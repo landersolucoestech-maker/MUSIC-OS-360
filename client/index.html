@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23B91C1C'/%3E%3Ctext x='16' y='23' font-family='Arial,sans-serif' font-size='20' font-weight='bold' fill='white' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E" />
+    <title>LANDER 360º - Gestão Musical Completa</title>
+    <meta name="description" content="Sistema completo de gestão para o mercado musical - artistas, contratos, finanças e muito mais" />
+    <meta name="author" content="LANDER 360º" />
+
+    <meta property="og:title" content="LANDER 360º - Gestão Musical Completa" />
+    <meta property="og:description" content="Sistema completo de gestão para o mercado musical" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@Lovable" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <!-- Theme initialization script - prevents flash of wrong theme -->
+    <script>
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const root = document.documentElement;
+        if (theme === 'system') {
+          const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          root.classList.add(isDark ? 'dark' : 'light');
+        } else {
+          root.classList.add(theme);
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
