@@ -4,191 +4,82 @@ import { execFileSync } from "node:child_process";
 import ts from "typescript";
 
 const cluster = process.argv[2];
-
-const CLUSTERS = new Set(["artist", "hr", "contracts", "accounting", "catalog"]);
-if (!CLUSTERS.has(cluster)) {
-  throw new Error(`Unknown normalization cluster: ${cluster ?? "<missing>"}`);
+if (cluster !== "artist") {
+  throw new Error(`This runner revision only authorizes the artist mechanical cluster; received ${cluster ?? "<missing>"}`);
 }
 
-const PROTECTED = [".gitignore", ".claude/"];
 const WEB_SRC = "apps/web/src/";
 
-function git(args, options = {}) {
+function git(args) {
   return execFileSync("git", args, {
     cwd: process.cwd(),
     encoding: "utf8",
-    stdio: options.stdio ?? ["ignore", "pipe", "pipe"],
+    stdio: ["ignore", "pipe", "pipe"],
   }).trimEnd();
 }
 
 function trackedFiles() {
-  const out = git(["ls-files"]);
-  return out ? out.split("\n").filter(Boolean) : [];
+  const output = git(["ls-files"]);
+  return output ? output.split("\n").filter(Boolean) : [];
 }
 
 function isCodeFile(file) {
   return /\.(?:ts|tsx|mts|cts)$/.test(file);
 }
 
-function ensureSafePath(file) {
+function assertUnprotected(file) {
   if (file === ".gitignore" || file.startsWith(".claude/")) {
     throw new Error(`Protected Engineering OS path would be modified: ${file}`);
   }
 }
 
-function renameFiles(transformPath) {
-  const moves = [];
-  for (const oldPath of trackedFiles()) {
-    if (!oldPath.startsWith(WEB_SRC)) continue;
-    const newPath = transformPath(oldPath);
-    if (newPath === oldPath) continue;
-    ensureSafePath(oldPath);
-    ensureSafePath(newPath);
-    moves.push([oldPath, newPath]);
-  }
-
-  const destinations = new Map();
-  for (const [oldPath, newPath] of moves) {
-    if (destinations.has(newPath) && destinations.get(newPath) !== oldPath) {
-      throw new Error(`Rename collision: ${oldPath} and ${destinations.get(newPath)} -> ${newPath}`);
-    }
-    if (fs.existsSync(newPath) && !moves.some(([candidate]) => candidate === newPath)) {
-      throw new Error(`Rename destination already exists: ${newPath}`);
-    }
-    destinations.set(newPath, oldPath);
-  }
-
-  // Move deeper paths first. Parent directories are created explicitly so file-level
-  // moves stay deterministic even when an entire technical directory is normalized.
-  moves.sort((a, b) => b[0].length - a[0].length || a[0].localeCompare(b[0]));
-  for (const [oldPath, newPath] of moves) {
-    fs.mkdirSync(path.dirname(newPath), { recursive: true });
-    git(["mv", "--", oldPath, newPath]);
-    console.log(`MOVE ${oldPath} -> ${newPath}`);
-  }
-
-  return moves;
+function writeIfChanged(file, source, next) {
+  if (source === next) return false;
+  assertUnprotected(file);
+  fs.writeFileSync(file, next);
+  console.log(`EDIT ${file}`);
+  return true;
 }
 
-function stripCodeExtension(file) {
-  return file.replace(/\.(?:tsx?|mts|cts)$/, "");
-}
-
-function buildModuleSpecifierRules(moves, extras = []) {
-  const rules = [...extras];
-  for (const [oldPath, newPath] of moves) {
-    const oldBase = path.basename(stripCodeExtension(oldPath));
-    const newBase = path.basename(stripCodeExtension(newPath));
-    if (oldBase !== newBase) rules.push([oldBase, newBase]);
-
-    if (oldPath.startsWith(WEB_SRC) && newPath.startsWith(WEB_SRC)) {
-      const oldAlias = `@/${stripCodeExtension(oldPath.slice(WEB_SRC.length))}`;
-      const newAlias = `@/${stripCodeExtension(newPath.slice(WEB_SRC.length))}`;
-      if (oldAlias !== newAlias) rules.push([oldAlias, newAlias]);
-    }
-  }
-
-  // Longest patterns first to avoid a shorter compatibility path eating a more
-  // specific one.
-  return [...new Map(rules.map(([from, to]) => [from, to])).entries()]
-    .sort((a, b) => b[0].length - a[0].length);
-}
-
-function replaceModuleSpecifier(rawToken, rules) {
-  const quote = rawToken[0];
-  if ((quote !== '"' && quote !== "'") || rawToken.at(-1) !== quote) return rawToken;
-  const inner = rawToken.slice(1, -1);
-  if (!(inner.startsWith(".") || inner.startsWith("@/"))) return rawToken;
-
-  let next = inner;
-  for (const [from, to] of rules) next = next.split(from).join(to);
-  return next === inner ? rawToken : `${quote}${next}${quote}`;
-}
-
-function rewriteIdentifiersAndImports(identifierTransform, moduleRules) {
-  const changed = [];
-  for (const file of trackedFiles()) {
-    if (!file.startsWith(WEB_SRC) || !isCodeFile(file)) continue;
-    ensureSafePath(file);
-
-    const source = fs.readFileSync(file, "utf8");
-    const variant = file.endsWith(".tsx") ? ts.LanguageVariant.JSX : ts.LanguageVariant.Standard;
-    const scanner = ts.createScanner(ts.ScriptTarget.Latest, false, variant, source);
-    let token = scanner.scan();
-    let cursor = 0;
-    let output = "";
-
-    while (token !== ts.SyntaxKind.EndOfFileToken) {
-      const start = scanner.getTokenPos();
-      const end = scanner.getTextPos();
-      output += source.slice(cursor, start);
-      const raw = source.slice(start, end);
-
-      if (token === ts.SyntaxKind.Identifier) {
-        output += identifierTransform(raw);
-      } else if (token === ts.SyntaxKind.StringLiteral) {
-        output += replaceModuleSpecifier(raw, moduleRules);
-      } else {
-        output += raw;
-      }
-      cursor = end;
-      token = scanner.scan();
-    }
-    output += source.slice(cursor);
-
-    if (output !== source) {
-      fs.writeFileSync(file, output);
-      changed.push(file);
-      console.log(`EDIT ${file}`);
-    }
-  }
-  return changed;
-}
-
-function applyOrdered(value, rules) {
-  let next = value;
-  for (const [from, to] of rules) next = next.split(from).join(to);
-  return next;
-}
-
-function artistPath(file) {
-  return applyOrdered(file, [
-    ["ArtistaVisao360", "ArtistOverview360"],
-    ["ArtistaEvolucao", "ArtistEvolution"],
-    ["ArtistaEvolution", "ArtistEvolution"],
-    ["ArtistaPlatform", "ArtistPlatform"],
-    ["ArtistasAssinados", "ContractedArtists"],
-    ["ArtistaAssinado", "ContractedArtist"],
-    ["ArtistaSignup", "ArtistSignup"],
-    ["Artistas", "Artists"],
-    ["Artista", "Artist"],
-    ["artista-tipo", "artist-type"],
-    ["artistas", "artists"],
-    ["artista", "artist"],
-    ["EquipeContatosCRM", "TeamContactsCRM"],
-  ]);
-}
-
-const ARTIST_EXACT = new Map([
+const EXACT = new Map([
   ["Artista", "Artist"],
   ["Artistas", "Artists"],
+  ["ArtistaApi", "ArtistApi"],
+  ["ArtistaInsert", "ArtistInsert"],
+  ["ArtistaUpdate", "ArtistUpdate"],
+  ["ArtistaFormData", "ArtistFormData"],
+  ["ArtistaFormValues", "ArtistFormValues"],
+  ["ArtistaFormAllValues", "ArtistFormAllValues"],
+  ["ArtistaPreservedInput", "ArtistPreservedInput"],
   ["ArtistaAssinado", "ContractedArtist"],
   ["ArtistasAssinados", "ContractedArtists"],
   ["ArtistaDistribuidoraEntry", "ArtistDistributorEntry"],
+  ["ArtistaDistribuidora", "ArtistDistributor"],
   ["ArtistaResponsavel", "ArtistContactPerson"],
   ["ArtistaFormResponsavel", "ArtistFormContactPerson"],
   ["ArtistaContatoVinculado", "LinkedArtistContact"],
   ["ArtistaContatoVinculadoValue", "LinkedArtistContactValue"],
   ["ArtistaRelacionamento", "ArtistRelationship"],
+  ["ArtistaFormRelacionamento", "ArtistFormRelationship"],
   ["ArtistaTipoPerfil", "ArtistProfileType"],
   ["ArtistaEspecialidade", "ArtistSpecialty"],
   ["ArtistaStatus", "ArtistStatus"],
   ["ArtistaVisao360Modal", "ArtistOverview360Modal"],
+  ["ArtistaVisao360ModalProps", "ArtistOverview360ModalProps"],
   ["ArtistaEvolucaoSection", "ArtistEvolutionSection"],
+  ["ArtistaEvolucaoSectionProps", "ArtistEvolutionSectionProps"],
   ["ArtistaEvolutionCard", "ArtistEvolutionCard"],
+  ["ArtistaEvolutionCardProps", "ArtistEvolutionCardProps"],
   ["ArtistaPlatformMetrics", "ArtistPlatformMetrics"],
+  ["ArtistaPlatformMetricsProps", "ArtistPlatformMetricsProps"],
   ["ArtistaFormModal", "ArtistFormModal"],
+  ["ArtistaFormModalProps", "ArtistFormModalProps"],
   ["ArtistaSignupPublic", "ArtistSignupPublic"],
+  ["ArtistaLookup", "ArtistLookup"],
+  ["ArtistasSkeleton", "ArtistsSkeleton"],
+  ["EquipeContatosCRM", "TeamContactsCRM"],
+  ["useArtistas", "useArtists"],
+  ["useArtistasPaginated", "useArtistsPaginated"],
   ["useArtistasAssinados", "useContractedArtists"],
   ["artistaService", "artistService"],
   ["artistaSchema", "artistSchema"],
@@ -198,239 +89,255 @@ const ARTIST_EXACT = new Map([
   ["artistaToExportRowFromForm", "artistToExportRowFromForm"],
   ["parseArtistaImportRow", "parseArtistImportRow"],
   ["formToArtistaPayload", "formToArtistPayload"],
+  ["formValuesToArtistaPayload", "formValuesToArtistPayload"],
+  ["FormToArtistaInput", "FormToArtistInput"],
   ["mapApiToArtista", "mapApiToArtist"],
   ["addArtista", "addArtist"],
   ["updateArtista", "updateArtist"],
   ["deleteArtista", "deleteArtist"],
+  ["todosArtistas", "allArtists"],
+  ["selectedArtista", "selectedArtist"],
+  ["selectedArtistas", "selectedArtists"],
+  ["viewArtista", "artistToView"],
+  ["setViewArtista", "setArtistToView"],
+  ["resolvedArtistas", "resolvedArtists"],
+  ["resolvedShareArtistas", "resolvedShareArtists"],
+  ["tiposRelacionadosArtista", "artistRelatedTypes"],
+  ["isArtistaRelated", "isArtistRelated"],
+  ["totalArtistas", "totalArtists"],
+  ["variosArtistas", "multipleArtists"],
+  ["CAPPED_ARTISTAS", "CAPPED_ARTISTS"],
   ["EMPTY_ARTISTAS", "EMPTY_ARTISTS"],
 ]);
 
-function artistIdentifier(identifier) {
-  if (ARTIST_EXACT.has(identifier)) return ARTIST_EXACT.get(identifier);
+const PORTUGUESE_SUFFIXES = [
+  ["Visao360", "Overview360"],
+  ["Evolucao", "Evolution"],
+  ["Distribuidora", "Distributor"],
+  ["Relacionamento", "Relationship"],
+  ["TipoPerfil", "ProfileType"],
+  ["Especialidade", "Specialty"],
+  ["Responsavel", "ContactPerson"],
+];
 
-  let next = identifier;
-  if (next.includes("Artista") || next.includes("Artistas")) {
-    next = applyOrdered(next, [
-      ["ArtistaVisao360", "ArtistOverview360"],
-      ["ArtistaEvolucao", "ArtistEvolution"],
-      ["ArtistaEvolution", "ArtistEvolution"],
-      ["ArtistaPlatform", "ArtistPlatform"],
-      ["ArtistasAssinados", "ContractedArtists"],
-      ["ArtistaAssinado", "ContractedArtist"],
-      ["ArtistaDistribuidora", "ArtistDistributor"],
-      ["ArtistaResponsavel", "ArtistContactPerson"],
-      ["ArtistaRelacionamento", "ArtistRelationship"],
-      ["ArtistaTipoPerfil", "ArtistProfileType"],
-      ["ArtistaEspecialidade", "ArtistSpecialty"],
-      ["Artistas", "Artists"],
-      ["Artista", "Artist"],
-    ]);
+function transformIdentifier(name) {
+  if (EXACT.has(name)) return EXACT.get(name);
+
+  if (name.startsWith("Artistas")) {
+    let suffix = name.slice("Artistas".length);
+    for (const [from, to] of PORTUGUESE_SUFFIXES) suffix = suffix.split(from).join(to);
+    return `Artists${suffix}`;
   }
-  if (next.includes("ARTISTAS") || next.includes("ARTISTA")) {
-    next = next.split("ARTISTAS").join("ARTISTS").split("ARTISTA").join("ARTIST");
+  if (name.startsWith("Artista")) {
+    let suffix = name.slice("Artista".length);
+    for (const [from, to] of PORTUGUESE_SUFFIXES) suffix = suffix.split(from).join(to);
+    return `Artist${suffix}`;
+  }
+  if (name.startsWith("useArtistas")) return `useArtists${name.slice("useArtistas".length)}`;
+  if (name.startsWith("useArtista")) return `useArtist${name.slice("useArtista".length)}`;
+  if (name.startsWith("artista") && name.length > "artista".length && /[A-Z]/.test(name["artista".length])) {
+    return `artist${name.slice("artista".length)}`;
+  }
+  if (name.includes("ARTISTAS")) return name.split("ARTISTAS").join("ARTISTS");
+  if (name.startsWith("ARTISTA_")) return name.replace(/^ARTISTA_/, "ARTIST_");
+  return name;
+}
+
+function shouldSkipIdentifier(node, sourceFile) {
+  const parent = node.parent;
+  const name = node.text;
+  if (name !== "Artista" && name !== "ARTISTA" && name !== "Artistas" && name !== "ARTISTAS") return false;
+
+  // Bare Portuguese role/category keys can be persisted enum values. Leave them for
+  // the accounting/contracts/status migration waves instead of changing semantics
+  // during a symbol-only artist rename.
+  if ((ts.isPropertyAssignment(parent) || ts.isPropertySignature(parent) || ts.isMethodDeclaration(parent) || ts.isEnumMember(parent)) && parent.name === node) {
+    return true;
+  }
+  if (ts.isPropertyAccessExpression(parent) && parent.name === node) return true;
+  return false;
+}
+
+function replaceRanges(source, ranges) {
+  if (!ranges.length) return source;
+  ranges.sort((a, b) => b.start - a.start || b.end - a.end);
+  let next = source;
+  let lastStart = source.length + 1;
+  for (const range of ranges) {
+    if (range.end > lastStart) throw new Error(`Overlapping AST edit at ${range.start}:${range.end}`);
+    next = next.slice(0, range.start) + range.text + next.slice(range.end);
+    lastStart = range.start;
   }
   return next;
 }
 
-function hrPath(file) {
-  return applyOrdered(file, [
-    ["/modules/rh/", "/modules/hr/"],
-    ["SolicitacaoFerias", "LeaveRequest"],
-    ["DocumentosFuncionario", "EmployeeDocuments"],
-    ["DocumentoFuncionario", "EmployeeDocument"],
-    ["Funcionarios", "Employees"],
-    ["Funcionario", "Employee"],
-    ["solicitacao-ferias", "leave-request"],
-    ["documentos-funcionario", "employee-documents"],
-    ["documento-funcionario", "employee-document"],
-    ["funcionarios", "employees"],
-    ["funcionario", "employee"],
-  ]);
+function prepareSharedArtistEnum() {
+  const file = `${WEB_SRC}shared/types/enums.ts`;
+  const source = fs.readFileSync(file, "utf8");
+  let next = source;
+  if (!next.includes("ArtistStatus as PkgArtistStatus")) {
+    next = next.replace(/(^\s*)ArtistStatus,(\r?\n)/m, "$1ArtistStatus as PkgArtistStatus,$2");
+  }
+  next = next.replace(/`\$\{ArtistStatus\}`/g, "`${PkgArtistStatus}`");
+  writeIfChanged(file, source, next);
 }
 
-const HR_EXACT = new Map([
-  ["DocumentoFuncionario", "EmployeeDocument"],
-  ["DocumentosFuncionario", "EmployeeDocuments"],
-  ["SolicitacaoFerias", "LeaveRequest"],
-  ["SolicitacaoFeriasFormModal", "LeaveRequestFormModal"],
-  ["Funcionario", "Employee"],
-  ["Funcionarios", "Employees"],
-  ["useFuncionarios", "useEmployees"],
-  ["useFuncionarioDetail", "useEmployeeDetail"],
-  ["useCreateFuncionario", "useCreateEmployee"],
-  ["useUpdateFuncionario", "useUpdateEmployee"],
-  ["useRemoveFuncionario", "useRemoveEmployee"],
-  ["useDocumentosFuncionario", "useEmployeeDocuments"],
-  ["useCreateDocumentoFuncionario", "useCreateEmployeeDocument"],
-]);
+function rewriteIdentifiers() {
+  for (const file of trackedFiles()) {
+    if (!file.startsWith(WEB_SRC) || !isCodeFile(file)) continue;
+    assertUnprotected(file);
+    const source = fs.readFileSync(file, "utf8");
+    const kind = file.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+    const sf = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, kind);
+    const ranges = [];
 
-function hrIdentifier(identifier) {
-  if (HR_EXACT.has(identifier)) return HR_EXACT.get(identifier);
-  let next = identifier;
-  if (next.includes("SolicitacaoFerias")) next = next.split("SolicitacaoFerias").join("LeaveRequest");
-  if (next.includes("DocumentosFuncionario")) next = next.split("DocumentosFuncionario").join("EmployeeDocuments");
-  if (next.includes("DocumentoFuncionario")) next = next.split("DocumentoFuncionario").join("EmployeeDocument");
-  if (next.includes("Funcionarios")) next = next.split("Funcionarios").join("Employees");
-  if (next.includes("Funcionario")) next = next.split("Funcionario").join("Employee");
-  if (next.includes("FUNCIONARIOS")) next = next.split("FUNCIONARIOS").join("EMPLOYEES");
-  if (next.includes("FUNCIONARIO")) next = next.split("FUNCIONARIO").join("EMPLOYEE");
+    function visit(node) {
+      if (ts.isIdentifier(node) && !shouldSkipIdentifier(node, sf)) {
+        const replacement = transformIdentifier(node.text);
+        if (replacement !== node.text) {
+          ranges.push({ start: node.getStart(sf), end: node.end, text: replacement });
+        }
+      }
+      ts.forEachChild(node, visit);
+    }
+    visit(sf);
+    writeIfChanged(file, source, replaceRanges(source, ranges));
+  }
+}
+
+function transformPath(file) {
+  let next = file;
+  const replacements = [
+    ["ArtistaVisao360", "ArtistOverview360"],
+    ["ArtistaEvolucao", "ArtistEvolution"],
+    ["ArtistaEvolution", "ArtistEvolution"],
+    ["ArtistaPlatform", "ArtistPlatform"],
+    ["ArtistasAssinados", "ContractedArtists"],
+    ["ArtistaAssinado", "ContractedArtist"],
+    ["ArtistaSignup", "ArtistSignup"],
+    ["Artistas", "Artists"],
+    ["Artista", "Artist"],
+    ["EquipeContatosCRM", "TeamContactsCRM"],
+    ["artista-tipo", "artist-type"],
+    ["artistas", "artists"],
+    ["artista", "artist"],
+  ];
+  for (const [from, to] of replacements) next = next.split(from).join(to);
   return next;
 }
 
-function contractsPath(file) {
-  return applyOrdered(file, [
-    ["TemplatesContratos", "ContractTemplates"],
-    ["Contratos", "Contracts"],
-    ["Contrato", "Contract"],
-    ["documentos-persist", "documents-persistence"],
-    ["contratos", "contracts"],
-    ["contrato", "contract"],
-  ]);
+function renameFiles() {
+  const moves = [];
+  for (const oldPath of trackedFiles()) {
+    if (!oldPath.startsWith(WEB_SRC)) continue;
+    const newPath = transformPath(oldPath);
+    if (newPath === oldPath) continue;
+    assertUnprotected(oldPath);
+    assertUnprotected(newPath);
+    moves.push([oldPath, newPath]);
+  }
+
+  const destinations = new Map();
+  for (const [oldPath, newPath] of moves) {
+    if (destinations.has(newPath)) throw new Error(`Rename collision at ${newPath}`);
+    if (fs.existsSync(newPath) && !moves.some(([candidate]) => candidate === newPath)) {
+      throw new Error(`Rename destination already exists: ${newPath}`);
+    }
+    destinations.set(newPath, oldPath);
+  }
+
+  moves.sort((a, b) => b[0].length - a[0].length || a[0].localeCompare(b[0]));
+  for (const [oldPath, newPath] of moves) {
+    fs.mkdirSync(path.dirname(newPath), { recursive: true });
+    git(["mv", "--", oldPath, newPath]);
+    console.log(`MOVE ${oldPath} -> ${newPath}`);
+  }
+  return moves;
 }
 
-function contractsIdentifier(identifier) {
-  let next = identifier;
-  if (next.includes("TemplatesContratos")) next = next.split("TemplatesContratos").join("ContractTemplates");
-  if (next.includes("Contratos")) next = next.split("Contratos").join("Contracts");
-  if (next.includes("Contrato")) next = next.split("Contrato").join("Contract");
-  if (next.includes("CONTRATOS")) next = next.split("CONTRATOS").join("CONTRACTS");
-  if (next.includes("CONTRATO")) next = next.split("CONTRATO").join("CONTRACT");
-  return next;
+function moduleRulesFromMoves(moves) {
+  const rules = [];
+  const strip = (file) => file.replace(/\.(?:tsx?|mts|cts)$/, "");
+  for (const [oldPath, newPath] of moves) {
+    const oldBase = path.basename(strip(oldPath));
+    const newBase = path.basename(strip(newPath));
+    if (oldBase !== newBase) rules.push([oldBase, newBase]);
+    const oldAlias = `@/${strip(oldPath.slice(WEB_SRC.length))}`;
+    const newAlias = `@/${strip(newPath.slice(WEB_SRC.length))}`;
+    if (oldAlias !== newAlias) rules.push([oldAlias, newAlias]);
+  }
+  return [...new Map(rules.map(([from, to]) => [from, to])).entries()].sort((a, b) => b[0].length - a[0].length);
 }
 
-function accountingPath(file) {
-  return applyOrdered(file, [
-    ["NovaTransacao", "NewTransaction"],
-    ["Transacoes", "Transactions"],
-    ["Transacao", "Transaction"],
-    ["transacao-form", "transaction-form"],
-    ["transacoes", "transactions"],
-    ["transacao", "transaction"],
-  ]);
-}
-
-function accountingIdentifier(identifier) {
-  let next = identifier;
-  if (next.includes("NovaTransacao")) next = next.split("NovaTransacao").join("NewTransaction");
-  if (next.includes("Transacoes")) next = next.split("Transacoes").join("Transactions");
-  if (next.includes("Transacao")) next = next.split("Transacao").join("Transaction");
-  if (next.includes("TRANSACOES")) next = next.split("TRANSACOES").join("TRANSACTIONS");
-  if (next.includes("TRANSACAO")) next = next.split("TRANSACAO").join("TRANSACTION");
-  return next;
-}
-
-function catalogPath(file) {
-  return applyOrdered(file, [
-    ["Licencas", "Licenses"],
-    ["Licenca", "License"],
-    ["Participantes", "Participants"],
-    ["Participante", "Participant"],
-    ["licencas", "licenses"],
-    ["licenca", "license"],
-    ["participantes", "participants"],
-    ["participante", "participant"],
-  ]);
-}
-
-function catalogIdentifier(identifier) {
-  let next = identifier;
-  if (next.includes("Licencas")) next = next.split("Licencas").join("Licenses");
-  if (next.includes("Licenca")) next = next.split("Licenca").join("License");
-  if (next.includes("Participantes")) next = next.split("Participantes").join("Participants");
-  if (next.includes("Participante")) next = next.split("Participante").join("Participant");
-  if (next.includes("LICENCAS")) next = next.split("LICENCAS").join("LICENSES");
-  if (next.includes("LICENCA")) next = next.split("LICENCA").join("LICENSE");
-  if (next.includes("PARTICIPANTES")) next = next.split("PARTICIPANTES").join("PARTICIPANTS");
-  if (next.includes("PARTICIPANTE")) next = next.split("PARTICIPANTE").join("PARTICIPANT");
-  return next;
-}
-
-const CONFIG = {
-  artist: {
-    pathTransform: artistPath,
-    identifierTransform: artistIdentifier,
-    moduleRules: [],
-    staleIdentifier: /Artista|Artistas|ARTISTA/,
-    stalePath: /Artista|Artistas|artista|artistas/,
-  },
-  hr: {
-    pathTransform: hrPath,
-    identifierTransform: hrIdentifier,
-    moduleRules: [["@/modules/rh/", "@/modules/hr/"], ["/modules/rh/", "/modules/hr/"]],
-    staleIdentifier: /Funcionario|Funcionarios|SolicitacaoFerias|DocumentoFuncionario|FUNCIONARIO/,
-    stalePath: /\/modules\/rh\/|Funcionario|Funcionarios|funcionario|funcionarios|SolicitacaoFerias/,
-  },
-  contracts: {
-    pathTransform: (file) => file.includes("/modules/contracts/") ? contractsPath(file) : file,
-    identifierTransform: contractsIdentifier,
-    moduleRules: [],
-    staleIdentifier: /Contrato|Contratos|CONTRATO/,
-    stalePath: /\/modules\/contracts\/.*(?:Contrato|Contratos|contrato|contratos)/,
-  },
-  accounting: {
-    pathTransform: (file) => file.includes("/modules/accounting/") ? accountingPath(file) : file,
-    identifierTransform: accountingIdentifier,
-    moduleRules: [["transacao-form", "transaction-form"]],
-    staleIdentifier: /Transacao|Transacoes|TRANSACAO/,
-    stalePath: /\/modules\/accounting\/.*(?:Transacao|Transacoes|transacao|transacoes)/,
-  },
-  catalog: {
-    pathTransform: (file) => file.includes("/modules/catalog/") ? catalogPath(file) : file,
-    identifierTransform: catalogIdentifier,
-    moduleRules: [],
-    staleIdentifier: /Licenca|Licencas|Participante|Participantes|LICENCA|PARTICIPANTE/,
-    stalePath: /\/modules\/catalog\/.*(?:Licenca|Licencas|licenca|licencas|Participante|Participantes|participante|participantes)/,
-  },
-};
-
-function scanStaleIdentifiers(pattern) {
-  const hits = [];
+function rewriteModuleSpecifiers(rules) {
   for (const file of trackedFiles()) {
     if (!file.startsWith(WEB_SRC) || !isCodeFile(file)) continue;
     const source = fs.readFileSync(file, "utf8");
-    const variant = file.endsWith(".tsx") ? ts.LanguageVariant.JSX : ts.LanguageVariant.Standard;
-    const scanner = ts.createScanner(ts.ScriptTarget.Latest, false, variant, source);
-    let token = scanner.scan();
-    while (token !== ts.SyntaxKind.EndOfFileToken) {
-      if (token === ts.SyntaxKind.Identifier) {
-        const raw = source.slice(scanner.getTokenPos(), scanner.getTextPos());
-        if (pattern.test(raw)) hits.push(`${file}: ${raw}`);
-        pattern.lastIndex = 0;
-      }
-      token = scanner.scan();
+    const kind = file.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+    const sf = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, kind);
+    const ranges = [];
+
+    function isModuleString(node) {
+      if (!ts.isStringLiteralLike(node)) return false;
+      const parent = node.parent;
+      if ((ts.isImportDeclaration(parent) || ts.isExportDeclaration(parent)) && parent.moduleSpecifier === node) return true;
+      if (ts.isExternalModuleReference(parent) && parent.expression === node) return true;
+      if (ts.isCallExpression(parent) && parent.arguments[0] === node && (parent.expression.kind === ts.SyntaxKind.ImportKeyword || (ts.isIdentifier(parent.expression) && parent.expression.text === "require"))) return true;
+      return false;
     }
+
+    function visit(node) {
+      if (isModuleString(node)) {
+        let value = node.text;
+        if (value.startsWith(".") || value.startsWith("@/")) {
+          for (const [from, to] of rules) value = value.split(from).join(to);
+          if (value !== node.text) {
+            const raw = source.slice(node.getStart(sf), node.end);
+            const quote = raw[0];
+            ranges.push({ start: node.getStart(sf), end: node.end, text: `${quote}${value}${quote}` });
+          }
+        }
+      }
+      ts.forEachChild(node, visit);
+    }
+    visit(sf);
+    writeIfChanged(file, source, replaceRanges(source, ranges));
   }
-  return hits;
 }
 
-function verifyProtectedPathsUntouched() {
-  const changed = git(["status", "--porcelain=v1"])
-    .split("\n")
-    .filter(Boolean)
-    .map((line) => line.slice(3).split(" -> ").at(-1));
-  for (const file of changed) ensureSafePath(file);
+function verifyNoStalePaths() {
+  const stale = trackedFiles().filter((file) => file.startsWith(WEB_SRC) && /Artista|Artistas|artista|artistas/.test(file));
+  if (stale.length) throw new Error(`Stale Portuguese artist paths remain:\n${stale.join("\n")}`);
 }
 
-const config = CONFIG[cluster];
-const moves = renameFiles(config.pathTransform);
-const moduleRules = buildModuleSpecifierRules(moves, config.moduleRules);
-rewriteIdentifiersAndImports(config.identifierTransform, moduleRules);
-verifyProtectedPathsUntouched();
-
-const stalePaths = trackedFiles().filter((file) => file.startsWith(WEB_SRC) && config.stalePath.test(file));
-const staleIdentifiers = scanStaleIdentifiers(config.staleIdentifier);
-
-if (stalePaths.length || staleIdentifiers.length) {
-  console.error("\nNormalization left developer-facing Portuguese technical names in the selected mechanical cluster.");
-  if (stalePaths.length) console.error(`Stale paths:\n${stalePaths.join("\n")}`);
-  if (staleIdentifiers.length) console.error(`Stale identifier tokens:\n${staleIdentifiers.slice(0, 200).join("\n")}`);
-  throw new Error(`Cluster ${cluster} did not converge; extend the explicit mapping before committing.`);
+function reportRemainingIdentifiers() {
+  const remaining = new Set();
+  for (const file of trackedFiles()) {
+    if (!file.startsWith(WEB_SRC) || !isCodeFile(file)) continue;
+    const source = fs.readFileSync(file, "utf8");
+    const kind = file.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+    const sf = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, kind);
+    function visit(node) {
+      if (ts.isIdentifier(node) && /Artista|Artistas|ARTISTA|artista/.test(node.text)) {
+        const transformed = shouldSkipIdentifier(node, sf) ? node.text : transformIdentifier(node.text);
+        if (transformed !== node.text) remaining.add(`${file}: ${node.text} -> ${transformed}`);
+      }
+      ts.forEachChild(node, visit);
+    }
+    visit(sf);
+  }
+  if (remaining.size) {
+    throw new Error(`Mapped Portuguese artist identifiers still remain after rewrite:\n${[...remaining].slice(0, 250).join("\n")}`);
+  }
 }
 
-const status = git(["status", "--short"]);
-if (!status) {
-  throw new Error(`Cluster ${cluster} produced no changes.`);
-}
+prepareSharedArtistEnum();
+rewriteIdentifiers();
+const moves = renameFiles();
+rewriteModuleSpecifiers(moduleRulesFromMoves(moves));
+verifyNoStalePaths();
+reportRemainingIdentifiers();
 
+if (!git(["status", "--short"])) throw new Error("Artist normalization produced no changes.");
 console.log("\nFINAL STATUS");
-console.log(status);
+console.log(git(["status", "--short"]));
