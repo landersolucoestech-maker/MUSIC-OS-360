@@ -105,7 +105,6 @@ const EXACT = new Map([
   ["tiposRelacionadosArtista", "artistRelatedTypes"],
   ["isArtistaRelated", "isArtistRelated"],
   ["totalArtistas", "totalArtists"],
-  ["variosArtistas", "multipleArtists"],
   ["CAPPED_ARTISTAS", "CAPPED_ARTISTS"],
   ["EMPTY_ARTISTAS", "EMPTY_ARTISTS"],
 ]);
@@ -135,9 +134,9 @@ function transformIdentifier(name) {
   }
   if (name.startsWith("useArtistas")) return `useArtists${name.slice("useArtistas".length)}`;
   if (name.startsWith("useArtista")) return `useArtist${name.slice("useArtista".length)}`;
-  if (name.startsWith("artista") && name.length > "artista".length && /[A-Z]/.test(name["artista".length])) {
-    return `artist${name.slice("artista".length)}`;
-  }
+  // Lowercase cross-domain fields such as artistaVinculado/variosArtistas may be
+  // API or persisted compatibility contracts. They are deliberately excluded from
+  // this symbol-only wave and must be normalized with their producer/consumer chain.
   if (name.includes("ARTISTAS")) return name.split("ARTISTAS").join("ARTISTS");
   if (name.startsWith("ARTISTA_")) return name.replace(/^ARTISTA_/, "ARTIST_");
   return name;
