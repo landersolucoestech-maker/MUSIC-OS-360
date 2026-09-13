@@ -29,7 +29,7 @@ import { randomUUID } from 'crypto';
 import { DataSource } from 'typeorm';
 import { BillingService } from '../../../src/modules/billing/billing.service';
 import { BillingEnforcementService } from '../../../src/modules/billing/billing-enforcement.service';
-import { TenantEntity } from '../../../src/database/entities';
+import { TenantEntity, ALL_ENTITIES } from '../../../src/database/entities';
 
 function readEnv(key: string): string {
   const envPath = path.resolve(process.cwd(), '.env.development');
@@ -47,7 +47,12 @@ describe('BillingService.updateAdminTenant — atomicity against real Postgres (
 
   beforeAll(async () => {
     const ownerUrl = readEnv('DATABASE_URL');
-    owner = await new DataSource({ type: 'postgres', url: ownerUrl, ssl: false }).initialize();
+    owner = await new DataSource({
+      type: 'postgres',
+      url: ownerUrl,
+      ssl: false,
+      entities: ALL_ENTITIES,
+    }).initialize();
 
     orgId = randomUUID();
     await owner.query(
@@ -81,6 +86,7 @@ describe('BillingService.updateAdminTenant — atomicity against real Postgres (
       {} as never, // EventsService — unused by updateAdminTenant
       enforcement as BillingEnforcementService,
       {} as never, // BillingPlansService — unused by updateAdminTenant
+      {} as never, // DatabaseContextService — unused by updateAdminTenant
     );
   }
 
