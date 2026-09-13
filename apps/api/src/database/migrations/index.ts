@@ -102,6 +102,12 @@ import { CatalogFormFieldColumns20260712000002 } from './20260712000002_CatalogF
 import { HrFormFieldColumns20260712000003 } from './20260712000003_HrFormFieldColumns';
 import { SharesContractsFormFieldColumns20260712000004 } from './20260712000004_SharesContractsFormFieldColumns';
 import { CrmFinanceOpsFormFieldColumns20260712000005 } from './20260712000005_CrmFinanceOpsFormFieldColumns';
+import { CreateOperationalListItems20260713000001 } from './20260713000001_CreateOperationalListItems';
+// 20260713000002_DropOrphanContactsSatelliteTables intentionally NOT registered yet:
+// it DROPs 4 tables (contacts + 3 satellites). The migration's own header cites a
+// pre-verified 0-rows-in-all-tenants check, but registering it here is what makes it
+// actually execute on the next migration run — that requires explicit sign-off, not
+// an agent's read of the migration's own justification. See mission findings.
 import { MakeShareRegistryFieldsNullable20260715000001 } from './20260715000001_MakeShareRegistryFieldsNullable';
 import { AddEventsStartsAt20260716000001 } from './20260716000001_AddEventsStartsAt';
 import { FinancialPrereqs20260718000000 } from './20260718000000_FinancialPrereqs';
@@ -138,6 +144,7 @@ import { RebuildRightsHoldersInCanonicalFormOrder20260719000013 } from './202607
 import { RebuildSharesInCanonicalFormOrder20260719000014 } from './20260719000014_RebuildSharesInCanonicalFormOrder';
 import { RebuildLicensesInCanonicalFormOrder20260719000015 } from './20260719000015_RebuildLicensesInCanonicalFormOrder';
 import { RebuildTakedownsInCanonicalFormOrder20260719000016 } from './20260719000016_RebuildTakedownsInCanonicalFormOrder';
+import { RebuildInventoryItemsInCanonicalFormOrder20260719000017 } from './20260719000017_RebuildInventoryItemsInCanonicalFormOrder';
 import { RebuildEmployeesInCanonicalFormOrder20260719000018 } from './20260719000018_RebuildEmployeesInCanonicalFormOrder';
 import { RebuildPayrollEntriesInCanonicalFormOrder20260719000019 } from './20260719000019_RebuildPayrollEntriesInCanonicalFormOrder';
 import { RebuildOrgMembersInCanonicalFormOrder20260719000020 } from './20260719000020_RebuildOrgMembersInCanonicalFormOrder';
@@ -178,6 +185,33 @@ import { RenameClientProjectCampaignReleaseFks20260905000005 } from './202609050
 import { RenameTituloToTitle20260905000006 } from './20260905000006_RenameTituloToTitle';
 import { RenameTipoToType20260905000007 } from './20260905000007_RenameTipoToType';
 import { RenameDataInicioFimToStartEndDate20260905000008 } from './20260905000008_RenameDataInicioFimToStartEndDate';
+import { RenameDocumentosToDocuments20260906000001 } from './20260906000001_RenameDocumentosToDocuments';
+import { AddTenantBillingStateStatusChangedAt20260906000002 } from './20260906000002_AddTenantBillingStateStatusChangedAt';
+import { CreateExternalDataSubmissions20260910000001 } from './20260910000001_CreateExternalDataSubmissions';
+import { AddArtistPlatformProfilesSyncStatusCheck20260910000002 } from './20260910000002_AddArtistPlatformProfilesSyncStatusCheck';
+import { BackfillAndRestrictArtistGoalStatusToEnglish20260910000003 } from './20260910000003_BackfillAndRestrictArtistGoalStatusToEnglish';
+import { BackfillAndRestrictContractStatusToEnglish20260910000010 } from './20260910000010_BackfillAndRestrictContractStatusToEnglish';
+import { BackfillAndRestrictWorkStatusToEnglish20260910000011 } from './20260910000011_BackfillAndRestrictWorkStatusToEnglish';
+import { BackfillAndRestrictPhonogramStatusToEnglish20260910000012 } from './20260910000012_BackfillAndRestrictPhonogramStatusToEnglish';
+import { BackfillAndRestrictShareStatusToEnglish20260910000013 } from './20260910000013_BackfillAndRestrictShareStatusToEnglish';
+import { BackfillAndRestrictTransactionStatusToEnglish20260910000014 } from './20260910000014_BackfillAndRestrictTransactionStatusToEnglish';
+import { BackfillAndRestrictInvoiceStatusToEnglish20260910000015 } from './20260910000015_BackfillAndRestrictInvoiceStatusToEnglish';
+import { BackfillAndRestrictLeadStatusToEnglish20260910000016 } from './20260910000016_BackfillAndRestrictLeadStatusToEnglish';
+import { BackfillAndRestrictClientStatusToEnglish20260910000017 } from './20260910000017_BackfillAndRestrictClientStatusToEnglish';
+import { BackfillAndRestrictCampaignStatusToEnglish20260910000018 } from './20260910000018_BackfillAndRestrictCampaignStatusToEnglish';
+import { BackfillAndRestrictBriefingStatusToEnglish20260910000019 } from './20260910000019_BackfillAndRestrictBriefingStatusToEnglish';
+import { BackfillAndRestrictTakedownStatusToEnglish20260910000020 } from './20260910000020_BackfillAndRestrictTakedownStatusToEnglish';
+import { BackfillAndRestrictContentDetectionStatusToEnglish20260910000021 } from './20260910000021_BackfillAndRestrictContentDetectionStatusToEnglish';
+import { BackfillAndRestrictProjectStatusToEnglish20260910000022 } from './20260910000022_BackfillAndRestrictProjectStatusToEnglish';
+import { BackfillAndRestrictEventStatusToEnglish20260910000023 } from './20260910000023_BackfillAndRestrictEventStatusToEnglish';
+import { BackfillAndRestrictEmployeeStatusToEnglish20260910000024 } from './20260910000024_BackfillAndRestrictEmployeeStatusToEnglish';
+import { BackfillAndRestrictPayrollStatusToEnglish20260910000025 } from './20260910000025_BackfillAndRestrictPayrollStatusToEnglish';
+import { BackfillAndRestrictLeaveRequestStatusToEnglish20260910000026 } from './20260910000026_BackfillAndRestrictLeaveRequestStatusToEnglish';
+import { BackfillAndRestrictArtistStatusToEnglish20260911000001 } from './20260911000001_BackfillAndRestrictArtistStatusToEnglish';
+import { SystemPathRlsExplicitMarker20260911000002 } from './20260911000002_SystemPathRlsExplicitMarker';
+import { PerTenantIsrcUniqueness20260911000003 } from './20260911000003_PerTenantIsrcUniqueness';
+import { NotificationsBullmqJobIdUniqueness20260912000001 } from './20260912000001_NotificationsBullmqJobIdUniqueness';
+import { RenameSharePartyFieldsToEnglish20260913000001 } from './20260913000001_RenameSharePartyFieldsToEnglish';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -282,6 +316,7 @@ export const ALL_MIGRATIONS = [
   HrFormFieldColumns20260712000003,
   SharesContractsFormFieldColumns20260712000004,
   CrmFinanceOpsFormFieldColumns20260712000005,
+  CreateOperationalListItems20260713000001,
   MakeShareRegistryFieldsNullable20260715000001,
   AddEventsStartsAt20260716000001,
   FinancialPrereqs20260718000000,
@@ -318,6 +353,7 @@ export const ALL_MIGRATIONS = [
   RebuildSharesInCanonicalFormOrder20260719000014,
   RebuildLicensesInCanonicalFormOrder20260719000015,
   RebuildTakedownsInCanonicalFormOrder20260719000016,
+  RebuildInventoryItemsInCanonicalFormOrder20260719000017,
   RebuildEmployeesInCanonicalFormOrder20260719000018,
   RebuildPayrollEntriesInCanonicalFormOrder20260719000019,
   RebuildOrgMembersInCanonicalFormOrder20260719000020,
@@ -372,4 +408,31 @@ export const ALL_MIGRATIONS = [
   RenameTituloToTitle20260905000006,
   RenameTipoToType20260905000007,
   RenameDataInicioFimToStartEndDate20260905000008,
+  RenameDocumentosToDocuments20260906000001,
+  AddTenantBillingStateStatusChangedAt20260906000002,
+  CreateExternalDataSubmissions20260910000001,
+  AddArtistPlatformProfilesSyncStatusCheck20260910000002,
+  BackfillAndRestrictArtistGoalStatusToEnglish20260910000003,
+  BackfillAndRestrictContractStatusToEnglish20260910000010,
+  BackfillAndRestrictWorkStatusToEnglish20260910000011,
+  BackfillAndRestrictPhonogramStatusToEnglish20260910000012,
+  BackfillAndRestrictShareStatusToEnglish20260910000013,
+  BackfillAndRestrictTransactionStatusToEnglish20260910000014,
+  BackfillAndRestrictInvoiceStatusToEnglish20260910000015,
+  BackfillAndRestrictLeadStatusToEnglish20260910000016,
+  BackfillAndRestrictClientStatusToEnglish20260910000017,
+  BackfillAndRestrictCampaignStatusToEnglish20260910000018,
+  BackfillAndRestrictBriefingStatusToEnglish20260910000019,
+  BackfillAndRestrictTakedownStatusToEnglish20260910000020,
+  BackfillAndRestrictContentDetectionStatusToEnglish20260910000021,
+  BackfillAndRestrictProjectStatusToEnglish20260910000022,
+  BackfillAndRestrictEventStatusToEnglish20260910000023,
+  BackfillAndRestrictEmployeeStatusToEnglish20260910000024,
+  BackfillAndRestrictPayrollStatusToEnglish20260910000025,
+  BackfillAndRestrictLeaveRequestStatusToEnglish20260910000026,
+  BackfillAndRestrictArtistStatusToEnglish20260911000001,
+  SystemPathRlsExplicitMarker20260911000002,
+  PerTenantIsrcUniqueness20260911000003,
+  NotificationsBullmqJobIdUniqueness20260912000001,
+  RenameSharePartyFieldsToEnglish20260913000001,
 ] as const;
