@@ -26,6 +26,7 @@ function makeContext(opts: {
   key?: string;
   userId?: string;
   statusCode?: number;
+  tenantId?: string;
 } = {}) {
   const headers: Record<string, string> = {};
   if (opts.key) headers['x-idempotency-key'] = opts.key;
@@ -42,6 +43,7 @@ function makeContext(opts: {
   const req = {
     headers,
     auth: opts.userId ? { userId: opts.userId } : undefined,
+    tenant: opts.tenantId ? { id: opts.tenantId } : undefined,
   };
 
   return {
@@ -198,7 +200,7 @@ describe('IdempotencyInterceptor', () => {
   it('in-flight placeholder lança ConflictException para requisição concorrente', (done) => {
     const store = makeFakeStore();
     // Pre-seed an in-flight placeholder
-    const cacheKey = 'user-concurrent:test-concurrent-key';
+    const cacheKey = 'no-tenant:user-concurrent:test-concurrent-key';
     void store.setInflight(cacheKey);
 
     const interceptor = makeInterceptor(store);
@@ -210,6 +212,36 @@ describe('IdempotencyInterceptor', () => {
         expect(err).toBeInstanceOf(ConflictException);
         expect(next.handle).not.toHaveBeenCalled();
         done();
+      },
+    });
+  });
+
+  // find-37b2adef: the same user acting in two different tenants, replaying
+  // the same client-generated X-Idempotency-Key, must NEVER see tenant A's
+  // cached response body returned for a tenant B request.
+  it('mesmo userId + mesma idempotency key em tenants diferentes: NUNCA replaya a resposta do outro tenant', (done) => {
+    const store = makeFakeStore();
+    const interceptor = makeInterceptor(store);
+    const keyOpts = { key: 'shared-key', userId: 'user-shared' };
+
+    const ctxTenantA = makeContext({ ...keyOpts, tenantId: 'tenant-a' });
+    const nextA = { handle: jest.fn().mockReturnValue(of({ secret: 'tenant-a-data' })) };
+
+    interceptor.intercept(ctxTenantA, nextA).subscribe({
+      next: () => {
+        // Give the fire-and-forget store.set() a tick to land before tenant B replays.
+        setImmediate(() => {
+          const ctxTenantB = makeContext({ ...keyOpts, tenantId: 'tenant-b' });
+          const nextB = { handle: jest.fn().mockReturnValue(of({ secret: 'tenant-b-data' })) };
+
+          interceptor.intercept(ctxTenantB, nextB).subscribe({
+            next: (v) => {
+              expect(v).toEqual({ secret: 'tenant-b-data' });
+              expect(nextB.handle).toHaveBeenCalled();
+              done();
+            },
+          });
+        });
       },
     });
   });

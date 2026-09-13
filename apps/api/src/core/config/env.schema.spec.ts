@@ -254,12 +254,28 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
 describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Parte 45)', () => {
   const base = { APP_DATABASE_URL: 'postgresql://musicos_app@host/db' };
 
-  it('development, RBAC ausente, DB context ausente → passa (flags só se aplicam em produção)', () => {
+  it('development, RBAC ausente, DB context ausente → passa (flags só se aplicam em produção/staging)', () => {
     expect(collectProductionAuthorityErrors({}, 'development')).toEqual([]);
   });
 
   it('test, RBAC ausente, DB context ausente → passa', () => {
     expect(collectProductionAuthorityErrors({}, 'test')).toEqual([]);
+  });
+
+  // find-902e12f6 (Wave 4): .github/workflows/staging.yml declara NODE_ENV=staging.
+  // Antes desta correção o gate só disparava para nodeEnv==='production' literal,
+  // deixando o deploy de staging herdar os defaults silenciosos (RLS/RBAC desligados).
+  it('staging, RBAC ausente, DB context ausente → falha (mesmo gate de produção agora cobre staging)', () => {
+    const errors = collectProductionAuthorityErrors({}, 'staging');
+    expect(errors.some((e) => e.includes('DATABASE_SESSION_CONTEXT_ENABLED') && e.includes('não declarado'))).toBe(true);
+    expect(errors.some((e) => e.includes('RBAC_PERSISTED_AUTHORITY') && e.includes('não declarado'))).toBe(true);
+  });
+
+  it('staging, RBAC=ON, DB context=true, APP_DATABASE_URL presente → passa', () => {
+    expect(collectProductionAuthorityErrors(
+      { ...base, DATABASE_SESSION_CONTEXT_ENABLED: 'true', RBAC_PERSISTED_AUTHORITY: 'ON' },
+      'staging',
+    )).toEqual([]);
   });
 
   it('production, RBAC ausente, DB context ausente → falha (ambas as flags reportadas)', () => {

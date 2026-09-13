@@ -17,15 +17,33 @@ function firstForwardedIp(value: unknown): string | null {
   return first && first.length > 0 ? first : null;
 }
 
+/**
+ * find-fd6b5b2b: CF-Connecting-IP/X-Real-IP/X-Forwarded-For are all fully
+ * client-settable and were trusted unconditionally, with no validation that
+ * a trusted proxy actually set them — this app's confirmed deployment model
+ * is dual (Docker long-running + Vercel serverless, docs/backend-v2/61),
+ * with no single verified fronting-proxy topology. Trusting these headers
+ * unconditionally let an attacker mint a fresh rate-limit bucket on every
+ * request just by rotating the header value, defeating brute-force
+ * protection on auth routes entirely.
+ *
+ * Default (safe): identify the client by the raw socket peer address, which
+ * the client cannot spoof via headers. Set RATE_LIMIT_TRUST_PROXY=true only
+ * once an operator has confirmed the real deployment's proxy chain actually
+ * sets these headers and cannot be reached directly by an untrusted client.
+ */
 function clientIp(request: Request): string {
-  return (
-    firstForwardedIp(request.headers['cf-connecting-ip']) ??
-    firstForwardedIp(request.headers['x-real-ip']) ??
-    firstForwardedIp(request.headers['x-forwarded-for']) ??
-    request.ip ??
-    request.socket?.remoteAddress ??
-    'unknown-ip'
-  );
+  if (process.env['RATE_LIMIT_TRUST_PROXY'] === 'true') {
+    return (
+      firstForwardedIp(request.headers['cf-connecting-ip']) ??
+      firstForwardedIp(request.headers['x-real-ip']) ??
+      firstForwardedIp(request.headers['x-forwarded-for']) ??
+      request.ip ??
+      request.socket?.remoteAddress ??
+      'unknown-ip'
+    );
+  }
+  return request.socket?.remoteAddress ?? request.ip ?? 'unknown-ip';
 }
 
 function normalizePath(path: string): string {

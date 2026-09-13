@@ -267,25 +267,34 @@ export function assertDatabaseCommandEnv(
  * (ver database.module.ts), então essa combinação também é bloqueada.
  * Recebe o env CRU (não o objeto já parseado pelo zod) porque só assim é possível
  * distinguir "declarado explicitamente" de "ausente e coberto pelo default".
+ *
+ * find-902e12f6 (Wave 4): o gate cobria apenas nodeEnv==='production' literal.
+ * .github/workflows/staging.yml declara NODE_ENV=staging — um ambiente
+ * deployado e publicamente alcançável (não um developer loopback) — que
+ * caía fora do gate e herdava os defaults silenciosos (RLS/RBAC desligados).
+ * `envSchema.NODE_ENV` só reconhece 4 valores; 'staging' é tratado como
+ * "deployed" junto de 'production', deixando apenas 'development'/'test'
+ * fora do gate.
  */
 export function collectProductionAuthorityErrors(
   env: Record<string, string | undefined>,
   nodeEnvInput?: string,
 ): string[] {
   const nodeEnv = nodeEnvInput ?? env['NODE_ENV'] ?? 'development';
-  if (nodeEnv !== 'production') return [];
+  if (nodeEnv !== 'production' && nodeEnv !== 'staging') return [];
 
   const errors: string[] = [];
+  const envLabel = nodeEnv === 'staging' ? 'staging' : 'produção';
 
   const dbCtxRaw = env['DATABASE_SESSION_CONTEXT_ENABLED'];
   if (dbCtxRaw === undefined || dbCtxRaw === '') {
     errors.push(
-      'DATABASE_SESSION_CONTEXT_ENABLED não declarado em produção — o default silencioso ' +
+      `DATABASE_SESSION_CONTEXT_ENABLED não declarado em ${envLabel} — o default silencioso ` +
         '("false") desliga o isolamento de sessão por tenant no DataSource de app (DBCTX-01).',
     );
   } else if (dbCtxRaw !== 'true') {
     errors.push(
-      'DATABASE_SESSION_CONTEXT_ENABLED=false em produção — isolamento de sessão por tenant desligado (DBCTX-01).',
+      `DATABASE_SESSION_CONTEXT_ENABLED=false em ${envLabel} — isolamento de sessão por tenant desligado (DBCTX-01).`,
     );
   } else {
     const appUrl = env['APP_DATABASE_URL'];
@@ -301,16 +310,16 @@ export function collectProductionAuthorityErrors(
   const rbacRaw = env['RBAC_PERSISTED_AUTHORITY'];
   if (rbacRaw === undefined || rbacRaw === '') {
     errors.push(
-      'RBAC_PERSISTED_AUTHORITY não declarado em produção — o default silencioso ("SHADOW") ' +
+      `RBAC_PERSISTED_AUTHORITY não declarado em ${envLabel} — o default silencioso ("SHADOW") ` +
         'significa que a autorização real ainda roda apenas no motor legado (RBAC-SHADOW-01).',
     );
   } else if (rbacRaw === 'OFF') {
-    errors.push('RBAC_PERSISTED_AUTHORITY=OFF é proibido em produção (RBAC-SHADOW-01).');
+    errors.push(`RBAC_PERSISTED_AUTHORITY=OFF é proibido em ${envLabel} (RBAC-SHADOW-01).`);
   } else if (rbacRaw === 'SHADOW') {
     const waiver = env['ALLOW_RBAC_SHADOW_IN_PRODUCTION'] === 'true';
     if (!waiver) {
       errors.push(
-        'RBAC_PERSISTED_AUTHORITY=SHADOW em produção sem waiver — defina ' +
+        `RBAC_PERSISTED_AUTHORITY=SHADOW em ${envLabel} sem waiver — defina ` +
           'ALLOW_RBAC_SHADOW_IN_PRODUCTION=true apenas como exceção temporária formal enquanto o ' +
           'harness (test/rbac-shadow-harness) ainda não aprovou a promoção a ON (RBAC-SHADOW-01).',
       );

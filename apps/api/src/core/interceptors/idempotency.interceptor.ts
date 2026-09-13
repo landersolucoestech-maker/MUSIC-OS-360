@@ -9,7 +9,10 @@
  * If the same key is seen again within TTL for the same user, the interceptor
  * returns the previously cached response without re-executing the handler.
  *
- * Cache key: `{userId}:{idempotencyKey}` — scoped per user.
+ * Cache key: `{tenantId}:{userId}:{idempotencyKey}` — scoped per tenant AND
+ * user (find-37b2adef: a user can hold tokens for multiple tenants; a
+ * key scoped only to userId would replay tenant A's cached response body
+ * verbatim into tenant B's request for the same client-generated key).
  *
  * TTL: 24 hours (configurable via IDEMPOTENCY_TTL_HOURS env var, validated 1–168h).
  *
@@ -39,7 +42,7 @@ export class IdempotencyInterceptor implements NestInterceptor {
   constructor(private readonly store: IdempotencyStore) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    const req = context.switchToHttp().getRequest<Request & { auth?: JwtAuth }>();
+    const req = context.switchToHttp().getRequest<Request & { auth?: JwtAuth; tenant?: Record<string, unknown> }>();
 
     const idempotencyKey = req.headers[HEADER] as string | undefined;
     if (!idempotencyKey) return next.handle();
@@ -49,8 +52,12 @@ export class IdempotencyInterceptor implements NestInterceptor {
       return next.handle();
     }
 
+    // find-37b2adef: prefer req.tenant.id (resolved+validated by TenantGuard,
+    // which runs before this interceptor) over the raw JWT orgId claim, same
+    // authoritative source CurrentTenant() uses.
+    const tenantId = (req.tenant?.['id'] as string | undefined) ?? req.auth?.orgId ?? 'no-tenant';
     const userId   = req.auth?.userId ?? 'anon';
-    const cacheKey = `${userId}:${idempotencyKey}`;
+    const cacheKey = `${tenantId}:${userId}:${idempotencyKey}`;
     const now      = Date.now();
 
     return from(this.store.get(cacheKey)).pipe(

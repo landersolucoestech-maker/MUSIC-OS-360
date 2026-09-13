@@ -163,12 +163,19 @@ describe('P2-9 event handlers context propagation', () => {
   it('LeadEventsHandler uses tenant context for conversion writes', async () => {
     const repos = new Map<unknown, any>([
       [ClientEntity, { create: jest.fn((v) => v), save: jest.fn(async (v) => ({ ...v, id: 'client-1' })) }],
-      [LeadEntity, { update: jest.fn().mockResolvedValue(undefined) }],
+      [LeadEntity, { update: jest.fn().mockResolvedValue(undefined), findOne: jest.fn().mockResolvedValue(null) }],
       [ArtistEntity, { create: jest.fn((v) => v), save: jest.fn().mockResolvedValue(undefined) }],
     ]);
-    const manager = { getRepository: jest.fn((entity) => repos.get(entity)) };
+    const getRepository = jest.fn((entity) => repos.get(entity));
+    // find-aca0fb58: onLeadConverted opens base.transaction(cb) to hold an
+    // advisory lock across the read-check-write sequence — the mock invokes
+    // cb with a manager resolving to the SAME repo mocks.
+    const manager = {
+      getRepository,
+      transaction: jest.fn((cb: (m: unknown) => unknown) => cb({ getRepository, query: jest.fn().mockResolvedValue(undefined) })),
+    };
     const dbContext = managerContext(manager);
-    const handler = new LeadEventsHandler({ getRepository: jest.fn((entity) => repos.get(entity)) } as any, dbContext as any);
+    const handler = new LeadEventsHandler({ getRepository } as any, dbContext as any);
 
     await handler.onLeadConverted({
       type: DOMAIN_EVENTS.LEAD_CONVERTED,
@@ -197,7 +204,7 @@ describe('P2-9 event handlers context propagation', () => {
     await handler.onArtistStatusChanged({
       type: DOMAIN_EVENTS.ARTIST_STATUS_CHANGED,
       tenantId: 't1',
-      payload: { artistId: 'a1', tenantId: 't1', nomeArtistico: 'A', newStatus: 'contratado', changedBy: 'u1' },
+      payload: { artistId: 'a1', tenantId: 't1', nomeArtistico: 'A', newStatus: 'signed', changedBy: 'u1' },
     } as any);
     expectTenantContext(dbContext);
     expect(taskRepo.save).toHaveBeenCalled();
