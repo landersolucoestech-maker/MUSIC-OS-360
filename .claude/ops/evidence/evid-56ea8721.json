@@ -1,0 +1,15 @@
+{
+  "id": "evid-56ea8721",
+  "createdAt": "2026-09-13T22:23:48.841Z",
+  "type": "COMMAND",
+  "label": "fresh8",
+  "command": "node .claude/runtime/verify-mission-closure.mjs no-destructive-loss",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "PASS: no unexpected/undispositioned deletions in working tree (git status shows none)",
+  "stderrTail": "",
+  "workspaceFingerprint": "8037477eabc15ed316d4aefb2372317435353eada1dab5bc2dfe45330eaffeda",
+  "fingerprintStatus": "BOUND",
+  "head": "59339595086a6e4265a1c1507e955a72a408f80d",
+  "durationMs": 144
+}

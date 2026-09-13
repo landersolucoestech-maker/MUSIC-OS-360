@@ -4,7 +4,7 @@
   "missionName": "resolve-worktree-86-diff",
   "status": "active",
   "createdAt": "2026-09-09T03:56:21.053Z",
-  "updatedAt": "2026-09-13T21:26:20.521Z",
+  "updatedAt": "2026-09-13T22:24:20.702Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": "L5",
@@ -42,7 +42,8 @@
             "evid-77ccc0db",
             "evid-8baabd95",
             "evid-0f3b5c22",
-            "evid-fecf636f"
+            "evid-fecf636f",
+            "evid-2bd6c61d"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -69,7 +70,8 @@
             "evid-3ce33965",
             "evid-dd759a65",
             "evid-5941b4d3",
-            "evid-9af27dce"
+            "evid-9af27dce",
+            "evid-f59f6760"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -97,7 +99,9 @@
             "evid-74bd4515",
             "evid-742345b8",
             "evid-210d989f",
-            "evid-a2bf0175"
+            "evid-a2bf0175",
+            "evid-ebf999f5",
+            "evid-41674bbc"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -354,7 +358,8 @@
             "evid-50a0524c",
             "evid-8a2e0267",
             "evid-a1fee30c",
-            "evid-08122e4f"
+            "evid-08122e4f",
+            "evid-e3ccc541"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -545,7 +550,8 @@
             "evid-1bbd88b4",
             "evid-94b3c6db",
             "evid-31e924c3",
-            "evid-cd04f9fb"
+            "evid-cd04f9fb",
+            "evid-c11bfaab"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -721,7 +727,8 @@
             "evid-1d8a358e",
             "evid-46403900",
             "evid-9f43168d",
-            "evid-7168301b"
+            "evid-7168301b",
+            "evid-f4633a55"
           ],
           "status": "closed"
         },
@@ -736,7 +743,8 @@
             "evid-a22bf4ff",
             "evid-b08bb492",
             "evid-ede91ff8",
-            "evid-efcd84ae"
+            "evid-efcd84ae",
+            "evid-52237576"
           ],
           "status": "closed"
         },
@@ -752,7 +760,8 @@
             "evid-8b75fa54",
             "evid-614cd575",
             "evid-9aa529a6",
-            "evid-29d61a9f"
+            "evid-29d61a9f",
+            "evid-56ea8721"
           ],
           "status": "closed"
         },
@@ -767,7 +776,8 @@
             "evid-bb9605ea",
             "evid-a9403d8e",
             "evid-4d9c1220",
-            "evid-5afcfd42"
+            "evid-5afcfd42",
+            "evid-1b6fe7bf"
           ],
           "status": "closed"
         }
@@ -3956,7 +3966,17 @@
     "evid-efcd84ae",
     "evid-29d61a9f",
     "evid-4d9c1220",
-    "evid-5afcfd42"
+    "evid-5afcfd42",
+    "evid-2bd6c61d",
+    "evid-f59f6760",
+    "evid-e3ccc541",
+    "evid-ebf999f5",
+    "evid-41674bbc",
+    "evid-c11bfaab",
+    "evid-f4633a55",
+    "evid-52237576",
+    "evid-56ea8721",
+    "evid-1b6fe7bf"
   ],
   "checkpointIds": [],
   "touchedFiles": [],

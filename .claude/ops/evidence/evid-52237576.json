@@ -1,0 +1,15 @@
+{
+  "id": "evid-52237576",
+  "createdAt": "2026-09-13T22:23:48.321Z",
+  "type": "COMMAND",
+  "label": "fresh8",
+  "command": "node .claude/runtime/verify-mission-closure.mjs reconciliation",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "PASS: find-7b40edd9 has terminal disposition \"CORRIGIDA\" (resolved 2026-09-12T08:25:10.133Z)",
+  "stderrTail": "",
+  "workspaceFingerprint": "8037477eabc15ed316d4aefb2372317435353eada1dab5bc2dfe45330eaffeda",
+  "fingerprintStatus": "BOUND",
+  "head": "59339595086a6e4265a1c1507e955a72a408f80d",
+  "durationMs": 74
+}

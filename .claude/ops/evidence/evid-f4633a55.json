@@ -1,0 +1,15 @@
+{
+  "id": "evid-f4633a55",
+  "createdAt": "2026-09-13T22:23:42.792Z",
+  "type": "COMMAND",
+  "label": "fresh8",
+  "command": "node .claude/runtime/verify-mission-closure.mjs no-push",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "PASS: local HEAD (59339595086a6e4265a1c1507e955a72a408f80d) is not reachable from origin/dev (506de92fbcb1cd0a9a67b27e0a90bb41f3ce9f48) -- this session has not pushed (origin/dev may have legitimately advanced from other sessions' pushes, already fetched/merged/reconciled).",
+  "stderrTail": "",
+  "workspaceFingerprint": "8037477eabc15ed316d4aefb2372317435353eada1dab5bc2dfe45330eaffeda",
+  "fingerprintStatus": "BOUND",
+  "head": "59339595086a6e4265a1c1507e955a72a408f80d",
+  "durationMs": 193
+}
