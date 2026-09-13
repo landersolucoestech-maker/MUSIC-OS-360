@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { DatePickerField } from "@/shared/ui/date-picker-field";
-import { ESPECIALIDADES_LABELS } from "@/modules/artist/mappers";
+import { SPECIALTY_LABELS } from "@/modules/artist/mappers";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
 import { contactTypeOptions, labelFor } from "@/modules/crm-relationships/constants";
 import {
@@ -58,9 +58,9 @@ import {
   Video,
   Link2,
 } from "lucide-react";
-import { ArtistaEvolucaoSection } from "@/modules/artist/components/ArtistaEvolucaoSection";
+import { ArtistEvolutionSection } from "@/modules/artist/components/ArtistEvolutionSection";
 import { PositioningCard } from "@/modules/artist/components/PositioningCard";
-import { ArtistaPlatformMetrics } from "@/modules/artist/components/ArtistaPlatformMetrics";
+import { ArtistPlatformMetrics } from "@/modules/artist/components/ArtistPlatformMetrics";
 
 const formatDateDMY = (d?: string | null): string => {
   if (!d) return "Não informado";
@@ -80,15 +80,15 @@ import { formatCurrency, getCurrencyToneClass, getMonetarySemanticClass } from "
 import { useObras } from "@/modules/catalog/hooks/useObras";
 import { useFonogramas } from "@/modules/catalog/hooks/useFonogramas";
 import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
-import { useProjetos } from "@/modules/projects/hooks/useProjetos";
+import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useMetas } from "@/modules/marketing/hooks/useMetas";
 import {
-  useContratos,
-  type ContratoWithRelations,
-} from "@/modules/contracts/hooks/useContratos";
-import { useTransacoes } from "@/modules/accounting/hooks/useTransacoes";
-import { ContratoStatusBadge } from "@/modules/contracts/components/ContratoStatusBadge";
-import { useEventos } from "@/modules/events/hooks/useEventos";
+  useContracts,
+  type ContractWithRelations,
+} from "@/modules/contracts/hooks/useContracts";
+import { useTransactions } from "@/modules/accounting/hooks/useTransactions";
+import { ContractStatusBadge } from "@/modules/contracts/components/ContractStatusBadge";
+import { useEvents } from "@/modules/events/hooks/useEvents";
 import { getBackendEventTypeLabel } from "@/modules/events/lib/event-type";
 import { useMarketingContents } from "@/modules/marketing/hooks/useMarketingContents";
 import { useMarketingCampaigns } from "@/modules/marketing/hooks/useMarketingCampaigns";
@@ -104,14 +104,14 @@ const CHANNEL_LABELS: Record<string, string> = {
   reels: "Reels", stories: "Stories", blog: "Blog", podcast: "Podcast",
   campanha: "Campanha", portal_noticias: "Portal", material_publicitario: "Publicidade",
 };
-const CAMPANHA_SECOES: Array<{ key: string; label: string; status: string[] }> = [
-  { key: "ativas", label: "Campanhas Ativas", status: ["ativa", "pausada"] },
-  { key: "encerradas", label: "Campanhas Encerradas", status: ["concluida", "cancelada"] },
-  { key: "planejadas", label: "Campanhas Planejadas", status: ["rascunho", "agendada"] },
+const CAMPAIGN_SECTIONS: Array<{ key: string; label: string; status: string[] }> = [
+  { key: "ativas", label: "Campanhas Ativas", status: ["active", "paused"] },
+  { key: "encerradas", label: "Campanhas Encerradas", status: ["completed", "cancelled"] },
+  { key: "planejadas", label: "Campanhas Planejadas", status: ["draft", "agendada"] },
 ];
 
 // ── Financeiro: receitas por natureza ──────────────────────────────────────
-const NATUREZA_BUCKETS: Array<{ label: string; keywords: string[] }> = [
+const NATURE_BUCKETS: Array<{ label: string; keywords: string[] }> = [
   { label: "Royalties", keywords: ["royalt"] },
   { label: "Shows", keywords: ["show", "cache", "cachê"] },
   { label: "Licenciamentos", keywords: ["licenc", "sync"] },
@@ -120,7 +120,7 @@ const NATUREZA_BUCKETS: Array<{ label: string; keywords: string[] }> = [
 ];
 
 // ── Contratos: filtros por type ────────────────────────────────────────────
-const CONTRATO_FILTERS: Array<{ key: string; label: string; tipos?: string[] }> = [
+const CONTRACT_FILTERS: Array<{ key: string; label: string; tipos?: string[] }> = [
   { key: "todos", label: "Todos" },
   { key: "empresarial", label: "Empresarial", tipos: ["exclusivo", "nao_exclusivo", "gestao", "representacao"] },
   { key: "distribuicao", label: "Distribuição", tipos: ["distribuicao"] },
@@ -136,11 +136,11 @@ const CONTRATO_FILTERS: Array<{ key: string; label: string; tipos?: string[] }> 
 // meeting/interview/tour/other) — ver modules/events/lib/event-type.ts para
 // os rótulos reais. "Ensaios" e "Gravações" viram um único filtro porque a
 // coluna real não distingue as duas (ambas coarseiam para "recording").
-const EVENTO_STATUS_LABELS: Record<string, string> = {
+const EVENT_STATUS_LABELS: Record<string, string> = {
   planejado: "Planejado", agendado: "Agendado", confirmado: "Confirmado",
   realizado: "Realizado", concluido: "Concluído", cancelado: "Cancelado", adiado: "Adiado",
 };
-const AGENDA_FILTERS: Array<{ key: string; label: string; tipos?: string[] }> = [
+const SCHEDULE_FILTERS: Array<{ key: string; label: string; tipos?: string[] }> = [
   { key: "todos", label: "Todos" },
   { key: "shows", label: "Shows", tipos: ["show", "festival"] },
   { key: "reunioes", label: "Reuniões", tipos: ["meeting"] },
@@ -162,14 +162,14 @@ const CONTENT_STATUS_LABELS: Record<string, string> = {
   ideia: "Planejado", producao: "Em Produção", revisao: "Em Revisão",
   agendado: "Agendado", publicado: "Publicado", falhou: "Falhou", atrasado: "Atrasado",
 };
-const CONTEUDO_FILTERS: Array<{ key: string; label: string; status?: string[] }> = [
+const CONTENT_FILTERS: Array<{ key: string; label: string; status?: string[] }> = [
   { key: "todos", label: "Todos" },
   { key: "planejados", label: "Planejados", status: ["ideia", "agendado"] },
   { key: "producao", label: "Em Produção", status: ["producao", "revisao"] },
   { key: "publicado", label: "Publicado", status: ["publicado"] },
 ];
 
-interface Meta {
+interface MarketingMeta {
   id: number;
   title: string;
   descricao: string;
@@ -183,13 +183,13 @@ interface Meta {
   status: "em_progresso" | "concluida" | "pausada" | "cancelada";
 }
 
-interface ArtistaVisao360ModalProps {
+interface ArtistVision360ModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   artista?: any;
 }
 
-const getHistoricoIcon = (type: string) => {
+const getHistoryIcon = (type: string) => {
   switch (type) {
     case "criacao":
       return <Plus className="h-4 w-4" />;
@@ -210,7 +210,7 @@ const getHistoricoIcon = (type: string) => {
   }
 };
 
-const getHistoricoBadge = (type: string) => {
+const getHistoryBadge = (type: string) => {
   switch (type) {
     case "criacao":
       return <Badge variant="success">Criação</Badge>;
@@ -233,7 +233,7 @@ const getHistoricoBadge = (type: string) => {
   }
 };
 
-const tiposMeta = [
+const goalTypes = [
   { value: "streams", label: "Streams" },
   { value: "seguidores", label: "Seguidores" },
   { value: "lancamentos", label: "Lançamentos" },
@@ -242,7 +242,7 @@ const tiposMeta = [
   { value: "outros", label: "Outros" },
 ];
 
-const categoriasMeta = [
+const goalCategories = [
   { value: "crescimento", label: "Crescimento" },
   { value: "financeiro", label: "Financeiro" },
   { value: "producao", label: "Produção" },
@@ -253,7 +253,7 @@ const categoriasMeta = [
 const primaryCompactButtonClass = "h-8 text-xs gap-1.5";
 const activeBlueBadgeClass = "bg-primary text-primary-foreground border-primary";
 
-const statusMeta = [
+const metaStatusOptions = [
   { value: "em_progresso", label: "Em Progresso", color: activeBlueBadgeClass },
   { value: "concluida", label: "Concluída", color: "bg-success" },
   { value: "pausada", label: "Pausada", color: "bg-gray-500" },
@@ -261,8 +261,8 @@ const statusMeta = [
 ];
 
 const getProjectStatusBadgeClass = (status?: string | null) => {
-  if (status === "em_andamento") return activeBlueBadgeClass;
-  if (status === "concluido") return "bg-success";
+  if (status === "in_progress") return activeBlueBadgeClass;
+  if (status === "completed") return "bg-success";
   return "bg-gray-600 text-white border-gray-600";
 };
 
@@ -291,11 +291,11 @@ const formatStatusPtBr = (status?: string | null): string => {
     key.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
 };
 
-export function ArtistaVisao360Modal({
+export function ArtistVision360Modal({
   open,
   onOpenChange,
   artista,
-}: ArtistaVisao360ModalProps) {
+}: ArtistVision360ModalProps) {
   // Consultas pesadas do hub 360 só fazem sentido com o modal aberto — ver
   // Task F: mantê-las sempre ativas fazia Dashboard/Artistas baixarem ~11
   // tabelas inteiras a cada carregamento de página, mesmo com o modal
@@ -310,26 +310,26 @@ export function ArtistaVisao360Modal({
   // (padrão que a Task G pede para eliminar) — trocar de artista reaproveitava
   // até o mesmo cache incorreto, já que a queryKey não distinguia o artista.
   const artistId = artista?.id;
-  const { obras: obrasReais } = useObras(open, artistId);
-  const { fonogramas: fonogramasReais } = useFonogramas(open, artistId);
-  const { lancamentos: lancamentosReais } = useLancamentos(open, artistId);
-  const { projetos: projetosReais } = useProjetos(open, artistId);
+  const { obras: actualWorks } = useObras(open, artistId);
+  const { fonogramas: actualPhonograms } = useFonogramas(open, artistId);
+  const { lancamentos: actualReleases } = useLancamentos(open, artistId);
+  const { projects: actualProjects } = useProjects(open, artistId);
   const {
-    metas: metasReais,
+    metas: actualMetas,
     addMeta,
     updateMeta,
     deleteMeta,
     getProgressPercent: calcProgress,
   } = useMetas(open, artistId);
-  const { contratos: contratosReais } = useContratos(open, artistId);
-  const { transacoes: transacoesArtista } = useTransacoes(open, artistId);
+  const { contracts: actualContracts } = useContracts(open, artistId);
+  const { transactions: artistTransactions } = useTransactions(open, artistId);
   const { contacts } = useContacts(open);
-  const { eventos: eventosReais } = useEventos(open, artistId);
+  const { events: actualEvents } = useEvents(open, artistId);
   const { data: marketingContents = [] } = useMarketingContents(open);
   const { data: marketingCampaigns = [] } = useMarketingCampaigns(open);
 
   // Resolve os contatos vinculados (referências) com os dados atuais do CRM.
-  const contatosVinculadosResolvidos = useMemo(() => {
+  const linkedContactsResolved = useMemo(() => {
     const raw = (artista as Record<string, unknown> | null | undefined)?.contatos_vinculados;
     if (!Array.isArray(raw)) return [];
     const byId = new Map(contacts.map((c) => [c.id, c]));
@@ -340,83 +340,83 @@ export function ArtistaVisao360Modal({
 
   const [activeTab, setActiveTab] = useState("visao-geral");
   const [showMetaForm, setShowMetaForm] = useState(false);
-  const [editingMeta, setEditingMeta] = useState<Meta | null>(null);
-  const [agendaFilter, setAgendaFilter] = useState("todos");
-  const [conteudoFilter, setConteudoFilter] = useState("todos");
-  const [contratoFilter, setContratoFilter] = useState("todos");
+  const [editingMeta, setEditingMeta] = useState<MarketingMeta | null>(null);
+  const [scheduleFilter, setScheduleFilter] = useState("todos");
+  const [contentFilter, setContentFilter] = useState("todos");
+  const [contractFilter, setContractFilter] = useState("todos");
 
   // ── Agenda (eventos do artista) ────────────────────────────────────────
-  const agendaFiltrada = (eventosReais as any[]).filter((e) => {
-    const cfg = AGENDA_FILTERS.find((f) => f.key === agendaFilter);
+  const filteredSchedule = (actualEvents as any[]).filter((e) => {
+    const cfg = SCHEDULE_FILTERS.find((f) => f.key === scheduleFilter);
     if (!cfg || !cfg.tipos) return true;
     return cfg.tipos.includes(String(e.type ?? "").toLowerCase());
   });
 
   // ── Conteúdos (marketing contents do artista) ──────────────────────────
-  const conteudosReais = marketingContents.filter(
+  const actualContent = marketingContents.filter(
     (c) => c.targetType === "artista" && c.targetId === artistId,
   );
-  const conteudosFiltrados = conteudosReais.filter((c) => {
-    const cfg = CONTEUDO_FILTERS.find((f) => f.key === conteudoFilter);
+  const filteredContent = actualContent.filter((c) => {
+    const cfg = CONTENT_FILTERS.find((f) => f.key === contentFilter);
     if (!cfg || !cfg.status) return true;
     return cfg.status.includes(String(c.status ?? "").toLowerCase());
   });
 
   // ── Marketing (campanhas do artista) ───────────────────────────────────
-  const campanhasReais = marketingCampaigns.filter(
+  const actualCampaigns = marketingCampaigns.filter(
     (c) => c.targetType === "artista" && c.targetId === artistId,
   );
 
   // ── Movimentação (timeline operacional derivada dos dados do artista) ──
-  const movimentacaoItems: {
+  const activityTimelineItems: {
     id: string;
     type: string;
     descricao: string;
     data: string;
     responsavel: string;
   }[] = [];
-  contratosReais.forEach((c) => {
+  actualContracts.forEach((c) => {
     const d = (c as { created_at?: string }).created_at;
-    if (d) movimentacaoItems.push({ id: `mv-ctr-${c.id}`, type: "Jurídico", descricao: `Contrato: ${c.title}`, data: d, responsavel: "Admin" });
+    if (d) activityTimelineItems.push({ id: `mv-ctr-${c.id}`, type: "Jurídico", descricao: `Contrato: ${c.title}`, data: d, responsavel: "Admin" });
   });
-  transacoesArtista.forEach((t) => {
+  artistTransactions.forEach((t) => {
     const d = (t as { created_at?: string; data?: string }).created_at ?? (t as { data?: string }).data;
-    if (d) movimentacaoItems.push({ id: `mv-txn-${t.id}`, type: "Financeiro", descricao: t.descricao ?? (t.type === "receita" ? "Pagamento recebido" : "Despesa registrada"), data: d, responsavel: "Financeiro" });
+    if (d) activityTimelineItems.push({ id: `mv-txn-${t.id}`, type: "Financeiro", descricao: t.descricao ?? (t.type === "receita" ? "Pagamento recebido" : "Despesa registrada"), data: d, responsavel: "Financeiro" });
   });
-  eventosReais.forEach((e) => {
+  actualEvents.forEach((e) => {
     const ev = e as { data?: string; type?: string; created_at?: string };
     const d = ev.data ?? ev.created_at;
-    if (d) movimentacaoItems.push({ id: `mv-evt-${e.id}`, type: "Agenda", descricao: `${getBackendEventTypeLabel(ev.type)}: ${e.title}`, data: d, responsavel: "—" });
+    if (d) activityTimelineItems.push({ id: `mv-evt-${e.id}`, type: "Agenda", descricao: `${getBackendEventTypeLabel(ev.type)}: ${e.title}`, data: d, responsavel: "—" });
   });
-  lancamentosReais.forEach((l: any) => {
+  actualReleases.forEach((l: any) => {
     const d = l.created_at ?? l.data_lancamento;
-    if (d) movimentacaoItems.push({ id: `mv-lan-${l.id}`, type: "Produção", descricao: `Lançamento: ${l.title ?? ""}`, data: d, responsavel: "Admin" });
+    if (d) activityTimelineItems.push({ id: `mv-lan-${l.id}`, type: "Produção", descricao: `Lançamento: ${l.title ?? ""}`, data: d, responsavel: "Admin" });
   });
-  campanhasReais.forEach((c) => {
+  actualCampaigns.forEach((c) => {
     const d = c.startDate ?? c.createdAt;
-    if (d) movimentacaoItems.push({ id: `mv-cmp-${c.id}`, type: "Marketing", descricao: `Campanha: ${c.name}`, data: d, responsavel: c.owner || "—" });
+    if (d) activityTimelineItems.push({ id: `mv-cmp-${c.id}`, type: "Marketing", descricao: `Campanha: ${c.name}`, data: d, responsavel: c.owner || "—" });
   });
-  conteudosReais.forEach((c) => {
+  actualContent.forEach((c) => {
     const d = c.publishDate ?? c.createdAt;
-    if (d) movimentacaoItems.push({ id: `mv-cnt-${c.id}`, type: "Marketing", descricao: `Conteúdo: ${c.title}`, data: d, responsavel: c.owner || "—" });
+    if (d) activityTimelineItems.push({ id: `mv-cnt-${c.id}`, type: "Marketing", descricao: `Conteúdo: ${c.title}`, data: d, responsavel: c.owner || "—" });
   });
-  movimentacaoItems.sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
+  activityTimelineItems.sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
 
   // ── Visão Geral: KPIs executivos + widgets ─────────────────────────────
   const nowTs = Date.now();
-  const showsConfirmados = (eventosReais as any[]).filter(
+  const confirmedShows = (actualEvents as any[]).filter(
     (e) =>
       ["show", "festival"].includes(String(e.type ?? "").toLowerCase()) &&
-      ["confirmado", "realizado", "concluido"].includes(String(e.status ?? "").toLowerCase()),
+      ["confirmed", "held", "completed"].includes(String(e.status ?? "").toLowerCase()),
   ).length;
-  const lancamentosAtivos = lancamentosReais.length;
-  const campanhasAtivasCount = campanhasReais.filter(
-    (c) => String(c.status ?? "").toLowerCase() === "ativa",
+  const activeReleases = actualReleases.length;
+  const activeCampaignsCount = actualCampaigns.filter(
+    (c) => String(c.status ?? "").toLowerCase() === "active",
   ).length;
-  const conteudosPendentes = conteudosReais.filter((c) =>
+  const pendingContent = actualContent.filter((c) =>
     ["ideia", "producao", "revisao", "agendado", "atrasado"].includes(String(c.status ?? "").toLowerCase()),
   ).length;
-  const proximoShow = (eventosReais as any[])
+  const nextShow = (actualEvents as any[])
     .filter(
       (e) =>
         ["show", "festival"].includes(String(e.type ?? "").toLowerCase()) &&
@@ -424,73 +424,73 @@ export function ArtistaVisao360Modal({
         new Date(e.data).getTime() >= nowTs,
     )
     .sort((a, b) => new Date(a.data!).getTime() - new Date(b.data!).getTime())[0];
-  const proximoLancamento = (lancamentosReais as any[])
+  const nextRelease = (actualReleases as any[])
     .filter((l) => l.data_lancamento && new Date(l.data_lancamento).getTime() >= nowTs)
     .sort((a, b) => new Date(a.data_lancamento).getTime() - new Date(b.data_lancamento).getTime())[0];
 
   // ── Evolução: marcos (milestones) derivados ────────────────────────────
-  const marcosEvolucao: { id: string; label: string; descricao: string; data: string }[] = [];
-  if (artista?.created_at) marcosEvolucao.push({ id: "m-cad", label: "Cadastro", descricao: "Artista cadastrado no sistema", data: artista.created_at });
-  const primeiroLanc = (lancamentosReais as any[])
+  const evolutionMilestones: { id: string; label: string; descricao: string; data: string }[] = [];
+  if (artista?.created_at) evolutionMilestones.push({ id: "m-cad", label: "Cadastro", descricao: "Artista cadastrado no sistema", data: artista.created_at });
+  const firstRelease = (actualReleases as any[])
     .filter((l) => l.created_at || l.data_lancamento)
     .sort((a, b) => new Date(a.created_at ?? a.data_lancamento).getTime() - new Date(b.created_at ?? b.data_lancamento).getTime())[0];
-  if (primeiroLanc) marcosEvolucao.push({ id: "m-lan", label: "Primeiro Lançamento", descricao: primeiroLanc.title ?? "Lançamento", data: primeiroLanc.created_at ?? primeiroLanc.data_lancamento });
-  const primeiroShow = (eventosReais as any[])
+  if (firstRelease) evolutionMilestones.push({ id: "m-lan", label: "Primeiro Lançamento", descricao: firstRelease.title ?? "Lançamento", data: firstRelease.created_at ?? firstRelease.data_lancamento });
+  const firstShow = (actualEvents as any[])
     .filter((e) => ["show", "festival"].includes(String(e.type ?? "").toLowerCase()) && e.data)
     .sort((a, b) => new Date(a.data!).getTime() - new Date(b.data!).getTime())[0];
-  if (primeiroShow) marcosEvolucao.push({ id: "m-show", label: "Primeira Turnê/Show", descricao: primeiroShow.title, data: primeiroShow.data! });
-  const primeiroContrato = (contratosReais as any[])
+  if (firstShow) evolutionMilestones.push({ id: "m-show", label: "Primeira Turnê/Show", descricao: firstShow.title, data: firstShow.data! });
+  const firstContract = (actualContracts as any[])
     .filter((c) => c.created_at)
     .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())[0];
-  if (primeiroContrato) marcosEvolucao.push({ id: "m-ctr", label: "Contrato Assinado", descricao: primeiroContrato.title, data: primeiroContrato.created_at });
-  marcosEvolucao.sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
+  if (firstContract) evolutionMilestones.push({ id: "m-ctr", label: "Contrato Assinado", descricao: firstContract.title, data: firstContract.created_at });
+  evolutionMilestones.sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
 
   // ── Financeiro real ──────────────────────────────────────────────────
-  const receitasTotal = transacoesArtista
-    .filter((t) => t.type === "receita" && t.status === "pago")
+  const totalRevenue = artistTransactions
+    .filter((t) => t.type === "receita" && t.status === "paid")
     .reduce((sum, t) => sum + (t.valor ?? 0), 0);
-  const despesasTotal = transacoesArtista
-    .filter((t) => t.type === "despesa" && t.status === "pago")
+  const totalExpenses = artistTransactions
+    .filter((t) => t.type === "despesa" && t.status === "paid")
     .reduce((sum, t) => sum + (t.valor ?? 0), 0);
-  const saldoTotal = receitasTotal - despesasTotal;
-  const roiGeral = despesasTotal > 0 ? saldoTotal / despesasTotal : null;
-  const margemGeral = receitasTotal > 0 ? saldoTotal / receitasTotal : null;
-  const receitasPagas = transacoesArtista.filter(
-    (t) => t.type === "receita" && t.status === "pago",
+  const totalBalance = totalRevenue - totalExpenses;
+  const overallRoi = totalExpenses > 0 ? totalBalance / totalExpenses : null;
+  const overallMargin = totalRevenue > 0 ? totalBalance / totalRevenue : null;
+  const paidRevenue = artistTransactions.filter(
+    (t) => t.type === "receita" && t.status === "paid",
   );
-  const receitasNatureza = NATUREZA_BUCKETS.map((b) => ({
+  const revenueByNature = NATURE_BUCKETS.map((b) => ({
     label: b.label,
-    total: receitasPagas
+    total: paidRevenue
       .filter((t) => b.keywords.some((k) => String((t as { categoria?: string }).categoria ?? "").toLowerCase().includes(k)))
       .reduce((s, t) => s + (t.valor ?? 0), 0),
   }));
-  const receitasNaturezaOutros = receitasPagas
-    .filter((t) => !NATUREZA_BUCKETS.some((b) => b.keywords.some((k) => String((t as { categoria?: string }).categoria ?? "").toLowerCase().includes(k))))
+  const revenueByNatureOther = paidRevenue
+    .filter((t) => !NATURE_BUCKETS.some((b) => b.keywords.some((k) => String((t as { categoria?: string }).categoria ?? "").toLowerCase().includes(k))))
     .reduce((s, t) => s + (t.valor ?? 0), 0);
-  const pendentesTotal = transacoesArtista
-    .filter((t) => t.status === "pendente" || t.status === "a_receber")
+  const totalPending = artistTransactions
+    .filter((t) => t.status === "pending" || t.status === "a_receber")
     .reduce((sum, t) => sum + (t.valor ?? 0), 0);
 
   // ── Métricas de contratos ────────────────────────────────────────────
   const today = new Date();
   const in60Days = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000);
-  const ATIVOS_STATUS = ["assinado", "vigente"];
-  const contratosAtivos = contratosReais.filter((c) =>
-    ATIVOS_STATUS.includes(c.status ?? ""),
+  const ACTIVE_STATUSES = ["signed", "in_force"];
+  const activeContracts = actualContracts.filter((c) =>
+    ACTIVE_STATUSES.includes(c.status ?? ""),
   ).length;
-  const contratosVencendo = contratosReais.filter((c) => {
-    if (!c.end_date || !ATIVOS_STATUS.includes(c.status ?? "")) return false;
-    const fim = new Date(c.end_date);
-    return fim > today && fim <= in60Days;
+  const expiringContracts = actualContracts.filter((c) => {
+    if (!c.end_date || !ACTIVE_STATUSES.includes(c.status ?? "")) return false;
+    const endDate = new Date(c.end_date);
+    return endDate > today && endDate <= in60Days;
   }).length;
-  const contratosFiltrados = contratosReais.filter((c) => {
-    const cfg = CONTRATO_FILTERS.find((f) => f.key === contratoFilter);
+  const filteredContracts = actualContracts.filter((c) => {
+    const cfg = CONTRACT_FILTERS.find((f) => f.key === contractFilter);
     if (!cfg || !cfg.tipos) return true;
     return cfg.tipos.includes(String(c.type ?? "").toLowerCase());
   });
 
   // ── Histórico derivado de dados reais ────────────────────────────────
-  const historicoReal: {
+  const actualHistory: {
     id: string;
     type: string;
     descricao: string;
@@ -498,7 +498,7 @@ export function ArtistaVisao360Modal({
     usuario: string;
   }[] = [];
   if (artista?.created_at) {
-    historicoReal.push({
+    actualHistory.push({
       id: "criacao",
       type: "criacao",
       descricao: "Artista cadastrado no sistema",
@@ -506,9 +506,9 @@ export function ArtistaVisao360Modal({
       usuario: "Admin",
     });
   }
-  contratosReais.forEach((c) => {
+  actualContracts.forEach((c) => {
     if (c.created_at)
-      historicoReal.push({
+      actualHistory.push({
         id: `ctr-${c.id}`,
         type: "contrato",
         descricao: `Contrato assinado: ${c.title}`,
@@ -516,9 +516,9 @@ export function ArtistaVisao360Modal({
         usuario: "Admin",
       });
   });
-  obrasReais.slice(0, 5).forEach((o: any) => {
+  actualWorks.slice(0, 5).forEach((o: any) => {
     if (o.created_at)
-      historicoReal.push({
+      actualHistory.push({
         id: `obra-${o.id}`,
         type: "obra",
         descricao: `Obra registrada: ${o.title}`,
@@ -526,9 +526,9 @@ export function ArtistaVisao360Modal({
         usuario: "Produtor",
       });
   });
-  lancamentosReais.slice(0, 5).forEach((l: any) => {
+  actualReleases.slice(0, 5).forEach((l: any) => {
     if (l.created_at)
-      historicoReal.push({
+      actualHistory.push({
         id: `lanc-${l.id}`,
         type: "obra",
         descricao: `Lançamento registrado: ${l.title}`,
@@ -536,9 +536,9 @@ export function ArtistaVisao360Modal({
         usuario: "Admin",
       });
   });
-  transacoesArtista.slice(0, 3).forEach((t) => {
+  artistTransactions.slice(0, 3).forEach((t) => {
     if (t.created_at)
-      historicoReal.push({
+      actualHistory.push({
         id: `txn-${t.id}`,
         type: "financeiro",
         descricao: t.descricao,
@@ -547,22 +547,22 @@ export function ArtistaVisao360Modal({
       });
   });
   // Status-change events derivados do status atual do artista
-  const STATUS_LABELS: Record<string, string> = {
-    contratado: "Artista contratado",
-    em_negociacao: "Negociação iniciada",
+  const ARTIST_STATUS_HISTORY_LABELS: Record<string, string> = {
+    signed: "Artista contratado",
+    in_negotiation: "Negociação iniciada",
     onboarding: "Artista em processo de onboarding",
-    inativo: "Artista inativado",
-    suspenso: "Artista suspenso",
+    inactive: "Artista inativado",
+    suspended: "Artista suspenso",
   };
   if (
     artista?.status &&
-    artista.status !== "contratado" &&
+    artista.status !== "signed" &&
     artista.updated_at
   ) {
     const label =
-      STATUS_LABELS[artista.status] ??
+      ARTIST_STATUS_HISTORY_LABELS[artista.status] ??
       `Status alterado para: ${artista.status}`;
-    historicoReal.push({
+    actualHistory.push({
       id: `status-${artista.status}`,
       type: "status",
       descricao: label,
@@ -570,7 +570,7 @@ export function ArtistaVisao360Modal({
       usuario: "Admin",
     });
   }
-  historicoReal.sort(
+  actualHistory.sort(
     (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime(),
   );
 
@@ -590,7 +590,7 @@ export function ArtistaVisao360Modal({
     unidade: "",
     startDate: "",
     endDate: "",
-    status: "em_progresso" as Meta["status"],
+    status: "em_progresso" as MarketingMeta["status"],
   });
 
   if (!artista) return null;
@@ -646,7 +646,7 @@ export function ArtistaVisao360Modal({
       unidade: meta.unidade || "",
       startDate: meta.start_date || meta.startDate || "",
       endDate: meta.end_date || meta.endDate || "",
-      status: (meta.status as Meta["status"]) || "em_progresso",
+      status: (meta.status as MarketingMeta["status"]) || "em_progresso",
     });
     setEditingMeta(meta);
     setShowMetaForm(true);
@@ -656,17 +656,17 @@ export function ArtistaVisao360Modal({
     await deleteMeta(String(id));
   };
 
-  const metasEmProgresso = metasReais.filter(
+  const metasInProgress = actualMetas.filter(
     (m) => m.status === "em_progresso",
   ).length;
-  const metasConcluidas = metasReais.filter(
+  const completedMetas = actualMetas.filter(
     (m) => m.status === "concluida",
   ).length;
-  const progressoMedio =
-    metasReais.length > 0
+  const averageProgress =
+    actualMetas.length > 0
       ? Math.round(
-          metasReais.reduce((acc, m) => acc + calcProgress(m), 0) /
-            metasReais.length,
+          actualMetas.reduce((acc, m) => acc + calcProgress(m), 0) /
+            actualMetas.length,
         )
       : 0;
 
@@ -707,18 +707,18 @@ export function ArtistaVisao360Modal({
                       </Badge>
                     ) : (
                       (() => {
-                        const ATIVO_S = new Set([
-                          "ativo",
-                          "assinado",
-                          "vigente",
-                          "vencendo",
+                        const ACTIVE_STATUS_VALUES = new Set([
+                          "active",
+                          "signed",
+                          "in_force",
+                          "expiring",
                         ]);
-                        const isExclusivo = contratosReais.some(
+                        const isExclusive = actualContracts.some(
                           (c) =>
                             c.exclusivo === true &&
-                            ATIVO_S.has((c.status || "").toLowerCase()),
+                            ACTIVE_STATUS_VALUES.has((c.status || "").toLowerCase()),
                         );
-                        return isExclusivo ? (
+                        return isExclusive ? (
                           <Badge variant="success">Artista exclusivo</Badge>
                         ) : (
                           <Badge variant="info">Artista parceiro</Badge>
@@ -811,7 +811,7 @@ export function ArtistaVisao360Modal({
               de overflow nativo é dimensionado pelo próprio flex e rola de facto. */}
           <div
             className="flex-1 min-h-0 overflow-y-auto overscroll-contain"
-            data-testid="visao360-scroll"
+            data-testid="vision360-scroll"
             tabIndex={0}
             role="region"
             aria-label="Conteúdo da Visão 360"
@@ -825,32 +825,32 @@ export function ArtistaVisao360Modal({
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <DollarSign className="h-5 w-5 mx-auto text-primary mb-2" />
-                      <p className={`text-lg font-bold ${getCurrencyToneClass(receitasTotal)}`}>{formatCurrency(receitasTotal)}</p>
+                      <p className={`text-lg font-bold ${getCurrencyToneClass(totalRevenue)}`}>{formatCurrency(totalRevenue)}</p>
                       <p className="text-xs text-muted-foreground">Receita Total</p>
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <DollarSign className="h-5 w-5 mx-auto text-primary mb-2" />
-                      <p className={`text-lg font-bold ${getCurrencyToneClass(-despesasTotal)}`}>{formatCurrency(-despesasTotal)}</p>
+                      <p className={`text-lg font-bold ${getCurrencyToneClass(-totalExpenses)}`}>{formatCurrency(-totalExpenses)}</p>
                       <p className="text-xs text-muted-foreground">Despesas Totais</p>
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <TrendingUp className="h-5 w-5 mx-auto text-primary mb-2" />
-                      <p className={`text-lg font-bold ${getCurrencyToneClass(saldoTotal)}`}>{formatCurrency(saldoTotal)}</p>
+                      <p className={`text-lg font-bold ${getCurrencyToneClass(totalBalance)}`}>{formatCurrency(totalBalance)}</p>
                       <p className="text-xs text-muted-foreground">Lucro Líquido</p>
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <BarChart3 className="h-5 w-5 mx-auto text-primary mb-2" />
-                      <p className="text-lg font-bold">{roiGeral != null ? `${Math.round(roiGeral * 100)}%` : "—"}</p>
+                      <p className="text-lg font-bold">{overallRoi != null ? `${Math.round(overallRoi * 100)}%` : "—"}</p>
                       <p className="text-xs text-muted-foreground">ROI Geral</p>
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <Calendar className="h-5 w-5 mx-auto text-primary mb-2" />
-                      <p className="text-lg font-bold">{showsConfirmados}</p>
+                      <p className="text-lg font-bold">{confirmedShows}</p>
                       <p className="text-xs text-muted-foreground">Shows Confirmados</p>
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <Rocket className="h-5 w-5 mx-auto text-primary mb-2" />
-                      <p className="text-lg font-bold">{lancamentosAtivos}</p>
+                      <p className="text-lg font-bold">{activeReleases}</p>
                       <p className="text-xs text-muted-foreground">Lançamentos Ativos</p>
                     </div>
                   </div>
@@ -864,10 +864,10 @@ export function ArtistaVisao360Modal({
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
                       <Calendar className="h-3.5 w-3.5" /> Próximo Show
                     </div>
-                    {proximoShow ? (
+                    {nextShow ? (
                       <>
-                        <p className="text-sm font-semibold truncate">{proximoShow.title}</p>
-                        <p className="text-xs text-muted-foreground">{formatDateDMY(proximoShow.data)}</p>
+                        <p className="text-sm font-semibold truncate">{nextShow.title}</p>
+                        <p className="text-xs text-muted-foreground">{formatDateDMY(nextShow.data)}</p>
                       </>
                     ) : (
                       <p className="text-sm text-muted-foreground">Nenhum agendado</p>
@@ -879,10 +879,10 @@ export function ArtistaVisao360Modal({
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
                       <Rocket className="h-3.5 w-3.5" /> Próximo Lançamento
                     </div>
-                    {proximoLancamento ? (
+                    {nextRelease ? (
                       <>
-                        <p className="text-sm font-semibold truncate">{proximoLancamento.title}</p>
-                        <p className="text-xs text-muted-foreground">{formatDateDMY(proximoLancamento.data_lancamento)}</p>
+                        <p className="text-sm font-semibold truncate">{nextRelease.title}</p>
+                        <p className="text-xs text-muted-foreground">{formatDateDMY(nextRelease.data_lancamento)}</p>
                       </>
                     ) : (
                       <p className="text-sm text-muted-foreground">Nenhum agendado</p>
@@ -894,7 +894,7 @@ export function ArtistaVisao360Modal({
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
                       <Zap className="h-3.5 w-3.5" /> Campanhas Ativas
                     </div>
-                    <p className="text-xl font-bold">{campanhasAtivasCount}</p>
+                    <p className="text-xl font-bold">{activeCampaignsCount}</p>
                   </CardContent>
                 </Card>
                 <Card className="bg-muted/30">
@@ -902,7 +902,7 @@ export function ArtistaVisao360Modal({
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
                       <Video className="h-3.5 w-3.5" /> Conteúdos Pendentes
                     </div>
-                    <p className="text-xl font-bold">{conteudosPendentes}</p>
+                    <p className="text-xl font-bold">{pendingContent}</p>
                   </CardContent>
                 </Card>
                 <Card className="bg-muted/30">
@@ -910,7 +910,7 @@ export function ArtistaVisao360Modal({
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
                       <FileText className="h-3.5 w-3.5" /> Contratos Ativos
                     </div>
-                    <p className="text-xl font-bold">{contratosAtivos}</p>
+                    <p className="text-xl font-bold">{activeContracts}</p>
                   </CardContent>
                 </Card>
               </div>
@@ -929,7 +929,7 @@ export function ArtistaVisao360Modal({
                       <Building className="h-4 w-4 text-primary" />
                       <span className="text-sm">Projetos</span>
                     </div>
-                    <p className="text-2xl font-bold">{projetosReais.length}</p>
+                    <p className="text-2xl font-bold">{actualProjects.length}</p>
                   </CardContent>
                 </Card>
                 <Card className="bg-muted/30">
@@ -938,7 +938,7 @@ export function ArtistaVisao360Modal({
                       <Music className="h-4 w-4 text-primary" />
                       <span className="text-sm">Obras</span>
                     </div>
-                    <p className="text-2xl font-bold">{obrasReais.length}</p>
+                    <p className="text-2xl font-bold">{actualWorks.length}</p>
                   </CardContent>
                 </Card>
                 <Card className="bg-muted/30">
@@ -948,7 +948,7 @@ export function ArtistaVisao360Modal({
                       <span className="text-sm">Fonogramas</span>
                     </div>
                     <p className="text-2xl font-bold">
-                      {fonogramasReais.length}
+                      {actualPhonograms.length}
                     </p>
                   </CardContent>
                 </Card>
@@ -959,7 +959,7 @@ export function ArtistaVisao360Modal({
                       <span className="text-sm">Lançamentos</span>
                     </div>
                     <p className="text-2xl font-bold">
-                      {lancamentosReais.length}
+                      {actualReleases.length}
                     </p>
                   </CardContent>
                 </Card>
@@ -970,7 +970,7 @@ export function ArtistaVisao360Modal({
                       <span className="text-sm">Contratos</span>
                     </div>
                     <p className="text-2xl font-bold">
-                      {contratosReais.length}
+                      {actualContracts.length}
                     </p>
                   </CardContent>
                 </Card>
@@ -1050,28 +1050,28 @@ export function ArtistaVisao360Modal({
                   <div className="grid grid-cols-4 gap-4">
                     <div>
                       <p className="text-sm text-muted-foreground">Receitas</p>
-                      <p className={`text-xl font-bold ${getCurrencyToneClass(receitasTotal)}`}>
-                        {formatCurrency(receitasTotal)}
+                      <p className={`text-xl font-bold ${getCurrencyToneClass(totalRevenue)}`}>
+                        {formatCurrency(totalRevenue)}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Despesas</p>
-                      <p className={`text-xl font-bold ${getCurrencyToneClass(-despesasTotal)}`}>
-                        {formatCurrency(-despesasTotal)}
+                      <p className={`text-xl font-bold ${getCurrencyToneClass(-totalExpenses)}`}>
+                        {formatCurrency(-totalExpenses)}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Saldo</p>
                       <p
-                        className={`text-xl font-bold ${getCurrencyToneClass(saldoTotal)}`}
+                        className={`text-xl font-bold ${getCurrencyToneClass(totalBalance)}`}
                       >
-                        {formatCurrency(saldoTotal)}
+                        {formatCurrency(totalBalance)}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Pendentes</p>
-                      <p className={`text-xl font-bold ${getCurrencyToneClass(pendentesTotal)}`}>
-                        {formatCurrency(pendentesTotal)}
+                      <p className={`text-xl font-bold ${getCurrencyToneClass(totalPending)}`}>
+                        {formatCurrency(totalPending)}
                       </p>
                     </div>
                   </div>
@@ -1090,14 +1090,14 @@ export function ArtistaVisao360Modal({
                       Progresso Médio
                     </span>
                     <span className="text-sm font-medium">
-                      {progressoMedio}%
+                      {averageProgress}%
                     </span>
                   </div>
-                  <Progress value={progressoMedio} className="h-2" />
+                  <Progress value={averageProgress} className="h-2" />
                   <div className="grid grid-cols-3 gap-4 mt-4 text-center">
                     <div>
                       <p className="text-2xl font-bold text-warning">
-                        {metasEmProgresso}
+                        {metasInProgress}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Em Progresso
@@ -1105,14 +1105,14 @@ export function ArtistaVisao360Modal({
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-success">
-                        {metasConcluidas}
+                        {completedMetas}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Concluídas
                       </p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold">{metasReais.length}</p>
+                      <p className="text-2xl font-bold">{actualMetas.length}</p>
                       <p className="text-xs text-muted-foreground">Total</p>
                     </div>
                   </div>
@@ -1170,12 +1170,12 @@ export function ArtistaVisao360Modal({
                       <p className="text-xs text-muted-foreground">Função</p>
                       <p className="text-sm font-medium">
                         {(() => {
-                          const esp = Array.isArray(artista.especialidades)
+                          const specialties = Array.isArray(artista.especialidades)
                             ? artista.especialidades
                             : [];
-                          if (esp.length === 0) return "Não informado";
-                          return esp
-                            .map((e: string) => ESPECIALIDADES_LABELS[e] ?? e)
+                          if (specialties.length === 0) return "Não informado";
+                          return specialties
+                            .map((e: string) => SPECIALTY_LABELS[e] ?? e)
                             .join(", ");
                         })()}
                       </p>
@@ -1315,7 +1315,7 @@ export function ArtistaVisao360Modal({
               </Card>
 
               {/* Perfis e Redes Sociais */}
-              <ArtistaPlatformMetrics
+              <ArtistPlatformMetrics
                 artistId={artista.id}
                 spotifyUrl={artista.spotify_url ?? null}
                 youtubeUrl={artista.youtube_url ?? null}
@@ -1458,15 +1458,15 @@ export function ArtistaVisao360Modal({
                     </h3>
                   </div>
                   {(() => {
-                    const distSel = artista.distribuidoras_selecionadas ?? {};
-                    const ativas = Object.entries(distSel)
+                    const distributorSelections = artista.distribuidoras_selecionadas ?? {};
+                    const activeDistributorIds = Object.entries(distributorSelections)
                       .filter(([, v]) => v)
                       .map(([k]) => k);
                     const emails = artista.distribuidoras_emails ?? {};
-                    return ativas.length > 0 ? (
+                    return activeDistributorIds.length > 0 ? (
                       <>
                         <div className="flex flex-wrap gap-2">
-                          {ativas.map((dist: string) => (
+                          {activeDistributorIds.map((dist: string) => (
                             <Badge
                               key={dist}
                               variant="secondary"
@@ -1493,7 +1493,7 @@ export function ArtistaVisao360Modal({
                         {Object.keys(emails).length > 0 && (
                           <div className="mt-4 grid grid-cols-2 gap-4 pt-4 border-t border-border">
                             {Object.entries(emails).map(([distId, email]) => {
-                              const distName =
+                              const distributorName =
                                 distId === "cdbaby"
                                   ? "CD Baby"
                                   : distId === "distrokid"
@@ -1512,7 +1512,7 @@ export function ArtistaVisao360Modal({
                               return (
                                 <div key={distId}>
                                   <p className="text-xs text-muted-foreground">
-                                    E-mail Share - {distName}
+                                    E-mail Share - {distributorName}
                                   </p>
                                   <p className="text-sm font-medium">
                                     {(email as string) || "Não informado"}
@@ -1534,12 +1534,12 @@ export function ArtistaVisao360Modal({
 
               {/* Distribuidoras / Agregadoras (novo formato — secção 5 do formulário) */}
               {(() => {
-                const distsGerais: Array<{ id: string; email: string; nomeCustom?: string }> =
+                const generalDistributors: Array<{ id: string; email: string; nomeCustom?: string }> =
                   Array.isArray((artista as Record<string, unknown>).distribuidoras_gerais)
                     ? ((artista as Record<string, unknown>).distribuidoras_gerais as Array<{ id: string; email: string; nomeCustom?: string }>)
                     : [];
-                if (distsGerais.length === 0) return null;
-                const DIST_LABEL: Record<string, string> = {
+                if (generalDistributors.length === 0) return null;
+                const DISTRIBUTOR_LABEL: Record<string, string> = {
                   onerpm: "ONErpm", distrokid: "DistroKid", "30por1": "30 Por 1",
                   symphonic: "Symphonic", musicpro: "MusicPro", somvibe: "Somvibe",
                 };
@@ -1551,18 +1551,18 @@ export function ArtistaVisao360Modal({
                         <h3 className="font-semibold">Distribuidoras / Agregadoras</h3>
                       </div>
                       <div className="flex flex-wrap gap-2 mb-3">
-                        {distsGerais.map((d) => (
+                        {generalDistributors.map((d) => (
                           <Badge key={d.id} variant="secondary">
-                            {d.id === "outros" ? (d.nomeCustom || "Outros") : (DIST_LABEL[d.id] ?? d.id)}
+                            {d.id === "outros" ? (d.nomeCustom || "Outros") : (DISTRIBUTOR_LABEL[d.id] ?? d.id)}
                           </Badge>
                         ))}
                       </div>
-                      {distsGerais.some((d) => d.email) && (
+                      {generalDistributors.some((d) => d.email) && (
                         <div className="grid grid-cols-2 gap-4 pt-3 border-t border-border">
-                          {distsGerais.filter((d) => d.email).map((d) => (
+                          {generalDistributors.filter((d) => d.email).map((d) => (
                             <div key={d.id}>
                               <p className="text-xs text-muted-foreground">
-                                E-mail Share — {d.id === "outros" ? (d.nomeCustom || "Outros") : (DIST_LABEL[d.id] ?? d.id)}
+                                E-mail Share — {d.id === "outros" ? (d.nomeCustom || "Outros") : (DISTRIBUTOR_LABEL[d.id] ?? d.id)}
                               </p>
                               <p className="text-sm font-medium">{d.email}</p>
                             </div>
@@ -1575,7 +1575,7 @@ export function ArtistaVisao360Modal({
               })()}
 
               {/* Equipe Vinculada (CRM) — dados resolvidos dinamicamente do CRM */}
-              {contatosVinculadosResolvidos.length > 0 && (
+              {linkedContactsResolved.length > 0 && (
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-2 mb-4">
@@ -1583,7 +1583,7 @@ export function ArtistaVisao360Modal({
                       <h3 className="font-semibold">Equipe Vinculada (CRM)</h3>
                     </div>
                     <div className="space-y-4">
-                      {contatosVinculadosResolvidos.map((c) => (
+                      {linkedContactsResolved.map((c) => (
                         <div key={c.id} className="p-3 rounded-lg border border-border/50 bg-background/40 space-y-2">
                           <div className="flex items-center justify-between gap-2">
                             <p className="text-sm font-semibold">{c.name}</p>
@@ -1614,17 +1614,17 @@ export function ArtistaVisao360Modal({
 
               {/* Equipa / Contactos (legado — dados embutidos antigos / auto-cadastro público) */}
               {(() => {
-                type ContatoEquipeItem = { nome: string; categoria: string; telefone: string; email: string; distribuidoras?: Array<{ id: string; email: string; nomeCustom?: string }> };
-                const equipe: ContatoEquipeItem[] = Array.isArray((artista as Record<string, unknown>).contatos_equipe)
-                  ? ((artista as Record<string, unknown>).contatos_equipe as ContatoEquipeItem[]).filter((c) => c.nome || c.email || c.telefone)
+                type TeamContactItem = { nome: string; categoria: string; telefone: string; email: string; distribuidoras?: Array<{ id: string; email: string; nomeCustom?: string }> };
+                const team: TeamContactItem[] = Array.isArray((artista as Record<string, unknown>).contatos_equipe)
+                  ? ((artista as Record<string, unknown>).contatos_equipe as TeamContactItem[]).filter((c) => c.nome || c.email || c.telefone)
                   : [];
-                if (equipe.length === 0) return null;
-                const CAT_LABEL: Record<string, string> = {
+                if (team.length === 0) return null;
+                const CATEGORY_LABEL: Record<string, string> = {
                   booker: "Booker", assessoria: "Assessoria de Imprensa", juridico: "Jurídico",
                   financeiro: "Financeiro", contador: "Contador", editora_musical: "Editora Musical",
                   roadie: "Roadie", gestor: "Gestor", empresario: "Empresário",
                 };
-                const DIST_LABEL: Record<string, string> = {
+                const DISTRIBUTOR_LABEL: Record<string, string> = {
                   onerpm: "ONErpm", distrokid: "DistroKid", "30por1": "30 Por 1",
                   symphonic: "Symphonic", musicpro: "MusicPro", somvibe: "Somvibe",
                 };
@@ -1636,13 +1636,13 @@ export function ArtistaVisao360Modal({
                         <h3 className="font-semibold">Equipe / Contatos</h3>
                       </div>
                       <div className="space-y-4">
-                        {equipe.map((c, idx) => (
+                        {team.map((c, idx) => (
                           <div key={idx} className="p-3 rounded-lg border border-border/50 bg-background/40 space-y-2">
                             <div className="flex items-center justify-between">
                               <p className="text-sm font-semibold">{c.nome || "—"}</p>
                               {c.categoria && (
                                 <Badge variant="outline" className="text-xs capitalize">
-                                  {CAT_LABEL[c.categoria] ?? c.categoria}
+                                  {CATEGORY_LABEL[c.categoria] ?? c.categoria}
                                 </Badge>
                               )}
                             </div>
@@ -1666,7 +1666,7 @@ export function ArtistaVisao360Modal({
                                 <div className="flex flex-wrap gap-1.5">
                                   {c.distribuidoras.map((d) => (
                                     <Badge key={d.id} variant="secondary" className="text-xs">
-                                      {d.id === "outros" ? (d.nomeCustom || "Outros") : (DIST_LABEL[d.id] ?? d.id)}
+                                      {d.id === "outros" ? (d.nomeCustom || "Outros") : (DISTRIBUTOR_LABEL[d.id] ?? d.id)}
                                     </Badge>
                                   ))}
                                 </div>
@@ -1675,7 +1675,7 @@ export function ArtistaVisao360Modal({
                                     {c.distribuidoras.filter((d) => d.email).map((d) => (
                                       <div key={d.id}>
                                         <p className="text-xs text-muted-foreground">
-                                          Share — {d.id === "outros" ? (d.nomeCustom || "Outros") : (DIST_LABEL[d.id] ?? d.id)}
+                                          Share — {d.id === "outros" ? (d.nomeCustom || "Outros") : (DISTRIBUTOR_LABEL[d.id] ?? d.id)}
                                         </p>
                                         <p className="text-sm">{d.email}</p>
                                       </div>
@@ -1777,18 +1777,18 @@ export function ArtistaVisao360Modal({
             </TabsContent>
 
             {/* Documentos */}
-            <TabsContent value="documentos" className="p-6 space-y-6 mt-0">
+            <TabsContent value="documents" className="p-6 space-y-6 mt-0">
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
                     <FileText className="h-5 w-5 text-muted-foreground" />
                     <h3 className="font-semibold">Documentos Vinculados</h3>
                   </div>
-                  {Array.isArray(artista.documentos) &&
-                  artista.documentos.length > 0 ? (
+                  {Array.isArray(artista.documents) &&
+                  artista.documents.length > 0 ? (
                     <div className="space-y-2">
                       {(
-                        artista.documentos as { nome: string; url: string }[]
+                        artista.documents as { nome: string; url: string }[]
                       ).map((doc, idx) => (
                         <div
                           key={idx}
@@ -1888,19 +1888,19 @@ export function ArtistaVisao360Modal({
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <Building className="h-5 w-5 mx-auto text-primary mb-2" />
                       <p className="text-2xl font-bold">
-                        {projetosReais.length}
+                        {actualProjects.length}
                       </p>
                       <p className="text-xs text-muted-foreground">Projetos</p>
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <Music className="h-5 w-5 mx-auto text-primary mb-2" />
-                      <p className="text-2xl font-bold">{obrasReais.length}</p>
+                      <p className="text-2xl font-bold">{actualWorks.length}</p>
                       <p className="text-xs text-muted-foreground">Obras</p>
                     </div>
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <Disc className="h-5 w-5 mx-auto text-primary mb-2" />
                       <p className="text-2xl font-bold">
-                        {fonogramasReais.length}
+                        {actualPhonograms.length}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Fonogramas
@@ -1909,7 +1909,7 @@ export function ArtistaVisao360Modal({
                     <div className="text-center p-3 bg-primary/10 rounded-lg">
                       <Rocket className="h-5 w-5 mx-auto text-primary mb-2" />
                       <p className="text-2xl font-bold">
-                        {lancamentosReais.length}
+                        {actualReleases.length}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Lançamentos
@@ -1930,10 +1930,10 @@ export function ArtistaVisao360Modal({
                 </CardContent>
               </Card>
 
-              {obrasReais.length +
-                fonogramasReais.length +
-                lancamentosReais.length +
-                projetosReais.length ===
+              {actualWorks.length +
+                actualPhonograms.length +
+                actualReleases.length +
+                actualProjects.length ===
               0 ? (
                 <Card className="bg-muted/30">
                   <CardContent className="p-8 flex flex-col items-center justify-center text-center gap-2">
@@ -1949,27 +1949,27 @@ export function ArtistaVisao360Modal({
                 </Card>
               ) : (
                 <div className="grid grid-cols-2 gap-6">
-                  {obrasReais.length > 0 && (
+                  {actualWorks.length > 0 && (
                     <Card className="bg-muted/30">
                       <CardContent className="p-4">
                         <h3 className="font-semibold mb-3">
-                          Obras Musicais ({obrasReais.length})
+                          Obras Musicais ({actualWorks.length})
                         </h3>
                         <ScrollArea className="h-[150px]">
                           <div className="space-y-2">
-                            {obrasReais.map((obra) => (
+                            {actualWorks.map((work) => (
                               <div
-                                key={obra.id}
+                                key={work.id}
                                 className="flex items-center justify-between py-1 border-b border-border/40 last:border-0"
                               >
                                 <span className="text-sm truncate flex-1 mr-2">
-                                  {obra.title}
+                                  {work.title}
                                 </span>
                                 <Badge
                                   variant="outline"
                                   className="text-xs shrink-0"
                                 >
-                                  {formatStatusPtBr(obra.status)}
+                                  {formatStatusPtBr(work.status)}
                                 </Badge>
                               </div>
                             ))}
@@ -1979,26 +1979,26 @@ export function ArtistaVisao360Modal({
                     </Card>
                   )}
 
-                  {fonogramasReais.length > 0 && (
+                  {actualPhonograms.length > 0 && (
                     <Card className="bg-muted/30">
                       <CardContent className="p-4">
                         <h3 className="font-semibold mb-3">
-                          Fonogramas ({fonogramasReais.length})
+                          Fonogramas ({actualPhonograms.length})
                         </h3>
                         <ScrollArea className="h-[150px]">
                           <div className="space-y-2">
-                            {fonogramasReais.map((fono) => (
+                            {actualPhonograms.map((phonogram) => (
                               <div
-                                key={fono.id}
+                                key={phonogram.id}
                                 className="flex items-center justify-between py-1 border-b border-border/40 last:border-0"
                               >
                                 <div className="flex-1 min-w-0 mr-2">
                                   <p className="text-sm font-medium truncate">
-                                    {fono.title}
+                                    {phonogram.title}
                                   </p>
-                                  {fono.gravadora && (
+                                  {phonogram.gravadora && (
                                     <p className="text-xs text-muted-foreground truncate">
-                                      {fono.gravadora}
+                                      {phonogram.gravadora}
                                     </p>
                                   )}
                                 </div>
@@ -2006,7 +2006,7 @@ export function ArtistaVisao360Modal({
                                   variant="outline"
                                   className="text-xs shrink-0"
                                 >
-                                  {formatStatusPtBr(fono.status)}
+                                  {formatStatusPtBr(phonogram.status)}
                                 </Badge>
                               </div>
                             ))}
@@ -2016,27 +2016,27 @@ export function ArtistaVisao360Modal({
                     </Card>
                   )}
 
-                  {lancamentosReais.length > 0 && (
+                  {actualReleases.length > 0 && (
                     <Card className="bg-muted/30">
                       <CardContent className="p-4">
                         <h3 className="font-semibold mb-3">
-                          Lançamentos ({lancamentosReais.length})
+                          Lançamentos ({actualReleases.length})
                         </h3>
                         <ScrollArea className="h-[150px]">
                           <div className="space-y-2">
-                            {lancamentosReais.map((lanc) => (
+                            {actualReleases.map((release) => (
                               <div
-                                key={lanc.id}
+                                key={release.id}
                                 className="flex items-center justify-between py-1 border-b border-border/40 last:border-0"
                               >
                                 <div className="flex-1 min-w-0 mr-2">
                                   <p className="text-sm font-medium truncate">
-                                    {lanc.title}
+                                    {release.title}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
-                                    {lanc.data_lancamento
+                                    {release.data_lancamento
                                       ? new Date(
-                                          lanc.data_lancamento,
+                                          release.data_lancamento,
                                         ).toLocaleDateString("pt-BR")
                                       : "Sem data"}
                                   </p>
@@ -2045,7 +2045,7 @@ export function ArtistaVisao360Modal({
                                   variant="outline"
                                   className="text-xs shrink-0"
                                 >
-                                  {formatStatusPtBr(lanc.status)}
+                                  {formatStatusPtBr(release.status)}
                                 </Badge>
                               </div>
                             ))}
@@ -2055,37 +2055,37 @@ export function ArtistaVisao360Modal({
                     </Card>
                   )}
 
-                  {projetosReais.length > 0 && (
+                  {actualProjects.length > 0 && (
                     <Card className="bg-muted/30">
                       <CardContent className="p-4">
                         <h3 className="font-semibold mb-3">
-                          Projetos ({projetosReais.length})
+                          Projetos ({actualProjects.length})
                         </h3>
                         <ScrollArea className="h-[150px]">
                           <div className="space-y-2">
-                            {projetosReais.map((proj) => (
+                            {actualProjects.map((project) => (
                               <div
-                                key={proj.id}
+                                key={project.id}
                                 className="flex items-center justify-between py-1 border-b border-border/40 last:border-0"
                               >
                                 <div className="flex-1 min-w-0 mr-2">
                                   <p className="text-sm font-medium truncate">
-                                    {proj.title}
+                                    {project.title}
                                   </p>
-                                  {Array.isArray(proj.produtores) &&
-                                    (proj.produtores as string[]).length >
+                                  {Array.isArray(project.produtores) &&
+                                    (project.produtores as string[]).length >
                                       0 && (
                                       <p className="text-xs text-muted-foreground truncate">
-                                        {(proj.produtores as string[]).join(
+                                        {(project.produtores as string[]).join(
                                           ", ",
                                         )}
                                       </p>
                                     )}
                                 </div>
                                 <Badge
-                                  className={`text-xs shrink-0 ${getProjectStatusBadgeClass(proj.status)}`}
+                                  className={`text-xs shrink-0 ${getProjectStatusBadgeClass(project.status)}`}
                                 >
-                                  {formatStatusPtBr(proj.status)}
+                                  {formatStatusPtBr(project.status)}
                                 </Badge>
                               </div>
                             ))}
@@ -2107,8 +2107,8 @@ export function ArtistaVisao360Modal({
                     <p className="text-sm text-muted-foreground">
                       Receitas Totais
                     </p>
-                    <p className={`text-2xl font-bold ${getCurrencyToneClass(receitasTotal)}`}>
-                      {formatCurrency(receitasTotal)}
+                    <p className={`text-2xl font-bold ${getCurrencyToneClass(totalRevenue)}`}>
+                      {formatCurrency(totalRevenue)}
                     </p>
                   </CardContent>
                 </Card>
@@ -2117,8 +2117,8 @@ export function ArtistaVisao360Modal({
                     <p className="text-sm text-muted-foreground">
                       Despesas Totais
                     </p>
-                    <p className={`text-2xl font-bold ${getCurrencyToneClass(-despesasTotal)}`}>
-                      {formatCurrency(-despesasTotal)}
+                    <p className={`text-2xl font-bold ${getCurrencyToneClass(-totalExpenses)}`}>
+                      {formatCurrency(-totalExpenses)}
                     </p>
                   </CardContent>
                 </Card>
@@ -2126,17 +2126,17 @@ export function ArtistaVisao360Modal({
                   <CardContent className="p-4">
                     <p className="text-sm text-muted-foreground">Saldo</p>
                     <p
-                      className={`text-2xl font-bold ${getCurrencyToneClass(saldoTotal)}`}
+                      className={`text-2xl font-bold ${getCurrencyToneClass(totalBalance)}`}
                     >
-                      {formatCurrency(saldoTotal)}
+                      {formatCurrency(totalBalance)}
                     </p>
                   </CardContent>
                 </Card>
                 <Card className="bg-warning/10 border-warning/20">
                   <CardContent className="p-4">
                     <p className="text-sm text-muted-foreground">Pendentes</p>
-                    <p className={`text-2xl font-bold ${getCurrencyToneClass(pendentesTotal)}`}>
-                      {formatCurrency(pendentesTotal)}
+                    <p className={`text-2xl font-bold ${getCurrencyToneClass(totalPending)}`}>
+                      {formatCurrency(totalPending)}
                     </p>
                   </CardContent>
                 </Card>
@@ -2144,7 +2144,7 @@ export function ArtistaVisao360Modal({
                   <CardContent className="p-4">
                     <p className="text-sm text-muted-foreground">Margem</p>
                     <p className="text-2xl font-bold">
-                      {margemGeral != null ? `${Math.round(margemGeral * 100)}%` : "—"}
+                      {overallMargin != null ? `${Math.round(overallMargin * 100)}%` : "—"}
                     </p>
                   </CardContent>
                 </Card>
@@ -2152,7 +2152,7 @@ export function ArtistaVisao360Modal({
                   <CardContent className="p-4">
                     <p className="text-sm text-muted-foreground">ROI</p>
                     <p className="text-2xl font-bold">
-                      {roiGeral != null ? `${Math.round(roiGeral * 100)}%` : "—"}
+                      {overallRoi != null ? `${Math.round(overallRoi * 100)}%` : "—"}
                     </p>
                   </CardContent>
                 </Card>
@@ -2163,7 +2163,7 @@ export function ArtistaVisao360Modal({
                 <CardContent className="p-4">
                   <h3 className="font-semibold mb-4">Receitas por Natureza</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                    {[...receitasNatureza, { label: "Outros", total: receitasNaturezaOutros }].map((n) => (
+                    {[...revenueByNature, { label: "Outros", total: revenueByNatureOther }].map((n) => (
                       <div key={n.label} className="text-center p-3 bg-primary/10 rounded-lg">
                         <p className={`text-lg font-bold ${getCurrencyToneClass(n.total)}`}>{formatCurrency(n.total)}</p>
                         <p className="text-xs text-muted-foreground">{n.label}</p>
@@ -2177,15 +2177,15 @@ export function ArtistaVisao360Modal({
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <h3 className="font-semibold mb-4">
-                    Últimas Transações ({transacoesArtista.length})
+                    Últimas Transações ({artistTransactions.length})
                   </h3>
-                  {transacoesArtista.length === 0 ? (
+                  {artistTransactions.length === 0 ? (
                     <p className="text-sm text-muted-foreground">
                       Nenhuma transação vinculada a este artista
                     </p>
                   ) : (
                     <div className="space-y-3">
-                      {transacoesArtista.slice(0, 10).map((t) => (
+                      {artistTransactions.slice(0, 10).map((t) => (
                         <div
                           key={t.id}
                           className="flex items-center justify-between py-2 border-b border-border/50 last:border-0"
@@ -2228,14 +2228,14 @@ export function ArtistaVisao360Modal({
                 <Card className="bg-muted/30">
                   <CardContent className="p-4 text-center">
                     <CheckCircle className="h-8 w-8 mx-auto text-success mb-2" />
-                    <p className="text-2xl font-bold">{contratosAtivos}</p>
+                    <p className="text-2xl font-bold">{activeContracts}</p>
                     <p className="text-sm text-muted-foreground">Ativos</p>
                   </CardContent>
                 </Card>
                 <Card className="bg-muted/30">
                   <CardContent className="p-4 text-center">
                     <Clock className="h-8 w-8 mx-auto text-warning mb-2" />
-                    <p className="text-2xl font-bold">{contratosVencendo}</p>
+                    <p className="text-2xl font-bold">{expiringContracts}</p>
                     <p className="text-sm text-muted-foreground">
                       Vencendo em 60d
                     </p>
@@ -2245,7 +2245,7 @@ export function ArtistaVisao360Modal({
                   <CardContent className="p-4 text-center">
                     <FileText className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                     <p className="text-2xl font-bold">
-                      {contratosReais.length}
+                      {actualContracts.length}
                     </p>
                     <p className="text-sm text-muted-foreground">Total</p>
                   </CardContent>
@@ -2254,12 +2254,12 @@ export function ArtistaVisao360Modal({
 
               {/* Filtros por type */}
               <div className="flex flex-wrap gap-2">
-                {CONTRATO_FILTERS.map((f) => (
+                {CONTRACT_FILTERS.map((f) => (
                   <Button
                     key={f.key}
                     size="sm"
-                    variant={contratoFilter === f.key ? "default" : "outline"}
-                    onClick={() => setContratoFilter(f.key)}
+                    variant={contractFilter === f.key ? "default" : "outline"}
+                    onClick={() => setContractFilter(f.key)}
                   >
                     {f.label}
                   </Button>
@@ -2270,21 +2270,21 @@ export function ArtistaVisao360Modal({
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <h3 className="font-semibold mb-4">
-                    Contratos ({contratosFiltrados.length})
+                    Contratos ({filteredContracts.length})
                   </h3>
-                  {contratosFiltrados.length > 0 ? (
+                  {filteredContracts.length > 0 ? (
                     <div className="space-y-3">
-                      {contratosFiltrados.map((contrato) => {
+                      {filteredContracts.map((contract) => {
                         const today = new Date();
                         today.setHours(0, 0, 0, 0);
                         const in30Days = new Date(today);
                         in30Days.setDate(in30Days.getDate() + 30);
-                        const endDate = contrato.end_date
-                          ? new Date(contrato.end_date)
+                        const endDate = contract.end_date
+                          ? new Date(contract.end_date)
                           : null;
-                        const expirando =
+                        const expiring =
                           endDate && endDate >= today && endDate <= in30Days;
-                        const diasRestantes = endDate
+                        const daysRemaining = endDate
                           ? Math.ceil(
                               (endDate.getTime() - today.getTime()) /
                                 (1000 * 60 * 60 * 24),
@@ -2293,48 +2293,48 @@ export function ArtistaVisao360Modal({
 
                         return (
                           <div
-                            key={contrato.id}
+                            key={contract.id}
                             className="flex items-center justify-between p-3 bg-muted/30 rounded-lg gap-3"
                           >
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
                                 <p className="font-medium text-sm truncate">
-                                  {contrato.title}
+                                  {contract.title}
                                 </p>
-                                {expirando && (
+                                {expiring && (
                                   <span className="inline-flex items-center gap-0.5 text-[10px] text-warning border border-warning/20 bg-warning/10 rounded px-1 py-0.5 shrink-0">
                                     <AlertTriangle className="h-2.5 w-2.5" />
-                                    {diasRestantes}d
+                                    {daysRemaining}d
                                   </span>
                                 )}
                               </div>
                               <p className="text-xs text-muted-foreground">
-                                {contrato.start_date
+                                {contract.start_date
                                   ? new Date(
-                                      contrato.start_date,
+                                      contract.start_date,
                                     ).toLocaleDateString("pt-BR")
                                   : "—"}
                                 {" → "}
-                                {contrato.end_date
+                                {contract.end_date
                                   ? new Date(
-                                      contrato.end_date,
+                                      contract.end_date,
                                     ).toLocaleDateString("pt-BR")
                                   : "Indeterminado"}
                               </p>
-                              {contrato.valor != null && (
+                              {contract.valor != null && (
                                 <p className="text-xs text-muted-foreground">
-                                  Valor: <span className={getMonetarySemanticClass("neutral")}>{formatCurrency(contrato.valor)}</span>
+                                  Valor: <span className={getMonetarySemanticClass("neutral")}>{formatCurrency(contract.valor)}</span>
                                 </p>
                               )}
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
-                              <ContratoStatusBadge contratos={[contrato]} />
-                              {contrato.arquivo_url && (
+                              <ContractStatusBadge contratos={[contract]} />
+                              {contract.arquivo_url && (
                                 <a
-                                  href={contrato.arquivo_url as string}
+                                  href={contract.arquivo_url as string}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  data-testid={`link-contrato-pdf-${contrato.id}`}
+                                  data-testid={`link-contrato-pdf-${contract.id}`}
                                 >
                                   <Button
                                     variant="outline"
@@ -2363,7 +2363,7 @@ export function ArtistaVisao360Modal({
             {/* Marketing */}
             <TabsContent value="marketing" className="p-6 space-y-6 mt-0">
               {/* Campanhas */}
-              {campanhasReais.length === 0 ? (
+              {actualCampaigns.length === 0 ? (
                 <Card className="bg-muted/30">
                   <CardContent className="p-8 flex flex-col items-center justify-center text-center gap-2">
                     <Zap className="h-10 w-10 text-muted-foreground/30" />
@@ -2376,16 +2376,16 @@ export function ArtistaVisao360Modal({
                   </CardContent>
                 </Card>
               ) : (
-                CAMPANHA_SECOES.map((secao) => {
-                  const items = campanhasReais.filter((c) =>
-                    secao.status.includes(String(c.status ?? "").toLowerCase()),
+                CAMPAIGN_SECTIONS.map((section) => {
+                  const items = actualCampaigns.filter((c) =>
+                    section.status.includes(String(c.status ?? "").toLowerCase()),
                   );
                   if (items.length === 0) return null;
                   return (
-                    <Card key={secao.key} className="bg-muted/30">
+                    <Card key={section.key} className="bg-muted/30">
                       <CardContent className="p-4">
                         <h3 className="font-semibold mb-3">
-                          {secao.label} ({items.length})
+                          {section.label} ({items.length})
                         </h3>
                         <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_120px_110px_100px] gap-3 px-1 pb-2 text-xs font-medium text-muted-foreground border-b border-border">
                           <span>Campanha</span>
@@ -2396,11 +2396,11 @@ export function ArtistaVisao360Modal({
                         </div>
                         <div className="divide-y divide-border/40">
                           {items.map((c) => {
-                            const canais = (c.platforms ?? [])
+                            const channels = (c.platforms ?? [])
                               .map((p) => CHANNEL_LABELS[String(p).toLowerCase()] ?? p)
                               .join(", ");
                             const roi = c.metrics?.roi;
-                            const resultado =
+                            const result =
                               roi && roi > 0
                                 ? `ROI ${Math.round(roi * 100)}%`
                                 : c.metrics?.conversions
@@ -2412,14 +2412,14 @@ export function ArtistaVisao360Modal({
                                 className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_120px_110px_100px] gap-3 px-1 py-2 items-center text-sm"
                               >
                                 <span className="truncate font-medium">{c.name}</span>
-                                <span className="truncate text-muted-foreground">{canais || "—"}</span>
+                                <span className="truncate text-muted-foreground">{channels || "—"}</span>
                                 <span className="text-muted-foreground">{formatCurrency(c.budget ?? 0)}</span>
                                 <span>
                                   <Badge variant="outline" className="text-xs">
                                     {CAMPAIGN_STATUS_LABELS[String(c.status ?? "").toLowerCase()] ?? formatStatusPtBr(c.status)}
                                   </Badge>
                                 </span>
-                                <span className="text-muted-foreground">{resultado}</span>
+                                <span className="text-muted-foreground">{result}</span>
                               </div>
                             );
                           })}
@@ -2456,12 +2456,12 @@ export function ArtistaVisao360Modal({
                   {/* Resumo */}
                   <div className="grid grid-cols-4 gap-4 mb-6">
                     <div className="text-center p-3 bg-muted/50 rounded-lg">
-                      <p className="text-2xl font-bold">{metasReais.length}</p>
+                      <p className="text-2xl font-bold">{actualMetas.length}</p>
                       <p className="text-xs text-muted-foreground">Total</p>
                     </div>
                     <div className="text-center p-3 bg-warning/10 rounded-lg">
                       <p className="text-2xl font-bold text-warning">
-                        {metasEmProgresso}
+                        {metasInProgress}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Em Progresso
@@ -2469,7 +2469,7 @@ export function ArtistaVisao360Modal({
                     </div>
                     <div className="text-center p-3 bg-success/10 rounded-lg">
                       <p className="text-2xl font-bold text-success">
-                        {metasConcluidas}
+                        {completedMetas}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Concluídas
@@ -2477,7 +2477,7 @@ export function ArtistaVisao360Modal({
                     </div>
                     <div className="text-center p-3 bg-blue-500/10 rounded-lg">
                       <p className="text-2xl font-bold text-blue-500">
-                        {progressoMedio}%
+                        {averageProgress}%
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Progresso Médio
@@ -2485,7 +2485,7 @@ export function ArtistaVisao360Modal({
                     </div>
                   </div>
 
-                  {metasReais.length === 0 ? (
+                  {actualMetas.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
                       <Target className="h-16 w-16 text-muted-foreground mb-4" />
                       <h4 className="font-medium mb-1">
@@ -2505,9 +2505,9 @@ export function ArtistaVisao360Modal({
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {metasReais.map((meta) => {
+                      {actualMetas.map((meta) => {
                         const progress = calcProgress(meta);
-                        const statusInfo = statusMeta.find(
+                        const statusInfo = metaStatusOptions.find(
                           (s) => s.value === meta.status,
                         );
                         const title =
@@ -2515,9 +2515,9 @@ export function ArtistaVisao360Modal({
                           meta.tipo_meta ||
                           meta.descricao ||
                           "Meta";
-                        const tipoMeta =
+                        const goalType =
                           (meta as any).tipo_meta || (meta as any).type;
-                        const categoria = (meta as any).categoria;
+                        const category = (meta as any).categoria;
                         const startDate =
                           meta.start_date || (meta as any).startDate;
                         const endDate = meta.end_date || (meta as any).endDate;
@@ -2593,17 +2593,17 @@ export function ArtistaVisao360Modal({
                                     </span>
                                   )}
                                 </div>
-                                {categoria && (
+                                {category && (
                                   <Badge variant="outline" className="text-xs">
-                                    {categoriasMeta.find(
-                                      (c) => c.value === categoria,
-                                    )?.label ?? categoria}
+                                    {goalCategories.find(
+                                      (c) => c.value === category,
+                                    )?.label ?? category}
                                   </Badge>
                                 )}
-                                {tipoMeta && (
+                                {goalType && (
                                   <Badge variant="outline" className="text-xs">
-                                    {tiposMeta.find((t) => t.value === tipoMeta)
-                                      ?.label ?? tipoMeta}
+                                    {goalTypes.find((t) => t.value === goalType)
+                                      ?.label ?? goalType}
                                   </Badge>
                                 )}
                               </div>
@@ -2619,10 +2619,10 @@ export function ArtistaVisao360Modal({
 
             {/* Evolução */}
             <TabsContent value="evolucao" className="p-6 space-y-6 mt-0">
-              <ArtistaEvolucaoSection artista={artista} />
+              <ArtistEvolutionSection artist={artista} />
 
               {/* Marcos / Linha do tempo */}
-              {marcosEvolucao.length > 0 && (
+              {evolutionMilestones.length > 0 && (
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-2 mb-4">
@@ -2630,7 +2630,7 @@ export function ArtistaVisao360Modal({
                       <h3 className="font-semibold">Marcos</h3>
                     </div>
                     <div className="space-y-3">
-                      {marcosEvolucao.map((m) => (
+                      {evolutionMilestones.map((m) => (
                         <div key={m.id} className="flex items-start gap-3">
                           <div className="h-2 w-2 rounded-full bg-primary mt-1.5 shrink-0" />
                           <div className="flex-1 min-w-0">
@@ -2652,19 +2652,19 @@ export function ArtistaVisao360Modal({
             {/* Agenda */}
             <TabsContent value="agenda" className="p-6 space-y-6 mt-0">
               <div className="flex flex-wrap gap-2">
-                {AGENDA_FILTERS.map((f) => (
+                {SCHEDULE_FILTERS.map((f) => (
                   <Button
                     key={f.key}
                     size="sm"
-                    variant={agendaFilter === f.key ? "default" : "outline"}
-                    onClick={() => setAgendaFilter(f.key)}
+                    variant={scheduleFilter === f.key ? "default" : "outline"}
+                    onClick={() => setScheduleFilter(f.key)}
                   >
                     {f.label}
                   </Button>
                 ))}
               </div>
 
-              {agendaFiltrada.length === 0 ? (
+              {filteredSchedule.length === 0 ? (
                 <Card className="bg-muted/30">
                   <CardContent className="p-8 flex flex-col items-center justify-center text-center gap-2">
                     <Calendar className="h-10 w-10 text-muted-foreground/30" />
@@ -2680,7 +2680,7 @@ export function ArtistaVisao360Modal({
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
                     <h3 className="font-semibold mb-3">
-                      Compromissos ({agendaFiltrada.length})
+                      Compromissos ({filteredSchedule.length})
                     </h3>
                     <div className="grid grid-cols-[88px_60px_110px_minmax(0,1fr)_minmax(0,1fr)_110px] gap-3 px-1 pb-2 text-xs font-medium text-muted-foreground border-b border-border">
                       <span>Data</span>
@@ -2692,7 +2692,7 @@ export function ArtistaVisao360Modal({
                     </div>
                     <ScrollArea className="h-[320px]">
                       <div className="divide-y divide-border/40">
-                        {agendaFiltrada.map((e) => (
+                        {filteredSchedule.map((e) => (
                           <div
                             key={e.id}
                             className="grid grid-cols-[88px_60px_110px_minmax(0,1fr)_minmax(0,1fr)_110px] gap-3 px-1 py-2 items-center text-sm"
@@ -2706,7 +2706,7 @@ export function ArtistaVisao360Modal({
                             <span className="truncate text-muted-foreground">{e.local || e.cidade || "—"}</span>
                             <span>
                               <Badge variant="outline" className="text-xs">
-                                {EVENTO_STATUS_LABELS[String(e.status ?? "").toLowerCase()] ?? formatStatusPtBr(e.status)}
+                                {EVENT_STATUS_LABELS[String(e.status ?? "").toLowerCase()] ?? formatStatusPtBr(e.status)}
                               </Badge>
                             </span>
                           </div>
@@ -2721,19 +2721,19 @@ export function ArtistaVisao360Modal({
             {/* Conteúdos */}
             <TabsContent value="conteudos" className="p-6 space-y-6 mt-0">
               <div className="flex flex-wrap gap-2">
-                {CONTEUDO_FILTERS.map((f) => (
+                {CONTENT_FILTERS.map((f) => (
                   <Button
                     key={f.key}
                     size="sm"
-                    variant={conteudoFilter === f.key ? "default" : "outline"}
-                    onClick={() => setConteudoFilter(f.key)}
+                    variant={contentFilter === f.key ? "default" : "outline"}
+                    onClick={() => setContentFilter(f.key)}
                   >
                     {f.label}
                   </Button>
                 ))}
               </div>
 
-              {conteudosFiltrados.length === 0 ? (
+              {filteredContent.length === 0 ? (
                 <Card className="bg-muted/30">
                   <CardContent className="p-8 flex flex-col items-center justify-center text-center gap-2">
                     <Video className="h-10 w-10 text-muted-foreground/30" />
@@ -2749,7 +2749,7 @@ export function ArtistaVisao360Modal({
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
                     <h3 className="font-semibold mb-3">
-                      Conteúdos ({conteudosFiltrados.length})
+                      Conteúdos ({filteredContent.length})
                     </h3>
                     <div className="grid grid-cols-[minmax(0,1fr)_110px_110px_100px_110px_120px] gap-3 px-1 pb-2 text-xs font-medium text-muted-foreground border-b border-border">
                       <span>Título</span>
@@ -2761,7 +2761,7 @@ export function ArtistaVisao360Modal({
                     </div>
                     <ScrollArea className="h-[320px]">
                       <div className="divide-y divide-border/40">
-                        {conteudosFiltrados.map((c) => (
+                        {filteredContent.map((c) => (
                           <div
                             key={c.id}
                             className="grid grid-cols-[minmax(0,1fr)_110px_110px_100px_110px_120px] gap-3 px-1 py-2 items-center text-sm"
@@ -2789,7 +2789,7 @@ export function ArtistaVisao360Modal({
 
             {/* Movimentação */}
             <TabsContent value="movimentacao" className="p-6 space-y-6 mt-0">
-              {movimentacaoItems.length === 0 ? (
+              {activityTimelineItems.length === 0 ? (
                 <Card className="bg-muted/30">
                   <CardContent className="p-8 flex flex-col items-center justify-center text-center gap-2">
                     <Clock className="h-10 w-10 text-muted-foreground/30" />
@@ -2805,7 +2805,7 @@ export function ArtistaVisao360Modal({
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
                     <h3 className="font-semibold mb-3">
-                      Movimentação ({movimentacaoItems.length})
+                      Movimentação ({activityTimelineItems.length})
                     </h3>
                     <div className="grid grid-cols-[110px_110px_minmax(0,1fr)_120px] gap-3 px-1 pb-2 text-xs font-medium text-muted-foreground border-b border-border">
                       <span>Data</span>
@@ -2815,7 +2815,7 @@ export function ArtistaVisao360Modal({
                     </div>
                     <ScrollArea className="h-[360px]">
                       <div className="divide-y divide-border/40">
-                        {movimentacaoItems.map((m) => (
+                        {activityTimelineItems.map((m) => (
                           <div
                             key={m.id}
                             className="grid grid-cols-[110px_110px_minmax(0,1fr)_120px] gap-3 px-1 py-2 items-center text-sm"
@@ -2843,7 +2843,7 @@ export function ArtistaVisao360Modal({
                     <h3 className="font-semibold">Histórico de Atividades</h3>
                   </div>
 
-                  {historicoReal.length > 0 ? (
+                  {actualHistory.length > 0 ? (
                     <>
                       <div className="grid grid-cols-[140px_120px_130px_minmax(0,1fr)] gap-3 px-1 pb-2 text-xs font-medium text-muted-foreground border-b border-border">
                         <span>Data</span>
@@ -2853,7 +2853,7 @@ export function ArtistaVisao360Modal({
                       </div>
                       <ScrollArea className="h-[360px]">
                         <div className="divide-y divide-border/40">
-                          {historicoReal.map((item) => (
+                          {actualHistory.map((item) => (
                             <div
                               key={item.id}
                               className="grid grid-cols-[140px_120px_130px_minmax(0,1fr)] gap-3 px-1 py-2 items-center text-sm"
@@ -2866,9 +2866,9 @@ export function ArtistaVisao360Modal({
                                 <User className="h-3 w-3 text-muted-foreground shrink-0" />
                                 {item.usuario}
                               </span>
-                              <span>{getHistoricoBadge(item.type)}</span>
+                              <span>{getHistoryBadge(item.type)}</span>
                               <span className="flex items-center gap-2 truncate">
-                                <span className="text-muted-foreground shrink-0">{getHistoricoIcon(item.type)}</span>
+                                <span className="text-muted-foreground shrink-0">{getHistoryIcon(item.type)}</span>
                                 <span className="truncate">{item.descricao}</span>
                               </span>
                             </div>
@@ -2933,7 +2933,7 @@ export function ArtistaVisao360Modal({
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {tiposMeta.map((t) => (
+                    {goalTypes.map((t) => (
                       <SelectItem key={t.value} value={t.value}>
                         {t.label}
                       </SelectItem>
@@ -2954,7 +2954,7 @@ export function ArtistaVisao360Modal({
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categoriasMeta.map((c) => (
+                    {goalCategories.map((c) => (
                       <SelectItem key={c.value} value={c.value}>
                         {c.label}
                       </SelectItem>
@@ -3003,14 +3003,14 @@ export function ArtistaVisao360Modal({
                 <Select
                   value={metaForm.status}
                   onValueChange={(v) =>
-                    setMetaForm({ ...metaForm, status: v as Meta["status"] })
+                    setMetaForm({ ...metaForm, status: v as MarketingMeta["status"] })
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {statusMeta.map((s) => (
+                    {metaStatusOptions.map((s) => (
                       <SelectItem key={s.value} value={s.value}>
                         {s.label}
                       </SelectItem>

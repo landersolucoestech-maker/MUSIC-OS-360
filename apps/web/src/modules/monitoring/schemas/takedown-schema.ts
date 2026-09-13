@@ -23,7 +23,7 @@ export const takedownSchema = z.object({
     .optional()
     .or(z.literal("")),
   prioridade: z.enum(["alta", "media", "baixa"]).default("media"),
-  status: z.enum(["pendente", "em_andamento", "concluido", "rejeitado"]).default("pendente"),
+  status: z.enum(["pending", "in_progress", "completed", "rejected"]).default("pending"),
   dataIdentificacao: z.string().optional().or(z.literal("")),
   evidencias: z.string().max(2000, "Evidências devem ter no máximo 2000 caracteres").optional().or(z.literal("")),
   observacoes: z.string().max(2000, "Observações deve ter no máximo 2000 caracteres").optional().or(z.literal("")),

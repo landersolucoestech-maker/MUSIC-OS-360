@@ -2,8 +2,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor, fireEvent, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConflictError } from "@/shared/lib/errors";
-import { ArtistaFormModal } from "./ArtistaFormModal";
-import type { Artista } from "@/modules/artist/hooks/useArtistas";
+import { ArtistFormModal } from "./ArtistFormModal";
+import type { Artist } from "@/modules/artist/hooks/useArtists";
+import type { ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 
 // ─── Regressão: campos do formulário e expectedUpdatedAt (CAS) devem vir
 // da MESMA versão fresca (GET /artists/:id), nunca do snapshot da listagem.
@@ -34,7 +35,10 @@ vi.mock("@/shared/lib/api-client", async (importOriginal) => {
 
 // Estado "servidor" em memória — permite simular GET fresco, PATCH normal e
 // um conflito real (outra sessão salvando entre o GET e o PATCH desta).
-let server: Artista;
+// Formato PT (contrato real do wire/backend) — o código de produção converte
+// via wireToArtist()/artistToWirePayload(), nunca recebe/envia o modelo EN
+// diretamente pela rede.
+let server: ArtistWireRecord & { id: string };
 let patchCalls: Array<{ path: string; body: Record<string, unknown> }>;
 
 const mockGet = vi.fn(async (path: string) => {
@@ -62,7 +66,7 @@ const mockPatch = vi.fn(async (path: string, body: Record<string, unknown>) => {
   return {};
 });
 
-function renderModal(props: Partial<React.ComponentProps<typeof ArtistaFormModal>> & { artista: Artista }) {
+function renderModal(props: Partial<React.ComponentProps<typeof ArtistFormModal>> & { artist: Artist }) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
@@ -70,21 +74,21 @@ function renderModal(props: Partial<React.ComponentProps<typeof ArtistaFormModal
   const onSuccess = vi.fn();
   render(
     <QueryClientProvider client={queryClient}>
-      <ArtistaFormModal open onOpenChange={onOpenChange} onSuccess={onSuccess} {...props} />
+      <ArtistFormModal open onOpenChange={onOpenChange} onSuccess={onSuccess} {...props} />
     </QueryClientProvider>,
   );
   return { queryClient, onOpenChange, onSuccess };
 }
 
 /** Snapshot desatualizado, como o que a listagem forneceria via prop `artista`. */
-const listSnapshot: Artista = {
+const listSnapshot: Artist = {
   id: ARTIST_ID,
-  nome_artistico: "Versão Antiga",
-  nome_civil: "Nome Antigo",
+  stageName: "Versão Antiga",
+  legalName: "Nome Antigo",
   updated_at: "2026-08-01T00:00:00.000Z",
 };
 
-function freshVersion(overrides: Partial<Artista> = {}): Artista {
+function freshVersion(overrides: Partial<ArtistWireRecord> = {}): ArtistWireRecord & { id: string } {
   return {
     id: ARTIST_ID,
     nome_artistico: "Versão Atual",
@@ -103,9 +107,9 @@ beforeEach(() => {
   server = freshVersion();
 });
 
-describe("ArtistaFormModal — hidratação a partir da versão fresca (CAS)", () => {
+describe("ArtistFormModal — hidratação a partir da versão fresca (CAS)", () => {
   it("exibe os campos da versão fresca (GET), não do snapshot da listagem, e envia o mesmo updated_at fresco como CAS", async () => {
-    renderModal({ artista: listSnapshot });
+    renderModal({ artist: listSnapshot });
 
     // Antes da hidratação: Salvar indisponível.
     expect(saveButton()).toBeDisabled();
@@ -123,7 +127,7 @@ describe("ArtistaFormModal — hidratação a partir da versão fresca (CAS)", (
   });
 
   it("preserva o que o usuário digitou quando um refetch em segundo plano chega depois da hidratação", async () => {
-    const { queryClient } = renderModal({ artista: listSnapshot });
+    const { queryClient } = renderModal({ artist: listSnapshot });
 
     await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
 
@@ -141,7 +145,7 @@ describe("ArtistaFormModal — hidratação a partir da versão fresca (CAS)", (
   });
 
   it("save normal funciona (ciclo 1: abrir → editar → salvar)", async () => {
-    const { onSuccess } = renderModal({ artista: listSnapshot });
+    const { onSuccess } = renderModal({ artist: listSnapshot });
 
     await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
     fireEvent.change(nomeInput(), { target: { value: "Editado ciclo 1" } });
@@ -155,7 +159,7 @@ describe("ArtistaFormModal — hidratação a partir da versão fresca (CAS)", (
   });
 
   it("save normal funciona (ciclo 2: reabrir → editar → salvar de novo, sem 409 espúrio)", async () => {
-    const { onSuccess } = renderModal({ artista: listSnapshot });
+    const { onSuccess } = renderModal({ artist: listSnapshot });
     await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
     fireEvent.change(nomeInput(), { target: { value: "Editado ciclo 1" } });
     fireEvent.click(saveButton());
@@ -166,7 +170,7 @@ describe("ArtistaFormModal — hidratação a partir da versão fresca (CAS)", (
     // ficou salvo (lista ainda pode estar desatualizada quanto ao updated_at
     // exato — o que é justamente o cenário que este fix cobre).
     const { onSuccess: onSuccess2 } = renderModal({
-      artista: { ...listSnapshot, nome_artistico: "Editado ciclo 1" },
+      artist: { ...listSnapshot, stageName: "Editado ciclo 1" },
     });
 
     await waitFor(() => {
@@ -190,7 +194,7 @@ describe("ArtistaFormModal — hidratação a partir da versão fresca (CAS)", (
   });
 
   it("conflito A/B real: outra sessão salva entre o GET e o PATCH desta sessão → 409 (ConflictError), modal não fecha", async () => {
-    const { onSuccess, onOpenChange } = renderModal({ artista: listSnapshot });
+    const { onSuccess, onOpenChange } = renderModal({ artist: listSnapshot });
     await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
 
     // "A" salva primeiro, por fora desta sessão — servidor avança de versão.

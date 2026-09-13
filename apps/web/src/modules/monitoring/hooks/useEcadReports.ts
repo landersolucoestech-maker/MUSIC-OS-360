@@ -4,7 +4,7 @@ import type { EcadReport } from "@/modules/monitoring/rights/types";
 
 export function useEcadReports() {
   const result = useDataQuery<EcadReport>({
-    queryKey: [...QUERY_KEYS.RELATORIOS_ECAD],
+    queryKey: [...QUERY_KEYS.ECAD_REPORTS],
     table: "relatorios_ecad",
     orderBy: { column: "created_at", ascending: false },
   }, {
@@ -14,7 +14,7 @@ export function useEcadReports() {
   });
 
   return {
-    relatorios: result.data,
+    reports: result.data,
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,

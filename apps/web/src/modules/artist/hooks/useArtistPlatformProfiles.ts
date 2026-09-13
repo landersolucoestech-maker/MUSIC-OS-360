@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
+import { QUERY_KEYS } from "@/shared/lib/query-config";
 
 // Espelha SOCIAL_PLATFORMS de apps/api/.../social-platform-sync.types.ts — sem
 // pacote compartilhado entre web/api para este contrato ainda, então os 7
@@ -52,7 +53,7 @@ export interface SyncArtistPlatformProfileInput {
 }
 
 export const artistPlatformProfilesKey = (artistId: string | null | undefined) => [
-  "artists",
+  ...QUERY_KEYS.ARTISTS,
   artistId,
   "platform-profiles",
 ];
@@ -92,8 +93,17 @@ export function useSyncArtistPlatformProfile(artistId: string | null | undefined
         source: input.source,
       });
     },
-    onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: artistPlatformProfilesKey(artistId) });
+    // platform-sync-retry-race: `onSuccess` must `await` the invalidation/
+    // refetch instead of firing it and returning — react-query's Mutation#execute
+    // awaits `options.onSuccess` before dispatching the "success" action that
+    // flips `isPending` back to false (see @tanstack/query-core mutation.js).
+    // Without the `await`, `isPending` went false right as the mutation promise
+    // resolved, BEFORE the invalidated GET had actually landed and updated
+    // `snapshot.sync_status` in the cache — a quick double-click on
+    // "Sincronizar agora" during that window could fire a second POST /sync for
+    // the same platform while the cache still showed the stale `sync_status`.
+    onSuccess: async (result) => {
+      await queryClient.invalidateQueries({ queryKey: artistPlatformProfilesKey(artistId) });
       if (result.enqueued.length > 0) {
         toast.success("Sincronização enfileirada.");
         return;

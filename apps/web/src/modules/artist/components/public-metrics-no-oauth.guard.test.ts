@@ -14,7 +14,7 @@ import { join } from "node:path";
  * Guard textual de propósito: o defeito é de COPY, e é exatamente o que volta
  * a aparecer quando alguém edita a tela sem conhecer a arquitetura.
  */
-const FILE = join(__dirname, "ArtistaPlatformMetrics.tsx");
+const FILE = join(__dirname, "ArtistPlatformMetrics.tsx");
 const source = readFileSync(FILE, "utf8");
 
 describe("Métricas públicas de artista não pedem conexão de conta", () => {

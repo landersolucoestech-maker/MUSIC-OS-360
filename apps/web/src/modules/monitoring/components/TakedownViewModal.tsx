@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import { AlertTriangle, Link2, Music, Calendar, FileText, ExternalLink } from "lucide-react";
-import { formatTakedownDate, normalizeTakedown, statusBadge, tipoBadge, prioridadeLabel } from "@/modules/monitoring/lib/takedown-format";
+import { formatTakedownDate, normalizeTakedown, statusBadge, typeBadge, prioridadeLabel } from "@/modules/monitoring/lib/takedown-format";
 import type { Takedown } from "@/modules/monitoring/types/monitoring.types";
 
 interface TakedownViewModalProps {
@@ -50,7 +50,7 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
               </div>
               <div>
                 <span className="text-sm text-muted-foreground">Tipo</span>
-                <div className="mt-1">{tipoBadge(n.type)}</div>
+                <div className="mt-1">{typeBadge(n.type)}</div>
               </div>
               <Field label="Prioridade" value={prioridadeLabel(n.prioridade)} />
             </div>

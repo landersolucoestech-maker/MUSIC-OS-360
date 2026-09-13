@@ -78,22 +78,22 @@ export function normalizeTakedown(raw: Takedown & Record<string, unknown>): Norm
 /** Normaliza aliases legados para os estados canônicos de UI. */
 function canonicalStatus(status?: string | null): string {
   switch (status) {
-    case "resolvido": return "concluido";
-    case "analise": return "em_andamento";
+    case "resolvido": return "completed";
+    case "analise": return "in_progress";
     default: return status ?? "";
   }
 }
 
 const STATUS_META: Record<string, { label: string; variant: BadgeVariant }> = {
-  pendente: { label: "Pendente", variant: "warning" },
-  em_andamento: { label: "Em Andamento", variant: "info" },
-  concluido: { label: "Concluído", variant: "success" },
-  rejeitado: { label: "Rejeitado", variant: "danger" },
+  pending: { label: "Pendente", variant: "warning" },
+  in_progress: { label: "Em Andamento", variant: "info" },
+  completed: { label: "Concluído", variant: "success" },
+  rejected: { label: "Rejeitado", variant: "danger" },
 };
 
-export const isResolved = (status?: string | null) => canonicalStatus(status) === "concluido";
-export const isPending = (status?: string | null) => canonicalStatus(status) === "pendente";
-export const isInProgress = (status?: string | null) => canonicalStatus(status) === "em_andamento";
+export const isResolved = (status?: string | null) => canonicalStatus(status) === "completed";
+export const isPending = (status?: string | null) => canonicalStatus(status) === "pending";
+export const isInProgress = (status?: string | null) => canonicalStatus(status) === "in_progress";
 
 export function statusLabel(status?: string | null): string {
   const meta = STATUS_META[canonicalStatus(status)];
@@ -107,13 +107,13 @@ export function statusBadge(status?: string | null) {
 }
 
 // ── Tipo ──────────────────────────────────────────────────────────────────────
-export function tipoBadge(type?: string | null) {
+export function typeBadge(type?: string | null) {
   if (type === "enviado") return <Badge variant="info">Enviado</Badge>;
   if (type === "recebido") return <Badge variant="warning">Recebido</Badge>;
   return <Badge variant="neutral">—</Badge>;
 }
 
-export const tipoLabel = (type?: string | null): string =>
+export const typeLabel = (type?: string | null): string =>
   type === "enviado" ? "Enviado por nós" : type === "recebido" ? "Recebido (Claim)" : "—";
 
 // ── Prioridade ──────────────────────────────────────────────────────────────────

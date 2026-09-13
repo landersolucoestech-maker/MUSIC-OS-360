@@ -2,11 +2,9 @@ import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { useDataQuery } from "@/shared/hooks/useDataQuery";
 import type { ContentDetection } from "@/modules/monitoring/rights/types";
 
-export type Deteccao = ContentDetection;
-
-export function useDeteccoes() {
-  const result = useDataQuery<Deteccao>({
-    queryKey: [...QUERY_KEYS.DETECCOES],
+export function useDetections() {
+  const result = useDataQuery<ContentDetection>({
+    queryKey: [...QUERY_KEYS.CONTENT_DETECTIONS],
     table: "deteccoes",
     orderBy: { column: "detectado_em", ascending: false },
   }, {
@@ -16,12 +14,12 @@ export function useDeteccoes() {
   });
 
   return {
-    deteccoes: result.data,
+    detections: result.data,
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,
-    addDeteccao: result.create,
-    updateDeteccao: result.update,
-    deleteDeteccao: result.delete,
+    addDetection: result.create,
+    updateDetection: result.update,
+    deleteDetection: result.delete,
   };
 }

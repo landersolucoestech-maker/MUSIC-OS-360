@@ -6,7 +6,7 @@
  * resolvido em runtime via work_id contra o catálogo real (useObras()).
  */
 
-export type DetectionStatus = "pendente" | "em_andamento" | "concluido" | "rejeitado" | "arquivado";
+export type DetectionStatus = "pending" | "in_progress" | "completed" | "rejected" | "archived";
 export type EcadReportStatus = "pendente" | "importado" | "concluido" | "erro";
 
 export interface CatalogObraRef {

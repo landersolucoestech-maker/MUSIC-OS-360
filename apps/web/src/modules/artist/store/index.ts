@@ -1,1 +1,1 @@
-export * from '../hooks/artist.store';
+export * from './artist.store';

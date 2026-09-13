@@ -7,11 +7,11 @@ import type { ContentDetection, DetectionStatus, CatalogObraRef } from "../types
 import { formatRightsDateTime } from "../utils/date-format";
 
 const STATUS_CONFIG: Record<DetectionStatus, { label: string; variant: BadgeVariant; icon: React.ReactNode }> = {
-  concluido:    { label: "Concluído",     variant: "success", icon: <CheckCircle className="h-3 w-3" /> },
-  em_andamento: { label: "Em Andamento",  variant: "info",    icon: <Clock className="h-3 w-3" /> },
-  pendente:     { label: "Pendente",      variant: "warning", icon: <Clock className="h-3 w-3" /> },
-  rejeitado:    { label: "Rejeitado",     variant: "danger",  icon: <XCircle className="h-3 w-3" /> },
-  arquivado:    { label: "Arquivado",     variant: "neutral", icon: <Archive className="h-3 w-3" /> },
+  completed:    { label: "Concluído",     variant: "success", icon: <CheckCircle className="h-3 w-3" /> },
+  in_progress:  { label: "Em Andamento",  variant: "info",    icon: <Clock className="h-3 w-3" /> },
+  pending:      { label: "Pendente",      variant: "warning", icon: <Clock className="h-3 w-3" /> },
+  rejected:     { label: "Rejeitado",     variant: "danger",  icon: <XCircle className="h-3 w-3" /> },
+  archived:     { label: "Arquivado",     variant: "neutral", icon: <Archive className="h-3 w-3" /> },
 };
 
 export interface DetectionRow extends ContentDetection {
@@ -19,14 +19,14 @@ export interface DetectionRow extends ContentDetection {
 }
 
 interface Props {
-  deteccoes: DetectionRow[];
+  detections: DetectionRow[];
   onViewDetail?: (det: DetectionRow) => void;
   selectedIds?: string[];
   onToggleSelect?: (id: string) => void;
 }
 
-export function ExecucoesTable({ deteccoes, onViewDetail, selectedIds, onToggleSelect }: Props) {
-  if (deteccoes.length === 0) {
+export function DetectionsTable({ detections, onViewDetail, selectedIds, onToggleSelect }: Props) {
+  if (detections.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
         <Radio className="h-10 w-10 mb-3 opacity-30" />
@@ -53,7 +53,7 @@ export function ExecucoesTable({ deteccoes, onViewDetail, selectedIds, onToggleS
           </TableRow>
         </TableHeader>
         <TableBody>
-          {deteccoes.map((det) => {
+          {detections.map((det) => {
             const status = STATUS_CONFIG[det.status];
             const dt = formatRightsDateTime(det.detectado_em);
             const matched = Boolean(det.obra?.cod_ecad);

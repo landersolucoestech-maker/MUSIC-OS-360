@@ -1,2 +1,2 @@
 
-export * from '../services/artista.mapper';
+export * from '../services/artist.mapper';

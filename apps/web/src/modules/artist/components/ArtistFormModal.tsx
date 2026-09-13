@@ -5,16 +5,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ARTIST_FORM_SECTIONS,
   DISTRIBUIDORAS_OPTIONS,
-  artistaSchema,
-  artistaToFormValues,
-  artistaToPreservedInput,
+  artistSchema,
+  artistToFormValues,
+  artistToPreservedInput,
   emptyArtistFormValues,
   emptyPreservedInput,
-  formValuesToArtistaPayload,
+  formValuesToArtistPayload,
   type ArtistFormField,
-  type ArtistaFormValues,
-  type ArtistaFormAllValues,
-  type ArtistaPreservedInput,
+  type ArtistFormValues,
+  type ArtistFormAllValues,
+  type ArtistPreservedInput,
 } from "@/modules/artist/forms/artist-form.definition";
 import { DatePickerField } from "@/shared/ui/date-picker-field";
 import {
@@ -39,14 +39,15 @@ import {
 } from "@/shared/ui/select";
 import { Loader2, Save, CheckCircle2, XCircle } from "lucide-react";
 import { FileUpload, type UploadedFile } from "@/shared/components/FileUpload";
-import { useArtistas, type Artista } from "@/modules/artist/hooks/useArtistas";
+import { useArtists, type Artist } from "@/modules/artist/hooks/useArtists";
 import { api } from "@/shared/lib/api-client";
 import { useClientes } from "@/modules/crm-relationships/hooks/useContacts";
-import { EquipeContatosCRM } from "@/modules/artist/components/EquipeContatosCRM";
+import { TeamContactsCRM } from "@/modules/artist/components/TeamContactsCRM";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { toast } from "sonner";
-import type { ArtistaDistribuidoraEntry } from "@/modules/artist/types/artista.types";
+import type { DistributorEntry } from "@/modules/artist/types/artist.types";
 import type { UrlValidationState } from "@/modules/artist/mappers";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 
 // ─── Helper: URL validation icon ─────────────────────────────────
 
@@ -58,24 +59,24 @@ function UrlIcon({ state }: { state: UrlValidationState }) {
 
 // ─── Composite: Distribuidoras / Agregadoras ─────────────────────
 
-function DistribuidorasField({
+function DistributorsField({
   value,
   onChange,
 }: {
-  value: ArtistaDistribuidoraEntry[];
-  onChange: (next: ArtistaDistribuidoraEntry[]) => void;
+  value: DistributorEntry[];
+  onChange: (next: DistributorEntry[]) => void;
 }) {
   const toggle = (distId: string, checked: boolean) => {
     if (checked) {
-      onChange([...value, { id: distId, email: "", nomeCustom: distId === "outros" ? "" : undefined }]);
+      onChange([...value, { id: distId, email: "", customName: distId === "outros" ? "" : undefined }]);
     } else {
       onChange(value.filter((d) => d.id !== distId));
     }
   };
   const updateEmail = (distId: string, email: string) =>
     onChange(value.map((d) => (d.id === distId ? { ...d, email } : d)));
-  const updateNomeCustom = (nomeCustom: string) =>
-    onChange(value.map((d) => (d.id === "outros" ? { ...d, nomeCustom } : d)));
+  const updateCustomName = (customName: string) =>
+    onChange(value.map((d) => (d.id === "outros" ? { ...d, customName } : d)));
 
   return (
     <>
@@ -100,13 +101,13 @@ function DistribuidorasField({
               {isChecked && dist.id === "outros" && (
                 <div className="ml-6 space-y-1.5">
                   <Input
-                    value={entry?.nomeCustom ?? ""}
-                    onChange={(e) => updateNomeCustom(e.target.value)}
+                    value={entry?.customName ?? ""}
+                    onChange={(e) => updateCustomName(e.target.value)}
                     placeholder="Nome da distribuidora…"
                     className="h-8 text-sm"
                     data-testid="input-geral-dist-nome-custom"
                   />
-                  {(entry?.nomeCustom ?? "").trim().length > 0 && (
+                  {(entry?.customName ?? "").trim().length > 0 && (
                     <Input
                       value={entry?.email ?? ""}
                       onChange={(e) => updateEmail(dist.id, e.target.value)}
@@ -136,7 +137,7 @@ function DistribuidorasField({
         })}
       </div>
 
-      {value.some((d) => d.id === "outros" && !(d.nomeCustom ?? "").trim()) && (
+      {value.some((d) => d.id === "outros" && !(d.customName ?? "").trim()) && (
         <p className="text-xs text-muted-foreground ml-6">
           Preencha o nome da distribuidora para activar o email de share.
         </p>
@@ -150,9 +151,9 @@ function DistribuidorasField({
 type FileFieldId = "fotoUrl" | "documentosPessoaisUrl" | "presskitUrl";
 
 interface FieldRendererCtx {
-  register: UseFormRegister<ArtistaFormValues>;
-  control: Control<ArtistaFormValues>;
-  watch: UseFormWatch<ArtistaFormValues>;
+  register: UseFormRegister<ArtistFormValues>;
+  control: Control<ArtistFormValues>;
+  watch: UseFormWatch<ArtistFormValues>;
   files: Record<FileFieldId, UploadedFile[]>;
   setFile: (id: FileFieldId, value: UploadedFile[]) => void;
   artistId?: string;
@@ -169,7 +170,7 @@ function FieldLabel({ field }: { field: ArtistFormField }) {
 function renderArtistField(field: ArtistFormField, ctx: FieldRendererCtx) {
   const { register, control, watch, files, setFile, artistId } = ctx;
   const span = field.fullWidth ? "col-span-2" : "";
-  const rhfId = field.id as keyof ArtistaFormValues;
+  const rhfId = field.id as keyof ArtistFormValues;
 
   switch (field.type) {
     case "file":
@@ -300,8 +301,8 @@ function renderArtistField(field: ArtistFormField, ctx: FieldRendererCtx) {
             control={control}
             name={rhfId}
             render={({ field: rhf }) => (
-              <EquipeContatosCRM
-                value={Array.isArray(rhf.value) ? (rhf.value as ArtistaFormValues["contatosVinculados"]) : []}
+              <TeamContactsCRM
+                value={Array.isArray(rhf.value) ? (rhf.value as ArtistFormValues["contatosVinculados"]) : []}
                 onChange={rhf.onChange}
               />
             )}
@@ -316,8 +317,8 @@ function renderArtistField(field: ArtistFormField, ctx: FieldRendererCtx) {
             control={control}
             name={rhfId}
             render={({ field: rhf }) => (
-              <DistribuidorasField
-                value={Array.isArray(rhf.value) ? (rhf.value as ArtistaDistribuidoraEntry[]) : []}
+              <DistributorsField
+                value={Array.isArray(rhf.value) ? (rhf.value as DistributorEntry[]) : []}
                 onChange={rhf.onChange}
               />
             )}
@@ -342,44 +343,46 @@ function renderArtistField(field: ArtistFormField, ctx: FieldRendererCtx) {
 
 // ─── Props ────────────────────────────────────────────────────────
 
-interface ArtistaFormModalProps {
+interface ArtistFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
-  artista?: Artista | null;
+  artist?: Artist | null;
 }
 
 // ─── Component ───────────────────────────────────────────────────
 
-export function ArtistaFormModal({ open, onOpenChange, onSuccess, artista }: ArtistaFormModalProps) {
-  const isEditing = !!artista;
-  const { addArtista, updateArtista } = useArtistas();
+export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: ArtistFormModalProps) {
+  const isEditing = !!artist;
+  const { addArtist, updateArtist } = useArtists();
   const { addCliente } = useClientes();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Task: CAS 409 espúrio — o modal recebia `artista` como snapshot congelado
+  // Task: CAS 409 espúrio — o modal recebia `artist` como snapshot congelado
   // da listagem (pode estar desatualizado: staleTime da lista, tempo com a
   // aba em segundo plano, etc.). Buscar a versão atual por ID ao abrir para
   // editar garante que o `expectedUpdatedAt` do CAS reflita o registro real
   // no momento da edição, não o que a lista tinha cacheado. `staleTime: 0`
   // força refetch a cada abertura do modal (nunca reaproveita uma busca
   // anterior da mesma sessão).
-  const freshArtistaQuery = useQuery({
-    queryKey: ["artists", artista?.id, "edit-fresh"],
-    queryFn: () => api.get<Artista>(`/artists/${artista!.id}`),
-    enabled: open && isEditing && !!artista?.id,
+  // `api.get` fala com o backend real (contrato PT, GET /artists/:id) —
+  // convertido para o modelo interno `Artist` (EN) via `wireToArtist`.
+  const freshArtistQuery = useQuery({
+    queryKey: ["artists", artist?.id, "edit-fresh"],
+    queryFn: async () => wireToArtist(await api.get<ArtistWireRecord>(`/artists/${artist!.id}`)),
+    enabled: open && isEditing && !!artist?.id,
     staleTime: 0,
     gcTime: 0,
   });
 
-  // Task: campos do formulário vinham de `artista` (snapshot da listagem)
+  // Task: campos do formulário vinham de `artist` (snapshot da listagem)
   // enquanto só o expectedUpdatedAt vinha da versão fresca — permitia CAS
   // passar (comparando com a versão real do banco) enquanto o PATCH ainda
   // carregava campos antigos por cima de uma edição concorrente já salva.
-  // `hydratedArtista` fixa a MESMA versão para os dois: é o exato objeto do
+  // `hydratedArtist` fixa a MESMA versão para os dois: é o exato objeto do
   // GET usado para hidratar o formulário, e é o que fornece expectedUpdatedAt
   // no submit — nunca duas fontes independentes.
-  const [hydratedArtista, setHydratedArtista] = useState<Artista | null>(null);
+  const [hydratedArtist, setHydratedArtist] = useState<Artist | null>(null);
 
   // ── Non-form state ──────────────────────────────────────────────
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -390,13 +393,13 @@ export function ArtistaFormModal({ open, onOpenChange, onSuccess, artista }: Art
     setFiles((prev) => ({ ...prev, [id]: value }));
 
   // Campos preservados em round-trip (métricas, modelo legado, contrato…)
-  const [preserved, setPreserved] = useState<ArtistaPreservedInput>(emptyPreservedInput());
-  // Legado: contatos de equipe embutidos (round-trip intacto; o painel usa contatos_vinculados)
-  const [contatosEquipe, setContatosEquipe] = useState<unknown[]>([]);
+  const [preserved, setPreserved] = useState<ArtistPreservedInput>(emptyPreservedInput());
+  // Legado: contatos de equipe embutidos (round-trip intacto; o painel usa linkedContacts)
+  const [teamContacts, setTeamContacts] = useState<Artist["teamContacts"]>([]);
 
   // ── react-hook-form (schema GERADO da definição do formulário) ──
-  const form = useForm<ArtistaFormValues>({
-    resolver: zodResolver(artistaSchema),
+  const form = useForm<ArtistFormValues>({
+    resolver: zodResolver(artistSchema),
     defaultValues: emptyArtistFormValues(),
   });
   const { register, control, watch, reset, handleSubmit: rhfSubmit } = form;
@@ -405,17 +408,13 @@ export function ArtistaFormModal({ open, onOpenChange, onSuccess, artista }: Art
 
   // ── Hidrata o formulário a partir de UMA versão (fonte única) ────
   // MESMA hidratação canônica usada pela exportação (definição única).
-  const hydrateForm = (source: Artista | null) => {
-    const v = artistaToFormValues(source);
+  const hydrateForm = (source: Artist | null) => {
+    const v = artistToFormValues(source);
     const { fotoUrl, documentosPessoaisUrl, presskitUrl, ...formValues } = v;
     reset(formValues);
 
-    setPreserved(artistaToPreservedInput(source));
-    setContatosEquipe(
-      Array.isArray((source as (Artista & { contatos_equipe?: unknown }) | null)?.contatos_equipe)
-        ? ((source as Artista & { contatos_equipe?: unknown }).contatos_equipe as unknown[])
-        : [],
-    );
+    setPreserved(artistToPreservedInput(source));
+    setTeamContacts(Array.isArray(source?.teamContacts) ? source.teamContacts : []);
 
     setFiles({
       fotoUrl: fotoUrl
@@ -434,31 +433,31 @@ export function ArtistaFormModal({ open, onOpenChange, onSuccess, artista }: Art
     }, 50);
   };
 
-  // ── Load artista data on open ───────────────────────────────────
+  // ── Load artist data on open ────────────────────────────────────
   // Modo criação: hidrata direto (nada para buscar).
   // Modo edição: só hidrata quando a versão fresca (GET /artists/:id) chega,
-  // e só a PRIMEIRA vez por artista/abertura — `artista` (prop da listagem)
+  // e só a PRIMEIRA vez por artista/abertura — `artist` (prop da listagem)
   // serve só para identificar o ID/loading visual antes disso, nunca para
   // preencher campos. Um refetch em segundo plano (ex.: refocus da aba) NÃO
   // deve chamar reset() de novo e apagar o que o usuário já digitou — por
-  // isso o guard compara com `hydratedArtista?.id`, não reage a toda mudança
-  // de `freshArtistaQuery.data`.
+  // isso o guard compara com `hydratedArtist?.id`, não reage a toda mudança
+  // de `freshArtistQuery.data`.
   useEffect(() => {
     if (!open) {
-      setHydratedArtista(null);
+      setHydratedArtist(null);
       return;
     }
     if (!isEditing) {
       hydrateForm(null);
       return;
     }
-    if (!freshArtistaQuery.data) return;
-    if (hydratedArtista?.id === freshArtistaQuery.data.id) return;
+    if (!freshArtistQuery.data) return;
+    if (hydratedArtist?.id === freshArtistQuery.data.id) return;
 
-    hydrateForm(freshArtistaQuery.data);
-    setHydratedArtista(freshArtistaQuery.data);
+    hydrateForm(freshArtistQuery.data);
+    setHydratedArtist(freshArtistQuery.data);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, isEditing, artista?.id, freshArtistaQuery.data]);
+  }, [open, isEditing, artist?.id, freshArtistQuery.data]);
 
   // ── Handlers ────────────────────────────────────────────────────
 
@@ -468,10 +467,10 @@ export function ArtistaFormModal({ open, onOpenChange, onSuccess, artista }: Art
   };
 
   // ── Submit ──────────────────────────────────────────────────────
-  const onSubmit = async (values: ArtistaFormValues) => {
+  const onSubmit = async (values: ArtistFormValues) => {
     setIsSubmitting(true);
     try {
-      const allValues: ArtistaFormAllValues = {
+      const allValues: ArtistFormAllValues = {
         ...values,
         fotoUrl:               files.fotoUrl[0]?.url ?? "",
         documentosPessoaisUrl: files.documentosPessoaisUrl[0]?.url ?? "",
@@ -479,26 +478,24 @@ export function ArtistaFormModal({ open, onOpenChange, onSuccess, artista }: Art
       };
 
       // MESMA conversão canônica usada pela importação (definição única).
-      const payload = formValuesToArtistaPayload(allValues, preserved);
+      const payload = formValuesToArtistPayload(allValues, preserved);
 
       // Pass-through de campos do Perfil 360 que não pertencem a este formulário
       // (Task AA: as três seções descontinuadas do cadastro/edição de artista
-      // coletavam galeria_urls, manager_*, produtor_executivo, agencia_booking
-      // e label_parceira — nenhuma delas é mais coletada aqui. Omiti-las do
+      // coletavam galleryUrls, manager*Legacy, executiveProducer, bookingAgency
+      // e partnerLabel — nenhuma delas é mais coletada aqui. Omiti-las do
       // payload preserva o valor já existente no backend (update() só toca
       // colunas presentes no DTO — ver artists.service.ts), em vez de zerá-las).
       const passThrough = {
-        contatos_equipe: contatosEquipe.length > 0
-          ? (contatosEquipe as Artista["contatos_equipe"])
-          : null,
+        teamContacts: teamContacts && teamContacts.length > 0 ? teamContacts : null,
       };
 
       if (isEditing) {
         try {
-          await updateArtista.mutateAsync({
-            id: artista.id, ...payload, ...passThrough,
-            contrato_id: preserved.contratoId || null,
-            expectedUpdatedAt: getExpectedUpdatedAt(hydratedArtista),
+          await updateArtist.mutateAsync({
+            id: artist!.id, ...payload, ...passThrough,
+            contractId: preserved.contratoId || null,
+            expectedUpdatedAt: getExpectedUpdatedAt(hydratedArtist),
           });
         } catch (err) {
           if (handleConcurrencyConflict(err, "artista")) return;
@@ -516,11 +513,11 @@ export function ArtistaFormModal({ open, onOpenChange, onSuccess, artista }: Art
           cidade:      null as string | null,
           estado:      null as string | null,
           observacoes: values.biografia.trim() || null,
-          status:      "ativo",
+          status:      "active",
         });
-        await addArtista.mutateAsync({
+        await addArtist.mutateAsync({
           ...payload, ...passThrough,
-          contrato_id: preserved.contratoId || null,
+          contractId: preserved.contratoId || null,
         });
       }
       handleClose(false);
@@ -530,14 +527,14 @@ export function ArtistaFormModal({ open, onOpenChange, onSuccess, artista }: Art
     }
   };
 
-  const onInvalid = (errors: FieldErrors<ArtistaFormValues>) => {
+  const onInvalid = (errors: FieldErrors<ArtistFormValues>) => {
     const first = Object.values(errors).find(
       (e): e is { message: string } => typeof (e as { message?: unknown })?.message === "string",
     );
     if (first) toast.error(first.message);
   };
 
-  const rendererCtx: FieldRendererCtx = { register, control, watch, files, setFile, artistId: artista?.id };
+  const rendererCtx: FieldRendererCtx = { register, control, watch, files, setFile, artistId: artist?.id };
   const currentValues = watch();
 
   // ── JSX (seções e campos iterados da definição única) ──────────
@@ -591,12 +588,12 @@ export function ArtistaFormModal({ open, onOpenChange, onSuccess, artista }: Art
           </Button>
           <Button
             onClick={rhfSubmit(onSubmit, onInvalid)}
-            disabled={isSubmitting || (isEditing && !hydratedArtista)}
+            disabled={isSubmitting || (isEditing && !hydratedArtist)}
             className="gap-2"
             data-testid="button-salvar-modal"
           >
             {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-            {isEditing && !hydratedArtista ? "Carregando versão atual…" : isEditing ? "Salvar Alterações" : "Criar Artista"}
+            {isEditing && !hydratedArtist ? "Carregando versão atual…" : isEditing ? "Salvar Alterações" : "Criar Artista"}
           </Button>
         </div>
       </DialogContent>

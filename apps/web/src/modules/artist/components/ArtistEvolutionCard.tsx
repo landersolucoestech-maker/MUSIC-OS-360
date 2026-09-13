@@ -97,7 +97,7 @@ interface ChartPoint {
   label: string;
 }
 
-interface ArtistaEvolutionCardProps {
+interface ArtistEvolutionCardProps {
   title: string;
   subtitle: string;
   Icon: LucideIcon;
@@ -136,7 +136,7 @@ const directionStyle: Record<
   },
 };
 
-export function ArtistaEvolutionCard({
+export function ArtistEvolutionCard({
   title,
   subtitle,
   Icon,
@@ -149,7 +149,7 @@ export function ArtistaEvolutionCard({
   metric,
   metricLabel,
   testIdPrefix,
-}: ArtistaEvolutionCardProps) {
+}: ArtistEvolutionCardProps) {
   const summary = useMemo(() => computeEvolutionSummary(points, metric), [points, metric]);
 
   const chartData = useMemo<ChartPoint[]>(() => {

@@ -18,7 +18,7 @@ const DIMENSION_LABELS: Record<CareerStageDimensionKey, string> = {
   MOMENTUM: "Momentum (90d)",
 };
 
-// Mesmos rótulos amigáveis já usados em ArtistaPlatformMetrics.tsx para cada
+// Mesmos rótulos amigáveis já usados em ArtistPlatformMetrics.tsx para cada
 // plataforma — reaproveitados aqui (item 61: nunca mostrar "spotify.monthly_listeners" na UI).
 const METRIC_LABELS: Record<string, string> = {
   "spotify.monthly_listeners": "Spotify · Ouvintes mensais",

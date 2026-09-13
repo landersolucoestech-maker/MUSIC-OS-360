@@ -1,5 +1,5 @@
 /**
- * ArtistaFormModal.sections-removed.guard.test.ts
+ * ArtistFormModal.sections-removed.guard.test.ts
  *
  * Guarda permanente (Task AA): as seções "Classificação e Vínculos",
  * "Equipe de Gestão" e "Mídia Adicional" deixaram de fazer parte do
@@ -16,9 +16,9 @@ import { describe, it, expect } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 
-const SOURCE = fs.readFileSync(path.resolve(__dirname, "ArtistaFormModal.tsx"), "utf8");
+const SOURCE = fs.readFileSync(path.resolve(__dirname, "ArtistFormModal.tsx"), "utf8");
 
-describe("ArtistaFormModal — as três seções descontinuadas não reaparecem", () => {
+describe("ArtistFormModal — as três seções descontinuadas não reaparecem", () => {
   it("nenhum título de seção descontinuada é renderizado", () => {
     expect(SOURCE).not.toMatch(/>\s*Classificação e Vínculos\s*</);
     expect(SOURCE).not.toMatch(/>\s*Equipe de Gestão\s*</);

@@ -11,15 +11,15 @@ import { Card, CardContent } from "@/shared/ui/card";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { cn } from "@/shared/lib/utils";
 import {
-  ArtistaEvolutionCard,
+  ArtistEvolutionCard,
   computeEvolutionSummary,
   type EvolutionSummary,
   type TrendDirection,
-} from "@/modules/artist/components/ArtistaEvolutionCard";
+} from "@/modules/artist/components/ArtistEvolutionCard";
 import { useArtistPlatformEvolution } from "@/modules/artist/hooks/useArtistPlatformEvolution";
 
-interface ArtistaEvolucaoSectionProps {
-  artista: any;
+interface ArtistEvolutionSectionProps {
+  artist: any;
 }
 
 const numberFormatter = new Intl.NumberFormat("pt-BR");
@@ -40,28 +40,28 @@ function fmtPercent(pct: number | null): string {
 
 const directionStyle: Record<
   TrendDirection,
-  { className: string; iconClass: string; ringClass: string; rotuloPositivo: string; rotuloNegativo: string }
+  { className: string; iconClass: string; ringClass: string; positiveLabel: string; negativeLabel: string }
 > = {
   up: {
     className: "text-success",
     iconClass: "bg-success/15 text-success",
     ringClass: "ring-success/30",
-    rotuloPositivo: "Em crescimento",
-    rotuloNegativo: "Em crescimento",
+    positiveLabel: "Em crescimento",
+    negativeLabel: "Em crescimento",
   },
   down: {
     className: "text-destructive",
     iconClass: "bg-destructive/15 text-destructive",
     ringClass: "ring-destructive/30",
-    rotuloPositivo: "Em queda",
-    rotuloNegativo: "Em queda",
+    positiveLabel: "Em queda",
+    negativeLabel: "Em queda",
   },
   flat: {
     className: "text-muted-foreground",
     iconClass: "bg-muted text-muted-foreground",
     ringClass: "ring-border",
-    rotuloPositivo: "Estável",
-    rotuloNegativo: "Estável",
+    positiveLabel: "Estável",
+    negativeLabel: "Estável",
   },
 };
 
@@ -132,15 +132,15 @@ function aggregateVerdict(platforms: PlatformInput[]): {
   };
 }
 
-export function ArtistaEvolucaoSection({ artista }: ArtistaEvolucaoSectionProps) {
-  const artistId: string | null = artista?.id ?? null;
-  const spotifyUrl: string | null = artista?.spotify_url ?? null;
-  const youtubeUrl: string | null = artista?.youtube_url ?? null;
-  const deezerUrl: string | null = artista?.deezer_url ?? null;
-  const soundcloudUrl: string | null = artista?.soundcloud_url ?? null;
-  const appleMusicUrl: string | null = artista?.apple_music_url ?? null;
-  const instagramHandle: string | null = artista?.instagram ?? null;
-  const tiktokHandle: string | null = artista?.tiktok ?? null;
+export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) {
+  const artistId: string | null = artist?.id ?? null;
+  const spotifyUrl: string | null = artist?.spotify_url ?? null;
+  const youtubeUrl: string | null = artist?.youtube_url ?? null;
+  const deezerUrl: string | null = artist?.deezer_url ?? null;
+  const soundcloudUrl: string | null = artist?.soundcloud_url ?? null;
+  const appleMusicUrl: string | null = artist?.apple_music_url ?? null;
+  const instagramHandle: string | null = artist?.instagram ?? null;
+  const tiktokHandle: string | null = artist?.tiktok ?? null;
 
   const spotifyQ = useArtistPlatformEvolution(artistId, "spotify");
   const youtubeQ = useArtistPlatformEvolution(artistId, "youtube");
@@ -350,7 +350,7 @@ export function ArtistaEvolucaoSection({ artista }: ArtistaEvolucaoSectionProps)
 
       {/* Cards por plataforma */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <ArtistaEvolutionCard
+        <ArtistEvolutionCard
           title="Spotify"
           subtitle="Seguidores"
           Icon={SiSpotify as any}
@@ -364,7 +364,7 @@ export function ArtistaEvolucaoSection({ artista }: ArtistaEvolucaoSectionProps)
           metricLabel="Seguidores"
           testIdPrefix="evolucao-spotify"
         />
-        <ArtistaEvolutionCard
+        <ArtistEvolutionCard
           title="YouTube"
           subtitle="Inscritos"
           Icon={Youtube}
@@ -378,7 +378,7 @@ export function ArtistaEvolucaoSection({ artista }: ArtistaEvolucaoSectionProps)
           metricLabel="Inscritos"
           testIdPrefix="evolucao-youtube"
         />
-        <ArtistaEvolutionCard
+        <ArtistEvolutionCard
           title="Deezer"
           subtitle="Fãs"
           Icon={DeezerIcon as any}
@@ -392,7 +392,7 @@ export function ArtistaEvolucaoSection({ artista }: ArtistaEvolucaoSectionProps)
           metricLabel="Fãs"
           testIdPrefix="evolucao-deezer"
         />
-        <ArtistaEvolutionCard
+        <ArtistEvolutionCard
           title="SoundCloud"
           subtitle="Seguidores"
           Icon={SiSoundcloud as any}
@@ -406,7 +406,7 @@ export function ArtistaEvolucaoSection({ artista }: ArtistaEvolucaoSectionProps)
           metricLabel="Seguidores"
           testIdPrefix="evolucao-soundcloud"
         />
-        <ArtistaEvolutionCard
+        <ArtistEvolutionCard
           title="Apple Music"
           subtitle="Ouvintes"
           Icon={SiApplemusic as any}
@@ -420,7 +420,7 @@ export function ArtistaEvolucaoSection({ artista }: ArtistaEvolucaoSectionProps)
           metricLabel="Ouvintes"
           testIdPrefix="evolucao-applemusic"
         />
-        <ArtistaEvolutionCard
+        <ArtistEvolutionCard
           title="Instagram"
           subtitle="Seguidores"
           Icon={SiInstagram as any}
@@ -434,7 +434,7 @@ export function ArtistaEvolucaoSection({ artista }: ArtistaEvolucaoSectionProps)
           metricLabel="Seguidores"
           testIdPrefix="evolucao-instagram"
         />
-        <ArtistaEvolutionCard
+        <ArtistEvolutionCard
           title="TikTok"
           subtitle="Seguidores"
           Icon={SiTiktok as any}

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/shared/lib/api-client";
+import { QUERY_KEYS } from "@/shared/lib/query-config";
 
 // Espelha CareerStageResult (apps/api/.../analytics/career-stage.engine.ts) —
 // sem pacote compartilhado entre web/api para este contrato ainda (mesmo
@@ -36,7 +37,7 @@ export interface CareerStageResult {
   freshness: "FRESH" | "STALE" | "UNKNOWN";
 }
 
-export const careerStageKey = (artistId: string | null | undefined) => ["artists", artistId, "career-stage"];
+export const careerStageKey = (artistId: string | null | undefined) => [...QUERY_KEYS.ARTISTS, artistId, "career-stage"];
 
 /**
  * Fase 3 — Estágio da Carreira: calculado no backend (React nunca calcula

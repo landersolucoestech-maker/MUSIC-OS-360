@@ -6,10 +6,10 @@
  * seção, ordem (posição no array) e obrigatoriedade.
  *
  * Consumidores obrigatórios desta definição:
- *   1. Renderização  — ArtistaFormModal itera ARTIST_FORM_SECTIONS.
- *   2. Validação     — artistaSchema é GERADO daqui (buildArtistaSchema).
- *   3. Exportação    — artistaToExportRowFromForm itera as seções/campos.
- *   4. Importação    — parseArtistaImportRow itera as seções/campos.
+ *   1. Renderização  — ArtistFormModal itera ARTIST_FORM_SECTIONS.
+ *   2. Validação     — artistSchema é GERADO daqui (buildArtistSchema).
+ *   3. Exportação    — artistToExportRowFromForm itera as seções/campos.
+ *   4. Importação    — parseArtistImportRow itera as seções/campos.
  *
  * Regra: NÃO criar listas de colunas, mappers de exportação, DTOs de
  * exportação ou headers paralelos. Um campo novo adicionado aqui aparece
@@ -19,13 +19,13 @@
 
 import { z } from "zod";
 import { MUSICAL_GENRE_LABELS } from "@/constants/musicalGenres";
-import type { Artista, ArtistaDistribuidoraEntry } from "@/modules/artist/types/artista.types";
+import type { Artist, DistributorEntry } from "@/modules/artist/types/artist.types";
 import {
-  artistaToFormFields,
-  formToArtistaPayload,
-  ESPECIALIDADES_LABELS,
-  normalizeEspecialidade,
-  normalizeTipoPerfil,
+  artistToFormFields,
+  formToArtistPayload,
+  SPECIALTY_LABELS,
+  normalizeSpecialty,
+  normalizeProfileType,
   pickRow,
   validateSpotifyUrl,
   validateYoutubeUrl,
@@ -34,19 +34,19 @@ import {
   validateSoundcloudUrl,
   validateDeezerUrl,
   validateAppleMusicUrl,
-  type FormToArtistaInput,
+  type FormToArtistInput,
   type UrlValidationState,
-} from "@/modules/artist/services/artista.mapper";
+} from "@/modules/artist/services/artist.mapper";
 
 // ─── Valores do formulário (react-hook-form) ─────────────────────
 
-export interface ArtistaContatoVinculadoValue {
+export interface ArtistLinkedContactValue {
   contactId: string;
-  distribuidoras: ArtistaDistribuidoraEntry[];
+  distributors: DistributorEntry[];
 }
 
 /** Campos controlados pelo react-hook-form (validados pelo schema gerado). */
-export interface ArtistaFormValues {
+export interface ArtistFormValues {
   nomeArtistico: string;
   generoMusical: string;
   especialidades: string[];
@@ -73,19 +73,19 @@ export interface ArtistaFormValues {
   deezer: string;
   appleMusic: string;
   tipoPerfil: "independente" | "com_empresario" | "gravadora" | "editora";
-  distribuidorasGerais: ArtistaDistribuidoraEntry[];
-  contatosVinculados: ArtistaContatoVinculadoValue[];
+  distribuidorasGerais: DistributorEntry[];
+  contatosVinculados: ArtistLinkedContactValue[];
 }
 
 /** Campos de arquivo (upload) — exibidos no formulário, fora do react-hook-form. */
-export interface ArtistaFormFileValues {
+export interface ArtistFormFileValues {
   fotoUrl: string;
   documentosPessoaisUrl: string;
   presskitUrl: string;
 }
 
 /** Todos os campos exibidos no Modal Criar (form + uploads). */
-export type ArtistaFormAllValues = ArtistaFormValues & ArtistaFormFileValues;
+export type ArtistFormAllValues = ArtistFormValues & ArtistFormFileValues;
 
 // ─── Tipos da definição ──────────────────────────────────────────
 
@@ -103,8 +103,8 @@ export type ArtistFieldType =
   | "distribuidoras";
 
 export interface ArtistFormField {
-  /** id do campo — chave em ArtistaFormAllValues. */
-  id: keyof ArtistaFormAllValues;
+  /** id do campo — chave em ArtistFormAllValues. */
+  id: keyof ArtistFormAllValues;
   /** Label exibido no formulário = header da coluna exportada. */
   label: string;
   type: ArtistFieldType;
@@ -131,7 +131,7 @@ export interface ArtistFormSection {
   id: string;
   title: string;
   /** Seção condicional — mesma regra usada na renderização. */
-  visibleWhen?: (values: ArtistaFormValues) => boolean;
+  visibleWhen?: (values: ArtistFormValues) => boolean;
   fields: ArtistFormField[];
 }
 
@@ -164,7 +164,7 @@ export const DISTRIBUIDORAS_OPTIONS = [
   { id: "outros",    label: "Outros" },
 ] as const;
 
-const ESPECIALIDADES_OPTIONS = Object.entries(ESPECIALIDADES_LABELS).map(
+const ESPECIALIDADES_OPTIONS = Object.entries(SPECIALTY_LABELS).map(
   ([value, label]) => ({ value, label }),
 );
 
@@ -199,7 +199,7 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
       },
       {
         id: "documentosPessoaisUrl", label: "Documentos Pessoais (PDF)", type: "file", fullWidth: true,
-        file: { folder: "artistas/documentos", accept: "application/pdf", maxSize: 5 },
+        file: { folder: "artistas/documents", accept: "application/pdf", maxSize: 5 },
       },
       {
         id: "presskitUrl", label: "Presskit / Media Kit", type: "file", fullWidth: true,
@@ -330,7 +330,7 @@ export function allArtistFormFields(): ArtistFormField[] {
 
 // ─── Defaults ────────────────────────────────────────────────────
 
-export function emptyArtistFormValues(): ArtistaFormValues {
+export function emptyArtistFormValues(): ArtistFormValues {
   return {
     nomeArtistico: "", generoMusical: "", especialidades: [], biografia: "", notasInternas: "",
     nome: "", dataNascimento: "", cpfCnpj: "", rg: "", genero: "", endereco: "", telefone: "", email: "",
@@ -350,7 +350,7 @@ const distribuidoraEntrySchema = z.object({
 
 const contatoVinculadoSchema = z.object({
   contactId: z.string(),
-  distribuidoras: z.array(distribuidoraEntrySchema),
+  distributors: z.array(distribuidoraEntrySchema),
 });
 
 function stringFieldSchema(field: ArtistFormField): z.ZodTypeAny {
@@ -367,7 +367,7 @@ function stringFieldSchema(field: ArtistFormField): z.ZodTypeAny {
  * Gera o schema de validação a partir da definição do formulário.
  * required/maxLength vêm exclusivamente de ARTIST_FORM_SECTIONS.
  */
-export function buildArtistaSchema() {
+export function buildArtistSchema() {
   const shape: Record<string, z.ZodTypeAny> = {};
   for (const field of allArtistFormFields()) {
     switch (field.type) {
@@ -400,29 +400,27 @@ export function buildArtistaSchema() {
   return z.object(shape);
 }
 
-export const artistaSchema = buildArtistaSchema() as unknown as z.ZodType<ArtistaFormValues>;
+export const artistSchema = buildArtistSchema() as unknown as z.ZodType<ArtistFormValues>;
 
-// ─── Hidratação (Artista → valores do formulário) ────────────────
+// ─── Hidratação (Artist → valores do formulário) ─────────────────
 // MESMA função para abrir o modal de edição e para exportar: garante
 // que a célula exportada é exatamente o valor que o formulário exibiria.
 
-export function artistaToFormValues(artista: Artista | null | undefined): ArtistaFormAllValues {
-  const f = artistaToFormFields(artista ?? null);
+export function artistToFormValues(artist: Artist | null | undefined): ArtistFormAllValues {
+  const f = artistToFormFields(artist ?? null);
 
-  const rawVinculos = (artista as (Artista & { contatos_vinculados?: unknown }) | null | undefined)?.contatos_vinculados;
-  const contatosVinculados: ArtistaContatoVinculadoValue[] = Array.isArray(rawVinculos)
-    ? (rawVinculos as Array<{ contactId?: string; distribuidoras?: ArtistaDistribuidoraEntry[] }>)
+  const rawLinked = artist?.linkedContacts;
+  const contatosVinculados: ArtistLinkedContactValue[] = Array.isArray(rawLinked)
+    ? rawLinked
         .filter((v) => typeof v?.contactId === "string" && v.contactId)
         .map((v) => ({
-          contactId: v.contactId as string,
-          distribuidoras: Array.isArray(v.distribuidoras) ? v.distribuidoras : [],
+          contactId: v.contactId,
+          distributors: Array.isArray(v.distributors) ? v.distributors : [],
         }))
     : [];
 
-  const rawDists = (artista as (Artista & { distribuidoras_gerais?: unknown }) | null | undefined)?.distribuidoras_gerais;
-  const distribuidorasGerais: ArtistaDistribuidoraEntry[] = Array.isArray(rawDists)
-    ? (rawDists as ArtistaDistribuidoraEntry[])
-    : [];
+  const rawDists = artist?.generalDistributors;
+  const distribuidorasGerais: DistributorEntry[] = Array.isArray(rawDists) ? rawDists : [];
 
   return {
     ...emptyArtistFormValues(),
@@ -435,7 +433,9 @@ export function artistaToFormValues(artista: Artista | null | undefined): Artist
     dataNascimento: f.dataNascimento,
     cpfCnpj: f.cpfCnpj,
     rg: f.rg,
-    genero: typeof artista?.genero === "string" ? artista.genero : "",
+    genero: typeof (artist as unknown as Record<string, unknown> | null | undefined)?.genero === "string"
+      ? ((artist as unknown as Record<string, unknown>).genero as string)
+      : "",
     endereco: f.endereco,
     telefone: f.telefone,
     email: f.email,
@@ -451,7 +451,7 @@ export function artistaToFormValues(artista: Artista | null | undefined): Artist
     soundcloud: f.soundcloud,
     deezer: f.deezer,
     appleMusic: f.appleMusic,
-    tipoPerfil: (f.tipoPerfil || "independente") as ArtistaFormValues["tipoPerfil"],
+    tipoPerfil: (f.tipoPerfil || "independente") as ArtistFormValues["tipoPerfil"],
     distribuidorasGerais,
     contatosVinculados,
     fotoUrl: f.fotoUrl,
@@ -460,19 +460,19 @@ export function artistaToFormValues(artista: Artista | null | undefined): Artist
   };
 }
 
-// ─── Persistência (valores do formulário → payload Artista) ──────
+// ─── Persistência (valores do formulário → payload Artist) ───────
 
 /**
  * Campos preservados em round-trip de edição que NÃO são exibidos no
  * formulário (métricas de plataforma, modelo legado, contrato etc.).
  * No CREATE e na IMPORTAÇÃO valem estes defaults.
  */
-export type ArtistaPreservedInput = Omit<FormToArtistaInput, keyof ArtistaFormAllValues>;
+export type ArtistPreservedInput = Omit<FormToArtistInput, keyof ArtistFormAllValues>;
 
-export function emptyPreservedInput(): ArtistaPreservedInput {
+export function emptyPreservedInput(): ArtistPreservedInput {
   return {
     slugArtistico: "", tagsMusicais: [], faseCarreira: "",
-    statusArtista: "contratado",
+    statusArtista: "signed",
     spotifyOuvintes: "", instagramSeguidores: "", youtubeInscritos: "",
     tiktokSeguidores: "", soundcloudSeguidores: "", deezerFas: "", appleMusicAlbuns: "",
     relacionamentos: [],
@@ -490,8 +490,8 @@ export function emptyPreservedInput(): ArtistaPreservedInput {
  * Extrai de um artista existente os campos preservados em round-trip de
  * edição (não exibidos no formulário). Usa a MESMA hidratação canônica.
  */
-export function artistaToPreservedInput(artista: Artista | null | undefined): ArtistaPreservedInput {
-  const f = artistaToFormFields(artista ?? null);
+export function artistToPreservedInput(artist: Artist | null | undefined): ArtistPreservedInput {
+  const f = artistToFormFields(artist ?? null);
   return {
     slugArtistico: f.slugArtistico,
     tagsMusicais: f.tagsMusicais,
@@ -529,11 +529,11 @@ export function artistaToPreservedInput(artista: Artista | null | undefined): Ar
  * Converte os valores do formulário no payload de persistência.
  * MESMA função para o submit do modal e para a importação.
  */
-export function formValuesToArtistaPayload(
-  values: ArtistaFormAllValues,
-  preserved: ArtistaPreservedInput = emptyPreservedInput(),
-): Omit<Artista, "id" | "user_id" | "created_at" | "updated_at"> {
-  const input: FormToArtistaInput = {
+export function formValuesToArtistPayload(
+  values: ArtistFormAllValues,
+  preserved: ArtistPreservedInput = emptyPreservedInput(),
+): Omit<Artist, "id" | "user_id" | "created_at" | "updated_at"> {
+  const input: FormToArtistInput = {
     ...preserved,
     nomeArtistico: values.nomeArtistico,
     generoMusical: values.generoMusical,
@@ -565,13 +565,13 @@ export function formValuesToArtistaPayload(
     presskitUrl: values.presskitUrl,
   };
 
-  const payload = formToArtistaPayload(input);
+  const payload = formToArtistPayload(input);
   return {
     ...payload,
     genero: values.genero || null,
-    contatos_vinculados: values.contatosVinculados.length > 0 ? values.contatosVinculados : null,
-    distribuidoras_gerais: values.distribuidorasGerais.length > 0 ? values.distribuidorasGerais : null,
-  } as Omit<Artista, "id" | "user_id" | "created_at" | "updated_at">;
+    linkedContacts: values.contatosVinculados.length > 0 ? values.contatosVinculados : null,
+    generalDistributors: values.distribuidorasGerais.length > 0 ? values.distribuidorasGerais : null,
+  } as Omit<Artist, "id" | "user_id" | "created_at" | "updated_at">;
 }
 
 // ─── Codecs de célula (por TIPO de campo, não por fluxo) ─────────
@@ -592,12 +592,12 @@ function parseJsonArray<T>(raw: unknown, isValid: (item: unknown) => boolean): T
 }
 
 /** Valor de célula exportada para um campo — derivado do valor do formulário. */
-export function serializeArtistFieldValue(field: ArtistFormField, values: ArtistaFormAllValues): string {
+export function serializeArtistFieldValue(field: ArtistFormField, values: ArtistFormAllValues): string {
   const v = values[field.id];
   switch (field.type) {
     case "multicheck": {
       const arr = Array.isArray(v) ? (v as string[]) : [];
-      return arr.map((e) => ESPECIALIDADES_LABELS[e] ?? e).join(", ");
+      return arr.map((e) => SPECIALTY_LABELS[e] ?? e).join(", ");
     }
     case "contatos-crm":
     case "distribuidoras":
@@ -611,23 +611,23 @@ export function serializeArtistFieldValue(field: ArtistFormField, values: Artist
 function deserializeArtistFieldValue(
   field: ArtistFormField,
   raw: unknown,
-): ArtistaFormAllValues[keyof ArtistaFormAllValues] {
+): ArtistFormAllValues[keyof ArtistFormAllValues] {
   const s = raw == null ? "" : String(raw).trim();
   switch (field.type) {
     case "multicheck":
-      return s ? s.split(",").map((x) => normalizeEspecialidade(x.trim())).filter(Boolean) : [];
+      return s ? s.split(",").map((x) => normalizeSpecialty(x.trim())).filter(Boolean) : [];
     case "contatos-crm":
-      return parseJsonArray<ArtistaContatoVinculadoValue>(
+      return parseJsonArray<ArtistLinkedContactValue>(
         s,
         (item) => typeof (item as { contactId?: unknown })?.contactId === "string",
       );
     case "distribuidoras":
-      return parseJsonArray<ArtistaDistribuidoraEntry>(
+      return parseJsonArray<DistributorEntry>(
         s,
         (item) => typeof (item as { id?: unknown })?.id === "string",
       );
     case "select":
-      if (field.id === "tipoPerfil") return normalizeTipoPerfil(s);
+      if (field.id === "tipoPerfil") return normalizeProfileType(s);
       return s;
     default:
       return s;
@@ -640,8 +640,8 @@ function deserializeArtistFieldValue(
  * Linha de exportação: itera as seções/campos NA ORDEM VISUAL do formulário.
  * 1 campo do formulário = exatamente 1 coluna, com o label como header.
  */
-export function artistaToExportRowFromForm(artista: Artista): Record<string, string> {
-  const values = artistaToFormValues(artista);
+export function artistToExportRowFromForm(artist: Artist): Record<string, string> {
+  const values = artistToFormValues(artist);
   const row: Record<string, string> = {};
   for (const section of ARTIST_FORM_SECTIONS) {
     for (const field of section.fields) {
@@ -657,7 +657,7 @@ export function artistaToExportRowFromForm(artista: Artista): Record<string, str
  * Headers aceitos por campo no import: label canônico, id do campo e
  * aliases de compatibilidade com planilhas exportadas por versões antigas.
  */
-const IMPORT_HEADER_ALIASES: Partial<Record<keyof ArtistaFormAllValues, string[]>> = {
+const IMPORT_HEADER_ALIASES: Partial<Record<keyof ArtistFormAllValues, string[]>> = {
   fotoUrl:               ["Foto URL"],
   nomeArtistico:         ["Nome", "nome_artistico"],
   generoMusical:         ["Genero Musical", "genero_musical"],
@@ -686,8 +686,8 @@ const IMPORT_HEADER_ALIASES: Partial<Record<keyof ArtistaFormAllValues, string[]
  * MESMA definição usada para renderizar e exportar. Retorna null quando
  * a linha não tem Nome Artístico (registro inválido).
  */
-export function parseArtistaImportRow(row: Record<string, unknown>): ArtistaFormAllValues | null {
-  const values: ArtistaFormAllValues = { ...emptyArtistFormValues(), fotoUrl: "", documentosPessoaisUrl: "", presskitUrl: "" };
+export function parseArtistImportRow(row: Record<string, unknown>): ArtistFormAllValues | null {
+  const values: ArtistFormAllValues = { ...emptyArtistFormValues(), fotoUrl: "", documentosPessoaisUrl: "", presskitUrl: "" };
 
   for (const field of allArtistFormFields()) {
     const headers = [field.label, field.id, ...(IMPORT_HEADER_ALIASES[field.id] ?? [])];

@@ -20,15 +20,15 @@ import {
   Shield, Search, RefreshCw, Upload, AlertTriangle, X, Trash2,
 } from "lucide-react";
 import { RightsKPICards } from "../components/RightsKPICards";
-import { ExecucoesTable, type DetectionRow } from "../components/ExecucoesTable";
+import { DetectionsTable, type DetectionRow } from "../components/DetectionsTable";
 import { DivergenciasPanel } from "../components/DivergenciasPanel";
 import { ResolverDivergenciaModal } from "../components/ResolverDivergenciaModal";
 import type { Divergencia } from "../components/DivergenciasPanel";
 import { EcadImportModal } from "../components/EcadImportModal";
-import { ExecucaoDetailModal } from "../components/ExecucaoDetailModal";
+import { DetectionDetailModal } from "../components/DetectionDetailModal";
 import { ECADViewModal, type EcadReportRow } from "@/modules/monitoring/components/ECADViewModal";
 import { formatRightsDate } from "../utils/date-format";
-import { useDeteccoes } from "@/modules/monitoring/hooks/useDeteccoes";
+import { useDetections } from "@/modules/monitoring/hooks/useDetections";
 import { useEcadReports } from "@/modules/monitoring/hooks/useEcadReports";
 import { storage } from "@/shared/lib/storage";
 import type { ObraWithRelations } from "@/modules/catalog/types/catalog.types";
@@ -66,8 +66,8 @@ export default function RightsMonitoring() {
   const [selectedDivergencia, setSelectedDivergencia] = useState<Divergencia | null>(null);
   const [resolverOpen, setResolverOpen] = useState(false);
 
-  const { deteccoes, isLoading: loadingDet, deleteDeteccao, refetch: refetchDet } = useDeteccoes();
-  const { relatorios, isLoading: loadingEcad, refetch: refetchEcad } = useEcadReports();
+  const { detections, isLoading: loadingDet, deleteDetection, refetch: refetchDet } = useDetections();
+  const { reports, isLoading: loadingEcad, refetch: refetchEcad } = useEcadReports();
   const queryClient = useQueryClient();
 
   // Resolução de catálogo por work_id — SEMPRE por ID (GET /works/:id), nunca
@@ -77,10 +77,10 @@ export default function RightsMonitoring() {
   // lista arbitrária.
   const workIds = useMemo(() => {
     const ids = new Set<string>();
-    for (const d of deteccoes) if (d.work_id) ids.add(d.work_id);
-    for (const r of relatorios) if (r.work_id) ids.add(r.work_id);
+    for (const d of detections) if (d.work_id) ids.add(d.work_id);
+    for (const r of reports) if (r.work_id) ids.add(r.work_id);
     return [...ids];
-  }, [deteccoes, relatorios]);
+  }, [detections, reports]);
 
   const obraQueries = useQueries({
     queries: workIds.map((id) => ({
@@ -131,14 +131,14 @@ export default function RightsMonitoring() {
     return [...names].sort((a, b) => a.localeCompare(b, "pt-BR"));
   }, [obraIndex]);
 
-  const enrichedDeteccoes: DetectionRow[] = useMemo(
-    () => deteccoes.map((det) => ({ ...det, obra: det.work_id ? obraIndex.get(det.work_id) : undefined })),
-    [deteccoes, obraIndex],
+  const enrichedDetections: DetectionRow[] = useMemo(
+    () => detections.map((det) => ({ ...det, obra: det.work_id ? obraIndex.get(det.work_id) : undefined })),
+    [detections, obraIndex],
   );
 
-  const enrichedRelatorios: EcadReportRow[] = useMemo(
-    () => relatorios.map((r) => ({ ...r, obra: r.work_id ? obraIndex.get(r.work_id) : undefined })),
-    [relatorios, obraIndex],
+  const enrichedReports: EcadReportRow[] = useMemo(
+    () => reports.map((r) => ({ ...r, obra: r.work_id ? obraIndex.get(r.work_id) : undefined })),
+    [reports, obraIndex],
   );
 
   const hasActiveFilters = search.trim() !== "" || dateFrom !== "" || dateTo !== "" || artistaFilter !== "all";
@@ -151,7 +151,7 @@ export default function RightsMonitoring() {
   }
 
   const filtered = useMemo(() => {
-    return enrichedDeteccoes.filter((det) => {
+    return enrichedDetections.filter((det) => {
       if (artistaFilter !== "all" && det.obra?.artista_nome !== artistaFilter) return false;
       if (dateFrom) {
         const d = det.detectado_em.split("T")[0];
@@ -171,15 +171,15 @@ export default function RightsMonitoring() {
       }
       return true;
     });
-  }, [enrichedDeteccoes, search, dateFrom, dateTo, artistaFilter]);
+  }, [enrichedDetections, search, dateFrom, dateTo, artistaFilter]);
 
   const detectionsPg = usePagination(filtered, 10);
 
-  const concluidas = filtered.filter((d) => d.status === "concluido").length;
-  const pendentes  = filtered.filter((d) => d.status === "pendente").length;
+  const completed = filtered.filter((d) => d.status === "completed").length;
+  const pending  = filtered.filter((d) => d.status === "pending").length;
   const matched    = filtered.filter((d) => d.obra?.cod_ecad).length;
   const matchRate  = filtered.length > 0 ? Math.round((matched / filtered.length) * 100) : 0;
-  const valorRecebidoEcad = enrichedRelatorios
+  const receivedEcadAmount = enrichedReports
     .filter((r) => r.status === "concluido")
     .reduce((s, r) => s + Number(r.valor_liquido ?? r.valor_bruto ?? 0), 0);
 
@@ -226,7 +226,7 @@ export default function RightsMonitoring() {
 
   const TABS: { key: Tab; label: string; icon: React.ReactNode; badge?: number }[] = [
     { key: "detections",   label: "Detecções",     icon: <Shield className="h-4 w-4" /> },
-    { key: "ecad",         label: "ECAD",          icon: <EcadIcon className="h-4 w-4" />, badge: enrichedRelatorios.length },
+    { key: "ecad",         label: "ECAD",          icon: <EcadIcon className="h-4 w-4" />, badge: enrichedReports.length },
     { key: "divergencias", label: "Divergências",  icon: <AlertTriangle className="h-4 w-4" />, badge: openDivergencias.length },
   ];
 
@@ -248,7 +248,7 @@ export default function RightsMonitoring() {
 
   async function handleConfirmBulkDelete() {
     if (!pendingBulkDelete) return;
-    await Promise.all(pendingBulkDelete.map((id) => deleteDeteccao.mutateAsync(id)));
+    await Promise.all(pendingBulkDelete.map((id) => deleteDetection.mutateAsync(id)));
     setSelectedIds([]);
     setPendingBulkDelete(null);
   }
@@ -272,12 +272,12 @@ export default function RightsMonitoring() {
 
         <RightsKPICards
           total={filtered.length}
-          concluidas={concluidas}
-          pendentes={pendentes}
-          divergencias={openDivergencias.length}
+          completed={completed}
+          pending={pending}
+          divergences={openDivergencias.length}
           matchRate={matchRate}
-          valorRecebidoEcad={valorRecebidoEcad}
-          totalRelatoriosEcad={enrichedRelatorios.length}
+          receivedEcadAmount={receivedEcadAmount}
+          totalEcadReports={enrichedReports.length}
         />
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as Tab)} className="space-y-5">
@@ -348,8 +348,8 @@ export default function RightsMonitoring() {
                       />
                       <span className="text-xs text-muted-foreground">Selecionar página</span>
                     </div>
-                    <ExecucoesTable
-                      deteccoes={detectionsPg.pageItems}
+                    <DetectionsTable
+                      detections={detectionsPg.pageItems}
                       onViewDetail={handleViewDetail}
                       selectedIds={selectedIds}
                       onToggleSelect={toggleSelect}
@@ -374,13 +374,13 @@ export default function RightsMonitoring() {
               <CardContent className="p-0">
                 <ListSectionHeader
                   title="Relatórios ECAD"
-                  count={enrichedRelatorios.length}
+                  count={enrichedReports.length}
                   description="Relatórios de recebimentos externos de direitos, por período e obra."
                   className="px-6 pt-6"
                 />
                 {loadingEcad ? (
                   <div className="py-16 text-center text-sm text-muted-foreground">Carregando...</div>
-                ) : enrichedRelatorios.length === 0 ? (
+                ) : enrichedReports.length === 0 ? (
                   <FeatureGate feature="moduleMonitoring" featureName="Monitoramento">
                     <EmptyState icon={EcadIcon} title="Nenhum relatório ECAD importado" description="Importe relatórios do ECAD para conciliação." />
                   </FeatureGate>
@@ -397,7 +397,7 @@ export default function RightsMonitoring() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {enrichedRelatorios.map((r) => (
+                      {enrichedReports.map((r) => (
                         <FeatureGate key={r.id} feature="moduleMonitoring" featureName="Monitoramento">
                           <TableRow>
                             <TableCell className="font-semibold">{r.periodo}</TableCell>
@@ -435,8 +435,8 @@ export default function RightsMonitoring() {
 
         {/* Modals */}
         <EcadImportModal open={importModalOpen} onOpenChange={setImportModalOpen} />
-        <ExecucaoDetailModal exec={selectedExec} open={detailOpen} onOpenChange={setDetailOpen} />
-        <ECADViewModal relatorio={selectedEcad} open={ecadDetailOpen} onOpenChange={setEcadDetailOpen} />
+        <DetectionDetailModal detection={selectedExec} open={detailOpen} onOpenChange={setDetailOpen} />
+        <ECADViewModal report={selectedEcad} open={ecadDetailOpen} onOpenChange={setEcadDetailOpen} />
         <ResolverDivergenciaModal
           divergencia={selectedDivergencia}
           open={resolverOpen}

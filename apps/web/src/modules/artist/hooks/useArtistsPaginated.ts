@@ -2,35 +2,37 @@ import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { api } from "@/shared/lib/api-client";
-import type { Artista } from "../types/artista.types";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
+import { ArtistRelationshipType } from "@music-os-360/types";
+import type { Artist } from "../types/artist.types";
 
-export interface UseArtistasPaginatedParams {
+export interface UseArtistsPaginatedParams {
   /** 0-indexado, mesma convenção de usePagination()/TablePagination. */
   page: number;
   pageSize: number;
   search?: string;
-  /** exclusivo/parceiro/independente — filtro server-side via EXISTS em contracts (ver artists.service.ts). */
-  vinculo?: "exclusivo" | "parceiro" | "independente";
+  /** exclusive/partner/independent — filtro server-side via EXISTS em contracts (ver artists.service.ts). */
+  vinculo?: ArtistRelationshipType;
   genero?: string;
 }
 
 /**
- * Lista paginada server-side de artistas — companheira de useArtistas()
+ * Lista paginada server-side de artistas — companheira de useArtists()
  * (que continua servindo os usos "me dê todos os artistas": dropdowns,
  * cross-referência em useMetrics/useAgendaParticipants, mutations dos
  * modais). Task H: a tabela de /artistas usa isso para as linhas
  * exibidas; vínculo/gêneros vêm de endpoints agregados dedicados
- * (useArtistasVinculoStats/useGenerosDistintos), nunca da lista completa.
+ * (useArtistsVinculoStats/useMusicGenres), nunca da lista completa.
  */
-export type ArtistaComVinculo = Artista & { vinculo?: "exclusivo" | "parceiro" | "independente" };
+export type ArtistWithRelationship = Artist & { vinculo?: ArtistRelationshipType };
 
-export function useArtistasPaginated({ page, pageSize, search, vinculo, genero }: UseArtistasPaginatedParams) {
+export function useArtistsPaginated({ page, pageSize, search, vinculo, genero }: UseArtistsPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (vinculo) filters.vinculo = vinculo;
   if (genero) filters.genre = genero;
 
-  const result = usePaginatedDataQuery<ArtistaComVinculo>({
-    queryKey: [...QUERY_KEYS.ARTISTAS],
+  const result = usePaginatedDataQuery<ArtistWireRecord>({
+    queryKey: [...QUERY_KEYS.ARTISTS],
     table: "artistas",
     page: page + 1,
     pageSize,
@@ -39,7 +41,7 @@ export function useArtistasPaginated({ page, pageSize, search, vinculo, genero }
   });
 
   return {
-    artistas: result.items,
+    artists: result.items.map((item) => wireToArtist(item) as ArtistWithRelationship),
     total: result.total,
     totalPages: result.totalPages,
     isLoading: result.isLoading,
@@ -50,19 +52,19 @@ export function useArtistasPaginated({ page, pageSize, search, vinculo, genero }
 }
 
 export interface VinculoStats {
-  exclusivo: number;
-  parceiro: number;
-  independente: number;
+  exclusive: number;
+  partner: number;
+  independent: number;
   total: number;
 }
 
-const EMPTY_VINCULO: VinculoStats = { exclusivo: 0, parceiro: 0, independente: 0, total: 0 };
-const EMPTY_GENEROS: string[] = [];
+const EMPTY_VINCULO: VinculoStats = { exclusive: 0, partner: 0, independent: 0, total: 0 };
+const EMPTY_GENRES: string[] = [];
 
 /** GET /artists/stats/vinculo — contagem exata por vínculo, tenant inteiro. */
-export function useArtistasVinculoStats() {
+export function useArtistsVinculoStats() {
   const query = useQuery<VinculoStats>({
-    queryKey: [...QUERY_KEYS.ARTISTAS, "stats", "vinculo"],
+    queryKey: [...QUERY_KEYS.ARTISTS, "stats", "vinculo"],
     queryFn: ({ signal }) => api.get<VinculoStats>("/artists/stats/vinculo", { signal }),
     staleTime: 30_000,
   });
@@ -70,11 +72,11 @@ export function useArtistasVinculoStats() {
 }
 
 /** GET /artists/stats/generos — gêneros distintos do tenant, para o filtro. */
-export function useGenerosDistintos() {
+export function useMusicGenres() {
   const query = useQuery<string[]>({
-    queryKey: [...QUERY_KEYS.ARTISTAS, "stats", "generos"],
+    queryKey: [...QUERY_KEYS.ARTISTS, "stats", "generos"],
     queryFn: ({ signal }) => api.get<string[]>("/artists/stats/generos", { signal }),
     staleTime: 60_000,
   });
-  return { generos: query.data ?? EMPTY_GENEROS, isLoading: query.isLoading };
+  return { genres: query.data ?? EMPTY_GENRES, isLoading: query.isLoading };
 }

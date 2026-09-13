@@ -1,1 +1,1 @@
-export * from "./artista.service";
+export * from "./artist.service";

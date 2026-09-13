@@ -19,13 +19,13 @@ import { join } from "node:path";
  * estrutural — alguém "simplificar" de volta para o ScrollArea e reintroduzir o
  * bug sem que nada falhe.
  */
-const FILE = join(__dirname, "ArtistaVisao360Modal.tsx");
+const FILE = join(__dirname, "ArtistVision360Modal.tsx");
 const source = readFileSync(FILE, "utf8");
 
 describe("Artist 360 modal — scroll owner estrutural", () => {
   it("o scroll owner existe e é um container de overflow nativo", () => {
-    expect(source).toContain('data-testid="visao360-scroll"');
-    expect(source).toMatch(/flex-1 min-h-0 overflow-y-auto[^"]*"\s+data-testid="visao360-scroll"/);
+    expect(source).toContain('data-testid="vision360-scroll"');
+    expect(source).toMatch(/flex-1 min-h-0 overflow-y-auto[^"]*"\s+data-testid="vision360-scroll"/);
   });
 
   it("NÃO voltou a usar o ScrollArea do Radix como scroll owner externo", () => {
@@ -42,6 +42,6 @@ describe("Artist 360 modal — scroll owner estrutural", () => {
   });
 
   it("o modal não ganhou overflow horizontal deliberado no scroll owner", () => {
-    expect(source).not.toMatch(/data-testid="visao360-scroll"[^>]*overflow-x-auto/);
+    expect(source).not.toMatch(/data-testid="vision360-scroll"[^>]*overflow-x-auto/);
   });
 });

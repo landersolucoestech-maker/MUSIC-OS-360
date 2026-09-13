@@ -5,6 +5,7 @@ import { SiApplemusic, SiSoundcloud, SiInstagram, SiTiktok, SiSpotify, SiYoutube
 import { DeezerIcon } from "@/shared/ui/deezer-icon";
 import { Button } from "@/shared/ui/button";
 import { primaryMetricFor } from "@/modules/artist/metrics/platform-metric-capabilities";
+import { normalizeYoutubeProfileUrl } from "@/modules/artist/services/artist.mapper";
 import {
   useArtistPlatformProfiles,
   useSyncArtistPlatformProfile,
@@ -13,7 +14,7 @@ import {
 } from "@/modules/artist/hooks/useArtistPlatformProfiles";
 import { toast } from "sonner";
 
-interface ArtistaPlatformMetricsProps {
+interface ArtistPlatformMetricsProps {
   artistId: string;
   spotifyUrl?: string | null;
   youtubeUrl?: string | null;
@@ -41,13 +42,10 @@ function normalizeSpotifyProfileUrl(input: string | null | undefined): string | 
   return match?.[1] ? `https://open.spotify.com/artist/${match[1]}` : null;
 }
 
-function normalizeYouTubeProfileUrl(input: string | null | undefined): string | null {
-  const value = (input ?? "").trim();
-  if (!value) return null;
-  if (/^UC[A-Za-z0-9_-]{22}$/.test(value)) return `https://www.youtube.com/channel/${value}`;
-  const match = value.match(/^https?:\/\/(?:www\.)?youtube\.com\/channel\/(UC[A-Za-z0-9_-]{22})(?:[/?#].*)?$/i);
-  return match?.[1] ? `https://www.youtube.com/channel/${match[1]}` : null;
-}
+// find-eb3c5c45-class: YouTube parsing lives in artist.mapper.ts's
+// `normalizeYoutubeProfileUrl`/`parseYoutubeRef` — the one canonical
+// implementation shared with the form validator — imported above instead
+// of a second, narrower hand-rolled regex here.
 
 /** API pública do Deezer — só exige um artist id/URL, sem OAuth. */
 function normalizeDeezerProfileUrl(input: string | null | undefined): string | null {
@@ -161,7 +159,7 @@ function renderSyncState(
   );
 }
 
-export function ArtistaPlatformMetrics({
+export function ArtistPlatformMetrics({
   artistId,
   spotifyUrl,
   youtubeUrl,
@@ -170,7 +168,7 @@ export function ArtistaPlatformMetrics({
   deezerUrl,
   appleMusicUrl,
   soundcloudUrl,
-}: ArtistaPlatformMetricsProps) {
+}: ArtistPlatformMetricsProps) {
   const qc = useQueryClient();
   const platformProfiles = useArtistPlatformProfiles(artistId);
   const syncPlatformProfile = useSyncArtistPlatformProfile(artistId);
@@ -201,7 +199,7 @@ export function ArtistaPlatformMetrics({
   const tiktokProfileInput = (tiktokUrl ?? "").trim();
   const appleMusicProfileInput = (appleMusicUrl ?? "").trim();
   const spotifyProfileUrl = normalizeSpotifyProfileUrl(spotifyProfileInput);
-  const youtubeProfileUrl = normalizeYouTubeProfileUrl(youtubeProfileInput);
+  const youtubeProfileUrl = normalizeYoutubeProfileUrl(youtubeProfileInput);
   const deezerProfileUrl = normalizeDeezerProfileUrl(deezerProfileInput);
   const soundcloudProfileUrl = normalizeSoundCloudProfileUrl(soundcloudProfileInput);
   const instagramProfileUrl = normalizeInstagramProfileUrl(instagramProfileInput);

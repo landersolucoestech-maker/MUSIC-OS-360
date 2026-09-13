@@ -26,66 +26,67 @@ import {
 import { SiInstagram, SiTiktok, SiYoutube, SiSpotify, SiSoundcloud, SiApplemusic } from "react-icons/si";
 import { DeezerIcon } from "@/shared/ui/deezer-icon";
 
-import { useArtistas, type Artista } from "@/modules/artist/hooks/useArtistas";
-import { ArtistaPlatformMetrics } from "@/modules/artist/components/ArtistaPlatformMetrics";
-import { useArtistasAssinados } from "@/modules/artist/hooks/useArtistasAssinados";
-import { useArtistasPaginated, useArtistasVinculoStats, useGenerosDistintos } from "@/modules/artist/hooks/useArtistasPaginated";
+import { useArtists, type Artist } from "@/modules/artist/hooks/useArtists";
+import { ArtistPlatformMetrics } from "@/modules/artist/components/ArtistPlatformMetrics";
+import { useSignedArtists } from "@/modules/artist/hooks/useSignedArtists";
+import { useArtistsPaginated, useArtistsVinculoStats, useMusicGenres } from "@/modules/artist/hooks/useArtistsPaginated";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
 import { MetricCard } from "@/shared/components/MetricCard";
 import { TablePagination } from "@/shared/ui/table-pagination";
-import { ArtistaVisao360Modal } from "@/modules/artist/components/ArtistaVisao360Modal";
-import { ArtistaFormModal } from "@/modules/artist/components/ArtistaFormModal";
+import { ArtistVision360Modal } from "@/modules/artist/components/ArtistVision360Modal";
+import { ArtistFormModal } from "@/modules/artist/components/ArtistFormModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { ArtistasSkeleton } from "@/shared/components/PageSkeletons";
 import { toast } from "sonner";
-import { ESPECIALIDADES_LABELS } from "@/modules/artist/mappers";
+import { SPECIALTY_LABELS } from "@/modules/artist/mappers";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
+import { ArtistRelationshipType } from "@music-os-360/types";
 import {
-  parseArtistaImportRow,
-  formValuesToArtistaPayload,
+  parseArtistImportRow,
+  formValuesToArtistPayload,
 } from "@/modules/artist/forms/artist-form.definition";
 import { RequirePermission } from "@/shared/components/RequirePermission";
 
 const getXLSX = () => import("xlsx");
 
-type VinculoTipo = "exclusivo" | "parceiro" | "independente";
-
-// Task H: vínculo (exclusivo/parceiro/independente) vem pronto do backend
-// (ArtistsService.list()/vinculoStats() — classificação por contrato ativo
-// feita server-side, contra o tenant inteiro, não só a página carregada).
-const VINCULO_BADGE: Record<VinculoTipo, { label: string; status: string }> = {
-  exclusivo:    { label: "Exclusivo",    status: "exclusivo" },
-  parceiro:     { label: "Parceiro",     status: "parceiro" },
-  independente: { label: "Independente", status: "sem_contrato" },
+// Task H: relationship type (exclusive/partner/independent) comes ready
+// from the backend (ArtistsService.list()/vinculoStats() — classification by
+// active contract done server-side, against the whole tenant, not just the
+// loaded page).
+const RELATIONSHIP_BADGE: Record<ArtistRelationshipType, { label: string; status: string }> = {
+  [ArtistRelationshipType.EXCLUSIVE]:   { label: "Exclusivo",    status: "exclusivo" },
+  [ArtistRelationshipType.PARTNER]:     { label: "Parceiro",     status: "parceiro" },
+  [ArtistRelationshipType.INDEPENDENT]: { label: "Independente", status: "sem_contrato" },
 };
 
-const PERFIL_LABELS: Record<string, string> = {
+const PROFILE_LABELS: Record<string, string> = {
   independente: "Independente",
   gravadora: "Gravadora",
   editora: "Editora",
   com_empresario: "Com Empresário",
 };
 
-export default function Artistas() {
+export default function Artists() {
   const navigate = useNavigate();
   const { id: editIdFromUrl } = useParams<{ id?: string }>();
-  const { artistas: artistasComContrato } = useArtistasAssinados();
-  const { artistas: todosArtistas, deleteArtista, addArtista, isLoading: artistasLoading } = useArtistas();
+  const { artists: signedArtists } = useSignedArtists();
+  const { artists: allArtists, deleteArtist, addArtist, isLoading: allArtistsLoading } = useArtists();
   const excelInputRef = useRef<HTMLInputElement>(null);
 
-  const isLoading = artistasLoading;
+  const isLoading = allArtistsLoading;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
-  const [generoFilter, setGeneroFilter] = useState<string>("todos");
-  const [perfilFilter, setPerfilFilter] = useState<string>("todos");
+  const [genreFilter, setGenreFilter] = useState<string>("todos");
+  const [profileFilter, setProfileFilter] = useState<string>("todos");
 
   const [createModal, setCreateModal] = useState(false);
-  const [editModal, setEditModal] = useState<{ open: boolean; artista?: Artista }>({ open: false });
-  const [deleteModal, setDeleteModal] = useState<{ open: boolean; artista?: Artista }>({ open: false });
-  const [visao360Modal, setVisao360Modal] = useState<{ open: boolean; artista?: Artista }>({ open: false });
+  const [editModal, setEditModal] = useState<{ open: boolean; artist?: Artist }>({ open: false });
+  const [deleteModal, setDeleteModal] = useState<{ open: boolean; artist?: Artist }>({ open: false });
+  const [vision360Modal, setVision360Modal] = useState<{ open: boolean; artist?: Artist }>({ open: false });
   const [selectedArtists, setSelectedArtists] = useState<string[]>([]);
 
   const debouncedSearch = useDebounce(searchTerm, 300);
@@ -93,32 +94,32 @@ export default function Artistas() {
   const [pageSize, setPageSize] = useState(10);
   useEffect(() => {
     setPage(0);
-  }, [debouncedSearch, statusFilter, generoFilter]);
+  }, [debouncedSearch, statusFilter, genreFilter]);
 
   const {
-    artistas: pageItemsRaw, total, isLoading: isLoadingPage, error: pageError, refetch: refetchPage,
-  } = useArtistasPaginated({
+    artists: pageItemsRaw, total, isLoading: isLoadingPage, error: pageError, refetch: refetchPage,
+  } = useArtistsPaginated({
     page, pageSize, search: debouncedSearch || undefined,
-    vinculo: statusFilter !== "todos" ? (statusFilter as VinculoTipo) : undefined,
-    genero: generoFilter !== "todos" ? generoFilter : undefined,
+    vinculo: statusFilter !== "todos" ? (statusFilter as ArtistRelationshipType) : undefined,
+    genero: genreFilter !== "todos" ? genreFilter : undefined,
   });
 
-  // perfilFilter (tipo_perfil) não é coluna mapeada no TypeORM entity —
-  // refinamento client-side aplicado só sobre a página já carregada
-  // (limitação documentada; não afeta total/paginação, que seguem exatos).
+  // profileFilter (tipo_perfil) is not a mapped column on the TypeORM entity —
+  // client-side refinement applied only over the already-loaded page
+  // (documented limitation; doesn't affect total/pagination, which stay exact).
   const pageItems = useMemo(() => {
-    if (perfilFilter === "todos") return pageItemsRaw;
+    if (profileFilter === "todos") return pageItemsRaw;
     return pageItemsRaw.filter(
-      (a) => ((a.tipo_perfil as string | null | undefined) || "independente") === perfilFilter,
+      (a) => ((a.profileType as string | null | undefined) || "independente") === profileFilter,
     );
-  }, [pageItemsRaw, perfilFilter]);
+  }, [pageItemsRaw, profileFilter]);
 
-  const { stats: vinculoStats } = useArtistasVinculoStats();
-  const { generos: generosUnicos } = useGenerosDistintos();
+  const { stats: relationshipStats } = useArtistsVinculoStats();
+  const { genres: uniqueGenres } = useMusicGenres();
 
   const handleDelete = () => {
-    if (deleteModal.artista) {
-      deleteArtista.mutate(deleteModal.artista.id);
+    if (deleteModal.artist) {
+      deleteArtist.mutate(deleteModal.artist.id);
       setDeleteModal({ open: false });
     }
   };
@@ -136,17 +137,17 @@ export default function Artistas() {
         toast.error("Arquivo Excel vazio");
         return;
       }
-      let importados = 0;
+      let importedCount = 0;
       for (const row of data) {
-        // Itera a definição única do formulário Criar: mesmos campos,
-        // mesma conversão de persistência usada pelo submit do modal.
-        const values = parseArtistaImportRow(row);
+        // Iterates the single Create form definition: same fields, same
+        // persistence conversion used by the modal's submit.
+        const values = parseArtistImportRow(row);
         if (!values) continue;
-        const payload = formValuesToArtistaPayload(values);
-        await addArtista.mutateAsync(payload as any);
-        importados++;
+        const payload = formValuesToArtistPayload(values);
+        await addArtist.mutateAsync(payload as any);
+        importedCount++;
       }
-      toast.success(`${importados} artista(s) importado(s) com sucesso!`);
+      toast.success(`${importedCount} artista(s) importado(s) com sucesso!`);
     } catch {
       toast.error("Erro ao importar arquivo Excel. Verifique se o formato está correto.");
     } finally {
@@ -157,14 +158,14 @@ export default function Artistas() {
   const clearFilters = () => {
     setSearchTerm("");
     setStatusFilter("todos");
-    setPerfilFilter("todos");
-    setGeneroFilter("todos");
+    setProfileFilter("todos");
+    setGenreFilter("todos");
   };
 
-  const hasActiveFilters = searchTerm !== "" || statusFilter !== "todos" || generoFilter !== "todos" || perfilFilter !== "todos";
+  const hasActiveFilters = searchTerm !== "" || statusFilter !== "todos" || genreFilter !== "todos" || profileFilter !== "todos";
 
-  const getInitials = (nome: string) =>
-    nome.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase();
+  const getInitials = (name: string) =>
+    name.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase();
 
   const toggleSelectAll = () => {
     if (selectedArtists.length === pageItems.length) {
@@ -184,28 +185,28 @@ export default function Artistas() {
     if (selectedArtists.length === 0) return;
     const ids = selectedArtists;
     setSelectedArtists([]);
-    const result = await runBulkAction(ids, (id) => deleteArtista.mutateAsync(id));
+    const result = await runBulkAction(ids, (id) => deleteArtist.mutateAsync(id));
     reportBulkResult(result, "excluído", "artista");
   };
 
   useEffect(() => {
     if (!editIdFromUrl || isLoading) return;
     const found =
-      todosArtistas.find((a) => a.id === editIdFromUrl) ||
-      artistasComContrato.find((a) => a.id === editIdFromUrl);
+      allArtists.find((a) => a.id === editIdFromUrl) ||
+      signedArtists.find((a) => a.id === editIdFromUrl);
     if (found) {
-      setEditModal({ open: true, artista: found });
+      setEditModal({ open: true, artist: found });
       return;
     }
-    // Task I: artista fora dos primeiros carregados por useArtistas() sem
-    // filtro — busca direto por ID em vez de nunca resolver o deep link.
+    // Task I: artist outside the first batch loaded by useArtists() with no
+    // filter — fetches directly by ID instead of never resolving the deep link.
     let cancelled = false;
-    storage.findById<Artista>("artistas", editIdFromUrl).then((entity) => {
+    storage.findById<ArtistWireRecord>("artistas", editIdFromUrl).then((entity) => {
       if (cancelled || !entity) return;
-      setEditModal({ open: true, artista: entity });
+      setEditModal({ open: true, artist: wireToArtist(entity) });
     });
     return () => { cancelled = true; };
-  }, [editIdFromUrl, isLoading, todosArtistas, artistasComContrato]);
+  }, [editIdFromUrl, isLoading, allArtists, signedArtists]);
 
   return (
     <>
@@ -228,7 +229,7 @@ export default function Artistas() {
               size="sm"
               className="h-8 text-xs gap-1.5"
               onClick={() => setCreateModal(true)}
-              data-testid="button-novo-artista"
+              data-testid="button-new-artist"
             >
               <PlusCircle className="h-3.5 w-3.5" />
               Novo Artista
@@ -242,28 +243,28 @@ export default function Artistas() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             title="Total de Artistas"
-            value={vinculoStats.total}
+            value={relationshipStats.total}
             description="no casting"
             icon={Users}
             accent="primary"
           />
           <MetricCard
             title="Artistas Exclusivos"
-            value={vinculoStats.exclusivo}
+            value={relationshipStats.exclusive}
             description="contrato exclusivo ativo"
             icon={Sparkles}
             accent="primary"
           />
           <MetricCard
             title="Artistas Parceiros"
-            value={vinculoStats.parceiro}
+            value={relationshipStats.partner}
             description="vínculo não exclusivo"
             icon={Music}
             accent="warning"
           />
           <MetricCard
             title="Independentes"
-            value={vinculoStats.independente}
+            value={relationshipStats.independent}
             description="sem contrato ativo"
             icon={CheckCircle}
             accent="success"
@@ -288,29 +289,29 @@ export default function Artistas() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos os artistas</SelectItem>
-                <SelectItem value="exclusivo">Exclusivo</SelectItem>
-                <SelectItem value="parceiro">Parceiro</SelectItem>
-                <SelectItem value="independente">Independente</SelectItem>
+                <SelectItem value={ArtistRelationshipType.EXCLUSIVE}>Exclusivo</SelectItem>
+                <SelectItem value={ArtistRelationshipType.PARTNER}>Parceiro</SelectItem>
+                <SelectItem value={ArtistRelationshipType.INDEPENDENT}>Independente</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={perfilFilter} onValueChange={setPerfilFilter}>
+            <Select value={profileFilter} onValueChange={setProfileFilter}>
               <SelectTrigger className="w-auto min-w-[138px] shrink-0 h-8 text-sm bg-card border-border">
                 <SelectValue placeholder="Todos os Perfis" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos os Perfis</SelectItem>
-                {Object.entries(PERFIL_LABELS).sort(([, a], [, b]) => a.localeCompare(b, "pt-BR")).map(([value, label]) => (
+                {Object.entries(PROFILE_LABELS).sort(([, a], [, b]) => a.localeCompare(b, "pt-BR")).map(([value, label]) => (
                   <SelectItem key={value} value={value}>{label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Select value={generoFilter} onValueChange={setGeneroFilter}>
+            <Select value={genreFilter} onValueChange={setGenreFilter}>
               <SelectTrigger className="w-auto min-w-[132px] shrink-0 h-8 text-sm bg-card border-border">
                 <SelectValue placeholder="Todos Gêneros" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos Gêneros</SelectItem>
-                {generosUnicos.map((g) => (
+                {uniqueGenres.map((g) => (
                   <SelectItem key={g} value={g}>{g.charAt(0).toUpperCase() + g.slice(1)}</SelectItem>
                 ))}
               </SelectContent>
@@ -323,8 +324,8 @@ export default function Artistas() {
             </Button>
           )}
           {hasActiveFilters && (
-            <span className="text-xs text-muted-foreground ml-auto" data-testid="text-contagem-artistas">
-              {total} de {vinculoStats.total} artistas
+            <span className="text-xs text-muted-foreground ml-auto" data-testid="text-artist-count">
+              {total} de {relationshipStats.total} artistas
             </span>
           )}
         </div>
@@ -381,29 +382,29 @@ export default function Artistas() {
               />
             )
           ) : (
-            pageItems.map((artista) => {
-              const vinculo = VINCULO_BADGE[artista.vinculo ?? "independente"];
+            pageItems.map((artist) => {
+              const relationship = RELATIONSHIP_BADGE[artist.vinculo ?? ArtistRelationshipType.INDEPENDENT];
 
               return (
-                <div key={artista.id}>
-                  <Card className="group duration-200" data-testid={`card-artista-${artista.id}`}>
+                <div key={artist.id}>
+                  <Card className="group duration-200" data-testid={`card-artist-${artist.id}`}>
                     <CardContent className="p-4">
                       <div className="flex items-start gap-4">
                         {/* Checkbox */}
                         <div className="pt-1">
                           <Checkbox
-                            checked={selectedArtists.includes(artista.id)}
-                            onCheckedChange={() => toggleSelectArtist(artista.id)}
+                            checked={selectedArtists.includes(artist.id)}
+                            onCheckedChange={() => toggleSelectArtist(artist.id)}
                           />
                         </div>
 
                         {/* Avatar */}
                         <Avatar className="h-12 w-12 shrink-0">
-                          {artista.foto_url && (
-                            <AvatarImage src={artista.foto_url} alt={artista.nome_artistico} className="object-cover" />
+                          {artist.photoUrl && (
+                            <AvatarImage src={artist.photoUrl} alt={artist.stageName} className="object-cover" />
                           )}
                           <AvatarFallback className="bg-primary/10 border border-primary/20 text-primary text-sm font-semibold">
-                            {getInitials(artista.nome_artistico)}
+                            {getInitials(artist.stageName)}
                           </AvatarFallback>
                         </Avatar>
 
@@ -414,28 +415,28 @@ export default function Artistas() {
                             <div className="space-y-2">
                               <div className="flex items-start gap-2 flex-wrap">
                                 <h3 className="font-semibold text-sm leading-tight text-foreground">
-                                  {artista.nome_artistico}
+                                  {artist.stageName}
                                 </h3>
-                                <StatusBadge status={vinculo.status} label={vinculo.label} />
+                                <StatusBadge status={relationship.status} label={relationship.label} />
                               </div>
-                              {Array.isArray(artista.especialidades) && artista.especialidades.length > 0 && (
+                              {Array.isArray(artist.specialties) && artist.specialties.length > 0 && (
                                 <p className="text-[11px] text-muted-foreground leading-tight">
-                                  {artista.especialidades.map((e: string) => ESPECIALIDADES_LABELS[e] ?? e).join(" · ")}
+                                  {artist.specialties.map((e: string) => SPECIALTY_LABELS[e] ?? e).join(" · ")}
                                 </p>
                               )}
-                              {artista.genero_musical && (
+                              {artist.musicGenre && (
                                 <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-border text-muted-foreground h-5">
-                                  {artista.genero_musical}
+                                  {artist.musicGenre}
                                 </Badge>
                               )}
                               <div className="flex flex-col gap-1 text-xs text-muted-foreground">
                                 <span className="flex items-center gap-1.5">
                                   <Phone className="h-3 w-3" />
-                                  {artista.telefone || "Não informado"}
+                                  {artist.phone || "Não informado"}
                                 </span>
                                 <span className="flex items-center gap-1.5">
                                   <Mail className="h-3 w-3" />
-                                  {artista.email || "Não informado"}
+                                  {artist.email || "Não informado"}
                                 </span>
                               </div>
                             </div>
@@ -448,13 +449,13 @@ export default function Artistas() {
                                 <div className="flex items-center gap-2">
                                   {(() => {
                                     const links = [
-                                      { url: artista.instagram_url, icon: <SiInstagram className="h-4 w-4" />, label: "Instagram" },
-                                      { url: artista.tiktok_url, icon: <SiTiktok className="h-4 w-4" />, label: "TikTok" },
-                                      { url: artista.youtube_url, icon: <SiYoutube className="h-4 w-4" />, label: "YouTube" },
-                                      { url: artista.spotify_url, icon: <SiSpotify className="h-4 w-4" />, label: "Spotify" },
-                                      { url: artista.deezer_url, icon: <DeezerIcon className="h-4 w-4" />, label: "Deezer" },
-                                      { url: artista.apple_music_url, icon: <SiApplemusic className="h-4 w-4" />, label: "Apple Music" },
-                                      { url: artista.soundcloud_url, icon: <SiSoundcloud className="h-4 w-4" />, label: "SoundCloud" },
+                                      { url: artist.instagramUrl, icon: <SiInstagram className="h-4 w-4" />, label: "Instagram" },
+                                      { url: artist.tiktokUrl, icon: <SiTiktok className="h-4 w-4" />, label: "TikTok" },
+                                      { url: artist.youtubeUrl, icon: <SiYoutube className="h-4 w-4" />, label: "YouTube" },
+                                      { url: artist.spotifyUrl, icon: <SiSpotify className="h-4 w-4" />, label: "Spotify" },
+                                      { url: artist.deezerUrl, icon: <DeezerIcon className="h-4 w-4" />, label: "Deezer" },
+                                      { url: artist.appleMusicUrl, icon: <SiApplemusic className="h-4 w-4" />, label: "Apple Music" },
+                                      { url: artist.soundcloudUrl, icon: <SiSoundcloud className="h-4 w-4" />, label: "SoundCloud" },
                                     ];
                                     return links.map(({ url, icon, label }) =>
                                       url ? (
@@ -485,19 +486,19 @@ export default function Artistas() {
                             <div className="flex items-start justify-between gap-3">
                               <div className="space-y-0.5 text-xs">
                                 {(() => {
-                                  const tp = artista.tipo_perfil as string | null | undefined;
+                                  const tp = artist.profileType as string | null | undefined;
                                   if (tp === "com_empresario") {
                                     return (
                                       <>
                                         <p className="font-medium text-foreground"><span className="text-muted-foreground font-normal">Artista:</span> Com Empresário</p>
-                                        {artista.empresario_nome && (
-                                          <p className="text-muted-foreground">{artista.empresario_nome}</p>
+                                        {artist.managerName && (
+                                          <p className="text-muted-foreground">{artist.managerName}</p>
                                         )}
-                                        {artista.empresario_telefone && (
-                                          <p className="text-muted-foreground">{artista.empresario_telefone}</p>
+                                        {artist.managerPhone && (
+                                          <p className="text-muted-foreground">{artist.managerPhone}</p>
                                         )}
-                                        {artista.empresario_email && (
-                                          <p className="text-muted-foreground">{artista.empresario_email}</p>
+                                        {artist.managerEmail && (
+                                          <p className="text-muted-foreground">{artist.managerEmail}</p>
                                         )}
                                       </>
                                     );
@@ -507,14 +508,14 @@ export default function Artistas() {
                                     return (
                                       <>
                                         <p className="font-medium text-foreground"><span className="text-muted-foreground font-normal">Artista:</span> {label}</p>
-                                        {artista.gravadora_nome && (
-                                          <p className="text-muted-foreground">{artista.gravadora_nome}</p>
+                                        {artist.labelName && (
+                                          <p className="text-muted-foreground">{artist.labelName}</p>
                                         )}
-                                        {artista.gravadora_responsavel_nome && (
-                                          <p className="text-muted-foreground">{artista.gravadora_responsavel_nome}</p>
+                                        {artist.labelResponsibleName && (
+                                          <p className="text-muted-foreground">{artist.labelResponsibleName}</p>
                                         )}
-                                        {artista.gravadora_telefone && (
-                                          <p className="text-muted-foreground">{artista.gravadora_telefone}</p>
+                                        {artist.labelPhone && (
+                                          <p className="text-muted-foreground">{artist.labelPhone}</p>
                                         )}
                                       </>
                                     );
@@ -528,8 +529,8 @@ export default function Artistas() {
                                 <Button
                                   size="sm"
                                   className="h-7 text-xs gap-1.5"
-                                  onClick={() => setVisao360Modal({ open: true, artista: artista as any })}
-                                  data-testid={`button-visao360-${artista.id}`}
+                                  onClick={() => setVision360Modal({ open: true, artist: artist as any })}
+                                  data-testid={`button-vision360-${artist.id}`}
                                 >
                                   <Sparkles className="h-3.5 w-3.5" />
                                   Visão 360°
@@ -540,7 +541,7 @@ export default function Artistas() {
                                       size="sm"
                                       variant="ghost"
                                       className="h-7 w-7 p-0"
-                                      data-testid={`button-menu-${artista.id}`}
+                                      data-testid={`button-menu-${artist.id}`}
                                     >
                                       <MoreVertical className="h-3.5 w-3.5" />
                                     </Button>
@@ -548,8 +549,8 @@ export default function Artistas() {
                                   <DropdownMenuContent align="end">
                                     <RequirePermission module="artists" action="write">
                                       <DropdownMenuItem
-                                        onClick={() => setEditModal({ open: true, artista })}
-                                        data-testid={`menu-edit-${artista.id}`}
+                                        onClick={() => setEditModal({ open: true, artist })}
+                                        data-testid={`menu-edit-${artist.id}`}
                                       >
                                         <Pencil className="h-3.5 w-3.5 mr-2" />
                                         Editar
@@ -559,8 +560,8 @@ export default function Artistas() {
                                     <RequirePermission module="artists" action="delete">
                                       <DropdownMenuItem
                                         className="text-destructive focus:text-destructive"
-                                        onClick={() => setDeleteModal({ open: true, artista: artista as any })}
-                                        data-testid={`menu-delete-${artista.id}`}
+                                        onClick={() => setDeleteModal({ open: true, artist: artist as any })}
+                                        data-testid={`menu-delete-${artist.id}`}
                                       >
                                         <Trash2 className="h-3.5 w-3.5 mr-2" />
                                         Excluir
@@ -576,15 +577,15 @@ export default function Artistas() {
                     </CardContent>
                   </Card>
 
-                  <ArtistaPlatformMetrics
-                    artistId={artista.id}
-                    spotifyUrl={(artista as Artista).spotify_url ?? null}
-                    youtubeUrl={(artista as Artista).youtube_url ?? null}
-                    instagramUrl={(artista as Artista).instagram_url ?? null}
-                    tiktokUrl={(artista as Artista).tiktok_url ?? null}
-                    deezerUrl={(artista as Artista).deezer_url ?? null}
-                    appleMusicUrl={(artista as Artista).apple_music_url ?? null}
-                    soundcloudUrl={(artista as Artista).soundcloud_url ?? null}
+                  <ArtistPlatformMetrics
+                    artistId={artist.id}
+                    spotifyUrl={artist.spotifyUrl ?? null}
+                    youtubeUrl={artist.youtubeUrl ?? null}
+                    instagramUrl={artist.instagramUrl ?? null}
+                    tiktokUrl={artist.tiktokUrl ?? null}
+                    deezerUrl={artist.deezerUrl ?? null}
+                    appleMusicUrl={artist.appleMusicUrl ?? null}
+                    soundcloudUrl={artist.soundcloudUrl ?? null}
                   />
                 </div>
               );
@@ -607,21 +608,21 @@ export default function Artistas() {
     </MainLayout>
     )}
 
-      {/* Fora do gate de isLoading de propósito: ArtistaFormModal usa
-          useArtistas() internamente (para as mutations). Montá-lo só depois
-          do isLoading virar false criava um observer novo na mesma query;
-          com a query sempre em erro (backend fora do ar), refetchOnMount
-          voltava o status pra "pending", isLoading virava true de novo, o
-          gate desmontava o modal — loop infinito de skeleton a cada retry
-          (~12s). Mantê-lo sempre montado quebra o ciclo. */}
-      <ArtistaFormModal open={createModal} onOpenChange={setCreateModal} />
-      <ArtistaFormModal
+      {/* Deliberately outside the isLoading gate: ArtistFormModal uses
+          useArtists() internally (for the mutations). Mounting it only after
+          isLoading became false created a new observer on the same query;
+          with the query always in error (backend down), refetchOnMount
+          flipped the status back to "pending", isLoading became true again,
+          the gate unmounted the modal — an infinite skeleton loop on every
+          retry (~12s). Keeping it always mounted breaks the cycle. */}
+      <ArtistFormModal open={createModal} onOpenChange={setCreateModal} />
+      <ArtistFormModal
         open={editModal.open}
         onOpenChange={(open) => {
           setEditModal((prev) => ({ ...prev, open }));
           if (!open && editIdFromUrl) navigate("/artistas");
         }}
-        artista={editModal.artista}
+        artist={editModal.artist}
       />
       <DeleteConfirmModal
         open={deleteModal.open}
@@ -630,10 +631,10 @@ export default function Artistas() {
         description="Tem certeza que deseja excluir este artista? Esta ação não pode ser desfeita."
         onConfirm={handleDelete}
       />
-      <ArtistaVisao360Modal
-        open={visao360Modal.open}
-        onOpenChange={(open) => setVisao360Modal({ ...visao360Modal, open })}
-        artista={visao360Modal.artista as any}
+      <ArtistVision360Modal
+        open={vision360Modal.open}
+        onOpenChange={(open) => setVision360Modal({ ...vision360Modal, open })}
+        artista={vision360Modal.artist as any}
       />
     </>
   );

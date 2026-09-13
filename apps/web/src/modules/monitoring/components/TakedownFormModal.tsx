@@ -49,7 +49,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
       motivo: "",
       descricao: "",
       prioridade: "media",
-      status: "pendente",
+      status: "pending",
       dataIdentificacao: new Date().toISOString().split("T")[0],
       evidencias: "",
       observacoes: "",
@@ -70,7 +70,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
         motivo: n.motivo,
         descricao: n.descricao,
         prioridade: (n.prioridade || "media") as TakedownFormData["prioridade"],
-        status: (n.status || "pendente") as TakedownFormData["status"],
+        status: (n.status || "pending") as TakedownFormData["status"],
         dataIdentificacao: n.data || new Date().toISOString().split("T")[0],
         evidencias: n.evidencias,
         observacoes: n.observacoes,
@@ -86,7 +86,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
         motivo: "",
         descricao: "",
         prioridade: "media",
-        status: "pendente",
+        status: "pending",
         dataIdentificacao: new Date().toISOString().split("T")[0],
         evidencias: "",
         observacoes: "",
@@ -209,15 +209,15 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
                   name="status"
                   control={control}
                   render={({ field }) => (
-                    <Select value={field.value ?? "pendente"} onValueChange={field.onChange} disabled={isViewMode}>
+                    <Select value={field.value ?? "pending"} onValueChange={field.onChange} disabled={isViewMode}>
                       <SelectTrigger data-testid="select-status">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="pendente">Pendente</SelectItem>
-                        <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                        <SelectItem value="concluido">Concluído</SelectItem>
-                        <SelectItem value="rejeitado">Rejeitado</SelectItem>
+                        <SelectItem value="pending">Pendente</SelectItem>
+                        <SelectItem value="in_progress">Em Andamento</SelectItem>
+                        <SelectItem value="completed">Concluído</SelectItem>
+                        <SelectItem value="rejected">Rejeitado</SelectItem>
                       </SelectContent>
                     </Select>
                   )}

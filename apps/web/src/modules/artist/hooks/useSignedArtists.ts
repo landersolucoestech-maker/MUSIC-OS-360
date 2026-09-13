@@ -1,34 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
-import type { ArtistaAssinado } from "@/modules/artist/types/artista.types";
+import type { SignedArtist } from "@/modules/artist/types/artist.types";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import { storage } from "@/shared/lib/storage";
 import { QUERY_KEYS, getCacheConfig } from "@/shared/lib/query-config";
 
-export type { ArtistaAssinado };
+export type { SignedArtist };
 
-const cacheConfig = getCacheConfig([...QUERY_KEYS.ARTISTAS]);
+const cacheConfig = getCacheConfig([...QUERY_KEYS.ARTISTS]);
 
 // Referência estável — ver mesmo comentário em shared/hooks/useDataQuery.ts:
 // `query.data ?? []` alocaria um array novo a cada render sem dado (loading
 // ou erro sem sucesso anterior), quebrando useMemo/useEffect que dependem
 // deste array em quem consome o hook.
-const EMPTY_ARTISTAS: readonly ArtistaAssinado[] = [];
+const EMPTY_ARTISTS: readonly SignedArtist[] = [];
 
-export function useArtistasAssinados() {
-  const query = useQuery<ArtistaAssinado[], Error, ArtistaAssinado[]>({
-    queryKey: [...QUERY_KEYS.ARTISTAS],
+export function useSignedArtists() {
+  const query = useQuery<ArtistWireRecord[], Error, SignedArtist[]>({
+    queryKey: [...QUERY_KEYS.ARTISTS],
     queryFn: async () =>
-      storage.list<ArtistaAssinado>("artistas"),
+      storage.list<ArtistWireRecord>("artistas"),
     select: (data) =>
-      data.filter((a) => a.status === "contratado"),
+      data.map(wireToArtist).filter((a) => a.status === "signed"),
     staleTime: cacheConfig.staleTime,
     gcTime: cacheConfig.gcTime,
   });
 
   return {
-    artistas: query.data ?? EMPTY_ARTISTAS,
+    artists: query.data ?? EMPTY_ARTISTS,
     isLoading: query.isLoading,
     error: query.error,
     refetch: query.refetch,
   };
 }
-

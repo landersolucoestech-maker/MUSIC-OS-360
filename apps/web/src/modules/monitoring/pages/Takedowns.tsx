@@ -21,7 +21,7 @@ import { UnavailableState } from "@/shared/components/UnavailableState";
 import { useTakedowns } from "@/modules/monitoring/hooks/useTakedowns";
 import { useTakedownsPaginated, useTakedownsStats } from "@/modules/monitoring/hooks/useTakedownsPaginated";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import { formatTakedownDate, normalizeTakedown, statusBadge, tipoBadge, isResolved, isPending, isInProgress } from "@/modules/monitoring/lib/takedown-format";
+import { formatTakedownDate, normalizeTakedown, statusBadge, typeBadge, isResolved, isPending, isInProgress } from "@/modules/monitoring/lib/takedown-format";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 
 export default function Takedowns() {
@@ -51,7 +51,7 @@ export default function Takedowns() {
   // interseção é vazia — não existe combinação de status que satisfaça as
   // duas, então nem chamamos a API (equivalente ao filteredRows.length===0
   // de antes).
-  const tabStatus = activeTab === "pendentes" ? "pendente" : activeTab === "resolvidos" ? "concluido" : undefined;
+  const tabStatus = activeTab === "pendentes" ? "pending" : activeTab === "resolvidos" ? "completed" : undefined;
   const statusContradiction = tabStatus !== undefined && statusFilter !== "all" && statusFilter !== tabStatus;
   const effectiveStatus = statusContradiction ? undefined : (tabStatus ?? (statusFilter !== "all" ? statusFilter : undefined));
 
@@ -199,10 +199,10 @@ export default function Takedowns() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="pendente">Pendente</SelectItem>
-              <SelectItem value="em_andamento">Em Andamento</SelectItem>
-              <SelectItem value="concluido">Concluído</SelectItem>
-              <SelectItem value="rejeitado">Rejeitado</SelectItem>
+              <SelectItem value="pending">Pendente</SelectItem>
+              <SelectItem value="in_progress">Em Andamento</SelectItem>
+              <SelectItem value="completed">Concluído</SelectItem>
+              <SelectItem value="rejected">Rejeitado</SelectItem>
             </SelectContent>
           </Select>
           {hasActiveFilters && (
@@ -283,7 +283,7 @@ export default function Takedowns() {
                         />
                       </TableCell>
                       <TableCell className="font-medium">{n.title || "—"}</TableCell>
-                      <TableCell>{tipoBadge(n.type)}</TableCell>
+                      <TableCell>{typeBadge(n.type)}</TableCell>
                       <TableCell>{n.plataforma ? <Badge variant="neutral">{n.plataforma}</Badge> : "—"}</TableCell>
                       <TableCell>{n.motivo || "—"}</TableCell>
                       <TableCell>{formatTakedownDate(n.data) ?? "—"}</TableCell>

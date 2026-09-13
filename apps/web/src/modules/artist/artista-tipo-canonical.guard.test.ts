@@ -19,16 +19,16 @@
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
-import { emptyPreservedInput, artistaToPreservedInput } from "./forms/artist-form.definition";
-import { artistaToFormFields, formToArtistaPayload } from "./services/artista.mapper";
+import { emptyPreservedInput, artistToPreservedInput } from "./forms/artist-form.definition";
+import { artistToFormFields, formToArtistPayload } from "./services/artist.mapper";
 
 const REMOVED_IDENTIFIERS = [/\bArtistaTipo\b/, /\btipoArtista\b/];
 
 const FILES_TO_SCAN = [
   path.resolve(__dirname, "../../shared/types/enums.ts"),
-  path.resolve(__dirname, "./services/artista.mapper.ts"),
+  path.resolve(__dirname, "./services/artist.mapper.ts"),
   path.resolve(__dirname, "./forms/artist-form.definition.ts"),
-  path.resolve(__dirname, "./types/artista.types.ts"),
+  path.resolve(__dirname, "./types/artist.types.ts"),
 ];
 
 describe("artists domain — o campo tipo (formação do artista) foi removido, não normalizado", () => {
@@ -43,19 +43,19 @@ describe("artists domain — o campo tipo (formação do artista) foi removido, 
     expect(emptyPreservedInput()).not.toHaveProperty("tipoArtista");
   });
 
-  it("artistaToFormFields() não devolve tipoArtista para nenhum artista", () => {
-    const fields = artistaToFormFields({ nome_artistico: "X" } as never);
+  it("artistToFormFields() não devolve tipoArtista para nenhum artista", () => {
+    const fields = artistToFormFields({ nome_artistico: "X" } as never);
     expect(fields).not.toHaveProperty("tipoArtista");
   });
 
-  it("artistaToPreservedInput() não devolve tipoArtista", () => {
-    const preserved = artistaToPreservedInput({ nome_artistico: "X" } as never);
+  it("artistToPreservedInput() não devolve tipoArtista", () => {
+    const preserved = artistToPreservedInput({ nome_artistico: "X" } as never);
     expect(preserved).not.toHaveProperty("tipoArtista");
   });
 
-  it("formToArtistaPayload() nunca envia a chave tipo ao backend", () => {
-    const fields = artistaToFormFields({ nome_artistico: "X" } as never);
-    const payload = formToArtistaPayload({ ...fields, contratoId: "" });
+  it("formToArtistPayload() nunca envia a chave tipo ao backend", () => {
+    const fields = artistToFormFields({ nome_artistico: "X" } as never);
+    const payload = formToArtistPayload({ ...fields, contratoId: "" });
     expect(payload).not.toHaveProperty("tipo");
   });
 });

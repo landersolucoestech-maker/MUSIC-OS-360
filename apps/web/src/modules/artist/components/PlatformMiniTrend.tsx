@@ -4,7 +4,7 @@ import { cn } from "@/shared/lib/utils";
 import {
   computeEvolutionSummary,
   type TrendDirection,
-} from "@/modules/artist/components/ArtistaEvolutionCard";
+} from "@/modules/artist/components/ArtistEvolutionCard";
 interface MetricEvolutionPoint { date: string; value?: number; [key: string]: unknown; }
 
 interface PlatformMiniTrendProps {
@@ -29,8 +29,8 @@ interface PlatformMiniTrendProps {
 
 /**
  * Mini badge de tendência + sparkline para uso DENTRO dos tiles compactos
- * de `ArtistaPlatformMetrics`. Para o card grande da aba "Evolução" use
- * `ArtistaEvolutionCard`.
+ * de `ArtistPlatformMetrics`. Para o card grande da aba "Evolução" use
+ * `ArtistEvolutionCard`.
  *
  * Por padrão renderiza nada se não houver pelo menos 2 pontos com valor —
  * assim os tiles não ficam "ruidosos" enquanto o histórico é coletado.

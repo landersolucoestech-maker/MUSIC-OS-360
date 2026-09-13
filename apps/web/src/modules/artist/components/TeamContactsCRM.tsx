@@ -1,5 +1,5 @@
 // ============================================================================
-// EquipeContatosCRM — seção "Equipe / Contatos" do cadastro/edição de artista.
+// TeamContactsCRM — seção "Equipe / Contatos" do cadastro/edição de artista.
 // ----------------------------------------------------------------------------
 // Substitui os antigos campos manuais (Nome/Categoria/Telefone/E-mail) por
 // VÍNCULOS com contatos já cadastrados no CRM (CRM > Contatos), que é a fonte
@@ -23,28 +23,25 @@ import { contatoPayloadToContactData } from "@/modules/crm-relationships/service
 import { ContatoFormModal, type ContatoFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
 import { contactTypeOptions, labelFor } from "@/modules/crm-relationships/constants";
 import type { Contact } from "@/modules/crm-relationships/types";
+import type { DistributorEntry } from "@/modules/artist/types/artist.types";
 
 // ─── Tipos ────────────────────────────────────────────────────────
 
-export interface DistribuidoraEntry {
-  id: string;
-  email: string;
-  nomeCustom?: string;
-}
+export type { DistributorEntry };
 
-export interface ContatoVinculadoForm {
+export interface LinkedContactForm {
   contactId: string;
-  distribuidoras: DistribuidoraEntry[];
+  distributors: DistributorEntry[];
 }
 
-interface EquipeContatosCRMProps {
-  value: ContatoVinculadoForm[];
-  onChange: (next: ContatoVinculadoForm[]) => void;
+interface TeamContactsCRMProps {
+  value: LinkedContactForm[];
+  onChange: (next: LinkedContactForm[]) => void;
 }
 
 // ─── Constantes ───────────────────────────────────────────────────
 
-const DISTRIBUIDORAS_OPTIONS = [
+const DISTRIBUTORS_OPTIONS = [
   { id: "onerpm", label: "ONErpm" },
   { id: "distrokid", label: "DistroKid" },
   { id: "30por1", label: "30 Por 1" },
@@ -56,7 +53,7 @@ const DISTRIBUIDORAS_OPTIONS = [
 
 // Categorias do CRM (contactType) que mantêm a seção de Distribuidoras:
 // Empresário Artístico, Gravadora/Selo e Editora Musical.
-const DISTRIBUIDORA_CONTACT_TYPES = new Set<Contact["contactType"]>([
+const DISTRIBUTOR_CONTACT_TYPES = new Set<Contact["contactType"]>([
   "ARTIST_MANAGER",
   "LABEL_RECORD",
   "MUSIC_PUBLISHER",
@@ -64,12 +61,12 @@ const DISTRIBUIDORA_CONTACT_TYPES = new Set<Contact["contactType"]>([
 
 // ─── Componente ───────────────────────────────────────────────────
 
-export function EquipeContatosCRM({ value, onChange }: EquipeContatosCRMProps) {
+export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
   const { contacts, createContact } = useContacts();
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [novoContatoOpen, setNovoContatoOpen] = useState(false);
+  const [newContactOpen, setNewContactOpen] = useState(false);
 
   const linkedIds = useMemo(() => new Set(value.map((v) => v.contactId)), [value]);
 
@@ -99,7 +96,7 @@ export function EquipeContatosCRM({ value, onChange }: EquipeContatosCRMProps) {
   // ── Vínculos ────────────────────────────────────────────────────
   function addLink(contactId: string) {
     if (linkedIds.has(contactId)) return;
-    onChange([...value, { contactId, distribuidoras: [] }]);
+    onChange([...value, { contactId, distributors: [] }]);
     setSearch("");
     setSearchOpen(false);
   }
@@ -109,30 +106,30 @@ export function EquipeContatosCRM({ value, onChange }: EquipeContatosCRMProps) {
   }
 
   // ── Distribuidoras (por vínculo) ────────────────────────────────
-  function updateDistribuidoras(contactId: string, dists: DistribuidoraEntry[]) {
-    onChange(value.map((v) => (v.contactId === contactId ? { ...v, distribuidoras: dists } : v)));
+  function updateDistributors(contactId: string, dists: DistributorEntry[]) {
+    onChange(value.map((v) => (v.contactId === contactId ? { ...v, distributors: dists } : v)));
   }
 
-  function toggleDistribuidora(contactId: string, distId: string, checked: boolean) {
+  function toggleDistributor(contactId: string, distId: string, checked: boolean) {
     const link = value.find((v) => v.contactId === contactId);
     if (!link) return;
     const next = checked
-      ? [...link.distribuidoras, { id: distId, email: "", nomeCustom: distId === "outros" ? "" : undefined }]
-      : link.distribuidoras.filter((d) => d.id !== distId);
-    updateDistribuidoras(contactId, next);
+      ? [...link.distributors, { id: distId, email: "", customName: distId === "outros" ? "" : undefined }]
+      : link.distributors.filter((d) => d.id !== distId);
+    updateDistributors(contactId, next);
   }
 
-  function updateDistField(contactId: string, distId: string, patch: Partial<DistribuidoraEntry>) {
+  function updateDistributorField(contactId: string, distId: string, patch: Partial<DistributorEntry>) {
     const link = value.find((v) => v.contactId === contactId);
     if (!link) return;
-    updateDistribuidoras(
+    updateDistributors(
       contactId,
-      link.distribuidoras.map((d) => (d.id === distId ? { ...d, ...patch } : d)),
+      link.distributors.map((d) => (d.id === distId ? { ...d, ...patch } : d)),
     );
   }
 
   // ── Novo Contato (cria no CRM e vincula automaticamente) ────────
-  async function handleNovoContato(payload: ContatoFormPayload) {
+  async function handleNewContact(payload: ContatoFormPayload) {
     const created = await createContact(contatoPayloadToContactData(payload));
     if (created?.id) addLink(created.id);
   }
@@ -158,7 +155,7 @@ export function EquipeContatosCRM({ value, onChange }: EquipeContatosCRMProps) {
             variant="outline"
             size="sm"
             className="h-7 text-xs gap-1"
-            onClick={() => setNovoContatoOpen(true)}
+            onClick={() => setNewContactOpen(true)}
             data-testid="button-novo-contato-crm"
           >
             <Plus className="h-3 w-3" />
@@ -220,7 +217,7 @@ export function EquipeContatosCRM({ value, onChange }: EquipeContatosCRMProps) {
         <div className="space-y-2" data-testid="equipe-vinculada">
           {value.map((link) => {
             const contact = contactById.get(link.contactId);
-            const showDistribuidoras = contact ? DISTRIBUIDORA_CONTACT_TYPES.has(contact.contactType) : false;
+            const showDistribuidoras = contact ? DISTRIBUTOR_CONTACT_TYPES.has(contact.contactType) : false;
 
             return (
               <div
@@ -266,8 +263,8 @@ export function EquipeContatosCRM({ value, onChange }: EquipeContatosCRMProps) {
                   <div className="mt-3 space-y-3 border-t border-border/40 pt-3">
                     <Label className="text-xs text-muted-foreground">Distribuidoras</Label>
                     <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                      {DISTRIBUIDORAS_OPTIONS.map((dist) => {
-                        const entry = link.distribuidoras.find((d) => d.id === dist.id);
+                      {DISTRIBUTORS_OPTIONS.map((dist) => {
+                        const entry = link.distributors.find((d) => d.id === dist.id);
                         const isChecked = !!entry;
                         return (
                           <div key={dist.id} className="space-y-1.5">
@@ -276,7 +273,7 @@ export function EquipeContatosCRM({ value, onChange }: EquipeContatosCRMProps) {
                                 id={`dist-${link.contactId}-${dist.id}`}
                                 checked={isChecked}
                                 onCheckedChange={(checked) =>
-                                  toggleDistribuidora(link.contactId, dist.id, !!checked)
+                                  toggleDistributor(link.contactId, dist.id, !!checked)
                                 }
                                 data-testid={`checkbox-dist-${link.contactId}-${dist.id}`}
                               />
@@ -291,19 +288,19 @@ export function EquipeContatosCRM({ value, onChange }: EquipeContatosCRMProps) {
                             {isChecked && dist.id === "outros" && (
                               <div className="ml-6 space-y-1.5">
                                 <Input
-                                  value={entry?.nomeCustom ?? ""}
+                                  value={entry?.customName ?? ""}
                                   onChange={(e) =>
-                                    updateDistField(link.contactId, dist.id, { nomeCustom: e.target.value })
+                                    updateDistributorField(link.contactId, dist.id, { customName: e.target.value })
                                   }
                                   placeholder="Nome da distribuidora…"
                                   className="h-7 text-xs"
                                   data-testid={`input-dist-nome-custom-${link.contactId}`}
                                 />
-                                {(entry?.nomeCustom ?? "").trim().length > 0 && (
+                                {(entry?.customName ?? "").trim().length > 0 && (
                                   <Input
                                     value={entry?.email ?? ""}
                                     onChange={(e) =>
-                                      updateDistField(link.contactId, dist.id, { email: e.target.value })
+                                      updateDistributorField(link.contactId, dist.id, { email: e.target.value })
                                     }
                                     type="email"
                                     placeholder="Email de share…"
@@ -319,7 +316,7 @@ export function EquipeContatosCRM({ value, onChange }: EquipeContatosCRMProps) {
                                 <Input
                                   value={entry?.email ?? ""}
                                   onChange={(e) =>
-                                    updateDistField(link.contactId, dist.id, { email: e.target.value })
+                                    updateDistributorField(link.contactId, dist.id, { email: e.target.value })
                                   }
                                   type="email"
                                   placeholder={`Email de share — ${dist.label}`}
@@ -342,10 +339,10 @@ export function EquipeContatosCRM({ value, onChange }: EquipeContatosCRMProps) {
 
       {/* Modal de criação de contato no CRM */}
       <ContatoFormModal
-        open={novoContatoOpen}
+        open={newContactOpen}
         mode="create"
-        onOpenChange={setNovoContatoOpen}
-        onSubmit={handleNovoContato}
+        onOpenChange={setNewContactOpen}
+        onSubmit={handleNewContact}
       />
     </div>
   );

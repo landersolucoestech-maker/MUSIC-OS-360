@@ -19,23 +19,23 @@ const fmtNum = (n: number) =>
 
 interface Props {
   total: number;
-  concluidas: number;
-  pendentes: number;
-  divergencias: number;
+  completed: number;
+  pending: number;
+  divergences: number;
   matchRate: number;
-  valorRecebidoEcad: number;
-  totalRelatoriosEcad: number;
+  receivedEcadAmount: number;
+  totalEcadReports: number;
 }
 
-export function RightsKPICards({ total, concluidas, pendentes, divergencias, matchRate, valorRecebidoEcad, totalRelatoriosEcad }: Props) {
+export function RightsKPICards({ total, completed, pending, divergences, matchRate, receivedEcadAmount, totalEcadReports }: Props) {
   const kpis: KPI[] = [
     { label: "Detecções",     value: fmtNum(total),         subvalue: "conteúdo monitorado",        icon: Radio,         accent: "primary" },
-    { label: "Concluídas",    value: fmtNum(concluidas),    subvalue: `${total > 0 ? Math.round((concluidas / total) * 100) : 0}% do total`, icon: CheckCircle, accent: "success" },
-    { label: "Pendentes",     value: fmtNum(pendentes),     subvalue: "aguardam análise",            icon: Clock,         accent: "warning" },
-    { label: "Divergências",  value: fmtNum(divergencias),  subvalue: "sem vínculo/cód. ECAD",       icon: AlertTriangle, accent: "destructive" },
+    { label: "Concluídas",    value: fmtNum(completed),    subvalue: `${total > 0 ? Math.round((completed / total) * 100) : 0}% do total`, icon: CheckCircle, accent: "success" },
+    { label: "Pendentes",     value: fmtNum(pending),     subvalue: "aguardam análise",            icon: Clock,         accent: "warning" },
+    { label: "Divergências",  value: fmtNum(divergences),  subvalue: "sem vínculo/cód. ECAD",       icon: AlertTriangle, accent: "destructive" },
     { label: "Match Rate",    value: `${matchRate}%`,       subvalue: "vinculadas ao catálogo",      icon: TrendingUp,    accent: matchRate >= 80 ? "success" : matchRate >= 60 ? "warning" : "destructive" },
-    { label: "Relatórios ECAD", value: fmtNum(totalRelatoriosEcad), subvalue: "importados",           icon: DollarSign,    accent: "primary" },
-    { label: "Valor Recebido", value: fmtBRL(valorRecebidoEcad), subvalue: "ECAD concluído",          icon: DollarSign,    accent: "success" },
+    { label: "Relatórios ECAD", value: fmtNum(totalEcadReports), subvalue: "importados",           icon: DollarSign,    accent: "primary" },
+    { label: "Valor Recebido", value: fmtBRL(receivedEcadAmount), subvalue: "ECAD concluído",          icon: DollarSign,    accent: "success" },
   ];
 
   return (
