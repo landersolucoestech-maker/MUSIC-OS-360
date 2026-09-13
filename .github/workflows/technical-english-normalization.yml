@@ -1,0 +1,128 @@
+name: Technical English Normalization Runner
+
+on:
+  push:
+    branches: [dev]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: technical-english-normalization-dev
+  cancel-in-progress: false
+
+jobs:
+  normalize:
+    if: contains(github.event.head_commit.message, '[run-tech-english:')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+    steps:
+      - name: Check out exact dev head
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Resolve requested cluster
+        id: cluster
+        shell: bash
+        run: |
+          set -euo pipefail
+          cluster="$(printf '%s' "$COMMIT_MESSAGE" | sed -n 's/.*\[run-tech-english:\([^]]*\)\].*/\1/p')"
+          case "$cluster" in
+            artist|hr|contracts|accounting|catalog) ;;
+            *) echo "Unsupported or missing cluster: $cluster" >&2; exit 1 ;;
+          esac
+          echo "name=$cluster" >> "$GITHUB_OUTPUT"
+          echo "Running technical-English normalization cluster: $cluster"
+
+      - name: Record baseline typecheck
+        id: baseline
+        shell: bash
+        run: |
+          set +e
+          pnpm --filter @music-os-360/web typecheck 2>&1 | tee /tmp/typecheck-before.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          echo "Baseline web typecheck exit code: $code"
+          exit 0
+
+      - name: Execute deterministic normalization
+        run: node scripts/run-technical-english-normalization.mjs "${{ steps.cluster.outputs.name }}"
+
+      - name: Verify protected Engineering OS paths are untouched
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! git diff --quiet -- .claude .gitignore; then
+            echo 'Protected Engineering OS paths were modified.' >&2
+            git diff -- .claude .gitignore
+            exit 1
+          fi
+
+      - name: Validate working-tree patch
+        run: |
+          git diff --check
+          git status --short
+          git diff --stat
+
+      - name: Run web typecheck after normalization
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm --filter @music-os-360/web typecheck 2>&1 | tee /tmp/typecheck-after.log
+
+      - name: Run web regression tests after normalization
+        run: pnpm --filter @music-os-360/web test:run
+
+      - name: Stage only normalized web source changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -u -- apps/web/src
+          if git diff --cached --quiet; then
+            echo 'No staged normalization changes.' >&2
+            exit 1
+          fi
+          if git diff --cached --name-only | grep -E '^(\.claude/|\.gitignore$)'; then
+            echo 'Protected path detected in staged patch.' >&2
+            exit 1
+          fi
+          git diff --cached --check
+          git diff --cached --stat
+          git diff --cached --name-status
+
+      - name: Commit normalized cluster
+        shell: bash
+        run: |
+          set -euo pipefail
+          cluster="${{ steps.cluster.outputs.name }}"
+          case "$cluster" in
+            artist) message='refactor(artists): normalize internal naming to English' ;;
+            hr) message='refactor(hr): normalize employee-domain internal naming' ;;
+            contracts) message='refactor(contracts): normalize internal naming to English' ;;
+            accounting) message='refactor(accounting): normalize internal naming to English' ;;
+            catalog) message='refactor(catalog): normalize licensing and participant naming' ;;
+          esac
+          git config user.name 'MUSIC OS 360 Normalization Runner'
+          git config user.email 'actions@users.noreply.github.com'
+          git commit -m "$message"
+
+      - name: Push without force
+        run: git push origin HEAD:dev
