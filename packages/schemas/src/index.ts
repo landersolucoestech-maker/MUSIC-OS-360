@@ -1,3 +1,3 @@
-export * from "./pagination.schema";
-export * from "./tenant.schema";
-export * from "./common.schema";
+export * from "./pagination.schema.js";
+export * from "./tenant.schema.js";
+export * from "./common.schema.js";

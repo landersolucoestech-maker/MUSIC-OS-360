@@ -58,80 +58,95 @@ export type AnyRole = SystemRole | FunctionalRole;
 
 /**
  * ArtistStatus — superset de todos os status possíveis para artistas.
- * Cobre status de cadastro geral (ativo/inativo) e status de relacionamento
- * contratual (contratado/em_negociacao/onboarding).
+ * Cobre status de cadastro geral (active/inactive) e status de relacionamento
+ * contratual (signed/in_negotiation/onboarding).
  * Frontend deriva: type ArtistaStatus = `${ArtistStatus}`
  */
 export enum ArtistStatus {
-  CONTRATADO    = "contratado",
-  ATIVO         = "ativo",
-  INATIVO       = "inativo",
-  PROSPECTO     = "prospecto",
-  DESLIGADO     = "desligado",
-  SUSPENSO      = "suspenso",
-  EX_ARTISTA    = "ex_artista",
-  EM_NEGOCIACAO = "em_negociacao",
-  ONBOARDING    = "onboarding",
+  SIGNED         = "signed",
+  ACTIVE         = "active",
+  INACTIVE       = "inactive",
+  PROSPECT       = "prospect",
+  TERMINATED     = "terminated",
+  SUSPENDED      = "suspended",
+  FORMER_ARTIST  = "former_artist",
+  IN_NEGOTIATION = "in_negotiation",
+  ONBOARDING     = "onboarding",
 }
 
 export enum ArtistStatusCadastro {
-  ATIVO    = "ativo",
-  INATIVO  = "inativo",
-  SUSPENSO = "suspenso",
+  ACTIVE    = "active",
+  INACTIVE  = "inactive",
+  SUSPENDED = "suspended",
+}
+
+/**
+ * ArtistRelationshipType — classificação do vínculo contratual do artista
+ * (nunca persistida; computada em runtime a partir de `contracts.exclusivo`
+ * + status de contrato ativo — ver `ArtistsService.vinculoStats`). Fonte
+ * única: antes duplicada como union type PT solto em 6 lugares (backend
+ * service x3, DTO, e frontend types/labels x2).
+ */
+export enum ArtistRelationshipType {
+  EXCLUSIVE   = "exclusive",
+  PARTNER     = "partner",
+  INDEPENDENT = "independent",
 }
 
 // ─── Contratos ────────────────────────────────────────────────────────────────
 
 /**
- * ContractStatus — ciclo de vida de um contrato.
- * Inclui todos os estados do pipeline: rascunho → ativo → vencendo → encerrado.
+ * ContractStatus — lifecycle of a contract.
+ * Covers every pipeline state: draft → active → expiring → terminated.
+ * ACTIVE and IN_FORCE are distinct pipeline states (signed-but-not-yet-effective
+ * vs. currently in force) and are kept as separate, unambiguous members.
  */
 export enum ContractStatus {
-  RASCUNHO              = "rascunho",
-  EM_ANALISE            = "em_analise",
-  AGUARDANDO_ASSINATURA = "aguardando_assinatura",
-  ASSINADO              = "assinado",
-  ATIVO                 = "ativo",
-  VIGENTE               = "vigente",
-  VENCENDO              = "vencendo",
-  VENCIDO               = "vencido",
-  ENCERRADO             = "encerrado",
-  CANCELADO             = "cancelado",
+  DRAFT               = "draft",
+  UNDER_REVIEW        = "under_review",
+  AWAITING_SIGNATURE  = "awaiting_signature",
+  SIGNED              = "signed",
+  ACTIVE              = "active",
+  IN_FORCE            = "in_force",
+  EXPIRING            = "expiring",
+  EXPIRED             = "expired",
+  TERMINATED          = "terminated",
+  CANCELLED           = "cancelled",
 }
 
 // ─── Catálogo — Obras ─────────────────────────────────────────────────────────
 
 /**
- * WorkStatus — ciclo de vida de uma obra musical.
- * "analise" e "em_analise" são mantidos como superset para compatibilidade
- * com dados legados frontend/backend.
+ * WorkStatus — lifecycle of a musical work.
+ * UNDER_REVIEW and IN_REVIEW are kept as a superset for compatibility with
+ * legacy frontend/backend data.
  */
 export enum WorkStatus {
-  PENDENTE   = "pendente",
-  ANALISE    = "analise",
-  EM_ANALISE = "em_analise",
-  REGISTRADO = "registrado",
-  ATIVO      = "ativo",
-  INATIVO    = "inativo",
-  REJEITADO  = "rejeitado",
-  ARQUIVADO  = "arquivado",
+  PENDING      = "pending",
+  UNDER_REVIEW = "under_review",
+  IN_REVIEW    = "in_review",
+  REGISTERED   = "registered",
+  ACTIVE       = "active",
+  INACTIVE     = "inactive",
+  REJECTED     = "rejected",
+  ARCHIVED     = "archived",
 }
 
 // ─── Catálogo — Fonogramas ────────────────────────────────────────────────────
 
 /**
- * PhonogramStatus — ciclo de vida de um fonograma.
- * Mesma estratégia de superset que WorkStatus.
+ * PhonogramStatus — lifecycle of a phonogram.
+ * Same superset strategy as WorkStatus.
  */
 export enum PhonogramStatus {
-  PENDENTE   = "pendente",
-  ANALISE    = "analise",
-  EM_ANALISE = "em_analise",
-  REGISTRADO = "registrado",
-  ATIVO      = "ativo",
-  INATIVO    = "inativo",
-  REJEITADO  = "rejeitado",
-  ARQUIVADO  = "arquivado",
+  PENDING      = "pending",
+  UNDER_REVIEW = "under_review",
+  IN_REVIEW    = "in_review",
+  REGISTERED   = "registered",
+  ACTIVE       = "active",
+  INACTIVE     = "inactive",
+  REJECTED     = "rejected",
+  ARCHIVED     = "archived",
 }
 
 // ─── Releases (Lançamentos) ───────────────────────────────────────────────────
@@ -157,167 +172,174 @@ export enum ReleaseStatus {
 // ─── Shares (Participações) ───────────────────────────────────────────────────
 
 export enum ShareStatus {
-  ATIVO     = "ativo",
-  INATIVO   = "inativo",
-  PENDENTE  = "pendente",
-  LIQUIDADO = "liquidado",
+  ACTIVE   = "active",
+  INACTIVE = "inactive",
+  PENDING  = "pending",
+  SETTLED  = "settled",
 }
 
 // ─── Financeiro / Accounting ──────────────────────────────────────────────────
 
-export enum TransactionTipo {
+export enum TransactionType {
   RECEITA = "receita",
   DESPESA = "despesa",
 }
 
 /**
- * TransactionStatus — estado de uma transacção financeira.
- * Inclui "concluido" (frontend) e "confirmado" (backend) como superset.
+ * TransactionStatus — state of a financial transaction.
+ * Includes "completed" (frontend) and "confirmed" (backend) as a superset.
+ * PAID is a third historically-distinct synonym for "money settled" (was
+ * PT-BR `pago`), treated identically to COMPLETED/CONFIRMED by every
+ * consumer (transactions.service.ts, analytics.service.ts) — kept as its
+ * own member rather than merged into COMPLETED/CONFIRMED because collapsing
+ * three pre-existing values into one is a data-model decision beyond a
+ * PT->EN naming translation.
  */
 export enum TransactionStatus {
-  PENDENTE   = "pendente",
-  CONCLUIDO  = "concluido",
-  CONFIRMADO = "confirmado",
-  CANCELADO  = "cancelado",
-  AGENDADO   = "agendado",
+  PENDING   = "pending",
+  COMPLETED = "completed",
+  CONFIRMED = "confirmed",
+  PAID      = "paid",
+  CANCELLED = "cancelled",
+  SCHEDULED = "scheduled",
 }
 
 // ─── Notas Fiscais (Invoices) ─────────────────────────────────────────────────
 
 /**
- * InvoiceStatus — estado de uma nota fiscal / factura.
- * Superset: inclui estados frontend (rascunho/emitida/rejeitada) e backend (paga/vencida).
+ * InvoiceStatus — state of an invoice.
+ * Superset: includes frontend states (draft/issued/rejected) and backend states (paid/overdue).
  */
 export enum InvoiceStatus {
-  RASCUNHO  = "rascunho",
-  PENDENTE  = "pendente",
-  EMITIDA   = "emitida",
-  PAGA      = "paga",
-  CANCELADA = "cancelada",
-  VENCIDA   = "vencida",
-  REJEITADA = "rejeitada",
+  DRAFT     = "draft",
+  PENDING   = "pending",
+  ISSUED    = "issued",
+  PAID      = "paid",
+  CANCELLED = "cancelled",
+  OVERDUE   = "overdue",
+  REJECTED  = "rejected",
 }
 
 // ─── CRM ──────────────────────────────────────────────────────────────────────
 
 /**
- * LeadStatus — pipeline de um lead no CRM.
- * Inclui "em_contato" (frontend) e "contato"/"qualificado" (backend).
+ * LeadStatus — pipeline of a CRM lead.
+ * Includes "in_contact" (frontend) and "contacted"/"qualified" (backend).
  */
 export enum LeadStatus {
-  NOVO        = "novo",
-  EM_CONTATO  = "em_contato",
-  CONTATO     = "contato",
-  QUALIFICADO = "qualificado",
-  PROPOSTA    = "proposta",
-  NEGOCIACAO  = "negociacao",
-  FECHADO     = "fechado",
-  PERDIDO     = "perdido",
-  INATIVO     = "inativo",
+  NEW         = "new",
+  IN_CONTACT  = "in_contact",
+  CONTACTED   = "contacted",
+  QUALIFIED   = "qualified",
+  PROPOSAL    = "proposal",
+  NEGOTIATION = "negotiation",
+  CLOSED      = "closed",
+  LOST        = "lost",
+  INACTIVE    = "inactive",
 }
 
 export enum ClientStatus {
-  ATIVO     = "ativo",
-  INATIVO   = "inativo",
-  PROSPECTO = "prospecto",
+  ACTIVE   = "active",
+  INACTIVE = "inactive",
+  PROSPECT = "prospect",
 }
 
 // ─── Marketing / Campanhas ────────────────────────────────────────────────────
 
 export enum CampaignStatus {
-  RASCUNHO     = "rascunho",
-  PLANEJAMENTO = "planejamento",
-  ATIVA        = "ativa",
-  PAUSADA      = "pausada",
-  CONCLUIDA    = "concluida",
-  CANCELADA    = "cancelada",
+  DRAFT     = "draft",
+  PLANNING  = "planning",
+  ACTIVE    = "active",
+  PAUSED    = "paused",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
 }
 
 export enum BriefingStatus {
-  RASCUNHO     = "rascunho",
-  EM_ANDAMENTO = "em_andamento",
-  REVISAO      = "revisao",
-  APROVADO     = "aprovado",
-  CONCLUIDO    = "concluido",
-  CANCELADO    = "cancelado",
+  DRAFT       = "draft",
+  IN_PROGRESS = "in_progress",
+  REVIEW      = "review",
+  APPROVED    = "approved",
+  COMPLETED   = "completed",
+  CANCELLED   = "cancelled",
 }
 
 // ─── Monitoramento ────────────────────────────────────────────────────────────
 
 /**
- * TakedownStatus — estado de um processo de takedown.
- * Superset: inclui "enviado"/"processando"/"falhou" (frontend) e "em_andamento"/"concluido" (backend).
+ * TakedownStatus — state of a takedown process.
+ * Superset: includes "sent"/"processing"/"failed" (frontend) and "in_progress"/"completed" (backend).
  */
 export enum TakedownStatus {
-  PENDENTE     = "pendente",
-  ENVIADO      = "enviado",
-  PROCESSANDO  = "processando",
-  EM_ANDAMENTO = "em_andamento",
-  CONCLUIDO    = "concluido",
-  REJEITADO    = "rejeitado",
-  FALHOU       = "falhou",
+  PENDING     = "pending",
+  SENT        = "sent",
+  PROCESSING  = "processing",
+  IN_PROGRESS = "in_progress",
+  COMPLETED   = "completed",
+  REJECTED    = "rejected",
+  FAILED      = "failed",
 }
 
 export enum ContentDetectionStatus {
-  PENDENTE     = "pendente",
-  EM_ANDAMENTO = "em_andamento",
-  CONCLUIDO    = "concluido",
-  REJEITADO    = "rejeitado",
-  ARQUIVADO    = "arquivado",
+  PENDING     = "pending",
+  IN_PROGRESS = "in_progress",
+  COMPLETED   = "completed",
+  REJECTED    = "rejected",
+  ARCHIVED    = "archived",
 }
 
 // ─── Projetos ────────────────────────────────────────────────────────────────
 
 /**
- * ProjectStatus — ciclo de vida de um projecto musical.
- * Conforme spec: planejamento → em_andamento → revisao → concluido / cancelado
+ * ProjectStatus — lifecycle of a music project.
+ * Per spec: planning → in_progress → review → completed / cancelled
  */
 export enum ProjectStatus {
-  PLANEJAMENTO  = "planejamento",
-  EM_ANDAMENTO  = "em_andamento",
-  REVISAO       = "revisao",
-  CONCLUIDO     = "concluido",
-  CANCELADO     = "cancelado",
+  PLANNING    = "planning",
+  IN_PROGRESS = "in_progress",
+  REVIEW      = "review",
+  COMPLETED   = "completed",
+  CANCELLED   = "cancelled",
 }
 
 // ─── Eventos ─────────────────────────────────────────────────────────────────
 
 /**
- * EventStatus — estado de um evento.
- * Superset: inclui "planejado"/"concluido"/"adiado" (frontend) e "agendado"/"realizado" (backend).
+ * EventStatus — state of an event.
+ * Superset: includes "planned"/"completed"/"postponed" (frontend) and "scheduled"/"held" (backend).
  */
 export enum EventStatus {
-  PLANEJADO  = "planejado",
-  AGENDADO   = "agendado",
-  CONFIRMADO = "confirmado",
-  REALIZADO  = "realizado",
-  CONCLUIDO  = "concluido",
-  CANCELADO  = "cancelado",
-  ADIADO     = "adiado",
+  PLANNED    = "planned",
+  SCHEDULED  = "scheduled",
+  CONFIRMED  = "confirmed",
+  HELD       = "held",
+  COMPLETED  = "completed",
+  CANCELLED  = "cancelled",
+  POSTPONED  = "postponed",
 }
 
 // ─── RH / Funcionários ────────────────────────────────────────────────────────
 
 export enum EmployeeStatus {
-  ATIVO    = "ativo",
-  INATIVO  = "inativo",
-  FERIAS   = "ferias",
-  LICENCA  = "licenca",
-  DEMITIDO = "demitido",
+  ACTIVE      = "active",
+  INACTIVE    = "inactive",
+  ON_VACATION = "on_vacation",
+  ON_LEAVE    = "on_leave",
+  TERMINATED  = "terminated",
 }
 
 export enum PayrollStatus {
-  PENDENTE   = "pendente",
-  PROCESSADO = "processado",
-  PAGO       = "pago",
-  CANCELADO  = "cancelado",
+  PENDING   = "pending",
+  PROCESSED = "processed",
+  PAID      = "paid",
+  CANCELLED = "cancelled",
 }
 
 export enum LeaveRequestStatus {
-  PENDENTE  = "pendente",
-  APROVADO  = "aprovado",
-  REJEITADO = "rejeitado",
-  CONCLUIDO = "concluido",
+  PENDING   = "pending",
+  APPROVED  = "approved",
+  REJECTED  = "rejected",
+  COMPLETED = "completed",
 }
 
 // ─── Uploads / Media ─────────────────────────────────────────────────────────
@@ -510,10 +532,10 @@ export enum EcadReportStatus {
 // ─── Artist Goals ─────────────────────────────────────────────────────────────
 
 export enum ArtistGoalStatus {
-  EM_ANDAMENTO = "em_andamento",
-  CONCLUIDO    = "concluido",
-  CANCELADO    = "cancelado",
-  EXPIRADO     = "expirado",
+  IN_PROGRESS = "in_progress",
+  COMPLETED   = "completed",
+  CANCELLED   = "cancelled",
+  EXPIRED     = "expired",
 }
 
 // ─── Notifications ────────────────────────────────────────────────────────────
