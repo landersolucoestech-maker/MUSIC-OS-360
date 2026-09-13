@@ -22,6 +22,13 @@ export function shortId(prefix) {
 // .claude/ops/evidence/ and .claude/ops/checkpoints/ (see lib/record-store.mjs,
 // run-state.schema.json). state.json keeps only the *pointers* (evidenceIds,
 // checkpointIds) plus the small, always-together-queried requirements/findings.
+export const EXECUTION_MODES = ["DEFAULT", "STRICT_MULTI_AGENT"];
+
+// DEFAULT: proportional execution (.claude/rules/00-execution-protocol.md's "smallest
+// dynamic execution graph") -- unchanged, always the default for a new mission.
+// STRICT_MULTI_AGENT: opt-in per mission (ops.mjs init --mode / ops.mjs mode set) --
+// mandatory full capability mobilization, enforced by gate-engine.mjs's
+// "full-mobilization-when-strict" check. See lib/capability-ledger.mjs.
 export function defaultState(missionName) {
   const now = new Date().toISOString();
   return {
@@ -29,6 +36,7 @@ export function defaultState(missionName) {
     missionId: shortId("mission"),
     missionName: missionName || "unnamed-mission",
     status: "active", // active | blocked | done
+    executionMode: "DEFAULT",
     createdAt: now,
     updatedAt: now,
     impact: { operatorDeclared: null, runtimeDetected: null, effective: null },

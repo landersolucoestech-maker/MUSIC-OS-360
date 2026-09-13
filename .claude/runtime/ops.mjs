@@ -11,6 +11,7 @@ import { addRecord, listRecords } from "./lib/record-store.mjs";
 import { recordKindNames } from "./lib/record-kinds.mjs";
 import { markAudited, computeCoverage } from "./lib/coverage-ledger.mjs";
 import { castVote, resolveByQuorum } from "./lib/quorum.mjs";
+import { computeCapabilityLedger } from "./lib/capability-ledger.mjs";
 import {
   defaultState,
   loadState,
@@ -19,6 +20,7 @@ import {
   shortId,
   loadImprovements,
   saveImprovements,
+  EXECUTION_MODES,
 } from "./lib/state-store.mjs";
 
 function parseFlags(argv) {
@@ -46,9 +48,23 @@ export function cmdInit({ flags, cwd }) {
   if (existing && !flags.force) {
     return { status: "EXISTS", missionId: existing.missionId, note: "state already initialized; pass --force to reset" };
   }
+  if (flags.mode && !EXECUTION_MODES.includes(flags.mode)) {
+    throw new Error(`INVALID_MODE: ${flags.mode}. Use one of ${EXECUTION_MODES.join(", ")}`);
+  }
   const state = defaultState(flags.mission || flags.name);
+  if (flags.mode) state.executionMode = flags.mode;
   saveState(state, cwd);
-  return { status: "CREATED", missionId: state.missionId };
+  return { status: "CREATED", missionId: state.missionId, executionMode: state.executionMode };
+}
+
+export function cmdModeSet({ flags, cwd }) {
+  const state = requireState(cwd);
+  if (!flags.mode || !EXECUTION_MODES.includes(flags.mode)) {
+    throw new Error(`USAGE: mode set --mode <${EXECUTION_MODES.join("|")}>`);
+  }
+  state.executionMode = flags.mode;
+  saveState(state, cwd);
+  return { status: "OK", executionMode: state.executionMode };
 }
 
 export function cmdRequirementAdd({ flags, cwd }) {
@@ -294,6 +310,7 @@ export function cmdStatus({ cwd }) {
     missionId: state.missionId,
     missionName: state.missionName,
     status: state.status,
+    executionMode: state.executionMode || "DEFAULT",
     impact: state.impact,
     requirements: state.requirements.length,
     openCriteria: openCriteria.length,
@@ -317,6 +334,19 @@ export function cmdCoverageStatus({ cwd }) {
   return { status: "OK", coverage: computeCoverage(cwd) };
 }
 
+export function cmdMobilizationStatus({ cwd }) {
+  const state = requireState(cwd);
+  const ledger = computeCapabilityLedger(cwd);
+  return {
+    status: "OK",
+    executionMode: state.executionMode,
+    ...ledger,
+    note: state.executionMode === "STRICT_MULTI_AGENT"
+      ? "completion-gate.mjs blocks unless summary.undispatched === 0 and summary.failed === 0 and summary.blocked === 0"
+      : "informational only in DEFAULT mode -- not a completion requirement",
+  };
+}
+
 export function cmdQuorumVote({ flags, cwd }) {
   requireState(cwd);
   if (!flags.conflict || !flags.voter || !flags.choice) {
@@ -333,6 +363,8 @@ export function cmdQuorumResolve({ flags, cwd }) {
 
 const COMMANDS = {
   init: cmdInit,
+  "mode set": cmdModeSet,
+  "mobilization status": cmdMobilizationStatus,
   "requirement add": cmdRequirementAdd,
   "criterion add": cmdCriterionAdd,
   "evidence run": cmdEvidenceRun,

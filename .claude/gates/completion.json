@@ -1,5 +1,5 @@
 {
-  "description": "Declarative GATE DEFINITION for mission completion — separate from the GATE ENGINE (.claude/runtime/gate-engine.mjs) that executes it, per the pack's explicit definition/engine split. Editing this file changes what 'done' requires without touching runtime code; each check's `type` must be one implemented in gate-engine.mjs's CHECKS registry. no-open-conflicts/no-unreconciled-destructive-effects/no-failed-gate-results/no-breaking-contract-drift are always-on (they PASS trivially — empty result sets — for a mission that hasn't recorded any of those record kinds, or that ships no versioned schema pairs, so this is safe by default, not a behavior change for missions that don't use them). coverage-threshold stays opt-in via the enforceCoverage flag: it requires marking files audited via `ops.mjs coverage mark`, which most L0-L2 tasks have no reason to do, so it would otherwise block trivial missions on an unrelated, unrequested requirement.",
+  "description": "Declarative GATE DEFINITION for mission completion — separate from the GATE ENGINE (.claude/runtime/gate-engine.mjs) that executes it, per the pack's explicit definition/engine split. Editing this file changes what 'done' requires without touching runtime code; each check's `type` must be one implemented in gate-engine.mjs's CHECKS registry. no-open-conflicts/no-unreconciled-destructive-effects/no-failed-gate-results/no-breaking-contract-drift are always-on (they PASS trivially — empty result sets — for a mission that hasn't recorded any of those record kinds, or that ships no versioned schema pairs, so this is safe by default, not a behavior change for missions that don't use them). full-mobilization-when-strict is likewise always-on but only evaluates anything when state.executionMode is STRICT_MULTI_AGENT (see lib/capability-ledger.mjs) — a DEFAULT-mode mission (the normal case) always passes it trivially. coverage-threshold stays opt-in via the enforceCoverage flag: it requires marking files audited via `ops.mjs coverage mark`, which most L0-L2 tasks have no reason to do, so it would otherwise block trivial missions on an unrelated, unrequested requirement.",
   "checks": [
     { "id": "state-exists", "type": "state-exists" },
     { "id": "fingerprint-available", "type": "fingerprint-available" },
@@ -11,7 +11,8 @@
     { "id": "no-failed-gate-results", "type": "no-failed-gate-results" },
     { "id": "no-breaking-contract-drift", "type": "no-breaking-contract-drift" },
     { "id": "no-open-critical-assumptions", "type": "no-open-critical-assumptions" },
-    { "id": "scope-traceability-warning", "type": "scope-traceability-warning" }
+    { "id": "scope-traceability-warning", "type": "scope-traceability-warning" },
+    { "id": "full-mobilization-when-strict", "type": "full-mobilization-when-strict" }
   ],
   "optionalChecks": [
     { "id": "impact-scoped-package-scripts", "type": "impact-scoped-package-scripts", "flag": "runGates" },

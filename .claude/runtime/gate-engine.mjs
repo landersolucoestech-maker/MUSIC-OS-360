@@ -13,6 +13,7 @@ import { loadState } from "./lib/state-store.mjs";
 import { getRecord, listRecords } from "./lib/record-store.mjs";
 import { recordEvent } from "./lib/telemetry.mjs";
 import { computeCoverage } from "./lib/coverage-ledger.mjs";
+import { outstandingCapabilities } from "./lib/capability-ledger.mjs";
 import { diffContractFiles, findVersionedSchemaPairs } from "./lib/contract-drift.mjs";
 import { detectAll } from "./lib/tool-capability.mjs";
 
@@ -187,6 +188,22 @@ const CHECKS = {
       }
     }
     return { reasons };
+  },
+
+  // No-op in DEFAULT mode (the vast majority of missions) -- only enforces anything
+  // when the mission explicitly opted into STRICT_MULTI_AGENT (ops.mjs init --mode /
+  // ops.mjs mode set). See lib/capability-ledger.mjs and .claude/rules/agent-orchestration.md.
+  "full-mobilization-when-strict": (ctx) => {
+    if (ctx.state.executionMode !== "STRICT_MULTI_AGENT") return {};
+    const outstanding = outstandingCapabilities(ctx.cwd);
+    if (outstanding.length === 0) return {};
+    const shown = outstanding.slice(0, 15).map((c) => `${c.name}(${c.status})`);
+    const more = outstanding.length > shown.length ? ` (+${outstanding.length - shown.length} more)` : "";
+    return {
+      reasons: [
+        `STRICT_MULTI_AGENT: ${outstanding.length} discovered capability(ies) have no terminal disposition (COMPLETED/DONE or a justified NOT_APPLICABLE_WITH_EVIDENCE): ${shown.join(", ")}${more} -- run \`ops.mjs mobilization status\` for the full ledger`,
+      ],
+    };
   },
 
   "no-failed-gate-results": (ctx) => {

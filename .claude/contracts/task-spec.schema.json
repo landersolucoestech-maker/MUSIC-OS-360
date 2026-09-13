@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://engineering-os/contracts/task-spec.schema.json",
   "title": "TaskSpec",
-  "description": "A bounded unit of implementation work targeting one or more acceptance criteria, used as a graph-engine.mjs execution-graph node. Consumer: ops.mjs task open/close.",
+  "description": "A bounded unit of implementation work targeting one or more acceptance criteria, used as a graph-engine.mjs execution-graph node. Consumer: ops.mjs task open/close. Also doubles as a capability-mobilization record (lib/capability-ledger.mjs) when `assignedAgent` names a registry agent/skill and `criterionIds` is empty -- the extra statuses below (PLANNED/DISPATCHED/RUNNING/COMPLETED/NOT_APPLICABLE_WITH_EVIDENCE/FAILED) exist for that use only; PENDING/IN_PROGRESS/DONE/BLOCKED remain the original implementation-task vocabulary and are unaffected.",
   "type": "object",
   "required": ["id", "title", "criterionIds", "status"],
   "properties": {
@@ -11,6 +11,12 @@
     "criterionIds": { "type": "array", "items": { "type": "string" } },
     "changeSetId": { "type": ["string", "null"] },
     "assignedAgent": { "type": "string" },
-    "status": { "enum": ["PENDING", "IN_PROGRESS", "DONE", "BLOCKED"] }
+    "status": {
+      "enum": [
+        "PENDING", "IN_PROGRESS", "DONE", "BLOCKED",
+        "PLANNED", "DISPATCHED", "RUNNING", "COMPLETED", "NOT_APPLICABLE_WITH_EVIDENCE", "FAILED"
+      ]
+    },
+    "notApplicableReason": { "type": ["string", "null"], "description": "Required (non-empty) when status is NOT_APPLICABLE_WITH_EVIDENCE -- must state the concrete technical reason, not a vague dismissal. Enforced by lib/capability-ledger.mjs, not the schema alone." }
   }
 }
