@@ -1,0 +1,15 @@
+{
+  "id": "evid-fecf636f",
+  "createdAt": "2026-09-13T21:24:19.157Z",
+  "type": "COMMAND",
+  "label": "fresh7",
+  "command": "node .claude/runtime/verify-naming-cluster-residual.mjs canonical-map-coverage",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "PASS: canonical map has documentos->documents and tipo->type rows; zero stale 'documentos' in 4 checked files",
+  "stderrTail": "",
+  "workspaceFingerprint": "5f1ceb2ec6777c9397261ddc4a7ebd6f786a9426b20a1d67c407d4460506029f",
+  "fingerprintStatus": "BOUND",
+  "head": "4eab36780a65636efcafb949a70c7a8cdb8ab535",
+  "durationMs": 149
+}

@@ -1,0 +1,15 @@
+{
+  "id": "evid-cd04f9fb",
+  "createdAt": "2026-09-13T21:24:42.589Z",
+  "type": "COMMAND",
+  "label": "fresh7",
+  "command": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts modules/marketing/marketing-contents.service.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "5f1ceb2ec6777c9397261ddc4a7ebd6f786a9426b20a1d67c407d4460506029f",
+  "fingerprintStatus": "BOUND",
+  "head": "4eab36780a65636efcafb949a70c7a8cdb8ab535",
+  "durationMs": 21473
+}

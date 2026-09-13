@@ -1,0 +1,15 @@
+{
+  "id": "evid-5afcfd42",
+  "createdAt": "2026-09-13T21:26:20.515Z",
+  "type": "COMMAND",
+  "label": "fresh8: bootstrap after all others settled",
+  "command": "node .claude/runtime/verify-gate-self-consistent.mjs",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "FAIL: completion-gate.mjs still blocked by 4 reason(s) unrelated to this criterion's own bootstrap:\nrequirement req-79299999 criterion ac-58c64ed1 has evidence but none is a fresh PASS bound to the current workspace fingerprint (stale or failing)\nrequirement req-a0341efe criterion ac-957bda76 has evidence but none is a fresh PASS bound to the current workspace fingerprint (stale or failing)\nrequirement req-a0341efe criterion ac-f9b4c439 has evidence but none is a fresh PASS bound to the current workspace fingerprint (stale or failing)\nrequirement req-5f0e2340 criterion ac-460c2fff has evidence but none is a fresh PASS bound to the current workspace fingerprint (stale or failing)",
+  "workspaceFingerprint": "5f1ceb2ec6777c9397261ddc4a7ebd6f786a9426b20a1d67c407d4460506029f",
+  "fingerprintStatus": "BOUND",
+  "head": "4eab36780a65636efcafb949a70c7a8cdb8ab535",
+  "durationMs": 25919
+}
