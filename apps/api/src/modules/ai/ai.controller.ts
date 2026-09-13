@@ -12,6 +12,7 @@ import {
   GenerateBiographyDto,
   GenerateCampaignCopyDto,
   AnalyzeContractDto,
+  GenerateMarketingSuggestionDto,
 } from './dto/ai.dto';
 
 function assertSystemPromptAllowed(req: any, systemPrompt?: string): void {
@@ -86,6 +87,18 @@ export class AIController {
   @HttpCode(HttpStatus.OK)
   async campaignCopy(@Request() req: any, @Body() dto: GenerateCampaignCopyDto) {
     const content = await this.ai.generateCampaignCopy(
+      req.tenant?.id ?? req.tenantId,
+      req.auth?.userId ?? req.userId,
+      dto,
+    );
+    return { content };
+  }
+
+  @Post('marketing-suggestion')
+  @ApiOperation({ summary: 'Gerar sugestão de conteúdo de marketing (JSON estruturado, systemPrompt fixo no servidor)' })
+  @HttpCode(HttpStatus.OK)
+  async marketingSuggestion(@Request() req: any, @Body() dto: GenerateMarketingSuggestionDto) {
+    const content = await this.ai.generateMarketingSuggestion(
       req.tenant?.id ?? req.tenantId,
       req.auth?.userId ?? req.userId,
       dto,

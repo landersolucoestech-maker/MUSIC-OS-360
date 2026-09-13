@@ -11,19 +11,22 @@ export type AiProvider = {
 const apiProvider: AiProvider = {
   id: "api",
   async generate(payload) {
-    const response = await api.post<{ content: string }>("/ai/generate", {
-      type: `marketing:${payload.kind}`,
-      jsonMode: true,
-      prompt: [
-        "Responda exclusivamente com JSON válido no formato AiGeneratedResult.",
-        `Alvo: ${payload.targetName}`,
-        `Tipo: ${payload.targetType}`,
-        `Tarefa: ${payload.kind}`,
-        `Prompt: ${payload.prompt}`,
-        payload.lyricText ? `Letra: ${payload.lyricText}` : "",
-        payload.audience ? `Público: ${payload.audience}` : "",
-        payload.channels?.length ? `Canais: ${payload.channels.join(", ")}` : "",
-      ].filter(Boolean).join("\n"),
+    // POSTs to a dedicated endpoint whose JSON-only task framing is a FIXED
+    // systemPrompt set server-side (AIService.generateMarketingSuggestion) --
+    // never the generic /ai/generate, which would require concatenating that
+    // instruction into the same untrusted string as targetName/prompt/
+    // lyricText/audience/channels, with no structural separation from
+    // user-controlled content (find-62e6b1b1, a real prompt-injection
+    // surface: the model had no reliable way to tell task framing apart from
+    // attacker/user-controlled data in that single message).
+    const response = await api.post<{ content: string }>("/ai/marketing-suggestion", {
+      kind: payload.kind,
+      targetType: payload.targetType,
+      targetName: payload.targetName,
+      prompt: payload.prompt,
+      lyricText: payload.lyricText,
+      audience: payload.audience,
+      channels: payload.channels,
     });
     const parsed = JSON.parse(response.content) as Partial<AiGeneratedResult>;
     const requiredArrays = [
