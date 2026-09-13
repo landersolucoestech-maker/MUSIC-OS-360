@@ -29,6 +29,7 @@ const ALLOWED_MIMES = {
   images: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
   audio: ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/flac', 'audio/mp4'],
   spreadsheets: [XLSX_MIME],
+  videos: ['video/mp4', 'video/webm', 'video/quicktime'],
 } as const;
 
 const MAX_SIZES_MB: Record<UploadCategory, number> = {
@@ -36,6 +37,7 @@ const MAX_SIZES_MB: Record<UploadCategory, number> = {
   images: 10,
   audio: 500,
   spreadsheets: 20,
+  videos: 500,
 };
 
 const MIME_TO_EXTENSIONS: Record<string, readonly string[]> = {
@@ -52,6 +54,9 @@ const MIME_TO_EXTENSIONS: Record<string, readonly string[]> = {
   'audio/flac': ['flac'],
   'audio/mp4': ['m4a', 'mp4'],
   [XLSX_MIME]: ['xlsx'],
+  'video/mp4': ['mp4'],
+  'video/webm': ['webm'],
+  'video/quicktime': ['mov'],
 };
 
 function extractExtension(fileName: string): string | null {

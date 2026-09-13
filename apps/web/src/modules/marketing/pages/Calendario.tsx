@@ -42,6 +42,7 @@ import { MetricCard } from "@/shared/components/MetricCard";
 import { FeatureGate } from "@/shared/components/FeatureGate";
 import { fetchAllLabels } from "@/shared/lib/fetch-all-labels";
 import { getExpectedUpdatedAt } from "@/shared/hooks/useConcurrencyConflict";
+import { useUploadToR2 } from "@/shared/hooks/useUploadToR2";
 import { useMarketingOAuth } from "@/modules/integrations/hooks/useMarketingOAuth";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
@@ -80,16 +81,26 @@ import {
   PUBLISH_PLATFORMS,
   acceptAttr,
   ensureValidType,
-  getDefaultType,
   getFormatSpec,
   getPlatformFormats,
-  normalizePlatform,
   type FormatSpec,
   type PreviewChrome,
   type SocialPlatform,
 } from "../config/social-formats";
 import type { ContentChannel, ContentStatus, ContentType, MarketingContent, MarketingTarget } from "../types/marketing.types";
 import type { MarketingAsset } from "../types/marketing.types";
+import {
+  NEWS_LANDER_RECORDS_TEMPLATE,
+  textLayer,
+  withTextLayer,
+  type CreativeConfig,
+} from "../types/creative.types";
+import {
+  initialContentForm,
+  toMarketingContentInput,
+  type ContentFormValues,
+  type MediaItem,
+} from "./content-form.mapper";
 
 /** Contexto do conteúdo — exclusivamente Empresa e Artista. */
 const CONTENT_CONTEXT_OPTIONS: { value: MarketingTarget; label: string }[] = [
@@ -107,31 +118,6 @@ const FILTER_TYPE_OPTIONS: { value: ContentType; label: string }[] = [
   { value: "shorts", label: "Shorts" },
   { value: "video", label: "Vídeo" },
 ];
-
-type MediaItem = { url: string; name: string; kind: string };
-
-type ContentFormValues = {
-  title: string;
-  targetType: MarketingTarget;
-  targetName: string;
-  /** Plataforma principal — dirige formato/preview/type. */
-  channel: SocialPlatform;
-  /** Todas as plataformas selecionadas (publicação multiplataforma). */
-  channels: SocialPlatform[];
-  type: ContentType;
-  publishDate: string;
-  publishTime: string;
-  copy: string;
-  campaignId: string;
-  releaseId: string;
-  notes: string;
-  hashtags: string;
-  location: string;
-  status: ContentStatus;
-  /** Conta integrada (corporativa) usada para publicar — apenas conteúdo de Empresa. */
-  integratedAccountId: string;
-  media: MediaItem[];
-};
 
 type ContentScheduleModalProps = {
   open: boolean;
@@ -341,72 +327,6 @@ function ToolbarSelect({
   );
 }
 
-function initialContentForm(content?: MarketingContent | null): ContentFormValues {
-  // Contexto restrito a Empresa/Artista — conteúdos legados de outro contexto viram "artista".
-  const targetType: MarketingTarget = content?.targetType === "empresa" ? "empresa" : "artista";
-  // Plataformas selecionadas (multiplataforma); a primeira é a principal.
-  const rawChannels = content?.channels?.length ? content.channels : [content?.channel ?? "instagram"];
-  const channels = Array.from(new Set(rawChannels.map((c) => normalizePlatform(c))));
-  const channel = channels[0] ?? "instagram";
-  const type = ensureValidType(channel, content?.type ?? getDefaultType(channel));
-  return {
-    title: content?.title ?? "",
-    targetType,
-    targetName: content?.targetName ?? (targetType === "empresa" ? "Empresa" : ""),
-    channel,
-    channels,
-    type,
-    publishDate: content?.publishDate?.slice(0, 10) ?? "",
-    publishTime: content?.publishTime ?? "",
-    copy: content?.copy ?? "",
-    campaignId: content?.campaignId ?? "none",
-    releaseId: content?.releaseId ?? "none",
-    notes: content?.notes ?? "",
-    hashtags: "",
-    location: "",
-    status: content?.status ?? "agendado",
-    integratedAccountId: "none",
-    media: (content?.files ?? []).map((file) => ({
-      url: file.url,
-      name: file.name,
-      kind: file.kind ?? "",
-    })),
-  };
-}
-
-function toMarketingContentInput(
-  values: ContentFormValues,
-  current: MarketingContent | undefined,
-): Omit<MarketingContent, "id" | "createdAt" | "updatedAt"> {
-  const spec = getFormatSpec(values.channel, values.type);
-  return {
-    title: values.title.trim(),
-    targetType: values.targetType,
-    targetName: values.targetType === "empresa" ? "Empresa" : values.targetName.trim(),
-    type: values.type,
-    channel: values.channel,
-    channels: values.channels,
-    // Regra de publicação: somente conteúdo de Empresa pode publicar (via integração).
-    // Artista/Projeto musical permanecem sempre "agendado" (apenas agendamento interno).
-    status: values.targetType === "empresa" ? values.status : "agendado",
-    approval: current?.approval ?? "pendente",
-    publishDate: values.publishDate,
-    publishTime: values.publishTime,
-    owner: current?.owner ?? "Marketing",
-    copy: values.copy.trim(),
-    notes: [values.hashtags, values.location, values.notes].filter(Boolean).join("\n"),
-    campaignId: values.campaignId === "none" ? undefined : values.campaignId,
-    releaseId: values.releaseId === "none" ? undefined : values.releaseId,
-    format: spec?.label ?? values.type,
-    files: values.media.map((item, index) => ({
-      id: current?.files?.[index]?.id ?? `media-${Date.now()}-${index}`,
-      name: item.name || "Mídia do conteúdo",
-      url: item.url,
-      kind: item.kind || "media",
-    })),
-  };
-}
-
 function ContentScheduleModal({
   open,
   onOpenChange,
@@ -493,6 +413,17 @@ function ContentScheduleModal({
     setErrors((prev) => ({ ...prev, type: undefined, media: undefined }));
   };
 
+  const { upload: uploadToR2 } = useUploadToR2();
+
+  /**
+   * blob: URLs are LOCAL-ONLY preview handles -- they never survive a page
+   * reload and must never be persisted (they'd 404 for every other viewer
+   * immediately). Each file gets an instant local-preview item (marked
+   * `uploading`) for responsive UX, then is uploaded to R2 in the background;
+   * once the permanent URL comes back, it replaces the blob: URL in place. A
+   * failed upload removes its item and surfaces the error instead of leaving
+   * a dead blob: URL behind.
+   */
   const handleMedia = (fileList: FileList | null) => {
     const files = fileList ? Array.from(fileList) : [];
     if (!files.length) return;
@@ -500,12 +431,31 @@ function ContentScheduleModal({
       url: URL.createObjectURL(file),
       name: file.name,
       kind: file.type,
+      uploading: true,
     }));
     setValues((prev) => {
       const next = spec?.multiple ? [...prev.media, ...incoming] : incoming.slice(0, 1);
       return { ...prev, media: next };
     });
     setErrors((prev) => ({ ...prev, media: undefined }));
+
+    files.forEach((file, i) => {
+      const localUrl = incoming[i].url;
+      const category = file.type.startsWith("video/") ? "videos" : "images";
+      uploadToR2({ file, category, entity: "marketing_content" })
+        .then((publicUrl) => {
+          setValues((prev) => ({
+            ...prev,
+            media: prev.media.map((item) => (item.url === localUrl ? { ...item, url: publicUrl, uploading: false } : item)),
+          }));
+          URL.revokeObjectURL(localUrl);
+        })
+        .catch((err: unknown) => {
+          setValues((prev) => ({ ...prev, media: prev.media.filter((item) => item.url !== localUrl) }));
+          URL.revokeObjectURL(localUrl);
+          setErrors((prev) => ({ ...prev, media: err instanceof Error ? err.message : "Falha no upload da mídia." }));
+        });
+    });
   };
 
   const removeMedia = (index: number) => {
@@ -563,6 +513,26 @@ function ContentScheduleModal({
       return;
     }
 
+    if (values.media.some((item) => item.uploading)) {
+      setErrors((prev) => ({ ...prev, media: "Aguarde o upload da mídia terminar." }));
+      return;
+    }
+
+    // Template mode has no render/export pipeline yet (see PreviewFrame's
+    // template surface) -- an actual external publish would ship an empty
+    // `files` (no rendered artifact exists), so that specific action is
+    // blocked with a clear reason. Saving/internal-scheduling the creative
+    // CONFIGURATION is still allowed (files stays empty/untouched until a
+    // real render exists) so the work itself is never lost, matching
+    // section 56's "complete what's independently safe" allowance.
+    if (values.creative.mode === "template" && publish) {
+      setErrors((prev) => ({
+        ...prev,
+        media: "Renderização do criativo (Template) ainda não está disponível nesta versão — não é possível publicar via integração sem uma mídia final renderizada. A configuração pode ser salva normalmente.",
+      }));
+      return;
+    }
+
     setErrors({});
     onSubmit(nextValues);
   };
@@ -576,8 +546,12 @@ function ContentScheduleModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-[760px] overflow-hidden p-0">
-        <form onSubmit={submit} className="flex max-h-[90vh] flex-col">
+      {/* Safe top/bottom breathing room on tall viewports (dvh-based so mobile
+          browser chrome doesn't clip it): was max-h-[90vh], which on a short
+          viewport or with the dev auth banner visible left the modal nearly
+          flush against the top edge. */}
+      <DialogContent className="max-h-[calc(100dvh-4rem)] max-w-[760px] overflow-hidden p-0">
+        <form onSubmit={submit} className="flex max-h-full flex-col">
           <DialogHeader className="sr-only">
             <DialogTitle>{mode === "edit" ? "Editar Conteúdo" : "Novo Conteúdo"}</DialogTitle>
             <DialogDescription>Agende e configure um conteúdo de marketing.</DialogDescription>
@@ -693,6 +667,13 @@ function ContentScheduleModal({
               {spec && (
                 <p className="text-[11px] text-muted-foreground">{formatHint(spec)}</p>
               )}
+
+              <CreativeSection
+                creative={values.creative}
+                onChange={(creative) => setValue("creative", creative)}
+                uploadToR2={uploadToR2}
+                projectAssets={projectAssetLibrary.data ?? []}
+              />
 
               <div className="grid gap-2 sm:grid-cols-2">
                 <FieldBlock label="Data" required error={errors.publishDate}>
@@ -880,6 +861,177 @@ function AssetThumb({ asset }: { asset: MarketingAsset }) {
 }
 
 // ---------------------------------------------------------------------------
+// Criativo (creative editor — Template mode layered onto the existing modal)
+// ---------------------------------------------------------------------------
+
+type UploadFn = (opts: { file: File; category: "images" | "videos"; entity?: string }) => Promise<string>;
+
+function CreativeSection({
+  creative,
+  onChange,
+  uploadToR2,
+  projectAssets,
+}: {
+  creative: CreativeConfig;
+  onChange: (next: CreativeConfig) => void;
+  uploadToR2: UploadFn;
+  projectAssets: MarketingAsset[];
+}) {
+  const [slotUploading, setSlotUploading] = useState(false);
+  const isTemplate = creative.mode === "template";
+
+  const setPrimarySlotFile = (file: File) => {
+    setSlotUploading(true);
+    const kind: "image" | "video" = file.type.startsWith("video/") ? "video" : "image";
+    uploadToR2({ file, category: kind === "video" ? "videos" : "images", entity: "marketing_content_creative" })
+      .then((assetUrl) => {
+        onChange({ ...creative, primarySlot: { assetUrl, kind }, renderState: "dirty" });
+      })
+      .finally(() => setSlotUploading(false));
+  };
+
+  return (
+    <FieldBlock label="Criativo">
+      <div className="flex gap-1.5 rounded-lg border border-border p-1">
+        <button
+          type="button"
+          onClick={() => onChange({ ...creative, mode: "simple" })}
+          className={cn(
+            "flex-1 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+            !isTemplate ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted/50",
+          )}
+        >
+          Mídia simples
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange({ ...creative, mode: "template" })}
+          className={cn(
+            "flex-1 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+            isTemplate ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted/50",
+          )}
+        >
+          Template
+        </button>
+      </div>
+
+      {isTemplate && (
+        <div className="mt-2.5 space-y-2.5 rounded-lg border border-border bg-muted/20 p-3">
+          <div>
+            <Label className="text-[11px] text-muted-foreground">Categoria</Label>
+            <Select value={creative.category} onValueChange={() => { /* single preset for now */ }}>
+              <SelectTrigger className="mt-1 h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NEWS_LANDER_RECORDS_TEMPLATE.category}>{NEWS_LANDER_RECORDS_TEMPLATE.label}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div>
+              <Label className="text-[11px] text-muted-foreground">Manchete</Label>
+              <Input
+                value={textLayer(creative, "headline")}
+                onChange={(e) => onChange(withTextLayer(creative, "headline", e.target.value))}
+                placeholder="Título em destaque"
+                maxLength={80}
+                className="mt-1 h-8 text-xs"
+              />
+            </div>
+            <div>
+              <Label className="text-[11px] text-muted-foreground">Subtítulo</Label>
+              <Input
+                value={textLayer(creative, "subtitle")}
+                onChange={(e) => onChange(withTextLayer(creative, "subtitle", e.target.value))}
+                placeholder="Texto de apoio"
+                maxLength={120}
+                className="mt-1 h-8 text-xs"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-[11px] text-muted-foreground">Mídia principal</Label>
+            {creative.primarySlot ? (
+              <div className="mt-1 flex items-center gap-2 rounded-md border border-border bg-background/50 p-1.5">
+                {creative.primarySlot.kind === "image" ? (
+                  <img src={creative.primarySlot.assetUrl} alt="" className="h-10 w-10 rounded object-cover" />
+                ) : (
+                  <span className="flex h-10 w-10 items-center justify-center rounded bg-card"><Play className="h-4 w-4" /></span>
+                )}
+                <span className="flex-1 truncate text-[11px] text-muted-foreground">{creative.primarySlot.assetUrl.split("/").pop()}</span>
+                <button
+                  type="button"
+                  onClick={() => onChange({ ...creative, primarySlot: null, renderState: "dirty" })}
+                  className="rounded p-1 text-muted-foreground hover:bg-muted"
+                  aria-label="Remover mídia principal"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              <label className="mt-1 flex h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border text-[11px] text-muted-foreground hover:border-primary/60">
+                {slotUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                <span>{slotUploading ? "Enviando..." : "Selecionar imagem ou vídeo"}</span>
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  className="sr-only"
+                  disabled={slotUploading}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) setPrimarySlotFile(file);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            )}
+            {projectAssets.length > 0 && (
+              <div className="mt-1.5 grid max-h-24 gap-1 overflow-y-auto">
+                {projectAssets.slice(0, 6).map((asset) => (
+                  <button
+                    key={asset.id}
+                    type="button"
+                    onClick={() => onChange({
+                      ...creative,
+                      primarySlot: { assetUrl: asset.url, kind: inferMediaKind(asset).startsWith("video/") ? "video" : "image" },
+                      renderState: "dirty",
+                    })}
+                    className="flex items-center gap-2 rounded-md border border-border px-2 py-1 text-left text-[11px] transition hover:border-primary/60 hover:bg-primary/5"
+                  >
+                    <AssetThumb asset={asset} />
+                    <span className="min-w-0 flex-1 truncate">{asset.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <Label className="text-[11px] text-muted-foreground">Marca d'água</Label>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={creative.watermark.enabled}
+              onClick={() => onChange({ ...creative, watermark: { ...creative.watermark, enabled: !creative.watermark.enabled }, renderState: "dirty" })}
+              className={cn("h-5 w-9 rounded-full transition-colors", creative.watermark.enabled ? "bg-primary" : "bg-muted")}
+            >
+              <span className={cn("block h-4 w-4 translate-x-0.5 rounded-full bg-background transition-transform", creative.watermark.enabled && "translate-x-[18px]")} />
+            </button>
+          </div>
+
+          <p className="rounded-md border border-dashed border-border bg-background/50 p-2 text-[10px] leading-relaxed text-muted-foreground">
+            A composição final (render/export) ainda não está disponível nesta versão — a configuração é salva e reaberta normalmente, mas agendar publicação via integração exige uma mídia final renderizada.
+          </p>
+        </div>
+      )}
+    </FieldBlock>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Preview
 // ---------------------------------------------------------------------------
 
@@ -913,7 +1065,8 @@ function ContentPreview({
   const headerLabel = `${platformName} ${spec?.label ?? ""}`.trim();
   const safePage = media.length ? Math.min(page, media.length - 1) : 0;
   const aspect = ASPECT_CLASS[spec?.aspect ?? "1:1"];
-  const isCarousel = !!spec?.carousel;
+  const isTemplate = values.creative.mode === "template";
+  const isCarousel = !isTemplate && !!spec?.carousel;
 
   const frame = (
     <PreviewFrame
@@ -924,6 +1077,7 @@ function ContentPreview({
       copy={values.copy}
       isCarousel={isCarousel}
       onPage={setPage}
+      renderSurface={isTemplate ? () => <CreativeTemplateSurface creative={values.creative} /> : undefined}
     />
   );
 
@@ -936,6 +1090,11 @@ function ContentPreview({
 
       {frame}
 
+      {isTemplate ? (
+        <p className="mt-3 rounded-md border border-dashed border-border bg-background/50 p-2 text-[11px] text-muted-foreground">
+          Mídia do criativo é gerenciada na seção "Criativo" ao lado — não aqui.
+        </p>
+      ) : (
       <div className="mt-3">
         {(projectAssetsLoading || projectAssets.length > 0) && (
           <div className="mb-3 rounded-lg border border-border bg-background/50 p-2">
@@ -1014,6 +1173,7 @@ function ContentPreview({
           </div>
         )}
       </div>
+      )}
     </aside>
   );
 }
@@ -1027,6 +1187,7 @@ function PreviewFrame({
   copy,
   isCarousel,
   onPage,
+  renderSurface,
 }: {
   chrome: PreviewChrome;
   aspect: string;
@@ -1035,11 +1196,14 @@ function PreviewFrame({
   copy: string;
   isCarousel: boolean;
   onPage: (page: number) => void;
+  /** Template mode's creative surface replaces the plain media content, but the
+   * platform chrome (Instagram/TikTok/YouTube frame) around it is unchanged. */
+  renderSurface?: () => ReactNode;
 }) {
   const current = media[page];
   const surface = (
     <div className={cn("relative w-full overflow-hidden bg-card", aspect)}>
-      <MediaContent item={current} />
+      {renderSurface ? renderSurface() : <MediaContent item={current} />}
       {isCarousel && media.length > 1 && (
         <>
           <CarouselArrows
@@ -1104,6 +1268,64 @@ function MediaContent({ item }: { item?: MediaItem }) {
       <div className="flex h-16 w-16 items-center justify-center rounded-md bg-primary/10">
         <Play className="h-8 w-8 text-primary" />
       </div>
+    </div>
+  );
+}
+
+/**
+ * Template mode's creative surface — composited INSIDE the media region, the
+ * platform chrome (Instagram/TikTok/etc. frame) stays around it unchanged
+ * (see PreviewFrame's `renderSurface`). FULL layout only (`primarySlot` fills
+ * the whole region) -- SPLIT (two slots side by side, zero separator) is not
+ * implemented in this pass; `creative.layout` stays "full" until it is.
+ *
+ * This is an in-browser visual composite for editing feedback only, not a
+ * rendered artifact -- there is no export/render pipeline yet (see the
+ * `finalize()` guard in ContentScheduleModal blocking external publish for
+ * template-mode content). Text position is fixed (header band top, subtitle
+ * band bottom) rather than freely draggable, matching the News/Lander
+ * Records preset's actual layout, not a generic design-tool canvas.
+ */
+function CreativeTemplateSurface({ creative }: { creative: CreativeConfig }) {
+  const headline = textLayer(creative, "headline");
+  const subtitle = textLayer(creative, "subtitle");
+  const slot = creative.primarySlot;
+
+  return (
+    <div className="absolute inset-0 flex flex-col bg-card">
+      <div className="z-10 bg-gradient-to-b from-background/90 to-transparent px-3 pb-4 pt-2.5">
+        <span className="rounded bg-primary px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-primary-foreground">
+          {NEWS_LANDER_RECORDS_TEMPLATE.label}
+        </span>
+      </div>
+
+      <div className="relative -mt-8 flex-1">
+        {slot ? (
+          slot.kind === "image" ? (
+            <img src={slot.assetUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          ) : (
+            <video src={slot.assetUrl} className="absolute inset-0 h-full w-full object-cover" muted loop autoPlay />
+          )
+        ) : (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-muted/40 text-muted-foreground">
+            <Upload className="h-6 w-6" />
+            <span className="text-[11px]">Selecione a mídia principal</span>
+          </div>
+        )}
+
+        {creative.watermark.enabled && (
+          <span className="absolute bottom-2 right-2 rounded bg-background/70 px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-wide text-foreground/80">
+            Lander Records
+          </span>
+        )}
+      </div>
+
+      {(headline || subtitle) && (
+        <div className="z-10 space-y-0.5 bg-gradient-to-t from-background/95 to-transparent px-3 pb-3 pt-6">
+          {headline && <p className="text-sm font-bold leading-tight text-foreground">{headline}</p>}
+          {subtitle && <p className="text-[11px] leading-snug text-muted-foreground">{subtitle}</p>}
+        </div>
+      )}
     </div>
   );
 }

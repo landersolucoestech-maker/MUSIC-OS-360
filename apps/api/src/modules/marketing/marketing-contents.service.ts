@@ -119,7 +119,10 @@ export class MarketingContentsService {
         project_id: dto.releaseId !== undefined ? dto.releaseId : current.project_id,
         format: dto.format !== undefined ? dto.format : current.format,
         files: dto.files !== undefined ? this.normalizeFiles(dto.files) : current.files,
-        metadata: dto.metadata ?? current.metadata,
+        // Merge, never replace: metadata carries independent keys (e.g. the
+        // creative-editor config) that a caller updating an unrelated field
+        // must not silently wipe.
+        metadata: dto.metadata !== undefined ? { ...current.metadata, ...dto.metadata } : current.metadata,
         publication_error: shouldRequeue ? null : current.publication_error,
         updated_by: userId,
       } as never,

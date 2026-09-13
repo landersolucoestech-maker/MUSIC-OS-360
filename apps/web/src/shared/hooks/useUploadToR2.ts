@@ -16,7 +16,7 @@ interface PresignResponse {
   publicUrl:    string;
 }
 
-export type UploadCategory = "documents" | "images" | "audio" | "spreadsheets";
+export type UploadCategory = "documents" | "images" | "audio" | "spreadsheets" | "videos";
 
 export interface UploadToR2Options {
   file:      File;

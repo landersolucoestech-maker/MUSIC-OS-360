@@ -12,7 +12,7 @@ import { Type } from 'class-transformer';
 import { UploadCategory } from '../../../storage/storage.service';
 
 const UPLOAD_CATEGORIES: UploadCategory[] = [
-  'documents', 'images', 'audio', 'spreadsheets',
+  'documents', 'images', 'audio', 'spreadsheets', 'videos',
 ];
 
 export class PresignUploadDto {
