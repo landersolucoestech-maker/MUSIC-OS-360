@@ -5,8 +5,6 @@ Monorepo pnpm/Turborepo: `apps/api` (NestJS + TypeORM + BullMQ), `apps/web` (Rea
 Convenções de engenharia por área (stack real, scripts reais, padrões vigentes) em `docs/engineering/`:
 `architecture.md`, `backend.md`, `frontend.md`, `database.md`, `integrations.md`, `security.md`, `testing.md`, `git-safety.md`, `data-governance.md`, `release-production.md`, `supply-chain.md`.
 
-Auditoria forense consolidada (baseline oficial para remediação): `AUDITORIA_COMPLETA_MUSIC_OS_360.md`.
-
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.

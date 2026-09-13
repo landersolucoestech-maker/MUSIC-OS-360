@@ -25,9 +25,10 @@ paths = [
   # value allowlist: the value must stay detectable in the throwaway
   # docs/__gitleaks_regression_test__.md file the test generates at runtime
   # (a different path, not covered here), or the regression test proves
-  # nothing. Only these two files, which just declare the constant, are
-  # exempted.
-  '''scripts/test-gitleaks-docs-coverage\.sh''',
+  # nothing. This is the only file that declares the constant (the inline
+  # SECRET-01 step in security.yml is the sole executor of this regression
+  # test; the standalone scripts/test-gitleaks-docs-coverage.sh script was
+  # removed as dead/duplicated — never wired into CI).
   '''\.github/workflows/security\.yml''',
   # SECRET-01: a blanket `docs/.*\.md` path allowlist used to live here, exempting
   # the entire docs tree (including every audit doc this project generates) from

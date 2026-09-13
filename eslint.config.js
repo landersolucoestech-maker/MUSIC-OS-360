@@ -19,7 +19,6 @@ export default tseslint.config(
       "apps/**/coverage/**",
       "apps/**/dist/**",
       "packages/**/dist/**",
-      "scripts/runtime-visual-validation.mjs",
     ],
   },
   {
@@ -36,10 +35,15 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
-      "@typescript-eslint/no-unused-vars": "off",
       // P0-08: Pre-existing lint debt — downgraded to warn until strict-types
       // migration backlog completes. CI now passes while preserving visibility.
       // New files should still avoid these patterns.
+      // find-42ac2e2b: was fully "off" (not merely warn like its
+      // siblings here), hiding dead-code findings from lint entirely with no
+      // comment explaining why. Downgraded to warn (matching the pattern
+      // above) instead of left off; `_`-prefixed args/vars are still allowed
+      // (a common intentional-unused convention).
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/ban-ts-comment": "warn",
       "@typescript-eslint/no-unused-expressions": "warn",

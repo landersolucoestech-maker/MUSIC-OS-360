@@ -26,7 +26,8 @@
 # BACKUP-01: this script used to fall back to uploading an UNENCRYPTED dump with
 # only a warning when neither age nor gpg was available. It now fails closed —
 # no recipient configured, or the corresponding binary missing, aborts the run
-# before any dump/upload happens. See scripts/test-pg-backup-cron.sh.
+# before any dump/upload happens. (The scripts/test-pg-backup-cron.sh regression
+# test for this behavior was removed as dead — never wired into any CI job.)
 
 set -euo pipefail
 
