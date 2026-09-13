@@ -1,0 +1,11 @@
+{
+  "id": "evid-78e46347",
+  "createdAt": "2026-09-11T22:25:16.666Z",
+  "type": "REVIEW",
+  "reviewer": "database-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Wave 7 read-only trace of Works/Phonograms/Releases + ISRC deep-dive complete. 4 findings recorded (3 HIGH, 1 MEDIUM): no DB-level ISRC uniqueness constraint (global or per-tenant) on works/phonograms; ISRC format not validated/normalized on the manual create/update write path (registry validator exists but only fires at society-submission time, not at persist time); bulk CSV import applies only generic string normalization, not ISRC-specific, risking divergent textual forms of the same real-world ISRC across write paths; phonograms.work_id/artist_id have no DB FK at all, enabling orphan references and unchecked cross-tenant work_id linkage. RLS/tenant isolation itself verified present and correctly tenant-scoped for works, phonograms, and work_participants (20260520000020_RLSPolicies.ts, 20260718000011_WorkParticipantsNormalization.ts) -- no RLS gap found. No error-mapping finding for ISRC duplicates since no uniqueness constraint exists to violate.",
+  "workspaceFingerprint": "7f36230d8bf92a9c64028a2b03e136ce66ec78c2f91feed8245130be8ec4fdf1",
+  "fingerprintStatus": "BOUND"
+}

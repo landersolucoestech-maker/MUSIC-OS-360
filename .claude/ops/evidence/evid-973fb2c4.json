@@ -1,0 +1,11 @@
+{
+  "id": "evid-973fb2c4",
+  "createdAt": "2026-09-09T20:38:17.572Z",
+  "type": "REVIEW",
+  "reviewer": "compliance-officer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "No compliance regime named for this task beyond Brazil fiscal/PII field-name sensitivity flagged in NAMING_NORMALIZATION_CANONICAL_MAP.md Section 10. Verified via full repo-wide git diff HEAD: zero +/- lines match cpf_encrypted, numero_nota_fiscal, cfop, or tomador_ (Section 10's REQUIRES_REVIEW cluster) -- the doc's claim that this session's naming work did not touch that cluster holds. Reviewed create-employee.dto.ts and its consumer hr.service.ts: the only change this session is documentos->documents rename of an unrelated jsonb attachments array; cpf/salario fields, validation, and encryption are untouched -- no PII/salary exposure introduced. No file/finding action required.",
+  "workspaceFingerprint": "d5dfc7ef8d1e2b69b5e5f680cf92073fc66024870565469a325188f232a93b76",
+  "fingerprintStatus": "BOUND"
+}

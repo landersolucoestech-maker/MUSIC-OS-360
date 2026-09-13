@@ -1,0 +1,8 @@
+{
+  "id": "fail-3c3b931d",
+  "createdAt": "2026-09-09T20:24:14.451Z",
+  "fingerprint": "SESSION_USAGE_LIMIT",
+  "summary": "strict-16: agent terminated early -- account/session usage limit hit mid-run, now reset per user. Queued for retry.",
+  "gateResultId": null,
+  "taskId": "strict-16"
+}

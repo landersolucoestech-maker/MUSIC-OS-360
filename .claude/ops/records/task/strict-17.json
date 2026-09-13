@@ -1,0 +1,9 @@
+{
+  "id": "strict-17",
+  "createdAt": "2026-09-09T15:32:15.878Z",
+  "title": "Review DunningService.runDunningCycle's per-tenant error isolation and logging for production observability.",
+  "criterionIds": [],
+  "assignedAgent": "reliability-observability-reviewer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

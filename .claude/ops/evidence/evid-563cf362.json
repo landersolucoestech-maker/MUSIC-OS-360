@@ -1,0 +1,14 @@
+{
+  "id": "evid-563cf362",
+  "createdAt": "2026-09-12T23:16:51.175Z",
+  "type": "COMMAND",
+  "label": "N/A: disposition B (leave unregistered + document decision, ac-2e273adf) was chosen instead of this disposition A (register+authorize) -- no operator authorization for this destructive DROP TABLE was available in this session.",
+  "command": "node -e process.exit(3)",
+  "status": "FAIL",
+  "exitCode": 3,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "d739e1603eafd68cfbe3ce6bdf3b8f484c816002005ddd0dc90afaa2fe5da86c",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 61
+}

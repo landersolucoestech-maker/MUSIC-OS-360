@@ -1,0 +1,14 @@
+{
+  "id": "evid-12016577",
+  "createdAt": "2026-09-12T08:02:16.550Z",
+  "type": "COMMAND",
+  "label": "cd apps/api && npx jest src/modules/audiovisual/dto/audiovisual.dto.spec.ts --silent",
+  "command": "cd apps/api && npx jest src/modules/audiovisual/dto/audiovisual.dto.spec.ts --silent",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync cd ENOENT",
+  "workspaceFingerprint": "949d0e3c3c2bea62de3a8c97f39a22bdc927a26f37b17af1ff6b242a2bcca224",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 6
+}

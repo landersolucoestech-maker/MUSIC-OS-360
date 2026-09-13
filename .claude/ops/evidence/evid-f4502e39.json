@@ -1,0 +1,14 @@
+{
+  "id": "evid-f4502e39",
+  "createdAt": "2026-09-13T00:12:10.745Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-entities-column-crosscheck.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-entities-column-crosscheck.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "OK: zero remaining \"documentos\" identifiers in entities.ts (found 0)\nOK: exactly 4 \"documents\" @Column properties (artists, contracts, shares, employees) (found 4)\nOK: TenantBillingStateEntity.status_changed_at exists as Date\nOK: mapped as timestamptz, matching the migration's column type\nOK: not marked nullable in the entity, matching the migration's final NOT NULL state",
+  "stderrTail": "",
+  "workspaceFingerprint": "e61bcce81613a58ff59a48f757e0fbd7a9169732707412df83edd33e719ba822",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 175
+}

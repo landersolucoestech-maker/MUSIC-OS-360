@@ -1,0 +1,14 @@
+{
+  "id": "evid-55b41570",
+  "createdAt": "2026-09-12T23:36:14.414Z",
+  "type": "COMMAND",
+  "label": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts database/rebuild-inventory-items-canonical-form-order.migration.spec.ts",
+  "command": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts database/rebuild-inventory-items-canonical-form-order.migration.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "7d61aa6999aeb52e618a35a7ee84ace9e2a724c62578b6497579abbe720ece6d",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 14904
+}

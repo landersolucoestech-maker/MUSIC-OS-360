@@ -1,0 +1,14 @@
+{
+  "id": "evid-4df0f964",
+  "createdAt": "2026-09-12T08:08:01.106Z",
+  "type": "COMMAND",
+  "label": "cd apps/api && npx jest src/modules/integrations --silent",
+  "command": "cd apps/api && npx jest src/modules/integrations --silent",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync cd ENOENT",
+  "workspaceFingerprint": "9c69bd06713ea2da44534b54bead0bbdb1ae19fbd50606e9e9295bc14b4d3b10",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 5
+}

@@ -1,0 +1,9 @@
+{
+  "id": "strict-01",
+  "createdAt": "2026-09-09T15:32:15.804Z",
+  "title": "Formalize RequirementRecords+AcceptanceCriteria for the two open decisions: (1) whether DropOrphanContactsSatelliteTables20260713000002 should be registered, (2) whether leads.service.ts public registration should gate on tenant_billing_state.",
+  "criterionIds": [],
+  "assignedAgent": "requirements-analyst",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

@@ -1,0 +1,9 @@
+{
+  "id": "strict-11",
+  "createdAt": "2026-09-09T15:32:15.859Z",
+  "title": "Review the same changed modals (ContratoFormModal/ContratoViewModal/ShareViewModal/SharePendenteFormModal) for PT-BR label corruption beyond the one already fixed in Configuracoes.tsx, and interaction correctness.",
+  "criterionIds": [],
+  "assignedAgent": "ui-ux-reviewer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

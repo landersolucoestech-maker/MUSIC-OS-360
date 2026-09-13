@@ -1,0 +1,11 @@
+{
+  "id": "evid-f8120d91",
+  "createdAt": "2026-09-12T23:04:22.790Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Reviewed billing.service.ts isStaleInvoiceEvent guard (find-99ea599c) added to onPaymentSucceeded/onPaymentFailed for invoice.payment_succeeded/paid/payment_failed/payment_action_required. Comparison of Stripe event.created vs tenant_billing_state.status_changed_at is a sound (if asymmetric vs the sibling period-based find-602e8654 guard) staleness signal given invoice events carry no period; it fails open (proceeds, no skip) when status_changed_at or event.created is missing/null, so first-ever provisioning and events lacking the field are never wrongly blocked. event.created is not attacker-controllable (only reachable post Stripe-signature verification via constructEvent, which already enforces a signature timestamp tolerance, so this does not open a new replay-suppression vector). No conflict with the pre-existing payment_events/recordWebhookProcessed dedup layer -- that guards same-event.id redelivery, this guards cross-event ordering, complementary not duplicative. No SQL/command injection, no new auth/tenant-isolation bypass, no secrets introduced. Minor non-blocking observations: (1) strict < comparison at second-vs-microsecond precision could in principle misclassify an event landing in the same wall-clock second as a transition, narrow/low-impact edge case; (2) assumes Stripe/server clocks are not meaningfully skewed, no explicit tolerance margin -- neither rises to a finding requiring code change. Tests: 4 new cases in billing.service.spec.ts (stale skip, newer still applies, cross-type stale skip, no-prior-state fail-open) plus full modules/billing suite 95/95 and tsc --noEmit clean, both reported by implementer for this workspace state. Unrelated: secret-scan flagged apps/api/src/modules/integrations/apple-music/apple-music.service.spec.ts:10 (synthetic test-only EC key, explicitly commented as non-real) -- pre-existing, untouched by this diff, out of scope for this review. Verdict: PASS.",
+  "workspaceFingerprint": "230d225c8d5fff1f8e741e35337612f5d3801f07b85fd6b5f49cee2bf80b0919",
+  "fingerprintStatus": "BOUND"
+}

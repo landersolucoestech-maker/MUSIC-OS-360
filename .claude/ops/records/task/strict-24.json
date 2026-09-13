@@ -1,0 +1,8 @@
+{
+  "id": "strict-24",
+  "createdAt": "2026-09-09T15:32:15.928Z",
+  "title": "Verify apps/api/DATABASE.md reflects the now-registered migrations and the pending unregistered destructive one.",
+  "criterionIds": [],
+  "assignedAgent": "documentation-reviewer",
+  "status": "COMPLETED"
+}

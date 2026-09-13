@@ -1,0 +1,14 @@
+{
+  "id": "evid-1bbd88b4",
+  "createdAt": "2026-09-12T23:34:39.441Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-dto-disposition-table.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-dto-disposition-table.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "OK: apps/api/src/modules/artist-goals/dto/query-artist-goal.dto.ts -> REMOVE (exists=false, expected=false)\nOK: apps/api/src/modules/artists/dto/sync-platform-profile.dto.ts -> SHIP (exists=true, expected=true)\nOK: apps/api/src/modules/assets/dto/assets.dto.ts -> REMOVE (exists=false, expected=false)\nOK: apps/api/src/modules/audiovisual/dto/audiovisual.dto.spec.ts -> SHIP (exists=true, expected=true)\nOK: apps/api/src/modules/content-detections/dto/query-content-detection.dto.ts -> REMOVE (exists=false, expected=false)\nOK: apps/api/src/modules/ecad-reports/dto/query-ecad-report.dto.ts -> REMOVE (exists=false, expected=false)\nOK: apps/api/src/modules/hr/dto/query-hr.dto.ts -> REMOVE (exists=false, expected=false)\nOK: apps/api/src/modules/integrations/dto/integrations.dto.spec.ts -> SHIP (exists=true, expected=true)\nOK: apps/api/src/modules/marketing/dto/campaign-builder-payload.dto.ts -> REMOVE (superseded by the CampaignBuilderPayload type + explicit validateCampaign() runtime check against dynamic campaignBuilderConfig -- documented in the DTO's own now-removed header comment as the deliberate validation strategy) (exists=false, expected=false)\nOK: apps/api/src/modules/marketing/dto/marketing-ai-suggestions.dto.ts -> REMOVE (wired dto-guard-allow annotation onto the controller instead, since the endpoint intentionally accepts a heterogeneous JSONB blob a strict DTO would break) (exists=false, expected=false)\nOK: apps/api/src/common/utils/safe-order-by.ts -> SHIP (was unused -- root cause of CRITICAL SQL injection find-924ed503; now wired into 4 services) (exists=true, expected=true)\nOK: apps/api/scripts/verify-no-inline-body.ts -> SHIP (wired as npm script verify:no-inline-body; 27 pre-existing unrelated violations tracked as accepted debt, find id recorded) (exists=true, expected=true)",
+  "stderrTail": "",
+  "workspaceFingerprint": "7d61aa6999aeb52e618a35a7ee84ace9e2a724c62578b6497579abbe720ece6d",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 77
+}

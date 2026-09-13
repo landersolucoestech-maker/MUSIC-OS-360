@@ -1,0 +1,8 @@
+{
+  "id": "strict-06",
+  "createdAt": "2026-09-09T15:32:15.829Z",
+  "title": "Independently verify billing-enforcement.guard.ts's new blanket-deny-except-allowlist for bypass paths (route casing/trailing slash/prefix collision), and assess the leads.service.ts tenant.active gap as a security-boundary regression.",
+  "criterionIds": [],
+  "assignedAgent": "security-reviewer",
+  "status": "COMPLETED"
+}

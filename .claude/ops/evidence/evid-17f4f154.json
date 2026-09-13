@@ -1,0 +1,14 @@
+{
+  "id": "evid-17f4f154",
+  "createdAt": "2026-09-13T00:20:01.940Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-canonical-map-and-docs-disposition.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-canonical-map-and-docs-disposition.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "OK: no duplicate root-level NAMING_NORMALIZATION_CANONICAL_MAP.md\nOK: docs/NAMING_NORMALIZATION_CANONICAL_MAP.md is the single live registry\nOK: NAMING_NORMALIZATION_DISCOVERY_LOG.md (renamed from the old root file) preserves the process history\nOK: AUDITORIA_COMPLETA_MUSIC_OS_360.md deleted (disposition DELETE/HISTORICAL)\nOK: AUDITORIA_DOMINIO_E_ARQUITETURA.md deleted (disposition DELETE/HISTORICAL)\nOK: AUDITORIA_SISTEMICA_TOTAL.md deleted (disposition DELETE/HISTORICAL)\nOK: MUSIC_OS_360_FORENSIC_AUDIT.md deleted (disposition DELETE/HISTORICAL)\nOK: ENGINEERING_OS_MAINTENANCE_REPORT.md deleted (disposition DELETE/HISTORICAL)\nOK: GIT_BRANCH_CONSOLIDATION_REPORT.md deleted (disposition DELETE/HISTORICAL)\nOK: STAGE2_AUDIT_RESULT.md deleted (disposition DELETE/HISTORICAL)\nOK: STAGE2_CLOSURE_RESULT.md deleted (disposition DELETE/HISTORICAL)\nOK: docs/AI_CREATIVE_MODULE_EXHAUSTIVE_AUDIT.md deleted (disposition DELETE/HISTORICAL)\nOK: graphify-out/ absent from the working tree (satisfies GITIGNORE_OR_DELETE trivially)",
+  "stderrTail": "",
+  "workspaceFingerprint": "e61bcce81613a58ff59a48f757e0fbd7a9169732707412df83edd33e719ba822",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 99
+}

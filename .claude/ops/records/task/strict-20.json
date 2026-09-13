@@ -1,0 +1,8 @@
+{
+  "id": "strict-20",
+  "createdAt": "2026-09-09T15:32:15.899Z",
+  "title": "Assess cost impact of the new daily dunning sweep + per-transition notification enqueue pattern.",
+  "criterionIds": [],
+  "assignedAgent": "cost-efficiency-reviewer",
+  "status": "DISPATCHED"
+}

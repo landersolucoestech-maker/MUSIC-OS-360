@@ -1,0 +1,14 @@
+{
+  "id": "evid-0efcfc57",
+  "createdAt": "2026-09-12T23:48:58.795Z",
+  "type": "COMMAND",
+  "label": "node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.mjs apps/web/src/modules/contracts/components/ContractFormModal.documents-persist.guard.test.ts",
+  "command": "node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.mjs apps/web/src/modules/contracts/components/ContractFormModal.documents-persist.guard.test.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[1m\u001b[7m\u001b[36m RUN \u001b[39m\u001b[27m\u001b[22m \u001b[36mv2.1.9 \u001b[39m\u001b[90mC:/Users/Usuario/Documents/MUSIC-OS-360/apps/web\u001b[39m\n\n \u001b[32m✓\u001b[39m src/modules/contracts/components/ContractFormModal.documents-persist.guard.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 5\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 20:48:55\n\u001b[2m   Duration \u001b[22m 3.48s\u001b[2m (transform 83ms, setup 565ms, collect 33ms, tests 5ms, environment 1.35s, prepare 171ms)\u001b[22m",
+  "stderrTail": "",
+  "workspaceFingerprint": "7d61aa6999aeb52e618a35a7ee84ace9e2a724c62578b6497579abbe720ece6d",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 4713
+}

@@ -1,0 +1,14 @@
+{
+  "id": "evid-0bb711f9",
+  "createdAt": "2026-09-12T23:04:44.231Z",
+  "type": "COMMAND",
+  "label": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts modules/billing/billing-enforcement.service.spec.ts",
+  "command": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts modules/billing/billing-enforcement.service.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[32m[Nest] 11116  - \u001b[39m12/09/2026, 20:04:43 \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[BillingEnforcementService] \u001b[39m\u001b[32mtenant.suspended: tenant=tenant-1 reason=billing grace and read-only windows expired\u001b[39m\n\u001b[32m[Nest] 11116  - \u001b[39m12/09/2026, 20:04:43 \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[BillingEnforcementService] \u001b[39m\u001b[32mbilling.grace_started: tenant=tenant-1 reason=invoice.payment_failed retry\u001b[39m\n\u001b[32m[Nest] 11116  - \u001b[39m12/09/2026, 20:04:43 \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[BillingEnforcementService] \u001b[39m\u001b[32mbilling.grace_started: tenant=tenant-1 reason=invoice.payment_failed\u001b[39m\n\u001b[32m[Nest] 11116  - \u001b[39m12/09/2026, 20:04:43 \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[BillingEnforcementService] \u001b[39m\u001b[32mbilling.read_only: tenant=tenant-1 reason=payment grace expired\u001b[39m\n\u001b[32m[Nest] 11116  - \u001b[39m12/09/2026, 20:04:43 \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[BillingEnforcementService] \u001b[39m\u001b[32mtenant.suspended: tenant=tenant-A reason=test\u001b[39m\n\u001b[32m[Nest] 11116  - \u001b[39m12/09/2026, 20:04:43 \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[BillingEnforcementService] \u001b[39m\u001b[32mtenant.reactivated: tenant=tenant-A reason=test\u001b[39m",
+  "stderrTail": "",
+  "workspaceFingerprint": "230d225c8d5fff1f8e741e35337612f5d3801f07b85fd6b5f49cee2bf80b0919",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 18776
+}

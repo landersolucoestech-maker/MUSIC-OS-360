@@ -1,0 +1,11 @@
+{
+  "id": "evid-69ba9e9c",
+  "createdAt": "2026-09-10T14:45:15.883Z",
+  "type": "REVIEW",
+  "reviewer": "schema-tenant-isolation-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Investigacao read-only concluida das 5 migrations do escopo Platform Metrics/Soundcharts (artist_platform_profiles, artist_metric_snapshots, market_reference_metrics, integration_governance x2). RLS/FORCE/tenant policy confirmados completos e corretos em todas as tabelas tenant-scoped; market_reference_metrics confirmada intencionalmente global sem vazamento de dado de tenant; ordering em migrations/index.ts correto. 2 findings MEDIO abertos (sync_status sem CHECK constraint; ausencia de lock otimista de banco alem do UNIQUE de criacao) entregues ao coordenador para reconciliacao com distributed-systems-reviewer.",
+  "workspaceFingerprint": "71c8f87f2fc3480331003b465fc3e4932fc55d5976fce4df842539ed6ab2be1d",
+  "fingerprintStatus": "BOUND"
+}

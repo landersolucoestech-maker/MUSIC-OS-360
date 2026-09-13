@@ -1,0 +1,14 @@
+{
+  "id": "evid-fc398cbb",
+  "createdAt": "2026-09-12T22:53:00.906Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-getstate-callers.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-getstate-callers.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "OK: all getState()/getStateWithEscalation() call sites match the reviewed set:\n  apps/api/src/core/guards/billing-enforcement.guard.ts:this.billing.getStateWithEscalation(tenantId)\n  apps/api/src/modules/billing/billing.controller.ts:this.enforcement.getState(tenantId)\n  apps/api/src/modules/billing/billing.service.ts:this.enforcement.getStateWithEscalation(sub.tenant_id)\n  apps/api/src/modules/billing/billing.service.ts:this.enforcement.getStateWithEscalation(tenantId)\n  apps/api/src/modules/billing/dunning.service.ts:this.enforcement.getState(tenantId)\n  apps/api/src/modules/leads/leads.service.ts:this.billing.getState(tenant.id)",
+  "stderrTail": "",
+  "workspaceFingerprint": "16294286ee686d185efbee514eddbc7f4930a11e66dde3b450234b50b2930b89",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 257
+}

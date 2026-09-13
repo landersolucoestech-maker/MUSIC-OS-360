@@ -1,0 +1,14 @@
+{
+  "id": "evid-d5c24931",
+  "createdAt": "2026-09-13T00:12:39.549Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-leads-billing-gate-disposition.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-leads-billing-gate-disposition.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "OK: exactly disposition A is present -- public lead-capture has a real tenant_billing_state suspended/read_only check, with an adjacent comment stating why (Type-A: repeatable unauthenticated new-write, billing-gated, not exempt like the Type-B reconciliation webhooks). Disposition B (ac-47473305's exemption-comment wording) was not the path chosen and is correctly absent.",
+  "stderrTail": "",
+  "workspaceFingerprint": "e61bcce81613a58ff59a48f757e0fbd7a9169732707412df83edd33e719ba822",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 81
+}

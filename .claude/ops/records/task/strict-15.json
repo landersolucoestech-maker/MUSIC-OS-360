@@ -1,0 +1,8 @@
+{
+  "id": "strict-15",
+  "createdAt": "2026-09-09T15:32:15.872Z",
+  "title": "Check whether billing.service.ts's updateAdminTenant transaction fix or the dunning rewrite breaks any sibling billing flow not covered by the 72 passing billing tests.",
+  "criterionIds": [],
+  "assignedAgent": "regression-reviewer",
+  "status": "COMPLETED"
+}

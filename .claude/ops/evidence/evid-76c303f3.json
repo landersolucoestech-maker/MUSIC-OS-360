@@ -1,0 +1,11 @@
+{
+  "id": "evid-76c303f3",
+  "createdAt": "2026-09-11T06:48:26.336Z",
+  "type": "REVIEW",
+  "reviewer": "artist-api-contract-tracer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Traced Artist domain API contract (list/get/create/update, platform-profiles, query keys) across apps/api and apps/web; findings reported to orchestrator, no writes performed.",
+  "workspaceFingerprint": "f2cc3ffbba028de722d8bd959f7d2eb4cc5e6fd7cb5c0089d9244af88e22efa8",
+  "fingerprintStatus": "BOUND"
+}

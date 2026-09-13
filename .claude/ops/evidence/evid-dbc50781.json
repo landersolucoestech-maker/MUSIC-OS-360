@@ -1,0 +1,11 @@
+{
+  "id": "evid-dbc50781",
+  "createdAt": "2026-09-12T02:26:18.000Z",
+  "type": "REVIEW",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Traced update()/patch() for Transactions and Invoices: new tests' mocks (getOne returns non-cancelled/non-issued-blocking mockTx, manager.connection.query wired) reach assertLinkedFks/assertSameTenantFk before casUpdate/repo.update fires, and reverting only the update/patch FK-check lines would make the new BadRequestException-expecting tests fail (query mock returning [] would go unused, casUpdate would resolve). buildPersistencePayload confirmed to actually map artistaVinculado/contratoVinculado/projetoVinculado dto fields to artist_id/contrato_id/project_id payload keys read by assertLinkedFks. casUpdate uses repo.update (not manager.connection.query), so the query-not-called assertions are specific to the FK check, not incidentally satisfied. No existing assertion was removed or loosened -- only import lines changed to add new named imports.",
+  "workspaceFingerprint": "d28979e3aedf98ce8bc00bcecd54848beb8e377d23009004721e42d953acd619",
+  "fingerprintStatus": "BOUND"
+}

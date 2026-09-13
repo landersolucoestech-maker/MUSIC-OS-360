@@ -1,0 +1,11 @@
+{
+  "id": "evid-de903db2",
+  "createdAt": "2026-09-11T21:34:52.456Z",
+  "type": "REVIEW",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "RLS system-path marker migration down() is byte-identical to prior policies (verified against 20260701000003/20260817000002); DunningService always uses real tenant context (never needs role:system) so unaffected; grepped all writers of webhook_events/payment_events/tenant_billing_state -- all route through billing-enforcement.service.ts which is only called from handleWebhook (now wrapped) or admin controller routes protected by the pre-existing global RequestTenantContextInterceptor (unchanged by this diff, same tenant-match semantics before/after -- not a regression this diff introduces). ON CONFLICT...WHERE...RETURNING semantics for the out-of-order subscription fix are correct per Postgres (false WHERE = no row returned, no throw); same-period status changes still apply. However, found a reproducible functional regression: onCheckoutCompleted's new alreadyActive guard (based on org.billing_status before the write) cannot distinguish a genuine retry of an already-applied checkout from a real second upgrade (e.g. professional->enterprise) while the org is already active -- both have billing_status==='active' beforehand. Stripe event-id dedup already filters true retries upstream via recordWebhookProcessed, so this guard's only remaining effect is to wrongly suppress the billing:plan_upgraded realtime notification and TENANT_CREATED domain event for real upgrades, while the underlying DB writes (subscription/tenant/org rows, enforcement.activateTenant) still apply correctly. The new spec test only exercises the retry scenario, never a genuine second checkout while active, so this gap ships untested. See finding find-9fd92b12.",
+  "workspaceFingerprint": "907cb8a885fbd9f82410f76ae60995c5944f76058f720cd9014e5af7f23dc361",
+  "fingerprintStatus": "BOUND"
+}

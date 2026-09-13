@@ -1,0 +1,11 @@
+{
+  "id": "evid-537f2bef",
+  "createdAt": "2026-09-12T04:11:03.180Z",
+  "type": "REVIEW",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Migration (partial unique index expression/WHERE clause) is correct and cannot reject legitimate rows (item A: PASS). The 23505 detection via err.code works because TypeORM's QueryFailedError copies driverError's own enumerable properties (incl. code) onto itself -- verified in node_modules/typeorm/error/QueryFailedError.js (item B: PASS). Mechanical mock fixes in dunning.service.spec.ts and guard-chain.integration.spec.ts match real production call sites, no masking (item E: PASS). However item C/D fail: the catch-and-refetch race fix in notifications.processor.ts handleSend runs its post-conflict findByJobId() re-fetch on the SAME queryRunner/transaction used for the failed INSERT when DATABASE_SESSION_CONTEXT_ENABLED=true (the actual staging config and documented production target) -- Postgres aborts that transaction after the 23505 error, so the re-fetch itself throws 25P02 and the intended graceful recovery never happens; it instead throws, undoing the fix's purpose in exactly the environment where the race is real. The new regression test only exercises a passthrough (non-transactional) mock of runInTenantContext, so it is false-green with respect to this failure mode -- ran all 3 named suites (37/37 pass) confirming this gap is not caught by existing evidence. See finding find-855bcd84.",
+  "workspaceFingerprint": "acb94c98bf9e66b5f9eea785fd3b0f6aa0fd917c74b3d9f16cc3d3539cdf2653",
+  "fingerprintStatus": "BOUND"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "strict-16",
+  "createdAt": "2026-09-09T15:32:15.874Z",
+  "title": "Attempt to find a bypass of the new BillingEnforcementGuard blanket-deny-except-allowlist (route normalization edge cases, prefix collisions).",
+  "criterionIds": [],
+  "assignedAgent": "adversarial-reviewer",
+  "status": "COMPLETED"
+}

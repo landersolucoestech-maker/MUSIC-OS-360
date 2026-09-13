@@ -1,0 +1,14 @@
+{
+  "id": "evid-97808a87",
+  "createdAt": "2026-09-13T00:18:14.095Z",
+  "type": "COMMAND",
+  "label": "node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.mjs apps/web/src/modules/crm-relationships/hooks/useContacts.test.tsx apps/web/src/modules/crm-relationships/services/contacts.service.test.ts apps/web/src/modules/leads/hooks/useLeads.test.tsx apps/web/src/modules/leads/services/leads.service.test.ts apps/web/src/modules/leads/schemas/index.test.ts apps/web/src/modules/settings/hooks/useOperationalSettings.test.tsx",
+  "command": "node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.mjs apps/web/src/modules/crm-relationships/hooks/useContacts.test.tsx apps/web/src/modules/crm-relationships/services/contacts.service.test.ts apps/web/src/modules/leads/hooks/useLeads.test.tsx apps/web/src/modules/leads/services/leads.service.test.ts apps/web/src/modules/leads/schemas/index.test.ts apps/web/src/modules/settings/hooks/useOperationalSettings.test.tsx",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[1m\u001b[7m\u001b[36m RUN \u001b[39m\u001b[27m\u001b[22m \u001b[36mv2.1.9 \u001b[39m\u001b[90mC:/Users/Usuario/Documents/MUSIC-OS-360/apps/web\u001b[39m\n\n \u001b[32m✓\u001b[39m src/modules/leads/services/leads.service.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 29\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/crm-relationships/services/contacts.service.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 26\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/settings/hooks/useOperationalSettings.test.tsx \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 56\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/leads/schemas/index.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 47\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/crm-relationships/hooks/useContacts.test.tsx \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 364\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/leads/hooks/useLeads.test.tsx \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 361\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m37 passed\u001b[39m\u001b[22m\u001b[90m (37)\u001b[39m\n\u001b[2m   Start at \u001b[22m 21:18:01\n\u001b[2m   Duration \u001b[22m 12.29s\u001b[2m (transform 961ms, setup 8.47s, collect 1.33s, tests 883ms, environment 17.97s, prepare 1.44s)\u001b[22m",
+  "stderrTail": "",
+  "workspaceFingerprint": "e61bcce81613a58ff59a48f757e0fbd7a9169732707412df83edd33e719ba822",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 13554
+}

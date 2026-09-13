@@ -1,0 +1,11 @@
+{
+  "id": "evid-baf95cd1",
+  "createdAt": "2026-09-09T16:05:35.987Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "P0-A Type-B (no-billing-gate) reasoning is sound and correctly implemented for autentique.service.ts and docusign.service.ts: both fail-closed on missing/invalid webhook secret, use timing-safe HMAC/shared-secret comparison via the canonical WebhookService, resolve tenant server-side from a doc/envelope id already stored on the contract (never client input), and gate on tenant.active while deliberately skipping billing status. However external-data-exchange.service.ts's webhook does not meet the same bar: it resolves the target tenant from a client-supplied X-Tenant-ID header verified only against a global per-provider secret (not tenant-bound), reimplements webhook dedup outside the canonical WebhookService with weaker retry semantics (a FAILED event's legitimate retry is treated as a permanent duplicate), and its own assertSignature fails open when secret is falsy (mitigated today only by the controller, not the service). Additionally autentique.service.ts and docusign.service.ts always return 200 on webhook processing failure with no reprocessing job for FAILED events, defeating the provider's own retry as the intended recovery path. 5 findings filed (find-bc7c20a6 ALTO, find-ee81e34d MEDIO, find-e5ca49de BAIXO, find-be29f421 MEDIO, find-8f366f1d MEDIO).",
+  "workspaceFingerprint": "d5dfc7ef8d1e2b69b5e5f680cf92073fc66024870565469a325188f232a93b76",
+  "fingerprintStatus": "BOUND"
+}

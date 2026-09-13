@@ -1,0 +1,14 @@
+{
+  "id": "evid-430b0ae4",
+  "createdAt": "2026-09-12T23:37:21.186Z",
+  "type": "COMMAND",
+  "label": "npx --prefix apps/web vitest run --config apps/web/vitest.config.mjs apps/web/src/modules/crm-relationships/hooks/useContacts.test.tsx apps/web/src/modules/crm-relationships/services/contacts.service.test.ts apps/web/src/modules/leads/hooks/useLeads.test.tsx apps/web/src/modules/leads/services/leads.service.test.ts apps/web/src/modules/leads/schemas/index.test.ts apps/web/src/modules/settings/hooks/useOperationalSettings.test.tsx",
+  "command": "npx --prefix apps/web vitest run --config apps/web/vitest.config.mjs apps/web/src/modules/crm-relationships/hooks/useContacts.test.tsx apps/web/src/modules/crm-relationships/services/contacts.service.test.ts apps/web/src/modules/leads/hooks/useLeads.test.tsx apps/web/src/modules/leads/services/leads.service.test.ts apps/web/src/modules/leads/schemas/index.test.ts apps/web/src/modules/settings/hooks/useOperationalSettings.test.tsx",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync npx ENOENT",
+  "workspaceFingerprint": "7d61aa6999aeb52e618a35a7ee84ace9e2a724c62578b6497579abbe720ece6d",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 5
+}

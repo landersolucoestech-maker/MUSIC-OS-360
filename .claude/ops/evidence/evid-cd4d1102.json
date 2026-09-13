@@ -1,0 +1,14 @@
+{
+  "id": "evid-cd4d1102",
+  "createdAt": "2026-09-13T00:11:21.785Z",
+  "type": "COMMAND",
+  "label": "probe-3",
+  "command": "node -e 1",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "e61bcce81613a58ff59a48f757e0fbd7a9169732707412df83edd33e719ba822",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 76
+}

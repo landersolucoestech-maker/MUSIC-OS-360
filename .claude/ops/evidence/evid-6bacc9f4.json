@@ -1,0 +1,14 @@
+{
+  "id": "evid-6bacc9f4",
+  "createdAt": "2026-09-12T23:08:14.371Z",
+  "type": "COMMAND",
+  "label": "N/A: disposition A (billing-gate) was chosen instead of disposition B (this criterion's exemption-comment wording); see ac-14d422da (closed) for the umbrella verification. Left open intentionally -- not fabricated PASS -- flagging for mission-level decision on whether to formally retire/reword this criterion.",
+  "command": "node -e process.exit(3)",
+  "status": "FAIL",
+  "exitCode": 3,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "230d225c8d5fff1f8e741e35337612f5d3801f07b85fd6b5f49cee2bf80b0919",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 76
+}

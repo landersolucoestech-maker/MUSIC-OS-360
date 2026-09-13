@@ -1,0 +1,7 @@
+{
+  "id": "deci-1a5d1c2d",
+  "createdAt": "2026-09-09T16:12:42.793Z",
+  "topic": "technology selection: Drizzle vs TypeORM migrations",
+  "decision": "apps/api/drizzle/ is a dead/archived artifact from a pre-decision phase, not a live second migration mechanism. drizzle-orm/drizzle-kit are not installed dependencies anywhere in the repo (absent from package.json and pnpm-lock.yaml). No script/CI/turbo entry invokes apps/api/drizzle/ or apps/api/migrate.mjs. apps/api/drizzle/_DEPRECATED.md and database.module.ts explicitly declare TypeORM (apps/api/src/database/migrations/) as the sole migration executor, enforced by scripts/verify-migration-source-of-truth.mjs, following commit 90961cc4. docs/backend-v2/*drizzle* references are forward planning docs for a not-yet-built apps/api-v2 that does not exist in the working tree. No architecture finding raised. Minor cleanup candidate (not a violation): apps/api/migrate.mjs is an orphaned, unwired script reading drizzle/0000_mixed_jimmy_woo.sql that could be deleted alongside the archived drizzle/ folder.",
+  "decidedBy": "technology-selection-reviewer"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "evid-ff873518",
+  "createdAt": "2026-09-11T23:06:45.885Z",
+  "type": "REVIEW",
+  "reviewer": "wave8-crm-marketing-trace",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Wave 8 trace of Leads/Clients/Campaigns/Briefings/Projects/Events: leads.service.ts has a correct WorkflowService state machine + CAS + LEAD_CONVERTED event (good), but lead-events.handler.ts is not idempotent on re-conversion via the CLOSED->INACTIVE->NEW->CLOSED reactivation path (duplicate client+artist). campaigns.service.ts create/update has zero DTO->entity field mapping (title/artistId/budget/currency/startsAt/endsAt vs nome/artist_id/orcamento/start_date/end_date), same bug class already fixed in projects.dto.ts per repo comments. Marketing Campaign Builder reuses the campaigns.status column with an incompatible status vocabulary and has no workflow/state-machine guard at all on its status transitions. events.service.ts and briefings.service.ts validate status by enum membership only, with no workflow registered for either entity. projects.service.ts, events.service.ts, briefings.service.ts and campaigns accept artist_id/campaign_id FKs with no assertSameTenantFk-style cross-tenant ownership check, unlike works/phonograms/contracts/shares/licensing/takedowns. clients.service.ts has no FK fields and is clean. Cross-domain event payload checks (LEAD_CONVERTED, CAMPAIGN_STARTED/ENDED, PROJECT_COMPLETED) show producer/consumer field shapes match; PROJECT_COMPLETED cannot re-fire for the same project since projects.workflow.ts has no path back into COMPLETED. 5 findings filed (find-6578b281 CRITICAL, find-16668018/find-824dc2b7/find-08fcdca7/find-2454ea57 HIGH).",
+  "workspaceFingerprint": "b4d7ae5fe25a66f5995b741410aa2938206c8dc11a7604605209e42c3c0689f8",
+  "fingerprintStatus": "BOUND"
+}

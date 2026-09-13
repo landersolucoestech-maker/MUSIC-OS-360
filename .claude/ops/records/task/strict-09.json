@@ -1,0 +1,9 @@
+{
+  "id": "strict-09",
+  "createdAt": "2026-09-09T15:32:15.838Z",
+  "title": "Audit shares.dto.ts, create-contract.dto.ts, apps/web contracts.types.ts for producer/consumer field alignment after the documentos/tipo naming rename.",
+  "criterionIds": [],
+  "assignedAgent": "contract-reviewer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

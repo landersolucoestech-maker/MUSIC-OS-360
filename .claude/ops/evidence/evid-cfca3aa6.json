@@ -1,0 +1,14 @@
+{
+  "id": "evid-cfca3aa6",
+  "createdAt": "2026-09-12T23:15:10.147Z",
+  "type": "COMMAND",
+  "label": "manual read: 20260906000002_AddTenantBillingStateStatusChangedAt.ts adds nullable, backfills from updated_at, THEN sets DEFAULT+NOT NULL (safe order); no new index/constraint; RLS untouched (FORCE RLS already on tenant_billing_state, no policy changed); down() drops column cleanly.",
+  "command": "node -e 1",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "d739e1603eafd68cfbe3ce6bdf3b8f484c816002005ddd0dc90afaa2fe5da86c",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 68
+}

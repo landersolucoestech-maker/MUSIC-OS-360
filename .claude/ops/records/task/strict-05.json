@@ -1,0 +1,8 @@
+{
+  "id": "strict-05",
+  "createdAt": "2026-09-09T15:32:15.826Z",
+  "title": "Independently re-verify DropOrphanContactsSatelliteTables20260713000002's 0-rows-in-all-tenants claim and safety-review the 2 newly-registered migrations (CreateOperationalListItems, RebuildInventoryItemsInCanonicalFormOrder).",
+  "criterionIds": [],
+  "assignedAgent": "database-reviewer",
+  "status": "COMPLETED"
+}

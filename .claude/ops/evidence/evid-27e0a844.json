@@ -1,0 +1,14 @@
+{
+  "id": "evid-27e0a844",
+  "createdAt": "2026-09-10T18:55:42.605Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter @music-os-360/web exec tsc --noEmit -p apps/web/tsconfig.app.json",
+  "command": "pnpm --filter @music-os-360/web exec tsc --noEmit -p apps/web/tsconfig.app.json",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync pnpm ENOENT",
+  "workspaceFingerprint": "c5002fe7e045e1ab15119e6c56b5d69dfff714ec67e695ab8491308ae4311ad7",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 13
+}

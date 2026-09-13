@@ -1,0 +1,11 @@
+{
+  "id": "evid-49129d81",
+  "createdAt": "2026-09-10T14:45:02.161Z",
+  "type": "REVIEW",
+  "reviewer": "platform-metrics-soundcharts-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Traced null-vs-zero and sync_status handling across metric-normalization.util.ts, career-stage.engine/service.ts, market-benchmark.engine/service.ts, market-reference-cache.service.ts, artist-metric-snapshots.service.ts, artist-platform-profiles.service.ts, dev-social-metrics-mock.ts and the controller. Domain layer is correct: missing metrics are represented as null end-to-end (never coerced to 0), NormalizedScore has an explicit UNAVAILABLE vs ZERO_REAL status, growth percentageChange is null (not Infinity/0) when previousValue=0, career-stage/market-benchmark both filter sync_status='success' before using numeric fields (no leakage of stale pending/failed zeros), recordFromProfileSnapshot is both comment-documented and code-guarded (sync_status check + dev_mock check) so the 'never called for non-success' claim holds at the only call site, dev-social-metrics-mock.ts is triple-guarded (USE_MOCK env-schema block in staging/prod, create-app.ts hard fail, isProdLike check) and cannot leak into production, and the controller is thin/tenant-scoped/role-permission-guarded with server-side artist ownership checks (service.findById) before returning any sub-resource. Two LOW findings recorded: find-5bf4716b (duplicated but consistent sync_status='success' filter logic in JS vs SQL, DRY/drift risk) and find-2933141c (platform-profiles response contract represents 'never configured' via row absence rather than an explicit discriminator -- works but implicit, flagged for contract-reviewer/frontend-reviewer cross-check). No CRITICAL/HIGH issues found in assigned scope.",
+  "workspaceFingerprint": "71c8f87f2fc3480331003b465fc3e4932fc55d5976fce4df842539ed6ab2be1d",
+  "fingerprintStatus": "BOUND"
+}

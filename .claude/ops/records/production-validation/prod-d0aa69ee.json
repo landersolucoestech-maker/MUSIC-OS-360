@@ -1,0 +1,8 @@
+{
+  "id": "prod-d0aa69ee",
+  "createdAt": "2026-09-09T20:47:53.573Z",
+  "status": "OUT_OF_SCOPE",
+  "checkedJourneys": [],
+  "outOfScopeReason": "This mission is a pre-production migration readiness review (static code/schema review of two unapplied TypeORM migrations), not a post-deployment validation -- no deployment-record/deploymentId exists for these migrations, no target environment has been deployed to, and this session has no production observability access (no health/readiness endpoint, no log/metric/trace/SLO access) in this read-only context. No HEALTHY/DEGRADED/FAILED verdict can be inferred from repository review alone; recording OUT_OF_SCOPE per release-production.md rather than fabricating a production health verdict.",
+  "deploymentId": null
+}

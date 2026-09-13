@@ -1,0 +1,11 @@
+{
+  "id": "evid-e82f3939",
+  "createdAt": "2026-09-12T02:29:49.099Z",
+  "type": "REVIEW",
+  "reviewer": "external-integrations-trace-wave10",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Read-only Wave 10 trace across apps/api/src/modules/integrations and apps/api/src/modules/artists/platform-profiles completed. Traced config->credentials->client->endpoint->persistence->consumer->retry->error paths for Soundcharts, Spotify, YouTube, Deezer, SoundCloud, Apple Music, Instagram, TikTok, Google Ads, Abramus, ACRCloud, Autentique, DocuSign, WhatsApp Cloud. No cross-tenant leakage or external-ID/internal-ID conflation found (Soundcharts UUID resolution and platform-profile upserts are correctly tenant+artist+platform scoped and never conflated with internal artist_id). Webhook signature verification is correctly enforced fail-closed for Autentique (shared secret, timing-safe), DocuSign (HMAC-SHA256 over raw body) and WhatsApp (HMAC-SHA256 over raw body via X-Hub-Signature-256), with server-side tenant resolution from persisted contract/phone-number-id lookups, never from client-supplied headers. Artist platform sync job idempotency confirmed via BullMQ deterministic jobId + DB upsert on (tenant_id, artist_id, platform) conflict key. Two findings recorded: find-fec66ce8 (HIGH, category D) -- systemic bypass of the project's own resilientFetch/timedFetch timeout+circuit-breaker pattern via raw fetch() in TikTok/AppleMusic/SoundCloud/GoogleAds/Abramus/Instagram/YouTube/Deezer/ACRCloud services, allowing a hanging provider to block a request indefinitely; find-7f9ee498 (MEDIUM, category D) -- inconsistent secret-reading mechanism (process.env vs ConfigService) for META_APP_SECRET/WHATSAPP_WEBHOOK_VERIFY_TOKEN/SOUNDCHARTS credentials. No files were modified during this pass.",
+  "workspaceFingerprint": "d28979e3aedf98ce8bc00bcecd54848beb8e377d23009004721e42d953acd619",
+  "fingerprintStatus": "BOUND"
+}

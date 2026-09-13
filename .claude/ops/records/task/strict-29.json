@@ -1,0 +1,8 @@
+{
+  "id": "strict-29",
+  "createdAt": "2026-09-09T15:32:15.942Z",
+  "title": "Pre-production readiness check on the 2 newly-registered migrations: env assumptions, rollback constraints, deployment sequencing.",
+  "criterionIds": [],
+  "assignedAgent": "production-validator",
+  "status": "COMPLETED"
+}

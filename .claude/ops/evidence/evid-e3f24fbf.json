@@ -1,0 +1,14 @@
+{
+  "id": "evid-e3f24fbf",
+  "createdAt": "2026-09-13T00:11:14.445Z",
+  "type": "COMMAND",
+  "label": "fingerprint-probe-1",
+  "command": "node -e 1",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "5a94f2ab6e7c71dabfb7a3157f3a53c983ad20f25a0130ab5c68668af00bbdb1",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 78
+}

@@ -1,0 +1,8 @@
+{
+  "id": "strict-26",
+  "createdAt": "2026-09-09T15:32:15.933Z",
+  "title": "Failure-mode investigation: what silent failure could occur in the billing/dunning escalation chain today (no live incident -- forward-looking analysis).",
+  "criterionIds": [],
+  "assignedAgent": "incident-investigator",
+  "status": "COMPLETED"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "strict-30",
+  "createdAt": "2026-09-09T15:32:15.944Z",
+  "title": "Evaluate rollback/recovery plan for the 2 newly-registered migrations and the billing-enforcement rewrite.",
+  "criterionIds": [],
+  "assignedAgent": "recovery-engineer",
+  "status": "COMPLETED"
+}

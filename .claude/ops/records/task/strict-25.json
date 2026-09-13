@@ -1,0 +1,8 @@
+{
+  "id": "strict-25",
+  "createdAt": "2026-09-09T15:32:15.930Z",
+  "title": "Review the untracked apps/api/src/modules/marketing/dto/marketing-ai-suggestions.dto.ts for AI/LLM-touching content and whether it is wired safely.",
+  "criterionIds": [],
+  "assignedAgent": "ai-llm-systems-reviewer",
+  "status": "DISPATCHED"
+}

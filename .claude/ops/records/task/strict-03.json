@@ -1,0 +1,9 @@
+{
+  "id": "strict-03",
+  "createdAt": "2026-09-09T15:32:15.812Z",
+  "title": "Verify no other reader besides leads.service.ts:326 still depends on tenants.active being set false by billing suspension, now that dunning/billing.service.ts no longer write it.",
+  "criterionIds": [],
+  "assignedAgent": "architecture-reviewer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

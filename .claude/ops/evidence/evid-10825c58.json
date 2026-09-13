@@ -1,0 +1,14 @@
+{
+  "id": "evid-10825c58",
+  "createdAt": "2026-09-12T23:11:26.194Z",
+  "type": "COMMAND",
+  "label": "PARTIAL: grep evidence attached (both files DO have a tenants.active check, see ac-9eeb925c). But disposition taken was NOT migration to tenant_billing_state -- it's the documented Type-B exemption (same policy as ac-9cccc5d9). Left open pending the same mission-level decision.",
+  "command": "node -e process.exit(3)",
+  "status": "FAIL",
+  "exitCode": 3,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "d739e1603eafd68cfbe3ce6bdf3b8f484c816002005ddd0dc90afaa2fe5da86c",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 61
+}

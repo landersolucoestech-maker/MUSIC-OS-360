@@ -1,0 +1,8 @@
+{
+  "id": "deci-4de32aa0",
+  "createdAt": "2026-09-09T16:09:35.445Z",
+  "topic": "requirement-duplication:req-90013e6a-vs-req-ea44db5a",
+  "decision": "req-90013e6a (created 04:08 by an earlier, now-superseded mission-orchestrator attempt) prescriptively mandates a hard tenant_billing_state gate on all 4 files (leads/autentique/docusign/external-data-exchange), foreclosing the Type-B (document-as-intentional) option before a human decided -- requirements-reviewer already filed FAIL evidence against its 3 criteria for exactly this reason. req-ea44db5a (this wave, narrower, leads.service.ts only) correctly leaves both options open and is the authoritative requirement for that file going forward. Independent integration-reviewer findings (evid-baf95cd1, FAIL overall but per-service: autentique and docusign verdicts are Type-B-sound with only unrelated failure-handling gaps found -- find-be29f421, find-8f366f1d) further confirm req-90013e6a's blanket demand to gate autentique/docusign was premature: those two services' Type-B posture is validated, not a bypass. external-data-exchange's real problem (find-bc7c20a6, ALTO -- client-supplied X-Tenant-ID header + a global not per-tenant HMAC secret) is a genuine security gap but is NOT the billing-gate question req-90013e6a asked about -- it needs its own requirement.",
+  "decidedBy": "mission-orchestrator",
+  "status": "DECIDED"
+}

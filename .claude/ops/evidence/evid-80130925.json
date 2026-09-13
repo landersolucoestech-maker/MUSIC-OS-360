@@ -1,0 +1,14 @@
+{
+  "id": "evid-80130925",
+  "createdAt": "2026-09-09T20:48:17.678Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter @music-os-360/api exec jest --config jest.config.ts src/modules/leads",
+  "command": "pnpm --filter @music-os-360/api exec jest --config jest.config.ts src/modules/leads",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync pnpm ENOENT",
+  "workspaceFingerprint": "670cf45179401267be05db7733ad20b9fad90aade4a2e3f732335bce8fb5dd45",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 5
+}

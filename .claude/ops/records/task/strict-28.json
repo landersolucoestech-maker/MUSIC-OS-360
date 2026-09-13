@@ -1,0 +1,8 @@
+{
+  "id": "strict-28",
+  "createdAt": "2026-09-09T15:32:15.939Z",
+  "title": "Git-blame apps/api/src/modules/leads/leads.service.ts and the old dunning.service.ts to date exactly when tenants.active stopped being billing-suspension-driven.",
+  "criterionIds": [],
+  "assignedAgent": "repo-investigator",
+  "status": "COMPLETED"
+}

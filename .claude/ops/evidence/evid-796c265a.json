@@ -1,0 +1,14 @@
+{
+  "id": "evid-796c265a",
+  "createdAt": "2026-09-12T23:18:07.721Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-operational-lists-wiring.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-operational-lists-wiring.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "OK: OperationalListsModule imported in app.module.ts\nOK: OperationalListsModule listed in AppModule imports array\nOK: module wires controller + service (standard NestJS DI shape)\nOK: controller routes are guarded (RequireRole on every handler, tenant-scoped via CurrentTenant)\nStructural wiring confirmed. NOTE: full end-to-end HTTP reachability (Nest app boot + real DB) is NOT verified here -- same DATABASE_URL-missing constraint that blocks ac-ac249ba5's e2e spec applies to any real app boot in this sandbox.",
+  "stderrTail": "",
+  "workspaceFingerprint": "eeefcde6346ba7ba7cc4d24880ff1f656a410b0f344614369aedc10de9e52afa",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 73
+}

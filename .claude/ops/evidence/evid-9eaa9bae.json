@@ -1,0 +1,14 @@
+{
+  "id": "evid-9eaa9bae",
+  "createdAt": "2026-09-13T00:17:11.681Z",
+  "type": "COMMAND",
+  "label": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts modules/contracts/contracts.service.spec.ts",
+  "command": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts modules/contracts/contracts.service.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[33m[Nest] 7876  - \u001b[39m12/09/2026, 21:17:11 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=titulo operation=create tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 7876  - \u001b[39m12/09/2026, 21:17:11 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=tipo operation=create tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 7876  - \u001b[39m12/09/2026, 21:17:11 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=value operation=create tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 7876  - \u001b[39m12/09/2026, 21:17:11 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=fileUrl operation=update tenantId=tenant-1 contractId=contract-1\u001b[39m\n\u001b[33m[Nest] 7876  - \u001b[39m12/09/2026, 21:17:11 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=tipo operation=list tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 7876  - \u001b[39m12/09/2026, 21:17:11 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=tipo operation=list tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 7876  - \u001b[39m12/09/2026, 21:17:11 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=artistId operation=list tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 7876  - \u001b[39m12/09/2026, 21:17:11 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=tipo operation=list tenantId=tenant-1\u001b[39m",
+  "stderrTail": "",
+  "workspaceFingerprint": "e61bcce81613a58ff59a48f757e0fbd7a9169732707412df83edd33e719ba822",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 21572
+}

@@ -1,0 +1,11 @@
+{
+  "id": "evid-d511ab52",
+  "createdAt": "2026-09-11T20:48:45.596Z",
+  "type": "REVIEW",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Wave 4 review: env.schema.ts staging gate widening and both queue-processor tenant-context wrappings (ai-jobs.processor.ts, external-data.processor.ts) check out -- staging env template (apps/api/.env.staging) already provisions RBAC_PERSISTED_AUTHORITY=ON so the gate has a real path to pass, and both processors route every DB-writing branch through DatabaseContextService.runInTenantContext consistent with the pre-existing ALS-proxy pattern (notifications.processor.ts), with no job-name branch left outside the wrapper. However the users.service.ts privilege-escalation fix is incomplete: assertCanAssignRole() now correctly checks is_assignable (verified against roles seed migration showing super_admin.is_assignable=FALSE, and exercised by the new assert-can-assign-role.security.spec.ts), but create() -- reachable via POST /users with only @RequireRole('owner') -- sets org_members.role directly from CreateUserDto.role (free-form string validated only by a slug regex) via MembershipRoleResolverService.resolveOrThrow(), which never checks is_assignable or hierarchy_level. A tenant owner can therefore still self-grant/grant another member the global super_admin role by calling POST /users instead of PATCH /users/:id/role, reproducing the exact vulnerability class the fix claims to close via a sibling code path that was never patched or tested.",
+  "workspaceFingerprint": "633892bcad717f5aad597b5bc0e6017e83d9e690233fc4bc131341292ed2625c",
+  "fingerprintStatus": "BOUND"
+}

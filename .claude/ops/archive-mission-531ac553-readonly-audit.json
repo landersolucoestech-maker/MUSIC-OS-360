@@ -1,0 +1,490 @@
+{
+  "version": 2,
+  "missionId": "mission-531ac553",
+  "missionName": "unnamed-mission",
+  "status": "active",
+  "createdAt": "2026-09-06T10:40:40.705Z",
+  "updatedAt": "2026-09-09T03:53:35.018Z",
+  "impact": {
+    "operatorDeclared": null,
+    "runtimeDetected": "L5",
+    "effective": "L5"
+  },
+  "requirements": [
+    {
+      "id": "req-50f8a48b",
+      "text": "TEST PROBE - delete me",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-324299de",
+          "text": "probe criterion",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:41:05.273Z"
+    },
+    {
+      "id": "req-a10f4e6f",
+      "text": "TEST PROBE 2",
+      "nonRequirements": [
+        "nr2"
+      ],
+      "acceptanceCriteria": [],
+      "createdAt": "2026-09-06T10:41:23.318Z"
+    },
+    {
+      "id": "req-2e49ae7d",
+      "text": "Deliver a single consolidated end-to-end systemic audit report covering architecture, database, backend, contracts, frontend, security, distributed systems, integrations, dependencies/supply-chain, test strategy, documentation accuracy, reliability/observability, performance, UI/UX, accessibility, adversarial/residual findings, and git/repo integrity for MUSIC OS 360.",
+      "nonRequirements": [
+        "No fixes, refactors, migrations, or code edits are implemented or committed as part of this mission; deliverable is analysis plus a proposed, NOT-executed implementation plan. The pre-existing uncommitted naming-normalization diff (per git status at mission start) and its already-landed PT->EN rename commits are read-only context and must not be staged, unstaged, committed, reset, or otherwise modified by this mission."
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-f5021468",
+          "text": "Final report contains one consolidated document including: coverage ledger, architecture/domain map, source-of-truth map, writer/reader matrix for material entities, producer/consumer/contract map, canonical naming findings classified by type, findings by severity with file:line evidence, security findings, residual-audit results, AI-skills/agent-pack capability map, and a prioritized implementation plan.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-36450436",
+          "text": "git status --short and git diff captured at end of mission are identical to the snapshot captured at mission start (no files staged/unstaged/committed/reset by this mission's activity).",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-cc5555e8",
+          "text": "The report contains zero applied code diffs; the plan section is explicitly labeled NOT EXECUTED / PENDING AUTHORIZATION.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:43:59.700Z"
+    },
+    {
+      "id": "req-e08b8bcb",
+      "text": "Audit the in-progress PT->EN naming normalization (titulo/title, tipo/type, data_inicio/data_fim->start_date/end_date, obra_id->work_id, documentos->documents, client/project/campaign/release FK families) for completeness and consistency across DB, backend, and frontend.",
+      "nonRequirements": [
+        "This mission does not perform additional renames or edits; it only verifies claims already recorded in NAMING_NORMALIZATION_CANONICAL_MAP.md against current code/DB state and reports gaps."
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-4392871b",
+          "text": "Every canonical rename pair listed in NAMING_NORMALIZATION_CANONICAL_MAP.md is checked by repo-wide search against apps/api/src, apps/web/src, and migrations/entities, and classified as fully-migrated, partially-migrated (with file:line holdouts listed), or not-migrated.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-9dd0b46f",
+          "text": "Report includes a source-of-truth map naming, per renamed concept, which layer (DB column, TypeORM entity, DTO, frontend type) is authoritative and which are stale/duplicated definitions.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-acf47062",
+          "text": "Every residual PT-named field, column, or variable still referenced in live (non-test, non-comment) code is reported with file path and line number.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:44:11.280Z"
+    },
+    {
+      "id": "req-3b5d915f",
+      "text": "Produce an architecture and domain map of MUSIC OS 360 covering every module in apps/api/src/modules and apps/web/src/modules, plus packages/*.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-97ad9f4d",
+          "text": "Report includes a module/domain map covering every top-level directory under apps/api/src/modules, apps/web/src/modules, and packages/*, each with stated responsibility and its known dependents.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-d4b5d436",
+          "text": "Coverage ledger lists every module/directory that was audited versus explicitly skipped-with-reason; no module is silently omitted from the ledger.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:44:15.564Z"
+    },
+    {
+      "id": "req-e0f2f1c2",
+      "text": "Audit database schema and multi-tenant isolation guarantees across all tenant-scoped entities in apps/api.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-6c5d9a09",
+          "text": "Every entity/table with a tenant-scoped column is classified as DB-enforced (FK/RLS/unique-with-tenant constraint) or application-only enforced, with file:line/migration evidence for the classification.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-f2af3b70",
+          "text": "Every TypeORM repository or query-builder call found not scoped by tenant id is listed by file:line, or the report states explicitly that a repo-wide search found none and describes the search method used.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-ba8976d4",
+          "text": "Migration history is diffed against current entity definitions for at least the tables touched by the in-progress naming normalization, reporting any drift between committed migrations and entity code.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:44:25.154Z"
+    },
+    {
+      "id": "req-6d142b12",
+      "text": "Audit API/DTO contracts between apps/api controllers and apps/web TanStack Query consumers for drift.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-0f33f95b",
+          "text": "A producer/consumer/contract map is produced for every REST endpoint exposed by apps/api, comparing the NestJS DTO/response shape against the actual frontend call/type shape, flagging every field-name or type mismatch with file:line on both sides.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-22d6ec31",
+          "text": "Every contract mismatch found is classified by severity (breaking / silent-fallback / cosmetic).",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:44:33.039Z"
+    },
+    {
+      "id": "req-b7d533b2",
+      "text": "Audit distributed-systems correctness of BullMQ queues/processors in apps/api: idempotency, retries, and failure handling.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-2bf221d1",
+          "text": "Every BullMQ queue/processor is inventoried with its idempotency mechanism (or none found), retry/backoff configuration, and dead-letter/failure handling, each with file:line evidence.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-9dd0a707",
+          "text": "Every job handler performing a mutating operation without an identifiable idempotency guard is reported as a finding with an assigned severity.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:44:43.273Z"
+    },
+    {
+      "id": "req-069f8cc2",
+      "text": "Audit external platform integrations (Spotify, Soundcharts, and any other providers under apps/api/src/modules/artists/platform-profiles/providers and elsewhere) for auth, rate-limiting, and error handling.",
+      "nonRequirements": [
+        "Verification is read-only; no live external API calls requiring write credentials are made during the audit."
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-70cd55b0",
+          "text": "Every external provider integration is inventoried with its auth method, rate-limit handling, and error/retry handling, each with file:line evidence.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-771ef549",
+          "text": "The currently unresolved-merge-conflict and staged files in the platform-profiles module (artist-external-profile-sync.service.ts, spotify-artist-profile.provider.ts/.spec.ts, ArtistaPlatformMetrics.tsx and its test, per git status at mission start) are reviewed and their conflicted/staged state is documented in the report without being resolved.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:44:47.771Z"
+    },
+    {
+      "id": "req-fd43b914",
+      "text": "Audit dependency and supply-chain risk across apps/api, apps/web, and packages/* (vulnerable, unpinned, or abandoned packages).",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-7f33e9a2",
+          "text": "Report lists results of a dependency vulnerability check (e.g. pnpm audit or lockfile inspection) across apps/api, apps/web, and packages/*, enumerating every high/critical advisory by package and version.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-22b9dcf7",
+          "text": "Any direct dependency found with no pinned/ranged version, or with an abandoned/unmaintained status discovered during the audit, is flagged as a finding.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:44:56.385Z"
+    },
+    {
+      "id": "req-c65058c3",
+      "text": "Audit test coverage posture across backend and frontend modules based on actual presence of spec/test files, and flag DI-wired services with no tests.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-83aaf1bb",
+          "text": "Report states, per backend and frontend module directory, whether matching spec/test files exist, derived from actual file search rather than assumption.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-f1e15bd4",
+          "text": "Every backend service class that is imported into a NestJS module's providers array (i.e., wired into DI) with no corresponding spec file is flagged as a finding.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:45:00.245Z"
+    },
+    {
+      "id": "req-47d24339",
+      "text": "Re-verify every major claim in AUDITORIA_COMPLETA_MUSIC_OS_360.md, AUDITORIA_DOMINIO_E_ARQUITETURA.md, AUDITORIA_SISTEMICA_TOTAL.md, and MUSIC_OS_360_FORENSIC_AUDIT.md against current code, treating them as claims rather than ground truth.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-951b7ad9",
+          "text": "Every major claim/finding in each of the four prior audit documents is classified as still-valid, stale/already-fixed, or contradicted-by-current-code, with file:line evidence supporting the re-verification.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-7e34220e",
+          "text": "Any finding from a prior audit document that this mission cannot reproduce is explicitly listed as not-reproduced rather than silently dropped from the report.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:45:10.272Z"
+    },
+    {
+      "id": "req-b4950d45",
+      "text": "Audit reliability and observability instrumentation (logging, error tracking, health checks, metrics) across apps/api.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-08b0b400",
+          "text": "Report inventories logging, error-tracking, health-check, and metrics instrumentation present in apps/api, and flags any critical path (auth, tenant isolation, and billing/payment if present) with no logging or alerting on failure, with file:line evidence.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:45:15.171Z"
+    },
+    {
+      "id": "req-bf6896d0",
+      "text": "Audit apps/api and apps/web for performance anti-patterns: N+1 queries, missing indexes on tenant-filtered columns, and unbounded/unpaginated queries.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-3c29753e",
+          "text": "Every N+1 query pattern, missing index on a frequently tenant-filtered column, or unbounded query lacking pagination/limit found via code inspection is reported with file:line evidence.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:45:23.975Z"
+    },
+    {
+      "id": "req-36389978",
+      "text": "Audit apps/web for UI/UX and accessibility issues: missing alt text, missing form labels, missing keyboard focus handling, and hardcoded low-contrast colors.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-8cac28ac",
+          "text": "Report inventories apps/web pages/components for missing alt text, missing form labels/aria attributes, missing keyboard focus handling, and hardcoded color values relevant to contrast, each finding class supported by file:line evidence.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:45:28.240Z"
+    },
+    {
+      "id": "req-00a16e9e",
+      "text": "Audit git/repo integrity: document the current uncommitted/staged/conflicted state of the working tree exactly as found, without resolving it.",
+      "nonRequirements": [
+        "This audit does not resolve the unresolved merge conflicts (UU files) or the staged/uncommitted naming-normalization diff; it only documents their state."
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-9823e719",
+          "text": "Report documents the exact git status (staged/unstaged/untracked/conflicted files) captured verbatim at mission start as a fixed reference snapshot.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-4b7c3aa2",
+          "text": "Every file listed with UU (unresolved merge conflict) status in that snapshot is opened and its conflict-marker state (or resolved-but-uncommitted state) is documented by file path in the report.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:45:37.242Z"
+    },
+    {
+      "id": "req-db9deaaf",
+      "text": "Audit application-level security: authentication/authorization guard coverage on all API routes, and presence of hardcoded secrets/credentials in the repo.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-72dddb39",
+          "text": "Every controller route in apps/api is checked for an auth guard; any route with no guard and no explicit public-route justification is reported with file:line evidence.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-98be4b7e",
+          "text": "Report lists results of a repo-wide secret scan (hardcoded API keys/passwords/tokens in source, config, or committed .env-like files) with every hit listed by file:line, or states explicitly that none were found and the search method used.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:45:41.367Z"
+    },
+    {
+      "id": "req-6d9db535",
+      "text": "Map the .claude/ agent/skill pack's own architecture (agents, skills, runtime scripts, rules) as a dedicated workstream of this audit.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-09e3e95f",
+          "text": "Report includes a capability map of every agent, skill, rule, and runtime script under .claude/, listing what each is triggered by and what actions/writes it is permitted to perform.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-9d7c11f0",
+          "text": "Any skill/agent whose declared write/permission scope is inconsistent with its stated purpose (e.g., a read-only investigation agent configured with file-write permission) is flagged as a finding.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:45:51.395Z"
+    },
+    {
+      "id": "req-3f8aa8fd",
+      "text": "Classify every finding in the report by severity and category with evidence, and run a dedicated adversarial/residual pass for race conditions, missing authz, committed secrets, and spoofable tenant IDs.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-e20cf199",
+          "text": "Every finding in the final report has an assigned severity (critical/high/medium/low), a category, and either file:line evidence or an explicit statement that it cannot be pinpointed to a line, with a description in its place.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-fca5c58f",
+          "text": "The residual/adversarial pass explicitly reports present-or-absent status for at least: race conditions on concurrent writes, missing authorization checks on admin-only endpoints, secrets committed to git history, and tenant-id values spoofable from client input.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:45:55.704Z"
+    },
+    {
+      "id": "req-ff8e77ee",
+      "text": "Produce a prioritized implementation plan addressing this audit's findings, explicitly not executed in this mission.",
+      "nonRequirements": [
+        "No item in the plan is implemented in this mission; every plan item requires separate, later authorization before work begins."
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-d2e4bf8c",
+          "text": "Every plan item links back to at least one finding ID from this report; there are no orphan plan items without an underlying finding.",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-d8a9be69",
+          "text": "Every plan item is ordered/tagged by priority derived from finding severity and explicitly labeled NOT YET AUTHORIZED / NOT EXECUTED.",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-06T10:46:04.390Z"
+    }
+  ],
+  "findings": [
+    {
+      "id": "find-735869b6",
+      "category": "G",
+      "severity": "ALTO",
+      "file": "apps/api/src/core/guards/rate-limit.guard.ts",
+      "line": null,
+      "summary": "clientIp() trusts X-Forwarded-For/X-Real-IP/CF-Connecting-IP headers verbatim with no Express trust-proxy validation (no app.set('trust proxy', ...) in create-app.ts) and no allowlist of known proxy hops. Rate-limit identifier is IP:route, so an attacker can set an arbitrary X-Forwarded-For (or X-Real-IP) value per request to get a fresh bucket every time, fully bypassing RateLimitGuard including the 5-req/15min 'auth' category that is the only brute-force protection on /auth/* login/password endpoints.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-06T16:54:22.537Z"
+    },
+    {
+      "id": "find-d1cb18a4",
+      "category": "G",
+      "severity": "MEDIO",
+      "file": "apps/api/src/core/security/rate-limit.service.ts",
+      "line": null,
+      "summary": "RateLimitService uses an in-process Map (sliding window held in memory) with no Redis/shared backing despite REDIS_QUEUE_URL being mandatory in production and multi-instance deployment being the norm; comment at top of file explicitly flags this as a stopgap ('Para producao com Redis: substituir'). Under horizontal scaling each instance enforces its own independent 5-req/15min auth limit, so effective brute-force protection scales up with instance count instead of staying fixed.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-06T16:54:25.357Z"
+    },
+    {
+      "id": "find-5e5c459f",
+      "category": "correctness",
+      "severity": "CRITICAL",
+      "file": "apps/api/src/modules/billing/billing-enforcement.service.ts",
+      "line": null,
+      "summary": "Infinite recursion / stack overflow when a payment_grace or read_only tenant crosses the suspend threshold: getState() -> applyOverrideAndEscalation() -> suspendTenant() -> getState() (nested) -> applyOverrideAndEscalation() -> suspendTenant() ... recurses forever because suspendTenant's own 'before = await this.getState(tenantId)' re-reads the still-unmodified DB row (its own UPDATE runs later in the function) and getState() re-evaluates the same expired-suspendAt condition, calling suspendTenant again before the first call ever reaches its UPDATE statement.",
+      "rootCause": "suspendTenant() fetches its audit 'before' snapshot via the public getState() (which itself triggers escalation as a side effect) instead of a raw, non-escalating SELECT of the current row; there is no re-entrancy guard between applyOverrideAndEscalation and suspendTenant, so any code path that calls suspendTenant from inside escalation (the normal payment_grace/read_only -> suspended transition, and also removeManualOverride when the override was masking an already-expired grace window) recurses unboundedly and the tenant can never actually be persisted as suspended.",
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-06T22:12:58.777Z"
+    },
+    {
+      "id": "find-adbba743",
+      "category": "architecture",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/billing/billing-enforcement.service.ts",
+      "line": null,
+      "summary": "getState() is a query with a disguised command/side effect: it calls applyOverrideAndEscalation() internally, which performs a real UPDATE (read_only or suspended transition, or removeManualOverride) as a side effect of what every caller (BillingEnforcementGuard, DunningService, and getState()'s own recursive self-calls) treats as a cheap read invoked on every authenticated HTTP request. This is genuine CQS-violation debt, worsened (not created) by P0-A: the guard now calls this write-capable getState() on every single guarded request instead of only reading the boolean tenants.active column TenantGuard used before.",
+      "rootCause": "No separation between the pure state read and the escalation/transition command; the transition logic was folded into the getter for reuse between the guard and the scheduler instead of being invoked explicitly by both callers alongside a plain, non-escalating read.",
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-06T22:13:07.708Z"
+    },
+    {
+      "id": "find-4d7b0cf4",
+      "category": "correctness",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/billing/dunning.service.ts",
+      "line": null,
+      "summary": "enqueueNotification's dedup-key comment ('tenant_billing_state.updated_at only changes when applyOverrideAndEscalation actually moves the tenant to a new status') is factually inaccurate and understates how often the dedup key changes: suspendTenant() and startPaymentGrace() both unconditionally set updated_at = now() on their ON CONFLICT DO UPDATE branch even when the tenant is already in that status (idempotent re-entry, e.g. two Stripe webhook retries, or the concurrent-recursion scenario in the sibling finding), and billing.service.ts's updateAdminTenant writes tenant_billing_state directly. Each such no-op write produces a new dunning-notify jobId and therefore a new duplicate notification, independent of the previously-confirmed staleness issue.",
+      "rootCause": "The dedup key assumes updated_at is a proxy for 'semantic status changed', but every UPSERT in billing-enforcement.service.ts bumps updated_at unconditionally rather than only on an actual status transition (e.g. via a WHERE status IS DISTINCT FROM ... guard or a dedicated status_changed_at column).",
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-06T22:13:12.720Z"
+    },
+    {
+      "id": "find-d57f47fe",
+      "category": "security",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/leads/leads.service.ts",
+      "line": null,
+      "summary": "Additional legacy readers of tenants.active beyond the ones already catalogued (TenantGuard, docusign, external-data): apps/api/src/modules/leads/leads.service.ts:326 (public lead-capture/registration lookup, unauthenticated) and apps/api/src/modules/integrations/autentique/autentique.service.ts:77-85 (Autentique e-signature webhook, @Public()) both still gate purely on tenants.active. Since nothing in the automated billing path sets tenants.active=false anymore (the core regression already confirmed), these two additional, previously unlisted checks are also permanently neutered for any tenant suspended only through tenant_billing_state — widening the already-confirmed blast radius beyond the 2 webhooks named in the review brief.",
+      "rootCause": "tenants.active was the shared, single boolean multiple independent modules (guard + 2 webhooks + leads public form + Autentique webhook) relied on as ground truth for tenant enforcement; P0-A stopped writing it from the automated dunning path without auditing or migrating any of its readers to tenant_billing_state, so every one of these reader sites silently degrades to 'always active' for suspensions reached exclusively via the new canonical table.",
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-06T22:13:17.895Z"
+    }
+  ],
+  "evidenceIds": [
+    "evid-7efe9199",
+    "evid-63bf2f51",
+    "evid-67e2a900"
+  ],
+  "checkpointIds": [],
+  "touchedFiles": [],
+  "blockers": []
+}

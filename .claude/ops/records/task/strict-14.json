@@ -1,0 +1,9 @@
+{
+  "id": "strict-14",
+  "createdAt": "2026-09-09T15:32:15.869Z",
+  "title": "Write and run a test proving/disproving: can a suspended tenant still submit via the public lead-capture endpoint (leads.service.ts) today.",
+  "criterionIds": [],
+  "assignedAgent": "qa-engineer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

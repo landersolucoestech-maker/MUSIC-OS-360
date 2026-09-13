@@ -1,0 +1,8 @@
+{
+  "id": "strict-32",
+  "createdAt": "2026-09-09T15:32:15.975Z",
+  "title": "Run a repo-wide residue sweep for tautology bugs (x.foo ?? x.foo pattern) the type/title/documentos renames may have introduced outside the files already checked.",
+  "criterionIds": [],
+  "assignedAgent": "implementation-engineer",
+  "status": "DISPATCHED"
+}

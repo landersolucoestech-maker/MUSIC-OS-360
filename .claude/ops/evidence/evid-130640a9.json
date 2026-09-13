@@ -1,0 +1,11 @@
+{
+  "id": "evid-130640a9",
+  "createdAt": "2026-09-11T22:18:20.329Z",
+  "type": "REVIEW",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Reviewed shares split-budget advisory-lock fix and contracts softDelete idempotency guard. Verified: (1) lock key template share-split:tenant:work:fonograma cannot collide in practice since work_id/fonograma_id are UUID columns (no colon chars); (2) update() reads 'current' before acquiring the lock, but the actual sum check runs after lock acquisition on the same EntityManager/connection, and casUpdate's expectedUpdatedAt CAS catches any staleness from a concurrent work_id change between the pre-lock read and the write, so no silent overwrite is possible; (3) TypeORM Repository.update() with FindOptionsWhere delegates to QueryBuilder.where(), which correctly translates IsNull() into 'deleted_at IS NULL' in the generated SQL -- confirmed in node_modules/typeorm EntityManager.update source; (4) the softDelete affected-count guard does not cause false affected=0 for a legitimate first cancel, since findById() already 404s on rows with non-null deleted_at before reaching the update; (5) remove() in shares.service.ts is intentionally left out of the advisory lock -- traced that sumEligiblePercentual always filters deleted_at IS NULL so remove() only ever decreases the cross-row sum, meaning its exclusion can produce at most a spurious rejection under a race, never an over-100% overshoot, so this is not a data-corruption path. Noted but not blocking: the spec mocks synchronously invoke the transaction callback (no real Postgres serialization is exercised) and the contracts idempotency test's repo.update assertion does not explicitly match deleted_at:IsNull() in its expect.objectContaining, so a regression removing that guard would not necessarily be caught by that particular assertion -- both are test-quality gaps, not implementation defects, and the lock-key call assertions in shares-split-invariant.spec.ts do catch argument-order/key-construction bugs. Tried to construct a corruption/security-bypass scenario for both fixes and could not.",
+  "workspaceFingerprint": "7f36230d8bf92a9c64028a2b03e136ce66ec78c2f91feed8245130be8ec4fdf1",
+  "fingerprintStatus": "BOUND"
+}

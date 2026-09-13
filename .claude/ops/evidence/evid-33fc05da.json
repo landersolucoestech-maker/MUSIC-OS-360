@@ -1,0 +1,11 @@
+{
+  "id": "evid-33fc05da",
+  "createdAt": "2026-09-09T16:06:48.707Z",
+  "type": "REVIEW",
+  "reviewer": "accessibility-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Reviewed ContratoFormModal.tsx, ContratoViewModal.tsx, ShareViewModal.tsx for a11y regressions from the documentos->documents rename. All label/htmlFor/id pairs unchanged by the rename (renamed identifiers were internal state vars, object keys, and a folder path, not DOM ids). Radix Tabs value 'documentos'->'documents' was renamed consistently on both TabsTrigger and matching TabsContent in ContratoViewModal.tsx, so Radix's internal aria-controls/aria-labelledby wiring (auto-generated from the shared Tabs.Root context, not hand-authored ids) remains correctly paired -- no orphaned tab reference found repo-wide. No focus-order change (no DOM structure/order edits in the diff, pure variable/property renames). One BAIXO finding recorded (find-54b229d8): leaked English word 'documents' into a PT-BR user-facing empty-state string in ContratoViewModal.tsx line 476, a naming-canonical/copy defect with minor AT-readability impact, not a blocking a11y defect (no keyboard trap, no unlabeled primary action).",
+  "workspaceFingerprint": "d5dfc7ef8d1e2b69b5e5f680cf92073fc66024870565469a325188f232a93b76",
+  "fingerprintStatus": "BOUND"
+}

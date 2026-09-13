@@ -1,0 +1,8 @@
+{
+  "id": "strict-10",
+  "createdAt": "2026-09-09T15:32:15.842Z",
+  "title": "Review ArtistaVisao360Modal.tsx, artist-form.definition.ts, ContratoFormModal.tsx, ContratoViewModal.tsx, useDocuments.ts, ShareViewModal.tsx, SharePendenteFormModal.tsx, RH.tsx, useDocumentosFuncionario.ts, query-config.ts for data-fetching correctness post-rename.",
+  "criterionIds": [],
+  "assignedAgent": "frontend-reviewer",
+  "status": "COMPLETED"
+}

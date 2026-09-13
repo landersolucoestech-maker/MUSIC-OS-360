@@ -1,0 +1,11 @@
+{
+  "id": "evid-fdc1d7ce",
+  "createdAt": "2026-09-12T08:36:33.379Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Residual final-wave security spot-check (categories 1-9 per task). Confirmed 1 new CRITICAL cross-tenant FK gap: ArtistGoalsService.create/update accept artist_id from client DTO without tenant-ownership check (find-78ff8a1e). Checked and found CLEAN: audiovisual shots/tasks/team-members services (all call assertProject which verifies tenant ownership); registry/ecad-reports/finance-category-rules/marketing-assets already use assertSameTenantFk; cache keys in permission-resolver.service.ts and integrations.controller.ts oauth exchange are tenant-scoped; BullMQ processors not previously covered (artist-platform-sync, market-benchmark-refresh, email) either fail-closed on missing tenant_id + use runInTenantContext, or (email) never touch tenant-scoped DB rows; autentique/docusign/whatsapp/stripe webhooks all verify signature/secret first and resolve tenant server-side via DB lookup, never from client-supplied tenant field; admin/super_admin-gated endpoints (admin-users, admin/integrations) are the only places accepting a client-supplied tenantId and are role-restricted, not reachable from normal user routes; spot-checked raw manager.query() calls in clients.service.ts and financial-categories.service.ts are properly tenant_id-scoped; no logger call found printing actual secret/token values (only token *names* in messages).",
+  "workspaceFingerprint": "8df3390cec53b7fddaa3cf45f3502a53767f1049cc2d60d6d7939f359efda0d7",
+  "fingerprintStatus": "BOUND"
+}

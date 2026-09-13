@@ -1,0 +1,14 @@
+{
+  "id": "evid-9a0d4e2d",
+  "createdAt": "2026-09-12T23:39:59.200Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-no-mixed-ptbr-en-corruption.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-no-mixed-ptbr-en-corruption.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "OK: zero mixed PT/EN corruption artifacts found across apps/web/src and field-labels.pt-br.ts.",
+  "stderrTail": "",
+  "workspaceFingerprint": "7d61aa6999aeb52e618a35a7ee84ace9e2a724c62578b6497579abbe720ece6d",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 473
+}

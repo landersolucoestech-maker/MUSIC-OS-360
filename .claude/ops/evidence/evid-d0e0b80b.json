@@ -1,0 +1,11 @@
+{
+  "id": "evid-d0e0b80b",
+  "createdAt": "2026-09-10T15:27:39.203Z",
+  "type": "REVIEW",
+  "reviewer": "backend-platform-metrics-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "VERDICT: PASS-WITH-FINDINGS. Sync-status state machine, worker rethrow/retry, provider-level 404-as-success handling for spotify/youtube/deezer/soundcloud, single-parser YouTube identity delegation (service+provider), and CHECK constraint migration all verified correct by direct code inspection at exact file:line. 58/58 targeted jest tests pass fresh (artist-platform-sync.spec.ts, 4 provider spec files, legacy-platform-fields.guard.spec.ts); tsc --noEmit -p . has 11 pre-existing errors confined to untracked audiovisual/integrations dto spec files, zero errors in any reviewed platform-profiles/queue file. Two findings recorded: find-2d37d50a (MEDIUM) — race window where producer's post-queue.add() upsertPending can run after the worker already finished the job and overwrite success/failed back to pending; find-4f3adbee (LOW) — soundcharts-canonical-candidates.util.ts still hand-rolls a narrower duplicate of the UC-id/channel-URL regex instead of delegating to parseYoutubeRef, a residual of the 'single YouTube parser' consolidation.",
+  "workspaceFingerprint": "2905dea63bdd99b9aa94b3e8f9b527b0b66b426eb1c61b167662395b9f0769fd",
+  "fingerprintStatus": "BOUND"
+}

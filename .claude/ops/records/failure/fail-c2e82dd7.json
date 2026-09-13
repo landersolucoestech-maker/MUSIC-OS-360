@@ -1,0 +1,8 @@
+{
+  "id": "fail-c2e82dd7",
+  "createdAt": "2026-09-09T16:00:30.402Z",
+  "fingerprint": "CONCURRENT_SUBAGENT_LIMIT",
+  "summary": "Dispatch attempt for strict-30 hit the real runtime ceiling: CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=20. Tool instructed not to retry immediately -- queued for redispatch as a running slot frees.",
+  "gateResultId": null,
+  "taskId": "strict-30"
+}

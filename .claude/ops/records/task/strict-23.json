@@ -1,0 +1,8 @@
+{
+  "id": "strict-23",
+  "createdAt": "2026-09-09T15:32:15.925Z",
+  "title": "Audit the untracked-files list (git status) for anything that should not ship: generated junk, secrets, duplicate reports.",
+  "criterionIds": [],
+  "assignedAgent": "supply-chain-reviewer",
+  "status": "COMPLETED"
+}

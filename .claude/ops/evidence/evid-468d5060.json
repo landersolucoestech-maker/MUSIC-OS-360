@@ -1,0 +1,14 @@
+{
+  "id": "evid-468d5060",
+  "createdAt": "2026-09-12T23:38:20.484Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-configuracoes-string-fix.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-configuracoes-string-fix.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "OK: no corrupted \"contratos e documents\" mixed-language artifact remains\nOK: natural PT-BR string \"...contratos e documentos\" is present",
+  "stderrTail": "",
+  "workspaceFingerprint": "7d61aa6999aeb52e618a35a7ee84ace9e2a724c62578b6497579abbe720ece6d",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 77
+}

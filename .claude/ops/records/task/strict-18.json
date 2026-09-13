@@ -1,0 +1,9 @@
+{
+  "id": "strict-18",
+  "createdAt": "2026-09-09T15:32:15.887Z",
+  "title": "Check BillingEnforcementService.listTenantIdsRequiringDunningAttention and the daily dunning sweep for N+1/unbounded-scan risk at tenant scale.",
+  "criterionIds": [],
+  "assignedAgent": "performance-reviewer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

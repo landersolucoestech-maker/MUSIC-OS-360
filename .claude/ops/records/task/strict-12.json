@@ -1,0 +1,9 @@
+{
+  "id": "strict-12",
+  "createdAt": "2026-09-09T15:32:15.862Z",
+  "title": "Accessibility pass on the changed modals: ContratoFormModal.tsx, ContratoViewModal.tsx, ShareViewModal.tsx.",
+  "criterionIds": [],
+  "assignedAgent": "accessibility-reviewer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

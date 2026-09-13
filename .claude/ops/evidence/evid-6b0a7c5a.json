@@ -1,0 +1,11 @@
+{
+  "id": "evid-6b0a7c5a",
+  "createdAt": "2026-09-12T02:49:28.372Z",
+  "type": "REVIEW",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Wave 10 fix (find-fec66ce8) reviewed: completeness confirmed (grep of all 9 files shows zero remaining raw fetch() calls, including helper methods); the 3 standalone wrappers (YouTube/Deezer/ACRCloud) correctly hold CircuitBreaker as a per-instance field and call resilientFetch with the same DEFAULT_TIMEOUT_MS default as IntegrationBaseService.fetch -- no behavior drift; the 6 base-class conversions have no .then()/callback usage anywhere in these files, so no this-scoping risk. Circuit-breaker isolation is per-instance (matches pre-existing IntegrationBaseService pattern, not a new regression). However instagram.service.spec.ts's changed assertion (expect.objectContaining({method:'DELETE'})) does not actually exercise/prove the fix: since the test mocks global.fetch directly and objectContaining ignores the added signal field, this assertion passes identically whether this.fetch is used (fixed) or raw fetch is used (reverted). This is a false-green test per the false-green-prevention rule and fails requirement 4 of the review objective (test fidelity). Filed as find-dd523831.",
+  "workspaceFingerprint": "cc547a9634024b6d2e6742ea3e2f74f8b3a95a6fb42d30a7c1efe5f54e8ecf16",
+  "fingerprintStatus": "BOUND"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "evid-38f51e25",
+  "createdAt": "2026-09-12T23:46:17.528Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-documentos-identifier-staleness.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-documentos-identifier-staleness.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "OK: apps/api/src/database/entities.ts\nOK: apps/api/src/modules/artists/dto/create-artist.dto.ts\nOK: apps/api/src/modules/contracts/dto/create-contract.dto.ts\nOK: apps/api/src/modules/hr/dto/create-employee.dto.ts\nOK: apps/api/src/modules/artists/artists.service.ts\nOK: apps/api/src/modules/artists/handlers/artist-workflow.handler.ts\nOK: apps/api/src/modules/contracts/contracts.service.ts\nOK: apps/api/src/modules/hr/hr.service.ts\nOK: apps/api/src/modules/reports/i18n/field-labels.pt-br.ts\nOK: apps/web/src/modules/artist/components/ArtistVision360Modal.tsx\nOK: apps/web/src/modules/artist/forms/artist-form.definition.ts\nOK: apps/web/src/modules/artist/types/artist.types.ts\nOK: apps/web/src/modules/auth/pages/ArtistaSignupPublic.tsx\nOK: apps/web/src/modules/contracts/components/ContractFormModal.tsx\nOK: apps/web/src/modules/contracts/components/ContractFormModal.documents-persist.guard.test.ts\nOK: apps/web/src/modules/contracts/components/ContractViewModal.tsx\nOK: apps/web/src/modules/contracts/hooks/useDocuments.ts\nOK: apps/web/src/modules/contracts/types/contracts.types.ts\nOK: apps/web/src/modules/leads/modals/LeadFormModal.tsx\nOK: apps/web/src/modules/releases/components/SharePendenteFormModal.tsx\nOK: apps/web/src/modules/releases/components/ShareViewModal.tsx\nOK: apps/web/src/modules/releases/pages/GestaoShares.tsx\nOK: apps/web/src/modules/rh/hooks/useEmployeeDocuments.ts\nOK: apps/web/src/modules/rh/pages/RH.tsx\nOK: apps/web/src/shared/integrations/contracts/signing.contract.ts\nOK: apps/web/src/shared/integrations/contracts/storage.contract.ts\nOK: apps/web/src/shared/lib/query-config.ts\nOK: apps/web/src/shared/pages/landing/data.ts\nOK: apps/web/src/modules/releases/types/index.ts\nOK: apps/web/src/modules/releases/lib/share-schema.ts\nOK: apps/web/src/modules/releases/schemas/share-schema.ts",
+  "stderrTail": "",
+  "workspaceFingerprint": "7d61aa6999aeb52e618a35a7ee84ace9e2a724c62578b6497579abbe720ece6d",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 104
+}

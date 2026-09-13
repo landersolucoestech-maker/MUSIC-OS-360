@@ -1,0 +1,9 @@
+{
+  "id": "strict-13",
+  "createdAt": "2026-09-09T15:32:15.865Z",
+  "title": "Assess negative-path test coverage gaps for the billing/naming clusters, specifically the leads.service.ts suspended-tenant scenario.",
+  "criterionIds": [],
+  "assignedAgent": "test-strategy-engineer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

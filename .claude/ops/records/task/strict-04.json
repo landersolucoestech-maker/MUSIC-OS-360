@@ -1,0 +1,9 @@
+{
+  "id": "strict-04",
+  "createdAt": "2026-09-09T15:32:15.816Z",
+  "title": "Review the not-yet-reviewed-this-session diffs: contracts.service.ts, create-contract.dto.ts, hr.service.ts, create-employee.dto.ts, artists.service.ts, create-artist.dto.ts, artist-workflow.handler.ts.",
+  "criterionIds": [],
+  "assignedAgent": "backend-reviewer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

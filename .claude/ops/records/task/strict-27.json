@@ -1,0 +1,8 @@
+{
+  "id": "strict-27",
+  "createdAt": "2026-09-09T15:32:15.936Z",
+  "title": "Trace git history on the billing/dunning P0-A remediation's actual origin/timeline to confirm it is deliberate, complete remediation.",
+  "criterionIds": [],
+  "assignedAgent": "root-cause-investigator",
+  "status": "COMPLETED"
+}

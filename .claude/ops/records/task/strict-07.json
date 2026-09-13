@@ -1,0 +1,9 @@
+{
+  "id": "strict-07",
+  "createdAt": "2026-09-09T15:32:15.832Z",
+  "title": "Independently verify dunning/webhook idempotency: status_changed_at dedup key, RLS tenant-context correctness in DunningService.processTenant, concurrency of the daily sweep.",
+  "criterionIds": [],
+  "assignedAgent": "distributed-systems-reviewer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

@@ -1,0 +1,9 @@
+{
+  "id": "strict-21",
+  "createdAt": "2026-09-09T15:32:15.904Z",
+  "title": "Determine whether the apps/api/drizzle/ folder alongside the TypeORM migrations/index.ts is a second, competing migration mechanism actually in use, or dead/historical.",
+  "criterionIds": [],
+  "assignedAgent": "technology-selection-reviewer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

@@ -1,0 +1,11 @@
+{
+  "id": "evid-7424e139",
+  "createdAt": "2026-09-11T22:53:27.925Z",
+  "type": "REVIEW",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Cross-tenant FK validation (phonograms/works) correctly runs before writes, explicit-null FK-clear is safe (assertSameTenantFk short-circuits on falsy id, which is fine since null clears rather than references), and the ISRC regex/normalize is correct against real ISRC examples (USRC17607839, GBUM71029604) and the manual create/update paths on phonograms and works. Migration 20260911000003's down() cleanly reverses up(), and deleted_at is confirmed the real soft-delete column used consistently by both tables' existing queries. However, the bulk-import ISRC fix (find-fb2cfb1b) is incomplete: RELEASES_CONTRACT defines a repeating group 'faixas' with a per-track 'isrc' field, but ImportCommitService.assertValidIsrc() only scans def.importableColumns/contract.fields (general, non-repeating columns) and insertGroup()'s normalizeIsrc-on-insert only fires for that same general-column loop. writeReleasesFaixasForImport() (apps/api/src/modules/reports/computed-fields/releases-faixas.field.ts) writes f.isrc straight into releases.metadata.faixas[].isrc with no normalization or format check at all, and the new import-commit.service.spec.ts ISRC describe block only exercises the flat phonograms column case, never the releases repeating-group case. This is a reproducible gap in the exact area the task asked to check (repeating groups) and directly undermines the stated goal of consistent ISRC handling across entry paths.",
+  "workspaceFingerprint": "b85a3769adf1b0101860bf24c7e26cf154dd0cf29f07debfbbad3c261440d73e",
+  "fingerprintStatus": "BOUND"
+}

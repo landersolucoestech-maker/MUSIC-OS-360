@@ -1,0 +1,11 @@
+{
+  "id": "evid-c37543e7",
+  "createdAt": "2026-09-09T16:12:17.971Z",
+  "type": "REVIEW",
+  "reviewer": "observability-reliability-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Reviewed dunning.service.ts runDunningCycle: per-tenant try/catch correctly isolates failures (one tenant's throw cannot abort the loop for others, confirmed at lines 123-131). Found 3 observability gaps (misleading aggregate success count, no per-tenant success log/no cycle correlation id, no failure-count/streak tracking for repeated per-tenant failures) and 1 reliability gap (no overlap lock + no query-level timeout for the 24h cycle). 4 findings logged: find-4f07e7c6, find-817acade, find-2e02fed3, find-e86ed9e1.",
+  "workspaceFingerprint": "d5dfc7ef8d1e2b69b5e5f680cf92073fc66024870565469a325188f232a93b76",
+  "fingerprintStatus": "BOUND"
+}

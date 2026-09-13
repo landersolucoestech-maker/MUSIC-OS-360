@@ -1,0 +1,11 @@
+{
+  "id": "evid-5d66f07a",
+  "createdAt": "2026-09-09T20:49:12.202Z",
+  "type": "REVIEW",
+  "reviewer": "regression-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Confirmed regression: billing.service.ts updateAdminTenant and dunning.service.ts no longer write tenants.active=false on billing suspension (P0-A consolidation onto tenant_billing_state). tenant.guard.ts/BillingEnforcementGuard are unaffected (BillingEnforcementGuard blanket-denies suspended/read_only tenants globally via tenant_billing_state, confirmed via 295/295 passing tests in billing/guards/webhook suites). autentique.service.ts/docusign.service.ts/external-data-exchange.service.ts intentionally decouple tenants.active from billing status per new P0-A/Type-B comments added this session (documented design decision, not a regression). BUT leads.service.ts:326 (public unauthenticated lead-capture, submitPublicArtistApplication/getPublicWorkspaceBySlug) still gates solely on tenants.active/deleted_at/allow_public_registration and has zero dependency on BillingEnforcementService -- since nothing sets tenants.active=false for billing suspension anymore, a suspended tenant's public lead-capture form now silently keeps accepting submissions (PII persisted, LEAD_CREATED event fired, automations run) where it was previously blocked via the old dunning hardSuspend's tenants.active=false write. Independently reproduced: jest src/modules/leads/leads.service.spec.ts fails 1/8 -- 'a checagem de billing deveria bloquear o tenant suspenso' expects rejection but resolves. This exact regression is already recorded as finding find-f10e1fcf (category G, HIGH, disposition null) plus related lower-severity findings find-7d412607 (tenant.guard.ts doc gap, MEDIUM) and find-c216b529 (dev-auth.controller.ts dev-only reader, LOW) -- no new duplicate finding filed. organizations.billing_status/billing_subscriptions.status staleness on suspend/cancel checked: no other reader consumes those fields as suspension authority (admin list queries COALESCE tenant_billing_state.status first), so no additional regression found there.",
+  "workspaceFingerprint": "670cf45179401267be05db7733ad20b9fad90aade4a2e3f732335bce8fb5dd45",
+  "fingerprintStatus": "BOUND"
+}

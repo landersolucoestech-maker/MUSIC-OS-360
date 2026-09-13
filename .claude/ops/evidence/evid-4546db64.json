@@ -1,0 +1,14 @@
+{
+  "id": "evid-4546db64",
+  "createdAt": "2026-09-12T23:11:25.177Z",
+  "type": "COMMAND",
+  "label": "CONFLICT: implemented disposition is the Type-B exemption (documented P0-A Public Boundary Policy Matrix, now pinned by autentique.service.spec.ts), NOT a migration to tenant_billing_state as this criterion literally asks. A suspended tenant's autentique webhook is NOT rejected by design (signature already happened externally). Left open -- not fabricated PASS -- flagging for mission-level decision: accept exemption and reword criterion, or actually add billing gating here.",
+  "command": "node -e process.exit(3)",
+  "status": "FAIL",
+  "exitCode": 3,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "d739e1603eafd68cfbe3ce6bdf3b8f484c816002005ddd0dc90afaa2fe5da86c",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 64
+}

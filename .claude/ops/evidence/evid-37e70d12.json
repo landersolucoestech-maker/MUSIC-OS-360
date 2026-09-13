@@ -1,0 +1,11 @@
+{
+  "id": "evid-37e70d12",
+  "createdAt": "2026-09-09T16:10:32.414Z",
+  "type": "REVIEW",
+  "reviewer": "idempotency-concurrency-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "VERDICT: FAIL. Independently traced dunning.service.ts + billing-enforcement.service.ts. (1) Dedup key works correctly for the sequential, single-writer, no-transition case (confirmed by dunning.service.spec.ts T11/T12) -- status_changed_at is bumped exactly once per genuine status transition on a lone call path. (2) Confirmed real race: BillingEnforcementService has no lock/advisory-lock/overlap-guard around the read-then-conditionally-write status_changed_at sequence in applyOverrideAndEscalation/suspendTenant/auditStateChange, and DunningService's own scheduler (onApplicationBootstrap+setInterval) has no cross-instance leader election -- so N horizontally-scaled API replicas each independently sweep and can concurrently hit the same tenant at the exact moment of a status transition, each minting a different status_changed_at and therefore a different BullMQ jobId, producing duplicate billing notifications (both the always-unconditional ws.sendToTenant push and the queued/persisted notification). Filed as find-3da8f1fd (ALTO). (3) Confirmed every status-mutation path in billing-enforcement.service.ts (startPaymentGrace/activateTenant/cancelTenant/suspendTenant/applyManualOverride/removeManualOverride's escalation re-entry) correctly routes through auditStateChange or an equivalent inline before!=after check, so status_changed_at is set on every real transition in the SINGLE-caller case -- no missed-write path found. (4) Secondary finding: BullMQ's jobId-existence dedup (verified in node_modules/bullmq lua scripts) also means a permanently-failed notification job is never retried on subsequent cycles for the same stable transition key -- silent drop, filed as find-27fef1de (MEDIO). No pre-existing test exercises concurrent runDunningCycle invocations.",
+  "workspaceFingerprint": "d5dfc7ef8d1e2b69b5e5f680cf92073fc66024870565469a325188f232a93b76",
+  "fingerprintStatus": "BOUND"
+}

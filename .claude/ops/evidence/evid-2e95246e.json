@@ -1,0 +1,14 @@
+{
+  "id": "evid-2e95246e",
+  "createdAt": "2026-09-12T23:50:01.768Z",
+  "type": "COMMAND",
+  "label": "N/A for now: this criterion requires commits traceable to requirement IDs, but this session's policy (git-safety.md + system instructions) is to never commit without the user's explicit request. No commit has been made. Left open intentionally, not fabricated -- ready to satisfy as soon as the user asks for commits, at which point commit messages will cite the requirement IDs each closes.",
+  "command": "node -e process.exit(3)",
+  "status": "FAIL",
+  "exitCode": 3,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "7d61aa6999aeb52e618a35a7ee84ace9e2a724c62578b6497579abbe720ece6d",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 77
+}

@@ -1,0 +1,14 @@
+{
+  "id": "evid-c3c2e724",
+  "createdAt": "2026-09-09T16:12:41.507Z",
+  "type": "COMMAND",
+  "label": "cd apps/api && npx jest --config jest.config.ts leads.service.spec.ts",
+  "command": "cd apps/api && npx jest --config jest.config.ts leads.service.spec.ts",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync cd ENOENT",
+  "workspaceFingerprint": "d5dfc7ef8d1e2b69b5e5f680cf92073fc66024870565469a325188f232a93b76",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 7
+}

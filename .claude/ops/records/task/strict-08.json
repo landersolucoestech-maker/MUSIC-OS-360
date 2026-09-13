@@ -1,0 +1,9 @@
+{
+  "id": "strict-08",
+  "createdAt": "2026-09-09T15:32:15.835Z",
+  "title": "Review autentique/docusign/external-data-exchange's new \"Type-B, no billing gate\" comments against their actual webhook signature/auth verification code.",
+  "criterionIds": [],
+  "assignedAgent": "integration-reviewer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

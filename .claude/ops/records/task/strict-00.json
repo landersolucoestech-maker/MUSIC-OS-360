@@ -1,0 +1,9 @@
+{
+  "id": "strict-00",
+  "createdAt": "2026-09-09T15:32:15.783Z",
+  "title": "Re-confirm current stack/migration/module map after this session's edits (naming cluster, billing/dunning fixes, 2 newly-registered migrations, operational-lists untracked module).",
+  "criterionIds": [],
+  "assignedAgent": "repo-intelligence",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

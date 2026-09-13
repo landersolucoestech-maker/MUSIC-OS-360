@@ -1,0 +1,8 @@
+{
+  "id": "strict-31",
+  "createdAt": "2026-09-09T15:32:15.963Z",
+  "title": "Final scope/diff integrity audit of everything changed in this session so far (naming, billing, migrations, STRICT_MULTI_AGENT mechanism).",
+  "criterionIds": [],
+  "assignedAgent": "git-auditor",
+  "status": "COMPLETED"
+}

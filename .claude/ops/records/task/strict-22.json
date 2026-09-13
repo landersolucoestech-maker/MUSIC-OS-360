@@ -1,0 +1,9 @@
+{
+  "id": "strict-22",
+  "createdAt": "2026-09-09T15:32:15.907Z",
+  "title": "Check for package.json/lockfile churn implied by the new operational-lists module or other untracked files.",
+  "criterionIds": [],
+  "assignedAgent": "dependency-reviewer",
+  "status": "COMPLETED",
+  "notApplicableReason": null
+}

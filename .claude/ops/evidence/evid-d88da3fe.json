@@ -1,0 +1,11 @@
+{
+  "id": "evid-d88da3fe",
+  "createdAt": "2026-09-09T15:53:01.957Z",
+  "type": "REVIEW",
+  "reviewer": "requirements-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "VERDICT: FAIL. ac-9cccc5d9 mandates changing autentique.service.ts's tenants.active check to tenant_billing_state, but the diff already documents (P0-A/Type-B comment, added alongside docusign/external-data-exchange) a reasoned decision that this exact boundary must NOT be gated on billing status. The requirement presumes the 'gate' answer and forecloses the legitimate 'ratify Type-B, document as intentionally ungated' resolution without human decision. Filed as finding find-cc1a1cfe against req-90013e6a. Blocks implementation until requirements-analyst leaves this decision open (both options viable) or an explicit human ruling is recorded.",
+  "workspaceFingerprint": "e007e2efc801f866dbdcfcd98dd7c5d8dbe345d91f4b5104dc330d1418418b76",
+  "fingerprintStatus": "BOUND"
+}

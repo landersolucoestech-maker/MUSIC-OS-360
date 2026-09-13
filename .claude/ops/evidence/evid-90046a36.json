@@ -1,0 +1,11 @@
+{
+  "id": "evid-90046a36",
+  "createdAt": "2026-09-11T23:27:59.100Z",
+  "type": "REVIEW",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Cross-tenant FK checks in projects/events/campaigns/briefings services correctly run before their DB writes in both create() and update(), and the update() 'only validate when field present in patch' logic is sound (dtoToEntity's undefined-check faithfully mirrors whether the original DTO key was present) -- no bypass found there. However, two real defects found: (1) HIGH: campaigns.service.ts's new dtoToEntity()-based update() path overwrites the entire metadata JSON column with only this request's currency/platforms/metadata, discarding previously-stored metadata keys never resent in the current PATCH (e.g. an update sending only {currency:'USD'} silently deletes a previously stored platforms array) -- untested in campaigns.service.spec.ts, which only covers create(). (2) MEDIUM: the new LEAD_CONVERTED idempotency guard in lead-events.handler.ts reads client_id then writes much later with no transaction/lock spanning the sequence, so genuine concurrent duplicate event delivery (not just the documented re-progression scenario) can still create duplicate client+artist pairs; only sequential mocked scenarios are tested. Recommend fixing the metadata merge (read-modify-write against current.metadata) before shipping; the idempotency race is a narrower risk worth a follow-up but is less clearly triggered in current delivery guarantees.",
+  "workspaceFingerprint": "27bd77dd235f489490f61774557a172dd555998ba6693dc0805980685ebf20c8",
+  "fingerprintStatus": "BOUND"
+}

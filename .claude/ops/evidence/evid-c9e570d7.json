@@ -1,0 +1,11 @@
+{
+  "id": "evid-c9e570d7",
+  "createdAt": "2026-09-11T17:30:34.939Z",
+  "type": "REVIEW",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Points 1 and 3 verified correct and complete: ArtistRelationshipType enum consolidation converges cleanly across all 6 sites (artists.service.ts x3, query-artist.dto.ts, useArtistsPaginated.ts x2, Artists.tsx), the ACTIVE_CONTRACT_STATUSES_SQL contract-status bug fix is correct (maps ativo/assinado/vigente/vencendo -> active/signed/in_force/expiring matching ContractStatus enum, applied consistently in list()/vinculoByArtistIds()/vinculoStats(), no other PT-status SQL literal left behind repo-wide), and vinculoStats()'s {exclusive,partner,independent,total} response is consumed correctly end-to-end (controller route -> VinculoStats interface -> Artists.tsx KPIs). Point 3's five new @Matches URL regexes for deezer/apple_music/soundcloud/instagram/tiktok are byte-identical to (or a strict subset of) the platform-sync extractors' regexes, APPLE_MUSIC_URL_PATTERN is correctly reused not duplicated, UpdateArtistDto inherits via PartialType, and no existing spec exercises a URL that would newly fail. tsc (api 3 pre-existing errors, web 5 pre-existing files) and jest/vitest (357/357, 118/118) all match the claimed baselines with zero Artist-domain regressions. However Point 2(a) is FALSE as literally claimed: ArtistVision360Modal.tsx still contains residual 'Goal' bindings (showGoalForm/setShowGoalForm state and a 'goal' parameter in handleEditMeta) that were not renamed to the Meta/MarketingMeta family, alongside the correctly renamed siblings. Filed as find-e7eafc1e (low severity, cosmetic naming-consistency gap, no behavior change) -- must be corrected or the claim in Point 2(a) walked back before the selo can be trusted verbatim.",
+  "workspaceFingerprint": "d15fa6d26712c59f962d38fc516af3b02287c90ba47df6a8848375bf9d320606",
+  "fingerprintStatus": "BOUND"
+}

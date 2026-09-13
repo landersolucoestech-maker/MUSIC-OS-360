@@ -1,0 +1,14 @@
+{
+  "id": "evid-30442526",
+  "createdAt": "2026-09-13T00:12:07.787Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-rename-documentos-migration.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\dae0ba4b-effe-4903-a4f3-f4667ef20542\\scratchpad\\verify-rename-documentos-migration.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "OK: metadata-only RENAME COLUMN (no data rewrite)\nOK: up() is IF EXISTS-guarded\nOK: down() is IF EXISTS-guarded\nOK: covers exactly the 4 tables (artists, contracts, shares, employees)",
+  "stderrTail": "",
+  "workspaceFingerprint": "e61bcce81613a58ff59a48f757e0fbd7a9169732707412df83edd33e719ba822",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 137
+}
