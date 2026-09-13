@@ -30,7 +30,7 @@ const INFO = [
 const WARNING = [
   "pending", "pendente", "metadata_pending", "assets_pending",
   "analysis", "em_analise", "analise", "negotiation", "negociacao",
-  "em_negociacao", "em_revisao", "em_producao", "agendado", "agendada",
+  "em_negociacao", "in_negotiation", "em_revisao", "em_producao", "agendado", "agendada",
   "scheduled", "vencendo", "lead", "em_uso", "emprestado", "manutencao",
   "programado", "pausada", "pausado", "onboarding", "planejamento",
   "aguardando", "waiting_customer", "pending_signature",
@@ -39,7 +39,7 @@ const WARNING = [
 const DANGER = [
   "cancelled", "cancelado", "cancelada", "rejected", "rejeitado", "rejeitada",
   "reprovado", "expired", "expirado", "expirada", "vencido", "vencida",
-  "rescindido", "rescindida", "inativo", "atrasada", "atrasado", "danificado",
+  "rescindido", "rescindida", "inativo", "inactive", "atrasada", "atrasado", "danificado",
   "descartado", "falhou", "failed", "bloqueada", "desconectado",
 ];
 const NEUTRAL = [
@@ -71,10 +71,10 @@ const statusLabels: Record<string, string> = {
   rejected: "Rejeitado", rejeitado: "Rejeitado", rejeitada: "Rejeitada",
   expired: "Expirado", expirado: "Expirado", expirada: "Expirada",
   vencido: "Vencido", vencida: "Vencida", vencendo: "Vencendo",
-  negotiation: "Em Negociação", negociacao: "Em Negociação", em_negociacao: "Em Negociação",
+  negotiation: "Em Negociação", negociacao: "Em Negociação", em_negociacao: "Em Negociação", in_negotiation: "Em Negociação",
   proposal: "Proposta Enviada", proposta: "Proposta Enviada",
-  lead: "Lead", cliente_ativo: "Cliente Ativo", inativo: "Inativo",
-  contratado: "Contratado", parceiro: "Parceiro", independente: "Independente", exclusivo: "Exclusivo",
+  lead: "Lead", cliente_ativo: "Cliente Ativo", inativo: "Inativo", inactive: "Inativo",
+  contratado: "Contratado", signed: "Contratado", parceiro: "Parceiro", independente: "Independente", exclusivo: "Exclusivo",
   agendado: "Agendado", concluido: "Concluído", concluida: "Concluída",
   aprovado: "Aprovado", aprovada: "Aprovada",
   em_revisao: "Em Revisão", em_andamento: "Em Andamento", em_execucao: "Em Execução", em_producao: "Em Produção",

@@ -3,7 +3,7 @@
 // + ecad_reports + obras — Decision Gate item 11, product-completion audit).
 //
 // Covers:
-//  1. Clicking a row detail button opens ExecucaoDetailModal with compositor + cod_ecad
+//  1. Clicking a row detail button opens DetectionDetailModal with compositor + cod_ecad
 //     from the catalog (enriched via work_id lookup against useObras())
 //  2. Clicking a detection with no matching/linked obra shows the orphan warning
 //  3. Divergências tab badge count reflects detections without a reconciled obra
@@ -24,13 +24,13 @@ const DETECCOES = [
   {
     id: "det-001", work_id: "obra-001", artist_id: null,
     plataforma: "YouTube", titulo_detectado: "Noite de Luz", url: "https://youtube.com/x",
-    score: "0.92", status: "concluido", type: "uso_nao_autorizado",
+    score: "0.92", status: "completed", type: "uso_nao_autorizado",
     detectado_em: "2026-05-08T14:32:00", metadata: {}, created_at: "2026-05-08T14:32:00", updated_at: "2026-05-08T14:32:00",
   },
   {
     id: "det-011", work_id: null, artist_id: null,
     plataforma: "TikTok", titulo_detectado: "Track Desconhecida", url: null,
-    score: null, status: "pendente", type: "uso_nao_autorizado",
+    score: null, status: "pending", type: "uso_nao_autorizado",
     detectado_em: "2026-05-02T11:20:00", metadata: {}, created_at: "2026-05-02T11:20:00", updated_at: "2026-05-02T11:20:00",
   },
 ];
@@ -48,21 +48,21 @@ const OBRAS = [
 
 const deleteMutateAsync = vi.fn();
 
-vi.mock("@/modules/monitoring/hooks/useDeteccoes", () => ({
-  useDeteccoes: () => ({
-    deteccoes: DETECCOES,
+vi.mock("@/modules/monitoring/hooks/useDetections", () => ({
+  useDetections: () => ({
+    detections: DETECCOES,
     isLoading: false,
     error: null,
     refetch: vi.fn(),
-    addDeteccao: { mutateAsync: vi.fn() },
-    updateDeteccao: { mutateAsync: vi.fn() },
-    deleteDeteccao: { mutateAsync: deleteMutateAsync },
+    addDetection: { mutateAsync: vi.fn() },
+    updateDetection: { mutateAsync: vi.fn() },
+    deleteDetection: { mutateAsync: deleteMutateAsync },
   }),
 }));
 
 vi.mock("@/modules/monitoring/hooks/useEcadReports", () => ({
   useEcadReports: () => ({
-    relatorios: [],
+    reports: [],
     isLoading: false,
     error: null,
     refetch: vi.fn(),

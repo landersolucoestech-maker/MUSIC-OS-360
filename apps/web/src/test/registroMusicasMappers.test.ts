@@ -13,13 +13,13 @@ import {
 } from "@/modules/catalog/mappers";
 
 describe("dbStatusToSelect", () => {
-  it("maps DB 'analise' to Select 'em_análise'", () => {
-    expect(dbStatusToSelect("analise")).toBe("em_análise");
+  it("maps DB 'under_review' to Select 'em_análise'", () => {
+    expect(dbStatusToSelect("under_review")).toBe("em_análise");
   });
-  it("passes through 'pendente', 'registrado', 'rejeitado'", () => {
-    expect(dbStatusToSelect("pendente")).toBe("pendente");
-    expect(dbStatusToSelect("registrado")).toBe("registrado");
-    expect(dbStatusToSelect("rejeitado")).toBe("rejeitado");
+  it("maps 'pending', 'registered', 'rejected' to their Select labels", () => {
+    expect(dbStatusToSelect("pending")).toBe("pendente");
+    expect(dbStatusToSelect("registered")).toBe("registrado");
+    expect(dbStatusToSelect("rejected")).toBe("rejeitado");
   });
   it("returns empty string for null/undefined", () => {
     expect(dbStatusToSelect(null)).toBe("");
@@ -29,20 +29,20 @@ describe("dbStatusToSelect", () => {
 });
 
 describe("normalizeStatusForDb", () => {
-  it("maps Select 'em_análise' (and variants) to DB 'analise'", () => {
-    expect(normalizeStatusForDb("em_análise")).toBe("analise");
-    expect(normalizeStatusForDb("em_analise")).toBe("analise");
-    expect(normalizeStatusForDb("Em Análise")).toBe("analise");
-    expect(normalizeStatusForDb("em analise")).toBe("analise");
+  it("maps Select 'em_análise' (and variants) to DB 'under_review'", () => {
+    expect(normalizeStatusForDb("em_análise")).toBe("under_review");
+    expect(normalizeStatusForDb("em_analise")).toBe("under_review");
+    expect(normalizeStatusForDb("Em Análise")).toBe("under_review");
+    expect(normalizeStatusForDb("em analise")).toBe("under_review");
   });
-  it("passes through other status values", () => {
-    expect(normalizeStatusForDb("pendente")).toBe("pendente");
-    expect(normalizeStatusForDb("registrado")).toBe("registrado");
-    expect(normalizeStatusForDb("rejeitado")).toBe("rejeitado");
+  it("maps other Select labels to their DB values", () => {
+    expect(normalizeStatusForDb("pendente")).toBe("pending");
+    expect(normalizeStatusForDb("registrado")).toBe("registered");
+    expect(normalizeStatusForDb("rejeitado")).toBe("rejected");
   });
-  it("defaults to 'pendente' on empty input", () => {
-    expect(normalizeStatusForDb("")).toBe("pendente");
-    expect(normalizeStatusForDb(null)).toBe("pendente");
+  it("defaults to 'pending' on empty input", () => {
+    expect(normalizeStatusForDb("")).toBe("pending");
+    expect(normalizeStatusForDb(null)).toBe("pending");
   });
 });
 
@@ -184,7 +184,7 @@ describe("fonogramaToParticipacao", () => {
 
 describe("status round-trip", () => {
   it("DB → Select → DB stays consistent", () => {
-    const cases = ["analise", "pendente", "registrado", "rejeitado"];
+    const cases = ["under_review", "pending", "registered", "rejected"];
     for (const dbVal of cases) {
       const selectVal = dbStatusToSelect(dbVal);
       expect(normalizeStatusForDb(selectVal)).toBe(dbVal);

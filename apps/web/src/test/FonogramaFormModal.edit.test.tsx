@@ -47,13 +47,13 @@ vi.mock("@/modules/catalog/hooks/useObras", () => {
 // (FonogramaFormModal.tsx) ainda dependesse de escanear esse array, o teste
 // abaixo falharia. A resolução real deve vir de storage.findById (GET
 // /artists/:id), que funciona para qualquer artista do tenant.
-vi.mock("@/modules/artist/hooks/useArtistas", async () => {
-  const actual = await vi.importActual<typeof import("@/modules/artist/hooks/useArtistas")>(
-    "@/modules/artist/hooks/useArtistas",
+vi.mock("@/modules/artist/hooks/useArtists", async () => {
+  const actual = await vi.importActual<typeof import("@/modules/artist/hooks/useArtists")>(
+    "@/modules/artist/hooks/useArtists",
   );
   return {
     ...actual,
-    useArtistas: () => ({
+    useArtists: () => ({
       artistas: [] as any[],
       isLoading: false,
       error: null,
@@ -221,7 +221,7 @@ describe("FonogramaFormModal edit mode", () => {
       (p: { nome: string }) => p.nome,
     );
     expect(produtoresNames).toEqual(expect.arrayContaining(["Pedro", "Marta"]));
-    expect(callArg.status).toBe("analise");
+    expect(callArg.status).toBe("under_review");
     // Tenant isolation: org_id/orgId must NEVER be part of the payload the
     // frontend sends — the API derives the tenant from the authenticated
     // request context (see registro-musicas.mapper.ts). A client-supplied

@@ -88,7 +88,7 @@ export const FLOW_ARTISTA_ONBOARDING: OperationalFlow = {
       module:           "artists",
       entitiesAffected: ["Artista"],
       integrations:     [],
-      uiElement:        "ArtistaFormModal",
+      uiElement:        "ArtistFormModal",
       notes:            "Status inicial: 'prospecto'.",
     },
     {
@@ -98,7 +98,7 @@ export const FLOW_ARTISTA_ONBOARDING: OperationalFlow = {
       module:           "contracts",
       entitiesAffected: ["Contrato", "TemplateContrato"],
       integrations:     [],
-      uiElement:        "ContratoFormModal",
+      uiElement:        "ContractFormModal",
       notes:            "Status inicial: 'rascunho'.",
     },
     {
@@ -271,7 +271,7 @@ export const FLOW_CONTRATO: OperationalFlow = {
   steps: [
     { step: 1, actor: "Gestor Jurídico", action: "Seleccionar template e criar rascunho",
       module: "contracts", entitiesAffected: ["Contrato"], integrations: [],
-      uiElement: "ContratoFormModal" },
+      uiElement:        "ContractFormModal" },
     { step: 2, actor: "Gestor Jurídico", action: "Rever e aprovar rascunho internamente",
       module: "contracts", entitiesAffected: ["Contrato"], integrations: [] },
     { step: 3, actor: "Gestor Jurídico", action: "Enviar para assinatura via Autentique",

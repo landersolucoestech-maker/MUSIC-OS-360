@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ArtistaPlatformMetrics } from "@/modules/artist/components/ArtistaPlatformMetrics";
+import { ArtistPlatformMetrics } from "@/modules/artist/components/ArtistPlatformMetrics";
 import { api } from "@/shared/lib/api-client";
 
 vi.mock("@/shared/lib/api-client", () => ({
@@ -42,7 +42,7 @@ function renderMetrics(overrides: Record<string, unknown> = {}) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={queryClient}>
-      <ArtistaPlatformMetrics
+      <ArtistPlatformMetrics
         artistId="artist-1"
         instagramUrl={INSTAGRAM_URL}
         tiktokUrl={TIKTOK_URL}
@@ -56,7 +56,7 @@ function renderMetrics(overrides: Record<string, unknown> = {}) {
  * Item 9/12 da correção: fallback de dev deve ser "claramente identificado",
  * nunca confundido com métrica real da Soundcharts.
  */
-describe("ArtistaPlatformMetrics — identificação do fallback de dev (raw_payload.source)", () => {
+describe("ArtistPlatformMetrics — identificação do fallback de dev (raw_payload.source)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("followers real da Soundcharts NÃO mostra rótulo de demonstração", async () => {

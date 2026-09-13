@@ -147,8 +147,8 @@ export type DomainEventPayloads = {
   RELEASE_CREATED:       ReleaseCreatedPayload;
   RELEASE_UPDATED:       Partial<ReleaseCreatedPayload> & { id: string };
   RELEASE_DELETED:       { id: string; org_id: string };
-  SHARE_CREATED:         { id: string; work_id?: string; artist_id?: string; percentual?: number; org_id: string };
-  SHARE_UPDATED:         { id: string; work_id?: string; artist_id?: string; percentual?: number; org_id: string };
+  SHARE_CREATED:         { id: string; work_id?: string; artist_id?: string; percentage?: number; org_id: string };
+  SHARE_UPDATED:         { id: string; work_id?: string; artist_id?: string; percentage?: number; org_id: string };
   SHARE_DELETED:         { id: string; org_id: string };
   LEAD_CAPTURED:         LeadCapturedPayload;
   LEAD_CONVERTED:        { id: string; artist_id?: string; org_id: string };

@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ComponentProps } from "react";
-import { ArtistaPlatformMetrics } from "@/modules/artist/components/ArtistaPlatformMetrics";
+import { ArtistPlatformMetrics } from "@/modules/artist/components/ArtistPlatformMetrics";
 import { api } from "@/shared/lib/api-client";
 
 vi.mock("@/shared/lib/api-client", () => ({
@@ -20,7 +20,7 @@ vi.mock("sonner", () => ({
   },
 }));
 
-type MetricsProps = ComponentProps<typeof ArtistaPlatformMetrics>;
+type MetricsProps = ComponentProps<typeof ArtistPlatformMetrics>;
 
 const SPOTIFY_ID = "4NHQUGzhtTLFvgF5SZesLK";
 const YOUTUBE_ID = "UC_x5XG1OV2P6uZZ5FSM9Ttw";
@@ -70,12 +70,12 @@ function renderMetrics(overrides: Partial<MetricsProps> = {}) {
 
   return render(
     <QueryClientProvider client={queryClient}>
-      <ArtistaPlatformMetrics {...props} />
+      <ArtistPlatformMetrics {...props} />
     </QueryClientProvider>,
   );
 }
 
-describe("ArtistaPlatformMetrics platform profiles", () => {
+describe("ArtistPlatformMetrics platform profiles", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -536,11 +536,82 @@ describe("ArtistaPlatformMetrics platform profiles", () => {
   it("link YouTube invalido bloqueia sync sem chamar endpoint", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
 
-    renderMetrics({ youtubeUrl: "https://www.youtube.com/@handle" });
+    // find-eb3c5c45-class: /@handle is now a VALID YouTube reference (the
+    // canonical parser accepts it, same as the backend) — a genuinely
+    // invalid link is a multi-segment non-channel path (a single-segment
+    // path like /watch is treated as a legacy custom-URL name, same as
+    // the backend's own parser).
+    renderMetrics({ youtubeUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ/nested" });
 
     fireEvent.click(await screen.findByTestId("button-sync-youtube-artist-1"));
 
     expect(api.post).not.toHaveBeenCalled();
+  });
+
+  // find-eb3c5c45-class REGRESSAO: os formatos que antes divergiam entre o
+  // validador do formulário (artista.mapper.ts) e o botão "Sincronizar
+  // agora" (ArtistPlatformMetrics) agora usam a MESMA função canônica
+  // (normalizeYoutubeProfileUrl) — @handle sozinho, /c/NAME e /user/NAME
+  // são aceitos pelo clique real em "Sincronizar agora", não só pela regex
+  // isolada do formulário.
+  it("YouTube: @handle sozinho e aceito pelo sync real (antes rejeitado pelo botao)", async () => {
+    vi.mocked(api.get).mockResolvedValue([]);
+    vi.mocked(api.post).mockResolvedValue({
+      artist_id: "artist-1",
+      enqueued: [{ platform: "youtube", job_id: "job-8" }],
+      skipped: [],
+    });
+
+    renderMetrics({ youtubeUrl: "https://youtube.com/@artistname" });
+
+    fireEvent.click(await screen.findByTestId("button-sync-youtube-artist-1"));
+
+    await waitFor(() => {
+      expect(api.post).toHaveBeenCalledWith("/artists/artist-1/platform-profiles/youtube/sync", {
+        profileUrl: "https://youtube.com/@artistname",
+        source: "profile_url",
+      });
+    });
+  });
+
+  it("YouTube: /c/NAME (custom URL legado) e aceito pelo sync real", async () => {
+    vi.mocked(api.get).mockResolvedValue([]);
+    vi.mocked(api.post).mockResolvedValue({
+      artist_id: "artist-1",
+      enqueued: [{ platform: "youtube", job_id: "job-9" }],
+      skipped: [],
+    });
+
+    renderMetrics({ youtubeUrl: "https://www.youtube.com/c/artistname" });
+
+    fireEvent.click(await screen.findByTestId("button-sync-youtube-artist-1"));
+
+    await waitFor(() => {
+      expect(api.post).toHaveBeenCalledWith("/artists/artist-1/platform-profiles/youtube/sync", {
+        profileUrl: "https://www.youtube.com/c/artistname",
+        source: "profile_url",
+      });
+    });
+  });
+
+  it("YouTube: /user/NAME (legado) e aceito pelo sync real", async () => {
+    vi.mocked(api.get).mockResolvedValue([]);
+    vi.mocked(api.post).mockResolvedValue({
+      artist_id: "artist-1",
+      enqueued: [{ platform: "youtube", job_id: "job-10" }],
+      skipped: [],
+    });
+
+    renderMetrics({ youtubeUrl: "https://www.youtube.com/user/artistname" });
+
+    fireEvent.click(await screen.findByTestId("button-sync-youtube-artist-1"));
+
+    await waitFor(() => {
+      expect(api.post).toHaveBeenCalledWith("/artists/artist-1/platform-profiles/youtube/sync", {
+        profileUrl: "https://www.youtube.com/user/artistname",
+        source: "profile_url",
+      });
+    });
   });
 
   // REGRESSAO (bug reportado "Link do Apple Music inválido" para uma URL
@@ -794,5 +865,48 @@ describe("ArtistaPlatformMetrics platform profiles", () => {
       () => expect(screen.getByTestId("metric-instagram-artist-1")).toHaveTextContent("4.242"),
       { timeout: 4000, interval: 100 },
     );
+  });
+
+  // platform-sync-retry-race: onSuccess now awaits the invalidated refetch
+  // before the mutation resolves, so `isPending` (and the disabled button)
+  // stays true for the whole window where the cache still shows the stale
+  // sync_status — a second rapid click on the same platform's button during
+  // that window must NOT fire a second POST /sync.
+  it("platform-sync-retry-race: dois cliques rapidos no mesmo botao de sync disparam so UMA chamada de mutation", async () => {
+    vi.mocked(api.post).mockResolvedValue({
+      artist_id: "artist-1",
+      enqueued: [{ platform: "spotify", job_id: "job-1" }],
+      skipped: [],
+    });
+
+    // Controla exatamente quando o GET disparado pela invalidação (pós-sync)
+    // resolve, para provar que o botão continua desabilitado durante essa
+    // janela — não só durante o POST em si.
+    let resolveRefetch: (value: unknown[]) => void = () => {};
+    vi.mocked(api.get).mockImplementationOnce(() => Promise.resolve([])); // fetch inicial
+    vi.mocked(api.get).mockImplementationOnce(
+      () => new Promise((resolve) => { resolveRefetch = resolve; }),
+    );
+
+    renderMetrics();
+
+    const button = await screen.findByTestId("button-sync-spotify-artist-1");
+    fireEvent.click(button);
+
+    // POST já disparou; o refetch invalidado ainda não resolveu — o botão
+    // deve permanecer desabilitado durante toda essa janela.
+    await waitFor(() => expect(api.post).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(button).toBeDisabled());
+
+    // Segundo clique enquanto o refetch está pendente: não pode disparar um
+    // segundo POST — é exatamente a race que o bug descrevia.
+    fireEvent.click(button);
+    expect(api.post).toHaveBeenCalledTimes(1);
+
+    // Libera o refetch e confirma que o botão volta a habilitar normalmente,
+    // sem ter havido nenhum POST extra.
+    resolveRefetch([]);
+    await waitFor(() => expect(button).not.toBeDisabled());
+    expect(api.post).toHaveBeenCalledTimes(1);
   });
 });

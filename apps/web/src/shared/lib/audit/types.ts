@@ -3,9 +3,9 @@ export type AuditSeverity = "obrigatorio" | "recomendado";
 export type AuditModuleId =
   | "artistas"
   | "catalog"
-  | "contratos"
+  | "contracts"
   | "crm"
-  | "eventos"
+  | "events"
   | "accounting"
   | "inventory"
   | "leads"
@@ -66,9 +66,9 @@ export interface AuditResult {
 export const AUDIT_MODULES: { id: AuditModuleId; label: string }[] = [
   { id: "artistas", label: "Artistas" },
   { id: "catalog", label: "Catálogo" },
-  { id: "contratos", label: "Contratos" },
+  { id: "contracts", label: "Contratos" },
   { id: "crm", label: "CRM" },
-  { id: "eventos", label: "Eventos" },
+  { id: "events", label: "Eventos" },
   { id: "accounting", label: "Accounting" },
   { id: "inventory", label: "Inventário" },
   { id: "leads", label: "Leads" },

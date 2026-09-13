@@ -6,7 +6,7 @@
  *
  * Padrões implementados:
  * - ARTIST_CREATED → inicializa metas_artistas padrão
- * - CONTRACT_CREATED → atualiza status do artista para "contratado"
+ * - CONTRACT_CREATED → atualiza status do artista para "signed"
  * - TRANSACTION_CREATED → sinaliza necessidade de atualizar cálculo financeiro
  * - LEAD_CONVERTED → cria rascunho de contrato + notifica equipe
  *
@@ -24,14 +24,14 @@ function initConsistencyHooks(): void {
   if (_initialized) return;
   _initialized = true;
 
-  // ── CONTRACT_CREATED → Artista vira "contratado" ─────────────────────────
+  // ── CONTRACT_CREATED → Artista vira "signed" ──────────────────────────────
   subscribe(DomainEvents.CONTRACT_CREATED, async ({ artist_id, id }) => {
     if (!artist_id) return;
     try {
       const artista = await storage.findById<Record<string, unknown> & { id: string }>("artistas", artist_id);
-      if (artista && artista.status !== "contratado") {
+      if (artista && artista.status !== "signed") {
         await storage.update("artistas", artist_id, {
-          status: "contratado",
+          status: "signed",
           contrato_id: id,
         });
       }

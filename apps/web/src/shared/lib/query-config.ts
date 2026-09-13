@@ -27,45 +27,45 @@ export const CACHE_TIMES = {
 // Query key prefixes for organized cache management
 export const QUERY_KEYS = {
   // Core entities
-  ARTISTAS: ["artistas"] as const,
-  PROJETOS: ["projetos"] as const,
-  CONTRATOS: ["contratos"] as const,
-  CLIENTES: ["clientes"] as const,
-  CONTATOS: ["contatos"] as const,
-  
+  ARTISTS: ["artists"] as const,
+  PROJECTS: ["projects"] as const,
+  CONTRACTS: ["contracts"] as const,
+  CLIENTS: ["clients"] as const,
+  CONTACTS: ["contacts"] as const,
+
   // Financial
-  TRANSACOES: ["transacoes"] as const,
-  NOTAS_FISCAIS: ["notas-fiscais"] as const,
-  REGRAS: ["regras"] as const,
-  FINANCIAL_RULES: ["regras-financeiras"] as const,
-  RELATORIOS_ECAD: ["relatorios-ecad"] as const,
-  
+  TRANSACTIONS: ["transactions"] as const,
+  INVOICES: ["invoices"] as const,
+  RULES: ["rules"] as const,
+  FINANCIAL_RULES: ["financial-rules"] as const,
+  ECAD_REPORTS: ["ecad-reports"] as const,
+
   // Content
-  OBRAS: ["obras"] as const,
-  FONOGRAMAS: ["fonogramas"] as const,
-  LANCAMENTOS: ["lancamentos"] as const,
+  WORKS: ["works"] as const,
+  PHONOGRAMS: ["phonograms"] as const,
+  RELEASES: ["releases"] as const,
   SHARES: ["shares"] as const,
-  LICENCAS: ["licencas"] as const,
+  LICENSES: ["licenses"] as const,
   TAKEDOWNS: ["takedowns"] as const,
-  DETECCOES: ["deteccoes"] as const,
-  
+  CONTENT_DETECTIONS: ["content-detections"] as const,
+
   // Marketing
-  CAMPANHAS: ["campanhas"] as const,
+  CAMPAIGNS: ["campaigns"] as const,
   BRIEFINGS: ["briefings"] as const,
-  TAREFAS_MARKETING: ["tarefas-marketing"] as const,
-  METAS_ARTISTAS: ["metas-artistas"] as const,
-  CONTEUDOS: ["conteudos"] as const,
-  
+  MARKETING_TASKS: ["marketing-tasks"] as const,
+  ARTIST_GOALS: ["artist-goals"] as const,
+  CONTENT: ["content"] as const,
+
   // Settings & Admin
   TEMPLATES: ["templates"] as const,
-  TEMPLATES_CONTRATOS: ["templates-contratos"] as const,
+  CONTRACT_TEMPLATES: ["contract-templates"] as const,
   USER_SETTINGS: ["user-settings"] as const,
-  INVENTARIO: ["inventario"] as const,
-  USUARIOS: ["usuarios"] as const,
-  
+  INVENTORY: ["inventory"] as const,
+  USERS: ["users"] as const,
+
   // Real-time
   NOTIFICATIONS: ["notifications"] as const,
-  EVENTOS: ["eventos"] as const,
+  EVENTS: ["events"] as const,
   METRICS: ["metrics"] as const,
   
   // External integrations
@@ -86,10 +86,10 @@ export const QUERY_KEYS = {
   FINANCIAL_CATEGORIES: ["financial-categories"] as const,
   
   // RH (Recursos Humanos)
-  FUNCIONARIOS: ["funcionarios"] as const,
-  FOLHA_PAGAMENTO: ["folha-pagamento"] as const,
-  FERIAS_AUSENCIAS: ["ferias-ausencias"] as const,
-  DOCUMENTOS_FUNCIONARIO: ["documentos-funcionario"] as const,
+  EMPLOYEES: ["employees"] as const,
+  PAYROLL: ["payroll"] as const,
+  LEAVE_REQUESTS: ["leave-requests"] as const,
+  EMPLOYEE_DOCUMENTS: ["employee-documents"] as const,
   
   // Auth & RBAC
   ROLES: ["roles"] as const,
@@ -100,51 +100,51 @@ export const QUERY_KEYS = {
 export const QUERY_CACHE_CONFIG: Record<string, typeof CACHE_TIMES[keyof typeof CACHE_TIMES]> = {
   // Static/Semi-static
   templates: CACHE_TIMES.SEMI_STATIC,
-  "templates-contratos": CACHE_TIMES.SEMI_STATIC,
+  "contract-templates": CACHE_TIMES.SEMI_STATIC,
   "user-settings": CACHE_TIMES.SEMI_STATIC,
-  regras: CACHE_TIMES.SEMI_STATIC,
+  rules: CACHE_TIMES.SEMI_STATIC,
   roles: CACHE_TIMES.SEMI_STATIC,
   permissions: CACHE_TIMES.SEMI_STATIC,
-  
+
   // Dynamic
-  artistas: CACHE_TIMES.DYNAMIC,
-  projetos: CACHE_TIMES.DYNAMIC,
-  contratos: CACHE_TIMES.DYNAMIC,
-  clientes: CACHE_TIMES.DYNAMIC,
-  contatos: CACHE_TIMES.DYNAMIC,
-  transacoes: CACHE_TIMES.DYNAMIC,
-  "notas-fiscais": CACHE_TIMES.DYNAMIC,
-  "relatorios-ecad": CACHE_TIMES.DYNAMIC,
-  obras: CACHE_TIMES.DYNAMIC,
-  fonogramas: CACHE_TIMES.DYNAMIC,
-  lancamentos: CACHE_TIMES.DYNAMIC,
-  licencas: CACHE_TIMES.DYNAMIC,
+  artists: CACHE_TIMES.DYNAMIC,
+  projects: CACHE_TIMES.DYNAMIC,
+  contracts: CACHE_TIMES.DYNAMIC,
+  clients: CACHE_TIMES.DYNAMIC,
+  contacts: CACHE_TIMES.DYNAMIC,
+  transactions: CACHE_TIMES.DYNAMIC,
+  invoices: CACHE_TIMES.DYNAMIC,
+  "ecad-reports": CACHE_TIMES.DYNAMIC,
+  works: CACHE_TIMES.DYNAMIC,
+  phonograms: CACHE_TIMES.DYNAMIC,
+  releases: CACHE_TIMES.DYNAMIC,
+  licenses: CACHE_TIMES.DYNAMIC,
   shares: CACHE_TIMES.DYNAMIC,
   takedowns: CACHE_TIMES.DYNAMIC,
-  deteccoes: CACHE_TIMES.DYNAMIC,
-  campanhas: CACHE_TIMES.DYNAMIC,
+  "content-detections": CACHE_TIMES.DYNAMIC,
+  campaigns: CACHE_TIMES.DYNAMIC,
   briefings: CACHE_TIMES.DYNAMIC,
-  "tarefas-marketing": CACHE_TIMES.DYNAMIC,
-  conteudos: CACHE_TIMES.DYNAMIC,
-  inventario: CACHE_TIMES.DYNAMIC,
-  usuarios: CACHE_TIMES.DYNAMIC,
-  
+  "marketing-tasks": CACHE_TIMES.DYNAMIC,
+  content: CACHE_TIMES.DYNAMIC,
+  inventory: CACHE_TIMES.DYNAMIC,
+  users: CACHE_TIMES.DYNAMIC,
+
   leads: CACHE_TIMES.DYNAMIC,
   "lead-interactions": CACHE_TIMES.DYNAMIC,
   proposals: CACHE_TIMES.DYNAMIC,
   "proposal-items": CACHE_TIMES.DYNAMIC,
   followups: CACHE_TIMES.DYNAMIC,
   "financial-categories": CACHE_TIMES.DYNAMIC,
-  funcionarios: CACHE_TIMES.DYNAMIC,
-  "folha-pagamento": CACHE_TIMES.DYNAMIC,
-  "ferias-ausencias": CACHE_TIMES.DYNAMIC,
-  "documentos-funcionario": CACHE_TIMES.DYNAMIC,
-  
+  employees: CACHE_TIMES.DYNAMIC,
+  payroll: CACHE_TIMES.DYNAMIC,
+  "leave-requests": CACHE_TIMES.DYNAMIC,
+  "employee-documents": CACHE_TIMES.DYNAMIC,
+
   // Real-time
   notifications: CACHE_TIMES.REALTIME,
-  eventos: CACHE_TIMES.REALTIME,
+  events: CACHE_TIMES.REALTIME,
   metrics: CACHE_TIMES.REALTIME,
-  "metas-artistas": CACHE_TIMES.REALTIME,
+  "artist-goals": CACHE_TIMES.REALTIME,
   
   // External integrations (cached longer - API rate limits)
   "meta-ad-accounts": CACHE_TIMES.SEMI_STATIC,

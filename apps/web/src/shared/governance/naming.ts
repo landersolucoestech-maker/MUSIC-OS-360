@@ -43,7 +43,7 @@
  *   Tipos            → kebab-case.ts (sufixo .types)  ex: artista.types.ts
  *   Contrato         → kebab-case.ts (sufixo .contract) ex: auth.contract.ts
  *   Adaptador        → kebab-case.ts (sufixo .adapter) ex: streaming.adapter.ts
- *   Constantes       → kebab-case.ts (sufixo -constants) ex: transacao-constants.ts
+ *   Constantes       → kebab-case.ts (sufixo -constants) ex: transaction-constants.ts
  *   Rotas            → kebab-case.tsx (sufixo .routes) ex: artist.routes.tsx
  *
  * Estrutura interna de módulo (ordem obrigatória):
@@ -81,10 +81,10 @@ export const FILE_NAMING_RULES = {
  * Sufixos obrigatórios por papel:
  *   Card     → item de lista compacto               ex: ArtistaCard
  *   Table    → tabela de dados paginada             ex: TransacaoTable
- *   Modal    → diálogo/modal (Dialog do Radix)      ex: ContratoFormModal
+ *   Modal    → diálogo/modal (Dialog do Radix)      ex: ContractFormModal
  *   Form     → formulário standalone                ex: ArtistaForm
  *   Page     → componente de rota (página)          ex: ArtistaListPage
- *   Badge    → badge de estado inline               ex: ContratoStatusBadge
+ *   Badge    → badge de estado inline               ex: ContractStatusBadge
  *   Panel    → painel colapsável ou lateral         ex: FiltrosPanel
  *   Drawer   → drawer lateral (Sheet do Radix)      ex: ArtistaDrawer
  *   Section  → secção de página                    ex: FinanceiroSummarySection
@@ -267,7 +267,7 @@ export const DTO_NAMING = {
  *   Enums de domínio    → shared/types/enums.ts (fonte única de verdade)
  *   Constantes visuais  → design tokens em index.css (CSS vars)
  *   Constantes de rota  → no ficheiro de rotas do módulo
- *   Constantes de forma → no módulo (ex: transacao-constants.ts)
+ *   Constantes de forma → no módulo (ex: transaction-constants.ts)
  *   Constantes de integração → shared/integrations/registry.ts
  *
  * PROIBIDO:

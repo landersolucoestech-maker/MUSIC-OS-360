@@ -10,13 +10,13 @@
 import { describe, it, expect } from "vitest";
 import {
   emptyArtistFormValues,
-  formValuesToArtistaPayload,
-  artistaToExportRowFromForm,
+  formValuesToArtistPayload,
+  artistToExportRowFromForm,
   allArtistFormFields,
   emptyPreservedInput,
 } from "@/modules/artist/forms/artist-form.definition";
-import { validateSpotifyUrl, validateYoutubeUrl } from "@/modules/artist/services/artista.mapper";
-import type { Artista } from "@/modules/artist/types/artista.types";
+import { validateSpotifyUrl, validateYoutubeUrl } from "@/modules/artist/services/artist.mapper";
+import type { Artist } from "@/modules/artist/types/artist.types";
 
 const LEGACY_KEYS = [
   "spotify_artist_id",
@@ -25,7 +25,7 @@ const LEGACY_KEYS = [
 ];
 
 describe("Domínio Artista — exclusivamente URL (foto_url/spotify_url/youtube_url)", () => {
-  it("formValuesToArtistaPayload nunca produz nenhum campo legado, para qualquer entrada", () => {
+  it("formValuesToArtistPayload nunca produz nenhum campo legado, para qualquer entrada", () => {
     const values = {
       ...emptyArtistFormValues(),
       nomeArtistico: "Artista Teste",
@@ -35,26 +35,26 @@ describe("Domínio Artista — exclusivamente URL (foto_url/spotify_url/youtube_
       documentosPessoaisUrl: "",
       presskitUrl: "",
     };
-    const payload = formValuesToArtistaPayload(values, emptyPreservedInput());
+    const payload = formValuesToArtistPayload(values, emptyPreservedInput());
     const keys = Object.keys(payload);
 
     for (const legacy of LEGACY_KEYS) {
       expect(keys).not.toContain(legacy);
     }
-    expect(payload.spotify_url).toBe("https://open.spotify.com/artist/4NHQUGzhtTLFvgF5SZesLK");
-    expect(payload.youtube_url).toBe("https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw");
+    expect(payload.spotifyUrl).toBe("https://open.spotify.com/artist/4NHQUGzhtTLFvgF5SZesLK");
+    expect(payload.youtubeUrl).toBe("https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw");
   });
 
   it("exportação (colunas do formulário) nunca inclui um header de campo legado", () => {
     const artista = {
       id: "a1",
-      nome_artistico: "Artista Teste",
-      foto_url: "https://cdn.example.com/foto.png",
+      stageName: "Artista Teste",
+      photoUrl: "https://cdn.example.com/foto.png",
       spotify_url: "https://open.spotify.com/artist/4NHQUGzhtTLFvgF5SZesLK",
       youtube_url: "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw",
-    } as Artista;
+    } as Artist;
 
-    const row = artistaToExportRowFromForm(artista);
+    const row = artistToExportRowFromForm(artista);
     const headers = Object.keys(row);
 
     // Nenhum header de export pode ser (ou conter) um campo legado.
@@ -73,8 +73,21 @@ describe("Domínio Artista — exclusivamente URL (foto_url/spotify_url/youtube_
     expect(validateSpotifyUrl("https://open.spotify.com/artist/4NHQUGzhtTLFvgF5SZesLK")).toBe("valid");
   });
 
-  it("validateYoutubeUrl rejeita um channelId cru (só URL é aceita)", () => {
-    expect(validateYoutubeUrl("UC_x5XG1OV2P6uZZ5FSM9Ttw")).toBe("invalid");
+  it("validateYoutubeUrl aceita URL completa e as mesmas referências cruas que o backend (find-eb3c5c45-class)", () => {
+    // find-eb3c5c45-class: validateYoutubeUrl agora usa a MESMA função canônica
+    // (parseYoutubeRef) que o botão "Sincronizar agora" e o backend, em vez de
+    // uma regex de URL-somente divergente — um channelId/handle cru digitado
+    // no campo é aceito aqui do mesmo jeito que seria aceito pelo sync real,
+    // e ainda persiste como string em youtube_url (nunca um campo legado
+    // youtube_artist_id/youtube_channel_id separado — ver LEGACY_KEYS acima).
+    expect(validateYoutubeUrl("UC_x5XG1OV2P6uZZ5FSM9Ttw")).toBe("valid");
     expect(validateYoutubeUrl("https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw")).toBe("valid");
+    expect(validateYoutubeUrl("@artistname")).toBe("valid");
+    expect(validateYoutubeUrl("https://youtube.com/@artistname")).toBe("valid");
+    expect(validateYoutubeUrl("https://www.youtube.com/c/artistname")).toBe("valid");
+    expect(validateYoutubeUrl("https://www.youtube.com/user/artistname")).toBe("valid");
+    expect(validateYoutubeUrl("http://www.youtube.com/@artistname")).toBe("valid");
+    expect(validateYoutubeUrl("https://www.youtube.com/embed/dQw4w9WgXcQ/nested")).toBe("invalid");
+    expect(validateYoutubeUrl("not a youtube link at all")).toBe("invalid");
   });
 });

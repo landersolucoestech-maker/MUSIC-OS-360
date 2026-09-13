@@ -197,7 +197,7 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
     typesFile:    "modules/releases/types/share.types.ts",
     primaryKey:   "id",
     externalIds:  [],
-    requiredFields: ["id", "tipo", "percentual"],
+    requiredFields: ["id", "tipo", "percentage"],
     relationships: [
       {
         target:      "Obra",

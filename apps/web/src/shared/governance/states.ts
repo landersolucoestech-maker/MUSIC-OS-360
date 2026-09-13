@@ -58,32 +58,32 @@ export interface StateMachine {
 
 export const ARTISTA_STATE_MACHINE: StateMachine = {
   entity:       "Artista",
-  initialState: "prospecto",
+  initialState: "prospect",
   states: [
-    { value: "prospecto",   label: "Prospecto",   color: "yellow", isFinal: false,
+    { value: "prospect",       label: "Prospecto",   color: "yellow", isFinal: false,
       description: "Artista em avaliação — não tem contrato activo." },
-    { value: "contratado",  label: "Contratado",  color: "blue",   isFinal: false,
+    { value: "signed",         label: "Contratado",  color: "blue",   isFinal: false,
       description: "Contrato assinado, onboarding em curso." },
-    { value: "ativo",       label: "Activo",      color: "green",  isFinal: false,
+    { value: "active",         label: "Activo",      color: "green",  isFinal: false,
       description: "Artista operacional na label/editora." },
-    { value: "inativo",     label: "Inactivo",    color: "gray",   isFinal: false,
+    { value: "inactive",       label: "Inactivo",    color: "gray",   isFinal: false,
       description: "Sem actividade recente; contrato suspenso." },
-    { value: "suspenso",    label: "Suspenso",    color: "yellow", isFinal: false,
+    { value: "suspended",      label: "Suspenso",    color: "yellow", isFinal: false,
       description: "Relação em análise por incumprimento." },
-    { value: "ex_artista",  label: "Ex-Artista",  color: "gray",   isFinal: true,
+    { value: "former_artist",  label: "Ex-Artista",  color: "gray",   isFinal: true,
       description: "Contrato encerrado; histórico mantido." },
-    { value: "desligado",   label: "Desligado",   color: "red",    isFinal: true,
+    { value: "terminated",     label: "Desligado",   color: "red",    isFinal: true,
       description: "Ruptura contratual antecipada ou por falta grave." },
   ],
   transitions: [
-    { from: "prospecto",  to: "contratado", trigger: "Assinar contrato",    description: "Contrato aceite e assinado digitalmente." },
-    { from: "contratado", to: "ativo",      trigger: "Concluir onboarding", description: "Perfil completo, dados fiscais verificados." },
-    { from: "ativo",      to: "inativo",    trigger: "Inactivar",           description: "Sem actividade durante período definido." },
-    { from: "inativo",    to: "ativo",      trigger: "Reactivar",           description: "Artista retoma actividade." },
-    { from: "ativo",      to: "suspenso",   trigger: "Suspender",           description: "Incumprimento de cláusula contratual." },
-    { from: "suspenso",   to: "ativo",      trigger: "Levantar suspensão",  description: "Resolução da causa de suspensão." },
-    { from: "suspenso",   to: "desligado",  trigger: "Desligar",            description: "Incumprimento não resolvido — ruptura." },
-    { from: "ativo",      to: "ex_artista", trigger: "Encerrar contrato",   description: "Contrato expirado naturalmente." },
+    { from: "prospect",  to: "signed",        trigger: "Assinar contrato",    description: "Contrato aceite e assinado digitalmente." },
+    { from: "signed",    to: "active",        trigger: "Concluir onboarding", description: "Perfil completo, dados fiscais verificados." },
+    { from: "active",    to: "inactive",      trigger: "Inactivar",           description: "Sem actividade durante período definido." },
+    { from: "inactive",  to: "active",        trigger: "Reactivar",           description: "Artista retoma actividade." },
+    { from: "active",    to: "suspended",     trigger: "Suspender",           description: "Incumprimento de cláusula contratual." },
+    { from: "suspended", to: "active",        trigger: "Levantar suspensão",  description: "Resolução da causa de suspensão." },
+    { from: "suspended", to: "terminated",    trigger: "Desligar",            description: "Incumprimento não resolvido — ruptura." },
+    { from: "active",    to: "former_artist", trigger: "Encerrar contrato",   description: "Contrato expirado naturalmente." },
   ],
 };
 
@@ -370,7 +370,7 @@ export function isFinalState(entity: string, value: string): boolean {
 
 /**
  * REGRA SEMÂNTICA DE COR — tabela de referência.
- * Todos os componentes Badge, StatusBadge e ContratoStatusBadge
+ * Todos os componentes Badge, StatusBadge e ContractStatusBadge
  * devem consultar esta tabela para determinar a variante de cor.
  */
 export const SEMANTIC_COLOR_RULES = {

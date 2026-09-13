@@ -20,7 +20,7 @@
 export type StorageBucket =
   | "audio"       // ficheiros de áudio (fonogramas, faixas)
   | "images"      // capas, fotos de artistas, marketing
-  | "documents"   // contratos PDF, documentos legais
+  | "documents"   // contratos PDF, documents legais
   | "exports"     // relatórios gerados, exports XLSX/PDF
   | "temp";       // uploads temporários antes de processamento
 

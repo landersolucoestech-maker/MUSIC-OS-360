@@ -40,7 +40,7 @@ describe("fetchAllPages", () => {
 
   it("preserva os filtros ativos em cada página buscada", async () => {
     mockedListPaged.mockResolvedValue({ items: [], page: 1, pageSize: 200, total: 0, totalPages: 1 });
-    await fetchAllPages<FakeRow>("eventos", { filters: { type: "show", status: "confirmado" } });
+    await fetchAllPages<FakeRow>("events", { filters: { type: "show", status: "confirmado" } });
 
     const calledOptions = mockedListPaged.mock.calls[0][1] as { filters?: Record<string, unknown> };
     expect(calledOptions.filters).toEqual({ type: "show", status: "confirmado" });

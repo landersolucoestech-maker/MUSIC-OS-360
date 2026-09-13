@@ -29,7 +29,7 @@ import {
 // Módulos reais do produto (alinhados ao painel). Sem métricas/valores falsos.
 
 export const MODULES = [
-  { icon: Users, title: "Gestão de Artistas", desc: "Cadastre artistas, perfis, contatos, documentos, responsáveis e informações operacionais." },
+  { icon: Users, title: "Gestão de Artistas", desc: "Cadastre artistas, perfis, contatos, documents, responsáveis e informações operacionais." },
   { icon: Library, title: "Catálogo Musical", desc: "Organize obras, fonogramas, ISRC, ISWC, splits, compositores, intérpretes, editoras e licenças." },
   { icon: Rocket, title: "Lançamentos", desc: "Planeje lançamentos, acompanhe status, etapas, responsáveis, prazos e entregas." },
   { icon: Share2, title: "Distribuição Musical", desc: "Centralize o processo de distribuição digital através das integrações com distribuidoras parceiras, acompanhando metadados, entregas e status operacionais." },

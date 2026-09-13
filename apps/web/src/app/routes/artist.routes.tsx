@@ -5,12 +5,12 @@ import { lazy } from "react";
 import { Route } from "react-router-dom";
 import type { SuspenseRouteComponent } from "./types";
 
-const Artistas = lazy(() => import("@/modules/artist/pages/Artistas"));
+const Artists = lazy(() => import("@/modules/artist/pages/Artists"));
 
 export function artistRoutes(P: SuspenseRouteComponent) {
   return (
     <>
-      <Route path="/artistas" element={<P><Artistas /></P>} />
+      <Route path="/artistas" element={<P><Artists /></P>} />
     </>
   );
 }

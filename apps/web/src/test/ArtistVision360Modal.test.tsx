@@ -1,5 +1,5 @@
 // @ts-nocheck
-// Integration test para ArtistaVisao360Modal.
+// Integration test para ArtistVision360Modal.
 //
 // Verifica os cards de Spotify / YouTube na seção "Perfis e Redes Sociais"
 // do modal Visão 360°, respeitando o backend real de platform-profiles:
@@ -65,7 +65,7 @@ vi.mock("@/shared/lib/api-client", () => ({
   },
 }));
 
-import { ArtistaVisao360Modal } from "@/modules/artist/components/ArtistaVisao360Modal";
+import { ArtistVision360Modal } from "@/modules/artist/components/ArtistVision360Modal";
 import { api } from "@/shared/lib/api-client";
 
 async function renderModal(artista: any) {
@@ -74,7 +74,7 @@ async function renderModal(artista: any) {
   });
   const utils = render(
     <QueryClientProvider client={queryClient}>
-      <ArtistaVisao360Modal
+      <ArtistVision360Modal
         open
         onOpenChange={() => {}}
         artista={artista}
@@ -94,7 +94,7 @@ async function renderModal(artista: any) {
   return utils;
 }
 
-describe("<ArtistaVisao360Modal /> cards de plataforma na aba Perfil", () => {
+describe("<ArtistVision360Modal /> cards de plataforma na aba Perfil", () => {
   beforeEach(() => {
     vi.mocked(api.get).mockReset();
     vi.mocked(api.post).mockReset();

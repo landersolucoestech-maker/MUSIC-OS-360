@@ -20,7 +20,7 @@ import type {
   PhonogramStatus,
   ReleaseStatus,
   ShareStatus     as PkgShareStatus,
-  TransactionTipo as PkgTransactionTipo,
+  TransactionType as PkgTransactionType,
   TransactionStatus,
   InvoiceStatus,
   LeadStatus      as PkgLeadStatus,
@@ -36,15 +36,15 @@ import type {
 // ── Artista ──────────────────────────────────────────────────────────────────
 
 /** Derivado de ArtistStatus — fonte de verdade: @music-os-360/types */
-export type ArtistaStatus = `${ArtistStatus}`;
+export type ArtistStatusValue = `${ArtistStatus}`;
 
-export type ArtistaTipoPerfil =
+export type ArtistProfileType =
   | "independente"
   | "com_empresario"
   | "gravadora"
   | "editora";
 
-export type ArtistaEspecialidade =
+export type ArtistSpecialty =
   | "dj"
   | "dj_produtor"
   | "compositor_autor"
@@ -54,9 +54,9 @@ export type ArtistaEspecialidade =
 // ── Contrato ─────────────────────────────────────────────────────────────────
 
 /** Derivado de ContractStatus — fonte de verdade: @music-os-360/types */
-export type ContratoStatus = `${ContractStatus}`;
+export type ContractStatusValue = `${ContractStatus}`;
 
-export type ContratoTipo =
+export type ContractType =
   | "exclusivo"
   | "nao_exclusivo"
   | "licenciamento"
@@ -70,13 +70,13 @@ export type ContratoTipo =
 
 // ── Transação / Accounting ────────────────────────────────────────────────────
 
-/** Derivado de TransactionTipo — fonte de verdade: @music-os-360/types */
-export type TransacaoTipo = `${PkgTransactionTipo}`;
+/** Derivado de TransactionType — fonte de verdade: @music-os-360/types */
+export type TransactionType = `${PkgTransactionType}`;
 
 /** Derivado de TransactionStatus — fonte de verdade: @music-os-360/types */
-export type TransacaoStatus = `${TransactionStatus}`;
+export type TransactionStatusValue = `${TransactionStatus}`;
 
-export type TransacaoFormaPagamento =
+export type TransactionPaymentMethod =
   | "dinheiro"
   | "pix"
   | "ted"
@@ -90,9 +90,9 @@ export type TransacaoFormaPagamento =
 // ── Nota Fiscal ──────────────────────────────────────────────────────────────
 
 /** Derivado de InvoiceStatus — fonte de verdade: @music-os-360/types */
-export type NotaFiscalStatus = `${InvoiceStatus}`;
+export type InvoiceStatusValue = `${InvoiceStatus}`;
 
-export type NotaFiscalTipo =
+export type InvoiceType =
   | "nfs"
   | "nfe"
   | "nfce"
@@ -103,9 +103,9 @@ export type NotaFiscalTipo =
 // ── Obra / Catálogo ──────────────────────────────────────────────────────────
 
 /** Derivado de WorkStatus — fonte de verdade: @music-os-360/types */
-export type ObraStatus = `${WorkStatus}`;
+export type WorkStatusValue = `${WorkStatus}`;
 
-export type ObraTipo =
+export type WorkType =
   | "musica"
   | "letra"
   | "trilha"
@@ -117,11 +117,11 @@ export type ObraTipo =
 // ── Fonograma ────────────────────────────────────────────────────────────────
 
 /** Derivado de PhonogramStatus — fonte de verdade: @music-os-360/types */
-export type FonogramaStatus = `${PhonogramStatus}`;
+export type PhonogramStatusValue = `${PhonogramStatus}`;
 
 // ── Lançamento ────────────────────────────────────────────────────────────────
 
-export type LancamentoTipo =
+export type ReleaseType =
   | "single"
   | "ep"
   | "album"
@@ -130,11 +130,11 @@ export type LancamentoTipo =
   | "outro";
 
 /** Derivado de ReleaseStatus — fonte de verdade: @music-os-360/types */
-export type LancamentoStatus = `${ReleaseStatus}`;
+export type ReleaseStatusValue = `${ReleaseStatus}`;
 
 // ── Share / Participação ──────────────────────────────────────────────────────
 
-export type ShareTipo =
+export type ShareCategory =
   | "composicao"
   | "master"
   | "editorial"
@@ -157,7 +157,7 @@ export type ShareStatus =
   | "cancelado";
 
 /** Direção do fluxo de caixa do share (mantém aliases legados). */
-export type ShareDirecao = "entrada" | "saida" | "a_receber" | "a_enviar" | "a_pagar";
+export type ShareDirection = "entrada" | "saida" | "a_receber" | "a_enviar" | "a_pagar";
 
 /** Discriminador de tipo de share: lançamento interno vs recebível externo. */
 export type ShareType = "internal_release" | "external_receivable";
@@ -167,14 +167,14 @@ export type ShareType = "internal_release" | "external_receivable";
 /** Derivado de LeadStatus — fonte de verdade: @music-os-360/types */
 export type LeadStatus = `${PkgLeadStatus}`;
 
-export type LeadPrioridade = "alta" | "media" | "baixa";
+export type LeadPriority = "alta" | "media" | "baixa";
 
-export type LeadTemperatura = "quente" | "morno" | "frio";
+export type LeadTemperature = "quente" | "morno" | "frio";
 
 /** Derivado de ClientStatus — fonte de verdade: @music-os-360/types */
-export type ClienteStatus = `${ClientStatus}`;
+export type ClientStatusValue = `${ClientStatus}`;
 
-export type ClienteSegmento =
+export type ClientSegment =
   | "artista"
   | "gravadora"
   | "editora"
@@ -187,7 +187,7 @@ export type ClienteSegmento =
 
 // ── Evento ────────────────────────────────────────────────────────────────────
 
-export type EventoTipo =
+export type EventType =
   | "show"
   | "festival"
   | "gravacao"
@@ -201,14 +201,14 @@ export type EventoTipo =
   | "outro";
 
 /** Derivado de EventStatus — fonte de verdade: @music-os-360/types */
-export type EventoStatus = `${EventStatus}`;
+export type EventStatusValue = `${EventStatus}`;
 
 // ── Projeto ───────────────────────────────────────────────────────────────────
 
 /** Derivado de ProjectStatus — fonte de verdade: @music-os-360/types */
-export type ProjetoStatus = `${ProjectStatus}`;
+export type ProjectStatusValue = `${ProjectStatus}`;
 
-export type ProjetoTipo =
+export type ProjectType =
   | "album"
   | "ep"
   | "single"
@@ -222,9 +222,9 @@ export type ProjetoTipo =
 // ── Marketing ─────────────────────────────────────────────────────────────────
 
 /** Derivado de CampaignStatus — fonte de verdade: @music-os-360/types */
-export type CampanhaStatus = `${CampaignStatus}`;
+export type CampaignStatusValue = `${CampaignStatus}`;
 
-export type CampanhaTipo =
+export type CampaignType =
   | "digital"
   | "impressa"
   | "outdoor"
@@ -237,7 +237,7 @@ export type CampanhaTipo =
   | "release"
   | "outro";
 
-export type ConteudoStatus =
+export type ContentStatus =
   | "rascunho"
   | "revisao"
   | "aprovado"
@@ -248,16 +248,16 @@ export type ConteudoStatus =
 // ── RH ────────────────────────────────────────────────────────────────────────
 
 /** Derivado de EmployeeStatus — fonte de verdade: @music-os-360/types */
-export type FuncionarioStatus = `${EmployeeStatus}`;
+export type EmployeeStatusValue = `${EmployeeStatus}`;
 
-export type FuncionarioTipoContrato =
+export type EmployeeContractType =
   | "clt"
   | "pj"
   | "autonomo"
   | "estagio"
   | "temporario";
 
-export type FeriasAusenciaTipo =
+export type LeaveType =
   | "ferias"
   | "licenca_medica"
   | "licenca_maternidade"
@@ -266,11 +266,11 @@ export type FeriasAusenciaTipo =
   | "outro";
 
 /** Derivado de LeaveRequestStatus — fonte de verdade: @music-os-360/types */
-export type FeriasAusenciaStatus = `${LeaveRequestStatus}`;
+export type LeaveRequestStatusValue = `${LeaveRequestStatus}`;
 
 // ── Inventário ────────────────────────────────────────────────────────────────
 
-export type InventarioStatus =
+export type InventoryStatus =
   | "disponivel"
   | "em_uso"
   | "manutencao"
@@ -279,7 +279,7 @@ export type InventarioStatus =
 
 // ── Licença ───────────────────────────────────────────────────────────────────
 
-export type LicencaTipo =
+export type LicenseType =
   | "sincronia"
   | "mecanica"
   | "performance"
@@ -288,7 +288,7 @@ export type LicencaTipo =
   | "streaming"
   | "outro";
 
-export type LicencaStatus =
+export type LicenseStatus =
   | "ativo"
   | "pendente"
   | "vencido"

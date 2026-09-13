@@ -5,7 +5,7 @@ import {
   validateSoundcloudUrl,
   validateDeezerUrl,
   validateAppleMusicUrl,
-} from "@/modules/artist/services/artista.mapper";
+} from "@/modules/artist/services/artist.mapper";
 
 describe("artist URL validators (host-based, CWE-20)", () => {
   it("accepts real platform hosts (incl. subdomains)", () => {

@@ -98,7 +98,7 @@ export interface ISigningProvider {
   /** Consulta o estado actual de um documento */
   getDocument(documentId: string): Promise<SigningDocument>;
 
-  /** Lista documentos (opcionalmente filtrados por contrato local) */
+  /** Lista documents (opcionalmente filtrados por contrato local) */
   listDocuments(params?: { contrato_id?: string; status?: SigningStatus }): Promise<SigningDocument[]>;
 
   /** Cancela um documento em aberto */

@@ -11,7 +11,7 @@
  * repositório inteiro: VariableRegistry.tsx / CategoryRegistry.tsx (registros
  * de contrato, sem entidade equivalente em Relatórios), o botão "Importar
  * Relatório ECAD" em RightsMonitoring.tsx (stub não funcional, dialog
- * completo já implementado), o "Exportar OFX" de Financeiro.tsx (domínio de
+ * completo já implementado), o "Exportar OFX" de Accounting.tsx (domínio de
  * conciliação bancária, não dado de entidade) e código morto já
  * não-renderizado (Metricas.tsx `ExportDropdown`) NÃO estão cobertos por
  * este guard — são divergências remanescentes documentadas no relatório
@@ -28,13 +28,13 @@ import * as path from "path";
 const SRC_ROOT = path.resolve(__dirname, "..");
 
 const FIXED_MODULE_FILES = [
-  "modules/projects/pages/Projetos.tsx",
+  "modules/projects/pages/Projects.tsx",
   "modules/catalog/pages/RegistroMusicas.tsx",
   "modules/rh/pages/RH.tsx",
   "modules/releases/pages/Lancamentos.tsx",
   "modules/inventory/pages/Inventario.tsx",
-  "modules/contracts/pages/Contratos.tsx",
-  "modules/accounting/pages/Contabilidade.tsx",
+  "modules/contracts/pages/Contracts.tsx",
+  "modules/accounting/pages/ProfitAndLoss.tsx",
   // Task T (continuidade): botão "Exportar" em GestaoShares.tsx não tinha
   // onClick algum — clicar não fazia nada. Shares já é entidade reportável
   // na Central de Relatórios (REPORT_MODULE_REGISTRY); removido em vez de

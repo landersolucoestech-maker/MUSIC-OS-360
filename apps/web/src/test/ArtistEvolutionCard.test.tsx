@@ -1,5 +1,5 @@
 // @ts-nocheck
-// Component tests para ArtistaEvolutionCard (Task #358).
+// Component tests para ArtistEvolutionCard (Task #358).
 //
 // Cobre os 5 cenários da regra de negócio:
 //   * 0 snapshots → estado vazio "Sem histórico suficiente ainda"
@@ -26,10 +26,10 @@ vi.mock("recharts", async () => {
 });
 
 import {
-  ArtistaEvolutionCard,
+  ArtistEvolutionCard,
   computeEvolutionSummary,
   type EvolutionSummary,
-} from "@/modules/artist/components/ArtistaEvolutionCard";
+} from "@/modules/artist/components/ArtistEvolutionCard";
 type MetricEvolutionPoint = { date: string; captured_at?: string; followers?: number | null; popularity?: number | null; views?: number | null; [key: string]: unknown; };
 
 function point(date: string, followers: number | null): MetricEvolutionPoint {
@@ -140,10 +140,10 @@ describe("computeEvolutionSummary", () => {
   });
 });
 
-describe("<ArtistaEvolutionCard />", () => {
+describe("<ArtistEvolutionCard />", () => {
   it("0 snapshots: renderiza estado vazio sem chart", () => {
     renderWithProviders(
-      <ArtistaEvolutionCard
+      <ArtistEvolutionCard
         {...baseProps}
         isLoading={false}
         points={[]}
@@ -164,7 +164,7 @@ describe("<ArtistaEvolutionCard />", () => {
 
   it("1 snapshot: mostra valor atual mas continua sem trend nem chart", () => {
     renderWithProviders(
-      <ArtistaEvolutionCard
+      <ArtistEvolutionCard
         {...baseProps}
         isLoading={false}
         points={[point("2026-04-30T06:20:00Z", 1234)]}
@@ -186,7 +186,7 @@ describe("<ArtistaEvolutionCard />", () => {
 
   it("2+ snapshots crescendo: mostra trend up, percentual e chart", () => {
     renderWithProviders(
-      <ArtistaEvolutionCard
+      <ArtistEvolutionCard
         {...baseProps}
         isLoading={false}
         points={[
@@ -214,7 +214,7 @@ describe("<ArtistaEvolutionCard />", () => {
 
   it("2+ snapshots em queda: mostra trend down e percentual negativo", () => {
     renderWithProviders(
-      <ArtistaEvolutionCard
+      <ArtistEvolutionCard
         {...baseProps}
         isLoading={false}
         points={[
@@ -236,7 +236,7 @@ describe("<ArtistaEvolutionCard />", () => {
 
   it("2+ snapshots iguais: mostra trend flat e 0%", () => {
     renderWithProviders(
-      <ArtistaEvolutionCard
+      <ArtistEvolutionCard
         {...baseProps}
         isLoading={false}
         points={[
@@ -255,7 +255,7 @@ describe("<ArtistaEvolutionCard />", () => {
 
   it("isMissingConfig: renderiza label de plataforma não configurada", () => {
     renderWithProviders(
-      <ArtistaEvolutionCard
+      <ArtistEvolutionCard
         {...baseProps}
         isLoading={false}
         isMissingConfig
@@ -271,7 +271,7 @@ describe("<ArtistaEvolutionCard />", () => {
 
   it("isLoading: renderiza skeletons no lugar do conteúdo", () => {
     const { container } = renderWithProviders(
-      <ArtistaEvolutionCard
+      <ArtistEvolutionCard
         {...baseProps}
         isLoading
         points={undefined}
@@ -287,7 +287,7 @@ describe("<ArtistaEvolutionCard />", () => {
 
   it("errorMessage: renderiza a mensagem de erro em destaque", () => {
     renderWithProviders(
-      <ArtistaEvolutionCard
+      <ArtistEvolutionCard
         {...baseProps}
         isLoading={false}
         errorMessage="Falha ao carregar histórico."

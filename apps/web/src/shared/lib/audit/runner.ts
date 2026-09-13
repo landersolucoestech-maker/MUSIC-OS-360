@@ -55,7 +55,7 @@ const CONFIGS: AuditConfig[] = [
   },
   {
     module: "projects",
-    table: "projetos",
+    table: "projects",
     entityType: "Projeto",
     fixPath: (row) => editPath("/projetos", row),
     label: (row) => entityLabel(row, ["title", "nome"], "Projeto sem título"),
@@ -112,8 +112,8 @@ const CONFIGS: AuditConfig[] = [
     ],
   },
   {
-    module: "contratos",
-    table: "contratos",
+    module: "contracts",
+    table: "contracts",
     entityType: "Contrato",
     fixPath: (row) => editPath("/contratos", row),
     label: (row) => entityLabel(row, ["title", "type"], "Contrato sem título"),
@@ -128,7 +128,7 @@ const CONFIGS: AuditConfig[] = [
   },
   {
     module: "accounting",
-    table: "transacoes",
+    table: "transactions",
     entityType: "Transação",
     fixPath: (row) => editPath("/accounting", row),
     label: (row) => entityLabel(row, ["descricao", "categoria"], "Transação sem descrição"),
@@ -142,8 +142,8 @@ const CONFIGS: AuditConfig[] = [
     ],
   },
   {
-    module: "eventos",
-    table: "eventos",
+    module: "events",
+    table: "events",
     entityType: "Evento",
     fixPath: (row) => editPath("/agenda", row),
     label: (row) => entityLabel(row, ["title", "nome", "local"], "Evento sem título"),

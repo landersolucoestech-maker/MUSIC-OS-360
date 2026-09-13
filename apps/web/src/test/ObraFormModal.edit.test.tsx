@@ -23,22 +23,22 @@ vi.mock("@/modules/catalog/hooks/useObras", () => {
   return { useObras: () => stableReturn };
 });
 
-vi.mock("@/modules/artist/hooks/useArtistasAssinados", () => {
+vi.mock("@/modules/artist/hooks/useSignedArtists", () => {
   const stableReturn = { artistas: [] as any[], isLoading: false, error: null };
-  return { useArtistasAssinados: () => stableReturn };
+  return { useSignedArtists: () => stableReturn };
 });
 
 // Task J: o hook useArtistas() (capped nos primeiros 50 do tenant) fica
 // deliberadamente VAZIO — se a resolução do artista dentro de selectProjeto
 // (ObraFormModal.tsx) ainda dependesse de escanear esse array, o teste
 // "resolves the linked project's artist..." abaixo falharia.
-vi.mock("@/modules/artist/hooks/useArtistas", async () => {
-  const actual = await vi.importActual<typeof import("@/modules/artist/hooks/useArtistas")>(
-    "@/modules/artist/hooks/useArtistas",
+vi.mock("@/modules/artist/hooks/useArtists", async () => {
+  const actual = await vi.importActual<typeof import("@/modules/artist/hooks/useArtists")>(
+    "@/modules/artist/hooks/useArtists",
   );
   return {
     ...actual,
-    useArtistas: () => ({
+    useArtists: () => ({
       artistas: [] as any[],
       isLoading: false,
       error: null,
@@ -67,7 +67,7 @@ vi.mock("@/shared/lib/storage", async () => {
         return undefined;
       }),
       listPaged: vi.fn(async (table: string) => {
-        if (table === "projetos") {
+        if (table === "projects") {
           return {
             items: [
               { id: "projeto-99", title: "Projeto Raro", status: "concluido", artist_id: "art-99" },
@@ -185,7 +185,7 @@ describe("ObraFormModal edit mode", () => {
     expect(callArg.id).toBe("obra-1");
     expect(callArg.title).toBe("Canção Editada");
     // Status round-trips back to DB form
-    expect(callArg.status).toBe("analise");
+    expect(callArg.status).toBe("under_review");
     // Duracao stays MM:SS
     expect(callArg.duracao).toBe("03:45");
     // Compositores/letristas preserved

@@ -8,50 +8,50 @@ import { describe, it, expect } from "vitest";
 import {
   ARTIST_FORM_SECTIONS,
   allArtistFormFields,
-  artistaToExportRowFromForm,
-  parseArtistaImportRow,
-  formValuesToArtistaPayload,
+  artistToExportRowFromForm,
+  parseArtistImportRow,
+  formValuesToArtistPayload,
 } from "@/modules/artist/forms/artist-form.definition";
-import type { Artista } from "@/modules/artist/types/artista.types";
+import type { Artist } from "@/modules/artist/types/artist.types";
 
-const ARTISTA: Artista = {
+const ARTISTA: Artist & { genero?: string } = {
   id: "a1",
-  nome_artistico: "MC Teste",
-  nome_civil: "Fulano de Tal",
-  genero_musical: "Funk",
+  stageName: "MC Teste",
+  legalName: "Fulano de Tal",
+  musicGenre: "Funk",
   genero: "Masculino",
-  especialidades: ["dj", "produtor"],
-  observacoes: "Bio do artista",
-  notas_internas: "Nota interna",
-  foto_url: "https://cdn/x/foto.png",
-  documentos_pessoais_url: "https://cdn/x/doc.pdf",
-  presskit_url: "https://cdn/x/press.pdf",
-  data_nascimento: "1990-01-01",
-  cpf_cnpj: "123.456.789-00",
-  rg: "12.345.678-9",
-  endereco: "Rua A, 1",
-  telefone: "(11) 90000-0000",
+  specialties: ["dj", "produtor"],
+  notes: "Bio do artista",
+  internalNotes: "Nota interna",
+  photoUrl: "https://cdn/x/foto.png",
+  personalDocumentsUrl: "https://cdn/x/doc.pdf",
+  pressKitUrl: "https://cdn/x/press.pdf",
+  birthDate: "1990-01-01",
+  taxId: "123.456.789-00",
+  idDocument: "12.345.678-9",
+  address: "Rua A, 1",
+  phone: "(11) 90000-0000",
   email: "mc@teste.com",
-  banco: "Nubank",
-  agencia: "0001",
-  conta: "12345-6",
-  chave_pix: "mc@teste.com",
-  titular_conta: "Fulano de Tal",
-  spotify_url: "https://open.spotify.com/artist/4ZzZzZzZzZzZzZzZzZzZzZ",
-  youtube_url: "https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv",
-  deezer_url: "https://deezer.com/artist/1",
-  apple_music_url: "https://music.apple.com/artist/1",
-  soundcloud_url: "https://soundcloud.com/mc",
-  instagram_url: "https://instagram.com/mc",
-  tiktok_url: "https://tiktok.com/@mc",
-  tipo_perfil: "com_empresario",
-  distribuidoras_gerais: [{ id: "onerpm", email: "share@onerpm.com" }],
-  contatos_vinculados: [{ contactId: "c-1", distribuidoras: [{ id: "distrokid", email: "d@k.com" }] }],
+  bank: "Nubank",
+  bankBranch: "0001",
+  bankAccount: "12345-6",
+  pixKey: "mc@teste.com",
+  accountHolder: "Fulano de Tal",
+  spotifyUrl: "https://open.spotify.com/artist/4ZzZzZzZzZzZzZzZzZzZzZ",
+  youtubeUrl: "https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv",
+  deezerUrl: "https://deezer.com/artist/1",
+  appleMusicUrl: "https://music.apple.com/artist/1",
+  soundcloudUrl: "https://soundcloud.com/mc",
+  instagramUrl: "https://instagram.com/mc",
+  tiktokUrl: "https://tiktok.com/@mc",
+  profileType: "com_empresario",
+  generalDistributors: [{ id: "onerpm", email: "share@onerpm.com" }],
+  linkedContacts: [{ contactId: "c-1", distributors: [{ id: "distrokid", email: "d@k.com" }] }],
 };
 
 describe("definição única do formulário de artista", () => {
   it("exporta exatamente uma coluna por campo do formulário, na ordem visual", () => {
-    const row = artistaToExportRowFromForm(ARTISTA);
+    const row = artistToExportRowFromForm(ARTISTA);
     const labelsDoFormulario = allArtistFormFields().map((f) => f.label);
     expect(Object.keys(row)).toEqual(labelsDoFormulario);
   });
@@ -69,43 +69,43 @@ describe("definição única do formulário de artista", () => {
   });
 
   it("faz round-trip export → import → payload sem perder dados do formulário", () => {
-    const row = artistaToExportRowFromForm(ARTISTA);
-    const values = parseArtistaImportRow(row);
+    const row = artistToExportRowFromForm(ARTISTA);
+    const values = parseArtistImportRow(row);
     expect(values).not.toBeNull();
-    const payload = formValuesToArtistaPayload(values!);
+    const payload = formValuesToArtistPayload(values!);
 
-    expect(payload.nome_artistico).toBe("MC Teste");
-    expect(payload.nome_civil).toBe("Fulano de Tal");
-    expect(payload.genero_musical).toBe("Funk");
-    expect(payload.genero).toBe("Masculino");
-    expect(payload.especialidades).toEqual(["dj", "produtor"]);
-    expect(payload.observacoes).toBe("Bio do artista");
-    expect(payload.notas_internas).toBe("Nota interna");
-    expect(payload.foto_url).toBe("https://cdn/x/foto.png");
-    expect(payload.documentos_pessoais_url).toBe("https://cdn/x/doc.pdf");
-    expect(payload.presskit_url).toBe("https://cdn/x/press.pdf");
+    expect(payload.stageName).toBe("MC Teste");
+    expect(payload.legalName).toBe("Fulano de Tal");
+    expect(payload.musicGenre).toBe("Funk");
+    expect((payload as unknown as Record<string, unknown>).genero).toBe("Masculino");
+    expect(payload.specialties).toEqual(["dj", "produtor"]);
+    expect(payload.notes).toBe("Bio do artista");
+    expect(payload.internalNotes).toBe("Nota interna");
+    expect(payload.photoUrl).toBe("https://cdn/x/foto.png");
+    expect(payload.personalDocumentsUrl).toBe("https://cdn/x/doc.pdf");
+    expect(payload.pressKitUrl).toBe("https://cdn/x/press.pdf");
     // URL do formulário é persistida diretamente — contrato do backend usa
     // spotify_url/youtube_url, nunca um ID extraído.
-    expect(payload.spotify_url).toBe("https://open.spotify.com/artist/4ZzZzZzZzZzZzZzZzZzZzZ");
-    expect(payload.youtube_url).toBe("https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv");
-    expect(payload.deezer_url).toBe("https://deezer.com/artist/1");
-    expect(payload.instagram_url).toBe("https://instagram.com/mc");
-    expect(payload.tiktok_url).toBe("https://tiktok.com/@mc");
-    expect(payload.tipo_perfil).toBe("com_empresario");
-    expect(payload.distribuidoras_gerais).toEqual([{ id: "onerpm", email: "share@onerpm.com" }]);
-    expect(payload.contatos_vinculados).toEqual([
-      { contactId: "c-1", distribuidoras: [{ id: "distrokid", email: "d@k.com" }] },
+    expect(payload.spotifyUrl).toBe("https://open.spotify.com/artist/4ZzZzZzZzZzZzZzZzZzZzZ");
+    expect(payload.youtubeUrl).toBe("https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv");
+    expect(payload.deezerUrl).toBe("https://deezer.com/artist/1");
+    expect(payload.instagramUrl).toBe("https://instagram.com/mc");
+    expect(payload.tiktokUrl).toBe("https://tiktok.com/@mc");
+    expect(payload.profileType).toBe("com_empresario");
+    expect(payload.generalDistributors).toEqual([{ id: "onerpm", email: "share@onerpm.com" }]);
+    expect(payload.linkedContacts).toEqual([
+      { contactId: "c-1", distributors: [{ id: "distrokid", email: "d@k.com" }] },
     ]);
-    expect(payload.banco).toBe("Nubank");
-    expect(payload.chave_pix).toBe("mc@teste.com");
+    expect(payload.bank).toBe("Nubank");
+    expect(payload.pixKey).toBe("mc@teste.com");
   });
 
   it("rejeita linha sem Nome Artístico", () => {
-    expect(parseArtistaImportRow({ "Gênero Musical": "Funk" })).toBeNull();
+    expect(parseArtistImportRow({ "Gênero Musical": "Funk" })).toBeNull();
   });
 
   it("aceita cabeçalhos de planilhas exportadas por versões antigas", () => {
-    const values = parseArtistaImportRow({
+    const values = parseArtistImportRow({
       "Nome Artístico": "Antigo",
       "Foto URL": "https://cdn/old.png",
       "Spotify URL": "https://open.spotify.com/artist/4ZzZzZzZzZzZzZzZzZzZzZ",
