@@ -9,8 +9,8 @@
  * CORPORATE_CLIENT/PARTNER/SUPPLIER/SERVICE_PROVIDER/INVESTOR/etc).
  *
  * Substitui a implementação anterior, que mantinha um array em memória com 5
- * contatos fictícios (Casa Aurora, Beat Press, João Silva, Maria Santos,
- * Pedro Costa) e nunca chamava a API. Também substitui o módulo backend
+ * contatos fictícios (nomes de exemplo fixos) e nunca chamava a API. Também
+ * substitui o módulo backend
  * `/contacts` (ContactsController/ContactsService) descoberto nesta Parte
  * como código morto: a tabela física `contacts` foi removida por uma
  * migration de limpeza (`DropOrphanContactsSatelliteTables`, presente apenas

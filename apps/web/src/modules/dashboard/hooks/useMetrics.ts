@@ -14,22 +14,22 @@
  * compromissos"), lançamentos/projetos (para contar por artista nos destaques).
  */
 import { useMemo } from "react";
-import { useArtistas } from "@/modules/artist/hooks/useArtistas";
-import { useEventos, type EventoWithRelations } from "@/modules/events/hooks/useEventos";
+import { useArtists } from "@/modules/artist/hooks/useArtists";
+import { useEvents, type EventWithRelations } from "@/modules/events/hooks/useEvents";
 import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
-import { useProjetos } from "@/modules/projects/hooks/useProjetos";
+import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useOperationalDashboard } from "./useOperationalDashboard";
 import { isToday, startOfMonth, endOfMonth, parseISO } from "date-fns";
 
 interface ArtistaDestaque {
   id: string;
-  nome_artistico: string;
-  genero_musical: string | null;
+  stageName: string;
+  musicGenre: string | null;
   lancamentos: number;
   /** null = dado de streams ainda não integrado (não exibir como 0). */
   streams: number | null;
   projetos: number;
-  foto_url: string | null;
+  photoUrl: string | null;
 }
 
 interface ArtistasMetrics {
@@ -56,17 +56,17 @@ interface DashboardMetrics {
 export interface UseMetricsReturn {
   artistasMetrics: ArtistasMetrics;
   dashboardMetrics: DashboardMetrics;
-  eventos: EventoWithRelations[];
+  eventos: EventWithRelations[];
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
 }
 
 export function useMetrics(): UseMetricsReturn {
-  const { artistas, isLoading: loadingArtistas, error: errArtistas, refetch: refetchArtistas } = useArtistas();
-  const { eventos, isLoading: loadingEventos, error: errEventos, refetch: refetchEventos } = useEventos();
+  const { artists: artistas, isLoading: loadingArtistas, error: errArtistas, refetch: refetchArtistas } = useArtists();
+  const { events: eventos, isLoading: loadingEventos, error: errEventos, refetch: refetchEventos } = useEvents();
   const { lancamentos: lancamentosData, isLoading: loadingLancamentos, error: errLancamentos, refetch: refetchLancamentos } = useLancamentos();
-  const { projetos, isLoading: loadingProjetos, error: errProjetos, refetch: refetchProjetos } = useProjetos();
+  const { projects: projetos, isLoading: loadingProjetos, error: errProjetos, refetch: refetchProjetos } = useProjects();
   const { dashboard, isLoading: loadingAgg, error: errAgg, refetch: refetchAgg } = useOperationalDashboard();
 
   const refetch = () => {
@@ -85,19 +85,19 @@ export function useMetrics(): UseMetricsReturn {
 
   const artistasMetrics = useMemo<ArtistasMetrics>(() => {
     // Task J: contrato_id/status são regra de negócio 1:1 no backend (artist
-    // só entra em status "contratado" com contrato_id preenchido — ver
-    // ArtistsService.changeStatus) — por isso `artists_by_status.contratado`
+    // só entra em status "signed" com contrato_id preenchido — ver
+    // ArtistsService.changeStatus) — por isso `artists_by_status.signed`
     // do agregado GET /analytics/dashboard (COUNT real no banco, nunca
     // capado) cobre exatamente "artistas com contrato ativo", sem precisar
     // de endpoint novo. Cai para o array capado (artistas.length) só se o
     // agregado ainda não carregou — mesmo padrão de fallback do totalArtistas.
     const statusCounts = dashboard?.artists_by_status;
     const artistasComContrato = statusCounts
-      ? (statusCounts["contratado"] ?? 0)
-      : artistas.filter(a => a.contrato_id).length;
+      ? (statusCounts["signed"] ?? 0)
+      : artistas.filter(a => a.contractId).length;
     const artistasAtivos = statusCounts
-      ? (statusCounts["ativo"] ?? 0) + (statusCounts["contratado"] ?? 0)
-      : artistas.filter(a => a.status === "ativo" || a.status === "contratado").length;
+      ? (statusCounts["active"] ?? 0) + (statusCounts["signed"] ?? 0)
+      : artistas.filter(a => a.status === "active" || a.status === "signed").length;
     const shows = eventos;
     const totalShows = shows.length;
     const showsAgendados = shows.filter(e => {
@@ -160,11 +160,11 @@ export function useMetrics(): UseMetricsReturn {
 
       // Streams: tenta múltiplas fontes; se nenhuma disponível, retorna null
       // para a UI poder exibir "–" em vez de "0" falso.
-      const a = artista as Record<string, unknown>;
+      const a = artista as unknown as Record<string, unknown>;
       const integrationsData = a["integrations_data"] as Record<string, unknown> | undefined;
       const spotifyData = integrationsData?.["spotify"] as Record<string, unknown> | undefined;
       const streamsRaw =
-        (a["spotify_ouvintes"] as number | undefined) ??
+        artista.spotifyListeners ??
         (spotifyData?.["monthly_listeners"] as number | undefined) ??
         (spotifyData?.["listeners"] as number | undefined);
       const streams = typeof streamsRaw === "number" && Number.isFinite(streamsRaw)
@@ -173,12 +173,12 @@ export function useMetrics(): UseMetricsReturn {
 
       return {
         id: artista.id,
-        nome_artistico: artista.nome_artistico,
-        genero_musical: artista.genero_musical ?? null,
+        stageName: artista.stageName,
+        musicGenre: artista.musicGenre ?? null,
         lancamentos,
         streams,
         projetos: projetosCount,
-        foto_url: (a["foto_url"] as string | null) ?? null,
+        photoUrl: (a["foto_url"] as string | null) ?? null,
       };
     });
 

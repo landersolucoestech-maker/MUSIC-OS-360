@@ -30,9 +30,9 @@ export function useLeads() {
     metrics: useMemo(() => ({
       total:         leads.length,
       followUps:     leads.filter((lead) => lead.dadosInternosCRM.proximoFollowUp).length,
-      // Alinhado ao enum real LeadStatus (@music-os-360/types): "proposta", não "proposta_enviada".
-      propostas:     leads.filter((lead) => lead.dadosInternosCRM.statusLead === "proposta").length,
-      contratos:     leads.filter((lead) => lead.dadosInternosCRM.statusLead === "fechado").length,
+      // Alinhado ao enum real LeadStatus (@music-os-360/types): "proposal"/"closed".
+      propostas:     leads.filter((lead) => lead.dadosInternosCRM.statusLead === "proposal").length,
+      contratos:     leads.filter((lead) => lead.dadosInternosCRM.statusLead === "closed").length,
       valorEstimado: leads.reduce((sum, lead) => sum + Number(lead.dadosInternosCRM.valorEstimado ?? 0), 0),
     }), [leads]),
     createLead: async (data: Parameters<typeof leadsService.create>[0]) => {

@@ -210,5 +210,5 @@ export type Cliente = {
 
 export type ClienteInsert = Omit<Cliente, "id">;
 export type ClienteUpdate = Partial<ClienteInsert>;
-export type ClienteSegmento = string;
+export type ClientSegment = string;
 

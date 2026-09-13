@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { type Artista } from "@/modules/artist/hooks/useArtistas";
+import { type Artist } from "@/modules/artist/hooks/useArtists";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import { useEntityLookup } from "@/shared/hooks/useEntityLookup";
-import { useProjetos, type ProjetoInsert, type ProjetoUpdate } from "@/modules/projects/hooks/useProjetos";
+import { useProjects, type ProjectInsert, type ProjectUpdate } from "@/modules/projects/hooks/useProjects";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/shared/ui/dialog";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -11,13 +12,13 @@ import { Textarea } from "@/shared/ui/textarea";
 import { FormTextarea } from "@/shared/components/FormField";
 import { toast } from "sonner";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
-import { projetoSchema } from "@/modules/projects/lib/projeto-schema";
+import { projectSchema } from "@/modules/projects/schemas/project-schema";
 import { MUSICAL_GENRES } from "@/constants/musicalGenres";
 import { LANGUAGES } from "@/constants/languages";
 import { Plus, Upload, X, Music, FileAudio, Loader2, Link } from "lucide-react";
 import { useUploadToR2, R2NotConfiguredError } from "@/shared/hooks/useUploadToR2";
 
-interface ProjetoFormModalProps {
+interface ProjectFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   projeto?: any;
@@ -88,10 +89,10 @@ function normTipo(v: string | null | undefined): string {
 }
 function normStatus(v: string | null | undefined): string {
   const s = (v || "").toLowerCase().trim();
-  if (s === "em_andamento" || s === "andamento") return "em_andamento";
-  if (s === "concluido" || s === "concluído") return "concluido";
-  if (s === "cancelado") return "cancelado";
-  return "planejamento";
+  if (s === "in_progress" || s === "em_andamento" || s === "andamento") return "in_progress";
+  if (s === "completed" || s === "concluido" || s === "concluído") return "completed";
+  if (s === "cancelled" || s === "cancelado") return "cancelled";
+  return "planning";
 }
 function normEnum(v: string | undefined, fallback: string): string {
   const s = (v || fallback).toLowerCase().trim() || fallback;
@@ -129,11 +130,12 @@ function ArtistNameInput({ value, onChange, placeholder, disabled }: ArtistNameI
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const { items: suggestions } = useEntityLookup<Artista>({
+  const { items: suggestionsWire } = useEntityLookup<ArtistWireRecord>({
     table: "artistas",
     search: inputText,
     enabled: open && inputText.trim().length > 0,
   });
+  const suggestions = suggestionsWire.map(wireToArtist);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
@@ -141,8 +143,8 @@ function ArtistNameInput({ value, onChange, placeholder, disabled }: ArtistNameI
     setOpen(true);
   };
 
-  const handleSelect = (a: Artista) => {
-    const display = a.nome_civil || a.nome_artistico;
+  const handleSelect = (a: Artist) => {
+    const display = a.legalName || a.stageName;
     setInputText(display);
     onChange(display);
     setOpen(false);
@@ -167,8 +169,8 @@ function ArtistNameInput({ value, onChange, placeholder, disabled }: ArtistNameI
               className="w-full text-left px-3 py-2 text-sm hover:bg-muted hover:text-foreground flex flex-col gap-0.5"
               onMouseDown={() => handleSelect(a)}
             >
-              <span className="font-medium">{a.nome_civil || a.nome_artistico}</span>
-              <span className="text-xs text-muted-foreground">{a.nome_artistico}</span>
+              <span className="font-medium">{a.legalName || a.stageName}</span>
+              <span className="text-xs text-muted-foreground">{a.stageName}</span>
             </button>
           ))}
         </div>
@@ -177,8 +179,8 @@ function ArtistNameInput({ value, onChange, placeholder, disabled }: ArtistNameI
   );
 }
 
-export function ProjetoFormModal({ open, onOpenChange, projeto, mode, onConcluido }: ProjetoFormModalProps) {
-  const { addProjeto, updateProjeto } = useProjetos();
+export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluido }: ProjectFormModalProps) {
+  const { addProject, updateProject } = useProjects();
   const { upload: uploadToR2 } = useUploadToR2();
 
   // Initialize state from projeto when the component mounts fresh (key-based remount ensures fresh mount per project).
@@ -204,7 +206,7 @@ export function ProjetoFormModal({ open, onOpenChange, projeto, mode, onConcluid
     const generoHerdado = normEnum(projeto?.genero as string | undefined, "");
     return [{ ...createEmptyMusica(), nome: type === "single" ? (projeto?.title || "") : "", genero: generoHerdado }];
   });
-  const [observacoes, setObservacoes] = useState(() => projeto?.observacoes || "");
+  const [observacoes, setObservacoes] = useState(() => projeto?.notes || "");
   const [status, setStatus] = useState(() => normStatus(projeto?.status));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -218,11 +220,11 @@ export function ProjetoFormModal({ open, onOpenChange, projeto, mode, onConcluid
     e.preventDefault();
     if (mode === "view") return;
 
-    const validation = projetoSchema.safeParse({
+    const validation = projectSchema.safeParse({
       tipoLancamento,
       nomeEP: nomeEP || "",
       status: status || "",
-      observacoes: observacoes || "",
+      notes: observacoes || "",
     });
 
     if (!validation.success) {
@@ -253,11 +255,11 @@ export function ProjetoFormModal({ open, onOpenChange, projeto, mode, onConcluid
     // Persiste o gênero da primeira música como campo direto para filtros eficientes
     const genero = musicas[0]?.genero || null;
 
-    const basePayload: ProjetoUpdate = {
+    const basePayload: ProjectUpdate = {
       title,
       type: tipoLancamento,
       status,
-      observacoes: observacoes || null,
+      notes: observacoes || null,
       genero,
       musicas: musicasParaSalvar,
     };
@@ -266,18 +268,18 @@ export function ProjetoFormModal({ open, onOpenChange, projeto, mode, onConcluid
       setIsSubmitting(true);
       let savedId: string | undefined;
       if (mode === "create") {
-        const insertPayload: ProjetoInsert = {
+        const insertPayload: ProjectInsert = {
           title,
           type: tipoLancamento,
           status,
-          observacoes: observacoes || null,
+          notes: observacoes || null,
           genero,
           musicas: musicasParaSalvar,
         };
-        const created = await addProjeto.mutateAsync(insertPayload) as { id: string };
+        const created = await addProject.mutateAsync(insertPayload) as { id: string };
         savedId = created?.id;
       } else if (projeto?.id) {
-        await updateProjeto.mutateAsync({
+        await updateProject.mutateAsync({
           id: projeto.id as string,
           ...basePayload,
           expectedUpdatedAt: getExpectedUpdatedAt(projeto),
@@ -285,7 +287,7 @@ export function ProjetoFormModal({ open, onOpenChange, projeto, mode, onConcluid
         savedId = projeto.id as string;
       }
       onOpenChange(false);
-      if (status === "concluido" && savedId) {
+      if (status === "completed" && savedId) {
         onConcluido?.(savedId);
       }
     } catch (err) {
@@ -755,10 +757,10 @@ export function ProjetoFormModal({ open, onOpenChange, projeto, mode, onConcluid
             <Select value={status} onValueChange={setStatus} disabled={isViewMode}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="planejamento">Planejamento</SelectItem>
-                <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                <SelectItem value="concluido">Concluído</SelectItem>
-                <SelectItem value="cancelado">Cancelado</SelectItem>
+                <SelectItem value="planning">Planejamento</SelectItem>
+                <SelectItem value="in_progress">Em Andamento</SelectItem>
+                <SelectItem value="completed">Concluído</SelectItem>
+                <SelectItem value="cancelled">Cancelado</SelectItem>
               </SelectContent>
             </Select>
           </div>

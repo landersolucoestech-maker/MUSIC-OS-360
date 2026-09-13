@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { SiSpotify, SiTiktok, SiApplemusic, SiSoundcloud } from "react-icons/si";
 import {
-  ESPECIALIDADES_LABELS,
+  SPECIALTY_LABELS,
   validateSpotifyUrl,
   validateYoutubeUrl,
   validateInstagramUrl,
@@ -33,7 +33,7 @@ import { cn } from "@/shared/lib/utils";
 import { publicApi } from "@/shared/lib/api-client";
 import { CompanyLogo } from "@/shared/ui/company-logo";
 import { companyLogoService } from "@/modules/settings/services/company-logo.service";
-import { useArtistas } from "@/modules/artist/hooks/useArtistas";
+import { useArtists } from "@/modules/artist/hooks/useArtists";
 
 // ─── Same constants as ArtistaFormModal ───────────────────────────────────────
 
@@ -69,7 +69,7 @@ const DISTRIBUIDORAS_OPTIONS = [
   { id: "outros",    label: "Outros" },
 ];
 
-const ESPECIALIDADES = Object.entries(ESPECIALIDADES_LABELS).map(([value, label]) => ({ value, label }));
+const ESPECIALIDADES = Object.entries(SPECIALTY_LABELS).map(([value, label]) => ({ value, label }));
 
 // ─── Types (same as ArtistaFormModal) ─────────────────────────────────────────
 
@@ -128,7 +128,7 @@ function UrlIcon({ state }: { state: UrlValidationState }) {
 
 export default function ArtistaSignupPublic() {
   const { orgSlug } = useParams<{ orgSlug?: string }>();
-  const { addArtista } = useArtistas();
+  const { addArtist } = useArtists();
 
   const [slugState, setSlugState] = useState<SlugState>("checking");
   const [orgInfo, setOrgInfo]     = useState<OrgInfo>({ id: "", name: "MUSIC OS 360", slug: orgSlug ?? "", allowPublicRegistration: false });
@@ -696,7 +696,7 @@ export default function ArtistaSignupPublic() {
                 placeholder="https://drive.google.com/… ou Dropbox"
                 value={documentosPessoaisUrl}
                 onChange={(e) => setDocumentosPessoaisUrl(e.target.value)}
-                data-testid="input-documentos-pessoais-url"
+                data-testid="input-documents-pessoais-url"
               />
             </div>
 

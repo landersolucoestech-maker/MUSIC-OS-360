@@ -73,16 +73,21 @@ export const DEFAULT_LEAD_CATEGORIES: OperationalListItem[] = [
 // workflow apps/api/src/core/workflow/definitions/leads.workflow.ts — os
 // slugs anteriores (novo_lead/proposta_enviada) não existem no backend;
 // qualquer PATCH /leads com esses valores era rejeitado por @IsIn(STATUSES).
+// 2026-09-10: LeadStatus foi renomeado para inglês (NOVO->NEW, CONTATO->CONTACTED,
+// EM_CONTATO->IN_CONTACT, QUALIFICADO->QUALIFIED, PROPOSTA->PROPOSAL,
+// NEGOCIACAO->NEGOTIATION, FECHADO->CLOSED, PERDIDO->LOST, INATIVO->INACTIVE) —
+// os slugs abaixo são o valor físico realmente gravado em leads.status via
+// LeadFormModal/InternalCRMFields; mantidos em sincronia com o enum canônico.
 export const DEFAULT_LEAD_STATUSES: OperationalListItem[] = [
-  { id: "lead-status-novo", kind: "lead_status", name: "Novo", slug: "novo", description: "Lead recebido e ainda não qualificado.", active: true, order: 10, group: "Pipeline" },
-  { id: "lead-status-contato", kind: "lead_status", name: "Contato", slug: "contato", description: "Primeiro contato realizado.", active: true, order: 20, group: "Pipeline" },
-  { id: "lead-status-em-contato", kind: "lead_status", name: "Em contato", slug: "em_contato", description: "Contato em andamento.", active: true, order: 30, group: "Pipeline" },
-  { id: "lead-status-qualificado", kind: "lead_status", name: "Qualificado", slug: "qualificado", description: "Lead validado comercialmente.", active: true, order: 40, group: "Pipeline" },
-  { id: "lead-status-proposta", kind: "lead_status", name: "Proposta", slug: "proposta", description: "Proposta comercial enviada.", active: true, order: 50, group: "Pipeline" },
-  { id: "lead-status-negociacao", kind: "lead_status", name: "Negociação", slug: "negociacao", description: "Em negociação de termos.", active: true, order: 60, group: "Pipeline" },
-  { id: "lead-status-fechado", kind: "lead_status", name: "Fechado", slug: "fechado", description: "Negócio fechado.", active: true, order: 70, group: "Pipeline" },
-  { id: "lead-status-perdido", kind: "lead_status", name: "Perdido", slug: "perdido", description: "Oportunidade perdida.", active: true, order: 80, group: "Pipeline" },
-  { id: "lead-status-inativo", kind: "lead_status", name: "Inativo/Arquivado", slug: "inativo", description: "Arquivado sem movimentação.", active: true, order: 90, group: "Pipeline" },
+  { id: "lead-status-novo", kind: "lead_status", name: "Novo", slug: "new", description: "Lead recebido e ainda não qualificado.", active: true, order: 10, group: "Pipeline" },
+  { id: "lead-status-contato", kind: "lead_status", name: "Contato", slug: "contacted", description: "Primeiro contato realizado.", active: true, order: 20, group: "Pipeline" },
+  { id: "lead-status-em-contato", kind: "lead_status", name: "Em contato", slug: "in_contact", description: "Contato em andamento.", active: true, order: 30, group: "Pipeline" },
+  { id: "lead-status-qualificado", kind: "lead_status", name: "Qualificado", slug: "qualified", description: "Lead validado comercialmente.", active: true, order: 40, group: "Pipeline" },
+  { id: "lead-status-proposta", kind: "lead_status", name: "Proposta", slug: "proposal", description: "Proposta comercial enviada.", active: true, order: 50, group: "Pipeline" },
+  { id: "lead-status-negociacao", kind: "lead_status", name: "Negociação", slug: "negotiation", description: "Em negociação de termos.", active: true, order: 60, group: "Pipeline" },
+  { id: "lead-status-fechado", kind: "lead_status", name: "Fechado", slug: "closed", description: "Negócio fechado.", active: true, order: 70, group: "Pipeline" },
+  { id: "lead-status-perdido", kind: "lead_status", name: "Perdido", slug: "lost", description: "Oportunidade perdida.", active: true, order: 80, group: "Pipeline" },
+  { id: "lead-status-inativo", kind: "lead_status", name: "Inativo/Arquivado", slug: "inactive", description: "Arquivado sem movimentação.", active: true, order: 90, group: "Pipeline" },
 ];
 
 export const DEFAULT_LEAD_SEGMENTS: OperationalListItem[] = [

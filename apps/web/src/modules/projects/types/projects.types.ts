@@ -1,14 +1,14 @@
 import type { ArtistaRef, ObraRef } from "@/shared/types/refs";
-import type { ProjetoStatus, ProjetoTipo } from "@/shared/types/enums";
+import type { ProjectStatusValue, ProjectType } from "@/shared/types/enums";
 
-export type { ProjetoStatus, ProjetoTipo };
+export type { ProjectStatusValue, ProjectType };
 
-export interface Projeto {
+export interface Project {
   id: string;
   user_id?: string;
   title: string;
-  type?: ProjetoTipo | string | null;
-  status?: ProjetoStatus | string | null;
+  type?: ProjectType | string | null;
+  status?: ProjectStatusValue | string | null;
   artist_id?: string | null;
   orcamento?: number | null;
   descricao?: string | null;
@@ -21,19 +21,19 @@ export interface Projeto {
   [key: string]: unknown;
 }
 
-export type ProjetoInsert = Omit<Projeto, "id" | "user_id" | "created_at" | "updated_at">;
-export type ProjetoUpdate = Partial<ProjetoInsert>;
+export type ProjectInsert = Omit<Project, "id" | "user_id" | "created_at" | "updated_at">;
+export type ProjectUpdate = Partial<ProjectInsert>;
 
-export interface ProjetoObraSummary extends ObraRef {
+export interface ProjectWorkSummary extends ObraRef {
   status?: string | null;
 }
 
-export interface ProjetoWithRelations extends Projeto {
+export interface ProjectWithRelations extends Project {
   artistas?: ArtistaRef | null;
-  obras?: ProjetoObraSummary[] | null;
+  obras?: ProjectWorkSummary[] | null;
 }
 
-export interface ProjetoWithRelationsExtended extends ProjetoWithRelations {
+export interface ProjectWithRelationsExtended extends ProjectWithRelations {
   total_obras?: number;
   obras_concluidas?: number;
   compositor?: string | null;

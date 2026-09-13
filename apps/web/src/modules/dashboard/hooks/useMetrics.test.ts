@@ -16,31 +16,31 @@ import { useMetrics } from "@/modules/dashboard/hooks/useMetrics";
 // estão fora da primeira página.
 const CAPPED_ARTISTAS = Array.from({ length: 50 }, (_, i) => ({
   id: `artist-${i + 1}`,
-  nome_artistico: `Artista ${i + 1}`,
-  genero_musical: null,
-  status: "prospecto",
-  contrato_id: null,
+  stageName: `Artista ${i + 1}`,
+  musicGenre: null,
+  status: "prospect",
+  contractId: null,
 }));
 
-vi.mock("@/modules/artist/hooks/useArtistas", () => ({
-  useArtistas: () => ({
-    artistas: CAPPED_ARTISTAS,
+vi.mock("@/modules/artist/hooks/useArtists", () => ({
+  useArtists: () => ({
+    artists: CAPPED_ARTISTAS,
     isLoading: false,
     error: null,
     refetch: vi.fn(),
   }),
 }));
 
-vi.mock("@/modules/events/hooks/useEventos", () => ({
-  useEventos: () => ({ eventos: [], isLoading: false, error: null, refetch: vi.fn() }),
+vi.mock("@/modules/events/hooks/useEvents", () => ({
+  useEvents: () => ({ events: [], isLoading: false, error: null, refetch: vi.fn() }),
 }));
 
 vi.mock("@/modules/releases/hooks/useLancamentos", () => ({
   useLancamentos: () => ({ lancamentos: [], isLoading: false, error: null, refetch: vi.fn() }),
 }));
 
-vi.mock("@/modules/projects/hooks/useProjetos", () => ({
-  useProjetos: () => ({ projetos: [], isLoading: false, error: null, refetch: vi.fn() }),
+vi.mock("@/modules/projects/hooks/useProjects", () => ({
+  useProjects: () => ({ projects: [], isLoading: false, error: null, refetch: vi.fn() }),
 }));
 
 // Tenant tem, de verdade, 137 artistas — 12 "contratado" e 30 "ativo" — número
@@ -50,7 +50,7 @@ vi.mock("@/modules/dashboard/hooks/useOperationalDashboard", () => ({
   useOperationalDashboard: () => ({
     dashboard: {
       artists: 137,
-      artists_by_status: { contratado: 12, ativo: 30, prospecto: 95 },
+      artists_by_status: { signed: 12, active: 30, prospect: 95 },
       active_contracts_count: 0,
       contracts_expiring_soon_count: 0,
       revenue_current_month: 0,

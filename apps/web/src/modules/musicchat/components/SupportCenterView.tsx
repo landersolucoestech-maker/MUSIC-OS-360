@@ -1685,7 +1685,7 @@ export function SupportCenterView({
           open={eventModalOpen}
           onOpenChange={setEventModalOpen}
           mode="create"
-          evento={buildEventInitialValue(selectedConversation)}
+          event={buildEventInitialValue(selectedConversation)}
         />
       </>
     )}

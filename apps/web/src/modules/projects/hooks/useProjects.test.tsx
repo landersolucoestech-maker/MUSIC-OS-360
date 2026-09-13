@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-import { useProjetos } from "./useProjetos";
+import { useProjects } from "./useProjects";
 import { storage } from "@/shared/lib/storage";
 
 vi.mock("@/shared/lib/storage", async () => {
@@ -23,14 +23,14 @@ function createWrapper() {
 // (Task H alinhou DTO/service nesse nome). Enviar "artist_id" — como o hook
 // fazia antes — é rejeitado com 400 pelo whitelist do ValidationPipe, o que
 // quebrava silenciosamente a aba Projetos do modal Visão 360° do artista.
-describe("useProjetos", () => {
+describe("useProjects", () => {
   beforeEach(() => {
     mockedList.mockReset();
     mockedList.mockResolvedValue([]);
   });
 
   it("filtra por artistId (não artist_id) ao buscar projetos de um artista", async () => {
-    renderHook(() => useProjetos(true, "artist-1"), { wrapper: createWrapper() });
+    renderHook(() => useProjects(true, "artist-1"), { wrapper: createWrapper() });
 
     await waitFor(() => expect(mockedList).toHaveBeenCalled());
     const [, options] = mockedList.mock.calls[0]!;
@@ -39,7 +39,7 @@ describe("useProjetos", () => {
   });
 
   it("sem artistId, não aplica filtro de artista", async () => {
-    renderHook(() => useProjetos(true), { wrapper: createWrapper() });
+    renderHook(() => useProjects(true), { wrapper: createWrapper() });
 
     await waitFor(() => expect(mockedList).toHaveBeenCalled());
     const [, options] = mockedList.mock.calls[0]!;

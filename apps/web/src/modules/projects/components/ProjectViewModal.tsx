@@ -12,7 +12,7 @@ import { useWorkflowTransition } from "@/shared/hooks/useWorkflowTransition";
 import { useEntityDetail } from "@/shared/hooks/useEntityDetail";
 import { resolveAllowedTransitions, WorkflowTransition } from "@/shared/lib/workflow-transitions";
 
-interface ProjetoViewModalProps {
+interface ProjectViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   projeto?: any;
@@ -27,16 +27,16 @@ function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-export const ProjetoViewModal = forwardRef<HTMLDivElement, ProjetoViewModalProps>(
-  function ProjetoViewModal({ open, onOpenChange, projeto }, ref) {
+export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps>(
+  function ProjectViewModal({ open, onOpenChange, projeto }, ref) {
     const { transition: workflowTransition, isPending: isTransitionPending } = useWorkflowTransition({
-      table:    'projetos',
+      table:    'projects',
       id:       projeto?.id ?? '',
-      queryKey: ['projetos'],
+      queryKey: ['projects'],
     });
 
     const { data: detail } = useEntityDetail<typeof projeto & { allowed_transitions?: WorkflowTransition[] }>(
-      'projetos', projeto?.id, open,
+      'projects', projeto?.id, open,
     );
 
     if (!projeto) return null;
@@ -49,16 +49,16 @@ export const ProjetoViewModal = forwardRef<HTMLDivElement, ProjetoViewModalProps
     const musicas = parseMusicasFromProjeto(projeto);
 
     const getStatusBadge = (status: string) => {
-      if (status?.toLowerCase().includes("pendente") || status === "planejamento") {
+      if (status?.toLowerCase().includes("pendente") || status === "planning") {
         return <Badge variant="warning">Registro Pendente</Badge>;
       }
-      if (status === "concluido" || status?.toLowerCase().includes("conclu")) {
+      if (status === "completed" || status?.toLowerCase().includes("conclu")) {
         return <Badge variant="success">Concluído</Badge>;
       }
-      if (status === "em_andamento") {
+      if (status === "in_progress") {
         return <Badge variant="info">Em Andamento</Badge>;
       }
-      if (status === "cancelado") {
+      if (status === "cancelled") {
         return <Badge variant="danger">Cancelado</Badge>;
       }
       return <Badge variant="neutral">{status}</Badge>;

@@ -1,4 +1,4 @@
-import type { Artista } from "@/modules/artist/hooks/useArtistas";
+import type { Artist } from "@/modules/artist/hooks/useArtists";
 import type { ObraWithRelations, FonogramaWithRelations } from "@/modules/catalog/types/catalog.types";
 import type { ArtistProfileContext, IntelligenceEntity, IntelligenceSources } from "./types";
 import { estimateReleaseFrequency, inferCareerStage, mostCommon, score, stringifyValue, uniqueStrings } from "./utils";
@@ -13,7 +13,7 @@ import { estimateReleaseFrequency, inferCareerStage, mostCommon, score, stringif
 export function loadArtistContext(
   artist: IntelligenceEntity,
   sources: IntelligenceSources,
-  catalog: { artistRecord?: Artista; obras: ObraWithRelations[]; fonogramas: FonogramaWithRelations[] },
+  catalog: { artistRecord?: Artist; obras: ObraWithRelations[]; fonogramas: FonogramaWithRelations[] },
 ): ArtistProfileContext {
   const artistRecord = catalog.artistRecord;
   const obras = catalog.obras;
@@ -25,18 +25,18 @@ export function loadArtistContext(
   const tasks = sources.tasks.filter((item) => item.targetType === "artista" && item.targetId === artist.id);
   const pitchings = sources.suggestions.filter((item) => item.targetId === artist.id || item.targetName === artist.label);
   const genreCandidates = [
-    artistRecord?.genero_musical,
+    artistRecord?.musicGenre,
     ...obras.map((item) => item.genero),
-    ...fonogramas.map((item) => item.genero_musical),
+    ...fonogramas.map((item) => item.musicGenre),
     ...releases.map((item) => item.genero),
   ].filter(Boolean).map(String);
   const publicSignals = [
-    artistRecord?.instagram ? `Instagram: ${artistRecord.instagram}` : "",
-    artistRecord?.instagram_seguidores ? `Instagram seguidores: ${artistRecord.instagram_seguidores}` : "",
-    artistRecord?.tiktok ? `TikTok: ${artistRecord.tiktok}` : "",
-    artistRecord?.tiktok_seguidores ? `TikTok seguidores: ${artistRecord.tiktok_seguidores}` : "",
-    artistRecord?.spotify_ouvintes ? `Spotify ouvintes: ${artistRecord.spotify_ouvintes}` : "",
-    artistRecord?.youtube_inscritos ? `YouTube inscritos: ${artistRecord.youtube_inscritos}` : "",
+    artistRecord?.instagramUrl ? `Instagram: ${artistRecord.instagramUrl}` : "",
+    artistRecord?.instagramFollowers ? `Instagram seguidores: ${artistRecord.instagramFollowers}` : "",
+    artistRecord?.tiktokUrl ? `TikTok: ${artistRecord.tiktokUrl}` : "",
+    artistRecord?.tiktokFollowers ? `TikTok seguidores: ${artistRecord.tiktokFollowers}` : "",
+    artistRecord?.spotifyListeners ? `Spotify ouvintes: ${artistRecord.spotifyListeners}` : "",
+    artistRecord?.youtubeSubscribers ? `YouTube inscritos: ${artistRecord.youtubeSubscribers}` : "",
   ].filter(Boolean);
   const releaseDates = releases.map((item) => item.data_lancamento).filter(Boolean).map(String).sort();
   const completedTasks = tasks.filter((item) => item.status === "concluida").length;
@@ -60,7 +60,7 @@ export function loadArtistContext(
       ...releases.map((item) => stringifyValue(item.distribuidora || item.gravadora)),
     ]),
     publicSignals,
-    careerStage: inferCareerStage(artistRecord?.spotify_ouvintes, artistRecord?.instagram_seguidores, releases.length),
+    careerStage: inferCareerStage(artistRecord?.spotifyListeners, artistRecord?.instagramFollowers, releases.length),
     growthRhythm: inferGrowthRhythm(releaseDates, publicSignals),
     catalog: {
       totalReleases: releases.length,
@@ -84,7 +84,7 @@ export function loadArtistContext(
       catalogo: score(releases.length + fonogramas.length, 20),
       engajamento: score(publicSignals.length + campaigns.length, 12),
       consistencia: releaseDates.length >= 2 ? score(releaseDates.length, 10) : 20,
-      crescimento: score((artistRecord?.spotify_ouvintes ?? 0) / 1000 + releases.length, 120),
+      crescimento: score((artistRecord?.spotifyListeners ?? 0) / 1000 + releases.length, 120),
     },
     bottleneck: inferBottleneck({ releases: releases.length, campaigns: campaigns.length, publicSignals: publicSignals.length, tasks: tasks.length }),
     actionPlan: {

@@ -232,6 +232,11 @@ export const serviceLeadSchemas: Record<LeadServiceType, ServiceLeadSchema> = {
   }),
 };
 
+// register(..., { valueAsNumber: true }) produz NaN quando o campo numérico é
+// limpo no DOM — trata como "não informado" em vez de erro de validação.
+const nanAsUndefined = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess((value) => (typeof value === "number" && Number.isNaN(value) ? undefined : value), schema);
+
 const leadBaseValidationSchema = z.object({
   nomeCompleto: z.string().trim().min(2, "Informe o nome completo"),
   nomeArtistico: z.string().trim().optional(),
@@ -245,18 +250,20 @@ const leadBaseValidationSchema = z.object({
   tipoCliente: z.string().min(1, "Selecione o tipo de cliente"),
   tipoServico: z.string().min(1, "Selecione o tipo de serviço"),
   payloadServico: z.record(z.unknown()),
-  dadosInternosCRM: z.object({
-    statusLead: z.string().min(1),
-    responsavel: z.string().optional(),
-    prioridade: z.string().optional(),
-    temperatura: z.string().optional(),
-    origemLead: z.string().optional(),
-    valorEstimado: z.coerce.number().min(0).optional(),
-    probabilidadeFechamento: z.coerce.number().min(0).max(100).optional(),
-    proximoFollowUp: z.string().optional(),
-    observacoesInternas: z.string().optional(),
-  }),
-});
+  dadosInternosCRM: z
+    .object({
+      statusLead: z.string().min(1),
+      responsavel: z.string().optional(),
+      prioridade: z.string().optional(),
+      temperatura: z.string().optional(),
+      origemLead: z.string().optional(),
+      valorEstimado: nanAsUndefined(z.coerce.number().min(0).optional()),
+      probabilidadeFechamento: nanAsUndefined(z.coerce.number().min(0).max(100).optional()),
+      proximoFollowUp: z.string().optional(),
+      observacoesInternas: z.string().optional(),
+    })
+    .strict(),
+}).strict();
 
 export const leadValidationSchema = leadBaseValidationSchema.superRefine((values, context) => {
   const serviceSchema = serviceLeadSchemas[values.tipoServico as LeadServiceType];

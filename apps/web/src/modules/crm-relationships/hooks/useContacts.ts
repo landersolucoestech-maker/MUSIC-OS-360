@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { contactsService } from "../services";
 import { clientsService, type ApiClient, type CreateApiClientInput, type UpdateApiClientInput } from "../services/clients.service";
-import type { Cliente, ClienteInsert, ClienteSegmento, ClienteUpdate, Contact } from "../types";
+import type { Cliente, ClienteInsert, ClientSegment, ClienteUpdate, Contact } from "../types";
 
-export type { Cliente, ClienteInsert, ClienteUpdate, ClienteSegmento, Contact };
+export type { Cliente, ClienteInsert, ClienteUpdate, ClientSegment, Contact };
 
 export function useContacts(enabled = true) {
   const [contacts, setContacts] = useState<Contact[]>([]);

@@ -137,7 +137,7 @@ export function useRoles() {
       queryClient.invalidateQueries({ queryKey: ["role_permissions"] }),
       queryClient.invalidateQueries({ queryKey: ["team_members"] }),
       queryClient.invalidateQueries({ queryKey: ["team_invitations"] }),
-      queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.USUARIOS] }),
+      queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.USERS] }),
     ]);
   };
 

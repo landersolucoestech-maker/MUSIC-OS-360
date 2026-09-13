@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const projetoSchema = z.object({
+export const projectSchema = z.object({
   tipoLancamento: z.string()
     .min(1, "Tipo de lançamento é obrigatório"),
   nomeEP: z.string()
@@ -14,4 +14,4 @@ export const projetoSchema = z.object({
     .or(z.literal("")),
 });
 
-export type ProjetoFormData = z.infer<typeof projetoSchema>;
+export type ProjectFormData = z.infer<typeof projectSchema>;

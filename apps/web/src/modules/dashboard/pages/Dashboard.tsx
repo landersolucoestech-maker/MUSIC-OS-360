@@ -14,12 +14,12 @@ import { Link } from "react-router-dom";
 import { differenceInDays } from "date-fns";
 import { useMetrics } from "../hooks/useMetrics";
 import { useOperationalDashboard } from "../hooks/useOperationalDashboard";
-import type { EventoWithRelations } from "@/modules/events/hooks/useEventos";
+import type { EventWithRelations } from "@/modules/events/hooks/useEvents";
 import { getBackendEventTypeLabel } from "@/modules/events/lib/event-type";
 import { formatCurrency } from "@/shared/lib/format-utils";
 import { DashboardSkeleton } from "@/shared/components/PageSkeletons";
 import { UnavailableState } from "@/shared/components/UnavailableState";
-import { ArtistaVisao360Modal } from "@/modules/artist/components/ArtistaVisao360Modal";
+import { ArtistVision360Modal } from "@/modules/artist/components/ArtistVision360Modal";
 import { useWsEvent } from "@/shared/hooks/useWsEvent";
 import { cn } from "@/shared/lib/utils";
 import { useActivityHistory, type AuditLogRow } from "../hooks/useActivityHistory";
@@ -524,7 +524,7 @@ export default function Dashboard() {
         return { evento, quando: compromissoDataHora(raw, evento.horario_inicio) };
       })
       .filter(
-        (item): item is { evento: EventoWithRelations; quando: Date } => {
+        (item): item is { evento: EventWithRelations; quando: Date } => {
           if (!item.quando) return false;
           if (item.quando.getTime() < agora) return false;
           return !COMPROMISSO_STATUS_OCULTOS.has(normalizarSlug(item.evento.status));
@@ -537,12 +537,12 @@ export default function Dashboard() {
   const artistasComEventos = useMemo(
     () => artistasDestaque.map((a) => ({
       id: a.id,
-      nome: a.nome_artistico,
-      genero: a.genero_musical || "Outro",
+      nome: a.stageName,
+      genero: a.musicGenre || "Outro",
       lancamentos: a.lancamentos,
       streams: a.streams, // pode ser null → UI exibe "–"
       projetos: a.projetos,
-      foto_url: a.foto_url,
+      foto_url: a.photoUrl,
     })),
     [artistasDestaque],
   );
@@ -894,7 +894,7 @@ export default function Dashboard() {
           queries; com elas em erro (backend fora do ar), refetchOnMount
           reabre isLoading, o gate desmonta o modal de novo — loop infinito.
           Mantê-lo sempre montado quebra o ciclo. */}
-      <ArtistaVisao360Modal
+      <ArtistVision360Modal
         open={visao360Modal.open}
         onOpenChange={(open) => setVisao360Modal({ ...visao360Modal, open })}
         artista={visao360Modal.artista}

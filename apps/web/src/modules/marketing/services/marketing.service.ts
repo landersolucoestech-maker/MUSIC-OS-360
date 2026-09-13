@@ -249,7 +249,7 @@ function briefingFromApi(row: RecordRow): MarketingBriefing {
   const meta = metadata(row);
   return {
     id: row.id,
-    title: row.title ?? row.title,
+    title: row.titulo ?? row.title,
     type: meta.type ?? "campanha",
     status: meta.uiStatus ?? row.status ?? "rascunho",
     objective: meta.objective ?? "",

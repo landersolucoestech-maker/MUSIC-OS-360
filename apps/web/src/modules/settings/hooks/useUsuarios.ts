@@ -77,7 +77,7 @@ export function useUsuarios() {
   const queryClient = useQueryClient();
 
   const { data: usuarios = EMPTY_USUARIOS, isLoading, error } = useQuery<Usuario[]>({
-    queryKey: [...QUERY_KEYS.USUARIOS],
+    queryKey: [...QUERY_KEYS.USERS],
     queryFn: async () => {
       const page = await api.get<UsersPage>("/users?limit=100&offset=0");
       return (page.data ?? []).map(mapUser);
@@ -112,7 +112,7 @@ export function useUsuarios() {
     },
     onSuccess: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.USUARIOS] }),
+        queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.USERS] }),
         queryClient.invalidateQueries({ queryKey: ["team_members"] }),
         queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.ROLES] }),
       ]);

@@ -187,7 +187,7 @@ function leadToFormInitial(lead: Lead): Partial<LeadFormPayload> {
     nome_artista_servico: str("nome_artista_servico"),
     descricao:            str("descricao"),
     origem_lead:          (crm.origemLead         as string) ?? "",
-    status_lead:          (crm.statusLead         as string) ?? "novo",
+    status_lead:          (crm.statusLead         as string) ?? "new",
     prioridade:           (crm.prioridade         as string) ?? "media",
     campanha_marketing:   (crm.campanha_marketing as string) ?? "",
     proximo_follow_up:    (crm.proximoFollowUp    as string) ?? "",

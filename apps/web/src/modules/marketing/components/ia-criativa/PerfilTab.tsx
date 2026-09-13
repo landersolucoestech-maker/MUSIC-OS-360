@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import { BarChart3, Disc3, Radio, Search, Share2, Target, TrendingUp, UserRound } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
-import type { Artista } from "@/modules/artist/hooks/useArtistas";
+import type { Artist } from "@/modules/artist/hooks/useArtists";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import { useObras } from "@/modules/catalog/hooks/useObras";
 import { useFonogramas } from "@/modules/catalog/hooks/useFonogramas";
 import type { AiGeneratedResult } from "../../types/marketing.types";
@@ -27,7 +28,8 @@ export function PerfilTab({
   // Task J — catálogo do artista selecionado busca direto e escopado por
   // artist_id (server-side), nunca mais filtrando sources.obras/fonogramas
   // sem filtro (capadas aos primeiros 50 do tenant).
-  const { entity: artistRecord } = useEntityById<Artista>("artistas", artist?.id);
+  const { entity: artistRecordWire } = useEntityById<ArtistWireRecord>("artistas", artist?.id);
+  const artistRecord: Artist | undefined = artistRecordWire ? wireToArtist(artistRecordWire) : undefined;
   const { obras } = useObras(!!artist, artist?.id);
   const { fonogramas } = useFonogramas(!!artist, artist?.id);
 

@@ -15,20 +15,21 @@ import { Clock, TrendingUp, FileText, LayoutGrid, Search, Play, Folder, Loader2,
 import { Checkbox } from "@/shared/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
-import { ProjetoFormModal } from "@/modules/projects/components/ProjetoFormModal";
-import { ProjetoViewModal } from "@/modules/projects/components/ProjetoViewModal";
+import { ProjectFormModal } from "@/modules/projects/components/ProjectFormModal";
+import { ProjectViewModal } from "@/modules/projects/components/ProjectViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { RequirePermission } from "@/shared/components/RequirePermission";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
-import { useProjetos } from "@/modules/projects/hooks/useProjetos";
-import { useProjetosPaginated, useProjetosStats } from "@/modules/projects/hooks/useProjetosPaginated";
+import { useProjects } from "@/modules/projects/hooks/useProjects";
+import { useProjectsPaginated, useProjectsStats } from "@/modules/projects/hooks/useProjectsPaginated";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import type { Artista } from "@/modules/artist/hooks/useArtistas";
+import type { Artist } from "@/modules/artist/hooks/useArtists";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { storage } from "@/shared/lib/storage";
-import type { ProjetoWithRelationsExtended } from "@/modules/projects/types/projetos-extensions";
+import type { ProjectWithRelationsExtended } from "@/modules/projects/types/projects-extensions";
 import { getFirstMusicaInfo, parseMusicasFromProjeto } from "@/modules/projects/lib/musica-helpers";
 
 // In mock mode (and over HTTP — /projects não faz join de artista) o
@@ -45,9 +46,9 @@ function withArtista<T extends { artist_id?: string | null; artistas?: unknown }
   }));
 }
 
-export default function Projetos() {
+export default function Projects() {
   const navigate = useNavigate();
-  // Task J: lista completa (rawProjetos/useProjetos() sem filtro) usada
+  // Task J: lista completa (rawProjetos/useProjects() sem filtro) usada
   // APENAS para popular o dropdown de gêneros — um caso de "valores
   // distintos para filtro" ainda pendente de um endpoint dedicado
   // (equivalente a /works/stats/generos), então continua sujeito ao cap de
@@ -55,7 +56,7 @@ export default function Projetos() {
   // H, paginada) nem a busca/filtro em si (server-side). Deep-link e o nome
   // do artista por linha, que ERAM os riscos reais de dado incorreto/
   // ausente, foram migrados abaixo para busca direta por ID.
-  const { projetos: rawProjetos, isLoading, deleteProjeto } = useProjetos();
+  const { projects: rawProjetos, isLoading, deleteProject: deleteProjeto } = useProjects();
 
   const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; projeto?: any }>({ open: false, mode: "create" });
   const [viewModal, setViewModal] = useState<{ open: boolean; projeto?: any }>({ open: false });
@@ -73,9 +74,9 @@ export default function Projetos() {
 
   // Auto-open the view modal when arriving with ?projeto=:id (e.g. from an
   // Obra link) — busca DIRETO por ID (GET /projects/:id), não depende do
-  // projeto estar entre os primeiros 50 carregados por useProjetos() sem
+  // projeto estar entre os primeiros 50 carregados por useProjects() sem
   // filtro (Task J).
-  const { entity: deepLinkProjeto } = useEntityById<ProjetoWithRelationsExtended>("projetos", projectIdParam ?? undefined);
+  const { entity: deepLinkProjeto } = useEntityById<ProjectWithRelationsExtended>("projects", projectIdParam ?? undefined);
   useEffect(() => {
     if (!projectIdParam || !deepLinkProjeto) return;
     setViewModal({ open: true, projeto: deepLinkProjeto });
@@ -89,7 +90,7 @@ export default function Projetos() {
   // filtragem em si agora acontece no backend, sobre a coluna `genero`
   // direta (que já é o mesmo valor persistido como atalho na criação/edição,
   // ver migration 20260719000005).
-  const getProjetoGenero = (p: ProjetoWithRelationsExtended): string => {
+  const getProjetoGenero = (p: ProjectWithRelationsExtended): string => {
     if (p.genero) return (p.genero as string).trim().toLowerCase();
     const musicas = parseMusicasFromProjeto(p);
     return (musicas[0]?.genero || "").trim().toLowerCase();
@@ -97,7 +98,7 @@ export default function Projetos() {
 
   const generos = useMemo(() => {
     const set = new Set<string>();
-    (rawProjetos as ProjetoWithRelationsExtended[]).forEach(p => {
+    (rawProjetos as ProjectWithRelationsExtended[]).forEach(p => {
       const g = getProjetoGenero(p);
       if (g) set.add(g);
     });
@@ -114,12 +115,12 @@ export default function Projetos() {
   useEffect(() => { setPage(0); }, [debouncedSearch, statusFilter, artistaFilter, tipoFilter, generoFilter]);
 
   const {
-    projetos: pageItems,
+    projects: pageItems,
     total,
     isLoading: isLoadingPage,
     error: pageError,
     refetch: refetchPage,
-  } = useProjetosPaginated({
+  } = useProjectsPaginated({
     page,
     pageSize,
     search: debouncedSearch || undefined,
@@ -134,33 +135,33 @@ export default function Projetos() {
   // partir de useArtistas() sem filtro, truncado nos primeiros 50 artistas
   // do tenant (silenciosamente ocultava o nome de qualquer artista além
   // desse cap).
-  const [resolvedArtistasMap, setResolvedArtistasMap] = useState<Record<string, Artista>>({});
+  const [resolvedArtistasMap, setResolvedArtistasMap] = useState<Record<string, Artist>>({});
   const pageArtistaIds = useMemo(
-    () => Array.from(new Set((pageItems as ProjetoWithRelationsExtended[]).map(p => p.artist_id).filter((id): id is string => !!id))),
+    () => Array.from(new Set((pageItems as ProjectWithRelationsExtended[]).map(p => p.artist_id).filter((id): id is string => !!id))),
     [pageItems],
   );
   useEffect(() => {
     if (pageArtistaIds.length === 0) return;
     let cancelled = false;
-    Promise.all(pageArtistaIds.map((id) => storage.findById<Artista & { id: string }>("artistas", id)))
+    Promise.all(pageArtistaIds.map((id) => storage.findById<ArtistWireRecord>("artistas", id)))
       .then((results) => {
         if (cancelled) return;
-        const map: Record<string, Artista> = {};
-        results.forEach((a, i) => { if (a) map[pageArtistaIds[i]] = a; });
+        const map: Record<string, Artist> = {};
+        results.forEach((a, i) => { if (a) map[pageArtistaIds[i]] = wireToArtist(a); });
         setResolvedArtistasMap((prev) => ({ ...prev, ...map }));
       })
       .catch(() => {});
     return () => { cancelled = true; };
   }, [pageArtistaIds]);
 
-  const pageProjetos = useMemo<ProjetoWithRelationsExtended[]>(
-    () => withArtista(pageItems as ProjetoWithRelationsExtended[], resolvedArtistasMap),
+  const pageProjetos = useMemo<ProjectWithRelationsExtended[]>(
+    () => withArtista(pageItems as ProjectWithRelationsExtended[], resolvedArtistasMap),
     [pageItems, resolvedArtistasMap],
   );
 
   // KPIs: contagem por status SOBRE O TENANT INTEIRO (não a página atual)
   // — GET /projects/stats, agregado no banco.
-  const { stats: projetosStats } = useProjetosStats();
+  const { stats: projetosStats } = useProjectsStats();
 
   const handleDelete = () => {
     if (deleteModal.projeto) {
@@ -210,14 +211,14 @@ export default function Projetos() {
 
   // Partição por status (bucket = status bruto, sem agrupamento) — cada
   // projeto cai em exatamente um bucket vindo de GET /projects/stats.
-  const tally = { em_andamento: 0, concluido: 0, planejamento: 0 };
+  const tally = { in_progress: 0, completed: 0, planning: 0 };
   for (const [status, count] of Object.entries(projetosStats.byGroup)) {
     if (status in tally) tally[status as keyof typeof tally] += count;
   }
   const metricas = {
-    ativos: tally.em_andamento,
-    concluidos: tally.concluido,
-    rascunhos: tally.planejamento,
+    ativos: tally.in_progress,
+    concluidos: tally.completed,
+    rascunhos: tally.planning,
     total: projetosStats.total,
   };
 
@@ -255,10 +256,10 @@ export default function Projetos() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos Status</SelectItem>
-              <SelectItem value="cancelado">Cancelado</SelectItem>
-              <SelectItem value="concluido">Concluído</SelectItem>
-              <SelectItem value="em_andamento">Em Andamento</SelectItem>
-              <SelectItem value="planejamento">Planejamento</SelectItem>
+              <SelectItem value="cancelled">Cancelado</SelectItem>
+              <SelectItem value="completed">Concluído</SelectItem>
+              <SelectItem value="in_progress">Em Andamento</SelectItem>
+              <SelectItem value="planning">Planejamento</SelectItem>
             </SelectContent>
           </Select>
           {/* Task J: busca server-side (AsyncEntityCombobox) — antes populava
@@ -266,9 +267,9 @@ export default function Projetos() {
               50 artistas do tenant. */}
           <div className="flex items-center gap-1 shrink-0">
             <div className="h-8 w-[160px]">
-              <AsyncEntityCombobox<Artista>
+              <AsyncEntityCombobox<Artist>
                 table="artistas"
-                getLabel={(a) => a.nome_artistico ?? ""}
+                getLabel={(a) => a.stageName ?? ""}
                 value={artistaFilter !== "all" ? artistaFilter : null}
                 onChange={(id) => setArtistaFilter(id)}
                 placeholder="Todos Artista"
@@ -372,7 +373,7 @@ export default function Projetos() {
                         <TableCell>
                           <div className="flex items-center gap-3">
                             {(() => {
-                              const capa = (project.capa_url ?? project.foto_url ?? project.cover_url) as string | undefined;
+                              const capa = (project.capa_url ?? project.photoUrl ?? project.cover_url) as string | undefined;
                               return (
                                 <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted flex items-center justify-center">
                                   {capa ? (
@@ -449,10 +450,10 @@ export default function Projetos() {
     )}
 
       {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): ProjetoFormModal chama useProjetos() de novo só para
+          (Task C): ProjectFormModal chama useProjects() de novo só para
           as mutations, a mesma query do isLoading acima. */}
-      <ProjetoFormModal key={formModal.mode === "create" ? "create" : (formModal.projeto?.id ?? "edit")} open={formModal.open} onOpenChange={(open) => setFormModal(prev => ({ ...prev, open }))} projeto={formModal.projeto} mode={formModal.mode} onConcluido={(id) => navigate(`/registro-musicas?newObra=${id}`)} />
-      <ProjetoViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} projeto={viewModal.projeto} />
+      <ProjectFormModal key={formModal.mode === "create" ? "create" : (formModal.projeto?.id ?? "edit")} open={formModal.open} onOpenChange={(open) => setFormModal(prev => ({ ...prev, open }))} projeto={formModal.projeto} mode={formModal.mode} onConcluido={(id) => navigate(`/registro-musicas?newObra=${id}`)} />
+      <ProjectViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} projeto={viewModal.projeto} />
       <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Projeto" description={`Tem certeza que deseja excluir o projeto "${deleteModal.projeto?.title}"?`} onConfirm={handleDelete} />
     </>
   );

@@ -155,15 +155,15 @@ export type OrigemLead = (typeof ORIGEM_LEAD_OPTIONS)[number]["value"];
 // (novo_lead/proposta_enviada/follow_up/confirmado/arquivado) não existia no
 // backend; qualquer PATCH com esses valores era rejeitado por @IsIn(STATUSES).
 export const STATUS_LEAD_OPTIONS = [
-  { value: "novo",        label: "Novo"           },
-  { value: "contato",     label: "Contato"        },
-  { value: "em_contato",  label: "Em contato"     },
-  { value: "qualificado", label: "Qualificado"    },
-  { value: "proposta",    label: "Proposta"       },
-  { value: "negociacao",  label: "Negociação"     },
-  { value: "fechado",     label: "Fechado"        },
-  { value: "perdido",     label: "Perdido"        },
-  { value: "inativo",     label: "Inativo/Arquivado" },
+  { value: "new",         label: "Novo"           },
+  { value: "contacted",   label: "Contato"        },
+  { value: "in_contact",  label: "Em contato"     },
+  { value: "qualified",   label: "Qualificado"    },
+  { value: "proposal",    label: "Proposta"       },
+  { value: "negotiation", label: "Negociação"     },
+  { value: "closed",      label: "Fechado"        },
+  { value: "lost",        label: "Perdido"        },
+  { value: "inactive",    label: "Inativo/Arquivado" },
 ] as const satisfies ReadonlyArray<Option>;
 
 export type StatusLead = (typeof STATUS_LEAD_OPTIONS)[number]["value"];

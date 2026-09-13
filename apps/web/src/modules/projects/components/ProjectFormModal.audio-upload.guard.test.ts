@@ -1,5 +1,5 @@
 /**
- * ProjetoFormModal.audio-upload.guard.test.ts
+ * ProjectFormModal.audio-upload.guard.test.ts
  *
  * Guarda permanente (Task T — continuidade): `uploadFile` era um stub que
  * sempre retornava `null` — o upload de áudio por música nunca enviava nada
@@ -12,9 +12,9 @@ import { describe, it, expect } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 
-const SOURCE = fs.readFileSync(path.resolve(__dirname, "ProjetoFormModal.tsx"), "utf8");
+const SOURCE = fs.readFileSync(path.resolve(__dirname, "ProjectFormModal.tsx"), "utf8");
 
-describe("ProjetoFormModal — upload de áudio usa o backend real (Task T)", () => {
+describe("ProjectFormModal — upload de áudio usa o backend real (Task T)", () => {
   it("não contém mais o stub que sempre retornava null", () => {
     expect(SOURCE).not.toMatch(/async\s*\(_file: File\)[^{]*=>\s*null/);
   });

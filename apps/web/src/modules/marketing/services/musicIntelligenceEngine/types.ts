@@ -1,4 +1,4 @@
-import type { Artista } from "@/modules/artist/hooks/useArtistas";
+import type { Artist } from "@/modules/artist/hooks/useArtists";
 import type { LancamentoWithRelations } from "@/modules/releases/hooks/useLancamentos";
 import type {
   AiSuggestion,
@@ -106,7 +106,7 @@ export type ReleaseContext = {
 
 export type ArtistProfileContext = {
   artist: IntelligenceEntity;
-  artistRecord?: Artista;
+  artistRecord?: Artist;
   predominantGenre: string;
   subgenres: string[];
   moods: string[];

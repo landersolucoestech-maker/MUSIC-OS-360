@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { api } from "@/shared/lib/api-client";
-import type { ProjetoWithRelations } from "./useProjetos";
+import type { ProjectWithRelations } from "./useProjects";
 
-export interface UseProjetosPaginatedParams {
+export interface UseProjectsPaginatedParams {
   /** 0-indexado, mesma convenção de usePagination()/TablePagination. */
   page: number;
   pageSize: number;
@@ -15,16 +15,16 @@ export interface UseProjetosPaginatedParams {
   genero?: string;
 }
 
-export function useProjetosPaginated({ page, pageSize, search, status, type, artistId, genero }: UseProjetosPaginatedParams) {
+export function useProjectsPaginated({ page, pageSize, search, status, type, artistId, genero }: UseProjectsPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
   if (type) filters.type = type;
   if (artistId) filters.artistId = artistId;
   if (genero) filters.genero = genero;
 
-  const result = usePaginatedDataQuery<ProjetoWithRelations>({
-    queryKey: [...QUERY_KEYS.PROJETOS],
-    table: "projetos",
+  const result = usePaginatedDataQuery<ProjectWithRelations>({
+    queryKey: [...QUERY_KEYS.PROJECTS],
+    table: "projects",
     page: page + 1,
     pageSize,
     search,
@@ -32,7 +32,7 @@ export function useProjetosPaginated({ page, pageSize, search, status, type, art
   });
 
   return {
-    projetos: result.items,
+    projects: result.items,
     total: result.total,
     totalPages: result.totalPages,
     isLoading: result.isLoading,
@@ -42,23 +42,23 @@ export function useProjetosPaginated({ page, pageSize, search, status, type, art
   };
 }
 
-export interface ProjetoStats {
+export interface ProjectStats {
   total: number;
   byGroup: Record<string, number>;
 }
 
-const EMPTY_STATS: ProjetoStats = { total: 0, byGroup: {} };
+const EMPTY_STATS: ProjectStats = { total: 0, byGroup: {} };
 
 /**
  * Contagem por status, sobre o TENANT INTEIRO — GET /projects/stats
- * (agregado no banco). Task H: os KPIs de Projetos.tsx não podem mais ser
+ * (agregado no banco). Task H: os KPIs de Projects.tsx não podem mais ser
  * calculados só sobre a página atual (nem sobre a lista inteira baixada
  * no cliente).
  */
-export function useProjetosStats() {
-  const query = useQuery<ProjetoStats>({
-    queryKey: [...QUERY_KEYS.PROJETOS, "stats"],
-    queryFn: ({ signal }) => api.get<ProjetoStats>("/projects/stats", { signal }),
+export function useProjectsStats() {
+  const query = useQuery<ProjectStats>({
+    queryKey: [...QUERY_KEYS.PROJECTS, "stats"],
+    queryFn: ({ signal }) => api.get<ProjectStats>("/projects/stats", { signal }),
     staleTime: 30_000,
   });
   return {
