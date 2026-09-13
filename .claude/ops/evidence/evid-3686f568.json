@@ -7,5 +7,6 @@
   "status": "FAIL",
   "summary": "Wave 4 authz trace (read-only): confirmed CRITICAL cross-tenant privilege escalation via PATCH /users/:id/role (owner bypasses assertCanAssignRole ceiling + is_assignable not checked) unlocking global super_admin across billing/audit/admin-users/knowledge-base endpoints that are not tenant-scoped. AUTH_DISABLED bypass and JWKS/JWT verification path reviewed as correctly fail-closed in prod/staging. secret-scan flagged 2 AWS key patterns in .github/workflows/security.yml and a private key block in apple-music.service.spec.ts test fixture -- flagged as NEEDS-MORE-EVIDENCE (likely CI placeholders/test fixtures, not confirmed live secrets) for separate triage, not confirmed as part of this authz trace.",
   "workspaceFingerprint": "d6c3fd6dc11ae3e09adfa14b8a8d29ee201cfc0b5976892ecf954811eaecdfb1",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

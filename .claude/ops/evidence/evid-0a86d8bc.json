@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "req-ea44db5a's ac-14d422da (already closed) established that leads.service.ts got disposition A (real tenant_billing_state billing gate + explanatory comment), which is the correct choice for a Type-A repeatable public new-write endpoint -- confirmed consistent with the just-ratified Type-A/Type-B policy split (Type-A=leads, gated; Type-B=autentique/docusign/external-data, exempt). ac-47473305 describes disposition B (exemption-comment wording), which correctly was NOT the path taken for leads. Closing as a permanently-inapplicable alternative, not a pending decision.",
   "workspaceFingerprint": "e61bcce81613a58ff59a48f757e0fbd7a9169732707412df83edd33e719ba822",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

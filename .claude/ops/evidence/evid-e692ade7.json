@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "Reviewed the 9 changed files from the documentos->documents rename batch (ContratoFormModal.tsx, ContratoViewModal.tsx, ShareViewModal.tsx, SharePendenteFormModal.tsx, RH.tsx, ArtistaVisao360Modal.tsx, ArtistaSignupPublic.tsx, Configuracoes.tsx, LeadFormModal.tsx) for the same PT/EN corruption pattern already fixed at Configuracoes.tsx:828. Found and filed 3 additional instances (find-5e8cfec1 ContratoViewModal.tsx:476, find-74aef606 ArtistaVisao360Modal.tsx:1835-1836, find-d8e4e852 LeadFormModal.tsx:1035). All other 'documents'/'contracts'/'artists'/'shares'/'leads'/'employees' occurrences in these files are internal identifiers (variable names, tab value keys, data-testid, storage folder paths, form field ids) which are correctly not user-facing, or are already-correct PT labels (e.g. Documentos Vinculados, Documentos Anexos). 'Share' used as a domain term in SharePendenteFormModal.tsx (Tipo de Share, % Share) predates this rename batch and is out of scope. No other interaction/label defects found in these files.",
   "workspaceFingerprint": "3e202b5e7c970a240fe8455ed62248dc1492b01e8370083eb88fa5a7fe898e6b",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

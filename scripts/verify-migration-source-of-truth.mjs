@@ -41,6 +41,28 @@ export const SUPABASE_MIGRATIONS_ALLOWLIST = [
 
 const TYPEORM_FILENAME_RE = /^(\d{14})_([A-Za-z0-9_]+)\.ts$/;
 
+// Migration classes that exist on disk but are deliberately NOT registered
+// in migrations/index.ts — a reviewed architectural/product decision, not
+// drift. Adding a class name here IS the explicit decision this guard
+// demands: each entry must be backed by a code comment (in index.ts, next to
+// where the migration would be imported, or in the migration file's own
+// header) explaining why it stays unregistered and what would need to happen
+// to register it. This guard still fails on anything unregistered that
+// ISN'T listed here — that's the "forgotten, not deliberate" case.
+export const INTENTIONALLY_UNREGISTERED_MIGRATIONS = [
+  // Destructive DROP TABLE (contacts + 3 satellites). Needs explicit
+  // sign-off to register/execute, not just the migration's own header
+  // claiming a pre-verified 0-rows check. See index.ts:106 and
+  // req-a6155d65 (mission-e39d21fa) for the recorded decision.
+  'DropOrphanContactsSatelliteTables20260713000002',
+  // Staged rollout proposal (filename-prefixed PROPOSAL_, self-documented
+  // "NOT REGISTERED IN index.ts, NOT EXECUTED" in its own header) — this is
+  // step 2 (BACKFILL) of a 4-step expand/contract rollout whose step 1
+  // (EXPAND, application code accepting both PT-BR and EN values) has not
+  // shipped yet. Registering it now would run it before the app is ready.
+  'PROPOSAL_BackfillArtistGoalStatusToEnglish20260910900001',
+];
+
 export function checkSupabaseMigrationsAllowlist(actualFiles, allowlist = SUPABASE_MIGRATIONS_ALLOWLIST) {
   const allowed = new Set(allowlist);
   const unexpected = actualFiles.filter((f) => f.endsWith('.sql') && !allowed.has(f));
@@ -106,9 +128,17 @@ export function checkCanonicalRunnerConfig(datasourceSource) {
 // filename — at least one migration (RemoveDeadStructuresD1D8_20260705000003)
 // breaks the usual {Name}{Timestamp} convention with an underscore
 // separator, and reconstructing names from filenames silently mismatches it.
-export function checkRegistryParity(classNamesOnDisk, indexSource) {
+export function checkRegistryParity(classNamesOnDisk, indexSource, intentionallyUnregistered = INTENTIONALLY_UNREGISTERED_MIGRATIONS) {
   const onDisk = new Set(classNamesOnDisk);
-  const missingFromIndex = [...onDisk].filter((className) => !indexSource.includes(className));
+  const allowedUnregistered = new Set(intentionallyUnregistered);
+  const notInIndex = [...onDisk].filter((className) => !indexSource.includes(className));
+  const missingFromIndex = notInIndex.filter((className) => !allowedUnregistered.has(className));
+  const unregisteredIntentional = notInIndex.filter((className) => allowedUnregistered.has(className));
+
+  // An allowlist entry for a class that isn't actually on disk (renamed,
+  // deleted, typo) is itself drift in the allowlist — surface it as a real
+  // failure rather than silently doing nothing.
+  const staleAllowlistEntries = [...allowedUnregistered].filter((className) => !onDisk.has(className));
 
   const exportedMatch = indexSource.match(/export const ALL_MIGRATIONS = \[([\s\S]*?)\] as const;/);
   const exportedNames = exportedMatch
@@ -117,9 +147,11 @@ export function checkRegistryParity(classNamesOnDisk, indexSource) {
   const orphanedInIndex = exportedNames.filter((name) => !onDisk.has(name));
 
   return {
-    ok: missingFromIndex.length === 0 && orphanedInIndex.length === 0,
+    ok: missingFromIndex.length === 0 && orphanedInIndex.length === 0 && staleAllowlistEntries.length === 0,
     missingFromIndex,
     orphanedInIndex,
+    unregisteredIntentional,
+    staleAllowlistEntries,
   };
 }
 
@@ -137,11 +169,13 @@ function main() {
     .map((f) => readFileSync(path.join(typeormMigrationsDir, f), 'utf8').match(/export class (\w+)/)?.[1])
     .filter(Boolean);
 
+  const registryParity = checkRegistryParity(classNamesOnDisk, indexSource);
+
   const results = [
     ['supabase/migrations/ matches the frozen allowlist', checkSupabaseMigrationsAllowlist(supabaseFiles)],
     ['no TypeORM/Supabase migration name or timestamp collision', checkNoParallelTimestampCollision(typeormFiles, supabaseFiles)],
     ['datasource.ts still points at the canonical runner/tracking table', checkCanonicalRunnerConfig(datasourceSource)],
-    ['migrations/index.ts registry matches disk exactly (no drift)', checkRegistryParity(classNamesOnDisk, indexSource)],
+    ['migrations/index.ts registry matches disk exactly (unexplained drift only)', registryParity],
   ];
 
   let failed = false;
@@ -153,6 +187,11 @@ function main() {
       console.error(`  ✗  ${label}`);
       console.error(`     ${JSON.stringify(result, null, 2).split('\n').join('\n     ')}`);
     }
+  }
+
+  if (registryParity.unregisteredIntentional.length > 0) {
+    console.log(`  ℹ  ${registryParity.unregisteredIntentional.length} migration(s) deliberately unregistered (INTENTIONALLY_UNREGISTERED_MIGRATIONS):`);
+    for (const name of registryParity.unregisteredIntentional) console.log(`     - ${name}`);
   }
 
   if (failed) {

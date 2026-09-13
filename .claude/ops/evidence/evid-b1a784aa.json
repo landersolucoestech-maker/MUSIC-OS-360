@@ -7,5 +7,6 @@
   "status": "FAIL",
   "summary": "VERDICT: FAIL. ac-bf0d6fcc's default action for docusign.service.ts and external-data-exchange.service.ts is 'migrated to the same authoritative source' if a tenants.active check is found -- but both files' checks are exactly the ones the diff's own new P0-A/Type-B comments argue should stay ungated. The criterion does not allow 'confirmed intentional Type-B, left as-is with documented rationale' as a pass outcome, presuming the gate answer. Filed as finding find-cc1a1cfe against req-90013e6a.",
   "workspaceFingerprint": "3e202b5e7c970a240fe8455ed62248dc1492b01e8370083eb88fa5a7fe898e6b",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

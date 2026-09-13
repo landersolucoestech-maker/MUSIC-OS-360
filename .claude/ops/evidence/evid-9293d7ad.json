@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "Naming-map decision (ac-7ca3d7e2) and full 11-file disposition (ac-a67ce5f1) made jointly in the same Wave 3 pass: the root NAMING_NORMALIZATION_CANONICAL_MAP.md's disposition (RENAME_KEEP, not delete) was decided together with and cross-referenced against the docs/ file's disposition (KEEP_AS_CANONICAL) precisely to resolve the name collision as one coordinated action, not two independent ones. No deletion or gitignore action was taken without a recorded disposition (see find-e7601371, find-c4faa83b, find-c620edb3, find-991f916e for all non-obvious dispositions); no commit or push was made.",
   "workspaceFingerprint": "b0fe08f28ce55b16ea2381b1da7d76e8847d88bd73078536474ffa5abc5db358",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

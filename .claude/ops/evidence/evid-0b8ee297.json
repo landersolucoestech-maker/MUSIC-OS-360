@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "Reviewed diffs for contracts.service.ts, contracts.service.spec.ts, create-contract.dto.ts, hr.service.ts, create-employee.dto.ts, artists.service.ts, create-artist.dto.ts, artist-workflow.handler.ts against the documentos->documents/tipo->type rename. All key/value renames in DTOs, services and entities are consistent 1:1 pairs (no tautology, no duplicate keys, no dangling old key). Confirmed via database/entities.ts diff + migration 20260906000001_RenameDocumentosToDocuments.ts that all 4 renamed columns (artists, contracts, shares, employees) are covered by an idempotent IF-EXISTS RENAME COLUMN migration correctly registered in migrations/index.ts. One real logic/content bug found and filed (find-67362e3b): artist-workflow.handler.ts's ONBOARDING_TASKS description string had 'documentos' blind-replaced inside PT-BR prose, producing a mixed-language string persisted to CrmTaskEntity.description and shown on the Tarefas UI page.",
   "workspaceFingerprint": "900ea33c851b2994c2e12fb4888d083d5afff4477c0a69a0648ba063221c718a",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

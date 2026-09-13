@@ -4,7 +4,7 @@
   "missionName": "resolve-worktree-86-diff",
   "status": "active",
   "createdAt": "2026-09-09T03:56:21.053Z",
-  "updatedAt": "2026-09-13T16:45:20.870Z",
+  "updatedAt": "2026-09-13T18:11:01.531Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": "L5",
@@ -25,7 +25,13 @@
             "evid-144a555a",
             "evid-f99bef13"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "docs/NAMING_NORMALIZATION_CANONICAL_MAP.md",
+            "NAMING_NORMALIZATION_CANONICAL_MAP.md"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-a65b0c0b",
@@ -34,7 +40,21 @@
             "evid-38f51e25",
             "evid-8b567f11"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/database/entities.ts",
+            "apps/api/src/modules/artist/dto/create-artist.dto.ts",
+            "apps/api/src/modules/contracts/dto/create-contract.dto.ts",
+            "apps/api/src/modules/hr/dto/create-employee.dto.ts",
+            "apps/api/src/modules/shares/dto/shares.dto.ts",
+            "apps/api/src/modules/artist/artists.service.ts",
+            "apps/api/src/modules/artist/artist-workflow.handler.ts",
+            "apps/api/src/modules/contracts/contracts.service.ts",
+            "apps/api/src/modules/hr/hr.service.ts",
+            "apps/web/src"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-ae07f017",
@@ -43,7 +63,13 @@
             "evid-9a0d4e2d",
             "evid-0b1ce6f6"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/web/src",
+            "apps/api/src/modules/hr"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-a224e37e",
@@ -55,7 +81,13 @@
             "evid-ccd86b6c",
             "evid-c2eea613"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src",
+            "apps/web/src"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-58c64ed1",
@@ -66,7 +98,13 @@
             "evid-9eaa9bae",
             "evid-c91a88cc"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/contracts/contracts.service.spec.ts",
+            "apps/web/src/modules/contracts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-70226c83",
@@ -75,7 +113,12 @@
             "evid-468d5060",
             "evid-7c20e707"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/web/src/modules/settings/pages/Configuracoes.tsx"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         }
       ],
       "createdAt": "2026-09-09T04:04:34.527Z"
@@ -94,7 +137,13 @@
             "evid-fa96dabb",
             "evid-91a2c6ad"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/billing/billing-enforcement.service.ts",
+            "apps/api/src/modules/billing/billing-enforcement.service.spec.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-a4e2dc8e",
@@ -103,7 +152,12 @@
             "evid-b9b104d5",
             "evid-ed3ae451"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/billing/billing-enforcement.service.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-2f8ae271",
@@ -112,7 +166,15 @@
             "evid-fc398cbb",
             "evid-9495b058"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/billing/billing-enforcement.guard.ts",
+            "apps/api/src/modules/billing/dunning.service.ts",
+            "apps/api/src/modules/billing/billing-enforcement.guard.spec.ts",
+            "apps/api/src/modules/billing/dunning.service.spec.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-ac249ba5",
@@ -122,7 +184,14 @@
             "evid-98b0d009",
             "evid-2e9b3e1e"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/test/e2e/billing/billing-admin-atomicity.e2e-spec.ts",
+            "apps/api/src/modules/billing/billing.service.ts",
+            "apps/api/src/modules/billing/billing-enforcement.service.ts"
+          ],
+          "verifiedSinceHead": "949aa381",
+          "verifiedSinceReason": "The E2E spec itself and the constructor it exercises were fixed and evidenced (evid-2e9b3e1e, PASS) within THIS session, committed at 949aa381 — the correct anchor is that commit, not the prior session's 2ef160ec (which predates the fix)."
         }
       ],
       "createdAt": "2026-09-09T04:07:33.318Z"
@@ -141,7 +210,13 @@
             "evid-01ab0b48",
             "evid-b7eb78c7"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/billing/dunning.service.ts",
+            "apps/api/src/modules/billing/dunning.service.spec.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-9aacedd2",
@@ -150,7 +225,13 @@
             "evid-dad22f92",
             "evid-3346529c"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/billing/dunning.service.ts",
+            "apps/api/src/modules/billing/dunning.service.spec.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-b4fd3e1e",
@@ -159,7 +240,13 @@
             "evid-d95a2eca",
             "evid-d88d71c2"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/billing/dunning.service.ts",
+            "apps/api/src/modules/billing/dunning.service.spec.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-50961d86",
@@ -168,7 +255,13 @@
             "evid-b684a73f",
             "evid-79c69a48"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/billing/dunning.service.ts",
+            "apps/api/src/modules/billing/dunning.service.spec.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         }
       ],
       "createdAt": "2026-09-09T04:08:27.422Z"
@@ -189,7 +282,12 @@
             "evid-edd2c116",
             "evid-c747bdeb"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/leads/leads.service.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-9cccc5d9",
@@ -199,7 +297,12 @@
             "evid-4546db64",
             "evid-0e48a3af"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/integrations/autentique/autentique.service.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-bf0d6fcc",
@@ -209,7 +312,13 @@
             "evid-10825c58",
             "evid-767ea11f"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/integrations/docusign/docusign.service.ts",
+            "apps/api/src/core/external-data/external-data-exchange.service.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-9eeb925c",
@@ -219,7 +328,12 @@
             "evid-e0aad3ea",
             "evid-89384817"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         }
       ],
       "createdAt": "2026-09-09T04:08:46.088Z"
@@ -239,7 +353,15 @@
             "evid-944a169b",
             "evid-2019731c"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/billing",
+            "apps/api/src/modules/integrations/autentique/autentique.service.ts",
+            "apps/api/src/modules/integrations/docusign/docusign.service.ts",
+            "apps/api/src/core/external-data/external-data-exchange.service.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-05867f68",
@@ -249,7 +371,15 @@
             "evid-f8120d91",
             "evid-1e4b7133"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/billing",
+            "apps/api/src/modules/integrations/autentique/autentique.service.ts",
+            "apps/api/src/modules/integrations/docusign/docusign.service.ts",
+            "apps/api/src/core/external-data/external-data-exchange.service.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-d7eba673",
@@ -258,7 +388,15 @@
             "evid-ebf31840",
             "evid-7ac1365d"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/billing",
+            "apps/api/src/modules/integrations/autentique/autentique.service.ts",
+            "apps/api/src/modules/integrations/docusign/docusign.service.ts",
+            "apps/api/src/core/external-data/external-data-exchange.service.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-33b28991",
@@ -267,7 +405,15 @@
             "evid-0bb711f9",
             "evid-a9b92d4f"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/billing",
+            "apps/api/src/modules/integrations/autentique/autentique.service.ts",
+            "apps/api/src/modules/integrations/docusign/docusign.service.ts",
+            "apps/api/src/core/external-data/external-data-exchange.service.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         }
       ],
       "createdAt": "2026-09-09T04:08:56.550Z"
@@ -287,7 +433,12 @@
             "evid-7d1285e3",
             "evid-ab7b6606"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/database/migrations/index.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-95a0591d",
@@ -296,7 +447,12 @@
             "evid-f3875c83",
             "evid-30442526"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/database/migrations/20260906000001_RenameDocumentosToDocuments.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-9809d8b7",
@@ -304,7 +460,12 @@
           "evidenceIds": [
             "evid-cfca3aa6"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/database/migrations/20260906000002_AddTenantBillingStateStatusChangedAt.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-5da4ec8f",
@@ -313,7 +474,15 @@
             "evid-bee58c70",
             "evid-f4502e39"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/billing/billing-enforcement.service.ts",
+            "apps/api/src/database/entities.ts",
+            "apps/api/src/database/migrations/20260906000001_RenameDocumentosToDocuments.ts",
+            "apps/api/src/database/migrations/20260906000002_AddTenantBillingStateStatusChangedAt.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-7de16425",
@@ -322,7 +491,14 @@
             "evid-40b12935",
             "evid-041e6fe3"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/database/migrations/20260713000001_CreateOperationalListItems.ts",
+            "apps/api/src/database/migrations/20260713000002_DropOrphanContactsSatelliteTables.ts",
+            "apps/api/src/database/migrations/20260719000017_RebuildInventoryItemsInCanonicalFormOrder.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         }
       ],
       "createdAt": "2026-09-09T04:11:23.229Z"
@@ -341,7 +517,22 @@
             "evid-1bbd88b4",
             "evid-94b3c6db"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/artist/dto/query-artist-goal.dto.ts",
+            "apps/api/src/modules/integrations/dto/sync-platform-profile.dto.ts",
+            "apps/api/src/modules/assets",
+            "apps/api/src/modules/audiovisual",
+            "apps/api/src/modules/content-detection",
+            "apps/api/src/modules/ecad",
+            "apps/api/src/modules/hr/dto/query-hr.dto.ts",
+            "apps/api/src/modules/integrations",
+            "apps/api/src/modules/marketing",
+            "apps/api/src/common/utils/safe-order-by.ts",
+            "apps/api/scripts/verify-no-inline-body.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-957bda76",
@@ -350,7 +541,15 @@
             "evid-796c265a",
             "evid-b79bc487"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/operational-lists",
+            "apps/api/src/app.module.ts",
+            "apps/api/src/database/migrations/20260713000001_CreateOperationalListItems.ts",
+            "apps/api/src/database/migrations/20260713000002_DropOrphanContactsSatelliteTables.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-f9b4c439",
@@ -359,7 +558,12 @@
             "evid-14cb930a",
             "evid-430c666a"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/operational-lists"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         }
       ],
       "createdAt": "2026-09-09T04:15:22.210Z"
@@ -379,7 +583,14 @@
             "evid-e9acd93e",
             "evid-97808a87"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/web/src/modules/crm-relationships",
+            "apps/web/src/modules/leads",
+            "apps/web/src/modules/settings"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-9a7f2e16",
@@ -389,7 +600,13 @@
             "evid-46307a0a",
             "evid-a7a71e20"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/database/rebuild-inventory-items-canonical-form-order.migration.spec.ts",
+            "apps/api/src/database/migrations/20260719000017_RebuildInventoryItemsInCanonicalFormOrder.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         }
       ],
       "createdAt": "2026-09-09T04:15:56.018Z"
@@ -409,7 +626,23 @@
             "evid-6ede13f2",
             "evid-17f4f154"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "AUDITORIA_COMPLETA_MUSIC_OS_360.md",
+            "AUDITORIA_DOMINIO_E_ARQUITETURA.md",
+            "AUDITORIA_SISTEMICA_TOTAL.md",
+            "ENGINEERING_OS_MAINTENANCE_REPORT.md",
+            "GIT_BRANCH_CONSOLIDATION_REPORT.md",
+            "MUSIC_OS_360_FORENSIC_AUDIT.md",
+            "STAGE2_AUDIT_RESULT.md",
+            "STAGE2_CLOSURE_RESULT.md",
+            "docs/AI_CREATIVE_MODULE_EXHAUSTIVE_AUDIT.md",
+            "docs/NAMING_NORMALIZATION_REPORT.md",
+            "docs/NAMING_NORMALIZATION_STATUS.md",
+            ".gitignore"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-611bdf01",
@@ -418,7 +651,13 @@
             "evid-9293d7ad",
             "evid-b25b817a"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "docs/NAMING_NORMALIZATION_CANONICAL_MAP.md",
+            "NAMING_NORMALIZATION_CANONICAL_MAP.md"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         }
       ],
       "createdAt": "2026-09-09T04:16:31.873Z"
@@ -436,7 +675,8 @@
           "evidenceIds": [
             "evid-c30f8c61",
             "evid-dc35b7b2",
-            "evid-3f886dc6"
+            "evid-3f886dc6",
+            "evid-f307a638"
           ],
           "status": "closed"
         },
@@ -484,7 +724,13 @@
             "evid-563cf362",
             "evid-def9a32c"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/database/migrations/index.ts",
+            "apps/api/src/database/migrations/20260713000002_DropOrphanContactsSatelliteTables.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-2e273adf",
@@ -493,7 +739,13 @@
             "evid-966cfa27",
             "evid-6538b7d3"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/database/migrations/index.ts",
+            "apps/api/src/database/migrations/20260713000002_DropOrphanContactsSatelliteTables.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-e5f00793",
@@ -502,7 +754,12 @@
             "evid-7146f11a",
             "evid-2c0eb51c"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/database/migrations/index.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         }
       ],
       "createdAt": "2026-09-09T15:42:10.647Z"
@@ -521,7 +778,15 @@
             "evid-6bacc9f4",
             "evid-0a86d8bc"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/leads/leads.service.ts",
+            "apps/api/src/modules/integrations/autentique/autentique.service.ts",
+            "apps/api/src/modules/integrations/docusign/docusign.service.ts",
+            "apps/api/src/core/external-data/external-data-exchange.service.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         },
         {
           "id": "ac-14d422da",
@@ -530,7 +795,12 @@
             "evid-e5f7ea40",
             "evid-d5c24931"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/leads/leads.service.ts"
+          ],
+          "verifiedSinceHead": "2ef160ec",
+          "verifiedSinceReason": "Prior mission session recorded this evidence against a long-lived uncommitted working tree (confirmed via git reflog: HEAD sat at 37403a32 from 2026-09-08 to 2026-09-12 while the actual fix content was already present, uncommitted); the content only became durably committed in the 7ec0477f..2ef160ec batch on 2026-09-12. 2ef160ec is the correct anchor, not each evidence's literal (pre-fix) recording-time HEAD."
         }
       ],
       "createdAt": "2026-09-09T15:55:24.397Z"
@@ -3525,7 +3795,8 @@
     "evid-def9a32c",
     "evid-0a86d8bc",
     "evid-98b0d009",
-    "evid-2e9b3e1e"
+    "evid-2e9b3e1e",
+    "evid-f307a638"
   ],
   "checkpointIds": [],
   "touchedFiles": [],

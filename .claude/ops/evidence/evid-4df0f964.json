@@ -10,5 +10,6 @@
   "stderrTail": "spawnSync cd ENOENT",
   "workspaceFingerprint": "9c69bd06713ea2da44534b54bead0bbdb1ae19fbd50606e9e9295bc14b4d3b10",
   "fingerprintStatus": "BOUND",
-  "durationMs": 5
+  "durationMs": 5,
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

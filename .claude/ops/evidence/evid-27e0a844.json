@@ -10,5 +10,6 @@
   "stderrTail": "spawnSync pnpm ENOENT",
   "workspaceFingerprint": "c5002fe7e045e1ab15119e6c56b5d69dfff714ec67e695ab8491308ae4311ad7",
   "fingerprintStatus": "BOUND",
-  "durationMs": 13
+  "durationMs": 13,
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

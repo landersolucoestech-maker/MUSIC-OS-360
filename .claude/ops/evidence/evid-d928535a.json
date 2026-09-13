@@ -7,5 +7,6 @@
   "status": "FAIL",
   "summary": "VERDICT: FAIL. ac-87717b09 mandates the 'gate' answer only for leads.service.ts:326, but the orchestrator's own framing of this mission states decision 2 (gate vs. document-as-Type-B) is still open. The acceptance criterion cannot be satisfied by a legitimate 'document as intentionally ungated' outcome, improperly presuming one answer before a human decides. Filed as finding find-cc1a1cfe against req-90013e6a.",
   "workspaceFingerprint": "3e202b5e7c970a240fe8455ed62248dc1492b01e8370083eb88fa5a7fe898e6b",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

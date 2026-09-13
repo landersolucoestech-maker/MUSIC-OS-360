@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "Audited shares.dto.ts and create-contract.dto.ts (backend) against contracts.types.ts, releases/types/index.ts, signing.contract.ts, storage.contract.ts (frontend) for the documentos->documents / tipo->type rename. No stale documentos/tipo keys remain on either side: CreateShareDto.type/documents matches Share.type/documents; CreateContractDto.type/documents matches Contrato.type/documents; DB entities.ts and contracts.service.ts/shares.service.ts already persist to documents/type columns consistently. signing.contract.ts and storage.contract.ts are unrelated provider-mock contracts with no tipo/documentos fields, no mismatch applicable. One unrelated pre-existing field gap (destinatario) logged as find-b9e5413e (INFO, out of rename scope).",
   "workspaceFingerprint": "3e202b5e7c970a240fe8455ed62248dc1492b01e8370083eb88fa5a7fe898e6b",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

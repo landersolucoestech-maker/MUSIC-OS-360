@@ -7,5 +7,6 @@
   "status": "FAIL",
   "summary": "Wave 9 trace pass of previously-uncovered business domains (HR/payroll/leave, inventory, takedowns, content-detections, ecad-reports, registry/external-identifiers, invoices, transactions, financial-*, marketing-assets, admin-users, support-tickets/requests, knowledge-base, contacts family, company-settings, contract-templates/service-types, uploads, assets linking). Found 6 CRITICAL and 2 HIGH cross-tenant FK-ownership gaps (hr payroll/leave-requests, content-detections, ecad-reports, registry external-identifiers, invoices, transactions, marketing-assets, finance-category-rules) following the same assertSameTenantFk-missing pattern as prior waves, plus 1 HIGH functional defect (contact-attachments/contracts/timeline persisted to an in-memory Map instead of the DB) and 1 LOW state-transition hardening gap in leave-request approval. CLEAN domains: inventory, takedowns, financial-categories, financial-rules, admin-users, support-tickets, support-requests, knowledge-base, company-settings, contract-templates, contract-service-types, uploads, operational-lists. Read-only trace, no fixes applied.",
   "workspaceFingerprint": "950445c64a5ffb3897608788194e67d6ff091b4327c4662959229cbc382b554a",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

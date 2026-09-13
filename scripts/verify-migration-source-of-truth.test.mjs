@@ -101,15 +101,43 @@ test('registry parity: every file on disk is exported, every export has a file -
       Foo20260101000000,
     ] as const;
   `;
-  const result = checkRegistryParity(['Foo20260101000000'], indexSource);
+  const result = checkRegistryParity(['Foo20260101000000'], indexSource, []);
   assert.equal(result.ok, true);
 });
 
 test('registry parity: a file on disk was never added to the registry -> FAIL', () => {
   const indexSource = `export const ALL_MIGRATIONS = [] as const;`;
-  const result = checkRegistryParity(['Foo20260101000000'], indexSource);
+  const result = checkRegistryParity(['Foo20260101000000'], indexSource, []);
   assert.equal(result.ok, false);
   assert.deepEqual(result.missingFromIndex, ['Foo20260101000000']);
+});
+
+test('registry parity: unregistered file IS on the intentional-exclusion allowlist -> PASS, reported separately', () => {
+  const indexSource = `export const ALL_MIGRATIONS = [] as const;`;
+  const result = checkRegistryParity(['Deferred20260101000000'], indexSource, ['Deferred20260101000000']);
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.missingFromIndex, []);
+  assert.deepEqual(result.unregisteredIntentional, ['Deferred20260101000000']);
+});
+
+test('registry parity: allowlist entry with no backing file on disk (stale/renamed) -> FAIL', () => {
+  const indexSource = `export const ALL_MIGRATIONS = [] as const;`;
+  const result = checkRegistryParity([], indexSource, ['GoneMissing20260101000000']);
+  assert.equal(result.ok, false);
+  assert.deepEqual(result.staleAllowlistEntries, ['GoneMissing20260101000000']);
+});
+
+test('registry parity: the real project allowlist entries are still valid (guards against silent renames)', () => {
+  const indexSource = `export const ALL_MIGRATIONS = [] as const;`;
+  const onDisk = [
+    'DropOrphanContactsSatelliteTables20260713000002',
+    'PROPOSAL_BackfillArtistGoalStatusToEnglish20260910900001',
+  ];
+  const result = checkRegistryParity(onDisk, indexSource);
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.missingFromIndex, []);
+  assert.deepEqual(result.staleAllowlistEntries, []);
+  assert.equal(result.unregisteredIntentional.length, 2);
 });
 
 test('registry parity: the registry references a class with no backing file -> FAIL', () => {
@@ -131,6 +159,6 @@ test('registry parity: a class name with an underscore separator (real-world exc
       RemoveDeadStructuresD1D8_20260705000003,
     ] as const;
   `;
-  const result = checkRegistryParity(['RemoveDeadStructuresD1D8_20260705000003'], indexSource);
+  const result = checkRegistryParity(['RemoveDeadStructuresD1D8_20260705000003'], indexSource, []);
   assert.equal(result.ok, true);
 });

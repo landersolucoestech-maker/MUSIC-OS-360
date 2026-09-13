@@ -10,5 +10,6 @@
   "stderrTail": "",
   "workspaceFingerprint": "5a94f2ab6e7c71dabfb7a3157f3a53c983ad20f25a0130ab5c68668af00bbdb1",
   "fingerprintStatus": "BOUND",
-  "durationMs": 6860
+  "durationMs": 6860,
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

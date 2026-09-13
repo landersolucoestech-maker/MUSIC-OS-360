@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "Reviewed apps/api/DATABASE.md against current migration set/policy. Migration policy section (single ALL_MIGRATIONS registry, verify-migration-source-of-truth.mjs guard behavior, supabase/migrations frozen-allowlist rule) remains accurate: the guard's current FAIL on DropOrphanContactsSatelliteTables20260713000002 is expected behavior matching the documented contract (unregistered file -> guard fails), not doc drift. Found one unrelated pre-existing staleness: Tabelas do schema Total: 35 tabelas vs 136 actual @Entity() declarations in entities.ts -- filed as find-219bd1bd.",
   "workspaceFingerprint": "d5dfc7ef8d1e2b69b5e5f680cf92073fc66024870565469a325188f232a93b76",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

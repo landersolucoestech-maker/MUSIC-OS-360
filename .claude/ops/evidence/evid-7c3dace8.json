@@ -7,5 +7,6 @@
   "status": "FAIL",
   "summary": "Wave 9 FK-check pattern is structurally correct across all 8 services (assertSameTenantFk short-circuits cleanly on null/undefined, so explicit-null-to-clear-a-link on transactions update/patch works fine, no incorrect-variable/stale-DataSource bugs found; all 15 referenced tables exist with tenant_id columns; ENTITY_TYPE_TABLE mapping for external-identifiers is complete and correct against the 5-value RegistrableEntityType enum; marketing-assets company_id/creative_request_id and invoices venda_id are correctly left unchecked since no backing entity exists anywhere in entities.ts). However, found a concrete evidence gap: the new assertLinkedFks/assertSameTenantFk calls added inside TransactionsService.update()/patch() and InvoicesService.update() are never exercised by any test — reverting just those update/patch branches (leaving create() untouched) would not fail the existing suites. This is a real false-green risk per testing.md and must be closed with fresh negative-path tests before this criterion can be considered verified.",
   "workspaceFingerprint": "852e913a0e7cf03f5db43f06f48b9c47791007ccec1abfd39a99e63b95cd83f5",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

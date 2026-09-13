@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "Read-only inventory of packages/** and cross-boundary contracts completed. Filed 5 prioritized findings (find-45a56b00 enums.ts shared-package HIGH, find-02105724 transaction-details.dto.ts HIGH, find-c8c730e6 contracts DTO MEDIUM, find-23992382 hr payroll DTO MEDIUM, find-288cfa3d domain-events.types.ts MEDIUM, plus a LOW rollup for scattered remaining fields). No renames executed, no files modified, no barrels found re-exporting PT symbols.",
   "workspaceFingerprint": "683d87b27493f0d1bac84ee081573a25a3c3e0ba8f95acbe53cc0e0bf0abfaaf",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

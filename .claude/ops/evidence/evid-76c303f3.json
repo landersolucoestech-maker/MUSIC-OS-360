@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "Traced Artist domain API contract (list/get/create/update, platform-profiles, query keys) across apps/api and apps/web; findings reported to orchestrator, no writes performed.",
   "workspaceFingerprint": "f2cc3ffbba028de722d8bd959f7d2eb4cc5e6fd7cb5c0089d9244af88e22efa8",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

@@ -7,5 +7,6 @@
   "status": "FAIL",
   "summary": "See finding find-532335a9: bulk-import ISRC normalization/validation fix (find-fb2cfb1b) does not cover the releases repeating-group per-track isrc field (RELEASES_CONTRACT.repeatingGroup.fields), only the flat generalKeys/importableColumns path -- concrete reproducible gap, writeReleasesFaixasForImport() persists raw unnormalized/unvalidated isrc into releases.metadata.faixas[].",
   "workspaceFingerprint": "b85a3769adf1b0101860bf24c7e26cf154dd0cf29f07debfbbad3c261440d73e",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

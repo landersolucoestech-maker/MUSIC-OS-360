@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "Verified writeReleasesFaixasForImport throws BadRequestException synchronously inside the .map() building 'stored' before the single qr.query UPDATE call (line 109) is reached -- no partial write possible regardless of which track index is invalid. Confirmed import-commit.service.ts wraps the entire commit() (INSERT at line 319 + writer call at line 328) in one qr transaction with rollback in the catch block, so a thrown exception here rolls back the whole transaction including the already-issued parent INSERT. Swept all 4 REPEATING_GROUP_IMPORT_WRITERS entries: releases.faixas (fixed), projects.musicas (insertProjectsMusicasForImport -- no isrc-like field in MusicaFieldItem/TrackRow), invoices.itens and events.participantes (generic row-embedded writer -- line items and participant names/roles, no ISRC-like identifier). No other repeating-group writer carries the same gap. The 3 new spec.ts tests assert canonicalization, BadRequestException + qr.query NOT called on invalid ISRC, and null passthrough when absent -- these do exercise throw-before-write ordering, not just return values. Tried to break it via multi-item arrays, non-string isrc, empty array, and other writers; found nothing.",
   "workspaceFingerprint": "b4d7ae5fe25a66f5995b741410aa2938206c8dc11a7604605209e42c3c0689f8",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

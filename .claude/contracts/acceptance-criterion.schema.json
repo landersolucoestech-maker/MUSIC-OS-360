@@ -9,6 +9,17 @@
     "id": { "type": "string" },
     "text": { "type": "string" },
     "status": { "enum": ["open", "closed"] },
-    "evidenceIds": { "type": "array", "items": { "type": "string" } }
+    "evidenceIds": { "type": "array", "items": { "type": "string" } },
+    "relevantPaths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Git pathspecs this criterion's evidence is actually about. When set, gate-engine.mjs's criteria-fresh-evidence check treats evidence as fresh if none of these paths changed since the evidence's recorded head (lib/hash.mjs pathsChangedSince), not only on exact whole-workspace fingerprint equality -- so an unrelated commit elsewhere doesn't stale it. Absent (the default) preserves the strict, unscoped, whole-fingerprint behavior. Set via `ops.mjs criterion set-paths` -- an explicit, reviewed decision, never inferred."
+    },
+    "relevantPathsReason": { "type": "string" },
+    "verifiedSinceHead": {
+      "type": "string",
+      "description": "Explicit override of each linked evidence's own recorded `head` when checking scoped freshness -- set via `ops.mjs criterion set-paths --verified-since <commit> --verified-since-reason \"...\"`. Use only when an evidence's literal recording-time HEAD is provably not the right anchor (e.g. evidence recorded against a long-lived uncommitted working tree later captured by a different batch commit -- see .claude/runtime/backfill-evidence-head.mjs). Always paired with relevantPathsReason/verifiedSinceReason explaining why; never inferred silently."
+    },
+    "verifiedSinceReason": { "type": "string" }
   }
 }

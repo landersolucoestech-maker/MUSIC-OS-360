@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "Broad security pass beyond RLS/tenant: auth/authz guard bypass surface (@Public routes), IDOR spot-checks on ID-based lookups, injection classes, secrets handling, data exposure via GlobalExceptionFilter, integration webhook signature verification (Autentique/DocuSign/WhatsApp), file upload validation, CORS/rate-limiting. 2 findings confirmed (ALTO: rate-limit IP-spoofing bypass; MEDIO: in-memory non-distributed rate limiter). 3 canonical secret-scan hits reviewed and marked false-positive (CI regression test synthetic AWS key, test-fixture synthetic EC private key).",
   "workspaceFingerprint": "1ccd8f8c4f16342330deb841cbf888cf3b415c3e5acbd67e4ab21eea898374dc",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "e52224f3fdc48eb857874e9ff8f55283dfea222b"
 }

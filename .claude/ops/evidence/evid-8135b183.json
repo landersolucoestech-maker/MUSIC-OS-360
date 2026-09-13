@@ -7,5 +7,6 @@
   "status": "FAIL",
   "summary": "VERDICT: FAIL. Read-only RLS/tenant-isolation trace for Wave 4 found 2 CRITICAL and 1 HIGH finding: (1) webhook_events/payment_events/tenant_billing_state RLS policies fail-open (grant full cross-tenant access) whenever app_current_tenant_id() is NULL, which is the default connection state outside NODE_ENV=production and for several BullMQ processors; (2) the default/fallback runtime DB connection (DATABASE_URL) is the Supabase postgres superuser-equivalent role, which bypasses RLS unconditionally regardless of FORCE ROW LEVEL SECURITY -- RLS enforcement depends entirely on an opt-in flag (DATABASE_SESSION_CONTEXT_ENABLED) only mandated for literal NODE_ENV=production; (3) email/ai-jobs/external-data BullMQ processors never establish tenant session context, inheriting either fail-closed-deny or fail-open-cross-tenant behavior depending on target table. See findings find-03176eef, find-902e12f6, find-657093f0.",
   "workspaceFingerprint": "d6c3fd6dc11ae3e09adfa14b8a8d29ee201cfc0b5976892ecf954811eaecdfb1",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

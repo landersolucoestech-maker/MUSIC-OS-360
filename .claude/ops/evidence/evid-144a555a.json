@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "Root-level NAMING_NORMALIZATION_CANONICAL_MAP.md (25KB, discovery/execution log) renamed to NAMING_NORMALIZATION_DISCOVERY_LOG.md, content preserved intact (confirmed 152 lines, intro through final line, nothing truncated). No second live copy of the CANONICAL_MAP.md name left in repo root -- docs/NAMING_NORMALIZATION_CANONICAL_MAP.md (2915B, the real canonical registry) is now unambiguous. Cross-reference in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md:5 updated to point to the new filename. Verified by adversarial-reviewer: file exists, content intact, no dangling reference to old root path anywhere in repo.",
   "workspaceFingerprint": "b0fe08f28ce55b16ea2381b1da7d76e8847d88bd73078536474ffa5abc5db358",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "User explicitly confirmed (2026-09-13, in-session decision): docusign.service.ts and external-data-exchange.service.ts KEEP their tenants.active-only lifecycle check (Type-B exemption), not migrated to tenant_billing_state. Grep evidence (ac-9eeb925c, already closed) already confirmed both files were found with the legacy-shaped check; this closes the 'if found, migrated' branch by ratifying that the actual disposition taken -- the documented P0-A exemption, not migration -- is final.",
   "workspaceFingerprint": "e61bcce81613a58ff59a48f757e0fbd7a9169732707412df83edd33e719ba822",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

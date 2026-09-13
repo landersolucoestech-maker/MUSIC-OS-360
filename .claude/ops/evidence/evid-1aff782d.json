@@ -7,5 +7,6 @@
   "status": "FAIL",
   "summary": "Wave 9 FK-check pattern (assertSameTenantFk) is structurally correct across all 8 services: null/undefined short-circuits cleanly (so explicit-null-to-clear-a-link on transactions update/patch is safe, not a false-positive rejection); no wrong-variable or stale-DataSource bugs found; all 15 referenced physical tables (works, phonograms, rights_holders, releases, society_submissions, clients, financial_categories, employees, marketing_projects, campaigns, audiovisual_projects, uploads, contracts, projects, artists) exist in entities.ts with tenant_id columns; external-identifiers ENTITY_TYPE_TABLE map is complete/correct against the 5-value RegistrableEntityType enum; marketing-assets company_id/creative_request_id and invoices venda_id are correctly left unchecked since no companies/creative_requests/vendas entity exists anywhere in the codebase. Concrete gap found: TransactionsService.update()/patch()'s new assertLinkedFks call and InvoicesService.update()'s new client_id check are never exercised by any test (only create() has cross-tenant-rejection tests) -- reverting just those update/patch branches would not fail the existing suites. Filed as find-e924a8e7 and find-7ca6d4ac.",
   "workspaceFingerprint": "852e913a0e7cf03f5db43f06f48b9c47791007ccec1abfd39a99e63b95cd83f5",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

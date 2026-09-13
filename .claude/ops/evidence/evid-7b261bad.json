@@ -7,5 +7,6 @@
   "status": "FAIL",
   "summary": "Onda 3 file mechanics (CLAUDE.md dangling-ref removal, 9 file deletions, naming-map rename+cross-ref update, migration backup removal, .gitignore graphify-out entry, 3 empty dir removals, 4 findings persisted) all verified correct at the filesystem/grep level -- no broken reference, no lost content, no scope leakage into the ~340 pre-existing Wave 1/2 files, migrations/index.ts intact. However the destructive/rename actions (item 2 deletions, item 3 rename) are exactly what req-79299999/ac-7ca3d7e2 and req-a233a653/ac-a67ce5f1+ac-611bdf01 in .claude/ops/state.json were written to gate, and all three remain status open with evidenceIds:[] -- the side effects happened without the evidence-governance chain this repo mandates for L5 destructive work, and without honoring req-a233a653's explicit non-requirement against undocumented deletion. Logged as find-b808e3b5. Wave 3 cannot be declared DONE until these criteria are closed with fresh PASS evidence (or the mission state is corrected to reflect that this ad hoc review satisfies them).",
   "workspaceFingerprint": "b0fe08f28ce55b16ea2381b1da7d76e8847d88bd73078536474ffa5abc5db358",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

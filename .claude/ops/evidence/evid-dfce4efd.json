@@ -7,5 +7,6 @@
   "status": "FAIL",
   "summary": "Branch=dev, HEAD unchanged, nothing committed/pushed (verified). No secrets found in diff (only test fixtures / env.get() refs / stripe sk_test_ test key). No .orig/conflict-marker files. All ~299 changed files map plausibly to the stated wave domains (billing, artist PT->EN rename, migrations, notifications dedup, packages/*, eslint/jest tooling) or to disposed findings; pre-session-dirty files (entities.ts, migrations/index.ts, artists.service.ts, contracts.service.ts, hr.service.ts, shares.dto.ts, etc.) are still present, not reverted. Spot-checked notifications.processor.ts + new migration 20260912000001 against find-855bcd84's disposition note: the ON CONFLICT DO NOTHING implementation genuinely matches (and improves on) the documented fix. However: find-c620edb3 explicitly recorded that 14 unreferenced scripts/** were NOT to be removed without human confirmation, yet 9 of those exact files are now deleted in the working tree with no subsequent authorization record (find-c325f7a3, HIGH). Also no baseline record existed for this session (find-eb3c3040, LOW), so this audit used the initial-turn git status snapshot instead of a recorded baseline. Recommend: either restore the 9 scripts pending explicit human sign-off, or obtain and record that sign-off before calling the mission done.",
   "workspaceFingerprint": "6d343dfa8e63ff643f895b7c1fc79e29af8ad2f9eb8c5ebbd1835b0f59851c7e",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

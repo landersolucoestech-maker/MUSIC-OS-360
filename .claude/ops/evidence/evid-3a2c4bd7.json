@@ -7,5 +7,6 @@
   "status": "FAIL",
   "summary": "Completeness (no raw fetch remains in any of the 9 files), the 3 standalone wrappers (YouTube/Deezer/ACRCloud) correctly instantiate CircuitBreaker as a per-instance field with the same DEFAULT_TIMEOUT_MS/resilientFetch contract as IntegrationBaseService.fetch, the 6 base-class conversions have no .then()/callback usage that would break 'this' scoping, and per-instance circuit-breaker isolation matches the pre-existing IntegrationBaseService pattern (a real but pre-existing NestJS-singleton-scope characteristic, not a regression introduced by this diff). However, instagram.service.spec.ts's changed assertion (objectContaining({method:'DELETE'}) instead of asserting the AbortSignal) does not actually distinguish fixed vs reverted code -- it stays green even if this.fetch is reverted to raw fetch, violating the false-green-prevention testing rule and the task's explicit test-fidelity requirement. See finding find-dd523831.",
   "workspaceFingerprint": "cc547a9634024b6d2e6742ea3e2f74f8b3a95a6fb42d30a7c1efe5f54e8ecf16",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

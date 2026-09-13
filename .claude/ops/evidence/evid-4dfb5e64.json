@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "Read-only audit of git status --short untracked/modified files completed. Scanned root audit markdown files, docs/NAMING_NORMALIZATION_CANONICAL_MAP.md vs root duplicate, graphify-out/ (37MB, ungitignored generated cache), .claude/ops/evidence+records (consistent with existing tracked pattern, no secrets), new module/dto/test/migration files (no secrets, no lifecycle scripts, no manifest/lockfile churn -- 0 package.json/pnpm-lock.yaml diff). No credentials, API keys, tokens or private keys found in any file. Filed 4 findings (find-8d18515b stale test-probe ops state, find-b5e83817 graphify-out/ missing from .gitignore, find-ea3da0e9 7 root-level audit reports needing archive/delete decision, find-c05e3bea same-named naming-map files needing intent confirmation). No secrets to redact; no findings required blocking severity.",
   "workspaceFingerprint": "d5dfc7ef8d1e2b69b5e5f680cf92073fc66024870565469a325188f232a93b76",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

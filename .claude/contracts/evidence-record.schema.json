@@ -15,6 +15,7 @@
     "summary": { "type": "string" },
     "workspaceFingerprint": { "type": ["string", "null"] },
     "fingerprintStatus": { "type": "string" },
+    "head": { "type": ["string", "null"], "description": "git commit SHA at recording time (workspaceFingerprint's head component) -- lets gate-engine.mjs's criteria-fresh-evidence check scoped freshness (lib/hash.mjs pathsChangedSince) against a criterion's relevantPaths instead of only whole-workspace fingerprint equality. Absent/null on evidence recorded before this field existed or when git was unavailable." },
     "createdAt": { "type": "string", "format": "date-time" }
   }
 }

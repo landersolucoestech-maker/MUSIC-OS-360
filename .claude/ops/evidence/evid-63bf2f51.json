@@ -7,5 +7,6 @@
   "status": "FAIL",
   "summary": "test",
   "workspaceFingerprint": "276168bb2346cf97d2721f3c2e9f33b3505a29e368e75ba35837ee5cde19e5ef",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "e52224f3fdc48eb857874e9ff8f55283dfea222b"
 }

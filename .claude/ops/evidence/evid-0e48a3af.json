@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "User explicitly confirmed (2026-09-13, in-session decision) via direct question: autentique/docusign/external-data webhooks should KEEP the current Type-B exemption policy (lifecycle-only tenants.active check, no tenant_billing_state gate) rather than being migrated to match leads.service.ts's Type-A billing gate. This supersedes ac-9cccc5d9/ac-bf0d6fcc's literal original wording (which assumed a uniform migration); the P0-A Public Boundary Policy Matrix documented in the code IS the final, user-ratified disposition. No further code change required for these two criteria.",
   "workspaceFingerprint": "e61bcce81613a58ff59a48f757e0fbd7a9169732707412df83edd33e719ba822",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

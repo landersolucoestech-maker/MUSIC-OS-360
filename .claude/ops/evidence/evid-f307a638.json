@@ -1,0 +1,15 @@
+{
+  "id": "evid-f307a638",
+  "createdAt": "2026-09-13T18:11:01.524Z",
+  "type": "COMMAND",
+  "label": "verify origin/dev unchanged since session start (no push)",
+  "command": "bash -c 'test \"$(git rev-parse origin/dev)\" = \"37403a32b0fae31b82bd6a5976113a5c07cb1136\" && echo PASS-no-push-occurred'",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "bash: line 1: git rev-parse origin/dev: No such file or directory",
+  "workspaceFingerprint": "33f9579316af7224fb06bfef2141aa059fd78065da97058272f17626643c2dcf",
+  "fingerprintStatus": "BOUND",
+  "head": "fee87b19de55d1887804eec238ab68f0e060b3a6",
+  "durationMs": 683
+}

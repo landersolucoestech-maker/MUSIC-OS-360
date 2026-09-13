@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "User explicitly confirmed (2026-09-13, in-session decision): DropOrphanContactsSatelliteTables20260713000002 stays UNREGISTERED. Operator declined to authorize the destructive DROP TABLE for registration in this session. Disposition B (ac-2e273adf, leave unregistered + documented decision) is the final, user-ratified outcome; disposition A (this criterion, register+authorize) is explicitly not taken.",
   "workspaceFingerprint": "e61bcce81613a58ff59a48f757e0fbd7a9169732707412df83edd33e719ba822",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

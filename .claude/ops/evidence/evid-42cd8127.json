@@ -7,5 +7,6 @@
   "status": "PASS",
   "summary": "Reviewed billing-enforcement.service.ts:listTenantIdsRequiringDunningAttention and dunning.service.ts:runDunningCycle. Index idx_tenant_billing_state_status exists (migration 20260701000001_BillingEnforcement.ts:54) supporting the WHERE status IN(...) enumeration query -- no missing-index issue. Sequential per-tenant loop (dunning.service.ts:123-131) confirmed real but only becomes a 24h-cadence risk at an unrealistic tenant scale (~100k-500k+ simultaneously restricted tenants); recorded as MEDIUM finding find-2532abad for the concrete near-term latency cost (minutes-scale delay at 5k-10k tenants) instead of overstating it as a scaling emergency.",
   "workspaceFingerprint": "d5dfc7ef8d1e2b69b5e5f680cf92073fc66024870565469a325188f232a93b76",
-  "fingerprintStatus": "BOUND"
+  "fingerprintStatus": "BOUND",
+  "head": "37403a32b0fae31b82bd6a5976113a5c07cb1136"
 }

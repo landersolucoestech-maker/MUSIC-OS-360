@@ -93,6 +93,44 @@ export function cmdCriterionAdd({ flags, cwd }) {
   return { status: "OK", criterion: crit };
 }
 
+// relevantPaths is the explicit, reviewed scope declaration that lets
+// gate-engine.mjs's criteria-fresh-evidence check distinguish "the files
+// this criterion is actually about changed" (evidence goes stale) from "an
+// unrelated commit advanced HEAD" (evidence stays valid) -- see
+// pathsChangedSince() in lib/hash.mjs. Adding/editing this list IS the
+// deliberate decision the mechanism requires: never inferred silently.
+// A criterion with no relevantPaths keeps the old, strict, whole-workspace
+// fingerprint comparison -- this is opt-in, never a default weakening.
+export function cmdCriterionSetPaths({ flags, cwd }) {
+  const state = requireState(cwd);
+  if (!flags.criterion || !flags.paths) {
+    throw new Error(
+      'USAGE: criterion set-paths --criterion <id> --paths "path/a,path/b" [--reason "..."] ' +
+      '[--verified-since <commit> --verified-since-reason "..."]',
+    );
+  }
+  const crit = state.requirements.flatMap((r) => r.acceptanceCriteria).find((c) => c.id === flags.criterion);
+  if (!crit) throw new Error(`UNKNOWN_CRITERION: ${flags.criterion}`);
+  crit.relevantPaths = flags.paths.split(",").map((p) => p.trim()).filter(Boolean);
+  if (flags.reason) crit.relevantPathsReason = flags.reason;
+  // verifiedSinceHead overrides each linked evidence's own recorded `head` when
+  // checking scoped freshness -- an explicit, reasoned escape hatch for the case
+  // where evidence's literal recording-time HEAD is not the correct anchor (e.g.
+  // this mission's own history: evidence was recorded against a long-lived
+  // uncommitted working tree, only durably committed in a later batch commit --
+  // see backfill-evidence-head.mjs's doc comment). Requires --verified-since-reason
+  // so the decision is reviewable, never silently inferred.
+  if (flags["verified-since"]) {
+    if (!flags["verified-since-reason"]) {
+      throw new Error("--verified-since requires --verified-since-reason (explain why the evidence's own head isn't the right anchor)");
+    }
+    crit.verifiedSinceHead = flags["verified-since"];
+    crit.verifiedSinceReason = flags["verified-since-reason"];
+  }
+  saveState(state, cwd);
+  return { status: "OK", criterion: crit };
+}
+
 function linkEvidenceToCriterion(state, criterionId, evidence) {
   if (!criterionId) return;
   const crit = state.requirements.flatMap((r) => r.acceptanceCriteria).find((c) => c.id === criterionId);
@@ -118,6 +156,7 @@ export function cmdEvidenceRun({ flags, cwd }) {
     stderrTail: result.stderr.slice(-4000),
     workspaceFingerprint: fp.ok ? fp.fingerprint : null,
     fingerprintStatus: fp.ok ? "BOUND" : fp.reason,
+    head: fp.ok ? fp.head : null,
     durationMs: Date.now() - started,
   });
   state.evidenceIds.push(evidence.id);
@@ -141,6 +180,7 @@ export function cmdEvidenceReview({ flags, cwd }) {
     summary: flags.summary,
     workspaceFingerprint: fp.ok ? fp.fingerprint : null,
     fingerprintStatus: fp.ok ? "BOUND" : fp.reason,
+    head: fp.ok ? fp.head : null,
   });
   state.evidenceIds.push(evidence.id);
   linkEvidenceToCriterion(state, flags.criterion, evidence);
@@ -367,6 +407,7 @@ const COMMANDS = {
   "mobilization status": cmdMobilizationStatus,
   "requirement add": cmdRequirementAdd,
   "criterion add": cmdCriterionAdd,
+  "criterion set-paths": cmdCriterionSetPaths,
   "evidence run": cmdEvidenceRun,
   "evidence review": cmdEvidenceReview,
   "finding add": cmdFindingAdd,

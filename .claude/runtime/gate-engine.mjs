@@ -8,7 +8,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { run } from "./lib/exec.mjs";
-import { workspaceFingerprint } from "./lib/hash.mjs";
+import { workspaceFingerprint, pathsChangedSince } from "./lib/hash.mjs";
 import { loadState } from "./lib/state-store.mjs";
 import { getRecord, listRecords } from "./lib/record-store.mjs";
 import { recordEvent } from "./lib/telemetry.mjs";
@@ -53,14 +53,41 @@ const CHECKS = {
       : {};
   },
 
+  // Freshness has two modes. Default (no relevantPaths declared on the
+  // criterion): exact whole-workspace fingerprint equality, unchanged from
+  // before -- an unrelated commit anywhere invalidates evidence, same as
+  // always, so nothing that hasn't opted in is weakened. Scoped (criterion
+  // declares relevantPaths via `ops.mjs criterion set-paths`): evidence with
+  // a recorded `head` is fresh if none of those paths changed between that
+  // head and now (lib/hash.mjs pathsChangedSince) -- an unrelated commit no
+  // longer stales it, but an actual change to the criterion's own files
+  // still does. Exact fingerprint equality is always also accepted (it's a
+  // strict subset of "unchanged" and needs no git calls).
   "criteria-fresh-evidence": (ctx) => {
     const reasons = [];
     const allCriteria = ctx.state.requirements.flatMap((r) => r.acceptanceCriteria.map((c) => ({ ...c, requirementId: r.id })));
     for (const crit of allCriteria) {
       const evs = crit.evidenceIds.map((id) => getRecord(ctx.cwd, "evidence", id)).filter(Boolean);
-      const freshPass = evs.filter((e) => e.status === "PASS" && e.workspaceFingerprint === ctx.fp.fingerprint);
-      if (evs.length === 0) reasons.push(`requirement ${crit.requirementId} criterion ${crit.id} has NO evidence`);
-      else if (freshPass.length === 0) {
+      if (evs.length === 0) {
+        reasons.push(`requirement ${crit.requirementId} criterion ${crit.id} has NO evidence`);
+        continue;
+      }
+      const relevantPaths = Array.isArray(crit.relevantPaths) && crit.relevantPaths.length > 0 ? crit.relevantPaths : null;
+      // verifiedSinceHead (set via `criterion set-paths --verified-since`) is an
+      // explicit, reasoned override of each evidence's own recorded `head` --
+      // required when that literal value isn't the right anchor (see cmdCriterionSetPaths).
+      const anchorHead = crit.verifiedSinceHead || null;
+      const freshPass = evs.filter((e) => {
+        if (e.status !== "PASS") return false;
+        if (e.workspaceFingerprint === ctx.fp.fingerprint) return true;
+        const sinceHead = anchorHead || e.head;
+        if (relevantPaths && sinceHead) {
+          const scoped = pathsChangedSince(ctx.cwd, sinceHead, relevantPaths);
+          return scoped.ok && !scoped.changed;
+        }
+        return false;
+      });
+      if (freshPass.length === 0) {
         reasons.push(`requirement ${crit.requirementId} criterion ${crit.id} has evidence but none is a fresh PASS bound to the current workspace fingerprint (stale or failing)`);
       }
     }
