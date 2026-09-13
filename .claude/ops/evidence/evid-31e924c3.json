@@ -1,0 +1,15 @@
+{
+  "id": "evid-31e924c3",
+  "createdAt": "2026-09-13T21:12:31.257Z",
+  "type": "COMMAND",
+  "label": "fresh5: marketing-contents.service metadata-merge spec",
+  "command": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts modules/marketing/marketing-contents.service.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "b3595015c46b6bba21addd08284bd1f6688cb93d3de002c8aa0c4c4b2fb61500",
+  "fingerprintStatus": "BOUND",
+  "head": "a060a21d2ff73ebb01a50d4f59e3ca3d8b507f48",
+  "durationMs": 16477
+}

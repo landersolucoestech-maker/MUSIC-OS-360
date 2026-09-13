@@ -4,7 +4,7 @@
   "missionName": "resolve-worktree-86-diff",
   "status": "active",
   "createdAt": "2026-09-09T03:56:21.053Z",
-  "updatedAt": "2026-09-13T18:56:32.080Z",
+  "updatedAt": "2026-09-13T21:21:55.254Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": "L5",
@@ -40,7 +40,8 @@
             "evid-38f51e25",
             "evid-8b567f11",
             "evid-77ccc0db",
-            "evid-8baabd95"
+            "evid-8baabd95",
+            "evid-0f3b5c22"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -65,7 +66,8 @@
             "evid-9a0d4e2d",
             "evid-0b1ce6f6",
             "evid-3ce33965",
-            "evid-dd759a65"
+            "evid-dd759a65",
+            "evid-5941b4d3"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -89,7 +91,9 @@
             "evid-6639fe81",
             "evid-07643420",
             "evid-352f10c7",
-            "evid-292a4ff7"
+            "evid-292a4ff7",
+            "evid-74bd4515",
+            "evid-742345b8"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -344,7 +348,8 @@
             "evid-e0aad3ea",
             "evid-89384817",
             "evid-50a0524c",
-            "evid-8a2e0267"
+            "evid-8a2e0267",
+            "evid-a1fee30c"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -533,7 +538,8 @@
           "text": "Every listed DTO/utility file (query-artist-goal.dto.ts, sync-platform-profile.dto.ts, assets.dto.ts, audiovisual.dto.spec.ts, query-content-detection.dto.ts, query-ecad-report.dto.ts, query-hr.dto.ts, integrations.dto.spec.ts, campaign-builder-payload.dto.ts, marketing-ai-suggestions.dto.ts, safe-order-by.ts, verify-no-inline-body.ts) is grepped for actual usage/import sites; each gets a recorded disposition (SHIP/IN_PROGRESS_TRACKED/REMOVE) with the grep evidence it's based on.",
           "evidenceIds": [
             "evid-1bbd88b4",
-            "evid-94b3c6db"
+            "evid-94b3c6db",
+            "evid-31e924c3"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -706,7 +712,9 @@
             "evid-64567d8a",
             "evid-4da85d3b",
             "evid-df3cd71b",
-            "evid-1d8a358e"
+            "evid-1d8a358e",
+            "evid-46403900",
+            "evid-9f43168d"
           ],
           "status": "closed"
         },
@@ -719,7 +727,8 @@
             "evid-38e83ed5",
             "evid-86ba7808",
             "evid-a22bf4ff",
-            "evid-b08bb492"
+            "evid-b08bb492",
+            "evid-ede91ff8"
           ],
           "status": "closed"
         },
@@ -733,7 +742,8 @@
             "evid-129a84cc",
             "evid-99a66c15",
             "evid-8b75fa54",
-            "evid-614cd575"
+            "evid-614cd575",
+            "evid-9aa529a6"
           ],
           "status": "closed"
         },
@@ -745,7 +755,8 @@
             "evid-8a259a86",
             "evid-bef5f575",
             "evid-b7736771",
-            "evid-bb9605ea"
+            "evid-bb9605ea",
+            "evid-a9403d8e"
           ],
           "status": "closed"
         }
@@ -3685,9 +3696,11 @@
       "line": null,
       "summary": "File is 11247 bytes of NUL padding (corrupted, not valid JS/mjs) — repo-wide eslint fails with a parsing error on it. Pre-existing since baseline commit f840fc7f, untouched by mission-e39d21fa's 30 commits. Out of scope for this mission (billing/naming clusters); needs a separate fix/restore-from-history or deletion decision.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T16:45:20.869Z"
+      "createdAt": "2026-09-13T16:45:20.869Z",
+      "justification": "File removed in commit 86746d98 (fix(governance): scoped evidence freshness) after tracing it as DEAD/GENERATED/OBSOLETE -- committed as 11247 bytes of NUL padding at the baseline commit itself, zero consumers anywhere in the repo. Repo-wide lint now reports 0 errors.",
+      "resolvedAt": "2026-09-13T20:47:35.691Z"
     },
     {
       "id": "find-62e6b1b1",
@@ -3697,9 +3710,11 @@
       "line": null,
       "summary": "Marketing AI generate: instruction ('Responda exclusivamente com JSON...') and user-controlled fields (prompt, lyricText, targetName, audience, channels) are concatenated into one undelimited string and sent as the sole user-role message to /ai/generate with no systemPrompt set, so the JSON-only/task framing has no structural separation from attacker/user-controlled text -- classic prompt-injection surface (see .claude/rules/trust-boundaries.md); output is parsed and persisted server-side via a Record<unknown> DTO and later returned to tenant users.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T18:29:13.249Z"
+      "createdAt": "2026-09-13T18:29:13.249Z",
+      "justification": "Moved the JSON-only task framing into a fixed, server-side systemPrompt (AIService.generateMarketingSuggestion, apps/api/src/modules/ai/ai.service.ts) never client-suppliable through the new dedicated POST /ai/marketing-suggestion endpoint -- mirrors the existing generateBiography/generateCampaignCopy/analyzeContract pattern. Frontend (providerRouter.ts) now sends structured fields only, no longer concatenates the instruction into the same untrusted string as user data. Regression tests: apps/api/src/modules/ai/ai.service.spec.ts (adversarial payload.prompt/targetName/lyricText/audience/channels never reach systemPrompt).",
+      "resolvedAt": "2026-09-13T20:58:39.432Z"
     },
     {
       "id": "find-ff83efc6",
@@ -3709,9 +3724,11 @@
       "line": null,
       "summary": "AIService.enforceMonthlyLimit (used by /ai/generate, called from marketing AI suggestions flow) has no per-request/per-minute throttling (no ThrottlerModule in repo) and the monthly cost cap is a non-atomic read-then-write (SUM query then later INSERT), so concurrent bursts from one tenant can pass the check before prior spend is recorded, overshooting the plan's monthlyAiUsd budget cap.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T18:29:15.448Z"
+      "createdAt": "2026-09-13T18:29:15.448Z",
+      "justification": "complete() now wraps enforceMonthlyLimit + provider call + recordJob in one transaction holding a pg_advisory_xact_lock(hashtext('ai-budget:'||tenantId)) -- same established pattern as leads/handlers/lead-events.handler.ts's conversion lock. Serializes concurrent AI calls per tenant so a second concurrent caller genuinely waits until the first one's job is recorded before reading the spend total; no reservation/new job-status machinery introduced. Regression tests: apps/api/src/modules/ai/ai.service.spec.ts (lock acquired before spend read, enforcement still blocks over-limit tenants).",
+      "resolvedAt": "2026-09-13T20:58:39.582Z"
     }
   ],
   "evidenceIds": [
@@ -3906,7 +3923,18 @@
     "evid-614cd575",
     "evid-bef5f575",
     "evid-b7736771",
-    "evid-bb9605ea"
+    "evid-bb9605ea",
+    "evid-74bd4515",
+    "evid-742345b8",
+    "evid-0f3b5c22",
+    "evid-5941b4d3",
+    "evid-a1fee30c",
+    "evid-31e924c3",
+    "evid-46403900",
+    "evid-ede91ff8",
+    "evid-9aa529a6",
+    "evid-a9403d8e",
+    "evid-9f43168d"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
