@@ -104,7 +104,7 @@ describe('ArtistsService', () => {
       telefone: null,
       cpf_cnpj: null,
       manager_contato: null,
-      vinculo: 'independente',
+      vinculo: 'independent',
     }]);
     expect(result.data[0]).not.toHaveProperty('email_encrypted');
     expect(result.meta.total).toBe(1);
@@ -112,6 +112,24 @@ describe('ArtistsService', () => {
       'a.tenant_id = :tenantId',
       { tenantId: TENANT_A },
     );
+  });
+
+  it('find-924ed503: list() ignora um orderBy fora da allow-list (tentativa de SQL injection) e usa o fallback created_at', async () => {
+    const ds = makeDataSource();
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+
+    await service.list(TENANT_A, { orderBy: "id; DROP TABLE artists;--" } as any);
+
+    expect(ds._repo._qb.orderBy).toHaveBeenCalledWith('a.created_at', 'DESC');
+  });
+
+  it('find-924ed503: list() aceita um orderBy da allow-list normalmente', async () => {
+    const ds = makeDataSource();
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+
+    await service.list(TENANT_A, { orderBy: 'nome_artistico', ascending: true } as any);
+
+    expect(ds._repo._qb.orderBy).toHaveBeenCalledWith('a.nome_artistico', 'ASC');
   });
 
   it('findById() retorna artista quando pertence ao tenant', async () => {

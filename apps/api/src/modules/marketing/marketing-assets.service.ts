@@ -22,6 +22,8 @@ import type {
   UpdateMarketingAssetDto,
 } from './dto/marketing-assets.dto';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
+import { safeOrderBy } from '../../common/utils/safe-order-by';
 
 @Injectable()
 export class MarketingAssetsService {
@@ -72,9 +74,11 @@ export class MarketingAssetsService {
       });
     }
 
-    const orderBy = ['created_at', 'updated_at', 'title', 'status', 'asset_type'].includes(query.orderBy ?? '')
-      ? query.orderBy!
-      : 'updated_at';
+    const orderBy = safeOrderBy(
+      query.orderBy,
+      ['created_at', 'updated_at', 'title', 'status', 'asset_type'],
+      'updated_at',
+    );
     qb.orderBy(`a.${orderBy}`, query.ascending ? 'ASC' : 'DESC')
       .skip(query.offset ?? 0)
       .take(query.limit ?? 50);
@@ -109,8 +113,34 @@ export class MarketingAssetsService {
     });
   }
 
+  /**
+   * find-d0c3ebb4: marketing_project_id/artist_id/campaign_id/
+   * audiovisual_project_id/source_upload_id had no cross-tenant ownership
+   * check. company_id/creative_request_id are deliberately NOT checked here
+   * — neither has an established backing table anywhere in this codebase
+   * (no entity, no FK, no other reader), so guessing one would risk
+   * encoding a wrong mapping.
+   */
+  private async assertLinkedFks(tenantId: string, fields: {
+    marketing_project_id?: string | null; artist_id?: string | null; campaign_id?: string | null;
+    audiovisual_project_id?: string | null; source_upload_id?: string | null;
+  }): Promise<void> {
+    await assertSameTenantFk(this.ds!, 'marketing_projects', fields.marketing_project_id ?? undefined, tenantId, 'Projeto de marketing');
+    await assertSameTenantFk(this.ds!, 'artists', fields.artist_id ?? undefined, tenantId, 'Artista');
+    await assertSameTenantFk(this.ds!, 'campaigns', fields.campaign_id ?? undefined, tenantId, 'Campanha');
+    await assertSameTenantFk(this.ds!, 'audiovisual_projects', fields.audiovisual_project_id ?? undefined, tenantId, 'Projeto audiovisual');
+    await assertSameTenantFk(this.ds!, 'uploads', fields.source_upload_id ?? undefined, tenantId, 'Upload');
+  }
+
   async create(tenantId: string, userId: string, dto: CreateMarketingAssetDto): Promise<MarketingAssetEntity> {
     void this.assets;
+    await this.assertLinkedFks(tenantId, {
+      marketing_project_id: dto.marketingProjectId,
+      artist_id: dto.artistId,
+      campaign_id: dto.campaignId,
+      audiovisual_project_id: dto.audiovisualProjectId,
+      source_upload_id: dto.sourceUploadId,
+    });
     return this.ds!.transaction(async (manager) => {
       const assets = manager.getRepository(MarketingAssetEntity);
       const versions = manager.getRepository(MarketingAssetVersionEntity);
@@ -160,6 +190,16 @@ export class MarketingAssetsService {
 
   async update(tenantId: string, userId: string, id: string, dto: UpdateMarketingAssetDto): Promise<MarketingAssetEntity> {
     const current = await this.findById(tenantId, id);
+    // find-d0c3ebb4: buildMetadataPatch() persists these FK fields on
+    // update() too — only validate when the patch actually sets them
+    // (undefined means "unchanged", already validated at create time).
+    await this.assertLinkedFks(tenantId, {
+      marketing_project_id: dto.marketingProjectId,
+      artist_id: dto.artistId,
+      campaign_id: dto.campaignId,
+      audiovisual_project_id: dto.audiovisualProjectId,
+      source_upload_id: dto.sourceUploadId,
+    });
     const incomingFileUrl = dto.fileUrl ?? current.file_url;
     if (!incomingFileUrl) throw new BadRequestException('fileUrl is required');
 

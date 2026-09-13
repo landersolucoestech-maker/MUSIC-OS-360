@@ -9,6 +9,7 @@ import {
   WorkEntity,
 } from '../../database/entities';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
+import { safeOrderBy } from '../../common/utils/safe-order-by';
 import type {
   CoverArtTaskCreatedPayload,
   ProjectCompletedPayload,
@@ -58,7 +59,11 @@ export class MarketingProjectsService {
     if (query.artistId) qb.andWhere('mp.artist_id = :artistId', { artistId: query.artistId });
     if (query.campaignId) qb.andWhere('mp.campaign_id = :campaignId', { campaignId: query.campaignId });
 
-    const orderBy = this.resolveOrderBy(query.orderBy);
+    const orderBy = safeOrderBy(
+      query.orderBy,
+      ['created_at', 'updated_at', 'title', 'status', 'type', 'starts_at', 'ends_at'],
+      'created_at',
+    );
     qb.orderBy(`mp.${orderBy}`, query.ascending ? 'ASC' : 'DESC')
       .skip(query.offset ?? 0)
       .take(query.limit ?? 50);
@@ -289,11 +294,6 @@ export class MarketingProjectsService {
         deleted_at: null,
       } as never,
     });
-  }
-
-  private resolveOrderBy(orderBy?: string): string {
-    const allowed = new Set(['created_at', 'updated_at', 'title', 'status', 'type', 'starts_at', 'ends_at']);
-    return orderBy && allowed.has(orderBy) ? orderBy : 'created_at';
   }
 
   private toPatch(dto: UpdateMarketingProjectDto): Partial<MarketingProjectEntity> {

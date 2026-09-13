@@ -5,6 +5,7 @@ import { MarketingContentPostEntity } from '../../database/entities';
 import { MarketingPublishingQueueService } from '../../queues/services/marketing-publishing-queue.service';
 import type { CreateMarketingContentDto, QueryMarketingContentDto, UpdateMarketingContentDto } from './dto/marketing-contents.dto';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { safeOrderBy } from '../../common/utils/safe-order-by';
 
 @Injectable()
 export class MarketingContentsService {
@@ -32,9 +33,11 @@ export class MarketingContentsService {
     if (query.status) qb.andWhere('c.status = :status', { status: query.status });
     if (query.projectId) qb.andWhere('c.project_id = :projectId', { projectId: query.projectId });
 
-    const orderBy = ['created_at', 'updated_at', 'scheduled_for', 'title', 'status'].includes(query.orderBy ?? '')
-      ? query.orderBy!
-      : 'scheduled_for';
+    const orderBy = safeOrderBy(
+      query.orderBy,
+      ['created_at', 'updated_at', 'scheduled_for', 'title', 'status'],
+      'scheduled_for',
+    );
 
     qb.orderBy(`c.${orderBy}`, query.ascending ? 'ASC' : 'DESC')
       .skip(query.offset ?? 0)
