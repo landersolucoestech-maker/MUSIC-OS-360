@@ -42,6 +42,6 @@ describe("SchedulerFormModal — não grava campos formais em metadata", () => {
   });
 
   it("lê `participantes` primariamente da coluna real da entity, não só de metadata legado", () => {
-    expect(SOURCE).toMatch(/normalizeAgendaParticipants\(evento\?\.participantes \?\? meta\["participants"\]\)/);
+    expect(SOURCE).toMatch(/normalizeAgendaParticipants\(event\?\.participantes \?\? meta\["participants"\]\)/);
   });
 });
