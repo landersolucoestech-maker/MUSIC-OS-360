@@ -1,7 +1,7 @@
 import type { ClienteRef } from "@/shared/types/refs";
-import type { LicencaTipo, LicencaStatus } from "@/shared/types/enums";
+import type { LicenseType, LicenseStatus } from "@/shared/types/enums";
 
-export type { LicencaTipo, LicencaStatus };
+export type { LicenseType, LicenseStatus };
 
 export type RemunerationType = "FIXED" | "PERCENTAGE" | "FIXED_PLUS_PERCENTAGE";
 export type Currency = "BRL" | "USD" | "EUR";
@@ -14,11 +14,11 @@ export interface Licenca {
   work_id?: string | null;
   client_id?: string | null;
   projeto?: string | null;
-  type?: LicencaTipo | string | null;
+  type?: LicenseType | string | null;
   tipo_uso?: string | null;
   midia_destino?: string | null;
   territorio?: string | null;
-  status?: LicencaStatus | string | null;
+  status?: LicenseStatus | string | null;
   start_date?: string | null;
   end_date?: string | null;
   // Remuneração estruturada

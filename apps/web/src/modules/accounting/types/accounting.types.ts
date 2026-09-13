@@ -1,13 +1,13 @@
 import type { ArtistaRef, ClienteRef } from "@/shared/types/refs";
 import type {
-  TransacaoTipo,
-  TransacaoStatus,
-  TransacaoFormaPagamento,
-  NotaFiscalStatus,
-  NotaFiscalTipo,
+  TransactionType,
+  TransactionStatusValue,
+  TransactionPaymentMethod,
+  InvoiceStatusValue,
+  InvoiceType,
 } from "@/shared/types/enums";
 
-export type { TransacaoTipo, TransacaoStatus, TransacaoFormaPagamento, NotaFiscalStatus, NotaFiscalTipo };
+export type { TransactionType, TransactionStatusValue, TransactionPaymentMethod, InvoiceStatusValue, InvoiceType };
 
 /** Entidades gerenciais elegíveis para vínculo de um lançamento (rastreabilidade P&L). */
 export type TransactionEntityType =
@@ -29,15 +29,15 @@ export interface TransactionEntityLink {
   allocationPercent?: number;
 }
 
-export interface Transacao {
+export interface Transaction {
   id: string;
   user_id?: string;
   descricao: string;
-  type: TransacaoTipo | string;
+  type: TransactionType | string;
   categoria?: string | null;
   valor: number;
   data: string;
-  status?: TransacaoStatus | string | null;
+  status?: TransactionStatusValue | string | null;
   artist_id?: string | null;
   client_id?: string | null;
   venda_id?: string | null;
@@ -47,27 +47,27 @@ export interface Transacao {
   observacoes?: string | null;
   conciliado?: boolean | null;
   anexo_url?: string | null;
-  forma_pagamento?: TransacaoFormaPagamento | string | null;
+  forma_pagamento?: TransactionPaymentMethod | string | null;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;
 }
 
-export type TransacaoInsert = Omit<Transacao, "id" | "user_id" | "created_at" | "updated_at" | keyof { [key: string]: unknown }>;
-export type TransacaoUpdate = Partial<TransacaoInsert>;
+export type TransactionInsert = Omit<Transaction, "id" | "user_id" | "created_at" | "updated_at" | keyof { [key: string]: unknown }>;
+export type TransactionUpdate = Partial<TransactionInsert>;
 
-export interface TransacaoWithRelations extends Transacao {
+export interface TransactionWithRelations extends Transaction {
   artistas?: ArtistaRef | null;
   clientes?: ClienteRef | null;
 }
 
-export interface NotaFiscal {
+export interface Invoice {
   id: string;
   user_id?: string;
   numero?: string | null;
   serie?: string | null;
-  tipo_nota?: NotaFiscalTipo | string | null;
-  status?: NotaFiscalStatus | string | null;
+  tipo_nota?: InvoiceType | string | null;
+  status?: InvoiceStatusValue | string | null;
   tomador_nome?: string | null;
   tomador_cnpj?: string | null;
   valor_total?: number | null;
@@ -83,10 +83,10 @@ export interface NotaFiscal {
   [key: string]: unknown;
 }
 
-export type NotaFiscalInsert = Omit<NotaFiscal, "id" | "user_id" | "created_at" | "updated_at">;
-export type NotaFiscalUpdate = Partial<NotaFiscalInsert>;
+export type InvoiceInsert = Omit<Invoice, "id" | "user_id" | "created_at" | "updated_at">;
+export type InvoiceUpdate = Partial<InvoiceInsert>;
 
-export interface NotaFiscalWithRelations extends NotaFiscal {
+export interface InvoiceWithRelations extends Invoice {
   clientes?: ClienteRef | null;
 }
 

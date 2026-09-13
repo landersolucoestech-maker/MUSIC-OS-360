@@ -1,12 +1,12 @@
 /**
- * financeiro/mappers/entity-to-form.mapper.ts
- * Entity → form field values. Source of truth for Transacao hydration.
+ * accounting/services/entity-to-form.mapper.ts
+ * Entity → form field values. Source of truth for Transaction hydration.
  */
 
-import { initialFormData } from "@/modules/accounting/lib/transacao-constants";
-import type { TransacaoFormData } from "@/modules/accounting/lib/transacao-constants";
+import { initialFormData } from "@/modules/accounting/constants/transaction-constants";
+import type { TransactionFormData } from "@/modules/accounting/constants/transaction-constants";
 
-export interface TransacaoFormEntity {
+export interface TransactionFormEntity {
   id?: string;
   updated_at?: unknown;
   updatedAt?: unknown;
@@ -67,12 +67,12 @@ export interface TransacaoFormEntity {
   entityLinks?: unknown;
 }
 
-export function transacaoToFormFields(t: TransacaoFormEntity | null | undefined): TransacaoFormData {
+export function transactionToFormFields(t: TransactionFormEntity | null | undefined): TransactionFormData {
   if (!t) return { ...initialFormData };
   const str = (v: unknown): string => (v == null ? "" : String(v).trim());
   return {
     ...initialFormData,
-    entityLinks: Array.isArray(t.entityLinks) ? (t.entityLinks as TransacaoFormData["entityLinks"]) : [],
+    entityLinks: Array.isArray(t.entityLinks) ? (t.entityLinks as TransactionFormData["entityLinks"]) : [],
     tipoTransacao:       str(t.tipoTransacao      ?? t.tipo_transacao ?? t.type),
     tipoCliente:         str(t.tipoCliente        ?? t.tipo_cliente),
     categoria:           str(t.categoria),
@@ -80,7 +80,7 @@ export function transacaoToFormFields(t: TransacaoFormEntity | null | undefined)
     descricao:           str(t.descricao),
     valor:               str(t.valor),
     dataTransacao:       str(t.dataTransacao      ?? t.data_transacao ?? t.data),
-    status:              str(t.status)            || "pendente",
+    status:              str(t.status)            || "pending",
     observacao:          str(t.observacao         ?? t.observacoes),
     artistaVinculado:    str(t.artistaVinculado   ?? t.artist_id),
     projetoVinculado:    str(t.projetoVinculado   ?? t.project_id),

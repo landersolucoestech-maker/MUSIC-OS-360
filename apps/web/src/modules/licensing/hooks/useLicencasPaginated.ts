@@ -20,7 +20,7 @@ export function useLicencasPaginated({ page, pageSize, search, status, midia }: 
   if (midia) filters.midia_destino = midia;
 
   const result = usePaginatedDataQuery<LicencaWithRelations>({
-    queryKey: [...QUERY_KEYS.LICENCAS],
+    queryKey: [...QUERY_KEYS.LICENSES],
     table: "licencas",
     page: page + 1,
     pageSize,
@@ -55,7 +55,7 @@ const EMPTY_STATS: LicencaStats = { total: 0, byGroup: {} };
  */
 export function useLicencasStats() {
   const query = useQuery<LicencaStats>({
-    queryKey: [...QUERY_KEYS.LICENCAS, "stats"],
+    queryKey: [...QUERY_KEYS.LICENSES, "stats"],
     queryFn: ({ signal }) => api.get<LicencaStats>("/licenses/stats", { signal }),
     staleTime: 30_000,
   });

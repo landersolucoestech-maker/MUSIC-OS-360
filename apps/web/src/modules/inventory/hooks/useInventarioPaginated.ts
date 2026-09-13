@@ -21,7 +21,7 @@ export function useInventarioPaginated({ page, pageSize, search, status, categor
   if (localizacao) filters.localizacao = localizacao;
 
   const result = usePaginatedDataQuery<InventarioItem>({
-    queryKey: [...QUERY_KEYS.INVENTARIO],
+    queryKey: [...QUERY_KEYS.INVENTORY],
     table: "inventario",
     page: page + 1,
     pageSize,
@@ -56,7 +56,7 @@ const EMPTY_STATS: InventarioStats = { total: 0, byGroup: {} };
  */
 export function useInventarioStats() {
   const query = useQuery<InventarioStats>({
-    queryKey: [...QUERY_KEYS.INVENTARIO, "stats"],
+    queryKey: [...QUERY_KEYS.INVENTORY, "stats"],
     queryFn: ({ signal }) => api.get<InventarioStats>("/inventory/stats", { signal }),
     staleTime: 30_000,
   });

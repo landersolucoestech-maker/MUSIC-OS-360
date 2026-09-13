@@ -272,7 +272,7 @@ export function createFinancialTransactionFromPaidInvoice(input: {
 }) {
   return {
     type: "receita",
-    status: "pago",
+    status: "paid",
     valor: roundMoney(input.amount_paid),
     metadata: input,
   };

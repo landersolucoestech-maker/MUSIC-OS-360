@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { useTransacoes } from "@/modules/accounting/hooks/useTransacoes";
+import { useTransactions } from "@/modules/accounting/hooks/useTransactions";
 import { format, startOfMonth, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { formatCurrency } from "@/shared/lib/format-utils";
@@ -36,7 +36,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export function FinanceChart() {
-  const { transacoes } = useTransacoes();
+  const { transactions } = useTransactions();
 
   const chartData = useMemo(() => {
     const hoje = new Date();
@@ -51,7 +51,7 @@ export function FinanceChart() {
     }
 
     return meses.map(({ month, label }) => {
-      const mesTransacoes = transacoes.filter(t => {
+      const monthTransactions = transactions.filter(t => {
         const dataTransacao = safeParseDate(t.data);
         if (!dataTransacao) return false;
         return (
@@ -60,11 +60,11 @@ export function FinanceChart() {
         );
       });
 
-      const receitas = mesTransacoes
+      const receitas = monthTransactions
         .filter(t => t.type === "receita")
         .reduce((acc, t) => acc + (t.valor || 0), 0);
 
-      const despesas = mesTransacoes
+      const despesas = monthTransactions
         .filter(t => t.type === "despesa")
         .reduce((acc, t) => acc + (t.valor || 0), 0);
 
@@ -75,7 +75,7 @@ export function FinanceChart() {
         lucro: receitas - despesas,
       };
     });
-  }, [transacoes]);
+  }, [transactions]);
 
   return (
     <Card>

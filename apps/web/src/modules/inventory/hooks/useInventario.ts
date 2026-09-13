@@ -6,7 +6,7 @@ export type { InventarioItem, InventarioInsert, InventarioUpdate };
 
 export function useInventario() {
   const result = useDataQuery<InventarioItem>({
-    queryKey: [...QUERY_KEYS.INVENTARIO],
+    queryKey: [...QUERY_KEYS.INVENTORY],
     table: "inventario",
   }, {
     create: { success: "Item criado com sucesso!", error: "Erro ao criar item" },

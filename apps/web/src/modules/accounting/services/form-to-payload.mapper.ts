@@ -1,49 +1,68 @@
 /**
- * financeiro/mappers/form-to-payload.mapper.ts
- * Form field values → DB/API payload. Source of truth for Transacao persistence.
+ * accounting/services/form-to-payload.mapper.ts
+ * Form field values → DB/API payload. Source of truth for Transaction persistence.
  */
 
-import type { TransacaoFormData } from "@/modules/accounting/lib/transacao-constants";
+import type { TransactionFormData } from "@/modules/accounting/constants/transaction-constants";
 
-export interface TransacaoFormPayload {
+/**
+ * Um campo por conceito (ver .claude/rules/naming-canonical.md). O backend
+ * (`POST/PUT/PATCH /transactions`, validado por createTransactionSchema em
+ * apps/api/.../validators/transacao.validator.ts) só lê chaves camelCase
+ * PT-BR — as mesmas do próprio formulário (`TransactionFormData`). Manter um
+ * par snake_case/camelCase aqui era duplicação pura para os campos que
+ * também existiam em camelCase (tipoTransacao, tipoCliente, dataTransacao,
+ * observacao, artistaVinculado, projetoVinculado) — o snake_case nunca era
+ * lido pelo schema e era só payload morto.
+ *
+ * Para os campos que só existiam em snake_case (contrato_id, evento_id,
+ * fornecedor_cliente, orgao_arrecadador, item_investimento, motivo_viagem,
+ * nome_publicidade, forma_pagamento, tipo_pagamento, quantidade_parcelas,
+ * intervalo_parcelas, data_primeira_parcela, anexo_url, anexo_nome), o nome
+ * enviado não batia com nenhuma chave do schema — o backend descartava
+ * silenciosamente esses valores (zod strip de chave desconhecida). Isso
+ * incluía `forma_pagamento`, campo obrigatório em createTransactionSchema.
+ * Renomear para a chave camelCase real corrige esse descarte silencioso,
+ * não é só rename cosmético.
+ *
+ * centro_custo/competencia/conta_origem/conta_destino não têm contraparte
+ * camelCase porque o schema atual não declara esses campos (nem como
+ * snake_case, nem como camelCase) — não é uma duplicação, é um campo do
+ * formulário sem persistência no backend hoje; fora do escopo desta
+ * consolidação (registrar como débito à parte, não inventar um campo novo
+ * no schema aqui).
+ */
+export interface TransactionFormPayload {
   [key: string]: string | number | null;
-  type: string | null;
-  tipo_transacao: string | null;
   tipoTransacao: string | null;
-  tipo_cliente: string | null;
   tipoCliente: string | null;
   categoria: string | null;
   subcategoria: string | null;
   descricao: string | null;
   valor: number | null;
-  data: string | null;
-  data_transacao: string | null;
   dataTransacao: string | null;
   status: string;
   observacao: string | null;
-  observacoes: string | null;
-  artist_id: string | null;
   artistaVinculado: string | null;
-  project_id: string | null;
   projetoVinculado: string | null;
-  contrato_id: string | null;
-  evento_id: string | null;
-  fornecedor_cliente: string | null;
-  orgao_arrecadador: string | null;
+  contratoVinculado: string | null;
+  eventoVinculado: string | null;
+  fornecedorCliente: string | null;
+  orgaoArrecadador: string | null;
   centro_custo: string | null;
   competencia: string | null;
   conta_origem: string | null;
   conta_destino: string | null;
-  item_investimento: string | null;
-  motivo_viagem: string | null;
-  nome_publicidade: string | null;
-  forma_pagamento: string | null;
-  tipo_pagamento: string | null;
-  quantidade_parcelas: number | null;
-  intervalo_parcelas: string | null;
-  data_primeira_parcela: string | null;
-  anexo_url: string | null;
-  anexo_nome: string | null;
+  itemInvestimento: string | null;
+  motivoViagem: string | null;
+  nomePublicidade: string | null;
+  formaPagamento: string | null;
+  tipoPagamento: string | null;
+  quantidadeParcelas: string | null;
+  intervaloParcelas: string | null;
+  dataPrimeiraParcela: string | null;
+  anexoUrl: string | null;
+  anexoNome: string | null;
 }
 
 function parseMoney(value: string): number | null {
@@ -58,47 +77,39 @@ function parseMoney(value: string): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-export function formToTransacaoPayload(f: TransacaoFormData): TransacaoFormPayload {
+export function formToTransactionPayload(f: TransactionFormData): TransactionFormPayload {
   const str = (v: string): string | null => v.trim() || null;
   const attachmentUrl = str(f.anexoUrl);
 
   return {
-    type:                    str(f.tipoTransacao),
-    tipo_transacao:          str(f.tipoTransacao),
     tipoTransacao:           str(f.tipoTransacao),
-    tipo_cliente:            str(f.tipoCliente),
     tipoCliente:             str(f.tipoCliente),
     categoria:               str(f.categoria),
     subcategoria:            str(f.subcategoria),
     descricao:               str(f.descricao),
     valor:                   parseMoney(f.valor),
-    data:                    str(f.dataTransacao),
-    data_transacao:          str(f.dataTransacao),
     dataTransacao:           str(f.dataTransacao),
-    status:                  str(f.status) ?? "pendente",
+    status:                  str(f.status) ?? "pending",
     observacao:              str(f.observacao),
-    observacoes:             str(f.observacao),
-    artist_id:              str(f.artistaVinculado),
     artistaVinculado:        str(f.artistaVinculado),
-    project_id:              str(f.projetoVinculado),
     projetoVinculado:        str(f.projetoVinculado),
-    contrato_id:             str(f.contratoVinculado),
-    evento_id:               str(f.eventoVinculado),
-    fornecedor_cliente:      str(f.fornecedorCliente),
-    orgao_arrecadador:       str(f.orgaoArrecadador),
+    contratoVinculado:       str(f.contratoVinculado),
+    eventoVinculado:         str(f.eventoVinculado),
+    fornecedorCliente:       str(f.fornecedorCliente),
+    orgaoArrecadador:        str(f.orgaoArrecadador),
     centro_custo:            str(f.centroCusto ?? ""),
     competencia:             str(f.competencia ?? ""),
     conta_origem:            str(f.contaOrigem ?? ""),
     conta_destino:           str(f.contaDestino ?? ""),
-    item_investimento:       str(f.itemInvestimento),
-    motivo_viagem:           str(f.motivoViagem),
-    nome_publicidade:        str(f.nomePublicidade),
-    forma_pagamento:         str(f.formaPagamento),
-    tipo_pagamento:          str(f.tipoPagamento),
-    quantidade_parcelas:     str(f.quantidadeParcelas) ? parseInt(f.quantidadeParcelas, 10) : null,
-    intervalo_parcelas:      str(f.intervaloParcelas),
-    data_primeira_parcela:   str(f.dataPrimeiraParcela),
-    anexo_url:               attachmentUrl?.startsWith("blob:") ? null : attachmentUrl,
-    anexo_nome:              str(f.anexoNome),
+    itemInvestimento:        str(f.itemInvestimento),
+    motivoViagem:            str(f.motivoViagem),
+    nomePublicidade:         str(f.nomePublicidade),
+    formaPagamento:          str(f.formaPagamento),
+    tipoPagamento:           str(f.tipoPagamento),
+    quantidadeParcelas:      str(f.quantidadeParcelas),
+    intervaloParcelas:       str(f.intervaloParcelas),
+    dataPrimeiraParcela:     str(f.dataPrimeiraParcela),
+    anexoUrl:                attachmentUrl?.startsWith("blob:") ? null : attachmentUrl,
+    anexoNome:               str(f.anexoNome),
   };
 }

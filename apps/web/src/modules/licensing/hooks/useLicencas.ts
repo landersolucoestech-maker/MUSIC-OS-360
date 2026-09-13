@@ -6,7 +6,7 @@ export type { Licenca, LicencaInsert, LicencaUpdate, LicencaWithRelations };
 
 export function useLicencas() {
   const result = useDataQuery<LicencaWithRelations>({
-    queryKey: [...QUERY_KEYS.LICENCAS],
+    queryKey: [...QUERY_KEYS.LICENSES],
     table: "licencas",
     select: "*, clientes(*)",
   }, {

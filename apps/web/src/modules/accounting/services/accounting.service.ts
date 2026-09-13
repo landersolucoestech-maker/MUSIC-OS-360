@@ -2,50 +2,50 @@ import { storage } from "@/shared/lib/storage";
 
 export const accountingService = {
   async listTransactions() {
-    return storage.list("transacoes", { orderBy: { column: "data", ascending: false } });
+    return storage.list("transactions", { orderBy: { column: "data", ascending: false } });
   },
 
   async getTransaction(id: string) {
-    return storage.findById("transacoes", id);
+    return storage.findById("transactions", id);
   },
 
   async createTransaction(data: Record<string, unknown>) {
-    return storage.create("transacoes", data as never);
+    return storage.create("transactions", data as never);
   },
 
   async updateTransaction(id: string, patch: Record<string, unknown>) {
-    return storage.update("transacoes", id, patch);
+    return storage.update("transactions", id, patch);
   },
 
   async deleteTransaction(id: string) {
-    return storage.delete("transacoes", id);
+    return storage.delete("transactions", id);
   },
 
   async listByPeriod(start: string, end: string) {
-    const all = await storage.list<{ id: string; data: string }>("transacoes");
+    const all = await storage.list<{ id: string; data: string }>("transactions");
     return all.filter((t) => t.data >= start && t.data <= end);
   },
 
   async getSummary() {
-    const list = await storage.list<{ id: string; type: string; valor: number }>("transacoes");
+    const list = await storage.list<{ id: string; type: string; valor: number }>("transactions");
     const receitas = list.filter((t) => t.type === "receita").reduce((s, t) => s + (t.valor ?? 0), 0);
     const despesas = list.filter((t) => t.type === "despesa").reduce((s, t) => s + (t.valor ?? 0), 0);
     return { receitas, despesas, saldo: receitas - despesas, total: list.length };
   },
 
-  async listNotasFiscais() {
-    return storage.list("notas_fiscais");
+  async listInvoices() {
+    return storage.list("invoices");
   },
 
-  async getNotaFiscal(id: string) {
-    return storage.findById("notas_fiscais", id);
+  async getInvoice(id: string) {
+    return storage.findById("invoices", id);
   },
 
-  async createNotaFiscal(data: Record<string, unknown>) {
-    return storage.create("notas_fiscais", data as never);
+  async createInvoice(data: Record<string, unknown>) {
+    return storage.create("invoices", data as never);
   },
 
-  async updateNotaFiscal(id: string, patch: Record<string, unknown>) {
-    return storage.update("notas_fiscais", id, patch);
+  async updateInvoice(id: string, patch: Record<string, unknown>) {
+    return storage.update("invoices", id, patch);
   },
 };

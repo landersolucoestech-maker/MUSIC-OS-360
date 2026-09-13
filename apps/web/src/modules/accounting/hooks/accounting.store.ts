@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export type AccountingPeriod = "current_month" | "last_month" | "current_quarter" | "ytd" | "custom";
-export type AccountingView = "transactions" | "cashflow" | "reconciliation" | "reports" | "pl" | "nota-fiscal";
+export type AccountingView = "transactions" | "cashflow" | "reconciliation" | "reports" | "pl" | "invoices";
 
 interface AccountingFilters {
   period: AccountingPeriod;
