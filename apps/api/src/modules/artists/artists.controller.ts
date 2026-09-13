@@ -17,6 +17,7 @@ import type { JwtAuth }     from '../../core/guards/auth.guard';
 import { CreateArtistDto }  from './dto/create-artist.dto';
 import { UpdateArtistDto }  from './dto/update-artist.dto';
 import { QueryArtistDto }   from './dto/query-artist.dto';
+import { SyncPlatformProfileDto } from './dto/sync-platform-profile.dto';
 import { ArtistPlatformProfilesService } from './platform-profiles/artist-platform-profiles.service';
 import { ArtistMetricSnapshotsService } from './platform-profiles/artist-metric-snapshots.service';
 import { ArtistExternalProfileSyncService } from './platform-profiles/artist-external-profile-sync.service';
@@ -173,7 +174,7 @@ export class ArtistsController {
     @CurrentUser() user: { userId: string },
     @Param('id', ParseUUIDPipe) id: string,
     @Param('platform') platform: string,
-    @Body() body?: { profileUrl?: string; source?: string },
+    @Body() body?: SyncPlatformProfileDto,
   ) {
     return this.platformSync.enqueueManualSync({
       tenantId: tenant.id,

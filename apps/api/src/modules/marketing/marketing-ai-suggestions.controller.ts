@@ -26,6 +26,13 @@ export class MarketingAiSuggestionsController {
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
+    // dto-guard-allow: heterogeneous AI-suggestion metadata blob (varies per
+    // task kind -- lyrics/audio/cover/campaign), stored verbatim as
+    // activity_logs.metadata (jsonb). Service reads kind/targetName
+    // defensively via bracket access with fallbacks; the rest is never
+    // interpolated into SQL/HTML, only persisted as JSONB. A strict
+    // whitelisted DTO would silently drop the metadata a caller actually
+    // needs stored.
     @Body() suggestion: Record<string, unknown>,
   ) {
     return this.service.create(tenant.id, user?.userId ?? '', suggestion);

@@ -47,6 +47,7 @@ import { LeadsModule }             from './modules/leads/leads.module';
 import { LeadInteractionsModule }  from './modules/lead-interactions/lead-interactions.module';
 import { ContactsModule }          from './modules/contacts/contacts.module';
 import { ContactTimelineModule }   from './modules/contact-timeline/contact-timeline.module';
+import { OperationalListsModule }  from './modules/operational-lists/operational-lists.module';
 import { ContactAttachmentsModule } from './modules/contact-attachments/contact-attachments.module';
 import { ContactContractsModule }  from './modules/contact-contracts/contact-contracts.module';
 import { CampaignsModule }         from './modules/campaigns/campaigns.module';
@@ -157,6 +158,7 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
     InvoicesModule,
     ClientsModule,
     LeadsModule,
+    OperationalListsModule,
     LeadInteractionsModule,
     ContactsModule,
     ContactTimelineModule,
