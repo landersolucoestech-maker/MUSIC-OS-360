@@ -20,11 +20,22 @@ export type CreativeLayout = "full" | "split";
 export interface CreativeSlot {
   assetUrl: string;
   kind: "image" | "video";
+  /**
+   * The backend upload row id, when this asset was uploaded through this
+   * editor (useUploadToR2). Powers /uploads/:fileId/raw for static export
+   * (see marketing/creative/static-export.ts) -- serving the byte-stream
+   * through the API's own, code-controlled CORS policy instead of R2's
+   * separate origin, which cannot be assumed to allow crossOrigin canvas
+   * reads. Absent for assets picked from the project asset library (no
+   * upload-row association there); export degrades honestly for those.
+   */
+  fileId?: string;
 }
 
 export interface CreativeWatermarkConfig {
   enabled: boolean;
   assetUrl: string | null;
+  fileId?: string;
   opacity: number;
 }
 

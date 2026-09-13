@@ -10,9 +10,10 @@
  */
 
 import {
-  Controller, Post, Get, Param, Body,
+  Controller, Post, Get, Param, Body, Res,
   BadRequestException, NotFoundException, ServiceUnavailableException, Logger, Inject,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Audit } from '../../core/interceptors/audit.interceptor';
 import { DataSource, Repository } from 'typeorm';
@@ -171,5 +172,36 @@ export class UploadsController {
 
     const url = await this.storage.createDownloadUrl(row.r2_key, 3600);
     return { url, expiresIn: 3600 };
+  }
+
+  // ── GET /uploads/:fileId/raw ─────────────────────────────────────────────────
+  // Serve o byte-stream através do backend (mesma política CORS controlada da
+  // API), em vez do domínio R2 directo -- necessário para composição em
+  // <canvas> (crossOrigin) sem tainting, usada pela exportação estática do
+  // editor criativo de marketing.
+
+  @Get(':fileId/raw')
+  @RequireRole('viewer')
+  @ApiOperation({ summary: 'Stream do ficheiro através do backend (necessário para composição em canvas sem CORS tainting)' })
+  async raw(
+    @CurrentTenant() tenant: { id: string },
+    @Param('fileId') fileId: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    const repo = this.requireRepo();
+    const row = await repo
+      .createQueryBuilder('u')
+      .where('u.file_id = :fileId AND u.tenant_id = :tenantId', { fileId, tenantId: tenant.id })
+      .andWhere('u.deleted_at IS NULL')
+      .andWhere("u.status != 'deleted'")
+      .getOne();
+
+    if (!row) throw new NotFoundException('Arquivo não encontrado');
+
+    const { body, contentType, contentLength } = await this.storage.getObject(row.r2_key);
+    res.setHeader('Content-Type', contentType ?? row.mime_type ?? 'application/octet-stream');
+    if (contentLength) res.setHeader('Content-Length', String(contentLength));
+    res.setHeader('Cache-Control', 'private, max-age=300');
+    body.pipe(res);
   }
 }

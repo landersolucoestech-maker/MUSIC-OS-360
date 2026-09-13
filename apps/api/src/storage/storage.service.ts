@@ -204,6 +204,30 @@ export class StorageService {
     });
   }
 
+  /**
+   * Stream do objeto directamente do R2, através do backend.
+   *
+   * R2 é uma origem separada (pub-xxx.r2.dev / domínio custom) sem CORS
+   * garantido para leitura em <canvas> (crossOrigin="anonymous"). Este
+   * método permite servir o mesmo byte-stream a partir da própria API --
+   * que já tem uma política CORS explícita e controlada (create-app.ts) --
+   * para que o frontend possa compor imagens num canvas sem "tainting" e
+   * exportar um PNG real (composição estática do template criativo).
+   */
+  async getObject(key: string): Promise<{
+    body: NodeJS.ReadableStream;
+    contentType: string | undefined;
+    contentLength: number | undefined;
+  }> {
+    const client = this.getClient();
+    const res = await client.send(new GetObjectCommand({ Bucket: this.r2Bucket, Key: key }));
+    return {
+      body: res.Body as NodeJS.ReadableStream,
+      contentType: res.ContentType,
+      contentLength: res.ContentLength,
+    };
+  }
+
   async delete(key: string): Promise<void> {
     const client = this.getClient();
     await client.send(

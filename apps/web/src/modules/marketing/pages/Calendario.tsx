@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
+  Download,
   Heart,
   Link2,
   Lock,
@@ -83,6 +84,7 @@ import {
   ensureValidType,
   getFormatSpec,
   getPlatformFormats,
+  type AspectRatio,
   type FormatSpec,
   type PreviewChrome,
   type SocialPlatform,
@@ -95,6 +97,7 @@ import {
   type CreativeSlot,
 } from "../types/creative.types";
 import { CreativeTemplateSurface } from "./creative-template-surface";
+import { exportCreativeToPng, downloadBlob, CreativeExportError } from "../creative/static-export";
 import {
   initialContentForm,
   toMarketingContentInput,
@@ -443,7 +446,7 @@ function ContentScheduleModal({
       const localUrl = incoming[i].url;
       const category = file.type.startsWith("video/") ? "videos" : "images";
       uploadToR2({ file, category, entity: "marketing_content" })
-        .then((publicUrl) => {
+        .then(({ publicUrl }) => {
           setValues((prev) => ({
             ...prev,
             media: prev.media.map((item) => (item.url === localUrl ? { ...item, url: publicUrl, uploading: false } : item)),
@@ -682,6 +685,7 @@ function ContentScheduleModal({
                 onChange={(creative) => setValue("creative", creative)}
                 uploadToR2={uploadToR2}
                 projectAssets={projectAssetLibrary.data ?? []}
+                aspect={spec?.aspect ?? "1:1"}
               />
 
               <div className="grid gap-2 sm:grid-cols-2">
@@ -873,7 +877,7 @@ function AssetThumb({ asset }: { asset: MarketingAsset }) {
 // Criativo (creative editor — Template mode layered onto the existing modal)
 // ---------------------------------------------------------------------------
 
-type UploadFn = (opts: { file: File; category: "images" | "videos"; entity?: string }) => Promise<string>;
+type UploadFn = (opts: { file: File; category: "images" | "videos"; entity?: string }) => Promise<{ publicUrl: string; fileId: string }>;
 
 type CreativeSlotField = "primarySlot" | "secondarySlot" | "profileAvatar";
 
@@ -938,28 +942,45 @@ function CreativeSection({
   onChange,
   uploadToR2,
   projectAssets,
+  aspect,
 }: {
   creative: CreativeConfig;
   onChange: (next: CreativeConfig) => void;
   uploadToR2: UploadFn;
   projectAssets: MarketingAsset[];
+  aspect: AspectRatio;
 }) {
   const [uploadingField, setUploadingField] = useState<CreativeSlotField | "watermark" | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const isTemplate = creative.mode === "template";
   const isSplit = creative.layout === "split";
+
+  const handleExportPng = async () => {
+    setIsExporting(true);
+    setExportError(null);
+    try {
+      const blob = await exportCreativeToPng(creative, aspect);
+      downloadBlob(blob, `${creative.templateKey || "criativo"}.png`);
+    } catch (err) {
+      setExportError(err instanceof CreativeExportError ? err.message : "Falha inesperada ao exportar imagem.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const uploadSlot = (file: File, field: CreativeSlotField) => {
     setUploadingField(field);
     const kind: "image" | "video" = file.type.startsWith("video/") ? "video" : "image";
     uploadToR2({ file, category: kind === "video" ? "videos" : "images", entity: "marketing_content_creative" })
-      .then((assetUrl) => onChange({ ...creative, [field]: { assetUrl, kind }, renderState: "dirty" }))
+      .then(({ publicUrl, fileId }) => onChange({ ...creative, [field]: { assetUrl: publicUrl, kind, fileId }, renderState: "dirty" }))
       .finally(() => setUploadingField(null));
   };
 
   const uploadWatermark = (file: File) => {
     setUploadingField("watermark");
     uploadToR2({ file, category: "images", entity: "marketing_content_creative" })
-      .then((assetUrl) => onChange({ ...creative, watermark: { ...creative.watermark, assetUrl }, renderState: "dirty" }))
+      .then(({ publicUrl, fileId }) => onChange({ ...creative, watermark: { ...creative.watermark, assetUrl: publicUrl, fileId }, renderState: "dirty" }))
       .finally(() => setUploadingField(null));
   };
 
@@ -1164,9 +1185,21 @@ function CreativeSection({
             )}
           </div>
 
-          <p className="rounded-md border border-dashed border-border bg-background/50 p-2 text-[10px] leading-relaxed text-muted-foreground">
-            A composição final (render/export) ainda não está disponível nesta versão — a configuração é salva e reaberta normalmente, mas agendar publicação via integração exige uma mídia final renderizada.
-          </p>
+          <div className="space-y-1.5 border-t border-border pt-2.5">
+            <button
+              type="button"
+              onClick={handleExportPng}
+              disabled={isExporting}
+              className="flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted disabled:opacity-60"
+            >
+              {isExporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+              {isExporting ? "Exportando..." : "Exportar imagem (PNG)"}
+            </button>
+            {exportError && <p className="text-[10px] text-destructive">{exportError}</p>}
+            <p className="rounded-md border border-dashed border-border bg-background/50 p-2 text-[10px] leading-relaxed text-muted-foreground">
+              A exportação em imagem estática (PNG) compõe o template real com a mídia enviada. Vídeo não tem exportação de frame estático nesta versão, e agendar publicação via integração externa para conteúdo em modo Template ainda exige uma mídia final renderizada por um pipeline dedicado.
+            </p>
+          </div>
         </div>
       )}
     </FieldBlock>

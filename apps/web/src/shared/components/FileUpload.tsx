@@ -181,7 +181,7 @@ export function FileUpload({
 
         try {
           setUploadingFiles((prev) => new Map(prev).set(fileId, 10));
-          const publicUrl = await uploadToR2({
+          const { publicUrl } = await uploadToR2({
             file,
             category: category ?? inferCategory(accept),
             entity,

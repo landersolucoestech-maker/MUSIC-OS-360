@@ -361,7 +361,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
     updateMusica(musicaId, '_uploading', true);
 
     try {
-      const publicUrl = await uploadToR2({
+      const { publicUrl } = await uploadToR2({
         file,
         category: "audio",
         entity:   "project",

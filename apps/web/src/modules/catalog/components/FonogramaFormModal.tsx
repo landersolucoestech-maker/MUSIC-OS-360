@@ -511,7 +511,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
     setArquivoAudio({ name: file.name, size: file.size });
     setAudioUploading(true);
     try {
-      const publicUrl = await uploadAudioToR2({
+      const { publicUrl } = await uploadAudioToR2({
         file,
         category: "audio",
         entity:   "phonogram",

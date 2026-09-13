@@ -385,7 +385,7 @@ export function LeadFormModal({
     for (const file of Array.from(files)) {
       const extension = file.name.includes(".") ? file.name.split(".").pop() ?? "" : "";
       try {
-        const publicUrl = await uploadToR2({ file, category: "documents", entity: "lead" });
+        const { publicUrl } = await uploadToR2({ file, category: "documents", entity: "lead" });
         const upload: LeadUpload = {
           id: newId(),
           fileName: file.name,

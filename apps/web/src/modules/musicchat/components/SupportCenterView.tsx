@@ -822,7 +822,7 @@ export function SupportCenterView({
     for (const file of files) {
       const kind = resolveAttachmentKind(file.type, file.name);
       try {
-        const publicUrl = await uploadAttachment({ file, category: attachmentCategoryFor(kind), entity: "conversation" });
+        const { publicUrl } = await uploadAttachment({ file, category: attachmentCategoryFor(kind), entity: "conversation" });
         setPendingAttachments((prev) => {
           const next = [
             ...prev,
@@ -922,7 +922,7 @@ export function SupportCenterView({
         const name = `audio-atendimento-${new Date().toISOString().replace(/[:.]/g, "-")}.${extension}`;
         const audioFile = new File([blob], name, { type: blob.type || "audio/webm" });
         void uploadAttachment({ file: audioFile, category: "audio", entity: "conversation" })
-          .then((publicUrl) => {
+          .then(({ publicUrl }) => {
             setPendingAttachments((prev) => {
               const next = [...prev, { kind: "audio" as const, name, mime: blob.type || "audio/webm", url: publicUrl }];
               if (selectedConversation) persistAttachments(selectedConversation.id, next);

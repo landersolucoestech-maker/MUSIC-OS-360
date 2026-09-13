@@ -692,7 +692,7 @@ export function LancamentoFormModal({
     updF(faixaId, "arquivoAudio", file);
     updF(faixaId, "_uploading", true);
     try {
-      const publicUrl = await uploadToR2({
+      const { publicUrl } = await uploadToR2({
         file,
         category: "audio",
         entity:   "release",
@@ -850,7 +850,7 @@ export function LancamentoFormModal({
   const handleCoverUpload = async (file: File) => {
     setCapaPrincipal(file);
     try {
-      const publicUrl = await uploadToR2({
+      const { publicUrl } = await uploadToR2({
         file,
         category: "images",
         entity:   "release",

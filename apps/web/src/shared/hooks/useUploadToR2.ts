@@ -46,7 +46,7 @@ function isR2NotConfigured(err: unknown): boolean {
 export function useUploadToR2() {
   const [isUploading, setIsUploading] = useState(false);
 
-  async function upload(opts: UploadToR2Options): Promise<string> {
+  async function upload(opts: UploadToR2Options): Promise<{ publicUrl: string; fileId: string }> {
     setIsUploading(true);
     try {
       // 1. Obter presigned URL do backend
@@ -80,7 +80,7 @@ export function useUploadToR2() {
       // 3. Confirmar upload no backend
       await api.post(`/uploads/${presign.fileId}/confirm`, {});
 
-      return presign.publicUrl;
+      return { publicUrl: presign.publicUrl, fileId: presign.fileId };
     } finally {
       setIsUploading(false);
     }
