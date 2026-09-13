@@ -1,0 +1,15 @@
+{
+  "id": "evid-3ce33965",
+  "createdAt": "2026-09-13T18:37:04.448Z",
+  "type": "COMMAND",
+  "label": "fresh: no PT/EN corruption artifacts",
+  "command": "node .claude/runtime/verify-naming-cluster-residual.mjs no-mixed-corruption",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "PASS: no 'documentsação'/'typeo'-style corruption artifacts found in apps/web/src or apps/api/src/modules/hr",
+  "stderrTail": "",
+  "workspaceFingerprint": "129d022f0ea128e885f602e790f7b318d81dc4c34c138dabcd2a1a53f431a872",
+  "fingerprintStatus": "BOUND",
+  "head": "86746d98fde07edd76f741499efe049b97c4053c",
+  "durationMs": 228
+}

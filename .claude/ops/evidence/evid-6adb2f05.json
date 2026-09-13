@@ -1,0 +1,12 @@
+{
+  "id": "evid-6adb2f05",
+  "createdAt": "2026-09-13T18:29:22.010Z",
+  "type": "REVIEW",
+  "reviewer": "ai-llm-systems-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Reviewed marketing-ai-suggestions.controller.ts/.service.ts, marketing.module.ts, apps/web marketing useMarketingAI.ts + providerRouter.ts, and the shared apps/api/src/modules/ai (AIController/AIService/dto) it routes through. Confirmed: tenant isolation correct (create/list scoped by tenant_id, no cross-tenant DB lookups feed the prompt); provider API keys sourced server-side only via ConfigService, never exposed to browser (frontend calls backend /ai/generate proxy, not the provider directly); client-supplied systemPrompt gated to manager+ role. Logged find-62e6b1b1 (MEDIUM, category G) for undelimited prompt-injection surface in providerRouter.ts and find-ff83efc6 (LOW, category A) for missing AI-endpoint rate limiting / non-atomic monthly-spend cap. No CRITICAL/HIGH issue found; no secret exposure found.",
+  "workspaceFingerprint": "3f5968a12b1f94284c1ae664f14a3f4e6aedad70ca860302178965d88e5c3d7c",
+  "fingerprintStatus": "BOUND",
+  "head": "86746d98fde07edd76f741499efe049b97c4053c"
+}

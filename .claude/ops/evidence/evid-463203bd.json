@@ -1,0 +1,15 @@
+{
+  "id": "evid-463203bd",
+  "createdAt": "2026-09-13T18:53:29.138Z",
+  "type": "COMMAND",
+  "label": "fresh3",
+  "command": "node .claude/runtime/verify-naming-cluster-residual.mjs operational-lists-wiring",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "PASS: OperationalListsModule is registered in app.module.ts imports (wired, not dangling)",
+  "stderrTail": "",
+  "workspaceFingerprint": "1d98b9a592a408e1cb62b055cb353e7e9dc16bfcc402cf3d0b610fb12b34c35d",
+  "fingerprintStatus": "BOUND",
+  "head": "86746d98fde07edd76f741499efe049b97c4053c",
+  "durationMs": 89
+}

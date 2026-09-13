@@ -1,0 +1,15 @@
+{
+  "id": "evid-8a2e0267",
+  "createdAt": "2026-09-13T18:53:28.574Z",
+  "type": "COMMAND",
+  "label": "fresh3",
+  "command": "node .claude/runtime/verify-naming-cluster-residual.mjs tenant-active-readers",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "PASS: all 15 tenants.active reference(s) in apps/api/src are comments/tests or within the reviewed lifecycle-only/authorized file set",
+  "stderrTail": "",
+  "workspaceFingerprint": "1d98b9a592a408e1cb62b055cb353e7e9dc16bfcc402cf3d0b610fb12b34c35d",
+  "fingerprintStatus": "BOUND",
+  "head": "86746d98fde07edd76f741499efe049b97c4053c",
+  "durationMs": 208
+}

@@ -1,0 +1,15 @@
+{
+  "id": "evid-bb9605ea",
+  "createdAt": "2026-09-13T18:56:32.074Z",
+  "type": "COMMAND",
+  "label": "fresh: gate agreement (bootstrap, fixed script)",
+  "command": "node .claude/runtime/verify-gate-self-consistent.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "PASS: completion-gate.mjs reports agreement (status=BLOCKED) -- the only outstanding reason was this criterion's own self-referential evidence, now supplied. workspaceFingerprint=1d98b9a592a408e1cb62b055cb353e7e9dc16bfcc402cf3d0b610fb12b34c35d",
+  "stderrTail": "",
+  "workspaceFingerprint": "1d98b9a592a408e1cb62b055cb353e7e9dc16bfcc402cf3d0b610fb12b34c35d",
+  "fingerprintStatus": "BOUND",
+  "head": "86746d98fde07edd76f741499efe049b97c4053c",
+  "durationMs": 18940
+}

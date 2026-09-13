@@ -1,0 +1,9 @@
+{
+  "id": "strict-na-incident",
+  "createdAt": "2026-09-13T18:27:12.373Z",
+  "title": "Disposition capability 'incident' for mission-e39d21fa closure",
+  "criterionIds": [],
+  "assignedAgent": "incident",
+  "status": "NOT_APPLICABLE_WITH_EVIDENCE",
+  "notApplicableReason": "mission-e39d21fa's actual scope (naming/billing/migration/governance-mechanism fixes) never required the 'incident' skill's workflow -- no task in this mission invoked it. Verified: grepped .claude/ops/records/task/*.json for 'incident' as assignedAgent or in any task title -- no match. Not a gap; this mission's real work simply never needed this capability."
+}

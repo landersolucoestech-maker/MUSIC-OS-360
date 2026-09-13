@@ -1,0 +1,15 @@
+{
+  "id": "evid-c31a8b46",
+  "createdAt": "2026-09-13T18:53:26.456Z",
+  "type": "COMMAND",
+  "label": "fresh3",
+  "command": "node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.mjs apps/web/src/modules/crm-relationships/hooks/useContacts.test.tsx apps/web/src/modules/crm-relationships/services/contacts.service.test.ts apps/web/src/modules/leads/hooks/useLeads.test.tsx apps/web/src/modules/leads/services/leads.service.test.ts apps/web/src/modules/leads/schemas/index.test.ts apps/web/src/modules/settings/hooks/useOperationalSettings.test.tsx",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[1m\u001b[7m\u001b[36m RUN \u001b[39m\u001b[27m\u001b[22m \u001b[36mv2.1.9 \u001b[39m\u001b[90mC:/Users/Usuario/Documents/MUSIC-OS-360/apps/web\u001b[39m\n\n \u001b[32m✓\u001b[39m src/modules/settings/hooks/useOperationalSettings.test.tsx \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 64\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/leads/services/leads.service.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 17\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/crm-relationships/services/contacts.service.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 17\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/leads/schemas/index.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 14\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/leads/hooks/useLeads.test.tsx \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 309\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/crm-relationships/hooks/useContacts.test.tsx \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 308\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m37 passed\u001b[39m\u001b[22m\u001b[90m (37)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:53:16\n\u001b[2m   Duration \u001b[22m 9.76s\u001b[2m (transform 580ms, setup 5.59s, collect 809ms, tests 728ms, environment 13.46s, prepare 1.50s)\u001b[22m",
+  "stderrTail": "",
+  "workspaceFingerprint": "1d98b9a592a408e1cb62b055cb353e7e9dc16bfcc402cf3d0b610fb12b34c35d",
+  "fingerprintStatus": "BOUND",
+  "head": "86746d98fde07edd76f741499efe049b97c4053c",
+  "durationMs": 11316
+}

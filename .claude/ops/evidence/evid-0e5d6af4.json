@@ -1,0 +1,12 @@
+{
+  "id": "evid-0e5d6af4",
+  "createdAt": "2026-09-13T18:27:11.617Z",
+  "type": "REVIEW",
+  "reviewer": "cost-performance-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Dunning sweep (dunning.service.ts + billing-enforcement.service.ts listTenantIdsRequiringDunningAttention) reviewed for cost risk: filtered WHERE status IN(...) scan (not full-table), daily cadence, stable jobId dedup (status_changed_at) preventing duplicate BullMQ/notification enqueues across cycles, bounded CYCLE_CONCURRENCY=5, no N+1 batch-avoidable pattern. No cost finding filed.",
+  "workspaceFingerprint": "3f5968a12b1f94284c1ae664f14a3f4e6aedad70ca860302178965d88e5c3d7c",
+  "fingerprintStatus": "BOUND",
+  "head": "86746d98fde07edd76f741499efe049b97c4053c"
+}

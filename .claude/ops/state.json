@@ -4,7 +4,7 @@
   "missionName": "resolve-worktree-86-diff",
   "status": "active",
   "createdAt": "2026-09-09T03:56:21.053Z",
-  "updatedAt": "2026-09-13T18:11:01.531Z",
+  "updatedAt": "2026-09-13T18:56:32.080Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": "L5",
@@ -38,7 +38,9 @@
           "text": "Every documentos->documents and tipo->type identifier rename touching apps/api/src/database/entities.ts, DTOs (create-artist.dto.ts, create-contract.dto.ts, create-employee.dto.ts, shares.dto.ts), services (artists.service.ts, artist-workflow.handler.ts, contracts.service.ts, hr.service.ts), report labels (report-form-contracts.ts, field-labels.pt-br.ts), and every touched apps/web file (ArtistaVisao360Modal.tsx, artist-form.definition.ts, artista.types.ts, ArtistaSignupPublic.tsx, ContratoFormModal.tsx + its .documentos-persist.guard.test.ts, ContratoViewModal.tsx, useDocuments.ts, contracts.types.ts, LeadFormModal.tsx, SharePendenteFormModal.tsx, ShareViewModal.tsx, GestaoShares.tsx, share-schema.ts, releases/types/index.ts, useDocumentosFuncionario.ts, RH.tsx, signing.contract.ts, storage.contract.ts, query-config.ts, landing/data.ts) has a matching row in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md; any identifier changed in the diff without a map row is a finding, not a silent pass.",
           "evidenceIds": [
             "evid-38f51e25",
-            "evid-8b567f11"
+            "evid-8b567f11",
+            "evid-77ccc0db",
+            "evid-8baabd95"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -61,7 +63,9 @@
           "text": "PT-BR user-facing labels/strings are not corrupted by the mechanical rename (the RenameDocumentosToDocuments migration's own docstring records a prior sed corrupting ~15 UI strings for the tipo rename) -- grep for mixed PT/EN artifacts (e.g. 'documentsação', 'typeo', stray 'documents' inside otherwise-Portuguese prose) in all touched apps/web and field-labels.pt-br.ts files returns zero matches.",
           "evidenceIds": [
             "evid-9a0d4e2d",
-            "evid-0b1ce6f6"
+            "evid-0b1ce6f6",
+            "evid-3ce33965",
+            "evid-dd759a65"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -79,7 +83,13 @@
             "evid-609a8e1a",
             "evid-2b993887",
             "evid-ccd86b6c",
-            "evid-c2eea613"
+            "evid-c2eea613",
+            "evid-ac23366e",
+            "evid-5800eb1f",
+            "evid-6639fe81",
+            "evid-07643420",
+            "evid-352f10c7",
+            "evid-292a4ff7"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -96,7 +106,13 @@
             "evid-305da6f0",
             "evid-0efcfc57",
             "evid-9eaa9bae",
-            "evid-c91a88cc"
+            "evid-c91a88cc",
+            "evid-313498db",
+            "evid-31329b78",
+            "evid-bcacf59d",
+            "evid-f8e4798a",
+            "evid-98236eae",
+            "evid-fca73712"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -326,7 +342,9 @@
           "evidenceIds": [
             "evid-ad871bb7",
             "evid-e0aad3ea",
-            "evid-89384817"
+            "evid-89384817",
+            "evid-50a0524c",
+            "evid-8a2e0267"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -539,7 +557,9 @@
           "text": "The operational-lists module (find-9a9fb661) disposition is resolved: either OperationalListsModule is added to app.module.ts's imports (or wherever feature modules are registered) and its controller route is confirmed reachable end-to-end, or it is explicitly disposed as REMOVE/deferred and its migrations (20260713000001, 20260713000002) are evaluated independently for whether they should still apply even if the module code is removed.",
           "evidenceIds": [
             "evid-796c265a",
-            "evid-b79bc487"
+            "evid-b79bc487",
+            "evid-574bc75a",
+            "evid-463203bd"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -556,7 +576,10 @@
           "text": "operational-lists.service.spec.ts is run and passes (or is deleted alongside the module if disposition is REMOVE) with fresh executed evidence bound to this workspace fingerprint.",
           "evidenceIds": [
             "evid-14cb930a",
-            "evid-430c666a"
+            "evid-430c666a",
+            "evid-18123fe7",
+            "evid-ea673f82",
+            "evid-61809c00"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -581,7 +604,10 @@
           "evidenceIds": [
             "evid-430b0ae4",
             "evid-e9acd93e",
-            "evid-97808a87"
+            "evid-97808a87",
+            "evid-5be50ab5",
+            "evid-a50a2759",
+            "evid-c31a8b46"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -676,7 +702,11 @@
             "evid-c30f8c61",
             "evid-dc35b7b2",
             "evid-3f886dc6",
-            "evid-f307a638"
+            "evid-f307a638",
+            "evid-64567d8a",
+            "evid-4da85d3b",
+            "evid-df3cd71b",
+            "evid-1d8a358e"
           ],
           "status": "closed"
         },
@@ -685,7 +715,11 @@
           "text": "find-7b40edd9 (86-count reconciliation) is either resolved by the orchestrator confirming which file set constitutes 'the 86', or explicitly accepted as unresolvable-from-git-status-alone with every file from the full git status output (tracked + meaningful untracked, cache/generated excluded) nonetheless mapped to a cluster/requirement in this mission's requirement set.",
           "evidenceIds": [
             "evid-000a5d14",
-            "evid-7c46585b"
+            "evid-7c46585b",
+            "evid-38e83ed5",
+            "evid-86ba7808",
+            "evid-a22bf4ff",
+            "evid-b08bb492"
           ],
           "status": "closed"
         },
@@ -695,7 +729,11 @@
           "evidenceIds": [
             "evid-a0a1d0e1",
             "evid-f0dac11b",
-            "evid-42a3d445"
+            "evid-42a3d445",
+            "evid-129a84cc",
+            "evid-99a66c15",
+            "evid-8b75fa54",
+            "evid-614cd575"
           ],
           "status": "closed"
         },
@@ -703,9 +741,13 @@
           "id": "ac-2e4da763",
           "text": "git log shows commits only (no push), each commit message traceable to the requirement id(s) it closes, and node .claude/runtime/completion-gate.mjs reports agreement with repository state before the mission is declared done.",
           "evidenceIds": [
-            "evid-2e95246e"
+            "evid-2e95246e",
+            "evid-8a259a86",
+            "evid-bef5f575",
+            "evid-b7736771",
+            "evid-bb9605ea"
           ],
-          "status": "open"
+          "status": "closed"
         }
       ],
       "createdAt": "2026-09-09T04:19:03.566Z"
@@ -3646,6 +3688,30 @@
       "disposition": null,
       "evidenceIds": [],
       "createdAt": "2026-09-13T16:45:20.869Z"
+    },
+    {
+      "id": "find-62e6b1b1",
+      "category": "G",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/marketing/ai/providers/providerRouter.ts",
+      "line": null,
+      "summary": "Marketing AI generate: instruction ('Responda exclusivamente com JSON...') and user-controlled fields (prompt, lyricText, targetName, audience, channels) are concatenated into one undelimited string and sent as the sole user-role message to /ai/generate with no systemPrompt set, so the JSON-only/task framing has no structural separation from attacker/user-controlled text -- classic prompt-injection surface (see .claude/rules/trust-boundaries.md); output is parsed and persisted server-side via a Record<unknown> DTO and later returned to tenant users.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-13T18:29:13.249Z"
+    },
+    {
+      "id": "find-ff83efc6",
+      "category": "A",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/ai/ai.service.ts",
+      "line": null,
+      "summary": "AIService.enforceMonthlyLimit (used by /ai/generate, called from marketing AI suggestions flow) has no per-request/per-minute throttling (no ThrottlerModule in repo) and the monthly cost cap is a non-atomic read-then-write (SUM query then later INSERT), so concurrent bursts from one tenant can pass the check before prior spend is recorded, overshooting the plan's monthlyAiUsd budget cap.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-13T18:29:15.448Z"
     }
   ],
   "evidenceIds": [
@@ -3796,7 +3862,51 @@
     "evid-0a86d8bc",
     "evid-98b0d009",
     "evid-2e9b3e1e",
-    "evid-f307a638"
+    "evid-f307a638",
+    "evid-64567d8a",
+    "evid-38e83ed5",
+    "evid-129a84cc",
+    "evid-0e5d6af4",
+    "evid-4da85d3b",
+    "evid-86ba7808",
+    "evid-99a66c15",
+    "evid-6adb2f05",
+    "evid-ac23366e",
+    "evid-5800eb1f",
+    "evid-313498db",
+    "evid-31329b78",
+    "evid-18123fe7",
+    "evid-5be50ab5",
+    "evid-77ccc0db",
+    "evid-3ce33965",
+    "evid-50a0524c",
+    "evid-574bc75a",
+    "evid-6639fe81",
+    "evid-07643420",
+    "evid-bcacf59d",
+    "evid-f8e4798a",
+    "evid-ea673f82",
+    "evid-a50a2759",
+    "evid-df3cd71b",
+    "evid-a22bf4ff",
+    "evid-8b75fa54",
+    "evid-8a259a86",
+    "evid-352f10c7",
+    "evid-292a4ff7",
+    "evid-98236eae",
+    "evid-fca73712",
+    "evid-61809c00",
+    "evid-c31a8b46",
+    "evid-8baabd95",
+    "evid-dd759a65",
+    "evid-8a2e0267",
+    "evid-463203bd",
+    "evid-1d8a358e",
+    "evid-b08bb492",
+    "evid-614cd575",
+    "evid-bef5f575",
+    "evid-b7736771",
+    "evid-bb9605ea"
   ],
   "checkpointIds": [],
   "touchedFiles": [],

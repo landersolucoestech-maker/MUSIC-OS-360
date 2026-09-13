@@ -1,0 +1,9 @@
+{
+  "id": "strict-na-mission-orchestrator",
+  "createdAt": "2026-09-13T18:27:12.292Z",
+  "title": "Disposition capability 'mission-orchestrator' for mission-e39d21fa closure",
+  "criterionIds": [],
+  "assignedAgent": "mission-orchestrator",
+  "status": "NOT_APPLICABLE_WITH_EVIDENCE",
+  "notApplicableReason": "The mission-orchestrator role was performed inline by the lead session throughout mission-e39d21fa (impact assessment, execution-graph selection, delegating bounded reviewer/implementer tasks, resolving conflicts, closing the completion gate) rather than as a separately dispatched capability with its own task record -- there is exactly one orchestrator per mission by design, and it IS the session doing this closure."
+}

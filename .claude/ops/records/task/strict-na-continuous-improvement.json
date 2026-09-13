@@ -1,0 +1,9 @@
+{
+  "id": "strict-na-continuous-improvement",
+  "createdAt": "2026-09-13T18:27:12.322Z",
+  "title": "Disposition capability 'continuous-improvement' for mission-e39d21fa closure",
+  "criterionIds": [],
+  "assignedAgent": "continuous-improvement",
+  "status": "NOT_APPLICABLE_WITH_EVIDENCE",
+  "notApplicableReason": "mission-e39d21fa's actual scope (naming/billing/migration/governance-mechanism fixes) never required the 'continuous-improvement' skill's workflow -- no task in this mission invoked it. Verified: grepped .claude/ops/records/task/*.json for 'continuous-improvement' as assignedAgent or in any task title -- no match. Not a gap; this mission's real work simply never needed this capability."
+}

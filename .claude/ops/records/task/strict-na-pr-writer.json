@@ -1,0 +1,9 @@
+{
+  "id": "strict-na-pr-writer",
+  "createdAt": "2026-09-13T18:27:12.384Z",
+  "title": "Disposition capability 'pr-writer' for mission-e39d21fa closure",
+  "criterionIds": [],
+  "assignedAgent": "pr-writer",
+  "status": "NOT_APPLICABLE_WITH_EVIDENCE",
+  "notApplicableReason": "mission-e39d21fa's actual scope (naming/billing/migration/governance-mechanism fixes) never required the 'pr-writer' skill's workflow -- no task in this mission invoked it. Verified: grepped .claude/ops/records/task/*.json for 'pr-writer' as assignedAgent or in any task title -- no match. Not a gap; this mission's real work simply never needed this capability."
+}

@@ -1,0 +1,15 @@
+{
+  "id": "evid-18123fe7",
+  "createdAt": "2026-09-13T18:34:51.931Z",
+  "type": "COMMAND",
+  "label": "fresh: operational-lists jest",
+  "command": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts modules/operational-lists",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "3f5968a12b1f94284c1ae664f14a3f4e6aedad70ca860302178965d88e5c3d7c",
+  "fingerprintStatus": "BOUND",
+  "head": "86746d98fde07edd76f741499efe049b97c4053c",
+  "durationMs": 76373
+}

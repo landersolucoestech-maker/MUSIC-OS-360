@@ -1,0 +1,15 @@
+{
+  "id": "evid-bef5f575",
+  "createdAt": "2026-09-13T18:53:59.192Z",
+  "type": "COMMAND",
+  "label": "fresh3",
+  "command": "node .claude/runtime/verify-gate-self-consistent.mjs",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "node:internal/errors:985\r\n  const err = new Error(message);\r\n              ^\r\n\r\nError: Command failed: C:\\Program Files\\nodejs\\node.exe .claude/runtime/completion-gate.mjs\r\n    at genericNodeError (node:internal/errors:985:15)\r\n    at wrappedFn (node:internal/errors:539:14)\r\n    at checkExecSyncError (node:child_process:925:11)\r\n    at execFileSync (node:child_process:961:15)\r\n    at file:///C:/Users/Usuario/Documents/MUSIC-OS-360/.claude/runtime/verify-gate-self-consistent.mjs:10:13\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:437:25)\r\n    at async node:internal/modules/esm/loader:639:26\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n  status: 1,\r\n  signal: null,\r\n  output: [\r\n    null,\r\n    '{\\n' +\r\n      '  \"status\": \"BLOCKED\",\\n' +\r\n      '  \"reasons\": [\\n' +\r\n      '    \"requirement req-570b5a8d criterion ac-2e4da763 has evidence but none is a fresh PASS bound to the current workspace fingerprint (stale or failing)\"\\n' +\r\n      '  ],\\n' +\r\n      '  \"warnings\": [],\\n' +\r\n      '  \"workspaceFingerprint\": \"1d98b9a592a408e1cb62b055cb353e7e9dc16bfcc402cf3d0b610fb12b34c35d\",\\n' +\r\n      '  \"missionId\": \"mission-e39d21fa\"\\n' +\r\n      '}\\n',\r\n    ''\r\n  ],\r\n  pid: 19656,\r\n  stdout: '{\\n' +\r\n    '  \"status\": \"BLOCKED\",\\n' +\r\n    '  \"reasons\": [\\n' +\r\n    '    \"requirement req-570b5a8d criterion ac-2e4da763 has evidence but none is a fresh PASS bound to the current workspace fingerprint (stale or failing)\"\\n' +\r\n    '  ],\\n' +\r\n    '  \"warnings\": [],\\n' +\r\n    '  \"workspaceFingerprint\": \"1d98b9a592a408e1cb62b055cb353e7e9dc16bfcc402cf3d0b610fb12b34c35d\",\\n' +\r\n    '  \"missionId\": \"mission-e39d21fa\"\\n' +\r\n    '}\\n',\r\n  stderr: ''\r\n}\r\n\r\nNode.js v24.15.0",
+  "workspaceFingerprint": "1d98b9a592a408e1cb62b055cb353e7e9dc16bfcc402cf3d0b610fb12b34c35d",
+  "fingerprintStatus": "BOUND",
+  "head": "86746d98fde07edd76f741499efe049b97c4053c",
+  "durationMs": 27474
+}

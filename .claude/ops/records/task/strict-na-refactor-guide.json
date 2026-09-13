@@ -1,0 +1,9 @@
+{
+  "id": "strict-na-refactor-guide",
+  "createdAt": "2026-09-13T18:27:12.400Z",
+  "title": "Disposition capability 'refactor-guide' for mission-e39d21fa closure",
+  "criterionIds": [],
+  "assignedAgent": "refactor-guide",
+  "status": "NOT_APPLICABLE_WITH_EVIDENCE",
+  "notApplicableReason": "mission-e39d21fa's actual scope (naming/billing/migration/governance-mechanism fixes) never required the 'refactor-guide' skill's workflow -- no task in this mission invoked it. Verified: grepped .claude/ops/records/task/*.json for 'refactor-guide' as assignedAgent or in any task title -- no match. Not a gap; this mission's real work simply never needed this capability."
+}

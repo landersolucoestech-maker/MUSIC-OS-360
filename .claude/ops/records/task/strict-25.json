@@ -4,5 +4,5 @@
   "title": "Review the untracked apps/api/src/modules/marketing/dto/marketing-ai-suggestions.dto.ts for AI/LLM-touching content and whether it is wired safely.",
   "criterionIds": [],
   "assignedAgent": "ai-llm-systems-reviewer",
-  "status": "DISPATCHED"
+  "status": "COMPLETED"
 }

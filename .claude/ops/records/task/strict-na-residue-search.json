@@ -1,0 +1,9 @@
+{
+  "id": "strict-na-residue-search",
+  "createdAt": "2026-09-13T18:27:12.417Z",
+  "title": "Disposition capability 'residue-search' for mission-e39d21fa closure",
+  "criterionIds": [],
+  "assignedAgent": "residue-search",
+  "status": "NOT_APPLICABLE_WITH_EVIDENCE",
+  "notApplicableReason": "mission-e39d21fa's actual scope (naming/billing/migration/governance-mechanism fixes) never required the 'residue-search' skill's workflow -- no task in this mission invoked it. Verified: grepped .claude/ops/records/task/*.json for 'residue-search' as assignedAgent or in any task title -- no match. Not a gap; this mission's real work simply never needed this capability."
+}
