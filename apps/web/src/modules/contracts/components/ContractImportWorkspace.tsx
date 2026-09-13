@@ -30,9 +30,9 @@ import { HighlightedPreview, A4Preview } from "@/modules/contracts/components/Co
 import { toast } from "sonner";
 import type {
   SemanticVariable,
-  TemplateContratoInsert,
-  TemplateContratoUpdate,
-  TemplateContrato,
+  ContractTemplateRowInsert,
+  ContractTemplateRowUpdate,
+  ContractTemplateRow,
 } from "@/modules/contracts/types/contracts.types";
 import { parseContractText } from "@/modules/contracts/services/semantic-parser.service";
 import { useVariableRegistry } from "@/modules/contracts/hooks/useVariableRegistry";
@@ -44,9 +44,9 @@ import { getExpectedUpdatedAt } from "@/shared/hooks/useConcurrencyConflict";
 interface ContractImportWorkspaceProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (data: TemplateContratoInsert) => void;
-  template?: TemplateContrato | null;
-  onEdit?: (id: string, data: TemplateContratoUpdate) => void;
+  onSave: (data: ContractTemplateRowInsert) => void;
+  template?: ContractTemplateRow | null;
+  onEdit?: (id: string, data: ContractTemplateRowUpdate) => void;
 }
 
 // ── Constants ──────────────────────────────────────────────────────────────

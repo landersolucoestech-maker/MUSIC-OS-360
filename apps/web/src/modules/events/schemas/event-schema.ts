@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { parseISO, isValid } from "date-fns";
 
-export const eventoSchema = z.object({
+export const eventSchema = z.object({
   title: z.string()
     .min(1, "Título do evento é obrigatório")
     .max(200, "Título deve ter no máximo 200 caracteres")
@@ -36,4 +36,4 @@ export const eventoSchema = z.object({
   observacoes: z.string().max(2000, "Observações deve ter no máximo 2000 caracteres").optional().or(z.literal("")),
 });
 
-export type EventoFormData = z.infer<typeof eventoSchema>;
+export type EventFormData = z.infer<typeof eventSchema>;

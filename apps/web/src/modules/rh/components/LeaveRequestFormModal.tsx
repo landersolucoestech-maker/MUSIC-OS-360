@@ -21,21 +21,21 @@ import {
 } from "@/shared/ui/select";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { feriasAusenciasSchema } from "@/modules/rh/lib/ferias-ausencias-schema";
+import { leaveRequestSchema } from "@/modules/rh/lib/ferias-ausencias-schema";
 import {
-  useFeriasAusencias,
-  TIPOS_AUSENCIA,
-  STATUS_AUSENCIA,
-} from "@/modules/rh/hooks/useFeriasAusencias";
-import type { FeriasAusencia, FeriasAusenciaInsert } from "@/modules/rh/hooks/useFeriasAusencias";
+  useLeaveRequests,
+  LEAVE_TYPES,
+  LEAVE_STATUS,
+} from "@/modules/rh/hooks/useLeaveRequests";
+import type { LeaveRequest, LeaveRequestInsert } from "@/modules/rh/hooks/useLeaveRequests";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
-import { useFuncionarios, type Funcionario } from "@/modules/rh/hooks/useFuncionarios";
+import { useEmployees, type Employee } from "@/modules/rh/hooks/useEmployees";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 
-interface FeriasAusenciasFormModalProps {
+interface LeaveRequestFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  ausencia?: FeriasAusencia | null;
+  ausencia?: LeaveRequest | null;
   mode: "create" | "edit" | "view";
 }
 
@@ -48,20 +48,20 @@ function calcDias(inicio: string, fim: string): number {
   return Math.max(0, Math.round(diff / (1000 * 60 * 60 * 24)) + 1);
 }
 
-export function FeriasAusenciasFormModal({
+export function LeaveRequestFormModal({
   open,
   onOpenChange,
   ausencia,
   mode,
-}: FeriasAusenciasFormModalProps) {
-  const { addFeriasAusencia, updateFeriasAusencia } = useFeriasAusencias();
-  const { isLoading: loadingFuncionarios } = useFuncionarios();
+}: LeaveRequestFormModalProps) {
+  const { addLeaveRequest, updateLeaveRequest } = useLeaveRequests();
+  const { isLoading: loadingFuncionarios } = useEmployees();
 
   const [funcionarioId, setFuncionarioId] = useState("");
   const [type, setTipo] = useState("");
   const [startDate, setDataInicio] = useState("");
   const [endDate, setDataFim] = useState("");
-  const [status, setStatus] = useState("pendente");
+  const [status, setStatus] = useState("pending");
   const [aprovadoPor, setAprovadoPor] = useState("");
   const [observacoes, setObservacoes] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -76,7 +76,7 @@ export function FeriasAusenciasFormModal({
       setTipo((ausencia.type as string) || "");
       setDataInicio((ausencia.start_date as string) || "");
       setDataFim((ausencia.end_date as string) || "");
-      setStatus((ausencia.status as string) || "pendente");
+      setStatus((ausencia.status as string) || "pending");
       setAprovadoPor((ausencia.aprovado_por as string) || "");
       setObservacoes((ausencia.observacoes as string) || "");
       setErrors({});
@@ -85,7 +85,7 @@ export function FeriasAusenciasFormModal({
       setTipo((ausencia.type as string) || "");
       setDataInicio((ausencia.start_date as string) || "");
       setDataFim((ausencia.end_date as string) || "");
-      setStatus((ausencia.status as string) || "pendente");
+      setStatus((ausencia.status as string) || "pending");
       setAprovadoPor((ausencia.aprovado_por as string) || "");
       setObservacoes((ausencia.observacoes as string) || "");
       setErrors({});
@@ -94,7 +94,7 @@ export function FeriasAusenciasFormModal({
       setTipo("");
       setDataInicio("");
       setDataFim("");
-      setStatus("pendente");
+      setStatus("pending");
       setAprovadoPor("");
       setObservacoes("");
       setErrors({});
@@ -112,13 +112,13 @@ export function FeriasAusenciasFormModal({
   };
 
   const validate = (): boolean => {
-    const result = feriasAusenciasSchema.safeParse({
-      funcionarioId,
+    const result = leaveRequestSchema.safeParse({
+      employeeId: funcionarioId,
       type,
       startDate,
       endDate,
-      status: status as "pendente" | "aprovado" | "rejeitado" | "em_andamento" | "concluido",
-      aprovadoPor: aprovadoPor || "",
+      status: status as "pending" | "approved" | "rejected" | "in_progress" | "completed",
+      approvedBy: aprovadoPor || "",
       observacoes: observacoes || "",
     });
 
@@ -131,7 +131,7 @@ export function FeriasAusenciasFormModal({
         }
       });
       // Map schema field names back to the original error keys
-      if (newErrors.funcionarioId) newErrors.funcionario_id = newErrors.funcionarioId;
+      if (newErrors.employeeId) newErrors.funcionario_id = newErrors.employeeId;
       if (newErrors.startDate) newErrors.start_date = newErrors.startDate;
       if (newErrors.endDate) newErrors.end_date = newErrors.endDate;
       setErrors(newErrors);
@@ -154,7 +154,7 @@ export function FeriasAusenciasFormModal({
       return;
     }
 
-    const data: FeriasAusenciaInsert = {
+    const data: LeaveRequestInsert = {
       funcionario_id: funcionarioId,
       type: type || null,
       start_date: startDate,
@@ -166,11 +166,11 @@ export function FeriasAusenciasFormModal({
     };
 
     if (mode === "create") {
-      addFeriasAusencia.mutate(data, {
+      addLeaveRequest.mutate(data, {
         onSuccess: () => onOpenChange(false),
       });
     } else if (mode === "edit" && ausencia) {
-      updateFeriasAusencia.mutate(
+      updateLeaveRequest.mutate(
         { id: ausencia.id, ...data, expectedUpdatedAt: getExpectedUpdatedAt(ausencia) },
         {
           onSuccess: () => onOpenChange(false),
@@ -187,7 +187,7 @@ export function FeriasAusenciasFormModal({
         ? "Editar Férias/Ausência"
         : "Visualizar Férias/Ausência";
 
-  const isPending = addFeriasAusencia.isPending || updateFeriasAusencia.isPending;
+  const isPending = addLeaveRequest.isPending || updateLeaveRequest.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -209,7 +209,7 @@ export function FeriasAusenciasFormModal({
         <div className="grid gap-4 py-4">
           <div className="space-y-2">
             <Label>Funcionário *</Label>
-            <AsyncEntityCombobox<Funcionario>
+            <AsyncEntityCombobox<Employee>
               table="funcionarios"
               value={funcionarioId || null}
               getLabel={(f) => f.nome ?? ""}
@@ -246,7 +246,7 @@ export function FeriasAusenciasFormModal({
                 <SelectValue placeholder="Selecione o tipo" />
               </SelectTrigger>
               <SelectContent>
-                {TIPOS_AUSENCIA.map((t) => (
+                {LEAVE_TYPES.map((t) => (
                   <SelectItem key={t} value={t}>
                     {t.charAt(0).toUpperCase() + t.slice(1)}
                   </SelectItem>
@@ -311,7 +311,7 @@ export function FeriasAusenciasFormModal({
                 <SelectValue placeholder="Selecione o status" />
               </SelectTrigger>
               <SelectContent>
-                {STATUS_AUSENCIA.map((s) => (
+                {LEAVE_STATUS.map((s) => (
                   <SelectItem key={s} value={s}>
                     {s.charAt(0).toUpperCase() + s.slice(1)}
                   </SelectItem>

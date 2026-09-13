@@ -22,32 +22,32 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { Loader2, User, Briefcase, Link2 } from "lucide-react";
 import {
-  useFuncionarios,
-  SETORES,
-  TIPOS_CONTRATO,
-  STATUS_FUNCIONARIO,
-} from "@/modules/rh/hooks/useFuncionarios";
-import type { Funcionario } from "@/modules/rh/hooks/useFuncionarios";
+  useEmployees,
+  DEPARTMENTS,
+  CONTRACT_TYPES,
+  EMPLOYEE_STATUS,
+} from "@/modules/rh/hooks/useEmployees";
+import type { Employee } from "@/modules/rh/hooks/useEmployees";
 import { useUsuarios } from "@/modules/settings/hooks/useUsuarios";
 import { maskCPF, maskPhone } from "@/shared/lib/masks";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { toast } from "sonner";
-import { funcionarioSchema } from "@/modules/rh/lib/funcionario-schema";
+import { employeeSchema } from "@/modules/rh/lib/funcionario-schema";
 
-interface FuncionarioFormModalProps {
+interface EmployeeFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  funcionario?: Funcionario | null;
+  funcionario?: Employee | null;
   mode: "create" | "edit" | "view";
 }
 
-export function FuncionarioFormModal({
+export function EmployeeFormModal({
   open,
   onOpenChange,
   funcionario,
   mode,
-}: FuncionarioFormModalProps) {
-  const { addFuncionario, updateFuncionario } = useFuncionarios();
+}: EmployeeFormModalProps) {
+  const { addEmployee, updateEmployee } = useEmployees();
   const { usuarios, isLoading: loadingUsuarios } = useUsuarios();
   const isViewMode = mode === "view";
 
@@ -65,7 +65,7 @@ export function FuncionarioFormModal({
   const [tipoContrato, setTipoContrato] = useState("");
   const [dataAdmissao, setDataAdmissao] = useState("");
   const [salarioBase, setSalarioBase] = useState<number | "">("");
-  const [status, setStatus] = useState("ativo");
+  const [status, setStatus] = useState("active");
   const [observacoes, setObservacoes] = useState("");
   const [vinculoUsuarioId, setVinculoUsuarioId] = useState("");
 
@@ -87,7 +87,7 @@ export function FuncionarioFormModal({
         setTipoContrato((funcionario.tipo_contrato as string) || "");
         setDataAdmissao((funcionario.data_admissao as string) || "");
         setSalarioBase(funcionario.salario != null ? Number(funcionario.salario) : "");
-        setStatus((funcionario.status as string) || "ativo");
+        setStatus((funcionario.status as string) || "active");
         setObservacoes((funcionario.observacoes as string) || "");
         setVinculoUsuarioId((funcionario.vinculo_usuario_id as string) || "");
       } else {
@@ -103,7 +103,7 @@ export function FuncionarioFormModal({
         setTipoContrato("");
         setDataAdmissao("");
         setSalarioBase("");
-        setStatus("ativo");
+        setStatus("active");
         setObservacoes("");
         setVinculoUsuarioId("");
       }
@@ -113,20 +113,20 @@ export function FuncionarioFormModal({
   }, [open, mode, funcionario]);
 
   const validate = (): boolean => {
-    const result = funcionarioSchema.safeParse({
-      nomeCompleto,
+    const result = employeeSchema.safeParse({
+      fullName: nomeCompleto,
       email: email || "",
       cpf: cpf || "",
       rg: rg || "",
-      dataNascimento: dataNascimento || "",
+      birthDate: dataNascimento || "",
       telefone: telefone || "",
       endereco: endereco || "",
       cargo: cargo || "",
       setor: setor || "",
-      tipoContrato: tipoContrato || "",
-      dataAdmissao: dataAdmissao || "",
-      salarioBase: salarioBase !== "" ? Number(salarioBase) : null,
-      status: status as "ativo" | "inativo" | "ferias" | "licenca",
+      contractType: tipoContrato || "",
+      hireDate: dataAdmissao || "",
+      baseSalary: salarioBase !== "" ? Number(salarioBase) : null,
+      status: status as "active" | "inactive" | "on_vacation" | "on_leave",
       observacoes: observacoes || "",
     });
 
@@ -139,7 +139,7 @@ export function FuncionarioFormModal({
         }
       });
       setErrors(newErrors);
-      if (newErrors.nomeCompleto || newErrors.email || newErrors.cpf || newErrors.rg || newErrors.dataNascimento || newErrors.telefone || newErrors.endereco) {
+      if (newErrors.fullName || newErrors.email || newErrors.cpf || newErrors.rg || newErrors.birthDate || newErrors.telefone || newErrors.endereco) {
         setActiveTab("pessoal");
       }
       return false;
@@ -173,9 +173,9 @@ export function FuncionarioFormModal({
 
     try {
       if (mode === "create") {
-        await addFuncionario.mutateAsync(data as any);
+        await addEmployee.mutateAsync(data as any);
       } else if (mode === "edit" && funcionario) {
-        await updateFuncionario.mutateAsync({
+        await updateEmployee.mutateAsync({
           id: funcionario.id,
           ...data,
           expectedUpdatedAt: getExpectedUpdatedAt(funcionario),
@@ -379,7 +379,7 @@ export function FuncionarioFormModal({
                     <SelectValue placeholder="Selecione o setor" />
                   </SelectTrigger>
                   <SelectContent>
-                    {SETORES.map((s) => (
+                    {DEPARTMENTS.map((s) => (
                       <SelectItem key={s} value={s}>
                         {s}
                       </SelectItem>
@@ -401,7 +401,7 @@ export function FuncionarioFormModal({
                     <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
                   <SelectContent>
-                    {TIPOS_CONTRATO.map((t) => (
+                    {CONTRACT_TYPES.map((t) => (
                       <SelectItem key={t} value={t}>
                         {t}
                       </SelectItem>
@@ -449,7 +449,7 @@ export function FuncionarioFormModal({
                     <SelectValue placeholder="Selecione o status" />
                   </SelectTrigger>
                   <SelectContent>
-                    {STATUS_FUNCIONARIO.map((s) => (
+                    {EMPLOYEE_STATUS.map((s) => (
                       <SelectItem key={s} value={s}>
                         {s.charAt(0).toUpperCase() + s.slice(1)}
                       </SelectItem>

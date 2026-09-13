@@ -21,28 +21,28 @@ import {
 import { Textarea } from "@/shared/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { folhaPagamentoSchema } from "@/modules/rh/lib/folha-pagamento-schema";
-import { useFolhaPagamento, STATUS_PAGAMENTO } from "@/modules/rh/hooks/useFolhaPagamento";
-import type { FolhaPagamento } from "@/modules/rh/hooks/useFolhaPagamento";
-import type { Funcionario } from "@/modules/rh/hooks/useFuncionarios";
+import { payrollEntrySchema } from "@/modules/rh/lib/folha-pagamento-schema";
+import { usePayroll, PAYMENT_STATUS } from "@/modules/rh/hooks/usePayroll";
+import type { PayrollEntry } from "@/modules/rh/hooks/usePayroll";
+import type { Employee } from "@/modules/rh/hooks/useEmployees";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 
-interface FolhaPagamentoFormModalProps {
+interface PayrollFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  registro?: FolhaPagamento | null;
+  registro?: PayrollEntry | null;
   mode: "create" | "edit" | "view";
 }
 
-export function FolhaPagamentoFormModal({
+export function PayrollFormModal({
   open,
   onOpenChange,
   registro,
   mode,
-}: FolhaPagamentoFormModalProps) {
-  const { addFolhaPagamento, updateFolhaPagamento } = useFolhaPagamento();
+}: PayrollFormModalProps) {
+  const { addPayrollEntry, updatePayrollEntry } = usePayroll();
 
   const [funcionarioId, setFuncionarioId] = useState("");
   const [mesReferencia, setMesReferencia] = useState("");
@@ -50,7 +50,7 @@ export function FolhaPagamentoFormModal({
   const [descontos, setDescontos] = useState<number | "">(0);
   const [bonus, setBonus] = useState<number | "">(0);
   const [dataPagamento, setDataPagamento] = useState("");
-  const [status, setStatus] = useState("pendente");
+  const [status, setStatus] = useState("pending");
   const [observacoes, setObservacoes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -69,7 +69,7 @@ export function FolhaPagamentoFormModal({
       setDescontos(0);
       setBonus(0);
       setDataPagamento("");
-      setStatus("pendente");
+      setStatus("pending");
       setObservacoes("");
     } else if (open && registro) {
       setFuncionarioId((registro.funcionario_id as string) || "");
@@ -78,7 +78,7 @@ export function FolhaPagamentoFormModal({
       setDescontos((registro.descontos as number) ?? 0);
       setBonus((registro.bonus as number) ?? 0);
       setDataPagamento((registro.data_pagamento as string) || "");
-      setStatus((registro.status as string) || "pendente");
+      setStatus((registro.status as string) || "pending");
       setObservacoes((registro.observacoes as string) || "");
     }
   }, [open, mode, registro]);
@@ -99,14 +99,14 @@ export function FolhaPagamentoFormModal({
   };
 
   const handleSubmit = async () => {
-    const validation = folhaPagamentoSchema.safeParse({
-      funcionarioId,
-      mesReferencia,
-      salarioBruto: salarioBruto !== "" ? Number(salarioBruto) : null,
+    const validation = payrollEntrySchema.safeParse({
+      employeeId: funcionarioId,
+      referenceMonth: mesReferencia,
+      grossSalary: salarioBruto !== "" ? Number(salarioBruto) : null,
       descontos: descontos !== "" ? Number(descontos) : null,
       bonus: bonus !== "" ? Number(bonus) : null,
-      dataPagamento: dataPagamento || "",
-      status: status as "pendente" | "processado" | "pago" | "cancelado",
+      paymentDate: dataPagamento || "",
+      status: status as "pending" | "processed" | "paid" | "cancelled",
       observacoes: observacoes || "",
     });
 
@@ -145,9 +145,9 @@ export function FolhaPagamentoFormModal({
 
     try {
       if (mode === "create") {
-        await addFolhaPagamento.mutateAsync(data);
+        await addPayrollEntry.mutateAsync(data);
       } else if (registro) {
-        await updateFolhaPagamento.mutateAsync({
+        await updatePayrollEntry.mutateAsync({
           id: registro.id,
           ...data,
           expectedUpdatedAt: getExpectedUpdatedAt(registro),
@@ -171,7 +171,7 @@ export function FolhaPagamentoFormModal({
 
   // Task I: resolve por ID direto (não depende do funcionário estar entre
   // os primeiros carregados por useFuncionarios() sem filtro).
-  const { entity: funcionarioSelecionado } = useEntityById<Funcionario>("funcionarios", funcionarioId || undefined);
+  const { entity: funcionarioSelecionado } = useEntityById<Employee>("funcionarios", funcionarioId || undefined);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -188,7 +188,7 @@ export function FolhaPagamentoFormModal({
         <div className="grid gap-4 py-4">
           <div className="space-y-2">
             <Label>Funcionário *</Label>
-            <AsyncEntityCombobox<Funcionario>
+            <AsyncEntityCombobox<Employee>
               table="funcionarios"
               value={funcionarioId || null}
               getLabel={(f) => `${f.nome ?? ""} - ${f.cargo || "Sem cargo"}`}
@@ -303,7 +303,7 @@ export function FolhaPagamentoFormModal({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {STATUS_PAGAMENTO.map((s) => (
+                  {PAYMENT_STATUS.map((s) => (
                     <SelectItem key={s} value={s}>
                       {s.charAt(0).toUpperCase() + s.slice(1)}
                     </SelectItem>

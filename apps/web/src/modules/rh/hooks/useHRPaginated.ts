@@ -2,11 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { api } from "@/shared/lib/api-client";
-import type { Funcionario } from "./useFuncionarios";
-import type { FolhaPagamento } from "./useFolhaPagamento";
-import type { FeriasAusencia } from "./useFeriasAusencias";
+import type { Employee } from "./useEmployees";
+import type { PayrollEntry } from "./usePayroll";
+import type { LeaveRequest } from "./useLeaveRequests";
 
-export interface UseFuncionariosPaginatedParams {
+export interface UseEmployeesPaginatedParams {
   page: number;
   pageSize: number;
   search?: string;
@@ -15,13 +15,13 @@ export interface UseFuncionariosPaginatedParams {
   enabled?: boolean;
 }
 
-export function useFuncionariosPaginated({ page, pageSize, search, status, setor, enabled = true }: UseFuncionariosPaginatedParams) {
+export function useEmployeesPaginated({ page, pageSize, search, status, setor, enabled = true }: UseEmployeesPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
   if (setor) filters.setor = setor;
 
-  const result = usePaginatedDataQuery<Funcionario>({
-    queryKey: [...QUERY_KEYS.FUNCIONARIOS],
+  const result = usePaginatedDataQuery<Employee>({
+    queryKey: [...QUERY_KEYS.EMPLOYEES],
     table: "funcionarios",
     page: page + 1,
     pageSize,
@@ -41,24 +41,24 @@ export function useFuncionariosPaginated({ page, pageSize, search, status, setor
   };
 }
 
-export interface FuncionarioStats {
+export interface EmployeeStats {
   total: number;
   byGroup: Record<string, number>;
 }
 
-const EMPTY_FUNCIONARIO_STATS: FuncionarioStats = { total: 0, byGroup: {} };
+const EMPTY_EMPLOYEE_STATS: EmployeeStats = { total: 0, byGroup: {} };
 
 /** GET /hr/employees/stats — contagem exata por status, tenant inteiro (Task H). */
-export function useFuncionariosStats() {
-  const query = useQuery<FuncionarioStats>({
-    queryKey: [...QUERY_KEYS.FUNCIONARIOS, "stats"],
-    queryFn: ({ signal }) => api.get<FuncionarioStats>("/hr/employees/stats", { signal }),
+export function useEmployeesStats() {
+  const query = useQuery<EmployeeStats>({
+    queryKey: [...QUERY_KEYS.EMPLOYEES, "stats"],
+    queryFn: ({ signal }) => api.get<EmployeeStats>("/hr/employees/stats", { signal }),
     staleTime: 30_000,
   });
-  return { stats: query.data ?? EMPTY_FUNCIONARIO_STATS, isLoading: query.isLoading, error: query.error };
+  return { stats: query.data ?? EMPTY_EMPLOYEE_STATS, isLoading: query.isLoading, error: query.error };
 }
 
-export interface UseFolhaPaginatedParams {
+export interface UsePayrollPaginatedParams {
   page: number;
   pageSize: number;
   search?: string;
@@ -67,13 +67,13 @@ export interface UseFolhaPaginatedParams {
   enabled?: boolean;
 }
 
-export function useFolhaPaginated({ page, pageSize, search, competencia, status, enabled = true }: UseFolhaPaginatedParams) {
+export function usePayrollPaginated({ page, pageSize, search, competencia, status, enabled = true }: UsePayrollPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (competencia) filters.competencia = competencia;
   if (status) filters.status = status;
 
-  const result = usePaginatedDataQuery<FolhaPagamento>({
-    queryKey: [...QUERY_KEYS.FOLHA_PAGAMENTO],
+  const result = usePaginatedDataQuery<PayrollEntry>({
+    queryKey: [...QUERY_KEYS.PAYROLL],
     table: "folha_pagamento",
     page: page + 1,
     pageSize,
@@ -93,7 +93,7 @@ export function useFolhaPaginated({ page, pageSize, search, competencia, status,
   };
 }
 
-export interface UseFeriasPaginatedParams {
+export interface UseLeaveRequestsPaginatedParams {
   page: number;
   pageSize: number;
   search?: string;
@@ -101,12 +101,12 @@ export interface UseFeriasPaginatedParams {
   enabled?: boolean;
 }
 
-export function useFeriasPaginated({ page, pageSize, search, status, enabled = true }: UseFeriasPaginatedParams) {
+export function useLeaveRequestsPaginated({ page, pageSize, search, status, enabled = true }: UseLeaveRequestsPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
 
-  const result = usePaginatedDataQuery<FeriasAusencia>({
-    queryKey: [...QUERY_KEYS.FERIAS_AUSENCIAS],
+  const result = usePaginatedDataQuery<LeaveRequest>({
+    queryKey: [...QUERY_KEYS.LEAVE_REQUESTS],
     table: "ferias_ausencias",
     page: page + 1,
     pageSize,

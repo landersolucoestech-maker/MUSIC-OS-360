@@ -18,16 +18,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { SortableTableHead } from "@/shared/components/SortableTableHead";
 import { nextTableSortState, sortTableRows, type TableSortState } from "@/shared/lib/table-sort";
 import {
-  useTemplatesContratos,
-  type TemplateContrato,
-  type TemplateContratoInsert,
-  type TemplateContratoUpdate,
-} from "@/modules/contracts/hooks/useTemplatesContratos";
+  useContractTemplates,
+  type ContractTemplateRow,
+  type ContractTemplateRowInsert,
+  type ContractTemplateRowUpdate,
+} from "@/modules/contracts/hooks/useContractTemplates";
 import { ContractImportWorkspace } from "@/modules/contracts/components/ContractImportWorkspace";
-import { TemplateContratoViewModal } from "@/modules/contracts/components/TemplateContratoViewModal";
+import { ContractTemplateViewModal } from "@/modules/contracts/components/ContractTemplateViewModal";
 import type { SemanticTemplateManifest } from "@/modules/contracts/types/contracts.types";
 
-function parseManifest(template: TemplateContrato): SemanticTemplateManifest | null {
+function parseManifest(template: ContractTemplateRow): SemanticTemplateManifest | null {
   const raw = template["variables_manifest"];
   if (!raw) return null;
   try {
@@ -38,11 +38,11 @@ function parseManifest(template: TemplateContrato): SemanticTemplateManifest | n
   }
 }
 
-function countVariables(template: TemplateContrato): number {
+function countVariables(template: ContractTemplateRow): number {
   return parseManifest(template)?.variables?.length ?? 0;
 }
 
-function getClauseTypes(template: TemplateContrato): string[] {
+function getClauseTypes(template: ContractTemplateRow): string[] {
   return parseManifest(template)?.clauseTypes ?? [];
 }
 
@@ -64,23 +64,23 @@ function formatDate(dateStr?: string): string {
   }
 }
 
-function templateCategory(template: TemplateContrato): string {
+function templateCategory(template: ContractTemplateRow): string {
   return template.tipo_servico === "semantico" ? "Semantico IA" : formatSlug(template.tipo_servico);
 }
 
-function templateStatus(template: TemplateContrato): string {
+function templateStatus(template: ContractTemplateRow): string {
   return template.ativo ? "Ativo" : "Inativo";
 }
 
-export default function TemplatesContratos() {
-  const { templates, isLoading, addTemplate, updateTemplate, deleteTemplate } = useTemplatesContratos();
+export default function ContractTemplates() {
+  const { templates, isLoading, addTemplate, updateTemplate, deleteTemplate } = useContractTemplates();
 
   const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<TemplateContrato | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<ContractTemplateRow | null>(null);
   const [selectedTemplateIds, setSelectedTemplateIds] = useState<string[]>([]);
 
   const [search, setSearch] = useState("");
@@ -134,15 +134,15 @@ export default function TemplatesContratos() {
     setSelectedTemplateIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   };
 
-  const handleSave = (data: TemplateContratoInsert) => {
+  const handleSave = (data: ContractTemplateRowInsert) => {
     addTemplate.mutate(data);
   };
 
-  const handleEditSave = (id: string, data: TemplateContratoUpdate) => {
+  const handleEditSave = (id: string, data: ContractTemplateRowUpdate) => {
     updateTemplate.mutate({ id, ...data });
   };
 
-  const handleDeleteClick = (template: TemplateContrato) => {
+  const handleDeleteClick = (template: ContractTemplateRow) => {
     setSelectedTemplate(template);
     setIsDeleteOpen(true);
   };
@@ -164,12 +164,12 @@ export default function TemplatesContratos() {
     reportBulkResult(result, "excluído", "template");
   };
 
-  const handleViewClick = (template: TemplateContrato) => {
+  const handleViewClick = (template: ContractTemplateRow) => {
     setSelectedTemplate(template);
     setIsViewOpen(true);
   };
 
-  const handleEditClick = (template: TemplateContrato) => {
+  const handleEditClick = (template: ContractTemplateRow) => {
     setSelectedTemplate(template);
     setIsEditOpen(true);
   };
@@ -436,7 +436,7 @@ export default function TemplatesContratos() {
         onEdit={handleEditSave}
       />
 
-      <TemplateContratoViewModal open={isViewOpen} onOpenChange={setIsViewOpen} template={selectedTemplate} />
+      <ContractTemplateViewModal open={isViewOpen} onOpenChange={setIsViewOpen} template={selectedTemplate} />
 
       <DeleteConfirmModal
         open={isDeleteOpen}

@@ -18,8 +18,9 @@ import { Plus, Search, ChevronDown, Trash2, Upload, FileAudio, Music, X, Eye, Li
 import type { ObraWithRelations } from "@/modules/catalog/hooks/useObras";
 import { useFonogramas, type FonogramaInsert, type FonogramaUpdate } from "@/modules/catalog/hooks/useFonogramas";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
-import type { Artista } from "@/modules/artist/hooks/useArtistas";
-import type { ProjetoWithRelations } from "@/modules/projects/hooks/useProjetos";
+import type { Artist } from "@/modules/artist/hooks/useArtists";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
+import type { ProjectWithRelations as ProjetoWithRelations } from "@/modules/projects/hooks/useProjects";
 import { ParticipanteViewModal } from "@/modules/catalog/components/ParticipanteViewModal";
 import { useCurrentOrgId } from "@/shared/hooks/useCurrentOrgId";
 import { useDebounce } from "@/shared/hooks/useDebounce";
@@ -99,7 +100,7 @@ interface FonogramaFormModalProps {
   fonograma?: FonogramaFormInput | null;
   mode: "create" | "edit" | "view";
   /** Chamado após salvar com sucesso — usado para abrir modal de contrato pré-preenchido */
-  onSaved?: (info: { title: string; observacoes: string }) => void;
+  onSaved?: (info: { title: string; notes: string }) => void;
 }
 
 const pickStr = (...values: Array<unknown>): string => {
@@ -183,7 +184,7 @@ const formatFileSize = (bytes: number) => {
 interface ArtistNameInputProps {
   value: string;
   onChange: (val: string) => void;
-  onSelect?: (a: { id: string; nome_artistico: string; nome_civil?: string | null }) => void;
+  onSelect?: (a: { id: string; stageName: string; nome_civil?: string | null }) => void;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
@@ -206,11 +207,12 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled, cla
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const { items: suggestions } = useEntityLookup<Artista>({
+  const { items: suggestionsWire } = useEntityLookup<ArtistWireRecord>({
     table: "artistas",
     search: inputText,
     enabled: open && inputText.trim().length > 0,
   });
+  const suggestions = suggestionsWire.map(wireToArtist);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
@@ -218,8 +220,8 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled, cla
     setOpen(true);
   };
 
-  const handleSelect = (a: Artista) => {
-    const display = a.nome_civil || a.nome_artistico;
+  const handleSelect = (a: Artist) => {
+    const display = a.legalName || a.stageName;
     setInputText(display);
     onChange(display);
     onSelect?.(a);
@@ -245,8 +247,8 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled, cla
               className="w-full text-left px-3 py-2 text-sm hover:bg-muted hover:text-foreground flex flex-col gap-0.5"
               onMouseDown={() => handleSelect(a)}
             >
-              <span className="font-medium">{a.nome_civil || a.nome_artistico}</span>
-              <span className="text-xs text-muted-foreground">{a.nome_artistico}</span>
+              <span className="font-medium">{a.legalName || a.stageName}</span>
+              <span className="text-xs text-muted-foreground">{a.stageName}</span>
             </button>
           ))}
         </div>
@@ -258,7 +260,7 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled, cla
 export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSaved }: FonogramaFormModalProps) {
   const { addFonograma, updateFonograma } = useFonogramas();
   const { orgId } = useCurrentOrgId();
-  const [viewArtista, setViewArtista] = useState<Artista | null>(null);
+  const [viewArtista, setViewArtista] = useState<Artist | null>(null);
 
   // Build initial obra vinculada from form-shape OR DB-shape (snake_case).
   // Em registros que vêm do banco apenas com work_id, a hidratação completa
@@ -302,7 +304,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   const [duracaoMin, setDuracaoMin] = useState(pickStr(fonograma?.duracaoMin, fonograma?.duracao_min) || initialDuracao.min);
   const [duracaoSeg, setDuracaoSeg] = useState(pickStr(fonograma?.duracaoSeg, fonograma?.duracao_seg) || initialDuracao.seg);
   const [instrumental, setInstrumental] = useState<boolean>(pickBool(fonograma?.instrumental) ?? false);
-  const [generoMusical, setGeneroMusical] = useState(pickStr(fonograma?.generoMusical, fonograma?.genero_musical));
+  const [generoMusical, setGeneroMusical] = useState(pickStr(fonograma?.generoMusical, fonograma?.musicGenre));
   const [classificacao, setClassificacao] = useState(pickStr(fonograma?.classificacao));
   const [midia, setMidia] = useState(pickStr(fonograma?.midia));
   const [nacional, setNacional] = useState<boolean>(pickBool(fonograma?.nacional) ?? true);
@@ -312,7 +314,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   const [paisPublicacao, setPaisPublicacao] = useState(pickStr(fonograma?.paisPublicacao, fonograma?.pais_publicacao));
   const [title, setTitle] = useState(pickStr(fonograma?.title));
   const [gravadora, setGravadora] = useState(pickStr(fonograma?.gravadora));
-  const [observacoes, setObservacoes] = useState(pickStr(fonograma?.observacoes));
+  const [observacoes, setObservacoes] = useState(pickStr(fonograma?.notes));
 
   // Participação
   const [participacao, setParticipacao] = useState<ParticipacaoCategoria>(() => {
@@ -572,14 +574,14 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       duracao: duracaoConcat,
       duracao_min: duracaoMin === "" ? null : Number(duracaoMin),
       duracao_seg: duracaoSeg === "" ? null : Number(duracaoSeg),
-      genero_musical: generoMusical || null,
+      musicGenre: generoMusical || null,
       midia: midia || null,
       classificacao: classificacao || null,
       pais_origem: paisOrigem || null,
       pais_publicacao: paisPublicacao || null,
       status: normalizeStatusForDb(status),
       gravadora: gravadora || null,
-      observacoes: observacoes || null,
+      notes: observacoes || null,
       work_id: obraVinculada && typeof obraVinculada.id === "string" ? obraVinculada.id : null,
       participacao: participacao as unknown as Json,
       arquivo_audio: arquivoAudio as unknown as Json,
@@ -650,7 +652,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       // Abre modal de contrato pré-preenchido após fechar o modal de fonograma
       onSaved?.({
         title: `Contrato de Fonograma – ${tituloSalvo}`,
-        observacoes: [
+        notes: [
           `Fonograma: ${tituloSalvo}`,
           obraVinculada?.title ? `Obra vinculada: ${obraVinculada.title}` : null,
           obraVinculada?.compositores ? `Compositores: ${obraVinculada.compositores}` : null,
@@ -717,13 +719,13 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                       // Busca por ID direto — não depende do artista estar entre os
                       // primeiros carregados; cai para busca por nome só quando o
                       // participante nunca foi vinculado a um artista cadastrado.
-                      const found = p.artist_id
-                        ? await storage.findById<Artista>("artistas", p.artist_id)
+                      const foundWire = p.artist_id
+                        ? await storage.findById<ArtistWireRecord>("artistas", p.artist_id)
                         : p.nome
-                          ? (await storage.listPaged<Artista>("artistas", { page: 1, pageSize: 5, filters: { search: p.nome } }))
+                          ? (await storage.listPaged<ArtistWireRecord>("artistas", { page: 1, pageSize: 5, filters: { search: p.nome } }))
                               .items.find(a => (a.nome_civil || a.nome_artistico) === p.nome)
                           : undefined;
-                      if (found) setViewArtista(found as Artista);
+                      if (foundWire) setViewArtista(wireToArtist(foundWire));
                     }}
                   >
                     <Eye className="w-4 h-4" />
@@ -845,7 +847,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                                 // de useProjetos() sem filtro, truncado em 50 por tenant).
                                 let musicosArr: Participante[] = [];
                                 if ((fullObra.project_id as string | null | undefined)) {
-                                  const projeto = await storage.findById<ProjetoWithRelations>("projetos", fullObra.project_id as string);
+                                  const projeto = await storage.findById<ProjetoWithRelations>("projects", fullObra.project_id as string);
                                   if (projeto?.descricao) {
                                     try {
                                       const normT = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
@@ -873,21 +875,21 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                                 let artistaNome = fullObra.artistas?.nome_artistico as string | undefined;
                                 let artistId = fullObra.artistas?.id as string | undefined;
                                 if (!artistaNome && (fullObra.artist_id as string | null | undefined)) {
-                                  const byId = await storage.findById<Artista>("artistas", fullObra.artist_id as string);
-                                  if (byId) { artistaNome = byId.nome_artistico; artistId = byId.id; }
+                                  const byId = await storage.findById<ArtistWireRecord>("artistas", fullObra.artist_id as string);
+                                  if (byId) { const a = wireToArtist(byId); artistaNome = a.stageName; artistId = a.id; }
                                 }
                                 if (!artistaNome && compositoresStr) {
                                   const firstComp = compositoresStr.split(",")[0]?.trim();
                                   if (firstComp) {
-                                    const { items: compMatches } = await storage.listPaged<Artista>("artistas", {
+                                    const { items: compMatches } = await storage.listPaged<ArtistWireRecord>("artistas", {
                                       page: 1, pageSize: 5, filters: { search: firstComp },
                                     });
-                                    const byName = compMatches.find((a: Artista) =>
-                                      norm(a.nome_artistico || "") === norm(firstComp) ||
-                                      norm((a as any).nome_civil || "") === norm(firstComp) ||
-                                      norm((a as any).nome || "") === norm(firstComp)
+                                    const byName = compMatches.map(wireToArtist).find((a: Artist) =>
+                                      norm(a.stageName || "") === norm(firstComp) ||
+                                      norm(a.legalName || "") === norm(firstComp) ||
+                                      norm(a.name || "") === norm(firstComp)
                                     );
-                                    if (byName) { artistaNome = byName.nome_artistico; artistId = byName.id; }
+                                    if (byName) { artistaNome = byName.stageName; artistId = byName.id; }
                                   }
                                 }
                                 const interpretes: Participante[] = artistaNome
@@ -970,7 +972,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                               compositores: Array.isArray(rec.compositores)
                                 ? rec.compositores.filter(Boolean).join(", ")
                                 : "",
-                              status: "registrado",
+                              status: "registered",
                             });
                             setBuscaObra("");
                             setBuscaOpen(false);

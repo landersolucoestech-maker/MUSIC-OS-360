@@ -3,21 +3,21 @@ import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import { Separator } from "@/shared/ui/separator";
 import { Printer, Download, Copy } from "lucide-react";
-import type { TemplateContrato } from "@/modules/contracts/hooks/useTemplatesContratos";
+import type { ContractTemplateRow } from "@/modules/contracts/hooks/useContractTemplates";
 import { A4Preview } from "@/modules/contracts/components/ContractA4Preview";
 import { toast } from "sonner";
 
-interface TemplateContratoViewModalProps {
+interface ContractTemplateViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  template: TemplateContrato | null;
+  template: ContractTemplateRow | null;
 }
 
-export function TemplateContratoViewModal({
+export function ContractTemplateViewModal({
   open,
   onOpenChange,
   template,
-}: TemplateContratoViewModalProps) {
+}: ContractTemplateViewModalProps) {
   if (!template) return null;
 
   const handlePrint = () => {

@@ -1,10 +1,10 @@
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { useDataQuery } from "@/shared/hooks/useDataQuery";
-import type { Funcionario, FuncionarioInsert, FuncionarioUpdate } from "../types/rh.types";
+import type { Employee, EmployeeInsert, EmployeeUpdate } from "../types/hr.types";
 
-export type { Funcionario, FuncionarioInsert, FuncionarioUpdate };
+export type { Employee, EmployeeInsert, EmployeeUpdate };
 
-export const SETORES = [
+export const DEPARTMENTS = [
   "Administrativo",
   "Financeiro",
   "Marketing",
@@ -17,7 +17,7 @@ export const SETORES = [
   "Operações",
 ] as const;
 
-export const TIPOS_CONTRATO = [
+export const CONTRACT_TYPES = [
   "CLT",
   "PJ",
   "Freelancer",
@@ -25,17 +25,17 @@ export const TIPOS_CONTRATO = [
   "Temporário",
 ] as const;
 
-export const STATUS_FUNCIONARIO = [
-  "ativo",
-  "inativo",
-  "férias",
-  "afastado",
-  "desligado",
+export const EMPLOYEE_STATUS = [
+  "active",
+  "inactive",
+  "on_vacation",
+  "on_leave",
+  "terminated",
 ] as const;
 
-export function useFuncionarios() {
-  const result = useDataQuery<Funcionario>({
-    queryKey: [...QUERY_KEYS.FUNCIONARIOS],
+export function useEmployees() {
+  const result = useDataQuery<Employee>({
+    queryKey: [...QUERY_KEYS.EMPLOYEES],
     table: "funcionarios",
   }, {
     create: { success: "Funcionário criado com sucesso!", error: "Erro ao criar funcionário" },
@@ -44,12 +44,12 @@ export function useFuncionarios() {
   });
 
   return {
-    funcionarios: result.data,
+    employees: result.data,
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,
-    addFuncionario: result.create,
-    updateFuncionario: result.update,
-    deleteFuncionario: result.delete,
+    addEmployee: result.create,
+    updateEmployee: result.update,
+    deleteEmployee: result.delete,
   };
 }

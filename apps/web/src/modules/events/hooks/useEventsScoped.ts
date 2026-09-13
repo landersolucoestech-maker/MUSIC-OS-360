@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { api } from "@/shared/lib/api-client";
-import type { EventoWithRelations } from "./useEventos";
+import type { EventWithRelations } from "./useEvents";
 
-export interface UseEventosScopedParams {
+export interface UseEventsScopedParams {
   /** ISO date-time bounds do período visível no calendário (dia/semana/mês/ano). */
   dateFrom: string;
   dateTo: string;
@@ -21,14 +21,14 @@ export interface UseEventosScopedParams {
  * Escopar por dateFrom/dateTo (coluna real `data`) resolve isso: cada
  * período tem, na prática, muito menos de 200 eventos.
  */
-export function useEventosScoped({ dateFrom, dateTo, search, type, status }: UseEventosScopedParams) {
+export function useEventsScoped({ dateFrom, dateTo, search, type, status }: UseEventsScopedParams) {
   const filters: Record<string, unknown> = { dateFrom, dateTo };
   if (type) filters.type = type;
   if (status) filters.status = status;
 
-  const result = usePaginatedDataQuery<EventoWithRelations>({
-    queryKey: [...QUERY_KEYS.EVENTOS, "scoped"],
-    table: "eventos",
+  const result = usePaginatedDataQuery<EventWithRelations>({
+    queryKey: [...QUERY_KEYS.EVENTS, "scoped"],
+    table: "events",
     page: 1,
     pageSize: 200,
     search,
@@ -36,7 +36,7 @@ export function useEventosScoped({ dateFrom, dateTo, search, type, status }: Use
   });
 
   return {
-    eventos: result.items,
+    events: result.items,
     total: result.total,
     isLoading: result.isLoading,
     isFetching: result.isFetching,
@@ -45,35 +45,37 @@ export function useEventosScoped({ dateFrom, dateTo, search, type, status }: Use
   };
 }
 
-export interface EventosKPIs {
+export interface EventsKPIs {
   total: number;
-  confirmados: number;
-  pendentes: number;
-  proximos7Dias: number;
+  confirmed: number;
+  pending: number;
+  upcoming7Days: number;
 }
 
-const EMPTY_KPIS: EventosKPIs = { total: 0, confirmados: 0, pendentes: 0, proximos7Dias: 0 };
+const EMPTY_KPIS: EventsKPIs = { total: 0, confirmed: 0, pending: 0, upcoming7Days: 0 };
 
 interface StatsResponse {
   total: number;
   byGroup: Record<string, number>;
-  proximos7Dias: number;
+  upcoming7Days: number;
 }
 
 /** GET /events/stats — KPIs exatos do tenant inteiro, independentes do período do calendário. */
-export function useEventosStats() {
+export function useEventsStats() {
   const query = useQuery<StatsResponse>({
-    queryKey: [...QUERY_KEYS.EVENTOS, "stats"],
+    queryKey: [...QUERY_KEYS.EVENTS, "stats"],
     queryFn: ({ signal }) => api.get<StatsResponse>("/events/stats", { signal }),
     staleTime: 30_000,
   });
 
   const data = query.data;
-  const kpis: EventosKPIs = !data ? EMPTY_KPIS : {
+  // byGroup agrupa por events.status real — valor canônico em inglês (ver
+  // @music-os-360/types EventStatus / EventsService.stats()), não pt-BR.
+  const kpis: EventsKPIs = !data ? EMPTY_KPIS : {
     total: data.total,
-    confirmados: data.byGroup["confirmado"] ?? 0,
-    pendentes: (data.byGroup["agendado"] ?? 0) + (data.byGroup["pendente"] ?? 0),
-    proximos7Dias: data.proximos7Dias,
+    confirmed: data.byGroup["confirmed"] ?? 0,
+    pending: (data.byGroup["planned"] ?? 0) + (data.byGroup["scheduled"] ?? 0),
+    upcoming7Days: data.upcoming7Days,
   };
 
   return { kpis, isLoading: query.isLoading, error: query.error };

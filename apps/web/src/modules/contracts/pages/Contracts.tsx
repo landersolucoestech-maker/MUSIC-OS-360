@@ -18,11 +18,11 @@ import {
 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
-import { ContratoWizard } from "@/modules/contracts/components/ContratoWizard";
-import { ContratoViewModal } from "@/modules/contracts/components/ContratoViewModal";
+import { ContractWizard } from "@/modules/contracts/components/ContractWizard";
+import { ContractViewModal } from "@/modules/contracts/components/ContractViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
-import { useContratos } from "@/modules/contracts/hooks/useContratos";
-import { useContratosPaginated, useContratosStats } from "@/modules/contracts/hooks/useContratosPaginated";
+import { useContracts } from "@/modules/contracts/hooks/useContracts";
+import { useContractsPaginated, useContractsStats } from "@/modules/contracts/hooks/useContractsPaginated";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { formatCurrency, formatDateDashes, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 import { formatCategoryLabel } from "@/shared/lib/category-labels";
@@ -35,9 +35,9 @@ import { usePagination } from "@/shared/hooks/usePagination";
 import { cn } from "@/shared/lib/utils";
 import { RequirePermission } from "@/shared/components/RequirePermission";
 
-export default function Contratos() {
+export default function Contracts() {
   const navigate = useNavigate();
-  const { contratos, isLoading, deleteContrato, addContrato } = useContratos();
+  const { contracts, isLoading, deleteContract, addContract } = useContracts();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const [wizardOpen, setWizardOpen] = useState(false);
@@ -47,9 +47,9 @@ export default function Contratos() {
 
   useEditQueryParam(
     "edit",
-    contratos,
+    contracts,
     useCallback((contrato) => setFormModal({ open: true, mode: "edit", contrato }), []),
-    "contratos",
+    "contracts",
   );
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -68,12 +68,12 @@ export default function Contratos() {
   useEffect(() => { setPage(0); }, [debouncedSearch, typeFilter, statusFilter, platformFilter]);
 
   const {
-    contratos: pageItems,
+    contracts: pageItems,
     total,
     isLoading: isLoadingPage,
     error: pageError,
     refetch: refetchPage,
-  } = useContratosPaginated({
+  } = useContractsPaginated({
     page,
     pageSize,
     search: debouncedSearch || undefined,
@@ -88,7 +88,7 @@ export default function Contratos() {
   // (vigente/assinado/aguardando/análise/encerrado) é o mesmo de sempre, só
   // que agora itera sobre {status: count} (5-10 entradas) em vez da lista
   // completa de contratos.
-  const { stats: contratosStats } = useContratosStats();
+  const { stats: contratosStats } = useContractsStats();
 
   const toggleSelectAll = () => {
     if (selectedIds.length === filteredContratos.length && filteredContratos.length > 0) {
@@ -103,7 +103,7 @@ export default function Contratos() {
     if (selectedIds.length === 0) return;
     const ids = selectedIds;
     setSelectedIds([]);
-    const result = await runBulkAction(ids, (id) => deleteContrato.mutateAsync(id));
+    const result = await runBulkAction(ids, (id) => deleteContract.mutateAsync(id));
     reportBulkResult(result, "excluído", "contrato");
   };
 
@@ -116,7 +116,7 @@ export default function Contratos() {
 
   const handleDelete = () => {
     if (deleteModal.contrato) {
-      deleteContrato.mutate(deleteModal.contrato.id);
+      deleteContract.mutate(deleteModal.contrato.id);
       setDeleteModal({ open: false });
     }
   };
@@ -125,17 +125,17 @@ export default function Contratos() {
   // Cada contrato cai em EXATAMENTE um bucket (status desconhecido → "Em Análise"),
   // garantindo Total = Vigentes + Assinados + Aguardando + Em Análise + Encerrados.
   const norm = (s?: string | null) => (s ?? "").toLowerCase();
-  const EM_VIGOR_STATUSES = new Set(["vigente", "ativo"]);
-  const ASSINADO_STATUSES = new Set(["assinado"]);
-  const AGUARDANDO_STATUSES = new Set(["aguardando_assinatura", "pendente"]);
-  const ENCERRADO_STATUSES = new Set(["expirado", "rescindido", "cancelado", "encerrado"]);
+  const EM_VIGOR_STATUSES = new Set(["in_force", "active"]);
+  const ASSINADO_STATUSES = new Set(["signed"]);
+  const AGUARDANDO_STATUSES = new Set(["awaiting_signature", "pendente"]);
+  const ENCERRADO_STATUSES = new Set(["expirado", "rescindido", "cancelled", "terminated"]);
   const bucketOf = (status?: string | null): "vigente" | "assinado" | "aguardando" | "encerrado" | "analise" => {
     const s = norm(status);
     if (EM_VIGOR_STATUSES.has(s)) return "vigente";
     if (ASSINADO_STATUSES.has(s)) return "assinado";
     if (AGUARDANDO_STATUSES.has(s)) return "aguardando";
     if (ENCERRADO_STATUSES.has(s)) return "encerrado";
-    return "analise"; // rascunho / em_analise / negociação / qualquer status desconhecido
+    return "analise"; // draft / under_review / negociação / qualquer status desconhecido
   };
 
   const tally = { vigente: 0, assinado: 0, aguardando: 0, analise: 0, encerrado: 0 };
@@ -258,15 +258,15 @@ export default function Contratos() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all-status">Todos os status</SelectItem>
-              <SelectItem value="assinado">Assinado</SelectItem>
-              <SelectItem value="vigente">Vigente</SelectItem>
-              <SelectItem value="ativo">Ativo</SelectItem>
-              <SelectItem value="aguardando_assinatura">Aguardando Assinatura</SelectItem>
+              <SelectItem value="signed">Assinado</SelectItem>
+              <SelectItem value="in_force">Vigente</SelectItem>
+              <SelectItem value="active">Ativo</SelectItem>
+              <SelectItem value="awaiting_signature">Aguardando Assinatura</SelectItem>
               <SelectItem value="pendente">Pendente</SelectItem>
-              <SelectItem value="rascunho">Rascunho</SelectItem>
+              <SelectItem value="draft">Rascunho</SelectItem>
               <SelectItem value="expirado">Expirado</SelectItem>
               <SelectItem value="rescindido">Rescindido</SelectItem>
-              <SelectItem value="cancelado">Cancelado</SelectItem>
+              <SelectItem value="cancelled">Cancelado</SelectItem>
             </SelectContent>
           </Select>
           <Select value={platformFilter} onValueChange={setPlatformFilter}>
@@ -434,23 +434,23 @@ export default function Contratos() {
     )}
 
       {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): ContratoWizard chama useContratos() de novo só para as
+          (Task C): ContractWizard chama useContracts() de novo só para as
           mutations de create/update, a mesma query do isLoading acima.
           Montá-lo só depois do isLoading virar false criava um observer
           novo nessa query; em erro (backend fora do ar), refetchOnMount
           reabria isLoading, o gate desmontava o wizard de novo — loop
           infinito de loading. Mantê-los sempre montados quebra o ciclo. */}
-      <ContratoViewModal
+      <ContractViewModal
         open={viewModal.open}
         onOpenChange={(open) => setViewModal({ ...viewModal, open })}
         contrato={viewModal.contrato}
         onEdit={() => setFormModal({ open: true, mode: "edit", contrato: viewModal.contrato })}
       />
-      <ContratoWizard
+      <ContractWizard
         open={wizardOpen}
         onOpenChange={setWizardOpen}
       />
-      <ContratoWizard
+      <ContractWizard
         open={formModal.open && formModal.mode === "edit"}
         onOpenChange={(open) => setFormModal({ ...formModal, open })}
         contrato={formModal.contrato}

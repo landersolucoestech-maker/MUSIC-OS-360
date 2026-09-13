@@ -37,7 +37,7 @@ export function useObrasPaginated({
   if (ecad) filters.ecad = ecad;
 
   const result = usePaginatedDataQuery<Obra>({
-    queryKey: [...QUERY_KEYS.OBRAS],
+    queryKey: [...QUERY_KEYS.WORKS],
     table: "obras",
     page: page + 1,
     pageSize,
@@ -59,7 +59,7 @@ export function useObrasPaginated({
 
 export function useObrasStats(query: { status?: string; tipoObra?: string; genero?: string; projectId?: string; ecad?: string } = {}) {
   const q = useQuery<GroupStatsResult>({
-    queryKey: [...QUERY_KEYS.OBRAS, "stats", query],
+    queryKey: [...QUERY_KEYS.WORKS, "stats", query],
     queryFn: ({ signal }) => {
       const params = new URLSearchParams();
       if (query.status) params.set("status", query.status);
@@ -77,7 +77,7 @@ export function useObrasStats(query: { status?: string; tipoObra?: string; gener
 
 export function useObrasGeneros() {
   const q = useQuery<string[]>({
-    queryKey: [...QUERY_KEYS.OBRAS, "stats", "generos"],
+    queryKey: [...QUERY_KEYS.WORKS, "stats", "generos"],
     queryFn: ({ signal }) => api.get<string[]>("/works/stats/generos", { signal }),
     staleTime: 60_000,
   });
@@ -105,7 +105,7 @@ export function useFonogramasPaginated({
   if (ecad) filters.ecad = ecad;
 
   const result = usePaginatedDataQuery<Fonograma>({
-    queryKey: [...QUERY_KEYS.FONOGRAMAS],
+    queryKey: [...QUERY_KEYS.PHONOGRAMS],
     table: "fonogramas",
     page: page + 1,
     pageSize,
@@ -127,7 +127,7 @@ export function useFonogramasPaginated({
 
 export function useFonogramasStats(query: { status?: string; genero?: string; obraVinculada?: string; ecad?: string } = {}) {
   const q = useQuery<GroupStatsResult>({
-    queryKey: [...QUERY_KEYS.FONOGRAMAS, "stats", query],
+    queryKey: [...QUERY_KEYS.PHONOGRAMS, "stats", query],
     queryFn: ({ signal }) => {
       const params = new URLSearchParams();
       if (query.status) params.set("status", query.status);
@@ -144,7 +144,7 @@ export function useFonogramasStats(query: { status?: string; genero?: string; ob
 
 export function useFonogramasGeneros() {
   const q = useQuery<string[]>({
-    queryKey: [...QUERY_KEYS.FONOGRAMAS, "stats", "generos"],
+    queryKey: [...QUERY_KEYS.PHONOGRAMS, "stats", "generos"],
     queryFn: ({ signal }) => api.get<string[]>("/phonograms/stats/generos", { signal }),
     staleTime: 60_000,
   });

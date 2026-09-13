@@ -12,8 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/shared/lib/utils";
 import { Calendar, Plus, Loader2, Eye, Pencil, Trash2, CalendarDays, CheckCircle2, Clock, CalendarClock, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/ui/dropdown-menu";
-import { useEventos } from "@/modules/events/hooks/useEventos";
-import { useEventosScoped, useEventosStats } from "@/modules/events/hooks/useEventosPaginated";
+import { useEvents } from "@/modules/events/hooks/useEvents";
+import { useEventsScoped, useEventsStats } from "@/modules/events/hooks/useEventsScoped";
 import { formatDate, formatCurrency } from "@/shared/lib/format-utils";
 import { SchedulerFormModal } from "@/modules/events/components/SchedulerFormModal";
 import { SchedulerViewModal } from "@/modules/events/components/SchedulerViewModal";
@@ -38,16 +38,20 @@ import {
 import { splitDateTime, combineDateTime } from "@/modules/events/lib/date-time";
 const getXLSX = () => import("xlsx");
 
-type Evento = Record<string, any>;
+type Event = Record<string, any>;
 
+// events.status é o valor real persistido pelo backend — canônico em inglês
+// (EventStatus de @music-os-360/types: planned/scheduled/confirmed/held/
+// completed/cancelled/postponed). Ver docs/NAMING_NORMALIZATION_CANONICAL_MAP.md.
 const getStatusBadge = (status: string) => {
   switch (status) {
-    case "confirmado": return <Badge variant="success">Confirmado</Badge>;
-    case "agendado":
-    case "pendente":
-    case "negociacao": return <Badge variant="warning">Pendente</Badge>;
-    case "realizado": return <Badge variant="info">Realizado</Badge>;
-    case "cancelado": return <Badge variant="danger">Cancelado</Badge>;
+    case "confirmed": return <Badge variant="success">Confirmado</Badge>;
+    case "planned":
+    case "scheduled": return <Badge variant="warning">Pendente</Badge>;
+    case "held":
+    case "completed": return <Badge variant="info">Realizado</Badge>;
+    case "cancelled": return <Badge variant="danger">Cancelado</Badge>;
+    case "postponed": return <Badge variant="neutral">Adiado</Badge>;
     default: return <Badge variant="neutral">{status?.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}</Badge>;
   }
 };
@@ -60,13 +64,15 @@ const VIEW_OPTIONS: { value: SchedulerViewMode; label: string }[] = [
 ];
 
 // Cor do chip por status (mesma identidade do calendário de conteúdo).
+// Chaves = events.status real (canônico em inglês, ver getStatusBadge acima).
 const STATUS_TONE: Record<string, string> = {
-  confirmado: "border-emerald-300/40 bg-emerald-400/15 text-emerald-700",
-  realizado: "border-sky-300/40 bg-sky-400/15 text-sky-700",
-  agendado: "border-amber-300/40 bg-amber-400/15 text-amber-700",
-  pendente: "border-amber-300/40 bg-amber-400/15 text-amber-700",
-  negociacao: "border-amber-300/40 bg-amber-400/15 text-amber-700",
-  cancelado: "border-rose-300/40 bg-rose-400/15 text-rose-700",
+  confirmed: "border-emerald-300/40 bg-emerald-400/15 text-emerald-700",
+  held: "border-sky-300/40 bg-sky-400/15 text-sky-700",
+  completed: "border-sky-300/40 bg-sky-400/15 text-sky-700",
+  planned: "border-amber-300/40 bg-amber-400/15 text-amber-700",
+  scheduled: "border-amber-300/40 bg-amber-400/15 text-amber-700",
+  cancelled: "border-rose-300/40 bg-rose-400/15 text-rose-700",
+  postponed: "border-slate-300/40 bg-slate-400/15 text-slate-700",
 };
 
 const TIPO_OPTIONS = [
@@ -83,14 +89,16 @@ const TIPO_OPTIONS = [
   { value: "reunioes", label: "Reuniões" },
 ];
 
+// value = events.status real enviado como filtro ao backend (e.status = :status,
+// ver EventsService.baseQb) — precisa bater com o valor canônico em inglês
+// persistido na coluna, não com o rótulo pt-BR exibido ao usuário.
 const STATUS_OPTIONS = [
   { value: "all-status", label: "Todos Status" },
-  { value: "confirmado", label: "Confirmado", dot: "bg-emerald-400" },
-  { value: "pendente", label: "Pendente", dot: "bg-amber-400" },
-  { value: "agendado", label: "Agendado", dot: "bg-amber-400" },
-  { value: "realizado", label: "Realizado", dot: "bg-sky-400" },
-  { value: "cancelado", label: "Cancelado", dot: "bg-rose-500" },
-  { value: "negociacao", label: "Negociação", dot: "bg-amber-400" },
+  { value: "confirmed", label: "Confirmado", dot: "bg-emerald-400" },
+  { value: "scheduled", label: "Agendado", dot: "bg-amber-400" },
+  { value: "held", label: "Realizado", dot: "bg-sky-400" },
+  { value: "cancelled", label: "Cancelado", dot: "bg-rose-500" },
+  { value: "postponed", label: "Adiado", dot: "bg-slate-400" },
 ];
 
 function ToolbarSelect({
@@ -121,8 +129,8 @@ function ToolbarSelect({
 }
 
 export default function Agenda() {
-  const { eventos: rawEventos, isLoading: loadingUnbounded, deleteEvento, addEvento } = useEventos();
-  const eventos = rawEventos as Evento[];
+  const { events: rawEvents, isLoading: loadingUnbounded, deleteEvent, addEvent } = useEvents();
+  const events = rawEvents as Event[];
   const { getOptionsByKind, getItemsByKind } = useOperationalSettings();
   const eventTypeOptions = getOptionsByKind("event_type");
   const typeOptions = useMemo(
@@ -141,9 +149,9 @@ export default function Agenda() {
     value === "all-type" ? undefined : normalizeToBackendType(value, granularToBackendType);
   const { getArtistParticipantById } = useAgendaParticipants();
 
-  const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; evento?: Evento }>({ open: false, mode: "create" });
-  const [viewModal, setViewModal] = useState<{ open: boolean; evento?: Evento }>({ open: false });
-  const [deleteModal, setDeleteModal] = useState<{ open: boolean; evento?: Evento }>({ open: false });
+  const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; event?: Event }>({ open: false, mode: "create" });
+  const [viewModal, setViewModal] = useState<{ open: boolean; event?: Event }>({ open: false });
+  const [deleteModal, setDeleteModal] = useState<{ open: boolean; event?: Event }>({ open: false });
   const [viewMode, setViewMode] = useState<SchedulerViewMode>("semana");
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [searchTerm, setSearchTerm] = useState("");
@@ -152,9 +160,9 @@ export default function Agenda() {
   const excelInputRef = useRef<HTMLInputElement>(null);
 
   // Bounds do período visível (dia/semana/mês/ano) — o calendário busca só
-  // os eventos desse período (Task H: sem isso, o fetch ficava preso ao
-  // limit=50 default do backend e sumia eventos silenciosamente em
-  // qualquer mês navegado, em tenants com mais de 50 eventos no total).
+  // os events desse período (Task H: sem isso, o fetch ficava preso ao
+  // limit=50 default do backend e sumia events silenciosamente em
+  // qualquer mês navegado, em tenants com mais de 50 events no total).
   const { periodStart, periodEnd } = useMemo(() => {
     if (viewMode === "dia") return { periodStart: startOfDay(currentDate), periodEnd: endOfDay(currentDate) };
     if (viewMode === "mes") return { periodStart: startOfMonth(currentDate), periodEnd: endOfMonth(currentDate) };
@@ -163,51 +171,51 @@ export default function Agenda() {
   }, [viewMode, currentDate]);
 
   const {
-    eventos: scopedEventosRaw, isLoading: isLoadingScoped, error: scopedError, refetch: refetchScoped,
-  } = useEventosScoped({
+    events: scopedEventsRaw, isLoading: isLoadingScoped, error: scopedError, refetch: refetchScoped,
+  } = useEventsScoped({
     dateFrom: periodStart.toISOString(),
     dateTo: periodEnd.toISOString(),
     type: typeFilterBackendValue(typeFilter),
     status: statusFilter !== "all-status" ? statusFilter : undefined,
   });
-  const scopedEventos = scopedEventosRaw as Evento[];
+  const scopedEvents = scopedEventsRaw as Event[];
 
-  const { kpis: metricas } = useEventosStats();
+  const { kpis: metrics } = useEventsStats();
 
-  const getEventoParticipants = useMemo(() => (evento: Evento) => {
-    const meta = (evento.metadata as Record<string, unknown> | undefined) ?? {};
+  const getEventParticipants = useMemo(() => (event: Event) => {
+    const meta = (event.metadata as Record<string, unknown> | undefined) ?? {};
     const stored = normalizeAgendaParticipants(meta["participants"]);
     if (stored.length > 0) return stored;
-    const artist = getArtistParticipantById(evento.artist_id);
+    const artist = getArtistParticipantById(event.artist_id);
     return artist ? [artist] : [];
   }, [getArtistParticipantById]);
 
   const handleExcelExport = async () => {
     // Task I: varredura completa via paginação iterativa server-side —
-    // antes exportava só `eventos` (useEventos() sem filtro, preso ao
+    // antes exportava só `events` (useEventos() sem filtro, preso ao
     // limit=50 default do backend). Preserva os filtros de type/status
     // ativos na tela; não escopa ao período do calendário (export é "todos
-    // os eventos que casam com o filtro", não "só o que está visível agora").
+    // os events que casam com o filtro", não "só o que está visível agora").
     const filters: Record<string, unknown> = {};
     const backendType = typeFilterBackendValue(typeFilter);
     if (backendType) filters.type = backendType;
     if (statusFilter !== "all-status") filters.status = statusFilter;
 
-    const { items: allEventos, truncated } = await fetchAllPages<Evento>("eventos", { filters });
+    const { items: allEvents, truncated } = await fetchAllPages<Event>("events", { filters });
 
-    if (allEventos.length === 0) {
+    if (allEvents.length === 0) {
       toast.error("Nenhum evento para exportar");
       return;
     }
 
-    const exportData = allEventos.map(e => {
+    const exportData = allEvents.map(e => {
       const inicio = splitDateTime(e.data);
       const fim = splitDateTime(e.end_date);
       return {
         title: e.title,
         type: getBackendEventTypeLabel(e.type),
         status: e.status,
-        participantes: summarizeAgendaParticipants(getEventoParticipants(e)),
+        participantes: summarizeAgendaParticipants(getEventParticipants(e)),
         start_date: inicio.date,
         horario_inicio: inicio.time,
         end_date: fim.date,
@@ -226,9 +234,9 @@ export default function Agenda() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Agenda");
     XLSX.writeFile(workbook, `agenda_${new Date().toISOString().split('T')[0]}.xlsx`);
     if (truncated) {
-      toast.warning(`Exportação limitada a ${allEventos.length} evento(s) (tenant muito grande) — refine os filtros para exportar o restante.`);
+      toast.warning(`Exportação limitada a ${allEvents.length} evento(s) (tenant muito grande) — refine os filtros para exportar o restante.`);
     } else {
-      toast.success(`${allEventos.length} evento(s) exportado(s) com sucesso!`);
+      toast.success(`${allEvents.length} evento(s) exportado(s) com sucesso!`);
     }
   };
 
@@ -279,7 +287,7 @@ export default function Agenda() {
         if (row.descricao || row.Descrição) payload.descricao = row.descricao || row.Descrição;
         if (row.observacoes || row.Observações) payload.observacoes = row.observacoes || row.Observações;
 
-        await addEvento.mutateAsync(payload as any);
+        await addEvent.mutateAsync(payload as any);
         importados++;
       }
 
@@ -294,39 +302,39 @@ export default function Agenda() {
   // Tipo/status já aplicados server-side em useEventosScoped(); a busca por
   // texto continua client-side sobre o período já escopado (título, local E
   // nome de participante — o backend não indexa nome de participante).
-  const filteredEventos = useMemo(() => {
-    if (!searchTerm) return scopedEventos;
+  const filteredEvents = useMemo(() => {
+    if (!searchTerm) return scopedEvents;
     const term = searchTerm.toLowerCase();
-    return scopedEventos.filter((evento) =>
-      evento.title?.toLowerCase().includes(term) ||
-      evento.local?.toLowerCase().includes(term) ||
-      summarizeAgendaParticipants(getEventoParticipants(evento)).toLowerCase().includes(term),
+    return scopedEvents.filter((event) =>
+      event.title?.toLowerCase().includes(term) ||
+      event.local?.toLowerCase().includes(term) ||
+      summarizeAgendaParticipants(getEventParticipants(event)).toLowerCase().includes(term),
     );
-  }, [scopedEventos, searchTerm, getEventoParticipants]);
+  }, [scopedEvents, searchTerm, getEventParticipants]);
 
-  const schedulerEvents = useMemo(() => filteredEventos.map((evento) => {
+  const schedulerEvents = useMemo(() => filteredEvents.map((event) => {
     // events.data/end_date são os únicos campos reais de data+hora (coluna
     // NOT NULL, sempre presente) — start_date/horario_inicio/horario_fim
     // nunca existiram no backend, então essa leitura sempre caía no fallback
     // "agora" e todo evento aparecia na data errada no calendário.
-    const start = evento.data ? new Date(evento.data) : new Date();
-    const end = evento.end_date ? new Date(evento.end_date) : undefined;
+    const start = event.data ? new Date(event.data) : new Date();
+    const end = event.end_date ? new Date(event.end_date) : undefined;
     const isMidnight = start.getHours() === 0 && start.getMinutes() === 0;
 
     return {
-      id: evento.id,
-      title: evento.title ?? "Evento",
-      artist: summarizeAgendaParticipants(getEventoParticipants(evento)) || undefined,
+      id: event.id,
+      title: event.title ?? "Evento",
+      artist: summarizeAgendaParticipants(getEventParticipants(event)) || undefined,
       startDate: start,
       endDate: end,
-      location: evento.local,
-      status: evento.status ?? "pendente",
-      cache: evento.valor_cache ?? undefined,
-      type: getBackendEventTypeLabel(evento.type),
+      location: event.local,
+      status: event.status ?? "scheduled",
+      cache: event.valor_cache ?? undefined,
+      type: getBackendEventTypeLabel(event.type),
       allDay: isMidnight,
-      raw: evento,
+      raw: event,
     };
-  }), [filteredEventos, getEventoParticipants]);
+  }), [filteredEvents, getEventParticipants]);
 
   const isoFromDate = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   const calendarEvents: CalendarEvent[] = useMemo(() => schedulerEvents.map((e) => ({
@@ -339,8 +347,8 @@ export default function Agenda() {
   })), [schedulerEvents]);
 
   const openEventView = (id: string) => {
-    const evento = scopedEventos.find((ev) => ev.id === id);
-    if (evento) setViewModal({ open: true, evento });
+    const event = scopedEvents.find((ev) => ev.id === id);
+    if (event) setViewModal({ open: true, event });
   };
 
   const periodLabel = useMemo(() => {
@@ -379,8 +387,8 @@ export default function Agenda() {
   };
 
   const handleDelete = () => {
-    if (deleteModal.evento) {
-      deleteEvento.mutate(deleteModal.evento.id);
+    if (deleteModal.event) {
+      deleteEvent.mutate(deleteModal.event.id);
       setDeleteModal({ open: false });
     }
   };
@@ -406,10 +414,10 @@ export default function Agenda() {
       <MainLayout title="Agenda" description="Gerencie shows, turnês e compromissos com foco operacional" actions={createButton}>
         <div className="space-y-6">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <MetricCard title="Eventos" value={metricas.total} description="no total" icon={CalendarDays} accent="primary" />
-            <MetricCard title="Confirmados" value={metricas.confirmados} description="eventos confirmados" icon={CheckCircle2} accent="success" />
-            <MetricCard title="Pendentes" value={metricas.pendentes} description="aguardando confirmação" icon={Clock} accent="warning" />
-            <MetricCard title="Próximos 7 dias" value={metricas.proximos7Dias} description="na próxima semana" icon={CalendarClock} accent="primary" />
+            <MetricCard title="Eventos" value={metrics.total} description="no total" icon={CalendarDays} accent="primary" />
+            <MetricCard title="Confirmados" value={metrics.confirmed} description="eventos confirmados" icon={CheckCircle2} accent="success" />
+            <MetricCard title="Pendentes" value={metrics.pending} description="aguardando confirmação" icon={Clock} accent="warning" />
+            <MetricCard title="Próximos 7 dias" value={metrics.upcoming7Days} description="na próxima semana" icon={CalendarClock} accent="primary" />
           </div>
 
           <div className="flex flex-wrap items-center gap-2 rounded-lg bg-muted/30 p-3">
@@ -460,8 +468,8 @@ export default function Agenda() {
           </div>
 
           <div className="space-y-4">
-            {filteredEventos.length === 0 ? (
-              scopedError && scopedEventos.length === 0 ? (
+            {filteredEvents.length === 0 ? (
+              scopedError && scopedEvents.length === 0 ? (
                 <Card>
                   <CardContent className="p-0">
                     <UnavailableState onRetry={() => refetchScoped()} />
@@ -505,23 +513,23 @@ export default function Agenda() {
       <SchedulerViewModal
         open={viewModal.open}
         onOpenChange={(open) => setViewModal({ ...viewModal, open })}
-        evento={viewModal.evento as any}
+        event={viewModal.event as any}
         onEdit={() => {
           setViewModal({ open: false });
-          setFormModal({ open: true, mode: "edit", evento: viewModal.evento });
+          setFormModal({ open: true, mode: "edit", event: viewModal.event });
         }}
       />
       <SchedulerFormModal
         open={formModal.open}
         onOpenChange={(open) => setFormModal({ ...formModal, open })}
-        evento={formModal.evento as any}
+        event={formModal.event as any}
         mode={formModal.mode}
       />
       <DeleteConfirmModal
         open={deleteModal.open}
         onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })}
         title="Excluir Evento"
-        description={`Tem certeza que deseja excluir "${deleteModal.evento?.title}"?`}
+        description={`Tem certeza que deseja excluir "${deleteModal.event?.title}"?`}
         onConfirm={handleDelete}
       />
     </>

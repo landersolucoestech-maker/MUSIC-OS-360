@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { eventoSchema } from "@/modules/events/lib/evento-schema";
+import { eventSchema } from "@/modules/events/lib/event-schema";
+import { legacyTitle } from "@/shared/lib/legacy-title";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/shared/ui/dialog";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -19,7 +20,7 @@ import { Clock, Search } from "lucide-react";
 import { format, parse, parseISO, isValid } from "date-fns";
 import { DatePickerField } from "@/shared/ui/date-picker-field";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
-import { useEventos } from "@/modules/events/hooks/useEventos";
+import { useEvents } from "@/modules/events/hooks/useEvents";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import {
   agendaParticipantKey,
@@ -35,7 +36,7 @@ import { buildGranularToBackendTypeMap, normalizeToBackendType } from "@/modules
 interface SchedulerFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  evento?: any;
+  event?: any;
   mode: "create" | "edit" | "view";
 }
 
@@ -110,6 +111,15 @@ const statusAliases: Record<string, string> = {
   realizado: "concluido",
   concluido: "concluido",
   negociacao: "pendente",
+  // events.status real vindo do backend é canônico em inglês (EventStatus de
+  // @music-os-360/types) — sem isto, editar um evento existente não casava
+  // nenhuma option do Select (ficava em branco).
+  scheduled: "agendado",
+  planned: "agendado",
+  confirmed: "confirmado",
+  held: "concluido",
+  completed: "concluido",
+  cancelled: "cancelado",
 };
 
 const normalizeSelectValue = (value: unknown, aliases: Record<string, string>) => {
@@ -168,43 +178,43 @@ const normalizeTimeValue = (value: unknown): string => {
   return "";
 };
 
-const getInitialFormData = (evento?: any) => {
+const getInitialFormData = (event?: any) => {
   // Backend HTTP retorna entity columns: type, data, local. Metadata armazena
   // descricao, observacoes, valor_cache, etc. Aceita todos os formatos.
-  const meta = (evento?.metadata as Record<string, unknown> | undefined) ?? {};
+  const meta = (event?.metadata as Record<string, unknown> | undefined) ?? {};
   return {
-    title: evento?.title || evento?.title || "",
+    title: (legacyTitle(event) as string | undefined) || "",
     tipoEvento: normalizeSelectValue(
-      evento?.tipoEvento || evento?.tipo_evento || evento?.type || evento?.type,
+      event?.tipoEvento || event?.tipo_evento || event?.tipo || event?.type,
       tipoEventoAliases,
     ),
-    artista: evento?.artista || evento?.artist_id || evento?.artistId || "",
-    participantes: normalizeAgendaParticipants(evento?.participantes ?? meta["participants"]),
-    status: normalizeSelectValue(evento?.status, statusAliases) || "agendado",
+    artista: event?.artista || event?.artist_id || event?.artistId || "",
+    participantes: normalizeAgendaParticipants(event?.participantes ?? meta["participants"]),
+    status: normalizeSelectValue(event?.status, statusAliases) || "agendado",
     startDate: normalizeEventDate(
-      evento?.startDate || evento?.start_date || evento?.data || evento?.startsAt,
+      event?.startDate || event?.start_date || event?.data || event?.startsAt,
     ),
-    horarioInicio: normalizeTimeValue(evento?.horarioInicio || evento?.horario_inicio),
+    horarioInicio: normalizeTimeValue(event?.horarioInicio || event?.horario_inicio),
     endDate: normalizeEventDate(
-      evento?.endDate || evento?.end_date || evento?.endsAt,
+      event?.endDate || event?.end_date || event?.endsAt,
     ),
-    horarioFim: normalizeTimeValue(evento?.horarioFim || evento?.horario_fim),
-    nomeLocal: evento?.nomeLocal || evento?.local || evento?.venue || "",
-    endereco: evento?.endereco || (meta["endereco"] as string) || "",
-    contatoLocal: evento?.contatoLocal || evento?.contato_local || (meta["contato_local"] as string) || "",
+    horarioFim: normalizeTimeValue(event?.horarioFim || event?.horario_fim),
+    nomeLocal: event?.nomeLocal || event?.local || event?.venue || "",
+    endereco: event?.endereco || (meta["endereco"] as string) || "",
+    contatoLocal: event?.contatoLocal || event?.contato_local || (meta["contato_local"] as string) || "",
     capacidadePublico:
-      evento?.capacidadePublico ||
-      evento?.capacidade_publico ||
-      evento?.capacity ||
+      event?.capacidadePublico ||
+      event?.capacidade_publico ||
+      event?.capacity ||
       "",
-    valorCache: evento?.valorCache || evento?.valor_cache || (meta["valor_cache"] as string | number) || "",
+    valorCache: event?.valorCache || event?.valor_cache || (meta["valor_cache"] as string | number) || "",
     publicoEsperado:
-      evento?.publicoEsperado ||
-      evento?.publico_esperado ||
+      event?.publicoEsperado ||
+      event?.publico_esperado ||
       (meta["publico_esperado"] as string | number) ||
       "",
-    descricao: evento?.descricao || (meta["descricao"] as string) || "",
-    observacoes: evento?.observacoes || (meta["observacoes"] as string) || "",
+    descricao: event?.descricao || (meta["descricao"] as string) || "",
+    observacoes: event?.observacoes || (meta["observacoes"] as string) || "",
   };
 };
 
@@ -222,7 +232,7 @@ const validationFieldLabels: Record<string, string> = {
   contatoLocal: "Contato do Local",
 };
 
-export function SchedulerFormModal({ open, onOpenChange, evento, mode }: SchedulerFormModalProps) {
+export function SchedulerFormModal({ open, onOpenChange, event, mode }: SchedulerFormModalProps) {
   const queryClient = useQueryClient();
   const { getOptionsByKind, getItemsByKind } = useOperationalSettings();
   const operationalEventTypeOptions = getOptionsByKind("event_type");
@@ -232,7 +242,7 @@ export function SchedulerFormModal({ open, onOpenChange, evento, mode }: Schedul
   // metadata.backend_type (ver lib/event-type.ts).
   const granularToBackendType = buildGranularToBackendTypeMap(getItemsByKind("event_type"));
   const [participantSearch, setParticipantSearch] = useState("");
-  const legacyArtistaId = evento?.artista || evento?.artist_id || evento?.artistId || null;
+  const legacyArtistaId = event?.artista || event?.artist_id || event?.artistId || null;
   const { participants, getParticipantByKey, getArtistParticipantById, pendingArtist } = useAgendaParticipants(participantSearch, legacyArtistaId);
 
   const hydrateFormData = (currentEvento?: any) => {
@@ -246,21 +256,21 @@ export function SchedulerFormModal({ open, onOpenChange, evento, mode }: Schedul
     return initial;
   };
 
-  const [formData, setFormData] = useState(hydrateFormData(evento));
+  const [formData, setFormData] = useState(hydrateFormData(event));
 
-  const { addEvento, updateEvento } = useEventos();
+  const { addEvent: addEvento, updateEvent: updateEvento } = useEvents();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    setFormData(hydrateFormData(open ? evento : undefined));
+    setFormData(hydrateFormData(open ? event : undefined));
     setErrors({});
     // `pendingArtist` (não `participants`) de propósito: `participants` muda a
     // cada busca digitada no picker de participantes, o que resetaria o
     // formulário inteiro enquanto o usuário digita. `pendingArtist` só muda
     // quando o artista legado do evento (campo `artista`) termina de resolver.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [evento, mode, open, pendingArtist]);
+  }, [event, mode, open, pendingArtist]);
 
   const isViewMode = mode === "view";
   const title = mode === "create" ? "Novo Evento na Agenda" : mode === "edit" ? "Editar Evento" : "Visualizar Evento";
@@ -318,19 +328,19 @@ export function SchedulerFormModal({ open, onOpenChange, evento, mode }: Schedul
 
   const getNormalizedFormData = (): SchedulerFormData => ({
     ...formData,
-    title: String(formData.title || evento?.title || "").trim(),
-    tipoEvento: normalizeSelectValue(formData.tipoEvento || evento?.tipoEvento || evento?.tipo_evento, tipoEventoAliases),
-    status: normalizeSelectValue(formData.status || evento?.status, statusAliases) || "agendado",
-    startDate: normalizeDate(formData.startDate) ?? normalizeEventDate(evento?.startDate || evento?.start_date || evento?.data),
-    endDate: normalizeDate(formData.endDate) ?? normalizeEventDate(evento?.endDate || evento?.end_date),
-    horarioInicio: normalizeTimeValue(formData.horarioInicio || evento?.horarioInicio || evento?.horario_inicio),
-    horarioFim: normalizeTimeValue(formData.horarioFim || evento?.horarioFim || evento?.horario_fim),
+    title: String(formData.title || event?.title || event?.titulo || "").trim(),
+    tipoEvento: normalizeSelectValue(formData.tipoEvento || event?.tipoEvento || event?.tipo_evento || event?.tipo, tipoEventoAliases),
+    status: normalizeSelectValue(formData.status || event?.status, statusAliases) || "agendado",
+    startDate: normalizeDate(formData.startDate) ?? normalizeEventDate(event?.startDate || event?.start_date || event?.data),
+    endDate: normalizeDate(formData.endDate) ?? normalizeEventDate(event?.endDate || event?.end_date),
+    horarioInicio: normalizeTimeValue(formData.horarioInicio || event?.horarioInicio || event?.horario_inicio),
+    horarioFim: normalizeTimeValue(formData.horarioFim || event?.horarioFim || event?.horario_fim),
   });
 
   const validate = (): SchedulerFormData | null => {
     const normalizedFormData = getNormalizedFormData();
 
-    const result = eventoSchema.safeParse({
+    const result = eventSchema.safeParse({
       title: normalizedFormData.title,
       tipoEvento: normalizedFormData.tipoEvento,
       artista: normalizedFormData.artista,
@@ -363,7 +373,7 @@ export function SchedulerFormModal({ open, onOpenChange, evento, mode }: Schedul
       // branco) — já comunicada via toast + FieldError inline abaixo.
       // console.error poluiria o monitoramento de erros (Sentry captura
       // console.error) com um evento que não é uma falha de runtime.
-      console.warn("SchedulerFormModal validation errors:", details, { formData, normalizedFormData, evento });
+      console.warn("SchedulerFormModal validation errors:", details, { formData, normalizedFormData, event });
       const firstError = result.error.errors[0];
       const firstField = firstError?.path[0] ? String(firstError.path[0]) : "";
       const firstLabel = validationFieldLabels[firstField] ?? firstField;
@@ -432,7 +442,8 @@ export function SchedulerFormModal({ open, onOpenChange, evento, mode }: Schedul
   };
 
   // Maps frontend status (pt-BR) → backend UpdateEventDto.status enum.
-  // Backend enum: scheduled | confirmed | cancelled | completed | postponed
+  // Backend enum (EventStatus, @music-os-360/types): planned | scheduled |
+  // confirmed | held | completed | cancelled | postponed
   const mapStatusToBackend = (status: string): string | undefined => {
     const s = (status || "").toLowerCase();
     const map: Record<string, string> = {
@@ -441,7 +452,8 @@ export function SchedulerFormModal({ open, onOpenChange, evento, mode }: Schedul
       confirmado:  "confirmed",
       cancelado:   "cancelled",
       concluido:   "completed",
-      realizado:   "completed",
+      realizado:   "held",
+      planejado:   "planned",
       postponed:   "postponed",
       adiado:      "postponed",
       scheduled:   "scheduled",
@@ -518,19 +530,19 @@ export function SchedulerFormModal({ open, onOpenChange, evento, mode }: Schedul
 
     try {
       if (mode === "edit") {
-        if (!evento?.id) {
+        if (!event?.id) {
           toast.error("Não foi possível atualizar: evento sem identificador.");
           return;
         }
         await updateEvento.mutateAsync({
-          id: evento.id,
+          id: event.id,
           ...buildPayload(validatedFormData, true),
-          expectedUpdatedAt: getExpectedUpdatedAt(evento),
+          expectedUpdatedAt: getExpectedUpdatedAt(event),
         });
       } else {
         await addEvento.mutateAsync(buildPayload(validatedFormData, false));
       }
-      await queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.EVENTOS] });
+      await queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.EVENTS] });
       onOpenChange(false);
     } catch (error) {
       // A mutação já dispara toast de erro genérico; aqui só precisamos do

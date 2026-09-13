@@ -1,14 +1,14 @@
 import type { ArtistaRef } from "@/shared/types/refs";
-import type { EventoTipo, EventoStatus } from "@/shared/types/enums";
+import type { EventType, EventStatusValue } from "@/shared/types/enums";
 
-export type { EventoTipo, EventoStatus };
+export type { EventType, EventStatusValue };
 
-export interface Evento {
+export interface Event {
   id: string;
   user_id?: string;
   title: string;
-  tipo_evento?: EventoTipo | string | null;
-  status?: EventoStatus | string | null;
+  tipo_evento?: EventType | string | null;
+  status?: EventStatusValue | string | null;
   artist_id?: string | null;
   start_date?: string | null;
   end_date?: string | null;
@@ -27,10 +27,10 @@ export interface Evento {
   [key: string]: unknown;
 }
 
-export type EventoInsert = Omit<Evento, "id" | "user_id" | "created_at" | "updated_at">;
-export type EventoUpdate = Partial<EventoInsert>;
+export type EventInsert = Omit<Event, "id" | "user_id" | "created_at" | "updated_at">;
+export type EventUpdate = Partial<EventInsert>;
 
-export interface EventoWithRelations extends Evento {
+export interface EventWithRelations extends Event {
   artistas?: ArtistaRef | null;
 }
 

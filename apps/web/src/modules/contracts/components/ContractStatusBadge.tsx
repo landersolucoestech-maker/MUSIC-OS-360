@@ -2,17 +2,17 @@ import { Badge, type BadgeVariant } from "@/shared/ui/badge";
 import { differenceInDays, parseISO } from "date-fns";
 import type { MockRow } from "@/shared/types/database";
 
-export type ContratoSituacao = "ativo" | "vencendo" | "sem_contrato" | "em_negociacao";
+export type ContractLifecycleState = "ativo" | "vencendo" | "sem_contrato" | "em_negociacao";
 
 type ContratoLike = MockRow & {
   status?: string | null;
   end_date?: string | null;
 };
 
-const ATIVO_STATUSES = new Set(["ativo", "assinado", "vigente"]);
-const NEGOCIACAO_STATUSES = new Set(["em_negociacao", "negociacao", "rascunho", "em_analise"]);
+const ATIVO_STATUSES = new Set(["active", "signed", "in_force"]);
+const NEGOCIACAO_STATUSES = new Set(["em_negociacao", "negociacao", "draft", "under_review"]);
 
-export function getContratoSituacao(contratos: ContratoLike[] | undefined | null): ContratoSituacao {
+export function getContractLifecycleState(contratos: ContratoLike[] | undefined | null): ContractLifecycleState {
   if (!contratos || contratos.length === 0) return "sem_contrato";
 
   const hoje = new Date();
@@ -28,7 +28,7 @@ export function getContratoSituacao(contratos: ContratoLike[] | undefined | null
       continue;
     }
 
-    if (status === "vencendo") {
+    if (status === "expiring") {
       temVencendo = true;
       temAtivo = true;
       continue;
@@ -60,7 +60,7 @@ function getDiasVencendo(contratos: ContratoLike[] | undefined | null): number |
   let menor: number | null = null;
   for (const c of contratos) {
     const status = (c.status || "").toLowerCase();
-    if (!ATIVO_STATUSES.has(status) && status !== "vencendo") continue;
+    if (!ATIVO_STATUSES.has(status) && status !== "expiring") continue;
     if (!c.end_date) continue;
     try {
       const dias = differenceInDays(parseISO(c.end_date), hoje);
@@ -72,20 +72,20 @@ function getDiasVencendo(contratos: ContratoLike[] | undefined | null): number |
   return menor;
 }
 
-interface ContratoStatusBadgeProps {
+interface ContractStatusBadgeProps {
   contratos?: ContratoLike[] | null;
-  situacao?: ContratoSituacao;
+  situacao?: ContractLifecycleState;
   className?: string;
   "data-testid"?: string;
 }
 
-export function ContratoStatusBadge({
+export function ContractStatusBadge({
   contratos,
   situacao,
   className,
   ...rest
-}: ContratoStatusBadgeProps) {
-  const resolved = situacao ?? getContratoSituacao(contratos);
+}: ContractStatusBadgeProps) {
+  const resolved = situacao ?? getContractLifecycleState(contratos);
 
   let label: string;
   let variant: BadgeVariant;

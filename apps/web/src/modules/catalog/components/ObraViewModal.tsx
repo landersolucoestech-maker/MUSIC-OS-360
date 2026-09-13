@@ -35,13 +35,13 @@ interface ObraViewModalProps {
 
 function StatusBadge({ status }: { status?: string }) {
   const s = status?.toLowerCase() ?? "";
-  if (s === "registrado")
+  if (s === "registered")
     return <Badge variant="success">Registrado</Badge>;
-  if (s === "analise" || s === "análise")
+  if (s === "under_review" || s === "in_review")
     return <Badge variant="warning">Em Análise</Badge>;
-  if (s === "pendente")
+  if (s === "pending")
     return <Badge variant="warning">Pendente</Badge>;
-  if (s === "rejeitado")
+  if (s === "rejected")
     return <Badge variant="danger">Rejeitado</Badge>;
   return <Badge variant="secondary">{status ?? "—"}</Badge>;
 }

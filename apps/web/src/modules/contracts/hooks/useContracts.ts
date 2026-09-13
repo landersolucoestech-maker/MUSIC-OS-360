@@ -3,37 +3,36 @@ import { useDataQuery } from "@/shared/hooks/useDataQuery";
 import { emit, DomainEvents } from "@/shared/domain-events";
 import { useTenant } from "@/app/providers/TenantContext";
 import type {
-  Contrato,
-  ContratoInsert,
-  ContratoUpdate,
-  ContratoVersao,
-  ContratoWithRelations,
+  Contract,
+  ContractInsert,
+  ContractUpdate,
+  ContractVersion,
+  ContractWithRelations,
 } from "../types/contracts.types";
 
-export type { Contrato, ContratoInsert, ContratoUpdate, ContratoVersao, ContratoWithRelations };
+export type { Contract, ContractInsert, ContractUpdate, ContractVersion, ContractWithRelations };
 
-export function useContratos(enabled = true, artistId?: string) {
+export function useContracts(enabled = true, artistId?: string) {
   const { tenant } = useTenant();
   const orgId = tenant?.id ?? "unknown";
 
-  const result = useDataQuery<ContratoWithRelations>({
-    queryKey: artistId ? [...QUERY_KEYS.CONTRATOS, "by-artist", artistId] : [...QUERY_KEYS.CONTRATOS],
-    table: "contratos",
-    select: "*, artistas(*), clientes(*)",
+  const result = useDataQuery<ContractWithRelations>({
+    queryKey: artistId ? [...QUERY_KEYS.CONTRACTS, "by-artist", artistId] : [...QUERY_KEYS.CONTRACTS],
+    table: "contracts",
     enabled,
     filters: artistId ? { artist_id: artistId } : undefined,
-    additionalInvalidateKeys: [[...QUERY_KEYS.ARTISTAS]],
+    additionalInvalidateKeys: [[...QUERY_KEYS.ARTISTS]],
     onMutationSuccess: {
       onCreate: (c) =>
         emit(DomainEvents.CONTRACT_CREATED, {
-          id: (c as ContratoWithRelations & { id: string }).id,
+          id: (c as ContractWithRelations & { id: string }).id,
           artist_id: c.artist_id ?? undefined,
           valor: c.valor ?? undefined,
           org_id: orgId,
         }),
       onUpdate: (c) =>
         emit(DomainEvents.CONTRACT_UPDATED, {
-          id: (c as ContratoWithRelations & { id: string }).id,
+          id: (c as ContractWithRelations & { id: string }).id,
           artist_id: c.artist_id ?? undefined,
           valor: c.valor ?? undefined,
           org_id: orgId,
@@ -48,12 +47,12 @@ export function useContratos(enabled = true, artistId?: string) {
   });
 
   return {
-    contratos: result.data,
+    contracts: result.data,
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,
-    addContrato: result.create,
-    updateContrato: result.update,
-    deleteContrato: result.delete,
+    addContract: result.create,
+    updateContract: result.update,
+    deleteContract: result.delete,
   };
 }

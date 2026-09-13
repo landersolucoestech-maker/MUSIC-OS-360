@@ -1,1 +1,1 @@
-export * from '../schemas/funcionario-schema';
+export * from '../schemas/employee-schema';

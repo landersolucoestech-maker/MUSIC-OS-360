@@ -1,11 +1,11 @@
 import type { ArtistaRef, ClienteRef } from "@/shared/types/refs";
-import type { ContratoStatus, ContratoTipo } from "@/shared/types/enums";
-import type { ContratoSigner } from "@/modules/contracts/lib/contrato-schema";
+import type { ContractStatusValue, ContractType } from "@/shared/types/enums";
+import type { ContractSigner } from "@/modules/contracts/lib/contract-schema";
 import type { UploadedFile } from "@/shared/components/FileUpload";
 
-export type { ContratoStatus, ContratoTipo };
+export type { ContractStatusValue, ContractType };
 
-export interface ContratoVersao {
+export interface ContractVersion {
   versao: string;
   url: string;
   criado_em: string;
@@ -16,12 +16,12 @@ export interface ContratoVersao {
 export type SigningPlatform = "autentique" | "clicksign" | "docusign";
 
 /**
- * Signer record persisted by ContratoWizard.
- * Richer than the legacy ContratoSigner — keeps wizard-specific fields
+ * Signer record persisted by ContractWizard.
+ * Richer than the legacy ContractSigner — keeps wizard-specific fields
  * (nome, obrigatorio, ordem, provider) alongside the canonical email + role.
  */
 export interface WizardSignerRecord {
-  /** Canonical display name — mirrors ContratoSigner.name for consumer compatibility */
+  /** Canonical display name — mirrors ContractSigner.name for consumer compatibility */
   name: string;
   nome: string;
   email: string;
@@ -31,12 +31,12 @@ export interface WizardSignerRecord {
   provider: string;
 }
 
-export interface Contrato {
+export interface Contract {
   id: string;
   user_id?: string;
   title: string;
-  type?: ContratoTipo | string | null;
-  status?: ContratoStatus | string | null;
+  type?: ContractType | string | null;
+  status?: ContractStatusValue | string | null;
   artist_id?: string | null;
   client_id?: string | null;
   release_id?: string | null;
@@ -50,23 +50,23 @@ export interface Contrato {
   arquivo_url?: string | null;
   autentique_doc_id?: string | null;
   signing_platform?: SigningPlatform | null;
-  versoes?: ContratoVersao[];
-  signers?: Array<ContratoSigner | WizardSignerRecord>;
-  documentos?: UploadedFile[];
+  versoes?: ContractVersion[];
+  signers?: Array<ContractSigner | WizardSignerRecord>;
+  documents?: UploadedFile[];
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;
 }
 
-export type ContratoInsert = Omit<Contrato, "id" | "user_id" | "created_at" | "updated_at">;
-export type ContratoUpdate = Partial<ContratoInsert>;
+export type ContractInsert = Omit<Contract, "id" | "user_id" | "created_at" | "updated_at">;
+export type ContractUpdate = Partial<ContractInsert>;
 
-export interface ContratoWithRelations extends Contrato {
+export interface ContractWithRelations extends Contract {
   artistas?: ArtistaRef | null;
   clientes?: ClienteRef | null;
 }
 
-export interface TemplateContrato {
+export interface ContractTemplateRow {
   id: string;
   user_id?: string | null;
   nome: string;
@@ -82,8 +82,8 @@ export interface TemplateContrato {
   [key: string]: unknown;
 }
 
-export type TemplateContratoInsert = Omit<TemplateContrato, "id" | "user_id" | "created_at" | "updated_at">;
-export type TemplateContratoUpdate = Partial<TemplateContratoInsert>;
+export type ContractTemplateRowInsert = Omit<ContractTemplateRow, "id" | "user_id" | "created_at" | "updated_at">;
+export type ContractTemplateRowUpdate = Partial<ContractTemplateRowInsert>;
 
 // ─── Contract Template Engine Types ──────────────────────────────────────────
 

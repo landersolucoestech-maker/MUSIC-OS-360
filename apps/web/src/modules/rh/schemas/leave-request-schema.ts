@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-export const feriasAusenciasSchema = z.object({
-  funcionarioId: z.string()
+export const leaveRequestSchema = z.object({
+  employeeId: z.string()
     .min(1, "Funcionário é obrigatório"),
   type: z.string()
     .min(1, "Tipo de ausência é obrigatório"),
@@ -9,12 +9,12 @@ export const feriasAusenciasSchema = z.object({
     .min(1, "Data de início é obrigatória"),
   endDate: z.string()
     .min(1, "Data de fim é obrigatória"),
-  status: z.enum(["pendente", "aprovado", "rejeitado", "em_andamento", "concluido"]).default("pendente"),
-  aprovadoPor: z.string().max(150, "Nome deve ter no máximo 150 caracteres").optional().or(z.literal("")),
+  status: z.enum(["pending", "approved", "rejected", "in_progress", "completed"]).default("pending"),
+  approvedBy: z.string().max(150, "Nome deve ter no máximo 150 caracteres").optional().or(z.literal("")),
   observacoes: z.string()
     .max(2000, "Observações deve ter no máximo 2000 caracteres")
     .optional()
     .or(z.literal("")),
 });
 
-export type FeriasAusenciasFormData = z.infer<typeof feriasAusenciasSchema>;
+export type LeaveRequestFormData = z.infer<typeof leaveRequestSchema>;

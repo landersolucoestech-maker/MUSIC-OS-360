@@ -1,11 +1,9 @@
-export type SchedulerStatus =
-  | "confirmado"
-  | "negociacao"
-  | "cancelado"
-  | "realizado"
-  | "agendado"
-  | "pendente"
-  | string;
+import type { EventStatusValue } from "@/modules/events/types/events.types";
+
+// SchedulerStatus carrega o valor real de events.status (backend, canônico em
+// inglês — ver @music-os-360/types EventStatus). O `| string` preserva
+// compatibilidade com valores legados/desconhecidos vindos de dados antigos.
+export type SchedulerStatus = EventStatusValue | string;
 
 export type AgendaEvent = {
   id: string;

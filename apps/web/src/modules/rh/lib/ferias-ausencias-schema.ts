@@ -1,1 +1,1 @@
-export * from '../schemas/ferias-ausencias-schema';
+export * from '../schemas/leave-request-schema';

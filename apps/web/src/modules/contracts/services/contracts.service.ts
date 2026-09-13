@@ -14,35 +14,35 @@ function serializeJsonFields(data: Record<string, unknown>): Record<string, unkn
 
 export const contractsService = {
   async list() {
-    return storage.list("contratos");
+    return storage.list("contracts");
   },
 
   async getById(id: string) {
-    return storage.findById("contratos", id);
+    return storage.findById("contracts", id);
   },
 
   async create(data: Record<string, unknown>) {
-    return storage.create("contratos", data as never);
+    return storage.create("contracts", data as never);
   },
 
   async update(id: string, patch: Record<string, unknown>) {
-    return storage.update("contratos", id, patch);
+    return storage.update("contracts", id, patch);
   },
 
   async delete(id: string) {
-    return storage.delete("contratos", id);
+    return storage.delete("contracts", id);
   },
 
   async listByStatus(status: string) {
-    return storage.list("contratos", { filters: { status } });
+    return storage.list("contracts", { filters: { status } });
   },
 
   async listExpiringSoon(days = 30) {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() + days);
-    const all = await storage.list<{ id: string; end_date: string; status: string }>("contratos");
+    const all = await storage.list<{ id: string; end_date: string; status: string }>("contracts");
     return all.filter(
-      (c) => c.status === "vigente" && new Date(c.end_date) <= cutoff,
+      (c) => c.status === "in_force" && new Date(c.end_date) <= cutoff,
     );
   },
 

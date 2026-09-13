@@ -11,14 +11,14 @@ import {
 } from "lucide-react";
 import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
 import type { LancamentoWithRelations } from "@/modules/releases/hooks/useLancamentos";
-import type { ContratoWithRelations, ContratoVersao } from "@/modules/contracts/hooks/useContratos";
+import type { ContractWithRelations, ContractVersion } from "@/modules/contracts/hooks/useContracts";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { formatDateDashes, formatDateTimeDashes, formatCurrency, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 import { formatCategoryLabel } from "@/shared/lib/category-labels";
 import { useDocuments } from "@/modules/contracts/hooks/useDocuments";
 import { DocumentStatusBadge, SignerStatusBadge } from "@/modules/contracts/components/DocumentStatusBadge";
 import { DocumentTimeline } from "@/modules/contracts/components/DocumentTimeline";
-import { SIGNER_ROLE_LABEL } from "@/modules/contracts/lib/contrato-schema";
+import { SIGNER_ROLE_LABEL } from "@/modules/contracts/lib/contract-schema";
 import { SigningPlatformBadge } from "@/modules/contracts/components/SigningPlatformBadge";
 import { SendForSigningDialog } from "@/modules/contracts/components/SendForSigningDialog";
 import { WorkflowTransitionPanel } from "@/shared/components/WorkflowTransitionPanel";
@@ -26,29 +26,29 @@ import { useWorkflowTransition } from "@/shared/hooks/useWorkflowTransition";
 import { useEntityDetail } from "@/shared/hooks/useEntityDetail";
 import { resolveAllowedTransitions, WorkflowTransition } from "@/shared/lib/workflow-transitions";
 
-interface ContratoWithWorkflow extends ContratoWithRelations {
+interface ContractWithWorkflow extends ContractWithRelations {
   allowed_transitions?: { to: string; label?: string }[];
 }
 
-interface ContratoViewModalProps {
+interface ContractViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  contrato?: ContratoWithWorkflow;
+  contrato?: ContractWithWorkflow;
   onEdit?: () => void;
 }
 
-export function ContratoViewModal({ open, onOpenChange, contrato, onEdit }: ContratoViewModalProps) {
+export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: ContractViewModalProps) {
   const { lancamentos } = useLancamentos();
   const navigate = useNavigate();
   const { data: allDocuments = [] } = useDocuments();
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
   const { transition: workflowTransition, isPending: isTransitionPending } = useWorkflowTransition({
-    table:    'contratos',
+    table:    'contracts',
     id:       contrato?.id ?? '',
-    queryKey: ['contratos'],
+    queryKey: ['contracts'],
   });
 
-  const { data: detail } = useEntityDetail<ContratoWithWorkflow>('contratos', contrato?.id, open);
+  const { data: detail } = useEntityDetail<ContractWithWorkflow>('contracts', contrato?.id, open);
 
   if (!contrato) return null;
 
@@ -64,10 +64,10 @@ export function ContratoViewModal({ open, onOpenChange, contrato, onEdit }: Cont
     ? lancamentos.find((l) => l.id === contrato.release_id)
     : undefined;
 
-  const versoes: ContratoVersao[] = Array.isArray(contrato.versoes)
-    ? (contrato.versoes as ContratoVersao[])
+  const versoes: ContractVersion[] = Array.isArray(contrato.versoes)
+    ? (contrato.versoes as ContractVersion[])
     : [];
-  const documentos = Array.isArray(contrato.documentos) ? contrato.documentos : [];
+  const documents = Array.isArray(contrato.documents) ? contrato.documents : [];
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -132,7 +132,7 @@ export function ContratoViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                 { value: "assinatura",  label: `Assinatura${contratoSigners.length > 0 ? ` (${contratoSigners.length})` : ""}` },
                 { value: "arquivo",     label: "Arquivo" },
                 { value: "versoes",     label: `Versões${versoes.length > 0 ? ` (${versoes.length})` : ""}` },
-                { value: "documentos",  label: `Documentos${documentos.length > 0 ? ` (${documentos.length})` : ""}` },
+                { value: "documents",  label: `Documentos${documents.length > 0 ? ` (${documents.length})` : ""}` },
                 { value: "lancamento",  label: "Lançamento" },
               ].map((tab) => (
                 <TabsTrigger
@@ -440,10 +440,10 @@ export function ContratoViewModal({ open, onOpenChange, contrato, onEdit }: Cont
               </TabsContent>
 
               {/* ── Documentos Anexos (REM-02) ── */}
-              <TabsContent value="documentos" className="p-6 mt-0" data-testid="tab-content-documentos">
-                {documentos.length > 0 ? (
+              <TabsContent value="documents" className="p-6 mt-0" data-testid="tab-content-documents">
+                {documents.length > 0 ? (
                   <div className="space-y-3">
-                    {documentos.map((d, index) => (
+                    {documents.map((d, index) => (
                       <div
                         key={`${d.path}-${index}`}
                         className="flex items-start gap-3 p-4 bg-muted/20 border border-border rounded-lg"

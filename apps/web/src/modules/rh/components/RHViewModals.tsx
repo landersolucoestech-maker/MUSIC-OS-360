@@ -16,7 +16,7 @@ import {
 import { Badge } from "@/shared/ui/badge";
 import { formatCurrency, formatDateDashes, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
-import type { Funcionario, FolhaPagamento, FeriasAusencia } from "@/modules/rh/types/rh.types";
+import type { Employee, PayrollEntry, LeaveRequest } from "@/modules/rh/types/hr.types";
 
 function humanize(value?: string | null): string {
   if (!value) return "—";
@@ -85,14 +85,14 @@ function ViewShell({
 
 // ── Funcionário ─────────────────────────────────────────────────────────────
 
-export function FuncionarioViewModal({
+export function EmployeeViewModal({
   open,
   onOpenChange,
   funcionario,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  funcionario?: Funcionario | null;
+  funcionario?: Employee | null;
 }) {
   if (!funcionario) return null;
   return (
@@ -118,7 +118,7 @@ export function FuncionarioViewModal({
           label="Status"
           value={
             funcionario.status ? (
-              <Badge variant={funcionario.status === "ativo" ? "success" : "neutral"}>
+              <Badge variant={funcionario.status === "active" ? "success" : "neutral"}>
                 {humanize(funcionario.status as string)}
               </Badge>
             ) : (
@@ -138,16 +138,16 @@ export function FuncionarioViewModal({
 
 // ── Folha de Pagamento ──────────────────────────────────────────────────────
 
-export function FolhaPagamentoViewModal({
+export function PayrollViewModal({
   open,
   onOpenChange,
   registro,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  registro?: FolhaPagamento | null;
+  registro?: PayrollEntry | null;
 }) {
-  const { entity: funcionario } = useEntityById<Funcionario>("funcionarios", registro?.funcionario_id);
+  const { entity: funcionario } = useEntityById<Employee>("funcionarios", registro?.funcionario_id);
   if (!registro) return null;
   return (
     <ViewShell
@@ -172,7 +172,7 @@ export function FolhaPagamentoViewModal({
           label="Status"
           value={
             registro.status ? (
-              <Badge variant={registro.status === "pago" ? "success" : registro.status === "cancelado" ? "danger" : "warning"}>
+              <Badge variant={registro.status === "paid" ? "success" : registro.status === "cancelled" ? "danger" : "warning"}>
                 {humanize(registro.status)}
               </Badge>
             ) : (
@@ -192,16 +192,16 @@ export function FolhaPagamentoViewModal({
 
 // ── Férias e Ausências ──────────────────────────────────────────────────────
 
-export function FeriasAusenciasViewModal({
+export function LeaveRequestViewModal({
   open,
   onOpenChange,
   ausencia,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  ausencia?: FeriasAusencia | null;
+  ausencia?: LeaveRequest | null;
 }) {
-  const { entity: funcionario } = useEntityById<Funcionario>("funcionarios", ausencia?.funcionario_id);
+  const { entity: funcionario } = useEntityById<Employee>("funcionarios", ausencia?.funcionario_id);
   if (!ausencia) return null;
   return (
     <ViewShell
@@ -222,7 +222,7 @@ export function FeriasAusenciasViewModal({
           label="Status"
           value={
             ausencia.status ? (
-              <Badge variant={ausencia.status === "aprovado" ? "success" : ausencia.status === "rejeitado" ? "danger" : "warning"}>
+              <Badge variant={ausencia.status === "approved" ? "success" : ausencia.status === "rejected" ? "danger" : "warning"}>
                 {humanize(ausencia.status as string)}
               </Badge>
             ) : (

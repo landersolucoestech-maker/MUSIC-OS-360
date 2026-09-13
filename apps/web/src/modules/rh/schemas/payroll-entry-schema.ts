@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-export const folhaPagamentoSchema = z.object({
-  funcionarioId: z.string()
+export const payrollEntrySchema = z.object({
+  employeeId: z.string()
     .min(1, "Funcionário é obrigatório"),
-  mesReferencia: z.string()
+  referenceMonth: z.string()
     .min(1, "Mês de referência é obrigatório"),
-  salarioBruto: z.number()
+  grossSalary: z.number()
     .min(0, "Salário bruto não pode ser negativo")
     .optional()
     .nullable(),
@@ -17,12 +17,12 @@ export const folhaPagamentoSchema = z.object({
     .min(0, "Bônus não pode ser negativo")
     .optional()
     .nullable(),
-  dataPagamento: z.string().optional().or(z.literal("")),
-  status: z.enum(["pendente", "processado", "pago", "cancelado"]).default("pendente"),
+  paymentDate: z.string().optional().or(z.literal("")),
+  status: z.enum(["pending", "processed", "paid", "cancelled"]).default("pending"),
   observacoes: z.string()
     .max(2000, "Observações deve ter no máximo 2000 caracteres")
     .optional()
     .or(z.literal("")),
 });
 
-export type FolhaPagamentoFormData = z.infer<typeof folhaPagamentoSchema>;
+export type PayrollEntryFormData = z.infer<typeof payrollEntrySchema>;

@@ -1,8 +1,8 @@
 import type { Json } from "@/shared/types/database";
 import type { ArtistaRef, ProjetoRef } from "@/shared/types/refs";
-import type { ObraStatus, ObraTipo, FonogramaStatus } from "@/shared/types/enums";
+import type { WorkStatusValue, WorkType, PhonogramStatusValue } from "@/shared/types/enums";
 
-export type { ObraStatus, ObraTipo, FonogramaStatus };
+export type { WorkStatusValue, WorkType, PhonogramStatusValue };
 
 export interface Obra {
   id: string;
@@ -18,9 +18,9 @@ export interface Obra {
   // Renomeado de `cod_abramus` (20260718000017) — código em qualquer entidade
   // de gestão coletiva (ABRAMUS, UBC, SOCINPRO, ...), não só ABRAMUS.
   cod_entidade?: string | null;
-  type?: ObraTipo | string | null;
+  type?: WorkType | string | null;
   genero?: string | null;
-  status?: ObraStatus | string | null;
+  status?: WorkStatusValue | string | null;
   duracao?: string | null;
   origem_externa?: string | null;
   origem_externa_id?: string | null;
@@ -49,7 +49,7 @@ export interface Fonograma {
   isrc?: string | null;
   duracao?: string | null;
   type?: string | null;
-  status?: FonogramaStatus | string | null;
+  status?: PhonogramStatusValue | string | null;
   compositores?: string | null;
   interpretes?: string | null;
   produtores?: string | null;

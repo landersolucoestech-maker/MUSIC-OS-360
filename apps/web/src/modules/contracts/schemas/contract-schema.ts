@@ -1,30 +1,30 @@
 import { z } from "zod";
 
 export const SIGNER_ROLES = ["artista", "label", "produtor", "empresario"] as const;
-export type ContratoSignerRole = typeof SIGNER_ROLES[number];
+export type ContractSignerRole = typeof SIGNER_ROLES[number];
 
-export const SIGNER_ROLE_LABEL: Record<ContratoSignerRole, string> = {
+export const SIGNER_ROLE_LABEL: Record<ContractSignerRole, string> = {
   artista:    "Artista",
   label:      "Gravadora / Label",
   produtor:   "Produtor",
   empresario: "Empresário",
 };
 
-export const contratoSignerSchema = z.object({
+export const contractSignerSchema = z.object({
   name:  z.string().min(1, "Nome obrigatório"),
   email: z.string().email("Email inválido"),
   role:  z.enum(SIGNER_ROLES),
 });
 
-export type ContratoSigner = z.infer<typeof contratoSignerSchema>;
+export type ContractSigner = z.infer<typeof contractSignerSchema>;
 
-export const contratoSchema = z.object({
+export const contractSchema = z.object({
   title: z.string().min(1, "Título é obrigatório"),
   service_type: z.string().min(1, "Tipo de serviço é obrigatório"),
   status: z.enum([
-    "pendente", "assinado", "aguardando_assinatura", "ativo", "vigente",
-    "expirado", "rescindido", "cancelado", "rascunho",
-  ]).default("rascunho"),
+    "pendente", "signed", "awaiting_signature", "active", "in_force",
+    "expirado", "rescindido", "cancelled", "draft",
+  ]).default("draft"),
   arquivo_url: z.string().optional(),
   notas_versao: z.string().optional(),
   release_id: z.string().optional(),
@@ -39,8 +39,8 @@ export const contratoSchema = z.object({
   financial_support: z.number().optional(),
   observations: z.string().optional(),
   terms: z.string().optional(),
-  signers: z.array(contratoSignerSchema).max(10, "Máximo de 10 signatários").default([]),
+  signers: z.array(contractSignerSchema).max(10, "Máximo de 10 signatários").default([]),
 });
 
-export type ContratoFormData = z.infer<typeof contratoSchema>;
+export type ContractFormData = z.infer<typeof contractSchema>;
 

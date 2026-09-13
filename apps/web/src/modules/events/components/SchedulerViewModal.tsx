@@ -11,18 +11,21 @@ import { getBackendEventTypeLabel } from "@/modules/events/lib/event-type";
 interface SchedulerViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  evento?: any;
+  event?: any;
   onEdit?: () => void;
 }
 
+// events.status é o valor real persistido pelo backend — canônico em inglês
+// (EventStatus de @music-os-360/types). Ver docs/NAMING_NORMALIZATION_CANONICAL_MAP.md.
 const getStatusBadge = (status: string) => {
   switch (status) {
-    case "confirmado": return <Badge variant="success">Confirmado</Badge>;
-    case "agendado":
-    case "pendente": return <Badge variant="warning">Pendente</Badge>;
-    case "realizado":
-    case "concluido": return <Badge variant="info">Realizado</Badge>;
-    case "cancelado": return <Badge variant="danger">Cancelado</Badge>;
+    case "confirmed": return <Badge variant="success">Confirmado</Badge>;
+    case "planned":
+    case "scheduled": return <Badge variant="warning">Pendente</Badge>;
+    case "held":
+    case "completed": return <Badge variant="info">Realizado</Badge>;
+    case "cancelled": return <Badge variant="danger">Cancelado</Badge>;
+    case "postponed": return <Badge variant="neutral">Adiado</Badge>;
     default: return <Badge variant="neutral">{status || "—"}</Badge>;
   }
 };
@@ -48,15 +51,15 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-export function SchedulerViewModal({ open, onOpenChange, evento, onEdit }: SchedulerViewModalProps) {
+export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: SchedulerViewModalProps) {
   const { getArtistParticipantById } = useAgendaParticipants();
 
-  if (!evento) return null;
+  if (!event) return null;
 
-  const artista = evento.artistas;
-  const meta = (evento.metadata as Record<string, unknown> | undefined) ?? {};
+  const artista = event.artistas;
+  const meta = (event.metadata as Record<string, unknown> | undefined) ?? {};
   const storedParticipants = normalizeAgendaParticipants(meta["participants"]);
-  const legacyArtistParticipant = getArtistParticipantById(evento.artist_id);
+  const legacyArtistParticipant = getArtistParticipantById(event.artist_id);
   const participants = storedParticipants.length > 0
     ? storedParticipants
     : legacyArtistParticipant
@@ -64,14 +67,14 @@ export function SchedulerViewModal({ open, onOpenChange, evento, onEdit }: Sched
       : artista
         ? [{
             source: "artist" as const,
-            id: String(artista.id ?? evento.artist_id ?? "legacy-artist"),
+            id: String(artista.id ?? event.artist_id ?? "legacy-artist"),
             label: String(artista.nome_artistico || artista.nome || "Artista"),
             email: artista.email ? String(artista.email) : undefined,
             phone: artista.telefone ? String(artista.telefone) : undefined,
             category: "Artista",
           }]
         : [];
-  const checklist: Array<{ item: string; concluido: boolean }> = Array.isArray(evento.checklist) ? evento.checklist : [];
+  const checklist: Array<{ item: string; concluido: boolean }> = Array.isArray(event.checklist) ? event.checklist : [];
   const checklistDone = checklist.filter(c => c.concluido).length;
 
   return (
@@ -80,7 +83,7 @@ export function SchedulerViewModal({ open, onOpenChange, evento, onEdit }: Sched
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/10">
           <div className="flex flex-col gap-3">
             <div className="min-w-0">
-              <DialogTitle className="text-2xl font-semibold tracking-tight" data-testid="text-evento-title">{evento.title}</DialogTitle>
+              <DialogTitle className="text-2xl font-semibold tracking-tight" data-testid="text-evento-title">{event.title}</DialogTitle>
               <DialogDescription className="mt-2 text-sm text-muted-foreground">
                 Detalhes completos do evento
               </DialogDescription>
@@ -88,9 +91,9 @@ export function SchedulerViewModal({ open, onOpenChange, evento, onEdit }: Sched
             <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="outline" className="text-xs">
                   <Tag className="h-3 w-3 mr-1" />
-                  {getBackendEventTypeLabel(evento.type)}
+                  {getBackendEventTypeLabel(event.type)}
                 </Badge>
-                {getStatusBadge(evento.status)}
+                {getStatusBadge(event.status)}
               </div>
             </div>
         </DialogHeader>
@@ -99,18 +102,18 @@ export function SchedulerViewModal({ open, onOpenChange, evento, onEdit }: Sched
           {/* DATA E HORÁRIO */}
           <Section title="Quando" icon={Calendar}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Field label="Data Início" value={formatDate(evento.data)} />
-              <Field label="Horário Início" value={evento.data ? new Date(evento.data).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : null} />
-              <Field label="Data Fim" value={evento.end_date ? formatDate(evento.end_date) : null} />
-              <Field label="Horário Fim" value={evento.end_date ? new Date(evento.end_date).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : null} />
+              <Field label="Data Início" value={formatDate(event.data)} />
+              <Field label="Horário Início" value={event.data ? new Date(event.data).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : null} />
+              <Field label="Data Fim" value={event.end_date ? formatDate(event.end_date) : null} />
+              <Field label="Horário Fim" value={event.end_date ? new Date(event.end_date).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : null} />
             </div>
           </Section>
 
           {/* LOCAL */}
           <Section title="Onde" icon={MapPin}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Local" value={evento.local} />
-              <Field label="Endereço" value={evento.endereco} />
+              <Field label="Local" value={event.local} />
+              <Field label="Endereço" value={event.endereco} />
             </div>
           </Section>
 
@@ -172,33 +175,33 @@ export function SchedulerViewModal({ open, onOpenChange, evento, onEdit }: Sched
           )}
 
           {/* CONTATO DO LOCAL */}
-          {(evento.contato_local || evento.contato_telefone || evento.contato_email) && (
+          {(event.contato_local || event.contato_telefone || event.contato_email) && (
             <Section title="Contato no Local" icon={Phone}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Field
                   label="Responsável"
-                  value={evento.contato_local && (
+                  value={event.contato_local && (
                     <span className="flex items-center gap-1.5">
                       <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
-                      {evento.contato_local}
+                      {event.contato_local}
                     </span>
                   )}
                 />
                 <Field
                   label="Telefone"
-                  value={evento.contato_telefone && (
+                  value={event.contato_telefone && (
                     <span className="flex items-center gap-1.5">
                       <Phone className="h-3.5 w-3.5 text-muted-foreground" />
-                      {evento.contato_telefone}
+                      {event.contato_telefone}
                     </span>
                   )}
                 />
                 <Field
                   label="E-mail"
-                  value={evento.contato_email && (
+                  value={event.contato_email && (
                     <span className="flex items-center gap-1.5">
                       <Mail className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="truncate">{evento.contato_email}</span>
+                      <span className="truncate">{event.contato_email}</span>
                     </span>
                   )}
                 />
@@ -207,37 +210,37 @@ export function SchedulerViewModal({ open, onOpenChange, evento, onEdit }: Sched
           )}
 
           {/* DETALHES OPERACIONAIS (Show) */}
-          {(evento.valor_cache != null || evento.capacidade_publico != null || evento.publico_esperado != null) && (
+          {(event.valor_cache != null || event.capacidade_publico != null || event.publico_esperado != null) && (
             <Section title="Detalhes Operacionais" icon={DollarSign}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {evento.valor_cache != null && (
+                {event.valor_cache != null && (
                   <Card>
                     <CardContent className="p-4">
                       <p className="text-xs text-muted-foreground">Cachê</p>
                       <p className={`text-xl font-bold mt-1 ${getMonetarySemanticClass("neutral")}`} data-testid="text-evento-cache">
-                        {formatCurrency(evento.valor_cache)}
+                        {formatCurrency(event.valor_cache)}
                       </p>
                     </CardContent>
                   </Card>
                 )}
-                {evento.capacidade_publico != null && (
+                {event.capacidade_publico != null && (
                   <Card>
                     <CardContent className="p-4">
                       <p className="text-xs text-muted-foreground">Capacidade</p>
                       <p className="text-xl font-bold mt-1 flex items-center gap-1.5">
                         <Users className="h-4 w-4 text-muted-foreground" />
-                        {Number(evento.capacidade_publico).toLocaleString("pt-BR")}
+                        {Number(event.capacidade_publico).toLocaleString("pt-BR")}
                       </p>
                     </CardContent>
                   </Card>
                 )}
-                {evento.publico_esperado != null && (
+                {event.publico_esperado != null && (
                   <Card>
                     <CardContent className="p-4">
                       <p className="text-xs text-muted-foreground">Público Esperado</p>
                       <p className="text-xl font-bold mt-1 flex items-center gap-1.5">
                         <Users className="h-4 w-4 text-muted-foreground" />
-                        {Number(evento.publico_esperado).toLocaleString("pt-BR")}
+                        {Number(event.publico_esperado).toLocaleString("pt-BR")}
                       </p>
                     </CardContent>
                   </Card>
@@ -247,12 +250,12 @@ export function SchedulerViewModal({ open, onOpenChange, evento, onEdit }: Sched
           )}
 
           {/* DESCRIÇÃO */}
-          {evento.descricao && (
+          {event.descricao && (
             <Section title="Descrição" icon={FileText}>
               <Card>
                 <CardContent className="p-4">
                   <p className="text-sm text-foreground whitespace-pre-wrap" data-testid="text-evento-descricao">
-                    {evento.descricao}
+                    {event.descricao}
                   </p>
                 </CardContent>
               </Card>
@@ -278,11 +281,11 @@ export function SchedulerViewModal({ open, onOpenChange, evento, onEdit }: Sched
           )}
 
           {/* OBSERVAÇÕES */}
-          {evento.observacoes && (
+          {event.observacoes && (
             <Section title="Observações" icon={FileText}>
               <Card>
                 <CardContent className="p-4">
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{evento.observacoes}</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{event.observacoes}</p>
                 </CardContent>
               </Card>
             </Section>

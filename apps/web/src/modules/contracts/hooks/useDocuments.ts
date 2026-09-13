@@ -4,7 +4,7 @@ import type { VinculadoDocument } from "@/modules/contracts/types/document-types
 
 // Documentos vinculados não possuem endpoint real ainda: leitura reporta o
 // estado verdadeiro (vazio) e escrita falha explicitamente. É proibido simular
-// o backend em localStorage ou devolver documentos fictícios.
+// o backend em localStorage ou devolver documents fictícios.
 const DOCUMENTS_BACKEND_UNAVAILABLE =
   "Documentos de contrato ainda não possuem endpoint real no backend — operação indisponível.";
 

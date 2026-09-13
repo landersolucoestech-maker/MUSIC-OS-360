@@ -42,8 +42,9 @@ import {
   Briefcase,
   Eye,
 } from "lucide-react";
-import type { ProjetoWithRelations } from "@/modules/projects/hooks/useProjetos";
-import type { Artista } from "@/modules/artist/hooks/useArtistas";
+import type { ProjectWithRelations as ProjetoWithRelations } from "@/modules/projects/hooks/useProjects";
+import type { Artist } from "@/modules/artist/hooks/useArtists";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import { ParticipanteViewModal } from "@/modules/catalog/components/ParticipanteViewModal";
 import { useObras } from "@/modules/catalog/hooks/useObras";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
@@ -77,7 +78,7 @@ import { obraSchema } from "@/modules/catalog/lib/obra-schema";
 interface ArtistNameInputProps {
   value: string;
   onChange: (val: string) => void;
-  onSelect?: (a: { id: string; nome_artistico: string; nome_civil?: string | null }) => void;
+  onSelect?: (a: { id: string; stageName: string; nome_civil?: string | null }) => void;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
@@ -100,11 +101,12 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled }: A
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const { items: suggestions } = useEntityLookup<Artista>({
+  const { items: suggestionsWire } = useEntityLookup<ArtistWireRecord>({
     table: "artistas",
     search: inputText,
     enabled: open && inputText.trim().length > 0,
   });
+  const suggestions = suggestionsWire.map(wireToArtist);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
@@ -112,8 +114,8 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled }: A
     setOpen(true);
   };
 
-  const handleSelect = (a: Artista) => {
-    const display = a.nome_civil || a.nome_artistico;
+  const handleSelect = (a: Artist) => {
+    const display = a.legalName || a.stageName;
     setInputText(display);
     onChange(display);
     onSelect?.(a);
@@ -140,8 +142,8 @@ function ArtistNameInput({ value, onChange, onSelect, placeholder, disabled }: A
               className="w-full text-left px-3 py-2 text-sm hover:bg-muted hover:text-foreground flex flex-col gap-0.5"
               onMouseDown={() => handleSelect(a)}
             >
-              <span className="font-medium">{a.nome_civil || a.nome_artistico}</span>
-              <span className="text-xs text-muted-foreground">{a.nome_artistico}</span>
+              <span className="font-medium">{a.legalName || a.stageName}</span>
+              <span className="text-xs text-muted-foreground">{a.stageName}</span>
             </button>
           ))}
         </div>
@@ -187,7 +189,7 @@ interface ObraFormModalProps {
    */
   tipoObra?: TipoObra;
   /** Chamado após salvar com sucesso — usado para abrir modal de contrato pré-preenchido */
-  onSaved?: (info: { title: string; observacoes: string }) => void;
+  onSaved?: (info: { title: string; notes: string }) => void;
 }
 
 interface Participante {
@@ -266,7 +268,7 @@ export function ObraFormModal({
   const [referenciasConexas, setReferenciasConexas] = useState<string[]>(() => obraReferenciasConexas(obra));
   const [letraCompleta, setLetraCompleta] = useState(() => obraLetraCompleta(obra));
   const [aceitaTermos, setAceitaTermos] = useState(false);
-  const [viewArtista, setViewArtista] = useState<Artista | null>(null);
+  const [viewArtista, setViewArtista] = useState<Artist | null>(null);
 
   // Sync state whenever the modal opens or the obra record changes
   useEffect(() => {
@@ -302,7 +304,7 @@ export function ObraFormModal({
   // truncava em 50 projetos por tenant).
   const linkedProjectId: string | undefined = obra?.project_id ?? obra?.projectId;
   const { entity: linkedProjeto } = useEntityById<ProjetoWithRelations>(
-    "projetos",
+    "projects",
     open ? linkedProjectId : undefined,
   );
   useEffect(() => {
@@ -329,7 +331,7 @@ export function ObraFormModal({
   // internamente) refaz a busca no backend, alcançando qualquer projeto
   // concluído do tenant.
   const { items: projetosConcluidosFiltrados } = useEntityLookup<ProjetoWithRelations>({
-    table: "projetos",
+    table: "projects",
     search: buscaProjeto,
     filters: { status: "concluido" },
     enabled: buscaProjetoOpen,
@@ -518,7 +520,7 @@ export function ObraFormModal({
 
       onSaved?.({
         title: `Cessão de Obras – ${tituloObra}`,
-        observacoes: obsLinhas.join("\n"),
+        notes: obsLinhas.join("\n"),
       });
     } catch (err) {
       if (handleConcurrencyConflict(err, "obra")) return;
@@ -638,10 +640,11 @@ export function ObraFormModal({
                             // Resolve artista por ID direto \u2014 n\u00e3o depende do artista estar
                             // entre os primeiros registros carregados (Task J).
                             const artistId = p.artist_id as string | null | undefined;
-                            const artistaFound = artistId
-                              ? await storage.findById<Artista>("artistas", artistId)
+                            const artistaFoundWire = artistId
+                              ? await storage.findById<ArtistWireRecord>("artistas", artistId)
                               : undefined;
-                            const artistaNomeResolved = artistaFound?.nome_artistico || pArtistaNomeDisplay;
+                            const artistaFound = artistaFoundWire ? wireToArtist(artistaFoundWire) : undefined;
+                            const artistaNomeResolved = artistaFound?.stageName || pArtistaNomeDisplay;
                             // Parse descricao JSON for composers/producers from project songs
                             let autoParticipantes: Participante[] = [];
                             try {
@@ -1235,13 +1238,13 @@ export function ObraFormModal({
                               // Busca por ID direto (não depende do artista estar entre os
                               // primeiros carregados) — cai para busca por nome só quando o
                               // participante nunca foi vinculado a um artista cadastrado.
-                              const found = p.artist_id
-                                ? await storage.findById<Artista>("artistas", p.artist_id)
+                              const foundWire = p.artist_id
+                                ? await storage.findById<ArtistWireRecord>("artistas", p.artist_id)
                                 : p.nome
-                                  ? (await storage.listPaged<Artista>("artistas", { page: 1, pageSize: 5, filters: { search: p.nome } }))
+                                  ? (await storage.listPaged<ArtistWireRecord>("artistas", { page: 1, pageSize: 5, filters: { search: p.nome } }))
                                       .items.find(a => (a.nome_civil || a.nome_artistico) === p.nome)
                                   : undefined;
-                              if (found) setViewArtista(found as Artista);
+                              if (foundWire) setViewArtista(wireToArtist(foundWire));
                             }}
                           >
                             <Eye className="w-3.5 h-3.5" />

@@ -15,13 +15,13 @@ import {
   Eye, PenLine, ClipboardList, UserPlus, Trash2,
   Building2, User, Music,
 } from "lucide-react";
-import { useTemplatesContratos } from "@/modules/contracts/hooks/useTemplatesContratos";
+import { useContractTemplates } from "@/modules/contracts/hooks/useContractTemplates";
 import { useCategoryRegistry } from "@/modules/contracts/hooks/useCategoryRegistry";
-import { useContratos } from "@/modules/contracts/hooks/useContratos";
+import { useContracts } from "@/modules/contracts/hooks/useContracts";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
-import type { TemplateContrato, ContractVariable, WizardSignerRecord } from "@/modules/contracts/types/contracts.types";
-import type { ContratoWithRelations, ContratoInsert } from "@/modules/contracts/hooks/useContratos";
+import type { ContractTemplateRow, ContractVariable, WizardSignerRecord } from "@/modules/contracts/types/contracts.types";
+import type { ContractWithRelations, ContractInsert } from "@/modules/contracts/hooks/useContracts";
 import type { SigningPlatform } from "@/modules/contracts/types/contracts.types";
 import { cn } from "@/shared/lib/utils";
 import { A4Preview } from "@/modules/contracts/components/ContractA4Preview";
@@ -132,21 +132,21 @@ const WIZARD_STEPS = [
 ];
 
 const STATUS_LABELS: Record<string, string> = {
-  rascunho:              "Rascunho",
+  draft:                 "Rascunho",
   pendente:              "Pendente",
-  aguardando_assinatura: "Aguardando Assinatura",
-  assinado:              "Assinado",
-  ativo:                 "Ativo",
-  vigente:               "Vigente",
+  awaiting_signature:    "Aguardando Assinatura",
+  signed:                "Assinado",
+  active:                "Ativo",
+  in_force:              "Vigente",
   expirado:              "Expirado",
   rescindido:            "Rescindido",
-  cancelado:             "Cancelado",
+  cancelled:             "Cancelado",
 };
 
 const EMPTY_PARTY: PartyData = { type: "pf", origin: "manual" };
 
 const EMPTY_META: WizardMeta = {
-  title: "", status: "rascunho", start_date: "", end_date: "", observations: "",
+  title: "", status: "draft", start_date: "", end_date: "", observations: "",
 };
 
 const EMPTY_WIZARD: WizardState = {
@@ -313,10 +313,10 @@ function StepTemplate({
   state, onSelect, categories,
 }: {
   state: WizardState;
-  onSelect: (t: TemplateContrato, label: string) => void;
+  onSelect: (t: ContractTemplateRow, label: string) => void;
   categories: Array<{ value: string; label: string }>;
 }) {
-  const { templates } = useTemplatesContratos();
+  const { templates } = useContractTemplates();
   const active = templates.filter((t) => t.ativo !== false);
 
   const getCategoryLabel = useCallback(
@@ -906,22 +906,22 @@ function ReviewStep({ state, onMeta }: { state: WizardState; onMeta: (m: WizardM
   );
 }
 
-// ── Main ContratoWizard ────────────────────────────────────────────────────
+// ── Main ContractWizard ────────────────────────────────────────────────────
 
-interface ContratoWizardProps {
+interface ContractWizardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  contrato?: ContratoWithRelations | null;
+  contrato?: ContractWithRelations | null;
 }
 
-export function ContratoWizard({ open, onOpenChange, contrato }: ContratoWizardProps) {
+export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardProps) {
   const [step, setStep] = useState(1);
   const [state, setState] = useState<WizardState>(EMPTY_WIZARD);
   const [isSaving, setIsSaving] = useState(false);
 
-  const { addContrato, updateContrato } = useContratos();
+  const { addContract, updateContract } = useContracts();
   const { categories } = useCategoryRegistry();
-  const { templates } = useTemplatesContratos();
+  const { templates } = useContractTemplates();
 
   const isEdit = !!contrato;
 
@@ -943,7 +943,7 @@ export function ContratoWizard({ open, onOpenChange, contrato }: ContratoWizardP
 
       const baseMeta: WizardMeta = {
         title:       contrato.title || "",
-        status:       String(contrato.status || "rascunho"),
+        status:       String(contrato.status || "draft"),
         start_date:  contrato.start_date || "",
         end_date:     contrato.end_date || "",
         observations: "",
@@ -1008,7 +1008,7 @@ export function ContratoWizard({ open, onOpenChange, contrato }: ContratoWizardP
 
   // ── Template selection ───────────────────────────────────────────────────
 
-  const handleSelectTemplate = useCallback((t: TemplateContrato) => {
+  const handleSelectTemplate = useCallback((t: ContractTemplateRow) => {
     const partyRoles     = extractPartyRoles(t.conteudo);
     const signatureRoles = extractSignatureRoles(t.conteudo);
     const manifestVars   = parseManifest(t.variables_manifest, t.conteudo, partyRoles);
@@ -1094,15 +1094,15 @@ export function ContratoWizard({ open, onOpenChange, contrato }: ContratoWizardP
         signatureRoles:       state.signatureRoles,
       });
 
-      // FIX: "Guardar Rascunho" always forces status = "rascunho"
+      // FIX: "Guardar Rascunho" always forces status = "draft"
       const resolvedStatus = sendForSignature
-        ? "aguardando_assinatura"
-        : "rascunho";
+        ? "awaiting_signature"
+        : "draft";
 
       const provider = (state.signers.find((s) => s.provider)?.provider || null) as SigningPlatform | null;
 
       // FIX: build typed payload — no `as any`
-      const payload: ContratoInsert = {
+      const payload: ContractInsert = {
         title:           state.meta.title.trim(),
         template_id:      state.templateId || null,
         type:             state.templateTipoServico || state.templateNome || null,
@@ -1119,7 +1119,7 @@ export function ContratoWizard({ open, onOpenChange, contrato }: ContratoWizardP
 
       if (isEdit && contrato) {
         try {
-          await updateContrato.mutateAsync({
+          await updateContract.mutateAsync({
             id: contrato.id,
             ...payload,
             expectedUpdatedAt: getExpectedUpdatedAt(contrato),
@@ -1130,7 +1130,7 @@ export function ContratoWizard({ open, onOpenChange, contrato }: ContratoWizardP
         }
       } else {
         try {
-          await addContrato.mutateAsync(payload);
+          await addContract.mutateAsync(payload);
         } catch {
           return;
         }

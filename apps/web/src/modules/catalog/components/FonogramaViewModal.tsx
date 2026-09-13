@@ -138,13 +138,13 @@ const formatDateBR = (d?: string | null) => {
 
 function StatusBadge({ status }: { status?: string }) {
   const s = status?.toLowerCase().replace(/\s+/g, "_") ?? "";
-  if (s === "registrado" || s === "cadastrado" || s === "ativo")
+  if (s === "registered" || s === "cadastrado" || s === "active")
     return <Badge variant="success">{status}</Badge>;
-  if (s === "em_analise" || s === "analise" || s === "análise")
+  if (s === "in_review" || s === "under_review")
     return <Badge variant="warning">Em Análise</Badge>;
-  if (s === "pendente")
+  if (s === "pending")
     return <Badge variant="warning">Pendente</Badge>;
-  if (s === "rejeitado" || s === "inativo")
+  if (s === "rejected" || s === "inactive")
     return <Badge variant="danger">{status}</Badge>;
   return <Badge variant="neutral">{status ?? "—"}</Badge>;
 }

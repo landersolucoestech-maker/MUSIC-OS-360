@@ -1,22 +1,22 @@
 import type {
-  FuncionarioStatus,
-  FuncionarioTipoContrato,
-  FeriasAusenciaTipo,
-  FeriasAusenciaStatus,
+  EmployeeStatusValue,
+  EmployeeContractType,
+  LeaveType,
+  LeaveRequestStatusValue,
 } from "@/shared/types/enums";
 
-export type { FuncionarioStatus, FuncionarioTipoContrato, FeriasAusenciaTipo, FeriasAusenciaStatus };
+export type { EmployeeStatusValue, EmployeeContractType, LeaveType, LeaveRequestStatusValue };
 
-export interface Funcionario {
+export interface Employee {
   id: string;
   user_id?: string;
   nome: string;
   cargo?: string | null;
   departamento?: string | null;
   salario?: number | string | null;
-  tipo_contrato?: FuncionarioTipoContrato | string | null;
+  tipo_contrato?: EmployeeContractType | string | null;
   data_admissao?: string | null;
-  status?: FuncionarioStatus | string | null;
+  status?: EmployeeStatusValue | string | null;
   vinculo_usuario_id?: string | null;
   email?: string | null;
   telefone?: string | null;
@@ -27,10 +27,10 @@ export interface Funcionario {
   [key: string]: unknown;
 }
 
-export type FuncionarioInsert = Omit<Funcionario, "id" | "user_id" | "created_at" | "updated_at">;
-export type FuncionarioUpdate = Partial<FuncionarioInsert>;
+export type EmployeeInsert = Omit<Employee, "id" | "user_id" | "created_at" | "updated_at">;
+export type EmployeeUpdate = Partial<EmployeeInsert>;
 
-export interface FolhaPagamento {
+export interface PayrollEntry {
   id: string;
   user_id?: string;
   funcionario_id?: string | null;
@@ -48,18 +48,18 @@ export interface FolhaPagamento {
   [key: string]: unknown;
 }
 
-export type FolhaPagamentoInsert = Omit<FolhaPagamento, "id" | "user_id" | "created_at" | "updated_at">;
-export type FolhaPagamentoUpdate = Partial<FolhaPagamentoInsert>;
+export type PayrollEntryInsert = Omit<PayrollEntry, "id" | "user_id" | "created_at" | "updated_at">;
+export type PayrollEntryUpdate = Partial<PayrollEntryInsert>;
 
-export interface FeriasAusencia {
+export interface LeaveRequest {
   id: string;
   user_id?: string;
   funcionario_id?: string | null;
-  type?: FeriasAusenciaTipo | string | null;
+  type?: LeaveType | string | null;
   start_date?: string | null;
   end_date?: string | null;
   dias_totais?: number | null;
-  status?: FeriasAusenciaStatus | string | null;
+  status?: LeaveRequestStatusValue | string | null;
   motivo?: string | null;
   observacoes?: string | null;
   created_at?: string;
@@ -67,10 +67,10 @@ export interface FeriasAusencia {
   [key: string]: unknown;
 }
 
-export type FeriasAusenciaInsert = Omit<FeriasAusencia, "id" | "user_id" | "created_at" | "updated_at">;
-export type FeriasAusenciaUpdate = Partial<FeriasAusenciaInsert>;
+export type LeaveRequestInsert = Omit<LeaveRequest, "id" | "user_id" | "created_at" | "updated_at">;
+export type LeaveRequestUpdate = Partial<LeaveRequestInsert>;
 
-export interface DocumentoFuncionario {
+export interface EmployeeDocument {
   id: string;
   user_id?: string;
   funcionario_id?: string | null;
@@ -83,5 +83,5 @@ export interface DocumentoFuncionario {
   [key: string]: unknown;
 }
 
-export type DocumentoFuncionarioInsert = Omit<DocumentoFuncionario, "id" | "user_id" | "created_at" | "updated_at">;
-export type DocumentoFuncionarioUpdate = Partial<DocumentoFuncionarioInsert>;
+export type EmployeeDocumentInsert = Omit<EmployeeDocument, "id" | "user_id" | "created_at" | "updated_at">;
+export type EmployeeDocumentUpdate = Partial<EmployeeDocumentInsert>;

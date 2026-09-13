@@ -1,18 +1,18 @@
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { useDataQuery } from "@/shared/hooks/useDataQuery";
-import type { FolhaPagamento, FolhaPagamentoInsert, FolhaPagamentoUpdate } from "../types/rh.types";
+import type { PayrollEntry, PayrollEntryInsert, PayrollEntryUpdate } from "../types/hr.types";
 
-export type { FolhaPagamento, FolhaPagamentoInsert, FolhaPagamentoUpdate };
+export type { PayrollEntry, PayrollEntryInsert, PayrollEntryUpdate };
 
-export const STATUS_PAGAMENTO = [
-  "pendente",
-  "pago",
-  "cancelado",
+export const PAYMENT_STATUS = [
+  "pending",
+  "paid",
+  "cancelled",
 ] as const;
 
-export function useFolhaPagamento() {
-  const result = useDataQuery<FolhaPagamento>({
-    queryKey: [...QUERY_KEYS.FOLHA_PAGAMENTO],
+export function usePayroll() {
+  const result = useDataQuery<PayrollEntry>({
+    queryKey: [...QUERY_KEYS.PAYROLL],
     table: "folha_pagamento",
   }, {
     create: { success: "Registro de pagamento criado com sucesso!", error: "Erro ao criar registro de pagamento" },
@@ -21,12 +21,12 @@ export function useFolhaPagamento() {
   });
 
   return {
-    folhaPagamento: result.data,
+    payrollEntries: result.data,
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,
-    addFolhaPagamento: result.create,
-    updateFolhaPagamento: result.update,
-    deleteFolhaPagamento: result.delete,
+    addPayrollEntry: result.create,
+    updatePayrollEntry: result.update,
+    deletePayrollEntry: result.delete,
   };
 }

@@ -7,12 +7,12 @@ import {
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
-import type { Artista } from "@/modules/artist/hooks/useArtistas";
+import type { Artist } from "@/modules/artist/hooks/useArtists";
 
 interface ParticipanteViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  artista: Artista | null;
+  artista: Artist | null;
 }
 
 const formatDateDMY = (d?: string | null): string => {
@@ -28,18 +28,16 @@ const formatDateDMY = (d?: string | null): string => {
   return d;
 };
 
-const deriveTipoPessoa = (artista: Artista): string => {
-  const raw = artista.tipo_pessoa as string | null | undefined;
+const deriveTipoPessoa = (artista: Artist): string => {
+  const raw = artista.personType;
   if (raw) {
     const r = raw.toLowerCase();
     if (r.includes("juridica") || r.includes("jurídica")) return "Jurídica";
     if (r.includes("fisica") || r.includes("física")) return "Física";
     return raw;
   }
-  const perfil = (artista.tipo_perfil as string | null | undefined) ?? "";
+  const perfil = (artista.profileType as string | null | undefined) ?? "";
   if (perfil.toLowerCase().includes("empresa")) return "Jurídica";
-  const type = (artista.type as string | null | undefined) ?? "";
-  if (type.toLowerCase() === "empresa") return "Jurídica";
   return "Física";
 };
 
@@ -50,13 +48,13 @@ export function ParticipanteViewModal({
 }: ParticipanteViewModalProps) {
   if (!artista) return null;
 
-  const nomeCivil = artista.nome_civil || artista.nome || artista.nome_artistico || "";
-  const pseudonimo = artista.nome_artistico || "";
+  const nomeCivil = artista.legalName || artista.name || artista.stageName || "";
+  const pseudonimo = artista.stageName || "";
   const tipoPessoa = deriveTipoPessoa(artista);
-  const genero = ((artista as Record<string, unknown>).genero as string | null | undefined) ?? "";
-  const dataNascimento = formatDateDMY(artista.data_nascimento);
-  const cpfCnpj = artista.cpf_cnpj || "";
-  const cae = ((artista as Record<string, unknown>).cae as string | null | undefined) ?? "";
+  const genero = ((artista as unknown as Record<string, unknown>).genero as string | null | undefined) ?? "";
+  const dataNascimento = formatDateDMY(artista.birthDate);
+  const cpfCnpj = artista.taxId || "";
+  const cae = ((artista as unknown as Record<string, unknown>).cae as string | null | undefined) ?? "";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

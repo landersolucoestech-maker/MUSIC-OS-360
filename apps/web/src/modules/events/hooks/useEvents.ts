@@ -1,14 +1,13 @@
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { useDataQuery } from "@/shared/hooks/useDataQuery";
-import type { Evento, EventoInsert, EventoUpdate, EventoWithRelations } from "../types/events.types";
+import type { Event, EventInsert, EventUpdate, EventWithRelations } from "../types/events.types";
 
-export type { Evento, EventoInsert, EventoUpdate, EventoWithRelations };
+export type { Event, EventInsert, EventUpdate, EventWithRelations };
 
-export function useEventos(enabled = true, artistId?: string) {
-  const result = useDataQuery<EventoWithRelations>({
-    queryKey: artistId ? [...QUERY_KEYS.EVENTOS, "by-artist", artistId] : [...QUERY_KEYS.EVENTOS],
-    table: "eventos",
-    select: "*, artistas(*)",
+export function useEvents(enabled = true, artistId?: string) {
+  const result = useDataQuery<EventWithRelations>({
+    queryKey: artistId ? [...QUERY_KEYS.EVENTS, "by-artist", artistId] : [...QUERY_KEYS.EVENTS],
+    table: "events",
     orderBy: { column: "data", ascending: true },
     enabled,
     // EventsService.list() só lê "artist_id" (pt-BR); "artistId" (camelCase)
@@ -21,12 +20,12 @@ export function useEventos(enabled = true, artistId?: string) {
   });
 
   return {
-    eventos: result.data,
+    events: result.data,
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,
-    addEvento: result.create,
-    updateEvento: result.update,
-    deleteEvento: result.delete,
+    addEvent: result.create,
+    updateEvent: result.update,
+    deleteEvent: result.delete,
   };
 }

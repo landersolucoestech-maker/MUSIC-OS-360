@@ -14,12 +14,12 @@ export function useObras(enabled = true, artistId?: string) {
     // artistId entra na queryKey: sem isso, abrir a Visão 360 do artista A e
     // depois do artista B reaproveitaria (errado) o cache de A — mesma key,
     // filtro server-side diferente (ver Task G).
-    queryKey: artistId ? [...QUERY_KEYS.OBRAS, "by-artist", artistId] : [...QUERY_KEYS.OBRAS],
+    queryKey: artistId ? [...QUERY_KEYS.WORKS, "by-artist", artistId] : [...QUERY_KEYS.WORKS],
     table: "obras",
     select: "*, artistas(*), projetos(id, title)",
     enabled,
     filters: artistId ? { artist_id: artistId } : undefined,
-    additionalInvalidateKeys: [[...QUERY_KEYS.PROJETOS]],
+    additionalInvalidateKeys: [[...QUERY_KEYS.PROJECTS]],
     onMutationSuccess: {
       onCreate: (o) =>
         emit(DomainEvents.MUSIC_REGISTERED, {

@@ -49,13 +49,13 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
-import { FuncionarioFormModal } from "@/modules/rh/components/FuncionarioFormModal";
-import { FolhaPagamentoFormModal } from "@/modules/rh/components/FolhaPagamentoFormModal";
-import { FeriasAusenciasFormModal } from "@/modules/rh/components/FeriasAusenciasFormModal";
+import { EmployeeFormModal } from "@/modules/rh/components/EmployeeFormModal";
+import { PayrollFormModal } from "@/modules/rh/components/PayrollFormModal";
+import { LeaveRequestFormModal } from "@/modules/rh/components/LeaveRequestFormModal";
 import {
-  FuncionarioViewModal,
-  FolhaPagamentoViewModal,
-  FeriasAusenciasViewModal,
+  EmployeeViewModal,
+  PayrollViewModal,
+  LeaveRequestViewModal,
 } from "@/modules/rh/components/RHViewModals";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { RequirePermission } from "@/shared/components/RequirePermission";
@@ -64,56 +64,56 @@ import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
 import { formatCurrency, formatDate, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 import {
-  useFuncionarios,
-  SETORES,
-  STATUS_FUNCIONARIO,
-} from "@/modules/rh/hooks/useFuncionarios";
-import type { Funcionario } from "@/modules/rh/hooks/useFuncionarios";
-import { useFolhaPagamento, STATUS_PAGAMENTO } from "@/modules/rh/hooks/useFolhaPagamento";
-import type { FolhaPagamento } from "@/modules/rh/hooks/useFolhaPagamento";
+  useEmployees,
+  DEPARTMENTS,
+  EMPLOYEE_STATUS,
+} from "@/modules/rh/hooks/useEmployees";
+import type { Employee } from "@/modules/rh/hooks/useEmployees";
+import { usePayroll, PAYMENT_STATUS } from "@/modules/rh/hooks/usePayroll";
+import type { PayrollEntry } from "@/modules/rh/hooks/usePayroll";
 import {
-  useFeriasAusencias,
-  STATUS_AUSENCIA,
-} from "@/modules/rh/hooks/useFeriasAusencias";
-import type { FeriasAusencia } from "@/modules/rh/hooks/useFeriasAusencias";
+  useLeaveRequests,
+  LEAVE_STATUS,
+} from "@/modules/rh/hooks/useLeaveRequests";
+import type { LeaveRequest } from "@/modules/rh/hooks/useLeaveRequests";
 import {
-  useFuncionariosPaginated, useFuncionariosStats,
-  useFolhaPaginated, useFeriasPaginated,
-} from "@/modules/rh/hooks/useRHPaginated";
+  useEmployeesPaginated, useEmployeesStats,
+  usePayrollPaginated, useLeaveRequestsPaginated,
+} from "@/modules/rh/hooks/useHRPaginated";
 import { useUsuarios } from "@/modules/settings/hooks/useUsuarios";
 import {
-  useDocumentosFuncionario,
-  TIPOS_DOCUMENTO,
-} from "@/modules/rh/hooks/useDocumentosFuncionario";
-import type { DocumentoFuncionario } from "@/modules/rh/hooks/useDocumentosFuncionario";
+  useEmployeeDocuments,
+  DOCUMENT_TYPES,
+} from "@/modules/rh/hooks/useEmployeeDocuments";
+import type { EmployeeDocument } from "@/modules/rh/hooks/useEmployeeDocuments";
 import { Label } from "@/shared/ui/label";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 const STATUS_VARIANT_FUNCIONARIO: Record<string, BadgeVariant> = {
-  ativo: "success",
-  inativo: "neutral",
-  "férias": "info",
-  afastado: "warning",
-  desligado: "danger",
+  active: "success",
+  inactive: "neutral",
+  on_vacation: "info",
+  on_leave: "warning",
+  terminated: "danger",
 };
 
 const STATUS_VARIANT_PAGAMENTO: Record<string, BadgeVariant> = {
-  pendente: "warning",
-  pago: "success",
-  cancelado: "neutral",
+  pending: "warning",
+  paid: "success",
+  cancelled: "neutral",
 };
 
 const STATUS_VARIANT_AUSENCIA: Record<string, BadgeVariant> = {
-  pendente: "warning",
-  aprovado: "success",
-  rejeitado: "danger",
+  pending: "warning",
+  approved: "success",
+  rejected: "danger",
   "em andamento": "info",
-  "concluído": "neutral",
+  completed: "neutral",
 };
 
 /** Resolve o nome do funcionário direto por ID (GET /hr/employees/:id) — nunca
- * escaneando a lista capada de useFuncionarios() (Task J). */
+ * escaneando a lista capada de useEmployees() (Task J). */
 function FuncionarioNomeCell({ id }: { id: string | null }) {
-  const { entity, isLoading } = useEntityById<Funcionario>("funcionarios", id);
+  const { entity, isLoading } = useEntityById<Employee>("funcionarios", id);
   if (!id) return <>N/A</>;
   if (isLoading) return <>…</>;
   return <>{entity?.nome || "N/A"}</>;
@@ -122,10 +122,10 @@ function FuncionarioNomeCell({ id }: { id: string | null }) {
 export default function RH() {
   const {
     isLoading: loadingFuncionarios,
-    deleteFuncionario,
-  } = useFuncionarios();
+    deleteEmployee,
+  } = useEmployees();
 
-  const { deleteFolhaPagamento } = useFolhaPagamento();
+  const { deletePayrollEntry } = usePayroll();
 
   const { usuarios = [] } = useUsuarios();
   const getUsuarioNome = (userId: string | null) => {
@@ -135,9 +135,9 @@ export default function RH() {
   };
 
   const {
-    updateFeriasAusencia,
-    deleteFeriasAusencia,
-  } = useFeriasAusencias();
+    updateLeaveRequest,
+    deleteLeaveRequest,
+  } = useLeaveRequests();
 
   const [activeTab, setActiveTab] = useState("funcionarios");
 
@@ -147,11 +147,11 @@ export default function RH() {
   const [funcFormModal, setFuncFormModal] = useState<{
     open: boolean;
     mode: "create" | "edit" | "view";
-    funcionario?: Funcionario;
+    funcionario?: Employee;
   }>({ open: false, mode: "create" });
   const [funcDeleteModal, setFuncDeleteModal] = useState<{
     open: boolean;
-    funcionario?: Funcionario;
+    funcionario?: Employee;
   }>({ open: false });
 
   const [selectedFuncIds, setSelectedFuncIds] = useState<string[]>([]);
@@ -167,7 +167,7 @@ export default function RH() {
     if (selectedFuncIds.length === 0) return;
     const ids = selectedFuncIds;
     setSelectedFuncIds([]);
-    const result = await runBulkAction(ids, (id) => deleteFuncionario.mutateAsync(id));
+    const result = await runBulkAction(ids, (id) => deleteEmployee.mutateAsync(id));
     reportBulkResult(result, "excluído", "funcionário");
   };
 
@@ -177,11 +177,11 @@ export default function RH() {
   const [folhaFormModal, setFolhaFormModal] = useState<{
     open: boolean;
     mode: "create" | "edit" | "view";
-    registro?: FolhaPagamento;
+    registro?: PayrollEntry;
   }>({ open: false, mode: "create" });
   const [folhaDeleteModal, setFolhaDeleteModal] = useState<{
     open: boolean;
-    registro?: FolhaPagamento;
+    registro?: PayrollEntry;
   }>({ open: false });
   const [selectedFolhaIds, setSelectedFolhaIds] = useState<string[]>([]);
   const [folhaBulkDeleteModal, setFolhaBulkDeleteModal] = useState<{ open: boolean; ids: string[] }>({ open: false, ids: [] });
@@ -191,11 +191,11 @@ export default function RH() {
   const [feriasFormModal, setFeriasFormModal] = useState<{
     open: boolean;
     mode: "create" | "edit" | "view";
-    ausencia?: FeriasAusencia;
+    ausencia?: LeaveRequest;
   }>({ open: false, mode: "create" });
   const [feriasDeleteModal, setFeriasDeleteModal] = useState<{
     open: boolean;
-    ausencia?: FeriasAusencia;
+    ausencia?: LeaveRequest;
   }>({ open: false });
   const [selectedFeriasIds, setSelectedFeriasIds] = useState<string[]>([]);
   const [feriasBulkDeleteModal, setFeriasBulkDeleteModal] = useState<{ open: boolean; ids: string[] }>({ open: false, ids: [] });
@@ -205,24 +205,24 @@ export default function RH() {
   const [docDescricao, setDocDescricao] = useState("");
   const [docDeleteModal, setDocDeleteModal] = useState<{
     open: boolean;
-    documento?: DocumentoFuncionario;
+    documento?: EmployeeDocument;
   }>({ open: false });
 
   const {
-    documentos,
+    documents,
     isLoading: loadingDocs,
     addDocumento,
     deleteDocumento,
-  } = useDocumentosFuncionario(docFuncionarioId || undefined);
+  } = useEmployeeDocuments(docFuncionarioId || undefined);
 
   // KPIs — agregação exata do tenant inteiro (GET /hr/employees/stats),
   // nunca calculada só sobre a página carregada (Task H).
-  const { stats: funcionariosStats } = useFuncionariosStats();
+  const { stats: funcionariosStats } = useEmployeesStats();
   const kpiCounts = {
     total: funcionariosStats.total,
-    ativos: funcionariosStats.byGroup["ativo"] ?? 0,
-    ferias: funcionariosStats.byGroup["férias"] ?? 0,
-    afastados: funcionariosStats.byGroup["afastado"] ?? 0,
+    ativos: funcionariosStats.byGroup["active"] ?? 0,
+    ferias: funcionariosStats.byGroup["on_vacation"] ?? 0,
+    afastados: funcionariosStats.byGroup["on_leave"] ?? 0,
   };
 
   const debouncedFuncSearch = useDebounce(funcSearch, 300);
@@ -243,7 +243,7 @@ export default function RH() {
   const {
     funcionarios: funcPageItems, total: funcTotal, isLoading: isLoadingFuncPage,
     error: funcPageError, refetch: refetchFuncPage,
-  } = useFuncionariosPaginated({
+  } = useEmployeesPaginated({
     page: funcPage, pageSize: funcPageSize, search: debouncedFuncSearch || undefined,
     status: funcStatusFilter !== "all" ? funcStatusFilter : undefined,
     setor: funcSetorFilter !== "all" ? funcSetorFilter : undefined,
@@ -255,7 +255,7 @@ export default function RH() {
   const {
     folhaPagamento: folhaPageItems, total: folhaTotal, isLoading: isLoadingFolhaPage,
     error: folhaPageError, refetch: refetchFolhaPage,
-  } = useFolhaPaginated({
+  } = usePayrollPaginated({
     page: folhaPage, pageSize: folhaPageSize, search: debouncedFolhaSearch || undefined,
     competencia: folhaMesFilter || undefined,
     status: folhaStatusFilter !== "all" ? folhaStatusFilter : undefined,
@@ -267,7 +267,7 @@ export default function RH() {
   const {
     feriasAusencias: feriasPageItems, total: feriasTotal, isLoading: isLoadingFeriasPage,
     error: feriasPageError, refetch: refetchFeriasPage,
-  } = useFeriasPaginated({
+  } = useLeaveRequestsPaginated({
     page: feriasPage, pageSize: feriasPageSize, search: debouncedFeriasSearch || undefined,
     status: feriasStatusFilter !== "all" ? feriasStatusFilter : undefined,
     enabled: activeTab === "ferias",
@@ -278,14 +278,14 @@ export default function RH() {
 
   const handleDeleteFuncionario = () => {
     if (funcDeleteModal.funcionario) {
-      deleteFuncionario.mutate(funcDeleteModal.funcionario.id);
+      deleteEmployee.mutate(funcDeleteModal.funcionario.id);
       setFuncDeleteModal({ open: false });
     }
   };
 
   const handleDeleteFolha = () => {
     if (folhaDeleteModal.registro) {
-      deleteFolhaPagamento.mutate(folhaDeleteModal.registro.id);
+      deletePayrollEntry.mutate(folhaDeleteModal.registro.id);
       setFolhaDeleteModal({ open: false });
     }
   };
@@ -304,13 +304,13 @@ export default function RH() {
     const ids = folhaBulkDeleteModal.ids;
     setSelectedFolhaIds((current) => current.filter((id) => !ids.includes(id)));
     setFolhaBulkDeleteModal({ open: false, ids: [] });
-    const result = await runBulkAction(ids, (id) => deleteFolhaPagamento.mutateAsync(id));
+    const result = await runBulkAction(ids, (id) => deletePayrollEntry.mutateAsync(id));
     reportBulkResult(result, "excluído", "registro de folha");
   };
 
   const handleDeleteFerias = () => {
     if (feriasDeleteModal.ausencia) {
-      deleteFeriasAusencia.mutate(feriasDeleteModal.ausencia.id);
+      deleteLeaveRequest.mutate(feriasDeleteModal.ausencia.id);
       setFeriasDeleteModal({ open: false });
     }
   };
@@ -329,12 +329,12 @@ export default function RH() {
     const ids = feriasBulkDeleteModal.ids;
     setSelectedFeriasIds((current) => current.filter((id) => !ids.includes(id)));
     setFeriasBulkDeleteModal({ open: false, ids: [] });
-    const result = await runBulkAction(ids, (id) => deleteFeriasAusencia.mutateAsync(id));
+    const result = await runBulkAction(ids, (id) => deleteLeaveRequest.mutateAsync(id));
     reportBulkResult(result, "excluído", "registro de férias");
   };
 
-  const handleApproveReject = (ausencia: FeriasAusencia, newStatus: string) => {
-    updateFeriasAusencia.mutate({
+  const handleApproveReject = (ausencia: LeaveRequest, newStatus: string) => {
+    updateLeaveRequest.mutate({
       id: ausencia.id,
       status: newStatus,
     } as any);
@@ -384,7 +384,7 @@ export default function RH() {
       description="Gestão de funcionários, folha de pagamento, férias e documentos"
       actions={
         <div className="flex items-center gap-2">
-          {activeTab !== "documentos" && (
+          {activeTab !== "documents" && (
             <RequirePermission module="rh" action="write">
               <Button
                 size="sm"
@@ -489,7 +489,7 @@ export default function RH() {
               <CalendarDays className="h-4 w-4" />
               Férias e Ausências
             </TabsTrigger>
-            <TabsTrigger value="documentos" className="flex items-center gap-2" data-testid="tab-documentos">
+            <TabsTrigger value="documents" className="flex items-center gap-2" data-testid="tab-documents">
               <FileText className="h-4 w-4" />
               Documentos
             </TabsTrigger>
@@ -513,7 +513,7 @@ export default function RH() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos Status</SelectItem>
-                    {STATUS_FUNCIONARIO.map((s) => (
+                    {EMPLOYEE_STATUS.map((s) => (
                       <SelectItem key={s} value={s}>
                         {s.charAt(0).toUpperCase() + s.slice(1)}
                       </SelectItem>
@@ -526,7 +526,7 @@ export default function RH() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos Setores</SelectItem>
-                    {SETORES.map((s) => (
+                    {DEPARTMENTS.map((s) => (
                       <SelectItem key={s} value={s}>{s}</SelectItem>
                     ))}
                   </SelectContent>
@@ -560,7 +560,7 @@ export default function RH() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos Status</SelectItem>
-                  {STATUS_PAGAMENTO.map((s) => (
+                  {PAYMENT_STATUS.map((s) => (
                     <SelectItem key={s} value={s}>
                       {s.charAt(0).toUpperCase() + s.slice(1)}
                     </SelectItem>
@@ -588,7 +588,7 @@ export default function RH() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos Status</SelectItem>
-                    {STATUS_AUSENCIA.map((s) => (
+                    {LEAVE_STATUS.map((s) => (
                       <SelectItem key={s} value={s}>
                         {s.charAt(0).toUpperCase() + s.slice(1)}
                       </SelectItem>
@@ -678,8 +678,8 @@ export default function RH() {
                       <TableCell className="text-muted-foreground">{f.tipo_contrato || "—"}</TableCell>
                       <TableCell className={`text-right ${getMonetarySemanticClass("neutral")}`}>{f.salario ? formatCurrency(Number(f.salario)) : "—"}</TableCell>
                       <TableCell>
-                        <Badge variant={STATUS_VARIANT_FUNCIONARIO[f.status || "ativo"] || "neutral"}>
-                          {(f.status || "ativo").charAt(0).toUpperCase() + (f.status || "ativo").slice(1)}
+                        <Badge variant={STATUS_VARIANT_FUNCIONARIO[f.status || "active"] || "neutral"}>
+                          {(f.status || "active").charAt(0).toUpperCase() + (f.status || "active").slice(1)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-xs" data-testid={`text-usuario-vinculo-${f.id}`}>
@@ -817,8 +817,8 @@ export default function RH() {
                       </TableCell>
                       <TableCell className="text-muted-foreground">{fp.data_pagamento ? formatDate(fp.data_pagamento) : "—"}</TableCell>
                       <TableCell>
-                        <Badge variant={STATUS_VARIANT_PAGAMENTO[fp.status || "pendente"] || "neutral"}>
-                          {(fp.status || "pendente").charAt(0).toUpperCase() + (fp.status || "pendente").slice(1)}
+                        <Badge variant={STATUS_VARIANT_PAGAMENTO[fp.status || "pending"] || "neutral"}>
+                          {(fp.status || "pending").charAt(0).toUpperCase() + (fp.status || "pending").slice(1)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
@@ -945,18 +945,18 @@ export default function RH() {
                       <TableCell className="text-muted-foreground">{formatDate(fa.end_date)}</TableCell>
                       <TableCell className="text-center">{fa.dias_totais ?? "—"}</TableCell>
                       <TableCell>
-                        <Badge variant={STATUS_VARIANT_AUSENCIA[fa.status || "pendente"] || "neutral"}>
-                          {(fa.status || "pendente").charAt(0).toUpperCase() + (fa.status || "pendente").slice(1)}
+                        <Badge variant={STATUS_VARIANT_AUSENCIA[fa.status || "pending"] || "neutral"}>
+                          {(fa.status || "pending").charAt(0).toUpperCase() + (fa.status || "pending").slice(1)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
-                          {fa.status === "pendente" && (
+                          {fa.status === "pending" && (
                             <>
-                              <Button variant="ghost" size="icon" onClick={() => handleApproveReject(fa, "aprovado")} title="Aprovar" data-testid={`button-approve-${fa.id}`}>
+                              <Button variant="ghost" size="icon" onClick={() => handleApproveReject(fa, "approved")} title="Aprovar" data-testid={`button-approve-${fa.id}`}>
                                 <CheckCircle className="h-4 w-4 text-emerald-600" />
                               </Button>
-                              <Button variant="ghost" size="icon" onClick={() => handleApproveReject(fa, "rejeitado")} title="Rejeitar" data-testid={`button-reject-${fa.id}`}>
+                              <Button variant="ghost" size="icon" onClick={() => handleApproveReject(fa, "rejected")} title="Rejeitar" data-testid={`button-reject-${fa.id}`}>
                                 <XCircle className="h-4 w-4 text-destructive" />
                               </Button>
                             </>
@@ -999,11 +999,11 @@ export default function RH() {
             )}
           </TabsContent>
 
-          <TabsContent value="documentos" className="mt-6 space-y-6">
+          <TabsContent value="documents" className="mt-6 space-y-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap items-center gap-2 flex-1">
                 <div className="w-[250px]">
-                  <AsyncEntityCombobox<Funcionario>
+                  <AsyncEntityCombobox<Employee>
                     table="funcionarios"
                     value={docFuncionarioId || null}
                     onChange={(id) => setDocFuncionarioId(id || "")}
@@ -1036,7 +1036,7 @@ export default function RH() {
                             <SelectValue placeholder="Selecione o tipo" />
                           </SelectTrigger>
                           <SelectContent>
-                            {TIPOS_DOCUMENTO.map((t) => (
+                            {DOCUMENT_TYPES.map((t) => (
                               <SelectItem key={t} value={t}>{t}</SelectItem>
                             ))}
                           </SelectContent>
@@ -1053,12 +1053,12 @@ export default function RH() {
                       </div>
                     </div>
                     <FileUpload
-                      folder="documentos-rh"
+                      folder="documents-rh"
                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                       maxSize={10}
                       multiple
                       onUploadComplete={handleDocUploadComplete}
-                      data-testid="file-upload-documentos"
+                      data-testid="file-upload-documents"
                     />
                   </CardContent>
                 </Card>
@@ -1067,18 +1067,18 @@ export default function RH() {
                   <div className="flex items-center justify-center h-32">
                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                   </div>
-                ) : (documentos || []).length === 0 ? (
+                ) : (documents || []).length === 0 ? (
                   <EmptyState
                     icon={FileText}
                     title="Nenhum documento encontrado"
                     description="Envie documentos usando o formulário acima."
                   />
                 ) : (
-                  <Card data-testid="table-documentos">
+                  <Card data-testid="table-documents">
                     <CardContent className="pt-0">
                     <ListSectionHeader
                       title="Documentos"
-                      count={(documentos || []).length}
+                      count={(documents || []).length}
                       description="Acompanhe documentos de funcionários, tipos, vencimentos, anexos e status."
                     />
                     <Table>
@@ -1092,7 +1092,7 @@ export default function RH() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {(documentos || []).map((doc) => (
+                        {(documents || []).map((doc) => (
                           <TableRow key={doc.id} data-testid={`row-documento-${doc.id}`}>
                             <TableCell>
                               <Badge variant="secondary">{doc.tipo_documento || "Outro"}</Badge>
@@ -1137,39 +1137,39 @@ export default function RH() {
     )}
 
       {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): FuncionarioFormModal chama useFuncionarios() de novo só
+          (Task C): EmployeeFormModal chama useEmployees() de novo só
           para as mutations, a mesma query de loadingFuncionarios acima. */}
-      <FuncionarioFormModal
+      <EmployeeFormModal
         open={funcFormModal.open && funcFormModal.mode !== "view"}
         onOpenChange={(open) => setFuncFormModal({ ...funcFormModal, open })}
         funcionario={funcFormModal.funcionario}
         mode={funcFormModal.mode}
       />
-      <FuncionarioViewModal
+      <EmployeeViewModal
         open={funcFormModal.open && funcFormModal.mode === "view"}
         onOpenChange={(open) => setFuncFormModal({ ...funcFormModal, open })}
         funcionario={funcFormModal.funcionario}
       />
 
-      <FolhaPagamentoFormModal
+      <PayrollFormModal
         open={folhaFormModal.open && folhaFormModal.mode !== "view"}
         onOpenChange={(open) => setFolhaFormModal({ ...folhaFormModal, open })}
         registro={folhaFormModal.registro}
         mode={folhaFormModal.mode}
       />
-      <FolhaPagamentoViewModal
+      <PayrollViewModal
         open={folhaFormModal.open && folhaFormModal.mode === "view"}
         onOpenChange={(open) => setFolhaFormModal({ ...folhaFormModal, open })}
         registro={folhaFormModal.registro}
       />
 
-      <FeriasAusenciasFormModal
+      <LeaveRequestFormModal
         open={feriasFormModal.open && feriasFormModal.mode !== "view"}
         onOpenChange={(open) => setFeriasFormModal({ ...feriasFormModal, open })}
         ausencia={feriasFormModal.ausencia}
         mode={feriasFormModal.mode}
       />
-      <FeriasAusenciasViewModal
+      <LeaveRequestViewModal
         open={feriasFormModal.open && feriasFormModal.mode === "view"}
         onOpenChange={(open) => setFeriasFormModal({ ...feriasFormModal, open })}
         ausencia={feriasFormModal.ausencia}

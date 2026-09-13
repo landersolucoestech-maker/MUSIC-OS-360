@@ -23,7 +23,7 @@ import { FonogramaFormModal } from "@/modules/catalog/components/FonogramaFormMo
 import { FonogramaViewModal } from "@/modules/catalog/components/FonogramaViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { RequirePermission } from "@/shared/components/RequirePermission";
-import { ContratoFormModal } from "@/modules/contracts/components/ContratoFormModal";
+import { ContractFormModal } from "@/modules/contracts/components/ContractFormModal";
 import { toast } from "sonner";
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
 import { EmptyState } from "@/shared/components/EmptyState";
@@ -32,7 +32,7 @@ import { useObras } from "@/modules/catalog/hooks/useObras";
 import { useFonogramas } from "@/modules/catalog/hooks/useFonogramas";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
-import type { ProjetoWithRelations } from "@/modules/projects/hooks/useProjetos";
+import type { ProjectWithRelations } from "@/modules/projects/hooks/useProjects";
 import {
   useObrasPaginated, useObrasStats, useObrasGeneros,
   useFonogramasPaginated, useFonogramasStats, useFonogramasGeneros,
@@ -40,16 +40,16 @@ import {
 import type { Obra, Fonograma } from "@/modules/catalog/types/catalog.types";
 import { projetoToObraSeed } from "@/modules/catalog/mappers";
 import { parseMusicasFromProjeto } from "@/modules/projects/lib/musica-helpers";
-import { useProjetos } from "@/modules/projects/hooks/useProjetos";
-import { useArtistasAssinados } from "@/modules/artist/hooks/useArtistasAssinados";
+import { useProjects } from "@/modules/projects/hooks/useProjects";
+import { useSignedArtists } from "@/modules/artist/hooks/useSignedArtists";
 
 
 
 
 const statusObraLabel = (s: string): string => {
-  if (s === "registrado") return "Registrado";
-  if (s === "analise") return "Em Análise";
-  if (s === "rejeitado") return "Rejeitado";
+  if (s === "registered") return "Registrado";
+  if (s === "under_review" || s === "in_review") return "Em Análise";
+  if (s === "rejected") return "Rejeitado";
   return "Pendente";
 };
 
@@ -83,8 +83,8 @@ export default function RegistroMusicas() {
   const navigate = useNavigate();
   const { obras, isLoading: loadingObras, deleteObra, addObra } = useObras();
   const { fonogramas, isLoading: loadingFonogramas, deleteFonograma, addFonograma } = useFonogramas();
-  const { projetos: allProjetos } = useProjetos();
-  const { artistas: artistasAssinados } = useArtistasAssinados();
+  const { projects: allProjetos } = useProjects();
+  const { artists: artistasAssinados } = useSignedArtists();
   const [activeTab, setActiveTab] = useState("obras");
   const [selectedObraIds, setSelectedObraIds] = useState<string[]>([]);
   const toggleSelectAllObras = () => {
@@ -145,7 +145,7 @@ export default function RegistroMusicas() {
   });
   const [fonogramaViewModal, setFonogramaViewModal] = useState<{ open: boolean; fonograma?: Fonograma }>({ open: false });
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; item?: Obra | Fonograma; type?: string }>({ open: false, item: undefined, type: undefined });
-  const [contratoModal, setContratoModal] = useState<{ open: boolean; prefill?: { title: string; observacoes: string } }>({ open: false });
+  const [contratoModal, setContratoModal] = useState<{ open: boolean; prefill?: { title: string; notes: string } }>({ open: false });
 
   // Apply incoming ?projeto=:id (and optional ?obra=:id) coming from the Projetos screen
   const [searchParams, setSearchParams] = useSearchParams();
@@ -315,9 +315,9 @@ export default function RegistroMusicas() {
   const { stats: obrasStats } = useObrasStats();
   const { stats: fonogramasStats } = useFonogramasStats();
   const activeStats = activeTab === "fonogramas" ? fonogramasStats : obrasStats;
-  const pendentes = activeStats.byGroup["pendente"] ?? 0;
-  const emAnalise = activeStats.byGroup["analise"] ?? 0;
-  const registrados = activeStats.byGroup["registrado"] ?? 0;
+  const pendentes = activeStats.byGroup["pending"] ?? 0;
+  const emAnalise = (activeStats.byGroup["under_review"] ?? 0) + (activeStats.byGroup["in_review"] ?? 0);
+  const registrados = activeStats.byGroup["registered"] ?? 0;
   const total = activeStats.total;
   const taxaAprovacao = total > 0 ? Math.round((registrados / total) * 100) : 0;
 
@@ -480,9 +480,9 @@ export default function RegistroMusicas() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all-status">Todos Status</SelectItem>
-              <SelectItem value="pendente">Pendente</SelectItem>
-              <SelectItem value="analise">Em Análise</SelectItem>
-              <SelectItem value="registrado">Registrado</SelectItem>
+              <SelectItem value="pending">Pendente</SelectItem>
+              <SelectItem value="under_review">Em Análise</SelectItem>
+              <SelectItem value="registered">Registrado</SelectItem>
             </SelectContent>
           </Select>
           <Select value={genreFilter} onValueChange={setGenreFilter}>
@@ -577,10 +577,10 @@ export default function RegistroMusicas() {
                           </TableCell>
                           <TableCell className="py-3">
                             <Badge
-                              variant={fonograma.status === "registrado" ? "success" : "warning"}
+                              variant={fonograma.status === "registered" ? "success" : "warning"}
                               className="text-xs"
                             >
-                              {fonograma.status === "registrado" ? "Registrado" : fonograma.status === "analise" ? "Em Análise" : "Pendente"}
+                              {fonograma.status === "registered" ? "Registrado" : fonograma.status === "under_review" ? "Em Análise" : "Pendente"}
                             </Badge>
                           </TableCell>
                           <TableCell className="py-3 text-sm">{fonograma.cod_entidade || "-"}</TableCell>
@@ -613,8 +613,8 @@ export default function RegistroMusicas() {
                                   Editar
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  disabled={fonograma.status === "analise"}
-                                  title={fonograma.status === "analise" ? "Fonograma em análise — aguarde a conclusão antes de criar um lançamento" : undefined}
+                                  disabled={fonograma.status === "under_review"}
+                                  title={fonograma.status === "under_review" ? "Fonograma em análise — aguarde a conclusão antes de criar um lançamento" : undefined}
                                   onClick={() => navigate("/lancamentos")}
                                 >
                                   <Upload className="h-4 w-4 mr-2" />
@@ -720,10 +720,10 @@ export default function RegistroMusicas() {
                           </TableCell>
                           <TableCell className="py-3">
                             <Badge
-                              variant={obra.status === "registrado" ? "success" : "warning"}
+                              variant={obra.status === "registered" ? "success" : "warning"}
                               className="text-xs"
                             >
-                              {obra.status === "registrado" ? "Registrado" : obra.status === "analise" ? "Em Análise" : "Pendente"}
+                              {obra.status === "registered" ? "Registrado" : obra.status === "under_review" ? "Em Análise" : "Pendente"}
                             </Badge>
                           </TableCell>
                           <TableCell className="py-3">
@@ -752,8 +752,8 @@ export default function RegistroMusicas() {
                                   Editar
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  disabled={obra.status === "analise"}
-                                  title={obra.status === "analise" ? "Obra em análise — aguarde a conclusão antes de registrar um fonograma" : undefined}
+                                  disabled={obra.status === "under_review"}
+                                  title={obra.status === "under_review" ? "Obra em análise — aguarde a conclusão antes de registrar um fonograma" : undefined}
                                   onClick={() => {
                                     setActiveTab("fonogramas");
                                     setFonogramaModal({ open: true, mode: "create", fonograma: { id: "", work_id: obra.id } as Fonograma });
@@ -810,9 +810,9 @@ export default function RegistroMusicas() {
           let obraSeed: Record<string, unknown> | undefined;
           if (pendingProjectId) {
             // Busca DIRETO por ID (GET /projects/:id) — não depende do projeto
-            // estar entre os primeiros 50 carregados por useProjetos() sem
+            // estar entre os primeiros 50 carregados por useProjects() sem
             // filtro (Task J).
-            const projeto = await storage.findById<ProjetoWithRelations>("projetos", pendingProjectId);
+            const projeto = await storage.findById<ProjectWithRelations>("projects", pendingProjectId);
             if (projeto) {
               const musicas = parseMusicasFromProjeto(projeto);
               obraSeed = projetoToObraSeed(projeto, musicas[0] ?? null);
@@ -867,7 +867,7 @@ export default function RegistroMusicas() {
         title={deleteModal.type === "fonograma" ? "Excluir Fonograma" : "Excluir Obra"}
         description={`Tem certeza que deseja excluir ${deleteModal.type === "fonograma" ? "este fonograma" : "esta obra"}? Esta ação não pode ser desfeita.`}
       />
-      <ContratoFormModal
+      <ContractFormModal
         open={contratoModal.open}
         onOpenChange={(open) => setContratoModal({ ...contratoModal, open })}
         mode="create"

@@ -31,21 +31,21 @@ export interface IsrcParts {
 }
 
 const STATUS_DB_TO_SELECT: Record<string, string> = {
-  analise: "em_análise",
-  pendente: "pendente",
-  registrado: "registrado",
-  rejeitado: "rejeitado",
+  under_review: "em_análise",
+  pending: "pendente",
+  registered: "registrado",
+  rejected: "rejeitado",
 };
 
 const STATUS_SELECT_TO_DB: Record<string, string> = {
-  em_análise: "analise",
-  "em_analise": "analise",
-  "em análise": "analise",
-  "em analise": "analise",
-  pendente: "pendente",
-  registrado: "registrado",
-  rejeitado: "rejeitado",
-  analise: "analise",
+  em_análise: "under_review",
+  "em_analise": "under_review",
+  "em análise": "under_review",
+  "em analise": "under_review",
+  pendente: "pending",
+  registrado: "registered",
+  rejeitado: "rejected",
+  analise: "under_review",
 };
 
 export function dbStatusToSelect(value: unknown): string {
@@ -56,9 +56,9 @@ export function dbStatusToSelect(value: unknown): string {
 }
 
 export function normalizeStatusForDb(value: unknown): string {
-  if (typeof value !== "string") return "pendente";
+  if (typeof value !== "string") return "pending";
   const key = value.toLowerCase().trim();
-  if (!key) return "pendente";
+  if (!key) return "pending";
   return STATUS_SELECT_TO_DB[key] ?? key;
 }
 

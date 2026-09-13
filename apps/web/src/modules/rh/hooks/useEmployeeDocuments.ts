@@ -1,10 +1,10 @@
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { useDataQuery } from "@/shared/hooks/useDataQuery";
-import type { DocumentoFuncionario, DocumentoFuncionarioInsert, DocumentoFuncionarioUpdate } from "../types/rh.types";
+import type { EmployeeDocument, EmployeeDocumentInsert, EmployeeDocumentUpdate } from "../types/hr.types";
 
-export type { DocumentoFuncionario, DocumentoFuncionarioInsert, DocumentoFuncionarioUpdate };
+export type { EmployeeDocument, EmployeeDocumentInsert, EmployeeDocumentUpdate };
 
-export const TIPOS_DOCUMENTO = [
+export const DOCUMENT_TYPES = [
   "RG",
   "CPF",
   "CTPS",
@@ -16,12 +16,12 @@ export const TIPOS_DOCUMENTO = [
   "Outro",
 ] as const;
 
-export function useDocumentosFuncionario(funcionarioId?: string) {
-  const result = useDataQuery<DocumentoFuncionario>({
-    queryKey: [...QUERY_KEYS.DOCUMENTOS_FUNCIONARIO, ...(funcionarioId ? [funcionarioId] : [])],
+export function useEmployeeDocuments(employeeId?: string) {
+  const result = useDataQuery<EmployeeDocument>({
+    queryKey: [...QUERY_KEYS.EMPLOYEE_DOCUMENTS, ...(employeeId ? [employeeId] : [])],
     table: "documentos_funcionario",
-    filters: funcionarioId ? { funcionario_id: funcionarioId } : undefined,
-    enabled: !!funcionarioId,
+    filters: employeeId ? { funcionario_id: employeeId } : undefined,
+    enabled: !!employeeId,
   }, {
     create: { success: "Documento enviado com sucesso!", error: "Erro ao enviar documento" },
     update: { success: "Documento atualizado com sucesso!", error: "Erro ao atualizar documento" },
@@ -29,7 +29,7 @@ export function useDocumentosFuncionario(funcionarioId?: string) {
   });
 
   return {
-    documentos: result.data,
+    documents: result.data,
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,

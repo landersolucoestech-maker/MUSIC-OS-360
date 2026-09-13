@@ -1,1 +1,1 @@
-export * from '../schemas/folha-pagamento-schema';
+export * from '../schemas/payroll-entry-schema';

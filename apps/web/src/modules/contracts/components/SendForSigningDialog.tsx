@@ -19,12 +19,12 @@ import { Loader2, Send, CheckCircle2, AlertCircle, ExternalLink } from "lucide-r
 import { cn } from "@/shared/lib/utils";
 import { useSigningProviders } from "@/modules/integrations/hooks/useSigningProviders";
 import { signingService, type SigningProviderId } from "@/modules/integrations/services/signing.service";
-import type { ContratoWithRelations } from "@/modules/contracts/hooks/useContratos";
+import type { ContractWithRelations } from "@/modules/contracts/hooks/useContracts";
 
 interface SendForSigningDialogProps {
   open:           boolean;
   onOpenChange:   (open: boolean) => void;
-  contrato:       ContratoWithRelations;
+  contrato:       ContractWithRelations;
   onSuccess?:     (documentId: string, provider: SigningProviderId) => void;
 }
 

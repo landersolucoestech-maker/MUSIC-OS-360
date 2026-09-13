@@ -16,7 +16,7 @@ export function useFonogramas(enabled = true, artistId?: string) {
   const orgId = tenant?.id ?? "unknown";
 
   const result = useDataQuery<FonogramaWithRelations>({
-    queryKey: artistId ? [...QUERY_KEYS.FONOGRAMAS, "by-artist", artistId] : [...QUERY_KEYS.FONOGRAMAS],
+    queryKey: artistId ? [...QUERY_KEYS.PHONOGRAMS, "by-artist", artistId] : [...QUERY_KEYS.PHONOGRAMS],
     table: "fonogramas",
     select: "*, artistas(*)",
     enabled,

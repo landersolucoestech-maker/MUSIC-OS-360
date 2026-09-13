@@ -1,10 +1,10 @@
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { useDataQuery } from "@/shared/hooks/useDataQuery";
-import type { FeriasAusencia, FeriasAusenciaInsert, FeriasAusenciaUpdate } from "../types/rh.types";
+import type { LeaveRequest, LeaveRequestInsert, LeaveRequestUpdate } from "../types/hr.types";
 
-export type { FeriasAusencia, FeriasAusenciaInsert, FeriasAusenciaUpdate };
+export type { LeaveRequest, LeaveRequestInsert, LeaveRequestUpdate };
 
-export const TIPOS_AUSENCIA = [
+export const LEAVE_TYPES = [
   "férias",
   "licença médica",
   "licença maternidade",
@@ -15,17 +15,17 @@ export const TIPOS_AUSENCIA = [
   "folga compensatória",
 ] as const;
 
-export const STATUS_AUSENCIA = [
-  "pendente",
-  "aprovado",
-  "rejeitado",
+export const LEAVE_STATUS = [
+  "pending",
+  "approved",
+  "rejected",
   "em andamento",
-  "concluído",
+  "completed",
 ] as const;
 
-export function useFeriasAusencias() {
-  const result = useDataQuery<FeriasAusencia>({
-    queryKey: [...QUERY_KEYS.FERIAS_AUSENCIAS],
+export function useLeaveRequests() {
+  const result = useDataQuery<LeaveRequest>({
+    queryKey: [...QUERY_KEYS.LEAVE_REQUESTS],
     table: "ferias_ausencias",
   }, {
     create: { success: "Registro de ausência criado com sucesso!", error: "Erro ao criar registro de ausência" },
@@ -34,12 +34,12 @@ export function useFeriasAusencias() {
   });
 
   return {
-    feriasAusencias: result.data,
+    leaveRequests: result.data,
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,
-    addFeriasAusencia: result.create,
-    updateFeriasAusencia: result.update,
-    deleteFeriasAusencia: result.delete,
+    addLeaveRequest: result.create,
+    updateLeaveRequest: result.update,
+    deleteLeaveRequest: result.delete,
   };
 }
