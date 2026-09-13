@@ -1,7 +1,7 @@
 import type { ArtistaRef, ObraRef } from "@/shared/types/refs";
-import type { LancamentoStatus, LancamentoTipo, ShareStatus, ShareTipo, ShareDirecao, ShareType } from "@/shared/types/enums";
+import type { ReleaseStatusValue, ReleaseType, ShareStatus, ShareCategory, ShareDirection, ShareType } from "@/shared/types/enums";
 
-export type { LancamentoStatus, LancamentoTipo, ShareStatus, ShareTipo, ShareDirecao, ShareType };
+export type { ReleaseStatusValue, ReleaseType, ShareStatus, ShareCategory, ShareDirection, ShareType };
 
 export interface LancamentoAssets {
   audio_master_url?: string | null;
@@ -54,8 +54,8 @@ export interface Lancamento {
   id: string;
   user_id?: string;
   title: string;
-  type?: LancamentoTipo | string | null;
-  status?: LancamentoStatus | string | null;
+  type?: ReleaseType | string | null;
+  status?: ReleaseStatusValue | string | null;
   artist_id?: string | null;
   data_lancamento?: string | null;
   distribuidora?: string | null;
@@ -107,17 +107,18 @@ export interface Share {
   share_type?: ShareType | string | null;
   work_id?: string | null;
   artist_id?: string | null;
-  percentual?: number | null;
-  type?: ShareTipo | string | null;
-  direcao?: ShareDirecao | string | null;
+  percentage?: number | null;
+  type?: ShareCategory | string | null;
+  direction?: ShareDirection | string | null;
   status?: ShareStatus | string | null;
   valor_total?: number | null;
   valor_liquidado?: number | null;
-  detentor?: string | null;
+  holder?: string | null;
+  recipient?: string | null;
   // ── Fluxo interno (release) ──────────────────────────────────────────────────
   release_id?: string | null;
   // ── Fluxo externo (recebível) ────────────────────────────────────────────────
-  nome_musica?: string | null;
+  music_title?: string | null;
   artista_externo?: string | null;
   /** Artista/projeto da empresa vinculado ao recebível externo. */
   artista_project_id?: string | null;
@@ -125,7 +126,7 @@ export interface Share {
   pagador_contato?: string | null;
   origem_acordo?: string | null;
   data_prevista?: string | null;
-  documentos?: string | null;
+  documents?: string | null;
   // ── Acordo / rastreabilidade (compartilhado) ─────────────────────────────────
   acordo_notas?: string | null;
   acordo_url?: string | null;
@@ -153,6 +154,10 @@ export interface ShareHistoricoEntry {
   valor_anterior?: number | null;
   valor_novo?: number | null;
   versao?: string | null;
+  /** Canonical field for newly-written entries. */
+  percentage?: number | null;
+  /** @deprecated Legacy key on already-persisted (append-only) entries written before the
+   * naming-normalization rename; kept for backward-compatible reads only, never written anew. */
   percentual?: number | null;
   descricao?: string | null;
   autor?: string | null;

@@ -21,7 +21,7 @@ export function useLancamentosPaginated({ page, pageSize, search, status, type, 
   if (artistId) filters.artistId = artistId;
 
   const result = usePaginatedDataQuery<LancamentoWithRelations>({
-    queryKey: [...QUERY_KEYS.LANCAMENTOS],
+    queryKey: [...QUERY_KEYS.RELEASES],
     table: "lancamentos",
     page: page + 1,
     pageSize,
@@ -65,7 +65,7 @@ const EMPTY_DISTRIBUTION_KPIS: DistributionKPIs = { total: 0, distributed: 0, pe
  */
 export function useLancamentosDistributionStats() {
   const query = useQuery<RawStatusRow[]>({
-    queryKey: [...QUERY_KEYS.LANCAMENTOS, "stats"],
+    queryKey: [...QUERY_KEYS.RELEASES, "stats"],
     queryFn: ({ signal }) => api.get<RawStatusRow[]>("/releases/stats", { signal }),
     staleTime: 30_000,
   });

@@ -13,7 +13,8 @@ import {
 import { Button } from "@/shared/ui/button";
 import type { Share, ShareHistoricoEntry } from "../types";
 import { formatDate, formatCurrency } from "@/shared/lib/format-utils";
-import type { Artista } from "@/modules/artist/hooks/useArtistas";
+import type { Artist } from "@/modules/artist/hooks/useArtists";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
 import type { ObraWithRelations } from "@/modules/catalog/hooks/useObras";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
@@ -62,9 +63,11 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
   // de obra/artista estarem entre os primeiros 50 carregados por
   // useObras()/useArtistas() sem filtro (Task J).
   const { entity: obraVinculada } = useEntityById<ObraWithRelations>("obras", open ? str("work_id") || undefined : undefined);
-  const { entity: artistaResolved } = useEntityById<Artista>("artistas", open ? share?.artist_id ?? undefined : undefined);
+  const { entity: artistaResolvedWire } = useEntityById<ArtistWireRecord>("artistas", open ? share?.artist_id ?? undefined : undefined);
+  const artistaResolved: Artist | undefined = artistaResolvedWire ? wireToArtist(artistaResolvedWire) : undefined;
   const vinculoArtistaId = str("artista_project_id") || share?.artist_id || undefined;
-  const { entity: vinculoArtistaResolved } = useEntityById<Artista>("artistas", open ? vinculoArtistaId : undefined);
+  const { entity: vinculoArtistaResolvedWire } = useEntityById<ArtistWireRecord>("artistas", open ? vinculoArtistaId : undefined);
+  const vinculoArtistaResolved: Artist | undefined = vinculoArtistaResolvedWire ? wireToArtist(vinculoArtistaResolvedWire) : undefined;
 
   if (!share) return null;
 
@@ -82,7 +85,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
     return (
       obraTitle ||
       lancTitle ||
-      str("nome_musica") ||
+      str("music_title") ||
       str("titulo_obra") ||
       str("trackTitle") ||
       str("musicTitle") ||
@@ -93,12 +96,12 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
   };
   const releaseTitle = pickShareTitle();
 
-  // Participante: artista vinculado (artist_id) → detentor (igual à coluna Detentor da tabela)
-  const participanteNome = artistaResolved?.nome_artistico ?? str("detentor") ?? null;
-  const artistaNome = artistaResolved?.nome_artistico ?? null;
-  const vinculoNome = vinculoArtistaResolved?.nome_artistico ?? null;
+  // Participante: artista vinculado (artist_id) → holder (igual à coluna Detentor da tabela)
+  const participanteNome = artistaResolved?.stageName ?? str("holder") ?? null;
+  const artistaNome = artistaResolved?.stageName ?? null;
+  const vinculoNome = vinculoArtistaResolved?.stageName ?? null;
 
-  const direcaoLabel = str("direcao") === "a_receber" ? "A Receber" : str("direcao") === "a_enviar" ? "A Enviar" : null;
+  const directionLabel = str("direction") === "a_receber" ? "A Receber" : str("direction") === "a_enviar" ? "A Enviar" : null;
   const registradoEm = str("created_at") ? formatDate(str("created_at")) : null;
 
   return (
@@ -129,24 +132,24 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
                   <Field label="Lançamento / Música" value={releaseTitle} icon={Disc3} />
                   {artistaNome && <Field label="Artista" value={artistaNome} icon={User} />}
                   <Field label="Participante" value={participanteNome} icon={User} />
-                  <Field label="Destinatário" value={str("destinatario") || null} icon={User} />
+                  <Field label="Destinatário" value={str("recipient") || null} icon={User} />
                   <Field label="Função" value={s["type"] ? funcaoLabel(String(s["type"])) : null} icon={Share2} />
-                  <Field label="Direção" value={direcaoLabel} />
+                  <Field label="Direção" value={directionLabel} />
                 </>
               ) : (
                 <>
-                  <Field label="Música externa" value={str("nome_musica") || null} icon={FileText} />
+                  <Field label="Música externa" value={str("music_title") || null} icon={FileText} />
                   <Field label="Artista externo" value={str("artista_externo") || null} icon={User} />
                   <Field label="Vínculo (empresa)" value={vinculoNome} icon={Building} />
                   <Field label="Pagador" value={str("pagador") || null} icon={User} />
                   <Field label="Contato do pagador" value={str("pagador_contato") || null} />
                   <Field label="Origem do acordo" value={str("origem_acordo") || null} />
                   <Field label="Data prevista" value={str("data_prevista") ? formatDate(str("data_prevista")) : null} icon={Calendar} />
-                  {str("documentos") && (
+                  {str("documents") && (
                     <Field
                       label="Documentos"
                       value={
-                        <a href={str("documentos")} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
+                        <a href={str("documents")} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
                           Abrir <ExternalLink className="h-3 w-3" />
                         </a>
                       }
@@ -158,10 +161,10 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
               <Field
                 label="% Share"
                 value={
-                  share.percentual != null ? (
+                  share.percentage != null ? (
                     <span className="font-sans text-primary font-semibold flex items-center gap-1">
                       <Percent className="h-3 w-3" />
-                      {share.percentual}%
+                      {share.percentage}%
                     </span>
                   ) : null
                 }
@@ -234,8 +237,8 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        {h.percentual != null && (
-                          <span className="text-sm font-sans font-semibold text-primary">{h.percentual}%</span>
+                        {(h.percentage ?? h.percentual) != null && (
+                          <span className="text-sm font-sans font-semibold text-primary">{h.percentage ?? h.percentual}%</span>
                         )}
                         {h.descricao && (
                           <span className="text-xs text-muted-foreground">{h.descricao}</span>

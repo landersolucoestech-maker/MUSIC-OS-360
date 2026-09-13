@@ -16,7 +16,7 @@ export function useLancamentos(enabled = true, artistId?: string) {
   const orgId = tenant?.id ?? "unknown";
 
   const result = useDataQuery<LancamentoWithRelations>({
-    queryKey: artistId ? [...QUERY_KEYS.LANCAMENTOS, "by-artist", artistId] : [...QUERY_KEYS.LANCAMENTOS],
+    queryKey: artistId ? [...QUERY_KEYS.RELEASES, "by-artist", artistId] : [...QUERY_KEYS.RELEASES],
     table: "lancamentos",
     select: "*, artistas(*)",
     orderBy: { column: "data_lancamento", ascending: false },

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const percentualField = z
+const percentageField = z
   .string()
   .refine(
     (v) => !v || (!isNaN(parseFloat(v)) && parseFloat(v) >= 0 && parseFloat(v) <= 100),
@@ -29,20 +29,20 @@ export const shareSchema = z
     share_type: z.enum(["internal_release", "external_receivable"]).default("internal_release"),
     // Interno
     release_id: z.string().optional().or(z.literal("")),
-    detentor: z.string().max(150, "Detentor deve ter no máximo 150 caracteres").optional().or(z.literal("")),
-    destinatario: z.string().max(150).optional().or(z.literal("")),
+    holder: z.string().max(150, "Detentor deve ter no máximo 150 caracteres").optional().or(z.literal("")),
+    recipient: z.string().max(150).optional().or(z.literal("")),
     funcao: z.enum(["compositor", "interprete", "produtor", "editora", "gravadora", "empresario", "outro"]).optional(),
     // Externo
-    nome_musica: z.string().max(200, "Nome deve ter no máximo 200 caracteres").optional().or(z.literal("")),
+    music_title: z.string().max(200, "Nome deve ter no máximo 200 caracteres").optional().or(z.literal("")),
     artista_externo: z.string().max(150).optional().or(z.literal("")),
     artista_project_id: z.string().optional().or(z.literal("")),
     pagador: z.string().max(150).optional().or(z.literal("")),
     pagador_contato: z.string().max(200).optional().or(z.literal("")),
     origem_acordo: z.string().max(300).optional().or(z.literal("")),
     data_prevista: z.string().optional().or(z.literal("")),
-    documentos: z.string().max(500).optional().or(z.literal("")),
+    documents: z.string().max(500).optional().or(z.literal("")),
     // Comum
-    percentual: percentualField,
+    percentage: percentageField,
     valor_total: valorField,
     status: z.enum(["pendente", "parcial", "enviado", "aceito", "recebido", "recusado", "erro", "cancelado"]).default("pendente"),
     acordo_notas: z.string().max(2000, "Notas devem ter no máximo 2000 caracteres").optional().or(z.literal("")),
@@ -50,15 +50,15 @@ export const shareSchema = z
     observacoes: z.string().max(2000, "Observações deve ter no máximo 2000 caracteres").optional().or(z.literal("")),
   })
   .superRefine((data, ctx) => {
-    const hasPct = data.percentual !== undefined && data.percentual !== "";
+    const hasPct = data.percentage !== undefined && data.percentage !== "";
     if (!hasPct) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["percentual"], message: "Percentual é obrigatório" });
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["percentage"], message: "Percentual é obrigatório" });
     }
     if (data.share_type === "internal_release") {
       if (!data.release_id) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["release_id"], message: "Selecione o lançamento" });
-      if (!data.detentor) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["detentor"], message: "Informe o participante" });
+      if (!data.holder) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["holder"], message: "Informe o participante" });
     } else {
-      if (!data.nome_musica) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["nome_musica"], message: "Informe o nome da música" });
+      if (!data.music_title) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["music_title"], message: "Informe o nome da música" });
       if (!data.artista_project_id) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["artista_project_id"], message: "Vincule um artista/projeto da empresa" });
     }
   });

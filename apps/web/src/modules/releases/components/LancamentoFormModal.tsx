@@ -55,8 +55,9 @@ import type { Lancamento } from "@/modules/releases/types";
 import { useDistributionPlatforms } from "@/modules/releases/hooks/useDistributionPlatforms";
 import { resolveReleaseStatus, releaseStatusLabel } from "@/modules/releases/lib/release-status";
 import { formatReleaseDate } from "@/modules/releases/lib/release-format";
-import type { ProjetoWithRelations } from "@/modules/projects/hooks/useProjetos";
-import type { Artista } from "@/modules/artist/hooks/useArtistas";
+import type { ProjectWithRelations } from "@/modules/projects/hooks/useProjects";
+import type { Artist } from "@/modules/artist/hooks/useArtists";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import type { FonogramaWithRelations } from "@/modules/catalog/hooks/useFonogramas";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
@@ -417,12 +418,12 @@ function ArtistAutocompleteInput({
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { items: suggestionsData } = useEntityLookup<Artista>({
+  const { items: suggestionsData } = useEntityLookup<ArtistWireRecord>({
     table: "artistas",
     search: value,
     enabled: open && value.trim().length > 0,
   });
-  const filtered = suggestionsData.map((a) => a.nome_artistico ?? "").filter(Boolean);
+  const filtered = suggestionsData.map((a) => wireToArtist(a).stageName ?? "").filter(Boolean);
 
   return (
     <div ref={containerRef} className="relative flex-1">
@@ -498,14 +499,15 @@ export function LancamentoFormModal({
   // ── Derived labels ────────────────────────────────────────────────────────
   // Task J: busca direto por ID (GET /projects/:id) — não depende do projeto
   // estar entre os primeiros carregados por useProjetos() sem filtro.
-  const { entity: selectedProjeto } = useEntityById<ProjetoWithRelations>("projetos", formData.projetoSeed || undefined);
+  const { entity: selectedProjeto } = useEntityById<ProjectWithRelations>("projects", formData.projetoSeed || undefined);
   const projetoLabel: string = selectedProjeto
     ? ((selectedProjeto.title ?? (selectedProjeto.nome as string | undefined) ?? "") as string)
     : "";
   // Task I: busca direto por ID (não depende do artista estar entre os
   // primeiros carregados por useArtistas() sem filtro).
-  const { entity: selectedArtista } = useEntityById<Artista>("artistas", formData.artist_id || undefined);
-  const artistaLabel = selectedArtista?.nome_artistico ?? "";
+  const { entity: selectedArtistaWire } = useEntityById<ArtistWireRecord>("artistas", formData.artist_id || undefined);
+  const selectedArtista: Artist | undefined = selectedArtistaWire ? wireToArtist(selectedArtistaWire) : undefined;
+  const artistaLabel = selectedArtista?.stageName ?? "";
 
   // ── Filtered lists ────────────────────────────────────────────────────────
   const TIPOS_MUSICAIS = ["album", "ep", "single"];
@@ -516,8 +518,8 @@ export function LancamentoFormModal({
   // vez, não uma lista (ver QueryProjectDto), então filtrar os 3 tipos
   // musicais aqui é a mesma concessão já aceita em outras migrações desta
   // tarefa (leve estreitamento, nunca um cap de 50 no tenant inteiro).
-  const { items: projetosBusca } = useEntityLookup<ProjetoWithRelations>({
-    table: "projetos",
+  const { items: projetosBusca } = useEntityLookup<ProjectWithRelations>({
+    table: "projects",
     search: projetoSearch,
     enabled: projetoOpen,
   });
@@ -526,11 +528,12 @@ export function LancamentoFormModal({
   );
   // Task I: busca server-side (debounced internamente) — antes filtrava só
   // os primeiros 50 artistas do tenant carregados via useArtistas() sem filtro.
-  const { items: artistasFiltrados } = useEntityLookup<Artista>({
+  const { items: artistasFiltradosWire } = useEntityLookup<ArtistWireRecord>({
     table: "artistas",
     search: artistaSearch,
     enabled: artistaOpen,
   });
+  const artistasFiltrados = artistasFiltradosWire.map(wireToArtist);
 
   // ── Reset on open ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -580,13 +583,14 @@ export function LancamentoFormModal({
   // vinculado e o fonograma cujo título bate com o do projeto/faixa também
   // são resolvidos por busca direta (storage.findById / busca por título),
   // nunca varrendo useArtistas()/useFonogramas() sem filtro.
-  const handleSelectProjeto = async (projeto: ProjetoWithRelations) => {
+  const handleSelectProjeto = async (projeto: ProjectWithRelations) => {
     const projectId = projeto.id;
     const seed = projetoToLancamentoSeed(projeto);
-    const linkedArtista = projeto.artist_id
-      ? await storage.findById<Artista>("artistas", projeto.artist_id as string)
+    const linkedArtistaWire = projeto.artist_id
+      ? await storage.findById<ArtistWireRecord>("artistas", projeto.artist_id as string)
       : undefined;
-    const rawGenero = seed.genero?.trim() || linkedArtista?.genero_musical || "";
+    const linkedArtista = linkedArtistaWire ? wireToArtist(linkedArtistaWire) : undefined;
+    const rawGenero = seed.genero?.trim() || linkedArtista?.musicGenre || "";
     const fonoDosProjeto = projeto.title
       ? await findFonogramaByTitle(projeto.title)
       : undefined;
@@ -613,7 +617,7 @@ export function LancamentoFormModal({
           letra?: string;
         }>;
         if (musicas.length > 0) {
-          const artistaNome = linkedArtista?.nome_artistico ?? "";
+          const artistaNome = linkedArtista?.stageName ?? "";
           const faixasResolvidas = await Promise.all(
             musicas.map(async (m, i) => {
               const isrcFaixa =
@@ -1265,7 +1269,7 @@ export function LancamentoFormModal({
                               <Music className="h-4 w-4 text-foreground" />
                             </div>
                             <p className="text-sm font-medium truncate">
-                              {a.nome_artistico ?? "—"}
+                              {a.stageName ?? "—"}
                             </p>
                           </div>
                         ))

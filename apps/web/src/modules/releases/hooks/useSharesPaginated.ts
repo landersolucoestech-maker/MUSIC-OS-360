@@ -8,15 +8,15 @@ export interface UseSharesPaginatedParams {
   page: number;
   pageSize: number;
   search?: string;
-  direcao?: string;
+  direction?: string;
   status?: string;
   type?: string;
   shareType?: string;
 }
 
-export function useSharesPaginated({ page, pageSize, search, direcao, status, type, shareType }: UseSharesPaginatedParams) {
+export function useSharesPaginated({ page, pageSize, search, direction, status, type, shareType }: UseSharesPaginatedParams) {
   const filters: Record<string, unknown> = {};
-  if (direcao) filters.direcao = direcao;
+  if (direction) filters.direction = direction;
   if (status) filters.status = status;
   if (type) filters.type = type;
   if (shareType) filters.share_type = shareType;
@@ -42,7 +42,7 @@ export function useSharesPaginated({ page, pageSize, search, direcao, status, ty
 }
 
 interface DirecaoStatusRow {
-  direcao: string | null;
+  direction: string | null;
   status: string;
   cnt: number;
 }
@@ -67,10 +67,10 @@ export function useSharesStats() {
   const rows = query.data ?? [];
   const kpis = rows.length === 0 ? EMPTY_SHARE_KPIS : rows.reduce((acc, row) => {
     const pendingLike = row.status === "pendente" || row.status === "parcial";
-    if (row.direcao === "a_receber" && pendingLike) acc.aReceber += row.cnt;
-    else if (row.direcao === "a_receber" && row.status === "recebido") acc.recebidos += row.cnt;
-    else if (row.direcao === "a_enviar" && pendingLike) acc.aEnviar += row.cnt;
-    else if (row.direcao === "a_enviar" && row.status === "enviado") acc.enviados += row.cnt;
+    if (row.direction === "a_receber" && pendingLike) acc.aReceber += row.cnt;
+    else if (row.direction === "a_receber" && row.status === "recebido") acc.recebidos += row.cnt;
+    else if (row.direction === "a_enviar" && pendingLike) acc.aEnviar += row.cnt;
+    else if (row.direction === "a_enviar" && row.status === "enviado") acc.enviados += row.cnt;
     return acc;
   }, { aReceber: 0, recebidos: 0, aEnviar: 0, enviados: 0 });
 

@@ -76,7 +76,7 @@ export default function GestaoShares() {
     shares: pageShares, total, isLoading: isLoadingPage, error: pageError, refetch: refetchPage,
   } = useSharesPaginated({
     page, pageSize, search: debouncedSearch || undefined,
-    direcao: direcaoFilter !== "todos" ? direcaoFilter : undefined,
+    direction: direcaoFilter !== "todos" ? direcaoFilter : undefined,
     status: statusFilter !== "todos" ? statusFilter : undefined,
     type: tipoFilter !== "todos" ? tipoFilter : undefined,
     shareType: shareTypeFilter !== "todos" ? shareTypeFilter : undefined,
@@ -398,7 +398,7 @@ export default function GestaoShares() {
                     const obra = share.work_id ? resolvedObras[share.work_id] : undefined;
                     const lancamento = lancamentos.find((l: any) => l.id === share.release_id);
                     const artista = share.artist_id ? resolvedArtistas[share.artist_id] : undefined;
-                    const nomeDetentor = artista?.nome_artistico || share.detentor || "—";
+                    const nomeDetentor = artista?.nome_artistico || share.holder || "—";
                     const sType = resolveShareType(share as Share & Record<string, unknown>);
                     const isPendente = share.status === "pendente" || share.status === "parcial";
 
@@ -417,7 +417,7 @@ export default function GestaoShares() {
                               <Share2 className="h-3.5 w-3.5 text-primary" />
                             </div>
                             <div>
-                              <p className="font-medium text-foreground text-sm">{obra?.title ?? lancamento?.title ?? share.nome_musica ?? share.work_id ?? "—"}</p>
+                              <p className="font-medium text-foreground text-sm">{obra?.title ?? lancamento?.title ?? share.music_title ?? share.work_id ?? "—"}</p>
                               <p className="text-xs text-muted-foreground">{obra?.compositor ?? ""}</p>
                             </div>
                           </div>
@@ -434,7 +434,7 @@ export default function GestaoShares() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center text-foreground text-sm">
-                          {share.percentual != null ? `${share.percentual}%` : "—"}
+                          {share.percentage != null ? `${share.percentage}%` : "—"}
                         </TableCell>
                         <TableCell>{shareStatusBadge(share.status)}</TableCell>
                         <TableCell className="text-right">
@@ -459,7 +459,7 @@ export default function GestaoShares() {
                                 <Pencil className="h-4 w-4 mr-2" />
                                 Editar
                               </DropdownMenuItem>
-                              {isPendente && share.direcao === "a_receber" && (
+                              {isPendente && share.direction === "a_receber" && (
                                 <DropdownMenuItem
                                   data-testid={`button-receber-${share.id}`}
                                   onClick={() => handleRegistrarLiquidacao(share, "recebido")}
@@ -468,7 +468,7 @@ export default function GestaoShares() {
                                   Registrar Recebimento
                                 </DropdownMenuItem>
                               )}
-                              {isPendente && share.direcao === "a_enviar" && (
+                              {isPendente && share.direction === "a_enviar" && (
                                 <DropdownMenuItem
                                   data-testid={`button-enviar-${share.id}`}
                                   onClick={() => handleRegistrarLiquidacao(share, "enviado")}

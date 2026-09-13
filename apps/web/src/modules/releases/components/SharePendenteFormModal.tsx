@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { useShares } from "@/modules/releases/hooks/useShares";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
-import type { Artista } from "@/modules/artist/hooks/useArtistas";
+import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { shareSchema } from "@/modules/releases/lib/share-schema";
 import { resolveShareType } from "@/modules/releases/lib/share-format";
@@ -34,25 +34,25 @@ interface ShareFormState {
   share_type: ShareType;
   // interno
   release_id: string;
-  detentor: string;       // participante
-  destinatario: string;
+  holder: string;       // participante
+  recipient: string;
   funcao: string;
   // externo
-  nome_musica: string;
+  music_title: string;
   artista_externo: string;
   artista_project_id: string;
   pagador: string;
   pagador_contato: string;
   origem_acordo: string;
   data_prevista: string;
-  documentos: string;
+  documents: string;
   // comum
-  percentual: string;
+  percentage: string;
   valor_total: string;
   status: string;
   acordo_notas: string;
   acordo_url: string;
-  observacoes: string;
+  notes: string;
 }
 
 const FUNCAO_OPTIONS = [
@@ -78,23 +78,23 @@ const STATUS_OPTIONS = [
 const EMPTY: ShareFormState = {
   share_type: "internal_release",
   release_id: "",
-  detentor: "",
-  destinatario: "",
+  holder: "",
+  recipient: "",
   funcao: "interprete",
-  nome_musica: "",
+  music_title: "",
   artista_externo: "",
   artista_project_id: "",
   pagador: "",
   pagador_contato: "",
   origem_acordo: "",
   data_prevista: "",
-  documentos: "",
-  percentual: "",
+  documents: "",
+  percentage: "",
   valor_total: "",
   status: "pendente",
   acordo_notas: "",
   acordo_url: "",
-  observacoes: "",
+  notes: "",
 };
 
 function shareToForm(share: Share & Record<string, unknown>): ShareFormState {
@@ -105,23 +105,23 @@ function shareToForm(share: Share & Record<string, unknown>): ShareFormState {
   return {
     share_type: resolveShareType(share),
     release_id: s("release_id"),
-    detentor: s("detentor"),
-    destinatario: s("destinatario"),
+    holder: s("holder"),
+    recipient: s("recipient"),
     funcao: s("type") || "interprete",
-    nome_musica: s("nome_musica") || s("titulo_obra"),
+    music_title: s("music_title") || s("titulo_obra"),
     artista_externo: s("artista_externo"),
     artista_project_id: s("artista_project_id") || s("artist_id"),
     pagador: s("pagador"),
     pagador_contato: s("pagador_contato"),
     origem_acordo: s("origem_acordo"),
     data_prevista: s("data_prevista"),
-    documentos: s("documentos"),
-    percentual: share.percentual != null ? String(share.percentual) : "",
+    documents: s("documents"),
+    percentage: share.percentage != null ? String(share.percentage) : "",
     valor_total: share.valor_total != null ? String(share.valor_total) : "",
     status: s("status") || "pendente",
     acordo_notas: s("acordo_notas"),
     acordo_url: s("acordo_url"),
-    observacoes: s("observacoes"),
+    notes: s("observacoes"),
   };
 }
 
@@ -161,23 +161,23 @@ export function SharePendenteFormModal({ open, onOpenChange, share, initialRelea
     const validation = shareSchema.safeParse({
       share_type: formData.share_type,
       release_id: formData.release_id,
-      detentor: formData.detentor,
-      destinatario: formData.destinatario,
+      holder: formData.holder,
+      recipient: formData.recipient,
       funcao: formData.funcao as ShareFormState["funcao"],
-      nome_musica: formData.nome_musica,
+      music_title: formData.music_title,
       artista_externo: formData.artista_externo,
       artista_project_id: formData.artista_project_id,
       pagador: formData.pagador,
       pagador_contato: formData.pagador_contato,
       origem_acordo: formData.origem_acordo,
       data_prevista: formData.data_prevista,
-      documentos: formData.documentos,
-      percentual: formData.percentual,
+      documents: formData.documents,
+      percentage: formData.percentage,
       valor_total: formData.valor_total,
       status: formData.status,
       acordo_notas: formData.acordo_notas,
       acordo_url: formData.acordo_url,
-      observacoes: formData.observacoes,
+      notes: formData.notes,
     });
     if (!validation.success) {
       toast.error(validation.error.errors[0]?.message || "Preencha os campos obrigatórios");
@@ -190,8 +190,8 @@ export function SharePendenteFormModal({ open, onOpenChange, share, initialRelea
         (s) =>
           s.id !== share?.id &&
           (s as Record<string, unknown>)["release_id"] === formData.release_id &&
-          (s.detentor ?? "") === formData.detentor &&
-          ((s as Record<string, unknown>)["destinatario"] ?? "") === formData.destinatario,
+          (s.holder ?? "") === formData.holder &&
+          ((s as Record<string, unknown>)["recipient"] ?? "") === formData.recipient,
       );
       if (dup) {
         toast.error("Já existe um share para este lançamento, participante e destinatário.");
@@ -199,35 +199,35 @@ export function SharePendenteFormModal({ open, onOpenChange, share, initialRelea
       }
     }
 
-    const percentualNum = formData.percentual ? parseFloat(formData.percentual) : null;
+    const percentageNum = formData.percentage ? parseFloat(formData.percentage) : null;
     const valorTotalNum = formData.valor_total ? parseFloat(formData.valor_total) : null;
     setIsSubmitting(true);
     try {
       const selectedRelease = lancamentosDistribuidos.find((l) => l.id === formData.release_id);
       const common = {
         share_type: formData.share_type,
-        percentual: percentualNum,
+        percentage: percentageNum,
         valor_total: valorTotalNum,
         status: formData.status,
         acordo_notas: formData.acordo_notas.trim() || null,
         acordo_url: formData.acordo_url.trim() || null,
-        observacoes: formData.observacoes.trim() || null,
+        notes: formData.notes.trim() || null,
       };
       const payload: Record<string, unknown> = isInternal
         ? {
             ...common,
-            // direcao mantém semântica de fluxo de caixa (compat KPIs)
-            direcao: "a_enviar",
+            // direction mantém semântica de fluxo de caixa (compat KPIs)
+            direction: "a_enviar",
             release_id: formData.release_id || null,
-            nome_musica: selectedRelease?.title ?? null,
-            detentor: formData.detentor.trim() || null,
-            destinatario: formData.destinatario.trim() || null,
+            music_title: selectedRelease?.title ?? null,
+            holder: formData.holder.trim() || null,
+            recipient: formData.recipient.trim() || null,
             type: formData.funcao || null,
           }
         : {
             ...common,
-            direcao: "a_receber",
-            nome_musica: formData.nome_musica.trim() || null,
+            direction: "a_receber",
+            music_title: formData.music_title.trim() || null,
             artista_externo: formData.artista_externo.trim() || null,
             artista_project_id: formData.artista_project_id || null,
             artist_id: formData.artista_project_id || null,
@@ -235,7 +235,7 @@ export function SharePendenteFormModal({ open, onOpenChange, share, initialRelea
             pagador_contato: formData.pagador_contato.trim() || null,
             origem_acordo: formData.origem_acordo.trim() || null,
             data_prevista: formData.data_prevista || null,
-            documentos: formData.documentos.trim() || null,
+            documents: formData.documents.trim() || null,
           };
 
       if (isEditing && share?.id) {
@@ -247,11 +247,11 @@ export function SharePendenteFormModal({ open, onOpenChange, share, initialRelea
           ...payload,
           versao: novaVersao,
           historico:
-            percentualNum != null
+            percentageNum != null
               ? [{
                   versao: novaVersao,
                   data: new Date().toISOString().split("T")[0],
-                  percentual: percentualNum,
+                  percentage: percentageNum,
                   autor: "Sistema",
                   descricao: "Registro inicial",
                 }]
@@ -315,14 +315,14 @@ export function SharePendenteFormModal({ open, onOpenChange, share, initialRelea
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="detentor">Participante</Label>
-                  <Input id="detentor" placeholder="Nome do participante" value={formData.detentor}
-                    onChange={(e) => handleChange("detentor", e.target.value)} data-testid="input-detentor" />
+                  <Label htmlFor="holder">Participante</Label>
+                  <Input id="holder" placeholder="Nome do participante" value={formData.holder}
+                    onChange={(e) => handleChange("holder", e.target.value)} data-testid="input-holder" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="destinatario">Destinatário</Label>
-                  <Input id="destinatario" placeholder="Quem recebe (envio)" value={formData.destinatario}
-                    onChange={(e) => handleChange("destinatario", e.target.value)} data-testid="input-destinatario" />
+                  <Label htmlFor="recipient">Destinatário</Label>
+                  <Input id="recipient" placeholder="Quem recebe (envio)" value={formData.recipient}
+                    onChange={(e) => handleChange("recipient", e.target.value)} data-testid="input-recipient" />
                 </div>
               </div>
               <div className="space-y-2">
@@ -343,9 +343,9 @@ export function SharePendenteFormModal({ open, onOpenChange, share, initialRelea
             <>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="nome_musica">Nome da Música</Label>
-                  <Input id="nome_musica" placeholder="Ex: Bohemian Rhapsody" value={formData.nome_musica}
-                    onChange={(e) => handleChange("nome_musica", e.target.value)} data-testid="input-nome-musica" />
+                  <Label htmlFor="music_title">Nome da Música</Label>
+                  <Input id="music_title" placeholder="Ex: Bohemian Rhapsody" value={formData.music_title}
+                    onChange={(e) => handleChange("music_title", e.target.value)} data-testid="input-music-title" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="artista_externo">Artista principal externo</Label>
@@ -358,9 +358,9 @@ export function SharePendenteFormModal({ open, onOpenChange, share, initialRelea
                 {/* Task J: busca server-side (AsyncEntityCombobox) — antes populava
                     o Select com useArtistas() sem filtro, truncado nos primeiros
                     50 artistas do tenant. */}
-                <AsyncEntityCombobox<Artista>
+                <AsyncEntityCombobox<Artist>
                   table="artistas"
-                  getLabel={(a) => a.nome_artistico ?? ""}
+                  getLabel={(a) => a.stageName ?? ""}
                   value={formData.artista_project_id || null}
                   onChange={(id) => handleChange("artista_project_id", id)}
                   placeholder="Selecione o vínculo"
@@ -393,9 +393,9 @@ export function SharePendenteFormModal({ open, onOpenChange, share, initialRelea
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="documentos">Documentos / comprovantes (URL)</Label>
-                <Input id="documentos" placeholder="https://..." value={formData.documentos}
-                  onChange={(e) => handleChange("documentos", e.target.value)} data-testid="input-documentos" />
+                <Label htmlFor="documents">Documentos / comprovantes (URL)</Label>
+                <Input id="documents" placeholder="https://..." value={formData.documents}
+                  onChange={(e) => handleChange("documents", e.target.value)} data-testid="input-documents" />
               </div>
             </>
           )}
@@ -403,9 +403,9 @@ export function SharePendenteFormModal({ open, onOpenChange, share, initialRelea
           {/* Percentual + Valor + Status (comum) */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="percentual">% Share</Label>
-              <Input id="percentual" type="number" min="0" max="100" step="0.01" placeholder="Ex: 10.00"
-                value={formData.percentual} onChange={(e) => handleChange("percentual", e.target.value)} data-testid="input-percentual" />
+              <Label htmlFor="percentage">% Share</Label>
+              <Input id="percentage" type="number" min="0" max="100" step="0.01" placeholder="Ex: 10.00"
+                value={formData.percentage} onChange={(e) => handleChange("percentage", e.target.value)} data-testid="input-percentage" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="valor_total">Valor combinado (R$)</Label>
@@ -440,7 +440,7 @@ export function SharePendenteFormModal({ open, onOpenChange, share, initialRelea
           <div className="space-y-2">
             <Label htmlFor="observacoes">Observações adicionais</Label>
             <Textarea id="observacoes" placeholder="Informações adicionais sobre este share..."
-              value={formData.observacoes} onChange={(e) => handleChange("observacoes", e.target.value)} rows={2} data-testid="textarea-observacoes" />
+              value={formData.notes} onChange={(e) => handleChange("notes", e.target.value)} rows={2} data-testid="textarea-observacoes" />
           </div>
         </div>
 

@@ -13,7 +13,8 @@ import {
   Mic2,
   UserRound,
 } from "lucide-react";
-import type { Artista } from "@/modules/artist/hooks/useArtistas";
+import type { Artist } from "@/modules/artist/hooks/useArtists";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import type { FonogramaWithRelations } from "@/modules/catalog/hooks/useFonogramas";
 import { useShares } from "@/modules/releases/hooks/useShares";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
@@ -108,7 +109,8 @@ function aggregateField(faixas: any[], key: string): string {
 export function LancamentoViewModal({ open, onOpenChange, lancamento }: LancamentoViewModalProps) {
   // Artista principal do lançamento — busca DIRETO por ID (GET /artists/:id),
   // não depende de estar entre os primeiros 50 carregados (Task J).
-  const { entity: artista } = useEntityById<Artista>("artistas", open ? lancamento?.artist_id ?? undefined : undefined);
+  const { entity: artistaWire } = useEntityById<ArtistWireRecord>("artistas", open ? lancamento?.artist_id ?? undefined : undefined);
+  const artista: Artist | undefined = artistaWire ? wireToArtist(artistaWire) : undefined;
   const { shares } = useShares();
   const { transition: workflowTransition, isPending: isTransitionPending } = useWorkflowTransition({
     table: "lancamentos",
@@ -149,15 +151,15 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
     () => Array.from(new Set(shares.filter((s) => (s as Record<string, unknown>)["release_id"] === lancamento?.id && s.artist_id).map((s) => s.artist_id as string))),
     [shares, lancamento?.id],
   );
-  const [resolvedShareArtistas, setResolvedShareArtistas] = useState<Record<string, Artista>>({});
+  const [resolvedShareArtistas, setResolvedShareArtistas] = useState<Record<string, Artist>>({});
   useEffect(() => {
     if (!open || shareArtistaIds.length === 0) return;
     let cancelled = false;
-    Promise.all(shareArtistaIds.map((id) => storage.findById<Artista & { id: string }>("artistas", id)))
+    Promise.all(shareArtistaIds.map((id) => storage.findById<ArtistWireRecord>("artistas", id)))
       .then((results) => {
         if (cancelled) return;
-        const map: Record<string, Artista> = {};
-        results.forEach((a, i) => { if (a) map[shareArtistaIds[i]] = a; });
+        const map: Record<string, Artist> = {};
+        results.forEach((a, i) => { if (a) map[shareArtistaIds[i]] = wireToArtist(a); });
         setResolvedShareArtistas(map);
       })
       .catch(() => {});
@@ -234,7 +236,7 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
               <h2 className="text-2xl font-bold leading-tight text-foreground">{lancamento.title}</h2>
               <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
                 <UserRound className="h-4 w-4" />
-                {artista?.nome_artistico || "Artista não vinculado"}
+                {artista?.stageName || "Artista não vinculado"}
               </p>
             </div>
             <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
@@ -440,11 +442,11 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
                 {linkedShares.map((s) => {
                   const sr = s as Record<string, unknown>;
                   const nome =
-                    (s.artist_id ? resolvedShareArtistas[s.artist_id]?.nome_artistico : undefined) ??
-                    textValue(sr["detentor"]) ??
-                    textValue(sr["nome_musica"]) ??
+                    (s.artist_id ? resolvedShareArtistas[s.artist_id]?.stageName : undefined) ??
+                    textValue(sr["holder"]) ??
+                    textValue(sr["music_title"]) ??
                     "—";
-                  const pct = s.percentual != null ? `${s.percentual}%` : "";
+                  const pct = s.percentage != null ? `${s.percentage}%` : "";
                   return (
                     <div key={s.id} className="flex items-center justify-between rounded-lg bg-muted/30 px-3 py-2 text-sm">
                       <span className="truncate">{nome}</span>

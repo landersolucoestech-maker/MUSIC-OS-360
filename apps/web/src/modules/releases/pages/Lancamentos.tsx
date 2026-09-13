@@ -37,7 +37,8 @@ import { cardStatusClasses, RELEASE_STATUS_OPTIONS } from "@/modules/releases/li
 import { formatReleaseDate } from "@/modules/releases/lib/release-format";
 import { shareFlowFromReleaseUrl } from "@/modules/releases/services/share-from-release";
 import type { Lancamento } from "@/modules/releases/types";
-import type { Artista } from "@/modules/artist/types/artista.types";
+import type { Artist } from "@/modules/artist/types/artist.types";
+import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 
 
 function getReleaseArtworkUrl(release: Lancamento & Record<string, unknown>): string | null {
@@ -70,7 +71,7 @@ function getCountdown(date: string | null | undefined, now: number): Countdown {
 
 interface ReleaseCardProps {
   release: Lancamento & Record<string, unknown>;
-  artista?: Artista;
+  artista?: Artist;
   now: number;
   selected: boolean;
   onToggleSelect: () => void;
@@ -93,7 +94,7 @@ function ReleaseCard({ release, artista, now, selected, onToggleSelect, onView, 
   const releaseTime = release.data_lancamento ? new Date(release.data_lancamento).getTime() : NaN;
   const showCountdown = !Number.isNaN(releaseTime) && releaseTime > now;
   const releaseType = release.type === "single" ? "Single" : release.type === "ep" ? "EP" : "Album";
-  const genre = (release.genero as string | null) ?? artista?.genero_musical ?? "Genre TBA";
+  const genre = (release.genero as string | null) ?? artista?.musicGenre ?? "Genre TBA";
   const text = contrastText(mode);
   const subtext = contrastSubtext(mode);
   const chrome = contrastChrome(mode);
@@ -166,7 +167,7 @@ function ReleaseCard({ release, artista, now, selected, onToggleSelect, onView, 
             {release.title}
           </h3>
           <p className={`mt-1 text-sm font-medium ${subtext}`} data-testid={`text-lancamento-artista-${release.id}`}>
-            {artista?.nome_artistico || "Artista não vinculado"}
+            {artista?.stageName || "Artista não vinculado"}
           </p>
           {showCountdown && (
             <div className={`mt-3 rounded-lg border p-2.5 ${chrome}`}>
@@ -290,7 +291,7 @@ export default function Lancamentos() {
   // Task J: nome/gênero do artista por card, resolvidos por ID direto (GET
   // /artists/:id) só para os releases da página atual — antes escaneava
   // useArtistas() sem filtro, truncado nos primeiros 50 do tenant.
-  const [resolvedArtistas, setResolvedArtistas] = useState<Record<string, Artista>>({});
+  const [resolvedArtistas, setResolvedArtistas] = useState<Record<string, Artist>>({});
   const pageArtistaIds = useMemo(
     () => Array.from(new Set(pageItems.map((r) => r.artist_id).filter((id): id is string => !!id))),
     [pageItems],
@@ -298,11 +299,11 @@ export default function Lancamentos() {
   useEffect(() => {
     if (pageArtistaIds.length === 0) return;
     let cancelled = false;
-    Promise.all(pageArtistaIds.map((id) => storage.findById<Artista & { id: string }>("artistas", id)))
+    Promise.all(pageArtistaIds.map((id) => storage.findById<ArtistWireRecord>("artistas", id)))
       .then((results) => {
         if (cancelled) return;
-        const map: Record<string, Artista> = {};
-        results.forEach((a, i) => { if (a) map[pageArtistaIds[i]] = a; });
+        const map: Record<string, Artist> = {};
+        results.forEach((a, i) => { if (a) map[pageArtistaIds[i]] = wireToArtist(a); });
         setResolvedArtistas((prev) => ({ ...prev, ...map }));
       })
       .catch(() => {});
@@ -328,22 +329,23 @@ export default function Lancamentos() {
     if (!release.id || shares.some((share) => share.release_id === release.id)) return;
     // Busca DIRETO por ID — o release recém-criado pode não estar (ainda)
     // no batch resolvido para a página atual (Task J).
-    const artista = release.artist_id
-      ? await storage.findById<Artista & { id: string }>("artistas", release.artist_id)
+    const artistaWire = release.artist_id
+      ? await storage.findById<ArtistWireRecord>("artistas", release.artist_id)
       : undefined;
+    const artista = artistaWire ? wireToArtist(artistaWire) : undefined;
 
     await addShare.mutateAsync({
       share_type: "internal_release",
       release_id: release.id,
       artist_id: release.artist_id ?? null,
-      nome_musica: release.title ?? null,
-      detentor: artista?.nome_artistico ?? release.title ?? "Lancamento",
-      destinatario: null,
+      music_title: release.title ?? null,
+      holder: artista?.stageName ?? release.title ?? "Lancamento",
+      recipient: null,
       type: "interprete",
-      direcao: "a_enviar",
-      percentual: 100,
+      direction: "a_enviar",
+      percentage: 100,
       status: "pendente",
-      observacoes: "Share inicial criado automaticamente após distribuição do lançamento.",
+      notes: "Share inicial criado automaticamente após distribuição do lançamento.",
       versao: 1,
       historico: [{
         versao: 1,
@@ -453,9 +455,9 @@ export default function Lancamentos() {
               Select com useArtistas() sem filtro, truncado nos primeiros 50
               artistas do tenant. "Todos Artistas" volta via o botão Limpar. */}
           <div className="h-8 w-[180px] shrink-0">
-            <AsyncEntityCombobox<Artista>
+            <AsyncEntityCombobox<Artist>
               table="artistas"
-              getLabel={(a) => a.nome_artistico ?? ""}
+              getLabel={(a) => a.stageName ?? ""}
               value={artistFilter !== "all-artist" ? artistFilter : null}
               onChange={(id) => setArtistFilter(id)}
               placeholder="Todos Artistas"

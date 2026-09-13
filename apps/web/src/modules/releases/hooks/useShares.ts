@@ -25,7 +25,7 @@ export function useShares() {
           id:          (s as ShareWithRelations & { id: string }).id,
           work_id:     (s as ShareWithRelations & { work_id?: string }).work_id ?? undefined,
           artist_id:  (s as ShareWithRelations & { artist_id?: string }).artist_id ?? undefined,
-          percentual:  (s as ShareWithRelations & { percentual?: number }).percentual ?? undefined,
+          percentage:  (s as ShareWithRelations & { percentage?: number }).percentage ?? undefined,
           org_id:      orgId,
         }),
       onUpdate: (s) =>
@@ -33,7 +33,7 @@ export function useShares() {
           id:          (s as ShareWithRelations & { id: string }).id,
           work_id:     (s as ShareWithRelations & { work_id?: string }).work_id ?? undefined,
           artist_id:  (s as ShareWithRelations & { artist_id?: string }).artist_id ?? undefined,
-          percentual:  (s as ShareWithRelations & { percentual?: number }).percentual ?? undefined,
+          percentage:  (s as ShareWithRelations & { percentage?: number }).percentage ?? undefined,
           org_id:      orgId,
         }),
       onDelete: (id) =>
