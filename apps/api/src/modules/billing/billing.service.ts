@@ -11,10 +11,11 @@ import {
 import { WebhookEventStatus } from '@music-os-360/types';
 import { RealtimeService } from '../../core/realtime/realtime.service';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
-import { BillingEnforcementService } from './billing-enforcement.service';
+import { BillingEnforcementService, TenantBillingStatus } from './billing-enforcement.service';
 import { BillingPlansService } from './billing-plans.service';
 import { classifyStripeSecretKeyFormat } from '../../core/config/stripe-key-guard';
 import { AdminListQueryDto, UpdateAdminTenantDto } from './dto/admin-billing.dto';
+import { DatabaseContextService } from '../../database/database-context.service';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const StripeRaw = require('stripe');
@@ -65,6 +66,8 @@ interface StripeWebhookEvent {
   id: string;
   type: string;
   data: { object: unknown };
+  /** Unix seconds — Stripe's own event-creation time, used for stale/out-of-order delivery checks (find-99ea599c). */
+  created?: number;
 }
 
 export const PLAN_FEATURES = {
@@ -174,6 +177,7 @@ export class BillingService {
     private readonly events: EventsService,
     private readonly enforcement: BillingEnforcementService,
     private readonly plans: BillingPlansService,
+    private readonly dbContext: DatabaseContextService,
   ) {
     if (ds) {
       this.subRepo = ds.getRepository(BillingSubscriptionEntity);
@@ -316,7 +320,43 @@ export class BillingService {
     }));
   }
 
+  /**
+   * P0-A-R6: the only `TenantBillingStatus` values `updateAdminTenant` is
+   * allowed to dispatch — 'trial'/'pending'/anything else is rejected
+   * up front (defense-in-depth only, see the method body for the real fix).
+   */
+  private static readonly ADMIN_SETTABLE_BILLING_STATUSES = new Set<string>([
+    'active', 'suspended', 'cancelled', 'past_due',
+  ] satisfies Array<TenantBillingStatus | 'past_due'>);
+
+  /**
+   * P0-A-R3/R4: `body.status` (a billing concept — `TenantBillingStatus`)
+   * used to be written two ways at once: a raw `tenant_billing_state` upsert
+   * right here (bypassing `BillingEnforcementService` entirely — no audit
+   * trail, no `billing_subscriptions` sync, no `status_changed_at`) AND an
+   * independently-derived `tenant.active` flip. `tenants.active` is a
+   * genuine, separate LIFECYCLE concept (tenant existence/deactivation,
+   * alongside `deleted_at` — see `leads.service.ts`/
+   * `workspace-provisioning.service.ts`), not a billing duplicate; deriving
+   * it from a billing status string was itself the conflation this fixes.
+   * `BillingEnforcementService` is now the only writer of
+   * `tenant_billing_state` anywhere in the codebase — this admin action
+   * dispatches to its existing, already-audited transition methods instead
+   * of reimplementing the write.
+   */
   async updateAdminTenant(tenantId: string, body: UpdateAdminTenantDto) {
+    // P0-A-R6 defense-in-depth: reject an unsupported status up front, before
+    // any write happens. This alone does NOT close the atomicity bug (a DB
+    // error or a business exception from the enforcement dispatch below can
+    // still fail after other statements ran) — the real fix is that the
+    // entire method, including the enforcement dispatch, now shares the one
+    // transaction opened below, so any failure rolls back everything.
+    if (body.status !== undefined && !BillingService.ADMIN_SETTABLE_BILLING_STATUSES.has(body.status)) {
+      throw new BadRequestException(
+        `Status "${body.status}" nao pode ser definido manualmente via este endpoint`,
+      );
+    }
+
     const ds = this.assertDataSource();
     await ds.transaction(async (manager) => {
       const tenant = await manager.getRepository(TenantEntity).findOne({ where: { id: tenantId } });
@@ -327,9 +367,6 @@ export class BillingService {
       if (body.plan !== undefined) tenant.plan = body.plan as any;
       if (body.country !== undefined) {
         tenant.settings = { ...(tenant.settings ?? {}), country: body.country };
-      }
-      if (body.status !== undefined) {
-        tenant.active = !['suspended', 'cancelled'].includes(body.status);
       }
       await manager.getRepository(TenantEntity).save(tenant);
 
@@ -352,16 +389,28 @@ export class BillingService {
         );
       }
 
+      // P0-A-R6: this dispatch used to run AFTER the transaction above had
+      // already committed — an invalid status or an exception here left the
+      // tenant/org_members writes persisted with the caller seeing a failure
+      // response implying nothing was applied (partial commit). It now runs
+      // inside the same transaction, sharing `manager`, so any throw here
+      // rolls back the tenant/org_members writes too.
       if (body.status !== undefined) {
-        await manager.query(
-          `
-          INSERT INTO tenant_billing_state (tenant_id, status)
-          VALUES ($1, $2)
-          ON CONFLICT (tenant_id)
-          DO UPDATE SET status = $2, updated_at = now()
-          `,
-          [tenantId, body.status],
-        );
+        const reason = `admin panel: tenant status set to ${body.status}`;
+        switch (body.status) {
+          case 'suspended':
+            await this.enforcement.suspendTenant(tenantId, reason, new Date(), manager);
+            break;
+          case 'active':
+            await this.enforcement.activateTenant(tenantId, reason, new Date(), manager);
+            break;
+          case 'cancelled':
+            await this.enforcement.cancelTenant(tenantId, reason, manager);
+            break;
+          case 'past_due':
+            await this.enforcement.startPaymentGrace(tenantId, reason, new Date(), manager);
+            break;
+        }
       }
     });
 
@@ -556,6 +605,24 @@ export class BillingService {
     }
 
     const tenantId = await this.resolveTenantIdFromEvent(event);
+
+    // find-03176eef: webhook_events/payment_events/tenant_billing_state RLS
+    // now requires an explicit system-path marker (app_is_system_context())
+    // instead of "no tenant context set" — declare it here rather than
+    // relying on this connection happening to have no session var bound.
+    // When the event DOES resolve to a tenant, use the normal tenant path
+    // (role left unset) so the ordinary tenant_id = app_current_tenant_id()
+    // branch applies, same as every other tenant-scoped write.
+    return this.dbContext.runInTenantContext(
+      { tenantId, orgId: null, role: tenantId ? null : 'system' },
+      () => this.processWebhookEvent(event, tenantId),
+    );
+  }
+
+  private async processWebhookEvent(
+    event: StripeWebhookEvent,
+    tenantId: string | null,
+  ): Promise<{ received: boolean }> {
     const insertStatus = await this.enforcement.recordWebhookProcessed({
       tenantId,
       stripeEventId: event.id,
@@ -594,11 +661,11 @@ export class BillingService {
         break;
       case 'invoice.payment_succeeded':
       case 'invoice.paid':
-        await this.onPaymentSucceeded(event.data.object as StripeInvoice, resolvedTenantId);
+        await this.onPaymentSucceeded(event.data.object as StripeInvoice, resolvedTenantId, event.created);
         break;
       case 'invoice.payment_failed':
       case 'invoice.payment_action_required':
-        await this.onPaymentFailed(event.data.object as StripeInvoice, resolvedTenantId);
+        await this.onPaymentFailed(event.data.object as StripeInvoice, resolvedTenantId, event.created);
         break;
       case 'invoice.finalized':
       case 'invoice.voided':
@@ -627,6 +694,26 @@ export class BillingService {
     }
 
     const features = PLAN_FEATURES[plan as Plan] ?? PLAN_FEATURES.starter;
+
+    // find-0b089515 / find-9fd92b12: a partial failure later in this handler
+    // marks the webhook 'failed', and a genuine Stripe retry reclaims + re-runs
+    // the whole method. The upserts below are idempotent, but the realtime
+    // notification and TENANT_CREATED event are not. `org.billing_status ===
+    // 'active'` is NOT a safe proxy for "this is a retry" — a real second
+    // checkout (e.g. professional -> enterprise upgrade) also finds the org
+    // already active. Identify a retry precisely instead: same subscription
+    // id AND same plan already recorded and already active — i.e. this exact
+    // checkout's effect is already applied, not just "some plan is active".
+    const subBefore = await this.subRepo!
+      .createQueryBuilder('s')
+      .select(['s.stripe_sub_id', 's.plan', 's.status'])
+      .where('s.org_id = :orgId', { orgId: org_id })
+      .getOne();
+    const isRetryOfSameCheckout =
+      !!session.subscription &&
+      subBefore?.stripe_sub_id === session.subscription &&
+      subBefore?.plan === plan &&
+      subBefore?.status === 'active';
 
     await this.subRepo!
       .createQueryBuilder()
@@ -660,6 +747,9 @@ export class BillingService {
       .execute();
 
     await this.enforcement.activateTenant(tenant_id, 'checkout.session.completed');
+
+    if (isRetryOfSameCheckout) return;
+
     this.ws.sendToTenant(tenant_id, 'billing:plan_upgraded', { org_id, plan, plan_id: plan_id ?? null });
 
     const tenantRecord = await this.tenantRepo!
@@ -687,7 +777,11 @@ export class BillingService {
   private async onSubUpdated(sub: StripeSubscription, resolvedTenantId: string | null) {
     const tenantId = resolvedTenantId ?? sub.metadata?.['tenant_id'] ?? null;
     if (!tenantId) return;
-    await this.upsertStripeSubscription(sub, tenantId);
+    const applied = await this.upsertStripeSubscription(sub, tenantId);
+    // find-602e8654: the subscription row rejected this event as stale
+    // (an older period than what's already stored) — don't apply a billing
+    // status transition derived from data that didn't actually land.
+    if (!applied) return;
 
     const status = normalizeSubscriptionStatus(sub.status);
     if (status === 'active') await this.enforcement.activateTenant(tenantId, 'customer.subscription.updated');
@@ -701,7 +795,10 @@ export class BillingService {
     const orgId = sub.metadata?.['org_id'] ?? await this.resolveOrgIdForTenant(tenantId);
     if (!tenantId || !orgId) return;
 
-    await this.upsertStripeSubscription({ ...sub, status: 'cancelled' }, tenantId);
+    const applied = await this.upsertStripeSubscription({ ...sub, status: 'cancelled' }, tenantId);
+    // find-602e8654: a stale/replayed cancellation for an already-superseded
+    // period must not cancel a subscription that has since moved forward.
+    if (!applied) return;
     await this.orgRepo!
       .createQueryBuilder()
       .update(OrganizationEntity)
@@ -713,11 +810,31 @@ export class BillingService {
     this.ws.sendToTenant(tenantId, 'billing:cancelled', { org_id: orgId });
   }
 
-  private async onPaymentSucceeded(invoice: StripeInvoice, resolvedTenantId: string | null) {
+  /**
+   * find-99ea599c: invoice.payment_succeeded/failed used to apply activateTenant()/
+   * startPaymentGrace() unconditionally, unlike onSubUpdated/onSubCanceled which
+   * already reject a write older than what's stored (find-602e8654). Stripe
+   * delivers webhooks at-least-once and out of order; a late invoice event for an
+   * already-superseded state must not resurrect it. tenant_billing_state.status_changed_at
+   * only advances on a REAL status transition (auditStateChange), so an event whose
+   * own creation time predates it is, by definition, stale relative to a newer
+   * transition that already landed.
+   */
+  private isStaleInvoiceEvent(state: { status_changed_at?: Date | string | null } | null, eventCreatedAtSec?: number): boolean {
+    if (!state?.status_changed_at || eventCreatedAtSec == null) return false;
+    return new Date(eventCreatedAtSec * 1000) < new Date(state.status_changed_at);
+  }
+
+  private async onPaymentSucceeded(invoice: StripeInvoice, resolvedTenantId: string | null, eventCreatedAtSec?: number) {
     const tenantId = resolvedTenantId ?? await this.resolveTenantIdFromInvoice(invoice);
     await this.upsertStripeInvoice(invoice, tenantId);
     if (!tenantId) return;
 
+    const state = await this.enforcement.getState(tenantId);
+    if (this.isStaleInvoiceEvent(state, eventCreatedAtSec)) {
+      this.logger.log(`invoice.payment_succeeded ignorado (stale): tenant=${tenantId} invoice=${invoice.id}`);
+      return;
+    }
     await this.enforcement.activateTenant(tenantId, 'invoice.payment_succeeded');
     this.ws.sendToTenant(tenantId, 'billing:payment_succeeded', {
       invoice_id: invoice.id,
@@ -725,11 +842,16 @@ export class BillingService {
     });
   }
 
-  private async onPaymentFailed(invoice: StripeInvoice, resolvedTenantId: string | null) {
+  private async onPaymentFailed(invoice: StripeInvoice, resolvedTenantId: string | null, eventCreatedAtSec?: number) {
     const tenantId = resolvedTenantId ?? await this.resolveTenantIdFromInvoice(invoice);
     await this.upsertStripeInvoice(invoice, tenantId);
     if (!tenantId) return;
 
+    const state = await this.enforcement.getState(tenantId);
+    if (this.isStaleInvoiceEvent(state, eventCreatedAtSec)) {
+      this.logger.log(`invoice.payment_failed ignorado (stale): tenant=${tenantId} invoice=${invoice.id}`);
+      return;
+    }
     await this.enforcement.startPaymentGrace(tenantId, 'invoice.payment_failed');
     await this.orgRepo!
       .createQueryBuilder()
@@ -751,12 +873,17 @@ export class BillingService {
     if (tenantId) await this.enforcement.suspendTenant(tenantId, 'invoice.marked_uncollectible');
   }
 
-  private async upsertStripeSubscription(sub: StripeSubscription, tenantId: string): Promise<void> {
+  /**
+   * @returns false when the write was rejected as stale (find-602e8654's WHERE
+   * guard matched zero rows) — callers must not apply a status transition
+   * derived from an event whose subscription-row write didn't actually land.
+   */
+  private async upsertStripeSubscription(sub: StripeSubscription, tenantId: string): Promise<boolean> {
     const orgId = sub.metadata?.['org_id'] ?? await this.resolveOrgIdForTenant(tenantId);
-    if (!orgId || !this.ds) return;
+    if (!orgId || !this.ds) return false;
     const priceId = sub.items?.data?.[0]?.price?.id ?? null;
     const status = normalizeSubscriptionStatus(sub.status);
-    await this.ds.query(
+    const result = await this.ds.query(
       `INSERT INTO billing_subscriptions (
          tenant_id, org_id, stripe_customer_id, stripe_sub_id, stripe_subscription_id, stripe_price_id,
          plan, status, trial_ends_at, current_period_start, current_period_end, cancel_at_period_end, updated_at
@@ -774,7 +901,16 @@ export class BillingService {
          current_period_start = EXCLUDED.current_period_start,
          current_period_end = EXCLUDED.current_period_end,
          cancel_at_period_end = EXCLUDED.cancel_at_period_end,
-         updated_at = now()`,
+         updated_at = now()
+       -- find-602e8654: Stripe delivers webhooks at-least-once, not in order.
+       -- Reject a write whose period is strictly OLDER than what's already
+       -- stored so a delayed/replayed stale event can't resurrect or clobber
+       -- a subscription's state after a newer event already advanced it.
+       -- Same-period status changes (NULL on either side included) still apply.
+       WHERE billing_subscriptions.current_period_start IS NULL
+          OR EXCLUDED.current_period_start IS NULL
+          OR EXCLUDED.current_period_start >= billing_subscriptions.current_period_start
+       RETURNING tenant_id`,
       [
         tenantId,
         orgId,
@@ -788,7 +924,8 @@ export class BillingService {
         stripeDate(sub.current_period_end),
         sub.cancel_at_period_end === true,
       ],
-    );
+    ) as Array<{ tenant_id: string }>;
+    return result.length > 0;
   }
 
   private async upsertStripeInvoice(invoice: StripeInvoice, tenantId: string | null): Promise<void> {
@@ -908,7 +1045,11 @@ export class BillingService {
       .getOne();
     if (!sub) return null;
     if (!sub.tenant_id) return sub;
-    const state = sub.tenant_id ? await this.enforcement.getState(sub.tenant_id) : null;
+    // find-d45d822d: `getState()` is now a pure read — `/billing` routes are
+    // on BillingEnforcementGuard's always-allowed list, so this call is the
+    // ONLY point that can trigger escalation for a tenant who exclusively
+    // visits the billing page and never hits any other enforced route.
+    const state = sub.tenant_id ? await this.enforcement.getStateWithEscalation(sub.tenant_id) : null;
     const invoiceRows = sub.tenant_id && this.ds
       ? await this.ds.query(
           `SELECT stripe_invoice_id, amount_due, amount_paid, currency, status, due_date, hosted_invoice_url, invoice_pdf, attempt_count
@@ -927,7 +1068,9 @@ export class BillingService {
     const sub = await this.getSubscription(orgId);
     const plan = ((sub as any)?.plan ?? 'starter') as string;
     const limits = PLAN_LIMITS[plan] ?? PLAN_LIMITS.starter;
-    const billingState = await this.enforcement.getState(tenantId);
+    // find-d45d822d: see getSubscription — `/billing` bypasses the guard's
+    // escalating read, so this must stay the escalating variant too.
+    const billingState = await this.enforcement.getStateWithEscalation(tenantId);
     return { plan, limits, tenantId, orgId, billingState };
   }
 

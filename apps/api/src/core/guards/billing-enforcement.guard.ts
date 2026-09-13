@@ -17,41 +17,14 @@ const ALWAYS_ALLOWED_PREFIXES = [
   '/metrics',
 ];
 
-const SUSPENDED_BLOCKED_PREFIXES = [
-  '/artists',
-  '/works',
-  '/phonograms',
-  '/catalog',
-  '/contracts',
-  '/contract-templates',
-  '/marketing',
-  '/campaigns',
-  '/briefings',
-  '/transactions',
-  '/finance',
-  '/financial',
-  '/invoices',
-  '/storage',
-  '/uploads',
-  '/clients',
-  '/leads',
-  '/contacts',
-  '/academy',
-  '/workspace',
-  '/reports',
-  '/projects',
-  '/releases',
-  '/assets',
-  '/inventory',
-  '/licensing',
-  '/registry',
-];
-
 function normalizePath(req: Request): string {
   const raw = (req.route?.path && typeof req.route.path === 'string')
     ? req.originalUrl
     : req.originalUrl ?? req.url ?? '';
-  return raw.replace(/^\/api\/v\d+/, '').split('?')[0] || '/';
+  // Express routing is case-insensitive by default, so the allowlist/denylist
+  // comparison below must be too — otherwise a differently-cased request path
+  // (e.g. /Billing/...) would bypass prefix matching against ALWAYS_ALLOWED_PREFIXES.
+  return raw.toLowerCase().replace(/^\/api\/v\d+/i, '').split('?')[0] || '/';
 }
 
 function startsWithAny(path: string, prefixes: string[]): boolean {
@@ -87,10 +60,23 @@ export class BillingEnforcementGuard implements CanActivate {
     const path = normalizePath(request);
     if (startsWithAny(path, ALWAYS_ALLOWED_PREFIXES)) return true;
 
-    const state = await this.billing.getState(tenantId);
+    // find-d45d822d: this must be the escalating read — the guard is the
+    // live per-request enforcement point that has to observe and settle any
+    // due payment_grace -> read_only -> suspended transition, not the pure
+    // `getState()` used by diagnostic/admin reads.
+    const state = await this.billing.getStateWithEscalation(tenantId);
     if (!state) return true;
 
-    if (state.status === 'suspended' && startsWithAny(path, SUSPENDED_BLOCKED_PREFIXES)) {
+    // P0-A-R2: blanket-deny-except-allowlist, not an enumerated denylist.
+    // The prior SUSPENDED_BLOCKED_PREFIXES list covered ~27 of 87 controller
+    // groups (confirmed regression, not intentional tightening — the
+    // frontend's own shipped contract, docs/backend-v2/15-frontend-auth-
+    // permission-contracts.md + App.tsx's BillingGuard, already implements
+    // blanket-deny-except-this-same-allowlist). Any path already past the
+    // ALWAYS_ALLOWED_PREFIXES check above is blocked for a suspended tenant,
+    // including routes added after this guard was written — the previous
+    // enumerated list could never cover those by construction.
+    if (state.status === 'suspended') {
       throw new ForbiddenException({
         error: 'TENANT_SUSPENDED',
         message: 'Subscription payment overdue',
