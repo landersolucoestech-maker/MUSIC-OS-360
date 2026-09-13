@@ -20,7 +20,28 @@ function makeRepo() {
     create: jest.fn((data: unknown) => ({ ...(data as object) })),
     save: jest.fn(async (entity: unknown) => ({ ...(entity as object) })),
     update: jest.fn(async () => ({ affected: 1 })),
+    // find-22ec2dfa: idempotency guard reads the lead's CURRENT client_id
+    // before creating anything — null means "not yet converted".
+    findOne: jest.fn(async (): Promise<Record<string, unknown> | null> => null),
   };
+}
+
+function makeDs(clientRepo: ReturnType<typeof makeRepo>, leadRepo: ReturnType<typeof makeRepo>, artistRepo: ReturnType<typeof makeRepo>) {
+  const getRepository = jest.fn((entity: { name: string }) => {
+    if (entity.name === 'ClientEntity') return clientRepo;
+    if (entity.name === 'LeadEntity') return leadRepo;
+    return artistRepo;
+  });
+  // find-aca0fb58: onLeadConverted opens a real transaction (via
+  // leadRepo.manager.transaction) to hold the advisory lock across the
+  // whole read-check-write sequence. The mock's transaction() just invokes
+  // the callback with a manager resolving to the SAME repo mocks, and a
+  // no-op query() for the advisory-lock statement.
+  const txManager = { getRepository, query: jest.fn().mockResolvedValue(undefined) };
+  (leadRepo as unknown as { manager: unknown }).manager = {
+    transaction: jest.fn((cb: (m: unknown) => unknown) => cb(txManager)),
+  };
+  return { getRepository } as any;
 }
 
 function makeEvent(): DomainEvent<LeadConvertedPayload> {
@@ -45,13 +66,7 @@ describe('LeadEventsHandler.onLeadConverted', () => {
     const clientRepo = makeRepo();
     const leadRepo = makeRepo();
     const artistRepo = makeRepo();
-    const ds = {
-      getRepository: jest.fn((entity: { name: string }) => {
-        if (entity.name === 'ClientEntity') return clientRepo;
-        if (entity.name === 'LeadEntity') return leadRepo;
-        return artistRepo;
-      }),
-    } as any;
+    const ds = makeDs(clientRepo, leadRepo, artistRepo);
 
     const handler = new LeadEventsHandler(ds, undefined);
     await handler.onLeadConverted(makeEvent());
@@ -70,20 +85,43 @@ describe('LeadEventsHandler.onLeadConverted', () => {
     const clientRepo = makeRepo();
     const leadRepo = makeRepo();
     const artistRepo = makeRepo();
-    const ds = {
-      getRepository: jest.fn((entity: { name: string }) => {
-        if (entity.name === 'ClientEntity') return clientRepo;
-        if (entity.name === 'LeadEntity') return leadRepo;
-        return artistRepo;
-      }),
-    } as any;
+    const ds = makeDs(clientRepo, leadRepo, artistRepo);
 
     const handler = new LeadEventsHandler(ds, undefined);
     await handler.onLeadConverted(makeEvent());
 
     expect(leadRepo.update).toHaveBeenCalledWith(
       { id: 'lead-1', tenant_id: 'tenant-1' },
-      expect.objectContaining({ client_id: expect.any(String), status: 'convertido' }),
+      expect.objectContaining({ client_id: expect.any(String), status: 'closed' }),
     );
+  });
+
+  it('find-22ec2dfa: não cria um SEGUNDO client/artist quando o lead já foi convertido antes (re-progressão CLOSED->INACTIVE->NEW->CLOSED)', async () => {
+    const clientRepo = makeRepo();
+    const leadRepo = makeRepo();
+    leadRepo.findOne = jest.fn(async () => ({ id: 'lead-1', tenant_id: 'tenant-1', client_id: 'client-already-there' }));
+    const artistRepo = makeRepo();
+    const ds = makeDs(clientRepo, leadRepo, artistRepo);
+
+    const handler = new LeadEventsHandler(ds, undefined);
+    await handler.onLeadConverted(makeEvent());
+
+    expect(clientRepo.create).not.toHaveBeenCalled();
+    expect(clientRepo.save).not.toHaveBeenCalled();
+    expect(artistRepo.create).not.toHaveBeenCalled();
+    expect(leadRepo.update).not.toHaveBeenCalled();
+  });
+
+  it('find-aca0fb58: abre uma transação com lock consultivo por leadId antes de checar/gravar', async () => {
+    const clientRepo = makeRepo();
+    const leadRepo = makeRepo();
+    const artistRepo = makeRepo();
+    const ds = makeDs(clientRepo, leadRepo, artistRepo);
+    const manager = (leadRepo as unknown as { manager: { transaction: jest.Mock } }).manager;
+
+    const handler = new LeadEventsHandler(ds, undefined);
+    await handler.onLeadConverted(makeEvent());
+
+    expect(manager.transaction).toHaveBeenCalledTimes(1);
   });
 });

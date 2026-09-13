@@ -178,12 +178,13 @@ describe('DocuSignService.handleWebhook', () => {
         buildHarness({ tenantActive: false });
       const { raw, signature } = signedBody(completedPayload);
 
-      await expect(service.handleWebhook(completedPayload, raw, signature)).resolves.toEqual({ received: true });
+      await expect(service.handleWebhook(completedPayload, raw, signature)).rejects.toThrow();
 
       expect(tenantResolver.resolveTenant).toHaveBeenCalledWith('tenant-a');
       expect(dbContext.runInTenantContext).not.toHaveBeenCalled();
       expect(events.emitTyped).not.toHaveBeenCalled();
-      // Failure is recorded (not silently dropped) so it's visible in ops, but never retried automatically.
+      // Failure is recorded (not silently dropped) and rethrown so DocuSign retries the delivery
+      // instead of a swallowed failure being treated as delivered (200).
       expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-a', 'failed', expect.any(String));
     });
 
@@ -192,8 +193,20 @@ describe('DocuSignService.handleWebhook', () => {
       tenantResolver.resolveTenant.mockResolvedValueOnce(null as never);
       const { raw, signature } = signedBody(completedPayload);
 
-      await expect(service.handleWebhook(completedPayload, raw, signature)).resolves.toEqual({ received: true });
+      await expect(service.handleWebhook(completedPayload, raw, signature)).rejects.toThrow();
       expect(dbContext.runInTenantContext).not.toHaveBeenCalled();
+    });
+
+    it('falha no processamento do webhook propaga o erro (5xx) em vez de engolir para 200, permitindo retry do provedor', async () => {
+      const { service, dbContext, webhookSvc } = buildHarness({ tenantActive: true });
+      const { raw, signature } = signedBody(completedPayload);
+
+      dbContext.runInTenantContext.mockRejectedValueOnce(new Error('processing boom'));
+
+      await expect(service.handleWebhook(completedPayload, raw, signature))
+        .rejects.toThrow('processing boom');
+
+      expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-a', 'failed', expect.any(String));
     });
 
     it('assinatura válida + tenant ativo: assina normalmente (regressão — não quebrou o caminho feliz)', async () => {

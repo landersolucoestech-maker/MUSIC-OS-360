@@ -79,6 +79,12 @@ export class TenantGuard implements CanActivate {
       (await this.distributedCache?.get<BootstrapTenant>(tenantKey)) ??
       (await this.bootstrapResolver.resolveTenant(auth.orgId));
 
+    // `tenant.active` is a lifecycle signal only (workspace provisioned/deprovisioned),
+    // not a billing/subscription-status check — same distinction documented in
+    // AutentiqueService/DocuSignService's assertTenantActive (P0-A Public Boundary
+    // Policy Matrix) and ExternalDataExchangeService's assertTenantActive. Billing
+    // enforcement (suspended/read_only/payment_grace) is a separate concern handled
+    // by BillingEnforcementGuard, never conflated with this lifecycle gate.
     if (!tenant || !tenant.active) {
       throw new UnauthorizedException('Tenant not found or inactive');
     }

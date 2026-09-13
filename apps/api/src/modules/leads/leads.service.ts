@@ -17,6 +17,7 @@ import { LeadStatus } from '@music-os-360/types';
 import { WorkflowService } from '../../core/workflow/workflow.service';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
+import { BillingEnforcementService } from '../billing/billing-enforcement.service';
 
 @Injectable()
 export class LeadsService {
@@ -31,6 +32,7 @@ export class LeadsService {
     private readonly workflowService: WorkflowService,
     private readonly events: EventsService,
     private readonly enc: EncryptionService,
+    private readonly billing: BillingEnforcementService,
     @Optional() private readonly activityLogs?: ActivityLogsService,
   ) {
     if (ds) {
@@ -109,7 +111,7 @@ export class LeadsService {
       ...(lead as Record<string, unknown>),
       email_encrypted:    this.enc.encryptNullable(email as string | undefined),
       telefone_encrypted: this.enc.encryptNullable(phone as string | undefined),
-      status:             LeadStatus.NOVO,
+      status:             LeadStatus.NEW,
       created_by:         userId,
       updated_by:         userId,
     } as Partial<LeadEntity>);
@@ -218,7 +220,7 @@ export class LeadsService {
           estado: dto.state?.trim() || null,
           fonte: 'public_artist_application',
           origemLead: 'public_artist_application',
-          status: LeadStatus.NOVO,
+          status: LeadStatus.NEW,
           tags: ['artist_application', 'public_form'],
           metadata: {
             musicalGenre: dto.musicalGenre,
@@ -324,6 +326,15 @@ export class LeadsService {
     const tenant = rows[0];
     if (!tenant) throw new NotFoundException('Workspace nao encontrado');
     if (!tenant.active || tenant.deleted_at) throw new NotFoundException('Cadastro indisponivel');
+    // find-a22e0dad / req-ea44db5a: unlike the Type-B external-reconciliation webhooks
+    // (Autentique/DocuSign/external-data), public lead-capture is a repeatable, unauthenticated,
+    // attacker-triggerable NEW write with ongoing storage/automation cost — it is billing-gated,
+    // not exempt. Suspended and read_only tenants both reject; response stays identical to the
+    // "not found" cases above so billing status is never leaked to an unauthenticated caller.
+    const billingState = await this.billing.getState(tenant.id);
+    if (billingState && (billingState.status === 'suspended' || billingState.status === 'read_only')) {
+      throw new NotFoundException('Cadastro indisponivel');
+    }
     if (!tenant.allow_public_registration || tenant.public_registration_blocked || tenant.public_registration_revoked_at) {
       throw new NotFoundException('Cadastro indisponivel para este workspace');
     }
@@ -422,7 +433,7 @@ export class LeadsService {
       });
 
       // Emit LEAD_CONVERTED when lead is won/closed (FECHADO)
-      if (toStatus === LeadStatus.FECHADO) {
+      if (toStatus === LeadStatus.CLOSED) {
         this.events.emitTyped(DOMAIN_EVENTS.LEAD_CONVERTED, {
           tenantId,
           userId,

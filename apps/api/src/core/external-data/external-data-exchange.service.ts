@@ -1,10 +1,11 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, Logger, Optional, ServiceUnavailableException } from '@nestjs/common';
 import { createHmac, randomUUID, timingSafeEqual } from 'crypto';
 import { DataSource, Repository } from 'typeorm';
-import { DATA_SOURCE } from '../../database/database.module';
+import { ADMIN_DATA_SOURCE, DATA_SOURCE } from '../../database/database.module';
 import {
   ActivityLogEntity,
   ArtistEntity,
+  ExternalDataSubmissionEntity,
   PhonogramEntity,
   ReleaseEntity,
   ShareEntity,
@@ -70,12 +71,19 @@ export class ExternalDataExchangeService {
   private readonly shares: Repository<ShareEntity> | null = null;
   private readonly activityLogs: Repository<ActivityLogEntity> | null = null;
   private readonly webhookEvents: Repository<WebhookEventEntity> | null = null;
+  private readonly submissions: Repository<ExternalDataSubmissionEntity> | null = null;
+  // find-bc7c20a6: resolving (provider, submission_id) -> tenant_id must run
+  // BEFORE tenant context exists on the connection (that's the point of the
+  // lookup), so it needs an RLS-bypassing connection — same reasoning as
+  // AutentiqueService/DocuSignService's adminContractRepo.
+  private readonly adminSubmissions: Repository<ExternalDataSubmissionEntity> | null = null;
 
   constructor(
     @Inject(DATA_SOURCE) private readonly ds: DataSource | null,
     private readonly registry: ExternalDataProviderRegistry,
     private readonly events: EventsService,
     private readonly tenantResolver: TenantBootstrapResolver,
+    @Inject(ADMIN_DATA_SOURCE) @Optional() adminDs?: DataSource | null,
   ) {
     if (ds) {
       this.artists = ds.getRepository(ArtistEntity);
@@ -85,6 +93,10 @@ export class ExternalDataExchangeService {
       this.shares = ds.getRepository(ShareEntity);
       this.activityLogs = ds.getRepository(ActivityLogEntity);
       this.webhookEvents = ds.getRepository(WebhookEventEntity);
+      this.submissions = ds.getRepository(ExternalDataSubmissionEntity);
+    }
+    if (adminDs) {
+      this.adminSubmissions = adminDs.getRepository(ExternalDataSubmissionEntity);
     }
   }
 
@@ -315,7 +327,6 @@ export class ExternalDataExchangeService {
   }
 
   async ingestWebhook(params: {
-    tenantId: string;
     providerId: string;
     kind: ExternalDataExchangeKind;
     payload: Record<string, unknown>;
@@ -324,16 +335,40 @@ export class ExternalDataExchangeService {
   }) {
     this.assertDb();
     this.assertSignature(params.payload, params.signature, params.secret);
-    await this.assertTenantActive(params.tenantId);
     const provider = this.registry.get(params.providerId);
     const normalized = provider.normalizeWebhook(params.payload);
+
+    // find-bc7c20a6: tenant is resolved server-side from a submission WE
+    // recorded at submit time (recordSubmission), never from caller input.
+    // The HMAC check above only proves the payload was signed with the
+    // shared per-provider secret — it proves nothing about which tenant the
+    // webhook belongs to. A webhook that can't be tied to a known
+    // submission is rejected rather than attributed by guesswork.
+    const tenantId = await this.resolveWebhookTenant(params.providerId, normalized.submissionId);
+    if (!tenantId) {
+      throw new BadRequestException('Webhook does not reference a known submission');
+    }
+    await this.assertTenantActive(tenantId);
+
     const externalId = `${params.providerId}:${normalized.providerEventId}`;
 
-    const duplicate = await this.webhookEvents!.findOne({ where: { external_id: externalId } });
-    if (duplicate) return { duplicate: true, eventId: duplicate.id };
+    // A prior row for this external_id is only a true duplicate once it reached the terminal
+    // PROCESSED status. A row stuck PENDING/FAILED is the same event legitimately being
+    // retried (matches WebhookService.ingest's identical reasoning) — reuse that row instead
+    // of permanently blocking reprocessing or violating the external_id unique constraint.
+    const existing = await this.webhookEvents!.findOne({ where: { external_id: externalId } });
+    if (existing) {
+      if (existing.status === WebhookEventStatus.PROCESSED) {
+        return { duplicate: true, eventId: existing.id };
+      }
+      await this.webhookEvents!.update({ id: existing.id } as any, {
+        status: WebhookEventStatus.PENDING,
+        retry_count: (existing.retry_count ?? 0) + 1,
+      } as any);
+    }
 
-    const saved = await this.webhookEvents!.save(this.webhookEvents!.create({
-      tenant_id: params.tenantId,
+    const saved = existing ?? await this.webhookEvents!.save(this.webhookEvents!.create({
+      tenant_id: tenantId,
       provider: params.providerId,
       event_type: `${params.kind}.status`,
       external_id: externalId,
@@ -343,7 +378,7 @@ export class ExternalDataExchangeService {
     }));
 
     try {
-      await this.applyWebhook(params.tenantId, normalized);
+      await this.applyWebhook(tenantId, normalized);
       await this.webhookEvents!.update({ id: saved.id } as any, {
         status: WebhookEventStatus.PROCESSED,
         processed_at: new Date(),
@@ -357,6 +392,20 @@ export class ExternalDataExchangeService {
       } as any);
       throw err;
     }
+  }
+
+  /**
+   * find-bc7c20a6: looks up the tenant that owns a submission via the
+   * RLS-bypassing admin connection — at this point in the flow no tenant
+   * context exists yet on the regular connection (resolving it IS the
+   * point of this lookup), so it cannot go through the RLS-scoped repo.
+   */
+  private async resolveWebhookTenant(provider: string, submissionId?: string | null): Promise<string | null> {
+    if (!submissionId) return null;
+    const repo = this.adminSubmissions ?? this.submissions;
+    if (!repo) return null;
+    const row = await repo.findOne({ where: { provider, submission_id: submissionId } });
+    return row?.tenant_id ?? null;
   }
 
   private async buildDistributorPayload(input: SubmitDistributorInput, providerId: string): Promise<DistributorSubmissionPayload> {
@@ -457,16 +506,16 @@ export class ExternalDataExchangeService {
           label: p.gravadora,
         })),
         contributors: shares.map((s) => ({
-          name: s.titular_nome,
-          role: s.papel,
-          declared_percentage: s.percentual,
+          name: s.holder_name,
+          role: s.party_role,
+          declared_percentage: s.percentage,
           status: s.status,
         })),
         rightHolders: shares.map((s) => ({
-          name: s.titular_nome,
-          document: s.titular_doc,
-          role: s.papel,
-          declared_percentage: s.percentual,
+          name: s.holder_name,
+          document: s.holder_document,
+          role: s.party_role,
+          declared_percentage: s.percentage,
         })),
       },
     };
@@ -531,6 +580,7 @@ export class ExternalDataExchangeService {
     };
     metadata['external_data_exchange'] = exchange;
     await repo.update({ id: entityId, tenant_id: tenantId } as any, { metadata, updated_at: new Date() } as any);
+    await this.recordSubmission(tenantId, result.providerId, entityType, entityId, result.submissionId);
 
     await this.logActivity(tenantId, userId, entityType, entityId, `${result.kind}.status_updated`, {
       providerId: result.providerId,
@@ -538,6 +588,25 @@ export class ExternalDataExchangeService {
       validationErrors: result.validationErrors,
       pendingRequirements: result.pendingRequirements,
     });
+  }
+
+  /**
+   * find-bc7c20a6: one row per (provider, submission_id, entity_type,
+   * entity_id) — the reverse-lookup index `ingestWebhook` uses to resolve
+   * tenant server-side instead of trusting a caller-supplied header.
+   */
+  private async recordSubmission(
+    tenantId: string,
+    provider: string,
+    entityType: EntityType,
+    entityId: string,
+    submissionId: string,
+  ): Promise<void> {
+    if (!this.submissions) return;
+    await this.submissions.upsert(
+      { tenant_id: tenantId, provider, entity_type: entityType, entity_id: entityId, submission_id: submissionId },
+      { conflictPaths: ['provider', 'submission_id', 'entity_type', 'entity_id'] },
+    );
   }
 
   private repoFor(entityType: EntityType): Repository<any> {
@@ -603,7 +672,10 @@ export class ExternalDataExchangeService {
   }
 
   private assertSignature(payload: Record<string, unknown>, signature?: string | null, secret?: string | null): void {
-    if (!secret) return;
+    // find-e5ca49de: fail CLOSED on a missing secret. The controller already
+    // rejects before calling in here when no secret is configured, but this
+    // primitive must be safe by default regardless of caller discipline.
+    if (!secret) throw new ServiceUnavailableException('External data webhook secret unavailable');
     if (!signature) throw new BadRequestException('Webhook signature missing');
     const raw = JSON.stringify(payload);
     const expected = createHmac('sha256', secret).update(raw, 'utf8').digest('hex');
@@ -640,5 +712,10 @@ export class ExternalDataExchangeService {
     if (!tenant || !tenant.active) {
       throw new ForbiddenException('Tenant not found or inactive');
     }
+    // P0-A: deliberately NO billing-status gate here. This endpoint
+    // reconciles external-data events (distributor/society) that already
+    // happened on the external side — same Type-B reasoning as the
+    // DocuSign/Autentique webhooks. Only the lifecycle check above applies.
+    // See the P0-A Public Boundary Policy Matrix.
   }
 }

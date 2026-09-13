@@ -103,6 +103,17 @@ export class DocuSignService {
     if (!tenant || !tenant.active) {
       throw new ForbiddenException('Tenant not found or inactive');
     }
+    // P0-A: deliberately NO billing-status gate here. This is a Type-B
+    // inbound external callback reconciling a signature that already
+    // happened outside the app (the signer completed the envelope in
+    // DocuSign before this webhook fired) — it does not consume any
+    // billable product capability. Blocking it on `suspended`/`read_only`
+    // would leave the contract permanently desynced from external reality
+    // (stuck at AGUARDANDO_ASSINATURA after it was genuinely signed) with no
+    // path to reconcile once the tenant regularizes billing, since
+    // DocuSign's own retry window is finite. Only the lifecycle check above
+    // (tenant exists/not deactivated) applies here — see the P0-A Public
+    // Boundary Policy Matrix.
   }
 
   /** Fetch com AbortController — mesma política de timeout do AutentiqueService. */
@@ -436,6 +447,10 @@ export class DocuSignService {
           metadata:    { envelopeId, eventType, error: errMsg.substring(0, 500), provider: PROVIDER },
         }).catch(() => {});
       }
+
+      // Rethrow so Nest returns a 5xx and DocuSign retries the webhook
+      // delivery instead of treating a swallowed failure as delivered.
+      throw err;
     }
 
     return { received: true };

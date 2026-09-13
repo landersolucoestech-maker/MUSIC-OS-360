@@ -121,7 +121,7 @@ describe('Guard chain composition (RateLimit -> JWT -> Tenant -> Billing -> Role
         },
         { provide: RbacErrorLogService, useValue: { record: jest.fn().mockResolvedValue(undefined) } },
         { provide: TenantBootstrapResolver, useValue: { resolveTenant, resolveMembership } },
-        { provide: BillingEnforcementService, useValue: { getState: getBillingState } },
+        { provide: BillingEnforcementService, useValue: { getStateWithEscalation: getBillingState } },
         { provide: RbacDecisionService, useValue: { evaluate: jest.fn().mockResolvedValue(undefined) } },
         // Ordem exata de apps/api/src/app.module.ts — não reordenar sem atualizar as expectativas abaixo.
         { provide: APP_GUARD, useClass: RateLimitGuard },

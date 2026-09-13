@@ -82,6 +82,10 @@ export class AutentiqueService {
     if (!tenant || !tenant.active) {
       throw new ForbiddenException('Tenant not found or inactive');
     }
+    // P0-A: deliberately NO billing-status gate here — same Type-B
+    // reconciliation reasoning as DocuSign's assertTenantActive. The
+    // signature already happened externally; only the lifecycle check above
+    // applies. See the P0-A Public Boundary Policy Matrix.
   }
 
   private async getToken(tenantId: string): Promise<string> {
@@ -344,6 +348,10 @@ export class AutentiqueService {
           metadata:     { docId, eventType, error: errMsg.substring(0, 500), provider: 'autentique' },
         }).catch(() => {});
       }
+
+      // Rethrow so Nest returns a 5xx and Autentique retries the webhook
+      // delivery instead of treating a swallowed failure as delivered.
+      throw err;
     }
 
     return { received: true };

@@ -18,6 +18,12 @@ import { EventsService } from '../../core/events/events.service';
  * payloadServico/dadosInternosCRM/etc, adicionados nesta Parte para eliminar
  * o mock do frontend).
  */
+function makeBilling(status: string | null = 'active') {
+  return {
+    getState: jest.fn(async () => (status == null ? null : ({ status } as any))),
+  } as unknown as import('../billing/billing-enforcement.service').BillingEnforcementService;
+}
+
 function makeEncryption() {
   return {
     encryptNullable: jest.fn((v: string | null | undefined) => (v != null ? `enc:${v}` : null)),
@@ -33,7 +39,9 @@ function makeRepo(rows: Record<string, unknown>[] = []) {
   qb['orderBy'] = jest.fn(chain);
   qb['skip'] = jest.fn(chain);
   qb['take'] = jest.fn(chain);
+  qb['limit'] = jest.fn(chain);
   qb['getOne'] = jest.fn(async () => rows[0] ?? null);
+  qb['getMany'] = jest.fn(async () => rows);
   qb['getManyAndCount'] = jest.fn(async () => [rows, rows.length]);
 
   return {
@@ -52,7 +60,7 @@ function makeService(rows: Record<string, unknown>[] = []) {
   const dbContext = { runInTenantContext: (_ctx: unknown, work: () => unknown) => work() } as unknown as DatabaseContextService;
   const workflowService = { getAllowedTransitions: jest.fn(() => []) } as unknown as WorkflowService;
   const events = { emitTyped: jest.fn(), emit: jest.fn() } as unknown as EventsService;
-  const svc = new LeadsService(ds, null, dbContext, workflowService, events, encryption, undefined);
+  const svc = new LeadsService(ds, null, dbContext, workflowService, events, encryption, makeBilling());
   return { svc, repo, encryption };
 }
 
@@ -128,7 +136,7 @@ describe('LeadsService.update — concorrência otimista (Task K)', () => {
       transitionInTx: jest.fn(async () => undefined),
     } as unknown as WorkflowService;
     const events = { emitTyped: jest.fn(), emit: jest.fn() } as unknown as EventsService;
-    const svc = new LeadsService(ds, null, dbContext, workflowService, events, encryption, undefined);
+    const svc = new LeadsService(ds, null, dbContext, workflowService, events, encryption, makeBilling());
     return { svc, repo };
   }
 
@@ -151,5 +159,114 @@ describe('LeadsService.update — concorrência otimista (Task K)', () => {
         expectedUpdatedAt: new Date('2026-08-14T11:00:00.000Z').toISOString(),
       } as any),
     ).rejects.toThrow(ConflictException);
+  });
+});
+
+/**
+ * HIGH finding (billing-enforcement rework, this session): the public
+ * lead-capture flow (`LeadsController.submitPublicArtistApplication`, marked
+ * `@Public()`, so `BillingEnforcementGuard` never runs for it) resolves the
+ * tenant via `LeadsService.getPublicWorkspaceBySlug` — which only checks
+ * `tenants.active` / `deleted_at` / `allow_public_registration`, never
+ * `tenant_billing_state.status`. `LeadsService` has no dependency on
+ * `BillingEnforcementService` at all, so a tenant with
+ * `tenant_billing_state.status = 'suspended'` that is still `active = true`
+ * can still successfully submit public artist applications and create leads.
+ */
+describe('LeadsService.submitPublicArtistApplication — tenant suspenso por billing (HIGH finding)', () => {
+  const SUSPENDED_BUT_ACTIVE_TENANT = {
+    id: 'tenant-suspended-1',
+    org_id: 'org-1',
+    name: 'Suspended Co',
+    slug: 'suspended-co',
+    // `active` reflete apenas o ciclo de vida do tenant, não o billing —
+    // tenant_billing_state.status = 'suspended' não altera esta coluna.
+    active: true,
+    deleted_at: null,
+    allow_public_registration: true,
+    public_registration_blocked: false,
+    public_registration_revoked_at: null,
+    settings: {},
+  };
+
+  function makeServiceForPublicFlow(billingStatus: string | null = 'active') {
+    const encryption = makeEncryption();
+    const repo = makeRepo([]);
+    const query = jest.fn(async (sql: string) => {
+      if (sql.includes('information_schema.columns')) return [];
+      if (sql.includes('FROM "tenants"')) return [SUSPENDED_BUT_ACTIVE_TENANT];
+      if (sql.startsWith('UPDATE "tenants"')) return [];
+      return [];
+    });
+    const ds = { getRepository: jest.fn(() => repo), query } as any;
+    const dbContext = { runInTenantContext: (_ctx: unknown, work: () => unknown) => work() } as unknown as DatabaseContextService;
+    const workflowService = { getAllowedTransitions: jest.fn(() => []) } as unknown as WorkflowService;
+    const events = { emitTyped: jest.fn(), emit: jest.fn() } as unknown as EventsService;
+    const billing = makeBilling(billingStatus);
+    const svc = new LeadsService(ds, null, dbContext, workflowService, events, encryption, billing);
+    return { svc, repo, query, billing };
+  }
+
+  it('rejeita a candidatura pública quando tenant_billing_state.status = suspended, mesmo com tenants.active = true (find-a22e0dad fix)', async () => {
+    const { svc, repo, billing } = makeServiceForPublicFlow('suspended');
+
+    await expect(
+      svc.submitPublicArtistApplication('suspended-co', {
+        artisticName: 'Artista Teste',
+        fullName: 'Fulano de Tal',
+        email: 'artista@example.test',
+        musicalGenre: 'MPB',
+        acceptedTerms: true,
+      } as any),
+    ).rejects.toThrow();
+
+    expect(billing.getState).toHaveBeenCalledWith('tenant-suspended-1');
+    expect(repo.save).not.toHaveBeenCalled();
+  });
+
+  it('rejeita a candidatura pública quando tenant_billing_state.status = read_only', async () => {
+    const { svc, repo } = makeServiceForPublicFlow('read_only');
+
+    await expect(
+      svc.submitPublicArtistApplication('suspended-co', {
+        artisticName: 'Artista Teste',
+        fullName: 'Fulano de Tal',
+        email: 'artista2@example.test',
+        musicalGenre: 'MPB',
+        acceptedTerms: true,
+      } as any),
+    ).rejects.toThrow();
+
+    expect(repo.save).not.toHaveBeenCalled();
+  });
+
+  it('aceita normalmente quando o tenant não está suspenso/read_only por billing', async () => {
+    const { svc, repo } = makeServiceForPublicFlow('active');
+
+    const result = await svc.submitPublicArtistApplication('suspended-co', {
+      artisticName: 'Artista Teste',
+      fullName: 'Fulano de Tal',
+      email: 'artista3@example.test',
+      musicalGenre: 'MPB',
+      acceptedTerms: true,
+    } as any);
+
+    expect(result.accepted).toBe(true);
+    expect(repo.save).toHaveBeenCalled();
+  });
+
+  it('aceita normalmente quando não existe linha de billing state (tenant sem billing configurado ainda)', async () => {
+    const { svc, repo } = makeServiceForPublicFlow(null);
+
+    const result = await svc.submitPublicArtistApplication('suspended-co', {
+      artisticName: 'Artista Teste',
+      fullName: 'Fulano de Tal',
+      email: 'artista4@example.test',
+      musicalGenre: 'MPB',
+      acceptedTerms: true,
+    } as any);
+
+    expect(result.accepted).toBe(true);
+    expect(repo.save).toHaveBeenCalled();
   });
 });
