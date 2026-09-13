@@ -1,0 +1,14 @@
+{
+  "id": "evid-2e9b3e1e",
+  "createdAt": "2026-09-13T16:34:21.654Z",
+  "type": "COMMAND",
+  "label": "bash -c 'cd apps/api && mv .env.development .env.development.e2e-hidden && DATABASE_URL=postgresql://musicos360:e2e_local_ephemeral_pw@localhost:5433/musicos360 APP_DATABASE_URL=postgresql://musicos_app:local_only_ephemeral_musicos_app_pw@localhost:5433/musicos360 DB_SSL=false NODE_ENV=test ENCRYPTION_KEY=33b29b3d331d95a7a029160cbbb4c64cc7e094271b0a6f501da19a596ade7217 npx jest --config jest.e2e.config.ts billing-admin-atomicity; EXIT=$?; mv .env.development.e2e-hidden .env.development; exit $EXIT'",
+  "command": "bash -c 'cd apps/api && mv .env.development .env.development.e2e-hidden && DATABASE_URL=postgresql://musicos360:e2e_local_ephemeral_pw@localhost:5433/musicos360 APP_DATABASE_URL=postgresql://musicos_app:local_only_ephemeral_musicos_app_pw@localhost:5433/musicos360 DB_SSL=false NODE_ENV=test ENCRYPTION_KEY=33b29b3d331d95a7a029160cbbb4c64cc7e094271b0a6f501da19a596ade7217 npx jest --config jest.e2e.config.ts billing-admin-atomicity; EXIT=$?; mv .env.development.e2e-hidden .env.development; exit $EXIT'",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[33m[Nest] 21212  - \u001b[39m13/09/2026, 13:34:21 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[BillingService] \u001b[39m\u001b[33mSTRIPE_SECRET_KEY nao configurada - Billing desativado\u001b[39m\n\u001b[33m[Nest] 21212  - \u001b[39m13/09/2026, 13:34:21 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[BillingService] \u001b[39m\u001b[33mSTRIPE_SECRET_KEY nao configurada - Billing desativado\u001b[39m",
+  "stderrTail": "",
+  "workspaceFingerprint": "8850958d0ad004a550bbe36521ad9304e96f23871180cef13f7a648f9fd9eebb",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 29434
+}

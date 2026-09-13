@@ -1,0 +1,14 @@
+{
+  "id": "evid-98b0d009",
+  "createdAt": "2026-09-13T16:31:36.736Z",
+  "type": "COMMAND",
+  "label": "cd apps/api && DATABASE_URL=postgresql://musicos360:e2e_local_ephemeral_pw@localhost:5433/musicos360 APP_DATABASE_URL=postgresql://musicos_app:local_only_ephemeral_musicos_app_pw@localhost:5433/musicos360 DB_SSL=false NODE_ENV=test ENCRYPTION_KEY=33b29b3d331d95a7a029160cbbb4c64cc7e094271b0a6f501da19a596ade7217 npx jest --config jest.e2e.config.ts billing-admin-atomicity",
+  "command": "cd apps/api && DATABASE_URL=postgresql://musicos360:e2e_local_ephemeral_pw@localhost:5433/musicos360 APP_DATABASE_URL=postgresql://musicos_app:local_only_ephemeral_musicos_app_pw@localhost:5433/musicos360 DB_SSL=false NODE_ENV=test ENCRYPTION_KEY=33b29b3d331d95a7a029160cbbb4c64cc7e094271b0a6f501da19a596ade7217 npx jest --config jest.e2e.config.ts billing-admin-atomicity",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync cd ENOENT",
+  "workspaceFingerprint": "8850958d0ad004a550bbe36521ad9304e96f23871180cef13f7a648f9fd9eebb",
+  "fingerprintStatus": "BOUND",
+  "durationMs": 6
+}

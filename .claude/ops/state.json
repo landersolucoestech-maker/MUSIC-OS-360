@@ -4,7 +4,7 @@
   "missionName": "resolve-worktree-86-diff",
   "status": "active",
   "createdAt": "2026-09-09T03:56:21.053Z",
-  "updatedAt": "2026-09-13T00:32:26.177Z",
+  "updatedAt": "2026-09-13T16:45:20.870Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": "L5",
@@ -118,9 +118,11 @@
           "id": "ac-ac249ba5",
           "text": "apps/api/test/e2e/billing/billing-admin-atomicity.e2e-spec.ts (already present untracked in the diff) runs green against the fixed service with fresh executed evidence bound to this workspace fingerprint.",
           "evidenceIds": [
-            "evid-22a16377"
+            "evid-22a16377",
+            "evid-98b0d009",
+            "evid-2e9b3e1e"
           ],
-          "status": "open"
+          "status": "closed"
         }
       ],
       "createdAt": "2026-09-09T04:07:33.318Z"
@@ -3362,6 +3364,18 @@
       "createdAt": "2026-09-13T00:04:40.724Z",
       "justification": "jest.useFakeTimers({ now }) added around the affected test, restored in a finally block. Verified: billing-enforcement.service.spec.ts 22/22 pass with the log line confirming the pinned clock (02/09/2026 21:00:00 vs real time). Also checked other tests in the same describe block ('when a concurrent writer...') already correctly pass an explicit now to applyOverrideAndEscalation and are unaffected.",
       "resolvedAt": "2026-09-13T00:04:46.807Z"
+    },
+    {
+      "id": "find-a6351e58",
+      "category": "A",
+      "severity": "LOW",
+      "file": "scripts/runtime-visual-validation.mjs",
+      "line": null,
+      "summary": "File is 11247 bytes of NUL padding (corrupted, not valid JS/mjs) — repo-wide eslint fails with a parsing error on it. Pre-existing since baseline commit f840fc7f, untouched by mission-e39d21fa's 30 commits. Out of scope for this mission (billing/naming clusters); needs a separate fix/restore-from-history or deletion decision.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-13T16:45:20.869Z"
     }
   ],
   "evidenceIds": [
@@ -3509,7 +3523,9 @@
     "evid-0e48a3af",
     "evid-767ea11f",
     "evid-def9a32c",
-    "evid-0a86d8bc"
+    "evid-0a86d8bc",
+    "evid-98b0d009",
+    "evid-2e9b3e1e"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
