@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { initialContentForm, toMarketingContentInput } from "./content-form.mapper";
-import { defaultCreativeConfig, withTextLayer, textLayer, NEWS_LANDER_RECORDS_TEMPLATE } from "../types/creative.types";
+import { defaultCreativeConfig, displayUsername, NEWS_LANDER_RECORDS_TEMPLATE, type CreativeConfig } from "../types/creative.types";
 import type { MarketingContent } from "../types/marketing.types";
 
 function baseContent(overrides: Partial<MarketingContent> = {}): MarketingContent {
@@ -69,10 +69,65 @@ describe("creative editor — model and round-trip", () => {
   it("metadata.creative round-trips through toMarketingContentInput, preserving other metadata keys", () => {
     const current = baseContent({ metadata: { unrelatedKey: "keep-me" } });
     const values = initialContentForm(current);
-    values.creative = withTextLayer(values.creative, "headline", "Big News");
+    values.creative = { ...values.creative, caption: "Big News" };
     const input = toMarketingContentInput(values, current);
     expect(input.metadata?.unrelatedKey).toBe("keep-me");
-    expect((input.metadata?.creative as typeof values.creative).textLayers).toContainEqual({ role: "headline", text: "Big News" });
+    expect((input.metadata?.creative as CreativeConfig).caption).toBe("Big News");
+  });
+
+  it("SPLIT: primary and secondary slots round-trip independently through persistence", () => {
+    const values = initialContentForm(baseContent());
+    values.creative = {
+      ...values.creative,
+      mode: "template",
+      layout: "split",
+      primarySlot: { assetUrl: "https://cdn/left.png", kind: "image" },
+      secondarySlot: { assetUrl: "https://cdn/right.mp4", kind: "video" },
+    };
+    const input = toMarketingContentInput(values, undefined);
+    const persisted = (input.metadata?.creative as CreativeConfig);
+    expect(persisted.primarySlot).toEqual({ assetUrl: "https://cdn/left.png", kind: "image" });
+    expect(persisted.secondarySlot).toEqual({ assetUrl: "https://cdn/right.mp4", kind: "video" });
+
+    // Reopening restores both slots exactly, and changing one on reopen never
+    // touches the value the mapper produced for the other.
+    const reopened = initialContentForm(baseContent({ metadata: { creative: persisted } }));
+    expect(reopened.creative.primarySlot).toEqual(values.creative.primarySlot);
+    expect(reopened.creative.secondarySlot).toEqual(values.creative.secondarySlot);
+  });
+
+  it("profileAvatar and watermark persist as independent fields -- setting one never touches the other", () => {
+    const values = initialContentForm(baseContent());
+    values.creative = {
+      ...values.creative,
+      mode: "template",
+      profileAvatar: { assetUrl: "https://cdn/avatar.png", kind: "image" },
+      watermark: { enabled: true, assetUrl: "https://cdn/watermark.png", opacity: 0.5 },
+    };
+    const input = toMarketingContentInput(values, undefined);
+    const persisted = (input.metadata?.creative as CreativeConfig);
+    expect(persisted.profileAvatar?.assetUrl).toBe("https://cdn/avatar.png");
+    expect(persisted.watermark.assetUrl).toBe("https://cdn/watermark.png");
+    expect(persisted.profileAvatar?.assetUrl).not.toBe(persisted.watermark.assetUrl);
+  });
+
+  it("full identity + caption + layout configuration survives save -> close -> reopen", () => {
+    const values = initialContentForm(baseContent());
+    values.creative = {
+      ...values.creative,
+      mode: "template",
+      layout: "split",
+      profileAvatar: { assetUrl: "https://cdn/avatar.png", kind: "image" },
+      profileName: "Acme Records",
+      username: "acmerecords",
+      caption: "Big announcement",
+      primarySlot: { assetUrl: "https://cdn/left.png", kind: "image" },
+      secondarySlot: { assetUrl: "https://cdn/right.png", kind: "image" },
+      watermark: { enabled: true, assetUrl: "https://cdn/wm.png", opacity: 0.85 },
+    };
+    const saved = toMarketingContentInput(values, undefined);
+    const reopened = initialContentForm(baseContent({ metadata: saved.metadata }));
+    expect(reopened.creative).toEqual(values.creative);
   });
 
   it("never persists a blob: URL in the submitted media/files", () => {
@@ -85,30 +140,35 @@ describe("creative editor — model and round-trip", () => {
     expect(values.media.some((m: { uploading?: boolean }) => m.uploading)).toBe(true);
     expect(values.media[0].url.startsWith("blob:")).toBe(true);
   });
+
+  it("operational title stays independent from the creative caption -- editing one never touches the other", () => {
+    const values = initialContentForm(baseContent({ title: "Operational title" }));
+    values.creative = { ...values.creative, caption: "Creative caption" };
+    values.title = "Renamed operational title";
+    const input = toMarketingContentInput(values, undefined);
+    expect(input.title).toBe("Renamed operational title");
+    expect((input.metadata?.creative as CreativeConfig).caption).toBe("Creative caption");
+  });
 });
 
 describe("creative.types helpers", () => {
-  it("defaultCreativeConfig starts dirty, Simple mode, News/Lander Records preset, no slots", () => {
+  it("defaultCreativeConfig starts dirty, Simple mode, News/Lander Records preset, no slots, empty identity", () => {
     const c = defaultCreativeConfig();
     expect(c.mode).toBe("simple");
     expect(c.layout).toBe("full");
     expect(c.templateKey).toBe(NEWS_LANDER_RECORDS_TEMPLATE.key);
     expect(c.primarySlot).toBeNull();
     expect(c.secondarySlot).toBeNull();
+    expect(c.profileAvatar).toBeNull();
+    expect(c.profileName).toBe("");
+    expect(c.username).toBe("");
+    expect(c.caption).toBe("");
     expect(c.renderState).toBe("dirty");
   });
 
-  it("withTextLayer updates an existing role without duplicating it and marks dirty", () => {
-    let c = defaultCreativeConfig();
-    c = { ...c, renderState: "clean" };
-    c = withTextLayer(c, "headline", "Hello");
-    expect(textLayer(c, "headline")).toBe("Hello");
-    expect(c.textLayers.filter((l) => l.role === "headline")).toHaveLength(1);
-    expect(c.renderState).toBe("dirty");
-  });
-
-  it("withTextLayer adds a role that doesn't exist yet", () => {
-    const c = withTextLayer({ ...defaultCreativeConfig(), textLayers: [] }, "subtitle", "Sub");
-    expect(textLayer(c, "subtitle")).toBe("Sub");
+  it("displayUsername applies '@' only for display, never mutating the stored value", () => {
+    expect(displayUsername("acmerecords")).toBe("@acmerecords");
+    expect(displayUsername("@already-prefixed")).toBe("@already-prefixed");
+    expect(displayUsername("")).toBe("");
   });
 });

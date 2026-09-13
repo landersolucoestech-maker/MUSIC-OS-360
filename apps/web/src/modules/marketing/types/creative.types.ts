@@ -4,27 +4,22 @@
  * MarketingContent.metadata.creative (jsonb, see marketing-contents.service.ts's
  * merge-on-update). Not a new ContentType/format — see social-formats.ts,
  * which remains the single source of truth for platform/aspect/media rules.
+ *
+ * Currently backs one preset (News / Lander Records — NEWS_LANDER_RECORDS_TEMPLATE),
+ * so its identity/caption fields live flat on CreativeConfig rather than
+ * behind a per-template union; if a second, structurally different preset is
+ * added later, split this into a discriminated union keyed on `templateKey`
+ * instead of growing unrelated optional fields here.
  */
 
 export type CreativeMode = "simple" | "template";
 
+/** The News template's media composition mode -- one full-width slot, or two independent slots side by side (zero gap). */
 export type CreativeLayout = "full" | "split";
 
 export interface CreativeSlot {
   assetUrl: string;
   kind: "image" | "video";
-}
-
-export type CreativeTextRole = "headline" | "subtitle";
-
-export interface CreativeTextLayer {
-  role: CreativeTextRole;
-  text: string;
-}
-
-export interface CreativeLogoConfig {
-  enabled: boolean;
-  assetUrl: string | null;
 }
 
 export interface CreativeWatermarkConfig {
@@ -35,10 +30,10 @@ export interface CreativeWatermarkConfig {
 
 /**
  * Whether the current output (if any) still matches the current
- * configuration. "dirty" after any edit to slots/text/logo/watermark/layout;
- * export/render (not implemented yet — see PreviewFrame's template surface
- * and the "Renderização ainda não disponível" guard in Calendario.tsx) would
- * clear it back to "clean" once it exists.
+ * configuration. "dirty" after any edit to slots/identity/caption/watermark/
+ * layout; export/render (not implemented yet — see PreviewFrame's template
+ * surface and the "Renderização ainda não disponível" guard in
+ * Calendario.tsx) would clear it back to "clean" once it exists.
  */
 export type CreativeRenderState = "clean" | "dirty";
 
@@ -48,10 +43,16 @@ export interface CreativeConfig {
   templateKey: string;
   category: string;
   layout: CreativeLayout;
+  /** FULL: the only media slot. SPLIT: the LEFT slot. Never rendered when layout is "split" and this is meant as a de-facto right-only config (impossible -- primarySlot is always left-or-full). */
   primarySlot: CreativeSlot | null;
+  /** Only meaningful (and only rendered) when layout is "split" -- the RIGHT slot. Kept in state across a switch back to "full" so the user doesn't lose it (section 9), just not rendered/persisted-as-visible while layout is "full". */
   secondarySlot: CreativeSlot | null;
-  textLayers: CreativeTextLayer[];
-  logo: CreativeLogoConfig;
+  /** Independent from `watermark` -- the identity avatar shown in the header row, never reused as the watermark automatically. */
+  profileAvatar: CreativeSlot | null;
+  profileName: string;
+  /** Stored without a leading "@" -- the "@" is a display convention applied where rendered. */
+  username: string;
+  caption: string;
   watermark: CreativeWatermarkConfig;
   renderState: CreativeRenderState;
 }
@@ -71,24 +72,18 @@ export function defaultCreativeConfig(): CreativeConfig {
     layout: "full",
     primarySlot: null,
     secondarySlot: null,
-    textLayers: [
-      { role: "headline", text: "" },
-      { role: "subtitle", text: "" },
-    ],
-    logo: { enabled: true, assetUrl: null },
+    profileAvatar: null,
+    profileName: "",
+    username: "",
+    caption: "",
     watermark: { enabled: true, assetUrl: null, opacity: 0.85 },
     renderState: "dirty",
   };
 }
 
-export function textLayer(config: CreativeConfig, role: CreativeTextRole): string {
-  return config.textLayers.find((layer) => layer.role === role)?.text ?? "";
-}
-
-export function withTextLayer(config: CreativeConfig, role: CreativeTextRole, text: string): CreativeConfig {
-  const exists = config.textLayers.some((layer) => layer.role === role);
-  const textLayers = exists
-    ? config.textLayers.map((layer) => (layer.role === role ? { ...layer, text } : layer))
-    : [...config.textLayers, { role, text }];
-  return { ...config, textLayers, renderState: "dirty" };
+/** "@" is a display convention, never persisted as part of the stored value. */
+export function displayUsername(username: string): string {
+  const trimmed = username.trim();
+  if (!trimmed) return "";
+  return trimmed.startsWith("@") ? trimmed : `@${trimmed}`;
 }

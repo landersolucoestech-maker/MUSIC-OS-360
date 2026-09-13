@@ -91,10 +91,10 @@ import type { ContentChannel, ContentStatus, ContentType, MarketingContent, Mark
 import type { MarketingAsset } from "../types/marketing.types";
 import {
   NEWS_LANDER_RECORDS_TEMPLATE,
-  textLayer,
-  withTextLayer,
   type CreativeConfig,
+  type CreativeSlot,
 } from "../types/creative.types";
+import { CreativeTemplateSurface } from "./creative-template-surface";
 import {
   initialContentForm,
   toMarketingContentInput,
@@ -549,9 +549,18 @@ function ContentScheduleModal({
       {/* Safe top/bottom breathing room on tall viewports (dvh-based so mobile
           browser chrome doesn't clip it): was max-h-[90vh], which on a short
           viewport or with the dev auth banner visible left the modal nearly
-          flush against the top edge. */}
-      <DialogContent className="max-h-[calc(100dvh-4rem)] max-w-[760px] overflow-hidden p-0">
-        <form onSubmit={submit} className="flex max-h-full flex-col">
+          flush against the top edge.
+          `flex flex-col` overrides dialog.tsx's base `grid`: a grid parent
+          only gives max-height (not height), and a percentage height (the
+          form's old `max-h-full`) can't resolve against an indefinite-height
+          ancestor -- it computes to `none` per spec, so nothing downstream
+          ever actually shrank and overflow got silently hard-clipped by this
+          element's own `overflow-hidden` instead of scrolling. A flex column
+          gives the form a real flex-basis to shrink against, so its own
+          `min-h-0 flex-1` content region (below) can actually engage
+          `overflow-y-auto` once content exceeds the available height. */}
+      <DialogContent className="flex max-h-[calc(100dvh-4rem)] max-w-[760px] flex-col overflow-hidden p-0">
+        <form onSubmit={submit} className="flex min-h-0 flex-1 flex-col">
           <DialogHeader className="sr-only">
             <DialogTitle>{mode === "edit" ? "Editar Conteúdo" : "Novo Conteúdo"}</DialogTitle>
             <DialogDescription>Agende e configure um conteúdo de marketing.</DialogDescription>
@@ -866,6 +875,64 @@ function AssetThumb({ asset }: { asset: MarketingAsset }) {
 
 type UploadFn = (opts: { file: File; category: "images" | "videos"; entity?: string }) => Promise<string>;
 
+type CreativeSlotField = "primarySlot" | "secondarySlot" | "profileAvatar";
+
+/** One upload-or-thumbnail control, shared by every media/avatar/watermark
+ * field in the Criativo panel instead of duplicating the same upload+preview
+ * JSX four times. */
+function MediaSlotControl({
+  slot,
+  onUpload,
+  onRemove,
+  uploading,
+  accept,
+  label,
+  placeholder,
+  circular,
+}: {
+  slot: CreativeSlot | null;
+  onUpload: (file: File) => void;
+  onRemove: () => void;
+  uploading: boolean;
+  accept: string;
+  label: string;
+  placeholder: string;
+  circular?: boolean;
+}) {
+  if (slot) {
+    return (
+      <div className="flex items-center gap-2 rounded-md border border-border bg-background/50 p-1.5">
+        {slot.kind === "image" ? (
+          <img src={slot.assetUrl} alt="" className={cn("h-9 w-9 object-cover", circular ? "rounded-full" : "rounded")} />
+        ) : (
+          <span className="flex h-9 w-9 items-center justify-center rounded bg-card"><Play className="h-4 w-4" /></span>
+        )}
+        <span className="flex-1 truncate text-[11px] text-muted-foreground">{slot.assetUrl.split("/").pop()}</span>
+        <button type="button" onClick={onRemove} className="rounded p-1 text-muted-foreground hover:bg-muted" aria-label={`Remover ${label}`}>
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    );
+  }
+  return (
+    <label className="flex h-14 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border text-[11px] text-muted-foreground hover:border-primary/60">
+      {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+      <span>{uploading ? "Enviando..." : placeholder}</span>
+      <input
+        type="file"
+        accept={accept}
+        className="sr-only"
+        disabled={uploading}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) onUpload(file);
+          e.target.value = "";
+        }}
+      />
+    </label>
+  );
+}
+
 function CreativeSection({
   creative,
   onChange,
@@ -877,17 +944,23 @@ function CreativeSection({
   uploadToR2: UploadFn;
   projectAssets: MarketingAsset[];
 }) {
-  const [slotUploading, setSlotUploading] = useState(false);
+  const [uploadingField, setUploadingField] = useState<CreativeSlotField | "watermark" | null>(null);
   const isTemplate = creative.mode === "template";
+  const isSplit = creative.layout === "split";
 
-  const setPrimarySlotFile = (file: File) => {
-    setSlotUploading(true);
+  const uploadSlot = (file: File, field: CreativeSlotField) => {
+    setUploadingField(field);
     const kind: "image" | "video" = file.type.startsWith("video/") ? "video" : "image";
     uploadToR2({ file, category: kind === "video" ? "videos" : "images", entity: "marketing_content_creative" })
-      .then((assetUrl) => {
-        onChange({ ...creative, primarySlot: { assetUrl, kind }, renderState: "dirty" });
-      })
-      .finally(() => setSlotUploading(false));
+      .then((assetUrl) => onChange({ ...creative, [field]: { assetUrl, kind }, renderState: "dirty" }))
+      .finally(() => setUploadingField(null));
+  };
+
+  const uploadWatermark = (file: File) => {
+    setUploadingField("watermark");
+    uploadToR2({ file, category: "images", entity: "marketing_content_creative" })
+      .then((assetUrl) => onChange({ ...creative, watermark: { ...creative.watermark, assetUrl }, renderState: "dirty" }))
+      .finally(() => setUploadingField(null));
   };
 
   return (
@@ -916,7 +989,7 @@ function CreativeSection({
       </div>
 
       {isTemplate && (
-        <div className="mt-2.5 space-y-2.5 rounded-lg border border-border bg-muted/20 p-3">
+        <div className="mt-2.5 space-y-3 rounded-lg border border-border bg-muted/20 p-3">
           <div>
             <Label className="text-[11px] text-muted-foreground">Categoria</Label>
             <Select value={creative.category} onValueChange={() => { /* single preset for now */ }}>
@@ -929,67 +1002,123 @@ function CreativeSection({
             </Select>
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-2">
-            <div>
-              <Label className="text-[11px] text-muted-foreground">Manchete</Label>
-              <Input
-                value={textLayer(creative, "headline")}
-                onChange={(e) => onChange(withTextLayer(creative, "headline", e.target.value))}
-                placeholder="Título em destaque"
-                maxLength={80}
-                className="mt-1 h-8 text-xs"
-              />
-            </div>
-            <div>
-              <Label className="text-[11px] text-muted-foreground">Subtítulo</Label>
-              <Input
-                value={textLayer(creative, "subtitle")}
-                onChange={(e) => onChange(withTextLayer(creative, "subtitle", e.target.value))}
-                placeholder="Texto de apoio"
-                maxLength={120}
-                className="mt-1 h-8 text-xs"
-              />
+          <div className="space-y-2 border-t border-border pt-2.5">
+            <p className="text-[11px] font-medium text-foreground">Perfil</p>
+            <MediaSlotControl
+              slot={creative.profileAvatar}
+              onUpload={(file) => uploadSlot(file, "profileAvatar")}
+              onRemove={() => onChange({ ...creative, profileAvatar: null, renderState: "dirty" })}
+              uploading={uploadingField === "profileAvatar"}
+              accept="image/*"
+              label="avatar do perfil"
+              placeholder="Selecionar avatar/logo"
+              circular
+            />
+            <div className="grid gap-2 sm:grid-cols-2">
+              <div>
+                <Label className="text-[11px] text-muted-foreground">Nome do perfil</Label>
+                <Input
+                  value={creative.profileName}
+                  onChange={(e) => onChange({ ...creative, profileName: e.target.value, renderState: "dirty" })}
+                  placeholder="Ex: Lander Records"
+                  maxLength={60}
+                  className="mt-1 h-8 text-xs"
+                />
+              </div>
+              <div>
+                <Label className="text-[11px] text-muted-foreground">Usuário</Label>
+                <Input
+                  value={creative.username}
+                  onChange={(e) => onChange({ ...creative, username: e.target.value.replace(/^@+/, ""), renderState: "dirty" })}
+                  placeholder="Ex: landerrecords"
+                  maxLength={40}
+                  className="mt-1 h-8 text-xs"
+                />
+              </div>
             </div>
           </div>
 
-          <div>
-            <Label className="text-[11px] text-muted-foreground">Mídia principal</Label>
-            {creative.primarySlot ? (
-              <div className="mt-1 flex items-center gap-2 rounded-md border border-border bg-background/50 p-1.5">
-                {creative.primarySlot.kind === "image" ? (
-                  <img src={creative.primarySlot.assetUrl} alt="" className="h-10 w-10 rounded object-cover" />
-                ) : (
-                  <span className="flex h-10 w-10 items-center justify-center rounded bg-card"><Play className="h-4 w-4" /></span>
+          <div className="border-t border-border pt-2.5">
+            <Label className="text-[11px] text-muted-foreground">Legenda da notícia</Label>
+            <Textarea
+              value={creative.caption}
+              onChange={(e) => onChange({ ...creative, caption: e.target.value, renderState: "dirty" })}
+              placeholder="Texto principal da notícia..."
+              maxLength={280}
+              className="mt-1 min-h-[60px] text-xs"
+            />
+          </div>
+
+          <div className="space-y-2 border-t border-border pt-2.5">
+            <Label className="text-[11px] text-muted-foreground">Layout da mídia</Label>
+            <div className="flex gap-1.5 rounded-lg border border-border p-1">
+              <button
+                type="button"
+                onClick={() => onChange({ ...creative, layout: "full", renderState: "dirty" })}
+                className={cn(
+                  "flex-1 rounded-md px-2 py-1 text-[11px] font-medium transition-colors",
+                  !isSplit ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted/50",
                 )}
-                <span className="flex-1 truncate text-[11px] text-muted-foreground">{creative.primarySlot.assetUrl.split("/").pop()}</span>
-                <button
-                  type="button"
-                  onClick={() => onChange({ ...creative, primarySlot: null, renderState: "dirty" })}
-                  className="rounded p-1 text-muted-foreground hover:bg-muted"
-                  aria-label="Remover mídia principal"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
+              >
+                Completo
+              </button>
+              <button
+                type="button"
+                onClick={() => onChange({ ...creative, layout: "split", renderState: "dirty" })}
+                className={cn(
+                  "flex-1 rounded-md px-2 py-1 text-[11px] font-medium transition-colors",
+                  isSplit ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted/50",
+                )}
+              >
+                Dividido
+              </button>
+            </div>
+
+            {isSplit ? (
+              <div className="grid gap-2 sm:grid-cols-2">
+                <div>
+                  <Label className="text-[11px] text-muted-foreground">Mídia esquerda</Label>
+                  <div className="mt-1">
+                    <MediaSlotControl
+                      slot={creative.primarySlot}
+                      onUpload={(file) => uploadSlot(file, "primarySlot")}
+                      onRemove={() => onChange({ ...creative, primarySlot: null, renderState: "dirty" })}
+                      uploading={uploadingField === "primarySlot"}
+                      accept="image/*,video/*"
+                      label="mídia esquerda"
+                      placeholder="Imagem ou vídeo"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-[11px] text-muted-foreground">Mídia direita</Label>
+                  <div className="mt-1">
+                    <MediaSlotControl
+                      slot={creative.secondarySlot}
+                      onUpload={(file) => uploadSlot(file, "secondarySlot")}
+                      onRemove={() => onChange({ ...creative, secondarySlot: null, renderState: "dirty" })}
+                      uploading={uploadingField === "secondarySlot"}
+                      accept="image/*,video/*"
+                      label="mídia direita"
+                      placeholder="Imagem ou vídeo"
+                    />
+                  </div>
+                </div>
               </div>
             ) : (
-              <label className="mt-1 flex h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border text-[11px] text-muted-foreground hover:border-primary/60">
-                {slotUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                <span>{slotUploading ? "Enviando..." : "Selecionar imagem ou vídeo"}</span>
-                <input
-                  type="file"
-                  accept="image/*,video/*"
-                  className="sr-only"
-                  disabled={slotUploading}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) setPrimarySlotFile(file);
-                    e.target.value = "";
-                  }}
-                />
-              </label>
+              <MediaSlotControl
+                slot={creative.primarySlot}
+                onUpload={(file) => uploadSlot(file, "primarySlot")}
+                onRemove={() => onChange({ ...creative, primarySlot: null, renderState: "dirty" })}
+                uploading={uploadingField === "primarySlot"}
+                accept="image/*,video/*"
+                label="mídia principal"
+                placeholder="Selecionar imagem ou vídeo"
+              />
             )}
+
             {projectAssets.length > 0 && (
-              <div className="mt-1.5 grid max-h-24 gap-1 overflow-y-auto">
+              <div className="grid max-h-24 gap-1 overflow-y-auto">
                 {projectAssets.slice(0, 6).map((asset) => (
                   <button
                     key={asset.id}
@@ -1009,17 +1138,30 @@ function CreativeSection({
             )}
           </div>
 
-          <div className="flex items-center justify-between">
-            <Label className="text-[11px] text-muted-foreground">Marca d'água</Label>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={creative.watermark.enabled}
-              onClick={() => onChange({ ...creative, watermark: { ...creative.watermark, enabled: !creative.watermark.enabled }, renderState: "dirty" })}
-              className={cn("h-5 w-9 rounded-full transition-colors", creative.watermark.enabled ? "bg-primary" : "bg-muted")}
-            >
-              <span className={cn("block h-4 w-4 translate-x-0.5 rounded-full bg-background transition-transform", creative.watermark.enabled && "translate-x-[18px]")} />
-            </button>
+          <div className="space-y-2 border-t border-border pt-2.5">
+            <div className="flex items-center justify-between">
+              <Label className="text-[11px] text-muted-foreground">Marca d'água</Label>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={creative.watermark.enabled}
+                onClick={() => onChange({ ...creative, watermark: { ...creative.watermark, enabled: !creative.watermark.enabled }, renderState: "dirty" })}
+                className={cn("h-5 w-9 rounded-full transition-colors", creative.watermark.enabled ? "bg-primary" : "bg-muted")}
+              >
+                <span className={cn("block h-4 w-4 translate-x-0.5 rounded-full bg-background transition-transform", creative.watermark.enabled && "translate-x-[18px]")} />
+              </button>
+            </div>
+            {creative.watermark.enabled && (
+              <MediaSlotControl
+                slot={creative.watermark.assetUrl ? { assetUrl: creative.watermark.assetUrl, kind: "image" } : null}
+                onUpload={uploadWatermark}
+                onRemove={() => onChange({ ...creative, watermark: { ...creative.watermark, assetUrl: null }, renderState: "dirty" })}
+                uploading={uploadingField === "watermark"}
+                accept="image/*"
+                label="marca d'água"
+                placeholder="Selecionar marca d'água"
+              />
+            )}
           </div>
 
           <p className="rounded-md border border-dashed border-border bg-background/50 p-2 text-[10px] leading-relaxed text-muted-foreground">
@@ -1268,64 +1410,6 @@ function MediaContent({ item }: { item?: MediaItem }) {
       <div className="flex h-16 w-16 items-center justify-center rounded-md bg-primary/10">
         <Play className="h-8 w-8 text-primary" />
       </div>
-    </div>
-  );
-}
-
-/**
- * Template mode's creative surface — composited INSIDE the media region, the
- * platform chrome (Instagram/TikTok/etc. frame) stays around it unchanged
- * (see PreviewFrame's `renderSurface`). FULL layout only (`primarySlot` fills
- * the whole region) -- SPLIT (two slots side by side, zero separator) is not
- * implemented in this pass; `creative.layout` stays "full" until it is.
- *
- * This is an in-browser visual composite for editing feedback only, not a
- * rendered artifact -- there is no export/render pipeline yet (see the
- * `finalize()` guard in ContentScheduleModal blocking external publish for
- * template-mode content). Text position is fixed (header band top, subtitle
- * band bottom) rather than freely draggable, matching the News/Lander
- * Records preset's actual layout, not a generic design-tool canvas.
- */
-function CreativeTemplateSurface({ creative }: { creative: CreativeConfig }) {
-  const headline = textLayer(creative, "headline");
-  const subtitle = textLayer(creative, "subtitle");
-  const slot = creative.primarySlot;
-
-  return (
-    <div className="absolute inset-0 flex flex-col bg-card">
-      <div className="z-10 bg-gradient-to-b from-background/90 to-transparent px-3 pb-4 pt-2.5">
-        <span className="rounded bg-primary px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-primary-foreground">
-          {NEWS_LANDER_RECORDS_TEMPLATE.label}
-        </span>
-      </div>
-
-      <div className="relative -mt-8 flex-1">
-        {slot ? (
-          slot.kind === "image" ? (
-            <img src={slot.assetUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
-          ) : (
-            <video src={slot.assetUrl} className="absolute inset-0 h-full w-full object-cover" muted loop autoPlay />
-          )
-        ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-muted/40 text-muted-foreground">
-            <Upload className="h-6 w-6" />
-            <span className="text-[11px]">Selecione a mídia principal</span>
-          </div>
-        )}
-
-        {creative.watermark.enabled && (
-          <span className="absolute bottom-2 right-2 rounded bg-background/70 px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-wide text-foreground/80">
-            Lander Records
-          </span>
-        )}
-      </div>
-
-      {(headline || subtitle) && (
-        <div className="z-10 space-y-0.5 bg-gradient-to-t from-background/95 to-transparent px-3 pb-3 pt-6">
-          {headline && <p className="text-sm font-bold leading-tight text-foreground">{headline}</p>}
-          {subtitle && <p className="text-[11px] leading-snug text-muted-foreground">{subtitle}</p>}
-        </div>
-      )}
     </div>
   );
 }
