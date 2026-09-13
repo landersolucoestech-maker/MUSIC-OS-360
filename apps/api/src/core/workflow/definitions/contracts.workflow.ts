@@ -2,7 +2,7 @@
  * contracts.workflow.ts
  *
  * Workflow de ciclo de vida para Contratos.
- * Estados: rascunho → em_analise → aguardando_assinatura → assinado → vigente → encerrado / cancelado
+ * Estados: draft → under_review → awaiting_signature → signed → in_force → terminated / cancelled
  */
 
 import { ContractStatus } from '@music-os-360/types';
@@ -11,30 +11,30 @@ import { WorkflowDefinition } from '../workflow.types';
 export const CONTRACTS_WORKFLOW: WorkflowDefinition<string> = {
   name:         'contracts',
   entityType:   'contract',
-  initialState: ContractStatus.RASCUNHO,
+  initialState: ContractStatus.DRAFT,
   states: Object.values(ContractStatus),
   transitions: [
     {
-      from:  ContractStatus.RASCUNHO,
-      to:    ContractStatus.EM_ANALISE,
+      from:  ContractStatus.DRAFT,
+      to:    ContractStatus.UNDER_REVIEW,
       label: 'Enviar para Análise',
       roles: ['super_admin','tenant_owner','owner','admin','manager','juridico'],
     },
     {
-      from:  ContractStatus.EM_ANALISE,
-      to:    ContractStatus.RASCUNHO,
+      from:  ContractStatus.UNDER_REVIEW,
+      to:    ContractStatus.DRAFT,
       label: 'Retornar para Rascunho',
       roles: ['super_admin','tenant_owner','owner','admin','manager','juridico'],
     },
     {
-      from:  ContractStatus.EM_ANALISE,
-      to:    ContractStatus.AGUARDANDO_ASSINATURA,
+      from:  ContractStatus.UNDER_REVIEW,
+      to:    ContractStatus.AWAITING_SIGNATURE,
       label: 'Aprovar para Assinatura',
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
     },
     {
-      from:  ContractStatus.AGUARDANDO_ASSINATURA,
-      to:    ContractStatus.ASSINADO,
+      from:  ContractStatus.AWAITING_SIGNATURE,
+      to:    ContractStatus.SIGNED,
       label: 'Registrar Assinatura',
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
       guard: async (ctx) => {
@@ -46,38 +46,38 @@ export const CONTRACTS_WORKFLOW: WorkflowDefinition<string> = {
       },
     },
     {
-      from:  ContractStatus.ASSINADO,
-      to:    ContractStatus.VIGENTE,
+      from:  ContractStatus.SIGNED,
+      to:    ContractStatus.IN_FORCE,
       label: 'Ativar Contrato',
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
     },
     {
-      from:  ContractStatus.VIGENTE,
-      to:    ContractStatus.VENCENDO,
+      from:  ContractStatus.IN_FORCE,
+      to:    ContractStatus.EXPIRING,
       label: 'Marcar como Vencendo',
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
     },
     {
-      from:  [ContractStatus.VENCENDO, ContractStatus.VIGENTE],
-      to:    ContractStatus.VENCIDO,
+      from:  [ContractStatus.EXPIRING, ContractStatus.IN_FORCE],
+      to:    ContractStatus.EXPIRED,
       label: 'Registrar Vencimento',
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
     },
     {
-      from:  [ContractStatus.VENCIDO, ContractStatus.VIGENTE, ContractStatus.ASSINADO],
-      to:    ContractStatus.ENCERRADO,
+      from:  [ContractStatus.EXPIRED, ContractStatus.IN_FORCE, ContractStatus.SIGNED],
+      to:    ContractStatus.TERMINATED,
       label: 'Encerrar Contrato',
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
     },
     {
       from:  [
-        ContractStatus.RASCUNHO,
-        ContractStatus.EM_ANALISE,
-        ContractStatus.AGUARDANDO_ASSINATURA,
-        ContractStatus.ASSINADO,
-        ContractStatus.VIGENTE,
+        ContractStatus.DRAFT,
+        ContractStatus.UNDER_REVIEW,
+        ContractStatus.AWAITING_SIGNATURE,
+        ContractStatus.SIGNED,
+        ContractStatus.IN_FORCE,
       ],
-      to:    ContractStatus.CANCELADO,
+      to:    ContractStatus.CANCELLED,
       label: 'Cancelar',
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
     },

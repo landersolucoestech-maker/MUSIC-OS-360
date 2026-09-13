@@ -1,15 +1,15 @@
-import { IsString, IsOptional, IsUrl } from 'class-validator';
+import { IsString, IsOptional, IsUrl, IsUUID } from 'class-validator';
 
 export class CreateContentDetectionDto {
   @IsString()
   plataforma: string;
 
   @IsOptional()
-  @IsString()
+  @IsUUID()
   work_id?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUUID()
   artist_id?: string;
 
   @IsOptional()

@@ -70,7 +70,7 @@ describe('Guarda permanente: colunas físicas removidas de artists nunca voltam 
     expect(propertyIsDeclared(artistEntitySource, 'status_cadastro')).toBe(true);
     const handlerPath = path.resolve(__dirname, '../leads/handlers/lead-events.handler.ts');
     const handlerSource = fs.readFileSync(handlerPath, 'utf8');
-    expect(handlerSource).toMatch(/status_cadastro\s*:\s*ArtistStatusCadastro\.ATIVO/);
+    expect(handlerSource).toMatch(/status_cadastro\s*:\s*ArtistStatusCadastro\.ACTIVE/);
   });
 
   it('a migration de remoção existe e está registrada em migrations/index.ts', () => {

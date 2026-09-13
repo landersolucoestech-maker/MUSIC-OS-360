@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { ExternalDataExchangeService } from '../../core/external-data/external-data-exchange.service';
 import { QUEUE_NAMES, WORKFLOW_JOB_NAMES } from '../queue.constants';
+import { DatabaseContextService } from '../../database/database-context.service';
 
 type ExternalDataJobPayload = Record<string, unknown> & {
   tenantId: string;
@@ -15,15 +16,30 @@ type ExternalDataJobPayload = Record<string, unknown> & {
 export class ExternalDataProcessor extends WorkerHost {
   private readonly logger = new Logger(ExternalDataProcessor.name);
 
-  constructor(private readonly exchange: ExternalDataExchangeService) {
+  constructor(
+    private readonly exchange: ExternalDataExchangeService,
+    private readonly dbContext: DatabaseContextService,
+  ) {
     super();
   }
 
+  // find-657093f0: ExternalDataExchangeService persists via repos captured at
+  // construction (artists/releases/works/phonograms/shares/webhookEvents/
+  // submissions — all tenant-scoped). Route every job through the tenant DB
+  // context so those repos re-resolve through the ALS-bound connection.
   async process(job: Job<ExternalDataJobPayload>): Promise<void> {
     const d = job.data;
     if (!d.tenantId) throw new Error('External data job missing tenantId');
     this.logger.log(`[external-data] job=${job.name} id=${job.id} tenant=${d.tenantId}`);
 
+    return this.dbContext.runInTenantContext(
+      { tenantId: d.tenantId, orgId: null, role: null },
+      () => this.processInContext(job),
+    );
+  }
+
+  private async processInContext(job: Job<ExternalDataJobPayload>): Promise<void> {
+    const d = job.data;
     switch (job.name) {
       case WORKFLOW_JOB_NAMES.DISTRIBUTOR_SUBMIT: {
         if (!d.providerId) throw new Error('External data job missing providerId (distributor.submit)');

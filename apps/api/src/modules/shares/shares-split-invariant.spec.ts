@@ -1,12 +1,12 @@
 /**
  * shares-split-invariant.spec.ts
  *
- * P1: SharesService.create/update persisted percentual with zero
+ * P1: SharesService.create/update persisted percentage with zero
  * validation — not even a same-row range check, let alone a cross-row
  * "splits for a work don't exceed 100%" check. A second, independent write
  * path (reports/import bulk importer) had the same gap. This closes the
- * SharesService half: a per-row range check (CreateShareDto.percentual now
- * has @Min(0)/@Max(100), matching its legacy alias `percentage`) plus a
+ * SharesService half: a per-row range check (CreateShareDto.percentage has
+ * @Min(0)/@Max(100)) plus a
  * cross-row "registry-eligible shares for the same work/phonogram never
  * exceed 100%" check — deliberately NOT "must equal exactly 100%", since a
  * work legitimately has 0/1/2/n shares entered incrementally before
@@ -27,7 +27,7 @@ function makeRepo(opts: { existingSum?: number; findByIdRow?: Record<string, unk
     save: jest.fn(async (entity: unknown) => ({ id: 'share-new', ...(entity as object) })),
     update: jest.fn(async () => ({ affected: 1 })),
     // One shared qb per createQueryBuilder() call — findById only ever calls
-    // where().getOne(); sumEligiblePercentual only ever calls select()/where()/
+    // where().getOne(); sumEligiblePercentage only ever calls select()/where()/
     // andWhere().getRawOne(). Both terminal methods live on the same object
     // since only one is ever invoked per call, keeping the mock simple.
     createQueryBuilder: jest.fn(() => {
@@ -50,10 +50,18 @@ function makeService(
   queryImpl = jest.fn(async () => [{ exists: 1 }]),
 ) {
   const repo = makeRepo(opts);
+  // manager mirrors the same repo (so __qbs instrumentation still captures
+  // the sum/find queries issued inside the transaction) plus a no-op query()
+  // for the find-a192e412 advisory-lock statement.
+  const manager = { getRepository: jest.fn(() => repo), query: jest.fn().mockResolvedValue([]) };
   // query() backs assertSameTenantFk's cross-tenant FK ownership check — a
   // truthy row means "found, same tenant", so these split-budget-focused
   // tests aren't coupled to that separate check.
-  const ds = { getRepository: jest.fn(() => repo), query: queryImpl } as never;
+  const ds = {
+    getRepository: jest.fn(() => repo),
+    query: queryImpl,
+    transaction: jest.fn(async (cb: (m: unknown) => unknown) => cb(manager)),
+  } as never;
   const svc = new SharesService(ds);
   return { svc, repo };
 }
@@ -83,11 +91,10 @@ describe('SharesService — split budget invariant (P1)', () => {
 
     it('NÃO valida orçamento para shares financeiros (share_type definido) — conceito distinto (Fase 5/C6)', async () => {
       const { svc } = makeService({ existingSum: 90 });
-      // percentual aqui é o campo do form (não a alias percentage), share_type
-      // definido explicitamente marca como financeiro/pendente — nunca conta
-      // no orçamento de splits de registro.
+      // share_type definido explicitamente marca como financeiro/pendente —
+      // nunca conta no orçamento de splits de registro.
       await expect(svc.create('tenant-1', {
-        share_type: 'pendente', percentual: 50, workId: 'work-1',
+        share_type: 'pendente', percentage: 50, workId: 'work-1',
       } as unknown as CreateShareDto)).resolves.toBeDefined();
     });
 
@@ -105,7 +112,7 @@ describe('SharesService — split budget invariant (P1)', () => {
     it('rejeita quando a atualização faria a soma exceder 100%, herdando work_id da linha atual', async () => {
       const { svc } = makeService({
         existingSum: 70,
-        findByIdRow: { id: 'share-1', tenant_id: 'tenant-1', work_id: 'work-1', percentual: 10, share_type: null },
+        findByIdRow: { id: 'share-1', tenant_id: 'tenant-1', work_id: 'work-1', percentage: 10, share_type: null },
       });
       await expect(svc.update('tenant-1', 'share-1', {
         percentage: 50,
@@ -115,7 +122,7 @@ describe('SharesService — split budget invariant (P1)', () => {
     it('exclui a própria linha da soma existente (não conta a si mesma duas vezes)', async () => {
       const { svc, repo } = makeService({
         existingSum: 30, // already excludes share-1 per the mocked query (asserted below)
-        findByIdRow: { id: 'share-1', tenant_id: 'tenant-1', work_id: 'work-1', percentual: 30, share_type: null },
+        findByIdRow: { id: 'share-1', tenant_id: 'tenant-1', work_id: 'work-1', percentage: 30, share_type: null },
       });
       await expect(svc.update('tenant-1', 'share-1', { percentage: 40 } as unknown as UpdateShareDto))
         .resolves.toBeDefined();
@@ -126,6 +133,67 @@ describe('SharesService — split budget invariant (P1)', () => {
       expect(sumQb).toBeDefined();
       expect(sumQb!['andWhere']).toHaveBeenCalledWith('s.id != :excludeId', { excludeId: 'share-1' });
     });
+  });
+});
+
+describe('SharesService — concurrent write serialization (find-a192e412)', () => {
+  it('create: acquires a per-work advisory lock before checking/writing the split budget', async () => {
+    const repo = makeRepo({ existingSum: 40 });
+    const manager = { getRepository: jest.fn(() => repo), query: jest.fn().mockResolvedValue([]) };
+    const transactionSpy = jest.fn(async (cb: (m: unknown) => unknown) => cb(manager));
+    const ds = {
+      getRepository: jest.fn(() => repo),
+      query: jest.fn(async () => [{ exists: 1 }]),
+      transaction: transactionSpy,
+    } as never;
+    const svc = new SharesService(ds);
+
+    await svc.create('tenant-1', {
+      holderName: 'Autor A', percentage: 30, workId: 'work-1',
+    } as unknown as CreateShareDto);
+
+    expect(transactionSpy).toHaveBeenCalled();
+    expect(manager.query).toHaveBeenCalledWith(
+      'SELECT pg_advisory_xact_lock(hashtext($1))',
+      ['share-split:tenant-1:work-1:'],
+    );
+  });
+
+  it('update: acquires the lock keyed by the CURRENT row scope before checking/writing', async () => {
+    const repo = makeRepo({
+      existingSum: 70,
+      findByIdRow: { id: 'share-1', tenant_id: 'tenant-1', work_id: 'work-9', percentage: 10, share_type: null },
+    });
+    const manager = { getRepository: jest.fn(() => repo), query: jest.fn().mockResolvedValue([]) };
+    const ds = {
+      getRepository: jest.fn(() => repo),
+      query: jest.fn(async () => [{ exists: 1 }]),
+      transaction: jest.fn(async (cb: (m: unknown) => unknown) => cb(manager)),
+    } as never;
+    const svc = new SharesService(ds);
+
+    await expect(svc.update('tenant-1', 'share-1', { percentage: 15 } as unknown as UpdateShareDto))
+      .resolves.toBeDefined();
+
+    expect(manager.query).toHaveBeenCalledWith(
+      'SELECT pg_advisory_xact_lock(hashtext($1))',
+      ['share-split:tenant-1:work-9:'],
+    );
+  });
+
+  it('does not acquire a lock when the write has no work_id/fonograma_id scope', async () => {
+    const repo = makeRepo();
+    const manager = { getRepository: jest.fn(() => repo), query: jest.fn().mockResolvedValue([]) };
+    const ds = {
+      getRepository: jest.fn(() => repo),
+      query: jest.fn(async () => [{ exists: 1 }]),
+      transaction: jest.fn(async (cb: (m: unknown) => unknown) => cb(manager)),
+    } as never;
+    const svc = new SharesService(ds);
+
+    await svc.create('tenant-1', { holderName: 'Sem Obra', percentage: 50 } as unknown as CreateShareDto);
+
+    expect(manager.query).not.toHaveBeenCalled();
   });
 });
 

@@ -1,6 +1,6 @@
 import {
   IsString, IsOptional, IsUUID, IsArray, IsObject, IsIn, IsBoolean,
-  IsInt, IsNumber, MaxLength, Min, IsNotEmpty,
+  IsInt, IsNumber, MaxLength, Min, IsNotEmpty, ArrayMaxSize,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
@@ -58,6 +58,32 @@ export class CreateAudiovisualProjectDto {
   @ApiPropertyOptional() @IsOptional() @IsUUID() campaign_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() event_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsObject() metadata?: Record<string, unknown>;
+
+  // ── Campos do formulário (chaves EXATAS de AudiovisualProjectFormModal) ──────
+  // Regra de produto: cada campo do form tem a sua coluna física
+  // (migration 20260718000012). music_id/budget/real_cost usam os nomes
+  // reais já existentes (phonogram_id/budget_estimated/budget_actual).
+  //
+  // find (Wave 13): estes campos estavam declarados em QueryAudiovisualProjectDto
+  // (um DTO de query params de listagem) em vez de aqui -- o corpo real de
+  // create/update era rejeitado inteiro por forbidNonWhitelisted, exatamente o
+  // bug que audiovisual.dto.spec.ts's "regressao do bug real" foi escrito para
+  // prevenir. Movidos para o DTO correto.
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(500) music_title?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) artist_name?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) format?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) videomaker?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) editor?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() shooting_date?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) location?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) capture_status?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) editing_status?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) approval_status?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() pre_release_date?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() release_date?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() concept?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() observations?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) final_status?: string;
 }
 
 export class UpdateAudiovisualProjectDto extends PartialType(CreateAudiovisualProjectDto) {
@@ -82,26 +108,6 @@ export class QueryAudiovisualProjectDto extends PaginationDto {
   @ApiPropertyOptional() @IsOptional() @IsUUID() release_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() campaign_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() event_id?: string;
-
-  // ── Campos do formulário (chaves EXATAS de AudiovisualProjectFormModal) ──────
-  // Regra de produto: cada campo do form tem a sua coluna física
-  // (migration 20260718000012). music_id/budget/real_cost usam os nomes
-  // reais já existentes (phonogram_id/budget_estimated/budget_actual).
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(500) music_title?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) artist_name?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) format?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) videomaker?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) editor?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() shooting_date?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) location?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) capture_status?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) editing_status?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) approval_status?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() pre_release_date?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() release_date?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() concept?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() observations?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) final_status?: string;
 }
 
 // ── Briefings ─────────────────────────────────────────────────────────────────
@@ -176,4 +182,60 @@ export class QueryApprovalDto extends PaginationDto {
 export class QueryDashboardDto {
   @ApiPropertyOptional() @IsOptional() @IsString() from?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() to?: string;
+}
+
+// ── Shots ─────────────────────────────────────────────────────────────────────
+// Only 2 values are evidenced by this repo (DB default 'pending' + the DTO
+// test's one asserted-valid value 'recording'). This is almost certainly an
+// incomplete real-world shot-capture lifecycle (no terminal/completed state)
+// — if the product needs more states, that requires a product decision on
+// their names; do not add speculative values here without that input.
+export const CAPTURE_STATUSES = ['pending', 'recording'] as const;
+
+export class CreateShotDto {
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) scene_title?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) location?: string;
+  @ApiPropertyOptional() @IsOptional() @IsArray() actors?: unknown[];
+  @ApiPropertyOptional() @IsOptional() @IsArray() props?: unknown[];
+  @ApiPropertyOptional() @IsOptional() @IsArray() wardrobe?: unknown[];
+  @ApiPropertyOptional() @IsOptional() @IsArray() equipment?: unknown[];
+  @ApiPropertyOptional() @IsOptional() @IsInt() @Min(0) estimated_duration_sec?: number;
+  @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
+  @ApiPropertyOptional() @IsOptional() @IsInt() @Min(0) ordering?: number;
+}
+
+export class UpdateShotDto extends PartialType(CreateShotDto) {
+  @ApiPropertyOptional({ enum: CAPTURE_STATUSES })
+  @IsOptional() @IsIn(CAPTURE_STATUSES) shooting_status?: typeof CAPTURE_STATUSES[number];
+}
+
+export class ReorderShotsDto {
+  @ApiProperty({ type: [String] })
+  @IsArray() @ArrayMaxSize(500) @IsUUID('4', { each: true }) ids!: string[];
+}
+
+// ── Tasks ─────────────────────────────────────────────────────────────────────
+export const TASK_STATUSES = ['pending', 'in_progress', 'blocked', 'done', 'cancelled'] as const;
+
+export class CreateTaskDto {
+  @ApiProperty() @IsString() @IsNotEmpty() @MaxLength(500) title!: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
+  @ApiPropertyOptional({ enum: TASK_STATUSES })
+  @IsOptional() @IsIn(TASK_STATUSES) status?: typeof TASK_STATUSES[number];
+  @ApiPropertyOptional({ enum: PROJECT_PRIORITIES })
+  @IsOptional() @IsIn(PROJECT_PRIORITIES) priority?: typeof PROJECT_PRIORITIES[number];
+  @ApiPropertyOptional() @IsOptional() @IsUUID() assigned_to?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() due_date?: string;
+}
+
+export class UpdateTaskDto extends PartialType(CreateTaskDto) {}
+
+// ── Team members ──────────────────────────────────────────────────────────────
+export class CreateTeamMemberDto {
+  @ApiProperty({ enum: TEAM_ROLES }) @IsIn(TEAM_ROLES) role!: typeof TEAM_ROLES[number];
+  @ApiPropertyOptional() @IsOptional() @IsUUID() user_id?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) external_name?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) contact?: string;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) payment_amount?: number;
 }

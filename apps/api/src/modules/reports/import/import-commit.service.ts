@@ -9,6 +9,7 @@ import {
 import { DataSource, QueryRunner } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { EncryptionService } from '../../../core/security/encryption.service';
+import { normalizeIsrc, isValidIsrc } from '../../registry/validators/registry-validators';
 import { ReportEntityDefinitionService } from '../definitions/report-entity-definition.service';
 import type { ReportEntityDefinition } from '../definitions/report-entity-definition.types';
 import {
@@ -158,6 +159,7 @@ export class ImportCommitService {
     try {
       for (const group of groups) await this.assertNotDuplicate(qr, def, contract, group.generalRow, tenantId, errors);
       for (const row of validation.rows) await this.assertRelationships(qr, def, row, tenantId, errors);
+      for (const row of validation.rows) this.assertValidIsrc(def, contract, row, errors);
 
       if (errors.length > 0) {
         await qr.rollbackTransaction();
@@ -222,6 +224,31 @@ export class ImportCommitService {
     }
   }
 
+  /**
+   * find-fb2cfb1b: bulk import only ran the generic normalizeImportedValue
+   * (trim + JSON-parse) on ISRC, never the ISRC-specific format check the
+   * manual-entry path (phonograms/works services) and the registry-submission
+   * flow already enforce. Runs before the insert phase, same pre-check
+   * pattern as assertRelationships, so an invalid ISRC rolls back cleanly
+   * with a row-scoped error instead of throwing mid-transaction.
+   */
+  private assertValidIsrc(
+    def: ReportEntityDefinition,
+    contract: ReportFormContract | null,
+    row: RowValidation,
+    errors: string[],
+  ): void {
+    for (const column of def.importableColumns) {
+      const physicalColumn = contract?.fields.find((field) => field.key === column)?.physical ?? column;
+      if (physicalColumn !== 'isrc') continue;
+      const value = row.data[column];
+      if (typeof value !== 'string' || value.trim() === '') continue;
+      if (!isValidIsrc(value)) {
+        errors.push(`Linha ${row.index + 2}: ISRC inválido "${value}". Formato esperado: CCXXXYYNNNNN (12 caracteres, hífens opcionais).`);
+      }
+    }
+  }
+
   private async insertGroup(
     qr: QueryRunner,
     def: ReportEntityDefinition,
@@ -256,7 +283,17 @@ export class ImportCommitService {
       }
 
       const field = contract?.fields.find((item) => item.key === column);
-      cols.push(field?.physical ?? column);
+      const physicalColumn = field?.physical ?? column;
+      // find-fb2cfb1b: normalize to the same canonical form the manual-entry
+      // path now enforces (registry-validators.ts normalizeIsrc) — format
+      // validity itself was already checked in assertValidIsrc() before this
+      // transaction reached the insert phase.
+      if (physicalColumn === 'isrc' && typeof rawValue === 'string' && rawValue.trim() !== '') {
+        cols.push(physicalColumn);
+        values.push(normalizeIsrc(rawValue));
+        continue;
+      }
+      cols.push(physicalColumn);
       values.push(rawValue);
     }
 

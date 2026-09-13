@@ -1,4 +1,5 @@
 import { Injectable, Inject, Logger, Optional } from '@nestjs/common';
+import { ArtistStatus } from '@music-os-360/types';
 import { OnEvent } from '@nestjs/event-emitter';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
@@ -49,7 +50,7 @@ export class ArtistWorkflowHandler {
     if (!tenantId) return this.failClosed(event.type);
 
     const { artistId, nomeArtistico, newStatus, changedBy } = event.payload;
-    if (newStatus !== 'contratado') return;
+    if (newStatus !== ArtistStatus.SIGNED) return;
 
     const now = new Date();
     const taskTitles: string[] = [];

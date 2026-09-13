@@ -1,4 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { timingSafeEqual } from 'crypto';
 import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
@@ -31,6 +32,7 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
   constructor(
     @Inject(DATA_SOURCE) ds: DataSource | null,
     enc: EncryptionService,
+    private readonly config: ConfigService,
   ) {
     super(ds, enc);
   }
@@ -104,7 +106,7 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
    * caso contrário (inclui verify token não configurado no ambiente).
    */
   verifyWebhookChallenge(mode: string | undefined, token: string | undefined, challenge: string | undefined): string {
-    const expected = process.env['WHATSAPP_WEBHOOK_VERIFY_TOKEN'] ?? '';
+    const expected = this.config.get<string>('WHATSAPP_WEBHOOK_VERIFY_TOKEN') ?? '';
     if (!expected) {
       throw new WhatsAppError('WHATSAPP_NOT_CONFIGURED', 'WHATSAPP_WEBHOOK_VERIFY_TOKEN não definido no ambiente da API');
     }

@@ -5,6 +5,8 @@ import {
 import { ConfigService }              from '@nestjs/config';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { randomUUID }    from 'crypto';
+import { plainToInstance } from 'class-transformer';
+import { validate }      from 'class-validator';
 import { RequireRole }   from '../../core/decorators/roles.decorator';
 import { Public }        from '../../core/decorators/public.decorator';
 import { Audit }         from '../../core/interceptors/audit.interceptor';
@@ -31,6 +33,10 @@ import {
   SyncSpotifyArtistDto,
   OAuthInitDto,
   OAuthExchangeDto,
+  RegisterAbramusWorkDto,
+  ConfigureSoundCloudDto,
+  OAuthCodeStateDto,
+  AutentiqueWebhookDto,
 } from './dto/integrations.dto';
 
 const GENERIC_OAUTH_PLATFORMS = new Set([
@@ -510,7 +516,23 @@ export class IntegrationsController {
   @RequireRole('editor')
   @ApiOperation({ summary: 'Webhook Autentique (assinatura concluída)' })
   @HttpCode(HttpStatus.OK)
-  autentiqueWebhook(@Body() payload: any) {
+  async autentiqueWebhook(@Body() payload: any) {
+    // `payload: any` é deliberado: o ValidationPipe global (whitelist:true,
+    // forbidNonWhitelisted:true) roda para TODA rota e não pode ser
+    // sobrescrito por @UsePipes de método (ambos os pipes executam — um
+    // @UsePipes local não substitui o global, apenas se soma a ele). Tipar
+    // como AutentiqueWebhookDto aqui reativaria forbidNonWhitelisted global e
+    // rejeitaria os campos extras que a Autentique de fato envia. Em vez
+    // disso validamos manualmente os campos declarados (event/event_id/
+    // document_id) sem whitelist, preservando a tolerância a campos não
+    // modelados do provedor — mesmo comportamento de AutentiqueController.webhook.
+    const dto = plainToInstance(AutentiqueWebhookDto, payload);
+    const errors = await validate(dto, { whitelist: false, forbidNonWhitelisted: false });
+    if (errors.length > 0) {
+      throw new BadRequestException(
+        errors.flatMap((e) => Object.values(e.constraints ?? {})),
+      );
+    }
     return this.autentique.handleWebhook(payload);
   }
 
@@ -633,7 +655,7 @@ export class IntegrationsController {
   @HttpCode(HttpStatus.OK)
   configureSoundCloud(
     @Request() req: any,
-    @Body() body: { clientId: string; clientSecret: string },
+    @Body() body: ConfigureSoundCloudDto,
   ) {
     return this.soundcloud.configure(req.tenant?.id ?? req.tenantId, body.clientId, body.clientSecret);
   }
@@ -786,7 +808,7 @@ export class IntegrationsController {
   @Audit('integration.connected')
   @ApiOperation({ summary: 'Callback OAuth Instagram' })
   @HttpCode(HttpStatus.OK)
-  instagramCallback(@Body() body: { code: string; state: string }) {
+  instagramCallback(@Body() body: OAuthCodeStateDto) {
     return this.instagram.handleCallback(body.code, body.state);
   }
 
@@ -903,7 +925,7 @@ export class IntegrationsController {
   @Audit('integration.connected')
   @ApiOperation({ summary: 'Callback OAuth TikTok orgânico' })
   @HttpCode(HttpStatus.OK)
-  tiktokCallback(@Body() body: { code: string; state: string }) {
+  tiktokCallback(@Body() body: OAuthCodeStateDto) {
     return this.tiktok.handleOAuthCallback(body.code, body.state);
   }
 
@@ -949,7 +971,7 @@ export class IntegrationsController {
   @Audit('integration.connected')
   @ApiOperation({ summary: 'Callback OAuth Google Ads' })
   @HttpCode(HttpStatus.OK)
-  googleAdsCallback(@Body() body: { code: string; state: string }) {
+  googleAdsCallback(@Body() body: OAuthCodeStateDto) {
     return this.googleAds.handleOAuthCallback(body.code, body.state);
   }
 
@@ -1032,8 +1054,19 @@ export class IntegrationsController {
   @RequireRole('manager')
   @Audit('integration.abramus_work_registered')
   @ApiOperation({ summary: 'Registrar obra no Abramus (manager+)' })
-  abramusRegisterWork(@Request() req: any, @Body() body: any) {
-    return this.abramus.registerWork(req.tenant?.id ?? req.tenantId, body);
+  abramusRegisterWork(@Request() req: any, @Body() body: RegisterAbramusWorkDto) {
+    // AbramusService.registerWork usa `title` (não `titulo`) na chamada real à
+    // API do Abramus — mapeado explicitamente aqui para preservar esse contrato
+    // de wire existente enquanto o corpo da requisição passa a ser validado.
+    return this.abramus.registerWork(req.tenant?.id ?? req.tenantId, {
+      title: body.titulo,
+      compositor: body.compositor,
+      iswc: body.iswc,
+      genero: body.genero,
+      duracao: body.duracao,
+      editora: body.editora,
+      coautores: body.coautores,
+    });
   }
 
   @Get('abramus/statements')

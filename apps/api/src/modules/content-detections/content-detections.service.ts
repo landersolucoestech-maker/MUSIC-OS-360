@@ -4,12 +4,15 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { ContentDetectionEntity } from '../../database/entities';
 import type { CreateContentDetectionDto } from './dto/create-content-detection.dto';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 
 @Injectable()
 export class ContentDetectionsService {
   private readonly repo: Repository<ContentDetectionEntity> | null = null;
+  private readonly ds: DataSource | null;
 
   constructor(@Inject(DATA_SOURCE) ds: DataSource | null) {
+    this.ds = ds;
     if (ds) this.repo = ds.getRepository(ContentDetectionEntity);
   }
 
@@ -42,6 +45,10 @@ export class ContentDetectionsService {
   }
 
   async create(tenantId: string, dto: CreateContentDetectionDto): Promise<ContentDetectionEntity> {
+    // find-20d3d9bd: work_id/artist_id had no cross-tenant ownership check —
+    // a content detection could silently reference another tenant's work/artist.
+    await assertSameTenantFk(this.ds!, 'works', dto.work_id, tenantId, 'Obra');
+    await assertSameTenantFk(this.ds!, 'artists', dto.artist_id, tenantId, 'Artista');
     const entity = this.repo!.create({ tenant_id: tenantId, ...(dto as any) });
     return this.repo!.save(entity as any) as any;
   }
@@ -49,6 +56,10 @@ export class ContentDetectionsService {
   async update(tenantId: string, id: string, dto: any): Promise<ContentDetectionEntity> {
     await this.findById(tenantId, id);
     const { expectedUpdatedAt, ...rest } = dto ?? {};
+    // find-20d3d9bd: only validate when the patch actually sets work_id/artist_id
+    // — omitted means "unchanged", already validated at its own create time.
+    if (rest.work_id !== undefined) await assertSameTenantFk(this.ds!, 'works', rest.work_id, tenantId, 'Obra');
+    if (rest.artist_id !== undefined) await assertSameTenantFk(this.ds!, 'artists', rest.artist_id, tenantId, 'Artista');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await casUpdate(
       this.repo!,

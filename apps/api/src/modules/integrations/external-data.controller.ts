@@ -154,13 +154,14 @@ export class ExternalDataController {
   @ApiOperation({ summary: 'External data provider webhook intake protected by HMAC signature' })
   async webhook(
     @Req() req: Request,
-    @Headers('x-tenant-id') tenantHeader: string | string[] | undefined,
     @Headers('x-provider-signature') signatureHeader: string | string[] | undefined,
     @Body() payload: Record<string, unknown>,
   ) {
-    const tenantId = header(tenantHeader);
-    if (!tenantId) throw new BadRequestException('X-Tenant-ID is required for external data webhooks');
-
+    // find-bc7c20a6: tenant is NEVER taken from a caller-supplied header —
+    // ExternalDataExchangeService.ingestWebhook resolves it server-side from
+    // a submission this API itself recorded. A signature only proves the
+    // payload was signed with the shared per-provider secret; it proves
+    // nothing about which tenant the webhook is for.
     const providerId = String(req.params['providerId'] ?? '');
     if (!providerId) throw new BadRequestException('Provider id is required');
 
@@ -172,7 +173,6 @@ export class ExternalDataController {
 
     const kind = providerId.includes('society') ? 'society' : 'distributor';
     return this.exchange.ingestWebhook({
-      tenantId,
       providerId,
       kind,
       payload,

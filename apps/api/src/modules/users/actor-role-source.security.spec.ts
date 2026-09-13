@@ -73,6 +73,19 @@ describe('Actor role source — privilege checks use currentMember, not the JWT 
       );
     });
 
+    it('create: uses currentMember.role, not the JWT claim (find-f7bfdd94)', () => {
+      const svc = { create: jest.fn() };
+      const controller = makeController(svc);
+
+      controller.create(tenant, { userId: 'user-1' }, { role: 'admin' }, {
+        userId: 'target-user', email: 'a@b.com', role: 'owner',
+      } as never);
+
+      expect(svc.create).toHaveBeenCalledWith(
+        'tenant-1', { userId: 'target-user', email: 'a@b.com', role: 'owner' }, 'user-1', 'admin',
+      );
+    });
+
     it('invite: uses currentMember.role, not the JWT claim', () => {
       const svc = { invite: jest.fn() };
       const controller = makeController(svc);

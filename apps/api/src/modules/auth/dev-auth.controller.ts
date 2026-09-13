@@ -41,7 +41,12 @@ export class DevAuthController implements OnModuleInit {
   async token() {
     this.assertDev();
 
-    // Resolve the first active tenant to get the real org_id
+    // Resolve the first active tenant to get the real org_id. `active` here is a
+    // lifecycle-only signal (not a billing/subscription-status check, same
+    // distinction documented in AutentiqueService/DocuSignService/
+    // ExternalDataExchangeService/TenantGuard) — fine to use as a "pick any
+    // healthy tenant" proxy because this endpoint is dev-only tooling
+    // (assertDev() above), never reachable in a real environment.
     const tenant = await this.tenantRepo
       ?.createQueryBuilder('t')
       .where('t.deleted_at IS NULL AND t.active = true')

@@ -7,14 +7,13 @@ const ROLES = ['author', 'composer', 'producer', 'performer', 'publisher', 'mast
 
 export class CreateShareDto {
   // ── Aliases EN legados (integrações/registry) — opcionais ────────────────────
-  // holderName é a única entrada que alimenta titular_nome (toColumns() em
-  // shares.service.ts) — não existe um campo `titular_nome` direto no DTO.
+  // holderName é a única entrada que alimenta holder_name (toColumns() em
+  // shares.service.ts) — não existe um campo `holder_name` direto no DTO.
   // Rejeita vazio/só-espaços em vez de aceitar e persistir um titular em branco.
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255)
   @Matches(/\S/, { message: 'holderName não pode ser vazio ou conter apenas espaços' })
   holderName?: string;
   @ApiPropertyOptional({ enum: ROLES }) @IsOptional() @IsIn(ROLES) role?: string;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Max(100) @Type(() => Number) percentage?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() workId?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() trackId?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) holderDoc?: string;
@@ -22,17 +21,19 @@ export class CreateShareDto {
 
   // ── Campos do formulário (chaves EXATAS do SharePendenteFormModal) ───────────
   // Regra de produto 2026-07-12: cada campo do form tem a sua coluna física.
+  // `percentage` também cobre o antigo alias EN legado (mesmo nome, mesma
+  // coluna desde 2026-09-13/RenameSharePartyFieldsToEnglish — ver toColumns()).
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) share_type?: string;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Max(100) @Type(() => Number) percentual?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Max(100) @Type(() => Number) percentage?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() acordo_notas?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() acordo_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() observacoes?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) direcao?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) direction?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() release_id?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(500) nome_musica?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) detentor?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) destinatario?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(500) music_title?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) holder?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) recipient?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) type?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) artista_externo?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() artista_project_id?: string;
@@ -41,7 +42,7 @@ export class CreateShareDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) pagador_contato?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) origem_acordo?: string;
   @ApiPropertyOptional() @IsOptional() @IsDateString() data_prevista?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() documentos?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() documents?: string;
   @ApiPropertyOptional() @IsOptional() @Type(() => Number) @IsInt() versao?: number;
   @ApiPropertyOptional() @IsOptional() @IsArray() historico?: unknown[];
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_total?: number;
@@ -58,13 +59,13 @@ export class QueryShareDto extends PaginationDto {
   @IsOptional() @IsString() workId?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Alias legado, não lido pelo service. Use "fonograma_id".' })
   @IsOptional() @IsString() trackId?: string;
-  @ApiPropertyOptional({ deprecated: true, description: 'Alias legado, não lido pelo service. Use "papel".' })
+  @ApiPropertyOptional({ deprecated: true, description: 'Alias legado, não lido pelo service. Use "party_role".' })
   @IsOptional() @IsString() role?: string;
 
   @ApiPropertyOptional() @IsOptional() @IsUUID() work_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() fonograma_id?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() papel?: string;
-  @ApiPropertyOptional() @IsOptional() @IsIn(['a_receber', 'a_enviar']) direcao?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() party_role?: string;
+  @ApiPropertyOptional() @IsOptional() @IsIn(['a_receber', 'a_enviar']) direction?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() type?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() share_type?: string;

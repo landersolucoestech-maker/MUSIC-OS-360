@@ -45,7 +45,7 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
   it('inclui uma share elegível (share_type null, não deletada) no payload', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
-      shares: [{ id: 's1', share_type: null, deleted_at: null, titular_nome: 'Autor A', percentual: '100', papel: 'autor' }],
+      shares: [{ id: 's1', share_type: null, deleted_at: null, holder_name: 'Autor A', percentage: '100', party_role: 'autor' }],
     }));
     const payload = await svc.buildWorkPayload('t1', 'w1');
     expect(payload.splits).toHaveLength(1);
@@ -55,7 +55,7 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
   it('exclui uma share financeira/pendente (share_type preenchido) do payload', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
-      shares: [{ id: 's1', share_type: 'pendente', deleted_at: null, titular_nome: 'Financeiro', percentual: '100', papel: 'autor' }],
+      shares: [{ id: 's1', share_type: 'pendente', deleted_at: null, holder_name: 'Financeiro', percentage: '100', party_role: 'autor' }],
     }));
     const payload = await svc.buildWorkPayload('t1', 'w1');
     expect(payload.splits).toHaveLength(0);
@@ -64,7 +64,7 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
   it('exclui uma share soft-deleted mesmo com share_type null', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
-      shares: [{ id: 's1', share_type: null, deleted_at: new Date(), titular_nome: 'X', percentual: '100', papel: 'autor' }],
+      shares: [{ id: 's1', share_type: null, deleted_at: new Date(), holder_name: 'X', percentage: '100', party_role: 'autor' }],
     }));
     const payload = await svc.buildWorkPayload('t1', 'w1');
     expect(payload.splits).toHaveLength(0);
@@ -74,9 +74,9 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
       shares: [
-        { id: 's1', share_type: null, deleted_at: null, titular_nome: 'A', percentual: '60', papel: 'autor' },
-        { id: 's2', share_type: 'pendente', deleted_at: null, titular_nome: 'Financeiro', percentual: '999', papel: 'autor' },
-        { id: 's3', share_type: null, deleted_at: null, titular_nome: 'B', percentual: '40', papel: 'autor' },
+        { id: 's1', share_type: null, deleted_at: null, holder_name: 'A', percentage: '60', party_role: 'autor' },
+        { id: 's2', share_type: 'pendente', deleted_at: null, holder_name: 'Financeiro', percentage: '999', party_role: 'autor' },
+        { id: 's3', share_type: null, deleted_at: null, holder_name: 'B', percentage: '40', party_role: 'autor' },
       ],
     }));
     const payload = await svc.buildWorkPayload('t1', 'w1');
@@ -84,18 +84,18 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
     expect(payload.splits.reduce((sum, p) => sum + (p.percentage ?? 0), 0)).toBe(100);
   });
 
-  it('lança BadRequestException quando uma share elegível está sem titular_nome (dado de registro incompleto)', async () => {
+  it('lança BadRequestException quando uma share elegível está sem holder_name (dado de registro incompleto)', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
-      shares: [{ id: 's1', share_type: null, deleted_at: null, titular_nome: null, credited_name: null, percentual: '100', papel: 'autor' }],
+      shares: [{ id: 's1', share_type: null, deleted_at: null, holder_name: null, credited_name: null, percentage: '100', party_role: 'autor' }],
     }));
     await expect(svc.buildWorkPayload('t1', 'w1')).rejects.toThrow(BadRequestException);
   });
 
-  it('lança BadRequestException quando uma share elegível está sem percentual (não coage para 0)', async () => {
+  it('lança BadRequestException quando uma share elegível está sem percentage (não coage para 0)', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
-      shares: [{ id: 's1', share_type: null, deleted_at: null, titular_nome: 'A', percentual: null, papel: 'autor' }],
+      shares: [{ id: 's1', share_type: null, deleted_at: null, holder_name: 'A', percentage: null, party_role: 'autor' }],
     }));
     await expect(svc.buildWorkPayload('t1', 'w1')).rejects.toThrow(BadRequestException);
   });
@@ -113,8 +113,8 @@ describe('SocietyPayloadBuilderService.buildRecordingPayload — elegibilidade d
     const svc = new SocietyPayloadBuilderService(makeDs({
       phonograms: [baseRec],
       shares: [
-        { id: 's1', share_type: null, deleted_at: null, titular_nome: 'Intérprete', percentual: '100', papel: 'interprete' },
-        { id: 's2', share_type: 'pendente', deleted_at: null, titular_nome: 'Financeiro', percentual: '100', papel: 'autor' },
+        { id: 's1', share_type: null, deleted_at: null, holder_name: 'Intérprete', percentage: '100', party_role: 'interprete' },
+        { id: 's2', share_type: 'pendente', deleted_at: null, holder_name: 'Financeiro', percentage: '100', party_role: 'autor' },
       ],
     }));
     const payload = await svc.buildRecordingPayload('t1', 'r1');

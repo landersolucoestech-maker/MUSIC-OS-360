@@ -8,7 +8,7 @@ import { ProjectEntity, ProjectTrackEntity, ProjectTrackParticipantEntity } from
 
 const TENANT = 'tenant-test';
 const PROJECT_ID = 'project-test';
-const mockProject = { id: PROJECT_ID, tenant_id: TENANT, title: 'Test', type: 'album', status: 'planejamento', deleted_at: null };
+const mockProject = { id: PROJECT_ID, tenant_id: TENANT, title: 'Test', type: 'album', status: 'planning', deleted_at: null };
 
 const buildMockQb = (getOneValue: unknown = mockProject) => {
   const qb: any = {

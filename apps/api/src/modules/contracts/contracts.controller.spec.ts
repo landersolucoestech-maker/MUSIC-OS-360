@@ -44,7 +44,7 @@ describe('ContractsController — contrato HTTP real (Fase 5 / C1)', () => {
   beforeAll(async () => {
     repo = {
       create: jest.fn((data: unknown) => ({ ...(data as object) })),
-      save: jest.fn(async (entity: unknown) => ({ id: 'contract-new', status: 'rascunho', ...(entity as object) })),
+      save: jest.fn(async (entity: unknown) => ({ id: 'contract-new', status: 'draft', ...(entity as object) })),
       update: jest.fn(async () => ({ affected: 1 })),
       createQueryBuilder: jest.fn(() => makeQb([])),
     };

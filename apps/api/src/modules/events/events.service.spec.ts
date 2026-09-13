@@ -44,7 +44,13 @@ const buildMockDs = (getOneValue: any = mockEvent) => {
     update: jest.fn().mockResolvedValue({ affected: 1 }),
     _qb: qb,
   };
-  return { getRepository: jest.fn(() => repo), _repo: repo };
+  return {
+    getRepository: jest.fn(() => repo),
+    // assertSameTenantFk's ownership check — a truthy row means "found, same
+    // tenant", so tests not focused on that behavior aren't coupled to it.
+    query: jest.fn().mockResolvedValue([{ exists: 1 }]),
+    _repo: repo,
+  };
 };
 
 describe('EventsService — Estado P (pré-C3, comportamento atual documentado)', () => {

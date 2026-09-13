@@ -8,7 +8,7 @@ import { EventsService, DOMAIN_EVENTS } from '../../../core/events/events.servic
 const DAY_MS    = 24 * 60 * 60 * 1000;
 const DEDUP_HRS = 23; // skip re-notification within 23h (allows daily run with drift)
 
-const ACTIVE_STATUSES = ['pendente', 'emitida', 'pending', 'issued'];
+const ACTIVE_STATUSES = ['pending', 'issued'];
 
 /**
  * Cross-tenant maintenance cron. P2-6: discovers affected tenants in a controlled
@@ -124,7 +124,7 @@ export class InvoiceOverdueScheduler implements OnApplicationBootstrap {
         .createQueryBuilder()
         .update(InvoiceEntity)
         .set({
-          status:     'vencida',
+          status:     'overdue',
           metadata:   { ...invoice.metadata, last_overdue_notified_at: now.toISOString() },
           updated_at: now,
         } as any)
@@ -145,7 +145,7 @@ export class InvoiceOverdueScheduler implements OnApplicationBootstrap {
         },
       });
 
-      this.logger.warn(`InvoiceOverdueScheduler: marked invoice "${invoice.id}" (${invoice.numero ?? 'no-number'}) as vencida`);
+      this.logger.warn(`InvoiceOverdueScheduler: marked invoice "${invoice.id}" (${invoice.numero ?? 'no-number'}) as overdue`);
     }
   }
 }

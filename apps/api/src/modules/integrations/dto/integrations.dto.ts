@@ -1,6 +1,19 @@
 import { IsString, IsOptional, IsNotEmpty, IsBase64, IsIn, IsArray, IsEmail, IsObject, Matches } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+// find-89cba006: RegisterAbramusWorkDto/ConfigureSoundCloudDto/OAuthCodeStateDto/
+// AutentiqueWebhookDto were referenced by integrations.dto.spec.ts (Wave 10) but
+// never defined here -- the import silently resolved to undefined and the whole
+// spec failed at runtime with a confusing class-validator "unknown value" error.
+// Added here to close that compile-time gap. Now wired into
+// IntegrationsController's @Body() types for soundcloud/configure,
+// abramus/register-work and the instagram|tiktok|google-ads callbacks,
+// activating the global ValidationPipe's whitelist/forbidNonWhitelisted/
+// transform on those routes. autentique/webhook keeps `@Body() payload: any`
+// (a scoped @UsePipes cannot override the global ValidationPipe -- both run)
+// and validates AutentiqueWebhookDto manually with whitelist:false, to keep
+// tolerating unmodeled provider fields -- see IntegrationsController.
+
 export class OAuthInitDto {
   @ApiProperty({ description: 'Plataforma que iniciará o fluxo OAuth' })
   @IsString() @IsNotEmpty()
@@ -178,4 +191,57 @@ export class ExternalDataStatusCheckDto {
 
   @ApiPropertyOptional() @IsOptional() @IsString()
   idempotencyKey?: string;
+}
+
+export class RegisterAbramusWorkDto {
+  @ApiProperty() @IsString() @IsNotEmpty()
+  titulo!: string;
+
+  @ApiProperty() @IsString() @IsNotEmpty()
+  compositor!: string;
+
+  @ApiPropertyOptional() @IsOptional() @IsString()
+  iswc?: string;
+
+  @ApiPropertyOptional() @IsOptional() @IsString()
+  genero?: string;
+
+  @ApiPropertyOptional() @IsOptional() @IsString()
+  duracao?: string;
+
+  @ApiPropertyOptional() @IsOptional() @IsString()
+  editora?: string;
+
+  @ApiPropertyOptional({ type: [String] }) @IsOptional() @IsArray() @IsString({ each: true })
+  coautores?: string[];
+}
+
+export class ConfigureSoundCloudDto {
+  @ApiProperty() @IsString() @IsNotEmpty()
+  clientId!: string;
+
+  @ApiProperty() @IsString() @IsNotEmpty()
+  clientSecret!: string;
+}
+
+export class OAuthCodeStateDto {
+  @ApiProperty({ description: 'Código de autorização retornado pela plataforma (Instagram/TikTok/Google Ads)' })
+  @IsString() @IsNotEmpty()
+  code!: string;
+
+  @ApiProperty({ description: 'State opaco emitido em /oauth/init, usado para correlacionar o callback' })
+  @IsString() @IsNotEmpty()
+  state!: string;
+}
+
+export class AutentiqueWebhookDto {
+  @ApiProperty({ description: 'Tipo de evento enviado pela Autentique (ex: document.signed)' })
+  @IsString() @IsNotEmpty()
+  event!: string;
+
+  @ApiProperty() @IsString() @IsNotEmpty()
+  event_id!: string;
+
+  @ApiProperty() @IsString() @IsNotEmpty()
+  document_id!: string;
 }

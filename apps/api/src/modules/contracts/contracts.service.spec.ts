@@ -63,23 +63,23 @@ describe('ContractsService.create — template_id/signers/type default (pré-req
     expect(created(repo)['signers']).toBeUndefined();
   });
 
-  it('REM-02: persiste documentos (anexos reais do R2) quando enviado', async () => {
+  it('REM-02: persiste documents (anexos reais do R2) quando enviado', async () => {
     const { svc, repo } = makeService();
-    const documentos = [{ name: 'contrato.pdf', size: 1234, type: 'application/pdf', path: 'https://r2/x.pdf', url: 'https://r2/x.pdf' }];
+    const documents = [{ name: 'contrato.pdf', size: 1234, type: 'application/pdf', path: 'https://r2/x.pdf', url: 'https://r2/x.pdf' }];
     await svc.create('tenant-1', 'user-1', {
-      title: 'Contrato X', type: 'gravacao', documentos,
+      title: 'Contrato X', type: 'gravacao', documents,
     } as unknown as CreateContractDto);
 
-    expect(created(repo)['documentos']).toEqual(documentos);
+    expect(created(repo)['documents']).toEqual(documents);
   });
 
-  it('REM-02: documentos ausente persiste como array vazio (mesmo padrão de versoes)', async () => {
+  it('REM-02: documents ausente persiste como array vazio (mesmo padrão de versoes)', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       title: 'Contrato X', type: 'gravacao',
     } as unknown as CreateContractDto);
 
-    expect(created(repo)['documentos']).toEqual([]);
+    expect(created(repo)['documents']).toEqual([]);
   });
 
   it('aplica type="outro" quando nem type nem tipo são enviados (fluxo do wizard sem template)', async () => {
@@ -169,7 +169,7 @@ const baseContractRow = (overrides: Record<string, unknown> = {}) => ({
   tenant_id: 'tenant-1',
   title: 'Contrato existente',
   type: 'gravacao',
-  status: 'rascunho',
+  status: 'draft',
   artist_id: null,
   client_id: null,
   valor: null,

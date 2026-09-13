@@ -98,6 +98,41 @@ describe('ImportCommitService — commit transacional', () => {
   });
 });
 
+describe('ImportCommitService — normalização/validação de ISRC (find-fb2cfb1b)', () => {
+  const PHONOGRAMS_DEF: ReportEntityDefinition = {
+    entityName: 'PhonogramEntity', tableName: 'phonograms', category: EntityCategory.REPORTABLE,
+    identityColumn: 'title', displayColumn: 'title', dateColumn: 'created_at',
+    exportableColumns: ['title', 'isrc'], importableColumns: ['title', 'isrc'],
+    filterableColumns: [], sortableColumns: [], searchableColumns: [], sensitiveColumns: [],
+    requiredImportColumns: ['title'], supportsExport: true, supportsImport: true,
+  };
+
+  function phonogramsValidation(isrc: string): ImportValidationResult {
+    return {
+      entity: 'phonograms', supportsImport: true, mapping: {}, unknownColumns: [], ignoredColumns: [],
+      totalRows: 1, validRows: 1, invalidRows: 0,
+      rows: [{ index: 0, data: { title: 'Faixa 1', isrc }, valid: true, errors: [], warnings: [] }],
+      errors: [], warnings: [],
+    };
+  }
+
+  it('normaliza ISRC hifenizado/minúsculo para a forma canônica antes do INSERT', async () => {
+    const { svc, qr } = makeSvc({ def: PHONOGRAMS_DEF, validation: phonogramsValidation('br-abc-26-00001') });
+    const result = await svc.commit('phonograms', file, 'tenant-1', 'user-1');
+    expect(result.importedRows).toBe(1);
+    const insert = qr.query.mock.calls.find((call: any[]) => String(call[0]).startsWith('INSERT'));
+    expect(insert?.[1]).toContain('BRABC2600001');
+  });
+
+  it('rejeita ISRC malformado com rollback total e erro por linha', async () => {
+    const { svc, qr } = makeSvc({ def: PHONOGRAMS_DEF, validation: phonogramsValidation('not-an-isrc') });
+    const result = await svc.commit('phonograms', file, 'tenant-1', 'user-1');
+    expect(qr.rollbackTransaction).toHaveBeenCalled();
+    expect(result.importedRows).toBe(0);
+    expect(result.errors.some((e) => /ISRC inválido/i.test(e))).toBe(true);
+  });
+});
+
 describe('ImportCommitService — grupo repetível na mesma aba', () => {
   const PROJECTS_DEF: ReportEntityDefinition = {
     entityName: 'ProjectEntity', tableName: 'projects', category: EntityCategory.REPORTABLE,

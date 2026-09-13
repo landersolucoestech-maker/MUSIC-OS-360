@@ -6,15 +6,18 @@ import type { CreateEventDto, UpdateEventDto, QueryEventDto } from './dto/events
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { groupCount, GroupStatsResult } from '../../common/stats/group-count.util';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 
 @Injectable()
 export class EventsService {
   private readonly repo: Repository<EventEntity> | null = null;
+  private readonly ds: DataSource | null;
 
   constructor(
     @Inject(DATA_SOURCE) ds: DataSource | null,
     @Optional() private readonly activityLogs?: ActivityLogsService,
   ) {
+    this.ds = ds;
     if (ds) this.repo = ds.getRepository(EventEntity);
   }
 
@@ -59,7 +62,7 @@ export class EventsService {
    * visível): contagem exata por status + "próximos 7 dias" (janela móvel,
    * não é um GROUP BY — query separada e simples).
    */
-  async stats(tenantId: string): Promise<GroupStatsResult & { proximos7Dias: number }> {
+  async stats(tenantId: string): Promise<GroupStatsResult & { upcoming7Days: number }> {
     const byStatus = await groupCount(
       this.repo!.createQueryBuilder('e').where('e.tenant_id = :tenantId', { tenantId }).andWhere('e.deleted_at IS NULL'),
       'e',
@@ -67,13 +70,13 @@ export class EventsService {
     );
     const now = new Date();
     const em7Dias = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-    const proximos7Dias = await this.repo!
+    const upcoming7Days = await this.repo!
       .createQueryBuilder('e')
       .where('e.tenant_id = :tenantId', { tenantId })
       .andWhere('e.deleted_at IS NULL')
       .andWhere('e.data >= :now AND e.data <= :em7Dias', { now, em7Dias })
       .getCount();
-    return { ...byStatus, proximos7Dias };
+    return { ...byStatus, upcoming7Days };
   }
 
   async findById(tenantId: string, id: string): Promise<EventEntity> {
@@ -120,6 +123,9 @@ export class EventsService {
 
   async create(tenantId: string, userId: string, dto: CreateEventDto): Promise<EventEntity> {
     const mapped = this.dtoToEntity(dto);
+    // find-50dd3726: artist_id had no cross-tenant ownership check — an
+    // event could silently reference another tenant's artist.
+    await assertSameTenantFk(this.ds!, 'artists', mapped.artist_id, tenantId, 'Artista');
     if (!mapped.data) {
       // Coluna NOT NULL — usa "agora" como fallback seguro se startsAt não veio.
       // C3/E2 — dual-write: o mesmo instante alimenta `data` e `starts_at`
@@ -147,6 +153,11 @@ export class EventsService {
   async update(tenantId: string, userId: string, id: string, dto: UpdateEventDto): Promise<EventEntity> {
     await this.findById(tenantId, id);
     const mapped = this.dtoToEntity(dto);
+    // find-50dd3726: only validate when the patch actually sets artist_id —
+    // omitted means "unchanged", already validated at its own create time.
+    if (mapped.artist_id !== undefined) {
+      await assertSameTenantFk(this.ds!, 'artists', mapped.artist_id, tenantId, 'Artista');
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await casUpdate(
       this.repo!,

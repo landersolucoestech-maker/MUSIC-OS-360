@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Test } from '@nestjs/testing';
 import { ConflictException, BadRequestException } from '@nestjs/common';
-import { TransactionsService } from './transactions.service';
+import { TransactionsService, toTransactionDetails } from './transactions.service';
 import { DATA_SOURCE } from '../../database/database.module';
 import { TransactionEntity } from '../../database/entities';
 
@@ -45,9 +45,65 @@ function buildMockDs(updateResult: { affected: number } = { affected: 1 }) {
   const repo = {
     createQueryBuilder: jest.fn(() => qb),
     update: jest.fn().mockResolvedValue(updateResult),
+    // assertSameTenantFk's ownership check — a truthy row means "found, same
+    // tenant", so tests not focused on that behavior aren't coupled to it.
+    manager: { connection: { query: jest.fn().mockResolvedValue([{ exists: 1 }]) } },
   };
   return { getRepository: jest.fn(() => repo), _repo: repo, _qb: qb };
 }
+
+describe('toTransactionDetails — contrato de saída em inglês (naming-canonical)', () => {
+  it('mapeia colunas PT e chaves de metadata PT para os nomes de campo em inglês do DTO', () => {
+    const entity = {
+      id: 'tx-1',
+      type: 'despesa',
+      status: 'pendente',
+      descricao: 'Aluguel de estúdio',
+      referencia: null,
+      valor: '250.50',
+      data: new Date('2026-08-01T00:00:00.000Z'),
+      categoria: 'servicos',
+      artist_id: 'artist-1',
+      contrato_id: 'contract-1',
+      project_id: 'project-1',
+      comprovante_url: null,
+      created_by: 'user-1',
+      updated_by: 'user-1',
+      created_at: new Date('2026-08-01T00:00:00.000Z'),
+      updated_at: new Date('2026-08-02T00:00:00.000Z'),
+      metadata: {
+        observacao: 'pago via pix',
+        formaPagamento: 'pix',
+        tipoPagamento: 'avista',
+        quantidadeParcelas: '1',
+        subcategoria: 'estudio',
+        fornecedorCliente: 'Estúdio XYZ',
+        eventoVinculado: 'evento-1',
+      },
+    } as unknown as import('../../database/entities').TransactionEntity;
+
+    const dto = toTransactionDetails(entity);
+
+    expect(dto.description).toBe('Aluguel de estúdio');
+    expect(dto.amount).toBe(250.5);
+    expect(dto.category).toBe('servicos');
+    expect(dto.subcategory).toBe('estudio');
+    expect(dto.note).toBe('pago via pix');
+    expect(dto.paymentMethod).toBe('pix');
+    expect(dto.paymentType).toBe('avista');
+    expect(dto.installments).toBe('1');
+    expect(dto.supplierOrClient).toBe('Estúdio XYZ');
+    expect(dto.linkedEventId).toBe('evento-1');
+    expect(dto.artistId).toBe('artist-1');
+    expect(dto.contractId).toBe('contract-1');
+    expect(dto.projectId).toBe('project-1');
+    expect(dto.transactionDate).toBe('2026-08-01T00:00:00.000Z');
+    // nenhum nome de campo em português deve vazar no DTO de saída
+    expect(dto).not.toHaveProperty('descricao');
+    expect(dto).not.toHaveProperty('valor');
+    expect(dto).not.toHaveProperty('categoria');
+  });
+});
 
 describe('TransactionsService — concorrência otimista em update/patch', () => {
   let service: TransactionsService;
@@ -137,6 +193,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
         savedEntities.push(saved);
         return saved;
       }),
+      manager: { connection: { query: jest.fn().mockResolvedValue([{ exists: 1 }]) } },
     };
     return { getRepository: jest.fn(() => repo), _repo: repo, _saved: savedEntities };
   }
@@ -261,5 +318,96 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     } as any);
 
     expect(saved.categoria).toBe('outros');
+  });
+});
+
+/**
+ * find-4cd2f044: artist_id/contrato_id/project_id had no cross-tenant
+ * ownership check — a transaction could silently reference another
+ * tenant's artist/contract/project.
+ */
+describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f044)', () => {
+  function makeService(queryImpl: jest.Mock) {
+    const repo = {
+      create: jest.fn((v: unknown) => v),
+      save: jest.fn(async (v: unknown) => ({ id: 'tx-new', ...(v as object) })),
+      manager: { connection: { query: queryImpl } },
+    };
+    const ds = { getRepository: jest.fn(() => repo) };
+    const service = new TransactionsService(ds as never, undefined as never, undefined as never, undefined as never);
+    return { service, repo };
+  }
+
+  it('rejects an artistaVinculado (artist_id) belonging to another tenant', async () => {
+    const { service } = makeService(jest.fn(async () => []));
+    await expect(
+      service.create(TENANT, 'user-1', {
+        tipoTransacao: 'despesa', descricao: 'X', categoria: 'marketing', valor: '50',
+        artistaVinculado: '323e4567-e89b-12d3-a456-426614174000',
+      } as any),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('allows an artistaVinculado that belongs to the same tenant', async () => {
+    const { service, repo } = makeService(jest.fn(async () => [{ exists: 1 }]));
+    await expect(
+      service.create(TENANT, 'user-1', {
+        tipoTransacao: 'despesa', descricao: 'X', categoria: 'marketing', valor: '50',
+        artistaVinculado: '223e4567-e89b-12d3-a456-426614174000',
+      } as any),
+    ).resolves.toBeDefined();
+    expect(repo.save).toHaveBeenCalled();
+  });
+
+  function makeUpdateService(queryImpl: jest.Mock) {
+    const qb: Record<string, jest.Mock> = {};
+    const chain = () => qb;
+    qb['where'] = jest.fn(chain);
+    qb['andWhere'] = jest.fn(chain);
+    qb['getOne'] = jest.fn(async () => mockTx);
+    const repo = {
+      createQueryBuilder: jest.fn(() => qb),
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+      manager: { connection: { query: queryImpl } },
+    };
+    const ds = { getRepository: jest.fn(() => repo) };
+    const service = new TransactionsService(ds as never, undefined as never, undefined as never, undefined as never);
+    return { service, repo };
+  }
+
+  it('update: rejects changing contratoVinculado (contrato_id) to another tenant\'s contract', async () => {
+    const { service } = makeUpdateService(jest.fn(async () => []));
+    await expect(
+      service.update(TENANT, 'user-1', TX_ID, {
+        contratoVinculado: '323e4567-e89b-12d3-a456-426614174000',
+      } as any),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('update: does not re-validate FK fields when the patch omits them (unchanged)', async () => {
+    const query = jest.fn();
+    const { service } = makeUpdateService(query);
+    await expect(
+      service.update(TENANT, 'user-1', TX_ID, { descricao: 'New' } as any),
+    ).resolves.toBeDefined();
+    expect(query).not.toHaveBeenCalled();
+  });
+
+  it('patch: rejects changing projetoVinculado (project_id) to another tenant\'s project', async () => {
+    const { service } = makeUpdateService(jest.fn(async () => []));
+    await expect(
+      service.patch(TENANT, 'user-1', TX_ID, {
+        projetoVinculado: '323e4567-e89b-12d3-a456-426614174000',
+      } as any),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('patch: does not re-validate FK fields when the patch omits them (unchanged)', async () => {
+    const query = jest.fn();
+    const { service } = makeUpdateService(query);
+    await expect(
+      service.patch(TENANT, 'user-1', TX_ID, { descricao: 'New' } as any),
+    ).resolves.toBeDefined();
+    expect(query).not.toHaveBeenCalled();
   });
 });

@@ -6,11 +6,12 @@ import { EncryptionService } from '../../core/security/encryption.service';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import type { CreateInvoiceDto, UpdateInvoiceDto, QueryInvoiceDto } from './dto/invoices.dto';
 
-const CANCELLED_STATUSES = new Set(['cancelada', 'cancelado', 'cancelled']);
-const ISSUED_STATUSES = new Set(['emitida', 'issued']);
-const OVERDUE_STATUSES = new Set(['vencida', 'overdue']);
+const CANCELLED_STATUSES = new Set(['cancelled']);
+const ISSUED_STATUSES = new Set(['issued']);
+const OVERDUE_STATUSES = new Set(['overdue']);
 
 @Injectable()
 export class InvoicesService {
@@ -113,6 +114,12 @@ export class InvoicesService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateInvoiceDto) {
+    // find-99749ea0: client_id had no cross-tenant ownership check — an
+    // invoice could silently reference another tenant's client. (venda_id's
+    // target table is not established anywhere in the codebase — no FK
+    // constraint, no comment, no other reader — so it is deliberately left
+    // unchecked here rather than guessing a table.)
+    await assertSameTenantFk(this.repository.manager.connection, 'clients', dto.client_id, tenantId, 'Cliente');
     const payload = this.normalizePayload(dto);
     const entity = this.repository.create({
       tenant_id: tenantId,
@@ -161,6 +168,11 @@ export class InvoicesService {
     const current = await this.findById(tenantId, id);
     if (CANCELLED_STATUSES.has(String(current['status'] ?? ''))) {
       throw new ForbiddenException('Nota fiscal cancelada não pode ser editada');
+    }
+    // find-99749ea0: only validate when the patch actually sets client_id —
+    // omitted means "unchanged", already validated at its own create time.
+    if (dto.client_id !== undefined) {
+      await assertSameTenantFk(this.repository.manager.connection, 'clients', dto.client_id, tenantId, 'Cliente');
     }
 
     const updates = {

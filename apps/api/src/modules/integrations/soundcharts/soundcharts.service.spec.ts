@@ -1,3 +1,4 @@
+import type { ConfigService } from '@nestjs/config';
 import { SoundchartsService } from './soundcharts.service';
 import {
   SoundchartsNotConfiguredError,
@@ -26,7 +27,8 @@ describe('SoundchartsService', () => {
   beforeEach(() => {
     process.env['SOUNDCHARTS_CLIENT_ID'] = 'test-client-id';
     process.env['SOUNDCHARTS_CLIENT_SECRET'] = 'test-client-secret';
-    service = new SoundchartsService();
+    const config = { get: (key: string) => process.env[key] } as unknown as ConfigService;
+    service = new SoundchartsService(config);
     fetchMock = jest.fn();
     (global as any).fetch = fetchMock;
   });

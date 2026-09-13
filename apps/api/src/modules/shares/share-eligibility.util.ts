@@ -3,8 +3,9 @@
  *
  * Regra TRANSITÓRIA (Fase 5 / C6): `share_type` só é gravado pelo fluxo
  * financeiro/pendente (SharePendenteFormModal → shares.service.ts::toColumns()).
- * O fluxo de registro (campos titular_nome/papel/percentual/titular_doc,
- * alimentados via os aliases holderName/role/percentage/holderDoc) nunca seta
+ * O fluxo de registro (campos holder_name/party_role/percentage/
+ * holder_document, alimentados via os aliases holderName/role/holderDoc)
+ * nunca seta
  * `share_type` — não existe hoje uma via de criação própria para shares de
  * registro. Por isso NULL é o único sinal disponível para "não veio do
  * formulário financeiro".

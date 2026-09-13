@@ -3,21 +3,22 @@ import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { TransactionEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { FinanceCategoryRulesService } from '../finance-category-rules/finance-category-rules.service';
 import type { QueryTransactionDto } from './dto/query-transaction.dto';
 import type { TransactionDetailsDTO } from './dto/transaction-details.dto';
 import type {
-  CreateTransacaoDto,
-  UpdateTransacaoDto,
-  PatchTransacaoDto,
-} from './validators/transacao.validator';
+  CreateTransactionDto,
+  UpdateTransactionDto,
+  PatchTransactionDto,
+} from './validators/transaction.validator';
 
 type AnyRecord = Record<string, unknown>;
 
-const PAID_STATUSES      = new Set(['pago', 'confirmado', 'concluido']);
-const CANCELLED_STATUSES = new Set(['cancelado', 'cancelled']);
+const PAID_STATUSES      = new Set(['paid', 'confirmed', 'completed']);
+const CANCELLED_STATUSES = new Set(['cancelled']);
 
 /**
  * Categoria "sem escolha real" — nunca oferecida como opção no formulário
@@ -53,7 +54,7 @@ function toIso(value: Date | string | null | undefined): string | null {
 function buildPersistencePayload(
   tenantId: string,
   userId: string,
-  dto: Partial<CreateTransacaoDto | UpdateTransacaoDto | PatchTransacaoDto>,
+  dto: Partial<CreateTransactionDto | UpdateTransactionDto | PatchTransactionDto>,
   existing?: TransactionEntity,
 ): AnyRecord {
   const currentMetadata = (existing?.metadata ?? {}) as AnyRecord;
@@ -93,7 +94,7 @@ function buildPersistencePayload(
   return payload;
 }
 
-function toTransactionDetails(entity: TransactionEntity): TransactionDetailsDTO {
+export function toTransactionDetails(entity: TransactionEntity): TransactionDetailsDTO {
   const metadata = (entity.metadata ?? {}) as AnyRecord;
   const amount = toNumber(entity.valor);
   const attachments = Array.isArray(metadata.attachments)
@@ -110,16 +111,10 @@ function toTransactionDetails(entity: TransactionEntity): TransactionDetailsDTO 
   return {
     id: entity.id,
     type: entity.type,
-    tipo: entity.type,
-    tipoTransacao: entity.type,
     status: entity.status,
     description: entity.descricao,
-    descricao: entity.descricao,
-    observations: (metadata.observacao as string | undefined) ?? entity.referencia,
-    observacao: (metadata.observacao as string | undefined) ?? entity.referencia,
-    observacoes: (metadata.observacao as string | undefined) ?? entity.referencia,
+    note: (metadata.observacao as string | undefined) ?? entity.referencia,
     amount,
-    valor: amount,
     grossAmount: toNumber(metadata.grossAmount ?? metadata.valorBruto ?? amount),
     netAmount: metadata.netAmount === undefined && metadata.valorLiquido === undefined ? amount : toNumber(metadata.netAmount ?? metadata.valorLiquido),
     fees: metadata.fees === undefined && metadata.taxas === undefined ? null : toNumber(metadata.fees ?? metadata.taxas),
@@ -129,52 +124,37 @@ function toTransactionDetails(entity: TransactionEntity): TransactionDetailsDTO 
     fine: metadata.fine === undefined && metadata.multa === undefined ? null : toNumber(metadata.fine ?? metadata.multa),
     currency: (metadata.currency as string | undefined) ?? 'BRL',
     transactionDate: toIso(entity.data),
-    dataTransacao: toIso(entity.data),
-    data_transacao: toIso(entity.data),
-    data: toIso(entity.data),
     competence: metadata.competence as string | null | undefined,
     dueDate: metadata.dueDate as string | null | undefined,
     paidAt: metadata.paidAt as string | null | undefined,
     recurrence: metadata.recurrence as string | null | undefined,
     paymentMethod: metadata.formaPagamento as string | null | undefined,
-    formaPagamento: metadata.formaPagamento as string | null | undefined,
     paymentType: metadata.tipoPagamento as string | null | undefined,
-    tipoPagamento: metadata.tipoPagamento as string | null | undefined,
-    installments: metadata.quantidadeParcelas == null ? null : toNumber(metadata.quantidadeParcelas),
-    quantidadeParcelas: metadata.quantidadeParcelas as number | string | null | undefined,
+    installments: metadata.quantidadeParcelas as number | string | null | undefined,
     installmentCurrent: metadata.installmentCurrent == null ? null : toNumber(metadata.installmentCurrent),
     bankAccount: metadata.bankAccount as Record<string, unknown> | string | null | undefined,
     category: entity.categoria,
-    categoria: entity.categoria,
     subcategory: metadata.subcategoria as string | null | undefined,
-    subcategoria: metadata.subcategoria as string | null | undefined,
     costCenter: metadata.costCenter as Record<string, unknown> | string | null | undefined,
     tags: Array.isArray(metadata.tags) ? metadata.tags as string[] : [],
     labels: Array.isArray(metadata.labels) ? metadata.labels as string[] : [],
     attachments,
     artist: metadata.artist as Record<string, unknown> | null | undefined,
-    artist_id: entity.artist_id,
-    artistaVinculado: entity.artist_id,
+    artistId: entity.artist_id,
     project: metadata.project as Record<string, unknown> | null | undefined,
-    project_id: entity.project_id,
-    projetoVinculado: entity.project_id,
+    projectId: entity.project_id,
     campaign: metadata.campaign as Record<string, unknown> | null | undefined,
     contract: metadata.contract as Record<string, unknown> | null | undefined,
-    contrato_id: entity.contrato_id,
-    contratoVinculado: entity.contrato_id,
+    contractId: entity.contrato_id,
     release: metadata.release as Record<string, unknown> | null | undefined,
     event: metadata.event as Record<string, unknown> | null | undefined,
-    evento_id: metadata.eventoVinculado as string | null | undefined,
-    eventoVinculado: metadata.eventoVinculado as string | null | undefined,
-    client: metadata.fornecedorCliente as string | null | undefined,
-    fornecedorCliente: metadata.fornecedorCliente as string | null | undefined,
+    linkedEventId: metadata.eventoVinculado as string | null | undefined,
+    supplierOrClient: metadata.fornecedorCliente as string | null | undefined,
     supplier: metadata.supplier as Record<string, unknown> | string | null | undefined,
     metadata,
     createdBy: entity.created_by,
     updatedBy: entity.updated_by,
-    createdAt: toIso(entity.created_at) ?? '',
     created_at: toIso(entity.created_at) ?? '',
-    updatedAt: toIso(entity.updated_at) ?? '',
     updated_at: toIso(entity.updated_at) ?? '',
   };
 }
@@ -255,8 +235,23 @@ export class TransactionsService {
     return toTransactionDetails(await this.findEntityById(tenantId, id));
   }
 
-  async create(tenantId: string, userId: string, dto: CreateTransacaoDto): Promise<TransactionEntity> {
+  /**
+   * find-4cd2f044: artist_id/contrato_id/project_id had no cross-tenant
+   * ownership check — a transaction could silently reference another
+   * tenant's artist/contract/project. Only validates fields actually
+   * present in `payload` (omitted on update = "unchanged", already
+   * validated at its own create/prior-update time).
+   */
+  private async assertLinkedFks(tenantId: string, payload: AnyRecord): Promise<void> {
+    const ds = this.repo!.manager.connection;
+    if (payload.artist_id !== undefined) await assertSameTenantFk(ds, 'artists', payload.artist_id as string | undefined, tenantId, 'Artista');
+    if (payload.contrato_id !== undefined) await assertSameTenantFk(ds, 'contracts', payload.contrato_id as string | undefined, tenantId, 'Contrato');
+    if (payload.project_id !== undefined) await assertSameTenantFk(ds, 'projects', payload.project_id as string | undefined, tenantId, 'Projeto');
+  }
+
+  async create(tenantId: string, userId: string, dto: CreateTransactionDto): Promise<TransactionEntity> {
     const payload = buildPersistencePayload(tenantId, userId, dto);
+    await this.assertLinkedFks(tenantId, payload);
     payload.categoria = await this.resolveCategoria(tenantId, dto, payload.categoria as string);
     const entity = this.repo!.create(payload as Parameters<Repository<TransactionEntity>['create']>[0]);
     const saved = await this.repo!.save(entity as TransactionEntity);
@@ -297,15 +292,17 @@ export class TransactionsService {
     return saved;
   }
 
-  async update(tenantId: string, userId: string, id: string, dto: UpdateTransacaoDto): Promise<TransactionEntity> {
+  async update(tenantId: string, userId: string, id: string, dto: UpdateTransactionDto): Promise<TransactionEntity> {
     const existing = await this.findEntityById(tenantId, id);
     this.assertEditable(existing);
 
     const newStatus = (dto as AnyRecord).status as string | undefined;
+    const payload = buildPersistencePayload(tenantId, userId, dto, existing);
+    await this.assertLinkedFks(tenantId, payload);
     await casUpdate(
       this.repo!,
       { id, tenant_id: tenantId } as AnyRecord,
-      { ...buildPersistencePayload(tenantId, userId, dto, existing), updated_at: new Date() },
+      { ...payload, updated_at: new Date() },
       (dto as AnyRecord).expectedUpdatedAt as string | undefined,
       'Esta transação foi alterada por outro usuário desde que você a carregou. Recarregue e tente novamente.',
     );
@@ -314,15 +311,17 @@ export class TransactionsService {
     return updated;
   }
 
-  async patch(tenantId: string, userId: string, id: string, dto: PatchTransacaoDto): Promise<TransactionEntity> {
+  async patch(tenantId: string, userId: string, id: string, dto: PatchTransactionDto): Promise<TransactionEntity> {
     const existing = await this.findEntityById(tenantId, id);
     this.assertEditable(existing);
 
     const newStatus = (dto as AnyRecord).status as string | undefined;
+    const patchPayload = buildPersistencePayload(tenantId, userId, dto, existing);
+    await this.assertLinkedFks(tenantId, patchPayload);
     await casUpdate(
       this.repo!,
       { id, tenant_id: tenantId } as AnyRecord,
-      { ...buildPersistencePayload(tenantId, userId, dto, existing), updated_at: new Date() },
+      { ...patchPayload, updated_at: new Date() },
       (dto as AnyRecord).expectedUpdatedAt as string | undefined,
       'Esta transação foi alterada por outro usuário desde que você a carregou. Recarregue e tente novamente.',
     );
@@ -389,7 +388,7 @@ export class TransactionsService {
    */
   private async resolveCategoria(
     tenantId: string,
-    dto: CreateTransacaoDto,
+    dto: CreateTransactionDto,
     currentCategoria: string,
   ): Promise<string> {
     if (currentCategoria.trim().toLowerCase() !== UNCATEGORIZED_PLACEHOLDER) {

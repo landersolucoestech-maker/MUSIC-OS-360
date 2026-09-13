@@ -13,6 +13,6 @@ export class CreateEmployeeDto {
   @IsOptional() @IsString() salario?: string;
   @IsOptional() @IsDateString() data_admissao?: string;
   @IsOptional() @IsDateString() data_demissao?: string;
-  @IsOptional() documentos?: unknown[];
+  @IsOptional() documents?: unknown[];
   @IsOptional() metadata?: Record<string, unknown>;
 }

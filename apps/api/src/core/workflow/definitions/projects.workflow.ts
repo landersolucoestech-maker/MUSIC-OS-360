@@ -2,7 +2,7 @@
  * projects.workflow.ts
  *
  * Workflow de ciclo de vida para Projetos musicais.
- * Conforme spec: planejamento → em_andamento → revisao → concluido / cancelado
+ * Conforme spec: planning → in_progress → review → completed / cancelled
  */
 
 import { ProjectStatus } from '@music-os-360/types';
@@ -11,40 +11,40 @@ import { WorkflowDefinition } from '../workflow.types';
 export const PROJECTS_WORKFLOW: WorkflowDefinition<string> = {
   name:         'projects',
   entityType:   'project',
-  initialState: ProjectStatus.PLANEJAMENTO,
+  initialState: ProjectStatus.PLANNING,
   states: Object.values(ProjectStatus),
   transitions: [
     {
-      from:  ProjectStatus.PLANEJAMENTO,
-      to:    ProjectStatus.EM_ANDAMENTO,
+      from:  ProjectStatus.PLANNING,
+      to:    ProjectStatus.IN_PROGRESS,
       label: 'Iniciar Projeto',
       roles: ['super_admin','tenant_owner','owner','admin','manager','produtor'],
     },
     {
-      from:  ProjectStatus.EM_ANDAMENTO,
-      to:    ProjectStatus.REVISAO,
+      from:  ProjectStatus.IN_PROGRESS,
+      to:    ProjectStatus.REVIEW,
       label: 'Enviar para Revisão',
       roles: ['super_admin','tenant_owner','owner','admin','manager','produtor'],
     },
     {
-      from:  ProjectStatus.REVISAO,
-      to:    ProjectStatus.EM_ANDAMENTO,
+      from:  ProjectStatus.REVIEW,
+      to:    ProjectStatus.IN_PROGRESS,
       label: 'Solicitar Alterações',
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
     },
     {
-      from:  ProjectStatus.REVISAO,
-      to:    ProjectStatus.CONCLUIDO,
+      from:  ProjectStatus.REVIEW,
+      to:    ProjectStatus.COMPLETED,
       label: 'Concluir Projeto',
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
     },
     {
       from:  [
-        ProjectStatus.PLANEJAMENTO,
-        ProjectStatus.EM_ANDAMENTO,
-        ProjectStatus.REVISAO,
+        ProjectStatus.PLANNING,
+        ProjectStatus.IN_PROGRESS,
+        ProjectStatus.REVIEW,
       ],
-      to:    ProjectStatus.CANCELADO,
+      to:    ProjectStatus.CANCELLED,
       label: 'Cancelar Projeto',
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
     },

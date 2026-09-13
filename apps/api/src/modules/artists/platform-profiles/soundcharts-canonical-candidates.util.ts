@@ -14,6 +14,7 @@
  * para o próprio caso do YouTube).
  */
 import { parseSpotifyArtistId } from '../../integrations/spotify/spotify-url.util';
+import { parseYoutubeRef } from './youtube-ref.util';
 import type { SoundchartsService } from '../../integrations/soundcharts/soundcharts.service';
 import type { ArtistEntity } from '../../../database/entities';
 
@@ -37,10 +38,8 @@ export function canonicalUrlsFromArtist(artist: ArtistEntity): CanonicalArtistUr
 }
 
 function extractYouTubeChannelId(value: string): string | null {
-  const trimmed = value.trim();
-  if (/^UC[A-Za-z0-9_-]{20,}$/.test(trimmed)) return trimmed;
-  const match = trimmed.match(/^https?:\/\/(?:www\.)?youtube\.com\/channel\/(UC[A-Za-z0-9_-]{20,})(?:[/?#].*)?$/i);
-  return match?.[1] ?? null;
+  const ref = parseYoutubeRef(value);
+  return ref?.kind === 'id' ? ref.value : null;
 }
 
 function extractDeezerArtistId(value: string): string | null {

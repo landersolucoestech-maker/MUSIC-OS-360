@@ -5,6 +5,7 @@ import { MarketBenchmarkSnapshotEntity } from '../../../../database/entities';
 import { SoundchartsService } from '../../../integrations/soundcharts/soundcharts.service';
 import { MarketBenchmarkRefreshQueueService } from '../../../../queues/services/market-benchmark-refresh-queue.service';
 import { PRIMARY_METRIC_BY_PLATFORM, primaryMetricValue, type MetricKey } from '../metric-keys';
+import { SYNC_STATUS_SUCCESS } from '../social-platform-sync.types';
 import { MINIMUM_COHORT_SIZE, BENCHMARK_METRICS, BENCHMARK_SNAPSHOT_TTL_HOURS, MARKET_BENCHMARK_ENGINE_VERSION, type CohortFallbackLevel } from './market-benchmark.config';
 import { MarketReferenceCacheService, type ReferenceCandidateMetric, type CohortFetchStats } from './market-reference-cache.service';
 import { computeMarketBenchmark, type BenchmarkMetricInput, type MarketBenchmarkResult } from './market-benchmark.engine';
@@ -198,8 +199,8 @@ export class MarketBenchmarkService {
     return this.ds.query<OwnMetricRow[]>(
       `SELECT platform, followers, subscribers, monthly_listeners, raw_payload
        FROM artist_platform_profiles
-       WHERE tenant_id = $1 AND artist_id = $2 AND sync_status = 'success'`,
-      [tenantId, artistId],
+       WHERE tenant_id = $1 AND artist_id = $2 AND sync_status = $3`,
+      [tenantId, artistId, SYNC_STATUS_SUCCESS],
     );
   }
 

@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsString, IsOptional, IsIn, IsNumber, IsDate, IsDateString, MaxLength } from 'class-validator';
+import { IsString, IsOptional, IsIn, IsEnum, IsNumber, IsDate, IsDateString, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import { EventStatus } from '@music-os-360/types';
 
 const TYPES    = ['show', 'festival', 'recording', 'meeting', 'interview', 'tour', 'other'] as const;
-const STATUSES = ['scheduled', 'confirmed', 'cancelled', 'completed', 'postponed'] as const;
 
 export class CreateEventDto {
   @ApiProperty() @IsString() @MaxLength(500) title!: string;
@@ -39,7 +39,7 @@ export class CreateEventDto {
 }
 
 export class UpdateEventDto extends PartialType(CreateEventDto) {
-  @ApiPropertyOptional({ enum: STATUSES }) @IsOptional() @IsIn(STATUSES) status?: string;
+  @ApiPropertyOptional({ enum: EventStatus }) @IsOptional() @IsEnum(EventStatus) status?: EventStatus;
   /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }

@@ -266,7 +266,7 @@ export const FIELD_LABELS_PT_BR = {
   detentores: 'Detentores',
   director: 'Diretor',
   distribuidora: 'Distribuidora',
-  documentos: 'Documentos',
+  documents: 'Documentos',
   duracao: 'Duração',
   durationSec: 'Duração (s)',
   durationSeconds: 'Duração (s)',
@@ -567,12 +567,18 @@ export const FIELD_LABELS_PT_BR = {
   faixaIdioma: 'Idioma da faixa',
 
   // ── Parte 89 — Shares ────────────────────────────────────────────────────────
+  // `percentual` (WorkParticipantEntity) e `nomeMusica` (projects.musicas,
+  // campo computado não relacionado) permanecem — shares migrou para
+  // holder/recipient/direction/percentage em 2026-09-13
+  // (RenameSharePartyFieldsToEnglish), mas essas chaves continuam vivas para
+  // outras entidades/campos.
   shareType: 'Tipo de share',
   percentual: 'Percentual',
-  direcao: 'Direção',
+  percentage: 'Percentual',
+  direction: 'Direção',
   nomeMusica: 'Nome da música',
-  detentor: 'Detentor',
-  destinatario: 'Destinatário',
+  holder: 'Detentor',
+  recipient: 'Destinatário',
   artistaExterno: 'Artista externo',
   artistaProjectId: 'Artista/projeto vinculado',
   pagador: 'Responsável pagador',

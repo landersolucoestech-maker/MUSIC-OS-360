@@ -43,7 +43,7 @@ export class TikTokService extends IntegrationBaseService {
     const creds = await this.loadCredentials<AdsCreds>(tenantId, PROVIDER_ADS);
     if (!creds) return { error: 'TikTok Ads não configurado' };
 
-    const res = await fetch(
+    const res = await this.fetch(
       `${TT_ADS_API}/campaign/get/?advertiser_id=${creds.advertiser_id}&fields=["campaign_id","campaign_name","status","budget","objective_type"]`,
       { headers: { 'Access-Token': creds.access_token } },
     );
@@ -65,7 +65,7 @@ export class TikTokService extends IntegrationBaseService {
       start_date: startDate, end_date: endDate, page_size: 100,
     };
 
-    const res = await fetch(`${TT_ADS_API}/report/integrated/get/`, {
+    const res = await this.fetch(`${TT_ADS_API}/report/integrated/get/`, {
       method: 'POST',
       headers: { 'Access-Token': creds.access_token, 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -93,7 +93,7 @@ export class TikTokService extends IntegrationBaseService {
     const clientSecret = this.config.get<string>('TIKTOK_CLIENT_SECRET') ?? '';
     const redirectUri  = this.config.get<string>('TIKTOK_REDIRECT_URI')  ?? '';
 
-    const res = await fetch(TT_TOKEN, {
+    const res = await this.fetch(TT_TOKEN, {
       method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ client_key: clientKey, client_secret: clientSecret, code, grant_type: 'authorization_code', redirect_uri: redirectUri }),
     });

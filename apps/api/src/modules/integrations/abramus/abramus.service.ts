@@ -34,7 +34,7 @@ export class AbramusService extends IntegrationBaseService {
   }
 
   private async getAuthToken(creds: AbramusCreds): Promise<string> {
-    const res = await fetch(`${creds.base_url}/api/v1/auth/login`, {
+    const res = await this.fetch(`${creds.base_url}/api/v1/auth/login`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ username: creds.username, password: creds.password }),
@@ -48,7 +48,7 @@ export class AbramusService extends IntegrationBaseService {
     const creds = await this.loadCredentials<AbramusCreds>(tenantId, PROVIDER);
     if (!creds) throw new Error('Abramus não configurado para este tenant');
     const token = await this.getAuthToken(creds);
-    const res = await fetch(`${creds.base_url}${path}`, {
+    const res = await this.fetch(`${creds.base_url}${path}`, {
       ...init,
       headers: {
         'Authorization': `Bearer ${token}`,

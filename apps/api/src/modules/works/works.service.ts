@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
@@ -6,6 +6,8 @@ import { WorkEntity, WorkParticipantEntity } from '../../database/entities';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { groupCount, GroupStatsResult } from '../../common/stats/group-count.util';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
+import { normalizeIsrc, isValidIsrc } from '../registry/validators/registry-validators';
 import type { CreateWorkDto }  from './dto/create-work.dto';
 import type { UpdateWorkDto }  from './dto/update-work.dto';
 import type { QueryWorkDto }   from './dto/query-work.dto';
@@ -158,10 +160,33 @@ export class WorksService {
     return hydrated;
   }
 
+  /**
+   * find-1e77a856: ISRC had zero format validation/normalization on this
+   * write path (only the registry-submission flow validated it) — the same
+   * real ISRC could be persisted in different textual forms depending on
+   * entry path. Mutates `rest.isrc` in place to its canonical form.
+   */
+  private normalizeIsrcField(rest: { isrc?: string }): void {
+    if (typeof rest.isrc !== 'string' || rest.isrc.trim() === '') return;
+    const canonicalIsrc = normalizeIsrc(rest.isrc);
+    if (!isValidIsrc(canonicalIsrc)) {
+      throw new BadRequestException({
+        code: 'WORK_ISRC_INVALID',
+        message: 'ISRC inválido. Formato esperado: CCXXXYYNNNNN (12 caracteres, hífens opcionais).',
+        field: 'isrc',
+      });
+    }
+    rest.isrc = canonicalIsrc;
+  }
+
   async create(tenantId: string, userId: string, dto: CreateWorkDto): Promise<WorkWithParticipantes> {
     // works.type é NOT NULL; o formulário envia tipo_obra (campo próprio).
     const type = dto.type ?? dto.tipo_obra ?? 'composicao';
     const { participantes, ...rest } = dto as CreateWorkDto & { participantes?: unknown[] };
+    // find-f81eebf2: artist_id had no FK (DB or app-layer) — a work could
+    // silently reference another tenant's artist.
+    await assertSameTenantFk(this.ds!, 'artists', rest.artist_id, tenantId, 'Artista');
+    this.normalizeIsrcField(rest);
 
     // Obra + participantes na mesma transação: se a gravação dos participantes
     // falhar, a criação da obra também reverte — nunca fica uma obra "órfã"
@@ -191,6 +216,10 @@ export class WorksService {
   async update(tenantId: string, userId: string, id: string, dto: UpdateWorkDto): Promise<WorkWithParticipantes> {
     await this.findById(tenantId, id);
     const { participantes, expectedUpdatedAt, ...rest } = dto as UpdateWorkDto & { participantes?: unknown[] };
+    // find-f81eebf2: only validate when the patch actually sets artist_id —
+    // omitted means "unchanged", already validated at its own create time.
+    if (rest.artist_id !== undefined) await assertSameTenantFk(this.ds!, 'artists', rest.artist_id, tenantId, 'Artista');
+    this.normalizeIsrcField(rest);
 
     // Task L: casUpdate() e replaceParticipantes() rodavam como duas operações
     // independentes — se a gravação dos participantes falhasse depois do

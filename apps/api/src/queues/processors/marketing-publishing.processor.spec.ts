@@ -21,17 +21,25 @@ describe('MarketingPublishingProcessor — tenant context (P1)', () => {
     };
   }
 
-  function makeJob(row: Record<string, unknown> | null) {
+  function makeJob(row: Record<string, unknown> | null, claimAffected = 1) {
+    const qb: Record<string, jest.Mock> = {};
+    const chain = () => qb;
+    qb['update'] = jest.fn(chain);
+    qb['set'] = jest.fn(chain);
+    qb['where'] = jest.fn(chain);
+    qb['andWhere'] = jest.fn(chain);
+    qb['execute'] = jest.fn(async () => ({ affected: claimAffected }));
     const repo = {
       findOne: jest.fn(async () => row),
       update: jest.fn(async () => ({ affected: 1 })),
+      createQueryBuilder: jest.fn(() => qb),
     };
     const manager = { getRepository: jest.fn(() => repo) };
-    return { repo, manager };
+    return { repo, manager, qb };
   }
 
   it('wraps the DB read/write in runInTenantContext with the job\'s tenantId', async () => {
-    const { repo, manager } = makeJob(makeRow());
+    const { repo, manager, qb } = makeJob(makeRow());
     const ds = { manager: {} };
     const dbContext = {
       runInTenantContext: jest.fn(async (ctx: unknown, work: (m: unknown) => Promise<unknown>) => {
@@ -51,10 +59,35 @@ describe('MarketingPublishingProcessor — tenant context (P1)', () => {
     expect(dbContext.runInTenantContext).toHaveBeenCalledWith(
       { tenantId: 'tenant-1', orgId: null, role: null }, expect.any(Function),
     );
-    expect(repo.update).toHaveBeenCalledWith(
-      { id: 'content-1', tenant_id: 'tenant-1' },
+    expect(qb.set).toHaveBeenCalledWith(
       expect.objectContaining({ publication_status: 'publishing' }),
     );
+    expect(qb.execute).toHaveBeenCalled();
+    // The second update (recording the publish failure) still goes through
+    // the plain repo.update() — only the initial claim needed to be atomic.
+    expect(repo.update).toHaveBeenCalledWith(
+      { id: 'content-1', tenant_id: 'tenant-1' },
+      expect.objectContaining({ status: 'falhou', publication_status: 'failed' }),
+    );
+  });
+
+  it('find-61333a55: claim já reivindicado por outro worker (affected=0) — pula publish() sem erro', async () => {
+    const { manager, qb } = makeJob(makeRow(), 0);
+    const ds = { manager: {} };
+    const dbContext = {
+      runInTenantContext: jest.fn(async (_ctx: unknown, work: (m: unknown) => Promise<unknown>) => work(manager)),
+    };
+    const processor = new MarketingPublishingProcessor(ds as never, dbContext as never);
+
+    await processor.process({
+      name: MARKETING_PUBLISHING_JOB_NAMES.PUBLISH_CONTENT,
+      data: { tenantId: 'tenant-1', userId: 'u1', contentId: 'content-1' },
+    } as never);
+
+    expect(qb.execute).toHaveBeenCalled();
+    // publish() always throws in this test file (no real adapter) — if it had
+    // been called, process() would have rejected. It didn't reject, proving
+    // the claim guard correctly skipped publish() for the loser.
   });
 
   it('fail-closed: rejects a job with no tenantId before touching the DB', async () => {

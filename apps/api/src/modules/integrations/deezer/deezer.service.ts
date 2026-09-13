@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { assertAllowedHost, assertSafePathSegment, assertSafeLimit } from '../../../core/resilience/safe-url';
+import { CircuitBreaker } from '../../../core/resilience/circuit-breaker';
+import { resilientFetch } from '../../../core/resilience/resilient-fetch';
 
 const DEEZER_API = 'https://api.deezer.com';
 const DEEZER_HOSTS = ['api.deezer.com'] as const;
@@ -7,6 +9,13 @@ const DEEZER_HOSTS = ['api.deezer.com'] as const;
 @Injectable()
 export class DeezerService {
   private readonly logger = new Logger(DeezerService.name);
+  // find-fec66ce8: guarded fetch (10s timeout + circuit breaker) — this
+  // service doesn't extend IntegrationBaseService (no DB/credentials), so it
+  // carries its own breaker instance rather than raw global fetch().
+  private readonly cb = new CircuitBreaker({ name: DeezerService.name });
+  private fetch(url: string, init?: RequestInit): Promise<Response> {
+    return resilientFetch(this.cb, url, init);
+  }
 
   isConfigured(): boolean {
     return true; // API pública, sem chave necessária
@@ -15,7 +24,7 @@ export class DeezerService {
   async getArtistStats(artistId: string) {
     const id = assertSafePathSegment(artistId, 'artistId');
     const url = assertAllowedHost(`${DEEZER_API}/artist/${encodeURIComponent(id)}`, DEEZER_HOSTS);
-    const res = await fetch(url);
+    const res = await this.fetch(url);
     if (!res.ok) return { error: `Deezer API error: ${res.status}` };
     const d = await res.json() as any;
     return {
@@ -33,7 +42,7 @@ export class DeezerService {
     const id = assertSafePathSegment(artistId, 'artistId');
     const lim = assertSafeLimit(limit);
     const url = assertAllowedHost(`${DEEZER_API}/artist/${encodeURIComponent(id)}/top?limit=${lim}`, DEEZER_HOSTS);
-    const res = await fetch(url);
+    const res = await this.fetch(url);
     if (!res.ok) return [];
     const data = await res.json() as any;
     return (data.data ?? []).map((t: any) => ({
@@ -50,7 +59,7 @@ export class DeezerService {
   async getAlbum(albumId: string) {
     const id = assertSafePathSegment(albumId, 'albumId');
     const url = assertAllowedHost(`${DEEZER_API}/album/${encodeURIComponent(id)}`, DEEZER_HOSTS);
-    const res = await fetch(url);
+    const res = await this.fetch(url);
     if (!res.ok) return { error: `Deezer API error: ${res.status}` };
     const d = await res.json() as any;
     return {
@@ -66,7 +75,7 @@ export class DeezerService {
   }
 
   async searchArtist(query: string, limit = 5) {
-    const res = await fetch(`${DEEZER_API}/search/artist?q=${encodeURIComponent(query)}&limit=${limit}`);
+    const res = await this.fetch(`${DEEZER_API}/search/artist?q=${encodeURIComponent(query)}&limit=${limit}`);
     if (!res.ok) return [];
     const data = await res.json() as any;
     return (data.data ?? []).map((a: any) => ({

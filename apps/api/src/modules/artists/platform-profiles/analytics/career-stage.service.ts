@@ -5,6 +5,7 @@ import { CareerStageSnapshotEntity } from '../../../../database/entities';
 import { ArtistPlatformProfilesService } from '../artist-platform-profiles.service';
 import { ArtistMetricSnapshotsService } from '../artist-metric-snapshots.service';
 import { PRIMARY_METRIC_BY_PLATFORM, primaryMetricValue } from '../metric-keys';
+import { SYNC_STATUS_SUCCESS } from '../social-platform-sync.types';
 import { GROWTH_ELIGIBLE_METRICS } from './career-stage.config';
 import { computeCareerStage, type CareerStageEngineInput, type CareerStageMetricPoint, type CareerStageResult } from './career-stage.engine';
 
@@ -34,7 +35,7 @@ export class CareerStageService {
   async calculate(tenantId: string, artistId: string): Promise<CareerStageResult> {
     const asOf = new Date();
     const profileRows = await this.profiles.findByArtist(tenantId, artistId);
-    const successRows = profileRows.filter((p) => p.sync_status === 'success');
+    const successRows = profileRows.filter((p) => p.sync_status === SYNC_STATUS_SUCCESS);
 
     const metricPoints: CareerStageMetricPoint[] = [];
     let platformsWithData = 0;

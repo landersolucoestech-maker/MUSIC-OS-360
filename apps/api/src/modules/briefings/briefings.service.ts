@@ -3,12 +3,15 @@ import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { BriefingEntity } from '../../database/entities';
 import type { CreateBriefingDto, UpdateBriefingDto, QueryBriefingDto } from './dto/briefings.dto';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 
 @Injectable()
 export class BriefingsService {
   private readonly repo: Repository<BriefingEntity> | null = null;
+  private readonly ds: DataSource | null;
 
   constructor(@Inject(DATA_SOURCE) ds: DataSource | null) {
+    this.ds = ds;
     if (ds) this.repo = ds.getRepository(BriefingEntity);
   }
 
@@ -55,14 +58,24 @@ export class BriefingsService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateBriefingDto): Promise<BriefingEntity> {
-    const entity = this.repo!.create({ tenant_id: tenantId, ...this.toEntityFields(dto), created_by: userId });
+    const mapped = this.toEntityFields(dto);
+    // find-50dd3726: campaign_id had no cross-tenant ownership check — a
+    // briefing could silently reference another tenant's campaign.
+    await assertSameTenantFk(this.ds!, 'campaigns', mapped.campaign_id as string | undefined, tenantId, 'Campanha');
+    const entity = this.repo!.create({ tenant_id: tenantId, ...mapped, created_by: userId });
     return this.repo!.save(entity as any) as any;
   }
 
   async update(tenantId: string, id: string, dto: UpdateBriefingDto): Promise<BriefingEntity> {
     await this.findById(tenantId, id);
+    const mapped = this.toEntityFields(dto);
+    // find-50dd3726: only validate when the patch actually sets campaign_id —
+    // omitted means "unchanged", already validated at its own create time.
+    if (mapped.campaign_id !== undefined) {
+      await assertSameTenantFk(this.ds!, 'campaigns', mapped.campaign_id as string | undefined, tenantId, 'Campanha');
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await this.repo!.update({ id, tenant_id: tenantId } as any, { ...this.toEntityFields(dto), updated_at: new Date() } as any);
+    await this.repo!.update({ id, tenant_id: tenantId } as any, { ...mapped, updated_at: new Date() } as any);
     return this.findById(tenantId, id);
   }
 

@@ -1,5 +1,6 @@
 import { SoundCloudArtistProfileProvider } from './soundcloud-artist-profile.provider';
 import type { SoundchartsService } from '../../../integrations/soundcharts/soundcharts.service';
+import { SoundchartsNotFoundError } from '../../../integrations/soundcharts/soundcharts.errors';
 
 const CANONICAL_URLS = {
   spotifyUrl: 'https://open.spotify.com/artist/6qqNVTkY8uBg9cP3Jd7DAH',
@@ -143,5 +144,44 @@ describe('SoundCloudArtistProfileProvider.resolve (Métricas Fase 1 — proteç�
     expect(snapshot.followers).toBe(42);
     expect(snapshot.sync_status).toBe('success');
     expect(snapshot.raw_payload.cross_platform_status).toBe('CROSS_PLATFORM_UNKNOWN');
+  });
+
+  it('find-4e35ea8e: slug resolvido com sucesso (existe de verdade) mas não indexado na Soundcharts (404): followers=null, sync_status=success (NUNCA "failed")', async () => {
+    const soundcharts = {
+      isConfigured: jest.fn().mockReturnValue(true),
+      resolveArtistByPlatform: jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found', 404)),
+      getSoundCloudFollowers: jest.fn(),
+    } as unknown as SoundchartsService;
+    const provider = new SoundCloudArtistProfileProvider(soundcharts);
+
+    const snapshot = await provider.resolve({
+      tenantId: 't1',
+      artistId: 'a1',
+      externalId: 'deejaystay',
+      externalUrl: null,
+      canonicalUrls: {},
+    });
+
+    expect(soundcharts.getSoundCloudFollowers).not.toHaveBeenCalled();
+    expect(snapshot.followers).toBeNull();
+    expect(snapshot.sync_status).toBe('success');
+    expect(snapshot.external_id).toBe('deejaystay');
+  });
+
+  it('erro real da Soundcharts (não 404) durante a resolução propaga como falha genuína (retry deve acontecer)', async () => {
+    const soundcharts = {
+      isConfigured: jest.fn().mockReturnValue(true),
+      resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: serviço indisponível')),
+      getSoundCloudFollowers: jest.fn(),
+    } as unknown as SoundchartsService;
+    const provider = new SoundCloudArtistProfileProvider(soundcharts);
+
+    await expect(provider.resolve({
+      tenantId: 't1',
+      artistId: 'a1',
+      externalId: 'deejaystay',
+      externalUrl: null,
+      canonicalUrls: {},
+    })).rejects.toThrow('Soundcharts 503: serviço indisponível');
   });
 });

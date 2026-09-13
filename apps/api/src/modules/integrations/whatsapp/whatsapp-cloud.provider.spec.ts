@@ -51,7 +51,8 @@ function makeIntegrationsStore() {
 
 function makeProvider(integRepo: ReturnType<typeof makeIntegrationsStore>) {
   const ds: any = { getRepository: jest.fn(() => integRepo) };
-  return new WhatsAppCloudProvider(ds, makeEncryption());
+  const config = { get: jest.fn((key: string) => process.env[key]) } as unknown as ConfigService;
+  return new WhatsAppCloudProvider(ds, makeEncryption(), config);
 }
 
 describe('WhatsAppCloudProvider', () => {

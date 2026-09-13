@@ -1,5 +1,6 @@
 import { SpotifyArtistProfileProvider } from './spotify-artist-profile.provider';
 import type { SoundchartsService } from '../../../integrations/soundcharts/soundcharts.service';
+import { SoundchartsNotFoundError } from '../../../integrations/soundcharts/soundcharts.errors';
 
 const CANONICAL_URLS = {
   youtubeUrl: 'https://www.youtube.com/channel/UCiGm_E4ZwYSHV3bcW1pnSeQ',
@@ -58,5 +59,44 @@ describe('SpotifyArtistProfileProvider.resolve (Métricas Fase 1 — proteção 
     expect(snapshot.raw_payload.primary_identity_status).toBe('VERIFIED_EXACT');
     expect(snapshot.raw_payload.cross_platform_status).toBe('CROSS_PLATFORM_DIVERGENT');
     expect(snapshot.raw_payload.cross_platform_uuid).toBe('canonical-uuid');
+  });
+
+  it('find-4e35ea8e: artistId resolvido com sucesso (existe de verdade) mas não indexado na Soundcharts (404): monthly_listeners=null, sync_status=success (NUNCA "failed")', async () => {
+    const soundcharts = {
+      isConfigured: jest.fn().mockReturnValue(true),
+      resolveArtistByPlatform: jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found', 404)),
+      getSpotifyMonthlyListeners: jest.fn(),
+    } as unknown as SoundchartsService;
+    const provider = new SpotifyArtistProfileProvider(soundcharts);
+
+    const snapshot = await provider.resolve({
+      tenantId: 't1',
+      artistId: 'a1',
+      externalId: '6qqNVTkY8uBg9cP3Jd7DAH',
+      externalUrl: null,
+      canonicalUrls: {},
+    });
+
+    expect(soundcharts.getSpotifyMonthlyListeners).not.toHaveBeenCalled();
+    expect(snapshot.monthly_listeners).toBeNull();
+    expect(snapshot.sync_status).toBe('success');
+    expect(snapshot.external_id).toBe('6qqNVTkY8uBg9cP3Jd7DAH');
+  });
+
+  it('erro real da Soundcharts (não 404) durante a resolução propaga como falha genuína (retry deve acontecer)', async () => {
+    const soundcharts = {
+      isConfigured: jest.fn().mockReturnValue(true),
+      resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: serviço indisponível')),
+      getSpotifyMonthlyListeners: jest.fn(),
+    } as unknown as SoundchartsService;
+    const provider = new SpotifyArtistProfileProvider(soundcharts);
+
+    await expect(provider.resolve({
+      tenantId: 't1',
+      artistId: 'a1',
+      externalId: '6qqNVTkY8uBg9cP3Jd7DAH',
+      externalUrl: null,
+      canonicalUrls: {},
+    })).rejects.toThrow('Soundcharts 503: serviço indisponível');
   });
 });

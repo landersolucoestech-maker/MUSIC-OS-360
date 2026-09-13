@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService }      from '@nestjs/config';
 import * as crypto            from 'crypto';
+import { CircuitBreaker } from '../../../core/resilience/circuit-breaker';
+import { resilientFetch } from '../../../core/resilience/resilient-fetch';
 
 export interface ACRCloudResult {
   title?:      string;
@@ -13,6 +15,13 @@ export interface ACRCloudResult {
 @Injectable()
 export class ACRCloudService {
   private readonly logger = new Logger(ACRCloudService.name);
+  // find-fec66ce8: guarded fetch (10s timeout + circuit breaker) — this
+  // service doesn't extend IntegrationBaseService (no DB/credentials), so it
+  // carries its own breaker instance rather than raw global fetch().
+  private readonly cb = new CircuitBreaker({ name: ACRCloudService.name });
+  private fetch(url: string, init?: RequestInit): Promise<Response> {
+    return resilientFetch(this.cb, url, init);
+  }
 
   constructor(private readonly config: ConfigService) {}
 
@@ -40,7 +49,7 @@ export class ACRCloudService {
     formData.append('signature',         signature);
     formData.append('timestamp',         String(timestamp));
 
-    const res  = await fetch(`https://${host}/v1/identify`, { method: 'POST', body: formData });
+    const res  = await this.fetch(`https://${host}/v1/identify`, { method: 'POST', body: formData });
     const data = await res.json() as any;
 
     if (data.status?.code !== 0) {

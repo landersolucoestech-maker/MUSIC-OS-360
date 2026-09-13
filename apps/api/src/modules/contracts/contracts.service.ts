@@ -1,5 +1,5 @@
 import { Injectable, Inject, NotFoundException, Logger, BadRequestException } from '@nestjs/common';
-import { DataSource, Repository, FindOptionsWhere } from 'typeorm';
+import { DataSource, Repository, FindOptionsWhere, IsNull } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { DATA_SOURCE } from '../../database/database.module';
 import { ContractEntity, ArtistEntity, ClientEntity } from '../../database/entities';
@@ -152,7 +152,7 @@ export class ContractsService {
     out.autentique_doc_id = dto['autentique_doc_id'] ?? null;
     out.signing_platform  = dto['signing_platform']  ?? null;
     out.versoes       = (dto['versoes'] as unknown[] | undefined) ?? [];
-    out.documentos    = (dto['documentos'] as unknown[] | undefined) ?? [];
+    out.documents    = (dto['documents'] as unknown[] | undefined) ?? [];
     // Campos do wizard (regra 2026-07-12: 1 coluna por campo, nome exato) — não são aliases.
     out.template_id   = dto['template_id'] ?? null;
     if (Array.isArray(dto['signers'])) out.signers = dto['signers'];
@@ -194,7 +194,7 @@ export class ContractsService {
     const entity = this.repo!.create({
       tenant_id:  tenantId,
       ...normalized,
-      status:     ContractStatus.RASCUNHO,
+      status:     ContractStatus.DRAFT,
       created_by: userId,
       updated_by: userId,
     } as Partial<ContractEntity>);
@@ -296,8 +296,8 @@ export class ContractsService {
         },
       });
 
-      // CONTRACT_SIGNED when transitioning to assinado
-      if (dtoMap['status'] === ContractStatus.ASSINADO) {
+      // CONTRACT_SIGNED when transitioning to signed
+      if (dtoMap['status'] === ContractStatus.SIGNED) {
         this.events.emitTyped(DOMAIN_EVENTS.CONTRACT_SIGNED, {
           tenantId,
           userId,
@@ -314,8 +314,8 @@ export class ContractsService {
         });
       }
 
-      // CONTRACT_EXPIRED when transitioning to vencido
-      if (dtoMap['status'] === ContractStatus.VENCIDO) {
+      // CONTRACT_EXPIRED when transitioning to expired
+      if (dtoMap['status'] === ContractStatus.EXPIRED) {
         this.events.emitTyped(DOMAIN_EVENTS.CONTRACT_EXPIRED, {
           tenantId,
           userId,
@@ -331,8 +331,8 @@ export class ContractsService {
         });
       }
 
-      // CONTRACT_CANCELLED when transitioning to cancelado
-      if (dtoMap['status'] === ContractStatus.CANCELADO) {
+      // CONTRACT_CANCELLED when transitioning to cancelled
+      if (dtoMap['status'] === ContractStatus.CANCELLED) {
         this.events.emitTyped(DOMAIN_EVENTS.CONTRACT_CANCELLED, {
           tenantId,
           userId,
@@ -379,10 +379,21 @@ export class ContractsService {
 
   async softDelete(tenantId: string, userId: string, id: string) {
     const existing = await this.findById(tenantId, id);
-    await this.repo!.update(
-      { id, tenant_id: tenantId } as FindOptionsWhere<ContractEntity>,
+    // find-7ced4670: without `deleted_at IS NULL` in the WHERE, two concurrent
+    // cancel calls (double-click, retry racing the original) can both pass
+    // findById() before either commits, then both unconditionally emit
+    // CONTRACT_CANCELLED — duplicate activity-log rows and duplicate
+    // notifications for one logical cancellation. Guarding the WHERE and
+    // checking `affected` makes only the call that actually performed the
+    // not-deleted -> deleted transition emit the event; a racing/duplicate
+    // call sees affected===0 and no-ops instead.
+    const result = await this.repo!.update(
+      { id, tenant_id: tenantId, deleted_at: IsNull() } as FindOptionsWhere<ContractEntity>,
       { deleted_at: new Date(), updated_by: userId } as QueryDeepPartialEntity<ContractEntity>,
     );
+    if (!result.affected) {
+      return { deleted: true };
+    }
 
     this.events.emitTyped(DOMAIN_EVENTS.CONTRACT_CANCELLED, {
       tenantId,

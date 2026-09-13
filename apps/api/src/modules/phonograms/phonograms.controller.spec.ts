@@ -36,7 +36,7 @@ describe('PhonogramsController — contrato HTTP real (C2)', () => {
   beforeAll(async () => {
     repo = {
       create: jest.fn((data: unknown) => ({ ...(data as object) })),
-      save: jest.fn(async (entity: unknown) => ({ id: 'phono-new', status: 'pendente', ...(entity as object) })),
+      save: jest.fn(async (entity: unknown) => ({ id: 'phono-new', status: 'pending', ...(entity as object) })),
       update: jest.fn(async () => ({ affected: 1 })),
       createQueryBuilder: jest.fn(() => makeQb([])),
     };

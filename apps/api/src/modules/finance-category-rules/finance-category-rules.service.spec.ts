@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { FinanceCategoryRulesService } from './finance-category-rules.service';
 
 const NOW = new Date('2026-08-16T12:00:00.000Z');
@@ -29,6 +29,9 @@ function makeRepo(rows: unknown[] = [RULE]) {
     create: jest.fn((data: unknown) => data),
     save: jest.fn(async (data: unknown) => ({ ...(data as object), id: 'new-id' })),
     createQueryBuilder: jest.fn(() => makeQueryBuilder(rows)),
+    // assertSameTenantFk's ownership check — a truthy row means "found, same
+    // tenant", so tests not focused on that behavior aren't coupled to it.
+    manager: { connection: { query: jest.fn().mockResolvedValue([{ exists: 1 }]) } },
   };
 }
 
@@ -66,6 +69,31 @@ describe('FinanceCategoryRulesService', () => {
     expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({
       tenant_id: 'tenant-1', created_by: 'user-1', updated_by: 'user-1',
     }));
+  });
+
+  // find-de6031eb: category_id had no cross-tenant ownership check.
+  it('create: rejeita category_id de outro tenant', async () => {
+    const { svc, repo } = makeService();
+    (repo.manager.connection.query as jest.Mock).mockResolvedValueOnce([]);
+
+    await expect(svc.create('tenant-1', 'user-1', {
+      keywords: ['ads'], transaction_type: 'RECEITA', category_id: 'cat-from-tenant-2',
+    } as any)).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('update: rejeita mudar category_id para outro tenant', async () => {
+    const { svc, repo } = makeService();
+    (repo.manager.connection.query as jest.Mock).mockResolvedValueOnce([]);
+
+    await expect(svc.update('tenant-1', 'user-1', 'rule-1', {
+      category_id: 'cat-from-tenant-2',
+    } as any)).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('update: não revalida category_id quando o patch não o inclui', async () => {
+    const { svc, repo } = makeService();
+    await svc.update('tenant-1', 'user-1', 'rule-1', { priority: 50 } as any);
+    expect(repo.manager.connection.query).not.toHaveBeenCalled();
   });
 
   it('update sem expectedUpdatedAt: aplica update incondicional', async () => {

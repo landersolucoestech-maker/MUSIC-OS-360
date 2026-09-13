@@ -23,7 +23,7 @@ import {
   PhonogramStatus,
   ReleaseStatus,
   ShareStatus,
-  TransactionTipo,
+  TransactionType,
   TransactionStatus,
   InvoiceStatus,
   ClientStatus,
@@ -413,6 +413,7 @@ export class TenantBillingStateEntity {
   @Column({ type: 'boolean', default: false }) manual_override: boolean;
   @Column({ type: 'text', nullable: true }) manual_override_reason: string | null;
   @Column({ type: 'timestamp', nullable: true }) manual_override_until: Date | null;
+  @Column({ type: 'timestamptz' }) status_changed_at: Date;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamp' }) updated_at: Date;
 }
@@ -480,15 +481,15 @@ export class ArtistEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255 }) nome_artistico: string;
   @Column({ type: 'varchar', length: 255, nullable: true }) nome_civil: string | null;
-  @Column({ type: 'varchar', length: 50, default: ArtistStatus.EM_NEGOCIACAO }) status: ArtistStatus;
-  @Column({ type: 'varchar', length: 50, default: ArtistStatusCadastro.ATIVO }) status_cadastro: ArtistStatusCadastro;
+  @Column({ type: 'varchar', length: 50, default: ArtistStatus.IN_NEGOTIATION }) status: ArtistStatus;
+  @Column({ type: 'varchar', length: 50, default: ArtistStatusCadastro.ACTIVE }) status_cadastro: ArtistStatusCadastro;
   @Column({ type: 'varchar', length: 100, nullable: true }) genero_musical: string | null;
   @Column({ type: 'text', nullable: true }) email_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) telefone_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) cpf_cnpj_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) foto_url: string | null;
   @Column({ type: 'jsonb', default: [] }) galeria_urls: unknown[];
-  @Column({ type: 'jsonb', default: [] }) documentos: unknown[];
+  @Column({ type: 'jsonb', default: [] }) documents: unknown[];
   @Column({ type: 'text', nullable: true }) observacoes: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) manager_nome: string | null;
   @Column({ type: 'text', nullable: true }) manager_contato_encrypted: string | null;
@@ -705,7 +706,7 @@ export class WorkEntity {
   @Column({ type: 'varchar', length: 100, nullable: true }) cod_ecad: string | null;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 100, nullable: true }) genero: string | null;
-  @Column({ type: 'varchar', length: 50, default: WorkStatus.PENDENTE }) status: WorkStatus;
+  @Column({ type: 'varchar', length: 50, default: WorkStatus.PENDING }) status: WorkStatus;
   @Column({ type: 'varchar', length: 20, nullable: true }) duracao: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) origem_externa: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) origem_externa_id: string | null;
@@ -803,7 +804,7 @@ export class PhonogramEntity {
   @Column({ type: 'varchar', length: 20, nullable: true }) isrc: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) duracao: string | null;
   @Column({ type: 'varchar', length: 100 }) type: string;
-  @Column({ type: 'varchar', length: 50, default: PhonogramStatus.PENDENTE }) status: PhonogramStatus;
+  @Column({ type: 'varchar', length: 50, default: PhonogramStatus.PENDING }) status: PhonogramStatus;
   @Column({ type: 'text', nullable: true }) compositores: string | null;
   @Column({ type: 'text', nullable: true }) interpretes: string | null;
   @Column({ type: 'text', nullable: true }) produtores: string | null;
@@ -885,7 +886,7 @@ export class ContractEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 500 }) title: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
-  @Column({ type: 'varchar', length: 50, default: ContractStatus.RASCUNHO }) status: ContractStatus;
+  @Column({ type: 'varchar', length: 50, default: ContractStatus.DRAFT }) status: ContractStatus;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'uuid', nullable: true }) client_id: string | null;
   @Column({ type: 'uuid', nullable: true }) release_id: string | null;
@@ -901,7 +902,7 @@ export class ContractEntity {
   // ── Campos do formulário/wizard (1 coluna por campo — nome exato) ────────────
   @Column({ type: 'uuid', nullable: true }) template_id: string | null;
   @Column({ type: 'jsonb', nullable: true }) signers: unknown[] | null;
-  @Column({ type: 'jsonb', default: [] }) documentos: unknown[];
+  @Column({ type: 'jsonb', default: [] }) documents: unknown[];
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
@@ -983,12 +984,12 @@ export class ContractServiceTypeEntity {
 export class TransactionEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'varchar', length: 50 }) type: TransactionTipo;
+  @Column({ type: 'varchar', length: 50 }) type: TransactionType;
   @Column({ type: 'varchar', length: 100 }) categoria: string;
   @Column({ type: 'text', nullable: true }) descricao: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2 }) valor: string;
   @Column({ type: 'timestamp' }) data: Date;
-  @Column({ type: 'varchar', length: 50, default: TransactionStatus.PENDENTE }) status: TransactionStatus;
+  @Column({ type: 'varchar', length: 50, default: TransactionStatus.PENDING }) status: TransactionStatus;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'uuid', nullable: true }) contrato_id: string | null;
   @Column({ type: 'uuid', nullable: true }) project_id: string | null;
@@ -1041,7 +1042,7 @@ export class InvoiceEntity {
   @Column({ type: 'varchar', length: 255, nullable: true, unique: true }) stripe_invoice_id: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) numero: string | null;
   @Column({ type: 'varchar', length: 100 }) type: string;
-  @Column({ type: 'varchar', length: 50, default: InvoiceStatus.PENDENTE }) status: InvoiceStatus;
+  @Column({ type: 'varchar', length: 50, default: InvoiceStatus.PENDING }) status: InvoiceStatus;
   @Column({ type: 'integer', nullable: true }) amount_due: number | null;
   @Column({ type: 'integer', nullable: true }) amount_paid: number | null;
   @Column({ type: 'varchar', length: 10, nullable: true }) currency: string | null;
@@ -1138,7 +1139,7 @@ export class ClientEntity {
   @Column({ type: 'jsonb', nullable: true }) attachments: unknown[] | null;
   @Column({ type: 'text', nullable: true }) observacoes: string | null;
   @Column({ type: 'jsonb', nullable: true }) interacoes: unknown[] | null;
-  @Column({ type: 'varchar', length: 50, default: ClientStatus.ATIVO }) status: ClientStatus;
+  @Column({ type: 'varchar', length: 50, default: ClientStatus.ACTIVE }) status: ClientStatus;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
@@ -1182,7 +1183,7 @@ export class LeadEntity {
   @Column({ type: 'text', nullable: true }) email_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) telefone_encrypted: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) empresa: string | null;
-  @Column({ type: 'varchar', length: 50, default: LeadStatus.NOVO }) status: LeadStatus;
+  @Column({ type: 'varchar', length: 50, default: LeadStatus.NEW }) status: LeadStatus;
   @Column({ type: 'varchar', length: 100, nullable: true }) fonte: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
 
@@ -1257,7 +1258,7 @@ export class CampaignEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255 }) nome: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
-  @Column({ type: 'varchar', length: 50, default: CampaignStatus.RASCUNHO }) status: CampaignStatus;
+  @Column({ type: 'varchar', length: 50, default: CampaignStatus.DRAFT }) status: CampaignStatus;
   @Column({ type: 'text', nullable: true }) objetivo: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) orcamento: string | null;
   @Column({ type: 'timestamp', nullable: true }) start_date: Date | null;
@@ -1285,7 +1286,7 @@ export class BriefingEntity {
   @Column({ type: 'text', nullable: true }) descricao: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'uuid', nullable: true }) campaign_id: string | null;
-  @Column({ type: 'varchar', length: 50, default: BriefingStatus.RASCUNHO }) status: BriefingStatus;
+  @Column({ type: 'varchar', length: 50, default: BriefingStatus.DRAFT }) status: BriefingStatus;
   @Column({ type: 'timestamp', nullable: true }) prazo: Date | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
@@ -1308,7 +1309,7 @@ export class EventEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255 }) title: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
-  @Column({ type: 'varchar', length: 50, default: EventStatus.AGENDADO }) status: EventStatus;
+  @Column({ type: 'varchar', length: 50, default: EventStatus.SCHEDULED }) status: EventStatus;
   @Column({ type: 'timestamp' }) data: Date;
   // C3/E1 (migration 20260716000001): coluna canônica futura de início do evento.
   // Nullable até a fase E5; dual-written com `data` a partir da fase E2.
@@ -1342,7 +1343,7 @@ export class ProjectEntity {
   // `title` é o nome real e único enviado pelo formulário ativo.
   @Column({ type: 'varchar', length: 255 }) title: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
-  @Column({ type: 'varchar', length: 50, default: ProjectStatus.PLANEJAMENTO }) status: ProjectStatus;
+  @Column({ type: 'varchar', length: 50, default: ProjectStatus.PLANNING }) status: ProjectStatus;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) orcamento: string | null;
   // `descricao` volta a ser texto livre puro — musicas[] normalizada em project_tracks.
@@ -1467,11 +1468,11 @@ export class ShareEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid', nullable: true }) work_id: string | null;
   @Column({ type: 'uuid', nullable: true }) fonograma_id: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) titular_nome: string | null;
-  @Column({ type: 'varchar', length: 50, nullable: true }) titular_doc: string | null;
-  @Column({ type: 'varchar', length: 100, default: 'autor' }) papel: string;
-  @Column({ type: 'decimal', precision: 7, scale: 4, nullable: true }) percentual: string | null;
-  @Column({ type: 'varchar', length: 50, default: ShareStatus.ATIVO }) status: ShareStatus;
+  @Column({ type: 'varchar', length: 255, nullable: true }) holder_name: string | null;
+  @Column({ type: 'varchar', length: 50, nullable: true }) holder_document: string | null;
+  @Column({ type: 'varchar', length: 100, default: 'autor' }) party_role: string;
+  @Column({ type: 'decimal', precision: 7, scale: 4, nullable: true }) percentage: string | null;
+  @Column({ type: 'varchar', length: 50, default: ShareStatus.ACTIVE }) status: ShareStatus;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
@@ -1491,11 +1492,11 @@ export class ShareEntity {
 
   // ── Campos do formulário de Share (1 coluna por campo — nome exato) ──────────
   @Column({ type: 'varchar', length: 30, nullable: true }) share_type: string | null;
-  @Column({ type: 'varchar', length: 20, nullable: true }) direcao: string | null;
+  @Column({ type: 'varchar', length: 20, nullable: true }) direction: string | null;
   @Column({ type: 'uuid', nullable: true }) release_id: string | null;
-  @Column({ type: 'varchar', length: 500, nullable: true }) nome_musica: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) detentor: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) destinatario: string | null;
+  @Column({ type: 'varchar', length: 500, nullable: true }) music_title: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) holder: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) recipient: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) type: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) artista_externo: string | null;
   @Column({ type: 'uuid', nullable: true }) artista_project_id: string | null;
@@ -1504,7 +1505,7 @@ export class ShareEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) pagador_contato: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) origem_acordo: string | null;
   @Column({ type: 'date', nullable: true }) data_prevista: string | null;
-  @Column({ type: 'text', nullable: true }) documentos: string | null;
+  @Column({ type: 'text', nullable: true }) documents: string | null;
   @Column({ type: 'text', nullable: true }) acordo_notas: string | null;
   @Column({ type: 'text', nullable: true }) acordo_url: string | null;
   @Column({ type: 'text', nullable: true }) observacoes: string | null;
@@ -1529,7 +1530,7 @@ export class TakedownEntity {
   @Column({ type: 'varchar', length: 255 }) title: string;
   @Column({ type: 'varchar', length: 100 }) plataforma: string;
   @Column({ type: 'text', nullable: true }) url: string | null;
-  @Column({ type: 'varchar', length: 50, default: TakedownStatus.PENDENTE }) status: TakedownStatus;
+  @Column({ type: 'varchar', length: 50, default: TakedownStatus.PENDING }) status: TakedownStatus;
   @Column({ type: 'uuid', nullable: true }) work_id: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'text', nullable: true }) motivo: string | null;
@@ -1763,6 +1764,59 @@ export class WebhookEventEntity {
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
 }
 
+// ─── Operational List Items ─────────────────────────────────────────────────────
+/**
+ * find-9a9fb661 / find-e59566ca: `OperationalListsService` already imported
+ * this entity (mismatched against nothing — it never existed), against a
+ * real, RLS-scoped table already created by migration
+ * `20260713000001_CreateOperationalListItems`. Everything else (controller,
+ * service, DTOs, seed bootstrap, tests) was already built — only this
+ * entity class and the module registration in `app.module.ts` were missing.
+ */
+@Entity('operational_list_items')
+@Index(['tenant_id', 'kind', 'order'])
+export class OperationalListItemEntity {
+  @PrimaryGeneratedColumn('uuid') id: string;
+  @Column({ type: 'uuid' }) tenant_id: string;
+  @Column({ type: 'varchar', length: 50 }) kind: string;
+  @Column({ type: 'varchar', length: 150 }) name: string;
+  @Column({ type: 'varchar', length: 100 }) slug: string;
+  @Column({ type: 'text', nullable: true }) description: string | null;
+  @Column({ type: 'boolean', default: true }) active: boolean;
+  @Column({ type: 'integer', default: 0 }) order: number;
+  @Column({ type: 'varchar', length: 100, nullable: true }) group: string | null;
+  @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
+  @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) updated_by: string | null;
+  @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
+  @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
+  @Column({ type: 'timestamptz', nullable: true }) deleted_at: Date | null;
+}
+
+// ─── External Data Submissions ─────────────────────────────────────────────────
+/**
+ * find-bc7c20a6: server-side reverse lookup from (provider, submission_id) to
+ * the tenant/entity that made the submission. `ExternalDataExchangeService
+ * .ingestWebhook` resolves tenant scoping from THIS table, never from the
+ * caller-supplied X-Tenant-ID header — the HMAC signature on a webhook only
+ * proves the payload came from a holder of the shared per-provider secret,
+ * it proves nothing about which tenant it belongs to.
+ */
+@Entity('external_data_submissions')
+@Index(['provider', 'submission_id', 'entity_type', 'entity_id'], { unique: true })
+@Index(['provider', 'submission_id'])
+@Index(['tenant_id'])
+export class ExternalDataSubmissionEntity {
+  @PrimaryGeneratedColumn('uuid') id: string;
+  @Column({ type: 'uuid' }) tenant_id: string;
+  @Column({ type: 'varchar', length: 100 }) provider: string;
+  @Column({ type: 'varchar', length: 30 }) entity_type: string;
+  @Column({ type: 'uuid' }) entity_id: string;
+  @Column({ type: 'varchar', length: 255 }) submission_id: string;
+  @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
+  @UpdateDateColumn({ type: 'timestamp' }) updated_at: Date;
+}
+
 // ─── Audit Logs ───────────────────────────────────────────────────────────────
 /** Append-only — no soft-delete, no update */
 @Entity('audit_logs')
@@ -1839,7 +1893,7 @@ export class ArtistGoalEntity {
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) meta_valor: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, default: '0' }) valor_atual: string;
-  @Column({ type: 'varchar', length: 50, default: ArtistGoalStatus.EM_ANDAMENTO }) status: ArtistGoalStatus;
+  @Column({ type: 'varchar', length: 50, default: ArtistGoalStatus.IN_PROGRESS }) status: ArtistGoalStatus;
   @Column({ type: 'varchar', length: 50, default: 'mensal' }) periodo: string;
   @Column({ type: 'timestamp', nullable: true }) start_date: Date | null;
   @Column({ type: 'timestamp', nullable: true }) end_date: Date | null;
@@ -1863,7 +1917,7 @@ export class ContentDetectionEntity {
   @Column({ type: 'varchar', length: 500, nullable: true }) titulo_detectado: string | null;
   @Column({ type: 'text', nullable: true }) url: string | null;
   @Column({ type: 'decimal', precision: 5, scale: 4, nullable: true }) score: string | null;
-  @Column({ type: 'varchar', length: 50, default: ContentDetectionStatus.PENDENTE }) status: ContentDetectionStatus;
+  @Column({ type: 'varchar', length: 50, default: ContentDetectionStatus.PENDING }) status: ContentDetectionStatus;
   @Column({ type: 'varchar', length: 100, default: 'uso_nao_autorizado' }) type: string;
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }) detectado_em: Date;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
@@ -1904,14 +1958,14 @@ export class EmployeeEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) cargo: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) departamento: string | null;
   @Column({ type: 'varchar', length: 100, default: 'clt' }) tipo_contrato: string;
-  @Column({ type: 'varchar', length: 50, default: EmployeeStatus.ATIVO }) status: EmployeeStatus;
+  @Column({ type: 'varchar', length: 50, default: EmployeeStatus.ACTIVE }) status: EmployeeStatus;
   @Column({ type: 'text', nullable: true }) email_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) telefone_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) cpf_encrypted: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) salario: string | null;
   @Column({ type: 'timestamp', nullable: true }) data_admissao: Date | null;
   @Column({ type: 'timestamp', nullable: true }) data_demissao: Date | null;
-  @Column({ type: 'jsonb', default: [] }) documentos: unknown[];
+  @Column({ type: 'jsonb', default: [] }) documents: unknown[];
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
@@ -1939,7 +1993,7 @@ export class PayrollEntryEntity {
   @Column({ type: 'decimal', precision: 15, scale: 2 }) salario_bruto: string;
   @Column({ type: 'decimal', precision: 15, scale: 2, default: '0' }) descontos: string;
   @Column({ type: 'decimal', precision: 15, scale: 2 }) salario_liquido: string;
-  @Column({ type: 'varchar', length: 50, default: PayrollStatus.PENDENTE }) status: PayrollStatus;
+  @Column({ type: 'varchar', length: 50, default: PayrollStatus.PENDING }) status: PayrollStatus;
   @Column({ type: 'text', nullable: true }) arquivo_url: string | null;
   @Column({ type: 'timestamp', nullable: true }) pago_em: Date | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
@@ -1964,7 +2018,7 @@ export class LeaveRequestEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid' }) employee_id: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
-  @Column({ type: 'varchar', length: 50, default: LeaveRequestStatus.PENDENTE }) status: LeaveRequestStatus;
+  @Column({ type: 'varchar', length: 50, default: LeaveRequestStatus.PENDING }) status: LeaveRequestStatus;
   @Column({ type: 'timestamp' }) start_date: Date;
   @Column({ type: 'timestamp' }) end_date: Date;
   @Column({ type: 'text', nullable: true }) motivo: string | null;

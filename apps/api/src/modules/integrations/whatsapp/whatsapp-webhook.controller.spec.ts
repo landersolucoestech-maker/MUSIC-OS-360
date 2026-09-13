@@ -35,8 +35,9 @@ function makeController(overrides: {
   const musicChat: any = {
     handleInboundMessage: overrides.handleInboundMessage ?? jest.fn().mockResolvedValue({ action: 'received' }),
   };
+  const config: any = { get: jest.fn((key: string) => process.env[key]) };
   return {
-    controller: new WhatsAppWebhookController(whatsapp, webhookSvc, musicChat),
+    controller: new WhatsAppWebhookController(whatsapp, webhookSvc, musicChat, config),
     whatsapp, webhookSvc, musicChat, ingestSpy, markProcessedSpy,
   };
 }

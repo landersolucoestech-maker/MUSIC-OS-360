@@ -5,6 +5,7 @@ import {
 import type { RawBodyRequest } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { ApiExcludeController } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 import { Public } from '../../../core/decorators/public.decorator';
 import { WhatsAppCloudProvider } from './whatsapp-cloud.provider';
 import { WebhookService } from '../webhooks/webhook.service';
@@ -39,6 +40,7 @@ export class WhatsAppWebhookController {
     private readonly whatsapp: WhatsAppCloudProvider,
     private readonly webhookSvc: WebhookService,
     private readonly musicChat: MusicChatAutomationService,
+    private readonly config: ConfigService,
   ) {}
 
   @Public()
@@ -109,7 +111,7 @@ export class WhatsAppWebhookController {
    * é sempre 403 — nunca "processa mesmo assim".
    */
   private verifySignature(req: RawBodyRequest<Request>, signature: string | undefined): void {
-    const appSecret = process.env['META_APP_SECRET'] ?? '';
+    const appSecret = this.config.get<string>('META_APP_SECRET') ?? '';
     if (!appSecret) {
       this.logger.error('[whatsapp/webhook] META_APP_SECRET não configurado — webhook rejeitado');
       throw new ServiceUnavailableException('WhatsApp webhook não configurado: META_APP_SECRET ausente');

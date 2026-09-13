@@ -18,7 +18,7 @@ describe('WorkRegistryValidationService', () => {
   it('passes a valid work (title + one author at 100%)', () => {
     const issues = work.validate(
       asWork({ title: 'Minha Obra', ai_used: false }),
-      [share({ percentual: '100', papel: 'autor', titular_nome: 'A', deleted_at: null })],
+      [share({ percentage: '100', party_role: 'autor', holder_name: 'A', deleted_at: null })],
     );
     expect(errors(issues)).toHaveLength(0);
   });
@@ -31,7 +31,7 @@ describe('WorkRegistryValidationService', () => {
   it('flags splits that do not sum to 100%', () => {
     const issues = work.validate(
       asWork({ title: 'X', ai_used: false }),
-      [share({ percentual: '60', papel: 'autor', titular_nome: 'A', deleted_at: null })],
+      [share({ percentage: '60', party_role: 'autor', holder_name: 'A', deleted_at: null })],
     );
     expect(codes(issues)).toContain('work_split_not_100');
   });
@@ -39,17 +39,17 @@ describe('WorkRegistryValidationService', () => {
   it('requires AI tools/prompts when ai_used is true', () => {
     const issues = work.validate(
       asWork({ title: 'X', ai_used: true, ai_tools: [], ai_prompts: [] }),
-      [share({ percentual: '100', papel: 'autor', titular_nome: 'A', deleted_at: null })],
+      [share({ percentage: '100', party_role: 'autor', holder_name: 'A', deleted_at: null })],
     );
     expect(codes(issues)).toContain('work_ai_declaration_missing');
   });
 
   // ── Fase 5 / C6: elegibilidade de registro (share_type IS NULL) ──────────────
 
-  it('excludes financial/pendente shares from author count and percentual sum', () => {
+  it('excludes financial/pendente shares from author count and percentage sum', () => {
     const issues = work.validate(
       asWork({ title: 'X', ai_used: false }),
-      [financialShare({ percentual: '100', papel: 'autor', titular_nome: 'Financeiro', deleted_at: null })],
+      [financialShare({ percentage: '100', party_role: 'autor', holder_name: 'Financeiro', deleted_at: null })],
     );
     expect(codes(issues)).toContain('work_no_author');
     expect(codes(issues)).not.toContain('work_split_not_100');
@@ -58,34 +58,34 @@ describe('WorkRegistryValidationService', () => {
   it('excludes soft-deleted shares even when share_type is null', () => {
     const issues = work.validate(
       asWork({ title: 'X', ai_used: false }),
-      [share({ percentual: '100', papel: 'autor', titular_nome: 'A', deleted_at: new Date() })],
+      [share({ percentage: '100', party_role: 'autor', holder_name: 'A', deleted_at: new Date() })],
     );
     expect(codes(issues)).toContain('work_no_author');
   });
 
-  it('flags an eligible share with null titular_nome instead of silently treating it as ""', () => {
+  it('flags an eligible share with null holder_name instead of silently treating it as ""', () => {
     const issues = work.validate(
       asWork({ title: 'X', ai_used: false }),
-      [share({ percentual: '100', papel: 'autor', titular_nome: null, deleted_at: null })],
+      [share({ percentage: '100', party_role: 'autor', holder_name: null, deleted_at: null })],
     );
-    expect(codes(issues)).toContain('work_split_titular_nome_missing');
+    expect(codes(issues)).toContain('work_split_holder_name_missing');
   });
 
-  it('flags an eligible share with null percentual instead of coercing it to 0 (and correctly reports the resulting sum mismatch)', () => {
+  it('flags an eligible share with null percentage instead of coercing it to 0 (and correctly reports the resulting sum mismatch)', () => {
     const issues = work.validate(
       asWork({ title: 'X', ai_used: false }),
-      [share({ percentual: null, papel: 'autor', titular_nome: 'A', deleted_at: null })],
+      [share({ percentage: null, party_role: 'autor', holder_name: 'A', deleted_at: null })],
     );
-    expect(codes(issues)).toContain('work_split_percentual_missing');
+    expect(codes(issues)).toContain('work_split_percentage_missing');
     expect(codes(issues)).toContain('work_split_not_100');
   });
 
-  it('sums percentual only across eligible shares (mixed financial + registry set)', () => {
+  it('sums percentage only across eligible shares (mixed financial + registry set)', () => {
     const issues = work.validate(
       asWork({ title: 'X', ai_used: false }),
       [
-        share({ percentual: '100', papel: 'autor', titular_nome: 'A', deleted_at: null }),
-        financialShare({ percentual: '500', papel: 'autor', titular_nome: 'Financeiro', deleted_at: null }),
+        share({ percentage: '100', party_role: 'autor', holder_name: 'A', deleted_at: null }),
+        financialShare({ percentage: '500', party_role: 'autor', holder_name: 'Financeiro', deleted_at: null }),
       ],
     );
     expect(errors(issues)).toHaveLength(0);
@@ -122,7 +122,7 @@ describe('RecordingRegistryValidationService', () => {
   it('a financial/pendente share role does not satisfy interpreter/producer requirements', () => {
     const issues = recording.validate(
       asRec({ ...valid(), artist_id: null, phonographic_producer_id: null, produtores: null }),
-      [financialShare({ papel: 'produtor', titular_nome: 'Financeiro' })],
+      [financialShare({ party_role: 'produtor', holder_name: 'Financeiro' })],
     );
     expect(codes(issues)).toContain('recording_producer_required');
   });
@@ -130,7 +130,7 @@ describe('RecordingRegistryValidationService', () => {
   it('an eligible share with an interpreter role satisfies the interpreter requirement', () => {
     const issues = recording.validate(
       asRec({ ...valid(), artist_id: null }),
-      [share({ papel: 'interpretes', titular_nome: 'A' })],
+      [share({ party_role: 'interpretes', holder_name: 'A' })],
     );
     expect(codes(issues)).not.toContain('recording_no_interpreter');
   });

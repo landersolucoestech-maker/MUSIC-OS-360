@@ -1,3 +1,4 @@
+import type { ConfigService } from '@nestjs/config';
 import { SoundchartsService } from '../../integrations/soundcharts/soundcharts.service';
 import {
   buildCanonicalCandidates,
@@ -5,6 +6,8 @@ import {
   evaluateCrossPlatformEvidence,
   resolveCanonicalUuidForProvider,
 } from './soundcharts-canonical-candidates.util';
+
+const fakeConfig = { get: jest.fn() } as unknown as ConfigService;
 
 const URLS = {
   spotifyUrl: 'https://open.spotify.com/artist/6qqNVTkY8uBg9cP3Jd7DAH',
@@ -170,7 +173,7 @@ describe('checkRegisteredHandleAgainstRegistry (Fase 1.3 — evidência secundá
 
 describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (Soundcharts 06)', () => {
   it('Spotify resolve UUID → Instagram usa o mesmo UUID, sem consultar YouTube/Deezer/SoundCloud/handle próprio', async () => {
-    const soundcharts = new SoundchartsService();
+    const soundcharts = new SoundchartsService(fakeConfig);
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       if (platform === 'spotify') return 'sc-uuid-1';
       throw new Error(`não deveria consultar ${platform}`);
@@ -184,7 +187,7 @@ describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (S
   });
 
   it('Spotify resolve UUID → TikTok usa o mesmo UUID, sem consultar o handle próprio', async () => {
-    const soundcharts = new SoundchartsService();
+    const soundcharts = new SoundchartsService(fakeConfig);
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       if (platform === 'spotify') return 'sc-uuid-1';
       throw new Error(`não deveria consultar ${platform}`);
@@ -198,7 +201,7 @@ describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (S
   });
 
   it('Spotify falha → YouTube resolve (Deezer/SoundCloud/handle próprio não são consultados)', async () => {
-    const soundcharts = new SoundchartsService();
+    const soundcharts = new SoundchartsService(fakeConfig);
     const attempted: string[] = [];
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       attempted.push(platform);
@@ -214,7 +217,7 @@ describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (S
   });
 
   it('Spotify e YouTube falham → Deezer resolve (SoundCloud/handle próprio não são consultados)', async () => {
-    const soundcharts = new SoundchartsService();
+    const soundcharts = new SoundchartsService(fakeConfig);
     const attempted: string[] = [];
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       attempted.push(platform);
@@ -229,7 +232,7 @@ describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (S
   });
 
   it('todas as 4 canônicas falham → ownPlatform (handle próprio) é o fallback final', async () => {
-    const soundcharts = new SoundchartsService();
+    const soundcharts = new SoundchartsService(fakeConfig);
     const attempted: string[] = [];
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       attempted.push(platform);
@@ -244,7 +247,7 @@ describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (S
   });
 
   it('sem nenhuma URL canônica cadastrada, resolve direto pelo handle próprio', async () => {
-    const soundcharts = new SoundchartsService();
+    const soundcharts = new SoundchartsService(fakeConfig);
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       if (platform === 'tiktok') return 'sc-uuid-own';
       throw new Error(`não deveria consultar ${platform}`);
@@ -258,7 +261,7 @@ describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (S
   });
 
   it('todas as tentativas (inclusive ownPlatform) falham → erro agregado, sem UUID inventado', async () => {
-    const soundcharts = new SoundchartsService();
+    const soundcharts = new SoundchartsService(fakeConfig);
     soundcharts.resolveArtistByPlatform = jest.fn(async () => { throw new Error('não encontrado'); }) as never;
 
     await expect(

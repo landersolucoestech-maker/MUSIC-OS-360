@@ -61,14 +61,32 @@ export class NotificationsProcessor extends WorkerHost {
     // Fail-closed: an async job without a tenant must NOT touch tenant-scoped data.
     if (!d.tenantId) { this.logger.warn(`[notifications/send] job ${job.id} sem tenantId — abortado (fail-closed)`); return null; }
 
-    // P2-5: run the write inside the tenant DB context so RLS applies once the
-    // app connects via the NOBYPASSRLS role + DATABASE_SESSION_CONTEXT_ENABLED=true.
-    // Flag OFF → passthrough (default manager), identical to current behaviour.
+    // find-8dfe93c3 / find-32bf2e0a: BullMQ's at-least-once delivery can
+    // redeliver the SAME job.id (a worker crash/stall after processing but
+    // before ack, or a stalled-job lock-TTL expiry while a worker is still
+    // finishing — a documented at-least-once scenario, not hypothetical).
+    // bullmq_job_id is stored in `metadata` (no schema migration for a
+    // low-volume table) and a partial UNIQUE index on it (migration
+    // 20260912000001) makes dedup atomic in the DB regardless of worker
+    // interleaving.
+    //
+    // find-855bcd84: an earlier version of this fix relied on catching a
+    // 23505 unique-violation from repo.save() and re-querying inside the SAME
+    // transaction — but with DATABASE_SESSION_CONTEXT_ENABLED=true (the
+    // runInTenantContext manager IS a live transaction), Postgres aborts the
+    // whole transaction after any statement error, so the re-query itself
+    // fails with 25P02 ("current transaction is aborted"). INSERT ... ON
+    // CONFLICT DO NOTHING never raises an error on the losing side — no
+    // statement fails, so there is nothing to abort the transaction — making
+    // this correct under both the transactional (flag ON) and passthrough
+    // (flag OFF) paths.
+    const jobId = job.id;
+    let alreadyExisted = false;
     const saved = await this.dbContext.runInTenantContext(
       { tenantId: d.tenantId, orgId: null, role: null },
       async (manager) => {
         const repo = manager ? manager.getRepository(NotificationEntity) : this.repo!;
-        const entity = repo.create({
+        const values = {
           tenant_id: d.tenantId,
           user_id:   d.userId ?? '',
           title:     d.title,
@@ -76,11 +94,37 @@ export class NotificationsProcessor extends WorkerHost {
           type:      d.type,
           entity:    d.entity   ?? null,
           entity_id: d.entityId ?? null,
-          metadata:  d.metadata ?? {},
-        });
-        return (await repo.save(entity)) as NotificationEntity;
+          metadata:  { ...(d.metadata ?? {}), ...(jobId ? { bullmq_job_id: jobId } : {}) },
+        };
+
+        const insert = await repo
+          .createQueryBuilder()
+          .insert()
+          .into(NotificationEntity)
+          .values(values as never)
+          .onConflict(
+            `("tenant_id", ((metadata ->> 'bullmq_job_id'))) WHERE (metadata ->> 'bullmq_job_id') IS NOT NULL DO NOTHING`,
+          )
+          .returning('*')
+          .execute();
+
+        if (insert.raw?.[0]) return insert.raw[0] as NotificationEntity;
+
+        // Conflict: another worker already won the race for this job.id.
+        const existing = await repo
+          .createQueryBuilder('n')
+          .where('n.tenant_id = :tenantId', { tenantId: d.tenantId })
+          .andWhere("n.metadata->>'bullmq_job_id' = :jobId", { jobId })
+          .getOne();
+        alreadyExisted = true;
+        return existing as NotificationEntity;
       },
     );
+
+    if (alreadyExisted) {
+      this.logger.log(`[notifications/send] job=${jobId} já processado (redelivery) — persistência/WS pulados, id=${saved.id}`);
+      return saved;
+    }
 
     this.logger.log(`[notifications/send] persistida id=${saved.id}`);
 

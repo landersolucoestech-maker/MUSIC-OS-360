@@ -21,7 +21,9 @@
  * que roda a MESMA verificação para todas):
  *
  *   1. artist-external-profile-sync.service.ts — os métodos PRIVADOS
- *      extractSpotifyArtistId/extractYouTubeChannelId extraem um ID em
+ *      extractSpotifyArtistId/resolveYoutubeRef (renomeado de
+ *      extractYouTubeChannelId — find-eb3c5c45-class, agora delega ao
+ *      parser canônico único em youtube-ref.util.ts) extraem um ID/ref em
  *      memória para chamar as APIs reais do Spotify/YouTube diretamente.
  *
  *   2. create-artist.dto.spec.ts — teste de regressão que envia os campos
@@ -180,7 +182,11 @@ describe('Guarda permanente: domínio Artista só usa foto_url/spotify_url/youtu
       'utf8',
     );
     expect(content).toMatch(/private\s+extractSpotifyArtistId/);
-    expect(content).toMatch(/private\s+extractYouTubeChannelId/);
+    // find-eb3c5c45-class: extractYouTubeChannelId was renamed to
+    // resolveYoutubeRef and now delegates to youtube-ref.util.ts's
+    // parseYoutubeRef (the single canonical YouTube ref parser) — still a
+    // private, in-memory-only method, same exception category.
+    expect(content).toMatch(/private\s+resolveYoutubeRef/);
   });
 
   it('nenhuma exceção documentada persiste o ID em artist_platform_profiles.raw_payload ou em qualquer coluna de artists', () => {

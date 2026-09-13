@@ -2,7 +2,7 @@
  * leads.workflow.ts
  *
  * Workflow de ciclo de vida para Leads (CRM).
- * Estados: novo → contato → qualificado → proposta → fechado / perdido
+ * Estados: new → contacted → qualified → proposal → closed / lost
  */
 
 import { LeadStatus } from '@music-os-360/types';
@@ -11,67 +11,67 @@ import { WorkflowDefinition } from '../workflow.types';
 export const LEADS_WORKFLOW: WorkflowDefinition<string> = {
   name:         'leads',
   entityType:   'lead',
-  initialState: LeadStatus.NOVO,
+  initialState: LeadStatus.NEW,
   states: Object.values(LeadStatus),
   transitions: [
     {
-      from:  LeadStatus.NOVO,
-      to:    LeadStatus.CONTATO,
+      from:  LeadStatus.NEW,
+      to:    LeadStatus.CONTACTED,
       label: 'Iniciar Contato',
       roles: ['super_admin','tenant_owner','owner','admin','manager','comercial'],
     },
     {
-      from:  [LeadStatus.NOVO, LeadStatus.CONTATO],
-      to:    LeadStatus.EM_CONTATO,
+      from:  [LeadStatus.NEW, LeadStatus.CONTACTED],
+      to:    LeadStatus.IN_CONTACT,
       label: 'Em Contato',
       roles: ['super_admin','tenant_owner','owner','admin','manager','comercial'],
     },
     {
-      from:  [LeadStatus.CONTATO, LeadStatus.EM_CONTATO],
-      to:    LeadStatus.QUALIFICADO,
+      from:  [LeadStatus.CONTACTED, LeadStatus.IN_CONTACT],
+      to:    LeadStatus.QUALIFIED,
       label: 'Qualificar Lead',
       roles: ['super_admin','tenant_owner','owner','admin','manager','comercial'],
     },
     {
-      from:  LeadStatus.QUALIFICADO,
-      to:    LeadStatus.PROPOSTA,
+      from:  LeadStatus.QUALIFIED,
+      to:    LeadStatus.PROPOSAL,
       label: 'Enviar Proposta',
       roles: ['super_admin','tenant_owner','owner','admin','manager','comercial'],
     },
     {
-      from:  LeadStatus.PROPOSTA,
-      to:    LeadStatus.NEGOCIACAO,
+      from:  LeadStatus.PROPOSAL,
+      to:    LeadStatus.NEGOTIATION,
       label: 'Em Negociação',
       roles: ['super_admin','tenant_owner','owner','admin','manager','comercial'],
     },
     {
-      from:  [LeadStatus.PROPOSTA, LeadStatus.NEGOCIACAO],
-      to:    LeadStatus.FECHADO,
+      from:  [LeadStatus.PROPOSAL, LeadStatus.NEGOTIATION],
+      to:    LeadStatus.CLOSED,
       label: 'Fechar Negócio',
       roles: ['super_admin','tenant_owner','owner','admin','manager','comercial'],
     },
     {
       from:  [
-        LeadStatus.NOVO,
-        LeadStatus.CONTATO,
-        LeadStatus.EM_CONTATO,
-        LeadStatus.QUALIFICADO,
-        LeadStatus.PROPOSTA,
-        LeadStatus.NEGOCIACAO,
+        LeadStatus.NEW,
+        LeadStatus.CONTACTED,
+        LeadStatus.IN_CONTACT,
+        LeadStatus.QUALIFIED,
+        LeadStatus.PROPOSAL,
+        LeadStatus.NEGOTIATION,
       ],
-      to:    LeadStatus.PERDIDO,
+      to:    LeadStatus.LOST,
       label: 'Marcar como Perdido',
       roles: ['super_admin','tenant_owner','owner','admin','manager','comercial'],
     },
     {
-      from:  [LeadStatus.PERDIDO, LeadStatus.INATIVO],
-      to:    LeadStatus.NOVO,
+      from:  [LeadStatus.LOST, LeadStatus.INACTIVE],
+      to:    LeadStatus.NEW,
       label: 'Reativar Lead',
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
     },
     {
-      from:  [LeadStatus.FECHADO, LeadStatus.PERDIDO],
-      to:    LeadStatus.INATIVO,
+      from:  [LeadStatus.CLOSED, LeadStatus.LOST],
+      to:    LeadStatus.INACTIVE,
       label: 'Arquivar',
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
     },

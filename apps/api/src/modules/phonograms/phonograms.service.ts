@@ -3,6 +3,8 @@ import { DataSource, Repository, SelectQueryBuilder } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { PhonogramEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
+import { normalizeIsrc, isValidIsrc } from '../registry/validators/registry-validators';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { groupCount, GroupStatsResult } from '../../common/stats/group-count.util';
 import type { CreatePhonogramDto } from './dto/create-phonogram.dto';
@@ -18,11 +20,13 @@ import {
 export class PhonogramsService {
   private readonly logger = new Logger(PhonogramsService.name);
   private readonly repo: Repository<PhonogramEntity> | null = null;
+  private readonly ds: DataSource | null;
 
   constructor(
     @Inject(DATA_SOURCE) ds: DataSource | null,
     private readonly events: EventsService,
   ) {
+    this.ds = ds;
     if (ds) this.repo = ds.getRepository(PhonogramEntity);
   }
 
@@ -138,6 +142,24 @@ export class PhonogramsService {
     delete out['duration'];
     delete out['fileUrl'];
 
+    // find-1e77a856: ISRC had zero format validation/normalization on this
+    // write path (only the registry-submission flow validated it) — the same
+    // real ISRC could be persisted in different textual forms depending on
+    // entry path. Normalize to canonical uppercase/no-separator form and
+    // reject malformed values before persist, same rule the registry
+    // submission validator already enforces (registry-validators.ts).
+    if (typeof out['isrc'] === 'string' && out['isrc'].trim() !== '') {
+      const canonicalIsrc = normalizeIsrc(out['isrc']);
+      if (!isValidIsrc(canonicalIsrc)) {
+        throw new BadRequestException({
+          code: 'PHONOGRAM_ISRC_INVALID',
+          message: 'ISRC inválido. Formato esperado: CCXXXYYNNNNN (12 caracteres, hífens opcionais).',
+          field: 'isrc',
+        });
+      }
+      out['isrc'] = canonicalIsrc;
+    }
+
     // Remove null/undefined — preserva a semântica atual de PATCH (null não
     // limpa coluna nesta fase; ver dívida C2.4).
     Object.keys(out).forEach((key) => (out[key] === undefined || out[key] === null) && delete out[key]);
@@ -156,6 +178,10 @@ export class PhonogramsService {
       });
     }
     this.logLegacyAliasUsage(legacyAliasesUsed, 'create', tenantId);
+    // find-f81eebf2: work_id/artist_id had no FK (DB or app-layer) — a
+    // phonogram could silently reference another tenant's work/artist.
+    await assertSameTenantFk(this.ds!, 'works',   resolved.work_id,   tenantId, 'Obra');
+    await assertSameTenantFk(this.ds!, 'artists', resolved.artist_id, tenantId, 'Artista');
 
     const normalized = this.buildEntityPayload(input, resolved);
     const entity = this.repo!.create({
@@ -187,6 +213,10 @@ export class PhonogramsService {
     // update: ausência de título é válida (PATCH parcial); se enviado, o
     // próprio resolvePhonogramAliases() já garantiu conteúdo/conflito válidos.
     this.logLegacyAliasUsage(legacyAliasesUsed, 'update', tenantId, id);
+    // find-f81eebf2: only validate when the patch actually sets work_id/artist_id
+    // — an omitted field means "unchanged", already validated at its own create time.
+    if (resolved.work_id !== undefined)   await assertSameTenantFk(this.ds!, 'works',   resolved.work_id,   tenantId, 'Obra');
+    if (resolved.artist_id !== undefined) await assertSameTenantFk(this.ds!, 'artists', resolved.artist_id, tenantId, 'Artista');
 
     const normalized = this.buildEntityPayload(input, resolved);
     delete normalized['expectedUpdatedAt'];

@@ -10,6 +10,7 @@ import { ProjectStatus } from '@music-os-360/types';
 import { WorkflowService } from '../../core/workflow/workflow.service';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 
 type TrackRole = 'compositor' | 'interprete' | 'produtor';
 
@@ -219,10 +220,13 @@ export class ProjectsService {
 
   async create(tenantId: string, userId: string, dto: CreateProjectDto): Promise<ProjectWithMusicas> {
     const { musicas, ...rest } = dto as CreateProjectDto & { musicas?: Record<string, unknown>[] };
+    // find-50dd3726: artist_id had no cross-tenant ownership check — a
+    // project could silently reference another tenant's artist.
+    await assertSameTenantFk(this.ds!, 'artists', (rest as { artist_id?: string }).artist_id, tenantId, 'Artista');
     const entity = this.repo!.create({
       tenant_id:  tenantId,
       ...(rest as Record<string, unknown>),
-      status:     ProjectStatus.PLANEJAMENTO,
+      status:     ProjectStatus.PLANNING,
       created_by: userId,
       updated_by: userId,
     } as Partial<ProjectEntity>);
@@ -245,6 +249,11 @@ export class ProjectsService {
 
     const { status: _s, musicas, expectedUpdatedAt, ...restFields } = dtoMap as Record<string, unknown> & { musicas?: Record<string, unknown>[]; expectedUpdatedAt?: string };
     void _s;
+    // find-50dd3726: only validate when the patch actually sets artist_id —
+    // omitted means "unchanged", already validated at its own create time.
+    if (restFields['artist_id'] !== undefined) {
+      await assertSameTenantFk(this.ds!, 'artists', restFields['artist_id'] as string | undefined, tenantId, 'Artista');
+    }
     const conflictMessage = 'Este projeto foi alterado por outro usuário desde que você o carregou. Recarregue e tente novamente.';
 
     const nonStatusUpdates: Record<string, unknown> = {
@@ -300,7 +309,7 @@ export class ProjectsService {
     project: ProjectEntity,
     toStatus: string,
   ): void {
-    if (toStatus !== ProjectStatus.CONCLUIDO) return;
+    if (toStatus !== ProjectStatus.COMPLETED) return;
     const completedAt = new Date().toISOString();
     this.events.emitTyped(DOMAIN_EVENTS.PROJECT_COMPLETED, {
       tenantId,

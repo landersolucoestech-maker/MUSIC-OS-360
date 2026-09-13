@@ -12,6 +12,16 @@ import { IdentifierType, RegistrableEntityType } from '@music-os-360/types';
 import type { CreateExternalIdentifierDto, UpdateExternalIdentifierDto } from './dto/external-identifier.dto';
 import { isValidIsrc, isValidIswc, normalizeIsrc, normalizeIswc } from './validators/registry-validators';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
+
+/** Physical table backing each RegistrableEntityType — all tenant_id-scoped. */
+const ENTITY_TYPE_TABLE: Record<RegistrableEntityType, string> = {
+  [RegistrableEntityType.WORK]: 'works',
+  [RegistrableEntityType.RECORDING]: 'phonograms',
+  [RegistrableEntityType.RIGHTS_HOLDER]: 'rights_holders',
+  [RegistrableEntityType.RELEASE]: 'releases',
+  [RegistrableEntityType.SUBMISSION]: 'society_submissions',
+};
 
 const ENTITY_TYPE_ALIASES: Record<string, RegistrableEntityType> = {
   work: RegistrableEntityType.WORK,
@@ -31,8 +41,10 @@ const ENTITY_TYPE_ALIASES: Record<string, RegistrableEntityType> = {
 @Injectable()
 export class ExternalIdentifierService {
   private readonly repo: Repository<ExternalIdentifierEntity> | null = null;
+  private readonly ds: DataSource | null;
 
   constructor(@Inject(DATA_SOURCE) ds: DataSource | null) {
+    this.ds = ds;
     if (ds) this.repo = ds.getRepository(ExternalIdentifierEntity);
   }
 
@@ -65,6 +77,10 @@ export class ExternalIdentifierService {
     dto: CreateExternalIdentifierDto,
   ): Promise<ExternalIdentifierEntity> {
     const entityType = this.normalizeEntityType(entityTypeRaw);
+    // find-bb1178da: entityId (route param) had no ownership check against
+    // its backing table — an external identifier could silently attach to
+    // another tenant's work/recording/rights-holder/release/submission.
+    await assertSameTenantFk(this.ds!, ENTITY_TYPE_TABLE[entityType], entityId, tenantId, 'Entidade');
     const value = this.validateAndNormalizeValue(dto.identifier_type, dto.identifier_value);
 
     const entity = this.repository.create({

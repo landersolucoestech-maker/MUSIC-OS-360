@@ -3,6 +3,7 @@ import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { FinanceCategoryKeywordRuleEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { matchCategoryRule } from './finance-category-matcher.util';
 import type {
   CreateFinanceCategoryRuleDto,
@@ -57,12 +58,21 @@ export class FinanceCategoryRulesService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateFinanceCategoryRuleDto): Promise<FinanceCategoryKeywordRuleEntity> {
+    // find-de6031eb: category_id had no cross-tenant ownership check — a
+    // categorization rule could silently reference another tenant's category.
+    await assertSameTenantFk(this.repository.manager.connection, 'financial_categories', (dto as { category_id?: string }).category_id, tenantId, 'Categoria financeira');
     const item = this.repository.create({ tenant_id: tenantId, ...dto, created_by: userId, updated_by: userId } as any);
     return this.repository.save(item as any) as any;
   }
 
   async update(tenantId: string, userId: string, id: string, dto: UpdateFinanceCategoryRuleDto): Promise<FinanceCategoryKeywordRuleEntity> {
     await this.findById(tenantId, id);
+    // find-de6031eb: only validate when the patch actually sets category_id —
+    // omitted means "unchanged", already validated at its own create time.
+    const dtoCategoryId = (dto as { category_id?: string }).category_id;
+    if (dtoCategoryId !== undefined) {
+      await assertSameTenantFk(this.repository.manager.connection, 'financial_categories', dtoCategoryId, tenantId, 'Categoria financeira');
+    }
     const updates: Record<string, unknown> = { ...dto, updated_at: new Date(), updated_by: userId };
     const expectedUpdatedAt = updates['expectedUpdatedAt'] as string | undefined;
     delete updates['expectedUpdatedAt'];

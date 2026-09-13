@@ -1,7 +1,7 @@
 /**
  * shares.dto.spec.ts
  *
- * Fase 5 / C6: holderName é a única entrada do DTO que alimenta titular_nome
+ * Fase 5 / C6: holderName é a única entrada do DTO que alimenta holder_name
  * (toColumns() em shares.service.ts). Reproduz o ValidationPipe global
  * (whitelist + forbidNonWhitelisted, ver main.ts) para provar, sem subir a
  * app inteira, que vazio/whitespace-only é rejeitado com 400 — nunca
@@ -45,7 +45,7 @@ describe('CreateShareDto/UpdateShareDto — holderName não aceita vazio/whitesp
   });
 
   it('aceita holderName ausente (campo opcional)', async () => {
-    const errors = await validatePayload(CreateShareDto, { detentor: 'João' });
+    const errors = await validatePayload(CreateShareDto, { holder: 'João' });
     expect(errors).toEqual([]);
   });
 
@@ -72,10 +72,10 @@ describe('CreateShareDto/UpdateShareDto — holderName não aceita vazio/whitesp
 });
 
 describe('CreateShareDto — regressão: campos do share financeiro permanecem intactos (Fase 5 / C6)', () => {
-  // O C6 isolou titular_nome/percentual (registro) de detentor/artista_externo/
-  // pagador/destinatario (financeiro) — nunca removeu ou renomeou os campos
+  // O C6 isolou holder_name/percentage (registro) de holder/artista_externo/
+  // pagador/recipient (financeiro) — nunca removeu ou renomeou os campos
   // financeiros em si. Esta regressão falha se algum deles for removido/renomeado.
-  const FINANCIAL_FIELDS = ['detentor', 'artista_externo', 'pagador', 'destinatario', 'share_type', 'percentual', 'direcao', 'type'];
+  const FINANCIAL_FIELDS = ['holder', 'artista_externo', 'pagador', 'recipient', 'share_type', 'percentage', 'direction', 'type'];
 
   it('CreateShareDto ainda declara todos os campos financeiros', () => {
     const props = decoratedPropertyNames(CreateShareDto);
@@ -84,7 +84,7 @@ describe('CreateShareDto — regressão: campos do share financeiro permanecem i
 
   it('um payload só com campos financeiros continua sendo aceito pelo pipe (nenhum deles virou obrigatório/removido)', async () => {
     const errors = await validatePayload(CreateShareDto, {
-      detentor: 'D', artista_externo: 'AE', pagador: 'P', destinatario: 'DEST', share_type: 'pendente', percentual: 100,
+      holder: 'D', artista_externo: 'AE', pagador: 'P', recipient: 'DEST', share_type: 'pendente', percentage: 100,
     });
     expect(errors).toEqual([]);
   });

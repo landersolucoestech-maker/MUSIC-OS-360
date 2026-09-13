@@ -148,6 +148,7 @@ describe('Fonte única Soundcharts por card de métrica do artista', () => {
   });
 
   it('Apple Music: permanece NOT_SUPPORTED (nenhum provider de métrica de artista existe para Apple Music)', () => {
-    expect(new SoundchartsService().getAppleMusicSupport()).toBe('NOT_SUPPORTED');
+    const config = { get: jest.fn() } as unknown as ConfigService;
+    expect(new SoundchartsService(config).getAppleMusicSupport()).toBe('NOT_SUPPORTED');
   });
 });

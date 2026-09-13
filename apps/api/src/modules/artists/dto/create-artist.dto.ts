@@ -3,6 +3,18 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ArtistStatus } from '@music-os-360/types';
+import { APPLE_MUSIC_URL_PATTERN } from '../platform-profiles/apple-music-url.util';
+
+// Mesmos padrões usados pelos extractors de sync manual
+// (artist-external-profile-sync.service.ts extractDeezerArtistId/
+// extractSoundCloudSlug/extractInstagramUsername/extractTikTokUsername) —
+// aqui aplicados também no create/update, para que o formato seja validado
+// no mesmo momento para todas as plataformas (spotify/youtube já validavam
+// aqui; as demais só eram validadas no fluxo de sync manual).
+const DEEZER_URL_PATTERN = /^https?:\/\/(?:www\.)?deezer\.com\/(?:[a-z]{2}\/)?artist\/\d+(?:[/?#].*)?$/i;
+const SOUNDCLOUD_URL_PATTERN = /^https?:\/\/(?:www\.|m\.)?soundcloud\.com\/[A-Za-z0-9_-]+\/?(?:[?#].*)?$/i;
+const INSTAGRAM_URL_PATTERN = /^https?:\/\/(?:www\.)?instagram\.com\/[A-Za-z0-9._]{1,30}\/?(?:[?#].*)?$/i;
+const TIKTOK_URL_PATTERN = /^https?:\/\/(?:www\.)?tiktok\.com\/@[A-Za-z0-9._]{1,24}\/?(?:[?#].*)?$/i;
 
 export class CreateArtistDto {
   @ApiProperty({ example: 'Seu Jorge' })
@@ -36,11 +48,11 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsString() titular_conta?: string;
 
   // ── Plataformas extras ───────────────────────────────────────────────────────
-  @ApiPropertyOptional() @IsOptional() @IsString() deezer_url?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() apple_music_url?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() soundcloud_url?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() instagram_url?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() tiktok_url?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @Matches(DEEZER_URL_PATTERN, { message: 'Informe uma URL válida do Deezer' }) deezer_url?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @Matches(APPLE_MUSIC_URL_PATTERN, { message: 'Informe uma URL válida do Apple Music' }) apple_music_url?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @Matches(SOUNDCLOUD_URL_PATTERN, { message: 'Informe uma URL válida do SoundCloud' }) soundcloud_url?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @Matches(INSTAGRAM_URL_PATTERN, { message: 'Informe uma URL válida do Instagram' }) instagram_url?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @Matches(TIKTOK_URL_PATTERN, { message: 'Informe uma URL válida do TikTok' }) tiktok_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() spotify_ouvintes?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() youtube_inscritos?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() deezer_fas?: number;
@@ -74,7 +86,7 @@ export class CreateArtistDto {
 
   // ── Documentos / Mídia ───────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsArray() galeria_urls?: string[];
-  @ApiPropertyOptional() @IsOptional() @IsArray() documentos?: unknown[];
+  @ApiPropertyOptional() @IsOptional() @IsArray() documents?: unknown[];
   @ApiPropertyOptional() @IsOptional() @IsString() documentos_pessoais_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() presskit_url?: string;
 

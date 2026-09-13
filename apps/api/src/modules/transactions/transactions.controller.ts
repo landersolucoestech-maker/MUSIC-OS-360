@@ -15,11 +15,11 @@ import { ZodValidationPipe } from '../../core/pipes/zod-validation.pipe';
 import { TransactionsService } from './transactions.service';
 import { QueryTransactionDto } from './dto/query-transaction.dto';
 import {
-  createTransacaoSchema,
-  patchTransacaoSchema,
-  type CreateTransacaoDto,
-  type PatchTransacaoDto,
-} from './validators/transacao.validator';
+  createTransactionSchema,
+  patchTransactionSchema,
+  type CreateTransactionDto,
+  type PatchTransactionDto,
+} from './validators/transaction.validator';
 
 @ApiTags('Transactions')
 @ApiBearerAuth()
@@ -64,7 +64,7 @@ export class TransactionsController {
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
-    @Body(new ZodValidationPipe(createTransacaoSchema)) dto: CreateTransacaoDto,
+    @Body(new ZodValidationPipe(createTransactionSchema)) dto: CreateTransactionDto,
   ) {
     return this.service.create(tenant.id, user.userId, dto);
   }
@@ -78,7 +78,7 @@ export class TransactionsController {
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(new ZodValidationPipe(createTransacaoSchema)) dto: CreateTransacaoDto,
+    @Body(new ZodValidationPipe(createTransactionSchema)) dto: CreateTransactionDto,
   ) {
     return this.service.update(tenant.id, user.userId, id, dto);
   }
@@ -92,7 +92,7 @@ export class TransactionsController {
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
     @Param('id', ParseUUIDPipe) id: string,
-    @Body(new ZodValidationPipe(patchTransacaoSchema)) dto: PatchTransacaoDto,
+    @Body(new ZodValidationPipe(patchTransactionSchema)) dto: PatchTransactionDto,
   ) {
     return this.service.patch(tenant.id, user.userId, id, dto);
   }

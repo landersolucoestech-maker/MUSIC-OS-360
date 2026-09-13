@@ -61,7 +61,12 @@ export class UsersService {
       .getOne() ?? null;
   }
 
-  async create(tenantId: string, dto: CreateUserDto, invitedBy?: string): Promise<OrgMemberEntity> {
+  async create(
+    tenantId: string,
+    dto: CreateUserDto,
+    invitedBy?: string,
+    actorRole = 'viewer',
+  ): Promise<OrgMemberEntity> {
     const existing = await this.findByUserId(tenantId, dto.userId);
     if (existing) throw new ConflictException('Utilizador já existe neste tenant');
 
@@ -71,6 +76,11 @@ export class UsersService {
       .where('m.tenant_id = :tenantId', { tenantId })
       .getOne();
     if (!anyMember) throw new NotFoundException('Tenant sem organização associada');
+
+    // find-f7bfdd94: create() escrevia dto.role directo em org_members.role sem
+    // passar por assertCanAssignRole — mesma classe de bypass de find-5cc269d3,
+    // só que via POST /users em vez de PATCH /users/:id/role.
+    await this.assertCanAssignRole(tenantId, actorRole, dto.role);
 
     // Dual-write (PASSO 12-G): grava `role` (legado) E `role_id` (canônico resolvido).
     const roleId = await this.roleResolver.resolveOrThrow(tenantId, dto.role);
@@ -391,7 +401,7 @@ export class UsersService {
   ): Promise<void> {
     const slugs = Array.from(new Set([actorRole, targetRole]));
     const roleRows = await this.repo!.manager.query(
-      `SELECT "slug", "hierarchy_level"
+      `SELECT "slug", "hierarchy_level", "is_assignable"
          FROM "roles"
         WHERE "slug" = ANY($1::text[])
           AND ("tenant_id" = $2 OR "tenant_id" IS NULL)
@@ -399,10 +409,19 @@ export class UsersService {
           AND "archived_at" IS NULL
         ORDER BY ("tenant_id" = $2) DESC`,
       [slugs, tenantId],
-    ) as Array<{ slug: string; hierarchy_level: number }>;
+    ) as Array<{ slug: string; hierarchy_level: number; is_assignable: boolean | null }>;
     const levels = new Map<string, number>();
+    const assignable = new Map<string, boolean>();
     for (const row of roleRows) {
       if (!levels.has(row.slug)) levels.set(row.slug, Number(row.hierarchy_level));
+      if (!assignable.has(row.slug)) assignable.set(row.slug, row.is_assignable !== false);
+    }
+    // find-5cc269d3: is_assignable is authoritative and applies regardless of
+    // actor role — super_admin (and any other non-assignable role) can never
+    // be granted through this self-service path, closing the gap where
+    // invite() filtered on is_assignable but assignRole() did not.
+    if (assignable.get(targetRole) === false) {
+      throw new BadRequestException(`O papel '${targetRole}' não pode ser atribuído por este fluxo`);
     }
     const actorLevel = levels.get(actorRole) ?? ROLE_HIERARCHY[actorRole] ?? 0;
     const targetLevel = levels.get(targetRole) ?? ROLE_HIERARCHY[targetRole] ?? 0;

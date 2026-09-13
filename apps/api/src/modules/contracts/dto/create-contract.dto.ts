@@ -39,9 +39,9 @@ export class CreateContractDto {
   @IsUUID()
   artistId?: string;
 
-  // Sem default — service.create() força ContractStatus.RASCUNHO na criação.
+  // Sem default — service.create() força ContractStatus.DRAFT na criação.
   // Manter default aqui injectava 'draft' em PATCH parcial (via PartialType)
-  // e disparava workflow 'rascunho → draft' indevido.
+  // e disparava workflow 'draft → draft' indevido.
   @ApiPropertyOptional({ example: 'draft' })
   @IsOptional()
   @IsString()
@@ -161,7 +161,7 @@ export class CreateContractDto {
 
   @ApiPropertyOptional({ type: [Object], description: 'Documentos anexos (metadata real de upload R2 — name/size/type/path/url).' })
   @IsOptional() @IsArray()
-  documentos?: unknown[];
+  documents?: unknown[];
 
   // Campo do wizard (regra 2026-07-12: 1 coluna por campo, nome exato)
   @ApiPropertyOptional()

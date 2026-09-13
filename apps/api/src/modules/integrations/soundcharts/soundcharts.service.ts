@@ -11,11 +11,12 @@
  *
  * Credenciais: SOUNDCHARTS_CLIENT_ID/SOUNDCHARTS_CLIENT_SECRET são globais
  * (uma conta Soundcharts para todo o Music OS 360, não por tenant) — por
- * isso lidas direto de process.env, no mesmo padrão dos outros providers em
- * artists/platform-profiles/providers/*, em vez do fluxo de credenciais por
- * tenant do IntegrationBaseService (que não se aplica aqui).
+ * isso lidas via ConfigService (env global da aplicação), em vez do fluxo
+ * de credenciais por tenant do IntegrationBaseService (que não se aplica
+ * aqui).
  */
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { CircuitBreaker } from '../../../core/resilience/circuit-breaker';
 import { resilientFetch } from '../../../core/resilience/resilient-fetch';
 import { assertAllowedHost, assertSafePathSegment } from '../../../core/resilience/safe-url';
@@ -67,8 +68,10 @@ export class SoundchartsService {
   private cachedToken: CachedToken | null = null;
   private readonly uuidCache = new Map<string, CachedUuid>();
 
+  constructor(private readonly config: ConfigService) {}
+
   isConfigured(): boolean {
-    return !!(process.env['SOUNDCHARTS_CLIENT_ID'] && process.env['SOUNDCHARTS_CLIENT_SECRET']);
+    return !!(this.config.get<string>('SOUNDCHARTS_CLIENT_ID') && this.config.get<string>('SOUNDCHARTS_CLIENT_SECRET'));
   }
 
   // ── Autenticação (client_credentials, cache até próximo da expiração) ────
@@ -78,8 +81,8 @@ export class SoundchartsService {
       return this.cachedToken.token;
     }
 
-    const clientId = process.env['SOUNDCHARTS_CLIENT_ID'];
-    const clientSecret = process.env['SOUNDCHARTS_CLIENT_SECRET'];
+    const clientId = this.config.get<string>('SOUNDCHARTS_CLIENT_ID');
+    const clientSecret = this.config.get<string>('SOUNDCHARTS_CLIENT_SECRET');
     if (!clientId || !clientSecret) {
       throw new SoundchartsNotConfiguredError();
     }

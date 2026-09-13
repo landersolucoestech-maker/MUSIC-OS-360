@@ -14,7 +14,9 @@
  * como colunas). Apenas compositores (já uma lista simples de nomes) é
  * exportado/importado.
  */
+import { BadRequestException } from '@nestjs/common';
 import type { DataSource, QueryRunner } from 'typeorm';
+import { normalizeIsrc, isValidIsrc } from '../../registry/validators/registry-validators';
 
 interface FaixaItem {
   nome: string;
@@ -72,8 +74,23 @@ export async function writeReleasesFaixasForImport(
   faixas: unknown,
 ): Promise<void> {
   const list = Array.isArray(faixas) ? faixas : [];
-  const stored = list.map((raw) => {
+  const stored = list.map((raw, i) => {
     const f = (raw ?? {}) as Record<string, unknown>;
+    // find-532335a9: per-track ISRC inside the "Faixas do Lançamento" child
+    // sheet bypassed ImportCommitService.assertValidIsrc()/normalizeIsrc()
+    // entirely (those only walk the general/non-repeating columns) — the
+    // same real ISRC could land here in a different textual form than the
+    // manual-entry or general-column import paths.
+    let isrc: string | null = null;
+    if (typeof f.isrc === 'string' && f.isrc.trim() !== '') {
+      const canonicalIsrc = normalizeIsrc(f.isrc);
+      if (!isValidIsrc(canonicalIsrc)) {
+        throw new BadRequestException(
+          `Faixa ${i + 1}: ISRC inválido "${f.isrc}". Formato esperado: CCXXXYYNNNNN (12 caracteres, hífens opcionais).`,
+        );
+      }
+      isrc = canonicalIsrc;
+    }
     return {
       title: String(f.nome ?? ''),
       isVersionAlternativa: f.isVersionAlternativa ?? null,
@@ -85,7 +102,7 @@ export async function writeReleasesFaixasForImport(
       idioma: f.faixa_idioma ?? null,
       letra: f.letra ?? null,
       explicit: f.explicit ?? null,
-      isrc: f.isrc ?? null,
+      isrc,
       artista: f.artista ?? null,
     };
   });

@@ -1,5 +1,6 @@
-import { IsOptional, IsString, IsIn } from 'class-validator';
+import { IsOptional, IsString, IsEnum } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ArtistRelationshipType } from '@music-os-360/types';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
 export class QueryArtistDto extends PaginationDto {
@@ -13,8 +14,8 @@ export class QueryArtistDto extends PaginationDto {
   @IsString()
   genre?: string;
 
-  @ApiPropertyOptional({ enum: ['exclusivo', 'parceiro', 'independente'] })
+  @ApiPropertyOptional({ enum: ArtistRelationshipType })
   @IsOptional()
-  @IsIn(['exclusivo', 'parceiro', 'independente'])
-  vinculo?: 'exclusivo' | 'parceiro' | 'independente';
+  @IsEnum(ArtistRelationshipType)
+  vinculo?: ArtistRelationshipType;
 }

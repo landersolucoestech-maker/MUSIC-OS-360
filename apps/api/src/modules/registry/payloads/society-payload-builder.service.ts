@@ -23,25 +23,25 @@ function isPublisher(role: string | null | undefined): boolean {
 
 /**
  * Só é chamada com shares já filtradas por isRegistryEligibleShare() — uma
- * share elegível sem titular_nome/percentual é dado de registro incompleto,
+ * share elegível sem holder_name/percentage é dado de registro incompleto,
  * não "ausência aceitável". Nunca silenciosamente vira '' ou 0 (ver Fase 5 / C6).
  */
 function shareToParty(s: ShareEntity): PayloadParty {
-  const name = s.credited_name ?? s.titular_nome;
+  const name = s.credited_name ?? s.holder_name;
   if (!name || !name.trim()) {
-    throw new BadRequestException(`Share ${s.id} elegível para registro está sem titular_nome (dado de registro incompleto).`);
+    throw new BadRequestException(`Share ${s.id} elegível para registro está sem holder_name (dado de registro incompleto).`);
   }
-  if (s.percentual == null) {
-    throw new BadRequestException(`Share ${s.id} elegível para registro está sem percentual (dado de registro incompleto).`);
+  if (s.percentage == null) {
+    throw new BadRequestException(`Share ${s.id} elegível para registro está sem percentage (dado de registro incompleto).`);
   }
-  const pct = Number(s.percentual);
+  const pct = Number(s.percentage);
   if (!Number.isFinite(pct)) {
-    throw new BadRequestException(`Share ${s.id} tem percentual inválido: "${s.percentual}".`);
+    throw new BadRequestException(`Share ${s.id} tem percentage inválido: "${s.percentage}".`);
   }
   return {
     name: name.trim(),
-    document: s.titular_doc ?? null,
-    role: s.role ?? s.papel ?? null,
+    document: s.holder_document ?? null,
+    role: s.role ?? s.party_role ?? null,
     percentage: pct,
     ipi_cae: null,
     society: null,

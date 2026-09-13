@@ -37,7 +37,7 @@ export class SoundCloudService extends IntegrationBaseService {
     const safeResolveUrl = assertSafeQueryValue(url, 'url', 512);
     const qs = new URLSearchParams({ url: safeResolveUrl, client_id: cid }).toString();
     const safeUrl = assertAllowedHost(`${SC_API}/resolve?${qs}`, SC_HOSTS);
-    const res = await fetch(safeUrl);
+    const res = await this.fetch(safeUrl);
     if (!res.ok) return { error: `SoundCloud API error: ${res.status}` };
     const d = await res.json() as any;
     return {
@@ -53,7 +53,7 @@ export class SoundCloudService extends IntegrationBaseService {
     const id = assertSafePathSegment(trackId, 'trackId');
     const qs = new URLSearchParams({ client_id: cid }).toString();
     const safeUrl = assertAllowedHost(`${SC_API}/tracks/${encodeURIComponent(id)}?${qs}`, SC_HOSTS);
-    const res = await fetch(safeUrl);
+    const res = await this.fetch(safeUrl);
     if (!res.ok) return { error: `SoundCloud API error: ${res.status}` };
     const d = await res.json() as any;
     return {
@@ -71,7 +71,7 @@ export class SoundCloudService extends IntegrationBaseService {
     const lim = assertSafeLimit(limit);
     const qs = new URLSearchParams({ q: safeQuery, limit: String(lim), client_id: cid }).toString();
     const safeUrl = assertAllowedHost(`${SC_API}/tracks?${qs}`, SC_HOSTS);
-    const res = await fetch(safeUrl);
+    const res = await this.fetch(safeUrl);
     if (!res.ok) return [];
     const data = await res.json() as any;
     return (Array.isArray(data) ? data : []).map((t: any) => ({

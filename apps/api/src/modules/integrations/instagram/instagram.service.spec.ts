@@ -161,7 +161,18 @@ describe('InstagramService', () => {
 
     await service.disconnectProvider(TENANT_A, USER_A, 'instagram');
 
-    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/me/permissions'), { method: 'DELETE' });
+    // find-fec66ce8/find-dd523831: this.fetch() now routes through
+    // resilientFetch, which adds an AbortSignal for the 10s timeout guard.
+    // objectContaining alone would still pass against a pre-fix raw fetch()
+    // call (it ignores the extra field either way) — assert the signal
+    // explicitly so this test actually fails if this.fetch() regresses to a
+    // raw fetch() call.
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining('/me/permissions'),
+      expect.objectContaining({ method: 'DELETE' }),
+    );
+    const [, deleteInit] = fetchMock.mock.calls.find(([url]) => String(url).includes('/me/permissions'))!;
+    expect(deleteInit.signal).toBeInstanceOf(AbortSignal);
     expect(oauthRepo._rows.size).toBe(0);
   });
 });

@@ -147,8 +147,8 @@ export class AnalyticsService {
       // Revenue and expenses this calendar month
       this.ds.query<[{ receitas: string; despesas: string }]>(`
         SELECT
-          COALESCE(SUM(CASE WHEN type = 'receita' AND status NOT IN ('cancelado','cancelled') THEN valor::numeric ELSE 0 END), 0)::numeric AS receitas,
-          COALESCE(SUM(CASE WHEN type = 'despesa' AND status NOT IN ('cancelado','cancelled') THEN valor::numeric ELSE 0 END), 0)::numeric AS despesas
+          COALESCE(SUM(CASE WHEN type = 'receita' AND status != 'cancelled' THEN valor::numeric ELSE 0 END), 0)::numeric AS receitas,
+          COALESCE(SUM(CASE WHEN type = 'despesa' AND status != 'cancelled' THEN valor::numeric ELSE 0 END), 0)::numeric AS despesas
         FROM transactions
         WHERE tenant_id = $1 AND deleted_at IS NULL AND data >= $2
       `, [tenantId, monthStart]),
@@ -156,22 +156,22 @@ export class AnalyticsService {
       this.ds.query<[{ total: string }]>(`
         SELECT COALESCE(SUM(valor::numeric), 0)::numeric AS total
         FROM transactions
-        WHERE tenant_id = $1 AND type = 'receita' AND status IN ('pendente','agendado') AND deleted_at IS NULL
+        WHERE tenant_id = $1 AND type = 'receita' AND status IN ('pending','scheduled') AND deleted_at IS NULL
       `, [tenantId]),
       // Overdue invoices count
       this.ds.query<[{ cnt: string }]>(`
         SELECT COUNT(*)::int AS cnt FROM invoices
-        WHERE tenant_id = $1 AND status IN ('vencida','overdue') AND deleted_at IS NULL
+        WHERE tenant_id = $1 AND status = 'overdue' AND deleted_at IS NULL
       `, [tenantId]),
       // Paid transactions count (all time)
       this.ds.query<[{ cnt: string }]>(`
         SELECT COUNT(*)::int AS cnt FROM transactions
-        WHERE tenant_id = $1 AND status IN ('pago','confirmado','concluido') AND deleted_at IS NULL
+        WHERE tenant_id = $1 AND status IN ('paid','confirmed','completed') AND deleted_at IS NULL
       `, [tenantId]),
       // Cancelled transactions count (all time)
       this.ds.query<[{ cnt: string }]>(`
         SELECT COUNT(*)::int AS cnt FROM transactions
-        WHERE tenant_id = $1 AND status IN ('cancelado','cancelled') AND deleted_at IS NULL
+        WHERE tenant_id = $1 AND status = 'cancelled' AND deleted_at IS NULL
       `, [tenantId]),
       // Invoices by status
       this.ds.query<Array<{ status: string; cnt: string }>>(

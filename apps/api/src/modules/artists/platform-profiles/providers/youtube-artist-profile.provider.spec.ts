@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { YouTubeArtistProfileProvider } from './youtube-artist-profile.provider';
 import type { SoundchartsService } from '../../../integrations/soundcharts/soundcharts.service';
+import { SoundchartsNotFoundError } from '../../../integrations/soundcharts/soundcharts.errors';
 
 function configWithKey(): ConfigService {
   return { get: () => 'fake-youtube-key' } as unknown as ConfigService;
@@ -132,6 +133,48 @@ describe('YouTubeArtistProfileProvider.resolve', () => {
     expect(snapshot.raw_payload.primary_identity_status).toBe('VERIFIED_EXACT');
     expect(snapshot.raw_payload.cross_platform_status).toBe('CROSS_PLATFORM_DIVERGENT');
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('find-4e35ea8e: canal resolvido com sucesso (existe de verdade) mas não indexado na Soundcharts (404): subscribers=null, sync_status=success (NUNCA "failed")', async () => {
+    const soundcharts = {
+      resolveArtistByPlatform: jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found', 404)),
+      getYouTubeAudience: jest.fn(),
+      isConfigured: jest.fn().mockReturnValue(true),
+    } as unknown as SoundchartsService;
+    const provider = new YouTubeArtistProfileProvider(configWithKey(), soundcharts);
+    fetchSpy = jest.spyOn(global, 'fetch');
+
+    const snapshot = await provider.resolve({
+      tenantId: 't1',
+      artistId: 'a1',
+      externalId: channelId,
+      externalUrl: null,
+      canonicalUrls: {},
+    });
+
+    expect(soundcharts.getYouTubeAudience).not.toHaveBeenCalled();
+    expect(snapshot.subscribers).toBeNull();
+    expect(snapshot.total_views).toBeNull();
+    expect(snapshot.total_videos).toBeNull();
+    expect(snapshot.sync_status).toBe('success');
+    expect(snapshot.external_id).toBe(channelId);
+  });
+
+  it('erro real da Soundcharts (não 404) durante a resolução propaga como falha genuína (retry deve acontecer)', async () => {
+    const soundcharts = {
+      resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: serviço indisponível')),
+      getYouTubeAudience: jest.fn(),
+      isConfigured: jest.fn().mockReturnValue(true),
+    } as unknown as SoundchartsService;
+    const provider = new YouTubeArtistProfileProvider(configWithKey(), soundcharts);
+
+    await expect(provider.resolve({
+      tenantId: 't1',
+      artistId: 'a1',
+      externalId: channelId,
+      externalUrl: null,
+      canonicalUrls: {},
+    })).rejects.toThrow('Soundcharts 503: serviço indisponível');
   });
 });
 

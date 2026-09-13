@@ -143,6 +143,92 @@ describe('ArtistExternalProfileSyncService', () => {
     expect(result.enqueued).toEqual([{ platform: 'youtube', job_id: 'job-2' }]);
   });
 
+  it('enfileira sync manual de YouTube a partir de um @handle (find-eb3c5c45-class: o extrator antigo rejeitava handles, só aceitava UC.../channel/UC...)', async () => {
+    const artists = {
+      findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null }),
+    };
+    const profiles = {
+      hasRecentPending: jest.fn().mockResolvedValue(false),
+      upsertPending: jest.fn().mockResolvedValue({}),
+    };
+    const queue = { add: jest.fn().mockResolvedValue({ id: 'job-2b' }) };
+    const service = new ArtistExternalProfileSyncService(
+      artists as never,
+      profiles as never,
+      { resolve: jest.fn() } as never,
+      queue as never,
+    );
+
+    const result = await service.enqueueManualSync({
+      tenantId: 'tenant-1',
+      artistId: 'artist-1',
+      platform: 'youtube',
+      requestedBy: 'user-1',
+      profileUrl: '@some_artist_handle',
+    });
+
+    // externalId fica null (resolução do UC... exige a chamada assíncrona à
+    // YouTube Data API que só o worker faz); externalUrl carrega a
+    // referência para o worker resolver — nunca um BadRequestException.
+    expect(queue.add).toHaveBeenCalledWith(
+      ARTIST_PLATFORM_PROFILE_JOB_NAMES.SYNC,
+      expect.objectContaining({
+        platform: 'youtube',
+        external_id: null,
+        external_url: 'https://www.youtube.com/@some_artist_handle',
+      }),
+      expect.any(Object),
+    );
+    expect(result.enqueued).toEqual([{ platform: 'youtube', job_id: 'job-2b' }]);
+  });
+
+  it('rejeita link de YouTube genuinamente não reconhecível em nenhum formato suportado', async () => {
+    const artists = {
+      findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null }),
+    };
+    const service = new ArtistExternalProfileSyncService(
+      artists as never,
+      { hasRecentPending: jest.fn(), upsertPending: jest.fn() } as never,
+      { resolve: jest.fn() } as never,
+      { add: jest.fn() } as never,
+    );
+
+    await expect(service.enqueueManualSync({
+      tenantId: 'tenant-1',
+      artistId: 'artist-1',
+      platform: 'youtube',
+      requestedBy: 'user-1',
+      profileUrl: '!!!totally-invalid!!!',
+    })).rejects.toThrow('Link do YouTube inválido');
+  });
+
+  it('find (Bug 1, distributed-systems-reviewer): não escreve sync_status=pending quando queue.add() lança — sem isso, a linha ficava órfã para sempre (nada jamais a processaria)', async () => {
+    const artists = {
+      findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null }),
+    };
+    const profiles = {
+      hasRecentPending: jest.fn().mockResolvedValue(false),
+      upsertPending: jest.fn().mockResolvedValue({}),
+    };
+    const queue = { add: jest.fn().mockRejectedValue(new Error('Redis ECONNRESET')) };
+    const service = new ArtistExternalProfileSyncService(
+      artists as never,
+      profiles as never,
+      { resolve: jest.fn() } as never,
+      queue as never,
+    );
+
+    await expect(service.enqueueManualSync({
+      tenantId: 'tenant-1',
+      artistId: 'artist-1',
+      platform: 'youtube',
+      requestedBy: 'user-1',
+      profileUrl: `https://www.youtube.com/channel/${YOUTUBE_ID}`,
+    })).rejects.toThrow('Falha ao enfileirar sincronização');
+
+    expect(profiles.upsertPending).not.toHaveBeenCalled();
+  });
+
   it('enfileira sync manual de Deezer', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null, deezer_url: null }),
@@ -466,7 +552,12 @@ describe('ArtistPlatformSyncProcessor', () => {
       { platform: 'apple-music' } as never,
     );
 
-    await processor.process({ name: ARTIST_PLATFORM_PROFILE_JOB_NAMES.SYNC, data: payload } as never);
+    // find (Bug 2): process() must reject on a genuine provider failure —
+    // swallowing this instead of rethrowing is exactly what made BullMQ's
+    // attempts:3/backoff dead configuration (job always looked 'completed').
+    await expect(
+      processor.process({ name: ARTIST_PLATFORM_PROFILE_JOB_NAMES.SYNC, data: payload } as never),
+    ).rejects.toThrow('Spotify API respondeu 429: limite de requisições excedido');
 
     expect(profiles.upsertSuccess).not.toHaveBeenCalled();
     expect(profiles.markFailed).toHaveBeenCalledWith(expect.objectContaining({

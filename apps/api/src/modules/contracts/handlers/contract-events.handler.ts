@@ -4,6 +4,7 @@ import { DataSource, EntityManager, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { DatabaseContextService } from '../../../database/database-context.service';
 import { ArtistEntity, ContractEntity, TransactionEntity } from '../../../database/entities';
+import { ArtistStatus } from '@music-os-360/types';
 import { EventsService, DOMAIN_EVENTS } from '../../../core/events/events.service';
 import { ActivityLogsService } from '../../activity-logs/activity-logs.service';
 import { FinancialRulesService } from '../../financial-rules/financial-rules.service';
@@ -128,9 +129,9 @@ export class ContractEventsHandler {
           try {
             await artistRepo.update(
               { id: artistId, tenant_id: tenantId },
-              { status: 'contratado' as any, contrato_id: contractId, updated_by: signedBy } as any,
+              { status: ArtistStatus.SIGNED, contrato_id: contractId, updated_by: signedBy } as any,
             );
-            this.logger.log(`Artist "${artistId}" -> contratado + contrato_id="${contractId}"`);
+            this.logger.log(`Artist "${artistId}" -> ${ArtistStatus.SIGNED} + contrato_id="${contractId}"`);
           } catch (err) {
             this.logger.error(`Failed to update artist status for "${artistId}" - ${String(err)}`);
           }
@@ -152,7 +153,7 @@ export class ContractEventsHandler {
                 descricao: `Receita prevista - contrato "${title}"`,
                 valor: String(contractValor),
                 data: new Date(),
-                status: 'agendado' as any,
+                status: 'scheduled' as any,
                 artist_id: artistId ?? null,
                 contrato_id: contractId,
                 created_by: signedBy,

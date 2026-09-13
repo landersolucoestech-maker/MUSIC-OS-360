@@ -10,7 +10,7 @@ const DAY_MS           = 24 * 60 * 60 * 1000;
 const EXPIRY_WINDOW    = 30;   // days ahead to start alerting
 const DEDUP_DAYS       = 7;    // minimum days between repeat notifications
 
-const ALERT_STATUSES = [ContractStatus.VIGENTE, ContractStatus.ASSINADO, ContractStatus.VENCENDO];
+const ALERT_STATUSES = [ContractStatus.IN_FORCE, ContractStatus.SIGNED, ContractStatus.EXPIRING];
 
 /**
  * Cross-tenant maintenance cron. P2-6: instead of a single global scan + update

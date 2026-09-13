@@ -5,7 +5,8 @@ import type {
   SocialPlatformProfileSnapshot,
 } from '../social-platform-sync.types';
 import { SoundchartsService } from '../../../integrations/soundcharts/soundcharts.service';
-import { primaryIdentityProvenance, soundchartsProvenance } from '../soundcharts-provenance.util';
+import { SoundchartsNotFoundError } from '../../../integrations/soundcharts/soundcharts.errors';
+import { primaryIdentityProvenance, soundchartsNotIndexedProvenance, soundchartsProvenance } from '../soundcharts-provenance.util';
 import { evaluateCrossPlatformEvidence } from '../soundcharts-canonical-candidates.util';
 
 /**
@@ -35,7 +36,43 @@ export class SoundCloudArtistProfileProvider implements ArtistPlatformProvider {
     const slug = input.externalId ?? this.extractSlug(input.externalUrl ?? '');
     if (!slug) throw new Error('SoundCloud profile slug ausente ou inválido');
 
-    const uuid = await this.soundcharts.resolveArtistByPlatform('soundcloud', slug);
+    // find-4e35ea8e: um slug do SoundCloud resolvido com sucesso (existe de
+    // verdade) mas não indexado na Soundcharts é uma resposta 404 VÁLIDA
+    // (mesmo padrão já aplicado em Instagram/TikTok/Apple Music/YouTube) —
+    // nunca sync_status=failed ("Erro"), sempre success com as métricas null
+    // ("Indisponível" na UI).
+    let uuid: string | null = null;
+    try {
+      uuid = await this.soundcharts.resolveArtistByPlatform('soundcloud', slug);
+    } catch (err) {
+      if (!(err instanceof SoundchartsNotFoundError)) throw err;
+    }
+
+    if (!uuid) {
+      return {
+        tenant_id: input.tenantId,
+        artist_id: input.artistId,
+        platform: 'soundcloud',
+        external_id: slug,
+        external_url: input.externalUrl ?? `https://soundcloud.com/${slug}`,
+        display_name: null,
+        username: slug,
+        profile_url: input.externalUrl ?? `https://soundcloud.com/${slug}`,
+        image_url: null,
+        followers: null,
+        subscribers: null,
+        monthly_listeners: null,
+        popularity: null,
+        total_views: null,
+        total_videos: null,
+        total_tracks: null,
+        total_albums: null,
+        raw_payload: soundchartsNotIndexedProvenance('soundcloud', [`/api/v2.9/artist/by-platform/soundcloud/${slug}`]),
+        sync_status: 'success',
+        last_synced_at: new Date(),
+        last_error: null,
+      };
+    }
 
     // Fase 1.3: a resolução exata by-platform do slug CADASTRADO já é a prova
     // de identidade primária (o endpoint da Soundcharts resolve exatamente

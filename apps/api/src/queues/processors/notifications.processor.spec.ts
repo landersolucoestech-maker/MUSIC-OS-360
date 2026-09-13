@@ -7,14 +7,31 @@ import { NOTIFICATION_JOB_NAMES }   from '../queue.constants';
 
 const mockNotif = { id: 'n1', title: 'T', type: 'info', created_at: new Date() };
 
+// Single chainable mock covering both query-builder shapes handleSend() uses:
+// the atomic insert().onConflict()...execute() write, and the where()/andWhere()/
+// getOne() fallback SELECT used only when the insert hits the conflict target.
+function makeQb(execRaw: unknown[] = [mockNotif], existing: unknown = null) {
+  const qb: Record<string, jest.Mock> = {};
+  const chain = () => qb;
+  qb['insert'] = jest.fn(chain);
+  qb['into'] = jest.fn(chain);
+  qb['values'] = jest.fn(chain);
+  qb['onConflict'] = jest.fn(chain);
+  qb['returning'] = jest.fn(chain);
+  qb['execute'] = jest.fn(async () => ({ raw: execRaw }));
+  qb['where'] = jest.fn(chain);
+  qb['andWhere'] = jest.fn(chain);
+  qb['getOne'] = jest.fn(async () => existing);
+  return qb;
+}
+
 const buildMockDs = () => {
-  const repo = {
-    create: jest.fn((v: any) => v),
-    save:   jest.fn().mockResolvedValue(mockNotif),
-  };
+  const qb = makeQb();
+  const repo = { createQueryBuilder: jest.fn(() => qb) };
   return {
     getRepository: jest.fn(() => repo),
     _repo: repo,
+    _qb: qb,
   };
 };
 
@@ -46,8 +63,8 @@ describe('NotificationsProcessor', () => {
     await processor.process({ name: NOTIFICATION_JOB_NAMES.SEND, data: {
       tenantId: 't1', userId: 'u1', title: 'Teste', type: 'info', body: 'msg',
     }} as any);
-    expect(mockDs._repo.save).toHaveBeenCalled();
-    expect(mockDs._repo.create).toHaveBeenCalledWith(
+    expect(mockDs._qb.execute).toHaveBeenCalled();
+    expect(mockDs._qb.values).toHaveBeenCalledWith(
       expect.objectContaining({ tenant_id: 't1', user_id: 'u1', title: 'Teste' }),
     );
   });
@@ -67,7 +84,7 @@ describe('NotificationsProcessor', () => {
       tenantId: 't1', userId: 'u1', title: 'X',
       type: 'entity', entity: 'artists', entityId: 'a1',
     }} as any);
-    expect(mockDs._repo.create).toHaveBeenCalledWith(
+    expect(mockDs._qb.values).toHaveBeenCalledWith(
       expect.objectContaining({ entity: 'artists', entity_id: 'a1' }),
     );
   });
@@ -81,7 +98,7 @@ describe('NotificationsProcessor', () => {
       { tenantId: 't1', orgId: null, role: null },
       expect.any(Function),
     );
-    expect(mockDs._repo.save).toHaveBeenCalled();
+    expect(mockDs._qb.execute).toHaveBeenCalled();
   });
 
   it('aborta (fail-closed) job SEND sem tenantId, sem tocar o banco', async () => {
@@ -90,6 +107,49 @@ describe('NotificationsProcessor', () => {
     }} as any);
     expect(out).toBeNull();
     expect(mockDbContext.runInTenantContext).not.toHaveBeenCalled();
-    expect(mockDs._repo.save).not.toHaveBeenCalled();
+    expect(mockDs._qb.execute).not.toHaveBeenCalled();
+  });
+
+  // find-8dfe93c3 / find-32bf2e0a: whether the dup comes from a sequential
+  // BullMQ redelivery (first INSERT already committed) or from two workers
+  // racing the SAME job.id concurrently, INSERT ... ON CONFLICT DO NOTHING
+  // makes both land on the identical code path: the losing/duplicate INSERT
+  // returns zero rows (no error — see find-855bcd84, an earlier version threw
+  // 23505 and poisoned the surrounding transaction), and the processor
+  // recovers the winner's row via one fallback SELECT instead of duplicating
+  // persistence or the WS push.
+  it('job.id já processado (redelivery OU corrida concorrente): recupera a linha existente, sem duplicar nem falhar', async () => {
+    const existingRow = { id: 'n-existing', title: 'Já processado', type: 'info', created_at: new Date() };
+    mockDs._qb.execute = jest.fn(async () => ({ raw: [] })); // ON CONFLICT DO NOTHING: no row inserted
+    mockDs._qb.getOne = jest.fn(async () => existingRow);
+
+    const out = await processor.process({
+      id: 'bullmq-job-123',
+      name: NOTIFICATION_JOB_NAMES.SEND,
+      data: { tenantId: 't1', userId: 'u1', title: 'Redelivered', type: 'info' },
+    } as any);
+
+    expect(out).toEqual(existingRow);
+    expect(mockWs.sendToUser).not.toHaveBeenCalled();
+    expect(mockWs.sendToTenant).not.toHaveBeenCalled();
+  });
+
+  it('primeira entrega com job.id: persiste normalmente e grava bullmq_job_id em metadata', async () => {
+    const firstRow = { id: 'n-first', title: 'First delivery', type: 'info', created_at: new Date() };
+    mockDs._qb.execute = jest.fn(async () => ({ raw: [firstRow] }));
+
+    await processor.process({
+      id: 'bullmq-job-456',
+      name: NOTIFICATION_JOB_NAMES.SEND,
+      data: { tenantId: 't1', userId: 'u1', title: 'First delivery', type: 'info' },
+    } as any);
+
+    expect(mockDs._qb.values).toHaveBeenCalledWith(
+      expect.objectContaining({ metadata: expect.objectContaining({ bullmq_job_id: 'bullmq-job-456' }) }),
+    );
+    expect(mockWs.sendToUser).toHaveBeenCalledWith(
+      't1', 'u1', 'notification:new',
+      expect.objectContaining({ id: 'n-first' }),
+    );
   });
 });

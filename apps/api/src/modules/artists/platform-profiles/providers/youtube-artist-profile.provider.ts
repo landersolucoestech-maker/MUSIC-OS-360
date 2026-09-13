@@ -6,8 +6,12 @@ import type {
   SocialPlatformProfileSnapshot,
 } from '../social-platform-sync.types';
 import { SoundchartsService } from '../../../integrations/soundcharts/soundcharts.service';
-import { primaryIdentityProvenance, soundchartsProvenance } from '../soundcharts-provenance.util';
+import { SoundchartsNotFoundError } from '../../../integrations/soundcharts/soundcharts.errors';
+import { primaryIdentityProvenance, soundchartsNotIndexedProvenance, soundchartsProvenance } from '../soundcharts-provenance.util';
 import { evaluateCrossPlatformEvidence } from '../soundcharts-canonical-candidates.util';
+import { parseYoutubeRef } from '../youtube-ref.util';
+import { CircuitBreaker } from '../../../../core/resilience/circuit-breaker';
+import { resilientFetch } from '../../../../core/resilience/resilient-fetch';
 
 const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
 
@@ -29,6 +33,13 @@ const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
 export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
   readonly platform = 'youtube' as const;
   private readonly logger = new Logger(YouTubeArtistProfileProvider.name);
+  // find-f0730ed7: guarded fetch (timeout + circuit breaker) — same pattern as
+  // YouTubeService (integrations/youtube/youtube.service.ts) for the raw YouTube
+  // Data API calls this provider makes for channel-id identity resolution.
+  private readonly cb = new CircuitBreaker({ name: YouTubeArtistProfileProvider.name });
+  private fetch(url: string, init?: RequestInit): Promise<Response> {
+    return resilientFetch(this.cb, url, init);
+  }
 
   constructor(
     private readonly config: ConfigService,
@@ -52,7 +63,43 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
     const channelId = await this.resolveChannelId(ref, apiKey);
     if (!channelId) throw new Error('Canal do YouTube não encontrado para o link informado');
 
-    const uuid = await this.soundcharts.resolveArtistByPlatform('youtube', channelId);
+    // find-4e35ea8e: um canal do YouTube resolvido com sucesso (existe de
+    // verdade) mas não indexado na Soundcharts é uma resposta 404 VÁLIDA
+    // (Soundcharts 07, mesmo padrão já aplicado em Instagram/TikTok/Apple
+    // Music) — nunca sync_status=failed ("Erro"), sempre success com as
+    // métricas null ("Indisponível" na UI).
+    let uuid: string | null = null;
+    try {
+      uuid = await this.soundcharts.resolveArtistByPlatform('youtube', channelId);
+    } catch (err) {
+      if (!(err instanceof SoundchartsNotFoundError)) throw err;
+    }
+
+    if (!uuid) {
+      return {
+        tenant_id: input.tenantId,
+        artist_id: input.artistId,
+        platform: 'youtube',
+        external_id: channelId,
+        external_url: input.externalUrl ?? `https://www.youtube.com/channel/${channelId}`,
+        display_name: null,
+        username: null,
+        profile_url: `https://www.youtube.com/channel/${channelId}`,
+        image_url: null,
+        followers: null,
+        subscribers: null,
+        monthly_listeners: null,
+        popularity: null,
+        total_views: null,
+        total_videos: null,
+        total_tracks: null,
+        total_albums: null,
+        raw_payload: soundchartsNotIndexedProvenance('youtube', [`/api/v2.9/artist/by-platform/youtube/${channelId}`]),
+        sync_status: 'success',
+        last_synced_at: new Date(),
+        last_error: null,
+      };
+    }
 
     // Fase 1.3: resolução exata by-platform do channelId cadastrado já é a
     // prova de identidade primária. Divergência cross-platform é diagnóstico.
@@ -110,29 +157,7 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
    * `/user/NAME` (legacy), `/c/NAME` (custom) and bare `/NAME` (legacy custom).
    */
   parseRef(raw: string): { kind: 'id' | 'handle' | 'username' | 'custom'; value: string } | null {
-    const value = (raw ?? '').trim();
-    if (!value) return null;
-
-    if (/^UC[A-Za-z0-9_-]{20,}$/.test(value)) return { kind: 'id', value };
-    if (/^@[A-Za-z0-9._-]+$/.test(value)) return { kind: 'handle', value: value.slice(1) };
-
-    let path = value;
-    try {
-      if (/^https?:\/\//i.test(value)) path = new URL(value).pathname;
-    } catch { /* treat as raw path */ }
-    path = path.replace(/^\/+|\/+$/g, '');
-
-    const channel = path.match(/^channel\/(UC[A-Za-z0-9_-]{20,})/);
-    if (channel) return { kind: 'id', value: channel[1] };
-    const handle = path.match(/^@([A-Za-z0-9._-]+)/);
-    if (handle) return { kind: 'handle', value: handle[1] };
-    const user = path.match(/^user\/([A-Za-z0-9._-]+)/i);
-    if (user) return { kind: 'username', value: user[1] };
-    const custom = path.match(/^c\/([A-Za-z0-9._-]+)/i);
-    if (custom) return { kind: 'custom', value: custom[1] };
-    const bare = path.match(/^([A-Za-z0-9._-]+)$/);
-    if (bare) return { kind: 'custom', value: bare[1] };
-    return null;
+    return parseYoutubeRef(raw);
   }
 
   /** Resolves a typed reference to a concrete `UC…` channel id via the YouTube Data API. */
@@ -147,7 +172,7 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
         ref.kind === 'handle'
           ? `forHandle=@${encodeURIComponent(ref.value)}`
           : `forUsername=${encodeURIComponent(ref.value)}`;
-      const res = await fetch(`${YOUTUBE_API}/channels?part=id&${param}&key=${apiKey}`);
+      const res = await this.fetch(`${YOUTUBE_API}/channels?part=id&${param}&key=${apiKey}`);
       if (!res.ok) throw new Error(await this.describeYouTubeError(res, `resolver o canal por ${ref.kind}`));
       const data = (await res.json()) as { items?: Array<{ id?: string }> };
       const id = data.items?.[0]?.id;
@@ -157,7 +182,7 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
     }
 
     // custom (/c/NAME) or unresolved handle → search the channel by name
-    const res = await fetch(
+    const res = await this.fetch(
       `${YOUTUBE_API}/search?part=id&type=channel&maxResults=1&q=${encodeURIComponent(ref.value)}&key=${apiKey}`,
     );
     if (!res.ok) throw new Error(await this.describeYouTubeError(res, `pesquisar o canal "${ref.value}"`));

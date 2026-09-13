@@ -1,14 +1,15 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { EmployeeEntity, PayrollEntryEntity, LeaveRequestEntity } from '../../database/entities';
 import { EncryptionService } from '../../core/security/encryption.service';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import type { CreateEmployeeDto }     from './dto/create-employee.dto';
 import type { UpdateEmployeeDto }     from './dto/update-employee.dto';
 import type { CreatePayrollEntryDto } from './dto/create-payroll-entry.dto';
 import type { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
-import { EmployeeStatus } from '@music-os-360/types';
+import { EmployeeStatus, PayrollStatus, LeaveRequestStatus } from '@music-os-360/types';
 import { groupCount, GroupStatsResult } from '../../common/stats/group-count.util';
 
 @Injectable()
@@ -92,14 +93,14 @@ export class HrService {
       cargo:              dto.cargo         ?? null,
       departamento:       dto.departamento  ?? null,
       tipo_contrato:      dto.tipo_contrato ?? 'clt',
-      status:             dto.status ?? EmployeeStatus.ATIVO,
+      status:             dto.status ?? EmployeeStatus.ACTIVE,
       email_encrypted:    this.enc.encryptNullable((dto as any).email),
       telefone_encrypted: this.enc.encryptNullable((dto as any).telefone),
       cpf_encrypted:      this.enc.encryptNullable((dto as any).cpf),
       salario:            (dto as any).salario       ?? null,
       data_admissao:      (dto as any).data_admissao ? new Date((dto as any).data_admissao) : null,
       data_demissao:      (dto as any).data_demissao ? new Date((dto as any).data_demissao) : null,
-      documentos:         (dto as any).documentos    ?? [],
+      documents:         (dto as any).documents    ?? [],
       metadata:           (dto as any).metadata      ?? {},
       created_by:         userId,
     });
@@ -116,7 +117,7 @@ export class HrService {
     if (dto.tipo_contrato != null) updates.tipo_contrato = dto.tipo_contrato;
     if (dto.status        != null) updates.status        = dto.status;
     if ((dto as any).salario       != null) updates.salario       = (dto as any).salario;
-    if ((dto as any).documentos    != null) updates.documentos    = (dto as any).documentos;
+    if ((dto as any).documents    != null) updates.documents    = (dto as any).documents;
     if ((dto as any).metadata      != null) updates.metadata      = (dto as any).metadata;
     if ((dto as any).data_admissao != null) updates.data_admissao = new Date((dto as any).data_admissao);
     if ((dto as any).data_demissao != null) updates.data_demissao = new Date((dto as any).data_demissao);
@@ -165,6 +166,9 @@ export class HrService {
   }
 
   async createPayroll(tenantId: string, dto: CreatePayrollEntryDto): Promise<PayrollEntryEntity> {
+    // find-88311b49: employee_id had no cross-tenant ownership check — a
+    // payroll entry could silently reference another tenant's employee.
+    await assertSameTenantFk(this.payrollRepo!.manager.connection, 'employees', dto.employee_id, tenantId, 'Funcionário');
     const entity = this.payrollRepo!.create({
       tenant_id:       tenantId,
       employee_id:     dto.employee_id,
@@ -172,7 +176,7 @@ export class HrService {
       salario_bruto:   dto.salario_bruto,
       descontos:       (dto as any).descontos    ?? '0',
       salario_liquido: dto.salario_liquido,
-      status:          (dto as any).status       ?? 'pendente',
+      status:          (dto as any).status       ?? PayrollStatus.PENDING,
       arquivo_url:     (dto as any).arquivo_url  ?? null,
       pago_em:         (dto as any).pago_em      ? new Date((dto as any).pago_em) : null,
       metadata:        (dto as any).metadata     ?? {},
@@ -203,13 +207,16 @@ export class HrService {
   }
 
   async createLeaveRequest(tenantId: string, userId: string, dto: CreateLeaveRequestDto): Promise<LeaveRequestEntity> {
+    // find-88311b49: employee_id had no cross-tenant ownership check — a
+    // leave request could silently reference another tenant's employee.
+    await assertSameTenantFk(this.leaveRepo!.manager.connection, 'employees', dto.employee_id, tenantId, 'Funcionário');
     const entity = this.leaveRepo!.create({
       tenant_id:    tenantId,
       employee_id:  dto.employee_id,
       type:         dto.type,
       start_date:  new Date(dto.start_date),
       end_date:     new Date(dto.end_date),
-      status:       (dto as any).status       ?? 'pendente',
+      status:       (dto as any).status       ?? LeaveRequestStatus.PENDING,
       motivo:       (dto as any).motivo       ?? null,
       aprovado_por: (dto as any).aprovado_por ?? null,
       documento_url: (dto as any).documento_url ?? null,
@@ -220,8 +227,22 @@ export class HrService {
   }
 
   async approveLeaveRequest(tenantId: string, id: string, userId: string): Promise<LeaveRequestEntity> {
+    // find-c83fdb94: guard the single valid transition (pending -> approved)
+    // so an already-approved/rejected request can't be re-approved or have
+    // its aprovado_por/updated_at silently overwritten by a repeat call.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await this.leaveRepo!.update({ id, tenant_id: tenantId } as any, { status: 'aprovado', aprovado_por: userId, updated_at: new Date() } as any);
+    const result = await this.leaveRepo!.update(
+      { id, tenant_id: tenantId, status: LeaveRequestStatus.PENDING } as any,
+      { status: LeaveRequestStatus.APPROVED, aprovado_por: userId, updated_at: new Date() } as any,
+    );
+    if (!result.affected) {
+      const current = await this.leaveRepo!
+        .createQueryBuilder('l')
+        .where('l.id = :id AND l.tenant_id = :tenantId AND l.deleted_at IS NULL', { id, tenantId })
+        .getOne();
+      if (!current) throw new NotFoundException('Afastamento não encontrado');
+      throw new BadRequestException(`Afastamento não está pendente (status atual: ${current.status})`);
+    }
     const updated = await this.leaveRepo!
       .createQueryBuilder('l')
       .where('l.id = :id AND l.tenant_id = :tenantId AND l.deleted_at IS NULL', { id, tenantId })

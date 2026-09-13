@@ -12,6 +12,7 @@ import { Job }                   from 'bullmq';
 import { QUEUE_NAMES }           from '../queue.constants';
 import { AIService, AICompletionOptions } from '../../modules/ai/ai.service';
 import { RealtimeService }       from '../../core/realtime/realtime.service';
+import { DatabaseContextService } from '../../database/database-context.service';
 
 // ─── Payload ──────────────────────────────────────────────────────────────────
 
@@ -30,6 +31,7 @@ export class AIJobsProcessor extends WorkerHost {
   constructor(
     private readonly ai:        AIService,
     private readonly wsGateway: RealtimeService,
+    private readonly dbContext: DatabaseContextService,
   ) { super(); }
 
   async process(job: Job<AIJobPayload>): Promise<void> {
@@ -38,20 +40,36 @@ export class AIJobsProcessor extends WorkerHost {
       `[ai-jobs] job="${job.name}" id=${job.id} skill=${d.skill} userId=${d.userId}`,
     );
 
+    // find-2ed4c244: fail-closed, matching every sibling processor
+    // (notifications/external-data/marketing-publishing) — RLS would deny
+    // the write anyway, but as a clean guard rather than a deep unhandled
+    // transaction error.
+    if (!d.tenantId) {
+      this.logger.warn(`[ai-jobs] job ${job.id} sem tenantId — abortado (fail-closed)`);
+      return;
+    }
+
     let result: Awaited<ReturnType<AIService['complete']>>;
     const startMs = Date.now();
 
     try {
-      result = await this.ai.complete({
-        tenantId:     d.tenantId,
-        userId:       d.userId,
-        skill:        d.skill,
-        prompt:       d.prompt,
-        systemPrompt: d.systemPrompt,
-        maxTokens:    d.maxTokens,
-        temperature:  d.temperature,
-        jsonMode:     d.jsonMode,
-      });
+      // find-657093f0: AIService persists to ai_jobs (a tenant-scoped table)
+      // via a repo captured at construction; runInTenantContext binds the ALS
+      // store so that repo re-resolves through the tenant-scoped connection
+      // for the duration of this call, same as notifications.processor.ts.
+      result = await this.dbContext.runInTenantContext(
+        { tenantId: d.tenantId, orgId: null, role: null },
+        () => this.ai.complete({
+          tenantId:     d.tenantId,
+          userId:       d.userId,
+          skill:        d.skill,
+          prompt:       d.prompt,
+          systemPrompt: d.systemPrompt,
+          maxTokens:    d.maxTokens,
+          temperature:  d.temperature,
+          jsonMode:     d.jsonMode,
+        }),
+      );
     } catch (err) {
       this.logger.error(`[ai-jobs] complete() falhou: ${(err as Error).message}`);
       throw err; // BullMQ vai re-tentar conforme backoff configurado

@@ -151,6 +151,16 @@ export class ArtistPlatformSyncProcessor extends WorkerHost {
         `[artist-platform-sync] failed error="${message}" latency_ms=${Date.now() - startedAt} ${logCtx}`,
         err instanceof Error ? err.stack : undefined,
       );
+      // find (distributed-systems-reviewer, Bug 2): swallowing this instead
+      // of rethrowing made process() always resolve, so BullMQ always saw
+      // the job as 'completed' — attempts:3/backoff (configured by the
+      // producer) never engaged, a transient failure (network, 429, 5xx)
+      // became permanent on the first try. sync_status is already
+      // persisted as 'failed' by markFailed above regardless of outcome;
+      // rethrowing only controls whether BullMQ retries the JOB, and lets
+      // a genuinely exhausted job surface as 'failed' in Redis too
+      // (removeOnFail:false, mirrors market-benchmark-refresh.processor.ts).
+      throw err;
     }
   }
 }

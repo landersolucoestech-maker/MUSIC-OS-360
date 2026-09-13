@@ -3,7 +3,13 @@ import { z } from 'zod';
 // ── Enum values matching the frontend constants in transacao-constants.ts ─────
 
 const TIPOS_TRANSACAO = ['receita', 'despesa', 'investimento', 'imposto', 'transferencia'] as const;
-const STATUS          = ['pendente', 'aprovado', 'pago', 'cancelado', 'atrasado'] as const;
+// 'aprovado'/'atrasado' were UI-only decorative labels with zero backend
+// consumer (no service/query ever branched on them) — dead options, removed.
+// 'pago' DOES have real consumers (transactions.service.ts PAID_STATUSES,
+// analytics.service.ts KPI queries, both already treating it as equivalent
+// to confirmado/concluido) so it is translated, not dropped: 'pago' ->
+// 'paid' (see TransactionStatus in packages/types/src/enums.ts).
+const STATUS          = ['pending', 'paid', 'confirmed', 'completed', 'scheduled', 'cancelled'] as const;
 const FORMAS_PAGAMENTO = [
   'pix', 'ted', 'boleto', 'cartao-credito', 'cartao-debito', 'dinheiro', 'cheque',
 ] as const;
@@ -38,7 +44,7 @@ const servicosReceitaComArtista = new Set([
 // tipoTransacao is defined separately in each schema so create makes it required
 // and update keeps it required (context always known when editing a transaction).
 
-// No defaults here — defaults only belong in createTransacaoSchema so partial
+// No defaults here — defaults only belong in createTransactionSchema so partial
 // PATCH requests don't silently overwrite existing DB values.
 const commonFields = {
   tipoCliente:         z.string().optional(),
@@ -95,7 +101,7 @@ interface PayloadForValidation {
   orgaoArrecadador?: string;
 }
 
-// Partial variant used by patchTransacaoSchema where tipoTransacao may be absent
+// Partial variant used by patchTransactionSchema where tipoTransacao may be absent
 interface PartialPayloadForValidation extends Omit<PayloadForValidation, 'tipoTransacao'> {
   tipoTransacao?: (typeof TIPOS_TRANSACAO)[number];
 }
@@ -233,7 +239,7 @@ function validateConditionalByType(data: PayloadForValidation, ctx: z.Refinement
 // All core fields required; conditional rules always run because tipoTransacao
 // is always present.
 
-export const createTransacaoSchema = z.object({
+export const createTransactionSchema = z.object({
   tipoTransacao: z.enum(TIPOS_TRANSACAO),
   descricao:     z.string().trim().min(1),
   valor:         valorField,
@@ -241,7 +247,7 @@ export const createTransacaoSchema = z.object({
   ...commonFields,
   // Defaults applied only on create — absent fields on PATCH/PUT must stay absent
   // so the update path does not reset existing values.
-  status:        z.enum(STATUS).optional().default('pendente'),
+  status:        z.enum(STATUS).optional().default('pending'),
   tipoPagamento: z.enum(TIPOS_PAGAMENTO).optional().default('avista'),
 }).superRefine((data, ctx) => {
   if (!data.descricao?.trim()) {
@@ -264,15 +270,15 @@ export const createTransacaoSchema = z.object({
 // tipoTransacao REQUIRED — client always knows the transaction type on PUT;
 // requiring it here ensures all conditional rules are always evaluated.
 //
-// NOTE: The controller currently applies createTransacaoSchema for PUT requests
+// NOTE: The controller currently applies createTransactionSchema for PUT requests
 // (both POST and PUT share the same mandatory-field requirements for a full
-// replace).  updateTransacaoSchema is exported here for explicit documentation
+// replace).  updateTransactionSchema is exported here for explicit documentation
 // of the intended PUT contract and to give future callers (e.g. admin CLI,
 // integration tests, OpenAPI codegen) a clearly named schema — remove this
-// comment and wire the schema when a divergence from createTransacaoSchema is
+// comment and wire the schema when a divergence from createTransactionSchema is
 // needed.
 
-export const updateTransacaoSchema = z.object({
+export const updateTransactionSchema = z.object({
   tipoTransacao: z.enum(TIPOS_TRANSACAO),
   descricao:     z.string().trim().optional(),
   valor:         valorField,
@@ -303,13 +309,13 @@ export const updateTransacaoSchema = z.object({
 //     evaluate them — partial payloads without tipoTransacao are validated only
 //     on the fields provided.
 
-export const patchTransacaoSchema = z.object({
+export const patchTransactionSchema = z.object({
   tipoTransacao: z.enum(TIPOS_TRANSACAO).optional(),
   descricao:     z.string().trim().optional(),
   valor:         valorField,
   dataTransacao: z.string().optional(),
   ...commonFields,
-  // Concorrência otimista — ver comentário em updateTransacaoSchema.
+  // Concorrência otimista — ver comentário em updateTransactionSchema.
   expectedUpdatedAt: z.string().optional(),
 }).superRefine((data, ctx) => {
   if (data.valor !== undefined) {
@@ -325,6 +331,6 @@ export const patchTransacaoSchema = z.object({
   }
 });
 
-export type CreateTransacaoDto = z.infer<typeof createTransacaoSchema>;
-export type UpdateTransacaoDto = z.infer<typeof updateTransacaoSchema>;
-export type PatchTransacaoDto  = z.infer<typeof patchTransacaoSchema>;
+export type CreateTransactionDto = z.infer<typeof createTransactionSchema>;
+export type UpdateTransactionDto = z.infer<typeof updateTransactionSchema>;
+export type PatchTransactionDto  = z.infer<typeof patchTransactionSchema>;

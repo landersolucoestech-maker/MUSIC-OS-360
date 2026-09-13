@@ -147,7 +147,7 @@ npm run db:generate -- NomeDaMigration
 | Plataforma    | uploads, integrations, oauth_connections, webhook_events           |
 | Sistema       | audit_logs, ai_jobs, notifications, support_tickets                |
 
-**Total: 35 tabelas**
+**Total: 138 tabelas** (contagem de `@Entity(...)` em `apps/api/src/database/entities.ts`)
 
 ---
 

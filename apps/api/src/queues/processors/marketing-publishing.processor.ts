@@ -53,10 +53,24 @@ export class MarketingPublishingProcessor extends WorkerHost {
     }
     if (row.status !== 'agendado' || row.publication_status === 'published') return;
 
-    await repo.update({ id: row.id, tenant_id: row.tenant_id } as never, {
-      publication_status: 'publishing',
-      publication_error: null,
-    } as never);
+    // find-61333a55: the read-then-write above is a TOCTOU race — two
+    // concurrently-enqueued jobs for the same content can both pass the
+    // check before either commits the claim, both calling publish(). Make
+    // the claim itself atomic: the UPDATE's WHERE re-checks the same
+    // preconditions, so only the first writer's UPDATE affects a row.
+    const claim = await repo
+      .createQueryBuilder()
+      .update(MarketingContentPostEntity)
+      .set({ publication_status: 'publishing', publication_error: null } as never)
+      .where('id = :id AND tenant_id = :tenantId', { id: row.id, tenantId: row.tenant_id })
+      .andWhere("status = 'agendado'")
+      .andWhere("publication_status IS DISTINCT FROM 'published'")
+      .andWhere("publication_status IS DISTINCT FROM 'publishing'")
+      .execute();
+    if (!claim.affected) {
+      this.logger.log(`[marketing-publishing] content=${row.id} já reivindicado por outro worker — pulando (idempotência)`);
+      return;
+    }
 
     try {
       const result = await this.publish(row);

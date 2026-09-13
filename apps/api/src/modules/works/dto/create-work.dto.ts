@@ -30,7 +30,7 @@ export class CreateWorkDto {
   @MaxLength(100)
   genero?: string;
 
-  @ApiPropertyOptional({ example: 'pendente' })
+  @ApiPropertyOptional({ example: 'pending' })
   @IsOptional()
   @IsString()
   status?: string;

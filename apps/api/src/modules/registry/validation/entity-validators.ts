@@ -60,33 +60,33 @@ export class WorkRegistryValidationService {
       issues.push(issue(E, 'work_title_required', 'title', 'Título da obra é obrigatório.'));
     }
 
-    const authors = eligible.filter((s) => !isPublisherRole(s.role ?? s.papel));
+    const authors = eligible.filter((s) => !isPublisherRole(s.role ?? s.party_role));
     if (authors.length === 0) {
       issues.push(issue(E, 'work_no_author', 'authors', 'A obra precisa de pelo menos um autor/compositor.'));
     }
 
-    let percentualSum = 0;
+    let percentageSum = 0;
     for (const s of eligible) {
-      if (!s.titular_nome || !s.titular_nome.trim()) {
-        issues.push(issue(E, 'work_split_titular_nome_missing', 'splits.titular_nome', `Share ${s.id} elegível para registro está sem titular_nome.`));
+      if (!s.holder_name || !s.holder_name.trim()) {
+        issues.push(issue(E, 'work_split_holder_name_missing', 'splits.holder_name', `Share ${s.id} elegível para registro está sem holder_name.`));
       }
-      if (s.percentual == null) {
-        issues.push(issue(E, 'work_split_percentual_missing', 'splits.percentual', `Share ${s.id} elegível para registro está sem percentual.`));
+      if (s.percentage == null) {
+        issues.push(issue(E, 'work_split_percentage_missing', 'splits.percentage', `Share ${s.id} elegível para registro está sem percentage.`));
         continue;
       }
-      const p = toPercent(s.percentual);
+      const p = toPercent(s.percentage);
       if (p < 0 || p > 100) {
         issues.push(issue(E, 'work_split_percentage_invalid', 'splits', `Percentual inválido (${p}). Deve estar entre 0 e 100.`));
       }
-      percentualSum += p;
-      if (!validateDocumentSoft(s.titular_doc)) {
-        issues.push(issue(W, 'work_invalid_document', 'splits.document', `Documento do titular "${s.titular_nome}" parece inválido.`));
+      percentageSum += p;
+      if (!validateDocumentSoft(s.holder_document)) {
+        issues.push(issue(W, 'work_invalid_document', 'splits.document', `Documento do titular "${s.holder_name}" parece inválido.`));
       }
     }
 
     if (eligible.length > 0) {
-      if (Math.abs(percentualSum - 100) > 0.01) {
-        issues.push(issue(E, 'work_split_not_100', 'splits', `A soma dos splits ativos deve ser 100% (atual: ${percentualSum.toFixed(2)}%).`));
+      if (Math.abs(percentageSum - 100) > 0.01) {
+        issues.push(issue(E, 'work_split_not_100', 'splits', `A soma dos splits ativos deve ser 100% (atual: ${percentageSum.toFixed(2)}%).`));
       }
     }
 
@@ -123,19 +123,19 @@ export class RecordingRegistryValidationService {
     }
 
     const hasMainArtist = !!recording.main_artist_id || !!recording.artist_id ||
-      eligible.some((s) => isInterpreterRole(s.role ?? s.papel));
+      eligible.some((s) => isInterpreterRole(s.role ?? s.party_role));
     if (!hasMainArtist) {
       issues.push(issue(E, 'recording_main_artist_required', 'main_artist', 'Fonograma precisa de um artista principal/intérprete.'));
     }
 
     const hasProducer = !!recording.phonographic_producer_id ||
-      eligible.some((s) => isProducerRole(s.role ?? s.papel)) ||
+      eligible.some((s) => isProducerRole(s.role ?? s.party_role)) ||
       !!(recording.produtores && recording.produtores.trim());
     if (!hasProducer) {
       issues.push(issue(E, 'recording_producer_required', 'phonographic_producer', 'Fonograma precisa de um produtor fonográfico.'));
     }
 
-    const hasInterpreter = eligible.some((s) => isInterpreterRole(s.role ?? s.papel)) ||
+    const hasInterpreter = eligible.some((s) => isInterpreterRole(s.role ?? s.party_role)) ||
       !!(recording.interpretes && recording.interpretes.trim()) || !!recording.artist_id;
     if (!hasInterpreter) {
       issues.push(issue(E, 'recording_no_interpreter', 'interpreters', 'Fonograma precisa de pelo menos um intérprete.'));

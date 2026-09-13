@@ -16,7 +16,12 @@ export class UsersController {
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryUserDto) { return this.svc.list(t.id, q); }
 
   @Post() @RequireRole('owner') @Audit('user.created') @ApiOperation({ summary: 'Criar utilizador' })
-  create(@CurrentTenant() t: { id: string }, @CurrentUser() u: { userId: string }, @Body() dto: CreateUserDto) { return this.svc.create(t.id, dto, u.userId); }
+  create(
+    @CurrentTenant() t: { id: string },
+    @CurrentUser() u: { userId: string },
+    @CurrentMember() member: { role?: string } | undefined,
+    @Body() dto: CreateUserDto,
+  ) { return this.svc.create(t.id, dto, u.userId, member?.role); }
 
   @Post('invitations') @RequireRole('admin') @Audit('user.invited') @ApiOperation({ summary: 'Convidar utilizador por email' })
   invite(

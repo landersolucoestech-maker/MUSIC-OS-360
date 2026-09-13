@@ -65,7 +65,7 @@ export class AppleMusicService extends IntegrationBaseService {
     const sf = assertSafeStorefront(storefront);
     const id = assertSafePathSegment(artistId, 'artistId');
     const url = assertAllowedHost(`${APPLE_API}/catalog/${encodeURIComponent(sf)}/artists/${encodeURIComponent(id)}`, APPLE_HOSTS);
-    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    const res = await this.fetch(url, { headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) return { error: `Apple Music API error: ${res.status}` };
     const d    = await res.json() as any;
     const attr = d.data?.[0]?.attributes ?? {};
@@ -86,7 +86,7 @@ export class AppleMusicService extends IntegrationBaseService {
     const lim = assertSafeLimit(limit);
     const qs = new URLSearchParams({ term: safeTerm, types: safeTypes, limit: String(lim) }).toString();
     const url = assertAllowedHost(`${APPLE_API}/catalog/${encodeURIComponent(sf)}/search?${qs}`, APPLE_HOSTS);
-    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    const res = await this.fetch(url, { headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) return { error: `Apple Music API error: ${res.status}` };
     return res.json();
   }

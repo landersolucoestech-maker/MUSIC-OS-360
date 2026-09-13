@@ -77,6 +77,9 @@ const buildMockDs = (getOneValue: any = mockWork, participantRows: any[] = []) =
     // que resolve para os MESMOS mocks de repo, então as asserções existentes
     // contra mockDs._repo/_participantsRepo continuam válidas inalteradas.
     transaction: jest.fn((cb: any) => cb({ getRepository })),
+    // assertSameTenantFk's ownership check — a truthy row means "found, same
+    // tenant", so tests not focused on that behavior aren't coupled to it.
+    query: jest.fn().mockResolvedValue([{ exists: 1 }]),
     _repo: repo,
     _participantsRepo: participantsRepo,
   };
@@ -143,7 +146,7 @@ describe('WorksService', () => {
       referencias_conexas: null,
       letra_completa: null,
       participantes: null,
-      status: 'pendente',
+      status: 'pending',
       compositores: ['Fulano'],
       letristas: null,
       project_id: '123e4567-e89b-12d3-a456-426614174000',

@@ -4,12 +4,15 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { EcadReportEntity } from '../../database/entities';
 import type { CreateEcadReportDto } from './dto/create-ecad-report.dto';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
+import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 
 @Injectable()
 export class EcadReportsService {
   private readonly repo: Repository<EcadReportEntity> | null = null;
+  private readonly ds: DataSource | null;
 
   constructor(@Inject(DATA_SOURCE) ds: DataSource | null) {
+    this.ds = ds;
     if (ds) this.repo = ds.getRepository(EcadReportEntity);
   }
 
@@ -41,6 +44,9 @@ export class EcadReportsService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateEcadReportDto): Promise<EcadReportEntity> {
+    // find-1163c6ed: work_id had no cross-tenant ownership check — an ECAD
+    // report could silently reference another tenant's work.
+    await assertSameTenantFk(this.ds!, 'works', (dto as { work_id?: string }).work_id, tenantId, 'Obra');
     const entity = this.repo!.create({ tenant_id: tenantId, ...(dto as any), created_by: userId });
     return this.repo!.save(entity as any) as any;
   }
@@ -48,6 +54,9 @@ export class EcadReportsService {
   async update(tenantId: string, id: string, dto: any): Promise<EcadReportEntity> {
     await this.findById(tenantId, id);
     const { expectedUpdatedAt, ...rest } = dto ?? {};
+    // find-1163c6ed: only validate when the patch actually sets work_id —
+    // omitted means "unchanged", already validated at its own create time.
+    if (rest.work_id !== undefined) await assertSameTenantFk(this.ds!, 'works', rest.work_id, tenantId, 'Obra');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await casUpdate(
       this.repo!,

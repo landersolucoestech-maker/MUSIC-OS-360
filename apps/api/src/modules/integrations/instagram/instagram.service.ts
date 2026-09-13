@@ -38,11 +38,11 @@ export class InstagramService extends IntegrationBaseService {
     const appSecret   = this.config.get<string>('META_APP_SECRET')   ?? '';
     const redirectUri = this.config.get<string>('META_REDIRECT_URI') ?? '';
 
-    const tokenRes   = await fetch(`${META_API}/oauth/access_token?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&client_secret=${appSecret}&code=${code}`);
+    const tokenRes   = await this.fetch(`${META_API}/oauth/access_token?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&client_secret=${appSecret}&code=${code}`);
     const shortToken = await tokenRes.json() as any;
     if (shortToken.error) throw new Error(shortToken.error.message);
 
-    const longRes   = await fetch(`${META_API}/oauth/access_token?grant_type=fb_exchange_token&client_id=${appId}&client_secret=${appSecret}&fb_exchange_token=${shortToken.access_token}`);
+    const longRes   = await this.fetch(`${META_API}/oauth/access_token?grant_type=fb_exchange_token&client_id=${appId}&client_secret=${appSecret}&fb_exchange_token=${shortToken.access_token}`);
     const longToken = await longRes.json() as any;
     if (longToken.error) throw new Error(longToken.error.message);
 
@@ -63,7 +63,7 @@ export class InstagramService extends IntegrationBaseService {
     const conn = await this.getOAuthConnection(tenantId, userId, provider);
     if (conn?.accessToken) {
       try {
-        await fetch(`${META_API}/me/permissions?access_token=${conn.accessToken}`, { method: 'DELETE' });
+        await this.fetch(`${META_API}/me/permissions?access_token=${conn.accessToken}`, { method: 'DELETE' });
       } catch (err) {
         this.logger.warn(`Instagram/Meta: falha ao revogar token no Meta (${userId}@${tenantId}, ${provider}) — ${String(err)}`);
       }
@@ -88,7 +88,7 @@ export class InstagramService extends IntegrationBaseService {
     const appSecret = this.config.get<string>('META_APP_SECRET') ?? '';
 
     try {
-      const res  = await fetch(`${META_API}/oauth/access_token?grant_type=fb_exchange_token&client_id=${appId}&client_secret=${appSecret}&fb_exchange_token=${conn.accessToken}`);
+      const res  = await this.fetch(`${META_API}/oauth/access_token?grant_type=fb_exchange_token&client_id=${appId}&client_secret=${appSecret}&fb_exchange_token=${conn.accessToken}`);
       const json = await res.json() as any;
       if (json.error) throw new Error(json.error.message);
 
@@ -120,7 +120,7 @@ export class InstagramService extends IntegrationBaseService {
     if (!conn) return { error: 'Instagram não conectado' };
     const token = conn.accessToken;
 
-    const pagesRes = await fetch(`${META_API}/me/accounts?access_token=${token}`);
+    const pagesRes = await this.fetch(`${META_API}/me/accounts?access_token=${token}`);
     const pages    = await pagesRes.json() as any;
     if (pages.error) {
       if (pages.error.code === 190) await this.markOAuthNeedsReauth(tenantId, userId, PROVIDER);
@@ -130,12 +130,12 @@ export class InstagramService extends IntegrationBaseService {
     const pageData = pages.data?.[0];
     if (!pageData) return { error: 'Nenhuma página Facebook encontrada' };
 
-    const igRes  = await fetch(`${META_API}/${pageData.id}?fields=instagram_business_account&access_token=${pageData.access_token}`);
+    const igRes  = await this.fetch(`${META_API}/${pageData.id}?fields=instagram_business_account&access_token=${pageData.access_token}`);
     const igData = await igRes.json() as any;
     const igId   = igData.instagram_business_account?.id;
     if (!igId) return { error: 'Conta Instagram Business não encontrada' };
 
-    const metricsRes = await fetch(`${META_API}/${igId}?fields=username,name,biography,followers_count,follows_count,media_count,profile_picture_url&access_token=${pageData.access_token}`);
+    const metricsRes = await this.fetch(`${META_API}/${igId}?fields=username,name,biography,followers_count,follows_count,media_count,profile_picture_url&access_token=${pageData.access_token}`);
     const metrics    = await metricsRes.json() as any;
     return {
       instagramId: igId, username: metrics.username ?? '', name: metrics.name ?? '',

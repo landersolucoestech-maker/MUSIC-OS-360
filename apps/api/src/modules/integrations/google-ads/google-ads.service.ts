@@ -61,7 +61,7 @@ export class GoogleAdsService extends IntegrationBaseService {
     const clientSecret = this.config.get<string>('GOOGLE_ADS_CLIENT_SECRET') ?? '';
     const redirectUri  = this.config.get<string>('GOOGLE_ADS_REDIRECT_URI')  ?? '';
 
-    const res = await fetch(GOOGLE_TOKEN, {
+    const res = await this.fetch(GOOGLE_TOKEN, {
       method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({ code, client_id: clientId, client_secret: clientSecret, redirect_uri: redirectUri, grant_type: 'authorization_code' }),
     });
@@ -87,7 +87,7 @@ export class GoogleAdsService extends IntegrationBaseService {
       ORDER BY metrics.impressions DESC LIMIT 25
     `;
 
-    const res = await fetch(`${GAD_API}/customers/${creds.customer_id}/googleAds:search`, {
+    const res = await this.fetch(`${GAD_API}/customers/${creds.customer_id}/googleAds:search`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${conn.accessToken}`, 'developer-token': creds.developer_token, 'Content-Type': 'application/json' },
       body: JSON.stringify({ query }),

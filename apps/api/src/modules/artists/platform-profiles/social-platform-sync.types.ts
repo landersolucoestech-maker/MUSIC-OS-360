@@ -5,6 +5,12 @@ export const SOCIAL_PLATFORMS = ['spotify', 'youtube', 'deezer', 'soundcloud', '
 export type SocialPlatform = (typeof SOCIAL_PLATFORMS)[number];
 export type SocialPlatformSyncStatus = 'pending' | 'success' | 'failed' | 'skipped';
 
+/** find-5bf4716b: single source of truth for the "sync succeeded" literal,
+ * used to filter/query rows eligible for analytics (career-stage, market
+ * benchmark) — was previously duplicated as a bare 'success' string literal
+ * independently in a JS .filter() and a raw SQL WHERE clause. */
+export const SYNC_STATUS_SUCCESS: SocialPlatformSyncStatus = 'success';
+
 export interface SocialPlatformSyncRequest {
   tenant_id: string;
   artist_id: string;

@@ -7,7 +7,16 @@ const config: Config = {
   transform: {
     '^.+\\.(t|j)s$': ['ts-jest', {
       tsconfig: '<rootDir>/../tsconfig.json',
-      diagnostics: { warnOnly: true },
+      // find-ec0a5729 (Wave 12): real diagnostics were previously downgraded to
+      // warnOnly repo-wide, which let real compile errors (missing exports,
+      // wrong constructor arity) pass CI silently as confusing runtime
+      // failures instead of loud compile failures -- see find-89cba006 and the
+      // integrations.oauth-security.spec.ts constructor-arity fix, both only
+      // surfaced once this was turned on. The prior audiovisual.dto.spec.ts
+      // exclusion (find-9ab67e64) was removed once its 6 missing DTOs were
+      // implemented (Wave 13) -- diagnostics are now real repo-wide with no
+      // exclusions.
+      diagnostics: true,
     }],
   },
   collectCoverageFrom: [

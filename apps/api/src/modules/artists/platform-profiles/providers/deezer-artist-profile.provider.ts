@@ -5,7 +5,8 @@ import type {
   SocialPlatformProfileSnapshot,
 } from '../social-platform-sync.types';
 import { SoundchartsService } from '../../../integrations/soundcharts/soundcharts.service';
-import { primaryIdentityProvenance, soundchartsProvenance } from '../soundcharts-provenance.util';
+import { SoundchartsNotFoundError } from '../../../integrations/soundcharts/soundcharts.errors';
+import { primaryIdentityProvenance, soundchartsNotIndexedProvenance, soundchartsProvenance } from '../soundcharts-provenance.util';
 import { evaluateCrossPlatformEvidence } from '../soundcharts-canonical-candidates.util';
 
 /**
@@ -33,7 +34,43 @@ export class DeezerArtistProfileProvider implements ArtistPlatformProvider {
     const artistId = input.externalId ?? this.extractArtistId(input.externalUrl ?? '');
     if (!artistId) throw new Error('Deezer artist id ausente ou inválido');
 
-    const uuid = await this.soundcharts.resolveArtistByPlatform('deezer', artistId);
+    // find-4e35ea8e: um artistId do Deezer resolvido com sucesso (existe de
+    // verdade) mas não indexado na Soundcharts é uma resposta 404 VÁLIDA
+    // (mesmo padrão já aplicado em Instagram/TikTok/Apple Music/YouTube) —
+    // nunca sync_status=failed ("Erro"), sempre success com as métricas null
+    // ("Indisponível" na UI).
+    let uuid: string | null = null;
+    try {
+      uuid = await this.soundcharts.resolveArtistByPlatform('deezer', artistId);
+    } catch (err) {
+      if (!(err instanceof SoundchartsNotFoundError)) throw err;
+    }
+
+    if (!uuid) {
+      return {
+        tenant_id: input.tenantId,
+        artist_id: input.artistId,
+        platform: 'deezer',
+        external_id: artistId,
+        external_url: input.externalUrl ?? `https://www.deezer.com/artist/${artistId}`,
+        display_name: null,
+        username: null,
+        profile_url: input.externalUrl ?? `https://www.deezer.com/artist/${artistId}`,
+        image_url: null,
+        followers: null,
+        subscribers: null,
+        monthly_listeners: null,
+        popularity: null,
+        total_views: null,
+        total_videos: null,
+        total_tracks: null,
+        total_albums: null,
+        raw_payload: soundchartsNotIndexedProvenance('deezer', [`/api/v2.9/artist/by-platform/deezer/${artistId}`]),
+        sync_status: 'success',
+        last_synced_at: new Date(),
+        last_error: null,
+      };
+    }
 
     // Fase 1.3: resolução exata by-platform do artistId cadastrado já é a
     // prova de identidade primária. Divergência cross-platform é diagnóstico.

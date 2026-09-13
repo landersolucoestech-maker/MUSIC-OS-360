@@ -93,7 +93,7 @@ const ARTISTS_CONTRACT: ReportFormContract = {
     // Mídia e links (colunas diretas)
     col('foto_url'), col('spotify_url'), col('youtube_url'), col('deezer_url'),
     col('apple_music_url'), col('soundcloud_url'), col('galeria_urls'),
-    col('documentos'),
+    col('documents'),
     // Mídia e links (metadata)
     meta('presskit_url'), meta('documentos_pessoais_url'),
     meta('apple_music_albuns_url'), meta('soundcloud_seguidores_url'),
@@ -140,7 +140,7 @@ const EMPLOYEES_CONTRACT: ReportFormContract = {
   fields: [
     col('nome'), col('cargo'), col('departamento'), col('status'),
     col('tipo_contrato'), col('salario'), col('data_admissao'),
-    col('data_demissao'), col('documentos'),
+    col('data_demissao'), col('documents'),
     enc('email', 'email_encrypted'), enc('telefone', 'telefone_encrypted'),
     enc('cpf', 'cpf_encrypted'),
   ],
@@ -161,7 +161,7 @@ const CONTRACTS_CONTRACT: ReportFormContract = {
     col('template_id'), // campo do wizard (regra 2026-07-12: coluna própria)
     ro('autentique_doc_id'), // estado técnico da integração de assinatura
     ro('versoes'),           // histórico de versões (gerado pelo fluxo de assinatura)
-    ro('documentos'),        // anexos reais do R2 (REM-02), mesmo padrão de versoes
+    ro('documents'),        // anexos reais do R2 (REM-02), mesmo padrão de versoes
   ],
   excludedFormFields: {
     metadata: 'objeto jsonb interno bruto',
@@ -446,23 +446,22 @@ const RELEASES_CONTRACT: ReportFormContract = {
 // filha própria.
 const SHARES_CONTRACT: ReportFormContract = {
   tableName: 'shares',
-  identityColumn: 'nome_musica',
+  identityColumn: 'music_title',
   fields: [
-    col('share_type'), col('percentual'), col('status'), col('direcao'),
-    col('release_id'), col('nome_musica'), col('detentor'), col('destinatario'),
+    col('share_type'), col('percentage'), col('status'), col('direction'),
+    col('release_id'), col('music_title'), col('holder'), col('recipient'),
     col('type'), col('artista_externo'), col('artista_project_id'), col('artist_id'),
     col('pagador'), col('pagador_contato'), col('origem_acordo'), col('data_prevista'),
-    col('documentos'), col('acordo_notas'), col('acordo_url'), col('observacoes'),
+    col('documents'), col('acordo_notas'), col('acordo_url'), col('observacoes'),
     col('valor_total'), col('valor_liquidado'),
     ro('versao'), ro('historico'),
   ],
   excludedFormFields: {
-    holderName: 'alias legado em inglês (registro ABRAMUS/ECAD) mapeado para titular_nome — não é a tela real de Shares',
-    role: 'alias legado em inglês mapeado para papel — idem',
-    percentage: 'alias legado em inglês mapeado para percentual — chave canônica já coberta por percentual',
+    holderName: 'alias legado em inglês (registro ABRAMUS/ECAD) mapeado para holder_name — não é a tela real de Shares',
+    role: 'alias legado em inglês mapeado para party_role — idem',
     workId: 'alias legado em inglês mapeado para work_id — idem',
     trackId: 'alias legado em inglês mapeado para fonograma_id — idem',
-    holderDoc: 'alias legado em inglês mapeado para titular_doc — idem',
+    holderDoc: 'alias legado em inglês mapeado para holder_document — idem',
     metadata: 'objeto jsonb interno bruto',
   },
 };

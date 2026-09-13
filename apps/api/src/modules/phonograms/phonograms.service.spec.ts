@@ -51,6 +51,9 @@ const buildMockDs = (getOneValue: any = mockPhono) => {
   };
   return {
     getRepository: jest.fn(() => repo),
+    // assertSameTenantFk's ownership check — a truthy row means "found, same
+    // tenant", so tests not focused on that behavior aren't coupled to it.
+    query: jest.fn().mockResolvedValue([{ exists: 1 }]),
     _repo: repo,
   };
 };
@@ -100,7 +103,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       pais_publicacao: null,
       gravadora: null,
       observacoes: null,
-      status: 'pendente',
+      status: 'pending',
       participacao: null,
       arquivo_audio: null,
     };
@@ -375,7 +378,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
     });
 
     it('ausência de work_id/artist_id: não adiciona filtro para esses campos', async () => {
-      await service.list(TENANT, { status: 'ativo' } as any);
+      await service.list(TENANT, { status: 'active' } as any);
       const calledWithObraId = mockDs._repo._qb.andWhere.mock.calls.some((c: unknown[]) => c[0] === 'p.work_id = :workId');
       const calledWithArtistaId = mockDs._repo._qb.andWhere.mock.calls.some((c: unknown[]) => c[0] === 'p.artist_id = :artistId');
       expect(calledWithObraId).toBe(false);
@@ -383,8 +386,8 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
     });
 
     it('demais filtros (status, search) continuam funcionando', async () => {
-      await service.list(TENANT, { status: 'ativo', search: 'noite' } as any);
-      expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith('p.status = :status', { status: 'ativo' });
+      await service.list(TENANT, { status: 'active', search: 'noite' } as any);
+      expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith('p.status = :status', { status: 'active' });
       expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith('p.title ILIKE :search', { search: '%noite%' });
     });
   });
