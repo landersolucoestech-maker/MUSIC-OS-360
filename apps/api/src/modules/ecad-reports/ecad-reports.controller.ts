@@ -23,12 +23,16 @@ export class EcadReportsController {
     @CurrentTenant() tenant: { id: string },
     @Query('periodo') periodo?: string,
     @Query('status') status?: string,
+    @Query('work_id') work_id?: string,
+    @Query('ascending') ascending?: string,
     @Query('offset') offset?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.list(tenant.id, {
       periodo,
       status,
+      work_id,
+      ascending: ascending === 'true',
       offset: offset ? +offset : undefined,
       limit:  limit  ? +limit  : undefined,
     });
@@ -57,7 +61,7 @@ export class EcadReportsController {
 
   @Patch(':id')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Actualizar relatório ECAD' })
+  @ApiOperation({ summary: 'Atualizar relatório ECAD' })
   update(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,

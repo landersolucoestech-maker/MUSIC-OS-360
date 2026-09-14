@@ -25,12 +25,16 @@ export class ArtistGoalsController {
     @CurrentTenant() tenant: { id: string },
     @Query('artist_id') artist_id?: string,
     @Query('status') status?: string,
+    @Query('type') type?: string,
+    @Query('ascending') ascending?: string,
     @Query('offset') offset?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.list(tenant.id, {
       artist_id,
       status,
+      type,
+      ascending: ascending === 'true',
       offset: offset ? +offset : undefined,
       limit:  limit  ? +limit  : undefined,
     });
@@ -62,7 +66,7 @@ export class ArtistGoalsController {
   @Patch(':id')
   @RequireRole('editor')
   @RequirePermission('artist_goal:update')
-  @ApiOperation({ summary: 'Actualizar meta de artista' })
+  @ApiOperation({ summary: 'Atualizar meta de artista' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },

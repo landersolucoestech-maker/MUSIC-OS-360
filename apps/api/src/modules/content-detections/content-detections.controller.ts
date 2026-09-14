@@ -22,12 +22,18 @@ export class ContentDetectionsController {
     @CurrentTenant() tenant: { id: string },
     @Query('status') status?: string,
     @Query('plataforma') plataforma?: string,
+    @Query('artist_id') artist_id?: string,
+    @Query('work_id') work_id?: string,
+    @Query('ascending') ascending?: string,
     @Query('offset') offset?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.list(tenant.id, {
       status,
       plataforma,
+      artist_id,
+      work_id,
+      ascending: ascending === 'true',
       offset: offset ? +offset : undefined,
       limit:  limit  ? +limit  : undefined,
     });
@@ -55,7 +61,7 @@ export class ContentDetectionsController {
 
   @Patch(':id')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Actualizar detecção' })
+  @ApiOperation({ summary: 'Atualizar detecção' })
   update(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
