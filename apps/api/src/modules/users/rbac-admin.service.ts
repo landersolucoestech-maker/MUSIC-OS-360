@@ -191,6 +191,18 @@ export class RbacAdminService {
     dto: DuplicateTenantRoleDto,
   ) {
     const source = await this.getRoleRow(tenantId, roleId);
+    // find-e0b57623: getRoleRow intentionally allows reading a GLOBAL
+    // (tenant_id IS NULL) role -- e.g. so a tenant can see what a role it
+    // was granted inherits -- but duplicating one is a distinct
+    // escalation path from the slug-collision vector already closed: it
+    // let a tenant owner clone super_admin's full grant set onto a new,
+    // hierarchy-89, always-assignable tenant role and self-assign it,
+    // bypassing is_assignable via the permission-COPY path instead of the
+    // slug path. A duplication source must always be one of the tenant's
+    // own roles.
+    if (source.tenant_id !== tenantId) {
+      throw new ForbiddenException('N\u00e3o \u00e9 poss\u00edvel duplicar um papel global do sistema');
+    }
     const level = Math.min(source.hierarchy_level, Math.max(0, (ROLE_HIERARCHY[actorRole] ?? 0) - 1));
     this.assertHierarchy(actorRole, level);
     const slug = dto.slug ?? dto.name.normalize('NFD')
@@ -203,7 +215,10 @@ export class RbacAdminService {
       name: dto.name.trim(),
       description: source.description,
       hierarchyLevel: level,
-      isAssignable: true,
+      // find-e0b57623: respect the source role's own is_assignable instead
+      // of unconditionally forcing true -- a non-assignable tenant role
+      // (if one exists) must not become assignable just by being cloned.
+      isAssignable: source.is_assignable ?? undefined,
       actorId,
     });
     const grants = await this.ds.query(
@@ -211,6 +226,15 @@ export class RbacAdminService {
       [roleId],
     ) as Array<{ permission_id: string }>;
     for (const grant of grants) {
+      // find-e0b57623: mirror grant()'s own assertPermission gate -- never
+      // copy a non-assignable/deprecated permission onto the duplicate,
+      // even from a same-tenant source role. Skipped, not thrown: cloning
+      // the rest of a role's real, assignable grants is still useful.
+      try {
+        await this.assertPermission(grant.permission_id);
+      } catch {
+        continue;
+      }
       await this.mutations.grantRolePermission(created.id, grant.permission_id, tenantId, actorId);
     }
     return this.getRoleDetail(tenantId, created.id);
@@ -296,7 +320,7 @@ export class RbacAdminService {
   private async getRoleRow(tenantId: string, roleId: string) {
     const rows = await this.ds.query(
       `SELECT "id", "tenant_id", "slug", "name", "description",
-              "hierarchy_level", "is_system", "archived_at", "deleted_at"
+              "hierarchy_level", "is_system", "is_assignable", "archived_at", "deleted_at"
          FROM "roles"
         WHERE "id" = $1
           AND ("tenant_id" = $2 OR "tenant_id" IS NULL)
@@ -311,6 +335,7 @@ export class RbacAdminService {
       description: string | null;
       hierarchy_level: number;
       is_system: boolean;
+      is_assignable: boolean | null;
       archived_at: Date | null;
     }>;
     if (!rows[0]) throw new NotFoundException('Papel não encontrado');
