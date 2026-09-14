@@ -149,6 +149,7 @@ export class RbacAdminService {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '_')
       .replace(/^_+|_+$/g, '');
+    await this.assertSlugNotReserved(slug);
     const role = await this.mutations.createRole({
       tenantId,
       slug,
@@ -195,6 +196,7 @@ export class RbacAdminService {
     const slug = dto.slug ?? dto.name.normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '').toLowerCase()
       .replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+    await this.assertSlugNotReserved(slug);
     const created = await this.mutations.createRole({
       tenantId,
       slug,
@@ -339,6 +341,27 @@ export class RbacAdminService {
     }
     if (targetLevel >= 90 && actorRole !== 'super_admin') {
       throw new ForbiddenException('Somente o sistema pode criar ou alterar papéis no nível owner');
+    }
+  }
+
+  // find-986186c1: a tenant-scoped role sharing its slug with a GLOBAL
+  // (tenant_id IS NULL) role shadows that global role's is_assignable/
+  // hierarchy_level in UsersService.assertCanAssignRole's slug lookup --
+  // letting a tenant admin create e.g. slug='super_admin' with
+  // isAssignable=true to bypass the real super_admin role's
+  // is_assignable=false gate and self-assign platform-wide privilege
+  // (RolesGuard and the RLS app_is_super_admin() function both trust the
+  // resulting org_members.role string directly). Block the collision at
+  // creation time -- the authoritative source is the live global roles
+  // table, not a hardcoded enum list, so this also covers any global role
+  // added later without a code change here.
+  private async assertSlugNotReserved(slug: string): Promise<void> {
+    const [existing] = (await this.ds.query(
+      `SELECT 1 FROM "roles" WHERE "tenant_id" IS NULL AND "slug" = $1 AND "deleted_at" IS NULL`,
+      [slug],
+    )) as unknown[];
+    if (existing) {
+      throw new ForbiddenException(`O identificador de papel '${slug}' é reservado pelo sistema`);
     }
   }
 

@@ -407,11 +407,18 @@ export class UsersService {
           AND ("tenant_id" = $2 OR "tenant_id" IS NULL)
           AND "deleted_at" IS NULL
           AND "archived_at" IS NULL
-        ORDER BY ("tenant_id" = $2) DESC`,
+        ORDER BY ("tenant_id" IS NULL) DESC`,
       [slugs, tenantId],
     ) as Array<{ slug: string; hierarchy_level: number; is_assignable: boolean | null }>;
     const levels = new Map<string, number>();
     const assignable = new Map<string, boolean>();
+    // find-986186c1: a GLOBAL (tenant_id IS NULL) role row must always be
+    // authoritative for its slug -- ordering global rows first means a
+    // tenant-scoped role sharing a reserved slug (e.g. a leftover row from
+    // before assertSlugNotReserved existed) can never override the real
+    // role's is_assignable/hierarchy_level via the "first seen wins" fill
+    // below. assertSlugNotReserved (rbac-admin.service.ts) now prevents new
+    // collisions at creation time; this is the read-time backstop.
     for (const row of roleRows) {
       if (!levels.has(row.slug)) levels.set(row.slug, Number(row.hierarchy_level));
       if (!assignable.has(row.slug)) assignable.set(row.slug, row.is_assignable !== false);
