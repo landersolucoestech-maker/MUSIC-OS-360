@@ -292,7 +292,21 @@ export class BillingEnforcementService {
     );
   }
 
-  async startPaymentGrace(tenantId: string, reason: string, now = new Date(), manager?: EntityManager): Promise<TenantBillingState> {
+  /**
+   * find-329e1db7 (concurrency/ordering): eventCreatedAtSec, when provided,
+   * anchors an atomic WHERE guard on the tenant_billing_state upsert itself
+   * (mirroring find-602e8654's billing_subscriptions guard) so two
+   * concurrently-delivered invoice webhooks for the same tenant can't race
+   * past each other -- the write for the chronologically OLDER Stripe event
+   * is rejected at the SQL level even if both requests read the same
+   * pre-write state. Callers that don't pass it (manual admin actions,
+   * subscription-status transitions that already have their own upstream
+   * `applied` guard via upsertStripeSubscription) keep the previous
+   * unconditional-apply behavior. Returns null when the write was rejected
+   * as stale -- callers must not run further side effects (websocket
+   * notifications, other table writes) in that case.
+   */
+  async startPaymentGrace(tenantId: string, reason: string, now = new Date(), manager?: EntityManager, eventCreatedAtSec?: number): Promise<TenantBillingState | null> {
     const ds = manager ?? this.assertDb();
     const settings = await this.getSettings();
     const before = await this.readStateRaw(tenantId, manager);
@@ -330,15 +344,19 @@ export class BillingEnforcementService {
          END,
          grace_until = $2,
          updated_at = now()
+       WHERE $3::bigint IS NULL
+          OR tenant_billing_state.status_changed_at IS NULL
+          OR to_timestamp($3) >= tenant_billing_state.status_changed_at
        RETURNING *`,
-      [tenantId, graceUntil],
+      [tenantId, graceUntil, eventCreatedAtSec ?? null],
     ) as TenantBillingState[];
     const after = rows[0];
+    if (!after) return null;
     await this.auditStateChange('billing.grace_started', tenantId, before, after, reason, manager);
     return after;
   }
 
-  async activateTenant(tenantId: string, reason: string, now = new Date(), manager?: EntityManager): Promise<TenantBillingState> {
+  async activateTenant(tenantId: string, reason: string, now = new Date(), manager?: EntityManager, eventCreatedAtSec?: number): Promise<TenantBillingState | null> {
     const ds = manager ?? this.assertDb();
     const before = await this.readStateRaw(tenantId, manager);
     await ds.query(
@@ -367,10 +385,14 @@ export class BillingEnforcementService {
          manual_override_reason = NULL,
          manual_override_until = NULL,
          updated_at = now()
+       WHERE $3::bigint IS NULL
+          OR tenant_billing_state.status_changed_at IS NULL
+          OR to_timestamp($3) >= tenant_billing_state.status_changed_at
        RETURNING *`,
-      [tenantId, now],
+      [tenantId, now, eventCreatedAtSec ?? null],
     ) as TenantBillingState[];
     const after = rows[0];
+    if (!after) return null;
     await this.auditStateChange('tenant.reactivated', tenantId, before, after, reason, manager);
     return after;
   }

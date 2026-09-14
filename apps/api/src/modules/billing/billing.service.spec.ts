@@ -257,7 +257,7 @@ describe('BillingService', () => {
         stripeEventId: 'evt_failed',
         eventType: 'invoice.payment_failed',
       }));
-      expect(enforcement.startPaymentGrace).toHaveBeenCalledWith('tenant-1', 'invoice.payment_failed');
+      expect(enforcement.startPaymentGrace).toHaveBeenCalledWith('tenant-1', 'invoice.payment_failed', expect.any(Date), undefined, undefined);
     });
 
     it('reativa tenant em invoice.payment_succeeded', async () => {
@@ -278,7 +278,7 @@ describe('BillingService', () => {
         },
       });
       await service.handleWebhook('sig', Buffer.from('{}'));
-      expect(enforcement.activateTenant).toHaveBeenCalledWith('tenant-1', 'invoice.payment_succeeded');
+      expect(enforcement.activateTenant).toHaveBeenCalledWith('tenant-1', 'invoice.payment_succeeded', expect.any(Date), undefined, undefined);
     });
 
     describe('invoice.payment_succeeded/failed — stale/out-of-order delivery (find-99ea599c)', () => {
@@ -305,7 +305,10 @@ describe('BillingService', () => {
           data: { object: { id: 'in_fresh', customer: 'cus_1', subscription: 'sub_1', status: 'paid' } },
         });
         await service.handleWebhook('sig', Buffer.from('{}'));
-        expect(enforcement.activateTenant).toHaveBeenCalledWith('tenant-1', 'invoice.payment_succeeded');
+        expect(enforcement.activateTenant).toHaveBeenCalledWith(
+          'tenant-1', 'invoice.payment_succeeded', expect.any(Date), undefined,
+          Math.floor(new Date('2026-01-02T00:00:00Z').getTime() / 1000),
+        );
       });
 
       it('an invoice.payment_failed older than a newer payment_succeeded does not re-open grace', async () => {
@@ -321,6 +324,21 @@ describe('BillingService', () => {
         expect(enforcement.startPaymentGrace).not.toHaveBeenCalled();
       });
 
+      it('a rejected startPaymentGrace write (lost the race) skips the org-status update and websocket notification', async () => {
+        enforcement.startPaymentGrace.mockResolvedValueOnce(null);
+        const stripe = getStripeInstance();
+        stripe.webhooks.constructEvent.mockReturnValueOnce({
+          id: 'evt_failed_raced',
+          type: 'invoice.payment_failed',
+          created: Math.floor(new Date('2026-01-02T00:00:00Z').getTime() / 1000),
+          data: { object: { id: 'in_failed_raced', customer: 'cus_1', subscription: 'sub_1', status: 'open' } },
+        });
+        const ws = (service as unknown as { ws: { sendToTenant: jest.Mock } }).ws;
+        await service.handleWebhook('sig', Buffer.from('{}'));
+        expect(enforcement.startPaymentGrace).toHaveBeenCalled();
+        expect(ws.sendToTenant).not.toHaveBeenCalledWith('tenant-1', 'billing:payment_failed', expect.anything());
+      });
+
       it('an invoice event with no prior status_changed_at (first-ever transition) is never treated as stale', async () => {
         enforcement.getState.mockResolvedValueOnce({ status: 'trial' });
         const stripe = getStripeInstance();
@@ -331,7 +349,25 @@ describe('BillingService', () => {
           data: { object: { id: 'in_first', customer: 'cus_1', subscription: 'sub_1', status: 'paid' } },
         });
         await service.handleWebhook('sig', Buffer.from('{}'));
-        expect(enforcement.activateTenant).toHaveBeenCalledWith('tenant-1', 'invoice.payment_succeeded');
+        expect(enforcement.activateTenant).toHaveBeenCalledWith(
+          'tenant-1', 'invoice.payment_succeeded', expect.any(Date), undefined,
+          Math.floor(new Date('2020-01-01T00:00:00Z').getTime() / 1000),
+        );
+      });
+
+      it('a rejected write (lost the race to a concurrent/newer event) skips the websocket notification', async () => {
+        enforcement.activateTenant.mockResolvedValueOnce(null);
+        const stripe = getStripeInstance();
+        stripe.webhooks.constructEvent.mockReturnValueOnce({
+          id: 'evt_paid_raced',
+          type: 'invoice.payment_succeeded',
+          created: Math.floor(new Date('2026-01-02T00:00:00Z').getTime() / 1000),
+          data: { object: { id: 'in_raced', customer: 'cus_1', subscription: 'sub_1', status: 'paid' } },
+        });
+        const ws = (service as unknown as { ws: { sendToTenant: jest.Mock } }).ws;
+        await service.handleWebhook('sig', Buffer.from('{}'));
+        expect(enforcement.activateTenant).toHaveBeenCalled();
+        expect(ws.sendToTenant).not.toHaveBeenCalledWith('tenant-1', 'billing:payment_succeeded', expect.anything());
       });
     });
 
@@ -450,7 +486,7 @@ describe('BillingService', () => {
       enforcement.recordWebhookProcessed.mockResolvedValueOnce('inserted'); // reclaimed
       const r = await service.handleWebhook('sig', Buffer.from('{}'));
       expect(r).toEqual({ received: true });
-      expect(enforcement.activateTenant).toHaveBeenCalledWith('tenant-1', 'invoice.payment_succeeded');
+      expect(enforcement.activateTenant).toHaveBeenCalledWith('tenant-1', 'invoice.payment_succeeded', expect.any(Date), undefined, undefined);
       expect(enforcement.markWebhookProcessed).toHaveBeenCalledWith('evt_retry');
     });
 

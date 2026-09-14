@@ -835,7 +835,16 @@ export class BillingService {
       this.logger.log(`invoice.payment_succeeded ignorado (stale): tenant=${tenantId} invoice=${invoice.id}`);
       return;
     }
-    await this.enforcement.activateTenant(tenantId, 'invoice.payment_succeeded');
+    // find-329e1db7: the pre-read check above can't stop two genuinely
+    // concurrent webhooks from both passing it against the same stale
+    // read -- activateTenant's own WHERE guard (atomic, SQL-level) is the
+    // real ordering enforcement; a null return means a concurrent/newer
+    // event already won the race, so no further side effect should fire.
+    const applied = await this.enforcement.activateTenant(tenantId, 'invoice.payment_succeeded', new Date(), undefined, eventCreatedAtSec);
+    if (!applied) {
+      this.logger.log(`invoice.payment_succeeded rejeitado (concorrência): tenant=${tenantId} invoice=${invoice.id}`);
+      return;
+    }
     this.ws.sendToTenant(tenantId, 'billing:payment_succeeded', {
       invoice_id: invoice.id,
       hosted_invoice_url: invoice.hosted_invoice_url ?? null,
@@ -852,7 +861,13 @@ export class BillingService {
       this.logger.log(`invoice.payment_failed ignorado (stale): tenant=${tenantId} invoice=${invoice.id}`);
       return;
     }
-    await this.enforcement.startPaymentGrace(tenantId, 'invoice.payment_failed');
+    // find-329e1db7: see onPaymentSucceeded's comment -- the atomic WHERE
+    // guard inside startPaymentGrace is the real concurrency enforcement.
+    const applied = await this.enforcement.startPaymentGrace(tenantId, 'invoice.payment_failed', new Date(), undefined, eventCreatedAtSec);
+    if (!applied) {
+      this.logger.log(`invoice.payment_failed rejeitado (concorrência): tenant=${tenantId} invoice=${invoice.id}`);
+      return;
+    }
     await this.orgRepo!
       .createQueryBuilder()
       .update(OrganizationEntity)

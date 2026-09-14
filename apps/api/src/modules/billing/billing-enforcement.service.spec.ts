@@ -282,11 +282,11 @@ describe('BillingEnforcementService — startPaymentGrace grace_until idempotenc
     const laterNow = new Date('2026-09-05T00:00:00.000Z'); // a later retry, days after the original failure
     const after = await service.startPaymentGrace('tenant-1', 'invoice.payment_failed retry', laterNow);
 
-    expect(new Date(after.grace_until as unknown as string)).toEqual(originalGraceUntil);
+    expect(new Date(after!.grace_until as unknown as string)).toEqual(originalGraceUntil);
     const updateCall = query.mock.calls.find(([sql]) => /UPDATE billing_subscriptions/.test(sql as string));
     expect(updateCall?.[1]).toEqual(['tenant-1', originalGraceUntil]);
     const insertCall = query.mock.calls.find(([sql]) => /INSERT INTO tenant_billing_state/.test(sql as string));
-    expect(insertCall?.[1]).toEqual(['tenant-1', originalGraceUntil]);
+    expect(insertCall?.[1]).toEqual(['tenant-1', originalGraceUntil, null]);
     // Same status in and out -> auditStateChange must not touch status_changed_at.
     expect(query.mock.calls.some(([sql]) => /status_changed_at = now\(\)/.test(sql as string))).toBe(false);
   });
@@ -310,7 +310,75 @@ describe('BillingEnforcementService — startPaymentGrace grace_until idempotenc
 
     const expectedGraceUntil = new Date(now);
     expectedGraceUntil.setUTCDate(expectedGraceUntil.getUTCDate() + 3); // DEFAULT_SETTINGS.grace_period_days
-    expect(new Date(after.grace_until as unknown as string).toISOString()).toBe(expectedGraceUntil.toISOString());
+    expect(new Date(after!.grace_until as unknown as string).toISOString()).toBe(expectedGraceUntil.toISOString());
+  });
+});
+
+/**
+ * find-329e1db7: activateTenant/startPaymentGrace used to write
+ * tenant_billing_state unconditionally -- two genuinely concurrent invoice
+ * webhooks for the same tenant (an older payment_failed racing a newer
+ * payment_succeeded) could both read the same pre-write state and both
+ * pass their own app-level staleness check, then race to write; whichever
+ * commit landed last won regardless of actual event order. The fix adds an
+ * atomic WHERE guard (mirroring find-602e8654's billing_subscriptions
+ * guard) directly on the tenant_billing_state upsert, keyed on the
+ * Stripe event's own created timestamp vs. the row's stored
+ * status_changed_at -- evaluated by Postgres inside the single UPDATE
+ * statement, not via a separate read.
+ */
+describe('BillingEnforcementService — invoice-event concurrency guard (find-329e1db7)', () => {
+  function makeQuery(insertResult: unknown[]) {
+    return jest.fn(async (sql: string, _params?: unknown[]) => {
+      if (/SELECT \* FROM tenant_billing_state WHERE tenant_id/.test(sql)) return [];
+      if (/SELECT value FROM billing_settings/.test(sql)) return [];
+      if (/UPDATE billing_subscriptions/.test(sql)) return [];
+      if (/INSERT INTO tenant_billing_state/.test(sql)) return insertResult;
+      if (/status_changed_at = now\(\)/.test(sql)) return [{ status_changed_at: new Date() }];
+      throw new Error(`Unexpected query: ${sql}`);
+    });
+  }
+
+  it('startPaymentGrace includes the atomic event-ordering WHERE guard in its SQL', async () => {
+    const query = makeQuery([{ id: 'row-1', tenant_id: 'tenant-1', status: 'payment_grace' }]);
+    const service = new BillingEnforcementService({ query } as never, { log: jest.fn() } as never);
+
+    await service.startPaymentGrace('tenant-1', 'invoice.payment_failed', new Date(), undefined, 1000);
+
+    const insertCall = query.mock.calls.find(([sql]) => /INSERT INTO tenant_billing_state/.test(sql as string));
+    expect(insertCall?.[0]).toContain('to_timestamp($3) >= tenant_billing_state.status_changed_at');
+    expect(insertCall?.[1]).toEqual(['tenant-1', expect.any(Date), 1000]);
+  });
+
+  it('activateTenant returns null and never audits a status change when the write is rejected as stale (guard matched zero rows)', async () => {
+    const query = makeQuery([]); // simulates Postgres's WHERE guard rejecting the write
+    const service = new BillingEnforcementService({ query } as never, { log: jest.fn() } as never);
+
+    const result = await service.activateTenant('tenant-1', 'invoice.payment_succeeded', new Date(), undefined, 500);
+
+    expect(result).toBeNull();
+    expect(query.mock.calls.some(([sql]) => /status_changed_at = now\(\)/.test(sql as string))).toBe(false);
+  });
+
+  it('activateTenant applies and audits normally when the write lands (guard matched)', async () => {
+    const query = makeQuery([{ id: 'row-1', tenant_id: 'tenant-1', status: 'active' }]);
+    const service = new BillingEnforcementService({ query } as never, { log: jest.fn() } as never);
+
+    const result = await service.activateTenant('tenant-1', 'invoice.payment_succeeded', new Date(), undefined, 2000);
+
+    expect(result?.status).toBe('active');
+    expect(query.mock.calls.some(([sql]) => /status_changed_at = now\(\)/.test(sql as string))).toBe(true);
+  });
+
+  it('a caller that omits eventCreatedAtSec (manual admin actions, subscription-status path) still applies unconditionally', async () => {
+    const query = makeQuery([{ id: 'row-1', tenant_id: 'tenant-1', status: 'active' }]);
+    const service = new BillingEnforcementService({ query } as never, { log: jest.fn() } as never);
+
+    const result = await service.activateTenant('tenant-1', 'manual admin reactivation');
+
+    expect(result?.status).toBe('active');
+    const insertCall = query.mock.calls.find(([sql]) => /INSERT INTO tenant_billing_state/.test(sql as string));
+    expect(insertCall?.[1]).toEqual(['tenant-1', expect.any(Date), null]);
   });
 });
 
