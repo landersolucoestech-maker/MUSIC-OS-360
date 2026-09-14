@@ -1,0 +1,12 @@
+{
+  "id": "evid-82d89ce9",
+  "createdAt": "2026-09-14T04:30:54.436Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Final gate re-verification of duplicateRole permission-copy fix (bc36dd41). Independently confirmed: (a) ForbiddenException fires at rbac-admin.service.ts:203-205 when source.tenant_id !== tenantId, before any write; (b) isAssignable at line 221 derives from source.is_assignable via '??' (false preserved through RbacMutationService.createRole's own 'input.isAssignable ?? true' at rbac-mutation.service.ts:98, since false is not nullish); (c) grant-copy loop at lines 228-239 calls assertPermission per grant and skips (continue, no throw) a non-assignable/deprecated one. rbac-duplicate-role-escalation.security.spec.ts's 4 tests genuinely exercise the real scenario (test 1 uses the actual global super_admin row: tenant_id null, hierarchy_level 100, is_assignable false, actor role 'owner', and asserts ForbiddenException + zero mutation calls); tests 2-4 mock only the DB/mutation boundary, not the vulnerability logic. find-ee2eab16 (addInheritance not checking parent.is_assignable) independently re-verified as honestly LOW: assertHierarchy's unconditional 90+ hierarchy ceiling (rbac-admin.service.ts:367-369) blocks any non-super_admin actor, including owner/tenant_owner, from inheriting from any role with hierarchy_level>=90, and super_admin (level 100) is the only NON_ASSIGNABLE global role in 04_rbac_seed.ts -- so the one dangerous non-assignable role can never be reached via addInheritance today. Ran pnpm exec jest --config jest.config.ts src/modules/users: 10 suites / 44 tests passed, matching the cross-reviewer's report. Ran pnpm exec tsc -p tsconfig.build.json --noEmit: clean. git status --porcelain: 60 dirty files, all pre-existing PT-BR spelling changes outside this RBAC surface -- no unexpected scope leakage. Fresh third-sibling-gap sweep found one new LOW, non-exploitable item (find-d4387fa2): createRole's permission-grant loop never calls assertPermission per permissionId, unlike grant() and the fixed duplicateRole(), but no current permission is deprecated/non-assignable and no endpoint sets those columns, so there is no live path today. VERDICT: PASS -- mission may close.",
+  "workspaceFingerprint": "c134eb03cbb7f7391dbdde698abbb3952b2b1ec68cf654b7864da132f1bc2f20",
+  "fingerprintStatus": "BOUND",
+  "head": "a96e1c61c586f962e07d62c33ee0bc1ee199479e"
+}

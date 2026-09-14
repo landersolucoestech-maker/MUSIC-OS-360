@@ -4,7 +4,7 @@
   "missionName": "resolve-worktree-86-diff",
   "status": "active",
   "createdAt": "2026-09-09T03:56:21.053Z",
-  "updatedAt": "2026-09-14T04:25:18.596Z",
+  "updatedAt": "2026-09-14T04:31:43.813Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": "L5",
@@ -4213,6 +4213,20 @@
       "createdAt": "2026-09-14T04:24:20.145Z",
       "justification": "addInheritance's hierarchy-only ceiling (>=90) doesn't check parent.is_assignable, and PermissionResolverService.resolvePersisted walks inherited roles without filtering on is_assignable. Not currently exploitable: super_admin (the only is_assignable=false global role in the seed) is already blocked by the >=90 ceiling. Real latent coupling of the same escalation class, recorded as defense-in-depth backlog rather than fixed now, since no live path reaches it with current seed data.",
       "resolvedAt": "2026-09-14T04:25:18.594Z"
+    },
+    {
+      "id": "find-d4387fa2",
+      "category": "G",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/users/rbac-admin.service.ts",
+      "line": null,
+      "summary": "createRole's permission-grant loop (lines 162-164) inserts each dto.permissionIds entry via mutations.grantRolePermission without calling assertPermission first, unlike grant() (line 269) and the now-fixed duplicateRole() (line 234) -- a defense-in-depth inconsistency on the same RBAC admin surface. Not exploitable today: no permission in the seed catalog has is_assignable=false or deprecated_at set, and no current endpoint sets those columns, so there is no live way to create a role holding a non-assignable/deprecated permission through this path right now. Recommend adding the same assertPermission(permissionId) call inside createRole's grant loop for consistency once a permission-deprecation workflow exists.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-14T04:30:41.072Z",
+      "justification": "createRole's permission-grant loop inserts dto.permissionIds via grantRolePermission without calling assertPermission first, unlike grant() and the now-fixed duplicateRole(). Confirmed non-exploitable today: grepped the whole repo, no writer anywhere ever sets permissions.is_assignable=false or deprecated_at -- the seed only inserts permissions with the column default (is_assignable=true). Same risk shape and same disposition as find-ee2eab16 -- real latent coupling, no live path reaches it with current seed data. Found by the final re-confirmation reviewer's fresh third-sibling-gap sweep.",
+      "resolvedAt": "2026-09-14T04:31:43.811Z"
     }
   ],
   "evidenceIds": [
@@ -4453,7 +4467,8 @@
     "evid-9e1c8359",
     "evid-9d0bc391",
     "evid-3b4d6b3b",
-    "evid-7303995d"
+    "evid-7303995d",
+    "evid-82d89ce9"
   ],
   "checkpointIds": [],
   "touchedFiles": [],

@@ -474,3 +474,4 @@
 {"seq":474,"kind":"evidence","recordId":"evid-9d0bc391","at":"2026-09-14T04:11:57.872Z","prevHash":"914605fa7a1f163919ceea095f02c023e333e90638f8df4decb4909ce84490d2","hash":"3d2ec380f3d197ff2b6c180fb4b193f887ea5a5d8a137d77d2b3e2372c0d25ae"}
 {"seq":475,"kind":"evidence","recordId":"evid-3b4d6b3b","at":"2026-09-14T04:24:09.226Z","prevHash":"3d2ec380f3d197ff2b6c180fb4b193f887ea5a5d8a137d77d2b3e2372c0d25ae","hash":"1fa80824501bcea7b3fa864caa4bb443af73427dea5f36b7db1c21f1bd151c23"}
 {"seq":476,"kind":"evidence","recordId":"evid-7303995d","at":"2026-09-14T04:25:17.966Z","prevHash":"1fa80824501bcea7b3fa864caa4bb443af73427dea5f36b7db1c21f1bd151c23","hash":"6dfa3b15c70cb4af176f9ce04d5fbd01d948b8f5defc3ca689813daa8b5d2d67"}
+{"seq":477,"kind":"evidence","recordId":"evid-82d89ce9","at":"2026-09-14T04:30:54.443Z","prevHash":"6dfa3b15c70cb4af176f9ce04d5fbd01d948b8f5defc3ca689813daa8b5d2d67","hash":"e409152ae3405f0ff0bc5409f0d92c9f27ceb241295401f60ef7989b4119771b"}
