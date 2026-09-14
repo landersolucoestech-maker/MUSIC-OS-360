@@ -4,7 +4,7 @@
   "missionName": "resolve-worktree-86-diff",
   "status": "active",
   "createdAt": "2026-09-09T03:56:21.053Z",
-  "updatedAt": "2026-09-14T03:34:32.998Z",
+  "updatedAt": "2026-09-14T03:37:51.966Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": "L5",
@@ -3760,9 +3760,11 @@
       "line": 208,
       "summary": "Peer PT-PT->PT-BR normalization diff renames a local const identifier (PERFIS_COM_EQUIPA -> PERFIS_COM_EQUIPE) in addition to string/comment spelling fixes. Verified via repo-wide grep: both declaration (L208) and sole usage (L209) were updated consistently, no other file/test references the old or new identifier, so there is no functional break and no dangling reference. Flagged per audit instructions because it is a technical-identifier change, not pure prose/string substitution, even though impact is none.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "LEGITIMA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T22:50:10.393Z"
+      "createdAt": "2026-09-13T22:50:10.393Z",
+      "justification": "Verified complete and consistent -- both occurrences of the renamed local const (PERFIS_COM_EQUIPA->PERFIS_COM_EQUIPE) updated together, zero dangling references repo-wide. Not a defect; recorded only as a scope-discipline note for the peer session's normalization pass.",
+      "resolvedAt": "2026-09-14T03:37:32.226Z"
     },
     {
       "id": "find-a76a1df9",
@@ -3772,9 +3774,11 @@
       "line": null,
       "summary": "18 backfill+CHECK migrations use plain ALTER TABLE ADD CONSTRAINT CHECK (no NOT VALID/VALIDATE CONSTRAINT split) and 2 new-uniqueness migrations use plain CREATE UNIQUE INDEX (no CONCURRENTLY) on populated, potentially large/hot tables (transactions, invoices, leads, works, phonograms, notifications). Both take a full-table lock/scan; on a large table this blocks reads/writes for the duration. Mitigating factor: TypeORM's default migrationsTransactionMode wraps migrations in one transaction, which itself forbids CREATE INDEX CONCURRENTLY, so the safer pattern isn't trivially available under current runner config without an explicit opt-out. No migration doc/runbook in this batch flags a required maintenance-window. Recommend documenting a low-traffic execution window in DATABASE.md for this batch, or splitting into migrationsTransactionMode:none + NOT VALID/VALIDATE CONSTRAINT and CREATE INDEX CONCURRENTLY for the largest tables.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T22:55:04.455Z"
+      "createdAt": "2026-09-13T22:55:04.455Z",
+      "justification": "Plain ADD CONSTRAINT CHECK / CREATE UNIQUE INDEX (no NOT VALID/CONCURRENTLY split) on 18 migrations. TypeORM's transactional migration runner forbids CONCURRENTLY anyway -- a runner-level tradeoff affecting the whole migration system, not unique negligence in these 18. Requires an infra decision (non-transactional migration runner mode) out of scope for this audit pass.",
+      "resolvedAt": "2026-09-14T03:37:35.281Z"
     },
     {
       "id": "find-e596e12e",
@@ -3784,9 +3788,11 @@
       "line": null,
       "summary": "shares.artista_projeto_id was only half-renamed to artista_project_id (projeto->project only; 'artista' PT-BR prefix left untouched), and the resulting name is absent from docs/NAMING_NORMALIZATION_CANONICAL_MAP.md entirely. Confirmed live in apps/api/src/database/entities.ts:1502 and referenced in shares.dto.ts / report-form-contracts.ts, so it's a real, still-mixed-language technical identifier with no canonical map entry, violating naming-canonical.md's 'one canonical name, English for internal code' rule. Not a functional bug (rename is internally consistent) but the naming-normalization mandate this migration batch implements is incomplete for this one column.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T22:55:05.742Z"
+      "createdAt": "2026-09-13T22:55:05.742Z",
+      "justification": "shares.artista_projeto_id half-renamed (projeto->project only). Per naming-canonical.md, no agent may invent a canonical name independently of docs/NAMING_NORMALIZATION_CANONICAL_MAP.md -- this needs a canonical-naming skill pass to propose the correct full name, a product/governance decision, not a code fix to make unilaterally.",
+      "resolvedAt": "2026-09-14T03:37:37.904Z"
     },
     {
       "id": "find-516a079d",
@@ -3796,9 +3802,11 @@
       "line": null,
       "summary": "This migration file is new in commit e0b7a9a5 (2026-09-12) but carries a backdated 20260719 timestamp (git log --follow shows only one commit ever touching it), slotting it into the pre-existing July-19 RebuildXInCanonicalFormOrder family it evidently forgot to include originally. Verified non-hazardous in the current repo state only by cross-checking two specific facts by hand: (1) GrantMusicosAppOnAllTables20260802000001 already set ALTER DEFAULT PRIVILEGES FOR ROLE musicos_migrator, so a table this migration creates out of wall-clock order still gets musicos_app grants automatically; (2) CasTimestampTzSystemicFix20260818000002 explicitly excludes inventory_items ('already timestamptz — nothing to fix'), so no incompatible assumption exists between the two. Neither fact is documented in this migration's own header (unlike the DropOrphanContactsSatelliteTables file, which has a full disposition comment) — a future backdated-migration insertion by another agent would need to redo this same manual cross-check, and TypeORM sorts pending migrations by timestamp at run time (not array position), so a backdated timestamp really can execute after later-dated, already-applied migrations in any environment that has advanced past 2026-07-19. Recommend either using a current timestamp for genuinely new migrations, or adding an explicit code comment documenting the cross-checked safety invariants when backdating is intentional.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T22:55:16.899Z"
+      "createdAt": "2026-09-13T22:55:16.899Z",
+      "justification": "Backdated migration timestamp (20260719) on a file actually added in commit e0b7a9a5 (2026-09-12). Manually verified safe (cross-checked against two unrelated migrations touching the same table) but undocumented rationale. Cosmetic; no functional risk. Left as a documentation debt item.",
+      "resolvedAt": "2026-09-14T03:37:39.665Z"
     },
     {
       "id": "find-5d9b853f",
@@ -4032,9 +4040,11 @@
       "line": null,
       "summary": "InstagramTokenRefreshScheduler runs its daily sweep via a bare setInterval in OnApplicationBootstrap with no cross-instance lock/leader-election. In any horizontally-scaled deployment (multiple API replicas), every replica runs the same sweep independently and concurrently calls instagram.refreshLongLivedToken() for the same OAuthConnectionEntity rows, racing on the same token refresh.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T23:02:19.703Z"
+      "createdAt": "2026-09-13T23:02:19.703Z",
+      "justification": "InstagramTokenRefreshScheduler's bare setInterval has no cross-instance lock -- only matters for a multi-replica deployment, which requires a real distributed-locking architecture decision (e.g. Postgres advisory lock keyed by a fixed scheduler id, or a dedicated leader-election mechanism), out of scope for this audit pass.",
+      "resolvedAt": "2026-09-14T03:37:41.265Z"
     },
     {
       "id": "find-8c5da169",
@@ -4044,9 +4054,11 @@
       "line": 36,
       "summary": "Local variable  (line 36) actually holds the Spotify external artist id (input.externalId / parsed from the URL), not the internal artistId -- the internal id is only reachable as input.artistId. Persisted fields are correctly distinct (artist_id vs external_id vs raw_payload.soundcharts_uuid), so no conflation bug was found, but the naming collision with the real internal artistId concept is a maintenance/readability risk in exactly the area (Soundcharts/provider-id vs internal artistId) this audit was asked to scrutinize; the identical pattern repeats in deezer-artist-profile.provider.ts line 44.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T23:02:19.973Z"
+      "createdAt": "2026-09-13T23:02:19.973Z",
+      "justification": "Superseded by find-48fa6520 (duplicate recording due to a shell escaping issue).",
+      "resolvedAt": "2026-09-14T03:37:46.048Z"
     },
     {
       "id": "find-48fa6520",
@@ -4056,9 +4068,11 @@
       "line": 36,
       "summary": "Correction of find-8c5da169 (shell mangled backticks): the local variable named artistId at line 36 actually holds the Spotify external artist id (input.externalId or parsed from the URL), not the internal artistId -- the internal id is only reachable as input.artistId. Persisted fields ARE correctly distinct (artist_id vs external_id vs raw_payload.soundcharts_uuid), so no conflation bug was found; this is a naming-hygiene finding only. Same pattern in deezer-artist-profile.provider.ts line 44.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T23:02:30.123Z"
+      "createdAt": "2026-09-13T23:02:30.123Z",
+      "justification": "Local variable naming nit only (holds the external provider id, named artistId) -- verified no functional conflation: persisted fields (artist_id, external_id, soundcharts_uuid) are genuinely distinct columns. Cosmetic rename, low value relative to risk of touching provider integration code for no functional gain.",
+      "resolvedAt": "2026-09-14T03:37:47.943Z"
     },
     {
       "id": "find-986186c1",
@@ -4096,9 +4110,11 @@
       "line": null,
       "summary": "find-329e1db7 follow-up: activateTenant/startPaymentGrace's ordering guard compares Stripe's event-creation timestamp against tenant_billing_state.status_changed_at, a wall-clock stamp set whenever the last write happened to land. Under Stripe's own documented multi-day redelivery backoff (this service's STALE_PROCESSING_MS reclaim window acknowledges multi-minute delays are normal), two racing events' write order can diverge from their event-creation order, permanently rejecting a chronologically-correct newer event as stale. Pre-existing design limitation (mirrors find-99ea599c's app-level heuristic), not a regression. Fix: anchor on a dedicated last_applied_event_created_at column instead of wall-clock status_changed_at.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-14T02:54:40.447Z"
+      "createdAt": "2026-09-14T02:54:40.447Z",
+      "justification": "Pre-existing design limitation inherited from find-99ea599c's app-level heuristic, not a regression of find-329e1db7's fix. Requires a schema change (dedicated last_applied_event_created_at column) -- a real but non-urgent hardening, deferred.",
+      "resolvedAt": "2026-09-14T03:37:48.738Z"
     },
     {
       "id": "find-12d46b50",
@@ -4108,9 +4124,11 @@
       "line": null,
       "summary": "billing_subscriptions rows written by activateTenant/startPaymentGrace remain unguarded by any ordering check (unlike tenant_billing_state after find-329e1db7). Confirmed non-blocking: BillingEnforcementGuard reads only tenant_billing_state (getStateWithEscalation/readStateRaw), so this can produce a stale billing_subscriptions.status/grace_until (display/reporting inconsistency) but never an access-control bypass.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-14T02:54:40.602Z"
+      "createdAt": "2026-09-14T02:54:40.602Z",
+      "justification": "Confirmed non-blocking: BillingEnforcementGuard reads only tenant_billing_state, never billing_subscriptions, so this can produce a stale display field but never an access-control bypass.",
+      "resolvedAt": "2026-09-14T03:37:49.695Z"
     },
     {
       "id": "find-2c0a3ffe",
@@ -4120,9 +4138,11 @@
       "line": null,
       "summary": "upsertStripeInvoice's ON CONFLICT (stripe_invoice_id) DO UPDATE has no ordering guard -- an out-of-order/stale invoice webhook can stomp fresher status/amount_paid/hosted_invoice_url fields on the invoices table, independent of the (now-fixed) tenant billing-status race. Pre-existing, not introduced or worsened by find-329e1db7's fix, which is scoped to tenant status only.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-14T02:54:40.758Z"
+      "createdAt": "2026-09-14T02:54:40.758Z",
+      "justification": "Pre-existing, not introduced or worsened by find-329e1db7's fix, which is scoped to tenant billing status only. Worth a dedicated follow-up applying the same atomic-guard pattern to invoices, deferred from this pass.",
+      "resolvedAt": "2026-09-14T03:37:50.983Z"
     },
     {
       "id": "find-b6125e2e",
@@ -4146,9 +4166,11 @@
       "line": null,
       "summary": "Three separate routes (autentique.controller.ts's POST /integrations/autentique/documents and /signature-requests, plus integrations.controller.ts's POST /integrations/autentique/send) all call the identical AutentiqueService.sendForSignature with the same real-world side effect. Each is now independently idempotency-protected (find-917fba5c), but the interceptor's cache key doesn't span routes -- a caller hitting two of the three routes for what a human considers 'the same' request still creates two real documents. Flagged by the independent cross-review of the idempotency fix as pre-existing route-duplication debt, out of scope for that fix.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-14T03:34:32.996Z"
+      "createdAt": "2026-09-14T03:34:32.996Z",
+      "justification": "Consolidating/removing the duplicate Autentique routes is a real but separate, larger API-surface product decision (which route is canonical, whether to deprecate the others) -- out of scope for the idempotency hardening pass that surfaced it.",
+      "resolvedAt": "2026-09-14T03:37:51.964Z"
     }
   ],
   "evidenceIds": [
