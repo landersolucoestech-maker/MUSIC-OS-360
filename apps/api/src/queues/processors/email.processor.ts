@@ -96,6 +96,7 @@ export class EmailProcessor extends WorkerHost {
           to:      d.email,
           subject: 'Bem-vindo ao MUSIC OS 360°',
           html:    this.mail.welcomeHtml(d.name),
+          idempotencyKey: job.id,
         });
         break;
       }
@@ -109,6 +110,7 @@ export class EmailProcessor extends WorkerHost {
           to:      d.recipientEmail,
           subject: `⚠️ Contrato vencendo em ${daysLeft} dias: ${title}`,
           html:    this.mail.contractExpiringHtml(title, daysLeft),
+          idempotencyKey: job.id,
         });
         break;
       }
@@ -119,6 +121,7 @@ export class EmailProcessor extends WorkerHost {
           to:      d.recipientEmail,
           subject: `✅ Contrato assinado: ${d.contractTitle}`,
           html:    this.mail.contractSignedHtml(d.contractTitle),
+          idempotencyKey: job.id,
         });
         break;
       }
@@ -129,6 +132,7 @@ export class EmailProcessor extends WorkerHost {
           to:      d.email,
           subject: '⚠️ Falha no pagamento da sua assinatura MUSIC OS 360°',
           html:    this.mail.paymentFailedHtml(d.plan),
+          idempotencyKey: job.id,
         });
         break;
       }
@@ -140,19 +144,20 @@ export class EmailProcessor extends WorkerHost {
           to:      d.email,
           subject: `Convite para ${d.orgName ?? 'MUSIC OS 360°'}`,
           html:    this.mail.inviteHtml(d.orgName ?? 'MUSIC OS 360°', d.inviteLink),
+          idempotencyKey: job.id,
         });
         break;
       }
 
       case EMAIL_JOB_NAMES.PASSWORD_RESET: {
         const d = job.data as PasswordResetEmailPayload;
-        await this.mail.sendPasswordReset(d.email, d.resetLink);
+        await this.mail.sendPasswordReset(d.email, d.resetLink, job.id);
         break;
       }
 
       case EMAIL_JOB_NAMES.MONITORING_ALERT: {
         const d = job.data as MonitoringAlertEmailPayload;
-        await this.mail.sendTakedownConfirmation(d.recipientEmail, d.trackTitle, d.platform);
+        await this.mail.sendTakedownConfirmation(d.recipientEmail, d.trackTitle, d.platform, job.id);
         break;
       }
 

@@ -51,12 +51,16 @@ describe("signingService.sendForSigning", () => {
     });
 
     expect(fetch).toHaveBeenCalledWith("https://storage.example/contratos/c1.pdf");
-    expect(apiClientMock.post).toHaveBeenCalledWith("/integrations/autentique/documents", {
-      name: "Contrato X",
-      fileBase64: "ZmFrZS1wZGY=",
-      signers: [{ name: "Ana", email: "ana@x.com" }],
-      contractId: "c1",
-    });
+    expect(apiClientMock.post).toHaveBeenCalledWith(
+      "/integrations/autentique/documents",
+      {
+        name: "Contrato X",
+        fileBase64: "ZmFrZS1wZGY=",
+        signers: [{ name: "Ana", email: "ana@x.com" }],
+        contractId: "c1",
+      },
+      { headers: { "X-Idempotency-Key": expect.any(String) } },
+    );
     expect(result).toEqual({ documentId: "doc-123", provider: "autentique" });
     restore();
   });
@@ -83,6 +87,7 @@ describe("signingService.sendForSigning", () => {
     expect(apiClientMock.post).toHaveBeenCalledWith(
       "/integrations/docusign/documents",
       expect.objectContaining({ name: "Contrato X", contractId: "c1" }),
+      { headers: { "X-Idempotency-Key": expect.any(String) } },
     );
     expect(result).toEqual({ documentId: "env-999", provider: "docusign" });
     restore();
@@ -105,6 +110,42 @@ describe("signingService.sendForSigning", () => {
 
     expect(apiClientMock.post.mock.calls[0][0]).toBe("/integrations/autentique/documents");
     expect(result.provider).toBe("autentique");
+    restore();
+  });
+
+  /**
+   * find-917fba5c/find-93b0039d: this creates a real external signature
+   * document -- a retry/double-click must not create a second one. Each
+   * call gets its own fresh key by default (protects one attempt's own
+   * retry); an explicit key lets a caller intentionally retry the same
+   * attempt.
+   */
+  it("sends a fresh X-Idempotency-Key per call by default", async () => {
+    const restore = mockBase64Read();
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({ ok: true, blob: async () => new Blob(["fake-pdf"]) });
+    apiClientMock.post.mockResolvedValue({ documentId: "doc-1" });
+
+    const input = { contratoId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [{ name: "A", email: "a@x.com" }] };
+    await signingService.sendForSigning(input);
+    await signingService.sendForSigning(input);
+
+    const key1 = apiClientMock.post.mock.calls[0][2].headers["X-Idempotency-Key"];
+    const key2 = apiClientMock.post.mock.calls[1][2].headers["X-Idempotency-Key"];
+    expect(key1).toBeTruthy();
+    expect(key2).toBeTruthy();
+    expect(key1).not.toBe(key2);
+    restore();
+  });
+
+  it("honors an explicitly-passed idempotencyKey for an intentional same-attempt retry", async () => {
+    const restore = mockBase64Read();
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({ ok: true, blob: async () => new Blob(["fake-pdf"]) });
+    apiClientMock.post.mockResolvedValue({ documentId: "doc-1" });
+
+    const input = { contratoId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [{ name: "A", email: "a@x.com" }] };
+    await signingService.sendForSigning(input, "retry-key-123");
+
+    expect(apiClientMock.post.mock.calls[0][2]).toEqual({ headers: { "X-Idempotency-Key": "retry-key-123" } });
     restore();
   });
 

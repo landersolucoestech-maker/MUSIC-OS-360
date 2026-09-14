@@ -49,6 +49,29 @@ describe('MailService', () => {
     expect(r.id).toBe('email_1');
   });
 
+  /**
+   * find-a4445173: EmailProcessor runs under BullMQ's default retry policy
+   * with no idempotency protection against Resend -- a retried job could
+   * double-send. Resend deduplicates by its own Idempotency-Key header.
+   */
+  it('forwards idempotencyKey as the Idempotency-Key header when provided (find-a4445173)', async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ id: 'email_2' }) });
+    await service.send({ to: 'x@x.com', subject: 'T', html: '<p>H</p>', idempotencyKey: 'job-42' });
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.resend.com/emails',
+      expect.objectContaining({
+        headers: expect.objectContaining({ 'Idempotency-Key': 'job-42' }),
+      }),
+    );
+  });
+
+  it('omits the Idempotency-Key header when none is provided', async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ id: 'email_3' }) });
+    await service.send({ to: 'x@x.com', subject: 'T', html: '<p>H</p>' });
+    const [, init] = mockFetch.mock.calls[0];
+    expect(init.headers).not.toHaveProperty('Idempotency-Key');
+  });
+
   it('retorna skipped:true quando sem API key', async () => {
     const svc = await makeModule(false);
     const r = await svc.send({ to: 'x@x.com', subject: 'T', html: '<p>H</p>' });

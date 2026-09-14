@@ -198,7 +198,19 @@ export class UploadsController {
 
     if (!row) throw new NotFoundException('Arquivo não encontrado');
 
-    const { body, contentType, contentLength } = await this.storage.getObject(row.r2_key);
+    // find-b4ffbce4: the DB row existing doesn't guarantee the R2 object
+    // still does (e.g. deleted directly in R2, or never finished
+    // uploading) -- surface that as a normal 404, matching confirm()'s own
+    // exists() check, instead of an unhandled 500.
+    let object: { body: NodeJS.ReadableStream; contentType: string | undefined; contentLength: number | undefined };
+    try {
+      object = await this.storage.getObject(row.r2_key);
+    } catch (error) {
+      const status = (error as { $metadata?: { httpStatusCode?: number } }).$metadata?.httpStatusCode;
+      if (status === 404) throw new NotFoundException('Arquivo não encontrado no armazenamento');
+      throw error;
+    }
+    const { body, contentType, contentLength } = object;
     res.setHeader('Content-Type', contentType ?? row.mime_type ?? 'application/octet-stream');
     if (contentLength) res.setHeader('Content-Length', String(contentLength));
     res.setHeader('Cache-Control', 'private, max-age=300');

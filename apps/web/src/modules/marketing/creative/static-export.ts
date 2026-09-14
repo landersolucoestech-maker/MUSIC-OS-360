@@ -27,13 +27,21 @@
  * frame.
  */
 import { API_BASE_URL } from "@/shared/lib/env";
-import { getAccessToken, getTenantId } from "@/shared/lib/api-client";
+import { getAccessToken, getTenantId, setAccessToken } from "@/shared/lib/api-client";
 import { displayUsername, type CreativeConfig, type CreativeSlot } from "../types/creative.types";
 import type { AspectRatio } from "../config/social-formats";
 
 export class CreativeExportError extends Error {}
 
 const EXPORT_WIDTH = 1080;
+
+// find-2cf48add: this raw-bytes fetch can't go through api-client.ts's
+// request() (it needs a Blob, not a JSON envelope), which meant it also
+// lost that pipeline's timeout and 401 handling -- a hung request left the
+// export spinner stuck forever, and an expired session surfaced a raw HTTP
+// 401 instead of the app's normal re-login signal. Mirrors api-client.ts's
+// own REQUEST_TIMEOUT_MS.
+const FETCH_TIMEOUT_MS = 10_000;
 
 const ASPECT_RATIO_VALUE: Record<AspectRatio, number> = {
   "1:1": 1,
@@ -54,10 +62,28 @@ async function fetchSlotBlob(slot: { fileId?: string }): Promise<Blob> {
   const tenantId = getTenantId();
   if (tenantId) headers["X-Tenant-ID"] = tenantId;
 
-  const res = await fetch(`${API_BASE_URL}/api/v1/uploads/${slot.fileId}/raw`, {
-    headers,
-    credentials: "include",
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}/api/v1/uploads/${slot.fileId}/raw`, {
+      headers,
+      credentials: "include",
+      signal: controller.signal,
+    });
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new CreativeExportError("Tempo esgotado ao carregar mídia para exportação.");
+    }
+    throw new CreativeExportError("Falha de conexão ao carregar mídia para exportação.");
+  } finally {
+    clearTimeout(timeoutId);
+  }
+
+  if (res.status === 401) {
+    setAccessToken(null);
+    throw new CreativeExportError("Sessão expirada -- faça login novamente para exportar.");
+  }
   if (!res.ok) {
     throw new CreativeExportError(`Falha ao carregar mídia para exportação (HTTP ${res.status}).`);
   }

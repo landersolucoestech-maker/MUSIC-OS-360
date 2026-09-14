@@ -72,7 +72,16 @@ export const signingService = {
    * 1. Baixa o arquivo do contrato (arquivo_url) e converte para base64
    * 2. Cria o documento no Autentique (que já notifica os signatários)
    */
-  async sendForSigning(input: SendForSigningInput): Promise<SendForSigningResult> {
+  /**
+   * find-917fba5c/find-93b0039d: this creates a REAL external signature
+   * document (Autentique/DocuSign email real signers directly) -- a
+   * network-level retry or a double-click on the same submission must not
+   * create a second one. idempotencyKey defaults to a fresh UUID per call
+   * (protects the single submission's own retry/timeout, same convention
+   * as conversations.service.ts's create()); pass the same value explicitly
+   * for an intentional user-initiated retry of the same attempt.
+   */
+  async sendForSigning(input: SendForSigningInput, idempotencyKey: string = crypto.randomUUID()): Promise<SendForSigningResult> {
     const { contratoId, title, fileUrl, signers } = input;
 
     if (!fileUrl) {
@@ -85,12 +94,16 @@ export const signingService = {
     const provider: SigningProviderId = input.provider ?? "autentique";
     const fileBase64 = await fetchFileAsBase64(fileUrl);
 
-    const doc = await api.post<{ documentId: string }>(PROVIDER_ENDPOINT[provider], {
-      name: title,
-      fileBase64,
-      signers: signers.map((s) => ({ name: s.name, email: s.email })),
-      contractId: contratoId,
-    });
+    const doc = await api.post<{ documentId: string }>(
+      PROVIDER_ENDPOINT[provider],
+      {
+        name: title,
+        fileBase64,
+        signers: signers.map((s) => ({ name: s.name, email: s.email })),
+        contractId: contratoId,
+      },
+      { headers: { "X-Idempotency-Key": idempotencyKey } },
+    );
 
     return { documentId: doc.documentId, provider };
   },

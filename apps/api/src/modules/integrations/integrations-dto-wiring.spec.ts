@@ -30,6 +30,7 @@ import { IntegrationBaseService } from './integration-base.service';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from '../../core/cache/cache.service';
 import { IntegrationPolicyService } from './governance/integration-policy.service';
+import { IdempotencyStore } from '../../core/interceptors/idempotency.store';
 
 describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)', () => {
   let app: INestApplication;
@@ -67,6 +68,7 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
         { provide: ConfigService, useValue: { get: jest.fn() } },
         { provide: CacheService, useValue: { get: jest.fn(), set: jest.fn(), delete: jest.fn() } },
         { provide: IntegrationPolicyService, useValue: noop },
+        IdempotencyStore,
       ],
     }).compile();
 

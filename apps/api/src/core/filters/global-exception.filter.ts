@@ -98,8 +98,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         scope.setTag('method',    request.method);
         scope.setTag('path',      request.url);
 
-        const tenantId = (request as any).tenantId as string | undefined;
-        const userId   = (request as any).userId   as string | undefined;
+        // find-e0163405: TenantGuard/AuthGuard set request.tenant.id /
+        // request.auth.userId -- request.tenantId/request.userId (flat)
+        // never existed, so these tags/user context were always empty.
+        const tenantId = (request as any).tenant?.id as string | undefined;
+        const userId   = (request as any).auth?.userId as string | undefined;
         if (tenantId) scope.setTag('tenantId', tenantId);
         if (userId)   scope.setUser({ id: userId });
 

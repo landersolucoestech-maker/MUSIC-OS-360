@@ -1,6 +1,7 @@
 import {
   Controller, Post, Get, Delete, Body, Param, Query, Redirect,
   HttpCode, HttpStatus, Request, BadRequestException, InternalServerErrorException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService }              from '@nestjs/config';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
@@ -10,6 +11,7 @@ import { validate }      from 'class-validator';
 import { RequireRole }   from '../../core/decorators/roles.decorator';
 import { Public }        from '../../core/decorators/public.decorator';
 import { Audit }         from '../../core/interceptors/audit.interceptor';
+import { IdempotencyInterceptor } from '../../core/interceptors/idempotency.interceptor';
 import { CacheService }  from '../../core/cache/cache.service';
 import { ACRCloudService }    from './acrcloud/acrcloud.service';
 import { AutentiqueService }  from './autentique/autentique.service';
@@ -500,6 +502,7 @@ export class IntegrationsController {
 
   @Post('autentique/send')
   @RequireRole('editor')
+  @UseInterceptors(IdempotencyInterceptor)
   @Audit('integration.document_sent')
   @ApiOperation({ summary: 'Enviar contrato para assinatura via Autentique' })
   sendForSignature(@Request() req: any, @Body() dto: SendForSignatureDto) {
@@ -1052,6 +1055,7 @@ export class IntegrationsController {
 
   @Post('abramus/register-work')
   @RequireRole('manager')
+  @UseInterceptors(IdempotencyInterceptor)
   @Audit('integration.abramus_work_registered')
   @ApiOperation({ summary: 'Registrar obra no Abramus (manager+)' })
   abramusRegisterWork(@Request() req: any, @Body() body: RegisterAbramusWorkDto) {

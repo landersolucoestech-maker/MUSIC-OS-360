@@ -1,8 +1,9 @@
-import { Body, Controller, Headers, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Headers, HttpCode, HttpStatus, Post, Request, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../../core/decorators/public.decorator';
 import { RequireRole } from '../../../core/decorators/roles.decorator';
 import { Audit } from '../../../core/interceptors/audit.interceptor';
+import { IdempotencyInterceptor } from '../../../core/interceptors/idempotency.interceptor';
 import { AutentiqueService } from './autentique.service';
 import { CreateAutentiqueDocumentDto, SendForSignatureDto } from '../dto/integrations.dto';
 import { IntegrationUsageGuard, RequiresIntegration } from '../governance/integration-usage.guard';
@@ -17,6 +18,7 @@ export class AutentiqueController {
   @RequireRole('editor')
   @UseGuards(IntegrationUsageGuard)
   @RequiresIntegration('autentique')
+  @UseInterceptors(IdempotencyInterceptor)
   @Audit('integration.autentique_document_created')
   @ApiOperation({ summary: 'Criar documento Autentique para assinatura' })
   @HttpCode(HttpStatus.CREATED)
@@ -35,6 +37,7 @@ export class AutentiqueController {
   @RequireRole('editor')
   @UseGuards(IntegrationUsageGuard)
   @RequiresIntegration('autentique')
+  @UseInterceptors(IdempotencyInterceptor)
   @Audit('integration.autentique_signature_requested')
   @ApiOperation({ summary: 'Enviar contrato/documento para assinatura Autentique' })
   @HttpCode(HttpStatus.OK)

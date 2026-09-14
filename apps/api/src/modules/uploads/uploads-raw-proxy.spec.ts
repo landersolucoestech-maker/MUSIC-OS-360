@@ -56,4 +56,27 @@ describe('UploadsController.raw — same-origin proxy for canvas-safe media read
 
     await expect(controller.raw(TENANT, 'missing', res as never)).rejects.toBeInstanceOf(NotFoundException);
   });
+
+  /**
+   * find-b4ffbce4: the DB row existing didn't guarantee the R2 object still
+   * did (deleted directly in R2, upload never completed) -- this used to
+   * surface as an unhandled 500 instead of a normal 404.
+   */
+  it('404s (not 500) when the DB row exists but the R2 object is missing', async () => {
+    const { controller, storage } = buildController({ id: '1', r2_key: 'k1', mime_type: 'image/png' });
+    const s3Error = Object.assign(new Error('NoSuchKey'), { $metadata: { httpStatusCode: 404 } });
+    storage.getObject.mockRejectedValueOnce(s3Error);
+    const res = buildRes();
+
+    await expect(controller.raw(TENANT, 'file-1', res as never)).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('re-throws a non-404 storage error (e.g. R2 outage) instead of masking it', async () => {
+    const { controller, storage } = buildController({ id: '1', r2_key: 'k1', mime_type: 'image/png' });
+    const s3Error = Object.assign(new Error('InternalError'), { $metadata: { httpStatusCode: 500 } });
+    storage.getObject.mockRejectedValueOnce(s3Error);
+    const res = buildRes();
+
+    await expect(controller.raw(TENANT, 'file-1', res as never)).rejects.toThrow('InternalError');
+  });
 });

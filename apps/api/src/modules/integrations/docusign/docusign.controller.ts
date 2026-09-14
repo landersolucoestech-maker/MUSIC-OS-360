@@ -1,8 +1,9 @@
-import { Body, Controller, Headers, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Headers, HttpCode, HttpStatus, Post, Request, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../../core/decorators/public.decorator';
 import { RequireRole } from '../../../core/decorators/roles.decorator';
 import { Audit } from '../../../core/interceptors/audit.interceptor';
+import { IdempotencyInterceptor } from '../../../core/interceptors/idempotency.interceptor';
 import { DocuSignService } from './docusign.service';
 import { SendForSignatureDto } from '../dto/integrations.dto';
 import { IntegrationUsageGuard, RequiresIntegration } from '../governance/integration-usage.guard';
@@ -26,6 +27,7 @@ export class DocuSignController {
   // escondida no frontend.
   @UseGuards(IntegrationUsageGuard)
   @RequiresIntegration('docusign')
+  @UseInterceptors(IdempotencyInterceptor)
   @Audit('integration.docusign_document_created')
   @ApiOperation({ summary: 'Criar envelope DocuSign para assinatura' })
   @HttpCode(HttpStatus.CREATED)

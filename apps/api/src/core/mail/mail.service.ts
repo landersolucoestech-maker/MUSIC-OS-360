@@ -33,6 +33,14 @@ export interface SendMailOptions {
   html:     string;
   replyTo?: string;
   tags?:    Array<{ name: string; value: string }>;
+  /**
+   * find-a4445173: EmailProcessor runs under BullMQ's default retry policy
+   * -- a retried job (same job.id) must reuse the same idempotencyKey so a
+   * transient failure/redelivery can't double-send. Resend deduplicates
+   * requests carrying the same Idempotency-Key header. Optional -- callers
+   * outside the queue (one-off sends with no natural retry) may omit it.
+   */
+  idempotencyKey?: string;
 }
 
 export interface MailResult {
@@ -94,6 +102,7 @@ export class MailService {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.apiKey}`,
+        ...(opts.idempotencyKey ? { 'Idempotency-Key': opts.idempotencyKey } : {}),
       },
       body: JSON.stringify({
         from:     this.fromEmail,
@@ -159,9 +168,10 @@ export class MailService {
     });
   }
 
-  async sendPasswordReset(to: string, resetUrl: string): Promise<MailResult> {
+  async sendPasswordReset(to: string, resetUrl: string, idempotencyKey?: string): Promise<MailResult> {
     return this.send({
       to,
+      idempotencyKey,
       subject: 'Redefinir senha — MUSIC OS 360',
       html: `
         <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px">
@@ -249,9 +259,9 @@ export class MailService {
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px">
         <h1 style="color:#1d4ed8">🎵 MUSIC OS 360</h1>
         <p>⚠️ O pagamento da sua assinatura <strong>${escapeHtml(plan)}</strong> falhou.</p>
-        <p>Acesse o portal de billing para actualizar o método de pagamento:</p>
+        <p>Acesse o portal de billing para atualizar o método de pagamento:</p>
         <a href="${escapeHtml(appUrl)}/configuracoes/billing" style="display:inline-block;padding:12px 24px;background:#dc2626;color:#fff;text-decoration:none;border-radius:6px;margin:16px 0">
-          Actualizar Pagamento
+          Atualizar Pagamento
         </a>
         <p style="color:#6b7280;font-size:12px;margin-top:32px">MUSIC OS 360</p>
       </div>
@@ -271,11 +281,12 @@ export class MailService {
     `;
   }
 
-  async sendTakedownConfirmation(to: string, trackTitle: string, platform: string): Promise<MailResult> {
+  async sendTakedownConfirmation(to: string, trackTitle: string, platform: string, idempotencyKey?: string): Promise<MailResult> {
     const safeTrackTitle = escapeHtml(trackTitle);
     const safePlatform = escapeHtml(platform);
     return this.send({
       to,
+      idempotencyKey,
       subject: `Takedown solicitado: ${trackTitle} em ${platform}`,
       html: `
         <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px">

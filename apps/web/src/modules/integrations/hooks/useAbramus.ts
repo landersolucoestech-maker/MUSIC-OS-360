@@ -221,6 +221,11 @@ export function useAbramusRegisterObra() {
   const queryClient = useQueryClient();
   return useMutation<RegistrationResult, Error, RegisterObraInput>({
     mutationFn: async (input) => {
+      // find-93fe3250: this submits a real registration to the Abramus API --
+      // a network-level retry or double submission of this mutation must not
+      // register the same work twice. Fresh key per mutationFn invocation
+      // (i.e. per user-initiated attempt), same convention as
+      // signing.service.ts's sendForSigning.
       const res = await api.post<{ external_id?: string; code?: string; iswc?: string | null }>(
         "/integrations/abramus/register-work",
         {
@@ -232,6 +237,7 @@ export function useAbramusRegisterObra() {
           duracao: input.duracao,
           editora: input.editora,
         },
+        { headers: { "X-Idempotency-Key": crypto.randomUUID() } },
       );
       return {
         entity: "abramus",

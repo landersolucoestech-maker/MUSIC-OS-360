@@ -143,6 +143,41 @@ describe("exportCreativeToPng — canvas-safe static export via the /uploads/:fi
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  /**
+   * find-f774744c: the mock stubbed createObjectURL/revokeObjectURL but
+   * never asserted on them -- a leak (missing revoke) wouldn't have been
+   * caught.
+   */
+  it("revokes every object URL it creates (no blob: URL leak)", async () => {
+    const creative = baseConfig({ layout: "full", primarySlot: slot("file-x") });
+    await exportCreativeToPng(creative, "1:1");
+
+    const createCalls = (URL.createObjectURL as ReturnType<typeof vi.fn>).mock.results.map((r) => r.value);
+    const revokeCalls = (URL.revokeObjectURL as ReturnType<typeof vi.fn>).mock.calls.map((c) => c[0]);
+    expect(createCalls.length).toBeGreaterThan(0);
+    expect(revokeCalls).toEqual(createCalls);
+  });
+
+  /**
+   * find-2cf48add: fetchSlotBlob gained a 401 handler and a request
+   * timeout -- previously untested branches.
+   */
+  it("throws a clear session-expired error on 401 and clears the stale access token", async () => {
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({ ok: false, status: 401 });
+    const creative = baseConfig({ layout: "full", primarySlot: slot("file-x") });
+
+    await expect(exportCreativeToPng(creative, "1:1")).rejects.toThrow(/sess[aã]o expirada/i);
+  });
+
+  it("throws a timeout-specific error when the request is aborted", async () => {
+    // Simulates what fetch() throws once AbortController.abort() fires --
+    // exercised directly rather than waiting out the real FETCH_TIMEOUT_MS.
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new DOMException("Aborted", "AbortError"));
+    const creative = baseConfig({ layout: "full", primarySlot: slot("file-x") });
+
+    await expect(exportCreativeToPng(creative, "1:1")).rejects.toThrow(/tempo esgotado/i);
+  });
+
   it("watermark with no asset renders the independent fallback label, never derived from profile identity", async () => {
     // No profileName/username set -- if the watermark fallback were ever
     // coupled to identity (the bug this guards against), there would be
