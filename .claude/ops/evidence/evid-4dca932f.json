@@ -1,0 +1,12 @@
+{
+  "id": "evid-4dca932f",
+  "createdAt": "2026-09-13T23:02:40.304Z",
+  "type": "REVIEW",
+  "reviewer": "external-integrations-auditor",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Independent read-only audit of every external-provider integration chain (Cloudflare R2/uploads, Stripe billing, Autentique, DocuSign, WhatsApp Cloud, external-data distributor/society webhooks, Soundcharts, Abramus, Instagram/Meta OAuth, Resend mail) completed. 9 findings recorded (2 HIGH, 3 MEDIUM, 4 LOW): missing idempotency protection on Autentique/DocuSign document-creation and Abramus register-work (real external side effects, retry can double-apply), MailService->Resend lacking Idempotency-Key under BullMQ retry, GlobalExceptionFilter Sentry tenant/userId enrichment reading request properties that are never set (dead code), uploads raw-proxy missing R2 NoSuchKey handling untested by uploads-raw-proxy.spec.ts, InstagramTokenRefreshScheduler lacking cross-instance coordination, and a naming-hygiene issue in spotify/deezer artist-profile providers (no functional artistId/soundcharts-uuid conflation found -- persisted fields are genuinely distinct). Stripe webhook idempotency (payment_events unique constraint + reclaim logic), Autentique/DocuSign/WhatsApp webhook HMAC/shared-secret verification, and the uploads/raw tenant-scoping (query filters by tenant_id+file_id+deleted_at) were verified correct with no findings.",
+  "workspaceFingerprint": "eb8d0c81d35825405842ca4fd835f63588501b0797ba0c7271da9406328f6a8c",
+  "fingerprintStatus": "BOUND",
+  "head": "e28b01e5a21cb7b1accb6714dfce98eafa73335a"
+}

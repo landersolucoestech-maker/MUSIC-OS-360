@@ -1,0 +1,12 @@
+{
+  "id": "evid-1793b1ef",
+  "createdAt": "2026-09-14T02:21:29.594Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "VERDICT: FAIL. Confirmed CRITICAL cross-tenant privilege escalation to platform super_admin (find-4d418e9c / find-986186c1) via role-slug shadowing across users.service.ts assertCanAssignRole, RolesGuard, and RLS app_is_super_admin(). Independently traced full code path with file:line evidence; not refuted. Requires remediation before this boundary can be considered safe: (a) reject/deny-list reserved role slugs (super_admin, owner, tenant_owner, admin, etc.) in tenant-scoped role creation, (b) make assertCanAssignRole's roles lookup prefer/require the GLOBAL (tenant_id IS NULL) row for any slug that exists globally rather than first-wins on tenant match, (c) stop trusting the mutable org_members.role string for RLS/RolesGuard super_admin checks -- key off an immutable platform_role column or the resolved role_id's is_system flag instead.",
+  "workspaceFingerprint": "eb8d0c81d35825405842ca4fd835f63588501b0797ba0c7271da9406328f6a8c",
+  "fingerprintStatus": "BOUND",
+  "head": "e28b01e5a21cb7b1accb6714dfce98eafa73335a"
+}

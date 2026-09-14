@@ -1,0 +1,12 @@
+{
+  "id": "evid-7beaac58",
+  "createdAt": "2026-09-13T22:55:43.681Z",
+  "type": "REVIEW",
+  "reviewer": "db-schema-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Independent audit of req-4f1dc61c migrations cluster (naming/billing/operational-lists batch, commit e0b7a9a5 + surrounding Sept 5-13 naming waves). scripts/verify-migration-source-of-truth.mjs PASSED (registry parity, no supabase/TypeORM collision, canonical runner config, both intentional-unregistered entries valid and backed by code comments). DropOrphanContactsSatelliteTables20260713000002 confirmed correctly UNREGISTERED with a full documented disposition; PROPOSAL_BackfillArtistGoalStatusToEnglish20260910900001 confirmed correctly unregistered as a superseded read-only proposal. operational_list_items table confirmed RLS-scoped and OperationalListsModule confirmed wired into app.module.ts. external_data_submissions confirmed consumed via ExternalDataSubmissionEntity in external-data-exchange.service.ts (tenant-resolution fix for find-bc7c20a6 actually wired). SystemPathRlsExplicitMarker's app_is_system_context() confirmed actually invoked end-to-end via billing.service.ts's runInTenantContext role:'system' wiring. 3 non-blocking findings recorded (1 MEDIO: lock/scan safety of plain CHECK+CREATE UNIQUE INDEX on large tables without documented maintenance window; 2 BAIXO: incomplete artista_project_id rename with no canonical-map entry, and an undocumented backdated migration timestamp whose safety required manual cross-referencing of two unrelated migrations). No destructive/unauthorized migration found registered; no duplicate schema changes found; no orphaned registry entries found.",
+  "workspaceFingerprint": "eb8d0c81d35825405842ca4fd835f63588501b0797ba0c7271da9406328f6a8c",
+  "fingerprintStatus": "BOUND",
+  "head": "e28b01e5a21cb7b1accb6714dfce98eafa73335a"
+}

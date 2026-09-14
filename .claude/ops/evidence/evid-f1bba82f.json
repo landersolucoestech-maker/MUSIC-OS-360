@@ -1,0 +1,12 @@
+{
+  "id": "evid-f1bba82f",
+  "createdAt": "2026-09-13T23:01:49.538Z",
+  "type": "REVIEW",
+  "reviewer": "frontend-auditor",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Independent read-only audit of creative editor (static-export.ts, creative-template-surface.tsx, Calendario.tsx, creative.types.ts, content-form.mapper.ts) plus backend uploads.controller.ts and marketing-contents.service.ts/dto, plus a broad Part-1 sweep (route wiring, useMarketingResource.ts mutation invalidation, hand-rolled-fetch grep, mock-data grep). Found 4 real gaps (2 stale-doc/dead-field LOW findings, 1 MEDIUM auth/timeout-handling gap in static-export.ts's raw fetch, 1 LOW test-coverage gap) -- recorded as findings. Verified genuinely solid and NOT reproduced as findings: drawCover/drawContain math, aspect-ratio-to-canvas-dimension mapping, object-fit cleanup (createObjectURL/revokeObjectURL pairing), video-slot placeholder never decoded as image, fileId-required export guard is honest for every actual slot-population path (project-asset picker only reachable for FULL-layout primarySlot, correctly never carries fileId; direct-upload paths for all other slots always carry fileId), the publish=true template-mode guard in Calendario.tsx's finalize() has no bypass via drag-reschedule/bulk-actions/campaign-builder (none of those call useUpdateContent), metadata.creative round-trips through a real merge-not-replace backend DTO/service (not just an isolated unit mock), backend /uploads/:fileId/raw enforces tenant_id scoping + viewer role + deleted_at filter, mutation cache invalidation is broad-root and consistent, no PT-EN stale queryKeys or stub routes found in the modules sampled, modal responsive classes (flex-col-reverse/sm:flex-row, flex-wrap toolbar) hold at <400px.",
+  "workspaceFingerprint": "eb8d0c81d35825405842ca4fd835f63588501b0797ba0c7271da9406328f6a8c",
+  "fingerprintStatus": "BOUND",
+  "head": "e28b01e5a21cb7b1accb6714dfce98eafa73335a"
+}

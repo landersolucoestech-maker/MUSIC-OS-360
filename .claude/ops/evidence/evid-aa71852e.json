@@ -1,0 +1,12 @@
+{
+  "id": "evid-aa71852e",
+  "createdAt": "2026-09-13T23:01:59.069Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "VERDICT: FAIL. Confirmed via direct code trace (not tool-only) a CRITICAL cross-tenant privilege-escalation chain: (1) apps/api/src/modules/users/rbac-admin.service.ts createRole/assertHierarchy + apps/api/src/core/rbac/rbac-mutation.service.ts createRole has no reserved-slug check, letting a tenant owner/admin insert a per-tenant 'roles' row with slug='super_admin' (DTO caps hierarchyLevel<=89, DB unique indexes are scoped separately for tenant_id NULL vs NOT NULL so no collision is prevented); (2) apps/api/src/modules/users/users.service.ts assertCanAssignRole (lines ~397-429) resolves is_assignable/hierarchy by SLUG only, ORDER BY tenant-scoped-first, so the attacker's own shadow row (is_assignable=true) overrides the real global super_admin row (is_assignable=false), letting them self-assign org_members.role='super_admin' (VARCHAR(50), no CHECK/enum, apps/api/src/database/migrations/20240101000000_InitialSchema.ts) via POST /users or PATCH /users/:id/role; (3) apps/api/src/core/guards/roles.guard.ts (lines 121-137) authorizes every @RequireRole('super_admin') endpoint purely via ROLE_HIERARCHY[memberRole] (apps/api/src/core/rbac/role-hierarchy.ts, hardcoded SUPER_ADMIN:100) keyed on that raw string, unlocking billing SaaS admin (suspend/reactivate/override any tenant, list all tenants/subscriptions/invoices), audit-log admin, integration-admin, knowledge-base admin, admin-users; (4) apps/api/src/core/interceptors/request-tenant-context.interceptor.ts forwards the exact same req.currentMember.role string into set_config('app.current_role', ...), which apps/api/src/database/migrations/20260612000001_PortableRlsTenantContext.ts's app_is_super_admin() trusts verbatim for the super_admin_full_access RLS policy on all ~34 tenant tables + org/tenant/billing_subscriptions tables. DATABASE_SESSION_CONTEXT_ENABLED=true is set in apps/api/.env.production, so this is a live production configuration, not a dormant flag. Net effect: any ordinary tenant owner/admin (a ordinary paying customer) can escalate to full platform super_admin, gaining unrestricted cross-tenant read/write at both the NestJS route-guard layer and the Postgres RLS layer. Recorded as find-4d418e9c.",
+  "workspaceFingerprint": "eb8d0c81d35825405842ca4fd835f63588501b0797ba0c7271da9406328f6a8c",
+  "fingerprintStatus": "BOUND",
+  "head": "e28b01e5a21cb7b1accb6714dfce98eafa73335a"
+}
