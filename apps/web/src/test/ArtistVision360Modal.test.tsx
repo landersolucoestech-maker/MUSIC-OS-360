@@ -34,14 +34,14 @@ vi.mock("@/modules/catalog/hooks/useFonogramas", () => ({
 vi.mock("@/modules/releases/hooks/useLancamentos", () => ({
   useLancamentos: () => ({ lancamentos: [], isLoading: false }),
 }));
-vi.mock("@/modules/projects/hooks/useProjetos", () => ({
-  useProjetos: () => ({ projetos: [], isLoading: false }),
+vi.mock("@/modules/projects/hooks/useProjects", () => ({
+  useProjects: () => ({ projects: [], isLoading: false }),
 }));
 vi.mock("@/modules/marketing/hooks/useMetas", () => ({
   useMetas: () => ({ metas: [], isLoading: false }),
 }));
-vi.mock("@/modules/contracts/hooks/useContratos", () => ({
-  useContratos: () => ({ contratos: [], isLoading: false }),
+vi.mock("@/modules/contracts/hooks/useContracts", () => ({
+  useContracts: () => ({ contracts: [], isLoading: false }),
 }));
 
 vi.mock("@/app/providers/TenantContext", () => ({

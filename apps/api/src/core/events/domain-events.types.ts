@@ -637,6 +637,13 @@ export interface LeadUpdatedPayload {
   action:        string;
 }
 
+export interface ConversationCreatedPayload {
+  tenantId:      string;
+  aggregateType: string;
+  aggregateId:   string;
+  action:        string;
+}
+
 // ─── Discriminated union over all event payloads ──────────────────────────────
 
 export type AnyDomainEventPayload =
@@ -678,6 +685,7 @@ export type AnyDomainEventPayload =
   | MarketingTasksGeneratedPayload
   | LeadCreatedPayload
   | LeadUpdatedPayload
+  | ConversationCreatedPayload
   | LeadConvertedPayload
   | AssetUploadedPayload
   | AssetAvailableForContentPayload

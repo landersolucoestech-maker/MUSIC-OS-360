@@ -132,7 +132,11 @@ export class ConversationsService {
       channel:        saved.channel,
     });
 
-    this.events.emitTyped(DOMAIN_EVENTS.LEAD_UPDATED, {
+    // find-5d9b853f: this used to emit LEAD_UPDATED for a brand-new
+    // conversation -- wrong event, wrong lifecycle stage (nothing here
+    // updates a lead), with no LEAD_UPDATED consumer anywhere to have
+    // masked the bug. CONVERSATION_CREATED is the correct semantic event.
+    this.events.emitTyped(DOMAIN_EVENTS.CONVERSATION_CREATED, {
       tenantId,
       userId,
       aggregateType: 'conversation',

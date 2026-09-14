@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { ConflictException } from '@nestjs/common';
 import { ConversationsService } from './conversations.service';
 import { ConversationEntity } from '../../database/entities';
+import { DOMAIN_EVENTS } from '../../core/events/events.service';
 
 /**
  * Task M — gap real fechado: `transfer()` usava `convRepo.update()` direto
@@ -49,8 +50,28 @@ function buildService(updateResult?: { affected: number }, whatsapp?: Record<str
   const mockWs = { sendToTenant: jest.fn() };
   const mockWhatsapp = whatsapp ?? { sendTextMessage: jest.fn() };
   const service = new ConversationsService(mockDs as any, mockEvents as any, mockWs as any, mockWhatsapp as any);
-  return { service, mockDs, mockWs, mockWhatsapp };
+  return { service, mockDs, mockEvents, mockWs, mockWhatsapp };
 }
+
+/**
+ * find-5d9b853f: createConversation() used to emit DOMAIN_EVENTS.LEAD_UPDATED
+ * for a brand-new conversation -- wrong event, wrong lifecycle stage (a
+ * conversation is not a lead), likely a copy-paste leftover. Fixed to emit
+ * the dedicated CONVERSATION_CREATED event instead.
+ */
+describe('ConversationsService.createConversation() — emits the correct domain event', () => {
+  it('emits CONVERSATION_CREATED, never LEAD_UPDATED', async () => {
+    const { service, mockEvents } = buildService();
+
+    await service.createConversation(TENANT, 'user-a', { subject: 'Nova conversa' } as any);
+
+    expect(mockEvents.emitTyped).toHaveBeenCalledWith(
+      DOMAIN_EVENTS.CONVERSATION_CREATED,
+      expect.objectContaining({ tenantId: TENANT, aggregateType: 'conversation' }),
+    );
+    expect(mockEvents.emitTyped).not.toHaveBeenCalledWith(DOMAIN_EVENTS.LEAD_UPDATED, expect.anything());
+  });
+});
 
 describe('ConversationsService.transfer() — Task M concorrência otimista', () => {
   it('sem expectedUpdatedAt: aplica incondicionalmente (retrocompatível)', async () => {

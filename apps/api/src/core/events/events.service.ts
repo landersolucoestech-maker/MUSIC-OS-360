@@ -68,6 +68,7 @@ import type {
   UserInvitedPayload,
   LeadCreatedPayload,
   LeadUpdatedPayload,
+  ConversationCreatedPayload,
 } from './domain-events.types';
 
 // ─── Core DomainEvent envelope ────────────────────────────────────────────────
@@ -141,6 +142,7 @@ export interface EventPayloadMap {
   'lead.created':          LeadCreatedPayload;
   'lead.updated':          LeadUpdatedPayload;
   'lead.converted':        LeadConvertedPayload;
+  'conversation.created':  ConversationCreatedPayload;
   'asset.uploaded':        AssetUploadedPayload;
   'marketing.asset_available_for_content': AssetAvailableForContentPayload;
   'skill.started':         SkillStartedPayload;
@@ -234,6 +236,7 @@ export const DOMAIN_EVENTS = {
   LEAD_CREATED:          'lead.created',
   LEAD_UPDATED:          'lead.updated',
   LEAD_CONVERTED:        'lead.converted',
+  CONVERSATION_CREATED:  'conversation.created',
 
   // Assets
   ASSET_UPLOADED:        'asset.uploaded',
