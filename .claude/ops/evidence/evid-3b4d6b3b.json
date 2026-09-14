@@ -1,0 +1,12 @@
+{
+  "id": "evid-3b4d6b3b",
+  "createdAt": "2026-09-14T04:24:09.213Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "find-e0b57623 cross-review: duplicateRole fix in apps/api/src/modules/users/rbac-admin.service.ts verified. ForbiddenException on source.tenant_id!==tenantId placed before any write (createRole/grantRolePermission), before assertSlugNotReserved/assertHierarchy. is_assignable??undefined preserves explicit false through RbacMutationService.createRole's own ??true default. assertPermission try/catch-continue mirrors grant()'s gate; only throw documented is NotFoundException so catch-all is acceptable simplification (fails safe: under-copies, never over-grants), flagged as low-severity robustness nit not blocking. Reviewed every other roles/role_permissions-touching method (createRole, updateRole, archiveRole, restoreRole, grant, revoke, addInheritance, removeInheritance, listRoles, listGrants, getRoleDetail): grantRolePermission has exactly 3 call sites, all internal to RbacAdminService, all tenant-scoped by RbacMutationService's own WHERE role.tenant_id IS NOT DISTINCT FROM guard -- no bypass path found. addInheritance can read a GLOBAL role as parent by design (intentional, documented) but assertHierarchy's targetLevel>=90 ceiling already blocks the only currently-seeded non-assignable global role (super_admin, level 100); no other global role has is_assignable=false today, so no active exploit -- however this is a latent coupling (parent gate keyed on hierarchy_level, not is_assignable) worth a low-severity finding for defense-in-depth if a future non-assignable role below level 90 is ever added. Ran pnpm exec jest --config jest.config.ts src/modules/users: 10 suites / 44 tests pass including new rbac-duplicate-role-escalation.security.spec.ts (4/4). Ran pnpm exec tsc -p tsconfig.build.json --noEmit: clean, zero errors. VERDICT: PASS -- the fix genuinely closes the reported vulnerability with no equivalent-severity gap found on this surface.",
+  "workspaceFingerprint": "708529e977615f02e0146c984b13b913f46e23d9618baa6644f3115b07a1caeb",
+  "fingerprintStatus": "BOUND",
+  "head": "d1bb61015bec51a94905b7e8e06b4c2733c6f5db"
+}

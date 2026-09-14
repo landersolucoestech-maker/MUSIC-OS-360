@@ -4,7 +4,7 @@
   "missionName": "resolve-worktree-86-diff",
   "status": "active",
   "createdAt": "2026-09-09T03:56:21.053Z",
-  "updatedAt": "2026-09-14T03:37:51.966Z",
+  "updatedAt": "2026-09-14T04:25:18.596Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": "L5",
@@ -4171,6 +4171,48 @@
       "createdAt": "2026-09-14T03:34:32.996Z",
       "justification": "Consolidating/removing the duplicate Autentique routes is a real but separate, larger API-surface product decision (which route is canonical, whether to deprecate the others) -- out of scope for the idempotency hardening pass that surfaced it.",
       "resolvedAt": "2026-09-14T03:37:51.964Z"
+    },
+    {
+      "id": "find-9b4dcc14",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/inventory/types/inventory.types.ts",
+      "line": null,
+      "summary": "Inventory module producer/consumer field-name drift (pre-existing, PT->EN rename backlog): frontend InventarioItem/InventarioFormModal use camelCase dataEntrada/localCompra/numeroNotaFiscal, but backend CreateInventoryItemDto/entity use snake_case data_entrada/local_compra/numero_nota_fiscal (apps/api/src/database/entities.ts, apps/api/src/modules/inventory/dto/inventory.dto.ts). Write path is mapped correctly at submit time, but the read path is not: Inventario.tsx:224 always renders 'Data de Entrada' as em-dash regardless of stored data, and InventarioFormModal.tsx's edit-mode prefill (lines 119-121) always shows these 3 fields blank when editing an existing item. Confirmed not destructive (undefined keys are dropped by JSON.stringify before reaching InventoryService.update, so existing values are not wiped), but it is a real, currently-live display bug outside this mission's fixed scope.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-14T04:11:18.666Z",
+      "justification": "Confirmed real (Data de Entrada column always renders em-dash; edit-mode prefill always blank for 3 fields) and confirmed non-destructive (undefined keys dropped before reaching update, existing values never wiped). Part of the same PT->EN rename backlog already deferred for the inventory module (1,594-occurrence naming debt). Found by Final Reviewer 2 during the mandated contract-drift hunt -- reinforces rather than contradicts that backlog's honesty. Read-path field mapping fix (2 files) is small and well-understood; deferred here only because it surfaced after the mission's fix scope was already closed and cross-reviewed, not because it's hard.",
+      "resolvedAt": "2026-09-14T04:12:20.541Z"
+    },
+    {
+      "id": "find-e0b57623",
+      "category": "security",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/users/rbac-admin.service.ts",
+      "line": null,
+      "summary": "duplicateRole (rbac-admin.service.ts:186-217) copies ALL role_permissions rows from ANY source role reachable via getRoleRow (tenant-scoped OR global tenant_id IS NULL, including is_system roles like the real global super_admin) via a raw INSERT loop into RbacMutationService.grantRolePermission, without calling assertPermission per grant (unlike grant() at line 242-255, which is the only place is_assignable is checked). It also hardcodes isAssignable:true on the newly created role regardless of source.is_assignable (line 206), defeating the ROLE-level is_assignable=false protection that blocks 'super_admin' and any future non-assignable role from self-service assignment -- the exact protection find-986186c1/assertSlugNotReserved was added to defend via the slug channel. A tenant 'owner' (hierarchy 90) CAN see the global super_admin role's id via GET /rbac/roles (listRoles returns tenant_id IS NULL rows too), call POST /rbac/roles/:id/duplicate on it (assertHierarchy passes: owner is hierarchy-exempt and target level clamped to min(100, 89)=89 < 90), get a new tenant-scoped role with ALL of super_admin's permissions and isAssignable=true forced, then self-assign it via assignRole (assertCanAssignRole permits since new role's DB is_assignable=true and hierarchy_level 89 < owner's level). No existing test (rbac-reserved-slug.security.spec.ts, rbac-admin.security.spec.ts) covers this permission-copy path -- both prior independent review passes only tested the slug-collision vector. Current blast radius is bounded to ordinary same-tenant CRUD permissions (ROLE_PERMISSIONS[SUPER_ADMIN] in rbac.service.ts contains no cross-tenant/platform-wide permission, and every permission row in the seed currently has is_assignable=true so assertPermission's filter is otherwise vacuous) and RolesGuard's fail-closed default blocks state-changing (POST/PATCH/PUT/DELETE) routes lacking @RequireRole regardless of this trick -- but it is a real, confirmed authorization-control gap on a security-critical RBAC admin surface, distinct from and not closed by the CRITICAL fix already shipped for find-986186c1, and would become fully exploitable the moment any permission or role is marked non-assignable for platform-reserved reasons. Fix: duplicateRole must call assertPermission(permission_id) for each copied grant (skip/reject non-assignable ones) and must not force isAssignable:true when source.is_assignable is false; consider also rejecting duplication of is_system source roles outright.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-14T04:11:30.054Z",
+      "justification": "duplicateRole now rejects a GLOBAL role as a duplication source (ForbiddenException before any write), respects the source role's own is_assignable instead of forcing true, and the grant-copy loop calls assertPermission per grant (mirroring grant()'s own gate), skipping non-assignable/deprecated permissions instead of blindly copying them. Regression tests added (4 cases). Independently cross-reviewed twice now (once by the final reviewer who found it, once by a dedicated cross-review agent) -- both confirm the fix is correct and complete.",
+      "resolvedAt": "2026-09-14T04:25:18.280Z"
+    },
+    {
+      "id": "find-ee2eab16",
+      "category": "security",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/users/rbac-admin.service.ts",
+      "line": null,
+      "summary": "addInheritance's parent-role ceiling (assertHierarchy, line ~299) gates on hierarchy_level>=90 only, not on parent.is_assignable -- unlike duplicateRole's post-fix tenant+assignability checks. Not exploitable today: the only global role with is_assignable=false is super_admin (level 100), already blocked by the >=90 ceiling. Latent coupling: if a future global/tenant-template role is ever added with is_assignable=false and hierarchy_level<90, an owner-tier actor could addInheritance() a low-level self-assignable role onto it and inherit its full permission set live via PermissionResolverService's recursive effective_roles walk (which does not filter by role.is_assignable either) -- same escalation class as find-e0b57623 but via the inheritance edge instead of a permission copy. Recommend: assertHierarchy (or a dedicated check in addInheritance) also reject parent.is_assignable === false for non-super_admin actors, mirroring duplicateRole's now-fixed posture. Disposition suggested: defense-in-depth backlog item, not a blocking regression of the reviewed fix.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-14T04:24:20.145Z",
+      "justification": "addInheritance's hierarchy-only ceiling (>=90) doesn't check parent.is_assignable, and PermissionResolverService.resolvePersisted walks inherited roles without filtering on is_assignable. Not currently exploitable: super_admin (the only is_assignable=false global role in the seed) is already blocked by the >=90 ceiling. Real latent coupling of the same escalation class, recorded as defense-in-depth backlog rather than fixed now, since no live path reaches it with current seed data.",
+      "resolvedAt": "2026-09-14T04:25:18.594Z"
     }
   ],
   "evidenceIds": [
@@ -4407,7 +4449,11 @@
     "evid-1793b1ef",
     "evid-5116bd3f",
     "evid-7cde9b0b",
-    "evid-c1a072bb"
+    "evid-c1a072bb",
+    "evid-9e1c8359",
+    "evid-9d0bc391",
+    "evid-3b4d6b3b",
+    "evid-7303995d"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
