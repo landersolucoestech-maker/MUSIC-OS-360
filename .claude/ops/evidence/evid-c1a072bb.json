@@ -1,0 +1,12 @@
+{
+  "id": "evid-c1a072bb",
+  "createdAt": "2026-09-14T03:34:14.133Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer-cross",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Independent cross-review of the idempotency hardening fix (find-917fba5c/find-93b0039d/find-93fe3250): confirmed correct decorator application on all 5 backend routes, correct BullMQ job.id stability for email retries, and correctly flagged that the web frontend wasn't actually sending the header -- since addressed by wiring signing.service.ts and useAbramus.ts to send X-Idempotency-Key. Also flagged a pre-existing route-duplication debt item (3 routes for one Autentique action) as out of scope, not a defect in this fix. Verdict PASS.",
+  "workspaceFingerprint": "193719976d43b0e1b3cdd73d0865ee1e20d8c17df25d85dcad035b27be179d5c",
+  "fingerprintStatus": "BOUND",
+  "head": "6a4713941554c93764f47f2f5a6c3b13937208b7"
+}

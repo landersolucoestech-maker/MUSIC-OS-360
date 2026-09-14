@@ -1,0 +1,12 @@
+{
+  "id": "evid-7cde9b0b",
+  "createdAt": "2026-09-14T02:54:27.873Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer-cross",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Independent cross-review of billing invoice-webhook concurrency fix (find-a1d3ee29): confirmed the atomic WHERE guard closes the specific race, status_changed_at anchor can't be poisoned by idempotent rewrites, all 8 call sites pass correct args, side effects correctly gated on rejection. 3 non-blocking pre-existing follow-ups recorded separately (event-time-vs-wall-clock anchor drift under long redelivery delay; billing_subscriptions and upsertStripeInvoice remain unguarded but are not enforcement-authoritative). Verdict PASS.",
+  "workspaceFingerprint": "4de3046a884090c6cf25c590bf6ae172587d84e0369592da865f1ddbd4458451",
+  "fingerprintStatus": "BOUND",
+  "head": "13e666cd7247ea9fd27c0287ae12732a7db16caa"
+}

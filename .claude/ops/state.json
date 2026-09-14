@@ -4,7 +4,7 @@
   "missionName": "resolve-worktree-86-diff",
   "status": "active",
   "createdAt": "2026-09-09T03:56:21.053Z",
-  "updatedAt": "2026-09-14T02:35:04.664Z",
+  "updatedAt": "2026-09-14T03:34:32.998Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": "L5",
@@ -3808,9 +3808,11 @@
       "line": null,
       "summary": "conversations.service.ts createConversation() emits DOMAIN_EVENTS.LEAD_UPDATED ('lead.updated') with aggregateType:'conversation' when a conversation is CREATED (not a lead, not an update). Proof: line ~135, this.events.emitTyped(DOMAIN_EVENTS.LEAD_UPDATED, { aggregateType: 'conversation', payload: { action: 'created' } }). No dedicated @OnEvent(DOMAIN_EVENTS.LEAD_UPDATED) handler exists anywhere in apps/api/src (grep confirms zero consumers besides the universal '**' audit-log wildcard). updateConversation() does NOT emit this event at all despite the name implying update-lifecycle. No CONVERSATION_CREATED/UPDATED constant exists in DOMAIN_EVENTS for this module to use instead -- likely leftover/mistaken reuse of the lead event during the PT->EN naming rename. Impact: any downstream consumer or analytics filtering on lead.updated sees phantom entries actually caused by unrelated conversation creation; audit/event log is mislabeled (producer/consumer semantic mismatch, req-79299999 naming-rename fallout). Recommended fix: add a real CONVERSATION_CREATED domain event and emit that, or remove the emission if unused downstream. Confidence: high.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T22:57:28.658Z"
+      "createdAt": "2026-09-13T22:57:28.658Z",
+      "justification": "Added dedicated CONVERSATION_CREATED domain event (events.service.ts + domain-events.types.ts's ConversationCreatedPayload) and switched conversations.service.ts's createConversation() to emit it instead of LEAD_UPDATED. Regression test added asserting the correct event fires and LEAD_UPDATED never does.",
+      "resolvedAt": "2026-09-14T02:56:10.218Z"
     },
     {
       "id": "find-8229f49e",
@@ -3820,9 +3822,11 @@
       "line": null,
       "summary": "Query/service filter drift on GET /contract-templates: QueryContractTemplateDto (dto/query-contract-template.dto.ts) declares 'type' and 'status' as filterable fields, but ContractTemplatesService.list() (contract-templates.service.ts line ~23-25) only reads query.type, query.ativo and query.search -- it NEVER reads query.status, so a caller who filters by ?status=... gets back an UNFILTERED list silently (no error, wrong data -- classic silent-fallback correctness bug). Conversely the working filters the service actually implements (query.ativo, query.search) are NOT declared on QueryContractTemplateDto, so with the global ValidationPipe (whitelist:true, forbidNonWhitelisted:true, see create-app.ts:167-172) any caller who tries ?ativo=true or ?search=x gets a hard 400 rejection instead of the intended filter working. Currently no apps/web caller passes any of these params (grep confirms useContractTemplates.ts calls list() with zero filters), so it is latent/unreached today, but the API contract is broken for both directions. Same root-cause class already fixed elsewhere in this exact rename effort -- see apps/api/src/modules/events/dto/events.dto.ts lines 50-52 comment describing removal of 'a filter 200-mas-silenciosamente-ignorado' (a 200-but-silently-ignored filter). Recommended fix: align QueryContractTemplateDto's declared fields with what the service actually reads (add ativo/search, remove or wire up status). Confidence: high.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T22:57:50.520Z"
+      "createdAt": "2026-09-13T22:57:50.520Z",
+      "justification": "Removed dead 'status' field (service never read it) from QueryContractTemplateDto; added 'ativo' (a real service filter that had no DTO field to reach it through). DTO validation test added.",
+      "resolvedAt": "2026-09-14T03:03:22.703Z"
     },
     {
       "id": "find-2f63ad75",
@@ -3832,9 +3836,11 @@
       "line": null,
       "summary": "GET /briefings list-filter drift, same anti-pattern as events.dto.ts's already-fixed 'silently-ignored filter' bug (see that file's own comment). BriefingsService.list() (briefings.service.ts line ~24-26) reads query.artist_id and query.search, but QueryBriefingDto (dto/briefings.dto.ts) never declares either field (only status + campaignId + pagination) -- with the global ValidationPipe (whitelist:true, forbidNonWhitelisted:true) any caller passing ?artist_id= or ?search= is hard-rejected with 400 instead of getting filtered results. In the other direction, QueryBriefingDto DOES declare 'campaignId' as a documented filter, but the service never reads query.campaignId (it only checks the nonexistent 'campaign_id' key which is never populated from a camelCase DTO instance) -- a caller who filters ?campaignId=X gets back the FULL unfiltered briefing list silently, no error. Currently apps/web's briefingsApi.list() (marketing.service.ts) calls '/briefings?limit=100' with no filters, so this is latent/unreached today. Recommended fix: align QueryBriefingDto's declared fields with what the service actually reads (add artist_id/search or wire up campaignId->campaign_id). Confidence: high.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T22:58:11.081Z"
+      "createdAt": "2026-09-13T22:58:11.081Z",
+      "justification": "Removed dead 'campaignId' field (service never read it) from QueryBriefingDto; added 'artist_id' (a real service filter that had no DTO field to reach it through). DTO validation test added.",
+      "resolvedAt": "2026-09-14T03:03:22.906Z"
     },
     {
       "id": "find-eb8482f6",
@@ -3844,9 +3850,11 @@
       "line": null,
       "summary": "GET /artist-goals: ArtistGoalsService.list() (artist-goals.service.ts line ~26) supports filtering by query.type and sorting by query.ascending, but ArtistGoalsController.list() (artist-goals.controller.ts line ~24-37) only forwards artist_id/status/offset/limit to the service -- it never declares or passes through a 'type' or 'ascending' query param, so this filtering/sorting capability is dead/unreachable from the real HTTP endpoint (controller manually destructures a fixed field set rather than using a DTO class, so any '?type=' or '?ascending=' the client sends is silently dropped before reaching the service, no error, just ignored). Confirmed apps/web's useMetas.ts never needs this today. Same systemic 'controller/service filter list drift' pattern found in content-detections (artist_id/work_id) and ecad-reports (work_id) controllers -- see companion findings on those files. Recommended fix: expose the query params the service already implements, or delete the dead service-side branches. Confidence: high.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T22:58:37.806Z"
+      "createdAt": "2026-09-13T22:58:37.806Z",
+      "justification": "ArtistGoalsController.list() now forwards type/ascending to the service, which already implemented both filters. Controller test added.",
+      "resolvedAt": "2026-09-14T03:03:23.116Z"
     },
     {
       "id": "find-6b2b9a7b",
@@ -3856,9 +3864,11 @@
       "line": null,
       "summary": "GET /content-detections: ContentDetectionsService.list() (content-detections.service.ts line ~27-28) supports filtering by query.artist_id and query.work_id, but ContentDetectionsController.list() (content-detections.controller.ts line ~21-34) only declares/forwards status, plataforma, offset, limit -- artist_id/work_id filtering is dead/unreachable from the real endpoint (manual @Query() param destructuring drops anything not explicitly bound, no error surfaced to caller). Same systemic pattern as artist-goals and ecad-reports (see companion findings) -- the controller-side filter set silently drifted out of sync with what the service actually implements, most likely each was extended independently after the PT->EN rename without updating the other side. Recommended fix: expose artist_id/work_id as controller query params, or remove the dead service branches. Confidence: high.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T22:58:39.192Z"
+      "createdAt": "2026-09-13T22:58:39.192Z",
+      "justification": "ContentDetectionsController.list() now forwards artist_id/work_id/ascending to the service, which already implemented all three filters. Controller test added.",
+      "resolvedAt": "2026-09-14T03:03:23.308Z"
     },
     {
       "id": "find-36852d37",
@@ -3868,9 +3878,11 @@
       "line": null,
       "summary": "GET /ecad-reports: EcadReportsService.list() (ecad-reports.service.ts line ~25) supports filtering by query.work_id, but EcadReportsController.list() (ecad-reports.controller.ts line ~22-35) only declares/forwards periodo, status, offset, limit -- work_id filtering is dead/unreachable from the real endpoint (manual @Query() param destructuring). Same systemic pattern as artist-goals and content-detections (see companion findings): controller-side filter set drifted out of sync with the service's actual filtering capability. Recommended fix: expose work_id as a controller query param, or remove the dead service branch. Confidence: high.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T22:58:40.001Z"
+      "createdAt": "2026-09-13T22:58:40.001Z",
+      "justification": "EcadReportsController.list() now forwards work_id/ascending to the service, which already implemented both filters. Controller test added.",
+      "resolvedAt": "2026-09-14T03:03:23.778Z"
     },
     {
       "id": "find-767495b2",
@@ -3880,9 +3892,11 @@
       "line": null,
       "summary": "CreativeConfig.renderState ('clean'|'dirty') is write-only dead state: every mutation site in Calendario.tsx's CreativeSection sets it to 'dirty' (15+ write sites, 0 reads outside a test asserting the literal 'dirty' default), and nothing ever sets it back to 'clean' or reads it to gate any UI (the export button is only disabled by local isExporting state). Leftover scaffolding from before static-export.ts existed; should get an explicit disposition (wire to the export flow, or delete) rather than being carried forward silently.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T23:01:15.784Z"
+      "createdAt": "2026-09-13T23:01:15.784Z",
+      "justification": "CreativeConfig.renderState is dead write-only state (15+ mutation sites set 'dirty', nothing reads it or sets 'clean'). Low-risk, cosmetic-only debt -- removing it touches 15+ call sites in Calendario.tsx for a field with no observable effect either way. Accepted as tracked debt rather than fixed in this pass; a future pass could either remove it or give it real semantics (e.g. cleared after a successful static export).",
+      "resolvedAt": "2026-09-14T03:34:31.953Z"
     },
     {
       "id": "find-2cf48add",
@@ -3892,9 +3906,11 @@
       "line": null,
       "summary": "exportCreativeToPng's fetchSlotBlob() (line 45-65) manually re-implements auth-header injection (Authorization/X-Tenant-ID via getAccessToken()/getTenantId(), same source of truth as api-client.ts -- no parallel token store) via a raw fetch() instead of the shared api-client's request() pipeline, because it needs a Blob response the JSON-only api client doesn't support. Two real gaps versus that shared pipeline it bypasses: (1) no request timeout/AbortController -- api-client.ts's request() aborts after REQUEST_TIMEOUT_MS, this fetch can hang indefinitely, leaving the export button's isExporting spinner stuck forever on a hung network condition; (2) no 401 handling -- api-client.ts's request() on a 401 clears the stored access token and dispatches the app-wide auth-invalid event (with a 30s circuit breaker) that presumably drives session-expiry UX elsewhere; this fetch just surfaces a generic 'HTTP 401' CreativeExportError string, without invalidating the stale token or triggering the same session-expired flow, so a user whose session expired mid-edit gets an unexplained per-click failure instead of the app's normal re-login prompt.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T23:01:28.924Z"
+      "createdAt": "2026-09-13T23:01:28.924Z",
+      "justification": "fetchSlotBlob now has a 10s AbortController timeout (mirroring api-client.ts's own REQUEST_TIMEOUT_MS) and explicit 401 handling (clears the stale access token via setAccessToken(null), throws a clear session-expired message instead of a raw HTTP error). Regression tests added for both branches.",
+      "resolvedAt": "2026-09-14T03:33:55.166Z"
     },
     {
       "id": "find-f774744c",
@@ -3904,9 +3920,11 @@
       "line": null,
       "summary": "static-export.test.ts stubs URL.revokeObjectURL/createObjectURL and fetch but never asserts on them: no test proves revokeObjectURL is actually called (memory-cleanup regression would pass silently), and no test exercises the Authorization/X-Tenant-ID headers, credentials:'include', or a non-ok/401 fetch response path (fetchSlotBlob's 'Falha ao carregar mídia... HTTP {status}' branch is unexercised). Code review confirms these are currently correct, but the test suite would not catch a regression in any of them.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T23:01:36.652Z"
+      "createdAt": "2026-09-13T23:01:36.652Z",
+      "justification": "Added assertions proving every URL.createObjectURL call is matched by a URL.revokeObjectURL call (no blob: URL leak), plus coverage for the new 401/timeout branches.",
+      "resolvedAt": "2026-09-14T03:33:55.446Z"
     },
     {
       "id": "find-4d418e9c",
@@ -3930,9 +3948,11 @@
       "line": null,
       "summary": "POST /integrations/autentique/documents and /signature-requests (AutentiqueService.sendForSignature) create a real external signature document and email real signers, but carry no idempotency protection (no IdempotencyInterceptor, no idempotency-key field in CreateAutentiqueDocumentDto/SendForSignatureDto). A client retry after a timeout, a double-click, or any upstream queue retry re-invokes sendForSignature and creates a second Autentique document + sends a duplicate signing email to real external recipients.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T23:02:17.908Z"
+      "createdAt": "2026-09-13T23:02:17.908Z",
+      "justification": "Added @UseInterceptors(IdempotencyInterceptor) to the Autentique document-creation routes, and wired the web frontend's signing.service.ts to actually send X-Idempotency-Key (a fresh UUID per call by default, or an explicit key for an intentional same-attempt retry) -- closing both the backend gap and the frontend no-op gap an independent cross-review identified.",
+      "resolvedAt": "2026-09-14T03:33:55.663Z"
     },
     {
       "id": "find-93b0039d",
@@ -3942,9 +3962,11 @@
       "line": null,
       "summary": "POST /integrations/docusign/documents (DocuSignService.sendForSignature) creates a real DocuSign envelope and emails real signers, with no IdempotencyInterceptor and no idempotency-key field on SendForSignatureDto (mirrors the same gap in AutentiqueController). A retried/duplicated request creates a second envelope and sends a duplicate signing email.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T23:02:18.251Z"
+      "createdAt": "2026-09-13T23:02:18.251Z",
+      "justification": "Same fix as find-917fba5c, applied to the DocuSign document-creation route (also covered by signing.service.ts's shared idempotency-key wiring).",
+      "resolvedAt": "2026-09-14T03:33:55.887Z"
     },
     {
       "id": "find-93fe3250",
@@ -3954,9 +3976,11 @@
       "line": null,
       "summary": "AbramusService.registerWork (POST /integrations/abramus/register-work) submits a work registration to the real Abramus rights-society API with no idempotency key and no IdempotencyInterceptor on the route -- unlike the project's own ExternalDataExchangeService.submitSociety path, which requires a caller-supplied idempotencyKey for the same class of operation (submitting rights metadata to an external society). A retry/double-submit duplicates the work registration at Abramus.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T23:02:18.569Z"
+      "createdAt": "2026-09-13T23:02:18.569Z",
+      "justification": "Added @UseInterceptors(IdempotencyInterceptor) to POST /integrations/abramus/register-work, and wired useAbramusRegisterObra to send a fresh X-Idempotency-Key per mutation attempt.",
+      "resolvedAt": "2026-09-14T03:33:56.105Z"
     },
     {
       "id": "find-a4445173",
@@ -3966,9 +3990,11 @@
       "line": null,
       "summary": "MailService.send() POSTs to Resend (https://api.resend.com/emails) with no Idempotency-Key header. EmailProcessor (BullMQ) runs this under the default queue attempts=3/exponential-backoff policy (apps/api/src/queues/queue.module.ts ~line 240). If Resend accepts and sends the email but the HTTP response is lost/times out before EmailProcessor's fetch resolves, BullMQ's retry re-calls mail.send() and Resend sends the same welcome/password-reset/contract-signed/invoice/payment-failed email a second time.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T23:02:18.936Z"
+      "createdAt": "2026-09-13T23:02:18.936Z",
+      "justification": "MailService.send() now forwards an optional idempotencyKey as Resend's Idempotency-Key header; EmailProcessor passes BullMQ's job.id (stable across retries of the same job) for every send. Regression tests added.",
+      "resolvedAt": "2026-09-14T03:33:56.357Z"
     },
     {
       "id": "find-e0163405",
@@ -3978,9 +4004,11 @@
       "line": null,
       "summary": "reportToSentry() reads (request as any).tenantId and (request as any).userId to tag/scope unhandled-exception reports, but no guard/middleware in the codebase ever sets those properties -- TenantGuard sets request.tenant (an object with .id) and AuthGuard sets request.auth (an object with .userId). The tenantId/userId Sentry tags are therefore always undefined for every unhandled error surfaced by any integration (R2 SDK errors, Autentique/DocuSign/Stripe fetch failures that escape as bare Error, etc.), silently degrading incident triage even though the HTTP response and local logger.error(...) still carry the message/stack.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T23:02:19.258Z"
+      "createdAt": "2026-09-13T23:02:19.258Z",
+      "justification": "reportToSentry now reads request.tenant?.id / request.auth?.userId (the real properties TenantGuard/AuthGuard set) instead of the never-existing flat request.tenantId/request.userId. Regression tests added mocking the Sentry module directly.",
+      "resolvedAt": "2026-09-14T03:33:54.513Z"
     },
     {
       "id": "find-b4ffbce4",
@@ -3990,9 +4018,11 @@
       "line": 201,
       "summary": "GET /uploads/:fileId/raw calls storage.getObject(row.r2_key) with no exists() pre-check and no try/catch, unlike confirm() which explicitly checks storage.exists() first. If the DB upload row exists but the R2 object is gone (deleted out of band, lifecycle expiry, or any future delete() call for that key), the AWS SDK NoSuchKey error propagates unhandled to a generic 500 instead of a 404 -- and uploads-raw-proxy.spec.ts only covers the tenant-404 and happy-path branches, not this one.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-13T23:02:19.492Z"
+      "createdAt": "2026-09-13T23:02:19.492Z",
+      "justification": "GET /uploads/:fileId/raw now catches a storage.getObject() failure and returns a normal 404 when R2 reports the object missing (matching confirm()'s own exists() check), re-throwing any other error untouched. Regression tests added for both the 404 and non-404 paths.",
+      "resolvedAt": "2026-09-14T03:33:54.837Z"
     },
     {
       "id": "find-8d6bb9b8",
@@ -4043,6 +4073,82 @@
       "createdAt": "2026-09-14T02:21:06.758Z",
       "justification": "Same fix as find-4d418e9c (this finding is the fully-traced proof record for it). See find-4d418e9c disposition.",
       "resolvedAt": "2026-09-14T02:35:04.662Z"
+    },
+    {
+      "id": "find-a1d3ee29",
+      "category": "G",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/billing/billing.service.ts",
+      "line": null,
+      "summary": "invoice.payment_succeeded/failed webhook handlers wrote tenant_billing_state via an unconditional upsert with only an app-level pre-read staleness check (getState+isStaleInvoiceEvent) -- two genuinely concurrent webhooks for the same tenant could both pass that check against the same stale read and race to write, unlike the sibling customer.subscription.* path which already had an atomic SQL-level ordering guard. Confirmed by an independent adversarial audit; req-329e1db7's 'concurrency' acceptance criterion was closed on evidence that only re-ran sequential mocked calls, never actually exercising concurrency (false-green).",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-14T02:50:21.853Z",
+      "justification": "Atomic SQL-level ordering guard added to activateTenant/startPaymentGrace (mirroring find-602e8654's pattern), threaded through onPaymentSucceeded/onPaymentFailed. Regression tests added in both billing-enforcement.service.spec.ts and billing.service.spec.ts. Independently cross-reviewed -- verdict PASS.",
+      "resolvedAt": "2026-09-14T02:54:28.026Z"
+    },
+    {
+      "id": "find-ba01ed5d",
+      "category": "G",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/billing/billing-enforcement.service.ts",
+      "line": null,
+      "summary": "find-329e1db7 follow-up: activateTenant/startPaymentGrace's ordering guard compares Stripe's event-creation timestamp against tenant_billing_state.status_changed_at, a wall-clock stamp set whenever the last write happened to land. Under Stripe's own documented multi-day redelivery backoff (this service's STALE_PROCESSING_MS reclaim window acknowledges multi-minute delays are normal), two racing events' write order can diverge from their event-creation order, permanently rejecting a chronologically-correct newer event as stale. Pre-existing design limitation (mirrors find-99ea599c's app-level heuristic), not a regression. Fix: anchor on a dedicated last_applied_event_created_at column instead of wall-clock status_changed_at.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-14T02:54:40.447Z"
+    },
+    {
+      "id": "find-12d46b50",
+      "category": "G",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/billing/billing-enforcement.service.ts",
+      "line": null,
+      "summary": "billing_subscriptions rows written by activateTenant/startPaymentGrace remain unguarded by any ordering check (unlike tenant_billing_state after find-329e1db7). Confirmed non-blocking: BillingEnforcementGuard reads only tenant_billing_state (getStateWithEscalation/readStateRaw), so this can produce a stale billing_subscriptions.status/grace_until (display/reporting inconsistency) but never an access-control bypass.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-14T02:54:40.602Z"
+    },
+    {
+      "id": "find-2c0a3ffe",
+      "category": "G",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/billing/billing.service.ts",
+      "line": null,
+      "summary": "upsertStripeInvoice's ON CONFLICT (stripe_invoice_id) DO UPDATE has no ordering guard -- an out-of-order/stale invoice webhook can stomp fresher status/amount_paid/hosted_invoice_url fields on the invoices table, independent of the (now-fixed) tenant billing-status race. Pre-existing, not introduced or worsened by find-329e1db7's fix, which is scoped to tenant status only.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-14T02:54:40.758Z"
+    },
+    {
+      "id": "find-b6125e2e",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/test/ArtistVision360Modal.test.tsx",
+      "line": null,
+      "summary": "Dead vi.mock specifiers (found independently by both the naming auditor and the test-strategy retry agent): vi.mock('@/modules/projects/hooks/useProjetos') and vi.mock('@/modules/contracts/hooks/useContratos') target paths deleted by earlier rename commits (5ec6d73d, 8028ed19) -- Vitest silently no-ops a mock whose specifier is never actually imported, so the real useProjects/useContracts hooks ran unmocked inside this test the whole time, receiving a mismatched mock API response with no assertion coverage over that path.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-14T02:56:54.250Z",
+      "justification": "Updated both vi.mock specifiers to the real current paths (@/modules/projects/hooks/useProjects, @/modules/contracts/hooks/useContracts) with matching return shapes (projects/contracts instead of projetos/contratos). Re-ran the test file in isolation -- all 3 tests still pass, now with the mocks genuinely applying.",
+      "resolvedAt": "2026-09-14T02:56:54.496Z"
+    },
+    {
+      "id": "find-9d4b5310",
+      "category": "G",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/integrations/integrations.controller.ts",
+      "line": null,
+      "summary": "Three separate routes (autentique.controller.ts's POST /integrations/autentique/documents and /signature-requests, plus integrations.controller.ts's POST /integrations/autentique/send) all call the identical AutentiqueService.sendForSignature with the same real-world side effect. Each is now independently idempotency-protected (find-917fba5c), but the interceptor's cache key doesn't span routes -- a caller hitting two of the three routes for what a human considers 'the same' request still creates two real documents. Flagged by the independent cross-review of the idempotency fix as pre-existing route-duplication debt, out of scope for that fix.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-14T03:34:32.996Z"
     }
   ],
   "evidenceIds": [
@@ -4277,7 +4383,9 @@
     "evid-aa71852e",
     "evid-4dca932f",
     "evid-1793b1ef",
-    "evid-5116bd3f"
+    "evid-5116bd3f",
+    "evid-7cde9b0b",
+    "evid-c1a072bb"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
