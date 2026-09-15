@@ -1,0 +1,15 @@
+{
+  "id": "evid-f91cc0c1",
+  "createdAt": "2026-09-15T20:32:08.234Z",
+  "type": "COMMAND",
+  "label": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts apps/api/src/modules/reports --silent",
+  "command": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts apps/api/src/modules/reports --silent",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "4fef3d535628119bffb5e189bc0c856f4865a3ecf19d7656404b63e402a25308",
+  "fingerprintStatus": "BOUND",
+  "head": "e356cd8b4247a17cf8f00bdc65d8982af0684f4c",
+  "durationMs": 45321
+}

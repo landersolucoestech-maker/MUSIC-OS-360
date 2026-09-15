@@ -1,0 +1,158 @@
+{
+  "version": 2,
+  "missionId": "mission-77b85a09",
+  "missionName": "cartographer-handoff-eos-skills-ai-skills",
+  "status": "active",
+  "executionMode": "STRICT_MULTI_AGENT",
+  "createdAt": "2026-09-15T19:39:32.385Z",
+  "updatedAt": "2026-09-15T19:54:27.342Z",
+  "impact": {
+    "operatorDeclared": null,
+    "runtimeDetected": "L5",
+    "effective": "L5"
+  },
+  "requirements": [
+    {
+      "id": "req-31e9d036",
+      "text": "Reconcile local dev vs origin/dev baseline non-destructively, preserving all 60 protected preexisting dirty paths",
+      "nonRequirements": [
+        "No push, no PR, no product-backlog remediation"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-1766c426",
+          "text": "Divergence direction between local HEAD and origin/dev is verified from actual git state (not assumed from operator-stated baseline), and reconciliation strategy matches the real direction",
+          "evidenceIds": [
+            "evid-c3d331d4"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T19:39:45.903Z"
+    },
+    {
+      "id": "req-4f910861",
+      "text": "Phase A: hand off Cartographer codebase map to canonical docs/CODEBASE_MAP.md, revalidating only materially stale statements",
+      "nonRequirements": [
+        "No Cartographer re-run, no global re-audit"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-3e035cac",
+          "text": "docs/CODEBASE_MAP.md is a verified, non-blind Cartographer handoff (staleness-checked, not a raw copy)",
+          "evidenceIds": [
+            "evid-dfff29e2",
+            "evid-8f0ac1bd"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T19:39:46.797Z"
+    },
+    {
+      "id": "req-a3b24d4e",
+      "text": "Phase B: create and validate exactly 7 specialist Engineering OS skills (security-tenancy-auditor, stripe-webhook-auditor, change-cluster-consolidator, royalties-integrity-auditor, contracts-side-effect-auditor, soundcharts-id-integrity, database-schema-drift)",
+      "nonRequirements": [
+        "No new agents, no compat facades"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-55488174",
+          "text": "All 7 skill files pass Engineering OS pack structural/schema validation",
+          "evidenceIds": [
+            "evid-5af6e3a7"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T19:39:47.320Z"
+    },
+    {
+      "id": "req-81a792d8",
+      "text": "Phase C: discover canonical AI Skills architecture, reconcile the 29-entry target catalog with classification and provable fixes only",
+      "nonRequirements": [
+        "No invented product behavior to manufacture 29 implementations; no automatic Postiz integration replacement"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-47f4c6ab",
+          "text": "Existing 9 canonical AI Skills (automation runner path) pass their focused test suite",
+          "evidenceIds": [
+            "evid-007caac3",
+            "evid-10e99e88",
+            "evid-e9d9825d"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-b101fb45",
+          "text": "No unexplained residual of legacy AI-skill misspellings (campaing-plan/report/strategy, postlz) anywhere in the repo",
+          "evidenceIds": [
+            "evid-024a848e",
+            "evid-32aab079"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T19:39:48.276Z"
+    }
+  ],
+  "findings": [
+    {
+      "id": "find-2ed56507",
+      "category": "B",
+      "severity": "MEDIUM",
+      "file": "packages/ai-skills/src",
+      "line": null,
+      "summary": "19 of the 29 target AI Skills catalog entries (social-content, paid-ads, onboarding-cro, launch-strategy, copywriting, analytics-tracking, ad-creative, campaign-plan, performance-report, seo-audit, postiz, automation-audit, automation-builder, audience-health, campaign-report, campaign-strategy, contact-operations, deals-crm, reporting-analysis) have zero repository presence under any name or legacy alias -- MISSING_BUT_REQUIRED, no provable product-intent contract exists to implement them without inventing behavior",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T19:53:24.118Z",
+      "justification": "MISSING_BUT_REQUIRED per target catalog; no product spec proves trigger/input/output for any of the 19, so implementing now would invent product behavior (forbidden by this mission's own rules). Accepted as backlog debt pending an explicit product decision in the next mission.",
+      "resolvedAt": "2026-09-15T19:53:38.599Z"
+    },
+    {
+      "id": "find-37b68a1c",
+      "category": "A",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine",
+      "line": null,
+      "summary": "Two parallel AI-execution paths exist: the canonical audited backend AI Skills (packages/ai-skills registry -> apps/api/src/core/automation loader/executor -> skill_runs audit trail, tenant-scoped, idempotent) and a separate frontend-only path (musicIntelligenceEngine/ + marketing/ai/providers/providerRouter.ts consumed by IACriativa.tsx) that calls an LLM provider directly from the client with no skill_runs audit record, no idempotency key, and no packages/ai-skills contract -- not one of the 29 catalog entries, and not reconciled against it. Not fixed in this mission per its own scope boundary (no product-finding remediation); recorded for the next mission.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T19:53:47.485Z",
+      "justification": "Real architectural duplication finding, but fixing/reconciling it is product-finding remediation, explicitly out of scope for this mission (terminal instruction: stop after final report, no remediation). Deferred to the next mission, which the operator has already said will use this mission's outputs.",
+      "resolvedAt": "2026-09-15T19:53:53.957Z"
+    },
+    {
+      "id": "find-1768c465",
+      "category": "B",
+      "severity": "LOW",
+      "file": "packages/ai-skills",
+      "line": null,
+      "summary": "postiz: zero repository presence -- no package.json dependency anywhere, no code reference, no config. Classified MISSING_BUT_REQUIRED / CANDIDATE_SOCIAL_PUBLISHING_GATEWAY only, per mission section 22 explicitly NOT an approved replacement for existing Instagram/YouTube/TikTok integrations. No integration built or wired in this mission.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T19:54:02.891Z",
+      "justification": "MISSING_BUT_REQUIRED, CANDIDATE_SOCIAL_PUBLISHING_GATEWAY only. No vendor/architecture decision authorized in this mission; deferred pending explicit product decision.",
+      "resolvedAt": "2026-09-15T19:54:27.339Z"
+    }
+  ],
+  "evidenceIds": [
+    "evid-c3d331d4",
+    "evid-dfff29e2",
+    "evid-8f0ac1bd",
+    "evid-5af6e3a7",
+    "evid-007caac3",
+    "evid-10e99e88",
+    "evid-e9d9825d",
+    "evid-024a848e",
+    "evid-32aab079"
+  ],
+  "checkpointIds": [],
+  "touchedFiles": [],
+  "blockers": []
+}

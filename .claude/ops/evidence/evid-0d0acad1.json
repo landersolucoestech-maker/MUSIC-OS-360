@@ -1,0 +1,15 @@
+{
+  "id": "evid-0d0acad1",
+  "createdAt": "2026-09-15T20:19:22.408Z",
+  "type": "COMMAND",
+  "label": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts apps/api/src/core/rbac apps/api/src/core/guards/guard-chain.integration.spec.ts --silent",
+  "command": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts apps/api/src/core/rbac apps/api/src/core/guards/guard-chain.integration.spec.ts --silent",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[33m[Nest] 11392  - \u001b[39m15/09/2026, 17:19:19 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[PermissionResolver] \u001b[39m\u001b[33mConflitos SoD detectados para role_id=00000000-0000-0000-0000-000000000001: payment:approve<->payment:create\u001b[39m\n\u001b[33m[Nest] 11392  - \u001b[39m15/09/2026, 17:19:19 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[PermissionResolver] \u001b[39m\u001b[33mConflitos SoD detectados para role_id=00000000-0000-0000-0000-000000000001: payment:approve<->payment:create, payment:cancel<->payment:create\u001b[39m\n\u001b[33m[Nest] 11392  - \u001b[39m15/09/2026, 17:19:19 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[PermissionResolver] \u001b[39m\u001b[33mConflitos SoD detectados para role_id=00000000-0000-0000-0000-000000000001: payment:approve<->payment:create\u001b[39m\n\u001b[32m[Nest] 11392  - \u001b[39m15/09/2026, 17:19:19 \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[PermissionResolver] \u001b[39m\u001b[32m{\"event\":\"rbac_dual_read\",\"path\":\"fallback\",\"reason\":\"no_role_id\",\"role\":\"viewer\",\"role_id\":null,\"tenant_id\":\"10000000-0000-0000-0000-000000000001\",\"divergence\":\"NO_ROLE_ID\",\"used_count\":1,\"legacy_count\":1,\"missing_vs_legacy\":0,\"extra_vs_legacy\":0,\"gating_safe\":true}\u001b[39m",
+  "stderrTail": "",
+  "workspaceFingerprint": "275b7eea594684e226b9146d278bcc6c38357a95cb362727e73e2dc79fceef84",
+  "fingerprintStatus": "BOUND",
+  "head": "14ada7b9cdcf28c3384c2b0478ef1e1324c63505",
+  "durationMs": 72841
+}
