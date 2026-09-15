@@ -1,0 +1,10 @@
+{
+  "id": "task-0b04b965",
+  "createdAt": "2026-09-15T19:55:36.299Z",
+  "title": "Create and validate stripe-webhook-auditor skill",
+  "assignedAgent": "stripe-webhook-auditor",
+  "status": "COMPLETED",
+  "criterionIds": [
+    "ac-55488174"
+  ]
+}

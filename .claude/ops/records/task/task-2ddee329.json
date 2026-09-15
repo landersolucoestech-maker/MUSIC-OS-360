@@ -1,0 +1,10 @@
+{
+  "id": "task-2ddee329",
+  "createdAt": "2026-09-15T19:55:36.108Z",
+  "title": "Create and validate security-tenancy-auditor skill",
+  "assignedAgent": "security-tenancy-auditor",
+  "status": "COMPLETED",
+  "criterionIds": [
+    "ac-55488174"
+  ]
+}

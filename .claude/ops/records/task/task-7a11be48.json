@@ -1,0 +1,10 @@
+{
+  "id": "task-7a11be48",
+  "createdAt": "2026-09-15T19:55:38.333Z",
+  "title": "Create and validate database-schema-drift skill",
+  "assignedAgent": "database-schema-drift",
+  "status": "COMPLETED",
+  "criterionIds": [
+    "ac-55488174"
+  ]
+}

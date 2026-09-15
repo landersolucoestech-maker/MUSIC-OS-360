@@ -1,0 +1,15 @@
+{
+  "id": "evid-e9d9825d",
+  "createdAt": "2026-09-15T19:51:46.168Z",
+  "type": "COMMAND",
+  "label": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts apps/api/src/core/automation --silent",
+  "command": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts apps/api/src/core/automation --silent",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[33m[Nest] 15480  - \u001b[39m15/09/2026, 16:51:38 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[NativeSkillAutomation] \u001b[39m\u001b[33m[release-checklist automation] falha pré-start (não-fatal): db indisponível no load\u001b[39m\n\u001b[33m[Nest] 15480  - \u001b[39m15/09/2026, 16:51:43 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[NativeSkillAutomation] \u001b[39m\u001b[33m[artist-profile-analysis automation] evento sem tenantId — abortado (fail-closed)\u001b[39m\n\u001b[33m[Nest] 15480  - \u001b[39m15/09/2026, 16:51:43 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[NativeSkillAutomation] \u001b[39m\u001b[33m[artist-profile-analysis automation] falha pré-start (não-fatal): load failed\u001b[39m\n\u001b[33m[Nest] 15480  - \u001b[39m15/09/2026, 16:51:43 \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[NativeSkillAutomation] \u001b[39m\u001b[33m[artist-profile-analysis automation] DatabaseContextService indisponivel — abortado (fail-closed)\u001b[39m",
+  "stderrTail": "",
+  "workspaceFingerprint": "0714b5c7b6fa60fb1cb52c5955f3c010e686a6b8eded0f37ace8ce7a0485b8d1",
+  "fingerprintStatus": "BOUND",
+  "head": "55d2e6908cb869cc2e734e249063d852a0e8b7aa",
+  "durationMs": 56197
+}

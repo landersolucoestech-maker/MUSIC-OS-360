@@ -1,0 +1,15 @@
+{
+  "id": "evid-10e99e88",
+  "createdAt": "2026-09-15T19:50:12.880Z",
+  "type": "COMMAND",
+  "label": "npx jest --config apps/api/jest.config.ts apps/api/src/core/automation --silent",
+  "command": "npx jest --config apps/api/jest.config.ts apps/api/src/core/automation --silent",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync npx ENOENT",
+  "workspaceFingerprint": "0714b5c7b6fa60fb1cb52c5955f3c010e686a6b8eded0f37ace8ce7a0485b8d1",
+  "fingerprintStatus": "BOUND",
+  "head": "55d2e6908cb869cc2e734e249063d852a0e8b7aa",
+  "durationMs": 5
+}

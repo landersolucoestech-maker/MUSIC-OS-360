@@ -1,0 +1,15 @@
+{
+  "id": "evid-007caac3",
+  "createdAt": "2026-09-15T19:49:44.812Z",
+  "type": "COMMAND",
+  "label": "cd apps/api && npx jest --config jest.config.ts src/core/automation --silent",
+  "command": "cd apps/api && npx jest --config jest.config.ts src/core/automation --silent",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync cd ENOENT",
+  "workspaceFingerprint": "0714b5c7b6fa60fb1cb52c5955f3c010e686a6b8eded0f37ace8ce7a0485b8d1",
+  "fingerprintStatus": "BOUND",
+  "head": "55d2e6908cb869cc2e734e249063d852a0e8b7aa",
+  "durationMs": 7
+}

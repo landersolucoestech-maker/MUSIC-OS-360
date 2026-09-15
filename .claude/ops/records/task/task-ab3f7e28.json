@@ -1,0 +1,10 @@
+{
+  "id": "task-ab3f7e28",
+  "createdAt": "2026-09-15T19:55:37.950Z",
+  "title": "Create and validate contracts-side-effect-auditor skill",
+  "assignedAgent": "contracts-side-effect-auditor",
+  "status": "COMPLETED",
+  "criterionIds": [
+    "ac-55488174"
+  ]
+}

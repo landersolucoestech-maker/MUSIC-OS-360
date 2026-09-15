@@ -1,0 +1,10 @@
+{
+  "id": "task-bc7362e4",
+  "createdAt": "2026-09-15T19:55:36.870Z",
+  "title": "Create and validate royalties-integrity-auditor skill",
+  "assignedAgent": "royalties-integrity-auditor",
+  "status": "COMPLETED",
+  "criterionIds": [
+    "ac-55488174"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "task-d87ba827",
+  "createdAt": "2026-09-15T19:55:36.598Z",
+  "title": "Create and validate change-cluster-consolidator skill",
+  "assignedAgent": "change-cluster-consolidator",
+  "status": "COMPLETED",
+  "criterionIds": [
+    "ac-55488174"
+  ]
+}

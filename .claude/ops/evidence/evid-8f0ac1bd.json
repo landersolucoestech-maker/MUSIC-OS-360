@@ -1,0 +1,15 @@
+{
+  "id": "evid-8f0ac1bd",
+  "createdAt": "2026-09-15T19:47:13.428Z",
+  "type": "COMMAND",
+  "label": "grep -q 'handoff_head: 2c36f2bc56ad1e59b8ca55dbf45d15b3d66c0f87' docs/CODEBASE_MAP.md && grep -q 'Handoff correction' docs/CODEBASE_MAP.md && ! diff -q 'C:/Users/Usuario/Documents/MUSIC-OS-360-cartographer-test/docs/CODEBASE_MAP.md' docs/CODEBASE_MAP.md >/dev/null",
+  "command": "grep -q 'handoff_head: 2c36f2bc56ad1e59b8ca55dbf45d15b3d66c0f87' docs/CODEBASE_MAP.md && grep -q 'Handoff correction' docs/CODEBASE_MAP.md && ! diff -q 'C:/Users/Usuario/Documents/MUSIC-OS-360-cartographer-test/docs/CODEBASE_MAP.md' docs/CODEBASE_MAP.md >/dev/null",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "0714b5c7b6fa60fb1cb52c5955f3c010e686a6b8eded0f37ace8ce7a0485b8d1",
+  "fingerprintStatus": "BOUND",
+  "head": "55d2e6908cb869cc2e734e249063d852a0e8b7aa",
+  "durationMs": 30
+}
