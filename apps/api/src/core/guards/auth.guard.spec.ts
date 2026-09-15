@@ -162,5 +162,14 @@ describe('JwtAuthGuard', () => {
       const ctx = makeContext({ authHeader: `Bearer ${makeDevToken()}` });
       await expect(guard.canActivate(ctx)).rejects.toThrow(UnauthorizedException);
     });
+
+    it.each(['Production', ' production ', 'STAGING', 'Staging'])(
+      'rejeita dev-token HS256 quando NODE_ENV=%j (variacao de caixa/espaco deve continuar prod-like -- CODEBASE_MAP Gotcha #9)',
+      async (nodeEnv) => {
+        const guard = makeGuard(false, { NODE_ENV: nodeEnv });
+        const ctx = makeContext({ authHeader: `Bearer ${makeDevToken()}` });
+        await expect(guard.canActivate(ctx)).rejects.toThrow(UnauthorizedException);
+      },
+    );
   });
 });

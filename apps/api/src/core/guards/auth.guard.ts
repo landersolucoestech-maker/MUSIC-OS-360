@@ -14,6 +14,7 @@ import * as jwt from 'jsonwebtoken';
 import type * as jwksRsaType from 'jwks-rsa';
 import { AUTH_DISABLED, DEV_AUTH } from '../auth-disabled';
 import { RbacErrorLogService } from '../rbac/rbac-error-log.service';
+import { isProdLike } from '../config/runtime-environment';
 
 // Lazy-loaded via require: sob tsx/esbuild o `import * as` de um módulo CJS que
 // exporta função vira namespace não-chamável — mesmo padrão do token-verifier.service.
@@ -149,9 +150,13 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
     // In non-prod-like envs only, accept dev tokens signed with ENCRYPTION_KEY (HS256).
     // Staging is treated as prod-like here (same as the Supabase ref allowlist in main.ts)
     // since it can hold real user data — the bypass must not be reachable there.
+    // Uses the shared isProdLike() (same one TokenVerifierService's dev-token path uses)
+    // instead of a hand-rolled comparison -- a prior inline `=== 'production' || === 'staging'`
+    // check lacked isProdLike()'s trim()/toLowerCase() normalization, so a NODE_ENV value with
+    // different casing/whitespace would have let the HS256 dev-token bypass stay reachable in
+    // what should have been treated as a prod-like environment (CODEBASE_MAP Gotcha #9).
     const nodeEnv = this.config?.get<string>('NODE_ENV') ?? 'development';
-    const isProdLike = nodeEnv === 'production' || nodeEnv === 'staging';
-    if (!isProdLike) {
+    if (!isProdLike(nodeEnv)) {
       const devClaims = this.tryVerifyDevToken(token);
       if (devClaims) {
         request.auth = {
