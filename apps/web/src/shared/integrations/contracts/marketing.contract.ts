@@ -176,6 +176,8 @@ export interface IMarketingProvider {
 export interface IMarketingOAuthConnection {
   platform: MarketingPlatformId;
   connected: boolean;
+  /** Token expired/revoked server-side; connected but a fresh authorization is required. */
+  needsReauth?: boolean;
   accountName?: string;
   accountId?: string;
   connectedAt?: string;

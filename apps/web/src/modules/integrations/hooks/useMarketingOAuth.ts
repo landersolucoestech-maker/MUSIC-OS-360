@@ -59,7 +59,8 @@ const SERVER_OAUTH_PLATFORM_SET = new Set<MarketingPlatformId>(SERVER_OAUTH_PLAT
 type ConnectionMap = Partial<Record<MarketingPlatformId, IMarketingOAuthConnection>>;
 type OAuthStatus = { connected: boolean; needs_reauth?: boolean };
 
-function toConnection(
+/** Exported for direct unit-testing of the wire-status -> connection mapping. */
+export function toConnection(
   platform: MarketingPlatformId,
   status: OAuthStatus,
   scopes: string[] = [],
@@ -67,6 +68,7 @@ function toConnection(
   return {
     platform,
     connected: status.connected,
+    needsReauth: status.needs_reauth === true,
     scopes,
     category: MARKETING_PLATFORM_CATEGORY[platform],
   };
@@ -163,6 +165,12 @@ export function useMarketingOAuth() {
     [connections],
   );
 
+  const needsReauth = useCallback(
+    (platform: MarketingPlatformId): boolean =>
+      connections[platform]?.needsReauth === true,
+    [connections],
+  );
+
   const getConnectionsByCategory = useCallback(
     (category: MarketingCategory): IMarketingOAuthConnection[] =>
       Object.values(connections).filter(
@@ -193,6 +201,7 @@ export function useMarketingOAuth() {
     refreshConnection,
     getConnection,
     isConnected,
+    needsReauth,
     getConnectionsByCategory,
     connectedCountByCategory,
     totalConnected,

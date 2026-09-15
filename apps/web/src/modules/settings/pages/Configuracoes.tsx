@@ -254,6 +254,7 @@ export default function Configuracoes() {
   const { data: ubcStatus } = useUbcStatus();
   const {
     isConnected: isMarketingConnected,
+    needsReauth: isMarketingNeedsReauth,
     connect: connectMarketing,
     disconnect: disconnectMarketing,
   } = useMarketingOAuth();
@@ -448,9 +449,14 @@ export default function Configuracoes() {
    * continuam com o sinal local, normalizado para o mesmo enum para que o
    * render tenha um único contrato.
    */
-  const providerStatus = (id: string, fallbackConnected?: boolean): ExternalProviderStatus => {
+  const providerStatus = (
+    id: string,
+    fallbackConnected?: boolean,
+    fallbackNeedsReauth?: boolean,
+  ): ExternalProviderStatus => {
     const governed = findProviderState(externalProviders, id);
     if (governed) return governed.connectionState;
+    if (fallbackConnected && fallbackNeedsReauth) return ExternalProviderStatus.REQUIRES_REAUTH;
     return fallbackConnected
       ? ExternalProviderStatus.CONNECTED
       : ExternalProviderStatus.AVAILABLE_NOT_CONNECTED;
@@ -522,7 +528,7 @@ export default function Configuracoes() {
       id: "meta_business",
       name: "Meta Business Suite",
       logoId: "meta_business",
-      status: providerStatus("meta_business", isMarketingConnected("meta_business")),
+      status: providerStatus("meta_business", isMarketingConnected("meta_business"), isMarketingNeedsReauth("meta_business")),
       description: "Facebook, Instagram e Meta Ads — mensagens, métricas, publicações, campanhas e resultados da empresa",
       category: "Marketing Digital",
       configurable: true,
@@ -531,7 +537,7 @@ export default function Configuracoes() {
       id: "tiktok_business",
       name: "TikTok Business",
       logoId: "tiktok_business",
-      status: providerStatus("tiktok_business", isMarketingConnected("tiktok_business")),
+      status: providerStatus("tiktok_business", isMarketingConnected("tiktok_business"), isMarketingNeedsReauth("tiktok_business")),
       description: "TikTok for Business e TikTok Ads — mensagens, seguidores, conteúdos, métricas e campanhas",
       category: "Marketing Digital",
       configurable: true,
@@ -540,7 +546,7 @@ export default function Configuracoes() {
       id: "google_business",
       name: "Google & YouTube",
       logoId: "google_business",
-      status: providerStatus("google_business", isMarketingConnected("google_business")),
+      status: providerStatus("google_business", isMarketingConnected("google_business"), isMarketingNeedsReauth("google_business")),
       description: "Google Analytics, Search Console, Google Ads e YouTube — tráfego, anúncios, SEO e desempenho de vídeos",
       category: "Marketing Digital",
       configurable: true,
@@ -550,7 +556,7 @@ export default function Configuracoes() {
       id: "spotify_ads",
       name: "Spotify Ad Studio",
       logoId: "spotify_ads",
-      status: providerStatus("spotify_ads", isMarketingConnected("spotify_ads")),
+      status: providerStatus("spotify_ads", isMarketingConnected("spotify_ads"), isMarketingNeedsReauth("spotify_ads")),
       description: "Spotify Ads — ouvintes, streams, seguidores e campanhas",
       category: "Marketing Digital",
       configurable: true,
