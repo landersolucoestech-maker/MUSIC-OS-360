@@ -1,6 +1,7 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { SystemRole, FunctionalRole } from '@music-os-360/types';
 import { PermissionResolverService, type MemberAuthzContext } from './permission-resolver.service';
+import { ROLE_HIERARCHY } from './role-hierarchy';
 
 export type { MemberAuthzContext };
 
@@ -19,30 +20,11 @@ export type Role = AnyRole;
 
 /**
  * Hierarquia numérica dos SystemRoles — quanto maior o número, mais permissões.
- * Exportado (FASE 8) como FONTE para o seed de roles; comportamento inalterado.
+ * Fonte única: `./role-hierarchy` (mesma usada por RolesGuard). Re-exportado aqui
+ * (FASE 8) para o seed de roles; antes era uma cópia literal independente que
+ * podia divergir silenciosamente da cópia realmente aplicada pelo guard.
  */
-export const ROLE_HIERARCHY: Record<string, number> = {
-  [SystemRole.SUPER_ADMIN]:  100,
-  [SystemRole.TENANT_OWNER]: 90,
-  [SystemRole.OWNER]:        90,
-  [SystemRole.ADMIN]:        80,
-  [SystemRole.EDITOR]:       60,
-  [SystemRole.MANAGER]:      70,
-  [SystemRole.VIEWER]:       10,
-  [FunctionalRole.FINANCIAL]:         60,
-  [FunctionalRole.ACCOUNTING]:        60,
-  [FunctionalRole.JURIDICO]:          55,
-  [FunctionalRole.MARKETING]:         50,
-  [FunctionalRole.MARKETING_MANAGER]: 55,
-  [FunctionalRole.ARTIST]:            30,
-  [FunctionalRole.ARTISTA]:           30,
-  [FunctionalRole.PRODUTOR]:          40,
-  [FunctionalRole.COMERCIAL]:         45,
-  [FunctionalRole.COLABORADOR]:       20,
-  [FunctionalRole.RH_MANAGER]:        55,
-  [FunctionalRole.RADIO]:             40,
-  [FunctionalRole.TV]:                40,
-};
+export { ROLE_HIERARCHY };
 
 export type Resource =
   | 'artist'
