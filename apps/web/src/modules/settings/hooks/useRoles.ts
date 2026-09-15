@@ -92,12 +92,27 @@ interface UsersPage {
   }>;
 }
 
+export interface RbacAuthorityMode {
+  mode: "OFF" | "SHADOW" | "ON";
+  enforced: boolean;
+}
+
 export function useRoles() {
   const queryClient = useQueryClient();
 
   const rolesQuery = useQuery<Role[]>({
     queryKey: [...QUERY_KEYS.ROLES],
     queryFn: () => api.get<Role[]>("/rbac/roles?includeArchived=true"),
+  });
+  /**
+   * CODEBASE_MAP Gotcha #17: without this, the editor below gives no
+   * indication that a granted/revoked permission may not actually be
+   * enforced (RBAC_PERSISTED_AUTHORITY=SHADOW). See Configuracoes.tsx's
+   * disclosure banner, which reads authorityModeQuery.data.
+   */
+  const authorityModeQuery = useQuery<RbacAuthorityMode>({
+    queryKey: ["rbac_authority_mode"],
+    queryFn: () => api.get<RbacAuthorityMode>("/rbac/authority-mode"),
   });
   const permissionsQuery = useQuery<Permission[]>({
     queryKey: [...QUERY_KEYS.PERMISSIONS],
@@ -261,6 +276,8 @@ export function useRoles() {
     permissions,
     rolePermissions,
     teamMembers,
+    authorityMode: authorityModeQuery.data,
+    authorityModeLoading: authorityModeQuery.isLoading,
     teamInvites: invitesQuery.data ?? [],
     isLoading:
       rolesQuery.isLoading ||

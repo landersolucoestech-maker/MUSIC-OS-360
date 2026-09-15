@@ -13,6 +13,7 @@ import {
   UpdateTenantRoleDto,
 } from './dto/rbac-admin.dto';
 import { RbacAdminService } from './rbac-admin.service';
+import { getPersistedAuthorityMode, isPermissionEnforcementEnabled } from '../../core/rbac/rbac-authority-mode';
 
 @ApiTags('RBAC Admin')
 @ApiBearerAuth()
@@ -20,6 +21,22 @@ import { RbacAdminService } from './rbac-admin.service';
 @Controller('rbac')
 export class RbacAdminController {
   constructor(private readonly service: RbacAdminService) {}
+
+  /**
+   * CODEBASE_MAP Gotcha #17: the granular permission editor below has no
+   * indication that RBAC_PERSISTED_AUTHORITY can be SHADOW (observe-only --
+   * a revoked/granted permission changes nothing until this reports 'ON').
+   * Read-only, no side effect; safe to expose to any admin/owner who can
+   * already see this UI at all (route-level @RequireRole above).
+   */
+  @Get('authority-mode')
+  @ApiOperation({ summary: 'Modo de autoridade RBAC persistido em vigor (OFF/SHADOW/ON) e se está de fato aplicado' })
+  authorityMode() {
+    return {
+      mode: getPersistedAuthorityMode(),
+      enforced: isPermissionEnforcementEnabled(),
+    };
+  }
 
   @Get('roles')
   @ApiOperation({ summary: 'Listar papéis globais e do tenant' })

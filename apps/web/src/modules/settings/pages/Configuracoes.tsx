@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import { Switch } from "@/shared/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Badge, type BadgeVariant } from "@/shared/ui/badge";
+import { Alert, AlertTitle, AlertDescription } from "@/shared/ui/alert";
 import { Separator } from "@/shared/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { toast } from "sonner";
@@ -217,6 +218,8 @@ export default function Configuracoes() {
     removeRoleInheritance,
     getPermissionsByCategory,
     getRoleDetail,
+    authorityMode,
+    authorityModeLoading,
   } = useRoles();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -2244,6 +2247,19 @@ export default function Configuracoes() {
                 </Button>
               </CardHeader>
               <CardContent>
+                {!authorityModeLoading && authorityMode && !authorityMode.enforced && (
+                  <Alert className="mb-4" data-testid="alert-rbac-not-enforced">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Permissões granulares ainda não aplicadas</AlertTitle>
+                    <AlertDescription>
+                      Criar papéis e alternar permissões aqui é salvo normalmente, mas o backend
+                      está em modo {authorityMode.mode === "OFF" ? "desativado" : "observação (shadow)"} —
+                      nenhuma rota é de fato bloqueada por essas permissões ainda. O acesso real
+                      hoje continua determinado pelo papel hierárquico do usuário (Visualizador,
+                      Editor, Gerente, Admin, Proprietário).
+                    </AlertDescription>
+                  </Alert>
+                )}
                 {rolesLoading ? (
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="h-6 w-6 animate-spin text-primary" />
