@@ -23,6 +23,18 @@ describe('ReportEntityDefinitionService — contratos', () => {
     }
   });
 
+  it('REM-06: a definição real de invoices exclui type=stripe_subscription do export/import genérico', () => {
+    const invoicesDef = defs.find((d) => d.tableName === 'invoices');
+    expect(invoicesDef).toBeDefined();
+    expect(invoicesDef!.baseWhere).toEqual(["type != 'stripe_subscription'"]);
+  });
+
+  it('tabelas sem exclusão declarada continuam com baseWhere vazio (comportamento existente preservado)', () => {
+    const artistsDef = defs.find((d) => d.tableName === 'artists');
+    expect(artistsDef).toBeDefined();
+    expect(artistsDef!.baseWhere).toEqual([]);
+  });
+
   it('toda coluna declarada no contrato possui lastro físico ou resolver repetível', () => {
     const offenders: string[] = [];
     for (const d of defs) {

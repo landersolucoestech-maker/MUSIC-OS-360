@@ -66,6 +66,21 @@ describe('ExportQueryBuilderService — query segura entity-driven', () => {
     expect(q.sql).toContain('"deleted_at" IS NULL');
   });
 
+  it('sem baseWhere declarado, nenhuma condição extra é adicionada (comportamento existente preservado)', () => {
+    const q = svc.build(DEF, base(), 't');
+    expect(q.sql).toBe(
+      `SELECT "nome_artistico", "email_encrypted" AS "email", "status" FROM "artists" WHERE "tenant_id" = $1 LIMIT $2`,
+    );
+  });
+
+  it('baseWhere (REM-06: invoices dual-purpose) é sempre aplicado no export genérico, mesmo sem filtro do chamador', () => {
+    const invoicesDef: ReportEntityDefinition = {
+      ...DEF, tableName: 'invoices', baseWhere: ["type != 'stripe_subscription'"],
+    };
+    const q = svc.build(invoicesDef, base(), 't');
+    expect(q.sql).toContain(`WHERE "tenant_id" = $1 AND type != 'stripe_subscription'`);
+  });
+
   // Regressão: seleção de colunas nunca pode determinar a ordem — apenas QUAIS
   // colunas entram. A ORDEM vem sempre de def.exportableColumns (config canônica).
   describe('ordem das colunas selecionadas — seleção filtra, nunca ordena', () => {

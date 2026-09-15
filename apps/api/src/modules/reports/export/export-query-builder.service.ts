@@ -77,6 +77,8 @@ export class ExportQueryBuilderService {
     const where: string[] = [`${quote('tenant_id')} = $1`];
     const parameters: unknown[] = [tenantId];
     if (opts.softDeleteColumn) where.push(`${quote(opts.softDeleteColumn)} IS NULL`);
+    // Server-declared only (ReportEntityDefinition.baseWhere), never request input.
+    where.push(...(def.baseWhere ?? []));
 
     if (params.filters) {
       for (const [key, value] of Object.entries(params.filters)) {

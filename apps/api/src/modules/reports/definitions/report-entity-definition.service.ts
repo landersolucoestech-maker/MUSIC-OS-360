@@ -29,6 +29,18 @@ const DATE_TYPES = new Set(['timestamp', 'timestamptz', 'date', 'datetime', 'Dat
 const NUMERIC_TYPES = new Set(['int', 'integer', 'numeric', 'decimal', 'float', 'bigint', 'Number', 'real', 'double precision']);
 const FILTERABLE_HINTS = /^(status|situacao|categoria|category|type|type|kind|stage|prioridade|priority|active|ativo|is_active|published|approved|archived)$/;
 
+/**
+ * Row-level exclusions for tables that are dual-purpose at the physical-table
+ * level (see ReportEntityDefinition.baseWhere). `invoices` also stores Stripe
+ * SaaS-subscription invoices (type='stripe_subscription'); invoices.service.ts's
+ * own list()/findById() already exclude them (REM-06) -- this closes the same
+ * gap for the generic reports export/import engine, which reads the table
+ * directly and has no domain knowledge of that split otherwise.
+ */
+const TABLE_BASE_EXCLUSIONS: Record<string, string[]> = {
+  invoices: ["type != 'stripe_subscription'"],
+};
+
 @Injectable()
 export class ReportEntityDefinitionService {
   constructor(private readonly entityMetadata: EntityMetadataService) {}
@@ -102,6 +114,7 @@ export class ReportEntityDefinitionService {
       searchableColumns,
       sensitiveColumns: sensitive,
       requiredImportColumns: [identityColumn],
+      baseWhere: TABLE_BASE_EXCLUSIONS[entity.tableName] ?? [],
       supportsExport: exportableColumns.length > 0,
       supportsImport: importableColumns.length > 0,
     };
