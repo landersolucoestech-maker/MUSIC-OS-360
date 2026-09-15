@@ -1,5 +1,11 @@
 # MUSIC OS 360 — Arquitetura de Segurança
 
+> **Nota de atualidade (2026-09-15):** este documento predatava uma quantidade
+> significativa de trabalho já concluído (ver §8) e não deve ser tratado como
+> fonte corrente sem cruzar com o código. `docs/CODEBASE_MAP.md` é a fonte
+> verificada mais recente sobre o estado real de segurança/tenancy deste
+> repositório.
+
 ## Visão Geral
 
 MUSIC OS 360 usa autenticação Supabase + RBAC hierárquico + RLS no banco de dados para garantir isolamento multi-tenant completo.
@@ -220,7 +226,7 @@ has_min_role(required) → boolean
 | Popular `app_metadata.org_id` | Alta | Definir org_id no Supabase Dashboard → Authentication → Users ou via trigger |
 | Renomear `auth_user_id` → `supabase_user_id` | Média | Migration de schema (aguarda DB em produção) |
 | Renomear `external_auth_org_id` → `ext_org_id` | Média | Mesmo — migration de schema |
-| Testes E2E de isolamento de tenant | Alta | Criar tenant A e B, verificar que dados não vazam |
+| ~~Testes E2E de isolamento de tenant~~ | — | **Feito.** `apps/api/test/e2e/rls/rls-isolation.e2e-spec.ts` já cobre exatamente isto: INSERT/UPDATE/DELETE cross-tenant bloqueados (Postgres `42501`, `WITH CHECK`) contra um banco Postgres real, tenant A × tenant B, em dezenas de tabelas. Verificado em 2026-09-15 durante o handoff do Cartographer (`docs/CODEBASE_MAP.md`). |
 | Teste de RBAC denial | Alta | Verificar que `viewer` não consegue `POST /contracts` |
 | Expiração de JWT | Alta | Testar comportamento quando token expira mid-session |
 | `super_admin` portal | Baixa | Interface de gestão de organizações |

@@ -1,5 +1,13 @@
 # MUSIC OS 360 — Relatório de Reorganização Arquitectural Enterprise
 
+> **Nota de atualidade (2026-09-15):** este documento está desatualizado e
+> ativamente enganoso sobre a árvore atual. Verificado que
+> `infrastructure/`, `workers/`, `app/guards/` e `shared/design-system/`
+> **não existem** em `apps/web/src/` hoje (confirmado por listagem direta
+> durante o handoff do Cartographer, `docs/CODEBASE_MAP.md`) — o plano
+> abaixo descreve uma reorganização proposta, não a estrutura real. Trate
+> como histórico de intenção, não como mapa do diretório atual.
+
 **Data:** 2026-05-10  
 **Versão:** Enterprise Modular v1.0  
 **Estado:** tsc --noEmit → 0 erros | UX/renders/forms/fluxos preservados integralmente
