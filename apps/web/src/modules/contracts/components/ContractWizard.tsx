@@ -73,6 +73,19 @@ interface WizardMeta {
   start_date: string;
   end_date: string;
   observations: string;
+  /**
+   * Canonical contract value (maps to ContractEntity.valor). Prior to this
+   * field, the wizard had no way to set it at all -- money typed into a
+   * template's "currency" manifest variable (if any) was serialized into
+   * the wizardBlob/observacoes JSON only, so `valor` stayed unset for every
+   * contract created via this flow. That silently fed contracts.service.ts's
+   * CONTRACT_SIGNED handler a `contractValor = 0` for the provisional
+   * revenue transaction (not just a missing KPI -- a wrong financial
+   * record). String here (matches every other money-typed input in this
+   * file, e.g. the "currency" manifest-variable case below); parsed to a
+   * number only at save time.
+   */
+  valor: string;
 }
 
 /** Parsed variables_manifest entry (subset of ContractVariable) */
@@ -146,7 +159,7 @@ const STATUS_LABELS: Record<string, string> = {
 const EMPTY_PARTY: PartyData = { type: "pf", origin: "manual" };
 
 const EMPTY_META: WizardMeta = {
-  title: "", status: "draft", start_date: "", end_date: "", observations: "",
+  title: "", status: "draft", start_date: "", end_date: "", observations: "", valor: "",
 };
 
 const EMPTY_WIZARD: WizardState = {
@@ -881,6 +894,24 @@ function ReviewStep({ state, onMeta }: { state: WizardState; onMeta: (m: WizardM
         </div>
 
         <div className="space-y-1.5">
+          <Label>Valor do Contrato</Label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">R$</span>
+            <Input
+              className="pl-8"
+              type="number"
+              value={m.valor}
+              onChange={(e) => setMeta({ valor: e.target.value })}
+              placeholder="0,00"
+              data-testid="input-valor-revisao"
+            />
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Alimenta o KPI "Valor Total" e a transação provisória de receita gerada ao assinar. Deixe em branco para contratos sem valor fixo (ex.: comissionamento).
+          </p>
+        </div>
+
+        <div className="space-y-1.5">
           <Label>Status</Label>
           <Select value={m.status} onValueChange={(v) => setMeta({ status: v })}>
             <SelectTrigger data-testid="select-wizard-status"><SelectValue /></SelectTrigger>
@@ -947,6 +978,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
         start_date:  contrato.start_date || "",
         end_date:     contrato.end_date || "",
         observations: "",
+        valor:        contrato.valor != null ? String(contrato.valor) : "",
       };
 
       if (tmpl) {
@@ -1102,6 +1134,14 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
       const provider = (state.signers.find((s) => s.provider)?.provider || null) as SigningPlatform | null;
 
       // FIX: build typed payload — no `as any`
+      const trimmedValor = state.meta.valor.trim();
+      const parsedValor = trimmedValor ? Number(trimmedValor) : null;
+      if (trimmedValor && (parsedValor === null || Number.isNaN(parsedValor))) {
+        toast.error("Valor do contrato inválido");
+        setIsSaving(false);
+        return;
+      }
+
       const payload: ContractInsert = {
         title:           state.meta.title.trim(),
         template_id:      state.templateId || null,
@@ -1109,6 +1149,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
         status:           resolvedStatus,
         start_date:      state.meta.start_date || null,
         end_date:         state.meta.end_date    || null,
+        valor:            parsedValor,
         observacoes:      wizardBlob,
         signing_platform: provider,
         // Deliberately map WizardSigner to the persisted WizardSignerRecord shape
