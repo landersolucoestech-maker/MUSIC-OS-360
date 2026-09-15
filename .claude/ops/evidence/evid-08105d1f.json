@@ -1,0 +1,15 @@
+{
+  "id": "evid-08105d1f",
+  "createdAt": "2026-09-15T21:01:58.064Z",
+  "type": "COMMAND",
+  "label": "node node_modules/typescript/bin/tsc --noEmit -p apps/web/tsconfig.app.json",
+  "command": "node node_modules/typescript/bin/tsc --noEmit -p apps/web/tsconfig.app.json",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "485e36e3361e72cb6ce7208bda14229cc3965b7014bac0a2d7ef357f63b46672",
+  "fingerprintStatus": "BOUND",
+  "head": "1c86b7dbdabcd629f6081ee231d46b94f54aec51",
+  "durationMs": 46292
+}

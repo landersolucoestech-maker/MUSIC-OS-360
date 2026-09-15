@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-15T20:13:08.319Z",
-  "updatedAt": "2026-09-15T20:54:32.799Z",
+  "updatedAt": "2026-09-15T21:02:45.063Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -23,7 +23,8 @@
           "id": "ac-ed473307",
           "text": "Exactly one literal ROLE_HIERARCHY declaration exists in apps/api/src, and all RBAC/guard/seed tests pass",
           "evidenceIds": [
-            "evid-0d0acad1"
+            "evid-0d0acad1",
+            "evid-1f89f736"
           ],
           "status": "closed"
         }
@@ -41,7 +42,8 @@
           "id": "ac-507489a2",
           "text": "JwtAuthGuard uses the shared isProdLike() helper; negative-path tests prove the HS256 dev-token bypass is rejected for case/whitespace-variant prod-like NODE_ENV values",
           "evidenceIds": [
-            "evid-e271dfb2"
+            "evid-e271dfb2",
+            "evid-f93c4ea6"
           ],
           "status": "closed"
         }
@@ -59,7 +61,8 @@
           "id": "ac-7346cc53",
           "text": "invoices' real ReportEntityDefinition carries baseWhere excluding type=stripe_subscription, applied unconditionally by ExportQueryBuilderService; full reports module suite passes",
           "evidenceIds": [
-            "evid-f91cc0c1"
+            "evid-f91cc0c1",
+            "evid-0e0308f3"
           ],
           "status": "closed"
         }
@@ -78,7 +81,8 @@
           "text": "toConnection propagates needs_reauth into needsReauth; Configuracoes.tsx's ungoverned marketing-platform cards render REQUIRES_REAUTH instead of a false CONNECTED badge; typecheck and focused tests pass",
           "evidenceIds": [
             "evid-bc96f503",
-            "evid-cf7d36b5"
+            "evid-cf7d36b5",
+            "evid-08105d1f"
           ],
           "status": "closed"
         }
@@ -97,7 +101,8 @@
           "text": "Wizard exposes an explicit Valor field, sends parsed number/null as ContractInsert.valor (confirmed accepted by CreateContractDto/UpdateContractDto and written by buildEntityPayload), hydrates it on edit; typecheck and guard tests pass",
           "evidenceIds": [
             "evid-7fea1d0c",
-            "evid-cf69158a"
+            "evid-cf69158a",
+            "evid-26275e34"
           ],
           "status": "closed"
         }
@@ -115,7 +120,8 @@
           "id": "ac-865945bb",
           "text": "Each correction is independently verified against the real repository (not copied from CODEBASE_MAP prose uncritically) before being written",
           "evidenceIds": [
-            "evid-99d6ec8f"
+            "evid-99d6ec8f",
+            "evid-36ad8aac"
           ],
           "status": "closed"
         }
@@ -245,7 +251,13 @@
     "evid-cf7d36b5",
     "evid-7fea1d0c",
     "evid-cf69158a",
-    "evid-99d6ec8f"
+    "evid-99d6ec8f",
+    "evid-1f89f736",
+    "evid-f93c4ea6",
+    "evid-0e0308f3",
+    "evid-08105d1f",
+    "evid-26275e34",
+    "evid-36ad8aac"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
