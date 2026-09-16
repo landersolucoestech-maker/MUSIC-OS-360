@@ -42,6 +42,7 @@ import type {
   ReleaseApprovedPayload,
   ReleaseDistributedPayload,
   TakedownRequestedPayload,
+  CampaignCreatedPayload,
   CampaignStartedPayload,
   CampaignEndedPayload,
   MarketingProjectCreatedPayload,
@@ -133,6 +134,7 @@ export interface EventPayloadMap {
   'release.approved':      ReleaseApprovedPayload;
   'release.distributed':   ReleaseDistributedPayload;
   'takedown.requested':    TakedownRequestedPayload;
+  'campaign.created':      CampaignCreatedPayload;
   'campaign.started':      CampaignStartedPayload;
   'campaign.ended':        CampaignEndedPayload;
   'marketing.project_created': MarketingProjectCreatedPayload;
@@ -227,6 +229,7 @@ export const DOMAIN_EVENTS = {
   TAKEDOWN_REQUESTED:    'takedown.requested',
 
   // Marketing / CRM
+  CAMPAIGN_CREATED:      'campaign.created',
   CAMPAIGN_STARTED:      'campaign.started',
   CAMPAIGN_ENDED:        'campaign.ended',
   MARKETING_PROJECT_CREATED: 'marketing.project_created',

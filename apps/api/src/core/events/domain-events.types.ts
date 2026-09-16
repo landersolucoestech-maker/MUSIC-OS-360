@@ -399,6 +399,13 @@ export interface TakedownRequestedPayload {
 
 // ─── Campaigns ────────────────────────────────────────────────────────────────
 
+export interface CampaignCreatedPayload {
+  campaignId: string;
+  tenantId:   string;
+  title:      string;
+  createdBy:  string;
+}
+
 export interface CampaignStartedPayload {
   campaignId: string;
   tenantId:   string;
@@ -677,6 +684,7 @@ export type AnyDomainEventPayload =
   | ReleaseApprovedPayload
   | ReleaseDistributedPayload
   | TakedownRequestedPayload
+  | CampaignCreatedPayload
   | CampaignStartedPayload
   | CampaignEndedPayload
   | MarketingProjectCreatedPayload

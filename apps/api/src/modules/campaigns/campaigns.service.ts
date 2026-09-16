@@ -117,7 +117,22 @@ export class CampaignsService {
       created_by: userId,
       updated_by: userId,
     } as Partial<CampaignEntity>);
-    return this.repo!.save(entity as CampaignEntity);
+    const saved = await this.repo!.save(entity as CampaignEntity);
+
+    this.events.emitTyped(DOMAIN_EVENTS.CAMPAIGN_CREATED, {
+      tenantId,
+      userId,
+      aggregateType: 'campaign',
+      aggregateId:   saved.id,
+      payload: {
+        campaignId: saved.id,
+        tenantId,
+        title:      saved.nome,
+        createdBy:  userId,
+      },
+    });
+
+    return saved;
   }
 
   async update(
