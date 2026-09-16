@@ -93,10 +93,10 @@ importers:
         specifier: ^0.24.1
         version: 0.24.1
       '@music-os-360/ai-skills':
-        specifier: file:../../packages/ai-skills
+        specifier: workspace:*
         version: link:../../packages/ai-skills
       '@music-os-360/types':
-        specifier: file:../../packages/types
+        specifier: workspace:*
         version: link:../../packages/types
       '@nestjs/bullmq':
         specifier: ^10.2.3
