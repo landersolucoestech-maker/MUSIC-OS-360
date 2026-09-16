@@ -1,0 +1,15 @@
+{
+  "id": "evid-f57bb577",
+  "createdAt": "2026-09-16T10:31:38.816Z",
+  "type": "COMMAND",
+  "label": "node scripts/verify-critical-workflows.mjs",
+  "command": "node scripts/verify-critical-workflows.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "✓ verify:critical-workflows — 4 workflows presentes, não vazios e com YAML válido no working tree atual.\n[xlsx-only] contrato validado: apenas XLSX para planilhas.",
+  "stderrTail": "",
+  "workspaceFingerprint": "0beab3500d6878545fb0d50449b8ebda51372f507f56d48945d738e5f4c4fc15",
+  "fingerprintStatus": "BOUND",
+  "head": "5df27ba4a609fc5f81602c7667b9e862ea8021fe",
+  "durationMs": 3764
+}

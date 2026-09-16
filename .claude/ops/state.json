@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-16T07:47:07.148Z",
+  "updatedAt": "2026-09-16T10:45:10.121Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -30,7 +30,8 @@
             "evid-3e7899c7",
             "evid-a379a9a1",
             "evid-37822ad6",
-            "evid-a86baf5e"
+            "evid-a86baf5e",
+            "evid-f57bb577"
           ],
           "status": "closed"
         }
@@ -67,7 +68,10 @@
             "evid-78eb895f",
             "evid-16e76999",
             "evid-08fb5e7e",
-            "evid-e8eda394"
+            "evid-e8eda394",
+            "evid-610f4b10",
+            "evid-e7aea149",
+            "evid-5bebd92d"
           ],
           "status": "closed"
         }
@@ -91,7 +95,8 @@
             "evid-bcd86f2b",
             "evid-5ffc2564",
             "evid-e9aa8f70",
-            "evid-47021dc6"
+            "evid-47021dc6",
+            "evid-15942351"
           ],
           "status": "closed"
         }
@@ -121,7 +126,9 @@
             "evid-b7d7f5dd",
             "evid-b3c301d3",
             "evid-34f8bd42",
-            "evid-e7298125"
+            "evid-e7298125",
+            "evid-97653760",
+            "evid-5ea045c4"
           ],
           "status": "closed"
         }
@@ -145,7 +152,8 @@
             "evid-51ab94e6",
             "evid-4a79a1cc",
             "evid-b1937dc9",
-            "evid-0976b706"
+            "evid-0976b706",
+            "evid-49dcc1c3"
           ],
           "status": "closed"
         },
@@ -158,7 +166,8 @@
             "evid-2ba5b520",
             "evid-d0063ec1",
             "evid-5900e042",
-            "evid-a1a02e68"
+            "evid-a1a02e68",
+            "evid-27b93c6f"
           ],
           "status": "closed"
         },
@@ -171,7 +180,8 @@
             "evid-38386e0a",
             "evid-b4dee765",
             "evid-83dc9a3b",
-            "evid-07b6001a"
+            "evid-07b6001a",
+            "evid-6fe5d4b9"
           ],
           "status": "closed"
         },
@@ -183,7 +193,9 @@
             "evid-1f98b318",
             "evid-89c32684",
             "evid-f3bc1584",
-            "evid-b37ecf7b"
+            "evid-b37ecf7b",
+            "evid-947b8047",
+            "evid-cf08e787"
           ],
           "status": "closed"
         }
@@ -203,7 +215,8 @@
           "evidenceIds": [
             "evid-2bb76704",
             "evid-c522aa41",
-            "evid-bbdcc07e"
+            "evid-bbdcc07e",
+            "evid-0f76bb0a"
           ],
           "status": "closed"
         },
@@ -212,12 +225,32 @@
           "text": "Full test:e2e (7 suites) and test:ci (288 suites) pass against a disposable local Postgres migrated from scratch; api typecheck clean",
           "evidenceIds": [
             "evid-665895aa",
-            "evid-dae6ac55"
+            "evid-dae6ac55",
+            "evid-92910c3a"
           ],
           "status": "closed"
         }
       ],
       "createdAt": "2026-09-16T07:32:35.788Z"
+    },
+    {
+      "id": "req-d151683c",
+      "text": "Audit all 35 pending DEV Supabase application migrations for safety before any application decision; resolve any blocker found via a proven-safe fix, never a one-off manual UPDATE",
+      "nonRequirements": [
+        "Do not apply migrations to DEV as part of this requirement; do not perform destructive manual data repair; do not edit a published/applied migration"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-962f41e3",
+          "text": "All 35 migrations reviewed (source + read-only pre-flight data checks against real DEV); the one blocker (leads.status='convertido') resolved via a proven-unpublished migration edit plus regression test, verified behaviorally on fresh local Postgres for both the happy path and the unweakened fail-closed guard",
+          "evidenceIds": [
+            "evid-6bba5e3d",
+            "evid-d5a3336d"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-16T10:30:04.011Z"
     }
   ],
   "findings": [
@@ -276,6 +309,20 @@
       "createdAt": "2026-09-16T07:33:02.327Z",
       "justification": "Fixed precedence in all 12 files; proven via relation-does-not-exist isolation test against explicit local DATABASE_URL with no migrations applied; read-only residue audit of real DEV found no session-attributable residue",
       "resolvedAt": "2026-09-16T07:33:10.466Z"
+    },
+    {
+      "id": "find-d39fe364",
+      "category": "E",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/database/migrations/20260910000016_BackfillAndRestrictLeadStatusToEnglish.ts",
+      "line": null,
+      "summary": "leads.status='convertido' (2 synthetic-fixture rows on real DEV) not covered by the migration's PT->EN map; would have thrown and blocked the whole pending chain. Traced read-only, proven semantically equivalent to 'closed' (client_id linkage to active client). Migration confirmed unpublished (dev-only, never applied anywhere) so amended in place with a regression test",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-16T10:30:14.964Z",
+      "justification": "Added ['convertido','closed'] to ptToEn with documented audit trail; new regression spec (6 tests) covers all 10 mappings, fail-closed guard, DEFAULT, and CHECK constraint; behaviorally verified against fresh local Postgres for both happy-path backfill and unweakened fail-closed rollback on a genuinely unmapped value",
+      "resolvedAt": "2026-09-16T10:30:21.040Z"
     }
   ],
   "evidenceIds": [
@@ -355,7 +402,23 @@
     "evid-a1a02e68",
     "evid-0976b706",
     "evid-07b6001a",
-    "evid-b37ecf7b"
+    "evid-b37ecf7b",
+    "evid-6bba5e3d",
+    "evid-d5a3336d",
+    "evid-f57bb577",
+    "evid-610f4b10",
+    "evid-e7aea149",
+    "evid-5bebd92d",
+    "evid-15942351",
+    "evid-97653760",
+    "evid-5ea045c4",
+    "evid-27b93c6f",
+    "evid-49dcc1c3",
+    "evid-6fe5d4b9",
+    "evid-947b8047",
+    "evid-cf08e787",
+    "evid-92910c3a",
+    "evid-0f76bb0a"
   ],
   "checkpointIds": [],
   "touchedFiles": [],

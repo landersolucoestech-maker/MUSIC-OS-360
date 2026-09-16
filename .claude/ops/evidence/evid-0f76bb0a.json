@@ -1,0 +1,15 @@
+{
+  "id": "evid-0f76bb0a",
+  "createdAt": "2026-09-16T10:45:10.114Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\verify-full-db-cluster.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\verify-full-db-cluster.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "+ docker rm -f final-cluster-verify-pg 2>/dev/null || true\n+ docker run -d --rm --name final-cluster-verify-pg -e POSTGRES_USER=musicos360 -e POSTGRES_PASSWORD=ci_only_ephemeral_password_ba3f0d -e POSTGRES_DB=musicos360 -p 55470:5432 postgres:16-alpine\n+ docker exec final-cluster-verify-pg pg_isready -U musicos360\n+ sleep 1\n+ docker exec final-cluster-verify-pg pg_isready -U musicos360\n+ sleep 1\n+ docker exec final-cluster-verify-pg pg_isready -U musicos360\n+ docker cp apps/api/scripts/local-auth-shim.sql final-cluster-verify-pg:/tmp/local-auth-shim.sql\n+ MSYS_NO_PATHCONV=1 docker exec -e PGPASSWORD=ci_only_ephemeral_password_ba3f0d final-cluster-verify-pg psql -h localhost -U musicos360 -d musicos360 -f /tmp/local-auth-shim.sql\n+ pnpm --filter @music-os-360/api verify:tenant-isolation\nIsolation proof: PASS (targets local empty DB, not real DEV)\n+ pnpm --filter @music-os-360/api db:migrate\n+ pnpm --filter @music-os-360/api verify:tenant-isolation\n+ pnpm --filter @music-os-360/api verify:rls\n+ pnpm --filter @music-os-360/api test:e2e 2>&1\ntest:e2e: 7/7 suites, 197/197 tests PASS",
+  "stderrTail": "",
+  "workspaceFingerprint": "0beab3500d6878545fb0d50449b8ebda51372f507f56d48945d738e5f4c4fc15",
+  "fingerprintStatus": "BOUND",
+  "head": "5df27ba4a609fc5f81602c7667b9e862ea8021fe",
+  "durationMs": 56444
+}
