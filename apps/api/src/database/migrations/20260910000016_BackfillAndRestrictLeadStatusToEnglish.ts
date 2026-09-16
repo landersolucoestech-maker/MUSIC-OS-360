@@ -10,6 +10,19 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * restrict together — no live window where old PT-BR-writing app code and
  * this migration's English-only CHECK constraint coexist.
  *
+ * Pre-deploy DEV audit (2026-09-16, before this migration was ever applied
+ * anywhere — confirmed via db:check:application and git branch history: this
+ * migration exists only on dev, never merged to staging/main) found 2 rows
+ * with `status = 'convertido'`, a value this migration's original ptToEn map
+ * didn't cover. Traced read-only: both rows are synthetic test fixtures
+ * (fonte='teste_sintetico') with a populated cliente_id linking to a real,
+ * active client row — the same real-world event (lead successfully became a
+ * client) that `LeadStatus.CLOSED` represents elsewhere in the current model,
+ * and that `LeadEventsHandler`'s LEAD_CONVERTED idempotency check keys off
+ * (client_id being set, not a distinct "converted" status — no such value
+ * exists in the canonical LeadStatus enum). Added below as a tenth PT->EN
+ * mapping, same pattern as the other nine.
+ *
  * Steps:
  *   1. Idempotently backfill existing rows from PT-BR to EN values (logs
  *      affected row count per value; matches only rows still holding an old
@@ -33,6 +46,7 @@ export class BackfillAndRestrictLeadStatusToEnglish20260910000016
     ['fechado', 'closed'],
     ['perdido', 'lost'],
     ['inativo', 'inactive'],
+    ['convertido', 'closed'],
   ];
 
   private readonly enValues = [
