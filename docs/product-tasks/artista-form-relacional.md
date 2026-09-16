@@ -6,7 +6,7 @@ Refatorar `ArtistaFormModal.tsx` (actual: 942 linhas, ~55 useState, entidade ún
 para um formulário relacional com react-hook-form + useFieldArray que suporte múltiplos
 relacionamentos comerciais simultâneos por artista. O modelo actual é rígido (um único
 tipo de perfil por artista) e não escala para a realidade de labels e distribuidoras que
-gerem artistas com múltiplos empresários, gravadoras, editoras e equipa ao mesmo tempo.
+gerem artistas com múltiplos empresários, gravadoras, editoras e equipe ao mesmo tempo.
 
 ## Done looks like
 
@@ -75,7 +75,7 @@ gerem artistas com múltiplos empresários, gravadoras, editoras e equipa ao mes
    Spotify, Instagram, YouTube, TikTok, SoundCloud, Deezer, Apple Music. Mostrar ícone de
    check/erro ao lado de cada campo. Reutilizar extractors já existentes no mapper.
 
-7. **Actualizar artista.mapper.ts** — Actualizar `artistaToFormFields` e `formToArtistaPayload`
+7. **Atualizar artista.mapper.ts** — Atualizar `artistaToFormFields` e `formToArtistaPayload`
    para serializar/deserializar o array `relacionamentos` de/para o tipo `Artista`.
    Manter backward-compat nos campos legados para artistas já cadastrados.
 

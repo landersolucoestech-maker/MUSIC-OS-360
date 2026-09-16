@@ -30,7 +30,7 @@ EDITORA, CEDENTE, CESSIONÁRIO) porque:
 1. **Expandir namespaces no system prompt** — adicionar ao SYSTEM_PROMPT:
    `AUTOR, COMPOSITOR, EDITORA, CEDENTE, CESSIONARIO, INTERPRETE, GRAVADORA,
    MUSICO, AGENCIA, REPRESENTANTE, LICENCIANTE, LICENCIADO, PARTE_A, PARTE_B`
-   e actualizar os exemplos de placeholders para cobrir contratos de cessão
+   e atualizar os exemplos de placeholders para cobrir contratos de cessão
 
 2. **Remover regra "omita"** — substituir a última linha do system prompt:
    - ANTES: "se não conseguir determinar o namespace correto, omita a variável"
@@ -42,7 +42,7 @@ EDITORA, CEDENTE, CESSIONÁRIO) porque:
      `/^\{\{[A-Z][A-Z0-9_]*\.[A-Z][A-Z0-9_]*\}\}$/`
    - Remover a constante `ALLOWED_NAMESPACES` (já não é necessária)
 
-4. **Actualizar `ALLOWED_NAMESPACES` em `semantic-parser.service.ts`** — se a
+4. **Atualizar `ALLOWED_NAMESPACES` em `semantic-parser.service.ts`** — se a
    constante for ainda usada para UI/labels, expandir com os novos namespaces;
    caso contrário, remover
 

@@ -31,7 +31,7 @@ Resultado: a IA responde com 1277 tokens mas o frontend mostra
 
 ## Steps
 
-1. **Actualizar `semantic-parser.service.ts` linhas 151-155** — mudar:
+1. **Atualizar `semantic-parser.service.ts` linhas 151-155** — mudar:
    ```ts
    const data = await response.json() as { content?: string; error?: string };
    if (!data.content) {

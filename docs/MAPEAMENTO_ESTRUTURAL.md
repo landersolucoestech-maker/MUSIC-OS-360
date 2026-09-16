@@ -879,7 +879,7 @@ Tipos de domínio (`interface Foo`, `type FooInsert`, `type FooUpdate`) estavam 
 ### Padrão aplicado
 Para cada módulo:
 1. **Criado** `{module}/types/{entity}.types.ts` — source of truth para todos os tipos de domínio
-2. **Hook actualizado** para `import type { ... } from "../types/{entity}.types"` + `export type { ... }` (backward compat)
+2. **Hook atualizado** para `import type { ... } from "../types/{entity}.types"` + `export type { ... }` (backward compat)
 3. Importadores existentes continuam a funcionar sem alteração (re-export transparente)
 
 ### Módulos e ficheiros criados
@@ -907,7 +907,7 @@ Para cada módulo:
 - Depois: `export type { ProjetoWithRelationsExtended } from "./projetos.types"` (types → types = CORRECTO)
 
 **`projects/utils/musicaHelpers.ts` → `projects/lib/musica-helpers.ts`** — movido para convenção de nomenclatura correcta:
-- 3 importadores actualizados: `Projetos.tsx`, `ProjetoViewModal.tsx`, `catalog/pages/RegistroMusicas.tsx`
+- 3 importadores atualizados: `Projetos.tsx`, `ProjetoViewModal.tsx`, `catalog/pages/RegistroMusicas.tsx`
 - Ficheiro antigo removido; `utils/` directório limpo
 
 **`projects/mappers/index.ts`** — removido (apenas continha `export {}` — 0 importadores)
@@ -950,7 +950,7 @@ Formulários sem validação centralizada — schemas Zod inline em componentes,
 | `rh` | `rh/lib/funcionario-schema.ts`, `rh/lib/folha-pagamento-schema.ts`, `rh/lib/ferias-ausencias-schema.ts` |
 | `settings` | `settings/lib/usuario-schema.ts` (pré-existente) |
 
-### Schemas inline extraídos para lib (componentes actualizados)
+### Schemas inline extraídos para lib (componentes atualizados)
 
 | Componente | Schema inline removido → importa de |
 |---|---|
@@ -998,7 +998,7 @@ Todos os formulários abaixo receberam validação Zod via `schema.safeParse()` 
 | `projects/components/ProjetoFormModal.tsx` | safeParse no handleSubmit |
 | `crm/components/LeadFormModal.tsx` | já tinha safeParse (pre-existente) |
 
-Schemas actualizados para alinhar com o comportamento real dos forms:
+Schemas atualizados para alinhar com o comportamento real dos forms:
 - `releases/lib/share-schema.ts` — direcao enum expandido para incluir `a_enviar`; campos opcionais
 - `rh/lib/funcionario-schema.ts` — email e cargo tornados opcionais (form não os obriga)
 

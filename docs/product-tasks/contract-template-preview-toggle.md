@@ -10,7 +10,7 @@ O objectivo é mostrar ao utilizador **em tempo real** como ficará o template a
 
 - Na etapa "review" do ContractImportWorkspace, o painel esquerdo tem dois botões de toggle no cabeçalho: **"Original"** e **"Template"**
 - Modo **Original** (comportamento actual): texto do contrato com os valores reais destacados a azul, com scroll para o elemento activo
-- Modo **Template** (novo): texto com todos os `{{NAMESPACE.CAMPO}}` placeholders aceites já substituídos nos sítios correctos, destacados a amarelo. Reactivo — actualiza automaticamente quando o utilizador aceita/rejeita variáveis ou edita placeholders
+- Modo **Template** (novo): texto com todos os `{{NAMESPACE.CAMPO}}` placeholders aceites já substituídos nos sítios correctos, destacados a amarelo. Reactivo — atualiza automaticamente quando o utilizador aceita/rejeita variáveis ou edita placeholders
 - O toggle mantém o estado durante toda a etapa de revisão
 - O modo "Template" usa a função `applyVariablesToText` já existente para calcular o texto transformado
 - Zero erros TypeScript (`EXIT:0`)

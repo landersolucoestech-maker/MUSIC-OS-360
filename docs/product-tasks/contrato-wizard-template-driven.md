@@ -8,7 +8,7 @@ O modal `ContratoFormModal` ainda usa campos fixos (`client_type`, `artist_id`, 
 - Etapa 1 — Template: dropdown mostra apenas os templates activos com o seu label da CategoryRegistry; ao seleccionar, o sistema lê o `variables_manifest` e extrai placeholders, partes e signatários.
 - Etapa 2 — Partes: o sistema detecta automaticamente os roles presentes nos placeholders do template (ex: `{{REPRESENTANTE.NAME}}` gera o role "REPRESENTANTE") e renderiza um formulário por role com os campos corrects (PF: nome, CPF, RG, endereço, profissão, estado civil; PJ: razão social, CNPJ, endereço, representante legal; Artista: nome artístico, nome civil, CPF). Cada parte pode ser preenchida manualmente, vinda do CRM ou dos Artistas.
 - Etapa 3 — Variáveis: inputs gerados dinamicamente a partir do manifest (`text`, `textarea`, `number`, `percentage`, `currency`, `boolean`, `select`, `date`). Nenhum campo financeiro hardcoded.
-- Etapa 4 — Documento: o template é renderizado com as variáveis/partes preenchidas; o preview à direita actualiza em tempo real; placeholders não resolvidos ficam destacados em amarelo com ⚠.
+- Etapa 4 — Documento: o template é renderizado com as variáveis/partes preenchidas; o preview à direita atualiza em tempo real; placeholders não resolvidos ficam destacados em amarelo com ⚠.
 - Etapa 5 — Signatários: signatários detectados automaticamente via `{{SIGNATURE.ROLE}}` no template; cada signatário tem nome, email, obrigatório, ordem, provider (DocuSign / Clicksign / Autentique).
 - Etapa 6 — Revisão: resumo de tudo antes de guardar. Botão "Guardar Rascunho" cria o contrato com `status: draft`. Botão "Enviar para Assinatura" cria o contrato e simula o envio.
 - O modal de edição (`mode: "edit"`) hidrata o wizard com os dados existentes.
@@ -38,7 +38,7 @@ O modal `ContratoFormModal` ainda usa campos fixos (`client_type`, `artist_id`, 
 
 7. **Etapa 6 — Revisão e gravação** — Mostrar resumo: template seleccionado, partes preenchidas, nº de variáveis, nº de signatários, provider. Botão "Guardar Rascunho": chamar `createContrato.mutate({ titulo, template_id, status: "rascunho", signers, ... })` onde os dados das partes e variáveis ficam em `observacoes` (JSON serializado) até existir schema dedicado. Botão "Enviar para Assinatura": mesmo mas `status: "aguardando_assinatura"` + `toast.info("Envio simulado — integração com [provider] não activa")`.
 
-8. **Limpar ContratoFormModal** — Remover completamente os campos `client_type`, `artist_id`, `company_id`, `contractor_contact`, `responsible_person` do schema Zod `contrato-schema.ts` e do componente. Actualizar `Contratos.tsx` para usar `ContratoWizard` em vez de `ContratoFormModal` para criação. O modal de edição pode continuar a existir em forma simplificada (apenas status, datas, observações) ou também usar o wizard com hidratação.
+8. **Limpar ContratoFormModal** — Remover completamente os campos `client_type`, `artist_id`, `company_id`, `contractor_contact`, `responsible_person` do schema Zod `contrato-schema.ts` e do componente. Atualizar `Contratos.tsx` para usar `ContratoWizard` em vez de `ContratoFormModal` para criação. O modal de edição pode continuar a existir em forma simplificada (apenas status, datas, observações) ou também usar o wizard com hidratação.
 
 ## Relevant files
 - `apps/web/src/modules/contracts/components/ContratoFormModal.tsx`

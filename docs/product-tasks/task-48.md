@@ -54,7 +54,7 @@ O módulo "Tipos de Contratos" actual é um formulário CRUD simples com campos 
 
 11. **Orquestração do modal multi-tab** — Refactorizar `ServiceTypeFormModal` para usar `Tabs`/`TabsList`/`TabsContent` (shadcn); mover toda a lógica de submit e state para o topo do componente; garantir que mudar de aba não apaga dados; o botão "Salvar" no footer funciona em qualquer aba activa; indicadores visuais de abas com erros (ponto vermelho no tab label se `formState.errors` tocar campos dessa aba).
 
-12. **Persistência** — Actualizar `contractsService.createContractServiceType` / `updateContractServiceType` para serializar os novos campos (participants, variables, music_work, signature_settings, branding_settings) como parte do objecto salvo; actualizar `useContractServiceTypes` hook para deserializar e expor os novos campos; garantir retrocompatibilidade com registos antigos sem os novos campos (defaults seguros).
+12. **Persistência** — Atualizar `contractsService.createContractServiceType` / `updateContractServiceType` para serializar os novos campos (participants, variables, music_work, signature_settings, branding_settings) como parte do objecto salvo; atualizar `useContractServiceTypes` hook para deserializar e expor os novos campos; garantir retrocompatibilidade com registos antigos sem os novos campos (defaults seguros).
 
 ## Relevant files
 - `apps/web/src/modules/contracts/components/ServiceTypeFormModal.tsx`

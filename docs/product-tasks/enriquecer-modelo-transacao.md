@@ -10,7 +10,7 @@ A tabela `transacoes` actual tem apenas `valor` (um único número), sem distin�
 - Toggle "Transação Recorrente" abre campos de frequência e data de fim
 - Tabela de transações na página `/accounting` mostra coluna "Valor Líquido" em vez de "Valor" quando existe distinção; indicador visual para transações recorrentes
 - Todos os dados históricos do localStorage continuam a funcionar (campos novos têm fallback para `valor` se `valor_liquido` não existir)
-- Backend entity `TransactionEntity` actualizado com os novos campos tipados
+- Backend entity `TransactionEntity` atualizado com os novos campos tipados
 
 ## Out of scope
 - Geração automática de transações recorrentes (cron job — futura task)
@@ -19,11 +19,11 @@ A tabela `transacoes` actual tem apenas `valor` (um único número), sem distin�
 
 ## Steps
 1. **Mock data** — adicionar campos novos a todas as transações seed em `buildSeedData()`; patch em `patchMockData()` que preenche `valor_liquido = valor` para transações sem o campo
-2. **Tipos TypeScript** — actualizar `Transacao` em `accounting.types.ts` com os novos campos opcionais
+2. **Tipos TypeScript** — atualizar `Transacao` em `accounting.types.ts` com os novos campos opcionais
 3. **Formulário — secção de valores** — criar sub-secção "Decomposição do Valor" na `PaymentSection` com Valor Bruto, Desconto %, Impostos, e Valor Líquido calculado reactivamente; o campo existente `valor` passa a ser alias de `valor_liquido` para compatibilidade
 4. **Formulário — recorrência** — adicionar toggle "Recorrente" que abre selects de frequência e data de fim; estes dados são guardados mas não geram transações automaticamente ainda
 5. **Tabela de transações** — mostrar `valor_liquido` (ou fallback para `valor`) na coluna de valor; adicionar ícone de recorrência; adicionar coluna "Vencimento" opcionalmente visível
-6. **Backend entity** — actualizar `TransactionEntity` com todos os novos campos `@Column({ nullable: true })`; actualizar `transacao.validator.ts` para aceitar os novos campos opcionais
+6. **Backend entity** — atualizar `TransactionEntity` com todos os novos campos `@Column({ nullable: true })`; atualizar `transacao.validator.ts` para aceitar os novos campos opcionais
 
 ## Relevant files
 - `apps/web/src/modules/accounting/types/accounting.types.ts`

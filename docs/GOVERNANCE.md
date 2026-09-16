@@ -475,7 +475,7 @@ Para activar uma integração stub:
 2. Configurar credenciais via variáveis de ambiente (`VITE_*`)
 3. Implementar o contrato (`shared/integrations/contracts/`)
 4. Substituir o hook stub pela implementação real
-5. Actualizar o registry (status: `active`)
+5. Atualizar o registry (status: `active`)
 
 ---
 
@@ -752,4 +752,4 @@ NÃO inclui:
 
 *Este documento é gerado a partir das fontes TypeScript em `shared/governance/` e é normativo para toda a contribuição ao MUSIC OS 360.*
 
-*Última actualização sincronizada com: ETAPA 11 — Governança Definitiva*
+*Última atualização sincronizada com: ETAPA 11 — Governança Definitiva*

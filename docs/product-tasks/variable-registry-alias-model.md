@@ -29,10 +29,10 @@ O registry actual usa "Grupo / Contexto" para o que conceptualmente é o Alias, 
 - Backend persistence (localStorage apenas, por design)
 
 ## Steps
-1. **Actualizar interface `RegistryVariable`** — adicionar campo opcional `internalGroup?: string` ao tipo em `useVariableRegistry.ts`
+1. **Atualizar interface `RegistryVariable`** — adicionar campo opcional `internalGroup?: string` ao tipo em `useVariableRegistry.ts`
 2. **Adicionar pré-seeds** — quando o hook carrega e o localStorage está vazio, popular com os ~10 exemplos acima (ARTISTA, GRAVADORA, LICENCIANTE, CONTRATANTE com campos NAME, CPF, EMAIL, CNPJ conforme aplicável)
-3. **Actualizar formulário modal** — renomear "Grupo / Contexto" → "Alias Visual / Jurídico", adicionar campo "Nomenclatura Interna" (opcional, não afecta o placeholder), actualizar lógica de `addVariable`/`updateVariable` para persistir `internalGroup`
-4. **Actualizar tabela** — adicionar coluna "Nomenclatura Interna" entre "Grupo/Alias" e "Campo"; mostrar o valor ou dash se vazio
+3. **Atualizar formulário modal** — renomear "Grupo / Contexto" → "Alias Visual / Jurídico", adicionar campo "Nomenclatura Interna" (opcional, não afecta o placeholder), atualizar lógica de `addVariable`/`updateVariable` para persistir `internalGroup`
+4. **Atualizar tabela** — adicionar coluna "Nomenclatura Interna" entre "Grupo/Alias" e "Campo"; mostrar o valor ou dash se vazio
 
 ## Relevant files
 - `apps/web/src/modules/contracts/hooks/useVariableRegistry.ts`

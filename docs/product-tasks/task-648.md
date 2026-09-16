@@ -4,14 +4,14 @@ title: Testes Backend NestJS + CI/CD + Deploy automático
 # Testes Backend NestJS + CI/CD + Deploy
 
 ## What & Why
-O backend NestJS em `apps/api/` não tem nenhum ficheiro `.spec.ts`, nenhum setup de Jest, e o CI não tem job de testes para a API. Este prompt adiciona: setup completo de Jest, testes unitários para os serviços críticos (criptografia, artistas, guards, isolamento de tenant), actualização do CI com cobertura mínima de 80%, e dois pipelines de deploy automático (staging via Railway + Vercel, produção via tag Git).
+O backend NestJS em `apps/api/` não tem nenhum ficheiro `.spec.ts`, nenhum setup de Jest, e o CI não tem job de testes para a API. Este prompt adiciona: setup completo de Jest, testes unitários para os serviços críticos (criptografia, artistas, guards, isolamento de tenant), atualização do CI com cobertura mínima de 80%, e dois pipelines de deploy automático (staging via Railway + Vercel, produção via tag Git).
 
 ## Done looks like
 - `apps/api/jest.config.ts` criado e funcional
 - Scripts `test`, `test:watch`, `test:coverage`, `test:e2e` em `apps/api/package.json`
 - 4 ficheiros `.spec.ts` criados e a passar: EncryptionService, ArtistsService, ClerkAuthGuard, Tenant Isolation
 - `npm run test:coverage` em `apps/api/` alcança ≥ 80% de cobertura
-- `.github/workflows/ci.yml` actualizado com jobs `test-api` e `test-web` (com Redis service)
+- `.github/workflows/ci.yml` atualizado com jobs `test-api` e `test-web` (com Redis service)
 - `.github/workflows/deploy-staging.yml` criado (trigger: push para `staging`)
 - `.github/workflows/deploy-production.yml` criado (trigger: push de tag `v*.*.*`)
 
@@ -31,7 +31,7 @@ O backend NestJS em `apps/api/` não tem nenhum ficheiro `.spec.ts`, nenhum setu
 
 5. **Criar teste Tenant Isolation** — Implementar `tenant-isolation.spec.ts` em `modules/artists/`: list só devolve artistas do tenant correto; `findById` e `update` de artista de outro tenant lançam `NotFoundException`.
 
-6. **Actualizar CI** — Substituir `.github/workflows/ci.yml` com os jobs `lint`, `typecheck-api`, `typecheck-web`, `test-api` (com serviço Redis 6379), `test-web`, e `build` que depende de todos os anteriores. O job `test-api` usa `ENCRYPTION_KEY` de 64 zeros, `CLERK_SECRET_KEY: sk_test_placeholder` e `NODE_ENV: test`.
+6. **Atualizar CI** — Substituir `.github/workflows/ci.yml` com os jobs `lint`, `typecheck-api`, `typecheck-web`, `test-api` (com serviço Redis 6379), `test-web`, e `build` que depende de todos os anteriores. O job `test-api` usa `ENCRYPTION_KEY` de 64 zeros, `CLERK_SECRET_KEY: sk_test_placeholder` e `NODE_ENV: test`.
 
 7. **Criar deploy-staging.yml** — Novo workflow acionado em push para branch `staging`: build API, deploy Railway staging (`RAILWAY_TOKEN_STAGING`), run Drizzle migrations com `NEON_STAGING_DIRECT_URL`, deploy frontend Vercel preview, smoke test `GET /api/v1/health`.
 
