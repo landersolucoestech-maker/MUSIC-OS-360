@@ -337,3 +337,40 @@ export {
   validateAutomationBuilderInput,
   validateAutomationBuilderOutput,
 } from "./automation-builder";
+
+// reporting-analysis — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  ReportingAnalysisInput,
+  ReportingAnalysisOutput,
+  ReportingAnalysisLanguage,
+  ReportingAnalysisHealthStatus,
+  ReportingAnalysisHighlight,
+  ReportingAnalysisConcern,
+  ReportingAnalysisAction,
+} from "./reporting-analysis";
+export {
+  REPORTING_ANALYSIS_SYSTEM_PROMPT,
+  buildReportingAnalysisPrompt,
+  parseReportingAnalysisResponse,
+  validateReportingAnalysisInput,
+  validateReportingAnalysisOutput,
+} from "./reporting-analysis";
+
+// performance-report — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  PerformanceReportInput,
+  PerformanceReportOutput,
+  PerformanceReportLanguage,
+  PerformanceReportTrend,
+  PerformanceReportMonthPoint,
+  PerformanceReportMonthlyBreakdown,
+  PerformanceReportObservation,
+  PerformanceReportAction,
+} from "./performance-report";
+export {
+  PERFORMANCE_REPORT_SYSTEM_PROMPT,
+  buildPerformanceReportPrompt,
+  parsePerformanceReportResponse,
+  validatePerformanceReportInput,
+  validatePerformanceReportOutput,
+} from "./performance-report";
