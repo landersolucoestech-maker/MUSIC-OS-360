@@ -14,6 +14,9 @@
  *   lead.created           → crm-followup
  *   release.approved       → marketing-calendar-builder
  *   release.approved       → audiovisual-briefing
+ *   campaign.created       → campaign-plan
+ *   campaign.started       → campaign-strategy
+ *   campaign.ended         → campaign-report
  * SkillRunService (auditoria/idempotência) vem do SkillsModule (@Global);
  * EventsService/DATA_SOURCE vêm de módulos @Global. AIService vem do AIModule.
  *
@@ -31,6 +34,9 @@ import { FinancialClassificationAutomation } from './financial-classification.au
 import { CrmFollowupAutomation } from './crm-followup.automation';
 import { MarketingCalendarBuilderAutomation } from './marketing-calendar-builder.automation';
 import { AudiovisualBriefingAutomation } from './audiovisual-briefing.automation';
+import { CampaignPlanAutomation } from './campaign-plan.automation';
+import { CampaignStrategyAutomation } from './campaign-strategy.automation';
+import { CampaignReportAutomation } from './campaign-report.automation';
 
 @Module({
   imports: [AIModule],
@@ -44,6 +50,9 @@ import { AudiovisualBriefingAutomation } from './audiovisual-briefing.automation
     CrmFollowupAutomation,
     MarketingCalendarBuilderAutomation,
     AudiovisualBriefingAutomation,
+    CampaignPlanAutomation,
+    CampaignStrategyAutomation,
+    CampaignReportAutomation,
   ],
 })
 export class AutomationModule {}

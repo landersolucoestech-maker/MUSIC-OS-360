@@ -197,3 +197,57 @@ export {
   validateAudiovisualBriefingInput,
   validateAudiovisualBriefingOutput,
 } from "./audiovisual-briefing";
+
+// campaign-plan — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  CampaignPlanInput,
+  CampaignPlanOutput,
+  CampaignPlanLanguage,
+  CampaignPlanChannel,
+  CampaignPlanMilestone,
+  CampaignPlanTask,
+  CampaignPlanRisk,
+} from "./campaign-plan";
+export {
+  CAMPAIGN_PLAN_SYSTEM_PROMPT,
+  buildCampaignPlanPrompt,
+  parseCampaignPlanResponse,
+  validateCampaignPlanInput,
+  validateCampaignPlanOutput,
+} from "./campaign-plan";
+
+// campaign-strategy — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  CampaignStrategyInput,
+  CampaignStrategyOutput,
+  CampaignStrategyLanguage,
+  CampaignKeyMessage,
+  CampaignMetricToWatch,
+  CampaignAdjustmentTrigger,
+} from "./campaign-strategy";
+export {
+  CAMPAIGN_STRATEGY_SYSTEM_PROMPT,
+  buildCampaignStrategyPrompt,
+  parseCampaignStrategyResponse,
+  validateCampaignStrategyInput,
+  validateCampaignStrategyOutput,
+} from "./campaign-strategy";
+
+// campaign-report — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  CampaignReportInput,
+  CampaignReportOutput,
+  CampaignReportLanguage,
+  CampaignReportExternalMetric,
+  CampaignReportMetricSummary,
+  CampaignReportLesson,
+  CampaignReportRecommendation,
+  MetricAvailability,
+} from "./campaign-report";
+export {
+  CAMPAIGN_REPORT_SYSTEM_PROMPT,
+  buildCampaignReportPrompt,
+  parseCampaignReportResponse,
+  validateCampaignReportInput,
+  validateCampaignReportOutput,
+} from "./campaign-report";
