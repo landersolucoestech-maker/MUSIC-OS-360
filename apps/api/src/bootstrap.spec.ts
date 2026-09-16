@@ -6,7 +6,7 @@ describe('production bootstrap', () => {
   const bootstrap = readFileSync(bootstrapPath, 'utf8');
 
   it('loads the compiled API entrypoint directly', () => {
-    expect(bootstrap).toContain("require('./apps/api/src/main.js')");
+    expect(bootstrap).toContain("require('./main.js')");
   });
 
   it('does not redirect runtime packages to source-only or removed workspaces', () => {
