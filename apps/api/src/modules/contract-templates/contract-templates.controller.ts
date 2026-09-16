@@ -46,7 +46,7 @@ export class ContractTemplatesController {
   @RequireRole('editor')
   @RequirePermission('contract_template:update')
   @Audit('contract_template.updated')
-  @ApiOperation({ summary: 'Actualizar template' })
+  @ApiOperation({ summary: 'Atualizar template' })
   update(@CurrentTenant() t: { id: string }, @CurrentUser() u: any, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateContractTemplateDto) {
     return this.svc.update(t.id, id, dto);
   }

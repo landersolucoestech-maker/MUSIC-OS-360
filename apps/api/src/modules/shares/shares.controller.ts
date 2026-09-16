@@ -28,7 +28,7 @@ export class SharesController {
   @ApiHeader({ name: 'X-Idempotency-Key', description: 'UUID único por operação — previne duplicação de share em duplo-clique/retry', required: false })
   create(@CurrentTenant() t: { id: string }, @CurrentUser() _u: any, @Body() dto: CreateShareDto) { return this.svc.create(t.id, dto); }
 
-  @Patch(':id') @RequireRole('editor') @RequirePermission('share:update') @Audit('share.updated') @ApiOperation({ summary: 'Actualizar share' })
+  @Patch(':id') @RequireRole('editor') @RequirePermission('share:update') @Audit('share.updated') @ApiOperation({ summary: 'Atualizar share' })
   update(@CurrentTenant() t: { id: string }, @CurrentUser() _u: any, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateShareDto) { return this.svc.update(t.id, id, dto); }
 
   @Delete(':id') @RequireRole('manager') @RequirePermission('share:delete') @Audit('share.deleted') @ApiOperation({ summary: 'Inactivar share' })

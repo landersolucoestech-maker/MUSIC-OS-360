@@ -214,7 +214,7 @@ export class ArtistsController {
   @RequireRole('editor')
   @RequirePermission('artist:update')
   @Audit('artist.updated')
-  @ApiOperation({ summary: 'Actualizar artista' })
+  @ApiOperation({ summary: 'Atualizar artista' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string },

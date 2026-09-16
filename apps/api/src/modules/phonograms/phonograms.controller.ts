@@ -69,7 +69,7 @@ export class PhonogramsController {
   @RequireRole('editor')
   @RequirePermission('phonogram:update')
   @Audit('phonogram.updated')
-  @ApiOperation({ summary: 'Actualizar fonograma' })
+  @ApiOperation({ summary: 'Atualizar fonograma' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string },

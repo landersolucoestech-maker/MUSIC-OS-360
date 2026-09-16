@@ -35,7 +35,7 @@ export class CampaignsController {
     return this.svc.create(t.id, u?.userId ?? '', dto);
   }
 
-  @Patch(':id') @RequireRole('editor') @Audit('campaign.updated') @ApiOperation({ summary: 'Actualizar campanha' })
+  @Patch(':id') @RequireRole('editor') @Audit('campaign.updated') @ApiOperation({ summary: 'Atualizar campanha' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser()   u: JwtAuth,

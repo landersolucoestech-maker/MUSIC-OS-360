@@ -69,7 +69,7 @@ export class WorksController {
   @RequireRole('editor')
   @RequirePermission('work:update')
   @Audit('work.updated')
-  @ApiOperation({ summary: 'Actualizar obra' })
+  @ApiOperation({ summary: 'Atualizar obra' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string },

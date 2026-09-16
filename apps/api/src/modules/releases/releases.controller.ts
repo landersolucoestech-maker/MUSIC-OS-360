@@ -44,7 +44,7 @@ export class ReleasesController {
     return this.svc.create(t.id, u?.userId ?? '', dto);
   }
 
-  @Patch(':id') @RequireRole('editor') @Audit('release.updated') @ApiOperation({ summary: 'Actualizar lançamento' })
+  @Patch(':id') @RequireRole('editor') @Audit('release.updated') @ApiOperation({ summary: 'Atualizar lançamento' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,

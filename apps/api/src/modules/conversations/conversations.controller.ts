@@ -70,7 +70,7 @@ export class ConversationsController {
   @Patch(':id')
   @RequireRole('editor')
   @Audit('conversation.updated')
-  @ApiOperation({ summary: 'Actualizar conversa (status, canal, assignee)' })
+  @ApiOperation({ summary: 'Atualizar conversa (status, canal, assignee)' })
   update(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,

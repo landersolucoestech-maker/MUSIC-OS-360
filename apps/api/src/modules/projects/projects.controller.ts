@@ -42,7 +42,7 @@ export class ProjectsController {
     return this.svc.create(t.id, u?.userId ?? '', dto);
   }
 
-  @Patch(':id') @RequireRole('editor') @RequirePermission('project:update') @Audit('project.updated') @ApiOperation({ summary: 'Actualizar projecto' })
+  @Patch(':id') @RequireRole('editor') @RequirePermission('project:update') @Audit('project.updated') @ApiOperation({ summary: 'Atualizar projecto' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser()   u: JwtAuth,

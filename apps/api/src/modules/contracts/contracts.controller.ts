@@ -70,7 +70,7 @@ export class ContractsController {
   @RequireRole('editor')
   @RequirePermission('contract:update')
   @Audit('contract.updated')
-  @ApiOperation({ summary: 'Actualizar contrato' })
+  @ApiOperation({ summary: 'Atualizar contrato' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   JwtAuth,

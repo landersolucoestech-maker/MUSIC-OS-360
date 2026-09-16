@@ -43,7 +43,7 @@ export class ContractServiceTypesController {
   @RequireRole('editor')
   @RequirePermission('contract_service_type:update')
   @Audit('contract_service_type.updated')
-  @ApiOperation({ summary: 'Actualizar tipo de serviço de contrato' })
+  @ApiOperation({ summary: 'Atualizar tipo de serviço de contrato' })
   update(
     @CurrentTenant() t: { id: string },
     @Param('id', ParseUUIDPipe) id: string,

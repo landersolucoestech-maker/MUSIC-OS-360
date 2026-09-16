@@ -53,7 +53,7 @@ export class SupportTicketsController {
     return this.svc.create(t.id, u?.userId ?? 'unknown', dto);
   }
 
-  @Patch(':id') @RequireRole('manager') @Audit('support-ticket.updated') @ApiOperation({ summary: 'Actualizar ticket de suporte' })
+  @Patch(':id') @RequireRole('manager') @Audit('support-ticket.updated') @ApiOperation({ summary: 'Atualizar ticket de suporte' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser()   u: JwtAuth,

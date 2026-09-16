@@ -35,7 +35,7 @@ export class OperationalListsController {
     return this.svc.create(t.id, u?.userId ?? '', dto);
   }
 
-  @Patch(':id') @RequireRole('editor') @Audit('operational_list_item.updated') @ApiOperation({ summary: 'Actualizar item de taxonomia' })
+  @Patch(':id') @RequireRole('editor') @Audit('operational_list_item.updated') @ApiOperation({ summary: 'Atualizar item de taxonomia' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,

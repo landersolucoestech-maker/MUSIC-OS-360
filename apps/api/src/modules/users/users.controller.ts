@@ -62,7 +62,7 @@ export class UsersController {
     return this.svc.findById(t.id, id);
   }
 
-  @Patch(':id') @RequireRole('manager') @Audit('user.updated') @ApiOperation({ summary: 'Actualizar utilizador' })
+  @Patch(':id') @RequireRole('manager') @Audit('user.updated') @ApiOperation({ summary: 'Atualizar utilizador' })
   update(@CurrentTenant() t: { id: string }, @CurrentUser() _u: any, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUserDto) { return this.svc.update(t.id, id, dto); }
 
   @Patch(':id/role') @RequireRole('admin') @Audit('user.role_changed') @ApiOperation({ summary: 'Alterar role do utilizador respeitando hierarquia' })

@@ -51,7 +51,7 @@ export class InvoicesController {
   @RequireRole('financial')
   @RequirePermission('invoice:update')
   @Audit('invoice.updated')
-  @ApiOperation({ summary: 'Actualizar nota fiscal (financial+)' })
+  @ApiOperation({ summary: 'Atualizar nota fiscal (financial+)' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,

@@ -73,7 +73,7 @@ export class TransactionsController {
   @RequireRole('financial')
   @RequirePermission('transaction:update')
   @Audit('transaction.updated')
-  @ApiOperation({ summary: 'Actualizar transação (financial+)' })
+  @ApiOperation({ summary: 'Atualizar transação (financial+)' })
   replace(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
@@ -87,7 +87,7 @@ export class TransactionsController {
   @RequireRole('financial')
   @RequirePermission('transaction:update')
   @Audit('transaction.updated')
-  @ApiOperation({ summary: 'Actualizar transação parcial (financial+)' })
+  @ApiOperation({ summary: 'Atualizar transação parcial (financial+)' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },

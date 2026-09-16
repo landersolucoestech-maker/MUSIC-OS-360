@@ -25,7 +25,7 @@ export class ClientsController {
   @Post() @RequireRole('editor') @RequirePermission('client:create') @Audit('client.created') @ApiOperation({ summary: 'Criar cliente' })
   create(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Body() dto: CreateClientDto) { return this.svc.create(t.id, u?.userId ?? '', dto); }
 
-  @Patch(':id') @RequireRole('editor') @RequirePermission('client:update') @Audit('client.updated') @ApiOperation({ summary: 'Actualizar cliente' })
+  @Patch(':id') @RequireRole('editor') @RequirePermission('client:update') @Audit('client.updated') @ApiOperation({ summary: 'Atualizar cliente' })
   update(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateClientDto) { return this.svc.update(t.id, u?.userId ?? '', id, dto); }
 
   @Delete(':id') @RequireRole('manager') @RequirePermission('client:delete') @Audit('client.deleted') @ApiOperation({ summary: 'Remover cliente' })

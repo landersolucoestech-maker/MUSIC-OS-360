@@ -74,7 +74,7 @@ export class HrController {
   @Patch('employees/:id')
   @RequireRole('manager')
   @Audit('employee.updated')
-  @ApiOperation({ summary: 'Actualizar funcionário' })
+  @ApiOperation({ summary: 'Atualizar funcionário' })
   updateEmployee(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },

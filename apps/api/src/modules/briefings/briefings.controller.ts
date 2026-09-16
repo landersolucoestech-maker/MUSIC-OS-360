@@ -20,7 +20,7 @@ export class BriefingsController {
   @Post() @RequireRole('editor') @Audit('briefing.created') @ApiOperation({ summary: 'Criar briefing' })
   create(@CurrentTenant() t: { id: string }, @CurrentUser() u: { id: string }, @Body() dto: CreateBriefingDto) { return this.svc.create(t.id, u.id, dto); }
 
-  @Patch(':id') @RequireRole('editor') @Audit('briefing.updated') @ApiOperation({ summary: 'Actualizar briefing' })
+  @Patch(':id') @RequireRole('editor') @Audit('briefing.updated') @ApiOperation({ summary: 'Atualizar briefing' })
   update(@CurrentTenant() t: { id: string }, @CurrentUser() u: { id: string }, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateBriefingDto) { return this.svc.update(t.id, id, dto); }
 
   @Delete(':id') @RequireRole('manager') @Audit('briefing.deleted') @ApiOperation({ summary: 'Arquivar briefing' })

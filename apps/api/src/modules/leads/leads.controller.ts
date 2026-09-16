@@ -59,7 +59,7 @@ export class LeadsController {
     return this.svc.create(t.id, u?.userId ?? '', dto);
   }
 
-  @Patch(':id') @RequireRole('editor') @RequirePermission('lead:update') @Audit('lead.updated') @ApiOperation({ summary: 'Actualizar lead' })
+  @Patch(':id') @RequireRole('editor') @RequirePermission('lead:update') @Audit('lead.updated') @ApiOperation({ summary: 'Atualizar lead' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser()   u: JwtAuth,
