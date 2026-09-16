@@ -251,3 +251,19 @@ export {
   validateCampaignReportInput,
   validateCampaignReportOutput,
 } from "./campaign-report";
+
+// social-content — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  SocialContentInput,
+  SocialContentOutput,
+  SocialContentLanguage,
+  SocialContentCaptionVariant,
+  SocialContentChecklistItem,
+} from "./social-content";
+export {
+  SOCIAL_CONTENT_SYSTEM_PROMPT,
+  buildSocialContentPrompt,
+  parseSocialContentResponse,
+  validateSocialContentInput,
+  validateSocialContentOutput,
+} from "./social-content";

@@ -17,6 +17,7 @@
  *   campaign.created       → campaign-plan
  *   campaign.started       → campaign-strategy
  *   campaign.ended         → campaign-report
+ *   marketing.content_created → social-content
  * SkillRunService (auditoria/idempotência) vem do SkillsModule (@Global);
  * EventsService/DATA_SOURCE vêm de módulos @Global. AIService vem do AIModule.
  *
@@ -37,6 +38,7 @@ import { AudiovisualBriefingAutomation } from './audiovisual-briefing.automation
 import { CampaignPlanAutomation } from './campaign-plan.automation';
 import { CampaignStrategyAutomation } from './campaign-strategy.automation';
 import { CampaignReportAutomation } from './campaign-report.automation';
+import { SocialContentAutomation } from './social-content.automation';
 
 @Module({
   imports: [AIModule],
@@ -53,6 +55,7 @@ import { CampaignReportAutomation } from './campaign-report.automation';
     CampaignPlanAutomation,
     CampaignStrategyAutomation,
     CampaignReportAutomation,
+    SocialContentAutomation,
   ],
 })
 export class AutomationModule {}
