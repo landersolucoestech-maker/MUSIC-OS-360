@@ -38,7 +38,7 @@ export function useWorkflowTransition({
     },
     onSuccess: (_data, toStatus) => {
       queryClient.invalidateQueries({ queryKey });
-      toast.success('Status actualizado com sucesso.');
+      toast.success('Status atualizado com sucesso.');
       onSuccess?.(toStatus);
     },
     onError: (err: Error) => {

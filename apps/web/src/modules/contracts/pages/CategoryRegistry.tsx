@@ -124,7 +124,7 @@ export default function CategoryRegistry({
       value: slug,
       description: editing.description.trim() || undefined,
     });
-    toast.success("Categoria actualizada");
+    toast.success("Categoria atualizada");
     setEditing(null);
   }
 

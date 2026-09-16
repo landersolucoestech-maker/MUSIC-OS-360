@@ -305,7 +305,7 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
             {saveMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
             ) : null}
-            {status?.connected ? "Actualizar" : "Configurar NF-e"}
+            {status?.connected ? "Atualizar" : "Configurar NF-e"}
           </Button>
         </DialogFooter>
       </DialogContent>

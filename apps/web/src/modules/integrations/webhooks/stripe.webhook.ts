@@ -5,8 +5,8 @@
  *
  * REGRA CRÍTICA: webhooks são SEMPRE processados no backend.
  * O frontend NUNCA recebe webhooks directamente.
- * O frontend obtém estado actualizado via polling ou domain events emitidos
- * após o backend processar o webhook e actualizar o mockData/DB.
+ * O frontend obtém estado atualizado via polling ou domain events emitidos
+ * após o backend processar o webhook e atualizar o mockData/DB.
  *
  * Endpoint backend:
  *   POST /webhooks/stripe
@@ -46,11 +46,11 @@ export interface StripeWebhookPayload {
  *   → emitir domain event: tenant.plan_upgraded
  *
  * customer.subscription.updated:
- *   → actualizar plano e data de expiração no tenant
+ *   → atualizar plano e data de expiração no tenant
  *   → emitir domain event: tenant.subscription_updated
  *
  * customer.subscription.deleted:
- *   → downgrade para free, desactivar features premium
+ *   → downgrade para free, desativar features premium
  *   → emitir domain event: tenant.subscription_cancelled
  *
  * invoice.paid:
@@ -62,8 +62,8 @@ export interface StripeWebhookPayload {
  *   → marcar tenant em grace period
  */
 export const STRIPE_WEBHOOK_ACTIONS: Record<StripeWebhookEvent, string> = {
-  "checkout.session.completed":    "activar plano + emitir tenant.plan_upgraded",
-  "customer.subscription.updated": "actualizar plano + emitir tenant.subscription_updated",
+  "checkout.session.completed":    "ativar plano + emitir tenant.plan_upgraded",
+  "customer.subscription.updated": "atualizar plano + emitir tenant.subscription_updated",
   "customer.subscription.deleted": "downgrade + emitir tenant.subscription_cancelled",
   "invoice.paid":                  "registar pagamento + email confirmação",
   "invoice.payment_failed":        "notificar admin + grace period",

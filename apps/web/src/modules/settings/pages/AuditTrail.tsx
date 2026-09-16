@@ -218,7 +218,7 @@ export default function AuditTrail() {
               ? <Loader2 className="w-4 h-4 animate-spin" />
               : <RefreshCw className="w-4 h-4" />
             }
-            Actualizar
+            Atualizar
           </Button>
         </div>
 
@@ -227,7 +227,7 @@ export default function AuditTrail() {
           {[
             { label: "Total de eventos",    value: entries.length, sub: "audit logs" },
             { label: "Criações",            value: entries.filter(e => e.action.endsWith(".created")).length,   sub: "endpoints" },
-            { label: "Actualizações",       value: entries.filter(e => e.action.endsWith(".updated")).length,   sub: "modificações" },
+            { label: "Atualizações",       value: entries.filter(e => e.action.endsWith(".updated")).length,   sub: "modificações" },
             {
               label: "Eliminações/Cancel.",
               value: entries.filter(e =>

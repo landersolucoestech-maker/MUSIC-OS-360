@@ -188,7 +188,7 @@ export const OBRA_STATE_MACHINE: StateMachine = {
     { value: "pendente",    label: "Pendente",    color: "yellow", isFinal: false,
       description: "Aguardando dados completos para registo." },
     { value: "analise",     label: "Em Análise",  color: "blue",   isFinal: false,
-      description: "Em análise pela equipa ou entidade de direitos." },
+      description: "Em análise pela equipe ou entidade de direitos." },
     { value: "registrado",  label: "Registado",   color: "green",  isFinal: false,
       description: "Registado nas entidades de direitos (ECAD/UBC)." },
     { value: "ativo",       label: "Activo",      color: "green",  isFinal: false,

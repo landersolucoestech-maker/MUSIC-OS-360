@@ -51,7 +51,7 @@ export const contratoMapper = {
 
   /**
    * Aplica o estado de um SigningDocument de volta à entidade Contrato.
-   * Retorna um patch (parcial) para actualizar o mockData.
+   * Retorna um patch (parcial) para atualizar o mockData.
    */
   applySigningStatus(
     contrato: ContratoEntity,

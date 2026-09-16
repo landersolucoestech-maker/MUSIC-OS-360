@@ -205,8 +205,8 @@ export default function ArtistaSignupPublic() {
 
   // ── Ensure at least one empty equipe card when perfil changes ─────────────
   useEffect(() => {
-    const PERFIS_COM_EQUIPA = ["independente", "com_empresario"];
-    if (PERFIS_COM_EQUIPA.includes(tipoPerfil) && contatosEquipe.length === 0) {
+    const PERFIS_COM_EQUIPE = ["independente", "com_empresario"];
+    if (PERFIS_COM_EQUIPE.includes(tipoPerfil) && contatosEquipe.length === 0) {
       setContatosEquipe([{ ...EMPTY_CONTATO }]);
     }
   }, [tipoPerfil]);
@@ -1122,7 +1122,7 @@ export default function ArtistaSignupPublic() {
           <div className="space-y-5">
             <div>
               <h2 className="font-semibold text-base">Tipo de Perfil</h2>
-              <p className="text-sm text-muted-foreground">Vínculo profissional e equipa</p>
+              <p className="text-sm text-muted-foreground">Vínculo profissional e equipe</p>
             </div>
 
             <div className="space-y-1.5">
@@ -1141,11 +1141,11 @@ export default function ArtistaSignupPublic() {
 
             <Separator />
 
-            {/* Equipa dinâmica — mesma lógica do ArtistaFormModal */}
+            {/* Equipe dinâmica — mesma lógica do ArtistaFormModal */}
             {["independente", "com_empresario"].includes(tipoPerfil) && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <Label className="text-sm text-muted-foreground">Equipa / Contactos</Label>
+                  <Label className="text-sm text-muted-foreground">Equipe / Contactos</Label>
                   <Button
                     type="button"
                     variant="outline"
@@ -1161,7 +1161,7 @@ export default function ArtistaSignupPublic() {
 
                 {contatosEquipe.length === 0 && (
                   <p className="text-xs text-muted-foreground text-center py-4 border border-dashed rounded-lg">
-                    Nenhum contacto adicionado. Clique em "Adicionar" para incluir membros da equipa.
+                    Nenhum contacto adicionado. Clique em "Adicionar" para incluir membros da equipe.
                   </p>
                 )}
 
@@ -1336,7 +1336,7 @@ export default function ArtistaSignupPublic() {
           <div className="space-y-5">
             <div>
               <h2 className="font-semibold text-base">Observações</h2>
-              <p className="text-sm text-muted-foreground">Notas para a equipa e revisão final</p>
+              <p className="text-sm text-muted-foreground">Notas para a equipe e revisão final</p>
             </div>
 
             {/* Resumo do cadastro */}

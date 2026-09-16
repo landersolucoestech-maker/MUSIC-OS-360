@@ -1612,7 +1612,7 @@ export function ArtistVision360Modal({
                 </Card>
               )}
 
-              {/* Equipa / Contactos (legado — dados embutidos antigos / auto-cadastro público) */}
+              {/* Equipe / Contactos (legado — dados embutidos antigos / auto-cadastro público) */}
               {(() => {
                 type TeamContactItem = { nome: string; categoria: string; telefone: string; email: string; distribuidoras?: Array<{ id: string; email: string; nomeCustom?: string }> };
                 const team: TeamContactItem[] = Array.isArray((artista as Record<string, unknown>).contatos_equipe)

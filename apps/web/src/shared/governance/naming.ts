@@ -199,7 +199,7 @@ export const SERVICE_NAMING = {
  * Interfaces de entidade:
  *   interface {NomeEntidade}          → entidade completa (ex: Artista)
  *   type {NomeEntidade}Insert         → campos para criação (sem id, timestamps)
- *   type {NomeEntidade}Update         → campos para actualização (Partial<Insert>)
+ *   type {NomeEntidade}Update         → campos para atualização (Partial<Insert>)
  *   interface {NomeEntidade}WithRelations → entidade com refs expandidas
  *
  * EntityRef (shared/types/refs.ts):

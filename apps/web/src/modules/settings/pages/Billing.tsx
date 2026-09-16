@@ -2,7 +2,7 @@
  * settings/pages/Billing.tsx
  *
  * Página de Billing — plano actual, upgrade e portal de gestão Stripe.
- * Subscreve ao WebSocket 'billing:plan_upgraded' para actualizar UI em tempo real.
+ * Subscreve ao WebSocket 'billing:plan_upgraded' para atualizar UI em tempo real.
  */
 
 import { useEffect } from "react";
@@ -99,10 +99,10 @@ export default function Billing() {
     retry:    false,
   });
 
-  // WebSocket: actualiza plano em tempo real após upgrade
+  // WebSocket: atualiza plano em tempo real após upgrade
   useWsEvent("billing:plan_upgraded", () => {
     queryClient.invalidateQueries({ queryKey: ["billing", "subscription"] });
-    toast.success("Plano actualizado!", { description: "O seu plano foi actualizado com sucesso." });
+    toast.success("Plano atualizado!", { description: "O seu plano foi atualizado com sucesso." });
   });
 
   useWsEvent("billing:cancelled", () => {

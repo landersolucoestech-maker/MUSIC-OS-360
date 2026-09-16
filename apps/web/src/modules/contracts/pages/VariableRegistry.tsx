@@ -498,7 +498,7 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
       field: values.field,
       internalGroup: values.internalGroup || undefined,
     });
-    toast.success("Variável actualizada");
+    toast.success("Variável atualizada");
     setEditTarget(null);
   }
 
