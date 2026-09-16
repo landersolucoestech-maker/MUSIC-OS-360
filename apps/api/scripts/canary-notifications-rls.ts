@@ -20,15 +20,17 @@ import { DatabaseContextService } from '../src/database/database-context.service
 import { assertDatabaseCommandEnv } from '../src/core/config/env.schema';
 
 try {
-  require('dotenv').config({ path: path.resolve(process.cwd(), '.env.development'), override: true });
+  // Never override an explicitly-provided process env with .env.development —
+  // an explicit DATABASE_URL/APP_DATABASE_URL/DB_SSL must always win.
+  require('dotenv').config({ path: path.resolve(process.cwd(), '.env.development') });
 } catch { /* optional */ }
 
 const apiEnvText = fs.existsSync(path.resolve(process.cwd(), '.env.development'))
   ? fs.readFileSync(path.resolve(process.cwd(), '.env.development'), 'utf8')
   : '';
-const OWNER_URL = apiEnvText.match(/^DATABASE_URL=(.+)$/m)?.[1]?.trim() || process.env['DATABASE_URL'];
-const APP_URL = apiEnvText.match(/^APP_DATABASE_URL=(.+)$/m)?.[1]?.trim() || process.env['APP_DATABASE_URL'];
-const DB_SSL = apiEnvText.match(/^DB_SSL=(.+)$/m)?.[1]?.trim() || process.env['DB_SSL'];
+const OWNER_URL = process.env['DATABASE_URL'] || apiEnvText.match(/^DATABASE_URL=(.+)$/m)?.[1]?.trim();
+const APP_URL = process.env['APP_DATABASE_URL'] || apiEnvText.match(/^APP_DATABASE_URL=(.+)$/m)?.[1]?.trim();
+const DB_SSL = process.env['DB_SSL'] || apiEnvText.match(/^DB_SSL=(.+)$/m)?.[1]?.trim();
 const TENANT_A = '11111111-1111-4111-8111-111111111111';
 const TENANT_B = '22222222-2222-4222-8222-222222222222';
 

@@ -66,9 +66,10 @@ function unwrap(value: unknown): any {
 
 async function main(): Promise<void> {
   console.log(`\n[reports:smoke] API=${API}`);
+  // An explicitly-provided process env must always win over .env.development.
   const envPath = path.resolve(process.cwd(), '.env.development');
   const envText = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
-  const url = (envText.match(/^DATABASE_URL=(.+)$/m)?.[1] ?? '')
+  const url = (process.env['DATABASE_URL'] ?? envText.match(/^DATABASE_URL=(.+)$/m)?.[1] ?? '')
     .trim()
     .replace(/^["']|["']$/g, '');
   assertDatabaseCommandEnv('reports-smoke', { ...process.env, DATABASE_URL: url });

@@ -32,9 +32,10 @@ import { BillingEnforcementService } from '../../../src/modules/billing/billing-
 import { TenantEntity, ALL_ENTITIES } from '../../../src/database/entities';
 
 function readEnv(key: string): string {
+  // An explicitly-provided process env must always win over .env.development.
   const envPath = path.resolve(process.cwd(), '.env.development');
   const txt = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
-  return (txt.match(new RegExp(`^${key}=(.+)$`, 'm'))?.[1] ?? process.env[key] ?? '')
+  return (process.env[key] ?? txt.match(new RegExp(`^${key}=(.+)$`, 'm'))?.[1] ?? '')
     .trim().replace(/^["']|["']$/g, '');
 }
 

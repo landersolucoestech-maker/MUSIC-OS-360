@@ -24,9 +24,10 @@ const TENANT_A = '10000000-0000-0000-0000-000000000002';
 const TENANT_B = 'fb6f3d4f-6161-4b55-8e4f-b4443c509b7c';
 
 function env(key: string): string {
+  // An explicitly-provided process env must always win over .env.development.
   const p = path.resolve(process.cwd(), '.env.development');
   const txt = fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : '';
-  return (txt.match(new RegExp(`^${key}=(.+)$`, 'm'))?.[1] ?? process.env[key] ?? '')
+  return (process.env[key] ?? txt.match(new RegExp(`^${key}=(.+)$`, 'm'))?.[1] ?? '')
     .trim().replace(/^["']|["']$/g, '');
 }
 

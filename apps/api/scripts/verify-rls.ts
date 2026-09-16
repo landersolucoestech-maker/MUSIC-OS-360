@@ -23,25 +23,27 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 try {
-  require('dotenv').config({ path: path.resolve(process.cwd(), '.env.development'), override: true });
+  // Never override an explicitly-provided process env (e.g. CI, or a shell
+  // export pointing at a disposable local Postgres) with .env.development —
+  // an explicit DATABASE_URL/DB_SSL must always win over the file fallback.
+  require('dotenv').config({ path: path.resolve(process.cwd(), '.env.development') });
   require('dotenv').config({ path: path.resolve(__dirname, '../.env.development') });
   require('dotenv').config({ path: path.resolve(__dirname, '../../.env.development') });
   require('dotenv').config({ path: path.resolve(__dirname, '../../../.env.development') });
 } catch { /* opcional */ }
 
 const FIX_MODE = process.argv.includes('--fix');
-let databaseHost = '';
-try {
-  databaseHost = new URL(process.env['DATABASE_URL'] ?? '').hostname;
-} catch { /* sem URL válida */ }
 const apiEnvText = fs.existsSync(path.resolve(process.cwd(), '.env.development'))
   ? fs.readFileSync(path.resolve(process.cwd(), '.env.development'), 'utf8')
   : '';
 const apiEnvDatabaseUrl = apiEnvText.match(/^DATABASE_URL=(.+)$/m)?.[1]?.trim();
 const apiEnvDbSsl = apiEnvText.match(/^DB_SSL=(.+)$/m)?.[1]?.trim();
-const databaseUrl = apiEnvDatabaseUrl || process.env['DATABASE_URL'];
-const dbSslDisabled = apiEnvDbSsl === 'false'
-  || process.env['DB_SSL'] === 'false'
+const databaseUrl = process.env['DATABASE_URL'] || apiEnvDatabaseUrl;
+let databaseHost = '';
+try {
+  databaseHost = new URL(databaseUrl ?? '').hostname;
+} catch { /* sem URL válida */ }
+const dbSslDisabled = (process.env['DB_SSL'] ?? apiEnvDbSsl) === 'false'
   || ['localhost', '127.0.0.1', '::1'].includes(databaseHost);
 if (dbSslDisabled) {
   process.env['PGSSLMODE'] = 'disable';

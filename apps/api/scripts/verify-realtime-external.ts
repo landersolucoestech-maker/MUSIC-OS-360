@@ -18,7 +18,9 @@
 import * as path from 'path';
 
 try {
-  require('dotenv').config({ path: path.resolve(process.cwd(), '.env.development'), override: true });
+  // Never override an explicitly-provided process env with .env.development —
+  // an explicit DATABASE_URL must always win over the file fallback.
+  require('dotenv').config({ path: path.resolve(process.cwd(), '.env.development') });
   require('dotenv').config({ path: path.resolve(__dirname, '../.env.development') });
 } catch { /* opcional */ }
 

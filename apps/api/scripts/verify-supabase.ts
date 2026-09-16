@@ -24,7 +24,9 @@ import * as path from 'path';
 // ── Carregar .env ────────────────────────────────────────────────────────────
 try {
   // The API package environment is authoritative. Root .env is fallback only.
-  require('dotenv').config({ path: path.resolve(__dirname, '../.env.development'), override: true });
+  // Never override an explicitly-provided process env with either file —
+  // an explicit DATABASE_URL must always win over the file fallback.
+  require('dotenv').config({ path: path.resolve(__dirname, '../.env.development') });
   require('dotenv').config({ path: path.resolve(__dirname, '../../../.env.development') });
 } catch { /* dotenv opcional */ }
 
