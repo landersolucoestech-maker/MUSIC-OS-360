@@ -26,6 +26,7 @@ import { isMetricKey, type MetricKey } from './platform-profiles/metric-keys';
 import { computeGrowth, STANDARD_GROWTH_PERIODS_DAYS } from './platform-profiles/metric-growth.util';
 import { CareerStageService } from './platform-profiles/analytics/career-stage.service';
 import { MarketBenchmarkService } from './platform-profiles/analytics/market-benchmark.service';
+import { AudienceHealthAutomation } from '../../core/automation/audience-health.automation';
 
 @ApiTags('Artists')
 @ApiBearerAuth()
@@ -38,6 +39,7 @@ export class ArtistsController {
     private readonly platformSync: ArtistExternalProfileSyncService,
     private readonly careerStage: CareerStageService,
     private readonly marketBenchmark: MarketBenchmarkService,
+    private readonly audienceHealth: AudienceHealthAutomation,
   ) {}
 
   @Get()
@@ -162,6 +164,22 @@ export class ArtistsController {
   ) {
     await this.service.findById(tenant.id, id);
     return this.marketBenchmark.getStatus(tenant.id, id);
+  }
+
+  @Post(':id/audience-health')
+  @RequireRole('viewer')
+  @RequirePermission('artist:read')
+  @ApiOperation({
+    summary: 'AI Skill audience-health — síntese narrativa sobre Career Stage + Market Benchmark já calculados',
+  })
+  async getAudienceHealth(
+    @CurrentTenant() tenant: { id: string },
+    @CurrentUser() user: { userId: string },
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query('force') force?: string,
+  ) {
+    const artist = await this.service.findById(tenant.id, id);
+    return this.audienceHealth.run(tenant.id, user.userId, id, artist.nome_artistico, force === 'true');
   }
 
   @Post(':id/platform-profiles/:platform/sync')

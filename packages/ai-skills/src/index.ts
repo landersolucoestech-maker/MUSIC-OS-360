@@ -284,3 +284,21 @@ export {
   validateLaunchStrategyInput,
   validateLaunchStrategyOutput,
 } from "./launch-strategy";
+
+// audience-health — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  AudienceHealthInput,
+  AudienceHealthOutput,
+  AudienceHealthLanguage,
+  AudienceHealthStatus,
+  AudienceHealthStrength,
+  AudienceHealthConcern,
+  AudienceHealthAction,
+} from "./audience-health";
+export {
+  AUDIENCE_HEALTH_SYSTEM_PROMPT,
+  buildAudienceHealthPrompt,
+  parseAudienceHealthResponse,
+  validateAudienceHealthInput,
+  validateAudienceHealthOutput,
+} from "./audience-health";

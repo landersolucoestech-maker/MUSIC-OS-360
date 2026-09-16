@@ -18,9 +18,11 @@ import { SoundchartsService } from '../integrations/soundcharts/soundcharts.serv
 import { CareerStageService } from './platform-profiles/analytics/career-stage.service';
 import { MarketBenchmarkService } from './platform-profiles/analytics/market-benchmark.service';
 import { MarketReferenceCacheService } from './platform-profiles/analytics/market-reference-cache.service';
+import { AIModule } from '../ai/ai.module';
+import { AudienceHealthAutomation } from '../../core/automation/audience-health.automation';
 
 @Module({
-  imports:     [ActivityLogsModule],
+  imports:     [ActivityLogsModule, AIModule],
   controllers: [ArtistsController],
   providers:   [
     ArtistsService,
@@ -40,6 +42,7 @@ import { MarketReferenceCacheService } from './platform-profiles/analytics/marke
     CareerStageService,
     MarketBenchmarkService,
     MarketReferenceCacheService,
+    AudienceHealthAutomation,
   ],
   exports:     [ArtistsService, ArtistPlatformProfilesService, ArtistMetricSnapshotsService, ArtistExternalProfileSyncService],
 })
