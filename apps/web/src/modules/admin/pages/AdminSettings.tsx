@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "../layouts/AdminLayout";
 import { ListSectionHeader } from "@/shared/components/ListSectionHeader";
@@ -126,13 +125,26 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     </div>
   );
 }
+/**
+ * CODEBASE_MAP Gotcha #19: this panel's inputs (Inp/Sel/Toggle above) are all
+ * uncontrolled (defaultValue only, no onChange) and this button previously
+ * fired `toast.success("Configurações salvas")` unconditionally -- no state
+ * was even read, let alone sent to an API. No backend contract exists for
+ * platform-wide settings (name/URL/timezone/SMTP/trial days/etc.); inventing
+ * one is out of scope for a truthfulness fix. Disabled + honest copy instead
+ * of a lying success toast, per "make the UI truthful rather than invent
+ * backend behavior" -- matches the already-honest empty-state pattern this
+ * same file uses for API_KEYS/webhooks below.
+ */
 function SaveBar() {
   return (
-    <div className="flex justify-end pt-2">
+    <div className="flex justify-end items-center gap-2 pt-2">
+      <span className="text-[11px] text-muted-foreground">Esta seção ainda não persiste alterações.</span>
       <button
-        className="rounded-xl bg-primary px-5 py-2 text-[13px] font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+        className="rounded-xl bg-primary/40 px-5 py-2 text-[13px] font-semibold text-primary-foreground/70 cursor-not-allowed"
         data-testid="button-save-settings"
-        onClick={() => toast.success("Configurações salvas")}
+        disabled
+        title="Ainda não implementado -- não há endpoint de configurações da plataforma"
       >
         Salvar Alterações
       </button>
