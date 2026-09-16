@@ -174,6 +174,30 @@ export class SkillRunService {
     return { data, total, limit, offset };
   }
 
+  /**
+   * Execução de SUCESSO mais recente desta skill (+ entidade, quando houver)
+   * dentro da janela em minutos — usado por skills ON_DEMAND com semântica
+   * stale-refresh (ex.: audience-health) para evitar regerar via IA a cada
+   * chamada. `entityId=null` busca execuções sem entidade (nível tenant).
+   */
+  async findRecentSuccess(
+    tenantId: string,
+    skillName: string,
+    entityId: string | null,
+    withinMinutes: number,
+  ): Promise<SkillRunEntity | null> {
+    if (!this.runRepo) return null;
+    const qb = this.runRepo
+      .createQueryBuilder('r')
+      .where('r.tenant_id = :tenantId', { tenantId })
+      .andWhere('r.skill_name = :skillName', { skillName })
+      .andWhere("r.status = 'success'")
+      .andWhere(`r.finished_at >= NOW() - (:mins || ' minutes')::interval`, { mins: withinMinutes })
+      .orderBy('r.finished_at', 'DESC');
+    qb.andWhere(entityId ? 'r.entity_id = :entityId' : 'r.entity_id IS NULL', entityId ? { entityId } : {});
+    return qb.getOne();
+  }
+
   /** Detalhe de uma execução + seus logs. */
   async getRun(
     tenantId: string,
