@@ -1,0 +1,15 @@
+{
+  "id": "evid-b4dee765",
+  "createdAt": "2026-09-16T05:32:12.253Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\verify-tenant-isolation-fix.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\verify-tenant-isolation-fix.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "+ docker rm -f verify-pg-3 2>/dev/null || true\n+ docker run -d --rm --name verify-pg-3 -e POSTGRES_USER=musicos360 -e POSTGRES_PASSWORD=ci_only_ephemeral_password_ba3f0d -e POSTGRES_DB=musicos360 -p 55433:5432 postgres:16-alpine\n+ docker exec verify-pg-3 pg_isready -U musicos360\n+ docker exec verify-pg-3 pg_isready -U musicos360\n+ docker exec verify-pg-3 pg_isready -U musicos360\n+ docker cp apps/api/scripts/local-auth-shim.sql verify-pg-3:/tmp/local-auth-shim.sql\n+ MSYS_NO_PATHCONV=1 docker exec -e PGPASSWORD=ci_only_ephemeral_password_ba3f0d verify-pg-3 psql -h localhost -U musicos360 -d musicos360 -f /tmp/local-auth-shim.sql\n+ pnpm --filter @music-os-360/api db:migrate\n+ pnpm --filter @music-os-360/api verify:tenant-isolation\n\n> @music-os-360/api@0.0.1 verify:tenant-isolation C:\\Users\\Usuario\\Documents\\MUSIC-OS-360\\apps\\api\n> tsx scripts/verify-tenant-isolation.ts\n\n\n╔══════════════════════════════════════════════════════════╗\n║   MUSIC OS 360 — Fase 18: Tenant Isolation Test           ║\n╚══════════════════════════════════════════════════════════╝\n\n  ✓  Conectado ao PostgreSQL\n  →  Tenant A: 71d0cb87-d9d4-4e93-b125-36b66c8ed304\n  →  Tenant B: c7bd38e3-3f0a-4f58-9405-35885c5a0525\n  ✓  Orgs e tenants criados\n  ✓  TEST 1: INSERT Artista A como Tenant A\n  ✓  TEST 2: INSERT Artista B como Tenant B\n  ✓  TEST 3: SELECT próprio tenant retorna dados\n  ✓  TEST 4: SELECT cross-tenant bloqueado por RLS — retornou 0 linhas\n  ✓  TEST 5: UPDATE cross-tenant bloqueado por RLS — afetou 0 linhas\n  ✓  TEST 6: DELETE cross-tenant bloqueado por RLS — afetou 0 linhas\n  ✓  TEST 7: Sem contexto tenant → SELECT retorna 0 linhas (RLS bloqueia tudo)\n  →  Limpando dados de teste…\n  ✓  Dados de teste removidos\n\n── Resultado ───────────────────────────────────────────────\n\n  Testes passados : 7\n  Testes falhados : 0\n\n  ✓ TENANT ISOLATION VALIDADO — RLS funciona corretamente.\n\n\nverify-tenant-isolation.ts fix verified: 7/7 tests pass against fresh Postgres\n+ docker rm -f verify-pg-3",
+  "stderrTail": "",
+  "workspaceFingerprint": "c98a246c36a58c09162f5dfae06dd416bdf25148906c6b382dc4dfc6e7a70bc4",
+  "fingerprintStatus": "BOUND",
+  "head": "a076da16b983a7a3899121a62d90e10dbd166635",
+  "durationMs": 35429
+}

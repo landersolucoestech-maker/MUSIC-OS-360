@@ -1,0 +1,15 @@
+{
+  "id": "evid-d8b247c4",
+  "createdAt": "2026-09-16T05:39:47.795Z",
+  "type": "COMMAND",
+  "label": "node scripts/verify-production-audit.mjs",
+  "command": "node scripts/verify-production-audit.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "7 known advisories accepted temporarily:\n  [WAIVED] 1108110 xlsx (high) — review by 2026-09-30, owner landersolucoestech@gmail.com\n  [WAIVED] 1108111 xlsx (high) — review by 2026-09-30, owner landersolucoestech@gmail.com\n  [WAIVED] 1114301 file-type (moderate) — review by 2026-09-30, owner landersolucoestech@gmail.com\n  [WAIVED] 1114726 file-type (moderate) — review by 2026-09-30, owner landersolucoestech@gmail.com\n  [WAIVED] 1117063 @nestjs/core (moderate) — review by 2026-09-30, owner landersolucoestech@gmail.com\n  [WAIVED] 1124268 react-router (moderate) — review by 2026-09-30, owner landersolucoestech@gmail.com\n  [WAIVED] 1124272 react-router (moderate) — review by 2026-09-30, owner landersolucoestech@gmail.com\n\n7 known advisories accepted temporarily\n0 unexpected advisories\nDependency audit policy PASSED.",
+  "stderrTail": "",
+  "workspaceFingerprint": "c98a246c36a58c09162f5dfae06dd416bdf25148906c6b382dc4dfc6e7a70bc4",
+  "fingerprintStatus": "BOUND",
+  "head": "a076da16b983a7a3899121a62d90e10dbd166635",
+  "durationMs": 2803
+}

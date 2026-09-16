@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-16T05:13:40.972Z",
+  "updatedAt": "2026-09-16T06:03:55.912Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -27,7 +27,9 @@
             "evid-8c8b88da",
             "evid-25d61758",
             "evid-c97a6fc0",
-            "evid-3e7899c7"
+            "evid-3e7899c7",
+            "evid-a379a9a1",
+            "evid-37822ad6"
           ],
           "status": "closed"
         }
@@ -57,7 +59,11 @@
             "evid-51e26673",
             "evid-a7fc32a2",
             "evid-16c21df9",
-            "evid-6b7b9e83"
+            "evid-6b7b9e83",
+            "evid-d8b247c4",
+            "evid-92514a3b",
+            "evid-0a433149",
+            "evid-78eb895f"
           ],
           "status": "closed"
         }
@@ -78,7 +84,9 @@
             "evid-7515337f",
             "evid-6d5ed298",
             "evid-1204321a",
-            "evid-bcd86f2b"
+            "evid-bcd86f2b",
+            "evid-5ffc2564",
+            "evid-e9aa8f70"
           ],
           "status": "closed"
         }
@@ -103,7 +111,10 @@
             "evid-2f75335f",
             "evid-6bb2f096",
             "evid-04e5a2dd",
-            "evid-38182139"
+            "evid-38182139",
+            "evid-84b0e890",
+            "evid-b7d7f5dd",
+            "evid-b3c301d3"
           ],
           "status": "closed"
         }
@@ -123,7 +134,10 @@
           "evidenceIds": [
             "evid-5ea83f58",
             "evid-7d9e2979",
-            "evid-13ac7113"
+            "evid-13ac7113",
+            "evid-51ab94e6",
+            "evid-4a79a1cc",
+            "evid-b1937dc9"
           ],
           "status": "closed"
         },
@@ -133,7 +147,9 @@
           "evidenceIds": [
             "evid-0aea1578",
             "evid-5c149abc",
-            "evid-2ba5b520"
+            "evid-2ba5b520",
+            "evid-d0063ec1",
+            "evid-5900e042"
           ],
           "status": "closed"
         },
@@ -142,7 +158,21 @@
           "text": "verify-tenant-isolation.ts no longer inserts into the dropped artists.tipo column (removed by migration 20260821000002_DropArtistTipoColumn); verified via local fresh-Postgres run: migrations applied, 7/7 tenant isolation tests pass",
           "evidenceIds": [
             "evid-716caa65",
-            "evid-f2835344"
+            "evid-f2835344",
+            "evid-38386e0a",
+            "evid-b4dee765",
+            "evid-83dc9a3b"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-810c33c0",
+          "text": "bootstrap.spec.ts asserts the corrected require path (require('./main.js')) instead of pinning the stale buggy path as expected behavior; full API test:ci suite (288/288 suites, 2547/2547 tests) passes",
+          "evidenceIds": [
+            "evid-74737fb9",
+            "evid-1f98b318",
+            "evid-89c32684",
+            "evid-f3bc1584"
           ],
           "status": "closed"
         }
@@ -204,7 +234,30 @@
     "evid-38182139",
     "evid-2ba5b520",
     "evid-13ac7113",
-    "evid-f2835344"
+    "evid-f2835344",
+    "evid-38386e0a",
+    "evid-b4dee765",
+    "evid-74737fb9",
+    "evid-1f98b318",
+    "evid-89c32684",
+    "evid-a379a9a1",
+    "evid-d8b247c4",
+    "evid-5ffc2564",
+    "evid-84b0e890",
+    "evid-51ab94e6",
+    "evid-4a79a1cc",
+    "evid-d0063ec1",
+    "evid-37822ad6",
+    "evid-92514a3b",
+    "evid-0a433149",
+    "evid-78eb895f",
+    "evid-e9aa8f70",
+    "evid-b7d7f5dd",
+    "evid-b3c301d3",
+    "evid-5900e042",
+    "evid-b1937dc9",
+    "evid-83dc9a3b",
+    "evid-f3bc1584"
   ],
   "checkpointIds": [],
   "touchedFiles": [],

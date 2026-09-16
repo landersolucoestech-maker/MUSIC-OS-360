@@ -1,0 +1,15 @@
+{
+  "id": "evid-51ab94e6",
+  "createdAt": "2026-09-16T05:50:25.156Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\verify-docker-bootstrap-fix.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\verify-docker-bootstrap-fix.mjs",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "+ docker build -f apps/api/Dockerfile -t musicos360-api:verify-bootstrap-fix .\n+ docker rm -f verify-api-2 verify-pg-2 verify-redis-2\n+ docker network rm verify-net-2",
+  "stderrTail": "Error: Command failed: docker build -f apps/api/Dockerfile -t musicos360-api:verify-bootstrap-fix .\nERROR: failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: O sistema não pode encontrar o arquivo especificado.",
+  "workspaceFingerprint": "c98a246c36a58c09162f5dfae06dd416bdf25148906c6b382dc4dfc6e7a70bc4",
+  "fingerprintStatus": "BOUND",
+  "head": "a076da16b983a7a3899121a62d90e10dbd166635",
+  "durationMs": 1978
+}
