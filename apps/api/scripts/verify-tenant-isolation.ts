@@ -128,8 +128,8 @@ async function main(): Promise<void> {
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     await client.query(
-      `INSERT INTO artists (id, tenant_id, nome_artistico, tipo, status)
-       VALUES ($1, $2, 'Artista Test A', 'solo', 'em_negociacao')`,
+      `INSERT INTO artists (id, tenant_id, nome_artistico, status)
+       VALUES ($1, $2, 'Artista Test A', 'em_negociacao')`,
       [artistA, tenantA],
     );
     await client.query('COMMIT');
@@ -140,8 +140,8 @@ async function main(): Promise<void> {
     await client.query('BEGIN');
     await setTenant(client, tenantB);
     await client.query(
-      `INSERT INTO artists (id, tenant_id, nome_artistico, tipo, status)
-       VALUES ($1, $2, 'Artista Test B', 'solo', 'em_negociacao')`,
+      `INSERT INTO artists (id, tenant_id, nome_artistico, status)
+       VALUES ($1, $2, 'Artista Test B', 'em_negociacao')`,
       [artistB, tenantB],
     );
     await client.query('COMMIT');

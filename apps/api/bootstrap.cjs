@@ -9,4 +9,4 @@
  * to non-existent source paths under apps/api/dist and referenced a removed
  * shared-types workspace.
  */
-require('./apps/api/src/main.js');
+require('./main.js');

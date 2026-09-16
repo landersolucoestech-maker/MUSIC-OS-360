@@ -373,6 +373,9 @@ jobs:
       - name: Install dependencies
         if: steps.gate.outputs.enabled == 'true'
         run: pnpm install --frozen-lockfile
+      - name: Build workspace packages
+        if: steps.gate.outputs.enabled == 'true'
+        run: pnpm turbo build --filter='./packages/*'
       - name: Validate Supabase project ref is DEV (never MAIN/STAGING/prod) before any query
         if: steps.gate.outputs.enabled == 'true'
         run: pnpm --filter @music-os-360/api exec tsx scripts/verify-supabase-dev-ref.ts
@@ -409,6 +412,9 @@ jobs:
       - name: Install dependencies
         if: steps.gate.outputs.enabled == 'true'
         run: pnpm install --frozen-lockfile
+      - name: Build workspace packages
+        if: steps.gate.outputs.enabled == 'true'
+        run: pnpm turbo build --filter='./packages/*'
       - name: Validate Supabase project ref is DEV (never MAIN/STAGING/prod) before any query
         if: steps.gate.outputs.enabled == 'true'
         run: pnpm --filter @music-os-360/api exec tsx scripts/verify-supabase-dev-ref.ts
