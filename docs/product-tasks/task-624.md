@@ -5,14 +5,14 @@ title: Unificar módulo Contratos (v1 + v2)
 
 ## What & Why
 
-Existem dois módulos de contratos visíveis no sidebar ("Contratos" e "Contratos v2"), o que confunde os utilizadores e duplica funcionalidade. O v1 tem o fluxo operacional completo (CRUD, KPIs, filtros, bulk, CSV, ligação artista/cliente/lançamento). O v2 acrescenta a integração de assinatura electrónica (wizard 7 passos, templates com variáveis tipadas, rastreio por signatário, timeline de auditoria).
+Existem dois módulos de contratos visíveis no sidebar ("Contratos" e "Contratos v2"), o que confunde os utilizadores e duplica funcionalidade. O v1 tem o fluxo operacional completo (CRUD, KPIs, filtros, bulk, ligação artista/cliente/lançamento). O v2 acrescenta a integração de assinatura electrónica (wizard 7 passos, templates com variáveis tipadas, rastreio por signatário, timeline de auditoria).
 
 A unificação é um **fluxo linear contínuo**, não duas abas paralelas: criar contrato → revisar → enviar para assinatura → acompanhar assinaturas. Tudo dentro de um único módulo, uma única entrada no sidebar.
 
 ## Done looks like
 
 - O sidebar mostra **apenas** "Contratos" (uma entrada, sem "Contratos v2")
-- A página `/contratos` é **idêntica** à versão v1 actual (lista, KPIs, filtros, bulk, CSV) — sem novas abas na página principal
+- A página `/contratos` é **idêntica** à versão v1 actual (lista, KPIs, filtros, bulk) — sem novas abas na página principal
 - O `ContratoViewModal` (modal de detalhe de um contrato) ganha uma aba **"Assinatura Digital"** com dois estados:
   - **Sem documento vinculado**: botão "Iniciar Processo de Assinatura" que abre o wizard v2 pré-preenchido com o `contract_id`, título e artista do contrato
   - **Com documento vinculado**: mostra status do documento (badge), lista de signatários com estado individual (assinou / pendente / data de assinatura), e a timeline de auditoria completa (DocumentTimeline do v2)

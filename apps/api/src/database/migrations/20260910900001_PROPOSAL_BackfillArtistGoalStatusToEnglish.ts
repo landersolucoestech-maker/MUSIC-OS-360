@@ -16,8 +16,9 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  *   - Naturally low-cardinality per tenant (a handful of goals per artist),
  *     unlike transactions/leads/events.
  *   - IS registered in the Reports export catalog (entity-metadata.service.ts),
- *     so the raw column value DOES reach user-facing CSV/XLSX exports verbatim
- *     (export-query-builder emits `SELECT "status" FROM ...` with no value
+ *     so the raw column value DOES reach user-facing XLSX exports verbatim
+ *     (this repo is XLSX-only, scripts/verify-xlsx-only.mjs; export-query-builder
+ *     emits `SELECT "status" FROM ...` with no value
  *     translation layer) — this migration's backfill is what makes that
  *     export show the new English value; it is not merely a technical rename.
  *

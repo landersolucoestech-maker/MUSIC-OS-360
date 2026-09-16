@@ -21,7 +21,7 @@ and seed a fresh environment without recreating every variable by hand.
 - TypeScript: EXIT:0
 
 ## Out of scope
-- CSV format (JSON only)
+- Delimited spreadsheet import/export format (JSON only — this repository is XLSX-only for actual spreadsheets, scripts/verify-xlsx-only.mjs)
 - Server-side backup or sync
 - Conflict resolution beyond "skip duplicates by placeholder"
 
