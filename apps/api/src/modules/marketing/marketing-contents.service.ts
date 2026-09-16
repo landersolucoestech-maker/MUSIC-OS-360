@@ -6,6 +6,7 @@ import { MarketingPublishingQueueService } from '../../queues/services/marketing
 import type { CreateMarketingContentDto, QueryMarketingContentDto, UpdateMarketingContentDto } from './dto/marketing-contents.dto';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { safeOrderBy } from '../../common/utils/safe-order-by';
+import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 
 @Injectable()
 export class MarketingContentsService {
@@ -14,6 +15,7 @@ export class MarketingContentsService {
   constructor(
     @Inject(DATA_SOURCE) ds: DataSource | null,
     private readonly publishingQueue: MarketingPublishingQueueService,
+    private readonly events: EventsService,
   ) {
     this.repo = ds?.getRepository(MarketingContentPostEntity) ?? null;
   }
@@ -80,6 +82,21 @@ export class MarketingContentsService {
     } as Partial<MarketingContentPostEntity>));
 
     await this.scheduleIfNeeded(row, userId);
+
+    this.events.emitTyped(DOMAIN_EVENTS.MARKETING_CONTENT_CREATED, {
+      tenantId,
+      userId,
+      aggregateType: 'marketing_content_post',
+      aggregateId:   row.id,
+      payload: {
+        contentId: row.id,
+        tenantId,
+        title:     row.title,
+        channel:   row.channel,
+        createdBy: userId,
+      },
+    });
+
     return this.findById(tenantId, row.id);
   }
 

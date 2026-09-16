@@ -49,6 +49,7 @@ import type {
   CoverArtTaskCreatedPayload,
   MarketingPlanCompletedPayload,
   MarketingTasksGeneratedPayload,
+  MarketingContentCreatedPayload,
   LeadConvertedPayload,
   AssetUploadedPayload,
   AssetAvailableForContentPayload,
@@ -141,6 +142,7 @@ export interface EventPayloadMap {
   'marketing.cover_art_task_created': CoverArtTaskCreatedPayload;
   'marketing.plan_completed': MarketingPlanCompletedPayload;
   'marketing.tasks_generated': MarketingTasksGeneratedPayload;
+  'marketing.content_created': MarketingContentCreatedPayload;
   'lead.created':          LeadCreatedPayload;
   'lead.updated':          LeadUpdatedPayload;
   'lead.converted':        LeadConvertedPayload;
@@ -236,6 +238,7 @@ export const DOMAIN_EVENTS = {
   COVER_ART_TASK_CREATED: 'marketing.cover_art_task_created',
   MARKETING_PLAN_COMPLETED: 'marketing.plan_completed',
   MARKETING_TASKS_GENERATED: 'marketing.tasks_generated',
+  MARKETING_CONTENT_CREATED: 'marketing.content_created',
   LEAD_CREATED:          'lead.created',
   LEAD_UPDATED:          'lead.updated',
   LEAD_CONVERTED:        'lead.converted',

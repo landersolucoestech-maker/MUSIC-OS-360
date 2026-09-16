@@ -459,6 +459,14 @@ export interface MarketingTasksGeneratedPayload {
   generatedAt:        string;
 }
 
+export interface MarketingContentCreatedPayload {
+  contentId: string;
+  tenantId:  string;
+  title:     string;
+  channel:   string;
+  createdBy: string;
+}
+
 // ─── Leads ────────────────────────────────────────────────────────────────────
 
 export interface LeadConvertedPayload {
@@ -688,6 +696,7 @@ export type AnyDomainEventPayload =
   | CampaignStartedPayload
   | CampaignEndedPayload
   | MarketingProjectCreatedPayload
+  | MarketingContentCreatedPayload
   | CoverArtTaskCreatedPayload
   | MarketingPlanCompletedPayload
   | MarketingTasksGeneratedPayload
