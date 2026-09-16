@@ -152,6 +152,12 @@ function campaignCtr(campaign: MarketingCampaign): number {
   return (campaign.metrics.clicks / campaign.metrics.impressions) * 100;
 }
 
+/** CODEBASE_MAP Gotcha #16: label a metric as estimated whenever it is (i.e. always, today —
+ * campaign.metrics is budget-derived, not measured; flips once a real integration is wired). */
+function estimatedLabel(base: string, campaign: MarketingCampaign): string {
+  return campaign.metrics.isEstimated !== false ? `${base} (estimado):` : `${base}:`;
+}
+
 function compactNumber(value: number): string {
   return new Intl.NumberFormat("pt-BR").format(Math.round(value));
 }
@@ -185,11 +191,17 @@ export default function Campanhas() {
     const spend = campaigns.reduce((sum, campaign) => sum + campaignSpend(campaign), 0);
     const clicks = campaigns.reduce((sum, campaign) => sum + campaign.metrics.clicks, 0);
     const impressions = campaigns.reduce((sum, campaign) => sum + campaign.metrics.impressions, 0);
+    // CODEBASE_MAP Gotcha #16: campaign.metrics is budget-derived (estimateCampaignResults),
+    // never real measured performance -- publish() never calls a real ad-platform integration.
+    // "estimado" only when every contributing campaign is itself estimated; a future real
+    // integration writing isEstimated=false on at least one campaign flips this to "total" again.
+    const clicksAllEstimated = campaigns.length > 0 && campaigns.every((c) => c.metrics.isEstimated !== false);
     return {
       active: campaigns.filter((campaign) => campaign.status === "ativa").length,
       budget,
       spend,
       clicks,
+      clicksAllEstimated,
       ctr: impressions ? (clicks / impressions) * 100 : 0,
     };
   }, [campaigns]);
@@ -239,7 +251,12 @@ export default function Campanhas() {
             <CampaignKpi label="Campanhas Ativas" value={totals.active} caption="em execução" icon={Target} />
             <CampaignKpi label="Budget Total" value={formatCurrency(totals.budget)} caption="investimento" icon={DollarSign} tone="success" />
             <CampaignKpi label="Gasto Total" value={formatCurrency(totals.spend)} caption="executado" icon={DollarSign} tone="danger" />
-            <CampaignKpi label="Cliques" value={compactNumber(totals.clicks)} caption="total" icon={MousePointer2} />
+            <CampaignKpi
+              label="Cliques"
+              value={compactNumber(totals.clicks)}
+              caption={totals.clicksAllEstimated ? "estimado" : "total"}
+              icon={MousePointer2}
+            />
             <CampaignKpi label="CTR Médio" value={`${totals.ctr.toFixed(0)}%`} caption="taxa de clique" icon={BarChart3} />
           </div>
 
@@ -591,13 +608,20 @@ function CampaignViewModal({
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
               Métricas
             </h3>
+            {campaign.metrics.isEstimated !== false && (
+              <p className="mb-3 text-xs text-muted-foreground" data-testid="campaign-metrics-estimated-note">
+                Cliques, Impressões, Conversões e CTR abaixo são uma estimativa calculada a partir do
+                orçamento — esta campanha ainda não foi publicada em nenhuma plataforma de anúncios
+                real, então não há dados medidos.
+              </p>
+            )}
             <div className="grid gap-x-12 gap-y-3 sm:grid-cols-2">
               <MetricLine icon={DollarSign} label="Orçamento:" value={formatCurrency(campaign.budget)} />
               <MetricLine icon={DollarSign} label="Gasto:" value={hasSpendData(campaign) ? formatCurrency(campaignSpend(campaign)) : "Indisponível"} />
-              <MetricLine icon={MousePointer2} label="Cliques:" value={compactNumber(campaign.metrics.clicks)} />
-              <MetricLine icon={BarChart3} label="Impressões:" value={compactNumber(campaign.metrics.impressions)} />
-              <MetricLine icon={BarChart3} label="Conversões:" value={compactNumber(campaign.metrics.conversions)} />
-              <MetricLine icon={BarChart3} label="CTR:" value={`${campaignCtr(campaign).toFixed(2)}%`} />
+              <MetricLine icon={MousePointer2} label={estimatedLabel("Cliques", campaign)} value={compactNumber(campaign.metrics.clicks)} />
+              <MetricLine icon={BarChart3} label={estimatedLabel("Impressões", campaign)} value={compactNumber(campaign.metrics.impressions)} />
+              <MetricLine icon={BarChart3} label={estimatedLabel("Conversões", campaign)} value={compactNumber(campaign.metrics.conversions)} />
+              <MetricLine icon={BarChart3} label={estimatedLabel("CTR", campaign)} value={`${campaignCtr(campaign).toFixed(2)}%`} />
             </div>
           </section>
 

@@ -83,6 +83,44 @@ describe("marketingService production API boundary", () => {
     );
   });
 
+  it("CODEBASE_MAP #16: campaign metrics default to estimated when the backend never set the flag", async () => {
+    apiMock.get.mockResolvedValueOnce({
+      data: [{
+        id: "campaign-legacy",
+        status: "DRAFT",
+        metadata: {
+          marketingBuilder: {
+            payload: { name: "Legada", metrics: { reach: 100, clicks: 10 } },
+          },
+        },
+        createdAt: "2026-06-20T00:00:00.000Z",
+        updatedAt: "2026-06-20T00:00:00.000Z",
+      }],
+    });
+
+    const [campaign] = await marketingService.campaigns.list();
+    expect(campaign.metrics.isEstimated).toBe(true);
+  });
+
+  it("CODEBASE_MAP #16: campaign metrics report measured once the backend explicitly says so", async () => {
+    apiMock.get.mockResolvedValueOnce({
+      data: [{
+        id: "campaign-real",
+        status: "ACTIVE",
+        metadata: {
+          marketingBuilder: {
+            payload: { name: "Real", metrics: { reach: 100, clicks: 10, isEstimated: false } },
+          },
+        },
+        createdAt: "2026-06-20T00:00:00.000Z",
+        updatedAt: "2026-06-20T00:00:00.000Z",
+      }],
+    });
+
+    const [campaign] = await marketingService.campaigns.list();
+    expect(campaign.metrics.isEstimated).toBe(false);
+  });
+
   it("requires a persisted marketing project when creating tasks", async () => {
     await expect(marketingService.tasks.create({
       title: "Tarefa",

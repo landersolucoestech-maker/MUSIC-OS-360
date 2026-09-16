@@ -165,6 +165,9 @@ function campaignFromApi(row: RecordRow): MarketingCampaign {
       conversions: Number(metrics.conversions ?? 0),
       roi: Number(metrics.roi ?? 0),
       costPerResult: Number(metrics.costPerResult ?? 0),
+      // CODEBASE_MAP Gotcha #16: absent (every campaign created before this field
+      // existed) defaults to estimated too -- only an explicit `false` means measured.
+      isEstimated: metrics.isEstimated !== false,
     },
     notes: payload.notes ?? "",
     createdAt: iso(row.createdAt ?? row.created_at),
@@ -667,13 +670,18 @@ async function analytics(): Promise<AnalyticsOverview> {
     key, label: CONTENT_TYPE_LABEL[key as keyof typeof CONTENT_TYPE_LABEL] ?? key,
     reach: 0, impressions: 0, engagement: 0, clicks: 0, conversions: count, roi: 0,
   }));
+  // Only the numeric metrics are summable -- isEstimated is a boolean flag,
+  // never aggregated (a month mixing estimated/measured campaigns has no
+  // single meaningful isEstimated value; period rollups are display-only
+  // reach/engagement/conversions below, not re-labeled as estimated/measured).
+  const NUMERIC_METRIC_KEYS = ["reach", "impressions", "engagement", "clicks", "conversions", "roi", "costPerResult"] as const;
   const byDate = new Map<string, MetricSnapshot>();
   campaigns.forEach((item) => {
     const label = item.startDate ? item.startDate.slice(0, 7) : "sem-data";
     const current = byDate.get(label) ?? { ...EMPTY_METRICS };
     const value = sumMetrics([item]);
-    Object.keys(current).forEach((metric) => {
-      current[metric as keyof MetricSnapshot] += value[metric as keyof MetricSnapshot];
+    NUMERIC_METRIC_KEYS.forEach((metric) => {
+      current[metric] += value[metric];
     });
     byDate.set(label, current);
   });

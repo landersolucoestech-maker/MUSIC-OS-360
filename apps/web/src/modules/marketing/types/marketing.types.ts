@@ -323,6 +323,16 @@ export interface MetricSnapshot {
   roi: number;
   /** Cost per result, in BRL. */
   costPerResult: number;
+  /**
+   * CODEBASE_MAP Gotcha #16: true when reach/impressions/engagement/clicks/
+   * conversions are a budget-derived estimate (estimateCampaignResults), not
+   * data measured by a real ad-platform integration -- which is every
+   * campaign today, since publish() never actually calls one. Absent/undefined
+   * (pre-existing campaigns created before this field existed) is treated as
+   * estimated too; only an explicit `false`, written once a real integration
+   * exists, means "measured."
+   */
+  isEstimated?: boolean;
 }
 
 // ---------------------------------------------------------------------------
