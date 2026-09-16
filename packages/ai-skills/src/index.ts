@@ -267,3 +267,20 @@ export {
   validateSocialContentInput,
   validateSocialContentOutput,
 } from "./social-content";
+
+// launch-strategy — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  LaunchStrategyInput,
+  LaunchStrategyOutput,
+  LaunchStrategyLanguage,
+  LaunchKeyMessage,
+  LaunchSuccessSignal,
+  LaunchRiskFactor,
+} from "./launch-strategy";
+export {
+  LAUNCH_STRATEGY_SYSTEM_PROMPT,
+  buildLaunchStrategyPrompt,
+  parseLaunchStrategyResponse,
+  validateLaunchStrategyInput,
+  validateLaunchStrategyOutput,
+} from "./launch-strategy";
