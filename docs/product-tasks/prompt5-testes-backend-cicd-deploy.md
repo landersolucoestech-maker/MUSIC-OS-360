@@ -28,7 +28,7 @@ O backend NestJS em `apps/api/` não tem nenhum ficheiro `.spec.ts`, nenhum setu
 
 5. **Criar teste Tenant Isolation** — Implementar `tenant-isolation.spec.ts` em `modules/artists/`: list só devolve artistas do tenant correto; `findById` e `update` de artista de outro tenant lançam `NotFoundException`.
 
-6. **Atualizar CI** — Substituir `.github/workflows/ci.yml` com os jobs `lint`, `typecheck-api`, `typecheck-web`, `test-api` (com serviço Redis 6379), `test-web`, e `build` que depende de todos os anteriores. O job `test-api` usa `ENCRYPTION_KEY` de 64 zeros, `CLERK_SECRET_KEY: sk_test_placeholder` e `NODE_ENV: test`.
+6. **Atualizar CI** — Substituir `.github/workflows/ci.yml` com os jobs `lint`, `typecheck-api`, `typecheck-web`, `test-api` (com serviço Redis 6379), `test-web`, e `build` que depende de todos os anteriores. O job `test-api` usa `ENCRYPTION_KEY` de 64 zeros, `CLERK_SECRET_KEY` com um valor fictício de teste (não uma chave real, formato deliberadamente diferente de uma credencial válida) e `NODE_ENV: test`.
 
 7. **Criar deploy-staging.yml** — Novo workflow acionado em push para branch `staging`: build API, deploy Railway staging (`RAILWAY_TOKEN_STAGING`), run Drizzle migrations com `NEON_STAGING_DIRECT_URL`, deploy frontend Vercel preview, smoke test `GET /api/v1/health`.
 
