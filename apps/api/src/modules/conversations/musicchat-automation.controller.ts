@@ -6,6 +6,7 @@ import { RequireRole } from '../../core/decorators/roles.decorator';
 import { Audit } from '../../core/interceptors/audit.interceptor';
 import type { JwtAuth } from '../../core/guards/auth.guard';
 import { MusicChatAutomationService } from './musicchat-automation.service';
+import { MusicChatAutomationInsightsAutomation } from '../../core/automation/musicchat-automation-insights.automation';
 import {
   MusicChatInboundMessageDto,
   RunMusicChatEscalationDto,
@@ -17,7 +18,10 @@ import {
 @ApiBearerAuth()
 @Controller('conversations/musicchat/automation')
 export class MusicChatAutomationController {
-  constructor(private readonly service: MusicChatAutomationService) {}
+  constructor(
+    private readonly service: MusicChatAutomationService,
+    private readonly insights: MusicChatAutomationInsightsAutomation,
+  ) {}
 
   @Get('settings')
   @RequireRole('manager')
@@ -90,5 +94,26 @@ export class MusicChatAutomationController {
     @Query('conversationId') conversationId?: string,
   ) {
     return this.service.listEvents(tenant.id, conversationId);
+  }
+
+  @Post('audit')
+  @RequireRole('manager')
+  @ApiOperation({ summary: 'AI Skill automation-audit — auditoria narrativa sobre contadores reais de eventos da automação' })
+  runAudit(
+    @CurrentTenant() tenant: { id: string },
+    @CurrentUser() user: JwtAuth,
+    @Query('force') force?: string,
+  ) {
+    return this.insights.runAudit(tenant.id, user.userId, force === 'true');
+  }
+
+  @Post('builder-suggestions')
+  @RequireRole('manager')
+  @ApiOperation({ summary: 'AI Skill automation-builder — SUGESTÕES de menu/escalonamento (nunca aplicadas automaticamente)' })
+  runBuilderSuggestions(
+    @CurrentTenant() tenant: { id: string },
+    @CurrentUser() user: JwtAuth,
+  ) {
+    return this.insights.runBuilderSuggestions(tenant.id, user.userId);
   }
 }

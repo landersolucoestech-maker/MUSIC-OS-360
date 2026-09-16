@@ -302,3 +302,38 @@ export {
   validateAudienceHealthInput,
   validateAudienceHealthOutput,
 } from "./audience-health";
+
+// automation-audit — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  AutomationAuditInput,
+  AutomationAuditOutput,
+  AutomationAuditLanguage,
+  AutomationAuditHealthStatus,
+  AutomationAuditEventCount,
+  AutomationAuditFinding,
+  AutomationAuditAction,
+} from "./automation-audit";
+export {
+  AUTOMATION_AUDIT_SYSTEM_PROMPT,
+  buildAutomationAuditPrompt,
+  parseAutomationAuditResponse,
+  validateAutomationAuditInput,
+  validateAutomationAuditOutput,
+} from "./automation-audit";
+
+// automation-builder — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  AutomationBuilderInput,
+  AutomationBuilderOutput,
+  AutomationBuilderLanguage,
+  AutomationBuilderMenuSuggestion,
+  AutomationBuilderEscalationSuggestion,
+  AutomationBuilderRisk,
+} from "./automation-builder";
+export {
+  AUTOMATION_BUILDER_SYSTEM_PROMPT,
+  buildAutomationBuilderPrompt,
+  parseAutomationBuilderResponse,
+  validateAutomationBuilderInput,
+  validateAutomationBuilderOutput,
+} from "./automation-builder";
