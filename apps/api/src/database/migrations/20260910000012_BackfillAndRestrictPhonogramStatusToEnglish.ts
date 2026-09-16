@@ -86,6 +86,11 @@ export class BackfillAndRestrictPhonogramStatusToEnglish20260910000012
       );
     }
 
+    // Column DEFAULT still held the old PT-BR value ('pendente') -- any INSERT
+    // relying on it (no explicit status) would violate the CHECK constraint
+    // added below.
+    await queryRunner.query(`ALTER TABLE "phonograms" ALTER COLUMN "status" SET DEFAULT 'pending'`);
+
     await queryRunner.query(`
       ALTER TABLE "phonograms"
       ADD CONSTRAINT "chk_phonograms_status"
@@ -98,6 +103,7 @@ export class BackfillAndRestrictPhonogramStatusToEnglish20260910000012
       ALTER TABLE "phonograms"
       DROP CONSTRAINT IF EXISTS "chk_phonograms_status"
     `);
+    await queryRunner.query(`ALTER TABLE "phonograms" ALTER COLUMN "status" SET DEFAULT 'pendente'`);
 
     for (const [pt, en] of this.ptToEn) {
       await queryRunner.query(

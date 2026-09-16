@@ -227,7 +227,7 @@ export class AutentiqueService {
         .createQueryBuilder()
         .update(ContractEntity)
         .set({
-          status:           'aguardando_assinatura',
+          status:           'awaiting_signature',
           autentique_doc_id: docId,
           signing_platform: 'autentique',
           updated_at:       new Date(),
@@ -379,7 +379,7 @@ export class AutentiqueService {
       .createQueryBuilder()
       .update(ContractEntity)
       .set({
-        status:     'assinado',
+        status:     'signed',
         updated_at: new Date(),
         metadata: () => `metadata || '${JSON.stringify({
           provider:          'autentique',

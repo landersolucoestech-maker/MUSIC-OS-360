@@ -75,6 +75,11 @@ export class BackfillAndRestrictEventStatusToEnglish20260910000023
       );
     }
 
+    // Column DEFAULT still held the old PT-BR value ('agendado') -- any INSERT
+    // relying on it (no explicit status) would violate the CHECK constraint
+    // added below.
+    await queryRunner.query(`ALTER TABLE "events" ALTER COLUMN "status" SET DEFAULT 'scheduled'`);
+
     await queryRunner.query(`
       ALTER TABLE "events"
       ADD CONSTRAINT "chk_events_status"
@@ -87,6 +92,7 @@ export class BackfillAndRestrictEventStatusToEnglish20260910000023
       ALTER TABLE "events"
       DROP CONSTRAINT IF EXISTS "chk_events_status"
     `);
+    await queryRunner.query(`ALTER TABLE "events" ALTER COLUMN "status" SET DEFAULT 'agendado'`);
 
     for (const [pt, en] of this.ptToEn) {
       await queryRunner.query(

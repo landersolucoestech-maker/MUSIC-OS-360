@@ -72,6 +72,11 @@ export class BackfillAndRestrictArtistGoalStatusToEnglish20260910000003
       );
     }
 
+    // Column DEFAULT still held the old PT-BR value ('em_andamento') -- any INSERT
+    // relying on it (no explicit status) would violate the CHECK constraint
+    // added below.
+    await queryRunner.query(`ALTER TABLE "artist_goals" ALTER COLUMN "status" SET DEFAULT 'in_progress'`);
+
     await queryRunner.query(`
       ALTER TABLE "artist_goals"
       ADD CONSTRAINT "chk_artist_goals_status"
@@ -84,6 +89,7 @@ export class BackfillAndRestrictArtistGoalStatusToEnglish20260910000003
       ALTER TABLE "artist_goals"
       DROP CONSTRAINT IF EXISTS "chk_artist_goals_status"
     `);
+    await queryRunner.query(`ALTER TABLE "artist_goals" ALTER COLUMN "status" SET DEFAULT 'em_andamento'`);
 
     for (const [pt, en] of this.ptToEn) {
       await queryRunner.query(

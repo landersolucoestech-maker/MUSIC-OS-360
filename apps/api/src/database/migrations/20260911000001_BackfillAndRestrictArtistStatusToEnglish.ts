@@ -91,6 +91,12 @@ export class BackfillAndRestrictArtistStatusToEnglish20260911000001
       );
     }
 
+    // Column DEFAULTs still held the old PT-BR values ('em_negociacao',
+    // 'ativo') — any INSERT relying on them (no explicit status/
+    // status_cadastro) would violate the CHECK constraints added below.
+    await queryRunner.query(`ALTER TABLE "artists" ALTER COLUMN "status" SET DEFAULT 'in_negotiation'`);
+    await queryRunner.query(`ALTER TABLE "artists" ALTER COLUMN "status_cadastro" SET DEFAULT 'active'`);
+
     await queryRunner.query(`
       ALTER TABLE "artists"
       ADD CONSTRAINT "chk_artists_status"
@@ -106,6 +112,8 @@ export class BackfillAndRestrictArtistStatusToEnglish20260911000001
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`ALTER TABLE "artists" DROP CONSTRAINT IF EXISTS "chk_artists_status"`);
     await queryRunner.query(`ALTER TABLE "artists" DROP CONSTRAINT IF EXISTS "chk_artists_status_cadastro"`);
+    await queryRunner.query(`ALTER TABLE "artists" ALTER COLUMN "status" SET DEFAULT 'em_negociacao'`);
+    await queryRunner.query(`ALTER TABLE "artists" ALTER COLUMN "status_cadastro" SET DEFAULT 'ativo'`);
 
     for (const [pt, en] of this.statusPtToEn) {
       await queryRunner.query(

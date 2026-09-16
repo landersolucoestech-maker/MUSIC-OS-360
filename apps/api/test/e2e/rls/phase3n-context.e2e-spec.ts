@@ -15,13 +15,15 @@ import { WorkflowExecutionService } from '../../../src/core/workflow/workflow-ex
 import { WorkflowAutomationService } from '../../../src/core/workflow/workflow-automation.service';
 import { AutentiqueService } from '../../../src/modules/integrations/autentique/autentique.service';
 import { AssetLinkingHandler } from '../../../src/modules/assets/handlers/asset-linking.handler';
+import { TenantBootstrapResolver } from '../../../src/database/tenant-bootstrap.resolver';
 
 const TENANT_A = '10000000-0000-0000-0000-000000000002';
 
 function env(key: string): string {
+  // An explicitly-provided process env must always win over .env.development.
   const envPath = path.resolve(process.cwd(), '.env.development');
   const text = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
-  return (text.match(new RegExp(`^${key}=(.+)$`, 'm'))?.[1] ?? process.env[key] ?? '')
+  return (process.env[key] ?? text.match(new RegExp(`^${key}=(.+)$`, 'm'))?.[1] ?? '')
     .trim()
     .replace(/^["']|["']$/g, '');
 }
@@ -241,7 +243,7 @@ describe('FASE 3N - runtime tenant context (PostgreSQL real)', () => {
 
   it('resolve webhook Autentique por OWNER read-only e executa negócio com tenant context', async () => {
     await owner.query(
-      `INSERT INTO contracts (tenant_id, titulo, tipo, autentique_doc_id)
+      `INSERT INTO contracts (tenant_id, title, type, autentique_doc_id)
        VALUES ($1, $2, 'teste', $3)`,
       [TENANT_A, tag, `${tag}_doc`],
     );
@@ -264,6 +266,7 @@ describe('FASE 3N - runtime tenant context (PostgreSQL real)', () => {
       null as never,
       dbContext,
       owner,
+      new TenantBootstrapResolver(owner),
     );
 
     await service.handleWebhook({
@@ -283,7 +286,7 @@ describe('FASE 3N - runtime tenant context (PostgreSQL real)', () => {
       [`${tag}_doc`],
     );
     expect(rows).toEqual([
-      expect.objectContaining({ tenant_id: TENANT_A, status: 'assinado' }),
+      expect.objectContaining({ tenant_id: TENANT_A, status: 'signed' }),
     ]);
     expect(webhookEvents.emitTyped).toHaveBeenCalledWith(
       expect.any(String),

@@ -119,7 +119,7 @@ async function createFixture(qr: QueryRunner): Promise<Fixture> {
     [fixture.contactA, fixture.tenantA, fixture.contactB, fixture.tenantB],
   );
   await qr.query(
-    `INSERT INTO public.contracts (id, tenant_id, titulo, tipo)
+    `INSERT INTO public.contracts (id, tenant_id, title, type)
      VALUES ($1, $2, 'Contract A', 'test'),
             ($3, $4, 'Contract B', 'test')`,
     [fixture.contractA, fixture.tenantA, fixture.contractB, fixture.tenantB],

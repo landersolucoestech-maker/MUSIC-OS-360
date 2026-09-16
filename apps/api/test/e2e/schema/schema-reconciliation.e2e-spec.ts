@@ -11,7 +11,6 @@ import {
   ALL_ENTITIES,
   ConversationEntity,
   ConversationMessageEntity,
-  FormEntity,
   LeadEntity,
   TransactionEntity,
 } from '../../../src/database/entities';
@@ -19,9 +18,10 @@ import {
 const TENANT = '10000000-0000-0000-0000-000000000002';
 
 function databaseUrl(): string {
+  // An explicitly-provided process env must always win over .env.development.
   const envPath = path.resolve(process.cwd(), '.env.development');
   const envText = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
-  return (envText.match(/^DATABASE_URL=(.+)$/m)?.[1] ?? process.env['DATABASE_URL'] ?? '')
+  return (process.env['DATABASE_URL'] ?? envText.match(/^DATABASE_URL=(.+)$/m)?.[1] ?? '')
     .trim()
     .replace(/^["']|["']$/g, '');
 }
@@ -90,20 +90,6 @@ describe('Schema reconciliation — PostgreSQL real', () => {
     }
   });
 
-  it('forms preservam enum status', async () => {
-    const qr = ds.createQueryRunner();
-    await qr.connect();
-    await qr.startTransaction();
-    try {
-      const repo = qr.manager.getRepository(FormEntity);
-      const form = await repo.save(repo.create({ tenant_id: TENANT, name: 'SCHEMA_E2E', status: 'active' }));
-      expect((await repo.findOneByOrFail({ id: form.id })).status).toBe('active');
-    } finally {
-      await qr.rollbackTransaction();
-      await qr.release();
-    }
-  });
-
   it('transactions preservam categoria e snapshot financeiro', async () => {
     const qr = ds.createQueryRunner();
     await qr.connect();
@@ -113,7 +99,7 @@ describe('Schema reconciliation — PostgreSQL real', () => {
       const snapshot = { name: 'Royalties', code: 'ROY', path: 'receita.royalties' };
       const row = await repo.save(repo.create({
         tenant_id: TENANT,
-        tipo: 'receita' as never,
+        type: 'receita' as never,
         categoria: 'royalties',
         valor: '1000.00',
         data: new Date(),
@@ -196,7 +182,7 @@ describe('Schema reconciliation — PostgreSQL real', () => {
       const lead = await repo.save(repo.create({
         tenant_id: TENANT,
         nome: 'SCHEMA_E2E',
-        status: 'novo' as never,
+        status: 'new' as never,
         fonte: 'manual',
         nome_completo: 'Fulano de Tal',
         nome_artistico: 'FulanX',

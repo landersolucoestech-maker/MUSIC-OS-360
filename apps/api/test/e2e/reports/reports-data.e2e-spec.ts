@@ -67,11 +67,12 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
   let commit: ImportCommitService;
 
   beforeAll(async () => {
+    // An explicitly-provided process env must always win over .env.development.
     const envPath = path.resolve(process.cwd(), '.env.development');
     const envText = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
     const url = (
-      envText.match(/^DATABASE_URL=(.+)$/m)?.[1] ??
       process.env['DATABASE_URL'] ??
+      envText.match(/^DATABASE_URL=(.+)$/m)?.[1] ??
       ''
     ).trim().replace(/^["']|["']$/g, '');
 
@@ -362,12 +363,12 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
         `INSERT INTO leads
            (id, tenant_id, nome, status, cidade, tipo_servico, origem_lead, tags)
          VALUES
-           (gen_random_uuid(), $1, $2, 'novo', 'São Paulo', 'distribuicao', 'indicacao', ARRAY['vip']::text[])`,
+           (gen_random_uuid(), $1, $2, 'new', 'São Paulo', 'distribuicao', 'indicacao', ARRAY['vip']::text[])`,
         [TENANT_A, `${LEAD_TAG}_A`],
       );
       await ds.query(
         `INSERT INTO leads (id, tenant_id, nome, status)
-         VALUES (gen_random_uuid(), $1, $2, 'novo')`,
+         VALUES (gen_random_uuid(), $1, $2, 'new')`,
         [TENANT_B, `${LEAD_TAG}_B`],
       );
     });

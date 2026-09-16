@@ -62,6 +62,11 @@ export class BackfillAndRestrictEmployeeStatusToEnglish20260910000024
       );
     }
 
+    // Column DEFAULT still held the old PT-BR value ('ativo') -- any INSERT
+    // relying on it (no explicit status) would violate the CHECK constraint
+    // added below.
+    await queryRunner.query(`ALTER TABLE "employees" ALTER COLUMN "status" SET DEFAULT 'active'`);
+
     await queryRunner.query(`
       ALTER TABLE "employees"
       ADD CONSTRAINT "chk_employees_status"
@@ -74,6 +79,7 @@ export class BackfillAndRestrictEmployeeStatusToEnglish20260910000024
       ALTER TABLE "employees"
       DROP CONSTRAINT IF EXISTS "chk_employees_status"
     `);
+    await queryRunner.query(`ALTER TABLE "employees" ALTER COLUMN "status" SET DEFAULT 'ativo'`);
 
     for (const [pt, en] of this.ptToEn) {
       await queryRunner.query(

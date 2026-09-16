@@ -28,9 +28,10 @@ const TENANT_A = '10000000-0000-0000-0000-000000000002';
 const TENANT_B = 'fb6f3d4f-6161-4b55-8e4f-b4443c509b7c';
 
 function readEnv(key: string): string {
+  // An explicitly-provided process env must always win over .env.development.
   const envPath = path.resolve(process.cwd(), '.env.development');
   const txt = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
-  return (txt.match(new RegExp(`^${key}=(.+)$`, 'm'))?.[1] ?? process.env[key] ?? '')
+  return (process.env[key] ?? txt.match(new RegExp(`^${key}=(.+)$`, 'm'))?.[1] ?? '')
     .trim().replace(/^["']|["']$/g, '');
 }
 
@@ -144,8 +145,8 @@ interface TableCfg {
 
 const SUBLOTE_A: TableCfg[] = [
   { table: 'inventory_items', extra: () => ({ nome: 'RLS_TEST' }) },
-  { table: 'licenses',        extra: () => ({ titulo: 'RLS_TEST' }) },
-  { table: 'financial_rules', extra: () => ({ nome: 'RLS_TEST', tipo: 'receita' }) },
+  { table: 'licenses',        extra: () => ({ title: 'RLS_TEST' }) },
+  { table: 'financial_rules', extra: () => ({ nome: 'RLS_TEST', type: 'receita' }) },
 ];
 const SUBLOTE_B: TableCfg[] = [
   { table: 'assets',           extra: () => ({ name: 'RLS_TEST', source: 'upload' }) },
@@ -243,7 +244,8 @@ const SUBLOTE_SKILL_WORKFLOW_EXECUTIONS: TableCfg[] = [
 // Mesma policy uniforme aplicada às 21; aqui validamos o comportamento.
 const SUBLOTE_HARMONIZED_3VA: TableCfg[] = [
   { table: 'conversations',    extra: () => ({}) },                                  // FORCE-RLS
-  { table: 'forms',            extra: () => ({ name: 'RLS_TEST' }) },                // FORCE-RLS
+  // 'forms' removed: table dropped by DropGenericFormsModule20260822000005
+  // (deliberate product decision — the generic forms module was retired).
   { table: 'marketing_assets', extra: () => ({ title: 'RLS_TEST', asset_type: 'COVER' }) },
 ];
 
@@ -433,12 +435,12 @@ describe('RLS isolation harness (FASE 3B) — PostgreSQL real', () => {
 
     const insRelease = async (tenantId: string) => {
       const id = randomUUID();
-      await owner.query(`INSERT INTO "releases" (id, tenant_id, titulo) VALUES ($1,$2,'RW_REL')`, [id, tenantId]);
+      await owner.query(`INSERT INTO "releases" (id, tenant_id, title) VALUES ($1,$2,'RW_REL')`, [id, tenantId]);
       return id;
     };
     const insWork = async (tenantId: string) => {
       const id = randomUUID();
-      await owner.query(`INSERT INTO "works" (id, tenant_id, titulo, tipo) VALUES ($1,$2,'RW_WORK','single')`, [id, tenantId]);
+      await owner.query(`INSERT INTO "works" (id, tenant_id, title, type) VALUES ($1,$2,'RW_WORK','single')`, [id, tenantId]);
       return id;
     };
     const cnt = async (qr: QueryRunner, rel: string, wrk: string): Promise<number> =>

@@ -80,6 +80,11 @@ export class BackfillAndRestrictLeadStatusToEnglish20260910000016
       );
     }
 
+    // Column DEFAULT still held the old PT-BR value ('novo') -- any INSERT
+    // relying on it (no explicit status) would violate the CHECK constraint
+    // added below.
+    await queryRunner.query(`ALTER TABLE "leads" ALTER COLUMN "status" SET DEFAULT 'new'`);
+
     await queryRunner.query(`
       ALTER TABLE "leads"
       ADD CONSTRAINT "chk_leads_status"
@@ -92,6 +97,7 @@ export class BackfillAndRestrictLeadStatusToEnglish20260910000016
       ALTER TABLE "leads"
       DROP CONSTRAINT IF EXISTS "chk_leads_status"
     `);
+    await queryRunner.query(`ALTER TABLE "leads" ALTER COLUMN "status" SET DEFAULT 'novo'`);
 
     for (const [pt, en] of this.ptToEn) {
       await queryRunner.query(

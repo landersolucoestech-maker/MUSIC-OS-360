@@ -71,6 +71,11 @@ export class BackfillAndRestrictInvoiceStatusToEnglish20260910000015
       );
     }
 
+    // Column DEFAULT still held the old PT-BR value ('pendente') -- any INSERT
+    // relying on it (no explicit status) would violate the CHECK constraint
+    // added below.
+    await queryRunner.query(`ALTER TABLE "invoices" ALTER COLUMN "status" SET DEFAULT 'pending'`);
+
     await queryRunner.query(`
       ALTER TABLE "invoices"
       ADD CONSTRAINT "chk_invoices_status"
@@ -83,6 +88,7 @@ export class BackfillAndRestrictInvoiceStatusToEnglish20260910000015
       ALTER TABLE "invoices"
       DROP CONSTRAINT IF EXISTS "chk_invoices_status"
     `);
+    await queryRunner.query(`ALTER TABLE "invoices" ALTER COLUMN "status" SET DEFAULT 'pendente'`);
 
     for (const [pt, en] of this.ptToEn) {
       await queryRunner.query(

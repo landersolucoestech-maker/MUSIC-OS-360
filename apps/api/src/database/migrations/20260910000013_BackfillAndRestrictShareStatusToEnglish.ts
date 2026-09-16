@@ -76,6 +76,11 @@ export class BackfillAndRestrictShareStatusToEnglish20260910000013
       );
     }
 
+    // Column DEFAULT still held the old PT-BR value ('ativo') -- any INSERT
+    // relying on it (no explicit status) would violate the CHECK constraint
+    // added below.
+    await queryRunner.query(`ALTER TABLE "shares" ALTER COLUMN "status" SET DEFAULT 'active'`);
+
     await queryRunner.query(`
       ALTER TABLE "shares"
       ADD CONSTRAINT "chk_shares_status"
@@ -88,6 +93,7 @@ export class BackfillAndRestrictShareStatusToEnglish20260910000013
       ALTER TABLE "shares"
       DROP CONSTRAINT IF EXISTS "chk_shares_status"
     `);
+    await queryRunner.query(`ALTER TABLE "shares" ALTER COLUMN "status" SET DEFAULT 'ativo'`);
 
     for (const [pt, en] of this.ptToEn) {
       await queryRunner.query(

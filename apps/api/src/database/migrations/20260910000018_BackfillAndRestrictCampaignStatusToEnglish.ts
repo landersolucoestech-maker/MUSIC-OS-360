@@ -69,6 +69,11 @@ export class BackfillAndRestrictCampaignStatusToEnglish20260910000018
       );
     }
 
+    // Column DEFAULT still held the old PT-BR value ('rascunho') -- any INSERT
+    // relying on it (no explicit status) would violate the CHECK constraint
+    // added below.
+    await queryRunner.query(`ALTER TABLE "campaigns" ALTER COLUMN "status" SET DEFAULT 'draft'`);
+
     await queryRunner.query(`
       ALTER TABLE "campaigns"
       ADD CONSTRAINT "chk_campaigns_status"
@@ -81,6 +86,7 @@ export class BackfillAndRestrictCampaignStatusToEnglish20260910000018
       ALTER TABLE "campaigns"
       DROP CONSTRAINT IF EXISTS "chk_campaigns_status"
     `);
+    await queryRunner.query(`ALTER TABLE "campaigns" ALTER COLUMN "status" SET DEFAULT 'rascunho'`);
 
     for (const [pt, en] of this.ptToEn) {
       await queryRunner.query(

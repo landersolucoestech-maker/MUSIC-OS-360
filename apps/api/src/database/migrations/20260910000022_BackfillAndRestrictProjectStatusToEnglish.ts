@@ -69,6 +69,11 @@ export class BackfillAndRestrictProjectStatusToEnglish20260910000022
       );
     }
 
+    // Column DEFAULT still held the old PT-BR value ('planejamento') -- any INSERT
+    // relying on it (no explicit status) would violate the CHECK constraint
+    // added below.
+    await queryRunner.query(`ALTER TABLE "projects" ALTER COLUMN "status" SET DEFAULT 'planning'`);
+
     await queryRunner.query(`
       ALTER TABLE "projects"
       ADD CONSTRAINT "chk_projects_status"
@@ -81,6 +86,7 @@ export class BackfillAndRestrictProjectStatusToEnglish20260910000022
       ALTER TABLE "projects"
       DROP CONSTRAINT IF EXISTS "chk_projects_status"
     `);
+    await queryRunner.query(`ALTER TABLE "projects" ALTER COLUMN "status" SET DEFAULT 'planejamento'`);
 
     for (const [pt, en] of this.ptToEn) {
       await queryRunner.query(

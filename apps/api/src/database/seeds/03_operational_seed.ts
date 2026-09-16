@@ -64,7 +64,7 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
   const artistId = '10000000-0000-0000-0000-000000000010';
   await ds.query(`
     INSERT INTO artists (id, tenant_id, nome_artistico, nome_civil, status, genero_musical, created_by)
-    VALUES ($1, $2, 'MC Demo Artist', 'Jose da Silva', 'ativo', 'Funk', $3)
+    VALUES ($1, $2, 'MC Demo Artist', 'Jose da Silva', 'active', 'Funk', $3)
     ON CONFLICT (id) DO NOTHING
   `, [artistId, tenantId, effectiveAdminSub]);
 

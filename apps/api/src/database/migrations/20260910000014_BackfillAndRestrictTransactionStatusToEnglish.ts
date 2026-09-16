@@ -77,6 +77,11 @@ export class BackfillAndRestrictTransactionStatusToEnglish20260910000014
       );
     }
 
+    // Column DEFAULT still held the old PT-BR value ('pendente') -- any INSERT
+    // relying on it (no explicit status) would violate the CHECK constraint
+    // added below.
+    await queryRunner.query(`ALTER TABLE "transactions" ALTER COLUMN "status" SET DEFAULT 'pending'`);
+
     await queryRunner.query(`
       ALTER TABLE "transactions"
       ADD CONSTRAINT "chk_transactions_status"
@@ -89,6 +94,7 @@ export class BackfillAndRestrictTransactionStatusToEnglish20260910000014
       ALTER TABLE "transactions"
       DROP CONSTRAINT IF EXISTS "chk_transactions_status"
     `);
+    await queryRunner.query(`ALTER TABLE "transactions" ALTER COLUMN "status" SET DEFAULT 'pendente'`);
 
     for (const [pt, en] of this.ptToEn) {
       await queryRunner.query(

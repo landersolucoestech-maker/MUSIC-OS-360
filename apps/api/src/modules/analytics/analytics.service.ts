@@ -131,7 +131,7 @@ export class AnalyticsService {
         [tenantId],
       ),
       this.ds.query<[{ cnt: string }]>(
-        `SELECT COUNT(*)::int AS cnt FROM contracts WHERE tenant_id = $1 AND status IN ('vigente','ativo','assinado') AND deleted_at IS NULL`,
+        `SELECT COUNT(*)::int AS cnt FROM contracts WHERE tenant_id = $1 AND status IN ('in_force','active','signed') AND deleted_at IS NULL`,
         [tenantId],
       ),
       this.ds.query<[{ cnt: string }]>(

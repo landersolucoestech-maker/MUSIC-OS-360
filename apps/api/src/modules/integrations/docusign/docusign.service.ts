@@ -317,7 +317,7 @@ export class DocuSignService {
         .createQueryBuilder()
         .update(ContractEntity)
         .set({
-          status:           'aguardando_assinatura',
+          status:           'awaiting_signature',
           signing_platform: PROVIDER,
           updated_at:       new Date(),
           metadata: () => `metadata || :dsMeta::jsonb`,
@@ -476,7 +476,7 @@ export class DocuSignService {
       .createQueryBuilder()
       .update(ContractEntity)
       .set({
-        status:     'assinado',
+        status:     'signed',
         updated_at: new Date(),
         metadata: () => `metadata || :dsMeta::jsonb`,
       } as any)
