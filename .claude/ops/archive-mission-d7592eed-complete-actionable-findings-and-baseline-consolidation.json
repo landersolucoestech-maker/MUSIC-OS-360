@@ -1,0 +1,270 @@
+{
+  "version": 2,
+  "missionId": "mission-d7592eed",
+  "missionName": "complete-actionable-findings-and-baseline-consolidation",
+  "status": "active",
+  "executionMode": "STRICT_MULTI_AGENT",
+  "createdAt": "2026-09-15T21:37:19.971Z",
+  "updatedAt": "2026-09-16T00:35:59.692Z",
+  "impact": {
+    "operatorDeclared": null,
+    "runtimeDetected": null,
+    "effective": null
+  },
+  "requirements": [
+    {
+      "id": "req-ba153f70",
+      "text": "Phase A: RBAC shadow-mode disclosure -- UI must never present unenforced permission changes as effectively enforced",
+      "nonRequirements": [
+        "No change to actual RBAC authority mode unless repository evidence proves that is intended"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-2d25758b",
+          "text": "Backend exposes real RBAC_PERSISTED_AUTHORITY mode via GET /rbac/authority-mode; frontend Papéis e Permissões UI discloses non-enforced state; enforced state (production/staging, RBAC_PERSISTED_AUTHORITY=ON) shows no banner",
+          "evidenceIds": [
+            "evid-ba78b27a",
+            "evid-e8a01a06",
+            "evid-c5309484",
+            "evid-a08b6234"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T21:37:27.136Z"
+    },
+    {
+      "id": "req-d687496c",
+      "text": "Phase A: marketing fabricated KPIs must be classified and never presented as measured performance without qualification",
+      "nonRequirements": [
+        "No invented real data source"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-8b306356",
+          "text": "campaign.metrics carries isEstimated end-to-end (write at creation, read on fetch); Campanhas.tsx discloses estimated status in the KPI strip caption and per-campaign detail view instead of presenting fabricated numbers as measured; full web typecheck and marketing-module suite pass",
+          "evidenceIds": [
+            "evid-785e5866",
+            "evid-db607eb8",
+            "evid-c8631ed7"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T21:37:27.441Z"
+    },
+    {
+      "id": "req-b460d2dd",
+      "text": "Phase A: decorative admin/settings controls must not claim success without a durable mutation",
+      "nonRequirements": [
+        "No invented backend contract where none exists"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-834975df",
+          "text": "AdminSettings.tsx's SaveBar (used by Geral/Email/Seguranca/Notificacoes tabs) no longer claims success without a durable mutation -- disabled with honest copy instead of a fake success toast; full web typecheck and admin-module suite pass",
+          "evidenceIds": [
+            "evid-6834ca6c",
+            "evid-568e1c7c",
+            "evid-d423973c"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T21:37:27.645Z"
+    },
+    {
+      "id": "req-a6845709",
+      "text": "Phase A: workspace module stub tabs/routes must be classified and misleading navigation/fake metrics corrected where safely provable",
+      "nonRequirements": [
+        "No new product modules built without spec"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-6fde68d6",
+          "text": "Workspace module: overview tab route unaffected; the 5 undestined tabs (releases/campaigns/financial/team/activity) render an honest placeholder instead of a blank Outlet; ArtistOverview's hardcoded fake counts (8/3) replaced with honest Indisponivel; full web typecheck and new router-integration test pass",
+          "evidenceIds": [
+            "evid-b36b37a9",
+            "evid-6dc9c7a0",
+            "evid-78a49e0e"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T21:37:27.885Z"
+    },
+    {
+      "id": "req-9a1dc0ec",
+      "text": "Phase B: forensically classify and consolidate all 60 protected preexisting dirty paths into functional clusters with proven dispositions",
+      "nonRequirements": [
+        "No git reset/clean/add-all; no force push; no discarding unknown hunks"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-75912f56",
+          "text": "Cluster 1 (21 API controllers): uniform Actualizar->Atualizar PT-BR Swagger-doc typo fix, zero residual, zero behavior change, api typecheck clean",
+          "evidenceIds": [
+            "evid-29e10d47",
+            "evid-1193a3d5"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-039e1067",
+          "text": "Cluster 2 (5 remaining backend files): completes the same Actualizar->Atualizar PT-BR typo sweep in scripts/core/database/queues/spec files; repo-wide residual search confirms zero remaining occurrences anywhere in apps/api, apps/web, packages",
+          "evidenceIds": [
+            "evid-d05ba39c",
+            "evid-2e49513b"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-9e7c9200",
+          "text": "Cluster 3 (14 web files): completes the Actualizar->Atualizar and Equipa->Equipe PT-BR sweep across web toasts/comments/governance-flow metadata/webhook-contract docs; repo-wide residual search (apps+packages+docs) confirms zero remaining occurrences; web typecheck and relevant existing test pass",
+          "evidenceIds": [
+            "evid-8c47ca35",
+            "evid-3f5ee226"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-c88787ed",
+          "text": "Cluster 4 (20 docs files, including docs/GOVERNANCE.md): completes the PT-BR normalization sweep in markdown prose; whole-repo residual search (git grep, no path scoping) confirms the only remaining 'actualiz' occurrences anywhere are this mission's own .claude/ops/state.json bookkeeping text quoting the fix description, not real content",
+          "evidenceIds": [
+            "evid-9f89d22b",
+            "evid-32e28b7c"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-3918aa23",
+          "text": "Final regression: full backend (33 suites/440 tests across rbac/guards/reports/tenant-isolation) and web (24 files/137 tests across settings/marketing/admin/contracts/integrations/routes/auth) pass at final HEAD; both apps typecheck clean",
+          "evidenceIds": [
+            "evid-78224fd3",
+            "evid-18aeee88",
+            "evid-600ae32a",
+            "evid-91347372"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T21:37:28.104Z"
+    }
+  ],
+  "findings": [
+    {
+      "id": "find-1a8f3c15",
+      "category": "F",
+      "severity": "HIGH",
+      "file": "apps/web/src/modules/settings/pages/Configuracoes.tsx",
+      "line": null,
+      "summary": "CODEBASE_MAP Gotcha #17: the fully backend-wired 'Papeis e Permissoes' granular permission editor gave zero indication that RBAC_PERSISTED_AUTHORITY can be SHADOW (observe-only). Evidence gathered this pass: .env.production and .env.staging both explicitly set RBAC_PERSISTED_AUTHORITY=ON (enforcement IS live in real deployed environments); only unset/local-dev environments default to the code-level SHADOW fallback. No API endpoint previously exposed this mode to the frontend at all.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T23:54:16.188Z",
+      "justification": "Fixed: new GET /rbac/authority-mode (read-only, RequireRole owner/admin, matches route-level guard already on the whole controller) exposes {mode, enforced}; useRoles() fetches it; Configuracoes.tsx renders a disclosure banner in the Papeis e Permissoes card only when enforced=false. Did NOT change the actual authority mode. Backend unit tests (6) + frontend guard test (3) + both apps' typecheck pass.",
+      "resolvedAt": "2026-09-15T23:54:21.982Z"
+    },
+    {
+      "id": "find-540f3f88",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/marketing/pages/Campanhas.tsx",
+      "line": null,
+      "summary": "CODEBASE_MAP Gotcha #16: estimateCampaignResults() (budget*constant) is persisted into campaign.metrics and rendered as unqualified real KPIs (Cliques/Impressoes/Conversoes/CTR) once a campaign is saved -- publish() never actually calls any ad-platform integration for any provider, so this is 100% of campaigns today, not an edge case.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-16T00:05:50.038Z",
+      "justification": "Fixed: MetricSnapshot.isEstimated threaded end-to-end (write in campaign-builder.helpers.ts, read in marketing.service.ts's campaignFromApi, absent-defaults-to-true for pre-existing campaigns). Campanhas.tsx's KPI strip caption and campaign detail view now disclose estimated status instead of presenting fabricated numbers as measured. central-analitica.data.ts/Metricas.tsx's separate aggregation surface, which also reads campaign.metrics, is NOT yet updated to consume the new flag -- deferred as its own finding since it mixes campaign ad-metrics with genuinely real streaming/artist analytics and needs careful tracing to avoid mislabeling real data.",
+      "resolvedAt": "2026-09-16T00:05:55.542Z"
+    },
+    {
+      "id": "find-e595d650",
+      "category": "F",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/marketing/analytics/central-analitica.data.ts",
+      "line": null,
+      "summary": "buildCentralAnaliticaModel aggregates campaign.metrics (reach/impressions/clicks/conversions) into executiveKpis/breakdown rows labeled 'Alcance total'/'Impressoes'/'Cliques' without consuming the isEstimated flag added this pass -- same disclosure gap as Campanhas.tsx, not yet fixed here because this surface mixes fabricated campaign ad-metrics with genuinely real streaming/artist data (its own doc comment: 'Metrics not supplied by a live integration remain explicitly unavailable') and needs careful tracing to avoid mislabeling real data as estimated.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-16T00:06:00.843Z",
+      "justification": "Deferred: real fix requires tracing which fields in buildCentralAnaliticaModel are campaign-ad-metrics-derived (now labelable via isEstimated) vs genuinely real streaming/artist data, to avoid mislabeling real data. The isEstimated flag added this pass makes that follow-up tractable.",
+      "resolvedAt": "2026-09-16T00:06:04.971Z"
+    },
+    {
+      "id": "find-8d95fcf2",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/admin/pages/AdminSettings.tsx",
+      "line": null,
+      "summary": "CODEBASE_MAP Gotcha #19: Geral/Email/Seguranca/Notificacoes tabs' inputs are uncontrolled (defaultValue only, no onChange -- React never sees edits) and the shared SaveBar button fired toast.success('Configuracoes salvas') unconditionally, with zero API call and no state even read. No backend contract exists for platform-wide settings (name/URL/timezone/SMTP/trial days/etc.).",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-16T00:10:36.911Z",
+      "justification": "Fixed: SaveBar's Save button is now disabled with an explicit 'esta secao ainda nao persiste alteracoes' note and a tooltip explaining why, instead of a lying success toast. Did not invent a platform-settings backend (no contract exists; that's a real feature needing product spec). 3 new render-based tests (real AdminSettings component, real click) prove the button is disabled and fires neither toast.success nor an API call; full admin-module suite (4 files, 18 tests) and web typecheck pass.",
+      "resolvedAt": "2026-09-16T00:10:42.100Z"
+    },
+    {
+      "id": "find-fd72a3c3",
+      "category": "F",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/admin/pages/AdminSettings.tsx",
+      "line": null,
+      "summary": "TabWebhooks ('Novo Webhook', 'Rotacionar') and TabChavesApi ('Nova Chave API') buttons have no onClick handler at all -- inert rather than lying (API_KEYS is honestly hardcoded empty with a code comment explaining why), a different and lower-severity class of defect than the SaveBar false-success toast fixed this pass. Not fixed here.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-16T00:10:47.184Z",
+      "justification": "Lower severity than the false-success SaveBar pattern (inert, not deceptive) and needs a real webhooks/API-keys backend contract to wire up -- a feature, not a truthfulness fix. Deferred.",
+      "resolvedAt": "2026-09-16T00:10:51.369Z"
+    },
+    {
+      "id": "find-732b651f",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/app/routes/workspace.routes.tsx",
+      "line": null,
+      "summary": "CODEBASE_MAP Gotcha #26: the workspace module is largely a stub -- only 1 of 6 nav tabs (overview) had a registered route (the other 5 -- releases/campaigns/financial/team/activity -- fell through to nothing), and the one implemented tab (ArtistOverview) hardcoded fake metrics (Lancamentos: 8, Campanhas: 3 as literal JSX numbers, no data source). The route itself is currently unreachable from any nav link in the app (not linked anywhere), lowering current user-facing risk.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-16T00:19:12.131Z",
+      "justification": "Fixed the truthfulness gaps without building the missing feature: (1) added a wildcard child route rendering an honest 'Em construcao' placeholder (EmptyState) for the 5 undestined tabs instead of a blank Outlet; (2) replaced ArtistOverview's hardcoded fake Lancamentos/Campanhas counts with honest Indisponivel, matching the codebase's established AdminDashboard pattern for unavailable KPIs -- no new releases/campaigns-count query was invented. Did not build the 5 missing tab pages (needs product spec) or link the module into app navigation (out of scope -- it's currently unreachable, which is why this stayed MEDIUM not HIGH severity). 6 new tests (real router-integration render, not just source-grep) cover overview-still-works plus all 5 placeholder paths; full web typecheck passes.",
+      "resolvedAt": "2026-09-16T00:19:20.062Z"
+    }
+  ],
+  "evidenceIds": [
+    "evid-ba78b27a",
+    "evid-e8a01a06",
+    "evid-c5309484",
+    "evid-785e5866",
+    "evid-db607eb8",
+    "evid-6834ca6c",
+    "evid-568e1c7c",
+    "evid-b36b37a9",
+    "evid-6dc9c7a0",
+    "evid-29e10d47",
+    "evid-d05ba39c",
+    "evid-8c47ca35",
+    "evid-9f89d22b",
+    "evid-78224fd3",
+    "evid-18aeee88",
+    "evid-600ae32a",
+    "evid-91347372",
+    "evid-a08b6234",
+    "evid-c8631ed7",
+    "evid-d423973c",
+    "evid-78a49e0e",
+    "evid-1193a3d5",
+    "evid-2e49513b",
+    "evid-3f5ee226",
+    "evid-32e28b7c"
+  ],
+  "checkpointIds": [],
+  "touchedFiles": [],
+  "blockers": []
+}
