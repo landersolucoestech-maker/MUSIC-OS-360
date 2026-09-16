@@ -47,13 +47,18 @@ export default function ArtistOverview() {
             <CardDescription>Resumo inicial</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
+            {/* CODEBASE_MAP Gotcha #26: "Lançamentos"/"Campanhas" were literal hardcoded
+                JSX numbers (8/3) with no data source at all -- useWorkspace() only ever
+                fetched the entity + activity log, never a releases/campaigns count.
+                Honest "Indisponível" instead of a fabricated number, matching the
+                pattern already established in AdminDashboard for unavailable KPIs. */}
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Lançamentos</span>
-              <span className="font-semibold">8</span>
+              <span className="font-semibold text-muted-foreground">Indisponível</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Campanhas</span>
-              <span className="font-semibold">3</span>
+              <span className="font-semibold text-muted-foreground">Indisponível</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Atividades</span>
