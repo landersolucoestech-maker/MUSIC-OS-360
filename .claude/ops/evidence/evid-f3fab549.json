@@ -1,0 +1,15 @@
+{
+  "id": "evid-f3fab549",
+  "createdAt": "2026-09-16T02:08:49.054Z",
+  "type": "COMMAND",
+  "label": "node node_modules/typescript/bin/tsc -p apps/api/tsconfig.build.json --noEmit",
+  "command": "node node_modules/typescript/bin/tsc -p apps/api/tsconfig.build.json --noEmit",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "089856d3c0783f464bac5745758c05f1573772b84704220c79ef6f64193f1bc6",
+  "fingerprintStatus": "BOUND",
+  "head": "9eefafa894745a716cf16cf9927918fafc425323",
+  "durationMs": 9183
+}

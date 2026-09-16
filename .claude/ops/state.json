@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-16T01:45:41.260Z",
+  "updatedAt": "2026-09-16T02:11:09.730Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -24,7 +24,8 @@
           "text": "verify-xlsx-only.mjs passes cleanly with zero unexplained residuals; every one of the original 37 hits has a proven disposition (documented scanner-scope exclusion for .claude/** and docs/backend-v2/**, or real content fix for apps/api/src and docs/product-tasks/*.md)",
           "evidenceIds": [
             "evid-cd3aa701",
-            "evid-8c8b88da"
+            "evid-8c8b88da",
+            "evid-25d61758"
           ],
           "status": "closed"
         }
@@ -45,7 +46,10 @@
             "evid-8f154c41",
             "evid-13ac325f",
             "evid-d3cc3bcd",
-            "evid-1802dc3b"
+            "evid-1802dc3b",
+            "evid-e6622a2e",
+            "evid-f3fab549",
+            "evid-8313fd24"
           ],
           "status": "closed"
         }
@@ -63,15 +67,52 @@
           "id": "ac-860646d1",
           "text": "sk_test_placeholder literal fully removed from both flagged files, replaced with non-secret-shaped prose; local gitleaks (zricethezav/gitleaks:v8.24.3, same version CI uses) scan of the exact commit range reports zero leaks",
           "evidenceIds": [
-            "evid-7515337f"
+            "evid-7515337f",
+            "evid-6d5ed298"
           ],
           "status": "closed"
         }
       ],
       "createdAt": "2026-09-16T01:10:21.855Z"
+    },
+    {
+      "id": "req-f80d5fab",
+      "text": "Fix the root cause of the CI TypeCheck/Build failure discovered when pushing Cluster A/B/C: apps/api/package.json's file:-protocol dependency on @music-os-360/types and @music-os-360/ai-skills breaks turbo's automatic ^build dependency-graph inference, racing the build order",
+      "nonRequirements": [
+        "No turbo.json config change; the dependsOn declaration was already correct -- only the package.json specifier protocol was wrong"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-562b6825",
+          "text": "apps/api/package.json declares @music-os-360/types and @music-os-360/ai-skills via workspace:* (matching apps/web's already-correct convention); turbo --dry=json proves api#build/typecheck/test now depend on types#build+ai-skills#build (were [] before); full cold-cache pnpm turbo build typecheck passes (12/12); both apps typecheck clean",
+          "evidenceIds": [
+            "evid-17200ad5",
+            "evid-6521f942",
+            "evid-07e9e3af",
+            "evid-a0a75ccf"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-16T02:03:31.731Z"
     }
   ],
-  "findings": [],
+  "findings": [
+    {
+      "id": "find-60665efe",
+      "category": "L",
+      "severity": "HIGH",
+      "file": "apps/api/package.json",
+      "line": null,
+      "summary": "apps/api/package.json declared @music-os-360/types and @music-os-360/ai-skills via file:../../packages/X instead of workspace:* (apps/web already used the correct convention). Proven via 'pnpm turbo build --dry=json' before/after: api#build/typecheck/test's dependencies array was [] (empty) with file:, meaning turbo never serialized these packages' build order relative to apps/api at all -- a pure race, previously masked by turbo cache hits (once packages/types was cached from any prior run, its dist/ already existed on disk). This mission's pnpm-lock.yaml changes (Cluster B, dependency-advisory remediation) forced a full cache invalidation, which is what first exposed the race in CI: TypeCheck and Build jobs both failed nondeterministically with 'Cannot find module @music-os-360/types', unreproducible locally on a fast machine after the same cold-cache clear.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-16T02:04:47.304Z",
+      "justification": "Fixed: both dependencies switched to workspace:* in apps/api/package.json, pnpm-lock.yaml refreshed (resolved 'version' unchanged -- link:../../packages/X both before and after, only the specifier protocol differs). turbo --dry=json confirms api#build/typecheck/test now correctly depend on ai-skills#build+types#build. Full cold-cache 'pnpm turbo build typecheck' (12/12 tasks) and both apps' direct tsc typecheck pass.",
+      "resolvedAt": "2026-09-16T02:04:52.408Z"
+    }
+  ],
   "evidenceIds": [
     "evid-cd3aa701",
     "evid-8f154c41",
@@ -79,7 +120,16 @@
     "evid-d3cc3bcd",
     "evid-7515337f",
     "evid-8c8b88da",
-    "evid-1802dc3b"
+    "evid-1802dc3b",
+    "evid-17200ad5",
+    "evid-6521f942",
+    "evid-25d61758",
+    "evid-e6622a2e",
+    "evid-f3fab549",
+    "evid-8313fd24",
+    "evid-6d5ed298",
+    "evid-07e9e3af",
+    "evid-a0a75ccf"
   ],
   "checkpointIds": [],
   "touchedFiles": [],

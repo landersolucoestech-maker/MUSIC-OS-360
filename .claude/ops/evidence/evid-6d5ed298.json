@@ -1,0 +1,15 @@
+{
+  "id": "evid-6d5ed298",
+  "createdAt": "2026-09-16T02:10:08.821Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\run-gitleaks-check.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\run-gitleaks-check.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "gitleaks: no leaks found",
+  "stderrTail": "",
+  "workspaceFingerprint": "089856d3c0783f464bac5745758c05f1573772b84704220c79ef6f64193f1bc6",
+  "fingerprintStatus": "BOUND",
+  "head": "9eefafa894745a716cf16cf9927918fafc425323",
+  "durationMs": 3476
+}
