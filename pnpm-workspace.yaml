@@ -11,9 +11,15 @@ packages:
 # relocated the rest verbatim so they actually take effect again.
 overrides:
   "js-yaml@>=4.0.0 <4.3.0": ">=4.3.0"
-  "multer@<2.2.0": ">=2.2.0"
+  # advisory 1193790/1193791/1193792/1193793 (multer DoS/file-descriptor-leak/
+  # size-limit-bypass, fixed >=2.3.0) -- widened from the prior <2.2.0/>=2.2.0
+  # pin, which had stopped catching the currently-resolved 2.2.0 itself.
+  "multer@<2.3.0": ">=2.3.0"
   "ws@>=8.0.0 <8.21.0": ">=8.21.0"
-  "qs@>=6.11.1 <=6.15.1": ">=6.15.2"
+  # advisory 1158506/1158507 (qs array-limit bypass / DoS, fixed >=6.16.0) --
+  # widened from the prior <=6.15.1/>=6.15.2 pin, which had stopped catching
+  # the currently-resolved 6.15.3 itself.
+  "qs@>=6.11.1 <6.16.0": ">=6.16.0"
   "lodash@<=4.17.23": ">=4.18.0"
   "@opentelemetry/core@<2.8.0": ">=2.8.0"
   "protobufjs@<=7.6.4": ">=7.6.5"
@@ -24,3 +30,11 @@ overrides:
   "@nestjs/typeorm>uuid": ">=11.1.1"
   "socket.io-parser@>=4.0.0 <4.2.7": ">=4.2.7"
   "dompurify@<=3.4.12": "3.4.13"
+  # advisory 1158518/1193689/1193692/1193696/1193700/1193705/1193708/1193709/
+  # 1193712 (xmldom XML-injection/ReDoS/quadratic-time family, fixed >=0.8.15)
+  # -- transitive via mammoth (apps/web, used by ChatAttachment.tsx for .docx
+  # parsing); mammoth@1.12.0 pins an old xmldom directly.
+  "@xmldom/xmldom@<0.8.15": ">=0.8.15"
+  # advisory 1164786 (fflate infinite loop on malformed ZIP64, fixed >=0.4.9)
+  # -- transitive via posthog-js (apps/web analytics).
+  "fflate@<0.4.9": ">=0.4.9"

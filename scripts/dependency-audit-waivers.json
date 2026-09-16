@@ -61,16 +61,6 @@
       "closeCondition": "Migração dedicada para react-router 7.x, validada com suíte completa de rotas, antes de produção. Mitigação interina: auditoria de todo destino de <Link>/navigate() controlado por usuário."
     },
     {
-      "advisoryId": 1124270,
-      "package": "react-router-dom",
-      "severity": "moderate",
-      "reason": "CVE-2026-53668 (open redirect -> XSS). react-router-dom não recebe mais correções na linha 6.x — o fix só existe no pacote unificado react-router 7.x.",
-      "owner": "landersolucoestech@gmail.com",
-      "introduced": "2026-07-31",
-      "reviewBy": "2026-09-30",
-      "closeCondition": "Mesma condição do advisory 1124268."
-    },
-    {
       "advisoryId": 1124272,
       "package": "react-router",
       "severity": "moderate",
