@@ -50,7 +50,7 @@ export class NotificationsQueueService {
   }
 
   async enqueuePaymentFailed(tenantId: string, userId: string, plan: string): Promise<void> {
-    await this.enqueueUrgent({ tenantId, userId, title: 'Falha no pagamento da assinatura', body: `Plano: ${plan}. Actualize o método de pagamento.`, type: 'billing:payment_failed', entity: 'billing', metadata: { plan } });
+    await this.enqueueUrgent({ tenantId, userId, title: 'Falha no pagamento da assinatura', body: `Plano: ${plan}. Atualize o método de pagamento.`, type: 'billing:payment_failed', entity: 'billing', metadata: { plan } });
   }
 
   async enqueueAIJobCompleted(tenantId: string, userId: string, skill: string): Promise<void> {

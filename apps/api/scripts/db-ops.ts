@@ -28,7 +28,7 @@ async function migrate(): Promise<void> {
 
   const pending = await AppDataSource.showMigrations();
   if (!pending) {
-    console.log('[db:migrate] Nenhuma migration pendente. Schema está actualizado.\n');
+    console.log('[db:migrate] Nenhuma migration pendente. Schema está atualizado.\n');
     return;
   }
 

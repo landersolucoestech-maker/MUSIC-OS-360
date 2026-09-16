@@ -19,7 +19,7 @@ import type { DomainEvent } from './events.service';
 
 const EVENT_LABELS: Record<string, (p: Record<string, unknown>) => string> = {
   [DOMAIN_EVENTS.ARTIST_CREATED]: (p) => `Artista criado: ${p['nomeArtistico'] ?? ''}`,
-  [DOMAIN_EVENTS.ARTIST_UPDATED]: (p) => `Artista actualizado: ${p['nomeArtistico'] ?? ''}`,
+  [DOMAIN_EVENTS.ARTIST_UPDATED]: (p) => `Artista atualizado: ${p['nomeArtistico'] ?? ''}`,
   [DOMAIN_EVENTS.ARTIST_STATUS_CHANGED]: (p) => `Artista "${p['nomeArtistico'] ?? ''}" -> ${p['newStatus'] ?? ''}`,
   [DOMAIN_EVENTS.ARTIST_DELETED]: (p) => `Artista removido: ${p['nomeArtistico'] ?? ''}`,
   [DOMAIN_EVENTS.CONTRACT_CREATED]: (p) => `Contrato criado: ${p['title'] ?? ''}`,

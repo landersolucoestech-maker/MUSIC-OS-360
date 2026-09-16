@@ -116,7 +116,7 @@ describe('Tenant Isolation - ArtistsService', () => {
     await expect(service.findById(TENANT_B, artistOfA.id)).rejects.toThrow(NotFoundException);
   });
 
-  it('update() lanca NotFoundException ao actualizar artista de outro tenant', async () => {
+  it('update() lanca NotFoundException ao atualizar artista de outro tenant', async () => {
     const ds = makeDataSource(null);
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock(), makePlanLimitMock());
 

@@ -3,7 +3,7 @@
  *
  * Serviço NestJS que valida, no boot da aplicação, se existem migrations
  * pendentes. Em produção, o processo termina imediatamente se o schema não
- * estiver sincronizado — prevenindo deploys com schema desactualizado.
+ * estiver sincronizado — prevenindo deploys com schema desatualizado.
  *
  * Injectar no AppModule como provider para activar a verificação.
  */
