@@ -1,0 +1,15 @@
+{
+  "id": "evid-5c149abc",
+  "createdAt": "2026-09-16T05:08:17.966Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\verify-ci-yaml-build-step.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\verify-ci-yaml-build-step.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "Job db-verify-application-dev: build step present and correctly ordered ✓\nJob db-verify-realtime-external-dev: build step present and correctly ordered ✓\nCI workflow YAML: valid and both DB Verify DEV jobs correctly build workspace packages first.",
+  "stderrTail": "",
+  "workspaceFingerprint": "7fec4c771e7357224f057ac7dec353dbcf119ea213113884fd964a04ae5b6407",
+  "fingerprintStatus": "BOUND",
+  "head": "badfc6d1d8c84dc9b7a40e28d125c131b22aacea",
+  "durationMs": 115
+}

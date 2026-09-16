@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-16T02:11:09.730Z",
+  "updatedAt": "2026-09-16T05:13:40.972Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -25,7 +25,9 @@
           "evidenceIds": [
             "evid-cd3aa701",
             "evid-8c8b88da",
-            "evid-25d61758"
+            "evid-25d61758",
+            "evid-c97a6fc0",
+            "evid-3e7899c7"
           ],
           "status": "closed"
         }
@@ -49,7 +51,13 @@
             "evid-1802dc3b",
             "evid-e6622a2e",
             "evid-f3fab549",
-            "evid-8313fd24"
+            "evid-8313fd24",
+            "evid-7c01888a",
+            "evid-5e28060a",
+            "evid-51e26673",
+            "evid-a7fc32a2",
+            "evid-16c21df9",
+            "evid-6b7b9e83"
           ],
           "status": "closed"
         }
@@ -68,7 +76,9 @@
           "text": "sk_test_placeholder literal fully removed from both flagged files, replaced with non-secret-shaped prose; local gitleaks (zricethezav/gitleaks:v8.24.3, same version CI uses) scan of the exact commit range reports zero leaks",
           "evidenceIds": [
             "evid-7515337f",
-            "evid-6d5ed298"
+            "evid-6d5ed298",
+            "evid-1204321a",
+            "evid-bcd86f2b"
           ],
           "status": "closed"
         }
@@ -89,12 +99,55 @@
             "evid-17200ad5",
             "evid-6521f942",
             "evid-07e9e3af",
-            "evid-a0a75ccf"
+            "evid-a0a75ccf",
+            "evid-2f75335f",
+            "evid-6bb2f096",
+            "evid-04e5a2dd",
+            "evid-38182139"
           ],
           "status": "closed"
         }
       ],
       "createdAt": "2026-09-16T02:03:31.731Z"
+    },
+    {
+      "id": "req-a0e07ff8",
+      "text": "Investigate and fix newly-surfaced CI failures (Docker Build API, DB Verify Application Migrations DEV, DB Verify Fresh PostgreSQL) exposed by the Turborepo build-order fix reaching further into the pipeline than any recent CI run",
+      "nonRequirements": [
+        "No external/infrastructure classification without proof; no masking with retries or skips"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-cc1f4a4c",
+          "text": "bootstrap.cjs and package.json start script reference the actual tsc dist output path (dist/main.js, not the stale dist/apps/api/src/main.js); verified via local docker build + health-check smoke test returning 200",
+          "evidenceIds": [
+            "evid-5ea83f58",
+            "evid-7d9e2979",
+            "evid-13ac7113"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-aa96c0eb",
+          "text": "db-verify-application-dev and db-verify-realtime-external-dev CI jobs build workspace packages before invoking tsx scripts that import @music-os-360/types, matching the sibling db-verify-fresh-postgres job's pattern",
+          "evidenceIds": [
+            "evid-0aea1578",
+            "evid-5c149abc",
+            "evid-2ba5b520"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-e2548839",
+          "text": "verify-tenant-isolation.ts no longer inserts into the dropped artists.tipo column (removed by migration 20260821000002_DropArtistTipoColumn); verified via local fresh-Postgres run: migrations applied, 7/7 tenant isolation tests pass",
+          "evidenceIds": [
+            "evid-716caa65",
+            "evid-f2835344"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-16T05:02:47.165Z"
     }
   ],
   "findings": [
@@ -129,7 +182,29 @@
     "evid-8313fd24",
     "evid-6d5ed298",
     "evid-07e9e3af",
-    "evid-a0a75ccf"
+    "evid-a0a75ccf",
+    "evid-5ea83f58",
+    "evid-7d9e2979",
+    "evid-716caa65",
+    "evid-0aea1578",
+    "evid-5c149abc",
+    "evid-2f75335f",
+    "evid-c97a6fc0",
+    "evid-7c01888a",
+    "evid-5e28060a",
+    "evid-51e26673",
+    "evid-6bb2f096",
+    "evid-1204321a",
+    "evid-3e7899c7",
+    "evid-a7fc32a2",
+    "evid-16c21df9",
+    "evid-6b7b9e83",
+    "evid-bcd86f2b",
+    "evid-04e5a2dd",
+    "evid-38182139",
+    "evid-2ba5b520",
+    "evid-13ac7113",
+    "evid-f2835344"
   ],
   "checkpointIds": [],
   "touchedFiles": [],

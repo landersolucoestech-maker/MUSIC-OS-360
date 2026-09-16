@@ -47,3 +47,9 @@
 {"name":"gate-run","at":"2026-09-16T02:07:55.315Z","gate":"completion","status":"BLOCKED","durationMs":557,"reasonCount":4}
 {"name":"gate-run","at":"2026-09-16T02:11:13.681Z","gate":"completion","status":"PASS","durationMs":421,"reasonCount":0}
 {"name":"gate-run","at":"2026-09-16T02:11:16.582Z","gate":"security","status":"PASS","durationMs":223,"reasonCount":0}
+{"name":"gate-run","at":"2026-09-16T05:08:36.693Z","gate":"completion","status":"BLOCKED","durationMs":463,"reasonCount":3}
+{"name":"gate-run","at":"2026-09-16T05:10:30.155Z","gate":"completion","status":"PASS","durationMs":468,"reasonCount":0}
+{"name":"gate-run","at":"2026-09-16T05:10:30.525Z","gate":"security","status":"PASS","durationMs":222,"reasonCount":0}
+{"name":"gate-run","at":"2026-09-16T05:10:50.474Z","gate":"completion","status":"BLOCKED","durationMs":416,"reasonCount":7}
+{"name":"gate-run","at":"2026-09-16T05:13:44.510Z","gate":"completion","status":"PASS","durationMs":452,"reasonCount":0}
+{"name":"gate-run","at":"2026-09-16T05:13:44.835Z","gate":"security","status":"PASS","durationMs":201,"reasonCount":0}
