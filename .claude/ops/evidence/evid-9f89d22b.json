@@ -1,0 +1,15 @@
+{
+  "id": "evid-9f89d22b",
+  "createdAt": "2026-09-16T00:27:52.426Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\check-actualiz-residual-final.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\check-actualiz-residual-final.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "OK: only 3 .claude/ops/** bookkeeping hits remain (this mission's own fix-description text)",
+  "stderrTail": "",
+  "workspaceFingerprint": "6c5429f642109134694fea7a187fccb409dba3f3790351ec3463150a27b52d9b",
+  "fingerprintStatus": "BOUND",
+  "head": "1fe9f933473ef10122507ffadd195b6e058394d6",
+  "durationMs": 317
+}

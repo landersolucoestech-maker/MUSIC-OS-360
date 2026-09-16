@@ -1,0 +1,15 @@
+{
+  "id": "evid-d05ba39c",
+  "createdAt": "2026-09-16T00:24:05.404Z",
+  "type": "COMMAND",
+  "label": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts apps/api/src/modules/artists/tenant-isolation.spec.ts --silent",
+  "command": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts apps/api/src/modules/artists/tenant-isolation.spec.ts --silent",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "0fa88cf75a11d0e237776f240aaef289bdc2c6ba745d2d7a6c75d65b5bd4905f",
+  "fingerprintStatus": "BOUND",
+  "head": "00244ba265a2d80a510a45e015f0ec5f465d8c8d",
+  "durationMs": 19821
+}

@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-15T21:37:19.971Z",
-  "updatedAt": "2026-09-16T00:19:20.064Z",
+  "updatedAt": "2026-09-16T00:35:59.692Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -25,7 +25,8 @@
           "evidenceIds": [
             "evid-ba78b27a",
             "evid-e8a01a06",
-            "evid-c5309484"
+            "evid-c5309484",
+            "evid-a08b6234"
           ],
           "status": "closed"
         }
@@ -44,7 +45,8 @@
           "text": "campaign.metrics carries isEstimated end-to-end (write at creation, read on fetch); Campanhas.tsx discloses estimated status in the KPI strip caption and per-campaign detail view instead of presenting fabricated numbers as measured; full web typecheck and marketing-module suite pass",
           "evidenceIds": [
             "evid-785e5866",
-            "evid-db607eb8"
+            "evid-db607eb8",
+            "evid-c8631ed7"
           ],
           "status": "closed"
         }
@@ -63,7 +65,8 @@
           "text": "AdminSettings.tsx's SaveBar (used by Geral/Email/Seguranca/Notificacoes tabs) no longer claims success without a durable mutation -- disabled with honest copy instead of a fake success toast; full web typecheck and admin-module suite pass",
           "evidenceIds": [
             "evid-6834ca6c",
-            "evid-568e1c7c"
+            "evid-568e1c7c",
+            "evid-d423973c"
           ],
           "status": "closed"
         }
@@ -82,7 +85,8 @@
           "text": "Workspace module: overview tab route unaffected; the 5 undestined tabs (releases/campaigns/financial/team/activity) render an honest placeholder instead of a blank Outlet; ArtistOverview's hardcoded fake counts (8/3) replaced with honest Indisponivel; full web typecheck and new router-integration test pass",
           "evidenceIds": [
             "evid-b36b37a9",
-            "evid-6dc9c7a0"
+            "evid-6dc9c7a0",
+            "evid-78a49e0e"
           ],
           "status": "closed"
         }
@@ -95,7 +99,55 @@
       "nonRequirements": [
         "No git reset/clean/add-all; no force push; no discarding unknown hunks"
       ],
-      "acceptanceCriteria": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-75912f56",
+          "text": "Cluster 1 (21 API controllers): uniform Actualizar->Atualizar PT-BR Swagger-doc typo fix, zero residual, zero behavior change, api typecheck clean",
+          "evidenceIds": [
+            "evid-29e10d47",
+            "evid-1193a3d5"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-039e1067",
+          "text": "Cluster 2 (5 remaining backend files): completes the same Actualizar->Atualizar PT-BR typo sweep in scripts/core/database/queues/spec files; repo-wide residual search confirms zero remaining occurrences anywhere in apps/api, apps/web, packages",
+          "evidenceIds": [
+            "evid-d05ba39c",
+            "evid-2e49513b"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-9e7c9200",
+          "text": "Cluster 3 (14 web files): completes the Actualizar->Atualizar and Equipa->Equipe PT-BR sweep across web toasts/comments/governance-flow metadata/webhook-contract docs; repo-wide residual search (apps+packages+docs) confirms zero remaining occurrences; web typecheck and relevant existing test pass",
+          "evidenceIds": [
+            "evid-8c47ca35",
+            "evid-3f5ee226"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-c88787ed",
+          "text": "Cluster 4 (20 docs files, including docs/GOVERNANCE.md): completes the PT-BR normalization sweep in markdown prose; whole-repo residual search (git grep, no path scoping) confirms the only remaining 'actualiz' occurrences anywhere are this mission's own .claude/ops/state.json bookkeeping text quoting the fix description, not real content",
+          "evidenceIds": [
+            "evid-9f89d22b",
+            "evid-32e28b7c"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-3918aa23",
+          "text": "Final regression: full backend (33 suites/440 tests across rbac/guards/reports/tenant-isolation) and web (24 files/137 tests across settings/marketing/admin/contracts/integrations/routes/auth) pass at final HEAD; both apps typecheck clean",
+          "evidenceIds": [
+            "evid-78224fd3",
+            "evid-18aeee88",
+            "evid-600ae32a",
+            "evid-91347372"
+          ],
+          "status": "closed"
+        }
+      ],
       "createdAt": "2026-09-15T21:37:28.104Z"
     }
   ],
@@ -194,7 +246,23 @@
     "evid-6834ca6c",
     "evid-568e1c7c",
     "evid-b36b37a9",
-    "evid-6dc9c7a0"
+    "evid-6dc9c7a0",
+    "evid-29e10d47",
+    "evid-d05ba39c",
+    "evid-8c47ca35",
+    "evid-9f89d22b",
+    "evid-78224fd3",
+    "evid-18aeee88",
+    "evid-600ae32a",
+    "evid-91347372",
+    "evid-a08b6234",
+    "evid-c8631ed7",
+    "evid-d423973c",
+    "evid-78a49e0e",
+    "evid-1193a3d5",
+    "evid-2e49513b",
+    "evid-3f5ee226",
+    "evid-32e28b7c"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
