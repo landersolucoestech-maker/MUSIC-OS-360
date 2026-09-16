@@ -1,0 +1,15 @@
+{
+  "id": "evid-b36b37a9",
+  "createdAt": "2026-09-16T00:18:00.352Z",
+  "type": "COMMAND",
+  "label": "node node_modules/vitest/dist/cli.js run --config apps/web/vitest.config.mjs apps/web/src/app/routes/workspace.routes.test.tsx",
+  "command": "node node_modules/vitest/dist/cli.js run --config apps/web/vitest.config.mjs apps/web/src/app/routes/workspace.routes.test.tsx",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[1m\u001b[7m\u001b[36m RUN \u001b[39m\u001b[27m\u001b[22m \u001b[36mv2.1.9 \u001b[39m\u001b[90mC:/Users/Usuario/Documents/MUSIC-OS-360/apps/web\u001b[39m\n\n \u001b[32m✓\u001b[39m src/app/routes/workspace.routes.test.tsx \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 1780\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m workspaceRoutes — nenhuma aba cai em 404/Outlet vazio (CODEBASE_MAP #26)\u001b[2m > \u001b[22moverview (rota registrada) não cai no placeholder 'Em construção' \u001b[33m1565\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 21:17:52\n\u001b[2m   Duration \u001b[22m 8.15s\u001b[2m (transform 359ms, setup 910ms, collect 282ms, tests 1.78s, environment 3.12s, prepare 418ms)\u001b[22m",
+  "stderrTail": "",
+  "workspaceFingerprint": "b31d84bdefad162c54a72d594a0cd43c25a71176a3d72a10783e67d01f5bdda8",
+  "fingerprintStatus": "BOUND",
+  "head": "5ba41aade45572f7bad476e5001ba1b856e16609",
+  "durationMs": 9958
+}

@@ -1,0 +1,15 @@
+{
+  "id": "evid-ba78b27a",
+  "createdAt": "2026-09-15T23:53:12.901Z",
+  "type": "COMMAND",
+  "label": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts apps/api/src/core/rbac/rbac-authority-mode.spec.ts apps/api/src/modules/users/rbac-admin.controller.spec.ts --silent",
+  "command": "node node_modules/jest/bin/jest.js --config apps/api/jest.config.ts apps/api/src/core/rbac/rbac-authority-mode.spec.ts apps/api/src/modules/users/rbac-admin.controller.spec.ts --silent",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "301c233c43f21a3fa1028752c3002e7cb34a1037aac14631b67f20aa46f72fb1",
+  "fingerprintStatus": "BOUND",
+  "head": "8b7ad353ee05214b40e619af8d1dd7d330a24cf9",
+  "durationMs": 75017
+}

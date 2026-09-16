@@ -1,0 +1,265 @@
+{
+  "version": 2,
+  "missionId": "mission-3ab7ff7a",
+  "missionName": "systemic-product-remediation",
+  "status": "active",
+  "executionMode": "STRICT_MULTI_AGENT",
+  "createdAt": "2026-09-15T20:13:08.319Z",
+  "updatedAt": "2026-09-15T21:02:45.063Z",
+  "impact": {
+    "operatorDeclared": null,
+    "runtimeDetected": null,
+    "effective": null
+  },
+  "requirements": [
+    {
+      "id": "req-3d7a0bc2",
+      "text": "Close the ROLE_HIERARCHY drift-risk finding (CODEBASE_MAP Gotcha #9): two independent literal definitions must become one canonical source",
+      "nonRequirements": [
+        "No change to actual hierarchy levels/values"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-ed473307",
+          "text": "Exactly one literal ROLE_HIERARCHY declaration exists in apps/api/src, and all RBAC/guard/seed tests pass",
+          "evidenceIds": [
+            "evid-0d0acad1",
+            "evid-1f89f736"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T20:17:48.337Z"
+    },
+    {
+      "id": "req-3f83b3cc",
+      "text": "Close the live JwtAuthGuard/TokenVerifierService prod-detection divergence (CODEBASE_MAP Gotcha #9): case/whitespace-insensitive NODE_ENV check must gate the HS256 dev-token bypass consistently with the shared isProdLike() helper",
+      "nonRequirements": [
+        "Full merge of the two JWT-verification implementations into one class is deferred (recorded as a finding), not attempted in this pass"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-507489a2",
+          "text": "JwtAuthGuard uses the shared isProdLike() helper; negative-path tests prove the HS256 dev-token bypass is rejected for case/whitespace-variant prod-like NODE_ENV values",
+          "evidenceIds": [
+            "evid-e271dfb2",
+            "evid-f93c4ea6"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T20:23:27.927Z"
+    },
+    {
+      "id": "req-652b58a1",
+      "text": "Close REM-06-class read-exposure gap: the generic reports/export engine must exclude Stripe SaaS-subscription rows from the invoices table, matching invoices.service.ts's own list()/findById() exclusion",
+      "nonRequirements": [
+        "No change to the invoices.service.ts business-logic path itself; no removal of invoices from the reportable catalog"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-7346cc53",
+          "text": "invoices' real ReportEntityDefinition carries baseWhere excluding type=stripe_subscription, applied unconditionally by ExportQueryBuilderService; full reports module suite passes",
+          "evidenceIds": [
+            "evid-f91cc0c1",
+            "evid-0e0308f3"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T20:31:10.928Z"
+    },
+    {
+      "id": "req-9238d38b",
+      "text": "Surface the Google Business/TikTok Business OAuth token-refresh gap to the UI instead of silently dropping needs_reauth (CODEBASE_MAP Gotcha #21)",
+      "nonRequirements": [
+        "No backend token-refresh implementation for these providers (that gap remains, this is UI-visibility only); no change to already-governed providers (meta_business, google_ads) that already source their state correctly"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-4ab8d10a",
+          "text": "toConnection propagates needs_reauth into needsReauth; Configuracoes.tsx's ungoverned marketing-platform cards render REQUIRES_REAUTH instead of a false CONNECTED badge; typecheck and focused tests pass",
+          "evidenceIds": [
+            "evid-bc96f503",
+            "evid-cf7d36b5",
+            "evid-08105d1f"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T20:40:39.469Z"
+    },
+    {
+      "id": "req-261e6cfe",
+      "text": "Contract creation wizard must populate the canonical valor column, not only serialize money into observacoes (CODEBASE_MAP Gotcha #22)",
+      "nonRequirements": [
+        "No change to which template manifest variables are currency-typed; no attempt to auto-derive valor from arbitrary template variables"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-cec3668c",
+          "text": "Wizard exposes an explicit Valor field, sends parsed number/null as ContractInsert.valor (confirmed accepted by CreateContractDto/UpdateContractDto and written by buildEntityPayload), hydrates it on edit; typecheck and guard tests pass",
+          "evidenceIds": [
+            "evid-7fea1d0c",
+            "evid-cf69158a",
+            "evid-26275e34"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T20:50:08.271Z"
+    },
+    {
+      "id": "req-6f9de57a",
+      "text": "Correct actively-misleading documentation staleness flagged by CODEBASE_MAP (Gotchas #15, #25, #27): SECURITY_ARCHITECTURE.md's already-done pending item, apps/web/ARCHITECTURE.md's nonexistent directories, and a leftover finished-migration instructions file",
+      "nonRequirements": [
+        "docs/GOVERNANCE.md excluded -- it is part of the protected preexisting dirty baseline, not touched"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-865945bb",
+          "text": "Each correction is independently verified against the real repository (not copied from CODEBASE_MAP prose uncritically) before being written",
+          "evidenceIds": [
+            "evid-99d6ec8f",
+            "evid-36ad8aac"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-15T20:53:32.016Z"
+    }
+  ],
+  "findings": [
+    {
+      "id": "find-23712564",
+      "category": "G",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/core/guards/auth.guard.ts",
+      "line": null,
+      "summary": "JwtAuthGuard still duplicates TokenVerifierService's full JWKS/HS256 verification pipeline in an independent inline implementation (CODEBASE_MAP Gotcha #9). This pass fixed the one confirmed live divergence (prod-detection casing/whitespace) but did not merge the two implementations -- that is a larger, high-blast-radius refactor of the primary auth path (AUTH_DISABLED early-exit semantics, isPublic bypass, and 401-vs-raw-jwt-error wrapping all need careful preservation) better done as its own dedicated, fully-regression-tested change.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T20:24:43.816Z",
+      "justification": "Real architectural duplication; the one confirmed live divergence was fixed and regression-tested this pass. Full merge deferred as a separate, dedicated high-risk change to the primary auth path, not rushed into this remediation pass.",
+      "resolvedAt": "2026-09-15T20:24:52.118Z"
+    },
+    {
+      "id": "find-8d3528b1",
+      "category": "G",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/reports/export/export-query-builder.service.ts",
+      "line": null,
+      "summary": "Prior to this fix, the generic reports/export engine's GET /reports/entities/invoices/export (RequireRole manager, level 70) had no exclusion for Stripe SaaS-subscription invoice rows (type=stripe_subscription), bypassing the REM-06 filter that invoices.service.ts's own list()/findById() (the intended admin-gated path via /billing/subscription) already enforce. A manager-level user of the same tenant could export the tenant's own SaaS billing invoice rows through this second read path.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T20:32:08.736Z",
+      "justification": "Fixed via ReportEntityDefinition.baseWhere (report-entity-definition.service.ts) applied unconditionally by ExportQueryBuilderService, mirroring invoices.service.ts's REM-06 exclusion. Regression-tested at both the query-builder level and end-to-end against real reflected entity metadata.",
+      "resolvedAt": "2026-09-15T20:32:14.254Z"
+    },
+    {
+      "id": "find-c2abe23c",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/integrations/hooks/useMarketingOAuth.ts",
+      "line": null,
+      "summary": "toConnection() fetched needs_reauth from GET /integrations/oauth/status but never copied it onto the IMarketingOAuthConnection object, so google_business/tiktok_business/spotify_ads cards (the marketing platforms NOT in Configuracoes.tsx's GOVERNED_PROVIDER_KEYS, so not backed by the mature useExternalProviders path) could only ever render CONNECTED or AVAILABLE_NOT_CONNECTED -- a backend-known token-refresh gap surfaced as a silent failure instead of a reconnect prompt (CODEBASE_MAP Gotcha #21).",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T20:42:12.781Z",
+      "justification": "Fixed: needsReauth now flows from backend status through toConnection() into providerStatus(), which maps to ExternalProviderStatus.REQUIRES_REAUTH and renders via the existing IntegrationStatusBadges REQUIRES_REAUTH case. Unit-tested at the toConnection mapping level; full web typecheck and focused vitest pass.",
+      "resolvedAt": "2026-09-15T20:42:18.083Z"
+    },
+    {
+      "id": "find-17dc8318",
+      "category": "B",
+      "severity": "HIGH",
+      "file": "apps/web/src/modules/contracts/components/ContractWizard.tsx",
+      "line": null,
+      "summary": "The primary contract-creation flow never populated ContractEntity.valor -- money typed into a template currency variable serialized only into observacoes JSON. Beyond the missing 'Valor Total' KPI, this silently fed apps/api/src/modules/contracts/handlers/contract-events.handler.ts's CONTRACT_SIGNED listener a contractValor of 0 for the provisional revenue TransactionEntity it creates on every contract signed through the main flow -- a wrong financial record, not just a display gap (CODEBASE_MAP Gotcha #22).",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T20:51:18.154Z",
+      "justification": "Fixed: WizardMeta gains an explicit valor field (Review step), mapped to ContractInsert.valor (parsed number or null), confirmed end-to-end accepted by CreateContractDto/UpdateContractDto and persisted by contracts.service.ts's buildEntityPayload (not one of the null-stripped fields when actually set). Hydrated on edit. Guard test + typecheck pass. Existing contracts already signed with a zero-value provisional transaction are NOT retroactively corrected by this fix -- that would need a data-remediation pass, out of scope here.",
+      "resolvedAt": "2026-09-15T20:51:23.644Z"
+    },
+    {
+      "id": "find-71050bd1",
+      "category": "F",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/contracts/components/ContractWizard.tsx",
+      "line": null,
+      "summary": "WizardMeta.observations (the free-text 'Observações' field in the Review step) is never included in the save payload and never hydrated from the saved contract on edit (baseMeta.observations is hardcoded to ''). Distinct from the valor bug fixed alongside it -- observed while tracing the same save/hydrate path, not yet fixed.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T20:51:30.504Z",
+      "justification": "Real but unrelated to the valor fix in progress; fixing it requires deciding where user-typed internal notes should actually be stored (observacoes is already used for the wizardBlob JSON, so this needs a real product/schema decision -- a second notes column, or folding into the JSON blob -- not a one-line fix). Deferred.",
+      "resolvedAt": "2026-09-15T20:51:36.848Z"
+    },
+    {
+      "id": "find-b1c50953",
+      "category": "P",
+      "severity": "LOW",
+      "file": "apps/api/SECURITY_ARCHITECTURE.md",
+      "line": null,
+      "summary": "Listed E2E tenant-isolation tests as pending; apps/api/test/e2e/rls/rls-isolation.e2e-spec.ts already provides this coverage (CODEBASE_MAP Gotcha #15).",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T20:54:25.302Z",
+      "justification": "Verified against real repository state and corrected in commit 645b6673.",
+      "resolvedAt": "2026-09-15T20:54:32.430Z"
+    },
+    {
+      "id": "find-e5c0806f",
+      "category": "P",
+      "severity": "LOW",
+      "file": "apps/web/src/ARCHITECTURE.md",
+      "line": null,
+      "summary": "Describes directories that do not exist in apps/web/src (CODEBASE_MAP Gotcha #27).",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T20:54:25.480Z",
+      "justification": "Verified against real repository state and corrected in commit 645b6673.",
+      "resolvedAt": "2026-09-15T20:54:32.623Z"
+    },
+    {
+      "id": "find-5d0adee8",
+      "category": "N",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/audiovisual/SIDEBAR_ROUTE_PATCH.md",
+      "line": null,
+      "summary": "Leftover finished-migration instructions file, zero code references (CODEBASE_MAP Gotcha #25).",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T20:54:25.868Z",
+      "justification": "Verified against real repository state and corrected in commit 645b6673.",
+      "resolvedAt": "2026-09-15T20:54:32.798Z"
+    }
+  ],
+  "evidenceIds": [
+    "evid-0d0acad1",
+    "evid-e271dfb2",
+    "evid-f91cc0c1",
+    "evid-bc96f503",
+    "evid-cf7d36b5",
+    "evid-7fea1d0c",
+    "evid-cf69158a",
+    "evid-99d6ec8f",
+    "evid-1f89f736",
+    "evid-f93c4ea6",
+    "evid-0e0308f3",
+    "evid-08105d1f",
+    "evid-26275e34",
+    "evid-36ad8aac"
+  ],
+  "checkpointIds": [],
+  "touchedFiles": [],
+  "blockers": []
+}

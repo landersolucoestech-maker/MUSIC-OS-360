@@ -1,0 +1,15 @@
+{
+  "id": "evid-785e5866",
+  "createdAt": "2026-09-16T00:05:01.034Z",
+  "type": "COMMAND",
+  "label": "node node_modules/vitest/dist/cli.js run --config apps/web/vitest.config.mjs apps/web/src/modules/marketing",
+  "command": "node node_modules/vitest/dist/cli.js run --config apps/web/vitest.config.mjs apps/web/src/modules/marketing",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[1m\u001b[7m\u001b[36m RUN \u001b[39m\u001b[27m\u001b[22m \u001b[36mv2.1.9 \u001b[39m\u001b[90mC:/Users/Usuario/Documents/MUSIC-OS-360/apps/web\u001b[39m\n\n \u001b[32m✓\u001b[39m src/modules/marketing/pages/Calendario.creative.test.ts \u001b[2m(\u001b[22m\u001b[2m14 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 12\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/marketing/creative/static-export.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 21\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/marketing/pages/creative-template-surface.test.tsx \u001b[2m(\u001b[22m\u001b[2m15 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 168\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/marketing/pages/Campanhas.estimated-metrics-disclosure.guard.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 4\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/marketing/services/marketing.service.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 12\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/marketing/components/campaign-builder/campaign-builder.helpers.estimated-metrics.guard.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 4\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m49 passed\u001b[39m\u001b[22m\u001b[90m (49)\u001b[39m\n\u001b[2m   Start at \u001b[22m 21:04:54\n\u001b[2m   Duration \u001b[22m 6.92s\u001b[2m (transform 556ms, setup 3.86s, collect 897ms, tests 221ms, environment 9.03s, prepare 1.28s)\u001b[22m",
+  "stderrTail": "",
+  "workspaceFingerprint": "32b056425aacb5304d338656dfe76d3d0556b01a59a0453a18e64b2d0e43da17",
+  "fingerprintStatus": "BOUND",
+  "head": "95f8059ff0c7ad9c1ca100f78eca1eb55318bd92",
+  "durationMs": 8092
+}

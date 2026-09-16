@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "missionId": "mission-3ab7ff7a",
-  "missionName": "systemic-product-remediation",
+  "missionId": "mission-d7592eed",
+  "missionName": "complete-actionable-findings-and-baseline-consolidation",
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
-  "createdAt": "2026-09-15T20:13:08.319Z",
-  "updatedAt": "2026-09-15T21:02:45.063Z",
+  "createdAt": "2026-09-15T21:37:19.971Z",
+  "updatedAt": "2026-09-16T00:19:20.064Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -13,251 +13,188 @@
   },
   "requirements": [
     {
-      "id": "req-3d7a0bc2",
-      "text": "Close the ROLE_HIERARCHY drift-risk finding (CODEBASE_MAP Gotcha #9): two independent literal definitions must become one canonical source",
+      "id": "req-ba153f70",
+      "text": "Phase A: RBAC shadow-mode disclosure -- UI must never present unenforced permission changes as effectively enforced",
       "nonRequirements": [
-        "No change to actual hierarchy levels/values"
+        "No change to actual RBAC authority mode unless repository evidence proves that is intended"
       ],
       "acceptanceCriteria": [
         {
-          "id": "ac-ed473307",
-          "text": "Exactly one literal ROLE_HIERARCHY declaration exists in apps/api/src, and all RBAC/guard/seed tests pass",
+          "id": "ac-2d25758b",
+          "text": "Backend exposes real RBAC_PERSISTED_AUTHORITY mode via GET /rbac/authority-mode; frontend Papéis e Permissões UI discloses non-enforced state; enforced state (production/staging, RBAC_PERSISTED_AUTHORITY=ON) shows no banner",
           "evidenceIds": [
-            "evid-0d0acad1",
-            "evid-1f89f736"
+            "evid-ba78b27a",
+            "evid-e8a01a06",
+            "evid-c5309484"
           ],
           "status": "closed"
         }
       ],
-      "createdAt": "2026-09-15T20:17:48.337Z"
+      "createdAt": "2026-09-15T21:37:27.136Z"
     },
     {
-      "id": "req-3f83b3cc",
-      "text": "Close the live JwtAuthGuard/TokenVerifierService prod-detection divergence (CODEBASE_MAP Gotcha #9): case/whitespace-insensitive NODE_ENV check must gate the HS256 dev-token bypass consistently with the shared isProdLike() helper",
+      "id": "req-d687496c",
+      "text": "Phase A: marketing fabricated KPIs must be classified and never presented as measured performance without qualification",
       "nonRequirements": [
-        "Full merge of the two JWT-verification implementations into one class is deferred (recorded as a finding), not attempted in this pass"
+        "No invented real data source"
       ],
       "acceptanceCriteria": [
         {
-          "id": "ac-507489a2",
-          "text": "JwtAuthGuard uses the shared isProdLike() helper; negative-path tests prove the HS256 dev-token bypass is rejected for case/whitespace-variant prod-like NODE_ENV values",
+          "id": "ac-8b306356",
+          "text": "campaign.metrics carries isEstimated end-to-end (write at creation, read on fetch); Campanhas.tsx discloses estimated status in the KPI strip caption and per-campaign detail view instead of presenting fabricated numbers as measured; full web typecheck and marketing-module suite pass",
           "evidenceIds": [
-            "evid-e271dfb2",
-            "evid-f93c4ea6"
+            "evid-785e5866",
+            "evid-db607eb8"
           ],
           "status": "closed"
         }
       ],
-      "createdAt": "2026-09-15T20:23:27.927Z"
+      "createdAt": "2026-09-15T21:37:27.441Z"
     },
     {
-      "id": "req-652b58a1",
-      "text": "Close REM-06-class read-exposure gap: the generic reports/export engine must exclude Stripe SaaS-subscription rows from the invoices table, matching invoices.service.ts's own list()/findById() exclusion",
+      "id": "req-b460d2dd",
+      "text": "Phase A: decorative admin/settings controls must not claim success without a durable mutation",
       "nonRequirements": [
-        "No change to the invoices.service.ts business-logic path itself; no removal of invoices from the reportable catalog"
+        "No invented backend contract where none exists"
       ],
       "acceptanceCriteria": [
         {
-          "id": "ac-7346cc53",
-          "text": "invoices' real ReportEntityDefinition carries baseWhere excluding type=stripe_subscription, applied unconditionally by ExportQueryBuilderService; full reports module suite passes",
+          "id": "ac-834975df",
+          "text": "AdminSettings.tsx's SaveBar (used by Geral/Email/Seguranca/Notificacoes tabs) no longer claims success without a durable mutation -- disabled with honest copy instead of a fake success toast; full web typecheck and admin-module suite pass",
           "evidenceIds": [
-            "evid-f91cc0c1",
-            "evid-0e0308f3"
+            "evid-6834ca6c",
+            "evid-568e1c7c"
           ],
           "status": "closed"
         }
       ],
-      "createdAt": "2026-09-15T20:31:10.928Z"
+      "createdAt": "2026-09-15T21:37:27.645Z"
     },
     {
-      "id": "req-9238d38b",
-      "text": "Surface the Google Business/TikTok Business OAuth token-refresh gap to the UI instead of silently dropping needs_reauth (CODEBASE_MAP Gotcha #21)",
+      "id": "req-a6845709",
+      "text": "Phase A: workspace module stub tabs/routes must be classified and misleading navigation/fake metrics corrected where safely provable",
       "nonRequirements": [
-        "No backend token-refresh implementation for these providers (that gap remains, this is UI-visibility only); no change to already-governed providers (meta_business, google_ads) that already source their state correctly"
+        "No new product modules built without spec"
       ],
       "acceptanceCriteria": [
         {
-          "id": "ac-4ab8d10a",
-          "text": "toConnection propagates needs_reauth into needsReauth; Configuracoes.tsx's ungoverned marketing-platform cards render REQUIRES_REAUTH instead of a false CONNECTED badge; typecheck and focused tests pass",
+          "id": "ac-6fde68d6",
+          "text": "Workspace module: overview tab route unaffected; the 5 undestined tabs (releases/campaigns/financial/team/activity) render an honest placeholder instead of a blank Outlet; ArtistOverview's hardcoded fake counts (8/3) replaced with honest Indisponivel; full web typecheck and new router-integration test pass",
           "evidenceIds": [
-            "evid-bc96f503",
-            "evid-cf7d36b5",
-            "evid-08105d1f"
+            "evid-b36b37a9",
+            "evid-6dc9c7a0"
           ],
           "status": "closed"
         }
       ],
-      "createdAt": "2026-09-15T20:40:39.469Z"
+      "createdAt": "2026-09-15T21:37:27.885Z"
     },
     {
-      "id": "req-261e6cfe",
-      "text": "Contract creation wizard must populate the canonical valor column, not only serialize money into observacoes (CODEBASE_MAP Gotcha #22)",
+      "id": "req-9a1dc0ec",
+      "text": "Phase B: forensically classify and consolidate all 60 protected preexisting dirty paths into functional clusters with proven dispositions",
       "nonRequirements": [
-        "No change to which template manifest variables are currency-typed; no attempt to auto-derive valor from arbitrary template variables"
+        "No git reset/clean/add-all; no force push; no discarding unknown hunks"
       ],
-      "acceptanceCriteria": [
-        {
-          "id": "ac-cec3668c",
-          "text": "Wizard exposes an explicit Valor field, sends parsed number/null as ContractInsert.valor (confirmed accepted by CreateContractDto/UpdateContractDto and written by buildEntityPayload), hydrates it on edit; typecheck and guard tests pass",
-          "evidenceIds": [
-            "evid-7fea1d0c",
-            "evid-cf69158a",
-            "evid-26275e34"
-          ],
-          "status": "closed"
-        }
-      ],
-      "createdAt": "2026-09-15T20:50:08.271Z"
-    },
-    {
-      "id": "req-6f9de57a",
-      "text": "Correct actively-misleading documentation staleness flagged by CODEBASE_MAP (Gotchas #15, #25, #27): SECURITY_ARCHITECTURE.md's already-done pending item, apps/web/ARCHITECTURE.md's nonexistent directories, and a leftover finished-migration instructions file",
-      "nonRequirements": [
-        "docs/GOVERNANCE.md excluded -- it is part of the protected preexisting dirty baseline, not touched"
-      ],
-      "acceptanceCriteria": [
-        {
-          "id": "ac-865945bb",
-          "text": "Each correction is independently verified against the real repository (not copied from CODEBASE_MAP prose uncritically) before being written",
-          "evidenceIds": [
-            "evid-99d6ec8f",
-            "evid-36ad8aac"
-          ],
-          "status": "closed"
-        }
-      ],
-      "createdAt": "2026-09-15T20:53:32.016Z"
+      "acceptanceCriteria": [],
+      "createdAt": "2026-09-15T21:37:28.104Z"
     }
   ],
   "findings": [
     {
-      "id": "find-23712564",
-      "category": "G",
-      "severity": "MEDIUM",
-      "file": "apps/api/src/core/guards/auth.guard.ts",
+      "id": "find-1a8f3c15",
+      "category": "F",
+      "severity": "HIGH",
+      "file": "apps/web/src/modules/settings/pages/Configuracoes.tsx",
       "line": null,
-      "summary": "JwtAuthGuard still duplicates TokenVerifierService's full JWKS/HS256 verification pipeline in an independent inline implementation (CODEBASE_MAP Gotcha #9). This pass fixed the one confirmed live divergence (prod-detection casing/whitespace) but did not merge the two implementations -- that is a larger, high-blast-radius refactor of the primary auth path (AUTH_DISABLED early-exit semantics, isPublic bypass, and 401-vs-raw-jwt-error wrapping all need careful preservation) better done as its own dedicated, fully-regression-tested change.",
+      "summary": "CODEBASE_MAP Gotcha #17: the fully backend-wired 'Papeis e Permissoes' granular permission editor gave zero indication that RBAC_PERSISTED_AUTHORITY can be SHADOW (observe-only). Evidence gathered this pass: .env.production and .env.staging both explicitly set RBAC_PERSISTED_AUTHORITY=ON (enforcement IS live in real deployed environments); only unset/local-dev environments default to the code-level SHADOW fallback. No API endpoint previously exposed this mode to the frontend at all.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-15T23:54:16.188Z",
+      "justification": "Fixed: new GET /rbac/authority-mode (read-only, RequireRole owner/admin, matches route-level guard already on the whole controller) exposes {mode, enforced}; useRoles() fetches it; Configuracoes.tsx renders a disclosure banner in the Papeis e Permissoes card only when enforced=false. Did NOT change the actual authority mode. Backend unit tests (6) + frontend guard test (3) + both apps' typecheck pass.",
+      "resolvedAt": "2026-09-15T23:54:21.982Z"
+    },
+    {
+      "id": "find-540f3f88",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/marketing/pages/Campanhas.tsx",
+      "line": null,
+      "summary": "CODEBASE_MAP Gotcha #16: estimateCampaignResults() (budget*constant) is persisted into campaign.metrics and rendered as unqualified real KPIs (Cliques/Impressoes/Conversoes/CTR) once a campaign is saved -- publish() never actually calls any ad-platform integration for any provider, so this is 100% of campaigns today, not an edge case.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-16T00:05:50.038Z",
+      "justification": "Fixed: MetricSnapshot.isEstimated threaded end-to-end (write in campaign-builder.helpers.ts, read in marketing.service.ts's campaignFromApi, absent-defaults-to-true for pre-existing campaigns). Campanhas.tsx's KPI strip caption and campaign detail view now disclose estimated status instead of presenting fabricated numbers as measured. central-analitica.data.ts/Metricas.tsx's separate aggregation surface, which also reads campaign.metrics, is NOT yet updated to consume the new flag -- deferred as its own finding since it mixes campaign ad-metrics with genuinely real streaming/artist analytics and needs careful tracing to avoid mislabeling real data.",
+      "resolvedAt": "2026-09-16T00:05:55.542Z"
+    },
+    {
+      "id": "find-e595d650",
+      "category": "F",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/marketing/analytics/central-analitica.data.ts",
+      "line": null,
+      "summary": "buildCentralAnaliticaModel aggregates campaign.metrics (reach/impressions/clicks/conversions) into executiveKpis/breakdown rows labeled 'Alcance total'/'Impressoes'/'Cliques' without consuming the isEstimated flag added this pass -- same disclosure gap as Campanhas.tsx, not yet fixed here because this surface mixes fabricated campaign ad-metrics with genuinely real streaming/artist data (its own doc comment: 'Metrics not supplied by a live integration remain explicitly unavailable') and needs careful tracing to avoid mislabeling real data as estimated.",
       "rootCause": null,
       "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-15T20:24:43.816Z",
-      "justification": "Real architectural duplication; the one confirmed live divergence was fixed and regression-tested this pass. Full merge deferred as a separate, dedicated high-risk change to the primary auth path, not rushed into this remediation pass.",
-      "resolvedAt": "2026-09-15T20:24:52.118Z"
+      "createdAt": "2026-09-16T00:06:00.843Z",
+      "justification": "Deferred: real fix requires tracing which fields in buildCentralAnaliticaModel are campaign-ad-metrics-derived (now labelable via isEstimated) vs genuinely real streaming/artist data, to avoid mislabeling real data. The isEstimated flag added this pass makes that follow-up tractable.",
+      "resolvedAt": "2026-09-16T00:06:04.971Z"
     },
     {
-      "id": "find-8d3528b1",
-      "category": "G",
-      "severity": "HIGH",
-      "file": "apps/api/src/modules/reports/export/export-query-builder.service.ts",
-      "line": null,
-      "summary": "Prior to this fix, the generic reports/export engine's GET /reports/entities/invoices/export (RequireRole manager, level 70) had no exclusion for Stripe SaaS-subscription invoice rows (type=stripe_subscription), bypassing the REM-06 filter that invoices.service.ts's own list()/findById() (the intended admin-gated path via /billing/subscription) already enforce. A manager-level user of the same tenant could export the tenant's own SaaS billing invoice rows through this second read path.",
-      "rootCause": null,
-      "disposition": "CORRIGIDA",
-      "evidenceIds": [],
-      "createdAt": "2026-09-15T20:32:08.736Z",
-      "justification": "Fixed via ReportEntityDefinition.baseWhere (report-entity-definition.service.ts) applied unconditionally by ExportQueryBuilderService, mirroring invoices.service.ts's REM-06 exclusion. Regression-tested at both the query-builder level and end-to-end against real reflected entity metadata.",
-      "resolvedAt": "2026-09-15T20:32:14.254Z"
-    },
-    {
-      "id": "find-c2abe23c",
+      "id": "find-8d95fcf2",
       "category": "F",
       "severity": "MEDIUM",
-      "file": "apps/web/src/modules/integrations/hooks/useMarketingOAuth.ts",
+      "file": "apps/web/src/modules/admin/pages/AdminSettings.tsx",
       "line": null,
-      "summary": "toConnection() fetched needs_reauth from GET /integrations/oauth/status but never copied it onto the IMarketingOAuthConnection object, so google_business/tiktok_business/spotify_ads cards (the marketing platforms NOT in Configuracoes.tsx's GOVERNED_PROVIDER_KEYS, so not backed by the mature useExternalProviders path) could only ever render CONNECTED or AVAILABLE_NOT_CONNECTED -- a backend-known token-refresh gap surfaced as a silent failure instead of a reconnect prompt (CODEBASE_MAP Gotcha #21).",
+      "summary": "CODEBASE_MAP Gotcha #19: Geral/Email/Seguranca/Notificacoes tabs' inputs are uncontrolled (defaultValue only, no onChange -- React never sees edits) and the shared SaveBar button fired toast.success('Configuracoes salvas') unconditionally, with zero API call and no state even read. No backend contract exists for platform-wide settings (name/URL/timezone/SMTP/trial days/etc.).",
       "rootCause": null,
       "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-15T20:42:12.781Z",
-      "justification": "Fixed: needsReauth now flows from backend status through toConnection() into providerStatus(), which maps to ExternalProviderStatus.REQUIRES_REAUTH and renders via the existing IntegrationStatusBadges REQUIRES_REAUTH case. Unit-tested at the toConnection mapping level; full web typecheck and focused vitest pass.",
-      "resolvedAt": "2026-09-15T20:42:18.083Z"
+      "createdAt": "2026-09-16T00:10:36.911Z",
+      "justification": "Fixed: SaveBar's Save button is now disabled with an explicit 'esta secao ainda nao persiste alteracoes' note and a tooltip explaining why, instead of a lying success toast. Did not invent a platform-settings backend (no contract exists; that's a real feature needing product spec). 3 new render-based tests (real AdminSettings component, real click) prove the button is disabled and fires neither toast.success nor an API call; full admin-module suite (4 files, 18 tests) and web typecheck pass.",
+      "resolvedAt": "2026-09-16T00:10:42.100Z"
     },
     {
-      "id": "find-17dc8318",
-      "category": "B",
-      "severity": "HIGH",
-      "file": "apps/web/src/modules/contracts/components/ContractWizard.tsx",
-      "line": null,
-      "summary": "The primary contract-creation flow never populated ContractEntity.valor -- money typed into a template currency variable serialized only into observacoes JSON. Beyond the missing 'Valor Total' KPI, this silently fed apps/api/src/modules/contracts/handlers/contract-events.handler.ts's CONTRACT_SIGNED listener a contractValor of 0 for the provisional revenue TransactionEntity it creates on every contract signed through the main flow -- a wrong financial record, not just a display gap (CODEBASE_MAP Gotcha #22).",
-      "rootCause": null,
-      "disposition": "CORRIGIDA",
-      "evidenceIds": [],
-      "createdAt": "2026-09-15T20:51:18.154Z",
-      "justification": "Fixed: WizardMeta gains an explicit valor field (Review step), mapped to ContractInsert.valor (parsed number or null), confirmed end-to-end accepted by CreateContractDto/UpdateContractDto and persisted by contracts.service.ts's buildEntityPayload (not one of the null-stripped fields when actually set). Hydrated on edit. Guard test + typecheck pass. Existing contracts already signed with a zero-value provisional transaction are NOT retroactively corrected by this fix -- that would need a data-remediation pass, out of scope here.",
-      "resolvedAt": "2026-09-15T20:51:23.644Z"
-    },
-    {
-      "id": "find-71050bd1",
+      "id": "find-fd72a3c3",
       "category": "F",
       "severity": "LOW",
-      "file": "apps/web/src/modules/contracts/components/ContractWizard.tsx",
+      "file": "apps/web/src/modules/admin/pages/AdminSettings.tsx",
       "line": null,
-      "summary": "WizardMeta.observations (the free-text 'Observações' field in the Review step) is never included in the save payload and never hydrated from the saved contract on edit (baseMeta.observations is hardcoded to ''). Distinct from the valor bug fixed alongside it -- observed while tracing the same save/hydrate path, not yet fixed.",
+      "summary": "TabWebhooks ('Novo Webhook', 'Rotacionar') and TabChavesApi ('Nova Chave API') buttons have no onClick handler at all -- inert rather than lying (API_KEYS is honestly hardcoded empty with a code comment explaining why), a different and lower-severity class of defect than the SaveBar false-success toast fixed this pass. Not fixed here.",
       "rootCause": null,
       "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-15T20:51:30.504Z",
-      "justification": "Real but unrelated to the valor fix in progress; fixing it requires deciding where user-typed internal notes should actually be stored (observacoes is already used for the wizardBlob JSON, so this needs a real product/schema decision -- a second notes column, or folding into the JSON blob -- not a one-line fix). Deferred.",
-      "resolvedAt": "2026-09-15T20:51:36.848Z"
+      "createdAt": "2026-09-16T00:10:47.184Z",
+      "justification": "Lower severity than the false-success SaveBar pattern (inert, not deceptive) and needs a real webhooks/API-keys backend contract to wire up -- a feature, not a truthfulness fix. Deferred.",
+      "resolvedAt": "2026-09-16T00:10:51.369Z"
     },
     {
-      "id": "find-b1c50953",
-      "category": "P",
-      "severity": "LOW",
-      "file": "apps/api/SECURITY_ARCHITECTURE.md",
+      "id": "find-732b651f",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/app/routes/workspace.routes.tsx",
       "line": null,
-      "summary": "Listed E2E tenant-isolation tests as pending; apps/api/test/e2e/rls/rls-isolation.e2e-spec.ts already provides this coverage (CODEBASE_MAP Gotcha #15).",
+      "summary": "CODEBASE_MAP Gotcha #26: the workspace module is largely a stub -- only 1 of 6 nav tabs (overview) had a registered route (the other 5 -- releases/campaigns/financial/team/activity -- fell through to nothing), and the one implemented tab (ArtistOverview) hardcoded fake metrics (Lancamentos: 8, Campanhas: 3 as literal JSX numbers, no data source). The route itself is currently unreachable from any nav link in the app (not linked anywhere), lowering current user-facing risk.",
       "rootCause": null,
       "disposition": "CORRIGIDA",
       "evidenceIds": [],
-      "createdAt": "2026-09-15T20:54:25.302Z",
-      "justification": "Verified against real repository state and corrected in commit 645b6673.",
-      "resolvedAt": "2026-09-15T20:54:32.430Z"
-    },
-    {
-      "id": "find-e5c0806f",
-      "category": "P",
-      "severity": "LOW",
-      "file": "apps/web/src/ARCHITECTURE.md",
-      "line": null,
-      "summary": "Describes directories that do not exist in apps/web/src (CODEBASE_MAP Gotcha #27).",
-      "rootCause": null,
-      "disposition": "CORRIGIDA",
-      "evidenceIds": [],
-      "createdAt": "2026-09-15T20:54:25.480Z",
-      "justification": "Verified against real repository state and corrected in commit 645b6673.",
-      "resolvedAt": "2026-09-15T20:54:32.623Z"
-    },
-    {
-      "id": "find-5d0adee8",
-      "category": "N",
-      "severity": "LOW",
-      "file": "apps/web/src/modules/audiovisual/SIDEBAR_ROUTE_PATCH.md",
-      "line": null,
-      "summary": "Leftover finished-migration instructions file, zero code references (CODEBASE_MAP Gotcha #25).",
-      "rootCause": null,
-      "disposition": "CORRIGIDA",
-      "evidenceIds": [],
-      "createdAt": "2026-09-15T20:54:25.868Z",
-      "justification": "Verified against real repository state and corrected in commit 645b6673.",
-      "resolvedAt": "2026-09-15T20:54:32.798Z"
+      "createdAt": "2026-09-16T00:19:12.131Z",
+      "justification": "Fixed the truthfulness gaps without building the missing feature: (1) added a wildcard child route rendering an honest 'Em construcao' placeholder (EmptyState) for the 5 undestined tabs instead of a blank Outlet; (2) replaced ArtistOverview's hardcoded fake Lancamentos/Campanhas counts with honest Indisponivel, matching the codebase's established AdminDashboard pattern for unavailable KPIs -- no new releases/campaigns-count query was invented. Did not build the 5 missing tab pages (needs product spec) or link the module into app navigation (out of scope -- it's currently unreachable, which is why this stayed MEDIUM not HIGH severity). 6 new tests (real router-integration render, not just source-grep) cover overview-still-works plus all 5 placeholder paths; full web typecheck passes.",
+      "resolvedAt": "2026-09-16T00:19:20.062Z"
     }
   ],
   "evidenceIds": [
-    "evid-0d0acad1",
-    "evid-e271dfb2",
-    "evid-f91cc0c1",
-    "evid-bc96f503",
-    "evid-cf7d36b5",
-    "evid-7fea1d0c",
-    "evid-cf69158a",
-    "evid-99d6ec8f",
-    "evid-1f89f736",
-    "evid-f93c4ea6",
-    "evid-0e0308f3",
-    "evid-08105d1f",
-    "evid-26275e34",
-    "evid-36ad8aac"
+    "evid-ba78b27a",
+    "evid-e8a01a06",
+    "evid-c5309484",
+    "evid-785e5866",
+    "evid-db607eb8",
+    "evid-6834ca6c",
+    "evid-568e1c7c",
+    "evid-b36b37a9",
+    "evid-6dc9c7a0"
   ],
   "checkpointIds": [],
   "touchedFiles": [],

@@ -1,0 +1,15 @@
+{
+  "id": "evid-6834ca6c",
+  "createdAt": "2026-09-16T00:09:48.690Z",
+  "type": "COMMAND",
+  "label": "node node_modules/vitest/dist/cli.js run --config apps/web/vitest.config.mjs apps/web/src/modules/admin",
+  "command": "node node_modules/vitest/dist/cli.js run --config apps/web/vitest.config.mjs apps/web/src/modules/admin",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[1m\u001b[7m\u001b[36m RUN \u001b[39m\u001b[27m\u001b[22m \u001b[36mv2.1.9 \u001b[39m\u001b[90mC:/Users/Usuario/Documents/MUSIC-OS-360/apps/web\u001b[39m\n\n \u001b[32m✓\u001b[39m src/modules/admin/hooks/useAdminIntegrations.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 10\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/admin/pages/AdminDashboard.kpis-error-state.test.tsx \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 389\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/admin/pages/AdminSettings.integracoes.test.tsx \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 2149\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m Portal Admin → Configurações → Integrações (componente real)\u001b[2m > \u001b[22mdispara a query administrativa ao montar a aba \u001b[33m310\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m Portal Admin → Configurações → Integrações (componente real)\u001b[2m > \u001b[22mrenderiza os provedores administrativos no DOM (inclusive ocultos do cliente) \u001b[33m323\u001b[2mms\u001b[22m\u001b[39m\n   \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m Portal Admin → Configurações → Integrações (componente real)\u001b[2m > \u001b[22mERROR não é renderizado como EMPTY (regressão do blocker) \u001b[33m1093\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/modules/admin/pages/AdminSettings.decorative-save.test.tsx \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[90m 174\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m4 passed\u001b[39m\u001b[22m\u001b[90m (4)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m18 passed\u001b[39m\u001b[22m\u001b[90m (18)\u001b[39m\n\u001b[2m   Start at \u001b[22m 21:09:42\n\u001b[2m   Duration \u001b[22m 6.47s\u001b[2m (transform 604ms, setup 1.98s, collect 3.24s, tests 2.72s, environment 5.31s, prepare 790ms)\u001b[22m",
+  "stderrTail": "",
+  "workspaceFingerprint": "10296706092ba8f668f700a3fbcf724c0cf9257a7edf956fe6c7d79f4b5de551",
+  "fingerprintStatus": "BOUND",
+  "head": "d48f58fd9286d084dbfdae28005478e2f706fe06",
+  "durationMs": 7548
+}
