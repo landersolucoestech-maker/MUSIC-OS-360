@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-16T06:03:55.912Z",
+  "updatedAt": "2026-09-16T07:47:07.148Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -29,7 +29,8 @@
             "evid-c97a6fc0",
             "evid-3e7899c7",
             "evid-a379a9a1",
-            "evid-37822ad6"
+            "evid-37822ad6",
+            "evid-a86baf5e"
           ],
           "status": "closed"
         }
@@ -63,7 +64,10 @@
             "evid-d8b247c4",
             "evid-92514a3b",
             "evid-0a433149",
-            "evid-78eb895f"
+            "evid-78eb895f",
+            "evid-16e76999",
+            "evid-08fb5e7e",
+            "evid-e8eda394"
           ],
           "status": "closed"
         }
@@ -86,7 +90,8 @@
             "evid-1204321a",
             "evid-bcd86f2b",
             "evid-5ffc2564",
-            "evid-e9aa8f70"
+            "evid-e9aa8f70",
+            "evid-47021dc6"
           ],
           "status": "closed"
         }
@@ -114,7 +119,9 @@
             "evid-38182139",
             "evid-84b0e890",
             "evid-b7d7f5dd",
-            "evid-b3c301d3"
+            "evid-b3c301d3",
+            "evid-34f8bd42",
+            "evid-e7298125"
           ],
           "status": "closed"
         }
@@ -137,7 +144,8 @@
             "evid-13ac7113",
             "evid-51ab94e6",
             "evid-4a79a1cc",
-            "evid-b1937dc9"
+            "evid-b1937dc9",
+            "evid-0976b706"
           ],
           "status": "closed"
         },
@@ -149,7 +157,8 @@
             "evid-5c149abc",
             "evid-2ba5b520",
             "evid-d0063ec1",
-            "evid-5900e042"
+            "evid-5900e042",
+            "evid-a1a02e68"
           ],
           "status": "closed"
         },
@@ -161,7 +170,8 @@
             "evid-f2835344",
             "evid-38386e0a",
             "evid-b4dee765",
-            "evid-83dc9a3b"
+            "evid-83dc9a3b",
+            "evid-07b6001a"
           ],
           "status": "closed"
         },
@@ -172,12 +182,42 @@
             "evid-74737fb9",
             "evid-1f98b318",
             "evid-89c32684",
-            "evid-f3bc1584"
+            "evid-f3bc1584",
+            "evid-b37ecf7b"
           ],
           "status": "closed"
         }
       ],
       "createdAt": "2026-09-16T05:02:47.165Z"
+    },
+    {
+      "id": "req-d96b3ee4",
+      "text": "Fix the DATABASE_URL/.env.development precedence safety defect (local verify scripts silently targeting real Supabase DEV) and resolve the 4-suite/27-test schema-drift cluster in DB Verify — Fresh PostgreSQL's test:e2e step",
+      "nonRequirements": [
+        "Do not apply the 35 pending DEV migrations; do not delete or modify .env.development; do not weaken any test"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-d0f5faaf",
+          "text": "12 scripts/e2e-specs no longer let .env.development silently override an explicit process env; proven via db-relation-not-exists isolation test against local Postgres",
+          "evidenceIds": [
+            "evid-2bb76704",
+            "evid-c522aa41",
+            "evid-bbdcc07e"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-61119aaa",
+          "text": "Full test:e2e (7 suites) and test:ci (288 suites) pass against a disposable local Postgres migrated from scratch; api typecheck clean",
+          "evidenceIds": [
+            "evid-665895aa",
+            "evid-dae6ac55"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-16T07:32:35.788Z"
     }
   ],
   "findings": [
@@ -194,6 +234,48 @@
       "createdAt": "2026-09-16T02:04:47.304Z",
       "justification": "Fixed: both dependencies switched to workspace:* in apps/api/package.json, pnpm-lock.yaml refreshed (resolved 'version' unchanged -- link:../../packages/X both before and after, only the specifier protocol differs). turbo --dry=json confirms api#build/typecheck/test now correctly depend on ai-skills#build+types#build. Full cold-cache 'pnpm turbo build typecheck' (12/12 tasks) and both apps' direct tsc typecheck pass.",
       "resolvedAt": "2026-09-16T02:04:52.408Z"
+    },
+    {
+      "id": "find-e875f6a8",
+      "category": "E",
+      "severity": "HIGH",
+      "file": "apps/api/src/database/migrations/20260910000011_BackfillAndRestrictWorkStatusToEnglish.ts",
+      "line": null,
+      "summary": "18 BackfillAndRestrict*StatusToEnglish migrations add English-only CHECK constraints but never update the column DEFAULT (still the old PT-BR value); fixed by adding ALTER COLUMN SET DEFAULT to each",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-16T07:32:56.103Z",
+      "justification": "All 18 migrations patched with ALTER COLUMN SET DEFAULT (up) and reverse (down); verified via fresh-Postgres pg_attrdef/pg_constraint cross-check showing all defaults now valid, plus full test:e2e and test:ci passing",
+      "resolvedAt": "2026-09-16T07:33:10.203Z"
+    },
+    {
+      "id": "find-6566150f",
+      "category": "E",
+      "severity": "CRITICAL",
+      "file": "apps/api/src/modules/integrations/autentique/autentique.service.ts",
+      "line": null,
+      "summary": "AutentiqueService and DocuSignService write pre-rename PT-BR contract status values ('assinado','aguardando_assinatura') that would violate the now-English-only chk_contract_status constraint on the first real e-signature webhook once migrations ship; fixed to English values",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-16T07:33:02.182Z",
+      "justification": "Fixed 4 status-literal write sites in AutentiqueService/DocuSignService plus AnalyticsService count query and verify-critical-rls.ts fixture; verified via phase3n-context.e2e-spec.ts real webhook flow test passing",
+      "resolvedAt": "2026-09-16T07:33:10.336Z"
+    },
+    {
+      "id": "find-77a9ca1c",
+      "category": "L",
+      "severity": "CRITICAL",
+      "file": "apps/api/scripts/verify-tenant-isolation.ts",
+      "line": null,
+      "summary": "12 local verify scripts/e2e-specs let apps/api/.env.development silently override an explicitly-provided DATABASE_URL/APP_DATABASE_URL/DB_SSL, causing local verification to unknowingly target the real shared Supabase DEV database; fixed precedence to explicit-env-wins in all 12",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-16T07:33:02.327Z",
+      "justification": "Fixed precedence in all 12 files; proven via relation-does-not-exist isolation test against explicit local DATABASE_URL with no migrations applied; read-only residue audit of real DEV found no session-attributable residue",
+      "resolvedAt": "2026-09-16T07:33:10.466Z"
     }
   ],
   "evidenceIds": [
@@ -257,7 +339,23 @@
     "evid-5900e042",
     "evid-b1937dc9",
     "evid-83dc9a3b",
-    "evid-f3bc1584"
+    "evid-f3bc1584",
+    "evid-2bb76704",
+    "evid-c522aa41",
+    "evid-bbdcc07e",
+    "evid-665895aa",
+    "evid-dae6ac55",
+    "evid-a86baf5e",
+    "evid-16e76999",
+    "evid-08fb5e7e",
+    "evid-e8eda394",
+    "evid-47021dc6",
+    "evid-34f8bd42",
+    "evid-e7298125",
+    "evid-a1a02e68",
+    "evid-0976b706",
+    "evid-07b6001a",
+    "evid-b37ecf7b"
   ],
   "checkpointIds": [],
   "touchedFiles": [],

@@ -1,0 +1,15 @@
+{
+  "id": "evid-0976b706",
+  "createdAt": "2026-09-16T07:44:29.877Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\verify-docker-bootstrap-fix.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\verify-docker-bootstrap-fix.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "+ docker build -f apps/api/Dockerfile -t musicos360-api:verify-bootstrap-fix .\n+ docker rm -f verify-api-2 verify-pg-2 verify-redis-2 2>/dev/null || true\n+ docker network rm verify-net-2 2>/dev/null || true\n+ docker network create verify-net-2\n+ docker run -d --rm --name verify-pg-2 --network verify-net-2 -e POSTGRES_USER=musicos360 -e POSTGRES_PASSWORD=ci_only_ephemeral_password_ba3f0d -e POSTGRES_DB=musicos360 postgres:16-alpine\n+ docker run -d --rm --name verify-redis-2 --network verify-net-2 redis:7-alpine\n+ docker exec verify-pg-2 pg_isready -U musicos360\n+ docker exec verify-pg-2 pg_isready -U musicos360\n+ docker run -d --name verify-api-2 --network verify-net-2 -p 3003:3001 -e NODE_ENV=development -e DATABASE_URL=postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@verify-pg-2:5432/musicos360 -e DB_SSL=false -e REDIS_URL=redis://verify-redis-2:6379 -e REDIS_QUEUE_URL=redis://verify-redis-2:6379 -e SUPABASE_URL=https://ci-smoke-test.invalid -e ENCRYPTION_KEY=33b29b3d331d95a7a029160cbbb4c64cc7e094271b0a6f501da19a596ade7217 -e CORS_ORIGINS=http://localhost:5000 musicos360-api:verify-bootstrap-fix\nDocker bootstrap fix verified: /health/live returned 200\n+ docker rm -f verify-api-2 verify-pg-2 verify-redis-2\n+ docker network rm verify-net-2",
+  "stderrTail": "",
+  "workspaceFingerprint": "43ef56112c1fcef2ccf15622615a216aa7cf69af6c1f47f91d9d4bb450cabd8f",
+  "fingerprintStatus": "BOUND",
+  "head": "1748c65b2ba82088d1a19bbefef12334c36c8d41",
+  "durationMs": 90899
+}

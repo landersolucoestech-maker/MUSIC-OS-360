@@ -60,3 +60,6 @@
 {"name":"gate-run","at":"2026-09-16T05:55:07.049Z","gate":"completion","status":"BLOCKED","durationMs":906,"reasonCount":8}
 {"name":"gate-run","at":"2026-09-16T06:04:00.780Z","gate":"completion","status":"PASS","durationMs":890,"reasonCount":0}
 {"name":"gate-run","at":"2026-09-16T06:04:01.279Z","gate":"security","status":"PASS","durationMs":309,"reasonCount":0}
+{"name":"gate-run","at":"2026-09-16T07:40:25.313Z","gate":"completion","status":"BLOCKED","durationMs":1403,"reasonCount":8}
+{"name":"gate-run","at":"2026-09-16T07:47:11.589Z","gate":"completion","status":"PASS","durationMs":641,"reasonCount":0}
+{"name":"gate-run","at":"2026-09-16T07:47:12.035Z","gate":"security","status":"PASS","durationMs":270,"reasonCount":0}
