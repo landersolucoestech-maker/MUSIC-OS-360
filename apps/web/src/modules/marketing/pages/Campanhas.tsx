@@ -64,6 +64,8 @@ import {
 } from "../constants/marketing.constants";
 import { formatCurrency, formatDate } from "../utils/marketing-format";
 import { PUBLISH_PLATFORMS } from "../config/social-formats";
+import { useSkillRun } from "@/shared/hooks/useSkillRun";
+import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
 import type {
   CampaignStatus,
   CampaignType,
@@ -551,6 +553,13 @@ function CampaignViewModal({
   onClose: () => void;
   onEdit: (campaign: MarketingCampaign) => void;
 }) {
+  const [adPlacement, setAdPlacement] = useState("feed");
+  const seoAudit = useSkillRun<Record<string, unknown>>(`/marketing/campaigns/${campaign?.id}/ai/seo-audit`);
+  const adCreative = useSkillRun<Record<string, unknown>>(
+    `/marketing/campaigns/${campaign?.id}/ai/ad-creative?platform=${encodeURIComponent(campaign?.platforms[0] ?? "")}&placement=${encodeURIComponent(adPlacement)}`,
+  );
+  const paidAds = useSkillRun<Record<string, unknown>>(`/marketing/campaigns/${campaign?.id}/ai/paid-ads-strategy`);
+
   if (!campaign) return null;
 
   return (
@@ -665,6 +674,63 @@ function CampaignViewModal({
           <section>
             <h3 className="mb-3 text-sm font-semibold text-foreground">Observações</h3>
             <p className="text-sm text-muted-foreground">{campaign.notes || campaign.objective || "Sem observações cadastradas."}</p>
+          </section>
+
+          <div className="border-t border-border" />
+
+          <section className="space-y-4">
+            <h3 className="mb-1 text-sm font-semibold text-foreground">Otimização (IA)</h3>
+
+            <div className="space-y-2">
+              <p className="text-xs font-medium tracking-wider text-muted-foreground">Higiene de link (seo-audit)</p>
+              <SkillRunPanel
+                label="Auditar link/UTM da campanha"
+                result={seoAudit.result}
+                isRunning={seoAudit.isRunning}
+                error={seoAudit.error}
+                onRun={() => seoAudit.run(undefined)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-xs font-medium tracking-wider text-muted-foreground">Criativos de anúncio (ad-creative)</p>
+              {campaign.platforms.length === 0 ? (
+                <p className="text-xs italic text-muted-foreground">Selecione ao menos uma plataforma na campanha para gerar criativos.</p>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-muted-foreground">Plataforma: {socialPlatformLabel(campaign.platforms[0])}</span>
+                    <Select value={adPlacement} onValueChange={setAdPlacement}>
+                      <SelectTrigger className="h-7 w-32 text-xs"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="feed">Feed</SelectItem>
+                        <SelectItem value="stories">Stories</SelectItem>
+                        <SelectItem value="reels">Reels</SelectItem>
+                        <SelectItem value="search">Busca</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <SkillRunPanel
+                    label="Gerar sugestões de criativo"
+                    result={adCreative.result}
+                    isRunning={adCreative.isRunning}
+                    error={adCreative.error}
+                    onRun={() => adCreative.run(undefined)}
+                  />
+                </>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-xs font-medium tracking-wider text-muted-foreground">Estratégia de mídia paga (paid-ads)</p>
+              <SkillRunPanel
+                label="Sugerir alocação entre plataformas"
+                result={paidAds.result}
+                isRunning={paidAds.isRunning}
+                error={paidAds.error}
+                onRun={() => paidAds.run(undefined)}
+              />
+            </div>
           </section>
         </div>
       </div>
