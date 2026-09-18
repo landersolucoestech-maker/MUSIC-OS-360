@@ -15,7 +15,7 @@ describe('projects-musicas.field — grupo repetível "Músicas do Projeto"', ()
         {
           id: 'track-1', project_id: 'proj-1', nome: 'Faixa 1', solo_feat: 'solo',
           original_remix: 'original', instrumental: 'nao', duracao_min: '3', duracao_seg: '30',
-          genero: 'pop', idioma: 'portugues', letra: 'la la', audio_url: 'https://x/a.mp3', ordem: 0,
+          genero: 'pop', idioma: 'portugues', letra: 'la la', audio_url: 'https://x/a.mp3', sort_order: 0,
         },
       ];
       const participants = [
@@ -49,7 +49,7 @@ describe('projects-musicas.field — grupo repetível "Músicas do Projeto"', ()
         produtores: ['Beltrano'],
         letra: 'la la',
         arquivosAudio: 'https://x/a.mp3',
-        ordem: 0,
+        sort_order: 0,
       }]);
     });
 

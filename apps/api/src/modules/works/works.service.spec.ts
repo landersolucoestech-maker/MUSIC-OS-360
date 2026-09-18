@@ -228,8 +228,8 @@ describe('WorksService', () => {
         ],
       } as any);
       expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
-        expect.objectContaining({ id: 'p1', tenant_id: TENANT, nome: 'Fulano', classe_funcao: 'compositor/autor', percentual: '60', ordem: 0 }),
-        expect.objectContaining({ id: 'p2', tenant_id: TENANT, nome: 'Beltrano', classe_funcao: 'tradutor', percentual: '40', ordem: 1 }),
+        expect.objectContaining({ id: 'p1', tenant_id: TENANT, nome: 'Fulano', classe_funcao: 'compositor/autor', percentual: '60', sort_order: 0 }),
+        expect.objectContaining({ id: 'p2', tenant_id: TENANT, nome: 'Beltrano', classe_funcao: 'tradutor', percentual: '40', sort_order: 1 }),
       ]);
     });
 

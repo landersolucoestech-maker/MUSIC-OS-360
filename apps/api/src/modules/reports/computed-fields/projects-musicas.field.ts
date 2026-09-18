@@ -19,7 +19,7 @@ export interface MusicaFieldItem {
   produtores: string[];
   letra: string | null;
   arquivosAudio: string | null;
-  ordem: number;
+  sort_order: number;
 }
 
 type TrackRole = 'compositor' | 'interprete' | 'produtor';
@@ -37,7 +37,7 @@ interface TrackRow {
   idioma: string | null;
   letra: string | null;
   audio_url: string | null;
-  ordem: number;
+  sort_order: number;
 }
 
 interface ParticipantRow {
@@ -62,10 +62,10 @@ export async function fetchProjectsMusicasForExport(
 
   const tracks = (await ds.query(
     `SELECT "id", "project_id", "nome", "solo_feat", "original_remix", "instrumental",
-            "duracao_min", "duracao_seg", "genero", "idioma", "letra", "audio_url", "ordem"
+            "duracao_min", "duracao_seg", "genero", "idioma", "letra", "audio_url", "sort_order"
        FROM "project_tracks"
       WHERE "tenant_id" = $1 AND "project_id" = ANY($2::uuid[])
-      ORDER BY "ordem" ASC`,
+      ORDER BY "sort_order" ASC`,
     [tenantId, projectIds],
   )) as TrackRow[];
 
@@ -75,7 +75,7 @@ export async function fetchProjectsMusicasForExport(
         `SELECT "project_track_id", "nome", "role"
            FROM "project_track_participants"
           WHERE "tenant_id" = $1 AND "project_track_id" = ANY($2::uuid[])
-          ORDER BY "ordem" ASC`,
+          ORDER BY "sort_order" ASC`,
         [tenantId, trackIds],
       )) as ParticipantRow[])
     : [];
@@ -105,7 +105,7 @@ export async function fetchProjectsMusicasForExport(
       produtores: namesByRole(track.id, 'produtor'),
       letra: track.letra,
       arquivosAudio: track.audio_url,
-      ordem: track.ordem,
+      sort_order: track.sort_order,
     });
     output.set(track.project_id, list);
   }
@@ -130,7 +130,7 @@ export async function insertProjectsMusicasForImport(
 
     const trackId = randomUUID();
     const duration = parseDuration(item);
-    const numericOrder = Number(item.ordem);
+    const numericOrder = Number(item.sort_order);
     const order = Number.isFinite(numericOrder) ? numericOrder : fallbackOrder;
     fallbackOrder += 1;
 
@@ -138,7 +138,7 @@ export async function insertProjectsMusicasForImport(
       `INSERT INTO "project_tracks"
          ("id", "tenant_id", "project_id", "nome", "solo_feat", "original_remix",
           "instrumental", "duracao_min", "duracao_seg", "genero", "idioma", "letra",
-          "audio_url", "ordem")
+          "audio_url", "sort_order")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
       [
         trackId,
@@ -170,7 +170,7 @@ export async function insertProjectsMusicasForImport(
         if (typeof value !== 'string' || !value.trim()) continue;
         await qr.query(
           `INSERT INTO "project_track_participants"
-             ("id", "tenant_id", "project_track_id", "nome", "role", "ordem")
+             ("id", "tenant_id", "project_track_id", "nome", "role", "sort_order")
            VALUES ($1, $2, $3, $4, $5, $6)`,
           [randomUUID(), tenantId, trackId, value.trim(), role, participantOrder++],
         );

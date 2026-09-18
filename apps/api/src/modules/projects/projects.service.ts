@@ -65,7 +65,7 @@ export class ProjectsService {
     const tracks = await this.tracksRepo!
       .createQueryBuilder('t')
       .where('t.project_id IN (:...projectIds)', { projectIds })
-      .orderBy('t.ordem', 'ASC')
+      .orderBy('t.sort_order', 'ASC')
       .getMany();
 
     const trackIds = tracks.map((t) => t.id);
@@ -73,7 +73,7 @@ export class ProjectsService {
       ? await this.participantsRepo!
           .createQueryBuilder('pp')
           .where('pp.project_track_id IN (:...trackIds)', { trackIds })
-          .orderBy('pp.ordem', 'ASC')
+          .orderBy('pp.sort_order', 'ASC')
           .getMany()
       : [];
 
@@ -119,7 +119,7 @@ export class ProjectsService {
     if (musicas === undefined) return;
     await this.tracksRepo!.delete({ project_id: projectId, tenant_id: tenantId });
 
-    let ordem = 0;
+    let sortOrder = 0;
     for (const m of musicas) {
       const trackId = (typeof m.id === 'string' && m.id) || randomUUID();
       await this.tracksRepo!.save(
@@ -137,7 +137,7 @@ export class ProjectsService {
           idioma: (m.idioma as string) || null,
           letra: (m.letra as string) || null,
           audio_url: (m.audioUrl as string) || null,
-          ordem: ordem++,
+          sort_order: sortOrder++,
         }),
       );
 
@@ -150,7 +150,7 @@ export class ProjectsService {
           .filter((nome): nome is string => typeof nome === 'string' && nome.trim().length > 0)
           .map((nome, i) => this.participantsRepo!.create({
             id: randomUUID(), tenant_id: tenantId, project_track_id: trackId,
-            nome: nome.trim(), role, ordem: i,
+            nome: nome.trim(), role, sort_order: i,
           }));
         if (rows.length > 0) await this.participantsRepo!.save(rows);
       }

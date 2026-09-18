@@ -780,7 +780,7 @@ export class WorkParticipantEntity {
   @Column({ type: 'varchar', length: 100 }) classe_funcao: string;
   @Column({ type: 'text', nullable: true }) link: string | null;
   @Column({ type: 'decimal', precision: 6, scale: 3, nullable: true }) percentual: string | null;
-  @Column({ type: 'integer', default: 0 }) ordem: number;
+  @Column({ type: 'integer', default: 0 }) sort_order: number;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamp' }) updated_at: Date;
 
@@ -1381,7 +1381,7 @@ export class ProjectTrackEntity {
   @Column({ type: 'varchar', length: 50, nullable: true }) idioma: string | null;
   @Column({ type: 'text', nullable: true }) letra: string | null;
   @Column({ type: 'text', nullable: true }) audio_url: string | null;
-  @Column({ type: 'integer', default: 0 }) ordem: number;
+  @Column({ type: 'integer', default: 0 }) sort_order: number;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamp' }) updated_at: Date;
 
@@ -1404,7 +1404,7 @@ export class ProjectTrackParticipantEntity {
   @Column({ type: 'uuid' }) project_track_id: string;
   @Column({ type: 'varchar', length: 255 }) nome: string;
   @Column({ type: 'varchar', length: 20 }) role: 'compositor' | 'interprete' | 'produtor';
-  @Column({ type: 'integer', default: 0 }) ordem: number;
+  @Column({ type: 'integer', default: 0 }) sort_order: number;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
 
   @ManyToOne(() => ProjectTrackEntity, (t) => t.participantes, { onDelete: 'CASCADE' })

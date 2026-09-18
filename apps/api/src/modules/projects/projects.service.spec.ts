@@ -109,7 +109,7 @@ describe('ProjectsService', () => {
       ],
     } as any);
     expect(mockDs._tracksRepo.save).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 't1', tenant_id: TENANT, nome: 'Faixa 1', duracao_min: '3', duracao_seg: '30', ordem: 0 }),
+      expect.objectContaining({ id: 't1', tenant_id: TENANT, nome: 'Faixa 1', duracao_min: '3', duracao_seg: '30', sort_order: 0 }),
     );
     expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
       expect.objectContaining({ nome: 'Fulano', role: 'compositor' }),

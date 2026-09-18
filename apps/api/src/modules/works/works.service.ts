@@ -51,7 +51,7 @@ export class WorksService {
     const rows = await this.participantsRepo!
       .createQueryBuilder('p')
       .where('p.work_id IN (:...ids)', { ids })
-      .orderBy('p.ordem', 'ASC')
+      .orderBy('p.sort_order', 'ASC')
       .getMany();
 
     const byWork = new Map<string, ParticipanteResponse[]>();
@@ -90,7 +90,7 @@ export class WorksService {
         classe_funcao: String(p.classeFuncao ?? 'não_informado'),
         link: (p.link as string) || null,
         percentual: p.percentual != null && p.percentual !== '' ? String(p.percentual) : null,
-        ordem: index,
+        sort_order: index,
       }),
     );
     if (rows.length > 0) await repo.save(rows);

@@ -146,8 +146,8 @@ describe('ImportEngineService — projetos em uma única aba', () => {
   const PROJECTS_DEF: ReportEntityDefinition = {
     entityName: 'ProjectEntity', tableName: 'projects', category: EntityCategory.REPORTABLE,
     identityColumn: 'nome_ep_album', displayColumn: 'nome_ep_album', dateColumn: 'created_at',
-    exportableColumns: ['tipo_lancamento', 'nome_ep_album', 'observacoes', 'status_projeto', 'nome_musica', 'soloFeat', 'originalRemix', 'instrumental', 'duracaoMinutos', 'duracaoSegundos', 'generoMusical', 'idiomaMusica', 'compositores', 'interpretes', 'produtores', 'letra', 'arquivosAudio', 'ordem'],
-    importableColumns: ['tipo_lancamento', 'nome_ep_album', 'observacoes', 'status_projeto', 'nome_musica', 'soloFeat', 'originalRemix', 'instrumental', 'duracaoMinutos', 'duracaoSegundos', 'generoMusical', 'idiomaMusica', 'compositores', 'interpretes', 'produtores', 'letra', 'arquivosAudio', 'ordem'],
+    exportableColumns: ['tipo_lancamento', 'nome_ep_album', 'observacoes', 'status_projeto', 'nome_musica', 'soloFeat', 'originalRemix', 'instrumental', 'duracaoMinutos', 'duracaoSegundos', 'generoMusical', 'idiomaMusica', 'compositores', 'interpretes', 'produtores', 'letra', 'arquivosAudio', 'sort_order'],
+    importableColumns: ['tipo_lancamento', 'nome_ep_album', 'observacoes', 'status_projeto', 'nome_musica', 'soloFeat', 'originalRemix', 'instrumental', 'duracaoMinutos', 'duracaoSegundos', 'generoMusical', 'idiomaMusica', 'compositores', 'interpretes', 'produtores', 'letra', 'arquivosAudio', 'sort_order'],
     filterableColumns: [], sortableColumns: [], searchableColumns: [], sensitiveColumns: [],
     requiredImportColumns: ['nome_ep_album'], supportsExport: true, supportsImport: true,
   };

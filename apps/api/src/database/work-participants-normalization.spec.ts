@@ -53,8 +53,8 @@ describe('WorkEntity não reintroduz colunas removidas', () => {
 describe('WorkParticipantEntity — tabela filha normalizada', () => {
   const block = entityBlock('WorkParticipantEntity');
 
-  it('possui as colunas reais extraídas de ParticipanteForm (nome, classe_funcao, link, percentual, ordem)', () => {
-    for (const field of ['tenant_id', 'work_id', 'nome', 'classe_funcao', 'link', 'percentual', 'ordem']) {
+  it('possui as colunas reais extraídas de ParticipanteForm (nome, classe_funcao, link, percentual, sort_order)', () => {
+    for (const field of ['tenant_id', 'work_id', 'nome', 'classe_funcao', 'link', 'percentual', 'sort_order']) {
       expect(block).toMatch(new RegExp(`\\b${field}\\b`));
     }
   });

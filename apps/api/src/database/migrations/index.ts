@@ -212,6 +212,7 @@ import { SystemPathRlsExplicitMarker20260911000002 } from './20260911000002_Syst
 import { PerTenantIsrcUniqueness20260911000003 } from './20260911000003_PerTenantIsrcUniqueness';
 import { NotificationsBullmqJobIdUniqueness20260912000001 } from './20260912000001_NotificationsBullmqJobIdUniqueness';
 import { RenameSharePartyFieldsToEnglish20260913000001 } from './20260913000001_RenameSharePartyFieldsToEnglish';
+import { RenameOrdemToSortOrder20260918000001 } from './20260918000001_RenameOrdemToSortOrder';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -435,4 +436,5 @@ export const ALL_MIGRATIONS = [
   PerTenantIsrcUniqueness20260911000003,
   NotificationsBullmqJobIdUniqueness20260912000001,
   RenameSharePartyFieldsToEnglish20260913000001,
+  RenameOrdemToSortOrder20260918000001,
 ] as const;

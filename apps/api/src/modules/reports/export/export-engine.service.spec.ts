@@ -143,7 +143,7 @@ describe('Projetos — workbook fiel ao modal e com uma única aba', () => {
       'tipo_lancamento', 'nome_ep_album', 'observacoes', 'status_projeto',
       'nome_musica', 'soloFeat', 'originalRemix', 'instrumental',
       'duracaoMinutos', 'duracaoSegundos', 'generoMusical', 'idiomaMusica',
-      'compositores', 'interpretes', 'produtores', 'letra', 'arquivosAudio', 'ordem',
+      'compositores', 'interpretes', 'produtores', 'letra', 'arquivosAudio', 'sort_order',
     ],
     importableColumns: [], filterableColumns: [], sortableColumns: ['created_at'], searchableColumns: [],
     sensitiveColumns: [], requiredImportColumns: ['nome_ep_album'], supportsExport: true, supportsImport: true,
@@ -156,8 +156,8 @@ describe('Projetos — workbook fiel ao modal e com uma única aba', () => {
         tipo_lancamento: 'ep', nome_ep_album: 'Meu EP', observacoes: 'Obs', status_projeto: 'em_andamento',
       }])
       .mockResolvedValueOnce([
-        { id: 'track-1', project_id: '00000000-0000-0000-0000-000000000001', nome: 'Faixa 1', solo_feat: 'solo', original_remix: 'original', instrumental: 'nao', duracao_min: '3', duracao_seg: '5', genero: 'pop', idioma: 'portugues', letra: 'Letra 1', audio_url: 'audio-1.wav', ordem: 0 },
-        { id: 'track-2', project_id: '00000000-0000-0000-0000-000000000001', nome: 'Faixa 2', solo_feat: 'feat', original_remix: 'remix', instrumental: 'sim', duracao_min: '4', duracao_seg: '10', genero: 'rap', idioma: 'portugues', letra: 'Letra 2', audio_url: 'audio-2.wav', ordem: 1 },
+        { id: 'track-1', project_id: '00000000-0000-0000-0000-000000000001', nome: 'Faixa 1', solo_feat: 'solo', original_remix: 'original', instrumental: 'nao', duracao_min: '3', duracao_seg: '5', genero: 'pop', idioma: 'portugues', letra: 'Letra 1', audio_url: 'audio-1.wav', sort_order: 0 },
+        { id: 'track-2', project_id: '00000000-0000-0000-0000-000000000001', nome: 'Faixa 2', solo_feat: 'feat', original_remix: 'remix', instrumental: 'sim', duracao_min: '4', duracao_seg: '10', genero: 'rap', idioma: 'portugues', letra: 'Letra 2', audio_url: 'audio-2.wav', sort_order: 1 },
       ])
       .mockResolvedValueOnce([
         { project_track_id: 'track-1', nome: 'Compositor A', role: 'compositor' },

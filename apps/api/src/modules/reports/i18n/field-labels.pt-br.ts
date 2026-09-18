@@ -310,7 +310,6 @@ export const FIELD_LABELS_PT_BR = {
   soloFeat: 'Solo/Feat',
   originalRemix: 'Original/Remix',
   audioUrl: 'Áudio',
-  ordem: 'Ordem',
   // Coluna de correlação entre a aba principal e abas filhas (Parte 87) —
   // nunca persistida, existe só dentro do arquivo XLSX.
   projetoRef: 'Projeto ID de referência',

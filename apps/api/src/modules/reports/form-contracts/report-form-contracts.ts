@@ -330,7 +330,7 @@ const PROJECTS_CONTRACT: ReportFormContract = {
         { key: 'produtores', multi: true },
         { key: 'letra' },
         { key: 'arquivosAudio' },
-        { key: 'ordem' },
+        { key: 'sort_order' },
       ],
   },
 };
