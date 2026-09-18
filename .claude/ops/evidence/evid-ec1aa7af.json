@@ -1,0 +1,15 @@
+{
+  "id": "evid-ec1aa7af",
+  "createdAt": "2026-09-18T08:15:29.430Z",
+  "type": "COMMAND",
+  "label": "node apps/api/node_modules/jest/bin/jest.js --config apps/api/jest.config.ts --rootDir apps/api bootstrap.spec.ts",
+  "command": "node apps/api/node_modules/jest/bin/jest.js --config apps/api/jest.config.ts --rootDir apps/api bootstrap.spec.ts",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "FAIL apps/api/src/bootstrap.spec.ts\n  ● Test suite failed to run\n\n    File not found: <rootDir>/../tsconfig.json (resolved as: C:\\Users\\Usuario\\Documents\\MUSIC-OS-360\\apps\\tsconfig.json)\n\n      at ConfigSet.resolvePath (../../node_modules/.pnpm/ts-jest@29.4.9_@babel+core@_d080f28b7a7c23c20016a0f2fd94f281/node_modules/ts-jest/dist/legacy/config/config-set.js:615:19)\n      at ConfigSet._setupConfigSet (../../node_modules/.pnpm/ts-jest@29.4.9_@babel+core@_d080f28b7a7c23c20016a0f2fd94f281/node_modules/ts-jest/dist/legacy/config/config-set.js:321:71)\n      at new ConfigSet (../../node_modules/.pnpm/ts-jest@29.4.9_@babel+core@_d080f28b7a7c23c20016a0f2fd94f281/node_modules/ts-jest/dist/legacy/config/config-set.js:205:14)\n      at TsJestTransformer._createConfigSet (../../node_modules/.pnpm/ts-jest@29.4.9_@babel+core@_d080f28b7a7c23c20016a0f2fd94f281/node_modules/ts-jest/dist/legacy/ts-jest-transformer.js:119:16)\n      at TsJestTransformer._configsFor (../../node_modules/.pnpm/ts-jest@29.4.9_@babel+core@_d080f28b7a7c23c20016a0f2fd94f281/node_modules/ts-jest/dist/legacy/ts-jest-transformer.js:98:34)\n      at TsJestTransformer.getCacheKey (../../node_modules/.pnpm/ts-jest@29.4.9_@babel+core@_d080f28b7a7c23c20016a0f2fd94f281/node_modules/ts-jest/dist/legacy/ts-jest-transformer.js:249:30)\n      at ScriptTransformer._getCacheKey (../../node_modules/.pnpm/@jest+transform@30.4.1/node_modules/@jest/transform/build/index.js:188:41)\n      at ScriptTransformer._getFileCachePath (../../node_modules/.pnpm/@jest+transform@30.4.1/node_modules/@jest/transform/build/index.js:224:27)\n      at ScriptTransformer.transformSource (../../node_modules/.pnpm/@jest+transform@30.4.1/node_modules/@jest/transform/build/index.js:395:32)\n      at ScriptTransformer._transformAndBuildScript (../../node_modules/.pnpm/@jest+transform@30.4.1/node_modules/@jest/transform/build/index.js:512:40)\n      at ScriptTransformer.transform (../../node_modules/.pnpm/@jest+transform@30.4.1/node_modules/@jest/transform/build/index.js:551:19)\n\nTest Suites: 1 failed, 1 total\nTests:       0 total\nSnapshots:   0 total\nTime:        1.345 s\nRan all test suites matching bootstrap.spec.ts.",
+  "workspaceFingerprint": "ff19c93d952c5a8374bb4b7ff6fa40129971873b302b9c980b46dde440e41bd7",
+  "fingerprintStatus": "BOUND",
+  "head": "e90e850527ec59bdd7f7f075c429b9d29d71d03e",
+  "durationMs": 9108
+}

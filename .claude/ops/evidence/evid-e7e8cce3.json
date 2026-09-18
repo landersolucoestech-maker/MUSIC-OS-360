@@ -1,0 +1,15 @@
+{
+  "id": "evid-e7e8cce3",
+  "createdAt": "2026-09-18T08:14:06.210Z",
+  "type": "COMMAND",
+  "label": "node node_modules/.bin/jest --config apps/api/jest.config.ts --rootDir apps/api bootstrap.spec.ts",
+  "command": "node node_modules/.bin/jest --config apps/api/jest.config.ts --rootDir apps/api bootstrap.spec.ts",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "C:\\Users\\Usuario\\Documents\\MUSIC-OS-360\\node_modules\\.bin\\jest:2\r\nbasedir=$(dirname \"$(echo \"$0\" | sed -e 's,\\\\,/,g')\")\r\n          ^^^^^^^\r\n\r\nSyntaxError: missing ) after argument list\r\n    at wrapSafe (node:internal/modules/cjs/loader:1763:18)\r\n    at Module._compile (node:internal/modules/cjs/loader:1804:20)\r\n    at Object..js (node:internal/modules/cjs/loader:1961:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1553:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1355:12)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\r\n    at node:internal/main/run_main_module:33:47\r\n\r\nNode.js v24.15.0",
+  "workspaceFingerprint": "ff19c93d952c5a8374bb4b7ff6fa40129971873b302b9c980b46dde440e41bd7",
+  "fingerprintStatus": "BOUND",
+  "head": "e90e850527ec59bdd7f7f075c429b9d29d71d03e",
+  "durationMs": 71
+}

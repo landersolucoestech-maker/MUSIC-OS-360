@@ -1,0 +1,15 @@
+{
+  "id": "evid-94ee2410",
+  "createdAt": "2026-09-18T08:14:33.952Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter @music-os-360/api exec jest bootstrap.spec.ts",
+  "command": "pnpm --filter @music-os-360/api exec jest bootstrap.spec.ts",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "spawnSync pnpm ENOENT",
+  "workspaceFingerprint": "ff19c93d952c5a8374bb4b7ff6fa40129971873b302b9c980b46dde440e41bd7",
+  "fingerprintStatus": "BOUND",
+  "head": "e90e850527ec59bdd7f7f075c429b9d29d71d03e",
+  "durationMs": 5
+}
