@@ -17,6 +17,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import { useAuth } from "@/app/providers/AuthContext";
 import { useTenant } from "@/app/providers/TenantContext";
+import { api } from "@/shared/lib/api-client";
+import { useAiSkillRun, type OnDemandSkillResult } from "@/shared/hooks/useAiSkillRun";
+import { AiSkillRunPanel } from "@/shared/components/ai/AiSkillRunPanel";
+import type { OnboardingCroOutput } from "@music-os-360/ai-skills";
 import { useUserSettings } from "@/modules/settings/hooks/useUserSettings";
 import { useCompanySettings } from "@/modules/settings/hooks/useCompanySettings";
 import { useUsuarios, Usuario } from "@/modules/settings/hooks/useUsuarios";
@@ -142,6 +146,10 @@ function formatRoleName(name: string): string {
 
 export default function Configuracoes() {
   const { tenant, setTenant } = useTenant();
+
+  const onboardingProgressMutation = useAiSkillRun<OnboardingCroOutput>(() =>
+    api.post<OnDemandSkillResult<OnboardingCroOutput>>("/auth/onboarding/ai/progress-analysis", {}),
+  );
 
   // Planos de billing — fonte dinâmica (Admin → Banco). Nunca hardcoded na tela.
   const billingPlansQuery = useQuery({
@@ -770,6 +778,29 @@ export default function Configuracoes() {
 
           {/* Empresa */}
           <TabsContent value="empresa" className="mt-6 space-y-6">
+            {!tenant.onboarding.completed && (
+              <AiSkillRunPanel
+                title="Progresso de onboarding"
+                description="Análise real do progresso deste workspace (perfil, artistas, catálogo, contratos, time, integrações)"
+                runLabel="Analisar progresso"
+                mutation={onboardingProgressMutation}
+                renderResult={(parsed: OnboardingCroOutput) => (
+                  <div className="space-y-2">
+                    <p className="text-sm">{parsed.progressSummary}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {parsed.completedStepsCount} de {parsed.totalStepsCount} passos concluídos — próximo: {parsed.nextRecommendedStep}
+                    </p>
+                    {parsed.recommendedActions.length > 0 && (
+                      <ul className="list-disc pl-4 text-sm space-y-1">
+                        {parsed.recommendedActions.map((a, i) => (
+                          <li key={i}>{a.action} <Badge variant="outline" className="ml-1">{a.priority}</Badge></li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+              />
+            )}
             <div className="grid gap-6 lg:grid-cols-3">
               {/* Resumo — Identidade Visual */}
               <Card className="lg:col-span-1">
