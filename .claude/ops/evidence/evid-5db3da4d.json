@@ -1,0 +1,15 @@
+{
+  "id": "evid-5db3da4d",
+  "createdAt": "2026-09-18T22:33:36.739Z",
+  "type": "COMMAND",
+  "label": "node apps/api/node_modules/jest/bin/jest.js --config apps/api/jest.config.ts bootstrap.spec.ts",
+  "command": "node apps/api/node_modules/jest/bin/jest.js --config apps/api/jest.config.ts bootstrap.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "e81fad33e78cd6c7345c59916bc04ff4781c3303f96978cf4c5c4e916239fc53",
+  "fingerprintStatus": "BOUND",
+  "head": "6acded223870bf32c6ddde1b69d8ce2ff91a34c9",
+  "durationMs": 11143
+}

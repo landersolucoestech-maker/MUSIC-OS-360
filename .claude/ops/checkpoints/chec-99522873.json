@@ -1,0 +1,7 @@
+{
+  "id": "chec-99522873",
+  "createdAt": "2026-09-18T22:40:07.152Z",
+  "label": "Naming normalization: ordem->sort_order + ativo->active (contract_templates) — gates PASS",
+  "workspaceFingerprint": "e81fad33e78cd6c7345c59916bc04ff4781c3303f96978cf4c5c4e916239fc53",
+  "head": "6acded223870bf32c6ddde1b69d8ce2ff91a34c9"
+}
