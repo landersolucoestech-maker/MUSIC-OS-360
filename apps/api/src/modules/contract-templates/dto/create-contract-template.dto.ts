@@ -18,7 +18,7 @@ export class CreateContractTemplateDto {
 
   @ApiPropertyOptional()
   @IsOptional() @IsBoolean()
-  ativo?: boolean;
+  active?: boolean;
 
   @ApiPropertyOptional()
   @IsOptional() @IsString()

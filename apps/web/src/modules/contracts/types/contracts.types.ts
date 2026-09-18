@@ -73,7 +73,7 @@ export interface ContractTemplateRow {
   tipo_servico: string;
   conteudo: string;
   descricao?: string | null;
-  ativo: boolean;
+  active: boolean;
   variables_manifest?: string | null;
   header_image?: string | null;
   footer_image?: string | null;

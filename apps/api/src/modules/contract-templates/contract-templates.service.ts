@@ -21,7 +21,7 @@ export class ContractTemplatesService {
       .andWhere('t.deleted_at IS NULL');
 
     if (query.type)   qb.andWhere('t.tipo_servico = :type', { type:   query.type });
-    if (query.ativo !== undefined) qb.andWhere('t.ativo = :ativo', { ativo: query.ativo });
+    if (query.active !== undefined) qb.andWhere('t.active = :active', { active: query.active });
     if (query.search) qb.andWhere('t.nome ILIKE :search',   { search: `%${query.search}%` });
 
     qb.orderBy('t.created_at', query.ascending ? 'ASC' : 'DESC')

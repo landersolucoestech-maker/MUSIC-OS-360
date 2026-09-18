@@ -80,10 +80,10 @@ export function ContractTemplateViewModal({
               <DialogTitle className="text-xl leading-snug">{template.nome}</DialogTitle>
               <div className="flex items-center gap-2 shrink-0">
                 <Badge
-                  variant={template.ativo ? "default" : "secondary"}
+                  variant={template.active ? "default" : "secondary"}
                   className="no-underline"
                 >
-                  {template.ativo ? "Ativo" : "Inativo"}
+                  {template.active ? "Ativo" : "Inativo"}
                 </Badge>
                 {template.tipo_servico && (
                   <Badge variant="outline" className="no-underline">

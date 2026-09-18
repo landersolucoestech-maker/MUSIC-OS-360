@@ -1,7 +1,7 @@
 /**
  * find-8229f49e: QueryContractTemplateDto declared `status`, which
  * ContractTemplatesService.list() never read (silently-ignored-filter),
- * and had no field for `ativo`, which the service already implements --
+ * and had no field for `active`, which the service already implements --
  * unreachable under the real global ValidationPipe (whitelist +
  * forbidNonWhitelisted). Reproduces that pipe exactly, without booting the
  * app, to prove the DTO's actual accepted-field contract.
@@ -22,8 +22,8 @@ async function validatePayload(payload: Record<string, unknown>) {
 }
 
 describe('QueryContractTemplateDto — matches ContractTemplatesService.list()\'s real filters', () => {
-  it('accepts ativo (a real service filter previously unreachable)', async () => {
-    const errors = await validatePayload({ ativo: 'true' });
+  it('accepts active (a real service filter previously unreachable)', async () => {
+    const errors = await validatePayload({ active: 'true' });
     expect(errors).toHaveLength(0);
   });
 

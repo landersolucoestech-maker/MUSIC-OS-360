@@ -69,7 +69,7 @@ function templateCategory(template: ContractTemplateRow): string {
 }
 
 function templateStatus(template: ContractTemplateRow): string {
-  return template.ativo ? "Ativo" : "Inativo";
+  return template.active ? "Ativo" : "Inativo";
 }
 
 export default function ContractTemplates() {
@@ -94,8 +94,8 @@ export default function ContractTemplates() {
       if (q && !template.nome.toLowerCase().includes(q) && !(template.descricao ?? "").toLowerCase().includes(q)) return false;
       if (filterType === "semantico" && template.tipo_servico !== "semantico") return false;
       if (filterType === "padrao" && template.tipo_servico === "semantico") return false;
-      if (filterStatus === "ativo" && !template.ativo) return false;
-      if (filterStatus === "inativo" && template.ativo) return false;
+      if (filterStatus === "ativo" && !template.active) return false;
+      if (filterStatus === "inativo" && template.active) return false;
       return true;
     });
   }, [templates, search, filterType, filterStatus]);
@@ -175,7 +175,7 @@ export default function ContractTemplates() {
   };
 
   const semanticCount = templates.filter((template) => template.tipo_servico === "semantico").length;
-  const activeCount = templates.filter((template) => template.ativo).length;
+  const activeCount = templates.filter((template) => template.active).length;
   const totalVars = templates.reduce((acc, template) => acc + countVariables(template), 0);
 
   if (isLoading) {
@@ -382,7 +382,7 @@ export default function ContractTemplates() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={template.ativo ? "default" : "secondary"} className="text-[10px]">{templateStatus(template)}</Badge>
+                          <Badge variant={template.active ? "default" : "secondary"} className="text-[10px]">{templateStatus(template)}</Badge>
                         </TableCell>
                         <TableCell className="text-muted-foreground whitespace-nowrap">{formatDate(template.created_at)}</TableCell>
                         <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>

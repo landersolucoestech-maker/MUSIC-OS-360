@@ -330,7 +330,7 @@ function StepTemplate({
   categories: Array<{ value: string; label: string }>;
 }) {
   const { templates } = useContractTemplates();
-  const active = templates.filter((t) => t.ativo !== false);
+  const active = templates.filter((t) => t.active !== false);
 
   const getCategoryLabel = useCallback(
     (tipoServico: string) => {
