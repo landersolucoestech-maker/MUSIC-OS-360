@@ -18,6 +18,8 @@ import { AuthContextService } from './auth-context.service';
 import { OnboardingService } from './onboarding.service';
 import { WorkspaceProvisioningService } from './workspace-provisioning.service';
 import { AuthPasswordService } from './auth-password.service';
+import { AIModule } from '../ai/ai.module';
+import { OnboardingCroAutomation } from '../../core/automation/onboarding-cro.automation';
 
 // DevAuthController is only registered outside production — the route must not
 // exist at all in production (defense-in-depth beyond the 403 guard in the controller).
@@ -25,13 +27,14 @@ const DEV_CONTROLLERS =
   !isProdLike(process.env['NODE_ENV']) ? [DevAuthController] : [];
 
 @Module({
-  imports:     [RbacModule, DatabaseModule],
+  imports:     [RbacModule, DatabaseModule, AIModule],
   controllers: [AuthController, ...DEV_CONTROLLERS],
   providers:   [
     AuthContextService,
     OnboardingService,
     WorkspaceProvisioningService,
     AuthPasswordService,
+    OnboardingCroAutomation,
   ],
   exports:     [AuthContextService],
 })

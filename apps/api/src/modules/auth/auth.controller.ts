@@ -15,6 +15,7 @@ import { ProvisionWorkspaceDto } from './dto/provision-workspace.dto';
 import { WorkspaceProvisioningService } from './workspace-provisioning.service';
 import { AuthPasswordService } from './auth-password.service';
 import { ChangeRequiredPasswordDto } from './dto/change-required-password.dto';
+import { OnboardingCroAutomation } from '../../core/automation/onboarding-cro.automation';
 
 function extractBearerToken(req: Request): string | null {
   const header = req.headers['authorization'];
@@ -30,6 +31,7 @@ export class AuthController {
     private readonly onboarding: OnboardingService,
     private readonly provisioning: WorkspaceProvisioningService,
     private readonly password: AuthPasswordService,
+    private readonly onboardingCro: OnboardingCroAutomation,
   ) {}
 
   @Get('context')
@@ -80,5 +82,15 @@ export class AuthController {
       user.userId,
       dto,
     );
+  }
+
+  @Post('onboarding/ai/progress-analysis')
+  @RequireRole('viewer')
+  @ApiOperation({ summary: 'AI Skill onboarding-cro — análise do progresso real de onboarding deste tenant' })
+  runOnboardingProgressAnalysis(
+    @CurrentUser() user: JwtAuth,
+    @CurrentTenant() tenant: Record<string, unknown>,
+  ) {
+    return this.onboardingCro.run(String(tenant['id']), user.userId);
   }
 }
