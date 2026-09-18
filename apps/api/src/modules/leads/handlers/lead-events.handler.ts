@@ -10,7 +10,7 @@ import {
   ClientEntity,
   LeadEntity,
 } from '../../../database/entities';
-import { DOMAIN_EVENTS } from '../../../core/events/events.service';
+import { DOMAIN_EVENTS, EventsService } from '../../../core/events/events.service';
 import type { DomainEvent } from '../../../core/events/events.service';
 import type { LeadConvertedPayload } from '../../../core/events/domain-events.types';
 
@@ -23,6 +23,7 @@ export class LeadEventsHandler {
 
   constructor(
     @Inject(DATA_SOURCE) @Optional() ds: DataSource | null,
+    @Optional() private readonly events?: EventsService,
     @Optional() private readonly dbContext?: DatabaseContextService,
   ) {
     if (ds) {
@@ -40,7 +41,7 @@ export class LeadEventsHandler {
     const { leadId, nome, empresa, convertedBy, convertedAt } = event.payload;
 
     if (this.clientRepo || this.leadRepo || this.artistRepo) {
-      await this.runInTenantContext(tenantId, async (manager) => {
+      const created = await this.runInTenantContext(tenantId, async (manager) => {
         // find-aca0fb58: the idempotency read (find-22ec2dfa) and the
         // subsequent creates/update were not wrapped in any lock/transaction
         // spanning the whole sequence — two genuinely concurrent
@@ -51,11 +52,33 @@ export class LeadEventsHandler {
         // a savepoint when `manager` already holds an open transaction
         // (session-context ON), or opens a real one otherwise.
         const base = manager ?? this.leadRepo!.manager;
-        await base.transaction(async (txManager) => {
+        return base.transaction(async (txManager) => {
           await txManager.query('SELECT pg_advisory_xact_lock(hashtext($1))', [`lead-conversion:${tenantId}:${leadId}`]);
-          await this.convertLead(txManager, tenantId, event, leadId, nome, empresa, convertedBy, convertedAt);
+          return this.convertLead(txManager, tenantId, event, leadId, nome, empresa, convertedBy, convertedAt);
         });
       });
+
+      // Emitido SÓ APÓS o commit da transação (fora do bloco acima) — o
+      // listener de automação faz sua própria leitura via conexão separada;
+      // emitir dentro da transação arriscaria uma leitura-suja da linha
+      // clients ainda não commitada (race entre commit e o listener).
+      if (created) {
+        this.events?.emitTyped(DOMAIN_EVENTS.CLIENT_CREATED, {
+          tenantId,
+          userId: event.userId ?? convertedBy,
+          aggregateType: 'client',
+          aggregateId: created.clientId,
+          payload: {
+            clientId: created.clientId,
+            tenantId,
+            nome: created.nome,
+            categoria: created.categoria,
+            tipoPessoa: created.tipoPessoa,
+            sourceLeadId: leadId,
+            createdBy: event.userId ?? convertedBy,
+          },
+        });
+      }
     }
   }
 
@@ -68,8 +91,10 @@ export class LeadEventsHandler {
     empresa: string | null,
     convertedBy: string,
     convertedAt: string,
-  ): Promise<void> {
+  ): Promise<{ clientId: string; nome: string; categoria: string; tipoPessoa: string } | null> {
     let clientId: string | null = null;
+    let createdCategoria = '';
+    let createdTipoPessoa = '';
     const clientRepo = manager.getRepository(ClientEntity);
     const leadRepo = manager.getRepository(LeadEntity);
     const artistRepo = manager.getRepository(ArtistEntity);
@@ -87,19 +112,21 @@ export class LeadEventsHandler {
         this.logger.warn(
           `LeadEventsHandler: lead "${leadId}" já convertido (client_id="${existingLead.client_id}") — LEAD_CONVERTED ignorado (idempotência)`,
         );
-        return;
+        return null;
       }
     }
 
     {
           try {
+            createdCategoria = 'CORPORATE_CLIENT';
+            createdTipoPessoa = empresa ? 'pessoa_juridica' : 'pessoa_fisica';
             const client = clientRepo.create({
               id: randomUUID(),
               tenant_id: tenantId,
               nome,
-              categoria: 'CORPORATE_CLIENT',
+              categoria: createdCategoria,
               perfil: 'outros',
-              tipo_pessoa: empresa ? 'pessoa_juridica' : 'pessoa_fisica',
+              tipo_pessoa: createdTipoPessoa,
               responsavel_nome: convertedBy,
               observacoes: `Convertido de lead ${leadId} em ${convertedAt}`,
               metadata: {
@@ -169,6 +196,8 @@ export class LeadEventsHandler {
             );
           }
         }
+
+        return clientId ? { clientId, nome, categoria: createdCategoria, tipoPessoa: createdTipoPessoa } : null;
   }
 
   private failClosed(eventType: string): void {

@@ -478,6 +478,18 @@ export interface LeadConvertedPayload {
   convertedAt: string;
 }
 
+// ─── Clients ──────────────────────────────────────────────────────────────────
+
+export interface ClientCreatedPayload {
+  clientId:   string;
+  tenantId:   string;
+  nome:       string;
+  categoria:  string;
+  tipoPessoa: string;
+  sourceLeadId: string | null;
+  createdBy:  string;
+}
+
 // ─── Assets / Uploads ─────────────────────────────────────────────────────────
 
 export interface AssetUploadedPayload {
@@ -704,6 +716,7 @@ export type AnyDomainEventPayload =
   | LeadUpdatedPayload
   | ConversationCreatedPayload
   | LeadConvertedPayload
+  | ClientCreatedPayload
   | AssetUploadedPayload
   | AssetAvailableForContentPayload
   | SkillStartedPayload

@@ -175,7 +175,7 @@ describe('P2-9 event handlers context propagation', () => {
       transaction: jest.fn((cb: (m: unknown) => unknown) => cb({ getRepository, query: jest.fn().mockResolvedValue(undefined) })),
     };
     const dbContext = managerContext(manager);
-    const handler = new LeadEventsHandler({ getRepository } as any, dbContext as any);
+    const handler = new LeadEventsHandler({ getRepository } as any, undefined, dbContext as any);
 
     await handler.onLeadConverted({
       type: DOMAIN_EVENTS.LEAD_CONVERTED,

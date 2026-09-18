@@ -51,6 +51,7 @@ import type {
   MarketingTasksGeneratedPayload,
   MarketingContentCreatedPayload,
   LeadConvertedPayload,
+  ClientCreatedPayload,
   AssetUploadedPayload,
   AssetAvailableForContentPayload,
   SkillStartedPayload,
@@ -146,6 +147,7 @@ export interface EventPayloadMap {
   'lead.created':          LeadCreatedPayload;
   'lead.updated':          LeadUpdatedPayload;
   'lead.converted':        LeadConvertedPayload;
+  'client.created':        ClientCreatedPayload;
   'conversation.created':  ConversationCreatedPayload;
   'asset.uploaded':        AssetUploadedPayload;
   'marketing.asset_available_for_content': AssetAvailableForContentPayload;
@@ -242,6 +244,7 @@ export const DOMAIN_EVENTS = {
   LEAD_CREATED:          'lead.created',
   LEAD_UPDATED:          'lead.updated',
   LEAD_CONVERTED:        'lead.converted',
+  CLIENT_CREATED:        'client.created',
   CONVERSATION_CREATED:  'conversation.created',
 
   // Assets

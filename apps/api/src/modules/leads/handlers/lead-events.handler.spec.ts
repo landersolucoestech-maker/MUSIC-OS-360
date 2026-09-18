@@ -81,6 +81,49 @@ describe('LeadEventsHandler.onLeadConverted', () => {
     expect(clientRepo.save).toHaveBeenCalledTimes(1);
   });
 
+  it('emite client.created (client_created) SÓ APÓS o commit, nunca dentro da transação, com o clientId/categoria/tipoPessoa reais', async () => {
+    const clientRepo = makeRepo();
+    const leadRepo = makeRepo();
+    const artistRepo = makeRepo();
+    const ds = makeDs(clientRepo, leadRepo, artistRepo);
+    const events = { emitTyped: jest.fn() };
+
+    const handler = new LeadEventsHandler(ds, events as never, undefined);
+    await handler.onLeadConverted(makeEvent());
+
+    expect(events.emitTyped).toHaveBeenCalledTimes(1);
+    const [eventName, envelope] = events.emitTyped.mock.calls[0];
+    expect(eventName).toBe('client.created');
+    expect(envelope).toEqual(
+      expect.objectContaining({
+        tenantId: 'tenant-1',
+        aggregateType: 'client',
+        aggregateId: expect.any(String),
+        payload: expect.objectContaining({
+          tenantId: 'tenant-1',
+          nome: 'Fulano de Tal',
+          categoria: 'CORPORATE_CLIENT',
+          tipoPessoa: 'pessoa_fisica',
+          sourceLeadId: 'lead-1',
+        }),
+      }),
+    );
+  });
+
+  it('idempotência: não emite client.created quando o lead já foi convertido antes', async () => {
+    const clientRepo = makeRepo();
+    const leadRepo = makeRepo();
+    leadRepo.findOne = jest.fn(async () => ({ client_id: 'client-already-there' }));
+    const artistRepo = makeRepo();
+    const ds = makeDs(clientRepo, leadRepo, artistRepo);
+    const events = { emitTyped: jest.fn() };
+
+    const handler = new LeadEventsHandler(ds, events as never, undefined);
+    await handler.onLeadConverted(makeEvent());
+
+    expect(events.emitTyped).not.toHaveBeenCalled();
+  });
+
   it('vincula lead.client_id após criar o cliente com sucesso', async () => {
     const clientRepo = makeRepo();
     const leadRepo = makeRepo();
