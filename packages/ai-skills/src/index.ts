@@ -424,3 +424,107 @@ export {
   validatePaidAdsInput,
   validatePaidAdsOutput,
 } from "./paid-ads";
+
+// deals-crm — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  DealsCrmInput,
+  DealsCrmOutput,
+  DealsCrmLanguage,
+  DealStage,
+  DealsCrmDeal,
+  DealsCrmAction,
+  DealsCrmRisk,
+} from "./deals-crm";
+export {
+  DEALS_CRM_SYSTEM_PROMPT,
+  buildDealsCrmPrompt,
+  parseDealsCrmResponse,
+  validateDealsCrmInput,
+  validateDealsCrmOutput,
+} from "./deals-crm";
+
+// postiz — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  PostizInput,
+  PostizOutput,
+  PostizLanguage,
+  PostizChannelReadiness,
+  PostizChannelState,
+  PostizBlocker,
+  PostizRecommendedAction,
+} from "./postiz";
+export {
+  POSTIZ_SYSTEM_PROMPT,
+  buildPostizPrompt,
+  parsePostizResponse,
+  validatePostizInput,
+  validatePostizOutput,
+} from "./postiz";
+
+// seo-audit — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  SeoAuditInput,
+  SeoAuditOutput,
+  SeoAuditLanguage,
+  SeoAuditCheckSource,
+  SeoAuditMetricProvenance,
+  SeoAuditCheck,
+  SeoAuditSeverityOrInfo,
+} from "./seo-audit";
+export {
+  SEO_AUDIT_SYSTEM_PROMPT,
+  buildSeoAuditPrompt,
+  parseSeoAuditResponse,
+  validateSeoAuditInput,
+  validateSeoAuditOutput,
+} from "./seo-audit";
+
+// onboarding-cro — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  OnboardingCroInput,
+  OnboardingCroOutput,
+  OnboardingCroLanguage,
+  OnboardingStepName,
+  OnboardingStepStatus,
+  OnboardingCroAction,
+} from "./onboarding-cro";
+export {
+  ONBOARDING_CRO_SYSTEM_PROMPT,
+  buildOnboardingCroPrompt,
+  parseOnboardingCroResponse,
+  validateOnboardingCroInput,
+  validateOnboardingCroOutput,
+} from "./onboarding-cro";
+
+// analytics-tracking — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  AnalyticsTrackingInput,
+  AnalyticsTrackingOutput,
+  AnalyticsTrackingLanguage,
+  AnalyticsTrackingProviderState,
+  AnalyticsTrackingCoverageItem,
+  AnalyticsTrackingGap,
+  AnalyticsTrackingRecommendation,
+} from "./analytics-tracking";
+export {
+  ANALYTICS_TRACKING_SYSTEM_PROMPT,
+  buildAnalyticsTrackingPrompt,
+  parseAnalyticsTrackingResponse,
+  validateAnalyticsTrackingInput,
+  validateAnalyticsTrackingOutput,
+} from "./analytics-tracking";
+
+// copywriting — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  CopywritingInput,
+  CopywritingOutput,
+  CopywritingLanguage,
+  CopywritingIntent,
+} from "./copywriting";
+export {
+  COPYWRITING_SYSTEM_PROMPT,
+  buildCopywritingPrompt,
+  parseCopywritingResponse,
+  validateCopywritingInput,
+  validateCopywritingOutput,
+} from "./copywriting";
