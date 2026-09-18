@@ -45,6 +45,8 @@ import { fetchAllLabels } from "@/shared/lib/fetch-all-labels";
 import { getExpectedUpdatedAt } from "@/shared/hooks/useConcurrencyConflict";
 import { useUploadToR2 } from "@/shared/hooks/useUploadToR2";
 import { useMarketingOAuth } from "@/modules/integrations/hooks/useMarketingOAuth";
+import { useSkillRun } from "@/shared/hooks/useSkillRun";
+import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import { DatePickerField } from "@/shared/ui/date-picker-field";
@@ -366,6 +368,7 @@ function ContentScheduleModal({
 
   const spec = getFormatSpec(values.channel, values.type);
   const projectAssetLibrary = useProjectAssetLibrary(values.releaseId);
+  const postiz = useSkillRun<Record<string, unknown>>(`/marketing/contents/${initialData?.id}/ai/postiz`);
 
   const setValue = <K extends keyof ContentFormValues>(key: K, value: ContentFormValues[K]) => {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -813,6 +816,18 @@ function ContentScheduleModal({
               </Collapsible>
             </div>
           </div>
+
+          {mode === "edit" && isEmpresa && (
+            <div className="border-t border-border p-3">
+              <SkillRunPanel
+                label="Verificar prontidão para publicação (IA)"
+                result={postiz.result}
+                isRunning={postiz.isRunning}
+                error={postiz.error}
+                onRun={() => postiz.run(undefined)}
+              />
+            </div>
+          )}
 
           <div className="flex shrink-0 flex-col-reverse gap-2 border-t border-border bg-background p-3 sm:flex-row sm:justify-end">
             <Button type="button" variant="outline" className="h-9 sm:w-[204px]" onClick={() => onOpenChange(false)} disabled={submitting}>

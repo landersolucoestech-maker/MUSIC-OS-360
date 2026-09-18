@@ -20,6 +20,8 @@ import { getPerfis, type ContatoTipoPessoa } from "../constants/contact-classifi
 import { useClientTimeline } from "../hooks/useClientTimeline";
 import { TIPO_INTERACAO_OPTIONS } from "../shared/interacoes";
 import type { Contact } from "../types";
+import { useSkillRun } from "@/shared/hooks/useSkillRun";
+import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
 
 // ─────────────────────────────────────────────
 // Tipos
@@ -83,6 +85,7 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
   const timeline = useClientTimeline(open && contact ? contact.id : null);
   const [newNote, setNewNote] = useState("");
   const [isSavingNote, setIsSavingNote] = useState(false);
+  const dealsCrm = useSkillRun<Record<string, unknown>>(`/clients/${contact?.id}/ai/deals-crm`);
 
   if (!contact) return null;
 
@@ -275,6 +278,20 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
                 ))}
               </div>
             )}
+          </section>
+
+          {/* ══ PIPELINE COMERCIAL (AI Skill deals-crm sobre contratos reais) ══ */}
+          <section className="space-y-3" data-testid="contato-view-deals-crm">
+            <h3 className="border-b pb-1 text-sm font-semibold tracking-wider text-muted-foreground">
+              Pipeline Comercial (IA)
+            </h3>
+            <SkillRunPanel
+              label="Analisar pipeline comercial"
+              result={dealsCrm.result}
+              isRunning={dealsCrm.isRunning}
+              error={dealsCrm.error}
+              onRun={() => dealsCrm.run(undefined)}
+            />
           </section>
 
           {/* ══ TIMELINE (real, persistida em activity_logs) ══ */}
