@@ -374,3 +374,19 @@ export {
   validatePerformanceReportInput,
   validatePerformanceReportOutput,
 } from "./performance-report";
+
+// contact-operations — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  ContactOperationsInput,
+  ContactOperationsOutput,
+  ContactOperationsLanguage,
+  ContactOperationsAction,
+  ContactOperationsGap,
+} from "./contact-operations";
+export {
+  CONTACT_OPERATIONS_SYSTEM_PROMPT,
+  buildContactOperationsPrompt,
+  parseContactOperationsResponse,
+  validateContactOperationsInput,
+  validateContactOperationsOutput,
+} from "./contact-operations";
