@@ -46,6 +46,11 @@ export class PostHogService implements OnModuleDestroy {
     this.logger.log(`PostHog inicializado — host: ${this.host}`);
   }
 
+  /** Estado real de configuração — usado por analytics-tracking para nunca fingir cobertura de um provedor não configurado. */
+  isConfigured(): boolean {
+    return this.client !== null;
+  }
+
   // ─── Identify ─────────────────────────────────────────────────────────────
 
   identify(userId: string, properties: Record<string, unknown>): void {

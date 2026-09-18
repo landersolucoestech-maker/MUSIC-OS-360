@@ -5,12 +5,14 @@ import { CurrentUser } from '../../core/decorators/current-user.decorator';
 import { RequireRole }   from '../../core/decorators/roles.decorator';
 import { AnalyticsService } from './analytics.service';
 import { AnalyticsInsightsAutomation } from '../../core/automation/analytics-insights.automation';
+import { AnalyticsTrackingAutomation } from '../../core/automation/analytics-tracking.automation';
 
 @ApiTags('Analytics') @ApiBearerAuth() @Controller('analytics')
 export class AnalyticsController {
   constructor(
     private readonly svc: AnalyticsService,
     private readonly insights: AnalyticsInsightsAutomation,
+    private readonly tracking: AnalyticsTrackingAutomation,
   ) {}
 
   @Get('dashboard')
@@ -57,5 +59,15 @@ export class AnalyticsController {
     @Query('months') months?: string,
   ) {
     return this.insights.runPerformanceReport(t.id, user.userId, months ? +months : 6);
+  }
+
+  @Post('tracking-coverage')
+  @RequireRole('manager')
+  @ApiOperation({ summary: 'AI Skill analytics-tracking — cobertura real de rastreamento entre eventos de negócio e o provedor de analytics' })
+  runAnalyticsTracking(
+    @CurrentTenant() t: { id: string },
+    @CurrentUser() user: { userId: string },
+  ) {
+    return this.tracking.run(t.id, user.userId);
   }
 }
