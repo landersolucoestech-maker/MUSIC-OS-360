@@ -16,10 +16,14 @@ import { MarketingCampaignBuilderService } from './marketing-campaign-builder.se
 import { MarketingAiSuggestionsController } from './marketing-ai-suggestions.controller';
 import { MarketingAiSuggestionsService } from './marketing-ai-suggestions.service';
 import { AIModule } from '../ai/ai.module';
+import { IntegrationsModule } from '../integrations/integrations.module';
 import { CampaignBuilderInsightsAutomation } from '../../core/automation/campaign-builder-insights.automation';
+import { SeoAuditAutomation } from '../../core/automation/seo-audit.automation';
+import { PostizAutomation } from '../../core/automation/postiz.automation';
+import { CopywritingAutomation } from '../../core/automation/copywriting.automation';
 
 @Module({
-  imports: [AIModule],
+  imports: [AIModule, IntegrationsModule],
   controllers: [
     MarketingProjectsController,
     MarketingStrategyController,
@@ -30,7 +34,7 @@ import { CampaignBuilderInsightsAutomation } from '../../core/automation/campaig
     MarketingTasksController,
     MarketingAiSuggestionsController,
   ],
-  providers:   [MarketingProjectsService, MarketingStrategyService, MarketingAssetsService, MarketingContentsService, MarketingTasksService, MarketingCampaignBuilderService, MarketingAiSuggestionsService, MarketingProjectEventsHandler, CampaignBuilderInsightsAutomation],
+  providers:   [MarketingProjectsService, MarketingStrategyService, MarketingAssetsService, MarketingContentsService, MarketingTasksService, MarketingCampaignBuilderService, MarketingAiSuggestionsService, MarketingProjectEventsHandler, CampaignBuilderInsightsAutomation, SeoAuditAutomation, PostizAutomation, CopywritingAutomation],
   exports:     [MarketingProjectsService, MarketingStrategyService, MarketingAssetsService, MarketingContentsService, MarketingTasksService],
 })
 export class MarketingModule {}

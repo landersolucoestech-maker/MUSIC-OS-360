@@ -10,6 +10,20 @@ import {
 } from 'class-validator';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
+export class RunCopywritingDto {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  tone?: string;
+
+  @ApiPropertyOptional({ type: [String], description: 'Fatos reais para usar no texto — a skill nunca inventa fatos fora desta lista' })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  sourceFacts?: string[];
+}
+
 export class CreateMarketingTaskDto {
   @ApiProperty()
   @IsUUID()

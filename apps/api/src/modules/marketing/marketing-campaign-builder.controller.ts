@@ -12,6 +12,7 @@ import {
   type CampaignValidation,
 } from './marketing-campaign-builder.service';
 import { CampaignBuilderInsightsAutomation } from '../../core/automation/campaign-builder-insights.automation';
+import { SeoAuditAutomation } from '../../core/automation/seo-audit.automation';
 
 function hasValue(value: unknown): boolean {
   return typeof value === 'string' ? value.trim().length > 0 : value != null;
@@ -128,6 +129,7 @@ export class MarketingCampaignBuilderController {
   constructor(
     private readonly service: MarketingCampaignBuilderService,
     private readonly insights: CampaignBuilderInsightsAutomation,
+    private readonly seoAudit: SeoAuditAutomation,
   ) {}
 
   @Get()
@@ -285,5 +287,17 @@ export class MarketingCampaignBuilderController {
     @Param('id') id: string,
   ) {
     return this.insights.runPaidAdsStrategy(tenant.id, user?.userId ?? '', id);
+  }
+
+  @Post(':id/ai/seo-audit')
+  @RequireRole('viewer')
+  @ApiOperation({ summary: 'AI Skill seo-audit — auditoria de higiene de link (análise estática, sem medição externa)' })
+  runSeoAudit(
+    @CurrentTenant() tenant: { id: string },
+    @CurrentUser() user: JwtAuth,
+    @Param('id') id: string,
+    @Query('force') force?: string,
+  ) {
+    return this.seoAudit.run(tenant.id, user?.userId ?? '', id, force === 'true');
   }
 }
