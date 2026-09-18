@@ -8,6 +8,8 @@
 import { useMemo, useState, type ComponentType } from "react";
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
 import { getExpectedUpdatedAt } from "@/shared/hooks/useConcurrencyConflict";
+import { useSkillRun } from "@/shared/hooks/useSkillRun";
+import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
 import { AlertTriangle, CalendarClock, CheckCircle, Download, Eye, ListChecks, MoreHorizontal, Music, Pencil, Plus, Trash2, UserRound } from "lucide-react";
 import { MainLayout } from "@/shared/components/MainLayout";
 import { MetricCard } from "@/shared/components/MetricCard";
@@ -444,6 +446,8 @@ function TaskViewModal({
   onOpenChange: (open: boolean) => void;
   onEdit: (task: MarketingTask) => void;
 }) {
+  const copywriting = useSkillRun<Record<string, unknown>>(`/marketing/tasks/${task?.id}/ai/copywriting`);
+
   if (!task) return null;
 
   return (
@@ -574,6 +578,18 @@ function TaskViewModal({
           <div className="border-t border-border pt-4">
             <MarketingDeliverableSection taskId={task.id} readOnly />
           </div>
+
+          {/* ══ RASCUNHO DE COPY (AI Skill copywriting sobre o contexto real da tarefa) ══ */}
+          <section className="space-y-2 border-t border-border pt-4" data-testid="task-view-copywriting">
+            <h3 className="text-sm font-semibold">Rascunho de Copy (IA)</h3>
+            <SkillRunPanel
+              label="Gerar rascunho de copy"
+              result={copywriting.result}
+              isRunning={copywriting.isRunning}
+              error={copywriting.error}
+              onRun={() => copywriting.run(undefined)}
+            />
+          </section>
         </div>
       </DialogContent>
     </Dialog>
