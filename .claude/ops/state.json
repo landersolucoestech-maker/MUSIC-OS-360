@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-18T03:04:13.811Z",
+  "updatedAt": "2026-09-18T03:08:39.938Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -34,7 +34,12 @@
             "evid-f57bb577",
             "evid-0f01c383"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            ".",
+            ":!.claude/ops"
+          ],
+          "relevantPathsReason": "repo-wide/apps-api-wide verification (residual scan, dependency audit, full build typecheck, full test suite) — scoped to exclude only .claude/ops bookkeeping so a later ops-evidence-only commit doesn't perpetually re-invalidate evidence that already covers the real diff"
         }
       ],
       "createdAt": "2026-09-16T01:10:21.561Z"
@@ -75,7 +80,12 @@
             "evid-5bebd92d",
             "evid-2a1149fd"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            ".",
+            ":!.claude/ops"
+          ],
+          "relevantPathsReason": "repo-wide/apps-api-wide verification (residual scan, dependency audit, full build typecheck, full test suite) — scoped to exclude only .claude/ops bookkeeping so a later ops-evidence-only commit doesn't perpetually re-invalidate evidence that already covers the real diff"
         }
       ],
       "createdAt": "2026-09-16T01:10:21.705Z"
@@ -224,7 +234,12 @@
             "evid-2d8ee49f",
             "evid-fb718aba"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            ".",
+            ":!.claude/ops"
+          ],
+          "relevantPathsReason": "repo-wide/apps-api-wide verification (residual scan, dependency audit, full build typecheck, full test suite) — scoped to exclude only .claude/ops bookkeeping so a later ops-evidence-only commit doesn't perpetually re-invalidate evidence that already covers the real diff"
         }
       ],
       "createdAt": "2026-09-16T05:02:47.165Z"
@@ -269,7 +284,12 @@
             "evid-92910c3a",
             "evid-79beb3e5"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            ".",
+            ":!.claude/ops"
+          ],
+          "relevantPathsReason": "repo-wide/apps-api-wide verification (residual scan, dependency audit, full build typecheck, full test suite) — scoped to exclude only .claude/ops bookkeeping so a later ops-evidence-only commit doesn't perpetually re-invalidate evidence that already covers the real diff"
         }
       ],
       "createdAt": "2026-09-16T07:32:35.788Z"
@@ -289,7 +309,12 @@
             "evid-d5a3336d",
             "evid-46000ad6"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            ".",
+            ":!.claude/ops"
+          ],
+          "relevantPathsReason": "repo-wide/apps-api-wide verification (residual scan, dependency audit, full build typecheck, full test suite) — scoped to exclude only .claude/ops bookkeeping so a later ops-evidence-only commit doesn't perpetually re-invalidate evidence that already covers the real diff"
         }
       ],
       "createdAt": "2026-09-16T10:30:04.011Z"
