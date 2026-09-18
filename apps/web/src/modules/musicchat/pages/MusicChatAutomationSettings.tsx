@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, Plus, Save, Trash2, Zap } from "lucide-react";
+import { useSkillRun } from "@/shared/hooks/useSkillRun";
+import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
 import { MainLayout } from "@/shared/components/MainLayout";
 import { Alert, AlertDescription, AlertTitle } from "@/shared/ui/alert";
 import { Button } from "@/shared/ui/button";
@@ -203,6 +205,8 @@ function FieldListEditor({ title, description, fields, emptyText, onChange }: Fi
 export default function MusicChatAutomationSettings() {
   const { settings, isLoading, isError, updateSettings } = useMusicChatAutomationSettings();
   const { runEscalations } = useMusicChatTriageRules();
+  const automationAudit = useSkillRun<Record<string, unknown>>("/conversations/musicchat/automation/audit");
+  const automationBuilder = useSkillRun<Record<string, unknown>>("/conversations/musicchat/automation/builder-suggestions");
   const [draft, setDraft] = useState<EditableSettings>(FALLBACK_SETTINGS);
   const [openServiceQuestionnaires, setOpenServiceQuestionnaires] = useState<Record<string, boolean>>({
     [FALLBACK_SETTINGS.menu_options[0]?.id ?? "shows"]: true,
@@ -370,6 +374,7 @@ export default function MusicChatAutomationSettings() {
               <TabsTrigger value="menu">Menu e filas</TabsTrigger>
               <TabsTrigger value="escalonamento">Escalonamento</TabsTrigger>
               <TabsTrigger value="templates">Templates</TabsTrigger>
+              <TabsTrigger value="ia-diagnostico">Diagnóstico IA</TabsTrigger>
             </TabsList>
 
             <TabsContent value="mensagens" className="space-y-4">
@@ -591,6 +596,37 @@ export default function MusicChatAutomationSettings() {
                       </Collapsible>
                     );
                   })}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="ia-diagnostico" className="space-y-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Auditoria da automação (IA)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <SkillRunPanel
+                    label="Auditar automação"
+                    result={automationAudit.result}
+                    isRunning={automationAudit.isRunning}
+                    error={automationAudit.error}
+                    onRun={() => automationAudit.run(undefined)}
+                  />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Sugestões de melhoria (IA)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <SkillRunPanel
+                    label="Gerar sugestões"
+                    result={automationBuilder.result}
+                    isRunning={automationBuilder.isRunning}
+                    error={automationBuilder.error}
+                    onRun={() => automationBuilder.run(undefined)}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
