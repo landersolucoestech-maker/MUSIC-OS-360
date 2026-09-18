@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-16T10:45:10.121Z",
+  "updatedAt": "2026-09-18T03:04:13.811Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -31,7 +31,8 @@
             "evid-a379a9a1",
             "evid-37822ad6",
             "evid-a86baf5e",
-            "evid-f57bb577"
+            "evid-f57bb577",
+            "evid-0f01c383"
           ],
           "status": "closed"
         }
@@ -71,7 +72,8 @@
             "evid-e8eda394",
             "evid-610f4b10",
             "evid-e7aea149",
-            "evid-5bebd92d"
+            "evid-5bebd92d",
+            "evid-2a1149fd"
           ],
           "status": "closed"
         }
@@ -98,7 +100,11 @@
             "evid-47021dc6",
             "evid-15942351"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "docs/product-tasks"
+          ],
+          "relevantPathsReason": "gitleaks tool unavailable locally; original fix was a docs/product-tasks/*.md placeholder string, confirmed untouched by the 9 AI Skills commits; manual secret-pattern grep over the AI Skills diff found zero matches"
         }
       ],
       "createdAt": "2026-09-16T01:10:21.855Z"
@@ -130,7 +136,12 @@
             "evid-97653760",
             "evid-5ea045c4"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/package.json",
+            "pnpm-lock.yaml"
+          ],
+          "relevantPathsReason": "root cause was file:-protocol vs workspace:* in apps/api/package.json; confirmed untouched by the 9 AI Skills commits (git diff --stat shows zero changes to this file or the lockfile)"
         }
       ],
       "createdAt": "2026-09-16T02:03:31.731Z"
@@ -155,7 +166,13 @@
             "evid-0976b706",
             "evid-49dcc1c3"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/bootstrap.cjs",
+            "apps/api/package.json",
+            ".github/workflows/ci.yml"
+          ],
+          "relevantPathsReason": "Docker Build API fix touched bootstrap.cjs/package.json/ci.yml; confirmed untouched by the 9 AI Skills commits"
         },
         {
           "id": "ac-aa96c0eb",
@@ -169,7 +186,11 @@
             "evid-a1a02e68",
             "evid-27b93c6f"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            ".github/workflows/ci.yml"
+          ],
+          "relevantPathsReason": "CI yaml build-step fix touched only .github/workflows/ci.yml; confirmed untouched by the 9 AI Skills commits"
         },
         {
           "id": "ac-e2548839",
@@ -183,7 +204,11 @@
             "evid-07b6001a",
             "evid-6fe5d4b9"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/scripts/verify-tenant-isolation.ts"
+          ],
+          "relevantPathsReason": "tenant-isolation fix touched only this script; confirmed untouched by the 9 AI Skills commits (my changes did not modify any verify-* script)"
         },
         {
           "id": "ac-810c33c0",
@@ -195,7 +220,9 @@
             "evid-f3bc1584",
             "evid-b37ecf7b",
             "evid-947b8047",
-            "evid-cf08e787"
+            "evid-cf08e787",
+            "evid-2d8ee49f",
+            "evid-fb718aba"
           ],
           "status": "closed"
         }
@@ -218,7 +245,20 @@
             "evid-bbdcc07e",
             "evid-0f76bb0a"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/scripts/canary-notifications-rls.ts",
+            "apps/api/scripts/reports-smoke.ts",
+            "apps/api/scripts/verify-contract-service-types-crud.ts",
+            "apps/api/scripts/verify-fase3k-http.ts",
+            "apps/api/scripts/verify-realtime-external.ts",
+            "apps/api/scripts/verify-rls.ts",
+            "apps/api/scripts/verify-supabase.ts",
+            "apps/api/scripts/verify-tenant-isolation.ts",
+            "apps/api/test/e2e/billing/billing-admin-atomicity.e2e-spec.ts",
+            "apps/api/test/e2e/rls/request-context.e2e-spec.ts"
+          ],
+          "relevantPathsReason": "DATABASE_URL/.env.development precedence fix touched exactly these 8 verify scripts + 2 e2e specs; confirmed untouched by the 9 AI Skills commits"
         },
         {
           "id": "ac-61119aaa",
@@ -226,7 +266,8 @@
           "evidenceIds": [
             "evid-665895aa",
             "evid-dae6ac55",
-            "evid-92910c3a"
+            "evid-92910c3a",
+            "evid-79beb3e5"
           ],
           "status": "closed"
         }
@@ -245,7 +286,8 @@
           "text": "All 35 migrations reviewed (source + read-only pre-flight data checks against real DEV); the one blocker (leads.status='convertido') resolved via a proven-unpublished migration edit plus regression test, verified behaviorally on fresh local Postgres for both the happy path and the unweakened fail-closed guard",
           "evidenceIds": [
             "evid-6bba5e3d",
-            "evid-d5a3336d"
+            "evid-d5a3336d",
+            "evid-46000ad6"
           ],
           "status": "closed"
         }
@@ -418,7 +460,13 @@
     "evid-947b8047",
     "evid-cf08e787",
     "evid-92910c3a",
-    "evid-0f76bb0a"
+    "evid-0f76bb0a",
+    "evid-0f01c383",
+    "evid-2a1149fd",
+    "evid-2d8ee49f",
+    "evid-fb718aba",
+    "evid-79beb3e5",
+    "evid-46000ad6"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
