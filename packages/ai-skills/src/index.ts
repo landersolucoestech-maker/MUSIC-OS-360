@@ -390,3 +390,37 @@ export {
   validateContactOperationsInput,
   validateContactOperationsOutput,
 } from "./contact-operations";
+
+// ad-creative — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  AdCreativeInput,
+  AdCreativeOutput,
+  AdCreativeLanguage,
+  AdCreativeVariant,
+  AdCreativeRisk,
+} from "./ad-creative";
+export {
+  AD_CREATIVE_SYSTEM_PROMPT,
+  buildAdCreativePrompt,
+  parseAdCreativeResponse,
+  validateAdCreativeInput,
+  validateAdCreativeOutput,
+} from "./ad-creative";
+
+// paid-ads — re-export seletivo (exclui ValidationResult para evitar TS2308)
+export type {
+  PaidAdsInput,
+  PaidAdsOutput,
+  PaidAdsLanguage,
+  PaidAdsPlatformInput,
+  PaidAdsPlatformSplit,
+  PaidAdsPlacementRecommendation,
+  PaidAdsRisk,
+} from "./paid-ads";
+export {
+  PAID_ADS_SYSTEM_PROMPT,
+  buildPaidAdsPrompt,
+  parsePaidAdsResponse,
+  validatePaidAdsInput,
+  validatePaidAdsOutput,
+} from "./paid-ads";

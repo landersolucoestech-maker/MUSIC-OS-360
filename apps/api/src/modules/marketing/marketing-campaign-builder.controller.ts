@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentTenant } from '../../core/decorators/current-tenant.decorator';
 import { CurrentUser } from '../../core/decorators/current-user.decorator';
@@ -11,6 +11,7 @@ import {
   type CampaignBuilderPayload,
   type CampaignValidation,
 } from './marketing-campaign-builder.service';
+import { CampaignBuilderInsightsAutomation } from '../../core/automation/campaign-builder-insights.automation';
 
 function hasValue(value: unknown): boolean {
   return typeof value === 'string' ? value.trim().length > 0 : value != null;
@@ -124,7 +125,10 @@ function buildBlueprint(payload: CampaignBuilderPayload): CampaignBlueprint {
 @ApiBearerAuth()
 @Controller('marketing/campaigns')
 export class MarketingCampaignBuilderController {
-  constructor(private readonly service: MarketingCampaignBuilderService) {}
+  constructor(
+    private readonly service: MarketingCampaignBuilderService,
+    private readonly insights: CampaignBuilderInsightsAutomation,
+  ) {}
 
   @Get()
   @RequireRole('viewer')
@@ -257,5 +261,29 @@ export class MarketingCampaignBuilderController {
     @Param('id') id: string,
   ) {
     return this.service.archive(tenant.id, user?.userId ?? '', id);
+  }
+
+  @Post(':id/ai/ad-creative')
+  @RequireRole('editor')
+  @ApiOperation({ summary: 'AI Skill ad-creative — sugestões de headline/copy/CTA para uma plataforma+posicionamento da campanha' })
+  runAdCreative(
+    @CurrentTenant() tenant: { id: string },
+    @CurrentUser() user: JwtAuth,
+    @Param('id') id: string,
+    @Query('platform') platform: string,
+    @Query('placement') placement: string,
+  ) {
+    return this.insights.runAdCreative(tenant.id, user?.userId ?? '', id, platform, placement);
+  }
+
+  @Post(':id/ai/paid-ads-strategy')
+  @RequireRole('editor')
+  @ApiOperation({ summary: 'AI Skill paid-ads — sugestão de alocação de orçamento e posicionamento entre as plataformas já selecionadas' })
+  runPaidAdsStrategy(
+    @CurrentTenant() tenant: { id: string },
+    @CurrentUser() user: JwtAuth,
+    @Param('id') id: string,
+  ) {
+    return this.insights.runPaidAdsStrategy(tenant.id, user?.userId ?? '', id);
   }
 }

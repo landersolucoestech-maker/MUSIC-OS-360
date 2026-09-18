@@ -15,8 +15,11 @@ import { MarketingTasksService } from './marketing-tasks.service';
 import { MarketingCampaignBuilderService } from './marketing-campaign-builder.service';
 import { MarketingAiSuggestionsController } from './marketing-ai-suggestions.controller';
 import { MarketingAiSuggestionsService } from './marketing-ai-suggestions.service';
+import { AIModule } from '../ai/ai.module';
+import { CampaignBuilderInsightsAutomation } from '../../core/automation/campaign-builder-insights.automation';
 
 @Module({
+  imports: [AIModule],
   controllers: [
     MarketingProjectsController,
     MarketingStrategyController,
@@ -27,7 +30,7 @@ import { MarketingAiSuggestionsService } from './marketing-ai-suggestions.servic
     MarketingTasksController,
     MarketingAiSuggestionsController,
   ],
-  providers:   [MarketingProjectsService, MarketingStrategyService, MarketingAssetsService, MarketingContentsService, MarketingTasksService, MarketingCampaignBuilderService, MarketingAiSuggestionsService, MarketingProjectEventsHandler],
+  providers:   [MarketingProjectsService, MarketingStrategyService, MarketingAssetsService, MarketingContentsService, MarketingTasksService, MarketingCampaignBuilderService, MarketingAiSuggestionsService, MarketingProjectEventsHandler, CampaignBuilderInsightsAutomation],
   exports:     [MarketingProjectsService, MarketingStrategyService, MarketingAssetsService, MarketingContentsService, MarketingTasksService],
 })
 export class MarketingModule {}
