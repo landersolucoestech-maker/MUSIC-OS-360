@@ -214,6 +214,7 @@ import { NotificationsBullmqJobIdUniqueness20260912000001 } from './202609120000
 import { RenameSharePartyFieldsToEnglish20260913000001 } from './20260913000001_RenameSharePartyFieldsToEnglish';
 import { RenameOrdemToSortOrder20260918000001 } from './20260918000001_RenameOrdemToSortOrder';
 import { RenameAtivoToActiveOnContractTemplates20260918000002 } from './20260918000002_RenameAtivoToActiveOnContractTemplates';
+import { RenameDuracaoToDurationTextOnWorksAndPhonograms20260918000003 } from './20260918000003_RenameDuracaoToDurationTextOnWorksAndPhonograms';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -439,4 +440,5 @@ export const ALL_MIGRATIONS = [
   RenameSharePartyFieldsToEnglish20260913000001,
   RenameOrdemToSortOrder20260918000001,
   RenameAtivoToActiveOnContractTemplates20260918000002,
+  RenameDuracaoToDurationTextOnWorksAndPhonograms20260918000003,
 ] as const;

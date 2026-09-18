@@ -121,7 +121,7 @@ export class PhonogramsService {
    * Monta o payload final para persistência a partir dos campos canônicos já
    * resolvidos (title/work_id/artist_id — ver resolvePhonogramAliases()) e
    * dos demais campos não relacionados a aliases (21 campos físicos do
-   * formulário, duration/duracao, metadata, status, ISRC etc.), que
+   * formulário, duration/duration_text, metadata, status, ISRC etc.), que
    * continuam passando direto para a entity, inalterados.
    */
   private buildEntityPayload(
@@ -130,7 +130,11 @@ export class PhonogramsService {
   ): Record<string, unknown> {
     const out: Record<string, unknown> = { ...input, ...resolved };
 
-    // duration/duracao: fora do escopo do C2 (C2.2) — comportamento inalterado.
+    // duration (raw seconds, mapped to duration_seconds) is a distinct
+    // concept from duration_text (formatted "MM:SS" string, plain
+    // passthrough) — naming-normalization 20260918000003 resolved the
+    // former collision between the two by disambiguating duracao ->
+    // duration_text instead of duration.
     out['duration_seconds'] = input['duration_seconds'] ?? input['duration'];
     // type: default apenas quando explicitamente ausente no CREATE (ver create());
     // num PATCH sem type, não sobrescrever o valor persistido.

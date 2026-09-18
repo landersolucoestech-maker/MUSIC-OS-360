@@ -87,7 +87,7 @@ export function DetectionDetailModal({ detection, open, onOpenChange }: Props) {
                 <Row icon={<BookOpen className="h-3.5 w-3.5" />} label="Compositor(es)" value={Array.isArray(catalog.compositores) ? catalog.compositores.join(", ") : (catalog.compositores || catalog.compositor || "—")} />
                 <Row icon={<BookOpen className="h-3.5 w-3.5" />} label="Publisher / Editora" value={catalog.editora || "—"} />
                 <Row icon={<Tag className="h-3.5 w-3.5" />} label="Gênero" value={catalog.genero || "—"} />
-                <Row icon={<Clock3 className="h-3.5 w-3.5" />} label="Duração" value={catalog.duracao || "—"} />
+                <Row icon={<Clock3 className="h-3.5 w-3.5" />} label="Duração" value={catalog.duration_text || "—"} />
                 {catalog.iswc && (
                   <Row icon={<Hash className="h-3.5 w-3.5" />} label="ISWC" value={catalog.iswc} mono />
                 )}

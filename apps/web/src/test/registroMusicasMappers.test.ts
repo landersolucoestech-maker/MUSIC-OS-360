@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   dbStatusToSelect,
   normalizeStatusForDb,
-  parseDuracao,
-  formatDuracao,
+  parseDurationText,
+  formatDurationText,
   parseIsrc,
   joinIsrc,
   obraToParticipantes,
@@ -46,26 +46,26 @@ describe("normalizeStatusForDb", () => {
   });
 });
 
-describe("parseDuracao", () => {
+describe("parseDurationText", () => {
   it("parses MM:SS", () => {
-    expect(parseDuracao("03:45")).toEqual({ min: "3", seg: "45" });
+    expect(parseDurationText("03:45")).toEqual({ min: "3", seg: "45" });
   });
   it("parses HH:MM:SS by collapsing hours into minutes", () => {
-    expect(parseDuracao("01:02:30")).toEqual({ min: "62", seg: "30" });
+    expect(parseDurationText("01:02:30")).toEqual({ min: "62", seg: "30" });
   });
   it("returns empty parts for missing duration", () => {
-    expect(parseDuracao(null)).toEqual({ min: "", seg: "" });
-    expect(parseDuracao("")).toEqual({ min: "", seg: "" });
+    expect(parseDurationText(null)).toEqual({ min: "", seg: "" });
+    expect(parseDurationText("")).toEqual({ min: "", seg: "" });
   });
 });
 
-describe("formatDuracao", () => {
+describe("formatDurationText", () => {
   it("formats min/seg into MM:SS", () => {
-    expect(formatDuracao("3", "45")).toBe("03:45");
-    expect(formatDuracao(0, 5)).toBe("00:05");
+    expect(formatDurationText("3", "45")).toBe("03:45");
+    expect(formatDurationText(0, 5)).toBe("00:05");
   });
   it("returns null when both empty", () => {
-    expect(formatDuracao("", "")).toBeNull();
+    expect(formatDurationText("", "")).toBeNull();
   });
 });
 
@@ -192,12 +192,12 @@ describe("status round-trip", () => {
   });
 });
 
-describe("duracao round-trip", () => {
+describe("duration_text round-trip", () => {
   it("DB string → parts → DB string", () => {
     const cases = ["00:05", "03:45", "10:00", "59:59"];
     for (const dur of cases) {
-      const { min, seg } = parseDuracao(dur);
-      expect(formatDuracao(min, seg)).toBe(dur);
+      const { min, seg } = parseDurationText(dur);
+      expect(formatDurationText(min, seg)).toBe(dur);
     }
   });
 });

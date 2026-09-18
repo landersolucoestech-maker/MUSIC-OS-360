@@ -192,7 +192,7 @@ const WORKS_CONTRACT: ReportFormContract = {
     col('compositor'), col('compositores'), col('editora'),
     col('isrc'), col('iswc'),
     // Campos do formulário de Obra (regra 2026-07-12: 1 coluna por campo, nome exato)
-    col('idioma'), col('cod_entidade'), col('cod_ecad'), col('duracao'),
+    col('idioma'), col('cod_entidade'), col('cod_ecad'), col('duration_text'),
     col('instrumental'), col('criada_por_ia'), col('tipo_ia'),
     col('ia_harmonia'), col('ia_melodia'), col('ia_letra'),
     col('outros_titulos'), col('referencias_conexas'), col('letra_completa'),
@@ -221,7 +221,7 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
   identityColumn: 'title',
   fields: [
     col('title'), col('status'), col('genero_musical'), col('isrc'),
-    col('duracao'), col('artist_id'), col('work_id'),
+    col('duration_text'), col('artist_id'), col('work_id'),
     // Campos do formulário de Fonograma (regra 2026-07-12: 1 coluna por campo, nome exato)
     col('cod_entidade'), col('cod_ecad'), col('agregadora'),
     col('isrc_pais'), col('isrc_registrante'), col('isrc_ano'), col('isrc_designacao'),
@@ -245,7 +245,8 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
   },
   formFieldAliases: {
     titulo: 'title',
-    duration: 'duracao',
+    duration: 'duration_text',
+    duracao: 'duration_text',
     artistId: 'artist_id',
     workId: 'work_id',
   },

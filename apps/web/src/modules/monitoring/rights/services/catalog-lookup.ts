@@ -18,7 +18,7 @@ export interface CatalogObra {
   cod_entidade: string | null;
   genero: string;
   status: string;
-  duracao: string;
+  duration_text: string;
 }
 
 export function buildIsrcIndex(obras: CatalogObra[]): Map<string, CatalogObra> {

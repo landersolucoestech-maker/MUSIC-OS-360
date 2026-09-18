@@ -9,7 +9,7 @@ export const fonogramaSchema = z.object({
     .max(20, "ISRC deve ter no máximo 20 caracteres")
     .optional()
     .or(z.literal("")),
-  duracao: z.string().optional().or(z.literal("")),
+  durationText: z.string().optional().or(z.literal("")),
   genero: z.string().optional().or(z.literal("")),
   idioma: z.string().optional().or(z.literal("")),
   instrumental: z.boolean().default(false),

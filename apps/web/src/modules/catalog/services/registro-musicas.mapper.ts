@@ -18,7 +18,7 @@ export interface ParticipacaoCategoria {
   musicoAcompanhante: FonogramaParticipante[];
 }
 
-export interface DuracaoParts {
+export interface DurationTextParts {
   min: string;
   seg: string;
 }
@@ -62,7 +62,7 @@ export function normalizeStatusForDb(value: unknown): string {
   return STATUS_SELECT_TO_DB[key] ?? key;
 }
 
-export function parseDuracao(value: unknown): DuracaoParts {
+export function parseDurationText(value: unknown): DurationTextParts {
   if (typeof value !== "string" || !value.trim()) {
     return { min: "", seg: "" };
   }
@@ -89,7 +89,7 @@ export function parseDuracao(value: unknown): DuracaoParts {
   };
 }
 
-export function formatDuracao(min: string | number, seg: string | number): string | null {
+export function formatDurationText(min: string | number, seg: string | number): string | null {
   const m = Number(min) || 0;
   const s = Number(seg) || 0;
   if (!min && !seg) return null;
@@ -302,7 +302,7 @@ export interface ObraFormFields {
 
 /** DB record → form field initial values (single source of truth for useEffect) */
 export function obraToFormFields(obra: any): ObraFormFields {
-  const dur = parseDuracao(obra?.duracao);
+  const dur = parseDurationText(obra?.duration_text);
   return {
     title: obraTitle(obra),
     situacao: dbStatusToSelect(obra?.status),
@@ -358,7 +358,7 @@ export function formToObraPayload(input: FormToObraInput): Record<string, unknow
   const { compositores, letristas } = participantesToCompositoresLetristas(
     input.participantes,
   );
-  const duracao = formatDuracao(input.duracaoMin, input.duracaoSeg);
+  const durationText = formatDurationText(input.duracaoMin, input.duracaoSeg);
   const iaH =
     input.iaHarmonia.ferramenta || input.iaHarmonia.prompt
       ? input.iaHarmonia
@@ -380,7 +380,7 @@ export function formToObraPayload(input: FormToObraInput): Record<string, unknow
     iswc: input.iswc || null,
     cod_ecad: input.codEcad || null,
     cod_entidade: input.codEntidade || null,
-    duracao,
+    duration_text: durationText,
     instrumental: input.instrumental || null,
     criada_por_ia: input.criadaPorIA === "sim",
     tipo_ia: input.tipoIA || null,
@@ -432,7 +432,7 @@ export interface FonogramaFormFields {
 
 /** DB record → fonograma form field initial values */
 export function fonogramaToFormFields(f: any): FonogramaFormFields {
-  const dur  = parseDuracao(f?.duracao);
+  const dur  = parseDurationText(f?.duration_text);
   const isrc = parseIsrc(f?.isrc);
   const ps   = (v: unknown): string => {
     if (v !== undefined && v !== null && v !== "") return String(v);

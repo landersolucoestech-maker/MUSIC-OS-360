@@ -30,8 +30,8 @@ import type { Fonograma } from "@/modules/catalog/hooks/useFonogramas";
 import {
   dbStatusToSelect,
   normalizeStatusForDb,
-  parseDuracao,
-  formatDuracao,
+  parseDurationText,
+  formatDurationText,
   parseIsrc,
   joinIsrc,
   fonogramaToParticipacao,
@@ -287,7 +287,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   const [buscaObra, setBuscaObra] = useState("");
   const [buscaOpen, setBuscaOpen] = useState(false);
   // Dados do Fonograma (suportam camelCase do form OU snake_case do banco)
-  const initialDuracao = parseDuracao(fonograma?.duracao);
+  const initialDurationText = parseDurationText(fonograma?.duration_text);
   const initialIsrc = parseIsrc(fonograma?.isrc);
 
   const [codEcad, setCodEcad] = useState(pickStr(fonograma?.codEcad, fonograma?.cod_ecad));
@@ -301,8 +301,8 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   const [emissao, setEmissao] = useState(pickStr(fonograma?.emissao));
   const [gravacaoOriginal, setGravacaoOriginal] = useState(pickStr(fonograma?.gravacaoOriginal, fonograma?.gravacao_original, fonograma?.data_registro));
   const [lancamento, setLancamento] = useState(pickStr(fonograma?.lancamento, fonograma?.data_lancamento));
-  const [duracaoMin, setDuracaoMin] = useState(pickStr(fonograma?.duracaoMin, fonograma?.duracao_min) || initialDuracao.min);
-  const [duracaoSeg, setDuracaoSeg] = useState(pickStr(fonograma?.duracaoSeg, fonograma?.duracao_seg) || initialDuracao.seg);
+  const [duracaoMin, setDuracaoMin] = useState(pickStr(fonograma?.duracaoMin, fonograma?.duracao_min) || initialDurationText.min);
+  const [duracaoSeg, setDuracaoSeg] = useState(pickStr(fonograma?.duracaoSeg, fonograma?.duracao_seg) || initialDurationText.seg);
   const [instrumental, setInstrumental] = useState<boolean>(pickBool(fonograma?.instrumental) ?? false);
   const [generoMusical, setGeneroMusical] = useState(pickStr(fonograma?.generoMusical, fonograma?.musicGenre));
   const [classificacao, setClassificacao] = useState(pickStr(fonograma?.classificacao));
@@ -548,8 +548,8 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
     designacao: isrcDesignacao
   });
 
-  // Duration in MM:SS for legacy column
-  const duracaoConcat = formatDuracao(duracaoMin, duracaoSeg);
+  // Duration in MM:SS, built from the separate minutes/seconds inputs
+  const durationTextConcat = formatDurationText(duracaoMin, duracaoSeg);
 
   const buildPayload = (): FonogramaInsert => {
     const tituloFinal = (title && title.trim()) || obraVinculada?.title || "Sem título";
@@ -571,7 +571,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       emissao: emissao || null,
       gravacao_original: gravacaoOriginal || null,
       data_lancamento: lancamento || null,
-      duracao: duracaoConcat,
+      duration_text: durationTextConcat,
       duracao_min: duracaoMin === "" ? null : Number(duracaoMin),
       duracao_seg: duracaoSeg === "" ? null : Number(duracaoSeg),
       musicGenre: generoMusical || null,

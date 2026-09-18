@@ -37,7 +37,7 @@ const BASE_DETECTION: DetectionRow = {
     cod_ecad: "ECAD-0001-VL",
     cod_entidade: "ABR-001-2025",
     genero: "Pop",
-    duracao: "3:42",
+    duration_text: "3:42",
     status: "registrado",
   },
 };

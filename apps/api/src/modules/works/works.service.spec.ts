@@ -135,7 +135,7 @@ describe('WorksService', () => {
       idioma: 'pt',
       cod_ecad: 'ECAD-0001',
       cod_entidade: 'ABR-123',
-      duracao: '03:30',
+      duration_text: '03:30',
       instrumental: 'nao',
       criada_por_ia: false,
       tipo_ia: null,

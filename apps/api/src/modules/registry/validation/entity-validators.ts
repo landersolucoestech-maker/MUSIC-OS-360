@@ -117,7 +117,7 @@ export class RecordingRegistryValidationService {
       issues.push(issue(E, 'recording_title_required', 'title', 'Título do fonograma é obrigatório.'));
     }
 
-    const hasDuration = (recording.duration_seconds ?? 0) > 0 || !!(recording.duracao && recording.duracao.trim());
+    const hasDuration = (recording.duration_seconds ?? 0) > 0 || !!(recording.duration_text && recording.duration_text.trim());
     if (!hasDuration) {
       issues.push(issue(E, 'recording_duration_required', 'duration_seconds', 'Duração do fonograma é obrigatória.'));
     }

@@ -72,7 +72,7 @@ export class CreateWorkDto {
   // Renomeado de `cod_abramus` (20260718000017) — código em qualquer entidade
   // de gestão coletiva (ABRAMUS, UBC, SOCINPRO, ...), não só ABRAMUS.
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) cod_entidade?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) duracao?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) duration_text?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(10) instrumental?: string;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() criada_por_ia?: boolean;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) tipo_ia?: string;

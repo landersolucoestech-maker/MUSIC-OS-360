@@ -18,7 +18,7 @@ const makeObra = (overrides: Partial<CatalogObra> = {}): CatalogObra => ({
   cod_entidade: "ABR-TEST-001",
   genero: "Pop",
   status: "registrado",
-  duracao: "3:30",
+  duration_text: "3:30",
   ...overrides,
 });
 

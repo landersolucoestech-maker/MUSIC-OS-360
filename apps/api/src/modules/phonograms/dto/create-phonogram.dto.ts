@@ -81,7 +81,7 @@ export class CreatePhonogramDto {
   @ApiPropertyOptional() @IsOptional() @IsString() emissao?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() gravacao_original?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() data_lancamento?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) duracao?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) duration_text?: string;
   @ApiPropertyOptional() @IsOptional() @Type(() => Number) @IsInt() duracao_min?: number;
   @ApiPropertyOptional() @IsOptional() @Type(() => Number) @IsInt() duracao_seg?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) midia?: string;

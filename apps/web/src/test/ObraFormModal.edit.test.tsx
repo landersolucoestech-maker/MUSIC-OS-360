@@ -113,7 +113,7 @@ describe("ObraFormModal edit mode", () => {
     title: "Canção Original",
     genero: "pop",
     iswc: "T-123.456.789-0",
-    duracao: "03:45",
+    duration_text: "03:45",
     status: "analise",
     compositores: ["Alice", "Bob"],
     letristas: ["Carol"],
@@ -186,8 +186,8 @@ describe("ObraFormModal edit mode", () => {
     expect(callArg.title).toBe("Canção Editada");
     // Status round-trips back to DB form
     expect(callArg.status).toBe("under_review");
-    // Duracao stays MM:SS
-    expect(callArg.duracao).toBe("03:45");
+    // Duration text stays MM:SS
+    expect(callArg.duration_text).toBe("03:45");
     // Compositores/letristas preserved
     expect(callArg.compositores).toEqual(["Alice", "Bob"]);
     expect(callArg.letristas).toEqual(["Carol"]);

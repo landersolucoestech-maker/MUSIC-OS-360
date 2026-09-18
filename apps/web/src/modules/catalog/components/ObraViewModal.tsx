@@ -24,7 +24,7 @@ import {
   obraIaLetra,
   obraToParticipantes,
   exportInstrumental,
-  parseDuracao,
+  parseDurationText,
 } from "@/modules/catalog/mappers";
 
 interface ObraViewModalProps {
@@ -122,11 +122,11 @@ export function ObraViewModal({
   const instrumental     =
     exportInstrumental(obra as Record<string, unknown>) === "Sim";
 
-  const dur = parseDuracao(obra.duracao);
+  const dur = parseDurationText(obra.duration_text);
   const duracaoDisplay =
     dur.min || dur.seg
       ? `${dur.min || "0"}min ${dur.seg || "0"}seg`
-      : obra.duracao || null;
+      : obra.duration_text || null;
 
   const artistaNome   = obra.artistas?.nome_artistico ?? null;
   const projetoTitle = obra.projetos?.title ?? null;

@@ -54,7 +54,7 @@ import { useDebounce } from "@/shared/hooks/useDebounce";
 import type { TipoObra } from "@/modules/catalog/components/ObraTipoSelectorModal";
 import {
   dbStatusToSelect,
-  parseDuracao,
+  parseDurationText,
   obraToParticipantes,
   obraTitle,
   obraOutrosTitulos,
@@ -237,7 +237,7 @@ export function ObraFormModal({
   const [buscaProjeto, setBuscaProjeto] = useState("");
   const debouncedBuscaProjeto = useDebounce(buscaProjeto, 300);
   const [buscaProjetoOpen, setBuscaProjetoOpen] = useState(false);
-  const initialDuracao = parseDuracao(obra?.duracao);
+  const initialDurationText = parseDurationText(obra?.duration_text);
   const [codEcad, setCodEcad] = useState(obra?.cod_ecad ?? obra?.codEcad ?? "");
   const [codEntidade, setCodEntidade] = useState(
     obra?.cod_entidade ?? obra?.codEntidade ?? "",
@@ -250,10 +250,10 @@ export function ObraFormModal({
   );
   const [idioma, setIdioma] = useState(obra?.idioma || "");
   const [duracaoMin, setDuracaoMin] = useState(
-    obra?.duracaoMin ?? initialDuracao.min,
+    obra?.duracaoMin ?? initialDurationText.min,
   );
   const [duracaoSeg, setDuracaoSeg] = useState(
-    obra?.duracaoSeg ?? initialDuracao.seg,
+    obra?.duracaoSeg ?? initialDurationText.seg,
   );
   const [instrumental, setInstrumental] = useState(obra?.instrumental || "nao");
   const [criadaPorIA, setCriadaPorIA] = useState(() => obraCriadaPorIA(obra));

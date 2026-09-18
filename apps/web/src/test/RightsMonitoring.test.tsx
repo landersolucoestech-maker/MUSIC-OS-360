@@ -41,7 +41,7 @@ const OBRAS = [
     compositor: "Vitória Carvalho", compositores: "Vitória Carvalho, Lucas Mendes",
     editora: "MusicOS Publishing", isrc: "BRMSC2500001", iswc: "T-123.456.789-0",
     cod_entidade: "ABR-001-2025", cod_ecad: "ECAD-0001-VL",
-    genero: "Pop", status: "registrado", duracao: "3:42",
+    genero: "Pop", status: "registrado", duration_text: "3:42",
     artistas: { id: "art-1", nome_artistico: "Vitória Lunar" },
   },
 ];

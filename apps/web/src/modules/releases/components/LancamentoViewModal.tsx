@@ -418,10 +418,10 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
                         {[f.artista, f.isrc].filter(Boolean).join(" • ")}
                       </p>
                     </div>
-                    {f.duracao && (
+                    {f.duration_text && (
                       <span className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
                         <Clock className="h-3 w-3" />
-                        {f.duracao}
+                        {f.duration_text}
                       </span>
                     )}
                   </div>

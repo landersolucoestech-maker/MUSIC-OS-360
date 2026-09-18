@@ -21,7 +21,7 @@ export interface CatalogObraRef {
   cod_entidade: string | null;
   genero: string | null;
   status: string | null;
-  duracao: string | null;
+  duration_text: string | null;
   artista_nome?: string | null;
 }
 

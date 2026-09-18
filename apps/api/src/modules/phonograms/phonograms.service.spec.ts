@@ -94,7 +94,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       emissao: null,
       gravacao_original: null,
       data_lancamento: null,
-      duracao: '03:30',
+      duration_text: '03:30',
       duracao_min: 3,
       duracao_seg: 30,
       midia: null,

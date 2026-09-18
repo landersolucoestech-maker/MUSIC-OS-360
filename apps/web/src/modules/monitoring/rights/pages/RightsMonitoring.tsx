@@ -116,7 +116,7 @@ export default function RightsMonitoring() {
         cod_entidade: o.cod_entidade ?? null,
         genero: o.genero ?? null,
         status: (o.status as string) ?? null,
-        duracao: o.duracao ?? null,
+        duration_text: o.duration_text ?? null,
         artista_nome: o.artistas?.nome_artistico ?? null,
       });
     });

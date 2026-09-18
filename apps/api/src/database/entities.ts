@@ -707,7 +707,7 @@ export class WorkEntity {
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 100, nullable: true }) genero: string | null;
   @Column({ type: 'varchar', length: 50, default: WorkStatus.PENDING }) status: WorkStatus;
-  @Column({ type: 'varchar', length: 20, nullable: true }) duracao: string | null;
+  @Column({ type: 'varchar', length: 20, nullable: true }) duration_text: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) origem_externa: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) origem_externa_id: string | null;
   @Column({ type: 'timestamp', nullable: true }) origem_externa_sincronizado_em: Date | null;
@@ -802,7 +802,7 @@ export class PhonogramEntity {
   @Column({ type: 'uuid', nullable: true }) work_id: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) isrc: string | null;
-  @Column({ type: 'varchar', length: 20, nullable: true }) duracao: string | null;
+  @Column({ type: 'varchar', length: 20, nullable: true }) duration_text: string | null;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 50, default: PhonogramStatus.PENDING }) status: PhonogramStatus;
   @Column({ type: 'text', nullable: true }) compositores: string | null;

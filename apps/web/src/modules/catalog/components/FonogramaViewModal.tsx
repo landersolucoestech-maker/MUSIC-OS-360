@@ -87,7 +87,7 @@ export interface FonogramaViewData {
   duracao_min?: string | null;
   duracaoSeg?: string | null;
   duracao_seg?: string | null;
-  duracao?: string | null;
+  duration_text?: string | null;
   // Categorization
   generoMusical?: string | null;
   genero_musical?: string | null;
@@ -291,7 +291,7 @@ export function FonogramaViewModal({
   // Duração
   let duracaoMin = pickStr(fonograma.duracaoMin, fonograma.duracao_min);
   let duracaoSeg = pickStr(fonograma.duracaoSeg, fonograma.duracao_seg);
-  const duracaoFull = pickStr(fonograma.duracao);
+  const duracaoFull = pickStr(fonograma.duration_text);
   if ((duracaoMin === undefined || duracaoSeg === undefined) && duracaoFull) {
     const parts = duracaoFull.split(":");
     if (parts.length === 2) {

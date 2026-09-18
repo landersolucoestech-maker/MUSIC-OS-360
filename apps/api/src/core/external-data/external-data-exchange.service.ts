@@ -449,7 +449,7 @@ export class ExternalDataExchangeService {
           id: p.id,
           title: p.title,
           isrc: p.isrc,
-          duration: p.duracao,
+          duration: p.duration_text,
           performers: p.interpretes,
           producers: p.produtores,
         })),

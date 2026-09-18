@@ -140,7 +140,7 @@ describe("FonogramaFormModal edit mode", () => {
     title: "Canção Vinculada",
     work_id: "obra-1",
     isrc: "BR-ABC-25-12345",
-    duracao: "04:20",
+    duration_text: "04:20",
     gravadora: "Gravadora X",
     produtores: ["Pedro", "Marta"],
     status: "analise",
@@ -170,7 +170,7 @@ describe("FonogramaFormModal edit mode", () => {
     expect(screen.getByDisplayValue("25")).toBeInTheDocument();
     expect(screen.getByDisplayValue("12345")).toBeInTheDocument();
 
-    // Duracao
+    // Duration
     expect(screen.getByTestId("input-duracao-minutos")).toHaveValue("4");
     expect(screen.getByTestId("input-duracao-segundos")).toHaveValue("20");
 
@@ -213,7 +213,7 @@ describe("FonogramaFormModal edit mode", () => {
     expect(callArg.id).toBe("fono-1");
     expect(callArg.work_id).toBe("obra-1");
     expect(callArg.isrc).toBe("BR-ABC-25-99999");
-    expect(callArg.duracao).toBe("04:20");
+    expect(callArg.duration_text).toBe("04:20");
     // The merged form persists Gravadora X via the agregadora field (mapped from gravadora)
     expect(callArg.agregadora).toBe("Gravadora X");
     // Produtores from the legacy column survive the round-trip via the participacao JSON

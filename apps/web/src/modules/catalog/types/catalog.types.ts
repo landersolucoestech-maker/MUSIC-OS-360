@@ -21,7 +21,7 @@ export interface Obra {
   type?: WorkType | string | null;
   genero?: string | null;
   status?: WorkStatusValue | string | null;
-  duracao?: string | null;
+  duration_text?: string | null;
   origem_externa?: string | null;
   origem_externa_id?: string | null;
   origem_externa_sincronizado_em?: string | null;
@@ -47,7 +47,7 @@ export interface Fonograma {
   work_id?: string | null;
   artist_id?: string | null;
   isrc?: string | null;
-  duracao?: string | null;
+  duration_text?: string | null;
   type?: string | null;
   status?: PhonogramStatusValue | string | null;
   compositores?: string | null;
