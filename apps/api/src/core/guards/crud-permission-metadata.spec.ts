@@ -82,6 +82,7 @@ const expectedRoutes: ExpectedRoute[] = [
   { controller: ClientsController, methodName: 'getTimeline', httpMethod: RequestMethod.GET, path: ':id/timeline', role: 'viewer', permission: 'client:read' },
   { controller: ClientsController, methodName: 'addTimelineEntry', httpMethod: RequestMethod.POST, path: ':id/timeline', role: 'editor', permission: 'client:update' },
   { controller: ClientsController, methodName: 'getContracts', httpMethod: RequestMethod.GET, path: ':id/contracts', role: 'viewer', permission: 'client:read' },
+  { controller: ClientsController, methodName: 'runDealsCrm', httpMethod: RequestMethod.POST, path: ':id/ai/deals-crm', role: 'viewer', permission: 'client:read' },
   { controller: ClientsController, methodName: 'listAttachments', httpMethod: RequestMethod.GET, path: ':id/attachments', role: 'viewer', permission: 'client:read' },
   { controller: ClientsController, methodName: 'presignAttachment', httpMethod: RequestMethod.POST, path: ':id/attachments/presign', role: 'editor', permission: 'client:update' },
   { controller: ClientsController, methodName: 'confirmAttachment', httpMethod: RequestMethod.POST, path: ':id/attachments', role: 'editor', permission: 'client:update' },

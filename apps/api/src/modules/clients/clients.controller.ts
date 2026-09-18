@@ -11,10 +11,14 @@ import {
   CreateClientDto, UpdateClientDto, QueryClientDto,
   CreateClientTimelineEntryDto, PresignClientAttachmentDto, ConfirmClientAttachmentDto,
 } from './dto/clients.dto';
+import { DealsCrmAutomation } from '../../core/automation/deals-crm.automation';
 
 @ApiTags('Clients') @ApiBearerAuth() @Controller('clients')
 export class ClientsController {
-  constructor(private readonly svc: ClientsService) {}
+  constructor(
+    private readonly svc: ClientsService,
+    private readonly dealsCrm: DealsCrmAutomation,
+  ) {}
 
   @Get()    @RequireRole('viewer') @RequirePermission('client:read') @ApiOperation({ summary: 'Listar clientes' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryClientDto) { return this.svc.list(t.id, q); }
@@ -47,6 +51,12 @@ export class ClientsController {
   @Get(':id/contracts') @RequireRole('viewer') @RequirePermission('client:read') @ApiOperation({ summary: 'Contratos vinculados ao cliente (contracts.client_id)' })
   getContracts(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.getContracts(t.id, id);
+  }
+
+  @Post(':id/ai/deals-crm') @RequireRole('viewer') @RequirePermission('client:read')
+  @ApiOperation({ summary: 'AI Skill deals-crm — análise do pipeline comercial (contratos) real do cliente' })
+  runDealsCrm(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Param('id', ParseUUIDPipe) id: string) {
+    return this.dealsCrm.run(t.id, u?.userId ?? '', id);
   }
 
   // ── Anexos (metadata real; binário no Cloudflare R2) ────────────────────
