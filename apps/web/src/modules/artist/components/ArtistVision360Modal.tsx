@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { useSkillRun } from "@/shared/hooks/useSkillRun";
+import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
 import { DatePickerField } from "@/shared/ui/date-picker-field";
 import { SPECIALTY_LABELS } from "@/modules/artist/mappers";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
@@ -310,6 +312,7 @@ export function ArtistVision360Modal({
   // (padrão que a Task G pede para eliminar) — trocar de artista reaproveitava
   // até o mesmo cache incorreto, já que a queryKey não distinguia o artista.
   const artistId = artista?.id;
+  const audienceHealth = useSkillRun<Record<string, unknown>>(`/artists/${artistId}/audience-health`);
   const { obras: actualWorks } = useObras(open, artistId);
   const { fonogramas: actualPhonograms } = useFonogramas(open, artistId);
   const { lancamentos: actualReleases } = useLancamentos(open, artistId);
@@ -2620,6 +2623,20 @@ export function ArtistVision360Modal({
             {/* Evolução */}
             <TabsContent value="evolucao" className="p-6 space-y-6 mt-0">
               <ArtistEvolutionSection artist={artista} />
+
+              {/* ══ SAÚDE DE AUDIÊNCIA (AI Skill audience-health sobre Career Stage + Market Benchmark já calculados) ══ */}
+              <section className="space-y-3" data-testid="artist-vision-audience-health">
+                <h3 className="border-b pb-1 text-sm font-semibold tracking-wider text-muted-foreground">
+                  Saúde de Audiência (IA)
+                </h3>
+                <SkillRunPanel
+                  label="Analisar saúde de audiência"
+                  result={audienceHealth.result}
+                  isRunning={audienceHealth.isRunning}
+                  error={audienceHealth.error}
+                  onRun={() => audienceHealth.run(undefined)}
+                />
+              </section>
 
               {/* Marcos / Linha do tempo */}
               {evolutionMilestones.length > 0 && (
