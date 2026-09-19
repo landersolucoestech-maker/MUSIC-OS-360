@@ -19,7 +19,7 @@ import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { obraArtistaLabel } from "@/modules/licensing/lib/licenca-format";
 import type { Obra } from "@/modules/catalog/types/catalog.types";
 
-interface ClienteOption { id: string; nome: string }
+interface ClienteOption { id: string; name: string }
 
 interface LicencaFormModalProps {
   open: boolean;
@@ -255,7 +255,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
                   render={({ field }) => (
                     <AsyncEntityCombobox<ClienteOption>
                       table="clientes"
-                      getLabel={(c) => c.nome ?? ""}
+                      getLabel={(c) => c.name ?? ""}
                       value={field.value}
                       onChange={(id) => field.onChange(id)}
                       placeholder="Selecione o cliente"

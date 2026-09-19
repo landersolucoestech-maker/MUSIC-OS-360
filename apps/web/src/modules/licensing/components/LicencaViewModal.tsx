@@ -6,7 +6,7 @@ import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { formatLicensingDate, formatRemuneration, obraArtistaLabel, midiaLabel, tipoLabel } from "@/modules/licensing/lib/licenca-format";
 import type { Obra } from "@/modules/catalog/types/catalog.types";
 
-interface ClienteOption { id: string; nome: string }
+interface ClienteOption { id: string; name: string }
 
 interface LicencaViewModalProps {
   open: boolean;
@@ -44,7 +44,7 @@ export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewMod
 
   const obraTitle = obra?.title ?? null;
   const artista = obraArtistaLabel(obra) || null;
-  const clienteNome = cliente?.nome ?? null;
+  const clienteNome = cliente?.name ?? null;
 
   const inicio = formatLicensingDate(licenca.start_date);
   const fim = formatLicensingDate(licenca.end_date);

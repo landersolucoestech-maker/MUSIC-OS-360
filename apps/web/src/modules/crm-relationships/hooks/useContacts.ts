@@ -68,29 +68,29 @@ export function useSimpleContacts() {
  * view-model `Cliente` consumido pelos formulários de contratos/agenda/
  * financeiro/nota fiscal/dashboard. */
 function apiClientToCliente(c: ApiClient): Cliente {
-  const isPF = c.tipo_pessoa === "pessoa_fisica";
-  const enderecoCompleto = c.endereco_completo ?? c.address ?? null;
+  const isPF = c.type === "pessoa_fisica";
+  const endereco = c.address ?? null;
   return {
     id: c.id,
-    nome: c.nome ?? c.name,
+    nome: c.name,
     razao_social: c.razao_social ?? null,
     email: c.email ?? null,
     telefone: c.phone ?? null,
     empresa: c.razao_social ?? c.nome_fantasia ?? null,
     cidade: c.cidade ?? null,
     estado: c.estado ?? null,
-    endereco: enderecoCompleto,
-    endereco_completo: enderecoCompleto,
+    endereco,
+    endereco_completo: endereco,
     cep: c.cep ?? null,
     status: c.status ?? null,
     cpf: isPF ? c.document ?? null : null,
     cnpj: !isPF ? c.document ?? null : null,
     cpf_cnpj: c.document ?? null,
-    tipo_pessoa: c.tipo_pessoa ?? null,
+    tipo_pessoa: c.type ?? null,
     responsavel: c.responsavel_nome ?? null,
     observacoes: c.observacoes ?? null,
-    type: c.tipo_pessoa ?? null,
-    segmento: c.categoria ?? null,
+    type: c.type ?? null,
+    segmento: c.category ?? null,
   };
 }
 

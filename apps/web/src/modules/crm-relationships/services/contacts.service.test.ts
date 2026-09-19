@@ -52,9 +52,9 @@ import { contactsService } from "./contacts.service";
 
 const wireRow = {
   id: "c1",
-  tipo_pessoa: "pessoa_fisica",
-  nome: "Ana Fotógrafa",
-  categoria: "SERVICE_PROVIDER",
+  type: "pessoa_fisica",
+  name: "Ana Fotógrafa",
+  category: "SERVICE_PROVIDER",
   perfil: "fotografo",
   status: "active",
   prioridade_contato: "medium",

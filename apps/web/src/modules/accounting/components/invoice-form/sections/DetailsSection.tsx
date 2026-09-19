@@ -243,7 +243,7 @@ export function DetailsSection({
           <Label>{rules.clienteSelectLabel}</Label>
           <AsyncEntityCombobox<InvoiceClientLookup>
             table="clientes"
-            getLabel={(c) => c.nome}
+            getLabel={(c) => c.name}
             value={formData.client_id}
             onChange={handleClientChange}
             placeholder="Selecione um client"

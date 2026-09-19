@@ -91,7 +91,7 @@ export default function Licenciamento() {
   // página atual — antes escaneava useObras()/uma listagem de clientes sem
   // filtro, truncados nos primeiros 50 do tenant.
   const [resolvedObras, setResolvedObras] = useState<Record<string, Obra>>({});
-  const [resolvedClientes, setResolvedClientes] = useState<Record<string, { id: string; nome: string }>>({});
+  const [resolvedClientes, setResolvedClientes] = useState<Record<string, { id: string; name: string }>>({});
   const licencaObraIds = useMemo(
     () => Array.from(new Set(pageItems.map((l: any) => l.work_id).filter(Boolean))) as string[],
     [pageItems],
@@ -116,10 +116,10 @@ export default function Licenciamento() {
   useEffect(() => {
     if (licencaClientIds.length === 0) return;
     let cancelled = false;
-    Promise.all(licencaClientIds.map((id) => storage.findById<{ id: string; nome: string }>("clientes", id)))
+    Promise.all(licencaClientIds.map((id) => storage.findById<{ id: string; name: string }>("clientes", id)))
       .then((results) => {
         if (cancelled) return;
-        const map: Record<string, { id: string; nome: string }> = {};
+        const map: Record<string, { id: string; name: string }> = {};
         results.forEach((c, i) => { if (c) map[licencaClientIds[i]] = c; });
         setResolvedClientes((prev) => ({ ...prev, ...map }));
       })
@@ -129,7 +129,7 @@ export default function Licenciamento() {
 
   const obraTitleDe = (l: any) => (l.work_id ? resolvedObras[l.work_id]?.title ?? null : null);
   const artistaDe = (l: any) => (l.work_id ? obraArtistaLabel(resolvedObras[l.work_id]) : "");
-  const clienteNomeDe = (l: any) => (l.client_id ? resolvedClientes[l.client_id]?.nome ?? null : null);
+  const clienteNomeDe = (l: any) => (l.client_id ? resolvedClientes[l.client_id]?.name ?? null : null);
 
   // KPIs: contagem + soma de valor por status SOBRE O TENANT INTEIRO (não a
   // página atual) — GET /licenses/stats, agregado no banco.

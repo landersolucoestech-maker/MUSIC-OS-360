@@ -60,6 +60,12 @@ export class LeadsService {
       tipoCliente:        l.tipo_cliente,
       payloadServico:     l.payload_servico,
       dadosInternosCRM:   l.dados_internos_crm,
+      // `...l` above spreads the raw physical `nome` key through first —
+      // without this, the response leaked BOTH `nome` and its English
+      // alias `name` for the same concept (see .claude/rules/naming-canonical.md).
+      // `undefined` drops the key from the JSON response entirely (same
+      // pattern used for the encrypted fields above).
+      nome:               undefined as unknown as string,
     };
   }
 

@@ -113,7 +113,7 @@ export default function Tarefas() {
   });
   const { data: empresaNameOptions = [] } = useQuery({
     queryKey: ["marketing-task-target-names", "clientes"],
-    queryFn: () => fetchAllLabels("clientes", (c) => c.nome as string | undefined),
+    queryFn: () => fetchAllLabels("clientes", (c) => c.name as string | undefined),
   });
   const { data: projects = [] } = useMarketingProjects();
   const { getOptionsByKind } = useOperationalSettings();

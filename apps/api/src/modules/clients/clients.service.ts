@@ -39,6 +39,17 @@ export class ClientsService {
       email:              this.enc.decryptNullable(c.email_encrypted),
       phone:              this.enc.decryptNullable(c.telefone_encrypted),
       document:           this.enc.decryptNullable(c.cpf_cnpj_encrypted),
+      // `...c` above spreads the raw physical-column keys through first —
+      // without these, the response leaked BOTH the Portuguese physical
+      // name (nome/tipo_pessoa/categoria/endereco_completo) AND its
+      // English-mapped counterpart for the same concept (two fields that
+      // can independently drift, see .claude/rules/naming-canonical.md).
+      // `undefined` here drops the key from the JSON response entirely
+      // (same pattern already used for the encrypted fields below).
+      nome:               undefined,
+      tipo_pessoa:        undefined,
+      categoria:          undefined,
+      endereco_completo:  undefined,
       email_encrypted:    undefined,
       telefone_encrypted: undefined,
       cpf_cnpj_encrypted: undefined,

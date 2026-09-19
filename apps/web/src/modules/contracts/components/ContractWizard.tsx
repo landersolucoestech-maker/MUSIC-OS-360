@@ -444,24 +444,24 @@ function PartyCard({
           <AsyncEntityCombobox<Record<string, unknown> & { id: string }>
             table="clientes"
             value={party.sourceId || null}
-            getLabel={(c) => String(c.nome || "")}
+            getLabel={(c) => String(c.name || "")}
             placeholder="Selecionar contato…"
             searchPlaceholder="Buscar por nome…"
             emptyText="Nenhum contato encontrado"
             data-testid="combobox-crm-contato"
             onChange={(id, c) => {
               if (!c) return;
-              const isPF = c.tipo_pessoa === "pessoa_fisica";
+              const isPF = c.type === "pessoa_fisica";
               const doc = String(c.document || "");
               set({
                 sourceId: id,
-                nome: String(c.nome || ""),
+                nome: String(c.name || ""),
                 cpf: isPF ? doc : "",
                 cnpj: !isPF ? doc : "",
                 email: String(c.email || ""),
                 telefone: String(c.phone || ""),
-                endereco: String(c.address || c.endereco_completo || ""),
-                razao_social: String(c.razao_social || c.nome || ""),
+                endereco: String(c.address || ""),
+                razao_social: String(c.razao_social || c.name || ""),
                 representante_legal: String(c.responsavel_nome || ""),
               });
             }}

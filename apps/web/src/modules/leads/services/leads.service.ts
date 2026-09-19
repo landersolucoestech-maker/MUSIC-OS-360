@@ -17,7 +17,7 @@ import type { Lead, LeadClientType, LeadServiceType, LeadInternalCRMData } from 
 
 interface ApiLeadResponse {
   id: string;
-  nome: string;
+  name: string;
   nome_completo: string | null;
   nomeArtistico: string | null;
   empresa: string | null;
@@ -47,7 +47,7 @@ function fromApi(row: ApiLeadResponse): Lead {
   const crm = (row.dadosInternosCRM ?? {}) as Partial<LeadInternalCRMData>;
   return {
     id: row.id,
-    nomeCompleto: row.nome_completo ?? row.nome,
+    nomeCompleto: row.nome_completo ?? row.name,
     nomeArtistico: row.nomeArtistico ?? undefined,
     empresa: row.empresa ?? undefined,
     email: row.email ?? undefined,

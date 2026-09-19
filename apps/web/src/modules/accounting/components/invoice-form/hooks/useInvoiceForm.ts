@@ -30,10 +30,10 @@ interface UseInvoiceFormOptions {
  * suficiente para o autofill do tomador; não precisa do view-model `Cliente`. */
 export interface InvoiceClientLookup {
   id: string;
-  nome: string;
+  name: string;
   document?: string | null;
   email?: string | null;
-  endereco_completo?: string | null;
+  address?: string | null;
   cidade?: string | null;
   estado?: string | null;
   cep?: string | null;
@@ -168,9 +168,9 @@ export function useInvoiceForm({
       ...prev,
       client_id: clientId,
       tomador_cnpj: client.document || "",
-      tomador_razao_social: client.nome || "",
+      tomador_razao_social: client.name || "",
       tomador_email: client.email || "",
-      tomador_endereco: client.endereco_completo || "",
+      tomador_endereco: client.address || "",
       tomador_cidade: client.cidade || "",
       tomador_uf: client.estado || "SP",
       tomador_cep: client.cep || "",
