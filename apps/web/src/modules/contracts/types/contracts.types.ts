@@ -18,12 +18,10 @@ export type SigningPlatform = "autentique" | "clicksign" | "docusign";
 /**
  * Signer record persisted by ContractWizard.
  * Richer than the legacy ContractSigner — keeps wizard-specific fields
- * (nome, obrigatorio, ordem, provider) alongside the canonical email + role.
+ * (obrigatorio, ordem, provider) alongside the canonical name/email/role.
  */
 export interface WizardSignerRecord {
-  /** Canonical display name — mirrors ContractSigner.name for consumer compatibility */
   name: string;
-  nome: string;
   email: string;
   role: string;
   obrigatorio: boolean;

@@ -60,7 +60,7 @@ interface PartyData {
 interface WizardSigner {
   id: string;
   role: string;
-  nome: string;
+  name: string;
   email: string;
   obrigatorio: boolean;
   ordem: number;
@@ -758,7 +758,7 @@ function SignerRow({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <div className="space-y-1">
           <Label className="text-xs">Nome</Label>
-          <Input className="h-8 text-xs" value={signer.nome} onChange={(e) => set({ nome: e.target.value })} placeholder="Nome completo" />
+          <Input className="h-8 text-xs" value={signer.name} onChange={(e) => set({ name: e.target.value })} placeholder="Nome completo" />
         </div>
         <div className="space-y-1">
           <Label className="text-xs">E-mail</Label>
@@ -998,7 +998,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
               return {
                 id:          String(i),
                 role:        String(r.role ?? "OUTRO"),
-                nome:        String(r.nome ?? r.name ?? ""),
+                name:        String(r.name ?? r.nome ?? ""),
                 email:       String(r.email ?? ""),
                 obrigatorio: Boolean(r.obrigatorio ?? true),
                 ordem:       Number(r.ordem ?? i + 1),
@@ -1008,7 +1008,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
           : signatureRoles.map((role, i) => ({
               id: `sig-${Date.now()}-${i}`,
               role,
-              nome: "",
+              name: "",
               email: "",
               obrigatorio: true,
               ordem: i + 1,
@@ -1053,7 +1053,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
     const initialSigners: WizardSigner[] = signatureRoles.map((role, i) => ({
       id: `sig-${Date.now()}-${i}`,
       role,
-      nome:        "",
+      name:        "",
       email:       "",
       obrigatorio: true,
       ordem:       i + 1,
@@ -1093,7 +1093,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
     const id = `sig-${Date.now()}`;
     setState((p) => ({
       ...p,
-      signers: [...p.signers, { id, role: "OUTRO", nome: "", email: "", obrigatorio: false, ordem: p.signers.length + 1, provider: "" }],
+      signers: [...p.signers, { id, role: "OUTRO", name: "", email: "", obrigatorio: false, ordem: p.signers.length + 1, provider: "" }],
     }));
   }, []);
 
@@ -1153,8 +1153,8 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
         observacoes:      wizardBlob,
         signing_platform: provider,
         // Deliberately map WizardSigner to the persisted WizardSignerRecord shape
-        signers: state.signers.map(({ nome, email, role, obrigatorio, ordem, provider }): WizardSignerRecord => ({
-          name: nome, nome, email, role, obrigatorio, ordem, provider,
+        signers: state.signers.map(({ name, email, role, obrigatorio, ordem, provider }): WizardSignerRecord => ({
+          name, email, role, obrigatorio, ordem, provider,
         })),
       };
 
