@@ -223,7 +223,7 @@ export default function Agenda() {
         local: e.local || "",
         publico_esperado: e.publico_esperado ?? "",
         valor_cache: e.valor_cache || "",
-        descricao: e.descricao || "",
+        descricao: e.description || "",
         observacoes: e.observacoes || "",
       };
     });
@@ -284,7 +284,7 @@ export default function Agenda() {
         if (row.local || row.Local) payload.venue = row.local || row.Local;
         if (valorCache) payload.valor_cache = Number(valorCache);
         if (publicoEsperado) payload.publico_esperado = Number(publicoEsperado);
-        if (row.descricao || row.Descrição) payload.descricao = row.descricao || row.Descrição;
+        if (row.descricao || row.Descrição) payload.description = row.descricao || row.Descrição;
         if (row.observacoes || row.Observações) payload.observacoes = row.observacoes || row.Observações;
 
         await addEvent.mutateAsync(payload as any);

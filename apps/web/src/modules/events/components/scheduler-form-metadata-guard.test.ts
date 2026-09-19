@@ -36,7 +36,7 @@ describe("SchedulerFormModal — não grava campos formais em metadata", () => {
     expect(SOURCE).toMatch(/payload\["contato_local"\]\s*=\s*data\.contatoLocal/);
     expect(SOURCE).toMatch(/payload\["valor_cache"\]\s*=\s*valorCache/);
     expect(SOURCE).toMatch(/payload\["publico_esperado"\]\s*=\s*publicoEsperado/);
-    expect(SOURCE).toMatch(/payload\["descricao"\]\s*=\s*data\.descricao/);
+    expect(SOURCE).toMatch(/payload\["description"\]\s*=\s*data\.descricao/);
     expect(SOURCE).toMatch(/payload\["observacoes"\]\s*=\s*data\.observacoes/);
     expect(SOURCE).toMatch(/payload\["participantes"\]\s*=\s*data\.participantes/);
   });

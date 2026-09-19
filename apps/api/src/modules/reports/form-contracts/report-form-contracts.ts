@@ -568,7 +568,7 @@ const EVENTS_CONTRACT: ReportFormContract = {
   fields: [
     col('title'), col('type'), col('data'), col('end_date'), col('local'),
     col('contato_local'), col('endereco'), col('valor_cache'), col('publico_esperado'),
-    col('descricao'), col('observacoes'), col('status'),
+    col('description'), col('observacoes'), col('status'),
   ],
   excludedFormFields: {
     city: 'aceito pelo DTO mas sem coluna física nem input no modal',

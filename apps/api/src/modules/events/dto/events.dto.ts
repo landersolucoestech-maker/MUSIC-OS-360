@@ -33,7 +33,7 @@ export class CreateEventDto {
   @ApiPropertyOptional() @IsOptional() @IsString() contato_local?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) valor_cache?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) publico_esperado?: number;
-  @ApiPropertyOptional() @IsOptional() @IsString() descricao?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() observacoes?: string;
   @ApiPropertyOptional() @IsOptional() participantes?: unknown[];
 }

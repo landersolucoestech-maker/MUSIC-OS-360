@@ -20,7 +20,7 @@ export interface Event {
   valor_cache?: number | null;
   valor_ingresso?: number | null;
   capacidade?: number | null;
-  descricao?: string | null;
+  description?: string | null;
   observacoes?: string | null;
   created_at?: string;
   updated_at?: string;

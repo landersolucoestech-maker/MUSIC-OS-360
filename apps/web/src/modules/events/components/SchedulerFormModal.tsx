@@ -213,7 +213,7 @@ const getInitialFormData = (event?: any) => {
       event?.publico_esperado ||
       (meta["publico_esperado"] as string | number) ||
       "",
-    descricao: event?.descricao || (meta["descricao"] as string) || "",
+    descricao: event?.description || (meta["descricao"] as string) || "",
     observacoes: event?.observacoes || (meta["observacoes"] as string) || "",
   };
 };
@@ -504,7 +504,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
     if (valorCache !== undefined) payload["valor_cache"] = valorCache;
     const publicoEsperado = toNumberOrUndefined(data.publicoEsperado);
     if (publicoEsperado !== undefined) payload["publico_esperado"] = publicoEsperado;
-    if (data.descricao)   payload["descricao"]   = data.descricao;
+    if (data.descricao)   payload["description"] = data.descricao;
     if (data.observacoes) payload["observacoes"] = data.observacoes;
     if (data.participantes.length > 0) payload["participantes"] = data.participantes;
 

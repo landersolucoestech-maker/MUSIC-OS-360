@@ -250,12 +250,12 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
           )}
 
           {/* DESCRIÇÃO */}
-          {event.descricao && (
+          {event.description && (
             <Section title="Descrição" icon={FileText}>
               <Card>
                 <CardContent className="p-4">
                   <p className="text-sm text-foreground whitespace-pre-wrap" data-testid="text-evento-descricao">
-                    {event.descricao}
+                    {event.description}
                   </p>
                 </CardContent>
               </Card>

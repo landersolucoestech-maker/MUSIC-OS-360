@@ -1323,7 +1323,7 @@ export class EventEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) contato_local: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) valor_cache: string | null;
   @Column({ type: 'integer', nullable: true }) publico_esperado: number | null;
-  @Column({ type: 'text', nullable: true }) descricao: string | null;
+  @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'jsonb', nullable: true }) participantes: unknown[] | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
