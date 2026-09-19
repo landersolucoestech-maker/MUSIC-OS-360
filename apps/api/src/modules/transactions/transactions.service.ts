@@ -63,7 +63,7 @@ function buildPersistencePayload(
     'quantidadeParcelas', 'intervaloParcelas', 'dataPrimeiraParcela',
     'artistaVinculado', 'projetoVinculado', 'contratoVinculado',
     'eventoVinculado', 'fornecedorCliente', 'orgaoArrecadador',
-    'itemInvestimento', 'motivoViagem', 'nomePublicidade', 'observacao',
+    'itemInvestimento', 'motivoViagem', 'advertisingName', 'observacao',
     'anexoUrl', 'anexoNome',
   ];
   const metadata = { ...currentMetadata };

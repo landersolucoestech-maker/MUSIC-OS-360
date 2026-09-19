@@ -55,7 +55,7 @@ export interface TransactionFormPayload {
   conta_destino: string | null;
   itemInvestimento: string | null;
   motivoViagem: string | null;
-  nomePublicidade: string | null;
+  advertisingName: string | null;
   formaPagamento: string | null;
   tipoPagamento: string | null;
   quantidadeParcelas: string | null;
@@ -103,7 +103,7 @@ export function formToTransactionPayload(f: TransactionFormData): TransactionFor
     conta_destino:           str(f.contaDestino ?? ""),
     itemInvestimento:        str(f.itemInvestimento),
     motivoViagem:            str(f.motivoViagem),
-    nomePublicidade:         str(f.nomePublicidade),
+    advertisingName:         str(f.advertisingName),
     formaPagamento:          str(f.formaPagamento),
     tipoPagamento:           str(f.tipoPagamento),
     quantidadeParcelas:      str(f.quantidadeParcelas),

@@ -22,7 +22,7 @@ export interface FinancialFormRules {
   exibirFornecedor:       boolean;
   exibirOrgaoArrecadador: boolean;
   exibirMotivoViagem:     boolean;
-  exibirNomePublicidade:  boolean;
+  exibirAdvertisingName:  boolean;
   exibirParcelamento:     boolean;
   labelTipoCliente:       string;
 }
@@ -141,7 +141,7 @@ export const DISPLAY_RULES: Record<BooleanRuleKey, RulePredicate> = {
 
   exibirMotivoViagem: (f, ctx) => ctx.isDespesaViagem && Boolean(f.subcategoria),
 
-  exibirNomePublicidade: (f, ctx) => ctx.isDespesaArtistaCaches && f.subcategoria === "publicidade",
+  exibirAdvertisingName: (f, ctx) => ctx.isDespesaArtistaCaches && f.subcategoria === "publicidade",
 
   exibirParcelamento: (f) => f.tipoPagamento === "parcelado",
 };

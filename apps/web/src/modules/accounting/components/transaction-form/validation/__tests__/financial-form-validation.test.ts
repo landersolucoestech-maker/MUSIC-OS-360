@@ -22,7 +22,7 @@ const baseForm: TransactionFormData = {
   orgaoArrecadador: "",
   itemInvestimento: "",
   motivoViagem: "",
-  nomePublicidade: "",
+  advertisingName: "",
   formaPagamento: "pix",
   tipoPagamento: "avista",
   quantidadeParcelas: "",
@@ -44,7 +44,7 @@ const noRules: FinancialFormRules = {
   exibirFornecedor: false,
   exibirOrgaoArrecadador: false,
   exibirMotivoViagem: false,
-  exibirNomePublicidade: false,
+  exibirAdvertisingName: false,
   exibirParcelamento: false,
   labelTipoCliente: "Tipo de Cliente",
 };
@@ -61,7 +61,7 @@ const allRules: FinancialFormRules = {
   exibirFornecedor: true,
   exibirOrgaoArrecadador: false,
   exibirMotivoViagem: false,
-  exibirNomePublicidade: false,
+  exibirAdvertisingName: false,
   exibirParcelamento: false,
   labelTipoCliente: "Para quem pagar",
 };
@@ -332,38 +332,38 @@ describe("motivoViagem validation", () => {
   });
 });
 
-// ── exibirNomePublicidade ──────────────────────────────────────────────────
-describe("nomePublicidade validation", () => {
-  it("errors when exibirNomePublicidade is true and nomePublicidade is empty", () => {
+// ── exibirAdvertisingName ──────────────────────────────────────────────────
+describe("advertisingName validation", () => {
+  it("errors when exibirAdvertisingName is true and advertisingName is empty", () => {
     const errors = validateTransactionForm(
-      form({ nomePublicidade: "" }),
-      rules({ exibirNomePublicidade: true }),
+      form({ advertisingName: "" }),
+      rules({ exibirAdvertisingName: true }),
     );
-    expect(errors.nomePublicidade).toBe("Informe o nome da publicidade");
+    expect(errors.advertisingName).toBe("Informe o nome da publicidade");
   });
 
-  it("errors when nomePublicidade is whitespace", () => {
+  it("errors when advertisingName is whitespace", () => {
     const errors = validateTransactionForm(
-      form({ nomePublicidade: "  " }),
-      rules({ exibirNomePublicidade: true }),
+      form({ advertisingName: "  " }),
+      rules({ exibirAdvertisingName: true }),
     );
-    expect(errors.nomePublicidade).toBe("Informe o nome da publicidade");
+    expect(errors.advertisingName).toBe("Informe o nome da publicidade");
   });
 
-  it("no error when exibirNomePublicidade is false", () => {
+  it("no error when exibirAdvertisingName is false", () => {
     const errors = validateTransactionForm(
-      form({ nomePublicidade: "" }),
-      rules({ exibirNomePublicidade: false }),
+      form({ advertisingName: "" }),
+      rules({ exibirAdvertisingName: false }),
     );
-    expect(errors.nomePublicidade).toBeUndefined();
+    expect(errors.advertisingName).toBeUndefined();
   });
 
-  it("no error when nomePublicidade is provided", () => {
+  it("no error when advertisingName is provided", () => {
     const errors = validateTransactionForm(
-      form({ nomePublicidade: "Campanha Verão" }),
-      rules({ exibirNomePublicidade: true }),
+      form({ advertisingName: "Campanha Verão" }),
+      rules({ exibirAdvertisingName: true }),
     );
-    expect(errors.nomePublicidade).toBeUndefined();
+    expect(errors.advertisingName).toBeUndefined();
   });
 });
 
@@ -468,7 +468,7 @@ describe("multiple simultaneous errors", () => {
       orgaoArrecadador: "",
       itemInvestimento: "",
       motivoViagem: "",
-      nomePublicidade: "",
+      advertisingName: "",
       formaPagamento: "",
       tipoPagamento: "avista",
       quantidadeParcelas: "",

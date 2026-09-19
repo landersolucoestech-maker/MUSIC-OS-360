@@ -505,7 +505,7 @@ export const FIELD_LABELS_PT_BR = {
   contaDestino: 'Conta de destino',
   itemInvestimento: 'Item de investimento',
   motivoViagem: 'Motivo da viagem',
-  nomePublicidade: 'Nome da publicidade',
+  advertisingName: 'Nome da publicidade',
   tipoPagamento: 'Tipo de pagamento',
   quantidadeParcelas: 'Quantidade de parcelas',
   intervaloParcelas: 'Intervalo das parcelas',

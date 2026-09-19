@@ -21,7 +21,7 @@ const base: TransactionFormData = {
   orgaoArrecadador: "",
   itemInvestimento: "",
   motivoViagem: "",
-  nomePublicidade: "",
+  advertisingName: "",
   formaPagamento: "",
   tipoPagamento: "avista",
   quantidadeParcelas: "",
@@ -564,11 +564,11 @@ describe("exibirMotivoViagem", () => {
   });
 });
 
-// ── exibirNomePublicidade ──────────────────────────────────────────────────
-describe("exibirNomePublicidade", () => {
+// ── exibirAdvertisingName ──────────────────────────────────────────────────
+describe("exibirAdvertisingName", () => {
   it("is false for non-artista caches publicidade scenarios", () => {
     const rules = computeFinancialRules(form({ tipoTransacao: "despesa", tipoCliente: "artista", category: "caches", subcategoria: "show-evento" }));
-    expect(rules.exibirNomePublicidade).toBe(false);
+    expect(rules.exibirAdvertisingName).toBe(false);
   });
 
   it("is true for despesa artista caches + publicidade", () => {
@@ -576,7 +576,7 @@ describe("exibirNomePublicidade", () => {
       tipoTransacao: "despesa", tipoCliente: "artista",
       category: "caches", subcategoria: "publicidade",
     }));
-    expect(rules.exibirNomePublicidade).toBe(true);
+    expect(rules.exibirAdvertisingName).toBe(true);
   });
 
   it("is false for despesa empresa marketing (not artista caches)", () => {
@@ -584,7 +584,7 @@ describe("exibirNomePublicidade", () => {
       tipoTransacao: "despesa", tipoCliente: "empresa",
       category: "marketing", subcategoria: "anuncios",
     }));
-    expect(rules.exibirNomePublicidade).toBe(false);
+    expect(rules.exibirAdvertisingName).toBe(false);
   });
 });
 

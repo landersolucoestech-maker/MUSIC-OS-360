@@ -74,8 +74,8 @@ export function validateTransactionForm(
     errors.motivoViagem = "Informe o motivo da viagem";
   }
 
-  if (rules.exibirNomePublicidade && !f.nomePublicidade?.trim()) {
-    errors.nomePublicidade = "Informe o nome da publicidade";
+  if (rules.exibirAdvertisingName && !f.advertisingName?.trim()) {
+    errors.advertisingName = "Informe o nome da publicidade";
   }
 
   if (rules.exibirOrgaoArrecadador && !f.orgaoArrecadador) {

@@ -33,7 +33,7 @@ export interface TransactionFormData {
   // Campos específicos
   itemInvestimento: string;
   motivoViagem: string;
-  nomePublicidade: string;
+  advertisingName: string;
   
   // Pagamento
   formaPagamento: string;
@@ -73,7 +73,7 @@ export const initialFormData: TransactionFormData = {
   
   itemInvestimento: "",
   motivoViagem: "",
-  nomePublicidade: "",
+  advertisingName: "",
   
   formaPagamento: "",
   tipoPagamento: "avista",

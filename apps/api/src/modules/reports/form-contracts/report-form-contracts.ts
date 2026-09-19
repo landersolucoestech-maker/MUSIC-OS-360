@@ -521,7 +521,7 @@ const TRANSACTIONS_CONTRACT: ReportFormContract = {
     col('artist_id'), col('project_id'), col('contrato_id'), col('evento_id'),
     col('fornecedor_cliente'), col('orgao_arrecadador'), col('centro_custo'), col('competencia'),
     col('conta_origem'), col('conta_destino'), col('item_investimento'), col('motivo_viagem'),
-    col('nome_publicidade'), col('forma_pagamento'), col('tipo_pagamento'),
+    col('advertising_name'), col('forma_pagamento'), col('tipo_pagamento'),
     col('quantidade_parcelas'), col('intervalo_parcelas'), col('data_primeira_parcela'),
     col('anexo_url'), col('anexo_nome'), col('observacoes'),
   ],

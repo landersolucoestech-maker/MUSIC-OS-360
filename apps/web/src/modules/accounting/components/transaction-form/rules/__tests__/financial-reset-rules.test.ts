@@ -13,7 +13,7 @@ describe("applyResets — tipoTransacao", () => {
     expect(result.contratoVinculado).toBe("");
     expect(result.eventoVinculado).toBe("");
     expect(result.motivoViagem).toBe("");
-    expect(result.nomePublicidade).toBe("");
+    expect(result.advertisingName).toBe("");
     expect(result.orgaoArrecadador).toBe("");
   });
 
@@ -54,7 +54,7 @@ describe("applyResets — tipoCliente", () => {
     expect(result.contratoVinculado).toBe("");
     expect(result.eventoVinculado).toBe("");
     expect(result.motivoViagem).toBe("");
-    expect(result.nomePublicidade).toBe("");
+    expect(result.advertisingName).toBe("");
   });
 
   it("does not reset itemInvestimento or orgaoArrecadador (not in tipoCliente map)", () => {
@@ -80,7 +80,7 @@ describe("applyResets — category", () => {
     expect(result.contratoVinculado).toBe("");
     expect(result.eventoVinculado).toBe("");
     expect(result.motivoViagem).toBe("");
-    expect(result.nomePublicidade).toBe("");
+    expect(result.advertisingName).toBe("");
   });
 
   it("does not reset tipoTransacao or tipoCliente", () => {

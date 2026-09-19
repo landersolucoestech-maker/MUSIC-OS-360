@@ -64,7 +64,7 @@ const commonFields = {
   orgaoArrecadador:    z.string().optional(),
   itemInvestimento:    z.string().optional(),
   motivoViagem:        z.string().optional(),
-  nomePublicidade:     z.string().optional(),
+  advertisingName:     z.string().optional(),
   observacao:          z.string().optional(),
   anexoUrl:            z.string().optional(),
   anexoNome:           z.string().optional(),
@@ -97,7 +97,7 @@ interface PayloadForValidation {
   projetoVinculado?: string;
   eventoVinculado?: string;
   motivoViagem?: string;
-  nomePublicidade?: string;
+  advertisingName?: string;
   orgaoArrecadador?: string;
 }
 
@@ -226,8 +226,8 @@ function validateConditionalByType(data: PayloadForValidation, ctx: z.Refinement
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe o motivo da viagem', path: ['motivoViagem'] });
   }
 
-  if (isDespesaArtistaCaches && subcategoria === 'publicidade' && !data.nomePublicidade?.trim()) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe o nome da publicidade', path: ['nomePublicidade'] });
+  if (isDespesaArtistaCaches && subcategoria === 'publicidade' && !data.advertisingName?.trim()) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe o nome da publicidade', path: ['advertisingName'] });
   }
 
   if (isImposto && !data.orgaoArrecadador) {

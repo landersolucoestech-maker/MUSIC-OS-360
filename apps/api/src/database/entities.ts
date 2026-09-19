@@ -1015,7 +1015,7 @@ export class TransactionEntity {
   @Column({ type: 'varchar', length: 100, nullable: true }) conta_destino: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) item_investimento: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) motivo_viagem: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) nome_publicidade: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) advertising_name: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) forma_pagamento: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) tipo_pagamento: string | null;
   @Column({ type: 'integer', nullable: true }) quantidade_parcelas: number | null;

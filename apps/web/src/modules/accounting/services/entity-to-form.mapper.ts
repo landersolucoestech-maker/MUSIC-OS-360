@@ -48,8 +48,8 @@ export interface TransactionFormEntity {
   item_investimento?: unknown;
   motivoViagem?: unknown;
   motivo_viagem?: unknown;
-  nomePublicidade?: unknown;
-  nome_publicidade?: unknown;
+  advertisingName?: unknown;
+  advertising_name?: unknown;
   formaPagamento?: unknown;
   forma_pagamento?: unknown;
   tipoPagamento?: unknown;
@@ -94,7 +94,7 @@ export function transactionToFormFields(t: TransactionFormEntity | null | undefi
     contaDestino:        str(t.contaDestino       ?? t.conta_destino),
     itemInvestimento:    str(t.itemInvestimento   ?? t.item_investimento),
     motivoViagem:        str(t.motivoViagem       ?? t.motivo_viagem),
-    nomePublicidade:     str(t.nomePublicidade    ?? t.nome_publicidade),
+    advertisingName:     str(t.advertisingName    ?? t.advertising_name),
     formaPagamento:      str(t.formaPagamento     ?? t.forma_pagamento),
     tipoPagamento:       str(t.tipoPagamento      ?? t.tipo_pagamento)     || "avista",
     quantidadeParcelas:  str(t.quantidadeParcelas ?? t.quantidade_parcelas),
