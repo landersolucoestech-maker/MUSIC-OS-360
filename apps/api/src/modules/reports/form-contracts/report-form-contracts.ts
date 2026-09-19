@@ -136,9 +136,9 @@ const ARTISTS_CONTRACT: ReportFormContract = {
 // ─── Funcionários (RH) ────────────────────────────────────────────────────────
 const EMPLOYEES_CONTRACT: ReportFormContract = {
   tableName: 'employees',
-  identityColumn: 'nome',
+  identityColumn: 'name',
   fields: [
-    col('nome'), col('cargo'), col('departamento'), col('status'),
+    col('name'), col('cargo'), col('departamento'), col('status'),
     col('tipo_contrato'), col('salario'), col('data_admissao'),
     col('data_demissao'), col('documents'),
     enc('email', 'email_encrypted'), enc('telefone', 'telefone_encrypted'),
@@ -597,9 +597,9 @@ const EVENTS_CONTRACT: ReportFormContract = {
 // ─── Inventário ───────────────────────────────────────────────────────────────
 const INVENTORY_ITEMS_CONTRACT: ReportFormContract = {
   tableName: 'inventory_items',
-  identityColumn: 'nome',
+  identityColumn: 'name',
   fields: [
-    col('nome'), col('categoria'), col('quantidade'), col('valor_unitario'),
+    col('name'), col('category'), col('quantidade'), col('valor_unitario'),
     col('localizacao'), col('status'), col('responsavel'), col('setor'),
     col('data_entrada'), col('local_compra'), col('numero_nota_fiscal'), col('observacoes'),
   ],
