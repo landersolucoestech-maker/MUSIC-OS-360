@@ -102,7 +102,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       pais_origem: null,
       pais_publicacao: null,
       gravadora: null,
-      observacoes: null,
+      notes: null,
       status: 'pending',
       participacao: null,
       arquivo_audio: null,
@@ -260,7 +260,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
 
   describe('update() — PATCH parcial não sobrescreve type', () => {
     it('não inclui type no payload de update quando o DTO não o envia', async () => {
-      await service.update(TENANT, 'u1', PHONO_ID, { observacoes: 'x' } as any);
+      await service.update(TENANT, 'u1', PHONO_ID, { notes: 'x' } as any);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('type');
     });
@@ -274,7 +274,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
 
   describe('update() — resolução de aliases (C2)', () => {
     it('PATCH sem title/titulo/work_id/artist_id: nenhum desses campos é alterado (ausência não altera)', async () => {
-      await service.update(TENANT, 'u1', PHONO_ID, { observacoes: 'x' } as any);
+      await service.update(TENANT, 'u1', PHONO_ID, { notes: 'x' } as any);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('title');
       expect(updateCall[1]).not.toHaveProperty('work_id');

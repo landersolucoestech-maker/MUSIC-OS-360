@@ -427,7 +427,7 @@ export interface FonogramaFormFields {
   paisPublicacao: string;
   title: string;
   gravadora: string;
-  observacoes: string;
+  notes: string;
 }
 
 /** DB record → fonograma form field initial values */
@@ -467,7 +467,7 @@ export function fonogramaToFormFields(f: any): FonogramaFormFields {
     paisPublicacao: ps(f?.paisPublicacao ?? f?.pais_publicacao),
     title: ps(f?.title),
     gravadora: ps(f?.gravadora),
-    observacoes: ps(f?.observacoes),
+    notes: ps(f?.notes),
   };
 }
 

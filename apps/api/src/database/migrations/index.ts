@@ -238,6 +238,7 @@ import { RenameDescricaoToDescriptionOnTakedowns20260918000023 } from './2026091
 import { RenameObservacoesToNotesOnTransactions20260918000024 } from './20260918000024_RenameObservacoesToNotesOnTransactions';
 import { RenameObservacoesToNotesOnInvoices20260918000025 } from './20260918000025_RenameObservacoesToNotesOnInvoices';
 import { RenameObservacoesToNotesOnArtists20260918000026 } from './20260918000026_RenameObservacoesToNotesOnArtists';
+import { RenameObservacoesToNotesOnPhonograms20260918000027 } from './20260918000027_RenameObservacoesToNotesOnPhonograms';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -487,4 +488,5 @@ export const ALL_MIGRATIONS = [
   RenameObservacoesToNotesOnTransactions20260918000024,
   RenameObservacoesToNotesOnInvoices20260918000025,
   RenameObservacoesToNotesOnArtists20260918000026,
+  RenameObservacoesToNotesOnPhonograms20260918000027,
 ] as const;

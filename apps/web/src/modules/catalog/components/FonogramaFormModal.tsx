@@ -376,7 +376,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
     setPaisPublicacao(f.paisPublicacao);
     setTitle(f.title);
     setGravadora(f.gravadora);
-    setObservacoes(f.observacoes);
+    setObservacoes(f.notes);
     setParticipacao(() => {
       const fromCat = toParticipacaoCategoria(fonograma?.participacao);
       if (fromCat.produtorFonografico.length === 0 && (fonograma as any)?.produtores) {

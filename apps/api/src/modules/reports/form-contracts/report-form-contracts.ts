@@ -229,7 +229,7 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
     col('emissao'), col('gravacao_original'), col('data_lancamento'),
     col('duracao_min'), col('duracao_seg'), col('midia'), col('classificacao'),
     col('pais_origem'), col('pais_publicacao'), col('gravadora'),
-    col('observacoes'), col('participacao'), col('arquivo_audio'),
+    col('notes'), col('participacao'), col('arquivo_audio'),
     // Somente leitura: registro/sociedades e metadados de gravação
     ro('type'), ro('version_title'), ro('interpretes'), ro('compositores'),
     ro('produtores'), ro('duration_seconds'),

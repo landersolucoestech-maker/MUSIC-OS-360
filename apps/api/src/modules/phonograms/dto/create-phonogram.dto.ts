@@ -89,7 +89,7 @@ export class CreatePhonogramDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) pais_origem?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) pais_publicacao?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) gravadora?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() observacoes?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() work_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsArray() participacao?: unknown[];

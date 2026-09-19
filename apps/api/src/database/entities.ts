@@ -860,7 +860,7 @@ export class PhonogramEntity {
   @Column({ type: 'varchar', length: 50, nullable: true }) classificacao: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) pais_origem: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) pais_publicacao: string | null;
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'jsonb', nullable: true }) participacao: unknown[] | null;
   @Column({ type: 'jsonb', nullable: true }) arquivo_audio: Record<string, unknown> | null;
 

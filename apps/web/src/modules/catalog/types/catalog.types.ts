@@ -78,7 +78,7 @@ export interface Fonograma {
   pub_simultanea?: boolean | null;
   pais_origem?: string | null;
   pais_publicacao?: string | null;
-  observacoes?: string | null;
+  notes?: string | null;
   arquivo_audio?: Json | null;
   participacao?: unknown;
   origem_externa?: string | null;

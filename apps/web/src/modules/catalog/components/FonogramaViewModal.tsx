@@ -55,7 +55,7 @@ export interface FonogramaViewData {
   // Identity
   title?: string | null;
   gravadora?: string | null;
-  observacoes?: string | null;
+  notes?: string | null;
   // ABRAMUS / ECAD codes
   codEntidade?: string | null;
   cod_entidade?: string | null;
@@ -243,7 +243,7 @@ export function FonogramaViewModal({
 
   const fonogramaTitle = pickStr(fonograma.title);
   const gravadora = pickStr(fonograma.gravadora);
-  const observacoes = pickStr(fonograma.observacoes);
+  const observacoes = pickStr(fonograma.notes);
 
   const codEntidade = pickStr(fonograma.codEntidade, fonograma.cod_entidade);
   const codEcad = pickStr(fonograma.codEcad, fonograma.cod_ecad);
