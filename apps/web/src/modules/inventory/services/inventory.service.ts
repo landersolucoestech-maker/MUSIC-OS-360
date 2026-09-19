@@ -7,7 +7,7 @@ export const inventoryService = {
   async update(id: string, data: Record<string, unknown>) { return storage.update("inventario", id, data); },
   async delete(id: string) { return storage.delete("inventario", id); },
   async listByCategory(category: string) {
-    return storage.list("inventario", { filters: { categoria: category } });
+    return storage.list("inventario", { filters: { category } });
   },
   async listLowStock(threshold = 5) {
     const items = await storage.list<{ id: string; quantidade: number }>("inventario");

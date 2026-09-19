@@ -7,7 +7,7 @@ const STATUSES = ['disponivel', 'em_uso', 'manutencao', 'descartado', 'reservado
 
 export class CreateInventoryItemDto {
   @ApiProperty() @IsString() @MaxLength(255) nome!: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) categoria?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) category?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) quantidade?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_unitario?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) localizacao?: string;
@@ -27,7 +27,7 @@ export class UpdateInventoryItemDto extends PartialType(CreateInventoryItemDto) 
 
 export class QueryInventoryDto extends PaginationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() categoria?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() category?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() localizacao?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() search?: string;
 }

@@ -215,6 +215,7 @@ import { RenameSharePartyFieldsToEnglish20260913000001 } from './20260913000001_
 import { RenameOrdemToSortOrder20260918000001 } from './20260918000001_RenameOrdemToSortOrder';
 import { RenameAtivoToActiveOnContractTemplates20260918000002 } from './20260918000002_RenameAtivoToActiveOnContractTemplates';
 import { RenameDuracaoToDurationTextOnWorksAndPhonograms20260918000003 } from './20260918000003_RenameDuracaoToDurationTextOnWorksAndPhonograms';
+import { RenameCategoriaToCategoryOnInventoryItems20260918000004 } from './20260918000004_RenameCategoriaToCategoryOnInventoryItems';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -441,4 +442,5 @@ export const ALL_MIGRATIONS = [
   RenameOrdemToSortOrder20260918000001,
   RenameAtivoToActiveOnContractTemplates20260918000002,
   RenameDuracaoToDurationTextOnWorksAndPhonograms20260918000003,
+  RenameCategoriaToCategoryOnInventoryItems20260918000004,
 ] as const;

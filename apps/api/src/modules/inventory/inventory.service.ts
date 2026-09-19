@@ -28,8 +28,8 @@ export class InventoryService {
 
     if (query.status)   qb.andWhere('i.status = :status',       { status: query.status });
     // ILIKE sem wildcard = igualdade case-insensitive — preserva o filtro
-    // de categoria case-insensitive que existia no client (Inventario.tsx).
-    if (query.categoria) qb.andWhere('i.categoria ILIKE :categoria', { categoria: query.categoria });
+    // de category case-insensitive que existia no client (Inventario.tsx).
+    if (query.category) qb.andWhere('i.category ILIKE :category', { category: query.category });
     if (query.localizacao) qb.andWhere('i.localizacao = :localizacao', { localizacao: query.localizacao });
     if (query.search)   qb.andWhere('i.nome ILIKE :search',     { search: `%${query.search}%` });
 

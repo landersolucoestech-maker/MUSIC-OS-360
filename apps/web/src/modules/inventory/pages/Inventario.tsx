@@ -86,7 +86,7 @@ export default function Inventario() {
     pageSize,
     search: debouncedSearch || undefined,
     status: statusFilter !== "all-status" ? STATUS_FILTER_MAP[statusFilter] : undefined,
-    categoria: categoryFilter !== "all-category" ? categoryFilter : undefined,
+    category: categoryFilter !== "all-category" ? categoryFilter : undefined,
     localizacao: localFilter !== "all-local" ? LOCAL_FILTER_MAP[localFilter] : undefined,
   });
 
@@ -208,7 +208,7 @@ export default function Inventario() {
                       </TableCell>
                       <TableCell className="font-medium" data-testid={`text-inventario-nome-${item.id}`}>{item.nome}</TableCell>
                       <TableCell>
-                        {item.categoria ? <Badge variant="outline" className="text-xs">{item.categoria}</Badge> : "—"}
+                        {item.category ? <Badge variant="outline" className="text-xs">{item.category}</Badge> : "—"}
                       </TableCell>
                       <TableCell>
                         {item.setor ? <Badge variant="secondary" className="text-xs">{item.setor}</Badge> : "—"}

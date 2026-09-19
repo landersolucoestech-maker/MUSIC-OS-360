@@ -41,7 +41,7 @@ const setoresOptions = [
   "Tecnologia / TI",
 ];
 
-const categoriasOptions = [
+const categoryOptions = [
   "Áudio",
   "Computador",
   "Escritório",
@@ -77,7 +77,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
     mode: "onChange",
     defaultValues: {
       nome: "",
-      categoria: "",
+      category: "",
       quantidade: 1,
       localizacao: "",
       status: "disponivel",
@@ -108,7 +108,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
       if (item) {
         reset({
           nome: item.nome || "",
-          categoria: item.categoria || "",
+          category: item.category || "",
           quantidade: item.quantidade || 1,
           localizacao: item.localizacao || "",
           status: item.status || "disponivel",
@@ -123,7 +123,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
       } else {
         reset({
           nome: "",
-          categoria: "",
+          category: "",
           quantidade: 1,
           localizacao: "",
           status: "disponivel",
@@ -146,7 +146,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
     try {
       const payload = {
         nome:                data.nome,
-        categoria:           data.categoria || undefined,
+        category:            data.category || undefined,
         quantidade:          data.quantidade ?? 1,
         valor_unitario:      data.valor_unitario ?? undefined,
         localizacao:         data.localizacao || undefined,
@@ -229,22 +229,22 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
                 <div className="space-y-2">
                   <Label>Categoria</Label>
                   <Select
-                    value={watch("categoria") || ""}
-                    onValueChange={(v) => setValue("categoria", v)}
+                    value={watch("category") || ""}
+                    onValueChange={(v) => setValue("category", v)}
                     disabled={isViewMode}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione a categoria" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categoriasOptions.map((cat) => (
+                      {categoryOptions.map((cat) => (
                         <SelectItem key={cat} value={cat}>
                           {cat}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FieldError error={errors.categoria?.message} />
+                  <FieldError error={errors.category?.message} />
                 </div>
 
                 <div className="space-y-2 md:col-span-2 lg:col-span-1">

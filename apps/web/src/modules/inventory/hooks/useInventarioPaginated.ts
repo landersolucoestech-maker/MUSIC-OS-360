@@ -10,14 +10,14 @@ export interface UseInventarioPaginatedParams {
   pageSize: number;
   search?: string;
   status?: string;
-  categoria?: string;
+  category?: string;
   localizacao?: string;
 }
 
-export function useInventarioPaginated({ page, pageSize, search, status, categoria, localizacao }: UseInventarioPaginatedParams) {
+export function useInventarioPaginated({ page, pageSize, search, status, category, localizacao }: UseInventarioPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
-  if (categoria) filters.categoria = categoria;
+  if (category) filters.category = category;
   if (localizacao) filters.localizacao = localizacao;
 
   const result = usePaginatedDataQuery<InventarioItem>({

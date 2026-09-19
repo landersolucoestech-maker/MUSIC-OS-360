@@ -6,7 +6,7 @@ export interface InventarioItem {
   id: string;
   user_id?: string;
   nome: string;
-  categoria?: string | null;
+  category?: string | null;
   quantidade?: number | null;
   valor_unitario?: number | null;
   localizacao?: string | null;

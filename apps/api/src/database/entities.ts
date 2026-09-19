@@ -2507,13 +2507,13 @@ export class AiUsageLogEntity {
 
 // ─── Inventory ────────────────────────────────────────────────────────────────
 @Entity('inventory_items')
-@Index(['tenant_id', 'categoria'])
+@Index(['tenant_id', 'category'])
 @Index(['tenant_id', 'status'])
 export class InventoryItemEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255 }) nome: string;
-  @Column({ type: 'varchar', length: 100, nullable: true }) categoria: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) category: string | null;
   @Column({ type: 'integer', default: 0 }) quantidade: number;
   @Column({ type: 'decimal', precision: 14, scale: 2, nullable: true }) valor_unitario: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) localizacao: string | null;

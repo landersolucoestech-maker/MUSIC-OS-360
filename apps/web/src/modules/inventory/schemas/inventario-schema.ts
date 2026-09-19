@@ -5,7 +5,7 @@ export const inventarioSchema = z.object({
     .min(1, "Nome é obrigatório")
     .max(150, "Nome deve ter no máximo 150 caracteres")
     .trim(),
-  categoria: z.string()
+  category: z.string()
     .optional()
     .nullable()
     .or(z.literal("")),

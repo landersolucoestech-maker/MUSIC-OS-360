@@ -57,13 +57,13 @@ export function InventarioViewModal({ open, onOpenChange, item }: InventarioView
           {/* Nome do Item */}
           <div>
             <h2 className="text-xl font-bold text-foreground">{item.nome}</h2>
-            <p className="text-muted-foreground">{item.categoria}</p>
+            <p className="text-muted-foreground">{item.category}</p>
           </div>
 
           {/* Badges */}
           <div className="flex gap-2">
             <Badge variant="neutral">
-              {item.categoria || "Equipamento"}
+              {item.category || "Equipamento"}
             </Badge>
             {getStatusBadge(item.status)}
           </div>
