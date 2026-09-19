@@ -10,7 +10,7 @@ import { CreateProjectDto } from './projects.dto';
  * antigo usava nomes em inglês (type/artistId/budget/currency/
  * startsAt/deadlineAt/releasedAt) que NUNCA batiam com o payload real
  * enviado por ProjetoFormModal.tsx/Projetos.tsx (title/type/status/
- * observacoes/description/genero/artist_id/musicas[]) nem com as colunas
+ * notes/description/genero/artist_id/musicas[]) nem com as colunas
  * físicas da entity (title/type/status/description). Com
  * ValidationPipe (whitelist + forbidNonWhitelisted), toda criação/edição de
  * projeto retornava 400. `title` passou de nome legado a canônico na
@@ -24,7 +24,7 @@ async function validatePayload(payload: Record<string, unknown>) {
 const REAL_FORM_PAYLOAD = {
   title: 'Meu Álbum',
   type: 'album',
-  observacoes: 'Notas internas',
+  notes: 'Notas internas',
   description: null,
   genero: 'pop',
   artist_id: '123e4567-e89b-12d3-a456-426614174000',

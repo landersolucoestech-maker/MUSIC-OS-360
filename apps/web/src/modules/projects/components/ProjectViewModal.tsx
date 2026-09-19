@@ -246,7 +246,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
               </div>
 
               {/* Observações — exibidas apenas quando preenchidas */}
-              {projeto.observacoes && (
+              {projeto.notes && (
                 <>
                   <Separator />
                   <div>
@@ -257,7 +257,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                     <Card className="bg-muted/30">
                       <CardContent className="p-4">
                         <p className="text-sm whitespace-pre-wrap" data-testid="text-view-observacoes">
-                          {projeto.observacoes}
+                          {projeto.notes}
                         </p>
                       </CardContent>
                     </Card>

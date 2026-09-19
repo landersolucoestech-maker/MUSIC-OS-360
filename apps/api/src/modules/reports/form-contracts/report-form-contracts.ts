@@ -304,7 +304,7 @@ const PROJECTS_CONTRACT: ReportFormContract = {
   fields: [
     col('tipo_lancamento', 'type'),
     col('nome_ep_album', 'title'),
-    col('observacoes'),
+    col('notes'),
     col('status_projeto', 'status'),
   ],
   excludedFormFields: {

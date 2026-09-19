@@ -1348,7 +1348,7 @@ export class ProjectEntity {
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) orcamento: string | null;
   // `description` volta a ser texto livre puro — musicas[] normalizada em project_tracks.
   @Column({ type: 'text', nullable: true }) description: string | null;
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) genero: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;

@@ -140,7 +140,7 @@ describe('Projetos — workbook fiel ao modal e com uma única aba', () => {
     entityName: 'ProjectEntity', tableName: 'projects', category: EntityCategory.REPORTABLE,
     identityColumn: 'nome_ep_album', displayColumn: 'nome_ep_album', dateColumn: 'created_at',
     exportableColumns: [
-      'tipo_lancamento', 'nome_ep_album', 'observacoes', 'status_projeto',
+      'tipo_lancamento', 'nome_ep_album', 'notes', 'status_projeto',
       'nome_musica', 'soloFeat', 'originalRemix', 'instrumental',
       'duracaoMinutos', 'duracaoSegundos', 'generoMusical', 'idiomaMusica',
       'compositores', 'interpretes', 'produtores', 'letra', 'arquivosAudio', 'sort_order',
@@ -153,7 +153,7 @@ describe('Projetos — workbook fiel ao modal e com uma única aba', () => {
     const query = jest.fn()
       .mockResolvedValueOnce([{
         __internal_id: '00000000-0000-0000-0000-000000000001',
-        tipo_lancamento: 'ep', nome_ep_album: 'Meu EP', observacoes: 'Obs', status_projeto: 'em_andamento',
+        tipo_lancamento: 'ep', nome_ep_album: 'Meu EP', notes: 'Obs', status_projeto: 'em_andamento',
       }])
       .mockResolvedValueOnce([
         { id: 'track-1', project_id: '00000000-0000-0000-0000-000000000001', name: 'Faixa 1', solo_feat: 'solo', original_remix: 'original', instrumental: 'nao', duracao_min: '3', duracao_seg: '5', genero: 'pop', idioma: 'portugues', letra: 'Letra 1', audio_url: 'audio-1.wav', sort_order: 0 },

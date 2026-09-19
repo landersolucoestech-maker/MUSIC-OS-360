@@ -13,7 +13,7 @@ export interface Project {
   orcamento?: number | null;
   description?: string | null;
   genero?: string | null;
-  observacoes?: string | null;
+  notes?: string | null;
   /** Faixas em desenvolvimento — normalizadas em project_tracks (migration 20260718000013). */
   musicas?: import("../utils/musica-helpers").MusicaData[];
   created_at?: string;

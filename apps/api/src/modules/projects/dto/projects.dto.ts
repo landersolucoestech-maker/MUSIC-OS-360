@@ -19,7 +19,7 @@ export class CreateProjectDto {
   @ApiProperty({ enum: TYPES }) @IsIn(TYPES) type!: typeof TYPES[number];
   @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) orcamento?: number;
-  @ApiPropertyOptional() @IsOptional() @IsString() observacoes?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) genero?: string;
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;

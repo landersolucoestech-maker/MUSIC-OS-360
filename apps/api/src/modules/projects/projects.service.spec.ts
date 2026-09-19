@@ -80,12 +80,12 @@ describe('ProjectsService', () => {
     await buildModule();
   });
 
-  it('create() persiste title/type/status/observacoes/description/genero corretamente', async () => {
+  it('create() persiste title/type/status/notes/description/genero corretamente', async () => {
     await service.create(TENANT, 'u1', {
-      title: 'Meu Álbum', type: 'album', observacoes: 'nota', description: null, genero: 'pop',
+      title: 'Meu Álbum', type: 'album', notes: 'nota', description: null, genero: 'pop',
     } as any);
     expect(mockDs._repo.create).toHaveBeenCalledWith(
-      expect.objectContaining({ tenant_id: TENANT, title: 'Meu Álbum', type: 'album', observacoes: 'nota', genero: 'pop' }),
+      expect.objectContaining({ tenant_id: TENANT, title: 'Meu Álbum', type: 'album', notes: 'nota', genero: 'pop' }),
     );
   });
 
@@ -151,7 +151,7 @@ describe('ProjectsService', () => {
   });
 
   it('update() não mexe em musicas quando o DTO não envia o campo', async () => {
-    await service.update(TENANT, 'u1', PROJECT_ID, { observacoes: 'x' } as any);
+    await service.update(TENANT, 'u1', PROJECT_ID, { notes: 'x' } as any);
     expect(mockDs._tracksRepo.delete).not.toHaveBeenCalled();
     expect(mockDs._tracksRepo.save).not.toHaveBeenCalled();
   });
