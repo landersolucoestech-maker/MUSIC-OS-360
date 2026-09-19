@@ -54,10 +54,11 @@ export class ProjectsService {
   }
 
   /**
-   * `projects.descricao` (JSON de musicas[]) foi normalizada em
-   * `project_tracks` + `project_track_participants` (migration
-   * ProjectsFormFieldAlignment20260718000013). Reidrata no MESMO formato que
-   * o frontend sempre consumiu, para que o contrato de API não mude.
+   * `projects.description` (antes `descricao`, JSON de musicas[]) foi
+   * normalizada em `project_tracks` + `project_track_participants`
+   * (migration ProjectsFormFieldAlignment20260718000013). Reidrata no MESMO
+   * formato que o frontend sempre consumiu, para que o contrato de API não
+   * mude.
    */
   private async hydrateMusicas(projects: ProjectEntity[]): Promise<ProjectWithMusicas[]> {
     if (projects.length === 0) return [];

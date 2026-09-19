@@ -80,9 +80,9 @@ describe('ProjectsService', () => {
     await buildModule();
   });
 
-  it('create() persiste title/type/status/observacoes/descricao/genero corretamente', async () => {
+  it('create() persiste title/type/status/observacoes/description/genero corretamente', async () => {
     await service.create(TENANT, 'u1', {
-      title: 'Meu Álbum', type: 'album', observacoes: 'nota', descricao: null, genero: 'pop',
+      title: 'Meu Álbum', type: 'album', observacoes: 'nota', description: null, genero: 'pop',
     } as any);
     expect(mockDs._repo.create).toHaveBeenCalledWith(
       expect.objectContaining({ tenant_id: TENANT, title: 'Meu Álbum', type: 'album', observacoes: 'nota', genero: 'pop' }),

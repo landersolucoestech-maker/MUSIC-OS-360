@@ -12,7 +12,7 @@ const STATUSES = Object.values(ProjectStatus) as string[];
  * ativo (ProjetoFormModal.tsx / bulk-import em Projetos.tsx), não os nomes em
  * inglês do DTO anterior (title/type/artistId/budget/currency/startsAt/
  * deadlineAt/releasedAt) — que nunca tinham writer real e, mesmo se
- * aceitos, não batiam com as colunas físicas (nome/type/status/descricao).
+ * aceitos, não batiam com as colunas físicas (title/type/status/description).
  */
 export class CreateProjectDto {
   @ApiProperty() @IsString() @MaxLength(500) title!: string;
@@ -20,12 +20,12 @@ export class CreateProjectDto {
   @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) orcamento?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() observacoes?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() descricao?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) genero?: string;
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
 
   // Lista de faixas em desenvolvimento — normalizada em project_tracks pelo
-  // service (não é mais serializada em `descricao`).
+  // service (não é mais serializada em `description`).
   @ApiPropertyOptional({ type: [Object] }) @IsOptional() @IsArray() musicas?: Record<string, unknown>[];
 }
 

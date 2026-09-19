@@ -607,9 +607,9 @@ export function LancamentoFormModal({
         ? (fonoDosProjeto?.isrc ?? "")
         : prev.isrcGlobal,
     }));
-    if (projeto.descricao) {
+    if (projeto.description) {
       try {
-        const musicas = JSON.parse(projeto.descricao) as Array<{
+        const musicas = JSON.parse(projeto.description) as Array<{
           nome?: string;
           compositores?: string[];
           produtores?: string[];

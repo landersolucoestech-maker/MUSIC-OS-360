@@ -1346,8 +1346,8 @@ export class ProjectEntity {
   @Column({ type: 'varchar', length: 50, default: ProjectStatus.PLANNING }) status: ProjectStatus;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) orcamento: string | null;
-  // `descricao` volta a ser texto livre puro — musicas[] normalizada em project_tracks.
-  @Column({ type: 'text', nullable: true }) descricao: string | null;
+  // `description` volta a ser texto livre puro — musicas[] normalizada em project_tracks.
+  @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'text', nullable: true }) observacoes: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) genero: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;

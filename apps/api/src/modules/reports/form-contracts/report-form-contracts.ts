@@ -311,7 +311,7 @@ const PROJECTS_CONTRACT: ReportFormContract = {
     metadata: 'objeto jsonb interno bruto',
     artist_id: 'sem campo correspondente no modal Criar/Editar',
     orcamento: 'sem campo correspondente no modal Criar/Editar',
-    descricao: 'sem campo correspondente no modal Criar/Editar',
+    description: 'sem campo correspondente no modal Criar/Editar',
     genero: 'derivado das músicas, não é campo geral do formulário',
     musicas: 'representada pelas colunas individuais do grupo repetível na mesma aba',
   },

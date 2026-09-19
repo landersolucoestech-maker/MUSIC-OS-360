@@ -848,10 +848,10 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                                 let musicosArr: Participante[] = [];
                                 if ((fullObra.project_id as string | null | undefined)) {
                                   const projeto = await storage.findById<ProjetoWithRelations>("projects", fullObra.project_id as string);
-                                  if (projeto?.descricao) {
+                                  if (projeto?.description) {
                                     try {
                                       const normT = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-                                      const musicas = JSON.parse(projeto.descricao as string) as Array<{ nome?: string; produtores?: string[] }>;
+                                      const musicas = JSON.parse(projeto.description as string) as Array<{ nome?: string; produtores?: string[] }>;
                                       const musicaMatch = musicas.find(m =>
                                         normT(m.nome || "") === normT(fullObra.title || "") ||
                                         normT(m.nome || "") === normT(obra.title || "")

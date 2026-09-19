@@ -11,7 +11,7 @@ export interface Project {
   status?: ProjectStatusValue | string | null;
   artist_id?: string | null;
   orcamento?: number | null;
-  descricao?: string | null;
+  description?: string | null;
   genero?: string | null;
   observacoes?: string | null;
   /** Faixas em desenvolvimento — normalizadas em project_tracks (migration 20260718000013). */
