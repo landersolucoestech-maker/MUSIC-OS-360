@@ -28,10 +28,12 @@ const entitiesSrc = fs.readFileSync(path.resolve(__dirname, 'entities.ts'), 'utf
 // tabela, mas não para nomes de coluna renomeados depois dela.
 // 20260918000015_RenameNomePfNomeFantasiaOnClients renomeou nome_pf ->
 // individual_name e nome_fantasia -> trade_name (Cluster D,
-// naming-normalization mandate).
+// naming-normalization mandate). 20260918000029_RenameObservacoesToNotesOnClients
+// renomeou observacoes -> notes (Cluster F, mesmo mandato).
 const RENAMED_AFTER_CANONICAL: Record<string, string> = {
   nome_pf: 'individual_name',
   nome_fantasia: 'trade_name',
+  observacoes: 'notes',
 };
 
 function extractMigrationColumns(): string[] {

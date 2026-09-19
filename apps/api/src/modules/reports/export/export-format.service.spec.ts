@@ -31,7 +31,7 @@ describe('ExportFormatService — serialização XLSX', () => {
 
   it('valor dentro do limite não é alterado', () => {
     const normal = 'Texto normal de observação.';
-    const buf = svc.toXlsx('artists', 'Artistas', ['observacoes'], [{ observacoes: normal }]);
+    const buf = svc.toXlsx('artists', 'Artistas', ['notes'], [{ notes: normal }]);
     const rows = readFirstSheetRows(buf);
     expect(rows[1][0]).toBe(normal);
   });
