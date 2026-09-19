@@ -91,7 +91,7 @@ describe('ProjectsService', () => {
 
   it('create() não envia musicas para o repo de ProjectEntity (não é mais coluna)', async () => {
     await service.create(TENANT, 'u1', {
-      title: 'X', type: 'single', musicas: [{ nome: 'Faixa 1' }],
+      title: 'X', type: 'single', musicas: [{ name: 'Faixa 1' }],
     } as any);
     expect(mockDs._repo.create).toHaveBeenCalledWith(
       expect.not.objectContaining({ musicas: expect.anything() }),
@@ -103,41 +103,41 @@ describe('ProjectsService', () => {
       title: 'X', type: 'album',
       musicas: [
         {
-          id: 't1', nome: 'Faixa 1', duracaoMin: '3', duracaoSeg: '30',
+          id: 't1', name: 'Faixa 1', duracaoMin: '3', duracaoSeg: '30',
           compositores: ['Fulano'], interpretes: ['Beltrano'], produtores: ['Ciclano'],
         },
       ],
     } as any);
     expect(mockDs._tracksRepo.save).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 't1', tenant_id: TENANT, nome: 'Faixa 1', duracao_min: '3', duracao_seg: '30', sort_order: 0 }),
+      expect.objectContaining({ id: 't1', tenant_id: TENANT, name: 'Faixa 1', duracao_min: '3', duracao_seg: '30', sort_order: 0 }),
     );
     expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
-      expect.objectContaining({ nome: 'Fulano', role: 'compositor' }),
+      expect.objectContaining({ name: 'Fulano', role: 'compositor' }),
     ]);
     expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
-      expect.objectContaining({ nome: 'Beltrano', role: 'interprete' }),
+      expect.objectContaining({ name: 'Beltrano', role: 'interprete' }),
     ]);
     expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
-      expect.objectContaining({ nome: 'Ciclano', role: 'produtor' }),
+      expect.objectContaining({ name: 'Ciclano', role: 'produtor' }),
     ]);
   });
 
   it('findById() reidrata musicas no formato esperado pelo frontend', async () => {
     const trackRows = [{
-      id: 't1', project_id: PROJECT_ID, nome: 'Faixa 1', solo_feat: 'solo', original_remix: 'original',
+      id: 't1', project_id: PROJECT_ID, name: 'Faixa 1', solo_feat: 'solo', original_remix: 'original',
       instrumental: 'nao', duracao_min: '3', duracao_seg: '30', genero: 'pop', idioma: 'pt-BR',
       letra: 'lalala', audio_url: null,
     }];
     const participantRows = [
-      { project_track_id: 't1', nome: 'Fulano', role: 'compositor' },
-      { project_track_id: 't1', nome: 'Beltrano', role: 'interprete' },
+      { project_track_id: 't1', name: 'Fulano', role: 'compositor' },
+      { project_track_id: 't1', name: 'Beltrano', role: 'interprete' },
     ];
     await buildModule(buildMockDs(mockProject, trackRows, participantRows));
 
     const found = await service.findById(TENANT, PROJECT_ID);
     expect(found.musicas).toEqual([
       {
-        id: 't1', nome: 'Faixa 1', soloFeat: 'solo', originalRemix: 'original', instrumental: 'nao',
+        id: 't1', name: 'Faixa 1', soloFeat: 'solo', originalRemix: 'original', instrumental: 'nao',
         duracaoMin: '3', duracaoSeg: '30', genero: 'pop', idioma: 'pt-BR', letra: 'lalala', audioUrl: null,
         compositores: ['Fulano'], interpretes: ['Beltrano'], produtores: [],
       },
@@ -145,9 +145,9 @@ describe('ProjectsService', () => {
   });
 
   it('update() substitui as musicas (delete + insert) quando o DTO envia o array', async () => {
-    await service.update(TENANT, 'u1', PROJECT_ID, { musicas: [{ nome: 'Nova Faixa' }] } as any);
+    await service.update(TENANT, 'u1', PROJECT_ID, { musicas: [{ name: 'Nova Faixa' }] } as any);
     expect(mockDs._tracksRepo.delete).toHaveBeenCalledWith({ project_id: PROJECT_ID, tenant_id: TENANT });
-    expect(mockDs._tracksRepo.save).toHaveBeenCalledWith(expect.objectContaining({ nome: 'Nova Faixa' }));
+    expect(mockDs._tracksRepo.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Nova Faixa' }));
   });
 
   it('update() não mexe em musicas quando o DTO não envia o campo', async () => {

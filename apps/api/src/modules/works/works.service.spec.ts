@@ -212,7 +212,7 @@ describe('WorksService', () => {
     it('create() não envia participantes para o repo de WorkEntity (não é mais coluna)', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Nova', type: 'original',
-        participantes: [{ id: 'p1', nome: 'Fulano', classeFuncao: 'compositor/autor', link: '', percentual: '50' }],
+        participantes: [{ id: 'p1', name: 'Fulano', classeFuncao: 'compositor/autor', link: '', percentual: '50' }],
       } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
         expect.not.objectContaining({ participantes: expect.anything() }),
@@ -223,19 +223,19 @@ describe('WorksService', () => {
       await service.create(TENANT, 'u1', {
         title: 'Nova', type: 'original',
         participantes: [
-          { id: 'p1', nome: 'Fulano', classeFuncao: 'compositor/autor', link: 'https://x', percentual: '60' },
-          { id: 'p2', nome: 'Beltrano', classeFuncao: 'tradutor', link: '', percentual: '40' },
+          { id: 'p1', name: 'Fulano', classeFuncao: 'compositor/autor', link: 'https://x', percentual: '60' },
+          { id: 'p2', name: 'Beltrano', classeFuncao: 'tradutor', link: '', percentual: '40' },
         ],
       } as any);
       expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
-        expect.objectContaining({ id: 'p1', tenant_id: TENANT, nome: 'Fulano', classe_funcao: 'compositor/autor', percentual: '60', sort_order: 0 }),
-        expect.objectContaining({ id: 'p2', tenant_id: TENANT, nome: 'Beltrano', classe_funcao: 'tradutor', percentual: '40', sort_order: 1 }),
+        expect.objectContaining({ id: 'p1', tenant_id: TENANT, name: 'Fulano', classe_funcao: 'compositor/autor', percentual: '60', sort_order: 0 }),
+        expect.objectContaining({ id: 'p2', tenant_id: TENANT, name: 'Beltrano', classe_funcao: 'tradutor', percentual: '40', sort_order: 1 }),
       ]);
     });
 
-    it('findById() reidrata participantes no formato esperado pelo frontend (id/nome/classeFuncao/link/percentual)', async () => {
+    it('findById() reidrata participantes no formato esperado pelo frontend (id/name/classeFuncao/link/percentual)', async () => {
       const rows = [
-        { id: 'p1', work_id: WORK_ID, nome: 'Fulano', classe_funcao: 'compositor/autor', link: null, percentual: '60' },
+        { id: 'p1', work_id: WORK_ID, name: 'Fulano', classe_funcao: 'compositor/autor', link: null, percentual: '60' },
       ];
       mockDs = buildMockDs(mockWork, rows);
       const module = await Test.createTestingModule({
@@ -249,17 +249,17 @@ describe('WorksService', () => {
 
       const found = await service.findById(TENANT, WORK_ID);
       expect(found.participantes).toEqual([
-        { id: 'p1', nome: 'Fulano', classeFuncao: 'compositor/autor', link: null, percentual: '60' },
+        { id: 'p1', name: 'Fulano', classeFuncao: 'compositor/autor', link: null, percentual: '60' },
       ]);
     });
 
     it('update() substitui os participantes (delete + insert) quando o DTO envia o array', async () => {
       await service.update(TENANT, 'u1', WORK_ID, {
-        participantes: [{ id: 'p1', nome: 'Novo Nome', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
+        participantes: [{ id: 'p1', name: 'Novo Nome', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
       } as any);
       expect(mockDs._participantsRepo.delete).toHaveBeenCalledWith({ work_id: WORK_ID, tenant_id: TENANT });
       expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
-        expect.objectContaining({ nome: 'Novo Nome', percentual: '100' }),
+        expect.objectContaining({ name: 'Novo Nome', percentual: '100' }),
       ]);
     });
 
@@ -274,7 +274,7 @@ describe('WorksService', () => {
     it('update() roda dentro de ds.transaction() (obra e participantes não são operações independentes)', async () => {
       await service.update(TENANT, 'u1', WORK_ID, {
         observacoes: 'x',
-        participantes: [{ id: 'p1', nome: 'X', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
+        participantes: [{ id: 'p1', name: 'X', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
       } as any);
       expect(mockDs.transaction).toHaveBeenCalledTimes(1);
     });
@@ -282,7 +282,7 @@ describe('WorksService', () => {
     it('create() também roda obra + participantes na mesma transação', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Nova', type: 'original',
-        participantes: [{ id: 'p1', nome: 'X', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
+        participantes: [{ id: 'p1', name: 'X', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
       } as any);
       expect(mockDs.transaction).toHaveBeenCalledTimes(1);
     });
@@ -292,7 +292,7 @@ describe('WorksService', () => {
       await expect(
         service.update(TENANT, 'u1', WORK_ID, {
           observacoes: 'x',
-          participantes: [{ id: 'p1', nome: 'X', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
+          participantes: [{ id: 'p1', name: 'X', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
         } as any),
       ).rejects.toThrow('constraint violation');
       // A mesma chamada de transaction() que tentou o update da obra é a que
@@ -308,7 +308,7 @@ describe('WorksService', () => {
       await expect(
         service.update(TENANT, 'u1', WORK_ID, {
           observacoes: 'edição de B',
-          participantes: [{ id: 'pB', nome: 'Participante de B', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
+          participantes: [{ id: 'pB', name: 'Participante de B', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
           expectedUpdatedAt: new Date('2026-08-14T10:00:00.000Z').toISOString(),
         } as any),
       ).rejects.toThrow(ConflictException);

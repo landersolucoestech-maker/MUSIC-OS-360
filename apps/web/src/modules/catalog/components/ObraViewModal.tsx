@@ -226,7 +226,7 @@ export function ObraViewModal({
                       >
                         <div className="flex-1 min-w-0">
                           <span className="font-medium text-foreground block">
-                            {p.nome || "—"}
+                            {p.name || "—"}
                           </span>
                           {p.link && (
                             <a

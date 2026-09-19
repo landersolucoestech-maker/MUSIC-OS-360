@@ -218,7 +218,7 @@ describe("FonogramaFormModal edit mode", () => {
     expect(callArg.agregadora).toBe("Gravadora X");
     // Produtores from the legacy column survive the round-trip via the participacao JSON
     const produtoresNames = (callArg.participacao?.produtorFonografico ?? []).map(
-      (p: { nome: string }) => p.nome,
+      (p: { name: string }) => p.name,
     );
     expect(produtoresNames).toEqual(expect.arrayContaining(["Pedro", "Marta"]));
     expect(callArg.status).toBe("under_review");

@@ -16,7 +16,7 @@ type TrackRole = 'compositor' | 'interprete' | 'produtor';
 
 export interface MusicaResponse {
   id: string;
-  nome: string;
+  name: string;
   soloFeat: string | null;
   originalRemix: string | null;
   instrumental: string | null;
@@ -84,14 +84,14 @@ export class ProjectsService {
       byTrack.set(p.project_track_id, list);
     }
     const namesByRole = (trackId: string, role: TrackRole): string[] =>
-      (byTrack.get(trackId) ?? []).filter((p) => p.role === role).map((p) => p.nome);
+      (byTrack.get(trackId) ?? []).filter((p) => p.role === role).map((p) => p.name);
 
     const musicasByProject = new Map<string, MusicaResponse[]>();
     for (const t of tracks) {
       const list = musicasByProject.get(t.project_id) ?? [];
       list.push({
         id: t.id,
-        nome: t.nome,
+        name: t.name,
         soloFeat: t.solo_feat,
         originalRemix: t.original_remix,
         instrumental: t.instrumental,
@@ -127,7 +127,7 @@ export class ProjectsService {
           id: trackId,
           tenant_id: tenantId,
           project_id: projectId,
-          nome: String(m.nome ?? ''),
+          name: String(m.name ?? ''),
           solo_feat: (m.soloFeat as string) || null,
           original_remix: (m.originalRemix as string) || null,
           instrumental: (m.instrumental as string) || null,
@@ -150,7 +150,7 @@ export class ProjectsService {
           .filter((nome): nome is string => typeof nome === 'string' && nome.trim().length > 0)
           .map((nome, i) => this.participantsRepo!.create({
             id: randomUUID(), tenant_id: tenantId, project_track_id: trackId,
-            nome: nome.trim(), role, sort_order: i,
+            name: nome.trim(), role, sort_order: i,
           }));
         if (rows.length > 0) await this.participantsRepo!.save(rows);
       }

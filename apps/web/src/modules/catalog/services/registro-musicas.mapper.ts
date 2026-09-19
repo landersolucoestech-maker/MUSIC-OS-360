@@ -1,6 +1,6 @@
 export interface ParticipanteForm {
   id: string;
-  nome: string;
+  name: string;
   classeFuncao: string;
   link: string;
   percentual: string;
@@ -8,7 +8,7 @@ export interface ParticipanteForm {
 
 export interface FonogramaParticipante {
   id: string;
-  nome: string;
+  name: string;
   percentual: string;
 }
 
@@ -148,7 +148,7 @@ export function obraToParticipantes(obra: any): ParticipanteForm[] {
   if (Array.isArray(obra.participantes) && obra.participantes.length > 0) {
     return obra.participantes.map((p: any) => ({
       id: p.id || crypto.randomUUID(),
-      nome: p.nome ?? "",
+      name: p.name ?? "",
       classeFuncao: p.classeFuncao ?? "",
       link: p.link ?? "",
       percentual: p.percentual ?? "",
@@ -157,19 +157,19 @@ export function obraToParticipantes(obra: any): ParticipanteForm[] {
   const compositores = normalizeStringArray(obra.compositores);
   const letristas = normalizeStringArray(obra.letristas);
   const out: ParticipanteForm[] = [];
-  for (const nome of compositores) {
+  for (const name of compositores) {
     out.push({
       id: crypto.randomUUID(),
-      nome,
+      name,
       classeFuncao: "compositor/autor",
       link: "",
       percentual: "",
     });
   }
-  for (const nome of letristas) {
+  for (const name of letristas) {
     out.push({
       id: crypto.randomUUID(),
-      nome,
+      name,
       classeFuncao: "tradutor",
       link: "",
       percentual: "",
@@ -182,11 +182,11 @@ export function participantesToCompositoresLetristas(
   participantes: ParticipanteForm[],
 ): { compositores: string[] | null; letristas: string[] | null } {
   const compositores = participantes
-    .filter((p) => p.classeFuncao?.toLowerCase() === "compositor/autor" && p.nome.trim())
-    .map((p) => p.nome.trim());
+    .filter((p) => p.classeFuncao?.toLowerCase() === "compositor/autor" && p.name.trim())
+    .map((p) => p.name.trim());
   const letristas = participantes
-    .filter((p) => p.classeFuncao?.toLowerCase() === "tradutor" && p.nome.trim())
-    .map((p) => p.nome.trim());
+    .filter((p) => p.classeFuncao?.toLowerCase() === "tradutor" && p.name.trim())
+    .map((p) => p.name.trim());
   return {
     compositores: compositores.length > 0 ? compositores : null,
     letristas: letristas.length > 0 ? letristas : null,
@@ -491,7 +491,7 @@ export function projetoToObraSeed(
     genero?: string | null;
   },
   musica?: {
-    nome?: string;
+    name?: string;
     genero?: string;
     idioma?: string;
     duracaoMin?: string;
@@ -505,7 +505,7 @@ export function projetoToObraSeed(
     .filter((nome): nome is string => Boolean(nome?.trim()))
     .map((nome) => ({
       id: crypto.randomUUID(),
-      nome: nome.trim(),
+      name: nome.trim(),
       classeFuncao: "compositor/autor",
       link: "",
       percentual: "",
@@ -517,7 +517,7 @@ export function projetoToObraSeed(
   return {
     project_id: projeto.id,
     artist_id: projeto.artist_id ?? null,
-    title: musica?.nome?.trim() || projeto.title?.trim() || "",
+    title: musica?.name?.trim() || projeto.title?.trim() || "",
     genero,
     idioma: musica?.idioma || null,
     duracaoMin: musica?.duracaoMin || "",
@@ -550,7 +550,7 @@ export function fonogramaToParticipacao(fonograma: any): ParticipacaoCategoria {
   return {
     produtorFonografico: produtores.map((nome) => ({
       id: crypto.randomUUID(),
-      nome,
+      name: nome,
       percentual: "",
     })),
     interprete: [],

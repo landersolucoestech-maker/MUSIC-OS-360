@@ -156,13 +156,13 @@ describe('Projetos — workbook fiel ao modal e com uma única aba', () => {
         tipo_lancamento: 'ep', nome_ep_album: 'Meu EP', observacoes: 'Obs', status_projeto: 'em_andamento',
       }])
       .mockResolvedValueOnce([
-        { id: 'track-1', project_id: '00000000-0000-0000-0000-000000000001', nome: 'Faixa 1', solo_feat: 'solo', original_remix: 'original', instrumental: 'nao', duracao_min: '3', duracao_seg: '5', genero: 'pop', idioma: 'portugues', letra: 'Letra 1', audio_url: 'audio-1.wav', sort_order: 0 },
-        { id: 'track-2', project_id: '00000000-0000-0000-0000-000000000001', nome: 'Faixa 2', solo_feat: 'feat', original_remix: 'remix', instrumental: 'sim', duracao_min: '4', duracao_seg: '10', genero: 'rap', idioma: 'portugues', letra: 'Letra 2', audio_url: 'audio-2.wav', sort_order: 1 },
+        { id: 'track-1', project_id: '00000000-0000-0000-0000-000000000001', name: 'Faixa 1', solo_feat: 'solo', original_remix: 'original', instrumental: 'nao', duracao_min: '3', duracao_seg: '5', genero: 'pop', idioma: 'portugues', letra: 'Letra 1', audio_url: 'audio-1.wav', sort_order: 0 },
+        { id: 'track-2', project_id: '00000000-0000-0000-0000-000000000001', name: 'Faixa 2', solo_feat: 'feat', original_remix: 'remix', instrumental: 'sim', duracao_min: '4', duracao_seg: '10', genero: 'rap', idioma: 'portugues', letra: 'Letra 2', audio_url: 'audio-2.wav', sort_order: 1 },
       ])
       .mockResolvedValueOnce([
-        { project_track_id: 'track-1', nome: 'Compositor A', role: 'compositor' },
-        { project_track_id: 'track-1', nome: 'Intérprete A', role: 'interprete' },
-        { project_track_id: 'track-1', nome: 'Produtor A', role: 'produtor' },
+        { project_track_id: 'track-1', name: 'Compositor A', role: 'compositor' },
+        { project_track_id: 'track-1', name: 'Intérprete A', role: 'interprete' },
+        { project_track_id: 'track-1', name: 'Produtor A', role: 'produtor' },
       ]);
 
     const { engine } = makeEngine({ tableName: 'projects', label: 'Projetos', definition: PROJECTS_DEF, query });

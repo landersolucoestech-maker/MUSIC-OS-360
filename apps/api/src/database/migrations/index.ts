@@ -223,6 +223,8 @@ import { RenameNomeToNameOnInventoryItems20260918000008 } from './20260918000008
 import { RenameNomeToNameOnContractTemplates20260918000009 } from './20260918000009_RenameNomeToNameOnContractTemplates';
 import { RenameNomeToNameOnEmployees20260918000010 } from './20260918000010_RenameNomeToNameOnEmployees';
 import { RenameNomeToNameOnCampaigns20260918000011 } from './20260918000011_RenameNomeToNameOnCampaigns';
+import { RenameNomeToNameOnWorkParticipants20260918000012 } from './20260918000012_RenameNomeToNameOnWorkParticipants';
+import { RenameNomeToNameOnProjectTracksAndParticipants20260918000013 } from './20260918000013_RenameNomeToNameOnProjectTracksAndParticipants';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -457,4 +459,6 @@ export const ALL_MIGRATIONS = [
   RenameNomeToNameOnContractTemplates20260918000009,
   RenameNomeToNameOnEmployees20260918000010,
   RenameNomeToNameOnCampaigns20260918000011,
+  RenameNomeToNameOnWorkParticipants20260918000012,
+  RenameNomeToNameOnProjectTracksAndParticipants20260918000013,
 ] as const;

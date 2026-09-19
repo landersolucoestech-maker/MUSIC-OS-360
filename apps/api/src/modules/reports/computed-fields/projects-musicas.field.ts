@@ -27,7 +27,7 @@ type TrackRole = 'compositor' | 'interprete' | 'produtor';
 interface TrackRow {
   id: string;
   project_id: string;
-  nome: string;
+  name: string;
   solo_feat: string | null;
   original_remix: string | null;
   instrumental: string | null;
@@ -42,7 +42,7 @@ interface TrackRow {
 
 interface ParticipantRow {
   project_track_id: string;
-  nome: string;
+  name: string;
   role: TrackRole;
 }
 
@@ -61,7 +61,7 @@ export async function fetchProjectsMusicasForExport(
   if (projectIds.length === 0) return output;
 
   const tracks = (await ds.query(
-    `SELECT "id", "project_id", "nome", "solo_feat", "original_remix", "instrumental",
+    `SELECT "id", "project_id", "name", "solo_feat", "original_remix", "instrumental",
             "duracao_min", "duracao_seg", "genero", "idioma", "letra", "audio_url", "sort_order"
        FROM "project_tracks"
       WHERE "tenant_id" = $1 AND "project_id" = ANY($2::uuid[])
@@ -72,7 +72,7 @@ export async function fetchProjectsMusicasForExport(
   const trackIds = tracks.map((track) => track.id);
   const participants: ParticipantRow[] = trackIds.length
     ? ((await ds.query(
-        `SELECT "project_track_id", "nome", "role"
+        `SELECT "project_track_id", "name", "role"
            FROM "project_track_participants"
           WHERE "tenant_id" = $1 AND "project_track_id" = ANY($2::uuid[])
           ORDER BY "sort_order" ASC`,
@@ -87,12 +87,12 @@ export async function fetchProjectsMusicasForExport(
     byTrack.set(participant.project_track_id, list);
   }
   const namesByRole = (trackId: string, role: TrackRole): string[] =>
-    (byTrack.get(trackId) ?? []).filter((participant) => participant.role === role).map((participant) => participant.nome);
+    (byTrack.get(trackId) ?? []).filter((participant) => participant.role === role).map((participant) => participant.name);
 
   for (const track of tracks) {
     const list = output.get(track.project_id) ?? [];
     list.push({
-      nome_musica: track.nome,
+      nome_musica: track.name,
       soloFeat: track.solo_feat,
       originalRemix: track.original_remix,
       instrumental: track.instrumental,
@@ -136,7 +136,7 @@ export async function insertProjectsMusicasForImport(
 
     await qr.query(
       `INSERT INTO "project_tracks"
-         ("id", "tenant_id", "project_id", "nome", "solo_feat", "original_remix",
+         ("id", "tenant_id", "project_id", "name", "solo_feat", "original_remix",
           "instrumental", "duracao_min", "duracao_seg", "genero", "idioma", "letra",
           "audio_url", "sort_order")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
@@ -170,7 +170,7 @@ export async function insertProjectsMusicasForImport(
         if (typeof value !== 'string' || !value.trim()) continue;
         await qr.query(
           `INSERT INTO "project_track_participants"
-             ("id", "tenant_id", "project_track_id", "nome", "role", "sort_order")
+             ("id", "tenant_id", "project_track_id", "name", "role", "sort_order")
            VALUES ($1, $2, $3, $4, $5, $6)`,
           [randomUUID(), tenantId, trackId, value.trim(), role, participantOrder++],
         );

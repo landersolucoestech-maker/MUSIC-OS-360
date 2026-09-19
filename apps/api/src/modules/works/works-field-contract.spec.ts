@@ -64,7 +64,7 @@ describe('CreateWorkDto — contrato canônico de campos', () => {
     const errors = await validateDto({
       ...MINIMAL_VALID,
       compositor: 'João Silva',
-      compositores: [{ nome: 'João Silva' }],
+      compositores: [{ name: 'João Silva' }],
       editora: 'Editora XYZ',
     });
     expect(errors).toHaveLength(0);
@@ -83,7 +83,7 @@ describe('CreateWorkDto — contrato canônico de campos', () => {
   it('rejeita `participantes[]` bruto como coluna — normalizado em work_participants (migration 20260718000011)', async () => {
     // `participantes` continua aceito no DTO (o service o traduz para linhas
     // filhas), mas não pode mais existir como coluna direta em `works`.
-    const errors = await validateDto({ ...MINIMAL_VALID, participantes: [{ nome: 'X', classeFuncao: 'compositor/autor' }] });
+    const errors = await validateDto({ ...MINIMAL_VALID, participantes: [{ name: 'X', classeFuncao: 'compositor/autor' }] });
     expect(errors).toHaveLength(0);
   });
 });

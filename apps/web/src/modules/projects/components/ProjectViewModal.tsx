@@ -121,7 +121,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                             {/* Título e Badges */}
                             <div className="flex items-start justify-between gap-2">
                               <h4 className="font-medium" data-testid={`text-view-musica-nome-${idx}`}>
-                                {musicas.length > 1 ? `${idx + 1}. ` : ""}{info.nome || projeto.title}
+                                {musicas.length > 1 ? `${idx + 1}. ` : ""}{info.name || projeto.title}
                               </h4>
                               <div className="flex items-center gap-1 flex-wrap justify-end">
                                 <Badge variant="outline" className="text-xs">

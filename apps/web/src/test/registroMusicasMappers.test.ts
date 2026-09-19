@@ -126,11 +126,11 @@ describe("obraToParticipantes", () => {
     expect(result).toHaveLength(3);
     expect(result.filter((p) => p.classeFuncao === "compositor/autor")).toHaveLength(2);
     expect(result.filter((p) => p.classeFuncao === "tradutor")).toHaveLength(1);
-    expect(result.find((p) => p.classeFuncao === "tradutor")?.nome).toBe("Carol");
+    expect(result.find((p) => p.classeFuncao === "tradutor")?.name).toBe("Carol");
   });
   it("preserves legacy participantes array if provided", () => {
     const legacy = [
-      { id: "1", nome: "Dan", classeFuncao: "Editor", link: "", percentual: "" },
+      { id: "1", name: "Dan", classeFuncao: "Editor", link: "", percentual: "" },
     ];
     expect(obraToParticipantes({ participantes: legacy })).toEqual(legacy);
   });
@@ -143,9 +143,9 @@ describe("obraToParticipantes", () => {
 describe("participantesToCompositoresLetristas", () => {
   it("splits the participantes back into named arrays", () => {
     const result = participantesToCompositoresLetristas([
-      { id: "1", nome: "Alice", classeFuncao: "compositor/autor", link: "", percentual: "" },
-      { id: "2", nome: "Carol", classeFuncao: "tradutor", link: "", percentual: "" },
-      { id: "3", nome: "  ", classeFuncao: "compositor/autor", link: "", percentual: "" },
+      { id: "1", name: "Alice", classeFuncao: "compositor/autor", link: "", percentual: "" },
+      { id: "2", name: "Carol", classeFuncao: "tradutor", link: "", percentual: "" },
+      { id: "3", name: "  ", classeFuncao: "compositor/autor", link: "", percentual: "" },
     ]);
     expect(result.compositores).toEqual(["Alice"]);
     expect(result.letristas).toEqual(["Carol"]);
@@ -161,13 +161,13 @@ describe("participantesToCompositoresLetristas", () => {
 describe("fonogramaToParticipacao", () => {
   it("hydrates produtores into produtorFonografico", () => {
     const result = fonogramaToParticipacao({ produtores: ["P1", "P2"] });
-    expect(result.produtorFonografico.map((p) => p.nome)).toEqual(["P1", "P2"]);
+    expect(result.produtorFonografico.map((p) => p.name)).toEqual(["P1", "P2"]);
     expect(result.interprete).toEqual([]);
     expect(result.musicoAcompanhante).toEqual([]);
   });
   it("respects legacy participacao object if present", () => {
     const legacy = {
-      produtorFonografico: [{ id: "1", nome: "X", percentual: "10" }],
+      produtorFonografico: [{ id: "1", name: "X", percentual: "10" }],
       interprete: [],
       musicoAcompanhante: [],
     };

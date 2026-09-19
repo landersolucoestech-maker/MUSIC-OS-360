@@ -1,6 +1,6 @@
 export interface MusicaData {
   id?: string;
-  nome?: string;
+  name?: string;
   soloFeat?: string;
   originalRemix?: string;
   instrumental?: string;
@@ -19,7 +19,7 @@ export interface MusicaData {
 }
 
 export interface MusicaInfo {
-  nome: string;
+  name: string;
   genero: string;
   idioma: string;
   compositores: string;
@@ -53,7 +53,7 @@ export function getMusicaInfo(m: MusicaData): MusicaInfo {
   const seg = m.duracaoSeg || "";
   const duracao = min && seg ? `${min}:${seg.padStart(2, "0")}` : min ? `${min}:00` : "";
   return {
-    nome: m.nome || "",
+    name: m.name || "",
     genero: m.genero || "",
     idioma: m.idioma || "",
     compositores: joinArray(m.compositores),
@@ -72,7 +72,7 @@ export function getFirstMusicaInfo(projeto: { musicas?: MusicaData[] } | null | 
   const musicas = parseMusicasFromProjeto(projeto);
   if (musicas.length === 0) {
     return {
-      nome: "", genero: "", idioma: "", compositores: "", interpretes: "",
+      name: "", genero: "", idioma: "", compositores: "", interpretes: "",
       produtores: "", duracao: "", soloFeat: "solo", originalRemix: "original",
       instrumental: "nao", letra: "", audioUrl: "",
     };

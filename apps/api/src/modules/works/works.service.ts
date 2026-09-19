@@ -14,7 +14,7 @@ import type { QueryWorkDto }   from './dto/query-work.dto';
 
 export interface ParticipanteResponse {
   id: string;
-  nome: string;
+  name: string;
   classeFuncao: string;
   link: string | null;
   percentual: string | null;
@@ -59,7 +59,7 @@ export class WorksService {
       const list = byWork.get(row.work_id) ?? [];
       list.push({
         id: row.id,
-        nome: row.nome,
+        name: row.name,
         classeFuncao: row.classe_funcao,
         link: row.link,
         percentual: row.percentual,
@@ -86,7 +86,7 @@ export class WorksService {
         id: (typeof p.id === 'string' && p.id) || randomUUID(),
         tenant_id: tenantId,
         work_id: workId,
-        nome: String(p.nome ?? ''),
+        name: String(p.name ?? ''),
         classe_funcao: String(p.classeFuncao ?? 'não_informado'),
         link: (p.link as string) || null,
         percentual: p.percentual != null && p.percentual !== '' ? String(p.percentual) : null,

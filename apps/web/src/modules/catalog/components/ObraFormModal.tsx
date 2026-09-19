@@ -194,7 +194,7 @@ interface ObraFormModalProps {
 
 interface Participante {
   id: string;
-  nome: string;
+  name: string;
   classeFuncao: string;
   link: string;
   percentual: string;
@@ -362,7 +362,7 @@ export function ObraFormModal({
       ...participantes,
       {
         id: crypto.randomUUID(),
-        nome: "",
+        name: "",
         classeFuncao: "",
         link: "",
         percentual: "",
@@ -503,9 +503,9 @@ export function ObraFormModal({
       // Abre modal de contrato pré-preenchido após fechar o modal de obra
       const dataHoje = new Date().toISOString().split("T")[0];
       const linhasParticipantes = participantes
-        .filter((p) => p.nome || p.classeFuncao)
+        .filter((p) => p.name || p.classeFuncao)
         .map((p) => {
-          const partes = [p.nome, p.classeFuncao, p.percentual ? `${p.percentual}%` : ""].filter(Boolean);
+          const partes = [p.name, p.classeFuncao, p.percentual ? `${p.percentual}%` : ""].filter(Boolean);
           return partes.join(" – ");
         });
       const obsLinhas: string[] = [
@@ -656,7 +656,7 @@ export function ObraFormModal({
                                   .filter((nome: string) => { const k = nome.trim(); return k && !seen.has(k) && seen.add(k); });
                                 autoParticipantes = compositoresArr.map((nome: string) => ({
                                   id: crypto.randomUUID(),
-                                  nome: nome.trim(),
+                                  name: nome.trim(),
                                   classeFuncao: "compositor/autor",
                                   link: "",
                                   percentual: "",
@@ -667,7 +667,7 @@ export function ObraFormModal({
                             if (autoParticipantes.length === 0 && artistaNomeResolved) {
                               autoParticipantes = [{
                                 id: crypto.randomUUID(),
-                                nome: artistaNomeResolved,
+                                name: artistaNomeResolved,
                                 classeFuncao: "compositor/autor",
                                 link: "",
                                 percentual: "100",
@@ -1169,8 +1169,8 @@ export function ObraFormModal({
                         <div className="col-span-4 space-y-1">
                           <Label className="text-xs">Nome *</Label>
                           <ArtistNameInput
-                            value={p.nome}
-                            onChange={(val) => updateParticipante(p.id, "nome", val)}
+                            value={p.name}
+                            onChange={(val) => updateParticipante(p.id, "name", val)}
                             onSelect={(a) => updateParticipante(p.id, "artist_id", a.id)}
                             placeholder="Nome do participante"
                             disabled={isViewMode}
@@ -1233,16 +1233,16 @@ export function ObraFormModal({
                             size="icon"
                             className="h-8 w-8 text-muted-foreground hover:text-foreground"
                             title="Visualizar participante"
-                            disabled={!p.nome}
+                            disabled={!p.name}
                             onClick={async () => {
                               // Busca por ID direto (não depende do artista estar entre os
                               // primeiros carregados) — cai para busca por nome só quando o
                               // participante nunca foi vinculado a um artista cadastrado.
                               const foundWire = p.artist_id
                                 ? await storage.findById<ArtistWireRecord>("artistas", p.artist_id)
-                                : p.nome
-                                  ? (await storage.listPaged<ArtistWireRecord>("artistas", { page: 1, pageSize: 5, filters: { search: p.nome } }))
-                                      .items.find(a => (a.nome_civil || a.nome_artistico) === p.nome)
+                                : p.name
+                                  ? (await storage.listPaged<ArtistWireRecord>("artistas", { page: 1, pageSize: 5, filters: { search: p.name } }))
+                                      .items.find(a => (a.nome_civil || a.nome_artistico) === p.name)
                                   : undefined;
                               if (foundWire) setViewArtista(wireToArtist(foundWire));
                             }}

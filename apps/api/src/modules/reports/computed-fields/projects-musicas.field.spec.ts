@@ -13,15 +13,15 @@ describe('projects-musicas.field — grupo repetível "Músicas do Projeto"', ()
     it('agrupa faixas por projeto e participantes por papel, isolado por tenant_id', async () => {
       const tracks = [
         {
-          id: 'track-1', project_id: 'proj-1', nome: 'Faixa 1', solo_feat: 'solo',
+          id: 'track-1', project_id: 'proj-1', name: 'Faixa 1', solo_feat: 'solo',
           original_remix: 'original', instrumental: 'nao', duracao_min: '3', duracao_seg: '30',
           genero: 'pop', idioma: 'portugues', letra: 'la la', audio_url: 'https://x/a.mp3', sort_order: 0,
         },
       ];
       const participants = [
-        { project_track_id: 'track-1', nome: 'Fulano', role: 'compositor' },
-        { project_track_id: 'track-1', nome: 'Ciclano', role: 'interprete' },
-        { project_track_id: 'track-1', nome: 'Beltrano', role: 'produtor' },
+        { project_track_id: 'track-1', name: 'Fulano', role: 'compositor' },
+        { project_track_id: 'track-1', name: 'Ciclano', role: 'interprete' },
+        { project_track_id: 'track-1', name: 'Beltrano', role: 'produtor' },
       ];
       const query = jest.fn()
         .mockResolvedValueOnce(tracks)

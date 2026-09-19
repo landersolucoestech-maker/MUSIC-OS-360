@@ -28,7 +28,7 @@ interface ProjectFormModalProps {
 
 interface MusicaData {
   id: string;
-  nome: string;
+  name: string;
   soloFeat: string;
   originalRemix: string;
   instrumental: string;
@@ -64,7 +64,7 @@ const formatFileSize = (bytes: number) => {
 
 const createEmptyMusica = (): MusicaData => ({
   id: crypto.randomUUID(),
-  nome: "",
+  name: "",
   soloFeat: "solo",
   originalRemix: "original",
   instrumental: "nao",
@@ -204,7 +204,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
     }
     const type = normTipo(projeto?.type);
     const generoHerdado = normEnum(projeto?.genero as string | undefined, "");
-    return [{ ...createEmptyMusica(), nome: type === "single" ? (projeto?.title || "") : "", genero: generoHerdado }];
+    return [{ ...createEmptyMusica(), name: type === "single" ? (projeto?.title || "") : "", genero: generoHerdado }];
   });
   const [observacoes, setObservacoes] = useState(() => projeto?.notes || "");
   const [status, setStatus] = useState(() => normStatus(projeto?.status));
@@ -240,7 +240,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
 
     const title = showAlbumEpName
       ? nomeEP.trim()
-      : (musicas[0]?.nome?.trim() || "");
+      : (musicas[0]?.name?.trim() || "");
 
     if (!title) {
       toast.error(!showAlbumEpName
@@ -398,9 +398,9 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
       <div className="grid grid-cols-3 gap-4">
         <div className="space-y-2">
           <Label>Nome da Música *</Label>
-          <Input 
-            value={musica.nome} 
-            onChange={(e) => updateMusica(musica.id, 'nome', e.target.value)} 
+          <Input
+            value={musica.name}
+            onChange={(e) => updateMusica(musica.id, 'name', e.target.value)}
             disabled={isViewMode} 
             placeholder="Digite o nome da música" 
           />

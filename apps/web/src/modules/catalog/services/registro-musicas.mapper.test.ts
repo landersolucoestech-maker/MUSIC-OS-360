@@ -71,8 +71,8 @@ describe("formToObraPayload — contrato canônico de works", () => {
 
   it("deriva `compositores`/`letristas` de `participantes` — nunca duplica dado livre", () => {
     const participantes: ParticipanteForm[] = [
-      { id: "1", nome: "Fulano", classeFuncao: "compositor/autor", link: "", percentual: "50" },
-      { id: "2", nome: "Beltrano", classeFuncao: "tradutor", link: "", percentual: "50" },
+      { id: "1", name: "Fulano", classeFuncao: "compositor/autor", link: "", percentual: "50" },
+      { id: "2", name: "Beltrano", classeFuncao: "tradutor", link: "", percentual: "50" },
     ];
     const payload = formToObraPayload(baseInput(participantes));
     expect(payload.compositores).toEqual(["Fulano"]);

@@ -143,7 +143,7 @@ const toArquivoAudio = (
 
 interface Participante {
   id: string;
-  nome: string;
+  name: string;
   percentual: string;
   artist_id?: string;
 }
@@ -476,7 +476,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   const addParticipante = (categoria: keyof ParticipacaoCategoria) => {
     setParticipacao({
       ...participacao,
-      [categoria]: [...participacao[categoria], { id: crypto.randomUUID(), nome: "", percentual: "" }]
+      [categoria]: [...participacao[categoria], { id: crypto.randomUUID(), name: "", percentual: "" }]
     });
   };
 
@@ -693,8 +693,8 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
               {participacao[categoria].map((p) => (
                 <div key={p.id} className="flex gap-3 items-center">
                   <ArtistNameInput
-                    value={p.nome}
-                    onChange={(val) => updateParticipante(categoria, p.id, 'nome', val)}
+                    value={p.name}
+                    onChange={(val) => updateParticipante(categoria, p.id, 'name', val)}
                     onSelect={(a) => updateParticipante(categoria, p.id, 'artist_id', a.id)}
                     placeholder="Nome do participante"
                     disabled={isViewMode}
@@ -714,16 +714,16 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                     size="icon"
                     className="text-muted-foreground hover:text-foreground"
                     title="Visualizar participante"
-                    disabled={!p.nome}
+                    disabled={!p.name}
                     onClick={async () => {
                       // Busca por ID direto — não depende do artista estar entre os
                       // primeiros carregados; cai para busca por nome só quando o
                       // participante nunca foi vinculado a um artista cadastrado.
                       const foundWire = p.artist_id
                         ? await storage.findById<ArtistWireRecord>("artistas", p.artist_id)
-                        : p.nome
-                          ? (await storage.listPaged<ArtistWireRecord>("artistas", { page: 1, pageSize: 5, filters: { search: p.nome } }))
-                              .items.find(a => (a.nome_civil || a.nome_artistico) === p.nome)
+                        : p.name
+                          ? (await storage.listPaged<ArtistWireRecord>("artistas", { page: 1, pageSize: 5, filters: { search: p.name } }))
+                              .items.find(a => (a.nome_civil || a.nome_artistico) === p.name)
                           : undefined;
                       if (foundWire) setViewArtista(wireToArtist(foundWire));
                     }}
@@ -858,7 +858,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                                       );
                                       if (musicaMatch?.produtores?.length) {
                                         musicosArr = musicaMatch.produtores.map((nome: string) => ({
-                                          id: crypto.randomUUID(), nome, percentual: "",
+                                          id: crypto.randomUUID(), name: nome, percentual: "",
                                         }));
                                       }
                                     } catch { /* invalid JSON — leave blank */ }
@@ -893,7 +893,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                                   }
                                 }
                                 const interpretes: Participante[] = artistaNome
-                                  ? [{ id: crypto.randomUUID(), nome: artistaNome, percentual: "", artist_id: artistId }]
+                                  ? [{ id: crypto.randomUUID(), name: artistaNome, percentual: "", artist_id: artistId }]
                                   : [];
                                 setParticipacao(prev => ({
                                   ...prev,

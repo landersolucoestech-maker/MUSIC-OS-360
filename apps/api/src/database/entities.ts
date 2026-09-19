@@ -776,7 +776,7 @@ export class WorkParticipantEntity {
   @PrimaryColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid' }) work_id: string;
-  @Column({ type: 'varchar', length: 255 }) nome: string;
+  @Column({ type: 'varchar', length: 255 }) name: string;
   @Column({ type: 'varchar', length: 100 }) classe_funcao: string;
   @Column({ type: 'text', nullable: true }) link: string | null;
   @Column({ type: 'decimal', precision: 6, scale: 3, nullable: true }) percentual: string | null;
@@ -1371,7 +1371,7 @@ export class ProjectTrackEntity {
   @PrimaryColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid' }) project_id: string;
-  @Column({ type: 'varchar', length: 500 }) nome: string;
+  @Column({ type: 'varchar', length: 500 }) name: string;
   @Column({ type: 'varchar', length: 20, nullable: true }) solo_feat: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) original_remix: string | null;
   @Column({ type: 'varchar', length: 10, nullable: true }) instrumental: string | null;
@@ -1402,7 +1402,7 @@ export class ProjectTrackParticipantEntity {
   @PrimaryColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid' }) project_track_id: string;
-  @Column({ type: 'varchar', length: 255 }) nome: string;
+  @Column({ type: 'varchar', length: 255 }) name: string;
   @Column({ type: 'varchar', length: 20 }) role: 'compositor' | 'interprete' | 'produtor';
   @Column({ type: 'integer', default: 0 }) sort_order: number;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
