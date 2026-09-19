@@ -15,7 +15,7 @@ import { getStoredOverrides, buildKey } from "./useRuleOverrides";
 interface Event  { id: string; artist_id?: string | null; title: string; start_date?: string | null }
 
 export interface FinancialRulesResult extends FinancialFormRules {
-  categorias:          { value: string; label: string }[];
+  categories:          { value: string; label: string }[];
   subcategorias:       { value: string; label: string }[];
   itensInvestimento:   { value: string; label: string }[];
   filteredEvents:    Event[];
@@ -37,10 +37,10 @@ export function useFinancialRules({
     if (Object.keys(stored).length === 0) return computed;
 
     // Apply stored overrides for matching combination
-    const { tipoTransacao, tipoCliente, categoria } = formData;
+    const { tipoTransacao, tipoCliente, category } = formData;
     const overridden: FinancialFormRules = { ...computed };
     for (const ruleKey of Object.keys(DISPLAY_RULES) as (keyof typeof DISPLAY_RULES)[]) {
-      const k = buildKey(tipoTransacao, tipoCliente, categoria, ruleKey);
+      const k = buildKey(tipoTransacao, tipoCliente, category, ruleKey);
       if (k in stored) {
         overridden[ruleKey] = stored[k];
       }
@@ -48,19 +48,19 @@ export function useFinancialRules({
     return overridden;
   }, [formData]);
 
-  const categorias = useMemo(
+  const categories = useMemo(
     () => getCategoriesForTransactionType(formData.tipoTransacao, formData.tipoCliente),
     [formData.tipoTransacao, formData.tipoCliente],
   );
 
   const subcategorias = useMemo(
-    () => getSubcategoriesForCategory(formData.tipoTransacao, formData.tipoCliente, formData.categoria),
-    [formData.tipoTransacao, formData.tipoCliente, formData.categoria],
+    () => getSubcategoriesForCategory(formData.tipoTransacao, formData.tipoCliente, formData.category),
+    [formData.tipoTransacao, formData.tipoCliente, formData.category],
   );
 
   const itensInvestimento = useMemo(
-    () => getInvestmentItemsByCategory(formData.categoria),
-    [formData.categoria],
+    () => getInvestmentItemsByCategory(formData.category),
+    [formData.category],
   );
 
   const filteredEvents = useMemo(
@@ -81,7 +81,7 @@ export function useFinancialRules({
 
   return {
     ...rules,
-    categorias,
+    categories,
     subcategorias,
     itensInvestimento,
     filteredEvents,

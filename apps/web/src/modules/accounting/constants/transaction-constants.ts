@@ -9,7 +9,7 @@ export interface TransactionFormData {
   // Dados gerais
   tipoTransacao: string;
   tipoCliente: string;
-  categoria: string;
+  category: string;
   subcategoria: string;
   descricao: string;
   valor: string;
@@ -51,7 +51,7 @@ export const initialFormData: TransactionFormData = {
   entityLinks: [],
   tipoTransacao: "",
   tipoCliente: "",
-  categoria: "",
+  category: "",
   subcategoria: "",
   descricao: "",
   valor: "",

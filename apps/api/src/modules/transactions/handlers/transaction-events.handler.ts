@@ -37,7 +37,7 @@ export class TransactionEventsHandler {
     }
     if (!this.financialRules) return;
 
-    const { transactionId, type, categoria, valor, source } = event.payload;
+    const { transactionId, type, category, valor, source } = event.payload;
     // A transação provisória criada por contract.signed já avalia regras sob
     // esse trigger — evita disparo duplicado para a mesma ação de negócio.
     if (source === 'contract.signed') return;
@@ -47,7 +47,7 @@ export class TransactionEventsHandler {
         entityId: transactionId,
         entityType: 'transaction',
         valor: parseFloat(valor),
-        categoria,
+        category,
         type,
       });
     } catch (err) {

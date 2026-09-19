@@ -52,25 +52,25 @@ export function TransactionTypeSection({
     [categoryRules, formData.tipoCliente, formData.tipoTransacao],
   );
   const subcategoryOptions = useMemo(
-    () => getSubcategoriesByCategory(categoryRules, formData.tipoTransacao, formData.tipoCliente, formData.categoria),
-    [categoryRules, formData.categoria, formData.tipoCliente, formData.tipoTransacao],
+    () => getSubcategoriesByCategory(categoryRules, formData.tipoTransacao, formData.tipoCliente, formData.category),
+    [categoryRules, formData.category, formData.tipoCliente, formData.tipoTransacao],
   );
   const finalRule = useMemo(
     () => getFinalRule(
       categoryRules,
       formData.tipoTransacao,
       formData.tipoCliente,
-      formData.categoria,
+      formData.category,
       formData.subcategoria,
     ),
-    [categoryRules, formData.categoria, formData.subcategoria, formData.tipoCliente, formData.tipoTransacao],
+    [categoryRules, formData.category, formData.subcategoria, formData.tipoCliente, formData.tipoTransacao],
   );
   const linkOptions = useMemo(() => getLinkOptions(finalRule), [finalRule]);
   const selectedLink = toRuleLink(formData.tipoVinculacao ?? "");
 
   const showCounterparty = Boolean(formData.tipoTransacao) && counterpartyOptions.length > 0;
   const showCategory = Boolean(formData.tipoCliente) && categoryOptions.length > 0;
-  const showSubcategory = Boolean(formData.categoria) && subcategoryOptions.length > 0;
+  const showSubcategory = Boolean(formData.category) && subcategoryOptions.length > 0;
   const hasFinalRule = Boolean(finalRule);
   const showLinks = hasFinalRule && linkOptions.length > 0;
 
@@ -112,11 +112,11 @@ export function TransactionTypeSection({
           {showCategory && (
             <FormSelectField
               label="Categoria"
-              value={formData.categoria}
-              onChange={(value) => updateField("categoria", value)}
+              value={formData.category}
+              onChange={(value) => updateField("category", value)}
               options={categoryOptions}
               placeholder="Selecione a categoria"
-              error={errors.categoria}
+              error={errors.category}
               disabled={disabled}
               required
             />
@@ -249,7 +249,7 @@ export function TransactionTypeSection({
             />
           )}
 
-          {selectedLink === null && rules.exibirOrgaoArrecadador && formData.categoria && (
+          {selectedLink === null && rules.exibirOrgaoArrecadador && formData.category && (
             <FormInputField
               label="Órgão Arrecadador"
               value={formData.orgaoArrecadador}

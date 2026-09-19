@@ -3,11 +3,6 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
 export class QueryTransactionDto extends PaginationDto {
-  @ApiPropertyOptional({ deprecated: true, description: 'Alias legado, não lido pelo service. Use "categoria".' })
-  @IsOptional()
-  @IsString()
-  category?: string;
-
   @ApiPropertyOptional({ example: 'pending' })
   @IsOptional()
   @IsString()
@@ -27,7 +22,7 @@ export class QueryTransactionDto extends PaginationDto {
   @ApiPropertyOptional({ example: 'streaming' })
   @IsOptional()
   @IsString()
-  categoria?: string;
+  category?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

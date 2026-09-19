@@ -52,7 +52,7 @@ const TRIGGERS: { value: FinancialRuleTrigger; label: string }[] = [
 interface FormState {
   nome: string;
   type: FinancialRuleTipo;
-  categoria: string;
+  category: string;
   calculo: FinancialRuleCalculo;
   valor: string;
   descricao: string;
@@ -61,7 +61,7 @@ interface FormState {
 }
 
 const EMPTY_FORM: FormState = {
-  nome: "", type: "outros", categoria: "", calculo: "percentual",
+  nome: "", type: "outros", category: "", calculo: "percentual",
   valor: "", descricao: "", ativo: true, triggers: [],
 };
 
@@ -69,7 +69,7 @@ function toForm(rule: FinancialRule): FormState {
   return {
     nome: rule.nome,
     type: rule.type,
-    categoria: rule.categoria ?? "",
+    category: rule.category ?? "",
     calculo: rule.calculo,
     valor: String(rule.valor),
     descricao: rule.descricao ?? "",
@@ -116,7 +116,7 @@ export default function FinancialRules() {
     const payload = {
       nome: form.nome.trim(),
       type: form.type,
-      categoria: form.categoria.trim() || undefined,
+      category: form.category.trim() || undefined,
       calculo: form.calculo,
       valor: valorNum,
       descricao: form.descricao.trim() || undefined,
@@ -204,7 +204,7 @@ export default function FinancialRules() {
                       <TableRow key={rule.id} data-testid={`row-regra-financeira-${rule.id}`}>
                         <TableCell>
                           <p className="font-medium text-foreground">{rule.nome}</p>
-                          {rule.categoria && <p className="text-xs text-muted-foreground">{rule.categoria}</p>}
+                          {rule.category && <p className="text-xs text-muted-foreground">{rule.category}</p>}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
                           {TIPOS.find((t) => t.value === rule.type)?.label ?? rule.type}
@@ -268,7 +268,7 @@ export default function FinancialRules() {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">Categoria</Label>
-                  <Input value={form.categoria} onChange={(e) => setField("categoria", e.target.value)} placeholder="Opcional" />
+                  <Input value={form.category} onChange={(e) => setField("category", e.target.value)} placeholder="Opcional" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">

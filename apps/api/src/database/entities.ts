@@ -2575,7 +2575,7 @@ export class FinancialRuleEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255 }) nome: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
-  @Column({ type: 'varchar', length: 100, nullable: true }) categoria: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) category: string | null;
   @Column({ type: 'varchar', length: 50, default: 'percentual' }) calculo: string;
   @Column({ type: 'decimal', precision: 10, scale: 4, default: 0 }) valor: string;
   @Column({ type: 'text', nullable: true }) descricao: string | null;

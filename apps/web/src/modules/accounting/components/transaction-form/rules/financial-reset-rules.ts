@@ -17,7 +17,7 @@ export const RESET_MAP: Partial<Record<keyof TransactionFormData, ResetEntry[]>>
       field: "tipoCliente",
       when: (v) => ["imposto", "transferencia", "investimento"].includes(v),
     },
-    "categoria",
+    "category",
     "subcategoria",
     "itemInvestimento",
     "artistaVinculado",
@@ -34,7 +34,7 @@ export const RESET_MAP: Partial<Record<keyof TransactionFormData, ResetEntry[]>>
     "contaDestino",
   ],
   tipoCliente: [
-    "categoria",
+    "category",
     "subcategoria",
     "artistaVinculado",
     "projetoVinculado",
@@ -48,7 +48,7 @@ export const RESET_MAP: Partial<Record<keyof TransactionFormData, ResetEntry[]>>
     "contaOrigem",
     "contaDestino",
   ],
-  categoria: [
+  category: [
     "subcategoria",
     "itemInvestimento",
     "artistaVinculado",

@@ -75,7 +75,7 @@ export function transactionToFormFields(t: TransactionFormEntity | null | undefi
     entityLinks: Array.isArray(t.entityLinks) ? (t.entityLinks as TransactionFormData["entityLinks"]) : [],
     tipoTransacao:       str(t.tipoTransacao      ?? t.tipo_transacao ?? t.type),
     tipoCliente:         str(t.tipoCliente        ?? t.tipo_cliente),
-    categoria:           str(t.categoria),
+    category:            str(t.categoria),
     subcategoria:        str(t.subcategoria),
     descricao:           str(t.descricao),
     valor:               str(t.valor),

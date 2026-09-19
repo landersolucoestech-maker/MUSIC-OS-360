@@ -254,7 +254,7 @@ export interface TransactionCreatedPayload {
   transactionId: string;
   tenantId:      string;
   type:          string;
-  categoria:     string;
+  category:      string;
   valor:         string;
   contratoId:    string | null;
   artistId:     string | null;
@@ -484,7 +484,7 @@ export interface ClientCreatedPayload {
   clientId:   string;
   tenantId:   string;
   nome:       string;
-  categoria:  string;
+  category:   string;
   tipoPessoa: string;
   sourceLeadId: string | null;
   createdBy:  string;

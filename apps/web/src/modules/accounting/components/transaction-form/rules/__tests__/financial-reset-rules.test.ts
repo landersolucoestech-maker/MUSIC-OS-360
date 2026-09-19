@@ -3,9 +3,9 @@ import { applyResets } from "../financial-reset-rules";
 
 // ── tipoTransacao resets ───────────────────────────────────────────────────
 describe("applyResets — tipoTransacao", () => {
-  it("always resets categoria and downstream fields", () => {
+  it("always resets category and downstream fields", () => {
     const result = applyResets("tipoTransacao", "despesa");
-    expect(result.categoria).toBe("");
+    expect(result.category).toBe("");
     expect(result.subcategoria).toBe("");
     expect(result.itemInvestimento).toBe("");
     expect(result.artistaVinculado).toBe("");
@@ -47,7 +47,7 @@ describe("applyResets — tipoTransacao", () => {
 describe("applyResets — tipoCliente", () => {
   it("resets all dependent fields when tipoCliente changes", () => {
     const result = applyResets("tipoCliente", "empresa");
-    expect(result.categoria).toBe("");
+    expect(result.category).toBe("");
     expect(result.subcategoria).toBe("");
     expect(result.artistaVinculado).toBe("");
     expect(result.projetoVinculado).toBe("");
@@ -69,10 +69,10 @@ describe("applyResets — tipoCliente", () => {
   });
 });
 
-// ── categoria resets ───────────────────────────────────────────────────────
-describe("applyResets — categoria", () => {
+// ── category resets ────────────────────────────────────────────────────────
+describe("applyResets — category", () => {
   it("resets subcategoria and all downstream fields", () => {
-    const result = applyResets("categoria", "servicos");
+    const result = applyResets("category", "servicos");
     expect(result.subcategoria).toBe("");
     expect(result.itemInvestimento).toBe("");
     expect(result.artistaVinculado).toBe("");
@@ -84,7 +84,7 @@ describe("applyResets — categoria", () => {
   });
 
   it("does not reset tipoTransacao or tipoCliente", () => {
-    const result = applyResets("categoria", "marketing");
+    const result = applyResets("category", "marketing");
     expect(result.tipoTransacao).toBeUndefined();
     expect(result.tipoCliente).toBeUndefined();
   });
@@ -102,7 +102,7 @@ describe("applyResets — artistaVinculado", () => {
   it("does not reset unrelated fields", () => {
     const result = applyResets("artistaVinculado", "artista-1");
     expect(result.tipoTransacao).toBeUndefined();
-    expect(result.categoria).toBeUndefined();
+    expect(result.category).toBeUndefined();
     expect(result.subcategoria).toBeUndefined();
   });
 });

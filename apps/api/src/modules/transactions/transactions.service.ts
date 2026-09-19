@@ -77,9 +77,9 @@ function buildPersistencePayload(
     payload.created_by = userId;
     // categoria é NOT NULL no DB; o validator não exige para `transferencia`,
     // então aplicamos default defensivo na criação para evitar 23502 → 500.
-    payload.categoria = (dto.categoria && String(dto.categoria).trim()) || 'outros';
-  } else if (dto.categoria !== undefined) {
-    payload.categoria = dto.categoria || 'outros';
+    payload.categoria = (dto.category && String(dto.category).trim()) || 'outros';
+  } else if (dto.category !== undefined) {
+    payload.categoria = dto.category || 'outros';
   }
   if (dto.tipoTransacao !== undefined) payload.type = dto.tipoTransacao;
   if (dto.descricao !== undefined) payload.descricao = dto.descricao;
@@ -181,7 +181,7 @@ export class TransactionsService {
 
     if (q.status)     qb.andWhere('t.status = :status', { status: q.status });
     if (q.type)       qb.andWhere('t.type = :type', { type: q.type });
-    if (q.categoria)  qb.andWhere('t.categoria = :categoria', { categoria: q.categoria });
+    if (q.category)   qb.andWhere('t.categoria = :categoria', { categoria: q.category });
     if (q.artist_id) qb.andWhere('t.artist_id = :artistId', { artistId: q.artist_id });
     if (q.dateFrom)   qb.andWhere('t.data >= :dateFrom', { dateFrom: q.dateFrom });
     if (q.dateTo)     qb.andWhere('t.data <= :dateTo', { dateTo: q.dateTo });
@@ -268,7 +268,7 @@ export class TransactionsService {
           transactionId: saved.id,
           tenantId,
           type:          saved.type ?? (dto as AnyRecord).tipoTransacao as string ?? '',
-          categoria:     saved.categoria ?? (dto as AnyRecord).categoria as string ?? '',
+          category:      saved.categoria ?? (dto as AnyRecord).category as string ?? '',
           valor,
           contratoId:    saved.contrato_id ?? null,
           artistId:     saved.artist_id ?? null,
@@ -284,7 +284,7 @@ export class TransactionsService {
           entity_id:    saved.id,
           action:       'created',
           description:  `Transacção ${saved.type} R$${valor} criada`,
-          metadata:     { type: saved.type, categoria: saved.categoria, valor },
+          metadata:     { type: saved.type, category: saved.categoria, valor },
         });
       } catch { /* non-critical */ }
     }

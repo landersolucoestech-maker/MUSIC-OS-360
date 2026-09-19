@@ -65,16 +65,16 @@ function buildContext(f: TransactionFormData): RuleContext {
   return {
     isImposto, isTransferencia, isInvestimento, isDespesa, isReceita,
     isEmpresa, isArtista, isPessoa, isEmpresaOuPessoa,
-    isDespesaServico:             isDespesa && isEmpresaOuPessoa && f.categoria === "servicos",
-    isDespesaMarketing:           isDespesa && isEmpresaOuPessoa && f.categoria === "marketing",
-    isDespesaViagem:              isDespesa && isEmpresaOuPessoa && f.categoria === "viagens",
-    isDespesaProduto:             isDespesa && isEmpresaOuPessoa && f.categoria === "produtos",
-    isDespesaSuporteFinanceiro:   isDespesa && isEmpresaOuPessoa && f.categoria === "suporte-financeiro",
-    isDespesaArtistaCaches:       isDespesa && isArtista && f.categoria === "caches",
-    isDespesaArtistaSuporteFinanceiro: isDespesa && isArtista && f.categoria === "suporte-financeiro",
-    isReceitaMusical: isReceita && isEmpresaOuPessoa && f.categoria === "receitas-musicais",
-    isReceitaServico: isReceita && isEmpresaOuPessoa && f.categoria === "servicos",
-    isReceitaProduto: isReceita && isEmpresaOuPessoa && f.categoria === "produtos",
+    isDespesaServico:             isDespesa && isEmpresaOuPessoa && f.category === "servicos",
+    isDespesaMarketing:           isDespesa && isEmpresaOuPessoa && f.category === "marketing",
+    isDespesaViagem:              isDespesa && isEmpresaOuPessoa && f.category === "viagens",
+    isDespesaProduto:             isDespesa && isEmpresaOuPessoa && f.category === "produtos",
+    isDespesaSuporteFinanceiro:   isDespesa && isEmpresaOuPessoa && f.category === "suporte-financeiro",
+    isDespesaArtistaCaches:       isDespesa && isArtista && f.category === "caches",
+    isDespesaArtistaSuporteFinanceiro: isDespesa && isArtista && f.category === "suporte-financeiro",
+    isReceitaMusical: isReceita && isEmpresaOuPessoa && f.category === "receitas-musicais",
+    isReceitaServico: isReceita && isEmpresaOuPessoa && f.category === "servicos",
+    isReceitaProduto: isReceita && isEmpresaOuPessoa && f.category === "produtos",
     hasTipoTransacao: Boolean(f.tipoTransacao),
   };
 }
@@ -95,13 +95,13 @@ export const DISPLAY_RULES: Record<BooleanRuleKey, RulePredicate> = {
   },
 
   exibirSubcategoria: (f) => {
-    const subs = getSubcategoriesForCategory(f.tipoTransacao, f.tipoCliente, f.categoria);
+    const subs = getSubcategoriesForCategory(f.tipoTransacao, f.tipoCliente, f.category);
     return subs.length > 0;
   },
 
   exibirItemInvestimento: (f, ctx) => {
-    const itens = getInvestmentItemsByCategory(f.categoria);
-    return ctx.isInvestimento && Boolean(f.categoria) && itens.length > 0;
+    const itens = getInvestmentItemsByCategory(f.category);
+    return ctx.isInvestimento && Boolean(f.category) && itens.length > 0;
   },
 
   exibirArtista: (f, ctx) =>

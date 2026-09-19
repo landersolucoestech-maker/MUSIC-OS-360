@@ -33,8 +33,8 @@ export function validateTransactionForm(
     errors.tipoCliente = "Selecione o tipo de cliente";
   }
 
-  if (rules.exibirCategoria && !f.categoria) {
-    errors.categoria = "Selecione a categoria";
+  if (rules.exibirCategoria && !f.category) {
+    errors.category = "Selecione a categoria";
   }
 
   if (rules.exibirSubcategoria && !f.subcategoria) {

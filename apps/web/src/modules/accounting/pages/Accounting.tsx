@@ -102,12 +102,12 @@ export default function Accounting() {
 
   const parseOFXContent = (content: string): Array<{
     descricao: string; valor: number; data: string; type: string;
-    categoria: string; status: string; artist_id: string | null;
+    category: string; status: string; artist_id: string | null;
     client_id: string | null; origem: any; venda_id: string | null;
   }> => {
     const transactions: Array<{
       descricao: string; valor: number; data: string; type: string;
-      categoria: string; status: string; artist_id: string | null;
+      category: string; status: string; artist_id: string | null;
       client_id: string | null; origem: any; venda_id: string | null;
     }> = [];
     const stmttrnRegex = /<STMTTRN>([\s\S]*?)<\/STMTTRN>/gi;
@@ -127,7 +127,7 @@ export default function Accounting() {
           descricao: memo, valor: Math.abs(valor),
           data: `${year}-${month}-${day}`,
           type: valor >= 0 ? "receita" : "despesa",
-          categoria: "outros", status: "paid",
+          category: "outros", status: "paid",
           artist_id: null, client_id: null,
           origem: "manual" as any, venda_id: null,
         });
@@ -153,7 +153,7 @@ export default function Accounting() {
     page, pageSize, search: debouncedSearch || undefined,
     type: typeFilter !== "all-type" ? typeFilter : undefined,
     status: statusFilter !== "all-status" ? statusFilter : undefined,
-    categoria: categoryFilter !== "all-category" ? categoryFilter : undefined,
+    category: categoryFilter !== "all-category" ? categoryFilter : undefined,
     dateFrom: startDate || undefined,
     dateTo: endDate || undefined,
   });
@@ -396,7 +396,7 @@ export default function Accounting() {
                   {pageItems.map((transaction) => {
                     const type = transaction.type === "receita" ? "receita" : "despesa";
                     const descricao = String(transaction.descricao ?? "Transação sem descrição");
-                    const categoria = String(transaction.categoria ?? "sem_categoria");
+                    const category = String(transaction.categoria ?? "sem_categoria");
                     const data = String(transaction.data ?? "");
                     const valor = Number(transaction.valor ?? 0);
 
@@ -423,7 +423,7 @@ export default function Accounting() {
                         </div>
                       </TableCell>
                       <TableCell className="font-medium max-w-[200px] truncate">{descricao}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{formatCategoryLabel(categoria)}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{formatCategoryLabel(category)}</TableCell>
                       <TableCell><StatusBadge status={transaction.status ?? "pending"} /></TableCell>
                       <TableCell className="text-sm text-muted-foreground whitespace-nowrap">{data ? formatDate(data) : "—"}</TableCell>
                       <TableCell className={cn(

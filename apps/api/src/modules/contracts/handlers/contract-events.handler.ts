@@ -173,7 +173,7 @@ export class ContractEventsHandler {
                     transactionId: savedTx.id,
                     tenantId,
                     type: 'receita',
-                    categoria: 'contratos',
+                    category: 'contratos',
                     valor: String(contractValor),
                     contratoId: contractId,
                     artistId: artistId ?? null,
@@ -188,7 +188,7 @@ export class ContractEventsHandler {
                   entityId: contractId,
                   entityType: 'contract',
                   valor: contractValor,
-                  categoria: 'contratos',
+                  category: 'contratos',
                 });
               }
             }

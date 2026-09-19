@@ -102,7 +102,7 @@ describe('LeadEventsHandler.onLeadConverted', () => {
         payload: expect.objectContaining({
           tenantId: 'tenant-1',
           nome: 'Fulano de Tal',
-          categoria: 'CORPORATE_CLIENT',
+          category: 'CORPORATE_CLIENT',
           tipoPessoa: 'pessoa_fisica',
           sourceLeadId: 'lead-1',
         }),

@@ -2,17 +2,17 @@ import { useState, useCallback, useEffect } from "react";
 
 const STORAGE_KEY = "musicos360_rule_overrides";
 
-// Override key: "<tipoTransacao>:<tipoCliente>:<categoria>:<ruleKey>"
+// Override key: "<tipoTransacao>:<tipoCliente>:<category>:<ruleKey>"
 export type OverrideKey = string;
 export type RuleOverrides = Record<OverrideKey, boolean>;
 
 function buildKey(
   tipoTransacao: string,
   tipoCliente:   string,
-  categoria:     string,
+  category:     string,
   ruleKey:       string,
 ): OverrideKey {
-  return `${tipoTransacao}:${tipoCliente}:${categoria}:${ruleKey}`;
+  return `${tipoTransacao}:${tipoCliente}:${category}:${ruleKey}`;
 }
 
 function load(): RuleOverrides {
@@ -32,10 +32,10 @@ function save(overrides: RuleOverrides): void {
 
 export interface UseRuleOverridesReturn {
   overrides:     RuleOverrides;
-  toggleOverride: (tipoTransacao: string, tipoCliente: string, categoria: string, ruleKey: string, currentValue: boolean) => void;
+  toggleOverride: (tipoTransacao: string, tipoCliente: string, category: string, ruleKey: string, currentValue: boolean) => void;
   clearOverrides: () => void;
   hasOverrides:   boolean;
-  getEffective:   (tipoTransacao: string, tipoCliente: string, categoria: string, ruleKey: string, computed: boolean) => boolean;
+  getEffective:   (tipoTransacao: string, tipoCliente: string, category: string, ruleKey: string, computed: boolean) => boolean;
 }
 
 export function useRuleOverrides(): UseRuleOverridesReturn {
@@ -46,11 +46,11 @@ export function useRuleOverrides(): UseRuleOverridesReturn {
   const toggleOverride = useCallback((
     tipoTransacao: string,
     tipoCliente:   string,
-    categoria:     string,
+    category:     string,
     ruleKey:       string,
     currentValue:  boolean,
   ) => {
-    const key = buildKey(tipoTransacao, tipoCliente, categoria, ruleKey);
+    const key = buildKey(tipoTransacao, tipoCliente, category, ruleKey);
     setOverrides(prev => {
       const next = { ...prev };
       // Toggle: if same as what the rule already produces without override, store explicit; if already overriding, remove
@@ -70,11 +70,11 @@ export function useRuleOverrides(): UseRuleOverridesReturn {
   const getEffective = useCallback((
     tipoTransacao: string,
     tipoCliente:   string,
-    categoria:     string,
+    category:     string,
     ruleKey:       string,
     computed:      boolean,
   ): boolean => {
-    const key = buildKey(tipoTransacao, tipoCliente, categoria, ruleKey);
+    const key = buildKey(tipoTransacao, tipoCliente, category, ruleKey);
     return key in overrides ? overrides[key] : computed;
   }, [overrides]);
 

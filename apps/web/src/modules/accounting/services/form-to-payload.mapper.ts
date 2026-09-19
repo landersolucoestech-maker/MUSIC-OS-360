@@ -36,7 +36,7 @@ export interface TransactionFormPayload {
   [key: string]: string | number | null;
   tipoTransacao: string | null;
   tipoCliente: string | null;
-  categoria: string | null;
+  category: string | null;
   subcategoria: string | null;
   descricao: string | null;
   valor: number | null;
@@ -84,7 +84,7 @@ export function formToTransactionPayload(f: TransactionFormData): TransactionFor
   return {
     tipoTransacao:           str(f.tipoTransacao),
     tipoCliente:             str(f.tipoCliente),
-    categoria:               str(f.categoria),
+    category:                str(f.category),
     subcategoria:            str(f.subcategoria),
     descricao:               str(f.descricao),
     valor:                   parseMoney(f.valor),

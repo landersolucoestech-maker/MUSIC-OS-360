@@ -37,7 +37,7 @@ export class FinancialRulesService {
       .andWhere('r.deleted_at IS NULL');
 
     if (query.type)     qb.andWhere('r.type = :type',           { type: query.type });
-    if (query.categoria) qb.andWhere('r.categoria = :categoria', { categoria: query.categoria });
+    if (query.category) qb.andWhere('r.category = :category', { category: query.category });
     if (query.ativo !== undefined) qb.andWhere('r.ativo = :ativo', { ativo: query.ativo });
     if (query.search)   qb.andWhere('r.nome ILIKE :search',     { search: `%${query.search}%` });
 
@@ -93,7 +93,7 @@ export class FinancialRulesService {
       entityId:   string | null;
       entityType: string | null;
       valor?:     number;
-      categoria?: string;
+      category?:  string;
       type?:      string;
     },
   ): Promise<void> {
@@ -117,8 +117,8 @@ export class FinancialRulesService {
       // Trigger filter: if rule specifies triggers, check match
       if (Array.isArray(conds['triggers']) && !(conds['triggers'] as string[]).includes(trigger)) continue;
 
-      // Categoria filter
-      if (rule.categoria && context.categoria && rule.categoria !== context.categoria) continue;
+      // Category filter
+      if (rule.category && context.category && rule.category !== context.category) continue;
 
       // Tipo filter
       if (conds['type'] && context.type && conds['type'] !== context.type) continue;

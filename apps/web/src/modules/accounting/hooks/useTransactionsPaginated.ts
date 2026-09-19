@@ -10,18 +10,18 @@ export interface UseTransactionsPaginatedParams {
   search?: string;
   type?: string;
   status?: string;
-  categoria?: string;
+  category?: string;
   dateFrom?: string;
   dateTo?: string;
 }
 
 export function useTransactionsPaginated({
-  page, pageSize, search, type, status, categoria, dateFrom, dateTo,
+  page, pageSize, search, type, status, category, dateFrom, dateTo,
 }: UseTransactionsPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (type) filters.type = type;
   if (status) filters.status = status;
-  if (categoria) filters.categoria = categoria;
+  if (category) filters.category = category;
   if (dateFrom) filters.dateFrom = dateFrom;
   if (dateTo) filters.dateTo = dateTo;
 

@@ -7,7 +7,7 @@ const baseForm: TransactionFormData = {
   entityLinks: [],
   tipoTransacao: "despesa",
   tipoCliente: "empresa",
-  categoria: "servicos",
+  category: "servicos",
   subcategoria: "design-grafico",
   descricao: "Pagamento de design",
   valor: "1500",
@@ -155,21 +155,21 @@ describe("tipoCliente validation", () => {
 });
 
 // ── exibirCategoria ────────────────────────────────────────────────────────
-describe("categoria validation", () => {
-  it("errors when exibirCategoria is true and categoria is empty", () => {
+describe("category validation", () => {
+  it("errors when exibirCategoria is true and category is empty", () => {
     const errors = validateTransactionForm(
-      form({ categoria: "" }),
+      form({ category: "" }),
       rules({ exibirCategoria: true }),
     );
-    expect(errors.categoria).toBe("Selecione a categoria");
+    expect(errors.category).toBe("Selecione a categoria");
   });
 
-  it("no error when exibirCategoria is false and categoria is empty", () => {
+  it("no error when exibirCategoria is false and category is empty", () => {
     const errors = validateTransactionForm(
-      form({ categoria: "" }),
+      form({ category: "" }),
       rules({ exibirCategoria: false }),
     );
-    expect(errors.categoria).toBeUndefined();
+    expect(errors.category).toBeUndefined();
   });
 });
 
@@ -453,7 +453,7 @@ describe("multiple simultaneous errors", () => {
       entityLinks: [],
       tipoTransacao: "",
       tipoCliente: "",
-      categoria: "",
+      category: "",
       subcategoria: "",
       descricao: "",
       valor: "",

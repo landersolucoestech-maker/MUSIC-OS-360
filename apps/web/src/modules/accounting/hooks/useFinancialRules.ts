@@ -9,7 +9,7 @@ export interface FinancialRule {
   id: string;
   nome: string;
   type: FinancialRuleTipo;
-  categoria: string | null;
+  category: string | null;
   calculo: FinancialRuleCalculo;
   valor: number;
   descricao: string | null;

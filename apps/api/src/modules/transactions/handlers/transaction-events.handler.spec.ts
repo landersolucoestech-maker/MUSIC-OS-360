@@ -50,14 +50,14 @@ describe('TransactionEventsHandler — P2-9', () => {
   });
 
   describe('onTransactionCreated', () => {
-    const createdPayload = { transactionId: 'tx2', type: 'receita', categoria: 'royalties', valor: '250' };
+    const createdPayload = { transactionId: 'tx2', type: 'receita', category: 'royalties', valor: '250' };
 
     it('avalia financial rules com o trigger transaction.created', async () => {
       const { handler, financialRules } = build();
       await handler.onTransactionCreated({ tenantId: 't1', payload: createdPayload } as any);
       expect(financialRules.evaluateRules).toHaveBeenCalledWith(
         't1', 'transaction.created',
-        expect.objectContaining({ entityId: 'tx2', entityType: 'transaction', valor: 250, categoria: 'royalties', type: 'receita' }),
+        expect.objectContaining({ entityId: 'tx2', entityType: 'transaction', valor: 250, category: 'royalties', type: 'receita' }),
       );
     });
 

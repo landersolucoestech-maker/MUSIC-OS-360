@@ -197,7 +197,7 @@ export function useTransactionFormController({
       categoryRules,
       formData.tipoTransacao,
       formData.tipoCliente,
-      formData.categoria,
+      formData.category,
       formData.subcategoria,
     );
     if (!finalRule) {

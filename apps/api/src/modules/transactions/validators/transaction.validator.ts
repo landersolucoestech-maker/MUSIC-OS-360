@@ -48,7 +48,7 @@ const servicosReceitaComArtista = new Set([
 // PATCH requests don't silently overwrite existing DB values.
 const commonFields = {
   tipoCliente:         z.string().optional(),
-  categoria:           z.string().optional(),
+  category:            z.string().optional(),
   subcategoria:        z.string().optional(),
   status:              z.enum(STATUS).optional(),
   formaPagamento:      z.enum(FORMAS_PAGAMENTO).optional(),
@@ -84,7 +84,7 @@ const valorField = z
 interface PayloadForValidation {
   tipoTransacao: (typeof TIPOS_TRANSACAO)[number];
   tipoCliente?: string;
-  categoria?: string;
+  category?: string;
   subcategoria?: string;
   descricao?: string;
   valor?: string;
@@ -138,7 +138,7 @@ function validateParcelamento(data: PartialPayloadForValidation, ctx: z.Refineme
 function validateConditionalByType(data: PayloadForValidation, ctx: z.RefinementCtx): void {
   const type             = data.tipoTransacao;
   const tipoCliente      = data.tipoCliente;
-  const categoria        = data.categoria;
+  const category        = data.category;
   const subcategoria     = data.subcategoria ?? '';
   const artistaVinculado = data.artistaVinculado;
 
@@ -157,20 +157,20 @@ function validateConditionalByType(data: PayloadForValidation, ctx: z.Refinement
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o tipo de cliente', path: ['tipoCliente'] });
   }
 
-  if (!isTransferencia && !categoria) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione a categoria', path: ['categoria'] });
+  if (!isTransferencia && !category) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione a categoria', path: ['category'] });
   }
 
-  const isDespesaServico                  = isDespesa && isEmpresaOuPessoa && categoria === 'servicos';
-  const isDespesaMarketing                = isDespesa && isEmpresaOuPessoa && categoria === 'marketing';
-  const isDespesaViagem                   = isDespesa && isEmpresaOuPessoa && categoria === 'viagens';
-  const isDespesaProduto                  = isDespesa && isEmpresaOuPessoa && categoria === 'produtos';
-  const isDespesaSuporteFinanceiro        = isDespesa && isEmpresaOuPessoa && categoria === 'suporte-financeiro';
-  const isDespesaArtistaCaches            = isDespesa && isArtista && categoria === 'caches';
-  const isDespesaArtistaSuporteFinanceiro = isDespesa && isArtista && categoria === 'suporte-financeiro';
-  const isReceitaMusical                  = isReceita && isEmpresaOuPessoa && categoria === 'receitas-musicais';
-  const isReceitaServico                  = isReceita && isEmpresaOuPessoa && categoria === 'servicos';
-  const isReceitaProduto                  = isReceita && isEmpresaOuPessoa && categoria === 'produtos';
+  const isDespesaServico                  = isDespesa && isEmpresaOuPessoa && category === 'servicos';
+  const isDespesaMarketing                = isDespesa && isEmpresaOuPessoa && category === 'marketing';
+  const isDespesaViagem                   = isDespesa && isEmpresaOuPessoa && category === 'viagens';
+  const isDespesaProduto                  = isDespesa && isEmpresaOuPessoa && category === 'produtos';
+  const isDespesaSuporteFinanceiro        = isDespesa && isEmpresaOuPessoa && category === 'suporte-financeiro';
+  const isDespesaArtistaCaches            = isDespesa && isArtista && category === 'caches';
+  const isDespesaArtistaSuporteFinanceiro = isDespesa && isArtista && category === 'suporte-financeiro';
+  const isReceitaMusical                  = isReceita && isEmpresaOuPessoa && category === 'receitas-musicais';
+  const isReceitaServico                  = isReceita && isEmpresaOuPessoa && category === 'servicos';
+  const isReceitaProduto                  = isReceita && isEmpresaOuPessoa && category === 'produtos';
 
   const needsSubcategoria =
     isDespesaServico || isDespesaMarketing || isDespesaViagem ||

@@ -72,7 +72,7 @@ export class LeadEventsHandler {
             clientId: created.clientId,
             tenantId,
             nome: created.nome,
-            categoria: created.categoria,
+            category: created.categoria,
             tipoPessoa: created.tipoPessoa,
             sourceLeadId: leadId,
             createdBy: event.userId ?? convertedBy,
