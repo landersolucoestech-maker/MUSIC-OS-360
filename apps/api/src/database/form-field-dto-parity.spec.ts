@@ -34,7 +34,7 @@ describe('Colunas dedicadas de formulário sempre expostas no DTO correspondente
     const dto = source('../modules/events/dto/events.dto.ts');
     const fields = [
       'endereco', 'contato_local', 'valor_cache', 'publico_esperado',
-      'descricao', 'observacoes', 'participantes',
+      'description', 'observacoes', 'participantes',
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);
     expectFields(dto, fields);
@@ -56,7 +56,7 @@ describe('Colunas dedicadas de formulário sempre expostas no DTO correspondente
     const dto = source('../modules/takedowns/dto/takedowns.dto.ts');
     const fields = [
       'title', 'type', 'obra_afetada', 'artista', 'plataforma',
-      'prioridade', 'url_infracao', 'motivo', 'descricao', 'evidencias',
+      'prioridade', 'url_infracao', 'motivo', 'description', 'evidencias',
       'data_identificacao', 'status', 'observacoes',
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);
@@ -69,14 +69,14 @@ describe('Colunas dedicadas de formulário sempre expostas no DTO correspondente
     const fields = [
       'numero', 'serie', 'tipo_nota', 'client_id', 'natureza_operacao',
       'codigo_servico_municipal', 'codigo_municipio', 'cfop',
-      'descricao_servicos', 'data_emissao', 'vencimento', 'status',
+      'service_description', 'data_emissao', 'vencimento', 'status',
       'tomador_cnpj', 'tomador_razao_social', 'tomador_inscricao_estadual',
       'tomador_inscricao_municipal', 'tomador_email', 'tomador_endereco',
       'tomador_cidade', 'tomador_uf', 'tomador_cep', 'valor_servicos',
       'valor_deducoes', 'base_calculo', 'aliquota_iss', 'valor_iss',
       'iss_retido', 'valor_pis', 'valor_cofins', 'valor_inss', 'valor_ir',
       'valor_csll', 'valor_liquido', 'forma_pagamento', 'condicao_pagamento',
-      'url_pdf', 'observacoes', 'itens',
+      'url_pdf', 'notes', 'itens',
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);
     expectFields(dto, fields);
