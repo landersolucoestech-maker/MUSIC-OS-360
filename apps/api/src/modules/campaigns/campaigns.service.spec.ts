@@ -5,7 +5,7 @@ import type { CreateCampaignDto } from './dto/campaigns.dto';
 /**
  * find-c06511bf: CreateCampaignDto/UpdateCampaignDto's EN camelCase fields
  * (title/artistId/budget/currency/startsAt/endsAt) never matched
- * CampaignEntity's real PT snake_case columns (nome/artist_id/orcamento/
+ * CampaignEntity's real columns (name/artist_id/orcamento/
  * start_date/end_date) — TypeORM silently drops unrecognized plain
  * properties, so every campaign created via this DTO persisted with no
  * title/artist/budget/dates. find-50dd3726: artist_id also had no
@@ -42,7 +42,7 @@ describe('CampaignsService', () => {
       } as unknown as CreateCampaignDto);
 
       const row = (repo.create as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
-      expect(row['nome']).toBe('Lançamento X');
+      expect(row['name']).toBe('Lançamento X');
       expect(row['artist_id']).toBe('223e4567-e89b-12d3-a456-426614174000');
       expect(row['orcamento']).toBe(5000);
       expect(row['start_date']).toEqual(new Date('2026-01-01'));

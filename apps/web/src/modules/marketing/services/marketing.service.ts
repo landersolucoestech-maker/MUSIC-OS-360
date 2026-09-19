@@ -140,7 +140,7 @@ function campaignFromApi(row: RecordRow): MarketingCampaign {
   const metrics = (payload.metrics ?? meta.metrics ?? {}) as Partial<MetricSnapshot>;
   return {
     id: row.id,
-    name: payload.name ?? row.nome ?? "",
+    name: payload.name ?? row.name ?? "",
     targetType: payload.promotedEntityType?.toLowerCase(),
     targetId: payload.promotedEntityId,
     targetName: payload.promotedEntityName,

@@ -1256,7 +1256,7 @@ export class LeadInteractionEntity {
 export class CampaignEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'varchar', length: 255 }) nome: string;
+  @Column({ type: 'varchar', length: 255 }) name: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 50, default: CampaignStatus.DRAFT }) status: CampaignStatus;
   @Column({ type: 'text', nullable: true }) objetivo: string | null;

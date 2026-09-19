@@ -96,7 +96,7 @@ export class MarketingCampaignBuilderService {
   ): Promise<StoredCampaign> {
     const row = this.repo.create({
       tenant_id: tenantId,
-      nome: payload.name?.trim() || 'Campanha sem título',
+      name: payload.name?.trim() || 'Campanha sem título',
       type: 'marketing_builder',
       status: 'DRAFT' as never,
       objetivo: payload.objective ?? null,
@@ -161,7 +161,7 @@ export class MarketingCampaignBuilderService {
       this.repo,
       { id, tenant_id: tenantId } as never,
       {
-        nome: payload.name?.trim() || 'Campanha sem título',
+        name: payload.name?.trim() || 'Campanha sem título',
         status: status as never,
         objetivo: payload.objective ?? null,
         orcamento: this.budget(payload),
@@ -187,7 +187,7 @@ export class MarketingCampaignBuilderService {
       ...(builder.payload ?? {}),
       id: row.id,
       tenantId: row.tenant_id,
-      name: builder.payload?.name ?? row.nome,
+      name: builder.payload?.name ?? row.name,
       objective: builder.payload?.objective ?? row.objetivo ?? undefined,
       status: row.status as unknown as BuilderStatus,
       validation: builder.validation ?? { valid: false, errors: [], warnings: [] },

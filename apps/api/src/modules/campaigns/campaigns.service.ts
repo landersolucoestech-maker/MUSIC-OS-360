@@ -35,7 +35,7 @@ export class CampaignsService {
     if (q['status'])     qb.andWhere('c.status = :status',         { status:     q['status'] });
     if (q['type'])       qb.andWhere('c.type = :type',             { type:       q['type'] });
     if (q['artist_id']) qb.andWhere('c.artist_id = :artistId',  { artistId:  q['artist_id'] });
-    if (q['search'])     qb.andWhere('c.nome ILIKE :search',       { search: `%${q['search']}%` });
+    if (q['search'])     qb.andWhere('c.name ILIKE :search',       { search: `%${q['search']}%` });
 
     qb.orderBy('c.created_at', q['ascending'] ? 'ASC' : 'DESC')
       .skip(typeof q['offset'] === 'number' ? q['offset'] : 0)
@@ -69,8 +69,10 @@ export class CampaignsService {
   /**
    * find-c06511bf: CreateCampaignDto/UpdateCampaignDto use EN camelCase
    * field names (title/artistId/budget/currency/startsAt/endsAt) that never
-   * matched CampaignEntity's real PT snake_case columns (nome/artist_id/
-   * orcamento/start_date/end_date) — TypeORM silently drops unrecognized
+   * matched CampaignEntity's real columns (name/artist_id/orcamento/
+   * start_date/end_date — `name` was `nome` at the time of this bug,
+   * since renamed; the DTO's own field stays `title`, mapped onto the
+   * `name` column in dtoToEntity()) — TypeORM silently drops unrecognized
    * plain properties at INSERT/UPDATE time, so every campaign created via
    * this DTO persisted with no title/artist/budget/dates at all. `currency`/
    * `platforms` have no dedicated column at all — folded into `metadata`
@@ -88,7 +90,7 @@ export class CampaignsService {
    */
   private dtoToEntity(dto: Record<string, unknown>, currentMetadata: Record<string, unknown> = {}): Partial<CampaignEntity> {
     const out: Record<string, unknown> = {};
-    if (dto['title']    !== undefined) out['nome']       = dto['title'];
+    if (dto['title']    !== undefined) out['name']       = dto['title'];
     if (dto['type']     !== undefined) out['type']       = dto['type'];
     if (dto['artistId'] !== undefined) out['artist_id']  = dto['artistId'];
     if (dto['budget']   !== undefined) out['orcamento']  = dto['budget'];
@@ -127,7 +129,7 @@ export class CampaignsService {
       payload: {
         campaignId: saved.id,
         tenantId,
-        title:      saved.nome,
+        title:      saved.name,
         createdBy:  userId,
       },
     });
@@ -211,7 +213,7 @@ export class CampaignsService {
           payload: {
             campaignId: id,
             tenantId,
-            title:     current.nome,
+            title:     current.name,
             startedBy:  userId,
             startedAt:  now,
           },
@@ -228,7 +230,7 @@ export class CampaignsService {
           payload: {
             campaignId: id,
             tenantId,
-            title:     current.nome,
+            title:     current.name,
             endedAt:    now,
           },
         });
