@@ -1508,7 +1508,7 @@ export class ShareEntity {
   @Column({ type: 'text', nullable: true }) documents: string | null;
   @Column({ type: 'text', nullable: true }) acordo_notas: string | null;
   @Column({ type: 'text', nullable: true }) acordo_url: string | null;
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'integer', nullable: true }) versao: number | null;
   @Column({ type: 'jsonb', nullable: true }) historico: unknown[] | null;
   @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true }) valor_total: string | null;

@@ -121,7 +121,7 @@ function shareToForm(share: Share & Record<string, unknown>): ShareFormState {
     status: s("status") || "pendente",
     acordo_notas: s("acordo_notas"),
     acordo_url: s("acordo_url"),
-    notes: s("observacoes"),
+    notes: s("notes"),
   };
 }
 

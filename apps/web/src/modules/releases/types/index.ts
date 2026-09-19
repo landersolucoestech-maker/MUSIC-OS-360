@@ -130,7 +130,7 @@ export interface Share {
   // ── Acordo / rastreabilidade (compartilhado) ─────────────────────────────────
   acordo_notas?: string | null;
   acordo_url?: string | null;
-  observacoes?: string | null;
+  notes?: string | null;
   versao?: number | null;
   historico?: ShareHistoricoEntry[] | null;
   created_at?: string;

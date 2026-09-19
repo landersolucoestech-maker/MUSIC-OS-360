@@ -453,7 +453,7 @@ const SHARES_CONTRACT: ReportFormContract = {
     col('release_id'), col('music_title'), col('holder'), col('recipient'),
     col('type'), col('artista_externo'), col('artista_project_id'), col('artist_id'),
     col('pagador'), col('pagador_contato'), col('origem_acordo'), col('data_prevista'),
-    col('documents'), col('acordo_notas'), col('acordo_url'), col('observacoes'),
+    col('documents'), col('acordo_notas'), col('acordo_url'), col('notes'),
     col('valor_total'), col('valor_liquidado'),
     ro('versao'), ro('historico'),
   ],

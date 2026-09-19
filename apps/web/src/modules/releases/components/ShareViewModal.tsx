@@ -206,14 +206,14 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
           )}
 
           {/* ── Observações ─────────────────────────────────────────────────── */}
-          {share.observacoes && (
+          {share.notes && (
             <Card className="bg-muted/30">
               <CardContent className="p-4 space-y-2">
                 <p className="text-xs font-semibold  tracking-wider text-muted-foreground">
                   Observações adicionais
                 </p>
                 <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                  {share.observacoes}
+                  {share.notes}
                 </p>
               </CardContent>
             </Card>

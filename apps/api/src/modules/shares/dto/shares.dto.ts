@@ -28,7 +28,7 @@ export class CreateShareDto {
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() acordo_notas?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() acordo_url?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() observacoes?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) direction?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() release_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(500) music_title?: string;

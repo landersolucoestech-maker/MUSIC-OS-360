@@ -47,7 +47,7 @@ export const shareSchema = z
     status: z.enum(["pendente", "parcial", "enviado", "aceito", "recebido", "recusado", "erro", "cancelado"]).default("pendente"),
     acordo_notas: z.string().max(2000, "Notas devem ter no máximo 2000 caracteres").optional().or(z.literal("")),
     acordo_url: z.string().max(500, "URL deve ter no máximo 500 caracteres").optional().or(z.literal("")),
-    observacoes: z.string().max(2000, "Observações deve ter no máximo 2000 caracteres").optional().or(z.literal("")),
+    notes: z.string().max(2000, "Observações deve ter no máximo 2000 caracteres").optional().or(z.literal("")),
   })
   .superRefine((data, ctx) => {
     const hasPct = data.percentage !== undefined && data.percentage !== "";
