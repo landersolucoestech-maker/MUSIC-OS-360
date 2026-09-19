@@ -50,7 +50,7 @@ const TRIGGERS: { value: FinancialRuleTrigger; label: string }[] = [
 ];
 
 interface FormState {
-  nome: string;
+  name: string;
   type: FinancialRuleTipo;
   category: string;
   calculo: FinancialRuleCalculo;
@@ -61,13 +61,13 @@ interface FormState {
 }
 
 const EMPTY_FORM: FormState = {
-  nome: "", type: "outros", category: "", calculo: "percentual",
+  name: "", type: "outros", category: "", calculo: "percentual",
   valor: "", descricao: "", active: true, triggers: [],
 };
 
 function toForm(rule: FinancialRule): FormState {
   return {
-    nome: rule.nome,
+    name: rule.name,
     type: rule.type,
     category: rule.category ?? "",
     calculo: rule.calculo,
@@ -105,7 +105,7 @@ export default function FinancialRules() {
   };
 
   async function handleSubmit() {
-    if (!form.nome.trim()) { setError("Informe o nome da regra."); return; }
+    if (!form.name.trim()) { setError("Informe o nome da regra."); return; }
     const valorNum = Number(form.valor);
     if (!form.valor.trim() || Number.isNaN(valorNum)) { setError("Informe um valor numérico válido."); return; }
     if (form.triggers.length === 0) {
@@ -114,7 +114,7 @@ export default function FinancialRules() {
     }
 
     const payload = {
-      nome: form.nome.trim(),
+      name: form.name.trim(),
       type: form.type,
       category: form.category.trim() || undefined,
       calculo: form.calculo,
@@ -203,7 +203,7 @@ export default function FinancialRules() {
                     {rules.map((rule) => (
                       <TableRow key={rule.id} data-testid={`row-regra-financeira-${rule.id}`}>
                         <TableCell>
-                          <p className="font-medium text-foreground">{rule.nome}</p>
+                          <p className="font-medium text-foreground">{rule.name}</p>
                           {rule.category && <p className="text-xs text-muted-foreground">{rule.category}</p>}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
@@ -254,7 +254,7 @@ export default function FinancialRules() {
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium">Nome *</Label>
-                <Input value={form.nome} onChange={(e) => setField("nome", e.target.value)} placeholder="Ex.: Comissão de agenciamento" />
+                <Input value={form.name} onChange={(e) => setField("name", e.target.value)} placeholder="Ex.: Comissão de agenciamento" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
@@ -327,7 +327,7 @@ export default function FinancialRules() {
             <AlertDialogHeader>
               <AlertDialogTitle>Excluir regra</AlertDialogTitle>
               <AlertDialogDescription>
-                Tem certeza que deseja excluir a regra &quot;{deleteTarget?.nome}&quot;? Esta ação não pode ser desfeita.
+                Tem certeza que deseja excluir a regra &quot;{deleteTarget?.name}&quot;? Esta ação não pode ser desfeita.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

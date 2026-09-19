@@ -39,9 +39,9 @@ export class FinancialRulesService {
     if (query.type)     qb.andWhere('r.type = :type',           { type: query.type });
     if (query.category) qb.andWhere('r.category = :category', { category: query.category });
     if (query.active !== undefined) qb.andWhere('r.active = :active', { active: query.active });
-    if (query.search)   qb.andWhere('r.nome ILIKE :search',     { search: `%${query.search}%` });
+    if (query.search)   qb.andWhere('r.name ILIKE :search',     { search: `%${query.search}%` });
 
-    qb.orderBy('r.nome', 'ASC')
+    qb.orderBy('r.name', 'ASC')
       .skip(query.offset ?? 0)
       .take(query.limit ?? 100);
 
@@ -135,7 +135,7 @@ export class FinancialRulesService {
         // FinancialRules.tsx "Faixa (em breve)"). Nunca fabricar computed=0
         // como se fosse um resultado real — pula a regra e avisa.
         this.logger.warn(
-          `evaluateRules: regra "${rule.nome}" (${rule.id}) usa calculo="${rule.calculo}" ainda não implementado — pulando, nenhum evento emitido`,
+          `evaluateRules: regra "${rule.name}" (${rule.id}) usa calculo="${rule.calculo}" ainda não implementado — pulando, nenhum evento emitido`,
         );
         continue;
       }
@@ -151,7 +151,7 @@ export class FinancialRulesService {
           payload: {
             ruleId:     rule.id,
             tenantId,
-            ruleName:   rule.nome,
+            ruleName:   rule.name,
             ruleType:   rule.type,
             trigger,
             entityId:   context.entityId,
@@ -159,7 +159,7 @@ export class FinancialRulesService {
             result,
           },
         });
-        this.logger.log(`FinancialRule "${rule.nome}" (${rule.id}) triggered by ${trigger}`);
+        this.logger.log(`FinancialRule "${rule.name}" (${rule.id}) triggered by ${trigger}`);
       } catch (err) {
         this.logger.warn(`evaluateRules: emit failed for rule "${rule.id}" — ${String(err)}`);
       }

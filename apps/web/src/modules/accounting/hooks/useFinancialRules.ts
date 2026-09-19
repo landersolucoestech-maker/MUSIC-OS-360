@@ -7,7 +7,7 @@ export type FinancialRuleCalculo = "percentual" | "fixo" | "faixa";
 
 export interface FinancialRule {
   id: string;
-  nome: string;
+  name: string;
   type: FinancialRuleTipo;
   category: string | null;
   calculo: FinancialRuleCalculo;
@@ -23,7 +23,7 @@ export function useFinancialRules() {
   const result = useDataQuery<FinancialRule>({
     queryKey: [...QUERY_KEYS.FINANCIAL_RULES],
     table: "regras_financeiras",
-    orderBy: { column: "nome", ascending: true },
+    orderBy: { column: "name", ascending: true },
   }, {
     create: { success: "Regra criada com sucesso!", error: "Erro ao criar regra" },
     update: { success: "Regra atualizada com sucesso!", error: "Erro ao atualizar regra" },

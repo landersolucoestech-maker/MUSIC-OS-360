@@ -7,7 +7,7 @@ const TIPOS    = ['imposto', 'comissao', 'external_rights_fee', 'desconto', 'tax
 const CALCULOS = ['percentual', 'fixo', 'faixa'] as const;
 
 export class CreateFinancialRuleDto {
-  @ApiProperty() @IsString() @MaxLength(255) nome!: string;
+  @ApiProperty() @IsString() @MaxLength(255) name!: string;
   @ApiProperty({ enum: TIPOS }) @IsIn(TIPOS) type!: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) category?: string;
   @ApiProperty({ enum: CALCULOS }) @IsIn(CALCULOS) calculo!: string;

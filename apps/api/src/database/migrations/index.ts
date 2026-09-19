@@ -218,6 +218,7 @@ import { RenameDuracaoToDurationTextOnWorksAndPhonograms20260918000003 } from '.
 import { RenameCategoriaToCategoryOnInventoryItems20260918000004 } from './20260918000004_RenameCategoriaToCategoryOnInventoryItems';
 import { RenameCategoriaToCategoryOnTransactionsAndFinancialRules20260918000005 } from './20260918000005_RenameCategoriaToCategoryOnTransactionsAndFinancialRules';
 import { RenameAtivoToActiveOnFinancialRules20260918000006 } from './20260918000006_RenameAtivoToActiveOnFinancialRules';
+import { RenameNomeToNameOnFinancialRules20260918000007 } from './20260918000007_RenameNomeToNameOnFinancialRules';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -447,4 +448,5 @@ export const ALL_MIGRATIONS = [
   RenameCategoriaToCategoryOnInventoryItems20260918000004,
   RenameCategoriaToCategoryOnTransactionsAndFinancialRules20260918000005,
   RenameAtivoToActiveOnFinancialRules20260918000006,
+  RenameNomeToNameOnFinancialRules20260918000007,
 ] as const;

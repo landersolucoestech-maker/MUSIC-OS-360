@@ -2573,7 +2573,7 @@ export class LicenseEntity {
 export class FinancialRuleEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'varchar', length: 255 }) nome: string;
+  @Column({ type: 'varchar', length: 255 }) name: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 100, nullable: true }) category: string | null;
   @Column({ type: 'varchar', length: 50, default: 'percentual' }) calculo: string;
