@@ -1006,7 +1006,7 @@ export class TransactionEntity {
   @Column({ type: 'varchar', length: 50, nullable: true }) tipo_cliente: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) subcategoria: string | null;
   @Column({ type: 'date', nullable: true }) data_transacao: string | null;
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) fornecedor_cliente: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) orgao_arrecadador: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) centro_custo: string | null;

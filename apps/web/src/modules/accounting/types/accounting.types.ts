@@ -44,7 +44,7 @@ export interface Transaction {
   /** Vínculos gerenciais obrigatórios para consolidação no P&L (≥1). */
   entityLinks?: TransactionEntityLink[];
   origem?: string | null;
-  observacoes?: string | null;
+  notes?: string | null;
   conciliado?: boolean | null;
   anexo_url?: string | null;
   forma_pagamento?: TransactionPaymentMethod | string | null;

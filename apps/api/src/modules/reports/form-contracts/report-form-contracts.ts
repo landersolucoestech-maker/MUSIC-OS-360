@@ -523,7 +523,7 @@ const TRANSACTIONS_CONTRACT: ReportFormContract = {
     col('conta_origem'), col('conta_destino'), col('item_investimento'), col('motivo_viagem'),
     col('advertising_name'), col('forma_pagamento'), col('tipo_pagamento'),
     col('quantidade_parcelas'), col('intervalo_parcelas'), col('data_primeira_parcela'),
-    col('anexo_url'), col('anexo_nome'), col('observacoes'),
+    col('anexo_url'), col('anexo_nome'), col('notes'),
   ],
   excludedFormFields: {},
   filterableColumns: ['status', 'tipo_transacao', 'categoria'],
