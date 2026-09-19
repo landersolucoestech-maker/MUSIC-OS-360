@@ -1283,7 +1283,7 @@ export class BriefingEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255 }) title: string;
-  @Column({ type: 'text', nullable: true }) descricao: string | null;
+  @Column({ type: 'text', nullable: true }) content: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'uuid', nullable: true }) campaign_id: string | null;
   @Column({ type: 'varchar', length: 50, default: BriefingStatus.DRAFT }) status: BriefingStatus;

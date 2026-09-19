@@ -42,14 +42,13 @@ export class BriefingsService {
     return result;
   }
 
-  // O DTO usa nomes em inglês (title/content/campaignId/dueAt) mas as colunas
-  // físicas da entidade são em português (title/descricao/campaign_id/prazo)
-  // — sem este mapeamento explícito, um spread bruto do DTO nunca populava as
-  // colunas reais (TypeORM só persiste propriedades decoradas com @Column).
+  // O DTO usa nomes em inglês (title/content/campaignId/dueAt) — desde a
+  // normalização de nomenclatura (Cluster E), as colunas físicas da
+  // entidade também usam esses nomes (title/content/campaign_id/prazo).
   private toEntityFields(dto: CreateBriefingDto | UpdateBriefingDto): Record<string, unknown> {
     const out: Record<string, unknown> = {};
     if (dto.title !== undefined) out.title = dto.title;
-    if (dto.content !== undefined) out.descricao = dto.content;
+    if (dto.content !== undefined) out.content = dto.content;
     if (dto.campaignId !== undefined) out.campaign_id = dto.campaignId;
     if (dto.dueAt !== undefined) out.prazo = dto.dueAt;
     if (dto.metadata !== undefined) out.metadata = dto.metadata;

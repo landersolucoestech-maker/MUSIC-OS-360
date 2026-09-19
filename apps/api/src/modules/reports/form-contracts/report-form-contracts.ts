@@ -712,14 +712,15 @@ const MARKETING_CONTENT_POSTS_CONTRACT: ReportFormContract = {
 // Correção Parte 89 (briefings.service.ts): o DTO usava nomes em inglês
 // (title/content/campaignId/dueAt) que nunca chegavam às colunas físicas reais
 // (title/descricao/campaign_id/prazo) — bug de mapeamento corrigido para que
-// este contrato seja utilizável. Os campos "avançados" (objetivo, contexto,
-// público-alvo etc., presentes só no Editar) vivem na coluna `metadata`
-// genérica.
+// este contrato seja utilizável. Cluster E (naming-normalization): a coluna
+// física descricao foi renomeada para content, eliminando o alias. Os campos
+// "avançados" (objetivo, contexto, público-alvo etc., presentes só no
+// Editar) vivem na coluna `metadata` genérica.
 const BRIEFINGS_CONTRACT: ReportFormContract = {
   tableName: 'briefings',
   identityColumn: 'title',
   fields: [
-    col('title'), col('descricao'), col('campaign_id'), col('prazo'), col('status'),
+    col('title'), col('content'), col('campaign_id'), col('prazo'), col('status'),
     meta('type'), meta('owners'), meta('objective'), meta('context'), meta('audience'),
     meta('positioning'), meta('tone'), meta('requirements'), meta('creativeDirection'),
     meta('references'), meta('visualGuidelines'), meta('textGuidelines'), meta('market'),
@@ -733,7 +734,7 @@ const BRIEFINGS_CONTRACT: ReportFormContract = {
   },
   formFieldAliases: {
     title: 'title',
-    content: 'descricao',
+    content: 'content',
     campaignId: 'campaign_id',
     dueAt: 'prazo',
   },

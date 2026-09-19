@@ -256,7 +256,7 @@ function briefingFromApi(row: RecordRow): MarketingBriefing {
     type: meta.type ?? "campanha",
     status: meta.uiStatus ?? row.status ?? "rascunho",
     objective: meta.objective ?? "",
-    context: row.descricao ?? meta.context ?? "",
+    context: row.content ?? meta.context ?? "",
     audience: meta.audience ?? "",
     positioning: meta.positioning ?? "",
     tone: meta.tone ?? "",

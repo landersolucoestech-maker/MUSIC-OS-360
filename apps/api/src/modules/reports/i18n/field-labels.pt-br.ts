@@ -65,6 +65,7 @@ export const FIELD_LABELS_PT_BR = {
   notasInternas: 'Notas internas',
   description: 'Descrição',
   descricao: 'Descrição',
+  content: 'Conteúdo',
   tags: 'Etiquetas',
   status: 'Situação',
   situacao: 'Situação',
