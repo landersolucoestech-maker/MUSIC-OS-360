@@ -21,14 +21,14 @@ export function useContractTemplates() {
       onCreate: (t) =>
         emit(DomainEvents.CONTRACT_TEMPLATE_CREATED, {
           id:    (t as ContractTemplateRow & { id: string }).id,
-          nome:  (t as ContractTemplateRow & { nome?: string }).nome ?? undefined,
+          name:  (t as ContractTemplateRow & { name?: string }).name ?? undefined,
           type:  (t as ContractTemplateRow & { type?: string }).type ?? undefined,
           org_id: orgId,
         }),
       onUpdate: (t) =>
         emit(DomainEvents.CONTRACT_TEMPLATE_UPDATED, {
           id:    (t as ContractTemplateRow & { id: string }).id,
-          nome:  (t as ContractTemplateRow & { nome?: string }).nome ?? undefined,
+          name:  (t as ContractTemplateRow & { name?: string }).name ?? undefined,
           type:  (t as ContractTemplateRow & { type?: string }).type ?? undefined,
           org_id: orgId,
         }),

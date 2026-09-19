@@ -353,7 +353,7 @@ export function ContractImportWorkspace({
   const isEditMode = !!template;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const [nome, setNome] = useState("");
+  const [name, setName] = useState("");
   const [categoria, setCategoria] = useState("");
   const [text, setText] = useState("");
   const [search, setSearch] = useState("");
@@ -374,7 +374,7 @@ export function ContractImportWorkspace({
   // Populate form when template changes (edit mode)
   useEffect(() => {
     if (!template) return;
-    setNome(template.nome ?? "");
+    setName(template.name ?? "");
     setCategoria(template.tipo_servico || (template as Record<string, unknown>)["type"] as string || "");
     setText(template.conteudo ?? "");
     setSearch("");
@@ -478,7 +478,7 @@ export function ContractImportWorkspace({
   // ── Save ────────────────────────────────────────────────────────────────
 
   async function handleSave() {
-    if (!nome.trim()) {
+    if (!name.trim()) {
       toast.error("Dê um nome ao template antes de guardar");
       return;
     }
@@ -502,7 +502,7 @@ export function ContractImportWorkspace({
       if (isEditMode && template && onEdit) {
         await Promise.resolve(
           onEdit(template.id, {
-            nome: nome.trim(),
+            name: name.trim(),
             tipo_servico: categoria,
             conteudo: text,
             active: template.active ?? true,
@@ -516,7 +516,7 @@ export function ContractImportWorkspace({
       } else {
         await Promise.resolve(
           onSave({
-            nome: nome.trim(),
+            name: name.trim(),
             tipo_servico: categoria,
             conteudo: text,
             active: true,
@@ -536,7 +536,7 @@ export function ContractImportWorkspace({
   // ── Close / reset ───────────────────────────────────────────────────────
 
   function handleClose() {
-    setNome("");
+    setName("");
     setCategoria("semantico");
     setText("");
     setSearch("");
@@ -633,14 +633,14 @@ export function ContractImportWorkspace({
                     </p>
                     <div className="flex flex-col gap-3">
                       <div className="space-y-1.5">
-                        <Label htmlFor="ws-nome" className="text-xs">
+                        <Label htmlFor="ws-name" className="text-xs">
                           Nome do Template
                         </Label>
                         <Input
-                          id="ws-nome"
+                          id="ws-name"
                           placeholder="Ex: Contrato de Gravação — Exclusivo"
-                          value={nome}
-                          onChange={(e) => setNome(e.target.value)}
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
                           className="h-9"
                           data-testid="input-template-name"
                         />

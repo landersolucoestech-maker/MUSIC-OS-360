@@ -22,7 +22,7 @@ export class ContractTemplatesService {
 
     if (query.type)   qb.andWhere('t.tipo_servico = :type', { type:   query.type });
     if (query.active !== undefined) qb.andWhere('t.active = :active', { active: query.active });
-    if (query.search) qb.andWhere('t.nome ILIKE :search',   { search: `%${query.search}%` });
+    if (query.search) qb.andWhere('t.name ILIKE :search',   { search: `%${query.search}%` });
 
     qb.orderBy('t.created_at', query.ascending ? 'ASC' : 'DESC')
       .skip(query.offset ?? 0)

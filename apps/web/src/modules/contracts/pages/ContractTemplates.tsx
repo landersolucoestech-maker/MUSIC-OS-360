@@ -91,7 +91,7 @@ export default function ContractTemplates() {
   const filteredTemplates = useMemo(() => {
     const q = search.trim().toLowerCase();
     return templates.filter((template) => {
-      if (q && !template.nome.toLowerCase().includes(q) && !(template.descricao ?? "").toLowerCase().includes(q)) return false;
+      if (q && !template.name.toLowerCase().includes(q) && !(template.descricao ?? "").toLowerCase().includes(q)) return false;
       if (filterType === "semantico" && template.tipo_servico !== "semantico") return false;
       if (filterType === "padrao" && template.tipo_servico === "semantico") return false;
       if (filterStatus === "ativo" && !template.active) return false;
@@ -102,7 +102,7 @@ export default function ContractTemplates() {
 
   const sortedTemplates = useMemo(
     () => sortTableRows(filteredTemplates, sortState, (template, key) => {
-      if (key === "nome") return template.nome;
+      if (key === "name") return template.name;
       if (key === "categoria") return templateCategory(template);
       if (key === "status") return templateStatus(template);
       if (key === "created_at") return template.created_at;
@@ -340,7 +340,7 @@ export default function ContractTemplates() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-8"></TableHead>
-                    <SortableTableHead sortKey="nome" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Nome</SortableTableHead>
+                    <SortableTableHead sortKey="name" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Nome</SortableTableHead>
                     <SortableTableHead sortKey="categoria" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Categoria</SortableTableHead>
                     <SortableTableHead sortKey="status" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Status</SortableTableHead>
                     <SortableTableHead sortKey="created_at" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Data de Criação</SortableTableHead>
@@ -357,7 +357,7 @@ export default function ContractTemplates() {
                           <Checkbox
                             checked={selectedTemplateIds.includes(template.id)}
                             onCheckedChange={() => toggleSelect(template.id)}
-                            aria-label={`Selecionar template ${template.nome}`}
+                            aria-label={`Selecionar template ${template.name}`}
                           />
                         </TableCell>
                         <TableCell>
@@ -366,7 +366,7 @@ export default function ContractTemplates() {
                               {isSemantic ? <Sparkles className="h-3.5 w-3.5 text-primary" /> : <FileText className="h-3.5 w-3.5 text-muted-foreground" />}
                             </div>
                             <div className="min-w-0">
-                              <p className="text-sm font-medium truncate leading-tight">{template.nome}</p>
+                              <p className="text-sm font-medium truncate leading-tight">{template.name}</p>
                               {template.descricao && <p className="text-xs text-muted-foreground truncate mt-0.5">{template.descricao}</p>}
                             </div>
                           </div>
@@ -443,7 +443,7 @@ export default function ContractTemplates() {
         onOpenChange={setIsDeleteOpen}
         onConfirm={handleDeleteConfirm}
         title="Excluir Template"
-        description={`Tem certeza que deseja excluir o template "${selectedTemplate?.nome}"? Esta acao nao pode ser desfeita.`}
+        description={`Tem certeza que deseja excluir o template "${selectedTemplate?.name}"? Esta acao nao pode ser desfeita.`}
       />
 
       <DeleteConfirmModal

@@ -27,7 +27,7 @@ export function ContractTemplateViewModal({
         <!DOCTYPE html>
         <html>
         <head>
-          <title>${template.nome}</title>
+          <title>${template.name}</title>
           <style>
             body { font-family: 'Times New Roman', Times, serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.8; }
             h1 { text-align: center; margin-bottom: 30px; }
@@ -36,7 +36,7 @@ export function ContractTemplateViewModal({
           </style>
         </head>
         <body>
-          <h1>${template.nome}</h1>
+          <h1>${template.name}</h1>
           <pre>${template.conteudo ?? ""}</pre>
         </body>
         </html>
@@ -56,7 +56,7 @@ export function ContractTemplateViewModal({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${template.nome.replace(/\s+/g, "_")}.txt`;
+    a.download = `${template.name.replace(/\s+/g, "_")}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -77,7 +77,7 @@ export function ContractTemplateViewModal({
         <div className="px-6 pt-6 pb-4 shrink-0">
           <DialogHeader>
             <div className="flex items-start justify-between gap-3">
-              <DialogTitle className="text-xl leading-snug">{template.nome}</DialogTitle>
+              <DialogTitle className="text-xl leading-snug">{template.name}</DialogTitle>
               <div className="flex items-center gap-2 shrink-0">
                 <Badge
                   variant={template.active ? "default" : "secondary"}

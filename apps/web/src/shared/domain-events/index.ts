@@ -141,8 +141,8 @@ export type DomainEventPayloads = {
   CONTRACT_UPDATED:          Partial<ContractCreatedPayload> & { id: string };
   CONTRACT_DELETED:          { id: string; org_id: string };
   CONTRACT_SIGNED:           { id: string; org_id: string };
-  CONTRACT_TEMPLATE_CREATED: { id: string; nome?: string; type?: string; org_id: string };
-  CONTRACT_TEMPLATE_UPDATED: { id: string; nome?: string; type?: string; org_id: string };
+  CONTRACT_TEMPLATE_CREATED: { id: string; name?: string; type?: string; org_id: string };
+  CONTRACT_TEMPLATE_UPDATED: { id: string; name?: string; type?: string; org_id: string };
   CONTRACT_TEMPLATE_DELETED: { id: string; org_id: string };
   RELEASE_CREATED:       ReleaseCreatedPayload;
   RELEASE_UPDATED:       Partial<ReleaseCreatedPayload> & { id: string };

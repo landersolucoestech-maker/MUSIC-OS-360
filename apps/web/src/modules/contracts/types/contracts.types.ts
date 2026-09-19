@@ -69,7 +69,7 @@ export interface ContractWithRelations extends Contract {
 export interface ContractTemplateRow {
   id: string;
   user_id?: string | null;
-  nome: string;
+  name: string;
   tipo_servico: string;
   conteudo: string;
   descricao?: string | null;

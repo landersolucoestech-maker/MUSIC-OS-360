@@ -922,7 +922,7 @@ export class ContractEntity {
 export class ContractTemplateEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'varchar', length: 500 }) nome: string;
+  @Column({ type: 'varchar', length: 500 }) name: string;
   @Column({ type: 'varchar', length: 100 }) tipo_servico: string;
   @Column({ type: 'text' }) conteudo: string;
   @Column({ type: 'jsonb', default: [] }) variaveis: unknown[];

@@ -100,7 +100,7 @@ interface ManifestVar {
 
 interface WizardState {
   templateId: string;
-  templateNome: string;
+  templateName: string;
   /** Canonical category slug (tipo_servico), e.g. "gravacao" — used as contract type */
   templateTipoServico: string;
   templateContent: string;
@@ -163,7 +163,7 @@ const EMPTY_META: WizardMeta = {
 };
 
 const EMPTY_WIZARD: WizardState = {
-  templateId: "", templateNome: "", templateTipoServico: "", templateContent: "",
+  templateId: "", templateName: "", templateTipoServico: "", templateContent: "",
   partyRoles: [], signatureRoles: [], manifestVars: [],
   parties: {}, variables: {}, signers: [], meta: EMPTY_META,
 };
@@ -369,7 +369,7 @@ function StepTemplate({
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{t.nome}</p>
+                    <p className="font-medium text-sm truncate">{t.name}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
                     {t.descricao && (
                       <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{t.descricao}</p>
@@ -852,7 +852,7 @@ function ReviewStep({ state, onMeta }: { state: WizardState; onMeta: (m: WizardM
   return (
     <div className="space-y-4">
       <div className="rounded-lg bg-muted/40 border border-border p-4 space-y-2 text-sm">
-        <div className="flex justify-between"><span className="text-muted-foreground">Template</span><span className="font-medium">{state.templateNome || "—"}</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">Template</span><span className="font-medium">{state.templateName || "—"}</span></div>
         <div className="flex justify-between"><span className="text-muted-foreground">Partes preenchidas</span><span className="font-medium">{filledParties}/{state.partyRoles.length}</span></div>
         <div className="flex justify-between"><span className="text-muted-foreground">Variáveis preenchidas</span><span className="font-medium">{resolvedVars}/{state.manifestVars.length}</span></div>
         {requiredVarsTotal > 0 && (
@@ -1017,7 +1017,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
 
         setState({
           templateId:          tmpl.id,
-          templateNome:        tmpl.nome,
+          templateName:        tmpl.name,
           templateTipoServico: tmpl.tipo_servico || "",
           templateContent:     tmpl.conteudo,
           partyRoles,
@@ -1063,7 +1063,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
     setState((prev) => ({
       ...prev,
       templateId:          t.id,
-      templateNome:        t.nome,
+      templateName:        t.name,
       templateTipoServico: t.tipo_servico || "",
       templateContent:     t.conteudo,
       partyRoles,
@@ -1145,7 +1145,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
       const payload: ContractInsert = {
         title:           state.meta.title.trim(),
         template_id:      state.templateId || null,
-        type:             state.templateTipoServico || state.templateNome || null,
+        type:             state.templateTipoServico || state.templateName || null,
         status:           resolvedStatus,
         start_date:      state.meta.start_date || null,
         end_date:         state.meta.end_date    || null,
@@ -1317,8 +1317,8 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
               <p className="text-xs font-semibold  tracking-wide text-muted-foreground">
                 {isEdit ? "Editar Contrato" : "Novo Contrato"}
               </p>
-              {state.templateNome && (
-                <p className="text-xs text-foreground mt-1 font-medium truncate">{state.templateNome}</p>
+              {state.templateName && (
+                <p className="text-xs text-foreground mt-1 font-medium truncate">{state.templateName}</p>
               )}
             </div>
             <nav className="flex-1 p-3 space-y-1">

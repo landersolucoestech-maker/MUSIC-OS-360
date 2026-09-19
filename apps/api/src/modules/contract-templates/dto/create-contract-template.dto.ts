@@ -6,7 +6,7 @@ import { IsString, IsOptional, IsBoolean, MaxLength } from 'class-validator';
 export class CreateContractTemplateDto {
   @ApiProperty({ example: 'Template Contrato de Exclusividade' })
   @IsString() @MaxLength(500)
-  nome!: string;
+  name!: string;
 
   @ApiPropertyOptional()
   @IsOptional() @IsString() @MaxLength(100)

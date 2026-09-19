@@ -1,7 +1,7 @@
 /**
  * contract-templates.service.spec.ts
  *
- * Task U — prova que o contrato real do formulário (nome/tipo_servico/
+ * Task U — prova que o contrato real do formulário (name/tipo_servico/
  * conteudo/active/descricao/variables_manifest/header_image/footer_image)
  * persiste 1:1 nas colunas físicas. Antes desta correção, o DTO usava chaves
  * em inglês (title/type/content/variables/metadata) que nunca eram enviadas
@@ -46,14 +46,14 @@ function updated(repo: ReturnType<typeof makeRepo>) {
 }
 
 describe('ContractTemplatesService — contrato real do formulário (Task U)', () => {
-  it('create: persiste nome/tipo_servico/conteudo/active exatamente como enviados', async () => {
+  it('create: persiste name/tipo_servico/conteudo/active exatamente como enviados', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
-      nome: 'Template Exclusividade', tipo_servico: 'semantico', conteudo: '{{NOME}}', active: true,
+      name: 'Template Exclusividade', tipo_servico: 'semantico', conteudo: '{{NOME}}', active: true,
     } as unknown as CreateContractTemplateDto);
 
     const row = created(repo);
-    expect(row['nome']).toBe('Template Exclusividade');
+    expect(row['name']).toBe('Template Exclusividade');
     expect(row['tipo_servico']).toBe('semantico');
     expect(row['conteudo']).toBe('{{NOME}}');
     expect(row['active']).toBe(true);
@@ -63,7 +63,7 @@ describe('ContractTemplatesService — contrato real do formulário (Task U)', (
   it('create: persiste descricao/variables_manifest/header_image/footer_image', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
-      nome: 'X', conteudo: 'Y',
+      name: 'X', conteudo: 'Y',
       descricao: '3 variáveis',
       variables_manifest: '{"variables":["{{NOME}}"]}',
       header_image: 'data:image/png;base64,abc',
@@ -80,18 +80,18 @@ describe('ContractTemplatesService — contrato real do formulário (Task U)', (
   it('update: escopa por tenant e grava os campos do formulário', async () => {
     const { svc, repo } = makeService();
     await svc.update('tenant-1', 'template-1', {
-      nome: 'Renomeado', active: false,
+      name: 'Renomeado', active: false,
     } as unknown as UpdateContractTemplateDto);
 
     const [criteria, row] = (repo.update as jest.Mock).mock.calls[0];
     expect(criteria).toEqual({ id: 'template-1', tenant_id: 'tenant-1' });
-    expect(row['nome']).toBe('Renomeado');
+    expect(row['name']).toBe('Renomeado');
     expect(row['active']).toBe(false);
   });
 
   it('update: nunca grava chaves antigas em inglês (title/type/content/variables/metadata)', async () => {
     const { svc, repo } = makeService();
-    await svc.update('tenant-1', 'template-1', { nome: 'X' } as unknown as UpdateContractTemplateDto);
+    await svc.update('tenant-1', 'template-1', { name: 'X' } as unknown as UpdateContractTemplateDto);
 
     const row = updated(repo);
     expect(row['title']).toBeUndefined();
@@ -135,7 +135,7 @@ describe('ContractTemplatesService — concorrência otimista (Task W)', () => {
 
   it('sem expectedUpdatedAt: aplica update incondicional (compatibilidade retroativa)', async () => {
     const { svc, repo } = makeCasService();
-    await svc.update('tenant-1', 'template-1', { nome: 'Novo nome' } as unknown as UpdateContractTemplateDto);
+    await svc.update('tenant-1', 'template-1', { name: 'Novo nome' } as unknown as UpdateContractTemplateDto);
 
     const [criteria] = (repo.update as jest.Mock).mock.calls[0];
     expect(criteria).toEqual({ id: 'template-1', tenant_id: 'tenant-1' });
@@ -144,7 +144,7 @@ describe('ContractTemplatesService — concorrência otimista (Task W)', () => {
   it('com expectedUpdatedAt correto: inclui updated_at no critério do UPDATE', async () => {
     const { svc, repo } = makeCasService();
     await svc.update('tenant-1', 'template-1', {
-      nome: 'Novo nome',
+      name: 'Novo nome',
       expectedUpdatedAt: NOW.toISOString(),
     } as unknown as UpdateContractTemplateDto);
 
@@ -165,7 +165,7 @@ describe('ContractTemplatesService — concorrência otimista (Task W)', () => {
 
     await expect(
       svc.update('tenant-1', 'template-1', {
-        nome: 'Edição concorrente',
+        name: 'Edição concorrente',
         expectedUpdatedAt: new Date('2026-08-16T11:00:00.000Z').toISOString(),
       } as unknown as UpdateContractTemplateDto),
     ).rejects.toThrow(ConflictException);
@@ -174,7 +174,7 @@ describe('ContractTemplatesService — concorrência otimista (Task W)', () => {
   it('expectedUpdatedAt nunca é persistido como coluna', async () => {
     const { svc, repo } = makeCasService();
     await svc.update('tenant-1', 'template-1', {
-      nome: 'X',
+      name: 'X',
       expectedUpdatedAt: NOW.toISOString(),
     } as unknown as UpdateContractTemplateDto);
 
