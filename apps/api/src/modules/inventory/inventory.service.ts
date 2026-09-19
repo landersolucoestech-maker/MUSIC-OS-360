@@ -31,7 +31,7 @@ export class InventoryService {
     // de category case-insensitive que existia no client (Inventario.tsx).
     if (query.category) qb.andWhere('i.category ILIKE :category', { category: query.category });
     if (query.localizacao) qb.andWhere('i.localizacao = :localizacao', { localizacao: query.localizacao });
-    if (query.search)   qb.andWhere('i.nome ILIKE :search',     { search: `%${query.search}%` });
+    if (query.search)   qb.andWhere('i.name ILIKE :search',     { search: `%${query.search}%` });
 
     qb.orderBy('i.created_at', 'DESC')
       .skip(query.offset ?? 0)

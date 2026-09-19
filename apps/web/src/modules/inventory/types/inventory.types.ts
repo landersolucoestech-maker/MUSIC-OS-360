@@ -5,7 +5,7 @@ export type { InventoryStatus };
 export interface InventarioItem {
   id: string;
   user_id?: string;
-  nome: string;
+  name: string;
   category?: string | null;
   quantidade?: number | null;
   valor_unitario?: number | null;

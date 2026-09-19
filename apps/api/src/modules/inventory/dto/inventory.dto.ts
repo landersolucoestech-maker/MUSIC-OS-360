@@ -6,7 +6,7 @@ import { PaginationDto } from '../../../common/dto/pagination.dto';
 const STATUSES = ['disponivel', 'em_uso', 'manutencao', 'descartado', 'reservado'] as const;
 
 export class CreateInventoryItemDto {
-  @ApiProperty() @IsString() @MaxLength(255) nome!: string;
+  @ApiProperty() @IsString() @MaxLength(255) name!: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) category?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) quantidade?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_unitario?: number;

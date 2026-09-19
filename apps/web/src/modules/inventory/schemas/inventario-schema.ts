@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const inventarioSchema = z.object({
-  nome: z.string()
+  name: z.string()
     .min(1, "Nome é obrigatório")
     .max(150, "Nome deve ter no máximo 150 caracteres")
     .trim(),

@@ -56,7 +56,7 @@ export function InventarioViewModal({ open, onOpenChange, item }: InventarioView
         <div className="space-y-6">
           {/* Nome do Item */}
           <div>
-            <h2 className="text-xl font-bold text-foreground">{item.nome}</h2>
+            <h2 className="text-xl font-bold text-foreground">{item.name}</h2>
             <p className="text-muted-foreground">{item.category}</p>
           </div>
 

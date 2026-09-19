@@ -203,10 +203,10 @@ export default function Inventario() {
                           checked={selectedIds.includes(item.id)}
                           onCheckedChange={() => toggleSelect(item.id)}
                           data-testid={`checkbox-inventario-${item.id}`}
-                          aria-label={`Selecionar ${item.nome}`}
+                          aria-label={`Selecionar ${item.name}`}
                         />
                       </TableCell>
-                      <TableCell className="font-medium" data-testid={`text-inventario-nome-${item.id}`}>{item.nome}</TableCell>
+                      <TableCell className="font-medium" data-testid={`text-inventario-name-${item.id}`}>{item.name}</TableCell>
                       <TableCell>
                         {item.category ? <Badge variant="outline" className="text-xs">{item.category}</Badge> : "—"}
                       </TableCell>
@@ -277,7 +277,7 @@ export default function Inventario() {
           para as mutations, a mesma query do isLoading acima. */}
       <InventarioViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} item={viewModal.item} />
       <InventarioFormModal open={formModal.open} onOpenChange={(open) => setFormModal({ ...formModal, open })} item={formModal.item} mode={formModal.mode} />
-      <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Item" description={`Tem certeza que deseja excluir "${deleteModal.item?.nome}"?`} onConfirm={handleDelete} />
+      <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Item" description={`Tem certeza que deseja excluir "${deleteModal.item?.name}"?`} onConfirm={handleDelete} />
     </>
     </FeatureGate>
   );

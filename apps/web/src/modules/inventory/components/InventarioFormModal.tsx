@@ -76,7 +76,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
     resolver: zodResolver(inventarioSchema),
     mode: "onChange",
     defaultValues: {
-      nome: "",
+      name: "",
       category: "",
       quantidade: 1,
       localizacao: "",
@@ -107,7 +107,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
     if (open) {
       if (item) {
         reset({
-          nome: item.nome || "",
+          name: item.name || "",
           category: item.category || "",
           quantidade: item.quantidade || 1,
           localizacao: item.localizacao || "",
@@ -122,7 +122,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
         });
       } else {
         reset({
-          nome: "",
+          name: "",
           category: "",
           quantidade: 1,
           localizacao: "",
@@ -145,7 +145,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
     if (isViewMode) return;
     try {
       const payload = {
-        nome:                data.nome,
+        name:                data.name,
         category:            data.category || undefined,
         quantidade:          data.quantidade ?? 1,
         valor_unitario:      data.valor_unitario ?? undefined,
@@ -252,11 +252,11 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
                     Nome do Item <span className="text-destructive">*</span>
                   </Label>
                   <Input
-                    {...register("nome")}
+                    {...register("name")}
                     placeholder="Ex: Microfone Condensador AKG C414"
                     disabled={isViewMode}
                   />
-                  <FieldError error={errors.nome?.message} />
+                  <FieldError error={errors.name?.message} />
                 </div>
               </div>
 
