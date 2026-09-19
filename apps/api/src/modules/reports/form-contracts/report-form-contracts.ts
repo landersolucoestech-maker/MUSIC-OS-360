@@ -272,7 +272,7 @@ const CLIENTS_CONTRACT: ReportFormContract = {
     col('status_contato'), col('prioridade_contato'),
     col('responsavel_nome'), col('responsavel_email'),
     col('responsavel_telefone'), col('responsavel_cargo'),
-    col('observacoes'), col('status'),
+    col('notes'), col('status'),
   ],
   excludedFormFields: {
     metadata: 'objeto jsonb interno bruto — sem campos de formulário próprios',
@@ -291,7 +291,7 @@ const CLIENTS_CONTRACT: ReportFormContract = {
     state: 'estado',
     zipCode: 'cep',
     responsible: 'responsavel_nome',
-    notes: 'observacoes',
+    notes: 'notes',
     priority: 'prioridade_contato',
   },
 };

@@ -128,7 +128,7 @@ export class LeadEventsHandler {
               perfil: 'outros',
               tipo_pessoa: createdTipoPessoa,
               responsavel_nome: convertedBy,
-              observacoes: `Convertido de lead ${leadId} em ${convertedAt}`,
+              notes: `Convertido de lead ${leadId} em ${convertedAt}`,
               metadata: {
                 leadId,
                 convertedAt,

@@ -88,7 +88,7 @@ function apiClientToCliente(c: ApiClient): Cliente {
     cpf_cnpj: c.document ?? null,
     tipo_pessoa: c.type ?? null,
     responsavel: c.responsavel_nome ?? null,
-    observacoes: c.observacoes ?? null,
+    observacoes: c.notes ?? null,
     type: c.type ?? null,
     segmento: c.category ?? null,
   };

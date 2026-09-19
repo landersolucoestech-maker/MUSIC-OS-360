@@ -28,7 +28,7 @@ export interface ApiClient {
   endereco_completo: string | null;
   status: string;
   prioridade_contato: string | null;
-  observacoes: string | null;
+  notes: string | null;
   responsavel_nome: string | null;
   attachments: unknown[] | null;
   metadata: Record<string, unknown> | null;

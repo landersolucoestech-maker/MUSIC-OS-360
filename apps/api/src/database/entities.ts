@@ -1137,7 +1137,7 @@ export class ClientEntity {
   @Column({ type: 'varchar', length: 30, nullable: true }) responsavel_telefone: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) responsavel_cargo: string | null;
   @Column({ type: 'jsonb', nullable: true }) attachments: unknown[] | null;
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'jsonb', nullable: true }) interacoes: unknown[] | null;
   @Column({ type: 'varchar', length: 50, default: ClientStatus.ACTIVE }) status: ClientStatus;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;

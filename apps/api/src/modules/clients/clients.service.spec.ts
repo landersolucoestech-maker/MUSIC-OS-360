@@ -298,7 +298,7 @@ describe('ClientsService — encryption', () => {
       expect(saved['instagram']).toBe('@auroralive');
       expect(saved['cep']).toBe('01000-000');
       expect(saved['responsavel_nome']).toBe('Operacoes');
-      expect(saved['observacoes']).toBe('Venue estrategico');
+      expect(saved['notes']).toBe('Venue estrategico');
       // Nunca reintroduz as colunas removidas pela migration canônica.
       expect(saved['segmento']).toBeUndefined();
       expect(saved['endereco']).toBeUndefined();

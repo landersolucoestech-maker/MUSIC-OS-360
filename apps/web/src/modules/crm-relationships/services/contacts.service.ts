@@ -46,7 +46,7 @@ function fromApi(c: ApiClient): Contact {
     country: "Brasil",
     zipCode: c.cep ?? undefined,
     responsible: c.responsavel_nome ?? undefined,
-    notes: c.observacoes ?? undefined,
+    notes: c.notes ?? undefined,
     tags: [],
     status: (c.status ?? "active") as Contact["status"],
     priority: (c.prioridade_contato ?? "medium") as Contact["priority"],

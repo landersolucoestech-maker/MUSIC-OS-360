@@ -316,7 +316,7 @@ export class ClientsService {
     if (instagram !== undefined) mapped['instagram'] = instagram;
     if (zipCode !== undefined) mapped['cep'] = zipCode;
     if (responsible !== undefined) mapped['responsavel_nome'] = responsible;
-    if (notes !== undefined) mapped['observacoes'] = notes;
+    if (notes !== undefined) mapped['notes'] = notes;
     if (priority !== undefined) mapped['prioridade_contato'] = priority;
     return mapped;
   }
