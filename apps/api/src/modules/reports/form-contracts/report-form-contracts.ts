@@ -365,7 +365,7 @@ const LICENSES_CONTRACT: ReportFormContract = {
     col('title'), col('type'), col('work_id'), col('obra_musical'), col('artista'),
     col('client_id'), col('cliente'), col('projeto'), col('tipo_uso'),
     col('midia_destino'), col('territorio'), col('status'),
-    col('start_date'), col('end_date'), col('valor'), col('moeda'), col('observacoes'),
+    col('start_date'), col('end_date'), col('valor'), col('moeda'), col('notes'),
   ],
   excludedFormFields: {},
   filterableColumns: ['status', 'type', 'territorio'],

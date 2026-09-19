@@ -100,7 +100,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
         currency: licenca.currency || "BRL",
         amount: (licenca.amount ?? licenca.valor) != null ? String(licenca.amount ?? licenca.valor) : "",
         percentage: licenca.percentage != null ? String(licenca.percentage) : "",
-        observacoes: licenca.observacoes || "",
+        observacoes: licenca.notes || "",
       });
     } else {
       reset(DEFAULT_VALUES);
@@ -129,7 +129,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
       amount:            isFixed || isBoth ? amountNum : null,
       percentage:        isPct || isBoth ? pctNum : null,
       valor:             isFixed || isBoth ? amountNum : null, // back-compat (campo legado)
-      observacoes:       data.observacoes || undefined,
+      notes:             data.observacoes || undefined,
     };
   };
 

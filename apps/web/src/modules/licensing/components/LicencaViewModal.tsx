@@ -103,10 +103,10 @@ export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewMod
           </div>
 
           {/* Observações */}
-          {licenca.observacoes && (
+          {licenca.notes && (
             <div className="space-y-2">
               <span className="text-sm text-muted-foreground">Observações</span>
-              <p className="text-sm bg-muted/30 p-3 rounded-lg">{licenca.observacoes}</p>
+              <p className="text-sm bg-muted/30 p-3 rounded-lg">{licenca.notes}</p>
             </div>
           )}
 

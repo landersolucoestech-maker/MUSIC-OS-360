@@ -2554,7 +2554,7 @@ export class LicenseEntity {
   @Column({ type: 'date', nullable: true }) end_date: string | null;
   @Column({ type: 'decimal', precision: 14, scale: 2, nullable: true }) valor: string | null;
   @Column({ type: 'varchar', length: 10, default: 'BRL' }) moeda: string;
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   // Campos do formulário de Licença (regra 2026-07-12: 1 coluna por campo)
   @Column({ type: 'varchar', length: 50, nullable: true }) remuneration_type: string | null;
   @Column({ type: 'decimal', precision: 7, scale: 4, nullable: true }) percentage: string | null;

@@ -28,7 +28,7 @@ export interface Licenca {
   percentage?: number | null;
   /** @deprecated valor monetário legado — leitura/back-compat; novo modelo usa `amount`. */
   valor?: number | null;
-  observacoes?: string | null;
+  notes?: string | null;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;

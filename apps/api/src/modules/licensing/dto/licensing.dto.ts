@@ -35,7 +35,7 @@ export class CreateLicenseDto {
   /** Campos físicos legados, aceitos apenas para interoperabilidade. */
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(10) moeda?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() observacoes?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
 }
 
 export class UpdateLicenseDto extends PartialType(CreateLicenseDto) {
