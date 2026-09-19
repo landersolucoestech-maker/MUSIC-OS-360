@@ -70,7 +70,7 @@ export class CreateInvoiceDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) forma_pagamento?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(200) condicao_pagamento?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(1000) url_pdf?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(2000) observacoes?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(2000) notes?: string;
 
   @ApiPropertyOptional({ type: [InvoiceItemDto] })
   @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => InvoiceItemDto)

@@ -86,7 +86,7 @@ export default function Invoices() {
     () =>
       invoices.map((n: any) => ({
         ...n,
-        _operationType: parseOperationType(n.observacoes).type,
+        _operationType: parseOperationType(n.notes).type,
       })),
     [invoices],
   );

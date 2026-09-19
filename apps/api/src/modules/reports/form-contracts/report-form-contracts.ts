@@ -549,7 +549,7 @@ const INVOICES_CONTRACT: ReportFormContract = {
     col('aliquota_iss'), col('valor_iss'), col('iss_retido'), col('valor_pis'), col('valor_cofins'),
     col('valor_ir'), col('valor_csll'), col('valor_inss'), col('valor_liquido'),
     col('forma_pagamento'), col('condicao_pagamento'), col('vencimento'), col('url_pdf'),
-    col('observacoes'),
+    col('notes'),
   ],
   excludedFormFields: {},
   repeatingGroup: {

@@ -86,7 +86,7 @@ export function useInvoiceForm({
 
   useEffect(() => {
     if (invoice && (mode === "edit" || mode === "view")) {
-      const { type, observacoesLimpas } = parseOperationType(invoice.observacoes);
+      const { type, observacoesLimpas } = parseOperationType(invoice.notes);
       const valorServicos = numberValue(invoice.valor_servicos, invoice.valor, invoice.valor_total) ?? 0;
       const valorLiquido = numberValue(invoice.valor_liquido, invoice.valor_servicos, invoice.valor, invoice.valor_total) ?? 0;
       const descricaoServicos = invoice.service_description ?? "";
@@ -257,7 +257,7 @@ export function useInvoiceForm({
       vencimento: formData.vencimento ? format(formData.vencimento, "yyyy-MM-dd") : null,
       status: formData.status,
       url_pdf: formData.url_pdf || null,
-      observacoes: serializeOperationType(operationType, formData.observacoes?.trim() || "") || null,
+      notes: serializeOperationType(operationType, formData.observacoes?.trim() || "") || null,
       natureza_operacao: formData.natureza_operacao,
       codigo_servico_municipal: formData.codigo_servico_municipal,
       codigo_municipio: formData.codigo_municipio,

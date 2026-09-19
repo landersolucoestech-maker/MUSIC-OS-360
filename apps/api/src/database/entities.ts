@@ -1064,7 +1064,7 @@ export class InvoiceEntity {
   @Column({ type: 'uuid', nullable: true }) client_id: string | null;
   @Column({ type: 'uuid', nullable: true }) venda_id: string | null;
   @Column({ type: 'text', nullable: true }) url_pdf: string | null;
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) natureza_operacao: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) codigo_servico_municipal: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) codigo_municipio: string | null;

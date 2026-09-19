@@ -116,7 +116,7 @@ describe('InvoicesService.create — cross-tenant FK ownership (find-99749ea0)',
     const query = jest.fn();
     const { svc } = makeUpdateService(query);
     await expect(
-      svc.update('tenant-1', 'user-1', 'invoice-1', { observacoes: 'x' } as any),
+      svc.update('tenant-1', 'user-1', 'invoice-1', { notes: 'x' } as any),
     ).resolves.toBeDefined();
     expect(query).not.toHaveBeenCalled();
   });

@@ -66,7 +66,7 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
 
 export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: InvoiceViewModalProps) {
   if (!invoice) return null;
-  const { type: operationType, observacoesLimpas: cleanedNotes } = parseOperationType(invoice.observacoes);
+  const { type: operationType, observacoesLimpas: cleanedNotes } = parseOperationType(invoice.notes);
   const isEntrada = operationType === "entrada";
   const itens: any[] = Array.isArray(invoice.itens) ? invoice.itens : [];
   const valorServicos = numberValue(invoice.valor_servicos, invoice.valor, invoice.valor_total) ?? 0;
