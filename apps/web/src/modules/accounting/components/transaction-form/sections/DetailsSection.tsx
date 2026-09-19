@@ -37,11 +37,11 @@ export function DetailsSection({
       <CardContent className="space-y-4">
         <FormInputField
           label="Descrição"
-          value={formData.descricao}
-          onChange={(e) => updateField("descricao", e.target.value)}
+          value={formData.description}
+          onChange={(e) => updateField("description", e.target.value)}
           disabled={disabled}
           placeholder="Ex: Pagamento de produção musical para o single 'Nome da Música'"
-          error={errors.descricao}
+          error={errors.description}
           required
         />
 

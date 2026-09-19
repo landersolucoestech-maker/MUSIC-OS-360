@@ -122,7 +122,7 @@ describe('TransactionsService — concorrência otimista em update/patch', () =>
 
   it('sem expectedUpdatedAt: aplica update incondicional (compatibilidade retroativa)', async () => {
     service = await buildService({ affected: 1 });
-    await service.patch(TENANT, 'u1', TX_ID, { descricao: 'Nova descrição' } as any);
+    await service.patch(TENANT, 'u1', TX_ID, { description: 'Nova descrição' } as any);
 
     expect(mockDs._repo.update).toHaveBeenCalledWith(
       { id: TX_ID, tenant_id: TENANT },
@@ -133,7 +133,7 @@ describe('TransactionsService — concorrência otimista em update/patch', () =>
   it('com expectedUpdatedAt correto: inclui updated_at no critério e aplica normalmente', async () => {
     service = await buildService({ affected: 1 });
     await service.patch(TENANT, 'u1', TX_ID, {
-      descricao: 'Editado',
+      description: 'Editado',
       expectedUpdatedAt: NOW.toISOString(),
     } as any);
 
@@ -151,7 +151,7 @@ describe('TransactionsService — concorrência otimista em update/patch', () =>
     service = await buildService({ affected: 0 });
     await expect(
       service.patch(TENANT, 'u1', TX_ID, {
-        descricao: 'Tentativa concorrente',
+        description: 'Tentativa concorrente',
         expectedUpdatedAt: new Date('2026-08-14T11:00:00.000Z').toISOString(),
       } as any),
     ).rejects.toThrow(ConflictException);
@@ -171,7 +171,7 @@ describe('TransactionsService — concorrência otimista em update/patch', () =>
     service = await buildService({ affected: 1 });
     await expect(
       service.patch(TENANT, 'u1', TX_ID, {
-        descricao: 'x',
+        description: 'x',
         expectedUpdatedAt: 'not-a-date',
       } as any),
     ).rejects.toThrow(BadRequestException);
@@ -213,7 +213,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const { service, mockDs, suggestFn } = await buildServiceWithMatcher(null);
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', descricao: 'Pagamento Spotify', category: 'marketing', valor: '50',
+      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'marketing', valor: '50',
     } as any);
 
     expect(saved.categoria).toBe('marketing');
@@ -225,7 +225,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const { service } = await buildServiceWithMatcher({ categoryId: 'cat-1', categoryName: 'streaming', ruleId: 'rule-1' });
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', descricao: 'Pagamento Spotify mensal', category: 'outros', valor: '50',
+      tipoTransacao: 'despesa', description: 'Pagamento Spotify mensal', category: 'outros', valor: '50',
     } as any);
 
     expect(saved.categoria).toBe('streaming');
@@ -235,7 +235,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const { service } = await buildServiceWithMatcher({ categoryId: 'cat-2', categoryName: 'servicos', ruleId: 'rule-2' });
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'receita', descricao: 'Recebimento de show', valor: '500',
+      tipoTransacao: 'receita', description: 'Recebimento de show', valor: '500',
     } as any);
 
     expect(saved.categoria).toBe('servicos');
@@ -245,7 +245,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const { service, suggestFn } = await buildServiceWithMatcher(null);
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', descricao: 'Compra qualquer', category: 'outros', valor: '20',
+      tipoTransacao: 'despesa', description: 'Compra qualquer', category: 'outros', valor: '20',
     } as any);
 
     expect(saved.categoria).toBe('outros');
@@ -257,7 +257,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const otherTenant = 'tenant-other';
 
     await service.create(otherTenant, 'u1', {
-      tipoTransacao: 'despesa', descricao: 'Pagamento Spotify', category: 'outros', valor: '10',
+      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', valor: '10',
     } as any);
 
     expect(suggestFn).toHaveBeenCalledWith(otherTenant, 'DESPESA', 'Pagamento Spotify');
@@ -267,7 +267,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const { service, suggestFn } = await buildServiceWithMatcher({ categoryId: 'c', categoryName: 's', ruleId: 'r' });
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'transferencia', descricao: 'Transferência entre contas', category: 'outros', valor: '10',
+      tipoTransacao: 'transferencia', description: 'Transferência entre contas', category: 'outros', valor: '10',
     } as any);
 
     expect(suggestFn).not.toHaveBeenCalled();
@@ -278,7 +278,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const { service } = await buildServiceWithMatcher(new Error('finance-category-rules DB down'));
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', descricao: 'Pagamento Spotify', category: 'outros', valor: '10',
+      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', valor: '10',
     } as any);
 
     expect(saved.categoria).toBe('outros');
@@ -286,18 +286,18 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
 
   it('importação em lote (múltiplas transações OFX em sequência): cada uma é categorizada de forma independente e determinística', async () => {
     const mockDs = buildCreateDs();
-    const suggestFn = jest.fn(async (_tenant: string, _type: string, descricao: string) => {
-      if (descricao.toLowerCase().includes('spotify')) return { categoryId: 'cat-1', categoryName: 'streaming', ruleId: 'r1' };
-      if (descricao.toLowerCase().includes('uber')) return { categoryId: 'cat-2', categoryName: 'transporte', ruleId: 'r2' };
+    const suggestFn = jest.fn(async (_tenant: string, _type: string, description: string) => {
+      if (description.toLowerCase().includes('spotify')) return { categoryId: 'cat-1', categoryName: 'streaming', ruleId: 'r1' };
+      if (description.toLowerCase().includes('uber')) return { categoryId: 'cat-2', categoryName: 'transporte', ruleId: 'r2' };
       return null;
     });
     const financeCategoryRules = { suggestCategoryForTransaction: suggestFn } as any;
     const service = new TransactionsService(mockDs as any, undefined as any, undefined as any, financeCategoryRules);
 
     const ofxRows = [
-      { tipoTransacao: 'despesa', descricao: 'Pagamento Spotify', category: 'outros', valor: '20' },
-      { tipoTransacao: 'despesa', descricao: 'Corrida Uber', category: 'outros', valor: '35' },
-      { tipoTransacao: 'despesa', descricao: 'Padaria do bairro', category: 'outros', valor: '15' },
+      { tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', valor: '20' },
+      { tipoTransacao: 'despesa', description: 'Corrida Uber', category: 'outros', valor: '35' },
+      { tipoTransacao: 'despesa', description: 'Padaria do bairro', category: 'outros', valor: '15' },
     ];
 
     const results = [];
@@ -314,7 +314,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const service = new TransactionsService(mockDs as any, undefined as any, undefined as any, undefined as any);
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', descricao: 'Pagamento Spotify', category: 'outros', valor: '10',
+      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', valor: '10',
     } as any);
 
     expect(saved.categoria).toBe('outros');
@@ -342,7 +342,7 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     const { service } = makeService(jest.fn(async () => []));
     await expect(
       service.create(TENANT, 'user-1', {
-        tipoTransacao: 'despesa', descricao: 'X', category: 'marketing', valor: '50',
+        tipoTransacao: 'despesa', description: 'X', category: 'marketing', valor: '50',
         artistaVinculado: '323e4567-e89b-12d3-a456-426614174000',
       } as any),
     ).rejects.toBeInstanceOf(BadRequestException);
@@ -352,7 +352,7 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     const { service, repo } = makeService(jest.fn(async () => [{ exists: 1 }]));
     await expect(
       service.create(TENANT, 'user-1', {
-        tipoTransacao: 'despesa', descricao: 'X', category: 'marketing', valor: '50',
+        tipoTransacao: 'despesa', description: 'X', category: 'marketing', valor: '50',
         artistaVinculado: '223e4567-e89b-12d3-a456-426614174000',
       } as any),
     ).resolves.toBeDefined();
@@ -388,7 +388,7 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     const query = jest.fn();
     const { service } = makeUpdateService(query);
     await expect(
-      service.update(TENANT, 'user-1', TX_ID, { descricao: 'New' } as any),
+      service.update(TENANT, 'user-1', TX_ID, { description: 'New' } as any),
     ).resolves.toBeDefined();
     expect(query).not.toHaveBeenCalled();
   });
@@ -406,7 +406,7 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     const query = jest.fn();
     const { service } = makeUpdateService(query);
     await expect(
-      service.patch(TENANT, 'user-1', TX_ID, { descricao: 'New' } as any),
+      service.patch(TENANT, 'user-1', TX_ID, { description: 'New' } as any),
     ).resolves.toBeDefined();
     expect(query).not.toHaveBeenCalled();
   });

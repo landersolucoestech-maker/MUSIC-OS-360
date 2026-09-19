@@ -38,7 +38,7 @@ export interface TransactionFormPayload {
   tipoCliente: string | null;
   category: string | null;
   subcategoria: string | null;
-  descricao: string | null;
+  description: string | null;
   valor: number | null;
   dataTransacao: string | null;
   status: string;
@@ -86,7 +86,7 @@ export function formToTransactionPayload(f: TransactionFormData): TransactionFor
     tipoCliente:             str(f.tipoCliente),
     category:                str(f.category),
     subcategoria:            str(f.subcategoria),
-    descricao:               str(f.descricao),
+    description:             str(f.description),
     valor:                   parseMoney(f.valor),
     dataTransacao:           str(f.dataTransacao),
     status:                  str(f.status) ?? "pending",

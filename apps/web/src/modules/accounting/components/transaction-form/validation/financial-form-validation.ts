@@ -41,8 +41,8 @@ export function validateTransactionForm(
     errors.subcategoria = "Selecione a subcategoria";
   }
 
-  if (!f.descricao?.trim()) {
-    errors.descricao = "Informe a descrição";
+  if (!f.description?.trim()) {
+    errors.description = "Informe a descrição";
   }
 
   const valor = parseMoney(f.valor);

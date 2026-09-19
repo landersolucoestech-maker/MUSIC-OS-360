@@ -148,8 +148,8 @@ describe("applyResets — fields not in RESET_MAP", () => {
     });
   });
 
-  it("returns empty object for descricao (no entry)", () => {
-    const result = applyResets("descricao", "anything");
+  it("returns empty object for description (no entry)", () => {
+    const result = applyResets("description", "anything");
     expect(result).toEqual({});
   });
 

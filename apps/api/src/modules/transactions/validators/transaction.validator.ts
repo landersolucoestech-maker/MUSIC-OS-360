@@ -86,7 +86,7 @@ interface PayloadForValidation {
   tipoCliente?: string;
   category?: string;
   subcategoria?: string;
-  descricao?: string;
+  description?: string;
   valor?: string;
   dataTransacao?: string;
   formaPagamento?: string;
@@ -241,7 +241,7 @@ function validateConditionalByType(data: PayloadForValidation, ctx: z.Refinement
 
 export const createTransactionSchema = z.object({
   tipoTransacao: z.enum(TIPOS_TRANSACAO),
-  descricao:     z.string().trim().min(1),
+  description:     z.string().trim().min(1),
   valor:         valorField,
   dataTransacao: z.string().min(1),
   ...commonFields,
@@ -250,8 +250,8 @@ export const createTransactionSchema = z.object({
   status:        z.enum(STATUS).optional().default('pending'),
   tipoPagamento: z.enum(TIPOS_PAGAMENTO).optional().default('avista'),
 }).superRefine((data, ctx) => {
-  if (!data.descricao?.trim()) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe a descrição', path: ['descricao'] });
+  if (!data.description?.trim()) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe a descrição', path: ['description'] });
   }
   if (!data.valor || isNaN(parseFloat(data.valor)) || parseFloat(data.valor) <= 0) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe um valor válido', path: ['valor'] });
@@ -280,7 +280,7 @@ export const createTransactionSchema = z.object({
 
 export const updateTransactionSchema = z.object({
   tipoTransacao: z.enum(TIPOS_TRANSACAO),
-  descricao:     z.string().trim().optional(),
+  description:     z.string().trim().optional(),
   valor:         valorField,
   dataTransacao: z.string().optional(),
   ...commonFields,
@@ -311,7 +311,7 @@ export const updateTransactionSchema = z.object({
 
 export const patchTransactionSchema = z.object({
   tipoTransacao: z.enum(TIPOS_TRANSACAO).optional(),
-  descricao:     z.string().trim().optional(),
+  description:     z.string().trim().optional(),
   valor:         valorField,
   dataTransacao: z.string().optional(),
   ...commonFields,

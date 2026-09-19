@@ -101,12 +101,12 @@ export default function Accounting() {
   };
 
   const parseOFXContent = (content: string): Array<{
-    descricao: string; valor: number; data: string; type: string;
+    description: string; valor: number; data: string; type: string;
     category: string; status: string; artist_id: string | null;
     client_id: string | null; origem: any; venda_id: string | null;
   }> => {
     const transactions: Array<{
-      descricao: string; valor: number; data: string; type: string;
+      description: string; valor: number; data: string; type: string;
       category: string; status: string; artist_id: string | null;
       client_id: string | null; origem: any; venda_id: string | null;
     }> = [];
@@ -124,7 +124,7 @@ export default function Accounting() {
         const month = dtposted.substring(4, 6);
         const day = dtposted.substring(6, 8);
         transactions.push({
-          descricao: memo, valor: Math.abs(valor),
+          description: memo, valor: Math.abs(valor),
           data: `${year}-${month}-${day}`,
           type: valor >= 0 ? "receita" : "despesa",
           category: "outros", status: "paid",

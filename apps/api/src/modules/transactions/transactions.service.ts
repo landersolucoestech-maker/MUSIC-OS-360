@@ -82,7 +82,7 @@ function buildPersistencePayload(
     payload.categoria = dto.category || 'outros';
   }
   if (dto.tipoTransacao !== undefined) payload.type = dto.tipoTransacao;
-  if (dto.descricao !== undefined) payload.descricao = dto.descricao;
+  if (dto.description !== undefined) payload.descricao = dto.description;
   if (dto.valor !== undefined) payload.valor = String(dto.valor);
   if (dto.dataTransacao !== undefined) payload.data = dto.dataTransacao;
   if (dto.status !== undefined) payload.status = dto.status;
@@ -396,13 +396,13 @@ export class TransactionsService {
     }
 
     const ruleType = toRuleTransactionType((dto as AnyRecord).tipoTransacao);
-    const descricao = (dto as AnyRecord).descricao as string | undefined;
-    if (!ruleType || !descricao || !this.financeCategoryRules) {
+    const description = (dto as AnyRecord).description as string | undefined;
+    if (!ruleType || !description || !this.financeCategoryRules) {
       return currentCategoria;
     }
 
     try {
-      const suggestion = await this.financeCategoryRules.suggestCategoryForTransaction(tenantId, ruleType, descricao);
+      const suggestion = await this.financeCategoryRules.suggestCategoryForTransaction(tenantId, ruleType, description);
       return suggestion?.categoryName ?? currentCategoria;
     } catch {
       return currentCategoria;

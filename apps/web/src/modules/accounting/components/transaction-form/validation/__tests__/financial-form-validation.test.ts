@@ -9,7 +9,7 @@ const baseForm: TransactionFormData = {
   tipoCliente: "empresa",
   category: "servicos",
   subcategoria: "design-grafico",
-  descricao: "Pagamento de design",
+  description: "Pagamento de design",
   valor: "1500",
   dataTransacao: "2026-05-01",
   status: "pending",
@@ -86,14 +86,14 @@ describe("always-required fields", () => {
     expect(errors.tipoTransacao).toBe("Selecione o tipo de transação");
   });
 
-  it("errors when descricao is empty", () => {
-    const errors = validateTransactionForm(form({ descricao: "" }), noRules);
-    expect(errors.descricao).toBe("Informe a descrição");
+  it("errors when description is empty", () => {
+    const errors = validateTransactionForm(form({ description: "" }), noRules);
+    expect(errors.description).toBe("Informe a descrição");
   });
 
-  it("errors when descricao is only whitespace", () => {
-    const errors = validateTransactionForm(form({ descricao: "   " }), noRules);
-    expect(errors.descricao).toBe("Informe a descrição");
+  it("errors when description is only whitespace", () => {
+    const errors = validateTransactionForm(form({ description: "   " }), noRules);
+    expect(errors.description).toBe("Informe a descrição");
   });
 
   it("errors when valor is empty", () => {
@@ -455,7 +455,7 @@ describe("multiple simultaneous errors", () => {
       tipoCliente: "",
       category: "",
       subcategoria: "",
-      descricao: "",
+      description: "",
       valor: "",
       dataTransacao: "",
       status: "pending",
@@ -479,7 +479,7 @@ describe("multiple simultaneous errors", () => {
     };
     const errors = validateTransactionForm(emptyForm, noRules);
     expect(errors.tipoTransacao).toBeDefined();
-    expect(errors.descricao).toBeDefined();
+    expect(errors.description).toBeDefined();
     expect(errors.valor).toBeDefined();
     expect(errors.dataTransacao).toBeDefined();
     expect(errors.formaPagamento).toBeDefined();

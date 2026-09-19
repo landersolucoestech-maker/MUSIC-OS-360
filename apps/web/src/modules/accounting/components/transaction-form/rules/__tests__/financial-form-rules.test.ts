@@ -8,7 +8,7 @@ const base: TransactionFormData = {
   tipoCliente: "",
   category: "",
   subcategoria: "",
-  descricao: "",
+  description: "",
   valor: "",
   dataTransacao: "",
   status: "pending",
