@@ -601,7 +601,7 @@ const INVENTORY_ITEMS_CONTRACT: ReportFormContract = {
   fields: [
     col('name'), col('category'), col('quantidade'), col('valor_unitario'),
     col('localizacao'), col('status'), col('responsavel'), col('setor'),
-    col('data_entrada'), col('local_compra'), col('numero_nota_fiscal'), col('observacoes'),
+    col('data_entrada'), col('local_compra'), col('numero_nota_fiscal'), col('notes'),
   ],
   excludedFormFields: {},
 };

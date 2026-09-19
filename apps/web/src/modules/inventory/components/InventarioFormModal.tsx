@@ -113,7 +113,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
           localizacao: item.localizacao || "",
           status: item.status || "disponivel",
           valor_unitario: item.valor_unitario || 0,
-          observacoes: item.observacoes || "",
+          observacoes: item.notes || "",
           setor: item.setor || "",
           responsavel: item.responsavel || "",
           localCompra: item.localCompra || "",
@@ -156,7 +156,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
         data_entrada:        data.dataEntrada || undefined,
         local_compra:        data.localCompra || undefined,
         numero_nota_fiscal:  data.numeroNotaFiscal || undefined,
-        observacoes:         data.observacoes || undefined,
+        notes:               data.observacoes || undefined,
       };
       if (mode === "edit" && item?.id) {
         await updateInventario.mutateAsync({

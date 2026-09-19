@@ -2523,7 +2523,7 @@ export class InventoryItemEntity {
   @Column({ type: 'date', nullable: true }) data_entrada: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) local_compra: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) numero_nota_fiscal: string | null;
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) updated_by: string | null;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
