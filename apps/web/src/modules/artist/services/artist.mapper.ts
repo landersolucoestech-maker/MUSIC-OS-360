@@ -309,7 +309,7 @@ export type ArtistWireRecord = Record<string, unknown> & {
   telefone?: string | null;
   cpf_cnpj?: string | null;
   foto_url?: string | null;
-  observacoes?: string | null;
+  notes?: string | null;
   contrato_id?: string | null;
   slug_artistico?: string | null;
   tags_musicais?: string[] | null;
@@ -465,7 +465,7 @@ export function wireToArtist(w: ArtistWireRecord): Artist {
     phone: w.telefone,
     taxId: w.cpf_cnpj,
     photoUrl: w.foto_url,
-    notes: w.observacoes,
+    notes: w.notes,
     contractId: w.contrato_id,
     artisticSlug: w.slug_artistico,
     musicTags: w.tags_musicais,
@@ -556,7 +556,6 @@ export function artistToWirePayload(a: Partial<Artist>): Record<string, unknown>
   setIf("phone", "telefone");
   setIf("taxId", "cpf_cnpj");
   setIf("photoUrl", "foto_url");
-  setIf("notes", "observacoes");
   setIf("contractId", "contrato_id");
   setIf("artisticSlug", "slug_artistico");
   setIf("musicTags", "tags_musicais");

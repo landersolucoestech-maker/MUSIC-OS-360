@@ -187,12 +187,12 @@ describe('ArtistsService', () => {
 
     await service.update(TENANT_A, USER_ID, 'artist-001', {
       agencia_booking: null,
-      observacoes: 'nova bio',
+      notes: 'nova bio',
     } as any);
 
     expect(ds._repo.update).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'artist-001', tenant_id: TENANT_A }),
-      expect.objectContaining({ agencia_booking: null, observacoes: 'nova bio' }),
+      expect.objectContaining({ agencia_booking: null, notes: 'nova bio' }),
     );
     const updates = ds._repo.update.mock.calls[0][1] as Record<string, unknown>;
     expect(updates).not.toHaveProperty('nome_artistico');

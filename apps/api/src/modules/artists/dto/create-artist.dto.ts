@@ -25,7 +25,7 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) nome_civil?: string;
   @ApiPropertyOptional({ enum: ArtistStatus }) @IsOptional() @IsEnum(ArtistStatus) status?: ArtistStatus;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) genero_musical?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() observacoes?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() foto_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @Matches(/^https:\/\/open\.spotify\.com\/(?:intl-[a-z]{2}\/)?artist\/[A-Za-z0-9]{22}(?:[/?#].*)?$/i, { message: 'Informe uma URL válida do Spotify' }) spotify_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @Matches(/^https:\/\/(?:www\.)?(?:youtube\.com\/(?:@[^/?#]+|channel\/UC[A-Za-z0-9_-]{22})(?:[/?#].*)?|music\.youtube\.com\/(?:.*))$/i, { message: 'Informe uma URL válida do YouTube' }) youtube_url?: string;

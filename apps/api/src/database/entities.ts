@@ -490,7 +490,7 @@ export class ArtistEntity {
   @Column({ type: 'text', nullable: true }) foto_url: string | null;
   @Column({ type: 'jsonb', default: [] }) galeria_urls: unknown[];
   @Column({ type: 'jsonb', default: [] }) documents: unknown[];
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) manager_nome: string | null;
   @Column({ type: 'text', nullable: true }) manager_contato_encrypted: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) produtor_executivo: string | null;

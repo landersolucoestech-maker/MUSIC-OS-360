@@ -175,7 +175,7 @@ export class LeadEventsHandler {
               nome_civil: null,
               status: ArtistStatus.IN_NEGOTIATION,
               status_cadastro: ArtistStatusCadastro.ACTIVE,
-              observacoes: `Criado automaticamente a partir da conversão do lead "${leadId}" em ${convertedAt}`,
+              notes: `Criado automaticamente a partir da conversão do lead "${leadId}" em ${convertedAt}`,
               metadata: {
                 leadId,
                 clientId,

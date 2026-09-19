@@ -1184,11 +1184,11 @@ export function ArtistVision360Modal({
                       </p>
                     </div>
                   </div>
-                  {artista.observacoes && (
+                  {artista.notes && (
                     <div className="mt-4">
                       <p className="text-xs text-muted-foreground">Biografia</p>
                       <p className="text-sm font-medium">
-                        {artista.observacoes}
+                        {artista.notes}
                       </p>
                     </div>
                   )}
@@ -1696,14 +1696,14 @@ export function ArtistVision360Modal({
               })()}
 
               {/* Observações */}
-              {artista.observacoes && (
+              {artista.notes && (
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-2 mb-4">
                       <BookOpen className="h-5 w-5 text-muted-foreground" />
                       <h3 className="font-semibold">Observações</h3>
                     </div>
-                    <p className="text-sm">{artista.observacoes}</p>
+                    <p className="text-sm">{artista.notes}</p>
                   </CardContent>
                 </Card>
               )}

@@ -82,7 +82,7 @@ const ARTISTS_CONTRACT: ReportFormContract = {
   fields: [
     // Identidade e perfil (colunas diretas)
     col('nome_artistico'), col('nome_civil'), col('status'),
-    col('genero_musical'), col('observacoes'), col('especialidades'),
+    col('genero_musical'), col('notes'), col('especialidades'),
     // Perfil estendido (metadata jsonb)
     meta('slug_artistico'), meta('tipo_perfil'), meta('fase_carreira'),
     meta('genero'), meta('data_nascimento'), meta('rg'), meta('endereco'),
@@ -130,7 +130,7 @@ const ARTISTS_CONTRACT: ReportFormContract = {
     notas_internas: 'anotação interna oculta por política (HIDDEN_INTERNAL_HINT)',
   },
   filterableColumns: ['status', 'genero_musical'],
-  searchableColumns: ['nome_artistico', 'nome_civil', 'genero_musical', 'observacoes'],
+  searchableColumns: ['nome_artistico', 'nome_civil', 'genero_musical', 'notes'],
 };
 
 // ─── Funcionários (RH) ────────────────────────────────────────────────────────

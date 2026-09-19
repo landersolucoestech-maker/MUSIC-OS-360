@@ -30,7 +30,7 @@ const REQUIRED_COLUMNS = ['nome_artistico', 'status'] as const;
 
 // Colunas anuláveis: `undefined` = não tocar; `null`/valor = persistir exatamente.
 const NULLABLE_COLUMNS = [
-  'nome_civil', 'genero_musical', 'observacoes', 'foto_url',
+  'nome_civil', 'genero_musical', 'notes', 'foto_url',
   'manager_nome', 'produtor_executivo',
   'agencia_booking', 'label_parceira', 'spotify_url', 'youtube_url',
   'deezer_url', 'apple_music_url', 'soundcloud_url', 'contrato_id',
@@ -278,7 +278,7 @@ export class ArtistsService {
       nome_civil:          dto.nome_civil          ?? null,
       status:              dto.status ?? ArtistStatus.IN_NEGOTIATION,
       genero_musical:      dto.genero_musical      ?? null,
-      observacoes:         dto.observacoes         ?? null,
+      notes:               dto.notes               ?? null,
       foto_url:            dto.foto_url            ?? null,
       galeria_urls:        (dto.galeria_urls        ?? []) as any,
       documents:          (dto.documents          ?? []) as any,
