@@ -60,7 +60,6 @@ export const FIELD_LABELS_PT_BR = {
 
   // ── Conteúdo / CRM ──────────────────────────────────────────────────────────
   notes: 'Observações',
-  observacoes: 'Observações',
   observacao: 'Observação',
   notasInternas: 'Notas internas',
   description: 'Descrição',
