@@ -2578,7 +2578,7 @@ export class FinancialRuleEntity {
   @Column({ type: 'varchar', length: 100, nullable: true }) category: string | null;
   @Column({ type: 'varchar', length: 50, default: 'percentual' }) calculo: string;
   @Column({ type: 'decimal', precision: 10, scale: 4, default: 0 }) valor: string;
-  @Column({ type: 'text', nullable: true }) descricao: string | null;
+  @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'boolean', default: true }) active: boolean;
   @Column({ type: 'jsonb', default: {} }) condicoes: Record<string, unknown>;
   @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;

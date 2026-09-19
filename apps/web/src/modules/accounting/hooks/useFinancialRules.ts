@@ -12,7 +12,7 @@ export interface FinancialRule {
   category: string | null;
   calculo: FinancialRuleCalculo;
   valor: number;
-  descricao: string | null;
+  description: string | null;
   active: boolean;
   condicoes: { triggers?: FinancialRuleTrigger[] } | null;
   created_at: string;

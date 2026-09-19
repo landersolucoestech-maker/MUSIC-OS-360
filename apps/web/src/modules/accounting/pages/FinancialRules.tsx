@@ -55,14 +55,14 @@ interface FormState {
   category: string;
   calculo: FinancialRuleCalculo;
   valor: string;
-  descricao: string;
+  description: string;
   active: boolean;
   triggers: FinancialRuleTrigger[];
 }
 
 const EMPTY_FORM: FormState = {
   name: "", type: "outros", category: "", calculo: "percentual",
-  valor: "", descricao: "", active: true, triggers: [],
+  valor: "", description: "", active: true, triggers: [],
 };
 
 function toForm(rule: FinancialRule): FormState {
@@ -72,7 +72,7 @@ function toForm(rule: FinancialRule): FormState {
     category: rule.category ?? "",
     calculo: rule.calculo,
     valor: String(rule.valor),
-    descricao: rule.descricao ?? "",
+    description: rule.description ?? "",
     active: rule.active,
     triggers: rule.condicoes?.triggers ?? [],
   };
@@ -119,7 +119,7 @@ export default function FinancialRules() {
       category: form.category.trim() || undefined,
       calculo: form.calculo,
       valor: valorNum,
-      descricao: form.descricao.trim() || undefined,
+      description: form.description.trim() || undefined,
       active: form.active,
       condicoes: { triggers: form.triggers },
     };
@@ -292,7 +292,7 @@ export default function FinancialRules() {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium">Descrição</Label>
-                <Textarea value={form.descricao} onChange={(e) => setField("descricao", e.target.value)} placeholder="Opcional" className="min-h-[70px]" />
+                <Textarea value={form.description} onChange={(e) => setField("description", e.target.value)} placeholder="Opcional" className="min-h-[70px]" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium">Eventos que disparam esta regra *</Label>
