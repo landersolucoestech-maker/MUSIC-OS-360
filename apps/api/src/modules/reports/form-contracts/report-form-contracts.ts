@@ -385,7 +385,7 @@ const TAKEDOWNS_CONTRACT: ReportFormContract = {
   fields: [
     col('title'), col('type'), col('obra_afetada'), col('artista'), col('status'),
     col('prioridade'), col('plataforma'), col('url_infracao'), col('motivo'),
-    col('data_identificacao'), col('description'), col('evidencias'), col('observacoes'),
+    col('data_identificacao'), col('description'), col('evidencias'), col('notes'),
   ],
   excludedFormFields: {},
   filterableColumns: ['status', 'type', 'prioridade', 'plataforma'],

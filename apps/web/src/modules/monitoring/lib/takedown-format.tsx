@@ -68,7 +68,7 @@ export function normalizeTakedown(raw: Takedown & Record<string, unknown>): Norm
     descricao: pick(raw.description, raw.descricao),
     evidencias: pick(raw.evidencias),
     status: pick(raw.status),
-    observacoes: pick(raw.observacoes),
+    observacoes: pick(raw.notes, raw.observacoes),
     created_at: str(raw.created_at) || undefined,
     updated_at: str(raw.updated_at) || undefined,
   };

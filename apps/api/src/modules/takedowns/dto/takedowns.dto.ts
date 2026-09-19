@@ -27,7 +27,7 @@ export class CreateTakedownDto {
   @ApiPropertyOptional({ enum: STATUSES }) @IsOptional() @IsIn(STATUSES) status?: string;
   @ApiPropertyOptional({ type: String, format: 'date' }) @IsOptional() @IsString() data_identificacao?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() evidencias?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() observacoes?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
 
   // Relações opcionais preenchidas por fluxos internos, sem substituir os
   // campos legíveis exibidos no formulário.

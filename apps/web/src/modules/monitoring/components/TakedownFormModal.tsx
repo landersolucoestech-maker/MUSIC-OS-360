@@ -108,7 +108,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
     evidencias: data.evidencias || null,
     data_identificacao: data.dataIdentificacao || null,
     status: data.status,
-    observacoes: data.observacoes || null,
+    notes: data.observacoes || null,
   });
 
   const onSubmit = async (data: TakedownFormData) => {

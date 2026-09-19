@@ -1544,7 +1544,7 @@ export class TakedownEntity {
   @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'text', nullable: true }) evidencias: string | null;
   @Column({ type: 'date', nullable: true }) data_identificacao: string | null;
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;

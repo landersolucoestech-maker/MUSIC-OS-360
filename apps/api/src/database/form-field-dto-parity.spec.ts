@@ -57,7 +57,7 @@ describe('Colunas dedicadas de formulário sempre expostas no DTO correspondente
     const fields = [
       'title', 'type', 'obra_afetada', 'artista', 'plataforma',
       'prioridade', 'url_infracao', 'motivo', 'description', 'evidencias',
-      'data_identificacao', 'status', 'observacoes',
+      'data_identificacao', 'status', 'notes',
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);
     expectFields(dto, fields);

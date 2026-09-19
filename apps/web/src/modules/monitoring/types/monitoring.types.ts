@@ -23,7 +23,7 @@ export interface Takedown {
   data_identificacao?: string | null;
   data_solicitacao?: string | null;
   data_conclusao?: string | null;
-  observacoes?: string | null;
+  notes?: string | null;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;
