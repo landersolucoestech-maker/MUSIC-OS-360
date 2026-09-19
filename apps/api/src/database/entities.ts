@@ -1541,7 +1541,7 @@ export class TakedownEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) artista: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) prioridade: string | null;
   @Column({ type: 'text', nullable: true }) url_infracao: string | null;
-  @Column({ type: 'text', nullable: true }) descricao: string | null;
+  @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'text', nullable: true }) evidencias: string | null;
   @Column({ type: 'date', nullable: true }) data_identificacao: string | null;
   @Column({ type: 'text', nullable: true }) observacoes: string | null;

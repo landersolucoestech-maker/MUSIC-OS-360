@@ -18,7 +18,7 @@ export interface Takedown {
   url_infracao?: string | null;
   status?: TakedownStatus | string | null;
   motivo?: string | null;
-  descricao?: string | null;
+  description?: string | null;
   evidencias?: string | null;
   data_identificacao?: string | null;
   data_solicitacao?: string | null;

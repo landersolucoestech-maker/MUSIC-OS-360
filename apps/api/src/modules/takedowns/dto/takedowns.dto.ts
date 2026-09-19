@@ -22,7 +22,7 @@ export class CreateTakedownDto {
   @ApiProperty() @IsString() @MaxLength(100) plataforma!: string;
   @ApiPropertyOptional() @IsOptional() @IsString() url_infracao?: string;
   @ApiProperty() @IsString() motivo!: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() descricao?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional({ enum: PRIORIDADES }) @IsOptional() @IsIn(PRIORIDADES) prioridade?: string;
   @ApiPropertyOptional({ enum: STATUSES }) @IsOptional() @IsIn(STATUSES) status?: string;
   @ApiPropertyOptional({ type: String, format: 'date' }) @IsOptional() @IsString() data_identificacao?: string;

@@ -104,7 +104,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
     prioridade: data.prioridade,
     url_infracao: data.urlInfratora || null,
     motivo: data.motivo,
-    descricao: data.descricao || null,
+    description: data.descricao || null,
     evidencias: data.evidencias || null,
     data_identificacao: data.dataIdentificacao || null,
     status: data.status,

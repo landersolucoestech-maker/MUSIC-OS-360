@@ -65,7 +65,7 @@ export function normalizeTakedown(raw: Takedown & Record<string, unknown>): Norm
     url_infracao: pick(raw.url_infracao, raw.urlInfratora, raw.url),
     motivo: pick(raw.motivo),
     data: pick(raw.data_identificacao, raw.dataIdentificacao, raw.data_solicitacao, raw.data),
-    descricao: pick(raw.descricao),
+    descricao: pick(raw.description, raw.descricao),
     evidencias: pick(raw.evidencias),
     status: pick(raw.status),
     observacoes: pick(raw.observacoes),
