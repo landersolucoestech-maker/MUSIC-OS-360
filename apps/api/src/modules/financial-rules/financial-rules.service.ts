@@ -38,7 +38,7 @@ export class FinancialRulesService {
 
     if (query.type)     qb.andWhere('r.type = :type',           { type: query.type });
     if (query.category) qb.andWhere('r.category = :category', { category: query.category });
-    if (query.ativo !== undefined) qb.andWhere('r.ativo = :ativo', { ativo: query.ativo });
+    if (query.active !== undefined) qb.andWhere('r.active = :active', { active: query.active });
     if (query.search)   qb.andWhere('r.nome ILIKE :search',     { search: `%${query.search}%` });
 
     qb.orderBy('r.nome', 'ASC')
@@ -104,7 +104,7 @@ export class FinancialRulesService {
       if (!this.repo) return;
       rules = await this.repo
         .createQueryBuilder('r')
-        .where('r.tenant_id = :tenantId AND r.ativo = true AND r.deleted_at IS NULL', { tenantId })
+        .where('r.tenant_id = :tenantId AND r.active = true AND r.deleted_at IS NULL', { tenantId })
         .getMany();
     } catch (err) {
       this.logger.warn(`evaluateRules: failed to fetch rules — ${String(err)}`);

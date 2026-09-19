@@ -13,7 +13,7 @@ export class CreateFinancialRuleDto {
   @ApiProperty({ enum: CALCULOS }) @IsIn(CALCULOS) calculo!: string;
   @ApiProperty() @IsNumber() @Type(() => Number) valor!: number;
   @ApiPropertyOptional() @IsOptional() @IsString() descricao?: string;
-  @ApiPropertyOptional() @IsOptional() @IsBoolean() ativo?: boolean;
+  @ApiPropertyOptional() @IsOptional() @IsBoolean() active?: boolean;
   @ApiPropertyOptional() @IsOptional() condicoes?: Record<string, unknown>;
 }
 
@@ -25,6 +25,6 @@ export class UpdateFinancialRuleDto extends PartialType(CreateFinancialRuleDto) 
 export class QueryFinancialRuleDto extends PaginationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() type?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() category?: string;
-  @ApiPropertyOptional() @IsOptional() ativo?: boolean;
+  @ApiPropertyOptional() @IsOptional() active?: boolean;
   @ApiPropertyOptional() @IsOptional() @IsString() search?: string;
 }

@@ -56,13 +56,13 @@ interface FormState {
   calculo: FinancialRuleCalculo;
   valor: string;
   descricao: string;
-  ativo: boolean;
+  active: boolean;
   triggers: FinancialRuleTrigger[];
 }
 
 const EMPTY_FORM: FormState = {
   nome: "", type: "outros", category: "", calculo: "percentual",
-  valor: "", descricao: "", ativo: true, triggers: [],
+  valor: "", descricao: "", active: true, triggers: [],
 };
 
 function toForm(rule: FinancialRule): FormState {
@@ -73,7 +73,7 @@ function toForm(rule: FinancialRule): FormState {
     calculo: rule.calculo,
     valor: String(rule.valor),
     descricao: rule.descricao ?? "",
-    ativo: rule.ativo,
+    active: rule.active,
     triggers: rule.condicoes?.triggers ?? [],
   };
 }
@@ -120,7 +120,7 @@ export default function FinancialRules() {
       calculo: form.calculo,
       valor: valorNum,
       descricao: form.descricao.trim() || undefined,
-      ativo: form.ativo,
+      active: form.active,
       condicoes: { triggers: form.triggers },
     };
 
@@ -148,7 +148,7 @@ export default function FinancialRules() {
 
   async function handleToggleActive(rule: FinancialRule) {
     try {
-      await updateRule.mutateAsync({ id: rule.id, ativo: !rule.ativo } as never);
+      await updateRule.mutateAsync({ id: rule.id, active: !rule.active } as never);
     } catch {
       // erro já reportado via toast pelo hook
     }
@@ -224,7 +224,7 @@ export default function FinancialRules() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Switch checked={rule.ativo} onCheckedChange={() => handleToggleActive(rule)} data-testid={`switch-ativo-${rule.id}`} />
+                          <Switch checked={rule.active} onCheckedChange={() => handleToggleActive(rule)} data-testid={`switch-active-${rule.id}`} />
                         </TableCell>
                         <TableCell className="text-right">
                           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(rule)} title="Editar">
@@ -310,7 +310,7 @@ export default function FinancialRules() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Switch checked={form.ativo} onCheckedChange={(v) => setField("ativo", v)} />
+                <Switch checked={form.active} onCheckedChange={(v) => setField("active", v)} />
                 <Label className="text-xs font-medium">Regra ativa</Label>
               </div>
               {error && <p className="text-[11px] text-destructive">{error}</p>}

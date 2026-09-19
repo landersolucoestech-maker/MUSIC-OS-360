@@ -2569,7 +2569,7 @@ export class LicenseEntity {
 // ─── Financial Rules ──────────────────────────────────────────────────────────
 @Entity('financial_rules')
 @Index(['tenant_id', 'type'])
-@Index(['tenant_id', 'ativo'])
+@Index(['tenant_id', 'active'])
 export class FinancialRuleEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
@@ -2579,7 +2579,7 @@ export class FinancialRuleEntity {
   @Column({ type: 'varchar', length: 50, default: 'percentual' }) calculo: string;
   @Column({ type: 'decimal', precision: 10, scale: 4, default: 0 }) valor: string;
   @Column({ type: 'text', nullable: true }) descricao: string | null;
-  @Column({ type: 'boolean', default: true }) ativo: boolean;
+  @Column({ type: 'boolean', default: true }) active: boolean;
   @Column({ type: 'jsonb', default: {} }) condicoes: Record<string, unknown>;
   @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) updated_by: string | null;

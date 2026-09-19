@@ -14,7 +14,7 @@ import { EventsService } from '../../core/events/events.service';
 const NOW = new Date('2026-08-14T12:00:00.000Z');
 const RULE = {
   id: 'rule-1', tenant_id: 'tenant-1', nome: 'Comissão padrão', type: 'comissao',
-  calculo: 'percentual', valor: '10', ativo: true, condicoes: {},
+  calculo: 'percentual', valor: '10', active: true, condicoes: {},
   deleted_at: null, updated_at: NOW,
 };
 
@@ -96,7 +96,7 @@ describe('FinancialRulesService.evaluateRules — calculo não implementado (REM
   it("calculo:'faixa' não emite FINANCIAL_RULE_TRIGGERED (nunca fabrica computed=0)", async () => {
     const { svc, events } = makeEvalService({
       id: 'rule-faixa', tenant_id: 'tenant-1', nome: 'Comissão em faixas', type: 'comissao',
-      calculo: 'faixa', valor: '10', ativo: true, condicoes: {},
+      calculo: 'faixa', valor: '10', active: true, condicoes: {},
     });
 
     await svc.evaluateRules('tenant-1', 'transaction.created', { entityId: 'tx-1', entityType: 'transaction', valor: 1000 });
@@ -107,7 +107,7 @@ describe('FinancialRulesService.evaluateRules — calculo não implementado (REM
   it("calculo:'percentual' continua emitindo normalmente (regressão)", async () => {
     const { svc, events } = makeEvalService({
       id: 'rule-pct', tenant_id: 'tenant-1', nome: 'Comissão padrão', type: 'comissao',
-      calculo: 'percentual', valor: '10', ativo: true, condicoes: {},
+      calculo: 'percentual', valor: '10', active: true, condicoes: {},
     });
 
     await svc.evaluateRules('tenant-1', 'transaction.created', { entityId: 'tx-1', entityType: 'transaction', valor: 1000 });
