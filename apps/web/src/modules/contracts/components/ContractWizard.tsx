@@ -77,7 +77,7 @@ interface WizardMeta {
    * Canonical contract value (maps to ContractEntity.valor). Prior to this
    * field, the wizard had no way to set it at all -- money typed into a
    * template's "currency" manifest variable (if any) was serialized into
-   * the wizardBlob/observacoes JSON only, so `valor` stayed unset for every
+   * the wizardBlob/notes JSON only, so `valor` stayed unset for every
    * contract created via this flow. That silently fed contracts.service.ts's
    * CONTRACT_SIGNED handler a `contractValor = 0` for the provisional
    * revenue transaction (not just a missing KPI -- a wrong financial
@@ -964,11 +964,11 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
     if (contrato) {
       const tmpl = templates.find((t) => t.id === contrato.template_id);
 
-      // FIX: parse saved wizard blob from observacoes to hydrate parties/variables
+      // FIX: parse saved wizard blob from notes to hydrate parties/variables
       let savedBlob: { parties?: Record<string, PartyData>; variables?: Record<string, string> } = {};
       try {
-        if (contrato.observacoes && contrato.observacoes.startsWith("{")) {
-          savedBlob = JSON.parse(contrato.observacoes);
+        if (contrato.notes && contrato.notes.startsWith("{")) {
+          savedBlob = JSON.parse(contrato.notes);
         }
       } catch { /* ignore parse errors */ }
 
@@ -1150,7 +1150,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
         start_date:      state.meta.start_date || null,
         end_date:         state.meta.end_date    || null,
         valor:            parsedValor,
-        observacoes:      wizardBlob,
+        notes:            wizardBlob,
         signing_platform: provider,
         // Deliberately map WizardSigner to the persisted WizardSignerRecord shape
         signers: state.signers.map(({ name, email, role, obrigatorio, ordem, provider }): WizardSignerRecord => ({

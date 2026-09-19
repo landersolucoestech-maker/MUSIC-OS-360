@@ -285,10 +285,10 @@ describe('ContractsService.create — consolidação de aliases (Fase 5 / C1)', 
 describe('ContractsService.update — consolidação de aliases (Fase 5 / C1)', () => {
   it('PATCH parcial (só um campo não-alias) é preservado', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
-    await svc.update('tenant-1', 'user-1', 'contract-1', { observacoes: 'nova nota' } as unknown as UpdateContractDto);
+    await svc.update('tenant-1', 'user-1', 'contract-1', { notes: 'nova nota' } as unknown as UpdateContractDto);
 
     const row = updatedC1(repo);
-    expect(row['observacoes']).toBe('nova nota');
+    expect(row['notes']).toBe('nova nota');
     expect(row['title']).toBeUndefined();
   });
 
@@ -336,7 +336,7 @@ describe('ContractsService.update — consolidação de aliases (Fase 5 / C1)', 
 
   it('update sem type/type enviados NÃO aplica default "outro"', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
-    await svc.update('tenant-1', 'user-1', 'contract-1', { observacoes: 'x' } as unknown as UpdateContractDto);
+    await svc.update('tenant-1', 'user-1', 'contract-1', { notes: 'x' } as unknown as UpdateContractDto);
 
     expect(updatedC1(repo)['type']).toBeUndefined();
   });

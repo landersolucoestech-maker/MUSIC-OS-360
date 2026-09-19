@@ -165,10 +165,10 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                   ))}
                 </div>
 
-                {contrato.observacoes && (
+                {contrato.notes && (
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Observações</p>
-                    <p className="text-sm bg-muted/30 rounded-lg p-3">{contrato.observacoes}</p>
+                    <p className="text-sm bg-muted/30 rounded-lg p-3">{contrato.notes}</p>
                   </div>
                 )}
 

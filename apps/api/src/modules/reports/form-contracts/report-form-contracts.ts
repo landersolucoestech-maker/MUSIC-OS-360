@@ -155,7 +155,7 @@ const CONTRACTS_CONTRACT: ReportFormContract = {
   identityColumn: 'title',
   fields: [
     col('title'), col('type'), col('status'), col('valor'),
-    col('start_date'), col('end_date'), col('exclusivo'), col('observacoes'),
+    col('start_date'), col('end_date'), col('exclusivo'), col('notes'),
     col('arquivo_url'), col('signing_platform'),
     col('artist_id'), col('client_id'), col('release_id'),
     col('template_id'), // campo do wizard (regra 2026-07-12: coluna própria)

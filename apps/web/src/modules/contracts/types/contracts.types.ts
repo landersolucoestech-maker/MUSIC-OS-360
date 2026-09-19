@@ -42,7 +42,7 @@ export interface Contract {
   end_date?: string | null;
   valor?: number | null;
   exclusivo?: boolean | null;
-  observacoes?: string | null;
+  notes?: string | null;
   template_id?: string | null;
   assinado_em?: string | null;
   arquivo_url?: string | null;

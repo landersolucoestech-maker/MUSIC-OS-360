@@ -148,7 +148,7 @@ export class ContractsService {
     out.client_id    = dto['client_id']    ?? null;
     out.release_id = dto['release_id'] ?? null;
     out.exclusivo     = dto['exclusivo']     ?? false;
-    out.observacoes   = dto['observacoes']   ?? null;
+    out.notes         = dto['notes']         ?? null;
     out.autentique_doc_id = dto['autentique_doc_id'] ?? null;
     out.signing_platform  = dto['signing_platform']  ?? null;
     out.versoes       = (dto['versoes'] as unknown[] | undefined) ?? [];

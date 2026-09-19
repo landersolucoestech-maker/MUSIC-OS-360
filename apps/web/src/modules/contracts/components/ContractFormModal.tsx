@@ -576,7 +576,7 @@ function contratoToFormData(c: ContractWithRelations): Partial<ContratoFormSubmi
     start_date:   c.start_date ? new Date(c.start_date) : undefined,
     end_date:     c.end_date    ? new Date(c.end_date)    : undefined,
     fixed_value:  c.valor ?? undefined,
-    observations: c.observacoes?.startsWith("{") ? undefined : (c.observacoes ?? undefined),
+    observations: c.notes?.startsWith("{") ? undefined : (c.notes ?? undefined),
     signers:      Array.isArray(c.signers)
       ? c.signers.filter((s): s is ContractSigner => !("obrigatorio" in s))
       : [],
@@ -623,7 +623,7 @@ export const ContractFormModal = ({
       start_date: start_date ? (start_date as Date).toISOString().split("T")[0] : null,
       end_date: end_date ? (end_date as Date).toISOString().split("T")[0] : null,
       valor: fixed_value || null,
-      observacoes: observations || null,
+      notes: observations || null,
       signers: signers ?? [],
       documents: documents ?? [],
     };

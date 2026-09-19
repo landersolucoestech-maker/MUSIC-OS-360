@@ -894,7 +894,7 @@ export class ContractEntity {
   @Column({ type: 'timestamp', nullable: true }) end_date: Date | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) valor: string | null;
   @Column({ type: 'boolean', default: false }) exclusivo: boolean;
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'text', nullable: true }) arquivo_url: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) autentique_doc_id: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) signing_platform: string | null;

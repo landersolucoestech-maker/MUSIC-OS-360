@@ -137,7 +137,7 @@ export class CreateContractDto {
 
   @ApiPropertyOptional()
   @IsOptional() @IsString()
-  observacoes?: string;
+  notes?: string;
 
   @ApiPropertyOptional()
   @IsOptional() @IsString()
