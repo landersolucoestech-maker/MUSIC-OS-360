@@ -24,7 +24,7 @@ interface ArtistaLookup {
 
 interface FuncionarioLookup {
   id: string;
-  nome?: string | null;
+  name?: string | null;
   full_name?: string | null;
   email?: string | null;
   telefone?: string | null;
@@ -96,7 +96,7 @@ export function useAgendaParticipants(search: string = "", pendingArtistId?: str
     const employeeOptions = employeeItems.map((employee) => ({
       source: "employee" as const,
       id: String(employee.id),
-      label: String(employee.nome || employee.full_name || employee.email || employee.id),
+      label: String(employee.name || employee.full_name || employee.email || employee.id),
       email: employee.email ? String(employee.email) : undefined,
       phone: employee.telefone ? String(employee.telefone) : undefined,
       category: employee.departamento ? String(employee.departamento) : "Funcionario",

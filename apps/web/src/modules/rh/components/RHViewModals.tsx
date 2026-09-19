@@ -99,11 +99,11 @@ export function EmployeeViewModal({
     <ViewShell
       open={open}
       onOpenChange={onOpenChange}
-      title={funcionario.nome || "Funcionário"}
+      title={funcionario.name || "Funcionário"}
       description="Detalhes do funcionário"
     >
       <Section title="Dados Pessoais">
-        <Row label="Nome completo" value={funcionario.nome} />
+        <Row label="Nome completo" value={funcionario.name} />
         <Row label="CPF" value={funcionario.cpf} />
         <Row label="E-mail" value={funcionario.email} />
         <Row label="Telefone" value={funcionario.telefone} />
@@ -157,7 +157,7 @@ export function PayrollViewModal({
       description={registro.periodo || registro.mes_referencia || "Detalhes do pagamento"}
     >
       <Section title="Identificação">
-        <Row label="Funcionário" value={funcionario?.nome} />
+        <Row label="Funcionário" value={funcionario?.name} />
         <Row label="Período" value={registro.periodo || registro.mes_referencia} />
       </Section>
       <Section title="Valores">
@@ -211,7 +211,7 @@ export function LeaveRequestViewModal({
       description={humanize(ausencia.type as string)}
     >
       <Section title="Identificação">
-        <Row label="Funcionário" value={funcionario?.nome} />
+        <Row label="Funcionário" value={funcionario?.name} />
         <Row label="Tipo" value={humanize(ausencia.type as string)} />
       </Section>
       <Section title="Período">

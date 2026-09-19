@@ -75,7 +75,7 @@ export function EmployeeFormModal({
   useEffect(() => {
     if (open) {
       if ((mode === "edit" || mode === "view") && funcionario) {
-        setNomeCompleto((funcionario.nome as string) || "");
+        setNomeCompleto((funcionario.name as string) || "");
         setCpf((funcionario.cpf as string) || "");
         setRg((funcionario.rg as string) || "");
         setDataNascimento((funcionario.data_nascimento as string) || "");
@@ -159,7 +159,7 @@ export function EmployeeFormModal({
     setSaving(true);
 
     const data: Record<string, unknown> = {
-      nome: nomeCompleto.trim(),
+      name: nomeCompleto.trim(),
       cpf: cpf.trim() || null,
       email: email.trim() || null,
       telefone: telefone.trim() || null,

@@ -116,7 +116,7 @@ function FuncionarioNomeCell({ id }: { id: string | null }) {
   const { entity, isLoading } = useEntityById<Employee>("funcionarios", id);
   if (!id) return <>N/A</>;
   if (isLoading) return <>…</>;
-  return <>{entity?.nome || "N/A"}</>;
+  return <>{entity?.name || "N/A"}</>;
 }
 
 export default function RH() {
@@ -664,12 +664,12 @@ export default function RH() {
                           checked={selectedFuncIds.includes(f.id)}
                           onCheckedChange={() => toggleSelectFunc(f.id)}
                           data-testid={`checkbox-funcionario-${f.id}`}
-                          aria-label={`Selecionar ${f.nome}`}
+                          aria-label={`Selecionar ${f.name}`}
                         />
                       </TableCell>
                       <TableCell>
                         <div>
-                          <p className="font-medium">{f.nome}</p>
+                          <p className="font-medium">{f.name}</p>
                           {f.email && <p className="text-xs text-muted-foreground">{f.email}</p>}
                         </div>
                       </TableCell>
@@ -1007,7 +1007,7 @@ export default function RH() {
                     table="funcionarios"
                     value={docFuncionarioId || null}
                     onChange={(id) => setDocFuncionarioId(id || "")}
-                    getLabel={(f) => f.nome ?? ""}
+                    getLabel={(f) => f.name ?? ""}
                     placeholder="Selecione um funcionário"
                     searchPlaceholder="Buscar por nome…"
                     emptyText="Nenhum funcionário encontrado"
@@ -1180,7 +1180,7 @@ export default function RH() {
         onOpenChange={(open) => setFuncDeleteModal({ ...funcDeleteModal, open })}
         onConfirm={handleDeleteFuncionario}
         title="Excluir Funcionário"
-        description={`Tem certeza que deseja excluir "${funcDeleteModal.funcionario?.nome}"? Esta ação não pode ser desfeita.`}
+        description={`Tem certeza que deseja excluir "${funcDeleteModal.funcionario?.name}"? Esta ação não pode ser desfeita.`}
       />
 
       <DeleteConfirmModal

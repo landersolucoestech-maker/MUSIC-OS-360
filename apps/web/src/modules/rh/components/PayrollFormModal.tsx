@@ -191,7 +191,7 @@ export function PayrollFormModal({
             <AsyncEntityCombobox<Employee>
               table="funcionarios"
               value={funcionarioId || null}
-              getLabel={(f) => `${f.nome ?? ""} - ${f.cargo || "Sem cargo"}`}
+              getLabel={(f) => `${f.name ?? ""} - ${f.cargo || "Sem cargo"}`}
               onChange={setFuncionarioId}
               placeholder="Selecione o funcionário"
               searchPlaceholder="Buscar por nome…"

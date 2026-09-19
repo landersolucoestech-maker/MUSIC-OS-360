@@ -212,7 +212,7 @@ export function LeaveRequestFormModal({
             <AsyncEntityCombobox<Employee>
               table="funcionarios"
               value={funcionarioId || null}
-              getLabel={(f) => f.nome ?? ""}
+              getLabel={(f) => f.name ?? ""}
               onChange={(id) => {
                 setFuncionarioId(id);
                 clearError("funcionario_id");

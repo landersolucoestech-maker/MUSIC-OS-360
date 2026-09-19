@@ -2,7 +2,7 @@ import { IsString, IsOptional, IsDateString, IsEnum } from 'class-validator';
 import { EmployeeStatus } from '@music-os-360/types';
 
 export class CreateEmployeeDto {
-  @IsString() nome: string;
+  @IsString() name: string;
   @IsOptional() @IsString() cargo?: string;
   @IsOptional() @IsString() departamento?: string;
   @IsOptional() @IsString() tipo_contrato?: string;

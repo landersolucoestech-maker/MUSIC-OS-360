@@ -54,7 +54,7 @@ export class HrService {
     if (query.status) qb.andWhere('e.status = :status', { status: query.status });
     // Frontend usa "setor"; a coluna física é `departamento` (mesmo campo, nome legado).
     if (query.setor)  qb.andWhere('e.departamento = :setor', { setor: query.setor });
-    if (query.search) qb.andWhere('(e.nome ILIKE :search OR e.cargo ILIKE :search)', { search: `%${query.search}%` });
+    if (query.search) qb.andWhere('(e.name ILIKE :search OR e.cargo ILIKE :search)', { search: `%${query.search}%` });
 
     qb.orderBy('e.created_at', 'DESC')
       .skip(query.offset ?? 0)
@@ -89,7 +89,7 @@ export class HrService {
   async createEmployee(tenantId: string, userId: string, dto: CreateEmployeeDto) {
     const entity = this.empRepo!.create({
       tenant_id:          tenantId,
-      nome:               dto.nome,
+      name:               dto.name,
       cargo:              dto.cargo         ?? null,
       departamento:       dto.departamento  ?? null,
       tipo_contrato:      dto.tipo_contrato ?? 'clt',
@@ -111,7 +111,7 @@ export class HrService {
     await this._findRaw(tenantId, id);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updates: Record<string, unknown> = { updated_at: new Date() };
-    if (dto.nome          != null) updates.nome          = dto.nome;
+    if (dto.name          != null) updates.name          = dto.name;
     if (dto.cargo         != null) updates.cargo         = dto.cargo;
     if (dto.departamento  != null) updates.departamento  = dto.departamento;
     if (dto.tipo_contrato != null) updates.tipo_contrato = dto.tipo_contrato;

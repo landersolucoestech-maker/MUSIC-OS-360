@@ -10,7 +10,7 @@ export type { EmployeeStatusValue, EmployeeContractType, LeaveType, LeaveRequest
 export interface Employee {
   id: string;
   user_id?: string;
-  nome: string;
+  name: string;
   cargo?: string | null;
   departamento?: string | null;
   salario?: number | string | null;

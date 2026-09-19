@@ -1954,7 +1954,7 @@ export class EcadReportEntity {
 export class EmployeeEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
-  @Column({ type: 'varchar', length: 255 }) nome: string;
+  @Column({ type: 'varchar', length: 255 }) name: string;
   @Column({ type: 'varchar', length: 255, nullable: true }) cargo: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) departamento: string | null;
   @Column({ type: 'varchar', length: 100, default: 'clt' }) tipo_contrato: string;
