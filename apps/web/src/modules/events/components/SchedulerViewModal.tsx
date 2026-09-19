@@ -281,11 +281,11 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
           )}
 
           {/* OBSERVAÇÕES */}
-          {event.observacoes && (
+          {event.notes && (
             <Section title="Observações" icon={FileText}>
               <Card>
                 <CardContent className="p-4">
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{event.observacoes}</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{event.notes}</p>
                 </CardContent>
               </Card>
             </Section>

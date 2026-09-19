@@ -214,7 +214,7 @@ const getInitialFormData = (event?: any) => {
       (meta["publico_esperado"] as string | number) ||
       "",
     descricao: event?.description || (meta["descricao"] as string) || "",
-    observacoes: event?.observacoes || (meta["observacoes"] as string) || "",
+    observacoes: event?.notes || (meta["observacoes"] as string) || "",
   };
 };
 
@@ -505,7 +505,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
     const publicoEsperado = toNumberOrUndefined(data.publicoEsperado);
     if (publicoEsperado !== undefined) payload["publico_esperado"] = publicoEsperado;
     if (data.descricao)   payload["description"] = data.descricao;
-    if (data.observacoes) payload["observacoes"] = data.observacoes;
+    if (data.observacoes) payload["notes"]       = data.observacoes;
     if (data.participantes.length > 0) payload["participantes"] = data.participantes;
 
     if (forUpdate) {

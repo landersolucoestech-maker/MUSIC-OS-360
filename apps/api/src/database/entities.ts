@@ -1316,7 +1316,7 @@ export class EventEntity {
   @Column({ type: 'timestamp', nullable: true }) starts_at: Date | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) local: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   // ── Campos do formulário de Evento (1 coluna por campo — nome exato) ─────────
   @Column({ type: 'timestamp', nullable: true }) end_date: Date | null;
   @Column({ type: 'varchar', length: 300, nullable: true }) endereco: string | null;

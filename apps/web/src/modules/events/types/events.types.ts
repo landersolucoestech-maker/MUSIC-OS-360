@@ -21,7 +21,7 @@ export interface Event {
   valor_ingresso?: number | null;
   capacidade?: number | null;
   description?: string | null;
-  observacoes?: string | null;
+  notes?: string | null;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;

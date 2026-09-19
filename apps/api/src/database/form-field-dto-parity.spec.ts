@@ -34,7 +34,7 @@ describe('Colunas dedicadas de formulário sempre expostas no DTO correspondente
     const dto = source('../modules/events/dto/events.dto.ts');
     const fields = [
       'endereco', 'contato_local', 'valor_cache', 'publico_esperado',
-      'description', 'observacoes', 'participantes',
+      'description', 'notes', 'participantes',
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);
     expectFields(dto, fields);

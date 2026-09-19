@@ -116,7 +116,7 @@ export class EventsService {
     if (d['valor_cache']      != null) out['valor_cache']      = String(d['valor_cache']);
     if (d['publico_esperado'] != null) out['publico_esperado'] = d['publico_esperado'];
     if (d['description']      != null) out['description']      = d['description'];
-    if (d['observacoes']      != null) out['observacoes']      = d['observacoes'];
+    if (d['notes']            != null) out['notes']             = d['notes'];
     if (d['participantes']    != null) out['participantes']    = d['participantes'];
     return out as Partial<EventEntity>;
   }

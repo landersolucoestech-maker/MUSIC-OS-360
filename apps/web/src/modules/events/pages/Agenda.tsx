@@ -224,7 +224,7 @@ export default function Agenda() {
         publico_esperado: e.publico_esperado ?? "",
         valor_cache: e.valor_cache || "",
         descricao: e.description || "",
-        observacoes: e.observacoes || "",
+        observacoes: e.notes || "",
       };
     });
 
@@ -285,7 +285,7 @@ export default function Agenda() {
         if (valorCache) payload.valor_cache = Number(valorCache);
         if (publicoEsperado) payload.publico_esperado = Number(publicoEsperado);
         if (row.descricao || row.Descrição) payload.description = row.descricao || row.Descrição;
-        if (row.observacoes || row.Observações) payload.observacoes = row.observacoes || row.Observações;
+        if (row.observacoes || row.Observações) payload.notes = row.observacoes || row.Observações;
 
         await addEvent.mutateAsync(payload as any);
         importados++;
