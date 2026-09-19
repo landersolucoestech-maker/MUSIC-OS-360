@@ -2,7 +2,7 @@ import type { InvoiceOperationType } from "@/modules/accounting/types/invoice-ty
 export type { InvoiceOperationType };
 
 export interface InvoiceLineItem {
-  descricao: string;
+  description: string;
   quantidade: number;
   valor_unitario: number;
   valor_total: number;
@@ -18,7 +18,7 @@ export interface InvoiceFormData {
   codigo_servico_municipal: string;
   codigo_municipio: string;
   cfop: string;
-  descricao_servicos: string;
+  service_description: string;
   data_emissao: Date | undefined;
   vencimento: Date | undefined;
   status: string;
@@ -51,7 +51,7 @@ export interface InvoiceFormData {
 }
 
 export const INITIAL_ITEM: InvoiceLineItem = {
-  descricao: "",
+  description: "",
   quantidade: 1,
   valor_unitario: 0,
   valor_total: 0,
@@ -67,7 +67,7 @@ export const INITIAL_FORM_DATA: InvoiceFormData = {
   codigo_servico_municipal: "12.07",
   codigo_municipio: "3550308",
   cfop: "5933",
-  descricao_servicos: "",
+  service_description: "",
   data_emissao: new Date(),
   vencimento: undefined,
   status: "issued",

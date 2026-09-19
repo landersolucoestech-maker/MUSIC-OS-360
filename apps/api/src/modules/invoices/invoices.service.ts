@@ -85,7 +85,7 @@ export class InvoicesService {
     if (query.artistId) qb.andWhere('i.prestador_id = :prestadorId', { prestadorId: query.artistId });
     if (query.search) {
       qb.andWhere(
-        '(i.numero ILIKE :search OR i.tomador_razao_social ILIKE :search OR i.descricao_servicos ILIKE :search)',
+        '(i.numero ILIKE :search OR i.tomador_razao_social ILIKE :search OR i.service_description ILIKE :search)',
         { search: `%${query.search}%` },
       );
     }

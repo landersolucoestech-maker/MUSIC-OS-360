@@ -43,8 +43,8 @@ export function InvoiceItemsSection({
         <div className="space-y-2">
           <Label>Descrição dos Serviços</Label>
           <Textarea
-            value={formData.descricao_servicos}
-            onChange={(e) => updateField("descricao_servicos", e.target.value)}
+            value={formData.service_description}
+            onChange={(e) => updateField("service_description", e.target.value)}
             placeholder="Descrição completa dos serviços prestados..."
             rows={3}
             disabled={disabled}
@@ -77,8 +77,8 @@ export function InvoiceItemsSection({
                 <div className="col-span-12 md:col-span-5 space-y-1">
                   <Label className="text-xs">Descrição</Label>
                   <Input
-                    value={item.descricao}
-                    onChange={(e) => updateItem(i, "descricao", e.target.value)}
+                    value={item.description}
+                    onChange={(e) => updateItem(i, "description", e.target.value)}
                     disabled={disabled}
                   />
                 </div>

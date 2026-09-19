@@ -136,14 +136,14 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
           </Card>
 
           {/* Serviços */}
-          {(invoice.descricao_servicos || itens.length > 0) && (
+          {(invoice.service_description || itens.length > 0) && (
             <Card>
               <CardHeader className="pb-2"><CardTitle className="text-sm">Serviços</CardTitle></CardHeader>
               <CardContent className="space-y-3">
-                {invoice.descricao_servicos && (
+                {invoice.service_description && (
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Descrição</p>
-                    <p className="text-sm whitespace-pre-wrap">{invoice.descricao_servicos}</p>
+                    <p className="text-sm whitespace-pre-wrap">{invoice.service_description}</p>
                   </div>
                 )}
                 {itens.length > 0 && (
@@ -168,7 +168,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
                         <TableBody>
                           {itens.map((it, i) => (
                             <TableRow key={i}>
-                              <TableCell>{it.descricao}</TableCell>
+                              <TableCell>{it.description}</TableCell>
                               <TableCell>{it.codigo_servico}</TableCell>
                               <TableCell className="text-right">{it.quantidade}</TableCell>
                               <TableCell className={`text-right ${getCurrencyToneClass(isEntrada ? -Number(it.valor_unitario || 0) : Number(it.valor_unitario || 0))}`}>{formatCurrency(isEntrada ? -Number(it.valor_unitario || 0) : Number(it.valor_unitario || 0))}</TableCell>

@@ -89,7 +89,7 @@ export function useInvoiceForm({
       const { type, observacoesLimpas } = parseOperationType(invoice.observacoes);
       const valorServicos = numberValue(invoice.valor_servicos, invoice.valor, invoice.valor_total) ?? 0;
       const valorLiquido = numberValue(invoice.valor_liquido, invoice.valor_servicos, invoice.valor, invoice.valor_total) ?? 0;
-      const descricaoServicos = invoice.descricao_servicos ?? invoice.descricao_servico ?? "";
+      const descricaoServicos = invoice.service_description ?? "";
       const tomadorRazaoSocial = invoice.tomador_razao_social ?? invoice.tomador_nome ?? invoice.clientes?.nome ?? "";
       setOperationType(type);
       setFormData({
@@ -97,7 +97,7 @@ export function useInvoiceForm({
         ...invoice,
         observacoes: observacoesLimpas,
         tomador_razao_social: tomadorRazaoSocial,
-        descricao_servicos: descricaoServicos,
+        service_description: descricaoServicos,
         valor_servicos: valorServicos,
         valor_liquido: valorLiquido,
         data_emissao: invoice.data_emissao ? new Date(invoice.data_emissao) : undefined,
@@ -108,7 +108,7 @@ export function useInvoiceForm({
             : undefined,
         itens: Array.isArray(invoice.itens) && invoice.itens.length > 0
           ? invoice.itens
-          : [{ ...INITIAL_ITEM, descricao: descricaoServicos, valor_unitario: valorServicos, valor_total: valorServicos }],
+          : [{ ...INITIAL_ITEM, description: descricaoServicos, valor_unitario: valorServicos, valor_total: valorServicos }],
       });
     } else if (!invoice && open) {
       setOperationType(defaultOperationType ?? "saida");
@@ -262,7 +262,7 @@ export function useInvoiceForm({
       codigo_servico_municipal: formData.codigo_servico_municipal,
       codigo_municipio: formData.codigo_municipio,
       cfop: formData.cfop,
-      descricao_servicos: formData.descricao_servicos,
+      service_description: formData.service_description,
       tomador_cnpj: formData.tomador_cnpj,
       tomador_razao_social: formData.tomador_razao_social,
       tomador_inscricao_estadual: formData.tomador_inscricao_estadual,

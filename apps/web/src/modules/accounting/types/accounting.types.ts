@@ -75,7 +75,7 @@ export interface Invoice {
   valor_iss?: number | null;
   data_emissao?: string | null;
   data_vencimento?: string | null;
-  descricao_servico?: string | null;
+  service_description?: string | null;
   client_id?: string | null;
   venda_id?: string | null;
   created_at?: string;

@@ -1054,7 +1054,7 @@ export class InvoiceEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) tomador_nome: string | null;
   @Column({ type: 'text', nullable: true }) tomador_doc_encrypted: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2 }) valor: string;
-  @Column({ type: 'text', nullable: true }) descricao: string | null;
+  @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'timestamp', nullable: true }) data_emissao: Date | null;
   @Column({ type: 'timestamp', nullable: true }) data_vencimento: Date | null;
   @Column({ type: 'text', nullable: true }) arquivo_url: string | null;
@@ -1069,7 +1069,7 @@ export class InvoiceEntity {
   @Column({ type: 'varchar', length: 50, nullable: true }) codigo_servico_municipal: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) codigo_municipio: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) cfop: string | null;
-  @Column({ type: 'text', nullable: true }) descricao_servicos: string | null;
+  @Column({ type: 'text', nullable: true }) service_description: string | null;
   @Column({ type: 'date', nullable: true }) vencimento: string | null;
   @Column({ type: 'varchar', length: 30, nullable: true }) tomador_cnpj: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) tomador_razao_social: string | null;

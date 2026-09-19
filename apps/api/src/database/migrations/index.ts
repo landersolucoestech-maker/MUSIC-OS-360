@@ -229,6 +229,7 @@ import { RenameNomePublicidadeToAdvertisingNameOnTransactions20260918000014 } fr
 import { RenameNomePfNomeFantasiaOnClients20260918000015 } from './20260918000015_RenameNomePfNomeFantasiaOnClients';
 import { RenameDescricaoToDescriptionOnFinancialRules20260918000016 } from './20260918000016_RenameDescricaoToDescriptionOnFinancialRules';
 import { RenameDescricaoToDescriptionOnContractTemplates20260918000017 } from './20260918000017_RenameDescricaoToDescriptionOnContractTemplates';
+import { RenameDescricaoOnInvoices20260918000018 } from './20260918000018_RenameDescricaoOnInvoices';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -469,4 +470,5 @@ export const ALL_MIGRATIONS = [
   RenameNomePfNomeFantasiaOnClients20260918000015,
   RenameDescricaoToDescriptionOnFinancialRules20260918000016,
   RenameDescricaoToDescriptionOnContractTemplates20260918000017,
+  RenameDescricaoOnInvoices20260918000018,
 ] as const;

@@ -460,7 +460,7 @@ export const FIELD_LABELS_PT_BR = {
   codigoServicoMunicipal: 'Código de serviço municipal',
   codigoMunicipio: 'Código do município',
   cfop: 'CFOP',
-  descricaoServicos: 'Descrição dos serviços',
+  serviceDescription: 'Descrição dos serviços',
   tomadorCnpj: 'CNPJ do tomador',
   tomadorRazaoSocial: 'Razão social do tomador',
   tomadorInscricaoEstadual: 'Inscrição estadual do tomador',

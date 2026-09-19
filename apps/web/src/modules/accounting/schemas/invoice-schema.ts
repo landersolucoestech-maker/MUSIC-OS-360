@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const invoiceLineItemSchema = z.object({
-  descricao: z.string().min(1, "Descrição do item é obrigatória").trim(),
+  description: z.string().min(1, "Descrição do item é obrigatória").trim(),
   quantidade: z.number().min(1, "Quantidade mínima é 1"),
   valor_unitario: z.number().min(0, "Valor não pode ser negativo"),
   valor_total: z.number().min(0, "Valor não pode ser negativo"),
@@ -16,7 +16,7 @@ export const invoiceSchema = z.object({
   codigo_servico_municipal: z.string().optional().or(z.literal("")),
   codigo_municipio: z.string().optional().or(z.literal("")),
   cfop: z.string().optional().or(z.literal("")),
-  descricao_servicos: z.string().max(2000, "Descrição deve ter no máximo 2000 caracteres").optional().or(z.literal("")),
+  service_description: z.string().max(2000, "Descrição deve ter no máximo 2000 caracteres").optional().or(z.literal("")),
   data_emissao: z.date().optional().nullable(),
   vencimento: z.date().optional().nullable(),
   status: z.string().optional().or(z.literal("")),

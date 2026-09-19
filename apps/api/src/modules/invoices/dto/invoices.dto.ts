@@ -9,7 +9,7 @@ import { PaginationDto } from '../../../common/dto/pagination.dto';
 const TIPOS_NOTA = ['nfse', 'nfe', 'nfce'] as const;
 
 export class InvoiceItemDto {
-  @ApiProperty() @IsString() @MaxLength(2000) descricao!: string;
+  @ApiProperty() @IsString() @MaxLength(2000) description!: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) codigo_servico?: string;
   @ApiProperty() @IsNumber() @Min(1) @Type(() => Number) quantidade!: number;
   @ApiProperty() @IsNumber() @Min(0) @Type(() => Number) valor_unitario!: number;
@@ -36,7 +36,7 @@ export class CreateInvoiceDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) codigo_servico_municipal?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) codigo_municipio?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) cfop?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(2000) descricao_servicos?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(2000) service_description?: string;
 
   @ApiPropertyOptional({ type: String, format: 'date' }) @IsOptional() @IsString() data_emissao?: string;
   @ApiPropertyOptional({ type: String, format: 'date' }) @IsOptional() @IsString() vencimento?: string;

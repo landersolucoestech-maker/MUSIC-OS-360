@@ -545,7 +545,7 @@ const INVOICES_CONTRACT: ReportFormContract = {
     col('client_id'), col('tomador_cnpj'), col('tomador_razao_social'),
     col('tomador_inscricao_estadual'), col('tomador_inscricao_municipal'), col('tomador_email'),
     col('tomador_endereco'), col('tomador_cidade'), col('tomador_uf'), col('tomador_cep'),
-    col('descricao_servicos'), col('valor_servicos'), col('valor_deducoes'), col('base_calculo'),
+    col('service_description'), col('valor_servicos'), col('valor_deducoes'), col('base_calculo'),
     col('aliquota_iss'), col('valor_iss'), col('iss_retido'), col('valor_pis'), col('valor_cofins'),
     col('valor_ir'), col('valor_csll'), col('valor_inss'), col('valor_liquido'),
     col('forma_pagamento'), col('condicao_pagamento'), col('vencimento'), col('url_pdf'),
@@ -555,7 +555,7 @@ const INVOICES_CONTRACT: ReportFormContract = {
   repeatingGroup: {
       key: 'itens',
       fields: [
-        { key: 'descricao' }, { key: 'codigo_servico' }, { key: 'quantidade' },
+        { key: 'description' }, { key: 'codigo_servico' }, { key: 'quantidade' },
         { key: 'valor_unitario' }, { key: 'valor_total' },
       ],
   },
