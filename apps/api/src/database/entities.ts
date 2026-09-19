@@ -1239,7 +1239,7 @@ export class LeadInteractionEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid' }) lead_id: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
-  @Column({ type: 'text', nullable: true }) descricao: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }) data: Date;
   @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;

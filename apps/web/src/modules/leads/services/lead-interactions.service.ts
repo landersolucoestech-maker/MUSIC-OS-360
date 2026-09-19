@@ -24,7 +24,7 @@ export interface LeadInteractionRecord {
   id: string;
   leadId: string;
   type: LeadInteractionType;
-  descricao: string | null;
+  notes: string | null;
   data: string;
   createdBy: string | null;
 }
@@ -33,7 +33,7 @@ interface RawLeadInteraction {
   id: string;
   lead_id: string;
   type: string;
-  descricao: string | null;
+  notes: string | null;
   data: string;
   created_by: string | null;
 }
@@ -43,7 +43,7 @@ function fromApi(r: RawLeadInteraction): LeadInteractionRecord {
     id: r.id,
     leadId: r.lead_id,
     type: r.type as LeadInteractionType,
-    descricao: r.descricao,
+    notes: r.notes,
     data: r.data,
     createdBy: r.created_by,
   };

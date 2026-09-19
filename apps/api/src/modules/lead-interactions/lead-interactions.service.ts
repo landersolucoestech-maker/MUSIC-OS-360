@@ -41,7 +41,7 @@ export class LeadInteractionsService {
       tenant_id:  tenantId,
       lead_id:    dto.leadId,
       type:       dto.type,
-      descricao:  dto.notes ?? null,
+      notes:      dto.notes ?? null,
       created_by: userId,
     } as any);
     return this.repo!.save(entity as any) as any;

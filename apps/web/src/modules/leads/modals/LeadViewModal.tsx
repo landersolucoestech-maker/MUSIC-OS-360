@@ -364,7 +364,7 @@ export function LeadViewModal({
                       {LEAD_INTERACTION_TYPE_LABELS[it.type] ?? it.type} · {fmtDate(it.data)}
                     </p>
                     <p className="text-sm text-foreground whitespace-pre-wrap">
-                      {it.descricao || "—"}
+                      {it.notes || "—"}
                     </p>
                   </div>
                 ))}

@@ -8,7 +8,7 @@ import type { CreateLeadInteractionDto, QueryLeadInteractionDto } from './dto/le
  * - list() lia `query.lead_id`, mas o DTO expõe `leadId` — o filtro por
  *   lead nunca funcionava (retornava interações de todos os leads do tenant).
  * - create() espalhava o DTO (leadId/type/notes) direto na entity, cujas
- *   colunas reais são lead_id/type/descricao — todo POST violava NOT NULL
+ *   colunas reais são lead_id/type/notes — todo POST violava NOT NULL
  *   em lead_id/type.
  */
 function makeQb(rows: unknown[]) {
@@ -51,7 +51,7 @@ describe('LeadInteractionsService.list — filtro por leadId (REM-04)', () => {
 });
 
 describe('LeadInteractionsService.create — mapeamento DTO → colunas reais (REM-04)', () => {
-  it('grava lead_id/type/descricao nas colunas reais da entity', async () => {
+  it('grava lead_id/type/notes nas colunas reais da entity', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       leadId: 'lead-1', type: 'call', notes: 'Ligação de follow-up',
@@ -60,16 +60,16 @@ describe('LeadInteractionsService.create — mapeamento DTO → colunas reais (R
     const created = (repo.create as jest.Mock).mock.calls[0][0];
     expect(created.lead_id).toBe('lead-1');
     expect(created.type).toBe('call');
-    expect(created.descricao).toBe('Ligação de follow-up');
+    expect(created.notes).toBe('Ligação de follow-up');
     expect(created.leadId).toBeUndefined();
   });
 
-  it('notes ausente persiste descricao como null (não undefined)', async () => {
+  it('notes ausente persiste notes como null (não undefined)', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       leadId: 'lead-1', type: 'note',
     } as CreateLeadInteractionDto);
 
-    expect((repo.create as jest.Mock).mock.calls[0][0].descricao).toBeNull();
+    expect((repo.create as jest.Mock).mock.calls[0][0].notes).toBeNull();
   });
 });
