@@ -371,8 +371,8 @@ function StepTemplate({
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm truncate">{t.name}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
-                    {t.descricao && (
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{t.descricao}</p>
+                    {t.description && (
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{t.description}</p>
                     )}
                   </div>
                   {selected && <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />}

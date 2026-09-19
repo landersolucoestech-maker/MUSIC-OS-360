@@ -91,7 +91,7 @@ export default function ContractTemplates() {
   const filteredTemplates = useMemo(() => {
     const q = search.trim().toLowerCase();
     return templates.filter((template) => {
-      if (q && !template.name.toLowerCase().includes(q) && !(template.descricao ?? "").toLowerCase().includes(q)) return false;
+      if (q && !template.name.toLowerCase().includes(q) && !(template.description ?? "").toLowerCase().includes(q)) return false;
       if (filterType === "semantico" && template.tipo_servico !== "semantico") return false;
       if (filterType === "padrao" && template.tipo_servico === "semantico") return false;
       if (filterStatus === "ativo" && !template.active) return false;
@@ -367,7 +367,7 @@ export default function ContractTemplates() {
                             </div>
                             <div className="min-w-0">
                               <p className="text-sm font-medium truncate leading-tight">{template.name}</p>
-                              {template.descricao && <p className="text-xs text-muted-foreground truncate mt-0.5">{template.descricao}</p>}
+                              {template.description && <p className="text-xs text-muted-foreground truncate mt-0.5">{template.description}</p>}
                             </div>
                           </div>
                         </TableCell>

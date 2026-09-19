@@ -2,7 +2,7 @@
  * contract-templates.service.spec.ts
  *
  * Task U — prova que o contrato real do formulário (name/tipo_servico/
- * conteudo/active/descricao/variables_manifest/header_image/footer_image)
+ * conteudo/active/description/variables_manifest/header_image/footer_image)
  * persiste 1:1 nas colunas físicas. Antes desta correção, o DTO usava chaves
  * em inglês (title/type/content/variables/metadata) que nunca eram enviadas
  * pelo único formulário real (ContractImportWorkspace.tsx) — toda criação/
@@ -60,18 +60,18 @@ describe('ContractTemplatesService — contrato real do formulário (Task U)', (
     expect(row['tenant_id']).toBe('tenant-1');
   });
 
-  it('create: persiste descricao/variables_manifest/header_image/footer_image', async () => {
+  it('create: persiste description/variables_manifest/header_image/footer_image', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       name: 'X', conteudo: 'Y',
-      descricao: '3 variáveis',
+      description: '3 variáveis',
       variables_manifest: '{"variables":["{{NOME}}"]}',
       header_image: 'data:image/png;base64,abc',
       footer_image: null,
     } as unknown as CreateContractTemplateDto);
 
     const row = created(repo);
-    expect(row['descricao']).toBe('3 variáveis');
+    expect(row['description']).toBe('3 variáveis');
     expect(row['variables_manifest']).toBe('{"variables":["{{NOME}}"]}');
     expect(row['header_image']).toBe('data:image/png;base64,abc');
     expect(row['footer_image']).toBeNull();

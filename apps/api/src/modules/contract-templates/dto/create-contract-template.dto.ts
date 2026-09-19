@@ -22,7 +22,7 @@ export class CreateContractTemplateDto {
 
   @ApiPropertyOptional()
   @IsOptional() @IsString()
-  descricao?: string;
+  description?: string;
 
   @ApiPropertyOptional({ description: 'Manifesto de variáveis detectadas (JSON serializado)' })
   @IsOptional() @IsString()

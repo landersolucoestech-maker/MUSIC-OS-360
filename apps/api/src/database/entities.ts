@@ -927,7 +927,7 @@ export class ContractTemplateEntity {
   @Column({ type: 'text' }) conteudo: string;
   @Column({ type: 'jsonb', default: [] }) variaveis: unknown[];
   @Column({ type: 'boolean', default: true }) active: boolean;
-  @Column({ type: 'text', nullable: true }) descricao: string | null;
+  @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'text', nullable: true }) variables_manifest: string | null;
   @Column({ type: 'text', nullable: true }) header_image: string | null;
   @Column({ type: 'text', nullable: true }) footer_image: string | null;

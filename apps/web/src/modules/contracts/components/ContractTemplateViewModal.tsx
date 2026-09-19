@@ -92,8 +92,8 @@ export function ContractTemplateViewModal({
                 )}
               </div>
             </div>
-            {template.descricao && (
-              <p className="text-sm text-muted-foreground mt-1">{template.descricao}</p>
+            {template.description && (
+              <p className="text-sm text-muted-foreground mt-1">{template.description}</p>
             )}
           </DialogHeader>
         </div>
