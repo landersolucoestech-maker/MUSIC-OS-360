@@ -58,7 +58,7 @@ export class ContactsService {
     return {
       id: c['id'],
       name: c['name'] ?? c['nome'],
-      companyName: c['razao_social'] ?? c['nome_fantasia'] ?? null,
+      companyName: c['razao_social'] ?? c['trade_name'] ?? null,
       contactType: c['categoria'] ?? 'OTHER',
       documentType: c['tipo_pessoa'] === 'pessoa_fisica' ? 'CPF' : 'CNPJ',
       documentNumber: c['document'] ?? null,

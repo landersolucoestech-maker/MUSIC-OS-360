@@ -21,7 +21,6 @@ export const FIELD_LABELS_PT_BR = {
   nomeArtistico: 'Nome artístico',
   nomeCivil: 'Nome civil',
   nomeCompleto: 'Nome completo',
-  nomeFantasia: 'Nome fantasia',
   legalName: 'Razão social',
   razaoSocial: 'Razão social',
   tradeName: 'Nome fantasia',
@@ -436,7 +435,7 @@ export const FIELD_LABELS_PT_BR = {
   paisPublicacao: 'País de publicação',
   arquivoAudio: 'Arquivo de áudio',
   // ── Clientes/Contatos (regra 2026-07-12: 1 coluna por campo) ─────────────────
-  nomePf: 'Nome (pessoa física)',
+  individualName: 'Nome (pessoa física)',
   cnpj: 'CNPJ',
   foto: 'Foto',
   perfil: 'Perfil',

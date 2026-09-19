@@ -1114,9 +1114,9 @@ export class ClientEntity {
   @Column({ type: 'varchar', length: 100 }) perfil: string;
   @Column({ type: 'varchar', length: 255 }) nome: string;
   @Column({ type: 'text', nullable: true }) foto: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) nome_pf: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) individual_name: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) razao_social: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) nome_fantasia: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) trade_name: string | null;
   @Column({ type: 'text', nullable: true }) cpf_cnpj_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) email_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) telefone_encrypted: string | null;

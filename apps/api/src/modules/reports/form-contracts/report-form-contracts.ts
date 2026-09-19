@@ -263,7 +263,7 @@ const CLIENTS_CONTRACT: ReportFormContract = {
   identityColumn: 'nome',
   fields: [
     col('tipo_pessoa'), col('categoria'), col('perfil'), col('nome'),
-    col('foto'), col('nome_pf'), col('razao_social'), col('nome_fantasia'),
+    col('foto'), col('individual_name'), col('razao_social'), col('trade_name'),
     enc('email', 'email_encrypted'), enc('telefone', 'telefone_encrypted'),
     enc('cpf_cnpj', 'cpf_cnpj_encrypted'),
     col('instagram'), col('funcao'),

@@ -188,7 +188,8 @@ const ENTITY_CATEGORY: Record<string, EntityCategory> = {
 };
 
 const IDENTITY_COLUMN_NAMES = new Set([
-  'name', 'nome', 'nome_artistico', 'nome_civil', 'nome_fantasia', 'razao_social',
+  'name', 'nome', 'nome_artistico', 'nome_civil', 'nome_fantasia', 'trade_name',
+  'individual_name', 'razao_social',
   'title', 'title', 'numero', 'codigo', 'code', 'slug', 'email', 'label',
   'assunto', 'descricao', 'description', 'referencia', 'ref',
   // Parte 89 — colunas de identidade dos novos módulos do registry fechado.

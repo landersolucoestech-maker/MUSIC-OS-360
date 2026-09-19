@@ -23,9 +23,22 @@ const migrationSrc = fs.readFileSync(
 );
 const entitiesSrc = fs.readFileSync(path.resolve(__dirname, 'entities.ts'), 'utf8');
 
+// Colunas renomeadas por migrations POSTERIORES à reconstrução canônica
+// (20260719000010) — a canônica é a fonte de verdade para a FORMA da
+// tabela, mas não para nomes de coluna renomeados depois dela.
+// 20260918000015_RenameNomePfNomeFantasiaOnClients renomeou nome_pf ->
+// individual_name e nome_fantasia -> trade_name (Cluster D,
+// naming-normalization mandate).
+const RENAMED_AFTER_CANONICAL: Record<string, string> = {
+  nome_pf: 'individual_name',
+  nome_fantasia: 'trade_name',
+};
+
 function extractMigrationColumns(): string[] {
   const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
-  return [...block.matchAll(/^\s*([a-z_]+)\s+\w/gm)].map((m) => m[1]);
+  return [...block.matchAll(/^\s*([a-z_]+)\s+\w/gm)]
+    .map((m) => m[1])
+    .map((c) => RENAMED_AFTER_CANONICAL[c] ?? c);
 }
 
 function extractEntityColumns(): string[] {
