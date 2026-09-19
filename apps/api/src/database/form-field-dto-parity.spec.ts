@@ -44,7 +44,7 @@ describe('Colunas dedicadas de formulário sempre expostas no DTO correspondente
     const block = entityBlock('ReleaseEntity');
     const dto = source('../modules/releases/dto/releases.dto.ts');
     const fields = [
-      'isrc_global', 'notas_internas', 'observacoes', 'gravadora',
+      'isrc_global', 'notas_internas', 'notes', 'gravadora',
       'copyright', 'genero', 'idioma', 'assets', 'cronograma',
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);

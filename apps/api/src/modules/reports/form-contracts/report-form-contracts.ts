@@ -407,7 +407,7 @@ const RELEASES_CONTRACT: ReportFormContract = {
   fields: [
     col('title'), col('type'), col('artist_id'), col('upc'), col('distribuidora'),
     col('data_lancamento'), col('capa_url'), col('isrc_global'), col('notas_internas'),
-    col('observacoes'), col('gravadora'), col('copyright'), col('genero'), col('idioma'),
+    col('notes'), col('gravadora'), col('copyright'), col('genero'), col('idioma'),
     ro('status'), ro('cronograma'),
     meta('variosArtistas'), meta('generoSecundario'),
     meta('copyrightDataLancamento'), meta('copyrightDataGravacao'),

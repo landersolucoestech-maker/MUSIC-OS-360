@@ -194,7 +194,7 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
   const produtores = aggregateField(faixas, "produtores");
   const hasAssets = Object.values(assets).some(Boolean) || Boolean(capaUrl);
   const hasCronograma = Object.values(cronograma).some(Boolean);
-  const hasNotes = Boolean(lancamento.observacoes || lancamento.notas_internas || metadata["observacoes"] || metadata["notas_internas"]);
+  const hasNotes = Boolean(lancamento.notes || lancamento.notas_internas || metadata["observacoes"] || metadata["notas_internas"]);
 
   // Copyright (anos + titular)
   const copyrightAnoLancamento = textValue(metadata["copyrightDataLancamento"]);
@@ -387,7 +387,7 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
                 <FileText className="h-3.5 w-3.5" />
                 Observacoes
               </h3>
-              <Field label="Notas de distribuição" value={lancamento.observacoes ?? textValue(metadata["observacoes"])} />
+              <Field label="Notas de distribuição" value={lancamento.notes ?? textValue(metadata["observacoes"])} />
               <Field label="Notas internas" value={lancamento.notas_internas ?? textValue(metadata["notas_internas"])} />
             </div>
           </>

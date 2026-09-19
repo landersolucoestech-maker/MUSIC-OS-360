@@ -61,7 +61,7 @@ export interface Lancamento {
   distribuidora?: string | null;
   plataformas?: string[] | null;
   fonograma_ids?: string[] | null;
-  observacoes?: string | null;
+  notes?: string | null;
   isrc_global?: string | null;
   upc?: string | null;
   notas_internas?: string | null;

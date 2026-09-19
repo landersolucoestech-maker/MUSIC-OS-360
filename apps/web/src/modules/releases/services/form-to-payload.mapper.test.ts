@@ -2,7 +2,7 @@
  * form-to-payload.mapper.test.ts
  *
  * Guarda permanente (auditoria 2026-07-18 — regra sem-metadata, lançamentos):
- * formToLancamentoPayload gravava isrc_global, notas_internas, observacoes,
+ * formToLancamentoPayload gravava isrc_global, notas_internas, notes,
  * gravadora, copyright, genero, idioma, assets e cronograma dentro de
  * `metadata`, apesar do mapper de leitura (entity-to-form.mapper.ts) e do
  * type `Lancamento` já esperarem essas colunas como campos de topo — a
@@ -46,9 +46,9 @@ describe("formToLancamentoPayload — contrato canônico de releases", () => {
     expect(payload.idioma).toBe("pt-BR");
   });
 
-  it("mapeia notasDistribuicao (nome do form) para a coluna canônica `observacoes`", () => {
+  it("mapeia notasDistribuicao (nome do form) para a coluna canônica `notes`", () => {
     const payload = formToLancamentoPayload(baseFields());
-    expect(payload.observacoes).toBe("nota de distribuição");
+    expect(payload.notes).toBe("nota de distribuição");
   });
 
   it("envia assets/cronograma como colunas jsonb dedicadas quando preenchidos", () => {

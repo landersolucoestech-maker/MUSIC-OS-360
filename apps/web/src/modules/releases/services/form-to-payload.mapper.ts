@@ -5,7 +5,7 @@
  * Backend expects:
  *   POST /releases  → CreateReleaseDto  { title, type, artistId, upc, distributor, releasedAt,
  *                                         platforms, coverUrl, metadata, isrc_global, notas_internas,
- *                                         observacoes, gravadora, copyright, genero, idioma, assets, cronograma }
+ *                                         notes, gravadora, copyright, genero, idioma, assets, cronograma }
  *   PATCH /releases → UpdateReleaseDto  (all optional + status: ReleaseStatus)
  *
  * NestJS ValidationPipe runs with { whitelist: true, forbidNonWhitelisted: true } —
@@ -88,7 +88,7 @@ export function formToLancamentoPayload(f: LancamentoFormFields, mode: "create" 
 
   if (ns(f.isrcGlobal))        payload["isrc_global"]    = ns(f.isrcGlobal);
   if (ns(f.notasInternas))     payload["notas_internas"] = ns(f.notasInternas);
-  if (ns(f.notasDistribuicao)) payload["observacoes"]    = ns(f.notasDistribuicao);
+  if (ns(f.notasDistribuicao)) payload["notes"]          = ns(f.notasDistribuicao);
   if (ns(f.gravadora))         payload["gravadora"]      = ns(f.gravadora);
   if (ns(f.copyright))         payload["copyright"]      = ns(f.copyright);
   if (ns(f.genero))            payload["genero"]         = ns(f.genero);

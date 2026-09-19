@@ -137,7 +137,7 @@ export class ReleaseFormBuilder {
       copyright:       normalizeStr(this._core.copyright),
       notas_internas:  ns(this._core.notas_internas),
       distribuidora:   normalizeStr(this._distribution.distribuidora),
-      observacoes:     normalizeStr(this._distribution.observacoes),
+      notes:           normalizeStr(this._distribution.observacoes),
       plataformas:     this._distribution.plataformas ?? null,
       fonograma_ids:   null,
       isrc_global:     ns(this._codes.isrc_global),

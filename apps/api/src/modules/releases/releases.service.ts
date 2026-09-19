@@ -116,7 +116,7 @@ export class ReleasesService {
       metadata:        dto.metadata    ?? {},
       isrc_global:     dto.isrc_global    ?? null,
       notas_internas:  dto.notas_internas ?? null,
-      observacoes:     dto.observacoes    ?? null,
+      notes:           dto.notes          ?? null,
       gravadora:       dto.gravadora      ?? null,
       copyright:       dto.copyright      ?? null,
       genero:          dto.genero         ?? null,
@@ -178,7 +178,7 @@ export class ReleasesService {
     if (dto.metadata    != null) nonStatusUpdates.metadata        = dto.metadata;
     if (dto.isrc_global    != null) nonStatusUpdates.isrc_global    = dto.isrc_global;
     if (dto.notas_internas != null) nonStatusUpdates.notas_internas = dto.notas_internas;
-    if (dto.observacoes    != null) nonStatusUpdates.observacoes    = dto.observacoes;
+    if (dto.notes          != null) nonStatusUpdates.notes          = dto.notes;
     if (dto.gravadora      != null) nonStatusUpdates.gravadora      = dto.gravadora;
     if (dto.copyright      != null) nonStatusUpdates.copyright      = dto.copyright;
     if (dto.genero         != null) nonStatusUpdates.genero         = dto.genero;

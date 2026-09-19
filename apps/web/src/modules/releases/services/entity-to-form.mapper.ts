@@ -83,7 +83,7 @@ export function lancamentoToFormFields(l: Lancamento | null | undefined): Lancam
     gravadora:                 ps(l?.gravadora ?? meta["gravadora"]),
     copyright:                 ps(l?.copyright ?? meta["copyright"]),
     distribuidora:             ps(l?.distribuidora ?? r?.["distributor"]) || "onerpm",
-    notasDistribuicao:         ps(l?.observacoes ?? meta["observacoes"]),
+    notasDistribuicao:         ps(l?.notes ?? meta["observacoes"]),
     isrcGlobal:                ps(l?.isrc_global ?? meta["isrc_global"]),
     upc:                       ps(l?.upc ?? r?.["upc"]),
     notasInternas:             ps(l?.notas_internas ?? meta["notas_internas"]),

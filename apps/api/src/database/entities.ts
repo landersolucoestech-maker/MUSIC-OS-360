@@ -1432,7 +1432,7 @@ export class ReleaseEntity {
   // ── Campos do formulário de Lançamento (1 coluna por campo — nome exato) ─────
   @Column({ type: 'varchar', length: 50, nullable: true }) isrc_global: string | null;
   @Column({ type: 'text', nullable: true }) notas_internas: string | null;
-  @Column({ type: 'text', nullable: true }) observacoes: string | null;
+  @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) gravadora: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) copyright: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) genero: string | null;
