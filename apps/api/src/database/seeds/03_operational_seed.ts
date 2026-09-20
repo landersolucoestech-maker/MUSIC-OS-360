@@ -41,11 +41,11 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
     ON CONFLICT (id) DO UPDATE SET active = TRUE
   `, [tenantId, orgId, orgName, `${orgSlug}-tenant`]);
 
-  await ds.query(`
-    INSERT INTO billing_subscriptions (org_id, plan, status, seats, seats_used)
-    VALUES ($1, 'enterprise', 'active', 50, 1)
-    ON CONFLICT DO NOTHING
-  `, [orgId]);
+  // billing_subscriptions ja e semeado por seedDefaultTenant() (01_default_tenant.ts)
+  // para o mesmo orgId -- inserir aqui tambem duplicava a linha a cada
+  // execucao (billing_subscriptions nao tem UNIQUE(org_id), so PK(id) e
+  // UNIQUE(stripe_customer_id/stripe_sub_id), sempre NULL aqui, entao
+  // ON CONFLICT DO NOTHING nunca tinha alvo para casar).
 
   // Dual-write (PASSO 12-G): grava role legado E role_id canônico.
   await ds.query(`
