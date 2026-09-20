@@ -72,10 +72,10 @@ describe('Colunas dedicadas de formulário sempre expostas no DTO correspondente
       'service_description', 'data_emissao', 'vencimento', 'status',
       'tomador_cnpj', 'tomador_razao_social', 'tomador_inscricao_estadual',
       'tomador_inscricao_municipal', 'tomador_email', 'tomador_endereco',
-      'tomador_cidade', 'tomador_uf', 'tomador_cep', 'valor_servicos',
-      'valor_deducoes', 'base_calculo', 'aliquota_iss', 'valor_iss',
-      'iss_retido', 'valor_pis', 'valor_cofins', 'valor_inss', 'valor_ir',
-      'valor_csll', 'valor_liquido', 'forma_pagamento', 'condicao_pagamento',
+      'tomador_cidade', 'tomador_uf', 'tomador_cep', 'service_amount',
+      'deductions_amount', 'base_calculo', 'aliquota_iss', 'iss_amount',
+      'iss_retido', 'pis_amount', 'cofins_amount', 'inss_amount', 'ir_amount',
+      'csll_amount', 'net_amount', 'forma_pagamento', 'condicao_pagamento',
       'url_pdf', 'notes', 'itens',
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);

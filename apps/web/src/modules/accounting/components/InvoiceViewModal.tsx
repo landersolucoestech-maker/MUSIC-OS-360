@@ -69,16 +69,16 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
   const { type: operationType, observacoesLimpas: cleanedNotes } = parseOperationType(invoice.notes);
   const isEntrada = operationType === "entrada";
   const itens: any[] = Array.isArray(invoice.itens) ? invoice.itens : [];
-  const valorServicos = numberValue(invoice.valor_servicos, invoice.valor, invoice.valor_total) ?? 0;
+  const valorServicos = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
   const totalRetencoes =
-    (invoice.iss_retido ? Number(invoice.valor_iss || 0) : 0) +
-    Number(invoice.valor_pis || 0) +
-    Number(invoice.valor_cofins || 0) +
-    Number(invoice.valor_ir || 0) +
-    Number(invoice.valor_csll || 0) +
-    Number(invoice.valor_inss || 0);
+    (invoice.iss_retido ? Number(invoice.iss_amount || 0) : 0) +
+    Number(invoice.pis_amount || 0) +
+    Number(invoice.cofins_amount || 0) +
+    Number(invoice.ir_amount || 0) +
+    Number(invoice.csll_amount || 0) +
+    Number(invoice.inss_amount || 0);
   const valorLiquido =
-    numberValue(invoice.valor_liquido, invoice.valor_servicos, invoice.valor, invoice.valor_total) ??
+    numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ??
     Math.max(valorServicos - totalRetencoes, 0);
   const signedNotaValue = isEntrada ? -valorLiquido : valorLiquido;
   const signedServicesValue = isEntrada ? -valorServicos : valorServicos;
@@ -166,15 +166,22 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {itens.map((it, i) => (
-                            <TableRow key={i}>
-                              <TableCell>{it.description}</TableCell>
-                              <TableCell>{it.codigo_servico}</TableCell>
-                              <TableCell className="text-right">{it.quantidade}</TableCell>
-                              <TableCell className={`text-right ${getCurrencyToneClass(isEntrada ? -Number(it.valor_unitario || 0) : Number(it.valor_unitario || 0))}`}>{formatCurrency(isEntrada ? -Number(it.valor_unitario || 0) : Number(it.valor_unitario || 0))}</TableCell>
-                              <TableCell className={`text-right font-medium ${getCurrencyToneClass(isEntrada ? -Number(it.valor_total || 0) : Number(it.valor_total || 0))}`}>{formatCurrency(isEntrada ? -Number(it.valor_total || 0) : Number(it.valor_total || 0))}</TableCell>
-                            </TableRow>
-                          ))}
+                          {itens.map((it, i) => {
+                            // Legacy itens[] entries persisted before Cluster G (naming-
+                            // normalization) still carry the Portuguese JSONB keys —
+                            // JSONB data isn't touched by the physical-column rename.
+                            const itemUnitPrice = Number(it.unit_price ?? it.valor_unitario ?? 0);
+                            const itemTotal = Number(it.total_amount ?? it.valor_total ?? 0);
+                            return (
+                              <TableRow key={i}>
+                                <TableCell>{it.description}</TableCell>
+                                <TableCell>{it.codigo_servico}</TableCell>
+                                <TableCell className="text-right">{it.quantidade}</TableCell>
+                                <TableCell className={`text-right ${getCurrencyToneClass(isEntrada ? -itemUnitPrice : itemUnitPrice)}`}>{formatCurrency(isEntrada ? -itemUnitPrice : itemUnitPrice)}</TableCell>
+                                <TableCell className={`text-right font-medium ${getCurrencyToneClass(isEntrada ? -itemTotal : itemTotal)}`}>{formatCurrency(isEntrada ? -itemTotal : itemTotal)}</TableCell>
+                              </TableRow>
+                            );
+                          })}
                         </TableBody>
                       </Table>
                     </div>
@@ -190,17 +197,17 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
             <CardContent className="space-y-3">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Field label="Vlr Serviços" value={<span className={getCurrencyToneClass(signedServicesValue)}>{formatCurrency(signedServicesValue)}</span>} />
-                <Field label="Deduções" value={<span className={getCurrencyToneClass(-Number(invoice.valor_deducoes || 0))}>{formatCurrency(-Number(invoice.valor_deducoes || 0))}</span>} />
+                <Field label="Deduções" value={<span className={getCurrencyToneClass(-Number(invoice.deductions_amount || 0))}>{formatCurrency(-Number(invoice.deductions_amount || 0))}</span>} />
                 <Field label="Base Cálculo" value={<span className={getCurrencyToneClass(signedServicesValue)}>{formatCurrency(signedServicesValue)}</span>} />
                 <Field label="Alíq. ISS" value={`${invoice.aliquota_iss || 0}%`} />
               </div>
               <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                <Field label={invoice.iss_retido ? "ISS (retido)" : "ISS"} value={<span className={getCurrencyToneClass(-Number(invoice.valor_iss || 0))}>{formatCurrency(-Number(invoice.valor_iss || 0))}</span>} />
-                <Field label="PIS" value={<span className={getCurrencyToneClass(-Number(invoice.valor_pis || 0))}>{formatCurrency(-Number(invoice.valor_pis || 0))}</span>} />
-                <Field label="COFINS" value={<span className={getCurrencyToneClass(-Number(invoice.valor_cofins || 0))}>{formatCurrency(-Number(invoice.valor_cofins || 0))}</span>} />
-                <Field label="IRRF" value={<span className={getCurrencyToneClass(-Number(invoice.valor_ir || 0))}>{formatCurrency(-Number(invoice.valor_ir || 0))}</span>} />
-                <Field label="CSLL" value={<span className={getCurrencyToneClass(-Number(invoice.valor_csll || 0))}>{formatCurrency(-Number(invoice.valor_csll || 0))}</span>} />
-                <Field label="INSS" value={<span className={getCurrencyToneClass(-Number(invoice.valor_inss || 0))}>{formatCurrency(-Number(invoice.valor_inss || 0))}</span>} />
+                <Field label={invoice.iss_retido ? "ISS (retido)" : "ISS"} value={<span className={getCurrencyToneClass(-Number(invoice.iss_amount || 0))}>{formatCurrency(-Number(invoice.iss_amount || 0))}</span>} />
+                <Field label="PIS" value={<span className={getCurrencyToneClass(-Number(invoice.pis_amount || 0))}>{formatCurrency(-Number(invoice.pis_amount || 0))}</span>} />
+                <Field label="COFINS" value={<span className={getCurrencyToneClass(-Number(invoice.cofins_amount || 0))}>{formatCurrency(-Number(invoice.cofins_amount || 0))}</span>} />
+                <Field label="IRRF" value={<span className={getCurrencyToneClass(-Number(invoice.ir_amount || 0))}>{formatCurrency(-Number(invoice.ir_amount || 0))}</span>} />
+                <Field label="CSLL" value={<span className={getCurrencyToneClass(-Number(invoice.csll_amount || 0))}>{formatCurrency(-Number(invoice.csll_amount || 0))}</span>} />
+                <Field label="INSS" value={<span className={getCurrencyToneClass(-Number(invoice.inss_amount || 0))}>{formatCurrency(-Number(invoice.inss_amount || 0))}</span>} />
               </div>
               <div className="flex items-center justify-between pt-3 border-t border-border">
                 <div>

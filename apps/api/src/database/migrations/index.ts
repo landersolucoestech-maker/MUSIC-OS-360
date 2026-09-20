@@ -256,6 +256,7 @@ import { RenameValorTotalValorLiquidadoOnShares20260918000041 } from './20260918
 import { RenameMetaValorValorAtualOnArtistGoals20260918000042 } from './20260918000042_RenameMetaValorValorAtualOnArtistGoals';
 import { RenameValorBrutoValorLiquidoOnEcadReports20260918000043 } from './20260918000043_RenameValorBrutoValorLiquidoOnEcadReports';
 import { RenameValorToValueOnFinancialRules20260918000044 } from './20260918000044_RenameValorToValueOnFinancialRules';
+import { RenameValorFieldsOnInvoices20260918000045 } from './20260918000045_RenameValorFieldsOnInvoices';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -523,4 +524,5 @@ export const ALL_MIGRATIONS = [
   RenameMetaValorValorAtualOnArtistGoals20260918000042,
   RenameValorBrutoValorLiquidoOnEcadReports20260918000043,
   RenameValorToValueOnFinancialRules20260918000044,
+  RenameValorFieldsOnInvoices20260918000045,
 ] as const;

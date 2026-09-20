@@ -107,16 +107,16 @@ export function InvoiceItemsSection({
                     type="number"
                     min="0"
                     step="0.01"
-                    value={item.valor_unitario}
+                    value={item.unit_price}
                     onChange={(e) =>
-                      updateItem(i, "valor_unitario", parseFloat(e.target.value) || 0)
+                      updateItem(i, "unit_price", parseFloat(e.target.value) || 0)
                     }
                     disabled={disabled}
                   />
                 </div>
                 <div className="col-span-10 md:col-span-1 space-y-1">
                   <Label className="text-xs">Total</Label>
-                  <p className="text-sm font-semibold pt-2">{fmt(item.valor_total)}</p>
+                  <p className="text-sm font-semibold pt-2">{fmt(item.total_amount)}</p>
                 </div>
                 <div className="col-span-2 md:col-span-1 flex justify-end">
                   {!disabled && formData.itens.length > 1 && (
@@ -140,7 +140,7 @@ export function InvoiceItemsSection({
                   className="text-xl font-bold text-foreground"
                   data-testid="text-total-servicos"
                 >
-                  {fmt(formData.valor_servicos)}
+                  {fmt(formData.service_amount)}
                 </p>
               </div>
             </div>
@@ -171,18 +171,18 @@ export function InvoiceItemsSection({
           <div className="space-y-2">
             <Label>
               Valor dos Serviços
-              {validationErrors.valor_servicos && (
-                <span className="text-destructive ml-1 text-xs">{validationErrors.valor_servicos}</span>
+              {validationErrors.service_amount && (
+                <span className="text-destructive ml-1 text-xs">{validationErrors.service_amount}</span>
               )}
             </Label>
             <Input
               type="number"
               step="0.01"
-              value={formData.valor_servicos}
-              onChange={(e) => updateField("valor_servicos", parseFloat(e.target.value) || 0)}
+              value={formData.service_amount}
+              onChange={(e) => updateField("service_amount", parseFloat(e.target.value) || 0)}
               disabled={disabled}
-              aria-invalid={!!validationErrors.valor_servicos}
-              className={validationErrors.valor_servicos ? "border-destructive" : ""}
+              aria-invalid={!!validationErrors.service_amount}
+              className={validationErrors.service_amount ? "border-destructive" : ""}
             />
           </div>
           <div className="space-y-2">
@@ -190,8 +190,8 @@ export function InvoiceItemsSection({
             <Input
               type="number"
               step="0.01"
-              value={formData.valor_deducoes}
-              onChange={(e) => updateField("valor_deducoes", parseFloat(e.target.value) || 0)}
+              value={formData.deductions_amount}
+              onChange={(e) => updateField("deductions_amount", parseFloat(e.target.value) || 0)}
               disabled={disabled}
             />
           </div>
@@ -227,8 +227,8 @@ export function InvoiceItemsSection({
               <Input
                 type="number"
                 step="0.01"
-                value={formData.valor_iss}
-                onChange={(e) => updateField("valor_iss", parseFloat(e.target.value) || 0)}
+                value={formData.iss_amount}
+                onChange={(e) => updateField("iss_amount", parseFloat(e.target.value) || 0)}
                 disabled={disabled}
               />
             </div>
@@ -260,8 +260,8 @@ export function InvoiceItemsSection({
               <Input
                 type="number"
                 step="0.01"
-                value={formData.valor_pis}
-                onChange={(e) => updateField("valor_pis", parseFloat(e.target.value) || 0)}
+                value={formData.pis_amount}
+                onChange={(e) => updateField("pis_amount", parseFloat(e.target.value) || 0)}
                 disabled={disabled}
               />
             </div>
@@ -270,8 +270,8 @@ export function InvoiceItemsSection({
               <Input
                 type="number"
                 step="0.01"
-                value={formData.valor_cofins}
-                onChange={(e) => updateField("valor_cofins", parseFloat(e.target.value) || 0)}
+                value={formData.cofins_amount}
+                onChange={(e) => updateField("cofins_amount", parseFloat(e.target.value) || 0)}
                 disabled={disabled}
               />
             </div>
@@ -280,8 +280,8 @@ export function InvoiceItemsSection({
               <Input
                 type="number"
                 step="0.01"
-                value={formData.valor_ir}
-                onChange={(e) => updateField("valor_ir", parseFloat(e.target.value) || 0)}
+                value={formData.ir_amount}
+                onChange={(e) => updateField("ir_amount", parseFloat(e.target.value) || 0)}
                 disabled={disabled}
               />
             </div>
@@ -290,8 +290,8 @@ export function InvoiceItemsSection({
               <Input
                 type="number"
                 step="0.01"
-                value={formData.valor_csll}
-                onChange={(e) => updateField("valor_csll", parseFloat(e.target.value) || 0)}
+                value={formData.csll_amount}
+                onChange={(e) => updateField("csll_amount", parseFloat(e.target.value) || 0)}
                 disabled={disabled}
               />
             </div>
@@ -300,8 +300,8 @@ export function InvoiceItemsSection({
               <Input
                 type="number"
                 step="0.01"
-                value={formData.valor_inss}
-                onChange={(e) => updateField("valor_inss", parseFloat(e.target.value) || 0)}
+                value={formData.inss_amount}
+                onChange={(e) => updateField("inss_amount", parseFloat(e.target.value) || 0)}
                 disabled={disabled}
               />
             </div>
@@ -313,20 +313,20 @@ export function InvoiceItemsSection({
             <div>
               <p className="text-xs text-muted-foreground">{rules.valorLiquidoLabel}</p>
               <p className="text-2xl font-bold text-primary" data-testid="text-valor-liquido">
-                {fmt(formData.valor_liquido)}
+                {fmt(formData.net_amount)}
               </p>
             </div>
             <div className="text-right text-xs text-muted-foreground">
-              <p>Bruto: {fmt(formData.valor_servicos)}</p>
+              <p>Bruto: {fmt(formData.service_amount)}</p>
               <p>
                 Total Retenções:{" "}
                 {fmt(
-                  (formData.iss_retido ? formData.valor_iss : 0) +
-                    formData.valor_pis +
-                    formData.valor_cofins +
-                    formData.valor_ir +
-                    formData.valor_csll +
-                    (formData.valor_inss || 0),
+                  (formData.iss_retido ? formData.iss_amount : 0) +
+                    formData.pis_amount +
+                    formData.cofins_amount +
+                    formData.ir_amount +
+                    formData.csll_amount +
+                    (formData.inss_amount || 0),
                 )}
               </p>
             </div>

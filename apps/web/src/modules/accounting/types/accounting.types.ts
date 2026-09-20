@@ -70,9 +70,9 @@ export interface Invoice {
   status?: InvoiceStatusValue | string | null;
   tomador_nome?: string | null;
   tomador_cnpj?: string | null;
-  valor_total?: number | null;
-  valor_servicos?: number | null;
-  valor_iss?: number | null;
+  total_amount?: number | null;
+  service_amount?: number | null;
+  iss_amount?: number | null;
   data_emissao?: string | null;
   data_vencimento?: string | null;
   service_description?: string | null;

@@ -28,8 +28,8 @@ export function validateInvoiceForm(f: InvoiceFormData): InvoiceValidationErrors
     errors.tomador_email = "E-mail inválido";
   }
 
-  if (!(parseFloat(String(f.valor_servicos)) > 0)) {
-    errors.valor_servicos = "Informe o valor dos serviços";
+  if (!(parseFloat(String(f.service_amount)) > 0)) {
+    errors.service_amount = "Informe o valor dos serviços";
   }
 
   return errors;

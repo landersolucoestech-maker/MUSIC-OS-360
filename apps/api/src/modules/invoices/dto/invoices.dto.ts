@@ -12,8 +12,8 @@ export class InvoiceItemDto {
   @ApiProperty() @IsString() @MaxLength(2000) description!: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) codigo_servico?: string;
   @ApiProperty() @IsNumber() @Min(1) @Type(() => Number) quantidade!: number;
-  @ApiProperty() @IsNumber() @Min(0) @Type(() => Number) valor_unitario!: number;
-  @ApiProperty() @IsNumber() @Min(0) @Type(() => Number) valor_total!: number;
+  @ApiProperty() @IsNumber() @Min(0) @Type(() => Number) unit_price!: number;
+  @ApiProperty() @IsNumber() @Min(0) @Type(() => Number) total_amount!: number;
 }
 
 /**
@@ -52,20 +52,20 @@ export class CreateInvoiceDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(2) tomador_uf?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(10) tomador_cep?: string;
 
-  /** Coluna legada ainda usada por eventos e telas antigas; espelha valor_servicos. */
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor?: number;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_servicos?: number;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_deducoes?: number;
+  /** Coluna legada ainda usada por eventos e telas antigas; espelha service_amount. */
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) legacy_amount?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) service_amount?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) deductions_amount?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) base_calculo?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Max(100) @Type(() => Number) aliquota_iss?: number;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_iss?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) iss_amount?: number;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() iss_retido?: boolean;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_pis?: number;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_cofins?: number;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_inss?: number;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_ir?: number;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_csll?: number;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_liquido?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) pis_amount?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) cofins_amount?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) inss_amount?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) ir_amount?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) csll_amount?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) net_amount?: number;
 
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) forma_pagamento?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(200) condicao_pagamento?: string;

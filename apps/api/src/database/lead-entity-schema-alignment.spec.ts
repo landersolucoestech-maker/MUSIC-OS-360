@@ -21,8 +21,11 @@ const entitiesSrc = fs.readFileSync(path.resolve(__dirname, 'entities.ts'), 'utf
 // (naming-normalization mandate, 2026-09-05): a migration histórica nunca é
 // editada, então seu texto ainda diz o nome antigo — mapeamos aqui para o
 // nome físico atual real.
+// 20260918000039_RenameValorEstimadoToEstimatedValueOnLeads renomeou
+// valor_estimado -> estimated_value (Cluster G, naming-normalization).
 const POST_REBUILD_RENAMES: Record<string, string> = {
   cliente_id: 'client_id',
+  valor_estimado: 'estimated_value',
 };
 
 function extractMigrationColumns(): string[] {

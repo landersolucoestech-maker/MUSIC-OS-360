@@ -11,7 +11,7 @@ const TENANT_B = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 
 function invoice(tenantId: string, id: string) {
   return {
-    id, tenant_id: tenantId, numero: `INV-${id}`, valor: 100,
+    id, tenant_id: tenantId, numero: `INV-${id}`, legacy_amount: 100,
     data_vencimento: new Date(Date.now() - 5 * 86400000), metadata: {},
   };
 }

@@ -49,7 +49,7 @@ export class InvoicesService {
     const payload: Record<string, unknown> = { ...input };
 
     if (input['tipo_nota'] !== undefined) payload['type'] = input['tipo_nota'];
-    if (input['valor_servicos'] !== undefined) payload['valor'] = input['valor_servicos'];
+    if (input['service_amount'] !== undefined) payload['legacy_amount'] = input['service_amount'];
     if (input['vencimento'] !== undefined) payload['data_vencimento'] = input['vencimento'];
 
     const cnpj = input['tomador_cnpj'];
@@ -138,7 +138,7 @@ export class InvoicesService {
         invoiceId: saved.id,
         tenantId,
         type: String((saved as unknown as Record<string, unknown>)['tipo_nota'] ?? saved.type ?? ''),
-        valor: String((saved as unknown as Record<string, unknown>)['valor_servicos'] ?? saved.valor ?? 0),
+        valor: String((saved as unknown as Record<string, unknown>)['service_amount'] ?? saved.legacy_amount ?? 0),
         numero: saved.numero ?? null,
         prestadorId: saved.prestador_id ?? null,
         createdBy: userId,
@@ -151,10 +151,10 @@ export class InvoicesService {
           entity_type: 'invoice',
           entity_id: saved.id,
           action: 'created',
-          description: `Nota fiscal${saved.numero ? ` nº ${saved.numero}` : ''} criada — R$${String((mapped['valor_servicos'] ?? mapped['valor']) ?? 0)}`,
+          description: `Nota fiscal${saved.numero ? ` nº ${saved.numero}` : ''} criada — R$${String((mapped['service_amount'] ?? mapped['legacy_amount']) ?? 0)}`,
           metadata: {
             type: mapped['tipo_nota'] ?? mapped['type'],
-            valor: String((mapped['valor_servicos'] ?? mapped['valor']) ?? 0),
+            valor: String((mapped['service_amount'] ?? mapped['legacy_amount']) ?? 0),
             numero: saved.numero,
           },
         });
@@ -210,7 +210,7 @@ export class InvoicesService {
           entity_id: id,
           action: 'cancelled',
           description: `Nota fiscal${current['numero'] ? ` nº ${String(current['numero'])}` : ''} cancelada`,
-          metadata: { numero: current['numero'], valor: String((current['valor_servicos'] ?? current['valor']) ?? 0) },
+          metadata: { numero: current['numero'], valor: String((current['service_amount'] ?? current['legacy_amount']) ?? 0) },
         });
       } catch { /* auditoria não bloqueia a operação principal */ }
     }
@@ -227,7 +227,7 @@ export class InvoicesService {
     const nowIso = new Date().toISOString();
     const invoiceId = String(after['id']);
     const numero = after['numero'] == null ? null : String(after['numero']);
-    const valor = String((after['valor_servicos'] ?? after['valor']) ?? 0);
+    const valor = String((after['service_amount'] ?? after['legacy_amount']) ?? 0);
 
     this.events?.emitTyped(DOMAIN_EVENTS.INVOICE_STATUS_CHANGED, {
       tenantId,

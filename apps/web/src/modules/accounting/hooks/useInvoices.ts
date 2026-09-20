@@ -13,10 +13,10 @@ export type { Invoice, InvoiceInsert, InvoiceUpdate, InvoiceWithRelations };
 
 function invoiceValue(invoice: InvoiceWithRelations): number | undefined {
   const row = invoice as InvoiceWithRelations & {
-    valor_servicos?: number | string;
-    valor?: number | string;
+    service_amount?: number | string;
+    legacy_amount?: number | string;
   };
-  const raw = row.valor_servicos ?? row.valor;
+  const raw = row.service_amount ?? row.legacy_amount;
   if (raw === null || raw === undefined || raw === "") return undefined;
   const parsed = typeof raw === "number" ? raw : Number(raw);
   return Number.isFinite(parsed) ? parsed : undefined;

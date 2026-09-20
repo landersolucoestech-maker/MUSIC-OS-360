@@ -87,8 +87,8 @@ export function useInvoiceForm({
   useEffect(() => {
     if (invoice && (mode === "edit" || mode === "view")) {
       const { type, observacoesLimpas } = parseOperationType(invoice.notes);
-      const valorServicos = numberValue(invoice.valor_servicos, invoice.valor, invoice.valor_total) ?? 0;
-      const valorLiquido = numberValue(invoice.valor_liquido, invoice.valor_servicos, invoice.valor, invoice.valor_total) ?? 0;
+      const valorServicos = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
+      const valorLiquido = numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
       const descricaoServicos = invoice.service_description ?? "";
       const tomadorRazaoSocial = invoice.tomador_razao_social ?? invoice.tomador_nome ?? invoice.clientes?.nome ?? "";
       setOperationType(type);
@@ -98,8 +98,8 @@ export function useInvoiceForm({
         observacoes: observacoesLimpas,
         tomador_razao_social: tomadorRazaoSocial,
         service_description: descricaoServicos,
-        valor_servicos: valorServicos,
-        valor_liquido: valorLiquido,
+        service_amount: valorServicos,
+        net_amount: valorLiquido,
         data_emissao: invoice.data_emissao ? new Date(invoice.data_emissao) : undefined,
         vencimento: invoice.vencimento
           ? new Date(invoice.vencimento)
@@ -108,7 +108,7 @@ export function useInvoiceForm({
             : undefined,
         itens: Array.isArray(invoice.itens) && invoice.itens.length > 0
           ? invoice.itens
-          : [{ ...INITIAL_ITEM, description: descricaoServicos, valor_unitario: valorServicos, valor_total: valorServicos }],
+          : [{ ...INITIAL_ITEM, description: descricaoServicos, unit_price: valorServicos, total_amount: valorServicos }],
       });
     } else if (!invoice && open) {
       setOperationType(defaultOperationType ?? "saida");
@@ -129,9 +129,9 @@ export function useInvoiceForm({
 
   useEffect(() => {
     if (isViewMode) return;
-    const valor = Number(formData.valor_servicos) || 0;
+    const valor = Number(formData.service_amount) || 0;
     if (valor === 0) return;
-    const deducoes = Number(formData.valor_deducoes) || 0;
+    const deducoes = Number(formData.deductions_amount) || 0;
     const baseCalculo = +(valor - deducoes).toFixed(2);
     const aliquotaIss = Number(formData.aliquota_iss) || 0;
     const valorIss = +(baseCalculo * (aliquotaIss / 100)).toFixed(2);
@@ -139,19 +139,19 @@ export function useInvoiceForm({
     const valorCofins = +(valor * 0.03).toFixed(2);
     const valorIr = +(valor * 0.015).toFixed(2);
     const valorCsll = +(valor * 0.01).toFixed(2);
-    const valorInss = Number(formData.valor_inss) || 0;
+    const valorInss = Number(formData.inss_amount) || 0;
     const valorLiquido = +(valor - (formData.iss_retido ? valorIss : 0) - valorPis - valorCofins - valorIr - valorCsll - valorInss).toFixed(2);
     setFormData((prev) => ({
       ...prev,
       base_calculo: baseCalculo,
-      valor_iss: valorIss,
-      valor_pis: valorPis,
-      valor_cofins: valorCofins,
-      valor_ir: valorIr,
-      valor_csll: valorCsll,
-      valor_liquido: valorLiquido,
+      iss_amount: valorIss,
+      pis_amount: valorPis,
+      cofins_amount: valorCofins,
+      ir_amount: valorIr,
+      csll_amount: valorCsll,
+      net_amount: valorLiquido,
     }));
-  }, [formData.valor_servicos, formData.valor_deducoes, formData.aliquota_iss, formData.iss_retido, formData.valor_inss, isViewMode]);
+  }, [formData.service_amount, formData.deductions_amount, formData.aliquota_iss, formData.iss_retido, formData.inss_amount, isViewMode]);
 
   const updateField = useCallback(<K extends keyof InvoiceFormData>(field: K, value: InvoiceFormData[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value, ...applyResets(field, value) }));
@@ -181,10 +181,10 @@ export function useInvoiceForm({
     setFormData((prev) => {
       const itens = [...prev.itens];
       itens[index] = { ...itens[index], [field]: value };
-      if (field === "quantidade" || field === "valor_unitario") {
-        itens[index].valor_total = +((itens[index].quantidade || 0) * (itens[index].valor_unitario || 0)).toFixed(2);
+      if (field === "quantidade" || field === "unit_price") {
+        itens[index].total_amount = +((itens[index].quantidade || 0) * (itens[index].unit_price || 0)).toFixed(2);
       }
-      return { ...prev, itens, valor_servicos: itens.reduce((sum, item) => sum + (item.valor_total || 0), 0) };
+      return { ...prev, itens, service_amount: itens.reduce((sum, item) => sum + (item.total_amount || 0), 0) };
     });
   }, []);
 
@@ -192,21 +192,21 @@ export function useInvoiceForm({
   const removeItem = useCallback((index: number) => setFormData((prev) => {
     if (prev.itens.length === 1) return prev;
     const itens = prev.itens.filter((_, itemIndex) => itemIndex !== index);
-    return { ...prev, itens, valor_servicos: itens.reduce((sum, item) => sum + (item.valor_total || 0), 0) };
+    return { ...prev, itens, service_amount: itens.reduce((sum, item) => sum + (item.total_amount || 0), 0) };
   }), []);
 
   const recalculateTaxes = useCallback(() => {
-    const valor = Number(formData.valor_servicos) || 0;
-    const deducoes = Number(formData.valor_deducoes) || 0;
+    const valor = Number(formData.service_amount) || 0;
+    const deducoes = Number(formData.deductions_amount) || 0;
     const baseCalculo = valor - deducoes;
     const valorIss = +(baseCalculo * ((Number(formData.aliquota_iss) || 0) / 100)).toFixed(2);
     const valorPis = +(valor * 0.0065).toFixed(2);
     const valorCofins = +(valor * 0.03).toFixed(2);
     const valorIr = +(valor * 0.015).toFixed(2);
     const valorCsll = +(valor * 0.01).toFixed(2);
-    const valorInss = Number(formData.valor_inss) || 0;
+    const valorInss = Number(formData.inss_amount) || 0;
     const valorLiquido = +(valor - (formData.iss_retido ? valorIss : 0) - valorPis - valorCofins - valorIr - valorCsll - valorInss).toFixed(2);
-    setFormData((prev) => ({ ...prev, base_calculo: baseCalculo, valor_iss: valorIss, valor_pis: valorPis, valor_cofins: valorCofins, valor_ir: valorIr, valor_csll: valorCsll, valor_liquido: valorLiquido }));
+    setFormData((prev) => ({ ...prev, base_calculo: baseCalculo, iss_amount: valorIss, pis_amount: valorPis, cofins_amount: valorCofins, ir_amount: valorIr, csll_amount: valorCsll, net_amount: valorLiquido }));
     toast.success("Tributos recalculados");
   }, [formData]);
 
@@ -221,17 +221,17 @@ export function useInvoiceForm({
       client_id: formData.client_id || "",
       data_emissao: formData.data_emissao,
       vencimento: formData.vencimento,
-      valor_servicos: Number(formData.valor_servicos) || 0,
-      valor_deducoes: Number(formData.valor_deducoes) || 0,
+      service_amount: Number(formData.service_amount) || 0,
+      deductions_amount: Number(formData.deductions_amount) || 0,
       base_calculo: Number(formData.base_calculo) || 0,
       aliquota_iss: Number(formData.aliquota_iss) || 0,
-      valor_iss: Number(formData.valor_iss) || 0,
-      valor_pis: Number(formData.valor_pis) || 0,
-      valor_cofins: Number(formData.valor_cofins) || 0,
-      valor_inss: Number(formData.valor_inss) || 0,
-      valor_ir: Number(formData.valor_ir) || 0,
-      valor_csll: Number(formData.valor_csll) || 0,
-      valor_liquido: Number(formData.valor_liquido) || 0,
+      iss_amount: Number(formData.iss_amount) || 0,
+      pis_amount: Number(formData.pis_amount) || 0,
+      cofins_amount: Number(formData.cofins_amount) || 0,
+      inss_amount: Number(formData.inss_amount) || 0,
+      ir_amount: Number(formData.ir_amount) || 0,
+      csll_amount: Number(formData.csll_amount) || 0,
+      net_amount: Number(formData.net_amount) || 0,
     });
     if (!schemaValidation.success) {
       toast.error(schemaValidation.error.errors[0]?.message || "Preencha os campos obrigatórios");
@@ -245,14 +245,14 @@ export function useInvoiceForm({
       return;
     }
 
-    const valorServicos = Number(formData.valor_servicos) || 0;
+    const valorServicos = Number(formData.service_amount) || 0;
     const data = {
       numero: formData.numero.trim(),
       serie: formData.serie?.trim() || null,
       tipo_nota: formData.tipo_nota,
       client_id: formData.client_id || null,
       venda_id: null,
-      valor: valorServicos,
+      legacy_amount: valorServicos,
       data_emissao: formData.data_emissao ? format(formData.data_emissao, "yyyy-MM-dd") : null,
       vencimento: formData.vencimento ? format(formData.vencimento, "yyyy-MM-dd") : null,
       status: formData.status,
@@ -272,18 +272,18 @@ export function useInvoiceForm({
       tomador_cidade: formData.tomador_cidade,
       tomador_uf: formData.tomador_uf,
       tomador_cep: formData.tomador_cep,
-      valor_servicos: valorServicos,
-      valor_deducoes: Number(formData.valor_deducoes) || 0,
+      service_amount: valorServicos,
+      deductions_amount: Number(formData.deductions_amount) || 0,
       base_calculo: Number(formData.base_calculo) || 0,
       aliquota_iss: Number(formData.aliquota_iss) || 0,
-      valor_iss: Number(formData.valor_iss) || 0,
+      iss_amount: Number(formData.iss_amount) || 0,
       iss_retido: Boolean(formData.iss_retido),
-      valor_pis: Number(formData.valor_pis) || 0,
-      valor_cofins: Number(formData.valor_cofins) || 0,
-      valor_inss: Number(formData.valor_inss) || 0,
-      valor_ir: Number(formData.valor_ir) || 0,
-      valor_csll: Number(formData.valor_csll) || 0,
-      valor_liquido: numberValue(formData.valor_liquido, formData.valor_servicos) ?? 0,
+      pis_amount: Number(formData.pis_amount) || 0,
+      cofins_amount: Number(formData.cofins_amount) || 0,
+      inss_amount: Number(formData.inss_amount) || 0,
+      ir_amount: Number(formData.ir_amount) || 0,
+      csll_amount: Number(formData.csll_amount) || 0,
+      net_amount: numberValue(formData.net_amount, formData.service_amount) ?? 0,
       forma_pagamento: formData.forma_pagamento,
       condicao_pagamento: formData.condicao_pagamento,
       itens: formData.itens,

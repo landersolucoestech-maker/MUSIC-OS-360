@@ -546,9 +546,9 @@ const INVOICES_CONTRACT: ReportFormContract = {
     col('client_id'), col('tomador_cnpj'), col('tomador_razao_social'),
     col('tomador_inscricao_estadual'), col('tomador_inscricao_municipal'), col('tomador_email'),
     col('tomador_endereco'), col('tomador_cidade'), col('tomador_uf'), col('tomador_cep'),
-    col('service_description'), col('valor_servicos'), col('valor_deducoes'), col('base_calculo'),
-    col('aliquota_iss'), col('valor_iss'), col('iss_retido'), col('valor_pis'), col('valor_cofins'),
-    col('valor_ir'), col('valor_csll'), col('valor_inss'), col('valor_liquido'),
+    col('service_description'), col('service_amount'), col('deductions_amount'), col('base_calculo'),
+    col('aliquota_iss'), col('iss_amount'), col('iss_retido'), col('pis_amount'), col('cofins_amount'),
+    col('ir_amount'), col('csll_amount'), col('inss_amount'), col('net_amount'),
     col('forma_pagamento'), col('condicao_pagamento'), col('vencimento'), col('url_pdf'),
     col('notes'),
   ],
@@ -557,7 +557,7 @@ const INVOICES_CONTRACT: ReportFormContract = {
       key: 'itens',
       fields: [
         { key: 'description' }, { key: 'codigo_servico' }, { key: 'quantidade' },
-        { key: 'valor_unitario' }, { key: 'valor_total' },
+        { key: 'unit_price' }, { key: 'total_amount' },
       ],
   },
 };

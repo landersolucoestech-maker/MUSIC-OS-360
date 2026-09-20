@@ -140,7 +140,7 @@ export class InvoiceOverdueScheduler implements OnApplicationBootstrap {
           invoiceId:      invoice.id,
           tenantId:       invoice.tenant_id,
           numero:         invoice.numero ?? null,
-          valor:          String(invoice.valor),
+          valor:          String(invoice.legacy_amount),
           dataVencimento: invoice.data_vencimento!.toISOString(),
         },
       });

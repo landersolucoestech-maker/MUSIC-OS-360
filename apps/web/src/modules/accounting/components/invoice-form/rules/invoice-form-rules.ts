@@ -4,8 +4,8 @@ export type { InvoiceOperationType };
 export interface InvoiceLineItem {
   description: string;
   quantidade: number;
-  valor_unitario: number;
-  valor_total: number;
+  unit_price: number;
+  total_amount: number;
   codigo_servico: string;
 }
 
@@ -31,18 +31,18 @@ export interface InvoiceFormData {
   tomador_cidade: string;
   tomador_uf: string;
   tomador_cep: string;
-  valor_servicos: number;
-  valor_deducoes: number;
+  service_amount: number;
+  deductions_amount: number;
   base_calculo: number;
   aliquota_iss: number;
-  valor_iss: number;
+  iss_amount: number;
   iss_retido: boolean;
-  valor_pis: number;
-  valor_cofins: number;
-  valor_inss: number;
-  valor_ir: number;
-  valor_csll: number;
-  valor_liquido: number;
+  pis_amount: number;
+  cofins_amount: number;
+  inss_amount: number;
+  ir_amount: number;
+  csll_amount: number;
+  net_amount: number;
   forma_pagamento: string;
   condicao_pagamento: string;
   itens: InvoiceLineItem[];
@@ -53,8 +53,8 @@ export interface InvoiceFormData {
 export const INITIAL_ITEM: InvoiceLineItem = {
   description: "",
   quantidade: 1,
-  valor_unitario: 0,
-  valor_total: 0,
+  unit_price: 0,
+  total_amount: 0,
   codigo_servico: "12.07",
 };
 
@@ -80,18 +80,18 @@ export const INITIAL_FORM_DATA: InvoiceFormData = {
   tomador_cidade: "",
   tomador_uf: "SP",
   tomador_cep: "",
-  valor_servicos: 0,
-  valor_deducoes: 0,
+  service_amount: 0,
+  deductions_amount: 0,
   base_calculo: 0,
   aliquota_iss: 5,
-  valor_iss: 0,
+  iss_amount: 0,
   iss_retido: false,
-  valor_pis: 0,
-  valor_cofins: 0,
-  valor_inss: 0,
-  valor_ir: 0,
-  valor_csll: 0,
-  valor_liquido: 0,
+  pis_amount: 0,
+  cofins_amount: 0,
+  inss_amount: 0,
+  ir_amount: 0,
+  csll_amount: 0,
+  net_amount: 0,
   forma_pagamento: "transferencia",
   condicao_pagamento: "30 dias",
   itens: [{ ...INITIAL_ITEM }],

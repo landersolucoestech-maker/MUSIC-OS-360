@@ -62,7 +62,7 @@ function getInvoicePartyName(invoice: any): string {
 }
 
 function getInvoiceDisplayValue(invoice: any): number | null {
-  return numberValue(invoice.valor_liquido, invoice.valor_servicos, invoice.valor, invoice.valor_total);
+  return numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount);
 }
 
 export default function Invoices() {
