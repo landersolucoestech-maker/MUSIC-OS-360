@@ -3,25 +3,37 @@ import { randomUUID } from 'node:crypto';
 import type { QueryRunner } from 'typeorm';
 import { AppDataSource } from '../src/database/datasource';
 
-const TABLES = [
-  'contacts',
-  'contact_attachments',
-  'contact_contracts',
-  'contact_timeline',
-  'lead_uploads',
-] as const;
+// Resincronizado (auditoria forense 2026-09-20): as tabelas contacts,
+// contact_contracts e contact_timeline nao existem mais no banco -- foram
+// consolidadas em "clients" (decisao "Contato = Cliente", ver
+// ContactsService) durante uma limpeza pre-existente desta base. Apenas
+// clients e client_attachments tem sucessor fisico real; contact_contracts
+// e contact_timeline viraram Maps em memoria (ver ContactContractsService /
+// ContactTimelineService) sem tabela para testar RLS. lead_uploads e um
+// modulo nao relacionado a contacts e permanece inalterado.
+const TABLES = ['clients', 'client_attachments', 'lead_uploads'] as const;
 
 type TableName = (typeof TABLES)[number];
+
+// Numero de policies FOR ALL varia por tabela: clients/client_attachments
+// foram consolidadas para 2 policies (tenant_isolation + super_admin_full_access)
+// pelas migrations Rebuild*InCanonicalFormOrder/CreateClientAttachments;
+// lead_uploads ainda usa o padrao mais antigo de 4 policies por-comando
+// (HardenContactsLeadUploadsRls), nunca migrado -- confirmado ao vivo, nao
+// assumido.
+const EXPECTED_POLICIES: Record<TableName, number> = {
+  clients: 2,
+  client_attachments: 2,
+  lead_uploads: 4,
+};
 
 type Fixture = {
   tenantA: string;
   tenantB: string;
   orgA: string;
   orgB: string;
-  contactA: string;
-  contactB: string;
-  contractA: string;
-  contractB: string;
+  clientA: string;
+  clientB: string;
   leadA: string;
   leadB: string;
   rowsB: Record<TableName, string>;
@@ -71,21 +83,17 @@ async function createFixture(qr: QueryRunner): Promise<Fixture> {
     tenantB: randomUUID(),
     orgA: randomUUID(),
     orgB: randomUUID(),
-    contactA: randomUUID(),
-    contactB: randomUUID(),
-    contractA: randomUUID(),
-    contractB: randomUUID(),
+    clientA: randomUUID(),
+    clientB: randomUUID(),
     leadA: randomUUID(),
     leadB: randomUUID(),
     rowsB: {
-      contacts: randomUUID(),
-      contact_attachments: randomUUID(),
-      contact_contracts: randomUUID(),
-      contact_timeline: randomUUID(),
+      clients: randomUUID(),
+      client_attachments: randomUUID(),
       lead_uploads: randomUUID(),
     },
   };
-  fixture.rowsB.contacts = fixture.contactB;
+  fixture.rowsB.clients = fixture.clientB;
 
   await qr.query(
     `INSERT INTO public.organizations (id, name, slug, plan)
@@ -112,17 +120,12 @@ async function createFixture(qr: QueryRunner): Promise<Fixture> {
     ],
   );
 
+  // categoria/perfil/nome sao NOT NULL sem default em ClientEntity.
   await qr.query(
-    `INSERT INTO public.contacts (id, tenant_id, name, contact_type)
-     VALUES ($1, $2, 'Contact A', 'person'),
-            ($3, $4, 'Contact B', 'person')`,
-    [fixture.contactA, fixture.tenantA, fixture.contactB, fixture.tenantB],
-  );
-  await qr.query(
-    `INSERT INTO public.contracts (id, tenant_id, title, type)
-     VALUES ($1, $2, 'Contract A', 'test'),
-            ($3, $4, 'Contract B', 'test')`,
-    [fixture.contractA, fixture.tenantA, fixture.contractB, fixture.tenantB],
+    `INSERT INTO public.clients (id, tenant_id, categoria, perfil, nome)
+     VALUES ($1, $2, 'producer', 'outros', 'Client A'),
+            ($3, $4, 'producer', 'outros', 'Client B')`,
+    [fixture.clientA, fixture.tenantA, fixture.clientB, fixture.tenantB],
   );
   await qr.query(
     `INSERT INTO public.leads (id, tenant_id, nome)
@@ -132,31 +135,10 @@ async function createFixture(qr: QueryRunner): Promise<Fixture> {
   );
 
   await qr.query(
-    `INSERT INTO public.contact_attachments
-       (id, tenant_id, contact_id, file_name, mime_type, extension, size)
-     VALUES ($1, $2, $3, 'tenant-b.pdf', 'application/pdf', 'pdf', 1)`,
-    [
-      fixture.rowsB.contact_attachments,
-      fixture.tenantB,
-      fixture.contactB,
-    ],
-  );
-  await qr.query(
-    `INSERT INTO public.contact_contracts
-       (id, tenant_id, contact_id, contract_id)
-     VALUES ($1, $2, $3, $4)`,
-    [
-      fixture.rowsB.contact_contracts,
-      fixture.tenantB,
-      fixture.contactB,
-      fixture.contractB,
-    ],
-  );
-  await qr.query(
-    `INSERT INTO public.contact_timeline
-       (id, tenant_id, contact_id, event_type, summary)
-     VALUES ($1, $2, $3, 'note', 'Tenant B')`,
-    [fixture.rowsB.contact_timeline, fixture.tenantB, fixture.contactB],
+    `INSERT INTO public.client_attachments
+       (id, tenant_id, client_id, storage_key, filename, mime_type, size_bytes)
+     VALUES ($1, $2, $3, 'rls-test/tenant-b.pdf', 'tenant-b.pdf', 'application/pdf', 1)`,
+    [fixture.rowsB.client_attachments, fixture.tenantB, fixture.clientB],
   );
   await qr.query(
     `INSERT INTO public.lead_uploads
@@ -174,34 +156,20 @@ function sameTenantInsert(
 ): { sql: string; params: unknown[] } {
   const id = randomUUID();
   switch (table) {
-    case 'contacts':
+    case 'clients':
       return {
-        sql: `INSERT INTO public.contacts
-                (id, tenant_id, name, contact_type)
-              VALUES ($1, $2, 'Allowed Contact', 'person') RETURNING id`,
+        sql: `INSERT INTO public.clients
+                (id, tenant_id, categoria, perfil, nome)
+              VALUES ($1, $2, 'producer', 'outros', 'Allowed Client') RETURNING id`,
         params: [id, fixture.tenantA],
       };
-    case 'contact_attachments':
+    case 'client_attachments':
       return {
-        sql: `INSERT INTO public.contact_attachments
-                (id, tenant_id, contact_id, file_name, mime_type, extension, size)
-              VALUES ($1, $2, $3, 'allowed.pdf', 'application/pdf', 'pdf', 1)
+        sql: `INSERT INTO public.client_attachments
+                (id, tenant_id, client_id, storage_key, filename, mime_type, size_bytes)
+              VALUES ($1, $2, $3, 'rls-test/allowed.pdf', 'allowed.pdf', 'application/pdf', 1)
               RETURNING id`,
-        params: [id, fixture.tenantA, fixture.contactA],
-      };
-    case 'contact_contracts':
-      return {
-        sql: `INSERT INTO public.contact_contracts
-                (id, tenant_id, contact_id, contract_id)
-              VALUES ($1, $2, $3, $4) RETURNING id`,
-        params: [id, fixture.tenantA, fixture.contactA, fixture.contractA],
-      };
-    case 'contact_timeline':
-      return {
-        sql: `INSERT INTO public.contact_timeline
-                (id, tenant_id, contact_id, event_type, summary)
-              VALUES ($1, $2, $3, 'note', 'Allowed') RETURNING id`,
-        params: [id, fixture.tenantA, fixture.contactA],
+        params: [id, fixture.tenantA, fixture.clientA],
       };
     case 'lead_uploads':
       return {
@@ -221,11 +189,8 @@ function divergentInsert(
   const statement = sameTenantInsert(table, fixture);
   const params = [...statement.params];
   params[1] = fixture.tenantB;
-  if (table === 'contact_attachments' || table === 'contact_timeline') {
-    params[2] = fixture.contactB;
-  } else if (table === 'contact_contracts') {
-    params[2] = fixture.contactB;
-    params[3] = fixture.contractB;
+  if (table === 'client_attachments') {
+    params[2] = fixture.clientB;
   } else if (table === 'lead_uploads') {
     params[2] = fixture.leadB;
   }
@@ -233,16 +198,13 @@ function divergentInsert(
 }
 
 function crossParentInsert(
-  table: Exclude<TableName, 'contacts'>,
+  table: Exclude<TableName, 'clients'>,
   fixture: Fixture,
 ): { sql: string; params: unknown[] } {
   const statement = sameTenantInsert(table, fixture);
   const params = [...statement.params];
-  if (table === 'contact_attachments' || table === 'contact_timeline') {
-    params[2] = fixture.contactB;
-  } else if (table === 'contact_contracts') {
-    params[2] = fixture.contactB;
-    params[3] = fixture.contractA;
+  if (table === 'client_attachments') {
+    params[2] = fixture.clientB;
   } else {
     params[2] = fixture.leadB;
   }
@@ -251,15 +213,7 @@ function crossParentInsert(
 
 async function cleanup(qr: QueryRunner, fixture: Fixture | null) {
   if (!fixture) return;
-  await qr.query(`DELETE FROM public.contact_attachments WHERE tenant_id IN ($1, $2)`, [
-    fixture.tenantA,
-    fixture.tenantB,
-  ]);
-  await qr.query(`DELETE FROM public.contact_contracts WHERE tenant_id IN ($1, $2)`, [
-    fixture.tenantA,
-    fixture.tenantB,
-  ]);
-  await qr.query(`DELETE FROM public.contact_timeline WHERE tenant_id IN ($1, $2)`, [
+  await qr.query(`DELETE FROM public.client_attachments WHERE tenant_id IN ($1, $2)`, [
     fixture.tenantA,
     fixture.tenantB,
   ]);
@@ -267,11 +221,7 @@ async function cleanup(qr: QueryRunner, fixture: Fixture | null) {
     fixture.tenantA,
     fixture.tenantB,
   ]);
-  await qr.query(`DELETE FROM public.contacts WHERE tenant_id IN ($1, $2)`, [
-    fixture.tenantA,
-    fixture.tenantB,
-  ]);
-  await qr.query(`DELETE FROM public.contracts WHERE tenant_id IN ($1, $2)`, [
+  await qr.query(`DELETE FROM public.clients WHERE tenant_id IN ($1, $2)`, [
     fixture.tenantA,
     fixture.tenantB,
   ]);
@@ -309,11 +259,14 @@ async function main() {
         ORDER BY c.relname`,
       [TABLES],
     );
-    assert(schemaRows.length === TABLES.length, 'as cinco tabelas foram encontradas');
+    assert(schemaRows.length === TABLES.length, 'as tabelas criticas foram encontradas');
     for (const row of schemaRows) {
       assert(row.relrowsecurity === true, `${row.relname}: RLS habilitado`);
       assert(row.relforcerowsecurity === true, `${row.relname}: FORCE RLS habilitado`);
-      assert(row.policies === 4, `${row.relname}: quatro policies mínimas`);
+      assert(
+        row.policies === EXPECTED_POLICIES[row.relname as TableName],
+        `${row.relname}: ${EXPECTED_POLICIES[row.relname as TableName]} policies esperadas`,
+      );
     }
 
     const functions = await qr.query(`
@@ -367,7 +320,7 @@ async function main() {
         ]),
       );
       assert(
-        table === 'contacts' ? ownRows.length === 1 : ownRows.length === 0,
+        table === 'clients' ? ownRows.length === 1 : ownRows.length === 0,
         `${table}: SELECT same-tenant permitido`,
       );
 
@@ -426,7 +379,7 @@ async function main() {
         `${table}: INSERT com tenant divergente negado`,
       );
 
-      if (table !== 'contacts') {
+      if (table !== 'clients') {
         const crossParent = crossParentInsert(table, fixture);
         await expectDenied(
           () =>
