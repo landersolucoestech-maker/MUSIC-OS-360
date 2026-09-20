@@ -11,7 +11,7 @@ export class CreateFinancialRuleDto {
   @ApiProperty({ enum: TIPOS }) @IsIn(TIPOS) type!: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) category?: string;
   @ApiProperty({ enum: CALCULOS }) @IsIn(CALCULOS) calculo!: string;
-  @ApiProperty() @IsNumber() @Type(() => Number) valor!: number;
+  @ApiProperty() @IsNumber() @Type(() => Number) value!: number;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() active?: boolean;
   @ApiPropertyOptional() @IsOptional() condicoes?: Record<string, unknown>;

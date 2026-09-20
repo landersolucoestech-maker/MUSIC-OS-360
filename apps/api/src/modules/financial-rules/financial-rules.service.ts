@@ -125,7 +125,7 @@ export class FinancialRulesService {
 
       // Compute result
       const valor  = context.valor ?? 0;
-      const ruleVal = parseFloat(String(rule.valor));
+      const ruleVal = parseFloat(String(rule.value));
       let computed: number;
       if (rule.calculo === 'percentual') computed = (valor * ruleVal) / 100;
       else if (rule.calculo === 'fixo')  computed = ruleVal;

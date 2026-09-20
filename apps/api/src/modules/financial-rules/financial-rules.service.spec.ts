@@ -14,7 +14,7 @@ import { EventsService } from '../../core/events/events.service';
 const NOW = new Date('2026-08-14T12:00:00.000Z');
 const RULE = {
   id: 'rule-1', tenant_id: 'tenant-1', name: 'Comissão padrão', type: 'comissao',
-  calculo: 'percentual', valor: '10', active: true, condicoes: {},
+  calculo: 'percentual', value: '10', active: true, condicoes: {},
   deleted_at: null, updated_at: NOW,
 };
 
@@ -37,7 +37,7 @@ describe('FinancialRulesService.update — concorrência otimista (Task K)', () 
   it('sem expectedUpdatedAt: aplica update incondicional (compatibilidade retroativa)', async () => {
     const { svc, repo } = makeService();
 
-    await svc.update('tenant-1', 'user-1', 'rule-1', { valor: 12 } as any);
+    await svc.update('tenant-1', 'user-1', 'rule-1', { value: 12 } as any);
 
     const [criteria] = (repo.update as jest.Mock).mock.calls[0];
     expect(criteria).toEqual({ id: 'rule-1', tenant_id: 'tenant-1' });
@@ -47,7 +47,7 @@ describe('FinancialRulesService.update — concorrência otimista (Task K)', () 
     const { svc, repo } = makeService();
 
     await svc.update('tenant-1', 'user-1', 'rule-1', {
-      valor: 12,
+      value: 12,
       expectedUpdatedAt: NOW.toISOString(),
     } as any);
 
@@ -66,7 +66,7 @@ describe('FinancialRulesService.update — concorrência otimista (Task K)', () 
 
     await expect(
       svc.update('tenant-1', 'user-1', 'rule-1', {
-        valor: 99,
+        value: 99,
         expectedUpdatedAt: new Date('2026-08-14T11:00:00.000Z').toISOString(),
       } as any),
     ).rejects.toThrow(ConflictException);
@@ -96,7 +96,7 @@ describe('FinancialRulesService.evaluateRules — calculo não implementado (REM
   it("calculo:'faixa' não emite FINANCIAL_RULE_TRIGGERED (nunca fabrica computed=0)", async () => {
     const { svc, events } = makeEvalService({
       id: 'rule-faixa', tenant_id: 'tenant-1', name: 'Comissão em faixas', type: 'comissao',
-      calculo: 'faixa', valor: '10', active: true, condicoes: {},
+      calculo: 'faixa', value: '10', active: true, condicoes: {},
     });
 
     await svc.evaluateRules('tenant-1', 'transaction.created', { entityId: 'tx-1', entityType: 'transaction', valor: 1000 });
@@ -107,7 +107,7 @@ describe('FinancialRulesService.evaluateRules — calculo não implementado (REM
   it("calculo:'percentual' continua emitindo normalmente (regressão)", async () => {
     const { svc, events } = makeEvalService({
       id: 'rule-pct', tenant_id: 'tenant-1', name: 'Comissão padrão', type: 'comissao',
-      calculo: 'percentual', valor: '10', active: true, condicoes: {},
+      calculo: 'percentual', value: '10', active: true, condicoes: {},
     });
 
     await svc.evaluateRules('tenant-1', 'transaction.created', { entityId: 'tx-1', entityType: 'transaction', valor: 1000 });

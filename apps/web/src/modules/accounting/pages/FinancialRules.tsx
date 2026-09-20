@@ -71,7 +71,7 @@ function toForm(rule: FinancialRule): FormState {
     type: rule.type,
     category: rule.category ?? "",
     calculo: rule.calculo,
-    valor: String(rule.valor),
+    valor: String(rule.value),
     description: rule.description ?? "",
     active: rule.active,
     triggers: rule.condicoes?.triggers ?? [],
@@ -79,7 +79,7 @@ function toForm(rule: FinancialRule): FormState {
 }
 
 function fmtValor(rule: FinancialRule): string {
-  return rule.calculo === "percentual" ? `${rule.valor}%` : `R$ ${Number(rule.valor).toFixed(2)}`;
+  return rule.calculo === "percentual" ? `${rule.value}%` : `R$ ${Number(rule.value).toFixed(2)}`;
 }
 
 export default function FinancialRules() {
@@ -118,7 +118,7 @@ export default function FinancialRules() {
       type: form.type,
       category: form.category.trim() || undefined,
       calculo: form.calculo,
-      valor: valorNum,
+      value: valorNum,
       description: form.description.trim() || undefined,
       active: form.active,
       condicoes: { triggers: form.triggers },

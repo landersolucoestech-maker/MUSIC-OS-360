@@ -11,7 +11,7 @@ export interface FinancialRule {
   type: FinancialRuleTipo;
   category: string | null;
   calculo: FinancialRuleCalculo;
-  valor: number;
+  value: number;
   description: string | null;
   active: boolean;
   condicoes: { triggers?: FinancialRuleTrigger[] } | null;
