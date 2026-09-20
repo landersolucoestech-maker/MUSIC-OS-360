@@ -1,9 +1,16 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { IsString, IsOptional, IsIn, IsDate, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
+import { BriefingStatus } from '@music-os-360/types';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
-const STATUSES = ['draft', 'review', 'approved', 'rejected', 'archived'] as const;
+// Was a hand-rolled, diverged local list (draft/review/approved/rejected/archived)
+// that matched neither the canonical BriefingStatus enum nor the live
+// chk_briefings_status constraint (draft/in_progress/review/approved/completed/
+// cancelled) -- every other module's status DTO (ArtistStatus, CampaignStatus,
+// etc.) derives its @IsIn list from the shared @music-os-360/types enum instead
+// of hand-rolling one; this now follows that same established pattern.
+const STATUSES = Object.values(BriefingStatus) as string[];
 
 export class CreateBriefingDto {
   @ApiProperty() @IsString() @MaxLength(500) title!: string;

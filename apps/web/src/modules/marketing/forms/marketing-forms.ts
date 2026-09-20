@@ -301,7 +301,7 @@ export function briefingInitialValues(briefing?: MarketingBriefing): FormValues 
   return {
     title: briefing?.title ?? "",
     type: briefing?.type ?? "campanha",
-    status: briefing?.status ?? "rascunho",
+    status: briefing?.status ?? "draft",
     deadline: briefing?.deadline ?? "",
     objective: briefing?.objective ?? "",
     context: briefing?.context ?? "",

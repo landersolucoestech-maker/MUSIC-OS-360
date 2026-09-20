@@ -309,19 +309,23 @@ export const BRIEFING_TYPE_OPTIONS: Option<BriefingType>[] = [
 export const BRIEFING_TYPE_LABEL = optionLabels(BRIEFING_TYPE_OPTIONS);
 
 export const BRIEFING_STATUS_OPTIONS: Option<BriefingStatus>[] = [
-  { value: "rascunho", label: "Rascunho" },
-  { value: "em_revisao", label: "Em Revisão" },
-  { value: "aprovado", label: "Aprovado" },
-  { value: "arquivado", label: "Arquivado" },
+  { value: "draft", label: "Rascunho" },
+  { value: "in_progress", label: "Em Andamento" },
+  { value: "review", label: "Em Revisão" },
+  { value: "approved", label: "Aprovado" },
+  { value: "completed", label: "Concluído" },
+  { value: "cancelled", label: "Cancelado" },
 ];
 
 export const BRIEFING_STATUS_LABEL = optionLabels(BRIEFING_STATUS_OPTIONS);
 
 export const BRIEFING_STATUS_TONE: Record<BriefingStatus, Tone> = {
-  rascunho: "neutral",
-  em_revisao: "warning",
-  aprovado: "success",
-  arquivado: "pending",
+  draft: "neutral",
+  in_progress: "info",
+  review: "warning",
+  approved: "success",
+  completed: "success",
+  cancelled: "pending",
 };
 
 // ---------------------------------------------------------------------------

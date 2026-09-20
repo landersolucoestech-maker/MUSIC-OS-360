@@ -117,9 +117,9 @@ export default function Briefing() {
   const [selectedBriefingIds, setSelectedBriefingIds] = useState<string[]>([]);
 
   const stats = useMemo(() => {
-    const approved = briefings.filter((b) => b.status === "aprovado").length;
-    const inReview = briefings.filter((b) => b.status === "em_revisao").length;
-    const open = briefings.filter((b) => b.status !== "aprovado" && b.status !== "arquivado").length;
+    const approved = briefings.filter((b) => b.status === "approved").length;
+    const inReview = briefings.filter((b) => b.status === "review").length;
+    const open = briefings.filter((b) => !["approved", "completed", "cancelled"].includes(b.status)).length;
     const deliverables = briefings.reduce((total, b) => total + (b.deliverables?.length ?? 0), 0);
     return { approved, inReview, open, deliverables };
   }, [briefings]);

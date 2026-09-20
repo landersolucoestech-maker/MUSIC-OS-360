@@ -147,7 +147,10 @@ export type BriefingType =
   | "portal_noticias"
   | "bastidores";
 
-export type BriefingStatus = "rascunho" | "em_revisao" | "aprovado" | "arquivado";
+// Canonical values match packages/types/src/enums.ts's BriefingStatus and the
+// live chk_briefings_status DB constraint -- display labels stay PT-BR (see
+// BRIEFING_STATUS_LABEL), only the wire-level value is the English enum.
+export type BriefingStatus = "draft" | "in_progress" | "review" | "approved" | "completed" | "cancelled";
 
 export type TaskType =
   | "design"
