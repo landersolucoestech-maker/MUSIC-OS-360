@@ -253,6 +253,7 @@ import { RenameValorUnitarioToUnitPriceOnInventoryItems20260918000038 } from './
 import { RenameValorEstimadoToEstimatedValueOnLeads20260918000039 } from './20260918000039_RenameValorEstimadoToEstimatedValueOnLeads';
 import { RenameValorCacheToFeeAmountOnEvents20260918000040 } from './20260918000040_RenameValorCacheToFeeAmountOnEvents';
 import { RenameValorTotalValorLiquidadoOnShares20260918000041 } from './20260918000041_RenameValorTotalValorLiquidadoOnShares';
+import { RenameMetaValorValorAtualOnArtistGoals20260918000042 } from './20260918000042_RenameMetaValorValorAtualOnArtistGoals';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -517,4 +518,5 @@ export const ALL_MIGRATIONS = [
   RenameValorEstimadoToEstimatedValueOnLeads20260918000039,
   RenameValorCacheToFeeAmountOnEvents20260918000040,
   RenameValorTotalValorLiquidadoOnShares20260918000041,
+  RenameMetaValorValorAtualOnArtistGoals20260918000042,
 ] as const;

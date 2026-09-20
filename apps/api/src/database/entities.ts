@@ -1891,8 +1891,8 @@ export class ArtistGoalEntity {
   @Column({ type: 'uuid' }) artist_id: string;
   @Column({ type: 'varchar', length: 255 }) title: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
-  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) meta_valor: string | null;
-  @Column({ type: 'decimal', precision: 15, scale: 2, default: '0' }) valor_atual: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) target_value: string | null;
+  @Column({ type: 'decimal', precision: 15, scale: 2, default: '0' }) current_value: string;
   @Column({ type: 'varchar', length: 50, default: ArtistGoalStatus.IN_PROGRESS }) status: ArtistGoalStatus;
   @Column({ type: 'varchar', length: 50, default: 'mensal' }) periodo: string;
   @Column({ type: 'timestamp', nullable: true }) start_date: Date | null;

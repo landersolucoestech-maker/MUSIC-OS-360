@@ -33,8 +33,8 @@ function normalizeType(value?: string): MetaTipo {
 
 function fromApi(row: GoalRow): Meta {
   const meta = row.metadata ?? {};
-  const target = Number(row.meta_valor ?? 0);
-  const current = Number(row.valor_atual ?? 0);
+  const target = Number(row.target_value ?? 0);
+  const current = Number(row.current_value ?? 0);
   return {
     id: row.id,
     nome: row.title,
@@ -72,8 +72,8 @@ function toApi(input: CreateMetaInput) {
     artist_id: String(input.artist_id),
     title: input.title ?? input.nome ?? "Meta",
     type: input.tipo_meta ?? input.type ?? "personalizada",
-    meta_valor: String(target),
-    valor_atual: String(current),
+    target_value: String(target),
+    current_value: String(current),
     status: input.status ?? "em_andamento",
     start_date: input.start_date ?? undefined,
     end_date: input.end_date ?? input.prazo ?? undefined,
@@ -147,8 +147,8 @@ export function useUpdateMeta() {
         descricao: current.metadata?.descricao ?? "",
         type: current.type,
         categoria: current.metadata?.categoria ?? "",
-        valorAlvo: Number(current.meta_valor ?? 0),
-        valorAtual: Number(current.valor_atual ?? 0),
+        valorAlvo: Number(current.target_value ?? 0),
+        valorAtual: Number(current.current_value ?? 0),
         unidade: current.metadata?.unidade ?? "",
         artist_id: current.artist_id,
         status: current.status,

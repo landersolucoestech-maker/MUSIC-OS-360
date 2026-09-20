@@ -12,11 +12,11 @@ export class CreateArtistGoalDto {
 
   @IsOptional()
   @IsString()
-  meta_valor?: string;
+  target_value?: string;
 
   @IsOptional()
   @IsString()
-  valor_atual?: string;
+  current_value?: string;
 
   @IsOptional()
   @IsString()
