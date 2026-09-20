@@ -76,7 +76,7 @@ export function lancamentoToFormFields(l: Lancamento | null | undefined): Lancam
     artist_id:                ps(l?.artist_id ?? r?.["artistId"]),
     type:                      ps(l?.type ?? r?.["type"]),
     codigoUPC:                 ps(l?.codigo_upc ?? l?.upc ?? r?.["upc"]),
-    genero:                    ps(l?.genero ?? meta["genero"]),
+    genero:                    ps(l?.music_genre ?? meta["genero"]),
     idioma:                    ps(l?.idioma ?? meta["idioma"]),
     dataLancamento:            ps(l?.data_lancamento ?? r?.["releasedAt"]),
     status:                    mapStatusToForm(l?.status),

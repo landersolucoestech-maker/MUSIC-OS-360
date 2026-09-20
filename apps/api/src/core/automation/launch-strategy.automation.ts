@@ -41,7 +41,7 @@ const SKILL_NAME = 'launch-strategy';
 interface ReleaseRow {
   title: string | null;
   type: string | null;
-  genero: string | null;
+  music_genre: string | null;
   data_lancamento: string | Date | null;
   artist_name: string | null;
   metadata: Record<string, unknown> | null;
@@ -97,7 +97,7 @@ export class LaunchStrategyAutomation {
   ): Promise<ReleaseRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT r.title, r.type, r.genero, r.data_lancamento, r.metadata,
+      `SELECT r.title, r.type, r.music_genre, r.data_lancamento, r.metadata,
               a.nome_artistico AS artist_name
          FROM releases r
          LEFT JOIN artists a
@@ -135,7 +135,7 @@ export class LaunchStrategyAutomation {
     };
 
     if (r.artist_name?.trim()) input.artistName = r.artist_name.trim();
-    if (r.genero?.trim()) input.genre = r.genero.trim();
+    if (r.music_genre?.trim()) input.genre = r.music_genre.trim();
     if (r.data_lancamento) input.releaseDate = new Date(r.data_lancamento).toISOString();
 
     // Reaproveita os pilares de conteúdo já gerados por marketing-calendar-builder,

@@ -265,7 +265,7 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
         <div className="rounded-lg border border-border p-3">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="Tipo" value={tipoInfo.label} />
-            <Field label="Gênero" value={lancamento.genero ?? textValue(metadata["genero"])} />
+            <Field label="Gênero" value={lancamento.music_genre ?? textValue(metadata["genero"])} />
             <Field label="Subgênero" value={subgenero} />
             <Field label="Idioma" value={idioma} />
             <Field label="Gravadora / Selo" value={lancamento.gravadora ?? textValue(metadata["gravadora"])} />

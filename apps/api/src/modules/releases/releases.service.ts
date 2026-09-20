@@ -70,7 +70,7 @@ export class ReleasesService {
     qb.select('r.status', 'status')
       .addSelect(
         `CASE WHEN r.title IS NOT NULL AND r.title <> '' AND r.artist_id IS NOT NULL
-              AND r.genero IS NOT NULL AND r.genero <> '' AND r.type IS NOT NULL AND r.type <> ''
+              AND r.music_genre IS NOT NULL AND r.music_genre <> '' AND r.type IS NOT NULL AND r.type <> ''
          THEN true ELSE false END`,
         'has_required',
       )
@@ -119,7 +119,7 @@ export class ReleasesService {
       notes:           dto.notes          ?? null,
       gravadora:       dto.gravadora      ?? null,
       copyright:       dto.copyright      ?? null,
-      genero:          dto.genero         ?? null,
+      music_genre:     dto.music_genre    ?? null,
       idioma:          dto.idioma         ?? null,
       assets:          dto.assets         ?? null,
       cronograma:      dto.cronograma     ?? null,
@@ -181,7 +181,7 @@ export class ReleasesService {
     if (dto.notes          != null) nonStatusUpdates.notes          = dto.notes;
     if (dto.gravadora      != null) nonStatusUpdates.gravadora      = dto.gravadora;
     if (dto.copyright      != null) nonStatusUpdates.copyright      = dto.copyright;
-    if (dto.genero         != null) nonStatusUpdates.genero         = dto.genero;
+    if (dto.music_genre    != null) nonStatusUpdates.music_genre    = dto.music_genre;
     if (dto.idioma         != null) nonStatusUpdates.idioma         = dto.idioma;
     if (dto.assets         != null) nonStatusUpdates.assets         = dto.assets;
     if (dto.cronograma     != null) nonStatusUpdates.cronograma     = dto.cronograma;

@@ -31,7 +31,7 @@ export function PitchingTab({
       .map((item) => ({
         id: item.id,
         label: item.title,
-        helper: [item.artistas?.nome_artistico, item.genero, item.status].filter(Boolean).join(" · ") || undefined,
+        helper: [item.artistas?.nome_artistico, item.music_genre, item.status].filter(Boolean).join(" · ") || undefined,
       }))
       .filter((option) => option.id && option.label)
       .sort((a, b) => a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }))

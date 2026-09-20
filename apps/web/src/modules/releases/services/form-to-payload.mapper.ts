@@ -91,7 +91,7 @@ export function formToLancamentoPayload(f: LancamentoFormFields, mode: "create" 
   if (ns(f.notasDistribuicao)) payload["notes"]          = ns(f.notasDistribuicao);
   if (ns(f.gravadora))         payload["gravadora"]      = ns(f.gravadora);
   if (ns(f.copyright))         payload["copyright"]      = ns(f.copyright);
-  if (ns(f.genero))            payload["genero"]         = ns(f.genero);
+  if (ns(f.genero))            payload["music_genre"]    = ns(f.genero);
   if (ns(f.idioma))            payload["idioma"]         = ns(f.idioma);
   if (hasAssets)               payload["assets"]         = assets;
   if (hasCron)                 payload["cronograma"]     = cronograma;

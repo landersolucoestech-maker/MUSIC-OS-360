@@ -64,7 +64,7 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
 const RELEASE_ROW = {
   title: 'Verão Eterno',
   type: 'single',
-  genero: 'pop',
+  music_genre: 'pop',
   data_lancamento: '2026-07-01T00:00:00.000Z',
   metadata: {
     aiMarketingCalendar: { parsed: { contentPillars: [{ pillar: 'Bastidores' }, { pillar: 'Lyric teasers' }] } },

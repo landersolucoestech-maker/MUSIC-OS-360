@@ -36,13 +36,13 @@ describe("formToLancamentoPayload — contrato canônico de releases", () => {
     expect(payload).not.toHaveProperty("metadata");
   });
 
-  it("envia isrc_global, notas_internas, gravadora, copyright, genero, idioma como campos de topo", () => {
+  it("envia isrc_global, notas_internas, gravadora, copyright, music_genre, idioma como campos de topo", () => {
     const payload = formToLancamentoPayload(baseFields());
     expect(payload.isrc_global).toBe("BR-XXX-25-00001");
     expect(payload.notas_internas).toBe("nota interna");
     expect(payload.gravadora).toBe("Gravadora X");
     expect(payload.copyright).toBe("(C) 2026 Gravadora X");
-    expect(payload.genero).toBe("MPB");
+    expect(payload.music_genre).toBe("MPB");
     expect(payload.idioma).toBe("pt-BR");
   });
 

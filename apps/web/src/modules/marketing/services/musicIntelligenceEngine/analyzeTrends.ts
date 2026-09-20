@@ -2,7 +2,7 @@ import type { IntelligenceSources } from "./types";
 import { mostCommon } from "./utils";
 
 export function analyzeTrendsContext(sources: IntelligenceSources, filters?: { genre?: string; platform?: string; period?: string }) {
-  const genres = sources.releases.map((item) => item.genero).filter(Boolean).map(String);
+  const genres = sources.releases.map((item) => item.music_genre).filter(Boolean).map(String);
   const channels = sources.contents.map((item) => item.channel).filter(Boolean).map(String);
   return {
     filters,

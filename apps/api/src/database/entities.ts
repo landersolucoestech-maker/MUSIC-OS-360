@@ -1435,7 +1435,7 @@ export class ReleaseEntity {
   @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) gravadora: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) copyright: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) genero: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) idioma: string | null;
   @Column({ type: 'jsonb', nullable: true }) assets: Record<string, unknown> | null;
   @Column({ type: 'jsonb', nullable: true }) cronograma: Record<string, unknown> | null;

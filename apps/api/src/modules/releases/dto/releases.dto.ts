@@ -29,7 +29,7 @@ export class CreateReleaseDto {
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) gravadora?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) copyright?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) genero?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) music_genre?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) idioma?: string;
   @ApiPropertyOptional() @IsOptional() assets?: Record<string, unknown>;
   @ApiPropertyOptional() @IsOptional() cronograma?: Record<string, unknown>;

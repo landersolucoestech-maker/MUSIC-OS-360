@@ -94,7 +94,7 @@ function ReleaseCard({ release, artista, now, selected, onToggleSelect, onView, 
   const releaseTime = release.data_lancamento ? new Date(release.data_lancamento).getTime() : NaN;
   const showCountdown = !Number.isNaN(releaseTime) && releaseTime > now;
   const releaseType = release.type === "single" ? "Single" : release.type === "ep" ? "EP" : "Album";
-  const genre = (release.genero as string | null) ?? artista?.musicGenre ?? "Genre TBA";
+  const genre = (release.music_genre as string | null) ?? artista?.musicGenre ?? "Genre TBA";
   const text = contrastText(mode);
   const subtext = contrastSubtext(mode);
   const chrome = contrastChrome(mode);

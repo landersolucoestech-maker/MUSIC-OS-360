@@ -131,7 +131,7 @@ export class ReleaseFormBuilder {
       type:            normalizeStr(this._core.type),
       status:          normalizeStr(this._core.status) ?? "analise",
       data_lancamento: normalizeStr(this._core.data_lancamento),
-      genero:          normalizeStr(this._core.genero),
+      music_genre:     normalizeStr(this._core.genero),
       idioma:          normalizeStr(this._core.idioma),
       gravadora:       normalizeStr(this._core.gravadora),
       copyright:       normalizeStr(this._core.copyright),

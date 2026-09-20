@@ -133,7 +133,7 @@ export function AiCreativeWorkspace() {
       </TabsContent>
       <TabsContent value="planejamento">
         <PlanejamentoTab
-          releaseOptions={lancamentos.map((release) => ({ id: release.id, label: release.title, helper: release.genero || undefined }))}
+          releaseOptions={lancamentos.map((release) => ({ id: release.id, label: release.title, helper: release.music_genre || undefined }))}
           onGenerate={handleGenerate}
           isGenerating={generate.isPending}
         />

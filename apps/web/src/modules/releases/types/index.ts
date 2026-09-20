@@ -68,7 +68,7 @@ export interface Lancamento {
   assets?: LancamentoAssets | null;
   cronograma?: LancamentoCronograma | null;
   // Campos adicionais presentes no mock e formulário
-  genero?: string | null;
+  music_genre?: string | null;
   idioma?: string | null;
   gravadora?: string | null;
   copyright?: string | null;

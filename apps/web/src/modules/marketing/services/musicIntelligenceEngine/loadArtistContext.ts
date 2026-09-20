@@ -28,7 +28,7 @@ export function loadArtistContext(
     artistRecord?.musicGenre,
     ...obras.map((item) => item.music_genre),
     ...fonogramas.map((item) => item.musicGenre),
-    ...releases.map((item) => item.genero),
+    ...releases.map((item) => item.music_genre),
   ].filter(Boolean).map(String);
   const publicSignals = [
     artistRecord?.instagramUrl ? `Instagram: ${artistRecord.instagramUrl}` : "",
