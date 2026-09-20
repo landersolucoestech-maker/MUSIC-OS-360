@@ -80,12 +80,12 @@ describe('ProjectsService', () => {
     await buildModule();
   });
 
-  it('create() persiste title/type/status/notes/description/genero corretamente', async () => {
+  it('create() persiste title/type/status/notes/description/music_genre corretamente', async () => {
     await service.create(TENANT, 'u1', {
-      title: 'Meu Álbum', type: 'album', notes: 'nota', description: null, genero: 'pop',
+      title: 'Meu Álbum', type: 'album', notes: 'nota', description: null, music_genre: 'pop',
     } as any);
     expect(mockDs._repo.create).toHaveBeenCalledWith(
-      expect.objectContaining({ tenant_id: TENANT, title: 'Meu Álbum', type: 'album', notes: 'nota', genero: 'pop' }),
+      expect.objectContaining({ tenant_id: TENANT, title: 'Meu Álbum', type: 'album', notes: 'nota', music_genre: 'pop' }),
     );
   });
 
@@ -125,7 +125,7 @@ describe('ProjectsService', () => {
   it('findById() reidrata musicas no formato esperado pelo frontend', async () => {
     const trackRows = [{
       id: 't1', project_id: PROJECT_ID, name: 'Faixa 1', solo_feat: 'solo', original_remix: 'original',
-      instrumental: 'nao', duracao_min: '3', duracao_seg: '30', genero: 'pop', idioma: 'pt-BR',
+      instrumental: 'nao', duracao_min: '3', duracao_seg: '30', music_genre: 'pop', idioma: 'pt-BR',
       letra: 'lalala', audio_url: null,
     }];
     const participantRows = [

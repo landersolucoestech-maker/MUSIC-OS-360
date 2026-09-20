@@ -26,7 +26,7 @@ export function loadArtistContext(
   const pitchings = sources.suggestions.filter((item) => item.targetId === artist.id || item.targetName === artist.label);
   const genreCandidates = [
     artistRecord?.musicGenre,
-    ...obras.map((item) => item.genero),
+    ...obras.map((item) => item.music_genre),
     ...fonogramas.map((item) => item.musicGenre),
     ...releases.map((item) => item.genero),
   ].filter(Boolean).map(String);

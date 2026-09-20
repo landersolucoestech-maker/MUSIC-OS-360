@@ -14,7 +14,7 @@ export interface ArtistaRef {
   id: string;
   nome_artistico?: string | null;
   foto_url?: string | null;
-  genero_musical?: string | null;
+  music_genre?: string | null;
   status?: string | null;
 }
 

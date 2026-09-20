@@ -25,7 +25,7 @@ const fullPhonogram = {
   tenant_id: 't1',
   title: 'Música X',
   isrc: 'BR-ABC-26-00001',
-  genero_musical: 'Pop',
+  music_genre: 'Pop',
   interpretes: 'Artista X',
   artist_id: 'art-1',
   work_id: null,

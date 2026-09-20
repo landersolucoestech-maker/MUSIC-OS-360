@@ -187,7 +187,7 @@ export function ObraViewModal({
             <div>
               <SectionTitle>Informações Gerais</SectionTitle>
               <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                <InfoField label="Gênero"  value={obra.genero} />
+                <InfoField label="Gênero"  value={obra.music_genre} />
                 <InfoField label="Idioma"  value={obra.idioma} />
                 <InfoField label="Duração" value={duracaoDisplay} />
                 <SwitchField label="Instrumental" value={instrumental} />

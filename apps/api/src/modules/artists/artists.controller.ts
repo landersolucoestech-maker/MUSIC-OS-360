@@ -66,8 +66,8 @@ export class ArtistsController {
   @RequireRole('viewer')
   @RequirePermission('artist:read')
   @ApiOperation({ summary: 'Gêneros musicais distintos do tenant' })
-  distinctGeneros(@CurrentTenant() tenant: { id: string }) {
-    return this.service.distinctGeneros(tenant.id);
+  distinctMusicGenres(@CurrentTenant() tenant: { id: string }) {
+    return this.service.distinctMusicGenres(tenant.id);
   }
 
   @Get(':id/platform-profiles')

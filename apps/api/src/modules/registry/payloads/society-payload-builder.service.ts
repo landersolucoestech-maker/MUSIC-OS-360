@@ -109,7 +109,7 @@ export class SocietyPayloadBuilderService {
         title: work.title,
         alternative_titles: Array.isArray(work.alternative_titles) ? work.alternative_titles : [],
         type: work.type ?? null,
-        genre: work.genero ?? null,
+        genre: work.music_genre ?? null,
         language: work.language ?? null,
         iswc: work.iswc ?? null,
         duration_seconds: work.duration_seconds ?? null,

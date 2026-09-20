@@ -9,14 +9,14 @@ export function projetoToLancamentoSeed(projeto: {
   id: string;
   title?: string | null;
   artist_id?: string | null;
-  genero?: string | null;
+  music_genre?: string | null;
   type?: string | null;
 }): Partial<LancamentoFormFields> {
   return {
     projetoSeed: projeto.id,
     title:      projeto.title?.trim() ?? "",
     artist_id:  projeto.artist_id ?? "",
-    genero:      projeto.genero ?? "",
+    genero:      projeto.music_genre ?? "",
     type:        projeto.type ?? "single",
   };
 }

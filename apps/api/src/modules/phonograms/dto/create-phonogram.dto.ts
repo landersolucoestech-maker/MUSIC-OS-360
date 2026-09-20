@@ -39,7 +39,7 @@ export class CreatePhonogramDto {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  genero_musical?: string | null;
+  music_genre?: string | null;
 
   @ApiPropertyOptional({ example: 312, description: 'Duração em segundos' })
   @IsOptional()

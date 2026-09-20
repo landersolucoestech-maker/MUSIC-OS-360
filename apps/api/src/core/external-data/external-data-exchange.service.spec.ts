@@ -121,7 +121,7 @@ function makeServiceWithWebhookRepo(
 }
 
 describe('ExternalDataExchangeService.buildSocietyPayload — elegibilidade de shares (Fase 5 / C6)', () => {
-  const work = { id: 'w1', title: 'Obra', compositores: null, compositor: null, co_compositores: null, editora: null, detentores: null, genero: null, isrc: null, iswc: null };
+  const work = { id: 'w1', title: 'Obra', compositores: null, compositor: null, co_compositores: null, editora: null, detentores: null, music_genre: null, isrc: null, iswc: null };
 
   it('contributors/rightHolders só incluem shares elegíveis (share_type null)', async () => {
     const svc = makeService({

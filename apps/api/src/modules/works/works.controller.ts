@@ -40,8 +40,8 @@ export class WorksController {
   @RequireRole('viewer')
   @RequirePermission('work:read')
   @ApiOperation({ summary: 'Gêneros distintos das obras do tenant' })
-  distinctGeneros(@CurrentTenant() tenant: { id: string }) {
-    return this.service.distinctGeneros(tenant.id);
+  distinctMusicGenres(@CurrentTenant() tenant: { id: string }) {
+    return this.service.distinctMusicGenres(tenant.id);
   }
 
   @Get(':id')

@@ -246,7 +246,7 @@ export function ObraFormModal({
   const [tituloObra, setTitleObra] = useState(obraTitle(obra));
   const [situacao, setSituacao] = useState(dbStatusToSelect(obra?.status));
   const [generoMusical, setGeneroMusical] = useState(
-    obra?.genero?.toLowerCase() || "",
+    obra?.music_genre?.toLowerCase() || "",
   );
   const [idioma, setIdioma] = useState(obra?.idioma || "");
   const [duracaoMin, setDuracaoMin] = useState(
@@ -631,9 +631,9 @@ export function ObraFormModal({
                             });
                             // Auto-fill fields from project registration
                             if (!tituloObra && p.title) setTitleObra(p.title as string);
-                            if (p.genero) {
+                            if (p.music_genre) {
                               const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-                              const generoRaw = p.genero as string;
+                              const generoRaw = p.music_genre as string;
                               const matched = generosMusicais.find(g => norm(g) === norm(generoRaw));
                               setGeneroMusical(matched ? matched.toLowerCase() : generoRaw.toLowerCase());
                             }

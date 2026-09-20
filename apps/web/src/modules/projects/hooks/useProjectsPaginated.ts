@@ -20,7 +20,7 @@ export function useProjectsPaginated({ page, pageSize, search, status, type, art
   if (status) filters.status = status;
   if (type) filters.type = type;
   if (artistId) filters.artistId = artistId;
-  if (genero) filters.genero = genero;
+  if (genero) filters.music_genre = genero;
 
   const result = usePaginatedDataQuery<ProjectWithRelations>({
     queryKey: [...QUERY_KEYS.PROJECTS],

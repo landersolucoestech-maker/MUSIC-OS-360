@@ -40,8 +40,8 @@ export class PhonogramsController {
   @RequireRole('viewer')
   @RequirePermission('phonogram:read')
   @ApiOperation({ summary: 'Gêneros distintos dos fonogramas do tenant' })
-  distinctGeneros(@CurrentTenant() tenant: { id: string }) {
-    return this.service.distinctGeneros(tenant.id);
+  distinctMusicGenres(@CurrentTenant() tenant: { id: string }) {
+    return this.service.distinctMusicGenres(tenant.id);
   }
 
   @Get(':id')

@@ -59,8 +59,8 @@ export class PhonogramsService {
     if (resolvedQuery.work_id)    qb.andWhere('p.work_id = :workId',      { workId:    resolvedQuery.work_id });
     if (q['obra_vinculada'] === 'sem-obra') qb.andWhere('p.work_id IS NULL');
     else if (q['obra_vinculada'] === 'com-obra') qb.andWhere('p.work_id IS NOT NULL');
-    if (q['genero_musical'] || q['genre']) {
-      qb.andWhere('p.genero_musical = :genre', { genre: q['genero_musical'] ?? q['genre'] });
+    if (q['music_genre'] || q['genre']) {
+      qb.andWhere('p.music_genre = :genre', { genre: q['music_genre'] ?? q['genre'] });
     }
     if (q['ecad'] === 'com-ecad')      qb.andWhere("p.cod_ecad IS NOT NULL AND p.cod_ecad <> ''");
     else if (q['ecad'] === 'sem-ecad') qb.andWhere("(p.cod_ecad IS NULL OR p.cod_ecad = '')");
@@ -96,16 +96,16 @@ export class PhonogramsService {
   }
 
   /** Gêneros distintos do tenant — usado no filtro (dropdown não pode ficar preso aos 50 primeiros registros). */
-  async distinctGeneros(tenantId: string): Promise<string[]> {
+  async distinctMusicGenres(tenantId: string): Promise<string[]> {
     const rows = await this.repo!
       .createQueryBuilder('p')
-      .select('DISTINCT p.genero_musical', 'genero')
+      .select('DISTINCT p.music_genre', 'musicGenre')
       .where('p.tenant_id = :tenantId', { tenantId })
       .andWhere('p.deleted_at IS NULL')
-      .andWhere('p.genero_musical IS NOT NULL')
-      .orderBy('p.genero_musical', 'ASC')
-      .getRawMany<{ genero: string }>();
-    return rows.map((r) => r.genero);
+      .andWhere('p.music_genre IS NOT NULL')
+      .orderBy('p.music_genre', 'ASC')
+      .getRawMany<{ musicGenre: string }>();
+    return rows.map((r) => r.musicGenre);
   }
 
   async findById(tenantId: string, id: string): Promise<PhonogramEntity> {

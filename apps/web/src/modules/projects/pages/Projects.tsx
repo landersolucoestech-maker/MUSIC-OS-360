@@ -87,11 +87,11 @@ export default function Projects() {
 
   // Canonical genre resolver: direct field wins; fallback to first track only.
   // Usado só para popular o dropdown de gêneros (lista completa) — a
-  // filtragem em si agora acontece no backend, sobre a coluna `genero`
+  // filtragem em si agora acontece no backend, sobre a coluna `music_genre`
   // direta (que já é o mesmo valor persistido como atalho na criação/edição,
   // ver migration 20260719000005).
   const getProjetoGenero = (p: ProjectWithRelationsExtended): string => {
-    if (p.genero) return (p.genero as string).trim().toLowerCase();
+    if (p.music_genre) return (p.music_genre as string).trim().toLowerCase();
     const musicas = parseMusicasFromProjeto(p);
     return (musicas[0]?.genero || "").trim().toLowerCase();
   };

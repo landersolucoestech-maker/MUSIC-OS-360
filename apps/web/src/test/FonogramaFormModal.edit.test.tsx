@@ -26,7 +26,7 @@ vi.mock("@/modules/catalog/hooks/useObras", () => {
     {
       id: "obra-1",
       title: "Canção Vinculada",
-      genero: "pop",
+      music_genre: "pop",
       compositores: ["Alice"],
       status: "registrado",
     },
@@ -79,7 +79,7 @@ vi.mock("@/shared/lib/storage", async () => {
       ...actual.storage,
       findById: vi.fn(async (table: string, id: string) => {
         if (table === "obras" && id === "obra-1") {
-          return { id: "obra-1", title: "Canção Vinculada", genero: "pop", compositores: ["Alice"], status: "registrado" };
+          return { id: "obra-1", title: "Canção Vinculada", music_genre: "pop", compositores: ["Alice"], status: "registrado" };
         }
         // Task J: artista "fora do cap" — nunca estaria entre os primeiros 50
         // retornados por useArtistas() sem filtro; só é alcançável por GET
@@ -99,7 +99,7 @@ vi.mock("@/shared/lib/storage", async () => {
               {
                 id: "obra-99",
                 title: "Obra Rara",
-                genero: "pop",
+                music_genre: "pop",
                 compositores: [],
                 artist_id: "art-99",
               },

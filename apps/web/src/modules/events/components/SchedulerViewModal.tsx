@@ -159,8 +159,8 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
                     <p className="font-semibold truncate" data-testid="text-evento-artista">
                       {artista.nome_artistico || artista.nome || "—"}
                     </p>
-                    {artista.genero_musical && (
-                      <p className="text-xs text-muted-foreground">{artista.genero_musical}</p>
+                    {artista.music_genre && (
+                      <p className="text-xs text-muted-foreground">{artista.music_genre}</p>
                     )}
                   </div>
                   {artista.email && (

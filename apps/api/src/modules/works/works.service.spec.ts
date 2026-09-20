@@ -131,7 +131,7 @@ describe('WorksService', () => {
   describe('CreateWorkDto — payload real do formulário (Estado B, pré-C2)', () => {
     const realFormPayload = {
       title: 'Minha Obra',
-      genero: 'pop',
+      music_genre: 'pop',
       idioma: 'pt',
       cod_ecad: 'ECAD-0001',
       cod_entidade: 'ABR-123',

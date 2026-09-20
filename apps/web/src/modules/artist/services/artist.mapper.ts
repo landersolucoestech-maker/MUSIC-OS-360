@@ -270,9 +270,10 @@ export function validateAppleMusicUrl(url: string): UrlValidationState {
 // ════════════════════════════════════════════════════════════════
 // ─── Fronteira 1: fio da API (PT, DTO do backend) ↔ Artist (EN) ──
 // ════════════════════════════════════════════════════════════════
-// O backend (CreateArtistDto/UpdateArtistDto/entities.ts) NÃO muda nesta
-// tarefa — continua em português (`nome_artistico`, `genero_musical` etc).
-// Estas funções são o ÚNICO lugar que conhece os dois nomes de cada campo.
+// O backend (CreateArtistDto/UpdateArtistDto/entities.ts) mistura colunas
+// físicas em português (`nome_artistico` etc) com algumas já normalizadas em
+// inglês (`music_genre`). Estas funções são o ÚNICO lugar que conhece os
+// dois nomes de cada campo.
 
 type WireDistributorEntry = { id: string; email: string; nomeCustom?: string };
 type WireResponsavel = { nome: string; telefone: string; email: string };
@@ -304,7 +305,7 @@ export type ArtistWireRecord = Record<string, unknown> & {
   nome?: string | null;
   status?: string | null;
   status_cadastro?: string | null;
-  genero_musical?: string | null;
+  music_genre?: string | null;
   email?: string | null;
   telefone?: string | null;
   cpf_cnpj?: string | null;
@@ -460,7 +461,7 @@ export function wireToArtist(w: ArtistWireRecord): Artist {
     name: w.nome,
     status: w.status,
     registrationStatus: w.status_cadastro,
-    musicGenre: w.genero_musical,
+    musicGenre: w.music_genre,
     email: w.email,
     phone: w.telefone,
     taxId: w.cpf_cnpj,
@@ -552,7 +553,7 @@ export function artistToWirePayload(a: Partial<Artist>): Record<string, unknown>
   setIf("stageName", "nome_artistico");
   setIf("legalName", "nome_civil");
   setIf("registrationStatus", "status_cadastro");
-  setIf("musicGenre", "genero_musical");
+  setIf("musicGenre", "music_genre");
   setIf("phone", "telefone");
   setIf("taxId", "cpf_cnpj");
   setIf("photoUrl", "foto_url");

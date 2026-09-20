@@ -30,7 +30,7 @@ const REQUIRED_COLUMNS = ['nome_artistico', 'status'] as const;
 
 // Colunas anuláveis: `undefined` = não tocar; `null`/valor = persistir exatamente.
 const NULLABLE_COLUMNS = [
-  'nome_civil', 'genero_musical', 'notes', 'foto_url',
+  'nome_civil', 'music_genre', 'notes', 'foto_url',
   'manager_nome', 'produtor_executivo',
   'agencia_booking', 'label_parceira', 'spotify_url', 'youtube_url',
   'deezer_url', 'apple_music_url', 'soundcloud_url', 'contrato_id',
@@ -114,7 +114,7 @@ export class ArtistsService {
       .andWhere('a.deleted_at IS NULL');
 
     if (query.status) qb.andWhere('a.status = :status', { status: query.status });
-    if (query.genre)  qb.andWhere('a.genero_musical = :genre', { genre: query.genre });
+    if (query.genre)  qb.andWhere('a.music_genre = :genre', { genre: query.genre });
     if (query.search) {
       qb.andWhere('(a.nome_artistico ILIKE :search OR a.nome_civil ILIKE :search)', {
         search: `%${query.search}%`,
@@ -242,12 +242,12 @@ export class ArtistsService {
 
   /** Gêneros musicais distintos do tenant (para o dropdown de filtro) — sem
    * baixar artistas inteiros só para extrair valores únicos de uma coluna. */
-  async distinctGeneros(tenantId: string): Promise<string[]> {
-    const rows = await this.ds!.query<Array<{ genero_musical: string }>>(
-      `SELECT DISTINCT genero_musical FROM artists WHERE tenant_id = $1 AND deleted_at IS NULL AND genero_musical IS NOT NULL ORDER BY genero_musical`,
+  async distinctMusicGenres(tenantId: string): Promise<string[]> {
+    const rows = await this.ds!.query<Array<{ music_genre: string }>>(
+      `SELECT DISTINCT music_genre FROM artists WHERE tenant_id = $1 AND deleted_at IS NULL AND music_genre IS NOT NULL ORDER BY music_genre`,
       [tenantId],
     );
-    return rows.map((r) => r.genero_musical).filter(Boolean);
+    return rows.map((r) => r.music_genre).filter(Boolean);
   }
 
   async findById(tenantId: string, id: string): Promise<ArtistEntity> {
@@ -277,7 +277,7 @@ export class ArtistsService {
       nome_artistico:      dto.nome_artistico,
       nome_civil:          dto.nome_civil          ?? null,
       status:              dto.status ?? ArtistStatus.IN_NEGOTIATION,
-      genero_musical:      dto.genero_musical      ?? null,
+      music_genre:         dto.music_genre         ?? null,
       notes:               dto.notes               ?? null,
       foto_url:            dto.foto_url            ?? null,
       galeria_urls:        (dto.galeria_urls        ?? []) as any,
@@ -446,12 +446,12 @@ export class ArtistsService {
     const newStatus = dto.status!;
 
     if (newStatus === ArtistStatus.ACTIVE) {
-      const genero      = dto.genero_musical ?? existing.genero_musical;
+      const genero      = dto.music_genre ?? existing.music_genre;
       const hasEmail    = (dto as any).email    != null || existing.email_encrypted    != null;
       const hasTelefone = (dto as any).telefone != null || existing.telefone_encrypted != null;
 
       const errors: string[] = [];
-      if (!genero)                  errors.push('genero_musical obrigatório para ativar artista');
+      if (!genero)                  errors.push('music_genre obrigatório para ativar artista');
       if (!hasEmail && !hasTelefone) errors.push('email ou telefone obrigatório para ativar artista');
 
       if (errors.length > 0) throw new BadRequestException(errors.join('; '));

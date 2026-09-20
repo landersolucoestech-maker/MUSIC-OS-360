@@ -28,7 +28,7 @@ export class CreateWorkDto {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  genero?: string;
+  music_genre?: string;
 
   @ApiPropertyOptional({ example: 'pending' })
   @IsOptional()

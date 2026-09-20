@@ -36,7 +36,7 @@ export class QueryPhonogramDto extends PaginationDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  genero_musical?: string;
+  music_genre?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

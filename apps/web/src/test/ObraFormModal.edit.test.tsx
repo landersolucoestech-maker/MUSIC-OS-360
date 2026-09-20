@@ -111,7 +111,7 @@ describe("ObraFormModal edit mode", () => {
   const baseObra = {
     id: "obra-1",
     title: "Canção Original",
-    genero: "pop",
+    music_genre: "pop",
     iswc: "T-123.456.789-0",
     duration_text: "03:45",
     status: "analise",
@@ -199,7 +199,7 @@ describe("ObraFormModal edit mode", () => {
     // assertion is a regression guard against that ever being reintroduced.
     expect(callArg.org_id).toBeUndefined();
     expect(callArg.orgId).toBeUndefined();
-    expect(callArg.genero).toBe("pop");
+    expect(callArg.music_genre).toBe("pop");
   });
 
   // Task J — Lookup Gap Zero: prova que o picker "Vincular a Projeto

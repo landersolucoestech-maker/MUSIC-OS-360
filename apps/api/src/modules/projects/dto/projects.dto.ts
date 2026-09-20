@@ -21,7 +21,7 @@ export class CreateProjectDto {
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) orcamento?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) genero?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) music_genre?: string;
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
 
   // Lista de faixas em desenvolvimento — normalizada em project_tracks pelo
@@ -39,5 +39,5 @@ export class QueryProjectDto extends PaginationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() type?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() artistId?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() genero?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() music_genre?: string;
 }

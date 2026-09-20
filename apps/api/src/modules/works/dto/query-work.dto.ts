@@ -8,10 +8,10 @@ export class QueryWorkDto extends PaginationDto {
   @IsString()
   status?: string;
 
-  @ApiPropertyOptional({ example: 'MPB', description: 'Filtro server-side pelo gênero (coluna genero).' })
+  @ApiPropertyOptional({ example: 'MPB', description: 'Filtro server-side pelo gênero (coluna music_genre).' })
   @IsOptional()
   @IsString()
-  genero?: string;
+  music_genre?: string;
 
   @ApiPropertyOptional({ example: 'autoral' })
   @IsOptional()

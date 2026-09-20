@@ -46,7 +46,7 @@ const CONFIGS: AuditConfig[] = [
     label: (row) => entityLabel(row, ["nome_artistico", "nome_civil", "email"], "Artista sem nome"),
     fields: [
       { key: "nome_artistico", label: "Nome artístico", severity: "obrigatorio" },
-      { key: "genero_musical", label: "Gênero musical", severity: "obrigatorio" },
+      { key: "music_genre", label: "Gênero musical", severity: "obrigatorio" },
       { key: "email", label: "E-mail", severity: "obrigatorio" },
       { key: "telefone", label: "Telefone", severity: "recomendado" },
       { key: "cpf_cnpj", label: "CPF/CNPJ", severity: "recomendado" },
@@ -76,7 +76,7 @@ const CONFIGS: AuditConfig[] = [
     fields: [
       { key: "title", label: "Título", severity: "obrigatorio" },
       { key: "compositores|compositor", label: "Compositores", severity: "obrigatorio" },
-      { key: "genero", label: "Gênero", severity: "recomendado" },
+      { key: "music_genre", label: "Gênero", severity: "recomendado" },
       { key: "iswc", label: "ISWC", severity: "recomendado" },
       { key: "cod_ecad", label: "Código ECAD", severity: "recomendado" },
     ],
@@ -92,7 +92,7 @@ const CONFIGS: AuditConfig[] = [
       { key: "isrc", label: "ISRC", severity: "obrigatorio" },
       { key: "artist_id", label: "Artista vinculado", severity: "recomendado" },
       { key: "work_id", label: "Obra vinculada", severity: "recomendado" },
-      { key: "genero_musical", label: "Gênero musical", severity: "recomendado" },
+      { key: "music_genre", label: "Gênero musical", severity: "recomendado" },
     ],
   },
   {

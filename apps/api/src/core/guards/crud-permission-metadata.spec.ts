@@ -52,7 +52,7 @@ const expectedRoutes: ExpectedRoute[] = [
 
   { controller: WorksController, methodName: 'list', httpMethod: RequestMethod.GET, path: '', role: 'viewer', permission: 'work:read' },
   { controller: WorksController, methodName: 'stats', httpMethod: RequestMethod.GET, path: 'stats', role: 'viewer', permission: 'work:read' },
-  { controller: WorksController, methodName: 'distinctGeneros', httpMethod: RequestMethod.GET, path: 'stats/generos', role: 'viewer', permission: 'work:read' },
+  { controller: WorksController, methodName: 'distinctMusicGenres', httpMethod: RequestMethod.GET, path: 'stats/generos', role: 'viewer', permission: 'work:read' },
   { controller: WorksController, methodName: 'findById', httpMethod: RequestMethod.GET, path: ':id', role: 'viewer', permission: 'work:read' },
   { controller: WorksController, methodName: 'create', httpMethod: RequestMethod.POST, path: '', role: 'editor', permission: 'work:create' },
   { controller: WorksController, methodName: 'update', httpMethod: RequestMethod.PATCH, path: ':id', role: 'editor', permission: 'work:update' },
@@ -60,7 +60,7 @@ const expectedRoutes: ExpectedRoute[] = [
 
   { controller: PhonogramsController, methodName: 'list', httpMethod: RequestMethod.GET, path: '', role: 'viewer', permission: 'phonogram:read' },
   { controller: PhonogramsController, methodName: 'stats', httpMethod: RequestMethod.GET, path: 'stats', role: 'viewer', permission: 'phonogram:read' },
-  { controller: PhonogramsController, methodName: 'distinctGeneros', httpMethod: RequestMethod.GET, path: 'stats/generos', role: 'viewer', permission: 'phonogram:read' },
+  { controller: PhonogramsController, methodName: 'distinctMusicGenres', httpMethod: RequestMethod.GET, path: 'stats/generos', role: 'viewer', permission: 'phonogram:read' },
   { controller: PhonogramsController, methodName: 'findById', httpMethod: RequestMethod.GET, path: ':id', role: 'viewer', permission: 'phonogram:read' },
   { controller: PhonogramsController, methodName: 'create', httpMethod: RequestMethod.POST, path: '', role: 'editor', permission: 'phonogram:create' },
   { controller: PhonogramsController, methodName: 'update', httpMethod: RequestMethod.PATCH, path: ':id', role: 'editor', permission: 'phonogram:update' },

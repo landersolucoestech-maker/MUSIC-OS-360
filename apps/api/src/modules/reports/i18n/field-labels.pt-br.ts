@@ -79,6 +79,7 @@ export const FIELD_LABELS_PT_BR = {
 
   // ── Artistas / streaming ────────────────────────────────────────────────────
   generoMusical: 'Gênero musical',
+  musicGenre: 'Gênero musical',
   faseCarreira: 'Fase da carreira',
   dataNascimento: 'Data de nascimento',
   managerName: 'Nome do empresário',

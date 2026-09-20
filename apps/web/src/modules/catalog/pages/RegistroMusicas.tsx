@@ -53,14 +53,14 @@ const statusObraLabel = (s: string): string => {
   return "Pendente";
 };
 
-const getFonogramaGenero = (fonograma: Pick<Fonograma, "genero_musical">): string =>
-  (fonograma.genero_musical ?? "").toString().trim();
+const getFonogramaGenero = (fonograma: Pick<Fonograma, "music_genre">): string =>
+  (fonograma.music_genre ?? "").toString().trim();
 
-const getFonogramaGeneroDisplay = (fonograma: Pick<Fonograma, "genero_musical">): string =>
+const getFonogramaGeneroDisplay = (fonograma: Pick<Fonograma, "music_genre">): string =>
   getFonogramaGenero(fonograma) || "Não informado";
 
-const getObraGeneroDisplay = (obra: Pick<Obra, "genero">): string =>
-  (obra.genero ?? "").toString().trim() || "Não informado";
+const getObraGeneroDisplay = (obra: Pick<Obra, "music_genre">): string =>
+  (obra.music_genre ?? "").toString().trim() || "Não informado";
 
 const getSortText = (value: unknown): string => {
   if (Array.isArray(value)) return value.filter(Boolean).join(", ");
@@ -734,7 +734,7 @@ export default function RegistroMusicas() {
                           <TableCell className="py-3 text-sm">{obra.iswc || "-"}</TableCell>
                           <TableCell className="py-3 text-sm max-w-[140px] truncate">{obra.compositores || "-"}</TableCell>
                           <TableCell className="py-3 text-sm max-w-[120px] truncate">{obra.editora || "-"}</TableCell>
-                          <TableCell className="py-3 text-sm">{obra.genero || "-"}</TableCell>
+                          <TableCell className="py-3 text-sm">{obra.music_genre || "-"}</TableCell>
                           <TableCell className="py-3 text-right">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>

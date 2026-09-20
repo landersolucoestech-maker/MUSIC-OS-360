@@ -702,7 +702,7 @@ export function ArtistVision360Modal({
                   </h2>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="neutral">
-                      {artista.genero_musical || "Não informado"}
+                      {artista.music_genre || "Não informado"}
                     </Badge>
                     {artista.status === "onboarding" ? (
                       <Badge variant="warning">
@@ -1166,7 +1166,7 @@ export function ArtistVision360Modal({
                         Gênero Musical
                       </p>
                       <p className="text-sm font-medium capitalize">
-                        {artista.genero_musical || "Não informado"}
+                        {artista.music_genre || "Não informado"}
                       </p>
                     </div>
                     <div>

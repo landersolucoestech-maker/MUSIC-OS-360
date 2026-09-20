@@ -40,13 +40,13 @@ const SKILL_NAME = 'artist-profile-analysis';
 
 interface ArtistRow {
   nome_artistico: string;
-  genero_musical: string | null;
+  music_genre: string | null;
   spotify_url: string | null;
   youtube_url: string | null;
   deezer_url: string | null;
   apple_music_url: string | null;
   soundcloud_url: string | null;
-  observacoes: string | null;
+  notes: string | null;
   metadata: Record<string, unknown> | null;
 }
 
@@ -114,8 +114,8 @@ export class ArtistProfileAnalysisAutomation {
   ): Promise<ArtistRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT nome_artistico, genero_musical, spotify_url, youtube_url,
-              deezer_url, apple_music_url, soundcloud_url, observacoes, metadata
+      `SELECT nome_artistico, music_genre, spotify_url, youtube_url,
+              deezer_url, apple_music_url, soundcloud_url, notes, metadata
          FROM artists
         WHERE id = $1 AND tenant_id = $2 AND deleted_at IS NULL
         LIMIT 1`,
@@ -150,7 +150,7 @@ export class ArtistProfileAnalysisAutomation {
       language: 'pt-BR',
     };
 
-    if (artist.genero_musical) input.genre = artist.genero_musical;
+    if (artist.music_genre) input.genre = artist.music_genre;
     if (typeof md.audience === 'string') input.audience = md.audience;
 
     const strengths = strArray(md.strengths);
@@ -161,7 +161,7 @@ export class ArtistProfileAnalysisAutomation {
     const platforms = buildPlatforms(artist);
     if (platforms.length > 0) input.platforms = platforms;
 
-    const context = typeof md.context === 'string' ? md.context : artist.observacoes;
+    const context = typeof md.context === 'string' ? md.context : artist.notes;
     if (context) input.context = context;
 
     return input;

@@ -483,7 +483,7 @@ export class ArtistEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) nome_civil: string | null;
   @Column({ type: 'varchar', length: 50, default: ArtistStatus.IN_NEGOTIATION }) status: ArtistStatus;
   @Column({ type: 'varchar', length: 50, default: ArtistStatusCadastro.ACTIVE }) status_cadastro: ArtistStatusCadastro;
-  @Column({ type: 'varchar', length: 100, nullable: true }) genero_musical: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
   @Column({ type: 'text', nullable: true }) email_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) telefone_encrypted: string | null;
   @Column({ type: 'text', nullable: true }) cpf_cnpj_encrypted: string | null;
@@ -705,7 +705,7 @@ export class WorkEntity {
   @Column({ type: 'varchar', length: 100, nullable: true }) cod_entidade: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) cod_ecad: string | null;
   @Column({ type: 'varchar', length: 100 }) type: string;
-  @Column({ type: 'varchar', length: 100, nullable: true }) genero: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
   @Column({ type: 'varchar', length: 50, default: WorkStatus.PENDING }) status: WorkStatus;
   @Column({ type: 'varchar', length: 20, nullable: true }) duration_text: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) origem_externa: string | null;
@@ -839,7 +839,7 @@ export class PhonogramEntity {
   @Column({ type: 'varchar', length: 50, nullable: true }) registry_status: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) external_reference: string | null;
   // migration 20260605000001_AddGenreToPhonograms
-  @Column({ type: 'varchar', length: 100, nullable: true }) genero_musical: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
 
   // ── Campos do formulário (1 coluna por campo — nome EXATO da chave do form) ──
   @Column({ type: 'varchar', length: 100, nullable: true }) agregadora: string | null;
@@ -1349,7 +1349,7 @@ export class ProjectEntity {
   // `description` volta a ser texto livre puro — musicas[] normalizada em project_tracks.
   @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) genero: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
@@ -1377,7 +1377,7 @@ export class ProjectTrackEntity {
   @Column({ type: 'varchar', length: 10, nullable: true }) instrumental: string | null;
   @Column({ type: 'varchar', length: 10, nullable: true }) duracao_min: string | null;
   @Column({ type: 'varchar', length: 10, nullable: true }) duracao_seg: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) genero: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) idioma: string | null;
   @Column({ type: 'text', nullable: true }) letra: string | null;
   @Column({ type: 'text', nullable: true }) audio_url: string | null;

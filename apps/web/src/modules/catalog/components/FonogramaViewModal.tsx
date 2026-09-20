@@ -90,7 +90,7 @@ export interface FonogramaViewData {
   duration_text?: string | null;
   // Categorization
   generoMusical?: string | null;
-  genero_musical?: string | null;
+  music_genre?: string | null;
   genero?: string | null;
   midia?: string | null;
   paisOrigem?: string | null;
@@ -233,7 +233,7 @@ export function FonogramaViewModal({
     obraVinculada = foundObra
       ? {
           title: foundObra.title ?? "",
-          genero: foundObra.genero ?? "",
+          genero: foundObra.music_genre ?? "",
           compositores: compositoresToString(foundObra.compositores),
         }
       : { title: "Obra vinculada" };
@@ -306,7 +306,7 @@ export function FonogramaViewModal({
 
   const generoMusical = pickStr(
     fonograma.generoMusical,
-    fonograma.genero_musical,
+    fonograma.music_genre,
     fonograma.genero,
   );
   const midia = pickStr(fonograma.midia);

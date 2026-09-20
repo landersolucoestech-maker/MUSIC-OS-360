@@ -304,7 +304,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   const [duracaoMin, setDuracaoMin] = useState(pickStr(fonograma?.duracaoMin, fonograma?.duracao_min) || initialDurationText.min);
   const [duracaoSeg, setDuracaoSeg] = useState(pickStr(fonograma?.duracaoSeg, fonograma?.duracao_seg) || initialDurationText.seg);
   const [instrumental, setInstrumental] = useState<boolean>(pickBool(fonograma?.instrumental) ?? false);
-  const [generoMusical, setGeneroMusical] = useState(pickStr(fonograma?.generoMusical, fonograma?.musicGenre));
+  const [generoMusical, setGeneroMusical] = useState(pickStr(fonograma?.generoMusical, fonograma?.music_genre));
   const [classificacao, setClassificacao] = useState(pickStr(fonograma?.classificacao));
   const [midia, setMidia] = useState(pickStr(fonograma?.midia));
   const [nacional, setNacional] = useState<boolean>(pickBool(fonograma?.nacional) ?? true);
@@ -417,7 +417,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       setObraVinculada({
         id: hydratedObra.id,
         title: hydratedObra.title ?? "",
-        genero: hydratedObra.genero ?? "",
+        genero: hydratedObra.music_genre ?? "",
         compositores: compositoresToString(hydratedObra.compositores),
         status: hydratedObra.status ?? "",
       });
@@ -454,7 +454,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
     .map((o) => ({
       id: o.id,
       title: o.title ?? "",
-      genero: o.genero ?? "",
+      genero: o.music_genre ?? "",
       compositores: compositoresToString(o.compositores),
       status: o.status ?? "",
     }))
@@ -574,7 +574,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       duration_text: durationTextConcat,
       duracao_min: duracaoMin === "" ? null : Number(duracaoMin),
       duracao_seg: duracaoSeg === "" ? null : Number(duracaoSeg),
-      musicGenre: generoMusical || null,
+      music_genre: generoMusical || null,
       midia: midia || null,
       classificacao: classificacao || null,
       pais_origem: paisOrigem || null,

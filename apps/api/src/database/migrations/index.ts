@@ -257,6 +257,11 @@ import { RenameMetaValorValorAtualOnArtistGoals20260918000042 } from './20260918
 import { RenameValorBrutoValorLiquidoOnEcadReports20260918000043 } from './20260918000043_RenameValorBrutoValorLiquidoOnEcadReports';
 import { RenameValorToValueOnFinancialRules20260918000044 } from './20260918000044_RenameValorToValueOnFinancialRules';
 import { RenameValorFieldsOnInvoices20260918000045 } from './20260918000045_RenameValorFieldsOnInvoices';
+import { RenameGeneroToMusicGenreOnWorks20260918000046 } from './20260918000046_RenameGeneroToMusicGenreOnWorks';
+import { RenameGeneroToMusicGenreOnProjectTracks20260918000047 } from './20260918000047_RenameGeneroToMusicGenreOnProjectTracks';
+import { RenameGeneroMusicalToMusicGenreOnArtists20260918000048 } from './20260918000048_RenameGeneroMusicalToMusicGenreOnArtists';
+import { RenameGeneroMusicalToMusicGenreOnPhonograms20260918000049 } from './20260918000049_RenameGeneroMusicalToMusicGenreOnPhonograms';
+import { RenameGeneroToMusicGenreOnProjects20260918000050 } from './20260918000050_RenameGeneroToMusicGenreOnProjects';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -525,4 +530,9 @@ export const ALL_MIGRATIONS = [
   RenameValorBrutoValorLiquidoOnEcadReports20260918000043,
   RenameValorToValueOnFinancialRules20260918000044,
   RenameValorFieldsOnInvoices20260918000045,
+  RenameGeneroToMusicGenreOnWorks20260918000046,
+  RenameGeneroToMusicGenreOnProjectTracks20260918000047,
+  RenameGeneroMusicalToMusicGenreOnArtists20260918000048,
+  RenameGeneroMusicalToMusicGenreOnPhonograms20260918000049,
+  RenameGeneroToMusicGenreOnProjects20260918000050,
 ] as const;

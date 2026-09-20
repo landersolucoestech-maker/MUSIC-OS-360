@@ -114,7 +114,7 @@ export default function RightsMonitoring() {
         iswc: o.iswc ?? null,
         cod_ecad: o.cod_ecad ?? null,
         cod_entidade: o.cod_entidade ?? null,
-        genero: o.genero ?? null,
+        genero: o.music_genre ?? null,
         status: (o.status as string) ?? null,
         duration_text: o.duration_text ?? null,
         artista_nome: o.artistas?.nome_artistico ?? null,

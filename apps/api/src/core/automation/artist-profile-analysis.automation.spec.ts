@@ -62,13 +62,13 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
 
 const ARTIST_ROW = {
   nome_artistico: 'Banda Aurora',
-  genero_musical: 'MPB',
+  music_genre: 'MPB',
   spotify_url: 'https://open.spotify.com/artist/4NHQUGzhtTLFvgF5SZesLK',
   youtube_url: null,
   deezer_url: null,
   apple_music_url: null,
   soundcloud_url: null,
-  observacoes: 'Artista em desenvolvimento na cena independente.',
+  notes: 'Artista em desenvolvimento na cena independente.',
   metadata: {},
 };
 

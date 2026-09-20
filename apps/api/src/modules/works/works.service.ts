@@ -106,7 +106,7 @@ export class WorksService {
 
     if (q['status'])     qb.andWhere('w.status = :status', { status: q['status'] });
     if (q['tipo_obra'])  qb.andWhere('w.tipo_obra = :tipoObra', { tipoObra: q['tipo_obra'] });
-    if (q['genero'])     qb.andWhere('LOWER(w.genero) = LOWER(:genero)', { genero: q['genero'] });
+    if (q['music_genre']) qb.andWhere('LOWER(w.music_genre) = LOWER(:musicGenre)', { musicGenre: q['music_genre'] });
     if (q['project_id']) {
       if (q['project_id'] === 'no-projeto') qb.andWhere('w.project_id IS NULL');
       else qb.andWhere('w.project_id = :projectId', { projectId: q['project_id'] });
@@ -138,16 +138,16 @@ export class WorksService {
   }
 
   /** Gêneros distintos do tenant — usado no filtro (dropdown não pode ficar preso aos 50 primeiros registros). */
-  async distinctGeneros(tenantId: string): Promise<string[]> {
+  async distinctMusicGenres(tenantId: string): Promise<string[]> {
     const rows = await this.repo!
       .createQueryBuilder('w')
-      .select('DISTINCT w.genero', 'genero')
+      .select('DISTINCT w.music_genre', 'musicGenre')
       .where('w.tenant_id = :tenantId', { tenantId })
       .andWhere('w.deleted_at IS NULL')
-      .andWhere('w.genero IS NOT NULL')
-      .orderBy('w.genero', 'ASC')
-      .getRawMany<{ genero: string }>();
-    return rows.map((r) => r.genero);
+      .andWhere('w.music_genre IS NOT NULL')
+      .orderBy('w.music_genre', 'ASC')
+      .getRawMany<{ musicGenre: string }>();
+    return rows.map((r) => r.musicGenre);
   }
 
   async findById(tenantId: string, id: string): Promise<WorkWithParticipantes> {

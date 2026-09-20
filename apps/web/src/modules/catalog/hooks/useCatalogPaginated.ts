@@ -32,7 +32,7 @@ export function useObrasPaginated({
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
   if (tipoObra) filters.tipo_obra = tipoObra;
-  if (genero) filters.genero = genero;
+  if (genero) filters.music_genre = genero;
   if (projectId) filters.project_id = projectId;
   if (ecad) filters.ecad = ecad;
 
@@ -64,7 +64,7 @@ export function useObrasStats(query: { status?: string; tipoObra?: string; gener
       const params = new URLSearchParams();
       if (query.status) params.set("status", query.status);
       if (query.tipoObra) params.set("tipo_obra", query.tipoObra);
-      if (query.genero) params.set("genero", query.genero);
+      if (query.genero) params.set("music_genre", query.genero);
       if (query.projectId) params.set("project_id", query.projectId);
       if (query.ecad) params.set("ecad", query.ecad);
       const qs = params.toString();
@@ -100,7 +100,7 @@ export function useFonogramasPaginated({
 }: UseFonogramasPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
-  if (genero) filters.genero_musical = genero;
+  if (genero) filters.music_genre = genero;
   if (obraVinculada) filters.obra_vinculada = obraVinculada;
   if (ecad) filters.ecad = ecad;
 
@@ -131,7 +131,7 @@ export function useFonogramasStats(query: { status?: string; genero?: string; ob
     queryFn: ({ signal }) => {
       const params = new URLSearchParams();
       if (query.status) params.set("status", query.status);
-      if (query.genero) params.set("genero_musical", query.genero);
+      if (query.genero) params.set("music_genre", query.genero);
       if (query.obraVinculada) params.set("obra_vinculada", query.obraVinculada);
       if (query.ecad) params.set("ecad", query.ecad);
       const qs = params.toString();

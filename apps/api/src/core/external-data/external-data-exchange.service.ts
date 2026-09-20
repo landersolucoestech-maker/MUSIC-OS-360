@@ -430,7 +430,7 @@ export class ExternalDataExchangeService {
         artist: {
           id: artist.id,
           name: artist.nome_artistico,
-          genre: artist.genero_musical,
+          genre: artist.music_genre,
           spotify_url: artist.spotify_url,
           youtube_url: artist.youtube_url,
         },
@@ -495,7 +495,7 @@ export class ExternalDataExchangeService {
           iswc: w.iswc,
           composers: w.compositores ?? w.compositor,
           publisher: w.editora,
-          genre: w.genero,
+          genre: w.music_genre,
         })),
         phonograms: phonograms.map((p) => ({
           id: p.id,

@@ -306,7 +306,7 @@ export function obraToFormFields(obra: any): ObraFormFields {
   return {
     title: obraTitle(obra),
     situacao: dbStatusToSelect(obra?.status),
-    generoMusical: obra?.genero?.toLowerCase() || "",
+    generoMusical: obra?.music_genre?.toLowerCase() || "",
     idioma: obra?.idioma || "",
     duracaoMin: obra?.duracaoMin ?? dur.min,
     duracaoSeg: obra?.duracaoSeg ?? dur.seg,
@@ -375,7 +375,7 @@ export function formToObraPayload(input: FormToObraInput): Record<string, unknow
   // org_id não é campo do form: o tenant vem do contexto autenticado da API.
   return {
     title: input.title.trim(),
-    genero: input.generoMusical || null,
+    music_genre: input.generoMusical || null,
     idioma: input.idioma || null,
     iswc: input.iswc || null,
     cod_ecad: input.codEcad || null,
@@ -457,7 +457,7 @@ export function fonogramaToFormFields(f: any): FonogramaFormFields {
     duracaoMin: ps(f?.duracaoMin ?? f?.duracao_min) || dur.min,
     duracaoSeg: ps(f?.duracaoSeg ?? f?.duracao_seg) || dur.seg,
     instrumental: pb(f?.instrumental),
-    generoMusical: ps(f?.generoMusical ?? f?.genero_musical),
+    generoMusical: ps(f?.music_genre ?? f?.generoMusical),
     classificacao: ps(f?.classificacao),
     midia: ps(f?.midia),
     nacional: pb(f?.nacional) !== false ? (pb(f?.nacional) ?? true) : false,
@@ -488,7 +488,7 @@ export function projetoToObraSeed(
     id: string;
     title?: string | null;
     artist_id?: string | null;
-    genero?: string | null;
+    music_genre?: string | null;
   },
   musica?: {
     name?: string;
@@ -512,13 +512,13 @@ export function projetoToObraSeed(
     }));
 
   const letraCompleta = musica?.letra || "";
-  const genero = ((musica?.genero || projeto.genero || "").toLowerCase()) || null;
+  const genero = ((musica?.genero || projeto.music_genre || "").toLowerCase()) || null;
 
   return {
     project_id: projeto.id,
     artist_id: projeto.artist_id ?? null,
     title: musica?.name?.trim() || projeto.title?.trim() || "",
-    genero,
+    music_genre: genero,
     idioma: musica?.idioma || null,
     duracaoMin: musica?.duracaoMin || "",
     duracaoSeg: musica?.duracaoSeg || "",

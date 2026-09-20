@@ -33,7 +33,7 @@ interface TrackRow {
   instrumental: string | null;
   duracao_min: string | null;
   duracao_seg: string | null;
-  genero: string | null;
+  music_genre: string | null;
   idioma: string | null;
   letra: string | null;
   audio_url: string | null;
@@ -62,7 +62,7 @@ export async function fetchProjectsMusicasForExport(
 
   const tracks = (await ds.query(
     `SELECT "id", "project_id", "name", "solo_feat", "original_remix", "instrumental",
-            "duracao_min", "duracao_seg", "genero", "idioma", "letra", "audio_url", "sort_order"
+            "duracao_min", "duracao_seg", "music_genre", "idioma", "letra", "audio_url", "sort_order"
        FROM "project_tracks"
       WHERE "tenant_id" = $1 AND "project_id" = ANY($2::uuid[])
       ORDER BY "sort_order" ASC`,
@@ -98,7 +98,7 @@ export async function fetchProjectsMusicasForExport(
       instrumental: track.instrumental,
       duracaoMinutos: track.duracao_min,
       duracaoSegundos: track.duracao_seg,
-      generoMusical: track.genero,
+      generoMusical: track.music_genre,
       idiomaMusica: track.idioma,
       compositores: namesByRole(track.id, 'compositor'),
       interpretes: namesByRole(track.id, 'interprete'),
@@ -137,7 +137,7 @@ export async function insertProjectsMusicasForImport(
     await qr.query(
       `INSERT INTO "project_tracks"
          ("id", "tenant_id", "project_id", "name", "solo_feat", "original_remix",
-          "instrumental", "duracao_min", "duracao_seg", "genero", "idioma", "letra",
+          "instrumental", "duracao_min", "duracao_seg", "music_genre", "idioma", "letra",
           "audio_url", "sort_order")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
       [

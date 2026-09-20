@@ -19,7 +19,7 @@ export interface Obra {
   // de gestão coletiva (ABRAMUS, UBC, SOCINPRO, ...), não só ABRAMUS.
   cod_entidade?: string | null;
   type?: WorkType | string | null;
-  genero?: string | null;
+  music_genre?: string | null;
   status?: WorkStatusValue | string | null;
   duration_text?: string | null;
   origem_externa?: string | null;
@@ -71,7 +71,7 @@ export interface Fonograma {
   duracao_min?: string | number | null;
   duracao_seg?: string | number | null;
   instrumental?: boolean | null;
-  genero_musical?: string | null;
+  music_genre?: string | null;
   classificacao?: string | null;
   midia?: string | null;
   nacional?: boolean | null;

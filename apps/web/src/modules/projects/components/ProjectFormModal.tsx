@@ -203,7 +203,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
       }));
     }
     const type = normTipo(projeto?.type);
-    const generoHerdado = normEnum(projeto?.genero as string | undefined, "");
+    const generoHerdado = normEnum(projeto?.music_genre as string | undefined, "");
     return [{ ...createEmptyMusica(), name: type === "single" ? (projeto?.title || "") : "", genero: generoHerdado }];
   });
   const [observacoes, setObservacoes] = useState(() => projeto?.notes || "");
@@ -260,7 +260,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
       type: tipoLancamento,
       status,
       notes: observacoes || null,
-      genero,
+      music_genre: genero,
       musicas: musicasParaSalvar,
     };
 
@@ -273,7 +273,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
           type: tipoLancamento,
           status,
           notes: observacoes || null,
-          genero,
+          music_genre: genero,
           musicas: musicasParaSalvar,
         };
         const created = await addProject.mutateAsync(insertPayload) as { id: string };

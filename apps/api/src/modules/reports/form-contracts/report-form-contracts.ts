@@ -82,7 +82,7 @@ const ARTISTS_CONTRACT: ReportFormContract = {
   fields: [
     // Identidade e perfil (colunas diretas)
     col('nome_artistico'), col('nome_civil'), col('status'),
-    col('genero_musical'), col('notes'), col('especialidades'),
+    col('music_genre'), col('notes'), col('especialidades'),
     // Perfil estendido (metadata jsonb)
     meta('slug_artistico'), meta('tipo_perfil'), meta('fase_carreira'),
     meta('genero'), meta('data_nascimento'), meta('rg'), meta('endereco'),
@@ -129,8 +129,8 @@ const ARTISTS_CONTRACT: ReportFormContract = {
     metadata: 'objeto jsonb interno bruto — os campos individuais já são colunas do contrato',
     notas_internas: 'anotação interna oculta por política (HIDDEN_INTERNAL_HINT)',
   },
-  filterableColumns: ['status', 'genero_musical'],
-  searchableColumns: ['nome_artistico', 'nome_civil', 'genero_musical', 'notes'],
+  filterableColumns: ['status', 'music_genre'],
+  searchableColumns: ['nome_artistico', 'nome_civil', 'music_genre', 'notes'],
 };
 
 // ─── Funcionários (RH) ────────────────────────────────────────────────────────
@@ -189,7 +189,7 @@ const WORKS_CONTRACT: ReportFormContract = {
   tableName: 'works',
   identityColumn: 'title',
   fields: [
-    col('title'), col('type'), col('status'), col('genero'),
+    col('title'), col('type'), col('status'), col('music_genre'),
     col('compositor'), col('compositores'), col('editora'),
     col('isrc'), col('iswc'),
     // Campos do formulário de Obra (regra 2026-07-12: 1 coluna por campo, nome exato)
@@ -221,7 +221,7 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
   tableName: 'phonograms',
   identityColumn: 'title',
   fields: [
-    col('title'), col('status'), col('genero_musical'), col('isrc'),
+    col('title'), col('status'), col('music_genre'), col('isrc'),
     col('duration_text'), col('artist_id'), col('work_id'),
     // Campos do formulário de Fonograma (regra 2026-07-12: 1 coluna por campo, nome exato)
     col('cod_entidade'), col('cod_ecad'), col('agregadora'),
@@ -313,7 +313,7 @@ const PROJECTS_CONTRACT: ReportFormContract = {
     artist_id: 'sem campo correspondente no modal Criar/Editar',
     orcamento: 'sem campo correspondente no modal Criar/Editar',
     description: 'sem campo correspondente no modal Criar/Editar',
-    genero: 'derivado das músicas, não é campo geral do formulário',
+    music_genre: 'derivado das músicas, não é campo geral do formulário',
     musicas: 'representada pelas colunas individuais do grupo repetível na mesma aba',
   },
   repeatingGroup: {

@@ -98,7 +98,7 @@ export class ProjectsService {
         instrumental: t.instrumental,
         duracaoMin: t.duracao_min,
         duracaoSeg: t.duracao_seg,
-        genero: t.genero,
+        genero: t.music_genre,
         idioma: t.idioma,
         letra: t.letra,
         audioUrl: t.audio_url,
@@ -134,7 +134,7 @@ export class ProjectsService {
           instrumental: (m.instrumental as string) || null,
           duracao_min: (m.duracaoMin as string) || null,
           duracao_seg: (m.duracaoSeg as string) || null,
-          genero: (m.genero as string) || null,
+          music_genre: (m.genero as string) || null,
           idioma: (m.idioma as string) || null,
           letra: (m.letra as string) || null,
           audio_url: (m.audioUrl as string) || null,
@@ -172,7 +172,7 @@ export class ProjectsService {
     if (q['status'])   qb.andWhere('p.status = :status',         { status:    q['status'] });
     if (q['type'])     qb.andWhere('p.type = :type',              { type:      q['type'] });
     if (q['artistId']) qb.andWhere('p.artist_id = :artistId',   { artistId: q['artistId'] });
-    if (q['genero'])   qb.andWhere('p.genero = :genero',          { genero:    q['genero'] });
+    if (q['music_genre']) qb.andWhere('p.music_genre = :musicGenre', { musicGenre: q['music_genre'] });
     if (q['search'])   qb.andWhere('p.title ILIKE :search',      { search: `%${q['search']}%` });
 
     qb.orderBy('p.created_at', q['ascending'] ? 'ASC' : 'DESC')
