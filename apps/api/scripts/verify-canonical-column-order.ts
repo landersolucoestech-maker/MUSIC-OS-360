@@ -15,7 +15,7 @@ const CANONICAL_ORDER: Record<string, string[]> = {
   artists: [
     'id', 'tenant_id', 'foto_url', 'nome_artistico', 'music_genre', 'especialidades',
     'documentos_pessoais_url', 'presskit_url', 'notes', 'nome_civil', 'data_nascimento', 'cpf_cnpj_encrypted',
-    'rg', 'genero', 'endereco', 'telefone_encrypted', 'email_encrypted', 'banco',
+    'rg', 'endereco', 'telefone_encrypted', 'email_encrypted', 'banco',
     'agencia', 'conta', 'chave_pix', 'titular_conta', 'spotify_url', 'youtube_url',
     'soundcloud_url', 'apple_music_url', 'deezer_url', 'tipo_perfil', 'contatos_vinculados', 'distribuidoras_gerais',
     'notas_internas', 'contrato_id', 'slug_artistico', 'tags_musicais', 'fase_carreira', 'status',
