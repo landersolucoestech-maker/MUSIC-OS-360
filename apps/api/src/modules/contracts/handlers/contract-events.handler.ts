@@ -144,7 +144,7 @@ export class ContractEventsHandler {
               .where('c.id = :id AND c.tenant_id = :tenantId', { id: contractId, tenantId })
               .getOne();
 
-            const contractValor = contract?.valor ? parseFloat(String(contract.valor)) : 0;
+            const contractValor = contract?.fixed_value ? parseFloat(String(contract.fixed_value)) : 0;
             if (contractValor > 0) {
               const provisional = transactionRepo.create({
                 tenant_id: tenantId,

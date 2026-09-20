@@ -47,7 +47,7 @@ export class CreateContractDto {
   @IsString()
   status?: string;
 
-  @ApiPropertyOptional({ example: '15000.00', deprecated: true, description: 'Use "valor".' })
+  @ApiPropertyOptional({ example: '15000.00', deprecated: true, description: 'Use "fixed_value".' })
   @IsOptional()
   @IsNumberString()
   value?: string;
@@ -127,9 +127,13 @@ export class CreateContractDto {
   @IsOptional() @IsDateString()
   data_fim?: string;
 
-  @ApiPropertyOptional({ example: 15000 })
+  @ApiPropertyOptional({ example: 15000, deprecated: true, description: 'Use "fixed_value".' })
   @IsOptional() @IsNumber()
   valor?: number;
+
+  @ApiPropertyOptional({ example: 15000 })
+  @IsOptional() @IsNumber()
+  fixed_value?: number;
 
   @ApiPropertyOptional()
   @IsOptional() @IsBoolean()

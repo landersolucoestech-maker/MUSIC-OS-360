@@ -74,10 +74,10 @@ interface WizardMeta {
   end_date: string;
   observations: string;
   /**
-   * Canonical contract value (maps to ContractEntity.valor). Prior to this
-   * field, the wizard had no way to set it at all -- money typed into a
+   * Canonical contract value (maps to ContractEntity.fixed_value). Prior to
+   * this field, the wizard had no way to set it at all -- money typed into a
    * template's "currency" manifest variable (if any) was serialized into
-   * the wizardBlob/notes JSON only, so `valor` stayed unset for every
+   * the wizardBlob/notes JSON only, so the value stayed unset for every
    * contract created via this flow. That silently fed contracts.service.ts's
    * CONTRACT_SIGNED handler a `contractValor = 0` for the provisional
    * revenue transaction (not just a missing KPI -- a wrong financial
@@ -85,7 +85,7 @@ interface WizardMeta {
    * file, e.g. the "currency" manifest-variable case below); parsed to a
    * number only at save time.
    */
-  valor: string;
+  value: string;
 }
 
 /** Parsed variables_manifest entry (subset of ContractVariable) */
@@ -159,7 +159,7 @@ const STATUS_LABELS: Record<string, string> = {
 const EMPTY_PARTY: PartyData = { type: "pf", origin: "manual" };
 
 const EMPTY_META: WizardMeta = {
-  title: "", status: "draft", start_date: "", end_date: "", observations: "", valor: "",
+  title: "", status: "draft", start_date: "", end_date: "", observations: "", value: "",
 };
 
 const EMPTY_WIZARD: WizardState = {
@@ -900,8 +900,8 @@ function ReviewStep({ state, onMeta }: { state: WizardState; onMeta: (m: WizardM
             <Input
               className="pl-8"
               type="number"
-              value={m.valor}
-              onChange={(e) => setMeta({ valor: e.target.value })}
+              value={m.value}
+              onChange={(e) => setMeta({ value: e.target.value })}
               placeholder="0,00"
               data-testid="input-valor-revisao"
             />
@@ -978,7 +978,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
         start_date:  contrato.start_date || "",
         end_date:     contrato.end_date || "",
         observations: "",
-        valor:        contrato.valor != null ? String(contrato.valor) : "",
+        value:        contrato.fixed_value != null ? String(contrato.fixed_value) : "",
       };
 
       if (tmpl) {
@@ -1134,7 +1134,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
       const provider = (state.signers.find((s) => s.provider)?.provider || null) as SigningPlatform | null;
 
       // FIX: build typed payload — no `as any`
-      const trimmedValor = state.meta.valor.trim();
+      const trimmedValor = state.meta.value.trim();
       const parsedValor = trimmedValor ? Number(trimmedValor) : null;
       if (trimmedValor && (parsedValor === null || Number.isNaN(parsedValor))) {
         toast.error("Valor do contrato inválido");
@@ -1149,7 +1149,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
         status:           resolvedStatus,
         start_date:      state.meta.start_date || null,
         end_date:         state.meta.end_date    || null,
-        valor:            parsedValor,
+        fixed_value:      parsedValor,
         notes:            wizardBlob,
         signing_platform: provider,
         // Deliberately map WizardSigner to the persisted WizardSignerRecord shape

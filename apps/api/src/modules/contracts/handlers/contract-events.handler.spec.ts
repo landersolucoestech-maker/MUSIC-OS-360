@@ -15,7 +15,7 @@ function build() {
   const contractRepo = {
     createQueryBuilder: jest.fn(() => ({
       where: jest.fn().mockReturnThis(),
-      getOne: jest.fn().mockResolvedValue({ id: 'c1', valor: '5000' }),
+      getOne: jest.fn().mockResolvedValue({ id: 'c1', fixed_value: '5000' }),
     })),
   };
   const ds = {

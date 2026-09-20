@@ -38,7 +38,7 @@ export interface ResolvedContractWriteFields {
   start_date?: string | null;
   end_date?: string | null;
   arquivo_url?: string | null;
-  valor?: string | null;
+  fixed_value?: string | null;
 }
 
 export interface ResolvedContractQueryFields {
@@ -206,8 +206,11 @@ const ARQUIVO_URL_SPEC: PairSpec = {
 };
 
 const VALOR_SPEC: PairSpec = {
-  canonical: 'valor',
-  legacy: 'value',
+  canonical: 'fixed_value',
+  // 'value' was the original English alias; 'valor' was this field's own
+  // canonical name before naming-normalization (Cluster G) — both are kept
+  // as accepted legacy aliases so no existing caller breaks.
+  legacy: ['value', 'valor'],
   invalidCode: 'CONTRACT_VALUE_INVALID',
   validate: (v) => parseCanonicalValue(v) !== 'invalid',
   isEquivalent: (a, b) => parseCanonicalValue(a) === parseCanonicalValue(b),
@@ -285,7 +288,7 @@ export function resolveContractAliases(input: Record<string, unknown>): Contract
   if (arquivoUrl !== undefined) normalized.arquivo_url = arquivoUrl as string | null;
 
   const valor = resolvePair(input, VALOR_SPEC, legacyUsed);
-  if (valor !== undefined) normalized.valor = valor as string | null;
+  if (valor !== undefined) normalized.fixed_value = valor as string | null;
 
   return { normalized, legacyAliasesUsed: Array.from(legacyUsed) };
 }

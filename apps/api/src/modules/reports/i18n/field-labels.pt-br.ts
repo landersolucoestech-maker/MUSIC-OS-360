@@ -138,6 +138,7 @@ export const FIELD_LABELS_PT_BR = {
   // ── Financeiro / contratos ──────────────────────────────────────────────────
   numero: 'Número',
   valor: 'Valor',
+  fixedValue: 'Valor Fixo',
   emissao: 'Emissão',
   vencimento: 'Vencimento',
   comissao: 'Comissão',

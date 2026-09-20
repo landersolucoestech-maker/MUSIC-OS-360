@@ -40,7 +40,7 @@ export interface Contract {
   release_id?: string | null;
   start_date?: string | null;
   end_date?: string | null;
-  valor?: number | null;
+  fixed_value?: number | null;
   exclusivo?: boolean | null;
   notes?: string | null;
   template_id?: string | null;

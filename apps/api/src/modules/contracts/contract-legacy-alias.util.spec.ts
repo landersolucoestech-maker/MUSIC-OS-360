@@ -260,17 +260,17 @@ describe('resolveContractAliases — arquivo_url/fileUrl (estrita, sem normaliza
 describe('resolveContractAliases — valor/value (coerção numérica)', () => {
   it('10 e "10" são equivalentes', () => {
     const { normalized } = resolveContractAliases({ title: 'X', valor: 10, value: '10' });
-    expect(normalized.valor).toBe('10');
+    expect(normalized.fixed_value).toBe('10');
   });
 
   it('10 e "10.0" são equivalentes', () => {
     const { normalized } = resolveContractAliases({ title: 'X', valor: 10, value: '10.0' });
-    expect(normalized.valor).toBe('10');
+    expect(normalized.fixed_value).toBe('10');
   });
 
   it('0 e "0" são equivalentes', () => {
     const { normalized } = resolveContractAliases({ title: 'X', valor: 0, value: '0' });
-    expect(normalized.valor).toBe('0');
+    expect(normalized.fixed_value).toBe('0');
   });
 
   it('0 e "" NÃO são equivalentes — "" é inválido → CONTRACT_VALUE_INVALID', () => {
@@ -305,11 +305,11 @@ describe('resolveContractAliases — valor/value (coerção numérica)', () => {
 
   it('null/null → equivalente, retorna null', () => {
     const { normalized } = resolveContractAliases({ title: 'X', valor: null, value: null });
-    expect(normalized.valor).toBeNull();
+    expect(normalized.fixed_value).toBeNull();
   });
 
   it('ausência total → undefined', () => {
-    expect(resolveContractAliases({ title: 'X' }).normalized.valor).toBeUndefined();
+    expect(resolveContractAliases({ title: 'X' }).normalized.fixed_value).toBeUndefined();
   });
 
   it('valores conflitantes (10 vs 20) → CONTRACT_ALIAS_CONFLICT', () => {

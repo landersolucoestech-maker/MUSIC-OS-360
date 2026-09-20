@@ -102,7 +102,7 @@ export class ContractWorkflowHandler {
             const contract = await contractRepo.findOne({
               where: { id: contractId, tenant_id: tenantId },
             });
-            valorStr = contract?.valor ? String(contract.valor) : null;
+            valorStr = contract?.fixed_value ? String(contract.fixed_value) : null;
           } catch {
             // non-fatal
           }

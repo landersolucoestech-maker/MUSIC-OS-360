@@ -892,7 +892,7 @@ export class ContractEntity {
   @Column({ type: 'uuid', nullable: true }) release_id: string | null;
   @Column({ type: 'timestamp', nullable: true }) start_date: Date | null;
   @Column({ type: 'timestamp', nullable: true }) end_date: Date | null;
-  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) valor: string | null;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) fixed_value: string | null;
   @Column({ type: 'boolean', default: false }) exclusivo: boolean;
   @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'text', nullable: true }) arquivo_url: string | null;

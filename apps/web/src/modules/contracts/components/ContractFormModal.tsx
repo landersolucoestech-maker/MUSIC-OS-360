@@ -575,7 +575,7 @@ function contratoToFormData(c: ContractWithRelations): Partial<ContratoFormSubmi
     release_id: c.release_id ?? undefined,
     start_date:   c.start_date ? new Date(c.start_date) : undefined,
     end_date:     c.end_date    ? new Date(c.end_date)    : undefined,
-    fixed_value:  c.valor ?? undefined,
+    fixed_value:  c.fixed_value ?? undefined,
     observations: c.notes?.startsWith("{") ? undefined : (c.notes ?? undefined),
     signers:      Array.isArray(c.signers)
       ? c.signers.filter((s): s is ContractSigner => !("obrigatorio" in s))
@@ -622,7 +622,7 @@ export const ContractFormModal = ({
       release_id: resolvedReleaseId,
       start_date: start_date ? (start_date as Date).toISOString().split("T")[0] : null,
       end_date: end_date ? (end_date as Date).toISOString().split("T")[0] : null,
-      valor: fixed_value || null,
+      fixed_value: fixed_value || null,
       notes: observations || null,
       signers: signers ?? [],
       documents: documents ?? [],

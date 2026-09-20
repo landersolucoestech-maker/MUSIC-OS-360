@@ -96,7 +96,7 @@ export class ContractsService {
   }
 
   /**
-   * Contagem + soma de `valor` por status, sobre o tenant inteiro (não a
+   * Contagem + soma de `fixed_value` por status, sobre o tenant inteiro (não a
    * página atual) — Task H: KPIs exatos sem baixar a tabela inteira. O
    * bucket-mapping (vigente/assinado/aguardando/análise/encerrado) continua
    * no frontend (Contratos.tsx), que agora itera sobre este mapa pequeno
@@ -107,7 +107,7 @@ export class ContractsService {
       .createQueryBuilder('c')
       .where('c.tenant_id = :tenantId', { tenantId })
       .andWhere('c.deleted_at IS NULL');
-    return groupCount(qb, 'c', 'status', 'valor');
+    return groupCount(qb, 'c', 'status', 'fixed_value');
   }
 
   async findById(
@@ -138,7 +138,7 @@ export class ContractsService {
 
   /**
    * Monta o payload final para persistência a partir dos campos canônicos já
-   * resolvidos (title/type/artist_id/start_date/end_date/arquivo_url/valor
+   * resolvidos (title/type/artist_id/start_date/end_date/arquivo_url/fixed_value
    * — ver resolveContractAliases()) e dos demais campos não relacionados a
    * aliases, que continuam passando direto para a entity.
    */

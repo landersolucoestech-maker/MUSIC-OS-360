@@ -27,14 +27,14 @@ export function useContracts(enabled = true, artistId?: string) {
         emit(DomainEvents.CONTRACT_CREATED, {
           id: (c as ContractWithRelations & { id: string }).id,
           artist_id: c.artist_id ?? undefined,
-          valor: c.valor ?? undefined,
+          valor: c.fixed_value ?? undefined,
           org_id: orgId,
         }),
       onUpdate: (c) =>
         emit(DomainEvents.CONTRACT_UPDATED, {
           id: (c as ContractWithRelations & { id: string }).id,
           artist_id: c.artist_id ?? undefined,
-          valor: c.valor ?? undefined,
+          valor: c.fixed_value ?? undefined,
           org_id: orgId,
         }),
       onDelete: (id) =>

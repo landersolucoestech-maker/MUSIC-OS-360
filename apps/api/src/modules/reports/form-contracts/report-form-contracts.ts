@@ -154,7 +154,7 @@ const CONTRACTS_CONTRACT: ReportFormContract = {
   tableName: 'contracts',
   identityColumn: 'title',
   fields: [
-    col('title'), col('type'), col('status'), col('valor'),
+    col('title'), col('type'), col('status'), col('fixed_value'),
     col('start_date'), col('end_date'), col('exclusivo'), col('notes'),
     col('arquivo_url'), col('signing_platform'),
     col('artist_id'), col('client_id'), col('release_id'),
@@ -173,7 +173,8 @@ const CONTRACTS_CONTRACT: ReportFormContract = {
   formFieldAliases: {
     titulo: 'title',
     tipo: 'type',
-    value: 'valor',
+    value: 'fixed_value',
+    valor: 'fixed_value',
     fileUrl: 'arquivo_url',
     data_inicio: 'start_date',
     startsAt: 'start_date',

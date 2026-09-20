@@ -155,7 +155,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                     { label: "Tipo", value: contrato.type ? formatCategoryLabel(contrato.type) : "—" },
                     { label: "Início", value: formatDateDashes(contrato.start_date) },
                     { label: "Término", value: contrato.end_date ? formatDateDashes(contrato.end_date) : "Indeterminado" },
-                    { label: "Valor", value: contrato.valor != null ? <span className={getMonetarySemanticClass("neutral")}>{formatCurrency(contrato.valor)}</span> : "—" },
+                    { label: "Valor", value: contrato.fixed_value != null ? <span className={getMonetarySemanticClass("neutral")}>{formatCurrency(contrato.fixed_value)}</span> : "—" },
                     { label: "Assinado em", value: formatDateDashes(contrato.assinado_em) },
                   ].map(({ label, value }) => (
                     <div key={label}>

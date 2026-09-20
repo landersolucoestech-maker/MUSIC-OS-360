@@ -157,16 +157,16 @@ describe('Swagger/OpenAPI — metadados de depreciação dos aliases (Fase 5 / C
     await swaggerApp.close();
   });
 
-  it('CreateContractDto: os 8 aliases legados restantes estão deprecated (title/type/start_date/end_date passaram a canônicos em 2026-09-05)', () => {
+  it('CreateContractDto: os 9 aliases legados restantes estão deprecated (title/type/start_date/end_date passaram a canônicos em 2026-09-05; fixed_value em Cluster G)', () => {
     const props = schemas['CreateContractDto'].properties!;
-    for (const field of ['tipo', 'artistId', 'value', 'data_inicio', 'data_fim', 'startsAt', 'expiresAt', 'fileUrl']) {
+    for (const field of ['tipo', 'artistId', 'value', 'valor', 'data_inicio', 'data_fim', 'startsAt', 'expiresAt', 'fileUrl']) {
       expect(props[field]?.deprecated).toBe(true);
     }
   });
 
   it('CreateContractDto: os campos canônicos NÃO estão deprecated', () => {
     const props = schemas['CreateContractDto'].properties!;
-    for (const field of ['title', 'type', 'artist_id', 'valor', 'start_date', 'end_date', 'arquivo_url']) {
+    for (const field of ['title', 'type', 'artist_id', 'fixed_value', 'start_date', 'end_date', 'arquivo_url']) {
       expect(props[field]?.deprecated).toBeUndefined();
     }
   });

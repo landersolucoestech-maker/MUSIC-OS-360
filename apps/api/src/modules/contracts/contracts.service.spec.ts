@@ -172,7 +172,7 @@ const baseContractRow = (overrides: Record<string, unknown> = {}) => ({
   status: 'draft',
   artist_id: null,
   client_id: null,
-  valor: null,
+  fixed_value: null,
   start_date: null,
   end_date: null,
   arquivo_url: null,
@@ -192,7 +192,7 @@ describe('ContractsService.create — consolidação de aliases (Fase 5 / C1)', 
     expect(row['title']).toBe('Contrato X');
     expect(row['type']).toBe('gravacao');
     expect(row['artist_id']).toBe('11111111-1111-4111-8111-111111111111');
-    expect(row['valor']).toBe('10');
+    expect(row['fixed_value']).toBe('10');
     expect(row['titulo']).toBeUndefined();
     expect(row['tipo']).toBeUndefined();
     expect(row['artistId']).toBeUndefined();
@@ -208,7 +208,7 @@ describe('ContractsService.create — consolidação de aliases (Fase 5 / C1)', 
     const row = createdC1(repo);
     expect(row['title']).toBe('Contrato PT legado');
     expect(row['type']).toBe('recording');
-    expect(row['valor']).toBe('10');
+    expect(row['fixed_value']).toBe('10');
     expect(row['titulo']).toBeUndefined();
     expect(row['tipo']).toBeUndefined();
     expect(row['value']).toBeUndefined();
@@ -266,7 +266,7 @@ describe('ContractsService.create — consolidação de aliases (Fase 5 / C1)', 
   it('valor zero é preservado (não tratado como ausente)', async () => {
     const { svc, repo } = makeServiceC1();
     await svc.create('tenant-1', 'user-1', { title: 'X', valor: 0 } as unknown as CreateContractDto);
-    expect(createdC1(repo)['valor']).toBe('0');
+    expect(createdC1(repo)['fixed_value']).toBe('0');
   });
 
   it('metadata/currency/signedAt/parties permanecem com comportamento inalterado (fora do escopo do C1)', async () => {

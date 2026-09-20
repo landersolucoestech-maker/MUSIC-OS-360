@@ -369,7 +369,7 @@ export default function Contracts() {
                           {formatDateDashes(contrato.start_date)} – {formatDateDashes(contrato.end_date)}
                         </TableCell>
                         <TableCell className={`text-sm ${getMonetarySemanticClass("neutral")}`}>
-                          {contrato.valor ? formatCurrency(contrato.valor) : "—"}
+                          {contrato.fixed_value ? formatCurrency(contrato.fixed_value) : "—"}
                         </TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>

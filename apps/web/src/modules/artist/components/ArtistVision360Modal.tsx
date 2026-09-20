@@ -2324,9 +2324,9 @@ export function ArtistVision360Modal({
                                     ).toLocaleDateString("pt-BR")
                                   : "Indeterminado"}
                               </p>
-                              {contract.valor != null && (
+                              {contract.fixed_value != null && (
                                 <p className="text-xs text-muted-foreground">
-                                  Valor: <span className={getMonetarySemanticClass("neutral")}>{formatCurrency(contract.valor)}</span>
+                                  Valor: <span className={getMonetarySemanticClass("neutral")}>{formatCurrency(contract.fixed_value)}</span>
                                 </p>
                               )}
                             </div>
