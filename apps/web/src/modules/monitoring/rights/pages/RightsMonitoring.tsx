@@ -181,7 +181,7 @@ export default function RightsMonitoring() {
   const matchRate  = filtered.length > 0 ? Math.round((matched / filtered.length) * 100) : 0;
   const receivedEcadAmount = enrichedReports
     .filter((r) => r.status === "concluido")
-    .reduce((s, r) => s + Number(r.valor_liquido ?? r.valor_bruto ?? 0), 0);
+    .reduce((s, r) => s + Number(r.net_amount ?? r.gross_amount ?? 0), 0);
 
   // Divergências dinâmicas: detecções sem obra vinculada, ou vinculadas a uma
   // obra sem cod_ecad cadastrado (sem conciliação ECAD possível).
@@ -403,7 +403,7 @@ export default function RightsMonitoring() {
                             <TableCell className="font-semibold">{r.periodo}</TableCell>
                             <TableCell className="text-sm text-muted-foreground hidden md:table-cell">{r.obra?.title ?? r.work_id ?? "—"}</TableCell>
                             <TableCell className="text-sm text-muted-foreground hidden lg:table-cell">{formatRightsDate(r.created_at)}</TableCell>
-                            <TableCell className="text-right">{fmtBRL(Number(r.valor_liquido ?? r.valor_bruto ?? 0))}</TableCell>
+                            <TableCell className="text-right">{fmtBRL(Number(r.net_amount ?? r.gross_amount ?? 0))}</TableCell>
                             <TableCell><Badge variant={STATUS_VARIANT[r.status] ?? "neutral"}>{STATUS_ECAD_LABEL[r.status] ?? r.status}</Badge></TableCell>
                             <TableCell className="text-right">
                               <Button variant="outline" size="sm" onClick={() => { setSelectedEcad(r); setEcadDetailOpen(true); }}>

@@ -46,8 +46,8 @@ export interface EcadReport {
   work_id: string | null;
   periodo: string;
   type: string;
-  valor_bruto: string | null;
-  valor_liquido: string | null;
+  gross_amount: string | null;
+  net_amount: string | null;
   status: EcadReportStatus;
   arquivo_url: string | null;
   metadata: Record<string, unknown>;

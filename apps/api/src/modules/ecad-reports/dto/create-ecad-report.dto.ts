@@ -13,11 +13,11 @@ export class CreateEcadReportDto {
 
   @IsOptional()
   @IsString()
-  valor_bruto?: string;
+  gross_amount?: string;
 
   @IsOptional()
   @IsString()
-  valor_liquido?: string;
+  net_amount?: string;
 
   @IsOptional()
   @IsString()

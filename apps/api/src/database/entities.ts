@@ -1936,8 +1936,8 @@ export class EcadReportEntity {
   @Column({ type: 'uuid', nullable: true }) work_id: string | null;
   @Column({ type: 'varchar', length: 20 }) periodo: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
-  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) valor_bruto: string | null;
-  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) valor_liquido: string | null;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) gross_amount: string | null;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) net_amount: string | null;
   @Column({ type: 'varchar', length: 50, default: EcadReportStatus.PENDENTE }) status: EcadReportStatus;
   @Column({ type: 'text', nullable: true }) arquivo_url: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;

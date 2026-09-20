@@ -44,7 +44,7 @@ export function ECADViewModal({ open, onOpenChange, report }: ECADViewModalProps
     }
   };
 
-  const valor = Number(report.valor_liquido ?? report.valor_bruto ?? 0);
+  const valor = Number(report.net_amount ?? report.gross_amount ?? 0);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -65,7 +65,7 @@ export function ECADViewModal({ open, onOpenChange, report }: ECADViewModalProps
 
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-muted/30 rounded-lg text-center">
-                <p className="text-lg font-bold text-foreground">{fmtBRL(Number(report.valor_bruto ?? 0))}</p>
+                <p className="text-lg font-bold text-foreground">{fmtBRL(Number(report.gross_amount ?? 0))}</p>
                 <p className="text-sm text-muted-foreground">Valor Bruto</p>
               </div>
               <div className="p-4 bg-muted/30 rounded-lg text-center">
