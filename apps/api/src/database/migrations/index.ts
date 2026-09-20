@@ -263,6 +263,7 @@ import { RenameGeneroMusicalToMusicGenreOnArtists20260918000048 } from './202609
 import { RenameGeneroMusicalToMusicGenreOnPhonograms20260918000049 } from './20260918000049_RenameGeneroMusicalToMusicGenreOnPhonograms';
 import { RenameGeneroToMusicGenreOnProjects20260918000050 } from './20260918000050_RenameGeneroToMusicGenreOnProjects';
 import { RenameGeneroToMusicGenreOnReleases20260918000051 } from './20260918000051_RenameGeneroToMusicGenreOnReleases';
+import { RestoreTenantResolverSecurityDefiner20260920000001 } from './20260920000001_RestoreTenantResolverSecurityDefiner';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -537,4 +538,5 @@ export const ALL_MIGRATIONS = [
   RenameGeneroMusicalToMusicGenreOnPhonograms20260918000049,
   RenameGeneroToMusicGenreOnProjects20260918000050,
   RenameGeneroToMusicGenreOnReleases20260918000051,
+  RestoreTenantResolverSecurityDefiner20260920000001,
 ] as const;
