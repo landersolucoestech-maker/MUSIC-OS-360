@@ -17,7 +17,7 @@ export interface Event {
   local?: string | null;
   cidade?: string | null;
   estado?: string | null;
-  valor_cache?: number | null;
+  fee_amount?: number | null;
   valor_ingresso?: number | null;
   capacidade?: number | null;
   description?: string | null;

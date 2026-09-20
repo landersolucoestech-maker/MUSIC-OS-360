@@ -110,7 +110,7 @@ export function useMetrics(): UseMetricsReturn {
         const s = (e.status ?? "").toLowerCase();
         return s === "confirmado" || s === "realizado";
       })
-      .reduce((acc, e) => acc + ((e as Record<string, unknown>)["valor_cache"] as number || 0), 0);
+      .reduce((acc, e) => acc + ((e as Record<string, unknown>)["fee_amount"] as number || 0), 0);
 
     return {
       total: artistas.length,

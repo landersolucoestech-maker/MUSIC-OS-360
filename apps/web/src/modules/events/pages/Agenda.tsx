@@ -222,7 +222,7 @@ export default function Agenda() {
         horario_fim: fim.time,
         local: e.local || "",
         publico_esperado: e.publico_esperado ?? "",
-        valor_cache: e.valor_cache || "",
+        valor_cache: e.fee_amount || "",
         descricao: e.description || "",
         observacoes: e.notes || "",
       };
@@ -282,7 +282,7 @@ export default function Agenda() {
         const endsAt = combineDateTime(endDate, horarioFim);
         if (endsAt) payload.endsAt = endsAt;
         if (row.local || row.Local) payload.venue = row.local || row.Local;
-        if (valorCache) payload.valor_cache = Number(valorCache);
+        if (valorCache) payload.fee_amount = Number(valorCache);
         if (publicoEsperado) payload.publico_esperado = Number(publicoEsperado);
         if (row.descricao || row.Descrição) payload.description = row.descricao || row.Descrição;
         if (row.observacoes || row.Observações) payload.notes = row.observacoes || row.Observações;
@@ -329,7 +329,7 @@ export default function Agenda() {
       endDate: end,
       location: event.local,
       status: event.status ?? "scheduled",
-      cache: event.valor_cache ?? undefined,
+      cache: event.fee_amount ?? undefined,
       type: getBackendEventTypeLabel(event.type),
       allDay: isMidnight,
       raw: event,

@@ -207,7 +207,7 @@ const getInitialFormData = (event?: any) => {
       event?.capacidade_publico ||
       event?.capacity ||
       "",
-    valorCache: event?.valorCache || event?.valor_cache || (meta["valor_cache"] as string | number) || "",
+    valorCache: event?.fee_amount || event?.valorCache || event?.valor_cache || (meta["valor_cache"] as string | number) || "",
     publicoEsperado:
       event?.publicoEsperado ||
       event?.publico_esperado ||
@@ -501,7 +501,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
     if (data.endereco)      payload["endereco"]      = data.endereco;
     if (data.contatoLocal)  payload["contato_local"]  = data.contatoLocal;
     const valorCache = toNumberOrUndefined(data.valorCache);
-    if (valorCache !== undefined) payload["valor_cache"] = valorCache;
+    if (valorCache !== undefined) payload["fee_amount"] = valorCache;
     const publicoEsperado = toNumberOrUndefined(data.publicoEsperado);
     if (publicoEsperado !== undefined) payload["publico_esperado"] = publicoEsperado;
     if (data.descricao)   payload["description"] = data.descricao;

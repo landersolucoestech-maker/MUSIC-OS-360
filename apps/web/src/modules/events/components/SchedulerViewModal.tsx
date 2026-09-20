@@ -210,15 +210,15 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
           )}
 
           {/* DETALHES OPERACIONAIS (Show) */}
-          {(event.valor_cache != null || event.capacidade_publico != null || event.publico_esperado != null) && (
+          {(event.fee_amount != null || event.capacidade_publico != null || event.publico_esperado != null) && (
             <Section title="Detalhes Operacionais" icon={DollarSign}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {event.valor_cache != null && (
+                {event.fee_amount != null && (
                   <Card>
                     <CardContent className="p-4">
                       <p className="text-xs text-muted-foreground">Cachê</p>
                       <p className={`text-xl font-bold mt-1 ${getMonetarySemanticClass("neutral")}`} data-testid="text-evento-cache">
-                        {formatCurrency(event.valor_cache)}
+                        {formatCurrency(event.fee_amount)}
                       </p>
                     </CardContent>
                   </Card>

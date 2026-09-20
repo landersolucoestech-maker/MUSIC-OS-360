@@ -453,7 +453,7 @@ export const FIELD_LABELS_PT_BR = {
   responsavelCargo: 'Cargo do responsável',
   // ── Eventos (regra 2026-07-12: 1 coluna por campo) ───────────────────────────
   contatoLocal: 'Contato do local',
-  valorCache: 'Valor do cachê',
+  feeAmount: 'Valor do cachê',
   publicoEsperado: 'Público esperado',
   // ── Notas Fiscais (regra 2026-07-12: 1 coluna por campo) ─────────────────────
   serie: 'Série',

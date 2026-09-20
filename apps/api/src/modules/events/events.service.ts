@@ -113,7 +113,7 @@ export class EventsService {
     // Campos do formulário (regra 2026-07-12: coluna própria, sem metadata)
     if (d['endereco']         != null) out['endereco']         = d['endereco'];
     if (d['contato_local']    != null) out['contato_local']    = d['contato_local'];
-    if (d['valor_cache']      != null) out['valor_cache']      = String(d['valor_cache']);
+    if (d['fee_amount']       != null) out['fee_amount']       = String(d['fee_amount']);
     if (d['publico_esperado'] != null) out['publico_esperado'] = d['publico_esperado'];
     if (d['description']      != null) out['description']      = d['description'];
     if (d['notes']            != null) out['notes']             = d['notes'];

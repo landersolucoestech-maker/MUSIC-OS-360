@@ -92,7 +92,7 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
       const errors = await validateDto({
         title: 'Show', type: 'show',
         endereco: 'Rua X, 100', contato_local: 'Fulano',
-        valor_cache: 1500.5, publico_esperado: 300,
+        fee_amount: 1500.5, publico_esperado: 300,
         description: 'desc', participantes: [{ id: 'p1' }],
       });
       expect(errors).toEqual([]);
@@ -134,14 +134,14 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
       await service.create(TENANT, 'u1', {
         title: 'Show', type: 'show', startsAt: new Date(),
         endereco: 'Rua X', contato_local: 'Fulano',
-        valor_cache: 1500.5, publico_esperado: 300,
+        fee_amount: 1500.5, publico_esperado: 300,
         description: 'desc', participantes: [{ id: 'p1' }],
       } as never);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
         expect.objectContaining({
           endereco: 'Rua X',
           contato_local: 'Fulano',
-          valor_cache: '1500.5',
+          fee_amount: '1500.5',
           publico_esperado: 300,
           description: 'desc',
           participantes: [{ id: 'p1' }],

@@ -568,7 +568,7 @@ const EVENTS_CONTRACT: ReportFormContract = {
   identityColumn: 'title',
   fields: [
     col('title'), col('type'), col('data'), col('end_date'), col('local'),
-    col('contato_local'), col('endereco'), col('valor_cache'), col('publico_esperado'),
+    col('contato_local'), col('endereco'), col('fee_amount'), col('publico_esperado'),
     col('description'), col('notes'), col('status'),
   ],
   excludedFormFields: {

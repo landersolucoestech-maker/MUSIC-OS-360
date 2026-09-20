@@ -212,7 +212,7 @@ describe('P2-9 event handlers context propagation', () => {
 
   it('ContractWorkflowHandler creates execution tasks inside tenant context', async () => {
     const taskRepo = { findOne: jest.fn().mockResolvedValue(null), create: jest.fn((v) => v), save: jest.fn().mockResolvedValue(undefined) };
-    const contractRepo = { findOne: jest.fn().mockResolvedValue({ valor: 100 }) };
+    const contractRepo = { findOne: jest.fn().mockResolvedValue({ fixed_value: 100 }) };
     const manager = { getRepository: jest.fn((entity) => (entity === CrmTaskEntity ? taskRepo : contractRepo)) };
     const dbContext = managerContext(manager);
     const handler = new ContractWorkflowHandler({ getRepository: jest.fn((entity) => (entity === CrmTaskEntity ? taskRepo : contractRepo)) } as any, null as any, null as any, dbContext as any);
@@ -233,7 +233,7 @@ describe('P2-9 event handlers context propagation', () => {
     const contractRepo = {
       createQueryBuilder: jest.fn(() => ({
         where: jest.fn().mockReturnThis(),
-        getOne: jest.fn().mockResolvedValue({ valor: 100 }),
+        getOne: jest.fn().mockResolvedValue({ fixed_value: 100 }),
       })),
     };
     const repoFor = (entity: unknown) => {

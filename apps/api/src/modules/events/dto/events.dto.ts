@@ -31,7 +31,7 @@ export class CreateEventDto {
   // Regra de produto 2026-07-12: cada campo do form tem a sua coluna física.
   @ApiPropertyOptional() @IsOptional() @IsString() endereco?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() contato_local?: string;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) valor_cache?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) fee_amount?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) publico_esperado?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;

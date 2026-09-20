@@ -1321,7 +1321,7 @@ export class EventEntity {
   @Column({ type: 'timestamp', nullable: true }) end_date: Date | null;
   @Column({ type: 'varchar', length: 300, nullable: true }) endereco: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) contato_local: string | null;
-  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) valor_cache: string | null;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) fee_amount: string | null;
   @Column({ type: 'integer', nullable: true }) publico_esperado: number | null;
   @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'jsonb', nullable: true }) participantes: unknown[] | null;
