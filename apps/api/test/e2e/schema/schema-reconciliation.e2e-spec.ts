@@ -197,7 +197,7 @@ describe('Schema reconciliation — PostgreSQL real', () => {
         prioridade: 'alta',
         temperatura: 'quente',
         origemLead: 'indicacao',
-        valor_estimado: '1500.00',
+        estimated_value: '1500.00',
         probabilidadeFechamento: '75.00',
         proximo_follow_up: new Date('2026-07-01T12:00:00Z'),
         tags: ['vip', 'inbound'],

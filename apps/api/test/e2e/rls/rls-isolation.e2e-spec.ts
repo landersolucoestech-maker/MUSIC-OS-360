@@ -144,9 +144,9 @@ interface TableCfg {
 }
 
 const SUBLOTE_A: TableCfg[] = [
-  { table: 'inventory_items', extra: () => ({ nome: 'RLS_TEST' }) },
+  { table: 'inventory_items', extra: () => ({ name: 'RLS_TEST' }) },
   { table: 'licenses',        extra: () => ({ title: 'RLS_TEST' }) },
-  { table: 'financial_rules', extra: () => ({ nome: 'RLS_TEST', type: 'receita' }) },
+  { table: 'financial_rules', extra: () => ({ name: 'RLS_TEST', type: 'receita' }) },
 ];
 const SUBLOTE_B: TableCfg[] = [
   { table: 'assets',           extra: () => ({ name: 'RLS_TEST', source: 'upload' }) },
