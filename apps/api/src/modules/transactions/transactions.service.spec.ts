@@ -213,7 +213,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const { service, mockDs, suggestFn } = await buildServiceWithMatcher(null);
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'marketing', valor: '50',
+      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'marketing', amount: '50',
     } as any);
 
     expect(saved.categoria).toBe('marketing');
@@ -225,7 +225,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const { service } = await buildServiceWithMatcher({ categoryId: 'cat-1', categoryName: 'streaming', ruleId: 'rule-1' });
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', description: 'Pagamento Spotify mensal', category: 'outros', valor: '50',
+      tipoTransacao: 'despesa', description: 'Pagamento Spotify mensal', category: 'outros', amount: '50',
     } as any);
 
     expect(saved.categoria).toBe('streaming');
@@ -235,7 +235,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const { service } = await buildServiceWithMatcher({ categoryId: 'cat-2', categoryName: 'servicos', ruleId: 'rule-2' });
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'receita', description: 'Recebimento de show', valor: '500',
+      tipoTransacao: 'receita', description: 'Recebimento de show', amount: '500',
     } as any);
 
     expect(saved.categoria).toBe('servicos');
@@ -245,7 +245,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const { service, suggestFn } = await buildServiceWithMatcher(null);
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', description: 'Compra qualquer', category: 'outros', valor: '20',
+      tipoTransacao: 'despesa', description: 'Compra qualquer', category: 'outros', amount: '20',
     } as any);
 
     expect(saved.categoria).toBe('outros');
@@ -257,7 +257,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const otherTenant = 'tenant-other';
 
     await service.create(otherTenant, 'u1', {
-      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', valor: '10',
+      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', amount: '10',
     } as any);
 
     expect(suggestFn).toHaveBeenCalledWith(otherTenant, 'DESPESA', 'Pagamento Spotify');
@@ -267,7 +267,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const { service, suggestFn } = await buildServiceWithMatcher({ categoryId: 'c', categoryName: 's', ruleId: 'r' });
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'transferencia', description: 'Transferência entre contas', category: 'outros', valor: '10',
+      tipoTransacao: 'transferencia', description: 'Transferência entre contas', category: 'outros', amount: '10',
     } as any);
 
     expect(suggestFn).not.toHaveBeenCalled();
@@ -278,7 +278,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const { service } = await buildServiceWithMatcher(new Error('finance-category-rules DB down'));
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', valor: '10',
+      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', amount: '10',
     } as any);
 
     expect(saved.categoria).toBe('outros');
@@ -295,9 +295,9 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const service = new TransactionsService(mockDs as any, undefined as any, undefined as any, financeCategoryRules);
 
     const ofxRows = [
-      { tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', valor: '20' },
-      { tipoTransacao: 'despesa', description: 'Corrida Uber', category: 'outros', valor: '35' },
-      { tipoTransacao: 'despesa', description: 'Padaria do bairro', category: 'outros', valor: '15' },
+      { tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', amount: '20' },
+      { tipoTransacao: 'despesa', description: 'Corrida Uber', category: 'outros', amount: '35' },
+      { tipoTransacao: 'despesa', description: 'Padaria do bairro', category: 'outros', amount: '15' },
     ];
 
     const results = [];
@@ -314,7 +314,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     const service = new TransactionsService(mockDs as any, undefined as any, undefined as any, undefined as any);
 
     const saved = await service.create(TENANT, 'u1', {
-      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', valor: '10',
+      tipoTransacao: 'despesa', description: 'Pagamento Spotify', category: 'outros', amount: '10',
     } as any);
 
     expect(saved.categoria).toBe('outros');
@@ -342,7 +342,7 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     const { service } = makeService(jest.fn(async () => []));
     await expect(
       service.create(TENANT, 'user-1', {
-        tipoTransacao: 'despesa', description: 'X', category: 'marketing', valor: '50',
+        tipoTransacao: 'despesa', description: 'X', category: 'marketing', amount: '50',
         artistaVinculado: '323e4567-e89b-12d3-a456-426614174000',
       } as any),
     ).rejects.toBeInstanceOf(BadRequestException);
@@ -352,7 +352,7 @@ describe('TransactionsService.create — cross-tenant FK ownership (find-4cd2f04
     const { service, repo } = makeService(jest.fn(async () => [{ exists: 1 }]));
     await expect(
       service.create(TENANT, 'user-1', {
-        tipoTransacao: 'despesa', description: 'X', category: 'marketing', valor: '50',
+        tipoTransacao: 'despesa', description: 'X', category: 'marketing', amount: '50',
         artistaVinculado: '223e4567-e89b-12d3-a456-426614174000',
       } as any),
     ).resolves.toBeDefined();

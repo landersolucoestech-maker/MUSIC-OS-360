@@ -10,7 +10,7 @@ const baseForm: TransactionFormData = {
   category: "servicos",
   subcategoria: "design-grafico",
   description: "Pagamento de design",
-  valor: "1500",
+  amount: "1500",
   dataTransacao: "2026-05-01",
   status: "pending",
   observacao: "",
@@ -96,24 +96,24 @@ describe("always-required fields", () => {
     expect(errors.description).toBe("Informe a descrição");
   });
 
-  it("errors when valor is empty", () => {
-    const errors = validateTransactionForm(form({ valor: "" }), noRules);
-    expect(errors.valor).toBe("Informe um valor válido");
+  it("errors when amount is empty", () => {
+    const errors = validateTransactionForm(form({ amount: "" }), noRules);
+    expect(errors.amount).toBe("Informe um valor válido");
   });
 
-  it("errors when valor is zero", () => {
-    const errors = validateTransactionForm(form({ valor: "0" }), noRules);
-    expect(errors.valor).toBe("Informe um valor válido");
+  it("errors when amount is zero", () => {
+    const errors = validateTransactionForm(form({ amount: "0" }), noRules);
+    expect(errors.amount).toBe("Informe um valor válido");
   });
 
-  it("errors when valor is negative", () => {
-    const errors = validateTransactionForm(form({ valor: "-10" }), noRules);
-    expect(errors.valor).toBe("Informe um valor válido");
+  it("errors when amount is negative", () => {
+    const errors = validateTransactionForm(form({ amount: "-10" }), noRules);
+    expect(errors.amount).toBe("Informe um valor válido");
   });
 
-  it("no valor error when valor is positive", () => {
-    const errors = validateTransactionForm(form({ valor: "0.01" }), noRules);
-    expect(errors.valor).toBeUndefined();
+  it("no amount error when amount is positive", () => {
+    const errors = validateTransactionForm(form({ amount: "0.01" }), noRules);
+    expect(errors.amount).toBeUndefined();
   });
 
   it("errors when dataTransacao is empty", () => {
@@ -456,7 +456,7 @@ describe("multiple simultaneous errors", () => {
       category: "",
       subcategoria: "",
       description: "",
-      valor: "",
+      amount: "",
       dataTransacao: "",
       status: "pending",
       observacao: "",
@@ -480,7 +480,7 @@ describe("multiple simultaneous errors", () => {
     const errors = validateTransactionForm(emptyForm, noRules);
     expect(errors.tipoTransacao).toBeDefined();
     expect(errors.description).toBeDefined();
-    expect(errors.valor).toBeDefined();
+    expect(errors.amount).toBeDefined();
     expect(errors.dataTransacao).toBeDefined();
     expect(errors.formaPagamento).toBeDefined();
   });

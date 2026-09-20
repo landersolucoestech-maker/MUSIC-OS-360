@@ -72,11 +72,11 @@ const commonFields = {
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-// ── valor field — accepts string or number from frontend mapper ───────────────
-// The frontend form-to-payload.mapper.ts emits valor as a JS number via
+// ── amount field — accepts string or number from frontend mapper ──────────────
+// The frontend form-to-payload.mapper.ts emits amount as a JS number via
 // parseFloat(). The schema normalises both string and number to a string
 // internally so validation logic can use parseFloat() uniformly.
-const valorField = z
+const amountField = z
   .union([z.string(), z.number()])
   .transform((v) => String(v))
   .optional();
@@ -87,7 +87,7 @@ interface PayloadForValidation {
   category?: string;
   subcategoria?: string;
   description?: string;
-  valor?: string;
+  amount?: string;
   dataTransacao?: string;
   formaPagamento?: string;
   tipoPagamento?: string;
@@ -242,7 +242,7 @@ function validateConditionalByType(data: PayloadForValidation, ctx: z.Refinement
 export const createTransactionSchema = z.object({
   tipoTransacao: z.enum(TIPOS_TRANSACAO),
   description:     z.string().trim().min(1),
-  valor:         valorField,
+  amount:        amountField,
   dataTransacao: z.string().min(1),
   ...commonFields,
   // Defaults applied only on create — absent fields on PATCH/PUT must stay absent
@@ -253,8 +253,8 @@ export const createTransactionSchema = z.object({
   if (!data.description?.trim()) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe a descrição', path: ['description'] });
   }
-  if (!data.valor || isNaN(parseFloat(data.valor)) || parseFloat(data.valor) <= 0) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe um valor válido', path: ['valor'] });
+  if (!data.amount || isNaN(parseFloat(data.amount)) || parseFloat(data.amount) <= 0) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe um valor válido', path: ['amount'] });
   }
   if (!data.dataTransacao) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe a data da transação', path: ['dataTransacao'] });
@@ -281,7 +281,7 @@ export const createTransactionSchema = z.object({
 export const updateTransactionSchema = z.object({
   tipoTransacao: z.enum(TIPOS_TRANSACAO),
   description:     z.string().trim().optional(),
-  valor:         valorField,
+  amount:        amountField,
   dataTransacao: z.string().optional(),
   ...commonFields,
   // Concorrência otimista (Task J — fase de continuidade): quando enviado, o
@@ -290,9 +290,9 @@ export const updateTransactionSchema = z.object({
   // paralelo. Opcional para não quebrar chamadores existentes.
   expectedUpdatedAt: z.string().optional(),
 }).superRefine((data, ctx) => {
-  if (data.valor !== undefined) {
-    if (isNaN(parseFloat(data.valor)) || parseFloat(data.valor) <= 0) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe um valor válido', path: ['valor'] });
+  if (data.amount !== undefined) {
+    if (isNaN(parseFloat(data.amount)) || parseFloat(data.amount) <= 0) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe um valor válido', path: ['amount'] });
     }
   }
   validateParcelamento(data, ctx);
@@ -312,15 +312,15 @@ export const updateTransactionSchema = z.object({
 export const patchTransactionSchema = z.object({
   tipoTransacao: z.enum(TIPOS_TRANSACAO).optional(),
   description:     z.string().trim().optional(),
-  valor:         valorField,
+  amount:        amountField,
   dataTransacao: z.string().optional(),
   ...commonFields,
   // Concorrência otimista — ver comentário em updateTransactionSchema.
   expectedUpdatedAt: z.string().optional(),
 }).superRefine((data, ctx) => {
-  if (data.valor !== undefined) {
-    if (isNaN(parseFloat(data.valor)) || parseFloat(data.valor) <= 0) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe um valor válido', path: ['valor'] });
+  if (data.amount !== undefined) {
+    if (isNaN(parseFloat(data.amount)) || parseFloat(data.amount) <= 0) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe um valor válido', path: ['amount'] });
     }
   }
   // Instalment validation runs whenever tipoPagamento is provided

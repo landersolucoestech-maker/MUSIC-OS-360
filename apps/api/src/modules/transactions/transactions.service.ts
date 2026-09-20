@@ -83,7 +83,7 @@ function buildPersistencePayload(
   }
   if (dto.tipoTransacao !== undefined) payload.type = dto.tipoTransacao;
   if (dto.description !== undefined) payload.descricao = dto.description;
-  if (dto.valor !== undefined) payload.valor = String(dto.valor);
+  if (dto.amount !== undefined) payload.valor = String(dto.amount);
   if (dto.dataTransacao !== undefined) payload.data = dto.dataTransacao;
   if (dto.status !== undefined) payload.status = dto.status;
   if ((dto as AnyRecord).artistaVinculado !== undefined) payload.artist_id = (dto as AnyRecord).artistaVinculado || null;
@@ -256,7 +256,7 @@ export class TransactionsService {
     const entity = this.repo!.create(payload as Parameters<Repository<TransactionEntity>['create']>[0]);
     const saved = await this.repo!.save(entity as TransactionEntity);
 
-    const valor = String((dto as AnyRecord).valor ?? '0');
+    const valor = String((dto as AnyRecord).amount ?? '0');
 
     if (this.events) {
       this.events.emitTyped(DOMAIN_EVENTS.TRANSACTION_CREATED, {

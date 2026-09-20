@@ -78,7 +78,7 @@ export function transactionToFormFields(t: TransactionFormEntity | null | undefi
     category:            str(t.categoria),
     subcategoria:        str(t.subcategoria),
     description:         str(t.descricao),
-    valor:               str(t.valor),
+    amount:              str(t.valor),
     dataTransacao:       str(t.dataTransacao      ?? t.data_transacao ?? t.data),
     status:              str(t.status)            || "pending",
     observacao:          str(t.observacao         ?? t.notes),

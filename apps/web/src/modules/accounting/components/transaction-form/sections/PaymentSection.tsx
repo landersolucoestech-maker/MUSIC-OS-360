@@ -39,11 +39,11 @@ export function PaymentSection({
             type="number"
             step="0.01"
             min="0"
-            value={formData.valor}
-            onChange={(e) => updateField("valor", e.target.value)}
+            value={formData.amount}
+            onChange={(e) => updateField("amount", e.target.value)}
             disabled={disabled}
             placeholder="0,00"
-            error={errors.valor}
+            error={errors.amount}
             required
           />
 

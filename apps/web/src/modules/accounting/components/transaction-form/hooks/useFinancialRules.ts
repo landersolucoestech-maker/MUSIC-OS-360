@@ -71,13 +71,13 @@ export function useFinancialRules({
   );
 
   const valorParcela = useMemo(() => {
-    if (formData.tipoPagamento === "parcelado" && formData.valor && formData.quantidadeParcelas) {
-      const v = parseFloat(formData.valor);
+    if (formData.tipoPagamento === "parcelado" && formData.amount && formData.quantidadeParcelas) {
+      const v = parseFloat(formData.amount);
       const p = parseInt(formData.quantidadeParcelas);
       if (v > 0 && p >= 2) return (v / p).toFixed(2);
     }
     return null;
-  }, [formData.tipoPagamento, formData.valor, formData.quantidadeParcelas]);
+  }, [formData.tipoPagamento, formData.amount, formData.quantidadeParcelas]);
 
   return {
     ...rules,

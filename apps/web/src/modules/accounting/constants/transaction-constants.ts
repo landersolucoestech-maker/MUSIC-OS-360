@@ -12,7 +12,7 @@ export interface TransactionFormData {
   category: string;
   subcategoria: string;
   description: string;
-  valor: string;
+  amount: string;
   dataTransacao: string;
   status: string;
   observacao: string;
@@ -54,7 +54,7 @@ export const initialFormData: TransactionFormData = {
   category: "",
   subcategoria: "",
   description: "",
-  valor: "",
+  amount: "",
   dataTransacao: "",
   status: "pending",
   observacao: "",

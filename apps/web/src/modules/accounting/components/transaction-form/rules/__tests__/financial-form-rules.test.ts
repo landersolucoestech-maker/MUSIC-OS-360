@@ -9,7 +9,7 @@ const base: TransactionFormData = {
   category: "",
   subcategoria: "",
   description: "",
-  valor: "",
+  amount: "",
   dataTransacao: "",
   status: "pending",
   observacao: "",

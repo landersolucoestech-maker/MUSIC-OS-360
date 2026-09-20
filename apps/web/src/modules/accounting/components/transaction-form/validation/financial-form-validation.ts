@@ -45,9 +45,9 @@ export function validateTransactionForm(
     errors.description = "Informe a descrição";
   }
 
-  const valor = parseMoney(f.valor);
+  const valor = parseMoney(f.amount);
   if (!Number.isFinite(valor) || valor <= 0) {
-    errors.valor = "Informe um valor válido";
+    errors.amount = "Informe um valor válido";
   }
 
   if (!f.dataTransacao) {

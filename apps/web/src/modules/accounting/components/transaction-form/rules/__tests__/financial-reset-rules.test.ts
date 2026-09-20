@@ -153,8 +153,8 @@ describe("applyResets — fields not in RESET_MAP", () => {
     expect(result).toEqual({});
   });
 
-  it("returns empty object for valor (no entry)", () => {
-    const result = applyResets("valor", "500");
+  it("returns empty object for amount (no entry)", () => {
+    const result = applyResets("amount", "500");
     expect(result).toEqual({});
   });
 });
