@@ -8,6 +8,8 @@ export interface InventarioItem {
   name: string;
   category?: string | null;
   quantidade?: number | null;
+  unit_price?: number | null;
+  /** @deprecated physical column renamed to `unit_price` (Cluster G) — kept for back-compat reads of stale cached data. */
   valor_unitario?: number | null;
   localizacao?: string | null;
   status?: InventoryStatus | string | null;

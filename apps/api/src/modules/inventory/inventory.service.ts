@@ -47,7 +47,7 @@ export class InventoryService {
    *
    * Não reusa groupCount() (common/stats/group-count.util.ts): seu parâmetro
    * `valueColumn` assume uma única coluna (`${alias}.${valueColumn}`), mas o
-   * valor patrimonial do item é `quantidade * valor_unitario` — um produto de
+   * valor patrimonial do item é `quantidade * unit_price` — um produto de
    * duas colunas. Replica aqui a mesma agregação, com a expressão SQL
    * correta. Mantém a regra de negócio existente no client (ver
    * Inventario.tsx pré-migração): quantidade 0/nula conta como 1 no cálculo
@@ -61,7 +61,7 @@ export class InventoryService {
       .select('i.status', 'grp')
       .addSelect('COUNT(*)::int', 'cnt')
       .addSelect(
-        'COALESCE(SUM(COALESCE(NULLIF(i.quantidade, 0), 1) * COALESCE(i.valor_unitario::numeric, 0)), 0)',
+        'COALESCE(SUM(COALESCE(NULLIF(i.quantidade, 0), 1) * COALESCE(i.unit_price::numeric, 0)), 0)',
         'sum',
       )
       .groupBy('i.status')

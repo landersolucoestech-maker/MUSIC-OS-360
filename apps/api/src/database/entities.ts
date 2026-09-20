@@ -2515,7 +2515,7 @@ export class InventoryItemEntity {
   @Column({ type: 'varchar', length: 255 }) name: string;
   @Column({ type: 'varchar', length: 100, nullable: true }) category: string | null;
   @Column({ type: 'integer', default: 0 }) quantidade: number;
-  @Column({ type: 'decimal', precision: 14, scale: 2, nullable: true }) valor_unitario: string | null;
+  @Column({ type: 'decimal', precision: 14, scale: 2, nullable: true }) unit_price: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) localizacao: string | null;
   @Column({ type: 'varchar', length: 50, default: 'disponivel' }) status: string;
   @Column({ type: 'varchar', length: 255, nullable: true }) responsavel: string | null;

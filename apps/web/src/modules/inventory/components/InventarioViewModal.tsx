@@ -27,7 +27,7 @@ export function InventarioViewModal({ open, onOpenChange, item }: InventarioView
   };
 
   const quantidade = toNumber(item.quantidade ?? item.qtd) ?? 1;
-  const valorUnitario = toNumber(item.valor_unitario ?? item.valorUnitario ?? item.valorUnit);
+  const valorUnitario = toNumber(item.unit_price ?? item.valor_unitario ?? item.valorUnitario ?? item.valorUnit);
   const valorTotal = valorUnitario == null ? null : valorUnitario * quantidade;
 
   const getStatusBadge = (status: string) => {

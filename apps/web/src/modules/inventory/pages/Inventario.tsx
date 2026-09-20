@@ -217,9 +217,9 @@ export default function Inventario() {
                       <TableCell className="text-muted-foreground text-sm">{item.responsavel || "—"}</TableCell>
                       <TableCell><StatusBadge status={item.status} /></TableCell>
                       <TableCell className="text-center">{item.quantidade || 1}</TableCell>
-                      <TableCell className={`text-right font-medium ${getMonetarySemanticClass("neutral")}`}>{item.valor_unitario ? formatCurrency(item.valor_unitario) : "—"}</TableCell>
+                      <TableCell className={`text-right font-medium ${getMonetarySemanticClass("neutral")}`}>{item.unit_price ? formatCurrency(item.unit_price) : "—"}</TableCell>
                       <TableCell className={`text-right font-medium ${getMonetarySemanticClass("neutral")}`}>
-                        {item.valor_unitario ? formatCurrency((Number(item.valor_unitario) || 0) * (Number(item.quantidade) || 1)) : "—"}
+                        {item.unit_price ? formatCurrency((Number(item.unit_price) || 0) * (Number(item.quantidade) || 1)) : "—"}
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">{item.dataEntrada ? formatDate(item.dataEntrada) : "—"}</TableCell>
                       <TableCell className="text-right">

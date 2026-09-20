@@ -400,6 +400,7 @@ export const FIELD_LABELS_PT_BR = {
   valorAtual: 'Valor atual',
   valorEstimado: 'Valor estimado',
   valorUnitario: 'Valor unitário',
+  unitPrice: 'Valor unitário',
   value: 'Valor',
   variaveis: 'Variáveis',
   version: 'Versão',

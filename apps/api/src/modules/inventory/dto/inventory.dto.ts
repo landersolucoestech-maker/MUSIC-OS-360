@@ -9,7 +9,7 @@ export class CreateInventoryItemDto {
   @ApiProperty() @IsString() @MaxLength(255) name!: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) category?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) quantidade?: number;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_unitario?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) unit_price?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) localizacao?: string;
   @ApiPropertyOptional({ enum: STATUSES }) @IsOptional() @IsIn(STATUSES) status?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) responsavel?: string;
