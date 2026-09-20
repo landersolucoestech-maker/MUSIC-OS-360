@@ -1212,7 +1212,7 @@ export class LeadEntity {
   @Column({ type: 'varchar', length: 40, nullable: true }) prioridade: string | null;
   @Column({ type: 'varchar', length: 40, nullable: true }) temperatura: string | null;
   @Column({ type: 'varchar', length: 120, nullable: true, name: 'origem_lead' }) origemLead: string | null;
-  @Column({ type: 'numeric', precision: 15, scale: 2, nullable: true }) valor_estimado: string | null;
+  @Column({ type: 'numeric', precision: 15, scale: 2, nullable: true }) estimated_value: string | null;
   @Column({ type: 'numeric', precision: 5, scale: 2, nullable: true, name: 'probabilidade_fechamento' }) probabilidadeFechamento: string | null;
   @Column({ type: 'timestamptz', nullable: true }) proximo_follow_up: Date | null;
   @Column({ type: 'text', array: true, default: () => "'{}'" }) tags: string[];
