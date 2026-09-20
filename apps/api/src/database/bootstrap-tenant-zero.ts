@@ -154,13 +154,18 @@ export async function bootstrapTenantZero(ds: DataSource, realOwner?: RealOwnerI
 
   // Billing: mesmo caminho normal de qualquer tenant enterprise ativo — não
   // é `manual_override`/isenção especial (ver docstring do módulo).
+  // tenant_id populado (nao so org_id): upsertStripeSubscription
+  // (billing.service.ts) faz upsert real de webhook Stripe chaveado em
+  // UNIQUE(tenant_id) -- uma linha com tenant_id NULL nunca bateria nesse
+  // ON CONFLICT, deixando um webhook real inserir uma segunda linha em vez
+  // de atualizar esta.
   await ds.query(
     `
-    INSERT INTO billing_subscriptions (org_id, plan, status, seats, seats_used)
-    VALUES ($1, 'enterprise', 'active', 25, 1)
-    ON CONFLICT DO NOTHING
+    INSERT INTO billing_subscriptions (org_id, tenant_id, plan, status, seats, seats_used)
+    VALUES ($1, $2, 'enterprise', 'active', 25, 1)
+    ON CONFLICT (org_id) DO NOTHING
     `,
-    [TENANT_ZERO_ORG_ID],
+    [TENANT_ZERO_ORG_ID, TENANT_ZERO_TENANT_ID],
   );
 
   if (realOwner) {
