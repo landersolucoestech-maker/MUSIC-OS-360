@@ -68,13 +68,18 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
     ON CONFLICT (id) DO NOTHING
   `, [artistId, tenantId, effectiveAdminSub]);
 
+  // "contacts" (+ satelites) foi removida em favor de "clients" (decisao
+  // "Contato = Cliente", ver ContactsService) -- semeia direto na tabela
+  // canonica, com o evento de criacao gravado em clients.interacoes (jsonb),
+  // que e o substituto documentado de contact_timeline.
   const contactId = '10000000-0000-0000-0000-000000000021';
   await ds.query(`
-    INSERT INTO contacts
-      (id, tenant_id, name, company_name, contact_type, status, priority, created_by)
-    VALUES ($1, $2, 'Maria Produtora', 'Gravadora Demo Records', 'producer', 'active', 'high', $3)
+    INSERT INTO clients
+      (id, tenant_id, tipo_pessoa, categoria, perfil, nome, razao_social, status_contato, prioridade_contato, status, interacoes, created_by)
+    VALUES ($1, $2, 'pessoa_juridica', 'producer', 'outros', 'Maria Produtora', 'Gravadora Demo Records', 'active', 'high', 'active',
+      $3::jsonb, $4)
     ON CONFLICT (id) DO NOTHING
-  `, [contactId, tenantId, effectiveAdminSub]);
+  `, [contactId, tenantId, JSON.stringify([{ event_type: 'contact.created', summary: 'Contato criado via seed operacional', actor_id: effectiveAdminSub, at: new Date().toISOString() }]), effectiveAdminSub]);
 
   const campaignId = '10000000-0000-0000-0000-000000000040';
   const now = new Date();
@@ -82,8 +87,8 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
   end.setMonth(end.getMonth() + 1);
 
   await ds.query(`
-    INSERT INTO campaigns (id, tenant_id, nome, type, status, objetivo, artist_id, start_date, end_date, created_by)
-    VALUES ($1, $2, 'Lancamento Verao Demo', 'digital', 'rascunho', 'Lancar single de verao', $3, $4, $5, $6)
+    INSERT INTO campaigns (id, tenant_id, name, type, status, objetivo, artist_id, start_date, end_date, created_by)
+    VALUES ($1, $2, 'Lancamento Verao Demo', 'digital', 'draft', 'Lancar single de verao', $3, $4, $5, $6)
     ON CONFLICT (id) DO NOTHING
   `, [campaignId, tenantId, artistId, now, end, effectiveAdminSub]);
 
@@ -94,34 +99,24 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
     ON CONFLICT (id) DO NOTHING
   `, [campaignTaskId, tenantId, campaignId, end, effectiveAdminSub]);
 
-  const formId = '10000000-0000-0000-0000-000000000050';
-  await ds.query(`
-    INSERT INTO forms (id, tenant_id, name, description, status, fields, created_by)
-    VALUES ($1, $2, 'Formulario de Captura Demo', 'Capture leads via site', 'active',
-      '[{"name":"name","label":"Nome","type":"text","required":true},{"name":"email","label":"Email","type":"email","required":true}]',
-      $3)
-    ON CONFLICT (id) DO NOTHING
-  `, [formId, tenantId, effectiveAdminSub]);
+  // "forms" (generic Form Builder) foi removida em
+  // 20260822000005_DropGenericFormsModule -- zero consumidor real, decisao
+  // final do produto (Artist Public Form / Support Ticket / MusicChat
+  // cobrem os 3 canais reais). Nada a semear aqui.
 
   const contractId = '10000000-0000-0000-0000-000000000060';
   await ds.query(`
-    INSERT INTO contracts (id, tenant_id, title, type, status, artist_id, valor, exclusivo, created_by)
-    VALUES ($1, $2, 'Contrato de Gravacao Demo', 'gravacao', 'rascunho', $3, 50000, FALSE, $4)
+    INSERT INTO contracts (id, tenant_id, title, type, status, artist_id, fixed_value, exclusivo, created_by)
+    VALUES ($1, $2, 'Contrato de Gravacao Demo', 'gravacao', 'draft', $3, 50000, FALSE, $4)
     ON CONFLICT (id) DO NOTHING
   `, [contractId, tenantId, artistId, effectiveAdminSub]);
 
   const txId = '10000000-0000-0000-0000-000000000070';
   await ds.query(`
     INSERT INTO transactions (id, tenant_id, type, categoria, descricao, valor, data, status, artist_id, created_by)
-    VALUES ($1, $2, 'receita', 'external-rights-receipts', 'Recebimento externo de direitos Q1 Demo', 15000, $3, 'pendente', $4, $5)
+    VALUES ($1, $2, 'receita', 'external-rights-receipts', 'Recebimento externo de direitos Q1 Demo', 15000, $3, 'pending', $4, $5)
     ON CONFLICT (id) DO NOTHING
   `, [txId, tenantId, now, artistId, effectiveAdminSub]);
-
-  await ds.query(`
-    INSERT INTO contact_timeline (tenant_id, contact_id, event_type, summary, actor_id)
-    VALUES ($1, $2, 'contact.created', 'Contato criado via seed operacional', $3)
-    ON CONFLICT DO NOTHING
-  `, [tenantId, contactId, effectiveAdminSub]);
 
   await ds.query(`RESET app.current_tenant_id`);
 

@@ -170,8 +170,13 @@ async function seedOperational(): Promise<void> {
 
   if (!AppDataSource.isInitialized) await AppDataSource.initialize();
 
+  // seedOperational() assume o tenant/org default ja semeado (mesmos IDs
+  // de 01_default_tenant.ts) -- precisa do SeedResult retornado por ele,
+  // nao apenas do DataSource (mesmo padrao ja usado em resetDb() acima).
+  const { seedDefaultTenant } = await import('../src/database/seeds/01_default_tenant');
   const { seedOperational: runSeed } = await import('../src/database/seeds/03_operational_seed');
-  await runSeed(AppDataSource);
+  const tenant = await seedDefaultTenant(AppDataSource);
+  await runSeed(AppDataSource, tenant);
 
   console.log('[seed:operational] Concluído.\n');
 }
