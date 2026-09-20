@@ -171,8 +171,8 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
               />
               <Field label="Status" value={shareStatusBadge(share.status)} />
               <Field label="Tipo" value={shareTypeLabel(shareType)} />
-              {share.valor_total != null && <Field label="Valor combinado" value={formatCurrency(share.valor_total)} />}
-              {share.valor_liquidado != null && <Field label="Valor liquidado" value={formatCurrency(share.valor_liquidado)} />}
+              {share.total_amount != null && <Field label="Valor combinado" value={formatCurrency(share.total_amount)} />}
+              {share.settled_amount != null && <Field label="Valor liquidado" value={formatCurrency(share.settled_amount)} />}
               {registradoEm && <Field label="Registrado em" value={registradoEm} icon={Calendar} />}
             </CardContent>
           </Card>

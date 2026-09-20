@@ -117,7 +117,7 @@ function shareToForm(share: Share & Record<string, unknown>): ShareFormState {
     data_prevista: s("data_prevista"),
     documents: s("documents"),
     percentage: share.percentage != null ? String(share.percentage) : "",
-    valor_total: share.valor_total != null ? String(share.valor_total) : "",
+    valor_total: share.total_amount != null ? String(share.total_amount) : "",
     status: s("status") || "pendente",
     acordo_notas: s("acordo_notas"),
     acordo_url: s("acordo_url"),
@@ -207,7 +207,7 @@ export function SharePendenteFormModal({ open, onOpenChange, share, initialRelea
       const common = {
         share_type: formData.share_type,
         percentage: percentageNum,
-        valor_total: valorTotalNum,
+        total_amount: valorTotalNum,
         status: formData.status,
         acordo_notas: formData.acordo_notas.trim() || null,
         acordo_url: formData.acordo_url.trim() || null,

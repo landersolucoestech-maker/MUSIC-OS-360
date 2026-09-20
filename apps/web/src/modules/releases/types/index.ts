@@ -111,8 +111,8 @@ export interface Share {
   type?: ShareCategory | string | null;
   direction?: ShareDirection | string | null;
   status?: ShareStatus | string | null;
-  valor_total?: number | null;
-  valor_liquidado?: number | null;
+  total_amount?: number | null;
+  settled_amount?: number | null;
   holder?: string | null;
   recipient?: string | null;
   // ── Fluxo interno (release) ──────────────────────────────────────────────────

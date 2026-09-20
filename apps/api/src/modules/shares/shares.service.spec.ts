@@ -149,33 +149,37 @@ describe('SharesService.update — patch parcial não contamina campos de regist
 
 /**
  * Task T (continuidade) — "Registrar Recebimento"/"Registrar Envio" em
- * GestaoShares.tsx envia { status, valor_liquidado, expectedUpdatedAt } mas
+ * GestaoShares.tsx envia { status, settled_amount, expectedUpdatedAt } mas
  * valor_liquidado (e valor_total) nunca existiram como coluna: a mudança de
  * status persistia, o valor liquidado era descartado silenciosamente. Prova
  * que ambos os campos agora chegam ao UPDATE/INSERT gerado.
+ *
+ * Cluster G (naming-normalization mandate) renomeou valor_total ->
+ * total_amount e valor_liquidado -> settled_amount; fixtures atualizadas
+ * em lockstep.
  */
-describe('SharesService — persistência de valor_total/valor_liquidado (Task T)', () => {
-  it('create: grava valor_total quando enviado', async () => {
+describe('SharesService — persistência de total_amount/settled_amount (Task T)', () => {
+  it('create: grava total_amount quando enviado', async () => {
     const { svc, repo } = makeService();
-    await svc.create('tenant-1', { holderName: 'X', valor_total: 1500.5 } as unknown as CreateShareDto);
-    expect(created(repo)['valor_total']).toBe(1500.5);
+    await svc.create('tenant-1', { holderName: 'X', total_amount: 1500.5 } as unknown as CreateShareDto);
+    expect(created(repo)['total_amount']).toBe(1500.5);
   });
 
-  it('update: grava valor_liquidado ao registrar recebimento/envio (mesmo payload do quick-action da página)', async () => {
+  it('update: grava settled_amount ao registrar recebimento/envio (mesmo payload do quick-action da página)', async () => {
     const { svc, repo } = makeService();
     await svc.update('tenant-1', 'share-1', {
       status: 'recebido',
-      valor_liquidado: 800,
+      settled_amount: 800,
     } as unknown as UpdateShareDto);
 
     const row = updated(repo);
     expect(row['status']).toBe('recebido');
-    expect(row['valor_liquidado']).toBe(800);
+    expect(row['settled_amount']).toBe(800);
   });
 
-  it('update: valor_liquidado: 0 explícito persiste como 0, não como ausente', async () => {
+  it('update: settled_amount: 0 explícito persiste como 0, não como ausente', async () => {
     const { svc, repo } = makeService();
-    await svc.update('tenant-1', 'share-1', { valor_liquidado: 0 } as unknown as UpdateShareDto);
-    expect(updated(repo)['valor_liquidado']).toBe(0);
+    await svc.update('tenant-1', 'share-1', { settled_amount: 0 } as unknown as UpdateShareDto);
+    expect(updated(repo)['settled_amount']).toBe(0);
   });
 });

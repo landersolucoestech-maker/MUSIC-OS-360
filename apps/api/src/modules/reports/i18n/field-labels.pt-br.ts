@@ -589,13 +589,14 @@ export const FIELD_LABELS_PT_BR = {
   acordoUrl: 'Link do documento',
   versao: 'Versão',
   historico: 'Histórico de versões',
-  valorLiquidado: 'Valor liquidado',
+  settledAmount: 'Valor liquidado',
 
   // ── Parte 89 — Transações Financeiras / Nota Fiscal / Agenda ────────────────
   eventoId: 'Evento vinculado',
   notaFiscalRef: 'Nota fiscal (ID de referência)',
   codigoServico: 'Código do serviço',
   valorTotal: 'Valor total',
+  totalAmount: 'Valor total',
   eventoRef: 'Evento (ID de referência)',
   label: 'Nome',
 

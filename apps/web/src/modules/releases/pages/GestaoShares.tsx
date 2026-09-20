@@ -178,7 +178,7 @@ export default function GestaoShares() {
       await updateShare.mutateAsync({
         id: share.id,
         status: novoStatus,
-        valor_liquidado: share.valor_total,
+        settled_amount: share.total_amount,
         expectedUpdatedAt: getExpectedUpdatedAt(share),
       });
       toast.success(novoStatus === "recebido" ? "Recebimento registrado!" : "Envio registrado!");

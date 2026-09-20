@@ -1511,8 +1511,8 @@ export class ShareEntity {
   @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'integer', nullable: true }) versao: number | null;
   @Column({ type: 'jsonb', nullable: true }) historico: unknown[] | null;
-  @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true }) valor_total: string | null;
-  @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true }) valor_liquidado: string | null;
+  @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true }) total_amount: string | null;
+  @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true }) settled_amount: string | null;
 
   // ── Relations ───────────────────────────────────────────────────────────────
   @ManyToOne(() => WorkEntity, (w) => w.shares, { nullable: true, onDelete: 'SET NULL' })

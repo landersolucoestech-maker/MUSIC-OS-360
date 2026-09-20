@@ -45,8 +45,8 @@ export class CreateShareDto {
   @ApiPropertyOptional() @IsOptional() @IsString() documents?: string;
   @ApiPropertyOptional() @IsOptional() @Type(() => Number) @IsInt() versao?: number;
   @ApiPropertyOptional() @IsOptional() @IsArray() historico?: unknown[];
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_total?: number;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor_liquidado?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) total_amount?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) settled_amount?: number;
 }
 
 export class UpdateShareDto extends PartialType(CreateShareDto) {
