@@ -19,7 +19,7 @@ export function loadReleaseContext(
     audioUrl: pickReleaseString(releaseRecord, ["audio_master_url", "audio_url", "wav_url", "master_url", "fonograma_url"]),
     lyric: pickReleaseString(releaseRecord, ["letra", "lyric", "lyrics"]),
     coverUrl: pickReleaseString(releaseRecord, ["capa_url", "cover_url", "artwork_url", "imagem_capa_url"]),
-    genre: pickReleaseString(releaseRecord, ["genero", "genre"]),
+    genre: pickReleaseString(releaseRecord, ["music_genre", "genero", "genre"]),
     subgenre: pickReleaseString(releaseRecord, ["subgenero", "subgenre"]),
     mood: pickReleaseString(releaseRecord, ["mood", "clima", "atmosfera"]),
     bpm: pickReleaseString(releaseRecord, ["bpm"]),
