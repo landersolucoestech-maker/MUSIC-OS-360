@@ -1466,7 +1466,7 @@ export class ShareEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid', nullable: true }) work_id: string | null;
-  @Column({ type: 'uuid', nullable: true }) fonograma_id: string | null;
+  @Column({ type: 'uuid', nullable: true }) phonogram_id: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) holder_name: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) holder_document: string | null;
   @Column({ type: 'varchar', length: 100, default: 'autor' }) party_role: string;

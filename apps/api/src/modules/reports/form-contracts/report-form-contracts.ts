@@ -462,7 +462,7 @@ const SHARES_CONTRACT: ReportFormContract = {
     holderName: 'alias legado em inglês (registro ABRAMUS/ECAD) mapeado para holder_name — não é a tela real de Shares',
     role: 'alias legado em inglês mapeado para party_role — idem',
     workId: 'alias legado em inglês mapeado para work_id — idem',
-    trackId: 'alias legado em inglês mapeado para fonograma_id — idem',
+    trackId: 'alias legado em inglês mapeado para phonogram_id — idem',
     holderDoc: 'alias legado em inglês mapeado para holder_document — idem',
     metadata: 'objeto jsonb interno bruto',
   },

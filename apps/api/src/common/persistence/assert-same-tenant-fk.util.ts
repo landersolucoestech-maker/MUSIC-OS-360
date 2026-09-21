@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 
 /**
  * contracts/licensing/takedowns/shares.create() all accepted a FK id
- * (artist_id/client_id/work_id/fonograma_id) straight from the request
+ * (artist_id/client_id/work_id/phonogram_id) straight from the request
  * DTO and persisted it with no check that the referenced row belongs to
  * the SAME tenant. No read-side leak resulted (every list/get query still
  * filters by the entity's own tenant_id), but a tenant could create a

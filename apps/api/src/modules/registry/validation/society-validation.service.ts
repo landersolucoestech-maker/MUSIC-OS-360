@@ -49,7 +49,7 @@ export class SocietyValidationService {
     this.assertDb();
     const recording = await this.phonograms!.findOne({ where: { id: recordingId, tenant_id: tenantId } });
     if (!recording || recording.deleted_at) throw new NotFoundException('Fonograma não encontrado');
-    const shares = await this.shares!.find({ where: { tenant_id: tenantId, fonograma_id: recordingId } });
+    const shares = await this.shares!.find({ where: { tenant_id: tenantId, phonogram_id: recordingId } });
     return { recording, shares };
   }
 

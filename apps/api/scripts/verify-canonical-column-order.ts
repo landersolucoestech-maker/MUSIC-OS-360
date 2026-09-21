@@ -132,7 +132,7 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at',
   ],
   shares: [
-    'id', 'tenant_id', 'work_id', 'fonograma_id', 'holder_name', 'holder_document',
+    'id', 'tenant_id', 'work_id', 'phonogram_id', 'holder_name', 'holder_document',
     'party_role', 'rights_holder_id', 'publisher_id', 'role', 'territory', 'instrument',
     'credited_name', 'is_primary', 'is_featured', 'start_date', 'end_date', 'share_type',
     'percentage', 'status', 'acordo_notas', 'acordo_url', 'notes', 'direction',

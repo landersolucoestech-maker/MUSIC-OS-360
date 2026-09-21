@@ -180,7 +180,7 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
       {
         target:      "Share",
         cardinality: "1:N",
-        via:         "Share.fonograma_id",
+        via:         "Share.phonogram_id",
         required:    false,
         description: "Participações de master (splits de direitos conexos)",
       },
@@ -209,7 +209,7 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
       {
         target:      "Fonograma",
         cardinality: "N:1",
-        via:         "fonograma_id",
+        via:         "phonogram_id",
         required:    false,
         description: "Fonograma ao qual este share de master pertence",
       },

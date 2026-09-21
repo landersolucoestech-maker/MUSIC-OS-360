@@ -133,7 +133,7 @@ export class SocietyPayloadBuilderService {
     const rec = await this.phonograms!.findOne({ where: { id: recordingId, tenant_id: tenantId } });
     if (!rec || rec.deleted_at) throw new NotFoundException('Fonograma não encontrado');
     // share_type IS NULL = elegibilidade transitória de registro (ver share-eligibility.util.ts).
-    const shares = (await this.shares!.find({ where: { tenant_id: tenantId, fonograma_id: recordingId, share_type: IsNull() } }))
+    const shares = (await this.shares!.find({ where: { tenant_id: tenantId, phonogram_id: recordingId, share_type: IsNull() } }))
       .filter((s) => !s.deleted_at && isRegistryEligibleShare(s));
 
     const legacy: PayloadIdentifier[] = [];

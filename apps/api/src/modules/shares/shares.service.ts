@@ -25,7 +25,7 @@ export class SharesService {
       .andWhere('s.deleted_at IS NULL');
 
     if (q['work_id'])      qb.andWhere('s.work_id = :workId',           { workId:      q['work_id'] });
-    if (q['fonograma_id']) qb.andWhere('s.fonograma_id = :fonogramaId', { fonogramaId: q['fonograma_id'] });
+    if (q['phonogram_id']) qb.andWhere('s.phonogram_id = :phonogramId', { phonogramId: q['phonogram_id'] });
     if (q['party_role'])   qb.andWhere('s.party_role = :partyRole',     { partyRole:   q['party_role'] });
     if (q['direction'])    qb.andWhere('s.direction = :direction',      { direction:   q['direction'] });
     if (q['status'])       qb.andWhere('s.status = :status',            { status:      q['status'] });
@@ -95,7 +95,7 @@ export class SharesService {
     if (d['holderDoc']  !== undefined) out['holder_document'] = d['holderDoc'];
     if (d['role']       !== undefined) out['party_role']      = d['role'];
     if (d['workId']     !== undefined) out['work_id']         = d['workId'];
-    if (d['trackId']    !== undefined) out['fonograma_id']    = d['trackId'];
+    if (d['trackId']    !== undefined) out['phonogram_id']    = d['trackId'];
     for (const k of ['holderName', 'holderDoc', 'role', 'workId', 'trackId', 'expectedUpdatedAt']) delete out[k];
     Object.keys(out).forEach((k) => out[k] === undefined && delete out[k]);
     return out;
@@ -109,9 +109,9 @@ export class SharesService {
    * registry-submission check considers.
    */
   private async sumEligiblePercentage(
-    tenantId: string, workId: string | null, fonogramaId: string | null, excludeId?: string, manager?: EntityManager,
+    tenantId: string, workId: string | null, phonogramId: string | null, excludeId?: string, manager?: EntityManager,
   ): Promise<number> {
-    if (!workId && !fonogramaId) return 0;
+    if (!workId && !phonogramId) return 0;
     const repo = manager ? manager.getRepository(ShareEntity) : this.repo!;
     const qb = repo
       .createQueryBuilder('s')
@@ -120,7 +120,7 @@ export class SharesService {
       .andWhere('s.deleted_at IS NULL')
       .andWhere('s.share_type IS NULL');
     if (workId)      qb.andWhere('s.work_id = :workId', { workId });
-    if (fonogramaId) qb.andWhere('s.fonograma_id = :fonogramaId', { fonogramaId });
+    if (phonogramId) qb.andWhere('s.phonogram_id = :phonogramId', { phonogramId });
     if (excludeId)   qb.andWhere('s.id != :excludeId', { excludeId });
     const row = await qb.getRawOne<{ sum: string }>();
     return Number(row?.sum ?? 0);
@@ -138,12 +138,12 @@ export class SharesService {
     if (!isEligible || cols['percentage'] == null) return;
 
     const workId      = (cols['work_id'] as string | undefined) ?? null;
-    const fonogramaId = (cols['fonograma_id'] as string | undefined) ?? null;
-    if (!workId && !fonogramaId) return;
+    const phonogramId = (cols['phonogram_id'] as string | undefined) ?? null;
+    if (!workId && !phonogramId) return;
 
     const percentage = Number(cols['percentage']);
-    const existingSum = await this.sumEligiblePercentage(tenantId, workId, fonogramaId, excludeId, manager);
-    assertSplitBudgetNotExceeded(existingSum, percentage, workId ? `obra ${workId}` : `fonograma ${fonogramaId}`);
+    const existingSum = await this.sumEligiblePercentage(tenantId, workId, phonogramId, excludeId, manager);
+    assertSplitBudgetNotExceeded(existingSum, percentage, workId ? `obra ${workId}` : `fonograma ${phonogramId}`);
   }
 
   /**
@@ -158,10 +158,10 @@ export class SharesService {
    * blocks writes to a different one.
    */
   private async lockSplitScope(
-    manager: EntityManager, tenantId: string, workId: string | null, fonogramaId: string | null,
+    manager: EntityManager, tenantId: string, workId: string | null, phonogramId: string | null,
   ): Promise<void> {
-    if (!workId && !fonogramaId) return;
-    const key = `share-split:${tenantId}:${workId ?? ''}:${fonogramaId ?? ''}`;
+    if (!workId && !phonogramId) return;
+    const key = `share-split:${tenantId}:${workId ?? ''}:${phonogramId ?? ''}`;
     await manager.query('SELECT pg_advisory_xact_lock(hashtext($1))', [key]);
   }
 
@@ -173,11 +173,11 @@ export class SharesService {
     // conceito distinto, ver Fase 5 / C6) nem preenchidos com default artificial.
     const cols = this.toColumns(dto);
     await assertSameTenantFk(this.ds!, 'works',      cols['work_id']      as string | undefined, tenantId, 'Obra');
-    await assertSameTenantFk(this.ds!, 'phonograms', cols['fonograma_id'] as string | undefined, tenantId, 'Fonograma');
+    await assertSameTenantFk(this.ds!, 'phonograms', cols['phonogram_id'] as string | undefined, tenantId, 'Fonograma');
     const workId      = (cols['work_id'] as string | undefined) ?? null;
-    const fonogramaId = (cols['fonograma_id'] as string | undefined) ?? null;
+    const phonogramId = (cols['phonogram_id'] as string | undefined) ?? null;
     return this.ds!.transaction(async (manager) => {
-      await this.lockSplitScope(manager, tenantId, workId, fonogramaId);
+      await this.lockSplitScope(manager, tenantId, workId, phonogramId);
       await this.assertSplitBudget(tenantId, cols, undefined, manager);
       const repo = manager.getRepository(ShareEntity);
       const entity = repo.create({ tenant_id: tenantId, ...cols } as any);
@@ -196,14 +196,14 @@ export class SharesService {
       if (!current) throw new NotFoundException('Participação não encontrada');
 
       const workId      = (cols['work_id']      !== undefined ? cols['work_id']      : current.work_id)      as string | null;
-      const fonogramaId = (cols['fonograma_id'] !== undefined ? cols['fonograma_id'] : current.fonograma_id) as string | null;
-      await this.lockSplitScope(manager, tenantId, workId, fonogramaId);
-      // Merge with the current row so an update that omits work_id/fonograma_id/
+      const phonogramId = (cols['phonogram_id'] !== undefined ? cols['phonogram_id'] : current.phonogram_id) as string | null;
+      await this.lockSplitScope(manager, tenantId, workId, phonogramId);
+      // Merge with the current row so an update that omits work_id/phonogram_id/
       // share_type (unchanged) still validates against the right scope.
       await this.assertSplitBudget(tenantId, {
         share_type:   cols['share_type']   !== undefined ? cols['share_type']   : current.share_type,
         work_id:      workId,
-        fonograma_id: fonogramaId,
+        phonogram_id: phonogramId,
         percentage:   cols['percentage']   !== undefined ? cols['percentage']   : current.percentage,
       }, id, manager);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
