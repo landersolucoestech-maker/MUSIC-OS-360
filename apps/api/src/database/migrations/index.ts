@@ -270,6 +270,7 @@ import { ReconcileDuplicateBillingSubscriptions20260920000004 } from './20260920
 import { ConsolidateInvoiceDueDateColumns20260920000005 } from './20260920000005_ConsolidateInvoiceDueDateColumns';
 import { RenameSharesFonogramaIdToPhonogramId20260920000006 } from './20260920000006_RenameSharesFonogramaIdToPhonogramId';
 import { RenameLeadsTipoClienteTipoServicoToEnglish20260920000007 } from './20260920000007_RenameLeadsTipoClienteTipoServicoToEnglish';
+import { FixWorksTypeTipoObraCollision20260921000001 } from './20260921000001_FixWorksTypeTipoObraCollision';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -551,4 +552,5 @@ export const ALL_MIGRATIONS = [
   ConsolidateInvoiceDueDateColumns20260920000005,
   RenameSharesFonogramaIdToPhonogramId20260920000006,
   RenameLeadsTipoClienteTipoServicoToEnglish20260920000007,
+  FixWorksTypeTipoObraCollision20260921000001,
 ] as const;

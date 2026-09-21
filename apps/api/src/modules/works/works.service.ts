@@ -8,6 +8,7 @@ import { groupCount, GroupStatsResult } from '../../common/stats/group-count.uti
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { normalizeIsrc, isValidIsrc } from '../registry/validators/registry-validators';
+import { deriveWorkRegistryFields, type WorkRegistrySourceFields } from './work-registry-fields.util';
 import type { CreateWorkDto }  from './dto/create-work.dto';
 import type { UpdateWorkDto }  from './dto/update-work.dto';
 import type { QueryWorkDto }   from './dto/query-work.dto';
@@ -180,13 +181,31 @@ export class WorksService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateWorkDto): Promise<WorkWithParticipantes> {
-    // works.type é NOT NULL; o formulário envia tipo_obra (campo próprio).
-    const type = dto.type ?? dto.tipo_obra ?? 'composicao';
+    // works.type é NOT NULL. find-tipo-obra-type-collision: o form real
+    // (formToObraPayload) NUNCA envia `type` -- só `tipo_obra` ('autoral'|
+    // 'referencia', a origem do registro no catálogo, ver
+    // ObraTipoSelectorModal.tsx). O fallback `?? dto.tipo_obra` que existia
+    // aqui portanto SEMPRE disparava em uso real, gravando 'autoral'/
+    // 'referencia' na coluna que o registro ABRAMUS/ECAD lê como a
+    // classificação musical da obra (ex. 'composicao') -- dois conceitos
+    // distintos sendo silenciosamente confundidos em 100% das obras criadas
+    // pela UI real. `tipo_obra` permanece sua própria coluna, intocada;
+    // `type` agora só usa o default real quando o chamador não o envia.
+    const type = dto.type ?? 'composicao';
     const { participantes, ...rest } = dto as CreateWorkDto & { participantes?: unknown[] };
     // find-f81eebf2: artist_id had no FK (DB or app-layer) — a work could
     // silently reference another tenant's artist.
     await assertSameTenantFk(this.ds!, 'artists', rest.artist_id, tenantId, 'Artista');
     this.normalizeIsrcField(rest);
+    // find-registry-null-fields: the PT form fields (idioma/instrumental/
+    // criada_por_ia/duration_text/outros_titulos/ia_*) are the only ones the
+    // real form writes -- the English Registry Fields
+    // (language/is_instrumental/duration_seconds/ai_used/ai_tools/ai_prompts/
+    // alternative_titles) that society-payload-builder.service.ts's
+    // buildWorkPayload() actually reads were never derived, so every
+    // ABRAMUS/ECAD work submission shipped them null. Derived here on every
+    // create so both sides finally agree.
+    const registryFields = deriveWorkRegistryFields(rest as WorkRegistrySourceFields);
 
     // Obra + participantes na mesma transação: se a gravação dos participantes
     // falhar, a criação da obra também reverte — nunca fica uma obra "órfã"
@@ -194,7 +213,14 @@ export class WorksService {
     const saved = await this.ds!.transaction(async (em) => {
       const workRepo = em.getRepository(WorkEntity);
       const participantsRepo = em.getRepository(WorkParticipantEntity);
-      const entity = workRepo.create({ tenant_id: tenantId, ...(rest as any), type, created_by: userId, updated_by: userId });
+      const entity = workRepo.create({
+        tenant_id: tenantId,
+        ...(rest as any),
+        ...registryFields,
+        type,
+        created_by: userId,
+        updated_by: userId,
+      });
       const savedWork = (await workRepo.save(entity as any)) as WorkEntity;
       await this.replaceParticipantes(participantsRepo, tenantId, savedWork.id, participantes);
       return savedWork;
@@ -214,12 +240,29 @@ export class WorksService {
   }
 
   async update(tenantId: string, userId: string, id: string, dto: UpdateWorkDto): Promise<WorkWithParticipantes> {
-    await this.findById(tenantId, id);
+    const current = await this.findById(tenantId, id);
     const { participantes, expectedUpdatedAt, ...rest } = dto as UpdateWorkDto & { participantes?: unknown[] };
     // find-f81eebf2: only validate when the patch actually sets artist_id —
     // omitted means "unchanged", already validated at its own create time.
     if (rest.artist_id !== undefined) await assertSameTenantFk(this.ds!, 'artists', rest.artist_id, tenantId, 'Artista');
     this.normalizeIsrcField(rest);
+    // find-registry-null-fields: merge the patch's PT fields over the
+    // CURRENT row's PT fields before deriving the English Registry Fields —
+    // a partial update that only touches e.g. `idioma` must still derive
+    // correct ai_tools/ai_prompts/etc. from the unchanged sibling fields,
+    // not from `undefined`. See create()'s identical derivation above.
+    const mergedForRegistry: WorkRegistrySourceFields = {
+      idioma: rest.idioma !== undefined ? rest.idioma : current.idioma,
+      instrumental: rest.instrumental !== undefined ? rest.instrumental : current.instrumental,
+      criada_por_ia: rest.criada_por_ia !== undefined ? rest.criada_por_ia : current.criada_por_ia,
+      duration_text: rest.duration_text !== undefined ? rest.duration_text : current.duration_text,
+      outros_titulos: rest.outros_titulos !== undefined ? rest.outros_titulos : current.outros_titulos,
+      letra_completa: rest.letra_completa !== undefined ? rest.letra_completa : current.letra_completa,
+      ia_harmonia: rest.ia_harmonia !== undefined ? rest.ia_harmonia : (current.ia_harmonia as WorkRegistrySourceFields['ia_harmonia']),
+      ia_melodia: rest.ia_melodia !== undefined ? rest.ia_melodia : (current.ia_melodia as WorkRegistrySourceFields['ia_melodia']),
+      ia_letra: rest.ia_letra !== undefined ? rest.ia_letra : (current.ia_letra as WorkRegistrySourceFields['ia_letra']),
+    };
+    const registryFields = deriveWorkRegistryFields(mergedForRegistry);
 
     // Task L: casUpdate() e replaceParticipantes() rodavam como duas operações
     // independentes — se a gravação dos participantes falhasse depois do
@@ -234,7 +277,7 @@ export class WorksService {
       await casUpdate(
         workRepo,
         { id, tenant_id: tenantId } as any,
-        { ...(rest as any), updated_at: new Date(), updated_by: userId } as any,
+        { ...(rest as any), ...registryFields, updated_at: new Date(), updated_by: userId } as any,
         expectedUpdatedAt,
         'Esta obra foi alterada por outro usuário desde que você a carregou. Recarregue e tente novamente.',
       );

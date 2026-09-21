@@ -200,7 +200,7 @@ const WORKS_CONTRACT: ReportFormContract = {
     col('letristas'), col('project_id'),
     col('artist_id'), col('tipo_obra'),
     // Somente leitura: registro/sociedades e enriquecimento (não são do form de criação)
-    ro('duration_seconds'),
+    ro('duration_seconds'), ro('alternative_titles'), ro('ai_tools'), ro('ai_prompts'),
     ro('language'), ro('lyrics'), ro('is_instrumental'), ro('ai_used'),
     ro('registry_status'),
     ro('external_reference'), ro('origem_externa'), ro('origem_externa_sincronizado_em'),

@@ -170,11 +170,15 @@ describe('WorksService', () => {
     });
   });
 
-  describe('create() — fallback de type (works.type é NOT NULL)', () => {
-    it('usa tipo_obra quando type está ausente', async () => {
+  describe('create() — type e tipo_obra são campos independentes (works.type é NOT NULL)', () => {
+    // tipo_obra (origem do catálogo: 'autoral'|'referencia') nunca alimenta
+    // type (classificação ABRAMUS/ECAD: 'composicao'|'original'|...) — eram
+    // conceitos distintos colididos por um fallback incorreto, removido em
+    // 20260921000001_FixWorksTypeTipoObraCollision.
+    it('usa composicao quando type está ausente, mesmo com tipo_obra presente', async () => {
       await service.create(TENANT, 'u1', { title: 'Nova', tipo_obra: 'musica' } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'musica' }),
+        expect.objectContaining({ type: 'composicao', tipo_obra: 'musica' }),
       );
     });
 
@@ -185,10 +189,10 @@ describe('WorksService', () => {
       );
     });
 
-    it('type explícito vence sobre tipo_obra quando ambos presentes', async () => {
+    it('type explícito é sempre respeitado, independente de tipo_obra', async () => {
       await service.create(TENANT, 'u1', { title: 'Nova', type: 'original', tipo_obra: 'musica' } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'original' }),
+        expect.objectContaining({ type: 'original', tipo_obra: 'musica' }),
       );
     });
 
