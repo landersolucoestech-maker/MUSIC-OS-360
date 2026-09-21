@@ -113,7 +113,7 @@ const CANONICAL_ORDER: Record<string, string[]> = {
   ],
   leads: [
     'id', 'tenant_id', 'nome', 'nome_completo', 'empresa', 'email_encrypted',
-    'whatsapp', 'instagram', 'cidade', 'estado', 'tipo_cliente', 'tipo_servico',
+    'whatsapp', 'instagram', 'cidade', 'estado', 'client_type', 'service_type',
     'payload_servico', 'origem_lead', 'responsavel', 'status', 'prioridade', 'proximo_follow_up',
     'estimated_value', 'temperatura', 'dados_internos_crm', 'uploads', 'pais', 'probabilidade_fechamento',
     'nome_artistico', 'telefone_encrypted', 'client_id', 'fonte', 'tags', 'metadata',

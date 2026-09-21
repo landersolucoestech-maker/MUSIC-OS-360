@@ -153,9 +153,13 @@ export const FIELD_LABELS_PT_BR = {
   chavePix: 'Chave Pix',
   temperatura: 'Temperatura',
   type: 'Tipo',
+  // "tipoCliente" continua servindo transactions.tipo_cliente (contraparte
+  // financeira — conceito distinto, ainda não renomeado); "clientType" é o
+  // novo alias para leads.client_type (tipo de cliente do lead).
   tipoCliente: 'Tipo de cliente',
+  clientType: 'Tipo de cliente',
   tipoPessoa: 'Tipo de pessoa',
-  tipoServico: 'Tipo de serviço',
+  serviceType: 'Tipo de serviço',
   financialModel: 'Modelo financeiro',
   requiresExternalRightsTerms: 'Exige termos de direitos externos',
   requiresFixedValue: 'Exige valor fixo',

@@ -23,9 +23,13 @@ const entitiesSrc = fs.readFileSync(path.resolve(__dirname, 'entities.ts'), 'utf
 // nome físico atual real.
 // 20260918000039_RenameValorEstimadoToEstimatedValueOnLeads renomeou
 // valor_estimado -> estimated_value (Cluster G, naming-normalization).
+// 20260920000007 renomeou tipo_cliente/tipo_servico -> client_type/
+// service_type (final naming-closure mission).
 const POST_REBUILD_RENAMES: Record<string, string> = {
   cliente_id: 'client_id',
   valor_estimado: 'estimated_value',
+  tipo_cliente: 'client_type',
+  tipo_servico: 'service_type',
 };
 
 function extractMigrationColumns(): string[] {
@@ -43,7 +47,7 @@ function extractEntityColumns(): string[] {
   // para a coluna física real quando o nome TS diverge, ex.: tipoServico).
   const nameOverrides = [...block.matchAll(/name:\s*'([a-z_]+)'/g)].map((m) => m[1]);
   const tsProps = [...block.matchAll(/\)\s*([A-Za-z_]+):\s/g)].map((m) => m[1]);
-  const overriddenProps = new Set(['tipoServico', 'origemLead', 'probabilidadeFechamento']);
+  const overriddenProps = new Set(['origemLead', 'probabilidadeFechamento']);
   const physicalNames = tsProps.filter((p) => !overriddenProps.has(p));
   return [...physicalNames, ...nameOverrides];
 }

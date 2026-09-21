@@ -28,8 +28,8 @@ interface ApiLeadResponse {
   cidade: string | null;
   estado: string | null;
   pais: string | null;
-  tipoCliente: string | null;
-  tipoServico: string | null;
+  clientType: string | null;
+  serviceType: string | null;
   payloadServico: Record<string, unknown> | null;
   dadosInternosCRM: Record<string, unknown> | null;
   status: string;
@@ -56,8 +56,8 @@ function fromApi(row: ApiLeadResponse): Lead {
     cidade: row.cidade ?? undefined,
     estado: row.estado ?? undefined,
     pais: row.pais ?? undefined,
-    tipoCliente: (row.tipoCliente ?? "other") as LeadClientType,
-    tipoServico: (row.tipoServico ?? "consultoria") as LeadServiceType,
+    clientType: (row.clientType ?? "other") as LeadClientType,
+    serviceType: (row.serviceType ?? "consultoria") as LeadServiceType,
     payloadServico: row.payloadServico ?? {},
     dadosInternosCRM: { ...crm, statusLead: row.status } as LeadInternalCRMData,
     uploads: (row.uploads ?? []) as Lead["uploads"],
@@ -79,8 +79,8 @@ function toApiPayload(data: Omit<Lead, "id" | "createdAt" | "updatedAt" | "histo
     cidade: data.cidade,
     estado: data.estado,
     pais: data.pais,
-    tipoCliente: data.tipoCliente,
-    tipoServico: data.tipoServico,
+    clientType: data.clientType,
+    serviceType: data.serviceType,
     payloadServico: data.payloadServico,
     dadosInternosCRM: data.dadosInternosCRM,
     uploads: data.uploads,
@@ -112,8 +112,8 @@ export const leadsService = {
     if (data.cidade !== undefined) payload.cidade = data.cidade;
     if (data.estado !== undefined) payload.estado = data.estado;
     if (data.pais !== undefined) payload.pais = data.pais;
-    if (data.tipoCliente !== undefined) payload.tipoCliente = data.tipoCliente;
-    if (data.tipoServico !== undefined) payload.tipoServico = data.tipoServico;
+    if (data.clientType !== undefined) payload.clientType = data.clientType;
+    if (data.serviceType !== undefined) payload.serviceType = data.serviceType;
     if (data.payloadServico !== undefined) payload.payloadServico = data.payloadServico;
     if (data.uploads !== undefined) payload.uploads = data.uploads;
     if (data.dadosInternosCRM !== undefined) {

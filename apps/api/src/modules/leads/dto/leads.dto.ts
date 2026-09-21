@@ -37,8 +37,8 @@ export class CreateLeadDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(120) cidade?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(80)  estado?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(80)  pais?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(80)  tipoCliente?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(120) tipoServico?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(80)  clientType?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(120) serviceType?: string;
   @ApiPropertyOptional() @IsOptional() @IsObject() payloadServico?: Record<string, unknown>;
   @ApiPropertyOptional() @IsOptional() @IsObject() dadosInternosCRM?: Record<string, unknown>;
   @ApiPropertyOptional() @IsOptional() uploads?: unknown[];

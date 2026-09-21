@@ -363,8 +363,8 @@ function leadPayloadToLead(
     cidade: payload.cidade,
     estado: payload.estado,
     pais: "Brasil",
-    tipoCliente: leadClientByType[payload.tipo_lead] ?? "other",
-    tipoServico: leadServiceByService[payload.servico] ?? "consultoria",
+    clientType: leadClientByType[payload.tipo_lead] ?? "other",
+    serviceType: leadServiceByService[payload.servico] ?? "consultoria",
     payloadServico: {
       tipo_lead: payload.tipo_lead,
       servico: payload.servico,

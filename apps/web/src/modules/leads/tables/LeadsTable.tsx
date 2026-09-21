@@ -104,10 +104,10 @@ export function LeadsTable({
             const servico = typeof ps.servico === "string" ? ps.servico : "";
 
             // CORRIGIDO: fallback usa leadServiceTypeOptions (enum LeadServiceType),
-            // não leadStatusOptions, que é uma lista de status sem relação com tipoServico.
+            // não leadStatusOptions, que é uma lista de status sem relação com serviceType.
             const servicoLabel = servico
               ? optionLabel(SERVICOS_OPTIONS, servico)
-              : optionLabel(leadServiceTypeOptions, lead.tipoServico);
+              : optionLabel(leadServiceTypeOptions, lead.serviceType);
 
             return (
               <TableRow key={lead.id} className={selectedIds.includes(lead.id) ? "bg-primary/5" : ""}>

@@ -57,15 +57,20 @@ export class LeadsService {
       telefone_encrypted: undefined as unknown as string,
       // Aliases camelCase para o CRM musical (mesmas colunas físicas de `l`).
       nomeArtistico:      l.nome_artistico,
-      tipoCliente:        l.tipo_cliente,
+      clientType:         l.client_type,
+      serviceType:        l.service_type,
       payloadServico:     l.payload_servico,
       dadosInternosCRM:   l.dados_internos_crm,
-      // `...l` above spreads the raw physical `nome` key through first —
-      // without this, the response leaked BOTH `nome` and its English
-      // alias `name` for the same concept (see .claude/rules/naming-canonical.md).
-      // `undefined` drops the key from the JSON response entirely (same
-      // pattern used for the encrypted fields above).
+      // `...l` above spreads the raw physical `nome`/`client_type`/
+      // `service_type` keys through first — without dropping them, the
+      // response would leak BOTH the physical snake_case key and its
+      // English camelCase alias for the same concept (see
+      // .claude/rules/naming-canonical.md). `undefined` drops the key from
+      // the JSON response entirely (same pattern used for the encrypted
+      // fields above).
       nome:               undefined as unknown as string,
+      client_type:        undefined as unknown as string,
+      service_type:       undefined as unknown as string,
     };
   }
 
@@ -481,7 +486,7 @@ export class LeadsService {
     const {
       name, source, stage, notes, assignedTo, value, metadata,
       nomeArtistico, empresa, whatsapp, instagram, cidade, estado, pais,
-      tipoCliente, tipoServico, payloadServico, dadosInternosCRM, uploads,
+      clientType, serviceType, payloadServico, dadosInternosCRM, uploads,
       ...rest
     } = input;
     const mapped: Record<string, unknown> = { ...rest };
@@ -496,8 +501,8 @@ export class LeadsService {
     if (cidade !== undefined) mapped['cidade'] = cidade;
     if (estado !== undefined) mapped['estado'] = estado;
     if (pais !== undefined) mapped['pais'] = pais;
-    if (tipoCliente !== undefined) mapped['tipo_cliente'] = tipoCliente;
-    if (tipoServico !== undefined) mapped['tipoServico'] = tipoServico;
+    if (clientType !== undefined) mapped['client_type'] = clientType;
+    if (serviceType !== undefined) mapped['service_type'] = serviceType;
     if (payloadServico !== undefined) mapped['payload_servico'] = payloadServico;
     if (dadosInternosCRM !== undefined) mapped['dados_internos_crm'] = dadosInternosCRM;
     if (uploads !== undefined) mapped['uploads'] = uploads;

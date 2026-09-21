@@ -1196,15 +1196,16 @@ export class LeadEntity {
   @Column({ type: 'varchar', length: 120, nullable: true }) cidade: string | null;
   @Column({ type: 'varchar', length: 80, nullable: true }) estado: string | null;
   @Column({ type: 'varchar', length: 80, nullable: true }) pais: string | null;
-  @Column({ type: 'varchar', length: 80, nullable: true }) tipo_cliente: string | null;
-  // RebuildLeadsInCanonicalFormOrder20260719000011 renamed these 3 physical
+  @Column({ type: 'varchar', length: 80, nullable: true }) client_type: string | null;
+  // RebuildLeadsInCanonicalFormOrder20260719000011 renamed these physical
   // columns to snake_case (tipoServico -> tipo_servico, origemLead ->
-  // origem_lead, probabilidadeFechamento -> probabilidade_fechamento) but
-  // this entity was never updated to match — every TypeORM read/write of
-  // these fields was silently targeting columns that no longer exist.
-  // `name:` maps the (unchanged) TS property to the real physical column,
-  // so nothing outside this file needs to change.
-  @Column({ type: 'varchar', length: 120, nullable: true, name: 'tipo_servico' }) tipoServico: string | null;
+  // origem_lead, probabilidadeFechamento -> probabilidade_fechamento).
+  // tipo_servico/tipo_cliente (this one, above) were further translated to
+  // English (service_type/client_type) by the naming-normalization mission
+  // -- origem_lead/probabilidade_fechamento remain snake_case Portuguese,
+  // unresolved (see leads dual-storage-location finding, NEEDS_DATA_
+  // RECONCILIATION, not a simple rename).
+  @Column({ type: 'varchar', length: 120, nullable: true }) service_type: string | null;
   @Column({ type: 'jsonb', default: {} }) payload_servico: Record<string, unknown>;
   @Column({ type: 'jsonb', default: {} }) dados_internos_crm: Record<string, unknown>;
   @Column({ type: 'varchar', length: 255, nullable: true }) responsavel: string | null;

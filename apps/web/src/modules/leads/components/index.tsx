@@ -26,8 +26,8 @@ export type LeadFormValues = {
   cidade?: string;
   estado?: string;
   pais?: string;
-  tipoCliente: string;
-  tipoServico: LeadServiceType;
+  clientType: string;
+  serviceType: LeadServiceType;
   payloadServico: Record<string, unknown>;
   dadosInternosCRM: {
     statusLead: string;
@@ -81,10 +81,10 @@ export function LeadFilters({
         placeholder="Buscar por nome, email, WhatsApp, Instagram ou empresa"
         className="h-8 min-w-[240px] flex-1 bg-card border-border text-sm"
       />
-      {/* tipoServico: usa leadServiceTypeOptions (enum LeadServiceType — válido para filtrar lead.tipoServico) */}
+      {/* serviceType: usa leadServiceTypeOptions (enum LeadServiceType — válido para filtrar lead.serviceType) */}
       <FilterSelect
-        value={filters.tipoServico}
-        onValueChange={(value) => onChange("tipoServico", value)}
+        value={filters.serviceType}
+        onValueChange={(value) => onChange("serviceType", value)}
         options={[{ value: "all", label: "Todos os serviços" }, ...leadServiceTypeOptions]}
       />
       {/* CORRIGIDO: usa STATUS_LEAD_OPTIONS do novo sistema, alinhado com os valores salvos pelo LeadFormModal */}
@@ -171,7 +171,7 @@ export function LeadBaseFields({ register, setValue, watch, schema }: LeadFormCo
         setValue={setValue}
       />
       <Field label="Tipo de Lead *" className="md:col-span-2">
-        <Select value={watch("tipoCliente")} onValueChange={(value) => setValue("tipoCliente", value, { shouldDirty: true })}>
+        <Select value={watch("clientType")} onValueChange={(value) => setValue("clientType", value, { shouldDirty: true })}>
           <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
           <SelectContent>
             {leadClientTypeOptions.map((option) => <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}
@@ -258,9 +258,9 @@ export function ServiceTypeSelect({ setValue, watch }: Pick<LeadFormController, 
   return (
     <Field label="Tipo de serviço">
       <Select
-        value={watch("tipoServico")}
+        value={watch("serviceType")}
         onValueChange={(value) => {
-          setValue("tipoServico", value as LeadServiceType, { shouldDirty: true });
+          setValue("serviceType", value as LeadServiceType, { shouldDirty: true });
           setValue("payloadServico", {}, { shouldDirty: true });
         }}
       >
@@ -274,9 +274,9 @@ export function ServiceTypeSelect({ setValue, watch }: Pick<LeadFormController, 
 }
 
 export function DynamicServiceFields({ setValue, watch }: Pick<LeadFormController, "setValue" | "watch">) {
-  const tipoServico = watch("tipoServico");
+  const serviceType = watch("serviceType");
   const payload = watch("payloadServico") ?? {};
-  const schema = serviceLeadSchemas[tipoServico];
+  const schema = serviceLeadSchemas[serviceType];
 
   return (
     <FormSection title="3. SERVIÇOS E DETALHES">
@@ -455,8 +455,8 @@ export function LeadRowSummary({ lead }: { lead: Lead }) {
   );
 }
 
-export function ServiceBadge({ tipoServico }: { tipoServico: LeadServiceType }) {
-  return <Badge variant="secondary">{optionLabel(leadServiceTypeOptions, tipoServico)}</Badge>;
+export function ServiceBadge({ serviceType }: { serviceType: LeadServiceType }) {
+  return <Badge variant="secondary">{optionLabel(leadServiceTypeOptions, serviceType)}</Badge>;
 }
 
 export function FormSection({ title, children }: { title: string; children: React.ReactNode }) {

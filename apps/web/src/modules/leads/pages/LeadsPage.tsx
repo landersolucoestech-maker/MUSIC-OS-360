@@ -96,8 +96,8 @@ const SERVICO_TO_TIPO_SERVICO: Record<string, LeadServiceType> = {
 function payloadToLead(
   payload: LeadFormPayload,
 ): Omit<Lead, "id" | "createdAt" | "updatedAt" | "historicoInteracoes"> {
-  const tipoCliente = TIPO_LEAD_TO_CLIENT[payload.tipo_lead]   ?? "other";
-  const tipoServico = SERVICO_TO_TIPO_SERVICO[payload.servico] ?? "consultoria";
+  const clientType = TIPO_LEAD_TO_CLIENT[payload.tipo_lead]   ?? "other";
+  const serviceType = SERVICO_TO_TIPO_SERVICO[payload.servico] ?? "consultoria";
 
   // CORRIGIDO: cada bloco condicional é espalhado individualmente para não perder dados.
   // O operador ?? encadeado anterior descartava todos os blocos exceto o primeiro não-undefined.
@@ -122,8 +122,8 @@ function payloadToLead(
     cidade:    payload.cidade,
     estado:    payload.estado,
     pais:      "Brasil",
-    tipoCliente,
-    tipoServico,
+    clientType,
+    serviceType,
     payloadServico: {
       tipo_lead:            payload.tipo_lead,
       servico:              payload.servico,
@@ -272,7 +272,7 @@ export default function LeadsPage() {
       ].join(" ").toLowerCase();
       return (
         (!search || values.includes(search))                                                           &&
-        (filters.tipoServico === "all" || lead.tipoServico                  === filters.tipoServico)   &&
+        (filters.serviceType === "all" || lead.serviceType                  === filters.serviceType)   &&
         (filters.statusLead  === "all" || lead.dadosInternosCRM.statusLead  === filters.statusLead)    &&
         (filters.responsavel === "all" || lead.dadosInternosCRM.responsavel === filters.responsavel)   &&
         (filters.origemLead  === "all" || lead.dadosInternosCRM.origemLead  === filters.origemLead)    &&

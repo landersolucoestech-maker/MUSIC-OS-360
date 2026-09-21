@@ -76,8 +76,8 @@ export type Lead = {
   cidade?: string;
   estado?: string;
   pais?: string;
-  tipoCliente: LeadClientType;
-  tipoServico: LeadServiceType;
+  clientType: LeadClientType;
+  serviceType: LeadServiceType;
   payloadServico: Record<string, unknown>;
   dadosInternosCRM: LeadInternalCRMData;
   uploads: LeadUpload[];
@@ -88,7 +88,7 @@ export type Lead = {
 
 export type LeadFiltersState = {
   search: string;
-  tipoServico: "all" | LeadServiceType;
+  serviceType: "all" | LeadServiceType;
   statusLead: "all" | string;
   responsavel: "all" | string;
   origemLead: "all" | string;

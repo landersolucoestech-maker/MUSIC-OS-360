@@ -13,7 +13,7 @@ export type LeadBaseFieldName =
   | "cidade"
   | "estado"
   | "pais"
-  | "tipoCliente";
+  | "clientType";
 
 export type DynamicFieldSchema = {
   name: string;
@@ -46,7 +46,7 @@ export type ServiceLeadSchema = {
   placeholders: Record<string, string>;
 };
 
-const universalBaseFields: LeadBaseFieldName[] = ["nomeCompleto", "email", "whatsapp", "instagram", "pais", "tipoCliente"];
+const universalBaseFields: LeadBaseFieldName[] = ["nomeCompleto", "email", "whatsapp", "instagram", "pais", "clientType"];
 const artisticBaseFields: LeadBaseFieldName[] = [...universalBaseFields, "nomeArtistico", "cidade", "estado"];
 const companyBaseFields: LeadBaseFieldName[] = [...universalBaseFields, "empresa", "cidade", "estado"];
 const eventBaseFields: LeadBaseFieldName[] = [...universalBaseFields, "nomeArtistico", "empresa", "cidade", "estado"];
@@ -247,8 +247,8 @@ const leadBaseValidationSchema = z.object({
   cidade: z.string().trim().optional(),
   estado: z.string().trim().optional(),
   pais: z.string().trim().optional(),
-  tipoCliente: z.string().min(1, "Selecione o tipo de cliente"),
-  tipoServico: z.string().min(1, "Selecione o tipo de serviço"),
+  clientType: z.string().min(1, "Selecione o tipo de cliente"),
+  serviceType: z.string().min(1, "Selecione o tipo de serviço"),
   payloadServico: z.record(z.unknown()),
   dadosInternosCRM: z
     .object({
@@ -266,7 +266,7 @@ const leadBaseValidationSchema = z.object({
 }).strict();
 
 export const leadValidationSchema = leadBaseValidationSchema.superRefine((values, context) => {
-  const serviceSchema = serviceLeadSchemas[values.tipoServico as LeadServiceType];
+  const serviceSchema = serviceLeadSchemas[values.serviceType as LeadServiceType];
   if (!serviceSchema) return;
 
   const result = serviceSchema.validation.safeParse(values.payloadServico ?? {});

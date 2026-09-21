@@ -630,7 +630,7 @@ const LEADS_CONTRACT: ReportFormContract = {
   identityColumn: 'nome',
   fields: [
     col('nome'), col('empresa'), enc('email', 'email_encrypted'), col('whatsapp'),
-    col('instagram'), col('cidade'), col('estado'), col('tipo_cliente'), col('tipo_servico'),
+    col('instagram'), col('cidade'), col('estado'), col('client_type'), col('service_type'),
     meta('cargo', 'payload_servico'), meta('website', 'payload_servico'),
     meta('endereco', 'payload_servico'), meta('tipo_lead', 'payload_servico'),
     meta('servico', 'payload_servico'), meta('nome_artista_servico', 'payload_servico'),
@@ -672,8 +672,8 @@ const LEADS_CONTRACT: ReportFormContract = {
   },
   formFieldAliases: {
     name: 'nome',
-    tipoCliente: 'tipo_cliente',
-    tipoServico: 'tipo_servico',
+    clientType: 'client_type',
+    serviceType: 'service_type',
   },
 };
 

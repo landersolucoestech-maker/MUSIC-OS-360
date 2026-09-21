@@ -3,7 +3,7 @@ import type { LeadFiltersState } from "../types";
 
 export const defaultLeadFilters: LeadFiltersState = {
   search: "",
-  tipoServico: "all",
+  serviceType: "all",
   statusLead: "all",
   responsavel: "all",
   origemLead: "all",

@@ -3,8 +3,8 @@ import { leadValidationSchema, serviceLeadSchemas } from "./index";
 
 const basePayload = {
   nomeCompleto: "Fulano de Tal",
-  tipoCliente: "artist",
-  tipoServico: "producaoMusical",
+  clientType: "artist",
+  serviceType: "producaoMusical",
   // "objetivo" é obrigatório para o tipo de serviço producaoMusical.
   payloadServico: { objetivo: "Lançamento de single" },
   dadosInternosCRM: { statusLead: "novo" },

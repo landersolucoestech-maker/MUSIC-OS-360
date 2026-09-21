@@ -77,8 +77,8 @@ describe('LeadsService.create — colunas físicas reais (nunca score/pipeline_s
       whatsapp: '+5511999990000',
       cidade: 'Sao Paulo',
       estado: 'SP',
-      tipoCliente: 'artist',
-      tipoServico: 'marketingMusical',
+      clientType: 'artist',
+      serviceType: 'marketingMusical',
       payloadServico: { tipo_lead: 'artista_banda' },
       dadosInternosCRM: { responsavel: 'QA' },
       uploads: [],
@@ -89,8 +89,8 @@ describe('LeadsService.create — colunas físicas reais (nunca score/pipeline_s
     expect(saved['empresa']).toBe('Empresa Teste');
     expect(saved['cidade']).toBe('Sao Paulo');
     expect(saved['estado']).toBe('SP');
-    expect(saved['tipo_cliente']).toBe('artist');
-    expect(saved['tipoServico']).toBe('marketingMusical');
+    expect(saved['client_type']).toBe('artist');
+    expect(saved['service_type']).toBe('marketingMusical');
     expect(saved['payload_servico']).toEqual({ tipo_lead: 'artista_banda' });
     expect(saved['dados_internos_crm']).toEqual({ responsavel: 'QA' });
     // Nunca reintroduz as colunas removidas pela migration canônica.
