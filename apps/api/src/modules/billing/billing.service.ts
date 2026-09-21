@@ -161,6 +161,25 @@ function normalizeSubscriptionStatus(status: string): string {
   return status === 'canceled' ? 'cancelled' : status;
 }
 
+// Stripe's Invoice.status vocabulary (draft/open/paid/uncollectible/void) is
+// distinct from chk_invoices_status's internal vocabulary (draft/pending/
+// issued/paid/cancelled/overdue/rejected) -- passing Stripe's raw string
+// through (as this code previously did via `COALESCE($3, 'open')`) violates
+// the CHECK constraint for every status except 'draft'/'paid', including
+// Stripe's own most common "awaiting payment" state ('open').
+function normalizeInvoiceStatus(status: string | null | undefined): string {
+  switch (status) {
+    case 'open': return 'pending';
+    case 'uncollectible': return 'overdue';
+    case 'void': return 'cancelled';
+    case 'draft':
+    case 'paid':
+      return status;
+    default:
+      return 'draft';
+  }
+}
+
 @Injectable()
 export class BillingService {
   private readonly stripe: StripeClient | null = null;
@@ -948,17 +967,17 @@ export class BillingService {
     await this.ds.query(
       `INSERT INTO invoices (
          tenant_id, stripe_invoice_id, numero, type, status, amount_due, amount_paid, currency,
-         valor, due_date, hosted_invoice_url, invoice_pdf, attempt_count, metadata, created_by
+         legacy_amount, due_date, hosted_invoice_url, invoice_pdf, attempt_count, metadata, created_by
        )
-       VALUES ($1, $2, $2, 'stripe_subscription', COALESCE($3, 'open'), $4, $5, $6, ($4::numeric / 100.0),
+       VALUES ($1, $2, $2, 'stripe_subscription', $3, $4, $5, $6, ($4::numeric / 100.0),
                $7, $8, $9, $10, $11::jsonb, 'stripe:webhook')
-       ON CONFLICT (stripe_invoice_id)
+       ON CONFLICT (stripe_invoice_id) WHERE stripe_invoice_id IS NOT NULL
        DO UPDATE SET
          status = EXCLUDED.status,
          amount_due = EXCLUDED.amount_due,
          amount_paid = EXCLUDED.amount_paid,
          currency = EXCLUDED.currency,
-         valor = EXCLUDED.valor,
+         legacy_amount = EXCLUDED.legacy_amount,
          due_date = EXCLUDED.due_date,
          hosted_invoice_url = EXCLUDED.hosted_invoice_url,
          invoice_pdf = EXCLUDED.invoice_pdf,
@@ -968,7 +987,7 @@ export class BillingService {
       [
         tenantId,
         invoice.id,
-        invoice.status ?? null,
+        normalizeInvoiceStatus(invoice.status),
         invoice.amount_due ?? 0,
         invoice.amount_paid ?? 0,
         invoice.currency ?? 'brl',
