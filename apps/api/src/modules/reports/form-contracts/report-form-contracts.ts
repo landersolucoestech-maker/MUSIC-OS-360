@@ -627,11 +627,20 @@ const LEADS_CONTRACT: ReportFormContract = {
     meta('endereco', 'payload_servico'), meta('tipo_lead', 'payload_servico'),
     meta('servico', 'payload_servico'), meta('nome_artista_servico', 'payload_servico'),
     meta('descricao', 'payload_servico'), meta('data_entrada', 'payload_servico'),
-    // origemLead é coluna própria (origem_lead), não uma chave dentro de
-    // dados_internos_crm — declará-la como meta() fazia o SELECT trazer o
-    // jsonb inteiro sob esse alias (descartado na exportação por não ser
-    // escalar) em vez do valor real da coluna.
-    col('origem_lead'), meta('campanha_marketing', 'dados_internos_crm'),
+    // origemLead: a coluna física origem_lead existe mas só é escrita por um
+    // caminho interno (public-artist-application, apps/api/src/modules/leads/
+    // leads.service.ts, via repo.save() direto, fora do DTO) que nunca foi
+    // exercitado em DEV (0 valores não-nulos, confirmado ao vivo). O
+    // formulário de CRM real — o caminho que de fato popula leads visíveis
+    // no produto — grava esse dado dentro de dados_internos_crm.origemLead
+    // (mesmo padrão de campanha_marketing/responsavel/prioridade logo
+    // abaixo), nunca na coluna física. O col('origem_lead') anterior lia a
+    // coluna sempre-NULL para leads criados via CRM, deixando "Origem do
+    // lead" em branco em toda exportação — corrigido para ler o mesmo lugar
+    // que o formulário realmente escreve. A divergência entre os dois
+    // caminhos de escrita (coluna física vs. jsonb) permanece um finding
+    // separado, não resolvido aqui.
+    meta('origemLead', 'dados_internos_crm'), meta('campanha_marketing', 'dados_internos_crm'),
     meta('responsavel', 'dados_internos_crm'), meta('prioridade', 'dados_internos_crm'),
     meta('proximoFollowUp', 'dados_internos_crm'), meta('valorEstimado', 'dados_internos_crm'),
     meta('temperatura', 'dados_internos_crm'), meta('statusLead', 'dados_internos_crm'),
