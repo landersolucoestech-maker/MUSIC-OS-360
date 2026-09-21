@@ -361,7 +361,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     beforeAll(async () => {
       await ds.query(
         `INSERT INTO leads
-           (id, tenant_id, nome, status, cidade, tipo_servico, origem_lead, tags)
+           (id, tenant_id, nome, status, cidade, service_type, origem_lead, tags)
          VALUES
            (gen_random_uuid(), $1, $2, 'new', 'São Paulo', 'distribuicao', 'indicacao', ARRAY['vip']::text[])`,
         [TENANT_A, `${LEAD_TAG}_A`],
@@ -412,7 +412,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
       const matrix = readWorkbook(result.body as Buffer, 'Leads');
       const headers = matrix[0] as unknown[];
       expect(headers).toContain('Tipo de serviço');
-      expect(headers).not.toContain('tipoServico');
+      expect(headers).not.toContain('serviceType');
     });
 
     it('import VALIDATE não persiste', async () => {

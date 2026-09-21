@@ -191,8 +191,8 @@ describe('Schema reconciliation — PostgreSQL real', () => {
         cidade: 'São Paulo',
         estado: 'SP',
         pais: 'BR',
-        tipo_cliente: 'artista',
-        tipoServico: 'distribuicao',
+        client_type: 'artista',
+        service_type: 'distribuicao',
         responsavel: 'ana',
         prioridade: 'alta',
         temperatura: 'quente',
@@ -205,7 +205,7 @@ describe('Schema reconciliation — PostgreSQL real', () => {
         dados_internos_crm: { score_interno: 9 },
       }));
       const read = await repo.findOneByOrFail({ id: lead.id });
-      expect(read.tipoServico).toBe('distribuicao');
+      expect(read.service_type).toBe('distribuicao');
       expect(read.origemLead).toBe('indicacao');
       expect(read.probabilidadeFechamento).toBe('75.00');
       expect(read.tags).toEqual(['vip', 'inbound']);
