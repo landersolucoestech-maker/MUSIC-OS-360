@@ -50,7 +50,18 @@ export class InvoicesService {
 
     if (input['tipo_nota'] !== undefined) payload['type'] = input['tipo_nota'];
     if (input['service_amount'] !== undefined) payload['legacy_amount'] = input['service_amount'];
-    if (input['vencimento'] !== undefined) payload['data_vencimento'] = input['vencimento'];
+    // "vencimento" is the DTO/form-facing key (kept as-is, a documented API
+    // alias); "data_vencimento" is the sole physical column. Without the
+    // delete, `payload = {...input}` above leaves a `vencimento` key that
+    // ALSO gets persisted verbatim into the entity's own `vencimento`
+    // column (a distinct physical column, added later by
+    // 20260712000005_CrmFinanceOpsFormFieldColumns.ts) -- two columns of
+    // different types (timestamp vs date) independently writable from one
+    // form field, exactly the drift naming-canonical.md warns against.
+    if (input['vencimento'] !== undefined) {
+      payload['data_vencimento'] = input['vencimento'];
+      delete payload['vencimento'];
+    }
 
     const cnpj = input['tomador_cnpj'];
     if (cnpj !== undefined) {
@@ -273,7 +284,7 @@ export class InvoicesService {
           tenantId,
           numero,
           valor,
-          dataVencimento: String(after['vencimento'] ?? after['data_vencimento'] ?? nowIso),
+          dataVencimento: String(after['data_vencimento'] ?? nowIso),
         },
       });
     }

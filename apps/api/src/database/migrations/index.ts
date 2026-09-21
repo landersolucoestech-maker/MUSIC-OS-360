@@ -267,6 +267,7 @@ import { RestoreTenantResolverSecurityDefiner20260920000001 } from './2026092000
 import { ReconcileOrphanContactsSatelliteTablesConvergence20260920000002 } from './20260920000002_ReconcileOrphanContactsSatelliteTablesConvergence';
 import { DropDeadArtistsGeneroColumn20260920000003 } from './20260920000003_DropDeadArtistsGeneroColumn';
 import { ReconcileDuplicateBillingSubscriptions20260920000004 } from './20260920000004_ReconcileDuplicateBillingSubscriptions';
+import { ConsolidateInvoiceDueDateColumns20260920000005 } from './20260920000005_ConsolidateInvoiceDueDateColumns';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -545,4 +546,5 @@ export const ALL_MIGRATIONS = [
   ReconcileOrphanContactsSatelliteTablesConvergence20260920000002,
   DropDeadArtistsGeneroColumn20260920000003,
   ReconcileDuplicateBillingSubscriptions20260920000004,
+  ConsolidateInvoiceDueDateColumns20260920000005,
 ] as const;

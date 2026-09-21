@@ -549,10 +549,18 @@ const INVOICES_CONTRACT: ReportFormContract = {
     col('service_description'), col('service_amount'), col('deductions_amount'), col('base_calculo'),
     col('aliquota_iss'), col('iss_amount'), col('iss_retido'), col('pis_amount'), col('cofins_amount'),
     col('ir_amount'), col('csll_amount'), col('inss_amount'), col('net_amount'),
-    col('forma_pagamento'), col('condicao_pagamento'), col('vencimento'), col('url_pdf'),
+    col('forma_pagamento'), col('condicao_pagamento'), col('data_vencimento'), col('url_pdf'),
     col('notes'),
   ],
   excludedFormFields: {},
+  // O form/DTO usa "vencimento" (mantido como alias de API documentado);
+  // a coluna física canônica é data_vencimento -- ver invoices.service.ts's
+  // normalizePayload(), que agora também apaga a chave "vencimento" do
+  // payload persistido para não escrever a coluna `vencimento` (physical,
+  // tipo date) em paralelo com data_vencimento (physical, tipo timestamp).
+  formFieldAliases: {
+    vencimento: 'data_vencimento',
+  },
   repeatingGroup: {
       key: 'itens',
       fields: [

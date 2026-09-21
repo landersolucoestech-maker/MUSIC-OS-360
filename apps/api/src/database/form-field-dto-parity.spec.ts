@@ -69,7 +69,7 @@ describe('Colunas dedicadas de formulário sempre expostas no DTO correspondente
     const fields = [
       'numero', 'serie', 'tipo_nota', 'client_id', 'natureza_operacao',
       'codigo_servico_municipal', 'codigo_municipio', 'cfop',
-      'service_description', 'data_emissao', 'vencimento', 'status',
+      'service_description', 'data_emissao', 'status',
       'tomador_cnpj', 'tomador_razao_social', 'tomador_inscricao_estadual',
       'tomador_inscricao_municipal', 'tomador_email', 'tomador_endereco',
       'tomador_cidade', 'tomador_uf', 'tomador_cep', 'service_amount',
@@ -80,6 +80,14 @@ describe('Colunas dedicadas de formulário sempre expostas no DTO correspondente
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);
     expectFields(dto, fields);
+    // "vencimento" is a DTO-only API alias for the entity's sole physical
+    // column, data_vencimento (see invoices.service.ts's normalizePayload()
+    // and report-form-contracts.ts's INVOICES_CONTRACT.formFieldAliases) --
+    // it must stay off the entity, or the dual-write bug this consolidated
+    // reappears.
+    expectFields(block, ['data_vencimento'], (field) => `\\b${field}\\b`);
+    expectFields(dto, ['vencimento']);
+    expect(block).not.toMatch(/\bvencimento\b/);
   });
 
   it('Licenciamento aceita e preserva os campos condicionais de remuneração', () => {

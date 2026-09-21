@@ -1070,7 +1070,6 @@ export class InvoiceEntity {
   @Column({ type: 'varchar', length: 20, nullable: true }) codigo_municipio: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) cfop: string | null;
   @Column({ type: 'text', nullable: true }) service_description: string | null;
-  @Column({ type: 'date', nullable: true }) vencimento: string | null;
   @Column({ type: 'varchar', length: 30, nullable: true }) tomador_cnpj: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) tomador_razao_social: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) tomador_inscricao_estadual: string | null;
