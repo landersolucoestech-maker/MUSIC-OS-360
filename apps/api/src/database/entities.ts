@@ -848,7 +848,7 @@ export class PhonogramEntity {
   @Column({ type: 'varchar', length: 4, nullable: true }) isrc_ano: string | null;
   @Column({ type: 'varchar', length: 10, nullable: true }) isrc_designacao: string | null;
   @Column({ type: 'boolean', nullable: true }) criada_por_ia: boolean | null;
-  @Column({ type: 'boolean', nullable: true }) instrumental: boolean | null;
+  @Column({ type: 'boolean', nullable: true }) is_instrumental: boolean | null;
   @Column({ type: 'boolean', nullable: true }) nacional: boolean | null;
   @Column({ type: 'boolean', nullable: true }) pub_simultanea: boolean | null;
   @Column({ type: 'date', nullable: true }) emissao: string | null;

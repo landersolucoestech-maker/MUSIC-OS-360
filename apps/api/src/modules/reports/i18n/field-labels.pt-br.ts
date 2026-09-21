@@ -441,6 +441,7 @@ export const FIELD_LABELS_PT_BR = {
   paisOrigem: 'País de origem',
   paisPublicacao: 'País de publicação',
   arquivoAudio: 'Arquivo de áudio',
+  audioFileId: 'ID do arquivo de áudio',
   // ── Clientes/Contatos (regra 2026-07-12: 1 coluna por campo) ─────────────────
   individualName: 'Nome (pessoa física)',
   cnpj: 'CNPJ',

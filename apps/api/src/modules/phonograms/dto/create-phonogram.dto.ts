@@ -75,7 +75,7 @@ export class CreatePhonogramDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(4) isrc_ano?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(10) isrc_designacao?: string;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() criada_por_ia?: boolean;
-  @ApiPropertyOptional() @IsOptional() @IsBoolean() instrumental?: boolean;
+  @ApiPropertyOptional() @IsOptional() @IsBoolean() is_instrumental?: boolean;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() nacional?: boolean;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() pub_simultanea?: boolean;
   @ApiPropertyOptional() @IsOptional() @IsString() emissao?: string;
@@ -94,4 +94,5 @@ export class CreatePhonogramDto {
   @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsArray() participacao?: unknown[];
   @ApiPropertyOptional() @IsOptional() @IsObject() arquivo_audio?: Record<string, unknown>;
+  @ApiPropertyOptional() @IsOptional() @IsUUID() audio_file_id?: string;
 }

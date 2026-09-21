@@ -5,6 +5,7 @@ import { PhonogramEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 import { normalizeIsrc, isValidIsrc } from '../registry/validators/registry-validators';
+import { derivePhonogramRegistryFields, type PhonogramRegistrySourceFields } from './phonogram-registry-fields.util';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { groupCount, GroupStatsResult } from '../../common/stats/group-count.util';
 import type { CreatePhonogramDto } from './dto/create-phonogram.dto';
@@ -127,6 +128,7 @@ export class PhonogramsService {
   private buildEntityPayload(
     input: Record<string, unknown>,
     resolved: ResolvedPhonogramWriteFields,
+    current?: PhonogramEntity,
   ): Record<string, unknown> {
     const out: Record<string, unknown> = { ...input, ...resolved };
 
@@ -135,10 +137,39 @@ export class PhonogramsService {
     // passthrough) — naming-normalization 20260918000003 resolved the
     // former collision between the two by disambiguating duracao ->
     // duration_text instead of duration.
+    // find-registry-null-fields: explicit input['duration_seconds']/
+    // ['duration'] still wins when a caller actually sends it (e.g. a
+    // future registry-aware form or API client); otherwise it's derived
+    // below from duracao_min/duracao_seg, the PT fields the real
+    // FonogramaFormModal actually writes.
     out['duration_seconds'] = input['duration_seconds'] ?? input['duration'];
     // type: default apenas quando explicitamente ausente no CREATE (ver create());
     // num PATCH sem type, não sobrescrever o valor persistido.
     if (input['type'] !== undefined) out['type'] = input['type'];
+
+    // find-registry-null-fields: gravacao_original/data_lancamento/
+    // duracao_min+duracao_seg/pais_origem are the only fields the real form
+    // writes -- the English Registry Fields (recording_date/release_date/
+    // duration_seconds/country_of_recording) that society-payload-builder.
+    // service.ts's buildRecordingPayload() actually reads were never
+    // derived, so every ABRAMUS/ECAD recording submission shipped them
+    // null. Merge the patch's PT fields over the current row's (so a
+    // partial PATCH still derives correctly) before deriving.
+    const mergedForRegistry: PhonogramRegistrySourceFields = {
+      gravacao_original: 'gravacao_original' in out ? (out['gravacao_original'] as string | null) : current?.gravacao_original,
+      data_lancamento: 'data_lancamento' in out ? (out['data_lancamento'] as string | null) : current?.data_lancamento,
+      duracao_min: 'duracao_min' in out ? (out['duracao_min'] as number | null) : current?.duracao_min,
+      duracao_seg: 'duracao_seg' in out ? (out['duracao_seg'] as number | null) : current?.duracao_seg,
+      pais_origem: 'pais_origem' in out ? (out['pais_origem'] as string | null) : current?.pais_origem,
+    };
+    const registryFields = derivePhonogramRegistryFields(mergedForRegistry);
+    // Only overwrite duration_seconds from this derivation when nothing
+    // more explicit (input['duration_seconds']/['duration'], handled above)
+    // already set it.
+    if (out['duration_seconds'] === undefined) out['duration_seconds'] = registryFields.duration_seconds;
+    if (out['recording_date'] === undefined) out['recording_date'] = registryFields.recording_date;
+    if (out['release_date'] === undefined) out['release_date'] = registryFields.release_date;
+    if (out['country_of_recording'] === undefined) out['country_of_recording'] = registryFields.country_of_recording;
 
     delete out['titulo'];
     delete out['workId'];
@@ -211,7 +242,7 @@ export class PhonogramsService {
   }
 
   async update(tenantId: string, userId: string, id: string, dto: UpdatePhonogramDto): Promise<PhonogramEntity> {
-    await this.findById(tenantId, id);
+    const current = await this.findById(tenantId, id);
     const input = dto as unknown as Record<string, unknown>;
     const { normalized: resolved, legacyAliasesUsed } = resolvePhonogramAliases(input);
     // update: ausência de título é válida (PATCH parcial); se enviado, o
@@ -222,7 +253,7 @@ export class PhonogramsService {
     if (resolved.work_id !== undefined)   await assertSameTenantFk(this.ds!, 'works',   resolved.work_id,   tenantId, 'Obra');
     if (resolved.artist_id !== undefined) await assertSameTenantFk(this.ds!, 'artists', resolved.artist_id, tenantId, 'Artista');
 
-    const normalized = this.buildEntityPayload(input, resolved);
+    const normalized = this.buildEntityPayload(input, resolved, current);
     delete normalized['expectedUpdatedAt'];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await casUpdate(

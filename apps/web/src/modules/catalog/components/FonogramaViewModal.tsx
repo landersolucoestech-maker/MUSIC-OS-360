@@ -72,6 +72,7 @@ export interface FonogramaViewData {
   criadaPorIA?: boolean | null;
   criada_por_ia?: boolean | null;
   instrumental?: boolean | null;
+  is_instrumental?: boolean | null;
   nacional?: boolean | null;
   pubSimultanea?: boolean | null;
   pub_simultanea?: boolean | null;
@@ -271,7 +272,7 @@ export function FonogramaViewModal({
       : isrcFull ?? undefined;
 
   const criadaPorIA = (fonograma.criadaPorIA ?? fonograma.criada_por_ia) === true;
-  const instrumental = (fonograma.instrumental ?? false) === true;
+  const instrumental = (fonograma.is_instrumental ?? fonograma.instrumental ?? false) === true;
   const nacional = (fonograma.nacional ?? true) === true;
   const pubSimultanea =
     (fonograma.pubSimultanea ?? fonograma.pub_simultanea ?? false) === true;

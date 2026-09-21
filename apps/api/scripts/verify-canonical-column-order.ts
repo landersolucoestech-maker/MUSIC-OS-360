@@ -43,7 +43,7 @@ const CANONICAL_ORDER: Record<string, string[]> = {
   phonograms: [
     'id', 'tenant_id', 'work_id', 'title', 'cod_entidade', 'cod_ecad',
     'agregadora', 'isrc', 'isrc_pais', 'isrc_registrante', 'isrc_ano', 'isrc_designacao',
-    'criada_por_ia', 'instrumental', 'emissao', 'gravacao_original', 'data_lancamento', 'duration_text',
+    'criada_por_ia', 'is_instrumental', 'emissao', 'gravacao_original', 'data_lancamento', 'duration_text',
     'duracao_min', 'duracao_seg', 'music_genre', 'midia', 'nacional', 'pub_simultanea',
     'pais_origem', 'pais_publicacao', 'classificacao', 'status', 'participacao', 'arquivo_audio',
     'notes', 'artist_id', 'type', 'compositores', 'interpretes', 'produtores',

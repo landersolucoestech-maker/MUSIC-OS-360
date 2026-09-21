@@ -226,7 +226,7 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
     // Campos do formulário de Fonograma (regra 2026-07-12: 1 coluna por campo, nome exato)
     col('cod_entidade'), col('cod_ecad'), col('agregadora'),
     col('isrc_pais'), col('isrc_registrante'), col('isrc_ano'), col('isrc_designacao'),
-    col('criada_por_ia'), col('instrumental'), col('nacional'), col('pub_simultanea'),
+    col('criada_por_ia'), col('is_instrumental'), col('nacional'), col('pub_simultanea'),
     col('emissao'), col('gravacao_original'), col('data_lancamento'),
     col('duracao_min'), col('duracao_seg'), col('midia'), col('classificacao'),
     col('pais_origem'), col('pais_publicacao'), col('gravadora'),
@@ -238,10 +238,11 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
     ro('copyright_owner'), ro('country_of_recording'),
     ro('registry_status'),
     ro('external_reference'), ro('origem_externa'), ro('origem_externa_sincronizado_em'),
+    ro('audio_file_id'),
   ],
   excludedFormFields: {
     metadata: 'objeto jsonb interno bruto',
-    fileUrl: 'arquivo de áudio gerido pelo fluxo de upload (audio_file_id)',
+    fileUrl: 'campo hipotético não existente no DTO — o fluxo de upload real popula audio_file_id (ver ro acima) e arquivo_audio',
     abramus_protocol: 'coluna órfã removida (20260718000016) — nunca escrita por nenhum fluxo real',
   },
   formFieldAliases: {

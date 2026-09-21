@@ -69,6 +69,7 @@ interface ArquivoAudioInput {
   name: string;
   size: number;
   url?: string;
+  fileId?: string;
 }
 
 export type FonogramaFormInput = Partial<FonogramaRow> & {
@@ -134,9 +135,14 @@ const toArquivoAudio = (
   raw: ArquivoAudioInput | Json | null | undefined
 ): ArquivoAudioInput | null => {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
-  const r = raw as { name?: unknown; size?: unknown; url?: unknown };
+  const r = raw as { name?: unknown; size?: unknown; url?: unknown; fileId?: unknown };
   if (typeof r.name === "string" && typeof r.size === "number") {
-    return { name: r.name, size: r.size, url: typeof r.url === "string" ? r.url : undefined };
+    return {
+      name: r.name,
+      size: r.size,
+      url: typeof r.url === "string" ? r.url : undefined,
+      fileId: typeof r.fileId === "string" ? r.fileId : undefined,
+    };
   }
   return null;
 };
@@ -303,7 +309,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   const [lancamento, setLancamento] = useState(pickStr(fonograma?.lancamento, fonograma?.data_lancamento));
   const [duracaoMin, setDuracaoMin] = useState(pickStr(fonograma?.duracaoMin, fonograma?.duracao_min) || initialDurationText.min);
   const [duracaoSeg, setDuracaoSeg] = useState(pickStr(fonograma?.duracaoSeg, fonograma?.duracao_seg) || initialDurationText.seg);
-  const [instrumental, setInstrumental] = useState<boolean>(pickBool(fonograma?.instrumental) ?? false);
+  const [instrumental, setInstrumental] = useState<boolean>(pickBool(fonograma?.is_instrumental, fonograma?.instrumental) ?? false);
   const [generoMusical, setGeneroMusical] = useState(pickStr(fonograma?.generoMusical, fonograma?.music_genre));
   const [classificacao, setClassificacao] = useState(pickStr(fonograma?.classificacao));
   const [midia, setMidia] = useState(pickStr(fonograma?.midia));
@@ -511,13 +517,13 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
     setArquivoAudio({ name: file.name, size: file.size });
     setAudioUploading(true);
     try {
-      const { publicUrl } = await uploadAudioToR2({
+      const { publicUrl, fileId } = await uploadAudioToR2({
         file,
         category: "audio",
         entity:   "phonogram",
         entityId: fonograma?.id as string | undefined,
       });
-      setArquivoAudio({ name: file.name, size: file.size, url: publicUrl });
+      setArquivoAudio({ name: file.name, size: file.size, url: publicUrl, fileId });
       toast.success("Áudio enviado e link gerado com sucesso!");
     } catch (err) {
       const msg = err instanceof R2NotConfiguredError
@@ -565,7 +571,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       isrc_ano: isrcAno || null,
       isrc_designacao: isrcDesignacao || null,
       criada_por_ia: !!criadaPorIA,
-      instrumental: !!instrumental,
+      is_instrumental: !!instrumental,
       nacional: !!nacional,
       pub_simultanea: !!pubSimultanea,
       emissao: emissao || null,
@@ -585,6 +591,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       work_id: obraVinculada && typeof obraVinculada.id === "string" ? obraVinculada.id : null,
       participacao: participacao as unknown as Json,
       arquivo_audio: arquivoAudio as unknown as Json,
+      audio_file_id: arquivoAudio?.fileId ?? null,
     };
   };
 

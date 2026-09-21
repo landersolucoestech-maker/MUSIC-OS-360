@@ -71,6 +71,7 @@ export interface Fonograma {
   duracao_min?: string | number | null;
   duracao_seg?: string | number | null;
   instrumental?: boolean | null;
+  is_instrumental?: boolean | null;
   music_genre?: string | null;
   classificacao?: string | null;
   midia?: string | null;
@@ -80,6 +81,7 @@ export interface Fonograma {
   pais_publicacao?: string | null;
   notes?: string | null;
   arquivo_audio?: Json | null;
+  audio_file_id?: string | null;
   participacao?: unknown;
   origem_externa?: string | null;
   origem_externa_id?: string | null;

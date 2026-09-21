@@ -88,7 +88,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       isrc_ano: '25',
       isrc_designacao: '12345',
       criada_por_ia: false,
-      instrumental: false,
+      is_instrumental: false,
       nacional: true,
       pub_simultanea: false,
       emissao: null,
