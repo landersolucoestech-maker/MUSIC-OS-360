@@ -23,9 +23,9 @@ export type LeadFormValues = {
   email?: string;
   whatsapp?: string;
   instagram?: string;
-  cidade?: string;
-  estado?: string;
-  pais?: string;
+  city?: string;
+  state?: string;
+  country?: string;
   clientType: string;
   serviceType: LeadServiceType;
   payloadServico: Record<string, unknown>;

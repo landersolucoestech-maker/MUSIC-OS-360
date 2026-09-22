@@ -30,6 +30,10 @@ const POST_REBUILD_RENAMES: Record<string, string> = {
   valor_estimado: 'estimated_value',
   tipo_cliente: 'client_type',
   tipo_servico: 'service_type',
+  // 20260921000004_RenameLeadsGeoFieldsToEnglish (naming-closure Cluster D).
+  cidade: 'city',
+  estado: 'state',
+  pais: 'country',
 };
 
 function extractMigrationColumns(): string[] {

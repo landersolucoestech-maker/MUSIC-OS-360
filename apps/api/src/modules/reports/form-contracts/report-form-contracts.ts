@@ -270,7 +270,7 @@ const CLIENTS_CONTRACT: ReportFormContract = {
     enc('cpf_cnpj', 'cpf_cnpj_encrypted'),
     col('instagram'), col('funcao'),
     col('logradouro'), col('numero'), col('complemento'), col('bairro'),
-    col('cidade'), col('estado'), col('cep'), col('endereco_completo'),
+    col('city'), col('state'), col('cep'), col('endereco_completo'),
     col('status_contato'), col('prioridade_contato'),
     col('responsavel_nome'), col('responsavel_email'),
     col('responsavel_telefone'), col('responsavel_cargo'),
@@ -288,9 +288,9 @@ const CLIENTS_CONTRACT: ReportFormContract = {
     document: 'cpf_cnpj',
     address: 'endereco_completo',
     // Parte 79: CreateClientDto ganhou estes campos para suportar "Contatos"
-    // do CRM (mesma tabela física `clients` — Contato = Cliente).
-    city: 'cidade',
-    state: 'estado',
+    // do CRM (mesma tabela física `clients` — Contato = Cliente). city/state
+    // não precisam mais de alias — 20260921000003_RenameClientsGeoFieldsToEnglish
+    // renomeou as colunas físicas para bater com o DTO diretamente.
     zipCode: 'cep',
     responsible: 'responsavel_nome',
     notes: 'notes',
@@ -631,7 +631,12 @@ const LEADS_CONTRACT: ReportFormContract = {
   identityColumn: 'nome',
   fields: [
     col('nome'), col('empresa'), enc('email', 'email_encrypted'), col('whatsapp'),
-    col('instagram'), col('cidade'), col('estado'), col('client_type'), col('service_type'),
+    col('instagram'), col('city'), col('state'), col('client_type'), col('service_type'),
+    // country: DTO-exposed (renamed from pais by naming-closure Cluster D,
+    // 20260921000004_RenameLeadsGeoFieldsToEnglish) but LeadFormModal.tsx has
+    // no input for it — every real row is system-normalized to 'BR'.
+    // Report-only, not a form field.
+    ro('country'),
     meta('cargo', 'payload_servico'), meta('website', 'payload_servico'),
     meta('endereco', 'payload_servico'), meta('tipo_lead', 'payload_servico'),
     meta('servico', 'payload_servico'), meta('nome_artista_servico', 'payload_servico'),
@@ -669,7 +674,6 @@ const LEADS_CONTRACT: ReportFormContract = {
     nomeArtistico: 'aceito pelo DTO mas sem input no formulário real de Leads',
     payloadServico: 'objeto jsonb bruto — os campos individuais já são colunas do contrato',
     dadosInternosCRM: 'objeto jsonb bruto — os campos individuais já são colunas do contrato',
-    pais: 'fixado em "Brasil" pelo formulário — não é um input do usuário',
   },
   formFieldAliases: {
     name: 'nome',

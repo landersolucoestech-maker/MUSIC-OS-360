@@ -171,8 +171,8 @@ export function LeadViewModal({
     : [];
   const uploads = lead.uploads ?? [];
 
-  const cidadeDisplay = str("cidade") || lead.cidade || "";
-  const estadoDisplay = str("estado") || lead.estado || "";
+  const cidadeDisplay = str("cidade") || lead.city || "";
+  const estadoDisplay = str("estado") || lead.state || "";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -209,8 +209,8 @@ export function LeadViewModal({
             <Row icon={Instagram} label="Instagram"             value={lead.instagram}                           />
             <Row icon={Globe}     label="Website"               value={str("website")}                           />
             <Row icon={MapPin}    label="Endereço"              value={str("endereco")}                          />
-            <Row icon={MapPin}    label="Cidade"                value={lead.cidade}                              />
-            <Row icon={Hash}      label="Estado"                value={lead.estado}                              />
+            <Row icon={MapPin}    label="Cidade"                value={lead.city}                                />
+            <Row icon={Hash}      label="Estado"                value={lead.state}                               />
             <Row icon={Tag}       label="Tipo de Lead"          value={lookup(TIPO_LEAD_OPTIONS, tipoLead)}      />
             <Row icon={Sparkles}  label="Serviço"               value={lookup(SERVICOS_OPTIONS,  servico)}       />
             {str("nome_artista_servico") && (

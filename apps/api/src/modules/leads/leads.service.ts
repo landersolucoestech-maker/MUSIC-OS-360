@@ -227,8 +227,8 @@ export class LeadsService {
           email_encrypted: this.enc.encryptNullable(dto.email.trim().toLowerCase()),
           telefone_encrypted: this.enc.encryptNullable(phone || undefined),
           whatsapp: phone || null,
-          cidade: dto.city?.trim() || null,
-          estado: dto.state?.trim() || null,
+          city: dto.city?.trim() || null,
+          state: dto.state?.trim() || null,
           fonte: 'public_artist_application',
           origemLead: 'public_artist_application',
           status: LeadStatus.NEW,
@@ -485,10 +485,14 @@ export class LeadsService {
   private normalizeLeadPayload(input: Record<string, unknown>, existingMetadata: Record<string, unknown> = {}) {
     const {
       name, source, stage, notes, assignedTo, value, metadata,
-      nomeArtistico, empresa, whatsapp, instagram, cidade, estado, pais,
+      nomeArtistico, empresa, whatsapp, instagram,
       clientType, serviceType, payloadServico, dadosInternosCRM, uploads,
       ...rest
     } = input;
+    // city/state/country pass through unchanged via ...rest -- the physical
+    // columns were renamed to match the DTO field names directly
+    // (naming-closure Cluster D, 20260921000004_RenameLeadsGeoFieldsToEnglish),
+    // so no translation is needed for these three anymore.
     const mapped: Record<string, unknown> = { ...rest };
     if (name !== undefined) mapped['nome'] = name;
     if (source !== undefined) mapped['fonte'] = source;
@@ -498,9 +502,6 @@ export class LeadsService {
     if (empresa !== undefined) mapped['empresa'] = empresa;
     if (whatsapp !== undefined) mapped['whatsapp'] = whatsapp;
     if (instagram !== undefined) mapped['instagram'] = instagram;
-    if (cidade !== undefined) mapped['cidade'] = cidade;
-    if (estado !== undefined) mapped['estado'] = estado;
-    if (pais !== undefined) mapped['pais'] = pais;
     if (clientType !== undefined) mapped['client_type'] = clientType;
     if (serviceType !== undefined) mapped['service_type'] = serviceType;
     if (payloadServico !== undefined) mapped['payload_servico'] = payloadServico;

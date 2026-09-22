@@ -25,9 +25,9 @@ interface ApiLeadResponse {
   phone: string | null;
   whatsapp: string | null;
   instagram: string | null;
-  cidade: string | null;
-  estado: string | null;
-  pais: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
   clientType: string | null;
   serviceType: string | null;
   payloadServico: Record<string, unknown> | null;
@@ -53,9 +53,9 @@ function fromApi(row: ApiLeadResponse): Lead {
     email: row.email ?? undefined,
     whatsapp: row.whatsapp ?? undefined,
     instagram: row.instagram ?? undefined,
-    cidade: row.cidade ?? undefined,
-    estado: row.estado ?? undefined,
-    pais: row.pais ?? undefined,
+    city: row.city ?? undefined,
+    state: row.state ?? undefined,
+    country: row.country ?? undefined,
     clientType: (row.clientType ?? "other") as LeadClientType,
     serviceType: (row.serviceType ?? "consultoria") as LeadServiceType,
     payloadServico: row.payloadServico ?? {},
@@ -76,9 +76,9 @@ function toApiPayload(data: Omit<Lead, "id" | "createdAt" | "updatedAt" | "histo
     phone: data.whatsapp,
     whatsapp: data.whatsapp,
     instagram: data.instagram,
-    cidade: data.cidade,
-    estado: data.estado,
-    pais: data.pais,
+    city: data.city,
+    state: data.state,
+    country: data.country,
     clientType: data.clientType,
     serviceType: data.serviceType,
     payloadServico: data.payloadServico,
@@ -109,9 +109,9 @@ export const leadsService = {
     if (data.email !== undefined) payload.email = data.email;
     if (data.whatsapp !== undefined) { payload.phone = data.whatsapp; payload.whatsapp = data.whatsapp; }
     if (data.instagram !== undefined) payload.instagram = data.instagram;
-    if (data.cidade !== undefined) payload.cidade = data.cidade;
-    if (data.estado !== undefined) payload.estado = data.estado;
-    if (data.pais !== undefined) payload.pais = data.pais;
+    if (data.city !== undefined) payload.city = data.city;
+    if (data.state !== undefined) payload.state = data.state;
+    if (data.country !== undefined) payload.country = data.country;
     if (data.clientType !== undefined) payload.clientType = data.clientType;
     if (data.serviceType !== undefined) payload.serviceType = data.serviceType;
     if (data.payloadServico !== undefined) payload.payloadServico = data.payloadServico;

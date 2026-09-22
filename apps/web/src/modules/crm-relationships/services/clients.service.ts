@@ -21,8 +21,8 @@ export interface ApiClient {
   razao_social: string | null;
   nome_fantasia: string | null;
   nome_pf: string | null;
-  cidade: string | null;
-  estado: string | null;
+  city: string | null;
+  state: string | null;
   cep: string | null;
   instagram: string | null;
   endereco_completo: string | null;

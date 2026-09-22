@@ -34,6 +34,9 @@ const RENAMED_AFTER_CANONICAL: Record<string, string> = {
   nome_pf: 'individual_name',
   nome_fantasia: 'trade_name',
   observacoes: 'notes',
+  // 20260921000003_RenameClientsGeoFieldsToEnglish (naming-closure Cluster D).
+  cidade: 'city',
+  estado: 'state',
 };
 
 function extractMigrationColumns(): string[] {

@@ -34,9 +34,9 @@ export class CreateLeadDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) empresa?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50)  whatsapp?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) instagram?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(120) cidade?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(80)  estado?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(80)  pais?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(120) city?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(80)  state?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(80)  country?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(80)  clientType?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(120) serviceType?: string;
   @ApiPropertyOptional() @IsOptional() @IsObject() payloadServico?: Record<string, unknown>;

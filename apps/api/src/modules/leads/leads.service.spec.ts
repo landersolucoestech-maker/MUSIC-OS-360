@@ -75,8 +75,8 @@ describe('LeadsService.create — colunas físicas reais (nunca score/pipeline_s
       nomeArtistico: 'Artistico Teste',
       empresa: 'Empresa Teste',
       whatsapp: '+5511999990000',
-      cidade: 'Sao Paulo',
-      estado: 'SP',
+      city: 'Sao Paulo',
+      state: 'SP',
       clientType: 'artist',
       serviceType: 'marketingMusical',
       payloadServico: { tipo_lead: 'artista_banda' },
@@ -87,8 +87,8 @@ describe('LeadsService.create — colunas físicas reais (nunca score/pipeline_s
     const saved = (repo.save as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
     expect(saved['nome_artistico']).toBe('Artistico Teste');
     expect(saved['empresa']).toBe('Empresa Teste');
-    expect(saved['cidade']).toBe('Sao Paulo');
-    expect(saved['estado']).toBe('SP');
+    expect(saved['city']).toBe('Sao Paulo');
+    expect(saved['state']).toBe('SP');
     expect(saved['client_type']).toBe('artist');
     expect(saved['service_type']).toBe('marketingMusical');
     expect(saved['payload_servico']).toEqual({ tipo_lead: 'artista_banda' });

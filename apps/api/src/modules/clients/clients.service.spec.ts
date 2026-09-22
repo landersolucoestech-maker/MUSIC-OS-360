@@ -293,8 +293,8 @@ describe('ClientsService — encryption', () => {
       } as any);
 
       const saved = (repo.save as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
-      expect(saved['cidade']).toBe('Sao Paulo');
-      expect(saved['estado']).toBe('SP');
+      expect(saved['city']).toBe('Sao Paulo');
+      expect(saved['state']).toBe('SP');
       expect(saved['instagram']).toBe('@auroralive');
       expect(saved['cep']).toBe('01000-000');
       expect(saved['responsavel_nome']).toBe('Operacoes');

@@ -361,7 +361,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     beforeAll(async () => {
       await ds.query(
         `INSERT INTO leads
-           (id, tenant_id, nome, status, cidade, service_type, origem_lead, tags)
+           (id, tenant_id, nome, status, city, service_type, origem_lead, tags)
          VALUES
            (gen_random_uuid(), $1, $2, 'new', 'São Paulo', 'distribuicao', 'indicacao', ARRAY['vip']::text[])`,
         [TENANT_A, `${LEAD_TAG}_A`],

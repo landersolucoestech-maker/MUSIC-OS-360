@@ -360,9 +360,9 @@ function leadPayloadToLead(
     email: payload.email,
     whatsapp: payload.telefone,
     instagram: payload.instagram,
-    cidade: payload.cidade,
-    estado: payload.estado,
-    pais: "Brasil",
+    city: payload.cidade,
+    state: payload.estado,
+    country: "BR",
     clientType: leadClientByType[payload.tipo_lead] ?? "other",
     serviceType: leadServiceByService[payload.servico] ?? "consultoria",
     payloadServico: {

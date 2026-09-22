@@ -118,7 +118,7 @@ export function LeadsTable({
                   <LeadRowSummary lead={lead} />
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {[lead.cidade, lead.estado].filter(Boolean).join(" / ") || "-"}
+                  {[lead.city, lead.state].filter(Boolean).join(" / ") || "-"}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
                   {servicoLabel}

@@ -300,10 +300,14 @@ export class ClientsService {
   private normalizeClientPayload(input: Record<string, unknown>, isCreate = false) {
     const {
       name, type, category, address, avatarUrl: _avatarUrl,
-      city, state, instagram, zipCode, responsible, notes, priority,
+      instagram, zipCode, responsible, notes, priority,
       ...rest
     } = input;
     void _avatarUrl;
+    // city/state pass through unchanged via ...rest -- the physical columns
+    // were renamed to match the DTO field names directly (naming-closure
+    // Cluster D, 20260921000003_RenameClientsGeoFieldsToEnglish), so no
+    // translation is needed for these two anymore.
     const mapped: Record<string, unknown> = { ...rest };
     if (name !== undefined) mapped['nome'] = name;
     if (type !== undefined) mapped['tipo_pessoa'] = type === 'company' ? 'pessoa_juridica' : type === 'person' ? 'pessoa_fisica' : type;
@@ -311,8 +315,6 @@ export class ClientsService {
     else if (isCreate) mapped['categoria'] = ClientsService.DEFAULT_CATEGORIA;
     if (isCreate) mapped['perfil'] = ClientsService.DEFAULT_PERFIL;
     if (address !== undefined) mapped['endereco_completo'] = typeof address === 'string' ? address : JSON.stringify(address);
-    if (city !== undefined) mapped['cidade'] = city;
-    if (state !== undefined) mapped['estado'] = state;
     if (instagram !== undefined) mapped['instagram'] = instagram;
     if (zipCode !== undefined) mapped['cep'] = zipCode;
     if (responsible !== undefined) mapped['responsavel_nome'] = responsible;

@@ -10,9 +10,9 @@ export type LeadBaseFieldName =
   | "email"
   | "whatsapp"
   | "instagram"
-  | "cidade"
-  | "estado"
-  | "pais"
+  | "city"
+  | "state"
+  | "country"
   | "clientType";
 
 export type DynamicFieldSchema = {
@@ -46,10 +46,10 @@ export type ServiceLeadSchema = {
   placeholders: Record<string, string>;
 };
 
-const universalBaseFields: LeadBaseFieldName[] = ["nomeCompleto", "email", "whatsapp", "instagram", "pais", "clientType"];
-const artisticBaseFields: LeadBaseFieldName[] = [...universalBaseFields, "nomeArtistico", "cidade", "estado"];
-const companyBaseFields: LeadBaseFieldName[] = [...universalBaseFields, "empresa", "cidade", "estado"];
-const eventBaseFields: LeadBaseFieldName[] = [...universalBaseFields, "nomeArtistico", "empresa", "cidade", "estado"];
+const universalBaseFields: LeadBaseFieldName[] = ["nomeCompleto", "email", "whatsapp", "instagram", "country", "clientType"];
+const artisticBaseFields: LeadBaseFieldName[] = [...universalBaseFields, "nomeArtistico", "city", "state"];
+const companyBaseFields: LeadBaseFieldName[] = [...universalBaseFields, "empresa", "city", "state"];
+const eventBaseFields: LeadBaseFieldName[] = [...universalBaseFields, "nomeArtistico", "empresa", "city", "state"];
 
 const optionalText = z.string().trim().optional();
 const optionalDate = z.string().optional();
@@ -244,9 +244,9 @@ const leadBaseValidationSchema = z.object({
   email: z.string().email("E-mail inválido").optional().or(z.literal("")),
   whatsapp: z.string().trim().optional(),
   instagram: z.string().trim().optional(),
-  cidade: z.string().trim().optional(),
-  estado: z.string().trim().optional(),
-  pais: z.string().trim().optional(),
+  city: z.string().trim().optional(),
+  state: z.string().trim().optional(),
+  country: z.string().trim().optional(),
   clientType: z.string().min(1, "Selecione o tipo de cliente"),
   serviceType: z.string().min(1, "Selecione o tipo de serviço"),
   payloadServico: z.record(z.unknown()),

@@ -1125,8 +1125,8 @@ export class ClientEntity {
   @Column({ type: 'varchar', length: 20, nullable: true }) numero: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) complemento: string | null;
   @Column({ type: 'varchar', length: 120, nullable: true }) bairro: string | null;
-  @Column({ type: 'varchar', length: 100, nullable: true }) cidade: string | null;
-  @Column({ type: 'varchar', length: 2, nullable: true }) estado: string | null;
+  @Column({ type: 'varchar', length: 100, nullable: true }) city: string | null;
+  @Column({ type: 'varchar', length: 2, nullable: true }) state: string | null;
   @Column({ type: 'varchar', length: 15, nullable: true }) cep: string | null;
   @Column({ type: 'varchar', length: 500, nullable: true }) endereco_completo: string | null;
   @Column({ type: 'varchar', length: 40, nullable: true }) status_contato: string | null;
@@ -1193,9 +1193,9 @@ export class LeadEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) nome_artistico: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) whatsapp: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) instagram: string | null;
-  @Column({ type: 'varchar', length: 120, nullable: true }) cidade: string | null;
-  @Column({ type: 'varchar', length: 80, nullable: true }) estado: string | null;
-  @Column({ type: 'varchar', length: 80, nullable: true }) pais: string | null;
+  @Column({ type: 'varchar', length: 120, nullable: true }) city: string | null;
+  @Column({ type: 'varchar', length: 80, nullable: true }) state: string | null;
+  @Column({ type: 'varchar', length: 80, nullable: true }) country: string | null;
   @Column({ type: 'varchar', length: 80, nullable: true }) client_type: string | null;
   // RebuildLeadsInCanonicalFormOrder20260719000011 renamed these physical
   // columns to snake_case (tipoServico -> tipo_servico, origemLead ->
