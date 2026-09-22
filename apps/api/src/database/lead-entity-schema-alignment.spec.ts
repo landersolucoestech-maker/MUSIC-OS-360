@@ -36,11 +36,21 @@ const POST_REBUILD_RENAMES: Record<string, string> = {
   pais: 'country',
 };
 
+// 20260921000005_DropDeadLeadsCrmDualStorageColumns (naming-closure Cluster
+// E) dropped these 7 physical columns -- a dead dual-storage location for
+// concepts real usage always wrote into dados_internos_crm (jsonb); 0
+// non-null rows confirmed on all 7 before dropping. Post-rename names (the
+// canonical migration text still says valor_estimado, mapped above).
+const REMOVED_AFTER_CANONICAL = new Set([
+  'origem_lead', 'responsavel', 'prioridade', 'temperatura',
+  'estimated_value', 'probabilidade_fechamento', 'proximo_follow_up',
+]);
+
 function extractMigrationColumns(): string[] {
   const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
-  return [...block.matchAll(/^\s*"?([A-Za-z_]+)"?\s+\w/gm)].map(
-    (m) => POST_REBUILD_RENAMES[m[1]] ?? m[1],
-  );
+  return [...block.matchAll(/^\s*"?([A-Za-z_]+)"?\s+\w/gm)]
+    .map((m) => POST_REBUILD_RENAMES[m[1]] ?? m[1])
+    .filter((c) => !REMOVED_AFTER_CANONICAL.has(c));
 }
 
 function extractEntityColumns(): string[] {
@@ -48,10 +58,13 @@ function extractEntityColumns(): string[] {
   const end = entitiesSrc.indexOf('\n}', start);
   const block = entitiesSrc.slice(start, end);
   // Propriedades TypeScript declaradas via @Column (usa `name:` para mapear
-  // para a coluna física real quando o nome TS diverge, ex.: tipoServico).
+  // para a coluna física real quando o nome TS diverge -- nenhuma atualmente
+  // em LeadEntity; origemLead/probabilidadeFechamento, os únicos exemplos
+  // anteriores, foram removidas por completo em
+  // 20260921000005_DropDeadLeadsCrmDualStorageColumns).
   const nameOverrides = [...block.matchAll(/name:\s*'([a-z_]+)'/g)].map((m) => m[1]);
   const tsProps = [...block.matchAll(/\)\s*([A-Za-z_]+):\s/g)].map((m) => m[1]);
-  const overriddenProps = new Set(['origemLead', 'probabilidadeFechamento']);
+  const overriddenProps = new Set<string>();
   const physicalNames = tsProps.filter((p) => !overriddenProps.has(p));
   return [...physicalNames, ...nameOverrides];
 }
@@ -64,9 +77,14 @@ describe('LeadEntity <-> leads (physical schema) alignment', () => {
     expect(missing).toEqual([]);
   });
 
-  it('LeadEntity não declara nenhuma coluna removida pela migration (score/pipeline_stage)', () => {
+  it('LeadEntity não declara nenhuma coluna removida (score/pipeline_stage e o dual-storage morto do Cluster E)', () => {
     const entCols = extractEntityColumns();
-    for (const ghost of ['score', 'pipeline_stage']) {
+    for (const ghost of [
+      'score', 'pipeline_stage',
+      'origem_lead', 'origemLead', 'responsavel', 'prioridade', 'temperatura',
+      'estimated_value', 'probabilidade_fechamento', 'probabilidadeFechamento',
+      'proximo_follow_up',
+    ]) {
       expect(entCols).not.toContain(ghost);
     }
   });

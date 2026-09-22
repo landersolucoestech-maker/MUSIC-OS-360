@@ -641,19 +641,16 @@ const LEADS_CONTRACT: ReportFormContract = {
     meta('endereco', 'payload_servico'), meta('tipo_lead', 'payload_servico'),
     meta('servico', 'payload_servico'), meta('nome_artista_servico', 'payload_servico'),
     meta('descricao', 'payload_servico'), meta('data_entrada', 'payload_servico'),
-    // origemLead: a coluna física origem_lead existe mas só é escrita por um
-    // caminho interno (public-artist-application, apps/api/src/modules/leads/
-    // leads.service.ts, via repo.save() direto, fora do DTO) que nunca foi
-    // exercitado em DEV (0 valores não-nulos, confirmado ao vivo). O
-    // formulário de CRM real — o caminho que de fato popula leads visíveis
-    // no produto — grava esse dado dentro de dados_internos_crm.origemLead
-    // (mesmo padrão de campanha_marketing/responsavel/prioridade logo
-    // abaixo), nunca na coluna física. O col('origem_lead') anterior lia a
-    // coluna sempre-NULL para leads criados via CRM, deixando "Origem do
-    // lead" em branco em toda exportação — corrigido para ler o mesmo lugar
-    // que o formulário realmente escreve. A divergência entre os dois
-    // caminhos de escrita (coluna física vs. jsonb) permanece um finding
-    // separado, não resolvido aqui.
+    // origemLead/responsavel/prioridade/temperatura/proximoFollowUp/
+    // valorEstimado: naming-closure Cluster E resolved the former dual
+    // storage location (a physical origem_lead/responsavel/prioridade/
+    // temperatura/estimated_value/probabilidade_fechamento/
+    // proximo_follow_up column set, 0 non-null rows on all 7, vs. these
+    // same concepts inside dados_internos_crm, which real usage always
+    // wrote) by dropping the dead physical columns
+    // (20260921000005_DropDeadLeadsCrmDualStorageColumns) and redirecting
+    // the one internal writer (public-artist-application) here too. jsonb
+    // was already the only place any of these had live data.
     meta('origemLead', 'dados_internos_crm'), meta('campanha_marketing', 'dados_internos_crm'),
     meta('responsavel', 'dados_internos_crm'), meta('prioridade', 'dados_internos_crm'),
     meta('proximoFollowUp', 'dados_internos_crm'), meta('valorEstimado', 'dados_internos_crm'),

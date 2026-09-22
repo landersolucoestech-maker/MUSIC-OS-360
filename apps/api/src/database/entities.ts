@@ -1197,24 +1197,17 @@ export class LeadEntity {
   @Column({ type: 'varchar', length: 80, nullable: true }) state: string | null;
   @Column({ type: 'varchar', length: 80, nullable: true }) country: string | null;
   @Column({ type: 'varchar', length: 80, nullable: true }) client_type: string | null;
-  // RebuildLeadsInCanonicalFormOrder20260719000011 renamed these physical
-  // columns to snake_case (tipoServico -> tipo_servico, origemLead ->
-  // origem_lead, probabilidadeFechamento -> probabilidade_fechamento).
-  // tipo_servico/tipo_cliente (this one, above) were further translated to
-  // English (service_type/client_type) by the naming-normalization mission
-  // -- origem_lead/probabilidade_fechamento remain snake_case Portuguese,
-  // unresolved (see leads dual-storage-location finding, NEEDS_DATA_
-  // RECONCILIATION, not a simple rename).
+  // tipo_servico/tipo_cliente (this one, above) were translated to English
+  // (service_type/client_type) by the naming-normalization mission.
+  // origem_lead/responsavel/prioridade/temperatura/estimated_value/
+  // probabilidade_fechamento/proximo_follow_up were a second, dead physical
+  // storage location for concepts real usage always wrote into
+  // dados_internos_crm (jsonb) -- dropped by naming-closure Cluster E
+  // (20260921000005_DropDeadLeadsCrmDualStorageColumns; 0 non-null rows on
+  // all 7 columns, live data confirmed exclusively on the jsonb side).
   @Column({ type: 'varchar', length: 120, nullable: true }) service_type: string | null;
   @Column({ type: 'jsonb', default: {} }) payload_servico: Record<string, unknown>;
   @Column({ type: 'jsonb', default: {} }) dados_internos_crm: Record<string, unknown>;
-  @Column({ type: 'varchar', length: 255, nullable: true }) responsavel: string | null;
-  @Column({ type: 'varchar', length: 40, nullable: true }) prioridade: string | null;
-  @Column({ type: 'varchar', length: 40, nullable: true }) temperatura: string | null;
-  @Column({ type: 'varchar', length: 120, nullable: true, name: 'origem_lead' }) origemLead: string | null;
-  @Column({ type: 'numeric', precision: 15, scale: 2, nullable: true }) estimated_value: string | null;
-  @Column({ type: 'numeric', precision: 5, scale: 2, nullable: true, name: 'probabilidade_fechamento' }) probabilidadeFechamento: string | null;
-  @Column({ type: 'timestamptz', nullable: true }) proximo_follow_up: Date | null;
   @Column({ type: 'text', array: true, default: () => "'{}'" }) tags: string[];
   // Campo do formulário de Lead (regra 2026-07-12: 1 coluna por campo)
   @Column({ type: 'jsonb', nullable: true }) uploads: unknown[] | null;

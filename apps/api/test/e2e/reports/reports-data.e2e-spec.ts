@@ -361,10 +361,10 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     beforeAll(async () => {
       await ds.query(
         `INSERT INTO leads
-           (id, tenant_id, nome, status, city, service_type, origem_lead, tags)
+           (id, tenant_id, nome, status, city, service_type, dados_internos_crm, tags)
          VALUES
-           (gen_random_uuid(), $1, $2, 'new', 'São Paulo', 'distribuicao', 'indicacao', ARRAY['vip']::text[])`,
-        [TENANT_A, `${LEAD_TAG}_A`],
+           (gen_random_uuid(), $1, $2, 'new', 'São Paulo', 'distribuicao', $3::jsonb, ARRAY['vip']::text[])`,
+        [TENANT_A, `${LEAD_TAG}_A`, JSON.stringify({ origemLead: 'indicacao' })],
       );
       await ds.query(
         `INSERT INTO leads (id, tenant_id, nome, status)

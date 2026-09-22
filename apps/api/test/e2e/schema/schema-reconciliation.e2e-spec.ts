@@ -193,21 +193,28 @@ describe('Schema reconciliation — PostgreSQL real', () => {
         country: 'BR',
         client_type: 'artista',
         service_type: 'distribuicao',
-        responsavel: 'ana',
-        prioridade: 'alta',
-        temperatura: 'quente',
-        origemLead: 'indicacao',
-        estimated_value: '1500.00',
-        probabilidadeFechamento: '75.00',
-        proximo_follow_up: new Date('2026-07-01T12:00:00Z'),
         tags: ['vip', 'inbound'],
         payload_servico: { plano: 'pro' },
-        dados_internos_crm: { score_interno: 9 },
+        // origem_lead/responsavel/prioridade/temperatura/estimated_value/
+        // probabilidade_fechamento/proximo_follow_up: dropped as dead
+        // physical columns (naming-closure Cluster E,
+        // 20260921000005_DropDeadLeadsCrmDualStorageColumns) -- these
+        // concepts live exclusively in dados_internos_crm now, the same
+        // place real usage always wrote them.
+        dados_internos_crm: {
+          score_interno: 9,
+          responsavel: 'ana',
+          prioridade: 'alta',
+          temperatura: 'quente',
+          origemLead: 'indicacao',
+          valorEstimado: 1500.0,
+          proximoFollowUp: '2026-07-01T12:00:00Z',
+        },
       }));
       const read = await repo.findOneByOrFail({ id: lead.id });
       expect(read.service_type).toBe('distribuicao');
-      expect(read.origemLead).toBe('indicacao');
-      expect(read.probabilidadeFechamento).toBe('75.00');
+      expect(read.dados_internos_crm['origemLead']).toBe('indicacao');
+      expect(read.dados_internos_crm['responsavel']).toBe('ana');
       expect(read.tags).toEqual(['vip', 'inbound']);
     } finally {
       await qr.rollbackTransaction();

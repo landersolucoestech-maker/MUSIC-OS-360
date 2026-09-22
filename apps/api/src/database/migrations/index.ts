@@ -274,6 +274,7 @@ import { FixWorksTypeTipoObraCollision20260921000001 } from './20260921000001_Fi
 import { RenamePhonogramInstrumentalToEnglish20260921000002 } from './20260921000002_RenamePhonogramInstrumentalToEnglish';
 import { RenameClientsGeoFieldsToEnglish20260921000003 } from './20260921000003_RenameClientsGeoFieldsToEnglish';
 import { RenameLeadsGeoFieldsToEnglish20260921000004 } from './20260921000004_RenameLeadsGeoFieldsToEnglish';
+import { DropDeadLeadsCrmDualStorageColumns20260921000005 } from './20260921000005_DropDeadLeadsCrmDualStorageColumns';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -559,4 +560,5 @@ export const ALL_MIGRATIONS = [
   RenamePhonogramInstrumentalToEnglish20260921000002,
   RenameClientsGeoFieldsToEnglish20260921000003,
   RenameLeadsGeoFieldsToEnglish20260921000004,
+  DropDeadLeadsCrmDualStorageColumns20260921000005,
 ] as const;

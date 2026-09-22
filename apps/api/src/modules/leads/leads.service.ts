@@ -230,9 +230,17 @@ export class LeadsService {
           city: dto.city?.trim() || null,
           state: dto.state?.trim() || null,
           fonte: 'public_artist_application',
-          origemLead: 'public_artist_application',
           status: LeadStatus.NEW,
           tags: ['artist_application', 'public_form'],
+          // origemLead: escrita redirecionada para dados_internos_crm (Cluster
+          // E, naming-closure) -- a coluna física origem_lead nunca foi lida
+          // por nenhum caminho real (só o formulário de CRM populava leads
+          // visíveis no produto, sempre via dados_internos_crm.origemLead);
+          // este era o único writer da coluna física em todo o sistema,
+          // inconsistente com o resto do app. Migration
+          // 20260921000005_DropDeadLeadsCrmDualStorageColumns removeu a
+          // coluna física (0 valores não-nulos confirmados em DEV).
+          dados_internos_crm: { origemLead: 'public_artist_application' },
           metadata: {
             musicalGenre: dto.musicalGenre,
             objective: dto.objective ?? null,
