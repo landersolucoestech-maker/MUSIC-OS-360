@@ -47,8 +47,8 @@ export class CreateInvoiceDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) tomador_inscricao_estadual?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) tomador_inscricao_municipal?: string;
   @ApiPropertyOptional() @IsOptional() @IsEmail() @MaxLength(100) tomador_email?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(300) tomador_endereco?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) tomador_cidade?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(300) tomador_address?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) tomador_city?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(2) tomador_uf?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(10) tomador_cep?: string;
 

@@ -331,8 +331,8 @@ export function DetailsSection({
         <div className="space-y-2">
           <Label>Endereço</Label>
           <Input
-            value={formData.tomador_endereco}
-            onChange={(e) => updateField("tomador_endereco", e.target.value)}
+            value={formData.tomador_address}
+            onChange={(e) => updateField("tomador_address", e.target.value)}
             placeholder="Av. Paulista, 1000"
             disabled={disabled}
           />
@@ -342,8 +342,8 @@ export function DetailsSection({
           <div className="space-y-2">
             <Label>Cidade</Label>
             <Input
-              value={formData.tomador_cidade}
-              onChange={(e) => updateField("tomador_cidade", e.target.value)}
+              value={formData.tomador_city}
+              onChange={(e) => updateField("tomador_city", e.target.value)}
               disabled={disabled}
             />
           </div>

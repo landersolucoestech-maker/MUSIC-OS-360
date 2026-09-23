@@ -23,7 +23,7 @@ export const NF_RESET_MAP: Partial<Record<keyof InvoiceFormData, ResetEntry[]>> 
       when: (v) => v === "nfe" || v === "nfce",
     },
   ],
-  client_id: ["tomador_cnpj", "tomador_razao_social", "tomador_email", "tomador_endereco", "tomador_cidade"],
+  client_id: ["tomador_cnpj", "tomador_razao_social", "tomador_email", "tomador_address", "tomador_city"],
   iss_retido: [],
 };
 

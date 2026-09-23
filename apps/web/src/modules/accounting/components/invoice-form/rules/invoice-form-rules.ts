@@ -27,8 +27,8 @@ export interface InvoiceFormData {
   tomador_inscricao_estadual: string;
   tomador_inscricao_municipal: string;
   tomador_email: string;
-  tomador_endereco: string;
-  tomador_cidade: string;
+  tomador_address: string;
+  tomador_city: string;
   tomador_uf: string;
   tomador_cep: string;
   service_amount: number;
@@ -76,8 +76,8 @@ export const INITIAL_FORM_DATA: InvoiceFormData = {
   tomador_inscricao_estadual: "ISENTO",
   tomador_inscricao_municipal: "",
   tomador_email: "",
-  tomador_endereco: "",
-  tomador_cidade: "",
+  tomador_address: "",
+  tomador_city: "",
   tomador_uf: "SP",
   tomador_cep: "",
   service_amount: 0,

@@ -546,7 +546,7 @@ const INVOICES_CONTRACT: ReportFormContract = {
     col('natureza_operacao'), col('cfop'), col('codigo_servico_municipal'), col('codigo_municipio'),
     col('client_id'), col('tomador_cnpj'), col('tomador_razao_social'),
     col('tomador_inscricao_estadual'), col('tomador_inscricao_municipal'), col('tomador_email'),
-    col('tomador_endereco'), col('tomador_cidade'), col('tomador_uf'), col('tomador_cep'),
+    col('tomador_address'), col('tomador_city'), col('tomador_uf'), col('tomador_cep'),
     col('service_description'), col('service_amount'), col('deductions_amount'), col('base_calculo'),
     col('aliquota_iss'), col('iss_amount'), col('iss_retido'), col('pis_amount'), col('cofins_amount'),
     col('ir_amount'), col('csll_amount'), col('inss_amount'), col('net_amount'),

@@ -1075,8 +1075,8 @@ export class InvoiceEntity {
   @Column({ type: 'varchar', length: 50, nullable: true }) tomador_inscricao_estadual: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) tomador_inscricao_municipal: string | null;
   @Column({ type: 'varchar', length: 150, nullable: true }) tomador_email: string | null;
-  @Column({ type: 'varchar', length: 300, nullable: true }) tomador_endereco: string | null;
-  @Column({ type: 'varchar', length: 120, nullable: true }) tomador_cidade: string | null;
+  @Column({ type: 'varchar', length: 300, nullable: true }) tomador_address: string | null;
+  @Column({ type: 'varchar', length: 120, nullable: true }) tomador_city: string | null;
   @Column({ type: 'varchar', length: 5, nullable: true }) tomador_uf: string | null;
   @Column({ type: 'varchar', length: 15, nullable: true }) tomador_cep: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) service_amount: string | null;

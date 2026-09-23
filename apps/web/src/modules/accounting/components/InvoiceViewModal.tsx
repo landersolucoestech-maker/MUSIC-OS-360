@@ -129,7 +129,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
               <Field label="Endereço" value={
                 <span className="flex items-start gap-1.5">
                   <MapPin className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                  <span>{[invoice.tomador_endereco, invoice.tomador_cidade, invoice.tomador_uf, invoice.tomador_cep].filter(Boolean).join(", ")}</span>
+                  <span>{[invoice.tomador_address, invoice.tomador_city, invoice.tomador_uf, invoice.tomador_cep].filter(Boolean).join(", ")}</span>
                 </span>
               } />
             </CardContent>
