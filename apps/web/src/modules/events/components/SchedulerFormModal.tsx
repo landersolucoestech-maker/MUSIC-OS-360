@@ -47,8 +47,8 @@ interface LocalCRMLookup {
   nome: string;
   phone?: string | null;
   endereco_completo?: string | null;
-  cidade?: string | null;
-  estado?: string | null;
+  city?: string | null;
+  state?: string | null;
 }
 
 const tiposEvento = [
@@ -315,7 +315,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
         ...formData,
         nomeLocal: localId,
         contatoLocal: local.phone || "",
-        endereco: [local.endereco_completo, local.cidade, local.estado].filter(Boolean).join(", ")
+        endereco: [local.endereco_completo, local.city, local.state].filter(Boolean).join(", ")
       });
     } else {
       setFormData({ ...formData, nomeLocal: localId });

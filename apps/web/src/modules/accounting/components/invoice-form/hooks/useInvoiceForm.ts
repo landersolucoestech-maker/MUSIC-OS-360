@@ -34,8 +34,8 @@ export interface InvoiceClientLookup {
   document?: string | null;
   email?: string | null;
   address?: string | null;
-  cidade?: string | null;
-  estado?: string | null;
+  city?: string | null;
+  state?: string | null;
   cep?: string | null;
 }
 
@@ -171,8 +171,8 @@ export function useInvoiceForm({
       tomador_razao_social: client.name || "",
       tomador_email: client.email || "",
       tomador_endereco: client.address || "",
-      tomador_cidade: client.cidade || "",
-      tomador_uf: client.estado || "SP",
+      tomador_cidade: client.city || "",
+      tomador_uf: client.state || "SP",
       tomador_cep: client.cep || "",
     }) : ({ ...prev, client_id: clientId }));
   }, []);
