@@ -168,6 +168,26 @@
       "high_file_count_verdict": "all informational, none flagged as a real problem on inspection -- migrations/evidence/docs directories are naturally large flat collections by their own nature, not god-directories in the architectural-debt sense",
       "method": "fully mechanical, zero semantic judgment"
     },
+    "characters": {
+      "script": "census-characters.ts",
+      "source": "GIT_OBJECT_DATABASE (TEXT/TEXT_WITH_CONTROL_BYTES files only, per the already-sealed HEAD_TREE classification)",
+      "scope": "repo-wide, all 3863 text files",
+      "text_files_discovered": 3863,
+      "text_files_scanned": 3863,
+      "text_files_errored": 0,
+      "total_code_points_scanned": 28794408,
+      "anomalies_found": 44,
+      "distinct_files_with_anomalies": 6,
+      "method": "every code point of every text file decoded and inspected (full coverage, proven by total_code_points_scanned); only anomalies get individual records, same method already proven on policy.mjs, now repo-wide",
+      "individual_findings": [
+        { "file": ".claude/runtime/lib/policy.mjs", "anomaly": "2x NUL", "verdict": "already documented this run -- deliberate glob->regex sentinel, node --check passes" },
+        { "file": ".claude/ops/archive-mission-e39d21fa-resolve-worktree-86-diff.json", "anomaly": "2x U+2009 THIN SPACE", "verdict": "benign -- archived historical mission diff/commit-message content, not live source" },
+        { "file": ".claude/ops/evidence/evid-a2c647a4.json", "anomaly": "3x U+FFFD (INVALID_SEQUENCE)", "verdict": "explained precisely: a captured Windows CMD stderr message in Portuguese (\"cd nao e reconhecido...\") whose accented characters (a-with-tilde, e-with-acute) were encoded in a non-UTF-8 Windows console codepage and mangled to invalid UTF-8 when logged as JSON -- benign encoding-fidelity artifact in a log, not corruption of anything meaningful" },
+        { "file": "apps/api/src/database/database.module.ts", "anomaly": "1x U+FEFF BOM at byte 0", "verdict": "REAL, minor hygiene finding -- a UTF-8 byte-order-mark present since this file's creation (2026-05-13, one of the repo's oldest files), harmless in practice (TS/Node handle a leading BOM correctly, file has run in production since), but inconsistent with every other TS file (no BOM elsewhere found). Not fixed here (out of this pass's scope per scope-control.md; a 1-byte removal is trivial but still an unrequested edit)." },
+        { "file": "apps/api/src/modules/artists/platform-profiles/soundcharts-only-metrics.guard.spec.ts", "anomaly": "1x U+200D ZERO WIDTH JOINER", "verdict": "benign, deliberate -- inserted inside a doc-comment's literal text `/* *‍/` specifically to write out a comment-closing sequence without prematurely terminating the doc-comment it appears in (the comment is explaining how the guard strips /* */ comments); a real, intentional technique, not an accident" },
+        { "file": "apps/web/public/pdf.worker.min.mjs", "anomaly": "35x CONTROL chars, clustered", "verdict": "benign -- confirmed via its own license header as the real, official vendored Mozilla PDF.js worker bundle (Apache 2.0, Copyright 2024 Mozilla Foundation); control bytes are inside its minified/embedded binary payload data, not source-affecting syntax" }
+      ]
+    },
     "remaining_mechanical_gap": "the same layers for non-TS/TSX files (JSON/SQL/CSS/HTML/YAML/SHELL/MD -- 291,864 of the 614,212 total physical lines) have not been run; a LINE_CLASS taxonomy for those formats would need per-format parsers (e.g. a real SQL/YAML parser), not yet built this run",
     "explicitly_not_attempted": "per-item SEMANTIC classification of the ~38,104 syntactic symbols and the full named-item/technical-term universe (NAMED_ITEM_ID-level CORRECT/SEMANTIC_DRIFT/WRONG_NAME/etc. verdicts) -- this requires reading each item's real usage context, which is not a mechanizable operation; partitioning it across many agents changes who pays the per-item cost, not whether it's paid, and an agent given hundreds of items with no time to read context per item would produce unearned labels, which is a fabricated certificate regardless of the delivery mechanism. Real semantic findings continue to be produced the way they have been all session -- genuine, evidenced, one real defect/question at a time -- which is real semantic coverage, not exhaustive-by-headcount coverage."
   }

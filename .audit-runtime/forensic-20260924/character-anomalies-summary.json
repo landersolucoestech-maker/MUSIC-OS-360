@@ -1,0 +1,26 @@
+{
+  "head_sha": "4139eec76bc89b49cd94df082a4341366f096a0a",
+  "source": "GIT_OBJECT_DATABASE (blob content from files-census-head-tree.jsonl, TEXT/TEXT_WITH_CONTROL_BYTES only, BINARY excluded)",
+  "text_files_discovered": 3863,
+  "text_files_scanned": 3863,
+  "text_files_errored": 0,
+  "total_code_points_scanned": 28794408,
+  "anomalies_found": 44,
+  "anomaly_class_counts": {
+    "NONSTANDARD_WHITESPACE": 2,
+    "INVALID_SEQUENCE": 3,
+    "NUL": 2,
+    "ZERO_WIDTH": 2,
+    "CONTROL": 35
+  },
+  "distinct_files_with_anomalies": 6,
+  "files_with_anomalies": [
+    ".claude/ops/archive-mission-e39d21fa-resolve-worktree-86-diff.json",
+    ".claude/ops/evidence/evid-a2c647a4.json",
+    ".claude/runtime/lib/policy.mjs",
+    "apps/api/src/database/database.module.ts",
+    "apps/api/src/modules/artists/platform-profiles/soundcharts-only-metrics.guard.spec.ts",
+    "apps/web/public/pdf.worker.min.mjs"
+  ],
+  "method": "every code point of every TEXT/TEXT_WITH_CONTROL_BYTES file decoded and inspected (full coverage, proven by total_code_points_scanned); only anomalies get individual records -- the same method already proven on .claude/runtime/lib/policy.mjs, now applied repo-wide"
+}
