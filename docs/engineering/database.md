@@ -21,6 +21,22 @@ description: Migrations, RLS, and schema conventions
   `apps/api/src/database/migrations/*RealtimeBroadcastAuthorization*` and
   `scripts/verify-realtime-external.ts` for why; don't fold external-managed migrations into the
   application-managed path.
+  **Fresh-DB setup (a new disposable/test Postgres instance with a superuser connection role):**
+  a single `db:migrate:application` run will *not* leave the database fully converged — it
+  deliberately skips `EXTERNAL_MANAGED` migrations, so tests exercising their effect (e.g.
+  `test/e2e/realtime/realtime-broadcast-authorization.e2e-spec.ts`) will fail with unfiltered
+  RLS results until the full chain runs. The canonical sequence (exactly what CI's
+  `db-verify-fresh-postgres` job in `.github/workflows/ci.yml` runs and asserts) is:
+  1. `db:migrate` (unfiltered) — applies everything, `APPLICATION` and `EXTERNAL_MANAGED` alike,
+     in one pass (works when the connecting role owns/can alter every schema touched, e.g. a
+     local superuser-owned disposable container); **or**, to also assert the classification
+     boundary itself (as CI's segmented-executor test does): `db:migrate:application` first
+     (must leave zero tracking rows for any `EXTERNAL_MANAGED` migration), then `db:migrate`
+     (unfiltered) to converge the rest.
+  2. `verify:realtime-external` — read-only physical check; must report `APPLIED_AND_VERIFIED`
+     once step 1 has converged (`PENDING_EXTERNAL_PRIVILEGE` is an expected, non-regression
+     result only when the connecting role genuinely cannot own the `realtime` schema, e.g. a
+     real Supabase-hosted environment before a DBA applies it there).
 - New columns/tables: consider nullability, defaults, and backward compatibility for existing
   rows — this repo has migrations specifically for backfills and safe-column additions
   (`AddMissingSafeColumns`, `MakeShareRegistryFieldsNullable`) because that's the established
