@@ -113,6 +113,23 @@ function isDevMockSnapshot(snapshot: ArtistPlatformProfileSnapshot | null): bool
 }
 
 /**
+ * Instagram/TikTok podem resolver o seguidor via UUID canônico (spotify→
+ * youtube→deezer→soundcloud) quando o handle próprio não está indexado
+ * standalone na Soundcharts (ver instagram-artist-profile.provider.ts) — o
+ * backend já classifica essa resolução em `raw_payload.primary_identity_status`
+ * ('VERIFIED_EXACT' | 'INSUFFICIENT_EVIDENCE' | 'PROFILE_NOT_FOUND') mas,
+ * até este fix, nenhuma tela exibia essa distinção: um valor de fallback
+ * sem confirmação de registry aparecia com a mesma confiança visual que um
+ * valor exato. finding original desta correção: catálogo da Soundcharts
+ * pode fragmentar um artista real em múltiplas entidades internas, e o
+ * fallback canônico pode resolver para uma entidade diferente da conta
+ * Instagram/TikTok real do artista.
+ */
+function isUnverifiedIdentitySnapshot(snapshot: ArtistPlatformProfileSnapshot | null): boolean {
+  return snapshot?.raw_payload?.["primary_identity_status"] === "INSUFFICIENT_EVIDENCE";
+}
+
+/**
  * Estados comuns aos cards com sync real (perfil público do artista →
  * provider → ArtistPlatformProfileEntity). Sem perfil cadastrado é
  * "Não configurado"; com perfil mas sem sync ainda é "Não sincronizado" —
@@ -331,11 +348,22 @@ export function ArtistPlatformMetrics({
             instagramSnapshot,
             instagramMetric?.value != null ? (
               <>
-                <p className="text-sm font-bold text-foreground" data-testid={`metric-instagram-${artistId}`}>
+                <p
+                  className="text-sm font-bold text-foreground"
+                  data-testid={`metric-instagram-${artistId}`}
+                  title={isUnverifiedIdentitySnapshot(instagramSnapshot) ? "Perfil resolvido por associação indireta (via outra plataforma cadastrada), sem confirmação exata do handle Instagram — número pode pertencer a um perfil diferente." : undefined}
+                >
                   {formatCount(instagramMetric.value)}
+                  {isUnverifiedIdentitySnapshot(instagramSnapshot) ? (
+                    <span className="ml-1 text-[10px] font-normal text-amber-600" data-testid={`metric-instagram-unverified-${artistId}`}>
+                      ⚠
+                    </span>
+                  ) : null}
                 </p>
                 <p className="text-[10px] text-muted-foreground" data-testid={`metric-instagram-source-${artistId}`}>
-                  Seguidores{isDevMockSnapshot(instagramSnapshot) ? " · dados de demonstração (dev)" : ""}
+                  Seguidores
+                  {isDevMockSnapshot(instagramSnapshot) ? " · dados de demonstração (dev)" : ""}
+                  {isUnverifiedIdentitySnapshot(instagramSnapshot) ? " · não confirmado" : ""}
                 </p>
               </>
             ) : (
@@ -366,11 +394,22 @@ export function ArtistPlatformMetrics({
             tiktokSnapshot,
             tiktokMetric?.value != null ? (
               <>
-                <p className="text-sm font-bold text-foreground" data-testid={`metric-tiktok-${artistId}`}>
+                <p
+                  className="text-sm font-bold text-foreground"
+                  data-testid={`metric-tiktok-${artistId}`}
+                  title={isUnverifiedIdentitySnapshot(tiktokSnapshot) ? "Perfil resolvido por associação indireta (via outra plataforma cadastrada), sem confirmação exata do handle TikTok — número pode pertencer a um perfil diferente." : undefined}
+                >
                   {formatCount(tiktokMetric.value)}
+                  {isUnverifiedIdentitySnapshot(tiktokSnapshot) ? (
+                    <span className="ml-1 text-[10px] font-normal text-amber-600" data-testid={`metric-tiktok-unverified-${artistId}`}>
+                      ⚠
+                    </span>
+                  ) : null}
                 </p>
                 <p className="text-[10px] text-muted-foreground" data-testid={`metric-tiktok-source-${artistId}`}>
-                  Seguidores{isDevMockSnapshot(tiktokSnapshot) ? " · dados de demonstração (dev)" : ""}
+                  Seguidores
+                  {isDevMockSnapshot(tiktokSnapshot) ? " · dados de demonstração (dev)" : ""}
+                  {isUnverifiedIdentitySnapshot(tiktokSnapshot) ? " · não confirmado" : ""}
                 </p>
               </>
             ) : (
