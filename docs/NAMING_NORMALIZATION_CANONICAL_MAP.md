@@ -161,4 +161,26 @@ Spot-check of `packages/*` (real shared-package boundary, not part of the naming
 
 **WHAT EXACT ACTION IS BLOCKED:** deleting the 5 packages, or scheduling the migration to finish adopting them. Not executed here — deletion is a scope-expanding, moderately consequential action outside this mission's original naming/collision scope and requires the same explicit confirmation as any other architecture-altering product decision (`.claude/rules/scope-control.md`: "discovering adjacent debt does not grant permission to fix it").
 
+## Security/architecture finding (2026-09-24): orphaned, unauthenticated `server/ai-proxy.ts`
+
+`server/` (repo root, outside both `apps/api` and `apps/web`) contains exactly one file: `ai-proxy.ts` — a standalone Node `http` server (not NestJS, not Express) exposing `POST /api/ai/generate` (raw OpenAI passthrough) and `POST /api/acrcloud/:endpoint` (a stub, always returns `501`). Audited per `.claude/rules/architecture.md`'s "second entrypoint"/"provider leakage" concern and `.claude/rules/security.md`'s auth-boundary concern, since this is exactly the "AI proxy/parallel server" pattern that needs proving, not assuming.
+
+**Entrypoint?** Yes — a real, independent `http.createServer`, started via `npx tsx server/ai-proxy.ts`, default port 3001.
+
+**Deployed?** No evidence found. Exhaustive check: zero references to `ai-proxy` anywhere in `docker-compose*.yml` (3 files), both `Dockerfile`s (`apps/api`, `apps/web`), any `package.json` (root or per-app) script, and `.github/workflows/**`. Nothing starts this process in any CI/build/deploy path discovered.
+
+**Duplicates backend/AI?** Yes, in design — a second, independent OpenAI call site outside `apps/api`'s and `packages/ai-skills`' (27 real consumers) provider infrastructure. But it's not reachable: zero frontend callers (`grep` for `api/ai/generate` across `apps/web/src` — 0 hits), and its own header comment ("the same endpoint is served by the `aiApiPlugin` inside `vite.config.ts` in dev") is **stale/false** — `apps/web/vite.config.ts` has no `aiApiPlugin` and no `/api/ai/generate` handler today.
+
+**Bypasses auth/tenancy/observability?** By construction, yes, if it were ever run: `Access-Control-Allow-Origin: *` (wildcard, any origin), zero authentication check on either endpoint, zero tenant scoping, zero rate limiting, and only a raw `console.log` on startup (no structured logging/Sentry/OTel integration). A request with any `prompt` string reaches `OPENAI_API_KEY`-billed OpenAI calls with no gate at all.
+
+**Legacy or canonical?** Legacy — created 2026-05-12 ("Integrate ACRCloud as a native backend infrastructure"), still minimally touched as late as 2026-08-30 ("build/docker/workflow touch-ups", unrelated to its logic), but its actual dev-mode counterpart was since removed from `vite.config.ts` without this file being cleaned up alongside it. The ACRCloud handler was never more than a stub (`"requires a real provider implementation"` — always 501).
+
+**Risk characterization:** not a live production vulnerability today (nothing starts this process), but a real footgun: a fully unauthenticated, wildcard-CORS, tenant-bypassing AI proxy sitting in the repo, discoverable and startable by anyone with repo access and an `OPENAI_API_KEY`, with documentation that inaccurately implies it's still an active dev-mode component.
+
+**EXACT PRODUCT/ENG QUESTION:** *Is `server/ai-proxy.ts` still needed for any deployment target this repo doesn't currently show (e.g. a static-hosting fallback mentioned in its own comment)? If not, delete it — it has zero current consumers and a real security footgun if anyone runs it. If it is still needed, it requires the same auth/tenancy/rate-limiting the rest of the backend has before it can be considered safe to deploy.*
+
+**WHAT WORK IS STILL EXECUTABLE WITHOUT THE ANSWER:** everything else — zero current blast radius since nothing deploys or calls this file today.
+
+**WHAT EXACT ACTION IS BLOCKED:** deleting the file, or hardening it to match the rest of the backend's auth/tenancy model. Not executed here (deletion of a file with real git history and an explicit original purpose is a product call, not a naming-mission call) — flagged with higher urgency than the 5 orphaned packages above specifically because of the auth-bypass-by-design characteristic if ever started.
+
 **Naming closure verdict: NAMING_NAO_ENCERRADO** — `shares.role`, `transactions`/`financial_transactions` v2, and `origem_externa*` remain BLOCKED_PRODUCT_DECISION on genuine product/feature-completeness grounds (re-investigated and confirmed, not merely carried forward). `shares.type`/`party_role` is now DONE. See the mission's final report (session `be6e7ab8-4127-49c5-bc15-a72af2385e9d`, 2026-09-20) for Mission 1's original audit methodology.
