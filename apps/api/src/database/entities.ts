@@ -690,11 +690,17 @@ export class WorkEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 500 }) title: string;
-  @Column({ type: 'varchar', length: 255, nullable: true }) compositor: string | null;
   // `compositores`/`letristas` são derivados de `participantes` (hoje work_participants)
   // e persistidos para leitura rápida em listas/relatórios sem join — justificativa
   // técnica (auditoria 2026-07-18). `co_compositores`/`detentores` removidos: sem
   // writer ativo (migration WorkParticipantsNormalization20260718000011).
+  // `compositor` (singular) PERMANECE apesar de parecer igualmente morto pelo
+  // form/DTO real: é `col()` (importável) em WORKS_CONTRACT, e o motor de
+  // bulk-import de Reports escreve INSERT SQL direto contra
+  // importableColumns, contornando CreateWorkDto por completo -- um writer
+  // real (naming-closure Phase 2 quase removeu esta coluna por engano; ver
+  // work-participants-normalization.spec.ts, que já documentava esse writer).
+  @Column({ type: 'varchar', length: 255, nullable: true }) compositor: string | null;
   @Column({ type: 'jsonb', nullable: true }) compositores: unknown[] | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) editora: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) isrc: string | null;
@@ -790,6 +796,19 @@ export class WorkParticipantEntity {
 }
 
 // ─── Phonograms (fonogramas) ───────────────────────────────────────────────────
+export interface PhonogramParticipante {
+  id?: string;
+  name?: string;
+  percentual?: string;
+  artist_id?: string;
+}
+
+export interface PhonogramParticipacao {
+  produtorFonografico?: PhonogramParticipante[];
+  interprete?: PhonogramParticipante[];
+  musicoAcompanhante?: PhonogramParticipante[];
+}
+
 @Entity('phonograms')
 @Index(['tenant_id'])
 @Index(['work_id'])
@@ -805,9 +824,11 @@ export class PhonogramEntity {
   @Column({ type: 'varchar', length: 20, nullable: true }) duration_text: string | null;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 50, default: PhonogramStatus.PENDING }) status: PhonogramStatus;
-  @Column({ type: 'text', nullable: true }) compositores: string | null;
-  @Column({ type: 'text', nullable: true }) interpretes: string | null;
-  @Column({ type: 'text', nullable: true }) produtores: string | null;
+  // compositores/interpretes/produtores (legacy free-text columns) removidas
+  // (naming-closure Phase 2, 20260923000002_DropDeadPhonogramsLegacyParticipantColumns)
+  // -- zero writers em todo o repositório (nem sequer aceitas por
+  // CreatePhonogramDto), superseded por `participacao` (jsonb estruturado,
+  // abaixo, o que o formulário real de Fonograma efetivamente grava).
   @Column({ type: 'varchar', length: 255, nullable: true }) gravadora: string | null;
   // Renomeada de `cod_abramus` (20260718000017) — o valor pode ser um código
   // em ABRAMUS, UBC, SOCINPRO ou outra entidade de gestão coletiva; coluna
@@ -861,7 +882,11 @@ export class PhonogramEntity {
   @Column({ type: 'varchar', length: 100, nullable: true }) pais_origem: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) pais_publicacao: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  @Column({ type: 'jsonb', nullable: true }) participacao: unknown[] | null;
+  // Shape real: objeto com 3 categorias de array de participante
+  // (produtorFonografico/interprete/musicoAcompanhante), não um array --
+  // ver ParticipacaoDto em modules/phonograms/dto/create-phonogram.dto.ts
+  // (fonte de verdade do shape, confirmada contra FonogramaFormModal.tsx).
+  @Column({ type: 'jsonb', nullable: true }) participacao: PhonogramParticipacao | null;
   @Column({ type: 'jsonb', nullable: true }) arquivo_audio: Record<string, unknown> | null;
 
   // ── Relations ───────────────────────────────────────────────────────────────

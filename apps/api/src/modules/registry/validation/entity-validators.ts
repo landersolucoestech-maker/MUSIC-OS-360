@@ -129,14 +129,12 @@ export class RecordingRegistryValidationService {
     }
 
     const hasProducer = !!recording.phonographic_producer_id ||
-      eligible.some((s) => isProducerRole(s.role ?? s.party_role)) ||
-      !!(recording.produtores && recording.produtores.trim());
+      eligible.some((s) => isProducerRole(s.role ?? s.party_role));
     if (!hasProducer) {
       issues.push(issue(E, 'recording_producer_required', 'phonographic_producer', 'Fonograma precisa de um produtor fonográfico.'));
     }
 
-    const hasInterpreter = eligible.some((s) => isInterpreterRole(s.role ?? s.party_role)) ||
-      !!(recording.interpretes && recording.interpretes.trim()) || !!recording.artist_id;
+    const hasInterpreter = eligible.some((s) => isInterpreterRole(s.role ?? s.party_role)) || !!recording.artist_id;
     if (!hasInterpreter) {
       issues.push(issue(E, 'recording_no_interpreter', 'interpreters', 'Fonograma precisa de pelo menos um intérprete.'));
     }

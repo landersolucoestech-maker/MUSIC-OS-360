@@ -450,8 +450,6 @@ export class ExternalDataExchangeService {
           title: p.title,
           isrc: p.isrc,
           duration: p.duration_text,
-          performers: p.interpretes,
-          producers: p.produtores,
         })),
         files: {
           artwork_url: release?.capa_url ?? null,
@@ -501,8 +499,6 @@ export class ExternalDataExchangeService {
           id: p.id,
           title: p.title,
           isrc: p.isrc,
-          composers: p.compositores,
-          performers: p.interpretes,
           label: p.gravadora,
         })),
         contributors: shares.map((s) => ({

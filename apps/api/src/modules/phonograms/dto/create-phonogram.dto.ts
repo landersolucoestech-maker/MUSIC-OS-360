@@ -1,6 +1,47 @@
-import { IsString, IsOptional, IsInt, IsObject, IsUUID, IsArray, IsBoolean, MaxLength, Min } from 'class-validator';
+import { IsString, IsOptional, IsInt, IsObject, IsUUID, IsArray, IsBoolean, MaxLength, Min, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+
+/**
+ * Um participante dentro de uma categoria de `participacao` (produtor
+ * fonográfico / intérprete / músico acompanhante). Shape real produzido por
+ * FonogramaFormModal.tsx (`Participante` interface) -- confirmado por
+ * inspeção direta do componente, não suposto.
+ */
+export class ParticipanteDto {
+  @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() name?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() percentual?: string;
+  @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
+}
+
+/**
+ * Shape real de `participacao`: um OBJETO com três categorias de array
+ * (produtorFonografico/interprete/musicoAcompanhante) -- confirmado por
+ * inspeção direta de FonogramaFormModal.tsx (`ParticipacaoCategoria`
+ * interface, `participacao: participacao as unknown as Json` no submit).
+ * O campo físico ANTERIOR era `@IsArray() participacao?: unknown[]` --
+ * `@IsArray()` rejeita este objeto real com "participacao must be an
+ * array" em TODO submit real com participantes preenchidos (verificado
+ * empiricamente: plainToInstance + validate() com o payload real do
+ * frontend produz esse erro). Naming-closure Phase 2 audit encontrou este
+ * bug ao investigar a coluna legada `interpretes` (dropada por não ter
+ * writer -- este é o motivo raiz: o campo vivo que deveria tê-la
+ * substituído nunca aceitou dados reais).
+ */
+export class ParticipacaoDto {
+  @ApiPropertyOptional({ type: [ParticipanteDto] })
+  @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => ParticipanteDto)
+  produtorFonografico?: ParticipanteDto[];
+
+  @ApiPropertyOptional({ type: [ParticipanteDto] })
+  @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => ParticipanteDto)
+  interprete?: ParticipanteDto[];
+
+  @ApiPropertyOptional({ type: [ParticipanteDto] })
+  @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => ParticipanteDto)
+  musicoAcompanhante?: ParticipanteDto[];
+}
 
 export class CreatePhonogramDto {
   // Title: `title` é o campo canônico (normalização de nomenclatura,
@@ -92,7 +133,9 @@ export class CreatePhonogramDto {
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() work_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
-  @ApiPropertyOptional() @IsOptional() @IsArray() participacao?: unknown[];
+  @ApiPropertyOptional({ type: ParticipacaoDto })
+  @IsOptional() @IsObject() @ValidateNested() @Type(() => ParticipacaoDto)
+  participacao?: ParticipacaoDto;
   @ApiPropertyOptional() @IsOptional() @IsObject() arquivo_audio?: Record<string, unknown>;
   @ApiPropertyOptional() @IsOptional() @IsUUID() audio_file_id?: string;
 }

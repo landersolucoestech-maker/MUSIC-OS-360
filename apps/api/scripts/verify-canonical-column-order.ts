@@ -46,7 +46,7 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'criada_por_ia', 'is_instrumental', 'emissao', 'gravacao_original', 'data_lancamento', 'duration_text',
     'duracao_min', 'duracao_seg', 'music_genre', 'midia', 'nacional', 'pub_simultanea',
     'pais_origem', 'pais_publicacao', 'classificacao', 'status', 'participacao', 'arquivo_audio',
-    'notes', 'artist_id', 'type', 'compositores', 'interpretes', 'produtores',
+    'notes', 'artist_id', 'type',
     'gravadora', 'version_title', 'recording_date', 'release_date', 'phonographic_producer_id', 'main_artist_id',
     'label_id', 'copyright_year', 'copyright_owner', 'country_of_recording', 'audio_file_id', 'duration_seconds',
     'registry_status', 'external_reference', 'origem_externa', 'origem_externa_id', 'origem_externa_sincronizado_em', 'metadata',

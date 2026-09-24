@@ -50,9 +50,13 @@ function makeDs(opts: { works?: unknown[]; recordings?: unknown[]; skillRuns?: u
 
 const WORK_ROW = {
   title: 'Aurora',
-  compositor: 'Ana Lima',
-  compositores: 'Ana Lima; Bruno Sá',
-  co_compositores: null,
+  // `compositor` (singular, free-text) genuinely has a writer -- the Reports
+  // bulk-import engine writes raw SQL against col()/importable fields,
+  // bypassing CreateWorkDto (see work-participants-normalization.spec.ts).
+  // Merged with `compositores` (plural, the real form's own field),
+  // deduplicated by name -- 'Ana Lima' appears in both on purpose.
+  compositor: 'Ana Lima; Carla Dias',
+  compositores: ['Ana Lima', 'Bruno Sá'],
   editora: 'Editora X',
   isrc: null,
   metadata: {},
@@ -60,9 +64,10 @@ const WORK_ROW = {
 
 const RECORDING_ROW = {
   title: 'Aurora (Ao Vivo)',
-  compositores: 'Ana Lima',
-  interpretes: 'Banda Aurora; Convidado Y',
-  produtores: 'Produtor Z',
+  participacao: {
+    interprete: [{ name: 'Banda Aurora' }, { name: 'Convidado Y' }],
+    produtorFonografico: [{ name: 'Produtor Z' }],
+  },
   isrc: 'BR-ABC-24-00001',
   gravadora: 'Selo Y',
   metadata: {},
@@ -109,10 +114,14 @@ describe('CatalogMetadataValidatorAutomation', () => {
     expect(skillRun.succeed).toHaveBeenCalled();
     expect(skillRun.fail).not.toHaveBeenCalled();
 
-    // input: type=work + compositores no prompt
+    // input: type=work + compositores (plural, form real) mesclados com
+    // compositor (singular, bulk-import) deduplicados por nome no prompt
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string; jsonMode: boolean }]>;
     expect(aiCalls[0][0].prompt).toContain('obra musical (work)');
     expect(aiCalls[0][0].prompt).toContain('Ana Lima');
+    expect(aiCalls[0][0].prompt).toContain('Bruno Sá');
+    expect(aiCalls[0][0].prompt).toContain('Carla Dias');
+    expect((aiCalls[0][0].prompt.match(/Ana Lima/g) ?? []).length).toBe(1);
 
     const updateCall = query.mock.calls.find((c: unknown[]) => /UPDATE\s+works/i.test(c[0] as string));
     expect(updateCall).toBeDefined();
@@ -169,7 +178,9 @@ describe('CatalogMetadataValidatorAutomation', () => {
     );
     expect(skillRun.succeed).toHaveBeenCalled();
 
-    // input: type=recording + intérpretes + label no prompt
+    // input: type=recording + intérpretes/produtor (de participacao, jsonb
+    // estruturado -- substituiu as colunas legadas interpretes/produtores,
+    // texto livre, dropadas por não ter writer real) + label no prompt
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string }]>;
     expect(aiCalls[0][0].prompt).toContain('fonograma/gravação (recording)');
     expect(aiCalls[0][0].prompt).toContain('Banda Aurora');
@@ -180,6 +191,20 @@ describe('CatalogMetadataValidatorAutomation', () => {
     const meta = JSON.parse((updateCall as unknown as [string, string[]])[1][0]);
     expect(meta.aiCatalogValidation.event).toBe('catalog.recording.created');
     expect(meta.aiCatalogValidation.idempotencyKey).toBe('catalog.recording.created:t1:r1');
+  });
+
+  it('recording: sem intérprete em participacao registra fail (skill exige performers não-vazio para type=recording)', async () => {
+    const noInterpreter = { ...RECORDING_ROW, participacao: { interprete: [], produtorFonografico: [] } };
+    const { ds } = makeDs({ recordings: [noInterpreter] });
+    const skillRun = makeSkillRun();
+    const ai = makeAi(VALID_JSON);
+    const handler = new CatalogMetadataValidatorAutomation(ds as never, skillRun as never, ai as never, passThroughTenantContext(ds) as never);
+
+    await handler.onRecordingCreated(recordingEvent() as never);
+
+    expect(skillRun.fail).toHaveBeenCalled();
+    expect(skillRun.succeed).not.toHaveBeenCalled();
+    expect(ai.complete).not.toHaveBeenCalled();
   });
 
   it('recording: idempotência skill_runs — run em andamento/sucesso bloqueia', async () => {

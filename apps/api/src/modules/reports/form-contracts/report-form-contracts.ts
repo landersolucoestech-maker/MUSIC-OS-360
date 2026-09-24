@@ -232,8 +232,7 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
     col('pais_origem'), col('pais_publicacao'), col('gravadora'),
     col('notes'), col('participacao'), col('arquivo_audio'),
     // Somente leitura: registro/sociedades e metadados de gravação
-    ro('type'), ro('version_title'), ro('interpretes'), ro('compositores'),
-    ro('produtores'), ro('duration_seconds'),
+    ro('type'), ro('version_title'), ro('duration_seconds'),
     ro('recording_date'), ro('release_date'), ro('copyright_year'),
     ro('copyright_owner'), ro('country_of_recording'),
     ro('registry_status'),
@@ -244,6 +243,9 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
     metadata: 'objeto jsonb interno bruto',
     fileUrl: 'campo hipotético não existente no DTO — o fluxo de upload real popula audio_file_id (ver ro acima) e arquivo_audio',
     abramus_protocol: 'coluna órfã removida (20260718000016) — nunca escrita por nenhum fluxo real',
+    compositores: 'coluna removida (20260923000002) — sem writer ativo, superseded por participacao (jsonb)',
+    interpretes: 'coluna removida (20260923000002) — sem writer ativo, superseded por participacao (jsonb)',
+    produtores: 'coluna removida (20260923000002) — sem writer ativo, superseded por participacao (jsonb)',
   },
   formFieldAliases: {
     titulo: 'title',

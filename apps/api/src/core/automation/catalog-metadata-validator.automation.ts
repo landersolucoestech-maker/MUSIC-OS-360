@@ -34,7 +34,6 @@ import {
   parseCatalogMetadataValidatorResponse,
   validateCatalogMetadataValidatorInput,
   type CatalogMetadataValidatorInput,
-  type CatalogComposer,
 } from '@music-os-360/ai-skills';
 import { runNativeSkillAutomation } from './native-skill-automation.runner';
 
@@ -44,33 +43,42 @@ const METADATA_KEY = 'aiCatalogValidation';
 interface WorkRow {
   title: string;
   compositor: string | null;
-  compositores: string | null;
+  compositores: string[] | null;
   editora: string | null;
   isrc: string | null;
   metadata: Record<string, unknown> | null;
 }
 
+/** `compositor` (singular) is a free-text field, still populated by the
+ * Reports bulk-import writer path (col()/importable in WORKS_CONTRACT) --
+ * split on common separators and merged with `compositores` (plural,
+ * structured, the real form's own field), deduplicated by name. */
+function splitFreeTextNames(text: string | null | undefined): string[] {
+  if (!text) return [];
+  return text.split(/[;,/\n]+/).map((s) => s.trim()).filter((s) => s.length > 0);
+}
+
+interface ParticipacaoParticipante {
+  name?: string;
+}
+interface ParticipacaoRow {
+  produtorFonografico?: ParticipacaoParticipante[];
+  interprete?: ParticipacaoParticipante[];
+}
+
 interface RecordingRow {
   title: string;
-  compositores: string | null;
-  interpretes: string | null;
-  produtores: string | null;
+  participacao: ParticipacaoRow | null;
   isrc: string | null;
   gravadora: string | null;
   metadata: Record<string, unknown> | null;
 }
 
-/** Divide um campo texto livre (com `;` `,` `/` ou quebras) numa lista limpa. */
-function splitList(text: string | null | undefined): string[] {
-  if (!text) return [];
-  return text.split(/[;,/\n]+/).map((s) => s.trim()).filter((s) => s.length > 0);
-}
-
-/** Une vários campos texto em CatalogComposer[] (deduplicado por nome). */
-function toComposers(...texts: Array<string | null | undefined>): CatalogComposer[] {
-  const names = new Set<string>();
-  for (const t of texts) for (const n of splitList(t)) names.add(n);
-  return [...names].map((name) => ({ name }));
+/** Nomes não-vazios de uma categoria de `participacao` (jsonb estruturado --
+ * ver ParticipacaoDto em modules/phonograms/dto/create-phonogram.dto.ts). */
+function participantNames(list: ParticipacaoParticipante[] | undefined): string[] {
+  if (!Array.isArray(list)) return [];
+  return list.map((p) => p?.name?.trim()).filter((n): n is string => !!n);
 }
 
 @Injectable()
@@ -187,7 +195,7 @@ export class CatalogMetadataValidatorAutomation {
   ): Promise<RecordingRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT title, compositores, interpretes, produtores, isrc, gravadora, metadata
+      `SELECT title, participacao, isrc, gravadora, metadata
          FROM phonograms
         WHERE id = $1 AND tenant_id = $2 AND deleted_at IS NULL
         LIMIT 1`,
@@ -214,10 +222,14 @@ export class CatalogMetadataValidatorAutomation {
 
   private buildWorkInput(work: WorkRow): CatalogMetadataValidatorInput {
     const md = (work.metadata ?? {}) as Record<string, unknown>;
+    const composerNames = new Set<string>([
+      ...(work.compositores ?? []),
+      ...splitFreeTextNames(work.compositor),
+    ]);
     const input: CatalogMetadataValidatorInput = {
       title: work.title,
       type: 'work',
-      composers: toComposers(work.compositor, work.compositores),
+      composers: [...composerNames].map((name) => ({ name })),
       language: 'pt-BR',
     };
     if (work.editora) input.publisher = work.editora;
@@ -229,15 +241,24 @@ export class CatalogMetadataValidatorAutomation {
 
   private buildRecordingInput(rec: RecordingRow): CatalogMetadataValidatorInput {
     const md = (rec.metadata ?? {}) as Record<string, unknown>;
+    // performers/producers previously read phonograms.interpretes/produtores
+    // (legacy free-text columns, dropped by naming-closure Phase 2,
+    // 20260923000002_DropDeadWorksPhonogramsLegacyParticipantColumns -- zero
+    // writers ever, so this input was already always empty in production).
+    // Real participant data lives in phonograms.participacao (jsonb object
+    // with produtorFonografico/interprete/musicoAcompanhante array
+    // categories -- shape confirmed against FonogramaFormModal.tsx and
+    // fixed at the DTO, create-phonogram.dto.ts's ParticipacaoDto).
+    // validateCatalogMetadataValidatorInput() requires a non-empty
+    // `performers` for type=recording -- this is not optional enrichment.
+    const performers = participantNames(rec.participacao?.interprete);
+    const producers = participantNames(rec.participacao?.produtorFonografico);
     const input: CatalogMetadataValidatorInput = {
       title: rec.title,
       type: 'recording',
-      performers: splitList(rec.interpretes),
+      performers,
       language: 'pt-BR',
     };
-    const composers = toComposers(rec.compositores);
-    if (composers.length > 0) input.composers = composers;
-    const producers = splitList(rec.produtores);
     if (producers.length > 0) input.producers = producers;
     if (rec.isrc) input.isrc = rec.isrc;
     if (rec.gravadora) input.label = rec.gravadora;

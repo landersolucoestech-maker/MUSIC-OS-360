@@ -111,7 +111,7 @@ describe('RecordingRegistryValidationService', () => {
   });
 
   it('requires a phonographic producer', () => {
-    const issues = recording.validate(asRec({ ...valid(), phonographic_producer_id: null, produtores: null }), []);
+    const issues = recording.validate(asRec({ ...valid(), phonographic_producer_id: null }), []);
     expect(codes(issues)).toContain('recording_producer_required');
   });
 
@@ -121,7 +121,7 @@ describe('RecordingRegistryValidationService', () => {
 
   it('a financial/pendente share role does not satisfy interpreter/producer requirements', () => {
     const issues = recording.validate(
-      asRec({ ...valid(), artist_id: null, phonographic_producer_id: null, produtores: null }),
+      asRec({ ...valid(), artist_id: null, phonographic_producer_id: null }),
       [financialShare({ party_role: 'produtor', holder_name: 'Financeiro' })],
     );
     expect(codes(issues)).toContain('recording_producer_required');

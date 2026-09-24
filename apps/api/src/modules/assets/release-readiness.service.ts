@@ -103,7 +103,20 @@ export class ReleaseReadinessService {
           blocking: true,
         });
 
-        const metaOk = !!(phonogram?.title && phonogram?.music_genre && phonogram?.interpretes && phonogram?.artist_id);
+        // `interpretes` (legacy free-text column, dropped -- zero writers
+        // ever, naming-closure Phase 2,
+        // 20260921000005.../20260923000002_DropDeadWorksPhonogramsLegacyParticipantColumns)
+        // was superseded by phonograms.participacao.interprete[]. Real shape
+        // confirmed against FonogramaFormModal.tsx and fixed at the DTO
+        // (create-phonogram.dto.ts's ParticipacaoDto -- the previous
+        // `@IsArray() participacao?: unknown[]` rejected the real object
+        // shape the form sends with "participacao must be an array" on every
+        // real submit with participants, verified empirically; this is the
+        // actual root cause `interpretes` always looked empty).
+        const hasInterpreter = !!phonogram?.participacao?.interprete?.some(
+          (p) => typeof p?.name === 'string' && p.name.trim().length > 0,
+        );
+        const metaOk = !!(phonogram?.title && phonogram?.music_genre && phonogram?.artist_id && hasInterpreter);
         requirements.push({
           id: 'metadata',
           label: 'Metadados obrigatórios',

@@ -122,6 +122,41 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       expect(errors).toEqual([]);
     });
 
+    // participacao: bug real encontrado durante naming-closure Phase 2 --
+    // o shape anterior (`@IsArray() participacao?: unknown[]`) rejeitava o
+    // objeto real que FonogramaFormModal.tsx sempre enviou
+    // (ParticipacaoCategoria: { produtorFonografico, interprete,
+    // musicoAcompanhante }), com "participacao must be an array" em TODO
+    // submit real com participantes preenchidos -- verificado
+    // empiricamente antes do fix. ParticipacaoDto corrige o shape.
+    it('aceita o shape real de participacao (objeto com categorias de array, não um array)', async () => {
+      const errors = await validateDto({
+        title: 'Noite Estrelada',
+        participacao: {
+          produtorFonografico: [{ id: '1', name: 'Produtor A', percentual: '50' }],
+          interprete: [{ id: '2', name: 'Intérprete B', percentual: '50' }],
+          musicoAcompanhante: [],
+        },
+      });
+      expect(errors).toEqual([]);
+    });
+
+    it('rejeita participacao no shape antigo incorreto (array, não objeto)', async () => {
+      const errors = await validateDto({
+        title: 'Noite Estrelada',
+        participacao: [{ role: 'interprete', name: 'X' }],
+      });
+      expect(errors.some((e) => e.property === 'participacao')).toBe(true);
+    });
+
+    it('rejeita participante malformado dentro de uma categoria (percentual não-string)', async () => {
+      const errors = await validateDto({
+        title: 'Noite Estrelada',
+        participacao: { interprete: [{ id: '1', name: 'X', percentual: 50 }] },
+      });
+      expect(errors.some((e) => e.property === 'participacao')).toBe(true);
+    });
+
     it('rejeita campo desconhecido (whitelist)', async () => {
       const errors = await validateDto({ title: 'X', campo_inexistente: 'y' });
       expect(errors.some((e) => e.property === 'campo_inexistente')).toBe(true);
