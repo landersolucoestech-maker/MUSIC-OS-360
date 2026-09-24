@@ -969,7 +969,7 @@ export function ArtistVision360Modal({
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                      <FileText className="h-4 w-4 text-blue-500" />
+                      <FileText className="h-4 w-4 text-info" />
                       <span className="text-sm">Contratos</span>
                     </div>
                     <p className="text-2xl font-bold">
@@ -2125,7 +2125,7 @@ export function ArtistVision360Modal({
                     </p>
                   </CardContent>
                 </Card>
-                <Card className="bg-blue-600/10 border-blue-600/20">
+                <Card className="bg-info/10 border-info/20">
                   <CardContent className="p-4">
                     <p className="text-sm text-muted-foreground">Saldo</p>
                     <p
@@ -2478,8 +2478,8 @@ export function ArtistVision360Modal({
                         Concluídas
                       </p>
                     </div>
-                    <div className="text-center p-3 bg-blue-500/10 rounded-lg">
-                      <p className="text-2xl font-bold text-blue-500">
+                    <div className="text-center p-3 bg-info/10 rounded-lg">
+                      <p className="text-2xl font-bold text-info">
                         {averageProgress}%
                       </p>
                       <p className="text-xs text-muted-foreground">

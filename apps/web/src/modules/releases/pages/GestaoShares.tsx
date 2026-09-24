@@ -225,8 +225,8 @@ export default function GestaoShares() {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-500/10 rounded-lg">
-                  <ArrowDownLeft className="h-5 w-5 text-blue-500" />
+                <div className="p-2 bg-info/10 rounded-lg">
+                  <ArrowDownLeft className="h-5 w-5 text-info" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">A Receber</p>

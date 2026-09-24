@@ -279,7 +279,7 @@ export function AppSidebar() {
                       "flex items-center gap-2 rounded-[5px] px-2 py-[5px]",
                       "text-[12px] transition-colors duration-100",
                       isActive(child.href)
-                        ? "bg-sidebar-accent text-sidebar-primary font-semibold"
+                        ? "bg-sidebar-active text-sidebar-active-foreground font-semibold"
                         : "text-sidebar-foreground/55 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground",
                     )}
                   >
@@ -313,7 +313,7 @@ export function AppSidebar() {
           "flex items-center gap-2 rounded-md px-2 py-[5px]",
           "text-[12px] font-medium transition-colors duration-100",
           active
-            ? "bg-sidebar-accent text-sidebar-primary font-semibold"
+            ? "bg-sidebar-active text-sidebar-active-foreground font-semibold"
             : "text-sidebar-foreground/60 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground",
         )}
         data-testid={`nav-link-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
@@ -393,7 +393,7 @@ export function AppSidebar() {
           <div
             className={cn(
               "flex items-center gap-2 rounded-md px-2 py-1.5",
-              "bg-sidebar-accent/50 border border-sidebar-border/60",
+              "bg-sidebar-secondary border border-sidebar-border/60",
               "cursor-default select-none",
             )}
           >

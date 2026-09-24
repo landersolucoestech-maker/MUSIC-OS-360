@@ -14,6 +14,7 @@ export default {
     extend: {
       colors: {
         border: "hsl(var(--border))",
+        "border-strong": "hsl(var(--border-strong))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
@@ -23,6 +24,9 @@ export default {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
           hover: "hsl(var(--primary-hover))",
+          active: "hsl(var(--primary-active))",
+          soft: "hsl(var(--primary-soft))",
+          "border-soft": "hsl(var(--primary-border-soft))",
         },
 
         secondary: {
@@ -33,6 +37,7 @@ export default {
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+          soft: "hsl(var(--destructive-soft))",
         },
 
         muted: {
@@ -58,13 +63,18 @@ export default {
 
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
+          secondary: "hsl(var(--sidebar-background-secondary))",
           foreground: "hsl(var(--sidebar-foreground))",
+          muted: "hsl(var(--sidebar-muted))",
           primary: "hsl(var(--sidebar-primary))",
           "primary-foreground":
             "hsl(var(--sidebar-primary-foreground))",
           accent: "hsl(var(--sidebar-accent))",
           "accent-foreground":
             "hsl(var(--sidebar-accent-foreground))",
+          active: "hsl(var(--sidebar-active))",
+          "active-foreground":
+            "hsl(var(--sidebar-active-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
@@ -72,16 +82,19 @@ export default {
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
+          soft: "hsl(var(--success-soft))",
         },
 
         warning: {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
+          soft: "hsl(var(--warning-soft))",
         },
 
         info: {
           DEFAULT: "hsl(var(--info))",
           foreground: "hsl(var(--info-foreground))",
+          soft: "hsl(var(--info-soft))",
         },
 
         status: {

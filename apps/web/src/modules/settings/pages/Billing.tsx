@@ -31,7 +31,7 @@ const PLANS = [
       "Contratos e CRM",
       "Suporte por e-mail",
     ],
-    color: "border-blue-200",
+    color: "border-border-strong",
   },
   {
     id:          "professional" as const,

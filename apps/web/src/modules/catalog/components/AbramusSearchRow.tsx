@@ -251,8 +251,8 @@ export function AbramusSearchRow({
               }}
               data-testid={`abramus-result-${item.external_id}`}
             >
-              <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center shrink-0">
-                <Music className="h-4 w-4 text-foreground" />
+              <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center shrink-0">
+                <Music className="h-4 w-4 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">

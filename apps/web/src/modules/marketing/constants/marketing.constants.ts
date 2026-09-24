@@ -62,13 +62,13 @@ export const TONE_VARIANT: Record<Tone, BadgeVariant> = {
  * (ex.: calendário). Mantém o mesmo contraste (fundo claro → texto escuro).
  */
 export const TONE_CLASS: Record<Tone, string> = {
-  neutral: "bg-slate-100 text-slate-800",
-  info: "bg-blue-100 text-blue-800",
-  success: "bg-green-100 text-green-800",
-  warning: "bg-yellow-100 text-yellow-800",
-  danger: "bg-red-100 text-red-800",
-  purple: "bg-blue-100 text-blue-800",
-  pending: "bg-slate-100 text-slate-800",
+  neutral: "bg-muted text-muted-foreground",
+  info: "bg-info-soft text-info",
+  success: "bg-success-soft text-success",
+  warning: "bg-warning-soft text-warning",
+  danger: "bg-destructive-soft text-destructive",
+  purple: "bg-info-soft text-info",
+  pending: "bg-muted text-muted-foreground",
 };
 
 // ---------------------------------------------------------------------------

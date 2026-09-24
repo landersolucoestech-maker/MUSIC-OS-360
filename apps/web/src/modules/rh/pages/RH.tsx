@@ -454,8 +454,8 @@ export default function RH() {
           </Card>
           <Card data-testid="kpi-ferias">
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-500/10">
-                <Palmtree className="h-5 w-5 text-blue-600" />
+              <div className="p-2 rounded-lg bg-info/10">
+                <Palmtree className="h-5 w-5 text-info" />
               </div>
               <div>
                 <p className="text-2xl font-bold" data-testid="text-kpi-ferias">{kpiCounts.ferias}</p>

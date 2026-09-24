@@ -151,7 +151,7 @@ const channelStyles: Record<SupportChannel, string> = {
   facebook: "border-blue-500/30 bg-blue-500/10 text-blue-700",
   tiktok: "border-zinc-500/30 bg-zinc-500/10 text-zinc-700",
   site: "border-cyan-500/30 bg-cyan-500/10 text-cyan-700",
-  custom: "border-violet-500/30 bg-violet-500/10 text-violet-700",
+  custom: "border-border-strong bg-muted text-muted-foreground",
 };
 
 const statusStyles: Record<SupportStatus, string> = {

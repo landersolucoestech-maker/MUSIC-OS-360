@@ -234,8 +234,8 @@ function LeadTags({ payload, setValue }: { payload: Record<string, unknown>; set
             className={cn(
               "rounded border px-2 py-0.5 text-xs font-medium transition",
               selected.includes(tag)
-                ? "border-blue-500/60 bg-blue-500/15 text-foreground"
-                : "border-border bg-card text-muted-foreground hover:border-blue-500/40",
+                ? "border-primary/60 bg-primary/15 text-foreground"
+                : "border-border bg-card text-muted-foreground hover:border-primary/40",
             )}
           >
             {tag}

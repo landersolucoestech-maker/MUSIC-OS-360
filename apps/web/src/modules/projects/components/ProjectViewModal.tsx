@@ -188,7 +188,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                               <Card className="bg-background/50">
                                 <CardContent className="p-3">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <User className="h-3.5 w-3.5 text-blue-500" />
+                                    <User className="h-3.5 w-3.5 text-info" />
                                     <span className="text-xs font-medium">Produtores</span>
                                   </div>
                                   <p className="text-sm text-muted-foreground" data-testid={`text-view-produtores-${idx}`}>

@@ -10,11 +10,11 @@ function renderStartupError(error: unknown): void {
   const stack = error instanceof Error ? error.stack : undefined;
 
   root.innerHTML = `
-    <div style="min-height:100vh;background:#0b1020;color:#f8fafc;font-family:system-ui,-apple-system,Segoe UI,sans-serif;padding:32px">
-      <div style="max-width:880px;margin:0 auto;border:1px solid rgba(248,250,252,.16);border-radius:8px;background:rgba(15,23,42,.92);padding:24px">
+    <div style="min-height:100vh;background:#11161d;color:#f8fafc;font-family:system-ui,-apple-system,Segoe UI,sans-serif;padding:32px">
+      <div style="max-width:880px;margin:0 auto;border:1px solid rgba(248,250,252,.16);border-radius:8px;background:rgba(23,29,37,.92);padding:24px">
         <p style="margin:0 0 8px;color:#f87171;font-size:13px;font-weight:700;letter-spacing:.04em">Erro ao iniciar o app</p>
         <h1 style="margin:0 0 16px;font-size:22px;line-height:1.25">MUSIC OS 360 não conseguiu renderizar</h1>
-        <pre style="white-space:pre-wrap;overflow:auto;background:#020617;border:1px solid rgba(248,250,252,.12);border-radius:6px;padding:16px;font-size:12px;line-height:1.5">${message}${stack ? `\n\n${stack}` : ""}</pre>
+        <pre style="white-space:pre-wrap;overflow:auto;background:#0a0d12;border:1px solid rgba(248,250,252,.12);border-radius:6px;padding:16px;font-size:12px;line-height:1.5">${message}${stack ? `\n\n${stack}` : ""}</pre>
       </div>
     </div>
   `;

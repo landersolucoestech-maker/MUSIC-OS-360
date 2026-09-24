@@ -20,17 +20,17 @@ const badgeVariants = cva(
     variants: {
       variant: {
         // ── 5 variants canônicos ──────────────────────────────────────────
-        success: "bg-green-100 text-green-800",
-        info: "bg-blue-100 text-blue-800",
-        warning: "bg-yellow-100 text-yellow-800",
-        danger: "bg-red-100 text-red-800",
-        neutral: "bg-slate-100 text-slate-800",
+        success: "bg-success-soft text-success",
+        info: "bg-info-soft text-info",
+        warning: "bg-warning-soft text-warning",
+        danger: "bg-destructive-soft text-destructive",
+        neutral: "bg-muted text-muted-foreground",
         // ── Aliases legados (mapeados aos canônicos) ──────────────────────
-        destructive: "bg-red-100 text-red-800",
-        default: "bg-slate-100 text-slate-800",
-        secondary: "bg-slate-100 text-slate-800",
-        outline: "bg-slate-100 text-slate-800",
-        muted: "bg-slate-100 text-slate-800",
+        destructive: "bg-destructive-soft text-destructive",
+        default: "bg-muted text-muted-foreground",
+        secondary: "bg-muted text-muted-foreground",
+        outline: "bg-muted text-muted-foreground",
+        muted: "bg-muted text-muted-foreground",
       },
     },
     defaultVariants: {

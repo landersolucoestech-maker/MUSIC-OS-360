@@ -71,7 +71,7 @@ const transactionTypeMeta: Record<string, TypeMeta> = {
   "recebimentos externos de direitos": {
     label: "Recebimentos externos de direitos",
     icon: ReceiptText,
-    badgeClass: "border-primary/30 bg-violet-50 text-primary",
+    badgeClass: "border-primary/30 bg-primary-soft text-primary",
     amountClass: "text-primary",
     sign: "+",
   },
@@ -138,7 +138,7 @@ const statusMeta: Record<string, { label: string; icon: LucideIcon; badgeClass: 
   parcial: { label: "Parcial", icon: Timer, badgeClass: "border-orange-200 bg-orange-50 text-orange-700", dotClass: "bg-orange-500" },
   cancelado: { label: "Cancelado", icon: XCircle, badgeClass: "border-zinc-200 bg-zinc-50 text-muted-foreground", dotClass: "bg-zinc-500" },
   cancelada: { label: "Cancelado", icon: XCircle, badgeClass: "border-zinc-200 bg-zinc-50 text-muted-foreground", dotClass: "bg-zinc-500" },
-  estornado: { label: "Estornado", icon: RotateCcw, badgeClass: "border-primary/30 bg-purple-50 text-primary", dotClass: "bg-primary" },
+  estornado: { label: "Estornado", icon: RotateCcw, badgeClass: "border-primary/30 bg-primary-soft text-primary", dotClass: "bg-primary" },
   processando: { label: "Processando", icon: Loader2, badgeClass: "border-cyan-200 bg-cyan-50 text-cyan-700", dotClass: "bg-cyan-500" },
 };
 

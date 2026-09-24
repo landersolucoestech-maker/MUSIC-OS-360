@@ -40,7 +40,7 @@ interface LancamentoViewModalProps {
 
 const TIPO_MAP: Record<string, { label: string; color: string }> = {
   single: { label: "Single", color: "bg-primary text-foreground" },
-  ep: { label: "EP", color: "bg-blue-600 text-foreground" },
+  ep: { label: "EP", color: "bg-info text-info-foreground" },
   album: { label: "Album", color: "bg-primary text-foreground" },
 };
 

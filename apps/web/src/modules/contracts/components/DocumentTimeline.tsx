@@ -8,8 +8,8 @@ interface EventConfig {
 }
 
 const EVENT_CONFIG: Record<DocumentLogEvent, EventConfig> = {
-  created:            { icon: FileText,     label: "Documento criado",                 color: "text-blue-600"    },
-  template_applied:   { icon: FileText,     label: "Modelo aplicado",                  color: "text-blue-600"    },
+  created:            { icon: FileText,     label: "Documento criado",                 color: "text-info"    },
+  template_applied:   { icon: FileText,     label: "Modelo aplicado",                  color: "text-info"    },
   sent_for_signature: { icon: Send,         label: "Enviado para assinatura",          color: "text-amber-600"  },
   signer_viewed:      { icon: Eye,          label: "Visualizado pelo signatário",      color: "text-primary"},
   signer_signed:      { icon: CheckCircle2, label: "Assinado",                         color: "text-green-600"  },

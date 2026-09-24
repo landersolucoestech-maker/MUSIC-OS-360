@@ -33,16 +33,17 @@ const RELEASE_STATUS_META: Record<ReleaseStatus, { label: string; variant: Badge
 /**
  * Cores SÓLIDAS das tags de status (página de Distribuição), conforme especificação:
  * Distribuído/Aprovado verde, Pendente amarelo, Incompleto cinza (texto preto),
- * Rejeitado vermelho, Takedown roxo, Em Espera azul — todas texto branco (exceto Incompleto).
+ * Rejeitado vermelho, Takedown neutro escuro (info), Em Espera amarelo (mesmo tom
+ * de "warning" já usado em RELEASE_STATUS_META) — todas texto branco (exceto Incompleto).
  */
 const RELEASE_STATUS_SOLID: Record<ReleaseStatus, string> = {
-  distribuido: "bg-green-600 text-white border-transparent",
-  aprovado: "bg-green-600 text-white border-transparent",
-  pendente: "bg-yellow-500 text-white border-transparent",
-  incompleto: "bg-gray-300 text-black border-transparent",
-  rejeitado: "bg-red-600 text-white border-transparent",
-  takedown: "bg-purple-600 text-white border-transparent",
-  em_espera: "bg-blue-600 text-white border-transparent",
+  distribuido: "bg-success text-success-foreground border-transparent",
+  aprovado: "bg-success text-success-foreground border-transparent",
+  pendente: "bg-warning text-warning-foreground border-transparent",
+  incompleto: "bg-border-strong text-foreground border-transparent",
+  rejeitado: "bg-destructive text-destructive-foreground border-transparent",
+  takedown: "bg-info text-info-foreground border-transparent",
+  em_espera: "bg-warning text-warning-foreground border-transparent",
 };
 
 /** Opções para selects de filtro (ordem de exibição). */

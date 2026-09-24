@@ -124,7 +124,7 @@ function AuthDisabledBanner() {
   return (
     <div
       role="alert"
-      className="sticky inset-x-0 top-0 z-[9999] bg-destructive px-4 py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-destructive-foreground"
+      className="sticky inset-x-0 top-0 z-[9999] bg-warning px-4 py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-warning-foreground"
     >
       ⚠ AUTH_DISABLED ativo — sessão, tenant e permissões são falsos (dev bypass). Nunca use para validar login real.
     </div>
@@ -143,7 +143,7 @@ function DevAuthBypassBanner() {
   return (
     <div
       role="alert"
-      className="sticky inset-x-0 top-0 z-[9999] bg-destructive px-4 py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-destructive-foreground"
+      className="sticky inset-x-0 top-0 z-[9999] bg-warning px-4 py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-warning-foreground"
     >
       ⚠ VITE_DISABLE_AUTH ativo (DEV ONLY) — login, sessão e MFA pulados no frontend. Chamadas de API que exigem auth real podem retornar 401/403. Nunca use para validar login real.
     </div>

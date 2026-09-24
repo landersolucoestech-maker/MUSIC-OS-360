@@ -389,7 +389,7 @@ export default function Lancamentos() {
         <TooltipProvider delayDuration={200}>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {([
-              { key: "total", label: "Total de Releases", value: distributionKPIs.total, subtitle: "lançamentos cadastrados", icon: Library, color: "text-blue-500", tooltip: "Quantidade total de lançamentos cadastrados no sistema." },
+              { key: "total", label: "Total de Releases", value: distributionKPIs.total, subtitle: "lançamentos cadastrados", icon: Library, color: "text-info", tooltip: "Quantidade total de lançamentos cadastrados no sistema." },
               { key: "distributed", label: "Distribuídos", value: distributionKPIs.distributed, subtitle: "ativos nas plataformas", icon: CheckCircle2, color: "text-green-500", tooltip: "Lançamentos já distribuídos para as plataformas." },
               { key: "pending", label: "Pendentes", value: distributionKPIs.pending, subtitle: "aguardando processamento", icon: Clock, color: "text-yellow-500", tooltip: "Lançamentos aguardando processamento ou validação." },
               { key: "waitingAction", label: "Aguardando Ação", value: distributionKPIs.waitingAction, subtitle: "necessitam intervenção", icon: AlertTriangle, color: "text-red-500", tooltip: "Lançamentos que exigem correção, atualização ou intervenção operacional." },
