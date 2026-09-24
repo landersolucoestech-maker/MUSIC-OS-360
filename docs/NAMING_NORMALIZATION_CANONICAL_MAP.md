@@ -140,4 +140,25 @@ Per this mission's explicit standard ("não declarar NEEDS_PRODUCT_DECISION se c
 
 **WHAT EXACT ACTION IS BLOCKED:** scheduling/building the v2 cutover, or dropping v2's schema. Both require the same one answer, and both are out of a naming mission's authority to decide unilaterally (this is an architecture/roadmap call, not a technical-authority-determinable one — unlike `shares.type`, there is no misrouted live path to fix here, only an unfinished-or-abandoned initiative to disposition).
 
+## Architecture finding (2026-09-24): 5 orphaned shared packages, duplicate-owner pattern
+
+Spot-check of `packages/*` (real shared-package boundary, not part of the naming mission's original scope, surfaced during continued audit) found a genuine "false shared package" pattern per this repo's own `.claude/rules/architecture.md` concerns:
+
+**TECHNICAL FACTS:**
+- `packages/auth`, `packages/observability`, `packages/schemas`, `packages/ui`, `packages/utils` all real source (4-18 `.ts`/`.tsx` files each, not empty stubs), all created the same day (`2026-05-15`, confirmed via `git log --diff-filter=A`).
+- Exhaustive repo-wide grep for `@music-os-360/<pkg>` (their real `package.json` `name` field, confirmed individually) across `apps/`, `packages/`, `scripts/`, `.github/` finds **zero** references anywhere outside each package's own directory.
+- None of the 5 are even declared as a dependency in `apps/api/package.json` or `apps/web/package.json` — not just unimported, never wired into either app's dependency graph at all.
+- Confirmed duplicate-owner pattern for 2 of the 5: `packages/ui/src/data-table` duplicates `apps/web/src/shared/components/DataTable.tsx` (a real, live, imported component); `packages/auth/src/{jwt,permissions,roles,tenant}.ts` duplicates real logic already implemented in `apps/api/src/modules/auth`.
+- Contrast: `packages/ai-skills` (27 consumers) and `packages/types` (86 consumers) are genuinely live shared packages — this finding is specific to the 5 named above, not a blanket claim about `packages/*`.
+
+**WHAT CODE/HISTORY PROVES:** an initial monorepo scaffold on day one (2026-05-15) set up 7 shared packages as the intended architecture; `ai-skills` and `types` were adopted, the other 5 were not — each app built its own local equivalent instead (at least for `auth` and `ui`, confirmed above), and the scaffolded packages were left in the workspace.
+
+**WHAT CODE/HISTORY CANNOT DETERMINE:** whether this was a deliberate architecture pivot (apps intentionally own their own auth/UI/schemas/utils/observability now, packages should be deleted) or an unfinished extraction still intended to happen (the apps' local code should eventually move INTO these packages, not the reverse).
+
+**EXACT PRODUCT/ENG QUESTION:** *Were `packages/{auth,observability,schemas,ui,utils}` abandoned in favor of local-per-app implementations (delete the 5 packages), or are they an incomplete extraction still planned (finish migrating `apps/api`'s auth module and `apps/web`'s component library into them)?*
+
+**WHAT WORK IS STILL EXECUTABLE WITHOUT THE ANSWER:** everything else in this mission — this is a fully isolated finding (zero consumers means zero blast radius either way).
+
+**WHAT EXACT ACTION IS BLOCKED:** deleting the 5 packages, or scheduling the migration to finish adopting them. Not executed here — deletion is a scope-expanding, moderately consequential action outside this mission's original naming/collision scope and requires the same explicit confirmation as any other architecture-altering product decision (`.claude/rules/scope-control.md`: "discovering adjacent debt does not grant permission to fix it").
+
 **Naming closure verdict: NAMING_NAO_ENCERRADO** — `shares.role`, `transactions`/`financial_transactions` v2, and `origem_externa*` remain BLOCKED_PRODUCT_DECISION on genuine product/feature-completeness grounds (re-investigated and confirmed, not merely carried forward). `shares.type`/`party_role` is now DONE. See the mission's final report (session `be6e7ab8-4127-49c5-bc15-a72af2385e9d`, 2026-09-20) for Mission 1's original audit methodology.
