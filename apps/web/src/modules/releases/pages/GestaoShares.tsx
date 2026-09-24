@@ -78,7 +78,7 @@ export default function GestaoShares() {
     page, pageSize, search: debouncedSearch || undefined,
     direction: direcaoFilter !== "todos" ? direcaoFilter : undefined,
     status: statusFilter !== "todos" ? statusFilter : undefined,
-    type: tipoFilter !== "todos" ? tipoFilter : undefined,
+    partyRole: tipoFilter !== "todos" ? tipoFilter : undefined,
     shareType: shareTypeFilter !== "todos" ? shareTypeFilter : undefined,
   });
 

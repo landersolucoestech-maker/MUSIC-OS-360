@@ -10,15 +10,18 @@ export interface UseSharesPaginatedParams {
   search?: string;
   direction?: string;
   status?: string;
-  type?: string;
+  /** Função do participante (autor/intérprete/produtor/...) -- filtra
+   * shares.party_role, não shares.type (coluna fantasma sem writer real;
+   * ver naming-closure Phase 3). */
+  partyRole?: string;
   shareType?: string;
 }
 
-export function useSharesPaginated({ page, pageSize, search, direction, status, type, shareType }: UseSharesPaginatedParams) {
+export function useSharesPaginated({ page, pageSize, search, direction, status, partyRole, shareType }: UseSharesPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (direction) filters.direction = direction;
   if (status) filters.status = status;
-  if (type) filters.type = type;
+  if (partyRole) filters.party_role = partyRole;
   if (shareType) filters.share_type = shareType;
 
   const result = usePaginatedDataQuery<ShareWithRelations>({
