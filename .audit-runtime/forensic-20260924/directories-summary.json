@@ -1,0 +1,53 @@
+{
+  "head_sha": "e9b2a3a457cc9a3bc3e212fdc44b7cea241d4dae",
+  "source": "GIT_OBJECT_DATABASE (git ls-tree --name-only, excludes .audit-runtime/forensic-20260924/** per the universe-separation rule)",
+  "discovered_directories": 798,
+  "audited_directories": 798,
+  "root_level_entries": [
+    ".audit-runtime",
+    ".claude",
+    ".config",
+    ".github",
+    "apps",
+    "docs",
+    "e2e",
+    "infra",
+    "packages",
+    "public",
+    "reports",
+    "scripts",
+    "server",
+    "supabase"
+  ],
+  "high_file_count_directories": [
+    {
+      "path": ".claude/ops/evidence",
+      "count": 472
+    },
+    {
+      "path": ".claude/ops/records/task",
+      "count": 86
+    },
+    {
+      "path": "apps/api/src/core/automation",
+      "count": 54
+    },
+    {
+      "path": "apps/api/src/database",
+      "count": 73
+    },
+    {
+      "path": "apps/api/src/database/migrations",
+      "count": 275
+    },
+    {
+      "path": "docs/backend-v2",
+      "count": 82
+    },
+    {
+      "path": "docs/product-tasks",
+      "count": 109
+    }
+  ],
+  "method": "fully mechanical -- derived entirely from git ls-tree paths, zero semantic judgment; HIGH_FILE_COUNT/SINGLE_FILE_DIR are informational flags for follow-up, not verdicts"
+}

@@ -155,6 +155,19 @@
       ],
       "conclusion": "no undiscovered second production backend/bootstrap found -- all 4 non-trivial hits (2 MAIN_BOOTSTRAP, 2 STANDALONE_SERVER) individually verified and explained, none surprising"
     },
+    "directories": {
+      "script": "census-directories.ts",
+      "source": "GIT_OBJECT_DATABASE (git ls-tree --name-only)",
+      "scope": "every directory in the tracked tree, excluding .audit-runtime/forensic-20260924/** per the universe-separation rule -- repo-wide, not TS/TSX-scoped",
+      "discovered_directories": 798,
+      "audited_directories": 798,
+      "gap": 0,
+      "root_level_entries": [".audit-runtime", ".claude", ".config", ".github", "apps", "docs", "e2e", "infra", "packages", "public", "reports", "scripts", "server", "supabase"],
+      "root_pollution_check": "all 14 root-level entries are known/expected directories -- no new/surprising root-level file or directory found; server/ is the already-documented finding, public/ is the already-documented orphaned-scaffolding finding (AGENT-12)",
+      "high_file_count_flagged": [".claude/ops/evidence (472)", ".claude/ops/records/task (86)", "apps/api/src/core/automation (54)", "apps/api/src/database (73)", "apps/api/src/database/migrations (275, expected -- 1 file per migration)", "docs/backend-v2 (82)", "docs/product-tasks (109)"],
+      "high_file_count_verdict": "all informational, none flagged as a real problem on inspection -- migrations/evidence/docs directories are naturally large flat collections by their own nature, not god-directories in the architectural-debt sense",
+      "method": "fully mechanical, zero semantic judgment"
+    },
     "remaining_mechanical_gap": "the same layers for non-TS/TSX files (JSON/SQL/CSS/HTML/YAML/SHELL/MD -- 291,864 of the 614,212 total physical lines) have not been run; a LINE_CLASS taxonomy for those formats would need per-format parsers (e.g. a real SQL/YAML parser), not yet built this run",
     "explicitly_not_attempted": "per-item SEMANTIC classification of the ~38,104 syntactic symbols and the full named-item/technical-term universe (NAMED_ITEM_ID-level CORRECT/SEMANTIC_DRIFT/WRONG_NAME/etc. verdicts) -- this requires reading each item's real usage context, which is not a mechanizable operation; partitioning it across many agents changes who pays the per-item cost, not whether it's paid, and an agent given hundreds of items with no time to read context per item would produce unearned labels, which is a fabricated certificate regardless of the delivery mechanism. Real semantic findings continue to be produced the way they have been all session -- genuine, evidenced, one real defect/question at a time -- which is real semantic coverage, not exhaustive-by-headcount coverage."
   }
