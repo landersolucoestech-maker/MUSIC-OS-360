@@ -1,0 +1,16 @@
+{
+  "total_files_compared": 3880,
+  "files_with_identical_byte_length": 3016,
+  "files_with_different_byte_length": 864,
+  "files_with_identical_physical_line_count": 3879,
+  "files_with_different_physical_line_count": 1,
+  "total_absolute_byte_delta": 164064,
+  "diff_files_that_are_git_dirty": 3,
+  "diff_files_that_are_NOT_git_dirty": 861,
+  "explanation": "files differing in byte_length but NOT flagged dirty by git status are CRLF<->LF checkout-normalization artifacts (core.autocrlf=true), proven by physical_line_count being identical for all of them -- confirmed below",
+  "crlf_hypothesis_check": {
+    "of_the_non_git_dirty_diffs": 861,
+    "how_many_have_identical_line_count": 861,
+    "conclusion": "if these two numbers match, every non-git-dirty byte delta is pure newline-byte inflation, not content drift"
+  }
+}

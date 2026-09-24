@@ -1,0 +1,103 @@
+{
+  "audit_run_id": "forensic-20260924",
+  "baseline": {
+    "branch": "dev",
+    "head_sha": "8c477787c043bdf0ceecf9feafe27a17fc932a3c",
+    "head_tree_sha": "70b6518697f76c18cbe0244806b1be5d8f0d85aa",
+    "origin_dev_sha": "8c477787c043bdf0ceecf9feafe27a17fc932a3c",
+    "head_equals_origin_dev": true,
+    "git_object_format": "sha1"
+  },
+  "universe_separation_rule": {
+    "rule": "audit output cannot recursively become an input subject of the same audit run",
+    "subject_universe": "the project tree at HEAD (70b6518697f76c18cbe0244806b1be5d8f0d85aa) plus the current worktree, EXCLUDING .audit-runtime/forensic-20260924/** ",
+    "audit_artifact_universe": ".audit-runtime/forensic-20260924/** exclusively -- census output, custody records, agent prompts/results, run.json itself",
+    "applies_to_run_id_only": "forensic-20260924 -- does not exclude .audit-runtime/ content from OTHER, earlier audit runs (e.g. pt-column-census.jsonl under .audit-runtime/ root, which IS part of SUBJECT_UNIVERSE as committed product tooling)"
+  },
+  "foreign_worktree_paths": [
+    {
+      "path": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+      "provenance": "FOREIGN_PREEXISTING_OR_CONCURRENT_WORK",
+      "mission_owned": false,
+      "action": "PRESERVE_UNTOUCHED"
+    },
+    {
+      "path": "apps/web/src/modules/artist/components/PositioningCard.tsx",
+      "provenance": "FOREIGN_PREEXISTING_OR_CONCURRENT_WORK",
+      "mission_owned": false,
+      "action": "PRESERVE_UNTOUCHED"
+    }
+  ],
+  "mission_owned_dirty_paths": [
+    {
+      "path": "docs/engineering/database.md",
+      "provenance": "MISSION_OWNED -- documentation fix from this session's §43/§66 EXTERNAL_MANAGED migration finding, edited before this P0 custody interruption, not yet committed",
+      "mission_owned": true,
+      "action": "PENDING_COMMIT"
+    }
+  ],
+  "census_reconciliation": {
+    "head_tree_physical_lines": 614212,
+    "worktree_physical_lines": 614228,
+    "final_line_delta": 16,
+    "expected_line_delta_components": [
+      { "path": "apps/web/.../ArtistVision360Modal.tsx", "line_delta": 0 },
+      { "path": "apps/web/.../PositioningCard.tsx", "line_delta": 0 },
+      { "path": "docs/engineering/database.md", "line_delta": 16, "evidence": "git diff --stat: 1 file changed, 16 insertions(+)" }
+    ],
+    "expected_line_delta_total": 16,
+    "discrepancy_status": "CLOSED -- final delta (16) exactly matches expected delta (16), mechanically proven"
+  },
+  "coverage_claims": {
+    "tracked_file_coverage": "3880/3880 (100%, both worktree and HEAD_TREE sourced censuses)",
+    "tracked_byte_accounting": "complete for all 3880 files (real sha256 + byte_length per file, both censuses)",
+    "tracked_physical_line_coverage": "complete for all 3862 TEXT + 1 TEXT_WITH_CONTROL_BYTES files (3863 line-counted files); 17 BINARY files correctly excluded from line counting, not silently dropped from the census (still hashed/byte-counted)",
+    "tracked_ts_tsx_lexical_token_coverage": "2522/2522 .ts/.tsx files (excluding .d.ts) -- LANGUAGE-SCOPED, not repo-wide. discovered_tokens=1968599 (corrected; AGENT-02 found 2 real bugs in the v1 scanner inflating this by 62,660/3.08%, fixed this run by deriving tokens from the same already-correct parser used for ast_node_count instead of a separate re-lex pass)",
+    "tracked_ts_tsx_syntactic_ast_coverage": "2522/2522, syntactic AST node traversal + syntactic symbol surface only -- NOT type-checker-bound symbol resolution (that requires a full ts.Program build per tsconfig project, not executed)",
+    "semantic_diagnostics": "NOT_EXECUTED",
+    "type_binding": "NOT_EXECUTED",
+    "type_checker_symbol_resolution": "NOT_EXECUTED",
+    "other_language_coverage": {
+      "note": "per-format state not yet built as a separate ledger this run -- JS/MJS/CJS/JSON/SQL/CSS/HTML/YAML/SHELL/MD files ARE included in the file/byte/line census (all 3880 tracked files), but have NO token/AST parser run against them (only .ts/.tsx got that treatment)",
+      "status": "DISCOVERED_FILES known exactly per extension via the file census; PARSED_OR_NOT = false for all non-ts/tsx; TOKENIZED_OR_NOT = false; AST_AVAILABLE_OR_NOT = false; PARSER_USED = none"
+    },
+    "byte_accounting_vs_byte_semantic_review": {
+      "byte_accounting": "COMPLETE (sha256 + byte_length, every tracked file, both HEAD_TREE and WORKTREE sourced)",
+      "byte_semantic_review": "NOT_PROVEN at full-repo scope -- a sha256 proves content identity/integrity, not that each byte was individually classified/reviewed for meaning"
+    },
+    "worktree_vs_head_tree_byte_interchangeability": "DISPROVEN as a blanket claim, then CORRECTED -- 864/3880 files (22%) differ in byte_length between worktree and HEAD_TREE despite only 3 being git-dirty (core.autocrlf=true CRLF checkout noise); real join proof in cross-census-reconciliation.json. physical_line_count IS interchangeable (861/861 non-dirty diffs proven identical line count)."
+  },
+  "stale_state": {
+    "stale_by_tree_mutation": "HEAD_TREE (70b6518697...) has not changed since the prior turn's report -- no claim bound exclusively to HEAD_TREE is stale by tree mutation",
+    "prior_evidence_reusable": ["shares.type/party_role fix (931ac6d1)", "shares.role decision matrix", "transactions v2 decision matrix", "origem_externa* 6-column audit", "5 orphaned packages finding", "server/ai-proxy.ts finding", "REDIS_QUEUE_URL flag", "naming-guard 23/23 tests", "API 306/306 + e2e 197/197 test results (all bound to tree 8c477787, unchanged)"],
+    "worktree_divergence": "3 tracked files (2 foreign, 1 mission-owned uncommitted docs edit)",
+    "revalidation_required": ["census-files.ts and census-files-head-tree.ts themselves were revalidated and corrected this turn (binary/text/text-with-control-bytes classification bug found and fixed)"]
+  },
+  "multi_agent_capability": {
+    "multi_agent_capability": "AVAILABLE",
+    "real_subagent_tool_available": true,
+    "real_parallel_agent_execution_available": true,
+    "evidence": "Agent tool with subagent_type parameter, specialized read-only reviewer types (database-reviewer, architecture-reviewer, security-reviewer, integration-reviewer, general-purpose, etc.), each spawned with fresh/isolated context and Read/Grep/Glob/Bash-only tool access -- no Edit/Write, so naturally read-only",
+    "independence_state": "genuine process isolation for each launched agent (fresh context, no visibility into orchestrator's prior reasoning or into each other's results while running) -- this satisfies real independence for PRIMARY-style parallel investigation; it does NOT constitute a PRIMARY/SECONDARY/SECONDARY-blind-to-PRIMARY sealed-commitment review chain for the same finding, which was not attempted this run"
+  },
+  "agent_registry_final": [
+    { "agent_id": "AGENT-02", "subagent_type": "general-purpose", "scope": "independent census script review", "state": "COMPLETED", "tool_uses": 29, "duration_ms": 609506, "artifact": "agent-results/agent-02-census-review.md", "real_bugs_found": 2, "false_claims_disproven": 1 },
+    { "agent_id": "AGENT-05", "subagent_type": "integration-reviewer", "scope": "integration discovery", "state": "COMPLETED", "tool_uses": 31, "duration_ms": 348804, "artifact": "agent-results/agent-05-integrations.md", "providers_found": 25, "new_findings": 1 },
+    { "agent_id": "AGENT-09", "subagent_type": "security-reviewer", "scope": "security/auth/tenancy local", "state": "COMPLETED", "tool_uses": 49, "duration_ms": 529458, "artifact": "agent-results/agent-09-security.md", "controllers_checked": 85, "confirmed_findings": 1, "new_blockers": 1 },
+    { "agent_id": "AGENT-10", "subagent_type": "database-reviewer", "scope": "database/migrations/RLS inventory", "state": "COMPLETED", "tool_uses": 79, "duration_ms": 954655, "artifact": "agent-results/agent-10-database.md", "migrations_checked": 274, "tables_checked": 171, "new_findings": 1 },
+    { "agent_id": "AGENT-12", "subagent_type": "architecture-reviewer", "scope": "architecture/placement", "state": "COMPLETED", "tool_uses": 40, "duration_ms": 473062, "artifact": "agent-results/agent-12-architecture.md", "prior_findings_confirmed": 2, "new_findings": 4 }
+  ],
+  "new_findings_this_run": [
+    { "id": "F-ARCH-ORPHAN-TSCONFIG-01", "source": "AGENT-12", "summary": "orphaned root-level tsconfig.app.json/tsconfig.node.json and root public/ from a pre-monorepo layout, unreferenced by any real build/CI command", "severity": "LOW", "action": "documented only, not fixed (read-only pass)" },
+    { "id": "F-ARCH-DUPLICATE-FORMAT-01", "source": "AGENT-12", "summary": "3 independently-implemented, live currency/date formatters for the same PT-BR business rule (shared/lib/format-utils.ts, modules/marketing/utils/marketing-format.ts, modules/licensing/lib/licenca-format.ts), 32 consumer files split across them, no documented reason", "severity": "MEDIUM", "action": "NEEDS_PRODUCT_DECISION -- which is canonical, or consolidate to shared/lib/format-utils.ts" },
+    { "id": "F-ARCH-GOD-FILES-01", "source": "AGENT-12", "summary": "4 files exceed 2000 lines (entities.ts 3717, ArtistVision360Modal.tsx 3076, LancamentoFormModal.tsx 2685, Configuracoes.tsx 2619)", "severity": "INFO", "action": "documented only, decomposition debt" },
+    { "id": "F-SEC-DEPENDENCY-SCAN-01", "source": "AGENT-09", "summary": "npm audit / OSV-Scanner could not run (no package-lock.json in this pnpm monorepo; OSV-Scanner skipped per networkAllowed:false policy)", "severity": "INFO", "action": "BLOCKED_EXTERNAL, honestly disclosed, not presented as a clean scan" },
+    { "id": "F-INTEGRATION-OAUTH-DUP-01", "source": "AGENT-05", "summary": "Meta OAuth token-exchange logic independently implemented twice (instagram.service.ts and integrations.controller.ts's GENERIC_OAUTH_PLATFORMS path)", "severity": "LOW", "action": "NEEDS_PRODUCT_DECISION -- intentional tenant-scoped-vs-corporate separation, or consolidate" },
+    { "id": "F-DB-SCHEMA-GUARD-COVERAGE-01", "source": "AGENT-10", "summary": "schema-reconciliation.e2e-spec.ts exercises only 5 of ~171 current tables; no active drift found (InvoiceEntity spot-check consistent), but guard breadth is a real coverage gap", "severity": "MEDIUM (informational, no active bug)", "action": "documented only" }
+  ],
+  "confirmed_findings_this_run": [
+    { "id": "shares.type/party_role fix", "source": "AGENT-02 (indirect, via unaffected census work)", "result": "unaffected, tree unchanged" },
+    { "id": "5 orphaned packages", "source": "AGENT-12", "result": "CONFIRMED independently" },
+    { "id": "server/ai-proxy.ts", "source": "AGENT-09 and AGENT-12 (both independently)", "result": "CONFIRMED independently by 2 separate agents, AGENT-09 additionally recorded it in the project's own evidence ledger (.claude/ops/state.json: find-10c37104, evid-0ae53f86)" }
+  ]
+}

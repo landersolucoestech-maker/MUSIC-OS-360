@@ -1,0 +1,20 @@
+{
+  "head_sha": "8c477787c043bdf0ceecf9feafe27a17fc932a3c",
+  "head_tree_sha": "70b6518697f76c18cbe0244806b1be5d8f0d85aa",
+  "git_object_format": "sha1",
+  "source": "GIT_OBJECT_DATABASE (git ls-tree + git cat-file --batch, zero filesystem reads)",
+  "head_tree_path_count": 3880,
+  "head_tree_regular_file_count": 3880,
+  "head_tree_executable_file_count": 0,
+  "head_tree_symlink_count": 0,
+  "head_tree_gitlink_count": 0,
+  "head_tree_total_bytes": 30750175,
+  "head_tree_text_files": 3862,
+  "head_tree_text_with_control_bytes_files": 1,
+  "head_tree_binary_files": 17,
+  "head_tree_physical_lines": 614212,
+  "head_tree_errors": 0,
+  "text_with_control_bytes_paths": [
+    ".claude/runtime/lib/policy.mjs"
+  ]
+}

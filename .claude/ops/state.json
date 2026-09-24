@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-18T22:40:07.160Z",
+  "updatedAt": "2026-09-24T08:06:19.998Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -435,6 +435,66 @@
       "createdAt": "2026-09-16T10:30:14.964Z",
       "justification": "Added ['convertido','closed'] to ptToEn with documented audit trail; new regression spec (6 tests) covers all 10 mappings, fail-closed guard, DEFAULT, and CHECK constraint; behaviorally verified against fresh local Postgres for both happy-path backfill and unweakened fail-closed rollback on a genuinely unmapped value",
       "resolvedAt": "2026-09-16T10:30:21.040Z"
+    },
+    {
+      "id": "find-10c37104",
+      "category": "G",
+      "severity": "HIGH",
+      "file": "server/ai-proxy.ts",
+      "line": 141,
+      "summary": "Independently confirmed (read-only re-audit): server/ai-proxy.ts is a standalone http server (not part of apps/api's NestJS auth stack) exposing POST /api/ai/generate (raw OpenAI passthrough, billed to OPENAI_API_KEY) and POST /api/acrcloud/:endpoint with zero authentication, zero tenant scoping, zero rate limiting, and Access-Control-Allow-Origin: * on every response (line 131). Confirmed exhaustively unreferenced: no docker-compose/Dockerfile/package.json script/workflow starts this process, and apps/web has 0 callers of /api/ai/generate -- not a live production vulnerability today, but a real footgun if ever started manually. Already documented in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md (2026-09-24 entry); recorded here for this independent security-audit pass's own evidence trail. Grep for Access-Control-Allow-Origin.*\\* repo-wide confirms this is the ONLY file with a wildcard-CORS pattern.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-24T07:59:19.397Z"
+    },
+    {
+      "id": "find-dbd79703",
+      "category": "E",
+      "severity": "INFO",
+      "file": "apps/api/src/database/migrations/index.ts",
+      "line": null,
+      "summary": "Migration registry inventory (read-only census): 274 migration files on disk (275 .ts files in migrations/ minus index.ts), 272 registered in ALL_MIGRATIONS/imports (exact match, no drift between import list and array). 2 unregistered files on disk: 20260713000002_DropOrphanContactsSatelliteTables.ts and 20260910900001_PROPOSAL_BackfillArtistGoalStatusToEnglish.ts -- both deliberate/documented (index.ts:106-110 comment; self-documented PROPOSAL header) and both enforced via scripts/verify-migration-source-of-truth.mjs's INTENTIONALLY_UNREGISTERED_MIGRATIONS allowlist. Zero undocumented/dangling registrations found.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-24T08:05:45.586Z"
+    },
+    {
+      "id": "find-4dddf862",
+      "category": "E",
+      "severity": "INFO",
+      "file": "apps/api/src/database/migration-classification.ts",
+      "line": null,
+      "summary": "Cross-referenced migration-classification.ts (1 migration classified EXTERNAL_MANAGED: RealtimeBroadcastAuthorization20260801000001) against actual DDL in all 274 migration files: grepped for auth./storage./realtime./extensions. schema-qualified identifiers (18 files matched), then filtered to actual DDL verbs (CREATE/ALTER/DROP/GRANT/REVOKE). Only RealtimeBroadcastAuthorization20260801000001 (apps/api/src/database/migrations/20260801000001_RealtimeBroadcastAuthorization.ts:35,37,39,47,49,61) performs real DDL against a non-public schema (realtime.messages: ALTER TABLE ... ENABLE ROW LEVEL SECURITY, CREATE POLICY). All other 17 matches are read-only references (auth.jwt()/auth.uid() in RLS predicates, to_regclass('auth.users') introspection) or false-positive substring matches to unrelated app code (frontend storage.ts module, StorageService). Zero classification mismatches found across 274 migrations checked.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-24T08:05:49.926Z"
+    },
+    {
+      "id": "find-d1fd67bd",
+      "category": "E",
+      "severity": "INFO",
+      "file": "apps/api/src/database/migrations",
+      "line": null,
+      "summary": "RLS census across all 274 migrations (up()-only event extraction, resolving templated for-loop table lists and quoted ${table} refs): 171 currently-existing application tables (CREATE TABLE minus real DROP TABLE minus rename-swap artifacts, event-ordered). 178 distinct table names have a confirmed ENABLE ROW LEVEL SECURITY event with no later DISABLE in up(). Diff (current tables with zero RLS-enable event) = 3 initial candidates, all resolved as non-issues on manual read: skill_run_logs and workflow_execution_logs DO have RLS (apps/api/src/database/migrations/20260613000013_RlsPoliciesSkillWorkflowLogs.ts:45, missed by regex because the for-loop destructures a tuple array, not a bare table var); market_reference_metrics is deliberately tenant-less (no tenant_id column, documented cross-tenant public-data cache, apps/api/src/database/migrations/20260831000003_CreateMarketReferenceMetrics.ts:15-25). Zero real tenant-scoped tables found missing RLS.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-24T08:05:57.244Z"
+    },
+    {
+      "id": "find-0dbee8c2",
+      "category": "E",
+      "severity": "MEDIO",
+      "file": "apps/api/test/e2e/schema/schema-reconciliation.e2e-spec.ts",
+      "line": null,
+      "summary": "entities.ts <-> migrations schema-drift guard coverage is narrow, not exhaustive. Found: (1) a generic migrations/index.ts registry-parity guard (scripts/verify-migration-source-of-truth.mjs) that DOES cover 100% of migration files deterministically; but (2) no equivalent exhaustive guard for entities.ts @Column declarations vs actual physical columns -- coverage is a set of per-incident targeted specs (apps/api/src/database/lead-entity-schema-alignment.spec.ts, client-entity-schema-alignment.spec.ts, work-participants-normalization.spec.ts, form-field-dto-parity.spec.ts, plus migration-specific specs for create-client-attachments/restore-ecad/remove-legacy-society-code) written reactively after a real drift bug (e.g. leads.score/pipeline_stage). apps/api/test/e2e/schema/schema-reconciliation.e2e-spec.ts is a real live-Postgres e2e test but only exercises 5 of ~171 current tables (conversations, conversation_messages, transactions, financial_categories, leads) via reflect-metadata + actual repo.save/find calls -- TypeORM's synchronize:false does not validate unqueried entities' columns at DataSource.initialize(). A future ad-hoc column addition/removal on entities.ts for any of the other ~165 tables would not be caught pre-runtime by any existing guard. Spot-checked apps/api/src/database/entities.ts InvoiceEntity (lines 1061-1121) against the most recent migration touching that table (20260923000001_RenameInvoiceTomadorGenericFieldsToEnglish.ts) and found zero drift (tomador_address/tomador_city already correct in entities.ts) -- no live bug found, this finding is about missing systemic coverage, not a confirmed current drift instance.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-24T08:06:14.060Z"
     }
   ],
   "evidenceIds": [
@@ -581,7 +641,9 @@
     "evid-012b2ee3",
     "evid-f93017e9",
     "evid-d3cb1150",
-    "evid-0da6751a"
+    "evid-0da6751a",
+    "evid-0ae53f86",
+    "evid-0e362748"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

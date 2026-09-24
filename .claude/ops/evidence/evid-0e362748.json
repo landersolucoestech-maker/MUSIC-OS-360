@@ -1,0 +1,12 @@
+{
+  "id": "evid-0e362748",
+  "createdAt": "2026-09-24T08:06:19.991Z",
+  "type": "REVIEW",
+  "reviewer": "db-schema-auditor",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Read-only mechanical inventory of apps/api/src/database/migrations (274 files) and entities.ts completed. VERDICT: PASS -- no destructive/unauthorized migration-registry drift, no RLS-classification mismatch, no tenant table missing RLS. One MEDIO coverage-gap finding recorded (entities.ts<->schema drift guard is per-incident, not exhaustive) with concrete evidence and no confirmed live drift instance. No files modified; no migration or verify script executed.",
+  "workspaceFingerprint": "6661f92c30d87fed829a27f7e77ab15f2753aee012da3739ab6a6bf33e5f136a",
+  "fingerprintStatus": "BOUND",
+  "head": "8c477787c043bdf0ceecf9feafe27a17fc932a3c"
+}

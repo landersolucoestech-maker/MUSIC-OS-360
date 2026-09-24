@@ -1,0 +1,11 @@
+{
+  "source": "FILESYSTEM_WORKTREE (fs.readFileSync); file LIST from git ls-files (git index)",
+  "discovered_tracked_files": 3880,
+  "audited_files": 3880,
+  "read_errors": 0,
+  "text_files": 3862,
+  "text_with_control_bytes_files": 1,
+  "binary_files": 17,
+  "discovered_bytes": 30914239,
+  "discovered_physical_lines": 614228
+}

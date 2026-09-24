@@ -1,0 +1,12 @@
+{
+  "id": "evid-0ae53f86",
+  "createdAt": "2026-09-24T07:59:32.338Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Independent read-only security audit (VERDICT=PASS for scope covered): (1) JWT tenant resolution traced to apps/api/src/core/guards/auth.guard.ts:179-185 (ES256, JWKS-verified, issuer/audience checked) feeding apps/api/src/core/guards/tenant.guard.ts:64-104 which resolves tenant server-side from auth.orgId (never trusts client X-Tenant-ID alone, cross-checks it, requires active membership). (2) Enumerated all apps/api/src/modules/**/*.controller.ts; auth/tenant/roles guards are global via APP_GUARD chain in app.module.ts:250-283; every @Public() route audited individually (webhooks HMAC/signature-verified, health checks, dev-auth gated by isProdLike(), OAuth callbacks protected by signed/expiring state or server-issued exchange tokens) -- no accidentally-unprotected route found among sibling routes. (3) Queue processors (ai-jobs, external-data) and webhook handlers (WhatsApp, Stripe, Autentique, external-data) all resolve tenantId server-side from a trustworthy source (enqueue-time payload set by authenticated caller, or a submission/phone-mapping the API itself recorded) -- explicit comments (find-bc7c20a6, find-2ed4c244) confirm this was a deliberate, audited design decision. (4) server/ai-proxy.ts CONFIRMED unauthenticated with wildcard CORS (finding find-10c37104, HIGH, not currently reachable/deployed). Repo-wide grep for Access-Control-Allow-Origin.*\\* found no other occurrence. (5) Hardcoded-secret grep across apps/api/src and apps/web/src .ts/.tsx (excluding spec/mocks/fixtures) found zero live-looking credential literals; the only secret-scanner hit (apple-music.service.spec.ts:10) is a synthetic EC test key explicitly labeled as never-real in an adjacent comment -- FALSE POSITIVE.",
+  "workspaceFingerprint": "6661f92c30d87fed829a27f7e77ab15f2753aee012da3739ab6a6bf33e5f136a",
+  "fingerprintStatus": "BOUND",
+  "head": "8c477787c043bdf0ceecf9feafe27a17fc932a3c"
+}

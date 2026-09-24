@@ -1,0 +1,10 @@
+{
+  "discovered_ts_files": 2522,
+  "audited_ts_files": 2522,
+  "read_or_parse_errors": 0,
+  "files_with_parse_diagnostics": 0,
+  "discovered_tokens": 1968599,
+  "discovered_ast_nodes": 1592761,
+  "discovered_syntactic_symbols": 38104,
+  "note": "syntactic symbol surface only -- not full type-checker binding resolution (that requires a full ts.Program build, out of scope for this pass)"
+}
