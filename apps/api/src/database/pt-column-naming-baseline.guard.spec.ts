@@ -137,4 +137,30 @@ describe('Guarda permanente: censo de colunas físicas PT-suspeitas não diverge
       );
     }
   });
+
+  // Prova positiva/negativa da heurística isPtSuspect, isolada de entities.ts real
+  // (evidência direta de que o mecanismo detecta certo, não só "funcionou uma vez").
+  describe('isPtSuspect: verdadeiro-positivo em coluna morta conhecida, verdadeiro-negativo em domínio legal intencional', () => {
+    it.each([
+      // Reintrodução simulada das 3 colunas mortas dropadas por 20260923000002 --
+      // se algum dia voltarem a aparecer como @Column, isto prova que o guard as pegaria.
+      'compositores', 'interpretes', 'produtores',
+      // Amostra dos tokens PT-suspeitos reais já classificados LIVE_CANONICAL_PT
+      // (a heurística os marca "suspeitos" corretamente -- suspeito != morto;
+      // a classificação individual é quem decide LIVE vs DEAD, não este guard).
+      'nome_completo', 'telefone_encrypted', 'razao_social', 'data_prevista',
+    ])('"%s" É detectado como PT-suspeito', (field) => {
+      expect(isPtSuspect(field)).toBe(true);
+    });
+
+    it.each([
+      // LEGAL_DOMAIN_INTENTIONAL -- nunca deveriam disparar o guard mesmo sendo PT.
+      'cpf', 'cnpj', 'cpf_cnpj_encrypted', 'inscricao_estadual', 'tomador_razao_social',
+      'nfse', 'aliquota_iss', 'regime_tributario',
+      // Termos EN puros -- nunca deveriam disparar.
+      'created_at', 'tenant_id', 'status', 'party_role', 'percentage',
+    ])('"%s" NÃO é detectado como PT-suspeito (falso-positivo seria um defeito do guard)', (field) => {
+      expect(isPtSuspect(field)).toBe(false);
+    });
+  });
 });
