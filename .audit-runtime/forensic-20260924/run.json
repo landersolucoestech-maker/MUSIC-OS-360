@@ -138,7 +138,24 @@
       "cross_app_boundary_violations_note": "independent confirmation, via a completely different method (AST import resolution across all 10,594 discovered edges, not grep/manual reading) of what AGENT-12 and AGENT-09 already found by reading code -- 2 independent methods now agree",
       "classification_method": "fully mechanical/deterministic (AST import parsing + real path resolution against the tracked-file set), zero semantic/human judgment involved"
     },
-    "remaining_mechanical_gap": "the same two layers for non-TS/TSX files (JSON/SQL/CSS/HTML/YAML/SHELL/MD -- 291,864 of the 614,212 total physical lines) have not been run; a LINE_CLASS taxonomy for those formats would need per-format parsers (e.g. a real SQL/YAML parser), not yet built this run",
+    "entrypoints": {
+      "script": "census-entrypoints.ts",
+      "source": "GIT_OBJECT_DATABASE",
+      "scope": "TS/TSX files only (2531/2531, 100%)",
+      "method": "AST-derived (decorator + call-expression detection against real NestJS/React APIs), not regex guessing",
+      "total_entrypoints_discovered": 691,
+      "entrypoint_kind_counts": { "CLI_SHEBANG": 23, "MAIN_BOOTSTRAP": 2, "NEST_CONTROLLER": 88, "NEST_CONTROLLER_ROUTE": 568, "STANDALONE_SERVER": 2, "QUEUE_PROCESSOR": 7, "FRONTEND_ROOT": 1 },
+      "main_bootstrap_verified": [
+        { "file": "apps/api/src/create-app.ts:69", "verdict": "REAL, the actual app factory -- confirmed apps/api/src/main.ts:38,73 imports and calls createApp() from this exact file" },
+        { "file": "apps/api/scripts/verify-fase3k-http.ts:379", "verdict": "benign -- a known verify-*.ts smoke-test script pattern (same family as verify-realtime-external.ts, verify-canonical-column-order.ts already used this session), spins up its own app instance for testing, not a production entrypoint" }
+      ],
+      "standalone_server_verified": [
+        { "file": "apps/api/src/modules/billing/webhook-rawbody.integration.spec.ts:48", "verdict": "benign -- express() called inside a .spec.ts test file as test harness infrastructure, not a production entrypoint" },
+        { "file": "server/ai-proxy.ts:130", "verdict": "the already-documented finding (docs/NAMING_NORMALIZATION_CANONICAL_MAP.md), independently re-confirmed by a 3rd method now (AST call-expression detection, after AGENT-09's and AGENT-12's grep-based confirmations)" }
+      ],
+      "conclusion": "no undiscovered second production backend/bootstrap found -- all 4 non-trivial hits (2 MAIN_BOOTSTRAP, 2 STANDALONE_SERVER) individually verified and explained, none surprising"
+    },
+    "remaining_mechanical_gap": "the same layers for non-TS/TSX files (JSON/SQL/CSS/HTML/YAML/SHELL/MD -- 291,864 of the 614,212 total physical lines) have not been run; a LINE_CLASS taxonomy for those formats would need per-format parsers (e.g. a real SQL/YAML parser), not yet built this run",
     "explicitly_not_attempted": "per-item SEMANTIC classification of the ~38,104 syntactic symbols and the full named-item/technical-term universe (NAMED_ITEM_ID-level CORRECT/SEMANTIC_DRIFT/WRONG_NAME/etc. verdicts) -- this requires reading each item's real usage context, which is not a mechanizable operation; partitioning it across many agents changes who pays the per-item cost, not whether it's paid, and an agent given hundreds of items with no time to read context per item would produce unearned labels, which is a fabricated certificate regardless of the delivery mechanism. Real semantic findings continue to be produced the way they have been all session -- genuine, evidenced, one real defect/question at a time -- which is real semantic coverage, not exhaustive-by-headcount coverage."
   }
 }

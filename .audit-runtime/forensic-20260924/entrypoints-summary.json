@@ -1,0 +1,21 @@
+{
+  "head_sha": "d4026a70512d42440a54aeba6820d8f3c61fd26d",
+  "source": "GIT_OBJECT_DATABASE (git ls-tree + git cat-file --batch)",
+  "ts_tsx_files_scanned": 2531,
+  "total_entrypoints_discovered": 691,
+  "entrypoint_kind_counts": {
+    "CLI_SHEBANG": 23,
+    "MAIN_BOOTSTRAP": 2,
+    "NEST_CONTROLLER": 88,
+    "NEST_CONTROLLER_ROUTE": 568,
+    "STANDALONE_SERVER": 2,
+    "QUEUE_PROCESSOR": 7,
+    "FRONTEND_ROOT": 1
+  },
+  "method": "AST-derived (decorator + call-expression detection against real NestJS/React APIs), not regex guessing",
+  "known_gaps": [
+    "server/ai-proxy.ts is caught by STANDALONE_SERVER (http.createServer at module scope) -- cross-check against the already-documented finding",
+    "webhook controllers are a subset of NEST_CONTROLLER_ROUTE (an @Public() route is still a route -- auth status is a separate, already-audited dimension, not re-derived here)",
+    "raw shell scripts (.sh) and non-TS CLI entrypoints are not scanned by this pass (TS/TSX scope only, consistent with this run's stated scope discipline)"
+  ]
+}
