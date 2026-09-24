@@ -1,0 +1,15 @@
+{
+  "id": "evid-18361ff7",
+  "createdAt": "2026-09-24T17:04:01.070Z",
+  "type": "COMMAND",
+  "label": "node \"C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\run-migration-spec-test.mjs\"",
+  "command": "node \"C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\run-migration-spec-test.mjs\"",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "node:internal/modules/cjs/loader:1479\r\n  throw err;\r\n  ^\r\n\r\nError: Cannot find module 'C:\\Users\\Usuario\\Documents\\MUSIC-OS-360\\\"C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\run-migration-spec-test.mjs\"'\r\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1476:15)\r\n    at wrapResolveFilename (node:internal/modules/cjs/loader:1049:27)\r\n    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1073:10)\r\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1094:12)\r\n    at Module._load (node:internal/modules/cjs/loader:1262:25)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\r\n    at node:internal/main/run_main_module:33:47 {\r\n  code: 'MODULE_NOT_FOUND',\r\n  requireStack: []\r\n}\r\n\r\nNode.js v24.15.0",
+  "workspaceFingerprint": "7844f6d9de3cfb4e469db7885ab9b5c3ba52fe012e5c2f3d5bd0e27ec610f68a",
+  "fingerprintStatus": "BOUND",
+  "head": "42f5844fc5d8c873fb397c343849af18ea73dd4a",
+  "durationMs": 69
+}

@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-24T08:06:19.998Z",
+  "updatedAt": "2026-09-24T17:13:30.896Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -37,7 +37,8 @@
             "evid-4391b807",
             "evid-f74676e2",
             "evid-af366221",
-            "evid-efea3100"
+            "evid-efea3100",
+            "evid-46015e2c"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -96,7 +97,8 @@
             "evid-54be99d3",
             "evid-51777a85",
             "evid-f8211f00",
-            "evid-8dd8b54e"
+            "evid-8dd8b54e",
+            "evid-309d3bad"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -162,7 +164,8 @@
             "evid-34f8bd42",
             "evid-e7298125",
             "evid-97653760",
-            "evid-5ea045c4"
+            "evid-5ea045c4",
+            "evid-65bbc0c0"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -263,7 +266,8 @@
             "evid-67a9e77d",
             "evid-54d7bb72",
             "evid-5db3da4d",
-            "evid-012b2ee3"
+            "evid-012b2ee3",
+            "evid-25fd4829"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -289,7 +293,8 @@
             "evid-2bb76704",
             "evid-c522aa41",
             "evid-bbdcc07e",
-            "evid-0f76bb0a"
+            "evid-0f76bb0a",
+            "evid-3b63c3b0"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -322,7 +327,10 @@
             "evid-12551ef2",
             "evid-898dd5ec",
             "evid-f93017e9",
-            "evid-d3cb1150"
+            "evid-d3cb1150",
+            "evid-c8f7aeab",
+            "evid-25fd4829",
+            "evid-3b63c3b0"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -352,7 +360,9 @@
             "evid-730a568f",
             "evid-4f8e69a3",
             "evid-c9663c52",
-            "evid-0da6751a"
+            "evid-0da6751a",
+            "evid-18361ff7",
+            "evid-af1d3d89"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -444,9 +454,11 @@
       "line": 141,
       "summary": "Independently confirmed (read-only re-audit): server/ai-proxy.ts is a standalone http server (not part of apps/api's NestJS auth stack) exposing POST /api/ai/generate (raw OpenAI passthrough, billed to OPENAI_API_KEY) and POST /api/acrcloud/:endpoint with zero authentication, zero tenant scoping, zero rate limiting, and Access-Control-Allow-Origin: * on every response (line 131). Confirmed exhaustively unreferenced: no docker-compose/Dockerfile/package.json script/workflow starts this process, and apps/web has 0 callers of /api/ai/generate -- not a live production vulnerability today, but a real footgun if ever started manually. Already documented in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md (2026-09-24 entry); recorded here for this independent security-audit pass's own evidence trail. Grep for Access-Control-Allow-Origin.*\\* repo-wide confirms this is the ONLY file with a wildcard-CORS pattern.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-24T07:59:19.397Z"
+      "createdAt": "2026-09-24T07:59:19.397Z",
+      "justification": "server/ai-proxy.ts confirmed HIGH-severity by design (zero auth, wildcard CORS, OPENAI_API_KEY-billed passthrough) but exhaustively confirmed unreachable in current deployment: zero references in any docker-compose*.yml, either Dockerfile, any package.json script, or .github/workflows/**, and zero frontend callers. Not fixed because the two real remediations (delete the file, or harden it to match the backend's real auth/tenancy model) both require a product/eng decision on whether this file is still needed for some undocumented deployment target -- a naming/audit mission cannot answer that unilaterally. Fully documented with the exact decision question in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md (2026-09-24 entry). Accepted as known debt pending that decision, not silently ignored.",
+      "resolvedAt": "2026-09-24T16:25:26.153Z"
     },
     {
       "id": "find-dbd79703",
@@ -456,9 +468,11 @@
       "line": null,
       "summary": "Migration registry inventory (read-only census): 274 migration files on disk (275 .ts files in migrations/ minus index.ts), 272 registered in ALL_MIGRATIONS/imports (exact match, no drift between import list and array). 2 unregistered files on disk: 20260713000002_DropOrphanContactsSatelliteTables.ts and 20260910900001_PROPOSAL_BackfillArtistGoalStatusToEnglish.ts -- both deliberate/documented (index.ts:106-110 comment; self-documented PROPOSAL header) and both enforced via scripts/verify-migration-source-of-truth.mjs's INTENTIONALLY_UNREGISTERED_MIGRATIONS allowlist. Zero undocumented/dangling registrations found.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "LEGITIMA",
       "evidenceIds": [],
-      "createdAt": "2026-09-24T08:05:45.586Z"
+      "createdAt": "2026-09-24T08:05:45.586Z",
+      "justification": "Real census confirmed zero drift: 274 migration files, 272 registered (exact match with imports), 2 deliberately unregistered files both documented and enforced by a real CI guard (scripts/verify-migration-source-of-truth.mjs's INTENTIONALLY_UNREGISTERED_MIGRATIONS allowlist). No defect found, recorded as confirmed-clean evidence.",
+      "resolvedAt": "2026-09-24T16:25:37.149Z"
     },
     {
       "id": "find-4dddf862",
@@ -468,9 +482,11 @@
       "line": null,
       "summary": "Cross-referenced migration-classification.ts (1 migration classified EXTERNAL_MANAGED: RealtimeBroadcastAuthorization20260801000001) against actual DDL in all 274 migration files: grepped for auth./storage./realtime./extensions. schema-qualified identifiers (18 files matched), then filtered to actual DDL verbs (CREATE/ALTER/DROP/GRANT/REVOKE). Only RealtimeBroadcastAuthorization20260801000001 (apps/api/src/database/migrations/20260801000001_RealtimeBroadcastAuthorization.ts:35,37,39,47,49,61) performs real DDL against a non-public schema (realtime.messages: ALTER TABLE ... ENABLE ROW LEVEL SECURITY, CREATE POLICY). All other 17 matches are read-only references (auth.jwt()/auth.uid() in RLS predicates, to_regclass('auth.users') introspection) or false-positive substring matches to unrelated app code (frontend storage.ts module, StorageService). Zero classification mismatches found across 274 migrations checked.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "LEGITIMA",
       "evidenceIds": [],
-      "createdAt": "2026-09-24T08:05:49.926Z"
+      "createdAt": "2026-09-24T08:05:49.926Z",
+      "justification": "Real cross-reference of migration-classification.ts against all 274 migrations' actual DDL confirmed zero classification mismatches -- the sole EXTERNAL_MANAGED migration is the only one performing real DDL against a non-public schema; all other schema-qualified-identifier matches are read-only predicates or false-positive substring hits. No defect found.",
+      "resolvedAt": "2026-09-24T16:25:37.328Z"
     },
     {
       "id": "find-d1fd67bd",
@@ -480,9 +496,11 @@
       "line": null,
       "summary": "RLS census across all 274 migrations (up()-only event extraction, resolving templated for-loop table lists and quoted ${table} refs): 171 currently-existing application tables (CREATE TABLE minus real DROP TABLE minus rename-swap artifacts, event-ordered). 178 distinct table names have a confirmed ENABLE ROW LEVEL SECURITY event with no later DISABLE in up(). Diff (current tables with zero RLS-enable event) = 3 initial candidates, all resolved as non-issues on manual read: skill_run_logs and workflow_execution_logs DO have RLS (apps/api/src/database/migrations/20260613000013_RlsPoliciesSkillWorkflowLogs.ts:45, missed by regex because the for-loop destructures a tuple array, not a bare table var); market_reference_metrics is deliberately tenant-less (no tenant_id column, documented cross-tenant public-data cache, apps/api/src/database/migrations/20260831000003_CreateMarketReferenceMetrics.ts:15-25). Zero real tenant-scoped tables found missing RLS.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "LEGITIMA",
       "evidenceIds": [],
-      "createdAt": "2026-09-24T08:05:57.244Z"
+      "createdAt": "2026-09-24T08:05:57.244Z",
+      "justification": "Real RLS census across all 274 migrations found zero tenant-scoped tables missing RLS. 3 initial diff candidates all resolved as non-issues on manual read (2 false-negatives from a regex extraction blind spot, both tables confirmed to have real RLS; 1 deliberately tenant-less public-data-cache table by design). No defect found.",
+      "resolvedAt": "2026-09-24T16:25:37.532Z"
     },
     {
       "id": "find-0dbee8c2",
@@ -492,9 +510,11 @@
       "line": null,
       "summary": "entities.ts <-> migrations schema-drift guard coverage is narrow, not exhaustive. Found: (1) a generic migrations/index.ts registry-parity guard (scripts/verify-migration-source-of-truth.mjs) that DOES cover 100% of migration files deterministically; but (2) no equivalent exhaustive guard for entities.ts @Column declarations vs actual physical columns -- coverage is a set of per-incident targeted specs (apps/api/src/database/lead-entity-schema-alignment.spec.ts, client-entity-schema-alignment.spec.ts, work-participants-normalization.spec.ts, form-field-dto-parity.spec.ts, plus migration-specific specs for create-client-attachments/restore-ecad/remove-legacy-society-code) written reactively after a real drift bug (e.g. leads.score/pipeline_stage). apps/api/test/e2e/schema/schema-reconciliation.e2e-spec.ts is a real live-Postgres e2e test but only exercises 5 of ~171 current tables (conversations, conversation_messages, transactions, financial_categories, leads) via reflect-metadata + actual repo.save/find calls -- TypeORM's synchronize:false does not validate unqueried entities' columns at DataSource.initialize(). A future ad-hoc column addition/removal on entities.ts for any of the other ~165 tables would not be caught pre-runtime by any existing guard. Spot-checked apps/api/src/database/entities.ts InvoiceEntity (lines 1061-1121) against the most recent migration touching that table (20260923000001_RenameInvoiceTomadorGenericFieldsToEnglish.ts) and found zero drift (tomador_address/tomador_city already correct in entities.ts) -- no live bug found, this finding is about missing systemic coverage, not a confirmed current drift instance.",
       "rootCause": null,
-      "disposition": null,
+      "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
-      "createdAt": "2026-09-24T08:06:14.060Z"
+      "createdAt": "2026-09-24T08:06:14.060Z",
+      "justification": "Real audit confirmed the schema-reconciliation e2e guard exercises only 5 of ~171 current tables via live-Postgres repo.save/find calls; entities.ts<->migration drift is otherwise caught only by per-incident targeted specs written reactively after real bugs. Spot-checked InvoiceEntity against its most recent migration and found zero drift -- no active bug exists today. Not expanded to full 171-table coverage in this pass: building an exhaustive live-Postgres schema-reconciliation harness for every table is a real, scoped engineering task warranting its own review, not an incidental fix. Accepted as known coverage debt, documented in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md's audit trail.",
+      "resolvedAt": "2026-09-24T16:25:50.210Z"
     }
   ],
   "evidenceIds": [
@@ -643,7 +663,15 @@
     "evid-d3cb1150",
     "evid-0da6751a",
     "evid-0ae53f86",
-    "evid-0e362748"
+    "evid-0e362748",
+    "evid-46015e2c",
+    "evid-309d3bad",
+    "evid-65bbc0c0",
+    "evid-18361ff7",
+    "evid-af1d3d89",
+    "evid-c8f7aeab",
+    "evid-3b63c3b0",
+    "evid-25fd4829"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

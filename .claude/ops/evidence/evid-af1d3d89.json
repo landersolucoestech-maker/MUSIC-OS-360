@@ -1,0 +1,15 @@
+{
+  "id": "evid-af1d3d89",
+  "createdAt": "2026-09-24T17:05:32.588Z",
+  "type": "COMMAND",
+  "label": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\run-migration-spec-test.mjs",
+  "command": "node C:\\Users\\Usuario\\AppData\\Local\\Temp\\claude\\C--Users-Usuario-Documents-MUSIC-OS-360\\be6e7ab8-4127-49c5-bc15-a72af2385e9d\\scratchpad\\run-migration-spec-test.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "Test Suites: 1 passed, 1 total\nTests:       6 passed, 6 total\nSnapshots:   0 total\nTime:        11.966 s, estimated 21 s\nRan all test suites matching backfill-and-restrict-lead-status.",
+  "stderrTail": "",
+  "workspaceFingerprint": "7844f6d9de3cfb4e469db7885ab9b5c3ba52fe012e5c2f3d5bd0e27ec610f68a",
+  "fingerprintStatus": "BOUND",
+  "head": "42f5844fc5d8c873fb397c343849af18ea73dd4a",
+  "durationMs": 14845
+}
