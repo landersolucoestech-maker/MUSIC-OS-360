@@ -1,0 +1,19 @@
+{
+  "head_sha": "ea375c40bfcd37ed8e8165a60bef1359bb4ffc65",
+  "source": "GIT_OBJECT_DATABASE (git ls-tree + git cat-file --batch)",
+  "ts_tsx_files_discovered": 2529,
+  "ts_tsx_files_processed": 2529,
+  "ts_tsx_files_errored": 0,
+  "discovered_import_export_edges": 10594,
+  "classified_edges": 7216,
+  "unclassified_edges_reason": {
+    "EXTERNAL_PACKAGE": 3378,
+    "RESOLVED": 7216
+  },
+  "edge_class_counts": {
+    "INTRA_APP": 6829,
+    "PACKAGE_IMPORT": 387
+  },
+  "cross_app_boundary_violations": 0,
+  "cross_app_boundary_violation_details": []
+}

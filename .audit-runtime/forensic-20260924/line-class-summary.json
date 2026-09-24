@@ -1,0 +1,24 @@
+{
+  "head_sha": "ea375c40bfcd37ed8e8165a60bef1359bb4ffc65",
+  "source": "GIT_OBJECT_DATABASE (git ls-tree + git cat-file --batch)",
+  "ts_tsx_files_discovered": 2529,
+  "ts_tsx_files_processed": 2529,
+  "ts_tsx_files_errored": 0,
+  "discovered_physical_lines_ts_tsx": 322348,
+  "audited_physical_lines_ts_tsx": 322348,
+  "line_class_counts": {
+    "COMMENT": 723,
+    "STRUCTURAL": 6826,
+    "IMPORT": 14403,
+    "EMPTY": 32135,
+    "DECLARATION": 88769,
+    "OTHER": 12253,
+    "TYPE_DEFINITION": 17332,
+    "CONTROL_FLOW": 34285,
+    "EXPRESSION": 33867,
+    "EXPORT": 1697,
+    "TEST_ASSERTION": 32397,
+    "JSX": 47661
+  },
+  "note": "deterministic AST-derived classification, no semantic/human judgment -- comment-interior lines inside multi-line block comments approximate to the following statement class (documented limitation, not hidden)"
+}

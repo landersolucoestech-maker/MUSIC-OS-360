@@ -99,5 +99,46 @@
     { "id": "shares.type/party_role fix", "source": "AGENT-02 (indirect, via unaffected census work)", "result": "unaffected, tree unchanged" },
     { "id": "5 orphaned packages", "source": "AGENT-12", "result": "CONFIRMED independently" },
     { "id": "server/ai-proxy.ts", "source": "AGENT-09 and AGENT-12 (both independently)", "result": "CONFIRMED independently by 2 separate agents, AGENT-09 additionally recorded it in the project's own evidence ledger (.claude/ops/state.json: find-10c37104, evid-0ae53f86)" }
-  ]
+  ],
+  "current_snapshot": {
+    "head_sha": "ea375c40bfcd37ed8e8165a60bef1359bb4ffc65",
+    "head_tree_sha": "a78451318546795f5754c2c7bc99a5e60cd8af78",
+    "origin_dev_sha": "ea375c40bfcd37ed8e8165a60bef1359bb4ffc65",
+    "head_equals_origin_dev": true,
+    "history_since_baseline": ["931ac6d1 (shares.type fix)", "91327844 (naming guard)", "191836d9 (decision matrices)", "b9997583 (orphaned packages doc)", "8c477787 (ai-proxy.ts doc)", "0a3a9fc8 (EXTERNAL_MANAGED doc)", "2e9874a8 (forensic census infra + 9-agent audit)", "ea375c40 (unverified-identity UI fix)"],
+    "out_of_order_commit": { "sha": "ea375c40", "state": "OUT_OF_ORDER_CHANGE relative to a later user sequencing instruction, PRODUCT_VALIDITY preserved (tested: 7/7 vitest, tsc EXIT_CODE=0), not reverted -- classified per user's own §1 instruction in the message that flagged it" },
+    "changed_paths_from_prior_forensic_snapshot": ["apps/web/src/modules/artist/components/ArtistPlatformMetrics.tsx", "apps/web/src/modules/artist/components/unverified-identity-indicator.guard.test.ts (new)"],
+    "stale_evidence": "none of the file/byte/line/token/AST/dependency-edge census claims are invalidated by this 2-file change -- census-lines.ts and census-dependency-graph.ts (below) were run fresh against this exact HEAD, so they are not stale by construction",
+    "reused_evidence": "all agent-results/*.md findings (AGENT-02/05/09/10/12 and AGENT-MC/METRICS/MARKETING/CROSS-CONTEXT) remain valid -- none touched apps/web/src/modules/artist/components/ArtistPlatformMetrics.tsx or its test",
+    "revalidated_evidence": "census-files.jsonl, census-files-head-tree.jsonl, ast-census.jsonl were NOT rerun against ea375c40 (2-file/94-line delta, unrelated to their scope -- TS/TSX file list membership unchanged, byte/line counts for the 2 changed files would shift by the diff size only, not re-executed given zero relevance to any open finding)"
+  },
+  "mechanical_layers_phase2": {
+    "line_classification": {
+      "script": "census-lines.ts",
+      "source": "GIT_OBJECT_DATABASE",
+      "scope": "TS/TSX files only (2529/2529, 100%), NOT repo-wide (614,212 total physical lines exist across all languages; this covers the 322,348 TS/TSX-language subset)",
+      "discovered_physical_lines_ts_tsx": 322348,
+      "audited_physical_lines_ts_tsx": 322348,
+      "errors": 0,
+      "self_correction": "v1 searched for the smallest AST node covering each line's first char (a leaf token), which almost never literally matched a statement-kind check, so 59% of lines (189,994) fell into OTHER; found and fixed by walking up to the nearest statement-level ancestor instead -- v2 result: OTHER dropped to 12,253 (3.8%)",
+      "line_class_counts": { "COMMENT": 723, "STRUCTURAL": 6826, "IMPORT": 14403, "EMPTY": 32135, "DECLARATION": 88769, "OTHER": 12253, "TYPE_DEFINITION": 17332, "CONTROL_FLOW": 34285, "EXPRESSION": 33867, "EXPORT": 1697, "TEST_ASSERTION": 32397, "JSX": 47661 },
+      "classification_method": "fully mechanical/deterministic (AST-derived), zero semantic/human judgment involved -- this is the genuinely mechanizable layer, done at 100% for its real scope"
+    },
+    "dependency_edges": {
+      "script": "census-dependency-graph.ts",
+      "source": "GIT_OBJECT_DATABASE",
+      "scope": "TS/TSX import/export-from declarations only (2529/2529 files, 100%)",
+      "discovered_import_export_edges": 10594,
+      "classified_edges": 7216,
+      "external_package_edges_not_traced_further": 3378,
+      "unresolved_edges": 0,
+      "self_correction": "v1 left 15 edges UNRESOLVED (all in packages/config, packages/observability, packages/schemas, packages/utils -- the already-flagged orphaned packages) due to not stripping a literal trailing .js from ESM NodeNext-style specifiers before retrying .ts; verified all 15 target files genuinely exist, fixed the resolver, reran: 0 unresolved",
+      "edge_class_counts": { "INTRA_APP": 6829, "PACKAGE_IMPORT": 387 },
+      "cross_app_boundary_violations": 0,
+      "cross_app_boundary_violations_note": "independent confirmation, via a completely different method (AST import resolution across all 10,594 discovered edges, not grep/manual reading) of what AGENT-12 and AGENT-09 already found by reading code -- 2 independent methods now agree",
+      "classification_method": "fully mechanical/deterministic (AST import parsing + real path resolution against the tracked-file set), zero semantic/human judgment involved"
+    },
+    "remaining_mechanical_gap": "the same two layers for non-TS/TSX files (JSON/SQL/CSS/HTML/YAML/SHELL/MD -- 291,864 of the 614,212 total physical lines) have not been run; a LINE_CLASS taxonomy for those formats would need per-format parsers (e.g. a real SQL/YAML parser), not yet built this run",
+    "explicitly_not_attempted": "per-item SEMANTIC classification of the ~38,104 syntactic symbols and the full named-item/technical-term universe (NAMED_ITEM_ID-level CORRECT/SEMANTIC_DRIFT/WRONG_NAME/etc. verdicts) -- this requires reading each item's real usage context, which is not a mechanizable operation; partitioning it across many agents changes who pays the per-item cost, not whether it's paid, and an agent given hundreds of items with no time to read context per item would produce unearned labels, which is a fabricated certificate regardless of the delivery mechanism. Real semantic findings continue to be produced the way they have been all session -- genuine, evidenced, one real defect/question at a time -- which is real semantic coverage, not exhaustive-by-headcount coverage."
+  }
 }
