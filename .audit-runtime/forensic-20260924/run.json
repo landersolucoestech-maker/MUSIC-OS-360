@@ -188,6 +188,18 @@
         { "file": "apps/web/public/pdf.worker.min.mjs", "anomaly": "35x CONTROL chars, clustered", "verdict": "benign -- confirmed via its own license header as the real, official vendored Mozilla PDF.js worker bundle (Apache 2.0, Copyright 2024 Mozilla Foundation); control bytes are inside its minified/embedded binary payload data, not source-affecting syntax" }
       ]
     },
+    "expressions_statements": {
+      "script": "census-expressions-statements.ts",
+      "source": "GIT_OBJECT_DATABASE",
+      "scope": "TS/TSX files only (2534/2534, 100%)",
+      "discovered_expressions": 978757,
+      "audited_expressions": 978757,
+      "discovered_statements": 91989,
+      "audited_statements": 91989,
+      "errors": 0,
+      "method": "fully mechanical -- ts.isExpression()/ts.isStatement() against the real parsed AST, kind names taken from the compiler's own ts.SyntaxKind taxonomy, zero custom heuristic or semantic judgment",
+      "note": "this is the real, distinct EXPRESSION_SET/STATEMENT_SET (per-node), not the earlier LINE_CLASS census's line-level EXPRESSION/CONTROL_FLOW proxy counts -- both are valid, they answer different questions (per-line dominant kind vs. total per-kind node count)"
+    },
     "remaining_mechanical_gap": "the same layers for non-TS/TSX files (JSON/SQL/CSS/HTML/YAML/SHELL/MD -- 291,864 of the 614,212 total physical lines) have not been run; a LINE_CLASS taxonomy for those formats would need per-format parsers (e.g. a real SQL/YAML parser), not yet built this run",
     "explicitly_not_attempted": "per-item SEMANTIC classification of the ~38,104 syntactic symbols and the full named-item/technical-term universe (NAMED_ITEM_ID-level CORRECT/SEMANTIC_DRIFT/WRONG_NAME/etc. verdicts) -- this requires reading each item's real usage context, which is not a mechanizable operation; partitioning it across many agents changes who pays the per-item cost, not whether it's paid, and an agent given hundreds of items with no time to read context per item would produce unearned labels, which is a fabricated certificate regardless of the delivery mechanism. Real semantic findings continue to be produced the way they have been all session -- genuine, evidenced, one real defect/question at a time -- which is real semantic coverage, not exhaustive-by-headcount coverage."
   }
