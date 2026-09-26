@@ -1,0 +1,15 @@
+{
+  "id": "evid-a7d2a67c",
+  "createdAt": "2026-09-26T03:41:24.690Z",
+  "type": "COMMAND",
+  "label": "env DATABASE_URL=postgresql://musicos360@127.0.0.1:55432/musicos360 APP_DATABASE_URL=postgresql://musicos_app:local_only_ephemeral_musicos_app_pw@127.0.0.1:55432/musicos360 DB_SSL=false NODE_ENV=test ENCRYPTION_KEY=33b29b3d331d95a7a029160cbbb4c64cc7e094271b0a6f501da19a596ade7217 pnpm --filter api exec jest --config jest.e2e.config.ts test/e2e/rls/phase3n-context.e2e-spec.ts",
+  "command": "env DATABASE_URL=postgresql://musicos360@127.0.0.1:55432/musicos360 APP_DATABASE_URL=postgresql://musicos_app:local_only_ephemeral_musicos_app_pw@127.0.0.1:55432/musicos360 DB_SSL=false NODE_ENV=test ENCRYPTION_KEY=33b29b3d331d95a7a029160cbbb4c64cc7e094271b0a6f501da19a596ade7217 pnpm --filter api exec jest --config jest.e2e.config.ts test/e2e/rls/phase3n-context.e2e-spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "console.log\n    FASE3N_SKILL_EVIDENCE {\n      tenant_id: '10000000-0000-0000-0000-000000000002',\n      role: 'musicos_app',\n      successId: '93496316-ad27-4e83-bd2c-4e848e3a447c',\n      failedId: '7c74fffb-dfed-4a5d-abfa-6bac5d285faa'\n    }\n\n      at Object.<anonymous> (test/e2e/rls/phase3n-context.e2e-spec.ts:125:13)\n\n  console.log\n    FASE3N_PRESTART_CONTEXT {\n      tenant_id: '10000000-0000-0000-0000-000000000002',\n      role: 'musicos_app'\n    }\n\n      at Object.load (test/e2e/rls/phase3n-context.e2e-spec.ts:147:17)\n\n\u001b[33m[Nest] 14863  - \u001b[39m09/26/2026, 3:41:24 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[NativeSkillAutomation] \u001b[39m\u001b[33m[fase3n_1790394083666_pre_start automation] falha pré-start (não-fatal): expected pre-start failure\u001b[39m\n  console.log\n    FASE3P_ASSET_LINKING_EVIDENCE {\n      tenant_id: '10000000-0000-0000-0000-000000000002',\n      role: 'musicos_app'\n    }\n\n      at Object.<anonymous> (test/e2e/rls/phase3n-context.e2e-spec.ts:194:13)\n\n\u001b[95m[Nest] 14863  - \u001b[39m09/26/2026, 3:41:24 AM \u001b[95m  DEBUG\u001b[39m \u001b[38;5;3m[WorkflowAutomationService] \u001b[39m\u001b[95mTrigger [fase3n_1790394083666_rule] → action [notify] executado para tenant=10000000-0000-0000-0000-000000000002\u001b[39m\n  console.log\n    FASE3N_WORKFLOW_EVIDENCE {\n      tenant_id: '10000000-0000-0000-0000-000000000002',\n      role: 'musicos_app'\n    }\n\n      at Object.<anonymous> (test/e2e/rls/phase3n-context.e2e-spec.ts:241:13)\n\n\u001b[32m[Nest] 14863  - \u001b[39m09/26/2026, 3:41:24 AM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[AutentiqueService] \u001b[39m\u001b[32m[autentique/webhook] Contract 51141d42-9e41-4d20-a08e-5592b3eb24bf signed via docId=fase3n_1790394083666_doc\u001b[39m\n  console.log\n    FASE3N_AUTENTIQUE_EVIDENCE {\n      tenant_id: '10000000-0000-0000-0000-000000000002',\n      role: 'musicos_app'\n    }\n\n      at Object.<anonymous> (test/e2e/rls/phase3n-context.e2e-spec.ts:295:13)",
+  "stderrTail": "",
+  "workspaceFingerprint": "a24d8f05e5c90d082cfb60e832cacfba61e0a29dbaa12e7b105632314ae29b56",
+  "fingerprintStatus": "BOUND",
+  "head": "8dc77cd37d5510310cd1170519a1a3241b8e9116",
+  "durationMs": 13803
+}

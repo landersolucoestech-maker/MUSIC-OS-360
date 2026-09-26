@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T03:31:52.173Z",
+  "updatedAt": "2026-09-26T03:44:45.149Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -676,6 +676,45 @@
         }
       ],
       "createdAt": "2026-09-26T03:22:53.268Z"
+    },
+    {
+      "id": "req-158a5beb",
+      "text": "B2 signature webhooks (Autentique/DocuSign): a provider signature applies SIGNED only from awaiting_signature (no resurrection/regression), exactly once per signature (redelivery/concurrency safe); contract resolution fails closed on ambiguity; provider linkage is server-owned (not client-writable, not erased by updates); DocuSign later events are not deduplicated against earlier events of the same envelope; no string-built SQL; no swallowed audit failures",
+      "nonRequirements": [
+        "No calls to real Autentique/DocuSign APIs"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-1aafd7f0",
+          "text": "Real Postgres e2e (signature-webhooks-real-context): signed once + dedup, no resurrection of cancelled / regression of in_force, ambiguous doc/envelope id fails closed, envelope-sent then envelope-completed signs, invalid HMAC rejected; status guard and dedup key mutation-verified",
+          "evidenceIds": [
+            "evid-e9b940d5"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-46d636e5",
+          "text": "Unit: Autentique/DocuSign specs (take:2 resolution, ambiguous -> FAILED, guarded transition SQL, dedup keys) and contracts spec (create strips linkage; update preserves linkage)",
+          "evidenceIds": [
+            "evid-0ff59194"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-f2bcd654",
+          "text": "Regression: phase3n e2e, api typecheck, lint, test:ci and full test:e2e exit 0 on the final workspace",
+          "evidenceIds": [
+            "evid-a7d2a67c",
+            "evid-dd2d884c",
+            "evid-1044229d",
+            "evid-4ebf6111",
+            "evid-018dfaeb",
+            "evid-a443ac5c"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-26T03:40:31.257Z"
     }
   ],
   "findings": [
@@ -1288,6 +1327,160 @@
       "createdAt": "2026-09-26T03:22:06.582Z",
       "justification": "S19=RISCO_NAO_RESOLVIDO | Routed to item 10/13 (database + naming): organizations.billing_status is written by billing.service (active/cancelled/past_due) in parallel with tenant_billing_state.status; resolution requires declaring one canonical in the map and migrating readers. Not closed by this cluster.",
       "resolvedAt": "2026-09-26T03:31:47.716Z"
+    },
+    {
+      "id": "find-c610ccc0",
+      "category": "L",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/contracts/contracts.service.ts",
+      "line": null,
+      "summary": "Signature webhook contract resolution trusted client-writable linkage: POST/PATCH /contracts accepted autentique_doc_id and arbitrary metadata (provider_doc_id, provider_status...), and both webhooks took the FIRST contract matching the provider doc id. A tenant knowing another tenant's doc/envelope id could make that tenant's signature land on its own contract (and leave the victim's unsigned). Proven on real Postgres: shared doc id -> one contract signed arbitrarily.",
+      "rootCause": "Provider linkage not declared server-owned; resolution had no uniqueness/ambiguity rule (same class as find-2220a85e).",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:40:07.346Z",
+      "justification": "S19=CORRIGIDO | commit=a2e1678 | autentique_doc_id removed from CreateContractDto (forbidNonWhitelisted -> 400), provider* keys stripped from client metadata, resolution take 2 + fail closed | tests: contracts spec (create strips), unit ambiguous->FAILED, e2e shared doc/envelope id -> neither signed evid-e9b940d5 | consumers: web never sends these fields (grep), reports already mark autentique_doc_id read-only",
+      "resolvedAt": "2026-09-26T03:44:44.415Z"
+    },
+    {
+      "id": "find-ea9d9d71",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/contracts/contracts.service.ts",
+      "line": null,
+      "summary": "Contract update replaced the metadata column wholesale whenever the client sent metadata/parties/currency/signedAt, erasing provider_doc_id/provider_status written by sendForSignature; DocuSign resolves by metadata.provider_doc_id, so the later envelope-completed webhook found no contract and the signature was lost.",
+      "rootCause": "Server-owned keys shared a column with client-editable keys without a merge/preserve rule.",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:40:07.433Z",
+      "justification": "S19=CORRIGIDO | commit=a2e1678 | preserveServerOwnedMetadata on update | test: contracts spec update keeps provider_doc_id/provider/provider_status while applying currency evid-0ff59194",
+      "resolvedAt": "2026-09-26T03:44:44.496Z"
+    },
+    {
+      "id": "find-06f8d204",
+      "category": "F",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/integrations/docusign/docusign.service.ts",
+      "line": null,
+      "summary": "DocuSign webhook dedup key was the bare envelopeId: any earlier event of the envelope (envelope-sent, recipient-*) marked PROCESSED made the later envelope-completed a 'duplicate', so the contract was never signed. Masked in tests by the un-awaited markProcessed race (find below).",
+      "rootCause": "Idempotency key identified the envelope, not the event delivery.",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:40:07.529Z",
+      "justification": "S19=CORRIGIDO | commit=a2e1678 | dedup key envelopeId:event (Autentique fallback docId:event) | test: e2e envelope-sent then envelope-completed signs; mutation (bare envelopeId) fails evid-e9b940d5; unit asserts key",
+      "resolvedAt": "2026-09-26T03:44:44.576Z"
+    },
+    {
+      "id": "find-a38ac0c8",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/integrations/webhooks/webhook.service.ts",
+      "line": null,
+      "summary": "Autentique/DocuSign handlers called webhookSvc.markProcessed without await: a redelivery arriving before the PROCESSED write was treated as a retry and re-applied side effects (proven: duplicate signed_via_webhook activity log + second CONTRACT_SIGNED event for one signature).",
+      "rootCause": "Fire-and-forget idempotency bookkeeping; side effects not guarded by an atomic state transition.",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:40:07.627Z",
+      "justification": "S19=CORRIGIDO | commit=a2e1678 | markProcessed awaited in all paths + side effects only on the guarded transition (exactly-once even under concurrent redelivery) | test: e2e redelivery -> 1 activity log, 1 CONTRACT_SIGNED (failed before: 2) evid-e9b940d5",
+      "resolvedAt": "2026-09-26T03:44:44.657Z"
+    },
+    {
+      "id": "find-dea10ba0",
+      "category": "F",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/integrations/autentique/autentique.service.ts",
+      "line": null,
+      "summary": "Signature webhooks set status='signed' from ANY state: a signed callback resurrected a cancelled contract and regressed in_force (proven on real Postgres), bypassing the contracts workflow whose only entry into SIGNED is AWAITING_SIGNATURE.",
+      "rootCause": "Unconditional UPDATE; no transition guard; duplicated (Autentique/DocuSign) implementation instead of one authoritative rule.",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:40:07.721Z",
+      "justification": "S19=CORRIGIDO | commit=a2e1678 | single authoritative guarded transition (contract-provider-signature.ts) used by both providers | test: e2e cancelled/in_force unchanged, mutation (guard removed) fails evid-e9b940d5 | regression: test:ci evid-4ebf6111, e2e evid-018dfaeb | consumers re-audited: CONTRACT_SIGNED listeners now receive only real transitions",
+      "resolvedAt": "2026-09-26T03:44:44.331Z"
+    },
+    {
+      "id": "find-9062a4bc",
+      "category": "L",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/integrations/autentique/autentique.service.ts",
+      "line": null,
+      "summary": "Autentique metadata writes interpolated provider-returned docId and webhook event_id into SQL string literals (metadata || '...'::jsonb); an apostrophe breaks the statement / injection surface behind the shared secret.",
+      "rootCause": "String-built SQL instead of bound parameters (DocuSign already parameterized).",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:40:07.815Z",
+      "justification": "S19=CORRIGIDO | commit=a2e1678 | bound parameters (:autMeta, $3::jsonb) | test: unit + e2e exercise the parameterized path evid-0ff59194 evid-e9b940d5",
+      "resolvedAt": "2026-09-26T03:44:44.741Z"
+    },
+    {
+      "id": "find-7595305c",
+      "category": "F",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/integrations/autentique/autentique.service.ts",
+      "line": null,
+      "summary": "Webhook failure path wrote activityLogs.create('system', ...) whose tenant_id is a uuid column: always failed, swallowed by .catch(() => {}) (dead audit). Success-path .catch on the in-transaction activity log INSERT was a latent silent rollback: a failed INSERT aborts the pg transaction and COMMIT becomes ROLLBACK while the handler reports success.",
+      "rootCause": "Empty catch blocks masking real errors (naming-canonical 'no scaffolding' rule).",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:40:07.910Z",
+      "justification": "S19=CORRIGIDO | commit=a2e1678 | dead 'system' activity log removed (durable trace is the awaited webhook_events FAILED row + error log); success-path activity log no longer swallowed, so an INSERT failure fails the transaction visibly and the provider retries | test: e2e asserts activity log written in tenant context evid-e9b940d5; phase3n evid-a7d2a67c",
+      "resolvedAt": "2026-09-26T03:44:44.824Z"
+    },
+    {
+      "id": "find-572b9556",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/integrations/autentique/autentique.service.ts",
+      "line": null,
+      "summary": "sendForSignature (Autentique/DocuSign, @RequireRole editor) sets status awaiting_signature from any status, parallel to the workflow where UNDER_REVIEW->AWAITING_SIGNATURE requires manager+ and no transition leaves cancelled/terminated/expired. UI (ContractViewModal) offers sending from draft.",
+      "rootCause": "Two authorities for the same transition; which states may be sent and whether editors may skip approval is a product rule.",
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:40:08.022Z",
+      "justification": "S19=DEPENDENTE_DECISAO_DE_PRODUTO | Which contract states may be sent for signature (UI offers draft) and whether an editor may skip the manager approval (UNDER_REVIEW->AWAITING_SIGNATURE) is a product rule; not changed unilaterally. Containment in place: a signature can now only complete awaiting_signature -> signed and never touches terminal states (find-dea10ba0). Decision needed: allowed source states for send + role.",
+      "resolvedAt": "2026-09-26T03:44:44.907Z"
+    },
+    {
+      "id": "find-8e604bac",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/contracts/components/ContractWizard.tsx",
+      "line": null,
+      "summary": "Contract wizard 'Enviar para Assinatura' saves the contract as draft and then ALWAYS shows 'Integração com X não configurada' and throws, regardless of configuration; it never calls the signing service (the real path is SendForSigningDialog in ContractViewModal).",
+      "rootCause": "Unfinished wizard action left with a hardcoded failure message.",
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:40:08.113Z",
+      "justification": "S19=RISCO_NAO_RESOLVIDO | Routed to item 11 (frontend<->backend contracts cluster), where it will be fixed or dispositioned; verified defect: handleSave(true) always toasts 'Integração ... não configurada' and throws after saving a draft.",
+      "resolvedAt": "2026-09-26T03:44:44.985Z"
+    },
+    {
+      "id": "find-371f3873",
+      "category": "L",
+      "severity": "LOW",
+      "file": "apps/api/src/database/migrations/20260911000002_SystemPathRlsExplicitMarker.ts",
+      "line": null,
+      "summary": "webhook_events policy USING (... OR tenant_id IS NULL ...) makes tenantless provider payloads (Autentique/DocuSign signer data) readable from any tenant context.",
+      "rootCause": "Tenantless system rows admitted by the tenant branch of the policy.",
+      "disposition": "FALSO_POSITIVO",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:40:08.209Z",
+      "justification": "S19=SEM_IMPACTO_COMPROVADO | No tenant-context reader of webhook_events exists (grep: only WebhookService/BillingService write paths and ExternalDataExchange; reports classify webhook_events as INFRA, not reportable). Policy tightening (system marker only for tenantless rows) re-evaluated in item 10 database cluster as defense in depth.",
+      "resolvedAt": "2026-09-26T03:44:45.066Z"
+    },
+    {
+      "id": "find-131c510e",
+      "category": "F",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/integrations/autentique/autentique.service.ts",
+      "line": null,
+      "summary": "Autentique webhook payload contract (payload.event string 'document.signed', event_id, document_id) and shared-secret header cannot be verified against provider documentation from this environment (egress to docs.autentique.com.br denied by proxy policy).",
+      "rootCause": "External contract verification unavailable.",
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:40:08.298Z",
+      "justification": "S19=BLOQUEADO_DEPENDENCIA_EXTERNA | curl to docs.autentique.com.br -> CONNECT 403 (proxy organization policy). Handler shape unchanged except dedup key; needs verification against Autentique docs or a captured real delivery (sandbox) by someone with access.",
+      "resolvedAt": "2026-09-26T03:44:45.149Z"
     }
   ],
   "evidenceIds": [
@@ -1553,7 +1746,15 @@
     "evid-65eca2d0",
     "evid-b8e7ec2f",
     "evid-5d0e821b",
-    "evid-e61b6340"
+    "evid-e61b6340",
+    "evid-e9b940d5",
+    "evid-0ff59194",
+    "evid-a7d2a67c",
+    "evid-dd2d884c",
+    "evid-1044229d",
+    "evid-4ebf6111",
+    "evid-018dfaeb",
+    "evid-a443ac5c"
   ],
   "checkpointIds": [
     "chec-e661a7aa",
