@@ -57,9 +57,9 @@ export class NotificationsProcessor extends WorkerHost {
 
   private async handleSend(job: Job<NotificationPayload>): Promise<unknown> {
     const d = job.data;
-    if (!this.repo) { this.logger.warn('[notifications/send] DB não configurado — pulando persistência'); return null; }
+    if (!this.repo) { this.logger.warn('[notifications/send] DB not configured — skipping persistence'); return null; }
     // Fail-closed: an async job without a tenant must NOT touch tenant-scoped data.
-    if (!d.tenantId) { this.logger.warn(`[notifications/send] job ${job.id} sem tenantId — abortado (fail-closed)`); return null; }
+    if (!d.tenantId) { this.logger.warn(`[notifications/send] job ${job.id} without tenantId — aborted (fail-closed)`); return null; }
 
     // find-8dfe93c3 / find-32bf2e0a: BullMQ's at-least-once delivery can
     // redeliver the SAME job.id (a worker crash/stall after processing but
@@ -122,7 +122,7 @@ export class NotificationsProcessor extends WorkerHost {
     );
 
     if (alreadyExisted) {
-      this.logger.log(`[notifications/send] job=${jobId} já processado (redelivery) — persistência/WS pulados, id=${saved.id}`);
+      this.logger.log(`[notifications/send] job=${jobId} already processed (redelivery) — persistence/WS skipped, id=${saved.id}`);
       return saved;
     }
 
@@ -139,7 +139,7 @@ export class NotificationsProcessor extends WorkerHost {
         });
       }
     } catch (wsErr) {
-      this.logger.warn(`[notifications/send] WS emit falhou: ${(wsErr as Error).message}`);
+      this.logger.warn(`[notifications/send] WS emit failed: ${(wsErr as Error).message}`);
     }
 
     return saved;
@@ -153,7 +153,7 @@ export class NotificationsProcessor extends WorkerHost {
       });
       this.logger.log(`[notifications/broadcast] tenant=${d.tenantId} — "${d.title}"`);
     } catch (wsErr) {
-      this.logger.warn(`[notifications/broadcast] WS emit falhou: ${(wsErr as Error).message}`);
+      this.logger.warn(`[notifications/broadcast] WS emit failed: ${(wsErr as Error).message}`);
     }
     return { broadcasted: true };
   }

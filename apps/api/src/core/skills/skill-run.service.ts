@@ -231,7 +231,7 @@ export class SkillRunService {
       return result;
     } catch (err) {
       await this.fail(runId, params.tenantId, params.skillName, err);
-      this.logger.error(`Skill "${params.skillName}" falhou (run=${runId})`, err instanceof Error ? err.stack : String(err));
+      this.logger.error(`Skill "${params.skillName}" failed (run=${runId})`, err instanceof Error ? err.stack : String(err));
       throw err;
     }
   }

@@ -102,7 +102,7 @@ export class ArtistsService {
     try {
       return this.encryption.decryptNullable(value);
     } catch {
-      this.logger.warn(`Falha ao decifrar campo "${field}" — retornando null`);
+      this.logger.warn(`Failed to decrypt field "${field}" — returning null`);
       return null;
     }
   }

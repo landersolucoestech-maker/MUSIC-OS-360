@@ -65,7 +65,7 @@ export class InstagramService extends IntegrationBaseService {
       try {
         await this.fetch(`${META_API}/me/permissions?access_token=${conn.accessToken}`, { method: 'DELETE' });
       } catch (err) {
-        this.logger.warn(`Instagram/Meta: falha ao revogar token no Meta (${userId}@${tenantId}, ${provider}) — ${String(err)}`);
+        this.logger.warn(`Instagram/Meta: failed to revoke token at Meta (${userId}@${tenantId}, ${provider}) — ${String(err)}`);
       }
     }
     await this.disconnectOAuth(tenantId, userId, provider);
@@ -102,7 +102,7 @@ export class InstagramService extends IntegrationBaseService {
       return true;
     } catch (err) {
       await this.markOAuthNeedsReauth(tenantId, userId, provider);
-      this.logger.warn(`Instagram/Meta: falha ao renovar token (${userId}@${tenantId}, ${provider}) — ${String(err)}`);
+      this.logger.warn(`Instagram/Meta: failed to refresh token (${userId}@${tenantId}, ${provider}) — ${String(err)}`);
       return false;
     }
   }

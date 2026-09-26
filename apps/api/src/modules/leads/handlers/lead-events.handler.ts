@@ -110,7 +110,7 @@ export class LeadEventsHandler {
       const existingLead = await leadRepo.findOne({ where: { id: leadId, tenant_id: tenantId } as never });
       if (existingLead?.client_id) {
         this.logger.warn(
-          `LeadEventsHandler: lead "${leadId}" já convertido (client_id="${existingLead.client_id}") — LEAD_CONVERTED ignorado (idempotência)`,
+          `LeadEventsHandler: lead "${leadId}" already converted (client_id="${existingLead.client_id}") — LEAD_CONVERTED ignored (idempotency)`,
         );
         return null;
       }
@@ -201,7 +201,7 @@ export class LeadEventsHandler {
   }
 
   private failClosed(eventType: string): void {
-    this.logger.warn(`LeadEventsHandler: event "${eventType}" sem tenantId - abortado (fail-closed)`);
+    this.logger.warn(`LeadEventsHandler: event "${eventType}" without tenantId - aborted (fail-closed)`);
   }
 
   private runInTenantContext<T>(

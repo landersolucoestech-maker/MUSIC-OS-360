@@ -75,11 +75,11 @@ export class DevAuthController implements OnModuleInit {
       });
 
       if (createErr) {
-        this.logger.error('Falha ao criar usuário dev:', createErr.message);
+        this.logger.error('Failed to create dev user:', createErr.message);
         throw new ForbiddenException(`Não foi possível criar usuário dev: ${createErr.message}`);
       }
 
-      this.logger.log(`Usuário dev criado: ${created.user?.id}`);
+      this.logger.log(`Dev user created: ${created.user?.id}`);
       auth = await supabase.auth.signInWithPassword({ email: DEV_EMAIL, password: DEV_PASSWORD });
     } else {
       // Ensure app_metadata.org_id is up to date (tenant may have changed)
@@ -143,7 +143,7 @@ export class DevAuthController implements OnModuleInit {
         { algorithm: 'HS256', issuer: 'music-os-360-dev', expiresIn: '1h' },
       );
       tokenSource = 'dev-local';
-      this.logger.warn('Token Supabase dev com org_id divergente; emitindo token local coerente para dev-auth.');
+      this.logger.warn('Dev Supabase token with mismatched org_id; issuing a consistent local token for dev-auth.');
     }
 
     return {

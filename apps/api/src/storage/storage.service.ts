@@ -121,7 +121,7 @@ export class StorageService {
     const url = this.r2PublicUrl
       ? `${this.r2PublicUrl}/${options.key}`
       : `r2://${this.r2Bucket}/${options.key}`;
-    this.logger.log(`Upload concluído: ${options.key}`);
+    this.logger.log(`Upload completed: ${options.key}`);
     return url;
   }
 
@@ -246,7 +246,7 @@ export class StorageService {
     } catch (error) {
       const status = (error as { $metadata?: { httpStatusCode?: number } }).$metadata?.httpStatusCode;
       if (status === 404) return false;
-      this.logger.error(`Falha ao verificar objeto R2: ${key}`, error instanceof Error ? error.stack : String(error));
+      this.logger.error(`Failed to check R2 object: ${key}`, error instanceof Error ? error.stack : String(error));
       throw error;
     }
   }

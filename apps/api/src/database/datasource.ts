@@ -31,8 +31,8 @@ const DATABASE_URL = process.env['DATABASE_URL'];
 
 if (!DATABASE_URL) {
   console.error(
-    '\n[MUSIC OS 360] DATABASE_URL não definida.\n' +
-    'Defina a variável de ambiente DATABASE_URL antes de correr migrations.\n',
+    '\n[MUSIC OS 360] DATABASE_URL is not defined.\n' +
+    'Set the DATABASE_URL environment variable before running migrations.\n',
   );
   process.exit(1);
 }

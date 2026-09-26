@@ -247,10 +247,10 @@ export function assertDatabaseCommandEnv(
   const env = envOverride ?? (process.env as Record<string, string | undefined>);
   const errors = collectDatabaseCommandErrors(env, env['NODE_ENV']);
   if (errors.length > 0) {
-    console.error(`\n[${context}] BLOQUEADO — alvo de banco não autorizado para este ambiente:`);
+    console.error(`\n[${context}] BLOCKED — database target not authorized for this environment:`);
     for (const err of errors) console.error(`  • ${err}`);
     console.error(
-      'Nenhuma conexão foi aberta. Matriz de ambientes: docs/SUPABASE_ENVIRONMENTS.md\n',
+      'No connection was opened. Environment matrix: docs/SUPABASE_ENVIRONMENTS.md\n',
     );
     process.exit(1);
   }

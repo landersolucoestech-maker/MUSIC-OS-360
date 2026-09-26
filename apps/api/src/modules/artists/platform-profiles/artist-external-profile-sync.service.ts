@@ -85,7 +85,7 @@ export class ArtistExternalProfileSyncService {
         });
         await this.profiles.upsertSuccess(snapshot);
         this.logger.log(
-          `[platform-sync/direct] Spotify concluído monthly_listeners=${snapshot.monthly_listeners ?? '-'} latency_ms=${Date.now() - startedAt} ${logCtx}`,
+          `[platform-sync/direct] Spotify completed monthly_listeners=${snapshot.monthly_listeners ?? '-'} latency_ms=${Date.now() - startedAt} ${logCtx}`,
         );
         return {
           artist_id: input.artistId,
@@ -102,7 +102,7 @@ export class ArtistExternalProfileSyncService {
           externalUrl,
           error: message,
         });
-        this.logger.error(`[platform-sync/direct] Spotify falhou: ${message} ${logCtx}`);
+        this.logger.error(`[platform-sync/direct] Spotify failed: ${message} ${logCtx}`);
         throw err;
       }
     }
@@ -122,7 +122,7 @@ export class ArtistExternalProfileSyncService {
       // it (there is no queue) — an orphan row that never transitions to
       // failed/success on its own. There is nothing to persist: the
       // operation failed outright, so it throws with no DB write at all.
-      this.logger.error(`[platform-sync/enqueue] fila BullMQ indisponível (Redis off/no-op) ${logCtx}`);
+      this.logger.error(`[platform-sync/enqueue] BullMQ queue unavailable (Redis off/no-op) ${logCtx}`);
       throw new ServiceUnavailableException(
         `Fila de sincronização indisponível: BullMQ está em modo no-op (Redis inacessível ou REDIS_QUEUE_URL ausente) — sync de ${platform} não pôde ser enfileirado`,
       );
@@ -174,7 +174,7 @@ export class ArtistExternalProfileSyncService {
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.error(
-        `[platform-sync/enqueue] BullMQ add falhou: ${message} jobId=${payload.idempotency_key} ${logCtx}`,
+        `[platform-sync/enqueue] BullMQ add failed: ${message} jobId=${payload.idempotency_key} ${logCtx}`,
         err instanceof Error ? err.stack : undefined,
       );
       throw new ServiceUnavailableException(

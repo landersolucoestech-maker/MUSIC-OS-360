@@ -96,12 +96,12 @@ export async function runNativeSkillAutomation<TRow, TInput>(
   params: NativeSkillAutomationParams<TRow, TInput>,
 ): Promise<void> {
   if (!params.tenantId) {
-    logger.warn(`[${params.skillName} automation] evento sem tenantId — abortado (fail-closed)`);
+    logger.warn(`[${params.skillName} automation] event without tenantId — aborted (fail-closed)`);
     return;
   }
   if (!deps.dbContext) {
     logger.warn(
-      `[${params.skillName} automation] DatabaseContextService indisponivel — abortado (fail-closed)`,
+      `[${params.skillName} automation] DatabaseContextService unavailable — aborted (fail-closed)`,
     );
     return;
   }
@@ -132,7 +132,7 @@ async function recordPreStartFailure<TRow, TInput>(
 ): Promise<void> {
   const message = err instanceof Error ? err.message : String(err);
   logger.warn(
-    `[${params.skillName} automation] falha pré-start (não-fatal): ${message}`,
+    `[${params.skillName} automation] pre-start failure (non-fatal): ${message}`,
   );
 
   const { tenantId, entityId, skillName } = params;

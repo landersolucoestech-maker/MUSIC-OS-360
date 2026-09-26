@@ -203,13 +203,13 @@ export class BillingPlansService {
 
   private async syncSafe(plan: BillingPlanEntity, opts: { recreatePrice: boolean }): Promise<BillingPlanEntity> {
     if (!this.stripe) {
-      this.logger.warn(`Plano '${plan.slug}' criado/atualizado sem Stripe configurado — não sincronizado`);
+      this.logger.warn(`Plan '${plan.slug}' created/updated without Stripe configured — not synced`);
       return plan;
     }
     try {
       return await this.syncPlanToStripe(plan, opts);
     } catch (err) {
-      this.logger.error(`Falha ao sincronizar plano '${plan.slug}' com Stripe: ${(err as Error).message}`);
+      this.logger.error(`Failed to sync plan '${plan.slug}' with Stripe: ${(err as Error).message}`);
       return plan; // plan persisted; sync pending
     }
   }
@@ -256,7 +256,7 @@ export class BillingPlansService {
         try {
           await stripe.prices.update(oldPriceId, { active: false });
         } catch (e) {
-          this.logger.warn(`Não foi possível desativar price antigo ${oldPriceId}: ${(e as Error).message}`);
+          this.logger.warn(`Could not deactivate old price ${oldPriceId}: ${(e as Error).message}`);
         }
       }
     }

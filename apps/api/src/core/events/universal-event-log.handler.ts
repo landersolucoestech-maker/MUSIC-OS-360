@@ -31,7 +31,7 @@ export class UniversalEventLogHandler {
     if (!event?.type) return;
     if (!event.tenantId) {
       this.logger.warn(
-        `UniversalEventLogHandler: event "${event.type}" sem tenantId - abortado (fail-closed)`,
+        `UniversalEventLogHandler: event "${event.type}" without tenantId - aborted (fail-closed)`,
       );
       return;
     }

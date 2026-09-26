@@ -47,7 +47,7 @@ export class MarketBenchmarkRefreshProcessor extends WorkerHost {
     // Fail-closed: same pattern as ArtistPlatformSyncProcessor — an asynchronous job
     // without a tenant NEVER touches tenant-scoped data.
     if (!payload.tenant_id) {
-      this.logger.warn(`[analytics-refresh] job=${job.id} sem tenant_id — abortado (fail-closed)`);
+      this.logger.warn(`[analytics-refresh] job=${job.id} without tenant_id — aborted (fail-closed)`);
       return;
     }
 

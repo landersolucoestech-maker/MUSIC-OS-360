@@ -363,7 +363,7 @@ export class BillingEnforcementService {
     // escalation. Only active/trial (or no state row) can enter grace; any
     // other state is a no-op (null = "no transition applied").
     if (before && !PAYMENT_GRACE_ENTRY_STATES.has(before.status)) {
-      this.logger.log(`startPaymentGrace: tenant=${tenantId} já em '${before.status}' — sem transição, relógio de dunning preservado (${reason})`);
+      this.logger.log(`startPaymentGrace: tenant=${tenantId} already in '${before.status}' — no transition, dunning clock preserved (${reason})`);
       return null;
     }
     const graceUntil = addDays(now, settings.grace_period_days);

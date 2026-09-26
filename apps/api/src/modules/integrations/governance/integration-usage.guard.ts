@@ -81,7 +81,7 @@ export class IntegrationUsageGuard implements CanActivate {
     const userId   = req.auth?.userId ?? req.user?.id ?? req.userId;
 
     if (!tenantId) {
-      this.logger.warn(`[integration-usage] ${providerKey}: sem contexto de tenant — negado (fail-closed)`);
+      this.logger.warn(`[integration-usage] ${providerKey}: no tenant context — denied (fail-closed)`);
       throw new ForbiddenException('Contexto de tenant ausente para autorizar a integração.');
     }
 
@@ -95,14 +95,14 @@ export class IntegrationUsageGuard implements CanActivate {
     });
 
     if (!resolved) {
-      this.logger.warn(`[integration-usage] ${providerKey}: sem política registada — negado (fail-closed)`);
+      this.logger.warn(`[integration-usage] ${providerKey}: no registered policy — denied (fail-closed)`);
       throw new ForbiddenException('Esta integração não está disponível nesta plataforma.');
     }
 
     const allowed = mode === 'connect' ? resolved.canConnect : resolved.canUse;
     if (!allowed) {
       this.logger.warn(
-        `[integration-usage] ${providerKey} (${mode}): negado para tenant=${tenantId} — reason=${resolved.reasonCode}`,
+        `[integration-usage] ${providerKey} (${mode}): denied for tenant=${tenantId} — reason=${resolved.reasonCode}`,
       );
       throw new ForbiddenException(
         DENY_MESSAGE[resolved.reasonCode] ?? 'Uso desta integração não autorizado.',

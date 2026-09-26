@@ -43,13 +43,13 @@ export class EmailQueueService {
       ...HIGH_PRIORITY,
       jobId: `welcome:${payload.userId}`,
     });
-    this.logger.log(`[emails] enqueued "${EMAIL_JOB_NAMES.WELCOME}" jobId=${job.id} para=${payload.email}`);
+    this.logger.log(`[emails] enqueued "${EMAIL_JOB_NAMES.WELCOME}" jobId=${job.id} to=${payload.email}`);
   }
 
   async enqueuePasswordResetEmail(payload: PasswordResetEmailPayload): Promise<void> {
     if (!this.available) return;
     const job = await this.emailQueue!.add(EMAIL_JOB_NAMES.PASSWORD_RESET, payload, HIGH_PRIORITY);
-    this.logger.log(`[emails] enqueued "${EMAIL_JOB_NAMES.PASSWORD_RESET}" jobId=${job.id} para=${payload.email}`);
+    this.logger.log(`[emails] enqueued "${EMAIL_JOB_NAMES.PASSWORD_RESET}" jobId=${job.id} to=${payload.email}`);
   }
 
   async enqueueContractExpiryEmail(payload: ContractExpiryEmailPayload): Promise<void> {
@@ -64,7 +64,7 @@ export class EmailQueueService {
   async enqueueInviteUserEmail(payload: InviteUserEmailPayload): Promise<void> {
     if (!this.available) return;
     const job = await this.emailQueue!.add(EMAIL_JOB_NAMES.INVITE_USER, payload, HIGH_PRIORITY);
-    this.logger.log(`[emails] enqueued "${EMAIL_JOB_NAMES.INVITE_USER}" jobId=${job.id} para=${payload.email}`);
+    this.logger.log(`[emails] enqueued "${EMAIL_JOB_NAMES.INVITE_USER}" jobId=${job.id} to=${payload.email}`);
   }
 
   async enqueueMonitoringAlertEmail(payload: MonitoringAlertEmailPayload): Promise<void> {

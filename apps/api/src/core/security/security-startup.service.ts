@@ -118,10 +118,10 @@ export class SecurityStartupService implements OnApplicationBootstrap {
     }
 
     if (hasFatal) {
-      this.logger.error('[SECURITY] Configuração de segurança inválida — terminando processo.');
+      this.logger.error('[SECURITY] Invalid security configuration — terminating process.');
       setTimeout(() => process.exit(1), 200);
     } else {
-      this.logger.log('[SECURITY] Configuração de segurança validada.');
+      this.logger.log('[SECURITY] Security configuration validated.');
     }
   }
 }

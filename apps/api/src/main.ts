@@ -51,7 +51,7 @@ function suppressNetworkNoise(err: NodeJS.ErrnoException): boolean {
   if (err.code === __netLastCode && now - __netLastLogAt < NET_LOG_THROTTLE_MS) return true;
   __netLastCode = err.code;
   __netLastLogAt = now;
-  console.warn(`[net] Conexao indisponivel (${err.code}): ${err.message?.split('\n')[0]}`);
+  console.warn(`[net] Connection unavailable (${err.code}): ${err.message?.split('\n')[0]}`);
   return true;
 }
 
@@ -93,6 +93,6 @@ async function bootstrap() {
 }
 
 bootstrap().catch((err: unknown) => {
-  console.error('Falha crítica no bootstrap:', err);
+  console.error('Critical bootstrap failure:', err);
   process.exit(1);
 });

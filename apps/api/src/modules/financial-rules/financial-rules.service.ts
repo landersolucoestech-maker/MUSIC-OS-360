@@ -135,7 +135,7 @@ export class FinancialRulesService {
         // FinancialRules.tsx "Faixa (em breve)"). Never fabricate computed=0
         // as if it were a real result — skip the rule and warn.
         this.logger.warn(
-          `evaluateRules: regra "${rule.name}" (${rule.id}) usa calculo="${rule.calculo}" ainda não implementado — pulando, nenhum evento emitido`,
+          `evaluateRules: rule "${rule.name}" (${rule.id}) uses calculo="${rule.calculo}" which is not implemented yet — skipping, no event emitted`,
         );
         continue;
       }

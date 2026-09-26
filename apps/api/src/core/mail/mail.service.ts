@@ -74,7 +74,7 @@ export class MailService {
 
   async send(opts: SendMailOptions): Promise<MailResult> {
     if (!this.apiKey) {
-      this.logger.warn(`MailService: RESEND_API_KEY não configurada — email para ${Array.isArray(opts.to) ? opts.to.join(', ') : opts.to} ignorado`);
+      this.logger.warn(`MailService: RESEND_API_KEY not configured — email to ${Array.isArray(opts.to) ? opts.to.join(', ') : opts.to} skipped`);
       return { skipped: true };
     }
 
@@ -88,7 +88,7 @@ export class MailService {
       const blockedCount = recipients.length - allowed.length;
       if (blockedCount > 0) {
         this.logger.warn(
-          `MailService[STAGING]: ${blockedCount} destinatário(s) fora do allowlist (STAGING_MAIL_ALLOWLIST_DOMAINS) — não enviado(s)`,
+          `MailService[STAGING]: ${blockedCount} recipient(s) outside the allowlist (STAGING_MAIL_ALLOWLIST_DOMAINS) — not sent`,
         );
       }
       recipients = allowed;

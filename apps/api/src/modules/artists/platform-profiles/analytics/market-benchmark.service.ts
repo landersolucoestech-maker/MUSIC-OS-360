@@ -98,7 +98,7 @@ export class MarketBenchmarkService {
 
     if (refreshInFlight) {
       if (latest) {
-        this.logger.debug(`[market-benchmark] benchmark_stale_served tenant=${tenantId} artist=${artistId} (refresh já em andamento)`);
+        this.logger.debug(`[market-benchmark] benchmark_stale_served tenant=${tenantId} artist=${artistId} (refresh already in progress)`);
         return { readStatus: 'STALE', result: this.snapshotToResult(latest), staleSince: latest.calculated_at.toISOString() };
       }
       return { readStatus: 'REFRESHING', result: null, staleSince: null };
@@ -216,7 +216,7 @@ export class MarketBenchmarkService {
     try {
       const last = await this.repo.findOne({ where: { tenant_id: tenantId, artist_id: artistId } as never, order: { calculated_at: 'DESC' } as never });
       if (last && this.fingerprint(last) === this.fingerprintResult(result)) {
-        this.logger.debug(`[market-benchmark] snapshot idêntico ao anterior — não duplicado tenant=${tenantId} artist=${artistId}`);
+        this.logger.debug(`[market-benchmark] snapshot identical to the previous one — not duplicated tenant=${tenantId} artist=${artistId}`);
         return;
       }
       await this.repo.insert({
@@ -233,7 +233,7 @@ export class MarketBenchmarkService {
         calculated_at: result.calculatedAt,
       } as never);
     } catch (err) {
-      this.logger.error(`[market-benchmark] falha ao persistir snapshot (resultado OK) tenant=${tenantId} artist=${artistId}: ${err instanceof Error ? err.message : String(err)}`);
+      this.logger.error(`[market-benchmark] failed to persist snapshot (result OK) tenant=${tenantId} artist=${artistId}: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 

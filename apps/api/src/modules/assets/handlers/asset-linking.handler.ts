@@ -26,12 +26,12 @@ export class AssetLinkingHandler {
     const tenantId = event?.tenantId ?? event?.payload?.tenantId;
     // Fail-closed: an async handler without a tenant must not touch tenant data.
     if (!tenantId) {
-      this.logger.warn('AssetLinkingHandler: evento sem tenantId — abortado (fail-closed)');
+      this.logger.warn('AssetLinkingHandler: event without tenantId — aborted (fail-closed)');
       return;
     }
     if (!this.dbContext) {
       this.logger.warn(
-        'AssetLinkingHandler: DatabaseContextService indisponível — abortado (fail-closed)',
+        'AssetLinkingHandler: DatabaseContextService unavailable — aborted (fail-closed)',
       );
       return;
     }
@@ -45,7 +45,7 @@ export class AssetLinkingHandler {
     } catch (err) {
       // The failure is already persisted in the skill_run; here only an internal technical log.
       this.logger.error(
-        `Asset linking falhou para upload "${event.payload.uploadId}"`,
+        `Asset linking failed for upload "${event.payload.uploadId}"`,
         err instanceof Error ? err.stack : String(err),
       );
     }

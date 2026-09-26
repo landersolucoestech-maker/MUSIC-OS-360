@@ -290,7 +290,7 @@ export class ConversationsService {
     const to = (conv.metadata?.['phone'] as string | undefined)
       ?? (conv.metadata?.['external_contact_id'] as string | undefined);
     if (!to) {
-      this.logger.warn(`dispatchOutbound: conversa ${conv.id} é whatsapp mas não tem telefone em metadata — entrega pulada`);
+      this.logger.warn(`dispatchOutbound: conversation ${conv.id} is whatsapp but has no phone in metadata — delivery skipped`);
       return this.setDeliveryStatus(message, 'failed', 'Telefone do contact não encontrado na conversa');
     }
 
@@ -299,7 +299,7 @@ export class ConversationsService {
       return this.setDeliveryStatus(message, 'sent', undefined, result.externalMessageId);
     } catch (err) {
       const reason = err instanceof Error ? err.message : String(err);
-      this.logger.warn(`dispatchOutbound: falha ao enviar via WhatsApp (conversa ${conv.id}) — ${reason}`);
+      this.logger.warn(`dispatchOutbound: failed to send via WhatsApp (conversation ${conv.id}) — ${reason}`);
       return this.setDeliveryStatus(message, 'failed', reason);
     }
   }

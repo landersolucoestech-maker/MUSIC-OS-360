@@ -110,7 +110,7 @@ export class ReleaseEventsHandler {
   }
 
   private failClosed(eventType: string): void {
-    this.logger.warn(`ReleaseEventsHandler: event "${eventType}" sem tenantId - abortado (fail-closed)`);
+    this.logger.warn(`ReleaseEventsHandler: event "${eventType}" without tenantId - aborted (fail-closed)`);
   }
 
   private runInTenantContext<T>(

@@ -500,7 +500,7 @@ export class MusicChatAutomationService {
       } catch (err) {
         metadataPatch['delivery_status'] = 'failed';
         metadataPatch['delivery_error'] = err instanceof Error ? err.message : String(err);
-        this.logger.warn(`dispatchOutboundIfExternal: falha ao enviar automação via WhatsApp (conversa ${conversationId}) — ${metadataPatch['delivery_error']}`);
+        this.logger.warn(`dispatchOutboundIfExternal: failed to send automation via WhatsApp (conversation ${conversationId}) — ${metadataPatch['delivery_error']}`);
       }
     }
     await this.msgRepo!.update({ id: message.id } as any, { metadata: metadataPatch } as any);
@@ -560,7 +560,7 @@ export class MusicChatAutomationService {
         actor_id: actorId,
       }));
     } catch (error) {
-      this.logger.warn(`Falha ao registrar evento MusicChat ${eventType}: ${String(error)}`);
+      this.logger.warn(`Failed to record MusicChat event ${eventType}: ${String(error)}`);
       return null;
     }
   }

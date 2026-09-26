@@ -27,11 +27,11 @@ export class PostHogService implements OnModuleDestroy {
     this.host   = config?.get<string>('POSTHOG_HOST') ?? process.env.POSTHOG_HOST ?? 'https://app.posthog.com';
 
     if (this.apiKey && !isPostHogPlaceholder(this.apiKey)) {
-      this.initClient().catch(err => this.logger.warn(`PostHog init falhou: ${String(err)}`));
+      this.initClient().catch(err => this.logger.warn(`PostHog init failed: ${String(err)}`));
     } else if (this.apiKey && isPostHogPlaceholder(this.apiKey)) {
       this.logger.log('PostHogService: monitoring disabled — placeholder detected (POSTHOG_API_KEY looks unconfigured)');
     } else {
-      this.logger.log('PostHogService: POSTHOG_API_KEY não configurada — analytics desativado');
+      this.logger.log('PostHogService: POSTHOG_API_KEY not configured — analytics disabled');
     }
   }
 
@@ -58,7 +58,7 @@ export class PostHogService implements OnModuleDestroy {
     try {
       this.client.identify({ distinctId: userId, properties });
     } catch (err) {
-      this.logger.warn(`PostHog identify erro: ${String(err)}`);
+      this.logger.warn(`PostHog identify error: ${String(err)}`);
     }
   }
 
@@ -82,7 +82,7 @@ export class PostHogService implements OnModuleDestroy {
         },
       });
     } catch (err) {
-      this.logger.warn(`PostHog capture erro: ${String(err)}`);
+      this.logger.warn(`PostHog capture error: ${String(err)}`);
     }
   }
 
@@ -93,7 +93,7 @@ export class PostHogService implements OnModuleDestroy {
     try {
       this.client.groupIdentify({ groupType: 'tenant', groupKey: tenantId, properties });
     } catch (err) {
-      this.logger.warn(`PostHog groupIdentify erro: ${String(err)}`);
+      this.logger.warn(`PostHog groupIdentify error: ${String(err)}`);
     }
   }
 
@@ -132,7 +132,7 @@ export class PostHogService implements OnModuleDestroy {
   async onModuleDestroy(): Promise<void> {
     if (this.client) {
       await this.client.shutdown();
-      this.logger.log('PostHog: flush e shutdown concluídos');
+      this.logger.log('PostHog: flush and shutdown completed');
     }
   }
 }

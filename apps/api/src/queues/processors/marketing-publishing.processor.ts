@@ -68,7 +68,7 @@ export class MarketingPublishingProcessor extends WorkerHost {
       .andWhere("publication_status IS DISTINCT FROM 'publishing'")
       .execute();
     if (!claim.affected) {
-      this.logger.log(`[marketing-publishing] content=${row.id} já reivindicado por outro worker — pulando (idempotência)`);
+      this.logger.log(`[marketing-publishing] content=${row.id} already claimed by another worker — skipping (idempotency)`);
       return;
     }
 

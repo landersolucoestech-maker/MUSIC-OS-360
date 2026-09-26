@@ -91,20 +91,20 @@ async function run(): Promise<void> {
 
   if (env === 'production' && !force) {
     console.error(
-      '\n[MUSIC OS 360] Bootstrap do tenant-zero em produção requer a flag --force ' +
+      '\n[MUSIC OS 360] Bootstrapping tenant-zero in production requires the --force flag ' +
       'e TENANT_ZERO_OWNER_EMAIL.\n',
     );
     process.exit(1);
   }
   if (env === 'production' && !ownerEmail) {
-    console.error('\n[MUSIC OS 360] Em produção, TENANT_ZERO_OWNER_EMAIL é obrigatória.\n');
+    console.error('\n[MUSIC OS 360] In production, TENANT_ZERO_OWNER_EMAIL is required.\n');
     process.exit(1);
   }
 
   const targetRef = extractSupabaseRef(process.env['DATABASE_URL']);
   if (targetRef === SUPABASE_PROD_REF) {
     console.error(
-      '\n[MUSIC OS 360] Recusado: DATABASE_URL aponta para a branch MAIN do Supabase. ' +
+      '\n[MUSIC OS 360] Refused: DATABASE_URL points to the Supabase MAIN branch. ' +
       'O bootstrap do tenant-zero nunca pode rodar contra MAIN.\n',
     );
     process.exit(1);
@@ -140,7 +140,7 @@ async function run(): Promise<void> {
     console.log(
       result.created
         ? `  ✓ LANDER RECORDS criada — org=${result.orgId} tenant=${result.tenantId}`
-        : `  ✓ LANDER RECORDS já existia e foi validada — org=${result.orgId} tenant=${result.tenantId}`,
+        : `  ✓ LANDER RECORDS already existed and was validated — org=${result.orgId} tenant=${result.tenantId}`,
     );
 
     if (realOwner) {
@@ -148,19 +148,19 @@ async function run(): Promise<void> {
       if (provisionalPassword) {
         const acceptedRisk = process.env['TENANT_ZERO_PRINT_PASSWORD_I_ACCEPT_THE_RISK'] === 'yes';
         if (process.stdout.isTTY || acceptedRisk) {
-          console.log('\n  ⚠ SENHA PROVISÓRIA (exibida uma única vez, não persiste em nenhum lugar):');
+          console.log('\n  ⚠ TEMPORARY PASSWORD (shown only once, not persisted anywhere):');
           console.log(`    ${provisionalPassword}`);
-          console.log('  Troca de senha será exigida no primeiro login.\n');
+          console.log('  A password change will be required on first login.\n');
           if (acceptedRisk && !process.stdout.isTTY) {
-            console.log('  ⚠ Impressa em execução não-interativa por TENANT_ZERO_PRINT_PASSWORD_I_ACCEPT_THE_RISK=yes — troque assim que possível.\n');
+            console.log('  ⚠ Printed in a non-interactive run because TENANT_ZERO_PRINT_PASSWORD_I_ACCEPT_THE_RISK=yes — change it as soon as possible.\n');
           }
         } else {
-          console.log('  ⚠ Senha provisória gerada, mas NÃO impressa (execução não-interativa/CI) — rode este script localmente para vê-la.');
+          console.log('  ⚠ Temporary password generated but NOT printed (non-interactive/CI run) — run this script locally to see it.');
         }
       }
     }
   } catch (err) {
-    console.error('\n[MUSIC OS 360] Erro no bootstrap do tenant-zero:', (err as Error).message);
+    console.error('\n[MUSIC OS 360] Tenant-zero bootstrap error:', (err as Error).message);
     process.exit(1);
   } finally {
     await AppDataSource.destroy();

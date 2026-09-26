@@ -53,7 +53,7 @@ export class WorkflowEventsHandler {
 
     if (!event.tenantId) {
       this.logger.warn(
-        `WorkflowEventsHandler: event "${event.type}" sem tenantId - abortado (fail-closed)`,
+        `WorkflowEventsHandler: event "${event.type}" without tenantId - aborted (fail-closed)`,
       );
       return;
     }

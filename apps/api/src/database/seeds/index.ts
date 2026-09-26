@@ -23,9 +23,9 @@ async function run(): Promise<void> {
 
   if (env === 'production' && !force) {
     console.error(
-      '\n[MUSIC OS 360] Seeds em produção requerem a flag --force.\n' +
+      '\n[MUSIC OS 360] Seeds in production require the --force flag.\n' +
       'Exemplo: npm run db:seed -- --force\n' +
-      'ATENÇÃO: seeds sobrescrevem dados existentes.\n',
+      'WARNING: seeds overwrite existing data.\n',
     );
     process.exit(1);
   }
@@ -37,7 +37,7 @@ async function run(): Promise<void> {
   const targetRef = extractSupabaseRef(process.env['DATABASE_URL']);
   if (targetRef === SUPABASE_PROD_REF) {
     console.error(
-      '\n[MUSIC OS 360] Recusado: DATABASE_URL aponta para a branch MAIN do Supabase.\n' +
+      '\n[MUSIC OS 360] Refused: DATABASE_URL points to the Supabase MAIN branch.\n' +
       'Seeds nunca podem rodar contra MAIN, independente de NODE_ENV ou --force.\n',
     );
     process.exit(1);
@@ -54,7 +54,7 @@ async function run(): Promise<void> {
     const tenant = await seedDefaultTenant(AppDataSource);
     await seedAdminUser(AppDataSource, tenant);
     await seedOperational(AppDataSource, tenant);
-    console.log('  ✓ Operacional: org/tenant/billing/artista/contato/campanha/contrato/transação demo');
+    console.log('  ✓ Operational: demo org/tenant/billing/artist/contact/campaign/contract/transaction');
 
     // FASE 8 — RBAC global (permissions/roles/role_permissions) + organograma por tenant.
     const rbac = await seedRbac(AppDataSource);
@@ -62,9 +62,9 @@ async function run(): Promise<void> {
     const org = await seedOrgStructure(AppDataSource);
     console.log(`  ✓ Organograma: ${org.tenants} tenant(s) × (${org.perTenant.departments} departments, ${org.perTenant.positions} positions, ${org.perTenant.jobFunctions} job_functions)`);
 
-    console.log('\n[MUSIC OS 360] Seeds concluídos com sucesso.\n');
+    console.log('\n[MUSIC OS 360] Seeds completed successfully.\n');
   } catch (err) {
-    console.error('\n[MUSIC OS 360] Erro durante seeds:', (err as Error).message);
+    console.error('\n[MUSIC OS 360] Error while running seeds:', (err as Error).message);
     process.exit(1);
   } finally {
     await AppDataSource.destroy();

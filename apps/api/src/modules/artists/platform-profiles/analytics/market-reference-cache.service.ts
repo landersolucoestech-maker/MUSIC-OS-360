@@ -103,7 +103,7 @@ export class MarketReferenceCacheService {
         try {
           countryCode = await this.soundcharts.getArtistCountryCode(item.uuid);
         } catch (err) {
-          this.logger.warn(`[market-reference-cache] falha ao buscar país de ${item.uuid}: ${err instanceof Error ? err.message : String(err)}`);
+          this.logger.warn(`[market-reference-cache] failed to fetch country for ${item.uuid}: ${err instanceof Error ? err.message : String(err)}`);
         }
       }
       candidates.push({ uuid: item.uuid, name: item.name, countryCode });
@@ -173,7 +173,7 @@ export class MarketReferenceCacheService {
         .orUpdate(['candidate_name', 'candidate_country_code', 'value', 'fetched_at', 'observed_at', 'updated_at'], ['candidate_uuid', 'metric'])
         .execute();
     } catch (err) {
-      this.logger.warn(`[market-reference-cache] falha ao gravar cache de ${uuid}/${metricKey}: ${err instanceof Error ? err.message : String(err)}`);
+      this.logger.warn(`[market-reference-cache] failed to write cache for ${uuid}/${metricKey}: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 }

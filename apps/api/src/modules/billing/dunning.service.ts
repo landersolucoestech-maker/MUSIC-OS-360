@@ -141,12 +141,12 @@ export class DunningService implements OnApplicationBootstrap {
     if (!this.ds) return;
 
     this.runDunningCycle().catch((err: unknown) =>
-      this.logger.warn(`Dunning initial run falhou: ${String(err)}`),
+      this.logger.warn(`Dunning initial run failed: ${String(err)}`),
     );
 
     this.intervalRef = setInterval(() => {
       this.runDunningCycle().catch((err: unknown) =>
-        this.logger.warn(`Dunning cycle falhou: ${String(err)}`),
+        this.logger.warn(`Dunning cycle failed: ${String(err)}`),
       );
     }, DAY_MS);
   }
@@ -156,7 +156,7 @@ export class DunningService implements OnApplicationBootstrap {
     if (this.cycleInFlight) {
       // find-e86ed9e1: previous cycle (still running past its 24h slot, or a
       // manual trigger overlapping the scheduled one) has not finished yet.
-      this.logger.warn('Dunning cycle: execução anterior ainda em andamento — pulando este disparo para evitar sobreposição');
+      this.logger.warn('Dunning cycle: previous run still in progress — skipping this trigger to avoid overlap');
       return;
     }
 
@@ -188,7 +188,7 @@ export class DunningService implements OnApplicationBootstrap {
           // Isolate the failure — one tenant must not abort the whole cycle
           // for every other tenant still waiting in this run.
           failed++;
-          this.logger.warn(`Dunning[${runId}]: tenant ${tenantId} falhou — ${String(err)}`);
+          this.logger.warn(`Dunning[${runId}]: tenant ${tenantId} failed — ${String(err)}`);
           await this.recordDunningOutcome(tenantId, false, runId);
         }
       });
@@ -199,7 +199,7 @@ export class DunningService implements OnApplicationBootstrap {
         );
       }
     } catch (err) {
-      this.logger.error(`Dunning cycle[${runId}] falhou: ${String(err)}`);
+      this.logger.error(`Dunning cycle[${runId}] failed: ${String(err)}`);
     } finally {
       this.cycleInFlight = false;
     }
@@ -233,7 +233,7 @@ export class DunningService implements OnApplicationBootstrap {
         [tenantId],
       ) as Array<{ locked: boolean }>;
       if (!row?.locked) {
-        this.logger.log(`Dunning[${runId}]: tenant ${tenantId} pulado — lock já detido por outra instância/ciclo`);
+        this.logger.log(`Dunning[${runId}]: tenant ${tenantId} skipped — lock already held by another instance/cycle`);
         return 'skipped';
       }
 
@@ -244,7 +244,7 @@ export class DunningService implements OnApplicationBootstrap {
       // sees zero rows under a NOBYPASSRLS app role.
       const state = await this.runInTenantContext(tenantId, () => this.enforcement.getState(tenantId));
       if (!state) {
-        this.logger.log(`Dunning[${runId}]: tenant ${tenantId} processado — sem estado de cobrança`);
+        this.logger.log(`Dunning[${runId}]: tenant ${tenantId} processed — no billing state`);
         return 'processed';
       }
 
@@ -320,7 +320,7 @@ export class DunningService implements OnApplicationBootstrap {
         );
       }
     } catch (err) {
-      this.logger.warn(`Dunning[${runId}]: falha ao persistir failure-streak do tenant ${tenantId} — ${String(err)}`);
+      this.logger.warn(`Dunning[${runId}]: failed to persist failure-streak for tenant ${tenantId} — ${String(err)}`);
     }
   }
 
@@ -356,7 +356,7 @@ export class DunningService implements OnApplicationBootstrap {
       if (existing) {
         const jobState = await existing.getState();
         if (jobState === 'failed') {
-          this.logger.error(`Dunning: notificação ${type} para tenant ${tenantId} tinha falhado permanentemente (jobId=${jobId}) — reenviando`);
+          this.logger.error(`Dunning: notification ${type} for tenant ${tenantId} had permanently failed (jobId=${jobId}) — resending`);
           await existing.retry();
         }
         return;
@@ -369,7 +369,7 @@ export class DunningService implements OnApplicationBootstrap {
     } catch (err) {
       // find-27fef1de: escalated to error — a silently dropped notification
       // enqueue is exactly the failure mode this finding calls out.
-      this.logger.error(`Dunning: enqueue notification ${type} falhou (ação necessária) — ${String(err)}`);
+      this.logger.error(`Dunning: enqueue notification ${type} failed (action required) — ${String(err)}`);
     }
   }
 }

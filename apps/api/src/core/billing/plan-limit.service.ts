@@ -79,7 +79,7 @@ export class PlanLimitService {
       if (resource === 'storageGb') current = Math.ceil(current / (1024 ** 3));
     } catch (err) {
       // Do not block creation on DB query failure — log and continue
-      this.logger.warn(`PlanLimitService: falha ao ler uso de ${resource} — ${String(err)}`);
+      this.logger.warn(`PlanLimitService: failed to read usage of ${resource} — ${String(err)}`);
       return;
     }
 

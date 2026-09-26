@@ -139,7 +139,7 @@ export class NotificationHandler {
   private async handle<T>(event: DomainEvent<T>): Promise<void> {
     if (!event.tenantId) {
       this.logger.warn(
-        `NotificationHandler: event "${event.type}" sem tenantId - abortado (fail-closed)`,
+        `NotificationHandler: event "${event.type}" without tenantId - aborted (fail-closed)`,
       );
       return;
     }

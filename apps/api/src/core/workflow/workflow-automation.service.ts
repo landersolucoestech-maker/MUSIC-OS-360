@@ -117,12 +117,12 @@ export class WorkflowAutomationService implements OnModuleInit {
       for (const event of events) {
         this.events.on(event, (payload: DomainEvent) => {
           this.processEvent(event, payload).catch((err: unknown) =>
-            this.logger.error(`WorkflowAutomation processEvent falhou [${event}]: ${String(err)}`),
+            this.logger.error(`WorkflowAutomation processEvent failed [${event}]: ${String(err)}`),
           );
         });
       }
     } else {
-      this.logger.warn('WorkflowAutomationService: EventsService indisponivel; triggers nao assinados');
+      this.logger.warn('WorkflowAutomationService: EventsService unavailable; triggers not subscribed');
     }
 
     this.logger.log(
@@ -144,12 +144,12 @@ export class WorkflowAutomationService implements OnModuleInit {
 
     const tenantId = payload.tenantId;
     if (!tenantId) {
-      this.logger.warn(`WorkflowAutomation ignorou evento sem tenantId [${eventType}]`);
+      this.logger.warn(`WorkflowAutomation skipped event without tenantId [${eventType}]`);
       return;
     }
     if (!this.dbContext) {
       this.logger.warn(
-        `WorkflowAutomation ignorou evento sem DatabaseContextService [${eventType}]`,
+        `WorkflowAutomation skipped event without DatabaseContextService [${eventType}]`,
       );
       return;
     }
@@ -184,7 +184,7 @@ export class WorkflowAutomationService implements OnModuleInit {
     const execution = this.execution;
     if (!execution) {
       this.logger.warn(
-        `WorkflowAutomation ignorou regra sem WorkflowExecutionService [${rule.id}]`,
+        `WorkflowAutomation skipped rule without WorkflowExecutionService [${rule.id}]`,
       );
       return;
     }
@@ -207,7 +207,7 @@ export class WorkflowAutomationService implements OnModuleInit {
         succeeded++;
         await execution.logAction(executionId, tenantId, action.type, 'success');
         this.logger.debug(
-          `Trigger [${rule.id}] → action [${action.type}] executado para tenant=${event.tenantId}`,
+          `Trigger [${rule.id}] → action [${action.type}] executed for tenant=${event.tenantId}`,
         );
       } catch (err) {
         failed++;
@@ -215,7 +215,7 @@ export class WorkflowAutomationService implements OnModuleInit {
         if (!firstError) firstError = msg;
         await execution.logAction(executionId, tenantId, action.type, 'failed', msg);
         this.logger.warn(
-          `Trigger [${rule.id}] → action [${action.type}] falhou: ${msg}. Enfileirando para retry.`,
+          `Trigger [${rule.id}] → action [${action.type}] failed: ${msg}. Enqueuing for retry.`,
         );
         await this.enqueueDlq(rule, action, event, msg);
       }

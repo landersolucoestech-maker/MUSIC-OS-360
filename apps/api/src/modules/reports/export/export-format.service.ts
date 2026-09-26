@@ -42,7 +42,7 @@ export function sanitizeExcelCellValue(value: unknown, context: CellContext): st
   if (typeof value === 'boolean') return value ? 'Sim' : 'Não';
   if (typeof value === 'object') {
     // eslint-disable-next-line no-console
-    console.warn(`[reports-export] campo técnico ignorado (objeto/array cru): ${context.entity}.${context.column}`);
+    console.warn(`[reports-export] technical field skipped (raw object/array): ${context.entity}.${context.column}`);
     return '';
   }
   let text: string;
@@ -55,7 +55,7 @@ export function sanitizeExcelCellValue(value: unknown, context: CellContext): st
   if (text.length > EXCEL_CELL_MAX_CHARS) {
     // eslint-disable-next-line no-console
     console.warn(
-      `[reports-export] campo truncado para exportação: ${context.entity}.${context.column} ` +
+      `[reports-export] field truncated for export: ${context.entity}.${context.column} ` +
       `tinha ${text.length} caracteres (limite Excel: ${EXCEL_CELL_MAX_CHARS})`,
     );
     text = text.slice(0, EXCEL_CELL_SAFE_CHARS - TRUNCATION_SUFFIX.length) + TRUNCATION_SUFFIX;

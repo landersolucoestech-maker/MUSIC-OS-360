@@ -146,7 +146,7 @@ export class ArtistPlatformProfilesService {
       await this.snapshots.recordFromProfileSnapshot(snapshot);
     } catch (err) {
       this.logger.error(
-        `[metric-snapshot] falha ao gravar histórico (current-state OK) tenant=${snapshot.tenant_id} artist=${snapshot.artist_id} platform=${snapshot.platform}: ${err instanceof Error ? err.message : String(err)}`,
+        `[metric-snapshot] failed to write history (current-state OK) tenant=${snapshot.tenant_id} artist=${snapshot.artist_id} platform=${snapshot.platform}: ${err instanceof Error ? err.message : String(err)}`,
       );
     }
 

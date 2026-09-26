@@ -57,7 +57,7 @@ export class ArtistPlatformSyncProcessor extends WorkerHost {
     const payload = job.data;
     // Fail-closed: an asynchronous job without a tenant NEVER touches tenant-scoped data.
     if (!payload.tenant_id) {
-      this.logger.warn(`[artist-platform-sync] job=${job.id} sem tenant_id — abortado (fail-closed)`);
+      this.logger.warn(`[artist-platform-sync] job=${job.id} without tenant_id — aborted (fail-closed)`);
       return;
     }
 
@@ -109,7 +109,7 @@ export class ArtistPlatformSyncProcessor extends WorkerHost {
           externalUrl: payload.external_url ?? null,
           error: 'Artista não encontrado',
         });
-        this.logger.warn(`[artist-platform-sync] artista não encontrado ${logCtx}`);
+        this.logger.warn(`[artist-platform-sync] artist not found ${logCtx}`);
         return;
       }
       if (!payload.external_id && !payload.external_url) {

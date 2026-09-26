@@ -218,11 +218,11 @@ export class BillingService {
         this.logger.error('STRIPE_SECRET_KEY e uma chave LIVE - recusada. Este projeto opera exclusivamente em TEST MODE. Billing desativado.');
         break;
       case 'INVALID_FORMAT':
-        this.logger.warn('STRIPE_SECRET_KEY nao tem um formato Stripe reconhecido - Billing desativado');
+        this.logger.warn('STRIPE_SECRET_KEY does not have a recognized Stripe format - Billing disabled');
         break;
       case 'MISSING':
       default:
-        this.logger.warn('STRIPE_SECRET_KEY nao configurada - Billing desativado');
+        this.logger.warn('STRIPE_SECRET_KEY not configured - Billing disabled');
     }
   }
 
@@ -683,7 +683,7 @@ export class BillingService {
         await this.recordLegacyWebhook(event, tenantId, WebhookEventStatus.FAILED, err.message);
       });
     } catch (logErr) {
-      this.logger.error(`Webhook Stripe ${event.id}: falha ao registrar a falha (${String(logErr)}); erro original: ${err.message}`);
+      this.logger.error(`Stripe webhook ${event.id}: failed to record the failure (${String(logErr)}); original error: ${err.message}`);
     }
   }
 
@@ -906,7 +906,7 @@ export class BillingService {
     // event already won the race, so no further side effect should fire.
     const applied = await this.enforcement.activateTenant(tenantId, 'invoice.payment_succeeded', new Date(), undefined, eventCreatedAtSec);
     if (!applied) {
-      this.logger.log(`invoice.payment_succeeded rejeitado (concorrência): tenant=${tenantId} invoice=${invoice.id}`);
+      this.logger.log(`invoice.payment_succeeded rejected (concurrency): tenant=${tenantId} invoice=${invoice.id}`);
       return;
     }
     this.ws.sendToTenant(tenantId, 'billing:payment_succeeded', {
@@ -929,7 +929,7 @@ export class BillingService {
     // guard inside startPaymentGrace is the real concurrency enforcement.
     const applied = await this.enforcement.startPaymentGrace(tenantId, 'invoice.payment_failed', new Date(), undefined, eventCreatedAtSec);
     if (!applied) {
-      this.logger.log(`invoice.payment_failed sem transição (já em dunning, cancelado, evento antigo ou concorrência): tenant=${tenantId} invoice=${invoice.id}`);
+      this.logger.log(`invoice.payment_failed without transition (already in dunning, canceled, stale event or concurrency): tenant=${tenantId} invoice=${invoice.id}`);
       return;
     }
     await this.orgRepo!

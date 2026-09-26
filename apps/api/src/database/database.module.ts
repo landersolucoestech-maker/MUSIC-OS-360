@@ -59,7 +59,7 @@ export async function createAdminDataSource(config: ConfigService): Promise<Data
     if (isProd) {
       throw new Error('DATABASE_URL is required in production');
     }
-    logger.warn('DATABASE_URL não configurado — ADMIN_DATA_SOURCE desativado (modo standalone)');
+    logger.warn('DATABASE_URL not configured — ADMIN_DATA_SOURCE disabled (standalone mode)');
     return null;
   }
 
@@ -88,11 +88,11 @@ export async function createAdminDataSource(config: ConfigService): Promise<Data
 
   try {
     await adminDs.initialize();
-    logger.log('ADMIN_DATA_SOURCE conectado (owner, bootstrap/enumeração read-only)');
+    logger.log('ADMIN_DATA_SOURCE connected (owner, bootstrap/read-only enumeration)');
     return adminDs;
   } catch (err) {
     const message = err instanceof Error ? (err.message || err.name) : String(err);
-    logger.error('Falha ao inicializar ADMIN_DATA_SOURCE', message);
+    logger.error('Failed to initialize ADMIN_DATA_SOURCE', message);
     throw new Error(`ADMIN_DATA_SOURCE não inicializou: ${message}`);
   }
 }
@@ -151,7 +151,7 @@ export async function createProvisioningDataSource(
             throw new Error('DATABASE_URL is required in production');
           }
           logger.warn(
-            'DATABASE_URL não configurado — DB desativado (modo standalone)',
+            'DATABASE_URL not configured — DB disabled (standalone mode)',
           );
           return null;
         }
@@ -215,7 +215,7 @@ export async function createProvisioningDataSource(
                 };
               }))}`
             : message;
-          logger.error('Falha ao conectar PostgreSQL via TypeORM', detail);
+          logger.error('Failed to connect to PostgreSQL via TypeORM', detail);
           throw new Error(`DATABASE_URL configurado, mas PostgreSQL nao inicializou: ${detail}`);
         }
       },

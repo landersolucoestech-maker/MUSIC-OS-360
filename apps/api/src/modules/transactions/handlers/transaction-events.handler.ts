@@ -32,7 +32,7 @@ export class TransactionEventsHandler {
   async onTransactionCreated(event: DomainEvent<TransactionCreatedPayload>): Promise<void> {
     const tenantId = event?.tenantId;
     if (!tenantId) {
-      this.logger.warn('TransactionEventsHandler: evento sem tenantId — abortado (fail-closed)');
+      this.logger.warn('TransactionEventsHandler: event without tenantId — aborted (fail-closed)');
       return;
     }
     if (!this.financialRules) return;
@@ -60,7 +60,7 @@ export class TransactionEventsHandler {
     const tenantId = event?.tenantId;
     // Fail-closed: an async handler without a tenant must not touch tenant data.
     if (!tenantId) {
-      this.logger.warn('TransactionEventsHandler: evento sem tenantId — abortado (fail-closed)');
+      this.logger.warn('TransactionEventsHandler: event without tenantId — aborted (fail-closed)');
       return;
     }
 

@@ -60,7 +60,7 @@ export class WhatsAppWebhookController {
       const echoed = this.whatsapp.verifyWebhookChallenge(mode, token, challenge);
       res.status(HttpStatus.OK).send(echoed);
     } catch (err) {
-      this.logger.warn(`[whatsapp/webhook] Verificação rejeitada: ${err instanceof Error ? err.message : String(err)}`);
+      this.logger.warn(`[whatsapp/webhook] Verification rejected: ${err instanceof Error ? err.message : String(err)}`);
       res.status(HttpStatus.FORBIDDEN).send('Forbidden');
     }
   }
@@ -118,12 +118,12 @@ export class WhatsAppWebhookController {
   private verifySignature(req: RawBodyRequest<Request>, signature: string | undefined): void {
     const appSecret = this.config.get<string>('META_APP_SECRET') ?? '';
     if (!appSecret) {
-      this.logger.error('[whatsapp/webhook] META_APP_SECRET não configurado — webhook rejeitado');
+      this.logger.error('[whatsapp/webhook] META_APP_SECRET not configured — webhook rejected');
       throw new ServiceUnavailableException('WhatsApp webhook não configurado: META_APP_SECRET ausente');
     }
 
     if (!signature) {
-      this.logger.warn('[whatsapp/webhook] Requisição sem X-Hub-Signature-256 — rejeitada');
+      this.logger.warn('[whatsapp/webhook] Request without X-Hub-Signature-256 — rejected');
       throw new ForbiddenException('X-Hub-Signature-256 ausente');
     }
 
@@ -132,7 +132,7 @@ export class WhatsAppWebhookController {
       rawBody, secret: appSecret, received: signature, algorithm: 'sha256', prefix: 'sha256=',
     });
     if (!valid) {
-      this.logger.warn('[whatsapp/webhook] Assinatura X-Hub-Signature-256 inválida — rejeitada');
+      this.logger.warn('[whatsapp/webhook] Invalid X-Hub-Signature-256 signature — rejected');
       throw new ForbiddenException('Assinatura X-Hub-Signature-256 inválida');
     }
   }
@@ -145,14 +145,14 @@ export class WhatsAppWebhookController {
 
     const resolution = await this.whatsapp.resolveTenantByPhoneNumberId(phoneNumberId);
     if (resolution.kind === 'unknown') {
-      this.logger.warn(`[whatsapp/webhook] Nenhum tenant configurado para phone_number_id=${phoneNumberId} — evento ignorado`);
+      this.logger.warn(`[whatsapp/webhook] No tenant configured for phone_number_id=${phoneNumberId} — event ignored`);
       return false;
     }
     if (resolution.kind === 'conflict') {
       // find-2220a85e: identity ambiguity is never resolved by "first row".
       // Routes to no tenant (fail-closed).
       this.logger.error(
-        `[whatsapp/webhook] CONFLITO de identidade: phone_number_id=${phoneNumberId} vinculado a ${resolution.tenantCount} tenants — evento NÃO roteado`,
+        `[whatsapp/webhook] Identity CONFLICT: phone_number_id=${phoneNumberId} linked to ${resolution.tenantCount} tenants — event NOT routed`,
       );
       return false;
     }
@@ -175,7 +175,7 @@ export class WhatsAppWebhookController {
         payload: message as unknown as Record<string, unknown>,
       }));
       if (ingestResult.isDuplicate) {
-        this.logger.log(`[whatsapp/webhook] Evento duplicado ignorado (já processado): externalId=${message.id}`);
+        this.logger.log(`[whatsapp/webhook] Duplicate event ignored (already processed): externalId=${message.id}`);
         continue;
       }
 
@@ -196,7 +196,7 @@ export class WhatsAppWebhookController {
         });
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        this.logger.error(`[whatsapp/webhook] Falha ao processar mensagem ${message.id}: ${msg}`);
+        this.logger.error(`[whatsapp/webhook] Failed to process message ${message.id}: ${msg}`);
         await this.dbContext.runInTenantContext(ctx, () => this.webhookSvc.markProcessed(ingestResult.eventId, 'failed', msg));
         anyFailed = true;
       }

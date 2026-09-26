@@ -102,7 +102,7 @@ export class AIService {
         return result;
       } catch (err) {
         lastError = err;
-        this.logger.warn(`AI provider falhou, tentando próximo: ${String(err)}`);
+        this.logger.warn(`AI provider failed, trying next: ${String(err)}`);
       }
     }
     throw new Error(`Todos os providers AI falharam. Último erro: ${String(lastError)}`);
@@ -224,7 +224,7 @@ export class AIService {
       });
       await repo.save(entity);
     } catch (err) {
-      this.logger.warn(`Erro ao registar AI job: ${String(err)}`);
+      this.logger.warn(`Error registering AI job: ${String(err)}`);
     }
   }
 

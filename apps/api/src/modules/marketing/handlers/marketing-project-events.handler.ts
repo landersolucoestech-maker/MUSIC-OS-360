@@ -19,7 +19,7 @@ export class MarketingProjectEventsHandler {
     const tenantId = event.tenantId ?? event.payload.tenantId;
     if (!tenantId) {
       this.logger.warn(
-        `MarketingProjectEventsHandler: event "${event.type}" sem tenantId - abortado (fail-closed)`,
+        `MarketingProjectEventsHandler: event "${event.type}" without tenantId - aborted (fail-closed)`,
       );
       return;
     }

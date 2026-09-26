@@ -211,7 +211,7 @@ export class SpotifyService {
     const artistId = parseSpotifyArtistId(spotifyUrlOrId);
 
     if (!artistId) {
-      this.logger.warn(`Spotify: link inválido — ${spotifyUrlOrId}`);
+      this.logger.warn(`Spotify: invalid link — ${spotifyUrlOrId}`);
       return null;
     }
 
@@ -222,7 +222,7 @@ export class SpotifyService {
       headers: { 'Authorization': `Bearer ${token}` },
     });
     const data = await res.json() as any;
-    this.logger.log(`Spotify: ${data.name} retornou perfil publico; monthly listeners nao disponivel neste endpoint`);
+    this.logger.log(`Spotify: ${data.name} returned a public profile; monthly listeners not available on this endpoint`);
     return {
       listeners: null,
       popularity: data.popularity ?? 0,

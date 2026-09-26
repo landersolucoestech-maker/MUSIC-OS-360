@@ -184,7 +184,7 @@ export class ArtistEventsHandler {
   }
 
   private failClosed(eventType: string): void {
-    this.logger.warn(`ArtistEventsHandler: event "${eventType}" sem tenantId - abortado (fail-closed)`);
+    this.logger.warn(`ArtistEventsHandler: event "${eventType}" without tenantId - aborted (fail-closed)`);
   }
 
   private runInTenantContext<T>(

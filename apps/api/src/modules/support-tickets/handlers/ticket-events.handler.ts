@@ -121,7 +121,7 @@ export class TicketEventsHandler {
   }
 
   private failClosed(eventType: string): void {
-    this.logger.warn(`TicketEventsHandler: event "${eventType}" sem tenantId - abortado (fail-closed)`);
+    this.logger.warn(`TicketEventsHandler: event "${eventType}" without tenantId - aborted (fail-closed)`);
   }
 
   private runInTenantContext<T>(

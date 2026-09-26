@@ -99,7 +99,7 @@ export class RealtimeService implements OnModuleDestroy {
       this.tenantRepo!.findOne({ where: { id: tenantId } as any, select: ['org_id'] as any }),
     );
     if (!tenant) {
-      this.logger.warn(`RealtimeService: tenant ${tenantId} não encontrado — broadcast pulado`);
+      this.logger.warn(`RealtimeService: tenant ${tenantId} not found — broadcast skipped`);
       return null;
     }
     this.orgIdCache.set(tenantId, tenant.org_id);
@@ -129,13 +129,13 @@ export class RealtimeService implements OnModuleDestroy {
         channel
           .send({ type: 'broadcast', event, payload })
           .catch((sendErr: unknown) => {
-            this.logger.warn(`RealtimeService: falha ao publicar em "${topic}" — ${String(sendErr)}`);
+            this.logger.warn(`RealtimeService: failed to publish to "${topic}" — ${String(sendErr)}`);
           })
           .finally(() => {
             client.removeChannel(channel);
           });
       } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-        this.logger.warn(`RealtimeService: falha ao conectar em "${topic}" (${status}) — ${err?.message ?? ''}`);
+        this.logger.warn(`RealtimeService: failed to connect to "${topic}" (${status}) — ${err?.message ?? ''}`);
         client.removeChannel(channel);
       }
     });

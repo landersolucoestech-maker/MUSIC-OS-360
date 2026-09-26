@@ -111,7 +111,7 @@ export class CareerStageService {
     try {
       const last = await this.repo.findOne({ where: { tenant_id: tenantId, artist_id: artistId } as never, order: { calculated_at: 'DESC' } as never });
       if (last && this.fingerprint(last) === this.fingerprintResult(result)) {
-        this.logger.debug(`[career-stage] snapshot idêntico ao anterior — não duplicado tenant=${tenantId} artist=${artistId}`);
+        this.logger.debug(`[career-stage] snapshot identical to the previous one — not duplicated tenant=${tenantId} artist=${artistId}`);
         return;
       }
       await this.repo.insert({
@@ -132,7 +132,7 @@ export class CareerStageService {
     } catch (err) {
       // Append-only audit trail — never breaks the user response if the write fails
       // (same pattern as ArtistMetricSnapshotsService).
-      this.logger.error(`[career-stage] falha ao persistir snapshot (resultado OK) tenant=${tenantId} artist=${artistId}: ${err instanceof Error ? err.message : String(err)}`);
+      this.logger.error(`[career-stage] failed to persist snapshot (result OK) tenant=${tenantId} artist=${artistId}: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 

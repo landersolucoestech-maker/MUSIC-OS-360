@@ -34,7 +34,7 @@ export class PlatformContactService {
     const recipient = this.config.get<string>('PLATFORM_CONTACT_RECIPIENT_EMAIL');
     if (!recipient) {
       this.logger.warn(
-        'PlatformContactService: PLATFORM_CONTACT_RECIPIENT_EMAIL não configurado — contato institucional indisponível (pendência operacional)',
+        'PlatformContactService: PLATFORM_CONTACT_RECIPIENT_EMAIL not configured — institutional contact unavailable (pending operational setup)',
       );
       throw new ServiceUnavailableException(
         'Contato institucional temporariamente indisponível. Tente novamente mais tarde.',

@@ -85,7 +85,7 @@ export class AssetLinkingService {
   /** Processa um asset.uploaded: cria asset central + vincula a projeto/tarefa. */
   async processUpload(payload: AssetUploadedPayload): Promise<AssetLinkResult | null> {
     if (!this.assets) {
-      this.logger.warn('AssetLinkingService: DATA_SOURCE indisponível — linking ignorado.');
+      this.logger.warn('AssetLinkingService: DATA_SOURCE unavailable — linking skipped.');
       return null;
     }
 

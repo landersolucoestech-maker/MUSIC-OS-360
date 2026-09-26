@@ -45,7 +45,7 @@ export class AIJobsProcessor extends WorkerHost {
     // the write anyway, but as a clean guard rather than a deep unhandled
     // transaction error.
     if (!d.tenantId) {
-      this.logger.warn(`[ai-jobs] job ${job.id} sem tenantId — abortado (fail-closed)`);
+      this.logger.warn(`[ai-jobs] job ${job.id} without tenantId — aborted (fail-closed)`);
       return;
     }
 
@@ -71,7 +71,7 @@ export class AIJobsProcessor extends WorkerHost {
         }),
       );
     } catch (err) {
-      this.logger.error(`[ai-jobs] complete() falhou: ${(err as Error).message}`);
+      this.logger.error(`[ai-jobs] complete() failed: ${(err as Error).message}`);
       throw err; // BullMQ vai re-tentar conforme backoff configurado
     }
 
@@ -93,7 +93,7 @@ export class AIJobsProcessor extends WorkerHost {
       });
     } catch (wsErr) {
       this.logger.warn(
-        `[ai-jobs] WS emit falhou (userId=${d.userId}): ${(wsErr as Error).message}`,
+        `[ai-jobs] WS emit failed (userId=${d.userId}): ${(wsErr as Error).message}`,
       );
     }
   }

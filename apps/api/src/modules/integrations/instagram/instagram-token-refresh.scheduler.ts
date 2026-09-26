@@ -75,7 +75,7 @@ export class InstagramTokenRefreshScheduler implements OnApplicationBootstrap {
         if (ok) refreshed++; else failed++;
       } catch (err) {
         failed++;
-        this.logger.warn(`InstagramTokenRefreshScheduler: falha em ${row.tenant_id}/${row.user_id}/${row.provider} — ${String(err)}`);
+        this.logger.warn(`InstagramTokenRefreshScheduler: failure for ${row.tenant_id}/${row.user_id}/${row.provider} — ${String(err)}`);
       }
     }
     this.logger.log(`InstagramTokenRefreshScheduler: ${rows.length} verificados, ${refreshed} renovados, ${failed} falhas`);

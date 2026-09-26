@@ -47,7 +47,7 @@ export class MigrationValidatorService implements OnApplicationBootstrap {
         this.logger.error('DB unavailable in production - migration validation cannot run');
         process.exit(1);
       }
-      this.logger.warn('DB desativado — validação de migrations ignorada');
+      this.logger.warn('DB disabled — migration validation skipped');
       return;
     }
 
@@ -55,7 +55,7 @@ export class MigrationValidatorService implements OnApplicationBootstrap {
     const skipCheck    = this.getConfig('SKIP_MIGRATION_CHECK') === 'true';
 
     if (skipCheck) {
-      this.logger.warn('SKIP_MIGRATION_CHECK=true — validação desactivada');
+      this.logger.warn('SKIP_MIGRATION_CHECK=true — validation disabled');
       return;
     }
 
@@ -75,15 +75,15 @@ export class MigrationValidatorService implements OnApplicationBootstrap {
           this.logger.warn(`[DEV] ${msg}`);
         }
       } else {
-        this.logger.log('Schema sincronizado — sem migrations pendentes.');
+        this.logger.log('Schema in sync — no pending migrations.');
       }
     } catch (err) {
       // A validation failure must not prevent boot in dev
       if (isProduction) {
-        this.logger.error('Falha ao verificar migrations:', (err as Error).message);
+        this.logger.error('Failed to check migrations:', (err as Error).message);
         process.exit(1);
       } else {
-        this.logger.warn('Não foi possível verificar migrations (dev):', (err as Error).message);
+        this.logger.warn('Could not check migrations (dev):', (err as Error).message);
       }
     }
   }

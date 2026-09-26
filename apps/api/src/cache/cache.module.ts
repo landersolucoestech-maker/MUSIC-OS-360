@@ -68,7 +68,7 @@ class InMemoryCacheClient implements CacheClient {
       provide: CACHE_CLIENT,
       useFactory: () => {
         const logger = new Logger('CacheModule');
-        logger.log('Cache em memória activado');
+        logger.log('In-memory cache enabled');
         return new InMemoryCacheClient();
       },
     },

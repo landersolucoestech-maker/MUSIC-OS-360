@@ -129,7 +129,7 @@ export async function runOnDemandSkill<TInput, TOutput>(
     return { parsed, provider: completion.provider, model: completion.model, generatedAt, fromCache: false, skillRunId: runId };
   } catch (err) {
     await skillRun.fail(runId, tenantId, skillName, err);
-    logger.warn(`[${skillName}] execução on-demand falhou (run=${runId}): ${err instanceof Error ? err.message : String(err)}`);
+    logger.warn(`[${skillName}] on-demand execution failed (run=${runId}): ${err instanceof Error ? err.message : String(err)}`);
     throw err;
   }
 }

@@ -71,7 +71,7 @@ export class AdminUsersService {
       for (let page = 1; page <= MAX_PAGES; page++) {
         const { data, error } = await supabase.auth.admin.listUsers({ page, perPage: PAGE_SIZE });
         if (error) {
-          this.logger.warn(`listUsers falhou na página ${page}: ${error.message}`);
+          this.logger.warn(`listUsers failed on page ${page}: ${error.message}`);
           break;
         }
         for (const user of data.users) {
@@ -84,7 +84,7 @@ export class AdminUsersService {
         if (data.users.length < PAGE_SIZE) break;
       }
     } catch (err) {
-      this.logger.warn(`Não foi possível obter dados de auth (MFA/last_login): ${(err as Error).message}`);
+      this.logger.warn(`Could not fetch auth data (MFA/last_login): ${(err as Error).message}`);
     }
 
     this.authCache = { data: map, expiresAt: Date.now() + AUTH_CACHE_TTL_MS };

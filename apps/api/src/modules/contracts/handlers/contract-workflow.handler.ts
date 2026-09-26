@@ -214,7 +214,7 @@ export class ContractWorkflowHandler {
   }
 
   private failClosed(eventType: string): void {
-    this.logger.warn(`ContractWorkflowHandler: event "${eventType}" sem tenantId - abortado (fail-closed)`);
+    this.logger.warn(`ContractWorkflowHandler: event "${eventType}" without tenantId - aborted (fail-closed)`);
   }
 
   private runInTenantContext<T>(

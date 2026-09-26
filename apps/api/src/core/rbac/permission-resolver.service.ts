@@ -186,7 +186,7 @@ export class PermissionResolverService implements OnModuleInit {
       };
     } catch (error) {
       this.logger.error(
-        `Falha no resolver persistido (role_id=${roleId}): ${(error as Error).message}`,
+        `Persisted resolver failed (role_id=${roleId}): ${(error as Error).message}`,
       );
       return {
         permissions: [],
@@ -259,13 +259,13 @@ export class PermissionResolverService implements OnModuleInit {
     } catch (error) {
       if (error instanceof PermissionResolutionError) {
         this.logger.error(
-          `Falha fechada na resolucao de permissoes (role_id=${roleId}): ${error.message}`,
+          `Fail-closed on permission resolution (role_id=${roleId}): ${error.message}`,
         );
         return { ...EMPTY_RESOLUTION };
       }
 
       this.logger.warn(
-        `Falha ao resolver permissoes via banco (role_id=${roleId}); aplicando matriz legada. ${(error as Error).message}`,
+        `Failed to resolve permissions from the database (role_id=${roleId}); applying the legacy matrix. ${(error as Error).message}`,
       );
       const permissions = this.unique(legacyFallback());
       await this.observeDualRead({
@@ -464,7 +464,7 @@ export class PermissionResolverService implements OnModuleInit {
 
     if (conflicts.length > 0) {
       this.logger.warn(
-        `Conflitos SoD detectados para role_id=${effectiveRoleId}: ${conflicts
+        `SoD conflicts detected for role_id=${effectiveRoleId}: ${conflicts
           .map((conflict) => `${conflict.permission}<->${conflict.conflictsWith}`)
           .join(', ')}`,
       );
