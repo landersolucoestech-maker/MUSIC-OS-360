@@ -1,4 +1,4 @@
-import { redactSensitiveObject, REDACTED } from './redact';
+import { redactSensitiveObject, redactUrl, REDACTED } from './redact';
 
 describe('redactSensitiveObject (clear-text exposure, CWE-312/532)', () => {
   it('redacts secret-looking keys, keeps metadata', () => {
@@ -41,5 +41,26 @@ describe('redactSensitiveObject (clear-text exposure, CWE-312/532)', () => {
     expect(redactSensitiveObject('hello')).toBe('hello');
     expect(redactSensitiveObject(42)).toBe(42);
     expect(redactSensitiveObject(null)).toBeNull();
+  });
+});
+
+describe('redactUrl (find-936c6f8d: credentials in query strings)', () => {
+  it('redacts OAuth code/state on callbacks, keeps path and harmless params', () => {
+    expect(redactUrl('/api/v1/integrations/spotify/callback?code=AQD123&state=abc.sig&lang=pt'))
+      .toBe(`/api/v1/integrations/spotify/callback?code=${REDACTED}&state=${REDACTED}&lang=pt`);
+  });
+
+  it('redacts the Meta webhook verify token and secret-looking keys', () => {
+    expect(redactUrl('/webhooks/whatsapp?hub.mode=subscribe&hub.verify_token=s3cr3t&hub.challenge=42'))
+      .toBe(`/webhooks/whatsapp?hub.mode=subscribe&hub.verify_token=${REDACTED}&hub.challenge=42`);
+    expect(redactUrl('/x?access_token=a&api_key=b&page=2'))
+      .toBe(`/x?access_token=${REDACTED}&api_key=${REDACTED}&page=2`);
+  });
+
+  it('handles encoded keys, case, no query, empty input', () => {
+    expect(redactUrl('/x?Code=1')).toBe(`/x?Code=${REDACTED}`);
+    expect(redactUrl('/x?hub%2Everify_token=t')).toBe(`/x?hub%2Everify_token=${REDACTED}`);
+    expect(redactUrl('/plain/path')).toBe('/plain/path');
+    expect(redactUrl(undefined)).toBe('');
   });
 });

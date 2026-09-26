@@ -30,6 +30,7 @@ import { DataSource }        from 'typeorm';
 import { AuditService }      from '../audit/audit.service';
 import { DATA_SOURCE }       from '../../database/database.module';
 import { CorrelationContext } from '../events/correlation.context';
+import { redactUrl }         from '../security/redact';
 
 export const AUDIT_KEY = 'audit_action';
 
@@ -202,7 +203,7 @@ export class AuditInterceptor implements NestInterceptor {
               correlationId,
               sessionId,
               httpMethod:     request.method     ?? null,
-              httpPath:       request.url        ?? null,
+              httpPath:       request.url ? redactUrl(request.url) : null,
             });
           } catch {
             // AuditInterceptor must never throw — swallow all errors

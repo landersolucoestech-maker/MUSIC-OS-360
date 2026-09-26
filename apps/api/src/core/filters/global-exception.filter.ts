@@ -9,6 +9,7 @@ import {
 import { Request, Response } from 'express';
 import { v4 as uuidv4 }     from 'uuid';
 import { Sentry }            from '../../instrument';
+import { redactUrl }         from '../security/redact';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -78,7 +79,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       traceId,
     };
 
-    this.logger.error(`${request.method} ${request.url} → ${statusCode} [${requestId}]`);
+    this.logger.error(`${request.method} ${redactUrl(request.url)} → ${statusCode} [${requestId}]`);
 
     response
       .status(statusCode)
@@ -96,7 +97,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         if (request.correlationId) scope.setTag('correlationId', request.correlationId);
         if (request.traceId) scope.setTag('traceId', request.traceId);
         scope.setTag('method',    request.method);
-        scope.setTag('path',      request.url);
+        scope.setTag('path',      redactUrl(request.url));
 
         // find-e0163405: TenantGuard/AuthGuard set request.tenant.id /
         // request.auth.userId -- request.tenantId/request.userId (flat)

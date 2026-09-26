@@ -38,3 +38,36 @@ export function safeLog(...args: unknown[]): void {
   // eslint-disable-next-line no-console
   console.log(...args.map((a) => redactSensitiveObject(a)));
 }
+
+/**
+ * Query-string parameters whose VALUES are credentials even though the key
+ * does not look like one: OAuth authorization `code`/`state` (callbacks) and
+ * the Meta webhook `hub.verify_token`. Any key matching SENSITIVE_KEY_RE is
+ * redacted too (token, secret, api_key, ...).
+ */
+const SENSITIVE_QUERY_KEYS = new Set(['code', 'state', 'hub.verify_token', 'signature', 'sig']);
+
+/**
+ * Returns the URL/path with sensitive query-string values replaced by
+ * [REDACTED] (find-936c6f8d). Use for anything that is logged, persisted
+ * (audit httpPath) or sent to telemetry. Path and non-sensitive params are
+ * kept so the line stays useful for debugging.
+ */
+export function redactUrl(url: string | null | undefined): string {
+  if (!url) return '';
+  const q = url.indexOf('?');
+  if (q < 0) return url;
+  const path = url.slice(0, q);
+  const hashAt = url.indexOf('#', q);
+  const query = url.slice(q + 1, hashAt < 0 ? undefined : hashAt);
+  const parts = query.split('&').map((pair) => {
+    if (!pair) return pair;
+    const eq = pair.indexOf('=');
+    const rawKey = eq < 0 ? pair : pair.slice(0, eq);
+    let key = rawKey;
+    try { key = decodeURIComponent(rawKey.replace(/\+/g, ' ')); } catch { /* keep raw key: undecodable input is still matched as-is */ }
+    const sensitive = SENSITIVE_QUERY_KEYS.has(key.toLowerCase()) || SENSITIVE_KEY_RE.test(key);
+    return sensitive && eq >= 0 ? `${rawKey}=${REDACTED}` : pair;
+  });
+  return `${path}?${parts.join('&')}`;
+}

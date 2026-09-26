@@ -14,6 +14,7 @@ import { RbacDecisionService } from '../rbac/rbac-decision.service';
 import { IS_PUBLIC_KEY } from './auth.guard';
 import { ROLE_HIERARCHY } from '../rbac/role-hierarchy';
 import { AUTH_BOOTSTRAP_KEY } from '../decorators/auth-bootstrap.decorator';
+import { redactUrl } from '../security/redact';
 export { ROLE_HIERARCHY } from '../rbac/role-hierarchy';
 
 const WRITE_METHODS = new Set(['POST', 'PATCH', 'PUT', 'DELETE']);
@@ -82,7 +83,7 @@ export class RolesGuard implements CanActivate {
           startedAt,
         );
         throw new ForbiddenException(
-          `RBAC: rota ${request.method} ${request.url ?? ''} sem @Roles declarado - bloqueado por politica fail-closed.`,
+          `RBAC: rota ${request.method} ${redactUrl(request.url ?? '')} sem @Roles declarado - bloqueado por politica fail-closed.`,
         );
       }
       request.rbacActiveDecision = {

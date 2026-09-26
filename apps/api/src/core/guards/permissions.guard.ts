@@ -16,6 +16,7 @@ import {
 } from '../rbac/rbac-authority-mode';
 import { IS_PUBLIC_KEY } from './auth.guard';
 import { AUTH_BOOTSTRAP_KEY } from '../decorators/auth-bootstrap.decorator';
+import { redactUrl } from '../security/redact';
 
 export {
   getPersistedAuthorityMode,
@@ -76,7 +77,7 @@ export class PermissionsGuard implements CanActivate {
 
     if (mode === 'ON' && shadowDecision === 'DENY') {
       const route =
-        `${request.method ?? ''} ${request.originalUrl ?? request.url ?? ''}`.trim();
+        `${request.method ?? ''} ${redactUrl(request.originalUrl ?? request.url ?? '')}`.trim();
       throw new ForbiddenException(
         `Permissao insuficiente para ${route}. Necessario: ${required.join(', ')}.`,
       );

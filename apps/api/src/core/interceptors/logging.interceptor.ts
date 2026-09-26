@@ -17,6 +17,7 @@ import {
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Request, Response } from 'express';
+import { redactUrl } from '../security/redact';
 
 const SERVICE_META = {
   service: 'music-os-api',
@@ -34,7 +35,9 @@ export class LoggingInterceptor implements NestInterceptor {
     const response = httpCtx.getResponse<Response>();
     const startMs  = Date.now();
 
-    const { method, url } = request;
+    const { method } = request;
+    // find-936c6f8d: OAuth code/state, hub.verify_token etc. never reach logs.
+    const url = redactUrl(request.url);
     const req       = request as unknown as Record<string, unknown>;
     const requestId = req['requestId'] as string | undefined;
     const correlationId = req['correlationId'] as string | undefined;
