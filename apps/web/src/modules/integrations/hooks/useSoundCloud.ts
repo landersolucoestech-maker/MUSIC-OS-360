@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 
+import { toUserMessage } from "@/shared/lib/errors";
 export interface SoundCloudStatus {
   connected: boolean;
   last_sync_at?: string | null;
@@ -45,7 +46,7 @@ export function useSoundCloudSaveCredentials() {
       queryClient.invalidateQueries({ queryKey: ["integrations", "soundcloud"] });
       toast.success("SoundCloud conectado com sucesso.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -59,7 +60,7 @@ export function useSoundCloudDeleteCredentials() {
       queryClient.invalidateQueries({ queryKey: ["integrations", "soundcloud"] });
       toast.success("SoundCloud desconectado.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 

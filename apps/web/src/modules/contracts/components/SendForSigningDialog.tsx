@@ -21,6 +21,7 @@ import { useSigningProviders } from "@/modules/integrations/hooks/useSigningProv
 import { signingService, type SigningProviderId } from "@/modules/integrations/services/signing.service";
 import type { ContractWithRelations } from "@/modules/contracts/hooks/useContracts";
 
+import { toUserMessage } from "@/shared/lib/errors";
 interface SendForSigningDialogProps {
   open:           boolean;
   onOpenChange:   (open: boolean) => void;
@@ -80,7 +81,7 @@ export function SendForSigningDialog({
       setSelected(null);
     } catch (err) {
       toast.error("Erro ao enviar para assinatura", {
-        description: err instanceof Error ? err.message : "Tente novamente.",
+        description: toUserMessage(err, "Tente novamente."),
       });
     } finally {
       setSending(false);

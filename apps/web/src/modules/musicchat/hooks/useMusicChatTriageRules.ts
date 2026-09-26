@@ -4,6 +4,7 @@ import { MUSICCHAT_AUTOMATION_SETTINGS_KEY } from "./useMusicChatAutomationSetti
 import { musicChatAutomationService } from "../services/musicchat-automation.service";
 import type { MusicChatInboundMessagePayload } from "../types/musicchat-automation.types";
 
+import { toUserMessage } from "@/shared/lib/errors";
 export function useMusicChatTriageRules(conversationId?: string) {
   const queryClient = useQueryClient();
   const eventsQuery = useQuery({
@@ -17,7 +18,7 @@ export function useMusicChatTriageRules(conversationId?: string) {
       void queryClient.invalidateQueries({ queryKey: ["musicchat", "automation", "events"] });
       void queryClient.invalidateQueries({ queryKey: MUSICCHAT_AUTOMATION_SETTINGS_KEY });
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: (error: Error) => toast.error(toUserMessage(error)),
   });
 
   const runEscalations = useMutation({
@@ -26,7 +27,7 @@ export function useMusicChatTriageRules(conversationId?: string) {
       void queryClient.invalidateQueries({ queryKey: ["musicchat", "automation", "events"] });
       toast.success(`${result.notifications.length} notificação(ões) de escalonamento gerada(s)`);
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: (error: Error) => toast.error(toUserMessage(error)),
   });
 
   return {

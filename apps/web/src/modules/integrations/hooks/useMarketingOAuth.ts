@@ -13,6 +13,7 @@ import type {
   MarketingCategory,
   IMarketingOAuthConnection,
 } from "@/shared/integrations/contracts/marketing.contract";
+import { UserFacingError } from "@/shared/lib/errors";
 
 export type { MarketingPlatformId };
 
@@ -123,11 +124,11 @@ export function useMarketingOAuth() {
   const connect = useCallback(
     async (platform: MarketingPlatformId, scopes: string[]): Promise<void> => {
       if (!SERVER_OAUTH_PLATFORM_SET.has(platform)) {
-        throw new Error(`OAuth server-side ainda não implementado para ${platform}.`);
+        throw new UserFacingError(`Server-side OAuth not implemented for ${platform}`, "A conexão com esta plataforma ainda não está disponível.");
       }
       const connected = await refreshConnection(platform, scopes);
       if (!connected) {
-        throw new Error(`A plataforma ${platform} não confirmou a conexão persistida.`);
+        throw new UserFacingError(`Platform ${platform} did not confirm the persisted connection`, "A plataforma não confirmou a conexão. Tente conectar novamente.");
       }
     },
     [refreshConnection],

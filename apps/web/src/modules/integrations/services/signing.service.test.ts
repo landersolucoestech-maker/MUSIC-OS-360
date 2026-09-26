@@ -152,14 +152,14 @@ describe("signingService.sendForSigning", () => {
   it("rejects when there is no file URL — never sends an empty document", async () => {
     await expect(
       signingService.sendForSigning({ contratoId: "c1", title: "X", fileUrl: "", signers: [{ name: "A", email: "a@x.com" }] }),
-    ).rejects.toThrow(/não possui um arquivo/i);
+    ).rejects.toMatchObject({ userMessage: expect.stringMatching(/não possui um arquivo/i) });
     expect(apiClientMock.post).not.toHaveBeenCalled();
   });
 
   it("rejects when there are no signers", async () => {
     await expect(
       signingService.sendForSigning({ contratoId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [] }),
-    ).rejects.toThrow(/signatário/i);
+    ).rejects.toMatchObject({ userMessage: expect.stringMatching(/signatário/i) });
     expect(apiClientMock.post).not.toHaveBeenCalled();
   });
 
@@ -168,7 +168,7 @@ describe("signingService.sendForSigning", () => {
 
     await expect(
       signingService.sendForSigning({ contratoId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [{ name: "A", email: "a@x.com" }] }),
-    ).rejects.toThrow(/não foi possível baixar/i);
+    ).rejects.toMatchObject({ userMessage: expect.stringMatching(/não foi possível baixar/i) });
     expect(apiClientMock.post).not.toHaveBeenCalled();
   });
 

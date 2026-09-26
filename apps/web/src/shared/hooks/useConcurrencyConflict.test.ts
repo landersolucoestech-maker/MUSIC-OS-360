@@ -31,7 +31,7 @@ describe("isConcurrencyConflict", () => {
     expect(isConcurrencyConflict(new ConflictError("conflict"))).toBe(true);
     expect(isConcurrencyConflict(new IntegrationError("api", "not found", { statusCode: 404 }))).toBe(false);
     expect(isConcurrencyConflict(new IntegrationError("api", "conflict", { statusCode: 409 }))).toBe(false);
-    expect(isConcurrencyConflict(new Error("outro erro"))).toBe(false);
+    expect(isConcurrencyConflict(new Error("another error"))).toBe(false);
     expect(isConcurrencyConflict(null)).toBe(false);
   });
 });
@@ -50,7 +50,7 @@ describe("handleConcurrencyConflict", () => {
   });
 
   it("non-409: returns false, shows no toast (lets the caller handle it)", () => {
-    const handled = handleConcurrencyConflict(new Error("falha de rede"), "contrato");
+    const handled = handleConcurrencyConflict(new Error("network failure"), "contrato");
     expect(handled).toBe(false);
     expect(toast.error).not.toHaveBeenCalled();
   });

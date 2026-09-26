@@ -41,16 +41,16 @@ describe("useLeads — estados reais de carregamento/sucesso/erro", () => {
   });
 
   it("a network/API failure becomes an observable error state, not an empty list disguised as success", async () => {
-    vi.mocked(leadsService.list).mockRejectedValue(new Error("Falha de rede"));
+    vi.mocked(leadsService.list).mockRejectedValue(new Error("Network failure"));
     const { result } = renderHook(() => useLeads());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.error).not.toBeNull();
-    expect(result.current.error?.message).toBe("Falha de rede");
+    expect(result.current.error?.message).toBe("Network failure");
   });
 
   it("createLead propagates the service error without creating a local lead", async () => {
     vi.mocked(leadsService.list).mockResolvedValue([]);
-    vi.mocked(leadsService.create).mockRejectedValue(new Error("422 validação"));
+    vi.mocked(leadsService.create).mockRejectedValue(new Error("422 validation"));
     const { result } = renderHook(() => useLeads());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -58,7 +58,7 @@ describe("useLeads — estados reais de carregamento/sucesso/erro", () => {
       act(async () => {
         await result.current.createLead({ nomeCompleto: "X" } as never);
       }),
-    ).rejects.toThrow("422 validação");
+    ).rejects.toThrow("422 validation");
     expect(result.current.leads).toEqual([]);
   });
 });

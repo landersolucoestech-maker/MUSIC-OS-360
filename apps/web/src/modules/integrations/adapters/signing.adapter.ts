@@ -14,13 +14,14 @@
  */
 
 import type { ISigningProvider } from "@/modules/integrations/dto";
+import { UserFacingError } from "@/shared/lib/errors";
 
 export type SigningProviderId = "autentique" | "clicksign" | "docusign";
 
 function unavailable(provider: string): never {
-  throw new Error(
-    `Assinatura digital (${provider}) não possui provider real configurado no frontend. ` +
-    "Use o backend real (/integrations/autentique) antes de chamar este adapter.",
+  throw new UserFacingError(
+    `Signing provider "${provider}" has no real frontend provider; use the real backend (/integrations/autentique) before calling this adapter`,
+    "A assinatura digital por este provedor ainda não está disponível.",
   );
 }
 

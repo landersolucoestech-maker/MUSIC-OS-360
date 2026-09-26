@@ -20,6 +20,7 @@
  */
 
 import { api } from "@/shared/lib/api-client";
+import { UserFacingError } from "@/shared/lib/errors";
 
 export type SigningProviderId = "autentique" | "docusign";
 
@@ -52,16 +53,16 @@ async function fetchFileAsBase64(url: string): Promise<string> {
   try {
     response = await fetch(url);
   } catch {
-    throw new Error(`Não foi possível baixar o arquivo do contrato em "${url}". Verifique a URL cadastrada.`);
+    throw new UserFacingError(`Contract file download failed (network): ${url}`, "Não foi possível baixar o arquivo do contrato. Verifique a URL cadastrada.");
   }
   if (!response.ok) {
-    throw new Error(`Falha ao baixar o arquivo do contrato (HTTP ${response.status}).`);
+    throw new UserFacingError(`Contract file download failed (HTTP ${response.status})`, "Falha ao baixar o arquivo do contrato. Verifique a URL cadastrada.");
   }
   const blob = await response.blob();
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve((reader.result as string).split(",")[1] ?? "");
-    reader.onerror = () => reject(new Error("Falha ao ler o conteúdo do arquivo."));
+    reader.onerror = () => reject(new UserFacingError("FileReader failed to read the contract file", "Falha ao ler o conteúdo do arquivo."));
     reader.readAsDataURL(blob);
   });
 }
@@ -85,10 +86,10 @@ export const signingService = {
     const { contratoId, title, fileUrl, signers } = input;
 
     if (!fileUrl) {
-      throw new Error("Este contrato não possui um arquivo (URL) cadastrado. Adicione a URL do PDF antes de enviar para assinatura.");
+      throw new UserFacingError("Contract has no file URL", "Este contrato não possui um arquivo (URL) cadastrado. Adicione a URL do PDF antes de enviar para assinatura.");
     }
     if (signers.length === 0) {
-      throw new Error("Adicione ao menos um signatário antes de enviar para assinatura.");
+      throw new UserFacingError("No signers provided", "Adicione ao menos um signatário antes de enviar para assinatura.");
     }
 
     const provider: SigningProviderId = input.provider ?? "autentique";

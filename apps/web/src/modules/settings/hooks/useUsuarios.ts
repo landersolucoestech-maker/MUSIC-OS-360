@@ -4,6 +4,7 @@ import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { api } from "@/shared/lib/api-client";
 import { useAuth } from "@/app/providers/AuthContext";
 
+import { toUserMessage } from "@/shared/lib/errors";
 export interface Usuario {
   id: string;
   email: string;
@@ -119,7 +120,7 @@ export function useUsuarios() {
       toast.success("Usuário atualizado com sucesso!");
     },
     onError: (mutationError: Error) => {
-      toast.error(`Erro ao atualizar usuário: ${mutationError.message}`);
+      toast.error(`Erro ao atualizar usuário: ${toUserMessage(mutationError)}`);
     },
   });
 

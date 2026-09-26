@@ -18,6 +18,7 @@ import { MUSICAL_GENRES } from "@/constants/musicalGenres";
 import { LANGUAGES } from "@/constants/languages";
 import { Plus, Upload, X, Music, FileAudio, Loader2, Link } from "lucide-react";
 import { useUploadToR2, R2NotConfiguredError } from "@/shared/hooks/useUploadToR2";
+import { toUserMessage } from "@/shared/lib/errors";
 
 interface ProjectFormModalProps {
   open: boolean;
@@ -389,8 +390,8 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
       toast.success("Áudio enviado e link gerado com sucesso!");
     } catch (err) {
       const msg = err instanceof R2NotConfiguredError
-        ? err.message
-        : err instanceof Error ? err.message : "Erro no upload do áudio";
+        ? toUserMessage(err)
+        : toUserMessage(err, "Erro no upload do áudio");
       toast.error(`Upload falhou: ${msg}`);
       // Never fakes success: without a real URL, removes the displayed local file.
       updateMusica(musicaId, 'arquivoAudio', null);

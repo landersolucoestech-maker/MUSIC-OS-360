@@ -18,6 +18,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 
+import { UserFacingError, toUserMessage } from "@/shared/lib/errors";
 const LS_KEY = "musicos360_deezer_credentials";
 
 export interface DeezerCredentials {
@@ -82,7 +83,7 @@ export function useDeezerSaveCredentials() {
       try {
         sessionStorage.setItem(LS_KEY, JSON.stringify(input));
       } catch {
-        throw new Error("Não foi possível salvar as credenciais.");
+        throw new UserFacingError("Deezer credentials save failed", "Não foi possível salvar as credenciais.");
       }
       return input;
     },
@@ -90,7 +91,7 @@ export function useDeezerSaveCredentials() {
       queryClient.invalidateQueries({ queryKey: ["integrations", "deezer", "status"] });
       toast.success("Deezer conectado com sucesso.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -101,14 +102,14 @@ export function useDeezerDeleteCredentials() {
       try {
         sessionStorage.removeItem(LS_KEY);
       } catch {
-        throw new Error("Não foi possível remover as credenciais.");
+        throw new UserFacingError("Deezer credentials removal failed", "Não foi possível remover as credenciais.");
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["integrations", "deezer", "status"] });
       toast.success("Deezer desconectado.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 

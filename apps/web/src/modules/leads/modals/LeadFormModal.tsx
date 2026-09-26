@@ -38,6 +38,7 @@ import {
   type TipoLead,
 } from "../constants/lead-form-options";
 import type { LeadUpload } from "../types";
+import { toUserMessage } from "@/shared/lib/errors";
 
 // ─────────────────────────────────────────────
 // Interações
@@ -398,8 +399,8 @@ export function LeadFormModal({
         setValues((prev) => ({ ...prev, uploads: [...prev.uploads, upload] }));
       } catch (err) {
         const msg = err instanceof R2NotConfiguredError
-          ? err.message
-          : err instanceof Error ? err.message : "Erro no upload do arquivo";
+          ? toUserMessage(err)
+          : toUserMessage(err, "Erro no upload do arquivo");
         toast.error(`${file.name}: ${msg}`);
       }
     }

@@ -13,6 +13,7 @@ import type {
   KnowledgeArticle, KnowledgeCategory,
   TicketStatus, TicketPriority, TicketCategory,
 } from "../types";
+import { toUserMessage } from "@/shared/lib/errors";
 
 /**
  * Suporte — tickets e mensagens de ticket usam o backend real
@@ -157,7 +158,7 @@ export function useKnowledgeCategories() {
     mutationFn: (id: string) => knowledgeBaseService.deleteCategory(id),
     onSuccess: invalidate,
     onError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : "Erro ao excluir categoria.";
+      const message = toUserMessage(error, "Erro ao excluir categoria.");
       toast.error(message);
     },
   });

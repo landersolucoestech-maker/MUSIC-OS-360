@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 import { DisabledIntegrationError } from "@/shared/lib/disabled-integration";
 
+import { toUserMessage } from "@/shared/lib/errors";
 /**
  * Decision Gate item 9 (GAP-15): Autentique has a real backend
  * (`GET /integrations/status`, `POST /integrations/autentique/configure`,
@@ -45,7 +46,7 @@ export function useAutentiqueSaveCredentials() {
       queryClient.invalidateQueries({ queryKey: ["autentique", "status"] });
       toast.success("Autentique conectado com sucesso!");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -53,6 +54,6 @@ export function useAutentiqueSaveCredentials() {
 export function useAutentiqueDeleteCredentials() {
   return useMutation({
     mutationFn: async () => Promise.reject(new DisabledIntegrationError("Autentique (desconectar)")),
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }

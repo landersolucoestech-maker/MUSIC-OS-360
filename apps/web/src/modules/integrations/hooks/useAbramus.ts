@@ -14,6 +14,7 @@ import type {
   ArtistSearchResult,
 } from "@/modules/integrations/dto";
 
+import { UserFacingError, toUserMessage } from "@/shared/lib/errors";
 // The schedule is a local scheduling preference (neither a credential nor domain data).
 const SCHED_KEY = "musicos360_abramus_schedule";
 function readSchedule(): AbramusSyncSchedule {
@@ -88,9 +89,7 @@ export interface AbramusLocalMatch {
 }
 
 function backendUnavailable(operation: string): never {
-  throw new Error(
-    `${operation} requer o endpoint real /integrations/abramus no backend — funcionalidade ainda não disponível.`,
-  );
+  throw new UserFacingError(`${operation} requires the real /integrations/abramus backend endpoint (not implemented)`, "Esta funcionalidade da integração ABRAMUS ainda não está disponível.");
 }
 
 // ─── Hooks ────────────────────────────────────────────────────────────────────
@@ -108,7 +107,7 @@ export function useAbramusSaveCredentials() {
   return useMutation({
     mutationFn: async (input: { username: string; password: string; base_url?: string }) => {
       if (!input.username.trim() || !input.password.trim()) {
-        throw new Error("Usuário e senha são obrigatórios.");
+        throw new UserFacingError("Abramus username and password are required", "Usuário e senha são obrigatórios.");
       }
       return api.post("/integrations/abramus/configure", {
         username: input.username.trim(),
@@ -120,7 +119,7 @@ export function useAbramusSaveCredentials() {
       queryClient.invalidateQueries({ queryKey: ["abramus", "status"] });
       toast.success("Credenciais ABRAMUS salvas. Conectado com sucesso.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -132,7 +131,7 @@ export function useAbramusDeleteCredentials() {
       queryClient.invalidateQueries({ queryKey: ["abramus", "status"] });
       toast.success("Integração ABRAMUS desconectada.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -168,7 +167,7 @@ export function useAbramusImport(kind: AbramusKind) {
   return useMutation({
     mutationFn: async (_input: { external_id: string; record?: AbramusSearchResult }): Promise<{ record?: AbramusSearchResult }> =>
       backendUnavailable(kind === "obras" ? "Importação de obras do ABRAMUS" : "Importação de fonogramas do ABRAMUS"),
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -176,7 +175,7 @@ export function useAbramusSyncAll() {
   return useMutation({
     mutationFn: async (_input?: { kinds?: AbramusKind[] }): Promise<AbramusSyncSummary> =>
       backendUnavailable("Sincronização completa com o ABRAMUS"),
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -203,7 +202,7 @@ export function useAbramusSetSchedule() {
       return { ok: true };
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["abramus", "status"] }),
-    onError:   (err: Error) => toast.error(err.message),
+    onError:   (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -255,7 +254,7 @@ export function useAbramusRegisterObra() {
       queryClient.invalidateQueries({ queryKey: ["abramus", "registration-history"] });
       toast.success(`Obra registrada na ABRAMUS. Código: ${data.code}${data.iswc ? ` | ISWC: ${data.iswc}` : ""}`);
     },
-    onError: (err) => toast.error(`Erro ao registrar obra: ${err.message}`),
+    onError: (err) => toast.error(`Erro ao registrar obra: ${toUserMessage(err)}`),
   });
 }
 
@@ -263,20 +262,20 @@ export function useAbramusRegisterFonograma() {
   return useMutation<RegistrationResult, Error, RegisterFonogramaInput>({
     mutationFn: async (_input) =>
       backendUnavailable("Registro de fonograma na ABRAMUS"),
-    onError: (err) => toast.error(`Erro ao registrar fonograma: ${err.message}`),
+    onError: (err) => toast.error(`Erro ao registrar fonograma: ${toUserMessage(err)}`),
   });
 }
 
 export function useAbramusGenerateISWC() {
   return useMutation<GenerateISWCResult, Error, GenerateISWCInput>({
     mutationFn: async (_input) => backendUnavailable("Geração de ISWC via ABRAMUS"),
-    onError: (err) => toast.error(`Erro ao gerar ISWC: ${err.message}`),
+    onError: (err) => toast.error(`Erro ao gerar ISWC: ${toUserMessage(err)}`),
   });
 }
 
 export function useAbramusGenerateISRC() {
   return useMutation<GenerateISRCResult, Error, GenerateISRCInput>({
     mutationFn: async (_input) => backendUnavailable("Geração de ISRC via ABRAMUS"),
-    onError: (err) => toast.error(`Erro ao gerar ISRC: ${err.message}`),
+    onError: (err) => toast.error(`Erro ao gerar ISRC: ${toUserMessage(err)}`),
   });
 }

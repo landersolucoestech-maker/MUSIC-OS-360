@@ -7,6 +7,7 @@ import type {
   DeliverableType, ApprovalStatus,
 } from "../types/audiovisual.types";
 
+import { toUserMessage } from "@/shared/lib/errors";
 const K = {
   projects:    (params?: Record<string, unknown>) => ["audiovisual", "projects", params ?? {}] as const,
   project:     (id: string) => ["audiovisual", "projects", id] as const,
@@ -48,7 +49,7 @@ export function useAudiovisualProjectMutations() {
     create: useMutation({
       mutationFn: audiovisualService.projects.create,
       onSuccess: () => { invalidate(); toast.success("Projeto criado"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     update: useMutation({
       mutationFn: ({ id, data }: { id: string; data: Partial<AudiovisualProject> & { expectedUpdatedAt?: string } }) =>
@@ -56,19 +57,19 @@ export function useAudiovisualProjectMutations() {
       onSuccess: () => { invalidate(); toast.success("Projeto atualizado"); },
       onError:   (e: Error) => {
         if (handleConcurrencyConflict(e, "projeto")) return;
-        toast.error(e.message);
+        toast.error(toUserMessage(e));
       },
     }),
     transition: useMutation({
       mutationFn: ({ id, status, reason }: { id: string; status: AudiovisualProjectStatus; reason?: string }) =>
         audiovisualService.projects.transition(id, status, reason),
       onSuccess: () => { invalidate(); toast.success("Status atualizado"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     remove: useMutation({
       mutationFn: (id: string) => audiovisualService.projects.delete(id),
       onSuccess: () => { invalidate(); toast.success("Projeto removido"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
   };
 }
@@ -89,7 +90,7 @@ export function useBriefingUpsert() {
     onSuccess: (_d, vars) => { qc.invalidateQueries({ queryKey: K.briefing(vars.projectId) }); toast.success("Briefing salvo"); },
     onError: (e: Error) => {
       if (handleConcurrencyConflict(e, "briefing")) return;
-      toast.error(e.message);
+      toast.error(toUserMessage(e));
     },
   });
 }
@@ -110,7 +111,7 @@ export function useDeliverableMutations(projectId?: string) {
       mutationFn: ({ projectId: pid, data }: { projectId: string; data: { title: string; type: DeliverableType } }) =>
         audiovisualService.deliverables.create(pid, data),
       onSuccess: () => { invalidate(); toast.success("Entregável criado"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     update: useMutation({
       mutationFn: ({ id, data }: { id: string; data: Parameters<typeof audiovisualService.deliverables.update>[1] }) =>
@@ -118,19 +119,19 @@ export function useDeliverableMutations(projectId?: string) {
       onSuccess: () => { invalidate(); toast.success("Entregável atualizado"); },
       onError:   (e: Error) => {
         if (handleConcurrencyConflict(e, "entregável")) return;
-        toast.error(e.message);
+        toast.error(toUserMessage(e));
       },
     }),
     seedDefaults: useMutation({
       mutationFn: ({ pid, type }: { pid: string; type: string }) =>
         audiovisualService.deliverables.seedDefaults(pid, type),
       onSuccess: () => { invalidate(); toast.success("Entregáveis padrão criados"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     remove: useMutation({
       mutationFn: (id: string) => audiovisualService.deliverables.delete(id),
       onSuccess: () => { invalidate(); toast.success("Entregável removido"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
   };
 }
@@ -160,7 +161,7 @@ export function useShotMutations(projectId: string) {
       mutationFn: (data: Parameters<typeof audiovisualService.shots.create>[1]) =>
         audiovisualService.shots.create(projectId, data),
       onSuccess: () => { invalidate(); toast.success("Shot adicionado"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     update: useMutation({
       mutationFn: ({ id, data }: { id: string; data: Parameters<typeof audiovisualService.shots.update>[1] }) =>
@@ -168,18 +169,18 @@ export function useShotMutations(projectId: string) {
       onSuccess: () => { invalidate(); toast.success("Shot atualizado"); },
       onError:   (e: Error) => {
         if (handleConcurrencyConflict(e, "shot")) return;
-        toast.error(e.message);
+        toast.error(toUserMessage(e));
       },
     }),
     reorder: useMutation({
       mutationFn: (ids: string[]) => audiovisualService.shots.reorder(projectId, ids),
       onSuccess: () => { invalidate(); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     remove: useMutation({
       mutationFn: (id: string) => audiovisualService.shots.delete(id),
       onSuccess: () => { invalidate(); toast.success("Shot removido"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
   };
 }
@@ -201,7 +202,7 @@ export function useProductionDayMutations(projectId: string) {
       mutationFn: (data: Parameters<typeof audiovisualService.productionDays.create>[1]) =>
         audiovisualService.productionDays.create(projectId, data),
       onSuccess: () => { invalidate(); toast.success("Dia de gravação agendado"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     update: useMutation({
       mutationFn: ({ id, data }: { id: string; data: Parameters<typeof audiovisualService.productionDays.update>[1] }) =>
@@ -209,13 +210,13 @@ export function useProductionDayMutations(projectId: string) {
       onSuccess: () => { invalidate(); toast.success("Dia atualizado"); },
       onError:   (e: Error) => {
         if (handleConcurrencyConflict(e, "dia de gravação")) return;
-        toast.error(e.message);
+        toast.error(toUserMessage(e));
       },
     }),
     remove: useMutation({
       mutationFn: (id: string) => audiovisualService.productionDays.delete(id),
       onSuccess: () => { invalidate(); toast.success("Dia removido"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
   };
 }
@@ -237,7 +238,7 @@ export function useTeamMemberMutations(projectId: string) {
       mutationFn: (data: Parameters<typeof audiovisualService.team.create>[1]) =>
         audiovisualService.team.create(projectId, data),
       onSuccess: () => { invalidate(); toast.success("Membro adicionado"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     update: useMutation({
       mutationFn: ({ id, data }: { id: string; data: Parameters<typeof audiovisualService.team.update>[1] }) =>
@@ -245,13 +246,13 @@ export function useTeamMemberMutations(projectId: string) {
       onSuccess: () => { invalidate(); toast.success("Membro atualizado"); },
       onError:   (e: Error) => {
         if (handleConcurrencyConflict(e, "membro da equipe")) return;
-        toast.error(e.message);
+        toast.error(toUserMessage(e));
       },
     }),
     remove: useMutation({
       mutationFn: (id: string) => audiovisualService.team.delete(id),
       onSuccess: () => { invalidate(); toast.success("Membro removido"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
   };
 }
@@ -273,7 +274,7 @@ export function useAssetMutations(projectId: string) {
       mutationFn: (data: Parameters<typeof audiovisualService.assets.create>[1]) =>
         audiovisualService.assets.create(projectId, data),
       onSuccess: () => { invalidate(); toast.success("Arquivo registrado"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     update: useMutation({
       mutationFn: ({ id, data }: { id: string; data: Parameters<typeof audiovisualService.assets.update>[1] }) =>
@@ -281,13 +282,13 @@ export function useAssetMutations(projectId: string) {
       onSuccess: () => { invalidate(); },
       onError:   (e: Error) => {
         if (handleConcurrencyConflict(e, "arquivo")) return;
-        toast.error(e.message);
+        toast.error(toUserMessage(e));
       },
     }),
     remove: useMutation({
       mutationFn: (id: string) => audiovisualService.assets.delete(id),
       onSuccess: () => { invalidate(); toast.success("Arquivo removido"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
   };
 }
@@ -309,7 +310,7 @@ export function useTaskMutations(projectId: string) {
       mutationFn: (data: Parameters<typeof audiovisualService.tasks.create>[1]) =>
         audiovisualService.tasks.create(projectId, data),
       onSuccess: () => { invalidate(); toast.success("Tarefa criada"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     update: useMutation({
       mutationFn: ({ id, data }: { id: string; data: Parameters<typeof audiovisualService.tasks.update>[1] }) =>
@@ -317,13 +318,13 @@ export function useTaskMutations(projectId: string) {
       onSuccess: () => { invalidate(); },
       onError:   (e: Error) => {
         if (handleConcurrencyConflict(e, "tarefa")) return;
-        toast.error(e.message);
+        toast.error(toUserMessage(e));
       },
     }),
     remove: useMutation({
       mutationFn: (id: string) => audiovisualService.tasks.delete(id),
       onSuccess: () => { invalidate(); toast.success("Tarefa removida"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
   };
 }
@@ -336,7 +337,7 @@ export function useApprovalMutations() {
       mutationFn: ({ projectId, data }: { projectId: string; data: { deliverable_id?: string; comments?: string } }) =>
         audiovisualService.approvals.request(projectId, data),
       onSuccess: () => { invalidate(); toast.success("Aprovação solicitada"); },
-      onError:   (e: Error) => toast.error(e.message),
+      onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     decide: useMutation({
       mutationFn: ({ id, status, comments, expectedUpdatedAt }: { id: string; status: ApprovalStatus; comments?: string; expectedUpdatedAt?: string }) =>
@@ -344,7 +345,7 @@ export function useApprovalMutations() {
       onSuccess: () => { invalidate(); toast.success("Decisão registrada"); },
       onError:   (e: Error) => {
         if (handleConcurrencyConflict(e, "aprovação")) return;
-        toast.error(e.message);
+        toast.error(toUserMessage(e));
       },
     }),
   };

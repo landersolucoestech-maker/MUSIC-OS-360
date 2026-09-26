@@ -8,6 +8,7 @@ import {
 } from "@/modules/admin/services/admin-integrations.service";
 import { adminPlanIntegrationsService } from "@/modules/admin/services/admin-integrations.service";
 
+import { toUserMessage } from "@/shared/lib/errors";
 const EMPTY_SLUGS: string[] = [];
 
 const EMPTY_INTEGRATIONS: AdminIntegration[] = [];
@@ -47,7 +48,7 @@ export function useUpdateIntegrationGovernance() {
       void qc.invalidateQueries({ queryKey: ["integrations", "external-providers"] });
       toast.success("Governança atualizada.");
     },
-    onError: (err: Error) => toast.error(err.message || "Não foi possível atualizar a governança."),
+    onError: (err: Error) => toast.error(toUserMessage(err, "Não foi possível atualizar a governança.")),
   });
 }
 
@@ -82,6 +83,6 @@ export function useSavePlanIntegrations() {
         toast.success("Integrações do plano salvas.");
       }
     },
-    onError: (err: Error) => toast.error(err.message || "Falha ao salvar integrações do plano."),
+    onError: (err: Error) => toast.error(toUserMessage(err, "Falha ao salvar integrações do plano.")),
   });
 }

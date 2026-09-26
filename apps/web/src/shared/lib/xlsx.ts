@@ -3,6 +3,7 @@
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
 
+import { UserFacingError, toUserMessage } from "@/shared/lib/errors";
 export interface XlsxColumn {
   key: string;
   label: string;
@@ -72,7 +73,7 @@ export function parseXlsx(file: File): Promise<Record<string, string>[]> {
 
         const sheetName = workbook.SheetNames[0];
         if (!sheetName) {
-          reject(new Error("Arquivo sem planilhas"));
+          reject(new UserFacingError("Workbook has no sheets", "O arquivo não contém planilhas."));
           return;
         }
 
@@ -85,7 +86,7 @@ export function parseXlsx(file: File): Promise<Record<string, string>[]> {
         });
 
         if (rawRows.length === 0) {
-          reject(new Error("O arquivo deve ter pelo menos um cabeçalho e uma linha de dados"));
+          reject(new UserFacingError("Sheet needs a header row and at least one data row", "O arquivo deve ter pelo menos um cabeçalho e uma linha de dados."));
           return;
         }
 
@@ -106,7 +107,7 @@ export function parseXlsx(file: File): Promise<Record<string, string>[]> {
       }
     };
 
-    reader.onerror = () => reject(new Error("Erro ao ler o arquivo"));
+    reader.onerror = () => reject(new UserFacingError("Workbook read failed", "Não foi possível ler o arquivo."));
     reader.readAsArrayBuffer(file);
   });
 }
@@ -142,7 +143,7 @@ export function importXlsx(
 
       await onImport(data);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao importar arquivo");
+      toast.error(toUserMessage(error, "Erro ao importar arquivo"));
     }
   };
 

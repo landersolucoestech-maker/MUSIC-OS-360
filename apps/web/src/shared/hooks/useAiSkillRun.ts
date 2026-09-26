@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { getErrorMessage } from "@/shared/lib/errors";
+import { toUserMessage } from "@/shared/lib/errors";
 
 /**
  * Envelope real devolvido por runOnDemandSkill() no backend
@@ -35,7 +35,7 @@ export function useAiSkillRun<TOutput>(
       );
     },
     onError: (error: unknown) => {
-      toast.error(`IA: ${getErrorMessage(error)}`);
+      toast.error(`IA: ${toUserMessage(error)}`);
     },
   });
 

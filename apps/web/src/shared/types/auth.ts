@@ -38,6 +38,9 @@ export interface Session {
 }
 
 export interface AuthError {
+  /** Internal diagnostic (raw Supabase/API text). Never rendered directly. */
   message: string;
   status?: number;
+  /** End-user copy (PT-BR) when the producer wrote one (e.g. API errors). */
+  userMessage?: string;
 }

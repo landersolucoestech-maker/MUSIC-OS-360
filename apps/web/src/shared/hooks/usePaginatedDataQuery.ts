@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { getCacheConfig } from "@/shared/lib/query-config";
 import { storage, type PagedResult } from "@/shared/lib/storage";
 
+import { toUserMessage } from "@/shared/lib/errors";
 /**
  * Paginação real server-side (Task G) — companheiro de useDataQuery.ts.
  *
@@ -121,7 +122,7 @@ export function usePaginatedDataQuery<T extends object>(
       onMutationSuccess?.onCreate?.(result);
     },
     onError: (error: Error) => {
-      toast.error(`${messages.create?.error || defaultMessages.create?.error}: ${error.message}`);
+      toast.error(`${messages.create?.error || defaultMessages.create?.error}: ${toUserMessage(error)}`);
     },
   });
 
@@ -134,7 +135,7 @@ export function usePaginatedDataQuery<T extends object>(
       onMutationSuccess?.onUpdate?.(result);
     },
     onError: (error: Error) => {
-      toast.error(`${messages.update?.error || defaultMessages.update?.error}: ${error.message}`);
+      toast.error(`${messages.update?.error || defaultMessages.update?.error}: ${toUserMessage(error)}`);
     },
   });
 
@@ -146,7 +147,7 @@ export function usePaginatedDataQuery<T extends object>(
       onMutationSuccess?.onDelete?.(id);
     },
     onError: (error: Error) => {
-      toast.error(`${messages.delete?.error || defaultMessages.delete?.error}: ${error.message}`);
+      toast.error(`${messages.delete?.error || defaultMessages.delete?.error}: ${toUserMessage(error)}`);
     },
   });
 

@@ -16,7 +16,7 @@ type GoalRow = Record<string, any>;
 function listRows<T>(value: ApiList<T>): T[] {
   if (Array.isArray(value)) return value;
   if (value && Array.isArray(value.data)) return value.data;
-  throw new Error("[marketing] resposta inválida da API de metas");
+  throw new Error("[marketing] invalid goals API response");
 }
 
 function progress(current: number, target: number): number {
@@ -64,7 +64,7 @@ function fromApi(row: GoalRow): Meta {
 
 function toApi(input: CreateMetaInput) {
   if (!input.artist_id) {
-    throw new Error("[marketing] artist_id é obrigatório para persistir uma meta");
+    throw new Error("[marketing] artist_id is required to persist a goal");
   }
   const target = Number(input.valorAlvo ?? input.valor_meta ?? 0);
   const current = Number(input.valorAtual ?? input.valor_atual ?? 0);

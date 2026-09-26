@@ -45,7 +45,7 @@ import { useMusicChatAutomationSettings } from "@/modules/musicchat/hooks/useMus
 import { useMusicChatTriageRules } from "@/modules/musicchat/hooks/useMusicChatTriageRules";
 import { musicChatConversationsService } from "@/modules/musicchat/services/conversations.service";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
-import { useUploadToR2, R2NotConfiguredError, type UploadCategory } from "@/shared/hooks/useUploadToR2";
+import { useUploadToR2, type UploadCategory } from "@/shared/hooks/useUploadToR2";
 import { useWsEvent } from "@/shared/hooks/useWsEvent";
 import { useTenant } from "@/app/providers/TenantContext";
 import {
@@ -69,6 +69,7 @@ import {
 } from "lucide-react";
 import { SiFacebook, SiInstagram, SiTiktok } from "react-icons/si";
 
+import { toUserMessage } from "@/shared/lib/errors";
 type SupportChannel = "whatsapp" | "instagram" | "facebook" | "tiktok" | "site" | "custom";
 type SupportStatus =
   | "nova"
@@ -839,9 +840,7 @@ export function SupportCenterView({
         successCount += 1;
       } catch (err) {
         toast.error(
-          err instanceof R2NotConfiguredError
-            ? err.message
-            : `Falha ao enviar "${file.name}" — anexo não adicionado.`,
+          toUserMessage(err, `Falha ao enviar "${file.name}" — anexo não adicionado.`),
         );
       }
     }
@@ -932,7 +931,7 @@ export function SupportCenterView({
           })
           .catch((err) => {
             toast.error(
-              err instanceof R2NotConfiguredError ? err.message : "Falha ao enviar o áudio gravado.",
+              toUserMessage(err, "Falha ao enviar o áudio gravado."),
             );
           });
       };

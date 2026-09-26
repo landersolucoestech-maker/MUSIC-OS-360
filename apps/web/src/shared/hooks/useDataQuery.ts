@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { getCacheConfig } from "@/shared/lib/query-config";
 import { storage } from "@/shared/lib/storage";
 
+import { toUserMessage } from "@/shared/lib/errors";
 // Referência estável: `query.data || []` alocaria um array novo a cada
 // render enquanto não há dado (loading, ou erro sem sucesso anterior — ex.:
 // backend indisponível). Consumidores que derivam `useMemo`/`useEffect`
@@ -107,7 +108,7 @@ export function useDataQuery<T extends object>(
       onMutationSuccess?.onCreate?.(result);
     },
     onError: (error: Error) => {
-      toast.error(`${messages.create?.error || defaultMessages.create?.error}: ${error.message}`);
+      toast.error(`${messages.create?.error || defaultMessages.create?.error}: ${toUserMessage(error)}`);
     },
   });
 
@@ -124,7 +125,7 @@ export function useDataQuery<T extends object>(
       onMutationSuccess?.onUpdate?.(result);
     },
     onError: (error: Error) => {
-      toast.error(`${messages.update?.error || defaultMessages.update?.error}: ${error.message}`);
+      toast.error(`${messages.update?.error || defaultMessages.update?.error}: ${toUserMessage(error)}`);
     },
   });
 
@@ -136,7 +137,7 @@ export function useDataQuery<T extends object>(
       onMutationSuccess?.onDelete?.(id);
     },
     onError: (error: Error) => {
-      toast.error(`${messages.delete?.error || defaultMessages.delete?.error}: ${error.message}`);
+      toast.error(`${messages.delete?.error || defaultMessages.delete?.error}: ${toUserMessage(error)}`);
     },
   });
 

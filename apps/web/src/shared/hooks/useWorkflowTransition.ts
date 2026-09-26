@@ -17,6 +17,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { storage, type StorageRow } from '@/shared/lib/storage';
 
+import { toUserMessage } from "@/shared/lib/errors";
 interface UseWorkflowTransitionOptions {
   table: string;
   id: string;
@@ -42,7 +43,7 @@ export function useWorkflowTransition({
       onSuccess?.(toStatus);
     },
     onError: (err: Error) => {
-      toast.error(`Erro na transição: ${err.message ?? 'Não foi possível alterar o status.'}`);
+      toast.error(`Erro na transição: ${toUserMessage(err, 'Não foi possível alterar o status.')}`);
     },
   });
 

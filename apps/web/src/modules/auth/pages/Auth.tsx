@@ -341,7 +341,7 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
     setLoading(true);
     try {
       const { error } = await resetPassword(data.email);
-      if (error) toast.error(error.message);
+      if (error) toast.error(describeAuthError(error, "Não foi possível enviar o e-mail de recuperação. Tente novamente."));
       else {
         toast.success("Email enviado! Verifique sua caixa de entrada.");
         onBack();

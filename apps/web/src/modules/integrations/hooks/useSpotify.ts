@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 
 
+import { toUserMessage } from "@/shared/lib/errors";
 export interface SpotifyStatus {
   connected: boolean;
   client_id?: string | null;
@@ -40,7 +41,7 @@ export function useSpotifySaveCredentials() {
       queryClient.invalidateQueries({ queryKey: ["integrations", "spotify", "status"] });
       toast.info("Janela OAuth aberta. Complete a autenticação no Spotify.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -55,7 +56,7 @@ export function useSpotifyDeleteCredentials() {
       queryClient.invalidateQueries({ queryKey: ["integrations", "spotify", "status"] });
       toast.success("Spotify desconectado.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -79,7 +80,7 @@ export function useSpotifyArtistMetrics() {
       queryClient.invalidateQueries({ queryKey: ["integrations", "spotify"] });
       toast.success("Métricas do artista Spotify sincronizadas.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 

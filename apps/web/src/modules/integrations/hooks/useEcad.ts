@@ -16,6 +16,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { IntegrationRuntimeStatus } from "@/shared/integrations/types";
 
+import { toUserMessage } from "@/shared/lib/errors";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface EcadStatus extends IntegrationRuntimeStatus {
@@ -84,14 +85,14 @@ export function useEcadSaveCredentials() {
   return useMutation({
     mutationFn: async (_input: { associacao: string; username: string; password: string }) =>
       ecadUnavailable(),
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
 export function useEcadDeleteCredentials() {
   return useMutation({
     mutationFn: async () => ecadUnavailable(),
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -108,13 +109,13 @@ export function useEcadArrecadacao(periodo: string, enabled = true) {
 export function useEcadConciliacao() {
   return useMutation<EcadConciliacaoResult, Error, { periodo: string }>({
     mutationFn: async (_input) => ecadUnavailable(),
-    onError: (err) => toast.error(`Erro na conciliação ECAD: ${err.message}`),
+    onError: (err) => toast.error(`Erro na conciliação ECAD: ${toUserMessage(err)}`),
   });
 }
 
 export function useEcadImportRelatorio() {
   return useMutation<{ linhas: number; importadas: number }, Error, File>({
     mutationFn: async (_file: File) => ecadUnavailable(),
-    onError: (err) => toast.error(`Erro ao importar relatório: ${err.message}`),
+    onError: (err) => toast.error(`Erro ao importar relatório: ${toUserMessage(err)}`),
   });
 }

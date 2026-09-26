@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/shared/lib/api-client";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
+import { UserFacingError } from "@/shared/lib/errors";
 
 export interface Role {
   id: string;
@@ -223,7 +224,7 @@ export function useRoles() {
   const assignRoleToUser = useMutation({
     mutationFn: async ({ userId, roleId }: { userId: string; roleId: string }) => {
       const role = roles.find((item) => item.id === roleId);
-      if (!role) throw new Error("Papel não encontrado");
+      if (!role) throw new UserFacingError("Role not found", "Papel não encontrado.");
       return api.patch(`/users/${userId}/role`, { role: role.slug });
     },
     onSuccess: invalidateRbac,
@@ -249,7 +250,7 @@ export function useRoles() {
 
   const unsupportedMutation = useMutation({
     mutationFn: async () => {
-      throw new Error("Operação não disponível neste contrato");
+      throw new UserFacingError("Operation not available in this roles contract", "Operação não disponível.");
     },
   });
   const getPermissionsForRole = (roleId: string): Permission[] => {

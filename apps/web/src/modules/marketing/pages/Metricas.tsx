@@ -301,7 +301,6 @@ export default function Metricas() {
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>
                 Não foi possível carregar as métricas.
-                {ctrl.error instanceof Error ? ` (${ctrl.error.message})` : ""}
               </span>
             </div>
           ) : (

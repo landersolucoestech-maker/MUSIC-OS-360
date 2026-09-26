@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 
 
+import { toUserMessage } from "@/shared/lib/errors";
 export interface YouTubeStatus {
   connected: boolean;
   channel_id?: string | null;
@@ -58,7 +59,7 @@ export function useYouTubeSaveCredentials() {
       queryClient.invalidateQueries({ queryKey: ["integrations", "youtube", "status"] });
       toast.info("YouTube é configurado via variável de ambiente do servidor. Verifique o status atualizado.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -72,7 +73,7 @@ export function useYouTubeDeleteCredentials() {
       queryClient.invalidateQueries({ queryKey: ["integrations", "youtube", "status"] });
       toast.success("YouTube Music desconectado.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 

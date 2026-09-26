@@ -59,9 +59,13 @@ import type {
   RegistrationHistoryEntry,
   RegistrationResult,
 } from "@/shared/integrations/contracts/rights.contract";
+import { UserFacingError } from "@/shared/lib/errors";
 
 function unavailable(integration: string): never {
-  throw new Error(`${integration} nao possui provider real configurado no frontend. Use o backend real antes de chamar este adapter.`);
+  throw new UserFacingError(
+    `${integration} has no real frontend provider; use the real backend before calling this adapter`,
+    "Esta integração ainda não está disponível.",
+  );
 }
 
 export function createUnavailableAuthProvider(): IAuthProvider {

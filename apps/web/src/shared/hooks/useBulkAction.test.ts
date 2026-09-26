@@ -33,7 +33,7 @@ describe("runBulkAction", () => {
   });
 
   it("all failing: none reported as success", async () => {
-    const action = vi.fn(async () => { throw new Error("falhou"); });
+    const action = vi.fn(async () => { throw new Error("failed"); });
     const result = await runBulkAction(["a", "b"], action);
     expect(result.succeeded).toEqual([]);
     expect(result.failed).toHaveLength(2);

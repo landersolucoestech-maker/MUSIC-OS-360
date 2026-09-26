@@ -14,6 +14,7 @@ import {
   type ImportValidationResult, type ReportEntityDefinition,
 } from "../services/reports-api";
 
+import { toUserMessage } from "@/shared/lib/errors";
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -39,7 +40,7 @@ export function ImportDialog({ open, onClose, definition }: Props) {
       const { blob, filename } = await reportsApi.importTemplateBlob(definition!.tableName);
       triggerBlobDownload(blob, filename);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Falha ao baixar o template.");
+      toast.error(toUserMessage(e, "Falha ao baixar o template."));
     } finally {
       setIsDownloadingTemplate(false);
     }
@@ -50,7 +51,7 @@ export function ImportDialog({ open, onClose, definition }: Props) {
     const body = await fileToImportBody(file);
     validate.mutate(
       { entity: definition!.tableName, body },
-      { onSuccess: setPreview, onError: (e) => toast.error(e instanceof Error ? e.message : "Falha ao validar.") },
+      { onSuccess: setPreview, onError: (e) => toast.error(toUserMessage(e, "Falha ao validar.")) },
     );
   }
 
@@ -65,7 +66,7 @@ export function ImportDialog({ open, onClose, definition }: Props) {
           else toast.success(`${r.importedRows} registro(s) importado(s).`);
           if (r.errors.length === 0) close();
         },
-        onError: (e) => toast.error(e instanceof Error ? e.message : "Falha ao importar."),
+        onError: (e) => toast.error(toUserMessage(e, "Falha ao importar.")),
       },
     );
   }

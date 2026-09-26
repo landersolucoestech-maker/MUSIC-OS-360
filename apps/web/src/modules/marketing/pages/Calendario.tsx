@@ -99,7 +99,7 @@ import {
   type CreativeSlot,
 } from "../types/creative.types";
 import { CreativeTemplateSurface } from "./creative-template-surface";
-import { exportCreativeToPng, downloadBlob, CreativeExportError } from "../creative/static-export";
+import { exportCreativeToPng, downloadBlob } from "../creative/static-export";
 import {
   initialContentForm,
   toMarketingContentInput,
@@ -107,6 +107,7 @@ import {
   type MediaItem,
 } from "./content-form.mapper";
 
+import { toUserMessage } from "@/shared/lib/errors";
 /** Content context — exclusively company and artist. */
 const CONTENT_CONTEXT_OPTIONS: { value: MarketingTarget; label: string }[] = [
   { value: "empresa", label: "Empresa" },
@@ -459,7 +460,7 @@ function ContentScheduleModal({
         .catch((err: unknown) => {
           setValues((prev) => ({ ...prev, media: prev.media.filter((item) => item.url !== localUrl) }));
           URL.revokeObjectURL(localUrl);
-          setErrors((prev) => ({ ...prev, media: err instanceof Error ? err.message : "Falha no upload da mídia." }));
+          setErrors((prev) => ({ ...prev, media: toUserMessage(err, "Falha no upload da mídia.") }));
         });
     });
   };
@@ -978,7 +979,7 @@ function CreativeSection({
       const blob = await exportCreativeToPng(creative, aspect);
       downloadBlob(blob, `${creative.templateKey || "criativo"}.png`);
     } catch (err) {
-      setExportError(err instanceof CreativeExportError ? err.message : "Falha inesperada ao exportar imagem.");
+      setExportError(toUserMessage(err, "Falha inesperada ao exportar imagem."));
     } finally {
       setIsExporting(false);
     }

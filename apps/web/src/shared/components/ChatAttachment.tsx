@@ -121,7 +121,7 @@ function PdfCanvasPreview({ data }: { data: Uint8Array }) {
           const viewport = page.getViewport({ scale: 1.35 });
           const canvas = document.createElement("canvas");
           const context = canvas.getContext("2d");
-          if (!context) throw new Error("Canvas indisponível");
+          if (!context) throw new Error("Canvas 2D context unavailable");
 
           canvas.width = viewport.width;
           canvas.height = viewport.height;

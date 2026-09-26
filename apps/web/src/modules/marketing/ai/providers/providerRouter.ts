@@ -38,7 +38,7 @@ const apiProvider: AiProvider = {
       typeof parsed.creativeDirection !== "string" ||
       requiredArrays.some((key) => !Array.isArray(parsed[key]))
     ) {
-      throw new Error("[marketing] resposta inválida do provedor de IA");
+      throw new Error("[marketing] invalid AI provider response");
     }
     return parsed as AiGeneratedResult;
   },

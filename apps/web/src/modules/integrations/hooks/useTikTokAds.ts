@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 
+import { toUserMessage } from "@/shared/lib/errors";
 export interface TikTokAdsStatus {
   connected: boolean;
   last_sync_at?: string | null;
@@ -47,7 +48,7 @@ export function useTikTokAdsSaveCredentials() {
       queryClient.invalidateQueries({ queryKey: ["integrations", "tiktok-ads"] });
       toast.success("TikTok Ads conectado com sucesso.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -61,7 +62,7 @@ export function useTikTokAdsDeleteCredentials() {
       queryClient.invalidateQueries({ queryKey: ["integrations", "tiktok-ads"] });
       toast.success("TikTok Ads desconectado.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 

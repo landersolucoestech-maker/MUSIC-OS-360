@@ -106,26 +106,29 @@ async function mapError(res: Response): Promise<never> {
   } catch {}
 
   const rawMsg = body.message;
-  const msg = Array.isArray(rawMsg) ? rawMsg.join("; ") : (rawMsg ?? res.statusText);
+  // The API's HTTP exception messages are end-user copy (PT-BR) by contract;
+  // they become `userMessage`. `technical` is the internal diagnostic.
+  const userMessage = Array.isArray(rawMsg) ? rawMsg.join("; ") : rawMsg;
+  const technical = `API responded ${res.status}${body.error ? ` (${body.error})` : ""}`;
 
   switch (res.status) {
     case 400:
-      throw new ValidationError(msg);
+      throw new ValidationError(technical, {}, { userMessage });
     case 403:
       // GlobalExceptionFilter preserves the `error` code of guards such as
       // MustChangePasswordGuard (see apps/api/.../global-exception.filter.ts) —
       // without it, every 403 became a generic TenantError and the frontend had
       // no way to know it needed to show the password change screen.
       if (body.error === "MUST_CHANGE_PASSWORD") {
-        throw new PasswordChangeRequiredError(msg);
+        throw new PasswordChangeRequiredError(userMessage);
       }
-      throw new TenantError("", "", msg);
+      throw new TenantError("", "", technical, { userMessage });
     case 404:
-      throw new NotFoundError(msg, "");
+      throw new NotFoundError("resource", res.url, { userMessage });
     case 409:
-      throw new ConflictError(msg);
+      throw new ConflictError(technical, undefined, { userMessage });
     default:
-      throw new IntegrationError("api", msg, { statusCode: res.status });
+      throw new IntegrationError("api", technical, { statusCode: res.status, userMessage, errorCode: body.error });
   }
 }
 
@@ -207,9 +210,17 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     });
   } catch (err) {
     if (err instanceof DOMException && err.name === "AbortError") {
-      throw new IntegrationError("api", "A API não respondeu a tempo", { statusCode: 0, retryable: true });
+      throw new IntegrationError("api", "API request timed out", {
+        statusCode: 0,
+        retryable: true,
+        userMessage: "O servidor não respondeu a tempo. Tente novamente.",
+      });
     }
-    throw new IntegrationError("api", "Falha de conexão com a API", { statusCode: 0, retryable: true });
+    throw new IntegrationError("api", "API connection failure", {
+      statusCode: 0,
+      retryable: true,
+      userMessage: "Falha de conexão com o servidor. Verifique sua internet e tente novamente.",
+    });
   } finally {
     clearTimeout(timeoutId);
   }

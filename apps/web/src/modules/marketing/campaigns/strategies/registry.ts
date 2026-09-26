@@ -28,7 +28,7 @@ export class CampaignPlatformRegistry {
   resolve(platform: PaidMediaPlatform): CampaignPlatformStrategy {
     const strategy = this.strategies.get(platform);
     if (!strategy) {
-      throw new Error(`[campaigns] Plataforma não suportada: ${platform}`);
+      throw new Error(`[campaigns] Unsupported platform: ${platform}`);
     }
     return strategy;
   }

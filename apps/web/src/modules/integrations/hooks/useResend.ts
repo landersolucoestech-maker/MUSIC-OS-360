@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { UserFacingError } from "@/shared/lib/errors";
 
 interface ResendStatus {
   connected: boolean;
@@ -26,7 +27,7 @@ export function useResendSaveCredentials() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (_payload: { api_key: string; from_address?: string }) => {
-      throw new Error("Integração Resend não disponível no modo demo.");
+      throw new UserFacingError("Resend integration unavailable in demo mode", "Integração Resend não disponível no modo demo.");
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ["resend", "status"] });
@@ -38,7 +39,7 @@ export function useResendDeleteCredentials() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      throw new Error("Integração Resend não disponível no modo demo.");
+      throw new UserFacingError("Resend integration unavailable in demo mode", "Integração Resend não disponível no modo demo.");
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ["resend", "status"] });

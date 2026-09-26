@@ -60,6 +60,7 @@ import {
   validateRule,
 } from "../utils/financialCategorizationRules.utils";
 
+import { toUserMessage } from "@/shared/lib/errors";
 const QUERY_KEY_RULES = ["finance-category-rules"] as const;
 const QUERY_KEY_CATEGORIES = ["finance-category-rule-categories"] as const;
 
@@ -162,7 +163,7 @@ export default function FinanceCategoryRules() {
       toast.success("Regra personalizada criada");
       setModalOpen(false);
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: (error: Error) => toast.error(toUserMessage(error)),
   });
 
   const updateMutation = useMutation({
@@ -176,7 +177,7 @@ export default function FinanceCategoryRules() {
     },
     onError: (error: Error) => {
       if (handleConcurrencyConflict(error, "regra de categorização")) return;
-      toast.error(error.message);
+      toast.error(toUserMessage(error));
     },
   });
 
@@ -187,7 +188,7 @@ export default function FinanceCategoryRules() {
       toast.success("Regra personalizada removida");
       setDeletingRule(null);
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: (error: Error) => toast.error(toUserMessage(error)),
   });
 
   const bulkDeleteMutation = useMutation({
@@ -198,7 +199,7 @@ export default function FinanceCategoryRules() {
       setSelectedRuleIds((current) => current.filter((id) => !result.succeeded.includes(id)));
       setBulkDeletingRuleIds([]);
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: (error: Error) => toast.error(toUserMessage(error)),
   });
 
   const openCreate = () => {

@@ -2,6 +2,7 @@ import type {
   SemanticVariable,
   SemanticParseResult,
 } from "@/modules/contracts/types/contracts.types";
+import { UserFacingError } from "@/shared/lib/errors";
 
 const SYSTEM_PROMPT = `Você é um parser semântico jurídico especializado em contratos da indústria fonográfica brasileira. Sua única função é analisar o texto de um contrato e retornar um JSON identificando todas as variáveis dinâmicas e os tipos de cláusulas presentes.
 
@@ -221,8 +222,9 @@ export async function parseContractText(text: string): Promise<SemanticParseResu
 
   if (!response.ok) {
     const errBody = await response.text().catch(() => "");
-    throw new Error(
-      `Erro na análise semântica (HTTP ${response.status})${errBody ? `: ${errBody.slice(0, 200)}` : ""}`,
+    throw new UserFacingError(
+      `Semantic analysis failed (HTTP ${response.status})${errBody ? `: ${errBody.slice(0, 200)}` : ""}`,
+      "Não foi possível analisar o documento. Tente novamente.",
     );
   }
 
@@ -234,7 +236,7 @@ export async function parseContractText(text: string): Promise<SemanticParseResu
   const content = raw.data?.content ?? raw.content;
 
   if (!content) {
-    throw new Error("O servidor de IA retornou uma resposta vazia. Tente novamente.");
+    throw new UserFacingError("AI provider returned an empty response", "O servidor de IA retornou uma resposta vazia. Tente novamente.");
   }
 
   let jsonStr = content.trim();
@@ -245,9 +247,7 @@ export async function parseContractText(text: string): Promise<SemanticParseResu
   try {
     parsed = JSON.parse(jsonStr) as RawAIResponse;
   } catch {
-    throw new Error(
-      "A IA retornou um formato inválido. Verifique se o documento é um contrato válido e tente novamente.",
-    );
+    throw new UserFacingError("AI provider returned an unparseable format", "A IA retornou um formato inválido. Verifique se o documento é um contrato válido e tente novamente.");
   }
 
   const variables = Array.isArray(parsed.variables)

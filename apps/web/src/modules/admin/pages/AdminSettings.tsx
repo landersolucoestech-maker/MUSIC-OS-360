@@ -36,6 +36,7 @@ import {
   MoreHorizontal, Activity, FileText, ScrollText,
 } from "lucide-react";
 
+import { toUserMessage } from "@/shared/lib/errors";
 /* ── types ── */
 type TabKey = "usuarios" | "geral" | "email" | "seguranca" | "notificacoes" | "webhooks" | "chaves-api" | "integracoes";
 
@@ -497,7 +498,7 @@ function TabIntegracoes() {
           {typeof status === "number" ? ` (HTTP ${status})` : ""}.
         </p>
         <p className="text-xs text-muted-foreground">
-          {(error as Error | null)?.message ?? "Erro desconhecido."} Isto NÃO significa que o
+          {toUserMessage(error, "Erro desconhecido.")} Isto NÃO significa que o
           catálogo está vazio — verifique se a API está no ar e se a rota
           <code className="mx-1">GET /admin/integrations</code> existe nesta build.
         </p>

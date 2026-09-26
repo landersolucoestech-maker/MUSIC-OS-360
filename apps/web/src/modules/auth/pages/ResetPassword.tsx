@@ -7,6 +7,8 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 
+import { toUserMessage } from "@/shared/lib/errors";
+import { describeAuthError } from "@/shared/lib/auth-error-messages";
 export default function ResetPassword() {
   const { session, loading, updatePassword } = useAuth();
   const [password, setPassword] = useState("");
@@ -31,11 +33,14 @@ export default function ResetPassword() {
     setSaving(true);
     try {
       const { error } = await updatePassword(password);
-      if (error) throw new Error(error.message);
+      if (error) {
+        toast.error(describeAuthError(error, "Não foi possível atualizar a senha. Tente novamente."));
+        return;
+      }
       setCompleted(true);
       toast.success("Senha atualizada com sucesso.");
     } catch (error) {
-      toast.error((error as Error).message);
+      toast.error(toUserMessage(error, "Não foi possível atualizar a senha. Tente novamente."));
     } finally {
       setSaving(false);
     }

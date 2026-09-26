@@ -98,9 +98,12 @@ describe("reportsApi — reports center, real data only", () => {
       text: vi.fn().mockResolvedValue("serviço indisponível"),
     } as unknown as Response);
 
-    await expect(reportsApi.exportBlob("artistas", { format: "xlsx" })).rejects.toThrow(
-      "Exportação falhou (503): serviço indisponível",
-    );
+    const failure = reportsApi.exportBlob("artistas", { format: "xlsx" });
+    // Technical diagnostic keeps the status and raw body; the user copy never does.
+    await expect(failure).rejects.toThrow("Export failed (HTTP 503): serviço indisponível");
+    await expect(failure).rejects.toMatchObject({
+      userMessage: "Não foi possível concluir a operação de relatório. Tente novamente.",
+    });
   });
 
   it("envia importValidate para a API real", () => {

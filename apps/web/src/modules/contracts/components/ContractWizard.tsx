@@ -25,6 +25,7 @@ import type { ContractWithRelations, ContractInsert } from "@/modules/contracts/
 import type { SigningPlatform } from "@/modules/contracts/types/contracts.types";
 import { cn } from "@/shared/lib/utils";
 import { A4Preview } from "@/modules/contracts/components/ContractA4Preview";
+import { UserFacingError } from "@/shared/lib/errors";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -1179,7 +1180,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
 
       if (sendForSignature) {
         toast.error(`Integração com ${provider || "plataforma"} não configurada`);
-        throw new Error(`Integração com ${provider || "plataforma"} não configurada`);
+        throw new UserFacingError(`Signing integration not configured: ${provider || "unknown"}`, `Integração com ${provider || "plataforma"} não configurada`);
       }
       onOpenChange(false);
     } finally {

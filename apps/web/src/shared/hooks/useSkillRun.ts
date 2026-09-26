@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 
+import { toUserMessage } from "@/shared/lib/errors";
 /**
  * useSkillRun — invocação genérica de um AI Skill ON_DEMAND real (backend
  * runOnDemandSkill / packages/ai-skills/*). Cada skill já tem seu próprio
@@ -24,7 +25,7 @@ export function useSkillRun<T>(path: string) {
   const mutation = useMutation({
     mutationFn: (body?: Record<string, unknown>) => api.post<SkillRunEnvelope<T>>(path, body ?? {}),
     onError: (error: Error) => {
-      toast.error(`IA: ${error.message}`);
+      toast.error(`IA: ${toUserMessage(error)}`);
     },
   });
 

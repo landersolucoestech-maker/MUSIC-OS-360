@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 import { disabledIntegration } from "@/shared/lib/disabled-integration";
 
+import { toUserMessage } from "@/shared/lib/errors";
 // ─── TikTok-specific types ────────────────────────────────────────────────────
 
 /** Mirrors exactly the return of IntegrationBaseService.getOAuthStatus() —
@@ -51,7 +52,7 @@ export function useTikTokDisconnect() {
       queryClient.invalidateQueries({ queryKey: ["integrations", "tiktok"] });
       toast.success("TikTok desconectado.");
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 

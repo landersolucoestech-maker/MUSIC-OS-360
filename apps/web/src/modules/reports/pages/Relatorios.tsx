@@ -15,6 +15,7 @@ import { useReportEntities, useReportDefinitions, useReportExport } from "../hoo
 import { ImportDialog } from "../components/ImportDialog";
 import type { ReportEntityDefinition } from "../services/reports-api";
 
+import { toUserMessage } from "@/shared/lib/errors";
 export default function Relatorios() {
   const entitiesQ = useReportEntities();
   const definitionsQ = useReportDefinitions();
@@ -31,7 +32,7 @@ export default function Relatorios() {
       { entity: tableName, params: { format: "xlsx", pageSize: 1000 } },
       {
         onSuccess: () => toast.success("Exportação concluída."),
-        onError: (e) => toast.error(e instanceof Error ? e.message : "Falha na exportação."),
+        onError: (e) => toast.error(toUserMessage(e, "Falha na exportação.")),
         onSettled: () => setExporting(null),
       },
     );

@@ -10,6 +10,7 @@ import type {
   BrandingSettings,
 } from "@/modules/contracts/types/contracts.types";
 
+import { UserFacingError, toUserMessage } from "@/shared/lib/errors";
 export type ClientType = "artista" | "pessoa_fisica" | "pessoa_juridica";
 export type FinancialModel = "valor_fixo" | "recebimentos externos de direitos" | "misto" | "recorrente";
 
@@ -128,7 +129,7 @@ export function useContractServiceTypes(filterByClientType?: ClientType | null) 
     mutationFn: async (data: ContractServiceTypeInsert) => {
       const slug = data.slug?.trim() ? data.slug.trim() : slugify(data.name);
       if (allTypes.some((t) => t.slug === slug)) {
-        throw new Error(`Já existe um tipo com o slug "${slug}"`);
+        throw new UserFacingError(`Duplicate contract service type slug: ${slug}`, `Já existe um tipo com o slug "${slug}"`);
       }
       return contractsService.createContractServiceType({
         ...data,
@@ -142,7 +143,7 @@ export function useContractServiceTypes(filterByClientType?: ClientType | null) 
       toast.success("Tipo de contrato criado com sucesso!");
     },
     onError: (err: Error) => {
-      toast.error(err.message || "Erro ao criar tipo de contrato");
+      toast.error(toUserMessage(err, "Erro ao criar tipo de contrato"));
     },
   });
 
@@ -150,9 +151,9 @@ export function useContractServiceTypes(filterByClientType?: ClientType | null) 
     mutationFn: async ({ id, ...data }: ContractServiceTypeUpdate) => {
       if (data.slug !== undefined) {
         const slug = data.slug.trim();
-        if (!slug) throw new Error("Slug não pode ser vazio");
+        if (!slug) throw new UserFacingError("Empty contract service type slug", "O slug não pode ser vazio.");
         if (allTypes.some((t) => t.slug === slug && t.id !== id)) {
-          throw new Error(`Já existe um tipo com o slug "${slug}"`);
+          throw new UserFacingError(`Duplicate contract service type slug: ${slug}`, `Já existe um tipo com o slug "${slug}"`);
         }
         data.slug = slug;
       }
@@ -166,7 +167,7 @@ export function useContractServiceTypes(filterByClientType?: ClientType | null) 
       toast.success("Tipo de contrato atualizado com sucesso!");
     },
     onError: (err: Error) => {
-      toast.error(err.message || "Erro ao atualizar tipo de contrato");
+      toast.error(toUserMessage(err, "Erro ao atualizar tipo de contrato"));
     },
   });
 
@@ -181,9 +182,7 @@ export function useContractServiceTypes(filterByClientType?: ClientType | null) 
             c["type"] === typeToArchive.slug,
         );
         if (inUse) {
-          throw new Error(
-            `O tipo "${typeToArchive.name}" está em uso por contratos existentes e não pode ser arquivado.`,
-          );
+          throw new UserFacingError(`Contract service type in use; cannot archive: ${typeToArchive.id}`, `O tipo "${typeToArchive.name}" está em uso por contratos existentes e não pode ser arquivado.`);
         }
       }
       return contractsService.archiveContractServiceType(id);
@@ -193,7 +192,7 @@ export function useContractServiceTypes(filterByClientType?: ClientType | null) 
       toast.success("Tipo de contrato arquivado.");
     },
     onError: (err: Error) => {
-      toast.error(err.message || "Erro ao arquivar tipo de contrato");
+      toast.error(toUserMessage(err, "Erro ao arquivar tipo de contrato"));
     },
   });
 

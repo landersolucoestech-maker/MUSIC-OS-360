@@ -28,6 +28,12 @@ describe('StorageService', () => {
     it('throws R2_NOT_CONFIGURED on presigned download when not configured', async () => {
       await expect(unconfigured().getPresignedUrl({ key: 'k' })).rejects.toBeInstanceOf(ServiceUnavailableException);
     });
+    it('carries the machine code in `error` and user copy without configuration internals', async () => {
+      const err = await unconfigured().upload({ key: 'k', body: 'x' }).catch((e: ServiceUnavailableException) => e);
+      const body = (err as ServiceUnavailableException).getResponse() as { error: string; message: string };
+      expect(body.error).toBe('R2_NOT_CONFIGURED');
+      expect(body.message).not.toMatch(/R2_ACCOUNT_ID|R2_ACCESS_KEY|R2_SECRET_KEY|R2_/);
+    });
   });
 
   describe('createPresignedUpload — validation', () => {

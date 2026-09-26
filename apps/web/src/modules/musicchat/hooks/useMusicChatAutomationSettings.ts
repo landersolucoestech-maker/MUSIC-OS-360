@@ -4,6 +4,7 @@ import { musicChatAutomationService } from "../services/musicchat-automation.ser
 import { handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import type { MusicChatAutomationSettings } from "../types/musicchat-automation.types";
 
+import { toUserMessage } from "@/shared/lib/errors";
 export const MUSICCHAT_AUTOMATION_SETTINGS_KEY = ["musicchat", "automation", "settings"] as const;
 
 export function useMusicChatAutomationSettings() {
@@ -21,7 +22,7 @@ export function useMusicChatAutomationSettings() {
     },
     onError: (error: Error) => {
       if (handleConcurrencyConflict(error, "configuração do MusicChat")) return;
-      toast.error(error.message);
+      toast.error(toUserMessage(error));
     },
   });
 

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useUsuarios, type Usuario } from "@/modules/settings/hooks/useUsuarios";
 import { useRoles } from "@/modules/settings/hooks/useRoles";
 
+import { toUserMessage } from "@/shared/lib/errors";
 interface UsuarioEditorModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -76,7 +77,7 @@ export function UsuarioEditorModal({ open, onOpenChange, usuario, mode }: Usuari
       }
       onOpenChange(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Não foi possível salvar o usuário");
+      toast.error(toUserMessage(error, "Não foi possível salvar o usuário"));
     }
   };
 

@@ -1,6 +1,6 @@
 {
  "totals": {
-  "comment": 848,
+  "comment": 847,
   "directory": 23,
   "eventQueueJob": 18,
   "filename": 83,
@@ -127,7 +127,7 @@
   "comment::apps/web/src/modules/reports/components/ImportDialog.tsx": 1,
   "comment::apps/web/src/modules/reports/hooks/useReports.ts": 2,
   "comment::apps/web/src/modules/reports/pages/Relatorios.tsx": 3,
-  "comment::apps/web/src/modules/reports/services/reports-api.ts": 2,
+  "comment::apps/web/src/modules/reports/services/reports-api.ts": 1,
   "comment::apps/web/src/modules/rh/components/PayrollFormModal.tsx": 3,
   "comment::apps/web/src/modules/rh/components/RHViewModals.tsx": 6,
   "comment::apps/web/src/modules/rh/pages/RH.tsx": 5,

@@ -4,6 +4,7 @@ import { Badge } from "@/shared/ui/badge";
 import { Alert, AlertDescription } from "@/shared/ui/alert";
 import type { SkillRunEnvelope } from "@/shared/hooks/useSkillRun";
 
+import { toUserMessage } from "@/shared/lib/errors";
 /**
  * SkillRunPanel — botão de disparo + renderização genérica do resultado real
  * de um AI Skill ON_DEMAND. Nenhum valor é inventado aqui: tudo vem de
@@ -117,7 +118,7 @@ export function SkillRunPanel<T extends Record<string, unknown>>({
       )}
       {error && (
         <Alert variant="destructive">
-          <AlertDescription>{error.message}</AlertDescription>
+          <AlertDescription>{toUserMessage(error)}</AlertDescription>
         </Alert>
       )}
       {result && (

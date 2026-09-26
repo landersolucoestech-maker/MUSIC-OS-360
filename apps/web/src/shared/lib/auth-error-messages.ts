@@ -22,7 +22,11 @@ export function isCredentialsError(error: AuthError): boolean {
   return INVALID_CREDENTIALS_RE.test(error.message ?? "");
 }
 
-export function describeAuthError(error: AuthError): string {
+export function describeAuthError(
+  error: AuthError,
+  fallback = "Não foi possível entrar. Tente novamente.",
+): string {
+  if (error.userMessage) return error.userMessage;
   const message = error.message ?? "";
 
   if (INVALID_CREDENTIALS_RE.test(message)) {
@@ -37,5 +41,6 @@ export function describeAuthError(error: AuthError): string {
   if (/failed to fetch|network|fetch failed/i.test(message)) {
     return "Falha de conexão. Verifique sua internet e tente novamente.";
   }
-  return message || "Não foi possível entrar. Tente novamente.";
+  // Unrecognized raw text is an internal diagnostic: never shown to the user.
+  return fallback;
 }

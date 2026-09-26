@@ -166,7 +166,7 @@ describe("exportCreativeToPng — canvas-safe static export via the /uploads/:fi
     (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({ ok: false, status: 401 });
     const creative = baseConfig({ layout: "full", primarySlot: slot("file-x") });
 
-    await expect(exportCreativeToPng(creative, "1:1")).rejects.toThrow(/sess[aã]o expirada/i);
+    await expect(exportCreativeToPng(creative, "1:1")).rejects.toMatchObject({ userMessage: expect.stringMatching(/sess[aã]o expirada/i) });
   });
 
   it("throws a timeout-specific error when the request is aborted", async () => {
@@ -175,7 +175,7 @@ describe("exportCreativeToPng — canvas-safe static export via the /uploads/:fi
     (fetch as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new DOMException("Aborted", "AbortError"));
     const creative = baseConfig({ layout: "full", primarySlot: slot("file-x") });
 
-    await expect(exportCreativeToPng(creative, "1:1")).rejects.toThrow(/tempo esgotado/i);
+    await expect(exportCreativeToPng(creative, "1:1")).rejects.toMatchObject({ userMessage: expect.stringMatching(/tempo esgotado/i) });
   });
 
   it("watermark with no asset renders the independent fallback label, never derived from profile identity", async () => {

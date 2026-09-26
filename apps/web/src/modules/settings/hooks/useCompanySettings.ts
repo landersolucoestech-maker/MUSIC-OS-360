@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 
+import { toUserMessage } from "@/shared/lib/errors";
 /**
  * The company's registration settings — persisted in the real backend
  * (GET/PATCH /company-settings, tenant-scoped, RLS + encrypted CNPJ).
@@ -131,7 +132,7 @@ export function useCompanySettings() {
       toast.success("Configurações da empresa salvas com sucesso!");
       return true;
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao salvar configurações da empresa");
+      toast.error(toUserMessage(err, "Erro ao salvar configurações da empresa"));
       return false;
     } finally {
       setSaving(false);

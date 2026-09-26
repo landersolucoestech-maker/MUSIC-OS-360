@@ -26,6 +26,8 @@ import {
   activationPlansService,
   type ActivationPlan,
 } from "@/modules/auth/services/activation-plans.service";
+import { describeAuthError } from "@/shared/lib/auth-error-messages";
+import { toUserMessage } from "@/shared/lib/errors";
 
 /* ── helpers ── */
 function slugify(val: string) {
@@ -210,11 +212,14 @@ export default function Register() {
         accepted_terms: all.acceptTerms,
         accepted_lgpd: all.acceptLgpd,
       });
-      if (error) throw new Error(error.message);
+      if (error) {
+        toast.error(describeAuthError(error, "Erro ao criar conta. Tente novamente."));
+        return;
+      }
       toast.success("Cadastro enviado. Confirme seu email para ativar a conta.");
       navigate("/login", { replace: true });
     } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message ?? "Erro ao criar conta. Tente novamente.");
+      toast.error(toUserMessage(err, "Erro ao criar conta. Tente novamente."));
     } finally {
       setIsLoading(false);
     }

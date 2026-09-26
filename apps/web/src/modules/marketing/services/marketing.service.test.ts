@@ -33,7 +33,7 @@ describe("marketingService production API boundary", () => {
   });
 
   it("propagates backend failures without fabricating a response", async () => {
-    const failure = new Error("API indisponível");
+    const failure = new Error("API unavailable");
     apiMock.get.mockRejectedValue(failure);
     await expect(marketingService.projects.list()).rejects.toBe(failure);
   });

@@ -140,6 +140,8 @@ import {
   type IntegrationLogoId,
 } from "@/shared/integrations";
 
+import { toUserMessage } from "@/shared/lib/errors";
+import { describeAuthError } from "@/shared/lib/auth-error-messages";
 function formatRoleName(name: string): string {
   return name.replace(/_/g, " ");
 }
@@ -343,7 +345,7 @@ export default function Configuracoes() {
     try {
       setSelectedRoleDetail(await getRoleDetail(role.id));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao carregar detalhes do papel.");
+      toast.error(toUserMessage(error, "Erro ao carregar detalhes do papel."));
     }
   };
 
@@ -352,7 +354,7 @@ export default function Configuracoes() {
       await duplicateRole.mutateAsync({ id: role.id, name: `${role.name} - cópia` });
       toast.success("Papel duplicado.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao duplicar papel.");
+      toast.error(toUserMessage(error, "Erro ao duplicar papel."));
     }
   };
 
@@ -363,7 +365,7 @@ export default function Configuracoes() {
       await updateRole.mutateAsync({ id: role.id, name });
       toast.success("Papel atualizado.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao editar papel.");
+      toast.error(toUserMessage(error, "Erro ao editar papel."));
     }
   };
 
@@ -377,7 +379,7 @@ export default function Configuracoes() {
         toast.success("Papel arquivado.");
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao alterar papel.");
+      toast.error(toUserMessage(error, "Erro ao alterar papel."));
     }
   };
 
@@ -391,7 +393,7 @@ export default function Configuracoes() {
       }
       setSelectedRoleDetail(await getRoleDetail(selectedRole.id));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao alterar permissão.");
+      toast.error(toUserMessage(error, "Erro ao alterar permissão."));
     }
   };
 
@@ -402,7 +404,7 @@ export default function Configuracoes() {
       setSelectedRoleDetail(await getRoleDetail(selectedRole.id));
       setParentRoleId("");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao adicionar herança.");
+      toast.error(toUserMessage(error, "Erro ao adicionar herança."));
     }
   };
 
@@ -412,7 +414,7 @@ export default function Configuracoes() {
       await removeRoleInheritance.mutateAsync({ roleId: selectedRole.id, parentRoleId: inheritedRoleId });
       setSelectedRoleDetail(await getRoleDetail(selectedRole.id));
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao remover herança.");
+      toast.error(toUserMessage(error, "Erro ao remover herança."));
     }
   };
 
@@ -723,7 +725,7 @@ export default function Configuracoes() {
 
     const { error } = await updatePassword(passwords.new);
     if (error) {
-      toast.error("Erro ao alterar senha: " + error.message);
+      toast.error(describeAuthError(error, "Erro ao alterar senha. Tente novamente."));
     } else {
       toast.success("Senha alterada com sucesso!");
       setPasswords({ current: "", new: "", confirm: "" });

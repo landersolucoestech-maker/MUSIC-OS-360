@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { DisabledIntegrationError, INTEGRATION_DISABLED_CODE } from "@/shared/lib/disabled-integration";
 
+import { toUserMessage } from "@/shared/lib/errors";
 /**
  * Clicksign stubs — integration switched off (no backend).
  *
@@ -44,13 +45,13 @@ export function useClicksignStatus() {
 export function useClicksignSaveCredentials() {
   return useMutation({
     mutationFn: async (_input: { api_key: string; account_email?: string }) => fail(),
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
 export function useClicksignDeleteCredentials() {
   return useMutation({
     mutationFn: async () => fail(),
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }

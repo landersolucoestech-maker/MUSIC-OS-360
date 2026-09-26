@@ -7,7 +7,7 @@
  */
 import { useState } from "react";
 import { api } from "@/shared/lib/api-client";
-import { IntegrationError } from "@/shared/lib/errors";
+import { IntegrationError, UserFacingError } from "@/shared/lib/errors";
 
 interface PresignResponse {
   presignedUrl: string;
@@ -26,21 +26,16 @@ export interface UploadToR2Options {
 }
 
 /** Sub-tipo de erro identificável: R2 não configurado no servidor. */
-export class R2NotConfiguredError extends Error {
-  constructor(message = "Upload indisponível — armazenamento R2 não configurado no servidor.") {
-    super(message);
+export class R2NotConfiguredError extends UserFacingError {
+  constructor(userMessage = "Upload indisponível no momento. Contate o administrador do sistema.") {
+    super("R2 storage not configured on the server", userMessage, "R2_NOT_CONFIGURED");
     this.name = "R2NotConfiguredError";
   }
 }
 
+/** Matches the API contract by machine code/status, never by message text. */
 function isR2NotConfigured(err: unknown): boolean {
-  if (err instanceof IntegrationError) {
-    return err.message.includes("R2_NOT_CONFIGURED") ||
-           err.message.includes("R2 não configurado") ||
-           err.message.includes("armazenamento R2 não configurado") ||
-           err.statusCode === 503;
-  }
-  return false;
+  return err instanceof IntegrationError && (err.errorCode === "R2_NOT_CONFIGURED" || err.statusCode === 503);
 }
 
 export function useUploadToR2() {
@@ -74,7 +69,7 @@ export function useUploadToR2() {
         headers: { "Content-Type": opts.file.type },
       });
       if (!putRes.ok) {
-        throw new Error(`R2 upload falhou: ${putRes.status} ${putRes.statusText}`);
+        throw new UserFacingError(`R2 upload failed: ${putRes.status} ${putRes.statusText}`, "Falha ao enviar o arquivo. Tente novamente.");
       }
 
       // 3. Confirmar upload no backend

@@ -18,6 +18,7 @@
  */
 import { API_BASE_URL } from "@/shared/lib/env";
 import { getAccessToken, getTenantId } from "@/shared/lib/api-client";
+import { UserFacingError } from "@/shared/lib/errors";
 
 export const ALLOWED_LOGO_MIME = [
   "image/png",
@@ -84,7 +85,7 @@ function readAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(new Error("Falha ao ler o arquivo."));
+    reader.onerror = () => reject(new UserFacingError("FileReader failed to read the logo file", "Falha ao ler o arquivo."));
     reader.readAsDataURL(file);
   });
 }
@@ -103,9 +104,9 @@ export const companyLogoService = {
    * Throws an Error with a friendly message on an invalid validation.
    */
   async saveLogo(workspaceId: string, file: File): Promise<string> {
-    if (!workspaceId) throw new Error("Workspace não identificado.");
+    if (!workspaceId) throw new UserFacingError("No tenant id available for logo upload", "Workspace não identificado.");
     const validation = await validateLogoFile(file);
-    if (!validation.ok) throw new Error(validation.error ?? "Arquivo inválido.");
+    if (!validation.ok) throw new UserFacingError("Invalid logo file", validation.error ?? "Arquivo inválido.");
 
     // Production: multipart upload to the backend (R2). Endpoint to be implemented in the backend.
     const form = new FormData();
@@ -123,7 +124,7 @@ export const companyLogoService = {
         },
       },
     );
-    if (!res.ok) throw new Error("Falha ao enviar a logo. Tente novamente.");
+    if (!res.ok) throw new UserFacingError("Logo upload failed", "Falha ao enviar a logo. Tente novamente.");
     const payload = (await res.json()) as { data?: { logoUrl: string }; logoUrl?: string };
     return payload.data?.logoUrl ?? payload.logoUrl ?? "";
   },

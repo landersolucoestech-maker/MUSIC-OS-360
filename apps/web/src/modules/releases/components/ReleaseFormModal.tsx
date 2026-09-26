@@ -68,6 +68,7 @@ import {
   projectToReleaseSeed,
 } from "@/modules/releases/mappers";
 
+import { toUserMessage } from "@/shared/lib/errors";
 // ─────────────────────────────────────────────────────────────────────────────
 // STEP LABELS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -702,8 +703,8 @@ export function ReleaseFormModal({
       toast.success("Áudio enviado e link gerado com sucesso!");
     } catch (err) {
       const msg = err instanceof R2NotConfiguredError
-        ? err.message
-        : err instanceof Error ? err.message : "Erro no upload do áudio";
+        ? toUserMessage(err)
+        : toUserMessage(err, "Erro no upload do áudio");
       toast.error(`Upload falhou: ${msg}`);
       updF(faixaId, "arquivoAudio", null);
     } finally {
@@ -864,7 +865,7 @@ export function ReleaseFormModal({
           description: "Contate o administrador para habilitar uploads de capa.",
         });
       } else if (err instanceof Error) {
-        toast.error("Falha ao enviar capa", { description: err.message });
+        toast.error("Falha ao enviar capa", { description: toUserMessage(err) });
       } else {
         toast.error("Falha desconhecida ao enviar capa.");
       }

@@ -27,6 +27,7 @@ import {
 import { IS_DEV, AUTH_DISABLED, DEV_AUTH_BYPASS } from "@/shared/lib/env";
 import { normalizeEmail } from "@/shared/lib/normalize-email";
 import { getSupabaseClient } from "@/lib/supabase";
+import { UserFacingError, toUserMessage } from "@/shared/lib/errors";
 
 function devLog(label: string, data?: unknown): void {
   if (!IS_DEV) return;
@@ -152,7 +153,7 @@ async function provisionWorkspaceForSession(
   });
   const { data, error } = await getSupabaseClient().auth.refreshSession();
   if (error || !data.session) {
-    throw new Error(error?.message ?? "Não foi possível atualizar a sessão.");
+    throw new UserFacingError(`Session refresh after workspace provisioning failed: ${error?.message ?? "no session returned"}`, "Não foi possível atualizar a sessão.");
   }
   return data.session;
 }
@@ -348,8 +349,12 @@ function SupabaseAuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await api.post("/auth/change-required-password", { newPassword, confirmPassword });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Não foi possível trocar a senha.";
-      return { error: { message } };
+      return {
+        error: {
+          message: error instanceof Error ? error.message : "Required password change request failed",
+          userMessage: toUserMessage(error, "Não foi possível trocar a senha."),
+        },
+      };
     }
 
     // The backend already confirmed the physical change + clearing of must_change_password
@@ -359,7 +364,12 @@ function SupabaseAuthProvider({ children }: { children: React.ReactNode }) {
     // via onAuthStateChange (above), which updates session/user automatically.
     const { data, error: refreshError } = await getSupabaseClient().auth.refreshSession();
     if (refreshError || !data.session) {
-      return { error: { message: refreshError?.message ?? "Senha trocada, mas não foi possível renovar a sessão. Faça login novamente." } };
+      return {
+        error: {
+          message: refreshError?.message ?? "Session refresh returned no session after the password change",
+          userMessage: "Senha trocada, mas não foi possível renovar a sessão. Faça login novamente.",
+        },
+      };
     }
     const mapped = applyApiSessionState(data.session);
     setSession(mapped);

@@ -41,16 +41,16 @@ describe("useContacts — estados reais de carregamento/sucesso/erro", () => {
   });
 
   it("a network/API failure becomes an observable error state, not an empty list disguised as success", async () => {
-    vi.mocked(contactsService.list).mockRejectedValue(new Error("Falha de rede"));
+    vi.mocked(contactsService.list).mockRejectedValue(new Error("Network failure"));
     const { result } = renderHook(() => useContacts());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.error).not.toBeNull();
-    expect(result.current.error?.message).toBe("Falha de rede");
+    expect(result.current.error?.message).toBe("Network failure");
   });
 
   it("createContact propagates the service error without creating a local contact", async () => {
     vi.mocked(contactsService.list).mockResolvedValue([]);
-    vi.mocked(contactsService.create).mockRejectedValue(new Error("422 validação"));
+    vi.mocked(contactsService.create).mockRejectedValue(new Error("422 validation"));
     const { result } = renderHook(() => useContacts());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -58,7 +58,7 @@ describe("useContacts — estados reais de carregamento/sucesso/erro", () => {
       act(async () => {
         await result.current.createContact({ name: "X" } as never);
       }),
-    ).rejects.toThrow("422 validação");
+    ).rejects.toThrow("422 validation");
     expect(result.current.contacts).toEqual([]);
   });
 });

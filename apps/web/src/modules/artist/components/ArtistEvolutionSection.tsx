@@ -18,6 +18,7 @@ import {
 } from "@/modules/artist/components/ArtistEvolutionCard";
 import { useArtistPlatformEvolution } from "@/modules/artist/hooks/useArtistPlatformEvolution";
 
+import { toUserMessage } from "@/shared/lib/errors";
 interface ArtistEvolutionSectionProps {
   artist: any;
 }
@@ -358,7 +359,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           isLoading={spotifyQ.isLoading}
           isMissingConfig={!spotifyUrl}
           missingConfigLabel="Sem perfil do Spotify cadastrado para este artista."
-          errorMessage={spotifyQ.error ? (spotifyQ.error as Error).message : null}
+          errorMessage={spotifyQ.error ? toUserMessage(spotifyQ.error) : null}
           points={spotifyQ.data}
           metric="followers"
           metricLabel="Seguidores"
@@ -372,7 +373,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           isLoading={youtubeQ.isLoading}
           isMissingConfig={!youtubeUrl}
           missingConfigLabel="Sem canal do YouTube cadastrado para este artista."
-          errorMessage={youtubeQ.error ? (youtubeQ.error as Error).message : null}
+          errorMessage={youtubeQ.error ? toUserMessage(youtubeQ.error) : null}
           points={youtubeQ.data}
           metric="followers"
           metricLabel="Inscritos"
@@ -386,7 +387,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           isLoading={deezerQ.isLoading}
           isMissingConfig={!deezerUrl}
           missingConfigLabel="Sem perfil do Deezer cadastrado para este artista."
-          errorMessage={deezerQ.error ? (deezerQ.error as Error).message : null}
+          errorMessage={deezerQ.error ? toUserMessage(deezerQ.error) : null}
           points={deezerQ.data}
           metric="followers"
           metricLabel="Fãs"
@@ -400,7 +401,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           isLoading={soundcloudQ.isLoading}
           isMissingConfig={!soundcloudUrl}
           missingConfigLabel="Sem perfil do SoundCloud cadastrado para este artista."
-          errorMessage={soundcloudQ.error ? (soundcloudQ.error as Error).message : null}
+          errorMessage={soundcloudQ.error ? toUserMessage(soundcloudQ.error) : null}
           points={soundcloudQ.data}
           metric="followers"
           metricLabel="Seguidores"
@@ -414,7 +415,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           isLoading={appleMusicQ.isLoading}
           isMissingConfig={!appleMusicUrl}
           missingConfigLabel="Sem perfil do Apple Music cadastrado para este artista."
-          errorMessage={appleMusicQ.error ? (appleMusicQ.error as Error).message : null}
+          errorMessage={appleMusicQ.error ? toUserMessage(appleMusicQ.error) : null}
           points={appleMusicQ.data}
           metric="followers"
           metricLabel="Ouvintes"
@@ -428,7 +429,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           isLoading={instagramQ.isLoading}
           isMissingConfig={!instagramHandle}
           missingConfigLabel="Sem perfil do Instagram cadastrado para este artista."
-          errorMessage={instagramQ.error ? (instagramQ.error as Error).message : null}
+          errorMessage={instagramQ.error ? toUserMessage(instagramQ.error) : null}
           points={instagramQ.data}
           metric="followers"
           metricLabel="Seguidores"
@@ -442,7 +443,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
           isLoading={tiktokQ.isLoading}
           isMissingConfig={!tiktokHandle}
           missingConfigLabel="Sem perfil do TikTok cadastrado para este artista."
-          errorMessage={tiktokQ.error ? (tiktokQ.error as Error).message : null}
+          errorMessage={tiktokQ.error ? toUserMessage(tiktokQ.error) : null}
           points={tiktokQ.data}
           metric="followers"
           metricLabel="Seguidores"

@@ -27,11 +27,18 @@
  * frame.
  */
 import { API_BASE_URL } from "@/shared/lib/env";
+import { UserFacingError } from "@/shared/lib/errors";
 import { getAccessToken, getTenantId, setAccessToken } from "@/shared/lib/api-client";
 import { displayUsername, type CreativeConfig, type CreativeSlot } from "../types/creative.types";
 import type { AspectRatio } from "../config/social-formats";
 
-export class CreativeExportError extends Error {}
+/** Export failure: English diagnostic in `message`, PT-BR copy in `userMessage`. */
+export class CreativeExportError extends UserFacingError {
+  constructor(technicalMessage: string, userMessage: string) {
+    super(technicalMessage, userMessage, "CREATIVE_EXPORT_FAILED");
+    this.name = "CreativeExportError";
+  }
+}
 
 const EXPORT_WIDTH = 1080;
 
@@ -53,6 +60,7 @@ const ASPECT_RATIO_VALUE: Record<AspectRatio, number> = {
 async function fetchSlotBlob(slot: { fileId?: string }): Promise<Blob> {
   if (!slot.fileId) {
     throw new CreativeExportError(
+      "Slot has no fileId (picked from the project library); cannot be exported",
       "Este item foi selecionado da biblioteca do projeto e não pode ser exportado -- envie-o novamente pelo editor para habilitar a exportação em imagem.",
     );
   }
@@ -73,19 +81,19 @@ async function fetchSlotBlob(slot: { fileId?: string }): Promise<Blob> {
     });
   } catch (err) {
     if (err instanceof DOMException && err.name === "AbortError") {
-      throw new CreativeExportError("Tempo esgotado ao carregar mídia para exportação.");
+      throw new CreativeExportError("Media fetch for export timed out", "Tempo esgotado ao carregar mídia para exportação.");
     }
-    throw new CreativeExportError("Falha de conexão ao carregar mídia para exportação.");
+    throw new CreativeExportError("Media fetch for export failed (network)", "Falha de conexão ao carregar mídia para exportação.");
   } finally {
     clearTimeout(timeoutId);
   }
 
   if (res.status === 401) {
     setAccessToken(null);
-    throw new CreativeExportError("Sessão expirada -- faça login novamente para exportar.");
+    throw new CreativeExportError("Session expired (401) while fetching export media", "Sessão expirada -- faça login novamente para exportar.");
   }
   if (!res.ok) {
-    throw new CreativeExportError(`Falha ao carregar mídia para exportação (HTTP ${res.status}).`);
+    throw new CreativeExportError(`Media fetch for export failed (HTTP ${res.status})`, "Falha ao carregar mídia para exportação.");
   }
   return res.blob();
 }
@@ -96,7 +104,7 @@ async function loadImage(blob: Blob): Promise<HTMLImageElement> {
   try {
     await new Promise<void>((resolve, reject) => {
       img.onload = () => resolve();
-      img.onerror = () => reject(new CreativeExportError("Falha ao decodificar imagem para exportação."));
+      img.onerror = () => reject(new CreativeExportError("Image decode failed during export", "Falha ao decodificar imagem para exportação."));
       img.src = url;
     });
     return img;
@@ -201,7 +209,7 @@ export async function exportCreativeToPng(creative: CreativeConfig, aspect: Aspe
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d");
-  if (!ctx) throw new CreativeExportError("Canvas 2D não suportado neste navegador.");
+  if (!ctx) throw new CreativeExportError("Canvas 2D context unavailable", "Canvas 2D não suportado neste navegador.");
 
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, width, height);
@@ -303,7 +311,7 @@ export async function exportCreativeToPng(creative: CreativeConfig, aspect: Aspe
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (blob) resolve(blob);
-      else reject(new CreativeExportError("Falha ao gerar PNG a partir do canvas."));
+      else reject(new CreativeExportError("canvas.toBlob returned null (PNG generation failed)", "Falha ao gerar PNG a partir do canvas."));
     }, "image/png");
   });
 }

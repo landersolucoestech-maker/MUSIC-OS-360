@@ -13,6 +13,7 @@ import type {
 } from "@/modules/integrations/dto";
 import type { IntegrationRuntimeStatus } from "@/shared/integrations/types";
 
+import { UserFacingError, toUserMessage } from "@/shared/lib/errors";
 export interface ACRCloudStatus extends IntegrationRuntimeStatus {
   integration_id: "acrcloud";
   plan?: string | null;
@@ -39,7 +40,7 @@ async function callAcrcloudApi<T>(
     : null;
 
   if (!apiPath) {
-    throw new Error(`Endpoint ACRCloud real nao implementado: ${endpoint}`);
+    throw new UserFacingError(`ACRCloud endpoint not implemented in the backend: ${endpoint}`, "O reconhecimento de áudio (ACRCloud) ainda não está disponível.");
   }
 
   const res = await fetch(apiPath, {
@@ -49,8 +50,11 @@ async function callAcrcloudApi<T>(
   });
 
   if (!res.ok) {
-    const err = await res.json().catch((): { error?: string; message?: string } => ({ error: "Erro interno" }));
-    throw new Error(err.error ?? err.message ?? `HTTP ${res.status}`);
+    const err = await res.json().catch((): { error?: string; message?: string } => ({}));
+    throw new UserFacingError(
+      `ACRCloud request failed (HTTP ${res.status})${err.error ? `: ${err.error}` : ""}`,
+      err.message ?? "Não foi possível concluir o reconhecimento de áudio. Tente novamente.",
+    );
   }
 
   return unwrapApiResponse<T>(await res.json());
@@ -89,7 +93,7 @@ export function useACRCloudIdentify() {
       }
     },
     onError: (err) => {
-      toast.error(`Erro na identificacao: ${err.message}`);
+      toast.error(`Erro na identificacao: ${toUserMessage(err)}`);
     },
   });
 }
@@ -130,7 +134,7 @@ export function useACRCloudAcknowledgeAlert() {
       toast.success("Alerta marcado como lido.");
     },
     onError: (err) => {
-      toast.error(err.message);
+      toast.error(toUserMessage(err));
     },
   });
 }
@@ -162,7 +166,7 @@ export function useACRCloudCreateProject() {
       toast.success(`Projeto "${data.name}" criado com sucesso.`);
     },
     onError: (err) => {
-      toast.error(`Erro ao criar projeto: ${err.message}`);
+      toast.error(`Erro ao criar projeto: ${toUserMessage(err)}`);
     },
   });
 }
@@ -176,7 +180,7 @@ export function useACRCloudToggleProject() {
       toast.success(`Projeto "${data.name}" ${data.active ? "ativado" : "pausado"}.`);
     },
     onError: (err) => {
-      toast.error(err.message);
+      toast.error(toUserMessage(err));
     },
   });
 }
@@ -192,7 +196,7 @@ export function useACRCloudCheckCopyright() {
       }
     },
     onError: (err) => {
-      toast.error(`Erro na verificacao: ${err.message}`);
+      toast.error(`Erro na verificacao: ${toUserMessage(err)}`);
     },
   });
 }
@@ -204,7 +208,7 @@ export function useACRCloudMonitorTrack() {
       toast.success(`Monitoramento ativo (job: ${data.job_id}).`);
     },
     onError: (err) => {
-      toast.error(`Erro ao iniciar monitoramento: ${err.message}`);
+      toast.error(`Erro ao iniciar monitoramento: ${toUserMessage(err)}`);
     },
   });
 }

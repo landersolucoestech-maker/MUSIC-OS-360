@@ -22,8 +22,15 @@ describe("describeAuthError", () => {
     expect(describeAuthError({ message: "Failed to fetch" })).toContain("Falha de conexão");
   });
 
-  it("fallback: original message when unrecognized", () => {
-    expect(describeAuthError({ message: "Some other Supabase error" })).toBe("Some other Supabase error");
+  it("never leaks an unrecognized raw provider message; uses the PT-BR fallback", () => {
+    expect(describeAuthError({ message: "Some other Supabase error" })).toBe("Não foi possível entrar. Tente novamente.");
+    expect(describeAuthError({ message: "Some other Supabase error" }, "Não foi possível atualizar a senha.")).toBe(
+      "Não foi possível atualizar a senha.",
+    );
+  });
+
+  it("prefers the producer's PT-BR userMessage (API errors) over any raw text", () => {
+    expect(describeAuthError({ message: "API responded 400", userMessage: "Senha fraca." })).toBe("Senha fraca.");
   });
 
   it("generic fallback when the message is empty", () => {

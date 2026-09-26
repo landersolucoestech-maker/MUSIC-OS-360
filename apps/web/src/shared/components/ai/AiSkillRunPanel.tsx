@@ -4,7 +4,7 @@ import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Alert, AlertDescription } from "@/shared/ui/alert";
 import { Badge } from "@/shared/ui/badge";
-import { getErrorMessage } from "@/shared/lib/errors";
+import { toUserMessage } from "@/shared/lib/errors";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { OnDemandSkillResult } from "@/shared/hooks/useAiSkillRun";
 
@@ -61,7 +61,7 @@ export function AiSkillRunPanel<TOutput>({
         {mutation.isError && (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>{getErrorMessage(mutation.error)}</AlertDescription>
+            <AlertDescription>{toUserMessage(mutation.error)}</AlertDescription>
           </Alert>
         )}
         {mutation.data && (

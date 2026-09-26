@@ -37,6 +37,7 @@ import {
   IntegrationLogo,
   type IntegrationLogoId,
 } from "@/shared/integrations";
+import { toUserMessage } from "@/shared/lib/errors";
 
 // ─── Metadados por plataforma ─────────────────────────────────────────────────
 
@@ -503,7 +504,7 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
       }, 1800);
     } catch (error) {
       setStep("permissions");
-      const message = error instanceof Error ? error.message : "Falha ao confirmar a conexão OAuth.";
+      const message = toUserMessage(error, "Falha ao confirmar a conexão OAuth.");
       toast.error(message);
     }
   }, [platform, meta, onConnect, onOpenChange]);

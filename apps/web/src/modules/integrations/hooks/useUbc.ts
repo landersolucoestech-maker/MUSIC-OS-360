@@ -26,6 +26,7 @@ import type {
 } from "@/modules/integrations/dto";
 import type { IntegrationRuntimeStatus } from "@/shared/integrations/types";
 
+import { toUserMessage } from "@/shared/lib/errors";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface UbcSyncCategorySummary {
@@ -123,14 +124,14 @@ export function useUbcSaveCredentials() {
   return useMutation({
     mutationFn: async (_input: { numero_filiado: string; username: string; password: string; base_url?: string }) =>
       ubcUnavailable(),
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
 export function useUbcDeleteCredentials() {
   return useMutation({
     mutationFn: async () => ubcUnavailable(),
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -158,21 +159,21 @@ export function useUbcImport() {
   return useMutation({
     mutationFn: async (_input: { external_id: string; record?: UbcSearchResult }): Promise<{ record?: UbcSearchResult }> =>
       ubcUnavailable(),
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
 export function useUbcSyncAll() {
   return useMutation({
     mutationFn: async (): Promise<UbcSyncSummary> => ubcUnavailable(),
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
 export function useUbcSetSchedule() {
   return useMutation({
     mutationFn: async (_schedule: UbcSyncSchedule) => ubcUnavailable(),
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
 
@@ -201,20 +202,20 @@ export function useUbcRegistrationHistory(localId: string) {
 export function useUbcRegisterObra() {
   return useMutation<RegistrationResult, Error, RegisterObraInput>({
     mutationFn: async (_input) => ubcUnavailable(),
-    onError: (err) => toast.error(`Erro ao registrar obra: ${err.message}`),
+    onError: (err) => toast.error(`Erro ao registrar obra: ${toUserMessage(err)}`),
   });
 }
 
 export function useUbcGenerateISWC() {
   return useMutation<GenerateISWCResult, Error, GenerateISWCInput>({
     mutationFn: async (_input) => ubcUnavailable(),
-    onError: (err) => toast.error(`Erro ao gerar ISWC: ${err.message}`),
+    onError: (err) => toast.error(`Erro ao gerar ISWC: ${toUserMessage(err)}`),
   });
 }
 
 export function useUbcGenerateISRC() {
   return useMutation<GenerateISRCResult, Error, GenerateISRCInput>({
     mutationFn: async (_input) => ubcUnavailable(),
-    onError: (err) => toast.error(`Erro ao gerar ISRC: ${err.message}`),
+    onError: (err) => toast.error(`Erro ao gerar ISRC: ${toUserMessage(err)}`),
   });
 }

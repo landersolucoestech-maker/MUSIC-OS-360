@@ -95,13 +95,13 @@ export class StorageService {
 
   private getClient(): S3Client {
     if (!this.r2Client) {
+      // `error` carries the machine code (GlobalExceptionFilter preserves it);
+      // `message` is end-user copy and must not expose configuration internals.
+      this.logger.error('R2 not configured: R2_ACCOUNT_ID / R2_ACCESS_KEY / R2_SECRET_KEY missing');
       throw new ServiceUnavailableException({
         statusCode: 503,
-        error: 'Service Unavailable',
-        code: 'R2_NOT_CONFIGURED',
-        message:
-          'Upload indisponível — armazenamento R2 não configurado no servidor. ' +
-          'Contate o administrador para configurar R2_ACCOUNT_ID, R2_ACCESS_KEY e R2_SECRET_KEY.',
+        error: 'R2_NOT_CONFIGURED',
+        message: 'Upload indisponível no momento. Contate o administrador do sistema.',
       });
     }
     return this.r2Client;

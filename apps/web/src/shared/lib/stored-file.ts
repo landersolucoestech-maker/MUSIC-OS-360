@@ -16,6 +16,7 @@
 import { api, getAccessToken, getTenantId } from "./api-client";
 import { API_BASE_URL } from "./env";
 import { safeLinkHref } from "./safe-url";
+import { UserFacingError } from "@/shared/lib/errors";
 
 const UPLOAD_KEY_RE =
   /(?:^|\/)tenants\/[0-9a-f-]{36}\/(?:documents|images|audio|spreadsheets|videos)\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\//i;
@@ -44,7 +45,7 @@ export async function openStoredFile(url: string | null | undefined): Promise<vo
   const tab = typeof window !== "undefined" ? window.open("", "_blank") : null;
   try {
     const target = await resolveStoredFileUrl(url);
-    if (!target) throw new Error("Link de arquivo inválido");
+    if (!target) throw new UserFacingError("Invalid stored file link", "Link de arquivo inválido.");
     if (tab) {
       tab.opener = null;
       tab.location.href = target;
@@ -78,7 +79,7 @@ export async function fetchStoredFileBytes(url: string): Promise<ArrayBuffer> {
   const fileId = uploadFileIdFromUrl(url);
   if (!fileId) {
     const safe = safeLinkHref(url);
-    if (!safe) throw new Error("Link de arquivo inválido");
+    if (!safe) throw new UserFacingError("Invalid stored file link", "Link de arquivo inválido.");
     return (await fetch(safe)).arrayBuffer();
   }
   const headers: Record<string, string> = {};
@@ -87,6 +88,6 @@ export async function fetchStoredFileBytes(url: string): Promise<ArrayBuffer> {
   const tenantId = getTenantId();
   if (tenantId) headers["X-Tenant-ID"] = tenantId;
   const res = await fetch(`${API_BASE_URL}/api/v1/uploads/${fileId}/raw`, { headers, credentials: "include" });
-  if (!res.ok) throw new Error(`Falha ao carregar o arquivo (HTTP ${res.status})`);
+  if (!res.ok) throw new UserFacingError(`Stored file fetch failed (HTTP ${res.status})`, "Não foi possível carregar o arquivo. Tente novamente.");
   return res.arrayBuffer();
 }

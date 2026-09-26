@@ -4,7 +4,8 @@ import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import { Progress } from "@/shared/ui/progress";
 import { toast } from "sonner";
-import { useUploadToR2, R2NotConfiguredError, type UploadCategory } from "@/shared/hooks/useUploadToR2";
+import { useUploadToR2, type UploadCategory } from "@/shared/hooks/useUploadToR2";
+import { toUserMessage } from "@/shared/lib/errors";
 
 /** Deriva a categoria de upload (contrato real do backend) a partir do `accept` do campo. */
 function inferCategory(accept?: string): UploadCategory {
@@ -207,7 +208,7 @@ export function FileUpload({
           }
           uploadedFiles.push(uploadedFile);
         } catch (error: any) {
-          const message = error instanceof R2NotConfiguredError ? error.message : (error?.message ?? "Falha no upload");
+          const message = toUserMessage(error, "Falha no upload");
           toast.error(`${file.name}: ${message}`);
           onUploadError?.(message);
         } finally {

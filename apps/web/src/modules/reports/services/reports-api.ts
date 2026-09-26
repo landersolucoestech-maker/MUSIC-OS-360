@@ -3,6 +3,7 @@
  */
 import { api, getAccessToken, getTenantId } from "@/shared/lib/api-client";
 import { API_BASE_URL } from "@/shared/lib/env";
+import { UserFacingError } from "@/shared/lib/errors";
 
 export type ExportFormat = "xlsx";
 export const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -129,14 +130,19 @@ function authenticatedHeaders(): Record<string, string> {
 
 async function responseError(response: Response, operation: string): Promise<Error> {
   const raw = await response.text().catch(() => "");
-  let message = raw;
+  // The API's `message` is end-user copy (PT-BR) by contract; anything else
+  // (unstructured text, `error` codes) is an internal diagnostic only.
+  let userMessage: string | undefined;
   try {
-    const parsed = JSON.parse(raw) as { message?: string; error?: string };
-    message = parsed.message ?? parsed.error ?? raw;
+    const parsed = JSON.parse(raw) as { message?: string | string[] };
+    userMessage = Array.isArray(parsed.message) ? parsed.message.join("; ") : parsed.message;
   } catch {
-    // Texto não estruturado é preservado somente para diagnóstico do status.
+    // Unstructured body: kept only in the technical diagnostic below.
   }
-  return new Error(`${operation} falhou (${response.status})${message ? `: ${message}` : ""}`);
+  return new UserFacingError(
+    `${operation} failed (HTTP ${response.status})${raw ? `: ${raw.slice(0, 200)}` : ""}`,
+    userMessage ?? "Não foi possível concluir a operação de relatório. Tente novamente.",
+  );
 }
 
 export const reportsApi = {
@@ -151,22 +157,22 @@ export const reportsApi = {
       `${API_BASE_URL}/api/v1/reports/entities/${encodeURIComponent(entity)}/export?${buildExportQuery(params)}`,
       { headers: authenticatedHeaders(), credentials: "include" },
     );
-    if (!response.ok) throw await responseError(response, "Exportação");
+    if (!response.ok) throw await responseError(response, "Export");
 
     const contentType = response.headers.get("content-type")?.split(";")[0].trim();
     if (contentType !== XLSX_MIME) {
-      throw new Error(`Exportação retornou MIME inesperado: ${contentType ?? "ausente"}.`);
+      throw new UserFacingError(`Export returned an unexpected MIME type: ${contentType ?? "missing"}`, "O arquivo exportado pelo servidor é inválido. Tente novamente.");
     }
     const disposition = response.headers.get("content-disposition") ?? "";
     const filename = /filename="?([^";]+)"?/i.exec(disposition)?.[1] ?? `${entity}.xlsx`;
     if (!/\.xlsx$/i.test(filename)) {
-      throw new Error(`Exportação retornou nome de arquivo inválido: ${filename}.`);
+      throw new UserFacingError(`Export returned an invalid filename: ${filename}`, "O arquivo exportado pelo servidor é inválido. Tente novamente.");
     }
 
     const blob = await response.blob();
     const signature = new Uint8Array(await blob.slice(0, 4).arrayBuffer());
     if (signature[0] !== 0x50 || signature[1] !== 0x4b || signature[2] !== 0x03 || signature[3] !== 0x04) {
-      throw new Error("Exportação retornou conteúdo que não é um workbook OpenXML válido.");
+      throw new UserFacingError("Export content is not a valid OpenXML workbook", "O arquivo exportado pelo servidor é inválido. Tente novamente.");
     }
     return { blob, filename };
   },
@@ -176,9 +182,9 @@ export const reportsApi = {
       `${API_BASE_URL}/api/v1/reports/entities/${encodeURIComponent(entity)}/import/template`,
       { headers: authenticatedHeaders(), credentials: "include" },
     );
-    if (!response.ok) throw await responseError(response, "Download do template");
+    if (!response.ok) throw await responseError(response, "Template download");
     if (response.headers.get("content-type")?.split(";")[0].trim() !== XLSX_MIME) {
-      throw new Error("Template retornou MIME incompatível com XLSX.");
+      throw new UserFacingError("Template returned a MIME type incompatible with XLSX", "O modelo retornado pelo servidor é inválido. Tente novamente.");
     }
 
     const disposition = response.headers.get("content-disposition") ?? "";
@@ -186,7 +192,7 @@ export const reportsApi = {
     const blob = await response.blob();
     const signature = new Uint8Array(await blob.slice(0, 4).arrayBuffer());
     if (signature[0] !== 0x50 || signature[1] !== 0x4b || signature[2] !== 0x03 || signature[3] !== 0x04) {
-      throw new Error("Template retornou conteúdo OpenXML inválido.");
+      throw new UserFacingError("Template returned invalid OpenXML content", "O modelo retornado pelo servidor é inválido. Tente novamente.");
     }
     return { blob, filename };
   },
@@ -206,19 +212,19 @@ export const reportsApi = {
 
 export async function fileToImportBody(file: File): Promise<ImportUploadBody> {
   if (!/^[^/\\]+\.xlsx$/i.test(file.name)) {
-    throw new Error("Selecione um arquivo com extensão .xlsx.");
+    throw new UserFacingError("Import file does not have the .xlsx extension", "Selecione um arquivo com extensão .xlsx.");
   }
   if (file.type !== XLSX_MIME) {
-    throw new Error(`MIME inválido. Esperado: ${XLSX_MIME}.`);
+    throw new UserFacingError(`Invalid import MIME type; expected ${XLSX_MIME}`, "Tipo de arquivo inválido. Selecione uma planilha .xlsx.");
   }
   if (file.size <= 0 || file.size > IMPORT_MAX_BYTES) {
-    throw new Error(`O arquivo deve possuir entre 1 e ${IMPORT_MAX_BYTES} bytes.`);
+    throw new UserFacingError(`Import file size outside 1..${IMPORT_MAX_BYTES} bytes`, `O arquivo deve possuir entre 1 e ${IMPORT_MAX_BYTES} bytes.`);
   }
 
   const buffer = await file.arrayBuffer();
   const bytes = new Uint8Array(buffer);
   if (bytes[0] !== 0x50 || bytes[1] !== 0x4b || bytes[2] !== 0x03 || bytes[3] !== 0x04) {
-    throw new Error("O conteúdo não possui assinatura OpenXML válida.");
+    throw new UserFacingError("Import content lacks a valid OpenXML signature", "O arquivo não é uma planilha .xlsx válida.");
   }
 
   let binary = "";

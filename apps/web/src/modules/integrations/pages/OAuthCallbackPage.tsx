@@ -20,6 +20,7 @@
 
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "@/shared/lib/env";
+import { toUserMessage } from "@/shared/lib/errors";
 
 type ExchangeState =
   | { status: "pending" }
@@ -125,8 +126,7 @@ export default function OAuthCallbackPage() {
         setState({ status: "success", platform: data.platform ?? platform });
         setTimeout(() => window.close(), 1200);
       } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        setState({ status: "error", message: `Erro ao conectar: ${msg}` });
+        setState({ status: "error", message: toUserMessage(err, "Não foi possível concluir a conexão. Tente novamente.") });
       }
     })();
   }, []);

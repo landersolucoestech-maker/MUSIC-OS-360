@@ -22,6 +22,7 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 
+import { describeAuthError } from "@/shared/lib/auth-error-messages";
 const MIN_LENGTH = 12;
 
 function clientSideViolations(password: string): string[] {
@@ -67,7 +68,7 @@ export default function ChangeRequiredPassword() {
       if (error) {
         // Mensagem já sanitizada pelo backend (nunca expõe detalhe interno) —
         // ver auth-password.service.ts / mapError() em api-client.ts.
-        setErrorMessage(error.message);
+        setErrorMessage(describeAuthError(error, "Não foi possível trocar a senha."));
         return;
       }
       toast.success("Senha atualizada. Redirecionando…");

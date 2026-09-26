@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { useTenant } from "@/app/providers/TenantContext";
 
+import { toUserMessage } from "@/shared/lib/errors";
 export default function Onboarding() {
   const navigate = useNavigate();
   const { tenant, setTenant } = useTenant();
@@ -46,7 +47,7 @@ export default function Onboarding() {
       toast.success("Workspace configurado.");
       navigate("/dashboard", { replace: true });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Não foi possível concluir o onboarding.");
+      toast.error(toUserMessage(error, "Não foi possível concluir o onboarding."));
     } finally {
       setSaving(false);
     }

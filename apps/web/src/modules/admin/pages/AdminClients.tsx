@@ -29,6 +29,7 @@ import {
   RefreshCw, ExternalLink, Calendar, CreditCard, Pencil, Trash2,
 } from "lucide-react";
 
+import { toUserMessage } from "@/shared/lib/errors";
 const STATUS_STYLE: Record<TenantStatus, string> = {
   active:    "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
   suspended: "text-red-400 bg-red-500/10 border-red-500/20",
@@ -127,7 +128,7 @@ export default function AdminClients() {
     },
     onError: (error) => {
       toast.error("Nao foi possivel atualizar o cliente", {
-        description: error instanceof Error ? error.message : "Verifique permissao e API.",
+        description: toUserMessage(error, "Verifique permissao e API."),
       });
     },
   });
@@ -242,7 +243,7 @@ export default function AdminClients() {
               {!isLoading && error && (
                 <TableRow>
                   <TableCell colSpan={11} className="py-10 text-center text-sm text-red-300">
-                    Nao foi possivel carregar clientes: {error instanceof Error ? error.message : "erro desconhecido"}
+                    Nao foi possivel carregar clientes: {toUserMessage(error, "erro desconhecido")}
                   </TableCell>
                 </TableRow>
               )}

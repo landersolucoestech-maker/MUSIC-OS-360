@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { api, setAccessToken, setTenantId } from "./api-client";
-import { PasswordChangeRequiredError, TenantError } from "./errors";
+import { IntegrationError, NotFoundError, PasswordChangeRequiredError, TenantError, toUserMessage } from "./errors";
 
 function mockResponse(body: unknown, status = 200): void {
   vi.stubGlobal(
@@ -72,5 +72,48 @@ describe("api-client response contract", () => {
     mockResponse({ statusCode: 403, error: "TENANT_SUSPENDED", message: "Tenant suspenso." }, 403);
 
     await expect(api.get("/artists")).rejects.toBeInstanceOf(TenantError);
+  });
+});
+
+describe("api-client error boundary — API copy is userMessage, diagnostics never reach the UI", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  async function caught(): Promise<unknown> {
+    return api.get("/artists").then(
+      () => { throw new Error("expected rejection"); },
+      (err: unknown) => err,
+    );
+  }
+
+  it("403: the API message is the user copy — the internal '[tenant] Cross-tenant…' diagnostic is not", async () => {
+    mockResponse({ statusCode: 403, error: "TENANT_SUSPENDED", message: "Tenant suspenso." }, 403);
+    const err = await caught();
+    expect(err).toBeInstanceOf(TenantError);
+    expect(toUserMessage(err)).toBe("Tenant suspenso.");
+    expect(toUserMessage(err)).not.toMatch(/Cross-tenant|record org/);
+  });
+
+  it("404: the API message is the user copy (no 'not found' diagnostic appended)", async () => {
+    mockResponse({ statusCode: 404, message: "Artista não encontrado." }, 404);
+    const err = await caught();
+    expect(err).toBeInstanceOf(NotFoundError);
+    expect(toUserMessage(err)).toBe("Artista não encontrado.");
+  });
+
+  it("5xx: keeps the machine error code; user copy is the API message", async () => {
+    mockResponse({ statusCode: 503, error: "R2_NOT_CONFIGURED", message: "Upload indisponível no momento." }, 503);
+    const err = await caught();
+    expect(err).toBeInstanceOf(IntegrationError);
+    expect((err as IntegrationError).errorCode).toBe("R2_NOT_CONFIGURED");
+    expect(toUserMessage(err)).toBe("Upload indisponível no momento.");
+  });
+
+  it("network failure: raw 'Failed to fetch' never reaches the user", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+    const err = await caught();
+    expect(toUserMessage(err)).toMatch(/Falha de conexão/);
+    expect(toUserMessage(err)).not.toMatch(/Failed to fetch/);
   });
 });

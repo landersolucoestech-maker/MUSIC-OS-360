@@ -32,7 +32,7 @@ type RecordRow = Record<string, any>;
 function rows<T>(value: ApiList<T>): T[] {
   if (Array.isArray(value)) return value;
   if (value && Array.isArray(value.data)) return value.data;
-  throw new Error("[marketing] resposta de lista inválida recebida da API");
+  throw new Error("[marketing] invalid list response received from the API");
 }
 
 function metadata(row: RecordRow): RecordRow {
@@ -355,7 +355,7 @@ function taskFromApi(row: RecordRow): MarketingTask {
 function taskToApi(input: Partial<MarketingTask>) {
   const marketingProjectId = input.projectId;
   if (!marketingProjectId) {
-    throw new Error("[marketing] uma tarefa exige projectId de um Marketing Project persistido");
+    throw new Error("[marketing] a task requires the projectId of a persisted Marketing Project");
   }
   return {
     marketingProjectId,
@@ -580,7 +580,7 @@ const deliverablesApi = {
     }
     const approvals = await api.get<RecordRow[]>(`/marketing/assets/${id}/approvals`);
     const pending = approvals.find((item) => item.status === "pending");
-    if (!pending) throw new Error("[marketing] ativo não possui aprovação pendente");
+    if (!pending) throw new Error("[marketing] asset has no pending approval");
     await api.post(`/marketing/assets/approvals/${pending.id}/decision`, {
       status: approval === "aprovado" ? "approved" : "rejected",
     });

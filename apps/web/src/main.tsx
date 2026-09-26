@@ -6,18 +6,35 @@ function renderStartupError(error: unknown): void {
   const root = document.getElementById("root");
   if (!root) return;
 
-  const message = error instanceof Error ? error.message : String(error);
-  const stack = error instanceof Error ? error.stack : undefined;
+  // Internal diagnostic: always reported to the console; rendered ONLY in dev.
+  // Every string is inserted via textContent (never interpolated into HTML).
+  console.error("[startup] unhandled error", error);
+  const diagnostic = import.meta.env.DEV
+    ? `${error instanceof Error ? error.message : String(error)}${error instanceof Error && error.stack ? `\n\n${error.stack}` : ""}`
+    : null;
 
-  root.innerHTML = `
-    <div style="min-height:100vh;background:#11161d;color:#f8fafc;font-family:system-ui,-apple-system,Segoe UI,sans-serif;padding:32px">
-      <div style="max-width:880px;margin:0 auto;border:1px solid rgba(248,250,252,.16);border-radius:8px;background:rgba(23,29,37,.92);padding:24px">
-        <p style="margin:0 0 8px;color:#f87171;font-size:13px;font-weight:700;letter-spacing:.04em">Erro ao iniciar o app</p>
-        <h1 style="margin:0 0 16px;font-size:22px;line-height:1.25">MUSIC OS 360 não conseguiu renderizar</h1>
-        <pre style="white-space:pre-wrap;overflow:auto;background:#0a0d12;border:1px solid rgba(248,250,252,.12);border-radius:6px;padding:16px;font-size:12px;line-height:1.5">${message}${stack ? `\n\n${stack}` : ""}</pre>
-      </div>
-    </div>
-  `;
+  const page = document.createElement("div");
+  page.setAttribute("style", "min-height:100vh;background:#11161d;color:#f8fafc;font-family:system-ui,-apple-system,Segoe UI,sans-serif;padding:32px");
+  const card = document.createElement("div");
+  card.setAttribute("style", "max-width:880px;margin:0 auto;border:1px solid rgba(248,250,252,.16);border-radius:8px;background:rgba(23,29,37,.92);padding:24px");
+  const eyebrow = document.createElement("p");
+  eyebrow.setAttribute("style", "margin:0 0 8px;color:#f87171;font-size:13px;font-weight:700;letter-spacing:.04em");
+  eyebrow.textContent = "Erro ao iniciar o app";
+  const title = document.createElement("h1");
+  title.setAttribute("style", "margin:0 0 16px;font-size:22px;line-height:1.25");
+  title.textContent = "MUSIC OS 360 não conseguiu renderizar";
+  const body = document.createElement("p");
+  body.setAttribute("style", "margin:0 0 16px;font-size:14px;line-height:1.5");
+  body.textContent = "Ocorreu um erro inesperado. Recarregue a página ou tente novamente em instantes.";
+  card.append(eyebrow, title, body);
+  if (diagnostic) {
+    const pre = document.createElement("pre");
+    pre.setAttribute("style", "white-space:pre-wrap;overflow:auto;background:#0a0d12;border:1px solid rgba(248,250,252,.12);border-radius:6px;padding:16px;font-size:12px;line-height:1.5");
+    pre.textContent = diagnostic;
+    card.append(pre);
+  }
+  page.append(card);
+  root.replaceChildren(page);
 }
 
 window.addEventListener("error", (event) => {

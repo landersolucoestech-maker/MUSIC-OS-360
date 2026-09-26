@@ -39,6 +39,7 @@ import {
 } from "@/modules/catalog/mappers";
 import { fonogramaSchema } from "@/modules/catalog/lib/fonograma-schema";
 import { useUploadToR2, R2NotConfiguredError } from "@/shared/hooks/useUploadToR2";
+import { toUserMessage } from "@/shared/lib/errors";
 
 type FonogramaRow = Fonograma;
 
@@ -527,8 +528,8 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       toast.success("Áudio enviado e link gerado com sucesso!");
     } catch (err) {
       const msg = err instanceof R2NotConfiguredError
-        ? err.message
-        : err instanceof Error ? err.message : "Erro no upload do áudio";
+        ? toUserMessage(err)
+        : toUserMessage(err, "Erro no upload do áudio");
       toast.error(`Upload falhou: ${msg}`);
       setArquivoAudio(null);
     } finally {

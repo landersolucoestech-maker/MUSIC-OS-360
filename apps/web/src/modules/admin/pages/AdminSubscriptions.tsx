@@ -39,6 +39,7 @@ import {
   CheckCircle2, Clock, AlertTriangle, Lock, Unlock, ShieldCheck, ShieldOff,
 } from "lucide-react";
 
+import { toUserMessage } from "@/shared/lib/errors";
 function fmtBRL(n: number) {
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 }
@@ -296,7 +297,7 @@ export default function AdminSubscriptions() {
     },
     onError: (error) => {
       toast.error("Nao foi possivel atualizar o billing", {
-        description: error instanceof Error ? error.message : "Verifique permissao, API e tenant.",
+        description: toUserMessage(error, "Verifique permissao, API e tenant."),
       });
     },
   });
@@ -424,7 +425,7 @@ export default function AdminSubscriptions() {
               {!subscriptionsQuery.isLoading && subscriptionsQuery.error && (
                 <TableRow>
                   <TableCell colSpan={9} className="py-10 text-center text-sm text-red-300">
-                    Nao foi possivel carregar assinaturas: {subscriptionsQuery.error instanceof Error ? subscriptionsQuery.error.message : "erro desconhecido"}
+                    Nao foi possivel carregar assinaturas: {toUserMessage(subscriptionsQuery.error, "erro desconhecido")}
                   </TableCell>
                 </TableRow>
               )}

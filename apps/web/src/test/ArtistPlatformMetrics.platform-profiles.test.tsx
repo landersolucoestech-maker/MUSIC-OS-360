@@ -433,7 +433,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     fireEvent.click(button);
 
     await waitFor(() => expect(button).toBeDisabled());
-    rejectPost(new Error("Falha externa"));
+    rejectPost(new Error("External failure"));
     await waitFor(() => expect(button).not.toBeDisabled());
   });
 

@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { internalChatService } from "../services/internal-chat.service";
 import { useWsEvent } from "@/shared/hooks/useWsEvent";
 
+import { toUserMessage } from "@/shared/lib/errors";
 const CONVERSATIONS_KEY = ["internal-chat", "conversations"] as const;
 const messagesKey = (conversationId: string) => ["internal-chat", "messages", conversationId] as const;
 
@@ -27,7 +28,7 @@ export function useInternalConversations() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: CONVERSATIONS_KEY });
     },
-    onError: (error: Error) => toast.error(error.message || "Não foi possível criar a conversa."),
+    onError: (error: Error) => toast.error(toUserMessage(error, "Não foi possível criar a conversa.")),
   });
 
   return {
@@ -53,7 +54,7 @@ export function useInternalMessages(conversationId: string | null) {
       if (conversationId) void queryClient.invalidateQueries({ queryKey: messagesKey(conversationId) });
       void queryClient.invalidateQueries({ queryKey: CONVERSATIONS_KEY });
     },
-    onError: (error: Error) => toast.error(error.message || "Não foi possível enviar a mensagem."),
+    onError: (error: Error) => toast.error(toUserMessage(error, "Não foi possível enviar a mensagem.")),
   });
 
   const markRead = useMutation({

@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 
+import { UserFacingError, toUserMessage } from "@/shared/lib/errors";
 // Mirrors SOCIAL_PLATFORMS from apps/api/.../social-platform-sync.types.ts —
 // there is no shared web/api package for this contract yet, so the 7 values are
 // replicated here (Metrics 09 phase 3).
@@ -87,7 +88,7 @@ export function useSyncArtistPlatformProfile(artistId: string | null | undefined
 
   return useMutation({
     mutationFn: async (input: SyncArtistPlatformProfileInput) => {
-      if (!artistId) throw new Error("Artista não informado.");
+      if (!artistId) throw new UserFacingError("artistId is required to sync a platform profile", "Artista não informado.");
       return api.post<SyncResponse>(`/artists/${artistId}/platform-profiles/${input.platform}/sync`, {
         profileUrl: input.profileUrl,
         source: input.source,
@@ -112,7 +113,7 @@ export function useSyncArtistPlatformProfile(artistId: string | null | undefined
       toast.info(`Sincronização não iniciada: ${reason}.`);
     },
     onError: (err: Error) => {
-      toast.error(err.message);
+      toast.error(toUserMessage(err));
       queryClient.invalidateQueries({ queryKey: artistPlatformProfilesKey(artistId) });
     },
   });
