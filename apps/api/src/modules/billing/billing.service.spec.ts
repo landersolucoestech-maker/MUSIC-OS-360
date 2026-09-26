@@ -92,6 +92,7 @@ describe('BillingService', () => {
       markWebhookProcessed: jest.fn().mockResolvedValue(undefined),
       markWebhookFailed: jest.fn().mockResolvedValue(undefined),
       findTenantIdByStripe: jest.fn().mockResolvedValue('tenant-1'),
+      findOrgIdForTenant: jest.fn().mockResolvedValue('org-1'),
       startPaymentGrace: jest.fn().mockResolvedValue({ status: 'payment_grace' }),
       activateTenant: jest.fn().mockResolvedValue({ status: 'active' }),
       ensureState: jest.fn().mockResolvedValue({ status: 'trial' }),
@@ -398,9 +399,12 @@ describe('BillingService', () => {
       await service.handleWebhook('sig', Buffer.from('{}'));
 
       expect(dbContext.runInTenantContext).toHaveBeenCalledWith(
-        { tenantId: 'tenant-1', orgId: null, role: null },
+        { tenantId: 'tenant-1', orgId: 'org-1', role: null },
         expect.any(Function),
       );
+      // org-isolated tables (billing_subscriptions/tenants/organizations) need the
+      // tenant's org in context; it is resolved read-only via the enforcement service
+      expect(enforcement.findOrgIdForTenant).toHaveBeenCalledWith('tenant-1');
     });
   });
 

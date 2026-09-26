@@ -647,10 +647,44 @@ export class BillingService {
     // When the event DOES resolve to a tenant, use the normal tenant path
     // (role left unset) so the ordinary tenant_id = app_current_tenant_id()
     // branch applies, same as every other tenant-scoped write.
-    return this.dbContext.runInTenantContext(
-      { tenantId, orgId: null, role: tenantId ? null : 'system' },
-      () => this.processWebhookEvent(event, tenantId),
-    );
+    // find-b4641a0f: billing_subscriptions / tenants /
+    // organizations are org-isolated under RLS. With orgId null every
+    // subscription write in the handlers matched 0 rows silently (proven on
+    // real Postgres), so the context carries the tenant's org as well.
+    const orgId = tenantId ? await this.enforcement.findOrgIdForTenant(tenantId) : null;
+    const ctx = { tenantId, orgId, role: tenantId ? null : 'system' };
+    try {
+      return await this.dbContext.runInTenantContext(ctx, () => this.processWebhookEvent(event, tenantId));
+    } catch (err) {
+      // The failed attempt's transaction (including its payment_events claim)
+      // rolled back, so the FAILED record (find-8e0c28b4) must be written in its own context
+      // or it never exists (it used to be written inside the doomed
+      // transaction). A later Stripe retry reclaims a FAILED row.
+      await this.recordWebhookFailure(ctx, event, tenantId, err as Error);
+      throw err;
+    }
+  }
+
+  private async recordWebhookFailure(
+    ctx: { tenantId: string | null; orgId: string | null; role: string | null },
+    event: StripeWebhookEvent,
+    tenantId: string | null,
+    err: Error,
+  ): Promise<void> {
+    try {
+      await this.dbContext.runInTenantContext(ctx, async () => {
+        const claim = await this.enforcement.recordWebhookProcessed({
+          tenantId,
+          stripeEventId: event.id,
+          eventType: event.type,
+          payload: event as unknown as Record<string, unknown>,
+        });
+        if (claim !== 'duplicate') await this.enforcement.markWebhookFailed(event.id);
+        await this.recordLegacyWebhook(event, tenantId, WebhookEventStatus.FAILED, err.message);
+      });
+    } catch (logErr) {
+      this.logger.error(`Webhook Stripe ${event.id}: falha ao registrar a falha (${String(logErr)}); erro original: ${err.message}`);
+    }
   }
 
   private async processWebhookEvent(
@@ -668,15 +702,10 @@ export class BillingService {
       return { received: true };
     }
 
-    try {
-      await this.processEvent(event, tenantId);
-      await this.enforcement.markWebhookProcessed(event.id);
-      await this.recordLegacyWebhook(event, tenantId, WebhookEventStatus.PROCESSED);
-    } catch (err) {
-      await this.enforcement.markWebhookFailed(event.id);
-      await this.recordLegacyWebhook(event, tenantId, WebhookEventStatus.FAILED, (err as Error).message);
-      throw err;
-    }
+    // Failure bookkeeping happens in handleWebhook, outside this transaction.
+    await this.processEvent(event, tenantId);
+    await this.enforcement.markWebhookProcessed(event.id);
+    await this.recordLegacyWebhook(event, tenantId, WebhookEventStatus.PROCESSED);
 
     return { received: true };
   }
@@ -899,7 +928,7 @@ export class BillingService {
     // guard inside startPaymentGrace is the real concurrency enforcement.
     const applied = await this.enforcement.startPaymentGrace(tenantId, 'invoice.payment_failed', new Date(), undefined, eventCreatedAtSec);
     if (!applied) {
-      this.logger.log(`invoice.payment_failed rejeitado (concorrência): tenant=${tenantId} invoice=${invoice.id}`);
+      this.logger.log(`invoice.payment_failed sem transição (já em dunning, cancelado, evento antigo ou concorrência): tenant=${tenantId} invoice=${invoice.id}`);
       return;
     }
     await this.orgRepo!
@@ -984,7 +1013,12 @@ export class BillingService {
          tenant_id, stripe_invoice_id, numero, type, status, amount_due, amount_paid, currency,
          legacy_amount, due_date, hosted_invoice_url, invoice_pdf, attempt_count, metadata, created_by
        )
-       VALUES ($1, $2, $2, 'stripe_subscription', $3, $4, $5, $6, ($4::numeric / 100.0),
+       -- find-475adb34: $4/$5 are integer cents: typed explicitly because $4 is also used in
+       -- the legacy_amount expression, and Postgres cannot deduce one type
+       -- for a parameter bound to an integer column AND a ::numeric cast
+       -- ("inconsistent types deduced for parameter $4" - every Stripe
+       -- invoice upsert failed once tenant resolution worked).
+       VALUES ($1, $2, $2, 'stripe_subscription', $3, $4::integer, $5::integer, $6, ($4::integer / 100.0),
                $7, $8, $9, $10, $11::jsonb, 'stripe:webhook')
        ON CONFLICT (stripe_invoice_id) WHERE stripe_invoice_id IS NOT NULL
        DO UPDATE SET
@@ -1040,12 +1074,11 @@ export class BillingService {
   }
 
   private async resolveOrgIdForTenant(tenantId: string | null): Promise<string | null> {
-    if (!tenantId || !this.ds) return null;
-    const rows = await this.ds.query(
-      `SELECT org_id FROM tenants WHERE id = $1 LIMIT 1`,
-      [tenantId],
-    ) as Array<{ org_id: string }>;
-    return rows[0]?.org_id ?? null;
+    // Single implementation (read-only, ADMIN_DATA_SOURCE): tenants is
+    // org-isolated under RLS, so a lookup through the app role only worked
+    // when the right org happened to already be in context.
+    if (!tenantId) return null;
+    return this.enforcement.findOrgIdForTenant(tenantId);
   }
 
   private async recordLegacyWebhook(

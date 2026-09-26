@@ -76,6 +76,9 @@ function normalizeSettings(value: unknown): BillingEnforcementSettings {
   };
 }
 
+/** States from which a payment failure may START the dunning sequence (find-2202a169). */
+const PAYMENT_GRACE_ENTRY_STATES = new Set<string>(['active', 'trial']);
+
 @Injectable()
 export class BillingEnforcementService {
   private readonly logger = new Logger(BillingEnforcementService.name);
@@ -183,22 +186,57 @@ export class BillingEnforcementService {
     return this.applyOverrideAndEscalation(state);
   }
 
+  /**
+   * find-3cdb4c15: resolve the internal tenant of a Stripe
+   * customer/subscription. Runs BEFORE any tenant context exists (webhook
+   * path), so it must use the owner read-only ADMIN_DATA_SOURCE:
+   * billing_subscriptions is FORCE RLS (org_isolation) and the app role
+   * returned 0 rows here in production, so invoice.* and
+   * customer.subscription.* events (which carry no tenant metadata) never
+   * resolved and were silently no-ops. A Stripe customer must map to
+   * exactly ONE tenant (stripe-webhook-auditor invariant 7): ambiguity, or
+   * metadata pointing at a tenant the customer does not belong to, fails
+   * closed (null) instead of "LIMIT 1".
+   */
   async findTenantIdByStripe(params: {
     customerId?: string | null;
     subscriptionId?: string | null;
     tenantId?: string | null;
   }): Promise<string | null> {
-    if (params.tenantId) return params.tenantId;
-    if (!this.ds) return null;
-    const rows = await this.ds.query(
-      `SELECT tenant_id
-         FROM billing_subscriptions
-        WHERE ($1::varchar IS NOT NULL AND stripe_customer_id = $1)
-           OR ($2::varchar IS NOT NULL AND (stripe_subscription_id = $2 OR stripe_sub_id = $2))
-        LIMIT 1`,
-      [params.customerId ?? null, params.subscriptionId ?? null],
-    ) as Array<{ tenant_id: string | null }>;
-    return rows[0]?.tenant_id ?? null;
+    const lookupDs = this.adminDs ?? this.ds;
+    const hasStripeIds = Boolean(params.customerId || params.subscriptionId);
+    let mapped: string[] = [];
+    if (lookupDs && hasStripeIds) {
+      const rows = await lookupDs.query(
+        `SELECT DISTINCT tenant_id
+           FROM billing_subscriptions
+          WHERE tenant_id IS NOT NULL
+            AND (($1::varchar IS NOT NULL AND stripe_customer_id = $1)
+              OR ($2::varchar IS NOT NULL AND (stripe_subscription_id = $2 OR stripe_sub_id = $2)))`,
+        [params.customerId ?? null, params.subscriptionId ?? null],
+      ) as Array<{ tenant_id: string }>;
+      mapped = rows.map((r) => String(r.tenant_id));
+    }
+    if (mapped.length > 1) {
+      this.logger.error(`Stripe identity ambiguous: customer/subscription maps to ${mapped.length} tenants — event not applied`);
+      return null;
+    }
+    if (params.tenantId) {
+      if (mapped.length === 1 && mapped[0] !== params.tenantId) {
+        this.logger.error(`Stripe identity conflict: metadata tenant differs from the tenant owning this customer — event not applied`);
+        return null;
+      }
+      return params.tenantId;
+    }
+    return mapped[0] ?? null;
+  }
+
+  /** Org of a tenant, read-only via ADMIN_DATA_SOURCE (tenants is org-isolated under RLS). */
+  async findOrgIdForTenant(tenantId: string): Promise<string | null> {
+    const lookupDs = this.adminDs ?? this.ds;
+    if (!lookupDs) return null;
+    const rows = await lookupDs.query(`SELECT org_id FROM tenants WHERE id = $1 LIMIT 1`, [tenantId]) as Array<{ org_id: string | null }>;
+    return rows[0]?.org_id ? String(rows[0].org_id) : null;
   }
 
   /**
@@ -314,22 +352,22 @@ export class BillingEnforcementService {
     // (Smart Retries), so payment_events dedup (a literal-replay guard) does
     // not intercept these. grace_until is the single anchor
     // applyOverrideAndEscalation uses for the whole
-    // payment_grace -> read_only -> suspended timeline, so a tenant already
-    // inside that window must keep its original deadline — only a fresh
-    // entry into payment_grace starts a new clock.
-    const alreadyInGrace = before?.status === 'payment_grace' || before?.status === 'read_only';
-    const graceUntil = alreadyInGrace && before?.grace_until
-      ? new Date(before.grace_until)
-      : addDays(now, settings.grace_period_days);
+    // payment_grace -> read_only -> suspended timeline.
+    //
+    // find-2202a169: a payment failure is only a SEMANTIC transition
+    // for a tenant that is not already in the dunning sequence. Previously a
+    // tenant already `suspended` (or `cancelled`) was moved back to
+    // payment_grace with a FRESH grace_until by every later Smart-Retry
+    // failure (restarting the clock and regressing to a less restrictive
+    // state), and `read_only` regressed to payment_grace until the next
+    // escalation. Only active/trial (or no state row) can enter grace; any
+    // other state is a no-op (null = "no transition applied").
+    if (before && !PAYMENT_GRACE_ENTRY_STATES.has(before.status)) {
+      this.logger.log(`startPaymentGrace: tenant=${tenantId} já em '${before.status}' — sem transição, relógio de dunning preservado (${reason})`);
+      return null;
+    }
+    const graceUntil = addDays(now, settings.grace_period_days);
 
-    await ds.query(
-      `UPDATE billing_subscriptions
-          SET status = 'past_due',
-              grace_until = $2,
-              updated_at = now()
-        WHERE tenant_id = $1`,
-      [tenantId, graceUntil],
-    );
     const rows = await ds.query(
       `INSERT INTO tenant_billing_state (tenant_id, status, grace_until)
        VALUES ($1, 'payment_grace', $2)
@@ -344,14 +382,26 @@ export class BillingEnforcementService {
          END,
          grace_until = $2,
          updated_at = now()
-       WHERE $3::bigint IS NULL
+       WHERE tenant_billing_state.status IN ('active', 'trial')
+         AND ($3::bigint IS NULL
           OR tenant_billing_state.status_changed_at IS NULL
-          OR to_timestamp($3) >= tenant_billing_state.status_changed_at
+          OR to_timestamp($3) >= tenant_billing_state.status_changed_at)
        RETURNING *`,
       [tenantId, graceUntil, eventCreatedAtSec ?? null],
     ) as TenantBillingState[];
+    // The atomic WHERE above (status still in active/trial) is what makes two
+    // concurrent failures for the same tenant produce exactly ONE transition
+    // and ONE clock; the pre-read is only a fast path.
     const after = rows[0];
     if (!after) return null;
+    await ds.query(
+      `UPDATE billing_subscriptions
+          SET status = 'past_due',
+              grace_until = $2,
+              updated_at = now()
+        WHERE tenant_id = $1`,
+      [tenantId, after.grace_until ?? graceUntil],
+    );
     await this.auditStateChange('billing.grace_started', tenantId, before, after, reason, manager);
     return after;
   }

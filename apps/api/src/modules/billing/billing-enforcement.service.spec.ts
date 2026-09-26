@@ -261,35 +261,31 @@ describe('BillingEnforcementService — getState() CQS purity (find-d45d822d)', 
  * never actually pays.
  */
 describe('BillingEnforcementService — startPaymentGrace grace_until idempotency', () => {
-  it('a tenant already in payment_grace keeps its original grace_until on a second payment-failure event', async () => {
-    const originalGraceUntil = new Date('2026-09-01T00:00:00.000Z');
-    const before = {
-      id: 'row-1', tenant_id: 'tenant-1', status: 'payment_grace',
-      grace_until: originalGraceUntil.toISOString(), suspended_at: null,
-      manual_override: false, manual_override_reason: null, manual_override_until: null,
-      created_at: new Date(), updated_at: new Date(),
-    };
-    const query = jest.fn(async (sql: string, params?: unknown[]) => {
-      if (/SELECT \* FROM tenant_billing_state WHERE tenant_id/.test(sql)) return [before];
-      if (/SELECT value FROM billing_settings/.test(sql)) return []; // defaults apply
-      if (/UPDATE billing_subscriptions/.test(sql)) return [];
-      if (/INSERT INTO tenant_billing_state/.test(sql)) return [{ ...before, grace_until: params?.[1] }];
-      throw new Error(`Unexpected query in grace_until idempotency test: ${sql}`);
+  // find-2202a169: a failure for a tenant already in the dunning
+  // sequence (or cancelled) is NOT a semantic transition: nothing is written,
+  // so the clock (grace_until) and status_changed_at cannot move.
+  for (const status of ['payment_grace', 'read_only', 'suspended', 'cancelled']) {
+    it(`a tenant already in ${status}: a later payment-failure event writes nothing and keeps the clock`, async () => {
+      const originalGraceUntil = new Date('2026-09-01T00:00:00.000Z');
+      const before = {
+        id: 'row-1', tenant_id: 'tenant-1', status,
+        grace_until: originalGraceUntil.toISOString(), suspended_at: null,
+        manual_override: false, manual_override_reason: null, manual_override_until: null,
+        created_at: new Date(), updated_at: new Date(),
+      };
+      const query = jest.fn(async (sql: string) => {
+        if (/SELECT \* FROM tenant_billing_state WHERE tenant_id/.test(sql)) return [before];
+        if (/SELECT value FROM billing_settings/.test(sql)) return [];
+        throw new Error(`No write allowed for a tenant already in ${status}: ${sql}`);
+      });
+      const service = new BillingEnforcementService({ query } as never, { log: jest.fn() } as never);
+
+      const result = await service.startPaymentGrace('tenant-1', 'invoice.payment_failed retry', new Date('2026-09-05T00:00:00.000Z'));
+
+      expect(result).toBeNull();
+      expect(query.mock.calls.some(([sql]) => /INSERT|UPDATE/.test(sql as string))).toBe(false);
     });
-    const audit = { log: jest.fn() };
-    const service = new BillingEnforcementService({ query } as never, audit as never);
-
-    const laterNow = new Date('2026-09-05T00:00:00.000Z'); // a later retry, days after the original failure
-    const after = await service.startPaymentGrace('tenant-1', 'invoice.payment_failed retry', laterNow);
-
-    expect(new Date(after!.grace_until as unknown as string)).toEqual(originalGraceUntil);
-    const updateCall = query.mock.calls.find(([sql]) => /UPDATE billing_subscriptions/.test(sql as string));
-    expect(updateCall?.[1]).toEqual(['tenant-1', originalGraceUntil]);
-    const insertCall = query.mock.calls.find(([sql]) => /INSERT INTO tenant_billing_state/.test(sql as string));
-    expect(insertCall?.[1]).toEqual(['tenant-1', originalGraceUntil, null]);
-    // Same status in and out -> auditStateChange must not touch status_changed_at.
-    expect(query.mock.calls.some(([sql]) => /status_changed_at = now\(\)/.test(sql as string))).toBe(false);
-  });
+  }
 
   it('a tenant entering payment_grace for the first time gets a fresh grace_until computed from settings', async () => {
     const now = new Date('2026-09-01T00:00:00.000Z');
@@ -565,13 +561,21 @@ describe('BillingEnforcementService — cross-tenant write isolation (find-99ea5
     expect(query).toHaveBeenCalledWith(expect.any(String), ['cus_tenantA', null]);
   });
 
-  it('findTenantIdByStripe trusts an explicitly-provided tenantId (from OUR OWN webhook-signed metadata) without a DB round trip, and never substitutes a different tenant', async () => {
-    const query = jest.fn();
+  it('findTenantIdByStripe: metadata tenant is accepted when the Stripe ids are not yet mapped (first checkout)', async () => {
+    const query = jest.fn().mockResolvedValue([]);
     const service = makeService(query);
+    await expect(service.findTenantIdByStripe({ tenantId: 'tenant-A', customerId: 'cus_new' })).resolves.toBe('tenant-A');
+  });
 
-    const resolved = await service.findTenantIdByStripe({ tenantId: 'tenant-A', customerId: 'cus_tenantB' });
+  it('findTenantIdByStripe: metadata pointing at a tenant the customer does NOT belong to fails closed (invariant 7), never substitutes either tenant', async () => {
+    const query = jest.fn().mockResolvedValue([{ tenant_id: 'tenant-B' }]);
+    const service = makeService(query);
+    await expect(service.findTenantIdByStripe({ tenantId: 'tenant-A', customerId: 'cus_tenantB' })).resolves.toBeNull();
+  });
 
-    expect(resolved).toBe('tenant-A');
-    expect(query).not.toHaveBeenCalled();
+  it('findTenantIdByStripe: a customer mapped to more than one tenant is ambiguous and fails closed', async () => {
+    const query = jest.fn().mockResolvedValue([{ tenant_id: 'tenant-A' }, { tenant_id: 'tenant-B' }]);
+    const service = makeService(query);
+    await expect(service.findTenantIdByStripe({ customerId: 'cus_shared' })).resolves.toBeNull();
   });
 });
