@@ -1,11 +1,11 @@
 /**
  * governance/integration-admin.controller.ts
  *
- * Portal Administrador → Configurações → Integrações.
+ * Admin portal → Settings → Integrations.
  *
- * Escrita restrita a super_admin (mesmo padrão de admin/users). Toda alteração é
- * auditada: mudar audiência de uma integração altera o que os clientes podem
- * usar, então precisa de rastro.
+ * Writes restricted to super_admin (same pattern as admin/users). Every change is
+ * audited: changing an integration's audience changes what customers can
+ * use, so it needs a trail.
  */
 
 import { Body, Controller, Get, Param, Patch, Put } from '@nestjs/common';
@@ -38,9 +38,9 @@ export class IntegrationAdminController {
   }
 
   /**
-   * Entitlements de integração por plano — persistidos em
-   * billing_plans.features.integrations. Fonte de verdade única: a edição vive
-   * aqui/Admin Plans, e a tela de integração só EXIBE includedInPlans.
+   * Per-plan integration entitlements — persisted in
+   * billing_plans.features.integrations. Single source of truth: editing lives
+   * here/Admin Plans, and the integration screen only DISPLAYS includedInPlans.
    */
   @Get('plans/:planSlug')
   @RequireRole('super_admin')

@@ -5,8 +5,8 @@ import { EncryptionService } from '../../../core/security/encryption.service';
 
 const TEST_KEY = '0000000000000000000000000000000000000000000000000000000000000000';
 
-// Chave EC (P-256) sintética gerada localmente só para este teste — nunca uma
-// credencial Apple real. `buildDeveloperToken` exige exatamente esta curva (ES256).
+// Synthetic EC (P-256) key generated locally only for this test — never a
+// real Apple credential. `buildDeveloperToken` requires exactly this curve (ES256).
 const TEST_PRIVATE_KEY = `-----BEGIN PRIVATE KEY-----
 MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgL31gt/CymDrlnoX5
 Ir7QchC0+4J/AJJPUD5tFVY/aa+hRANCAAQ4RWLRxdQnRpeF55Gd7CZuvo+inhai

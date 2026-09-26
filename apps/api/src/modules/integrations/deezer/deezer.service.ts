@@ -18,7 +18,7 @@ export class DeezerService {
   }
 
   isConfigured(): boolean {
-    return true; // API pública, sem chave necessária
+    return true; // Public API, no key required
   }
 
   async getArtistStats(artistId: string) {

@@ -66,8 +66,8 @@ function buildHarness(overrides: {
     ),
   };
   const events = { emitTyped: jest.fn() };
-  // WebhookService real — a verificação HMAC precisa ser exercitada de verdade,
-  // não substituída por um mock que devolve true.
+  // Real WebhookService — HMAC verification must actually be exercised,
+  // not replaced by a mock that returns true.
   const webhookSvc = new WebhookService(null as never);
   jest.spyOn(webhookSvc, 'ingest').mockResolvedValue({
     isDuplicate: false, eventId: 'webhook-a', status: 'pending',
@@ -127,7 +127,7 @@ describe('DocuSignService.handleWebhook', () => {
 
     await service.handleWebhook(completedPayload, raw, signature);
 
-    // Casamento pelo metadata genérico — sem coluna vendor-specific.
+    // Matching through the generic metadata — no vendor-specific column.
     expect(adminQb.where).toHaveBeenCalledWith(
       expect.stringContaining("metadata->>'provider_doc_id'"),
       { provider: 'docusign', envelopeId: 'env-a' },

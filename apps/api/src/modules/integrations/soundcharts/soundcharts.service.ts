@@ -1,19 +1,19 @@
 /**
  * modules/integrations/soundcharts/soundcharts.service.ts
  *
- * Client isolado para a Soundcharts API — fonte de métricas públicas de
- * audiência de artista (ver Soundcharts 02: credenciais reais validadas,
- * auth OAuth2 client_credentials confirmada contra a documentação oficial
- * antes de qualquer chamada).
+ * Isolated client for the Soundcharts API — source of public artist
+ * audience metrics (see Soundcharts 02: real credentials validated,
+ * OAuth2 client_credentials auth confirmed against the official documentation
+ * before any call).
  *
- * Conectado a ArtistPlatformProfile/artist-external-profile-sync — os 7
- * providers em artists/platform-profiles/providers/* delegam a este client.
+ * Wired to ArtistPlatformProfile/artist-external-profile-sync — the 7
+ * providers in artists/platform-profiles/providers/* delegate to this client.
  *
- * Credenciais: SOUNDCHARTS_CLIENT_ID/SOUNDCHARTS_CLIENT_SECRET são globais
- * (uma conta Soundcharts para todo o Music OS 360, não por tenant) — por
- * isso lidas via ConfigService (env global da aplicação), em vez do fluxo
- * de credenciais por tenant do IntegrationBaseService (que não se aplica
- * aqui).
+ * Credentials: SOUNDCHARTS_CLIENT_ID/SOUNDCHARTS_CLIENT_SECRET are global
+ * (one Soundcharts account for all of Music OS 360, not per tenant) — which is
+ * why they are read via ConfigService (the application's global env), instead of the
+ * IntegrationBaseService per-tenant credentials flow (which does not apply
+ * here).
  */
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -32,14 +32,14 @@ const TOKEN_URL = 'https://account.soundcharts.com/oauth/token';
 const API_BASE = 'https://customer.api.soundcharts.com';
 const ALLOWED_HOSTS = ['account.soundcharts.com', 'customer.api.soundcharts.com'] as const;
 
-// Renova um pouco antes do expires_in real devolvido pela Soundcharts, para
-// nunca usar em uma chamada um token que expira no meio do voo.
+// Renews a little before the real expires_in returned by Soundcharts, so
+// a token that expires mid-flight is never used in a call.
 const TOKEN_REFRESH_SKEW_MS = 30_000;
-const DEFAULT_TOKEN_TTL_S = 900; // fallback só se a resposta omitir expires_in
+const DEFAULT_TOKEN_TTL_S = 900; // fallback only when the response omits expires_in
 
 interface CachedToken {
   token: string;
-  expiresAt: number; // epoch ms, já com o skew de renovação aplicado
+  expiresAt: number; // epoch ms, with the renewal skew already applied
 }
 
 interface CachedUuid {
@@ -47,9 +47,9 @@ interface CachedUuid {
   expiresAt: number;
 }
 
-// Reuso do UUID resolvido por (platform, externalId) durante uma janela curta
-// — evita repetir /artist/by-platform/... quando várias plataformas do mesmo
-// artista são sincronizadas em sequência (Soundcharts 06).
+// Reuse of the UUID resolved by (platform, externalId) for a short window
+// — avoids repeating /artist/by-platform/... when several platforms of the same
+// artist are synced in sequence (Soundcharts 06).
 const UUID_CACHE_TTL_MS = 5 * 60 * 1000;
 
 interface SeriesItem {
@@ -74,7 +74,7 @@ export class SoundchartsService {
     return !!(this.config.get<string>('SOUNDCHARTS_CLIENT_ID') && this.config.get<string>('SOUNDCHARTS_CLIENT_SECRET'));
   }
 
-  // ── Autenticação (client_credentials, cache até próximo da expiração) ────
+  // ── Authentication (client_credentials, cached until close to expiry) ────
 
   private async getToken(): Promise<string> {
     if (this.cachedToken && this.cachedToken.expiresAt > Date.now()) {
@@ -100,12 +100,12 @@ export class SoundchartsService {
     });
 
     if (!res.ok) {
-      // Nunca logar o corpo da resposta de token — pode ecoar client_secret em erros de auth.
+      // Never log the token response body — it may echo client_secret on auth errors.
       throw new SoundchartsApiError(`Soundcharts token request falhou: HTTP ${res.status}`, res.status);
     }
 
     let body: { access_token?: string; expires_in?: number; token_type?: string } | null = null;
-    try { body = await res.json(); } catch { /* resposta sem corpo JSON */ }
+    try { body = await res.json(); } catch { /* response without a JSON body */ }
 
     if (!body?.access_token) {
       throw new SoundchartsApiError('Soundcharts token response sem access_token', res.status);
@@ -128,7 +128,7 @@ export class SoundchartsService {
       headers: { Authorization: `Bearer ${token}` },
     });
     let body: unknown = null;
-    try { body = await res.json(); } catch { /* resposta sem corpo JSON */ }
+    try { body = await res.json(); } catch { /* response without a JSON body */ }
     return { status: res.status, body };
   }
 
@@ -139,12 +139,12 @@ export class SoundchartsService {
   }
 
   /**
-   * Registro completo de identifiers externos que a Soundcharts já associou
-   * a um UUID — usado para investigação de identidade (Métricas Fase 1.1):
-   * permite ver TODAS as plataformas conhecidas pela Soundcharts para este
-   * artista, não só a que está sendo resolvida no momento. Nunca usado para
-   * resolver UUID automaticamente — é evidência para decisão de identidade,
-   * não um resolver por si só.
+   * Full registry of external identifiers that Soundcharts has already associated
+   * with a UUID — used for identity investigation (Metrics Phase 1.1):
+   * shows ALL platforms Soundcharts knows for this
+   * artist, not only the one currently being resolved. Never used to
+   * resolve a UUID automatically — it is evidence for an identity decision,
+   * not a resolver on its own.
    */
   async getArtistIdentifiers(uuid: string): Promise<{ raw: unknown; identifiers: Array<{ platform: string; identifier: string }> }> {
     const id = assertSafePathSegment(uuid, 'uuid');
@@ -163,14 +163,14 @@ export class SoundchartsService {
   }
 
   /**
-   * Artistas relacionados/similares segundo o algoritmo de similaridade da
-   * própria Soundcharts (Fase 3.1 — descoberta de candidatos de mercado real
-   * para o Market Benchmark). Confirmado ao vivo (DJ Stay, 2026-08-31):
-   * `/related` devolve `{items:[{uuid,slug,name,appUrl,imageUrl}], page:{offset,limit,next,previous,total}}` —
-   * paginado (offset/limit), sem genre/country no item (precisa de
-   * getArtistProfile(uuid) à parte para isso). É "candidate discovery", não
-   * uma coorte estatisticamente validada por si só — o chamador (Market
-   * Benchmark) decide os critérios de inclusão.
+   * Related/similar artists according to Soundcharts' own similarity
+   * algorithm (Phase 3.1 — discovery of real market candidates
+   * for the Market Benchmark). Confirmed live (DJ Stay, 2026-08-31):
+   * `/related` returns `{items:[{uuid,slug,name,appUrl,imageUrl}], page:{offset,limit,next,previous,total}}` —
+   * paginated (offset/limit), no genre/country in the item (needs a separate
+   * getArtistProfile(uuid) for that). It is "candidate discovery", not
+   * a statistically validated cohort on its own — the caller (Market
+   * Benchmark) decides the inclusion criteria.
    */
   async getRelatedArtists(uuid: string, offset = 0, limit = 100): Promise<{ items: Array<{ uuid: string; name: string }>; total: number }> {
     const id = assertSafePathSegment(uuid, 'uuid');
@@ -185,10 +185,10 @@ export class SoundchartsService {
   }
 
   /**
-   * Perfil raso de um artista por UUID (Fase 3.1) — usado só para
-   * `countryCode` na filtragem de coorte de mercado. Confirmado ao vivo:
-   * `GET /api/v2/artist/{uuid}` devolve `countryCode` (string, pode ser vazia
-   * quando a Soundcharts não tem essa informação — nunca inventar país).
+   * Shallow artist profile by UUID (Phase 3.1) — used only for
+   * `countryCode` when filtering the market cohort. Confirmed live:
+   * `GET /api/v2/artist/{uuid}` returns `countryCode` (string, may be empty
+   * when Soundcharts lacks that information — never invent a country).
    */
   async getArtistCountryCode(uuid: string): Promise<string | null> {
     const id = assertSafePathSegment(uuid, 'uuid');
@@ -199,8 +199,8 @@ export class SoundchartsService {
   }
 
   /**
-   * Busca artistas por nome/query — evidência auxiliar para investigação de
-   * identidade (nunca prova identidade sozinha: nome igual não é MATCH).
+   * Searches artists by name/query — auxiliary evidence for identity
+   * investigation (it never proves identity alone: an equal name is not a MATCH).
    */
   async searchArtists(query: string): Promise<{ raw: unknown; results: Array<{ uuid: string; name: string }> }> {
     const q = encodeURIComponent(query);
@@ -218,7 +218,7 @@ export class SoundchartsService {
     };
   }
 
-  /** Item com a data mais recente — nunca assume a ordem do array (endpoints diferentes ordenam diferente). */
+  /** Item with the most recent date — never assumes the array order (different endpoints sort differently). */
   private pickLatest(items: unknown): SeriesItem | null {
     if (!Array.isArray(items) || items.length === 0) return null;
     let latest: SeriesItem | null = null;
@@ -234,10 +234,10 @@ export class SoundchartsService {
   }
 
   /**
-   * Fase 2 — extrai a série datada COMPLETA de `items` (mesmo payload que
-   * `pickLatest` já recebe) para o campo pedido, ordenada por `observedAt`
-   * crescente. Pontos sem data válida ou sem o campo numérico são
-   * descartados silenciosamente (não é erro — só não vira ponto de série).
+   * Phase 2 — extracts the FULL dated series from `items` (the same payload
+   * `pickLatest` already receives) for the requested field, sorted by ascending
+   * `observedAt`. Points without a valid date or without the numeric field are
+   * silently discarded (not an error — they just do not become a series point).
    */
   private extractSeries(items: unknown, field: 'followerCount' | 'value' | 'playlistCount' | 'postCount' | 'viewCount'): Array<{ value: number; observedAt: Date }> {
     if (!Array.isArray(items)) return [];
@@ -251,7 +251,7 @@ export class SoundchartsService {
     return out;
   }
 
-  // ── Resolução de artista ─────────────────────────────────────────────
+  // ── Artist resolution ────────────────────────────────────────────────
 
   async resolveArtistByPlatform(platform: string, externalId: string): Promise<string> {
     const p = assertSafePathSegment(platform, 'platform');
@@ -275,13 +275,13 @@ export class SoundchartsService {
   }
 
   /**
-   * Resolução canônica: tenta os candidatos em ordem (tipicamente
-   * spotify → youtube → deezer → soundcloud) e usa o primeiro que resolver
-   * — em vez de cada plataforma (ex.: Instagram/TikTok) resolver de novo
-   * pelo próprio handle, que é frágil quando a Soundcharts não indexa
-   * aquele handle específico mesmo já tendo o artista via Spotify.
-   * Todas as métricas do mesmo artista devem reutilizar o UUID retornado
-   * aqui (Soundcharts 06).
+   * Canonical resolution: tries the candidates in order (typically
+   * spotify → youtube → deezer → soundcloud) and uses the first that resolves
+   * — instead of each platform (e.g. Instagram/TikTok) resolving again
+   * through its own handle, which is fragile when Soundcharts does not index
+   * that specific handle even though it already has the artist via Spotify.
+   * All metrics of the same artist must reuse the UUID returned
+   * here (Soundcharts 06).
    */
   async resolveCanonicalArtistUuid(
     candidates: Array<{ platform: string; externalId: string | null | undefined }>,
@@ -304,12 +304,12 @@ export class SoundchartsService {
     );
   }
 
-  // ── Métricas ──────────────────────────────────────────────────────────
+  // ── Metrics ─────────────────────────────────────────────────────────────
 
   /**
-   * Ouvintes mensais do Spotify — EXCLUSIVAMENTE via /streaming/spotify/listening.
-   * Proibido usar /audience/spotify aqui: esse endpoint devolve followerCount
-   * (seguidores), uma métrica diferente (confirmado na validação real —
+   * Spotify monthly listeners — EXCLUSIVELY via /streaming/spotify/listening.
+   * Using /audience/spotify here is forbidden: that endpoint returns followerCount
+   * (followers), a different metric (confirmed in the real validation —
    * Soundcharts 02).
    */
   async getSpotifyMonthlyListeners(uuid: string): Promise<SoundchartsMetric> {
@@ -363,17 +363,17 @@ export class SoundchartsService {
   }
 
   /**
-   * YouTube — auditoria 2026-08-31 (regra "SOUNDCHARTS ONLY" para métricas de
-   * plataforma): o MESMO /audience/youtube que já devolve followerCount
-   * (subscribers) também devolve, por item da série, postCount e viewCount —
-   * confirmado com chamada real contra a API (DJ Stay, uuid
-   * 11e81bc0-69a1-279e-9fb0-a0369fe50396: postCount=277, viewCount=1.221.926
-   * em 2026-08-31). Isso substitui a YouTube Data API
-   * (channels?part=statistics) como fonte de total_views/total_videos, que
-   * violava a regra de que métricas de plataforma vêm exclusivamente da
-   * Soundcharts — e faz isso com UMA chamada só (nunca duas), a mesma que já
-   * era feita para subscribers. postCount/viewCount ausentes no payload real
-   * (conta sem esse dado) viram `null`, nunca um valor inventado.
+   * YouTube — 2026-08-31 audit ("SOUNDCHARTS ONLY" rule for platform
+   * metrics): the SAME /audience/youtube that already returns followerCount
+   * (subscribers) also returns, per series item, postCount and viewCount —
+   * confirmed with a real call against the API (DJ Stay, uuid
+   * 11e81bc0-69a1-279e-9fb0-a0369fe50396: postCount=277, viewCount=1,221,926
+   * on 2026-08-31). This replaces the YouTube Data API
+   * (channels?part=statistics) as the source of total_views/total_videos, which
+   * violated the rule that platform metrics come exclusively from
+   * Soundcharts — and does it with ONE call only (never two), the same one already
+   * made for subscribers. postCount/viewCount missing from the real payload
+   * (account without that data) become `null`, never an invented value.
    */
   async getYouTubeAudience(uuid: string): Promise<{
     subscribers: SoundchartsMetric;
@@ -421,32 +421,32 @@ export class SoundchartsService {
   }
 
   /**
-   * Apple Music não tem métrica de audiência/ouvintes na Soundcharts.
-   * Endpoints verificados contra a API real (Soundcharts 06/07), todos com
-   * uuid de um artista real conhecido:
+   * Apple Music has no audience/listeners metric in Soundcharts.
+   * Endpoints verified against the real API (Soundcharts 06/07), all with the
+   * uuid of a known real artist:
    *   - /audience/apple-music                  → 404 "not a social platform"
    *   - /social/apple-music/followers/ (v2.37) → 404 "not a social platform"
    *   - /streaming/apple-music/listening       → 404 "not a streaming platform"
-   *   - /popularity/apple-music                → 404 (endpoint só suporta
-   *     Spotify/Tidal/Deezer — confirmado na documentação oficial)
-   *   - /charts/song/ranks/apple-music         → 200, mas é uma lista de
-   *     posições por FAIXA/país/chart, nunca um número único do ARTISTA.
-   *   - /playlist/reach/apple-music            → 200. playlistReach vem
-   *     SEMPRE zero para apple-music (reach só é calculado para
-   *     Spotify/YouTube/Deezer/Jiosaavn/Boomplay, confirmado na doc e na
-   *     API real até com Billie Eilish, 734 playlists e reach=0 em todos os
-   *     períodos) — não usável. playlistCount, porém, é real e não-zero:
-   *     quantidade de playlists do Apple Music que incluem o artista. Não é
-   *     "ouvintes", é presença editorial/de playlist — por isso vive só em
-   *     raw_payload.playlist_count, nunca nos campos followers/subscribers/
-   *     monthly_listeners (ver AppleMusicArtistProfileProvider).
+   *   - /popularity/apple-music                → 404 (the endpoint only supports
+   *     Spotify/Tidal/Deezer — confirmed in the official documentation)
+   *   - /charts/song/ranks/apple-music         → 200, but it is a list of
+   *     positions per TRACK/country/chart, never a single ARTIST number.
+   *   - /playlist/reach/apple-music            → 200. playlistReach is
+   *     ALWAYS zero for apple-music (reach is only computed for
+   *     Spotify/YouTube/Deezer/Jiosaavn/Boomplay, confirmed in the docs and in the
+   *     real API even with Billie Eilish, 734 playlists and reach=0 in every
+   *     period) — not usable. playlistCount, however, is real and non-zero:
+   *     the number of Apple Music playlists that include the artist. It is not
+   *     "listeners", it is editorial/playlist presence — which is why it lives only in
+   *     raw_payload.playlist_count, never in the followers/subscribers/
+   *     monthly_listeners fields (see AppleMusicArtistProfileProvider).
    */
   /**
-   * Capability-check síncrono e sem rede: a Soundcharts não tem métrica de
-   * audiência para Apple Music (ver os endpoints verificados no comentário
-   * acima). Callers que só precisam decidir o estado do card antes de
-   * qualquer tentativa de sync usam isto em vez de round-trip para descobrir
-   * o óbvio (Métricas 09 fase 6).
+   * Synchronous, network-free capability check: Soundcharts has no
+   * audience metric for Apple Music (see the verified endpoints in the comment
+   * above). Callers that only need to decide the card state before
+   * any sync attempt use this instead of a round-trip to discover
+   * the obvious (Metrics 09 phase 6).
    */
   getAppleMusicSupport(): 'NOT_SUPPORTED' {
     return 'NOT_SUPPORTED';

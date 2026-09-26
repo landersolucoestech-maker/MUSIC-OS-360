@@ -9,10 +9,10 @@ import { SendForSignatureDto } from '../dto/integrations.dto';
 import { IntegrationUsageGuard, RequiresIntegration } from '../governance/integration-usage.guard';
 
 /**
- * Espelha AutentiqueController: mesmas rotas semânticas, mesmo DTO, mesmo RBAC
- * (@RequireRole('editor')) e mesma auditoria. O webhook é @Public() porque quem
- * chama é o DocuSign Connect — a autenticação dele é a assinatura HMAC
- * verificada em DocuSignService.handleWebhook, não um JWT.
+ * Mirrors AutentiqueController: same semantic routes, same DTO, same RBAC
+ * (@RequireRole('editor')) and same auditing. The webhook is @Public() because the
+ * caller is DocuSign Connect — its authentication is the HMAC signature
+ * verified in DocuSignService.handleWebhook, not a JWT.
  */
 @ApiTags('DocuSign')
 @Controller('integrations/docusign')
@@ -22,9 +22,9 @@ export class DocuSignController {
   @Post('documents')
   @ApiBearerAuth()
   @RequireRole('editor')
-  // Enforcement de governança: RBAC autoriza o PAPEL, isto autoriza a
-  // INTEGRAÇÃO para este tenant. Chamada direta à API é bloqueada aqui, não só
-  // escondida no frontend.
+  // Governance enforcement: RBAC authorizes the ROLE, this authorizes the
+  // INTEGRATION for this tenant. A direct API call is blocked here, not just
+  // hidden in the frontend.
   @UseGuards(IntegrationUsageGuard)
   @RequiresIntegration('docusign')
   @UseInterceptors(IdempotencyInterceptor)
@@ -51,8 +51,8 @@ export class DocuSignController {
     @Body() payload: any,
     @Headers('x-docusign-signature-1') signature?: string,
   ) {
-    // rawBody é populado no bootstrap (create-app.ts) — a verificação HMAC do
-    // DocuSign é sobre os bytes originais, não sobre o JSON re-serializado.
+    // rawBody is populated at bootstrap (create-app.ts) — DocuSign's HMAC
+    // verification is over the original bytes, not over the re-serialized JSON.
     const rawBody = (req.rawBody as Buffer | undefined)?.toString('utf8') ?? '';
     return this.docusign.handleWebhook(payload, rawBody, signature);
   }

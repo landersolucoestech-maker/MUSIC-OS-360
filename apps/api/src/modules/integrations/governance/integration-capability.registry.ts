@@ -1,29 +1,29 @@
 /**
  * governance/integration-capability.registry.ts
  *
- * CAPACIDADE TÉCNICA — a única parte da governança que continua em código, e
- * deliberadamente: implementação técnica É código. Um admin não pode "ligar" um
- * adapter que não existe, então isto não é editável por painel.
+ * TECHNICAL CAPABILITY — the only part of governance that remains in code, and
+ * deliberately so: a technical implementation IS code. An admin cannot "switch on" an
+ * adapter that does not exist, so this is not editable from a panel.
  *
- * O que É editável pelo admin vive no banco (platform_integrations):
- * publicação e audiência VIEW/USE. O erro que este arquivo corrige é o oposto —
- * antes um catálogo .ts decidia QUEM ENXERGA o quê, que é governança e exigia
- * deploy para mudar.
+ * What IS editable by the admin lives in the database (platform_integrations):
+ * publication and VIEW/USE audience. The error this file fixes is the opposite —
+ * previously a .ts catalog decided WHO SEES what, which is governance and required
+ * a deploy to change.
  *
- * Regra de ouro do resolver: publicar nunca cria capacidade. Um provedor
- * publicado sem adapter continua NOT_IMPLEMENTED e o USE nunca é liberado.
+ * Golden rule of the resolver: publishing never creates capability. A provider
+ * published without an adapter stays NOT_IMPLEMENTED and USE is never granted.
  */
 
 export enum IntegrationTechnicalCapability {
-  /** Existe adapter real e ligado ao módulo. */
+  /** A real adapter exists and is wired to the module. */
   IMPLEMENTED     = 'implemented',
-  /** Não existe adapter no backend — nenhuma credencial resolve isto. */
+  /** No adapter exists in the backend — no credential resolves this. */
   NOT_IMPLEMENTED = 'not_implemented',
 }
 
 /**
- * Cada entrada aponta para a evidência no código. Ao adicionar um provedor,
- * cite o adapter real — se não houver arquivo a citar, é NOT_IMPLEMENTED.
+ * Each entry points to the evidence in code. When adding a provider,
+ * cite the real adapter — if there is no file to cite, it is NOT_IMPLEMENTED.
  */
 const CAPABILITY: Record<string, { capability: IntegrationTechnicalCapability; evidence: string }> = {
   autentique:    { capability: IntegrationTechnicalCapability.IMPLEMENTED,     evidence: 'integrations/autentique/autentique.service.ts' },
@@ -42,7 +42,7 @@ const CAPABILITY: Record<string, { capability: IntegrationTechnicalCapability; e
   whatsapp:      { capability: IntegrationTechnicalCapability.IMPLEMENTED,     evidence: 'integrations/whatsapp/whatsapp-cloud.provider.ts' },
 };
 
-/** Fail-closed: provedor desconhecido nunca é tratado como implementado. */
+/** Fail-closed: an unknown provider is never treated as implemented. */
 export function technicalCapabilityOf(providerKey: string): IntegrationTechnicalCapability {
   return CAPABILITY[providerKey]?.capability ?? IntegrationTechnicalCapability.NOT_IMPLEMENTED;
 }

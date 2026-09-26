@@ -73,7 +73,7 @@ describe('SoundchartsService', () => {
         .mockResolvedValueOnce(jsonResponse(200, { items: [{ date: '2026-08-18', followerCount: 1 }] }));
       await service.getInstagramFollowers('uuid-1');
 
-      // Força a expiração sem depender de fake timers (sem convenção de clock injetável neste repo).
+      // Forces expiry without relying on fake timers (no injectable-clock convention in this repo).
       (service as any).cachedToken.expiresAt = Date.now() - 1;
 
       fetchMock
@@ -109,7 +109,7 @@ describe('SoundchartsService', () => {
         // Provenance (auditoria 2026-08-31): endpoint/campo exatos de origem.
         endpoint: '/api/v2/artist/uuid-1/streaming/spotify/listening',
         field: 'items[].value',
-        // Fase 2: série completa (mesmo payload) para backfill de histórico.
+        // Phase 2: full series (same payload) for history backfill.
         series: [{ value: 100_900_923, observedAt: new Date('2026-08-18') }],
       });
       const dataCall = fetchMock.mock.calls.find(([url]) => url !== TOKEN_URL);
@@ -122,7 +122,7 @@ describe('SoundchartsService', () => {
         jsonResponse(200, {
           items: [
             { date: '2026-08-16', value: 1 },
-            { date: '2026-08-18', value: 3 }, // mais recente no meio do array — não deve confiar em [0] nem em [length-1]
+            { date: '2026-08-18', value: 3 }, // most recent in the middle of the array — must not trust [0] or [length-1]
             { date: '2026-08-17', value: 2 },
           ],
         }),
@@ -174,8 +174,8 @@ describe('SoundchartsService', () => {
       expect(videos!.source).toBe('soundcharts');
       expect(views!.source).toBe('soundcharts');
 
-      // Exatamente 2 chamadas de rede no total (token + 1 dado) — nunca uma
-      // segunda chamada de dados (que seria a YouTube Data API).
+      // Exactly 2 network calls in total (token + 1 data call) — never a
+      // second data call (which would be the YouTube Data API).
       expect(fetchMock).toHaveBeenCalledTimes(2);
       const dataCalls = fetchMock.mock.calls.filter(([url]) => url !== TOKEN_URL);
       expect(dataCalls).toHaveLength(1);
@@ -271,7 +271,7 @@ describe('SoundchartsService', () => {
       expect(first).toBe('sc-uuid-1');
       expect(second).toBe('sc-uuid-1');
       const resolveCalls = fetchMock.mock.calls.filter(([url]) => (url as string).includes('/artist/by-platform/'));
-      expect(resolveCalls).toHaveLength(1); // dedup dentro da janela do cache — não repete a consulta pelo mesmo candidato
+      expect(resolveCalls).toHaveLength(1); // dedup within the cache window — does not repeat the query for the same candidate
     });
 
     it('resolveCanonicalArtistUuid: uses the first candidate that resolves and ignores the rest', async () => {

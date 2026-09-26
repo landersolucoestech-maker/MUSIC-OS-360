@@ -104,9 +104,9 @@ export class TikTokService extends IntegrationBaseService {
     this.logger.log(`TikTok OAuth: ${userId}@${tenantId} conectado`);
   }
 
-  /** Status da conexão orgânica (mesmo padrão de InstagramService.getProviderStatus) —
-   * faltava desde a implementação original do OAuth orgânico; o frontend não tinha
-   * como saber se a conta estava conectada além do fluxo de callback em si. */
+  /** Status of the organic connection (same pattern as InstagramService.getProviderStatus) —
+   * missing since the original organic OAuth implementation; the frontend had no
+   * way to know whether the account was connected beyond the callback flow itself. */
   async getOrganicStatus(tenantId: string, userId: string) {
     return this.getOAuthStatus(tenantId, userId, PROVIDER_ORG);
   }

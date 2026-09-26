@@ -55,9 +55,9 @@ export class InstagramService extends IntegrationBaseService {
   }
 
   /**
-   * Desconecta e tenta revogar o token no lado do Meta (best-effort — DELETE
-   * /me/permissions). A revogação nunca bloqueia o disconnect local: se a API
-   * do Meta estiver indisponível, o utilizador ainda consegue desconectar.
+   * Disconnects and tries to revoke the token on Meta's side (best-effort — DELETE
+   * /me/permissions). Revocation never blocks the local disconnect: if the Meta
+   * API is unavailable, the user can still disconnect.
    */
   async disconnectProvider(tenantId: string, userId: string, provider: string = PROVIDER): Promise<void> {
     const conn = await this.getOAuthConnection(tenantId, userId, provider);
@@ -72,13 +72,13 @@ export class InstagramService extends IntegrationBaseService {
   }
 
   /**
-   * Renova o token de longa duração re-trocando o token ainda válido pelo
-   * grant `fb_exchange_token` (o Meta não emite refresh_token separado — o
-   * próprio token de 60 dias, enquanto ainda válido, é re-trocável por um
-   * novo de 60 dias). Usado tanto pelo acesso sob-demanda (getAccountMetrics)
-   * quanto pelo cron de renovação (instagram-token-refresh.scheduler.ts).
-   * Em falha, marca a conexão como needs_reauth em vez de a deixar
-   * silenciosamente obsoleta.
+   * Renews the long-lived token by re-exchanging the still-valid token through the
+   * `fb_exchange_token` grant (Meta issues no separate refresh_token — the
+   * 60-day token itself, while still valid, can be re-exchanged for a
+   * new 60-day one). Used both by on-demand access (getAccountMetrics)
+   * and by the renewal cron (instagram-token-refresh.scheduler.ts).
+   * On failure, marks the connection as needs_reauth instead of leaving it
+   * silently stale.
    */
   async refreshLongLivedToken(tenantId: string, userId: string, provider: string = PROVIDER): Promise<boolean> {
     const conn = await this.getOAuthConnection(tenantId, userId, provider);

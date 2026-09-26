@@ -145,10 +145,10 @@ export class IntegrationBaseService {
   }
 
   /**
-   * Marca uma conexão OAuth como precisando de nova autorização — usado quando
-   * uma tentativa automática de refresh falha (ex.: token de longa duração do
-   * Meta expirado/revogado). Não apaga a linha: preserva o histórico e permite
-   * ao utilizador ver "precisa reconectar" em vez de "nunca conectou".
+   * Marks an OAuth connection as needing re-authorization — used when
+   * an automatic refresh attempt fails (e.g. an expired/revoked Meta long-lived
+   * token). Does not delete the row: preserves history and lets
+   * the user see "needs reconnecting" instead of "never connected".
    */
   async markOAuthNeedsReauth(tenantId: string, userId: string, provider: string): Promise<void> {
     const conn = await this.oauthRepo!
@@ -163,10 +163,10 @@ export class IntegrationBaseService {
   }
 
   /**
-   * Faz merge de metadados não-sensíveis na conexão OAuth (nunca tokens — esses
-   * vivem encriptados nas colunas próprias). Usado para cachear dados que só o
-   * provedor sabe informar depois do consentimento, ex.: account_id/base_uri do
-   * DocuSign, que vêm de /oauth/userinfo e não do token endpoint.
+   * Merges non-sensitive metadata into the OAuth connection (never tokens — those
+   * live encrypted in their own columns). Used to cache data only the
+   * provider can supply after consent, e.g. DocuSign's account_id/base_uri,
+   * which come from /oauth/userinfo and not from the token endpoint.
    */
   async saveOAuthMetadata(
     tenantId: string, userId: string, provider: string, patch: Record<string, unknown>,

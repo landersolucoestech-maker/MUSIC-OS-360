@@ -1,20 +1,20 @@
 /**
  * governance/integration-usage.guard.ts
  *
- * BACKEND ENFORCEMENT — o requisito que faltava.
+ * BACKEND ENFORCEMENT — the missing requirement.
  *
- * Esconder um card no frontend não é autorização: quem chamar a API direto
- * (curl, script, token roubado, cliente antigo em cache) passaria. Este guard
- * fecha isso no backend, consultando o MESMO policy resolver que o frontend usa.
+ * Hiding a card in the frontend is not authorization: whoever calls the API directly
+ * (curl, script, stolen token, old cached client) would get through. This guard
+ * closes that in the backend, consulting the SAME policy resolver the frontend uses.
  *
- * Uso:
+ * Usage:
  *   @UseGuards(IntegrationUsageGuard)
  *   @RequiresIntegration('docusign')
  *   createDocument(...) { ... }
  *
- * Fail-closed em todos os caminhos: provedor desconhecido, política ausente,
- * contexto de tenant ausente ou resolver indisponível → 403. Nunca "deixa
- * passar por não conseguir decidir".
+ * Fail-closed on every path: unknown provider, missing policy,
+ * missing tenant context or unavailable resolver → 403. Never "lets it
+ * through because it could not decide".
  */
 
 import {
@@ -26,10 +26,10 @@ import { IntegrationPolicyService } from './integration-policy.service';
 export const REQUIRES_INTEGRATION = 'requires_integration';
 
 /**
- * `use`     — operação real: exige tudo, inclusive conexão válida.
- * `connect` — iniciar OAuth/salvar credencial: exige publicação, capacidade
- *             técnica, audiência e entitlement, mas obviamente NÃO exige que a
- *             conta já esteja conectada (senão conectar seria impossível).
+ * `use`     — real operation: requires everything, including a valid connection.
+ * `connect` — start OAuth/save a credential: requires publication, technical
+ *             capability, audience and entitlement, but obviously does NOT require the
+ *             account to be already connected (otherwise connecting would be impossible).
  */
 export type IntegrationRequirementMode = 'use' | 'connect';
 
@@ -43,7 +43,7 @@ export const RequiresIntegration = (
   mode: IntegrationRequirementMode = 'use',
 ) => SetMetadata(REQUIRES_INTEGRATION, { providerKey, mode } as IntegrationRequirement);
 
-/** Mensagens por reason code — honestas, sem expor governança interna. */
+/** Messages per reason code — honest, without exposing internal governance. */
 const DENY_MESSAGE: Record<string, string> = {
   NOT_CUSTOMER_FACING:     'Esta integração não é uma integração de cliente.',
   HIDDEN:                  'Esta integração não está disponível nesta plataforma.',
@@ -72,7 +72,7 @@ export class IntegrationUsageGuard implements CanActivate {
       REQUIRES_INTEGRATION,
       [context.getHandler(), context.getClass()],
     );
-    // Handler não declara exigência → guard não opina.
+    // Handler declares no requirement → the guard has no opinion.
     if (!requirement?.providerKey) return true;
     const { providerKey, mode } = requirement;
 
@@ -88,8 +88,8 @@ export class IntegrationUsageGuard implements CanActivate {
     const resolved = await this.policy.resolveOne(providerKey, {
       tenantId,
       userId: userId ?? '',
-      // tenants.plan é a coluna real (TenantPlan). plan_slug/planSlug NÃO existem —
-      // lê-los fazia mode:'plans' negar para todos, em silêncio.
+      // tenants.plan is the real column (TenantPlan). plan_slug/planSlug do NOT exist —
+      // reading them made mode:'plans' deny everyone, silently.
       planSlug: req.tenant?.plan ?? null,
       tenantFeatures: (req.tenant?.features as Record<string, unknown> | undefined) ?? null,
     });

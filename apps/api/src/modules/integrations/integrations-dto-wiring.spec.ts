@@ -1,13 +1,13 @@
 /**
  * integrations-dto-wiring.spec.ts
  *
- * Prova o contrato HTTP real (ValidationPipe global real: whitelist/
- * forbidNonWhitelisted/transform) para as 4 rotas que passaram a usar
+ * Proves the real HTTP contract (real global ValidationPipe: whitelist/
+ * forbidNonWhitelisted/transform) for the 4 routes that switched to
  * RegisterAbramusWorkDto / ConfigureSoundCloudDto / OAuthCodeStateDto /
- * AutentiqueWebhookDto em vez de `any`/tipos inline. Mesmo padrão de
- * phonograms.controller.spec.ts (C2): controller real, ValidationPipe real,
- * apenas os services externos mockados. Sem guards (RequireRole não é
- * enforced fora do AppModule real, mesmo padrão do resto do módulo).
+ * AutentiqueWebhookDto instead of `any`/inline types. Same pattern as
+ * phonograms.controller.spec.ts (C2): real controller, real ValidationPipe,
+ * only the external services mocked. No guards (RequireRole is not
+ * enforced outside the real AppModule, same pattern as the rest of the module).
  */
 import { DatabaseContextService } from '../../database/database-context.service';
 import 'reflect-metadata';

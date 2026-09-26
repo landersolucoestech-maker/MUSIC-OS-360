@@ -19,8 +19,8 @@ export class IntegrationAudienceDto {
 }
 
 /**
- * Só campos de GOVERNANÇA. Capacidade técnica e conexão do tenant não entram
- * aqui de propósito — ver integration-admin.service.ts.
+ * GOVERNANCE fields only. Technical capability and the tenant connection are
+ * deliberately left out — see integration-admin.service.ts.
  */
 export class UpdatePlatformIntegrationDto {
   @ApiPropertyOptional({ description: 'Categoria (uuid) ou null para remover' })
@@ -31,7 +31,7 @@ export class UpdatePlatformIntegrationDto {
   @IsOptional() @IsIn(['hidden','coming_soon','beta','available','temporarily_unavailable'])
   publicationState?: 'hidden' | 'coming_soon' | 'beta' | 'available' | 'temporarily_unavailable';
 
-  /** Estado operacional do adapter — governável, mas vetado pela capability em código. */
+  /** Operational state of the adapter — governable, but vetoed by the in-code capability. */
   @ApiPropertyOptional({ enum: ['planned','in_development','configuring','awaiting_provider','homologating','ready','degraded','disabled','retired'] })
   @IsOptional() @IsIn(['planned','in_development','configuring','awaiting_provider','homologating','ready','degraded','disabled','retired'])
   technicalState?: string;
@@ -50,8 +50,8 @@ export class UpdatePlatformIntegrationDto {
 }
 
 /**
- * Entitlements de integração de um plano. Lista DINÂMICA de slugs comerciais —
- * sem chave por provedor, sem nome de plano em código.
+ * A plan's integration entitlements. DYNAMIC list of commercial slugs —
+ * no per-provider key, no plan name in code.
  */
 export class SetPlanIntegrationsDto {
   @ApiPropertyOptional({ type: [String], description: 'Slugs comerciais incluídos no plano' })

@@ -1,22 +1,22 @@
 /**
  * governance/integration-policy.service.ts
  *
- * POLICY RESOLVER — a composição final:
+ * POLICY RESOLVER — the final composition:
  *
- *   ADMIN GOVERNANCE (banco: publicação + audiência VIEW/USE)
- * + TECHNICAL CAPABILITY (código: existe adapter?)
- * + AUDIENCE POLICY (plano/tenant do cliente)
- * + TENANT CONNECTION (credenciais/OAuth — permanece SEPARADO)
+ *   ADMIN GOVERNANCE (database: publication + VIEW/USE audience)
+ * + TECHNICAL CAPABILITY (code: does an adapter exist?)
+ * + AUDIENCE POLICY (the customer's plan/tenant)
+ * + TENANT CONNECTION (credentials/OAuth — stays SEPARATE)
  * = RESOLVED CLIENT INTEGRATION
  *
- * Cada fator é independente e nenhum substitui o outro:
- *   - publicar não cria capacidade técnica;
- *   - capacidade técnica não concede audiência;
- *   - audiência não conecta o tenant;
- *   - estar conectado não autoriza uso se o admin revogou a audiência.
+ * Each factor is independent and none replaces another:
+ *   - publishing does not create technical capability;
+ *   - technical capability does not grant audience;
+ *   - audience does not connect the tenant;
+ *   - being connected does not authorize use if the admin revoked the audience.
  *
- * É esta função que o guard de enforcement consulta — por isso mudar a
- * governança no banco muda o comportamento do cliente SEM deploy.
+ * This is the function the enforcement guard consults — which is why changing
+ * governance in the database changes customer behavior WITHOUT a deploy.
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -53,29 +53,29 @@ export interface ResolvedIntegration {
   name: string;
   category: string | null;
   connectionKind: PlatformIntegrationEntity['connection_kind'];
-  /** Rollout comercial — separado de técnico/entitlement/conexão. */
+  /** Commercial rollout — separate from technical/entitlement/connection. */
   publicationState: IntegrationPublicationState;
-  /** Estado operacional do adapter — separado da capability em código. */
+  /** Operational state of the adapter — separate from the in-code capability. */
   technicalState: IntegrationTechnicalState;
-  /** Classificação arquitetural — comercial / interna / billing. */
+  /** Architectural classification — commercial / internal / billing. */
   classification: IntegrationClassification;
-  /** O plano do tenant inclui este slug (billing_plans.integrations)? */
+  /** Does the tenant's plan include this slug (billing_plans.integrations)? */
   entitled: boolean;
-  /** Código estável para o frontend ramificar — nunca texto humano. */
+  /** Stable code for the frontend to branch on — never human text. */
   reasonCode: IntegrationReasonCode;
-  /** Aparece no catálogo (pode estar bloqueada por plano). */
+  /** Appears in the catalog (may be blocked by plan). */
   canDiscover: boolean;
-  /** Pode iniciar conexão/OAuth — NÃO exige estar conectado. */
+  /** Can start connection/OAuth — does NOT require being connected. */
   canConnect: boolean;
   technicalCapability: IntegrationTechnicalCapability;
   capabilityEvidence: string | null;
-  /** Cliente pode ENXERGAR a integração. */
+  /** Customer can SEE the integration. */
   canView: boolean;
-  /** Cliente pode USAR (chamar endpoints). O guard depende disto. */
+  /** Customer can USE it (call endpoints). The guard depends on this. */
   canUse: boolean;
-  /** Por que USE foi negado — para diagnóstico honesto, nunca para o cliente adivinhar. */
+  /** Why USE was denied — for honest diagnostics, never for the customer to guess. */
   denyReason: string | null;
-  /** Conexão do tenant — dimensão SEPARADA da autorização. */
+  /** Tenant connection — a dimension SEPARATE from authorization. */
   connectionStatus: ExternalProviderStatus;
   missingRequirements: string[];
   lastErrorAt: string | null;
@@ -86,12 +86,12 @@ export interface TenantPolicyContext {
   tenantId: string;
   userId: string;
   /**
-   * Plano do tenant. A coluna real é `tenants.plan` (TenantPlan) — NÃO
-   * `plan_slug`. Ler o nome errado fazia `mode:'plans'` negar para todo mundo,
-   * em silêncio e fail-closed (reproduzido em runtime antes desta correção).
+   * The tenant's plan. The real column is `tenants.plan` (TenantPlan) — NOT
+   * `plan_slug`. Reading the wrong name made `mode:'plans'` deny everyone,
+   * silently and fail-closed (reproduced at runtime before this fix).
    */
   planSlug?: string | null;
-  /** Overrides por tenant (`tenants.features`), quando já carregados. */
+  /** Per-tenant overrides (`tenants.features`), when already loaded. */
   tenantFeatures?: Record<string, unknown> | null;
 }
 
@@ -117,7 +117,7 @@ export class IntegrationPolicyService {
     }
   }
 
-  /** Audiência: 'none' nega, 'all' concede, 'plans'/'tenants' casam o contexto. */
+  /** Audience: 'none' denies, 'all' grants, 'plans'/'tenants' match the context. */
   private audienceAllows(audience: IntegrationAudience | null, ctx: TenantPolicyContext): boolean {
     if (!audience) return false;
     switch (audience.mode) {
@@ -137,8 +137,8 @@ export class IntegrationPolicyService {
   }
 
   /**
-   * Planos que incluem um slug comercial — para o upgrade hint. Descoberto por
-   * consulta, nunca hardcoded: nenhum nome de plano decide acesso em código.
+   * Plans that include a commercial slug — for the upgrade hint. Discovered by
+   * query, never hardcoded: no plan name decides access in code.
    */
   async plansIncluding(providerKey: string): Promise<string[]> {
     if (!this.planRepo) return [];
@@ -153,13 +153,13 @@ export class IntegrationPolicyService {
   }
 
   /**
-   * Slugs comerciais liberados para o tenant.
+   * Commercial slugs enabled for the tenant.
    *
-   * Precedência (documentada porque é semântica, não acidente):
-   *   1. `tenants.features.integrations` — override explícito por tenant, quando
-   *      presente, VENCE o plano (mecanismo de override já existente).
-   *   2. `billing_plans.integrations` do plano ativo do tenant.
-   * Falha de leitura NUNCA vira liberação: cai em lista vazia (fail-closed).
+   * Precedence (documented because it is semantics, not accident):
+   *   1. `tenants.features.integrations` — explicit per-tenant override, when
+   *      present, BEATS the plan (existing override mechanism).
+   *   2. `billing_plans.integrations` of the tenant's active plan.
+   * A read failure NEVER becomes a grant: it falls back to an empty list (fail-closed).
    */
   private async resolveEntitledSlugs(ctx: TenantPolicyContext): Promise<string[]> {
     const override = (ctx.tenantFeatures ?? null)?.[PLAN_INTEGRATIONS_FEATURE_KEY];
@@ -178,9 +178,9 @@ export class IntegrationPolicyService {
   }
 
   /**
-   * Entitlement = o slug comercial está na lista dinâmica do plano. Estrutura
-   * genérica: uma integração comercial nova entra num plano sem schema novo e
-   * sem código por provedor.
+   * Entitlement = the commercial slug is in the plan's dynamic list. Generic
+   * structure: a new commercial integration enters a plan with no new schema and
+   * no per-provider code.
    */
   private isEntitled(providerKey: string, entitledSlugs: string[]): boolean {
     return entitledSlugs.includes(providerKey);
@@ -220,7 +220,7 @@ export class IntegrationPolicyService {
     return rows.map((row) => this.resolveRow(row, catById, integByKey, oauthByKey, ctx, features));
   }
 
-  /** Resolve um único provedor — caminho usado pelo guard de enforcement. */
+  /** Resolves a single provider — the path used by the enforcement guard. */
   async resolveOne(providerKey: string, ctx: TenantPolicyContext): Promise<ResolvedIntegration | null> {
     if (!this.platformRepo) return null;
     const row = await this.platformRepo.findOne({ where: { provider_key: providerKey } });
@@ -264,15 +264,15 @@ export class IntegrationPolicyService {
     const integ = integByKey.get(row.provider_key) ?? null;
     const oauth = oauthByKey.get(row.provider_key) ?? null;
 
-    // Conexão é dimensão SEPARADA e é resolvida antes só para poder compor o
-    // reason code — nunca para substituir autorização.
+    // Connection is a SEPARATE dimension and is resolved first only to compose the
+    // reason code — never to replace authorization.
     const connectionStatusPre = this.resolveConnectionStatus(row, integ, oauth);
 
     const classification = (row.classification as IntegrationClassification)
       ?? IntegrationClassification.COMMERCIAL;
-    // Integração interna/billing NUNCA é integração de cliente: a plataforma é
-    // que detém a credencial. Fica fora do catálogo comercial mesmo que alguém
-    // publique ou abra audiência por engano.
+    // An internal/billing integration is NEVER a customer integration: the platform
+    // holds the credential. It stays out of the commercial catalog even if someone
+    // publishes it or opens its audience by mistake.
     const customerFacing = CUSTOMER_FACING_CLASSIFICATIONS.includes(classification);
     const entitled = this.isEntitled(row.provider_key, features);
 
@@ -281,22 +281,22 @@ export class IntegrationPolicyService {
     const publication = (row.publication_state as IntegrationPublicationState)
       ?? IntegrationPublicationState.HIDDEN;
 
-    // Capability em código VETA um technical_state otimista: marcar READY sem
-    // adapter no admin não pode criar operação real.
+    // The in-code capability VETOES an optimistic technical_state: marking READY without
+    // an adapter in the admin cannot create a real operation.
     const technicalReady =
       OPERATIONAL_TECHNICAL_STATES.includes(technicalState)
       && capability === IntegrationTechnicalCapability.IMPLEMENTED;
 
-    // ── DISCOVER: aparece no catálogo? (publication + VIEW) ──────────────────
-    // Sem entitlement NÃO some — aparece bloqueada, com upgrade.
+    // ── DISCOVER: does it appear in the catalog? (publication + VIEW) ───────────
+    // Without entitlement it does NOT disappear — it appears blocked, with an upgrade.
     const viewAllowed = this.audienceAllows(row.view_audience, ctx);
     const canDiscover =
       customerFacing
       && publication !== IntegrationPublicationState.HIDDEN
       && viewAllowed;
 
-    // ── CONNECT: pode iniciar OAuth/salvar credencial? ───────────────────────
-    // NÃO exige conexão prévia (senão o próprio Connect ficaria impossível).
+    // ── CONNECT: can it start OAuth/save a credential? ──────────────────────────
+    // Does NOT require a prior connection (otherwise Connect itself would be impossible).
     const canConnect =
       canDiscover
       && publication !== IntegrationPublicationState.COMING_SOON
@@ -305,7 +305,7 @@ export class IntegrationPolicyService {
       && entitled
       && this.audienceAllows(row.use_audience, ctx);
 
-    // ── USE: operar de facto. Precisa de tudo acima + conexão válida. ────────
+    // ── USE: operate for real. Needs everything above + a valid connection. ────────
     let reasonCode: IntegrationReasonCode;
     if (!customerFacing)                                     reasonCode = IntegrationReasonCode.NOT_CUSTOMER_FACING;
     else if (publication === IntegrationPublicationState.HIDDEN)     reasonCode = IntegrationReasonCode.HIDDEN;
@@ -316,8 +316,8 @@ export class IntegrationPolicyService {
     else if (capability === IntegrationTechnicalCapability.NOT_IMPLEMENTED)
                                                              reasonCode = IntegrationReasonCode.NOT_IMPLEMENTED;
     else if (!technicalReady)                                reasonCode = IntegrationReasonCode.TECHNICAL_NOT_READY;
-    // Entitlement é avaliado DEPOIS de visibilidade: sem plano a integração
-    // continua visível e bloqueada, nunca escondida.
+    // Entitlement is evaluated AFTER visibility: without a plan the integration
+    // stays visible and blocked, never hidden.
     else if (!entitled)                                      reasonCode = IntegrationReasonCode.PLAN_NOT_INCLUDED;
     else if (!this.audienceAllows(row.use_audience, ctx))    reasonCode = IntegrationReasonCode.AUDIENCE_NOT_ALLOWED;
     else if (connectionStatusPre === ExternalProviderStatus.REQUIRES_REAUTH)
@@ -364,9 +364,9 @@ export class IntegrationPolicyService {
   }
 
   /**
-   * Conexão do tenant — dimensão independente da autorização. Um provedor pode
-   * estar CONNECTED e mesmo assim ter canUse=false (audiência revogada), e é
-   * exatamente isso que mantém as duas coisas separadas.
+   * Tenant connection — a dimension independent of authorization. A provider can
+   * be CONNECTED and still have canUse=false (audience revoked), and that is
+   * exactly what keeps the two things separate.
    */
   private resolveConnectionStatus(
     row: PlatformIntegrationEntity,
@@ -403,7 +403,7 @@ export class IntegrationPolicyService {
     return ExternalProviderStatus.CONNECTED;
   }
 
-  /** Falha só conta enquanto não houve sucesso posterior — senão fica presa para sempre. */
+  /** A failure only counts while there has been no later success — otherwise it gets stuck forever. */
   private hasUnresolvedFailure(integ: IntegrationEntity): boolean {
     const failedAt = integ.metadata?.['last_failure_at'] as string | undefined;
     if (!failedAt) return false;

@@ -78,7 +78,7 @@ describe('Per-plan entitlement — composition', () => {
 
   it('VIEW allowed + NO entitlement → VISIBLE and blocked (never hidden)', async () => {
     const [r] = await buildPolicy({ plans: [{ slug: 'enterprise', integrations: [] }] }).resolveAll(CTX);
-    expect(r.canDiscover).toBe(true);        // continua no catálogo
+    expect(r.canDiscover).toBe(true);        // still in the catalog
     expect(r.entitled).toBe(false);
     expect(r.canConnect).toBe(false);
     expect(r.canUse).toBe(false);
@@ -140,7 +140,7 @@ describe('Classification — internal/billing outside the commercial catalog', (
   }
 });
 
-/** §61 — regressão específica do bug tenant.plan vs plan_slug. */
+/** §61 — specific regression of the tenant.plan vs plan_slug bug. */
 describe('REGRESSION: per-plan audience uses tenant.plan', () => {
   it('tenant.plan="enterprise" + audience plans=["enterprise"] → MATCH', async () => {
     const [r] = await buildPolicy({
@@ -193,7 +193,7 @@ describe('IntegrationUsageGuard — enforcement', () => {
   it('mode=connect does NOT require a prior connection (otherwise connecting would be impossible)', async () => {
     const g = new IntegrationUsageGuard(
       reflectorFor({ providerKey: 'docusign', mode: 'connect' }),
-      buildPolicy(), // sem oauth → não conectado
+      buildPolicy(), // no oauth → not connected
     );
     await expect(g.canActivate(ctxFor(req))).resolves.toBe(true);
   });

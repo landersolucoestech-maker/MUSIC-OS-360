@@ -1,14 +1,14 @@
 /**
  * governance/integration-admin.service.ts
  *
- * CRUD administrativo da governança de integrações (Portal Admin → Configurações
- * → Integrações). Só escreve o que é REALMENTE governança: categoria, publicação
- * e audiência VIEW/USE.
+ * Administrative CRUD of integration governance (Admin portal → Settings
+ * → Integrations). Writes only what is REALLY governance: category, publication
+ * and VIEW/USE audience.
  *
- * Deliberadamente NÃO editável por aqui:
- *   - capacidade técnica  → é código (integration-capability.registry.ts)
- *   - conexão do tenant   → é credencial do cliente (integrations/oauth_connections)
- * Permitir "ligar" um adapter inexistente por painel seria fabricar capacidade.
+ * Deliberately NOT editable here:
+ *   - technical capability → it is code (integration-capability.registry.ts)
+ *   - tenant connection    → it is the customer's credential (integrations/oauth_connections)
+ * Allowing a nonexistent adapter to be "switched on" from a panel would fabricate capability.
  */
 
 import { Injectable, Inject, Optional, NotFoundException, BadRequestException } from '@nestjs/common';
@@ -45,16 +45,16 @@ export interface AdminIntegrationView {
   publicationState: string;
   technicalState: string;
   classification: string;
-  /** Planos que incluem este slug — read-only aqui; edição vive em Admin Plans. */
+  /** Plans that include this slug — read-only here; editing lives in Admin Plans. */
   includedInPlans: string[];
   viewAudience: IntegrationAudience;
   useAudience: IntegrationAudience;
   isCore: boolean;
   notes: string | null;
-  /** Somente leitura — vem do código, não do banco. */
+  /** Read-only — comes from code, not from the database. */
   technicalCapability: IntegrationTechnicalCapability;
   capabilityEvidence: string | null;
-  /** Publicado mas sem adapter: o admin precisa ver essa contradição. */
+  /** Published but without an adapter: the admin must see this contradiction. */
   publishedWithoutCapability: boolean;
 }
 
@@ -80,7 +80,7 @@ export class IntegrationAdminService {
   }
 
 
-  /** provider_key -> planos que o incluem (billing_plans.integrations). */
+  /** provider_key -> plans that include it (billing_plans.integrations). */
   private async loadPlanIntegrationMap(): Promise<Map<string, string[]>> {
     const map = new Map<string, string[]>();
     if (!this.planRepo) return map;
@@ -92,11 +92,11 @@ export class IntegrationAdminService {
           map.set(slug, [...(map.get(slug) ?? []), p.slug]);
         }
       }
-    } catch { /* sem planos legíveis → mapa vazio, nunca erro de catálogo */ }
+    } catch { /* no readable plans → empty map, never a catalog error */ }
     return map;
   }
 
-  /** Slugs comerciais válidos — usado para validar entitlements de plano. */
+  /** Valid commercial slugs — used to validate plan entitlements. */
   async listCommercialSlugs(): Promise<string[]> {
     this.assertRepos();
     const rows = await this.platformRepo!.find();
@@ -111,13 +111,13 @@ export class IntegrationAdminService {
   }
 
   /**
-   * Catálogo administrativo.
+   * Administrative catalog.
    *
-   * Por padrão devolve SOMENTE `commercial`: esta tela governa integrações
-   * oferecidas aos clientes, e Soundcharts/ACRCloud/Resend/Stripe deixaram de
-   * ser isso (a plataforma é dona da credencial). Eles continuam no banco —
-   * `includeNonCommercial` existe para inspeção/auditoria, não para o fluxo
-   * comercial normal.
+   * By default returns ONLY `commercial`: this screen governs integrations
+   * offered to customers, and Soundcharts/ACRCloud/Resend/Stripe stopped
+   * being that (the platform owns the credential). They remain in the database —
+   * `includeNonCommercial` exists for inspection/auditing, not for the normal
+   * commercial flow.
    */
   async list(includeNonCommercial = false): Promise<AdminIntegrationView[]> {
     this.assertRepos();
@@ -160,12 +160,12 @@ export class IntegrationAdminService {
   }
 
   /**
-   * Persiste os entitlements de integração de um plano em
-   * `billing_plans.integrations` — coluna canônica da tabela de planos.
+   * Persists a plan's integration entitlements in
+   * `billing_plans.integrations` — the canonical column of the plans table.
    *
-   * Rejeita silenciosamente (filtra) slugs que não podem ser entitlement:
-   * inexistentes, internos e billing. Entitlement comercial para infraestrutura
-   * interna não pode existir nem por engano do admin.
+   * Silently rejects (filters out) slugs that cannot be an entitlement:
+   * nonexistent, internal and billing ones. A commercial entitlement for internal
+   * infrastructure must not exist, not even by admin mistake.
    */
   async setPlanIntegrations(planSlug: string, slugs: string[]): Promise<{
     planSlug: string; integrations: string[]; rejected: string[];
@@ -180,8 +180,8 @@ export class IntegrationAdminService {
     const plan = await this.planRepo.findOne({ where: { slug: planSlug } });
     if (!plan) throw new NotFoundException(`Plano não encontrado: ${planSlug}`);
 
-    // Escrita via REPOSITÓRIO: a DataSource tenant-aware filtra UPDATE cru em
-    // billing_plans (0 linhas, sem erro) — o repo é o caminho que persiste.
+    // Write via the REPOSITORY: the tenant-aware DataSource filters a raw UPDATE on
+    // billing_plans (0 rows, no error) — the repo is the path that persists.
     await this.planRepo.update(
       { id: plan.id } as never,
       { integrations: accepted, updated_at: new Date() } as never,

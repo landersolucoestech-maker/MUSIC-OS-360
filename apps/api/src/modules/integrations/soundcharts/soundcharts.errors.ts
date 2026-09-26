@@ -1,8 +1,8 @@
 /**
  * modules/integrations/soundcharts/soundcharts.errors.ts
  *
- * Erros tipados do SoundchartsService — nunca carregam token/client_secret,
- * só a mensagem e (quando aplicável) o status HTTP.
+ * Typed SoundchartsService errors — they never carry token/client_secret,
+ * only the message and (when applicable) the HTTP status.
  */
 
 export class SoundchartsNotConfiguredError extends Error {

@@ -1,13 +1,13 @@
 /**
- * Parsing de URL de artista do Spotify, compartilhado por SpotifyService e
- * SpotifyArtistProfileProvider. Usa `URL` (hostname real) em vez de regex
- * sobre a string inteira — `evil.com/artist/xyz` ou
- * `open.spotify.com/track/xyz` nunca devem ser aceitos como artista.
+ * Spotify artist URL parsing, shared by SpotifyService and
+ * SpotifyArtistProfileProvider. Uses `URL` (real hostname) instead of a regex
+ * over the whole string — `evil.com/artist/xyz` or
+ * `open.spotify.com/track/xyz` must never be accepted as an artist.
  */
 export function parseSpotifyArtistId(value: string): string | null {
   if (!value) return null;
 
-  // ID/URI puro (sem barras) — aceito diretamente, sem parsing de URL.
+  // Bare ID/URI (no slashes) — accepted directly, without URL parsing.
   if (/^[A-Za-z0-9]{10,}$/.test(value)) return value;
 
   let url: URL;
@@ -20,8 +20,8 @@ export function parseSpotifyArtistId(value: string): string | null {
   const host = url.hostname.toLowerCase();
   if (host !== 'open.spotify.com' && !host.endsWith('.open.spotify.com')) return null;
 
-  // Segmentos do path, sem vazios (barra final ou dupla). Aceita o formato
-  // padrão `/artist/{id}` e o com prefixo de locale `/intl-pt/artist/{id}`.
+  // Path segments, without empty ones (trailing or double slash). Accepts the
+  // standard `/artist/{id}` format and the locale-prefixed `/intl-pt/artist/{id}`.
   const segments = url.pathname.split('/').filter(Boolean);
   const artistIdx = segments.indexOf('artist');
   if (artistIdx === -1 || artistIdx > 1) return null;

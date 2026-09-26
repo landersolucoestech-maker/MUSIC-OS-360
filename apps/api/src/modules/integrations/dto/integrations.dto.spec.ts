@@ -1,8 +1,8 @@
 /**
  * integrations.dto.spec.ts
  *
- * Fase 4 — testes obrigatórios para os DTOs recém-criados que substituíram
- * bodies inline/genéricos no IntegrationsController.
+ * Phase 4 — mandatory tests for the newly created DTOs that replaced
+ * inline/generic bodies in IntegrationsController.
  */
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
@@ -97,8 +97,8 @@ describe('AutentiqueWebhookDto (webhook externo — sem whitelist fechado no con
   });
 
   it('accepts extra provider fields when validated without a closed whitelist (real controller behavior)', async () => {
-    // O AutentiqueController usa @UsePipes(new ValidationPipe({ whitelist: false }))
-    // exatamente porque a Autentique pode enviar campos que não modelamos.
+    // AutentiqueController uses @UsePipes(new ValidationPipe({ whitelist: false }))
+    // precisely because Autentique may send fields we do not model.
     const errors = await validatePayload(
       AutentiqueWebhookDto,
       { event: 'document.signed', event_id: 'e1', document_id: 'd1', campo_da_autentique_nao_modelado: true },

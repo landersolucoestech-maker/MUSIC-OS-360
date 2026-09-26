@@ -136,10 +136,10 @@ export class WebhookService {
    * HMAC-SHA256 signature validation — provider-agnostic.
    * Both sides must produce the same digest from the raw body + secret.
    *
-   * `encoding` cobre a diferença real entre provedores: a maioria envia o digest
-   * em hex (default), mas o DocuSign Connect envia em base64 no header
-   * X-DocuSign-Signature-1 (ver docusign/connect-node-listener-aws). A comparação
-   * continua sendo timing-safe sobre os bytes decodificados nos dois casos.
+   * `encoding` covers the real difference between providers: most send the digest
+   * in hex (default), but DocuSign Connect sends it in base64 in the
+   * X-DocuSign-Signature-1 header (see docusign/connect-node-listener-aws). The comparison
+   * remains timing-safe over the decoded bytes in both cases.
    */
   validateHmacSignature(params: {
     rawBody:   string;
