@@ -100,7 +100,7 @@ describe('KnowledgeBaseService', () => {
       ).rejects.toBeInstanceOf(BadRequestException);
     });
 
-    it('atribui o próximo sort_order e calcula read_time a partir do conteúdo', async () => {
+    it('assigns the next sort_order and computes read_time from the content', async () => {
       const { svc, categoryQb, articleQb, articleRepo } = makeService();
       categoryQb.getOne.mockResolvedValueOnce({ id: 'cat-1' });
       articleQb.getRawOne.mockResolvedValueOnce({ max: 4 });

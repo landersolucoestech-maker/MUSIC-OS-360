@@ -36,7 +36,7 @@ beforeEach(() => {
   state.setTenant.mockClear();
 });
 
-describe("BillingProvider — tratamento de erro em refresh() (Parte 77)", () => {
+describe("BillingProvider — error handling in refresh() (Part 77)", () => {
   it("PasswordChangeRequiredError (403) never escapes as an unhandled rejection and is not logged as an unexpected error", async () => {
     state.getSubscription.mockRejectedValue(new PasswordChangeRequiredError("Troca de senha obrigatória antes de continuar."));
 

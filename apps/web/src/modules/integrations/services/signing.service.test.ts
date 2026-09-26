@@ -35,7 +35,7 @@ describe("signingService.sendForSigning", () => {
     vi.stubGlobal("fetch", vi.fn());
   });
 
-  it("baixa o arquivo, converte para base64 e chama o endpoint real do Autentique", async () => {
+  it("downloads the file, converts it to base64 and calls the real Autentique endpoint", async () => {
     const restore = mockBase64Read();
     (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
@@ -163,7 +163,7 @@ describe("signingService.sendForSigning", () => {
     expect(apiClientMock.post).not.toHaveBeenCalled();
   });
 
-  it("propaga erro honesto quando o download do arquivo falha (rede)", async () => {
+  it("propagates an honest error when the file download fails (network)", async () => {
     (fetch as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error("network down"));
 
     await expect(

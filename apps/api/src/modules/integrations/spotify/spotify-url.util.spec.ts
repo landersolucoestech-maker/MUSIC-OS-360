@@ -13,7 +13,7 @@ describe('parseSpotifyArtistId', () => {
     ).toBe('1Xyo4u8uXC1ZmMpatF05PJ');
   });
 
-  it('extrai o id com prefixo de locale (/intl-pt/artist/...)', () => {
+  it('extracts the id with a locale prefix (/intl-pt/artist/...)', () => {
     expect(
       parseSpotifyArtistId('https://open.spotify.com/intl-pt/artist/1Xyo4u8uXC1ZmMpatF05PJ'),
     ).toBe('1Xyo4u8uXC1ZmMpatF05PJ');

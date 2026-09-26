@@ -35,7 +35,7 @@ describe('financial migrations M0–M9 — static contracts', () => {
     }
   });
 
-  it('cada migration implementa up() e down() e declara name coerente', () => {
+  it('each migration implements up() and down() and declares a consistent name', () => {
     for (const f of FILES) {
       const src = read(f);
       expect(src).toMatch(/public async up\(queryRunner: QueryRunner\): Promise<void>/);
@@ -62,7 +62,7 @@ describe('financial migrations M0–M9 — static contracts', () => {
     }
   });
 
-  it('nenhum OWNER TO (ownership fica com o executor) e nenhum synchronize', () => {
+  it('no OWNER TO (ownership stays with the executor) and no synchronize', () => {
     const src = all();
     expect(src.includes('OWNER TO')).toBe(false);
     expect(src.includes('synchronize')).toBe(false);
@@ -130,7 +130,7 @@ describe('financial migrations M0–M9 — static contracts', () => {
     expect(src).toContain('UNIQUE ("tenant_id", "id")');
   });
 
-  it('M1: enums aprovados — sem paid/received/overdue/partially persistidos', () => {
+  it('M1: approved enums — no persisted paid/received/overdue/partially', () => {
     const src = read(FILES[1]);
     expect(src).toContain(`'pending', 'settled', 'cancelled', 'reversed'`);
     expect(src.includes(`'paid'`)).toBe(false);

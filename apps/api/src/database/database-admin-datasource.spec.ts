@@ -15,7 +15,7 @@ describe('createAdminDataSource — P2-7 owner-only enumeration connection', () 
     return { config: config as any, requested };
   }
 
-  it('usa DATABASE_URL e ignora APP_DATABASE_URL e DATABASE_SESSION_CONTEXT_ENABLED', async () => {
+  it('uses DATABASE_URL and ignores APP_DATABASE_URL and DATABASE_SESSION_CONTEXT_ENABLED', async () => {
     const { config, requested } = configSpy({
       NODE_ENV: 'development',
       DATABASE_URL: undefined,           // standalone → returns null before connecting

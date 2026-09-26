@@ -67,7 +67,7 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
     await waitFor(() => expect(apiMock.get).toHaveBeenCalledWith("/admin/integrations"));
   });
 
-  it("renderiza os provedores administrativos no DOM (inclusive ocultos do cliente)", async () => {
+  it("renders the admin providers in the DOM (including those hidden from the customer)", async () => {
     renderAdminSettings();
     await openIntegracoesTab();
 
@@ -105,7 +105,7 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
     expect(screen.getByTestId("use-audience-clicksign")).toBeInTheDocument();
   });
 
-  it("usa nomes humanos, nunca o slug cru", async () => {
+  it("uses human-readable names, never the raw slug", async () => {
     renderAdminSettings();
     await openIntegracoesTab();
 

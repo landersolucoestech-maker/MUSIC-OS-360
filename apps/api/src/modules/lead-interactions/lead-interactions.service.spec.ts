@@ -51,7 +51,7 @@ describe('LeadInteractionsService.list — filtro por leadId (REM-04)', () => {
 });
 
 describe('LeadInteractionsService.create — mapeamento DTO → colunas reais (REM-04)', () => {
-  it('grava lead_id/type/notes nas colunas reais da entity', async () => {
+  it('writes lead_id/type/notes to the entity\'s real columns', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       leadId: 'lead-1', type: 'call', notes: 'Ligação de follow-up',

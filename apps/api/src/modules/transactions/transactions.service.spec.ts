@@ -231,7 +231,7 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     expect(saved.categoria).toBe('streaming');
   });
 
-  it("categoria ausente (default 'outros') + regra correspondente: aplica a categoria sugerida", async () => {
+  it("absent category (default 'outros') + matching rule: applies the suggested category", async () => {
     const { service } = await buildServiceWithMatcher({ categoryId: 'cat-2', categoryName: 'servicos', ruleId: 'rule-2' });
 
     const saved = await service.create(TENANT, 'u1', {
@@ -252,7 +252,7 @@ describe('TransactionsService.create — rule-based auto-categorization (Task W)
     expect(suggestFn).toHaveBeenCalledWith(TENANT, 'DESPESA', 'Compra qualquer');
   });
 
-  it('nunca cruza tenant: passa exatamente o tenantId do chamador ao matcher', async () => {
+  it('never crosses tenants: passes exactly the caller\'s tenantId to the matcher', async () => {
     const { service, suggestFn } = await buildServiceWithMatcher({ categoryId: 'c', categoryName: 's', ruleId: 'r' });
     const otherTenant = 'tenant-other';
 

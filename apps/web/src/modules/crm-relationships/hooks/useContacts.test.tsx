@@ -16,7 +16,7 @@ import { useContacts } from "./useContacts";
 beforeEach(() => vi.clearAllMocks());
 
 describe("useContacts — estados reais de carregamento/sucesso/erro", () => {
-  it("inicia em isLoading=true e sem erro", () => {
+  it("starts with isLoading=true and no error", () => {
     vi.mocked(contactsService.list).mockReturnValue(new Promise(() => {}));
     const { result } = renderHook(() => useContacts());
     expect(result.current.isLoading).toBe(true);
@@ -48,7 +48,7 @@ describe("useContacts — estados reais de carregamento/sucesso/erro", () => {
     expect(result.current.error?.message).toBe("Falha de rede");
   });
 
-  it("createContact propaga erro do service sem criar contato local", async () => {
+  it("createContact propagates the service error without creating a local contact", async () => {
     vi.mocked(contactsService.list).mockResolvedValue([]);
     vi.mocked(contactsService.create).mockRejectedValue(new Error("422 validação"));
     const { result } = renderHook(() => useContacts());

@@ -50,7 +50,7 @@ const VALID_JSON = JSON.stringify({
 });
 
 describe('DealsCrmAutomation (ON_DEMAND: POST /clients/:id/ai/deals-crm)', () => {
-  it('deriva dealStage deterministicamente do ContractStatus real e nunca deixa o modelo reclassificar', async () => {
+  it('derives dealStage deterministically from the real ContractStatus and never lets the model reclassify', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const clients = makeClients();

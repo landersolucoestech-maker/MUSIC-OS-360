@@ -17,7 +17,7 @@ import * as path from "path";
 
 const SOURCE = fs.readFileSync(path.resolve(__dirname, "ArtistaSignupPublic.tsx"), "utf8");
 
-describe("ArtistaSignupPublic — contrato real com /public/artist-registration", () => {
+describe("ArtistaSignupPublic — real contract with /public/artist-registration", () => {
   it("calls the real backend route (not /public/artists, which never existed)", () => {
     expect(SOURCE).toMatch(/"\/public\/artist-registration"/);
     expect(SOURCE).not.toMatch(/"\/public\/artists"/);

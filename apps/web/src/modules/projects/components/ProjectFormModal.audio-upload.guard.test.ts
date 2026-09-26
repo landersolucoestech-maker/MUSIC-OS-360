@@ -19,7 +19,7 @@ describe("ProjectFormModal — audio upload uses the real backend (Task T)", () 
     expect(SOURCE).not.toMatch(/async\s*\(_file: File\)[^{]*=>\s*null/);
   });
 
-  it("usa useUploadToR2 para enviar o arquivo de fato", () => {
+  it("uses useUploadToR2 to actually upload the file", () => {
     expect(SOURCE).toMatch(/useUploadToR2/);
     expect(SOURCE).toMatch(/category:\s*"audio"/);
   });

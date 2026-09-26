@@ -24,7 +24,7 @@ describe('RemoveLegacySocietyCodeColumns20260718000016', () => {
     expect(migrationSrc).toMatch(/ALTER TABLE phonograms[\s\S]*DROP COLUMN IF EXISTS abramus_protocol/);
   });
 
-  it('valida fail-fast (NOT EXISTS em external_identifiers) antes de dropar qualquer coluna', () => {
+  it('validates fail-fast (NOT EXISTS in external_identifiers) before dropping any column', () => {
     expect(migrationSrc).toMatch(/assertFullyMigrated/);
     expect(migrationSrc).toMatch(/NOT EXISTS/);
     expect(migrationSrc).toMatch(/throw new Error/);

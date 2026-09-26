@@ -5,7 +5,7 @@ describe('RlsPoliciesSkillRunsWorkflowExecutions20260613000012', () => {
     return { query: jest.fn(async (_sql: string) => undefined) };
   }
 
-  it('cria somente RLS padrao nas duas tabelas autorizadas', async () => {
+  it('creates only default RLS on the two authorized tables', async () => {
     const qr = queryRunner();
     await new RlsPoliciesSkillRunsWorkflowExecutions20260613000012().up(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');

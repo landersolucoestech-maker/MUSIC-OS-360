@@ -19,7 +19,7 @@ describe("ContractFormModal — documents anexos persistem no contrato (REM-02)"
     expect(SOURCE).toMatch(/documents:\s*documents\s*\?\?\s*\[\]/);
   });
 
-  it("repassa o estado documents para o onSubmit em ambos os pontos de submit", () => {
+  it("passes the documents state to onSubmit at both submit points", () => {
     const matches = SOURCE.match(/onSubmit\(\{\s*\.\.\.data,\s*documents\s*\}\)/g) ?? [];
     expect(matches.length).toBeGreaterThanOrEqual(2);
   });

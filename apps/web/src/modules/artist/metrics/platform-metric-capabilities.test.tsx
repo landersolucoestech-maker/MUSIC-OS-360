@@ -77,7 +77,7 @@ describe("Real zero vs missing metric", () => {
   });
 });
 
-describe("Renderer adaptativo — plataformas com schemas diferentes", () => {
+describe("Adaptive renderer — platforms with different schemas", () => {
   it("Spotify renderiza ouvintes; SoundCloud renderiza seguidores", () => {
     const { unmount } = render(
       <AdaptivePlatformMetrics platform="spotify" values={{ monthly_listeners: 1500 }} />,

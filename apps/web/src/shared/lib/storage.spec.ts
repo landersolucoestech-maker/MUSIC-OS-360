@@ -22,7 +22,7 @@ describe("storage.list", () => {
     vi.clearAllMocks();
   });
 
-  it("preserva respostas em array", async () => {
+  it("preserves array responses", async () => {
     apiMock.get.mockResolvedValueOnce([{ id: "1", nome: "Item" }]);
 
     await expect(storage.list("items")).resolves.toEqual([
@@ -30,7 +30,7 @@ describe("storage.list", () => {
     ]);
   });
 
-  it("desembrulha o envelope paginado retornado pelos controllers", async () => {
+  it("unwraps the paginated envelope returned by the controllers", async () => {
     apiMock.get.mockResolvedValueOnce({
       data: [{ id: "1", nome: "Item" }],
       meta: { total: 1, limit: 50, offset: 0 },

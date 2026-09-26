@@ -131,8 +131,8 @@ describe("RightsMonitoring page — detail modal for orphan detection", () => {
   });
 });
 
-describe("RightsMonitoring page — Divergências tab badge", () => {
-  it("Divergências tab shows a badge count reflecting the unreconciled detection", async () => {
+describe("RightsMonitoring page — 'Divergências' tab badge", () => {
+  it("'Divergências' tab shows a badge count reflecting the unreconciled detection", async () => {
     renderPage();
 
     await waitFor(() => {

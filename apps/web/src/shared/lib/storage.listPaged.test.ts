@@ -28,7 +28,7 @@ describe("storage.listPaged", () => {
     expect(url).toContain("limit=10");
   });
 
-  it("inclui search, orderBy e filtros extra na query string", async () => {
+  it("includes search, orderBy and extra filters in the query string", async () => {
     mockedGet.mockResolvedValue({ data: [], meta: { total: 0 } });
     await storage.listPaged("artistas", {
       page: 1,
@@ -43,7 +43,7 @@ describe("storage.listPaged", () => {
     expect(url).toContain("ascending=true");
   });
 
-  it("desembrulha o envelope {data, meta:{total}} e usa o total real do backend", async () => {
+  it("unwraps the {data, meta:{total}} envelope and uses the backend's real total", async () => {
     const rows = [{ id: "a" }, { id: "b" }];
     mockedGet.mockResolvedValue({ data: rows, meta: { total: 137, offset: 0, limit: 2 } });
     const result = await storage.listPaged("artistas", { page: 1, pageSize: 2 });
@@ -72,7 +72,7 @@ describe("storage.listPaged", () => {
     });
   });
 
-  it("propaga o AbortSignal para api.get", async () => {
+  it("propagates the AbortSignal to api.get", async () => {
     mockedGet.mockResolvedValue({ data: [], meta: { total: 0 } });
     const controller = new AbortController();
     await storage.listPaged("artistas", { page: 1, pageSize: 10, signal: controller.signal });

@@ -26,7 +26,7 @@ describe('RebuildWorksInCanonicalFormOrder20260719000002', () => {
     expect(tituloIdx).toBeGreaterThan(codEntidadeIdx);
   });
 
-  it('nenhum campo funcional aparece depois de metadata/created_at/updated_at/deleted_at', () => {
+  it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const metadataIdx = block.indexOf('metadata ');
     const deletedAtIdx = block.indexOf('deleted_at ');
@@ -46,14 +46,14 @@ describe('RebuildWorksInCanonicalFormOrder20260719000002', () => {
     }
   });
 
-  it('recria o CHECK de registry_status e RLS + policies', () => {
+  it('recreates the registry_status CHECK and RLS + policies', () => {
     expect(migrationSrc).toMatch(/chk_works_registry_status/);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/tenant_isolation/);
   });
 
-  it('valida contagem antes de trocar (up e down) e possui down() honesto', () => {
+  it('validates counts before swapping (up and down) and has an honest down()', () => {
     expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });

@@ -135,7 +135,7 @@ describe('Instagram/TikTok provider — dev fallback when Soundcharts does not h
     expect((snapshot.raw_payload as Record<string, unknown>)['source']).toBe('soundcharts');
   });
 
-  it('Instagram: USE_MOCK=true em production NUNCA ativa o fallback', async () => {
+  it('Instagram: USE_MOCK=true in production NEVER activates the fallback', async () => {
     process.env['USE_MOCK'] = 'true';
     process.env['NODE_ENV'] = 'production';
     const getInstagramFollowers = jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found'));

@@ -154,7 +154,7 @@ describe('DocuSignService.handleWebhook', () => {
     );
   });
 
-  it('envelope ligado a mais de um contrato: falha fechado, nenhum contrato assinado', async () => {
+  it('envelope linked to more than one contract: fails closed, no contract signed', async () => {
     const { service, dbContext, events, webhookSvc } = buildHarness({
       matches: [
         { id: 'contract-a', tenant_id: 'tenant-a' },
@@ -169,7 +169,7 @@ describe('DocuSignService.handleWebhook', () => {
     expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-a', 'failed', expect.stringContaining('ambiguous'));
   });
 
-  it('contrato fora de awaiting_signature: status inalterado, sem CONTRACT_SIGNED', async () => {
+  it('contract outside awaiting_signature: status unchanged, no CONTRACT_SIGNED', async () => {
     const { service, events, manager, webhookSvc } = buildHarness({ signedRows: 0 });
     const { raw, signature } = signedBody(completedPayload);
 
@@ -199,7 +199,7 @@ describe('DocuSignService.handleWebhook', () => {
     expect(events.emitTyped).not.toHaveBeenCalled();
   });
 
-  it('trata evento duplicado como no-op idempotente', async () => {
+  it('treats a duplicate event as an idempotent no-op', async () => {
     const { service, webhookSvc, adminQb } = buildHarness();
     (webhookSvc.ingest as jest.Mock).mockResolvedValueOnce({
       isDuplicate: true, eventId: 'webhook-a', status: 'processed',
@@ -235,7 +235,7 @@ describe('DocuSignService.handleWebhook', () => {
       expect(dbContext.runInTenantContext).not.toHaveBeenCalled();
     });
 
-    it('falha no processamento do webhook propaga o erro (5xx) em vez de engolir para 200, permitindo retry do provedor', async () => {
+    it('a webhook processing failure propagates the error (5xx) instead of swallowing it into 200, allowing the provider to retry', async () => {
       const { service, dbContext, webhookSvc } = buildHarness({ tenantActive: true });
       const { raw, signature } = signedBody(completedPayload);
 

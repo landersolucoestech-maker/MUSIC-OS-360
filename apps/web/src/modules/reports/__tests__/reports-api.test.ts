@@ -45,7 +45,7 @@ describe("reportsApi — reports center, real data only", () => {
     expect(apiClientMock.get).toHaveBeenCalledWith("/reports/definitions");
   });
 
-  it("exportBlob chama o endpoint real com token, tenant e query params", async () => {
+  it("exportBlob calls the real endpoint with token, tenant and query params", async () => {
     const signature = new Uint8Array([0x50, 0x4b, 0x03, 0x04]);
     const blob = {
       slice: vi.fn(() => ({

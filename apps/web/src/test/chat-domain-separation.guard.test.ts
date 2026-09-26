@@ -39,7 +39,7 @@ const INTERNAL_TEAM_TERMS = [
 ];
 
 describe("Permanent guard: internal chat and the support center never mix", () => {
-  it("ChatInternoView.tsx e SupportCenterView.tsx existem como componentes isolados", () => {
+  it("ChatInternoView.tsx and SupportCenterView.tsx exist as isolated components", () => {
     expect(fs.existsSync(path.resolve(SRC_ROOT, CHAT_INTERNO_VIEW))).toBe(true);
     expect(fs.existsSync(path.resolve(SRC_ROOT, SUPPORT_CENTER_VIEW))).toBe(true);
   });
@@ -66,7 +66,7 @@ describe("Permanent guard: internal chat and the support center never mix", () =
     expect(hits).toEqual([]);
   });
 
-  it("nenhum dos dois componentes usa Radix Tabs forceMount (causa raiz do bug original)", () => {
+  it("neither component uses Radix Tabs forceMount (root cause of the original bug)", () => {
     expect(readCode(CHAT_INTERNO_VIEW)).not.toMatch(/forceMount/);
     expect(readCode(SUPPORT_CENTER_VIEW)).not.toMatch(/forceMount/);
   });
@@ -75,7 +75,7 @@ describe("Permanent guard: internal chat and the support center never mix", () =
     expect(readCode(MUSICCHAT_PAGE)).not.toMatch(/forceMount/);
   });
 
-  it("MusicChat.tsx monta os dois tabs a partir dos componentes isolados corretos", () => {
+  it("MusicChat.tsx mounts both tabs from the correct isolated components", () => {
     const content = read(MUSICCHAT_PAGE);
     expect(content).toMatch(/<ChatInternoView\s*\/>/);
     expect(content).toMatch(/<SupportCenterView/);

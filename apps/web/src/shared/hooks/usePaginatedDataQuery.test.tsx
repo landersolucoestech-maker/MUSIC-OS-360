@@ -101,7 +101,7 @@ describe("usePaginatedDataQuery", () => {
     expect(mockedListPaged).toHaveBeenCalledTimes(2);
   });
 
-  it("passa search sob o searchParam configurado e restringe os resultados", async () => {
+  it("passes search under the configured searchParam and narrows the results", async () => {
     const { result } = renderHook(
       () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 1, pageSize: 10, search: "Registro 7" }),
       { wrapper: createWrapper() },
@@ -145,7 +145,7 @@ describe("usePaginatedDataQuery", () => {
     expect(mockedListPaged).toHaveBeenCalledTimes(2);
   });
 
-  it("encaminha o AbortSignal do React Query para storage.listPaged", async () => {
+  it("forwards the React Query AbortSignal to storage.listPaged", async () => {
     const { result } = renderHook(
       () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 1, pageSize: 10 }),
       { wrapper: createWrapper() },

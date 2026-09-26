@@ -15,7 +15,7 @@ const migrationSrc = fs.readFileSync(
 describe('RebuildPayrollEntriesInCanonicalFormOrder20260719000019', () => {
   const block = () => migrationSrc.split('newColumns = `')[1].split('`;')[0];
 
-  it('funcionario_id/employee_id e mes_referencia/competencia ficam em pares adjacentes (campo real primeiro)', () => {
+  it('funcionario_id/employee_id and mes_referencia/competencia sit in adjacent pairs (real field first)', () => {
     const b = block();
     const funcionarioIdx = b.indexOf('funcionario_id');
     const employeeIdx = b.indexOf('employee_id');
@@ -64,7 +64,7 @@ describe('RebuildPayrollEntriesInCanonicalFormOrder20260719000019', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria FK fk_payroll_entries_employee_id (ON DELETE RESTRICT) e recria RLS + policies, com down() honesto', () => {
+  it('recreates FK fk_payroll_entries_employee_id (ON DELETE RESTRICT) and RLS + policies, with an honest down()', () => {
     expect(migrationSrc.match(/FOREIGN KEY \(employee_id\) REFERENCES employees\(id\) ON DELETE RESTRICT/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);

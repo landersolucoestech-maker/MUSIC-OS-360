@@ -40,7 +40,7 @@ describe('TransactionEventsHandler — P2-9', () => {
     expect(contractRepo.createQueryBuilder).not.toHaveBeenCalled();
   });
 
-  it('transaction.paid avalia financial rules com o trigger correto', async () => {
+  it('transaction.paid evaluates financial rules with the correct trigger', async () => {
     const { handler, financialRules } = build();
     await handler.onTransactionPaid({ tenantId: 't1', payload, correlationId: null } as any);
     expect(financialRules.evaluateRules).toHaveBeenCalledWith(
@@ -52,7 +52,7 @@ describe('TransactionEventsHandler — P2-9', () => {
   describe('onTransactionCreated', () => {
     const createdPayload = { transactionId: 'tx2', type: 'receita', category: 'royalties', valor: '250' };
 
-    it('avalia financial rules com o trigger transaction.created', async () => {
+    it('evaluates financial rules with the transaction.created trigger', async () => {
       const { handler, financialRules } = build();
       await handler.onTransactionCreated({ tenantId: 't1', payload: createdPayload } as any);
       expect(financialRules.evaluateRules).toHaveBeenCalledWith(

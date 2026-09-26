@@ -45,7 +45,7 @@ const VALID_JSON = JSON.stringify({
 });
 
 describe('CopywritingAutomation (ON_DEMAND: POST /marketing/tasks/:id/ai/copywriting)', () => {
-  it('gera rascunho a partir do contexto real da tarefa, isDraft sempre true', async () => {
+  it('generates a draft from the task\'s real context, isDraft always true', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const tasks = makeTasks();

@@ -107,7 +107,7 @@ describe('evaluateRealtimeState', () => {
     expect(result.state).toBe('DRIFT');
   });
 
-  it('INVALID_POLICY: nomes corretos mas predicado divergente (ex.: comparando org_id errado)', () => {
+  it('INVALID_POLICY: correct names but a diverging predicate (e.g. comparing the wrong org_id)', () => {
     const result = evaluateRealtimeState({
       tableExists: true,
       rlsEnabled: true,

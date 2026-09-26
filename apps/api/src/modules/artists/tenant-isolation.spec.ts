@@ -87,7 +87,7 @@ function makeDataSource(getOneValue: unknown = artistOfA) {
 }
 
 describe('Tenant Isolation - ArtistsService', () => {
-  it('list() devolve apenas artistas do tenant correcto', async () => {
+  it('list() returns only the correct tenant\'s artists', async () => {
     const ds = makeDataSource();
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock(), makePlanLimitMock());
 
@@ -101,7 +101,7 @@ describe('Tenant Isolation - ArtistsService', () => {
     );
   });
 
-  it('findById() retorna artista quando tenant coincide', async () => {
+  it('findById() returns the artist when the tenant matches', async () => {
     const ds = makeDataSource();
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock(), makePlanLimitMock());
 
@@ -109,14 +109,14 @@ describe('Tenant Isolation - ArtistsService', () => {
     expect(result.id).toBe(artistOfA.id);
   });
 
-  it('findById() lanca NotFoundException ao aceder a artista de outro tenant', async () => {
+  it('findById() throws NotFoundException when accessing another tenant\'s artist', async () => {
     const ds = makeDataSource(null);
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock(), makePlanLimitMock());
 
     await expect(service.findById(TENANT_B, artistOfA.id)).rejects.toThrow(NotFoundException);
   });
 
-  it('update() lanca NotFoundException ao atualizar artista de outro tenant', async () => {
+  it('update() throws NotFoundException when updating another tenant\'s artist', async () => {
     const ds = makeDataSource(null);
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock(), makePlanLimitMock());
 

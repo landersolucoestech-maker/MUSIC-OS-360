@@ -36,7 +36,7 @@ describe("deriveMaskedSupabaseRef", () => {
     expect(deriveMaskedSupabaseRef("https://rypnevnfipygyhysqpdo.supabase.co")).toBe("rypn…qpdo");
   });
 
-  it("nunca inclui o ref inteiro nem a URL completa", () => {
+  it("never includes the whole ref or the full URL", () => {
     const masked = deriveMaskedSupabaseRef("https://rypnevnfipygyhysqpdo.supabase.co");
     expect(masked).not.toContain("rypnevnfipygyhysqpdo");
   });

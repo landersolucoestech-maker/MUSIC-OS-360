@@ -32,7 +32,7 @@ describe('RebuildPhonogramsInCanonicalFormOrder20260719000003', () => {
     expect(compositoresIdx).toBeGreaterThan(participacaoIdx);
   });
 
-  it('nenhum campo funcional aparece depois de metadata/created_at/updated_at/deleted_at', () => {
+  it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const deletedAtIdx = block.indexOf('deleted_at ');
     const afterDeletedAt = block.slice(deletedAtIdx + 'deleted_at'.length).trim();
@@ -58,7 +58,7 @@ describe('RebuildPhonogramsInCanonicalFormOrder20260719000003', () => {
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
   });
 
-  it('valida contagem antes de trocar (up e down) e possui down() honesto', () => {
+  it('validates counts before swapping (up and down) and has an honest down()', () => {
     expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });

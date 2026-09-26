@@ -23,13 +23,13 @@ const CATEGORIES_SERVICE_SOURCE = fs.readFileSync(
   "utf8",
 );
 
-describe("FinanceCategoryRules — nenhuma chamada aponta para o endpoint inexistente", () => {
+describe("FinanceCategoryRules — no call targets the nonexistent endpoint", () => {
   it("the page neither imports nor references /financial-categories/rules", () => {
     expect(PAGE_SOURCE).not.toMatch(/financial-categories\/rules/);
     expect(PAGE_SOURCE).not.toMatch(/financeCategorizationRulesService/);
   });
 
-  it("finance-category-rules.service.ts usa apenas /finance-category-rules", () => {
+  it("finance-category-rules.service.ts uses only /finance-category-rules", () => {
     expect(RULES_SERVICE_SOURCE).not.toMatch(/financial-categories\/rules/);
     expect(RULES_SERVICE_SOURCE).toMatch(/\/finance-category-rules/);
   });

@@ -13,7 +13,7 @@ import * as path from "path";
 const FILE_PATH = path.resolve(__dirname, "useUsuarios.ts");
 const SOURCE = fs.readFileSync(FILE_PATH, "utf8");
 
-describe("useUsuarios — contratos de perfil e RBAC", () => {
+describe("useUsuarios — profile and RBAC contracts", () => {
   it("traduz full_name para fullName no PATCH de perfil", () => {
     expect(SOURCE).toMatch(/fullName:\s*full_name/);
     expect(SOURCE).toMatch(/api\.patch\(`\/users\/\$\{id\}`,\s*profilePayload\)/);

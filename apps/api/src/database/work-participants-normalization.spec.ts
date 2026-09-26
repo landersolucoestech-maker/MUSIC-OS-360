@@ -66,7 +66,7 @@ describe('WorkParticipantEntity — tabela filha normalizada', () => {
 });
 
 describe('Migration WorkParticipantsNormalization20260718000011 — data safety', () => {
-  it('aborta (fail-fast) se houver item de participantes em formato desconhecido', () => {
+  it('aborts (fail-fast) if any participantes item has an unknown format', () => {
     expect(migrationSrc).toMatch(/NOT \(item \? 'nome'\)/);
     expect(migrationSrc).toMatch(/throw new Error/);
   });
@@ -93,7 +93,7 @@ describe('Migration WorkParticipantsNormalization20260718000011 — data safety'
     expect(migrationSrc).toMatch(/jsonb_agg/);
   });
 
-  it('habilita RLS com tenant_isolation na tabela filha', () => {
+  it('enables RLS with tenant_isolation on the child table', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/tenant_isolation/);
   });

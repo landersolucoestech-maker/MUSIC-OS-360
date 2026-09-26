@@ -53,7 +53,7 @@ describe("artists domain — the tipo field (artist line-up) was removed, not no
     expect(preserved).not.toHaveProperty("tipoArtista");
   });
 
-  it("formToArtistPayload() nunca envia a chave tipo ao backend", () => {
+  it("formToArtistPayload() never sends the tipo key to the backend", () => {
     const fields = artistToFormFields({ nome_artistico: "X" } as never);
     const payload = formToArtistPayload({ ...fields, contratoId: "" });
     expect(payload).not.toHaveProperty("tipo");

@@ -79,7 +79,7 @@ describe('ContractExpiryScheduler — P2-7 admin discovery', () => {
     expect(updateWhereCalls(adminRepo).length).toBe(0);
   });
 
-  it('fallback: sem ADMIN_DATA_SOURCE, descoberta usa DATA_SOURCE', async () => {
+  it('fallback: without ADMIN_DATA_SOURCE, discovery uses DATA_SOURCE', async () => {
     const appRepo = makeRepo({ rawMany: [{ tenant_id: TENANT_A }], manyByTenant: { [TENANT_A]: [contract(TENANT_A, 'c1')] } });
     const sched = new ContractExpiryScheduler(dsOf(appRepo), events, dbContext, null);
 

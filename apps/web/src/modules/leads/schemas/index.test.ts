@@ -52,7 +52,7 @@ describe("leadValidationSchema — dadosInternosCRM.valorEstimado/probabilidadeF
     expect(result.success).toBe(false);
   });
 
-  it("rejeita campo desconhecido em dadosInternosCRM (.strict())", () => {
+  it("rejects an unknown field in dadosInternosCRM (.strict())", () => {
     const result = leadValidationSchema.safeParse({
       ...basePayload,
       dadosInternosCRM: { statusLead: "novo", campoInventado: "x" },

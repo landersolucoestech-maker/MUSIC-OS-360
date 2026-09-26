@@ -13,7 +13,7 @@ import { describe, it, expect } from "vitest";
 import { splitDateTime, combineDateTime } from "./date-time";
 
 describe("splitDateTime", () => {
-  it("separa um ISO datetime real em data (YYYY-MM-DD) e hora (HH:mm)", () => {
+  it("splits a real ISO datetime into date (YYYY-MM-DD) and time (HH:mm)", () => {
     expect(splitDateTime("2026-08-20T14:30:00.000Z")).toEqual(
       (() => {
         const d = new Date("2026-08-20T14:30:00.000Z");

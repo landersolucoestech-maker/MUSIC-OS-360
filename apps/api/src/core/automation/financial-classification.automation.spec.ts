@@ -126,7 +126,7 @@ describe('FinancialClassificationAutomation (transaction.created → financial-c
     expect(meta.aiClassification.parsed.costCenter).toBe('marketing');
   });
 
-  it('mapeia direction=income para receita', async () => {
+  it('maps direction=income to receita', async () => {
     const row = { ...TX_ROW, type: 'receita', descricao: 'Royalties Spotify' };
     const { ds } = makeDs([row]);
     const skillRun = makeSkillRun();

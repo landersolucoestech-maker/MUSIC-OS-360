@@ -41,7 +41,7 @@ describe('CreateShotDto', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejeita valor negativo em estimated_duration_sec (@Min(0))', async () => {
+  it('rejects a negative estimated_duration_sec (@Min(0))', async () => {
     const errors = await validatePayload(CreateShotDto, { estimated_duration_sec: -5 });
     expect(errors.length).toBeGreaterThan(0);
   });
@@ -92,7 +92,7 @@ describe('ReorderShotsDto', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejeita lista excedendo o limite de 500 (exceeded limit)', async () => {
+  it('rejects a list exceeding the limit of 500 (exceeded limit)', async () => {
     const ids = Array.from({ length: 501 }, () => '4b7f2b7e-8b0a-4b4a-9b0a-8b0a4b4a9b0a');
     const errors = await validatePayload(ReorderShotsDto, { ids });
     expect(errors.length).toBeGreaterThan(0);
@@ -120,7 +120,7 @@ describe('CreateTaskDto / UpdateTaskDto', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('TASK_STATUSES corresponde exatamente ao CHECK constraint da tabela audiovisual_tasks', () => {
+  it('TASK_STATUSES matches the audiovisual_tasks CHECK constraint exactly', () => {
     expect(TASK_STATUSES).toEqual(['pending', 'in_progress', 'blocked', 'done', 'cancelled']);
   });
 
@@ -216,7 +216,7 @@ describe('CreateAudiovisualProjectDto — regression of the real bug (audit 2026
     }
   });
 
-  it('rejeita capture_status maior que 30 caracteres (coluna varchar(30))', async () => {
+  it('rejects a capture_status longer than 30 characters (varchar(30) column)', async () => {
     const errors = await validatePayload(CreateAudiovisualProjectDto, { ...REAL_FORM_PAYLOAD, capture_status: 'x'.repeat(31) });
     expect(errors.some((e) => e.property === 'capture_status')).toBe(true);
   });

@@ -38,7 +38,7 @@ describe('RebuildEventsInCanonicalFormOrder20260719000007', () => {
     expect(migrationSrc).toMatch(/presumida órfã, mas há dado real/);
   });
 
-  it('nenhum campo funcional aparece depois de metadata/created_at/updated_at/deleted_at', () => {
+  it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const deletedAtIdx = block.indexOf('deleted_at');
     const afterDeletedAt = block.slice(deletedAtIdx + 'deleted_at'.length).trim();

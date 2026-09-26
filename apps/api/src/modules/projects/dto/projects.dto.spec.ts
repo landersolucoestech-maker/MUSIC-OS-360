@@ -43,7 +43,7 @@ describe('CreateProjectDto — real canonical contract (audit 2026-07-18)', () =
     expect(errors).toEqual([]);
   });
 
-  it('rejeita os nomes em inglês do DTO antigo (type/artistId/budget/currency/startsAt/deadlineAt/releasedAt) — "title" passou a canônico em 2026-09-05', async () => {
+  it('rejects the old DTO\'s English names (type/artistId/budget/currency/startsAt/deadlineAt/releasedAt) — "title" became canonical on 2026-09-05', async () => {
     for (const key of ['type', 'artistId', 'budget', 'currency', 'startsAt', 'deadlineAt', 'releasedAt']) {
       const errors = await validatePayload({ ...REAL_FORM_PAYLOAD, [key]: 'x' });
       expect(errors.some((e) => e.property === key)).toBe(true);
@@ -62,7 +62,7 @@ describe('CreateProjectDto — real canonical contract (audit 2026-07-18)', () =
 });
 
 describe('CreateProjectDto — artist_id/orcamento (GAP-0001 / DEC-001)', () => {
-  it('aceita artist_id e orcamento enviados pelo ProjectFormModal', async () => {
+  it('accepts artist_id and orcamento sent by ProjectFormModal', async () => {
     expect(await validatePayload({ ...REAL_FORM_PAYLOAD, orcamento: 15000.5 })).toEqual([]);
   });
 

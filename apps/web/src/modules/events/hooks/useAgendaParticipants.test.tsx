@@ -50,7 +50,7 @@ describe("useAgendaParticipants", () => {
     }) as typeof storage.listPaged);
   });
 
-  it("busca real: encontra o artista #75 (fora do antigo cap de 50) digitando o nome", async () => {
+  it("real search: finds artist #75 (beyond the old cap of 50) by typing the name", async () => {
     const { result, rerender } = renderHook(
       ({ search }: { search: string }) => useAgendaParticipants(search),
       { wrapper: createWrapper(), initialProps: { search: "" } },

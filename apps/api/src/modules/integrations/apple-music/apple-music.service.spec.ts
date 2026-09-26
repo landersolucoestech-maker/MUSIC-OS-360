@@ -75,7 +75,7 @@ describe('AppleMusicService', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('configure(): persiste team_id/key_id/private_key cifrados — nunca em texto plano', async () => {
+  it('configure(): persists team_id/key_id/private_key encrypted — never in plain text', async () => {
     await service.configure(TENANT_A, 'TEAM123', 'KEY456', TEST_PRIVATE_KEY);
 
     const raw = [...integRepo._rows.values()][0];

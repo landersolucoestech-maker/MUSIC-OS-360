@@ -80,7 +80,7 @@ const apiRow = {
 describe("leadsService — always delegates to the real API (no local state)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("list() chama GET /leads e traduz o formato da API para Lead", async () => {
+  it("list() calls GET /leads and maps the API shape to Lead", async () => {
     vi.mocked(api.get).mockResolvedValue([apiRow] as never);
 
     const result = await leadsService.list();
@@ -115,7 +115,7 @@ describe("leadsService — always delegates to the real API (no local state)", (
     expect(api.delete).toHaveBeenCalledWith("/leads/1");
   });
 
-  it("propaga erros da API sem mascarar (nenhum fallback de sucesso local)", async () => {
+  it("propagates API errors without masking (no local success fallback)", async () => {
     vi.mocked(api.get).mockRejectedValue(new Error("network down"));
     await expect(leadsService.list()).rejects.toThrow("network down");
   });

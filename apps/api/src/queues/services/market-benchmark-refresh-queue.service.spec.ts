@@ -50,7 +50,7 @@ describe('MarketBenchmarkRefreshQueueService', () => {
     expect(add).not.toHaveBeenCalled();
   });
 
-  it('job anterior FALHOU: remove o job antigo e tenta uma nova rodada limpa', async () => {
+  it('the previous job FAILED: removes the old job and tries a fresh clean run', async () => {
     const oldJob = fakeJob('failed');
     const add = jest.fn().mockResolvedValue({ id: 'job-2' });
     const getJob = jest.fn().mockResolvedValue(oldJob);
@@ -82,7 +82,7 @@ describe('MarketBenchmarkRefreshQueueService', () => {
     expect(a).not.toBe(c);
   });
 
-  it('getRefreshState reflete o estado real do job quando existe', async () => {
+  it('getRefreshState reflects the real job state when it exists', async () => {
     const getJob = jest.fn().mockResolvedValue(fakeJob('active'));
     const queue = { getJob } as never;
     const service = new MarketBenchmarkRefreshQueueService(queue);

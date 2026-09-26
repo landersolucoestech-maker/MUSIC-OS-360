@@ -102,7 +102,7 @@ describe('FinancialCategoriesService.remove()', () => {
     await expect(svc.remove(TENANT, 'user-1', CATEGORY_ID)).rejects.toThrow(ConflictException);
   });
 
-  it('categoria inexistente: 404 antes de qualquer checagem de uso', async () => {
+  it('nonexistent category: 404 before any usage check', async () => {
     const { svc, query } = makeService((sql) => {
       if (sql.includes('SELECT *') && sql.includes('FROM financial_categories')) return [];
       throw new Error(`unexpected query: ${sql}`);

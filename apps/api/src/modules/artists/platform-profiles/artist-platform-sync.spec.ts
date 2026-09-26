@@ -568,7 +568,7 @@ describe('ArtistPlatformSyncProcessor', () => {
     }));
   });
 
-  it('roteia job de Deezer para o DeezerArtistProfileProvider e persiste fas', async () => {
+  it('routes a Deezer job to DeezerArtistProfileProvider and persists fans', async () => {
     const findOne = jest.fn().mockResolvedValue({
       id: 'artist-1',
       tenant_id: 'tenant-1',
@@ -614,7 +614,7 @@ describe('ArtistPlatformSyncProcessor', () => {
     expect(profiles.markFailed).not.toHaveBeenCalled();
   });
 
-  it('roteia job de SoundCloud para o SoundCloudArtistProfileProvider e persiste seguidores do PERFIL DO ARTISTA', async () => {
+  it('routes a SoundCloud job to SoundCloudArtistProfileProvider and persists the ARTIST PROFILE followers', async () => {
     const findOne = jest.fn().mockResolvedValue({
       id: 'artist-1',
       tenant_id: 'tenant-1',

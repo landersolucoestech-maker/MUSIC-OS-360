@@ -163,7 +163,7 @@ async function main(): Promise<void> {
     expect(r.status, 'status').toBe(200);
   }, !hasTenant);
 
-  await test('GET /artists -> 200 com dados', async () => {
+  await test('GET /artists -> 200 with data', async () => {
     const r = await request('GET', '/artists');
     expect(r.status, 'status').toBe(200);
     const d = r.data as { data?: unknown[] };

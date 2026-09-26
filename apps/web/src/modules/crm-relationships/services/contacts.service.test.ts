@@ -65,7 +65,7 @@ const wireRow = {
 describe("contactsService — always delegates to the real clientsService (no local state)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("list() chama clientsService.list() e traduz o formato da API para Contact", async () => {
+  it("list() calls clientsService.list() and maps the API shape to Contact", async () => {
     vi.mocked(clientsService.list).mockResolvedValue([wireRow] as never);
 
     const result = await contactsService.list();
@@ -112,7 +112,7 @@ describe("contactsService — always delegates to the real clientsService (no lo
     expect(clientsService.remove).toHaveBeenCalledWith("c1");
   });
 
-  it("propaga erros do clientsService sem mascarar (nenhum fallback de sucesso local)", async () => {
+  it("propagates clientsService errors without masking (no local success fallback)", async () => {
     vi.mocked(clientsService.list).mockRejectedValue(new Error("network down"));
     await expect(contactsService.list()).rejects.toThrow("network down");
   });

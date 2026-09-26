@@ -104,7 +104,7 @@ describe('TikTokArtistProfileProvider.resolve (Phase 1.3 — the registered hand
     expect(snapshot.raw_payload.primary_identity_status).toBe('INSUFFICIENT_EVIDENCE');
   });
 
-  it('4) handle cadastrado não indexado, registry do canônico aponta OUTRA conta de TikTok: rejeita o dado do canônico — nunca herda audiência de outra conta', async () => {
+  it('4) the registered handle is not indexed and the canonical registry points to ANOTHER TikTok account: rejects the canonical data — never inherits another account\'s audience', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found', 404)),

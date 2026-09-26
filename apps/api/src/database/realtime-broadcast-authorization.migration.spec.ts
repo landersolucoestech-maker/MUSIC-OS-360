@@ -5,7 +5,7 @@ describe('RealtimeBroadcastAuthorization20260801000001', () => {
     return { query: jest.fn(async (_sql: string) => undefined) };
   }
 
-  it('habilita RLS em realtime.messages e cria policies de leitura por topic', async () => {
+  it('enables RLS on realtime.messages and creates per-topic read policies', async () => {
     const qr = queryRunner();
     await new RealtimeBroadcastAuthorization20260801000001().up(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');

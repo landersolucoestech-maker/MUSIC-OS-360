@@ -42,7 +42,7 @@ describe('RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006', () => {
     expect(migrationSrc).toMatch(/presumidas órfãs, mas há dado real/);
   });
 
-  it('nenhum campo funcional aparece depois de metadata/created_at/updated_at/deleted_at', () => {
+  it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const deletedAtIdx = block.indexOf('deleted_at');
     const afterDeletedAt = block.slice(deletedAtIdx + 'deleted_at'.length).trim();
@@ -61,7 +61,7 @@ describe('RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006', () => {
     expect(migrationSrc.match(/CREATE POLICY tenant_isolation ON audiovisual_projects/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('recria RLS + FORCE RLS, valida contagem antes de trocar e possui down() honesto', () => {
+  it('recreates RLS + FORCE RLS, validates counts before swapping and has an honest down()', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);

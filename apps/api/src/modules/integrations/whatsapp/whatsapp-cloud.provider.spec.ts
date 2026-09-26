@@ -92,7 +92,7 @@ describe('WhatsAppCloudProvider', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('configure(): persiste credenciais cifradas — nunca o accessToken em texto plano', async () => {
+  it('configure(): persists encrypted credentials — never the accessToken in plain text', async () => {
     await configureOk(TENANT_A, '1234567890', 'secret-token-xyz', 'waba-456');
     const raw = [...integRepo._rows.values()][0];
     expect(raw.credentials_encrypted).not.toContain('secret-token-xyz');
@@ -102,7 +102,7 @@ describe('WhatsAppCloudProvider', () => {
 
   // ── outbound ─────────────────────────────────────────────────────────────────
 
-  it('envio outbound de texto: sucesso retorna o id da mensagem', async () => {
+  it('outbound text send: success returns the message id', async () => {
     await configureOk(TENANT_A, '1234567890', 'token', 'waba-456');
     fetchMock.mockResolvedValueOnce({ ok: true, json: async () => ({ messages: [{ id: 'wamid.ABC' }] }) });
 

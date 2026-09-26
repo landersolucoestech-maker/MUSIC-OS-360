@@ -38,7 +38,7 @@ describe('RegisterAbramusWorkDto', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejeita compositor ausente (missing required)', async () => {
+  it('rejects an absent compositor (missing required)', async () => {
     const errors = await validatePayload(RegisterAbramusWorkDto, { titulo: 'Obra X' });
     expect(errors.length).toBeGreaterThan(0);
   });
@@ -96,7 +96,7 @@ describe('AutentiqueWebhookDto (webhook externo — sem whitelist fechado no con
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('aceita campos extras do provedor quando validado sem whitelist fechado (comportamento do controller real)', async () => {
+  it('accepts extra provider fields when validated without a closed whitelist (real controller behavior)', async () => {
     // O AutentiqueController usa @UsePipes(new ValidationPipe({ whitelist: false }))
     // exatamente porque a Autentique pode enviar campos que não modelamos.
     const errors = await validatePayload(

@@ -78,7 +78,7 @@ describe('RebuildLeaveRequestsInCanonicalFormOrder20260719000025', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria FK fk_leave_requests_employee_id (ON DELETE RESTRICT) e RLS + as duas policies, com down() honesto', () => {
+  it('recreates FK fk_leave_requests_employee_id (ON DELETE RESTRICT) and RLS + both policies, with an honest down()', () => {
     expect(migrationSrc.match(/FOREIGN KEY \(employee_id\) REFERENCES employees\(id\) ON DELETE RESTRICT/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);

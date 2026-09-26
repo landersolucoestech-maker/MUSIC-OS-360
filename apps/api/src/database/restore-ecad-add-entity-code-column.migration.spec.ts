@@ -17,7 +17,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RestoreEcadAddEntityCodeColumn20260718000017', () => {
-  it('recria cod_ecad e cria cod_entidade em works e phonograms', () => {
+  it('recreates cod_ecad and creates cod_entidade on works and phonograms', () => {
     expect(migrationSrc).toMatch(/ALTER TABLE works[\s\S]*ADD COLUMN IF NOT EXISTS cod_ecad/);
     expect(migrationSrc).toMatch(/ALTER TABLE works[\s\S]*ADD COLUMN IF NOT EXISTS cod_entidade/);
     expect(migrationSrc).toMatch(/ALTER TABLE phonograms[\s\S]*ADD COLUMN IF NOT EXISTS cod_ecad/);

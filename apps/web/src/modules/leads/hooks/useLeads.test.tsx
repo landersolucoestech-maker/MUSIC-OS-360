@@ -16,7 +16,7 @@ import { useLeads } from "./index";
 beforeEach(() => vi.clearAllMocks());
 
 describe("useLeads — estados reais de carregamento/sucesso/erro", () => {
-  it("inicia em isLoading=true e sem erro", () => {
+  it("starts with isLoading=true and no error", () => {
     vi.mocked(leadsService.list).mockReturnValue(new Promise(() => {}));
     const { result } = renderHook(() => useLeads());
     expect(result.current.isLoading).toBe(true);
@@ -48,7 +48,7 @@ describe("useLeads — estados reais de carregamento/sucesso/erro", () => {
     expect(result.current.error?.message).toBe("Falha de rede");
   });
 
-  it("createLead propaga erro do service sem criar lead local", async () => {
+  it("createLead propagates the service error without creating a local lead", async () => {
     vi.mocked(leadsService.list).mockResolvedValue([]);
     vi.mocked(leadsService.create).mockRejectedValue(new Error("422 validação"));
     const { result } = renderHook(() => useLeads());

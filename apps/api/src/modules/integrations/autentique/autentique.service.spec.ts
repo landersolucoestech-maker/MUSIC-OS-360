@@ -50,7 +50,7 @@ describe('AutentiqueService — assertTenantActive (P0-A, Type-B public boundary
 });
 
 describe('AutentiqueService webhook tenant context', () => {
-  it('resolve o tenant por leitura administrativa e processa o contrato no contexto correto', async () => {
+  it('resolves the tenant via an admin read and processes the contract in the right context', async () => {
     const contract = {
       id: 'contract-a',
       tenant_id: 'tenant-a',
@@ -190,7 +190,7 @@ describe('AutentiqueService webhook tenant context', () => {
     expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-a', 'failed', expect.any(String));
   });
 
-  it('P0-3b: falha no processamento do webhook propaga o erro (5xx) em vez de engolir para 200, permitindo retry do provedor', async () => {
+  it('P0-3b: a webhook processing failure propagates the error (5xx) instead of swallowing it into 200, allowing the provider to retry', async () => {
     const contract = {
       id: 'contract-a', tenant_id: 'tenant-a', title: 'Contrato A',
       artist_id: 'artist-a', autentique_doc_id: 'doc-a',
@@ -226,7 +226,7 @@ describe('AutentiqueService webhook tenant context', () => {
     expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-b', 'failed', expect.any(String));
   });
 
-  it('doc id ligado a mais de um contrato: falha fechado (nenhum assinado, evento FAILED, 200)', async () => {
+  it('doc id linked to more than one contract: fails closed (none signed, event FAILED, 200)', async () => {
     const integrationRepo = { createQueryBuilder: jest.fn(() => ({ where: jest.fn().mockReturnThis(), getOne: jest.fn(async () => null) })) };
     const appDataSource = { getRepository: jest.fn((entity: unknown) => (entity === IntegrationEntity ? integrationRepo : {})) };
     const adminContractRepo = { find: jest.fn(async () => [

@@ -66,7 +66,7 @@ describe('ownership prechecks and tenant-scoped final operations', () => {
     expect(storage.createDownloadUrl).not.toHaveBeenCalled();
   });
 
-  it('marca notification como lida usando update e retorno final escopados por tenant', async () => {
+  it('marks a notification as read using a tenant-scoped update and final read', async () => {
     const existing = { id: 'notification-1', tenant_id: 'tenant-1' };
     const precheckQb = qb(existing);
     const returnQb = qb({ ...existing, read_at: new Date() });

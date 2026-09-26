@@ -29,7 +29,7 @@ describe('MarketBenchmarkRefreshProcessor', () => {
     expect(marketBenchmark.computeAndPersist).not.toHaveBeenCalled();
   });
 
-  it('processa o refresh chamando computeAndPersist com os identifiers do payload (item 39: engine inalterado)', async () => {
+  it('processes the refresh by calling computeAndPersist with the payload identifiers (item 39: engine unchanged)', async () => {
     const marketBenchmark = {
       computeAndPersist: jest.fn().mockResolvedValue({
         result: { status: 'OK', sampleSize: 20, fallbackLevel: 1 },

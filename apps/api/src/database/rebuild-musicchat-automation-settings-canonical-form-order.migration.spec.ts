@@ -48,7 +48,7 @@ describe('RebuildMusicchatAutomationSettingsInCanonicalFormOrder20260719000021',
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria RLS + policy tenant_isolation (role public, preservada como estava) e possui down() honesto', () => {
+  it('recreates RLS + the tenant_isolation policy (role public, kept as it was) and has an honest down()', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc.match(/CREATE POLICY tenant_isolation ON musicchat_automation_settings\s*\n\s*AS PERMISSIVE FOR ALL TO public/g)?.length).toBeGreaterThanOrEqual(2);

@@ -64,7 +64,7 @@ describe('AppleMusicArtistProfileProvider.resolve (Phase 1.3 — the registered 
     expect(snapshot.raw_payload.primary_identity_status).toBe('INSUFFICIENT_EVIDENCE');
   });
 
-  it('4) nenhuma playlist encontrada: playlist_count=null, sync_status=success (nunca "Erro")', async () => {
+  it('4) no playlist found: playlist_count=null, sync_status=success (never "Erro")', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockResolvedValue('own-uuid'),

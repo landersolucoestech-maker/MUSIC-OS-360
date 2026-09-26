@@ -25,7 +25,7 @@ describe('RebuildReleasesInCanonicalFormOrder20260719000004', () => {
     expect(statusIdx).toBeGreaterThan(gravadoraIdx);
   });
 
-  it('nenhum campo funcional aparece depois de metadata/created_at/updated_at/deleted_at', () => {
+  it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const deletedAtIdx = block.indexOf('deleted_at ');
     const afterDeletedAt = block.slice(deletedAtIdx + 'deleted_at'.length).trim();
@@ -36,7 +36,7 @@ describe('RebuildReleasesInCanonicalFormOrder20260719000004', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('trata a policy cross-table de release_works (drop + recreate) como em works', () => {
+  it('handles the release_works cross-table policy (drop + recreate) as in works', () => {
     expect(migrationSrc.match(/DROP POLICY tenant_isolation ON release_works/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/releaseWorksPolicySql/);
     expect(migrationSrc.match(/this\.releaseWorksPolicySql\(\)/g)?.length).toBeGreaterThanOrEqual(2);

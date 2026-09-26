@@ -34,7 +34,7 @@ beforeEach(() => {
 });
 
 describe("TenantProvider — /auth/context error surface (Part 76)", () => {
-  it("sucesso: contextLoading termina em false e contextError permanece null", async () => {
+  it("success: contextLoading ends false and contextError stays null", async () => {
     state.getContext.mockResolvedValue({
       user: { id: "u1", email: "owner@lander.example", fullName: "Owner", avatarUrl: null },
       workspace: { id: "org-1", orgId: "org-1", name: "LANDER RECORDS", slug: "lander", active: true, plan: "enterprise", features: {}, settings: {} },

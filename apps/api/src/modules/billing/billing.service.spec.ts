@@ -168,7 +168,7 @@ describe('BillingService', () => {
       })).rejects.toThrow(BadRequestException);
     });
 
-    it('falha se plano inativo', async () => {
+    it('fails when the plan is inactive', async () => {
       plans.resolve.mockResolvedValueOnce({ id: 'p', slug: 'x', active: false, stripe_price_id: 'price_x' });
       await expect(service.createCheckoutSession({
         orgId: 'o', tenantId: 't', planRef: 'x', successUrl: '', cancelUrl: '',

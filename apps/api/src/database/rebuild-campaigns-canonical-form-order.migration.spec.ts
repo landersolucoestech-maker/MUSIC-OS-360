@@ -68,7 +68,7 @@ describe('RebuildCampaignsInCanonicalFormOrder20260719000024', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('derruba e recria todas as FKs dependentes (campaign_tasks, campaign_assets, briefings) e as compostas', () => {
+  it('drops and recreates every dependent FK (campaign_tasks, campaign_assets, briefings) and the composite ones', () => {
     expect(migrationSrc).toMatch(/ALTER TABLE campaign_tasks DROP CONSTRAINT campaign_tasks_campaign_id_fkey/);
     expect(migrationSrc).toMatch(/ALTER TABLE campaign_tasks DROP CONSTRAINT fk_campaign_tasks_campaign_tenant/);
     expect(migrationSrc).toMatch(/ALTER TABLE campaign_assets DROP CONSTRAINT campaign_assets_campaign_id_fkey/);

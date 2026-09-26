@@ -44,7 +44,7 @@ describe('Schema reconciliation — PostgreSQL real', () => {
     if (ds?.isInitialized) await ds.destroy();
   });
 
-  it('conversations e mensagens preservam enums mapeados', async () => {
+  it('conversations and messages preserve mapped enums', async () => {
     const qr = ds.createQueryRunner();
     await qr.connect();
     await qr.startTransaction();
@@ -90,7 +90,7 @@ describe('Schema reconciliation — PostgreSQL real', () => {
     }
   });
 
-  it('transactions preservam categoria e snapshot financeiro', async () => {
+  it('transactions preserve the category and financial snapshot', async () => {
     const qr = ds.createQueryRunner();
     await qr.connect();
     await qr.startTransaction();
@@ -173,7 +173,7 @@ describe('Schema reconciliation — PostgreSQL real', () => {
     }
   });
 
-  it('leads usa somente colunas do schema canônico atual', async () => {
+  it('leads uses only columns of the current canonical schema', async () => {
     const qr = ds.createQueryRunner();
     await qr.connect();
     await qr.startTransaction();

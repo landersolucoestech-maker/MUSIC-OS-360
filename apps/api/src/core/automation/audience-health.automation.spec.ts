@@ -66,7 +66,7 @@ const VALID_JSON = JSON.stringify({
 });
 
 describe('AudienceHealthAutomation (ON_DEMAND: POST /artists/:id/audience-health)', () => {
-  it('sintetiza career-stage + market-benchmark reais, registra skill_run e retorna o resultado', async () => {
+  it('synthesizes the real career-stage + market-benchmark, records skill_run and returns the result', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const careerStage = makeCareerStage();
@@ -113,7 +113,7 @@ describe('AudienceHealthAutomation (ON_DEMAND: POST /artists/:id/audience-health
     expect(skillRun.start).not.toHaveBeenCalled();
   });
 
-  it('forceRefresh ignora o cache e gera novamente', async () => {
+  it('forceRefresh ignores the cache and regenerates', async () => {
     const cachedRun = {
       id: 'run-old',
       finished_at: new Date().toISOString(),

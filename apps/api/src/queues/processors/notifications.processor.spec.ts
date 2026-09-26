@@ -79,7 +79,7 @@ describe('NotificationsProcessor', () => {
     );
   });
 
-  it('inclui entity e entityId quando fornecidos', async () => {
+  it('includes entity and entityId when provided', async () => {
     await processor.process({ name: NOTIFICATION_JOB_NAMES.SEND, data: {
       tenantId: 't1', userId: 'u1', title: 'X',
       type: 'entity', entity: 'artists', entityId: 'a1',
@@ -90,7 +90,7 @@ describe('NotificationsProcessor', () => {
   });
 
   // ── P2-5: session-context wiring ───────────────────────────────────────────
-  it('persiste dentro de runInTenantContext com o tenant do job', async () => {
+  it('persists inside runInTenantContext with the job\'s tenant', async () => {
     await processor.process({ name: NOTIFICATION_JOB_NAMES.SEND, data: {
       tenantId: 't1', userId: 'u1', title: 'Ctx', type: 'info',
     }} as any);
@@ -134,7 +134,7 @@ describe('NotificationsProcessor', () => {
     expect(mockWs.sendToTenant).not.toHaveBeenCalled();
   });
 
-  it('primeira entrega com job.id: persiste normalmente e grava bullmq_job_id em metadata', async () => {
+  it('first delivery with job.id: persists normally and writes bullmq_job_id into metadata', async () => {
     const firstRow = { id: 'n-first', title: 'First delivery', type: 'info', created_at: new Date() };
     mockDs._qb.execute = jest.fn(async () => ({ raw: [firstRow] }));
 

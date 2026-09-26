@@ -13,7 +13,7 @@ describe('BillingController.getAdminStripeMode — authorization', () => {
     expect(Reflect.getMetadata(ROLES_KEY, handler)).toEqual(['super_admin']);
   });
 
-  it('delega ao BillingService.getStripeMode sem transformar a resposta', () => {
+  it('delegates to BillingService.getStripeMode without transforming the response', () => {
     const billing = { getStripeMode: jest.fn().mockReturnValue({ environment: 'sandbox', keyState: 'VALID_TEST_KEY' }) };
     const ctrl = Object.create(BillingController.prototype) as BillingController;
     (ctrl as unknown as { billing: unknown }).billing = billing;

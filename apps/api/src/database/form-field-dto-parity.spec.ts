@@ -51,7 +51,7 @@ describe('Dedicated form columns are always exposed in the matching DTO', () => 
     expectFields(dto, fields);
   });
 
-  it('TakedownEntity e CreateTakedownDto refletem integralmente o modal real', () => {
+  it('TakedownEntity and CreateTakedownDto fully reflect the real modal', () => {
     const block = entityBlock('TakedownEntity');
     const dto = source('../modules/takedowns/dto/takedowns.dto.ts');
     const fields = [
@@ -63,7 +63,7 @@ describe('Dedicated form columns are always exposed in the matching DTO', () => 
     expectFields(dto, fields);
   });
 
-  it('InvoiceEntity e CreateInvoiceDto refletem os dados e tributos da Nota Fiscal', () => {
+  it('InvoiceEntity and CreateInvoiceDto reflect the Nota Fiscal data and taxes', () => {
     const block = entityBlock('InvoiceEntity');
     const dto = source('../modules/invoices/dto/invoices.dto.ts');
     const fields = [

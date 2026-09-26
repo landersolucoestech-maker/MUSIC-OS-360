@@ -40,7 +40,7 @@ describe('RebuildProjectsInCanonicalFormOrder20260719000005', () => {
     expect(migrationSrc).toMatch(/presumidas órfãs, mas há dado real/);
   });
 
-  it('nenhum campo funcional aparece depois de metadata/created_at/updated_at/deleted_at', () => {
+  it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const deletedAtIdx = block.indexOf('deleted_at ');
     const afterDeletedAt = block.slice(deletedAtIdx + 'deleted_at'.length).trim();
@@ -61,7 +61,7 @@ describe('RebuildProjectsInCanonicalFormOrder20260719000005', () => {
     }
   });
 
-  it('recria RLS + FORCE RLS + policies, valida contagem antes de trocar e possui down() honesto', () => {
+  it('recreates RLS + FORCE RLS + policies, validates counts before swapping and has an honest down()', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);

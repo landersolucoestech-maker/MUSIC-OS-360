@@ -26,7 +26,7 @@ describe("AuthRateLimiter (Parte 77)", () => {
     expect(authRateLimiter.getTimeUntilReset("blocked@example.com")).toBeGreaterThan(0);
   });
 
-  it("reset() limpa o estado completamente", () => {
+  it("reset() clears the state completely", () => {
     authRateLimiter.recordFailure("reset@example.com");
     authRateLimiter.recordFailure("reset@example.com");
     authRateLimiter.reset("reset@example.com");
@@ -34,7 +34,7 @@ describe("AuthRateLimiter (Parte 77)", () => {
     expect(authRateLimiter.isBlocked("reset@example.com")).toBe(false);
   });
 
-  it("erro de rede/servidor nunca deveria chamar recordFailure — simula o fluxo correto do Auth.tsx", () => {
+  it("a network/server error must never call recordFailure — simulates the correct Auth.tsx flow", () => {
     // Este teste documenta o contrato: o chamador só invoca recordFailure()
     // para erros de credencial confirmados, nunca para falhas de rede/servidor.
     const email = "network-error@example.com";

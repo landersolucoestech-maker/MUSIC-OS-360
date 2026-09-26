@@ -69,7 +69,7 @@ describe("formToObraPayload — canonical works contract", () => {
     expect(payload).not.toHaveProperty("detentores");
   });
 
-  it("deriva `compositores`/`letristas` de `participantes` — nunca duplica dado livre", () => {
+  it("derives `compositores`/`letristas` from `participantes` — never duplicates free data", () => {
     const participantes: ParticipanteForm[] = [
       { id: "1", name: "Fulano", classeFuncao: "compositor/autor", link: "", percentual: "50" },
       { id: "2", name: "Beltrano", classeFuncao: "tradutor", link: "", percentual: "50" },

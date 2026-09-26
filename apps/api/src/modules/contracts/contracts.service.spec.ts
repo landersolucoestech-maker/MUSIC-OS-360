@@ -214,7 +214,7 @@ describe('ContractsService.create — alias consolidation (Phase 5 / C1)', () =>
     expect(row['value']).toBeUndefined();
   });
 
-  it('uso de alias emite exatamente um warning por alias', async () => {
+  it('alias use emits exactly one warning per alias', async () => {
     const { svc } = makeServiceC1();
     const warnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
     await svc.create('tenant-1', 'user-1', {
@@ -229,7 +229,7 @@ describe('ContractsService.create — alias consolidation (Phase 5 / C1)', () =>
     warnSpy.mockRestore();
   });
 
-  it('conflito PT/EN rejeita antes de chamar o repository', async () => {
+  it('a PT/EN conflict is rejected before calling the repository', async () => {
     const { svc, repo } = makeServiceC1();
     await expect(svc.create('tenant-1', 'user-1', {
       title: 'A', titulo: 'B',
@@ -309,7 +309,7 @@ describe('ContractsService.update — alias consolidation (Phase 5 / C1)', () =>
     expect(row['fileUrl']).toBeUndefined();
   });
 
-  it('uso de alias em update emite warning com operation=update e contractId', async () => {
+  it('alias use on update emits a warning with operation=update and contractId', async () => {
     const { svc } = makeServiceC1([baseContractRow()]);
     const warnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
     await svc.update('tenant-1', 'user-1', 'contract-1', { fileUrl: 'https://a.com/x.pdf' } as unknown as UpdateContractDto);
@@ -319,7 +319,7 @@ describe('ContractsService.update — alias consolidation (Phase 5 / C1)', () =>
     warnSpy.mockRestore();
   });
 
-  it('conflito PT/EN em update rejeita antes de chamar o repository', async () => {
+  it('a PT/EN conflict on update is rejected before calling the repository', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await expect(svc.update('tenant-1', 'user-1', 'contract-1', {
       arquivo_url: 'https://a.com/1.pdf', fileUrl: 'https://a.com/2.pdf',
@@ -355,7 +355,7 @@ describe('ContractsService.list — canonical and legacy filters (Phase 5 / C1)'
     expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type = :type', { type: 'gravacao' });
   });
 
-  it('filtra por tipo legado (traduzido para type)', async () => {
+  it('filters by the legacy tipo (translated to type)', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.list('tenant-1', { tipo: 'gravacao' } as unknown as QueryContractDto);
     expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type = :type', { type: 'gravacao' });
@@ -367,7 +367,7 @@ describe('ContractsService.list — canonical and legacy filters (Phase 5 / C1)'
     expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type = :type', { type: 'gravacao' });
   });
 
-  it('type e tipo conflitantes rejeitam antes de montar a query', async () => {
+  it('conflicting type and tipo are rejected before building the query', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await expect(svc.list('tenant-1', { type: 'gravacao', tipo: 'edicao' } as unknown as QueryContractDto))
       .rejects.toMatchObject({ response: { code: 'CONTRACT_ALIAS_CONFLICT' } });
@@ -403,7 +403,7 @@ describe('ContractsService.list — canonical and legacy filters (Phase 5 / C1)'
     expect(calls.some(([, params]) => params && 'tipo' in params)).toBe(false);
   });
 
-  it('emite warning ao usar filtro legado', async () => {
+  it('emits a warning when a legacy filter is used', async () => {
     const { svc } = makeServiceC1([baseContractRow()]);
     const warnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
     await svc.list('tenant-1', { tipo: 'gravacao' } as unknown as QueryContractDto);
@@ -442,7 +442,7 @@ describe('ContractsService.create — FK cross-tenant (P1)', () => {
     } as unknown as CreateContractDto)).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('permite quando ambos pertencem ao tenant', async () => {
+  it('allows when both belong to the tenant', async () => {
     const { svc } = makeServiceC1([], jest.fn(async () => [{ exists: 1 }]));
     await expect(svc.create('tenant-1', 'user-1', {
       title: 'X', type: 'gravacao',

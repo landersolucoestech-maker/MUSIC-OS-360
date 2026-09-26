@@ -19,7 +19,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('BackfillLegacySocietyCodesToExternalIdentifiers20260718000015', () => {
-  it('migra works.cod_abramus/cod_ecad e phonograms.cod_abramus/cod_ecad para external_identifiers', () => {
+  it('migrates works.cod_abramus/cod_ecad and phonograms.cod_abramus/cod_ecad to external_identifiers', () => {
     expect(migrationSrc).toMatch(/FROM works WHERE cod_abramus/);
     expect(migrationSrc).toMatch(/FROM works WHERE cod_ecad/);
     expect(migrationSrc).toMatch(/FROM phonograms WHERE cod_abramus/);

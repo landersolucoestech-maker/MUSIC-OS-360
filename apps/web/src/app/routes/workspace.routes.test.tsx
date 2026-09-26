@@ -31,7 +31,7 @@ function renderWorkspaceAt(path: string) {
   );
 }
 
-describe("workspaceRoutes — nenhuma aba cai em 404/Outlet vazio (CODEBASE_MAP #26)", () => {
+describe("workspaceRoutes — no tab falls into a 404/empty Outlet (CODEBASE_MAP #26)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     apiMock.get.mockImplementation((path: string) => {

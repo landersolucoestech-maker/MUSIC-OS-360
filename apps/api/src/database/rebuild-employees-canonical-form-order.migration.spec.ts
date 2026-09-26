@@ -27,7 +27,7 @@ describe('RebuildEmployeesInCanonicalFormOrder20260719000018', () => {
     expect(nomeIdx).toBeGreaterThan(nomeCompletoIdx);
   });
 
-  it('campos legados (departamento/salario/data_demissao) ficam adjacentes ao campo real correspondente', () => {
+  it('legacy fields (departamento/salario/data_demissao) sit next to their matching real field', () => {
     const b = block();
     const setorIdx = b.indexOf('setor ');
     const departamentoIdx = b.indexOf('departamento');

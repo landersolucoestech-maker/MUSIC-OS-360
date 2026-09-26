@@ -17,7 +17,7 @@ const URLS = {
 };
 
 describe('buildCanonicalCandidates', () => {
-  it('extrai o id de cada plataforma na ordem spotify → youtube → deezer → soundcloud', () => {
+  it('extracts each platform\'s id in the order spotify → youtube → deezer → soundcloud', () => {
     expect(buildCanonicalCandidates(URLS)).toEqual([
       { platform: 'spotify', externalId: '6qqNVTkY8uBg9cP3Jd7DAH' },
       { platform: 'youtube', externalId: 'UCiGm_E4ZwYSHV3bcW1pnSeQ' },
@@ -67,7 +67,7 @@ describe('evaluateCrossPlatformEvidence (Phase 1.3 — purely diagnostic, never 
     expect(result).toEqual({ status: 'CROSS_PLATFORM_DIVERGENT', independentUuid: 'canonical-uuid-artist-a', registryIdentifier: null });
   });
 
-  it('3b) em divergência, busca no registry do canônico o identifier desta plataforma como evidência (achado real: SoundCloud "deejaystay" cadastrado vs. "djstay-sc" no registry do canônico — diagnóstico, nunca aplicado)', async () => {
+  it('3b) on divergence, looks up this platform\'s identifier in the canonical registry as evidence (real finding: registered SoundCloud "deejaystay" vs. "djstay-sc" in the canonical registry — diagnostic only, never applied)', async () => {
     const soundcharts = {
       resolveCanonicalArtistUuid: jest.fn().mockResolvedValue('canonical-uuid-artist-a'),
       getArtistIdentifiers: jest.fn().mockResolvedValue({
@@ -171,7 +171,7 @@ describe('checkRegisteredHandleAgainstRegistry (Phase 1.3 — secondary fallback
   });
 });
 
-describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (Soundcharts 06)', () => {
+describe('resolveCanonicalUuidForProvider — cross-platform UUID reuse (Soundcharts 06)', () => {
   it('Spotify resolves the UUID → Instagram reuses it without querying YouTube/Deezer/SoundCloud/own handle', async () => {
     const soundcharts = new SoundchartsService(fakeConfig);
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {

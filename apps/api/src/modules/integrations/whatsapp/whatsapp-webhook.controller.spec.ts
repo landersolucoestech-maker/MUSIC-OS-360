@@ -146,7 +146,7 @@ describe('WhatsAppWebhookController', () => {
     expect(musicChat.handleInboundMessage).not.toHaveBeenCalled();
   });
 
-  it('POST com assinatura HMAC real e correta + mensagem: inbound processado', async () => {
+  it('POST with a real, correct HMAC signature + message: inbound processed', async () => {
     const { controller, musicChat, ingestSpy, markProcessedSpy } = makeController();
     const body = messagePayloadObj();
     const req = rawReq(body);
@@ -229,7 +229,7 @@ describe('WhatsAppWebhookController', () => {
     expect(musicChat.handleInboundMessage).not.toHaveBeenCalled();
   });
 
-  it('find-2220a85e: mensagem roteada vai exatamente para o tenant resolvido', async () => {
+  it('find-2220a85e: the routed message goes exactly to the resolved tenant', async () => {
     const { controller, musicChat, ingestSpy } = makeController({
       findTenant: jest.fn().mockResolvedValue({ kind: 'resolved', tenantId: 'tenant-z' }),
     });

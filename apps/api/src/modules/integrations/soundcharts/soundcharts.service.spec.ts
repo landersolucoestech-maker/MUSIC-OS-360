@@ -67,7 +67,7 @@ describe('SoundchartsService', () => {
       expect(fetchMock).toHaveBeenCalledTimes(3); // 1 token + 2 chamadas de dado
     });
 
-    it('renova o token quando ele expira', async () => {
+    it('renews the token when it expires', async () => {
       fetchMock
         .mockResolvedValueOnce(tokenResponse())
         .mockResolvedValueOnce(jsonResponse(200, { items: [{ date: '2026-08-18', followerCount: 1 }] }));
@@ -95,7 +95,7 @@ describe('SoundchartsService', () => {
   });
 
   describe('Spotify monthly listeners', () => {
-    it('usa exclusivamente /streaming/spotify/listening — nunca /audience/spotify', async () => {
+    it('uses only /streaming/spotify/listening — never /audience/spotify', async () => {
       fetchMock
         .mockResolvedValueOnce(tokenResponse())
         .mockResolvedValueOnce(jsonResponse(200, { items: [{ date: '2026-08-18', value: 100_900_923 }] }));
@@ -134,7 +134,7 @@ describe('SoundchartsService', () => {
     });
   });
 
-  describe('followerCount das demais plataformas', () => {
+  describe('followerCount of the other platforms', () => {
     const cases: Array<[string, () => Promise<{ value: number }>]> = [
       ['instagram', () => service.getInstagramFollowers('uuid-1')],
       ['tiktok', () => service.getTikTokFollowers('uuid-1')],
@@ -274,7 +274,7 @@ describe('SoundchartsService', () => {
       expect(resolveCalls).toHaveLength(1); // dedup dentro da janela do cache — não repete a consulta pelo mesmo candidato
     });
 
-    it('resolveCanonicalArtistUuid: usa o primeiro candidato que resolver e ignora os demais', async () => {
+    it('resolveCanonicalArtistUuid: uses the first candidate that resolves and ignores the rest', async () => {
       const resolveSpy = jest.spyOn(service, 'resolveArtistByPlatform').mockImplementation(async (platform: string) => {
         if (platform === 'youtube') return 'sc-uuid-yt';
         throw new Error('não encontrado');
@@ -329,7 +329,7 @@ describe('SoundchartsService', () => {
   });
 
   describe('searchArtists (Metrics Phase 1.1 — auxiliary evidence, never proves identity alone)', () => {
-    it('retorna uuid+nome de cada resultado da busca', async () => {
+    it('returns uuid+name for each search result', async () => {
       fetchMock
         .mockResolvedValueOnce(tokenResponse())
         .mockResolvedValueOnce(jsonResponse(200, {
@@ -347,7 +347,7 @@ describe('SoundchartsService', () => {
       ]);
     });
 
-    it('sem resultados retorna lista vazia', async () => {
+    it('no results returns an empty list', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(jsonResponse(200, { items: [] }));
 
       const result = await service.searchArtists('artista-inexistente-xyz');

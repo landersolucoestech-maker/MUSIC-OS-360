@@ -70,7 +70,7 @@ describe('AnalyticsTrackingAutomation (ON_DEMAND: POST /analytics/tracking-cover
     expect(aiCalls[0][0].prompt).toContain('estado: configuration_required');
   });
 
-  it('reaproveita auditoria recente (stale-refresh de 1 dia) sem nova chamada de IA', async () => {
+  it('reuses a recent audit (1-day stale-refresh) without a new AI call', async () => {
     const cachedRun = {
       id: 'run-old',
       finished_at: new Date().toISOString(),

@@ -67,7 +67,7 @@ describe('OperationalListsService', () => {
       expect(repo._qb['insert']).not.toHaveBeenCalled();
     });
 
-    it('filtra por kind e por active quando informados na query', async () => {
+    it('filters by kind and active when given in the query', async () => {
       const { svc, repo } = makeService([{ id: 'x', tenant_id: 'tenant-1' }]);
 
       await svc.list('tenant-1', { kind: 'event_type', active: true } as any);
@@ -88,7 +88,7 @@ describe('OperationalListsService', () => {
       expect(repo.save).not.toHaveBeenCalled();
     });
 
-    it('persiste com tenant_id e created_by/updated_by corretos', async () => {
+    it('persists with the correct tenant_id and created_by/updated_by', async () => {
       const { svc, repo } = makeService([]);
       (repo._qb['getOne'] as jest.Mock).mockResolvedValueOnce(null);
 

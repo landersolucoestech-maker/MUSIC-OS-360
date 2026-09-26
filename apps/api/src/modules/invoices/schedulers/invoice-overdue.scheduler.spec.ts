@@ -74,7 +74,7 @@ describe('InvoiceOverdueScheduler — P2-7 admin discovery', () => {
     expect(updateWhereCalls(adminRepo).length).toBe(0);
   });
 
-  it('fallback: sem ADMIN_DATA_SOURCE, descoberta usa DATA_SOURCE', async () => {
+  it('fallback: without ADMIN_DATA_SOURCE, discovery uses DATA_SOURCE', async () => {
     const appRepo = makeRepo({ rawMany: [{ tenant_id: TENANT_A }], manyByTenant: { [TENANT_A]: [invoice(TENANT_A, 'i1')] } });
     const sched = new InvoiceOverdueScheduler(dsOf(appRepo), events, dbContext, null);
 

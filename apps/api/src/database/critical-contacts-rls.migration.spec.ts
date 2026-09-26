@@ -67,7 +67,7 @@ describe('HardenContactsLeadUploadsRls20260620000002', () => {
     expect(sql).toContain('IF policy_roles IS NOT NULL THEN');
   });
 
-  it('restringe ACLs e endurece os resolvers SECURITY DEFINER', async () => {
+  it('restricts ACLs and hardens the SECURITY DEFINER resolvers', async () => {
     const qr = queryRunner();
     await new HardenContactsLeadUploadsRls20260620000002().up(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');

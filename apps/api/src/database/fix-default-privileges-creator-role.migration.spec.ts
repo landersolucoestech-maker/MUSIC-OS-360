@@ -31,7 +31,7 @@ describe('FixDefaultPrivilegesCreatorRole20260803000002', () => {
     expect(codeOnly).toMatch(/FOR ROLE "\$\{creatorRole\}"/);
   });
 
-  it('concede SELECT/INSERT/UPDATE/DELETE em TABLES e USAGE/SELECT em SEQUENCES para o role criador real', () => {
+  it('grants SELECT/INSERT/UPDATE/DELETE on TABLES and USAGE/SELECT on SEQUENCES to the real creator role', () => {
     expect(migrationSrc).toMatch(/ALTER DEFAULT PRIVILEGES FOR ROLE "\$\{creatorRole\}" IN SCHEMA public/);
     expect(migrationSrc).toMatch(/GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO musicos_app/);
     expect(migrationSrc).toMatch(/GRANT USAGE, SELECT ON SEQUENCES TO musicos_app/);

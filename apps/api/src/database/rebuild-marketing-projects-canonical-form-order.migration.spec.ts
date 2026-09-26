@@ -57,7 +57,7 @@ describe('RebuildMarketingProjectsInCanonicalFormOrder20260719000008', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria os 3 CHECK constraints, a FK financeira, RLS + policy e possui down() honesto', () => {
+  it('recreates the 3 CHECK constraints, the financial FK, RLS + policy and has an honest down()', () => {
     expect(migrationSrc).toMatch(/chk_marketing_projects_type/);
     expect(migrationSrc).toMatch(/chk_marketing_projects_status/);
     expect(migrationSrc).toMatch(/chk_marketing_projects_priority/);

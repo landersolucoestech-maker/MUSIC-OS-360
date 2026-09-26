@@ -71,7 +71,7 @@ describe('ContractEventsHandler — onContractSigned', () => {
     );
   });
 
-  it('avalia financial rules com o trigger contract.signed', async () => {
+  it('evaluates financial rules with the contract.signed trigger', async () => {
     const { handler, financialRules } = build();
     await handler.onContractSigned({ tenantId: 't1', payload, correlationId: null } as any);
 

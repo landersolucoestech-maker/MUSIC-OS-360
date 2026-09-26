@@ -122,7 +122,7 @@ describe('ProjectsService', () => {
     ]);
   });
 
-  it('findById() reidrata musicas no formato esperado pelo frontend', async () => {
+  it('findById() rehydrates musicas in the shape the frontend expects', async () => {
     const trackRows = [{
       id: 't1', project_id: PROJECT_ID, name: 'Faixa 1', solo_feat: 'solo', original_remix: 'original',
       instrumental: 'nao', duracao_min: '3', duracao_seg: '30', music_genre: 'pop', idioma: 'pt-BR',
@@ -144,7 +144,7 @@ describe('ProjectsService', () => {
     ]);
   });
 
-  it('update() substitui as musicas (delete + insert) quando o DTO envia o array', async () => {
+  it('update() replaces the musicas (delete + insert) when the DTO sends the array', async () => {
     await service.update(TENANT, 'u1', PROJECT_ID, { musicas: [{ name: 'Nova Faixa' }] } as any);
     expect(mockDs._tracksRepo.delete).toHaveBeenCalledWith({ project_id: PROJECT_ID, tenant_id: TENANT });
     expect(mockDs._tracksRepo.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Nova Faixa' }));

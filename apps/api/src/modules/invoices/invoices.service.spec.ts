@@ -31,7 +31,7 @@ function makeService(rows: unknown[] = [], one: unknown = null) {
   return { svc, qb };
 }
 
-describe('InvoicesService.list — exclui faturas Stripe da assinatura SaaS (REM-06)', () => {
+describe('InvoicesService.list — excludes SaaS subscription Stripe invoices (REM-06)', () => {
   it('filters type != stripe_subscription by default', async () => {
     const { svc, qb } = makeService();
     await svc.list('tenant-1', {} as any);
@@ -40,7 +40,7 @@ describe('InvoicesService.list — exclui faturas Stripe da assinatura SaaS (REM
   });
 });
 
-describe('InvoicesService.findById — exclui faturas Stripe da assinatura SaaS (REM-06)', () => {
+describe('InvoicesService.findById — excludes SaaS subscription Stripe invoices (REM-06)', () => {
   it('filtra type != stripe_subscription na busca por id', async () => {
     const { svc, qb } = makeService([], { id: 'inv-1', type: 'nfse' });
     await svc.findById('tenant-1', 'inv-1');

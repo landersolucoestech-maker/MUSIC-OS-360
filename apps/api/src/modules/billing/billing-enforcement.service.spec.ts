@@ -13,7 +13,7 @@ describe('BillingEnforcementService — webhook idempotency lifecycle', () => {
     return new BillingEnforcementService(ds, audit);
   }
 
-  it('primeira entrega: INSERT reivindica o evento (status=processing) — "inserted"', async () => {
+  it('first delivery: the INSERT claims the event (status=processing) — "inserted"', async () => {
     const query = jest.fn().mockResolvedValueOnce([{ id: 'row-1' }]); // INSERT ... RETURNING id
     const service = makeService(query);
 

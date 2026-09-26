@@ -49,7 +49,7 @@ describe('GrantMusicosAppOnAllTables20260802000001', () => {
     expect(migrationSrc).toMatch(/GRANT USAGE, SELECT ON SEQUENCES TO musicos_app/);
   });
 
-  it('down() reverte tanto os grants por tabela quanto os default privileges', () => {
+  it('down() reverts both the per-table grants and the default privileges', () => {
     expect(migrationSrc).toMatch(/async down/);
     const downBlock = migrationSrc.split('async down')[1];
     expect(downBlock).toMatch(/REVOKE SELECT, INSERT, UPDATE, DELETE ON TABLES FROM musicos_app/);

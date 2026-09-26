@@ -35,7 +35,7 @@ describe('RebuildArtistsInCanonicalFormOrder20260719000001', () => {
     expect(newColumnsBlock).not.toMatch(/\borg_slug\b/);
   });
 
-  it('nenhum campo funcional aparece depois de metadata/created_at/updated_at/deleted_at', () => {
+  it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {
     const newColumnsBlock = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const metadataIdx = newColumnsBlock.indexOf('metadata ');
     const createdAtIdx = newColumnsBlock.indexOf('created_at ');
@@ -71,7 +71,7 @@ describe('RebuildArtistsInCanonicalFormOrder20260719000001', () => {
     expect(migrationSrc).toMatch(/tenant_isolation/);
   });
 
-  it('valida contagem de linhas antes de trocar a tabela (up e down)', () => {
+  it('validates row counts before swapping the table (up and down)', () => {
     expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
   });
 

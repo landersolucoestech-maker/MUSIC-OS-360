@@ -48,7 +48,7 @@ describe("useEntityLookup", () => {
     mockedListPaged.mockImplementation(fakeBackend as typeof storage.listPaged);
   });
 
-  it("encontra o registro #75 buscando por um trecho do nome (fora do antigo cap de 50)", async () => {
+  it("finds record #75 by searching part of the name (beyond the old cap of 50)", async () => {
     const { result, rerender } = renderHook(
       ({ search }: { search: string }) => useEntityLookup<FakeRow>({ table: "artistas", search, enabled: true }),
       { wrapper: createWrapper(), initialProps: { search: "" } },

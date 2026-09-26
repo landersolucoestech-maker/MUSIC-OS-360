@@ -50,7 +50,7 @@ describe('BillingPlansService', () => {
   });
 
   describe('create', () => {
-    it('cria Product + Price no Stripe e persiste os ids', async () => {
+    it('creates Product + Price in Stripe and persists the ids', async () => {
       const plan = await service.create({ slug: 'pro', name: 'Pro', amount: 29900, currency: 'brl', interval: 'month' });
       expect(stripe().products.create).toHaveBeenCalledTimes(1);
       expect(stripe().prices.create).toHaveBeenCalledWith(expect.objectContaining({
@@ -91,7 +91,7 @@ describe('BillingPlansService', () => {
       return qb;
     }
 
-    it('nunca retorna campos administrativos internos (allow-list estrita)', async () => {
+    it('never returns internal admin fields (strict allow-list)', async () => {
       mockPlansQuery([
         {
           id: 'plan-1',

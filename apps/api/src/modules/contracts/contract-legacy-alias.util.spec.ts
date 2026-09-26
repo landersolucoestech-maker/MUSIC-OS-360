@@ -160,8 +160,8 @@ describe('resolveContractAliases — artist_id/artistId (UUID, case-insensitive 
   });
 });
 
-describe('resolveContractAliases — start_date/data_inicio/startsAt e end_date/data_fim/expiresAt (3 nomes aceitos por campo)', () => {
-  it('mesmo instante em representações ISO diferentes (canônico + 2 legados) → equivalente, valor do canônico vence', () => {
+describe('resolveContractAliases — start_date/data_inicio/startsAt and end_date/data_fim/expiresAt (3 accepted names per field)', () => {
+  it('the same instant in different ISO representations (canonical + 2 legacy) → equivalent, the canonical value wins', () => {
     const { normalized, legacyAliasesUsed } = resolveContractAliases({
       title: 'X',
       start_date: '2026-01-01T00:00:00.000Z',
@@ -172,13 +172,13 @@ describe('resolveContractAliases — start_date/data_inicio/startsAt e end_date/
     expect(legacyAliasesUsed).toEqual(expect.arrayContaining(['data_inicio', 'startsAt']));
   });
 
-  it('somente o alias legado pt-BR (data_inicio) → aceito, resolvido para start_date', () => {
+  it('only the legacy pt-BR alias (data_inicio) → accepted, resolved to start_date', () => {
     const { normalized, legacyAliasesUsed } = resolveContractAliases({ title: 'X', data_inicio: '2026-01-01T00:00:00.000Z' });
     expect(normalized.start_date).toBe('2026-01-01T00:00:00.000Z');
     expect(legacyAliasesUsed).toContain('data_inicio');
   });
 
-  it('somente o alias legado EN (startsAt) → aceito, resolvido para start_date', () => {
+  it('only the legacy EN alias (startsAt) → accepted, resolved to start_date', () => {
     const { normalized, legacyAliasesUsed } = resolveContractAliases({ title: 'X', startsAt: '2026-01-01T00:00:00.000Z' });
     expect(normalized.start_date).toBe('2026-01-01T00:00:00.000Z');
     expect(legacyAliasesUsed).toContain('startsAt');
@@ -317,7 +317,7 @@ describe('resolveContractAliases — valor/value (numeric coercion)', () => {
   });
 });
 
-describe('resolveContractQueryAliases — apenas type/tipo e artist_id/artistId', () => {
+describe('resolveContractQueryAliases — only type/tipo and artist_id/artistId', () => {
   it('canonical type', () => {
     expect(resolveContractQueryAliases({ type: 'gravacao' }).normalized.type).toBe('gravacao');
   });

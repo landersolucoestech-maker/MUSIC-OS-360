@@ -42,7 +42,7 @@ describe("RequirePermission / PermissionGate", () => {
     expect(screen.getByText("sem-acesso")).toBeInTheDocument();
   });
 
-  it("durante loading renderiza loadingFallback e NUNCA abre children", () => {
+  it("while loading renders loadingFallback and NEVER opens children", () => {
     state.loading = true;
     state.allow = true; // mesmo com allow, loading tem precedência (fail-closed)
     render(

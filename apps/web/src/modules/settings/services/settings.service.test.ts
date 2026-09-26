@@ -28,7 +28,7 @@ vi.mock("@/shared/lib/storage", () => ({
 
 import { settingsService } from "./settings.service";
 
-describe("settingsService — nunca propaga o throw de storage.getRaw/setRaw", () => {
+describe("settingsService — never propagates the storage.getRaw/setRaw throw", () => {
   it("getOperationalLists() returns [] instead of throwing", () => {
     expect(settingsService.getOperationalLists()).toEqual([]);
   });
