@@ -31,6 +31,31 @@ function build() {
   return { handler, artistRepo, transactionRepo, events, financialRules };
 }
 
+function buildWithContract(contract: Record<string, unknown>) {
+  const artistRepo = { update: jest.fn().mockResolvedValue(undefined) };
+  const transactionRepo = {
+    create: jest.fn((v: unknown) => v),
+    save: jest.fn(async (v: unknown) => ({ id: 'tx-new', ...(v as object) })),
+  };
+  const contractRepo = {
+    createQueryBuilder: jest.fn(() => ({
+      where: jest.fn().mockReturnThis(),
+      getOne: jest.fn().mockResolvedValue(contract),
+    })),
+  };
+  const ds = {
+    getRepository: jest.fn()
+      .mockReturnValueOnce(artistRepo)
+      .mockReturnValueOnce(transactionRepo)
+      .mockReturnValueOnce(contractRepo),
+  };
+  const activityLogs = { create: jest.fn().mockResolvedValue(undefined) };
+  const events = { emitTyped: jest.fn() };
+  const financialRules = { evaluateRules: jest.fn().mockResolvedValue(undefined) };
+  const handler = new ContractEventsHandler(ds as any, activityLogs as any, events as any, financialRules as any);
+  return { handler, artistRepo, transactionRepo, events, financialRules };
+}
+
 describe('ContractEventsHandler — onContractSigned', () => {
   const payload = { contractId: 'c1', title: 'Contrato X', artistId: 'a1', signedBy: 'u1', signedAt: '2026-06-12' };
 
@@ -54,5 +79,26 @@ describe('ContractEventsHandler — onContractSigned', () => {
       't1', 'contract.signed',
       expect.objectContaining({ entityId: 'c1', entityType: 'contract', valor: 5000, category: 'contratos' }),
     );
+  });
+
+  // GAP-0055: a transação provisória deve usar a data de início real do
+  // contrato quando disponível, não sempre "hoje" (data em que o webhook/evento
+  // de assinatura foi processado, que pode ser muito depois do início real).
+  it('usa contract.start_date como data da transação provisória quando disponível', async () => {
+    const { handler, transactionRepo } = buildWithContract({ id: 'c1', fixed_value: '5000', start_date: new Date('2026-03-01T00:00:00.000Z') });
+    await handler.onContractSigned({ tenantId: 't1', payload, correlationId: null } as any);
+
+    expect(transactionRepo.create).toHaveBeenCalledWith(
+      expect.objectContaining({ data: new Date('2026-03-01T00:00:00.000Z') }),
+    );
+  });
+
+  it('usa a data atual como fallback quando o contrato não tem start_date', async () => {
+    const { handler, transactionRepo } = buildWithContract({ id: 'c1', fixed_value: '5000', start_date: null });
+    await handler.onContractSigned({ tenantId: 't1', payload, correlationId: null } as any);
+
+    const created = transactionRepo.create.mock.calls[0][0] as { data: Date };
+    expect(created.data).toBeInstanceOf(Date);
+    expect(created.data.getTime()).not.toBeNull();
   });
 });

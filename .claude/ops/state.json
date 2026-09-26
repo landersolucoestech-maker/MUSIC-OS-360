@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T01:24:23.869Z",
+  "updatedAt": "2026-09-26T01:32:41.254Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -389,6 +389,24 @@
         }
       ],
       "createdAt": "2026-09-26T01:22:12.873Z"
+    },
+    {
+      "id": "req-a610e7b3",
+      "text": "Cluster 2 (Fase 2): royalty/financial-rules audit -- trace Gotcha #3 (largestRemainder/fn_largest_remainder/transaction_allocations, FinancialRulesService) and canonical-gap-register.json financial S1_HIGH gaps (GAP-0001, GAP-0009, GAP-0010, GAP-0055) to real code, fix what is safe/proven/reversible, document what requires a product decision or contradicts an existing PO decision.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-a238d26f",
+          "text": "GAP-0055 fixed: contract-signed provisional transaction uses contract.start_date when available instead of always 'today'; regression tests (start_date present + fallback) pass; other GAP-0055 sub-issues (category taxonomy mapping, installment schedule, payment-method/advance capture) documented as separate deferred debt requiring product/taxonomy decisions, not squeezed into this fix.",
+          "evidenceIds": [
+            "evid-d917226c",
+            "evid-afc3f4ca",
+            "evid-24cadf62"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-26T01:30:00.430Z"
     }
   ],
   "findings": [
@@ -545,6 +563,48 @@
       "createdAt": "2026-09-26T01:24:13.225Z",
       "justification": "Confirmed via real command execution (evid-a5fc16b8, PASS) that no waiver has expired or broken CI as of 2026-09-26; the underlying NestJS 10->11 and react-router 6->7 major migrations are genuine unstarted engineering efforts requiring their own dedicated regression-scoped mission, not a same-day incidental fix. Flagged to product owner: waivers expire 2026-09-30 (4 days) and need either the migrations started or a justified, time-bound extension before then -- this mission's runtime cannot decide that unilaterally (dependent on product/eng-management scheduling decision).",
       "resolvedAt": "2026-09-26T01:24:23.868Z"
+    },
+    {
+      "id": "find-8ae5b06f",
+      "category": "E",
+      "severity": "INFO",
+      "file": "docs/backend-v2/gap-resolution/canonical-gap-register.json",
+      "line": null,
+      "summary": "GAP-0010 ('/financial-categories/rules* endpoints do not exist, 400 on every page load') re-verified against current code and found ALREADY FIXED, contradicting the register's stale 'OPEN' status: apps/web/src/modules/accounting/pages/finance-category-rules-endpoint.guard.test.ts is a permanent regression guard (added by a prior effort, git-blame/content shows it asserts FinanceCategoryRules.tsx and finance-category-rules.service.ts point only to the real backend module /finance-category-rules, and that financial-categories.service.ts no longer exposes the fake createRule/previewRules/executeRules methods). Confirms canonical-gap-register.json's status field cannot be trusted without tracing per-gap against current code, exactly as the mission's Section 4/5 require -- no code change needed here, this is a confirmed-already-resolved re-audit, not a new finding requiring action.",
+      "rootCause": null,
+      "disposition": "LEGITIMA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T01:31:34.518Z",
+      "justification": "Re-audit confirmed the register's OPEN status is stale; current code already has the real backend module (/finance-category-rules) wired and a permanent regression guard test preventing recurrence. No further action needed.",
+      "resolvedAt": "2026-09-26T01:31:43.274Z"
+    },
+    {
+      "id": "find-9e7bc94e",
+      "category": "E",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/financial/domain/largest-remainder.ts",
+      "line": null,
+      "summary": "CODEBASE_MAP Gotcha #3 (royalty/rate-splitting fragmentation) CONFIRMED via tracing, with root cause and product-decision context found: (1) largestRemainder() pure TS function has ZERO production callers (only its own .spec.ts) confirmed via repo-wide grep. (2) fn_largest_remainder SQL function (created by migration 20260718000005_TransactionAllocations) and the transaction_allocations table it targets have ZERO application-code readers/writers (grep confirms only migration files + rebuild-*-canonical-form-order specs reference transaction_allocations by name, no service/controller). (3) This is not an oversight to silently wire up: docs/backend-v2/gap-resolution/canonical-gap-register.json GAP-0009 records an explicit Product Owner decision (REMOVE_SECOND_ACCOUNTING_LAYER, PO-VERIFY-027) that FORMALLY REJECTS transaction_allocations/financial_transactions/financial_accounts as any future path -- 'transactions remains the single canonical financial ledger; there will be no second ledger.' Wiring largestRemainder()/fn_largest_remainder() into transaction_allocations would directly contradict a recorded PO decision. (4) Separately, FinancialRulesService.evaluateRules() (apps/api/src/modules/financial-rules/financial-rules.service.ts) IS wired end-to-end at the event layer (called from transaction/invoice/contract event handlers, emits FINANCIAL_RULE_TRIGGERED, consumed by notification.handler.ts) -- contradicting the map's literal claim of 'no listener' -- but the consumption is COSMETIC: notification.handler.ts only renders 'Regra financeira disparada: {ruleName}', it never reads/applies payload.result.computed (the actual penalty/interest amount) anywhere; no transaction/adjustment is ever created from a triggered rule. The computed value is functionally discarded.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T01:31:34.717Z",
+      "justification": "Root cause fully traced end-to-end (producer/consumer/persistence) per mission Section 6. Not fixed in this pass: (a) wiring largestRemainder/fn_largest_remainder/transaction_allocations into a real allocation flow would contradict an existing, explicit Product Owner architectural decision (GAP-0009, REMOVE_SECOND_ACCOUNTING_LAYER) -- doing so unilaterally would be worse than leaving it inert; (b) making FinancialRulesService's computed penalty/interest actually create a real financial consequence (adjustment transaction, invoice line, etc.) is a genuine new-feature/business-rule design decision (which trigger, which ledger entry, tax treatment, reversal semantics) that this audit cannot infer safely -- flagged for explicit product decision, not attempted as a speculative implementation.",
+      "resolvedAt": "2026-09-26T01:31:43.365Z"
+    },
+    {
+      "id": "find-870087b6",
+      "category": "L",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/projects/components/ProjectFormModal.tsx",
+      "line": null,
+      "summary": "GAP-0001 (projects domain-meaning) CONFIRMED still real via tracing against current code (file renamed since the gap register was written: ProjetoFormModal.tsx -> ProjectFormModal.tsx, part of the PT->EN naming wave, but the underlying gap persists). apps/web/src/modules/projects/types/projects.types.ts already declares artist_id/orcamento as real fields on the Project type (matching real DB columns per the entity), but ProjectFormModal.tsx's 783-line form (grepped for artist_id/orcamento/budget: zero matches) never renders an input for either -- the only reachable UI still cannot set a project's lead artist or production budget. decision-register.json's DEC-001 already resolved the semantic ambiguity this gap depends on (MUSICAL_PROJECT_CANONICAL_HUB: artist_id/orcamento are legitimate attributes of a musical project) and its fieldRevalidation explicitly recommends KEEP_AS_PROJECT_FIELD for both -- so this is not blocked on a product decision, only on bounded UI implementation work (new form fields + submit-payload wiring + component test) that exceeds a same-pass incidental fix given this cluster's time budget.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T01:31:54.234Z",
+      "justification": "PO decision (DEC-001/MUSICAL_PROJECT_CANONICAL_HUB) already authorizes exposing artist_id/orcamento as real project form fields -- not blocked on a product decision. Not implemented in this pass because ProjectFormModal.tsx is a large (783-line), non-trivial existing form (song-level ArtistNameInput autocomplete, complex multi-song array state, audio upload) and correctly wiring a new project-level artist link + money-formatted budget field (submit payload, concurrency-safe patch, existing money-input conventions, component test) is bounded UI feature work that deserves its own focused change and review rather than being squeezed into this financial-rules cluster pass. Recorded as accepted, PO-authorized, ready-to-implement debt for a dedicated frontend cluster.",
+      "resolvedAt": "2026-09-26T01:32:14.276Z"
     }
   ],
   "evidenceIds": [
@@ -702,7 +762,10 @@
     "evid-c8f7aeab",
     "evid-3b63c3b0",
     "evid-25fd4829",
-    "evid-a5fc16b8"
+    "evid-a5fc16b8",
+    "evid-d917226c",
+    "evid-afc3f4ca",
+    "evid-24cadf62"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

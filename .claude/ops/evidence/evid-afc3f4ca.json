@@ -1,0 +1,15 @@
+{
+  "id": "evid-afc3f4ca",
+  "createdAt": "2026-09-26T01:30:45.369Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter api exec tsc --noEmit -p tsconfig.json",
+  "command": "pnpm --filter api exec tsc --noEmit -p tsconfig.json",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "c2ebf007993318c65d5c21d8c3ce7afd268143234c17cb6ce91ffd3ea1827b07",
+  "fingerprintStatus": "BOUND",
+  "head": "83afabf5c789adeb9e660eb65b1fe2eb10b53f28",
+  "durationMs": 21970
+}

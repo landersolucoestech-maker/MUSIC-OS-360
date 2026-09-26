@@ -152,7 +152,11 @@ export class ContractEventsHandler {
                 categoria: 'contratos',
                 descricao: `Receita prevista - contrato "${title}"`,
                 valor: String(contractValor),
-                data: new Date(),
+                // GAP-0055: usar a data de início real do contrato quando disponível
+                // em vez de sempre "hoje" -- a transação provisória deve refletir
+                // quando a receita do contrato realmente começa a ser devida, não
+                // a data em que o evento CONTRACT_SIGNED foi processado.
+                data: contract?.start_date ?? new Date(),
                 status: 'scheduled' as any,
                 artist_id: artistId ?? null,
                 contrato_id: contractId,
