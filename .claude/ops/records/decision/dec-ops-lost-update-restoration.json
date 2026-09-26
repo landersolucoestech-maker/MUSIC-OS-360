@@ -1,0 +1,8 @@
+{
+  "id": "dec-ops-lost-update-restoration",
+  "createdAt": "2026-09-26T03:04:42.104Z",
+  "topic": "Restoration of 8 findings lost by an ops.mjs read-modify-write race",
+  "decidedBy": "mission-orchestrator",
+  "decision": "8 findings (find-df79ea88, find-625ea03e, find-cced89c0, find-e94a8665, find-55e3c6c2, find-936c6f8d, find-2220a85e, find-b4201eb2) were issued by ops.mjs finding add while background `evidence run` batches executed; each evidence run saved the state snapshot it had loaded before its command started, silently discarding them (findings are not journaled, so no trace remained in the hash chain). They were restored into state.json with their ORIGINAL runtime-issued IDs and verbatim content from the session record (two are referenced by pushed commits cd7ab30 and d18be7f), each tagged restoredAfterLostUpdate. Root cause fixed in .claude/runtime/ops.mjs (re-read state after the command) with regression test evidence-run-lost-update.regression.mjs (fails without the fix, passes with it).",
+  "rationale": "evidence-governance.md: provenance must be real; restoring the genuine records is more truthful than minting new IDs that would orphan commit references. No evidence records were affected (evidence files and the journal were intact)."
+}
