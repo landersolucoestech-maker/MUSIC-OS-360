@@ -1,11 +1,11 @@
 // @ts-nocheck
-// Component tests para PlatformMiniTrend (Task #361).
+// Component tests for PlatformMiniTrend (Task #361).
 //
-// Cobre o uso compacto do chip de tendência nos tiles de métrica e
-// principalmente o novo `showEmptyState` que faz o chip aparecer como
-// "— sem histórico" no dashboard 360 quando ainda não há snapshot
-// suficiente. Garante também que `showSparkline={false}` esconde a
-// sparkline quando só queremos o badge no dashboard 360.
+// Covers the compact use of the trend chip in the metric tiles and
+// mainly the new `showEmptyState`, which makes the chip appear as
+// "— sem histórico" in the 360 dashboard when there is not yet enough
+// snapshot data. Also ensures `showSparkline={false}` hides the
+// sparkline when we only want the badge in the 360 dashboard.
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithProviders } from "./_helpers/render-with-providers";
@@ -78,7 +78,7 @@ describe("<PlatformMiniTrend />", () => {
     expect(screen.getByTestId("visao360-spotify-trend-pct")).toHaveTextContent(
       /\+4\.2%/,
     );
-    // Empty state não aparece quando há trend válido
+    // The empty state does not appear when there is a valid trend
     expect(
       screen.queryByTestId("visao360-spotify-trend-empty"),
     ).not.toBeInTheDocument();

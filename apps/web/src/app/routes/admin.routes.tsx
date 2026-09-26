@@ -35,7 +35,7 @@ export function adminRoutes(S: SuspenseRouteComponent, P: SuspenseRouteComponent
       <Route path="/admin/support"        element={<P><AdminSupport /></P>} />
       <Route path="/admin/knowledge"      element={<P><AdminKnowledge /></P>} />
 
-      {/* Configurações centraliza: Geral, Email, Segurança, Notificações, Webhooks, Chaves API, Integrações, Usuários */}
+      {/* Settings centralizes the general, email, security, notifications, webhooks, API keys, integrations and users tabs */}
       <Route path="/admin/configuracoes"  element={<P><AdminSettings /></P>} />
       <Route path="/admin/musicchat/automacoes" element={<P><MusicChatAutomationSettings /></P>} />
 

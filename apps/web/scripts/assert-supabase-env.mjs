@@ -18,7 +18,7 @@ export const SUPABASE_REF_DENYLIST = ["mkyvkciwyhfawmvluugb", "sxdhnhoupjrnntrmj
 const SUPABASE_ALLOWED_REFS = [SUPABASE_PROD_REF, SUPABASE_STAGING_REF, SUPABASE_DEV_REF];
 const SUPABASE_KNOWN_REFS = [SUPABASE_PROD_REF, SUPABASE_STAGING_REF, SUPABASE_DEV_REF];
 
-/** Ref esperado por ambiente. `null` (test) = nenhum projeto remoto aceito. */
+/** Expected ref per environment. `null` (test) = no remote project accepted. */
 function expectedRefFor(nodeEnv) {
   if (nodeEnv === "production") return SUPABASE_PROD_REF;
   if (nodeEnv === "staging") return SUPABASE_STAGING_REF;
@@ -32,7 +32,7 @@ function forbiddenRefsFor(nodeEnv) {
   return SUPABASE_KNOWN_REFS.filter((ref) => ref !== expected);
 }
 
-/** Payload público do JWT ({ ref, role }). Nunca expõe o token. */
+/** The JWT's public payload ({ ref, role }). Never exposes the token. */
 function jwtClaims(token) {
   if (!token || token.split(".").length < 2) return null;
   try {

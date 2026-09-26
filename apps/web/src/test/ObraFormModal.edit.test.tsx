@@ -28,10 +28,10 @@ vi.mock("@/modules/artist/hooks/useSignedArtists", () => {
   return { useSignedArtists: () => stableReturn };
 });
 
-// Task J: o hook useArtistas() (capped nos primeiros 50 do tenant) fica
-// deliberadamente VAZIO — se a resolução do artista dentro de selectProjeto
-// (ObraFormModal.tsx) ainda dependesse de escanear esse array, o teste
-// "resolves the linked project's artist..." abaixo falharia.
+// Task J: the useArtistas() hook (capped at the tenant's first 50) is
+// deliberately EMPTY — if the artist resolution inside selectProjeto
+// (ObraFormModal.tsx) still depended on scanning that array, the test
+// "resolves the linked project's artist..." below would fail.
 vi.mock("@/modules/artist/hooks/useArtists", async () => {
   const actual = await vi.importActual<typeof import("@/modules/artist/hooks/useArtists")>(
     "@/modules/artist/hooks/useArtists",
@@ -49,9 +49,9 @@ vi.mock("@/modules/artist/hooks/useArtists", async () => {
   };
 });
 
-// ObraFormModal.tsx não usa mais useProjetos() (Task J) — o picker "Vincular
-// a Projeto Concluído" e a resolução do artista vinculado ao projeto agora
-// passam por storage.listPaged/findById direto.
+// ObraFormModal.tsx no longer uses useProjetos() (Task J) — the
+// "Vincular a Projeto Concluído" picker and the resolution of the project's linked artist now
+// go through storage.listPaged/findById directly.
 vi.mock("@/shared/lib/storage", async () => {
   const actual = await vi.importActual<typeof import("@/shared/lib/storage")>("@/shared/lib/storage");
   return {
@@ -59,8 +59,8 @@ vi.mock("@/shared/lib/storage", async () => {
     storage: {
       ...actual.storage,
       findById: vi.fn(async (table: string, id: string) => {
-        // Task J: artista "fora do cap" — só alcançável por GET /artists/:id
-        // direto (nunca estaria entre os primeiros 50 de useArtistas()).
+        // Task J: an artist "outside the cap" — only reachable by a direct GET /artists/:id
+        // (it would never be among the first 50 of useArtistas()).
         if (table === "artistas" && id === "art-99") {
           return { id: "art-99", nome_artistico: "Artista Fora Do Cap" };
         }
@@ -138,7 +138,7 @@ describe("ObraFormModal edit mode", () => {
     // ISWC
     expect(screen.getByDisplayValue("T-123.456.789-0")).toBeInTheDocument();
 
-    // Duração: 3 min and 45 seg
+    // Duration: 3 min and 45 sec
     expect(screen.getByTestId("input-duracao-minutos")).toHaveValue("3");
     expect(screen.getByTestId("input-duracao-segundos")).toHaveValue("45");
 
@@ -202,10 +202,10 @@ describe("ObraFormModal edit mode", () => {
     expect(callArg.music_genre).toBe("pop");
   });
 
-  // Task J — Lookup Gap Zero: prova que o picker "Vincular a Projeto
-  // Concluído" busca via storage.listPaged (server-side) e que o autofill do
-  // artista do projeto vinculado resolve via storage.findById por ID direto,
-  // nunca escaneando o array capped de useArtistas() (mockado vazio acima).
+  // Task J — Lookup Gap Zero: proves that the
+  // "Vincular a Projeto Concluído" picker searches via storage.listPaged (server-side) and that the autofill of the
+  // linked project's artist resolves via storage.findById by direct ID,
+  // never scanning the capped array of useArtistas() (mocked empty above).
   it("resolves the linked project's artist via storage.findById when linking a project", async () => {
     renderWithProviders(
       <ObraFormModal

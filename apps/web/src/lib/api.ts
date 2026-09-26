@@ -1,8 +1,8 @@
 /**
- * lib/api.ts — Ponto de entrada canónico para o cliente HTTP.
+ * lib/api.ts — Canonical entry point for the HTTP client.
  *
- * Re-exporta de shared/lib/api-client para que novos módulos
- * importem sempre de @/lib/api em vez de @/shared/lib/api-client.
+ * Re-exports from shared/lib/api-client so new modules
+ * always import from @/lib/api instead of @/shared/lib/api-client.
  */
 export {
   api,

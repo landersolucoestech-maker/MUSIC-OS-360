@@ -1,9 +1,9 @@
 /**
  * Audiovisual / Video Production routes
  *
- * Módulo audiovisual unificado.
- * A rota principal /audiovisual renderiza diretamente a lista de projetos.
- * Rotas antigas permanecem apenas como redirects para evitar quebra de links salvos.
+ * Unified audiovisual module.
+ * The main /audiovisual route renders the project list directly.
+ * Old routes remain only as redirects to avoid breaking saved links.
  */
 import { lazy } from "react";
 import { Route, Navigate } from "react-router-dom";

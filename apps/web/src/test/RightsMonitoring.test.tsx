@@ -5,8 +5,8 @@
 // Covers:
 //  1. Clicking a row detail button opens DetectionDetailModal with compositor + cod_ecad
 //     from the catalog (enriched via work_id lookup against useObras())
-//  2. Clicking a detection with no matching/linked obra shows the orphan warning
-//  3. Divergências tab badge count reflects detections without a reconciled obra
+//  2. Clicking a detection with no matching/linked work shows the orphan warning
+//  3. The "Divergências" tab badge count reflects detections without a reconciled work
 
 import { describe, it, expect, vi } from "vitest";
 import { act } from "react";

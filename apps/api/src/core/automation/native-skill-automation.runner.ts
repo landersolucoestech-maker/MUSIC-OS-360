@@ -67,7 +67,7 @@ export interface NativeSkillAutomationParams<TRow, TInput> {
   entityId: string | null | undefined;
   /** Key in `metadata` where the envelope is written (e.g. 'aiPlan', 'aiChecklist'). */
   metadataKey: string;
-  /** System prompt canônico (do pacote). */
+  /** Canonical system prompt (from the package). */
   systemPrompt: string;
   /** Optional eligibility evaluated BEFORE any database access. */
   isEligible?: () => boolean;

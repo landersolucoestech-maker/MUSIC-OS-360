@@ -1,9 +1,9 @@
 /**
  * app/providers/tenant-labels.ts
  *
- * Constantes de label para tipos do tenant.
- * Separado de TenantContext.tsx para compatibilidade com Vite Fast Refresh.
- * (TenantContext.tsx só pode exportar componentes React e hooks.)
+ * Label constants for tenant types.
+ * Separated from TenantContext.tsx for Vite Fast Refresh compatibility.
+ * (TenantContext.tsx may only export React components and hooks.)
  */
 
 import { getAccessToken } from "@/shared/lib/api-client";
@@ -78,7 +78,7 @@ export const ROLE_PERMISSIONS: Record<TenantRole, TenantPermissions> = {
   viewer:  Object.fromEntries(MODULE_KEYS.map(k => [k, k === "audit" || k === "settings" ? NO_ACCESS : READ_ONLY])) as TenantPermissions,
 };
 
-/** Deriva permissões do JWT real. */
+/** Derives permissions from the real JWT. */
 export function getPermissionsFromToken(): TenantPermissions {
   try {
     const token = getAccessToken();

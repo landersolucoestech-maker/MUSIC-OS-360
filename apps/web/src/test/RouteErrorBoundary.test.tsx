@@ -5,7 +5,7 @@ import { MemoryRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import React from 'react';
 import { RouteErrorBoundary } from '@/shared/infrastructure/RouteErrorBoundary';
 
-// Componente que lança erro para testar
+// Component that throws an error, for testing
 function ThrowError({ shouldThrow }: { shouldThrow: boolean }) {
   if (shouldThrow) {
     throw new Error('Route error');

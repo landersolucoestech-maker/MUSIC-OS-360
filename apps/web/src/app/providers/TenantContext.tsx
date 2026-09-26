@@ -15,7 +15,7 @@ import { SYSTEM_REGIONAL_SETTINGS } from "@/shared/lib/system-regional-settings"
 export type TenantPlan           = "starter" | "professional" | "enterprise";
 export type TenantBillingStatus  =
   | "active" | "trial" | "suspended" | "cancelled"
-  // Estados de enforcement de inadimplência (fonte da verdade = backend tenant_billing_state)
+  // Delinquency enforcement states (source of truth = backend tenant_billing_state)
   | "past_due" | "payment_grace" | "read_only";
 export type TenantIndustry       = "gravadora" | "editora" | "distribuidora" | "agencia" | "publisher" | "outro";
 
@@ -38,7 +38,7 @@ export type TenantModuleKey =
 
 export type TenantPermissions = Record<TenantModuleKey, TenantModulePermission>;
 
-// ROLE_PERMISSIONS disponível em ./tenant-labels
+// ROLE_PERMISSIONS available in ./tenant-labels
 
 // ─── Tenant config (branding + UX per tenant) ─────────────────────────────────
 
@@ -125,9 +125,9 @@ export interface Tenant {
   };
 }
 
-// getPermissionsFromToken disponível em ./tenant-labels
+// getPermissionsFromToken available in ./tenant-labels
 
-// ─── Tenant base vazio (nenhum dado fictício; preenchido pela API real) ──────
+// ─── Empty base tenant (no fictitious data; filled by the real API) ──────────
 
 const BASE_TENANT: Tenant = {
   id:       "",
@@ -162,16 +162,16 @@ const BASE_TENANT: Tenant = {
 interface TenantContextType {
   tenant:           Tenant;
   setTenant:        React.Dispatch<React.SetStateAction<Tenant>>;
-  /** FONTE ÚNICA de autorização: membership.permissions (resource:action). null = ainda não carregado. */
+  /** SINGLE source of authorization: membership.permissions (resource:action). null = not loaded yet. */
   permissionKeys:   string[] | null;
-  /** true enquanto a primeira chamada a /auth/context ainda não resolveu (sucesso ou erro). */
+  /** true while the first call to /auth/context has not resolved yet (success or error). */
   contextLoading:   boolean;
   /**
-   * Parte 76 — antes, uma falha em /auth/context (ex.: 503 por dependência de
-   * banco indisponível) era silenciosamente engolida: `tenant` ficava para
-   * sempre no placeholder vazio, sem nenhum sinal de erro — dando a
-   * impressão de "carregando para sempre" quando na verdade a chamada já
-   * tinha falhado de vez. Mensagem sanitizada (nunca o erro cru do backend).
+   * Part 76 — before, a failure on /auth/context (e.g. a 503 caused by an unavailable
+   * database dependency) was silently swallowed: `tenant` stayed
+   * forever on the empty placeholder, without any error signal — giving the
+   * impression of "loading forever" when the call had actually
+   * failed for good. Sanitized message (never the raw backend error).
    */
   contextError:     string | null;
   isFeatureEnabled: (flag: keyof FeatureFlags) => boolean;
@@ -184,19 +184,19 @@ interface TenantContextType {
 
 const TenantContext = createContext<TenantContextType | undefined>(undefined);
 
-// Espelha, só para exibição, o tenant-zero real (LANDER RECORDS) que o
-// backend já usa sob AUTH_DISABLED — fonte de verdade é
+// Mirrors, for display only, the real tenant-zero (LANDER RECORDS) that the
+// backend already uses under AUTH_DISABLED — the source of truth is
 // apps/api/src/database/tenant-zero.constants.ts (TENANT_ZERO_TENANT_ID),
-// congelado e coberto por snapshot lá. Não é usado para autorização: o
-// backend nunca confia no tenant.id enviado pelo cliente sob AUTH_DISABLED,
-// ele já injeta o tenant-zero real via guard independentemente do que a UI
-// mostra aqui.
+// frozen and covered by a snapshot there. It is not used for authorization: the
+// backend never trusts the tenant.id sent by the client under AUTH_DISABLED,
+// it already injects the real tenant-zero via a guard regardless of what the UI
+// shows here.
 const AUTH_DISABLED_TENANT_ID = "a900b3a8-fa1c-5a6b-a852-1b0689e27fe3";
 
-// DEV ONLY (VITE_DISABLE_AUTH=true) — tenant sintético central, IDs
-// deliberadamente distintos do AUTH_DISABLED_TENANT_ID acima (ver nota em
-// AuthContext.tsx: este flag não pressupõe nenhum bypass correspondente no
-// backend). Permissões de owner para liberar toda a navegação/UI local.
+// DEV ONLY (VITE_DISABLE_AUTH=true) — central synthetic tenant, IDs
+// deliberately distinct from AUTH_DISABLED_TENANT_ID above (see the note in
+// AuthContext.tsx: this flag assumes no corresponding bypass in the
+// backend). Owner permissions to unlock all local navigation/UI.
 const DEV_AUTH_BYPASS_TENANT_ID = "00000000-0000-4000-8000-000000000002";
 
 function buildInitialTenant(): Tenant {
@@ -274,8 +274,8 @@ function normalizeOnboarding(settings: Record<string, unknown>): TenantOnboardin
 export function TenantProvider({ children }: { children: React.ReactNode }) {
   const { session } = useAuth();
   const [tenant, setTenant] = useState<Tenant>(buildInitialTenant);
-  // FONTE ÚNICA de autorização: permissões resource:action vindas de membership.permissions.
-  // null = ainda não carregado (ou MOCK/AUTH_DISABLED) → usePermissions faz fail-open de UI.
+  // SINGLE source of authorization: resource:action permissions coming from membership.permissions.
+  // null = not loaded yet (or MOCK/AUTH_DISABLED) → usePermissions does a UI fail-open.
   const [permissionKeys, setPermissionKeys] = useState<string[] | null>(null);
   const [contextLoading, setContextLoading] = useState<boolean>(!(AUTH_DISABLED || DEV_AUTH_BYPASS));
   const [contextError, setContextError] = useState<string | null>(null);
@@ -336,9 +336,9 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
 
   const isFeatureEnabled = (flag: keyof FeatureFlags): boolean => tenant.features[flag] ?? false;
 
-  // FONTE ÚNICA de autorização: membership.permissions (resource:action).
-  // Permissivo APENAS em dev/mock/auth-disabled. Em produção, ausência de permissões
-  // (permissionKeys === null, ainda carregando ou indisponível) NÃO abre — fail-closed.
+  // SINGLE source of authorization: membership.permissions (resource:action).
+  // Permissive ONLY in dev/mock/auth-disabled. In production, absent permissions
+  // (permissionKeys === null, still loading or unavailable) do NOT open — fail-closed.
   const hasPermission = (module: TenantModuleKey, action: keyof TenantModulePermission): boolean => {
     if (AUTH_DISABLED || IS_DEV) return true;
     if (permissionKeys === null) return false;
@@ -392,20 +392,20 @@ function parseJwtClaims(token: string): JwtAppClaims | null {
 }
 
 /**
- * useSyncTenantFromJWT — sincroniza permissões + metadados do tenant.
+ * useSyncTenantFromJWT — syncs permissions + tenant metadata.
  *
- * Fontes de dados (por prioridade decrescente):
- *   1. JWT app_metadata.role + app_metadata.org_id (injetado pelo Supabase Hook)
- *   2. JWT top-level role / org_id (fallback para tokens legados)
+ * Data sources (by descending priority):
+ *   1. JWT app_metadata.role + app_metadata.org_id (injected by the Supabase Hook)
+ *   2. JWT top-level role / org_id (fallback for legacy tokens)
  *
- * Re-executa em:
- *   • mudança de userEmail (login inicial)
- *   • evento window "musicos360:auth:tokenRefreshed" (refresh de token)
+ * Re-runs on:
+ *   • a userEmail change (initial login)
+ *   • the window event "musicos360:auth:tokenRefreshed" (token refresh)
  */
 export function useSyncTenantFromJWT(_userEmail?: string): void {
   const { setTenant } = useTenant();
 
-  // Função interna de sincronização — partilhada pelos dois efeitos abaixo
+  // Internal sync function — shared by the two effects below
   const syncFromJwt = React.useCallback(() => {
     
     if (AUTH_DISABLED || DEV_AUTH_BYPASS) return;
@@ -443,13 +443,13 @@ export function useSyncTenantFromJWT(_userEmail?: string): void {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Efeito 1: dispara no login / quando o email do utilizador muda
+  // Effect 1: fires on login / when the user's email changes
   useEffect(() => {
     syncFromJwt();
   }, [syncFromJwt]);
 
-  // Efeito 2: dispara quando o AuthContext renova o token (TOKEN_REFRESHED)
-  // sem necessidade de reload — os novos claims do hook ficam imediatamente ativos
+  // Effect 2: fires when AuthContext renews the token (TOKEN_REFRESHED)
+  // without a reload — the hook's new claims become active immediately
   useEffect(() => {
     const handler = () => {
       devTenantLog("TOKEN_REFRESHED recebido — re-sincronizando claims do JWT");
@@ -461,4 +461,4 @@ export function useSyncTenantFromJWT(_userEmail?: string): void {
 }
 
 // Label constants (PLAN_LABEL, INDUSTRY_LABEL, BILLING_STATUS_LABEL, ROLE_LABEL)
-// e ROLE_PERMISSIONS disponíveis em ./tenant-labels
+// and ROLE_PERMISSIONS available in ./tenant-labels

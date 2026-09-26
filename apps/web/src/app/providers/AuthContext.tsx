@@ -1,11 +1,11 @@
 /**
  * app/providers/AuthContext.tsx
  *
- * AuthContext — bridge multi-modo:
+ * AuthContext — multi-mode bridge:
  *
- * Autenticação real via Supabase (sem modo mock).
- *   Autenticação real via Supabase Auth.
- *   O SDK gerencia tokens, refresh automático e persistência de sessão.
+ * Real authentication via Supabase (no mock mode).
+ *   Real authentication via Supabase Auth.
+ *   The SDK manages tokens, automatic refresh and session persistence.
  */
 
 import React, {
@@ -72,12 +72,12 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
   updatePassword: (password: string) => Promise<{ error: AuthError | null }>;
   /**
-   * Troca atômica da senha obrigatória do primeiro login (Parte 74):
-   * chama POST /auth/change-required-password (o backend troca a senha de
-   * verdade no Supabase Auth E limpa must_change_password na mesma
-   * operação), depois força refreshSession() para que o novo JWT (sem a
-   * flag) chegue ao app — sem isso, o usuário ficaria preso na tela de
-   * troca mesmo após o backend já ter concluído com sucesso.
+   * Atomic change of the first-login mandatory password (Part 74):
+   * calls POST /auth/change-required-password (the backend really changes the password
+   * in Supabase Auth AND clears must_change_password in the same
+   * operation), then forces refreshSession() so the new JWT (without the
+   * flag) reaches the app — without it, the user would stay stuck on the
+   * change screen even after the backend had already succeeded.
    */
   changeRequiredPassword: (newPassword: string, confirmPassword: string) => Promise<{ error: AuthError | null }>;
 }
@@ -170,12 +170,12 @@ function ensureWorkspaceProvisioned(
   return activeProvisioning;
 }
 
-// Espelha, só para exibição, o owner sintético do tenant-zero (LANDER
-// RECORDS) que o backend já usa sob AUTH_DISABLED — fonte de verdade é
+// Mirrors, for display only, the tenant-zero synthetic owner (LANDER
+// RECORDS) that the backend already uses under AUTH_DISABLED — the source of truth is
 // apps/api/src/database/tenant-zero.constants.ts
-// (TENANT_ZERO_SYNTHETIC_OWNER_*), congelado e coberto por snapshot lá.
-// Nunca chama Supabase Auth: sob AUTH_DISABLED o backend não valida token
-// nenhum, então não há sessão real para buscar.
+// (TENANT_ZERO_SYNTHETIC_OWNER_*), frozen and covered by a snapshot there.
+// Never calls Supabase Auth: under AUTH_DISABLED the backend validates no
+// token at all, so there is no real session to fetch.
 const AUTH_DISABLED_USER: User = {
   id: "c600dbbd-84ea-5910-8655-eb94389bb224",
   email: "owner@lander-records.example.com",
@@ -185,11 +185,11 @@ const AUTH_DISABLED_USER: User = {
   user_metadata: { full_name: "LANDER RECORDS (Owner Sintético — DEV/STAGING)", role: "owner" },
 };
 
-// DEV ONLY (VITE_DISABLE_AUTH=true) — usuário sintético central para navegar a
-// UI sem login. Deliberadamente distinto do AUTH_DISABLED_USER acima: este NÃO
-// espelha nenhum dado real do backend (o backend não tem, e não precisa ter,
-// nenhum bypass correspondente sob este flag) — IDs claramente sintéticos para
-// nunca serem confundidos com um tenant/usuário real.
+// DEV ONLY (VITE_DISABLE_AUTH=true) — central synthetic user to browse the
+// UI without login. Deliberately distinct from AUTH_DISABLED_USER above: this one does NOT
+// mirror any real backend data (the backend has, and needs, no
+// corresponding bypass under this flag) — clearly synthetic IDs so they are
+// never mistaken for a real tenant/user.
 const DEV_BYPASS_USER: User = {
   id: "00000000-0000-4000-8000-000000000001",
   email: "dev-bypass@local.dev",
@@ -352,11 +352,11 @@ function SupabaseAuthProvider({ children }: { children: React.ReactNode }) {
       return { error: { message } };
     }
 
-    // O backend já confirmou a troca física + limpeza de must_change_password
-    // (operação atômica — ver auth-password.service.ts). O JWT que o
-    // frontend ainda tem em memória é que está desatualizado: refreshSession()
-    // busca um novo access_token já sem a flag, disparando TOKEN_REFRESHED
-    // via onAuthStateChange (acima), que atualiza session/user automaticamente.
+    // The backend already confirmed the physical change + clearing of must_change_password
+    // (an atomic operation — see auth-password.service.ts). It is the JWT the
+    // frontend still holds in memory that is outdated: refreshSession()
+    // fetches a new access_token already without the flag, firing TOKEN_REFRESHED
+    // via onAuthStateChange (above), which updates session/user automatically.
     const { data, error: refreshError } = await getSupabaseClient().auth.refreshSession();
     if (refreshError || !data.session) {
       return { error: { message: refreshError?.message ?? "Senha trocada, mas não foi possível renovar a sessão. Faça login novamente." } };

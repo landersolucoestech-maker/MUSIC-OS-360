@@ -16,12 +16,12 @@ export function supportRoutes(P: SuspenseRouteComponent) {
       <Route path="/support/tickets"       element={<P><SupportTickets /></P>} />
       <Route path="/support/tickets/:id"   element={<P><SupportTicketDetail /></P>} />
       <Route path="/support/knowledge"        element={<P><SupportKnowledge /></P>} />
-      {/* Gestão da Base de Conhecimento é exclusiva do Painel Admin. */}
+      {/* Knowledge Base management is exclusive to the Admin Panel. */}
       <Route path="/support/knowledge/manage" element={<Navigate to="/admin/knowledge" replace />} />
-      {/* Chat ao Vivo — não é um segundo sistema de chat: aponta para o
-          MusicChat real (/chat), que já cobre exatamente este caso de uso na
-          aba "internal" (conversa com a própria equipe). A antiga SupportChat
-          era uma demo com respostas automáticas fake, sem backend algum. */}
+      {/* Live chat — not a second chat system: it points to the
+          real MusicChat (/chat), which already covers exactly this use case in the
+          "internal" tab (conversation with the team itself). The old SupportChat
+          was a demo with fake automatic replies, with no backend at all. */}
       <Route path="/support/chat"          element={<Navigate to="/chat" replace />} />
       <Route path="/support/status"        element={<P><SupportStatus /></P>} />
       <Route path="/support/requests"      element={<P><SupportRequests /></P>} />

@@ -72,11 +72,11 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
 
   const refresh = async () => {
-    // Parte 77 — enquanto a troca obrigatória de senha está pendente, o
-    // backend bloqueia toda rota de domínio (inclusive /billing/subscription)
-    // com 403 MUST_CHANGE_PASSWORD. Buscar billing nesse estado não serve a
-    // nenhum propósito (a UI de billing nem é exibida antes da troca) e só
-    // gera um erro sem tratamento a cada 60s.
+    // Part 77 — while the mandatory password change is pending, the
+    // backend blocks every domain route (including /billing/subscription)
+    // with 403 MUST_CHANGE_PASSWORD. Fetching billing in that state serves
+    // no purpose (the billing UI is not even shown before the change) and only
+    // produces an unhandled error every 60s.
     if (AUTH_DISABLED || !session?.access_token || user?.mustChangePassword) return;
     setLoading(true);
     try {
@@ -98,9 +98,9 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
         },
       }));
     } catch (error) {
-      // Nunca deixar uma falha de billing (403 must-change-password, 503
-      // dependência indisponível, rede) escapar como rejeição não tratada —
-      // isso já causou um crash real de toda a árvore React (Parte 77).
+      // Never let a billing failure (403 must-change-password, 503
+      // unavailable dependency, network) escape as an unhandled rejection —
+      // that already caused a real crash of the whole React tree (Part 77).
       if (!(error instanceof PasswordChangeRequiredError)) {
         captureError(error instanceof Error ? error : new Error(String(error)), { extra: { source: "BillingContext.refresh" } });
       }

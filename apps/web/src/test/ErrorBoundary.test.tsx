@@ -4,7 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { ErrorBoundary } from '@/shared/infrastructure/ErrorBoundary';
 
-// Componente que lança erro para testar
+// Component that throws an error, for testing
 function ThrowError({ shouldThrow }: { shouldThrow: boolean }) {
   if (shouldThrow) {
     throw new Error('Test error');

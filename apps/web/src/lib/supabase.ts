@@ -2,10 +2,10 @@
  * lib/supabase.ts
  *
  * Supabase client singleton.
- * Auth persistente + refresh automático + sessão salva no localStorage.
+ * Persistent auth + automatic refresh + session saved in localStorage.
  *
- * O cliente é armazenado em window.__musicos360_sb para sobreviver
- * ao HMR do Vite (que re-avalia módulos e resetaria uma variável local).
+ * The client is stored in window.__musicos360_sb to survive
+ * Vite's HMR (which re-evaluates modules and would reset a local variable).
  */
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";

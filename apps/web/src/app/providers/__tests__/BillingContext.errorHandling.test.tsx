@@ -42,7 +42,7 @@ describe("BillingProvider — error handling in refresh() (Part 77)", () => {
 
     const { result } = renderHook(() => useBilling(), { wrapper });
     await waitFor(() => expect(state.getSubscription).toHaveBeenCalled());
-    // Não deveria ter lançado — se chegou aqui sem o teste falhar, refresh() engoliu o erro.
+    // It should not have thrown — if it got here without the test failing, refresh() swallowed the error.
     expect(result.current).toBeDefined();
     expect(state.captureError).not.toHaveBeenCalled();
   });

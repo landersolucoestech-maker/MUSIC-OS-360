@@ -17,8 +17,8 @@ export function accountingRoutes(P: SuspenseRouteComponent) {
       <Route path="/accounting/nota-fiscal" element={<P><Invoices /></P>} />
       <Route path="/accounting/rules" element={<P><FinanceCategoryRules /></P>} />
       <Route path="/accounting/categorias" element={<P><FinancialCategories /></P>} />
-      {/* Automações financeiras (event-driven) — domínio distinto de /accounting/rules
-          (categorização por palavra-chave). Ver Decision Gate item 2+3. */}
+      {/* Financial automations (event-driven) — a domain distinct from /accounting/rules
+          (keyword categorization). See Decision Gate items 2+3. */}
       <Route path="/accounting/automacoes" element={<P><FinancialRules /></P>} />
       <Route path="/financeiro/regras" element={<P><FinanceCategoryRules /></P>} />
       <Route path="/financeiro/regras-categorias" element={<Navigate to="/configuracoes?aba=operacional&modulo=financeiro" replace />} />

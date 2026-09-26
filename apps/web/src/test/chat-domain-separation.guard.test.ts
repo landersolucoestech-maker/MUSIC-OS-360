@@ -1,17 +1,17 @@
 /**
  * chat-domain-separation.guard.test.ts
  *
- * Guarda permanente: Chat Interno (equipe <-> equipe) e Central de
- * Atendimento (equipe <-> público externo) devem permanecer domínios
- * arquiteturalmente independentes — árvore de componentes, serviços e
- * entidades próprios — mesmo vivendo sob a mesma rota (/chat) com dois
- * tabs. Nunca podem ser montados simultaneamente.
+ * Permanent guard: Internal Chat (team <-> team) and the Service
+ * Center (team <-> external public) must remain architecturally
+ * independent domains — their own component tree, services and
+ * entities — even living under the same route (/chat) with two
+ * tabs. They can never be mounted simultaneously.
  *
- * Contexto: a implementação anterior usava `<TabsContent forceMount>` na
- * aba de Central de Atendimento, o que a mantinha renderizando mesmo com
- * "Chat Interno" ativo (mistura visual/funcional/de dados). Este guard
- * prova que a causa raiz não volta a existir, sem exigir duas rotas
- * separadas (que não é o formato desejado do produto).
+ * Context: the previous implementation used `<TabsContent forceMount>` on the
+ * Service Center tab, which kept it rendering even with
+ * Internal Chat active (a visual/functional/data mix). This guard
+ * proves the root cause does not come back, without requiring two separate
+ * routes (which is not the desired product format).
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

@@ -55,7 +55,7 @@ export interface ReportFormContract {
   fields: ReportFieldSpec[];
   /** DTO field → exclusion reason (auditable; required by the guard). */
   excludedFormFields: Record<string, string>;
-  /** Campo legado/EN do DTO → key canônica do contrato. */
+  /** Legacy/EN DTO field → the contract's canonical key. */
   formFieldAliases?: Record<string, string>;
   /** Optional overrides (physical contract columns only). */
   filterableColumns?: string[];

@@ -1,14 +1,14 @@
 /**
  * constants/musicalGenres.ts
  *
- * FONTE ÚNICA DE VERDADE — Gêneros Musicais (PT-BR).
+ * SINGLE SOURCE OF TRUTH — Musical genres (PT-BR display labels).
  *
- * Todos os módulos do frontend devem importar daqui. É proibido manter listas
- * locais/duplicadas de gênero musical. Catálogo ordenado alfabeticamente
- * (locale pt-BR). Camada de apresentação apenas — não altera backend/contratos.
+ * Every frontend module must import from here. Keeping local/duplicated
+ * musical genre lists is forbidden. Catalog sorted alphabetically (pt-BR locale).
+ * Presentation layer only — does not change backend/contracts.
  */
 
-/** Ordenação alfabética crescente em PT-BR (case/acento-insensível). */
+/** Ascending alphabetical sort in PT-BR (case/accent-insensitive). */
 export function sortLabelsPtBr(items: string[]): string[] {
   return [...items].sort((a, b) => a.localeCompare(b, "pt-BR", { sensitivity: "base" }));
 }
@@ -17,7 +17,7 @@ export function sortOptionsPtBr<T extends { label: string }>(items: T[]): T[] {
   return [...items].sort((a, b) => a.label.localeCompare(b.label, "pt-BR", { sensitivity: "base" }));
 }
 
-/** Slug estável (value canônico) derivado do rótulo. */
+/** Stable slug (canonical value) derived from the label. */
 export function toGenreSlug(label: string): string {
   return label
     .normalize("NFD")
@@ -27,7 +27,7 @@ export function toGenreSlug(label: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-/** Rótulos canônicos (PT-BR), já ordenados alfabeticamente. */
+/** Canonical labels (PT-BR), already sorted alphabetically. */
 export const MUSICAL_GENRE_LABELS: string[] = sortLabelsPtBr([
   "Afrobeat",
   "Alternativo",
@@ -105,13 +105,13 @@ export interface GenreOption {
   label: string;
 }
 
-/** Catálogo canônico {value(slug), label}, ordenado alfabeticamente. */
+/** Canonical catalog {value(slug), label}, sorted alphabetically. */
 export const MUSICAL_GENRES: GenreOption[] = MUSICAL_GENRE_LABELS.map((label) => ({
   value: toGenreSlug(label),
   label,
 }));
 
-/** Mapa slug → rótulo (para exibir o rótulo a partir de um value persistido). */
+/** slug → label map (to display the label from a persisted value). */
 export const MUSICAL_GENRE_LABEL_BY_VALUE: Record<string, string> = Object.fromEntries(
   MUSICAL_GENRES.map((g) => [g.value, g.label]),
 );

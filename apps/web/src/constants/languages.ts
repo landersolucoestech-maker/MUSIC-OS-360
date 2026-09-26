@@ -1,21 +1,21 @@
 /**
  * constants/languages.ts
  *
- * FONTE ÚNICA DE VERDADE — Idiomas da música (PT-BR).
+ * SINGLE SOURCE OF TRUTH — Song languages (PT-BR display labels).
  *
- * Todos os módulos do frontend devem importar daqui. É proibido manter listas
- * locais/duplicadas de idioma. Catálogo ordenado alfabeticamente (locale pt-BR).
- * Camada de apresentação apenas — não altera backend/contratos.
+ * Every frontend module must import from here. Keeping local/duplicated
+ * language lists is forbidden. Catalog sorted alphabetically (pt-BR locale).
+ * Presentation layer only — does not change backend/contracts.
  */
 
 import { sortLabelsPtBr, sortOptionsPtBr, toGenreSlug } from "./musicalGenres";
 
 export { sortLabelsPtBr, sortOptionsPtBr };
 
-/** Slug estável (value canônico) derivado do rótulo do idioma. */
+/** Stable slug (canonical value) derived from the language label. */
 export const toLanguageSlug = toGenreSlug;
 
-/** Rótulos canônicos de idioma (PT-BR), já ordenados alfabeticamente. */
+/** Canonical language labels (PT-BR), already sorted alphabetically. */
 export const LANGUAGE_LABELS: string[] = sortLabelsPtBr([
   "Alemão",
   "Amárico",
@@ -66,13 +66,13 @@ export interface LanguageOption {
   label: string;
 }
 
-/** Catálogo canônico {value(slug), label}, ordenado alfabeticamente. */
+/** Canonical catalog {value(slug), label}, sorted alphabetically. */
 export const LANGUAGES: LanguageOption[] = LANGUAGE_LABELS.map((label) => ({
   value: toLanguageSlug(label),
   label,
 }));
 
-/** Mapa slug → rótulo (para exibir o rótulo a partir de um value persistido). */
+/** slug → label map (to display the label from a persisted value). */
 export const LANGUAGE_LABEL_BY_VALUE: Record<string, string> = Object.fromEntries(
   LANGUAGES.map((l) => [l.value, l.label]),
 );

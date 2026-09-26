@@ -56,7 +56,7 @@ describe("TenantProvider — /auth/context error surface (Part 76)", () => {
 
     await waitFor(() => expect(result.current.contextLoading).toBe(false));
     expect(result.current.contextError).toMatch(/indisponível/i);
-    // Nunca expõe a mensagem crua do backend — mensagem sanitizada e genérica.
+    // Never exposes the raw backend message — a sanitized, generic message.
     expect(result.current.contextError).not.toMatch(/bootstrap/i);
   });
 

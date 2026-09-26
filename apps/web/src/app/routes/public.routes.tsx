@@ -1,9 +1,9 @@
 /**
  * STEP 10 — Routing Modularization: Public Routes
  *
- * Exporta função (não componente) para uso inline dentro de <Routes>.
- * React Router v6 exige que filhos de <Routes> sejam <Route> ou <React.Fragment>.
- * Chamar como função — {publicRoutes(...)} — retorna um fragmento válido.
+ * Exports a function (not a component) for inline use inside <Routes>.
+ * React Router v6 requires the children of <Routes> to be <Route> or <React.Fragment>.
+ * Calling it as a function — {publicRoutes(...)} — returns a valid fragment.
  */
 import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";

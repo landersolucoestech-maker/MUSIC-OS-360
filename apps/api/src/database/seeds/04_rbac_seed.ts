@@ -14,7 +14,7 @@
 import { DataSource } from 'typeorm';
 import { ROLE_PERMISSIONS, ROLE_HIERARCHY } from '../../core/rbac/rbac.service';
 
-/** Aliases → role canônico. Excluídos do seed de role_permissions (herdam do canônico). */
+/** Aliases → canonical role. Excluded from the role_permissions seed (they inherit from the canonical role). */
 const ALIASES: Record<string, string> = {
   artista: 'artist',
   tenant_owner: 'owner',
@@ -216,7 +216,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
 
   // ── 3) role_permissions: paridade EXATA com ROLE_PERMISSIONS (exceto aliases) ─
   for (const [slug, perms] of Object.entries(ROLE_PERMISSIONS)) {
-    if (ALIASES[slug]) continue; // alias herda do canônico
+    if (ALIASES[slug]) continue; // alias inherits from the canonical role
     for (const key of perms) {
       await ds.query(
         `INSERT INTO "role_permissions" ("role_id", "permission_id")
@@ -233,7 +233,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
   // PHASE 8.1: incremental financial permissions without changing the legacy matrix.
   for (const [key, slugs] of Object.entries(FINANCIAL_PERMISSION_GRANTS)) {
     for (const slug of slugs) {
-      if (ALIASES[slug]) continue; // aliases herdam do canônico
+      if (ALIASES[slug]) continue; // aliases inherit from the canonical role
       await ds.query(
         `INSERT INTO "role_permissions" ("role_id", "permission_id")
          SELECT r."id", p."id"
@@ -249,7 +249,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
   // PHASE 8.3: transactions/invoices permissions at parity with the controllers' baseline.
   for (const [key, slugs] of Object.entries(TRANSACTION_INVOICE_PERMISSION_GRANTS)) {
     for (const slug of slugs) {
-      if (ALIASES[slug]) continue; // aliases herdam do canônico
+      if (ALIASES[slug]) continue; // aliases inherit from the canonical role
       await ds.query(
         `INSERT INTO "role_permissions" ("role_id", "permission_id")
          SELECT r."id", p."id"
@@ -265,7 +265,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
   // PHASE 8.4: contracts/contract-templates permissions at parity with the controllers' baseline.
   for (const [key, slugs] of Object.entries(CONTRACT_PERMISSION_GRANTS)) {
     for (const slug of slugs) {
-      if (ALIASES[slug]) continue; // aliases herdam do canônico
+      if (ALIASES[slug]) continue; // aliases inherit from the canonical role
       await ds.query(
         `INSERT INTO "role_permissions" ("role_id", "permission_id")
          SELECT r."id", p."id"
@@ -281,7 +281,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
   // PHASE 8.5: granular CRUD of the migrated controllers (closes the catalog×controller gap).
   for (const [key, slugs] of Object.entries(GRANULAR_CRUD_PERMISSION_GRANTS)) {
     for (const slug of slugs) {
-      if (ALIASES[slug]) continue; // aliases herdam do canônico
+      if (ALIASES[slug]) continue; // aliases inherit from the canonical role
       await ds.query(
         `INSERT INTO "role_permissions" ("role_id", "permission_id")
          SELECT r."id", p."id"
@@ -297,7 +297,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
   // PHASE 8.6: realignment of the artist:* and inventory:* distribution (adds missing grants).
   for (const [key, slugs] of Object.entries(ARTIST_INVENTORY_PERMISSION_GRANTS)) {
     for (const slug of slugs) {
-      if (ALIASES[slug]) continue; // aliases herdam do canônico
+      if (ALIASES[slug]) continue; // aliases inherit from the canonical role
       await ds.query(
         `INSERT INTO "role_permissions" ("role_id", "permission_id")
          SELECT r."id", p."id"

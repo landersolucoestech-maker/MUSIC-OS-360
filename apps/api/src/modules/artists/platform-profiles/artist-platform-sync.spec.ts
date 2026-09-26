@@ -505,7 +505,7 @@ describe('ArtistPlatformSyncProcessor', () => {
 
     await processor.process({ name: ARTIST_PLATFORM_PROFILE_JOB_NAMES.SYNC, data: payload } as never);
 
-    // FORCE RLS: toda a persistência do worker roda dentro do contexto do tenant do job.
+    // FORCE RLS: all of the worker's persistence runs inside the job's tenant context.
     expect(dbContext.runInTenantContext).toHaveBeenCalledWith(
       { tenantId: 'tenant-1', orgId: null, role: null },
       expect.any(Function),

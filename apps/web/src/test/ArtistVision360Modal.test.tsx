@@ -1,18 +1,18 @@
 // @ts-nocheck
-// Integration test para ArtistVision360Modal.
+// Integration test for ArtistVision360Modal.
 //
-// Verifica os cards de Spotify / YouTube na seção "Perfis e Redes Sociais"
-// do modal Visão 360°, respeitando o backend real de platform-profiles:
-//   * Sem URL cadastrada → "—" e nenhum botão de sincronização.
-//   * Com URL cadastrada mas sem snapshot ainda → "Não sincronizado".
-//   * Com snapshot de sucesso → valores reais retornados pelo backend.
+// Checks the Spotify / YouTube cards in the "Perfis e Redes Sociais" section
+// of the 360° View modal, respecting the real platform-profiles backend:
+//   * No registered URL → "—" and no sync button.
+//   * Registered URL but no snapshot yet → "Não sincronizado".
+//   * With a successful snapshot → real values returned by the backend.
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { act } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-// Estabiliza o ResponsiveContainer do recharts (usado por outras seções
-// do modal) para evitar avisos sobre dimensões zero no jsdom.
+// Stabilizes recharts' ResponsiveContainer (used by other sections
+// of the modal) to avoid warnings about zero dimensions in jsdom.
 vi.mock("recharts", async () => {
   const actual: any = await vi.importActual("recharts");
   return {
@@ -23,8 +23,8 @@ vi.mock("recharts", async () => {
   };
 });
 
-// Mocks dos hooks de dados do modal (não nos importam aqui — só queremos
-// renderizar a tab "Perfil"). Retornam arrays vazios.
+// Mocks of the modal's data hooks (irrelevant here — we only want to
+// render the "Perfil" tab). They return empty arrays.
 vi.mock("@/modules/catalog/hooks/useObras", () => ({
   useObras: () => ({ obras: [], isLoading: false }),
 }));
@@ -81,15 +81,15 @@ async function renderModal(artista: any) {
       />
     </QueryClientProvider>,
   );
-  // Navega para a aba "Perfil" onde ficam os cards de plataforma.
-  // Radix Tabs trigger usa pointer events; combinamos pointerDown + click.
+  // Navigates to the "Perfil" tab where the platform cards live.
+  // The Radix Tabs trigger uses pointer events; we combine pointerDown + click.
   const tab = screen.getByRole("tab", { name: /perfil/i });
   await act(async () => {
     fireEvent.pointerDown(tab, { button: 0, ctrlKey: false });
     fireEvent.mouseDown(tab, { button: 0 });
     fireEvent.click(tab);
   });
-  // Confirma que a tab "Perfil" foi ativada e as métricas estão visíveis.
+  // Confirms the "Perfil" tab was activated and the metrics are visible.
   await screen.findByTestId("metric-spotify-art-1");
   return utils;
 }

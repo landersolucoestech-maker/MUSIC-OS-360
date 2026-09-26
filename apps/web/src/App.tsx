@@ -58,11 +58,11 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 
 function PasswordChangeGuard({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  // Espelha o MustChangePasswordGuard do backend: enquanto a flag estiver
-  // ligada, nenhuma rota de domínio é alcançável, mesmo que o backend já
-  // tivesse (por bug de UI) deixado passar — a defesa real é o guard do
-  // backend; este redirect só evita o usuário ficar preso vendo erros 403
-  // avulsos sem saber o motivo.
+  // Mirrors the backend's MustChangePasswordGuard: while the flag is
+  // on, no domain route is reachable, even if the backend had
+  // (through a UI bug) let it through — the real defense is the backend
+  // guard; this redirect only keeps the user from being stuck seeing loose
+  // 403 errors without knowing why.
   if (user?.mustChangePassword) return <Navigate to="/change-required-password" replace />;
   return <>{children}</>;
 }
@@ -113,11 +113,11 @@ const SuperAdminRoute: SuspenseRouteComponent = ({ children }) => (
 );
 
 /**
- * Parte 76 — banner crítico, sempre visível, quando AUTH_DISABLED está ativo.
- * Sem isso, um usuário real podia ver "LANDER RECORDS" / "Owner" no menu e
- * não perceber que está navegando um workspace sentinela falso (auth-disabled
- * user/tenant, ver apps/api/src/core/auth-disabled.ts), sem sessão Supabase
- * real nenhuma por trás.
+ * Part 76 — critical banner, always visible, when AUTH_DISABLED is active.
+ * Without it, a real user could see "LANDER RECORDS" / "Owner" in the menu and
+ * not realize they are browsing a fake sentinel workspace (auth-disabled
+ * user/tenant, see apps/api/src/core/auth-disabled.ts), with no real Supabase
+ * session behind it at all.
  */
 function AuthDisabledBanner() {
   if (!AUTH_DISABLED) return null;
@@ -132,11 +132,11 @@ function AuthDisabledBanner() {
 }
 
 /**
- * DEV ONLY — banner crítico, sempre visível, quando VITE_DISABLE_AUTH está
- * ativo. Mesmo propósito do AuthDisabledBanner acima, mas para o bypass
- * puramente de frontend: sem sessão Supabase real nenhuma por trás, e sem
- * suposição de que o backend também tenha auth desligada — chamadas de API
- * autenticadas podem retornar 401/403 normalmente.
+ * DEV ONLY — critical banner, always visible, when VITE_DISABLE_AUTH is
+ * active. Same purpose as the AuthDisabledBanner above, but for the purely
+ * frontend bypass: no real Supabase session behind it at all, and no
+ * assumption that the backend also has auth off — authenticated API
+ * calls may return 401/403 normally.
  */
 function DevAuthBypassBanner() {
   if (!DEV_AUTH_BYPASS) return null;
@@ -151,10 +151,10 @@ function DevAuthBypassBanner() {
 }
 
 /**
- * Parte 76 — antes, uma falha em /auth/context (ex.: banco de aplicação
- * indisponível) deixava a organização/usuário em branco para sempre sem
- * nenhum aviso — indistinguível de "ainda carregando". Este banner torna o
- * estado "Contexto indisponível" visível em vez de um skeleton silencioso.
+ * Part 76 — before, a failure on /auth/context (e.g. application database
+ * unavailable) left the organization/user blank forever without
+ * any warning — indistinguishable from "still loading". This banner makes the
+ * "Contexto indisponível" state visible instead of a silent skeleton.
  */
 function TenantContextErrorBanner() {
   const { contextError } = useTenant();

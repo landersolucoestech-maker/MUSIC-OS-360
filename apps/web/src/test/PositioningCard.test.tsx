@@ -1,14 +1,14 @@
 // @ts-nocheck
-// Component tests para PositioningCard (Fase 3.2 Parte IV).
+// Component tests for PositioningCard (Phase 3.2 Part IV).
 //
-// Cobre os critérios de aceite do item 74:
-//   * um único card/diagnóstico principal (Career Stage)
-//   * benchmark é contexto, nunca segundo diagnóstico (sem P77/"Forte" na UI)
-//   * labels amigáveis por plataforma, nunca a chave crua da métrica
-//   * dimensão sem dado mostra "sem dado", nunca 0
-//   * estados: completo, parcial (sem dados), loading, error, benchmark
-//     refreshing/insufficient/stale/error — falha do benchmark nunca quebra
-//     o Career Stage já disponível.
+// Covers the acceptance criteria of item 74:
+//   * a single main card/diagnosis (Career Stage)
+//   * the benchmark is context, never a second diagnosis (no P77/"Forte" in the UI)
+//   * friendly labels per platform, never the raw metric key
+//   * a dimension without data shows "sem dado", never 0
+//   * states: complete, partial (no data), loading, error, benchmark
+//     refreshing/insufficient/stale/error — a benchmark failure never breaks
+//     the already available Career Stage.
 import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithProviders } from "./_helpers/render-with-providers";

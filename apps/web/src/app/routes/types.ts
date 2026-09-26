@@ -1,5 +1,5 @@
 /**
- * Tipos compartilhados pelo sistema de rotas modular.
+ * Types shared by the modular routing system.
  */
 import type { ReactNode } from "react";
 

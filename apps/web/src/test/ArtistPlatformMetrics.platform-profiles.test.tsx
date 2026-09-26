@@ -880,9 +880,9 @@ describe("ArtistPlatformMetrics platform profiles", () => {
       skipped: [],
     });
 
-    // Controla exatamente quando o GET disparado pela invalidação (pós-sync)
-    // resolve, para provar que o botão continua desabilitado durante essa
-    // janela — não só durante o POST em si.
+    // Controls exactly when the GET fired by the (post-sync) invalidation
+    // resolves, to prove the button stays disabled during that
+    // window — not only during the POST itself.
     let resolveRefetch: (value: unknown[]) => void = () => {};
     vi.mocked(api.get).mockImplementationOnce(() => Promise.resolve([])); // fetch inicial
     vi.mocked(api.get).mockImplementationOnce(
@@ -894,18 +894,18 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     const button = await screen.findByTestId("button-sync-spotify-artist-1");
     fireEvent.click(button);
 
-    // POST já disparou; o refetch invalidado ainda não resolveu — o botão
-    // deve permanecer desabilitado durante toda essa janela.
+    // The POST already fired; the invalidated refetch has not resolved yet — the button
+    // must stay disabled during that whole window.
     await waitFor(() => expect(api.post).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(button).toBeDisabled());
 
-    // Segundo clique enquanto o refetch está pendente: não pode disparar um
-    // segundo POST — é exatamente a race que o bug descrevia.
+    // Second click while the refetch is pending: it must not fire a
+    // second POST — this is exactly the race the bug described.
     fireEvent.click(button);
     expect(api.post).toHaveBeenCalledTimes(1);
 
-    // Libera o refetch e confirma que o botão volta a habilitar normalmente,
-    // sem ter havido nenhum POST extra.
+    // Releases the refetch and confirms the button becomes enabled again normally,
+    // without any extra POST.
     resolveRefetch([]);
     await waitFor(() => expect(button).not.toBeDisabled());
     expect(api.post).toHaveBeenCalledTimes(1);

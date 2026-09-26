@@ -42,11 +42,11 @@ vi.mock("@/modules/catalog/hooks/useObras", () => {
   return { useObras: () => stableReturn };
 });
 
-// Task J: o hook useArtistas() (capped nos primeiros 50 do tenant) fica
-// deliberadamente VAZIO aqui — se a resolução do intérprete em selectObra
-// (FonogramaFormModal.tsx) ainda dependesse de escanear esse array, o teste
-// abaixo falharia. A resolução real deve vir de storage.findById (GET
-// /artists/:id), que funciona para qualquer artista do tenant.
+// Task J: the useArtistas() hook (capped at the tenant's first 50) is
+// deliberately EMPTY here — if the performer resolution in selectObra
+// (FonogramaFormModal.tsx) still depended on scanning that array, the test
+// below would fail. The real resolution must come from storage.findById (GET
+// /artists/:id), which works for any artist of the tenant.
 vi.mock("@/modules/artist/hooks/useArtists", async () => {
   const actual = await vi.importActual<typeof import("@/modules/artist/hooks/useArtists")>(
     "@/modules/artist/hooks/useArtists",
@@ -68,9 +68,9 @@ vi.mock("@/shared/hooks/useCurrentOrgId", () => ({
   useCurrentOrgId: () => ({ orgId: "org-1", isLoading: false }),
 }));
 
-// Task I: FonogramaFormModal hidrata a obra vinculada via useEntityById
-// (GET /works/:id direto), não mais varrendo a lista de useObras() — o
-// fixture precisa vir de storage.findById, não do mock de useObras() acima.
+// Task I: FonogramaFormModal hydrates the linked work via useEntityById
+// (a direct GET /works/:id), no longer scanning the useObras() list — the
+// fixture must come from storage.findById, not from the useObras() mock above.
 vi.mock("@/shared/lib/storage", async () => {
   const actual = await vi.importActual<typeof import("@/shared/lib/storage")>("@/shared/lib/storage");
   return {
@@ -81,17 +81,17 @@ vi.mock("@/shared/lib/storage", async () => {
         if (table === "obras" && id === "obra-1") {
           return { id: "obra-1", title: "Canção Vinculada", music_genre: "pop", compositores: ["Alice"], status: "registrado" };
         }
-        // Task J: artista "fora do cap" — nunca estaria entre os primeiros 50
-        // retornados por useArtistas() sem filtro; só é alcançável por GET
-        // /artists/:id direto (ver selectObra em FonogramaFormModal.tsx).
+        // Task J: an artist "outside the cap" — it would never be among the first 50
+        // returned by an unfiltered useArtistas(); it is only reachable by a direct GET
+        // /artists/:id (see selectObra in FonogramaFormModal.tsx).
         if (table === "artistas" && id === "art-99") {
           return { id: "art-99", nome_artistico: "Artista Fora Do Cap" };
         }
         return undefined;
       }),
-      // Resultado de busca da obra vinculável — usado pelo popover "Buscar
-      // obra" (useEntityLookup dentro de FonogramaFormModal). Um único
-      // registro cujo artista só é resolvível via storage.findById acima.
+      // Search result of the linkable work — used by the "Buscar
+      // obra" popover (useEntityLookup inside FonogramaFormModal). A single
+      // record whose artist is only resolvable via storage.findById above.
       listPaged: vi.fn(async (table: string) => {
         if (table === "obras") {
           return {
@@ -231,12 +231,12 @@ describe("FonogramaFormModal edit mode", () => {
     expect(callArg.orgId).toBeUndefined();
   });
 
-  // Task J — Lookup Gap Zero: prova que a cadeia de resolução de intérprete
-  // dentro de selectObra (ao vincular uma obra no formulário de Fonograma)
-  // usa busca/lookup real por ID em vez de escanear o array capped de
-  // useArtistas(). O mock de useArtistas() acima devolve uma lista vazia —
-  // se o código regredisse para `artistas.find(...)`, o intérprete nunca
-  // seria preenchido.
+  // Task J — Lookup Gap Zero: proves that the performer resolution chain
+  // inside selectObra (when linking a work in the Phonogram form)
+  // uses a real search/lookup by ID instead of scanning the capped array of
+  // useArtistas(). The useArtistas() mock above returns an empty list —
+  // if the code regressed to `artistas.find(...)`, the performer would never
+  // be filled.
   it("resolves the interprete's artist name via storage.findById, not from the capped artistas list", async () => {
     renderWithProviders(
       <FonogramaFormModal

@@ -6,7 +6,7 @@ import { PaginationDto } from '../../../common/dto/pagination.dto';
 const STATUSES = ['ativa', 'negociacao', 'proposta', 'expirada'] as const;
 const REMUNERATION_TYPES = ['FIXED', 'PERCENTAGE', 'FIXED_PLUS_PERCENTAGE'] as const;
 
-/** Contrato canônico do formulário LicencaFormModal. */
+/** Canonical contract of the LicencaFormModal form. */
 export class CreateLicenseDto {
   @ApiProperty() @IsString() @MaxLength(500) title!: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() work_id?: string;

@@ -53,8 +53,8 @@ function renderMetrics(overrides: Record<string, unknown> = {}) {
 }
 
 /**
- * Item 9/12 da correção: fallback de dev deve ser "claramente identificado",
- * nunca confundido com métrica real da Soundcharts.
+ * Items 9/12 of the fix: the dev fallback must be "clearly identified",
+ * never mistaken for a real Soundcharts metric.
  */
 describe("ArtistPlatformMetrics — identification of the dev fallback (raw_payload.source)", () => {
   beforeEach(() => vi.clearAllMocks());

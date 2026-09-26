@@ -5,8 +5,8 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const webRoot = path.resolve(__dirname, "..");
 const command = process.argv[2] ?? "dev";
-// VITE_PORT > PORT: PORT é a convenção da API (Nest, 3001); priorizar VITE_PORT
-// impede o dev server web de colidir com a API quando PORT está exportado.
+// VITE_PORT > PORT: PORT is the API's convention (Nest, 3001); prioritizing VITE_PORT
+// keeps the web dev server from colliding with the API when PORT is exported.
 const port = Number(process.env.VITE_PORT ?? process.env.PORT ?? 5000);
 
 process.chdir(webRoot);
@@ -14,12 +14,12 @@ process.chdir(webRoot);
 const configModule = await import(pathToFileURL(path.join(webRoot, "vite.config.mjs")).href);
 const config = configModule.default ?? {};
 
-// CAUSA RAIZ (localhost morria em background): com stdin fechado/não-TTY,
-// `process.stdin.resume()` emite `end` imediatamente e solta o handle; o
-// keepAlive antigo era `unref()` (não segura o event loop). Durante lacunas
-// assíncronas do startup do Vite o loop drenava e o Node saía com código 0,
-// silenciosamente. A correção é um timer REF'D (segura o loop até SIGINT/
-// SIGTERM), armado só para servidores (dev/preview) — build sai normalmente.
+// ROOT CAUSE (localhost died in the background): with stdin closed/non-TTY,
+// `process.stdin.resume()` emits `end` immediately and releases the handle; the
+// old keepAlive was `unref()` (it does not hold the event loop). During asynchronous
+// gaps of Vite's startup the loop drained and Node exited with code 0,
+// silently. The fix is a REF'D timer (holds the loop until SIGINT/
+// SIGTERM), armed only for servers (dev/preview) — build exits normally.
 function holdEventLoopForServer() {
   setInterval(() => {}, 2 ** 30);
   for (const sig of ["SIGINT", "SIGTERM"]) {
@@ -27,7 +27,7 @@ function holdEventLoopForServer() {
   }
 }
 
-// Guard de ambiente: falha antes de subir/buildar se o Supabase ref for inválido.
+// Environment guard: fails before starting/building if the Supabase ref is invalid.
 
 const inlineConfig = {
   ...config,

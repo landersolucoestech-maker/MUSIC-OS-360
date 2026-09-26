@@ -1,17 +1,17 @@
 /**
  * legacy-platform-fields.guard.test.ts
  *
- * Proteção permanente: o domínio Artista trabalha EXCLUSIVAMENTE com
- * foto_url/spotify_url/youtube_url. Nenhuma referência a spotify_artist_id,
- * youtube_artist_id, youtube_channel_id, banner_url ou video_apresentacao(_url)
- * pode existir em código-fonte vivo do frontend — nem como campo, nem como
- * utilitário de extração/reconstrução de ID (o frontend nunca extrai ID de
- * plataforma; isso é uma exceção documentada e restrita à camada de
- * integração do backend — ver apps/api's legacy-platform-fields.guard.spec.ts).
+ * Permanent protection: the Artist domain works EXCLUSIVELY with
+ * foto_url/spotify_url/youtube_url. No reference to spotify_artist_id,
+ * youtube_artist_id, youtube_channel_id, banner_url or video_apresentacao(_url)
+ * may exist in live frontend source code — neither as a field nor as an
+ * ID extraction/reconstruction utility (the frontend never extracts a
+ * platform ID; that is a documented exception restricted to the backend's
+ * integration layer — see apps/api's legacy-platform-fields.guard.spec.ts).
  *
- * Exceção documentada: artista-url-only-domain.test.ts referencia os nomes
- * legados como fixture, exatamente para provar que o mapper/form NUNCA os
- * produz — referenciá-los ali é o próprio teste de regressão.
+ * Documented exception: artista-url-only-domain.test.ts references the legacy
+ * names as a fixture, precisely to prove the mapper/form NEVER
+ * produces them — referencing them there is the regression test itself.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";
@@ -37,7 +37,7 @@ const FORBIDDEN_CAMEL = [
   /videoApresentacao/i,
 ];
 
-// Utilitários de extração/reconstrução de ID↔URL: nenhum deve existir no frontend.
+// ID↔URL extraction/reconstruction utilities: none may exist in the frontend.
 const FORBIDDEN_UTIL_NAMES = [
   /extractSpotifyId/,
   /extractYoutubeId/,
