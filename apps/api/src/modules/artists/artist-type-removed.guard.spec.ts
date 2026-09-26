@@ -1,5 +1,5 @@
 /**
- * artist-tipo-removed.guard.spec.ts
+ * artist-type-removed.guard.spec.ts
  *
  * Permanent guard (Artists Schema 15): the "tipo" field (artist
  * formation — solo/banda/duo/trio/grupo/coletivo, and the old

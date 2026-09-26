@@ -5,7 +5,7 @@
 import { randomUUID } from 'crypto';
 import type { DataSource, QueryRunner } from 'typeorm';
 
-export interface MusicaFieldItem {
+export interface ProjectTrackFieldItem {
   nome_musica: string;
   soloFeat: string | null;
   originalRemix: string | null;
@@ -52,12 +52,12 @@ function parseDuration(item: Record<string, unknown>): { minutes: string | null;
   return { minutes: minutes || null, seconds: seconds || null };
 }
 
-export async function fetchProjectsMusicasForExport(
+export async function fetchProjectTracksForExport(
   ds: DataSource,
   tenantId: string,
   projectIds: string[],
-): Promise<Map<string, MusicaFieldItem[]>> {
-  const output = new Map<string, MusicaFieldItem[]>();
+): Promise<Map<string, ProjectTrackFieldItem[]>> {
+  const output = new Map<string, ProjectTrackFieldItem[]>();
   if (projectIds.length === 0) return output;
 
   const tracks = (await ds.query(
@@ -113,7 +113,7 @@ export async function fetchProjectsMusicasForExport(
   return output;
 }
 
-export async function insertProjectsMusicasForImport(
+export async function insertProjectTracksForImport(
   qr: QueryRunner,
   tenantId: string,
   projectId: string,

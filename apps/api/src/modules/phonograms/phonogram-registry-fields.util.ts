@@ -29,7 +29,7 @@ const PAIS_ORIGEM_TO_ISO: Record<string, string> = {
   // rather than invented.
 };
 
-export function mapPaisOrigemToCountryCode(paisOrigem: string | null | undefined): string | null {
+export function mapOriginCountryToCountryCode(paisOrigem: string | null | undefined): string | null {
   if (!paisOrigem) return null;
   const code = PAIS_ORIGEM_TO_ISO[paisOrigem.toLowerCase()];
   return code ?? null;
@@ -71,6 +71,6 @@ export function derivePhonogramRegistryFields(
     recording_date: toDate(merged.gravacao_original),
     release_date: toDate(merged.data_lancamento),
     duration_seconds: hasDuration ? min * 60 + seg : null,
-    country_of_recording: mapPaisOrigemToCountryCode(merged.pais_origem),
+    country_of_recording: mapOriginCountryToCountryCode(merged.pais_origem),
   };
 }

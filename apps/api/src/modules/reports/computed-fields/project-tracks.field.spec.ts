@@ -1,11 +1,11 @@
-import { fetchProjectsMusicasForExport, insertProjectsMusicasForImport } from './projects-musicas.field';
+import { fetchProjectTracksForExport, insertProjectTracksForImport } from './project-tracks.field';
 
-describe('projects-musicas.field — repeating group "Músicas do Projeto"', () => {
-  describe('fetchProjectsMusicasForExport', () => {
+describe('project-tracks.field — repeating group "Músicas do Projeto"', () => {
+  describe('fetchProjectTracksForExport', () => {
     it('empty list of projectIds → does not query the database, returns an empty map', async () => {
       const query = jest.fn();
       const ds = { query } as any;
-      const result = await fetchProjectsMusicasForExport(ds, 'tenant-1', []);
+      const result = await fetchProjectTracksForExport(ds, 'tenant-1', []);
       expect(query).not.toHaveBeenCalled();
       expect(result.size).toBe(0);
     });
@@ -28,7 +28,7 @@ describe('projects-musicas.field — repeating group "Músicas do Projeto"', () 
         .mockResolvedValueOnce(participants);
       const ds = { query } as any;
 
-      const result = await fetchProjectsMusicasForExport(ds, 'tenant-1', ['proj-1']);
+      const result = await fetchProjectTracksForExport(ds, 'tenant-1', ['proj-1']);
 
       expect(query.mock.calls[0][0]).toContain('"project_tracks"');
       expect(query.mock.calls[0][1]).toEqual(['tenant-1', ['proj-1']]);
@@ -56,13 +56,13 @@ describe('projects-musicas.field — repeating group "Músicas do Projeto"', () 
     it('project without tracks → does not appear in the map', async () => {
       const query = jest.fn().mockResolvedValueOnce([]);
       const ds = { query } as any;
-      const result = await fetchProjectsMusicasForExport(ds, 'tenant-1', ['proj-vazio']);
+      const result = await fetchProjectTracksForExport(ds, 'tenant-1', ['proj-vazio']);
       expect(result.has('proj-vazio')).toBe(false);
       expect(query).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe('insertProjectsMusicasForImport', () => {
+  describe('insertProjectTracksForImport', () => {
     function makeQR() {
       const calls: Array<[string, unknown[]]> = [];
       const qr = { query: jest.fn((sql: string, params: unknown[]) => { calls.push([sql, params]); return Promise.resolve([]); }) } as any;
@@ -71,7 +71,7 @@ describe('projects-musicas.field — repeating group "Músicas do Projeto"', () 
 
     it('non-array value → no-op', async () => {
       const { qr, calls } = makeQR();
-      await insertProjectsMusicasForImport(qr, 'tenant-1', 'proj-1', 'não é array');
+      await insertProjectTracksForImport(qr, 'tenant-1', 'proj-1', 'não é array');
       expect(calls).toHaveLength(0);
     });
 
@@ -92,7 +92,7 @@ describe('projects-musicas.field — repeating group "Músicas do Projeto"', () 
         interpretes: ['B'],
         produtores: [],
       }];
-      await insertProjectsMusicasForImport(qr, 'tenant-1', 'proj-novo', musicas);
+      await insertProjectTracksForImport(qr, 'tenant-1', 'proj-novo', musicas);
 
       const trackInsert = calls.find(([sql]) => sql.includes('"project_tracks"'));
       expect(trackInsert).toBeDefined();
@@ -109,7 +109,7 @@ describe('projects-musicas.field — repeating group "Músicas do Projeto"', () 
 
     it('invalid item is ignored and a valid canonical item is inserted', async () => {
       const { qr, calls } = makeQR();
-      await insertProjectsMusicasForImport(qr, 'tenant-1', 'proj-1', [
+      await insertProjectTracksForImport(qr, 'tenant-1', 'proj-1', [
         null,
         'string',
         42,

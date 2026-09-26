@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { writeReleasesFaixasForImport } from './releases-faixas.field';
+import { writeReleaseTracksForImport } from './release-tracks.field';
 
 /**
  * find-532335a9 (Wave 7 cross-review): per-track ISRC inside the "Faixas do
@@ -8,14 +8,14 @@ import { writeReleasesFaixasForImport } from './releases-faixas.field';
  * repeating columns. This proves the per-track write path now applies the
  * same normalization/validation independently.
  */
-describe('writeReleasesFaixasForImport — per-track ISRC (find-532335a9)', () => {
+describe('writeReleaseTracksForImport — per-track ISRC (find-532335a9)', () => {
   function makeQr() {
     return { query: jest.fn().mockResolvedValue(undefined) };
   }
 
   it('normalizes a hyphenated/lowercase per-track ISRC to canonical form before persist', async () => {
     const qr = makeQr();
-    await writeReleasesFaixasForImport(qr as never, 'tenant-1', 'release-1', [
+    await writeReleaseTracksForImport(qr as never, 'tenant-1', 'release-1', [
       { nome: 'Track 1', isrc: 'br-abc-26-00001' },
     ]);
     const [, params] = qr.query.mock.calls[0];
@@ -26,7 +26,7 @@ describe('writeReleasesFaixasForImport — per-track ISRC (find-532335a9)', () =
   it('rejects a malformed per-track ISRC', async () => {
     const qr = makeQr();
     await expect(
-      writeReleasesFaixasForImport(qr as never, 'tenant-1', 'release-1', [
+      writeReleaseTracksForImport(qr as never, 'tenant-1', 'release-1', [
         { nome: 'Track 1', isrc: 'not-an-isrc' },
       ]),
     ).rejects.toBeInstanceOf(BadRequestException);
@@ -35,7 +35,7 @@ describe('writeReleasesFaixasForImport — per-track ISRC (find-532335a9)', () =
 
   it('leaves an absent per-track ISRC as null (optional field)', async () => {
     const qr = makeQr();
-    await writeReleasesFaixasForImport(qr as never, 'tenant-1', 'release-1', [
+    await writeReleaseTracksForImport(qr as never, 'tenant-1', 'release-1', [
       { nome: 'Track 1' },
     ]);
     const [, params] = qr.query.mock.calls[0];

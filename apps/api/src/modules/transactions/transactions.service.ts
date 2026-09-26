@@ -252,7 +252,7 @@ export class TransactionsService {
   async create(tenantId: string, userId: string, dto: CreateTransactionDto): Promise<TransactionEntity> {
     const payload = buildPersistencePayload(tenantId, userId, dto);
     await this.assertLinkedFks(tenantId, payload);
-    payload.categoria = await this.resolveCategoria(tenantId, dto, payload.categoria as string);
+    payload.categoria = await this.resolveCategory(tenantId, dto, payload.categoria as string);
     const entity = this.repo!.create(payload as Parameters<Repository<TransactionEntity>['create']>[0]);
     const saved = await this.repo!.save(entity as TransactionEntity);
 
@@ -386,7 +386,7 @@ export class TransactionsService {
    * de regras já é escopada por tenantId). Se não houver regra
    * correspondente, ou o matcher estiver indisponível, mantém "outros".
    */
-  private async resolveCategoria(
+  private async resolveCategory(
     tenantId: string,
     dto: CreateTransactionDto,
     currentCategoria: string,

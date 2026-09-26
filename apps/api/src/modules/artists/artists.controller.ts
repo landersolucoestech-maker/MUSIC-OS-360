@@ -62,7 +62,10 @@ export class ArtistsController {
     return this.service.vinculoStats(tenant.id);
   }
 
-  @Get('stats/generos')
+  // CZ-020: 'stats/genres' is canonical; 'stats/generos' stays as a TEMPORARY
+  // compatibility alias on the same handler (web/api deploy independently),
+  // removed once a web build calling 'stats/genres' is deployed.
+  @Get(['stats/genres', 'stats/generos'])
   @RequireRole('viewer')
   @RequirePermission('artist:read')
   @ApiOperation({ summary: 'Gêneros musicais distintos do tenant' })

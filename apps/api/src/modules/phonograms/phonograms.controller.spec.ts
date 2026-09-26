@@ -20,6 +20,7 @@ import { EventsService } from '../../core/events/events.service';
 function makeQb(rows: Record<string, unknown>[]) {
   const qb: Record<string, jest.Mock> = {};
   const chain = () => qb;
+  qb['select'] = jest.fn(chain);
   qb['where'] = jest.fn(chain);
   qb['andWhere'] = jest.fn(chain);
   qb['orderBy'] = jest.fn(chain);
@@ -27,6 +28,7 @@ function makeQb(rows: Record<string, unknown>[]) {
   qb['take'] = jest.fn(chain);
   qb['getOne'] = jest.fn(async () => rows[0] ?? null);
   qb['getManyAndCount'] = jest.fn(async () => [rows, rows.length]);
+  qb['getRawMany'] = jest.fn(async () => rows);
   return qb;
 }
 
@@ -118,6 +120,21 @@ describe('PhonogramsController — real HTTP contract (C2)', () => {
       .expect((res) => {
         expect(res.body.message?.code ?? res.body.code).toBe('PHONOGRAM_ALIAS_CONFLICT');
       });
+  });
+
+  // CZ-020: 'stats/generos' is a TEMPORARY compatibility alias for the
+  // canonical 'stats/genres' route, on the same controller handler.
+  it('GET /phonograms/stats/genres (canonical) and /phonograms/stats/generos (temporary alias) both resolve to the same handler', async () => {
+    const genreRows = [{ musicGenre: 'rock' }, { musicGenre: 'pop' }];
+    repo.createQueryBuilder
+      .mockReturnValueOnce(makeQb(genreRows) as never)
+      .mockReturnValueOnce(makeQb(genreRows) as never);
+
+    const canonical = await request(app.getHttpServer()).get('/phonograms/stats/genres').expect(200);
+    const legacyAlias = await request(app.getHttpServer()).get('/phonograms/stats/generos').expect(200);
+
+    expect(canonical.body).toEqual(['rock', 'pop']);
+    expect(legacyAlias.body).toEqual(canonical.body);
   });
 });
 

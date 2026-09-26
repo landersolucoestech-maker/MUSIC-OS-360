@@ -36,7 +36,10 @@ export class WorksController {
     return this.service.stats(tenant.id, query);
   }
 
-  @Get('stats/generos')
+  // CZ-020: 'stats/genres' is canonical; 'stats/generos' stays as a TEMPORARY
+  // compatibility alias on the same handler (web/api deploy independently),
+  // removed once a web build calling 'stats/genres' is deployed.
+  @Get(['stats/genres', 'stats/generos'])
   @RequireRole('viewer')
   @RequirePermission('work:read')
   @ApiOperation({ summary: 'Gêneros distintos das obras do tenant' })

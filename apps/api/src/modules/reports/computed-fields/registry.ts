@@ -4,13 +4,13 @@
  */
 import type { DataSource, QueryRunner } from 'typeorm';
 import {
-  fetchProjectsMusicasForExport,
-  insertProjectsMusicasForImport,
-} from './projects-musicas.field';
+  fetchProjectTracksForExport,
+  insertProjectTracksForImport,
+} from './project-tracks.field';
 import {
-  fetchReleasesFaixasForExport,
-  writeReleasesFaixasForImport,
-} from './releases-faixas.field';
+  fetchReleaseTracksForExport,
+  writeReleaseTracksForImport,
+} from './release-tracks.field';
 import {
   makeRowEmbeddedRepeatingGroupExportResolver,
   makeRowEmbeddedRepeatingGroupImportWriter,
@@ -41,15 +41,15 @@ const eventParticipants = {
 } as const;
 
 export const REPEATING_GROUP_EXPORT_RESOLVERS: Record<string, RepeatingGroupExportResolver> = {
-  'projects.musicas': fetchProjectsMusicasForExport as unknown as RepeatingGroupExportResolver,
-  'releases.faixas': fetchReleasesFaixasForExport as unknown as RepeatingGroupExportResolver,
+  'projects.musicas': fetchProjectTracksForExport as unknown as RepeatingGroupExportResolver,
+  'releases.faixas': fetchReleaseTracksForExport as unknown as RepeatingGroupExportResolver,
   'invoices.itens': makeRowEmbeddedRepeatingGroupExportResolver(invoiceItems),
   'events.participantes': makeRowEmbeddedRepeatingGroupExportResolver(eventParticipants),
 };
 
 export const REPEATING_GROUP_IMPORT_WRITERS: Record<string, RepeatingGroupImportWriter> = {
-  'projects.musicas': insertProjectsMusicasForImport,
-  'releases.faixas': writeReleasesFaixasForImport,
+  'projects.musicas': insertProjectTracksForImport,
+  'releases.faixas': writeReleaseTracksForImport,
   'invoices.itens': makeRowEmbeddedRepeatingGroupImportWriter(invoiceItems),
   'events.participantes': makeRowEmbeddedRepeatingGroupImportWriter(eventParticipants),
 };

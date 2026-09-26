@@ -14,7 +14,7 @@ import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-
 
 type TrackRole = 'compositor' | 'interprete' | 'produtor';
 
-export interface MusicaResponse {
+export interface ProjectTrackResponse {
   id: string;
   name: string;
   soloFeat: string | null;
@@ -31,7 +31,7 @@ export interface MusicaResponse {
   produtores: string[];
 }
 
-type ProjectWithMusicas = ProjectEntity & { musicas: MusicaResponse[] };
+type ProjectWithTracks = ProjectEntity & { musicas: ProjectTrackResponse[] };
 
 @Injectable()
 export class ProjectsService {
@@ -60,7 +60,7 @@ export class ProjectsService {
    * formato que o frontend sempre consumiu, para que o contrato de API não
    * mude.
    */
-  private async hydrateMusicas(projects: ProjectEntity[]): Promise<ProjectWithMusicas[]> {
+  private async hydrateTracks(projects: ProjectEntity[]): Promise<ProjectWithTracks[]> {
     if (projects.length === 0) return [];
     const projectIds = projects.map((p) => p.id);
     const tracks = await this.tracksRepo!
@@ -87,7 +87,7 @@ export class ProjectsService {
     const namesByRole = (trackId: string, role: TrackRole): string[] =>
       (byTrack.get(trackId) ?? []).filter((p) => p.role === role).map((p) => p.name);
 
-    const musicasByProject = new Map<string, MusicaResponse[]>();
+    const musicasByProject = new Map<string, ProjectTrackResponse[]>();
     for (const t of tracks) {
       const list = musicasByProject.get(t.project_id) ?? [];
       list.push({
@@ -112,7 +112,7 @@ export class ProjectsService {
     return projects.map((p) => Object.assign(p, { musicas: musicasByProject.get(p.id) ?? [] }));
   }
 
-  private async replaceMusicas(
+  private async replaceTracks(
     tenantId: string,
     projectId: string,
     musicas: Record<string, unknown>[] | undefined,
@@ -180,7 +180,7 @@ export class ProjectsService {
       .take(typeof q['limit']  === 'number' ? q['limit']  : 50);
 
     const [data, total] = await qb.getManyAndCount();
-    const hydrated = await this.hydrateMusicas(data);
+    const hydrated = await this.hydrateTracks(data);
     return {
       data: hydrated,
       meta: {
@@ -208,18 +208,18 @@ export class ProjectsService {
     tenantId: string,
     id: string,
     actorRole?: string,
-  ): Promise<ProjectWithMusicas & { allowed_transitions: { to: string; label?: string }[] }> {
+  ): Promise<ProjectWithTracks & { allowed_transitions: { to: string; label?: string }[] }> {
     const result = await this.repo!
       .createQueryBuilder('p')
       .where('p.id = :id AND p.tenant_id = :tenantId AND p.deleted_at IS NULL', { id, tenantId })
       .getOne();
     if (!result) throw new NotFoundException('Projeto não encontrado');
-    const [hydrated] = await this.hydrateMusicas([result]);
+    const [hydrated] = await this.hydrateTracks([result]);
     const allowed_transitions = this.workflowService.getAllowedTransitions('project', result.status, actorRole);
     return { ...hydrated, allowed_transitions };
   }
 
-  async create(tenantId: string, userId: string, dto: CreateProjectDto): Promise<ProjectWithMusicas> {
+  async create(tenantId: string, userId: string, dto: CreateProjectDto): Promise<ProjectWithTracks> {
     const { musicas, ...rest } = dto as CreateProjectDto & { musicas?: Record<string, unknown>[] };
     // find-50dd3726: artist_id had no cross-tenant ownership check — a
     // project could silently reference another tenant's artist.
@@ -232,8 +232,8 @@ export class ProjectsService {
       updated_by: userId,
     } as Partial<ProjectEntity>);
     const saved = await this.repo!.save(entity as ProjectEntity);
-    await this.replaceMusicas(tenantId, saved.id, musicas);
-    const [hydrated] = await this.hydrateMusicas([saved]);
+    await this.replaceTracks(tenantId, saved.id, musicas);
+    const [hydrated] = await this.hydrateTracks([saved]);
     return hydrated;
   }
 
@@ -243,7 +243,7 @@ export class ProjectsService {
     id: string,
     dto: UpdateProjectDto,
     actorRole?: string,
-  ): Promise<ProjectWithMusicas & { allowed_transitions: { to: string; label?: string }[] }> {
+  ): Promise<ProjectWithTracks & { allowed_transitions: { to: string; label?: string }[] }> {
     const current = await this.findById(tenantId, id, actorRole);
     const dtoMap  = dto as Record<string, unknown>;
     const statusChanging = dtoMap['status'] != null && dtoMap['status'] !== current.status;
@@ -300,7 +300,7 @@ export class ProjectsService {
       );
     }
 
-    await this.replaceMusicas(tenantId, id, musicas);
+    await this.replaceTracks(tenantId, id, musicas);
     return this.findById(tenantId, id, actorRole);
   }
 

@@ -400,7 +400,7 @@ const TAKEDOWNS_CONTRACT: ReportFormContract = {
 // Fonte canônica: LancamentoFormModal.tsx (wizard de 5 etapas). A maioria dos
 // campos avançados (Step 0/3) vive na coluna `metadata` genérica
 // (extraFields.* → metadata.*); `faixas[]` (Step 1) vive em
-// metadata.faixas — grupo repetível própria (ver releases-faixas.field.ts).
+// metadata.faixas — grupo repetível própria (ver release-tracks.field.ts).
 // `platforms`/`assets`/`cronograma` não têm input de UI identificável
 // (platforms: sem seletor multi-plataforma no wizard atual; assets: sem
 // upload dedicado além da capa; cronograma: sem inputs no modal) — excluídos/

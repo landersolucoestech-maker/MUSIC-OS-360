@@ -1,5 +1,5 @@
 /**
- * modules/reports/computed-fields/releases-faixas.field.ts  ·  Parte 89
+ * modules/reports/computed-fields/release-tracks.field.ts  ·  Parte 89
  *
  * Resolver dedicado para a aba filha "Faixas do Lançamento"
  * (RELEASES_CONTRACT.childSheets). `faixas[]` vive dentro de
@@ -18,7 +18,7 @@ import { BadRequestException } from '@nestjs/common';
 import type { DataSource, QueryRunner } from 'typeorm';
 import { normalizeIsrc, isValidIsrc } from '../../registry/validators/registry-validators';
 
-interface FaixaItem {
+interface ReleaseTrackItem {
   nome: string;
   isVersionAlternativa: unknown;
   tipoVersao: unknown;
@@ -33,12 +33,12 @@ interface FaixaItem {
   artista: unknown;
 }
 
-export async function fetchReleasesFaixasForExport(
+export async function fetchReleaseTracksForExport(
   ds: DataSource,
   tenantId: string,
   releaseIds: string[],
-): Promise<Map<string, FaixaItem[]>> {
-  const out = new Map<string, FaixaItem[]>();
+): Promise<Map<string, ReleaseTrackItem[]>> {
+  const out = new Map<string, ReleaseTrackItem[]>();
   if (releaseIds.length === 0) return out;
   const rows = (await ds.query(
     `SELECT "id", "metadata"->'faixas' AS faixas FROM "releases" WHERE "tenant_id" = $1 AND "id" = ANY($2::uuid[])`,
@@ -67,7 +67,7 @@ export async function fetchReleasesFaixasForExport(
   return out;
 }
 
-export async function writeReleasesFaixasForImport(
+export async function writeReleaseTracksForImport(
   qr: QueryRunner,
   tenantId: string,
   releaseId: string,

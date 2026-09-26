@@ -304,7 +304,7 @@ export class ImportCommitService {
     }
 
     if (def.tableName === 'transactions') {
-      await this.resolveTransactionCategoria(group.generalRow.data, cols, values, tenantId);
+      await this.resolveTransactionCategory(group.generalRow.data, cols, values, tenantId);
     }
 
     cols.push('tenant_id');
@@ -336,7 +336,7 @@ export class ImportCommitService {
    * FinanceCategoryRulesService.suggestCategoryForTransaction usado na
    * criação manual; nunca duplica o matcher.
    */
-  private async resolveTransactionCategoria(
+  private async resolveTransactionCategory(
     rowData: Record<string, unknown>,
     cols: string[],
     values: unknown[],

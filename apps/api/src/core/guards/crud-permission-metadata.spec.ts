@@ -30,7 +30,7 @@ type ExpectedRoute = {
   controller: ControllerClass;
   methodName: string;
   httpMethod: RequestMethod;
-  path: string;
+  path: string | string[];
   role: string;
   permission: string;
 };
@@ -52,7 +52,8 @@ const expectedRoutes: ExpectedRoute[] = [
 
   { controller: WorksController, methodName: 'list', httpMethod: RequestMethod.GET, path: '', role: 'viewer', permission: 'work:read' },
   { controller: WorksController, methodName: 'stats', httpMethod: RequestMethod.GET, path: 'stats', role: 'viewer', permission: 'work:read' },
-  { controller: WorksController, methodName: 'distinctMusicGenres', httpMethod: RequestMethod.GET, path: 'stats/generos', role: 'viewer', permission: 'work:read' },
+  // CZ-020: canonical 'stats/genres' + TEMPORARY 'stats/generos' compatibility alias on the same handler.
+  { controller: WorksController, methodName: 'distinctMusicGenres', httpMethod: RequestMethod.GET, path: ['stats/genres', 'stats/generos'], role: 'viewer', permission: 'work:read' },
   { controller: WorksController, methodName: 'findById', httpMethod: RequestMethod.GET, path: ':id', role: 'viewer', permission: 'work:read' },
   { controller: WorksController, methodName: 'create', httpMethod: RequestMethod.POST, path: '', role: 'editor', permission: 'work:create' },
   { controller: WorksController, methodName: 'update', httpMethod: RequestMethod.PATCH, path: ':id', role: 'editor', permission: 'work:update' },
@@ -60,7 +61,8 @@ const expectedRoutes: ExpectedRoute[] = [
 
   { controller: PhonogramsController, methodName: 'list', httpMethod: RequestMethod.GET, path: '', role: 'viewer', permission: 'phonogram:read' },
   { controller: PhonogramsController, methodName: 'stats', httpMethod: RequestMethod.GET, path: 'stats', role: 'viewer', permission: 'phonogram:read' },
-  { controller: PhonogramsController, methodName: 'distinctMusicGenres', httpMethod: RequestMethod.GET, path: 'stats/generos', role: 'viewer', permission: 'phonogram:read' },
+  // CZ-020: canonical 'stats/genres' + TEMPORARY 'stats/generos' compatibility alias on the same handler.
+  { controller: PhonogramsController, methodName: 'distinctMusicGenres', httpMethod: RequestMethod.GET, path: ['stats/genres', 'stats/generos'], role: 'viewer', permission: 'phonogram:read' },
   { controller: PhonogramsController, methodName: 'findById', httpMethod: RequestMethod.GET, path: ':id', role: 'viewer', permission: 'phonogram:read' },
   { controller: PhonogramsController, methodName: 'create', httpMethod: RequestMethod.POST, path: '', role: 'editor', permission: 'phonogram:create' },
   { controller: PhonogramsController, methodName: 'update', httpMethod: RequestMethod.PATCH, path: ':id', role: 'editor', permission: 'phonogram:update' },
@@ -195,9 +197,14 @@ describe('FASE 6.1 CRUD controller permission metadata', () => {
     '$controller.name.$methodName keeps @RequireRole and adds the expected @RequirePermission',
     ({ controller, methodName, httpMethod, path, role, permission }) => {
       const handler = getHandler(controller, methodName);
+      const actualPath = Reflect.getMetadata(PATH_METADATA, handler) as unknown;
 
       expect(Reflect.getMetadata(METHOD_METADATA, handler)).toBe(httpMethod);
-      expect(normalizePath(Reflect.getMetadata(PATH_METADATA, handler))).toBe(path);
+      if (Array.isArray(path)) {
+        expect(actualPath).toEqual(path);
+      } else {
+        expect(normalizePath(actualPath)).toBe(path);
+      }
       expect(Reflect.getMetadata(ROLES_KEY, handler)).toEqual([role]);
       expect(Reflect.getMetadata(PERMISSIONS_KEY, handler)).toEqual([permission]);
     },
