@@ -1,23 +1,23 @@
 /**
  * integrations/webhooks/autentique.webhook.ts
  *
- * CONTRATO de webhook Autentique — documentação dos eventos processados.
+ * Autentique webhook CONTRACT — documentation of the processed events.
  *
- * REGRA CRÍTICA: webhooks são SEMPRE processados no backend.
- * O frontend consulta estado via polling em signingAdapter.getDocument(id).
+ * CRITICAL RULE: webhooks are ALWAYS processed in the backend.
+ * The frontend queries state by polling signingAdapter.getDocument(id).
  *
- * Endpoint backend:
+ * Backend endpoint:
  *   POST /webhooks/autentique
- *   Validação: HMAC-SHA256 com AUTENTIQUE_WEBHOOK_SECRET
+ *   Validation: HMAC-SHA256 with AUTENTIQUE_WEBHOOK_SECRET
  *
- * Eventos processados pelo backend:
+ * Events processed by the backend:
  */
 
 export const AUTENTIQUE_WEBHOOK_EVENTS = [
-  "document_created",    // documento criado com sucesso na plataforma
-  "signer_signed",       // signatário assinou o documento
-  "signer_rejected",     // signatário rejeitou o documento
-  "document_signed",     // todos os signatários assinaram (documento completo)
+  "document_created",    // document successfully created on the platform
+  "signer_signed",       // a signer signed the document
+  "signer_rejected",     // a signer rejected the document
+  "document_signed",     // all signers signed (document complete)
   "document_expired",    // prazo de assinatura expirou
   "document_cancelled",  // documento cancelado manualmente
 ] as const;
@@ -25,7 +25,7 @@ export const AUTENTIQUE_WEBHOOK_EVENTS = [
 export type AutentiqueWebhookEvent = typeof AUTENTIQUE_WEBHOOK_EVENTS[number];
 
 /**
- * Payload do webhook Autentique (simplificado para documentação).
+ * Autentique webhook payload (simplified for documentation).
  */
 export interface AutentiqueWebhookPayload {
   event:    AutentiqueWebhookEvent;
@@ -44,31 +44,31 @@ export interface AutentiqueWebhookPayload {
 }
 
 /**
- * Acções do backend após processar cada evento:
+ * Backend actions after processing each event:
  *
  * signer_signed:
- *   → atualizar status do signatário no DB
- *   → notificar admin via Resend
+ *   → update the signer's status in the DB
+ *   → notify the admin via Resend
  *
  * document_signed:
- *   → atualizar status do contrato para "signed"
- *   → emitir domain event: contrato.signed
- *   → enviar email de confirmação a todos via Resend
- *   → guardar PDF final no R2 (storage)
+ *   → update the contract status to "signed"
+ *   → emit domain event: contrato.signed
+ *   → send a confirmation email to everyone via Resend
+ *   → store the final PDF in R2 (storage)
  *
  * signer_rejected:
- *   → atualizar status do contrato para "rejected"
- *   → emitir domain event: contrato.rejected
- *   → notificar gestor responsável via Resend
+ *   → update the contract status to "rejected"
+ *   → emit domain event: contrato.rejected
+ *   → notify the responsible manager via Resend
  *
  * document_expired:
- *   → atualizar status do contrato para "expired"
- *   → emitir domain event: contrato.expired
- *   → notificar admin para renovar
+ *   → update the contract status to "expired"
+ *   → emit domain event: contrato.expired
+ *   → notify the admin to renew
  *
  * document_cancelled:
- *   → atualizar status do contrato para "cancelled"
- *   → emitir domain event: contrato.cancelled
+ *   → update the contract status to "cancelled"
+ *   → emit domain event: contrato.cancelled
  */
 export const AUTENTIQUE_WEBHOOK_ACTIONS: Record<AutentiqueWebhookEvent, string> = {
   document_created: "registar id Autentique no contrato",

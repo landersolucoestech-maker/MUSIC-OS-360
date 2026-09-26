@@ -1,15 +1,15 @@
 /**
  * integrations/clients/stripe.client.ts
  *
- * Cliente HTTP para o backend Stripe Billing.
+ * HTTP client for the Stripe Billing backend.
  *
- * REGRA CRÍTICA: a Stripe secret key NUNCA chega ao frontend.
- * O frontend chama endpoints do backend que executam as chamadas Stripe server-side.
+ * CRITICAL RULE: the Stripe secret key NEVER reaches the frontend.
+ * The frontend calls backend endpoints that make the Stripe calls server-side.
  *
  * Backend endpoints:
- *   POST /billing/checkout     → cria Checkout Session → retorna { url }
- *   POST /billing/portal       → abre Customer Portal  → retorna { url }
- *   GET  /billing/subscription → consulta subscription do tenant
+ *   POST /billing/checkout     → creates a Checkout Session → returns { url }
+ *   POST /billing/portal       → opens the Customer Portal  → returns { url }
+ *   GET  /billing/subscription → queries the tenant's subscription
  */
 
 import { api } from '@/shared/lib/api-client';

@@ -1,16 +1,16 @@
 /**
  * integrations/services/notifications.service.ts
  *
- * Serviço de notificações transaccionais.
- * Orquestra: emailAdapter + analyticsAdapter + domain events.
+ * Transactional notifications service.
+ * Orchestrates: emailAdapter + analyticsAdapter + domain events.
  *
- * Casos de uso no MUSIC OS 360:
- *  - Convite de utilizador ao tenant
- *  - Alerta de contrato a expirar
- *  - Relatório mensal de accounting
- *  - Aprovação / rejeição de lançamento
+ * Use cases in MUSIC OS 360:
+ *  - Inviting a user to the tenant
+ *  - Expiring contract alert
+ *  - Monthly accounting report
+ *  - Release approval / rejection
  *
- * Uso:
+ * Usage:
  *   import { notificationsService } from "@/modules/integrations/services";
  *   await notificationsService.sendUserInvite({ ...  });
  */

@@ -1,8 +1,8 @@
 /**
  * modules/integrations/components/UbcConfigDialog.tsx
  *
- * Dialog de configuração da integração UBC (União Brasileira de Compositores).
- * Permite conectar, desconectar, sincronizar catálogo e agendar sincronizações.
+ * Configuration dialog of the UBC integration (Brazilian composers' union).
+ * Allows connecting, disconnecting, syncing the catalog and scheduling syncs.
  */
 
 import { useState } from "react";
@@ -137,7 +137,7 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
           )}
         </div>
 
-        {/* Form de credenciais (exibido apenas quando desconectado) */}
+        {/* Credentials form (shown only when disconnected) */}
         {!isConnected && (
           <form onSubmit={handleSave} className="space-y-4">
             <div className="grid gap-4">
@@ -228,10 +228,10 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
           </form>
         )}
 
-        {/* Painel de gestão (exibido quando conectado) */}
+        {/* Management panel (shown when connected) */}
         {isConnected && (
           <div className="space-y-4">
-            {/* Sincronização em lote */}
+            {/* Batch sync */}
             <div className="rounded-lg border bg-muted/20 p-4 space-y-3">
               <div className="flex items-center gap-2">
                 <RefreshCw className="h-4 w-4 text-muted-foreground" />

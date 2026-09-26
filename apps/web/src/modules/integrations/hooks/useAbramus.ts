@@ -14,7 +14,7 @@ import type {
   ArtistSearchResult,
 } from "@/modules/integrations/dto";
 
-// Schedule é preferência local de agendamento (não é credencial nem dado de domínio).
+// The schedule is a local scheduling preference (neither a credential nor domain data).
 const SCHED_KEY = "musicos360_abramus_schedule";
 function readSchedule(): AbramusSyncSchedule {
   try { return (sessionStorage.getItem(SCHED_KEY) as AbramusSyncSchedule) || "off"; } catch { return "off"; }
@@ -187,8 +187,8 @@ export function useAbramusLocalLookup(kind: AbramusKind, externalIds: string[]) 
   );
   return useQuery<Map<string, AbramusLocalMatch>>({
     queryKey: ["abramus", "local-lookup", kind, ids],
-    // Correspondência local depende do vínculo real obra/fonograma ↔ código externo
-    // persistido no backend; sem ele, não há match a exibir.
+    // Local matching depends on the real work/phonogram ↔ external code link
+    // persisted in the backend; without it, there is no match to display.
     queryFn: async () => new Map<string, AbramusLocalMatch>(),
     enabled: ids.length > 0,
     staleTime: 10_000,
@@ -210,7 +210,7 @@ export function useAbramusSetSchedule() {
 export function useAbramusRegistrationHistory(kind: AbramusKind, localId: string) {
   return useQuery<RegistrationHistoryEntry[]>({
     queryKey: ["abramus", "registration-history", kind, localId],
-    // Histórico de registro vive no backend; sem endpoint, não há histórico a exibir.
+    // Registration history lives in the backend; without an endpoint, there is no history to display.
     queryFn: async () => [],
     enabled: Boolean(localId),
     staleTime: 60_000,

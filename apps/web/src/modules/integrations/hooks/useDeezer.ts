@@ -1,17 +1,17 @@
 /**
  * integrations/hooks/useDeezer.ts
  *
- * Hook para integração Deezer.
+ * Hook for the Deezer integration.
  *
- * O backend (apps/api/.../integrations/deezer/deezer.service.ts) é uma API
- * pública sem necessidade de credenciais (isConfigured() sempre true) — o
- * fluxo de "conectar" abaixo (app_id/secret_key em sessionStorage) é apenas
- * uma preferência cosmética de UI para guardar um artist_id de referência,
- * já que a API pública do Deezer não expõe endpoints de configure/status/
- * disconnect. useDeezerArtistMetrics/useDeezerTopTracks chamam os endpoints
- * reais e funcionais (GET /integrations/deezer/artist/:id[/top]).
+ * The backend (apps/api/.../integrations/deezer/deezer.service.ts) is a public
+ * API that needs no credentials (isConfigured() is always true) — the
+ * "connect" flow below (app_id/secret_key in sessionStorage) is only
+ * a cosmetic UI preference to keep a reference artist_id,
+ * since the public Deezer API exposes no configure/status/
+ * disconnect endpoints. useDeezerArtistMetrics/useDeezerTopTracks call the real,
+ * working endpoints (GET /integrations/deezer/artist/:id[/top]).
  *
- * Contrato: @/shared/integrations/contracts/streaming.contract → IStreamingProvider
+ * Contract: @/shared/integrations/contracts/streaming.contract → IStreamingProvider
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

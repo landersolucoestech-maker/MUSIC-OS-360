@@ -1,15 +1,15 @@
 /**
  * modules/integrations/hooks/useEcad.ts
  *
- * Integração ECAD (Escritório Central de Arrecadação e Distribuição).
+ * ECAD integration (Brazil's central office for the collection and distribution of music royalties).
  *
- * ESTADO REAL: o acesso à API do ECAD requer contrato institucional (via
- * ABRAMUS, UBC, AMAR ou associação afiliada) e um endpoint real no backend.
- * Até lá, este hook reporta o estado verdadeiro (desconectado) e TODA
- * operação falha explicitamente. É proibido simular conexão, arrecadação,
- * conciliação ou importação de relatório.
+ * REAL STATE: access to the ECAD API requires an institutional contract (via
+ * ABRAMUS, UBC, AMAR or an affiliated association) and a real backend endpoint.
+ * Until then, this hook reports the true state (disconnected) and EVERY
+ * operation fails explicitly. Simulating connection, collection,
+ * reconciliation or report import is forbidden.
  *
- * Contrato: @/shared/integrations/contracts/rights.contract → IRightsProvider
+ * Contract: @/shared/integrations/contracts/rights.contract → IRightsProvider
  */
 
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -65,7 +65,7 @@ function ecadUnavailable(): never {
 export function useEcadStatus() {
   return useQuery<EcadStatus>({
     queryKey: ["integrations", "ecad", "status"],
-    // Estado verdadeiro: não há integração ECAD configurável hoje.
+    // True state: there is no configurable ECAD integration today.
     queryFn: async (): Promise<EcadStatus> => ({
       integration_id:      "ecad",
       status:              "disconnected",

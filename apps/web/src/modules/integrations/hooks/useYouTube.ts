@@ -1,7 +1,7 @@
 /**
  * integrations/hooks/useYouTube.ts
  *
- * Hook para integração YouTube Analytics.
+ * Hook for the YouTube Analytics integration.
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -46,13 +46,13 @@ export function useYouTubeStatus() {
   });
 }
 
-/** @deprecated Mantido para retrocompatibilidade com YouTubeConfigDialog. */
+/** @deprecated Kept for backward compatibility with YouTubeConfigDialog. */
 export function useYouTubeSaveCredentials() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: { api_key?: string; channel_id?: string }) => {
-      // Modo real: YouTube usa YOUTUBE_API_KEY configurado no servidor (env var).
-      // Não há endpoint de configure — status reflete configuração do servidor.
+      // Real mode: YouTube uses the YOUTUBE_API_KEY configured on the server (env var).
+      // There is no configure endpoint — the status reflects the server configuration.
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["integrations", "youtube", "status"] });
@@ -62,7 +62,7 @@ export function useYouTubeSaveCredentials() {
   });
 }
 
-/** @deprecated Mantido para retrocompatibilidade com YouTubeConfigDialog. */
+/** @deprecated Kept for backward compatibility with YouTubeConfigDialog. */
 export function useYouTubeDeleteCredentials() {
   const queryClient = useQueryClient();
   return useMutation({

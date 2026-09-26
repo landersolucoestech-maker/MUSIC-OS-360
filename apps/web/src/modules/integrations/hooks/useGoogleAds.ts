@@ -1,8 +1,8 @@
 /**
  * integrations/hooks/useGoogleAds.ts
  *
- * Hook para integração Google Ads.
- * Credenciais gerenciadas server-side (criptografadas no banco).
+ * Hook for the Google Ads integration.
+ * Credentials managed server-side (encrypted in the database).
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

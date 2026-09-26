@@ -4,13 +4,13 @@ import { api } from "@/shared/lib/api-client";
 import { DisabledIntegrationError } from "@/shared/lib/disabled-integration";
 
 /**
- * Decision Gate item 9 (GAP-15): Autentique tem backend real
+ * Decision Gate item 9 (GAP-15): Autentique has a real backend
  * (`GET /integrations/status`, `POST /integrations/autentique/configure`,
  * `POST /integrations/autentique/documents` — apps/api/.../autentique/*).
- * Não há endpoint real de "desconectar" nem campos ricos de status
- * (has_token/has_global_fallback/last_sync_at/last_error) — o mapeamento
- * abaixo só preenche o que é real; o restante fica undefined de propósito
- * (AutentiqueConfigDialog já trata esses campos como opcionais).
+ * There is no real "disconnect" endpoint nor rich status fields
+ * (has_token/has_global_fallback/last_sync_at/last_error) — the mapping
+ * below only fills what is real; the rest stays undefined on purpose
+ * (AutentiqueConfigDialog already treats those fields as optional).
  */
 export interface AutentiqueStatus {
   connected: boolean;
@@ -49,7 +49,7 @@ export function useAutentiqueSaveCredentials() {
   });
 }
 
-/** Sem endpoint real de desconexão — nunca fabricar sucesso. */
+/** No real disconnect endpoint — never fabricate success. */
 export function useAutentiqueDeleteCredentials() {
   return useMutation({
     mutationFn: async () => Promise.reject(new DisabledIntegrationError("Autentique (desconectar)")),

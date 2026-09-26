@@ -1,9 +1,9 @@
 /**
  * modules/integrations/components/MarketingOAuthDialog.tsx
  *
- * Abre um popup do browser com a página de login da plataforma (/oauth/:platform).
- * Após o utilizador fazer login no popup, este envia um postMessage de sucesso,
- * o dialog recebe, conecta e fecha.
+ * Opens a browser popup with the platform's login page (/oauth/:platform).
+ * After the user logs in in the popup, it sends a success postMessage,
+ * the dialog receives it, connects and closes.
  */
 
 import { useState, useEffect, useRef, useCallback, type ComponentType, type CSSProperties } from "react";
@@ -268,7 +268,7 @@ const PLATFORM_META: Record<MarketingPlatformId, PlatformMeta> = {
   },
 };
 
-// Plataformas cujo OAuth é iniciado pelo backend (têm endpoint próprio)
+// Platforms whose OAuth is started by the backend (they have their own endpoint)
 const BACKEND_OAUTH_PLATFORMS = new Set<MarketingPlatformId>(["spotify_ads", "corp_spotify"]);
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
@@ -533,7 +533,7 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
     const interval = setInterval(() => {
       if (!popupRef.current) return;
 
-      // Spotify: backend redireciona de volta com ?spotify=connected na mesma origem
+      // Spotify: the backend redirects back with ?spotify=connected on the same origin
       if (BACKEND_OAUTH_PLATFORMS.has(platform)) {
         try {
           const href = popupRef.current.location.href;
@@ -560,9 +560,9 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
     const top  = Math.round(window.screenY + (window.outerHeight - h) / 2);
     const popupFeatures = `width=${w},height=${h},left=${left},top=${top},toolbar=no,menubar=no,scrollbars=yes,resizable=yes`;
 
-    // Abre o popup IMEDIATAMENTE (dentro do gesto do utilizador, antes de qualquer await)
-    // para evitar que o bloqueador de popups do browser rejeite a janela.
-    // O popup começa em about:blank e é navegado para a URL correta após o fetch.
+    // Opens the popup IMMEDIATELY (inside the user gesture, before any await)
+    // so the browser's popup blocker does not reject the window.
+    // The popup starts at about:blank and is navigated to the right URL after the fetch.
     const popup = window.open("about:blank", `musicos360_oauth_${platform}`, popupFeatures);
     if (!popup) {
       toast.error(
@@ -656,7 +656,7 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md p-0 overflow-hidden" data-testid={`dialog-oauth-${platform}`}>
 
-        {/* Cabeçalho com cor da plataforma */}
+        {/* Header with the platform color */}
         <div
           className="px-5 py-4 flex items-center gap-3"
           style={{ backgroundColor: meta.buttonColor }}
@@ -685,7 +685,7 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
 
         <div className="px-5 pb-5 pt-4 space-y-4">
 
-          {/* PASSO 1: Permissões */}
+          {/* STEP 1: Permissions */}
           {step === "permissions" && (
             <>
               <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-2">

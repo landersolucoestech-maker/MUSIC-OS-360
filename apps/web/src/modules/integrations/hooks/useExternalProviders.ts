@@ -1,15 +1,15 @@
 /**
  * modules/integrations/hooks/useExternalProviders.ts
  *
- * Catálogo comercial resolvido para ESTE tenant (GET /integrations/providers).
+ * Commercial catalog resolved for THIS tenant (GET /integrations/providers).
  *
- * O BACKEND é a fonte de verdade: ele compõe governança administrativa +
- * capacidade técnica + audiência VIEW/USE + entitlement do plano + conexão, e
- * devolve apenas o que o cliente pode DESCOBRIR. Integrações internas
- * (Soundcharts/ACRCloud/Resend) e billing (Stripe) são excluídas por
- * classificação no resolver — nunca por filtro de frontend.
+ * The BACKEND is the source of truth: it composes administrative governance +
+ * technical capability + VIEW/USE audience + plan entitlement + connection, and
+ * returns only what the customer can DISCOVER. Internal integrations
+ * (Soundcharts/ACRCloud/Resend) and billing (Stripe) are excluded by
+ * classification in the resolver — never by a frontend filter.
  *
- * Regra: ramifique sempre por `reasonCode`/flags (enum), nunca por texto humano.
+ * Rule: always branch on `reasonCode`/flags (enum), never on human text.
  */
 
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +22,7 @@ import {
 } from "@music-os-360/types";
 import { api } from "@/shared/lib/api-client";
 
-/** Espelha 1:1 o payload client-safe do resolver — sem campos administrativos. */
+/** Mirrors the resolver's client-safe payload 1:1 — no administrative fields. */
 export interface ClientIntegration {
   slug: string;
   name: string;
@@ -31,33 +31,33 @@ export interface ClientIntegration {
   publicationState: IntegrationPublicationState;
   technicalState: IntegrationTechnicalState;
   connectionKind: "oauth" | "tenant_credentials" | "platform_credentials";
-  /** O plano do tenant inclui esta integração. */
+  /** The tenant's plan includes this integration. */
   entitled: boolean;
-  /** Pode iniciar conexão/OAuth — não exige já estar conectado. */
+  /** Can start connection/OAuth — does not require being connected already. */
   canConnect: boolean;
-  /** Pode operar de facto (exige conexão válida). */
+  /** Can actually operate (requires a valid connection). */
   canUse: boolean;
   connectionState: ExternalProviderStatus;
   reasonCode: IntegrationReasonCode;
-  /** Planos que incluem o slug — descoberto no backend, nunca hardcoded. */
+  /** Plans that include the slug — discovered in the backend, never hardcoded. */
   eligiblePlans: string[];
 }
 
 const EMPTY: ClientIntegration[] = [];
 
-/** Como cada estado deve ser apresentado. Derivado do enum, nunca fonte de lógica. */
+/** How each state must be presented. Derived from the enum, never a source of logic. */
 export interface IntegrationPresentation {
   label: string;
   tone: "success" | "neutral" | "warning" | "danger" | "info";
-  /** Ação primária oferecida ao cliente, se houver. */
+  /** Primary action offered to the customer, if any. */
   action: "connect" | "reconnect" | "manage" | "upgrade" | "none";
   hint?: string;
 }
 
 /**
- * PLAN_NOT_INCLUDED e COMING_SOON são deliberadamente distintos em rótulo, tom
- * e ação: "bloqueado pelo plano" é uma venda (upgrade), "em breve" é ausência de
- * produto. Colapsá-los num só estado esconde a diferença do cliente.
+ * PLAN_NOT_INCLUDED and COMING_SOON are deliberately distinct in label, tone
+ * and action: "blocked by the plan" is a sale (upgrade), "coming soon" is the absence of a
+ * product. Collapsing them into a single state hides the difference from the customer.
  */
 export const INTEGRATION_PRESENTATION: Record<IntegrationReasonCode, IntegrationPresentation> = {
   [IntegrationReasonCode.CONNECTED]: {
@@ -113,7 +113,7 @@ export function useExternalProviders() {
   return { ...query, data: query.data ?? EMPTY };
 }
 
-/** Lookup por slug. Undefined = o backend não resolveu para este cliente. */
+/** Lookup by slug. Undefined = the backend did not resolve it for this customer. */
 export function findProviderState(
   providers: ClientIntegration[],
   slug: string,
@@ -122,8 +122,8 @@ export function findProviderState(
 }
 
 /**
- * Um botão de conexão só pode existir quando o backend autoriza conectar E o
- * provedor tem forma real de conexão. Entitlement sozinho nunca cria botão.
+ * A connect button may only exist when the backend authorizes connecting AND the
+ * provider has a real way to connect. Entitlement alone never creates a button.
  */
 export function canOfferConnection(p: ClientIntegration): boolean {
   return p.canConnect && p.connectionKind !== "platform_credentials";

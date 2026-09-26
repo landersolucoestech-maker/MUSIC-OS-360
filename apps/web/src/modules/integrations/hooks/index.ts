@@ -1,9 +1,9 @@
 /**
  * modules/integrations/hooks/index.ts
  *
- * Barrel de todos os hooks de integração.
+ * Barrel of all integration hooks.
  *
- * Organização por categoria:
+ * Organization by category:
  *   - Storage           → useR2
  *   - Email             → useResend
  *   - Payments          → useStripe

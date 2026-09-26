@@ -1,32 +1,32 @@
 /**
  * integrations/hooks/useSigningProviders.ts
  *
- * Agrega o estado de conexão dos provedores de assinatura digital
- * REALMENTE suportados comercialmente pelo produto hoje.
+ * Aggregates the connection state of the digital signature providers
+ * REALLY supported commercially by the product today.
  *
- * Autentique e DocuSign são selecionáveis: ambos têm cadeia real de ponta a
- * ponta no backend (envio + webhook + persistência de status). `connected`
- * reflete o estado real da credencial/OAuth de cada um — um provedor aparece
- * como "Não conectado" até que a integração seja de facto autorizada, nunca
- * como conectado por antecipação.
+ * Autentique and DocuSign are selectable: both have a real end-to-end chain in the
+ * backend (sending + webhook + status persistence). `connected`
+ * reflects the real state of each one's credential/OAuth — a provider appears
+ * as "Não conectado" until the integration is actually authorized, never
+ * as connected in advance.
  *
- * Clicksign continua FORA: não existe nenhum backend em apps/api/src para ele
- * (useClicksign.ts é um stub honesto). Expor um provedor selecionável sem
- * adapter real seria fabricar funcionalidade.
+ * Clicksign stays OUT: there is no backend in apps/api/src for it
+ * (useClicksign.ts is an honest stub). Exposing a selectable provider without a
+ * real adapter would fabricate functionality.
  *
- * CORREÇÃO 2026-08-23 do "Decision Gate item 13": a justificativa anterior
- * dizia que "signing.adapter.ts sempre falha para os três" provaria que
- * Clicksign/DocuSign não são reais. Isso não se sustenta — aquele adapter é um
- * stub de frontend deliberado e falha TAMBÉM para Autentique, que funciona
- * normalmente via backend. O estado real é:
- *   - DocuSign  — OAuth real já existia; o adapter de assinatura foi
- *                 implementado em 2026-08-23 (integrations/docusign/) e o
- *                 provedor voltou a ser selecionável.
- *   - Clicksign — UI real existe (ClicksignConfigDialog + useClicksign), mas
- *                 não há NENHUM backend em apps/api/src. Continua fora até ter
- *                 adapter real. Ver docs/BACKLOG.md Grupo 1.
+ * 2026-08-23 CORRECTION of "Decision Gate item 13": the previous justification
+ * said that "signing.adapter.ts always fails for all three" would prove that
+ * Clicksign/DocuSign are not real. That does not hold — that adapter is a
+ * deliberate frontend stub and fails ALSO for Autentique, which works
+ * normally via the backend. The real state is:
+ *   - DocuSign  — real OAuth already existed; the signature adapter was
+ *                 implemented on 2026-08-23 (integrations/docusign/) and the
+ *                 provider became selectable again.
+ *   - Clicksign — a real UI exists (ClicksignConfigDialog + useClicksign), but
+ *                 there is NO backend at all in apps/api/src. It stays out until it has a
+ *                 real adapter. See docs/BACKLOG.md Group 1.
  *
- * Uso:
+ * Usage:
  *   const { data: providers } = useSigningProviders();
  */
 
@@ -43,10 +43,10 @@ export interface SigningProviderOption {
   logo:        string;
 }
 
-// Referência estável — ver shared/hooks/useDataQuery.ts para o motivo.
+// Stable reference — see shared/hooks/useDataQuery.ts for the reason.
 const EMPTY_PROVIDERS: SigningProviderOption[] = [];
 
-/** Estado real da conexão OAuth do DocuSign — nunca inferido, nunca fabricado. */
+/** Real state of the DocuSign OAuth connection — never inferred, never fabricated. */
 function useDocuSignStatus() {
   return useQuery<{ connected: boolean; needs_reauth?: boolean }>({
     queryKey: ["integrations", "docusign", "oauth-status"],

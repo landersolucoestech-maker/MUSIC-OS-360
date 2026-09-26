@@ -1,23 +1,23 @@
 /**
  * integrations/webhooks/stripe.webhook.ts
  *
- * CONTRATO de webhook Stripe — documentação dos eventos processados.
+ * Stripe webhook CONTRACT — documentation of the processed events.
  *
- * REGRA CRÍTICA: webhooks são SEMPRE processados no backend.
- * O frontend NUNCA recebe webhooks directamente.
- * O frontend obtém estado atualizado via polling ou domain events emitidos
- * após o backend processar o webhook e atualizar o mockData/DB.
+ * CRITICAL RULE: webhooks are ALWAYS processed in the backend.
+ * The frontend NEVER receives webhooks directly.
+ * The frontend obtains the updated state via polling or domain events emitted
+ * after the backend processes the webhook and updates the mockData/DB.
  *
- * Endpoint backend:
+ * Backend endpoint:
  *   POST /webhooks/stripe
- *   Header: stripe-signature (validado com STRIPE_WEBHOOK_SECRET)
+ *   Header: stripe-signature (validated with STRIPE_WEBHOOK_SECRET)
  *
- * Eventos processados pelo backend:
+ * Events processed by the backend:
  */
 
 export const STRIPE_WEBHOOK_EVENTS = [
   "checkout.session.completed",      // tenant completou upgrade de plano
-  "customer.subscription.updated",   // mudança de plano (upgrade/downgrade)
+  "customer.subscription.updated",   // plan change (upgrade/downgrade)
   "customer.subscription.deleted",   // cancelamento de subscription
   "invoice.paid",                    // pagamento de fatura confirmado
   "invoice.payment_failed",          // falha de pagamento → notificar admin
@@ -26,8 +26,8 @@ export const STRIPE_WEBHOOK_EVENTS = [
 export type StripeWebhookEvent = typeof STRIPE_WEBHOOK_EVENTS[number];
 
 /**
- * Tipo do payload do webhook Stripe (simplificado para documentação).
- * O backend usa o SDK oficial: stripe.webhooks.constructEvent(body, sig, secret)
+ * Stripe webhook payload type (simplified for documentation).
+ * The backend uses the official SDK: stripe.webhooks.constructEvent(body, sig, secret)
  */
 export interface StripeWebhookPayload {
   id:       string;
@@ -39,27 +39,27 @@ export interface StripeWebhookPayload {
 }
 
 /**
- * Acções do backend após processar cada evento:
+ * Backend actions after processing each event:
  *
  * checkout.session.completed:
- *   → activar plano no tenant (DB: tenants.plan = "pro")
- *   → emitir domain event: tenant.plan_upgraded
+ *   → activate the plan on the tenant (DB: tenants.plan = "pro")
+ *   → emit domain event: tenant.plan_upgraded
  *
  * customer.subscription.updated:
- *   → atualizar plano e data de expiração no tenant
- *   → emitir domain event: tenant.subscription_updated
+ *   → update the plan and expiry date on the tenant
+ *   → emit domain event: tenant.subscription_updated
  *
  * customer.subscription.deleted:
- *   → downgrade para free, desativar features premium
- *   → emitir domain event: tenant.subscription_cancelled
+ *   → downgrade to free, disable premium features
+ *   → emit domain event: tenant.subscription_cancelled
  *
  * invoice.paid:
- *   → registar pagamento no histórico de billing
- *   → enviar email de confirmação via Resend
+ *   → record the payment in the billing history
+ *   → send a confirmation email via Resend
  *
  * invoice.payment_failed:
- *   → notificar admin via email (Resend)
- *   → marcar tenant em grace period
+ *   → notify the admin via email (Resend)
+ *   → mark the tenant as in a grace period
  */
 export const STRIPE_WEBHOOK_ACTIONS: Record<StripeWebhookEvent, string> = {
   "checkout.session.completed":    "ativar plano + emitir tenant.plan_upgraded",

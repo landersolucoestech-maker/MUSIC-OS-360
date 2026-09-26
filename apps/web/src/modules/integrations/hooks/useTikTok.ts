@@ -1,16 +1,16 @@
 /**
  * integrations/hooks/useTikTok.ts
  *
- * Hook para integração TikTok orgânico (Login Kit — distinto de TikTok Ads,
- * ver useTikTokAds.ts). O backend tem um fluxo OAuth real e funcional
+ * Hook for the organic TikTok integration (Login Kit — distinct from TikTok Ads,
+ * see useTikTokAds.ts). The backend has a real, working OAuth flow
  * (GET /integrations/tiktok/auth, POST /integrations/tiktok/callback,
  * GET /integrations/tiktok/status, DELETE /integrations/tiktok/disconnect —
- * apps/api/src/modules/integrations/tiktok/tiktok.service.ts), mas a TikTok
- * Display API não expõe endpoints de métricas de vídeo/som para esta conta
- * de desenvolvedor — por isso useTikTokVideoMetrics/useTikTokSoundMetrics
- * permanecem indisponíveis (não é um mock, é uma limitação real da API).
+ * apps/api/src/modules/integrations/tiktok/tiktok.service.ts), but the TikTok
+ * Display API exposes no video/sound metrics endpoints for this developer
+ * account — that is why useTikTokVideoMetrics/useTikTokSoundMetrics
+ * stay unavailable (it is not a mock, it is a real API limitation).
  *
- * Contrato: @/shared/integrations/contracts/streaming.contract → IStreamingProvider
+ * Contract: @/shared/integrations/contracts/streaming.contract → IStreamingProvider
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,11 +18,11 @@ import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 import { disabledIntegration } from "@/shared/lib/disabled-integration";
 
-// ─── Tipos específicos do TikTok ──────────────────────────────────────────────
+// ─── TikTok-specific types ────────────────────────────────────────────────────
 
-/** Espelha exatamente o retorno de IntegrationBaseService.getOAuthStatus() —
- * não estender IntegrationRuntimeStatus aqui, que teria campos (integration_id,
- * status) que o endpoint real não retorna. */
+/** Mirrors exactly the return of IntegrationBaseService.getOAuthStatus() —
+ * do not extend IntegrationRuntimeStatus here, which would have fields (integration_id,
+ * status) that the real endpoint does not return. */
 export interface TikTokStatus {
   connected: boolean;
 }
@@ -55,7 +55,7 @@ export function useTikTokDisconnect() {
   });
 }
 
-// ─── Métricas indisponíveis (limitação real da TikTok Display API) ──────────
+// ─── Unavailable metrics (a real TikTok Display API limitation) ──────────────
 
 export function useTikTokVideoMetrics() {
   return {

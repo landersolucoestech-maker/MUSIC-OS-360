@@ -1,7 +1,7 @@
 /**
  * integrations/hooks/useSpotify.ts
  *
- * Hook para integração Spotify for Artists.
+ * Hook for the Spotify for Artists integration.
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,12 +27,12 @@ export function useSpotifyStatus() {
   });
 }
 
-/** @deprecated Mantido para retrocompatibilidade com SpotifyConfigDialog. */
+/** @deprecated Kept for backward compatibility with SpotifyConfigDialog. */
 export function useSpotifySaveCredentials() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (_input: { client_id?: string; client_secret?: string; artist_id?: string }) => {
-      // Modo real: inicia OAuth (não usa client_id/secret do form — backend gerencia)
+      // Real mode: starts OAuth (does not use the form's client_id/secret — the backend manages them)
       const { url } = await api.get<{ url: string }>("/integrations/spotify/auth");
       window.open(url, "spotify_oauth", "width=600,height=700");
     },
@@ -44,7 +44,7 @@ export function useSpotifySaveCredentials() {
   });
 }
 
-/** @deprecated Mantido para retrocompatibilidade com SpotifyConfigDialog. */
+/** @deprecated Kept for backward compatibility with SpotifyConfigDialog. */
 export function useSpotifyDeleteCredentials() {
   const queryClient = useQueryClient();
   return useMutation({

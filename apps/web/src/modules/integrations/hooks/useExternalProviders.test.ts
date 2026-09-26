@@ -14,8 +14,8 @@ import {
 } from "./useExternalProviders";
 
 /**
- * Catálogo comercial do tenant: o frontend ramifica pelo enum resolvido no
- * backend, nunca por texto humano. Estes testes travam o contrato de UX.
+ * The tenant's commercial catalog: the frontend branches on the enum resolved in the
+ * backend, never on human text. These tests lock in the UX contract.
  */
 
 function integration(over: Partial<ClientIntegration> = {}): ClientIntegration {
@@ -47,7 +47,7 @@ describe("Tenant commercial catalog — state contract", () => {
     const soon = INTEGRATION_PRESENTATION[IntegrationReasonCode.COMING_SOON];
 
     expect(locked.label).not.toBe(soon.label);
-    // Bloqueio por plano é uma venda: oferece upgrade. "Em breve" não oferece nada.
+    // A plan block is a sale: it offers an upgrade. "Coming soon" offers nothing.
     expect(locked.action).toBe("upgrade");
     expect(soon.action).toBe("none");
   });
@@ -95,7 +95,7 @@ describe("Tenant commercial catalog — state contract", () => {
   it("findProviderState returns undefined for what the backend did not resolve", () => {
     const list = [integration()];
     expect(findProviderState(list, "docusign")?.slug).toBe("docusign");
-    // Internos nunca chegam ao catálogo do cliente.
+    // Internal ones never reach the customer's catalog.
     for (const internal of ["soundcharts", "acrcloud", "resend", "stripe"]) {
       expect(findProviderState(list, internal)).toBeUndefined();
     }

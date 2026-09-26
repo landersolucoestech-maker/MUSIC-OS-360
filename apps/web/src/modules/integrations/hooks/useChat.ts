@@ -1,24 +1,24 @@
 /**
  * integrations/hooks/useChat.ts
  *
- * Hook stub para integração MusicChat (mensagens internas da plataforma).
+ * Stub hook for the MusicChat integration (the platform's internal messages).
  *
- * ESTADO ACTUAL: standalone — mensagens simuladas com MOCK_DATA em /chat.
- * MIGRAÇÃO FUTURA:
- *   1. Backend WebSocket (Socket.io) ou servidor SSE
- *   2. Persistência em base de dados multi-tenant (isolamento por tenant_id)
- *   3. Notificações push via Web Push API
- *   4. Upload de ficheiros via R2 (usar useR2 para attachments)
+ * CURRENT STATE: standalone — messages simulated with MOCK_DATA at /chat.
+ * FUTURE MIGRATION:
+ *   1. WebSocket backend (Socket.io) or SSE server
+ *   2. Persistence in a multi-tenant database (isolation by tenant_id)
+ *   3. Push notifications via the Web Push API
+ *   4. File upload via R2 (use useR2 for attachments)
  *
- * Rota MusicChat: /chat
- * Contrato: @/shared/integrations/contracts/chat.contract → IChatProvider
+ * MusicChat route: /chat
+ * Contract: @/shared/integrations/contracts/chat.contract → IChatProvider
  */
 
 import { useQuery } from "@tanstack/react-query";
 import type { IntegrationRuntimeStatus } from "@/shared/integrations/types";
 import { disabledIntegration } from "@/shared/lib/disabled-integration";
 
-// ─── Tipos específicos do MusicChat ──────────────────────────────────────────
+// ─── MusicChat-specific types ─────────────────────────────────────────────────
 
 export interface ChatStatus extends IntegrationRuntimeStatus {
   integration_id: "musicroomchat";
@@ -49,8 +49,8 @@ export function useChatStatus() {
 // ─── Stubs desabilitados ──────────────────────────────────────────────────────
 
 /**
- * MIGRAÇÃO FUTURA: conectar ao WebSocket/SSE do MusicChat backend.
- * Em modo standalone: dados do localStorage substituem o canal real.
+ * FUTURE MIGRATION: connect to the MusicChat backend WebSocket/SSE.
+ * In standalone mode: localStorage data replaces the real channel.
  */
 export function useChatChannel() {
   return {
@@ -62,7 +62,7 @@ export function useChatChannel() {
 }
 
 /**
- * MIGRAÇÃO FUTURA: listar canais disponíveis para o tenant.
+ * FUTURE MIGRATION: list the channels available to the tenant.
  */
 export function useChatChannels() {
   return {
@@ -73,7 +73,7 @@ export function useChatChannels() {
 }
 
 /**
- * MIGRAÇÃO FUTURA: subscrever notificações push via Web Push API.
+ * FUTURE MIGRATION: subscribe to push notifications via the Web Push API.
  */
 export function useChatNotifications() {
   return {

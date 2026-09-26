@@ -1,11 +1,11 @@
 /**
  * integrations/services/index.ts
  *
- * Barrel de todos os serviços de orquestração de integrações.
- * Estes serviços coordenam múltiplos adapters + domain events.
+ * Barrel of all integration orchestration services.
+ * These services coordinate multiple adapters + domain events.
  *
- * REGRA: módulos importam SEMPRE daqui quando precisam de orquestrar
- * mais do que uma integração numa única operação.
+ * RULE: modules ALWAYS import from here when they need to orchestrate
+ * more than one integration in a single operation.
  */
 
 export { signingService }       from "./signing.service";

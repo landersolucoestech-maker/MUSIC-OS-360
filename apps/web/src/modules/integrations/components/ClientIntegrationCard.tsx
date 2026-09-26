@@ -1,15 +1,15 @@
 /**
  * components/ClientIntegrationCard.tsx
  *
- * Card de uma integração comercial no catálogo do tenant.
+ * Card of a commercial integration in the tenant's catalog.
  *
- * Toda decisão vem do backend (`reasonCode`, `canConnect`, `entitled`,
- * `eligiblePlans`). Este componente NÃO recalcula política — só apresenta.
+ * Every decision comes from the backend (`reasonCode`, `canConnect`, `entitled`,
+ * `eligiblePlans`). This component does NOT recompute policy — it only presents.
  *
- * Estados que precisam ser inequivocamente diferentes:
- *   PLAN_NOT_INCLUDED → bloqueado pelo plano, com upgrade (é uma venda)
- *   COMING_SOON       → em breve, sem ação (não existe produto ainda)
- * Colapsar os dois esconderia do cliente qual é o caminho para destravar.
+ * States that must be unmistakably different:
+ *   PLAN_NOT_INCLUDED → blocked by the plan, with an upgrade (it is a sale)
+ *   COMING_SOON       → coming soon, no action (there is no product yet)
+ * Collapsing the two would hide from the customer which path unlocks it.
  */
 
 import { Badge, type BadgeVariant } from "@/shared/ui/badge";
@@ -31,9 +31,9 @@ const TONE_VARIANT: Record<string, BadgeVariant> = {
 
 interface Props {
   integration: ClientIntegration;
-  /** Abre a superfície canônica de conexão do provedor, quando existir. */
+  /** Opens the provider's canonical connection surface, when it exists. */
   onConnect?: (slug: string) => void;
-  /** Leva à superfície de upgrade/billing já existente — nunca um checkout novo. */
+  /** Leads to the already existing upgrade/billing surface — never a new checkout. */
   onUpgrade?: () => void;
 }
 
@@ -62,8 +62,8 @@ export function ClientIntegrationCard({ integration, onConnect, onUpgrade }: Pro
         </Badge>
       </div>
 
-      {/* Bloqueio por plano: mostra os planos REAIS que incluem, vindos do
-          backend. Nenhum nome de plano é decidido aqui. */}
+      {/* Plan block: shows the REAL plans that include it, coming from the
+          backend. No plan name is decided here. */}
       {lockedByPlan && (
         <div className="rounded-md bg-muted/50 p-3 space-y-2" data-testid={`client-integration-${integration.slug}-locked`}>
           {integration.eligiblePlans.length > 0 ? (
@@ -87,8 +87,8 @@ export function ClientIntegrationCard({ integration, onConnect, onUpgrade }: Pro
         </div>
       )}
 
-      {/* Connect só aparece quando o BACKEND autoriza conectar. Em breve,
-          indisponível e não-implementado nunca oferecem botão funcional. */}
+      {/* Connect only appears when the BACKEND authorizes connecting. Coming soon,
+          unavailable and not-implemented never offer a working button. */}
       {showConnect && (
         <Button
           size="sm"

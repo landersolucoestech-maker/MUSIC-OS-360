@@ -1,15 +1,15 @@
 /**
  * integrations/adapters/analytics.adapter.ts
  *
- * Adapter de analytics de produto — implementação REAL via posthog-js.
- * O init acontece em main.tsx (VITE_POSTHOG_KEY, chave publishable);
- * antes do init ou sem chave configurada, os eventos são descartados
- * pelo próprio posthog-js — nunca há dados simulados.
+ * Product analytics adapter — REAL implementation via posthog-js.
+ * Init happens in main.tsx (VITE_POSTHOG_KEY, publishable key);
+ * before init or without a configured key, events are discarded
+ * by posthog-js itself — there is never simulated data.
  *
- * REGRA: componentes NUNCA chamam posthog-js directamente.
- * Usam hooks/serviços que delegam para este adapter.
+ * RULE: components NEVER call posthog-js directly.
+ * They use hooks/services that delegate to this adapter.
  *
- * Uso:
+ * Usage:
  *   import { analyticsAdapter } from "@/modules/integrations/adapters/analytics.adapter";
  *   analyticsAdapter.track("contrato.created", { tenant_id, user_id });
  */

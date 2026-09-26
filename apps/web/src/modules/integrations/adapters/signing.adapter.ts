@@ -1,14 +1,14 @@
 /**
  * integrations/adapters/signing.adapter.ts
  *
- * Adapter de assinatura digital.
+ * Digital signature adapter.
  *
- * REGRA: o frontend NUNCA chama APIs externas de assinatura directamente e
- * NUNCA simula sucesso. Enquanto o fluxo não estiver fiado ao backend real
- * (/integrations/autentique), qualquer chamada falha explicitamente — mesmo
- * padrão de unavailable.provider (storage/streaming).
+ * RULE: the frontend NEVER calls external signature APIs directly and
+ * NEVER simulates success. While the flow is not wired to the real backend
+ * (/integrations/autentique), any call fails explicitly — same
+ * pattern as unavailable.provider (storage/streaming).
  *
- * Uso:
+ * Usage:
  *   import { resolveSigningAdapter } from "@/modules/integrations/adapters/signing.adapter";
  *   const adapter = resolveSigningAdapter("autentique");
  */

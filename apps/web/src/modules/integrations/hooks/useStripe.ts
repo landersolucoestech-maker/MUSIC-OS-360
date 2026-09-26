@@ -1,18 +1,18 @@
 /**
  * integrations/hooks/useStripe.ts
  *
- * Hook stub para integração Stripe (billing de subscriptions SaaS).
+ * Stub hook for the Stripe integration (SaaS subscription billing).
  *
- * ÂMBITO: billing da plataforma MUSIC OS 360 por tenant.
- * NÃO abrange recebimentos externos de direitos ou pagamentos para artistas (domínio Accounting).
+ * SCOPE: billing of the MUSIC OS 360 platform per tenant.
+ * It does NOT cover external rights receipts or payments to artists (Accounting domain).
  *
- * ESTADO ACTUAL: standalone — sem billing real; plano simulado em TenantContext.
- * MIGRAÇÃO FUTURA:
- *   1. Configurar Stripe com price IDs por plano
- *   2. Implementar webhook endpoint no backend
- *   3. Substituir TenantBilling mock por dados reais da subscription
+ * CURRENT STATE: standalone — no real billing; plan simulated in TenantContext.
+ * FUTURE MIGRATION:
+ *   1. Configure Stripe with price IDs per plan
+ *   2. Implement the webhook endpoint in the backend
+ *   3. Replace the TenantBilling mock with real subscription data
  *
- * Contrato: @/shared/integrations/contracts/payments.contract → IPaymentsProvider
+ * Contract: @/shared/integrations/contracts/payments.contract → IPaymentsProvider
  */
 
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +22,7 @@ import type { TenantSubscription } from "@/shared/integrations/contracts/payment
 import { PLAN_FEATURES } from "@/shared/integrations/contracts/payments.contract";
 import { disabledIntegration } from "@/shared/lib/disabled-integration";
 
-// ─── Tipos específicos do Stripe ──────────────────────────────────────────────
+// ─── Stripe-specific types ────────────────────────────────────────────────────
 
 export interface StripeStatus extends IntegrationRuntimeStatus {
   integration_id: "stripe";
@@ -54,8 +54,8 @@ export function useStripeStatus() {
 export function useStripeSubscription(tenantId: string) {
   return useQuery<TenantSubscription | null>({
     queryKey: ["integrations", "stripe", "subscription", tenantId],
-    // Assinatura REAL do backend (/billing/subscription — Stripe). Nunca
-    // fabricar assinatura: sem dado, retorna null (estado verdadeiro).
+    // REAL subscription from the backend (/billing/subscription — Stripe). Never
+    // fabricate a subscription: without data, returns null (the true state).
     queryFn: async (): Promise<TenantSubscription | null> =>
       (await api.get<TenantSubscription | null>("/billing/subscription")) ?? null,
     staleTime: 5 * 60_000,

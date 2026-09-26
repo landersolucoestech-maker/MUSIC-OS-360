@@ -1,8 +1,8 @@
 /**
  * modules/integrations/components/EcadConfigDialog.tsx
  *
- * Dialog de configuração da integração ECAD.
- * Permite conectar, consultar arrecadação, conciliar com catálogo e desconectar.
+ * Configuration dialog of the ECAD integration.
+ * Allows connecting, querying collections, reconciling with the catalog and disconnecting.
  */
 
 import { useState } from "react";
@@ -126,7 +126,7 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
           )}
         </div>
 
-        {/* Aviso institucional (sempre visível) */}
+        {/* Institutional notice (always visible) */}
         <div className="flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/8 px-4 py-3">
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
           <p className="text-xs text-amber-700">
@@ -212,10 +212,10 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
           </form>
         )}
 
-        {/* Painel de gestão (conectado) */}
+        {/* Management panel (connected) */}
         {isConnected && (
           <div className="space-y-4">
-            {/* Conciliação */}
+            {/* Reconciliation */}
             <div className="rounded-lg border bg-muted/20 p-4 space-y-3">
               <div className="flex items-center gap-2">
                 <RefreshCw className="h-4 w-4 text-muted-foreground" />
@@ -256,7 +256,7 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
               </Button>
             </div>
 
-            {/* Import de relatório */}
+            {/* Report import */}
             <div className="rounded-lg border bg-muted/20 p-4 space-y-2">
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-muted-foreground" />

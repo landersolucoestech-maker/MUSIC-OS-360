@@ -1,22 +1,22 @@
 /**
  * integrations/hooks/useR2.ts
  *
- * Hook stub para integração Cloudflare R2 (armazenamento de ficheiros).
+ * Stub hook for the Cloudflare R2 integration (file storage).
  *
- * ESTADO ACTUAL: standalone — ficheiros referenciados por URLs locais/mock.
- * MIGRAÇÃO FUTURA:
- *   1. Configurar bucket R2 e Worker de upload assinado
- *   2. Implementar IStorageProvider com R2 SDK
- *   3. Substituir referências a URLs locais por presigned URLs R2
+ * CURRENT STATE: standalone — files referenced by local/mock URLs.
+ * FUTURE MIGRATION:
+ *   1. Configure the R2 bucket and a signed-upload Worker
+ *   2. Implement IStorageProvider with the R2 SDK
+ *   3. Replace references to local URLs with R2 presigned URLs
  *
- * Contrato: @/shared/integrations/contracts/storage.contract → IStorageProvider
+ * Contract: @/shared/integrations/contracts/storage.contract → IStorageProvider
  */
 
 import { useQuery } from "@tanstack/react-query";
 import type { IntegrationRuntimeStatus } from "@/shared/integrations/types";
 import { disabledIntegration } from "@/shared/lib/disabled-integration";
 
-// ─── Tipos específicos do R2 ──────────────────────────────────────────────────
+// ─── R2-specific types ────────────────────────────────────────────────────────
 
 export interface R2Status extends IntegrationRuntimeStatus {
   integration_id: "r2";
@@ -47,7 +47,7 @@ export function useR2Status() {
 // ─── Stubs desabilitados ──────────────────────────────────────────────────────
 
 /**
- * MIGRAÇÃO FUTURA: implementar upload real para R2 via Worker assinado.
+ * FUTURE MIGRATION: implement the real upload to R2 via a signed Worker.
  */
 export function useR2Upload() {
   return {

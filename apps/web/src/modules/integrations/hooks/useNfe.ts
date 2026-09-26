@@ -1,15 +1,15 @@
 /**
  * integrations/hooks/useNfe.ts
  *
- * Hook de configuração para emissão de NF-e (Nota Fiscal Eletrônica).
- * Cada empresa autentica com seu próprio certificado digital + credenciais SEFAZ.
- * Dados armazenados em localStorage (musicos360_ prefix).
+ * Configuration hook for issuing NF-e (Brazilian electronic invoices).
+ * Each company authenticates with its own digital certificate + SEFAZ credentials.
+ * Data stored in localStorage (musicos360_ prefix).
  *
- * MIGRAÇÃO FUTURA:
- *   - Integração com SEFAZ via webservice (NF-e 4.0 + NFS-e)
- *   - Suporte a certificado A1 (PFX) e A3 (token/cartão)
- *   - Emissão, cancelamento, inutilização e consulta de status SEFAZ
- *   - DANFE em PDF via foco nfe / nfe.io / emites / plugnotas
+ * FUTURE MIGRATION:
+ *   - Integration with SEFAZ via web service (NF-e 4.0 + NFS-e)
+ *   - Support for A1 (PFX) and A3 (token/card) certificates
+ *   - Issuing, cancellation, number voiding and SEFAZ status queries
+ *   - DANFE as PDF via foco nfe / nfe.io / emites / plugnotas
  */
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";

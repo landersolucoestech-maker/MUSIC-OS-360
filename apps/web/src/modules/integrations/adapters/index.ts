@@ -1,12 +1,12 @@
 /**
  * integrations/adapters/index.ts
  *
- * Barrel de todos os adapters.
- * Ponto de entrada único para módulos que precisam de chamar integrações.
+ * Barrel of all adapters.
+ * Single entry point for modules that need to call integrations.
  *
- * REGRA: módulos importam SEMPRE daqui, nunca dos providers directamente.
+ * RULE: modules ALWAYS import from here, never from the providers directly.
  *
- * Uso:
+ * Usage:
  *   import { authAdapter }      from "@/modules/integrations/adapters";
  *   import { emailAdapter }     from "@/modules/integrations/adapters";
  *   import { signingAdapter }   from "@/modules/integrations/adapters";

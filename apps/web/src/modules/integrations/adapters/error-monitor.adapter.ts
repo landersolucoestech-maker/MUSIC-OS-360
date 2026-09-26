@@ -1,14 +1,14 @@
 /**
  * integrations/adapters/error-monitor.adapter.ts
  *
- * Adapter de monitoramento de erros — implementação REAL via @sentry/react.
- * O init acontece em main.tsx (VITE_SENTRY_DSN, DSN público de browser);
- * sem DSN configurado, o SDK descarta os eventos — nunca há dados simulados.
+ * Error monitoring adapter — REAL implementation via @sentry/react.
+ * Init happens in main.tsx (VITE_SENTRY_DSN, public browser DSN);
+ * without a configured DSN, the SDK discards events — there is never simulated data.
  *
- * REGRA: componentes NUNCA importam @sentry/react directamente.
- * Usam hooks/serviços que delegam para este adapter.
+ * RULE: components NEVER import @sentry/react directly.
+ * They use hooks/services that delegate to this adapter.
  *
- * Uso:
+ * Usage:
  *   import { errorMonitorAdapter } from "@/modules/integrations/adapters/error-monitor.adapter";
  *   errorMonitorAdapter.captureError(error, { module: "accounting", action: "create" });
  */

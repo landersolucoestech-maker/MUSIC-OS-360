@@ -1,8 +1,8 @@
 /**
  * integrations/hooks/useTikTokAds.ts
  *
- * Hook para integração TikTok Ads Manager.
- * Credenciais gerenciadas server-side (criptografadas no banco).
+ * Hook for the TikTok Ads Manager integration.
+ * Credentials managed server-side (encrypted in the database).
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

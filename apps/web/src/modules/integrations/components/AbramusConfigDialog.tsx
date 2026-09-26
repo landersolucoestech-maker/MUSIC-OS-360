@@ -77,14 +77,14 @@ export function AbramusConfigDialog({
 
   const handleSyncAll = async () => {
     await syncAllMutation.mutateAsync(undefined).catch(() => {
-      // toast já é exibido no onError do hook
+      // the toast is already shown in the hook's onError
     });
   };
 
   const handleScheduleChange = async (next: AbramusSyncSchedule) => {
     if (next === currentSchedule) return;
     await setScheduleMutation.mutateAsync(next).catch(() => {
-      // toast já é exibido no onError do hook
+      // the toast is already shown in the hook's onError
     });
   };
 

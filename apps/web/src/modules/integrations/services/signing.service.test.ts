@@ -6,12 +6,12 @@ vi.mock("@/shared/lib/api-client", () => ({ api: { post: apiClientMock.post } })
 import { signingService } from "./signing.service";
 
 /**
- * Decision Gate item 9 (GAP-15): Autentique é o único provedor real. O
- * backend não retorna signing_url nem suporta cancel/get — este serviço
- * nunca deve inventar esses campos. Autentique já notifica os signatários
- * por email diretamente; este serviço nunca chama um adapter de email
- * próprio (evita duplicar a notificação e evita depender de um provider
- * sempre indisponível).
+ * Decision Gate item 9 (GAP-15): Autentique is the only real provider. The
+ * backend returns no signing_url nor supports cancel/get — this service
+ * must never invent those fields. Autentique already notifies the signers
+ * by email directly; this service never calls an email adapter of its
+ * own (avoids duplicating the notification and depending on an always
+ * unavailable provider).
  */
 function mockBase64Read() {
   const originalFileReader = globalThis.FileReader;
@@ -24,7 +24,7 @@ function mockBase64Read() {
       this.onload?.();
     }
   }
-  // @ts-expect-error — stub mínimo suficiente para o serviço
+  // @ts-expect-error — minimal stub sufficient for the service
   globalThis.FileReader = FakeFileReader;
   return () => { globalThis.FileReader = originalFileReader; };
 }
@@ -65,9 +65,9 @@ describe("signingService.sendForSigning", () => {
     restore();
   });
 
-  // 2026-08-23: DocuSign passou a ser provedor real (integrations/docusign). O
-  // roteamento por provedor tem de bater no endpoint certo — mandar um envelope
-  // DocuSign para o endpoint do Autentique falharia silenciosamente no provedor errado.
+  // 2026-08-23: DocuSign became a real provider (integrations/docusign). The
+  // per-provider routing must hit the right endpoint — sending a DocuSign
+  // envelope to the Autentique endpoint would fail silently on the wrong provider.
   it("routes to the DocuSign endpoint when that provider is chosen", async () => {
     const restore = mockBase64Read();
     (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({

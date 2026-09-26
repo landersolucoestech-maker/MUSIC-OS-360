@@ -1,11 +1,11 @@
 /**
  * integrations/webhooks/index.ts
  *
- * Barrel de contratos/documentação de todos os webhooks do MUSIC OS 360.
+ * Barrel of the contracts/documentation of every MUSIC OS 360 webhook.
  *
- * REGRA: estes módulos são APENAS documentação e tipos.
- * Nenhum webhook é processado no frontend.
- * Todos os webhooks são recebidos e validados no backend.
+ * RULE: these modules are ONLY documentation and types.
+ * No webhook is processed in the frontend.
+ * Every webhook is received and validated in the backend.
  */
 
 export {

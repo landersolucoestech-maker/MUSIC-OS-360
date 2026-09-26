@@ -1,12 +1,12 @@
 /**
  * integrations/dto/index.ts
  *
- * Barrel que re-exporta todos os DTOs e tipos dos contratos de integração.
+ * Barrel that re-exports every DTO and type of the integration contracts.
  *
- * REGRA: o frontend NUNCA importa directamente de @/shared/integrations/contracts/*.
- * Importa sempre daqui ou dos adapters do seu módulo.
+ * RULE: the frontend NEVER imports directly from @/shared/integrations/contracts/*.
+ * It always imports from here or from its module's adapters.
  *
- * Uso:
+ * Usage:
  *   import type { AuthUser, AuthSession } from "@/modules/integrations/dto";
  *   import type { SendEmailParams } from "@/modules/integrations/dto";
  */

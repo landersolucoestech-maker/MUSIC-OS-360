@@ -1,8 +1,8 @@
 /**
  * integrations/hooks/useAppleMusic.ts
  *
- * Hook para integração Apple Music for Artists.
- * Credenciais gerenciadas server-side (criptografadas no banco).
+ * Hook for the Apple Music for Artists integration.
+ * Credentials managed server-side (encrypted in the database).
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

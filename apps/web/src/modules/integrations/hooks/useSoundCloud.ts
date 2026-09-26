@@ -1,8 +1,8 @@
 /**
  * integrations/hooks/useSoundCloud.ts
  *
- * Hook para integração SoundCloud.
- * Credenciais gerenciadas server-side (criptografadas no banco).
+ * Hook for the SoundCloud integration.
+ * Credentials managed server-side (encrypted in the database).
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

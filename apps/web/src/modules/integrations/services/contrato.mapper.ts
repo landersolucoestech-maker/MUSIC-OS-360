@@ -1,13 +1,13 @@
 /**
  * integrations/mappers/contrato.mapper.ts
  *
- * Mapper entre a entidade de domínio Contrato (mockData) e os DTOs
- * de assinatura digital (ISigningProvider).
+ * Mapper between the Contract domain entity (mockData) and the digital
+ * signature DTOs (ISigningProvider).
  *
- * REGRA: este mapper é a ÚNICA fonte de verdade para a transformação
- * Contrato ↔ SigningDTO. Nenhum componente ou hook faz transformação inline.
+ * RULE: this mapper is the ONLY source of truth for the
+ * Contract ↔ SigningDTO transformation. No component or hook transforms inline.
  *
- * Uso:
+ * Usage:
  *   import { contratoMapper } from "@/modules/integrations/mappers";
  *   const input = contratoMapper.toSigningInput(contrato);
  *   const updated = contratoMapper.applySigningStatus(contrato, signingDoc);
@@ -15,7 +15,7 @@
 
 import type { CreateSigningDocumentParams as CreateDocumentInput, SigningDocument } from "@/modules/integrations/dto";
 
-/** Entidade de domínio Contrato (fonte: mockData). */
+/** Contract domain entity (source: mockData). */
 export interface ContratoEntity {
   id:            string;
   title:        string;
@@ -32,7 +32,7 @@ export interface ContratoEntity {
 
 export const contratoMapper = {
   /**
-   * Converte um Contrato para o input de criação de documento de assinatura.
+   * Converts a Contract into the input for creating a signature document.
    */
   toSigningInput(contrato: ContratoEntity, _deadline_days = 7): CreateDocumentInput {
     return {
@@ -50,8 +50,8 @@ export const contratoMapper = {
   },
 
   /**
-   * Aplica o estado de um SigningDocument de volta à entidade Contrato.
-   * Retorna um patch (parcial) para atualizar o mockData.
+   * Applies the state of a SigningDocument back to the Contract entity.
+   * Returns a (partial) patch to update the mockData.
    */
   applySigningStatus(
     contrato: ContratoEntity,
@@ -76,14 +76,14 @@ export const contratoMapper = {
   },
 
   /**
-   * Verifica se um contrato está em estado de assinatura activa.
+   * Checks whether a contract is in an active signature state.
    */
   isInSigning(contrato: ContratoEntity): boolean {
     return contrato.status === "aguardando_assinatura" && !!contrato.signingDocId;
   },
 
   /**
-   * Verifica se um contrato está próximo de expirar (< 30 dias).
+   * Checks whether a contract is close to expiring (< 30 days).
    */
   isDueToExpire(contrato: ContratoEntity, thresholdDays = 30): boolean {
     if (!contrato.expiresAt) return false;

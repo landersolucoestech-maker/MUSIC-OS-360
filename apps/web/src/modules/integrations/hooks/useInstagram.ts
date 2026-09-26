@@ -1,8 +1,8 @@
 /**
  * integrations/hooks/useInstagram.ts
  *
- * Hook para integração Instagram Insights (Meta Graph API).
- * Fluxo OAuth 2.0 via popup → backend gerencia tokens.
+ * Hook for the Instagram Insights integration (Meta Graph API).
+ * OAuth 2.0 flow via popup → the backend manages the tokens.
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

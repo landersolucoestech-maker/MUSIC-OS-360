@@ -1,14 +1,14 @@
 /**
  * modules/integrations/hooks/useUbc.ts
  *
- * Integração UBC (União Brasileira de Compositores).
+ * UBC integration (Brazilian composers' union).
  *
- * ESTADO REAL: a UBC não expõe API pública — a integração requer contrato
- * institucional e um endpoint real no backend. Até lá, este hook reporta o
- * estado verdadeiro (desconectado) e TODA operação falha explicitamente.
- * É proibido simular conexão, busca, importação ou registro.
+ * REAL STATE: UBC exposes no public API — the integration requires an institutional
+ * contract and a real backend endpoint. Until then, this hook reports the
+ * true state (disconnected) and EVERY operation fails explicitly.
+ * Simulating connection, search, import or registration is forbidden.
  *
- * Contrato: @/shared/integrations/contracts/rights.contract → IRightsProvider
+ * Contract: @/shared/integrations/contracts/rights.contract → IRightsProvider
  */
 
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -100,7 +100,7 @@ function ubcUnavailable(): never {
 export function useUbcStatus() {
   return useQuery<UbcStatus>({
     queryKey: ["integrations", "ubc", "status"],
-    // Estado verdadeiro: não há integração UBC configurável hoje.
+    // True state: there is no configurable UBC integration today.
     queryFn: async (): Promise<UbcStatus> => ({
       integration_id:  "ubc",
       status:          "disconnected",

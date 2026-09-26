@@ -3,16 +3,16 @@ import { toast } from "sonner";
 import { DisabledIntegrationError, INTEGRATION_DISABLED_CODE } from "@/shared/lib/disabled-integration";
 
 /**
- * Stubs do Clicksign — integração desligada (sem backend).
+ * Clicksign stubs — integration switched off (no backend).
  *
- * Não existe nenhum serviço Clicksign em apps/api/src. A implementação
- * anterior aqui gravava metadados não-sensíveis em sessionStorage e reportava
- * `connected: true` sem jamais validar nada contra uma conta Clicksign real
- * — a UI mostrava "Conectado" para uma conexão que nunca aconteceu. Corrigido
- * para seguir o mesmo padrão honesto já usado pelas integrações irmãs
- * (Autentique, Spotify, YouTube, Deezer, SoundCloud, ABRAMUS, Resend, IA
- * Criativa, Meta Ads — ver shared/lib/disabled-integration.ts) em vez de
- * inventar uma exceção só para esta.
+ * There is no Clicksign service in apps/api/src. The previous
+ * implementation here wrote non-sensitive metadata to sessionStorage and reported
+ * `connected: true` without ever validating anything against a real Clicksign account
+ * — the UI showed "Conectado" for a connection that never happened. Fixed
+ * to follow the same honest pattern already used by the sibling integrations
+ * (Autentique, Spotify, YouTube, Deezer, SoundCloud, ABRAMUS, Resend, Creative
+ * AI, Meta Ads — see shared/lib/disabled-integration.ts) instead of
+ * inventing an exception just for this one.
  */
 
 export interface ClicksignStatus {
