@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { BarChart3, CalendarDays, Clock, Lightbulb, Send, Sparkles, TrendingUp, UserRound } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { useTenant } from "@/app/providers/TenantContext";
-import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
+import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { useMarketingAnalytics } from "../../hooks/useMarketingAnalytics";
 import { useMarketingCampaigns } from "../../hooks/useMarketingCampaigns";
 import { useMarketingContents } from "../../hooks/useMarketingContents";
@@ -36,7 +36,7 @@ function isAiTab(value: string): value is AiTab {
 export function AiCreativeWorkspace() {
   const { tenant } = useTenant();
   const { data: suggestions = [] } = useAiSuggestions();
-  const { lancamentos = [] } = useLancamentos();
+  const { lancamentos = [] } = useReleases();
   const { data: marketingProjects = [] } = useMarketingProjects();
   const { data: campaigns = [] } = useMarketingCampaigns();
   const { data: contents = [] } = useMarketingContents();

@@ -35,8 +35,8 @@ vi.mock("@/modules/events/hooks/useEvents", () => ({
   useEvents: () => ({ events: [], isLoading: false, error: null, refetch: vi.fn() }),
 }));
 
-vi.mock("@/modules/releases/hooks/useLancamentos", () => ({
-  useLancamentos: () => ({ lancamentos: [], isLoading: false, error: null, refetch: vi.fn() }),
+vi.mock("@/modules/releases/hooks/useReleases", () => ({
+  useReleases: () => ({ lancamentos: [], isLoading: false, error: null, refetch: vi.fn() }),
 }));
 
 vi.mock("@/modules/projects/hooks/useProjects", () => ({

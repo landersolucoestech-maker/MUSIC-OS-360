@@ -9,8 +9,8 @@ import { Card, CardContent } from "@/shared/ui/card";
 import {
   FileText, ExternalLink, History, Music, Clock, AlertCircle, Info, User, PenLine, CheckCircle2, MailCheck, PencilLine, Send,
 } from "lucide-react";
-import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
-import type { LancamentoWithRelations } from "@/modules/releases/hooks/useLancamentos";
+import { useReleases } from "@/modules/releases/hooks/useReleases";
+import type { ReleaseWithRelations } from "@/modules/releases/hooks/useReleases";
 import type { ContractWithRelations, ContractVersion } from "@/modules/contracts/hooks/useContracts";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { formatDateDashes, formatDateTimeDashes, formatCurrency, getMonetarySemanticClass } from "@/shared/lib/format-utils";
@@ -40,7 +40,7 @@ interface ContractViewModalProps {
 }
 
 export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: ContractViewModalProps) {
-  const { lancamentos } = useLancamentos();
+  const { lancamentos } = useReleases();
   const navigate = useNavigate();
   const { data: allDocuments = [] } = useDocuments();
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
@@ -62,7 +62,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
   const vinculadoDoc = allDocuments.find((d) => d.contract_id === contrato.id);
   const contratoSigners = Array.isArray(contrato.signers) ? contrato.signers : [];
 
-  const lancamentoVinculado: LancamentoWithRelations | undefined = contrato.release_id
+  const lancamentoVinculado: ReleaseWithRelations | undefined = contrato.release_id
     ? lancamentos.find((l) => l.id === contrato.release_id)
     : undefined;
 

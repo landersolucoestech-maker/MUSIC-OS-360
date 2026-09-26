@@ -43,8 +43,8 @@ export const DomainEvents = {
   RELEASE_CREATED: "RELEASE_CREATED",
   RELEASE_UPDATED: "RELEASE_UPDATED",
   RELEASE_DELETED: "RELEASE_DELETED",
-  LANCAMENTO_APPROVED: "lancamento.approved",
-  LANCAMENTO_REJECTED: "lancamento.rejected",
+  RELEASE_APPROVED: "release.approved",
+  RELEASE_REJECTED: "release.rejected",
 
   // Shares (gestão de participação em obras/fonogramas)
   SHARE_CREATED: "SHARE_CREATED",
@@ -163,8 +163,8 @@ export type DomainEventPayloads = {
   "user.invited":               { tenantId: string; email: string; role: string };
   "contrato.sent_for_signing":  { contratoId: string; signers: unknown[]; org_id?: string };
   "contrato.signing_cancelled": { contratoId: string; reason?: string; org_id?: string };
-  "lancamento.approved":        { releaseId: string; reason?: string };
-  "lancamento.rejected":        { releaseId: string; reason?: string };
+  "release.approved":           { releaseId: string; reason?: string };
+  "release.rejected":           { releaseId: string; reason?: string };
 };
 
 // ─── Event Bus ───────────────────────────────────────────────────────────────

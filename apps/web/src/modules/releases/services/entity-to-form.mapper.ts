@@ -1,12 +1,12 @@
 /**
  * releases/mappers/entity-to-form.mapper.ts
  * Entity (DB record / WS payload) → form field values.
- * Source of truth for Lancamento hydration.
+ * Source of truth for Release hydration.
  */
 
-import type { Lancamento } from "@/modules/releases/hooks/useLancamentos";
+import type { Release } from "@/modules/releases/hooks/useReleases";
 
-export interface LancamentoFormFields {
+export interface ReleaseFormFields {
   projetoSeed: string;
   title: string;
   artist_id: string;
@@ -42,7 +42,7 @@ function ps(v: unknown): string {
   return String(v).trim();
 }
 
-export function lancamentoToFormFields(l: Lancamento | null | undefined): LancamentoFormFields {
+export function releaseToFormFields(l: Release | null | undefined): ReleaseFormFields {
   const r = l as Record<string, unknown> | null | undefined;
   // Support both snake_case (from backend entity) and camelCase (legacy mock data)
   const assets = (l?.assets ?? (r?.["metadata"] as Record<string, unknown>)?.["assets"] ?? {}) as Record<string, unknown>;
@@ -78,7 +78,7 @@ export function lancamentoToFormFields(l: Lancamento | null | undefined): Lancam
   };
 }
 
-export function emptyLancamentoFormFields(): LancamentoFormFields {
+export function emptyReleaseFormFields(): ReleaseFormFields {
   return {
     projetoSeed: "", title: "", artist_id: "", type: "",
     codigoUPC: "", genero: "", idioma: "", dataLancamento: "",

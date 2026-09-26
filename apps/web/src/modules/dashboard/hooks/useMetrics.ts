@@ -16,7 +16,7 @@
 import { useMemo } from "react";
 import { useArtists } from "@/modules/artist/hooks/useArtists";
 import { useEvents, type EventWithRelations } from "@/modules/events/hooks/useEvents";
-import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
+import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useOperationalDashboard } from "./useOperationalDashboard";
 import { isToday, startOfMonth, endOfMonth, parseISO } from "date-fns";
@@ -65,7 +65,7 @@ export interface UseMetricsReturn {
 export function useMetrics(): UseMetricsReturn {
   const { artists: artistas, isLoading: loadingArtistas, error: errArtistas, refetch: refetchArtistas } = useArtists();
   const { events: eventos, isLoading: loadingEventos, error: errEventos, refetch: refetchEventos } = useEvents();
-  const { lancamentos: lancamentosData, isLoading: loadingLancamentos, error: errLancamentos, refetch: refetchLancamentos } = useLancamentos();
+  const { lancamentos: lancamentosData, isLoading: loadingLancamentos, error: errLancamentos, refetch: refetchLancamentos } = useReleases();
   const { projects: projetos, isLoading: loadingProjetos, error: errProjetos, refetch: refetchProjetos } = useProjects();
   const { dashboard, isLoading: loadingAgg, error: errAgg, refetch: refetchAgg } = useOperationalDashboard();
 

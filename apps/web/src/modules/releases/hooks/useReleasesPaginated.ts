@@ -3,9 +3,9 @@ import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { api } from "@/shared/lib/api-client";
 import { resolveStatusFromRawStatus, type ReleaseStatus } from "@/modules/releases/lib/release-status";
-import type { LancamentoWithRelations } from "./useLancamentos";
+import type { ReleaseWithRelations } from "./useReleases";
 
-export interface UseLancamentosPaginatedParams {
+export interface UseReleasesPaginatedParams {
   page: number;
   pageSize: number;
   search?: string;
@@ -14,13 +14,13 @@ export interface UseLancamentosPaginatedParams {
   artistId?: string;
 }
 
-export function useLancamentosPaginated({ page, pageSize, search, status, type, artistId }: UseLancamentosPaginatedParams) {
+export function useReleasesPaginated({ page, pageSize, search, status, type, artistId }: UseReleasesPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
   if (type) filters.type = type;
   if (artistId) filters.artistId = artistId;
 
-  const result = usePaginatedDataQuery<LancamentoWithRelations>({
+  const result = usePaginatedDataQuery<ReleaseWithRelations>({
     queryKey: [...QUERY_KEYS.RELEASES],
     table: "lancamentos",
     page: page + 1,
@@ -63,7 +63,7 @@ const EMPTY_DISTRIBUTION_KPIS: DistributionKPIs = { total: 0, distributed: 0, pe
  * usa a MESMA função (resolveStatusFromRawStatus) que já classifica cada
  * card individualmente — nenhuma regra de negócio duplicada em SQL.
  */
-export function useLancamentosDistributionStats() {
+export function useReleasesDistributionStats() {
   const query = useQuery<RawStatusRow[]>({
     queryKey: [...QUERY_KEYS.RELEASES, "stats"],
     queryFn: ({ signal }) => api.get<RawStatusRow[]>("/releases/stats", { signal }),

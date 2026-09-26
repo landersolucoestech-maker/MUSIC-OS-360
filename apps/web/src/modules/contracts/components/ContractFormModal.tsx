@@ -17,7 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { format, parseISO } from "date-fns";
 import { DatePickerField } from "@/shared/ui/date-picker-field";
 import { FileUpload, UploadedFile } from "@/shared/components/FileUpload";
-import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
+import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/ui/dialog";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { useContracts } from "@/modules/contracts/hooks/useContracts";
@@ -66,7 +66,7 @@ const ContractForm = ({
   contratoId,
 }: ContractFormProps) => {
   const [documents, setDocuments] = useState<UploadedFile[]>(initialData?.documents ?? []);
-  const { lancamentos } = useLancamentos();
+  const { lancamentos } = useReleases();
 
   const form = useForm<ContractFormData>({
     resolver: zodResolver(contractSchema),

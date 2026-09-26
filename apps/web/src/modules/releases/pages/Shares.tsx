@@ -22,11 +22,11 @@ import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/
 import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
 import { ShareViewModal } from "@/modules/releases/components/ShareViewModal";
-import { SharePendenteFormModal } from "@/modules/releases/components/SharePendenteFormModal";
+import { ShareFormModal } from "@/modules/releases/components/ShareFormModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { useShares } from "@/modules/releases/hooks/useShares";
 import { useSharesPaginated, useSharesStats } from "@/modules/releases/hooks/useSharesPaginated";
-import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
+import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { storage } from "@/shared/lib/storage";
 import { resolveShareType, shareTypeLabel, shareStatusBadge } from "@/modules/releases/lib/share-format";
 import { SHARE_FOR_RELEASE_PARAM } from "@/modules/releases/services/share-from-release";
@@ -43,9 +43,9 @@ const TIPO_LABELS: Record<string, string> = {
   outro: "Outro",
 };
 
-export default function GestaoShares() {
+export default function Shares() {
   const { deleteShare, updateShare } = useShares();
-  const { lancamentos, isLoading: loadingLancamentos } = useLancamentos();
+  const { lancamentos, isLoading: loadingLancamentos } = useReleases();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [direcaoFilter, setDirecaoFilter] = useState("todos");
@@ -96,10 +96,10 @@ export default function GestaoShares() {
   // direto (GET /works/:id, /artists/:id) só para os registros da página
   // atual — antes escaneava useObras()/useArtistas() sem filtro, truncado
   // nos primeiros 50 do tenant.
-  type ObraLabel = { title?: string | null; compositor?: string | null };
-  type ArtistaLabel = { nome_artistico?: string | null };
-  const [resolvedObras, setResolvedObras] = useState<Record<string, ObraLabel>>({});
-  const [resolvedArtistas, setResolvedArtistas] = useState<Record<string, ArtistaLabel>>({});
+  type WorkLabel = { title?: string | null; compositor?: string | null };
+  type ArtistLabel = { nome_artistico?: string | null };
+  const [resolvedObras, setResolvedObras] = useState<Record<string, WorkLabel>>({});
+  const [resolvedArtistas, setResolvedArtistas] = useState<Record<string, ArtistLabel>>({});
   const shareObraIds = useMemo(
     () => Array.from(new Set(pageShares.map((s: any) => s.work_id).filter(Boolean))) as string[],
     [pageShares],
@@ -111,10 +111,10 @@ export default function GestaoShares() {
   useEffect(() => {
     if (shareObraIds.length === 0) return;
     let cancelled = false;
-    Promise.all(shareObraIds.map((id) => storage.findById<ObraLabel & { id: string }>("obras", id)))
+    Promise.all(shareObraIds.map((id) => storage.findById<WorkLabel & { id: string }>("obras", id)))
       .then((results) => {
         if (cancelled) return;
-        const map: Record<string, ObraLabel> = {};
+        const map: Record<string, WorkLabel> = {};
         results.forEach((o, i) => { if (o) map[shareObraIds[i]] = o; });
         setResolvedObras((prev) => ({ ...prev, ...map }));
       })
@@ -124,10 +124,10 @@ export default function GestaoShares() {
   useEffect(() => {
     if (shareArtistaIds.length === 0) return;
     let cancelled = false;
-    Promise.all(shareArtistaIds.map((id) => storage.findById<ArtistaLabel & { id: string }>("artistas", id)))
+    Promise.all(shareArtistaIds.map((id) => storage.findById<ArtistLabel & { id: string }>("artistas", id)))
       .then((results) => {
         if (cancelled) return;
-        const map: Record<string, ArtistaLabel> = {};
+        const map: Record<string, ArtistLabel> = {};
         results.forEach((a, i) => { if (a) map[shareArtistaIds[i]] = a; });
         setResolvedArtistas((prev) => ({ ...prev, ...map }));
       })
@@ -520,7 +520,7 @@ export default function GestaoShares() {
     )}
 
       {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): SharePendenteFormModal chama useShares() de novo só para
+          (Task C): ShareFormModal chama useShares() de novo só para
           as mutations, a mesma query do isLoading acima. Ver Artistas.tsx
           para a explicação completa do loop. */}
       <ShareViewModal
@@ -537,7 +537,7 @@ export default function GestaoShares() {
         description="Tem certeza que deseja excluir este share? Esta ação não pode ser desfeita."
       />
 
-      <SharePendenteFormModal
+      <ShareFormModal
         open={formModal.open}
         onOpenChange={(open) => setFormModal({ ...formModal, open })}
         share={formModal.share}

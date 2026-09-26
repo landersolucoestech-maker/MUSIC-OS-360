@@ -1,7 +1,7 @@
 /**
  * releases/builders/release-form.builder.ts
  *
- * Builder pattern for composing Lancamento payloads.
+ * Builder pattern for composing Release payloads.
  * Separates construction logic from UI components and mapper utilities.
  *
  * Usage:
@@ -15,7 +15,7 @@
  */
 
 import { normalizeStr } from "@/shared/lib/normalize";
-import type { LancamentoInsert } from "@/modules/releases/hooks/useLancamentos";
+import type { ReleaseInsert } from "@/modules/releases/hooks/useReleases";
 
 // ─── Param shapes ─────────────────────────────────────────────────────────────
 
@@ -101,7 +101,7 @@ export class ReleaseFormBuilder {
     return this;
   }
 
-  build(): LancamentoInsert {
+  build(): ReleaseInsert {
     if (!this._core) {
       throw new Error("ReleaseFormBuilder: withCore() must be called before build()");
     }
@@ -144,11 +144,11 @@ export class ReleaseFormBuilder {
       upc:             ns(this._codes.upc ?? this._codes.codigo_upc),
       assets:          hasAssets ? assetsObj : null,
       cronograma:      hasCron ? cronObj : null,
-    } as LancamentoInsert;
+    } as ReleaseInsert;
   }
 
   /**
-   * Convenience: build from flat form fields (compatible with LancamentoFormFields).
+   * Convenience: build from flat form fields (compatible with ReleaseFormFields).
    */
   static fromFormFields(f: {
     title: string;
@@ -176,7 +176,7 @@ export class ReleaseFormBuilder {
     cronGravacao?: string;
     cronMixMaster?: string;
     cronEntregaDistribuidora?: string;
-  }): LancamentoInsert {
+  }): ReleaseInsert {
     return new ReleaseFormBuilder()
       .withCore({
         title:          f.title,

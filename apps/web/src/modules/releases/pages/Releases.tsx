@@ -20,27 +20,27 @@ import {
   Loader2, Trash2, MoreHorizontal, Pencil, BarChart3,
   CheckCircle2, Timer, Library, Clock, AlertTriangle, Info,
 } from "lucide-react";
-import { LancamentoFormModal } from "@/modules/releases/components/LancamentoFormModal";
-import { LancamentoViewModal } from "@/modules/releases/components/LancamentoViewModal";
+import { ReleaseFormModal } from "@/modules/releases/components/ReleaseFormModal";
+import { ReleaseViewModal } from "@/modules/releases/components/ReleaseViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
 import { TablePagination } from "@/shared/ui/table-pagination";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
-import { useLancamentosPaginated, useLancamentosDistributionStats } from "@/modules/releases/hooks/useLancamentosPaginated";
+import { useReleases } from "@/modules/releases/hooks/useReleases";
+import { useReleasesPaginated, useReleasesDistributionStats } from "@/modules/releases/hooks/useReleasesPaginated";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { useImageContrast } from "@/shared/hooks/useImageContrast";
 import { contrastText, contrastSubtext, contrastChrome, contrastScrim } from "@/shared/lib/image-contrast";
 import { cardStatusClasses, RELEASE_STATUS_OPTIONS } from "@/modules/releases/lib/release-status";
 import { formatReleaseDate } from "@/modules/releases/lib/release-format";
 import { shareFlowFromReleaseUrl } from "@/modules/releases/services/share-from-release";
-import type { Lancamento } from "@/modules/releases/types";
+import type { Release } from "@/modules/releases/types";
 import type { Artist } from "@/modules/artist/types/artist.types";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 
 
-function getReleaseArtworkUrl(release: Lancamento & Record<string, unknown>): string | null {
+function getReleaseArtworkUrl(release: Release & Record<string, unknown>): string | null {
   const metadata = release.metadata as Record<string, unknown> | null | undefined;
   const metadataAssets = metadata?.["assets"] as Record<string, unknown> | null | undefined;
   const directAssets = release.assets as Record<string, unknown> | null | undefined;
@@ -69,7 +69,7 @@ function getCountdown(date: string | null | undefined, now: number): Countdown {
 }
 
 interface ReleaseCardProps {
-  release: Lancamento & Record<string, unknown>;
+  release: Release & Record<string, unknown>;
   artista?: Artist;
   now: number;
   selected: boolean;
@@ -198,8 +198,8 @@ function ReleaseCard({ release, artista, now, selected, onToggleSelect, onView, 
   );
 }
 
-export default function Lancamentos() {
-  const { lancamentos, isLoading, deleteLancamento, addLancamento } = useLancamentos();
+export default function Releases() {
+  const { lancamentos, isLoading, deleteLancamento, addLancamento } = useReleases();
   const navigate = useNavigate();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -218,36 +218,36 @@ export default function Lancamentos() {
     const result = await runBulkAction(ids, (id) => deleteLancamento.mutateAsync(id));
     reportBulkResult(result, "excluído", "lançamento");
   };
-  const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; lancamento?: any }>({ open: false, mode: "create" });
-  const [viewModal, setViewModal] = useState<{ open: boolean; lancamento?: any }>({ open: false });
-  const [deleteModal, setDeleteModal] = useState<{ open: boolean; lancamento?: any }>({ open: false });
-  const [sharePrompt, setSharePrompt] = useState<{ open: boolean; release?: Lancamento }>({ open: false });
+  const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; release?: any }>({ open: false, mode: "create" });
+  const [viewModal, setViewModal] = useState<{ open: boolean; release?: any }>({ open: false });
+  const [deleteModal, setDeleteModal] = useState<{ open: boolean; release?: any }>({ open: false });
+  const [sharePrompt, setSharePrompt] = useState<{ open: boolean; release?: Release }>({ open: false });
 
   useEditQueryParam(
     "edit",
     lancamentos,
-    useCallback((lancamento) => setFormModal({ open: true, mode: "edit", lancamento }), []),
+    useCallback((release) => setFormModal({ open: true, mode: "edit", release }), []),
     "lancamentos",
   );
 
   // Support ?view=<id> to directly open the view modal (e.g., navigated from
   // ContratoViewModal) — busca por ID direto quando o lançamento não está
-  // entre os primeiros carregados por useLancamentos() sem filtro (Task I).
+  // entre os primeiros carregados por useReleases() sem filtro (Task I).
   const [searchParams, setSearchParams] = useSearchParams();
   useEffect(() => {
     const viewId = searchParams.get("view");
     if (!viewId) return;
     const target = lancamentos.find((l) => l.id === viewId);
     if (target) {
-      setViewModal({ open: true, lancamento: target });
+      setViewModal({ open: true, release: target });
       setSearchParams((prev) => { prev.delete("view"); return prev; }, { replace: true });
       return;
     }
     if (lancamentos.length === 0) return;
     let cancelled = false;
-    storage.findById<Lancamento & { id: string }>("lancamentos", viewId).then((found) => {
+    storage.findById<Release & { id: string }>("lancamentos", viewId).then((found) => {
       if (cancelled || !found) return;
-      setViewModal({ open: true, lancamento: found });
+      setViewModal({ open: true, release: found });
       setSearchParams((prev) => { prev.delete("view"); return prev; }, { replace: true });
     });
     return () => { cancelled = true; };
@@ -266,7 +266,7 @@ export default function Lancamentos() {
 
   // KPIs operacionais de distribuição — agregação exata do tenant inteiro
   // (GET /releases/stats), nunca calculada só sobre a página carregada (Task H).
-  const { kpis: distributionKPIs } = useLancamentosDistributionStats();
+  const { kpis: distributionKPIs } = useReleasesDistributionStats();
 
   const hasActiveFilters = searchTerm !== "" || typeFilter !== "all-type" || statusFilter !== "all-status" || artistFilter !== "all-artist";
 
@@ -279,7 +279,7 @@ export default function Lancamentos() {
 
   const {
     lancamentos: pageItems, total, isLoading: isLoadingPage, error: pageError, refetch: refetchPage,
-  } = useLancamentosPaginated({
+  } = useReleasesPaginated({
     page, pageSize, search: debouncedSearch || undefined,
     status: statusFilter !== "all-status" ? statusFilter : undefined,
     type: typeFilter !== "all-type" ? typeFilter : undefined,
@@ -317,8 +317,8 @@ export default function Lancamentos() {
   };
 
   const handleDelete = () => {
-    if (deleteModal.lancamento) {
-      deleteLancamento.mutate(deleteModal.lancamento.id);
+    if (deleteModal.release) {
+      deleteLancamento.mutate(deleteModal.release.id);
       setDeleteModal({ open: false });
     }
   };
@@ -327,7 +327,7 @@ export default function Lancamentos() {
   // permite SCHEDULED -> DISTRIBUTED). Apenas oferece navegar para o fluxo
   // de shares — nenhum share é gravado automaticamente e nenhum status de
   // distribuição é simulado.
-  const handleReleaseCreated = useCallback((release: Lancamento) => {
+  const handleReleaseCreated = useCallback((release: Release) => {
     setSharePrompt({ open: true, release });
   }, []);
 
@@ -477,10 +477,10 @@ export default function Lancamentos() {
                       now={now}
                       selected={selectedIds.includes(release.id)}
                       onToggleSelect={() => toggleSelect(release.id)}
-                      onView={() => setViewModal({ open: true, lancamento: release })}
-                      onEdit={() => setFormModal({ open: true, mode: "edit", lancamento: release })}
+                      onView={() => setViewModal({ open: true, release })}
+                      onEdit={() => setFormModal({ open: true, mode: "edit", release })}
                       onMetrics={() => navigate(`/marketing/metricas?releaseId=${encodeURIComponent(release.id)}`)}
-                      onDelete={() => setDeleteModal({ open: true, lancamento: release })}
+                      onDelete={() => setDeleteModal({ open: true, release })}
                     />
                   ))}
                 </div>
@@ -511,17 +511,17 @@ export default function Lancamentos() {
     )}
 
       {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): LancamentoFormModal chama useLancamentos() de novo só
+          (Task C): ReleaseFormModal chama useReleases() de novo só
           para as mutations, a mesma query do isLoading acima. */}
-      <LancamentoFormModal
+      <ReleaseFormModal
         open={formModal.open}
         onOpenChange={(open) => setFormModal({ ...formModal, open })}
-        lancamento={formModal.lancamento}
+        release={formModal.release}
         mode={formModal.mode}
         onCreated={handleReleaseCreated}
       />
-      <LancamentoViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} lancamento={viewModal.lancamento} />
-      <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Lançamento" description={`Tem certeza que deseja excluir "${deleteModal.lancamento?.title}"?`} onConfirm={handleDelete} />
+      <ReleaseViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} release={viewModal.release} />
+      <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Lançamento" description={`Tem certeza que deseja excluir "${deleteModal.release?.title}"?`} onConfirm={handleDelete} />
       <Dialog open={sharePrompt.open} onOpenChange={(open) => setSharePrompt((current) => ({ ...current, open }))}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

@@ -43,7 +43,7 @@ import { Skeleton } from "@/shared/ui/skeleton";
 import { cn } from "@/shared/lib/utils";
 import { MarketingHeader, MarketingSectionCard } from "../components";
 import { useCentralAnaliticaMarketing } from "../hooks/useCentralAnaliticaMarketing";
-import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
+import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { formatCompact, formatPercent } from "../utils/marketing-format";
 import { formatMetric, PLATFORM_META } from "../analytics/central-analitica.format";
 import type {
@@ -242,7 +242,7 @@ export default function Metricas() {
   const ctrl = useCentralAnaliticaMarketing();
   const [searchParams] = useSearchParams();
   const releaseId = searchParams.get("releaseId");
-  const { lancamentos } = useLancamentos();
+  const { lancamentos } = useReleases();
   const selectedRelease = useMemo(
     () => (releaseId ? lancamentos.find((release) => release.id === releaseId) ?? null : null),
     [lancamentos, releaseId],

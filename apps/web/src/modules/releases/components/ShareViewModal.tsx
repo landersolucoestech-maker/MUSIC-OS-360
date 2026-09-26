@@ -11,11 +11,11 @@ import {
   Clock, History, Building, Calendar, Disc3,
 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
-import type { Share, ShareHistoricoEntry } from "../types";
+import type { Share, ShareHistoryEntry } from "../types";
 import { formatDate, formatCurrency } from "@/shared/lib/format-utils";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
-import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
+import { useReleases } from "@/modules/releases/hooks/useReleases";
 import type { ObraWithRelations } from "@/modules/catalog/hooks/useObras";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import {
@@ -57,7 +57,7 @@ function Field({
 }
 
 export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProps) {
-  const { lancamentos } = useLancamentos();
+  const { lancamentos } = useReleases();
 
   const s = (share ?? {}) as Share & Record<string, unknown>;
   const str = (k: string): string => (typeof s[k] === "string" ? (s[k] as string) : "");
@@ -74,7 +74,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
 
   if (!share) return null;
 
-  const historico: ShareHistoricoEntry[] = Array.isArray(share.historico) ? share.historico : [];
+  const historico: ShareHistoryEntry[] = Array.isArray(share.historico) ? share.historico : [];
   const shareType = resolveShareType(s);
   const isInternal = shareType === "internal_release";
 

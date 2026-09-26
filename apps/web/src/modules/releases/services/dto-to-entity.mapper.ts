@@ -3,15 +3,15 @@
  * Contextual inheritance seeds: parent entity → child form pre-fill.
  */
 
-import type { LancamentoFormFields } from "./entity-to-form.mapper";
+import type { ReleaseFormFields } from "./entity-to-form.mapper";
 
-export function projetoToLancamentoSeed(projeto: {
+export function projectToReleaseSeed(projeto: {
   id: string;
   title?: string | null;
   artist_id?: string | null;
   music_genre?: string | null;
   type?: string | null;
-}): Partial<LancamentoFormFields> {
+}): Partial<ReleaseFormFields> {
   return {
     projetoSeed: projeto.id,
     title:      projeto.title?.trim() ?? "",

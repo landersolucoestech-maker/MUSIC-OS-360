@@ -1,5 +1,5 @@
 import type { Artist } from "@/modules/artist/hooks/useArtists";
-import type { LancamentoWithRelations } from "@/modules/releases/hooks/useLancamentos";
+import type { ReleaseWithRelations } from "@/modules/releases/hooks/useReleases";
 import type {
   AiSuggestion,
   AnalyticsOverview,
@@ -10,7 +10,7 @@ import type {
 } from "../../types/marketing.types";
 
 export type IntelligenceSources = {
-  releases: LancamentoWithRelations[];
+  releases: ReleaseWithRelations[];
   projects: MarketingProject[];
   campaigns: MarketingCampaign[];
   contents: MarketingContent[];
@@ -83,7 +83,7 @@ export type TrackDiagnosis = {
 export type ReleaseContext = {
   artist: IntelligenceEntity;
   release: IntelligenceEntity;
-  releaseRecord?: LancamentoWithRelations;
+  releaseRecord?: ReleaseWithRelations;
   audioUrl: string;
   lyric: string;
   coverUrl: string;

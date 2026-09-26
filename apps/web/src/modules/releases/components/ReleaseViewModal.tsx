@@ -30,12 +30,12 @@ import {
 } from "@/modules/releases/lib/release-status";
 import { formatReleaseDate } from "@/modules/releases/lib/release-format";
 import { findDistributionPlatform } from "@/modules/releases/services/distribution-platforms";
-import type { Lancamento, PlatformError } from "@/modules/releases/types";
+import type { Release, PlatformError } from "@/modules/releases/types";
 
-interface LancamentoViewModalProps {
+interface ReleaseViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  lancamento?: Lancamento;
+  release?: Release;
 }
 
 const TIPO_MAP: Record<string, { label: string; color: string }> = {
@@ -106,21 +106,21 @@ function aggregateField(faixas: any[], key: string): string {
   return [...new Set(values)].join(", ");
 }
 
-export function LancamentoViewModal({ open, onOpenChange, lancamento }: LancamentoViewModalProps) {
+export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewModalProps) {
   // Artista principal do lançamento — busca DIRETO por ID (GET /artists/:id),
   // não depende de estar entre os primeiros 50 carregados (Task J).
-  const { entity: artistaWire } = useEntityById<ArtistWireRecord>("artistas", open ? lancamento?.artist_id ?? undefined : undefined);
+  const { entity: artistaWire } = useEntityById<ArtistWireRecord>("artistas", open ? release?.artist_id ?? undefined : undefined);
   const artista: Artist | undefined = artistaWire ? wireToArtist(artistaWire) : undefined;
   const { shares } = useShares();
   const { transition: workflowTransition, isPending: isTransitionPending } = useWorkflowTransition({
     table: "lancamentos",
-    id: lancamento?.id ?? "",
+    id: release?.id ?? "",
     queryKey: ["lancamentos"],
   });
 
-  const { data: detail } = useEntityDetail<typeof lancamento & { allowed_transitions?: WorkflowTransition[] }>(
+  const { data: detail } = useEntityDetail<typeof release & { allowed_transitions?: WorkflowTransition[] }>(
     "lancamentos",
-    lancamento?.id,
+    release?.id,
     open,
   );
 
@@ -129,8 +129,8 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
   // direto via storage.findById, nunca escaneando useFonogramas()/
   // useArtistas() sem filtro (Task J).
   const fonogramaIds = useMemo(
-    () => (Array.isArray(lancamento?.fonograma_ids) ? (lancamento!.fonograma_ids as string[]) : []),
-    [lancamento],
+    () => (Array.isArray(release?.fonograma_ids) ? (release!.fonograma_ids as string[]) : []),
+    [release],
   );
   const [resolvedFonogramas, setResolvedFonogramas] = useState<Record<string, FonogramaWithRelations>>({});
   useEffect(() => {
@@ -148,8 +148,8 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
   }, [open, fonogramaIds]);
 
   const shareArtistaIds = useMemo(
-    () => Array.from(new Set(shares.filter((s) => (s as Record<string, unknown>)["release_id"] === lancamento?.id && s.artist_id).map((s) => s.artist_id as string))),
-    [shares, lancamento?.id],
+    () => Array.from(new Set(shares.filter((s) => (s as Record<string, unknown>)["release_id"] === release?.id && s.artist_id).map((s) => s.artist_id as string))),
+    [shares, release?.id],
   );
   const [resolvedShareArtistas, setResolvedShareArtistas] = useState<Record<string, Artist>>({});
   useEffect(() => {
@@ -166,23 +166,23 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
     return () => { cancelled = true; };
   }, [open, shareArtistaIds]);
 
-  if (!lancamento) return null;
+  if (!release) return null;
 
-  const metadata = ((lancamento as Record<string, unknown>)["metadata"] as Record<string, unknown> | null | undefined) ?? {};
-  const assets = (lancamento.assets ?? metadata["assets"] ?? {}) as Record<string, unknown>;
-  const cronograma = (lancamento.cronograma ?? metadata["cronograma"] ?? {}) as Record<string, unknown>;
+  const metadata = ((release as Record<string, unknown>)["metadata"] as Record<string, unknown> | null | undefined) ?? {};
+  const assets = (release.assets ?? metadata["assets"] ?? {}) as Record<string, unknown>;
+  const cronograma = (release.cronograma ?? metadata["cronograma"] ?? {}) as Record<string, unknown>;
   const metadataFaixas = Array.isArray(metadata["faixas"]) ? (metadata["faixas"] as any[]) : [];
 
   const allowedTransitions = resolveAllowedTransitions(
     "release",
-    detail?.status ?? lancamento.status,
+    detail?.status ?? release.status,
     detail?.allowed_transitions,
   );
-  const type = String(lancamento.type ?? "single").toLowerCase();
+  const type = String(release.type ?? "single").toLowerCase();
   const tipoInfo = TIPO_MAP[type] ?? { label: type.toUpperCase(), color: "bg-muted text-muted-foreground" };
-  const capaUrl = (lancamento.capa_url as string | null | undefined) ?? textValue(assets["capa_url"]);
-  const dataFormatada = formatReleaseDate(lancamento.data_lancamento);
-  const idiomaRaw = lancamento.idioma ?? metadata["idioma"];
+  const capaUrl = (release.capa_url as string | null | undefined) ?? textValue(assets["capa_url"]);
+  const dataFormatada = formatReleaseDate(release.data_lancamento);
+  const idiomaRaw = release.idioma ?? metadata["idioma"];
   const idioma = IDIOMAS[String(idiomaRaw ?? "")] ?? textValue(idiomaRaw);
 
   const faixasCatalogo = fonogramaIds
@@ -194,7 +194,7 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
   const produtores = aggregateField(faixas, "produtores");
   const hasAssets = Object.values(assets).some(Boolean) || Boolean(capaUrl);
   const hasCronograma = Object.values(cronograma).some(Boolean);
-  const hasNotes = Boolean(lancamento.notes || lancamento.notas_internas || metadata["observacoes"] || metadata["notas_internas"]);
+  const hasNotes = Boolean(release.notes || release.notas_internas || metadata["observacoes"] || metadata["notas_internas"]);
 
   // Copyright (anos + titular)
   const copyrightAnoLancamento = textValue(metadata["copyrightDataLancamento"]);
@@ -202,45 +202,45 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
 
   // Subgênero + plataformas selecionadas
   const subgenero = textValue(metadata["generoSecundario"]) ?? textValue(metadata["genero_secundario"]);
-  const plataformasArr = Array.isArray(lancamento.plataformas) ? (lancamento.plataformas as string[]).filter(Boolean) : [];
+  const plataformasArr = Array.isArray(release.plataformas) ? (release.plataformas as string[]).filter(Boolean) : [];
   const plataformasLabel = plataformasArr.length > 0 ? plataformasArr.join(", ") : null;
 
   // Distribuição: interno vs plataforma (platform_status NUNCA é manual)
-  const platformId = textValue(lancamento.selected_platform_id) ?? textValue(lancamento.distribuidora);
+  const platformId = textValue(release.selected_platform_id) ?? textValue(release.distribuidora);
   const platformName = findDistributionPlatform(platformId)?.name ?? platformId;
-  const platformStatus = resolvePlatformStatus(lancamento);
+  const platformStatus = resolvePlatformStatus(release);
   const modoDistribuicao = platformStatus || platformId ? "Plataforma" : "Controle interno";
-  const lastAttempt = formatReleaseDate(textValue(lancamento.platform_last_attempt_at));
-  const lastSync = formatReleaseDate(textValue(lancamento.platform_last_sync_at));
+  const lastAttempt = formatReleaseDate(textValue(release.platform_last_attempt_at));
+  const lastSync = formatReleaseDate(textValue(release.platform_last_sync_at));
 
   // Erros de plataforma
-  const platformErrors: PlatformError[] = Array.isArray(lancamento.platform_errors)
-    ? (lancamento.platform_errors as PlatformError[])
+  const platformErrors: PlatformError[] = Array.isArray(release.platform_errors)
+    ? (release.platform_errors as PlatformError[])
     : [];
 
   // Shares vinculados a este lançamento
   const linkedShares = shares.filter(
-    (s) => (s as Record<string, unknown>)["release_id"] === lancamento.id,
+    (s) => (s as Record<string, unknown>)["release_id"] === release.id,
   );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
         <VisuallyHidden>
-          <DialogTitle>{lancamento.title}</DialogTitle>
+          <DialogTitle>{release.title}</DialogTitle>
         </VisuallyHidden>
 
         <div className="rounded-xl border border-border bg-card p-4">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
-              <h2 className="text-2xl font-bold leading-tight text-foreground">{lancamento.title}</h2>
+              <h2 className="text-2xl font-bold leading-tight text-foreground">{release.title}</h2>
               <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
                 <UserRound className="h-4 w-4" />
                 {artista?.stageName || "Artista não vinculado"}
               </p>
             </div>
             <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-              {releaseStatusBadge(lancamento)}
+              {releaseStatusBadge(release)}
               {dataFormatada && (
                 <Badge variant="outline">
                   <Calendar className="mr-1 h-3.5 w-3.5" />
@@ -253,7 +253,7 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
           {allowedTransitions.length > 0 && (
             <div className="mt-4">
               <WorkflowTransitionPanel
-                currentStatus={lancamento.status ?? ""}
+                currentStatus={release.status ?? ""}
                 allowedTransitions={allowedTransitions}
                 onTransition={workflowTransition}
                 isLoading={isTransitionPending}
@@ -265,14 +265,14 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
         <div className="rounded-lg border border-border p-3">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="Tipo" value={tipoInfo.label} />
-            <Field label="Gênero" value={lancamento.music_genre ?? textValue(metadata["genero"])} />
+            <Field label="Gênero" value={release.music_genre ?? textValue(metadata["genero"])} />
             <Field label="Subgênero" value={subgenero} />
             <Field label="Idioma" value={idioma} />
-            <Field label="Gravadora / Selo" value={lancamento.gravadora ?? textValue(metadata["gravadora"])} />
+            <Field label="Gravadora / Selo" value={release.gravadora ?? textValue(metadata["gravadora"])} />
             <Field label="Plataformas selecionadas" value={plataformasLabel} />
-            <Field label="ISRC Global" value={lancamento.isrc_global ?? textValue(metadata["isrc_global"])} />
-            <Field label="UPC / EAN" value={lancamento.upc ?? lancamento.codigo_upc ?? textValue(metadata["upc"])} />
-            <Field label="Titular do Copyright" value={lancamento.copyright ?? textValue(metadata["copyright"])} />
+            <Field label="ISRC Global" value={release.isrc_global ?? textValue(metadata["isrc_global"])} />
+            <Field label="UPC / EAN" value={release.upc ?? release.codigo_upc ?? textValue(metadata["upc"])} />
+            <Field label="Titular do Copyright" value={release.copyright ?? textValue(metadata["copyright"])} />
             <Field label="© Ano (Lançamento)" value={copyrightAnoLancamento} />
             <Field label="℗ Ano (Gravação)" value={copyrightAnoGravacao} />
           </div>
@@ -287,7 +287,7 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-semibold tracking-wider text-muted-foreground">Status:</span>
-              {releaseStatusBadge(lancamento)}
+              {releaseStatusBadge(release)}
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-semibold tracking-wider text-muted-foreground">Distribuição:</span>
@@ -296,7 +296,7 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
             {platformStatus && (
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-semibold tracking-wider text-muted-foreground">Status da plataforma:</span>
-                {platformStatusBadge(lancamento)}
+                {platformStatusBadge(release)}
               </div>
             )}
           </div>
@@ -387,8 +387,8 @@ export function LancamentoViewModal({ open, onOpenChange, lancamento }: Lancamen
                 <FileText className="h-3.5 w-3.5" />
                 Observacoes
               </h3>
-              <Field label="Notas de distribuição" value={lancamento.notes ?? textValue(metadata["observacoes"])} />
-              <Field label="Notas internas" value={lancamento.notas_internas ?? textValue(metadata["notas_internas"])} />
+              <Field label="Notas de distribuição" value={release.notes ?? textValue(metadata["observacoes"])} />
+              <Field label="Notas internas" value={release.notas_internas ?? textValue(metadata["notas_internas"])} />
             </div>
           </>
         )}

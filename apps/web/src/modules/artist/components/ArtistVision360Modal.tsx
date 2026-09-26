@@ -81,7 +81,7 @@ const formatDateDMY = (d?: string | null): string => {
 import { formatCurrency, getCurrencyToneClass, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 import { useObras } from "@/modules/catalog/hooks/useObras";
 import { useFonogramas } from "@/modules/catalog/hooks/useFonogramas";
-import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
+import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useMetas } from "@/modules/marketing/hooks/useMetas";
 import {
@@ -317,7 +317,7 @@ export function ArtistVision360Modal({
   const audienceHealth = useSkillRun<Record<string, unknown>>(`/artists/${artistId}/audience-health`);
   const { obras: actualWorks } = useObras(open, artistId);
   const { fonogramas: actualPhonograms } = useFonogramas(open, artistId);
-  const { lancamentos: actualReleases } = useLancamentos(open, artistId);
+  const { lancamentos: actualReleases } = useReleases(open, artistId);
   const { projects: actualProjects } = useProjects(open, artistId);
   const {
     metas: actualMetas,

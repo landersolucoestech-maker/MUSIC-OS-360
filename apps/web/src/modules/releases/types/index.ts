@@ -3,7 +3,7 @@ import type { ReleaseStatusValue, ReleaseType, ShareStatus, ShareCategory, Share
 
 export type { ReleaseStatusValue, ReleaseType, ShareStatus, ShareCategory, ShareDirection, ShareType };
 
-export interface LancamentoAssets {
+export interface ReleaseAssets {
   audio_master_url?: string | null;
   capa_url?: string | null;
   video_clipe_url?: string | null;
@@ -14,7 +14,7 @@ export interface LancamentoAssets {
   [key: string]: string | null | undefined;
 }
 
-export interface LancamentoCronograma {
+export interface ReleaseSchedule {
   data_gravacao?: string | null;
   data_mix_master?: string | null;
   data_entrega_distribuidora?: string | null;
@@ -50,7 +50,7 @@ export interface ReleasePlatformAttempt {
   updatedAt?: string | null;
 }
 
-export interface Lancamento {
+export interface Release {
   id: string;
   user_id?: string;
   title: string;
@@ -65,8 +65,8 @@ export interface Lancamento {
   isrc_global?: string | null;
   upc?: string | null;
   notas_internas?: string | null;
-  assets?: LancamentoAssets | null;
-  cronograma?: LancamentoCronograma | null;
+  assets?: ReleaseAssets | null;
+  cronograma?: ReleaseSchedule | null;
   // Campos adicionais presentes no mock e formulário
   music_genre?: string | null;
   idioma?: string | null;
@@ -93,10 +93,10 @@ export interface Lancamento {
   [key: string]: unknown;
 }
 
-export type LancamentoInsert = Omit<Lancamento, "id" | "user_id" | "created_at" | "updated_at">;
-export type LancamentoUpdate = Partial<LancamentoInsert>;
+export type ReleaseInsert = Omit<Release, "id" | "user_id" | "created_at" | "updated_at">;
+export type ReleaseUpdate = Partial<ReleaseInsert>;
 
-export interface LancamentoWithRelations extends Lancamento {
+export interface ReleaseWithRelations extends Release {
   artistas?: ArtistaRef | null;
 }
 
@@ -132,7 +132,7 @@ export interface Share {
   acordo_url?: string | null;
   notes?: string | null;
   versao?: number | null;
-  historico?: ShareHistoricoEntry[] | null;
+  historico?: ShareHistoryEntry[] | null;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;
@@ -146,7 +146,7 @@ export interface ShareWithRelations extends Share {
   artistas?: ArtistaRef | null;
 }
 
-export interface ShareHistoricoEntry {
+export interface ShareHistoryEntry {
   data: string;
   acao: string;
   usuario?: string | null;

@@ -1,6 +1,6 @@
 import { Badge, type BadgeVariant } from "@/shared/ui/badge";
 import type { ContrastMode } from "@/shared/lib/image-contrast";
-import type { Lancamento } from "@/modules/releases/types";
+import type { Release } from "@/modules/releases/types";
 import { cn } from "@/shared/lib/utils";
 
 /**
@@ -111,7 +111,7 @@ const LEGACY_TO_DISPLAY: Record<string, ReleaseStatus> = {
 };
 
 /** Há campos obrigatórios mínimos para o release deixar de ser "incompleto"? */
-export function hasRequiredForSubmission(release: Lancamento & Record<string, unknown>): boolean {
+export function hasRequiredForSubmission(release: Release & Record<string, unknown>): boolean {
   return Boolean(str(release.title) && str(release.artist_id) && str(release.music_genre) && str(release.type));
 }
 
@@ -134,7 +134,7 @@ export function resolveStatusFromRawStatus(status: string, hasRequired: boolean)
   return LEGACY_TO_DISPLAY[key] ?? "incompleto";
 }
 
-export function resolveReleaseStatus(release: Lancamento & Record<string, unknown>): ReleaseStatus {
+export function resolveReleaseStatus(release: Release & Record<string, unknown>): ReleaseStatus {
   const platform = str(release.platform_status).toLowerCase();
   if (platform && PLATFORM_TO_DISPLAY[platform]) return PLATFORM_TO_DISPLAY[platform];
 
@@ -148,18 +148,18 @@ export function resolveReleaseStatus(release: Lancamento & Record<string, unknow
 
 export const releaseStatusLabel = (s: ReleaseStatus): string => RELEASE_STATUS_META[s].label;
 
-export function releaseStatusBadge(release: Lancamento & Record<string, unknown>) {
+export function releaseStatusBadge(release: Release & Record<string, unknown>) {
   const s = resolveReleaseStatus(release);
   return <Badge className={cn("border", RELEASE_STATUS_SOLID[s])}>{RELEASE_STATUS_META[s].label}</Badge>;
 }
 
 /** Normaliza um valor de `platform_status` cru para o 7-set (ou null se ausente/desconhecido). */
-export function resolvePlatformStatus(release: Lancamento & Record<string, unknown>): ReleaseStatus | null {
+export function resolvePlatformStatus(release: Release & Record<string, unknown>): ReleaseStatus | null {
   const platform = str(release.platform_status).toLowerCase();
   return platform && PLATFORM_TO_DISPLAY[platform] ? PLATFORM_TO_DISPLAY[platform] : null;
 }
 
-export function platformStatusBadge(release: Lancamento & Record<string, unknown>) {
+export function platformStatusBadge(release: Release & Record<string, unknown>) {
   const s = resolvePlatformStatus(release);
   if (!s) return null;
   return <Badge className={cn("border", RELEASE_STATUS_SOLID[s])}>{RELEASE_STATUS_META[s].label}</Badge>;
@@ -176,7 +176,7 @@ export interface CardStatusStyle {
  * (texto branco/preto), que garantem contraste sobre qualquer capa — o modo de
  * contraste é ignorado para manter a identidade de cor exigida.
  */
-export function cardStatusClasses(release: Lancamento & Record<string, unknown>, _mode: ContrastMode): CardStatusStyle {
+export function cardStatusClasses(release: Release & Record<string, unknown>, _mode: ContrastMode): CardStatusStyle {
   const s = resolveReleaseStatus(release);
   return { label: RELEASE_STATUS_META[s].label, className: RELEASE_STATUS_SOLID[s] };
 }

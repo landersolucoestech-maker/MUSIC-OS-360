@@ -28,10 +28,10 @@ export type AnalyticsEventName =
   | "fonograma.registered_ecad"
   | "fonograma.imported_abramus"
   // Releases
-  | "lancamento.created"
-  | "lancamento.submitted"
-  | "lancamento.approved"
-  | "lancamento.rejected"
+  | "release.created"
+  | "release.submitted"
+  | "release.approved"
+  | "release.rejected"
   // Contracts
   | "contrato.created"
   | "contrato.sent_for_signing"

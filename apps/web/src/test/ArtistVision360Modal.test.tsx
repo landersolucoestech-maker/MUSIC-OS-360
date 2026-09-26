@@ -31,8 +31,8 @@ vi.mock("@/modules/catalog/hooks/useObras", () => ({
 vi.mock("@/modules/catalog/hooks/useFonogramas", () => ({
   useFonogramas: () => ({ fonogramas: [], isLoading: false }),
 }));
-vi.mock("@/modules/releases/hooks/useLancamentos", () => ({
-  useLancamentos: () => ({ lancamentos: [], isLoading: false }),
+vi.mock("@/modules/releases/hooks/useReleases", () => ({
+  useReleases: () => ({ lancamentos: [], isLoading: false }),
 }));
 vi.mock("@/modules/projects/hooks/useProjects", () => ({
   useProjects: () => ({ projects: [], isLoading: false }),

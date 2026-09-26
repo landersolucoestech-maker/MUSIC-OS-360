@@ -9,10 +9,10 @@ import { describe, it, expect } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 
-const MODAL = fs.readFileSync(path.resolve(__dirname, "LancamentoFormModal.tsx"), "utf8");
-const PAGE = fs.readFileSync(path.resolve(__dirname, "../pages/Lancamentos.tsx"), "utf8");
+const MODAL = fs.readFileSync(path.resolve(__dirname, "ReleaseFormModal.tsx"), "utf8");
+const PAGE = fs.readFileSync(path.resolve(__dirname, "../pages/Releases.tsx"), "utf8");
 
-describe("LancamentoFormModal — no simulated distribution", () => {
+describe("ReleaseFormModal — no simulated distribution", () => {
   it("does not force status distributed or distributedAt in the creation flow", () => {
     expect(MODAL).not.toMatch(/status:\s*"distributed"/);
     expect(MODAL).not.toMatch(/distributionCompletedAt/);

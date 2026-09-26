@@ -3,19 +3,19 @@ import { useDataQuery } from "@/shared/hooks/useDataQuery";
 import { emit, DomainEvents } from "@/shared/domain-events";
 import { useTenant } from "@/app/providers/TenantContext";
 import type {
-  Lancamento,
-  LancamentoInsert,
-  LancamentoUpdate,
-  LancamentoWithRelations,
+  Release,
+  ReleaseInsert,
+  ReleaseUpdate,
+  ReleaseWithRelations,
 } from "../types";
 
-export type { Lancamento, LancamentoInsert, LancamentoUpdate, LancamentoWithRelations };
+export type { Release, ReleaseInsert, ReleaseUpdate, ReleaseWithRelations };
 
-export function useLancamentos(enabled = true, artistId?: string) {
+export function useReleases(enabled = true, artistId?: string) {
   const { tenant } = useTenant();
   const orgId = tenant?.id ?? "unknown";
 
-  const result = useDataQuery<LancamentoWithRelations>({
+  const result = useDataQuery<ReleaseWithRelations>({
     queryKey: artistId ? [...QUERY_KEYS.RELEASES, "by-artist", artistId] : [...QUERY_KEYS.RELEASES],
     table: "lancamentos",
     select: "*, artistas(*)",
@@ -26,14 +26,14 @@ export function useLancamentos(enabled = true, artistId?: string) {
     onMutationSuccess: {
       onCreate: (l) =>
         emit(DomainEvents.RELEASE_CREATED, {
-          id: (l as LancamentoWithRelations & { id: string }).id,
+          id: (l as ReleaseWithRelations & { id: string }).id,
           title: l.title ?? "",
           artist_id: l.artist_id ?? undefined,
           org_id: orgId,
         }),
       onUpdate: (l) =>
         emit(DomainEvents.RELEASE_UPDATED, {
-          id: (l as LancamentoWithRelations & { id: string }).id,
+          id: (l as ReleaseWithRelations & { id: string }).id,
           title: l.title ?? "",
           artist_id: l.artist_id ?? undefined,
           org_id: orgId,

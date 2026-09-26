@@ -15,5 +15,5 @@ export { notificationsService } from "./notifications.service";
 export type {
   SendUserInviteInput,
   SendContratoExpiryAlertInput,
-  SendLancamentoStatusInput,
+  SendReleaseStatusInput,
 } from "./notifications.service";

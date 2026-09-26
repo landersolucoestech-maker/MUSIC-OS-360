@@ -44,7 +44,7 @@ export interface FonogramaRef {
 }
 
 /** Referência leve a um Lançamento. */
-export interface LancamentoRef {
+export interface ReleaseRef {
   id: string;
   title: string;
   type?: string | null;

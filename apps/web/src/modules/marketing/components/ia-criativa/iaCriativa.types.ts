@@ -1,5 +1,5 @@
 import type { UseMutationResult } from "@tanstack/react-query";
-import type { LancamentoWithRelations } from "@/modules/releases/hooks/useLancamentos";
+import type { ReleaseWithRelations } from "@/modules/releases/hooks/useReleases";
 import type {
   AiGenerationPayload,
   AiGeneratedResult,
@@ -25,7 +25,7 @@ export type GenerateAiMutation = UseMutationResult<AiSuggestion, Error, AiGenera
 export type GenerateAiHandler = (payload: AiGenerationPayload) => void;
 
 export type ArtistProfileSources = {
-  releases: LancamentoWithRelations[];
+  releases: ReleaseWithRelations[];
   projects: MarketingProject[];
   campaigns: MarketingCampaign[];
   contents: MarketingContent[];

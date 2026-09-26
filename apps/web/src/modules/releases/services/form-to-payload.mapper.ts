@@ -15,14 +15,14 @@
  * cada campo do formulário tem coluna própria — nenhum campo formal vai para `metadata`.
  */
 
-import type { LancamentoFormFields } from "./entity-to-form.mapper";
+import type { ReleaseFormFields } from "./entity-to-form.mapper";
 
 function ns(v: string): string | null {
   const t = v.trim();
   return t || null;
 }
 
-export function formToLancamentoPayload(f: LancamentoFormFields, mode: "create" | "edit" = "create"): Record<string, unknown> {
+export function formToReleasePayload(f: ReleaseFormFields, mode: "create" | "edit" = "create"): Record<string, unknown> {
   const assets = {
     audio_master_url:  ns(f.assetAudioMasterUrl),
     capa_url:          ns(f.assetCapaUrl),
@@ -69,7 +69,7 @@ export function formToLancamentoPayload(f: LancamentoFormFields, mode: "create" 
 
   // find-ed7823e9 (consumidor incompatível): o formulário NÃO escreve status.
   // O status é somente-leitura na UI ("Controlado pelo sistema") e o único
-  // escritor canônico é o workflow (LancamentoViewModal → useWorkflowTransition,
+  // escritor canônico é o workflow (ReleaseViewModal → useWorkflowTransition,
   // guiado por allowed_transitions do backend). O mapeamento antigo
   // backend→form→backend era com perda (distributed→scheduled,
   // archived→released, assets_pending→metadata_pending, null→review), e toda

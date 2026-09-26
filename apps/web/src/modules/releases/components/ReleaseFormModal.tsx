@@ -49,9 +49,9 @@ import {
   Loader2,
 } from "lucide-react";
 import { useUploadToR2, R2NotConfiguredError } from "@/shared/hooks/useUploadToR2";
-import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
+import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
-import type { Lancamento } from "@/modules/releases/types";
+import type { Release } from "@/modules/releases/types";
 import { useDistributionPlatforms } from "@/modules/releases/hooks/useDistributionPlatforms";
 import { resolveReleaseStatus, releaseStatusLabel } from "@/modules/releases/lib/release-status";
 import { formatReleaseDate } from "@/modules/releases/lib/release-format";
@@ -62,10 +62,10 @@ import type { FonogramaWithRelations } from "@/modules/catalog/hooks/useFonogram
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
 import {
-  lancamentoToFormFields,
-  emptyLancamentoFormFields,
-  formToLancamentoPayload,
-  projetoToLancamentoSeed,
+  releaseToFormFields,
+  emptyReleaseFormFields,
+  formToReleasePayload,
+  projectToReleaseSeed,
 } from "@/modules/releases/mappers";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -256,7 +256,7 @@ interface MusicianEntry {
   instrumento: string;
 }
 
-interface Faixa {
+interface ReleaseTrack {
   id: number;
   title: string;
   artista: string;
@@ -299,18 +299,18 @@ interface ExtraFields {
   pricing: string;
 }
 
-interface LancamentoFormModalProps {
+interface ReleaseFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  lancamento?: Lancamento;
+  release?: Release;
   mode: "create" | "edit" | "view";
-  onCreated?: (lancamento: Lancamento) => void | Promise<void>;
+  onCreated?: (release: Release) => void | Promise<void>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DEFAULTS
 // ─────────────────────────────────────────────────────────────────────────────
-const mkFaixa = (id = Date.now()): Faixa => ({
+const createReleaseTrack = (id = Date.now()): ReleaseTrack => ({
   id,
   title: "",
   artista: "",
@@ -462,23 +462,23 @@ function ArtistAutocompleteInput({
 // ─────────────────────────────────────────────────────────────────────────────
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
-export function LancamentoFormModal({
+export function ReleaseFormModal({
   open,
   onOpenChange,
-  lancamento,
+  release,
   mode,
   onCreated,
-}: LancamentoFormModalProps) {
-  const { addLancamento, updateLancamento } = useLancamentos();
+}: ReleaseFormModalProps) {
+  const { addLancamento, updateLancamento } = useReleases();
   const { upload: uploadToR2, isUploading: isUploadingCoverR2 } = useUploadToR2();
 
   // ── Core state ────────────────────────────────────────────────────────────
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState(emptyLancamentoFormFields);
+  const [formData, setFormData] = useState(emptyReleaseFormFields);
   const [extraFields, setExtraFields] = useState<ExtraFields>({
     ...DEFAULT_EXTRA,
   });
-  const [faixas, setFaixas] = useState<Faixa[]>([mkFaixa(1)]);
+  const [faixas, setFaixas] = useState<ReleaseTrack[]>([createReleaseTrack(1)]);
   const [capaPrincipal, setCapaPrincipal] = useState<File | null>(null);
   const isUploadingCover = isUploadingCoverR2;
 
@@ -539,16 +539,16 @@ export function LancamentoFormModal({
   useEffect(() => {
     if (!open) return;
     setCurrentStep(0);
-    setFormData(lancamentoToFormFields(lancamento ?? null));
+    setFormData(releaseToFormFields(release ?? null));
 
-    const meta = lancamento
-      ? ((lancamento as Record<string, unknown>)["metadata"] as Record<string, unknown> | undefined) ?? {}
+    const meta = release
+      ? ((release as Record<string, unknown>)["metadata"] as Record<string, unknown> | undefined) ?? {}
       : {};
 
-    if (lancamento && Array.isArray(meta["faixas"]) && (meta["faixas"] as unknown[]).length > 0) {
-      setFaixas((meta["faixas"] as Faixa[]).map(f => ({ ...f, arquivoAudio: null })));
+    if (release && Array.isArray(meta["faixas"]) && (meta["faixas"] as unknown[]).length > 0) {
+      setFaixas((meta["faixas"] as ReleaseTrack[]).map(f => ({ ...f, arquivoAudio: null })));
     } else {
-      setFaixas([mkFaixa(1)]);
+      setFaixas([createReleaseTrack(1)]);
     }
 
     setExtraFields({
@@ -569,7 +569,7 @@ export function LancamentoFormModal({
     setArtistaSearch("");
     setProjetoOpen(false);
     setArtistaOpen(false);
-  }, [open, lancamento]);
+  }, [open, release]);
 
   const isViewMode = mode === "view";
 
@@ -585,7 +585,7 @@ export function LancamentoFormModal({
   // nunca varrendo useArtistas()/useFonogramas() sem filtro.
   const handleSelectProjeto = async (projeto: ProjectWithRelations) => {
     const projectId = projeto.id;
-    const seed = projetoToLancamentoSeed(projeto);
+    const seed = projectToReleaseSeed(projeto);
     const linkedArtistaWire = projeto.artist_id
       ? await storage.findById<ArtistWireRecord>("artistas", projeto.artist_id as string)
       : undefined;
@@ -623,7 +623,7 @@ export function LancamentoFormModal({
               const isrcFaixa =
                 m.isrc?.trim() || (m.nome ? (await findFonogramaByTitle(m.nome))?.isrc ?? "" : "");
               return {
-                ...mkFaixa(i + 1),
+                ...createReleaseTrack(i + 1),
                 title: m.nome ?? "",
                 artista: artistaNome,
                 isrc: isrcFaixa,
@@ -681,11 +681,11 @@ export function LancamentoFormModal({
   // FAIXA HELPERS
   // ─────────────────────────────────────────────────────────────────────────
   const addFaixa = () =>
-    setFaixas((prev) => [...prev, mkFaixa(prev.length + 1)]);
+    setFaixas((prev) => [...prev, createReleaseTrack(prev.length + 1)]);
   const removeFaixa = (id: number) => {
     if (faixas.length > 1) setFaixas((prev) => prev.filter((f) => f.id !== id));
   };
-  const updF = <K extends keyof Faixa>(id: number, k: K, v: Faixa[K]) =>
+  const updF = <K extends keyof ReleaseTrack>(id: number, k: K, v: ReleaseTrack[K]) =>
     setFaixas((prev) => prev.map((f) => (f.id === id ? { ...f, [k]: v } : f)));
 
   const handleFaixaAudioUpload = async (faixaId: number, file: File) => {
@@ -696,7 +696,7 @@ export function LancamentoFormModal({
         file,
         category: "audio",
         entity:   "release",
-        entityId: lancamento?.id,
+        entityId: release?.id,
       });
       updF(faixaId, "audioUrl", publicUrl);
       toast.success("Áudio enviado e link gerado com sucesso!");
@@ -854,7 +854,7 @@ export function LancamentoFormModal({
         file,
         category: "images",
         entity:   "release",
-        entityId: lancamento?.id,
+        entityId: release?.id,
       });
       setFormData((prev) => ({ ...prev, assetCapaUrl: publicUrl }));
     } catch (err) {
@@ -883,7 +883,7 @@ export function LancamentoFormModal({
       return;
     }
     try {
-      const payload = formToLancamentoPayload(formData, mode === "edit" ? "edit" : "create");
+      const payload = formToReleasePayload(formData, mode === "edit" ? "edit" : "create");
       // Persist faixas and extraFields in metadata for edit round-trips
       const savableFaixas = faixas.map(({ arquivoAudio: _a, _uploading: _u, ...f }) => f);
       const enrichedMeta: Record<string, unknown> = {
@@ -902,15 +902,15 @@ export function LancamentoFormModal({
         artistasAdicionaisAlbum: extraFields.artistasAdicionaisAlbum,
       };
       payload["metadata"] = enrichedMeta;
-      if (mode === "edit" && lancamento?.id) {
+      if (mode === "edit" && release?.id) {
         await updateLancamento.mutateAsync({
-          id: lancamento.id,
+          id: release.id,
           ...payload,
-          expectedUpdatedAt: getExpectedUpdatedAt(lancamento),
+          expectedUpdatedAt: getExpectedUpdatedAt(release),
         } as never);
         toast.success("Lançamento atualizado!");
       } else {
-        const created = (await addLancamento.mutateAsync(payload as never)) as (Lancamento & { id?: string }) | undefined;
+        const created = (await addLancamento.mutateAsync(payload as never)) as (Release & { id?: string }) | undefined;
         // Integração desacoplada: oferecer iniciar o fluxo de shares (via navegação),
         // somente se houver participantes/créditos suficientes. Sem acoplamento direto.
         // find-ed7823e9: antes forçava um PATCH de status para distribuído logo após
@@ -920,7 +920,7 @@ export function LancamentoFormModal({
         // reenviar e duplicar). Nenhuma distribuição real existe neste fluxo.
         if (created?.id) {
           toast.success("Lançamento criado!");
-          await onCreated?.(created as Lancamento);
+          await onCreated?.(created as Release);
         } else {
           toast.success("Lançamento criado!");
         }
@@ -1479,7 +1479,7 @@ export function LancamentoFormModal({
             <Label>Status interno</Label>
             <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm">
               <Badge variant="neutral">
-                {lancamento ? releaseStatusLabel(resolveReleaseStatus(lancamento)) : "Incompleto"}
+                {release ? releaseStatusLabel(resolveReleaseStatus(release)) : "Incompleto"}
               </Badge>
               <span className="text-xs text-muted-foreground">
                 Controlado pelo sistema. O status de distribuição é definido pela plataforma.

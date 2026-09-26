@@ -1,4 +1,4 @@
-import type { LancamentoWithRelations } from "@/modules/releases/hooks/useLancamentos";
+import type { ReleaseWithRelations } from "@/modules/releases/hooks/useReleases";
 
 export function stringifyValue(value: unknown): string {
   if (typeof value === "string") return value.trim();
@@ -19,7 +19,7 @@ export function mostCommon(values: string[]) {
   return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "";
 }
 
-export function pickReleaseString(release: LancamentoWithRelations, keys: string[]) {
+export function pickReleaseString(release: ReleaseWithRelations, keys: string[]) {
   for (const key of keys) {
     const direct = stringifyValue(release[key]);
     if (direct) return direct;

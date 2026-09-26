@@ -31,15 +31,15 @@ const FIXED_MODULE_FILES = [
   "modules/projects/pages/Projects.tsx",
   "modules/catalog/pages/RegistroMusicas.tsx",
   "modules/rh/pages/RH.tsx",
-  "modules/releases/pages/Lancamentos.tsx",
+  "modules/releases/pages/Releases.tsx",
   "modules/inventory/pages/Inventario.tsx",
   "modules/contracts/pages/Contracts.tsx",
   "modules/accounting/pages/ProfitAndLoss.tsx",
-  // Task T (continuation): the "Exportar" button in GestaoShares.tsx had no
+  // Task T (continuation): the "Exportar" button in Shares.tsx had no
   // onClick at all — clicking did nothing. Shares is already a reportable
   // entity in the Reports Center (REPORT_MODULE_REGISTRY); removed instead
   // of duplicating a local export, same policy as Parte 86.
-  "modules/releases/pages/GestaoShares.tsx",
+  "modules/releases/pages/Shares.tsx",
 ];
 
 const BUTTON_TEXT_PATTERNS = [

@@ -39,9 +39,9 @@ export interface SendContratoExpiryAlertInput {
   to: { name: string; email: string };
 }
 
-export interface SendLancamentoStatusInput {
+export interface SendReleaseStatusInput {
   releaseId:    string;
-  lancamentoTitle: string;
+  releaseTitle: string;
   status:          "approved" | "rejected";
   reason?:         string;
   to: { name: string; email: string };
@@ -87,19 +87,19 @@ export const notificationsService = {
     });
   },
 
-  async sendLancamentoStatus(input: SendLancamentoStatusInput): Promise<void> {
-    const { releaseId, lancamentoTitle, status, reason, to } = input;
+  async sendReleaseStatus(input: SendReleaseStatusInput): Promise<void> {
+    const { releaseId, releaseTitle, status, reason, to } = input;
 
     await emailAdapter.send({
       to,
-      subject:      `Lançamento ${status === "approved" ? "aprovado" : "rejeitado"}: ${lancamentoTitle}`,
+      subject:      `Lançamento ${status === "approved" ? "aprovado" : "rejeitado"}: ${releaseTitle}`,
       template_id:  status === "approved" ? "release-approved" : "release-rejected",
-      template_vars: { lancamento_title: lancamentoTitle, reason: reason ?? "" },
+      template_vars: { lancamento_title: releaseTitle, reason: reason ?? "" },
     });
 
-    analyticsAdapter.track(`lancamento.${status}`, { release_id: releaseId });
+    analyticsAdapter.track(`release.${status}`, { release_id: releaseId });
 
-    emit(status === "approved" ? "lancamento.approved" : "lancamento.rejected", {
+    emit(status === "approved" ? "release.approved" : "release.rejected", {
       releaseId,
       reason,
     });

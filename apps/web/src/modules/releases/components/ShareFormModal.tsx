@@ -14,14 +14,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { useShares } from "@/modules/releases/hooks/useShares";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
-import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
+import { useReleases } from "@/modules/releases/hooks/useReleases";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { shareSchema } from "@/modules/releases/lib/share-schema";
 import { resolveShareType } from "@/modules/releases/lib/share-format";
 import type { Share, ShareType } from "@/modules/releases/types";
 
-interface SharePendenteFormModalProps {
+interface ShareFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   share?: Share;
@@ -125,9 +125,9 @@ function shareToForm(share: Share & Record<string, unknown>): ShareFormState {
   };
 }
 
-export function SharePendenteFormModal({ open, onOpenChange, share, initialReleaseId, onSuccess }: SharePendenteFormModalProps) {
+export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, onSuccess }: ShareFormModalProps) {
   const { addShare, updateShare, shares } = useShares();
-  const { lancamentos } = useLancamentos();
+  const { lancamentos } = useReleases();
   const [formData, setFormData] = useState<ShareFormState>(EMPTY);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
