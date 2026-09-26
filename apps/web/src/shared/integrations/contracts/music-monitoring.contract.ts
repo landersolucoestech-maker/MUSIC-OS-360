@@ -1,44 +1,44 @@
 /**
  * shared/integrations/contracts/music-monitoring.contract.ts
  *
- * Contrato de monitoramento musical por fingerprint (ACRCloud-style).
+ * Music monitoring contract by audio fingerprint (ACRCloud-style).
  *
- * Cobre:
- *   - Identificação de músicas por fingerprint de áudio
- *   - Relatórios de execução em rádio, TV, plataformas digitais
- *   - Alertas em tempo real de uso não autorizado
- *   - Busca de artistas, obras e fonogramas no banco do provedor
- *   - Configuração de projetos de monitoramento por artista/obra
+ * Covers:
+ *   - Track identification by audio fingerprint
+ *   - Play reports on radio, TV and digital platforms
+ *   - Real-time alerts of unauthorized use
+ *   - Search of artists, works and phonograms in the provider database
+ *   - Configuration of monitoring projects per artist/work
  *
- * ESTADO ACTUAL:
- *   - ACRCloud: mock funcional (useACRCloud.ts + mock-music-monitoring.provider.ts)
+ * CURRENT STATE:
+ *   - ACRCloud: working mock (useACRCloud.ts + mock-music-monitoring.provider.ts)
  *
- * MIGRAÇÃO FUTURA:
- *   - ACRCloudProvider implementa IMusicMonitoringProvider com a API real
+ * FUTURE MIGRATION:
+ *   - ACRCloudProvider implements IMusicMonitoringProvider with the real API
  */
 
-// ─── Identificação de fonte ────────────────────────────────────────────────────
+// ─── Source identification ─────────────────────────────────────────────────────
 
 export type MonitoringSourceType =
-  | "radio"        // Rádio AM/FM
-  | "tv"           // Televisão aberta / cable
+  | "radio"        // AM/FM radio
+  | "tv"           // Broadcast / cable TV
   | "streaming"    // Spotify, Deezer, YouTube Music, Apple Music
   | "video"        // YouTube, TikTok, Instagram Reels
-  | "podcast"      // Podcasts e programas de áudio
-  | "venue"        // Shows, eventos ao vivo
+  | "podcast"      // Podcasts and audio shows
+  | "venue"        // Concerts, live events
   | "public"       // Ambientes comerciais (loja, restaurante)
   | "unknown";
 
 // ─── DTOs de fingerprint ───────────────────────────────────────────────────────
 
 export interface FingerprintInput {
-  /** Áudio em base64 ou URL pública do trecho */
+  /** Audio in base64 or a public URL of the clip */
   audio_data: string;
-  /** Duração do trecho em segundos (padrão: 10s) */
+  /** Clip duration in seconds (default: 10s) */
   duration_seconds?: number;
   /** Fonte do trecho para contexto */
   source_type?: MonitoringSourceType;
-  /** Nome da estação/plataforma (ex.: "Rádio CBN", "Spotify") */
+  /** Station/platform name (e.g. "Rádio CBN", "Spotify") */
   source_name?: string;
 }
 
@@ -56,9 +56,9 @@ export interface FingerprintMatch {
   genero?: string | null;
   /** Identificador interno do ACRCloud */
   external_id: string;
-  /** Posição no trecho onde a música foi detectada (segundos) */
+  /** Position in the clip where the track was detected (seconds) */
   offset_segundos?: number | null;
-  /** ID local da obra/fonograma se cruzamento for bem-sucedido */
+  /** Local work/phonogram ID when the match succeeds */
   local_work_id?: string | null;
   local_fonograma_id?: string | null;
 }
@@ -72,7 +72,7 @@ export interface FingerprintResult {
   detected_at: string;
 }
 
-// ─── DTOs de relatórios de execução ──────────────────────────────────────────
+// ─── Play report DTOs ────────────────────────────────────────────────────────
 
 export interface PlayReport {
   id: string;
@@ -82,13 +82,13 @@ export interface PlayReport {
   iswc?: string | null;
   source_type: MonitoringSourceType;
   source_name: string;
-  /** País de execução (ISO 3166-1 alpha-2) */
+  /** Play country (ISO 3166-1 alpha-2) */
   country?: string | null;
   played_at: string;
   duration_seconds: number;
-  /** Estimativa de audiência da execução */
+  /** Estimated audience of the play */
   estimated_audience?: number | null;
-  /** Valor informado por plataforma externa em centavos (BRL); sem cálculo interno */
+  /** Amount reported by an external platform in cents (BRL); no internal calculation */
   external_reported_amount_cents?: number | null;
   /** ID local do fonograma se cruzamento for bem-sucedido */
   local_fonograma_id?: string | null;
@@ -102,9 +102,9 @@ export interface PlayReportQuery {
   artista?: string;
   title?: string;
   source_type?: MonitoringSourceType;
-  /** Período inicial "YYYY-MM-DD" */
+  /** Period start "YYYY-MM-DD" */
   date_from?: string;
-  /** Período final "YYYY-MM-DD" */
+  /** Period end "YYYY-MM-DD" */
   date_to?: string;
   limit?: number;
   offset?: number;
@@ -125,13 +125,13 @@ export interface PlayReportSummary {
 export type AlertSeverity = "critical" | "warning" | "info";
 
 export type AlertType =
-  | "unauthorized_use"       // Uso sem licença detectado
-  | "high_play_count"        // Pico de execuções inesperado
-  | "new_territory"          // Detecção em novo país/região
-  | "unregistered_track"     // Fingerprint sem registro de ISRC/ISWC
-  | "external_data_discrepancy"    // Arrecadação abaixo do esperado
-  | "source_new"             // Nova fonte de execução detectada
-  | "sync_required";         // Sincronização necessária
+  | "unauthorized_use"       // Unlicensed use detected
+  | "high_play_count"        // Unexpected play spike
+  | "new_territory"          // Detection in a new country/region
+  | "unregistered_track"     // Fingerprint without an ISRC/ISWC registration
+  | "external_data_discrepancy"    // Collection below expectations
+  | "source_new"             // New play source detected
+  | "sync_required";         // Sync required
 
 export interface MonitoringAlert {
   id: string;
@@ -162,7 +162,7 @@ export interface MonitoringProject {
   iswcs: string[];
   /** Fontes a monitorar */
   sources: MonitoringSourceType[];
-  /** Países a monitorar (ISO 3166-1 alpha-2, empty = todos) */
+  /** Countries to monitor (ISO 3166-1 alpha-2, empty = all) */
   countries: string[];
   active: boolean;
   created_at: string;
@@ -179,7 +179,7 @@ export interface CreateMonitoringProjectInput {
   countries?: string[];
 }
 
-// ─── DTOs de busca de catálogo ───────────────────────────────────────────────
+// ─── Catalog search DTOs ─────────────────────────────────────────────────────
 
 export interface MusicSearchQuery {
   query: string;
@@ -204,43 +204,43 @@ export interface MusicSearchResult {
 // ─── Contrato ─────────────────────────────────────────────────────────────────
 
 /**
- * IMusicMonitoringProvider — contrato de monitoramento musical por fingerprint.
+ * IMusicMonitoringProvider — music monitoring contract by fingerprint.
  *
- * Implementações previstas:
- *   - MockMusicMonitoringProvider  (standalone — dados simulados)
- *   - ACRCloudProvider             (produção — API ACRCloud v2)
+ * Planned implementations:
+ *   - MockMusicMonitoringProvider  (standalone — simulated data)
+ *   - ACRCloudProvider             (production — ACRCloud v2 API)
  */
 export interface IMusicMonitoringProvider {
   readonly provider_name: string;
 
-  /** Identifica uma música por fingerprint de áudio */
+  /** Identifies a track by audio fingerprint */
   identify(input: FingerprintInput): Promise<FingerprintResult>;
 
-  /** Lista relatórios de execução por filtro */
+  /** Lists play reports by filter */
   getPlayReports(query: PlayReportQuery): Promise<PlayReport[]>;
 
-  /** Resumo de execuções por período */
+  /** Play summary per period */
   getPlayReportSummary(query: PlayReportQuery): Promise<PlayReportSummary>;
 
-  /** Lista alertas activos ou histórico */
+  /** Lists active alerts or history */
   getAlerts(options?: { unacknowledged_only?: boolean; limit?: number }): Promise<MonitoringAlert[]>;
 
-  /** Marca um alerta como lido */
+  /** Marks an alert as read */
   acknowledgeAlert(alertId: string): Promise<void>;
 
-  /** Pesquisa músicas/artistas no catálogo do provedor */
+  /** Searches tracks/artists in the provider catalog */
   search(query: MusicSearchQuery): Promise<MusicSearchResult[]>;
 
-  /** Cria um projecto de monitoramento */
+  /** Creates a monitoring project */
   createProject(input: CreateMonitoringProjectInput): Promise<MonitoringProject>;
 
   /** Lista projectos de monitoramento */
   listProjects(): Promise<MonitoringProject[]>;
 
-  /** Activa/desactiva um projecto de monitoramento */
+  /** Enables/disables a monitoring project */
   toggleProject(projectId: string, active: boolean): Promise<MonitoringProject>;
 
-  /** Verifica conexão com o provedor */
+  /** Checks the connection to the provider */
   verifyConnection(): Promise<{ ok: boolean; quota_remaining?: number; plan?: string }>;
 }
 
@@ -267,12 +267,12 @@ export const ALERT_TYPE_LABELS: Record<AlertType, string> = {
   sync_required:       "Sincronização Necessária",
 };
 
-/** Chave de localStorage para relatórios de execução cacheados */
+/** localStorage key for cached play reports */
 export function playReportsStorageKey(isrc: string): string {
   return `musicos360_acrcloud_plays_${isrc}`;
 }
 
-/** Chave de localStorage para projectos de monitoramento */
+/** localStorage key for monitoring projects */
 export const MONITORING_PROJECTS_KEY = "musicos360_acrcloud_projects";
 
 /** Chave de localStorage para alertas */

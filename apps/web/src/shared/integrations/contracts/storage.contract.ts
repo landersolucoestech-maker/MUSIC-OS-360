@@ -1,28 +1,28 @@
 /**
  * shared/integrations/contracts/storage.contract.ts
  *
- * Contrato de armazenamento de ficheiros — implementação alvo: Cloudflare R2.
+ * File storage contract — target implementation: Cloudflare R2.
  *
- * ESTADO ACTUAL: standalone — ficheiros são referenciados por URL local/mock.
- * MIGRAÇÃO FUTURA: StorageService implementará IStorageProvider usando R2 SDK.
+ * CURRENT STATE: standalone — files are referenced by a local/mock URL.
+ * FUTURE MIGRATION: StorageService will implement IStorageProvider using the R2 SDK.
  *
- * Domínios que utilizam storage:
- *   - Catalog (áudio de fonogramas)
- *   - Releases (capas, assets de lançamento)
- *   - Contracts (PDFs de contratos)
- *   - Artist (presskit, fotos)
- *   - Marketing (assets de campanhas)
+ * Domains that use storage:
+ *   - Catalog (phonogram audio)
+ *   - Releases (covers, release assets)
+ *   - Contracts (contract PDFs)
+ *   - Artist (press kit, photos)
+ *   - Marketing (campaign assets)
  */
 
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
 
-/** Categorias de bucket para organização dos ficheiros */
+/** Bucket categories that organize the files */
 export type StorageBucket =
-  | "audio"       // ficheiros de áudio (fonogramas, faixas)
+  | "audio"       // audio files (phonograms, tracks)
   | "images"      // capas, fotos de artistas, marketing
   | "documents"   // contratos PDF, documents legais
-  | "exports"     // relatórios gerados, exports XLSX/PDF
-  | "temp";       // uploads temporários antes de processamento
+  | "exports"     // generated reports, XLSX/PDF exports
+  | "temp";       // temporary uploads before processing
 
 export interface StorageObject {
   key: string;
@@ -52,24 +52,24 @@ export interface StorageUploadResult {
 export interface StoragePresignedUrlParams {
   bucket: StorageBucket;
   key: string;
-  /** Duração da URL em segundos. Default: 3600 (1 hora) */
+  /** URL lifetime in seconds. Default: 3600 (1 hour) */
   expires_in?: number;
 }
 
 // ─── Contrato ─────────────────────────────────────────────────────────────────
 
 /**
- * IStorageProvider — contrato de armazenamento de objectos.
+ * IStorageProvider — object storage contract.
  *
- * Implementações previstas:
- *   - MockStorageProvider  (standalone — usa blob URLs locais)
- *   - R2StorageProvider    (produção — Cloudflare R2 via Workers API)
+ * Planned implementations:
+ *   - MockStorageProvider  (standalone — uses local blob URLs)
+ *   - R2StorageProvider    (production — Cloudflare R2 via the Workers API)
  */
 export interface IStorageProvider {
-  /** Faz upload de um ficheiro e devolve a URL pública */
+  /** Uploads a file and returns its public URL */
   upload(params: StorageUploadParams): Promise<StorageUploadResult>;
 
-  /** Gera uma URL assinada para download temporário */
+  /** Generates a signed URL for a temporary download */
   presignedUrl(params: StoragePresignedUrlParams): Promise<string>;
 
   /** Remove um objecto do storage */
@@ -78,16 +78,16 @@ export interface IStorageProvider {
   /** Lista objectos num prefixo */
   list(bucket: StorageBucket, prefix: string): Promise<StorageObject[]>;
 
-  /** Verifica se um objecto existe */
+  /** Checks whether an object exists */
   exists(bucket: StorageBucket, key: string): Promise<boolean>;
 
-  /** Copia um objecto dentro do mesmo bucket */
+  /** Copies an object within the same bucket */
   copy(bucket: StorageBucket, sourceKey: string, destKey: string): Promise<StorageUploadResult>;
 }
 
 // ─── Helpers de chave ─────────────────────────────────────────────────────────
 
-/** Constrói a chave de storage com isolamento por tenant */
+/** Builds the storage key with per-tenant isolation */
 export function buildStorageKey(
   tenantId: string,
   bucket: StorageBucket,

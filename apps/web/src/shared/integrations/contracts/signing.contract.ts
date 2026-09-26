@@ -1,14 +1,14 @@
 /**
  * shared/integrations/contracts/signing.contract.ts
  *
- * Contrato de assinatura digital — implementação alvo: Autentique.
+ * Digital signature contract — target implementation: Autentique.
  *
- * ESTADO ACTUAL: useAutentique em modules/integrations/hooks/useAutentique.ts (mock).
- * MIGRAÇÃO FUTURA: ISigningProvider implementado via Autentique GraphQL API.
+ * CURRENT STATE: useAutentique in modules/integrations/hooks/useAutentique.ts (mock).
+ * FUTURE MIGRATION: ISigningProvider implemented via the Autentique GraphQL API.
  *
- * Domínios que utilizam assinatura:
- *   - Contracts (contratos com artistas, distribuidoras, editoras)
- *   - CRM (acordos de representação, NDAs)
+ * Domains that use signatures:
+ *   - Contracts (contracts with artists, distributors, publishers)
+ *   - CRM (representation agreements, NDAs)
  */
 
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
@@ -32,9 +32,9 @@ export interface Signer {
   name: string;
   email: string;
   role: SignerRole;
-  /** CPF ou CNPJ do signatário */
+  /** Signer's CPF or CNPJ */
   document?: string;
-  /** URL da assinatura gerada após assinar */
+  /** Signature URL generated after signing */
   signature_url?: string | null;
   signed_at?: string | null;
 }
@@ -51,11 +51,11 @@ export interface SigningDocument {
   completed_at?: string | null;
   /** URL do PDF original */
   document_url: string;
-  /** URL do PDF assinado (disponível após conclusão) */
+  /** Signed PDF URL (available after completion) */
   signed_document_url?: string | null;
   /**
-   * Link de acesso ao envelope de assinatura no provedor (enviado aos signatários).
-   * Disponível imediatamente após createDocument.
+   * Access link to the signature envelope at the provider (sent to signers).
+   * Available right after createDocument.
    */
   signing_url?: string | null;
   /** ID do contrato local associado */
@@ -64,14 +64,14 @@ export interface SigningDocument {
 
 export interface CreateSigningDocumentParams {
   title: string;
-  /** PDF em base64 ou URL pública acessível */
+  /** PDF in base64 or an accessible public URL */
   document: string;
   signers: Omit<Signer, "signature_url" | "signed_at">[];
-  /** Data de expiração (ISO 8601). Default: 30 dias */
+  /** Expiry date (ISO 8601). Default: 30 days */
   expires_at?: string;
-  /** Mensagem para os signatários */
+  /** Message for the signers */
   message?: string;
-  /** ID do contrato local para referência cruzada */
+  /** Local contract ID for cross-reference */
   contrato_id?: string;
 }
 
@@ -85,29 +85,29 @@ export interface SigningWebhookEvent {
 // ─── Contrato ─────────────────────────────────────────────────────────────────
 
 /**
- * ISigningProvider — contrato de assinatura digital.
+ * ISigningProvider — digital signature contract.
  *
- * Implementações previstas:
- *   - MockSigningProvider      (standalone — status simulado)
- *   - AutentiqueSigningProvider (produção — Autentique GraphQL API)
+ * Planned implementations:
+ *   - MockSigningProvider      (standalone — simulated status)
+ *   - AutentiqueSigningProvider (production — Autentique GraphQL API)
  */
 export interface ISigningProvider {
-  /** Cria um documento para assinatura e envia convites por e-mail */
+  /** Creates a document for signature and sends email invitations */
   createDocument(params: CreateSigningDocumentParams): Promise<SigningDocument>;
 
-  /** Consulta o estado actual de um documento */
+  /** Looks up the current state of a document */
   getDocument(documentId: string): Promise<SigningDocument>;
 
   /** Lista documents (opcionalmente filtrados por contrato local) */
   listDocuments(params?: { contrato_id?: string; status?: SigningStatus }): Promise<SigningDocument[]>;
 
-  /** Cancela um documento em aberto */
+  /** Cancels an open document */
   cancelDocument(documentId: string): Promise<void>;
 
-  /** Reenvia o convite de assinatura para um signatário */
+  /** Resends the signature invitation to a signer */
   resendInvite(documentId: string, signerEmail: string): Promise<void>;
 
-  /** Processa um evento de webhook recebido */
+  /** Processes a received webhook event */
   handleWebhook(event: SigningWebhookEvent): Promise<void>;
 
   /** Verifica as credenciais configuradas */

@@ -1,10 +1,10 @@
 /**
  * shared/integrations/contracts/auth.contract.ts
  *
- * Contrato de autenticação — implementação: NestJS JWT.
+ * Authentication contract — implementation: NestJS JWT.
  *
- * Qualquer componente que precise de dados de auth deve depender de IAuthProvider,
- * nunca de um SDK de auth de terceiro directamente.
+ * Any component that needs auth data must depend on IAuthProvider, never
+ * directly on a third-party auth SDK.
  */
 
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
@@ -47,30 +47,30 @@ export interface AuthInviteParams {
 // ─── Contrato ─────────────────────────────────────────────────────────────────
 
 /**
- * IAuthProvider — contrato que todo provider de autenticação deve implementar.
+ * IAuthProvider — contract every authentication provider must implement.
  *
- * Implementações:
- *   - MockAuthProvider  (standalone, já em uso)
- *   - NestAuthProvider  (produção, JWT via NestJS)
+ * Implementations:
+ *   - MockAuthProvider  (standalone, already in use)
+ *   - NestAuthProvider  (production, JWT via NestJS)
  */
 export interface IAuthProvider {
-  /** Sessão activa, ou null se não autenticado */
+  /** Active session, or null when not authenticated */
   readonly session: AuthSession | null;
-  /** Utilizador activo, ou null se não autenticado */
+  /** Active user, or null when not authenticated */
   readonly user: AuthUser | null;
-  /** True enquanto a sessão está a ser verificada */
+  /** True while the session is being verified */
   readonly isLoading: boolean;
 
   signIn(params: AuthSignInParams): Promise<AuthSession>;
   signUp(params: AuthSignUpParams): Promise<AuthSession>;
   signOut(): Promise<void>;
 
-  /** Convida um novo utilizador para o tenant */
+  /** Invites a new user to the tenant */
   inviteUser(params: AuthInviteParams): Promise<void>;
-  /** Revoga o acesso de um utilizador */
+  /** Revokes a user's access */
   revokeUser(userId: string): Promise<void>;
 
-  /** Verifica se o token activo ainda é válido */
+  /** Checks whether the active token is still valid */
   verifySession(): Promise<boolean>;
   /** Renova o token de acesso */
   refreshSession(): Promise<AuthSession>;
@@ -79,8 +79,8 @@ export interface IAuthProvider {
 // ─── Feature flags de auth ───────────────────────────────────────────────────
 
 /**
- * Capacidades que o provider de auth pode ou não suportar.
- * Usado para condicionar a UI sem acoplamento ao provider concreto.
+ * Capabilities the auth provider may or may not support.
+ * Used to gate the UI without coupling it to the concrete provider.
  */
 export interface AuthProviderCapabilities {
   supportsSSO: boolean;

@@ -1,10 +1,10 @@
 /**
  * shared/integrations/registry.ts
  *
- * Registro central de todas as integrações do MUSIC OS 360.
- * Fonte única de verdade para metadados de integrações.
+ * Central registry of every MUSIC OS 360 integration.
+ * Single source of truth for integration metadata.
  *
- * Uso:
+ * Usage:
  *   import { INTEGRATION_REGISTRY, getIntegration, getIntegrationsByCategory }
  *     from "@/shared/integrations/registry";
  */
@@ -94,7 +94,7 @@ export const INTEGRATION_REGISTRY: Record<IntegrationId, IntegrationMeta> = {
     credentialsKey: "musicos360_sentry_credentials",
   },
 
-  // ── Streaming / Métricas ──────────────────────────────────────────────────
+  // ── Streaming / metrics ───────────────────────────────────────────────────
   spotify: {
     id: "spotify",
     name: "Spotify for Artists",
@@ -199,7 +199,7 @@ export const INTEGRATION_REGISTRY: Record<IntegrationId, IntegrationMeta> = {
     credentialsKey: "musicos360_soundcloud_credentials",
   },
 
-  // ── Direitos / Arrecadação ────────────────────────────────────────────────
+  // ── Rights / collection ───────────────────────────────────────────────────
   ecad: {
     id: "ecad",
     name: "ECAD",
@@ -228,7 +228,7 @@ export const INTEGRATION_REGISTRY: Record<IntegrationId, IntegrationMeta> = {
     credentialsKey: "musicos360_abramus_credentials",
   },
 
-  // ── Distribuição digital ─────────────────────────────────────────────────
+  // ── Digital distribution ─────────────────────────────────────────────────
   onerpm: {
     id: "onerpm",
     name: "ONErpm",
@@ -311,22 +311,22 @@ export const INTEGRATION_REGISTRY: Record<IntegrationId, IntegrationMeta> = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/** Retorna os metadados de uma integração pelo id. */
+/** Returns an integration's metadata by id. */
 export function getIntegration(id: IntegrationId): IntegrationMeta {
   return INTEGRATION_REGISTRY[id];
 }
 
-/** Retorna todas as integrações de uma categoria. */
+/** Returns every integration of a category. */
 export function getIntegrationsByCategory(category: IntegrationCategory): IntegrationMeta[] {
   return Object.values(INTEGRATION_REGISTRY).filter((i) => i.category === category);
 }
 
-/** Retorna todas as integrações registadas. */
+/** Returns every registered integration. */
 export function getAllIntegrations(): IntegrationMeta[] {
   return Object.values(INTEGRATION_REGISTRY);
 }
 
-/** Retorna todas as categorias únicas presentes no registry. */
+/** Returns every unique category present in the registry. */
 export function getAllCategories(): IntegrationCategory[] {
   const set = new Set<IntegrationCategory>();
   for (const meta of Object.values(INTEGRATION_REGISTRY)) set.add(meta.category);
@@ -334,8 +334,8 @@ export function getAllCategories(): IntegrationCategory[] {
 }
 
 /**
- * Constrói a chave de localStorage para as credenciais de uma integração.
- * Convenção: `musicos360_<id>_credentials`
+ * Builds the localStorage key for an integration's credentials.
+ * Convention: `musicos360_<id>_credentials`
  */
 export function credentialsStorageKey(id: IntegrationId): string {
   return `musicos360_${id.replace("-", "_")}_credentials`;

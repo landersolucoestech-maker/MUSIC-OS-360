@@ -1,16 +1,16 @@
 /**
  * shared/integrations/contracts/chat.contract.ts
  *
- * Contrato de comunicação interna — MusicChat.
+ * Internal communication contract — MusicChat.
  *
- * ESTADO ACTUAL: rota /chat existe; comunicação é mock (sem tempo real).
- * MIGRAÇÃO FUTURA: IChatProvider implementado via WebSocket / SSE ou
- *   serviço dedicado (ex.: Stream Chat, Supabase Realtime, Pusher).
+ * CURRENT STATE: the /chat route exists; communication is mocked (no real time).
+ * FUTURE MIGRATION: IChatProvider implemented via WebSocket / SSE or a
+ *   dedicated service (e.g. Stream Chat, Supabase Realtime, Pusher).
  *
- * Entidades do MusicChat alinhadas com domínios do produto:
- *   - Canais por projecto, artista, departamento
- *   - Menções a entidades do sistema (obra, contrato, lançamento)
- *   - Notificações internas
+ * MusicChat entities aligned with the product domains:
+ *   - Channels per project, artist, department
+ *   - Mentions of system entities (work, contract, release)
+ *   - Internal notifications
  */
 
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
@@ -19,7 +19,7 @@ export type ChannelType =
   | "direct"        // DM entre dois utilizadores
   | "group"         // grupo ad-hoc
   | "project"       // canal associado a um Projecto
-  | "artist"        // canal associado a um Artista
+  | "artist"        // channel associated with an artist
   | "department"    // canal de departamento (Marketing, RH, etc.)
   | "general";      // canal geral do tenant
 
@@ -28,13 +28,13 @@ export type MessageType =
   | "file"
   | "image"
   | "audio"
-  | "entity_ref"    // referência a uma entidade do sistema
-  | "notification"  // notificação gerada pelo sistema
+  | "entity_ref"    // reference to a system entity
+  | "notification"  // system-generated notification
   | "event";        // evento de canal (membro adicionado, etc.)
 
 /**
- * Referência a uma entidade do domínio MUSIC OS 360.
- * Permite vincular mensagens a obras, contratos, lançamentos, etc.
+ * Reference to a MUSIC OS 360 domain entity.
+ * Lets messages link to works, contracts, releases, etc.
  */
 export interface EntityReference {
   entity_type:
@@ -74,7 +74,7 @@ export interface ChatChannel {
   type: ChannelType;
   name: string;
   description?: string | null;
-  /** ID da entidade vinculada (projecto, artista, etc.) */
+  /** ID of the linked entity (project, artist, etc.) */
   entity_id?: string | null;
   members: ChatMember[];
   unread_count: number;
@@ -96,7 +96,7 @@ export interface ChatMessage {
   entity_ref?: EntityReference | null;
   /** IDs de utilizadores mencionados com @ */
   mentions?: string[];
-  /** Mensagem à qual esta responde (thread) */
+  /** Message this one replies to (thread) */
   reply_to?: string | null;
   reactions?: Record<string, string[]>;  // emoji → user_ids
   created_at: string;
@@ -138,11 +138,11 @@ export interface ChatNotification {
 // ─── Contrato ─────────────────────────────────────────────────────────────────
 
 /**
- * IChatProvider — contrato de comunicação interna.
+ * IChatProvider — internal communication contract.
  *
- * Implementações previstas:
+ * Planned implementations:
  *   - MockChatProvider        (standalone — localStorage + MOCK_DATA)
- *   - RealtimeChatProvider    (produção — WebSocket ou SSE)
+ *   - RealtimeChatProvider    (production — WebSocket or SSE)
  */
 export interface IChatProvider {
   // ── Canais ────────────────────────────────────────────────────────────────
@@ -159,17 +159,17 @@ export interface IChatProvider {
   editMessage(messageId: string, text: string): Promise<ChatMessage>;
   deleteMessage(messageId: string): Promise<void>;
 
-  // ── Reacções ──────────────────────────────────────────────────────────────
+  // ── Reactions ─────────────────────────────────────────────────────────────
   addReaction(messageId: string, emoji: string): Promise<void>;
   removeReaction(messageId: string, emoji: string): Promise<void>;
 
-  // ── Notificações ──────────────────────────────────────────────────────────
+  // ── Notifications ─────────────────────────────────────────────────────────
   listNotifications(): Promise<ChatNotification[]>;
   markNotificationRead(notificationId: string): Promise<void>;
   markChannelRead(channelId: string): Promise<void>;
 
   // ── Tempo real ────────────────────────────────────────────────────────────
-  /** Subscreve a novos eventos num canal. Devolve função de unsubscribe. */
+  /** Subscribes to new events on a channel. Returns an unsubscribe function. */
   subscribe(channelId: string, handler: (message: ChatMessage) => void): () => void;
 }
 

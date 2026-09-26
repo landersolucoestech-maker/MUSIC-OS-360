@@ -1,19 +1,19 @@
 /**
  * shared/integrations/contracts/rights.contract.ts
  *
- * Contrato de gestão de direitos autorais e arrecadação.
+ * Copyright management and collection contract.
  *
- * Entidades cobertas:
- *   - ECAD   — arrecadação de execução pública (rádio, TV, shows, streaming)
- *   - UBC    — União Brasileira de Compositores: registro e distribuição
- *   - Abramus — registro de obras e fonogramas (mock funcional já existe)
+ * Covered entities:
+ *   - ECAD    — public performance collection (radio, TV, concerts, streaming)
+ *   - UBC     — Brazilian composers' union: registration and distribution
+ *   - Abramus — registration of works and phonograms (a working mock already exists)
  *
- * ESTADO ACTUAL:
- *   - Abramus: mock funcional completo (useAbramus.ts)
- *   - UBC:     mock funcional completo (useUbc.ts)
- *   - ECAD:    dados MOCK_DATA, conciliação visual em ECADViewModal
+ * CURRENT STATE:
+ *   - Abramus: complete working mock (useAbramus.ts)
+ *   - UBC:     complete working mock (useUbc.ts)
+ *   - ECAD:    MOCK_DATA, visual reconciliation in ECADViewModal
  *
- * MIGRAÇÃO FUTURA: cada entidade implementa IRightsProvider com a sua API.
+ * FUTURE MIGRATION: each entity implements IRightsProvider with its own API.
  */
 
 // ─── Identificadores ──────────────────────────────────────────────────────────
@@ -72,7 +72,7 @@ export interface RightsRegistrationStatus {
   kind: RightsKind;
   local_id: string;
   external_id?: string | null;
-  /** Código de registro na entidade (ex.: cod_ecad, cod_entidade) */
+  /** Registration code at the entity (e.g. cod_ecad, cod_entidade) */
   code?: string | null;
   registered: boolean;
   registered_at?: string | null;
@@ -88,9 +88,9 @@ export interface RegisterObraInput {
   editora?: string;
   genero?: string;
   duracao?: string;
-  /** ISWC já existente (se disponível); senão será gerado pela entidade */
+  /** Existing ISWC (when available); otherwise the entity generates it */
   iswc?: string;
-  /** ID local da obra no catálogo */
+  /** Local work ID in the catalog */
   local_id: string;
 }
 
@@ -102,11 +102,11 @@ export interface RegisterFonogramaInput {
   gravadora?: string;
   genero?: string;
   duracao?: string;
-  /** ISRC já existente (se disponível); senão será gerado pela entidade */
+  /** Existing ISRC (when available); otherwise the entity generates it */
   isrc?: string;
-  /** Obra vinculada (ISWC ou external_id) */
+  /** Linked work (ISWC or external_id) */
   work_id?: string;
-  /** ID local do fonograma no catálogo */
+  /** Local phonogram ID in the catalog */
   local_id: string;
 }
 
@@ -116,9 +116,9 @@ export interface RegistrationResult {
   local_id: string;
   external_id: string;
   code: string;
-  /** ISWC gerado/atribuído (para obras) */
+  /** Generated/assigned ISWC (for works) */
   iswc?: string | null;
-  /** ISRC gerado/atribuído (para fonogramas) */
+  /** Generated/assigned ISRC (for phonograms) */
   isrc?: string | null;
   registered_at: string;
   status: "pending" | "registered" | "rejected";
@@ -140,14 +140,14 @@ export interface RegistrationHistoryEntry {
   notes?: string | null;
 }
 
-// ─── DTOs de geração de código ────────────────────────────────────────────────
+// ─── Code generation DTOs ─────────────────────────────────────────────────────
 
 export interface GenerateISWCInput {
-  /** ID local da obra no catálogo */
+  /** Local work ID in the catalog */
   local_work_id: string;
   title: string;
   compositores: string[];
-  /** Se já existe ISWC, retorna o existente */
+  /** When an ISWC already exists, returns it */
   existing_iswc?: string | null;
 }
 
@@ -159,16 +159,16 @@ export interface GenerateISWCResult {
 }
 
 export interface GenerateISRCInput {
-  /** ID local do fonograma no catálogo */
+  /** Local phonogram ID in the catalog */
   local_fonograma_id: string;
   title: string;
   interprete: string;
   ano?: number;
-  /** País registante (ex.: "BR") */
+  /** Registrant country (e.g. "BR") */
   country_code?: string;
-  /** Código de registante (ex.: "MSC") */
+  /** Registrant code (e.g. "MSC") */
   registrant_code?: string;
-  /** Se já existe ISRC, retorna o existente */
+  /** When an ISRC already exists, returns it */
   existing_isrc?: string | null;
 }
 
@@ -179,13 +179,13 @@ export interface GenerateISRCResult {
   generated_at: string;
 }
 
-// ─── DTOs de arrecadação ──────────────────────────────────────────────────────
+// ─── Collection DTOs ──────────────────────────────────────────────────────────
 
 export type ArrecadacaoTipo =
-  | "execucao_publica"   // rádio, TV, shows ao vivo
+  | "execucao_publica"   // radio, TV, live concerts
   | "streaming"          // plataformas digitais
-  | "sincronizacao"      // filmes, séries, publicidade
-  | "mecanica"           // reprodução mecânica, CDs
+  | "sincronizacao"      // films, series, advertising
+  | "mecanica"           // mechanical reproduction, CDs
   | "sonorizacao";       // estabelecimentos comerciais
 
 export interface ArrecadacaoEntry {
@@ -212,7 +212,7 @@ export interface ArrecadacaoSummary {
   por_tipo: Record<ArrecadacaoTipo, number>;
 }
 
-// ─── DTOs de conciliação ─────────────────────────────────────────────────────
+// ─── Reconciliation DTOs ─────────────────────────────────────────────────────
 
 export interface ConciliacaoResult {
   matched: Array<{
@@ -221,8 +221,8 @@ export interface ConciliacaoResult {
     title: string;
     diferenca_cents: number;
   }>;
-  unmatched_local: string[];   // IDs locais sem correspondência
-  unmatched_external: string[]; // IDs externos sem correspondência local
+  unmatched_local: string[];   // Local IDs without a match
+  unmatched_external: string[]; // External IDs without a local match
   total_matched: number;
   total_unmatched_local: number;
   total_unmatched_external: number;
@@ -231,88 +231,88 @@ export interface ConciliacaoResult {
 // ─── Contrato ─────────────────────────────────────────────────────────────────
 
 /**
- * IRightsProvider — contrato completo de gestão de direitos autorais.
+ * IRightsProvider — complete copyright management contract.
  *
- * Implementações previstas:
+ * Planned implementations:
  *   - MockRightsProvider    (standalone — MOCK_DATA)
- *   - EcadRightsProvider    (ECAD API — quando disponível)
+ *   - EcadRightsProvider    (ECAD API — when available)
  *   - UbcRightsProvider     (UBC API)
- *   - AbramusRightsProvider (Abramus API — já tem mock funcional)
+ *   - AbramusRightsProvider (Abramus API — already has a working mock)
  */
 export interface IRightsProvider {
   readonly entity: RightsEntityId;
 
   // ── Pesquisa ────────────────────────────────────────────────────────────────
 
-  /** Pesquisa obras ou fonogramas na base da entidade */
+  /** Searches works or phonograms in the entity's database */
   search(query: RightsSearchQuery): Promise<RightsSearchResult[]>;
 
-  /** Pesquisa artistas, compositores, editoras na base da entidade */
+  /** Searches artists, composers, publishers in the entity's database */
   searchArtists(query: ArtistSearchQuery): Promise<ArtistSearchResult[]>;
 
-  // ── Importação ──────────────────────────────────────────────────────────────
+  // ── Import ──────────────────────────────────────────────────────────────────
 
-  /** Importa um registro externo para o catálogo local */
+  /** Imports an external record into the local catalog */
   import(kind: RightsKind, externalId: string): Promise<{ local_id: string }>;
 
-  /** Verifica o status de registro de um item local */
+  /** Checks the registration status of a local item */
   getRegistrationStatus(kind: RightsKind, localId: string): Promise<RightsRegistrationStatus>;
 
-  /** Histório de operações de registro */
+  /** History of registration operations */
   getRegistrationHistory(kind: RightsKind, localId: string): Promise<RegistrationHistoryEntry[]>;
 
   // ── Registro de novas obras/fonogramas ──────────────────────────────────────
 
-  /** Registra uma nova obra (composição) na entidade */
+  /** Registers a new work (composition) at the entity */
   registerObra(input: RegisterObraInput): Promise<RegistrationResult>;
 
-  /** Atualiza dados de uma obra já registada */
+  /** Updates data of an already registered work */
   updateObraRegistration(externalId: string, input: Partial<RegisterObraInput>): Promise<RegistrationResult>;
 
-  /** Registra um novo fonograma na entidade */
+  /** Registers a new phonogram at the entity */
   registerFonograma(input: RegisterFonogramaInput): Promise<RegistrationResult>;
 
-  /** Atualiza dados de um fonograma já registado */
+  /** Updates data of an already registered phonogram */
   updateFonogramaRegistration(externalId: string, input: Partial<RegisterFonogramaInput>): Promise<RegistrationResult>;
 
-  // ── Geração de códigos ──────────────────────────────────────────────────────
+  // ── Code generation ─────────────────────────────────────────────────────────
 
-  /** Gera ou recupera o ISWC de uma obra */
+  /** Generates or retrieves a work's ISWC */
   generateISWC(input: GenerateISWCInput): Promise<GenerateISWCResult>;
 
-  /** Gera ou recupera o ISRC de um fonograma */
+  /** Generates or retrieves a phonogram's ISRC */
   generateISRC(input: GenerateISRCInput): Promise<GenerateISRCResult>;
 
-  // ── Sincronização ───────────────────────────────────────────────────────────
+  // ── Synchronization ─────────────────────────────────────────────────────────
 
-  /** Sincroniza todos os registros locais com a entidade externa */
+  /** Syncs every local record with the external entity */
   syncAll(): Promise<{ synced: number; errors: number }>;
 
-  // ── Arrecadação ─────────────────────────────────────────────────────────────
+  // ── Collection ──────────────────────────────────────────────────────────────
 
-  /** Consulta arrecadação de um período */
+  /** Looks up collection for a period */
   getArrecadacao(periodo: string): Promise<ArrecadacaoEntry[]>;
 
-  /** Resumo de arrecadação de um período */
+  /** Collection summary for a period */
   getArrecadacaoSummary(periodo: string): Promise<ArrecadacaoSummary>;
 
-  /** Concilia arrecadação recebida com catálogo local */
+  /** Reconciles received collection with the local catalog */
   conciliar(periodo: string): Promise<ConciliacaoResult>;
 
-  // ── Saúde ───────────────────────────────────────────────────────────────────
+  // ── Health ──────────────────────────────────────────────────────────────────
 
-  /** Verifica conexão com a entidade */
+  /** Checks the connection to the entity */
   verifyConnection(): Promise<boolean>;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/** Chave de localStorage para arrecadação cacheada */
+/** localStorage key for cached collection data */
 export function arrecadacaoStorageKey(entity: RightsEntityId, periodo: string): string {
   return `musicos360_${entity}_arrecadacao_${periodo}`;
 }
 
-/** Gera um ISWC canónico (formato T-XXXXXXXXX-C) — apenas para MOCK */
+/** Generates a canonical ISWC (format T-XXXXXXXXX-C) — MOCK only */
 export function generateMockISWC(seed: string): string {
   let hash = 0;
   for (let i = 0; i < seed.length; i++) {
@@ -324,7 +324,7 @@ export function generateMockISWC(seed: string): string {
   return `T-${body.slice(0, 3)}.${body.slice(3, 6)}.${body.slice(6)}-${check}`;
 }
 
-/** Gera um ISRC canónico (formato CC-XXX-YY-NNNNN) — apenas para MOCK */
+/** Generates a canonical ISRC (format CC-XXX-YY-NNNNN) — MOCK only */
 export function generateMockISRC(
   country: string = "BR",
   registrant: string = "MSC",

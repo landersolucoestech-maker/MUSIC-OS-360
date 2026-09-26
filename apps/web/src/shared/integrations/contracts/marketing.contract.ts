@@ -1,39 +1,39 @@
 /**
  * shared/integrations/contracts/marketing.contract.ts
  *
- * Contratos unificados para integrações de Marketing Digital — contas corporativas.
+ * Unified contracts for digital marketing integrations — corporate accounts.
  *
- * ARQUITECTURA:
- * — Plataformas dos ARTISTAS (Instagram, TikTok, Spotify, YouTube, Deezer, Apple Music,
- *   SoundCloud) funcionam AUTOMATICAMENTE via links do cadastro do artista.
- *   NÃO existe integração manual separada para artistas nessas plataformas.
+ * ARCHITECTURE:
+ * — ARTIST platforms (Instagram, TikTok, Spotify, YouTube, Deezer, Apple Music,
+ *   SoundCloud) work AUTOMATICALLY through the links in the artist record.
+ *   There is NO separate manual integration for artists on those platforms.
  *
- * — Este módulo trata APENAS contas corporativas da empresa/label/publisher:
- *   · Métricas Corporativas — contas analytics da empresa
- *   · Tráfego Pago         — contas de anúncios da empresa
- *   · Website & Outros     — formulários, landing pages, API directa
+ * — This module covers ONLY the company/label/publisher corporate accounts:
+ *   · Corporate metrics — the company's analytics accounts
+ *   · Paid traffic      — the company's ad accounts
+ *   · Website & other   — forms, landing pages, direct API
  */
 
 // ─── IDs de plataforma ────────────────────────────────────────────────────────
 
 export type MarketingPlatformId =
-  // ── Métricas Corporativas ─────────────────────────────────────────────────
-  // Contas oficiais da empresa/label em cada plataforma.
-  // Login obrigatório para aceder analytics, gestão de página e publicações.
+  // ── Corporate metrics ─────────────────────────────────────────────────────
+  // The company/label's official accounts on each platform.
+  // Login required to access analytics, page management and posts.
   | "meta_business"       // Meta Business Suite — Facebook + Instagram + Meta Ads (unificado)
   | "youtube_business"    // YouTube Business — YouTube Studio + YouTube Ads (unificado)
   | "tiktok_business"     // TikTok Business — TikTok for Business + TikTok Ads (unificado)
   | "google_business"     // Google Business — Analytics 4 + Search Console + Google Ads (unificado)
-  | "corp_spotify"        // Spotify for Artists — perfil oficial da empresa
-  | "corp_deezer"         // Deezer for Artists — presença da label no Deezer
+  | "corp_spotify"        // Spotify for Artists — the company's official profile
+  | "corp_deezer"         // Deezer for Artists — the label's presence on Deezer
   | "corp_soundcloud"     // SoundCloud Pro — perfil oficial da label
-  | "corp_apple_music"    // Apple Music for Artists — presença da label no Apple Music
-  // ── Métricas Corporativas — aliases curtos ────────────────────────────────
+  | "corp_apple_music"    // Apple Music for Artists — the label's presence on Apple Music
+  // ── Corporate metrics — short aliases ─────────────────────────────────────
   | "corp_instagram"       // Instagram corporativo (parte de meta_business)
   | "corp_tiktok"          // TikTok corporativo (parte de tiktok_business)
   | "corp_youtube"         // YouTube corporativo (parte de youtube_business)
-  // ── Tráfego Pago ─────────────────────────────────────────────────────────
-  // Contas de anúncios pagos da empresa. Login obrigatório.
+  // ── Paid traffic ─────────────────────────────────────────────────────────
+  // The company's paid ad accounts. Login required.
   | "meta_ads"
   | "google_ads"
   | "tiktok_ads"
@@ -49,7 +49,7 @@ export type CampaignStatus = "active" | "paused" | "ended" | "draft" | "archived
 
 export type LeadStatus = "new" | "contacted" | "qualified" | "converted" | "lost";
 
-// ─── Campanhas (Tráfego Pago) ─────────────────────────────────────────────────
+// ─── Campaigns (paid traffic) ─────────────────────────────────────────────────
 
 export interface ICampaign {
   id: string;
@@ -108,7 +108,7 @@ export interface ILeadSyncResult {
   lastSyncAt: string;
 }
 
-// ─── Métricas & Analytics ─────────────────────────────────────────────────────
+// ─── Metrics & analytics ──────────────────────────────────────────────────────
 
 export interface IMetricsPeriod {
   from: string;
@@ -171,7 +171,7 @@ export interface IMarketingProvider {
   getTopContent?(limit?: number): Promise<ITopPost[]>;
 }
 
-// ─── Estado de conexão OAuth ──────────────────────────────────────────────────
+// ─── OAuth connection state ───────────────────────────────────────────────────
 
 export interface IMarketingOAuthConnection {
   platform: MarketingPlatformId;

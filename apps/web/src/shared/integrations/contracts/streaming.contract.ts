@@ -1,18 +1,18 @@
 /**
  * shared/integrations/contracts/streaming.contract.ts
  *
- * Contrato de métricas de streaming e publicidade digital.
+ * Streaming and digital advertising metrics contract.
  *
- * Plataformas cobertas:
+ * Covered platforms:
  *   Streaming: Spotify · YouTube · TikTok · Instagram · Deezer · Apple Music · SoundCloud
- *   Ads:       Google Ads · Meta Ads (já em marketing/adapters/meta-ads.adapter.ts)
+ *   Ads:       Google Ads · Meta Ads (already in marketing/adapters/meta-ads.adapter.ts)
  *
- * ESTADO ACTUAL: standalone — métricas são MOCK_DATA.
- * MIGRAÇÃO FUTURA: cada plataforma implementa IStreamingProvider com a sua API.
+ * CURRENT STATE: standalone — metrics are MOCK_DATA.
+ * FUTURE MIGRATION: each platform implements IStreamingProvider with its own API.
  *
- * REGRA: Analytics module usa IStreamingProvider para company-level metrics.
- *        Artist module usa IStreamingProvider filtrado por artista (Visão 360 modal).
- *        Nenhum componente chama APIs de streaming directamente.
+ * RULE: the Analytics module uses IStreamingProvider for company-level metrics.
+ *       The Artist module uses IStreamingProvider filtered by artist (360 view modal).
+ *       No component calls streaming APIs directly.
  */
 
 // ─── Identificadores de plataforma ────────────────────────────────────────────
@@ -30,7 +30,7 @@ export type AdsPlatformId =
   | "google-ads"
   | "meta-ads";
 
-// ─── DTOs de métricas ─────────────────────────────────────────────────────────
+// ─── Metrics DTOs ─────────────────────────────────────────────────────────────
 
 export type MetricsPeriod = "7d" | "28d" | "30d" | "90d" | "365d" | "all";
 
@@ -39,13 +39,13 @@ export interface MetricsDateRange {
   to: string;    // ISO 8601
 }
 
-/** Série temporal de um único indicador */
+/** Time series of a single indicator */
 export interface MetricTimeSeries {
   date: string;
   value: number;
 }
 
-/** Métricas de uma obra/fonograma numa plataforma */
+/** Metrics of a work/phonogram on a platform */
 export interface TrackMetrics {
   isrc: string;
   platform: StreamingPlatformId;
@@ -54,11 +54,11 @@ export interface TrackMetrics {
   playlist_adds?: number;
   skip_rate?: number;
   completion_rate?: number;
-  /** Série temporal de streams por dia */
+  /** Time series of daily streams */
   daily_streams?: MetricTimeSeries[];
 }
 
-/** Métricas gerais de um artista numa plataforma */
+/** Overall metrics of an artist on a platform */
 export interface ArtistMetrics {
   artist_id: string;
   platform: StreamingPlatformId;
@@ -67,13 +67,13 @@ export interface ArtistMetrics {
   followers?: number;
   total_streams: number;
   top_tracks: TrackMetrics[];
-  /** Distribuição geográfica de streams por país */
+  /** Geographic distribution of streams per country */
   geo_breakdown?: Array<{ country: string; streams: number; pct: number }>;
-  /** Evolução de ouvintes mensais */
+  /** Monthly listeners trend */
   listener_trend?: MetricTimeSeries[];
 }
 
-/** Métricas de conteúdo em vídeo (YouTube, TikTok) */
+/** Video content metrics (YouTube, TikTok) */
 export interface VideoMetrics {
   video_id: string;
   platform: "youtube" | "tiktok";
@@ -83,11 +83,11 @@ export interface VideoMetrics {
   shares?: number;
   watch_time_hours?: number;
   avg_view_duration_seconds?: number;
-  /** Receita estimada em centavos (disponível apenas no YouTube) */
+  /** Estimated revenue in cents (available only on YouTube) */
   estimated_revenue_cents?: number;
 }
 
-/** Métricas de conteúdo social (Instagram, TikTok) */
+/** Social content metrics (Instagram, TikTok) */
 export interface SocialMetrics {
   account_id: string;
   platform: "instagram" | "tiktok";
@@ -130,9 +130,9 @@ export interface AdCampaign {
 // ─── Contrato de streaming ────────────────────────────────────────────────────
 
 /**
- * IStreamingProvider — contrato de métricas de streaming por plataforma.
+ * IStreamingProvider — per-platform streaming metrics contract.
  *
- * Implementações previstas (uma por plataforma):
+ * Planned implementations (one per platform):
  *   - MockStreamingProvider        (standalone — MOCK_DATA)
  *   - SpotifyStreamingProvider     (Spotify for Artists API)
  *   - YouTubeStreamingProvider     (YouTube Analytics API v2)
@@ -145,43 +145,43 @@ export interface AdCampaign {
 export interface IStreamingProvider {
   readonly platform: StreamingPlatformId;
 
-  /** Métricas de um artista no período */
+  /** An artist's metrics for the period */
   getArtistMetrics(
     artistId: string,
     period: MetricsPeriod | MetricsDateRange
   ): Promise<ArtistMetrics>;
 
-  /** Métricas de uma obra/fonograma por ISRC */
+  /** A work/phonogram's metrics by ISRC */
   getTrackMetrics(
     isrc: string,
     period: MetricsPeriod | MetricsDateRange
   ): Promise<TrackMetrics>;
 
-  /** Métricas de vídeo (YouTube / TikTok) */
+  /** Video metrics (YouTube / TikTok) */
   getVideoMetrics?(
     videoId: string,
     period: MetricsPeriod | MetricsDateRange
   ): Promise<VideoMetrics>;
 
-  /** Métricas sociais (Instagram / TikTok) */
+  /** Social metrics (Instagram / TikTok) */
   getSocialMetrics?(
     accountId: string,
     period: MetricsPeriod
   ): Promise<SocialMetrics>;
 
-  /** Verifica se as credenciais configuradas são válidas */
+  /** Checks whether the configured credentials are valid */
   verifyConnection(): Promise<boolean>;
 }
 
 // ─── Contrato de ads ──────────────────────────────────────────────────────────
 
 /**
- * IAdsProvider — contrato de campanhas de publicidade digital.
+ * IAdsProvider — digital advertising campaigns contract.
  *
- * Implementações previstas:
+ * Planned implementations:
  *   - MockAdsProvider       (standalone — MOCK_DATA)
  *   - GoogleAdsProvider     (Google Ads API)
- *   - MetaAdsProvider       (Meta Marketing API — já em marketing/hooks/useMetaAds.ts)
+ *   - MetaAdsProvider       (Meta Marketing API — already in marketing/hooks/useMetaAds.ts)
  */
 export interface IAdsProvider {
   readonly platform: AdsPlatformId;
@@ -198,9 +198,9 @@ export interface StreamingPlatformMeta {
   id: StreamingPlatformId;
   name: string;
   color: string;
-  /** Chave métrica principal exibida nos cards */
+  /** Main metric key shown on the cards */
   primaryMetric: "streams" | "views" | "plays" | "listeners";
-  /** URL base de perfil para construir links de artista */
+  /** Base profile URL used to build artist links */
   profileBaseUrl: string;
 }
 

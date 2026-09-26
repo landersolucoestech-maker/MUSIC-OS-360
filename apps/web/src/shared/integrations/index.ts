@@ -1,16 +1,16 @@
 /**
  * shared/integrations/index.ts
  *
- * Barrel principal do sistema de integrações do MUSIC OS 360.
+ * Main barrel of the MUSIC OS 360 integrations system.
  *
- * Estrutura:
+ * Structure:
  *   types.ts    — IntegrationId, IntegrationCategory, IntegrationStatus, etc.
- *   registry.ts — metadados centrais de todas as integrações
- *   contracts/  — interfaces IXxxProvider por categoria
+ *   registry.ts — central metadata of every integration
+ *   contracts/  — IXxxProvider interfaces per category
  *
- * REGRA: código de domínio importa de "@/modules/<domain>/adapters/<x>.adapter"
- * e NÃO directamente de "@/shared/integrations".
- * Este barrel é para uso interno de infraestrutura e Settings.
+ * RULE: domain code imports from "@/modules/<domain>/adapters/<x>.adapter"
+ * and NOT directly from "@/shared/integrations".
+ * This barrel is for internal infrastructure and Settings use.
  */
 
 export type {

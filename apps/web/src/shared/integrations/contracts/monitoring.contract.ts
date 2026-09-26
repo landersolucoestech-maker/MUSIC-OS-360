@@ -1,15 +1,15 @@
 /**
  * shared/integrations/contracts/monitoring.contract.ts
  *
- * Contratos de monitoramento de produto e erros.
- *   - IAnalyticsProvider  → PostHog (feature flags, funis, A/B)
- *   - IErrorMonitorProvider → Sentry (erros, performance, traces)
+ * Product and error monitoring contracts.
+ *   - IAnalyticsProvider  → PostHog (feature flags, funnels, A/B)
+ *   - IErrorMonitorProvider → Sentry (errors, performance, traces)
  *
- * ESTADO ACTUAL: standalone — sem monitoramento real.
- * MIGRAÇÃO FUTURA: providers substituem as funções de log actuais.
+ * CURRENT STATE: standalone — no real monitoring.
+ * FUTURE MIGRATION: providers replace the current log functions.
  *
- * REGRA: componentes NUNCA chamam PostHog ou Sentry directamente.
- * Usam os hooks useAnalytics() e useErrorMonitor() que delegam para estes contratos.
+ * RULE: components NEVER call PostHog or Sentry directly.
+ * They use the useAnalytics() and useErrorMonitor() hooks, which delegate to these contracts.
  */
 
 // ─── Analytics (PostHog) ──────────────────────────────────────────────────────
@@ -65,29 +65,29 @@ export interface FeatureFlagContext {
 }
 
 /**
- * IAnalyticsProvider — contrato de analytics de produto.
+ * IAnalyticsProvider — product analytics contract.
  *
- * Implementações previstas:
- *   - MockAnalyticsProvider   (standalone — log em consola em dev)
- *   - PostHogAnalyticsProvider (produção — PostHog SDK)
+ * Planned implementations:
+ *   - MockAnalyticsProvider   (standalone — console log in dev)
+ *   - PostHogAnalyticsProvider (production — PostHog SDK)
  */
 export interface IAnalyticsProvider {
   /** Identifica o utilizador no sistema de analytics */
   identify(userId: string, properties?: AnalyticsEventProperties): void;
 
-  /** Regista um evento de produto */
+  /** Records a product event */
   track(event: AnalyticsEventName, properties?: AnalyticsEventProperties): void;
 
-  /** Regista uma visualização de página */
+  /** Records a page view */
   page(name: string, properties?: AnalyticsEventProperties): void;
 
-  /** Verifica se uma feature flag está activa para o contexto dado */
+  /** Checks whether a feature flag is active for the given context */
   isFeatureEnabled(flagKey: string, context: FeatureFlagContext): Promise<boolean>;
 
-  /** Obtém o valor de uma feature flag (para A/B testing) */
+  /** Gets a feature flag value (for A/B testing) */
   getFeatureFlagPayload(flagKey: string, context: FeatureFlagContext): Promise<string | null>;
 
-  /** Limpa a identidade (após sign out) */
+  /** Clears the identity (after sign-out) */
   reset(): void;
 }
 
@@ -120,32 +120,32 @@ export interface PerformanceTransaction {
 }
 
 /**
- * IErrorMonitorProvider — contrato de monitoramento de erros e performance.
+ * IErrorMonitorProvider — error and performance monitoring contract.
  *
- * Implementações previstas:
- *   - MockErrorMonitorProvider   (standalone — console.error em dev)
- *   - SentryErrorMonitorProvider (produção — Sentry SDK)
+ * Planned implementations:
+ *   - MockErrorMonitorProvider   (standalone — console.error in dev)
+ *   - SentryErrorMonitorProvider (production — Sentry SDK)
  */
 export interface IErrorMonitorProvider {
-  /** Captura um erro e envia para o sistema de monitoramento */
+  /** Captures an error and sends it to the monitoring system */
   captureError(error: Error, context?: ErrorContext, severity?: ErrorSeverity): string;
 
-  /** Captura uma mensagem (não um Error) */
+  /** Captures a message (not an Error) */
   captureMessage(message: string, severity?: ErrorSeverity, context?: ErrorContext): string;
 
-  /** Define o utilizador activo para correlação de erros */
+  /** Sets the active user for error correlation */
   setUser(user: { id: string; email?: string; tenant_id?: string } | null): void;
 
-  /** Adiciona uma entrada de breadcrumb para rastreio de fluxo */
+  /** Adds a breadcrumb entry for flow tracing */
   addBreadcrumb(entry: BreadcrumbEntry): void;
 
-  /** Inicia uma transacção de performance */
+  /** Starts a performance transaction */
   startTransaction(name: string, op: string): PerformanceTransaction;
 
-  /** Define uma tag global para todas as ocorrências */
+  /** Sets a global tag on every occurrence */
   setTag(key: string, value: string): void;
 
-  /** Define contexto extra para todas as ocorrências */
+  /** Sets extra context on every occurrence */
   setContext(key: string, context: Record<string, unknown>): void;
 }
 

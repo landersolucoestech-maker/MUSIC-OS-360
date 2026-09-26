@@ -1,13 +1,13 @@
 /**
  * shared/integrations/contracts/payments.contract.ts
  *
- * Contrato de pagamentos — implementação alvo: Stripe.
+ * Payments contract — target implementation: Stripe.
  *
- * ESTADO ACTUAL: standalone — sem billing real.
- * MIGRAÇÃO FUTURA: IPaymentsProvider implementado via Stripe SDK no backend.
+ * CURRENT STATE: standalone — no real billing.
+ * FUTURE MIGRATION: IPaymentsProvider implemented via the Stripe SDK in the backend.
  *
- * Âmbito: subscriptions SaaS por tenant (não recebimentos externos de direitos de artistas).
- * Recebimentos externos de direitos são um domínio separado (accounting + rights).
+ * Scope: per-tenant SaaS subscriptions (not external artist rights receipts).
+ * External rights receipts are a separate domain (accounting + rights).
  */
 
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
@@ -52,7 +52,7 @@ export interface TenantSubscription {
   trial_end?: string | null;
   cancel_at?: string | null;
   features: SubscriptionFeatures;
-  /** Preço em centavos (BRL) */
+  /** Price in cents (BRL) */
   amount_cents: number;
   currency: "brl" | "usd";
 }
@@ -97,32 +97,32 @@ export interface CreatePortalParams {
 // ─── Contrato ─────────────────────────────────────────────────────────────────
 
 /**
- * IPaymentsProvider — contrato de billing e subscriptions SaaS.
+ * IPaymentsProvider — SaaS billing and subscriptions contract.
  *
- * Implementações previstas:
- *   - MockPaymentsProvider   (standalone — dados fixos)
- *   - StripePaymentsProvider (produção — Stripe API via backend)
+ * Planned implementations:
+ *   - MockPaymentsProvider   (standalone — fixed data)
+ *   - StripePaymentsProvider (production — Stripe API via the backend)
  */
 export interface IPaymentsProvider {
-  /** Dados da subscription activa do tenant */
+  /** The tenant's active subscription data */
   getSubscription(tenantId: string): Promise<TenantSubscription | null>;
 
-  /** Cria uma sessão de Checkout para subscrever ou upgradar */
+  /** Creates a Checkout session to subscribe or upgrade */
   createCheckoutSession(params: CreateCheckoutParams): Promise<{ url: string }>;
 
-  /** Cria uma sessão do Customer Portal para gerir billing */
+  /** Creates a Customer Portal session to manage billing */
   createPortalSession(params: CreatePortalParams): Promise<{ url: string }>;
 
-  /** Lista os métodos de pagamento do tenant */
+  /** Lists the tenant's payment methods */
   listPaymentMethods(tenantId: string): Promise<PaymentMethod[]>;
 
   /** Lista facturas emitidas */
   listInvoices(tenantId: string, limit?: number): Promise<Invoice[]>;
 
-  /** Cancela a subscription no fim do período */
+  /** Cancels the subscription at the end of the period */
   cancelSubscription(tenantId: string): Promise<void>;
 
-  /** Verifica se o tenant tem acesso a uma feature pelo plano */
+  /** Checks whether the tenant's plan grants access to a feature */
   hasFeature(tenantId: string, feature: keyof SubscriptionFeatures): Promise<boolean>;
 }
 

@@ -1,8 +1,8 @@
 /**
  * shared/integrations/contracts/index.ts
  *
- * Barrel de todos os contratos de integração.
- * Importar de "@/shared/integrations/contracts" para aceder a qualquer contrato.
+ * Barrel of every integration contract.
+ * Import from "@/shared/integrations/contracts" to reach any contract.
  */
 
 export type {

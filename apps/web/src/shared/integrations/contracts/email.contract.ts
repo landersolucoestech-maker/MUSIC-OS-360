@@ -1,17 +1,17 @@
 /**
  * shared/integrations/contracts/email.contract.ts
  *
- * Contrato de e-mail transaccional — implementação alvo: Resend.
+ * Transactional email contract — target implementation: Resend.
  *
- * ESTADO ACTUAL: hook useResend em modules/integrations/hooks/useResend.ts (mock).
- * MIGRAÇÃO FUTURA: IEmailProvider implementado via Resend SDK no backend.
+ * CURRENT STATE: useResend hook in modules/integrations/hooks/useResend.ts (mock).
+ * FUTURE MIGRATION: IEmailProvider implemented via the Resend SDK in the backend.
  *
- * Casos de uso no MUSIC OS 360:
- *   - Convite de novos utilizadores ao tenant
- *   - Alertas de expiração de contrato
- *   - Relatórios periódicos de recebimentos externos de direitos/contabilidade
- *   - Notificações de aprovação/rejeição de lançamento
- *   - Confirmação de assinatura digital (Autentique)
+ * Use cases in MUSIC OS 360:
+ *   - Inviting new users to the tenant
+ *   - Contract expiry alerts
+ *   - Periodic reports of external rights/accounting receipts
+ *   - Release approval/rejection notifications
+ *   - Digital signature confirmation (Autentique)
  */
 
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
@@ -41,7 +41,7 @@ export interface EmailAttachment {
 export interface SendEmailParams {
   to: EmailRecipient | EmailRecipient[];
   subject: string;
-  /** HTML gerado ou template_id com variáveis */
+  /** Generated HTML or a template_id with variables */
   html?: string;
   text?: string;
   template_id?: EmailTemplateId;
@@ -67,22 +67,22 @@ export interface EmailDeliveryStatus {
 // ─── Contrato ─────────────────────────────────────────────────────────────────
 
 /**
- * IEmailProvider — contrato de envio de e-mail transaccional.
+ * IEmailProvider — transactional email sending contract.
  *
- * Implementações previstas:
- *   - MockEmailProvider   (standalone — log em consola, toast de sucesso)
- *   - ResendEmailProvider (produção — Resend API via backend)
+ * Planned implementations:
+ *   - MockEmailProvider   (standalone — console log, success toast)
+ *   - ResendEmailProvider (production — Resend API via the backend)
  */
 export interface IEmailProvider {
   send(params: SendEmailParams): Promise<SendEmailResult>;
   getDeliveryStatus(messageId: string): Promise<EmailDeliveryStatus>;
-  /** Verifica se as credenciais configuradas são válidas */
+  /** Checks whether the configured credentials are valid */
   verifyConnection(): Promise<boolean>;
 }
 
 // ─── Template helpers ─────────────────────────────────────────────────────────
 
-/** Variáveis esperadas por cada template */
+/** Variables each template expects */
 export const EMAIL_TEMPLATE_VARS: Record<EmailTemplateId, string[]> = {
   "user-invite":          ["invitee_name", "inviter_name", "tenant_name", "invite_url"],
   "contract-expiry-alert":["artist_name", "contract_title", "expiry_date", "days_remaining"],

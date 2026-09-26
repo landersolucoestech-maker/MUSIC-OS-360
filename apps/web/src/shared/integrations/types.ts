@@ -1,19 +1,19 @@
 /**
  * shared/integrations/types.ts
  *
- * Tipos centrais do sistema de integrações do MUSIC OS 360.
- * Este ficheiro é a fonte de verdade para todos os identificadores,
- * categorias e contratos de metadados de integrações.
+ * Core types of the MUSIC OS 360 integrations system.
+ * This file is the source of truth for every integration identifier,
+ * category and metadata contract.
  *
- * REGRA: código de domínio NUNCA importa daqui directamente —
- * usa o adapter do seu próprio módulo.
+ * RULE: domain code NEVER imports from here directly —
+ * it uses its own module's adapter.
  */
 
 // ─── Identificadores ──────────────────────────────────────────────────────────
 
 /**
- * Identificador canónico de cada integração.
- * Usado como chave no registry, em queryKeys, e em localStorage.
+ * Canonical identifier of each integration.
+ * Used as the registry key, in queryKeys and in localStorage.
  */
 export type IntegrationId =
   // Storage
@@ -29,7 +29,7 @@ export type IntegrationId =
   // Monitoramento de produto / erros
   | "posthog"
   | "sentry"
-  // Streaming / métricas
+  // Streaming / metrics
   | "spotify"
   | "youtube"
   | "tiktok"
@@ -42,11 +42,11 @@ export type IntegrationId =
   | "deezer"
   | "apple-music"
   | "soundcloud"
-  // Arrecadação / direitos autorais
+  // Collection / copyright
   | "ecad"
   | "ubc"
   | "abramus"
-  // Distribuição digital
+  // Digital distribution
   | "onerpm"
   | "distrokid"
   | "symphonic"
@@ -57,7 +57,7 @@ export type IntegrationId =
   | "nfe"
   // Monitoramento musical (fingerprint)
   | "acrcloud"
-  // Comunicação interna
+  // Internal communication
   | "chat"
   | "musicroomchat";
 
@@ -89,39 +89,39 @@ export type IntegrationStatus =
 // ─── Metadados ───────────────────────────────────────────────────────────────
 
 /**
- * Metadados descritivos de uma integração.
- * Consumido pelo registry e pelas UIs de configuração.
+ * Descriptive metadata of an integration.
+ * Consumed by the registry and the configuration UIs.
  */
 export interface IntegrationMeta {
-  /** Identificador canónico */
+  /** Canonical identifier */
   id: IntegrationId;
-  /** Nome de exibição */
+  /** Display name */
   name: string;
   /** Categoria funcional */
   category: IntegrationCategory;
-  /** Descrição curta para UI */
+  /** Short UI description */
   description: string;
-  /** Identidade visual canônica usada por cards, diálogos e popups. */
+  /** Canonical visual identity used by cards, dialogs and popups. */
   logoId?: import("./logos").IntegrationLogoId;
-  /** URL da documentação oficial */
+  /** Official documentation URL */
   docsUrl?: string;
   /**
-   * Chave de localStorage onde as credenciais são guardadas.
-   * Convenção: `musicos360_<id>_credentials`
+   * localStorage key where the credentials are stored.
+   * Convention: `musicos360_<id>_credentials`
    */
   credentialsKey?: string;
   /**
-   * Indica se a integração é obrigatória para o funcionamento
-   * básico da plataforma.
+   * Whether the integration is required for the platform's basic
+   * operation.
    */
   required?: boolean;
 }
 
-// ─── Credenciais genéricas ───────────────────────────────────────────────────
+// ─── Generic credentials ─────────────────────────────────────────────────────
 
 /**
- * Wrapper de credenciais genérico.
- * Cada integração define o type concreto de `T`.
+ * Generic credentials wrapper.
+ * Each integration defines the concrete type of `T`.
  */
 export interface IntegrationCredentials<T extends Record<string, string>> {
   integration_id: IntegrationId;
@@ -141,7 +141,7 @@ export interface IntegrationHealthCheck {
 // ─── Estado runtime ──────────────────────────────────────────────────────────
 
 /**
- * Estado runtime de uma integração (retornado pelos hooks `use<X>Status`).
+ * Runtime state of an integration (returned by the `use<X>Status` hooks).
  */
 export interface IntegrationRuntimeStatus {
   integration_id: IntegrationId;
@@ -149,6 +149,6 @@ export interface IntegrationRuntimeStatus {
   connected: boolean;
   last_error?: string | null;
   last_checked_at?: string | null;
-  /** Campos específicos de cada integração são acrescentados via extensão */
+  /** Integration-specific fields are added through extension */
   [key: string]: unknown;
 }
