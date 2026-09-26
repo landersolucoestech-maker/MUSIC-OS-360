@@ -25,6 +25,7 @@ import { DatabaseContextService } from '../../../src/database/database-context.s
 import { EncryptionService } from '../../../src/core/security/encryption.service';
 import { IntegrationBaseService } from '../../../src/modules/integrations/integration-base.service';
 import { InstagramTokenRefreshScheduler } from '../../../src/modules/integrations/instagram/instagram-token-refresh.scheduler';
+import { RealtimeService } from '../../../src/core/realtime/realtime.service';
 
 const TENANT_A = '7c000000-0000-4000-8000-00000000000a';
 const TENANT_B = '7d000000-0000-4000-8000-00000000000b';
@@ -136,5 +137,32 @@ describe('Caminhos públicos/sistema com contexto de tenant — Postgres real (f
       expect(c.visible).toBe(1);
     }
     expect(result.refreshed).toBeGreaterThanOrEqual(2);
+  });
+
+  it('5. contexto só com tenantId completa o org (tabelas org-isoladas: tenants/organizations/billing_subscriptions)', async () => {
+    const readOwnTenant = () => app.query(`SELECT count(*)::int AS n FROM tenants WHERE id = $1`, [TENANT_A]);
+    const readOtherTenant = () => app.query(`SELECT count(*)::int AS n FROM tenants WHERE id = $1`, [TENANT_B]);
+
+    // Sem ADMIN_DATA_SOURCE (comportamento antigo): org vazio -> 0 linhas.
+    const noAdmin = new DatabaseContextService(app, { get: () => 'true' } as never);
+    const before = await noAdmin.runInTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, readOwnTenant);
+    expect(before[0].n).toBe(0);
+
+    // Com ADMIN_DATA_SOURCE: org resolvido a partir do tenant.
+    const withAdmin = new DatabaseContextService(app, { get: () => 'true' } as never, owner);
+    const own = await withAdmin.runInTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, readOwnTenant);
+    expect(own[0].n).toBe(1);
+    // ...e continua sem enxergar o tenant de OUTRO org.
+    const other = await withAdmin.runInTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, readOtherTenant);
+    expect(other[0].n).toBe(0);
+  });
+
+  it('6. RealtimeService resolve tenant -> org fora de contexto (antes: broadcast sempre pulado)', async () => {
+    const expected = (await owner.query(`SELECT org_id FROM tenants WHERE id = $1`, [TENANT_A]))[0].org_id;
+    const cfg = { get: () => undefined } as never;
+    const legacy = new RealtimeService(cfg, app) as unknown as { resolveOrgId(t: string): Promise<string | null> };
+    expect(await legacy.resolveOrgId(TENANT_A)).toBeNull();
+    const fixed = new RealtimeService(cfg, app, owner) as unknown as { resolveOrgId(t: string): Promise<string | null> };
+    expect(await fixed.resolveOrgId(TENANT_A)).toBe(expected);
   });
 });

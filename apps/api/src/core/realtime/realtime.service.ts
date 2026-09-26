@@ -29,11 +29,11 @@
  * a missing Redis adapter (single-instance mode) rather than crashing.
  */
 
-import { Injectable, Inject, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Inject, Logger, OnModuleDestroy, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { DataSource, Repository } from 'typeorm';
-import { DATA_SOURCE } from '../../database/database.module';
+import { DATA_SOURCE, ADMIN_DATA_SOURCE } from '../../database/database.module';
 import { TenantEntity } from '../../database/entities';
 import { tenantAls } from '../../database/tenant-als';
 
@@ -48,6 +48,7 @@ export class RealtimeService implements OnModuleDestroy {
   constructor(
     private readonly config: ConfigService,
     @Inject(DATA_SOURCE) ds: DataSource | null,
+    @Optional() @Inject(ADMIN_DATA_SOURCE) adminDs?: DataSource | null,
   ) {
     const url            = this.config.get<string>('SUPABASE_URL');
     const serviceRoleKey = this.config.get<string>('SUPABASE_SERVICE_ROLE_KEY');
@@ -62,8 +63,15 @@ export class RealtimeService implements OnModuleDestroy {
         'RealtimeService: SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY ausentes — broadcasts desativados (no-op)',
       );
     }
-    if (ds) {
-      this.tenantRepo = ds.getRepository(TenantEntity);
+    // find-c703b56c (class find-b4201eb2): `tenants` is FORCE RLS (org_isolation). This lookup
+    // runs deliberately OUTSIDE any tenant context (tenantAls.exit below), so
+    // through the app role (NOBYPASSRLS) it found no row and EVERY tenant
+    // broadcast was skipped in production. The Supabase service_role only
+    // applies to the broadcast client, not to this DB read: use the owner
+    // read-only ADMIN_DATA_SOURCE for the tenant -> org mapping.
+    const lookupDs = adminDs ?? ds;
+    if (lookupDs) {
+      this.tenantRepo = lookupDs.getRepository(TenantEntity);
     }
   }
 
@@ -75,8 +83,9 @@ export class RealtimeService implements OnModuleDestroy {
    * DatabaseContextService.runInTenantContext (DATABASE_SESSION_CONTEXT_ENABLED=true),
    * o QueryRunner request-scoped pode já ter sido liberado (finally do
    * runInTenantContext) antes desta query assíncrona terminar, lançando
-   * QueryRunnerAlreadyReleasedError. RealtimeService usa service_role e
-   * bypassa RLS — nunca precisou do contexto de tenant/ALS para esta consulta.
+   * QueryRunnerAlreadyReleasedError. A consulta usa ADMIN_DATA_SOURCE (owner,
+   * somente leitura) — o service_role do Supabase vale só para o broadcast,
+   * não para esta leitura no Postgres.
    * `tenantAls.exit()` garante que o Proxy de DATA_SOURCE (tenant-als.ts) NUNCA
    * veja um store ativo aqui, então esta query sempre usa uma conexão própria
    * do pool, independente do ciclo de vida de qualquer QueryRunner de request.

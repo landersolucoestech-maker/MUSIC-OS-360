@@ -33,7 +33,7 @@
 import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DataSource, EntityManager } from 'typeorm';
-import { DATA_SOURCE } from './database.tokens';
+import { DATA_SOURCE, ADMIN_DATA_SOURCE } from './database.tokens';
 import { runWithTenantManager, currentTenantManager } from './tenant-als';
 
 export interface TenantDbContext {
@@ -47,9 +47,21 @@ export class DatabaseContextService {
   private readonly logger = new Logger('DatabaseContextService');
   private readonly flagEnabled: boolean;
 
+  /** tenantId -> org_id (a tenant's org never changes); bounded by TTL. */
+  private readonly orgCache = new Map<string, { orgId: string | null; expiresAt: number }>();
+  private static readonly ORG_CACHE_TTL_MS = 5 * 60_000;
+
   constructor(
     @Optional() @Inject(DATA_SOURCE) private readonly ds: DataSource | null,
     @Optional() private readonly config?: ConfigService,
+    // find-b4641a0f (class find-b4201eb2): RLS scopes by TWO keys — tenant (most tables) and org
+    // (tenants, organizations, billing_subscriptions). Workers, schedulers
+    // and webhooks open contexts with only a tenantId (34 call sites pass
+    // orgId: null), so every org-isolated read/write in them silently saw
+    // nothing (proven on real Postgres: Stripe handlers, AI plan lookup,
+    // onboarding automation). The org is resolved read-only via the owner
+    // connection when the caller does not supply it.
+    @Optional() @Inject(ADMIN_DATA_SOURCE) private readonly adminDs?: DataSource | null,
   ) {
     this.flagEnabled =
       (this.config?.get<string>('DATABASE_SESSION_CONTEXT_ENABLED') ?? 'false') === 'true';
@@ -68,6 +80,17 @@ export class DatabaseContextService {
    * @param work  receives the EntityManager that MUST be used for the work to be
    *              covered by the session context (when enabled).
    */
+  /** Read-only, cached tenant -> org resolution through ADMIN_DATA_SOURCE. */
+  private async resolveOrgIdForTenant(tenantId: string): Promise<string | null> {
+    const hit = this.orgCache.get(tenantId);
+    if (hit && hit.expiresAt > Date.now()) return hit.orgId;
+    if (!this.adminDs) return null;
+    const rows = await this.adminDs.query(`SELECT org_id FROM tenants WHERE id = $1 LIMIT 1`, [tenantId]) as Array<{ org_id: string | null }>;
+    const orgId = rows[0]?.org_id ? String(rows[0].org_id) : null;
+    this.orgCache.set(tenantId, { orgId, expiresAt: Date.now() + DatabaseContextService.ORG_CACHE_TTL_MS });
+    return orgId;
+  }
+
   /**
    * find-b4201eb2 (classe: escrita/leitura tenant-scoped a partir de caminho
    * sem contexto — rota @Public, callback OAuth, scheduler). Se já existe um
@@ -91,6 +114,8 @@ export class DatabaseContextService {
       return work(this.ds ? this.ds.manager : (undefined as unknown as EntityManager));
     }
 
+    const orgId = ctx.orgId ?? (ctx.tenantId ? await this.resolveOrgIdForTenant(ctx.tenantId) : null);
+
     const queryRunner = this.ds.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -101,7 +126,7 @@ export class DatabaseContextService {
         ctx.tenantId ?? '',
       ]);
       await queryRunner.query(`SELECT set_config('app.current_org_id', $1, true)`, [
-        ctx.orgId ?? '',
+        orgId ?? '',
       ]);
       await queryRunner.query(`SELECT set_config('app.current_role', $1, true)`, [
         ctx.role ?? '',
