@@ -243,8 +243,8 @@ describe('FASE 3N - runtime tenant context (PostgreSQL real)', () => {
 
   it('resolve webhook Autentique por OWNER read-only e executa negócio com tenant context', async () => {
     await owner.query(
-      `INSERT INTO contracts (tenant_id, title, type, autentique_doc_id)
-       VALUES ($1, $2, 'teste', $3)`,
+      `INSERT INTO contracts (tenant_id, title, type, status, autentique_doc_id)
+       VALUES ($1, $2, 'teste', 'awaiting_signature', $3)`,
       [TENANT_A, tag, `${tag}_doc`],
     );
 

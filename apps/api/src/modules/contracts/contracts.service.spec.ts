@@ -451,3 +451,37 @@ describe('ContractsService.create — FK cross-tenant (P1)', () => {
     } as unknown as CreateContractDto)).resolves.toBeDefined();
   });
 });
+
+describe('ContractsService — provider signature linkage is server-owned', () => {
+  it('create ignores client autentique_doc_id and metadata provider* keys (cannot claim another tenant\'s signature)', async () => {
+    const { svc, repo } = makeServiceC1();
+    await svc.create('tenant-1', 'user-1', {
+      title: 'X',
+      autentique_doc_id: 'doc-of-another-tenant',
+      signing_platform: 'docusign',
+      metadata: { provider: 'docusign', provider_doc_id: 'env-of-another-tenant', provider_status: 'signed', synced_at: 'x', keep: 1 },
+    } as unknown as CreateContractDto);
+
+    const row = createdC1(repo);
+    expect(row['autentique_doc_id']).toBeUndefined();
+    expect(row['signing_platform']).toBe('docusign'); // user choice in the wizard stays writable
+    expect(row['metadata']).toEqual({ keep: 1 });
+  });
+
+  it('update that replaces metadata keeps the current provider linkage and drops client-sent provider keys', async () => {
+    const current = baseContractRow({
+      metadata: { provider: 'docusign', provider_doc_id: 'env-real', provider_status: 'awaiting_signature', synced_at: 't0', currency: 'BRL' },
+    });
+    const { svc, repo } = makeServiceC1([current]);
+    await svc.update('tenant-1', 'user-1', 'contract-1', {
+      currency: 'USD',
+      metadata: { provider_doc_id: 'env-forged' },
+    } as unknown as UpdateContractDto);
+
+    const meta = updatedC1(repo)['metadata'] as Record<string, unknown>;
+    expect(meta['provider_doc_id']).toBe('env-real');
+    expect(meta['provider']).toBe('docusign');
+    expect(meta['provider_status']).toBe('awaiting_signature');
+    expect(meta['currency']).toBe('USD');
+  });
+});

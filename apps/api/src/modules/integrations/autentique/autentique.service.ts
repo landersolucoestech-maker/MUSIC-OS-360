@@ -27,6 +27,7 @@ import { ActivityLogsService } from '../../activity-logs/activity-logs.service';
 import { WebhookService } from '../webhooks/webhook.service';
 import { IntegrationStatus } from '@music-os-360/types';
 import { TenantBootstrapResolver } from '../../../database/tenant-bootstrap.resolver';
+import { applyProviderSignature } from '../../contracts/contract-provider-signature';
 
 const AUTENTIQUE_API    = 'https://api.autentique.com.br/v2';
 const FETCH_TIMEOUT_MS  = 15_000;
@@ -231,11 +232,14 @@ export class AutentiqueService {
           autentique_doc_id: docId,
           signing_platform: 'autentique',
           updated_at:       new Date(),
-          metadata: () => `metadata || '${JSON.stringify({
+          metadata: () => `metadata || :autMeta::jsonb`,
+        } as any)
+        .setParameters({
+          autMeta: JSON.stringify({
             provider: 'autentique', provider_doc_id: docId,
             synced_at: new Date().toISOString(), provider_status: 'awaiting_signature',
-          })}'::jsonb`,
-        } as any)
+          }),
+        })
         .where('id = :contractId AND tenant_id = :tenantId', {
           contractId: params.contractId, tenantId: params.tenantId,
         })
@@ -280,7 +284,11 @@ export class AutentiqueService {
 
     // 2. Ingest via WebhookService (idempotency + persistence)
     const eventType   = String(payload?.event ?? 'unknown');
-    const externalId  = String(payload?.event_id ?? payload?.document?.id ?? payload?.document_id ?? '');
+    const docId       = (payload?.document_id ?? payload?.document?.id) as string | undefined;
+    // The dedup key identifies ONE delivery of ONE event. Without a provider
+    // event id, fall back to (document, event type) — never the bare document
+    // id, which would make every later event of that document a "duplicate".
+    const externalId  = String(payload?.event_id ?? (docId ? `${docId}:${eventType}` : ''));
     const tenantId    = null; // Autentique webhooks don't carry tenant — resolved via document lookup
 
     const ingestResult = this.webhookSvc
@@ -293,14 +301,8 @@ export class AutentiqueService {
     }
 
     // 3. Only process document.signed events
-    if (eventType !== 'document.signed') {
-      this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
-      return { received: true };
-    }
-
-    const docId = (payload.document_id ?? payload.document?.id) as string | undefined;
-    if (!docId) {
-      this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
+    if (eventType !== 'document.signed' || !docId) {
+      await this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
       return { received: true };
     }
 
@@ -309,16 +311,26 @@ export class AutentiqueService {
         throw new ServiceUnavailableException('Autentique tenant bootstrap unavailable');
       }
 
-      // Read-only bootstrap: resolve tenant without depending on tenant RLS context.
-      const contractIdentity = await this.adminContractRepo.findOne({
+      // Read-only bootstrap: resolve tenant without depending on tenant RLS
+      // context. Collect up to two matches: a doc id owned by more than one
+      // contract is ambiguous and fails closed (never "first row wins").
+      const matches = await this.adminContractRepo.find({
         where: { autentique_doc_id: docId },
+        take: 2,
       });
 
-      if (!contractIdentity?.tenant_id) {
+      if (matches.length === 0 || !matches[0].tenant_id) {
         this.logger.warn(`[autentique/webhook] No contract found for docId=${docId}`);
-        this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
+        await this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
         return { received: true };
       }
+      if (matches.length > 1) {
+        const msg = `ambiguous autentique docId=${docId}: more than one contract`;
+        this.logger.error(`[autentique/webhook] ${msg} — not applied`);
+        await this.webhookSvc?.markProcessed(ingestResult.eventId, 'failed', msg);
+        return { received: true };
+      }
+      const contractIdentity = matches[0];
 
       await this.assertTenantActive(contractIdentity.tenant_id);
 
@@ -333,21 +345,12 @@ export class AutentiqueService {
         ),
       );
 
-      this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
+      await this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
     } catch (err) {
       const errMsg = String(err);
       this.logger.error(`[autentique/webhook] Processing failed: ${errMsg}`);
-      this.webhookSvc?.markProcessed(ingestResult.eventId, 'failed', errMsg);
-
-      if (this.activityLogs) {
-        await this.activityLogs.create('system', 'autentique:webhook', {
-          entity_type:  'webhook',
-          entity_id:    ingestResult.eventId,
-          action:       'webhook_processing_failed',
-          description:  `Falha ao processar webhook Autentique: ${errMsg.substring(0, 200)}`,
-          metadata:     { docId, eventType, error: errMsg.substring(0, 500), provider: 'autentique' },
-        }).catch(() => {});
-      }
+      // Durable failure trace: the webhook_events row (tenantless, system path).
+      await this.webhookSvc?.markProcessed(ingestResult.eventId, 'failed', errMsg);
 
       // Rethrow so Nest returns a 5xx and Autentique retries the webhook
       // delivery instead of treating a swallowed failure as delivered.
@@ -364,8 +367,7 @@ export class AutentiqueService {
     docId: string,
     externalId: string,
   ): Promise<void> {
-    const repo = manager.getRepository(ContractEntity);
-    const contract = await repo.findOne({
+    const contract = await manager.getRepository(ContractEntity).findOne({
       where: { id: contractId, tenant_id: tenantId },
     });
     if (!contract) {
@@ -375,23 +377,16 @@ export class AutentiqueService {
     const signedAt = new Date().toISOString();
     const providerEventId = externalId || docId;
 
-    await repo
-      .createQueryBuilder()
-      .update(ContractEntity)
-      .set({
-        status:     'signed',
-        updated_at: new Date(),
-        metadata: () => `metadata || '${JSON.stringify({
-          provider:          'autentique',
-          provider_event_id: providerEventId,
-          provider_status:   'signed',
-          synced_at:         signedAt,
-        })}'::jsonb`,
-      } as any)
-      .where('id = :id AND tenant_id = :tenantId', { id: contract.id, tenantId })
-      .execute();
-
+    const outcome = await applyProviderSignature(manager, {
+      contractId: contract.id, tenantId, provider: 'autentique', providerEventId, signedAt,
+    });
     await this.recordSuccess(tenantId);
+    if (outcome !== 'signed') {
+      this.logger.warn(
+        `[autentique/webhook] Contract ${contract.id} is '${contract.status}', not awaiting signature — status unchanged (docId=${docId})`,
+      );
+      return;
+    }
     this.logger.log(`[autentique/webhook] Contract ${contract.id} signed via docId=${docId}`);
 
     if (this.activityLogs) {
@@ -401,7 +396,7 @@ export class AutentiqueService {
         action:       'signed_via_webhook',
         description:  `Contrato assinado via Autentique webhook (docId=${docId})`,
         metadata:     { docId, providerEventId, signedAt, provider: 'autentique' },
-      }).catch(() => {});
+      });
     }
 
     if (this.events) {

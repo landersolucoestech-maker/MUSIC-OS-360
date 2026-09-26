@@ -11,6 +11,8 @@ const SECRET = 'docusign-webhook-secret-with-enough-length';
 function buildHarness(overrides: {
   contract?: Record<string, unknown> | null;
   tenantActive?: boolean;
+  matches?: Array<Record<string, unknown>>;
+  signedRows?: number;
 } = {}) {
   const contract = overrides.contract === undefined
     ? { id: 'contract-a', tenant_id: 'tenant-a', title: 'Contrato A', artist_id: 'artist-a' }
@@ -42,11 +44,17 @@ function buildHarness(overrides: {
   };
   const adminQb = {
     where: jest.fn().mockReturnThis(),
-    getOne: jest.fn(async () => contract),
+    take: jest.fn().mockReturnThis(),
+    getMany: jest.fn(async () => overrides.matches ?? (contract ? [contract] : [])),
   };
   const adminContractRepo = { createQueryBuilder: jest.fn(() => adminQb) };
   const adminDataSource = { getRepository: jest.fn(() => adminContractRepo) };
+  // applyProviderSignature: guarded UPDATE ... RETURNING -> [rows, count]
+  const signedRows = overrides.signedRows ?? 1;
   const manager = {
+    query: jest.fn(async (sql: string) => (
+      sql.includes('status = $5') ? [Array.from({ length: signedRows }, () => ({ id: 'contract-a' })), signedRows] : [[], 1]
+    )),
     getRepository: jest.fn((entity: unknown) => {
       expect(entity).toBe(ContractEntity);
       return contextualContractRepo;
@@ -78,7 +86,7 @@ function buildHarness(overrides: {
     tenantResolver as never,
   );
 
-  return { service, adminQb, contextualContractRepo, updateQb, dbContext, events, webhookSvc, tenantResolver };
+  return { service, adminQb, contextualContractRepo, updateQb, manager, dbContext, events, webhookSvc, tenantResolver };
 }
 
 function signedBody(payload: unknown): { raw: string; signature: string } {
@@ -101,7 +109,7 @@ describe('DocuSignService.handleWebhook', () => {
       service.handleWebhook(completedPayload, raw, 'not-a-valid-signature'),
     ).rejects.toBeInstanceOf(UnauthorizedException);
 
-    expect(adminQb.getOne).not.toHaveBeenCalled();
+    expect(adminQb.getMany).not.toHaveBeenCalled();
   });
 
   it('rejeita quando o header de assinatura está ausente (fail-closed)', async () => {
@@ -110,11 +118,11 @@ describe('DocuSignService.handleWebhook', () => {
 
     await expect(service.handleWebhook(completedPayload, raw, undefined))
       .rejects.toBeInstanceOf(UnauthorizedException);
-    expect(adminQb.getOne).not.toHaveBeenCalled();
+    expect(adminQb.getMany).not.toHaveBeenCalled();
   });
 
   it('aceita HMAC base64 válido, resolve o tenant e assina o contrato no contexto correto', async () => {
-    const { service, adminQb, contextualContractRepo, updateQb, dbContext, events } = buildHarness();
+    const { service, adminQb, contextualContractRepo, manager, dbContext, events, webhookSvc } = buildHarness();
     const { raw, signature } = signedBody(completedPayload);
 
     await service.handleWebhook(completedPayload, raw, signature);
@@ -131,14 +139,44 @@ describe('DocuSignService.handleWebhook', () => {
     expect(contextualContractRepo.findOne).toHaveBeenCalledWith({
       where: { id: 'contract-a', tenant_id: 'tenant-a' },
     });
-    expect(updateQb.where).toHaveBeenCalledWith(
-      'id = :id AND tenant_id = :tenantId',
-      { id: 'contract-a', tenantId: 'tenant-a' },
+    // Guarded transition: SIGNED only from awaiting_signature, tenant-scoped.
+    expect(manager.query).toHaveBeenCalledWith(
+      expect.stringContaining('WHERE id = $1 AND tenant_id = $2 AND status = $5'),
+      ['contract-a', 'tenant-a', expect.any(String), 'signed', 'awaiting_signature'],
     );
     expect(events.emitTyped).toHaveBeenCalledWith(
       DOMAIN_EVENTS.CONTRACT_SIGNED,
       expect.objectContaining({ tenantId: 'tenant-a', aggregateId: 'contract-a' }),
     );
+    // Dedup key is per (envelope, event), not the bare envelope id.
+    expect(webhookSvc.ingest).toHaveBeenCalledWith(
+      expect.objectContaining({ externalId: 'env-a:envelope-completed' }),
+    );
+  });
+
+  it('envelope ligado a mais de um contrato: falha fechado, nenhum contrato assinado', async () => {
+    const { service, dbContext, events, webhookSvc } = buildHarness({
+      matches: [
+        { id: 'contract-a', tenant_id: 'tenant-a' },
+        { id: 'contract-b', tenant_id: 'tenant-b' },
+      ],
+    });
+    const { raw, signature } = signedBody(completedPayload);
+
+    await expect(service.handleWebhook(completedPayload, raw, signature)).resolves.toEqual({ received: true });
+    expect(dbContext.runInTenantContext).not.toHaveBeenCalled();
+    expect(events.emitTyped).not.toHaveBeenCalled();
+    expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-a', 'failed', expect.stringContaining('ambiguous'));
+  });
+
+  it('contrato fora de awaiting_signature: status inalterado, sem CONTRACT_SIGNED', async () => {
+    const { service, events, manager, webhookSvc } = buildHarness({ signedRows: 0 });
+    const { raw, signature } = signedBody(completedPayload);
+
+    await service.handleWebhook(completedPayload, raw, signature);
+    expect(manager.query).toHaveBeenCalledTimes(2); // guarded transition (0 rows) + metadata-only record
+    expect(events.emitTyped).not.toHaveBeenCalled();
+    expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-a', 'processed');
   });
 
   it('ignora eventos que não são envelope-completed sem alterar contrato', async () => {
@@ -148,7 +186,7 @@ describe('DocuSignService.handleWebhook', () => {
 
     await service.handleWebhook(payload, raw, signature);
 
-    expect(adminQb.getOne).not.toHaveBeenCalled();
+    expect(adminQb.getMany).not.toHaveBeenCalled();
     expect(events.emitTyped).not.toHaveBeenCalled();
   });
 
@@ -169,7 +207,7 @@ describe('DocuSignService.handleWebhook', () => {
     const { raw, signature } = signedBody(completedPayload);
 
     await expect(service.handleWebhook(completedPayload, raw, signature)).resolves.toEqual({ received: true });
-    expect(adminQb.getOne).not.toHaveBeenCalled();
+    expect(adminQb.getMany).not.toHaveBeenCalled();
   });
 
   describe('P0-3: tenant desativado', () => {

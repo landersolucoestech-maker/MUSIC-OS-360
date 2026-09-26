@@ -18,6 +18,7 @@ import {
   resolveContractQueryAliases,
   type ResolvedContractWriteFields,
 } from './contract-legacy-alias.util';
+import { preserveServerOwnedMetadata, stripServerOwnedMetadata } from './contract-provider-signature';
 
 
 @Injectable()
@@ -149,7 +150,8 @@ export class ContractsService {
     out.release_id = dto['release_id'] ?? null;
     out.exclusivo     = dto['exclusivo']     ?? false;
     out.notes         = dto['notes']         ?? null;
-    out.autentique_doc_id = dto['autentique_doc_id'] ?? null;
+    // autentique_doc_id / metadata provider* are server-owned (written only by
+    // the signing integrations' sendForSignature) — never taken from a client.
     out.signing_platform  = dto['signing_platform']  ?? null;
     out.versoes       = (dto['versoes'] as unknown[] | undefined) ?? [];
     out.documents    = (dto['documents'] as unknown[] | undefined) ?? [];
@@ -158,7 +160,7 @@ export class ContractsService {
     if (Array.isArray(dto['signers'])) out.signers = dto['signers'];
 
     // parties/currency/signedAt → metadata: fora do escopo do C1 (C1.1), comportamento inalterado.
-    const metaIn = (dto['metadata'] as Record<string, unknown> | undefined) ?? {};
+    const metaIn = stripServerOwnedMetadata((dto['metadata'] as Record<string, unknown> | undefined) ?? {});
     const meta: Record<string, unknown> = { ...metaIn };
     if (Array.isArray(dto['parties']))  meta['parties']  = dto['parties'];
     if (dto['currency'])                meta['currency'] = dto['currency'];
@@ -241,6 +243,15 @@ export class ContractsService {
 
     const normalized = this.buildEntityPayload(restFields, resolved);
     // Sem default de type='outro' aqui — PATCH ausente não deve forçar um valor.
+    // A client metadata update replaces the column: carry the server-owned
+    // provider linkage over, or the signature webhook can no longer find the
+    // contract (DocuSign resolves by metadata.provider_doc_id).
+    if (normalized['metadata']) {
+      normalized['metadata'] = preserveServerOwnedMetadata(
+        current.metadata as Record<string, unknown> | null,
+        normalized['metadata'] as Record<string, unknown>,
+      );
+    }
 
     const nonStatusUpdates: Record<string, unknown> = {
       updated_at: new Date(),

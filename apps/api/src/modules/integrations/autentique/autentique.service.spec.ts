@@ -81,12 +81,14 @@ describe('AutentiqueService webhook tenant context', () => {
         entity === IntegrationEntity ? integrationRepo : appContractRepo),
     };
     const adminContractRepo = {
-      findOne: jest.fn(async () => contract),
+      find: jest.fn(async () => [contract]),
     };
     const adminDataSource = {
       getRepository: jest.fn(() => adminContractRepo),
     };
     const manager = {
+      // applyProviderSignature: guarded UPDATE ... RETURNING -> [rows, count]
+      query: jest.fn(async () => [[{ id: 'contract-a' }], 1]),
       getRepository: jest.fn((entity: unknown) => {
         expect(entity).toBe(ContractEntity);
         return contextualContractRepo;
@@ -128,8 +130,10 @@ describe('AutentiqueService webhook tenant context', () => {
       document_id: 'doc-a',
     }, 'secret');
 
-    expect(adminContractRepo.findOne).toHaveBeenCalledWith({
+    // Up to two matches: a doc id owned by >1 contract must fail closed.
+    expect(adminContractRepo.find).toHaveBeenCalledWith({
       where: { autentique_doc_id: 'doc-a' },
+      take: 2,
     });
     expect(dbContext.runInTenantContext).toHaveBeenCalledWith(
       { tenantId: 'tenant-a', orgId: null, role: null },
@@ -138,10 +142,11 @@ describe('AutentiqueService webhook tenant context', () => {
     expect(contextualContractRepo.findOne).toHaveBeenCalledWith({
       where: { id: 'contract-a', tenant_id: 'tenant-a' },
     });
-    expect(updateQb.where).toHaveBeenCalledWith(
-      'id = :id AND tenant_id = :tenantId',
-      { id: 'contract-a', tenantId: 'tenant-a' },
+    expect(manager.query).toHaveBeenCalledWith(
+      expect.stringContaining('WHERE id = $1 AND tenant_id = $2 AND status = $5'),
+      ['contract-a', 'tenant-a', expect.any(String), 'signed', 'awaiting_signature'],
     );
+    void updateQb;
     expect(events.emitTyped).toHaveBeenCalledWith(
       DOMAIN_EVENTS.CONTRACT_SIGNED,
       expect.objectContaining({ tenantId: 'tenant-a', aggregateId: 'contract-a' }),
@@ -158,7 +163,7 @@ describe('AutentiqueService webhook tenant context', () => {
     const appDataSource = {
       getRepository: jest.fn((entity: unknown) => (entity === IntegrationEntity ? integrationRepo : {})),
     };
-    const adminContractRepo = { findOne: jest.fn(async () => contract) };
+    const adminContractRepo = { find: jest.fn(async () => [contract]) };
     const adminDataSource = { getRepository: jest.fn(() => adminContractRepo) };
     const dbContext = { runInTenantContext: jest.fn() };
     const events = { emitTyped: jest.fn() };
@@ -195,7 +200,7 @@ describe('AutentiqueService webhook tenant context', () => {
     const appDataSource = {
       getRepository: jest.fn((entity: unknown) => (entity === IntegrationEntity ? integrationRepo : {})),
     };
-    const adminContractRepo = { findOne: jest.fn(async () => contract) };
+    const adminContractRepo = { find: jest.fn(async () => [contract]) };
     const adminDataSource = { getRepository: jest.fn(() => adminContractRepo) };
     const dbContext = { runInTenantContext: jest.fn() };
     const events = { emitTyped: jest.fn() };
@@ -219,5 +224,50 @@ describe('AutentiqueService webhook tenant context', () => {
     }, 'secret')).rejects.toThrow('processing boom');
 
     expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-b', 'failed', expect.any(String));
+  });
+
+  it('doc id ligado a mais de um contrato: falha fechado (nenhum assinado, evento FAILED, 200)', async () => {
+    const integrationRepo = { createQueryBuilder: jest.fn(() => ({ where: jest.fn().mockReturnThis(), getOne: jest.fn(async () => null) })) };
+    const appDataSource = { getRepository: jest.fn((entity: unknown) => (entity === IntegrationEntity ? integrationRepo : {})) };
+    const adminContractRepo = { find: jest.fn(async () => [
+      { id: 'contract-a', tenant_id: 'tenant-a' },
+      { id: 'contract-b', tenant_id: 'tenant-b' },
+    ]) };
+    const dbContext = { runInTenantContext: jest.fn() };
+    const events = { emitTyped: jest.fn() };
+    const webhookSvc = {
+      validateSharedSecret: jest.fn(() => true),
+      ingest: jest.fn(async () => ({ isDuplicate: false, eventId: 'webhook-d', status: 'pending' })),
+      markProcessed: jest.fn(),
+    };
+    const service = new AutentiqueService(
+      appDataSource as never, {} as never, { get: jest.fn(() => 'secret') } as never,
+      events as never, null as never, webhookSvc as never, dbContext as never,
+      { getRepository: jest.fn(() => adminContractRepo) } as never,
+      { resolveTenant: jest.fn(async () => ({ id: 'tenant-a', active: true })) } as never,
+    );
+
+    await expect(service.handleWebhook({
+      event: 'document.signed', event_id: 'event-d', document_id: 'doc-shared',
+    }, 'secret')).resolves.toEqual({ received: true });
+    expect(dbContext.runInTenantContext).not.toHaveBeenCalled();
+    expect(events.emitTyped).not.toHaveBeenCalled();
+    expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-d', 'failed', expect.stringContaining('ambiguous'));
+  });
+
+  it('sem event_id: chave de dedup é (documento, tipo de evento), nunca o documento sozinho', async () => {
+    const webhookSvc = {
+      validateSharedSecret: jest.fn(() => true),
+      ingest: jest.fn(async () => ({ isDuplicate: true, eventId: 'webhook-e', status: 'processed' })),
+      markProcessed: jest.fn(),
+    };
+    const integrationRepo = { createQueryBuilder: jest.fn() };
+    const service = new AutentiqueService(
+      { getRepository: jest.fn((e: unknown) => (e === IntegrationEntity ? integrationRepo : {})) } as never,
+      {} as never, { get: jest.fn(() => 'secret') } as never,
+      undefined as never, null as never, webhookSvc as never, undefined, null, undefined,
+    );
+    await service.handleWebhook({ event: 'document.signed', document_id: 'doc-z' }, 'secret');
+    expect(webhookSvc.ingest).toHaveBeenCalledWith(expect.objectContaining({ externalId: 'doc-z:document.signed' }));
   });
 });

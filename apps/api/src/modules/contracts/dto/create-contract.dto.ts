@@ -149,10 +149,6 @@ export class CreateContractDto {
 
   @ApiPropertyOptional()
   @IsOptional() @IsString()
-  autentique_doc_id?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional() @IsString()
   signing_platform?: string;
 
   @ApiPropertyOptional({ type: [Object] })

@@ -40,6 +40,7 @@ import { ActivityLogsService } from '../../activity-logs/activity-logs.service';
 import { WebhookService } from '../webhooks/webhook.service';
 import { IntegrationBaseService } from '../integration-base.service';
 import { TenantBootstrapResolver } from '../../../database/tenant-bootstrap.resolver';
+import { applyProviderSignature } from '../../contracts/contract-provider-signature';
 
 const PROVIDER          = 'docusign';
 const FETCH_TIMEOUT_MS  = 15_000;
@@ -385,7 +386,12 @@ export class DocuSignService {
 
     const eventType  = String(payload?.event ?? 'unknown');
     const envelopeId = (payload?.data?.envelopeId ?? payload?.envelopeId) as string | undefined;
-    const externalId = String(payload?.data?.envelopeId ?? payload?.generatedDateTime ?? '');
+    // find-06f8d204: dedup key = one event of one envelope. The bare envelopeId (previous
+    // key) made envelope-completed a "duplicate" of any earlier event of the
+    // same envelope (envelope-sent, recipient-*), so the signature was lost.
+    const externalId = envelopeId
+      ? `${envelopeId}:${eventType}`
+      : String(payload?.generatedDateTime ?? '');
 
     const ingestResult = this.webhookSvc
       ? await this.webhookSvc.ingest({
@@ -399,7 +405,7 @@ export class DocuSignService {
     }
 
     if (eventType !== EVENT_COMPLETED || !envelopeId) {
-      this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
+      await this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
       return { received: true };
     }
 
@@ -409,19 +415,29 @@ export class DocuSignService {
       }
 
       // Bootstrap read-only: resolve o tenant sem depender do contexto RLS.
-      // Sem coluna vendor-specific — casa pelo provider_doc_id genérico no metadata.
-      const contractIdentity = await this.adminContractRepo
+      // Sem coluna vendor-specific — casa pelo provider_doc_id genérico no
+      // metadata. Até dois resultados: envelope ligado a mais de um contrato é
+      // ambíguo e falha fechado (nunca "a primeira linha vence").
+      const matches = await this.adminContractRepo
         .createQueryBuilder('c')
         .where(`c.signing_platform = :provider AND c.metadata->>'provider_doc_id' = :envelopeId`, {
           provider: PROVIDER, envelopeId,
         })
-        .getOne();
+        .take(2)
+        .getMany();
 
-      if (!contractIdentity?.tenant_id) {
+      if (matches.length === 0 || !matches[0].tenant_id) {
         this.logger.warn(`[docusign/webhook] No contract found for envelopeId=${envelopeId}`);
-        this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
+        await this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
         return { received: true };
       }
+      if (matches.length > 1) {
+        const msg = `ambiguous docusign envelopeId=${envelopeId}: more than one contract`;
+        this.logger.error(`[docusign/webhook] ${msg} — not applied`);
+        await this.webhookSvc?.markProcessed(ingestResult.eventId, 'failed', msg);
+        return { received: true };
+      }
+      const contractIdentity = matches[0];
 
       await this.assertTenantActive(contractIdentity.tenant_id);
 
@@ -432,21 +448,12 @@ export class DocuSignService {
         ),
       );
 
-      this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
+      await this.webhookSvc?.markProcessed(ingestResult.eventId, 'processed');
     } catch (err) {
       const errMsg = String(err);
       this.logger.error(`[docusign/webhook] Processing failed: ${errMsg}`);
-      this.webhookSvc?.markProcessed(ingestResult.eventId, 'failed', errMsg);
-
-      if (this.activityLogs) {
-        await this.activityLogs.create('system', 'docusign:webhook', {
-          entity_type: 'webhook',
-          entity_id:   ingestResult.eventId,
-          action:      'webhook_processing_failed',
-          description: `Falha ao processar webhook DocuSign: ${errMsg.substring(0, 200)}`,
-          metadata:    { envelopeId, eventType, error: errMsg.substring(0, 500), provider: PROVIDER },
-        }).catch(() => {});
-      }
+      // Durable failure trace: the webhook_events row (tenantless, system path).
+      await this.webhookSvc?.markProcessed(ingestResult.eventId, 'failed', errMsg);
 
       // Rethrow so Nest returns a 5xx and DocuSign retries the webhook
       // delivery instead of treating a swallowed failure as delivered.
@@ -463,8 +470,7 @@ export class DocuSignService {
     envelopeId: string,
     externalId: string,
   ): Promise<void> {
-    const repo = manager.getRepository(ContractEntity);
-    const contract = await repo.findOne({ where: { id: contractId, tenant_id: tenantId } });
+    const contract = await manager.getRepository(ContractEntity).findOne({ where: { id: contractId, tenant_id: tenantId } });
     if (!contract) {
       throw new Error(`DocuSign contract not visible in tenant context: ${contractId}`);
     }
@@ -472,26 +478,16 @@ export class DocuSignService {
     const signedAt = new Date().toISOString();
     const providerEventId = externalId || envelopeId;
 
-    await repo
-      .createQueryBuilder()
-      .update(ContractEntity)
-      .set({
-        status:     'signed',
-        updated_at: new Date(),
-        metadata: () => `metadata || :dsMeta::jsonb`,
-      } as any)
-      .setParameters({
-        dsMeta: JSON.stringify({
-          provider:          PROVIDER,
-          provider_event_id: providerEventId,
-          provider_status:   'signed',
-          synced_at:         signedAt,
-        }),
-      })
-      .where('id = :id AND tenant_id = :tenantId', { id: contract.id, tenantId })
-      .execute();
-
+    const outcome = await applyProviderSignature(manager, {
+      contractId: contract.id, tenantId, provider: PROVIDER, providerEventId, signedAt,
+    });
     await this.recordSuccess(tenantId);
+    if (outcome !== 'signed') {
+      this.logger.warn(
+        `[docusign/webhook] Contract ${contract.id} is '${contract.status}', not awaiting signature — status unchanged (envelopeId=${envelopeId})`,
+      );
+      return;
+    }
     this.logger.log(`[docusign/webhook] Contract ${contract.id} signed via envelopeId=${envelopeId}`);
 
     if (this.activityLogs) {
@@ -501,7 +497,7 @@ export class DocuSignService {
         action:      'signed_via_webhook',
         description: `Contrato assinado via DocuSign webhook (envelopeId=${envelopeId})`,
         metadata:    { envelopeId, providerEventId, signedAt, provider: PROVIDER },
-      }).catch(() => {});
+      });
     }
 
     if (this.events) {
