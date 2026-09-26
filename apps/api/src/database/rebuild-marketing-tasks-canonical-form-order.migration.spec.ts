@@ -11,7 +11,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildMarketingTasksInCanonicalFormOrder20260719000009', () => {
-  it('marketing_project_id (FK do pai) vem logo após id/tenant_id, seguido de title', () => {
+  it('marketing_project_id (parent FK) comes right after id/tenant_id, followed by title', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -22,7 +22,7 @@ describe('RebuildMarketingTasksInCanonicalFormOrder20260719000009', () => {
     expect(titleIdx).toBeGreaterThan(parentIdx);
   });
 
-  it('completed_at (derivado de negócio) vem logo após status, e task_key (controle, gerado pelo service) fica junto de metadata', () => {
+  it('completed_at (business-derived) comes right after status, and task_key (control, service-generated) sits with metadata', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const statusIdx = block.search(/\bstatus\s+varchar/);
     const completedIdx = block.indexOf('completed_at');
@@ -46,7 +46,7 @@ describe('RebuildMarketingTasksInCanonicalFormOrder20260719000009', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria os 2 CHECK constraints, o índice único (tenant/project/task_key), RLS + policy e possui down() honesto', () => {
+  it('recreates the 2 CHECK constraints, the unique index (tenant/project/task_key), RLS + policy and has an honest down()', () => {
     expect(migrationSrc).toMatch(/chk_marketing_tasks_status/);
     expect(migrationSrc).toMatch(/chk_marketing_tasks_priority/);
     expect(migrationSrc).toMatch(/uq_marketing_tasks_project_key/);

@@ -148,7 +148,7 @@ async function main(): Promise<void> {
     expect(r.status, 'status').toBeOneOf([401, 403]);
   });
 
-  await test('Endpoint protegido com token sem X-Tenant-ID -> 403', async () => {
+  await test('Protected endpoint with a token but no X-Tenant-ID -> 403', async () => {
     const res = await safeFetch(apiPath('/artists'), {
       headers: {
         Authorization: `Bearer ${SMOKE_TOKEN}`,
@@ -196,7 +196,7 @@ async function main(): Promise<void> {
     expect(r.status, 'status').toBe(200);
   }, !hasTenant);
 
-  await test('POST /forms/:id/submit publico sem auth com X-Tenant-ID -> 200/201/404', async () => {
+  await test('public POST /forms/:id/submit without auth with X-Tenant-ID -> 200/201/404', async () => {
     const demoFormId = '10000000-0000-0000-0000-000000000050';
     const res = await safeFetch(apiPath(`/forms/${demoFormId}/submit`), {
       method: 'POST',

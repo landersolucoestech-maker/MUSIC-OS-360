@@ -89,7 +89,7 @@ describe('ProjectsService', () => {
     );
   });
 
-  it('create() não envia musicas para o repo de ProjectEntity (não é mais coluna)', async () => {
+  it('create() does not send musicas to the ProjectEntity repo (no longer a column)', async () => {
     await service.create(TENANT, 'u1', {
       title: 'X', type: 'single', musicas: [{ name: 'Faixa 1' }],
     } as any);
@@ -98,7 +98,7 @@ describe('ProjectsService', () => {
     );
   });
 
-  it('create() persiste cada música como linha própria em project_tracks, com participantes por role', async () => {
+  it('create() persists each track as its own row in project_tracks, with participants per role', async () => {
     await service.create(TENANT, 'u1', {
       title: 'X', type: 'album',
       musicas: [
@@ -150,7 +150,7 @@ describe('ProjectsService', () => {
     expect(mockDs._tracksRepo.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Nova Faixa' }));
   });
 
-  it('update() não mexe em musicas quando o DTO não envia o campo', async () => {
+  it('update() leaves musicas untouched when the DTO does not send the field', async () => {
     await service.update(TENANT, 'u1', PROJECT_ID, { notes: 'x' } as any);
     expect(mockDs._tracksRepo.delete).not.toHaveBeenCalled();
     expect(mockDs._tracksRepo.save).not.toHaveBeenCalled();

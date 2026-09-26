@@ -153,7 +153,7 @@ describe('AutentiqueService webhook tenant context', () => {
     );
   });
 
-  it('P0-3: assinatura válida + tenant inativo — NÃO assina o contrato (webhook é @Public, TenantGuard nunca roda)', async () => {
+  it('P0-3: valid signature + inactive tenant — does NOT sign the contract (the webhook is @Public, TenantGuard never runs)', async () => {
     const contract = {
       id: 'contract-a', tenant_id: 'tenant-a', title: 'Contrato A',
       artist_id: 'artist-a', autentique_doc_id: 'doc-a',
@@ -255,7 +255,7 @@ describe('AutentiqueService webhook tenant context', () => {
     expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-d', 'failed', expect.stringContaining('ambiguous'));
   });
 
-  it('sem event_id: chave de dedup é (documento, tipo de evento), nunca o documento sozinho', async () => {
+  it('without event_id: the dedup key is (document, event type), never the document alone', async () => {
     const webhookSvc = {
       validateSharedSecret: jest.fn(() => true),
       ingest: jest.fn(async () => ({ isDuplicate: true, eventId: 'webhook-e', status: 'processed' })),

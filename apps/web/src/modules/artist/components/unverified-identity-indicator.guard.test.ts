@@ -33,7 +33,7 @@ describe("The unconfirmed-identity indicator (primary_identity_status) reaches t
     expect(instagramCard).toContain("não confirmado");
   });
 
-  it("o card do TikTok usa o helper para o indicador visual e o texto 'não confirmado'", () => {
+  it("the TikTok card uses the helper for the visual indicator and the 'não confirmado' text", () => {
     const tiktokCardStart = source.indexOf("metric-tiktok-${artistId}");
     const tiktokCardEnd = source.indexOf("hasTikTokProfileInput ? syncButton");
     const tiktokCard = source.slice(tiktokCardStart, tiktokCardEnd);
@@ -41,7 +41,7 @@ describe("The unconfirmed-identity indicator (primary_identity_status) reaches t
     expect(tiktokCard).toContain("não confirmado");
   });
 
-  it("o indicador não é confundido com o rótulo de dados de demonstração (dev_mock)", () => {
+  it("the indicator is not confused with the demo data label (dev_mock)", () => {
     // isDevMockSnapshot e isUnverifiedIdentitySnapshot são condições
     // independentes lendo campos distintos de raw_payload -- nunca um
     // substituindo o outro.

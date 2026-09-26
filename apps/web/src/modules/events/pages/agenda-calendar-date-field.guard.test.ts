@@ -24,8 +24,8 @@ function schedulerEventsBody(): string {
   return SOURCE.slice(start, end);
 }
 
-describe("Agenda — cálculo do calendário usa os campos reais de data", () => {
-  it("não lê event.start_date/horario_inicio/horario_fim (nunca existiram no backend)", () => {
+describe("Agenda — the calendar calculation uses the real date fields", () => {
+  it("does not read event.start_date/horario_inicio/horario_fim (they never existed in the backend)", () => {
     const body = schedulerEventsBody();
     expect(body).not.toMatch(/event\.start_date/);
     expect(body).not.toMatch(/event\.horario_inicio/);
@@ -33,7 +33,7 @@ describe("Agenda — cálculo do calendário usa os campos reais de data", () =>
     expect(body).not.toMatch(/event\.tipo_evento/);
   });
 
-  it("lê event.data/event.end_date (colunas reais, timestamp completo)", () => {
+  it("reads event.data/event.end_date (real columns, full timestamp)", () => {
     const body = schedulerEventsBody();
     expect(body).toMatch(/event\.data\s*\?/);
     expect(body).toMatch(/event\.end_date/);

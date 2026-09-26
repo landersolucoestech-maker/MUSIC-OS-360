@@ -64,7 +64,7 @@ describe('CrmFollowupAutomation (lead.created → crm-followup)', () => {
     expect(meta.aiFollowup.status).toBe('generated');
   });
 
-  it('idempotência metadata bloqueia reprocesso', async () => {
+  it('metadata idempotency blocks reprocessing', async () => {
     const row = { ...LEAD_ROW, metadata: { aiFollowup: { idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' } } };
     const { ds, query } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -76,7 +76,7 @@ describe('CrmFollowupAutomation (lead.created → crm-followup)', () => {
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('idempotência skill_runs bloqueia reprocesso', async () => {
+  it('skill_runs idempotency blocks reprocessing', async () => {
     const { ds } = makeDs([LEAD_ROW], [{ '1': 1 }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
@@ -86,7 +86,7 @@ describe('CrmFollowupAutomation (lead.created → crm-followup)', () => {
     expect(ai.complete).not.toHaveBeenCalled();
   });
 
-  it('falha da IA registra fail, não relança e não grava', async () => {
+  it('an AI failure records fail, does not rethrow and does not write', async () => {
     const { ds, query } = makeDs([LEAD_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();

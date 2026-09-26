@@ -30,7 +30,7 @@ describe('RemoveLegacySocietyCodeColumns20260718000016', () => {
     expect(migrationSrc).toMatch(/throw new Error/);
   });
 
-  it('não cria coluna por sociedade específica (nunca cod_ubc/cod_sbacem/...)', () => {
+  it('creates no per-society column (never cod_ubc/cod_sbacem/...)', () => {
     expect(migrationSrc).not.toMatch(/cod_ubc|cod_sbacem|cod_socinpro|cod_assim|cod_amar|cod_sicam/i);
   });
 
@@ -38,7 +38,7 @@ describe('RemoveLegacySocietyCodeColumns20260718000016', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('possui down() honesto — só reidrata quando há exatamente um identificador (HAVING COUNT(*) = 1)', () => {
+  it('has an honest down() — rehydrates only when there is exactly one identifier (HAVING COUNT(*) = 1)', () => {
     expect(migrationSrc).toMatch(/async down/);
     expect(migrationSrc).toMatch(/HAVING COUNT\(\*\) = 1/);
   });

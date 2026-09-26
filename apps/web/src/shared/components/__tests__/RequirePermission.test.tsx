@@ -31,7 +31,7 @@ describe("RequirePermission / PermissionGate", () => {
     expect(screen.getByText("Nova")).toBeInTheDocument();
   });
 
-  it("não renderiza children quando NÃO autorizado (mostra fallback)", () => {
+  it("does not render children when NOT authorized (shows the fallback)", () => {
     state.allow = false;
     render(
       <RequirePermission module="artists" action="delete" fallback={<span>sem-acesso</span>}>
@@ -54,7 +54,7 @@ describe("RequirePermission / PermissionGate", () => {
     expect(screen.getByText("carregando")).toBeInTheDocument();
   });
 
-  it("PermissionGate é alias e respeita fallback", () => {
+  it("PermissionGate is an alias and respects the fallback", () => {
     state.allow = false;
     render(
       <PermissionGate module="contracts" action="delete" fallback={<span>bloqueado</span>}>

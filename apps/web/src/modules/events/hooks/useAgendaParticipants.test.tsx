@@ -63,7 +63,7 @@ describe("useAgendaParticipants", () => {
     );
   });
 
-  it("pendingArtistId: resolve o artista legado vinculado ao evento mesmo fora da página padrão, sem digitar busca", async () => {
+  it("pendingArtistId: resolves the legacy artist linked to the event even outside the default page, without typing a search", async () => {
     mockedFindById.mockResolvedValue({ id: "artist-75", nome_artistico: "Artista 75" });
 
     const { result } = renderHook(() => useAgendaParticipants("", "artist-75"), { wrapper: createWrapper() });
@@ -75,7 +75,7 @@ describe("useAgendaParticipants", () => {
     expect(mockedFindById).toHaveBeenCalledWith("artistas", "artist-75");
   });
 
-  it("sem pendingArtistId, não chama findById", async () => {
+  it("without pendingArtistId, does not call findById", async () => {
     renderHook(() => useAgendaParticipants(""), { wrapper: createWrapper() });
     await settle();
     expect(mockedFindById).not.toHaveBeenCalled();

@@ -25,8 +25,8 @@ function perms() { return renderHook(() => usePermissions()).result.current; }
 
 beforeEach(() => { setProd(); state.permissionKeys = null; });
 
-describe("usePermissions — produção (sem bypass)", () => {
-  it("permissionKeys preenchido libera a permissão correta e bloqueia a ausente", () => {
+describe("usePermissions — production (no bypass)", () => {
+  it("populated permissionKeys grants the right permission and blocks the missing one", () => {
     state.permissionKeys = ["artist:read"];
     const p = perms();
     expect(p.hasPermission("artist:read")).toBe(true);
@@ -42,7 +42,7 @@ describe("usePermissions — produção (sem bypass)", () => {
     expect(p.isLoadingPermissions).toBe(false);
   });
 
-  it("permissionKeys null em produção BLOQUEIA e marca isLoadingPermissions", () => {
+  it("permissionKeys null in production BLOCKS and sets isLoadingPermissions", () => {
     state.permissionKeys = null;
     const p = perms();
     expect(p.hasPermission("artist:read")).toBe(false);
@@ -75,7 +75,7 @@ describe("usePermissions — produção (sem bypass)", () => {
 });
 
 describe("usePermissions — dev/auth-disabled (permissivo)", () => {
-  it("IS_DEV + permissionKeys null → permite (não trava o dev)", () => {
+  it("IS_DEV + permissionKeys null → allows (does not block dev)", () => {
     setDev();
     state.permissionKeys = null;
     const p = perms();

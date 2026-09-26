@@ -65,7 +65,7 @@ describe('CopywritingAutomation (ON_DEMAND: POST /marketing/tasks/:id/ai/copywri
     expect(skillRun.succeed).toHaveBeenCalled();
   });
 
-  it('ANTI-FABRICAÇÃO: descarta qualquer "fato usado" que não exista no sourceFacts real', async () => {
+  it('ANTI-FABRICATION: drops any "used fact" that does not exist in the real sourceFacts', async () => {
     const inventingJson = JSON.stringify({
       draftTitle: 'x',
       draftBody: 'x',
@@ -83,7 +83,7 @@ describe('CopywritingAutomation (ON_DEMAND: POST /marketing/tasks/:id/ai/copywri
     expect(result.parsed.usedFacts).not.toContain('Artista ganhou um Grammy');
   });
 
-  it('sem sourceFacts: escreve genérico, usedFacts vazio', async () => {
+  it('without sourceFacts: writes generic text, empty usedFacts', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON); // modelo tenta reivindicar um fato mesmo sem ter recebido nenhum
     const tasks = makeTasks();
@@ -97,7 +97,7 @@ describe('CopywritingAutomation (ON_DEMAND: POST /marketing/tasks/:id/ai/copywri
     expect(aiCalls[0][0].prompt).toContain('Nenhum fato específico foi fornecido');
   });
 
-  it('kind não mapeado: usa intent general_draft', async () => {
+  it('unmapped kind: uses the general_draft intent', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const tasks = makeTasks();

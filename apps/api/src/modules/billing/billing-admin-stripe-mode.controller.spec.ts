@@ -7,7 +7,7 @@ import { BillingController } from './billing.controller';
  * metadata, RolesGuard trataria a rota GET como aberta a qualquer usuário
  * autenticado do tenant.
  */
-describe('BillingController.getAdminStripeMode — autorização', () => {
+describe('BillingController.getAdminStripeMode — authorization', () => {
   it('exige exatamente super_admin', () => {
     const handler = BillingController.prototype.getAdminStripeMode;
     expect(Reflect.getMetadata(ROLES_KEY, handler)).toEqual(['super_admin']);

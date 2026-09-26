@@ -16,12 +16,12 @@ describe("FileUpload — upload real (R2), nunca stub/base64", () => {
     expect(src).toMatch(/useUploadToR2/);
   });
 
-  it("não usa mais o stub de setTimeout nem path fictício", () => {
+  it("no longer uses the setTimeout stub or a fake path", () => {
     expect(src).not.toMatch(/setTimeout\(r, 40\)/);
     expect(src).not.toMatch(/\$\{options\?\.folder/);
   });
 
-  it("não persiste mais data URL base64 como fonte de verdade do arquivo", () => {
+  it("no longer persists a base64 data URL as the file's source of truth", () => {
     expect(src).not.toMatch(/readAsDataURL/);
   });
 });

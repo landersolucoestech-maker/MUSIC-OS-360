@@ -14,7 +14,7 @@ describe('TenantZeroFormalization20260801000002', () => {
     expect(sql).toContain('ALTER TABLE tenants ADD COLUMN IF NOT EXISTS is_system_tenant boolean NOT NULL DEFAULT false');
   });
 
-  it('cria índices únicos parciais que impedem mais de um tenant-zero por tabela', async () => {
+  it('creates partial unique indexes that prevent more than one tenant-zero per table', async () => {
     const qr = queryRunner();
     await new TenantZeroFormalization20260801000002().up(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');
@@ -25,7 +25,7 @@ describe('TenantZeroFormalization20260801000002', () => {
     expect(sql.match(/WHERE is_system_tenant = true/g)).toHaveLength(2);
   });
 
-  it('default é false — nenhum tenant existente é promovido pela migration', async () => {
+  it('the default is false — no existing tenant is promoted by the migration', async () => {
     const qr = queryRunner();
     await new TenantZeroFormalization20260801000002().up(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');
@@ -34,7 +34,7 @@ describe('TenantZeroFormalization20260801000002', () => {
     expect(sql).toContain('DEFAULT false');
   });
 
-  it('down() remove índices e coluna sem apagar nenhum tenant', async () => {
+  it('down() drops the indexes and column without deleting any tenant', async () => {
     const qr = queryRunner();
     await new TenantZeroFormalization20260801000002().down(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');

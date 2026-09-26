@@ -23,12 +23,12 @@ import * as path from "path";
 const FILE_PATH = path.resolve(__dirname, "Projects.tsx");
 const SOURCE = fs.readFileSync(FILE_PATH, "utf8");
 
-describe("Projects.tsx — sem import em massa client-side (centralizado em Relatórios, Parte 86)", () => {
-  it("não usa mais JSON.stringify(musicasParaSalvar) em lugar nenhum do arquivo", () => {
+describe("Projects.tsx — no client-side bulk import (centralized in Reports, Part 86)", () => {
+  it("no longer uses JSON.stringify(musicasParaSalvar) anywhere in the file", () => {
     expect(SOURCE).not.toMatch(/JSON\.stringify\(musicasParaSalvar\)/);
   });
 
-  it("não reintroduz um segundo writer de import em massa (mutação addProjeto fora do modal de criar/editar)", () => {
+  it("does not reintroduce a second bulk-import writer (addProjeto mutation outside the create/edit modal)", () => {
     expect(SOURCE).not.toMatch(/importXlsx/);
     expect(SOURCE).not.toMatch(/addProjeto\.mutateAsync/);
   });

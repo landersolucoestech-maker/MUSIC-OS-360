@@ -50,8 +50,8 @@ function baseInput(participantes: ParticipanteForm[] = []) {
   };
 }
 
-describe("formToObraPayload — contrato canônico de works", () => {
-  it("envia `cod_ecad` e `cod_entidade` (nomes canônicos reais) — nunca `cod_abramus`/`codigo_abramus`/`codigo_entidade`", () => {
+describe("formToObraPayload — canonical works contract", () => {
+  it("sends `cod_ecad` and `cod_entidade` (the real canonical names) — never `cod_abramus`/`codigo_abramus`/`codigo_entidade`", () => {
     const payload = formToObraPayload(baseInput());
     expect(payload).toHaveProperty("cod_ecad", "ECAD-456");
     expect(payload).toHaveProperty("cod_entidade", "ABR-123");
@@ -60,7 +60,7 @@ describe("formToObraPayload — contrato canônico de works", () => {
     expect(payload).not.toHaveProperty("codigo_entidade");
   });
 
-  it("nunca envia `metadata`, `compositor` (singular) ou `editora` — não são campos do formulário interativo", () => {
+  it("never sends `metadata`, `compositor` (singular) or `editora` — they are not interactive form fields", () => {
     const payload = formToObraPayload(baseInput());
     expect(payload).not.toHaveProperty("metadata");
     expect(payload).not.toHaveProperty("compositor");
@@ -80,7 +80,7 @@ describe("formToObraPayload — contrato canônico de works", () => {
     expect(payload.participantes).toEqual(participantes);
   });
 
-  it("participantesToCompositoresLetristas retorna null quando não há participantes na classe correspondente", () => {
+  it("participantesToCompositoresLetristas returns null when there are no participants in the matching class", () => {
     const result = participantesToCompositoresLetristas([]);
     expect(result.compositores).toBeNull();
     expect(result.letristas).toBeNull();

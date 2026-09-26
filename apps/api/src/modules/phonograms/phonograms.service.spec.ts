@@ -260,7 +260,7 @@ describe('PhonogramsService — State B (pre-C2, current behavior documented)', 
   });
 
   describe('create() — type default applied only on create', () => {
-    it("aplica type='master' quando o DTO não envia type", async () => {
+    it("applies type='master' when the DTO sends no type", async () => {
       await service.create(TENANT, 'u1', { title: 'X' } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'master' }),

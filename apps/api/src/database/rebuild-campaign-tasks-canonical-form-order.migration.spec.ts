@@ -31,7 +31,7 @@ describe('RebuildCampaignTasksInCanonicalFormOrder20260719000022', () => {
     expect(completedIdx).toBeGreaterThan(dueDateIdx);
   });
 
-  it('created_by vem depois de created_at/updated_at (não antes)', () => {
+  it('created_by comes after created_at/updated_at (not before)', () => {
     const b = block();
     const createdAtIdx = b.indexOf('created_at');
     const updatedAtIdx = b.indexOf('updated_at');

@@ -18,8 +18,8 @@ import * as path from "path";
 const FILE_PATH = path.resolve(__dirname, "SchedulerFormModal.tsx");
 const SOURCE = fs.readFileSync(FILE_PATH, "utf8");
 
-describe("SchedulerFormModal — não grava campos formais em metadata", () => {
-  it("não constrói mais um objeto `metadata` a partir de dados do formulário", () => {
+describe("SchedulerFormModal — does not write formal fields into metadata", () => {
+  it("no longer builds a `metadata` object from form data", () => {
     expect(SOURCE).not.toMatch(/metadata\["endereco"\]/);
     expect(SOURCE).not.toMatch(/metadata\["contato_local"\]/);
     expect(SOURCE).not.toMatch(/metadata\["valor_cache"\]/);
@@ -31,7 +31,7 @@ describe("SchedulerFormModal — não grava campos formais em metadata", () => {
     expect(SOURCE).not.toMatch(/payload\["metadata"\]\s*=\s*metadata/);
   });
 
-  it("envia os campos formais como chaves de topo do payload (coluna própria via DTO)", () => {
+  it("sends the formal fields as top-level payload keys (own column via the DTO)", () => {
     expect(SOURCE).toMatch(/payload\["endereco"\]\s*=\s*data\.endereco/);
     expect(SOURCE).toMatch(/payload\["contato_local"\]\s*=\s*data\.contatoLocal/);
     expect(SOURCE).toMatch(/payload\["fee_amount"\]\s*=\s*valorCache/);
@@ -41,7 +41,7 @@ describe("SchedulerFormModal — não grava campos formais em metadata", () => {
     expect(SOURCE).toMatch(/payload\["participantes"\]\s*=\s*data\.participantes/);
   });
 
-  it("lê `participantes` primariamente da coluna real da entity, não só de metadata legado", () => {
+  it("reads `participantes` primarily from the entity's real column, not only from legacy metadata", () => {
     expect(SOURCE).toMatch(/normalizeAgendaParticipants\(event\?\.participantes \?\? meta\["participants"\]\)/);
   });
 });

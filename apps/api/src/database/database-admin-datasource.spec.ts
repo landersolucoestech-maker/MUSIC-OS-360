@@ -31,7 +31,7 @@ describe('createAdminDataSource — P2-7 owner-only enumeration connection', () 
     expect(requested).not.toContain('DATABASE_SESSION_CONTEXT_ENABLED'); // ignores the flag
   });
 
-  it('em produção sem DATABASE_URL lança erro (não cai em APP_DATABASE_URL)', async () => {
+  it('in production without DATABASE_URL throws (does not fall back to APP_DATABASE_URL)', async () => {
     const { config, requested } = configSpy({
       NODE_ENV: 'production',
       DATABASE_URL: undefined,

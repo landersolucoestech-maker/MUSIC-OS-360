@@ -30,7 +30,7 @@ const BASE_DTO: PlatformContactDto = {
 };
 
 describe('PlatformContactService.submit', () => {
-  it('encaminha por e-mail para o destinatário configurado, com reply-to do remetente', async () => {
+  it('forwards by email to the configured recipient, with the sender as reply-to', async () => {
     const { svc, mail } = makeService();
     const result = await svc.submit(BASE_DTO);
 
@@ -57,7 +57,7 @@ describe('PlatformContactService.submit', () => {
     expect(html).toContain('&lt;img');
   });
 
-  it('honeypot preenchido: aceita em silêncio, nunca envia e-mail', async () => {
+  it('honeypot filled: silently accepts, never sends email', async () => {
     const { svc, mail } = makeService();
     const result = await svc.submit({ ...BASE_DTO, website: 'https://bot.example' });
 
@@ -65,7 +65,7 @@ describe('PlatformContactService.submit', () => {
     expect(mail.send).not.toHaveBeenCalled();
   });
 
-  it('sem PLATFORM_CONTACT_RECIPIENT_EMAIL configurado: 503 honesto, nunca finge sucesso', async () => {
+  it('without PLATFORM_CONTACT_RECIPIENT_EMAIL configured: an honest 503, never fakes success', async () => {
     const { svc, mail } = makeService(false);
     await expect(svc.submit(BASE_DTO)).rejects.toThrow(ServiceUnavailableException);
     expect(mail.send).not.toHaveBeenCalled();

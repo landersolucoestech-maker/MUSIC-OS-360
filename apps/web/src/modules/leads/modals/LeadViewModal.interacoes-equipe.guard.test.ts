@@ -11,12 +11,12 @@ import * as path from "path";
 
 const SOURCE = fs.readFileSync(path.resolve(__dirname, "LeadViewModal.tsx"), "utf8");
 
-describe("LeadViewModal — registro real de interações da equipe (REM-04)", () => {
-  it("usa useLeadInteractions para buscar dados reais (não array vazio hardcoded)", () => {
+describe("LeadViewModal — real record of team interactions (REM-04)", () => {
+  it("uses useLeadInteractions to fetch real data (not a hardcoded empty array)", () => {
     expect(SOURCE).toMatch(/useLeadInteractions\(lead\?\.id\)/);
   });
 
-  it("renderiza a lista real, não um placeholder estático", () => {
+  it("renders the real list, not a static placeholder", () => {
     expect(SOURCE).toMatch(/interacoesEquipe\.map/);
   });
 });

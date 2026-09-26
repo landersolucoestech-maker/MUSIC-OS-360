@@ -62,7 +62,7 @@ describe('AudiovisualBriefingAutomation (release.approved → audiovisual-briefi
     expect(meta.aiAudiovisualBriefing.status).toBe('generated');
   });
 
-  it('idempotência metadata bloqueia reprocesso', async () => {
+  it('metadata idempotency blocks reprocessing', async () => {
     const row = { ...RELEASE_ROW, metadata: { aiAudiovisualBriefing: { idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' } } };
     const { ds, query } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -73,7 +73,7 @@ describe('AudiovisualBriefingAutomation (release.approved → audiovisual-briefi
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('falha da IA registra fail e não grava', async () => {
+  it('an AI failure records fail and does not write', async () => {
     const { ds, query } = makeDs([RELEASE_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();

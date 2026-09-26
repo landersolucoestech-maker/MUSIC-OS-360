@@ -26,11 +26,11 @@ describe("ContractWizard — valor do contrato persiste na coluna canônica (COD
     expect(SOURCE).toMatch(/interface WizardMeta \{[\s\S]*?\bvalue: string;[\s\S]*?\}/);
   });
 
-  it("inclui fixed_value (número parseado, não a string bruta) no payload enviado ao backend", () => {
+  it("includes fixed_value (parsed number, not the raw string) in the payload sent to the backend", () => {
     expect(SOURCE).toMatch(/fixed_value:\s*parsedValor,/);
   });
 
-  it("popula meta.value a partir do contrato ao editar (não reinicia sempre vazio)", () => {
+  it("populates meta.value from the contract when editing (does not always reset to empty)", () => {
     expect(SOURCE).toMatch(/value:\s*contrato\.fixed_value\s*!=\s*null\s*\?\s*String\(contrato\.fixed_value\)\s*:\s*""/);
   });
 });

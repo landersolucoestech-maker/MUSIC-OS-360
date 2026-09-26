@@ -12,7 +12,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildReleasesInCanonicalFormOrder20260719000004', () => {
-  it('titulo é o primeiro campo funcional após id/tenant_id (seção Metadata)', () => {
+  it('titulo is the first functional field after id/tenant_id (metadata section)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');

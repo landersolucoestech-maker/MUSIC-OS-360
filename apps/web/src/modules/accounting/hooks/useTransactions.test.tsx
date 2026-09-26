@@ -35,7 +35,7 @@ describe("useTransactions", () => {
     mockedList.mockResolvedValue([]);
   });
 
-  it("filtra por artist_id (não artistId) ao buscar transações de um artista", async () => {
+  it("filters by artist_id (not artistId) when fetching an artist's transactions", async () => {
     renderHook(() => useTransactions(true, "artist-1"), { wrapper: createWrapper() });
 
     await waitFor(() => expect(mockedList).toHaveBeenCalled());
@@ -44,7 +44,7 @@ describe("useTransactions", () => {
     expect(options?.filters).not.toHaveProperty("artistId");
   });
 
-  it("sem artistId, não aplica filtro de artista", async () => {
+  it("without artistId, applies no artist filter", async () => {
     renderHook(() => useTransactions(true), { wrapper: createWrapper() });
 
     await waitFor(() => expect(mockedList).toHaveBeenCalled());

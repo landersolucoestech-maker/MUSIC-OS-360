@@ -75,7 +75,7 @@ describe('DealsCrmAutomation (ON_DEMAND: POST /clients/:id/ai/deals-crm)', () =>
     expect(skillRun.succeed).toHaveBeenCalled();
   });
 
-  it('cliente sem contratos: monta input com deals=[]', async () => {
+  it('client without contracts: builds the input with deals=[]', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const clients = makeClients(CLIENT, []);

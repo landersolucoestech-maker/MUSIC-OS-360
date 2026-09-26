@@ -19,13 +19,13 @@ describe('ReleasesService.create — estado inicial', () => {
     return { svc, repo, events, workflow };
   }
 
-  it('persiste status DRAFT mesmo se o payload tentar outro status', async () => {
+  it('persists status DRAFT even if the payload tries another status', async () => {
     const { svc, repo } = build();
     await svc.create('t1', 'u1', { title: 'X', type: 'single', status: 'distributed' } as never);
     expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({ status: ReleaseStatus.DRAFT, tenant_id: 't1' }));
   });
 
-  it('não emite RELEASE_DISTRIBUTED na criação', async () => {
+  it('does not emit RELEASE_DISTRIBUTED on creation', async () => {
     const { svc, events } = build();
     await svc.create('t1', 'u1', { title: 'X', type: 'single' } as never);
     const emitted = events.emitTyped.mock.calls.map((c) => c[0]);

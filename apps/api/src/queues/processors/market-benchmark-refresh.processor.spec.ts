@@ -43,7 +43,7 @@ describe('MarketBenchmarkRefreshProcessor', () => {
     expect(marketBenchmark.computeAndPersist).toHaveBeenCalledWith('t1', 'a1', 'uuid-1');
   });
 
-  it('falha do computeAndPersist (ex.: SoundchartsRateLimitError propagado): RE-LANÇA o erro para o BullMQ decidir retry/backoff', async () => {
+  it('a computeAndPersist failure (e.g. a propagated SoundchartsRateLimitError): RETHROWS so BullMQ decides retry/backoff', async () => {
     const marketBenchmark = {
       computeAndPersist: jest.fn().mockRejectedValue(new Error('rate limited')),
     } as unknown as MarketBenchmarkService;
@@ -52,14 +52,14 @@ describe('MarketBenchmarkRefreshProcessor', () => {
     await expect(processor.process(fakeJob())).rejects.toThrow('rate limited');
   });
 
-  it('job sem tenant_id: NUNCA chama computeAndPersist (fail-closed)', async () => {
+  it('job without tenant_id: NEVER calls computeAndPersist (fail-closed)', async () => {
     const marketBenchmark = { computeAndPersist: jest.fn() } as unknown as MarketBenchmarkService;
     const processor = new MarketBenchmarkRefreshProcessor(marketBenchmark, makeDbContext() as never);
     await processor.process(fakeJob({ data: { tenant_id: '', artist_id: 'a1', target_uuid: 'uuid-1', engine_version: '2.0.0', reason: 'cold', idempotency_key: 'k' } }));
     expect(marketBenchmark.computeAndPersist).not.toHaveBeenCalled();
   });
 
-  it('roda computeAndPersist dentro de runInTenantContext com o tenant do payload (regressão RLS: worker fora do request HTTP precisa do contexto)', async () => {
+  it('runs computeAndPersist inside runInTenantContext with the payload tenant (RLS regression: a worker outside the HTTP request needs the context)', async () => {
     const marketBenchmark = {
       computeAndPersist: jest.fn().mockResolvedValue({
         result: { status: 'OK', sampleSize: 20, fallbackLevel: 1 },

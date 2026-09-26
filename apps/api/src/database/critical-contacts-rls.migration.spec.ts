@@ -13,7 +13,7 @@ describe('HardenContactsLeadUploadsRls20260620000002', () => {
     return { query: jest.fn(async (_sql: string) => undefined) };
   }
 
-  it('habilita e força RLS com policies mínimas por operação', async () => {
+  it('enables and forces RLS with minimal per-operation policies', async () => {
     const qr = queryRunner();
     await new HardenContactsLeadUploadsRls20260620000002().up(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');
@@ -92,7 +92,7 @@ describe('HardenContactsLeadUploadsRls20260620000002', () => {
     }
   });
 
-  it('impede vínculos entre pais e filhos de tenants diferentes', async () => {
+  it('prevents parent/child links across different tenants', async () => {
     const qr = queryRunner();
     await new HardenContactsLeadUploadsRls20260620000002().up(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');
@@ -105,7 +105,7 @@ describe('HardenContactsLeadUploadsRls20260620000002', () => {
     expect(sql.match(/VALIDATE CONSTRAINT "fk_/g)).toHaveLength(5);
   });
 
-  it('revoga exposição direta das partições de decisão RBAC', async () => {
+  it('revokes direct exposure of the RBAC decision partitions', async () => {
     const qr = queryRunner();
     await new HardenContactsLeadUploadsRls20260620000002().up(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');

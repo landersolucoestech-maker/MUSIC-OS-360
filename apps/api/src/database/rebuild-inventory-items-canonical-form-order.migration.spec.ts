@@ -12,7 +12,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildInventoryItemsInCanonicalFormOrder20260719000017', () => {
-  it('nome/categoria vêm logo após id/tenant_id (ordem do DTO)', () => {
+  it('nome/categoria come right after id/tenant_id (DTO order)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');

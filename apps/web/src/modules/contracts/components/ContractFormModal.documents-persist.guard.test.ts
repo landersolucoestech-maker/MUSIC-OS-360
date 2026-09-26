@@ -24,7 +24,7 @@ describe("ContractFormModal — documents anexos persistem no contrato (REM-02)"
     expect(matches.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("popula documents a partir do contrato ao editar (não reinicia sempre vazio)", () => {
+  it("populates documents from the contract when editing (does not always reset to empty)", () => {
     expect(SOURCE).toMatch(/setDocuments\(initialData\.documents\s*\?\?\s*\[\]\)/);
     expect(SOURCE).toMatch(/documents:\s*Array\.isArray\(c\.documents\)/);
   });

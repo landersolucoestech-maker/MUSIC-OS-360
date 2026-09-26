@@ -73,7 +73,7 @@ describe('Schema reconciliation — PostgreSQL real', () => {
     }
   });
 
-  it('conversation rejeita enum inválido no banco', async () => {
+  it('conversation rejects an invalid enum in the database', async () => {
     const qr = ds.createQueryRunner();
     await qr.connect();
     await qr.startTransaction();
@@ -112,7 +112,7 @@ describe('Schema reconciliation — PostgreSQL real', () => {
     }
   });
 
-  it('financial_categories preserva o contrato canônico nature/level', async () => {
+  it('financial_categories preserves the canonical nature/level contract', async () => {
     const qr = ds.createQueryRunner();
     await qr.connect();
     await qr.startTransaction();

@@ -4,7 +4,7 @@ import { ManualExportAdapter } from './manual-export.adapter';
 describe('ManualExportAdapter — exportPayload XLSX', () => {
   const adapter = new ManualExportAdapter();
 
-  it('produz workbook OpenXML real com estrutura e conteúdo íntegros', async () => {
+  it('produces a real OpenXML workbook with intact structure and content', async () => {
     const payload = {
       title: 'Minha Obra',
       autores: [{ nome: 'Fulano', percentual: 100 }],
@@ -30,7 +30,7 @@ describe('ManualExportAdapter — exportPayload XLSX', () => {
     expect(rows.some((row) => row[0] === 'autores[0].percentual' && row[1] === '100')).toBe(true);
   });
 
-  it('formato json continua disponível para integração técnica', async () => {
+  it('the json format stays available for technical integration', async () => {
     const payload = { title: 'Outra Obra' };
     const result = await adapter.exportPayload(payload, 'json', 'submission-json');
     expect(result.format).toBe('json');

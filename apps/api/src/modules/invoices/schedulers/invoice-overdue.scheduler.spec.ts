@@ -58,7 +58,7 @@ function updateWhereCalls(repo: any) {
 describe('InvoiceOverdueScheduler — P2-7 admin discovery', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('descobre tenants via ADMIN_DATA_SOURCE e processa via DATA_SOURCE + runInTenantContext', async () => {
+  it('discovers tenants via ADMIN_DATA_SOURCE and processes via DATA_SOURCE + runInTenantContext', async () => {
     const adminRepo = makeRepo({ rawMany: [{ tenant_id: TENANT_A }, { tenant_id: TENANT_B }] });
     const appRepo = makeRepo({ manyByTenant: { [TENANT_A]: [invoice(TENANT_A, 'i1')], [TENANT_B]: [invoice(TENANT_B, 'i2')] } });
     const sched = new InvoiceOverdueScheduler(dsOf(appRepo), events, dbContext, dsOf(adminRepo));
@@ -84,7 +84,7 @@ describe('InvoiceOverdueScheduler — P2-7 admin discovery', () => {
     expect(dbContext.runInTenantContext).toHaveBeenCalledWith({ tenantId: TENANT_A, orgId: null, role: null }, expect.any(Function));
   });
 
-  it('isola falha: erro no tenant A não impede o B', async () => {
+  it('isolates failures: an error on tenant A does not stop tenant B', async () => {
     const adminRepo = makeRepo({ rawMany: [{ tenant_id: TENANT_A }, { tenant_id: TENANT_B }] });
     const appRepo = makeRepo({ throwForTenant: TENANT_A, manyByTenant: { [TENANT_B]: [invoice(TENANT_B, 'i2')] } });
     const sched = new InvoiceOverdueScheduler(dsOf(appRepo), events, dbContext, dsOf(adminRepo));

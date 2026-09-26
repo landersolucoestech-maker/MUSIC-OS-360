@@ -29,7 +29,7 @@ describe("useProjects", () => {
     mockedList.mockResolvedValue([]);
   });
 
-  it("filtra por artistId (não artist_id) ao buscar projetos de um artista", async () => {
+  it("filters by artistId (not artist_id) when fetching an artist's projects", async () => {
     renderHook(() => useProjects(true, "artist-1"), { wrapper: createWrapper() });
 
     await waitFor(() => expect(mockedList).toHaveBeenCalled());
@@ -38,7 +38,7 @@ describe("useProjects", () => {
     expect(options?.filters).not.toHaveProperty("artist_id");
   });
 
-  it("sem artistId, não aplica filtro de artista", async () => {
+  it("without artistId, applies no artist filter", async () => {
     renderHook(() => useProjects(true), { wrapper: createWrapper() });
 
     await waitFor(() => expect(mockedList).toHaveBeenCalled());

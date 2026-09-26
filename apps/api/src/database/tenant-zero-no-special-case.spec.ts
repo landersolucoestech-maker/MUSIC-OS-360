@@ -44,7 +44,7 @@ function listTsFiles(dir: string): string[] {
 }
 
 describe('tenant-zero: nenhum special-case de RLS/RBAC/billing/guard', () => {
-  it('IDs canônicos do tenant-zero só aparecem nos arquivos autorizados', () => {
+  it('tenant-zero canonical IDs appear only in the authorized files', () => {
     const offenders: string[] = [];
 
     for (const file of listTsFiles(SRC_ROOT)) {
@@ -62,7 +62,7 @@ describe('tenant-zero: nenhum special-case de RLS/RBAC/billing/guard', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('nenhuma policy/guard/service usa is_system_tenant para autorizar (só o bootstrap grava/lê esta coluna)', () => {
+  it('no policy/guard/service uses is_system_tenant to authorize (only the bootstrap writes/reads this column)', () => {
     const offenders: string[] = [];
 
     for (const file of listTsFiles(SRC_ROOT)) {

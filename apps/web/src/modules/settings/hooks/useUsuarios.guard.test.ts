@@ -19,14 +19,14 @@ describe("useUsuarios — contratos de perfil e RBAC", () => {
     expect(SOURCE).toMatch(/api\.patch\(`\/users\/\$\{id\}`,\s*profilePayload\)/);
   });
 
-  it("envia role ou o alias cargo pelo endpoint RBAC dedicado", () => {
+  it("sends role or the cargo alias through the dedicated RBAC endpoint", () => {
     expect(SOURCE).toMatch(/const effectiveRole = role \?\? cargo/);
     expect(SOURCE).toMatch(
       /api\.patch\(`\/users\/\$\{id\}\/role`,\s*\{\s*role:\s*effectiveRole\s*\}\)/,
     );
   });
 
-  it("não inclui role nem cargo no payload genérico de perfil", () => {
+  it("includes neither role nor cargo in the generic profile payload", () => {
     const profilePayload = SOURCE.match(/const profilePayload = \{[\s\S]*?\n\s*\};/)?.[0] ?? "";
     expect(profilePayload).not.toMatch(/\brole\b|\bcargo\b/);
     expect(SOURCE).not.toMatch(/\{\s*full_name,?\s*phone,?\s*cargo,?\s*\}/);

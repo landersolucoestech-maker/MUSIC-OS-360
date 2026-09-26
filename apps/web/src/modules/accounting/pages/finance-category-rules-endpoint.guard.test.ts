@@ -24,7 +24,7 @@ const CATEGORIES_SERVICE_SOURCE = fs.readFileSync(
 );
 
 describe("FinanceCategoryRules — nenhuma chamada aponta para o endpoint inexistente", () => {
-  it("a página não importa nem referencia /financial-categories/rules", () => {
+  it("the page neither imports nor references /financial-categories/rules", () => {
     expect(PAGE_SOURCE).not.toMatch(/financial-categories\/rules/);
     expect(PAGE_SOURCE).not.toMatch(/financeCategorizationRulesService/);
   });
@@ -34,7 +34,7 @@ describe("FinanceCategoryRules — nenhuma chamada aponta para o endpoint inexis
     expect(RULES_SERVICE_SOURCE).toMatch(/\/finance-category-rules/);
   });
 
-  it("financial-categories.service.ts não expõe mais os métodos falsos de regras", () => {
+  it("financial-categories.service.ts no longer exposes the fake rules methods", () => {
     expect(CATEGORIES_SERVICE_SOURCE).not.toMatch(/\/financial-categories\/rules/);
     expect(CATEGORIES_SERVICE_SOURCE).not.toMatch(/\bcreateRule\b/);
     expect(CATEGORIES_SERVICE_SOURCE).not.toMatch(/\bpreviewRules\b/);
@@ -43,7 +43,7 @@ describe("FinanceCategoryRules — nenhuma chamada aponta para o endpoint inexis
     expect(CATEGORIES_SERVICE_SOURCE).not.toMatch(/\bsuggest\s*:/);
   });
 
-  it("a página usa financeCategoryRulesService (backend real)", () => {
+  it("the page uses financeCategoryRulesService (real backend)", () => {
     expect(PAGE_SOURCE).toMatch(/financeCategoryRulesService/);
   });
 });

@@ -166,7 +166,7 @@ describe('FinancialClassificationAutomation (transaction.created → financial-c
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('falha da IA registra fail, não relança e não grava aiClassification', async () => {
+  it('an AI failure records fail, does not rethrow and does not write aiClassification', async () => {
     const { ds, query } = makeDs([TX_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
@@ -179,7 +179,7 @@ describe('FinancialClassificationAutomation (transaction.created → financial-c
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('guarda: tenantId/transactionId ausente é ignorado (sem run, sem query)', async () => {
+  it('guard: absent tenantId/transactionId is ignored (no run, no query)', async () => {
     const { ds, query } = makeDs([TX_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

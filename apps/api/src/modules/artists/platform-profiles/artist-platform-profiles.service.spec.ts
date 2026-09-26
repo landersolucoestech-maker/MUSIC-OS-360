@@ -65,7 +65,7 @@ function baseSnapshot(overrides: Partial<SocialPlatformProfileSnapshot>): Social
 // 'success' na API — só descoberto rodando o fluxo real de ponta a ponta, não pelos
 // testes unitários dos providers (que nunca passam pelo upsert de verdade).
 describe('ArtistPlatformProfilesService.upsertSuccess', () => {
-  it('persiste sync_status=success/last_error=null quando o snapshot é um sucesso normal', async () => {
+  it('persists sync_status=success/last_error=null when the snapshot is a normal success', async () => {
     const qb = buildQb();
     const repo = buildRepo(qb);
     const service = new ArtistPlatformProfilesService({ getRepository: () => repo } as never, buildNoopSnapshots());
@@ -79,7 +79,7 @@ describe('ArtistPlatformProfilesService.upsertSuccess', () => {
     expect(values.followers).toBe(777);
   });
 
-  it('NUNCA sobrescreve sync_status=failed/last_error de um snapshot IDENTITY_MISMATCH — persiste exatamente o que o provider decidiu', async () => {
+  it('NEVER overwrites sync_status=failed/last_error of an IDENTITY_MISMATCH snapshot — persists exactly what the provider decided', async () => {
     const qb = buildQb();
     const repo = buildRepo(qb);
     const service = new ArtistPlatformProfilesService({ getRepository: () => repo } as never, buildNoopSnapshots());

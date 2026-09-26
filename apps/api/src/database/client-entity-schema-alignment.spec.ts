@@ -54,21 +54,21 @@ function extractEntityColumns(): string[] {
 }
 
 describe('ClientEntity <-> clients (physical schema) alignment', () => {
-  it('toda coluna física da migration canônica está mapeada em ClientEntity', () => {
+  it('every physical column of the canonical migration is mapped in ClientEntity', () => {
     const migCols = extractMigrationColumns();
     const entCols = extractEntityColumns();
     const missing = migCols.filter((c) => !entCols.includes(c));
     expect(missing).toEqual([]);
   });
 
-  it('ClientEntity não declara nenhuma coluna removida pela migration (segmento/endereco/responsavel/prioridade/cpf/cnpj)', () => {
+  it('ClientEntity declares no column removed by the migration (segmento/endereco/responsavel/prioridade/cpf/cnpj)', () => {
     const entCols = extractEntityColumns();
     for (const ghost of ['segmento', 'endereco', 'responsavel', 'prioridade', 'cpf', 'cnpj']) {
       expect(entCols).not.toContain(ghost);
     }
   });
 
-  it('ClientEntity não declara coluna alguma que não exista fisicamente na tabela', () => {
+  it('ClientEntity declares no column that does not physically exist in the table', () => {
     const migCols = extractMigrationColumns();
     const entCols = extractEntityColumns().filter((c) => c !== 'id');
     const extra = entCols.filter((c) => !migCols.includes(c));

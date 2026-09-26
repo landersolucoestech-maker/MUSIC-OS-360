@@ -59,7 +59,7 @@ function buildWithContract(contract: Record<string, unknown>) {
 describe('ContractEventsHandler — onContractSigned', () => {
   const payload = { contractId: 'c1', title: 'Contrato X', artistId: 'a1', signedBy: 'u1', signedAt: '2026-06-12' };
 
-  it('marca a transação criada com source: contract.signed para evitar avaliação duplicada de regras', async () => {
+  it('tags the created transaction with source: contract.signed to avoid duplicate rule evaluation', async () => {
     const { handler, events } = build();
     await handler.onContractSigned({ tenantId: 't1', payload, correlationId: null } as any);
 
@@ -84,7 +84,7 @@ describe('ContractEventsHandler — onContractSigned', () => {
   // GAP-0055: a transação provisória deve usar a data de início real do
   // contrato quando disponível, não sempre "hoje" (data em que o webhook/evento
   // de assinatura foi processado, que pode ser muito depois do início real).
-  it('usa contract.start_date como data da transação provisória quando disponível', async () => {
+  it('uses contract.start_date as the provisional transaction date when available', async () => {
     const { handler, transactionRepo } = buildWithContract({ id: 'c1', fixed_value: '5000', start_date: new Date('2026-03-01T00:00:00.000Z') });
     await handler.onContractSigned({ tenantId: 't1', payload, correlationId: null } as any);
 
@@ -93,7 +93,7 @@ describe('ContractEventsHandler — onContractSigned', () => {
     );
   });
 
-  it('usa a data atual como fallback quando o contrato não tem start_date', async () => {
+  it('uses the current date as a fallback when the contract has no start_date', async () => {
     const { handler, transactionRepo } = buildWithContract({ id: 'c1', fixed_value: '5000', start_date: null });
     await handler.onContractSigned({ tenantId: 't1', payload, correlationId: null } as any);
 

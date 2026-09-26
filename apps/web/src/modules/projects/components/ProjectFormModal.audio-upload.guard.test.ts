@@ -14,8 +14,8 @@ import * as path from "path";
 
 const SOURCE = fs.readFileSync(path.resolve(__dirname, "ProjectFormModal.tsx"), "utf8");
 
-describe("ProjectFormModal — upload de áudio usa o backend real (Task T)", () => {
-  it("não contém mais o stub que sempre retornava null", () => {
+describe("ProjectFormModal — audio upload uses the real backend (Task T)", () => {
+  it("no longer contains the stub that always returned null", () => {
     expect(SOURCE).not.toMatch(/async\s*\(_file: File\)[^{]*=>\s*null/);
   });
 
@@ -24,7 +24,7 @@ describe("ProjectFormModal — upload de áudio usa o backend real (Task T)", ()
     expect(SOURCE).toMatch(/category:\s*"audio"/);
   });
 
-  it("nunca exibe sucesso sem uma URL real (sem toast de 'carregado localmente' mascarando falha)", () => {
+  it("never shows success without a real URL (no 'carregado localmente' toast masking a failure)", () => {
     expect(SOURCE).not.toMatch(/Arquivo de áudio carregado localmente/);
   });
 });

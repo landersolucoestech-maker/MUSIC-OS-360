@@ -18,12 +18,12 @@ import * as path from "path";
 const SOURCE = fs.readFileSync(path.resolve(__dirname, "ArtistaSignupPublic.tsx"), "utf8");
 
 describe("ArtistaSignupPublic — contrato real com /public/artist-registration", () => {
-  it("chama a rota real do backend (não /public/artists, que nunca existiu)", () => {
+  it("calls the real backend route (not /public/artists, which never existed)", () => {
     expect(SOURCE).toMatch(/"\/public\/artist-registration"/);
     expect(SOURCE).not.toMatch(/"\/public\/artists"/);
   });
 
-  it("envia os campos obrigatórios do DTO real (artistName/artisticName/fullName/email/acceptedTerms)", () => {
+  it("sends the real DTO's required fields (artistName/artisticName/fullName/email/acceptedTerms)", () => {
     expect(SOURCE).toMatch(/artistName:\s*nomeArtistico\.trim\(\)/);
     expect(SOURCE).toMatch(/artisticName:\s*nomeArtistico\.trim\(\)/);
     expect(SOURCE).toMatch(/fullName:\s*nome\.trim\(\)/);
@@ -31,7 +31,7 @@ describe("ArtistaSignupPublic — contrato real com /public/artist-registration"
     expect(SOURCE).toMatch(/acceptedTerms,/);
   });
 
-  it("preserva os campos sem coluna própria no DTO via additionalData (não descarta dados)", () => {
+  it("preserves fields without their own DTO column via additionalData (drops no data)", () => {
     expect(SOURCE).toMatch(/additionalData/);
     expect(SOURCE).toMatch(/banco:\s*banco/);
   });

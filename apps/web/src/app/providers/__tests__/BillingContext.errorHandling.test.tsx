@@ -37,7 +37,7 @@ beforeEach(() => {
 });
 
 describe("BillingProvider — tratamento de erro em refresh() (Parte 77)", () => {
-  it("PasswordChangeRequiredError (403) nunca escapa como rejeição não tratada, e não é logada como erro inesperado", async () => {
+  it("PasswordChangeRequiredError (403) never escapes as an unhandled rejection and is not logged as an unexpected error", async () => {
     state.getSubscription.mockRejectedValue(new PasswordChangeRequiredError("Troca de senha obrigatória antes de continuar."));
 
     const { result } = renderHook(() => useBilling(), { wrapper });
@@ -47,7 +47,7 @@ describe("BillingProvider — tratamento de erro em refresh() (Parte 77)", () =>
     expect(state.captureError).not.toHaveBeenCalled();
   });
 
-  it("erro inesperado (5xx) é capturado via captureError, mas nunca propaga", async () => {
+  it("an unexpected (5xx) error is captured via captureError but never propagates", async () => {
     state.getSubscription.mockRejectedValue(new IntegrationError("api", "boom", { statusCode: 500 }));
 
     renderHook(() => useBilling(), { wrapper });
@@ -55,7 +55,7 @@ describe("BillingProvider — tratamento de erro em refresh() (Parte 77)", () =>
     await waitFor(() => expect(state.captureError).toHaveBeenCalled());
   });
 
-  it("quando must_change_password=true, nunca chama /billing/subscription", async () => {
+  it("when must_change_password=true, never calls /billing/subscription", async () => {
     state.user = { mustChangePassword: true };
 
     renderHook(() => useBilling(), { wrapper });

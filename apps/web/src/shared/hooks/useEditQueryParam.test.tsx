@@ -25,7 +25,7 @@ describe("useEditQueryParam", () => {
     mockedFindById.mockReset();
   });
 
-  it("resolve pelo id quando o registro já está na lista carregada (comportamento original preservado)", async () => {
+  it("resolves by id when the record is already in the loaded list (original behavior preserved)", async () => {
     const items: FakeRow[] = [{ id: "id-1", nome: "Um" }, { id: "id-2", nome: "Dois" }];
     const onMatch = vi.fn();
     renderHook(() => useEditQueryParam("edit", items, onMatch, "artistas"), {
@@ -36,7 +36,7 @@ describe("useEditQueryParam", () => {
     expect(mockedFindById).not.toHaveBeenCalled();
   });
 
-  it("registro #75 fora da lista carregada (capada em 50) resolve via busca direta por ID quando `table` é passado", async () => {
+  it("record #75 outside the loaded list (capped at 50) resolves via a direct ID lookup when `table` is passed", async () => {
     // Simula a lista "me dê tudo" travada nos primeiros 50 registros do tenant.
     const items: FakeRow[] = Array.from({ length: 50 }, (_, i) => ({ id: `id-${i + 1}`, nome: `Registro ${i + 1}` }));
     mockedFindById.mockResolvedValue({ id: "id-75", nome: "Registro 75" });
@@ -50,7 +50,7 @@ describe("useEditQueryParam", () => {
     expect(mockedFindById).toHaveBeenCalledWith("artistas", "id-75");
   });
 
-  it("sem `table`, mantém o comportamento antigo: não resolve registros fora da lista carregada", async () => {
+  it("without `table`, keeps the old behavior: does not resolve records outside the loaded list", async () => {
     const items: FakeRow[] = Array.from({ length: 50 }, (_, i) => ({ id: `id-${i + 1}`, nome: `Registro ${i + 1}` }));
     const onMatch = vi.fn();
 
@@ -63,7 +63,7 @@ describe("useEditQueryParam", () => {
     expect(mockedFindById).not.toHaveBeenCalled();
   });
 
-  it("sem parâmetro na URL, não busca nada", async () => {
+  it("without a URL parameter, fetches nothing", async () => {
     const onMatch = vi.fn();
     renderHook(() => useEditQueryParam("edit", [], onMatch, "artistas"), {
       wrapper: wrapperFor("/artistas"),

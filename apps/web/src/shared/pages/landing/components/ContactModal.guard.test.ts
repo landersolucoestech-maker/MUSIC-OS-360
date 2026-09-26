@@ -14,8 +14,8 @@ import * as path from "path";
 
 const SOURCE = fs.readFileSync(path.resolve(__dirname, "ContactModal.tsx"), "utf8");
 
-describe("ContactModal — separação arquitetural do tenant operacional", () => {
-  it("usa publicApi (não api autenticado de tenant)", () => {
+describe("ContactModal — architectural separation from the operational tenant", () => {
+  it("uses publicApi (not the authenticated tenant api)", () => {
     expect(SOURCE).toMatch(/publicApi\.post/);
     expect(SOURCE).not.toMatch(/(?<!public)Api\.post\("\/(support-tickets|conversations|leads)/);
   });
@@ -24,7 +24,7 @@ describe("ContactModal — separação arquitetural do tenant operacional", () =
     expect(SOURCE).toMatch(/"\/public\/platform-contact"/);
   });
 
-  it("nunca referencia tenant, support ticket, ou conversation do MusicChat", () => {
+  it("never references a tenant, support ticket, or MusicChat conversation", () => {
     expect(SOURCE).not.toMatch(/CurrentTenant|tenant_id|tenantId|support-ticket|conversation/i);
   });
 

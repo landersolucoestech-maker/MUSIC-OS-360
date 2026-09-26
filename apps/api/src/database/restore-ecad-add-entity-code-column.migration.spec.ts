@@ -24,16 +24,16 @@ describe('RestoreEcadAddEntityCodeColumn20260718000017', () => {
     expect(migrationSrc).toMatch(/ALTER TABLE phonograms[\s\S]*ADD COLUMN IF NOT EXISTS cod_entidade/);
   });
 
-  it('não recria cod_abramus nem colunas por sociedade específica', () => {
+  it('recreates neither cod_abramus nor per-society columns', () => {
     expect(migrationSrc).not.toMatch(/ADD COLUMN[^;]*cod_abramus/);
     expect(migrationSrc).not.toMatch(/cod_ubc|cod_sbacem|cod_socinpro|cod_assim|cod_amar|cod_sicam/i);
   });
 
-  it('restaura valores de external_identifiers apenas quando há exatamente um identificador (HAVING COUNT(*) = 1)', () => {
+  it('restores external_identifiers values only when there is exactly one identifier (HAVING COUNT(*) = 1)', () => {
     expect(migrationSrc).toMatch(/HAVING COUNT\(\*\) = 1/);
   });
 
-  it('não usa DROP ... CASCADE e possui down() que remove as colunas', () => {
+  it('does not use DROP ... CASCADE and has a down() that drops the columns', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
     expect(migrationSrc).toMatch(/async down/);
     expect(migrationSrc).toMatch(/DROP COLUMN IF EXISTS cod_ecad/);

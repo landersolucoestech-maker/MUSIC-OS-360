@@ -12,7 +12,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildPhonogramsInCanonicalFormOrder20260719000003', () => {
-  it('obra_id é o primeiro campo funcional após id/tenant_id', () => {
+  it('obra_id is the first functional field after id/tenant_id', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -25,7 +25,7 @@ describe('RebuildPhonogramsInCanonicalFormOrder20260719000003', () => {
     expect(codEntidadeIdx).toBeGreaterThan(tituloIdx);
   });
 
-  it('participacao e arquivo_audio (seções reais e visíveis) vêm antes dos campos legados', () => {
+  it('participacao and arquivo_audio (real, visible sections) come before the legacy fields', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const participacaoIdx = block.indexOf('participacao ');
     const compositoresIdx = block.indexOf('compositores ');
@@ -50,7 +50,7 @@ describe('RebuildPhonogramsInCanonicalFormOrder20260719000003', () => {
     }
   });
 
-  it('recria as próprias FKs (artista_id, obra_id — nomes históricos da migration), o CHECK de registry_status e RLS + policies', () => {
+  it('recreates its own FKs (artista_id, obra_id — the migration\'s historical names), the registry_status CHECK and RLS + policies', () => {
     expect(migrationSrc).toMatch(/fk_phonograms_artista_id/);
     expect(migrationSrc).toMatch(/fk_phonograms_obra_id/);
     expect(migrationSrc).toMatch(/chk_phonograms_registry_status/);

@@ -10,16 +10,16 @@ import * as path from "path";
  */
 const SOURCE = fs.readFileSync(path.resolve(__dirname, "SchedulerFormModal.tsx"), "utf8");
 
-describe("SchedulerFormModal — logging de validação não usa console.error", () => {
-  it("não chama console.error para erros de validação esperados", () => {
+describe("SchedulerFormModal — validation logging does not use console.error", () => {
+  it("does not call console.error for expected validation errors", () => {
     expect(SOURCE).not.toMatch(/console\.error\(["']SchedulerFormModal validation errors/);
   });
 
-  it("usa console.warn (ou equivalente não-error) para o detalhe de debug", () => {
+  it("uses console.warn (or a non-error equivalent) for the debug detail", () => {
     expect(SOURCE).toMatch(/console\.warn\(["']SchedulerFormModal validation errors/);
   });
 
-  it("continua avisando o usuário via toast quando a validação falha", () => {
+  it("still notifies the user via toast when validation fails", () => {
     expect(SOURCE).toMatch(/toast\.error\(/);
   });
 });

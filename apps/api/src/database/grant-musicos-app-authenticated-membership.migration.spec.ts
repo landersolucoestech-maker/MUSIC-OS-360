@@ -29,7 +29,7 @@ describe('GrantMusicosAppAuthenticatedMembership20260802000002', () => {
     expect(migrationSrc).toMatch(/alreadyMember/);
   });
 
-  it('é defensiva em ambientes sem convenção Supabase (sem role authenticated) ou sem musicos_app', () => {
+  it('is defensive in environments without the Supabase convention (no authenticated role) or without musicos_app', () => {
     expect(migrationSrc).toMatch(/authenticatedExists/);
     expect(migrationSrc).toMatch(/appRoleExists/);
   });
@@ -39,7 +39,7 @@ describe('GrantMusicosAppAuthenticatedMembership20260802000002', () => {
     expect(downBlock).toMatch(/REVOKE authenticated FROM musicos_app/);
   });
 
-  it('nunca concede BYPASSRLS nem altera propriedade de tabelas — apenas membership de role', () => {
+  it('never grants BYPASSRLS or changes table ownership — only role membership', () => {
     expect(migrationSrc).not.toMatch(/BYPASSRLS/);
     expect(migrationSrc).not.toMatch(/OWNER TO/);
     expect(migrationSrc).not.toMatch(/DROP\s+TABLE/i);

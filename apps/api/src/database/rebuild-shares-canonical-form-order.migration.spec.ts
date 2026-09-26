@@ -14,7 +14,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildSharesInCanonicalFormOrder20260719000014', () => {
-  it('obra_id/fonograma_id/titular_nome/papel vêm logo após id/tenant_id', () => {
+  it('obra_id/fonograma_id/titular_nome/papel come right after id/tenant_id', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -25,7 +25,7 @@ describe('RebuildSharesInCanonicalFormOrder20260719000014', () => {
     expect(papelIdx).toBeGreaterThan(obraIdx);
   });
 
-  it('bloco Registry Fields Phase 1 (rights_holder_id..end_date) vem antes do formulário financeiro (share_type em diante)', () => {
+  it('the Registry Fields Phase 1 block (rights_holder_id..end_date) comes before the financial form (share_type onward)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const rightsHolderIdx = block.indexOf('rights_holder_id');
     const endDateIdx = block.indexOf('end_date');
@@ -55,7 +55,7 @@ describe('RebuildSharesInCanonicalFormOrder20260719000014', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria a FK própria (fk_shares_obra_id), RLS + policies e possui down() honesto', () => {
+  it('recreates its own FK (fk_shares_obra_id), RLS + policies and has an honest down()', () => {
     expect(migrationSrc).toMatch(/fk_shares_obra_id/);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);

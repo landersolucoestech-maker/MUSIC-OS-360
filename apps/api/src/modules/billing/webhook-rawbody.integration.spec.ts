@@ -79,7 +79,7 @@ describe('Stripe webhook rawBody wiring (regressao do fix b728b133)', () => {
       });
   });
 
-  it('assinatura adulterada e rejeitada mesmo com rawBody presente (400)', async () => {
+  it('a tampered signature is rejected even with rawBody present (400)', async () => {
     const app = makeAppWithWebhookRoute(jsonWithRawBody());
     const { payload } = makeSignedPayload();
 
@@ -91,7 +91,7 @@ describe('Stripe webhook rawBody wiring (regressao do fix b728b133)', () => {
       .expect(400);
   });
 
-  it('REGRESSAO: sem o verify callback (req.rawBody nunca populado), webhook valido e rejeitado com 400', async () => {
+  it('REGRESSION: without the verify callback (req.rawBody never populated), a valid webhook is rejected with 400', async () => {
     // Parser "ingenuo" sem `verify` — reproduz exatamente o bug do commit b728b133
     // (req.rawBody fica undefined -> constructEvent nunca roda -> 400 sempre).
     const naiveParser = express.json({ limit: '1mb' });

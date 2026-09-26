@@ -15,15 +15,15 @@ import { ptBR } from "date-fns/locale";
 describe("date-fns format — locale pt-BR", () => {
   const someAugustDate = new Date(2026, 7, 24); // 24 de agosto de 2026
 
-  it("sem locale, o nome do mês sai em inglês (reproduz o bug)", () => {
+  it("without a locale, the month name renders in English (reproduces the bug)", () => {
     expect(format(someAugustDate, "MMMM")).toBe("August");
   });
 
-  it("com { locale: ptBR }, o nome do mês sai em português", () => {
+  it("with { locale: ptBR }, the month name renders in Portuguese", () => {
     expect(format(someAugustDate, "MMMM", { locale: ptBR })).toBe("agosto");
   });
 
-  it("reproduz o rótulo exato relatado no bug e prova a correção", () => {
+  it("reproduces the exact label reported in the bug and proves the fix", () => {
     const buggy = `${format(someAugustDate, "d")} — ${format(someAugustDate, "d 'de' MMMM, yyyy")}`;
     expect(buggy).toContain("August");
 
@@ -33,7 +33,7 @@ describe("date-fns format — locale pt-BR", () => {
   });
 });
 
-describe("Agenda.tsx — guarda contra regressão de locale", () => {
+describe("Agenda.tsx — guard against a locale regression", () => {
   const SOURCE = fs.readFileSync(path.resolve(__dirname, "Agenda.tsx"), "utf8");
 
   it('importa ptBR de "date-fns/locale"', () => {

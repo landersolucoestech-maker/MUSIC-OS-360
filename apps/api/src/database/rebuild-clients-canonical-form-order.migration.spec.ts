@@ -13,7 +13,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildClientsInCanonicalFormOrder20260719000010', () => {
-  it('tipo_pessoa/categoria/perfil vêm logo após id/tenant_id, seguidos de nome (derivada)', () => {
+  it('tipo_pessoa/categoria/perfil come right after id/tenant_id, followed by nome (derived)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -28,7 +28,7 @@ describe('RebuildClientsInCanonicalFormOrder20260719000010', () => {
     expect(nomeIdx).toBeGreaterThan(perfilIdx);
   });
 
-  it('remove segmento/endereco/responsavel/prioridade/cpf/cnpj (órfãs comprovadas) com validação fail-fast', () => {
+  it('drops segmento/endereco/responsavel/prioridade/cpf/cnpj (proven orphans) with fail-fast validation', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     expect(block).not.toMatch(/\bsegmento\b/);
     expect(block).not.toMatch(/\bendereco\s+varchar/);
@@ -40,7 +40,7 @@ describe('RebuildClientsInCanonicalFormOrder20260719000010', () => {
     expect(migrationSrc).toMatch(/presumidas órfãs, mas há dado real/);
   });
 
-  it('corrige categoria/perfil para NOT NULL com validação fail-fast de dados existentes', () => {
+  it('fixes categoria/perfil to NOT NULL with fail-fast validation of existing data', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     expect(block).toMatch(/categoria\s+varchar\(100\) NOT NULL/);
     expect(block).toMatch(/perfil\s+varchar\(100\) NOT NULL/);

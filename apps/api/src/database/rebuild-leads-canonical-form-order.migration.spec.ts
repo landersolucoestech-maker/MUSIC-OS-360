@@ -13,7 +13,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildLeadsInCanonicalFormOrder20260719000011', () => {
-  it('nome/nome_completo/empresa vêm logo após id/tenant_id (seção Dados do Contato)', () => {
+  it('nome/nome_completo/empresa come right after id/tenant_id (contact details section)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -24,7 +24,7 @@ describe('RebuildLeadsInCanonicalFormOrder20260719000011', () => {
     expect(empresaIdx).toBeGreaterThan(nomeIdx);
   });
 
-  it('renomeia tipoServico/origemLead/probabilidadeFechamento para snake_case (colunas físicas novas)', () => {
+  it('renames tipoServico/origemLead/probabilidadeFechamento to snake_case (new physical columns)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     expect(block).toMatch(/\btipo_servico\s+varchar/);
     expect(block).toMatch(/\borigem_lead\s+varchar/);
@@ -32,7 +32,7 @@ describe('RebuildLeadsInCanonicalFormOrder20260719000011', () => {
     expect(block).not.toMatch(/"tipoServico"|"origemLead"|"probabilidadeFechamento"/);
   });
 
-  it('remove score/pipeline_stage (órfãs comprovadas) com validação fail-fast', () => {
+  it('drops score/pipeline_stage (proven orphans) with fail-fast validation', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     expect(block).not.toMatch(/\bscore\b/);
     expect(block).not.toMatch(/\bpipeline_stage\b/);

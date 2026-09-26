@@ -31,7 +31,7 @@ describe('TakedownsService.create — FK cross-tenant (P1)', () => {
     } as unknown as CreateTakedownDto)).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('permite quando todas as referências pertencem ao tenant', async () => {
+  it('allows when every reference belongs to the tenant', async () => {
     const svc = makeService(jest.fn(async () => [{ exists: 1 }]));
     await expect(svc.create('tenant-1', 'user-1', {
       work_id: 'work-1', artist_id: 'artist-1', title: 'X',

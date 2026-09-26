@@ -20,7 +20,7 @@ describe("fetchAllPages", () => {
     mockedListPaged.mockReset();
   });
 
-  it("coleta os 75 registros via paginação iterativa — não trunca no antigo cap de 50", async () => {
+  it("collects the 75 records via iterative pagination — does not truncate at the old cap of 50", async () => {
     const dataset = fakeDataset(75);
     mockedListPaged.mockImplementation((async (_table: string, options: { page: number; pageSize: number }) => {
       const offset = (options.page - 1) * options.pageSize;
@@ -38,7 +38,7 @@ describe("fetchAllPages", () => {
     expect(mockedListPaged).toHaveBeenCalledTimes(4);
   });
 
-  it("preserva os filtros ativos em cada página buscada", async () => {
+  it("preserves the active filters on every fetched page", async () => {
     mockedListPaged.mockResolvedValue({ items: [], page: 1, pageSize: 200, total: 0, totalPages: 1 });
     await fetchAllPages<FakeRow>("events", { filters: { type: "show", status: "confirmado" } });
 
@@ -46,7 +46,7 @@ describe("fetchAllPages", () => {
     expect(calledOptions.filters).toEqual({ type: "show", status: "confirmado" });
   });
 
-  it("respeita o teto de segurança (maxRecords) e reporta truncated:true em vez de rodar para sempre", async () => {
+  it("respects the safety ceiling (maxRecords) and reports truncated:true instead of running forever", async () => {
     const dataset = fakeDataset(500);
     mockedListPaged.mockImplementation((async (_table: string, options: { page: number; pageSize: number }) => {
       const offset = (options.page - 1) * options.pageSize;
@@ -61,7 +61,7 @@ describe("fetchAllPages", () => {
     expect(result.total).toBe(500);
   });
 
-  it("dataset vazio retorna items:[] sem chamar listPaged mais de uma vez", async () => {
+  it("an empty dataset returns items:[] without calling listPaged more than once", async () => {
     mockedListPaged.mockResolvedValue({ items: [], page: 1, pageSize: 200, total: 0, totalPages: 1 });
     const result = await fetchAllPages<FakeRow>("artistas");
     expect(result.items).toEqual([]);

@@ -13,7 +13,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildWorksInCanonicalFormOrder20260719000002', () => {
-  it('projeto_id é o primeiro campo funcional após id/tenant_id (vínculo de projeto é a 1ª seção do form)', () => {
+  it('projeto_id is the first functional field after id/tenant_id (the project link is the form\'s 1st section)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');

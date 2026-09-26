@@ -69,7 +69,7 @@ describe('NotificationsProcessor', () => {
     );
   });
 
-  it('envia via WebSocket após persistir', async () => {
+  it('sends via WebSocket after persisting', async () => {
     await processor.process({ name: NOTIFICATION_JOB_NAMES.SEND, data: {
       tenantId: 't1', userId: 'u1', title: 'WS Test', type: 'info',
     }} as any);
@@ -101,7 +101,7 @@ describe('NotificationsProcessor', () => {
     expect(mockDs._qb.execute).toHaveBeenCalled();
   });
 
-  it('aborta (fail-closed) job SEND sem tenantId, sem tocar o banco', async () => {
+  it('aborts (fail-closed) a SEND job without tenantId, without touching the database', async () => {
     const out = await processor.process({ name: NOTIFICATION_JOB_NAMES.SEND, data: {
       userId: 'u1', title: 'NoTenant', type: 'info',
     }} as any);
@@ -118,7 +118,7 @@ describe('NotificationsProcessor', () => {
   // 23505 and poisoned the surrounding transaction), and the processor
   // recovers the winner's row via one fallback SELECT instead of duplicating
   // persistence or the WS push.
-  it('job.id já processado (redelivery OU corrida concorrente): recupera a linha existente, sem duplicar nem falhar', async () => {
+  it('job.id already processed (redelivery OR concurrent race): recovers the existing row without duplicating or failing', async () => {
     const existingRow = { id: 'n-existing', title: 'Já processado', type: 'info', created_at: new Date() };
     mockDs._qb.execute = jest.fn(async () => ({ raw: [] })); // ON CONFLICT DO NOTHING: no row inserted
     mockDs._qb.getOne = jest.fn(async () => existingRow);

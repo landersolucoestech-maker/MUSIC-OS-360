@@ -2,18 +2,18 @@ import { describe, expect, it } from "vitest";
 import { deriveDevAuthBypass } from "./env";
 
 describe("deriveDevAuthBypass (VITE_DISABLE_AUTH — DEV ONLY)", () => {
-  it("nunca ativa fora de build de desenvolvimento, mesmo com a flag mal configurada (staging/produção)", () => {
+  it("never activates outside a development build, even with a misconfigured flag (staging/production)", () => {
     expect(deriveDevAuthBypass(false, "true")).toBe(false);
   });
 
-  it("não ativa em dev quando a flag está ausente, falsa, ou qualquer valor que não seja exatamente 'true'", () => {
+  it("does not activate in dev when the flag is absent, false, or anything other than exactly 'true'", () => {
     expect(deriveDevAuthBypass(true, undefined)).toBe(false);
     expect(deriveDevAuthBypass(true, "false")).toBe(false);
     expect(deriveDevAuthBypass(true, "1")).toBe(false);
     expect(deriveDevAuthBypass(true, "")).toBe(false);
   });
 
-  it("só ativa quando dev E a flag é exatamente 'true'", () => {
+  it("activates only when dev AND the flag is exactly 'true'", () => {
     expect(deriveDevAuthBypass(true, "true")).toBe(true);
   });
 });

@@ -7,7 +7,7 @@ describe("AuthRateLimiter (Parte 77)", () => {
     vi.useRealTimers();
   });
 
-  it("isBlocked() nunca incrementa nada — chamável livremente sem efeito colateral", () => {
+  it("isBlocked() never increments anything — freely callable without side effects", () => {
     expect(authRateLimiter.isBlocked("user@example.com")).toBe(false);
     expect(authRateLimiter.isBlocked("user@example.com")).toBe(false);
     expect(authRateLimiter.getRemainingAttempts("user@example.com")).toBe(5);
@@ -20,7 +20,7 @@ describe("AuthRateLimiter (Parte 77)", () => {
     expect(authRateLimiter.getRemainingAttempts("user@example.com")).toBe(3);
   });
 
-  it("bloqueia após exceder o máximo de tentativas falhas", () => {
+  it("blocks after exceeding the maximum number of failed attempts", () => {
     for (let i = 0; i < 6; i++) authRateLimiter.recordFailure("blocked@example.com");
     expect(authRateLimiter.isBlocked("blocked@example.com")).toBe(true);
     expect(authRateLimiter.getTimeUntilReset("blocked@example.com")).toBeGreaterThan(0);

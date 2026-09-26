@@ -104,7 +104,7 @@ describe('SupportTicketsService — messages (GAP-04)', () => {
 });
 
 describe('SupportTicketsService.listAdmin (REM-01 — cross-tenant admin view)', () => {
-  it('nunca filtra por tenant_id — só deleted_at + join real com tenants para tenant_name', async () => {
+  it('never filters by tenant_id — only deleted_at + a real join with tenants for tenant_name', async () => {
     const { svc, ds } = makeService();
     await svc.listAdmin({});
 
@@ -114,7 +114,7 @@ describe('SupportTicketsService.listAdmin (REM-01 — cross-tenant admin view)',
     expect(sql).toMatch(/tn\.name AS tenant_name/);
   });
 
-  it('aplica filtros de busca/status/priority como parâmetros', async () => {
+  it('applies search/status/priority filters as parameters', async () => {
     const { svc, ds } = makeService();
     await svc.listAdmin({ search: 'Ana', status: 'open', priority: 'high' });
 

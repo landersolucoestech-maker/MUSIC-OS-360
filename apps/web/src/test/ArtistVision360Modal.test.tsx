@@ -100,7 +100,7 @@ describe("<ArtistVision360Modal /> cards de plataforma na aba Perfil", () => {
     vi.mocked(api.post).mockReset();
   });
 
-  it("renderiza traço quando nenhuma URL de plataforma está configurada", async () => {
+  it("renders a dash when no platform URL is configured", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
 
     await renderModal({
@@ -116,7 +116,7 @@ describe("<ArtistVision360Modal /> cards de plataforma na aba Perfil", () => {
     expect(screen.queryByTestId("button-sync-youtube-art-1")).not.toBeInTheDocument();
   });
 
-  it("renderiza 'Não sincronizado' quando ha URL mas nenhum snapshot ainda", async () => {
+  it("renders 'Não sincronizado' when a URL exists but no snapshot yet", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
 
     await renderModal({
@@ -130,7 +130,7 @@ describe("<ArtistVision360Modal /> cards de plataforma na aba Perfil", () => {
     expect(screen.getByTestId("metric-youtube-art-1")).toHaveTextContent("Não sincronizado");
   });
 
-  it("renderiza valores reais do snapshot quando o backend ja sincronizou", async () => {
+  it("renders the real snapshot values once the backend has synced", async () => {
     vi.mocked(api.get).mockResolvedValue([
       {
         tenant_id: "tenant-1",

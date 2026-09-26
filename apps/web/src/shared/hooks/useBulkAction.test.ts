@@ -14,14 +14,14 @@ import { toast } from "sonner";
  * falhava, sem contar nem identificar o que falhou.
  */
 describe("runBulkAction", () => {
-  it("aguarda todas as operações e reporta sucesso total quando todas resolvem", async () => {
+  it("awaits every operation and reports full success when all resolve", async () => {
     const action = vi.fn(async (id: string) => id);
     const result = await runBulkAction(["a", "b", "c"], action);
     expect(result.succeeded).toEqual(["a", "b", "c"]);
     expect(result.failed).toEqual([]);
   });
 
-  it("uma falha não cancela as demais (Promise.allSettled) e é contabilizada, não escondida", async () => {
+  it("one failure does not cancel the others (Promise.allSettled) and is counted, not hidden", async () => {
     const action = vi.fn(async (id: string) => {
       if (id === "b") throw new Error("conflito 409");
       return id;
@@ -32,7 +32,7 @@ describe("runBulkAction", () => {
     expect(result.failed).toEqual([{ id: "b", error: "conflito 409" }]);
   });
 
-  it("todas falhando: nenhuma reportada como sucesso", async () => {
+  it("all failing: none reported as success", async () => {
     const action = vi.fn(async () => { throw new Error("falhou"); });
     const result = await runBulkAction(["a", "b"], action);
     expect(result.succeeded).toEqual([]);
@@ -58,7 +58,7 @@ describe("reportBulkResult", () => {
     expect(toast.success).not.toHaveBeenCalled();
   });
 
-  it("sucesso parcial -> toast.warning (nunca success, que mentiria sobre o resultado)", () => {
+  it("partial success -> toast.warning (never success, which would misreport the result)", () => {
     reportBulkResult(
       { succeeded: ["a"], failed: [{ id: "b", error: "x" }] },
       "excluído",

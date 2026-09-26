@@ -71,7 +71,7 @@ describe('MarketingPublishingProcessor — tenant context (P1)', () => {
     );
   });
 
-  it('find-61333a55: claim já reivindicado por outro worker (affected=0) — pula publish() sem erro', async () => {
+  it('find-61333a55: claim already taken by another worker (affected=0) — skips publish() without error', async () => {
     const { manager, qb } = makeJob(makeRow(), 0);
     const ds = { manager: {} };
     const dbContext = {
@@ -103,7 +103,7 @@ describe('MarketingPublishingProcessor — tenant context (P1)', () => {
     expect(dbContext.runInTenantContext).not.toHaveBeenCalled();
   });
 
-  it('sem dbContext (fallback): ainda usa ds.manager diretamente, comportamento preservado', async () => {
+  it('without dbContext (fallback): still uses ds.manager directly, behavior preserved', async () => {
     const { repo, manager } = makeJob(makeRow({ status: 'publicado', publication_status: 'published' }));
     const ds = { manager };
     const processor = new MarketingPublishingProcessor(ds as never, undefined);

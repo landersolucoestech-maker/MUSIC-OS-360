@@ -37,7 +37,7 @@ function renderDashboard() {
 describe("AdminDashboard — falha de query nunca vira KPI zerado fabricado", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("endpoint fora do ar mostra 'Indisponível', nunca R$ 0 fabricado", async () => {
+  it("an endpoint that is down shows 'Indisponível', never a fabricated R$ 0", async () => {
     apiMock.get.mockImplementation((path: string) => {
       if (path === "/billing/admin/tenants") return Promise.reject(new Error("Network error"));
       if (path === "/billing/admin/subscriptions") return Promise.reject(new Error("Network error"));
@@ -52,7 +52,7 @@ describe("AdminDashboard — falha de query nunca vira KPI zerado fabricado", ()
     expect(screen.queryByText(/R\$\s*0,00/)).toBeNull();
   });
 
-  it("endpoint saudável com plataforma genuinamente vazia mostra 0 real, não 'Indisponível'", async () => {
+  it("a healthy endpoint with a genuinely empty platform shows a real 0, not 'Indisponível'", async () => {
     apiMock.get.mockImplementation((path: string) => {
       if (path === "/billing/admin/tenants") return Promise.resolve([]);
       if (path === "/billing/admin/subscriptions") return Promise.resolve([]);
@@ -65,7 +65,7 @@ describe("AdminDashboard — falha de query nunca vira KPI zerado fabricado", ()
     expect(screen.queryByText("Indisponível")).toBeNull();
   });
 
-  it("não renderiza mais o banner desatualizado 'Admin analytics indisponível'", async () => {
+  it("no longer renders the stale 'Admin analytics indisponível' banner", async () => {
     apiMock.get.mockImplementation(() => Promise.resolve([]));
     renderDashboard();
     await screen.findByText("Painel Executivo");

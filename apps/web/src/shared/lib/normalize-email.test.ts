@@ -2,19 +2,19 @@ import { describe, expect, it } from "vitest";
 import { normalizeEmail } from "./normalize-email";
 
 describe("normalizeEmail", () => {
-  it("converte para minúsculas", () => {
+  it("converts to lowercase", () => {
     expect(normalizeEmail("Deyvisson@LanderRecords.com")).toBe("deyvisson@landerrecords.com");
   });
 
-  it("remove espaços no início e no fim", () => {
+  it("trims leading and trailing spaces", () => {
     expect(normalizeEmail("  deyvisson@landerrecords.com  ")).toBe("deyvisson@landerrecords.com");
   });
 
-  it("caixa mista com espaços nas duas pontas", () => {
+  it("mixed case with spaces on both ends", () => {
     expect(normalizeEmail("  Deyvisson@LANDERRECORDS.com  ")).toBe("deyvisson@landerrecords.com");
   });
 
-  it("já normalizado permanece idêntico", () => {
+  it("an already normalized value stays identical", () => {
     expect(normalizeEmail("deyvisson@landerrecords.com")).toBe("deyvisson@landerrecords.com");
   });
 });

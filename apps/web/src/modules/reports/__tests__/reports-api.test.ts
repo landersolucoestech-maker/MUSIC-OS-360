@@ -27,7 +27,7 @@ import {
   type ImportUploadBody,
 } from "../services/reports-api";
 
-describe("reportsApi — Central de Relatórios real-only", () => {
+describe("reportsApi — reports center, real data only", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubGlobal("fetch", vi.fn());
@@ -127,7 +127,7 @@ describe("reportsApi — Central de Relatórios real-only", () => {
     expect(apiClientMock.post).toHaveBeenCalledWith("/reports/entities/artistas/import/commit", body);
   });
 
-  describe("triggerBlobDownload — não revoga a URL antes do download iniciar", () => {
+  describe("triggerBlobDownload — does not revoke the URL before the download starts", () => {
     beforeEach(() => {
       vi.useFakeTimers();
       vi.stubGlobal("URL", {
@@ -136,7 +136,7 @@ describe("reportsApi — Central de Relatórios real-only", () => {
       });
     });
 
-    it("clica no link ANTES de revogar a URL, e a revogação só ocorre no próximo tick", () => {
+    it("clicks the link BEFORE revoking the URL, and revocation only happens on the next tick", () => {
       const anchor = document.createElement("a");
       const clickSpy = vi.spyOn(anchor, "click").mockImplementation(() => undefined);
       const createSpy = vi.spyOn(document, "createElement").mockReturnValue(anchor);

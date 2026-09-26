@@ -33,12 +33,12 @@ beforeEach(() => {
 // reclassified as REAL_PRODUCT_DECISION (wire vs. keep client-only) rather than a
 // simple staleness fix; this file now tests the hook that actually exists.
 describe("useOperationalSettings", () => {
-  it("não lança durante a montagem mesmo sem dados salvos (correção do crash de storage.getRaw) e cai nos defaults", () => {
+  it("does not throw on mount even without saved data (storage.getRaw crash fix) and falls back to the defaults", () => {
     const { result } = renderHook(() => useOperationalSettings());
     expect(result.current.getOptionsByKind("event_type").length).toEqual(DEFAULT_EVENT_TYPES.filter((i) => i.active).length);
   });
 
-  it("getOptionsByKind exclui itens inativos e reflete o nome salvo (não o default) para itens já existentes", () => {
+  it("getOptionsByKind excludes inactive items and reflects the saved name (not the default) for existing items", () => {
     vi.mocked(settingsService.getOperationalLists).mockReturnValue(ROWS as never);
     const { result } = renderHook(() => useOperationalSettings());
 
@@ -48,7 +48,7 @@ describe("useOperationalSettings", () => {
     expect(options.some((o) => o.value === "desativado")).toBe(false);
   });
 
-  it("getItemsByKind não mistura outras taxonomias (só retorna itens do kind pedido)", () => {
+  it("getItemsByKind does not mix other taxonomies (returns only items of the requested kind)", () => {
     vi.mocked(settingsService.getOperationalLists).mockReturnValue(ROWS as never);
     const { result } = renderHook(() => useOperationalSettings());
 

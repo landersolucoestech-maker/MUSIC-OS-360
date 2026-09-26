@@ -41,7 +41,7 @@ describe("storage.list", () => {
     ]);
   });
 
-  it("falha explicitamente para um contrato de resposta inválido", async () => {
+  it("fails explicitly for an invalid response contract", async () => {
     apiMock.get.mockResolvedValueOnce({ meta: { total: 0 } });
 
     await expect(storage.list("items")).rejects.toThrow(

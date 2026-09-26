@@ -25,7 +25,7 @@ describe('UploadEventsHandler — P2-9', () => {
     uploadedBy: 'u1',
   };
 
-  it('tenantId válido → executa dentro de runInTenantContext e deixa upload pronto', async () => {
+  it('valid tenantId → runs inside runInTenantContext and leaves the upload ready', async () => {
     const { handler, uploadRepo, dbContext } = build();
     await handler.onAssetUploaded({ payload: basePayload, correlationId: null } as any);
     expect(dbContext.runInTenantContext).toHaveBeenCalledWith(
@@ -38,7 +38,7 @@ describe('UploadEventsHandler — P2-9', () => {
     );
   });
 
-  it('tenantId ausente → rejeita fail-closed e não toca banco', async () => {
+  it('absent tenantId → rejects fail-closed and does not touch the database', async () => {
     const { handler, uploadRepo, dbContext } = build();
     await expect(
       handler.onAssetUploaded({

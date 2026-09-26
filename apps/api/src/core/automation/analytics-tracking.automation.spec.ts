@@ -39,7 +39,7 @@ const VALID_JSON = JSON.stringify({
 });
 
 describe('AnalyticsTrackingAutomation (ON_DEMAND: POST /analytics/tracking-coverage)', () => {
-  it('cruza o registro real de DOMAIN_EVENTS contra os métodos reais de PostHogService', async () => {
+  it('cross-checks the real DOMAIN_EVENTS registry against the real PostHogService methods', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const postHog = makePostHog(true);
@@ -58,7 +58,7 @@ describe('AnalyticsTrackingAutomation (ON_DEMAND: POST /analytics/tracking-cover
     expect(skillRun.succeed).toHaveBeenCalled();
   });
 
-  it('provedor não configurado: reporta configuration_required de forma verdadeira', async () => {
+  it('provider not configured: truthfully reports configuration_required', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const postHog = makePostHog(false);

@@ -44,7 +44,7 @@ describe('AIJobsProcessor — tenant DB context', () => {
   });
 
   // find-2ed4c244: fail-closed on a missing tenantId, matching every sibling processor.
-  it('aborta (fail-closed) job sem tenantId, sem chamar runInTenantContext', async () => {
+  it('aborts (fail-closed) a job without tenantId, without calling runInTenantContext', async () => {
     const ai = { complete: jest.fn() };
     const ws = { sendToUser: jest.fn() };
     const runInTenantContext = jest.fn();

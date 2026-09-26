@@ -13,7 +13,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildProjectsInCanonicalFormOrder20260719000005', () => {
-  it('tipo é o primeiro campo funcional após id/tenant_id, seguido de titulo', () => {
+  it('tipo is the first functional field after id/tenant_id, followed by titulo', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -26,14 +26,14 @@ describe('RebuildProjectsInCanonicalFormOrder20260719000005', () => {
     expect(statusIdx).toBeGreaterThan(tituloIdx);
   });
 
-  it('artista_id (relação técnica, só escrita por import em massa) vem depois de status', () => {
+  it('artista_id (technical relation, written only by bulk import) comes after status', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const statusIdx = block.indexOf('status ');
     const artistaIdx = block.indexOf('artista_id ');
     expect(artistaIdx).toBeGreaterThan(statusIdx);
   });
 
-  it('remove data_inicio/data_fim (órfãs comprovadas) com validação fail-fast', () => {
+  it('drops data_inicio/data_fim (proven orphans) with fail-fast validation', () => {
     expect(migrationSrc).not.toMatch(/newColumns = `[^`]*data_inicio/);
     expect(migrationSrc).not.toMatch(/newColumns = `[^`]*data_fim/);
     expect(migrationSrc).toMatch(/count\(data_inicio\)::int \+ count\(data_fim\)::int/);

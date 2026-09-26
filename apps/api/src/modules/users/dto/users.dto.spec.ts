@@ -30,21 +30,21 @@ describe('UpdateUserDto — contrato real (auditoria 2026-07-18 + Task L)', () =
     expect(errors).toEqual([]);
   });
 
-  it('rejeita full_name/cargo (nomes antigos incorretos usados pelo hook antes da correção)', async () => {
+  it('rejects full_name/cargo (old incorrect names used by the hook before the fix)', async () => {
     for (const key of ['full_name', 'cargo']) {
       const errors = await validatePayload({ [key]: 'x' });
       expect(errors.some((e) => e.property === key)).toBe(true);
     }
   });
 
-  it('Task L: rejeita role/status — só os endpoints dedicados (autorizados) podem alterá-los', async () => {
+  it('Task L: rejects role/status — only the dedicated (authorized) endpoints may change them', async () => {
     for (const key of ['role', 'status']) {
       const errors = await validatePayload({ [key]: 'owner' });
       expect(errors.some((e) => e.property === key)).toBe(true);
     }
   });
 
-  it('aceita expectedUpdatedAt (concorrência otimista, Task L)', async () => {
+  it('accepts expectedUpdatedAt (optimistic concurrency, Task L)', async () => {
     const errors = await validatePayload({ fullName: 'x', expectedUpdatedAt: '2026-08-14T10:00:00.000Z' });
     expect(errors).toEqual([]);
   });

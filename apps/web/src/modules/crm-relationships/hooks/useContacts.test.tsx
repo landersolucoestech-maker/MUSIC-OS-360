@@ -24,7 +24,7 @@ describe("useContacts — estados reais de carregamento/sucesso/erro", () => {
     expect(result.current.contacts).toEqual([]);
   });
 
-  it("lista vazia é um estado real e distinto (não erro, não mock)", async () => {
+  it("an empty list is a real, distinct state (not an error, not a mock)", async () => {
     vi.mocked(contactsService.list).mockResolvedValue([]);
     const { result } = renderHook(() => useContacts());
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -40,7 +40,7 @@ describe("useContacts — estados reais de carregamento/sucesso/erro", () => {
     expect(result.current.error).toBeNull();
   });
 
-  it("falha de rede/API vira estado de erro observável, não lista vazia disfarçada de sucesso", async () => {
+  it("a network/API failure becomes an observable error state, not an empty list disguised as success", async () => {
     vi.mocked(contactsService.list).mockRejectedValue(new Error("Falha de rede"));
     const { result } = renderHook(() => useContacts());
     await waitFor(() => expect(result.current.isLoading).toBe(false));

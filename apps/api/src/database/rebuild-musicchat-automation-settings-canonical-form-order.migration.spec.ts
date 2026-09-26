@@ -25,7 +25,7 @@ describe('RebuildMusicchatAutomationSettingsInCanonicalFormOrder20260719000021',
     expect(managerIdx).toBeGreaterThan(supervisorIdx);
   });
 
-  it('updated_by vem depois de created_at/updated_at (não antes)', () => {
+  it('updated_by comes after created_at/updated_at (not before)', () => {
     const b = block();
     const createdAtIdx = b.indexOf('created_at');
     const updatedAtIdx = b.indexOf('updated_at');

@@ -26,14 +26,14 @@ describe('TransactionEventsHandler — P2-9', () => {
 
   const payload = { transactionId: 'tx1', contratoId: 'c1', valor: 100, paidBy: 'u1', paidAt: '2026-06-12' };
 
-  it('tenantId válido → executa dentro de runInTenantContext', async () => {
+  it('valid tenantId → runs inside runInTenantContext', async () => {
     const { handler, dbContext, activityLogs } = build();
     await handler.onTransactionPaid({ tenantId: 't1', payload, correlationId: null } as any);
     expect(dbContext.runInTenantContext).toHaveBeenCalledWith({ tenantId: 't1', orgId: null, role: null }, expect.any(Function));
     expect(activityLogs.create).toHaveBeenCalledWith('t1', 'u1', expect.objectContaining({ action: 'paid' }));
   });
 
-  it('tenantId ausente → aborta (fail-closed), não toca banco', async () => {
+  it('absent tenantId → aborts (fail-closed), does not touch the database', async () => {
     const { handler, dbContext, contractRepo } = build();
     await handler.onTransactionPaid({ payload, correlationId: null } as any);
     expect(dbContext.runInTenantContext).not.toHaveBeenCalled();
@@ -61,7 +61,7 @@ describe('TransactionEventsHandler — P2-9', () => {
       );
     });
 
-    it('não avalia regras quando a transação já veio de contract.signed (evita disparo duplicado)', async () => {
+    it('does not evaluate rules when the transaction came from contract.signed (avoids a duplicate trigger)', async () => {
       const { handler, financialRules } = build();
       await handler.onTransactionCreated({
         tenantId: 't1',

@@ -60,7 +60,7 @@ describe('MarketingContentsService.update — metadata merge', () => {
   });
 });
 
-describe('MarketingContentsService.create — evento de domínio', () => {
+describe('MarketingContentsService.create — domain event', () => {
   const savedRow = {
     id: 'c1',
     tenant_id: 't1',
@@ -98,7 +98,7 @@ describe('MarketingContentsService.create — evento de domínio', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  it('emite marketing.content_created com o id/canal/título reais do post salvo', async () => {
+  it('emits marketing.content_created with the saved post\'s real id/channel/title', async () => {
     const service = new MarketingContentsService(dataSource as never, publishingQueue as never, events as never);
 
     await service.create('t1', 'u1', {

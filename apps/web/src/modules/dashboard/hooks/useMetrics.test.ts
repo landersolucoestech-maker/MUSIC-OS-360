@@ -61,8 +61,8 @@ vi.mock("@/modules/dashboard/hooks/useOperationalDashboard", () => ({
   }),
 }));
 
-describe("useMetrics — artistasMetrics.comContrato/.ativos além do cap de 50", () => {
-  it("usa o agregado do dashboard (COUNT real), não artistas.length (capado a 50)", () => {
+describe("useMetrics — artistasMetrics.comContrato/.ativos beyond the cap of 50", () => {
+  it("uses the dashboard aggregate (real COUNT), not artistas.length (capped at 50)", () => {
     const { result } = renderHook(() => useMetrics());
 
     // A lista capada tem 0 artistas com status contratado/ativo (todos
@@ -73,7 +73,7 @@ describe("useMetrics — artistasMetrics.comContrato/.ativos além do cap de 50"
     expect(result.current.dashboardMetrics.totalArtistas).toBe(137);
   });
 
-  it("cai para o array capado só quando o agregado ainda não carregou", async () => {
+  it("falls back to the capped array only while the aggregate has not loaded", async () => {
     vi.resetModules();
     vi.doMock("@/modules/dashboard/hooks/useOperationalDashboard", () => ({
       useOperationalDashboard: () => ({ dashboard: null, isLoading: true, error: null, refetch: vi.fn() }),

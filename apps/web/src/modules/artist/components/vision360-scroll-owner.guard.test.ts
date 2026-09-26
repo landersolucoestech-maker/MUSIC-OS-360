@@ -23,12 +23,12 @@ const FILE = join(__dirname, "ArtistVision360Modal.tsx");
 const source = readFileSync(FILE, "utf8");
 
 describe("Artist 360 modal — scroll owner estrutural", () => {
-  it("o scroll owner existe e é um container de overflow nativo", () => {
+  it("the scroll owner exists and is a native overflow container", () => {
     expect(source).toContain('data-testid="vision360-scroll"');
     expect(source).toMatch(/flex-1 min-h-0 overflow-y-auto[^"]*"\s+data-testid="vision360-scroll"/);
   });
 
-  it("NÃO voltou a usar o ScrollArea do Radix como scroll owner externo", () => {
+  it("does NOT use Radix ScrollArea as the outer scroll owner again", () => {
     // ScrollAreas internos (h-[150px], h-[320px]) continuam legítimos; o que não
     // pode voltar é o outer com flex-1, que é exatamente o padrão quebrado.
     expect(source).not.toContain('<ScrollArea className="flex-1 min-h-0">');
@@ -41,7 +41,7 @@ describe("Artist 360 modal — scroll owner estrutural", () => {
     expect(source).toMatch(/<Tabs[^>]*className="[^"]*flex-1[^"]*min-h-0/);
   });
 
-  it("o modal não ganhou overflow horizontal deliberado no scroll owner", () => {
+  it("the modal did not gain deliberate horizontal overflow on the scroll owner", () => {
     expect(source).not.toMatch(/data-testid="vision360-scroll"[^>]*overflow-x-auto/);
   });
 });

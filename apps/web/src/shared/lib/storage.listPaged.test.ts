@@ -51,7 +51,7 @@ describe("storage.listPaged", () => {
     expect(result.total).toBe(137);
   });
 
-  it("cai para items.length como total quando a resposta é um array puro (sem envelope)", async () => {
+  it("falls back to items.length as the total when the response is a plain array (no envelope)", async () => {
     const rows = [{ id: "a" }, { id: "b" }, { id: "c" }];
     mockedGet.mockResolvedValue(rows);
     const result = await storage.listPaged("artistas", { page: 1, pageSize: 50 });

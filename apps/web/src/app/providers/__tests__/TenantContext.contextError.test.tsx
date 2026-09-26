@@ -33,7 +33,7 @@ beforeEach(() => {
   state.getContext.mockReset();
 });
 
-describe("TenantProvider — superfície de erro de /auth/context (Parte 76)", () => {
+describe("TenantProvider — /auth/context error surface (Part 76)", () => {
   it("sucesso: contextLoading termina em false e contextError permanece null", async () => {
     state.getContext.mockResolvedValue({
       user: { id: "u1", email: "owner@lander.example", fullName: "Owner", avatarUrl: null },
@@ -49,7 +49,7 @@ describe("TenantProvider — superfície de erro de /auth/context (Parte 76)", (
     expect(result.current.tenant.name).toBe("LANDER RECORDS");
   });
 
-  it("falha 503 (dependência indisponível): contextError é preenchido em vez de ficar preso em loading silencioso", async () => {
+  it("503 failure (dependency unavailable): contextError is set instead of hanging in a silent loading state", async () => {
     state.getContext.mockRejectedValue(new IntegrationError("api", "Tenant bootstrap database unavailable", { statusCode: 503 }));
 
     const { result } = renderHook(() => useTenant(), { wrapper });
@@ -60,7 +60,7 @@ describe("TenantProvider — superfície de erro de /auth/context (Parte 76)", (
     expect(result.current.contextError).not.toMatch(/bootstrap/i);
   });
 
-  it("falha genérica (não-503): contextError ainda assim é preenchido, nunca fica em limbo", async () => {
+  it("generic failure (non-503): contextError is still set, never left in limbo", async () => {
     state.getContext.mockRejectedValue(new IntegrationError("api", "Internal error", { statusCode: 500 }));
 
     const { result } = renderHook(() => useTenant(), { wrapper });

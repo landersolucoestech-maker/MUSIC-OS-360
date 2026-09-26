@@ -13,7 +13,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildEventsInCanonicalFormOrder20260719000007', () => {
-  it('titulo/tipo vêm logo após id/tenant_id, e data/starts_at ficam lado a lado', () => {
+  it('titulo/tipo come right after id/tenant_id, and data/starts_at sit side by side', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -26,13 +26,13 @@ describe('RebuildEventsInCanonicalFormOrder20260719000007', () => {
     expect(startsAtIdx - dataIdx).toBeLessThan(120);
   });
 
-  it('não renomeia nem remove data/starts_at (fase de dual-write ativa preservada)', () => {
+  it('neither renames nor drops data/starts_at (active dual-write phase preserved)', () => {
     expect(migrationSrc).not.toMatch(/DROP COLUMN\s+"?(data|starts_at)"?/i);
     expect(migrationSrc).not.toMatch(/RENAME COLUMN\s+"?(data|starts_at)"?/i);
     expect(migrationSrc.match(/starts_at/g)?.length).toBeGreaterThanOrEqual(4);
   });
 
-  it('remove valor (órfã comprovada) com validação fail-fast', () => {
+  it('drops valor (proven orphan) with fail-fast validation', () => {
     expect(migrationSrc).not.toMatch(/newColumns = `[^`]*\bvalor\b(?!_cache)/);
     expect(migrationSrc).toMatch(/count\(valor\)::int AS non_null/);
     expect(migrationSrc).toMatch(/presumida órfã, mas há dado real/);

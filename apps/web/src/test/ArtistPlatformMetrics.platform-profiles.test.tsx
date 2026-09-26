@@ -873,7 +873,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
   // stays true for the whole window where the cache still shows the stale
   // sync_status — a second rapid click on the same platform's button during
   // that window must NOT fire a second POST /sync.
-  it("platform-sync-retry-race: dois cliques rapidos no mesmo botao de sync disparam so UMA chamada de mutation", async () => {
+  it("platform-sync-retry-race: two quick clicks on the same sync button fire only ONE mutation call", async () => {
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
       enqueued: [{ platform: "spotify", job_id: "job-1" }],

@@ -93,7 +93,7 @@ describe('AudienceHealthAutomation (ON_DEMAND: POST /artists/:id/audience-health
     expect(skillRun.succeed).toHaveBeenCalled();
   });
 
-  it('reaproveita síntese recente (stale-refresh) sem nova chamada de IA', async () => {
+  it('reuses a recent synthesis (stale-refresh) without a new AI call', async () => {
     const cachedRun = {
       id: 'run-old',
       finished_at: new Date().toISOString(),
@@ -131,7 +131,7 @@ describe('AudienceHealthAutomation (ON_DEMAND: POST /artists/:id/audience-health
     expect(ai.complete).toHaveBeenCalled();
   });
 
-  it('Market Benchmark indisponível: sinaliza no prompt, sem inventar score', async () => {
+  it('Market Benchmark unavailable: flagged in the prompt, no invented score', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const careerStage = makeCareerStage();
@@ -145,7 +145,7 @@ describe('AudienceHealthAutomation (ON_DEMAND: POST /artists/:id/audience-health
     expect(aiCalls[0][0].prompt).not.toMatch(/marketBenchmarkScore|label=/);
   });
 
-  it('falha da IA registra fail e relança (síncrono — o controller decide o erro HTTP)', async () => {
+  it('an AI failure records fail and rethrows (synchronous — the controller decides the HTTP error)', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const careerStage = makeCareerStage();

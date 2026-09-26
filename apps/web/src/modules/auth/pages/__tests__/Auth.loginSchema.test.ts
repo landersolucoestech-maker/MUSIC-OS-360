@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { loginSchema } from "../login-schema";
 
-describe("loginSchema (Parte 77) — a senha nunca é transformada", () => {
-  it("preserva espaços no início e no fim da senha", () => {
+describe("loginSchema (Part 77) — the password is never transformed", () => {
+  it("preserves leading and trailing spaces in the password", () => {
     const result = loginSchema.safeParse({ email: "user@example.com", password: "  Senha123!  " });
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.password).toBe("  Senha123!  ");
   });
 
-  it("preserva caixa (maiúsculas/minúsculas) exatamente como digitada", () => {
+  it("preserves case exactly as typed", () => {
     const result = loginSchema.safeParse({ email: "user@example.com", password: "MiXeD-CaSe-Pass1!" });
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.password).toBe("MiXeD-CaSe-Pass1!");
@@ -23,7 +23,7 @@ describe("loginSchema (Parte 77) — a senha nunca é transformada", () => {
     if (result.success) expect(result.data.password).toBe(password);
   });
 
-  it("normaliza o e-mail (trim) mas NUNCA a senha", () => {
+  it("normalizes the email (trim) but NEVER the password", () => {
     const result = loginSchema.safeParse({ email: "  User@Example.com  ", password: "  senha  " });
     expect(result.success).toBe(true);
     if (result.success) {

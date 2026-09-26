@@ -26,7 +26,7 @@ describe('RebuildPayrollEntriesInCanonicalFormOrder20260719000019', () => {
     expect(mesRefIdx).toBeGreaterThan(employeeIdx);
   });
 
-  it('bonus/data_pagamento/observacoes vêm em ordem visual do form, antes de arquivo_url/pago_em (legado)', () => {
+  it('bonus/data_pagamento/observacoes follow the form\'s visual order, before arquivo_url/pago_em (legacy)', () => {
     const b = block();
     const bonusIdx = b.indexOf('bonus');
     const salarioLiquidoIdx = b.indexOf('salario_liquido');
@@ -39,7 +39,7 @@ describe('RebuildPayrollEntriesInCanonicalFormOrder20260719000019', () => {
     expect(pagoEmIdx).toBeGreaterThan(arquivoUrlIdx);
   });
 
-  it('bloco de auditoria é created_at -> updated_at -> deleted_at (sem created_by/updated_by, lacuna preexistente)', () => {
+  it('the audit block is created_at -> updated_at -> deleted_at (no created_by/updated_by, pre-existing gap)', () => {
     const b = block();
     const createdAtIdx = b.indexOf('created_at');
     const updatedAtIdx = b.indexOf('updated_at');

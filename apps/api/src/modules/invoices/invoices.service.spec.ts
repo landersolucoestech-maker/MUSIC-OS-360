@@ -32,7 +32,7 @@ function makeService(rows: unknown[] = [], one: unknown = null) {
 }
 
 describe('InvoicesService.list — exclui faturas Stripe da assinatura SaaS (REM-06)', () => {
-  it('filtra type != stripe_subscription por padrão', async () => {
+  it('filters type != stripe_subscription by default', async () => {
     const { svc, qb } = makeService();
     await svc.list('tenant-1', {} as any);
 
@@ -48,7 +48,7 @@ describe('InvoicesService.findById — exclui faturas Stripe da assinatura SaaS 
     expect(qb.andWhere).toHaveBeenCalledWith("i.type != 'stripe_subscription'");
   });
 
-  it('lança NotFoundException quando a fatura Stripe é a única correspondência (excluída pela query)', async () => {
+  it('throws NotFoundException when the Stripe invoice is the only match (excluded by the query)', async () => {
     const { svc } = makeService([], null);
     await expect(svc.findById('tenant-1', 'inv-stripe-1')).rejects.toThrow(NotFoundException);
   });

@@ -70,14 +70,14 @@ function extractEntityColumns(): string[] {
 }
 
 describe('LeadEntity <-> leads (physical schema) alignment', () => {
-  it('toda coluna física da migration canônica está mapeada em LeadEntity', () => {
+  it('every physical column of the canonical migration is mapped in LeadEntity', () => {
     const migCols = extractMigrationColumns();
     const entCols = extractEntityColumns();
     const missing = migCols.filter((c) => !entCols.includes(c));
     expect(missing).toEqual([]);
   });
 
-  it('LeadEntity não declara nenhuma coluna removida (score/pipeline_stage e o dual-storage morto do Cluster E)', () => {
+  it('LeadEntity declares no removed column (score/pipeline_stage and the dead Cluster E dual storage)', () => {
     const entCols = extractEntityColumns();
     for (const ghost of [
       'score', 'pipeline_stage',
@@ -89,7 +89,7 @@ describe('LeadEntity <-> leads (physical schema) alignment', () => {
     }
   });
 
-  it('LeadEntity não declara coluna alguma que não exista fisicamente na tabela', () => {
+  it('LeadEntity declares no column that does not physically exist in the table', () => {
     const migCols = extractMigrationColumns();
     const entCols = extractEntityColumns().filter((c) => c !== 'id' && c !== 'interactions');
     const extra = entCols.filter((c) => !migCols.includes(c));

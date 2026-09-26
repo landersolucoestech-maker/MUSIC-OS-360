@@ -35,14 +35,14 @@ function makeService(rows: unknown[] = []) {
 }
 
 describe('LeadInteractionsService.list — filtro por leadId (REM-04)', () => {
-  it('filtra por lead_id quando leadId é enviado na query', async () => {
+  it('filters by lead_id when leadId is sent in the query', async () => {
     const { svc, qb } = makeService();
     await svc.list('tenant-1', { leadId: 'lead-1' } as unknown as QueryLeadInteractionDto);
 
     expect(qb.andWhere).toHaveBeenCalledWith('i.lead_id = :leadId', { leadId: 'lead-1' });
   });
 
-  it('sem leadId, não filtra por lead (lista todas as interações do tenant)', async () => {
+  it('without leadId, does not filter by lead (lists every tenant interaction)', async () => {
     const { svc, qb } = makeService();
     await svc.list('tenant-1', {} as unknown as QueryLeadInteractionDto);
 
@@ -64,7 +64,7 @@ describe('LeadInteractionsService.create — mapeamento DTO → colunas reais (R
     expect(created.leadId).toBeUndefined();
   });
 
-  it('notes ausente persiste notes como null (não undefined)', async () => {
+  it('absent notes persists notes as null (not undefined)', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       leadId: 'lead-1', type: 'note',

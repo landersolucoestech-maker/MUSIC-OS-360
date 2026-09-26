@@ -17,7 +17,7 @@ describe('ContractServiceTypesController', () => {
     controller = new ContractServiceTypesController(svc as unknown as ContractServiceTypesService);
   });
 
-  it('list delega para o service com o tenant atual (nunca lista de outro tenant)', async () => {
+  it('list delegates to the service with the current tenant (never lists another tenant)', async () => {
     await controller.list(tenant);
     expect(svc.list).toHaveBeenCalledWith('tenant-1');
   });

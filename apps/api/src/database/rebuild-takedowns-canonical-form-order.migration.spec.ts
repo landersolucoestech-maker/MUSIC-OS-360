@@ -13,7 +13,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildTakedownsInCanonicalFormOrder20260719000016', () => {
-  it('titulo/tipo/obra_afetada/artista vêm antes de plataforma (2ª seção visual)', () => {
+  it('titulo/tipo/obra_afetada/artista come before plataforma (2nd visual section)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -24,7 +24,7 @@ describe('RebuildTakedownsInCanonicalFormOrder20260719000016', () => {
     expect(plataformaIdx).toBeGreaterThan(tituloIdx);
   });
 
-  it('remove url/resposta/obra_id/artista_id (órfãs comprovadas, nomes históricos da migration) com validação fail-fast', () => {
+  it('drops url/resposta/obra_id/artista_id (proven orphans, the migration\'s historical names) with fail-fast validation', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     expect(block).not.toMatch(/\bresposta\b/);
     expect(block).not.toMatch(/\bobra_id\b/);

@@ -41,7 +41,7 @@ describe("workspaceRoutes — nenhuma aba cai em 404/Outlet vazio (CODEBASE_MAP 
     });
   });
 
-  it("overview (rota registrada) não cai no placeholder 'Em construção'", async () => {
+  it("overview (registered route) does not fall into the 'Em construção' placeholder", async () => {
     renderWorkspaceAt("/workspace/artist/artist-1/overview");
     // Two nested lazy() boundaries (layout + page) resolving together can exceed
     // findByText's default 1000ms wait under test-runner load; give it more room.

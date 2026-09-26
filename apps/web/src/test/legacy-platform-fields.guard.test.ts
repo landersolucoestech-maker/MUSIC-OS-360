@@ -58,10 +58,10 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-describe("Guarda permanente: domínio Artista (frontend) só usa foto_url/spotify_url/youtube_url", () => {
+describe("Permanent guard: the artist domain (frontend) only uses foto_url/spotify_url/youtube_url", () => {
   const allFiles = walk(SRC_ROOT).filter((f) => f !== THIS_FILE);
 
-  it("nenhum arquivo contém as formas snake_case dos campos removidos", () => {
+  it("no file contains the snake_case forms of the removed fields", () => {
     const violations: string[] = [];
     for (const file of allFiles) {
       if (file === REGRESSION_TEST_EXCEPTION) continue;
@@ -75,7 +75,7 @@ describe("Guarda permanente: domínio Artista (frontend) só usa foto_url/spotif
     expect(violations).toEqual([]);
   });
 
-  it("nenhum arquivo contém as formas camelCase dos campos removidos", () => {
+  it("no file contains the camelCase forms of the removed fields", () => {
     const violations: string[] = [];
     for (const file of allFiles) {
       if (file === REGRESSION_TEST_EXCEPTION) continue;
@@ -89,7 +89,7 @@ describe("Guarda permanente: domínio Artista (frontend) só usa foto_url/spotif
     expect(violations).toEqual([]);
   });
 
-  it("nenhum utilitário de extração/reconstrução de ID↔URL existe no frontend", () => {
+  it("no ID↔URL extraction/reconstruction utility exists in the frontend", () => {
     const violations: string[] = [];
     for (const file of allFiles) {
       const content = fs.readFileSync(file, "utf8");
