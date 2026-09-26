@@ -127,10 +127,10 @@ const splitNames = (s: string | null | undefined): string[] => {
 };
 
 /**
- * Resolve um fonograma pelo título exato (após normalização) — busca
- * server-side (ILIKE) em vez de escanear a lista capped de useFonogramas()
- * sem filtro (Task J). Usado só para autofill best-effort (ISRC de uma faixa
- * de projeto); poucos resultados bastam, `pageSize` pequeno é intencional.
+ * Resolves a phonogram by exact title (after normalization) — server-side
+ * search (ILIKE) instead of scanning the capped, unfiltered useFonogramas()
+ * list (Task J). Used only for best-effort autofill (ISRC of a project track);
+ * a few results are enough, so the small `pageSize` is intentional.
  */
 async function findFonogramaByTitle(title: string): Promise<FonogramaWithRelations | undefined> {
   if (!title.trim()) return undefined;
@@ -397,12 +397,12 @@ function InfoBox({ children }: { children: React.ReactNode }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ArtistAutocompleteInput — texto com dropdown que abre no foco. Task J:
-// antes recebia uma lista `suggestions: string[]` pré-computada a partir de
-// useArtistas() sem filtro (primeiros 50 artistas do tenant); agora busca
-// server-side (debounced internamente) a cada tecla, alcançando qualquer
-// artista do tenant. Texto livre continua permitido — nem todo colaborador
-// precisa estar cadastrado.
+// ArtistAutocompleteInput — text input with a dropdown that opens on focus.
+// Task J: it used to receive a `suggestions: string[]` list precomputed from
+// unfiltered useArtistas() (the tenant's first 50 artists); it now searches
+// server-side (internally debounced) on every keystroke, reaching any artist
+// of the tenant. Free text is still allowed — not every collaborator has to
+// be registered.
 // ─────────────────────────────────────────────────────────────────────────────
 function ArtistAutocompleteInput({
   value,
@@ -488,8 +488,8 @@ export function ReleaseFormModal({
   const [artistaSearch, setArtistaSearch] = useState("");
   const [artistaOpen, setArtistaOpen] = useState(false);
 
-  // ── Plataformas de distribuição (fonte única: serviço/hook) ────────────────
-  // Apenas plataformas realmente conectadas aparecem como selecionáveis.
+  // ── Distribution platforms (single source: service/hook) ──────────────────
+  // Only truly connected platforms are selectable.
   const { enabledPlatforms: connectedDistributors, hasAnyConnected } = useDistributionPlatforms();
 
   // ── Helper to update extraFields ──────────────────────────────────────────
@@ -497,27 +497,27 @@ export function ReleaseFormModal({
     setExtraFields((prev) => ({ ...prev, [k]: v }));
 
   // ── Derived labels ────────────────────────────────────────────────────────
-  // Task J: busca direto por ID (GET /projects/:id) — não depende do projeto
-  // estar entre os primeiros carregados por useProjetos() sem filtro.
+  // Task J: fetches directly by ID (GET /projects/:id) — does not depend on the
+  // project being among the first loaded by unfiltered useProjetos().
   const { entity: selectedProjeto } = useEntityById<ProjectWithRelations>("projects", formData.projetoSeed || undefined);
   const projetoLabel: string = selectedProjeto
     ? ((selectedProjeto.title ?? (selectedProjeto.nome as string | undefined) ?? "") as string)
     : "";
-  // Task I: busca direto por ID (não depende do artista estar entre os
-  // primeiros carregados por useArtistas() sem filtro).
+  // Task I: fetches directly by ID (does not depend on the artist being among
+  // the first loaded by unfiltered useArtistas()).
   const { entity: selectedArtistaWire } = useEntityById<ArtistWireRecord>("artistas", formData.artist_id || undefined);
   const selectedArtista: Artist | undefined = selectedArtistaWire ? wireToArtist(selectedArtistaWire) : undefined;
   const artistaLabel = selectedArtista?.stageName ?? "";
 
   // ── Filtered lists ────────────────────────────────────────────────────────
   const TIPOS_MUSICAIS = ["album", "ep", "single"];
-  // Task J: busca server-side (debounced internamente) — antes filtrava só
-  // os primeiros 50 projetos do tenant carregados via useProjetos() sem
-  // filtro. O filtro por type (album/ep/single) continua client-side sobre
-  // os resultados já buscados — o backend só suporta um único `type=` por
-  // vez, não uma lista (ver QueryProjectDto), então filtrar os 3 tipos
-  // musicais aqui é a mesma concessão já aceita em outras migrações desta
-  // tarefa (leve estreitamento, nunca um cap de 50 no tenant inteiro).
+  // Task J: server-side search (internally debounced) — it used to filter only
+  // the tenant's first 50 projects loaded by unfiltered useProjetos(). The type
+  // filter (album/ep/single) stays client-side over the fetched results — the
+  // backend supports a single `type=` at a time, not a list (see
+  // QueryProjectDto), so filtering the 3 music types here is the same concession
+  // accepted in other migrations of this task (a slight narrowing, never a cap
+  // of 50 over the whole tenant).
   const { items: projetosBusca } = useEntityLookup<ProjectWithRelations>({
     table: "projects",
     search: projetoSearch,
@@ -526,8 +526,8 @@ export function ReleaseFormModal({
   const projetosFiltrados = projetosBusca.filter(
     (p) => !p.type || TIPOS_MUSICAIS.includes(String(p.type).toLowerCase()),
   );
-  // Task I: busca server-side (debounced internamente) — antes filtrava só
-  // os primeiros 50 artistas do tenant carregados via useArtistas() sem filtro.
+  // Task I: server-side search (internally debounced) — it used to filter only
+  // the tenant's first 50 artists loaded by unfiltered useArtistas().
   const { items: artistasFiltradosWire } = useEntityLookup<ArtistWireRecord>({
     table: "artistas",
     search: artistaSearch,
@@ -576,13 +576,13 @@ export function ReleaseFormModal({
   // ─────────────────────────────────────────────────────────────────────────
   // AUTO-FILL HANDLERS
   // ─────────────────────────────────────────────────────────────────────────
-  // Task J: recebe o projeto já resolvido (o item clicado veio direto dos
-  // resultados de busca server-side em `projetosBusca`) em vez de reescanear
-  // um array `projetos` capped por ID — elimina o risco de "not found" para
-  // projetos fora dos primeiros 50 do tenant. O nome/gênero do artista
-  // vinculado e o fonograma cujo título bate com o do projeto/faixa também
-  // são resolvidos por busca direta (storage.findById / busca por título),
-  // nunca varrendo useArtistas()/useFonogramas() sem filtro.
+  // Task J: receives the already-resolved project (the clicked item came
+  // straight from the server-side search results in `projetosBusca`) instead of
+  // rescanning a capped `projetos` array by ID — removes the "not found" risk
+  // for projects beyond the tenant's first 50. The linked artist's name/genre
+  // and the phonogram whose title matches the project/track are also resolved
+  // by direct lookup (storage.findById / title search), never by scanning
+  // unfiltered useArtistas()/useFonogramas().
   const handleSelectProjeto = async (projeto: ProjectWithRelations) => {
     const projectId = projeto.id;
     const seed = projectToReleaseSeed(projeto);
@@ -788,7 +788,7 @@ export function ReleaseFormModal({
       ),
     );
 
-  // Músicos
+  // Musicians
   const addMus = (fid: number) =>
     setFaixas((prev) =>
       prev.map((f) =>
@@ -868,7 +868,7 @@ export function ReleaseFormModal({
       } else {
         toast.error("Falha desconhecida ao enviar capa.");
       }
-      // Limpa preview para indicar que o upload não foi concluído
+      // Clears the preview to show the upload did not complete
       setCapaPrincipal(null);
     }
   };
@@ -911,13 +911,13 @@ export function ReleaseFormModal({
         toast.success("Lançamento atualizado!");
       } else {
         const created = (await addLancamento.mutateAsync(payload as never)) as (Release & { id?: string }) | undefined;
-        // Integração desacoplada: oferecer iniciar o fluxo de shares (via navegação),
-        // somente se houver participantes/créditos suficientes. Sem acoplamento direto.
-        // find-ed7823e9: antes forçava um PATCH de status para distribuído logo após
-        // criar. O backend cria sempre em DRAFT e o workflow só permite
-        // SCHEDULED -> DISTRIBUTED, então esse PATCH falhava com 400 depois de
-        // um create bem-sucedido (modal ficava aberto com erro, convidando a
-        // reenviar e duplicar). Nenhuma distribuição real existe neste fluxo.
+        // Decoupled integration: offer to start the shares flow (via navigation) only
+        // when there are enough participants/credits. No direct coupling.
+        // find-ed7823e9: it used to force a status PATCH to distributed right after
+        // creation. The backend always creates in DRAFT and the workflow only allows
+        // SCHEDULED -> DISTRIBUTED, so that PATCH failed with 400 after a successful
+        // create (the modal stayed open with an error, inviting a resubmit and a
+        // duplicate). No real distribution exists in this flow.
         if (created?.id) {
           toast.success("Lançamento criado!");
           await onCreated?.(created as Release);
@@ -928,7 +928,7 @@ export function ReleaseFormModal({
       onOpenChange(false);
     } catch (err) {
       if (handleConcurrencyConflict(err, "lançamento")) return;
-      // demais erros: mutation onError já exibe o toast — evita toast duplicado
+      // other errors: the mutation's onError already shows the toast — avoids a duplicate toast
     }
   };
 
@@ -950,7 +950,7 @@ export function ReleaseFormModal({
     onAdd: () => void;
     onUpdate: (i: number, k: "nome" | "role", v: string) => void;
     onRemove: (i: number) => void;
-    /** Habilita sugestão de artistas cadastrados (busca server-side) neste campo. */
+    /** Enables registered-artist suggestions (server-side search) on this field. */
     withArtistSuggestions?: boolean;
   }) => {
     return (
@@ -1021,7 +1021,7 @@ export function ReleaseFormModal({
   // ─────────────────────────────────────────────────────────────────────────
   const renderStep0 = () => (
     <div className="space-y-6">
-      {/* Vinculações */}
+      {/* Links */}
       <Card className="bg-muted/30 border-border">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
@@ -1103,12 +1103,12 @@ export function ReleaseFormModal({
                             <p className="text-sm font-medium truncate">
                               {String(p.title ?? p.nome ?? "—")}
                             </p>
-                            {/* ponytail: subtítulo com nome do artista removido — a API real
-                                não embute o artista no /projects (sem join), e resolvê-lo por
-                                linha exigiria N lookups por página de resultados. O valor
-                                selecionado (projectId) continua correto independentemente
-                                deste subtítulo. Upgrade path: endpoint dedicado que devolva
-                                id+title+nome_artistico já agregados, se a UX exigir. */}
+                            {/* ponytail: artist-name subtitle removed — the real API does not
+                                embed the artist in /projects (no join), and resolving it per
+                                row would need N lookups per results page. The selected value
+                                (projectId) stays correct regardless of this subtitle. Upgrade
+                                path: a dedicated endpoint returning id+title+nome_artistico
+                                already aggregated, if the UX requires it. */}
                           </div>
                         </div>
                       ))
@@ -1473,8 +1473,8 @@ export function ReleaseFormModal({
             )}
           </div>
 
-          {/* Status interno — controlado pelo sistema (não editável manualmente).
-              O status de plataforma é atualizado apenas por integração real. */}
+          {/* Internal status — system-controlled (not manually editable).
+              The platform status is updated only by a real integration. */}
           <div className="space-y-2">
             <Label>Status interno</Label>
             <div className="flex items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm">
@@ -1899,7 +1899,7 @@ export function ReleaseFormModal({
               />
             </div>
 
-            {/* Artista da faixa */}
+            {/* Track artist */}
             <div className="space-y-2">
               <Label>
                 Nome do Artista na Faixa{" "}

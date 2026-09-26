@@ -1,11 +1,11 @@
 // ============================================================================
-// AdminSubscriptions — gestão de assinaturas dos clientes (Painel Admin).
-// Fonte central de assinaturas: consulta de status, histórico de cobranças,
-// cancelamentos e renovações. Real e live-wired via adminBillingService
-// (GET/POST /billing/admin/**) -- NÃO é modo mock. billing.service.ts recusa
-// ativamente qualquer STRIPE_SECRET_KEY que não seja uma chave TEST; o modo
-// real é exibido no cabeçalho via GET /billing/admin/stripe-mode (badge no
-// padrão ENV_BADGE — find-340abf0b / Gotcha #20).
+// AdminSubscriptions — customer subscription management (admin panel).
+// Central subscriptions source: status lookup, charge history, cancellations
+// and renewals. Real and live-wired via adminBillingService
+// (GET/POST /billing/admin/**) -- NOT mock mode. billing.service.ts actively
+// rejects any STRIPE_SECRET_KEY that is not a TEST key; the real mode is shown
+// in the header via GET /billing/admin/stripe-mode (badge following the
+// ENV_BADGE pattern — find-340abf0b / Gotcha #20).
 // ============================================================================
 
 import { useMemo, useState } from "react";
@@ -99,7 +99,7 @@ function subscriptionStatusFromBilling(status: AdminBillingStateStatus): Subscri
   return "active";
 }
 
-/* ─────────────── Histórico de cobranças (mock derivado) ─────────────── */
+/* ─────────────── Charge history (derived mock) ─────────────── */
 interface Invoice {
   id: string;
   date: string;
@@ -127,7 +127,7 @@ function buildInvoices(sub: AdminSubscription): Invoice[] {
     cursor.setMonth(cursor.getMonth() + stepMonths);
     i += 1;
   }
-  // Estado atual reflete a assinatura: última cobrança pendente/falha quando aplicável.
+  // Current state mirrors the subscription: the latest charge is pending/failed when applicable.
   if (invoices.length > 0) {
     if (sub.status === "past_due") invoices[invoices.length - 1].status = "failed";
     else if (sub.status === "cancelled") invoices[invoices.length - 1].status = "pending";
@@ -141,7 +141,7 @@ function InvoiceStatusBadge({ status }: { status: Invoice["status"] }) {
   return <Badge variant="warning" className="text-[10px] gap-1"><Clock className="h-3 w-3" />Pendente</Badge>;
 }
 
-/* ─────────────── Diálogo de histórico de cobranças ─────────────── */
+/* ─────────────── Charge history dialog ─────────────── */
 function BillingHistoryDialog({ sub, onClose }: { sub: AdminSubscription; onClose: () => void }) {
   const invoices = useMemo(() => buildInvoices(sub), [sub]);
   return (
@@ -194,7 +194,7 @@ function BillingHistoryDialog({ sub, onClose }: { sub: AdminSubscription; onClos
   );
 }
 
-/* ─────────────── Confirmação de cancelamento ─────────────── */
+/* ─────────────── Cancellation confirmation ─────────────── */
 function CancelDialog({ sub, onConfirm, onClose }: { sub: AdminSubscription; onConfirm: () => void; onClose: () => void }) {
   return (
     <Dialog open onOpenChange={onClose}>
@@ -222,7 +222,7 @@ function CancelDialog({ sub, onConfirm, onClose }: { sub: AdminSubscription; onC
   );
 }
 
-/* ─────────────── Página principal ─────────────── */
+/* ─────────────── Main page ─────────────── */
 export default function AdminSubscriptions() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");

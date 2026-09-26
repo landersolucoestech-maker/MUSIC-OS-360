@@ -53,8 +53,8 @@ function makeIntegrationsStore() {
 function makeProvider(integRepo: ReturnType<typeof makeIntegrationsStore>) {
   const ds: any = { getRepository: jest.fn(() => integRepo) };
   const config = { get: jest.fn((key: string) => process.env[key]) } as unknown as ConfigService;
-  // adminDs = mesma store: no runtime é a conexão owner (ADMIN_DATA_SOURCE)
-  // sobre a MESMA tabela integrations.
+  // adminDs = the same store: at runtime it is the owner connection
+  // (ADMIN_DATA_SOURCE) over the SAME integrations table.
   return new WhatsAppCloudProvider(ds, makeEncryption(), config, ds);
 }
 
@@ -71,7 +71,7 @@ describe('WhatsAppCloudProvider', () => {
     (global as any).fetch = fetchMock;
   });
 
-  /** find-2220a85e: configure agora prova posse via Graph API antes de gravar. */
+  /** find-2220a85e: configure now proves ownership via the Graph API before writing. */
   async function configureOk(tenant: string, pid: string, token: string, waba: string) {
     fetchMock.mockResolvedValueOnce({ ok: true, json: async () => ({ id: pid }) });
     await provider.configure(tenant, pid, token, waba);
@@ -83,7 +83,7 @@ describe('WhatsAppCloudProvider', () => {
     else process.env['WHATSAPP_WEBHOOK_VERIFY_TOKEN'] = ORIGINAL_ENV;
   });
 
-  // ── configuração ────────────────────────────────────────────────────────────
+  // ── configuration ──────────────────────────────────────────────────────────
 
   it('provider not configured: rejects the send without calling Meta', async () => {
     await expect(provider.sendTextMessage(TENANT_A, '5511999999999', 'oi')).rejects.toMatchObject({
@@ -232,7 +232,7 @@ describe('WhatsAppCloudProvider', () => {
 
   it('resolveTenantByPhoneNumberId: a legacy duplicate link becomes a conflict (fail-closed), never "first row"', async () => {
     await configureOk(TENANT_A, '1111111111', 'token-a', 'waba-a');
-    // simula uma linha legada gravada antes da checagem de unicidade
+    // simulates a legacy row written before the uniqueness check existed
     integRepo._rows.set(`${TENANT_B}:whatsapp`, {
       id: 'legacy-b', tenant_id: TENANT_B, provider: 'whatsapp',
       credentials_encrypted: makeEncryption().encrypt(JSON.stringify({ phoneNumberId: '1111111111', accessToken: 'x', wabaId: 'y' })),

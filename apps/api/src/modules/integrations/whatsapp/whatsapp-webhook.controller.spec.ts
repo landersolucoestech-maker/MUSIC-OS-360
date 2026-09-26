@@ -15,7 +15,7 @@ function makeRes() {
   return { status: jest.fn().mockReturnThis(), send: jest.fn().mockReturnThis() } as any;
 }
 
-/** WebhookService real (não mockado) — o teste precisa exercitar o HMAC de verdade, não uma dublê que sempre retorna true. */
+/** Real WebhookService (not mocked) — the test must exercise the real HMAC, not a double that always returns true. */
 function makeController(overrides: {
   findTenant?: jest.Mock;
   verify?: jest.Mock;
@@ -36,9 +36,9 @@ function makeController(overrides: {
     handleInboundMessage: overrides.handleInboundMessage ?? jest.fn().mockResolvedValue({ action: 'received' }),
   };
   const config: any = { get: jest.fn((key: string) => process.env[key]) };
-  // find-b4201eb2: rota @Public — todo acesso a banco precisa rodar dentro do
-  // contexto do tenant resolvido. O stub marca "dentro do contexto" e registra
-  // o tenant de cada abertura.
+  // find-b4201eb2: @Public route — every database access must run inside the
+  // resolved tenant's context. The stub marks "inside the context" and records
+  // the tenant of each opening.
   const contexts: string[] = [];
   let active: string | null = null;
   const dbContext: any = {
@@ -72,7 +72,7 @@ const messagePayloadObj = (overrides: Partial<any> = {}) => ({
   }],
 });
 
-/** Simula o request real: rawBody é o Buffer capturado pelo bootstrap (rawBody:true), payload é o JSON já parseado pelo Nest — os dois vêm do mesmo corpo. */
+/** Simulates the real request: rawBody is the Buffer captured at bootstrap (rawBody:true), payload is the JSON already parsed by Nest — both come from the same body. */
 function rawReq(bodyObj: unknown): any {
   return { rawBody: Buffer.from(JSON.stringify(bodyObj), 'utf8') };
 }
@@ -109,7 +109,7 @@ describe('WhatsAppWebhookController', () => {
     expect(res.send).not.toHaveBeenCalledWith('challenge-123');
   });
 
-  // ── POST: assinatura obrigatória (algoritmo HMAC real, não mockado) ──────────
+  // ── POST: mandatory signature (real HMAC algorithm, not mocked) ─────────────
 
   it('POST without X-Hub-Signature-256: rejected with 403, nothing processed', async () => {
     const { controller, ingestSpy, musicChat } = makeController();
@@ -138,7 +138,7 @@ describe('WhatsAppWebhookController', () => {
     const { controller, ingestSpy, musicChat } = makeController();
     const body = messagePayloadObj();
     const req = rawReq(body);
-    const validSig = sign(req.rawBody.toString('utf8')); // mesmo com assinatura correta, sem secret no servidor não há como validar
+    const validSig = sign(req.rawBody.toString('utf8')); // even with a correct signature, there is no way to validate without a server secret
 
     await expect(controller.receive(body, validSig, req)).rejects.toBeInstanceOf(ServiceUnavailableException);
 
@@ -263,12 +263,12 @@ describe('WhatsAppWebhookController', () => {
     const body = messagePayloadObj();
     const req = rawReq(body);
     await expect(ctl.controller.receive(body, sign(req.rawBody.toString('utf8')), req)).rejects.toThrow();
-    // ingest, tentativa de processamento, registro da falha: 3 contextos distintos
+    // ingest, processing attempt, failure record: 3 distinct contexts
     expect(ctl.dbContext.runInTenantContext).toHaveBeenCalledTimes(3);
     expect(ctl.markProcessedSpy).toHaveBeenLastCalledWith('evt-1', 'failed', 'RLS/DB error');
   });
 
-  // ── Regressão: falha interna não pode virar perda silenciosa (200 sempre) ────
+  // ── Regression: an internal failure must not become silent loss (always 200) ─
 
   it('handleInboundMessage fails: does NOT silently return 200 — throws to trigger Meta\'s retry', async () => {
     const { controller, markProcessedSpy } = makeController({
@@ -304,9 +304,9 @@ describe('WhatsAppWebhookController', () => {
   });
 
   it('redelivery of a previously FAILED event (isDuplicate=false, status pending after retry): reprocesses instead of skipping', async () => {
-    // Reflete o comportamento real de WebhookService.ingest após o fix: um external_id
-    // conhecido cujo status anterior era FAILED volta como isDuplicate=false (retryable),
-    // não isDuplicate=true — só um evento já PROCESSED é um duplicado de verdade.
+    // Mirrors WebhookService.ingest's real behavior after the fix: a known external_id
+    // whose previous status was FAILED comes back as isDuplicate=false (retryable),
+    // not isDuplicate=true — only an already PROCESSED event is a true duplicate.
     const { controller, musicChat, markProcessedSpy } = makeController({
       ingest: jest.fn().mockResolvedValue({ isDuplicate: false, eventId: 'evt-1', status: 'pending' }),
     });

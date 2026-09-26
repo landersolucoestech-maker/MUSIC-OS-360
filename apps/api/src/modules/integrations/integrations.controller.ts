@@ -77,8 +77,8 @@ export class IntegrationsController {
     private readonly config:      ConfigService,
     private readonly cache:       CacheService,
     private readonly integrationPolicy: IntegrationPolicyService,
-    // find-b4201eb2: oauth/exchange é @Public — sem contexto de tenant do
-    // interceptor, a gravação em oauth_connections (FORCE RLS) é negada.
+    // find-b4201eb2: oauth/exchange is @Public — without the interceptor's tenant
+    // context, the write to oauth_connections (FORCE RLS) is denied.
     private readonly dbContext: DatabaseContextService,
   ) {}
 
@@ -98,9 +98,9 @@ export class IntegrationsController {
   @ApiOperation({ summary: 'Emite exchange_token de uso único para iniciar fluxo OAuth de marketing' })
   oauthInit(@Body() dto: OAuthInitDto, @Request() req: any): { exchange_token: string } {
     const token = randomUUID();
-    // tenantId/userId do chamador autenticado viajam com o exchange_token para
-    // que oauthExchange saiba a quem associar o token persistido (Meta
-    // corporativo — ver isInstagram branch abaixo).
+    // The authenticated caller's tenantId/userId travel with the exchange_token so
+    // oauthExchange knows whom to associate the persisted token with (corporate
+    // Meta — see the isInstagram branch below).
     this.cache.set(`oauth_exchange:${token}`, {
       platform: dto.platform,
       tenantId: req.tenant?.id ?? req.tenantId,
@@ -167,8 +167,8 @@ export class IntegrationsController {
       expiresIn?: number;
       scopes?: string;
     }): Promise<{ connected: true; platform: string }> => {
-      // tenantId vem da entrada server-side do cache de exchange (emitida para
-      // um usuário autenticado no passo 1), nunca do corpo desta requisição.
+      // tenantId comes from the server-side exchange cache entry (issued to an
+      // authenticated user in step 1), never from this request's body.
       await this.dbContext.runInTenantContext({ tenantId: entry.tenantId!, orgId: null, role: null }, () => this.integrationBase.saveOAuthTokens({
         tenantId: entry.tenantId!,
         userId: entry.userId!,
@@ -416,7 +416,7 @@ export class IntegrationsController {
     return platform;
   }
 
-  // ─── Governança de provedores externos ─────────────────────────────────────
+  // ─── External provider governance ──────────────────────────────────────────
 
   @Get('providers')
   @RequireRole('viewer')
@@ -432,18 +432,18 @@ export class IntegrationsController {
     const resolved = await this.integrationPolicy.resolveAll({
       tenantId: req.tenant?.id ?? req.tenantId,
       userId:   req.auth?.userId ?? req.userId,
-      // tenants.plan é a coluna real (TenantPlan). plan_slug/planSlug NÃO existem —
-      // lê-los fazia mode:'plans' negar para todos, em silêncio.
+      // tenants.plan is the real column (TenantPlan). plan_slug/planSlug do NOT exist —
+      // reading them made mode:'plans' silently deny everyone.
       planSlug: req.tenant?.plan ?? null,
       tenantFeatures: (req.tenant?.features as Record<string, unknown> | undefined) ?? null,
     });
 
-    // canDiscover, não canUse: uma integração de plano superior CONTINUA
-    // visível (bloqueada + upgrade). Esconder seria perder a venda e mentir
-    // sobre o catálogo. Internos/billing já saem por classificação.
+    // canDiscover, not canUse: an integration of a higher plan STAYS visible
+    // (blocked + upgrade). Hiding it would lose the sale and misrepresent the
+    // catalog. Internal/billing entries are already excluded by classification.
     const visible = resolved.filter((r) => r.canDiscover);
 
-    // Upgrade hint descoberto por consulta — nenhum nome de plano em código.
+    // Upgrade hint discovered by query — no plan name in code.
     return Promise.all(visible.map(async (r) => ({
       slug:             r.providerKey,
       name:             r.name,
@@ -458,8 +458,8 @@ export class IntegrationsController {
       connectionState:  r.connectionStatus,
       reasonCode:       r.reasonCode,
       eligiblePlans:    r.entitled ? [] : await this.integrationPolicy.plansIncluding(r.providerKey),
-      // Deliberadamente NÃO expostos ao cliente: notes administrativos,
-      // required_env, capabilityEvidence, audiências e internals de policy.
+      // Deliberately NOT exposed to the customer: admin notes, required_env,
+      // capabilityEvidence, audiences and policy internals.
     })));
   }
 
@@ -526,15 +526,14 @@ export class IntegrationsController {
   @ApiOperation({ summary: 'Webhook Autentique (assinatura concluída)' })
   @HttpCode(HttpStatus.OK)
   async autentiqueWebhook(@Body() payload: any) {
-    // `payload: any` é deliberado: o ValidationPipe global (whitelist:true,
-    // forbidNonWhitelisted:true) roda para TODA rota e não pode ser
-    // sobrescrito por @UsePipes de método (ambos os pipes executam — um
-    // @UsePipes local não substitui o global, apenas se soma a ele). Tipar
-    // como AutentiqueWebhookDto aqui reativaria forbidNonWhitelisted global e
-    // rejeitaria os campos extras que a Autentique de fato envia. Em vez
-    // disso validamos manualmente os campos declarados (event/event_id/
-    // document_id) sem whitelist, preservando a tolerância a campos não
-    // modelados do provedor — mesmo comportamento de AutentiqueController.webhook.
+    // `payload: any` is deliberate: the global ValidationPipe (whitelist:true,
+    // forbidNonWhitelisted:true) runs for EVERY route and cannot be overridden by a
+    // method-level @UsePipes (both pipes run — a local @UsePipes does not replace
+    // the global one, it only adds to it). Typing it as AutentiqueWebhookDto here
+    // would re-enable the global forbidNonWhitelisted and reject the extra fields
+    // Autentique actually sends. Instead we manually validate the declared fields
+    // (event/event_id/document_id) without a whitelist, keeping tolerance for
+    // unmodeled provider fields — same behavior as AutentiqueController.webhook.
     const dto = plainToInstance(AutentiqueWebhookDto, payload);
     const errors = await validate(dto, { whitelist: false, forbidNonWhitelisted: false });
     if (errors.length > 0) {
@@ -920,7 +919,7 @@ export class IntegrationsController {
     return this.tiktok.getAdsInsights(req.tenant?.id ?? req.tenantId, startDate, endDate);
   }
 
-  // ─── TikTok orgânico ───────────────────────────────────────────────────────
+  // ─── TikTok organic ────────────────────────────────────────────────────────
 
   @Get('tiktok/auth')
   @RequireRole('editor')
@@ -1065,9 +1064,9 @@ export class IntegrationsController {
   @Audit('integration.abramus_work_registered')
   @ApiOperation({ summary: 'Registrar obra no Abramus (manager+)' })
   abramusRegisterWork(@Request() req: any, @Body() body: RegisterAbramusWorkDto) {
-    // AbramusService.registerWork usa `title` (não `titulo`) na chamada real à
-    // API do Abramus — mapeado explicitamente aqui para preservar esse contrato
-    // de wire existente enquanto o corpo da requisição passa a ser validado.
+    // AbramusService.registerWork uses `title` (not `titulo`) in the real Abramus
+    // API call — mapped explicitly here to keep that existing wire contract while
+    // the request body becomes validated.
     return this.abramus.registerWork(req.tenant?.id ?? req.tenantId, {
       title: body.titulo,
       compositor: body.compositor,

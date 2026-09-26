@@ -101,10 +101,10 @@ function normEnum(v: string | undefined, fallback: string): string {
   return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "") || fallback;
 }
 
-// ── Autocomplete: busca server-side por nome_artistico/nome_civil (Task I —
-// antes filtrava só os primeiros 50 artistas do tenant carregados via
-// useArtistas() sem filtro; agora cada tecla digitada (debounced) refaz a
-// busca no backend). Texto livre continua permitido.
+// ── Autocomplete: server-side search by nome_artistico/nome_civil (Task I —
+// it used to filter only the tenant's first 50 artists loaded by unfiltered
+// useArtistas(); now every (debounced) keystroke searches the backend again).
+// Free text is still allowed.
 interface ArtistNameInputProps {
   value: string;
   onChange: (val: string) => void;
@@ -189,8 +189,8 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
   const [nomeEP, setNomeEP] = useState(() => (mode !== "create" && projeto?.type !== "single") ? (projeto?.title || "") : "");
   const [musicas, setMusicas] = useState<MusicaData[]>(() => {
     if (mode === "create" || !projeto) return [createEmptyMusica()];
-    // musicas[] normalizada em project_tracks (migration 20260718000013) —
-    // a API já retorna o array hidratado em projeto.musicas.
+    // musicas[] is normalized into project_tracks (migration 20260718000013) —
+    // the API already returns the hydrated array in projeto.musicas.
     const saved = (projeto as { musicas?: MusicaData[] }).musicas;
     if (Array.isArray(saved) && saved.length > 0) {
       return saved.map((m) => ({
@@ -208,9 +208,9 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
     return [{ ...createEmptyMusica(), name: type === "single" ? (projeto?.title || "") : "", genero: generoHerdado }];
   });
   const [observacoes, setObservacoes] = useState(() => projeto?.notes || "");
-  // GAP-0001 / DEC-001 (MUSICAL_PROJECT_CANONICAL_HUB): artista principal e
-  // orçamento de produção são atributos legítimos do projeto musical —
-  // colunas projects.artist_id / projects.orcamento, aceitas pelo DTO real.
+  // GAP-0001 / DEC-001 (MUSICAL_PROJECT_CANONICAL_HUB): the main artist and the
+  // production budget are legitimate attributes of the music project —
+  // columns projects.artist_id / projects.orcamento, accepted by the real DTO.
   const [artistId, setArtistId] = useState<string | null>(() => (projeto?.artist_id as string | null | undefined) ?? null);
   const [orcamento, setOrcamento] = useState<string>(() =>
     projeto?.orcamento != null && projeto?.orcamento !== "" ? String(projeto.orcamento) : "");
@@ -262,11 +262,11 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
       return;
     }
 
-    // Remove campos apenas locais (File metadata, flag de upload) antes de enviar —
-    // musicas[] vai para colunas próprias (project_tracks), nunca mais serializada em descricao.
+    // Removes local-only fields (File metadata, upload flag) before sending —
+    // musicas[] goes to its own storage (project_tracks), never again serialized into descricao.
     const musicasParaSalvar = musicas.map(({ arquivoAudio: _a, _uploading: _u, ...m }) => m);
 
-    // Persiste o gênero da primeira música como campo direto para filtros eficientes
+    // Persists the first track's genre as a direct field for efficient filtering
     const genero = musicas[0]?.genero || null;
 
     const basePayload: ProjectUpdate = {
@@ -310,7 +310,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
       }
     } catch (err) {
       if (handleConcurrencyConflict(err, "projeto")) return;
-      // demais erros: toast já é exibido por useDataQuery
+      // other errors: the toast is already shown by useDataQuery
     } finally {
       setIsSubmitting(false);
     }
@@ -392,7 +392,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         ? err.message
         : err instanceof Error ? err.message : "Erro no upload do áudio";
       toast.error(`Upload falhou: ${msg}`);
-      // Nunca finge sucesso: sem URL real, remove o arquivo local exibido.
+      // Never fakes success: without a real URL, removes the displayed local file.
       updateMusica(musicaId, 'arquivoAudio', null);
     } finally {
       updateMusica(musicaId, '_uploading', false);
@@ -525,7 +525,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         </div>
       </div>
 
-      {/* Intérpretes */}
+      {/* Performers */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Intérpretes *</Label>
@@ -595,7 +595,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         />
       </div>
 
-      {/* Upload de Áudio */}
+      {/* Audio upload */}
       <div className="space-y-2">
         <Label>Arquivos de Áudio (MP3/WAV)</Label>
         <input
@@ -714,7 +714,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Tipo de Lançamento */}
+            {/* Release type */}
             <div className={showAlbumEpName ? "space-y-2" : "space-y-2 md:col-span-2"}>
               <Label>Tipo de Lançamento *</Label>
               <Select value={tipoLancamento} onValueChange={setTipoLancamento} disabled={isViewMode}>
@@ -727,7 +727,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
               </Select>
             </div>
 
-            {/* Nome do EP/Álbum (condicional) */}
+            {/* EP/album name (conditional) */}
             {showAlbumEpName && (
               <div className="space-y-2">
                 <Label>Nome do {tipoLancamento === "ep" ? "EP" : "Álbum"} *</Label>
@@ -741,7 +741,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
             )}
           </div>
 
-          {/* Artista principal e orçamento (GAP-0001 / DEC-001) */}
+          {/* Main artist and budget (GAP-0001 / DEC-001) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Artista principal</Label>
@@ -773,7 +773,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
             </div>
           </div>
 
-          {/* Seção de Músicas */}
+          {/* Tracks section */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">{tipoLancamento === "single" ? "Música" : "Músicas"}</h3>
@@ -789,7 +789,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
             </div>
           </div>
 
-          {/* Observações */}
+          {/* Notes */}
           <div className="space-y-2">
             <Label>Observações</Label>
             <Textarea 

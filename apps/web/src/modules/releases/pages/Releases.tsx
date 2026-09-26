@@ -81,15 +81,15 @@ interface ReleaseCardProps {
 }
 
 /**
- * Card de release com contraste automático: detecta a luminância da capa e adapta
- * texto/badges/chrome para legibilidade tanto sobre capas claras quanto escuras.
+ * Release card with automatic contrast: detects the cover's luminance and adapts
+ * text/badges/chrome for legibility over both light and dark covers.
  */
 function ReleaseCard({ release, artista, now, selected, onToggleSelect, onView, onEdit, onMetrics, onDelete }: ReleaseCardProps) {
   const artworkUrl = getReleaseArtworkUrl(release);
   const { mode } = useImageContrast(artworkUrl);
   const status = cardStatusClasses(release, mode);
   const countdown = getCountdown(release.data_lancamento, now);
-  // Countdown só faz sentido enquanto a data de lançamento não chegou.
+  // The countdown only makes sense until the release date arrives.
   const releaseTime = release.data_lancamento ? new Date(release.data_lancamento).getTime() : NaN;
   const showCountdown = !Number.isNaN(releaseTime) && releaseTime > now;
   const releaseType = release.type === "single" ? "Single" : release.type === "ep" ? "EP" : "Album";
@@ -112,7 +112,7 @@ function ReleaseCard({ release, artista, now, selected, onToggleSelect, onView, 
           </div>
         )}
 
-        {/* Scrim para reforçar contraste do conteúdo na base */}
+        {/* Scrim that reinforces the contrast of the content at the bottom */}
         <div className={`pointer-events-none absolute inset-0 ${contrastScrim(mode)}`} />
 
         <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
@@ -231,8 +231,8 @@ export default function Releases() {
   );
 
   // Support ?view=<id> to directly open the view modal (e.g., navigated from
-  // ContratoViewModal) — busca por ID direto quando o lançamento não está
-  // entre os primeiros carregados por useReleases() sem filtro (Task I).
+  // ContratoViewModal) — fetches by ID directly when the release is not among
+  // the first loaded by unfiltered useReleases() (Task I).
   const [searchParams, setSearchParams] = useSearchParams();
   useEffect(() => {
     const viewId = searchParams.get("view");
@@ -264,8 +264,8 @@ export default function Releases() {
     return () => window.clearInterval(timer);
   }, []);
 
-  // KPIs operacionais de distribuição — agregação exata do tenant inteiro
-  // (GET /releases/stats), nunca calculada só sobre a página carregada (Task H).
+  // Operational distribution KPIs — exact aggregation over the whole tenant
+  // (GET /releases/stats), never computed over the loaded page only (Task H).
   const { kpis: distributionKPIs } = useReleasesDistributionStats();
 
   const hasActiveFilters = searchTerm !== "" || typeFilter !== "all-type" || statusFilter !== "all-status" || artistFilter !== "all-artist";
@@ -286,9 +286,9 @@ export default function Releases() {
     artistId: artistFilter !== "all-artist" ? artistFilter : undefined,
   });
 
-  // Task J: nome/gênero do artista por card, resolvidos por ID direto (GET
-  // /artists/:id) só para os releases da página atual — antes escaneava
-  // useArtistas() sem filtro, truncado nos primeiros 50 do tenant.
+  // Task J: per-card artist name/genre, resolved by direct ID lookup (GET
+  // /artists/:id) only for the current page's releases — it used to scan
+  // unfiltered useArtistas(), truncated at the tenant's first 50.
   const [resolvedArtistas, setResolvedArtistas] = useState<Record<string, Artist>>({});
   const pageArtistaIds = useMemo(
     () => Array.from(new Set(pageItems.map((r) => r.artist_id).filter((id): id is string => !!id))),
@@ -323,10 +323,10 @@ export default function Releases() {
     }
   };
 
-  // find-ed7823e9: após criar, o lançamento fica em DRAFT (o backend só
-  // permite SCHEDULED -> DISTRIBUTED). Apenas oferece navegar para o fluxo
-  // de shares — nenhum share é gravado automaticamente e nenhum status de
-  // distribuição é simulado.
+  // find-ed7823e9: after creation the release stays in DRAFT (the backend only
+  // allows SCHEDULED -> DISTRIBUTED). It only offers to navigate to the shares
+  // flow — no share is written automatically and no distribution status is
+  // simulated.
   const handleReleaseCreated = useCallback((release: Release) => {
     setSharePrompt({ open: true, release });
   }, []);
@@ -355,7 +355,7 @@ export default function Releases() {
     ) : (
     <MainLayout title="Lançamentos" description="Gestão de lançamentos e distribuição" actions={headerActions}>
       <div className="space-y-6">
-        {/* KPIs operacionais de distribuição */}
+        {/* Operational distribution KPIs */}
         <TooltipProvider delayDuration={200}>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {([
@@ -421,9 +421,9 @@ export default function Releases() {
               ))}
             </SelectContent>
           </Select>
-          {/* Task J: busca server-side (AsyncEntityCombobox) — antes populava o
-              Select com useArtistas() sem filtro, truncado nos primeiros 50
-              artistas do tenant. "Todos Artistas" volta via o botão Limpar. */}
+          {/* Task J: server-side search (AsyncEntityCombobox) — it used to fill the
+              Select from unfiltered useArtistas(), truncated at the tenant's
+              first 50 artists. "Todos Artistas" comes back via the Clear button. */}
           <div className="h-8 w-[180px] shrink-0">
             <AsyncEntityCombobox<Artist>
               table="artistas"
@@ -510,9 +510,9 @@ export default function Releases() {
     </MainLayout>
     )}
 
-      {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): ReleaseFormModal chama useReleases() de novo só
-          para as mutations, a mesma query do isLoading acima. */}
+      {/* Outside the isLoading gate on purpose — same bug as /artistas
+          (Task C): ReleaseFormModal calls useReleases() again only for
+          the mutations, the same query as the isLoading above. */}
       <ReleaseFormModal
         open={formModal.open}
         onOpenChange={(open) => setFormModal({ ...formModal, open })}
