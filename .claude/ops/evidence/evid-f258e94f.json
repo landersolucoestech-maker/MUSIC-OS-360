@@ -1,0 +1,15 @@
+{
+  "id": "evid-f258e94f",
+  "createdAt": "2026-09-26T01:59:17.877Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter api exec jest --config jest.config.ts src/core/workflow src/modules/releases",
+  "command": "pnpm --filter api exec jest --config jest.config.ts src/core/workflow src/modules/releases",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[95m[Nest] 10400  - \u001b[39m09/26/2026, 1:59:17 AM \u001b[95m  DEBUG\u001b[39m \u001b[38;5;3m[WorkflowAutomationService] \u001b[39m\u001b[95mTrigger [r1] → action [notify] executado para tenant=t1\u001b[39m\n\u001b[33m[Nest] 10400  - \u001b[39m09/26/2026, 1:59:17 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[WorkflowAutomationService] \u001b[39m\u001b[33mTrigger [r2] → action [notify] falhou: Error: queue down. Enfileirando para retry.\u001b[39m\n\u001b[33m[Nest] 10400  - \u001b[39m09/26/2026, 1:59:17 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[WorkflowAutomationService] \u001b[39m\u001b[33mWorkflowAutomation ignorou evento sem tenantId [lead.created]\u001b[39m\n\u001b[95m[Nest] 10400  - \u001b[39m09/26/2026, 1:59:17 AM \u001b[95m  DEBUG\u001b[39m \u001b[38;5;3m[WorkflowAutomationService] \u001b[39m\u001b[95mTrigger [r4] → action [notify] executado para tenant=tenant-a\u001b[39m",
+  "stderrTail": "",
+  "workspaceFingerprint": "bbf43632c18d0437634d3a63d1a065b260f81e2875e08a11e58fe5cca3c14128",
+  "fingerprintStatus": "BOUND",
+  "head": "7cee4a72eaf438ecd7f5c7c9885e2cb532ef4258",
+  "durationMs": 14394
+}

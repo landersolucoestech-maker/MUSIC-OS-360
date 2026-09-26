@@ -1,0 +1,15 @@
+{
+  "id": "evid-44d974d7",
+  "createdAt": "2026-09-26T01:59:21.071Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter web exec vitest run src/modules/releases",
+  "command": "pnpm --filter web exec vitest run src/modules/releases",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "RUN  v2.1.9 /home/user/MUSIC-OS-360/apps/web\n\n ✓ src/modules/releases/components/LancamentoFormModal.no-fake-distribution.guard.test.ts (2 tests) 4ms\n ✓ src/modules/releases/services/form-to-payload.mapper.test.ts (17 tests) 10ms\n\n Test Files  2 passed (2)\n      Tests  19 passed (19)\n   Start at  01:59:19\n   Duration  1.61s (transform 75ms, setup 423ms, collect 79ms, tests 14ms, environment 1.24s, prepare 155ms)",
+  "stderrTail": "",
+  "workspaceFingerprint": "bbf43632c18d0437634d3a63d1a065b260f81e2875e08a11e58fe5cca3c14128",
+  "fingerprintStatus": "BOUND",
+  "head": "7cee4a72eaf438ecd7f5c7c9885e2cb532ef4258",
+  "durationMs": 3054
+}

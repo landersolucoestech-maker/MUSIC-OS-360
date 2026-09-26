@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T01:40:59.333Z",
+  "updatedAt": "2026-09-26T02:03:39.468Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -430,6 +430,59 @@
         }
       ],
       "createdAt": "2026-09-26T01:37:57.307Z"
+    },
+    {
+      "id": "req-1ffd8253",
+      "text": "Fase 3 Parte A: close the fixable items deferred in Fase 2 (releases fake distribution, GAP-0001 project artist/budget, Stripe TEST MODE badge, dead Zustand stores + empty barrels with full importer proof, integrations-sync unbounded growth containment, dead entity/repository stubs + false-green spec)",
+      "nonRequirements": [
+        "Do not invent integrations-sync business semantics; do not execute destructive data backfills; do not remove any file without a complete zero-importer proof"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-2464bb2b",
+          "text": "A1 find-ed7823e9: create flow no longer PATCHes status distributed (backend creates DRAFT; workflow only allows SCHEDULED->DISTRIBUTED, so the PATCH always failed with 400 after a successful create); no auto 100% share write; workflow contract pinned by releases.workflow.spec.ts; guard test in web; no persisted data affected (PATCH was always rejected in-transaction) so no backfill",
+          "evidenceIds": [
+            "evid-57082c4b",
+            "evid-00eb5d7d",
+            "evid-f258e94f",
+            "evid-44d974d7",
+            "evid-b2ebf857",
+            "evid-8ab2a93d"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-0bf41f0a",
+          "text": "A2 GAP-0001/find-870087b6: ProjectFormModal exposes artist_id (AsyncEntityCombobox) and orcamento; create/edit payloads carry both; server DTO rejects negative orcamento (@Min(0)); behavioral web test + DTO spec",
+          "evidenceIds": [
+            "evid-0bc2d180",
+            "evid-8ade5256",
+            "evid-cddf1414",
+            "evid-85e40ac9",
+            "evid-19f44533",
+            "evid-6b7e7d23",
+            "evid-62f0bd5e",
+            "evid-e556a28c"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-2a8f85ca",
+          "text": "A3 find-340abf0b: GET /billing/admin/stripe-mode (super_admin) returns only the classified key state; AdminSubscriptions renders ENV_BADGE-pattern badge with explicit error state; service, controller-authz and page tests",
+          "evidenceIds": [
+            "evid-62c4225f",
+            "evid-beab4ec9",
+            "evid-3bec64a9",
+            "evid-6365fd1b",
+            "evid-75f442f7",
+            "evid-bd508284",
+            "evid-0a27ffc6",
+            "evid-2c087296"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-26T01:50:25.297Z"
     }
   ],
   "findings": [
@@ -623,11 +676,11 @@
       "line": null,
       "summary": "GAP-0001 (projects domain-meaning) CONFIRMED still real via tracing against current code (file renamed since the gap register was written: ProjetoFormModal.tsx -> ProjectFormModal.tsx, part of the PT->EN naming wave, but the underlying gap persists). apps/web/src/modules/projects/types/projects.types.ts already declares artist_id/orcamento as real fields on the Project type (matching real DB columns per the entity), but ProjectFormModal.tsx's 783-line form (grepped for artist_id/orcamento/budget: zero matches) never renders an input for either -- the only reachable UI still cannot set a project's lead artist or production budget. decision-register.json's DEC-001 already resolved the semantic ambiguity this gap depends on (MUSICAL_PROJECT_CANONICAL_HUB: artist_id/orcamento are legitimate attributes of a musical project) and its fieldRevalidation explicitly recommends KEEP_AS_PROJECT_FIELD for both -- so this is not blocked on a product decision, only on bounded UI implementation work (new form fields + submit-payload wiring + component test) that exceeds a same-pass incidental fix given this cluster's time budget.",
       "rootCause": null,
-      "disposition": "DIVIDA_ACEITA",
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:31:54.234Z",
-      "justification": "PO decision (DEC-001/MUSICAL_PROJECT_CANONICAL_HUB) already authorizes exposing artist_id/orcamento as real project form fields -- not blocked on a product decision. Not implemented in this pass because ProjectFormModal.tsx is a large (783-line), non-trivial existing form (song-level ArtistNameInput autocomplete, complex multi-song array state, audio upload) and correctly wiring a new project-level artist link + money-formatted budget field (submit payload, concurrency-safe patch, existing money-input conventions, component test) is bounded UI feature work that deserves its own focused change and review rather than being squeezed into this financial-rules cluster pass. Recorded as accepted, PO-authorized, ready-to-implement debt for a dedicated frontend cluster.",
-      "resolvedAt": "2026-09-26T01:32:14.276Z"
+      "justification": "S19=CORRIGIDO | commit=931c4ab | DEC-001 implemented end to end: form state/prefill -> client validation -> DTO (server @Min(0) authoritative) -> POST/PATCH /projects (editor + project:create/update) -> ProjectsService tenant-scoped + assertSameTenantFk -> row -> findById readback. Tests: web behavioral (create/edit/negative), DTO spec, security spec incl. new PATCH cross-tenant artist_id rejection (IDOR) and readback; evid-6b7e7d23, evid-62f0bd5e.",
+      "resolvedAt": "2026-09-26T02:03:39.368Z"
     },
     {
       "id": "find-721c845e",
@@ -679,11 +732,11 @@
       "line": null,
       "summary": "CODEBASE_MAP Gotcha #18 CONFIRMED with full end-to-end trace, still real: immediately after creating a release, LancamentoFormModal.tsx's onSubmit unconditionally issues a second PATCH forcing status:'distributed' + metadata.distributedAt/distributionCompletedAt (lines ~918-933), then toasts 'Lancamento criado e distribuido!'. Backend: releases.service.ts emits RELEASE_DISTRIBUTED on this status transition; its only consumer, release-events.handler.ts::onReleaseDistributed, is a genuine empty no-op (tenantId guard only, no body). There is no distributor API call anywhere in this path -- every release in the system is persisted with status='distributed' the instant it is created, unconditionally, and the DB row itself (not just a UI label) misrepresents this. This is a real data-integrity defect, not a cosmetic-only issue like the already-fixed disclosure-class Gotchas (#16/#17/#19/#26): the persisted status value itself is false, so a pure UI disclosure fix would not resolve it. Not changed in this pass: removing the auto-flip or introducing a distinct 'pending_distribution' status is a real behavior/data-model change whose full consumer blast radius (release-list filters, KPIs, any other code branching on status='distributed') was not exhaustively vetted within this cluster's time budget, and forcing it through without that verification risks a worse regression than the current known-bad state.",
       "rootCause": null,
-      "disposition": "DIVIDA_ACEITA",
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:40:08.321Z",
-      "justification": "Real, confirmed, currently-active data-integrity defect (persisted status, not just UI). Requires a dedicated, properly-vetted fix (either remove the auto-flip, or introduce a real pending/distributed state model) with full consumer-impact verification across release-list/KPI/status-branching code -- correctly scoped as its own follow-up rather than a same-pass squeeze-in, given the money/status-adjacent blast radius.",
-      "resolvedAt": "2026-09-26T01:40:08.461Z"
+      "justification": "S19=CORRIGIDO | commit=17e635f | Root cause proven: create persists DRAFT (workflow initialState); form forced PATCH to distributed which the workflow always rejected (only SCHEDULED->DISTRIBUTED exists) -> 400 after successful create; second incompatible consumer: lossy edit status round-trip (distributed/archived/assets_pending/null) -> undefined transition 400 on any metadata edit. Earlier claim that the DB row was persisted as distributed was WRONG and is corrected here: the PATCH was rejected in-transaction, so no data affected, no backfill. Fix: no status PATCH/fake metadata/auto 100% share on create; form never writes status (workflow is the single writer). Consumers reaudited: KPI buckets, display map, notification label, stats endpoint compatible. Tests: releases.workflow.spec, releases.service.spec, web guard + 12 round-trip cases; evid-f258e94f, evid-44d974d7, typecheck/lint/build evid-b2ebf857/evid-8ab2a93d/evid-e556a28c/evid-2c087296.",
+      "resolvedAt": "2026-09-26T02:03:39.233Z"
     },
     {
       "id": "find-340abf0b",
@@ -696,8 +749,8 @@
       "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:40:17.317Z",
-      "justification": "The misleading stale-comment part is fixed and verified (pnpm --filter web run typecheck PASS, evid-3b579d68). The remaining TEST MODE indicator gap is real but requires a new backend field/endpoint + frontend badge, tracked as separate deferred work, not blocking this finding's comment-accuracy fix.",
-      "resolvedAt": "2026-09-26T01:40:22.604Z"
+      "justification": "S19=CORRIGIDO | commits=7cee4a7 (stale comment), 919731f (indicator) | Source with contract: BillingService classified STRIPE_SECRET_KEY state (same config the Stripe client is built from) -> GET /billing/admin/stripe-mode (super_admin, enum only, never the key) -> AdminSubscriptions ENV_BADGE badge with explicit error state; no hostname/heuristic/hardcoded mode. Tests: service (4), controller authz metadata, page (3); evid-75f442f7, evid-bd508284.",
+      "resolvedAt": "2026-09-26T02:03:39.468Z"
     },
     {
       "id": "find-a9e7b823",
@@ -902,7 +955,29 @@
     "evid-afc3f4ca",
     "evid-24cadf62",
     "evid-040f123c",
-    "evid-3b579d68"
+    "evid-3b579d68",
+    "evid-57082c4b",
+    "evid-00eb5d7d",
+    "evid-0bc2d180",
+    "evid-8ade5256",
+    "evid-62c4225f",
+    "evid-beab4ec9",
+    "evid-cddf1414",
+    "evid-85e40ac9",
+    "evid-19f44533",
+    "evid-3bec64a9",
+    "evid-6365fd1b",
+    "evid-f258e94f",
+    "evid-44d974d7",
+    "evid-6b7e7d23",
+    "evid-62f0bd5e",
+    "evid-75f442f7",
+    "evid-bd508284",
+    "evid-b2ebf857",
+    "evid-8ab2a93d",
+    "evid-e556a28c",
+    "evid-0a27ffc6",
+    "evid-2c087296"
   ],
   "checkpointIds": [
     "chec-e661a7aa",
