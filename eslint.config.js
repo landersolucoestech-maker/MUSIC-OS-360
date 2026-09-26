@@ -14,6 +14,10 @@ export default tseslint.config(
       ".local/**",
       ".validation-shots/**",
       ".tmp-audit/**",
+      // Forensic census artifacts (same class as .tmp-audit/**): one-off,
+      // hash-referenced by .audit-runtime/*/run.json; editing them to satisfy
+      // lint would break the census integrity record.
+      ".audit-runtime/**",
       "node_modules/**",
       "attached_assets/**",
       "apps/**/coverage/**",
