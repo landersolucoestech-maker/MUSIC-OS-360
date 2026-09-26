@@ -1,8 +1,8 @@
 /**
- * modules/reports/export/export-audit.service.ts  ·  FASE 2.2
+ * modules/reports/export/export-audit.service.ts  ·  PHASE 2.2
  *
- * Auditoria de exportação usando a infraestrutura de eventos existente
- * (EventsService). Emite o evento REPORT_EXPORT. Não cria sistema paralelo.
+ * Export auditing using the existing event infrastructure
+ * (EventsService). Emits the REPORT_EXPORT event. Does not create a parallel system.
  */
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { EventsService } from '../../../core/events/events.service';

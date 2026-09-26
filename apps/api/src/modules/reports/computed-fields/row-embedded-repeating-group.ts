@@ -1,6 +1,6 @@
 /**
- * Resolver/writer para grupos repetíveis armazenados em uma coluna JSONB do
- * registro pai. Cada item é achatado em uma linha da mesma aba XLSX.
+ * Resolver/writer for repeatable groups stored in a JSONB column of the
+ * parent record. Each item is flattened into a row of the same XLSX sheet.
  */
 import type { DataSource, QueryRunner } from 'typeorm';
 

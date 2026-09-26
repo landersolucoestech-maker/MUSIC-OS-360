@@ -1,10 +1,10 @@
 /**
- * modules/reports/computed-fields/accounting-summary.report.ts  ·  Parte 89
+ * modules/reports/computed-fields/accounting-summary.report.ts  ·  Part 89
  *
- * "Contabilidade" (Bloco 19) — relatório 100% computado: P&L por artista,
- * agregado sobre `transactions` (mesma lógica de apps/web/.../Contabilidade.tsx,
- * aba "P&L por Artista"). Sem tabela física própria, sem importação — apenas
- * exportação, com contrato explícito (ver ACCOUNTING_SUMMARY_CONTRACT).
+ * "Contabilidade" (Block 19) — a 100% computed report: P&L per artist,
+ * aggregated over `transactions` (same logic as apps/web/.../Contabilidade.tsx,
+ * "P&L por Artista" tab). No physical table of its own, no import — export
+ * only, with an explicit contract (see ACCOUNTING_SUMMARY_CONTRACT).
  */
 import type { DataSource } from 'typeorm';
 

@@ -1,16 +1,16 @@
 /**
  * modules/reports/i18n/entity-labels.pt-br.ts
  *
- * Camada ÚNICA de labels pt-BR por ENTIDADE (tabela) da Central de Relatórios —
- * complemento de field-labels.pt-br.ts (que cobre colunas).
+ * The SINGLE layer of pt-BR labels per ENTITY (table) of the Reports Center —
+ * complement of field-labels.pt-br.ts (which covers columns).
  *
- * Mesma regra absoluta: chave técnica é infraestrutura, label é produto. O
- * frontend NUNCA deriva texto de tableName; ele exibe o `label` retornado pela
- * API. Toda tabela REPORTABLE DEVE ter entrada aqui — a ausência é sinalizada
- * como risco `UNTRANSLATED_ENTITY` no inventário (nunca mascarada).
+ * Same absolute rule: the technical key is infrastructure, the label is product. The
+ * frontend NEVER derives text from tableName; it displays the `label` returned by the
+ * API. Every REPORTABLE table MUST have an entry here — its absence is flagged
+ * as an `UNTRANSLATED_ENTITY` risk in the inventory (never masked).
  */
 
-/** Dicionário canônico (tableName → label pt-BR) das entidades reportáveis. */
+/** Canonical dictionary (tableName → pt-BR label) of the reportable entities. */
 export const ENTITY_LABELS_PT_BR: Readonly<Record<string, string>> = {
   artists: 'Artistas',
   works: 'Obras',
@@ -63,8 +63,8 @@ export const ENTITY_LABELS_PT_BR: Readonly<Record<string, string>> = {
 };
 
 /**
- * Resolve o label pt-BR de uma entidade. `null` quando não traduzida —
- * o chamador decide sinalizar (risco) ou cair no tableName, nunca inventar.
+ * Resolves an entity's pt-BR label. `null` when not translated —
+ * the caller decides whether to flag it (risk) or fall back to tableName, never invent.
  */
 export function resolveEntityLabel(tableName: string): string | null {
   return ENTITY_LABELS_PT_BR[tableName] ?? null;

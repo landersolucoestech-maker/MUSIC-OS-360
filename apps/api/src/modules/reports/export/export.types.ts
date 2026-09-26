@@ -6,9 +6,9 @@ export type ExportFormat = 'xlsx';
 export const EXPORT_FORMATS: ExportFormat[] = ['xlsx'];
 
 /**
- * XLSX é materializado em memória pela biblioteca atual. Acima deste volume a
- * requisição síncrona deve falhar explicitamente, nunca entregar uma planilha
- * parcial. O limite + 1 é consultado para detectar excesso sem COUNT adicional.
+ * XLSX is materialized in memory by the current library. Above this volume the
+ * synchronous request must fail explicitly, never deliver a partial
+ * spreadsheet. limit + 1 is queried to detect the excess without an additional COUNT.
  */
 export const EXPORT_MAX_ROWS = 50_000;
 export const EXPORT_DETECTION_LIMIT = EXPORT_MAX_ROWS + 1;
@@ -19,9 +19,9 @@ export interface ExportQueryParams {
   filters?: Record<string, string>;
   sort?: string;
   order?: 'ASC' | 'DESC';
-  /** @deprecated Export síncrono não é paginado; mantido para clientes legados. */
+  /** @deprecated Synchronous export is not paginated; kept for legacy clients. */
   page?: number;
-  /** @deprecated Export síncrono não é paginado; mantido para clientes legados. */
+  /** @deprecated Synchronous export is not paginated; kept for legacy clients. */
   pageSize?: number;
 }
 

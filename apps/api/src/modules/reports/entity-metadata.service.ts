@@ -1,13 +1,13 @@
 /**
  * modules/reports/entity-metadata.service.ts
  *
- * FASE 1 — varredura REAL das entidades TypeORM (sem depender do frontend e sem
- * exigir conexão de banco). Lê os metadados de decorator via
- * `getMetadataArgsStorage()` para as entidades registradas em `ALL_ENTITIES`
- * (fonte de verdade do DataSource), classifica cada uma explicitamente e expõe
- * um inventário técnico confiável.
+ * PHASE 1 — REAL scan of the TypeORM entities (no dependency on the frontend and no
+ * database connection required). Reads the decorator metadata via
+ * `getMetadataArgsStorage()` for the entities registered in `ALL_ENTITIES`
+ * (the DataSource's source of truth), classifies each one explicitly and exposes
+ * a reliable technical inventory.
  *
- * NÃO implementa import/export. NÃO usa dados fake. NÃO usa hook de frontend.
+ * Does NOT implement import/export. Does NOT use fake data. Does NOT use a frontend hook.
  */
 import { Injectable } from '@nestjs/common';
 import { getMetadataArgsStorage } from 'typeorm';
@@ -28,24 +28,24 @@ import {
   type RelationMeta,
 } from './entity-metadata.types';
 
-// ─── Classificação central, explícita e exaustiva (117 tabelas) ──────────────────
-// Qualquer tabela ausente daqui cai em UNKNOWN → teste falha (proposital).
+// ─── Central, explicit and exhaustive classification (117 tables) ─────────────────
+// Any table missing here falls into UNKNOWN → the test fails (on purpose).
 //
-// Parte 89 — a categoria REPORTABLE não é mais atribuída aqui por tabela: ela
-// é derivada exclusivamente da presença em REPORT_MODULE_REGISTRY (registry
-// fechado, ver report-module-registry.ts). As tabelas abaixo listadas como
-// NOT_REPORTABLE são as que NÃO constam no registry autorizado — inclui
-// tanto ruído técnico quanto entidades reais ainda sem contrato/autorização
-// explícita para aparecer em Relatórios.
+// Part 89 — the REPORTABLE category is no longer assigned here per table: it
+// is derived exclusively from presence in REPORT_MODULE_REGISTRY (closed
+// registry, see report-module-registry.ts). The tables listed below as
+// NOT_REPORTABLE are the ones NOT present in the authorized registry — this includes
+// both technical noise and real entities still without an explicit contract/authorization
+// to appear in Reports.
 const ENTITY_CATEGORY: Record<string, EntityCategory> = {
-  // ── Operacionais NÃO reportáveis (fora do registry fechado de Relatórios) ──
-  // Parte 87: "pipelines" (PipelineEntity) nunca pode aparecer na Central de
-  // Relatórios (nem export, nem import, nem no inventário de entidades) —
-  // segue existindo normalmente em seu próprio módulo, fora de Relatórios.
-  // ("forms" removida — DropGenericFormsModule20260822000005.)
+  // ── Operational, NOT reportable (outside the closed Reports registry) ──────
+  // Part 87: "pipelines" (PipelineEntity) may never appear in the Reports
+  // Center (not in export, import or the entity inventory) —
+  // it keeps existing normally in its own module, outside Reports.
+  // ("forms" removed — DropGenericFormsModule20260822000005.)
   pipelines: EntityCategory.NOT_REPORTABLE,
-  // Parte 89 — não fazem parte da lista de 22 módulos autorizados pelo
-  // usuário. Continuam existindo normalmente em seus próprios módulos.
+  // Part 89 — not part of the list of 22 modules authorized by the
+  // user. They keep existing normally in their own modules.
   contract_templates: EntityCategory.NOT_REPORTABLE,
   contract_service_types: EntityCategory.NOT_REPORTABLE,
   lead_interactions: EntityCategory.NOT_REPORTABLE,
@@ -67,9 +67,9 @@ const ENTITY_CATEGORY: Record<string, EntityCategory> = {
   marketing_strategies: EntityCategory.NOT_REPORTABLE,
   marketing_assets: EntityCategory.NOT_REPORTABLE,
   audiovisual_briefings: EntityCategory.NOT_REPORTABLE,
-  // operational_tasks: sem controller, sem DTO, sem tela de Criar/Editar —
-  // escrita só por workflows automáticos internos (ver Bloco 26). "Tarefas"
-  // no registry aponta para marketing_tasks, a tela real. Fora do registry.
+  // operational_tasks: no controller, no DTO, no Create/Edit screen —
+  // written only by internal automatic workflows (see Block 26). "Tarefas"
+  // in the registry points to marketing_tasks, the real screen. Outside the registry.
   operational_tasks: EntityCategory.NOT_REPORTABLE,
   audiovisual_tasks: EntityCategory.NOT_REPORTABLE,
   audiovisual_assets: EntityCategory.NOT_REPORTABLE,
@@ -77,15 +77,15 @@ const ENTITY_CATEGORY: Record<string, EntityCategory> = {
   pipeline_opportunities: EntityCategory.NOT_REPORTABLE,
   society_submissions: EntityCategory.NOT_REPORTABLE,
   society_accounts: EntityCategory.NOT_REPORTABLE,
-  // work_participants: relação normalizada de autoria de works (migration
-  // 20260718000011) — reportável separadamente, como shares/rights_holders.
+  // work_participants: normalized authorship relation of works (migration
+  // 20260718000011) — reportable separately, like shares/rights_holders.
   work_participants: EntityCategory.NOT_REPORTABLE,
-  // client_attachments: metadata de anexos (Parte 80) — sub-entidade de
-  // clients, mesmo padrão de work_participants/project_tracks.
+  // client_attachments: attachment metadata (Part 80) — sub-entity of
+  // clients, same pattern as work_participants/project_tracks.
   client_attachments: EntityCategory.NOT_REPORTABLE,
-  // project_tracks/project_track_participants: relação normalizada de
-  // musicas[] de projects (migration 20260718000013) — reportável
-  // separadamente, mesmo padrão de work_participants.
+  // project_tracks/project_track_participants: normalized relation of
+  // projects' musicas[] (migration 20260718000013) — reportable
+  // separately, same pattern as work_participants.
   project_tracks: EntityCategory.NOT_REPORTABLE,
   project_track_participants: EntityCategory.NOT_REPORTABLE,
   notifications: EntityCategory.NOT_REPORTABLE,
@@ -113,7 +113,7 @@ const ENTITY_CATEGORY: Record<string, EntityCategory> = {
   external_identifiers: EntityCategory.NOT_REPORTABLE,
   integrations: EntityCategory.NOT_REPORTABLE,
 
-  // ── Junção (N:N) ──────────────────────────────────────────────────────────
+  // ── Join (N:N) ───────────────────────────────────────────────────────────────
   role_permissions: EntityCategory.JUNCTION,
   role_template_permissions: EntityCategory.JUNCTION,
   role_inheritance: EntityCategory.JUNCTION,
@@ -124,7 +124,7 @@ const ENTITY_CATEGORY: Record<string, EntityCategory> = {
   task_assets: EntityCategory.JUNCTION,
   financial_category_links: EntityCategory.JUNCTION,
 
-  // ── Segurança / RBAC / auth / auditoria ──────────────────────────────────
+  // ── Security / RBAC / auth / audit ──────────────────────────────────────────
   auth: EntityCategory.SECURITY,
   users: EntityCategory.SECURITY,
   permissions: EntityCategory.SECURITY,
@@ -140,7 +140,7 @@ const ENTITY_CATEGORY: Record<string, EntityCategory> = {
   audit_logs: EntityCategory.SECURITY,
   financial_category_audit_logs: EntityCategory.SECURITY,
 
-  // ── Cobrança ──────────────────────────────────────────────────────────────
+  // ── Billing ─────────────────────────────────────────────────────────────────
   billing: EntityCategory.BILLING,
   billing_plans: EntityCategory.BILLING,
   billing_settings: EntityCategory.BILLING,
@@ -166,8 +166,8 @@ const ENTITY_CATEGORY: Record<string, EntityCategory> = {
   asset_usage_logs: EntityCategory.INFRA,
   domain_event_log: EntityCategory.INFRA,
   health: EntityCategory.INFRA,
-  // Governança de integrações (migration 20260823000001): config GLOBAL da
-  // plataforma, sem tenant_id e sem dado de negócio — não é reportável.
+  // Integration governance (migration 20260823000001): GLOBAL platform
+  // config, no tenant_id and no business data — not reportable.
   integration_categories: EntityCategory.INFRA,
   platform_integrations: EntityCategory.INFRA,
   hr: EntityCategory.INFRA,
@@ -192,15 +192,15 @@ const IDENTITY_COLUMN_NAMES = new Set([
   'individual_name', 'razao_social',
   'title', 'title', 'numero', 'codigo', 'code', 'slug', 'email', 'label',
   'assunto', 'descricao', 'description', 'referencia', 'ref',
-  // Parte 89 — colunas de identidade dos novos módulos do registry fechado.
+  // Part 89 — identity columns of the new modules in the closed registry.
   'titulo_detectado', 'nome_musica', 'music_title',
 ]);
 
 /**
- * "Colunas" sintéticas da Contabilidade (relatório computado — P&L por
- * artista agregado sobre `transactions`). Não existem fisicamente; servem
- * apenas para o contrato central (form-contracts) ter lastro consistente com
- * o guard test, e para a export engine saber o shape final do XLSX.
+ * Synthetic "columns" of the Contabilidade report (computed report — P&L per
+ * artist aggregated over `transactions`). They do not exist physically; they only
+ * give the central contract (form-contracts) consistent backing for
+ * the guard test, and tell the export engine the final XLSX shape.
  */
 const ACCOUNTING_SUMMARY_COLUMNS: ColumnMeta[] = [
   { name: 'artista', label: 'Artista', type: 'varchar', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
@@ -208,8 +208,8 @@ const ACCOUNTING_SUMMARY_COLUMNS: ColumnMeta[] = [
   { name: 'despesas', label: 'Despesas', type: 'numeric', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
   { name: 'resultado', label: 'Resultado', type: 'numeric', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
   { name: 'margem', label: 'Margem (%)', type: 'numeric', nullable: false, hasDefault: false, primary: false, generated: false, isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
-  // Não exportada (fora de ACCOUNTING_SUMMARY_CONTRACT.fields) — existe só
-  // para dateColumn ter uma coluna física válida para o fallback de ordenação.
+  // Not exported (outside ACCOUNTING_SUMMARY_CONTRACT.fields) — exists only
+  // so dateColumn has a valid physical column for the sort fallback.
   { name: 'created_at', label: null, type: 'timestamp', nullable: false, hasDefault: true, primary: false, generated: false, isEnum: false, isCreatedAt: true, isUpdatedAt: false, isDeletedAt: false, isTenantId: false },
 ];
 
@@ -230,14 +230,14 @@ function typeToString(type: unknown, mode: string): string {
 
 @Injectable()
 export class EntityMetadataService {
-  /** Varre todas as entidades registradas e devolve o inventário classificado. */
+  /** Scans every registered entity and returns the classified inventory. */
   scan(): EntitiesInventory {
     const storage = getMetadataArgsStorage();
     const entities: EntityReport[] = [];
 
     for (const cls of ALL_ENTITIES as unknown[]) {
       const tableArgs = storage.tables.find((t) => t.target === cls);
-      if (!tableArgs) continue; // não é @Entity (defensivo)
+      if (!tableArgs) continue; // not an @Entity (defensive)
       const tableName = tableArgs.name ?? '';
 
       const columnArgs = storage.columns.filter((c) => isOwnedBy(cls, c.target));
@@ -252,8 +252,8 @@ export class EntityMetadataService {
         const enumOpt = c.options.enum;
         return {
           name: dbName,
-          // Label EXPLÍCITO da camada central; null quando ainda não traduzido
-          // (nunca cai em humanizeKey — sem fallback visual).
+          // EXPLICIT label from the central layer; null when not yet translated
+          // (never falls back to humanizeKey — no visual fallback).
           label: tryGetFieldLabelPtBr(dbName),
           type: typeToString(c.options.type, mode),
           nullable: c.options.nullable === true,
@@ -277,7 +277,7 @@ export class EntityMetadataService {
             ? (t as () => unknown)()
             : t;
           targetName = typeof resolved === 'function' ? (resolved as { name?: string }).name ?? 'unknown' : String(resolved);
-        } catch { /* relação por string/lazy — mantém unknown */ }
+        } catch { /* string/lazy relation — keeps unknown */ }
         return { property: r.propertyName, type: r.relationType, target: targetName };
       });
 
@@ -286,14 +286,14 @@ export class EntityMetadataService {
       const hasTimestamps = columns.some((c) => c.isCreatedAt) && columns.some((c) => c.isUpdatedAt);
       const hasIdentifiable = columns.some((c) => IDENTITY_COLUMN_NAMES.has(c.name));
 
-      // Parte 89: REPORTABLE é derivado exclusivamente da presença no
-      // registry fechado — nunca por decorator/override, nunca por heurística.
+      // Part 89: REPORTABLE is derived exclusively from presence in the
+      // closed registry — never from a decorator/override, never from a heuristic.
       const inRegistry = REPORT_MODULE_TABLE_NAMES.has(tableName);
       const override = getReportableMetadata(cls);
       const category = override?.category ?? (inRegistry ? EntityCategory.REPORTABLE : (ENTITY_CATEGORY[tableName] ?? EntityCategory.UNKNOWN));
       const label = inRegistry ? (REPORT_MODULE_REGISTRY_BY_TABLE.get(tableName)?.label ?? resolveEntityLabel(tableName)) : resolveEntityLabel(tableName);
 
-      // Colunas "visíveis" (candidatas a export) sem label pt-BR — não técnicas.
+      // "Visible" columns (export candidates) without a pt-BR label — not technical.
       const untranslatedVisible = columns.filter(
         (c) => !c.primary && !c.generated && !c.isTenantId &&
           !c.isCreatedAt && !c.isUpdatedAt && !c.isDeletedAt &&
@@ -311,10 +311,10 @@ export class EntityMetadataService {
         risks.push(`UNTRANSLATED_COLUMNS:${untranslatedVisible.length}`);
       }
 
-      // Reportável de fato exige: (1) constar no registry fechado (Parte 89),
-      // (2) tenant_id, (3) coluna identificável (fail-closed). Entidades fora
-      // do registry NUNCA são reportáveis, mesmo com categoria REPORTABLE por
-      // algum override futuro — o registry é a única porta de entrada.
+      // Actually reportable requires: (1) being in the closed registry (Part 89),
+      // (2) tenant_id, (3) an identifiable column (fail-closed). Entities outside
+      // the registry are NEVER reportable, even with a REPORTABLE category from
+      // some future override — the registry is the only entry point.
       const reportable = inRegistry && hasTenantId && hasIdentifiable;
 
       entities.push({
@@ -332,10 +332,10 @@ export class EntityMetadataService {
       });
     }
 
-    // "Contabilidade" (Bloco 19/Parte 89) é um relatório computado — agregação
-    // sobre `transactions`, sem tabela física própria. Injetado aqui (não em
-    // ALL_ENTITIES) para que apareça de forma idêntica em getDefinitions() e
-    // no inventário do controller, sem forçar um TypeORM @Entity fictício.
+    // "Contabilidade" (Block 19/Part 89) is a computed report — an aggregation
+    // over `transactions`, with no physical table of its own. Injected here (not in
+    // ALL_ENTITIES) so it appears identically in getDefinitions() and
+    // in the controller's inventory, without forcing a fictitious TypeORM @Entity.
     const accountingEntry = REPORT_MODULE_REGISTRY_BY_TABLE.get(ACCOUNTING_SUMMARY_TABLE_NAME);
     if (accountingEntry) {
       entities.push({
@@ -353,9 +353,9 @@ export class EntityMetadataService {
       });
     }
 
-    // Ordem de exibição: módulos do registry na ordem exata definida pelo
-    // usuário (Bloco 2/31); qualquer entidade fora do registry vem depois,
-    // em ordem alfabética (nunca aparece em Relatórios, ordem é irrelevante).
+    // Display order: registry modules in the exact order defined by the
+    // user (Blocks 2/31); any entity outside the registry comes afterwards,
+    // in alphabetical order (it never appears in Reports, so the order is irrelevant).
     entities.sort((a, b) => {
       const oa = REPORT_MODULE_REGISTRY_BY_TABLE.get(a.tableName)?.order ?? Number.MAX_SAFE_INTEGER;
       const ob = REPORT_MODULE_REGISTRY_BY_TABLE.get(b.tableName)?.order ?? Number.MAX_SAFE_INTEGER;

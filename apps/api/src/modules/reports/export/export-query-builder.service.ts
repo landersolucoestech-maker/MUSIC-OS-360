@@ -37,9 +37,9 @@ export class ExportQueryBuilderService {
   ): BuiltExportQuery {
     if (!tenantId) throw new ForbiddenException('Tenant não identificado para exportação');
 
-    // Seleção = QUAIS colunas; ordem canônica (def.exportableColumns) = EM QUAL ordem.
-    // Nunca usar a ordem em que o chamador enviou `columns` — sempre filtrar a
-    // configuração canônica pelos identificadores selecionados, preservando a ordem dela.
+    // Selection = WHICH columns; canonical order (def.exportableColumns) = IN WHICH order.
+    // Never use the order in which the caller sent `columns` — always filter the
+    // canonical configuration by the selected identifiers, preserving its order.
     if (params.columns?.length) {
       for (const column of params.columns) {
         if (def.sensitiveColumns.includes(column)) {

@@ -1,6 +1,6 @@
 /**
- * Registro dos resolvers e writers para grupos repetíveis achatados em linhas
- * da mesma aba XLSX.
+ * Registry of the resolvers and writers for repeatable groups flattened into
+ * rows of the same XLSX sheet.
  */
 import type { DataSource, QueryRunner } from 'typeorm';
 import {

@@ -1,12 +1,12 @@
 /**
  * modules/reports/reportable.decorator.ts
  *
- * FASE 1 — mecanismo explícito de reportabilidade por entidade.
+ * PHASE 1 — explicit per-entity reportability mechanism.
  *
- * Permite marcar uma entidade TypeORM como reportável (ou não) diretamente na
- * classe, SOBREPONDO a classificação central. Uso opcional — a classificação
- * central já cobre o inventário; o decorator existe para futuras entidades e
- * para ajustes pontuais auditáveis.
+ * Allows marking a TypeORM entity as reportable (or not) directly on the
+ * class, OVERRIDING the central classification. Optional use — the central
+ * classification already covers the inventory; the decorator exists for future entities and
+ * for auditable one-off adjustments.
  *
  *   @Reportable({ category: EntityCategory.REPORTABLE, label: 'Artistas' })
  *   @Entity('artists')
@@ -16,11 +16,11 @@ import 'reflect-metadata';
 import { EntityCategory } from './entity-metadata.types';
 
 export interface ReportableOptions {
-  /** Categoria explícita (sobrepõe a central). */
+  /** Explicit category (overrides the central one). */
   category?: EntityCategory;
   /** Atalho: `reportable: false` ⇒ NOT_REPORTABLE. */
   reportable?: boolean;
-  /** Rótulo operacional pt-BR. */
+  /** Operational pt-BR label. */
   label?: string;
 }
 
@@ -36,7 +36,7 @@ export function Reportable(options: ReportableOptions = {}): ClassDecorator {
   };
 }
 
-/** Lê a marcação `@Reportable` de uma classe de entidade, se houver. */
+/** Reads the `@Reportable` marking of an entity class, if any. */
 export function getReportableMetadata(target: unknown): ReportableOptions | undefined {
   if (typeof target !== 'function') return undefined;
   return Reflect.getMetadata(REPORTABLE_METADATA, target) as ReportableOptions | undefined;

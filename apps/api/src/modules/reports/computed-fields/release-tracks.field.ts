@@ -1,18 +1,18 @@
 /**
- * modules/reports/computed-fields/release-tracks.field.ts  ·  Parte 89
+ * modules/reports/computed-fields/release-tracks.field.ts  ·  Part 89
  *
- * Resolver dedicado para a aba filha "Faixas do Lançamento"
- * (RELEASES_CONTRACT.childSheets). `faixas[]` vive dentro de
- * releases.metadata.faixas (não normalizada em tabela própria, ao contrário
- * de Projetos/project_tracks). Cada faixa usa a chave `title` no armazenamento
- * real do formulário (LancamentoFormModal.tsx) — renomeada para `nome` na aba
- * filha para não colidir com a coluna `title` do Lançamento (linha-pai).
+ * Dedicated resolver for the "Faixas do Lançamento" child sheet
+ * (RELEASES_CONTRACT.childSheets). `faixas[]` lives inside
+ * releases.metadata.faixas (not normalized into its own table, unlike
+ * Projects/project_tracks). Each track uses the `title` key in the form's real
+ * storage (LancamentoFormModal.tsx) — renamed to `nome` in the child
+ * sheet so it does not collide with the release's (parent row) `title` column.
  *
- * Simplificação documentada (Parte 89): produtores/músicos/artistas
- * adicionais de cada faixa são arrays de objetos ({nome,role}/{nome,
- * instrumento}) — fora do alcance desta aba filha nesta Parte (não incluídos
- * como colunas). Apenas compositores (já uma lista simples de nomes) é
- * exportado/importado.
+ * Documented simplification (Part 89): each track's additional
+ * producers/musicians/artists are arrays of objects ({nome,role}/{nome,
+ * instrumento}) — out of reach of this child sheet in this Part (not included
+ * as columns). Only composers (already a simple list of names) are
+ * exported/imported.
  */
 import { BadRequestException } from '@nestjs/common';
 import type { DataSource, QueryRunner } from 'typeorm';

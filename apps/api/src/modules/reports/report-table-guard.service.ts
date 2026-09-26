@@ -1,15 +1,15 @@
 /**
  * modules/reports/report-table-guard.service.ts
  *
- * Guarda de segurança da Central de Relatórios: garante que uma entidade só é
- * exportada/importada quando sua tabela física EXISTE no banco. Entidades
- * declaradas (ALL_ENTITIES) mas sem tabela materializada (ex.: crm_contacts,
- * pipelines — schema só no dump consolidado) deixam de retornar 500 e passam a
- * retornar erro controlado 422 (UnprocessableEntity), sem stack trace.
+ * Security guard of the Reports Center: ensures an entity is only
+ * exported/imported when its physical table EXISTS in the database. Entities
+ * declared (ALL_ENTITIES) but without a materialized table (e.g. crm_contacts,
+ * pipelines — schema only in the consolidated dump) no longer return 500 and instead
+ * return a controlled 422 error (UnprocessableEntity), without a stack trace.
  *
- * A lista de tabelas existentes é consultada uma única vez e cacheada (read-only,
- * information_schema). Quando o DataSource não está disponível, a guarda degrada
- * de forma segura (não bloqueia indevidamente — o engine já trata banco ausente).
+ * The list of existing tables is queried only once and cached (read-only,
+ * information_schema). When the DataSource is unavailable, the guard degrades
+ * safely (it does not block wrongly — the engine already handles a missing database).
  */
 import { Injectable, Inject, Optional, UnprocessableEntityException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
@@ -23,14 +23,14 @@ export class ReportTableGuardService {
 
   constructor(@Inject(DATA_SOURCE) @Optional() private readonly ds: DataSource | null) {}
 
-  /** Conjunto de tabelas físicas do schema public (cacheado). `null` se indisponível. */
+  /** Set of physical tables of the public schema (cached). `null` when unavailable. */
   existingTables(): Promise<Set<string> | null> {
     if (this.cache) return this.cache;
     this.cache = this.load();
     return this.cache;
   }
 
-  /** Limpa o cache (após migrations, em testes). */
+  /** Clears the cache (after migrations, in tests). */
   invalidate(): void {
     this.cache = null;
   }
@@ -43,17 +43,17 @@ export class ReportTableGuardService {
       )) as { tablename: string }[];
       return new Set(rows.map((r) => r.tablename));
     } catch {
-      // Falha de introspecção não deve mascarar o fluxo; degrade seguro.
+      // An introspection failure must not mask the flow; degrade safely.
       return null;
     }
   }
 
   /**
-   * Valida que a entidade pode ser exportada/importada com segurança.
-   * Lança 422 (sem 500/stack trace) quando:
-   *  - metadata da entidade não existe;
-   *  - a tabela física não existe no banco;
-   *  - a entidade é multi-tenant mas a tabela não possui coluna tenant_id.
+   * Validates that the entity can be exported/imported safely.
+   * Throws 422 (no 500/stack trace) when:
+   *  - the entity metadata does not exist;
+   *  - the physical table does not exist in the database;
+   *  - the entity is multi-tenant but the table has no tenant_id column.
    */
   async assertTableUsable(tableName: string, report: EntityReport | undefined): Promise<void> {
     if (!report) {
@@ -61,12 +61,12 @@ export class ReportTableGuardService {
         `Entidade "${tableName}" não possui metadados registrados e não pode ser processada.`,
       );
     }
-    // Relatório computado (ex.: Contabilidade/accounting_summary): não tem
-    // tabela física própria — a validação de "tabela existe" não se aplica.
+    // Computed report (e.g. Contabilidade/accounting_summary): has no
+    // physical table of its own — the "table exists" validation does not apply.
     if (REPORT_MODULE_REGISTRY_BY_TABLE.get(tableName)?.computed) return;
 
     const tables = await this.existingTables();
-    if (!tables) return; // não foi possível verificar — não bloqueia (engine trata DB ausente)
+    if (!tables) return; // could not be verified — does not block (the engine handles a missing DB)
 
     if (!tables.has(tableName)) {
       throw new UnprocessableEntityException(

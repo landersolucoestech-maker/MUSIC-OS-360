@@ -1,8 +1,8 @@
 /**
  * modules/reports/export/export-engine.service.ts
  *
- * Exportação entity-driven em uma única aba. Estruturas repetíveis são
- * achatadas em linhas da mesma worksheet; nunca são criadas abas auxiliares.
+ * Entity-driven export into a single sheet. Repeatable structures are
+ * flattened into rows of the same worksheet; auxiliary sheets are never created.
  */
 import {
   BadRequestException,
@@ -109,9 +109,9 @@ export class ExportEngineService {
       try {
         const rows = await this.resolveComputedReport(entity, tenantId);
         assertExportSize(entity, rows.length);
-        // Seleção = QUAIS colunas; ordem canônica (definition.exportableColumns) = EM
-        // QUAL ordem. Filtrar a config canônica pela seleção, não o inverso — nunca
-        // deixar a ordem de `params.columns` (ordem do chamador) vazar para o XLSX.
+        // Selection = WHICH columns; canonical order (definition.exportableColumns) = IN
+        // WHICH order. Filter the canonical config by the selection, not the reverse — never
+        // let the order of `params.columns` (the caller's order) leak into the XLSX.
         const columns = params.columns?.length
           ? definition.exportableColumns.filter((column) => params.columns!.includes(column))
           : definition.exportableColumns;

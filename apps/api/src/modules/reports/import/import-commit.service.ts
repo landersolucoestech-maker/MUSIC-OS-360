@@ -329,12 +329,12 @@ export class ImportCommitService {
   }
 
   /**
-   * `transactions.categoria` é NOT NULL sem default. A criação manual
-   * (TransactionsService) já tem fallback para "outros" + auto-categorização
-   * por regra (Task W); o importador XLSX não tinha nenhum dos dois — uma
-   * célula vazia quebrava o INSERT. Reaproveita o mesmo
-   * FinanceCategoryRulesService.suggestCategoryForTransaction usado na
-   * criação manual; nunca duplica o matcher.
+   * `transactions.categoria` is NOT NULL without a default. Manual creation
+   * (TransactionsService) already falls back to "outros" + rule-based
+   * auto-categorization (Task W); the XLSX importer had neither — an
+   * empty cell broke the INSERT. Reuses the same
+   * FinanceCategoryRulesService.suggestCategoryForTransaction used by
+   * manual creation; never duplicates the matcher.
    */
   private async resolveTransactionCategory(
     rowData: Record<string, unknown>,
@@ -352,7 +352,7 @@ export class ImportCommitService {
         try {
           const suggestion = await this.financeCategoryRules.suggestCategoryForTransaction(tenantId, ruleType, descricao);
           if (suggestion) categoria = suggestion.categoryName;
-        } catch { /* mantém o placeholder */ }
+        } catch { /* keeps the placeholder */ }
       }
     }
 

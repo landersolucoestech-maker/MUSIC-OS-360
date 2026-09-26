@@ -1,5 +1,5 @@
 /**
- * Parser fail-closed para workbook XLSX com exatamente uma aba.
+ * Fail-closed parser for an XLSX workbook with exactly one sheet.
  */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as XLSX from 'xlsx';

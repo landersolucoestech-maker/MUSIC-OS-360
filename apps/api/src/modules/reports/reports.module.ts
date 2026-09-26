@@ -1,8 +1,8 @@
 /**
  * modules/reports/reports.module.ts
  *
- * FASE 1 — fundação backend da Central de Relatórios (metadata entity-driven).
- * Sem import/export funcional ainda; apenas inventário classificado.
+ * PHASE 1 — backend foundation of the Reports Center (entity-driven metadata).
+ * No functional import/export yet; only the classified inventory.
  */
 import { Module } from '@nestjs/common';
 import { FinanceCategoryRulesModule } from '../finance-category-rules/finance-category-rules.module';

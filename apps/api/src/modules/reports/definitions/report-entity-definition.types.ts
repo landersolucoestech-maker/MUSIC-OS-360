@@ -1,9 +1,9 @@
 /**
  * modules/reports/definitions/report-entity-definition.types.ts
  *
- * FASE 2.1 — contrato explícito por entidade reportável.
- * O contrato declara CHAVES TÉCNICAS (colunas reais da metadata TypeORM).
- * Os LABELS são resolvidos exclusivamente pela camada i18n (getFieldLabelPtBr).
+ * PHASE 2.1 — explicit contract per reportable entity.
+ * The contract declares TECHNICAL KEYS (real columns from TypeORM metadata).
+ * LABELS are resolved exclusively by the i18n layer (getFieldLabelPtBr).
  */
 import type { EntityCategory } from '../entity-metadata.types';
 
@@ -12,9 +12,9 @@ export interface ReportEntityDefinition {
   tableName: string;
   category: EntityCategory;
 
-  /** Coluna de identidade natural (não-PK interna) — ex.: numero, nome. */
+  /** Natural identity column (not the internal PK) — e.g. numero, nome. */
   identityColumn: string;
-  /** Coluna usada para exibição amigável. */
+  /** Column used for friendly display. */
   displayColumn: string;
   /** Coluna de data principal (filtro/ordem temporal). */
   dateColumn: string;

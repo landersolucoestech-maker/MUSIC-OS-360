@@ -1,8 +1,8 @@
 /**
  * modules/reports/form-contracts/artists.form-contract.ts
  *
- * Vista derivada do contrato central de Artistas (report-form-contracts.ts).
- * NÃO declarar listas aqui: a fonte única é REPORT_FORM_CONTRACTS.artists.
+ * Derived view of the central Artists contract (report-form-contracts.ts).
+ * Do NOT declare lists here: the single source is REPORT_FORM_CONTRACTS.artists.
  */
 import {
   REPORT_FORM_CONTRACTS,

@@ -1,6 +1,6 @@
 /**
- * modules/reports/import/import-audit.service.ts  ·  FASE 2.3B
- * Auditoria de commit de importação via EventsService existente.
+ * modules/reports/import/import-audit.service.ts  ·  PHASE 2.3B
+ * Import commit auditing via the existing EventsService.
  */
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { EventsService } from '../../../core/events/events.service';

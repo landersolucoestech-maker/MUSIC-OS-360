@@ -1,6 +1,6 @@
 /**
- * Resolver dos campos repetíveis do formulário de Projetos.
- * Cada música vira uma linha da única aba do XLSX.
+ * Resolver for the repeatable fields of the Projects form.
+ * Each track becomes one row of the XLSX's single sheet.
  */
 import { randomUUID } from 'crypto';
 import type { DataSource, QueryRunner } from 'typeorm';

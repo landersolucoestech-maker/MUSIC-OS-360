@@ -1,5 +1,5 @@
 /**
- * Endpoints entity-driven da Central de Relatórios.
+ * Entity-driven endpoints of the Reports Center.
  */
 import { BadRequestException, Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
@@ -46,8 +46,8 @@ export class ImportUploadDto {
   contentBase64: string;
 }
 
-// page/pageSize permanecem reservados para não serem interpretados como filtros
-// caso um cliente antigo ainda os envie. Exportação de arquivo nunca é paginada.
+// page/pageSize stay reserved so they are not interpreted as filters
+// in case an old client still sends them. File export is never paginated.
 const RESERVED_QUERY_KEYS = new Set(['format', 'columns', 'sort', 'order', 'page', 'pageSize']);
 
 function first(value: string | string[] | undefined): string | undefined {

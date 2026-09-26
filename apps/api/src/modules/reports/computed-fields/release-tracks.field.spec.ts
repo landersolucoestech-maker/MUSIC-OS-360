@@ -2,8 +2,8 @@ import { BadRequestException } from '@nestjs/common';
 import { writeReleaseTracksForImport } from './release-tracks.field';
 
 /**
- * find-532335a9 (Wave 7 cross-review): per-track ISRC inside the "Faixas do
- * Lançamento" repeating-group child sheet bypassed ImportCommitService's
+ * find-532335a9 (Wave 7 cross-review): per-track ISRC inside the
+ * "Faixas do Lançamento" repeating-group child sheet bypassed ImportCommitService's
  * ISRC pre-check/normalization entirely — those only walk general/non-
  * repeating columns. This proves the per-track write path now applies the
  * same normalization/validation independently.

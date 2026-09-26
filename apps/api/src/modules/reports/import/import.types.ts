@@ -1,5 +1,5 @@
 /**
- * Contratos e limites da importação XLSX em uma única aba.
+ * Contracts and limits of the single-sheet XLSX import.
  */
 export type ImportFormat = 'xlsx';
 export const IMPORT_MAX_ROWS = 5000;
@@ -34,7 +34,7 @@ export interface RowValidation {
   valid: boolean;
   errors: RowIssue[];
   warnings: RowIssue[];
-  /** Itens agrupados a partir de linhas consecutivas da mesma aba. */
+  /** Items grouped from consecutive rows of the same sheet. */
   repeatingGroups?: Record<string, unknown[]>;
 }
 

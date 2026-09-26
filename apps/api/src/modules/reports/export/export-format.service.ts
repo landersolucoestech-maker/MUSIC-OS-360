@@ -1,9 +1,9 @@
 /**
- * modules/reports/export/export-format.service.ts  ·  FASE 2.2
+ * modules/reports/export/export-format.service.ts  ·  PHASE 2.2
  *
- * Serialização centralizada. Cabeçalhos SEMPRE em pt-BR via getFieldLabelPtBr
- * (fonte única). Valores formatados em pt-BR (data, booleano, número). Sem
- * formatação espalhada pela aplicação.
+ * Centralized serialization. Headers ALWAYS in pt-BR via getFieldLabelPtBr
+ * (single source). Values formatted in pt-BR (date, boolean, number). No
+ * formatting scattered across the application.
  */
 import { Injectable } from '@nestjs/common';
 import * as XLSX from 'xlsx';
@@ -69,7 +69,7 @@ export class ExportFormatService {
     return columns.map((key) => ({ key, label: getFieldLabelPtBr(key) }));
   }
 
-  /** Todo workbook de relatório possui exatamente uma aba. */
+  /** Every report workbook has exactly one sheet. */
   toXlsx(entity: string, sheetName: string, columns: string[], rows: Record<string, unknown>[]): Buffer {
     const header = this.headers(columns).map((h) => h.label);
     const aoa: unknown[][] = [

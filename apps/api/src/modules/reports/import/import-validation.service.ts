@@ -1,5 +1,5 @@
 /**
- * Valida linhas XLSX contra o contrato e a metadata sem persistir dados.
+ * Validates XLSX rows against the contract and the metadata without persisting data.
  */
 import { Injectable } from '@nestjs/common';
 import { getReportFormContract } from '../form-contracts/report-form-contracts';

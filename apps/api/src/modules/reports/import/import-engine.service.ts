@@ -1,8 +1,8 @@
 /**
  * modules/reports/import/import-engine.service.ts
  *
- * Validação e template XLSX em uma única aba. Grupos repetíveis são linhas
- * consecutivas do mesmo arquivo, nunca worksheets auxiliares.
+ * Validation and XLSX template in a single sheet. Repeatable groups are
+ * consecutive rows of the same file, never auxiliary worksheets.
  */
 import {
   BadRequestException,
@@ -62,9 +62,9 @@ function reportSheetName(report: EntityReport, entity: string): string {
 }
 
 /**
- * A definição usa chaves lógicas do formulário, enquanto a metadata do banco
- * usa nomes físicos. Este mapa mantém coerção/required checks alinhados ao
- * contrato, inclusive quando `nome_ep_album` persiste em `projects.title`.
+ * The definition uses the form's logical keys, while the database metadata
+ * uses physical names. This map keeps coercion/required checks aligned with the
+ * contract, including when `nome_ep_album` persists into `projects.title`.
  */
 function buildLogicalTypeMap(
   report: EntityReport,
@@ -86,9 +86,9 @@ function buildLogicalTypeMap(
     if (metadata) typeMap[field.key] = metadata;
   }
 
-  // Campos de subformulários são resolvidos por serviços dedicados e não
-  // pertencem à tabela pai. Sem metadata física confiável, são texto por
-  // padrão; validações específicas continuam a cargo do contrato/resolver.
+  // Sub-form fields are resolved by dedicated services and do not
+  // belong to the parent table. Without reliable physical metadata they are text by
+  // default; specific validations remain the contract's/resolver's responsibility.
   for (const field of contract.repeatingGroup?.fields ?? []) {
     typeMap[field.key] ??= {
       type: 'String',

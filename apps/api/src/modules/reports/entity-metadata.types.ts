@@ -1,39 +1,39 @@
 /**
  * modules/reports/entity-metadata.types.ts
  *
- * FASE 1 — tipos do inventário entity-driven da Central de Relatórios.
- * A fonte da verdade é o backend (entidades TypeORM), nunca o frontend.
+ * PHASE 1 — types of the Reports Center's entity-driven inventory.
+ * The source of truth is the backend (TypeORM entities), never the frontend.
  */
 
-/** Classificação explícita e obrigatória de toda entidade persistida. */
+/** Explicit, mandatory classification of every persisted entity. */
 export enum EntityCategory {
-  /** Entidade operacional de negócio, elegível para export/import. */
+  /** Operational business entity, eligible for export/import. */
   REPORTABLE = 'REPORTABLE',
-  /** Operacional, porém não exportável por padrão (sub-entidade, ruído). */
+  /** Operational, but not exportable by default (sub-entity, noise). */
   NOT_REPORTABLE = 'NOT_REPORTABLE',
-  /** Estrutura interna do domínio (não voltada ao usuário final). */
+  /** Internal domain structure (not aimed at the end user). */
   INTERNAL = 'INTERNAL',
-  /** Tabela de junção / N:N. */
+  /** Join table / N:N. */
   JUNCTION = 'JUNCTION',
   /** Infraestrutura (logs, eventos, filas, jobs, org/tenant structure). */
   INFRA = 'INFRA',
-  /** Segurança / RBAC / auth / auditoria. */
+  /** Security / RBAC / auth / audit. */
   SECURITY = 'SECURITY',
-  /** Cobrança / assinatura. */
+  /** Billing / subscription. */
   BILLING = 'BILLING',
-  /** Infra interna de IA (Skills/Automações — invisível ao usuário). */
+  /** Internal AI infrastructure (Skills/Automations — invisible to the user). */
   AI_INTERNAL = 'AI_INTERNAL',
-  /** Sem classificação — DEVE falhar o teste se ocorrer. */
+  /** Unclassified — the test MUST fail if this occurs. */
   UNKNOWN = 'UNKNOWN',
 }
 
 export interface ColumnMeta {
   name: string;
-  /** Label pt-BR explícito (camada central). `null` quando ainda não traduzido. */
+  /** Explicit pt-BR label (central layer). `null` when not yet translated. */
   label: string | null;
   type: string;
   nullable: boolean;
-  /** Coluna tem DEFAULT no schema (Postgres preenche se omitida do INSERT). */
+  /** Column has a DEFAULT in the schema (Postgres fills it when omitted from the INSERT). */
   hasDefault: boolean;
   primary: boolean;
   generated: boolean;
@@ -54,7 +54,7 @@ export interface RelationMeta {
 export interface EntityReport {
   entityName: string;
   tableName: string;
-  /** Label pt-BR da entidade (camada central i18n). `null` quando não traduzida. */
+  /** The entity's pt-BR label (central i18n layer). `null` when not translated. */
   label: string | null;
   category: EntityCategory;
   reportable: boolean;
@@ -65,9 +65,9 @@ export interface EntityReport {
   hasTimestamps: boolean;
   risks: string[];
   /**
-   * Tabela física existe no banco. Preenchido no overlay de disponibilidade
-   * (controller). `undefined` quando a verificação não foi aplicada (ex.: scan
-   * puro de metadata, sem DataSource).
+   * The physical table exists in the database. Filled by the availability overlay
+   * (controller). `undefined` when the check was not applied (e.g. a pure
+   * metadata scan, without a DataSource).
    */
   available?: boolean;
 }

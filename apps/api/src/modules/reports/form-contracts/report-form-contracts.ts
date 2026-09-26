@@ -1,43 +1,43 @@
 /**
  * modules/reports/form-contracts/report-form-contracts.ts
  *
- * FONTE ÚNICA DE VERDADE das colunas de exportação/importação da Central de
- * Relatórios para entidades com formulário real.
+ * SINGLE SOURCE OF TRUTH for the Reports Center's export/import columns
+ * for entities with a real form.
  *
- * Consumida simultaneamente por:
+ * Consumed simultaneously by:
  *   - ReportEntityDefinitionService  (exportableColumns / importableColumns)
- *   - ExportQueryBuilderService      (resolução física: coluna | metadata | cifrada)
- *   - ExportEngineService            (descriptografia na exportação)
- *   - ImportCommitService            (persistência: coluna | metadata | cifrada)
- *   - form-contracts.guard.spec      (guarda permanente DTO ↔ contrato)
+ *   - ExportQueryBuilderService      (physical resolution: column | metadata | encrypted)
+ *   - ExportEngineService            (decryption on export)
+ *   - ImportCommitService            (persistence: column | metadata | encrypted)
+ *   - form-contracts.guard.spec      (permanent DTO ↔ contract guard)
  *
- * Regras:
- *   - `key` é a chave lógica estável da coluna no arquivo (o cabeçalho exibido
- *     vem da camada i18n central, field-labels.pt-br).
- *   - `storage` define onde o campo vive fisicamente na tabela.
- *   - `importable: false` marca campo somente-leitura no arquivo (exportado,
- *     mas nunca sobrescrito pela importação — ex.: códigos de registro ECAD).
- *   - `excludedFormFields` documenta TODO campo do DTO do formulário que ficou
- *     deliberadamente fora do contrato, com o motivo (o guard exige isso).
- *   - `formFieldAliases` mapeia campos legados/EN do DTO para a chave física
- *     canônica (ex.: `title` → `title`).
+ * Rules:
+ *   - `key` is the column's stable logical key in the file (the displayed header
+ *     comes from the central i18n layer, field-labels.pt-br).
+ *   - `storage` defines where the field physically lives in the table.
+ *   - `importable: false` marks a read-only field in the file (exported,
+ *     but never overwritten by import — e.g. ECAD registration codes).
+ *   - `excludedFormFields` documents EVERY form DTO field that was
+ *     deliberately left out of the contract, with the reason (the guard requires it).
+ *   - `formFieldAliases` maps legacy/EN DTO fields to the canonical physical
+ *     key (e.g. `title` → `title`).
  */
 import { ACCOUNTING_SUMMARY_TABLE_NAME } from '../report-module-registry';
 
 export type ReportFieldStorage = 'column' | 'metadata' | 'encrypted';
 
 export interface ReportFieldSpec {
-  /** Chave lógica estável (coluna do arquivo e do formulário). */
+  /** Stable logical key (file and form column). */
   key: string;
-  /** Onde o campo vive fisicamente. */
+  /** Where the field physically lives. */
   storage: ReportFieldStorage;
-  /** Coluna física para storage cifrado ou alias de coluna real. */
+  /** Physical column for encrypted storage or alias of a real column. */
   physical?: string;
-  /** false ⇒ somente exportação (nunca sobrescrito na importação). */
+  /** false ⇒ export only (never overwritten on import). */
   importable?: boolean;
 }
 
-/** Grupo repetível achatado em linhas da mesma aba XLSX. */
+/** Repeatable group flattened into rows of the same XLSX sheet. */
 export interface ReportRepeatingGroupFieldSpec {
   key: string;
   multi?: boolean;
@@ -51,36 +51,36 @@ export interface ReportRepeatingGroupSpec {
 export interface ReportFormContract {
   tableName: string;
   identityColumn: string;
-  /** Ordem oficial e determinística das colunas do arquivo. */
+  /** Official, deterministic order of the file's columns. */
   fields: ReportFieldSpec[];
-  /** Campo do DTO → motivo da exclusão (auditável; exigido pelo guard). */
+  /** DTO field → exclusion reason (auditable; required by the guard). */
   excludedFormFields: Record<string, string>;
   /** Campo legado/EN do DTO → key canônica do contrato. */
   formFieldAliases?: Record<string, string>;
-  /** Overrides opcionais (apenas colunas físicas do contrato). */
+  /** Optional overrides (physical contract columns only). */
   filterableColumns?: string[];
   searchableColumns?: string[];
-  /** Campos repetíveis achatados em linhas da mesma aba XLSX. */
+  /** Repeatable fields flattened into rows of the same XLSX sheet. */
   repeatingGroup?: ReportRepeatingGroupSpec;
 }
 
 const col = (key: string, physical?: string): ReportFieldSpec => ({ key, storage: 'column', physical });
 const ro = (key: string, physical?: string): ReportFieldSpec => ({ key, storage: 'column', physical, importable: false });
 /**
- * Campo residente num jsonb. `physical` indica QUAL coluna jsonb (default
- * `'metadata'`, a coluna genérica presente na maioria das tabelas) — use o
- * segundo parâmetro quando o formulário guarda o campo numa coluna jsonb
- * NOMEADA própria (ex.: leads.payload_servico, leads.dados_internos_crm),
- * não na coluna `metadata` genérica.
+ * Field residing in a jsonb column. `physical` says WHICH jsonb column (default
+ * `'metadata'`, the generic column present in most tables) — use the
+ * second parameter when the form stores the field in its own NAMED jsonb
+ * column (e.g. leads.payload_servico, leads.dados_internos_crm),
+ * not in the generic `metadata` column.
  */
 const meta = (key: string, physical: string = 'metadata'): ReportFieldSpec => ({ key, storage: 'metadata', physical });
 const enc = (key: string, physical: string): ReportFieldSpec => ({ key, storage: 'encrypted', physical });
-// ─── Artistas (formulário completo — 68 campos) ──────────────────────────────
+// ─── Artists (full form — 68 fields) ────────────────────────────────────────
 const ARTISTS_CONTRACT: ReportFormContract = {
   tableName: 'artists',
   identityColumn: 'nome_artistico',
   fields: [
-    // Identidade e perfil (colunas diretas)
+    // Identity and profile (direct columns)
     col('nome_artistico'), col('nome_civil'), col('status'),
     col('music_genre'), col('notes'), col('especialidades'),
     // Perfil estendido (metadata jsonb)
@@ -90,39 +90,39 @@ const ARTISTS_CONTRACT: ReportFormContract = {
     // Contato (cifrados)
     enc('email', 'email_encrypted'), enc('telefone', 'telefone_encrypted'),
     enc('cpf_cnpj', 'cpf_cnpj_encrypted'),
-    // Mídia e links (colunas diretas)
+    // Media and links (direct columns)
     col('foto_url'), col('spotify_url'), col('youtube_url'), col('deezer_url'),
     col('apple_music_url'), col('soundcloud_url'), col('galeria_urls'),
     col('documents'),
-    // Mídia e links (metadata)
+    // Media and links (metadata)
     meta('presskit_url'), meta('documentos_pessoais_url'),
     meta('apple_music_albuns_url'), meta('soundcloud_seguidores_url'),
     meta('instagram_url'), meta('tiktok_url'),
-    // Métricas de plataformas (metadata)
+    // Platform metrics (metadata)
     meta('instagram_seguidores'), meta('tiktok_seguidores'),
     meta('spotify_ouvintes'), meta('youtube_inscritos'), meta('deezer_fas'),
-    // Equipe e negócios (colunas diretas)
+    // Team and business (direct columns)
     col('manager_nome'), enc('manager_contato', 'manager_contato_encrypted'),
     col('produtor_executivo'), col('agencia_booking'), col('label_parceira'),
     col('contrato_id'),
-    // Equipe e negócios (metadata)
+    // Team and business (metadata)
     meta('empresario_id'), meta('empresario_nome'),
     meta('empresario_email'), meta('empresario_telefone'),
     meta('gravadora_id'), meta('gravadora_nome'), meta('gravadora_email'),
     meta('gravadora_telefone'), meta('gravadora_responsavel_id'),
     meta('gravadora_responsavel_nome'), meta('gravadora_responsavel_email'),
     meta('gravadora_responsavel_telefone'),
-    // Dados bancários (metadata) — "agencia" aqui é a agência bancária do
-    // formulário (Dados Bancários: Banco/Agência/Conta/Chave Pix/Titular),
-    // não a agência de booking (col('agencia_booking') acima, campo distinto).
-    // Estava incorretamente listada em "Equipe e negócios" (mesma key JSON,
-    // categoria errada) — corrigido para casar com a ordem visual do form.
+    // Bank details (metadata) — "agencia" here is the form's bank branch
+    // (bank details section: bank/branch/account/Pix key/holder),
+    // not the booking agency (col('agencia_booking') above, a distinct field).
+    // It was wrongly listed under "team and business" (same JSON key,
+    // wrong category) — fixed to match the form's visual order.
     meta('banco'), meta('agencia'), meta('conta'), meta('chave_pix'), meta('titular_conta'),
-    // Distribuição (metadata; arrays serializados em JSON reversível)
+    // Distribution (metadata; arrays serialized as reversible JSON)
     meta('distribuidoras_selecionadas'), meta('distribuidoras_gerais'),
     meta('distribuidoras_emails'), meta('distribuidoras_empresa_selecionadas'),
     meta('distribuidoras_empresa_emails'),
-    // Rede (metadata; arrays/objetos serializados em JSON reversível)
+    // Network (metadata; arrays/objects serialized as reversible JSON)
     meta('contatos_equipe'), meta('contatos_vinculados'), meta('relacionamentos'),
   ],
   excludedFormFields: {
@@ -133,7 +133,7 @@ const ARTISTS_CONTRACT: ReportFormContract = {
   searchableColumns: ['nome_artistico', 'nome_civil', 'music_genre', 'notes'],
 };
 
-// ─── Funcionários (RH) ────────────────────────────────────────────────────────
+// ─── Employees (HR) ─────────────────────────────────────────────────────────
 const EMPLOYEES_CONTRACT: ReportFormContract = {
   tableName: 'employees',
   identityColumn: 'name',
@@ -158,10 +158,10 @@ const CONTRACTS_CONTRACT: ReportFormContract = {
     col('start_date'), col('end_date'), col('exclusivo'), col('notes'),
     col('arquivo_url'), col('signing_platform'),
     col('artist_id'), col('client_id'), col('release_id'),
-    col('template_id'), // campo do wizard (regra 2026-07-12: coluna própria)
-    ro('autentique_doc_id'), // estado técnico da integração de assinatura
-    ro('versoes'),           // histórico de versões (gerado pelo fluxo de assinatura)
-    ro('documents'),        // anexos reais do R2 (REM-02), mesmo padrão de versoes
+    col('template_id'), // wizard field (2026-07-12 rule: its own column)
+    ro('autentique_doc_id'), // technical state of the signature integration
+    ro('versoes'),           // version history (generated by the signature flow)
+    ro('documents'),        // real R2 attachments (REM-02), same pattern as versoes
   ],
   excludedFormFields: {
     metadata: 'objeto jsonb interno bruto',
@@ -192,14 +192,14 @@ const WORKS_CONTRACT: ReportFormContract = {
     col('title'), col('type'), col('status'), col('music_genre'),
     col('compositor'), col('compositores'), col('editora'),
     col('isrc'), col('iswc'),
-    // Campos do formulário de Obra (regra 2026-07-12: 1 coluna por campo, nome exato)
+    // Work form fields (2026-07-12 rule: 1 column per field, exact name)
     col('idioma'), col('cod_entidade'), col('cod_ecad'), col('duration_text'),
     col('instrumental'), col('criada_por_ia'), col('tipo_ia'),
     col('ia_harmonia'), col('ia_melodia'), col('ia_letra'),
     col('outros_titulos'), col('referencias_conexas'), col('letra_completa'),
     col('letristas'), col('project_id'),
     col('artist_id'), col('tipo_obra'),
-    // Somente leitura: registro/sociedades e enriquecimento (não são do form de criação)
+    // Read-only: registration/societies and enrichment (not part of the create form)
     ro('duration_seconds'), ro('alternative_titles'), ro('ai_tools'), ro('ai_prompts'),
     ro('language'), ro('lyrics'), ro('is_instrumental'), ro('ai_used'),
     ro('registry_status'),
@@ -223,7 +223,7 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
   fields: [
     col('title'), col('status'), col('music_genre'), col('isrc'),
     col('duration_text'), col('artist_id'), col('work_id'),
-    // Campos do formulário de Fonograma (regra 2026-07-12: 1 coluna por campo, nome exato)
+    // Phonogram form fields (2026-07-12 rule: 1 column per field, exact name)
     col('cod_entidade'), col('cod_ecad'), col('agregadora'),
     col('isrc_pais'), col('isrc_registrante'), col('isrc_ano'), col('isrc_designacao'),
     col('criada_por_ia'), col('is_instrumental'), col('nacional'), col('pub_simultanea'),
@@ -231,7 +231,7 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
     col('duracao_min'), col('duracao_seg'), col('midia'), col('classificacao'),
     col('pais_origem'), col('pais_publicacao'), col('gravadora'),
     col('notes'), col('participacao'), col('arquivo_audio'),
-    // Somente leitura: registro/sociedades e metadados de gravação
+    // Read-only: registration/societies and recording metadata
     ro('type'), ro('version_title'), ro('duration_seconds'),
     ro('recording_date'), ro('release_date'), ro('copyright_year'),
     ro('copyright_owner'), ro('country_of_recording'),
@@ -256,12 +256,12 @@ const PHONOGRAMS_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Clientes ─────────────────────────────────────────────────────────────────
-// Parte 78: sem contrato central, o exportador (heurística genérica) omitia
-// email/telefone/cpf_cnpj por completo (colunas *_encrypted nunca aparecem em
-// exportableColumns). Uma exportação de "Clientes" sem contato é inútil na
-// prática — registra o contrato para que o engine descriptografe esses campos
-// como faz para artists/employees.
+// ─── Clients ─────────────────────────────────────────────────────────────────
+// Part 78: without a central contract, the exporter (generic heuristic) omitted
+// email/phone/cpf_cnpj entirely (*_encrypted columns never appear in
+// exportableColumns). A "Clientes" export without contact data is useless in
+// practice — registers the contract so the engine decrypts these fields
+// as it does for artists/employees.
 const CLIENTS_CONTRACT: ReportFormContract = {
   tableName: 'clients',
   identityColumn: 'nome',
@@ -289,10 +289,10 @@ const CLIENTS_CONTRACT: ReportFormContract = {
     phone: 'telefone',
     document: 'cpf_cnpj',
     address: 'endereco_completo',
-    // Parte 79: CreateClientDto ganhou estes campos para suportar "Contatos"
-    // do CRM (mesma tabela física `clients` — Contato = Cliente). city/state
-    // não precisam mais de alias — 20260921000003_RenameClientsGeoFieldsToEnglish
-    // renomeou as colunas físicas para bater com o DTO diretamente.
+    // Part 79: CreateClientDto gained these fields to support CRM
+    // "Contatos" (same physical `clients` table — contact = client). city/state
+    // no longer need an alias — 20260921000003_RenameClientsGeoFieldsToEnglish
+    // renamed the physical columns to match the DTO directly.
     zipCode: 'cep',
     responsible: 'responsavel_nome',
     notes: 'notes',
@@ -300,8 +300,8 @@ const CLIENTS_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Projetos ─────────────────────────────────────────────────────────────────
-// Fonte canônica: ProjetoFormModal.tsx. Uma única aba; uma linha por música.
+// ─── Projects ────────────────────────────────────────────────────────────────
+// Canonical source: ProjetoFormModal.tsx. A single sheet; one row per track.
 const PROJECTS_CONTRACT: ReportFormContract = {
   tableName: 'projects',
   identityColumn: 'nome_ep_album',
@@ -340,13 +340,13 @@ const PROJECTS_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Monitoramento (content_detections) ───────────────────────────────────────
-// Parte 89, Bloco 11: não existe formulário Criar/Editar real (a tela é uma
-// listagem read-only de detecções geradas automaticamente pela plataforma —
-// os hooks addDeteccao/updateDeteccao/deleteDeteccao existem mas nunca são
-// chamados por nenhuma UI). Contrato export-only, refletindo as colunas
-// físicas reais (não os campos "periodo"/"quantidade" que a tela referencia
-// mas não existem na entidade — bug de UI pré-existente, não reproduzido aqui).
+// ─── Monitoring (content_detections) ─────────────────────────────────────────
+// Part 89, Block 11: there is no real Create/Edit form (the screen is a
+// read-only list of detections generated automatically by the platform —
+// the addDeteccao/updateDeteccao/deleteDeteccao hooks exist but are never
+// called by any UI). Export-only contract, reflecting the real physical
+// columns (not the "periodo"/"quantidade" fields the screen references
+// but that do not exist on the entity — a pre-existing UI bug, not reproduced here).
 const CONTENT_DETECTIONS_CONTRACT: ReportFormContract = {
   tableName: 'content_detections',
   identityColumn: 'titulo_detectado',
@@ -357,11 +357,11 @@ const CONTENT_DETECTIONS_CONTRACT: ReportFormContract = {
   excludedFormFields: {},
 };
 
-// ─── Licenciamento ──────────────────────────────────────────────────────────
-// `amount`/`percentage`/`currency` são enviados pelo formulário mas NÃO
-// existem no CreateLicenseDto (nem na entidade) — nunca persistem. `valor`/
-// `moeda` são as colunas reais correspondentes. `remuneration_type`, embora
-// exista fisicamente na entidade, também não está no DTO — excluído.
+// ─── Licensing ───────────────────────────────────────────────────────────────
+// `amount`/`percentage`/`currency` are sent by the form but do NOT
+// exist in CreateLicenseDto (or on the entity) — they are never persisted. `valor`/
+// `moeda` are the corresponding real columns. `remuneration_type`, although it
+// physically exists on the entity, is not in the DTO either — excluded.
 const LICENSES_CONTRACT: ReportFormContract = {
   tableName: 'licenses',
   identityColumn: 'title',
@@ -377,12 +377,12 @@ const LICENSES_CONTRACT: ReportFormContract = {
 };
 
 // ─── Takedowns ────────────────────────────────────────────────────────────────
-// CreateTakedownDto (platform/trackId/reason/requestedAt) diverge por completo
-// dos nomes reais de coluna e do formulário real (TakedownFormModal.tsx, que
-// usa title/type/obra_afetada/artista/.../observacoes) — bug pré-existente
-// de mismatch DTO↔form, fora do escopo desta Parte. O contrato usa as colunas
-// físicas reais que o formulário de fato grava; não é checado contra o DTO
-// quebrado (ausente de FORM_DTO_BY_TABLE no guard test).
+// CreateTakedownDto (platform/trackId/reason/requestedAt) diverges completely
+// from the real column names and from the real form (TakedownFormModal.tsx, which
+// uses title/type/obra_afetada/artista/.../observacoes) — a pre-existing
+// DTO↔form mismatch bug, out of scope for this Part. The contract uses the real
+// physical columns the form actually writes; it is not checked against the broken
+// DTO (absent from FORM_DTO_BY_TABLE in the guard test).
 const TAKEDOWNS_CONTRACT: ReportFormContract = {
   tableName: 'takedowns',
   identityColumn: 'title',
@@ -396,15 +396,15 @@ const TAKEDOWNS_CONTRACT: ReportFormContract = {
   searchableColumns: ['title', 'obra_afetada', 'artista', 'motivo'],
 };
 
-// ─── Distribuição (releases) ───────────────────────────────────────────────────
-// Fonte canônica: LancamentoFormModal.tsx (wizard de 5 etapas). A maioria dos
-// campos avançados (Step 0/3) vive na coluna `metadata` genérica
-// (extraFields.* → metadata.*); `faixas[]` (Step 1) vive em
-// metadata.faixas — grupo repetível própria (ver release-tracks.field.ts).
-// `platforms`/`assets`/`cronograma` não têm input de UI identificável
-// (platforms: sem seletor multi-plataforma no wizard atual; assets: sem
-// upload dedicado além da capa; cronograma: sem inputs no modal) — excluídos/
-// somente leitura.
+// ─── Distribution (releases) ─────────────────────────────────────────────────
+// Canonical source: LancamentoFormModal.tsx (5-step wizard). Most of the
+// advanced fields (Step 0/3) live in the generic `metadata` column
+// (extraFields.* → metadata.*); `faixas[]` (Step 1) lives in
+// metadata.faixas — its own repeatable group (see release-tracks.field.ts).
+// `platforms`/`assets`/`cronograma` have no identifiable UI input
+// (platforms: no multi-platform selector in the current wizard; assets: no
+// dedicated upload besides the cover; cronograma: no inputs in the modal) — excluded/
+// read-only.
 const RELEASES_CONTRACT: ReportFormContract = {
   tableName: 'releases',
   identityColumn: 'title',
@@ -445,10 +445,10 @@ const RELEASES_CONTRACT: ReportFormContract = {
 };
 
 // ─── Shares ───────────────────────────────────────────────────────────────────
-// `historico[]` é uma trilha de auditoria gerada automaticamente pelo sistema
-// a cada edição (nunca digitada pelo usuário) — exportada somente leitura como
-// coluna direta (mesmo padrão já usado por contracts.versoes), sem virar aba
-// filha própria.
+// `historico[]` is an audit trail generated automatically by the system
+// on every edit (never typed by the user) — exported read-only as a
+// direct column (same pattern already used by contracts.versoes), without becoming
+// its own child sheet.
 const SHARES_CONTRACT: ReportFormContract = {
   tableName: 'shares',
   identityColumn: 'music_title',
@@ -507,15 +507,15 @@ const AUDIOVISUAL_PROJECTS_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Transações Financeiras ─────────────────────────────────────────────────────
-// Colunas de formulário (regra 2026-07-12) — `tipo_transacao`/`data_transacao`
-// são a chave lógica do arquivo, mas a tabela NÃO as duplica de `type`/`data`
-// (essas são NOT NULL, sem default, e são as únicas lidas por
-// TransactionsService — tipo_transacao/data_transacao ficavam sempre NULL).
-// `physical` aponta a chave lógica para a coluna real, igual ao import/export
-// manual — sem isso, todo INSERT do importador violava NOT NULL. Validação
-// real é Zod (transacao.validator.ts), não um DTO class-validator — não
-// checado contra FORM_DTO_BY_TABLE.
+// ─── Financial transactions ─────────────────────────────────────────────────
+// Form columns (2026-07-12 rule) — `tipo_transacao`/`data_transacao`
+// are the file's logical key, but the table does NOT duplicate them from `type`/`data`
+// (those are NOT NULL, without a default, and are the only ones read by
+// TransactionsService — tipo_transacao/data_transacao were always NULL).
+// `physical` points the logical key to the real column, like the manual
+// import/export — without it, every importer INSERT violated NOT NULL. Real
+// validation is Zod (transacao.validator.ts), not a class-validator DTO — not
+// checked against FORM_DTO_BY_TABLE.
 const TRANSACTIONS_CONTRACT: ReportFormContract = {
   tableName: 'transactions',
   identityColumn: 'descricao',
@@ -534,12 +534,12 @@ const TRANSACTIONS_CONTRACT: ReportFormContract = {
   searchableColumns: ['descricao', 'categoria', 'fornecedor_cliente'],
 };
 
-// ─── Nota Fiscal (invoices) ───────────────────────────────────────────────────
-// CreateInvoiceDto declara um schema inglês/Stripe (type/amount/number/...)
-// totalmente diferente das colunas reais que o formulário NotaFiscalFormModal
-// grava — bug pré-existente de mismatch DTO↔form (mesmo padrão de Takedowns),
-// fora do escopo desta Parte. O contrato usa as colunas físicas reais; não é
-// checado contra o DTO quebrado.
+// ─── Invoice (invoices) ──────────────────────────────────────────────────────
+// CreateInvoiceDto declares an English/Stripe schema (type/amount/number/...)
+// completely different from the real columns the NotaFiscalFormModal form
+// writes — a pre-existing DTO↔form mismatch bug (same pattern as Takedowns),
+// out of scope for this Part. The contract uses the real physical columns; it is not
+// checked against the broken DTO.
 const INVOICES_CONTRACT: ReportFormContract = {
   tableName: 'invoices',
   identityColumn: 'numero',
@@ -556,11 +556,11 @@ const INVOICES_CONTRACT: ReportFormContract = {
     col('notes'),
   ],
   excludedFormFields: {},
-  // O form/DTO usa "vencimento" (mantido como alias de API documentado);
-  // a coluna física canônica é data_vencimento -- ver invoices.service.ts's
-  // normalizePayload(), que agora também apaga a chave "vencimento" do
-  // payload persistido para não escrever a coluna `vencimento` (physical,
-  // tipo date) em paralelo com data_vencimento (physical, tipo timestamp).
+  // The form/DTO uses "vencimento" (kept as a documented API alias);
+  // the canonical physical column is data_vencimento -- see invoices.service.ts's
+  // normalizePayload(), which now also deletes the "vencimento" key from the
+  // persisted payload so it does not write the `vencimento` column (physical,
+  // date type) in parallel with data_vencimento (physical, timestamp type).
   formFieldAliases: {
     vencimento: 'data_vencimento',
   },
@@ -606,7 +606,7 @@ const EVENTS_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Inventário ───────────────────────────────────────────────────────────────
+// ─── Inventory ───────────────────────────────────────────────────────────────
 const INVENTORY_ITEMS_CONTRACT: ReportFormContract = {
   tableName: 'inventory_items',
   identityColumn: 'name',
@@ -619,15 +619,15 @@ const INVENTORY_ITEMS_CONTRACT: ReportFormContract = {
 };
 
 // ─── CRM — Leads ──────────────────────────────────────────────────────────────
-// A maioria dos campos "avançados" do formulário (LeadFormModal.tsx) vive em
-// duas colunas jsonb NOMEADAS — payload_servico e dados_internos_crm — não na
-// coluna `metadata` genérica (por isso `meta(key, physical)` com o segundo
-// argumento explícito). Os 4 blocos condicionais aninhados (evento/campanha/
-// influenciador/empresario, cada um sob payload_servico.<bloco>.*) e o
-// histórico de interações (payload_servico.interacoes[]) ficam FORA desta
-// Parte — são objetos aninhados dentro de payload_servico, não suportados
-// pelo mecanismo atual de 1 nível (coluna jsonb → chave), documentado como
-// divergência no relatório final.
+// Most of the form's "advanced" fields (LeadFormModal.tsx) live in
+// two NAMED jsonb columns — payload_servico and dados_internos_crm — not in the
+// generic `metadata` column (hence `meta(key, physical)` with the explicit second
+// argument). The 4 nested conditional blocks (evento/campanha/
+// influenciador/empresario, each under payload_servico.<block>.*) and the
+// interaction history (payload_servico.interacoes[]) stay OUT of this
+// Part — they are objects nested inside payload_servico, not supported
+// by the current 1-level mechanism (jsonb column → key), documented as a
+// divergence in the final report.
 const LEADS_CONTRACT: ReportFormContract = {
   tableName: 'leads',
   identityColumn: 'nome',
@@ -643,12 +643,12 @@ const LEADS_CONTRACT: ReportFormContract = {
     meta('endereco', 'payload_servico'), meta('tipo_lead', 'payload_servico'),
     meta('servico', 'payload_servico'), meta('nome_artista_servico', 'payload_servico'),
     meta('descricao', 'payload_servico'), meta('data_entrada', 'payload_servico'),
-    // origemLead/responsavel/prioridade/temperatura/proximoFollowUp/
-    // valorEstimado: naming-closure Cluster E resolved the former dual
-    // storage location (a physical origem_lead/responsavel/prioridade/
-    // temperatura/estimated_value/probabilidade_fechamento/
-    // proximo_follow_up column set, 0 non-null rows on all 7, vs. these
-    // same concepts inside dados_internos_crm, which real usage always
+    // `origemLead`/`responsavel`/`prioridade`/`temperatura`/`proximoFollowUp`/
+    // `valorEstimado`: naming-closure Cluster E resolved the former dual
+    // storage location (a physical `origem_lead`/`responsavel`/`prioridade`/
+    // `temperatura`/`estimated_value`/`probabilidade_fechamento`/
+    // `proximo_follow_up` column set, 0 non-null rows on all 7, vs. these
+    // same concepts inside `dados_internos_crm`, which real usage always
     // wrote) by dropping the dead physical columns
     // (20260921000005_DropDeadLeadsCrmDualStorageColumns) and redirecting
     // the one internal writer (public-artist-application) here too. jsonb
@@ -658,8 +658,8 @@ const LEADS_CONTRACT: ReportFormContract = {
     meta('proximoFollowUp', 'dados_internos_crm'), meta('valorEstimado', 'dados_internos_crm'),
     meta('temperatura', 'dados_internos_crm'), meta('statusLead', 'dados_internos_crm'),
     ro('uploads'),
-    // tags é coluna própria (text[]) do lead, sem input no formulário
-    // (gerida fora do DTO) — somente exportação.
+    // tags is the lead's own column (text[]), with no input in the form
+    // (managed outside the DTO) — export only.
     ro('tags'),
   ],
   excludedFormFields: {
@@ -681,10 +681,10 @@ const LEADS_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Tarefas (marketing_tasks) ───────────────────────────────────────────────
-// A única tela real de Criar/Editar/Visualizar de tarefas é Marketing >
-// Tarefas — ver nota em report-module-registry.ts sobre por que "Tarefas"
-// aponta para marketing_tasks e não operational_tasks (que não tem tela).
+// ─── Tasks (marketing_tasks) ─────────────────────────────────────────────────
+// The only real Create/Edit/View task screen is Marketing >
+// Tarefas — see the note in report-module-registry.ts on why "Tarefas"
+// points to marketing_tasks and not operational_tasks (which has no screen).
 const MARKETING_TASKS_CONTRACT: ReportFormContract = {
   tableName: 'marketing_tasks',
   identityColumn: 'title',
@@ -705,7 +705,7 @@ const MARKETING_TASKS_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Calendário de Conteúdo (marketing_content_posts) ────────────────────────
+// ─── Content calendar (marketing_content_posts) ──────────────────────────────
 const MARKETING_CONTENT_POSTS_CONTRACT: ReportFormContract = {
   tableName: 'marketing_content_posts',
   identityColumn: 'title',
@@ -730,14 +730,14 @@ const MARKETING_CONTENT_POSTS_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Briefing (genérico, marketing) ──────────────────────────────────────────
-// Correção Parte 89 (briefings.service.ts): o DTO usava nomes em inglês
-// (title/content/campaignId/dueAt) que nunca chegavam às colunas físicas reais
-// (title/descricao/campaign_id/prazo) — bug de mapeamento corrigido para que
-// este contrato seja utilizável. Cluster E (naming-normalization): a coluna
-// física descricao foi renomeada para content, eliminando o alias. Os campos
-// "avançados" (objetivo, contexto, público-alvo etc., presentes só no
-// Editar) vivem na coluna `metadata` genérica.
+// ─── Briefing (generic, marketing) ───────────────────────────────────────────
+// Part 89 fix (briefings.service.ts): the DTO used English names
+// (title/content/campaignId/dueAt) that never reached the real physical columns
+// (title/descricao/campaign_id/prazo) — a mapping bug fixed so that
+// this contract is usable. Cluster E (naming-normalization): the physical
+// column descricao was renamed to content, eliminating the alias. The
+// "advanced" fields (objective, context, target audience etc., present only in
+// Edit) live in the generic `metadata` column.
 const BRIEFINGS_CONTRACT: ReportFormContract = {
   tableName: 'briefings',
   identityColumn: 'title',
@@ -762,10 +762,10 @@ const BRIEFINGS_CONTRACT: ReportFormContract = {
   },
 };
 
-// ─── Contabilidade (relatório computado, sem tabela física — Bloco 19) ────────
-// P&L por artista, agregado sobre `transactions` — mesma lógica da aba
-// "P&L por Artista" de Contabilidade.tsx. Export-only (nenhum campo
-// importável): não é um formulário editável, é um relatório calculado.
+// ─── Accounting (computed report, no physical table — Block 19) ──────────────
+// P&L per artist, aggregated over `transactions` — same logic as the
+// "P&L por Artista" tab of Contabilidade.tsx. Export-only (no importable
+// field): it is not an editable form, it is a calculated report.
 const ACCOUNTING_SUMMARY_CONTRACT: ReportFormContract = {
   tableName: ACCOUNTING_SUMMARY_TABLE_NAME,
   identityColumn: 'artista',
@@ -836,7 +836,7 @@ export function contractEncryptedFields(contract: ReportFormContract): Record<st
   return out;
 }
 
-/** key → coluna jsonb física onde vive (default 'metadata' quando `physical` não foi informado). */
+/** key → physical jsonb column where it lives (default 'metadata' when `physical` was not given). */
 export function contractMetadataFields(contract: ReportFormContract): Record<string, string> {
   const out: Record<string, string> = {};
   for (const f of contract.fields) {

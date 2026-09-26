@@ -1,18 +1,18 @@
 /**
  * modules/reports/i18n/field-labels.pt-br.ts
  *
- * FASE 2 — camada ÚNICA, centralizada e OBRIGATÓRIA de labels pt-BR.
+ * PHASE 2 — the SINGLE, centralized and MANDATORY pt-BR label layer.
  *
- * Regra absoluta: chave técnica é infraestrutura, label é produto. Nenhum texto
- * visível ao usuário pode nascer de transformação automática de chave técnica
- * (humanizeKey/startCase/…). A resolução de label é EXPLÍCITA e falha-rápido
- * quando ausente — é melhor quebrar o build do que exibir inglês.
+ * Absolute rule: the technical key is infrastructure, the label is product. No text
+ * visible to the user may originate from an automatic transformation of a technical key
+ * (humanizeKey/startCase/…). Label resolution is EXPLICIT and fails fast
+ * when missing — breaking the build is better than displaying English.
  *
- * Chaves canônicas em camelCase. `normalizeFieldKey` converte snake_case,
- * kebab-case e PascalCase para a forma canônica antes da busca.
+ * Canonical keys in camelCase. `normalizeFieldKey` converts snake_case,
+ * kebab-case and PascalCase to the canonical form before the lookup.
  */
 
-/** Dicionário canônico (camelCase → pt-BR). Fonte única de verdade dos labels. */
+/** Canonical dictionary (camelCase → pt-BR). Single source of truth for the labels. */
 export const FIELD_LABELS_PT_BR = {
   // ── Identidade / pessoa ─────────────────────────────────────────────────────
   name: 'Nome',
@@ -46,7 +46,7 @@ export const FIELD_LABELS_PT_BR = {
   twitter: 'Twitter',
   website: 'Site',
 
-  // ── Endereço ────────────────────────────────────────────────────────────────
+  // ── Address ─────────────────────────────────────────────────────────────────
   address: 'Endereço',
   endereco: 'Endereço',
   city: 'Cidade',
@@ -58,7 +58,7 @@ export const FIELD_LABELS_PT_BR = {
   zipCode: 'CEP',
   cep: 'CEP',
 
-  // ── Conteúdo / CRM ──────────────────────────────────────────────────────────
+  // ── Content / CRM ───────────────────────────────────────────────────────────
   notes: 'Observações',
   observacao: 'Observação',
   notasInternas: 'Notas internas',
@@ -153,9 +153,9 @@ export const FIELD_LABELS_PT_BR = {
   chavePix: 'Chave Pix',
   temperatura: 'Temperatura',
   type: 'Tipo',
-  // "tipoCliente" continua servindo transactions.tipo_cliente (contraparte
-  // financeira — conceito distinto, ainda não renomeado); "clientType" é o
-  // novo alias para leads.client_type (tipo de cliente do lead).
+  // "tipoCliente" still serves transactions.tipo_cliente (financial
+  // counterparty — a distinct concept, not renamed yet); "clientType" is the
+  // new alias for leads.client_type (the lead's client type).
   tipoCliente: 'Tipo de cliente',
   clientType: 'Tipo de cliente',
   tipoPessoa: 'Tipo de pessoa',
@@ -175,10 +175,10 @@ export const FIELD_LABELS_PT_BR = {
   financialInterestPercentage: 'Percentual de juros',
   financialDueDays: 'Prazo de vencimento (dias)',
 
-  // ── Bancárias/streaming extras ──────────────────────────────────────────────
+  // ── Extra bank/streaming fields ─────────────────────────────────────────────
   slugArtistico: 'Identificador público',
 
-  // ── Técnicas comuns (ETAPA 5) ───────────────────────────────────────────────
+  // ── Common technical fields (STEP 5) ────────────────────────────────────────
   createdAt: 'Criado em',
   updatedAt: 'Atualizado em',
   deletedAt: 'Excluído em',
@@ -200,7 +200,7 @@ export const FIELD_LABELS_PT_BR = {
   startsAt: 'Início',
   endsAt: 'Término',
 
-  // ── Colunas reais das 39 entidades reportáveis (cobertura 100%) ─────────────
+  // ── Real columns of the 39 reportable entities (100% coverage) ──────────────
   abramusProtocol: 'Protocolo ABRAMUS',
   active: 'Ativo',
   actualCloseDate: 'Data real de fechamento',
@@ -233,8 +233,8 @@ export const FIELD_LABELS_PT_BR = {
   channel: 'Canal',
   cliente: 'Cliente',
   coCompositores: 'Co-compositores',
-  // Renomeado de `codAbramus` (20260718000017) — código em qualquer entidade
-  // de gestão coletiva (ABRAMUS/UBC/SOCINPRO/outras), não só ABRAMUS.
+  // Renamed from `codAbramus` (20260718000017) — code at any collective
+  // management society (ABRAMUS/UBC/SOCINPRO/others), not only ABRAMUS.
   codEntidade: 'Código de Cadastro da Sociedade',
   codEcad: 'Código ECAD',
   code: 'Código',
@@ -315,8 +315,8 @@ export const FIELD_LABELS_PT_BR = {
   soloFeat: 'Solo/Feat',
   originalRemix: 'Original/Remix',
   audioUrl: 'Áudio',
-  // Coluna de correlação entre a aba principal e abas filhas (Parte 87) —
-  // nunca persistida, existe só dentro do arquivo XLSX.
+  // Correlation column between the main sheet and child sheets (Part 87) —
+  // never persisted, it exists only inside the XLSX file.
   projetoRef: 'Projeto ID de referência',
   midiaDestino: 'Mídia de destino',
   mimeType: 'Tipo de arquivo',
@@ -411,7 +411,7 @@ export const FIELD_LABELS_PT_BR = {
   version: 'Versão',
   versionTitle: 'Título da versão',
   versoes: 'Versões',
-  // ── Campos do formulário de Obra (regra 2026-07-12) ──────────────────────────
+  // ── Work form fields (2026-07-12 rule) ──────────────────────────────────────
   idioma: 'Idioma',
   instrumental: 'Instrumental',
   criadaPorIa: 'Criada por IA',
@@ -425,7 +425,7 @@ export const FIELD_LABELS_PT_BR = {
   participantes: 'Participantes',
   letristas: 'Letristas',
   tipoObra: 'Tipo de obra',
-  // ── Campos do formulário de Fonograma (regra 2026-07-12) ─────────────────────
+  // ── Phonogram form fields (2026-07-12 rule) ─────────────────────────────────
   agregadora: 'Agregadora',
   isrcPais: 'ISRC — País',
   isrcRegistrante: 'ISRC — Registrante',
@@ -493,14 +493,14 @@ export const FIELD_LABELS_PT_BR = {
   formaPagamento: 'Forma de pagamento',
   condicaoPagamento: 'Condição de pagamento',
   urlPdf: 'PDF da nota',
-  // ── Licenças (regra 2026-07-12: 1 coluna por campo) ──────────────────────────
+  // ── Licenses (2026-07-12 rule: 1 column per field) ──────────────────────────
   remunerationType: 'Tipo de remuneração',
   // ── Takedowns (regra 2026-07-12: 1 coluna por campo) ─────────────────────────
   obraAfetada: 'Obra afetada',
   urlInfracao: 'Link da infração',
   evidencias: 'Evidências',
   dataIdentificacao: 'Data de identificação',
-  // ── Transações financeiras (regra 2026-07-12: 1 coluna por campo) ────────────
+  // ── Financial transactions (2026-07-12 rule: 1 column per field) ────────────
   tipoTransacao: 'Tipo de transação',
   subcategoria: 'Subcategoria',
   competencia: 'Competência',
@@ -519,38 +519,38 @@ export const FIELD_LABELS_PT_BR = {
   dataPrimeiraParcela: 'Data da primeira parcela',
   anexoUrl: 'Link do anexo',
   anexoNome: 'Nome do anexo',
-  // ── Produções audiovisuais (migration AudiovisualProjectsFormFieldColumns
-  // 20260718000012) e Lançamentos — campos confirmados via
-  // AudiovisualProjectFormModal.tsx / LancamentoViewModal.tsx (Parte 50) ──────
+  // ── Audiovisual productions (migration AudiovisualProjectsFormFieldColumns
+  // 20260718000012) and Releases — fields confirmed via
+  // AudiovisualProjectFormModal.tsx / LancamentoViewModal.tsx (Part 50) ──────
   musicTitle: 'Título da música',
   artistName: 'Nome do artista',
   videomaker: 'Videomaker',
   editor: 'Editor',
   shootingDate: 'Data da gravação',
-  // Mesmo conceito de `local` (linha acima) — chave técnica desta tabela é
-  // `location`, não `local`; rótulo reaproveitado por regra de consistência.
+  // Same concept as `local` (line above) — this table's technical key is
+  // `location`, not `local`; label reused by the consistency rule.
   location: 'Local',
   captureStatus: 'Status da captação',
   editingStatus: 'Status da edição',
   approvalStatus: 'Status da aprovação',
   finalStatus: 'Status final',
   preReleaseDate: 'Data de pré-lançamento',
-  // Mesmo conceito de `notes`/`observacoes` (acima) — chave técnica desta
-  // tabela é `observations`.
+  // Same concept as `notes`/`observacoes` (above) — this table's technical
+  // key is `observations`.
   observations: 'Observações',
-  // Compartilhado por audiovisual_projects e audiovisual_briefings — conceito
-  // criativo inicial da produção (roteiro/estética/referências).
+  // Shared by audiovisual_projects and audiovisual_briefings — the production's
+  // initial creative concept (script/aesthetics/references).
   concept: 'Conceito',
   isrcGlobal: 'ISRC Global',
-  // Distinto de `copyrightOwner` (linha acima, "Titular do direito autoral")
-  // — campo técnico diferente, rótulo real confirmado em LancamentoViewModal.
+  // Distinct from `copyrightOwner` (line above, "Titular do direito autoral")
+  // — a different technical field, real label confirmed in LancamentoViewModal.
   copyright: 'Titular do copyright',
 
   // ── Parte 89 — Monitoramento (content_detections) ──────────────────────────
   tituloDetectado: 'Título detectado',
   detectadoEm: 'Detectado em',
 
-  // ── Parte 89 — Distribuição (releases) ──────────────────────────────────────
+  // ── Part 89 — Distribution (releases) ───────────────────────────────────────
   lancamentoRef: 'Lançamento (ID de referência)',
   cronograma: 'Cronograma',
   variosArtistas: 'Vários artistas',
@@ -572,12 +572,12 @@ export const FIELD_LABELS_PT_BR = {
   explicit: 'Conteúdo explícito',
   faixaIdioma: 'Idioma da faixa',
 
-  // ── Parte 89 — Shares ────────────────────────────────────────────────────────
-  // `percentual` (WorkParticipantEntity) e `nomeMusica` (projects.musicas,
-  // campo computado não relacionado) permanecem — shares migrou para
-  // holder/recipient/direction/percentage em 2026-09-13
-  // (RenameSharePartyFieldsToEnglish), mas essas chaves continuam vivas para
-  // outras entidades/campos.
+  // ── Part 89 — Shares ─────────────────────────────────────────────────────────
+  // `percentual` (WorkParticipantEntity) and `nomeMusica` (projects.musicas,
+  // an unrelated computed field) remain — shares migrated to
+  // holder/recipient/direction/percentage on 2026-09-13
+  // (RenameSharePartyFieldsToEnglish), but these keys are still live for
+  // other entities/fields.
   shareType: 'Tipo de share',
   percentual: 'Percentual',
   percentage: 'Percentual',
@@ -597,7 +597,7 @@ export const FIELD_LABELS_PT_BR = {
   historico: 'Histórico de versões',
   settledAmount: 'Valor liquidado',
 
-  // ── Parte 89 — Transações Financeiras / Nota Fiscal / Agenda ────────────────
+  // ── Part 89 — Financial transactions / Invoice / Calendar ───────────────────
   eventoId: 'Evento vinculado',
   notaFiscalRef: 'Nota fiscal (ID de referência)',
   codigoServico: 'Código do serviço',
@@ -614,7 +614,7 @@ export const FIELD_LABELS_PT_BR = {
   statusLead: 'Status do lead',
   uploads: 'Anexos',
 
-  // ── Parte 89 — Tarefas (marketing_tasks) / Calendário de Conteúdo ───────────
+  // ── Part 89 — Tasks (marketing_tasks) / Content calendar ────────────────────
   marketingProjectId: 'Projeto de marketing vinculado',
   sector: 'Setor',
   campaignId: 'Campanha',
@@ -648,7 +648,7 @@ export const FIELD_LABELS_PT_BR = {
   idiomaMusica: 'Idioma da Música',
   arquivosAudio: 'Arquivos de Áudio (MP3/WAV)',
 
-  // ── Parte 89 — Contabilidade (relatório computado) ──────────────────────────
+  // ── Part 89 — Accounting (computed report) ──────────────────────────────────
   receitas: 'Receitas',
   despesas: 'Despesas',
   resultado: 'Resultado',
@@ -657,7 +657,7 @@ export const FIELD_LABELS_PT_BR = {
 
 export type FieldLabelKey = keyof typeof FIELD_LABELS_PT_BR;
 
-/** Reverse map (rótulo pt-BR → chave canônica). Primeira chave vence em empate. */
+/** Reverse map (pt-BR label → canonical key). The first key wins on a tie. */
 export const FIELD_KEYS_BY_LABEL_PT_BR: Record<string, string> = (() => {
   const m: Record<string, string> = {};
   for (const [key, label] of Object.entries(FIELD_LABELS_PT_BR)) {
@@ -668,8 +668,8 @@ export const FIELD_KEYS_BY_LABEL_PT_BR: Record<string, string> = (() => {
 })();
 
 /**
- * Converte uma chave técnica (snake_case, kebab-case, PascalCase, camelCase)
- * para a forma canônica camelCase. NÃO gera label — só normaliza formato.
+ * Converts a technical key (snake_case, kebab-case, PascalCase, camelCase)
+ * to the canonical camelCase form. Does NOT generate a label — only normalizes the format.
  */
 export function normalizeFieldKey(fieldKey: string): string {
   const cleaned = String(fieldKey ?? '').trim();
@@ -681,14 +681,14 @@ export function normalizeFieldKey(fieldKey: string): string {
       parts.slice(1).map((p) => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()).join('')
     );
   }
-  // camelCase já normalizado, ou PascalCase → camelCase.
+  // camelCase already normalized, or PascalCase → camelCase.
   return cleaned.charAt(0).toLowerCase() + cleaned.slice(1);
 }
 
 /**
- * Resolve o label pt-BR de um campo. EXPLÍCITO e fail-fast: lança erro quando o
- * label não existe (sem fallback visual). Use em UI, relatórios, export, import
- * e templates.
+ * Resolves a field's pt-BR label. EXPLICIT and fail-fast: throws when the
+ * label does not exist (no visual fallback). Use in UI, reports, export, import
+ * and templates.
  */
 export function getFieldLabelPtBr(fieldKey: string): string {
   const normalized = normalizeFieldKey(fieldKey);
@@ -699,13 +699,13 @@ export function getFieldLabelPtBr(fieldKey: string): string {
   return label;
 }
 
-/** Variante SEGURA (não lança) — para inventário/diagnóstico. Retorna null se ausente. */
+/** SAFE variant (does not throw) — for inventory/diagnostics. Returns null when missing. */
 export function tryGetFieldLabelPtBr(fieldKey: string): string | null {
   const normalized = normalizeFieldKey(fieldKey);
   return (FIELD_LABELS_PT_BR as Record<string, string>)[normalized] ?? null;
 }
 
-/** Reverte um rótulo pt-BR para a chave canônica (round-trip da importação). */
+/** Reverts a pt-BR label to the canonical key (import round-trip). */
 export function fieldKeyForLabelPtBr(label: string): string | null {
   return FIELD_KEYS_BY_LABEL_PT_BR[String(label ?? '').trim().toLowerCase()] ?? null;
 }

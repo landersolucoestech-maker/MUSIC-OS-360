@@ -1,9 +1,9 @@
 /**
  * modules/reports/report-module-registry.ts
  *
- * Registro FECHADO e EXPLÍCITO dos módulos autorizados na Central de
- * Relatórios. Esta lista — chave física (tableName), label exibida e ordem —
- * é a ÚNICA fonte da verdade sobre o que pode aparecer em Relatórios.
+ * CLOSED and EXPLICIT registry of the modules authorized in the Reports
+ * Center. This list — physical key (tableName), displayed label and order —
+ * is the ONLY source of truth about what may appear in Reports.
  */
 
 export interface ReportModuleRegistryEntry {
