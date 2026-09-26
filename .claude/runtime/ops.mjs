@@ -140,7 +140,7 @@ function linkEvidenceToCriterion(state, criterionId, evidence) {
 }
 
 export function cmdEvidenceRun({ flags, cwd }) {
-  const state = requireState(cwd);
+  requireState(cwd); // fail fast if there is no mission, before running anything
   if (!flags.cmd) throw new Error("USAGE: evidence run --cmd \"npm test\" [--criterion <id>] [--label x]");
   const fp = workspaceFingerprint(cwd);
   const [cmd, ...args] = flags.cmd.split(" ");
@@ -159,6 +159,11 @@ export function cmdEvidenceRun({ flags, cwd }) {
     head: fp.ok ? fp.head : null,
     durationMs: Date.now() - started,
   });
+  // Re-read AFTER the (possibly minutes-long) command: saving the snapshot
+  // loaded before it ran overwrote every record other ops.mjs invocations
+  // wrote meanwhile (lost update observed 2026-09-26: 8 findings added while a
+  // background evidence batch ran were silently dropped from state.json).
+  const state = requireState(cwd);
   state.evidenceIds.push(evidence.id);
   linkEvidenceToCriterion(state, flags.criterion, evidence);
   saveState(state, cwd);
