@@ -22,35 +22,6 @@ function ns(v: string): string | null {
   return t || null;
 }
 
-// Maps frontend form status values → backend ReleaseStatus enum values
-const STATUS_MAP: Record<string, string> = {
-  // Portuguese legacy values
-  planejado:               "draft",
-  em_producao:             "metadata_pending",
-  analise:                 "review",
-  aprovado:                "approved",
-  aguardando_distribuicao: "scheduled",
-  programado:              "scheduled",
-  ativo:                   "released",
-  cancelado:               "cancelled",
-  // Pass-through: already valid ReleaseStatus enum values
-  draft:             "draft",
-  metadata_pending:  "metadata_pending",
-  assets_pending:    "assets_pending",
-  review:            "review",
-  approved:          "approved",
-  scheduled:         "scheduled",
-  distributed:       "distributed",
-  released:          "released",
-  archived:          "archived",
-  cancelled:         "cancelled",
-};
-
-function mapStatus(raw: string): string | undefined {
-  const t = raw.trim().toLowerCase();
-  return STATUS_MAP[t] ?? (t || undefined);
-}
-
 export function formToLancamentoPayload(f: LancamentoFormFields, mode: "create" | "edit" = "create"): Record<string, unknown> {
   const assets = {
     audio_master_url:  ns(f.assetAudioMasterUrl),
@@ -96,11 +67,16 @@ export function formToLancamentoPayload(f: LancamentoFormFields, mode: "create" 
   if (hasAssets)               payload["assets"]         = assets;
   if (hasCron)                 payload["cronograma"]     = cronograma;
 
-  // status is not in CreateReleaseDto — only send on edit (backend always sets DRAFT on create)
-  if (mode === "edit") {
-    const mappedStatus = mapStatus(f.status);
-    if (mappedStatus) payload["status"] = mappedStatus;
-  }
+  // find-ed7823e9 (consumidor incompatível): o formulário NÃO escreve status.
+  // O status é somente-leitura na UI ("Controlado pelo sistema") e o único
+  // escritor canônico é o workflow (LancamentoViewModal → useWorkflowTransition,
+  // guiado por allowed_transitions do backend). O mapeamento antigo
+  // backend→form→backend era com perda (distributed→scheduled,
+  // archived→released, assets_pending→metadata_pending, null→review), e toda
+  // edição de metadados desses lançamentos disparava uma transição inexistente
+  // no workflow e falhava com 400. `mode` é mantido na assinatura por
+  // compatibilidade com os chamadores.
+  void mode;
 
   return payload;
 }

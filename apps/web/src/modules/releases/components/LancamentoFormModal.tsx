@@ -304,7 +304,7 @@ interface LancamentoFormModalProps {
   onOpenChange: (open: boolean) => void;
   lancamento?: Lancamento;
   mode: "create" | "edit" | "view";
-  onCreatedAndDistributed?: (lancamento: Lancamento) => void | Promise<void>;
+  onCreated?: (lancamento: Lancamento) => void | Promise<void>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -467,7 +467,7 @@ export function LancamentoFormModal({
   onOpenChange,
   lancamento,
   mode,
-  onCreatedAndDistributed,
+  onCreated,
 }: LancamentoFormModalProps) {
   const { addLancamento, updateLancamento } = useLancamentos();
   const { upload: uploadToR2, isUploading: isUploadingCoverR2 } = useUploadToR2();
@@ -903,10 +903,6 @@ export function LancamentoFormModal({
       };
       payload["metadata"] = enrichedMeta;
       if (mode === "edit" && lancamento?.id) {
-        // Only send status if it actually changed — backend workflow rejects same-state transitions
-        if (payload["status"] === lancamento.status) {
-          delete payload["status"];
-        }
         await updateLancamento.mutateAsync({
           id: lancamento.id,
           ...payload,
@@ -917,20 +913,14 @@ export function LancamentoFormModal({
         const created = (await addLancamento.mutateAsync(payload as never)) as (Lancamento & { id?: string }) | undefined;
         // Integração desacoplada: oferecer iniciar o fluxo de shares (via navegação),
         // somente se houver participantes/créditos suficientes. Sem acoplamento direto.
+        // find-ed7823e9: antes forçava um PATCH de status para distribuído logo após
+        // criar. O backend cria sempre em DRAFT e o workflow só permite
+        // SCHEDULED -> DISTRIBUTED, então esse PATCH falhava com 400 depois de
+        // um create bem-sucedido (modal ficava aberto com erro, convidando a
+        // reenviar e duplicar). Nenhuma distribuição real existe neste fluxo.
         if (created?.id) {
-          const releaseId = created.id;
-          const distributedAt = new Date().toISOString();
-          const updated = await updateLancamento.mutateAsync({
-            id: releaseId,
-            status: "distributed",
-            metadata: {
-              ...enrichedMeta,
-              distributedAt,
-              distributionCompletedAt: distributedAt,
-            },
-          } as never) as Lancamento;
-          toast.success("Lançamento criado e distribuído!");
-          await onCreatedAndDistributed?.(updated ?? ({ ...created, status: "distributed" } as Lancamento));
+          toast.success("Lançamento criado!");
+          await onCreated?.(created as Lancamento);
         } else {
           toast.success("Lançamento criado!");
         }

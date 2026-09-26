@@ -65,3 +65,30 @@ describe("formToLancamentoPayload — contrato canônico de releases", () => {
     expect(payload).not.toHaveProperty("cronograma");
   });
 });
+
+/**
+ * find-ed7823e9 (consumidor incompatível): editar metadados de um lançamento
+ * nunca pode enviar status. O mapeamento antigo backend→form→backend tinha
+ * perda (distributed→scheduled, archived→released,
+ * assets_pending→metadata_pending, null→review) e cada edição disparava uma
+ * transição inexistente no workflow (400). O status só muda pelo workflow.
+ */
+import { lancamentoToFormFields } from "./entity-to-form.mapper";
+
+describe("formToLancamentoPayload — status nunca é escrito pelo formulário", () => {
+  const statuses = [
+    null, "draft", "metadata_pending", "assets_pending", "review", "approved",
+    "scheduled", "distributed", "released", "archived", "cancelled",
+  ];
+  for (const status of statuses) {
+    it(`round-trip de um lançamento em ${String(status)} não envia status na edição`, () => {
+      const fields = lancamentoToFormFields({ id: "r1", title: "X", status } as never);
+      const payload = formToLancamentoPayload(fields, "edit");
+      expect(payload).not.toHaveProperty("status");
+    });
+  }
+
+  it("criação também não envia status (backend define DRAFT)", () => {
+    expect(formToLancamentoPayload(baseFields(), "create")).not.toHaveProperty("status");
+  });
+});

@@ -29,7 +29,6 @@ import { TablePagination } from "@/shared/ui/table-pagination";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { useLancamentos } from "@/modules/releases/hooks/useLancamentos";
 import { useLancamentosPaginated, useLancamentosDistributionStats } from "@/modules/releases/hooks/useLancamentosPaginated";
-import { useShares } from "@/modules/releases/hooks/useShares";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { useImageContrast } from "@/shared/hooks/useImageContrast";
 import { contrastText, contrastSubtext, contrastChrome, contrastScrim } from "@/shared/lib/image-contrast";
@@ -201,7 +200,6 @@ function ReleaseCard({ release, artista, now, selected, onToggleSelect, onView, 
 
 export default function Lancamentos() {
   const { lancamentos, isLoading, deleteLancamento, addLancamento } = useLancamentos();
-  const { shares, addShare } = useShares();
   const navigate = useNavigate();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -325,41 +323,13 @@ export default function Lancamentos() {
     }
   };
 
-  const ensureInitialShare = useCallback(async (release: Lancamento) => {
-    if (!release.id || shares.some((share) => share.release_id === release.id)) return;
-    // Busca DIRETO por ID — o release recém-criado pode não estar (ainda)
-    // no batch resolvido para a página atual (Task J).
-    const artistaWire = release.artist_id
-      ? await storage.findById<ArtistWireRecord>("artistas", release.artist_id)
-      : undefined;
-    const artista = artistaWire ? wireToArtist(artistaWire) : undefined;
-
-    await addShare.mutateAsync({
-      share_type: "internal_release",
-      release_id: release.id,
-      artist_id: release.artist_id ?? null,
-      music_title: release.title ?? null,
-      holder: artista?.stageName ?? release.title ?? "Lancamento",
-      recipient: null,
-      type: "interprete",
-      direction: "a_enviar",
-      percentage: 100,
-      status: "pendente",
-      notes: "Share inicial criado automaticamente após distribuição do lançamento.",
-      versao: 1,
-      historico: [{
-        versao: 1,
-        data: new Date().toISOString().split("T")[0],
-        acao: "criado_automaticamente",
-        descricao: "Share inicial criado pelo fluxo de distribuição automática.",
-      }],
-    } as never);
-  }, [addShare, shares]);
-
-  const handleReleaseCreatedAndDistributed = useCallback(async (release: Lancamento) => {
-    await ensureInitialShare(release);
+  // find-ed7823e9: após criar, o lançamento fica em DRAFT (o backend só
+  // permite SCHEDULED -> DISTRIBUTED). Apenas oferece navegar para o fluxo
+  // de shares — nenhum share é gravado automaticamente e nenhum status de
+  // distribuição é simulado.
+  const handleReleaseCreated = useCallback((release: Lancamento) => {
     setSharePrompt({ open: true, release });
-  }, [ensureInitialShare]);
+  }, []);
 
   const handleCreateSharesNow = () => {
     const releaseId = sharePrompt.release?.id;
@@ -548,7 +518,7 @@ export default function Lancamentos() {
         onOpenChange={(open) => setFormModal({ ...formModal, open })}
         lancamento={formModal.lancamento}
         mode={formModal.mode}
-        onCreatedAndDistributed={handleReleaseCreatedAndDistributed}
+        onCreated={handleReleaseCreated}
       />
       <LancamentoViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} lancamento={viewModal.lancamento} />
       <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Lançamento" description={`Tem certeza que deseja excluir "${deleteModal.lancamento?.title}"?`} onConfirm={handleDelete} />
@@ -557,7 +527,7 @@ export default function Lancamentos() {
           <DialogHeader>
             <DialogTitle>Compartilhar Lançamento</DialogTitle>
             <DialogDescription>
-              Seu lançamento foi distribuído com sucesso. Deseja criar o compartilhamento agora?
+              Seu lançamento foi criado como rascunho. Deseja criar o compartilhamento agora?
             </DialogDescription>
           </DialogHeader>
           {sharePrompt.release && (

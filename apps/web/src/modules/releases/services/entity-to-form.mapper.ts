@@ -15,7 +15,6 @@ export interface LancamentoFormFields {
   genero: string;
   idioma: string;
   dataLancamento: string;
-  status: string;
   gravadora: string;
   copyright: string;
   distribuidora: string;
@@ -43,26 +42,6 @@ function ps(v: unknown): string {
   return String(v).trim();
 }
 
-// Maps backend ReleaseStatus enum → frontend form status values
-const BACKEND_STATUS_TO_FORM: Record<string, string> = {
-  draft:             "planejado",
-  metadata_pending:  "em_producao",
-  assets_pending:    "em_producao",
-  review:            "analise",
-  approved:          "aprovado",
-  scheduled:         "programado",
-  distributed:       "aguardando_distribuicao",
-  released:          "ativo",
-  archived:          "ativo",
-  cancelled:         "cancelado",
-};
-
-function mapStatusToForm(raw: unknown): string {
-  if (!raw) return "analise";
-  const s = String(raw).trim().toLowerCase();
-  return BACKEND_STATUS_TO_FORM[s] ?? (s || "analise");
-}
-
 export function lancamentoToFormFields(l: Lancamento | null | undefined): LancamentoFormFields {
   const r = l as Record<string, unknown> | null | undefined;
   // Support both snake_case (from backend entity) and camelCase (legacy mock data)
@@ -79,7 +58,6 @@ export function lancamentoToFormFields(l: Lancamento | null | undefined): Lancam
     genero:                    ps(l?.music_genre ?? meta["genero"]),
     idioma:                    ps(l?.idioma ?? meta["idioma"]),
     dataLancamento:            ps(l?.data_lancamento ?? r?.["releasedAt"]),
-    status:                    mapStatusToForm(l?.status),
     gravadora:                 ps(l?.gravadora ?? meta["gravadora"]),
     copyright:                 ps(l?.copyright ?? meta["copyright"]),
     distribuidora:             ps(l?.distribuidora ?? r?.["distributor"]) || "onerpm",
@@ -104,7 +82,7 @@ export function emptyLancamentoFormFields(): LancamentoFormFields {
   return {
     projetoSeed: "", title: "", artist_id: "", type: "",
     codigoUPC: "", genero: "", idioma: "", dataLancamento: "",
-    status: "analise", gravadora: "", copyright: "",
+    gravadora: "", copyright: "",
     distribuidora: "onerpm", notasDistribuicao: "",
     isrcGlobal: "", upc: "", notasInternas: "",
     assetAudioMasterUrl: "", assetCapaUrl: "", assetVideoClipeUrl: "",
