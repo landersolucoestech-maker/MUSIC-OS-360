@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/automation-audit/prompt.ts
  *
- * Prompts canônicos da skill automation-audit (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato AutomationAuditOutput.
+ * Canonical prompts of the automation-audit skill (version 1.0.0).
+ * The response MUST be a single JSON object in the AutomationAuditOutput shape.
  */
 
 import type { AutomationAuditInput } from "./contracts";

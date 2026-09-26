@@ -1,14 +1,14 @@
 /**
  * packages/ai-skills/src/artist-profile-analysis/parser.ts
  *
- * Converte a resposta crua do provider em ArtistProfileAnalysisOutput estruturado.
- * Estratégia:
- *  1. tentar extrair e parsear JSON da resposta (com/sem cercas markdown, com texto à volta);
- *  2. coagir cada campo para o shape esperado, descartando valores inválidos;
- *  3. se nada for aproveitável, devolver fallback estruturado seguro montado a
- *     partir de artistName/genre/audience/strengths/weaknesses (sinalizado como
- *     análise heurística local no texto).
- * NUNCA lança — qualquer resposta malformada resulta num output válido.
+ * Converts the provider's raw response into a structured ArtistProfileAnalysisOutput.
+ * Strategy:
+ *  1. try to extract and parse JSON from the response (with/without markdown fences, with surrounding text);
+ *  2. coerce each field to the expected shape, dropping invalid values;
+ *  3. if nothing is usable, return a safe structured fallback built from
+ *     artistName/genre/audience/strengths/weaknesses (flagged in the text as a
+ *     local heuristic analysis).
+ * NEVER throws — any malformed response yields a valid output.
  */
 
 import type {
@@ -28,7 +28,7 @@ const PRIORITIES: SkillPriority[] = ["low", "medium", "high", "critical"];
 
 const HEURISTIC_NOTE = "Análise heurística local: o diagnóstico detalhado do modelo não foi executado. Revise antes de tomar decisões estratégicas.";
 
-// ─── Helpers de coerção ───────────────────────────────────────────────────────
+// ─── Coercion helpers ─────────────────────────────────────────────────────────
 
 function asString(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value.trim();
@@ -135,7 +135,7 @@ function buildFallback(input: ArtistProfileAnalysisInput): ArtistProfileAnalysis
   };
 }
 
-// ─── Extração de JSON da resposta ─────────────────────────────────────────────
+// ─── JSON extraction from the response ────────────────────────────────────────
 
 function extractJson(raw: string): Record<string, unknown> | null {
   if (!raw) return null;
@@ -162,7 +162,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

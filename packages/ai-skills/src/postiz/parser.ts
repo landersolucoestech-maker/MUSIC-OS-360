@@ -1,14 +1,14 @@
 /**
  * packages/ai-skills/src/postiz/parser.ts
  *
- * Converte a resposta crua do provider em PostizOutput estruturado.
+ * Converts the provider's raw response into a structured PostizOutput.
  *
- * ENFORCEMENT ANTI-FABRICAÇÃO (crítico, mesmo princípio de
- * campaign-report/parser.ts): o runner de automação NÃO chama
- * validateOutput — apenas validateInput. Por isso, `readyToRequestPublish`
- * é SEMPRE recalculado aqui a partir dos sinais reais do input
- * (channelReadiness==="connected" && hasCopy), IGNORANDO o que o modelo
- * tenha devolvido nesse campo.
+ * ANTI-FABRICATION ENFORCEMENT (critical, same principle as
+ * campaign-report/parser.ts): the automation runner does NOT call
+ * validateOutput — only validateInput. So `readyToRequestPublish` is ALWAYS
+ * recomputed here from the input's real signals
+ * (channelReadiness==="connected" && hasCopy), IGNORING whatever the model
+ * returned in that field.
  */
 
 import type {
@@ -108,7 +108,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }
@@ -126,7 +126,7 @@ export function parsePostizResponse(
 
   return {
     readinessSummary: asString(json.readinessSummary) || fallback.readinessSummary,
-    // ENFORCEMENT: nunca confiado ao modelo — sempre recalculado dos sinais reais.
+    // ENFORCEMENT: never trusted to the model — always recomputed from the real signals.
     readyToRequestPublish: computeReadyToRequestPublish(input),
     blockers: blockers.length > 0 ? blockers : fallback.blockers,
     recommendedActions: mapActions(json.recommendedActions),

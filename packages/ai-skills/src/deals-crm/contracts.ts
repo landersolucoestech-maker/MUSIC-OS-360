@@ -1,27 +1,26 @@
 /**
  * packages/ai-skills/src/deals-crm/contracts.ts
  *
- * Contratos da skill deals-crm (version 1.0.0).
- * Análise do pipeline comercial (deals) de um cliente — a partir dos
- * CONTRATOS reais já vinculados a ele (ContractEntity.client_id,
- * ClientsService.getContracts()) — nunca sobre o esquema
- * `pipelines`/`pipeline_opportunities` (schema existe mas está
- * explicitamente sem contrato auditado — ver
- * apps/api/src/modules/reports/pipeline-forms-not-reportable.guard.spec.ts —
- * e sem service/controller/frontend real algum).
+ * Contracts of the deals-crm skill (version 1.0.0).
+ * Analysis of a client's sales pipeline (deals) — from the real CONTRACTS
+ * already linked to it (ContractEntity.client_id, ClientsService.getContracts())
+ * — never from the `pipelines`/`pipeline_opportunities` schema (it exists but
+ * explicitly has no audited contract — see
+ * apps/api/src/modules/reports/pipeline-forms-not-reportable.guard.spec.ts — and
+ * no real service/controller/frontend at all).
  *
- * "Deal" = contrato (a unidade comercial real deste produto — tem valor
- * monetário real (`valor`), status com ciclo de vida real (ContractStatus),
- * cliente vinculado). dealStage é DERIVADO deterministicamente do
- * ContractStatus real no código da automação (nunca pelo modelo) — ver
- * mapContractStatusToDealStage() no automation layer.
+ * "Deal" = contract (this product's real business unit — it has a real money
+ * value (`valor`), a status with a real lifecycle (ContractStatus) and a linked
+ * client). dealStage is DERIVED deterministically from the real ContractStatus
+ * in the automation code (never by the model) — see
+ * mapContractStatusToDealStage() in the automation layer.
  *
- * ANTI-FABRICAÇÃO: o valor de cada deal é ecoado diretamente do campo real
- * `contracts.valor` (nullable) — nunca inventado; quando ausente, o deal é
- * marcado com value=null e a skill NUNCA propõe um valor. O modelo nunca
- * recebe permissão de alterar dealStage/value — apenas narra e recomenda.
+ * ANTI-FABRICATION: each deal's value is echoed straight from the real
+ * `contracts.valor` field (nullable) — never invented; when absent, the deal is
+ * flagged with value=null and the skill NEVER proposes a value. The model is
+ * never allowed to change dealStage/value — it only narrates and recommends.
  *
- * Execução: ON_DEMAND, disparada pelo usuário na tela do cliente.
+ * Execution: ON_DEMAND, triggered by the user on the client screen.
  */
 
 import type { SkillLanguage, SkillPriority, SkillSeverity } from "../shared/primitives";
@@ -49,7 +48,7 @@ export interface DealsCrmInput {
   language?: DealsCrmLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface DealsCrmAction {
   action: string;

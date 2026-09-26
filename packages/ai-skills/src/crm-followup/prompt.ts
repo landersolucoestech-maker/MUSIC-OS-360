@@ -1,9 +1,9 @@
 /**
  * skills/crm-followup/prompts/crm-followup.prompt.ts
  *
- * Prompts canónicos da skill crm-followup (version 1.0.0).
- * Especializado em CRM/relacionamento comercial do mercado musical.
- * A resposta DEVE ser um único objeto JSON no formato CrmFollowupOutput.
+ * Canonical prompts of the crm-followup skill (version 1.0.0).
+ * Specialized in music-market CRM/business relationships.
+ * The response MUST be a single JSON object in the CrmFollowupOutput shape.
  */
 
 import type { CrmFollowupInput } from "./contracts";

@@ -1,9 +1,9 @@
 /**
  * packages/ai-skills/src/support-triage/prompt.ts
  *
- * Prompts canónicos da skill support-triage (version 1.0.0).
- * Especializado em triagem de suporte técnico/operacional para SaaS musical.
- * A resposta DEVE ser um único objeto JSON no formato SupportTriageOutput.
+ * Canonical prompts of the support-triage skill (version 1.0.0).
+ * Specialized in technical/operational support triage for a music SaaS.
+ * The response MUST be a single JSON object in the SupportTriageOutput shape.
  */
 
 import type { SupportTriageInput } from "./contracts";

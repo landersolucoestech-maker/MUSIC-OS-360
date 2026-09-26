@@ -1,10 +1,9 @@
 /**
  * packages/ai-skills/src/seo-audit/validator.ts
  *
- * Validação de entrada/saída. Usa o tipo compartilhado SkillValidationResult.
- * Valida também a garantia anti-fabricação: nenhum check pode ter
- * source="external_measurement" (nenhuma medição externa é executada por
- * esta skill).
+ * Input/output validation. Uses the shared SkillValidationResult type.
+ * Also validates the anti-fabrication guarantee: no check may have
+ * source="external_measurement" (this skill runs no external measurement).
  */
 
 import type { SeoAuditInput, SeoAuditOutput } from "./contracts";

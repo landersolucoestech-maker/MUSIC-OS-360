@@ -1,10 +1,10 @@
 /**
  * skills/crm-followup/contracts/crm-followup.contracts.ts
  *
- * Contratos da skill crm-followup (version 1.0.0).
- * Follow-up comercial de CRM para gravadora, editora, produtora, artistas,
- * parceiros, marcas, fornecedores e clientes.
- * Usa os tipos compartilhados de domain/ai.types (SkillLanguage/SkillSeverity/SkillPriority).
+ * Contracts of the crm-followup skill (version 1.0.0).
+ * CRM sales follow-up for record labels, publishers, production companies,
+ * artists, partners, brands, suppliers and clients.
+ * Uses the shared domain/ai.types types (SkillLanguage/SkillSeverity/SkillPriority).
  */
 
 import type { SkillLanguage, SkillSeverity, SkillPriority } from "../shared/primitives";
@@ -42,7 +42,7 @@ export interface CrmFollowupInput {
   language?: SkillLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface CrmObjection {
   objection: string;

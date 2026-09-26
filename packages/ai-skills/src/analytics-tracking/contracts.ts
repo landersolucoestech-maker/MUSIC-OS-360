@@ -1,30 +1,29 @@
 /**
  * packages/ai-skills/src/analytics-tracking/contracts.ts
  *
- * Contratos da skill analytics-tracking (version 1.0.0).
- * Auditoria de COBERTURA de rastreamento analítico — cruza o registro
- * canônico de eventos de domínio (apps/api/src/core/events/events.service.ts
- * DOMAIN_EVENTS, já 100% capturado em `domain_event_log` via
- * UniversalEventLogHandler, um listener wildcard '**' real e sempre ativo)
- * contra os métodos de rastreamento REAIS já implementados em
- * PostHogService (trackAIUsage/trackIntegrationConnected/
- * trackContractSigned/trackReleaseCreated) — que existem mas NUNCA são
- * chamados por nenhum outro serviço (grep repo-wide confirmado).
+ * Contracts of the analytics-tracking skill (version 1.0.0).
+ * Audit of analytics tracking COVERAGE — cross-checks the canonical domain
+ * event registry (apps/api/src/core/events/events.service.ts DOMAIN_EVENTS,
+ * already 100% captured in `domain_event_log` via UniversalEventLogHandler, a
+ * real, always-on '**' wildcard listener) against the REAL tracking methods
+ * already implemented in PostHogService (trackAIUsage/trackIntegrationConnected/
+ * trackContractSigned/trackReleaseCreated) — which exist but are NEVER called
+ * by any other service (confirmed by a repo-wide grep).
  *
- * Distinção obrigatória (nunca misturada silenciosamente):
- *   BUSINESS EVENT     — DOMAIN_EVENTS (evento de negócio real do produto)
- *   AUDIT EVENT        — domain_event_log (cópia auditável de todo BUSINESS EVENT)
- *   ANALYTICS EVENT    — chamada real a PostHogService.capture()/trackX()
- *   PROVIDER CONVERSION EVENT — fora de escopo (nenhum pixel de conversão
- *                         de provedor de ads está implementado)
+ * Mandatory distinction (never silently mixed):
+ *   BUSINESS EVENT     — DOMAIN_EVENTS (a real product business event)
+ *   AUDIT EVENT        — domain_event_log (auditable copy of every BUSINESS EVENT)
+ *   ANALYTICS EVENT    — a real call to PostHogService.capture()/trackX()
+ *   PROVIDER CONVERSION EVENT — out of scope (no ads provider conversion
+ *                         pixel is implemented)
  *
- * Esta skill NUNCA envia dado sensível a um provedor, NUNCA fabrica um
- * reconhecimento (acknowledgement) do PostHog, e reporta
- * "CONFIGURATION_REQUIRED" de forma verdadeira quando POSTHOG_API_KEY está
- * ausente/placeholder (mesma checagem real usada por PostHogService).
+ * This skill NEVER sends sensitive data to a provider, NEVER fabricates a
+ * PostHog acknowledgement, and truthfully reports "CONFIGURATION_REQUIRED"
+ * when POSTHOG_API_KEY is absent/placeholder (the same real check
+ * PostHogService uses).
  *
- * Execução: ON_DEMAND, disparada pelo usuário (ex.: painel de
- * governança/observabilidade).
+ * Execution: ON_DEMAND, triggered by the user (e.g. a governance/observability
+ * panel).
  */
 
 import type { SkillLanguage, SkillSeverity } from "../shared/primitives";
@@ -50,7 +49,7 @@ export interface AnalyticsTrackingInput {
   language?: AnalyticsTrackingLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface AnalyticsTrackingGap {
   gap: string;

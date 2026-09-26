@@ -1,16 +1,16 @@
 /**
  * packages/ai-skills/src/campaign-strategy/contracts.ts
  *
- * Contratos da skill campaign-strategy (version 1.0.0).
- * Direção estratégica de uma campanha no momento em que ela entra em
- * execução — posicionamento, público-alvo, mensagens-chave e sinais a
- * observar para ajuste de rota. Fonte canônica compartilhada (web + api).
+ * Contracts of the campaign-strategy skill (version 1.0.0).
+ * Strategic direction of a campaign when it goes into execution — positioning,
+ * target audience, key messages and signals to watch for course correction.
+ * Shared canonical source (web + api).
  *
- * Distinção de escopo dentro do cluster de campanhas — ver
- * campaign-plan/contracts.ts para o quadro completo. Esta skill NÃO
- * recomenda canais/orçamento/tarefas (isso é campaign-plan) e NÃO relata
- * resultados (isso é campaign-report); ela define COMO comunicar e O QUE
- * observar enquanto a campanha roda.
+ * Scope distinction within the campaigns cluster — see
+ * campaign-plan/contracts.ts for the full picture. This skill does NOT
+ * recommend channels/budget/tasks (that is campaign-plan) and does NOT report
+ * results (that is campaign-report); it defines HOW to communicate and WHAT to
+ * watch while the campaign runs.
  */
 
 import type { SkillLanguage, SkillSeverity } from "../shared/primitives";
@@ -31,7 +31,7 @@ export interface CampaignStrategyInput {
   language?: CampaignStrategyLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface CampaignKeyMessage {
   message: string;

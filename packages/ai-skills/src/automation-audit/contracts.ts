@@ -1,17 +1,17 @@
 /**
  * packages/ai-skills/src/automation-audit/contracts.ts
  *
- * Contratos da skill automation-audit (version 1.0.0).
- * Auditoria narrativa da automação do MusicChat (triagem/escalonamento/
- * notificações WhatsApp) a partir de dados REAIS já persistidos em
- * `musicchat_automation_events` e `musicchat_automation_settings` — nunca
- * inspeciona nem audita o WorkflowAutomationService (trigger rules internas,
- * sem persistência/CRUD tenant-scoped, portanto sem substrato real para uma
- * skill de produto auditar).
+ * Contracts of the automation-audit skill (version 1.0.0).
+ * Narrative audit of MusicChat automation (triage/escalation/WhatsApp
+ * notifications) from REAL data already persisted in
+ * `musicchat_automation_events` and `musicchat_automation_settings` — it never
+ * inspects or audits WorkflowAutomationService (internal trigger rules, with no
+ * tenant-scoped persistence/CRUD, so there is no real substrate for a product
+ * skill to audit).
  *
- * Execução: ON_DEMAND (ver on-demand-skill.runner.ts), disparada por ação
- * explícita do usuário — nunca corre em cada evento novo (isso rodaria sem
- * limite/custo descontrolado a cada mensagem recebida).
+ * Execution: ON_DEMAND (see on-demand-skill.runner.ts), triggered by an
+ * explicit user action — never on every new event (that would run without a
+ * limit and with uncontrolled cost for every received message).
  */
 
 import type { SkillLanguage, SkillSeverity, SkillPriority } from "../shared/primitives";
@@ -38,7 +38,7 @@ export interface AutomationAuditInput {
   language?: AutomationAuditLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface AutomationAuditFinding {
   finding: string;

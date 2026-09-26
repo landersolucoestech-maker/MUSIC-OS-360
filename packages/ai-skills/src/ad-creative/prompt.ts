@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/ad-creative/prompt.ts
  *
- * Prompts canônicos da skill ad-creative (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato AdCreativeOutput.
+ * Canonical prompts of the ad-creative skill (version 1.0.0).
+ * The response MUST be a single JSON object in the AdCreativeOutput shape.
  */
 
 import type { AdCreativeInput } from "./contracts";

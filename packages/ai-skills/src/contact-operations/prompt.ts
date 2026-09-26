@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/contact-operations/prompt.ts
  *
- * Prompts canônicos da skill contact-operations (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato ContactOperationsOutput.
+ * Canonical prompts of the contact-operations skill (version 1.0.0).
+ * The response MUST be a single JSON object in the ContactOperationsOutput shape.
  */
 
 import type { ContactOperationsInput } from "./contracts";

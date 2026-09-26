@@ -1,12 +1,12 @@
 /**
  * packages/ai-skills/src/analytics-tracking/parser.ts
  *
- * Converte a resposta crua do provider em AnalyticsTrackingOutput
- * estruturado.
+ * Converts the provider's raw response into a structured
+ * AnalyticsTrackingOutput.
  *
- * ANTI-FABRICAÇÃO: coveragePercentage é SEMPRE derivado de input.coverage
- * real (nunca do JSON do modelo) — o modelo não tem permissão de reportar
- * uma cobertura diferente da real.
+ * ANTI-FABRICATION: coveragePercentage is ALWAYS derived from the real
+ * input.coverage (never from the model's JSON) — the model is not allowed to
+ * report a coverage different from the real one.
  */
 
 import type {
@@ -93,7 +93,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

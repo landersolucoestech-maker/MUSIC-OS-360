@@ -1,9 +1,10 @@
 /**
  * packages/ai-skills/src/support-triage/contracts.ts
  *
- * Contratos da skill support-triage (version 1.0.0).
- * Triagem de tickets de suporte para SaaS de gravadora, editora e produtora.
- * Fonte canônica compartilhada (web + api).
+ * Contracts of the support-triage skill (version 1.0.0).
+ * Support ticket triage for a SaaS serving record labels, publishers and
+ * production companies.
+ * Shared canonical source (web + api).
  */
 
 import type { SkillLanguage, SkillSeverity, SkillPriority } from "../shared/primitives";
@@ -36,7 +37,7 @@ export interface SupportTriageInput {
   language?: SupportTriageLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface SLARecommendation {
   responseTime: string;

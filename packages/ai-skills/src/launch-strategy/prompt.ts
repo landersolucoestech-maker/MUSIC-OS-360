@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/launch-strategy/prompt.ts
  *
- * Prompts canônicos da skill launch-strategy (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato LaunchStrategyOutput.
+ * Canonical prompts of the launch-strategy skill (version 1.0.0).
+ * The response MUST be a single JSON object in the LaunchStrategyOutput shape.
  */
 
 import type { LaunchStrategyInput } from "./contracts";

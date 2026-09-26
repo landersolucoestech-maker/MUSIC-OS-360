@@ -1,12 +1,12 @@
 /**
  * packages/ai-skills/src/campaign-report/validator.ts
  *
- * Validação de entrada/saída. Usa o tipo compartilhado SkillValidationResult.
- * Além dos campos obrigatórios, valida a regra crítica anti-fabricação:
- * hasMeasuredPerformanceData só pode ser true quando o input realmente
- * continha externalMetrics — o parser nunca pode "promover" dados
- * heurísticos a medidos, e esta validação é a rede de segurança que
- * confirma que a saída do modelo respeitou essa regra.
+ * Input/output validation. Uses the shared SkillValidationResult type.
+ * Besides the required fields, it validates the critical anti-fabrication rule:
+ * hasMeasuredPerformanceData can only be true when the input really contained
+ * externalMetrics — the parser can never "promote" heuristic data to measured,
+ * and this validation is the safety net confirming the model's output
+ * respected that rule.
  */
 
 import type { CampaignReportInput, CampaignReportOutput } from "./contracts";

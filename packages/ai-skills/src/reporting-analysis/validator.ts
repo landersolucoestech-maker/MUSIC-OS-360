@@ -1,7 +1,7 @@
 /**
  * packages/ai-skills/src/reporting-analysis/validator.ts
  *
- * Validação de entrada/saída. Usa o tipo compartilhado SkillValidationResult.
+ * Input/output validation. Uses the shared SkillValidationResult type.
  */
 
 import type { ReportingAnalysisInput, ReportingAnalysisOutput } from "./contracts";

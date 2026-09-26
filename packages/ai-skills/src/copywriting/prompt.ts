@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/copywriting/prompt.ts
  *
- * Prompts canônicos da skill copywriting (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato CopywritingOutput.
+ * Canonical prompts of the copywriting skill (version 1.0.0).
+ * The response MUST be a single JSON object in the CopywritingOutput shape.
  */
 
 import type { CopywritingInput } from "./contracts";

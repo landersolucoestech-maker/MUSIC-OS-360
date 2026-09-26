@@ -1,9 +1,9 @@
 /**
  * packages/ai-skills/src/financial-classification/prompt.ts
  *
- * Prompts canónicos da skill financial-classification (version 1.0.0).
- * Especializado em classificação financeira de gravadora, editora e produtora.
- * A resposta DEVE ser um único objeto JSON no formato FinancialClassificationOutput.
+ * Canonical prompts of the financial-classification skill (version 1.0.0).
+ * Specialized in financial classification for record labels, publishers and production companies.
+ * The response MUST be a single JSON object in the FinancialClassificationOutput shape.
  */
 
 import type { FinancialClassificationInput } from "./contracts";

@@ -1,10 +1,9 @@
 /**
  * packages/ai-skills/src/copywriting/validator.ts
  *
- * Validação de entrada/saída. Usa o tipo compartilhado SkillValidationResult.
- * Valida também a garantia anti-fabricação: usedFacts deve ser um
- * subconjunto de sourceFacts (input) — nunca um fato novo inventado pelo
- * modelo.
+ * Input/output validation. Uses the shared SkillValidationResult type.
+ * Also validates the anti-fabrication guarantee: usedFacts must be a subset of
+ * sourceFacts (input) — never a new fact invented by the model.
  */
 
 import type { CopywritingInput, CopywritingOutput } from "./contracts";

@@ -1,10 +1,10 @@
 /**
  * packages/ai-skills/src/campaign-strategy/parser.ts
  *
- * Converte a resposta crua do provider em CampaignStrategyOutput estruturado.
- * Mesma estratégia das demais skills do pacote: extrai JSON (com/sem cercas
- * markdown), coage cada campo, e cai para um fallback heurístico seguro
- * quando a resposta é malformada. NUNCA lança.
+ * Converts the provider's raw response into a structured CampaignStrategyOutput.
+ * Same strategy as the package's other skills: extracts JSON (with/without
+ * markdown fences), coerces each field, and falls back to a safe heuristic
+ * output when the response is malformed. NEVER throws.
  */
 
 import type {
@@ -90,7 +90,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

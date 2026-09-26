@@ -1,27 +1,26 @@
 /**
  * packages/ai-skills/src/paid-ads/contracts.ts
  *
- * Contratos da skill paid-ads (version 1.0.0).
- * Sugestão de alocação de orçamento e posicionamento entre plataformas de
- * mídia paga para uma campanha JÁ EM RASCUNHO no Campaign Builder real
- * (MarketingCampaignBuilderService/CampaignEntity com type='marketing_builder').
+ * Contracts of the paid-ads skill (version 1.0.0).
+ * Suggested budget allocation and placement across paid media platforms for a
+ * campaign ALREADY IN DRAFT in the real Campaign Builder
+ * (MarketingCampaignBuilderService/CampaignEntity with type='marketing_builder').
  *
- * Distinção de escopo: ad-creative sugere o TEXTO do criativo para uma
- * plataforma/posicionamento específicos; paid-ads sugere COMO distribuir o
- * orçamento ENTRE as plataformas selecionadas (o campo real
- * CampaignBudget.platformSplit) e quais posicionamentos priorizar — não se
- * sobrepõem. Nenhuma das duas lança/gerencia anúncios: o backend real já
- * declara `/publish` como stub self-documented e todo provedor de ads como
- * `available: false` (marketing-integration.contract.ts).
+ * Scope distinction: ad-creative suggests the creative TEXT for a specific
+ * platform/placement; paid-ads suggests HOW to split the budget ACROSS the
+ * selected platforms (the real CampaignBudget.platformSplit field) and which
+ * placements to prioritize — they do not overlap. Neither launches/manages ads:
+ * the real backend already declares `/publish` as a self-documented stub and
+ * every ads provider as `available: false` (marketing-integration.contract.ts).
  *
- * ANTI-FABRICAÇÃO: esta skill NUNCA produz uma previsão numérica de
- * desempenho (CPA, ROAS, CTR estimado) — apenas percentuais de alocação de
- * orçamento (que somam 100%, renormalizados no parser) e recomendações
- * qualitativas. docs/CODEBASE_MAP.md documenta que
- * `estimateCampaignResults()` já fabrica métricas exibidas como reais; esta
- * skill não reproduz esse padrão nem lê/escreve esses campos.
+ * ANTI-FABRICATION: this skill NEVER produces a numeric performance forecast
+ * (CPA, ROAS, estimated CTR) — only budget allocation percentages (summing to
+ * 100%, renormalized in the parser) and qualitative recommendations.
+ * docs/CODEBASE_MAP.md documents that `estimateCampaignResults()` already
+ * fabricates metrics shown as real; this skill neither reproduces that pattern
+ * nor reads/writes those fields.
  *
- * Execução: ON_DEMAND, disparada pelo usuário dentro do Campaign Builder.
+ * Execution: ON_DEMAND, triggered by the user inside the Campaign Builder.
  */
 
 import type { SkillLanguage, SkillSeverity } from "../shared/primitives";
@@ -50,7 +49,7 @@ export interface PaidAdsInput {
   language?: PaidAdsLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface PaidAdsPlatformSplit {
   platform: string;

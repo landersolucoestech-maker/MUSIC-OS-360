@@ -1,22 +1,20 @@
 /**
  * packages/ai-skills/src/audience-health/contracts.ts
  *
- * Contratos da skill audience-health (version 1.0.0).
- * Síntese narrativa do estado de audiência de um artista, a partir de
- * resultados JÁ COMPUTADOS pelo Career Stage Engine e pelo Market Benchmark
- * Engine (Fase 3/3.2) — nunca chama provedores ao vivo, nunca recalcula
- * métricas, nunca fabrica um número que os engines não produziram.
+ * Contracts of the audience-health skill (version 1.0.0).
+ * Narrative synthesis of an artist's audience state, from results ALREADY
+ * COMPUTED by the Career Stage Engine and the Market Benchmark Engine
+ * (Phase 3/3.2) — it never calls providers live, never recomputes metrics, and
+ * never fabricates a number the engines did not produce.
  *
- * Execução: ON_DEMAND + stale-refresh (ver
- * apps/api/src/core/automation/on-demand-skill.runner.ts) — disparada por
- * ação explícita do usuário na tela do artista, reaproveitando o último
- * resultado dentro de uma janela de frescor em vez de gerar a cada
- * visualização.
+ * Execution: ON_DEMAND + stale-refresh (see
+ * apps/api/src/core/automation/on-demand-skill.runner.ts) — triggered by an
+ * explicit user action on the artist screen, reusing the last result within a
+ * freshness window instead of generating on every view.
  *
- * Não-sobreposição: artist-profile-analysis lê apenas a tabela `artists`
- * (perfil básico); audience-health lê exclusivamente os ENGINES de
- * analytics (career stage + market benchmark) — nenhum dos dois duplica o
- * outro.
+ * No overlap: artist-profile-analysis reads only the `artists` table (basic
+ * profile); audience-health reads exclusively the analytics ENGINES (career
+ * stage + market benchmark) — neither duplicates the other.
  */
 
 import type { SkillLanguage, SkillSeverity, SkillPriority } from "../shared/primitives";
@@ -42,7 +40,7 @@ export interface AudienceHealthInput {
   language?: AudienceHealthLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface AudienceHealthStrength {
   strength: string;

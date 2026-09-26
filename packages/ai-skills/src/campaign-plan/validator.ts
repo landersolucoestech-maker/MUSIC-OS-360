@@ -1,7 +1,7 @@
 /**
  * packages/ai-skills/src/campaign-plan/validator.ts
  *
- * Validação de entrada/saída. Usa o tipo compartilhado SkillValidationResult.
+ * Input/output validation. Uses the shared SkillValidationResult type.
  */
 
 import type { CampaignPlanInput, CampaignPlanOutput } from "./contracts";

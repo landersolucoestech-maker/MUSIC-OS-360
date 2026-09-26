@@ -1,7 +1,7 @@
 /**
  * packages/ai-skills/src/automation-builder/validator.ts
  *
- * Validação de entrada/saída. Usa o tipo compartilhado SkillValidationResult.
+ * Input/output validation. Uses the shared SkillValidationResult type.
  */
 
 import type { AutomationBuilderInput, AutomationBuilderOutput } from "./contracts";

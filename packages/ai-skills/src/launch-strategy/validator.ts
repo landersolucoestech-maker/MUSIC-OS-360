@@ -1,7 +1,7 @@
 /**
  * packages/ai-skills/src/launch-strategy/validator.ts
  *
- * Validação de entrada/saída. Usa o tipo compartilhado SkillValidationResult.
+ * Input/output validation. Uses the shared SkillValidationResult type.
  */
 
 import type { LaunchStrategyInput, LaunchStrategyOutput } from "./contracts";

@@ -1,9 +1,9 @@
 /**
  * packages/ai-skills/src/shared/primitives.ts
  *
- * Primitivos compartilhados das AI Skills — fonte única para web e api.
- * Estruturalmente idênticos aos definidos em apps/web (domain/ai.types.ts),
- * permitindo reúso sem acoplar a um app específico.
+ * Shared AI Skills primitives — single source for web and api.
+ * Structurally identical to those defined in apps/web (domain/ai.types.ts),
+ * enabling reuse without coupling to a specific app.
  */
 
 export type SkillLanguage = "pt-BR" | "en-US";

@@ -1,21 +1,20 @@
 /**
  * packages/ai-skills/src/campaign-report/contracts.ts
  *
- * Contratos da skill campaign-report (version 1.0.0).
- * Retrospectiva de execução de uma campanha ao ser encerrada (concluída ou
- * cancelada) — o que foi executado internamente (tarefas, prazos, assets),
- * lições aprendidas e recomendações para próximas campanhas.
- * Fonte canônica compartilhada (web + api).
+ * Contracts of the campaign-report skill (version 1.0.0).
+ * Execution retrospective of a campaign when it closes (completed or
+ * cancelled) — what was executed internally (tasks, deadlines, assets), lessons
+ * learned and recommendations for the next campaigns.
+ * Shared canonical source (web + api).
  *
- * IMPORTANTE — classificação de métricas (mandato da missão AI Skills):
- * esta skill NUNCA deve apresentar dados sintéticos como se fossem
- * resultados medidos. MUSIC OS 360 não garante uma conexão de mídia paga
- * ativa para toda campanha (a integração Google Ads é opt-in por tenant), e
- * a tabela `campaigns` não possui colunas de métricas de desempenho
- * (impressões/cliques/custo). Por isso, todo dado numérico de desempenho
- * neste contrato é EXPLICITAMENTE opcional e vem acompanhado de uma
- * classificação de origem via `MetricAvailability` — nunca inventado pelo
- * parser nem pelo prompt quando ausente.
+ * IMPORTANT — metric classification (AI Skills mission mandate): this skill
+ * must NEVER present synthetic data as measured results. MUSIC OS 360 does not
+ * guarantee an active paid media connection for every campaign (the Google Ads
+ * integration is opt-in per tenant), and the `campaigns` table has no
+ * performance metric columns (impressions/clicks/cost). So every numeric
+ * performance datum in this contract is EXPLICITLY optional and comes with an
+ * origin classification via `MetricAvailability` — never invented by the
+ * parser or the prompt when absent.
  */
 
 import type { SkillLanguage } from "../shared/primitives";
@@ -23,11 +22,11 @@ import type { SkillLanguage } from "../shared/primitives";
 export type CampaignReportLanguage = SkillLanguage;
 
 /**
- * Classificação de origem de qualquer dado quantitativo reportado:
- *   - "actual":      valor medido, vindo de uma fonte real conectada (ex.: Google Ads).
- *   - "estimated":   estimativa derivada de dados internos parciais.
- *   - "projected":   projeção qualitativa, sem base numérica direta.
- *   - "unavailable": nenhuma fonte de dado real está disponível para esta métrica.
+ * Origin classification of any reported quantitative datum:
+ *   - "actual":      measured value from a real connected source (e.g. Google Ads).
+ *   - "estimated":   estimate derived from partial internal data.
+ *   - "projected":   qualitative projection without a direct numeric basis.
+ *   - "unavailable": no real data source is available for this metric.
  */
 export type MetricAvailability = "actual" | "estimated" | "projected" | "unavailable";
 
@@ -50,13 +49,13 @@ export interface CampaignReportInput {
   tasksTotal?: number;
   tasksCompleted?: number;
   assetsUsedCount?: number;
-  /** Métricas externas REAIS, apenas quando uma integração de mídia paga está conectada e retornou dados (ex.: Google Ads). NUNCA preenchido com valores inventados. */
+  /** REAL external metrics, only when a paid media integration is connected and returned data (e.g. Google Ads). NEVER filled with invented values. */
   externalMetrics?: CampaignReportExternalMetric[];
   context?: string;
   language?: CampaignReportLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface CampaignReportMetricSummary {
   metric: string;
@@ -78,7 +77,7 @@ export interface CampaignReportRecommendation {
 
 export interface CampaignReportOutput {
   executionSummary: string;
-  /** true somente quando externalMetrics não estava vazio no input. */
+  /** true only when externalMetrics was not empty in the input. */
   hasMeasuredPerformanceData: boolean;
   metricSummaries: CampaignReportMetricSummary[];
   lessonsLearned: CampaignReportLesson[];

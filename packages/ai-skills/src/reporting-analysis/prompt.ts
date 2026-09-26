@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/reporting-analysis/prompt.ts
  *
- * Prompts canônicos da skill reporting-analysis (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato ReportingAnalysisOutput.
+ * Canonical prompts of the reporting-analysis skill (version 1.0.0).
+ * The response MUST be a single JSON object in the ReportingAnalysisOutput shape.
  */
 
 import type { ReportingAnalysisInput } from "./contracts";

@@ -1,7 +1,7 @@
 /**
  * packages/ai-skills/src/social-content/validator.ts
  *
- * Validação de entrada/saída. Usa o tipo compartilhado SkillValidationResult.
+ * Input/output validation. Uses the shared SkillValidationResult type.
  */
 
 import type { SocialContentInput, SocialContentOutput } from "./contracts";

@@ -1,14 +1,13 @@
 /**
  * packages/ai-skills/src/seo-audit/parser.ts
  *
- * Converte a resposta crua do provider em SeoAuditOutput estruturado.
+ * Converts the provider's raw response into a structured SeoAuditOutput.
  *
- * ENFORCEMENT ANTI-FABRICAÇÃO: todo check com source !== "static_analysis"
- * é DESCARTADO aqui (nunca repassado ao chamador) — o runner de automação
- * não chama validateOutput, então este é o ponto real de aplicação. As
- * métricas externas clássicas (ranking, tráfego, backlinks, etc.) são
- * SEMPRE incluídas em unavailableMetrics, independentemente do que o
- * modelo tenha devolvido.
+ * ANTI-FABRICATION ENFORCEMENT: every check with source !== "static_analysis"
+ * is DROPPED here (never passed to the caller) — the automation runner does not
+ * call validateOutput, so this is the real enforcement point. The classic
+ * external metrics (ranking, traffic, backlinks, etc.) are ALWAYS included in
+ * unavailableMetrics, regardless of what the model returned.
  */
 
 import type {
@@ -62,8 +61,8 @@ function asRecordArray(value: unknown): Record<string, unknown>[] {
   return value.filter((v): v is Record<string, unknown> => typeof v === "object" && v !== null);
 }
 
-/** Descarta qualquer check que o modelo tenha marcado como external_measurement
- * ANTES de mapear — nunca repassado ao chamador, mesmo relabeled. */
+/** Drops any check the model marked as external_measurement BEFORE mapping —
+ * never passed to the caller, even relabeled. */
 function mapChecks(value: unknown): SeoAuditCheck[] {
   return asRecordArray(value)
     .filter((v) => asString(v.source, "static_analysis").toLowerCase() !== "external_measurement")
@@ -134,7 +133,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

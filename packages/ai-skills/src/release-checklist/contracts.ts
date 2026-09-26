@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/release-checklist/contracts.ts
  *
- * Contratos da skill release-checklist (version 1.0.0).
- * Fonte canônica compartilhada (web + api).
+ * Contracts of the release-checklist skill (version 1.0.0).
+ * Shared canonical source (web + api).
  */
 
 import type { SkillLanguage, SkillSeverity, SkillPriority } from "../shared/primitives";

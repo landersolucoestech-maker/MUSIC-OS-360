@@ -1,11 +1,11 @@
 /**
  * packages/ai-skills/src/onboarding-cro/parser.ts
  *
- * Converte a resposta crua do provider em OnboardingCroOutput estruturado.
+ * Converts the provider's raw response into a structured OnboardingCroOutput.
  *
- * ANTI-FABRICAÇÃO: completedStepsCount/totalStepsCount são SEMPRE derivados
- * do input.steps real (nunca do JSON do modelo) — o modelo não tem
- * permissão de reportar uma contagem diferente da realidade.
+ * ANTI-FABRICATION: completedStepsCount/totalStepsCount are ALWAYS derived from
+ * the real input.steps (never from the model's JSON) — the model is not allowed
+ * to report a count different from reality.
  */
 
 import type {
@@ -89,7 +89,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

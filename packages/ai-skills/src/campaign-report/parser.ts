@@ -1,20 +1,20 @@
 /**
  * packages/ai-skills/src/campaign-report/parser.ts
  *
- * Converte a resposta crua do provider em CampaignReportOutput estruturado.
+ * Converts the provider's raw response into a structured CampaignReportOutput.
  *
- * ENFORCEMENT ANTI-FABRICAÇÃO (crítico): o runner de automação
- * (native-skill-automation.runner.ts) NÃO chama validateCampaignReportOutput
- * — apenas validateInput. Por isso, esta é a ÚLTIMA linha de defesa contra o
- * modelo "inventar" que mediu desempenho: independentemente do que o JSON
- * bruto do provider disser, se `input.externalMetrics` estiver vazio/ausente,
- * este parser FORÇA hasMeasuredPerformanceData=false e rebaixa qualquer
- * metricSummaries.availability="actual" para "unavailable", descartando
- * qualquer valor numérico que o modelo tenha tentado incluir.
+ * ANTI-FABRICATION ENFORCEMENT (critical): the automation runner
+ * (native-skill-automation.runner.ts) does NOT call validateCampaignReportOutput
+ * — only validateInput. So this is the LAST line of defense against the model
+ * "inventing" that it measured performance: regardless of what the provider's
+ * raw JSON says, when `input.externalMetrics` is empty/absent this parser FORCES
+ * hasMeasuredPerformanceData=false and downgrades any
+ * metricSummaries.availability="actual" to "unavailable", dropping any numeric
+ * value the model tried to include.
  *
- * Estratégia geral (igual às demais skills do pacote): extrai JSON
- * (com/sem cercas markdown), coage cada campo, cai para fallback heurístico
- * seguro quando malformado. NUNCA lança.
+ * General strategy (same as the package's other skills): extracts JSON
+ * (with/without markdown fences), coerces each field, and falls back to a safe
+ * heuristic output when malformed. NEVER throws.
  */
 
 import type {
@@ -72,7 +72,7 @@ function mapRecommendations(value: unknown): CampaignReportRecommendation[] {
   })).filter((r) => r.recommendation.length > 0);
 }
 
-/** Rebaixa qualquer availability="actual" para "unavailable" e descarta o resumo numérico quando não há métricas reais no input. */
+/** Downgrades any availability="actual" to "unavailable" and drops the numeric summary when the input has no real metrics. */
 function enforceNoFabricatedMetrics(
   summaries: CampaignReportMetricSummary[],
   hadRealMetrics: boolean,
@@ -123,7 +123,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }
@@ -142,7 +142,7 @@ export function parseCampaignReportResponse(
 
   return {
     executionSummary: asString(json.executionSummary) || fallback.executionSummary,
-    // ENFORCEMENT: nunca true sem métricas reais no input, independentemente do que o modelo disse.
+    // ENFORCEMENT: never true without real metrics in the input, regardless of what the model said.
     hasMeasuredPerformanceData: hadRealMetrics && asBoolean(json.hasMeasuredPerformanceData),
     metricSummaries: metricSummaries.length > 0 ? metricSummaries : fallback.metricSummaries,
     lessonsLearned: mapLessons(json.lessonsLearned),

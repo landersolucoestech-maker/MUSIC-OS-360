@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/campaign-plan/prompt.ts
  *
- * Prompts canônicos da skill campaign-plan (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato CampaignPlanOutput.
+ * Canonical prompts of the campaign-plan skill (version 1.0.0).
+ * The response MUST be a single JSON object in the CampaignPlanOutput shape.
  */
 
 import type { CampaignPlanInput } from "./contracts";

@@ -1,9 +1,9 @@
 /**
  * skills/marketing-calendar-builder/prompts/marketing-calendar-builder.prompt.ts
  *
- * Prompts canónicos da skill marketing-calendar-builder (version 1.0.0).
- * Especializado em calendário de marketing musical.
- * A resposta DEVE ser um único objeto JSON no formato MarketingCalendarBuilderOutput.
+ * Canonical prompts of the marketing-calendar-builder skill (version 1.0.0).
+ * Specialized in music marketing calendars.
+ * The response MUST be a single JSON object in the MarketingCalendarBuilderOutput shape.
  */
 
 import type { MarketingCalendarBuilderInput } from "./contracts";

@@ -1,28 +1,27 @@
 /**
  * packages/ai-skills/src/ad-creative/contracts.ts
  *
- * Contratos da skill ad-creative (version 1.0.0).
- * Sugestões de criativo (headline/copy/descrição/CTA) para uma campanha de
- * mídia paga JÁ EM RASCUNHO no Campaign Builder real
- * (MarketingCampaignBuilderService/CampaignEntity com type='marketing_builder')
- * — nunca inventa uma campanha nem persiste o criativo diretamente.
+ * Contracts of the ad-creative skill (version 1.0.0).
+ * Creative suggestions (headline/copy/description/CTA) for a paid media
+ * campaign ALREADY IN DRAFT in the real Campaign Builder
+ * (MarketingCampaignBuilderService/CampaignEntity with type='marketing_builder')
+ * — it never invents a campaign or persists the creative directly.
  *
- * Escopo deliberadamente restrito à GERAÇÃO de texto de criativo — nunca ao
- * lançamento/publicação (o próprio backend já declara `/publish` como stub
- * self-documented: "Provider-side publishing is not executed by this stub
- * endpoint"; marketing-integration.contract.ts declara `available: false`
- * para todo provedor de ads). Esta skill nunca implica que um anúncio foi
- * veiculado, e nunca produz números de desempenho (reach/clicks/conversions/
- * ROAS) — ver docs/CODEBASE_MAP.md sobre `estimateCampaignResults()` já ser
- * uma métrica fabricada e exibida como real; esta skill não repete esse
- * padrão.
+ * Scope deliberately limited to GENERATING creative text — never launching or
+ * publishing (the backend itself declares `/publish` as a self-documented
+ * stub: "Provider-side publishing is not executed by this stub endpoint";
+ * marketing-integration.contract.ts declares `available: false` for every ads
+ * provider). This skill never implies an ad was served and never produces
+ * performance numbers (reach/clicks/conversions/ROAS) — see
+ * docs/CODEBASE_MAP.md on `estimateCampaignResults()` already being a fabricated
+ * metric shown as real; this skill does not repeat that pattern.
  *
- * Distinção de escopo: paid-ads sugere ALOCAÇÃO de orçamento/plataforma;
- * ad-creative sugere o TEXTO do criativo para UMA plataforma/posicionamento
- * específicos — não se sobrepõem.
+ * Scope distinction: paid-ads suggests budget/platform ALLOCATION; ad-creative
+ * suggests the creative TEXT for ONE specific platform/placement — they do not
+ * overlap.
  *
- * Execução: ON_DEMAND (ver on-demand-skill.runner.ts), disparada pelo
- * usuário dentro do Campaign Builder — nunca automaticamente.
+ * Execution: ON_DEMAND (see on-demand-skill.runner.ts), triggered by the user
+ * inside the Campaign Builder — never automatically.
  */
 
 import type { SkillLanguage, SkillSeverity } from "../shared/primitives";
@@ -45,7 +44,7 @@ export interface AdCreativeInput {
   language?: AdCreativeLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface AdCreativeVariant {
   headline: string;

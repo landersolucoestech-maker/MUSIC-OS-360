@@ -1,13 +1,13 @@
 /**
  * packages/ai-skills/src/support-triage/parser.ts
  *
- * Converte a resposta crua do provider em SupportTriageOutput estruturado.
- * Estratégia:
- *  1. tentar extrair e parsear JSON da resposta (com/sem cercas markdown, com texto à volta);
- *  2. coagir cada campo para o shape esperado, descartando valores inválidos;
- *  3. se nada for aproveitável, devolver fallback estruturado seguro com triagem
- *     heurística local (priority/severity inferidas por palavras-chave).
- * NUNCA lança — qualquer resposta malformada resulta num output válido.
+ * Converts the provider's raw response into a structured SupportTriageOutput.
+ * Strategy:
+ *  1. try to extract and parse JSON from the response (with/without markdown fences, with surrounding text);
+ *  2. coerce each field to the expected shape, dropping invalid values;
+ *  3. if nothing is usable, return a safe structured fallback with a local
+ *     heuristic triage (priority/severity inferred from keywords).
+ * NEVER throws — any malformed response yields a valid output.
  */
 
 import type {
@@ -23,7 +23,7 @@ const PRIORITIES: SkillPriority[] = ["low", "medium", "high", "critical"];
 
 const HEURISTIC_NOTE = "Triagem heurística local: a classificação detalhada do modelo não foi executada. Revisar antes de responder/escalar.";
 
-// ─── Helpers de coerção ───────────────────────────────────────────────────────
+// ─── Coercion helpers ─────────────────────────────────────────────────────────
 
 function asString(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value.trim();
@@ -67,7 +67,7 @@ function asRecord(value: unknown): Record<string, unknown> | null {
     : null;
 }
 
-// ─── Inferência por palavras-chave (fallback) ─────────────────────────────────
+// ─── Keyword inference (fallback) ─────────────────────────────────────────────
 
 const HIGH_TECH_RE = /\b(erro|bug|falha|n[ãa]o consigo|travou|crash|quebrou|indispon[íi]vel)\b/i;
 const HIGH_SENSITIVE_RE = /\b(pagamento|cobran[çc]a|contrato|login|acesso|senha|autentica[çc][ãa]o)\b/i;
@@ -146,7 +146,7 @@ function buildFallback(input: SupportTriageInput): SupportTriageOutput {
   };
 }
 
-// ─── Extração de JSON da resposta ─────────────────────────────────────────────
+// ─── JSON extraction from the response ────────────────────────────────────────
 
 function extractJson(raw: string): Record<string, unknown> | null {
   if (!raw) return null;
@@ -173,7 +173,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

@@ -1,10 +1,10 @@
 /**
  * packages/ai-skills/src/performance-report/validator.ts
  *
- * Validação de entrada/saída. Usa o tipo compartilhado SkillValidationResult.
- * Valida também a garantia anti-fabricação: monthlyBreakdown da saída deve
- * corresponder exatamente (mesmos meses, mesmos valores) à série real do
- * input — nunca um valor diferente do que foi fornecido.
+ * Input/output validation. Uses the shared SkillValidationResult type.
+ * Also validates the anti-fabrication guarantee: the output monthlyBreakdown
+ * must match the input's real series exactly (same months, same values) —
+ * never a value different from what was provided.
  */
 
 import type { PerformanceReportInput, PerformanceReportOutput } from "./contracts";

@@ -1,9 +1,9 @@
 /**
  * packages/ai-skills/src/release-checklist/prompt.ts
  *
- * Prompts canónicos da skill release-checklist (version 1.0.0).
- * Especializado em checklist de lançamento musical: gravadora, editora e produtora.
- * A resposta DEVE ser um único objeto JSON no formato ReleaseChecklistOutput.
+ * Canonical prompts of the release-checklist skill (version 1.0.0).
+ * Specialized in music release checklists: record labels, publishers and production companies.
+ * The response MUST be a single JSON object in the ReleaseChecklistOutput shape.
  */
 
 import type { ReleaseChecklistInput } from "./contracts";

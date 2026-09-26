@@ -1,25 +1,24 @@
 /**
  * packages/ai-skills/src/launch-strategy/contracts.ts
  *
- * Contratos da skill launch-strategy (version 1.0.0).
- * Direção estratégica/narrativa de lançamento de um release aprovado —
- * posicionamento, público-alvo, mensagens-chave e sinais de sucesso a
- * observar. Fonte canônica compartilhada (web + api).
+ * Contracts of the launch-strategy skill (version 1.0.0).
+ * Strategic/narrative launch direction of an approved release — positioning,
+ * target audience, key messages and success signals to watch.
+ * Shared canonical source (web + api).
  *
- * Distinção de escopo (mesmo release, mesmo evento release.approved, três
- * skills não-sobrepostas):
- *   marketing-calendar-builder — QUANDO/ONDE: calendário tático de posts por
- *                                 plataforma/cadência.
- *   audiovisual-briefing       — briefing de produção audiovisual.
- *   launch-strategy            — POR QUÊ/PARA QUEM/QUAL MENSAGEM: narrativa
- *                                 estratégica e posicionamento do lançamento
- *                                 (mesmo papel que campaign-strategy cumpre
- *                                 para campanhas — ver campaign-strategy/contracts.ts).
+ * Scope distinction (same release, same release.approved event, three
+ * non-overlapping skills):
+ *   marketing-calendar-builder — WHEN/WHERE: tactical post calendar per
+ *                                 platform/cadence.
+ *   audiovisual-briefing       — audiovisual production briefing.
+ *   launch-strategy            — WHY/FOR WHOM/WHICH MESSAGE: the launch's
+ *                                 strategic narrative and positioning (the
+ *                                 same role campaign-strategy plays for
+ *                                 campaigns — see campaign-strategy/contracts.ts).
  *
- * successSignals é deliberadamente qualitativo (sinal + porquê), nunca uma
- * métrica numérica — números de desempenho fabricados são proibidos pela
- * missão (ver campaign-report/contracts.ts para o mesmo princípio aplicado
- * a métricas).
+ * successSignals is deliberately qualitative (signal + why), never a numeric
+ * metric — fabricated performance numbers are forbidden by the mission (see
+ * campaign-report/contracts.ts for the same principle applied to metrics).
  */
 
 import type { SkillLanguage, SkillSeverity } from "../shared/primitives";
@@ -39,7 +38,7 @@ export interface LaunchStrategyInput {
   language?: LaunchStrategyLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface LaunchKeyMessage {
   message: string;

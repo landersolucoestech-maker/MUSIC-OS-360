@@ -1,14 +1,14 @@
 /**
  * skills/crm-followup/parsers/crm-followup.parser.ts
  *
- * Converte a resposta crua do provider em CrmFollowupOutput estruturado.
- * Estratégia:
- *  1. tentar extrair e parsear JSON da resposta (com/sem cercas markdown, com texto à volta);
- *  2. coagir cada campo para o shape esperado, descartando valores inválidos;
- *  3. normalizar conversionProbability para 0–1;
- *  4. se nada for aproveitável, devolver fallback estruturado seguro baseado no
- *     currentStage (priority, conversionProbability e mensagem em pt-BR).
- * NUNCA lança — qualquer resposta malformada resulta num output válido.
+ * Converts the provider's raw response into a structured CrmFollowupOutput.
+ * Strategy:
+ *  1. try to extract and parse JSON from the response (with/without markdown fences, with surrounding text);
+ *  2. coerce each field to the expected shape, dropping invalid values;
+ *  3. normalize conversionProbability to 0–1;
+ *  4. if nothing is usable, return a safe structured fallback based on
+ *     currentStage (priority, conversionProbability and a pt-BR message).
+ * NEVER throws — any malformed response yields a valid output.
  */
 
 import type {
@@ -26,7 +26,7 @@ const SEVERITIES: SkillSeverity[] = ["low", "medium", "high", "critical"];
 const PRIORITIES: SkillPriority[] = ["low", "medium", "high", "critical"];
 const STAGES: CrmStage[] = ["new", "contacted", "qualified", "proposal", "negotiation", "won", "lost", "inactive"];
 
-// Mapas determinísticos para o fallback (baseados no currentStage).
+// Deterministic maps for the fallback (based on currentStage).
 const STAGE_PRIORITY: Record<CrmStage, SkillPriority> = {
   negotiation: "high",
   proposal:    "high",
@@ -49,7 +49,7 @@ const STAGE_PROBABILITY: Record<CrmStage, number> = {
   lost:        0,
 };
 
-// ─── Helpers de coerção ───────────────────────────────────────────────────────
+// ─── Coercion helpers ─────────────────────────────────────────────────────────
 
 function asString(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value.trim();
@@ -182,7 +182,7 @@ function buildFallback(input: CrmFollowupInput): CrmFollowupOutput {
   };
 }
 
-// ─── Extração de JSON da resposta ─────────────────────────────────────────────
+// ─── JSON extraction from the response ────────────────────────────────────────
 
 function extractJson(raw: string): Record<string, unknown> | null {
   if (!raw) return null;
@@ -209,7 +209,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

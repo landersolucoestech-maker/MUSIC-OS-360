@@ -1,9 +1,9 @@
 /**
  * packages/ai-skills/src/catalog-metadata-validator/contracts.ts
  *
- * Contratos da skill catalog-metadata-validator (version 1.0.0).
- * Validação de metadata de catálogo musical — obra (work) e fonograma (recording).
- * Fonte canônica compartilhada (web + api).
+ * Contracts of the catalog-metadata-validator skill (version 1.0.0).
+ * Music catalog metadata validation — work and phonogram (recording).
+ * Shared canonical source (web + api).
  */
 
 import type { SkillLanguage, SkillSeverity, SkillPriority } from "../shared/primitives";
@@ -43,7 +43,7 @@ export interface CatalogMetadataValidatorInput {
   language?: CatalogMetadataValidatorLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface CatalogFieldIssue {
   field: string;

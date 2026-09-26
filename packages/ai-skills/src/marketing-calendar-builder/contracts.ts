@@ -1,9 +1,9 @@
 /**
  * skills/marketing-calendar-builder/contracts/marketing-calendar-builder.contracts.ts
  *
- * Contratos da skill marketing-calendar-builder (version 1.0.0).
- * Construção de calendário de marketing musical (pré/lançamento/pós/institucional).
- * Usa os tipos compartilhados de domain/ai.types (SkillLanguage/SkillPriority).
+ * Contracts of the marketing-calendar-builder skill (version 1.0.0).
+ * Builds a music marketing calendar (pre-launch/launch/post-launch/institutional).
+ * Uses the shared domain/ai.types types (SkillLanguage/SkillPriority).
  */
 
 import type { SkillLanguage, SkillPriority } from "../shared/primitives";
@@ -40,7 +40,7 @@ export interface MarketingCalendarBuilderInput {
   language?: SkillLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface MarketingCalendarEntry {
   date: string;

@@ -1,14 +1,14 @@
 /**
  * skills/marketing-calendar-builder/parsers/marketing-calendar-builder.parser.ts
  *
- * Converte a resposta crua do provider em MarketingCalendarBuilderOutput estruturado.
- * Estratégia:
- *  1. tentar extrair e parsear JSON da resposta (com/sem cercas markdown, com texto à volta);
- *  2. coagir cada campo para o shape esperado, descartando valores inválidos;
- *  3. se nada for aproveitável, devolver fallback estruturado seguro que monta um
- *     calendário mínimo a partir de datas, plataformas e frequência (sinalizado
- *     como heurístico local no texto).
- * NUNCA lança — qualquer resposta malformada resulta num output válido.
+ * Converts the provider's raw response into a structured MarketingCalendarBuilderOutput.
+ * Strategy:
+ *  1. try to extract and parse JSON from the response (with/without markdown fences, with surrounding text);
+ *  2. coerce each field to the expected shape, dropping invalid values;
+ *  3. if nothing is usable, return a safe structured fallback that builds a
+ *     minimal calendar from dates, platforms and frequency (flagged in the text
+ *     as a local heuristic).
+ * NEVER throws — any malformed response yields a valid output.
  */
 
 import type {
@@ -28,7 +28,7 @@ const PRIORITIES: SkillPriority[] = ["low", "medium", "high", "critical"];
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_FALLBACK_ENTRIES = 90;
 
-// ─── Helpers de coerção ───────────────────────────────────────────────────────
+// ─── Coercion helpers ─────────────────────────────────────────────────────────
 
 function asString(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value.trim();
@@ -51,7 +51,7 @@ function asRecordArray(value: unknown): Record<string, unknown>[] {
   return value.filter((v): v is Record<string, unknown> => typeof v === "object" && v !== null);
 }
 
-/** Atribui uma string opcional só quando não vazia (preserva campos `?`). */
+/** Assigns an optional string only when non-empty (preserves `?` fields). */
 function setIfPresent<T extends object>(target: T, key: keyof T, value: string): void {
   if (value) (target as unknown as Record<string, unknown>)[key as string] = value;
 }
@@ -114,7 +114,7 @@ function mapProductionNeeds(value: unknown): MarketingProductionNeed[] {
   }));
 }
 
-// ─── Datas / frequência (fallback) ────────────────────────────────────────────
+// ─── Dates / frequency (fallback) ─────────────────────────────────────────────
 
 function parseDate(value: string): number | null {
   const ts = Date.parse(value);
@@ -148,7 +148,7 @@ function buildFallbackCalendar(input: MarketingCalendarBuilderInput): MarketingC
   const end = parseDate(input.endDate);
   const platforms = input.platforms.length > 0 ? input.platforms : ["instagram"];
 
-  // Sem datas parseáveis: uma única entrada na startDate informada.
+  // Without parseable dates: a single entry on the given startDate.
   if (start === null || end === null || end < start) {
     return [
       {
@@ -235,7 +235,7 @@ function buildFallback(input: MarketingCalendarBuilderInput): MarketingCalendarB
   };
 }
 
-// ─── Extração de JSON da resposta ─────────────────────────────────────────────
+// ─── JSON extraction from the response ────────────────────────────────────────
 
 function extractJson(raw: string): Record<string, unknown> | null {
   if (!raw) return null;
@@ -262,7 +262,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

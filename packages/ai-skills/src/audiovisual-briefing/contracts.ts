@@ -1,9 +1,9 @@
 /**
  * skills/audiovisual-briefing/contracts/audiovisual-briefing.contracts.ts
  *
- * Contratos da skill audiovisual-briefing (version 1.0.0).
- * Briefing de produção audiovisual para gravadora, produtora e artista.
- * Usa os tipos compartilhados de domain/ai.types (SkillLanguage/SkillSeverity/SkillPriority).
+ * Contracts of the audiovisual-briefing skill (version 1.0.0).
+ * Audiovisual production briefing for a record label, production company and artist.
+ * Uses the shared domain/ai.types types (SkillLanguage/SkillSeverity/SkillPriority).
  */
 
 import type { SkillLanguage, SkillSeverity, SkillPriority } from "../shared/primitives";
@@ -43,7 +43,7 @@ export interface AudiovisualBriefingInput {
   language?: SkillLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface AudiovisualScriptScene {
   scene: number;

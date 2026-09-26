@@ -1,9 +1,9 @@
 /**
  * packages/ai-skills/src/artist-profile-analysis/prompt.ts
  *
- * Prompts canónicos da skill artist-profile-analysis (version 1.0.0).
- * Especializado em desenvolvimento artístico, posicionamento e estratégia de carreira.
- * A resposta DEVE ser um único objeto JSON no formato ArtistProfileAnalysisOutput.
+ * Canonical prompts of the artist-profile-analysis skill (version 1.0.0).
+ * Specialized in artist development, positioning and career strategy.
+ * The response MUST be a single JSON object in the ArtistProfileAnalysisOutput shape.
  */
 
 import type { ArtistProfileAnalysisInput } from "./contracts";

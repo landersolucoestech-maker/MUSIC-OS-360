@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/audience-health/prompt.ts
  *
- * Prompts canônicos da skill audience-health (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato AudienceHealthOutput.
+ * Canonical prompts of the audience-health skill (version 1.0.0).
+ * The response MUST be a single JSON object in the AudienceHealthOutput shape.
  */
 
 import type { AudienceHealthInput } from "./contracts";

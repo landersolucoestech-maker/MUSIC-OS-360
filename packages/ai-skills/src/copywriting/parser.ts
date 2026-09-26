@@ -1,12 +1,12 @@
 /**
  * packages/ai-skills/src/copywriting/parser.ts
  *
- * Converte a resposta crua do provider em CopywritingOutput estruturado.
+ * Converts the provider's raw response into a structured CopywritingOutput.
  *
- * ENFORCEMENT ANTI-FABRICAÇÃO: `usedFacts` é sempre filtrado para conter
- * apenas itens que literalmente existem em input.sourceFacts — qualquer
- * "fato" que o modelo tenha inventado é descartado aqui, nunca repassado ao
- * chamador (o runner de automação não chama validateOutput).
+ * ANTI-FABRICATION ENFORCEMENT: `usedFacts` is always filtered to contain only
+ * items that literally exist in input.sourceFacts — any "fact" the model
+ * invented is dropped here and never passed to the caller (the automation
+ * runner does not call validateOutput).
  */
 
 import type { CopywritingInput, CopywritingOutput } from "./contracts";
@@ -54,7 +54,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }
@@ -74,7 +74,7 @@ export function parseCopywritingResponse(
   return {
     draftTitle: asString(json.draftTitle) || fallback.draftTitle,
     draftBody: asString(json.draftBody) || fallback.draftBody,
-    // ENFORCEMENT: descarta qualquer "fato" que não exista literalmente no input real.
+    // ENFORCEMENT: drops any "fact" that does not literally exist in the real input.
     usedFacts,
     isDraft: true,
   };

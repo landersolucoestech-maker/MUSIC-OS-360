@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/deals-crm/prompt.ts
  *
- * Prompts canônicos da skill deals-crm (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato DealsCrmOutput.
+ * Canonical prompts of the deals-crm skill (version 1.0.0).
+ * The response MUST be a single JSON object in the DealsCrmOutput shape.
  */
 
 import type { DealsCrmInput } from "./contracts";

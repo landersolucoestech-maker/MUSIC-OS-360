@@ -1,9 +1,9 @@
 /**
  * packages/ai-skills/src/project-planning/prompt.ts
  *
- * Prompts canónicos da skill project-planning (version 1.0.0).
- * Especializado em operação musical: gravadora, editora e produtora.
- * A resposta DEVE ser um único objeto JSON no formato ProjectPlanningOutput.
+ * Canonical prompts of the project-planning skill (version 1.0.0).
+ * Specialized in music operations: record labels, publishers and production companies.
+ * The response MUST be a single JSON object in the ProjectPlanningOutput shape.
  */
 
 import type { ProjectPlanningInput } from "./contracts";

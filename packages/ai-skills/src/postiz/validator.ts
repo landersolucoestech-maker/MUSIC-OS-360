@@ -1,12 +1,12 @@
 /**
  * packages/ai-skills/src/postiz/validator.ts
  *
- * Validação de entrada/saída. Usa o tipo compartilhado SkillValidationResult.
- * Valida também a garantia anti-fabricação: readyToRequestPublish não pode
- * ser true quando channelReadiness (input) não é "connected" ou hasCopy é
- * false — o parser força isso independentemente do que o modelo disser (o
- * runner de automação não chama validateOutput; esta validação é a rede de
- * segurança para quem chamar diretamente).
+ * Input/output validation. Uses the shared SkillValidationResult type.
+ * Also validates the anti-fabrication guarantee: readyToRequestPublish cannot be
+ * true when channelReadiness (input) is not "connected" or hasCopy is false —
+ * the parser enforces this regardless of what the model says (the automation
+ * runner does not call validateOutput; this validation is the safety net for
+ * direct callers).
  */
 
 import type { PostizInput, PostizOutput } from "./contracts";

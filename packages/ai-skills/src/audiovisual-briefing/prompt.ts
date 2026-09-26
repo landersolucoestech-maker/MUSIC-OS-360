@@ -1,9 +1,9 @@
 /**
  * skills/audiovisual-briefing/prompts/audiovisual-briefing.prompt.ts
  *
- * Prompts canónicos da skill audiovisual-briefing (version 1.0.0).
- * Especializado em produção audiovisual para gravadora, produtora e artista.
- * A resposta DEVE ser um único objeto JSON no formato AudiovisualBriefingOutput.
+ * Canonical prompts of the audiovisual-briefing skill (version 1.0.0).
+ * Specialized in audiovisual production for a record label, production company and artist.
+ * The response MUST be a single JSON object in the AudiovisualBriefingOutput shape.
  */
 
 import type { AudiovisualBriefingInput } from "./contracts";

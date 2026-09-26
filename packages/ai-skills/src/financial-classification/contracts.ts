@@ -1,9 +1,10 @@
 /**
  * packages/ai-skills/src/financial-classification/contracts.ts
  *
- * Contratos da skill financial-classification (version 1.0.0).
- * Classificação financeira de transações para gravadora, editora e produtora.
- * Fonte canônica compartilhada (web + api).
+ * Contracts of the financial-classification skill (version 1.0.0).
+ * Financial classification of transactions for record labels, publishers and
+ * production companies.
+ * Shared canonical source (web + api).
  */
 
 import type { SkillLanguage, SkillSeverity, SkillPriority } from "../shared/primitives";
@@ -44,7 +45,7 @@ export interface FinancialClassificationInput {
   language?: FinancialClassificationLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface LinkedEntitySuggestion {
   entityType?: LinkedEntityType;

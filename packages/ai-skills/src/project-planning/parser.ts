@@ -1,10 +1,10 @@
 /**
  * packages/ai-skills/src/project-planning/parser.ts
  *
- * Converte a resposta crua do provider em ProjectPlanningOutput estruturado.
- * Estratégia: extrai JSON (markdown/recorte/texto à volta) → coage campos →
- * fallback estruturado seguro (com marcador de proveniência heurística).
- * NUNCA lança — qualquer resposta malformada resulta num output válido.
+ * Converts the provider's raw response into a structured ProjectPlanningOutput.
+ * Strategy: extract JSON (markdown/cutout/surrounding text) → coerce fields →
+ * safe structured fallback (with a heuristic-provenance marker).
+ * NEVER throws — any malformed response yields a valid output.
  */
 
 import type {
@@ -22,7 +22,7 @@ import type {
 const PRIORITIES: TaskPriority[] = ["low", "medium", "high", "critical"];
 const SEVERITIES: RiskSeverity[] = ["low", "medium", "high", "critical"];
 
-// ─── Helpers de coerção ───────────────────────────────────────────────────────
+// ─── Coercion helpers ─────────────────────────────────────────────────────────
 
 function asString(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value.trim();
@@ -59,7 +59,7 @@ function asRecordArray(value: unknown): Record<string, unknown>[] {
   return value.filter((v): v is Record<string, unknown> => typeof v === "object" && v !== null);
 }
 
-// ─── Extração de JSON da resposta ─────────────────────────────────────────────
+// ─── JSON extraction from the response ────────────────────────────────────────
 
 function extractJson(raw: string): Record<string, unknown> | null {
   if (!raw) return null;
@@ -86,7 +86,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

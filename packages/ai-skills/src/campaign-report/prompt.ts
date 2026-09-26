@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/campaign-report/prompt.ts
  *
- * Prompts canônicos da skill campaign-report (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato CampaignReportOutput.
+ * Canonical prompts of the campaign-report skill (version 1.0.0).
+ * The response MUST be a single JSON object in the CampaignReportOutput shape.
  */
 
 import type { CampaignReportInput } from "./contracts";

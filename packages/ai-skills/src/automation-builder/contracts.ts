@@ -1,17 +1,16 @@
 /**
  * packages/ai-skills/src/automation-builder/contracts.ts
  *
- * Contratos da skill automation-builder (version 1.0.0).
- * Sugestões de melhoria para a configuração de automação do MusicChat
- * (menu de triagem, regras de escalonamento) a partir de padrões REAIS de
- * uso — nunca cria nem modifica `musicchat_automation_settings`
- * automaticamente. A skill produz apenas SUGESTÕES; qualquer mudança real
- * de configuração exige a ação humana explícita em
- * `PATCH /conversations/musicchat/automation/settings` (endpoint já
- * existente, inalterado por esta skill).
+ * Contracts of the automation-builder skill (version 1.0.0).
+ * Improvement suggestions for the MusicChat automation configuration (triage
+ * menu, escalation rules) based on REAL usage patterns — it never creates or
+ * modifies `musicchat_automation_settings` automatically. The skill produces
+ * SUGGESTIONS only; any real configuration change requires an explicit human
+ * action on `PATCH /conversations/musicchat/automation/settings` (an existing
+ * endpoint, unchanged by this skill).
  *
- * Execução: ON_DEMAND, disparada por ação explícita do usuário — nunca
- * automaticamente ao detectar mudança de dados.
+ * Execution: ON_DEMAND, triggered by an explicit user action — never
+ * automatically when a data change is detected.
  */
 
 import type { SkillLanguage, SkillSeverity } from "../shared/primitives";
@@ -29,7 +28,7 @@ export interface AutomationBuilderInput {
   language?: AutomationBuilderLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface AutomationBuilderMenuSuggestion {
   change: string;

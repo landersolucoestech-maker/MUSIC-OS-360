@@ -1,10 +1,10 @@
 /**
  * packages/ai-skills/src/release-checklist/parser.ts
  *
- * Converte a resposta crua do provider em ReleaseChecklistOutput estruturado.
- * Estratégia: extrai JSON (markdown/recorte/texto à volta) → coage → normaliza
- * readinessScore (0–100) e status → fallback seguro a partir dos booleanos.
- * NUNCA lança — qualquer resposta malformada resulta num output válido.
+ * Converts the provider's raw response into a structured ReleaseChecklistOutput.
+ * Strategy: extract JSON (markdown/cutout/surrounding text) → coerce → normalize
+ * readinessScore (0–100) and status → safe fallback from the booleans.
+ * NEVER throws — any malformed response yields a valid output.
  */
 
 import type {
@@ -24,7 +24,7 @@ const SEVERITIES: ItemSeverity[] = ["low", "medium", "high", "critical"];
 const PRIORITIES: ActionPriority[] = ["low", "medium", "high", "critical"];
 const STATUSES: ReleaseStatus[] = ["not-ready", "needs-attention", "almost-ready", "ready"];
 
-// ─── Helpers de coerção ───────────────────────────────────────────────────────
+// ─── Coercion helpers ─────────────────────────────────────────────────────────
 
 function asString(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value.trim();
@@ -80,7 +80,7 @@ function asStatus(value: unknown, score: number): ReleaseStatus {
   return (STATUSES as string[]).includes(v) ? (v as ReleaseStatus) : statusFromScore(score);
 }
 
-// ─── Extração de JSON da resposta ─────────────────────────────────────────────
+// ─── JSON extraction from the response ────────────────────────────────────────
 
 function extractJson(raw: string): Record<string, unknown> | null {
   if (!raw) return null;
@@ -107,7 +107,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }
@@ -158,7 +158,7 @@ function mapMetadataReview(value: unknown, fallback: MetadataReview): MetadataRe
   };
 }
 
-// ─── Score básico a partir dos booleanos de entrada ───────────────────────────
+// ─── Basic score from the input booleans ──────────────────────────────────────
 
 function computeBaselineScore(input: ReleaseChecklistInput): number {
   const flags = [

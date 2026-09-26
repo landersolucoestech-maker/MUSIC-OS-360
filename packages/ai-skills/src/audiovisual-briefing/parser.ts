@@ -1,13 +1,13 @@
 /**
  * skills/audiovisual-briefing/parsers/audiovisual-briefing.parser.ts
  *
- * Converte a resposta crua do provider em AudiovisualBriefingOutput estruturado.
- * Estratégia:
- *  1. tentar extrair e parsear JSON da resposta (com/sem cercas markdown, com texto à volta);
- *  2. coagir cada campo para o shape esperado, descartando valores inválidos;
- *  3. se nada for aproveitável, devolver fallback estruturado seguro com conceito
- *     básico, checklist mínimo e entregáveis conforme o contentType.
- * NUNCA lança — qualquer resposta malformada resulta num output válido.
+ * Converts the provider's raw response into a structured AudiovisualBriefingOutput.
+ * Strategy:
+ *  1. try to extract and parse JSON from the response (with/without markdown fences, with surrounding text);
+ *  2. coerce each field to the expected shape, dropping invalid values;
+ *  3. if nothing is usable, return a safe structured fallback with a basic
+ *     concept, a minimal checklist and deliverables matching the contentType.
+ * NEVER throws — any malformed response yields a valid output.
  */
 
 import type {
@@ -29,7 +29,7 @@ const SEVERITIES: SkillSeverity[] = ["low", "medium", "high", "critical"];
 const PRIORITIES: SkillPriority[] = ["low", "medium", "high", "critical"];
 const ASSET_TYPES: AudiovisualAssetType[] = ["image", "video", "audio", "document", "prop", "other"];
 
-// ─── Helpers de coerção ───────────────────────────────────────────────────────
+// ─── Coercion helpers ─────────────────────────────────────────────────────────
 
 function asString(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value.trim();
@@ -81,7 +81,7 @@ function asRecordArray(value: unknown): Record<string, unknown>[] {
   return value.filter((v): v is Record<string, unknown> => typeof v === "object" && v !== null);
 }
 
-/** Atribui uma string opcional só quando não vazia (preserva campos `?`). */
+/** Assigns an optional string only when non-empty (preserves `?` fields). */
 function setIfPresent<T extends object>(target: T, key: keyof T, value: string): void {
   if (value) (target as unknown as Record<string, unknown>)[key as string] = value;
 }
@@ -155,7 +155,7 @@ function mapRisks(value: unknown): AudiovisualRisk[] {
   }));
 }
 
-// ─── Entregáveis padrão por tipo de conteúdo (fallback) ───────────────────────
+// ─── Default deliverables per content type (fallback) ─────────────────────────
 
 const DELIVERABLE_BY_TYPE: Record<AudiovisualContentType, AudiovisualDeliverable> = {
   "music-video":   { name: "Videoclipe final",        format: "MP4 1080p 16:9", platform: "YouTube" },
@@ -194,7 +194,7 @@ function buildFallback(input: AudiovisualBriefingInput): AudiovisualBriefingOutp
   };
 }
 
-// ─── Extração de JSON da resposta ─────────────────────────────────────────────
+// ─── JSON extraction from the response ────────────────────────────────────────
 
 function extractJson(raw: string): Record<string, unknown> | null {
   if (!raw) return null;
@@ -221,7 +221,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

@@ -1,10 +1,10 @@
 /**
  * packages/ai-skills/src/artist-profile-analysis/contracts.ts
  *
- * Contratos da skill artist-profile-analysis (version 1.0.0).
- * Análise de perfil artístico — posicionamento, público, forças/fraquezas,
- * oportunidades, riscos, narrativa de marca e ações recomendadas.
- * Fonte canônica compartilhada (web + api).
+ * Contracts of the artist-profile-analysis skill (version 1.0.0).
+ * Artist profile analysis — positioning, audience, strengths/weaknesses,
+ * opportunities, risks, brand narrative and recommended actions.
+ * Shared canonical source (web + api).
  */
 
 import type { SkillLanguage, SkillSeverity, SkillPriority } from "../shared/primitives";
@@ -33,7 +33,7 @@ export interface ArtistProfileAnalysisInput {
   language?: ArtistProfileAnalysisLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface ArtistStrength {
   point: string;

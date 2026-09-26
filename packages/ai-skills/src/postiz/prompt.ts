@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/postiz/prompt.ts
  *
- * Prompts canônicos da skill postiz (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato PostizOutput.
+ * Canonical prompts of the postiz skill (version 1.0.0).
+ * The response MUST be a single JSON object in the PostizOutput shape.
  */
 
 import type { PostizInput } from "./contracts";

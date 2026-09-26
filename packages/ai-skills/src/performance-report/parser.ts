@@ -1,19 +1,18 @@
 /**
  * packages/ai-skills/src/performance-report/parser.ts
  *
- * Converte a resposta crua do provider em PerformanceReportOutput
- * estruturado.
+ * Converts the provider's raw response into a structured
+ * PerformanceReportOutput.
  *
- * ANTI-FABRICAÇÃO (crítico, igual ao princípio de campaign-report): o
- * runner de automação NÃO chama validateOutput — apenas validateInput. Por
- * isso, `monthlyBreakdown` é SEMPRE reconstruído aqui diretamente a partir
- * de `input.series` (dado real), IGNORANDO completamente o que o modelo
- * tenha devolvido nesse campo — o modelo nunca reproduz números
- * financeiros, apenas narrativa/classificação.
+ * ANTI-FABRICATION (critical, same principle as campaign-report): the
+ * automation runner does NOT call validateOutput — only validateInput. So
+ * `monthlyBreakdown` is ALWAYS rebuilt here straight from `input.series` (real
+ * data), COMPLETELY IGNORING whatever the model returned in that field — the
+ * model never reproduces financial numbers, only narrative/classification.
  *
- * Estratégia geral (igual às demais skills do pacote): extrai JSON
- * (com/sem cercas markdown), coage cada campo, cai para fallback heurístico
- * seguro quando malformado. NUNCA lança.
+ * General strategy (same as the package's other skills): extracts JSON
+ * (with/without markdown fences), coerces each field, and falls back to a safe
+ * heuristic output when malformed. NEVER throws.
  */
 
 import type {
@@ -114,7 +113,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }
@@ -131,7 +130,7 @@ export function parsePerformanceReportResponse(
   return {
     periodSummary: asString(json.periodSummary) || fallback.periodSummary,
     trend: asTrend(json.trend),
-    // ENFORCEMENT: sempre reconstruído do input real, nunca do modelo.
+    // ENFORCEMENT: always rebuilt from the real input, never from the model.
     monthlyBreakdown: buildMonthlyBreakdown(input),
     keyObservations: mapObservations(json.keyObservations),
     recommendedActions: mapActions(json.recommendedActions),

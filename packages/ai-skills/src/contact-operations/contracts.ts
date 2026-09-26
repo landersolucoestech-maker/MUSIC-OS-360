@@ -1,20 +1,20 @@
 /**
  * packages/ai-skills/src/contact-operations/contracts.ts
  *
- * Contratos da skill contact-operations (version 1.0.0).
- * Checklist operacional de onboarding para um CLIENTE recém-criado a partir
- * da conversão de um lead — momento do ciclo de vida distinto do já coberto
- * por crm-followup (que atua em `lead.created`, antes da conversão,
- * sugerindo como fechar o negócio). contact-operations atua DEPOIS da
- * conversão, em `client.created`, sugerindo como operacionalizar a nova
- * relação com o cliente (ClientEntity/tabela `clients` — "Contato" e
- * "Cliente" são a mesma entidade física, ver contacts.service.ts).
+ * Contracts of the contact-operations skill (version 1.0.0).
+ * Operational onboarding checklist for a CLIENT newly created from a lead
+ * conversion — a lifecycle moment distinct from the one already covered by
+ * crm-followup (which acts on `lead.created`, before conversion, suggesting how
+ * to close the deal). contact-operations acts AFTER conversion, on
+ * `client.created`, suggesting how to operationalize the new client relationship
+ * (ClientEntity/`clients` table — "Contato" and "Cliente" are the same physical
+ * entity, see contacts.service.ts).
  *
- * Fonte de dados: apenas campos reais e persistidos de ClientEntity
- * (nome, categoria, tipo_pessoa, responsavel_nome). NÃO depende de
- * ContactTimelineService (módulo contact-timeline — Map em memória, nunca
- * persistido, não é fonte de dado real) nem de ClientEntity.interacoes
- * (coluna declarada mas nunca escrita por nenhum fluxo real).
+ * Data source: only real, persisted ClientEntity fields (nome, categoria,
+ * tipo_pessoa, responsavel_nome). It does NOT depend on ContactTimelineService
+ * (contact-timeline module — an in-memory Map, never persisted, not a real data
+ * source) nor on ClientEntity.interacoes (a declared column no real flow ever
+ * writes).
  */
 
 import type { SkillLanguage, SkillPriority } from "../shared/primitives";
@@ -33,7 +33,7 @@ export interface ContactOperationsInput {
   language?: ContactOperationsLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface ContactOperationsAction {
   action: string;

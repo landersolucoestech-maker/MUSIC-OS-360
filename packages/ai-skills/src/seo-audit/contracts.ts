@@ -1,29 +1,28 @@
 /**
  * packages/ai-skills/src/seo-audit/contracts.ts
  *
- * Contratos da skill seo-audit (version 1.0.0).
- * Auditoria de higiene de link/discoverability de uma campanha de mídia
- * paga JÁ EM RASCUNHO no Campaign Builder real
- * (MarketingCampaignBuilderService/CampaignEntity type='marketing_builder')
- * — o único "público-alvo com URL configurável" real encontrado no produto
- * (destinationUrl em CampaignBuilderPayload).
+ * Contracts of the seo-audit skill (version 1.0.0).
+ * Link hygiene/discoverability audit of a paid media campaign ALREADY IN DRAFT
+ * in the real Campaign Builder (MarketingCampaignBuilderService/CampaignEntity
+ * type='marketing_builder') — the only real "target with a configurable URL"
+ * found in the product (destinationUrl in CampaignBuilderPayload).
  *
- * Escopo deliberadamente limitado a STATIC_ANALYSIS sobre CAMPOS JÁ
- * CONHECIDOS do produto — nunca faz fetch HTTP de uma URL externa
- * arbitrária (destinationUrl é 100% fornecida pelo usuário; buscar seu
- * conteúdo ao vivo exigiria um guard anti-SSRF de propósito geral que não
- * existe hoje — core/resilience/safe-url.ts só suporta allowlist de hosts
- * fixos de integrações conhecidas, não URLs arbitrárias de usuário — construir
- * isso com segurança está fora do escopo desta mudança).
+ * Scope deliberately limited to STATIC_ANALYSIS over fields the product ALREADY
+ * KNOWS — it never does an HTTP fetch of an arbitrary external URL
+ * (destinationUrl is 100% user-supplied; fetching its content live would need a
+ * general-purpose anti-SSRF guard that does not exist today —
+ * core/resilience/safe-url.ts only supports an allowlist of fixed hosts of known
+ * integrations, not arbitrary user URLs — building that safely is out of scope
+ * for this change).
  *
- * EXTERNAL_MEASUREMENT (ranking, volume de busca, domain authority, tráfego,
- * posição em SERP, backlinks, Core Web Vitals, status de indexação) NUNCA é
- * produzido — não há provedor real conectado para nenhuma dessas métricas
- * (confirmado: "Search Console" só existe como rótulo de UI em
- * Configuracoes.tsx, zero capacidade de backend). Todo campo dessa
- * categoria é reportado explicitamente como "unavailable".
+ * EXTERNAL_MEASUREMENT (ranking, search volume, domain authority, traffic, SERP
+ * position, backlinks, Core Web Vitals, indexing status) is NEVER produced —
+ * there is no real provider connected for any of these metrics (confirmed:
+ * "Search Console" only exists as a UI label in Configuracoes.tsx, zero backend
+ * capability). Every field in that category is explicitly reported as
+ * "unavailable".
  *
- * Execução: ON_DEMAND + STALE_REFRESH (mesma semântica de audience-health).
+ * Execution: ON_DEMAND + STALE_REFRESH (same semantics as audience-health).
  */
 
 import type { SkillLanguage, SkillSeverity } from "../shared/primitives";
@@ -45,7 +44,7 @@ export interface SeoAuditInput {
   language?: SeoAuditLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface SeoAuditCheck {
   subject: string;

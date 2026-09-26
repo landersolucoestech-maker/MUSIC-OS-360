@@ -1,14 +1,14 @@
 /**
  * packages/ai-skills/src/financial-classification/parser.ts
  *
- * Converte a resposta crua do provider em FinancialClassificationOutput estruturado.
- * Estratégia:
- *  1. tentar extrair e parsear JSON da resposta (com/sem cercas markdown, com texto à volta);
- *  2. coagir cada campo para o shape esperado, descartando valores inválidos;
- *  3. normalizar confidence para 0–1;
- *  4. se nada for aproveitável, devolver fallback estruturado seguro que infere
- *     categoria e centro de custo por palavras-chave da description.
- * NUNCA lança — qualquer resposta malformada resulta num output válido.
+ * Converts the provider's raw response into a structured FinancialClassificationOutput.
+ * Strategy:
+ *  1. try to extract and parse JSON from the response (with/without markdown fences, with surrounding text);
+ *  2. coerce each field to the expected shape, dropping invalid values;
+ *  3. normalize confidence to 0–1;
+ *  4. if nothing is usable, return a safe structured fallback that infers the
+ *     category and cost center from description keywords.
+ * NEVER throws — any malformed response yields a valid output.
  */
 
 import type {
@@ -28,7 +28,7 @@ const RECURRENCES: FinancialRecurrence[] = ["one-time", "weekly", "monthly", "qu
 const COST_CENTERS = ["marketing", "audiovisual", "legal", "distribution", "royalties", "administrative", "commercial", "other"];
 const ENTITY_TYPES: LinkedEntityType[] = ["artist", "project", "release", "contract", "campaign", "supplier", "client", "none"];
 
-// ─── Helpers de coerção ───────────────────────────────────────────────────────
+// ─── Coercion helpers ─────────────────────────────────────────────────────────
 
 function asString(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value.trim();
@@ -93,7 +93,7 @@ function normalizeConfidence(value: unknown, fallback: number): number {
   return Math.max(0, Math.min(1, n));
 }
 
-// ─── Inferência por palavras-chave (fallback) ─────────────────────────────────
+// ─── Keyword inference (fallback) ─────────────────────────────────────────────
 
 interface KeywordRule {
   test: RegExp;
@@ -151,7 +151,7 @@ function mapLinkedEntity(value: unknown, fallback: LinkedEntitySuggestion): Link
   const reason = asString(m.reason);
   if (reason) suggestion.reason = reason;
 
-  // Se nada aproveitável, devolve o fallback inferido do input.
+  // When nothing is usable, return the fallback inferred from the input.
   return Object.keys(suggestion).length > 0 ? suggestion : fallback;
 }
 
@@ -193,7 +193,7 @@ function buildFallback(input: FinancialClassificationInput): FinancialClassifica
   };
 }
 
-// ─── Extração de JSON da resposta ─────────────────────────────────────────────
+// ─── JSON extraction from the response ────────────────────────────────────────
 
 function extractJson(raw: string): Record<string, unknown> | null {
   if (!raw) return null;
@@ -220,7 +220,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

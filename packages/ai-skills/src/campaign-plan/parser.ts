@@ -1,16 +1,16 @@
 /**
  * packages/ai-skills/src/campaign-plan/parser.ts
  *
- * Converte a resposta crua do provider em CampaignPlanOutput estruturado.
- * Estratégia:
- *  1. tentar extrair e parsear JSON da resposta (com/sem cercas markdown, com texto à volta);
- *  2. coagir cada campo para o shape esperado, descartando valores inválidos;
- *  3. normalizar suggestedBudgetSharePercent por canal para somar 100 quando a
- *     soma bruta do modelo divergir;
- *  4. se nada for aproveitável, devolver fallback estruturado seguro montado a
- *     partir de campaignName/campaignType/objective (sinalizado como
- *     planejamento heurístico local no texto).
- * NUNCA lança — qualquer resposta malformada resulta num output válido.
+ * Converts the provider's raw response into a structured CampaignPlanOutput.
+ * Strategy:
+ *  1. try to extract and parse JSON from the response (with/without markdown fences, with surrounding text);
+ *  2. coerce each field to the expected shape, dropping invalid values;
+ *  3. normalize suggestedBudgetSharePercent per channel to sum to 100 when the
+ *     model's raw sum diverges;
+ *  4. if nothing is usable, return a safe structured fallback built from
+ *     campaignName/campaignType/objective (flagged in the text as local
+ *     heuristic planning).
+ * NEVER throws — any malformed response yields a valid output.
  */
 
 import type {
@@ -28,7 +28,7 @@ const PRIORITIES: SkillPriority[] = ["low", "medium", "high", "critical"];
 
 const HEURISTIC_NOTE = "Plano heurístico local: o planejamento detalhado do modelo não foi executado. Revise antes de operacionalizar.";
 
-// ─── Helpers de coerção ───────────────────────────────────────────────────────
+// ─── Coercion helpers ─────────────────────────────────────────────────────────
 
 function asString(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value.trim();
@@ -73,12 +73,12 @@ function mapChannels(value: unknown): CampaignPlanChannel[] {
 
   const sum = raw.reduce((acc, c) => acc + c.suggestedBudgetSharePercent, 0);
   if (sum <= 0) {
-    // Distribui igualmente quando o modelo não forneceu percentuais utilizáveis.
+    // Splits evenly when the model provided no usable percentages.
     const equalShare = Math.round((100 / raw.length) * 100) / 100;
     return raw.map((c) => ({ ...c, suggestedBudgetSharePercent: equalShare }));
   }
   if (Math.round(sum) !== 100) {
-    // Renormaliza proporcionalmente para somar exatamente 100.
+    // Renormalizes proportionally to sum to exactly 100.
     return raw.map((c) => ({
       ...c,
       suggestedBudgetSharePercent: Math.round((c.suggestedBudgetSharePercent / sum) * 10000) / 100,
@@ -110,7 +110,7 @@ function mapRisks(value: unknown): CampaignPlanRisk[] {
   })).filter((r) => r.risk.length > 0);
 }
 
-// ─── Fallback heurístico ───────────────────────────────────────────────────────
+// ─── Heuristic fallback ────────────────────────────────────────────────────────
 
 function buildFallback(input: CampaignPlanInput): CampaignPlanOutput {
   return {
@@ -127,7 +127,7 @@ function buildFallback(input: CampaignPlanInput): CampaignPlanOutput {
   };
 }
 
-// ─── Extração de JSON da resposta ─────────────────────────────────────────────
+// ─── JSON extraction from the response ────────────────────────────────────────
 
 function extractJson(raw: string): Record<string, unknown> | null {
   if (!raw) return null;
@@ -154,7 +154,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

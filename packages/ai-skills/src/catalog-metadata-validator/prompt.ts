@@ -1,9 +1,9 @@
 /**
  * packages/ai-skills/src/catalog-metadata-validator/prompt.ts
  *
- * Prompts canónicos da skill catalog-metadata-validator (version 1.0.0).
- * Especializado em metadata de catálogo musical: obra (work) e fonograma (recording).
- * A resposta DEVE ser um único objeto JSON no formato CatalogMetadataValidatorOutput.
+ * Canonical prompts of the catalog-metadata-validator skill (version 1.0.0).
+ * Specialized in music catalog metadata: work and phonogram (recording).
+ * The response MUST be a single JSON object in the CatalogMetadataValidatorOutput shape.
  */
 
 import type { CatalogMetadataValidatorInput } from "./contracts";

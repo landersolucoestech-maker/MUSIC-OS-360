@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/seo-audit/prompt.ts
  *
- * Prompts canônicos da skill seo-audit (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato SeoAuditOutput.
+ * Canonical prompts of the seo-audit skill (version 1.0.0).
+ * The response MUST be a single JSON object in the SeoAuditOutput shape.
  */
 
 import type { SeoAuditInput } from "./contracts";

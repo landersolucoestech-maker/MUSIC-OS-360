@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/analytics-tracking/prompt.ts
  *
- * Prompts canônicos da skill analytics-tracking (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato AnalyticsTrackingOutput.
+ * Canonical prompts of the analytics-tracking skill (version 1.0.0).
+ * The response MUST be a single JSON object in the AnalyticsTrackingOutput shape.
  */
 
 import type { AnalyticsTrackingInput } from "./contracts";

@@ -1,17 +1,17 @@
 /**
  * packages/ai-skills/src/campaign-plan/contracts.ts
  *
- * Contratos da skill campaign-plan (version 1.0.0).
- * Plano tático inicial de uma campanha de marketing recém-criada — canais,
- * alocação de orçamento, marcos de cronograma e tarefas sugeridas.
- * Fonte canônica compartilhada (web + api).
+ * Contracts of the campaign-plan skill (version 1.0.0).
+ * Initial tactical plan of a newly created marketing campaign — channels,
+ * budget allocation, schedule milestones and suggested tasks.
+ * Shared canonical source (web + api).
  *
- * Distinção de escopo dentro do cluster de campanhas:
- *   campaign-plan     (campaign.created) — plano tático inicial, ANTES de a
- *                      campanha começar a rodar.
- *   campaign-strategy (campaign.started) — direção estratégica/posicionamento
- *                      no momento em que a campanha entra em execução.
- *   campaign-report   (campaign.ended)   — retrospectiva de execução ao final.
+ * Scope distinction within the campaigns cluster:
+ *   campaign-plan     (campaign.created) — initial tactical plan, BEFORE the
+ *                      campaign starts running.
+ *   campaign-strategy (campaign.started) — strategic direction/positioning
+ *                      when the campaign goes into execution.
+ *   campaign-report   (campaign.ended)   — execution retrospective at the end.
  */
 
 import type { SkillLanguage, SkillPriority, SkillSeverity } from "../shared/primitives";
@@ -34,7 +34,7 @@ export interface CampaignPlanInput {
   language?: CampaignPlanLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface CampaignPlanChannel {
   channel: string;

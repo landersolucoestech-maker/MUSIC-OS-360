@@ -1,21 +1,20 @@
 /**
  * packages/ai-skills/src/social-content/contracts.ts
  *
- * Contratos da skill social-content (version 1.0.0).
- * Fonte canônica compartilhada (web + api).
+ * Contracts of the social-content skill (version 1.0.0).
+ * Shared canonical source (web + api).
  *
- * Escopo: `marketing_content_posts` é uma entidade estritamente de conteúdo
- * ORGÂNICO (canais: instagram/facebook/tiktok/youtube/twitter/threads — ver
- * MARKETING_CONTENT_CHANNELS em marketing-contents.dto.ts). Não existe hoje
- * nenhuma entidade de mídia paga no schema — por isso `ad-creative` e
- * `paid-ads` NÃO reusam este contrato (ver NEEDS_PRODUCT_DECISION no
- * relatório da missão).
+ * Scope: `marketing_content_posts` is a strictly ORGANIC content entity
+ * (channels: instagram/facebook/tiktok/youtube/twitter/threads — see
+ * MARKETING_CONTENT_CHANNELS in marketing-contents.dto.ts). There is no paid
+ * media entity in the schema today — so `ad-creative` and `paid-ads` do NOT
+ * reuse this contract (see NEEDS_PRODUCT_DECISION in the mission report).
  *
- * Não-objetivo crítico: esta skill NUNCA gera o `copy` publicado nem altera
- * status de publicação. O usuário já fornece `copy` na criação do post
- * (campo obrigatório). A saída daqui é uma SUGESTÃO (variações de legenda,
- * hashtags, checklist do canal) gravada em metadata — nunca aplicada
- * automaticamente ao post nem tratada como publicada (generated != published).
+ * Critical non-goal: this skill NEVER generates the published `copy` or changes
+ * the publication status. The user already provides `copy` when creating the
+ * post (a required field). The output here is a SUGGESTION (caption variations,
+ * hashtags, channel checklist) stored in metadata — never applied to the post
+ * automatically or treated as published (generated != published).
  */
 
 import type { SkillLanguage } from "../shared/primitives";
@@ -36,7 +35,7 @@ export interface SocialContentInput {
   language?: SocialContentLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface SocialContentCaptionVariant {
   variant: string;

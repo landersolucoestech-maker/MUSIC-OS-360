@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/paid-ads/prompt.ts
  *
- * Prompts canônicos da skill paid-ads (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato PaidAdsOutput.
+ * Canonical prompts of the paid-ads skill (version 1.0.0).
+ * The response MUST be a single JSON object in the PaidAdsOutput shape.
  */
 
 import type { PaidAdsInput } from "./contracts";

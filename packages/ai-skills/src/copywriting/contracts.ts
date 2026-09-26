@@ -1,32 +1,30 @@
 /**
  * packages/ai-skills/src/copywriting/contracts.ts
  *
- * Contratos da skill copywriting (version 1.0.0).
- * Rascunho de texto de marketing GENÉRICO (não estruturado em campos
- * específicos de canal/plataforma) para uma MarketingTaskEntity real cujo
- * `kind` indica um tipo de trabalho textual (copywriting, email, press,
- * etc. — catálogo real em operational-lists.defaults.ts).
+ * Contracts of the copywriting skill (version 1.0.0).
+ * Draft of GENERIC marketing text (not structured into channel/platform-specific
+ * fields) for a real MarketingTaskEntity whose `kind` indicates a textual work
+ * type (copywriting, email, press, etc. — the real catalog is in
+ * operational-lists.defaults.ts).
  *
- * Distinção de escopo (nunca duplicada):
- *   social-content — copy estruturada para UM POST de conteúdo social já
- *                     existente (headline/cta não aplicável; foco em
- *                     variações de legenda para um canal específico).
- *   ad-creative     — copy estruturada (headline/primaryCopy/description/cta)
- *                     para UM criativo de anúncio pago, platform+placement
- *                     específicos.
- *   copywriting     — rascunho de texto LIVRE (prosa, não estruturado em
- *                     campos de canal) para uma TAREFA de marketing (email,
- *                     press release, landing copy, etc.) — a fonte é a
- *                     TAREFA (marketing_tasks), não um post nem um anúncio.
+ * Scope distinction (never duplicated):
+ *   social-content — structured copy for ONE existing social content POST
+ *                     (headline/cta not applicable; focus on caption
+ *                     variations for a specific channel).
+ *   ad-creative     — structured copy (headline/primaryCopy/description/cta)
+ *                     for ONE paid ad creative, specific platform+placement.
+ *   copywriting     — FREE-FORM text draft (prose, not structured into channel
+ *                     fields) for a marketing TASK (email, press release,
+ *                     landing copy, etc.) — the source is the TASK
+ *                     (marketing_tasks), not a post or an ad.
  *
- * ANTI-FABRICAÇÃO: todo fato sobre artista/release/campanha usado no texto
- * deve vir literalmente do input (sourceFacts) — a skill nunca inventa
- * datas, números, prêmios ou afirmações sobre o artista/projeto. O texto
- * gerado é sempre marcado como RASCUNHO — nunca campanha publicada ou
- * resultado real.
+ * ANTI-FABRICATION: every fact about the artist/release/campaign used in the
+ * text must come literally from the input (sourceFacts) — the skill never
+ * invents dates, numbers, awards or claims about the artist/project. The
+ * generated text is always marked as a DRAFT — never a published campaign or a
+ * real result.
  *
- * Execução: ON_DEMAND, disparada pelo usuário na tela da tarefa de
- * marketing.
+ * Execution: ON_DEMAND, triggered by the user on the marketing task screen.
  */
 
 import type { SkillLanguage } from "../shared/primitives";

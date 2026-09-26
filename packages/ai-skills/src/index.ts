@@ -1,11 +1,11 @@
 /**
  * packages/ai-skills/src/index.ts
  *
- * Barrel raiz do pacote compartilhado de AI Skills (lógica pura).
- * Fonte canônica consumível por apps/web e apps/api.
+ * Root barrel of the shared AI Skills package (pure logic).
+ * Canonical source consumable by apps/web and apps/api.
  *
- * Fase atual: project-planning e release-checklist (automações nativas).
- * As demais skills serão migradas incrementalmente.
+ * Current phase: project-planning and release-checklist (native automations).
+ * The other skills will be migrated incrementally.
  */
 
 export * from "./shared/primitives";

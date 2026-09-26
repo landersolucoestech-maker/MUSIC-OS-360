@@ -1,7 +1,7 @@
 /**
  * packages/ai-skills/src/audience-health/validator.ts
  *
- * Validação de entrada/saída. Usa o tipo compartilhado SkillValidationResult.
+ * Input/output validation. Uses the shared SkillValidationResult type.
  */
 
 import type { AudienceHealthInput, AudienceHealthOutput } from "./contracts";

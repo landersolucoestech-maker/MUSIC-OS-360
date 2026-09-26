@@ -1,10 +1,10 @@
 /**
  * packages/ai-skills/src/performance-report/prompt.ts
  *
- * Prompts canônicos da skill performance-report (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato PerformanceReportOutput
- * (exceto monthlyBreakdown, que o parser SEMPRE reconstrói a partir do
- * input real, ignorando o que o modelo devolver nesse campo).
+ * Canonical prompts of the performance-report skill (version 1.0.0).
+ * The response MUST be a single JSON object in the PerformanceReportOutput shape
+ * (except monthlyBreakdown, which the parser ALWAYS rebuilds from the real
+ * input, ignoring whatever the model returns in that field).
  */
 
 import type { PerformanceReportInput } from "./contracts";

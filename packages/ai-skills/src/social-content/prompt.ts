@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/social-content/prompt.ts
  *
- * Prompts canônicos da skill social-content (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato SocialContentOutput.
+ * Canonical prompts of the social-content skill (version 1.0.0).
+ * The response MUST be a single JSON object in the SocialContentOutput shape.
  */
 
 import type { SocialContentInput } from "./contracts";

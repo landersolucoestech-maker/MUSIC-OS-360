@@ -1,11 +1,10 @@
 /**
  * packages/ai-skills/src/paid-ads/parser.ts
  *
- * Converte a resposta crua do provider em PaidAdsOutput estruturado.
- * Estratégia (igual a campaign-plan/parser.ts): extrai JSON, coage campos,
- * RENORMALIZA platformSplit para somar exatamente 100 quando o modelo
- * divergir, cai para fallback heurístico seguro quando malformado. NUNCA
- * lança.
+ * Converts the provider's raw response into a structured PaidAdsOutput.
+ * Strategy (same as campaign-plan/parser.ts): extracts JSON, coerces fields,
+ * RENORMALIZES platformSplit to sum to exactly 100 when the model diverges, and
+ * falls back to a safe heuristic output when malformed. NEVER throws.
  */
 
 import type {
@@ -56,7 +55,7 @@ function mapPlatformSplit(value: unknown, knownPlatforms: string[]): PaidAdsPlat
     .filter((v) => v.platform.length > 0);
 
   if (raw.length === 0) {
-    // Fallback: distribui igualmente entre as plataformas conhecidas do input.
+    // Fallback: splits evenly across the platforms known from the input.
     if (knownPlatforms.length === 0) return [];
     const equalShare = Math.round((100 / knownPlatforms.length) * 100) / 100;
     return knownPlatforms.map((platform) => ({ platform, percentageShare: equalShare, rationale: "" }));
@@ -120,7 +119,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

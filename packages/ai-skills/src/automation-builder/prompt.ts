@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/automation-builder/prompt.ts
  *
- * Prompts canônicos da skill automation-builder (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato AutomationBuilderOutput.
+ * Canonical prompts of the automation-builder skill (version 1.0.0).
+ * The response MUST be a single JSON object in the AutomationBuilderOutput shape.
  */
 
 import type { AutomationBuilderInput } from "./contracts";

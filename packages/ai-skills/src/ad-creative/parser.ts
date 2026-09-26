@@ -1,10 +1,10 @@
 /**
  * packages/ai-skills/src/ad-creative/parser.ts
  *
- * Converte a resposta crua do provider em AdCreativeOutput estruturado.
- * Estratégia geral (igual às demais skills do pacote): extrai JSON
- * (com/sem cercas markdown), coage cada campo, cai para fallback heurístico
- * seguro quando malformado. NUNCA lança.
+ * Converts the provider's raw response into a structured AdCreativeOutput.
+ * General strategy (same as the package's other skills): extracts JSON
+ * (with/without markdown fences), coerces each field, and falls back to a safe
+ * heuristic output when malformed. NEVER throws.
  */
 
 import type {
@@ -91,7 +91,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

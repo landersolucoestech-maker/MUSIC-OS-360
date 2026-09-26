@@ -1,20 +1,20 @@
 /**
  * packages/ai-skills/src/performance-report/contracts.ts
  *
- * Contratos da skill performance-report (version 1.0.0).
- * Retrospectiva narrativa de desempenho financeiro (receita/despesa mensal)
- * a partir da série REAL já calculada por
- * AnalyticsService.getRevenueOverview() — cada valor de `monthlyBreakdown`
- * na saída é ECOADO diretamente do input pelo parser, nunca reproduzido
- * pelo modelo (elimina risco de o modelo "arredondar"/alucinar um número).
- * O modelo só produz texto narrativo e classificações qualitativas.
+ * Contracts of the performance-report skill (version 1.0.0).
+ * Narrative retrospective of financial performance (monthly revenue/expense)
+ * from the REAL series already computed by AnalyticsService.getRevenueOverview()
+ * — every `monthlyBreakdown` value in the output is ECHOED straight from the
+ * input by the parser, never reproduced by the model (removing the risk of the
+ * model "rounding"/hallucinating a number). The model only produces narrative
+ * text and qualitative classifications.
  *
- * Distinção de escopo: campaign-report é a retrospectiva de UMA campanha
- * específica ao encerrar; performance-report é a retrospectiva financeira
- * agregada do NEGÓCIO inteiro em um período — não se sobrepõem.
+ * Scope distinction: campaign-report is the retrospective of ONE specific
+ * campaign when it closes; performance-report is the aggregated financial
+ * retrospective of the WHOLE business over a period — they do not overlap.
  *
- * Execução: ON_DEMAND, período explícito (parâmetro `months`) — sem
- * stale-refresh, já que peridos diferentes produzem relatórios diferentes.
+ * Execution: ON_DEMAND, explicit period (`months` parameter) — no
+ * stale-refresh, since different periods produce different reports.
  */
 
 import type { SkillLanguage, SkillPriority } from "../shared/primitives";
@@ -37,7 +37,7 @@ export interface PerformanceReportInput {
   language?: PerformanceReportLanguage;
 }
 
-// ─── Blocos de saída ──────────────────────────────────────────────────────────
+// ─── Output blocks ────────────────────────────────────────────────────────────
 
 export interface PerformanceReportMonthlyBreakdown {
   month: string;

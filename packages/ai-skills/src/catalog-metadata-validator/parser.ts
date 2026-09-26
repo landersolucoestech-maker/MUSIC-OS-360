@@ -1,14 +1,14 @@
 /**
  * packages/ai-skills/src/catalog-metadata-validator/parser.ts
  *
- * Converte a resposta crua do provider em CatalogMetadataValidatorOutput estruturado.
- * Estratégia:
- *  1. tentar extrair e parsear JSON da resposta (com/sem cercas markdown, com texto à volta);
- *  2. coagir cada campo para o shape esperado, descartando valores inválidos;
- *  3. normalizar score para 0–100;
- *  4. se nada for aproveitável, devolver fallback estruturado seguro montado a
- *     partir do input (normalizedMetadata reconstruída + score básico calculado).
- * NUNCA lança — qualquer resposta malformada resulta num output válido.
+ * Converts the provider's raw response into a structured CatalogMetadataValidatorOutput.
+ * Strategy:
+ *  1. try to extract and parse JSON from the response (with/without markdown fences, with surrounding text);
+ *  2. coerce each field to the expected shape, dropping invalid values;
+ *  3. normalize score to 0–100;
+ *  4. if nothing is usable, return a safe structured fallback built from the
+ *     input (rebuilt normalizedMetadata + a computed basic score).
+ * NEVER throws — any malformed response yields a valid output.
  */
 
 import type {
@@ -27,7 +27,7 @@ import type { SkillSeverity, SkillPriority } from "../shared/primitives";
 const SEVERITIES: SkillSeverity[] = ["low", "medium", "high", "critical"];
 const PRIORITIES: SkillPriority[] = ["low", "medium", "high", "critical"];
 
-// ─── Helpers de coerção ───────────────────────────────────────────────────────
+// ─── Coercion helpers ─────────────────────────────────────────────────────────
 
 function asString(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value.trim();
@@ -182,7 +182,7 @@ function mapNormalizedMetadata(
   return normalized;
 }
 
-// ─── normalizedMetadata + score básico a partir do input ──────────────────────
+// ─── normalizedMetadata + basic score from the input ──────────────────────────
 
 function buildNormalizedFromInput(input: CatalogMetadataValidatorInput): NormalizedMetadata {
   const normalized: NormalizedMetadata = {
@@ -216,7 +216,7 @@ function buildFallback(
   const missingFields: string[] = [];
   let score = 100;
 
-  // Campos obrigatórios ausentes
+  // Missing required fields
   if (!input.title?.trim()) {
     errors.push({ field: "title", message: "Título é obrigatório.", severity: "critical" });
     missingFields.push("title");
@@ -255,8 +255,8 @@ function buildFallback(
     }
   }
 
-  // O fallback valida apenas presença básica — não validade jurídica/técnica
-  // completa. Por isso o score é limitado a no máximo 85 (nunca 100).
+  // The fallback validates basic presence only — not full legal/technical
+  // validity. So the score is capped at 85 (never 100).
   score = Math.max(0, Math.min(85, score));
 
   const recommendedFixes: RecommendedFix[] = [
@@ -264,7 +264,7 @@ function buildFallback(
     ...warnings.map((w) => ({ action: `Revisar: ${w.message}`, priority: "medium" as SkillPriority, field: w.field })),
   ];
 
-  // Marcador explícito de proveniência heurística — sempre presente no fallback.
+  // Explicit heuristic-provenance marker — always present in the fallback.
   warnings.push({
     field: "fallback",
     severity: "medium",
@@ -273,8 +273,8 @@ function buildFallback(
   });
 
   return {
-    // isValid só é true sem erros E com score mínimo; o warning de fallback
-    // permanece para impedir leitura como aprovação real do catálogo.
+    // isValid is true only with no errors AND a minimum score; the fallback warning
+    // stays so the result is never read as a real catalog approval.
     isValid: errors.length === 0 && score >= 70,
     score,
     errors,
@@ -287,7 +287,7 @@ function buildFallback(
   };
 }
 
-// ─── Extração de JSON da resposta ─────────────────────────────────────────────
+// ─── JSON extraction from the response ────────────────────────────────────────
 
 function extractJson(raw: string): Record<string, unknown> | null {
   if (!raw) return null;
@@ -314,7 +314,7 @@ function tryParse(text: string): Record<string, unknown> | null {
       return parsed as Record<string, unknown>;
     }
   } catch {
-    // ignora — resposta não era JSON válido
+    // ignore — the response was not valid JSON
   }
   return null;
 }

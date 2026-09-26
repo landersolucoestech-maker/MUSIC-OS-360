@@ -1,9 +1,9 @@
 /**
  * packages/ai-skills/src/catalog-metadata-validator/validator.ts
  *
- * Validação de entrada/saída. Usa o tipo compartilhado SkillValidationResult.
- * Regras de bloqueio (erros) ficam aqui; avisos não-bloqueantes (ISRC ausente em
- * recording, soma de shares ≠ 100) são tratados no parser/fallback como warnings.
+ * Input/output validation. Uses the shared SkillValidationResult type.
+ * Blocking rules (errors) live here; non-blocking notices (ISRC missing on a
+ * recording, shares sum ≠ 100) are handled by the parser/fallback as warnings.
  */
 
 import type {

@@ -1,8 +1,8 @@
 /**
  * packages/ai-skills/src/onboarding-cro/prompt.ts
  *
- * Prompts canônicos da skill onboarding-cro (version 1.0.0).
- * A resposta DEVE ser um único objeto JSON no formato OnboardingCroOutput.
+ * Canonical prompts of the onboarding-cro skill (version 1.0.0).
+ * The response MUST be a single JSON object in the OnboardingCroOutput shape.
  */
 
 import type { OnboardingCroInput } from "./contracts";
