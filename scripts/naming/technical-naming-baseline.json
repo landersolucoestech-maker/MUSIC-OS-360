@@ -6,7 +6,7 @@
   "eventQueueJob": 24,
   "filename": 96,
   "identifier": 2576,
-  "testTitle": 1113
+  "testTitle": 1106
  },
  "debt": {
   "apiRoute::apps/api/src/modules/artists/artists.controller.ts::route::/artists/stats/generos": 1,
@@ -4527,13 +4527,6 @@
   "testTitle::apps/web/src/test/legacy-platform-fields.guard.test.ts::test-title::nenhum arquivo contém as formas snake_case dos campos removidos": 1,
   "testTitle::apps/web/src/test/legacy-platform-fields.guard.test.ts::test-title::nenhum utilitário de extração/reconstrução de ID↔URL existe no frontend": 1,
   "testTitle::apps/web/src/test/registroMusicasMappers.test.ts::test-title::maps DB 'under_review' to Select 'em_análise'": 1,
-  "testTitle::apps/web/src/test/registroMusicasMappers.test.ts::test-title::maps Select 'em_análise' (and variants) to DB 'under_review'": 1,
-  "testTitle::scripts/verify-production-audit.test.mjs::test-title::JSON inválido no arquivo de waivers -> lança erro (falha o processo)": 1,
-  "testTitle::scripts/verify-production-audit.test.mjs::test-title::JSON inválido no audit -> lança erro (falha o processo)": 1,
-  "testTitle::scripts/verify-production-audit.test.mjs::test-title::advisory HIGH novo sem waiver -> FAIL (severidade não isenta de waiver)": 1,
-  "testTitle::scripts/verify-production-audit.test.mjs::test-title::advisory resolvido mas waiver sobrando -> reportado como órfão, não falha o build": 1,
-  "testTitle::scripts/verify-production-audit.test.mjs::test-title::múltiplos advisories mistos: aceitos + não autorizados são reportados separadamente": 1,
-  "testTitle::scripts/verify-production-audit.test.mjs::test-title::pnpm audit sem saída utilizável (ex.: processo falhou) -> tratado como entrada inválida": 1,
-  "testTitle::scripts/verify-production-audit.test.mjs::test-title::waiver sem campo obrigatório -> lança erro": 1
+  "testTitle::apps/web/src/test/registroMusicasMappers.test.ts::test-title::maps Select 'em_análise' (and variants) to DB 'under_review'": 1
  }
 }

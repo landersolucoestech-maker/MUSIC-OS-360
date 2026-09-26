@@ -28,7 +28,7 @@ function waiverFileWith(waivers) {
   });
 }
 
-test('baseline exatamente permitido -> PASS (0 unauthorized)', () => {
+test('baseline exactly permitted -> PASS (0 unauthorized)', () => {
   const advisories = loadAuditAdvisories(auditWith([{ advisoryId: 1, package: 'foo', severity: 'moderate' }]));
   const waivers = loadWaivers(waiverFileWith([{ advisoryId: 1, package: 'foo' }]));
   const { accepted, unauthorized, orphaned } = evaluate(advisories, waivers, NOW);
@@ -37,7 +37,7 @@ test('baseline exatamente permitido -> PASS (0 unauthorized)', () => {
   assert.equal(orphaned.length, 0);
 });
 
-test('advisory novo sem waiver -> FAIL', () => {
+test('new advisory without a waiver -> FAIL', () => {
   const advisories = loadAuditAdvisories(auditWith([{ advisoryId: 2, package: 'bar', severity: 'moderate' }]));
   const waivers = loadWaivers(waiverFileWith([]));
   const { unauthorized } = evaluate(advisories, waivers, NOW);
@@ -45,7 +45,7 @@ test('advisory novo sem waiver -> FAIL', () => {
   assert.match(unauthorized[0].cause, /sem waiver/);
 });
 
-test('advisory HIGH novo sem waiver -> FAIL (severidade não isenta de waiver)', () => {
+test('new HIGH advisory without a waiver -> FAIL (severity does not exempt from waiver)', () => {
   const advisories = loadAuditAdvisories(auditWith([{ advisoryId: 3, package: 'baz', severity: 'high' }]));
   const waivers = loadWaivers(waiverFileWith([]));
   const { unauthorized } = evaluate(advisories, waivers, NOW);
@@ -53,7 +53,7 @@ test('advisory HIGH novo sem waiver -> FAIL (severidade não isenta de waiver)',
   assert.equal(unauthorized[0].severity, 'high');
 });
 
-test('waiver expirado -> FAIL', () => {
+test('expired waiver -> FAIL', () => {
   const advisories = loadAuditAdvisories(auditWith([{ advisoryId: 4, package: 'qux', severity: 'moderate' }]));
   const waivers = loadWaivers(waiverFileWith([{ advisoryId: 4, package: 'qux', reviewBy: '2025-01-01' }]));
   const { unauthorized } = evaluate(advisories, waivers, NOW);
@@ -61,7 +61,7 @@ test('waiver expirado -> FAIL', () => {
   assert.match(unauthorized[0].cause, /expirado/);
 });
 
-test('waiver com package errado -> FAIL', () => {
+test('waiver with wrong package -> FAIL', () => {
   const advisories = loadAuditAdvisories(auditWith([{ advisoryId: 5, package: 'real-pkg', severity: 'moderate' }]));
   const waivers = loadWaivers(waiverFileWith([{ advisoryId: 5, package: 'different-pkg' }]));
   const { unauthorized } = evaluate(advisories, waivers, NOW);
@@ -69,7 +69,7 @@ test('waiver com package errado -> FAIL', () => {
   assert.match(unauthorized[0].cause, /outro pacote/);
 });
 
-test('advisory resolvido mas waiver sobrando -> reportado como órfão, não falha o build', () => {
+test('resolved advisory but leftover waiver -> reported as orphaned, does not fail the build', () => {
   const advisories = loadAuditAdvisories(auditWith([]));
   const waivers = loadWaivers(waiverFileWith([{ advisoryId: 6, package: 'fixed-pkg' }]));
   const { unauthorized, orphaned } = evaluate(advisories, waivers, NOW);
@@ -78,24 +78,24 @@ test('advisory resolvido mas waiver sobrando -> reportado como órfão, não fal
   assert.equal(orphaned[0].advisoryId, 6);
 });
 
-test('JSON inválido no audit -> lança erro (falha o processo)', () => {
+test('invalid JSON in the audit -> throws an error (fails the process)', () => {
   assert.throws(() => loadAuditAdvisories('{ not valid json'), /não é JSON válido/);
 });
 
-test('JSON inválido no arquivo de waivers -> lança erro (falha o processo)', () => {
+test('invalid JSON in the waivers file -> throws an error (fails the process)', () => {
   assert.throws(() => loadWaivers('{ not valid json'), /não é JSON válido/);
 });
 
-test('waiver sem campo obrigatório -> lança erro', () => {
+test('waiver missing a required field -> throws an error', () => {
   const bad = JSON.stringify({ waivers: [{ advisoryId: 7, package: 'x' }] });
   assert.throws(() => loadWaivers(bad), /campo obrigatório/);
 });
 
-test('pnpm audit sem saída utilizável (ex.: processo falhou) -> tratado como entrada inválida', () => {
+test('pnpm audit with no usable output (e.g., the process failed) -> treated as invalid input', () => {
   assert.throws(() => loadAuditAdvisories(''), /não é JSON válido/);
 });
 
-test('múltiplos advisories mistos: aceitos + não autorizados são reportados separadamente', () => {
+test('mixed advisories: accepted + unauthorized are reported separately', () => {
   const advisories = loadAuditAdvisories(
     auditWith([
       { advisoryId: 8, package: 'ok-pkg', severity: 'moderate' },
