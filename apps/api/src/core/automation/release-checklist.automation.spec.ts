@@ -32,9 +32,9 @@ function makeFailingAi() {
 }
 
 /**
- * Mock de DataSource que roteia por SQL:
+ * DataSource mock that routes by SQL:
  *  - SELECT ... FROM releases   → releaseRows
- *  - SELECT ... FROM skill_runs → skillRunRows (guarda de idempotência)
+ *  - SELECT ... FROM skill_runs → skillRunRows (idempotency guard)
  *  - UPDATE                     → undefined
  */
 function makeDs(releaseRows: unknown[], skillRunRows: unknown[] = []) {
@@ -46,13 +46,13 @@ function makeDs(releaseRows: unknown[], skillRunRows: unknown[] = []) {
   return { ds: { query }, query };
 }
 
-/** Janela de stale do runner (mantida em sincronia com STALE_RUNNING_MINUTES). */
+/** The runner's stale window (kept in sync with STALE_RUNNING_MINUTES). */
 const STALE_RUNNING_MINUTES = 15;
 
 /**
- * Mock status-aware (M1): emula a guarda do runner sobre os runs fornecidos —
- * 'success' bloqueia sempre; 'running' bloqueia só se RECENTE (ageMinutes dentro da
- * janela); 'running' stale e 'failed'/'cancelled' não bloqueiam.
+ * Status-aware mock (M1): emulates the runner's guard over the given runs —
+ * 'success' always blocks; 'running' blocks only if RECENT (ageMinutes within the
+ * window); stale 'running' and 'failed'/'cancelled' do not block.
  */
 function makeDsWithRuns(
   releaseRows: unknown[],
@@ -199,7 +199,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
 
     expect(skillRun.start).not.toHaveBeenCalled();
     expect(ai.complete).not.toHaveBeenCalled();
-    // A guarda SQL deve bloquear 'success' sempre e 'running' só dentro da janela (M1).
+    // The SQL guard must always block 'success' and block 'running' only within the window (M1).
     const guardCall = query.mock.calls.find((c: unknown[]) => /FROM\s+skill_runs/i.test(c[0] as string));
     expect(guardCall).toBeDefined();
     const guardSql = guardCall ? (guardCall[0] as string) : '';
@@ -217,7 +217,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
 
     await handler.onReleaseCreated(makeEvent() as never);
 
-    // 'running' órfão (> janela) não conta → reexecuta normalmente.
+    // orphan 'running' (> window) does not count → runs again normally.
     expect(skillRun.start).toHaveBeenCalled();
     expect(ai.complete).toHaveBeenCalled();
     const updateCall = query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string));
@@ -244,7 +244,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
 
     await handler.onReleaseCreated(makeEvent() as never);
 
-    // 'failed' não conta → reexecuta normalmente.
+    // 'failed' does not count → runs again normally.
     expect(skillRun.start).toHaveBeenCalled();
     expect(ai.complete).toHaveBeenCalled();
     const updateCall = query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string));
@@ -255,7 +255,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     const boom = new Error('db indisponível no load');
     const query = jest.fn(async (sql: string) => {
       if (/FROM\s+skill_runs/i.test(sql)) return [];
-      if (/FROM\s+releases/i.test(sql)) throw boom; // load() lança
+      if (/FROM\s+releases/i.test(sql)) throw boom; // load() throws
       return undefined;
     });
     const ds = { query };
@@ -263,10 +263,10 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     const ai = makeAi(VALID_CHECKLIST_JSON);
     const handler = new ReleaseChecklistAutomation(ds as never, skillRun as never, ai as never, passThroughTenantContext(ds) as never);
 
-    // Não deve lançar (release.created não é revertido).
+    // Must not throw (release.created is not reverted).
     await expect(handler.onReleaseCreated(makeEvent() as never)).resolves.toBeUndefined();
 
-    // B1: registrou o fail best-effort do skill_run pré-start.
+    // B1: recorded the best-effort fail of the pre-start skill_run.
     expect(skillRun.start).toHaveBeenCalledWith(
       expect.objectContaining({ skillName: 'release-checklist', entityId: 'r1' }),
     );
@@ -283,7 +283,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     const ai = makeFailingAi();
     const handler = new ReleaseChecklistAutomation(ds as never, skillRun as never, ai as never, passThroughTenantContext(ds) as never);
 
-    // Não deve lançar (release.created não é revertido)
+    // Must not throw (release.created is not reverted)
     await expect(handler.onReleaseCreated(makeEvent() as never)).resolves.toBeUndefined();
 
     expect(skillRun.start).toHaveBeenCalled();

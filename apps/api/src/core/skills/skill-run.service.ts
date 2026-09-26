@@ -1,12 +1,12 @@
 /**
  * core/skills/skill-run.service.ts
  *
- * Runtime de execução de Skills — infraestrutura interna e INVISÍVEL ao usuário.
- * Persiste cada execução (skill_runs) e seus logs (skill_run_logs), e emite os
- * eventos de domínio skill.started / skill.completed / skill.failed.
+ * Skill execution runtime — internal infrastructure, INVISIBLE to the user.
+ * Persists each execution (skill_runs) and its logs (skill_run_logs), and emits the
+ * domain events skill.started / skill.completed / skill.failed.
  *
- * Toda Skill operacional do sistema deve executar via `run()` para herdar
- * persistência, auditoria, logs e rastreabilidade automaticamente.
+ * Every operational Skill in the system must run via `run()` to automatically inherit
+ * persistence, auditing, logs and traceability.
  */
 
 import { Injectable, Logger, Inject, Optional } from '@nestjs/common';
@@ -29,7 +29,7 @@ export interface SkillRunStartParams {
   input?: Record<string, unknown>;
 }
 
-/** Contexto entregue ao corpo da skill durante `run()`. */
+/** Context handed to the skill body during `run()`. */
 export interface SkillRunContext {
   runId: string;
   log: (level: SkillLogLevel, message: string, payload?: Record<string, unknown>) => Promise<void>;
@@ -51,7 +51,7 @@ export class SkillRunService {
     }
   }
 
-  /** Cria um skill_run em estado `running` e emite skill.started. */
+  /** Creates a skill_run in the `running` state and emits skill.started. */
   async start(params: SkillRunStartParams): Promise<string> {
     const correlationId = params.correlationId ?? CorrelationContext.get() ?? null;
     const startedAt = new Date();
@@ -91,7 +91,7 @@ export class SkillRunService {
     return runId;
   }
 
-  /** Acrescenta uma linha de log à execução. */
+  /** Appends a log line to the execution. */
   async log(
     runId: string,
     level: SkillLogLevel,
@@ -108,7 +108,7 @@ export class SkillRunService {
     await this.logRepo.save(entity);
   }
 
-  /** Marca a execução como sucesso e emite skill.completed. */
+  /** Marks the execution as successful and emits skill.completed. */
   async succeed(
     runId: string,
     tenantId: string,
@@ -133,7 +133,7 @@ export class SkillRunService {
     });
   }
 
-  /** Marca a execução como falha e emite skill.failed. */
+  /** Marks the execution as failed and emits skill.failed. */
   async fail(runId: string, tenantId: string, skillName: string, error: unknown): Promise<void> {
     const finishedAt = new Date();
     const errorMessage = error instanceof Error ? error.message : String(error);
@@ -152,7 +152,7 @@ export class SkillRunService {
     });
   }
 
-  /** Lista execuções de skills (read-only, paginado, isolado por tenant). */
+  /** Lists skill executions (read-only, paginated, tenant-isolated). */
   async listRuns(
     tenantId: string,
     opts: { skillName?: string; status?: string; limit?: number; offset?: number } = {},
@@ -175,10 +175,10 @@ export class SkillRunService {
   }
 
   /**
-   * Execução de SUCESSO mais recente desta skill (+ entidade, quando houver)
-   * dentro da janela em minutos — usado por skills ON_DEMAND com semântica
-   * stale-refresh (ex.: audience-health) para evitar regerar via IA a cada
-   * chamada. `entityId=null` busca execuções sem entidade (nível tenant).
+   * The most recent SUCCESSFUL execution of this skill (+ entity, when any)
+   * within the window in minutes — used by ON_DEMAND skills with
+   * stale-refresh semantics (e.g. audience-health) to avoid regenerating via AI on every
+   * call. `entityId=null` looks up executions without an entity (tenant level).
    */
   async findRecentSuccess(
     tenantId: string,
@@ -198,7 +198,7 @@ export class SkillRunService {
     return qb.getOne();
   }
 
-  /** Detalhe de uma execução + seus logs. */
+  /** Detail of an execution + its logs. */
   async getRun(
     tenantId: string,
     runId: string,
@@ -213,8 +213,8 @@ export class SkillRunService {
   }
 
   /**
-   * Executa uma skill com persistência/auditoria completas.
-   * start → fn(ctx) → succeed; em erro: fail + rethrow.
+   * Runs a skill with full persistence/auditing.
+   * start → fn(ctx) → succeed; on error: fail + rethrow.
    */
   async run<T>(
     params: SkillRunStartParams,

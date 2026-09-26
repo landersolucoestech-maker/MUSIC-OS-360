@@ -32,8 +32,8 @@ function makeFailingAi() {
 }
 
 /**
- * Mock de DataSource que roteia por SQL:
- *  - SELECT ... FROM skill_runs → skillRunRows (guarda de idempotência)
+ * DataSource mock that routes by SQL:
+ *  - SELECT ... FROM skill_runs → skillRunRows (idempotency guard)
  *  - SELECT ... FROM artists    → artistRows
  *  - UPDATE                     → undefined
  */
@@ -110,7 +110,7 @@ describe('ArtistProfileAnalysisAutomation (artist.created → artist-profile-ana
     );
     expect(skillRun.fail).not.toHaveBeenCalled();
 
-    // input montado: artistName, genre(MPB) e plataforma derivada (spotify) no prompt
+    // assembled input: artistName, genre (MPB) and derived platform (spotify) in the prompt
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string; jsonMode: boolean }]>;
     const aiArg = aiCalls[0][0];
     expect(aiArg.jsonMode).toBe(true);
@@ -170,7 +170,7 @@ describe('ArtistProfileAnalysisAutomation (artist.created → artist-profile-ana
     const ai = makeFailingAi();
     const handler = new ArtistProfileAnalysisAutomation(ds as never, skillRun as never, ai as never, passThroughTenantContext(ds) as never);
 
-    // Não deve lançar (artist.created não é revertido)
+    // Must not throw (artist.created is not reverted)
     await expect(handler.onArtistCreated(makeEvent() as never)).resolves.toBeUndefined();
 
     expect(skillRun.start).toHaveBeenCalled();

@@ -1,10 +1,10 @@
 /**
- * password-policy.ts  (Parte 74)
+ * password-policy.ts  (Part 74)
  *
- * Política de força para senhas ESCOLHIDAS PELO USUÁRIO (ex.: troca
- * obrigatória da senha provisória). Distinto de generate-strong-password.ts,
- * que gera a senha provisória em si (CSPRNG, 24+ caracteres) — aqui só
- * validamos o que um humano digitou.
+ * Strength policy for passwords CHOSEN BY THE USER (e.g. the mandatory
+ * change of the temporary password). Distinct from generate-strong-password.ts,
+ * which generates the temporary password itself (CSPRNG, 24+ characters) — here we only
+ * validate what a human typed.
  */
 
 export const MIN_USER_PASSWORD_LENGTH = 12;
@@ -14,7 +14,7 @@ const UPPER_RE = /[A-Z]/;
 const DIGIT_RE = /[0-9]/;
 const SYMBOL_RE = /[^A-Za-z0-9]/;
 
-/** Retorna a lista de requisitos NÃO atendidos (vazia = senha forte o suficiente). */
+/** Returns the list of requirements NOT met (empty = strong enough password). */
 export function strongPasswordViolations(password: string): string[] {
   const violations: string[] = [];
   if (password.length < MIN_USER_PASSWORD_LENGTH) {

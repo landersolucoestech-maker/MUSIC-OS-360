@@ -1,14 +1,14 @@
 /**
  * core/automation/marketing-calendar-builder.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
- *   release.approved → marketing-calendar-builder → salva PLANEJAMENTO interno em
+ * NATIVE, INTERNAL and INVISIBLE automation:
+ *   release.approved → marketing-calendar-builder → saves internal PLANNING in
  *   releases.metadata.aiMarketingCalendar
  *
- * Toda a orquestração comum vive em `runNativeSkillAutomation`.
+ * All common orchestration lives in `runNativeSkillAutomation`.
  *
- * Restrições: apenas planejamento interno — NÃO cria posts, NÃO cria campanhas,
- * NÃO cria calendário oficial, não altera status/dados oficiais do release.
+ * Restrictions: internal planning only — does NOT create posts, does NOT create campaigns,
+ * does NOT create an official calendar, does not change the release's official status/data.
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -88,7 +88,7 @@ export class MarketingCalendarBuilderAutomation {
     );
   }
 
-  // ── Persistência (read/write de releases.metadata via DataSource) ───────────
+  // ── Persistence (read/write of releases.metadata via DataSource) ─────
 
   private async loadRelease(
     tenantId: string,

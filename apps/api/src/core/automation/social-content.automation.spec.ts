@@ -118,7 +118,7 @@ describe('SocialContentAutomation (marketing.content_created → social-content)
     expect(meta.aiSocialContent.idempotencyKey).toBe(IDEMPOTENCY_KEY);
     expect(meta.aiSocialContent.status).toBe('generated');
     expect(meta.aiSocialContent.parsed.captionVariants).toHaveLength(2);
-    // nunca escreve no campo `copy` real nem em status de publicação — apenas metadata
+    // never writes to the real `copy` field nor to the publishing status — metadata only
     expect(query.mock.calls.find((c: unknown[]) => /SET\s+copy/i.test(c[0] as string))).toBeUndefined();
   });
 

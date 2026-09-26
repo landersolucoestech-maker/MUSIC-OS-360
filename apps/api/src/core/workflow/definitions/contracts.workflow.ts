@@ -1,8 +1,8 @@
 /**
  * contracts.workflow.ts
  *
- * Workflow de ciclo de vida para Contratos.
- * Estados: draft → under_review → awaiting_signature → signed → in_force → terminated / cancelled
+ * Lifecycle workflow for Contracts.
+ * States: draft → under_review → awaiting_signature → signed → in_force → terminated / cancelled
  */
 
 import { ContractStatus } from '@music-os-360/types';

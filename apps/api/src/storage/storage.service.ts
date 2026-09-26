@@ -1,8 +1,8 @@
 /**
  * storage/storage.service.ts
  *
- * Serviço de abstração sobre Cloudflare R2.
- * Operações: upload, presigned URL, delete, exists, list.
+ * Abstraction service over Cloudflare R2.
+ * Operations: upload, presigned URL, delete, exists, list.
  */
 
 import { Injectable, Inject, Optional, Logger, BadRequestException, ServiceUnavailableException } from '@nestjs/common';
@@ -205,14 +205,14 @@ export class StorageService {
   }
 
   /**
-   * Stream do objeto directamente do R2, através do backend.
+   * Streams the object directly from R2, through the backend.
    *
-   * R2 é uma origem separada (pub-xxx.r2.dev / domínio custom) sem CORS
-   * garantido para leitura em <canvas> (crossOrigin="anonymous"). Este
-   * método permite servir o mesmo byte-stream a partir da própria API --
-   * que já tem uma política CORS explícita e controlada (create-app.ts) --
-   * para que o frontend possa compor imagens num canvas sem "tainting" e
-   * exportar um PNG real (composição estática do template criativo).
+   * R2 is a separate origin (pub-xxx.r2.dev / custom domain) without guaranteed
+   * CORS for reads in <canvas> (crossOrigin="anonymous"). This
+   * method serves the same byte stream from the API itself --
+   * which already has an explicit, controlled CORS policy (create-app.ts) --
+   * so the frontend can compose images on a canvas without "tainting" and
+   * export a real PNG (static composition of the creative template).
    */
   async getObject(key: string): Promise<{
     body: NodeJS.ReadableStream;

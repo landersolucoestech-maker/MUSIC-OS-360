@@ -1,17 +1,17 @@
 /**
  * core/automation/campaign-plan.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
- *   campaign.created → campaign-plan → salva SUGESTÃO em
+ * NATIVE, INTERNAL and INVISIBLE automation:
+ *   campaign.created → campaign-plan → saves a SUGGESTION in
  *   campaigns.metadata.aiCampaignPlan
  *
- * Toda a orquestração comum (idempotência metadata + skill_runs, auditoria,
- * envelope, persistência, fail-safe) vive em `runNativeSkillAutomation`. Aqui
- * ficam apenas as partes específicas: load da campanha, montagem do input e o
- * UPDATE da tabela `campaigns`.
+ * All common orchestration (metadata + skill_runs idempotency, auditing,
+ * envelope, persistence, fail-safe) lives in `runNativeSkillAutomation`. Only
+ * the specific parts live here: loading the campaign, assembling the input and the
+ * UPDATE of the `campaigns` table.
  *
- * Apenas grava SUGESTÃO interna — NÃO altera orçamento/datas/status oficiais,
- * sem tarefas, sem notificações, sem tabelas novas.
+ * Only writes an internal SUGGESTION — does NOT change the official budget/dates/status,
+ * no tasks, no notifications, no new tables.
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -87,7 +87,7 @@ export class CampaignPlanAutomation {
     );
   }
 
-  // ── Persistência (read/write de campaigns.metadata via DataSource) ─────────
+  // ── Persistence (read/write of campaigns.metadata via DataSource) ──────────
 
   private async loadCampaign(
     tenantId: string,

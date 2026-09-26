@@ -1,9 +1,9 @@
 /**
  * queues/processors/ai-jobs.processor.ts
  *
- * Processor BullMQ para a fila "ai-jobs".
- * Executa completions de IA (OpenAI / Claude / Gemini via AIService),
- * persiste o resultado na tabela ai_jobs e emite via WebSocket.
+ * BullMQ processor for the "ai-jobs" queue.
+ * Runs AI completions (OpenAI / Claude / Gemini via AIService),
+ * persists the result in the ai_jobs table and emits it via WebSocket.
  */
 
 import { Processor, WorkerHost } from '@nestjs/bullmq';
@@ -17,7 +17,7 @@ import { DatabaseContextService } from '../../database/database-context.service'
 // ─── Payload ──────────────────────────────────────────────────────────────────
 
 export interface AIJobPayload extends AICompletionOptions {
-  /** jobId único para deduplicação — opcional */
+  /** unique jobId for deduplication — optional */
   jobRef?: string;
 }
 

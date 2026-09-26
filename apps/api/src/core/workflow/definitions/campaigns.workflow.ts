@@ -1,8 +1,8 @@
 /**
  * campaigns.workflow.ts
  *
- * Workflow de ciclo de vida para Campanhas de Marketing.
- * Estados: draft → planning → active → paused → completed / cancelled
+ * Lifecycle workflow for Marketing Campaigns.
+ * States: draft → planning → active → paused → completed / cancelled
  */
 
 import { CampaignStatus } from '@music-os-360/types';

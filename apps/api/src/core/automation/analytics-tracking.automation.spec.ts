@@ -52,9 +52,9 @@ describe('AnalyticsTrackingAutomation (ON_DEMAND: POST /analytics/tracking-cover
     expect(aiCalls[0][0].prompt).toContain('contract.signed (via trackContractSigned)');
     expect(aiCalls[0][0].prompt).toContain('release.created (via trackReleaseCreated)');
 
-    // ANTI-FABRICAÇÃO: coveragePercentage é sempre derivado do cruzamento real, nunca do modelo.
+    // ANTI-FABRICATION: coveragePercentage is always derived from the real cross-check, never from the model.
     expect(result.parsed.coveragePercentage).toBeGreaterThan(0);
-    expect(result.parsed.coveragePercentage).toBeLessThan(5); // só 2 de ~100 eventos têm tracking real
+    expect(result.parsed.coveragePercentage).toBeLessThan(5); // only 2 of ~100 events have real tracking
     expect(skillRun.succeed).toHaveBeenCalled();
   });
 

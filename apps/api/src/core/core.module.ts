@@ -1,16 +1,16 @@
 /**
  * core/core.module.ts
  *
- * CoreModule — agrega todos os serviços de infraestrutura transversal:
- *   - EncryptionService  (AES-256-GCM para campos PII)
+ * CoreModule — aggregates all cross-cutting infrastructure services:
+ *   - EncryptionService  (AES-256-GCM for PII fields)
  *   - AuditService       (audit_logs Drizzle)
- *   - AuditInterceptor   (registo automático via @Audit())
+ *   - AuditInterceptor   (automatic recording via @Audit())
  *   - RateLimitService   (Upstash sliding window)
- *   - RateLimitGuard     (guard injectável)
- *   - MailService        (Resend — email transacional)
- *   - PostHogService     (product analytics server-side)
+ *   - RateLimitGuard     (injectable guard)
+ *   - MailService        (Resend — transactional email)
+ *   - PostHogService     (server-side product analytics)
  *
- * É @Global() — importar uma vez no AppModule.
+ * It is @Global() — import it once in AppModule.
  */
 
 import { Global, Module }            from '@nestjs/common';

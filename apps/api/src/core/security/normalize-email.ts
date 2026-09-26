@@ -1,10 +1,10 @@
 /**
- * normalize-email.ts  (Parte 75)
+ * normalize-email.ts  (Part 75)
  *
- * Normalização única e centralizada de e-mail para qualquer comparação,
- * busca ou criação de conta (bootstrap do owner institucional, resolução
- * de duplicidade, etc.) — sem isso, "Nome@Dominio.com" e " nome@dominio.com "
- * podiam ser tratados como contas diferentes em pontos distintos do código.
+ * Single, centralized e-mail normalization for any comparison,
+ * lookup or account creation (institutional owner bootstrap, duplicate
+ * resolution, etc.) — without it, "Nome@Dominio.com" and " nome@dominio.com "
+ * could be treated as different accounts in different places in the code.
  */
 export function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();

@@ -1,8 +1,8 @@
 /**
  * tickets.workflow.ts
  *
- * Workflow de ciclo de vida para Support Tickets.
- * Estados: open → in_progress → pending_user → resolved → closed / cancelled
+ * Lifecycle workflow for Support Tickets.
+ * States: open → in_progress → pending_user → resolved → closed / cancelled
  */
 
 import { SupportTicketStatus } from '@music-os-360/types';

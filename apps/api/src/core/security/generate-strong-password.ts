@@ -1,30 +1,30 @@
 /**
- * generate-strong-password.ts  (Parte 73, charset revisto na Parte 75)
+ * generate-strong-password.ts  (Part 73, charset revised in Part 75)
  *
- * Gera uma senha provisória forte para o owner institucional do
- * tenant-zero (e qualquer outro fluxo que precise de uma senha temporária
- * segura). Usa `crypto.randomInt` (CSPRNG, não `Math.random()`), garante
- * pelo menos um caractere de cada classe exigida, e não deriva de nenhum
- * dado de entrada (nome, projeto, data) — cada chamada é independente e
- * imprevisível.
+ * Generates a strong temporary password for the tenant-zero institutional
+ * owner (and any other flow that needs a secure temporary
+ * password). Uses `crypto.randomInt` (CSPRNG, not `Math.random()`), guarantees
+ * at least one character of each required class, and does not derive from any
+ * input data (name, project, date) — each call is independent and
+ * unpredictable.
  *
- * Parte 75: o símbolo original incluía `()[]{}"^` — caracteres que, embora
- * não "ambíguos" no sentido de l/O/0/1, são propensos a erro de cópia/
- * digitação manual (parênteses/colchetes/chaves fáceis de trocar entre si
- * ou de perder ao copiar de uma bolha de chat). Restrito a um conjunto sem
- * aspas, crases, barras invertidas, espaços ou pares que se abrem/fecham.
+ * Part 75: the original symbol set included `()[]{}"^` — characters that, although
+ * not "ambiguous" in the l/O/0/1 sense, are prone to copy/manual typing
+ * errors (parentheses/brackets/braces are easy to swap with each other
+ * or lose when copying from a chat bubble). Restricted to a set without
+ * quotes, backticks, backslashes, spaces or opening/closing pairs.
  *
- * Nunca logar, commitar ou persistir o valor retornado em texto plano por
- * mais tempo do que o necessário para entregá-lo ao destinatário (ver
- * bootstrap-tenant-zero.cli.ts, que só imprime em stdout interativo local,
- * nunca em execução não-interativa/CI).
+ * Never log, commit or persist the returned value in plain text for
+ * longer than needed to deliver it to the recipient (see
+ * bootstrap-tenant-zero.cli.ts, which only prints it on a local interactive stdout,
+ * never in a non-interactive/CI run).
  */
 import { randomInt } from 'node:crypto';
 
-const LOWER = 'abcdefghijkmnopqrstuvwxyz'; // sem "l" (confunde com "1"/"I")
-const UPPER = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // sem "O" (confunde com "0")
+const LOWER = 'abcdefghijkmnopqrstuvwxyz'; // no "l" (confused with "1"/"I")
+const UPPER = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // no "O" (confused with "0")
 const DIGITS = '23456789'; // sem "0"/"1"
-const SYMBOLS = '!@#$%&*+-=?_'; // sem aspas/crases/barras/espaços/parênteses/colchetes/chaves
+const SYMBOLS = '!@#$%&*+-=?_'; // no quotes/backticks/backslashes/spaces/parentheses/brackets/braces
 const ALL = LOWER + UPPER + DIGITS + SYMBOLS;
 
 const MIN_LENGTH = 28;

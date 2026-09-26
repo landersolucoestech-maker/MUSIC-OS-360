@@ -55,7 +55,7 @@ export class ArtistPlatformSyncProcessor extends WorkerHost {
     if (job.name !== ARTIST_PLATFORM_PROFILE_JOB_NAMES.SYNC) return;
 
     const payload = job.data;
-    // Fail-closed: job assíncrono sem tenant NUNCA toca dados tenant-scoped.
+    // Fail-closed: an asynchronous job without a tenant NEVER touches tenant-scoped data.
     if (!payload.tenant_id) {
       this.logger.warn(`[artist-platform-sync] job=${job.id} sem tenant_id — abortado (fail-closed)`);
       return;
@@ -67,9 +67,9 @@ export class ArtistPlatformSyncProcessor extends WorkerHost {
       return;
     }
 
-    // P2-5: todas as escritas do worker rodam dentro do contexto de tenant —
-    // as tabelas têm FORCE RLS com policy em private_get_tenant_id(); sem o
-    // set_config da sessão o INSERT/UPDATE é negado pelo Postgres.
+    // P2-5: every worker write runs inside the tenant context —
+    // the tables have FORCE RLS with a policy on private_get_tenant_id(); without the
+    // session set_config, Postgres denies the INSERT/UPDATE.
     await this.dbContext.runInTenantContext(
       { tenantId: payload.tenant_id, orgId: null, role: null },
       () => this.processInTenantContext(job, payload, provider),

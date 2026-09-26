@@ -1,10 +1,10 @@
 /**
  * core/interceptors/etag.interceptor.ts
  *
- * Adiciona ETag + Cache-Control a respostas GET bem-sucedidas.
- * Se o cliente enviar If-None-Match igual ao ETag calculado, retorna 304.
+ * Adds ETag + Cache-Control to successful GET responses.
+ * If the client sends an If-None-Match equal to the computed ETag, returns 304.
  *
- * Uso: registar globalmente ou por rota com @UseInterceptors(ETagInterceptor).
+ * Usage: register globally or per route with @UseInterceptors(ETagInterceptor).
  */
 
 import {

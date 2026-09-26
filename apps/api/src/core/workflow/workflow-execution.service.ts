@@ -1,11 +1,11 @@
 /**
  * core/workflow/workflow-execution.service.ts
  *
- * Persistência e rastreabilidade das execuções do Workflow Automation Engine.
- * Cada disparo de regra gera um workflow_executions; cada ação gera um
- * workflow_execution_logs. Emite workflow.execution.started/completed/failed.
+ * Persistence and traceability of the Workflow Automation Engine executions.
+ * Every rule trigger generates a workflow_executions row; every action generates a
+ * workflow_execution_logs row. Emits workflow.execution.started/completed/failed.
  *
- * Infraestrutura interna — invisível ao usuário final.
+ * Internal infrastructure — invisible to the end user.
  */
 
 import { Injectable, Logger, Inject, Optional } from '@nestjs/common';
@@ -166,7 +166,7 @@ export class WorkflowExecutionService {
     }
   }
 
-  /** Lista execuções (read-only, paginado, isolado por tenant). */
+  /** Lists executions (read-only, paginated, tenant-isolated). */
   async list(
     tenantId: string,
     opts: { ruleId?: string; status?: string; limit?: number; offset?: number } = {},
@@ -186,7 +186,7 @@ export class WorkflowExecutionService {
     return { data, total, limit, offset };
   }
 
-  /** Detalhe de uma execução + logs de ações. */
+  /** Detail of an execution + action logs. */
   async get(
     tenantId: string,
     executionId: string,

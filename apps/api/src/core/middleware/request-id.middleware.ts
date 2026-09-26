@@ -1,17 +1,17 @@
 /**
  * core/middleware/request-id.middleware.ts
  *
- * Middleware de correlação de requests.
- * Lê X-Request-ID do header de entrada ou gera um novo UUID.
- * Propaga o requestId no header de resposta e no objeto request
- * para que interceptors e filters possam incluí-lo nos logs.
+ * Request correlation middleware.
+ * Reads X-Request-ID from the incoming header or generates a new UUID.
+ * Propagates the requestId in the response header and on the request object
+ * so interceptors and filters can include it in the logs.
  */
 
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 
-// Extensão do Request do Express para transportar o requestId
+// Extension of the Express Request to carry the requestId
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {

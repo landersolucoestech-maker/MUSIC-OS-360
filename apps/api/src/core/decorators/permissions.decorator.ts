@@ -2,18 +2,18 @@ import { SetMetadata } from '@nestjs/common';
 
 export const PERMISSIONS_KEY = 'permissions';
 
-/** Padrão obrigatório de chave de permissão: resource:action (minúsculas, snake). */
+/** Mandatory permission key pattern: resource:action (lowercase, snake). */
 const PERMISSION_KEY_FORMAT = /^[a-z][a-z0-9_]*:[a-z][a-z0-9_]*$/;
 
 /**
  * @RequirePermission('artist:read', 'artist:export')
  *
- * Exige que o membro possua TODAS as permissões informadas (semântica AND).
- * Coexiste com @RequireRole: a rota pode ter ambos (exige hierarquia E permissão).
- * O enforcement real depende de RBAC_PERSISTED_AUTHORITY (ver PermissionsGuard).
+ * Requires the member to hold ALL the given permissions (AND semantics).
+ * Coexists with @RequireRole: a route can have both (requires hierarchy AND permission).
+ * Real enforcement depends on RBAC_PERSISTED_AUTHORITY (see PermissionsGuard).
  *
- * As chaves são validadas no formato `resource:action` em tempo de decoração (boot),
- * para falhar cedo em caso de typo.
+ * The keys are validated against the `resource:action` format at decoration time (boot),
+ * to fail early on a typo.
  */
 export const RequirePermission = (...permissions: string[]) => {
   for (const permission of permissions) {

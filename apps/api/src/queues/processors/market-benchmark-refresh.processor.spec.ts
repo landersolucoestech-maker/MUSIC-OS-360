@@ -3,7 +3,7 @@ import type { MarketBenchmarkService } from '../../modules/artists/platform-prof
 import { ANALYTICS_REFRESH_JOB_NAMES } from '../queue.constants';
 import type { MarketBenchmarkRefreshJobPayload } from '../../modules/artists/platform-profiles/analytics/market-benchmark-refresh.types';
 
-/** Mock do DatabaseContextService no padrão de artist-platform-sync.spec.ts. */
+/** DatabaseContextService mock following the artist-platform-sync.spec.ts pattern. */
 const makeDbContext = () => ({
   runInTenantContext: jest.fn((_ctx: unknown, work: (m: unknown) => unknown) => work(undefined)),
 });

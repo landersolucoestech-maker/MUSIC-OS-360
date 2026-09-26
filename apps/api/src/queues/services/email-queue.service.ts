@@ -1,8 +1,8 @@
 /**
  * queues/services/email-queue.service.ts
  *
- * Producer service para a fila "emails".
- * Quando Redis não está disponível, os métodos são no-op silenciosos.
+ * Producer service for the "emails" queue.
+ * When Redis is not available, the methods are silent no-ops.
  */
 
 import { Injectable, Logger, Optional } from '@nestjs/common';

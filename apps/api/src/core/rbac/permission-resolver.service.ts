@@ -118,7 +118,7 @@ export class PermissionResolverService implements OnModuleInit {
   private readonly logger = new Logger('PermissionResolver');
   private readonly cacheTtlMs = 60_000;
   private readonly cache = new Map<string, CacheEntry>();
-  // PASSO 12-H — cache leve de identidade de role para classificação de divergência (dual-read).
+  // STEP 12-H — lightweight role identity cache for divergence classification (dual-read).
   private readonly identityCache = new Map<string, IdentityCacheEntry>();
 
   constructor(
@@ -198,7 +198,7 @@ export class PermissionResolverService implements OnModuleInit {
     }
   }
 
-  /** Telemetria de dual-read ligada por padrão; desligável via RBAC_DUAL_READ_TELEMETRY=false. */
+  /** Dual-read telemetry on by default; can be turned off via RBAC_DUAL_READ_TELEMETRY=false. */
   private telemetryEnabled(): boolean {
     return process.env['RBAC_DUAL_READ_TELEMETRY'] !== 'false';
   }
@@ -240,7 +240,7 @@ export class PermissionResolverService implements OnModuleInit {
 
     try {
       const result = await this.loadFromDb(ds, roleId, tenantId);
-      // Caminho PRIMÁRIO: role_id resolveu permissões via banco.
+      // PRIMARY path: role_id resolved permissions via the database.
       if (result.permissions.length > 0) {
         await this.observeDualRead({
           path: 'role_id', reason: 'role_id_resolved',
@@ -249,7 +249,7 @@ export class PermissionResolverService implements OnModuleInit {
         return result;
       }
 
-      // role_id presente mas sem permissões ativas (role removida/arquivada/sem grants) → FALLBACK.
+      // role_id present but without active permissions (role removed/archived/without grants) → FALLBACK.
       const permissions = this.unique(legacyFallback());
       await this.observeDualRead({
         path: 'fallback', reason: 'role_id_no_active_perms',
@@ -277,11 +277,11 @@ export class PermissionResolverService implements OnModuleInit {
   }
 
   /**
-   * PASSO 12-H — telemetria de dual-read + shadow + classificação de divergência.
-   * Apenas OBSERVA/registra: nunca altera a decisão de autorização nem o conjunto retornado.
-   * - `path`: 'role_id' (primário) ou 'fallback' (role string legado).
-   * - shadow: compara o conjunto usado (role_id/DB) com o conjunto legado (role string).
-   * - divergência: compara a string `role` com a role canônica de `role_id`.
+   * STEP 12-H — dual-read telemetry + shadow + divergence classification.
+   * Only OBSERVES/records: never changes the authorization decision nor the returned set.
+   * - `path`: 'role_id' (primary) or 'fallback' (legacy role string).
+   * - shadow: compares the set used (role_id/DB) with the legacy set (role string).
+   * - divergence: compares the `role` string with the canonical role of `role_id`.
    */
   private async observeDualRead(input: {
     path: DualReadPath;
@@ -312,18 +312,18 @@ export class PermissionResolverService implements OnModuleInit {
           divergence,
           used_count: input.usedPermissions.length,
           legacy_count: input.legacyPermissions.length,
-          // shadow: chaves do legado ausentes no conjunto usado (regressão potencial de gating)
+          // shadow: legacy keys missing from the set used (potential gating regression)
           missing_vs_legacy: missingVsLegacy.length,
           extra_vs_legacy: extraVsLegacy.length,
           gating_safe: missingVsLegacy.length === 0,
         }),
       );
     } catch {
-      // telemetria nunca quebra a resolução
+      // telemetry never breaks the resolution
     }
   }
 
-  /** Classifica a relação entre a string `role` e a role canônica de `role_id`. */
+  /** Classifies the relationship between the `role` string and the canonical role of `role_id`. */
   private async classifyDivergence(
     ds: DataSource | null,
     roleId: string | null,

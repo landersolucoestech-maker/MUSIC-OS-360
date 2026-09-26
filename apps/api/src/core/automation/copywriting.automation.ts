@@ -1,11 +1,11 @@
 /**
  * core/automation/copywriting.automation.ts
  *
- * Skill ON_DEMAND (ver on-demand-skill.runner.ts): rascunho de texto de
- * marketing genérico (e-mail/release de imprensa/landing/rascunho geral)
- * para uma MarketingTaskEntity real — nunca sobrepõe social-content (copy
- * de post) nem ad-creative (copy de anúncio pago), que operam sobre
- * entidades e formatos estruturados distintos.
+ * ON_DEMAND skill (see on-demand-skill.runner.ts): draft of generic marketing
+ * text (e-mail/press release/landing/general draft)
+ * for a real MarketingTaskEntity — never overlaps social-content (post
+ * copy) nor ad-creative (paid ad copy), which operate on
+ * distinct structured entities and formats.
  */
 
 import { Injectable } from '@nestjs/common';
@@ -68,7 +68,7 @@ export class CopywritingAutomation {
     tone: string | undefined,
     sourceFacts: string[] | undefined,
   ): Promise<OnDemandSkillResult<CopywritingOutput>> {
-    // Confirma existência/tenant via o service real (lança NotFoundException se ausente).
+    // Confirms existence/tenant via the real service (throws NotFoundException when missing).
     await this.tasks.findById(tenantId, taskId);
     const row = await this.loadTaskWithProject(tenantId, taskId);
 

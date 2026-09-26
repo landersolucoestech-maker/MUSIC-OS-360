@@ -1,15 +1,15 @@
 /**
  * core/automation/deals-crm.automation.ts
  *
- * Skill ON_DEMAND (ver on-demand-skill.runner.ts): análise do pipeline
- * comercial (deals = contratos reais, ContractEntity.client_id) de um
- * cliente, disparada por ação explícita do usuário na tela do cliente.
+ * ON_DEMAND skill (see on-demand-skill.runner.ts): analysis of a client's
+ * commercial pipeline (deals = real contracts, ContractEntity.client_id),
+ * triggered by an explicit user action on the client screen.
  *
- * "Deal" = contrato. dealStage é SEMPRE derivado deterministicamente do
- * ContractStatus real aqui no código — nunca decidido pelo modelo. Reaproveita
- * ClientsService.findById()/getContracts() (já reais, já existentes) — nenhum
- * novo domínio "pipeline_opportunities" é criado ou consultado (esse schema
- * existe mas está explicitamente sem contrato auditado, ver
+ * "Deal" = contract. dealStage is ALWAYS derived deterministically from the
+ * real ContractStatus here in code — never decided by the model. Reuses
+ * ClientsService.findById()/getContracts() (already real, already existing) — no
+ * new "pipeline_opportunities" domain is created or queried (that schema
+ * exists but explicitly has no audited contract, see
  * apps/api/src/modules/reports/pipeline-forms-not-reportable.guard.spec.ts).
  */
 
@@ -45,7 +45,7 @@ const WON_STATUSES = new Set(['signed', 'active', 'in_force']);
 const AT_RISK_STATUSES = new Set(['expiring']);
 const LOST_STATUSES = new Set(['expired', 'terminated', 'cancelled']);
 
-/** Deriva deterministicamente o estágio do deal a partir do ContractStatus real. */
+/** Deterministically derives the deal stage from the real ContractStatus. */
 function mapContractStatusToDealStage(status: string): DealStage {
   if (WON_STATUSES.has(status)) return 'won';
   if (AT_RISK_STATUSES.has(status)) return 'at_risk';

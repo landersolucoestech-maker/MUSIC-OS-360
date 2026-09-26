@@ -1,18 +1,18 @@
 /**
  * core/automation/support-triage.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
- *   support.ticket.created → support-triage → salva triagem em support_tickets.metadata.aiTriage
+ * NATIVE, INTERNAL and INVISIBLE automation:
+ *   support.ticket.created → support-triage → saves the triage in support_tickets.metadata.aiTriage
  *
- * Toda a orquestração comum (idempotência metadata + skill_runs, auditoria,
- * envelope, persistência, fail-safe) vive em `runNativeSkillAutomation`. Aqui ficam
- * apenas as partes específicas: load do ticket, montagem do input e o UPDATE da
- * tabela `support_tickets`.
+ * All common orchestration (metadata + skill_runs idempotency, auditing,
+ * envelope, persistence, fail-safe) lives in `runNativeSkillAutomation`. Only the
+ * specific parts live here: loading the ticket, assembling the input and the UPDATE of the
+ * `support_tickets` table.
  *
- * Garantias herdadas do runner: execução não-bloqueante, falha da IA nunca reverte
- * support.ticket.created, dupla guarda de idempotência, e nenhum efeito colateral
- * (sem tarefas, sem notificações, sem escalação, sem mudança de status, sem
- * tabelas novas).
+ * Guarantees inherited from the runner: non-blocking execution, an AI failure never reverts
+ * support.ticket.created, double idempotency guard, and no side effects
+ * (no tasks, no notifications, no escalation, no status change, no
+ * new tables).
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -37,13 +37,13 @@ import { runNativeSkillAutomation } from './native-skill-automation.runner';
 
 const SKILL_NAME = 'support-triage';
 
-/** Módulos aceitos pela skill (espelha o union SupportModule do pacote). */
+/** Modules accepted by the skill (mirrors the package's SupportModule union). */
 const KNOWN_MODULES: readonly SupportModule[] = [
   'artists', 'releases', 'contracts', 'financial', 'catalog', 'marketing',
   'audiovisual', 'agenda', 'integrations', 'ai', 'settings', 'support', 'other',
 ];
 
-/** Mapeia a `category` livre do ticket para um SupportModule; undefined se não casar. */
+/** Maps the ticket's free-form `category` to a SupportModule; undefined when it does not match. */
 function mapModule(category: string | null | undefined): SupportModule | undefined {
   const c = (category ?? '').trim().toLowerCase();
   return (KNOWN_MODULES as readonly string[]).includes(c) ? (c as SupportModule) : undefined;
@@ -97,7 +97,7 @@ export class SupportTriageAutomation {
     );
   }
 
-  // ── Persistência (read/write de support_tickets.metadata via DataSource) ─────
+  // ── Persistence (read/write of support_tickets.metadata via DataSource) ─────
 
   private async loadTicket(
     tenantId: string,

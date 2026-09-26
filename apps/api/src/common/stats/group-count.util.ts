@@ -3,19 +3,19 @@ import { SelectQueryBuilder } from 'typeorm';
 export interface GroupStatsResult {
   total: number;
   byGroup: Record<string, number>;
-  /** Presente apenas quando um valueColumn foi somado junto da contagem. */
+  /** Present only when a valueColumn was summed along with the count. */
   sumByGroup?: Record<string, number>;
   totalSum?: number;
 }
 
 /**
- * Conta registros agrupados por uma coluna (ex.: status), opcionalmente
- * somando uma coluna numérica no mesmo agrupamento (ex.: valor).
+ * Counts records grouped by a column (e.g. status), optionally
+ * summing a numeric column in the same grouping (e.g. valor).
  *
- * Task H: elimina o padrão "baixa a tabela inteira e conta/soma no
- * cliente" — usado por todo endpoint `GET /<recurso>/stats`. `qb` já deve
- * vir com tenant_id/deleted_at/outros filtros aplicados; esta função só
- * adiciona SELECT/GROUP BY e executa.
+ * Task H: eliminates the "download the whole table and count/sum in the
+ * client" pattern — used by every `GET /<resource>/stats` endpoint. `qb` must already
+ * come with tenant_id/deleted_at/other filters applied; this function only
+ * adds SELECT/GROUP BY and executes.
  */
 export async function groupCount<T extends object>(
   qb: SelectQueryBuilder<T>,

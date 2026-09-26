@@ -1,10 +1,10 @@
 /**
  * queues/processors/email.processor.ts
  *
- * Processor BullMQ para a fila "emails".
- * Envia emails reais via Resend (através do MailService).
- * Se RESEND_API_KEY não estiver configurada, MailService.send() retorna
- * { skipped: true } sem lançar excepção — comportamento gracioso em dev.
+ * BullMQ processor for the "emails" queue.
+ * Sends real emails via Resend (through MailService).
+ * If RESEND_API_KEY is not configured, MailService.send() returns
+ * { skipped: true } without throwing — graceful behavior in dev.
  */
 
 import { Processor, WorkerHost } from '@nestjs/bullmq';

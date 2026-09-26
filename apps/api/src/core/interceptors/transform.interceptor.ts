@@ -33,7 +33,7 @@ export class TransformInterceptor<T>
 
     return next.handle().pipe(
       map((value) => {
-        // Se o valor já tem formato { data, meta }, preservar
+        // If the value already has the { data, meta } shape, preserve it
         if (
           value !== null &&
           typeof value === 'object' &&
@@ -46,7 +46,7 @@ export class TransformInterceptor<T>
           } as ApiResponse<T>;
         }
 
-        // Caso contrário, envolver em { data }
+        // Otherwise, wrap it in { data }
         return {
           data: value as T,
           timestamp: new Date().toISOString(),

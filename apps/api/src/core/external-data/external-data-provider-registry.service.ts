@@ -18,9 +18,9 @@ export class ExternalDataProviderRegistry {
   private readonly providers = new Map<string, AnyProvider>();
 
   constructor() {
-    // Providers reais de distribuidora/sociedade ainda não existem; os providers
-    // "unconfigured" registrados fora de prod/staging FALHAM explicitamente em
-    // toda operação — nunca fabricam submissões.
+    // Real distributor/society providers do not exist yet; the
+    // "unconfigured" providers registered outside prod/staging explicitly FAIL on
+    // every operation — they never fabricate submissions.
     const nodeEnv = process.env.NODE_ENV ?? 'development';
     const isProdLike = nodeEnv === 'production' || nodeEnv === 'staging';
     if (!isProdLike) {

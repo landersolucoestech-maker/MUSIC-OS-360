@@ -1,20 +1,20 @@
 /**
  * core/automation/financial-classification.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
- *   transaction.created → financial-classification → salva SUGESTÃO em
+ * NATIVE, INTERNAL and INVISIBLE automation:
+ *   transaction.created → financial-classification → saves a SUGGESTION in
  *   transactions.metadata.aiClassification
  *
- * Toda a orquestração comum (idempotência metadata + skill_runs, auditoria,
- * envelope, persistência, fail-safe) vive em `runNativeSkillAutomation`. Aqui ficam
- * apenas as partes específicas: load da transação, montagem do input e o UPDATE da
- * tabela `transactions`.
+ * All common orchestration (metadata + skill_runs idempotency, auditing,
+ * envelope, persistence, fail-safe) lives in `runNativeSkillAutomation`. Only
+ * the specific parts live here: loading the transaction, assembling the input and the
+ * UPDATE of the `transactions` table.
  *
- * Garantias herdadas do runner: execução não-bloqueante, falha da IA nunca reverte a
- * criação da transação, dupla guarda de idempotência (running recente/success
- * bloqueiam; running stale/failed permitem retry). Apenas grava SUGESTÃO interna —
- * NÃO lança classificação definitiva, NÃO altera categoria nem centro de custo
- * oficiais, sem tarefas, sem notificações, sem tabelas novas.
+ * Guarantees inherited from the runner: non-blocking execution, an AI failure never reverts the
+ * transaction creation, double idempotency guard (recent running/success
+ * block; stale running/failed allow a retry). Only writes an internal SUGGESTION —
+ * does NOT post a definitive classification, does NOT change the official category or cost
+ * center, no tasks, no notifications, no new tables.
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -50,7 +50,7 @@ interface TransactionRow {
   metadata: Record<string, unknown> | null;
 }
 
-/** Mapeia o `type` da transação (receita/despesa) para a direção da skill. */
+/** Maps the transaction `type` (receita/despesa) to the skill's direction. */
 function mapDirection(type: string | null | undefined): FinancialDirection {
   return (type ?? '').trim().toLowerCase() === 'receita' ? 'income' : 'expense';
 }
@@ -96,7 +96,7 @@ export class FinancialClassificationAutomation {
     );
   }
 
-  // ── Persistência (read/write de transactions.metadata via DataSource) ────────
+  // ── Persistence (read/write of transactions.metadata via DataSource) ───
 
   private async loadTransaction(
     tenantId: string,

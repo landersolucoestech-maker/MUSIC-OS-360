@@ -1,23 +1,23 @@
 /**
  * core/automation/contact-operations.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
- *   client.created → contact-operations → salva SUGESTÃO em
+ * NATIVE, INTERNAL and INVISIBLE automation:
+ *   client.created → contact-operations → saves a SUGGESTION in
  *   clients.metadata.aiContactOperations
  *
- * Toda a orquestração comum (idempotência metadata + skill_runs, auditoria,
- * envelope, persistência, fail-safe) vive em `runNativeSkillAutomation`. Aqui
- * ficam apenas as partes específicas: load do cliente, montagem do input e o
- * UPDATE da tabela `clients`.
+ * All common orchestration (metadata + skill_runs idempotency, auditing,
+ * envelope, persistence, fail-safe) lives in `runNativeSkillAutomation`. Only
+ * the specific parts live here: loading the client, assembling the input and the
+ * UPDATE of the `clients` table.
  *
- * client.created dispara SÓ na criação via conversão de lead
- * (LeadEventsHandler.convertLead, após o commit da transação) — o momento em
- * que um relacionamento comercial novo nasce. Distinto de crm-followup, que
- * atua em lead.created (ANTES da conversão, tentando fechar o negócio);
- * contact-operations atua DEPOIS, ajudando a operacionalizar a relação com o
- * cliente recém-criado. Apenas grava SUGESTÃO interna — não altera dados
- * oficiais do cliente, não escreve em nenhum "timeline"/histórico de
- * interações.
+ * client.created fires ONLY on creation via lead conversion
+ * (LeadEventsHandler.convertLead, after the transaction commits) — the moment
+ * a new commercial relationship is born. Distinct from crm-followup, which
+ * acts on lead.created (BEFORE the conversion, trying to close the deal);
+ * contact-operations acts AFTERWARDS, helping to operationalize the relationship with the
+ * newly created client. Only writes an internal SUGGESTION — does not change the client's
+ * official data, does not write to any "timeline"/interaction
+ * history.
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -90,7 +90,7 @@ export class ContactOperationsAutomation {
     );
   }
 
-  // ── Persistência (read/write de clients.metadata via DataSource) ───────────
+  // ── Persistence (read/write of clients.metadata via DataSource) ──────
 
   private async loadClient(
     tenantId: string,

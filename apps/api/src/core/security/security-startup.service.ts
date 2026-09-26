@@ -1,10 +1,10 @@
 /**
  * core/security/security-startup.service.ts
  *
- * Valida configuração de segurança no boot da aplicação.
- * Em produção, termina o processo se chaves críticas estiverem ausentes ou
- * com valores padrão inseguros.
- * Em desenvolvimento, emite warnings sem bloquear o boot.
+ * Validates the security configuration at application boot.
+ * In production, terminates the process if critical keys are missing or
+ * have insecure default values.
+ * In development, emits warnings without blocking the boot.
  */
 
 import { Optional, Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';

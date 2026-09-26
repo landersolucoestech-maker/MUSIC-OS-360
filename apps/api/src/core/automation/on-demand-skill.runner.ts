@@ -1,26 +1,26 @@
 /**
  * core/automation/on-demand-skill.runner.ts
  *
- * Runner comum para skills ON_DEMAND — disparadas por uma ação explícita do
- * usuário via controller (POST), não por um evento de domínio de ciclo de
- * vida. Contraparte de `native-skill-automation.runner.ts` (que é
- * EVENT_DRIVEN, assíncrono, fail-safe/invisível).
+ * Common runner for ON_DEMAND skills — triggered by an explicit user action
+ * via a controller (POST), not by a lifecycle domain
+ * event. Counterpart of `native-skill-automation.runner.ts` (which is
+ * EVENT_DRIVEN, asynchronous, fail-safe/invisible).
  *
- * Diferenças deliberadas em relação ao runner event-driven:
- *   — síncrono: o usuário está esperando a resposta HTTP, então a chamada de
- *     IA acontece dentro da requisição e falhas SÃO relançadas (o controller
- *     decide o código de erro) — nunca o fail-safe "engolir e seguir".
- *   — sem idempotencyKey/guarda de metadata: não há entidade cujo `metadata`
- *     sirva de guarda. A auditoria/histórico vivem inteiramente em
- *     `skill_runs` (start/succeed/fail já existentes), reaproveitando
- *     `output_payload` — nenhuma tabela nova.
- *   — staleness opcional (`freshnessMinutes`): quando informado, reaproveita
- *     a última execução de SUCESSO dentro da janela em vez de chamar a IA de
- *     novo (via `SkillRunService.findRecentSuccess`), a menos que
- *     `forceRefresh` seja true. Skills sem `freshnessMinutes` sempre geram.
+ * Deliberate differences from the event-driven runner:
+ *   — synchronous: the user is waiting for the HTTP response, so the AI
+ *     call happens inside the request and failures ARE rethrown (the controller
+ *     decides the error code) — never the fail-safe "swallow and move on".
+ *   — no idempotencyKey/metadata guard: there is no entity whose `metadata`
+ *     can serve as a guard. Auditing/history live entirely in
+ *     `skill_runs` (the existing start/succeed/fail), reusing
+ *     `output_payload` — no new table.
+ *   — optional staleness (`freshnessMinutes`): when given, reuses
+ *     the last SUCCESSFUL execution within the window instead of calling the AI
+ *     again (via `SkillRunService.findRecentSuccess`), unless
+ *     `forceRefresh` is true. Skills without `freshnessMinutes` always generate.
  *
- * Nunca escreve em nenhuma entidade de produto — cada resultado é devolvido
- * ao chamador (controller), que decide se/como expor.
+ * Never writes to any product entity — each result is returned
+ * to the caller (controller), which decides whether/how to expose it.
  */
 
 import { Logger } from '@nestjs/common';
@@ -43,7 +43,7 @@ export interface OnDemandSkillParams<TInput, TOutput> {
   skillName: string;
   tenantId: string;
   userId: string | null;
-  /** Tipo/id da entidade quando a skill é escopada a uma (ex.: 'artist'/artistId). null para skills a nível de tenant. */
+  /** Entity type/id when the skill is scoped to one (e.g. 'artist'/artistId). null for tenant-level skills. */
   entityType: string | null;
   entityId: string | null;
   systemPrompt: string;
@@ -51,9 +51,9 @@ export interface OnDemandSkillParams<TInput, TOutput> {
   buildPrompt: (input: TInput) => string;
   parseResponse: (content: string, input: TInput) => TOutput;
   validateInput?: (input: TInput) => OnDemandSkillValidation;
-  /** Janela em minutos para reaproveitar a última execução de sucesso sem nova chamada de IA. Omitido = sempre gera. */
+  /** Window in minutes to reuse the last successful execution without a new AI call. Omitted = always generates. */
   freshnessMinutes?: number;
-  /** Ignora o cache de frescor e força nova geração mesmo dentro da janela. */
+  /** Ignores the freshness cache and forces a new generation even within the window. */
   forceRefresh?: boolean;
 }
 

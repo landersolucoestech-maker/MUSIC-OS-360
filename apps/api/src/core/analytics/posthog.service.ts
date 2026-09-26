@@ -1,9 +1,9 @@
 /**
  * core/analytics/posthog.service.ts
  *
- * PostHogService — product analytics server-side.
- * Envia eventos de forma assíncrona (fire-and-forget).
- * Se POSTHOG_API_KEY não estiver configurada, todos os métodos são no-op.
+ * PostHogService — server-side product analytics.
+ * Sends events asynchronously (fire-and-forget).
+ * If POSTHOG_API_KEY is not configured, every method is a no-op.
  */
 
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
@@ -46,7 +46,7 @@ export class PostHogService implements OnModuleDestroy {
     this.logger.log(`PostHog inicializado — host: ${this.host}`);
   }
 
-  /** Estado real de configuração — usado por analytics-tracking para nunca fingir cobertura de um provedor não configurado. */
+  /** Real configuration state — used by analytics-tracking to never pretend coverage of an unconfigured provider. */
   isConfigured(): boolean {
     return this.client !== null;
   }
@@ -109,7 +109,7 @@ export class PostHogService implements OnModuleDestroy {
     }
   }
 
-  // ─── Eventos de domínio ───────────────────────────────────────────────────
+  // ─── Domain events ───────────────────────────────────────────────────────────
 
   trackAIUsage(userId: string, tenantId: string, skill: string, provider: string, costUsd: number): void {
     this.capture({ userId, tenantId, event: 'ai_usage', properties: { skill, provider, cost_usd: costUsd } });

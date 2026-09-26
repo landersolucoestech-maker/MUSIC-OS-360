@@ -1,18 +1,18 @@
 /**
  * core/automation/catalog-metadata-validator.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
+ * NATIVE, INTERNAL and INVISIBLE automation:
  *   catalog.work.created      → catalog-metadata-validator (type=work)      → works.metadata.aiCatalogValidation
  *   catalog.recording.created → catalog-metadata-validator (type=recording) → phonograms.metadata.aiCatalogValidation
  *
- * Um único handler trata os dois eventos, mantendo entityType/eventName/idempotencyKey
- * próprios de cada type. Toda a orquestração comum (idempotência metadata + skill_runs,
- * auditoria, envelope, persistência, fail-safe) vive em `runNativeSkillAutomation`.
+ * A single handler treats both events, keeping each type's own
+ * entityType/eventName/idempotencyKey. All common orchestration (metadata + skill_runs idempotency,
+ * auditing, envelope, persistence, fail-safe) lives in `runNativeSkillAutomation`.
  *
- * Garantias herdadas do runner: execução não-bloqueante, falha da IA nunca reverte a
- * criação do ativo, dupla guarda de idempotência (running recente/success bloqueiam;
- * running stale/failed permitem retry), e nenhum efeito colateral (não aprova catálogo,
- * não altera status de obra/fonograma, sem tarefas, sem notificações, sem tabelas novas).
+ * Guarantees inherited from the runner: non-blocking execution, an AI failure never reverts the
+ * asset creation, double idempotency guard (recent running/success block;
+ * stale running/failed allow a retry), and no side effects (does not approve the catalog,
+ * does not change the work/phonogram status, no tasks, no notifications, no new tables).
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -74,8 +74,8 @@ interface RecordingRow {
   metadata: Record<string, unknown> | null;
 }
 
-/** Nomes não-vazios de uma categoria de `participacao` (jsonb estruturado --
- * ver ParticipacaoDto em modules/phonograms/dto/create-phonogram.dto.ts). */
+/** Non-empty names of a `participacao` category (structured jsonb --
+ * see ParticipacaoDto in modules/phonograms/dto/create-phonogram.dto.ts). */
 function participantNames(list: ParticipacaoParticipante[] | undefined): string[] {
   if (!Array.isArray(list)) return [];
   return list.map((p) => p?.name?.trim()).filter((n): n is string => !!n);
@@ -154,7 +154,7 @@ export class CatalogMetadataValidatorAutomation {
     );
   }
 
-  // ── Persistência: works ─────────────────────────────────────────────────────
+  // ── Persistence: works ──────────────────────────────────────────────────────
 
   private async loadWork(
     tenantId: string,
@@ -186,7 +186,7 @@ export class CatalogMetadataValidatorAutomation {
     );
   }
 
-  // ── Persistência: phonograms ────────────────────────────────────────────────
+  // ── Persistence: phonograms ─────────────────────────────────────────────────
 
   private async loadRecording(
     tenantId: string,
@@ -233,7 +233,7 @@ export class CatalogMetadataValidatorAutomation {
       language: 'pt-BR',
     };
     if (work.editora) input.publisher = work.editora;
-    // ISRC numa obra é inconsistência — passado para o modelo apontar, se houver.
+    // An ISRC on a work is an inconsistency — passed to the model to point out, if present.
     if (work.isrc) input.isrc = work.isrc;
     if (typeof md.context === 'string') input.context = md.context;
     return input;

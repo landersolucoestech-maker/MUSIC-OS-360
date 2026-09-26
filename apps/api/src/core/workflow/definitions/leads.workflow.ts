@@ -1,8 +1,8 @@
 /**
  * leads.workflow.ts
  *
- * Workflow de ciclo de vida para Leads (CRM).
- * Estados: new → contacted → qualified → proposal → closed / lost
+ * Lifecycle workflow for Leads (CRM).
+ * States: new → contacted → qualified → proposal → closed / lost
  */
 
 import { LeadStatus } from '@music-os-360/types';

@@ -1,14 +1,14 @@
 /**
  * core/automation/crm-followup.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
- *   lead.created → crm-followup → salva SUGESTÃO interna em leads.metadata.aiFollowup
+ * NATIVE, INTERNAL and INVISIBLE automation:
+ *   lead.created → crm-followup → saves an internal SUGGESTION in leads.metadata.aiFollowup
  *
- * Toda a orquestração comum (idempotência metadata + skill_runs, auditoria, envelope,
- * persistência, fail-safe) vive em `runNativeSkillAutomation`.
+ * All common orchestration (metadata + skill_runs idempotency, auditing, envelope,
+ * persistence, fail-safe) lives in `runNativeSkillAutomation`.
  *
- * Restrições: apenas gera sugestão interna — NUNCA envia mensagem, NUNCA cria
- * atividade/interação, NUNCA cria tarefa, não altera status/dados oficiais do lead.
+ * Restrictions: only generates an internal suggestion — NEVER sends a message, NEVER creates
+ * an activity/interaction, NEVER creates a task, does not change the lead's official status/data.
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -38,7 +38,7 @@ const LEAD_TYPES: readonly CrmLeadType[] = [
   'artist', 'label', 'publisher', 'producer', 'brand', 'partner', 'supplier', 'client', 'other',
 ];
 
-/** Mapeia o status livre do lead para o estágio canônico da skill. */
+/** Maps the lead's free-form status to the skill's canonical stage. */
 const STAGE_MAP: Record<string, CrmStage> = {
   novo: 'new', new: 'new',
   contatado: 'contacted', contactado: 'contacted', contacted: 'contacted',
@@ -105,7 +105,7 @@ export class CrmFollowupAutomation {
     );
   }
 
-  // ── Persistência (read/write de leads.metadata via DataSource) ──────────────
+  // ── Persistence (read/write of leads.metadata via DataSource) ────────
 
   private async loadLead(
     tenantId: string,

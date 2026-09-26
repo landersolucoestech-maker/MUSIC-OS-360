@@ -1,8 +1,8 @@
 /**
  * projects.workflow.ts
  *
- * Workflow de ciclo de vida para Projetos musicais.
- * Conforme spec: planning → in_progress → review → completed / cancelled
+ * Lifecycle workflow for music Projects.
+ * Per spec: planning → in_progress → review → completed / cancelled
  */
 
 import { ProjectStatus } from '@music-os-360/types';

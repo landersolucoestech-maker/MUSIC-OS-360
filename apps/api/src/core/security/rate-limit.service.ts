@@ -1,10 +1,10 @@
 /**
  * core/security/rate-limit.service.ts
  *
- * RateLimitService — sliding window rate limiting em memória.
- * Categorias: auth (5/15m), api (120/1m), ai (20/1h), upload (30/1h), webhook (100/1m).
+ * RateLimitService — in-memory sliding window rate limiting.
+ * Categories: auth (5/15m), api (120/1m), ai (20/1h), upload (30/1h), webhook (100/1m).
  *
- * Para produção com Redis: substituir o Map interno por ioredis + Lua script.
+ * For production with Redis: replace the internal Map with ioredis + a Lua script.
  */
 
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';

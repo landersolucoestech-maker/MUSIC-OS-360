@@ -1,25 +1,25 @@
 /**
  * core/automation/campaign-report.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
- *   campaign.ended → campaign-report → salva SUGESTÃO em
+ * NATIVE, INTERNAL and INVISIBLE automation:
+ *   campaign.ended → campaign-report → saves a SUGGESTION in
  *   campaigns.metadata.aiCampaignReport
  *
- * Toda a orquestração comum (idempotência metadata + skill_runs, auditoria,
- * envelope, persistência, fail-safe) vive em `runNativeSkillAutomation`. Aqui
- * ficam apenas as partes específicas: load da campanha + contagem real de
- * tarefas/assets (campaign_tasks/campaign_assets), montagem do input e o
- * UPDATE da tabela `campaigns`.
+ * All common orchestration (metadata + skill_runs idempotency, auditing,
+ * envelope, persistence, fail-safe) lives in `runNativeSkillAutomation`. Only
+ * the specific parts live here: loading the campaign + the real count of
+ * tasks/assets (campaign_tasks/campaign_assets), assembling the input and the
+ * UPDATE of the `campaigns` table.
  *
- * ANTI-FABRICAÇÃO (deliberado): não existe, hoje, nenhum mapeamento
- * campanha-interna → campanha-de-mídia-paga persistido no schema (a
- * integração Google Ads não referencia `campaigns.id`). Por isso
- * `externalMetrics` é deliberadamente NUNCA populado aqui — fica undefined,
- * e o parser/validador da skill (enforceNoFabricatedMetrics) força
- * hasMeasuredPerformanceData=false e availability="unavailable" nesse caso.
- * Quando um mapeamento real existir, popular externalMetrics aqui a partir
- * de dados reais é a única mudança necessária — a skill já suporta o caso
- * "actual".
+ * ANTI-FABRICATION (deliberate): today there is no persisted
+ * internal-campaign → paid-media-campaign mapping in the schema (the
+ * Google Ads integration does not reference `campaigns.id`). That is why
+ * `externalMetrics` is deliberately NEVER populated here — it stays undefined,
+ * and the skill's parser/validator (enforceNoFabricatedMetrics) forces
+ * hasMeasuredPerformanceData=false and availability="unavailable" in that case.
+ * When a real mapping exists, populating externalMetrics here from
+ * real data is the only change needed — the skill already supports the
+ * "actual" case.
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -98,7 +98,7 @@ export class CampaignReportAutomation {
     );
   }
 
-  // ── Persistência (read/write de campaigns.metadata via DataSource) ─────────
+  // ── Persistence (read/write of campaigns.metadata via DataSource) ────
 
   private async loadCampaign(
     tenantId: string,
@@ -142,8 +142,8 @@ export class CampaignReportAutomation {
     const input: CampaignReportInput = {
       campaignName: c.nome?.trim() || 'Campanha',
       campaignType: c.type?.trim() || 'geral',
-      // CampaignStatus.CANCELLED é o único desfecho que não é "completed";
-      // qualquer outro status neste ponto do ciclo de vida (ENDED) é conclusão.
+      // CampaignStatus.CANCELLED is the only outcome that is not "completed";
+      // any other status at this point of the lifecycle (ENDED) is a completion.
       outcomeStatus: c.status === 'cancelled' ? 'cancelled' : 'completed',
       language: 'pt-BR',
     };

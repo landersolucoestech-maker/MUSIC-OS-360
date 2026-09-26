@@ -1,17 +1,17 @@
 /**
  * core/automation/onboarding-cro.automation.ts
  *
- * Skill ON_DEMAND (ver on-demand-skill.runner.ts): calcula o progresso REAL
- * de onboarding de um tenant a partir de contagens reais já existentes —
- * os 6 passos definidos em apps/web/src/app/providers/TenantContext.tsx
- * (OnboardingStep) nunca eram computados por nenhum backend antes desta
- * automação (grep repo-wide confirmado); apenas `company_profile`/`complete`
- * eram gravados via OnboardingService.complete().
+ * ON_DEMAND skill (see on-demand-skill.runner.ts): computes a tenant's REAL
+ * onboarding progress from real, already existing counts —
+ * the 6 steps defined in apps/web/src/app/providers/TenantContext.tsx
+ * (OnboardingStep) were never computed by any backend before this
+ * automation (repo-wide grep confirmed); only `company_profile`/`complete`
+ * were written via OnboardingService.complete().
  *
- * Cada `completed` é um booleano DERIVADO deterministicamente de uma
- * contagem SQL real aqui — o modelo nunca decide isso, apenas recebe o
- * resultado já calculado. Nenhuma taxa de conversão agregada entre tenants é
- * produzida (não existe motor de funil/cohort no produto).
+ * Each `completed` is a boolean DERIVED deterministically from a real SQL
+ * count here — the model never decides it, it only receives the
+ * already computed result. No aggregated cross-tenant conversion rate is
+ * produced (there is no funnel/cohort engine in the product).
  */
 
 import { Injectable, Inject, Optional, NotFoundException } from '@nestjs/common';

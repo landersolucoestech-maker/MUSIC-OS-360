@@ -1,17 +1,17 @@
 /**
  * core/interceptors/audit.interceptor.ts
  *
- * AuditInterceptor — intercepta rotas decoradas com @Audit('entidade.acao')
- * e regista a mutação no AuditService após a resposta.
+ * AuditInterceptor — intercepts routes decorated with @Audit('entity.action')
+ * and records the mutation in AuditService after the response.
  *
- * Captura automática:
- *  - before: SELECT da entidade por (tenant_id, id) antes do handler
- *  - after:  resposta do handler
- *  - diff:   calculado pelo AuditService a partir de before + after
- *  - correlation_id: lido do CorrelationContext (FASE 3 AsyncLocalStorage)
- *  - http_method / http_path: do request
- *  - actor_role: do JWT (orgRole)
- *  - session_id: do header X-Session-Id
+ * Automatic capture:
+ *  - before: SELECT of the entity by (tenant_id, id) before the handler
+ *  - after:  the handler's response
+ *  - diff:   computed by AuditService from before + after
+ *  - correlation_id: read from CorrelationContext (PHASE 3 AsyncLocalStorage)
+ *  - http_method / http_path: from the request
+ *  - actor_role: from the JWT (orgRole)
+ *  - session_id: from the X-Session-Id header
  */
 
 import {
@@ -34,7 +34,7 @@ import { redactUrl }         from '../security/redact';
 
 export const AUDIT_KEY = 'audit_action';
 
-/** Decorator para marcar uma rota para auditoria. */
+/** Decorator that marks a route for auditing. */
 export const Audit = (action: string) => SetMetadata(AUDIT_KEY, action);
 
 // ── Sanitization for audit storage ───────────────────────────────────────────

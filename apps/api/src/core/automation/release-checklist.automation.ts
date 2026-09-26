@@ -1,17 +1,17 @@
 /**
  * core/automation/release-checklist.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
- *   release.created → release-checklist → salva auditoria em releases.metadata.aiChecklist
+ * NATIVE, INTERNAL and INVISIBLE automation:
+ *   release.created → release-checklist → saves the audit in releases.metadata.aiChecklist
  *
- * Toda a orquestração comum (idempotência metadata + skill_runs, auditoria,
- * envelope, persistência, fail-safe) vive em `runNativeSkillAutomation`. Aqui ficam
- * apenas as partes específicas: load do release (com nome do artista), montagem do
- * input e o UPDATE da tabela `releases`.
+ * All common orchestration (metadata + skill_runs idempotency, auditing,
+ * envelope, persistence, fail-safe) lives in `runNativeSkillAutomation`. Only the
+ * specific parts live here: loading the release (with the artist name), assembling the
+ * input and the UPDATE of the `releases` table.
  *
- * Garantias herdadas do runner: execução não-bloqueante, falha da IA nunca reverte
- * release.created, dupla guarda de idempotência, e nenhum efeito colateral (sem
- * tarefas reais, sem notificações, sem tabelas novas).
+ * Guarantees inherited from the runner: non-blocking execution, an AI failure never reverts
+ * release.created, double idempotency guard, and no side effects (no
+ * real tasks, no notifications, no new tables).
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -36,10 +36,10 @@ import { runNativeSkillAutomation } from './native-skill-automation.runner';
 
 const SKILL_NAME = 'release-checklist';
 
-/** Tipos de lançamento aceitos pela skill (alinha o varchar livre de releases.type). */
+/** Release types accepted by the skill (aligns releases.type's free varchar). */
 const KNOWN_RELEASE_TYPES: readonly ReleaseType[] = ['single', 'ep', 'album', 'mixtape', 'video', 'other'];
 
-/** Mapeia o `type` livre do release para o enum da skill; cai em "other" se desconhecido. */
+/** Maps the release's free-form `type` to the skill enum; falls back to "other" when unknown. */
 function mapReleaseType(type: string | null | undefined): ReleaseType {
   const t = (type ?? '').trim().toLowerCase();
   if ((KNOWN_RELEASE_TYPES as readonly string[]).includes(t)) return t as ReleaseType;
@@ -100,7 +100,7 @@ export class ReleaseChecklistAutomation {
     );
   }
 
-  // ── Persistência (read/write de releases.metadata via DataSource) ───────────
+  // ── Persistence (read/write of releases.metadata via DataSource) ─────
 
   private async loadRelease(
     tenantId: string,

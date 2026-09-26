@@ -1,20 +1,20 @@
 /**
  * core/automation/analytics-insights.automation.ts
  *
- * Duas skills ON_DEMAND (ver on-demand-skill.runner.ts) sobre dados REAIS já
- * expostos por AnalyticsService — nunca recalculam, nunca inventam um
- * contador ou um valor financeiro:
+ * Two ON_DEMAND skills (see on-demand-skill.runner.ts) over REAL data already
+ * exposed by AnalyticsService — they never recompute, never invent a
+ * counter or a financial value:
  *
- *   reporting-analysis  → síntese narrativa do dashboard operacional
- *                          (AnalyticsService.getDashboard) — contadores por
- *                          entidade, financeiro do mês, tarefas, syncs
- *                          externos. Stale-refresh de 1 dia.
- *   performance-report   → retrospectiva narrativa de receita/despesa por
- *                          período (AnalyticsService.getRevenueOverview) —
- *                          monthlyBreakdown é SEMPRE o dado real (garantido
- *                          no parser da skill, nunca reproduzido pelo
- *                          modelo). Sem stale-refresh: períodos diferentes
- *                          (`months`) produzem relatórios diferentes.
+ *   reporting-analysis  → narrative synthesis of the operational dashboard
+ *                          (AnalyticsService.getDashboard) — counters per
+ *                          entity, the month's financials, tasks, external
+ *                          syncs. 1-day stale refresh.
+ *   performance-report   → narrative retrospective of revenue/expense per
+ *                          period (AnalyticsService.getRevenueOverview) —
+ *                          monthlyBreakdown is ALWAYS the real data (guaranteed
+ *                          in the skill's parser, never reproduced by the
+ *                          model). No stale refresh: different periods
+ *                          (`months`) produce different reports.
  */
 
 import { Injectable } from '@nestjs/common';

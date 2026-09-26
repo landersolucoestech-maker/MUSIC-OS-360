@@ -1,17 +1,17 @@
 /**
- * stripe-key-guard.ts  (Parte 72)
+ * stripe-key-guard.ts  (Part 72)
  *
- * Classificação segura de chaves Stripe — nunca imprime o valor da chave,
- * apenas o estado. Esta parte do projeto usa Stripe exclusivamente em TEST
- * MODE (ver regras absolutas das Partes 69-72): uma chave `sk_live_`/
- * `pk_live_` é sempre rejeitada aqui, em qualquer ambiente, não apenas em
- * DEV/STAGING — não há uma fase "produção com Stripe live" habilitada ainda.
+ * Safe classification of Stripe keys — never prints the key value,
+ * only its state. This part of the project uses Stripe exclusively in TEST
+ * MODE (see the absolute rules of Parts 69-72): an `sk_live_`/
+ * `pk_live_` key is always rejected here, in any environment, not only in
+ * DEV/STAGING — there is no "production with live Stripe" phase enabled yet.
  *
- * `classifyStripeSecretKeyFormat` é síncrona e não faz nenhuma chamada de
- * rede — segura para rodar no boot/build. Ela NÃO consegue detectar uma
- * chave revogada/expirada (formato continua válido); isso só é observável
- * chamando a API da Stripe, o que `checkStripeKeyLiveness` faz sob demanda
- * (nunca automaticamente no boot/build).
+ * `classifyStripeSecretKeyFormat` is synchronous and makes no network
+ * call — safe to run at boot/build. It CANNOT detect a
+ * revoked/expired key (the format stays valid); that is only observable by
+ * calling the Stripe API, which `checkStripeKeyLiveness` does on demand
+ * (never automatically at boot/build).
  */
 
 export type StripeKeyFormatState =
@@ -43,10 +43,10 @@ export function classifyStripePublishableKeyFormat(key: string | undefined | nul
 }
 
 /**
- * Chama GET /v1/balance — endpoint autenticado, somente-leitura, sem efeito
- * colateral — apenas para confirmar que a chave ainda é aceita pela Stripe.
- * Nunca deve ser chamada automaticamente no boot; é para uso sob demanda
- * (ex.: um endpoint de readiness ou script de verificação manual).
+ * Calls GET /v1/balance — an authenticated, read-only endpoint without side
+ * effects — only to confirm the key is still accepted by Stripe.
+ * Must never be called automatically at boot; it is for on-demand use
+ * (e.g. a readiness endpoint or a manual verification script).
  */
 export async function checkStripeKeyLiveness(key: string): Promise<StripeKeyLivenessState> {
   try {

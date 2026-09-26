@@ -1,22 +1,22 @@
 /**
- * must-change-password.guard.ts  (Parte 73)
+ * must-change-password.guard.ts  (Part 73)
  *
- * Supabase Auth não tem uma flag nativa de "troca de senha obrigatória" —
- * ela é modelada em `app_metadata.must_change_password` (setada na criação
- * do owner institucional real, ver bootstrap-tenant-zero.cli.ts) e viaja no
- * JWT como qualquer outro claim (mesmo mecanismo de org_id/role — ver
- * auth.guard.ts). Este guard bloqueia toda rota, exceto uma allowlist
- * mínima, enquanto a flag estiver true — o gate real de segurança fica no
- * backend, não apenas num redirect de frontend (que um usuário determinado
- * poderia contornar).
+ * Supabase Auth has no native "mandatory password change" flag —
+ * it is modelled in `app_metadata.must_change_password` (set when the real
+ * institutional owner is created, see bootstrap-tenant-zero.cli.ts) and travels in the
+ * JWT like any other claim (same mechanism as org_id/role — see
+ * auth.guard.ts). This guard blocks every route, except a minimal
+ * allowlist, while the flag is true — the real security gate lives in the
+ * backend, not only in a frontend redirect (which a determined user
+ * could bypass).
  *
- * A allowlist inclui deliberadamente /auth/context (o frontend precisa
- * disso pra saber que deve mostrar a tela de troca de senha) e
- * /auth/change-required-password (Parte 74 — o único endpoint que pode
- * tirar a conta deste estado, e só faz isso de forma atômica: troca a
- * senha de verdade E limpa a flag na mesma chamada Admin API), mas NÃO
- * /auth/onboarding — a sequência é sempre trocar senha primeiro, depois
- * (se aplicável) o assistente de configuração da empresa.
+ * The allowlist deliberately includes /auth/context (the frontend needs it
+ * to know it must show the password change screen) and
+ * /auth/change-required-password (Part 74 — the only endpoint that can
+ * take the account out of this state, and it only does so atomically: it really changes the
+ * password AND clears the flag in the same Admin API call), but NOT
+ * /auth/onboarding — the sequence is always: change the password first, then
+ * (if applicable) the company setup wizard.
  */
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';

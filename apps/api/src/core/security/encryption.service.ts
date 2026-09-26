@@ -50,7 +50,7 @@ export class EncryptionService {
     return PREFIX + payload.toString('base64');
   }
 
-  /** Expõe os bytes da chave para uso em HMAC dentro de serviços internos. */
+  /** Exposes the key bytes for HMAC use inside internal services. */
   getKeyBytes(): Buffer { return this.key; }
 
   decrypt(ciphertext: string): string {

@@ -1,10 +1,10 @@
 /**
  * core/interceptors/logging.interceptor.ts
  *
- * HTTP logging interceptor estruturado.
- * Emite JSON por request com: requestId, correlationId, method, url, statusCode,
+ * Structured HTTP logging interceptor.
+ * Emits JSON per request with: requestId, correlationId, method, url, statusCode,
  * latency_ms, tenantId, userId.
- * O requestId é propagado pelo RequestIdMiddleware (X-Request-ID).
+ * The requestId is propagated by RequestIdMiddleware (X-Request-ID).
  */
 
 import {

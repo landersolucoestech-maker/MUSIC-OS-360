@@ -1,22 +1,22 @@
 /**
  * core/automation/social-content.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
- *   marketing.content_created → social-content → salva SUGESTÃO em
+ * NATIVE, INTERNAL and INVISIBLE automation:
+ *   marketing.content_created → social-content → saves a SUGGESTION in
  *   marketing_content_posts.metadata.aiSocialContent
  *
- * Toda a orquestração comum (idempotência metadata + skill_runs, auditoria,
- * envelope, persistência, fail-safe) vive em `runNativeSkillAutomation`. Aqui
- * ficam apenas as partes específicas: load do post (+ nome da campanha
- * relacionada, quando houver), montagem do input e o UPDATE da tabela
- * `marketing_content_posts`.
+ * All common orchestration (metadata + skill_runs idempotency, auditing,
+ * envelope, persistence, fail-safe) lives in `runNativeSkillAutomation`. Only
+ * the specific parts live here: loading the post (+ the related campaign's
+ * name, when any), assembling the input and the UPDATE of the
+ * `marketing_content_posts` table.
  *
- * ANTI-FABRICAÇÃO / generated != published (deliberado): esta automação
- * NUNCA escreve em `copy`, `status` ou `publication_status` — apenas grava
- * uma sugestão de variações de legenda/hashtags em metadata. A publicação
- * real (fila `marketing-publishing`, `MarketingPublishingProcessor.publish()`)
- * é um boundary totalmente separado e hoje reporta honestamente "não
- * configurada" para qualquer canal — esta skill nunca implica o contrário.
+ * ANTI-FABRICATION / generated != published (deliberate): this automation
+ * NEVER writes to `copy`, `status` or `publication_status` — it only writes
+ * a suggestion of caption/hashtag variations in metadata. Real publishing
+ * (the `marketing-publishing` queue, `MarketingPublishingProcessor.publish()`)
+ * is a completely separate boundary and today honestly reports "not
+ * configured" for every channel — this skill never implies otherwise.
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -92,7 +92,7 @@ export class SocialContentAutomation {
     );
   }
 
-  // ── Persistência (read/write de marketing_content_posts.metadata) ──────────
+  // ── Persistence (read/write of marketing_content_posts.metadata) ───────────
 
   private async loadContent(
     tenantId: string,

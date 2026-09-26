@@ -6,8 +6,8 @@ interface CacheEntry<T> {
 }
 
 /**
- * CacheService — in-memory cache com TTL.
- * Em produção: substitua pela implementação Redis via @nestjs/cache-manager.
+ * CacheService — in-memory cache with TTL.
+ * In production: replace it with the Redis implementation via @nestjs/cache-manager.
  */
 @Injectable()
 export class CacheService {

@@ -118,7 +118,7 @@ describe('CampaignPlanAutomation (campaign.created → campaign-plan)', () => {
     expect(meta.aiCampaignPlan.idempotencyKey).toBe(IDEMPOTENCY_KEY);
     expect(meta.aiCampaignPlan.status).toBe('generated');
     expect(meta.aiCampaignPlan.parsed.channels).toHaveLength(2);
-    // renormalização: soma dos percentuais deve ser exatamente 100
+    // renormalization: the sum of the percentages must be exactly 100
     const sum = meta.aiCampaignPlan.parsed.channels.reduce(
       (acc: number, ch: { suggestedBudgetSharePercent: number }) => acc + ch.suggestedBudgetSharePercent,
       0,

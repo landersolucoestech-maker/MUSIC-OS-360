@@ -1,17 +1,17 @@
 /**
  * core/automation/project-planning.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
- *   project.completed → project-planning → salva plano em projects.metadata.aiPlan
+ * NATIVE, INTERNAL and INVISIBLE automation:
+ *   project.completed → project-planning → saves the plan in projects.metadata.aiPlan
  *
- * Toda a orquestração comum (idempotência metadata + skill_runs, auditoria,
- * envelope, persistência, fail-safe) vive em `runNativeSkillAutomation`. Aqui ficam
- * apenas as partes específicas: elegibilidade, load do projeto, montagem do input
- * e o UPDATE da tabela `projects`.
+ * All common orchestration (metadata + skill_runs idempotency, auditing,
+ * envelope, persistence, fail-safe) lives in `runNativeSkillAutomation`. Only the
+ * specific parts live here: eligibility, loading the project, assembling the input
+ * and the UPDATE of the `projects` table.
  *
- * Garantias herdadas do runner: execução não-bloqueante, falha da IA nunca reverte
- * project.completed, dupla guarda de idempotência, e nenhum efeito colateral
- * (sem tarefas reais, sem notificações, sem tabelas novas).
+ * Guarantees inherited from the runner: non-blocking execution, an AI failure never reverts
+ * project.completed, double idempotency guard, and no side effects
+ * (no real tasks, no notifications, no new tables).
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -35,14 +35,14 @@ import { runNativeSkillAutomation } from './native-skill-automation.runner';
 
 const SKILL_NAME = 'project-planning';
 
-/** Palavras-chave que indicam projeto musical / lançamento musical (type livre). */
+/** Keywords indicating a music project / music release (free-form type). */
 const MUSICAL_TYPE_KEYWORDS = [
   'lancamento', 'lançamento', 'single', 'ep', 'album', 'álbum', 'release',
   'fonograma', 'musical', 'musica', 'música', 'turne', 'turnê', 'show',
   'clipe', 'audiovisual', 'obra',
 ];
 
-/** Departamentos operacionais padrão (quando o projeto não os declara em metadata). */
+/** Default operational departments (when the project does not declare them in metadata). */
 const DEFAULT_DEPARTMENTS = ['A&R', 'Marketing', 'Audiovisual', 'Distribuição', 'Jurídico', 'Administrativo'];
 
 interface ProjectRow {
@@ -102,7 +102,7 @@ export class ProjectPlanningAutomation {
     );
   }
 
-  // ── Persistência (read/write de projects.metadata via DataSource) ───────────
+  // ── Persistence (read/write of projects.metadata via DataSource) ─────
 
   private async loadProject(
     tenantId: string,

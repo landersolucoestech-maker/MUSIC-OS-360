@@ -1,10 +1,10 @@
-// ── .env carregado ANTES de qualquer módulo (garante process.env para QueueModule.register) ──
-// Carrega apps/api/.env.development explicitamente (path relativo ao CWD =
-// apps/api/ via `npm run dev`). Só é usado para desenvolvimento local — em
-// staging/produção as variáveis vêm do provedor de hosting/Docker -e/secrets
-// de CI (o arquivo não existe nesses ambientes, então isto vira um no-op).
-// Variáveis já presentes em process.env não são sobrepostas — só preenche o
-// que ainda não foi definido.
+// ── .env loaded BEFORE any module (guarantees process.env for QueueModule.register) ──
+// Loads apps/api/.env.development explicitly (path relative to CWD =
+// apps/api/ via `npm run dev`). Used only for local development — in
+// staging/production the variables come from the hosting provider/Docker -e/CI
+// secrets (the file does not exist in those environments, so this becomes a no-op).
+// Variables already present in process.env are not overridden — it only fills
+// what is not defined yet.
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -30,16 +30,16 @@ function loadLocalEnv(envPath: string): void {
 loadLocalEnv(path.resolve(__dirname, '../.env.development'));
 loadLocalEnv(path.resolve(process.cwd(), '.env.development'));
 
-// ── Sentry DEVE ser o segundo import ───────────────────────────────────────────
+// ── Sentry MUST be the second import ───────────────────────────────────────────
 import './instrument';
 
 import 'reflect-metadata';
 import { Logger } from '@nestjs/common';
 import { createApp } from './create-app';
 
-// Silencia erros de conexão a serviços de rede indisponíveis em ambiente de
-// desenvolvimento (ex: Redis local não subiu ainda, ou pooler do Supabase
-// caiu temporariamente).
+// Silences connection errors to network services unavailable in the
+// development environment (e.g. local Redis not started yet, or the Supabase
+// pooler temporarily down).
 const NETWORK_CODES = new Set(['ENOTFOUND', 'ECONNREFUSED', 'ECONNRESET', 'EPIPE', 'ETIMEDOUT']);
 const NET_LOG_THROTTLE_MS = 30_000;
 let __netLastCode = '';

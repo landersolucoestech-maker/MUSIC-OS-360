@@ -1,24 +1,24 @@
 /**
  * core/automation/campaign-builder-insights.automation.ts
  *
- * Duas skills ON_DEMAND (ver on-demand-skill.runner.ts) sobre a campanha REAL
- * já em rascunho no Campaign Builder (MarketingCampaignBuilderService,
- * CampaignEntity com type='marketing_builder') — nunca lançam/gerenciam
- * anúncios reais, apenas geram sugestões de texto/alocação que o usuário
- * revisa e aplica manualmente na UI existente:
+ * Two ON_DEMAND skills (see on-demand-skill.runner.ts) over the REAL campaign
+ * already in draft in the Campaign Builder (MarketingCampaignBuilderService,
+ * CampaignEntity with type='marketing_builder') — they never launch/manage
+ * real ads, they only generate text/allocation suggestions that the user
+ * reviews and applies manually in the existing UI:
  *
- *   ad-creative → sugestões de headline/copy/descrição/CTA para UMA
- *                 plataforma+posicionamento específicos da campanha.
- *   paid-ads    → sugestão de alocação percentual de orçamento entre as
- *                 plataformas já selecionadas + posicionamentos prioritários
- *                 (usa o mesmo campaignBuilderConfig que o próprio
- *                 controller do Campaign Builder usa para validação — nunca
- *                 inventa um posicionamento incompatível).
+ *   ad-creative → headline/copy/description/CTA suggestions for ONE
+ *                 specific platform+placement of the campaign.
+ *   paid-ads    → suggested percentage budget allocation across the
+ *                 already selected platforms + priority placements
+ *                 (uses the same campaignBuilderConfig the Campaign Builder
+ *                 controller itself uses for validation — it never
+ *                 invents an incompatible placement).
  *
- * Nenhuma das duas lê/escreve `metrics`/`estimateCampaignResults()` — ver
- * docs/CODEBASE_MAP.md: esse campo já fabrica desempenho e é exibido como
- * real (achado pré-existente, fora do escopo desta automação). Nenhuma
- * escreve o resultado de volta na campanha automaticamente.
+ * Neither reads/writes `metrics`/`estimateCampaignResults()` — see
+ * docs/CODEBASE_MAP.md: that field already fabricates performance and is displayed as
+ * real (a pre-existing finding, out of this automation's scope). Neither
+ * writes the result back to the campaign automatically.
  */
 
 import { Injectable, NotFoundException } from '@nestjs/common';

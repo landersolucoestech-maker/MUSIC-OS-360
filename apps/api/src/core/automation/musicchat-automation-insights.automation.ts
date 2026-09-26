@@ -1,21 +1,21 @@
 /**
  * core/automation/musicchat-automation-insights.automation.ts
  *
- * Duas skills ON_DEMAND (ver on-demand-skill.runner.ts) sobre o MESMO
- * substrato real e já existente — `musicchat_automation_settings` +
- * `musicchat_automation_events` — disparadas por ação explícita do usuário,
- * nunca por evento/mudança de dado:
+ * Two ON_DEMAND skills (see on-demand-skill.runner.ts) over the SAME
+ * real, already existing substrate — `musicchat_automation_settings` +
+ * `musicchat_automation_events` — triggered by an explicit user action,
+ * never by an event/data change:
  *
- *   automation-audit    → auditoria narrativa da saúde operacional da
- *                          automação (contadores reais de eventos).
- *   automation-builder  → SUGESTÕES de menu/escalonamento a partir de
- *                          padrões reais de mensagens sem correspondência.
- *                          NUNCA aplica a sugestão — settings só mudam via
- *                          PATCH .../settings, já existente, inalterado.
+ *   automation-audit    → narrative audit of the automation's operational
+ *                          health (real event counters).
+ *   automation-builder  → menu/escalation SUGGESTIONS from real
+ *                          patterns of unmatched messages.
+ *                          NEVER applies the suggestion — settings only change via
+ *                          the already existing, unchanged PATCH .../settings.
  *
- * Não audita/constrói o WorkflowAutomationService (trigger rules internas
- * em memória, sem persistência/CRUD tenant-scoped — sem substrato real para
- * uma skill de produto operar).
+ * Does not audit/build the WorkflowAutomationService (internal in-memory trigger rules,
+ * without tenant-scoped persistence/CRUD — no real substrate for
+ * a product skill to operate on).
  */
 
 import { Injectable } from '@nestjs/common';
@@ -127,8 +127,8 @@ export class MusicChatAutomationInsightsAutomation {
       language: 'pt-BR',
     };
 
-    // Sem cache de frescor deliberadamente: sugestões são baratas e o usuário
-    // as pede explicitamente esperando uma nova rodada a cada clique.
+    // Deliberately no freshness cache: suggestions are cheap and the user
+    // requests them explicitly, expecting a new round on every click.
     return runOnDemandSkill<AutomationBuilderInput, AutomationBuilderOutput>(
       { skillRun: this.skillRun, ai: this.ai },
       {

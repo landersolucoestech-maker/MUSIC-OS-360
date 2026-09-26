@@ -1,37 +1,37 @@
 import { z } from 'zod';
 
 // ── Supabase environment guard ────────────────────────────────────────────────
-// Fonte única de verdade dos refs permitidos por ambiente. O frontend espelha
-// esta lista em apps/web/scripts/assert-supabase-env.mjs e o gate de repo em
-// scripts/env-check.mjs — qualquer alteração deve ser feita nos três lugares.
+// Single source of truth for the refs allowed per environment. The frontend mirrors
+// this list in apps/web/scripts/assert-supabase-env.mjs and the repo gate in
+// scripts/env-check.mjs — any change must be made in all three places.
 //
-// MATRIZ DE AMBIENTES (incidente de isolamento 2026-07-16/17):
-//   development → SOMENTE DEV_REF; STAGING/PROD explicitamente proibidos.
-//   test        → NENHUM projeto remoto (sem fallback silencioso para DEV).
-//   staging     → SOMENTE STAGING_REF.
-//   production  → SOMENTE PROD_REF.
-// O projeto Supabase MAIN é o ambiente de produção e permanece intacto até a liberação formal.
+// ENVIRONMENT MATRIX (isolation incident 2026-07-16/17):
+//   development → ONLY DEV_REF; STAGING/PROD explicitly forbidden.
+//   test        → NO remote project (no silent fallback to DEV).
+//   staging     → ONLY STAGING_REF.
+//   production  → ONLY PROD_REF.
+// The MAIN Supabase project is the production environment and stays untouched until the formal release.
 export const SUPABASE_PROD_REF = 'sxmfeocztlztvpdnxayk';
-/** Branch STAGING persistente do projeto Supabase MAIN, criada na Parte 65
- * (2026-08-01) via mcp__Supabase__create_branch. Substitui o valor reservado
- * anteriormente ('khnaxcgjnvhhtgkozsif') que nunca correspondeu a um recurso
- * real — o placeholder ficou sem uso até este ref ser confirmado. */
+/** Persistent STAGING branch of the MAIN Supabase project, created in Part 65
+ * (2026-08-01) via mcp__Supabase__create_branch. Replaces the previously reserved
+ * value ('khnaxcgjnvhhtgkozsif') that never matched a real
+ * resource — the placeholder stayed unused until this ref was confirmed. */
 export const SUPABASE_STAGING_REF = 'jjnnjnxjkqipgqebijen';
-/** Alias legado para guards operacionais que bloqueiam explicitamente produção. */
+/** Legacy alias for operational guards that explicitly block production. */
 export const SUPABASE_MAIN_REF = SUPABASE_PROD_REF;
-/** Branch DEV do projeto Supabase (único ref aceito em development). */
+/** DEV branch of the Supabase project (the only ref accepted in development). */
 export const SUPABASE_DEV_REF = 'rypnevnfipygyhysqpdo';
-/** Refs banidos de QUALQUER runtime (previews/branches excluídos). */
+/** Refs banned from ANY runtime (previews/deleted branches). */
 export const SUPABASE_REF_DENYLIST: readonly string[] = [
   'mkyvkciwyhfawmvluugb',
-  'sxdhnhoupjrnntrmjtyn', // branch DEV antigo, excluído em 2026-07-17
+  'sxdhnhoupjrnntrmjtyn', // old DEV branch, deleted on 2026-07-17
 ];
 export const SUPABASE_ALLOWED_REFS: readonly string[] = [
   SUPABASE_PROD_REF,
   SUPABASE_STAGING_REF,
   SUPABASE_DEV_REF,
 ];
-/** Todos os refs conhecidos (para a denylist cruzada por ambiente). */
+/** All known refs (for the per-environment cross denylist). */
 export const SUPABASE_KNOWN_REFS: readonly string[] = [
   SUPABASE_PROD_REF,
   SUPABASE_STAGING_REF,
@@ -39,9 +39,9 @@ export const SUPABASE_KNOWN_REFS: readonly string[] = [
 ];
 
 /**
- * Ref esperado por NODE_ENV — isolamento absoluto: cada ambiente aceita SOMENTE
- * o seu projeto. `null` significa "nenhum projeto remoto é aceito" (test):
- * qualquer ref Supabase resolvido é erro, sem fallback silencioso.
+ * Expected ref per NODE_ENV — absolute isolation: each environment accepts ONLY
+ * its own project. `null` means "no remote project is accepted" (test):
+ * any resolved Supabase ref is an error, with no silent fallback.
  */
 export function expectedSupabaseRef(nodeEnv: string | undefined): string | null {
   if (nodeEnv === 'production') return SUPABASE_PROD_REF;
@@ -51,9 +51,9 @@ export function expectedSupabaseRef(nodeEnv: string | undefined): string | null 
 }
 
 /**
- * Denylist cruzada explícita: refs conhecidos de OUTROS ambientes são proibidos
- * mesmo que uma allowlist tenha sido editada incorretamente. Prevalece sobre
- * qualquer configuração permissiva.
+ * Explicit cross denylist: known refs of OTHER environments are forbidden
+ * even if an allowlist was edited incorrectly. It takes precedence over
+ * any permissive configuration.
  */
 export function forbiddenSupabaseRefs(nodeEnv: string | undefined): readonly string[] {
   const expected = expectedSupabaseRef(nodeEnv);
@@ -61,9 +61,9 @@ export function forbiddenSupabaseRefs(nodeEnv: string | undefined): readonly str
 }
 
 /**
- * Núcleo puro e testável do guard de bootstrap (consumido por main.ts).
- * Valida conjuntamente URLs, connection strings, JWTs e coerência entre elas.
- * Retorna a lista de erros (vazia = ambiente válido). Nunca expõe secrets.
+ * Pure, testable core of the bootstrap guard (consumed by main.ts).
+ * Jointly validates URLs, connection strings, JWTs and the coherence between them.
+ * Returns the list of errors (empty = valid environment). Never exposes secrets.
  */
 export function collectSupabaseEnvErrors(
   env: Record<string, string | undefined>,
@@ -88,8 +88,8 @@ export function collectSupabaseEnvErrors(
     if (!raw) continue;
     const ref = extractSupabaseRef(raw);
     if (ref === null) {
-      // Hostname Supabase malformado (presente mas sem ref extraível) é erro;
-      // conexões não-Supabase (ex.: Postgres local em test) passam sem ref.
+      // A malformed Supabase hostname (present but with no extractable ref) is an error;
+      // non-Supabase connections (e.g. local Postgres in test) pass without a ref.
       if (/supabase\.(co|com)/i.test(raw)) {
         errors.push(`${key} tem hostname Supabase malformado — ref não extraível`);
       }
@@ -100,7 +100,7 @@ export function collectSupabaseEnvErrors(
       errors.push(`${key} aponta para o ref Supabase banido "${ref}"`);
       continue;
     }
-    // Denylist cruzada: ref conhecido de OUTRO ambiente é sempre proibido.
+    // Cross denylist: a known ref of ANOTHER environment is always forbidden.
     if (forbidden.includes(ref)) {
       errors.push(
         `${key} usa ref "${ref}" de OUTRO ambiente — proibido em NODE_ENV=${nodeEnv} (denylist cruzada)`,
@@ -118,7 +118,7 @@ export function collectSupabaseEnvErrors(
     }
   }
 
-  // Coerência: todas as fontes resolvidas devem apontar para o MESMO projeto.
+  // Coherence: every resolved source must point to the SAME project.
   const distinctRefs = new Set(resolved.map(([, ref]) => ref));
   if (distinctRefs.size > 1) {
     errors.push(
@@ -128,7 +128,7 @@ export function collectSupabaseEnvErrors(
     );
   }
 
-  // Coerência ref × payload dos JWTs (sem expor o token).
+  // Coherence of ref × JWT payloads (without exposing the token).
   const jwtSources: Array<[string, string | undefined, string]> = [
     ['SUPABASE_ANON_KEY', env['SUPABASE_ANON_KEY'], 'anon'],
     ['VITE_SUPABASE_ANON_KEY', env['VITE_SUPABASE_ANON_KEY'], 'anon'],
@@ -164,7 +164,7 @@ export function collectSupabaseEnvErrors(
   return errors;
 }
 
-/** Decodifica só o payload público do JWT ({ ref, role }). Nunca expõe o token. */
+/** Decodes only the JWT's public payload ({ ref, role }). Never exposes the token. */
 export function decodeSupabaseJwtClaims(
   token: string | undefined | null,
 ): { ref: string | null; role: string | null } | null {
@@ -180,7 +180,7 @@ export function decodeSupabaseJwtClaims(
 }
 
 /**
- * Extrai o project ref de qualquer formato de conexão Supabase:
+ * Extracts the project ref from any Supabase connection format:
  *   https://<ref>.supabase.co · db.<ref>.supabase.co · <role>.<ref>@...pooler.supabase.com
  */
 export function extractSupabaseRef(value: string | undefined | null): string | null {
@@ -194,15 +194,15 @@ export function extractSupabaseRef(value: string | undefined | null): string | n
   return null;
 }
 
-/** Hosts locais aceitos quando a URL não é Supabase (identificação inequívoca). */
+/** Local hosts accepted when the URL is not Supabase (unambiguous identification). */
 const LOCAL_DB_HOSTS: readonly string[] = ['localhost', '127.0.0.1', '::1', '[::1]'];
 
 /**
- * Guard de COMANDOS de banco (migrate/rollback/reset/seed/scripts): além da
- * matriz completa de collectSupabaseEnvErrors, exige DATABASE_URL presente e
- * identificável — Supabase do ambiente esperado ou Postgres local explícito.
- * Host remoto não-Supabase ou URL não parseável = bloqueio fail-closed.
- * Puro e testável; nunca inclui credenciais nas mensagens.
+ * Database COMMAND guard (migrate/rollback/reset/seed/scripts): in addition to the
+ * full collectSupabaseEnvErrors matrix, requires DATABASE_URL present and
+ * identifiable — the expected environment's Supabase or an explicit local Postgres.
+ * A non-Supabase remote host or an unparseable URL = fail-closed block.
+ * Pure and testable; never includes credentials in the messages.
  */
 export function collectDatabaseCommandErrors(
   env: Record<string, string | undefined>,
@@ -234,11 +234,11 @@ export function collectDatabaseCommandErrors(
 }
 
 /**
- * Aborta o processo ANTES de qualquer conexão quando o alvo de banco não é o
- * autorizado para o NODE_ENV. Usado por datasource.ts (nível de módulo — quem
- * importa o DataSource não consegue contornar), seed.ts e scripts de banco.
- * `envOverride` permite validar URLs obtidas fora de process.env (ex.: .env
- * parseado manualmente). Nunca imprime URL completa, usuário ou senha.
+ * Aborts the process BEFORE any connection when the database target is not the
+ * one authorized for NODE_ENV. Used by datasource.ts (module level — whoever
+ * imports the DataSource cannot bypass it), seed.ts and database scripts.
+ * `envOverride` allows validating URLs obtained outside process.env (e.g. a manually
+ * parsed .env). Never prints the full URL, user or password.
  */
 export function assertDatabaseCommandEnv(
   context: string,
@@ -257,24 +257,24 @@ export function assertDatabaseCommandEnv(
 }
 
 /**
- * RELEASE-01/RBAC-SHADOW-01/DBCTX-01: em produção, estas duas flags nunca podem
- * ficar no default silencioso do zod. Precisam ser declaradas explicitamente no
- * ambiente. RBAC_PERSISTED_AUTHORITY só pode permanecer em SHADOW mediante waiver
- * explícito e temporário (ALLOW_RBAC_SHADOW_IN_PRODUCTION=true) enquanto o rollout
- * do harness (test/rbac-shadow-harness) não foi aprovado; OFF é sempre proibido.
- * DATABASE_SESSION_CONTEXT_ENABLED=true sem APP_DATABASE_URL não falha aqui por
- * acidente — o DatabaseModule cai silenciosamente para a conexão bypassrls
- * (ver database.module.ts), então essa combinação também é bloqueada.
- * Recebe o env CRU (não o objeto já parseado pelo zod) porque só assim é possível
- * distinguir "declarado explicitamente" de "ausente e coberto pelo default".
+ * RELEASE-01/RBAC-SHADOW-01/DBCTX-01: in production, these two flags can never
+ * stay on zod's silent default. They must be declared explicitly in the
+ * environment. RBAC_PERSISTED_AUTHORITY may only remain in SHADOW under an explicit,
+ * temporary waiver (ALLOW_RBAC_SHADOW_IN_PRODUCTION=true) while the rollout
+ * of the harness (test/rbac-shadow-harness) has not been approved; OFF is always forbidden.
+ * DATABASE_SESSION_CONTEXT_ENABLED=true without APP_DATABASE_URL does not fail here by
+ * accident — DatabaseModule silently falls back to the bypassrls connection
+ * (see database.module.ts), so that combination is blocked too.
+ * Receives the RAW env (not the object already parsed by zod) because only then is it possible
+ * to distinguish "explicitly declared" from "absent and covered by the default".
  *
- * find-902e12f6 (Wave 4): o gate cobria apenas nodeEnv==='production' literal.
- * .github/workflows/staging.yml declara NODE_ENV=staging — um ambiente
- * deployado e publicamente alcançável (não um developer loopback) — que
- * caía fora do gate e herdava os defaults silenciosos (RLS/RBAC desligados).
- * `envSchema.NODE_ENV` só reconhece 4 valores; 'staging' é tratado como
- * "deployed" junto de 'production', deixando apenas 'development'/'test'
- * fora do gate.
+ * find-902e12f6 (Wave 4): the gate only covered a literal nodeEnv==='production'.
+ * .github/workflows/staging.yml declares NODE_ENV=staging — a deployed,
+ * publicly reachable environment (not a developer loopback) — which
+ * fell outside the gate and inherited the silent defaults (RLS/RBAC off).
+ * `envSchema.NODE_ENV` only recognizes 4 values; 'staging' is treated as
+ * "deployed" together with 'production', leaving only 'development'/'test'
+ * outside the gate.
  */
 export function collectProductionAuthorityErrors(
   env: Record<string, string | undefined>,
@@ -331,8 +331,8 @@ export function collectProductionAuthorityErrors(
   return errors;
 }
 
-// Exportado (Parte 76) só para testes diretos do superRefine (ex.: AUTH_DISABLED
-// proibido fora de development) sem precisar acionar validateEnv()'s process.exit.
+// Exported (Part 76) only for direct tests of the superRefine (e.g. AUTH_DISABLED
+// forbidden outside development) without having to trigger validateEnv()'s process.exit.
 export const envSchema = z.object({
   NODE_ENV: z
     .enum(['development', 'staging', 'production', 'test'])
@@ -367,10 +367,10 @@ export const envSchema = z.object({
   REDIS_PORT: z.coerce.number().optional(),
   REDIS_PASSWORD: z.string().optional(),
   RBAC_PERSISTED_AUTHORITY: z.enum(['OFF', 'SHADOW', 'ON']).default('SHADOW'),
-  // Waiver temporário e explícito (RBAC-SHADOW-01): permite RBAC_PERSISTED_AUTHORITY=SHADOW
-  // em produção enquanto o rollout do harness (test/rbac-shadow-harness) ainda não foi
-  // aprovado. Nunca deixar "true" permanentemente — remover assim que a flag for promovida a ON.
-  // Validado por collectProductionAuthorityErrors, não pelo zod (precisa do valor cru, não do default).
+  // Explicit, temporary waiver (RBAC-SHADOW-01): allows RBAC_PERSISTED_AUTHORITY=SHADOW
+  // in production while the harness rollout (test/rbac-shadow-harness) has not yet been
+  // approved. Never leave it "true" permanently — remove it as soon as the flag is promoted to ON.
+  // Validated by collectProductionAuthorityErrors, not by zod (it needs the raw value, not the default).
   ALLOW_RBAC_SHADOW_IN_PRODUCTION: z.enum(['true', 'false']).default('false'),
   RBAC_DUAL_READ_TELEMETRY: z.enum(['true', 'false']).default('true'),
   RBAC_DISTRIBUTED_CACHE_ENABLED: z.enum(['true', 'false']).default('true'),
@@ -445,8 +445,8 @@ export const envSchema = z.object({
       },
       { message: 'STRIPE_WEBHOOK_SECRET is required in production when STRIPE_SECRET_KEY is set' },
     ),
-  // Preços/planos NÃO vêm mais do env. Fonte primária = tabela billing_plans (admin),
-  // e cada plano guarda seu stripe_price_id sincronizado. (STRIPE_PRICE_* removido.)
+  // Prices/plans NO longer come from env. Primary source = the billing_plans table (admin),
+  // and each plan stores its synced stripe_price_id. (STRIPE_PRICE_* removed.)
 
   AUTENTIQUE_WEBHOOK_SECRET: z
     .string()
@@ -488,16 +488,16 @@ export const envSchema = z.object({
     .string()
     .email()
     .default('noreply@musicos360.com.br'),
-  // STAGING-01: em NODE_ENV=staging, MailService só envia para estes domínios
-  // (lista separada por vírgulas) — protege contra envio acidental para
-  // endereços reais durante testes manuais em staging. Sem efeito fora de staging.
+  // STAGING-01: in NODE_ENV=staging, MailService only sends to these domains
+  // (comma-separated list) — protects against accidentally sending to
+  // real addresses during manual tests in staging. No effect outside staging.
   STAGING_MAIL_ALLOWLIST_DOMAINS: z.string().default('example.com'),
 
-  // Platform Commercial Contact (decisão de produto 2026-08-22): destino do
-  // formulário de contato institucional da landing do próprio Music OS 360
-  // (empresas interessadas em contratar a plataforma) — NUNCA um endereço
-  // inventado no código. Opcional: se ausente, o endpoint responde
-  // honestamente indisponível (503) em vez de fingir que enviou.
+  // Platform Commercial Contact (2026-08-22 product decision): destination of the
+  // institutional contact form of Music OS 360's own landing page
+  // (companies interested in hiring the platform) — NEVER an address
+  // invented in code. Optional: when absent, the endpoint honestly answers
+  // unavailable (503) instead of pretending it sent.
   PLATFORM_CONTACT_RECIPIENT_EMAIL: z.string().email().optional(),
 
   SENTRY_DSN: z
@@ -547,9 +547,9 @@ export const envSchema = z.object({
 
   SOUNDCLOUD_CLIENT_ID: z.string().optional(),
 
-  // Soundcharts — fonte de métricas públicas de audiência (backend-only,
-  // client_credentials). Nunca expor via VITE_* — client_secret não pode
-  // chegar ao navegador (ver SoundchartsService).
+  // Soundcharts — source of public audience metrics (backend-only,
+  // client_credentials). Never expose via VITE_* — client_secret must not
+  // reach the browser (see SoundchartsService).
   SOUNDCHARTS_CLIENT_ID: z.string().optional(),
   SOUNDCHARTS_CLIENT_SECRET: z.string().optional(),
 
@@ -561,17 +561,17 @@ export const envSchema = z.object({
   TIKTOK_CLIENT_SECRET: z.string().optional(),
   TIKTOK_REDIRECT_URI: z.string().optional(),
 
-  // WhatsApp Cloud API (Meta) — phoneNumberId/accessToken/wabaId são por
-  // tenant (ver WhatsAppCloudProvider.configure, mesmo padrão do Apple Music).
-  // O verify token é único por app Meta (um webhook para todas as WABAs).
+  // WhatsApp Cloud API (Meta) — phoneNumberId/accessToken/wabaId are per
+  // tenant (see WhatsAppCloudProvider.configure, same pattern as Apple Music).
+  // The verify token is unique per Meta app (one webhook for all WABAs).
   WHATSAPP_WEBHOOK_VERIFY_TOKEN: z.string().optional(),
 
   DOCUSIGN_INTEGRATION_KEY: z.string().optional(),
   DOCUSIGN_CLIENT_SECRET: z.string().optional(),
   DOCUSIGN_AUTH_BASE_URL: z.string().url().default('https://account-d.docusign.com'),
-  // HMAC key configurada no DocuSign Connect. Sem ela o webhook é rejeitado
-  // fail-closed (mesma regra do AUTENTIQUE_WEBHOOK_SECRET) — nunca processar
-  // um callback de assinatura sem verificar a assinatura HMAC.
+  // HMAC key configured in DocuSign Connect. Without it the webhook is rejected
+  // fail-closed (same rule as AUTENTIQUE_WEBHOOK_SECRET) — never process
+  // a signature callback without verifying the HMAC signature.
   DOCUSIGN_WEBHOOK_SECRET: z
     .string()
     .min(24, 'DOCUSIGN_WEBHOOK_SECRET must have at least 24 characters')
@@ -588,7 +588,7 @@ export const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
 
-  // Flags de conveniência LOCAL — bloqueadas fora de development pelo superRefine.
+  // LOCAL convenience flags — blocked outside development by the superRefine.
   USE_MOCK: z.string().optional(),
   MOCK_MODE: z.string().optional(),
   AUTH_DISABLED: z.string().optional(),
@@ -611,7 +611,7 @@ export const envSchema = z.object({
     }
   }
 
-  // 2) Coerência: API inteira (auth + banco) deve usar UM único projeto Supabase.
+  // 2) Coherence: the whole API (auth + database) must use ONE single Supabase project.
   const resolved = refSources.filter((entry): entry is [string, string] => entry[1] !== null);
   const distinctRefs = new Set(resolved.map(([, ref]) => ref));
   if (distinctRefs.size > 1) {
@@ -624,7 +624,7 @@ export const envSchema = z.object({
     });
   }
 
-  // 3) Produção/staging: apenas refs da allowlist; produção exige o ref de produção.
+  // 3) Production/staging: only allowlisted refs; production requires the production ref.
   if (isProdLike) {
     for (const [key, ref] of resolved) {
       if (!SUPABASE_ALLOWED_REFS.includes(ref)) {
@@ -643,7 +643,7 @@ export const envSchema = z.object({
       }
     }
 
-    // 4) Mock e bypass de auth são exclusivos de development.
+    // 4) Mock and auth bypass are exclusive to development.
     for (const flag of ['USE_MOCK', 'MOCK_MODE', 'AUTH_DISABLED'] as const) {
       if (cfg[flag] === 'true') {
         ctx.addIssue({

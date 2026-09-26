@@ -1,19 +1,19 @@
 /**
  * core/automation/artist-profile-analysis.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
- *   artist.created → artist-profile-analysis → salva diagnóstico em
+ * NATIVE, INTERNAL and INVISIBLE automation:
+ *   artist.created → artist-profile-analysis → saves the diagnosis in
  *   artists.metadata.aiProfileAnalysis
  *
- * Toda a orquestração comum (idempotência metadata + skill_runs, auditoria,
- * envelope, persistência, fail-safe) vive em `runNativeSkillAutomation`. Aqui ficam
- * apenas as partes específicas: load do artista, montagem do input e o UPDATE da
- * tabela `artists`.
+ * All common orchestration (metadata + skill_runs idempotency, auditing,
+ * envelope, persistence, fail-safe) lives in `runNativeSkillAutomation`. Only the
+ * specific parts live here: loading the artist, assembling the input and the UPDATE of the
+ * `artists` table.
  *
- * Garantias herdadas do runner: execução não-bloqueante, falha da IA nunca reverte
- * artist.created, dupla guarda de idempotência (running/success bloqueiam; failed
- * permite retry), e nenhum efeito colateral (sem tarefas, sem notificações, sem
- * mudança de status, sem alteração da estratégia oficial do artista, sem tabelas novas).
+ * Guarantees inherited from the runner: non-blocking execution, an AI failure never reverts
+ * artist.created, double idempotency guard (running/success block; failed
+ * allows a retry), and no side effects (no tasks, no notifications, no
+ * status change, no change to the artist's official strategy, no new tables).
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -50,7 +50,7 @@ interface ArtistRow {
   metadata: Record<string, unknown> | null;
 }
 
-/** Deriva os perfis de plataforma a partir das colunas de redes/streaming do artista. */
+/** Derives the platform profiles from the artist's social/streaming columns. */
 function buildPlatforms(artist: ArtistRow): ArtistPlatformProfile[] {
   const platforms: ArtistPlatformProfile[] = [];
   const add = (platform: string, handle: string | null) => {
@@ -105,7 +105,7 @@ export class ArtistProfileAnalysisAutomation {
     );
   }
 
-  // ── Persistência (read/write de artists.metadata via DataSource) ────────────
+  // ── Persistence (read/write of artists.metadata via DataSource) ─────────────
 
   private async loadArtist(
     tenantId: string,

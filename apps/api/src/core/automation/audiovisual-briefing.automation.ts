@@ -1,14 +1,14 @@
 /**
  * core/automation/audiovisual-briefing.automation.ts
  *
- * Automação NATIVA, INTERNA e INVISÍVEL:
- *   release.approved → audiovisual-briefing → salva BRIEFING interno em
+ * NATIVE, INTERNAL and INVISIBLE automation:
+ *   release.approved → audiovisual-briefing → saves an internal BRIEFING in
  *   releases.metadata.aiAudiovisualBriefing
  *
- * Toda a orquestração comum vive em `runNativeSkillAutomation`.
+ * All common orchestration lives in `runNativeSkillAutomation`.
  *
- * Restrições: apenas briefing interno — NÃO cria tarefas para designer/videomaker,
- * NÃO cria solicitações, não altera status/dados oficiais do release.
+ * Restrictions: internal briefing only — does NOT create tasks for the designer/videomaker,
+ * does NOT create requests, does not change the release's official status/data.
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';
@@ -85,7 +85,7 @@ export class AudiovisualBriefingAutomation {
     );
   }
 
-  // ── Persistência (read/write de releases.metadata via DataSource) ───────────
+  // ── Persistence (read/write of releases.metadata via DataSource) ────────────
 
   private async loadRelease(
     tenantId: string,

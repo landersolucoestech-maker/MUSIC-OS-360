@@ -13,8 +13,8 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger, RequestMethod, INestApplication, LogLevel } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
-// `import =` para interop CJS: compression não expõe `.default`, então o default
-// import quebra em runtime sob ts-node (esModuleInterop off). Funciona sob tsx e ts-node.
+// `import =` for CJS interop: compression does not expose `.default`, so the default
+// import breaks at runtime under ts-node (esModuleInterop off). Works under tsx and ts-node.
 import compression = require('compression');
 import * as express from 'express';
 import { AppModule } from './app.module';
@@ -68,7 +68,7 @@ export async function createApp(): Promise<INestApplication> {
 
   const app = await NestFactory.create(AppModule, nestOptions);
 
-  // ── Segurança ──────────────────────────────────────────────────────────────
+  // ── Security ─────────────────────────────────────────────────────────────────
   app.use(
     helmet({
       contentSecurityPolicy: {

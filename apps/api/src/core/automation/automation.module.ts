@@ -1,10 +1,10 @@
 /**
  * core/automation/automation.module.ts
  *
- * Automações NATIVAS internas orientadas a eventos (event-driven).
- * Registra handlers @OnEvent que executam AI Skills automaticamente.
+ * Internal NATIVE event-driven automations.
+ * Registers @OnEvent handlers that run AI Skills automatically.
  *
- * Fatia atual:
+ * Current slice:
  *   project.completed      → project-planning
  *   release.created        → release-checklist
  *   support.ticket.created → support-triage
@@ -18,12 +18,12 @@
  *   campaign.started       → campaign-strategy
  *   campaign.ended         → campaign-report
  *   marketing.content_created → social-content
- *   release.approved       → launch-strategy (3ª skill não sobreposta neste evento)
+ *   release.approved       → launch-strategy (3rd non-overlapping skill on this event)
  *   client.created          → contact-operations
- * SkillRunService (auditoria/idempotência) vem do SkillsModule (@Global);
- * EventsService/DATA_SOURCE vêm de módulos @Global. AIService vem do AIModule.
+ * SkillRunService (auditing/idempotency) comes from SkillsModule (@Global);
+ * EventsService/DATA_SOURCE come from @Global modules. AIService comes from AIModule.
  *
- * Não expõe controller, rota, configuração nem nada ao usuário final.
+ * Exposes no controller, route, configuration or anything else to the end user.
  */
 
 import { Module } from '@nestjs/common';

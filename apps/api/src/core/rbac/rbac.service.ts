@@ -6,23 +6,23 @@ import { ROLE_HIERARCHY } from './role-hierarchy';
 export type { MemberAuthzContext };
 
 /**
- * AnyRole — union de roles de sistema e roles funcionais.
- * SystemRole: roles hierárquicos armazenados em OrgMemberEntity.role
- * FunctionalRole: roles operacionais/domínio (financial, marketing, etc.)
+ * AnyRole — union of system roles and functional roles.
+ * SystemRole: hierarchical roles stored in OrgMemberEntity.role
+ * FunctionalRole: operational/domain roles (financial, marketing, etc.)
  */
 export type AnyRole = SystemRole | FunctionalRole;
 
 /**
- * @deprecated Use SystemRole de @music-os-360/types
- * Mantido para compatibilidade com código legado que importa daqui.
+ * @deprecated Use SystemRole from @music-os-360/types
+ * Kept for compatibility with legacy code that imports from here.
  */
 export type Role = AnyRole;
 
 /**
- * Hierarquia numérica dos SystemRoles — quanto maior o número, mais permissões.
- * Fonte única: `./role-hierarchy` (mesma usada por RolesGuard). Re-exportado aqui
- * (FASE 8) para o seed de roles; antes era uma cópia literal independente que
- * podia divergir silenciosamente da cópia realmente aplicada pelo guard.
+ * Numeric hierarchy of the SystemRoles — the higher the number, the more permissions.
+ * Single source: `./role-hierarchy` (the same one used by RolesGuard). Re-exported here
+ * (PHASE 8) for the roles seed; before, it was an independent literal copy that
+ * could silently diverge from the copy actually applied by the guard.
  */
 export { ROLE_HIERARCHY };
 
@@ -46,8 +46,8 @@ export type Resource =
 
 export type Action = 'read' | 'create' | 'update' | 'delete' | 'export' | 'approve';
 
-// Exportado (FASE 8) como FONTE de paridade para o seed de permissions/role_permissions.
-// NÃO removido nem alterado — continua sendo a matriz legada do fallback (FASE 5).
+// Exported (PHASE 8) as the parity SOURCE for the permissions/role_permissions seed.
+// NOT removed nor changed — it remains the legacy fallback matrix (PHASE 5).
 export const ROLE_PERMISSIONS: Record<string, Array<`${Resource}:${Action}`>> = {
   // ── System Roles ────────────────────────────────────────────────────────────
   [SystemRole.SUPER_ADMIN]: [
@@ -203,13 +203,13 @@ export class RbacService {
   constructor(private readonly resolver: PermissionResolverService) {}
 
   /**
-   * Permissões efetivas do membro (DUAL-SOURCE — FASE 5).
-   * role_id presente → matriz do banco (roles/role_permissions, com alias canônico e escopo de
-   * tenant). Sem role_id (ou DB indisponível / matriz vazia na transição) → matriz legada deste
-   * serviço, idêntica ao comportamento anterior à FASE 4. Nunca amplia acesso por erro.
+   * The member's effective permissions (DUAL-SOURCE — PHASE 5).
+   * role_id present → database matrix (roles/role_permissions, with canonical alias and tenant
+   * scope). No role_id (or DB unavailable / empty matrix during the transition) → this
+   * service's legacy matrix, identical to the behavior before PHASE 4. Never widens access by mistake.
    *
-   * NÃO substitui o RolesGuard (enforcement por hierarquia continua inalterado nesta fase);
-   * é consumido pelo auth-context para expor membership.permissions.
+   * Does NOT replace RolesGuard (hierarchy enforcement stays unchanged in this phase);
+   * it is consumed by auth-context to expose membership.permissions.
    */
   async getEffectivePermissions(member: MemberAuthzContext): Promise<string[]> {
     const legacyRole = typeof member.role === 'string' && member.role.length > 0 ? member.role : SystemRole.VIEWER;

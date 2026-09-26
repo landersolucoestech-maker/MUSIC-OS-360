@@ -1,12 +1,12 @@
 /**
  * cache/cache.module.ts
  *
- * Módulo de cache em memória (Map com TTL).
- * Substitui Upstash Redis — sem dependências externas.
- * Adequado para desenvolvimento e ambientes sem Redis dedicado.
+ * In-memory cache module (Map with TTL).
+ * Replaces Upstash Redis — no external dependencies.
+ * Suitable for development and environments without a dedicated Redis.
  *
- * Para produção com Redis: substituir o provider pelo ioredis client
- * usando REDIS_CACHE_URL.
+ * For production with Redis: replace the provider with the ioredis client
+ * using REDIS_CACHE_URL.
  */
 
 import { Module, Global, Logger } from '@nestjs/common';

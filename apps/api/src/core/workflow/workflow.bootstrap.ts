@@ -1,8 +1,8 @@
 /**
  * workflow.bootstrap.ts
  *
- * Registra todos os workflows de domínio no WorkflowService durante o bootstrap da aplicação.
- * Chamado automaticamente via OnModuleInit.
+ * Registers all domain workflows in WorkflowService during application bootstrap.
+ * Called automatically via OnModuleInit.
  */
 
 import { Optional, Injectable, OnModuleInit } from '@nestjs/common';

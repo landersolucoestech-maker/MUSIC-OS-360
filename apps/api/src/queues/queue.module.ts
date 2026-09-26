@@ -1,14 +1,14 @@
 /**
  * queues/queue.module.ts
  *
- * Módulo central de filas BullMQ do Music OS 360.
+ * Central BullMQ queue module of Music OS 360.
  *
- * register() é async: testa a conexão Redis com PING antes de ativar BullMQ.
- * Se a conexão falhar (WRONGPASS, ECONNREFUSED, timeout), cai em no-op mode:
- *   - BullModule NÃO é importado (nenhum RedisConnection interno é criado)
- *   - Workers (processors) NÃO são registrados
- *   - Serviços produtores são registrados mas @Optional() @InjectQueue
- *     resolve para null → métodos enqueue são no-op explícito
+ * register() is async: it tests the Redis connection with PING before enabling BullMQ.
+ * If the connection fails (WRONGPASS, ECONNREFUSED, timeout), it falls back to no-op mode:
+ *   - BullModule is NOT imported (no internal RedisConnection is created)
+ *   - Workers (processors) are NOT registered
+ *   - Producer services are registered but @Optional() @InjectQueue
+ *     resolves to null → enqueue methods are an explicit no-op
  */
 
 import { DynamicModule, Global, Module, Logger } from '@nestjs/common';
@@ -98,7 +98,7 @@ function isIoRedisUrl(url: string | undefined): boolean {
   return true;
 }
 
-/** Testa se a URL Redis e comandos estao realmente acessiveis. Retorna false se falhar. */
+/** Tests whether the Redis URL and commands are really reachable. Returns false on failure. */
 async function probeRedis(url: string): Promise<boolean> {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { Redis } = require('ioredis') as { Redis: new (url: string, opts: object) => import('ioredis').Redis };
@@ -149,9 +149,9 @@ async function probeRedis(url: string): Promise<boolean> {
 }
 
 /**
- * Decisão ÚNICA (memoizada) de disponibilidade do BullMQ no boot.
- * Compartilhada entre QueueModule e AdminQueuesModule para que o Bull Board
- * nunca seja montado quando as filas estão em modo no-op (Redis ausente/fora).
+ * SINGLE (memoized) decision on BullMQ availability at boot.
+ * Shared by QueueModule and AdminQueuesModule so the Bull Board
+ * is never mounted when the queues are in no-op mode (Redis missing/down).
  */
 let bullAvailability: Promise<boolean> | undefined;
 export function bullMqAvailable(): Promise<boolean> {
@@ -264,11 +264,11 @@ export class QueueModule {
         MarketBenchmarkRefreshProcessor,
         WorkerErrorThrottlerService,
         ArtistPlatformProfilesService,
-        // Fase 3.2 fix: dependência real de ArtistPlatformProfilesService
-        // (desde a Fase 2) nunca tinha sido registada neste módulo —
-        // resolução de DI real deste módulo quebraria no boot da app
-        // (nenhum teste existente sobe o QueueModule real com DI completo
-        // para pegar isso; achado ao adicionar o novo processor).
+        // Phase 3.2 fix: the real dependency on ArtistPlatformProfilesService
+        // (since Phase 2) had never been registered in this module —
+        // real DI resolution of this module would break at app boot
+        // (no existing test boots the real QueueModule with full DI
+        // to catch it; found while adding the new processor).
         ArtistMetricSnapshotsService,
         MarketBenchmarkService,
         MarketReferenceCacheService,

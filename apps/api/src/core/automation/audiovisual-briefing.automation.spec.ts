@@ -55,7 +55,7 @@ describe('AudiovisualBriefingAutomation (release.approved → audiovisual-briefi
     const updateCall = query.mock.calls.find((c: unknown[]) => /UPDATE\s+releases/i.test(c[0] as string));
     expect(updateCall).toBeDefined();
     const meta = JSON.parse((updateCall as unknown as [string, string[]])[1][0]);
-    // chave distinta da marketing-calendar (mesma idempotencyKey, metadataKey diferente)
+    // key distinct from marketing-calendar (same idempotencyKey, different metadataKey)
     expect(meta.aiAudiovisualBriefing).toBeDefined();
     expect(meta.aiAudiovisualBriefing.skill).toBe('audiovisual-briefing');
     expect(meta.aiAudiovisualBriefing.event).toBe('release.approved');

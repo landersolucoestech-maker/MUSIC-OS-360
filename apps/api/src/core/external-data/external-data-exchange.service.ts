@@ -470,8 +470,8 @@ export class ExternalDataExchangeService {
         .where('p.tenant_id = :tenantId AND p.id IN (:...ids) AND p.deleted_at IS NULL', { tenantId: input.tenantId, ids: input.phonogramIds })
         .getMany()
       : [];
-    // share_type IS NULL = elegibilidade transitória de registro (ver share-eligibility.util.ts) —
-    // exclui shares financeiras/pendentes (Fase 5 / C6) da submissão à sociedade externa.
+    // share_type IS NULL = transitional registration eligibility (see share-eligibility.util.ts) —
+    // excludes financial/pending shares (Phase 5 / C6) from the submission to the external society.
     const shares = works.length
       ? (await this.shares!.createQueryBuilder('s')
         .where('s.tenant_id = :tenantId AND s.work_id IN (:...ids) AND s.deleted_at IS NULL AND s.share_type IS NULL', { tenantId: input.tenantId, ids: works.map((w) => w.id) })

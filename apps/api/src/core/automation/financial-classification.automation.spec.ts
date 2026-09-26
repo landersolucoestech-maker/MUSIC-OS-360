@@ -108,7 +108,7 @@ describe('FinancialClassificationAutomation (transaction.created → financial-c
     expect(skillRun.succeed).toHaveBeenCalled();
     expect(skillRun.fail).not.toHaveBeenCalled();
 
-    // input: direction=expense (despesa) + descrição + artista no prompt
+    // input: direction=expense (despesa) + description + artist in the prompt
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string; jsonMode: boolean }]>;
     expect(aiCalls[0][0].jsonMode).toBe(true);
     expect(aiCalls[0][0].prompt).toContain('despesa (expense)');

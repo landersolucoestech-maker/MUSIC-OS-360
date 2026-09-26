@@ -170,7 +170,7 @@ export interface EventPayloadMap {
 
 export type DomainEventType = keyof EventPayloadMap;
 
-/** Nomes de eventos de domínio padronizados */
+/** Standardized domain event names */
 export const DOMAIN_EVENTS = {
   // Artists
   ARTIST_CREATED:        'artist.created',

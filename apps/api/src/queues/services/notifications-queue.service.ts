@@ -1,8 +1,8 @@
 /**
  * queues/services/notifications-queue.service.ts
  *
- * Producer service para a fila "notifications".
- * Quando Redis não está disponível, os métodos são no-op silenciosos.
+ * Producer service for the "notifications" queue.
+ * When Redis is not available, the methods are silent no-ops.
  */
 
 import { Injectable, Logger, Optional } from '@nestjs/common';
@@ -30,9 +30,9 @@ export class NotificationsQueueService {
 
   async enqueue(payload: NotificationPayload, opts?: Partial<JobsOptions>): Promise<void> {
     if (!this.available) return;
-    // Job name deve corresponder ao switch(job.name) do NotificationsProcessor
-    // (NOTIFICATION_JOB_NAMES.SEND='send') — usar uma string arbitrária aqui
-    // faz o processor cair silenciosamente no `default:` e nunca persistir/emitir.
+    // The job name must match NotificationsProcessor's switch(job.name)
+    // (NOTIFICATION_JOB_NAMES.SEND='send') — using an arbitrary string here
+    // makes the processor silently fall into `default:` and never persist/emit.
     const job = await this.queue!.add(NOTIFICATION_JOB_NAMES.SEND, payload, { ...NORMAL_PRIORITY, ...opts });
     this.logger.log(`[notifications] enqueued jobId=${job.id} userId=${payload.userId} type=${payload.type}`);
   }

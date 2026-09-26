@@ -1,12 +1,12 @@
 /**
  * core/skills/skills.module.ts
  *
- * Infraestrutura GLOBAL de execução de skills. Exporta o SkillRunService para
- * que qualquer skill operacional do sistema persista execução/logs e emita
- * eventos de auditoria. Não expõe nada ao usuário final.
+ * GLOBAL skill execution infrastructure. Exports SkillRunService so that
+ * any operational skill in the system persists execution/logs and emits
+ * audit events. Exposes nothing to the end user.
  *
- * DatabaseModule (@Global) e DomainEventsModule (@Global) fornecem DATA_SOURCE
- * e EventsService — não precisam ser importados aqui.
+ * DatabaseModule (@Global) and DomainEventsModule (@Global) provide DATA_SOURCE
+ * and EventsService — they do not need to be imported here.
  */
 
 import { Global, Module } from '@nestjs/common';

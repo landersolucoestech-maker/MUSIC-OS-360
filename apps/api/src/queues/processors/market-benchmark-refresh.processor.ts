@@ -9,24 +9,24 @@ import type { MarketBenchmarkRefreshJobPayload } from '../../modules/artists/pla
 /**
  * queues/processors/market-benchmark-refresh.processor.ts
  *
- * Fase 3.2 — worker que executa o trabalho PESADO (até
- * MAX_CANDIDATES_PER_REFRESH × BENCHMARK_METRICS chamadas Soundcharts) fora
- * do request HTTP. Chama MarketBenchmarkService.computeAndPersist() — a
- * mesma matemática validada na Fase 3.1, engine inalterado (item 39).
+ * Phase 3.2 — worker that performs the HEAVY work (up to
+ * MAX_CANDIDATES_PER_REFRESH × BENCHMARK_METRICS Soundcharts calls) outside
+ * the HTTP request. Calls MarketBenchmarkService.computeAndPersist() — the
+ * same math validated in Phase 3.1, engine unchanged (item 39).
  *
- * Retry/backoff reaproveitados do default global do BullMQ (item 3) + os
- * mesmos attempts=3/backoff exponencial explícitos no enqueue (item 9) — um
- * erro transitório da Soundcharts (rate limit/5xx/timeout) propagado por
- * MarketReferenceCacheService.fetchMetric() faz este job falhar e o BullMQ
- * reagenda automaticamente.
+ * Retry/backoff reused from BullMQ's global default (item 3) + the
+ * same explicit attempts=3/exponential backoff on enqueue (item 9) — a
+ * transient Soundcharts error (rate limit/5xx/timeout) propagated by
+ * MarketReferenceCacheService.fetchMetric() makes this job fail and BullMQ
+ * reschedules it automatically.
  *
- * Contexto de tenant (achado na validação real com worker): market_benchmark_snapshots
- * tem FORCE RLS com WITH CHECK em private_get_tenant_id(). Um job BullMQ roda fora do
- * ciclo HTTP — sem envolver a chamada em runInTenantContext (mesmo padrão já usado por
- * ArtistPlatformSyncProcessor), o INSERT do snapshot é rejeitado pelo Postgres
- * ("new row violates row-level security policy"), o job "completa" do ponto de vista do
- * BullMQ mesmo assim (persistIfChanged engole o erro) e a leitura seguinte nunca encontra
- * snapshot — reenfileirando 'cold' indefinidamente.
+ * Tenant context (found in the real validation with the worker): market_benchmark_snapshots
+ * has FORCE RLS with WITH CHECK on private_get_tenant_id(). A BullMQ job runs outside the
+ * HTTP cycle — without wrapping the call in runInTenantContext (the same pattern already used by
+ * ArtistPlatformSyncProcessor), Postgres rejects the snapshot INSERT
+ * ("new row violates row-level security policy"), the job still "completes" from
+ * BullMQ's point of view (persistIfChanged swallows the error) and the next read never finds a
+ * snapshot — re-enqueueing 'cold' indefinitely.
  */
 @Processor(QUEUE_NAMES.ANALYTICS_REFRESH)
 @Injectable()
@@ -44,8 +44,8 @@ export class MarketBenchmarkRefreshProcessor extends WorkerHost {
     if (job.name !== ANALYTICS_REFRESH_JOB_NAMES.MARKET_BENCHMARK_REFRESH) return;
 
     const payload = job.data;
-    // Fail-closed: mesmo padrão do ArtistPlatformSyncProcessor — job assíncrono
-    // sem tenant NUNCA toca dados tenant-scoped.
+    // Fail-closed: same pattern as ArtistPlatformSyncProcessor — an asynchronous job
+    // without a tenant NEVER touches tenant-scoped data.
     if (!payload.tenant_id) {
       this.logger.warn(`[analytics-refresh] job=${job.id} sem tenant_id — abortado (fail-closed)`);
       return;
@@ -70,7 +70,7 @@ export class MarketBenchmarkRefreshProcessor extends WorkerHost {
       const durationMs = Date.now() - startedAt;
       const message = err instanceof Error ? err.message : String(err);
       this.logger.warn(`[analytics-refresh] benchmark_refresh_failed ${logCtx} durationMs=${durationMs} error="${message}"`);
-      throw err; // deixa o BullMQ decidir retry/backoff/dead-letter (removeOnFail:false preserva o job para inspeção).
+      throw err; // lets BullMQ decide retry/backoff/dead-letter (removeOnFail:false keeps the job for inspection).
     }
   }
 }

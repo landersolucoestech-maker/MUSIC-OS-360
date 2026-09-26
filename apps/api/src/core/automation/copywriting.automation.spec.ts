@@ -85,7 +85,7 @@ describe('CopywritingAutomation (ON_DEMAND: POST /marketing/tasks/:id/ai/copywri
 
   it('without sourceFacts: writes generic text, empty usedFacts', async () => {
     const skillRun = makeSkillRun();
-    const ai = makeAi(VALID_JSON); // modelo tenta reivindicar um fato mesmo sem ter recebido nenhum
+    const ai = makeAi(VALID_JSON); // the model tries to claim a fact even without having received any
     const tasks = makeTasks();
     const ds = makeDs();
     const handler = new CopywritingAutomation(ds as never, skillRun as never, ai as never, tasks as never);

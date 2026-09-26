@@ -3,12 +3,12 @@ import { ConflictException, BadRequestException } from '@nestjs/common';
 import { casUpdate } from './optimistic-update.util';
 
 /**
- * Task K — cenário canônico de concorrência exigido pela auditoria:
- *   A lê versão X
- *   B lê versão X
- *   A salva
- *   B tenta salvar versão X
- *   → B NÃO pode sobrescrever silenciosamente A
+ * Task K — canonical concurrency scenario required by the audit:
+ *   A reads version X
+ *   B reads version X
+ *   A saves
+ *   B tries to save version X
+ *   → B must NOT silently overwrite A
  */
 interface TestRow {
   id: string;
@@ -28,11 +28,11 @@ describe('casUpdate', () => {
   });
 
   it('with expectedUpdatedAt: includes updated_at in the UPDATE criteria as a millisecond-truncated comparison', async () => {
-    // Task X — updated_at costuma ser `timestamp` do Postgres sem precisão
-    // declarada (microssegundos); o valor que chega do cliente já perdeu
-    // essa precisão (Date só guarda milissegundos). Uma igualdade exata
-    // (`updated_at: t`) nunca bateria com o valor real do banco — precisa
-    // ser um Raw() com date_trunc dos dois lados.
+    // Task X — updated_at is usually a Postgres `timestamp` without declared
+    // precision (microseconds); the value arriving from the client has already lost
+    // that precision (Date only keeps milliseconds). An exact equality
+    // (`updated_at: t`) would never match the real database value — it must
+    // be a Raw() with date_trunc on both sides.
     const repo = buildRepo(1);
     const t = new Date('2026-08-14T10:00:00.000Z');
     await casUpdate<TestRow>(repo, { id: '1' }, { nome: 'x' }, t.toISOString());
@@ -51,14 +51,14 @@ describe('casUpdate', () => {
   });
 
   it('A/B scenario: B saves against A\'s pre-write version (0 rows affected) -> 409, no overwrite', async () => {
-    // A e B leram updated_at = T0. A salva (a coluna passa a T1 no banco, fora
-    // deste teste). B tenta salvar ainda contra T0 -> WHERE não bate -> 0 rows.
+    // A and B read updated_at = T0. A saves (the column becomes T1 in the database, outside
+    // this test). B tries to save still against T0 -> WHERE does not match -> 0 rows.
     const repo = buildRepo(0);
     const t0 = new Date('2026-08-14T10:00:00.000Z').toISOString();
     await expect(casUpdate<TestRow>(repo, { id: '1' }, { nome: 'edição de B' }, t0))
       .rejects.toThrow(ConflictException);
-    // A escrita de B nunca é aplicada de forma incondicional depois do 409 —
-    // repo.update só foi chamado a UMA vez, com o critério condicional.
+    // B's write is never applied unconditionally after the 409 —
+    // repo.update was called only ONCE, with the conditional criterion.
     expect(repo.update).toHaveBeenCalledTimes(1);
   });
 

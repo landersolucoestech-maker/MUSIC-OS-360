@@ -1,22 +1,22 @@
 /**
  * core/automation/analytics-tracking.automation.ts
  *
- * Skill ON_DEMAND (ver on-demand-skill.runner.ts): audita a COBERTURA real
- * de rastreamento analítico — cruza o registro canônico DOMAIN_EVENTS
- * (apps/api/src/core/events/events.service.ts, ~100 BUSINESS EVENTS reais,
- * já 100% capturados em `domain_event_log` via UniversalEventLogHandler,
- * um listener wildcard '**' sempre ativo — isso é AUDIT EVENT, não
- * ANALYTICS EVENT) contra os métodos de rastreamento REAIS já implementados
- * em PostHogService (ANALYTICS EVENT real, mas nunca chamados por nenhum
- * outro serviço — grep repo-wide confirmado).
+ * ON_DEMAND skill (see on-demand-skill.runner.ts): audits the real COVERAGE
+ * of analytics tracking — cross-checks the canonical DOMAIN_EVENTS registry
+ * (apps/api/src/core/events/events.service.ts, ~100 real BUSINESS EVENTS,
+ * already 100% captured in `domain_event_log` via UniversalEventLogHandler,
+ * an always-active '**' wildcard listener — that is an AUDIT EVENT, not an
+ * ANALYTICS EVENT) against the REAL tracking methods already implemented
+ * in PostHogService (real ANALYTICS EVENTs, but never called by any
+ * other service — repo-wide grep confirmed).
  *
- * KNOWN_TRACKING_MAP abaixo é a única fonte de verdade sobre qual
- * DOMAIN_EVENT já tem um método de rastreamento correspondente no código —
- * mapeamento estático, verificável, nunca inventado pelo modelo.
+ * KNOWN_TRACKING_MAP below is the single source of truth on which
+ * DOMAIN_EVENT already has a matching tracking method in code —
+ * a static, verifiable mapping, never invented by the model.
  *
- * Nunca envia dado a nenhum provedor (esta skill só lê/analisa, nunca
- * chama capture()/identify()). Reporta providerState="configuration_required"
- * de forma verdadeira quando PostHogService.isConfigured() é false.
+ * Never sends data to any provider (this skill only reads/analyzes, never
+ * calls capture()/identify()). Truthfully reports providerState="configuration_required"
+ * when PostHogService.isConfigured() is false.
  */
 
 import { Injectable } from '@nestjs/common';
@@ -37,7 +37,7 @@ import { runOnDemandSkill, type OnDemandSkillResult } from './on-demand-skill.ru
 
 const SKILL_NAME = 'analytics-tracking';
 
-/** Única fonte de verdade: DOMAIN_EVENT -> método real de PostHogService. */
+/** Single source of truth: DOMAIN_EVENT -> real PostHogService method. */
 const KNOWN_TRACKING_MAP: Record<string, string> = {
   [DOMAIN_EVENTS.CONTRACT_SIGNED]: 'trackContractSigned',
   [DOMAIN_EVENTS.RELEASE_CREATED]: 'trackReleaseCreated',

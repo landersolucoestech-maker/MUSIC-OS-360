@@ -1,9 +1,9 @@
 /**
  * core/mail/mail.service.ts
  *
- * MailService — envio transacional via Resend.
- * Se RESEND_API_KEY não estiver definida, regista warning e retorna sem enviar.
- * Templates em HTML inline (sem dependências externas).
+ * MailService — transactional sending via Resend.
+ * If RESEND_API_KEY is not defined, logs a warning and returns without sending.
+ * Inline HTML templates (no external dependencies).
  */
 
 import { Inject, Injectable, Logger } from '@nestjs/common';
@@ -55,10 +55,10 @@ export class MailService {
   private readonly apiKey:    string | undefined;
   private readonly nodeEnv:   string;
   /**
-   * STAGING-01: em NODE_ENV=staging, envios ficam limitados a domínios desta
-   * lista — sem isto, testar manualmente "convidar utilizador" ou qualquer
-   * outro fluxo transacional em staging enviaria emails reais para o que quer
-   * que um testador digite. Produção/development não são afetados.
+   * STAGING-01: in NODE_ENV=staging, sends are limited to domains in this
+   * list — without it, manually testing "invite user" or any
+   * other transactional flow in staging would send real emails to whatever
+   * a tester types. Production/development are not affected.
    */
   private readonly stagingAllowedDomains: string[];
 
@@ -124,7 +124,7 @@ export class MailService {
     return { id: data.id };
   }
 
-  // ─── Templates de domínio ─────────────────────────────────────────────────
+  // ─── Domain templates ────────────────────────────────────────────────────────
 
   async sendWelcome(to: string, tenantName: string): Promise<MailResult> {
     const appUrl = this.config.get<string>('APP_URL') ?? 'https://musicos360.com.br';
@@ -211,7 +211,7 @@ export class MailService {
     });
   }
 
-  // ─── Métodos de template HTML (usados pelo EmailProcessor) ──────────────────
+  // ─── HTML template methods (used by EmailProcessor) ─────────────────────────
 
   welcomeHtml(name: string): string {
     const appUrl = this.config.get<string>('APP_URL') ?? 'https://musicos360.com.br';

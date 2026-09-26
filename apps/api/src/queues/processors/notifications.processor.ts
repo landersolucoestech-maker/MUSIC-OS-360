@@ -1,9 +1,9 @@
 /**
  * queues/processors/notifications.processor.ts
  *
- * Processor BullMQ para a fila "notifications".
- * Persiste a notificação no banco (tabela notifications)
- * e emite via WebSocket para o utilizador em tempo real.
+ * BullMQ processor for the "notifications" queue.
+ * Persists the notification in the database (notifications table)
+ * and emits it via WebSocket to the user in real time.
  */
 
 import { Processor, WorkerHost }      from '@nestjs/bullmq';

@@ -16,8 +16,8 @@ import { AUTH_DISABLED, DEV_AUTH } from '../auth-disabled';
 import { RbacErrorLogService } from '../rbac/rbac-error-log.service';
 import { isProdLike } from '../config/runtime-environment';
 
-// Lazy-loaded via require: sob tsx/esbuild o `import * as` de um módulo CJS que
-// exporta função vira namespace não-chamável — mesmo padrão do token-verifier.service.
+// Lazy-loaded via require: under tsx/esbuild, `import * as` of a CJS module that
+// exports a function becomes a non-callable namespace — same pattern as token-verifier.service.
 type JwksRsaFn = (options: jwksRsaType.Options) => jwksRsaType.JwksClient;
 let _jwksRsa: JwksRsaFn | null = null;
 function getJwksRsa(): JwksRsaFn {

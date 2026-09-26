@@ -54,9 +54,9 @@ export class AdminQueuesModule implements NestModule {
       return { module: AdminQueuesModule };
     }
 
-    // Bull Board só existe quando as filas existem: se o QueueModule caiu em
-    // no-op (Redis ausente/inacessível em dev), montar o board quebraria o
-    // bootstrap com "Nest could not find BullQueue_<nome>".
+    // Bull Board only exists when the queues exist: if QueueModule fell back to
+    // no-op (Redis missing/unreachable in dev), mounting the board would break
+    // bootstrap with "Nest could not find BullQueue_<name>".
     if (!(await bullMqAvailable())) {
       AdminQueuesModule.logger.warn('AdminQueuesModule: BullMQ em modo no-op — dashboard de filas desativado');
       return { module: AdminQueuesModule };

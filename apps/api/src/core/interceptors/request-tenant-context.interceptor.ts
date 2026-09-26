@@ -1,24 +1,24 @@
 /**
  * core/interceptors/request-tenant-context.interceptor.ts
  *
- * FASE 3J — Estabelece o contexto de tenant no banco para TODA requisição HTTP
- * autenticada, de forma transparente (nenhum service/controller precisa mudar).
+ * PHASE 3J — Establishes the database tenant context for EVERY authenticated HTTP
+ * request, transparently (no service/controller needs to change).
  *
- * Fluxo: guards já populam `request.tenant` (TenantGuard). Este interceptor —
- * registrado como APP_INTERCEPTOR OUTERMOST — envolve o handler em
- * `DatabaseContextService.runInTenantContext`, que abre uma transação, executa
- * `set_config('app.current_tenant_id', …)` e liga o EntityManager ao
- * AsyncLocalStorage. O Proxy de DATA_SOURCE roteia então todas as queries
- * (inclusive repos globais capturados no construtor) para essa conexão/contexto.
+ * Flow: the guards already populate `request.tenant` (TenantGuard). This interceptor —
+ * registered as the OUTERMOST APP_INTERCEPTOR — wraps the handler in
+ * `DatabaseContextService.runInTenantContext`, which opens a transaction, runs
+ * `set_config('app.current_tenant_id', …)` and binds the EntityManager to
+ * AsyncLocalStorage. The DATA_SOURCE Proxy then routes every query
+ * (including global repos captured in constructors) to that connection/context.
  *
- * Resultado: `private_get_tenant_id()` passa a retornar o tenant correto durante
- * qualquer controller HTTP — corrigindo o achado da FASE 3I sem tocar em RLS,
- * policies, migrations, schema ou nos services de negócio.
+ * Result: `private_get_tenant_id()` now returns the correct tenant during
+ * any HTTP controller — fixing the PHASE 3I finding without touching RLS,
+ * policies, migrations, schema or the business services.
  *
- * Compatibilidade: gated por `DatabaseContextService.isEnabled`
- * (DATABASE_SESSION_CONTEXT_ENABLED=true). Requests sem tenant (rotas públicas,
- * health) passam direto. Workers/jobs/schedulers continuam usando
- * runInTenantContext diretamente — inalterados.
+ * Compatibility: gated by `DatabaseContextService.isEnabled`
+ * (DATABASE_SESSION_CONTEXT_ENABLED=true). Requests without a tenant (public routes,
+ * health) pass straight through. Workers/jobs/schedulers keep using
+ * runInTenantContext directly — unchanged.
  */
 import {
   CallHandler,
@@ -41,7 +41,7 @@ export class RequestTenantContextInterceptor implements NestInterceptor {
   constructor(@Optional() private readonly dbContext?: DatabaseContextService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    // Só HTTP e só com o primitivo de contexto habilitado.
+    // HTTP only, and only with the context primitive enabled.
     if (context.getType() !== 'http' || !this.dbContext?.isEnabled) {
       return next.handle();
     }
@@ -49,15 +49,15 @@ export class RequestTenantContextInterceptor implements NestInterceptor {
     const req = context.switchToHttp().getRequest<TenantRequest>();
     const tenantId = req?.tenant?.id ?? null;
     if (!tenantId) {
-      // Rota pública / sem tenant resolvido → sem contexto (comportamento atual).
+      // Public route / no resolved tenant → no context (current behavior).
       return next.handle();
     }
 
     const orgId = req?.tenant?.org_id ?? req?.tenant?.orgId ?? req?.auth?.orgId ?? null;
     const role = req?.currentMember?.role ?? req?.auth?.orgRole ?? null;
 
-    // Envolve TODO o restante da cadeia (interceptors internos + handler) na
-    // transação contextualizada. Erros propagam → rollback automático.
+    // Wraps the WHOLE rest of the chain (inner interceptors + handler) in the
+    // contextualized transaction. Errors propagate → automatic rollback.
     return from(
       this.dbContext.runInTenantContext({ tenantId, orgId, role }, () =>
         lastValueFrom(next.handle()),

@@ -1,13 +1,13 @@
 /**
  * core/automation/seo-audit.automation.ts
  *
- * Skill ON_DEMAND + STALE_REFRESH (ver on-demand-skill.runner.ts): audita a
- * higiene de link de uma campanha real do Campaign Builder
+ * ON_DEMAND + STALE_REFRESH skill (see on-demand-skill.runner.ts): audits the
+ * link hygiene of a real Campaign Builder campaign
  * (MarketingCampaignBuilderService/CampaignEntity type='marketing_builder')
- * — STATIC_ANALYSIS apenas, sobre campos já conhecidos (destinationUrl,
- * utm, nome da entidade promovida). NUNCA faz fetch HTTP da destinationUrl
- * (ver contracts.ts para a justificativa de segurança — ausência de guard
- * anti-SSRF de propósito geral neste código).
+ * — STATIC_ANALYSIS only, over already known fields (destinationUrl,
+ * utm, name of the promoted entity). NEVER makes an HTTP fetch of the destinationUrl
+ * (see contracts.ts for the security rationale — deliberate absence of a
+ * general-purpose anti-SSRF guard in this code).
  */
 
 import { Injectable } from '@nestjs/common';

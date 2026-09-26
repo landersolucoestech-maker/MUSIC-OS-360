@@ -31,14 +31,14 @@ describe('MarketBenchmarkRefreshQueueService', () => {
     );
   });
 
-  // Regressão: BullMQ (Job.validateOptions) lança "Custom Id cannot contain :"
-  // — descoberto na validação real do worker (Fase 3.2), não pelo mock.
+  // Regression: BullMQ (Job.validateOptions) throws "Custom Id cannot contain :"
+  // — discovered in the real worker validation (Phase 3.2), not by the mock.
   it('jobId never contains ":" — regression of "Custom Id cannot contain :"', () => {
     const service = new MarketBenchmarkRefreshQueueService(null);
     expect(service.dedupKey('t1', 'a1', '2.0.0')).not.toContain(':');
   });
 
-  // Item 7/8: dedup — job já waiting/active/delayed NUNCA gera um segundo job equivalente.
+  // Items 7/8: dedup — a job already waiting/active/delayed NEVER produces a second equivalent job.
   it.each(['waiting', 'active', 'delayed'])('DEDUP: job existente em estado "%s" — suprime o novo enqueue (already_running)', async (state) => {
     const add = jest.fn();
     const getJob = jest.fn().mockResolvedValue(fakeJob(state));

@@ -1,12 +1,12 @@
 /**
  * storage/storage.module.ts
  *
- * Módulo Cloudflare R2 (S3-compatible) para file storage.
- * Usa @aws-sdk/client-s3 + @aws-sdk/s3-request-presigner.
+ * Cloudflare R2 (S3-compatible) module for file storage.
+ * Uses @aws-sdk/client-s3 + @aws-sdk/s3-request-presigner.
  *
- * Credenciais: R2_ACCOUNT_ID, R2_ACCESS_KEY, R2_SECRET_KEY
+ * Credentials: R2_ACCOUNT_ID, R2_ACCESS_KEY, R2_SECRET_KEY
  * Bucket:      R2_BUCKET_NAME (default: music-os-360)
- * URL pública: R2_PUBLIC_URL
+ * Public URL:  R2_PUBLIC_URL
  */
 
 import { Module, Global, Logger } from '@nestjs/common';
@@ -45,11 +45,11 @@ export { R2_CLIENT, R2_BUCKET, R2_PUBLIC_URL } from './storage.tokens';
             accessKeyId:     accessKey,
             secretAccessKey: secretKey,
           },
-          // O SDK v3 (>=3.729) calcula checksum por padrão (WHEN_SUPPORTED).
-          // Em URLs pré-assinadas isso quebra: o corpo real só existe quando o
-          // cliente faz o PUT depois, então o checksum assinado é o de um corpo
-          // vazio — todo upload real falha com SignatureDoesNotMatch. R2 também
-          // não suporta os checksums compostos que o SDK tentaria usar.
+          // SDK v3 (>=3.729) computes a checksum by default (WHEN_SUPPORTED).
+          // With presigned URLs this breaks: the real body only exists when the
+          // client makes the PUT later, so the signed checksum is that of an empty
+          // body — every real upload fails with SignatureDoesNotMatch. R2 also
+          // does not support the composite checksums the SDK would try to use.
           requestChecksumCalculation: 'WHEN_REQUIRED',
         });
 

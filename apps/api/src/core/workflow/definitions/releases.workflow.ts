@@ -1,8 +1,8 @@
 /**
  * releases.workflow.ts
  *
- * Workflow de ciclo de vida para Lançamentos (Releases).
- * Conforme spec: draft → metadata_pending → assets_pending → review → approved →
+ * Lifecycle workflow for Releases.
+ * Per spec: draft → metadata_pending → assets_pending → review → approved →
  *                scheduled → distributed → released → archived / cancelled
  */
 

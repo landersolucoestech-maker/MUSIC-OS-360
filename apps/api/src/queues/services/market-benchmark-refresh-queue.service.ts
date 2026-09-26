@@ -1,22 +1,22 @@
 /**
  * queues/services/market-benchmark-refresh-queue.service.ts
  *
- * Fase 3.2 — producer service para a fila "analytics-refresh" (item 4/27:
- * nenhuma chamada pesada à Soundcharts dentro do request HTTP; refresh do
- * Market Benchmark roda em background). Mesmo padrão de
- * notifications-queue.service.ts: quando Redis está indisponível (BullMQ
- * no-op), os métodos retornam 'unavailable' em vez de lançar — o chamador
- * (MarketBenchmarkService.getStatus) decide o readStatus a partir disso.
+ * Phase 3.2 — producer service for the "analytics-refresh" queue (items 4/27:
+ * no heavy Soundcharts call inside the HTTP request; the Market Benchmark
+ * refresh runs in the background). Same pattern as
+ * notifications-queue.service.ts: when Redis is unavailable (BullMQ
+ * no-op), the methods return 'unavailable' instead of throwing — the caller
+ * (MarketBenchmarkService.getStatus) decides the readStatus from that.
  *
- * Dedup (item 7/8): jobId determinístico `benchmark-refresh__{tenant}__{artist}__{engineVersion}`.
- * Enquanto um job com esse id estiver waiting/active/delayed, um novo
- * enqueue NUNCA cria um job duplicado — BullMQ dedupa por jobId
- * nativamente. Um job 'failed' anterior é removido antes de tentar de novo
- * (dá uma tentativa limpa em vez de ficar preso ao id ocupado).
+ * Dedup (items 7/8): deterministic jobId `benchmark-refresh__{tenant}__{artist}__{engineVersion}`.
+ * While a job with that id is waiting/active/delayed, a new
+ * enqueue NEVER creates a duplicate job — BullMQ dedupes by jobId
+ * natively. A previous 'failed' job is removed before trying again
+ * (giving a clean attempt instead of being stuck on the occupied id).
  *
- * jobId usa '__' como separador, não ':' — BullMQ (Job.validateOptions)
- * lança "Custom Id cannot contain :" porque ':' é o separador de chaves do
- * Redis. Mesma correção já aplicada em artist-external-profile-sync.service.ts.
+ * The jobId uses '__' as the separator, not ':' — BullMQ (Job.validateOptions)
+ * throws "Custom Id cannot contain :" because ':' is the Redis key
+ * separator. Same fix already applied in artist-external-profile-sync.service.ts.
  */
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
@@ -90,7 +90,7 @@ export class MarketBenchmarkRefreshQueueService {
     }
   }
 
-  /** 'not_found' | estado real do job — usado por getStatus() para decidir REFRESHING vs. re-enfileirar. */
+  /** 'not_found' | the job's real state — used by getStatus() to decide REFRESHING vs. re-enqueueing. */
   async getRefreshState(tenantId: string, artistId: string, engineVersion: string): Promise<string> {
     if (!this.queue) return 'not_found';
     const jobId = this.dedupKey(tenantId, artistId, engineVersion);

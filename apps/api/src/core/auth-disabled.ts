@@ -32,12 +32,12 @@ if (AUTH_DISABLED) {
   );
 }
 
-// Tenant/org usados pelo bypass. Por padrão apontam para o tenant-zero real
-// (LANDER RECORDS — única fonte de verdade: tenant-zero.constants.ts), para
-// que AUTH_DISABLED opere sobre dados reais em vez de um workspace vazio.
-// Sobrescritíveis via env (DEV_TENANT_ID / DEV_ORG_ID) quando algum dev
-// precisar apontar para outro tenant local. Honrados apenas fora de
-// produção, pelas mesmas condições de AUTH_DISABLED acima.
+// Tenant/org used by the bypass. By default they point to the real tenant-zero
+// (LANDER RECORDS — single source of truth: tenant-zero.constants.ts), so
+// that AUTH_DISABLED operates on real data instead of an empty workspace.
+// Overridable via env (DEV_TENANT_ID / DEV_ORG_ID) when a dev
+// needs to point to another local tenant. Honored only outside
+// production, under the same conditions as AUTH_DISABLED above.
 const DEV_TENANT_ID = process.env.DEV_TENANT_ID ?? TENANT_ZERO_AUTH_DISABLED_IDENTITY.tenantId;
 const DEV_ORG_ID = process.env.DEV_ORG_ID ?? TENANT_ZERO_AUTH_DISABLED_IDENTITY.orgId;
 const DEV_USER_ID = TENANT_ZERO_AUTH_DISABLED_IDENTITY.syntheticOwnerAuthUserId;

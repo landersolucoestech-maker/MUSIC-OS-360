@@ -1,25 +1,25 @@
 /**
  * core/automation/native-skill-automation.runner.ts
  *
- * Runner comum para automações NATIVAS, INTERNAS e INVISÍVEIS de AI Skills.
+ * Common runner for NATIVE, INTERNAL and INVISIBLE AI Skills automations.
  *
- * Centraliza tudo o que é idêntico entre as automações orientadas a evento
+ * Centralizes everything that is identical across the event-driven automations
  * (project.completed → project-planning, release.created → release-checklist, …):
- *   — montagem da idempotencyKey ({event}:{tenant}:{entity});
- *   — DUPLA guarda de idempotência: metadata + skill_runs (status success);
- *   — ciclo de auditoria SkillRunService.start/succeed/fail;
- *   — chamada AIService.complete em jsonMode;
- *   — parse via parser do pacote @music-os-360/ai-skills (injetado pelo consumer);
- *   — montagem do ENVELOPE padrão;
- *   — persistência do metadata preservando o existente + histórico defensivo;
- *   — fail-safe: NUNCA lança para o emissor do evento; falha da IA registra `fail`
- *     e permite retry, sem reverter o evento original e sem sobrescrever um
- *     resultado válido.
+ *   — building the idempotencyKey ({event}:{tenant}:{entity});
+ *   — DOUBLE idempotency guard: metadata + skill_runs (status success);
+ *   — SkillRunService.start/succeed/fail audit cycle;
+ *   — AIService.complete call in jsonMode;
+ *   — parsing via the @music-os-360/ai-skills package parser (injected by the consumer);
+ *   — building the standard ENVELOPE;
+ *   — persisting the metadata preserving what exists + defensive history;
+ *   — fail-safe: NEVER throws to the event emitter; an AI failure records `fail`
+ *     and allows a retry, without reverting the original event and without overwriting a
+ *     valid result.
  *
- * Cada automação fornece apenas a parte específica: load do registro, montagem do
- * input, prompts/parser do pacote e a persistência (UPDATE) da própria tabela.
+ * Each automation provides only the specific part: loading the record, building the
+ * input, the package's prompts/parser and the persistence (UPDATE) of its own table.
  *
- * Não cria tarefas reais, não envia notificações, não cria tabelas/migrations.
+ * Does not create real tasks, does not send notifications, does not create tables/migrations.
  */
 
 import { Logger } from '@nestjs/common';
@@ -30,13 +30,13 @@ import { SkillRunService } from '../skills/skill-run.service';
 
 const logger = new Logger('NativeSkillAutomation');
 
-/** Status canônico do envelope persistido em metadata. */
+/** Canonical status of the envelope persisted in metadata. */
 const ENVELOPE_STATUS_GENERATED = 'generated';
 
 /**
- * Janela (minutos) em que um skill_run 'running' ainda bloqueia reexecução.
- * Um 'running' mais antigo que isto é considerado órfão/stale (processo morreu
- * antes de succeed/fail) e NÃO bloqueia retry. 'success' bloqueia sempre.
+ * Window (minutes) during which a 'running' skill_run still blocks re-execution.
+ * A 'running' older than this is considered orphan/stale (the process died
+ * before succeed/fail) and does NOT block a retry. 'success' always blocks.
  */
 const STALE_RUNNING_MINUTES = 15;
 
@@ -53,43 +53,43 @@ export interface NativeSkillValidation {
 }
 
 export interface NativeSkillAutomationParams<TRow, TInput> {
-  /** Nome do evento de domínio (ex.: 'project.completed'). Usado na idempotencyKey e no envelope. */
+  /** Domain event name (e.g. 'project.completed'). Used in the idempotencyKey and the envelope. */
   eventName: string;
-  /** Nome da skill (ex.: 'project-planning'). Usado em skill_runs e no envelope. */
+  /** Skill name (e.g. 'project-planning'). Used in skill_runs and the envelope. */
   skillName: string;
   /** Tenant do evento. */
   tenantId: string | null | undefined;
-  /** Usuário responsável (para skill_run e AIService). */
+  /** Responsible user (for skill_run and AIService). */
   userId: string | null | undefined;
   /** Tipo do agregado (ex.: 'project', 'release'). */
   entityType: string;
   /** ID do agregado. */
   entityId: string | null | undefined;
-  /** Chave em `metadata` onde o envelope é gravado (ex.: 'aiPlan', 'aiChecklist'). */
+  /** Key in `metadata` where the envelope is written (e.g. 'aiPlan', 'aiChecklist'). */
   metadataKey: string;
   /** System prompt canônico (do pacote). */
   systemPrompt: string;
-  /** Elegibilidade opcional avaliada ANTES de qualquer acesso ao banco. */
+  /** Optional eligibility evaluated BEFORE any database access. */
   isEligible?: () => boolean;
-  /** Carrega o registro (incl. metadata). Retorna null se não existir. */
+  /** Loads the record (incl. metadata). Returns null when it does not exist. */
   load: (manager: EntityManager) => Promise<TRow | null>;
-  /** Extrai o objeto metadata do registro carregado. */
+  /** Extracts the metadata object from the loaded record. */
   getMetadata: (row: TRow) => Record<string, unknown>;
-  /** Monta o input da skill a partir do registro. */
+  /** Builds the skill input from the record. */
   buildInput: (row: TRow) => TInput;
-  /** Validação opcional do input (do pacote). */
+  /** Optional input validation (from the package). */
   validateInput?: (input: TInput) => NativeSkillValidation;
   /** Builder do user prompt (do pacote). */
   buildPrompt: (input: TInput) => string;
-  /** Parser da resposta (do pacote). */
+  /** Response parser (from the package). */
   parseResponse: (content: string, input: TInput) => unknown;
-  /** Persiste o metadata final (UPDATE puro da própria tabela). */
+  /** Persists the final metadata (a plain UPDATE of its own table). */
   saveMetadata: (nextMetadata: Record<string, unknown>, manager: EntityManager) => Promise<void>;
 }
 
 /**
- * Executa uma automação nativa de skill de ponta a ponta, de forma fail-safe.
- * NUNCA lança para o emissor do evento.
+ * Runs a native skill automation end to end, in a fail-safe way.
+ * NEVER throws to the event emitter.
  */
 export async function runNativeSkillAutomation<TRow, TInput>(
   deps: NativeAutomationDeps,
@@ -113,17 +113,17 @@ export async function runNativeSkillAutomation<TRow, TInput>(
       work,
     );
   } catch (err) {
-    // Erros ANTES do skillRun.start (load/guarda/persistência inicial). Não propaga.
+    // Errors BEFORE skillRun.start (load/guard/initial persistence). Not propagated.
     await recordPreStartFailure(deps, params, err);
   }
 }
 
 /**
- * Observabilidade de falhas pré-start (B1): erros que ocorrem antes do skillRun.start
- * (ex.: load() lança) não deixariam trilha em skill_runs. Aqui registramos um log
- * interno claro e, quando há dados mínimos (tenant + entity), abrimos best-effort um
- * skill_run e o marcamos como `failed` — preservando a auditoria e permitindo retry
- * (status 'failed' não bloqueia). Tudo é fail-safe: NUNCA lança ao emissor.
+ * Observability of pre-start failures (B1): errors occurring before skillRun.start
+ * (e.g. load() throws) would leave no trail in skill_runs. Here we record a clear
+ * internal log and, when minimal data exists (tenant + entity), open a best-effort
+ * skill_run and mark it as `failed` — preserving the audit trail and allowing a retry
+ * (status 'failed' does not block). Everything is fail-safe: NEVER throws to the emitter.
  */
 async function recordPreStartFailure<TRow, TInput>(
   deps: NativeAutomationDeps,
@@ -136,7 +136,7 @@ async function recordPreStartFailure<TRow, TInput>(
   );
 
   const { tenantId, entityId, skillName } = params;
-  // Sem dados mínimos ou sem runtime de skill_run → fica só o log acima.
+  // No minimal data or no skill_run runtime → only the log above remains.
   if (!tenantId || !entityId || !deps.skillRun || !deps.dbContext) return;
 
   try {
@@ -156,7 +156,7 @@ async function recordPreStartFailure<TRow, TInput>(
       },
     );
   } catch {
-    // best-effort — se o próprio registro de auditoria falhar, não há mais o que fazer.
+    // best-effort — if the audit record itself fails, there is nothing more to do.
   }
 }
 
@@ -168,28 +168,28 @@ async function execute<TRow, TInput>(
   const { ds, skillRun, ai } = deps;
   const { tenantId, entityId, skillName, eventName, metadataKey } = params;
 
-  // 1/2. Validar tenantId e entityId.
+  // 1/2. Validate tenantId and entityId.
   if (!tenantId || !entityId) return;
-  // Sem banco → nada a fazer (ambiente sem DATA_SOURCE).
+  // No database → nothing to do (environment without DATA_SOURCE).
   if (!ds) return;
 
-  // 3. Portão OFICIAL de elegibilidade / controle de custo (M2).
-  // Avaliado SEMPRE, antes de qualquer query/IA. Automações sem filtro próprio
-  // passam por aqui com `true` (default), mantendo um único ponto de decisão de custo.
+  // 3. OFFICIAL eligibility / cost-control gate (M2).
+  // ALWAYS evaluated, before any query/AI call. Automations without their own filter
+  // pass through here with `true` (default), keeping a single cost-decision point.
   const eligible = params.isEligible ? params.isEligible() : true;
   if (!eligible) return;
 
-  // 4. Chave de idempotência.
+  // 4. Idempotency key.
   const idempotencyKey = `${eventName}:${tenantId}:${entityId}`;
 
-  // 5. Carregar registro (dados + metadata para a guarda de idempotência).
+  // 5. Load the record (data + metadata for the idempotency guard).
   const row = await params.load(manager);
   if (!row) return;
 
   const metadata = params.getMetadata(row);
   const existing = metadata[metadataKey] as Record<string, unknown> | undefined;
 
-  // 6. Guarda de idempotência (metadata): já existe envelope gerado com esta chave.
+  // 6. Idempotency guard (metadata): an envelope generated with this key already exists.
   if (
     existing &&
     existing.idempotencyKey === idempotencyKey &&
@@ -198,13 +198,13 @@ async function execute<TRow, TInput>(
     return;
   }
 
-  // 7. Guarda de idempotência (skill_runs): já existe execução EM ANDAMENTO ('running')
-  // ou de SUCESSO ('success') com esta chave. Bloquear 'running' fecha a janela TOCTOU
-  // entre dois eventos concorrentes do mesmo agregado (M1). Falhas anteriores
-  // ('failed'/'cancelled') NÃO bloqueiam → retry seguro.
+  // 7. Idempotency guard (skill_runs): there is already an IN-PROGRESS ('running')
+  // or SUCCESSFUL ('success') execution with this key. Blocking 'running' closes the TOCTOU window
+  // between two concurrent events of the same aggregate (M1). Previous failures
+  // ('failed'/'cancelled') do NOT block → safe retry.
   if (await hasActiveOrSucceededRun(manager, tenantId, skillName, idempotencyKey)) return;
 
-  // 8. Registrar execução (auditável + retry seguro).
+  // 8. Record the execution (auditable + safe retry).
   const runId = await skillRun.start({
     tenantId,
     userId: params.userId ?? null,
@@ -226,7 +226,7 @@ async function execute<TRow, TInput>(
       return;
     }
 
-    // Execução da IA via gateway backend (OpenAI→Claude→Gemini), em jsonMode.
+    // AI execution via the backend gateway (OpenAI→Claude→Gemini), in jsonMode.
     const completion = await ai.complete({
       tenantId,
       userId: params.userId ?? 'system',
@@ -260,20 +260,20 @@ async function execute<TRow, TInput>(
       status: ENVELOPE_STATUS_GENERATED,
     });
   } catch (err) {
-    // Falha da IA/persistência: registra e permite retry; NÃO relança e NÃO grava
-    // o envelope (um resultado válido nunca é sobrescrito por falha).
+    // AI/persistence failure: records it and allows a retry; does NOT rethrow and does NOT write
+    // the envelope (a valid result is never overwritten by a failure).
     await skillRun.fail(runId, tenantId, skillName, err);
   }
 }
 
 /**
- * True se já existir um skill_run que deva BLOQUEAR a reexecução desta skill com a
- * mesma idempotencyKey:
- *   - 'success' → bloqueia sempre;
- *   - 'running' → bloqueia apenas se RECENTE (started_at dentro da janela de
- *     STALE_RUNNING_MINUTES). Um 'running' mais antigo é órfão/stale e NÃO bloqueia,
- *     permitindo retry após a morte de um processo anterior.
- * 'failed'/'cancelled' nunca bloqueiam.
+ * True when a skill_run already exists that must BLOCK re-execution of this skill with the
+ * same idempotencyKey:
+ *   - 'success' → always blocks;
+ *   - 'running' → blocks only if RECENT (started_at within the
+ *     STALE_RUNNING_MINUTES window). An older 'running' is orphan/stale and does NOT block,
+ *     allowing a retry after a previous process died.
+ * 'failed'/'cancelled' never block.
  */
 async function hasActiveOrSucceededRun(
   manager: EntityManager,
@@ -298,10 +298,10 @@ async function hasActiveOrSucceededRun(
 }
 
 /**
- * Monta o metadata final preservando o existente e o histórico defensivo, e delega
- * o UPDATE ao consumer. O histórico (`${metadataKey}History`) só é populado quando
- * havia um envelope anterior com chave de idempotência diferente — normalmente um
- * no-op, já que a chave é estável por entidade.
+ * Builds the final metadata preserving what exists and the defensive history, and delegates
+ * the UPDATE to the consumer. The history (`${metadataKey}History`) is only populated when
+ * there was a previous envelope with a different idempotency key — normally a
+ * no-op, since the key is stable per entity.
  */
 async function persist<TRow, TInput>(
   params: NativeSkillAutomationParams<TRow, TInput>,

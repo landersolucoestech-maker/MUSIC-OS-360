@@ -1,19 +1,19 @@
 /**
  * core/automation/audience-health.automation.ts
  *
- * Skill ON_DEMAND (ver on-demand-skill.runner.ts): disparada por uma ação
- * explícita do usuário na tela do artista (nunca por um evento de ciclo de
- * vida) — audience-health sintetiza os resultados JÁ CALCULADOS pelo Career
- * Stage Engine e pelo Market Benchmark Engine.
+ * ON_DEMAND skill (see on-demand-skill.runner.ts): triggered by an explicit
+ * user action on the artist screen (never by a lifecycle
+ * event) — audience-health synthesizes the results ALREADY COMPUTED by the Career
+ * Stage Engine and the Market Benchmark Engine.
  *
- * Stale-refresh: reaproveita a última síntese de sucesso (skill_runs) dentro
- * de AUDIENCE_HEALTH_FRESHNESS_MINUTES em vez de chamar a IA a cada
- * visualização da tela — evita tanto "nunca atualiza" quanto "atualiza a
- * cada refresh de página" (ver discussão de execução ON_DEMAND vs
- * EVENT_DRIVEN no relatório da missão).
+ * Stale refresh: reuses the last successful synthesis (skill_runs) within
+ * AUDIENCE_HEALTH_FRESHNESS_MINUTES instead of calling the AI on every
+ * screen view — avoids both "never updates" and "updates on every
+ * page refresh" (see the ON_DEMAND vs EVENT_DRIVEN execution discussion
+ * in the mission report).
  *
- * Nunca escreve em `artists` nem em nenhuma tabela de produto — apenas lê
- * (via os dois services já existentes) e devolve o resultado ao controller.
+ * Never writes to `artists` nor any product table — it only reads
+ * (via the two existing services) and returns the result to the controller.
  */
 
 import { Injectable } from '@nestjs/common';

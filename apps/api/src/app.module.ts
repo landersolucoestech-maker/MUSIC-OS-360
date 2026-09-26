@@ -1,13 +1,13 @@
 /**
  * app.module.ts
  *
- * Módulo raiz do MUSIC OS 360 API.
- * Infraestrutura:
+ * Root module of the MUSIC OS 360 API.
+ * Infrastructure:
  *   - PostgreSQL (TypeORM / node-postgres)
- *   - Cache em memória (InMemoryCacheClient)
+ *   - In-memory cache (InMemoryCacheClient)
  *   - Cloudflare R2 (file storage)
- *   - BullMQ + Redis (filas assíncronas)
- *   - JWT (autenticação)
+ *   - BullMQ + Redis (asynchronous queues)
+ *   - JWT (authentication)
  */
 
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
@@ -102,16 +102,16 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
     ConfigModule.forRoot({
       isGlobal: true,
       validate: validateEnv,
-      // main.ts (loadLocalEnv) já popula process.env a partir de apps/api/.env.development
-      // ANTES do bootstrap; reler o arquivo aqui duplicava a carga e podia
-      // divergir. Estratégia única: process.env é a fonte de verdade.
+      // main.ts (loadLocalEnv) already populates process.env from apps/api/.env.development
+      // BEFORE bootstrap; re-reading the file here duplicated the load and could
+      // diverge. Single strategy: process.env is the source of truth.
       ignoreEnvFile: true,
     }),
 
     // ── PostgreSQL (TypeORM / node-postgres) ──────────────────────────────────
     DatabaseModule,
 
-    // ── Cache em memória ─────────────────────────────────────────────────────
+    // ── In-memory cache ─────────────────────────────────────────────────────────
     CacheModule,
 
     // ── Cloudflare R2 (file storage) ──────────────────────────────────────────
@@ -133,7 +133,7 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
     AuthModule,
     CompanySettingsModule,
 
-    // ── Filas (BullMQ) — só quando Redis ioredis está disponível ─────────────
+    // ── Queues (BullMQ) — only when ioredis Redis is available ──────────────────
     QueueModule.register(),
 
     // ── BullBoard admin dashboard (/admin/queues, basic-auth) ─────────────────
@@ -142,7 +142,7 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
     // ── Realtime (Supabase Realtime Broadcast — replaces Socket.IO WsGateway) ──
     RealtimeModule,
 
-    // ── Módulos de domínio ────────────────────────────────────────────────────
+    // ── Domain modules ──────────────────────────────────────────────────────────
     HealthModule,
     ArtistsModule,
     WorksModule,
@@ -152,7 +152,7 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
     NotificationsModule,
     UploadsModule,
 
-    // ── Módulos FASE 3 ────────────────────────────────────────────────────────
+    // ── PHASE 3 modules ─────────────────────────────────────────────────────────
     ContractTemplatesModule,
     ContractServiceTypesModule,
     InvoicesModule,
@@ -180,16 +180,16 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
     KnowledgeBaseModule,
     AdminUsersModule,
 
-    // ── Módulos FASE 7 — Integrações Reais ───────────────────────────────────
+    // ── PHASE 7 modules — real integrations ─────────────────────────────────────
     IntegrationsModule,
 
-    // ── Módulos FASE 8 — AI Gateway ──────────────────────────────────────────
+    // ── PHASE 8 modules — AI Gateway ────────────────────────────────────────────
     AIModule,
 
-    // ── Módulos FASE 6 — Stripe Billing ──────────────────────────────────────
+    // ── PHASE 6 modules — Stripe Billing ────────────────────────────────────────
     BillingModule,
 
-    // ── Módulos FASE 10 — Artist Goals / Content Detections / ECAD / HR ──────
+    // ── PHASE 10 modules — Artist Goals / Content Detections / ECAD / HR ────────
     ArtistGoalsModule,
     ContentDetectionsModule,
     EcadReportsModule,
@@ -199,7 +199,7 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
     SkillsModule,
     AssetsModule,
 
-    // ── Automações nativas event-driven (project.completed → project-planning) ─
+    // ── Native event-driven automations (project.completed → project-planning) ─
     AutomationModule,
 
     // ── Workflow Engine (state machine global) ────────────────────────────────
@@ -209,16 +209,16 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
     ConversationsModule,
     InternalChatModule,
 
-    // Phase 12 — Forms & Submissions removido (DropGenericFormsModule20260822000005):
-    // decisão de produto — nenhum Form Builder genérico.
+    // Phase 12 — Forms & Submissions removed (DropGenericFormsModule20260822000005):
+    // product decision — no generic Form Builder.
 
-    // ── Platform Commercial Contact — contato institucional da landing ────────
+    // ── Platform Commercial Contact — institutional contact from the landing page ─
     PlatformContactModule,
 
     // ── Phase 13 — Analytics & AI Governance ──────────────────────────────────
     AnalyticsModule,
 
-    // ── Novos módulos — Inventory / Licensing / Financial Rules ──────────────
+    // ── New modules — Inventory / Licensing / Financial Rules ───────────────────
     InventoryModule,
     LicensingModule,
     FinancialRulesModule,
@@ -231,18 +231,18 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
     // ── Registry (ABRAMUS/ECAD) — rights holders & external identifiers
     RegistryModule,
 
-    // ── Reports — inventário entity-driven (FASE 1: metadata)
+    // ── Reports — entity-driven inventory (PHASE 1: metadata)
     ReportsModule,
   ],
   providers: [
-    // FASE 3J — Interceptor global OUTERMOST: estabelece app.current_tenant_id por
-    // request (transparente). Deve vir ANTES do AuditInterceptor para que as
-    // leituras de auditoria também rodem dentro do contexto de tenant.
+    // PHASE 3J — OUTERMOST global interceptor: establishes app.current_tenant_id per
+    // request (transparently). Must come BEFORE AuditInterceptor so that the
+    // audit reads also run inside the tenant context.
     {
       provide:  APP_INTERCEPTOR,
       useClass: RequestTenantContextInterceptor,
     },
-    // Interceptor global — processa @Audit() em todas as rotas com DI completo
+    // Global interceptor — processes @Audit() on every route with full DI
     {
       provide:  APP_INTERCEPTOR,
       useClass: AuditInterceptor,
@@ -274,9 +274,9 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
       provide:  APP_GUARD,
       useClass: RolesGuard,
     },
-    // FASE 6 — autorização por permissão (resource:action), após o RolesGuard.
-    // Não substitui o RolesGuard; só atua em rotas com @RequirePermission e respeita a
-    // RBAC_PERSISTED_AUTHORITY controla o modo (default SHADOW = observação).
+    // PHASE 6 — permission-based authorization (resource:action), after RolesGuard.
+    // Does not replace RolesGuard; only acts on routes with @RequirePermission, and
+    // RBAC_PERSISTED_AUTHORITY controls the mode (default SHADOW = observation).
     {
       provide:  APP_GUARD,
       useClass: PermissionsGuard,

@@ -19,7 +19,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx       = host.switchToHttp();
     const response  = ctx.getResponse<Response>();
     const request   = ctx.getRequest<Request>();
-    // requestId foi injectado pelo RequestIdMiddleware; fallback defensivo
+    // requestId was injected by RequestIdMiddleware; defensive fallback
     const requestId = request.requestId ?? (request.headers['x-request-id'] as string) ?? uuidv4();
     const correlationId =
       request.correlationId ?? (request.headers['x-correlation-id'] as string) ?? requestId;
@@ -35,11 +35,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-      // Default: nome da classe da exceção. Alguns guards (MustChangePasswordGuard,
-      // BillingEnforcementGuard, ...) lançam `new ForbiddenException({ error: 'CODE', message })`
-      // com um código de máquina próprio — esse código PRECISA sobreviver até o cliente,
-      // senão vira só "ForbiddenException" genérico e o frontend não consegue diferenciar
-      // (ex.: MUST_CHANGE_PASSWORD vs TENANT_SUSPENDED vs qualquer outro 403).
+      // Default: the exception's class name. Some guards (MustChangePasswordGuard,
+      // BillingEnforcementGuard, ...) throw `new ForbiddenException({ error: 'CODE', message })`
+      // with their own machine code — that code MUST survive all the way to the client,
+      // otherwise it becomes just a generic "ForbiddenException" and the frontend cannot tell them apart
+      // (e.g. MUST_CHANGE_PASSWORD vs TENANT_SUSPENDED vs any other 403).
       error = exception.name;
 
       if (typeof exceptionResponse === 'string') {
@@ -50,7 +50,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         error   = (resp['error']   as string)            ?? exception.name;
       }
 
-      // Não reportar 4xx ao Sentry (erros de cliente, não de sistema)
+      // Do not report 4xx to Sentry (client errors, not system errors)
     } else if (exception instanceof Error) {
       const errObj = exception as Error & { type?: string; status?: number };
       // express body-parser → entity.too.large (PayloadTooLargeError) → 413

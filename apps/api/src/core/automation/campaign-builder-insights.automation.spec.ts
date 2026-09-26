@@ -135,7 +135,7 @@ describe('CampaignBuilderInsightsAutomation.runPaidAdsStrategy (ON_DEMAND: POST 
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string }]>;
     expect(aiCalls[0][0].prompt).toContain('META_ADS');
     expect(aiCalls[0][0].prompt).toContain('GOOGLE_ADS');
-    // posicionamentos compatíveis restritos aos já selecionados na campanha (META_STORIES/GOOGLE_SEARCH)
+    // compatible placements restricted to those already selected in the campaign (META_STORIES/GOOGLE_SEARCH)
     expect(aiCalls[0][0].prompt).toContain('META_STORIES');
     expect(aiCalls[0][0].prompt).not.toContain('META_REELS');
 
