@@ -6,6 +6,7 @@ import type { RawBodyRequest } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { ApiExcludeController } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { DatabaseContextService } from '../../../database/database-context.service';
 import { Public } from '../../../core/decorators/public.decorator';
 import { WhatsAppCloudProvider } from './whatsapp-cloud.provider';
 import { WebhookService } from '../webhooks/webhook.service';
@@ -41,6 +42,10 @@ export class WhatsAppWebhookController {
     private readonly webhookSvc: WebhookService,
     private readonly musicChat: MusicChatAutomationService,
     private readonly config: ConfigService,
+    // find-b4201eb2: rota @Public não recebe contexto de tenant do
+    // RequestTenantContextInterceptor; sem ele, ingest (webhook_events) e o
+    // MusicChat (conversations) são negados pelo RLS em produção.
+    private readonly dbContext: DatabaseContextService,
   ) {}
 
   @Public()
@@ -138,23 +143,38 @@ export class WhatsAppWebhookController {
     const messages = value.messages ?? [];
     if (!phoneNumberId || messages.length === 0) return false;
 
-    const tenantId = await this.whatsapp.findTenantByPhoneNumberId(phoneNumberId);
-    if (!tenantId) {
+    const resolution = await this.whatsapp.resolveTenantByPhoneNumberId(phoneNumberId);
+    if (resolution.kind === 'unknown') {
       this.logger.warn(`[whatsapp/webhook] Nenhum tenant configurado para phone_number_id=${phoneNumberId} — evento ignorado`);
       return false;
     }
+    if (resolution.kind === 'conflict') {
+      // find-2220a85e: ambiguidade de identidade nunca é resolvida por
+      // "primeira linha". Não roteia para nenhum tenant (fail-closed).
+      this.logger.error(
+        `[whatsapp/webhook] CONFLITO de identidade: phone_number_id=${phoneNumberId} vinculado a ${resolution.tenantCount} tenants — evento NÃO roteado`,
+      );
+      return false;
+    }
+    const tenantId = resolution.tenantId;
+    const ctx = { tenantId, orgId: null, role: null };
 
     let anyFailed = false;
     for (const message of messages) {
       if (message.type !== 'text' || !message.text?.body) continue; // foundation: só texto por enquanto
 
-      const ingestResult = await this.webhookSvc.ingest({
+      // find-b4201eb2: cada mensagem roda no seu PRÓPRIO contexto de tenant
+      // (transação isolada). Rota @Public não tem contexto do interceptor;
+      // e um erro de banco numa mensagem aborta só a transação dela — o
+      // registro de falha é gravado em outro contexto, nunca na transação
+      // já abortada.
+      const ingestResult = await this.dbContext.runInTenantContext(ctx, () => this.webhookSvc.ingest({
         provider: 'whatsapp',
         eventType: 'message',
         externalId: message.id,
         tenantId,
         payload: message as unknown as Record<string, unknown>,
-      });
+      }));
       if (ingestResult.isDuplicate) {
         this.logger.log(`[whatsapp/webhook] Evento duplicado ignorado (já processado): externalId=${message.id}`);
         continue;
@@ -171,12 +191,14 @@ export class WhatsAppWebhookController {
       };
 
       try {
-        await this.musicChat.handleInboundMessage(tenantId, dto);
-        await this.webhookSvc.markProcessed(ingestResult.eventId, 'processed');
+        await this.dbContext.runInTenantContext(ctx, async () => {
+          await this.musicChat.handleInboundMessage(tenantId, dto);
+          await this.webhookSvc.markProcessed(ingestResult.eventId, 'processed');
+        });
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         this.logger.error(`[whatsapp/webhook] Falha ao processar mensagem ${message.id}: ${msg}`);
-        await this.webhookSvc.markProcessed(ingestResult.eventId, 'failed', msg);
+        await this.dbContext.runInTenantContext(ctx, () => this.webhookSvc.markProcessed(ingestResult.eventId, 'failed', msg));
         anyFailed = true;
       }
     }

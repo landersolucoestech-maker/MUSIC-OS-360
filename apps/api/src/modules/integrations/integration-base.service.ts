@@ -63,37 +63,6 @@ export class IntegrationBaseService {
     try { return JSON.parse(this.enc.decrypt(row.credentials_encrypted)) as T; } catch { return null; }
   }
 
-  /**
-   * Todas as credenciais salvas para um provider, entre tenants — usado
-   * quando o lado de fora (ex.: um webhook inbound) só conhece um
-   * identificador do lado do provider (ex.: WhatsApp phone_number_id) e
-   * precisa descobrir a que tenant ele pertence.
-   *
-   * ponytail: full scan da tabela integrations por provider — aceitável no
-   * volume atual (um provider tem no máximo uma linha por tenant); trocar
-   * por um índice dedicado (ex.: coluna external_lookup_key) se o número de
-   * tenants com esse provider crescer o suficiente para pesar.
-   */
-  async findAllCredentials<T = Record<string, string>>(
-    provider: string,
-  ): Promise<Array<{ tenantId: string; credentials: T }>> {
-    const rows = await this.integRepo!
-      .createQueryBuilder('i')
-      .where('i.provider = :provider', { provider })
-      .getMany();
-
-    const out: Array<{ tenantId: string; credentials: T }> = [];
-    for (const row of rows) {
-      if (!row.credentials_encrypted) continue;
-      try {
-        out.push({ tenantId: row.tenant_id, credentials: JSON.parse(this.enc.decrypt(row.credentials_encrypted)) as T });
-      } catch {
-        // credencial corrompida/ilegível — ignora essa linha, não derruba o lookup inteiro
-      }
-    }
-    return out;
-  }
-
   async getStatus(tenantId: string, provider: string): Promise<{ connected: boolean; last_sync_at: Date | null }> {
     const row = await this.integRepo!
       .createQueryBuilder('i')

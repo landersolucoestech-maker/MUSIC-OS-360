@@ -24,7 +24,7 @@ function makeController(overrides: {
   handleInboundMessage?: jest.Mock;
 } = {}) {
   const whatsapp: any = {
-    findTenantByPhoneNumberId: overrides.findTenant ?? jest.fn().mockResolvedValue('tenant-a'),
+    resolveTenantByPhoneNumberId: overrides.findTenant ?? jest.fn().mockResolvedValue({ kind: 'resolved', tenantId: 'tenant-a' }),
     verifyWebhookChallenge: overrides.verify ?? jest.fn(() => 'challenge-echo'),
   };
   const webhookSvc = new WebhookService(null);
@@ -36,9 +36,23 @@ function makeController(overrides: {
     handleInboundMessage: overrides.handleInboundMessage ?? jest.fn().mockResolvedValue({ action: 'received' }),
   };
   const config: any = { get: jest.fn((key: string) => process.env[key]) };
+  // find-b4201eb2: rota @Public — todo acesso a banco precisa rodar dentro do
+  // contexto do tenant resolvido. O stub marca "dentro do contexto" e registra
+  // o tenant de cada abertura.
+  const contexts: string[] = [];
+  let active: string | null = null;
+  const dbContext: any = {
+    runInTenantContext: jest.fn(async (ctx: { tenantId: string }, work: () => Promise<unknown>) => {
+      contexts.push(ctx.tenantId);
+      const prev = active;
+      active = ctx.tenantId;
+      try { return await work(); } finally { active = prev; }
+    }),
+  };
+  const activeTenant = () => active;
   return {
-    controller: new WhatsAppWebhookController(whatsapp, webhookSvc, musicChat, config),
-    whatsapp, webhookSvc, musicChat, ingestSpy, markProcessedSpy,
+    controller: new WhatsAppWebhookController(whatsapp, webhookSvc, musicChat, config, dbContext),
+    whatsapp, webhookSvc, musicChat, ingestSpy, markProcessedSpy, dbContext, contexts, activeTenant,
   };
 }
 
@@ -193,7 +207,7 @@ describe('WhatsAppWebhookController', () => {
   });
 
   it('provider não configurado (nenhum tenant com esse phone_number_id): ignora com segurança após assinatura válida', async () => {
-    const { controller, musicChat, ingestSpy } = makeController({ findTenant: jest.fn().mockResolvedValue(null) });
+    const { controller, musicChat, ingestSpy } = makeController({ findTenant: jest.fn().mockResolvedValue({ kind: 'unknown' }) });
     const body = messagePayloadObj();
     const req = rawReq(body);
     const validSig = sign(req.rawBody.toString('utf8'));
@@ -202,6 +216,56 @@ describe('WhatsAppWebhookController', () => {
 
     expect(ingestSpy).not.toHaveBeenCalled();
     expect(musicChat.handleInboundMessage).not.toHaveBeenCalled();
+  });
+
+  it('find-2220a85e: phone_number_id vinculado a mais de um tenant NÃO é roteado para nenhum (fail-closed)', async () => {
+    const { controller, musicChat, ingestSpy } = makeController({
+      findTenant: jest.fn().mockResolvedValue({ kind: 'conflict', tenantCount: 2 }),
+    });
+    const body = messagePayloadObj();
+    const req = rawReq(body);
+    await controller.receive(body, sign(req.rawBody.toString('utf8')), req);
+    expect(ingestSpy).not.toHaveBeenCalled();
+    expect(musicChat.handleInboundMessage).not.toHaveBeenCalled();
+  });
+
+  it('find-2220a85e: mensagem roteada vai exatamente para o tenant resolvido', async () => {
+    const { controller, musicChat, ingestSpy } = makeController({
+      findTenant: jest.fn().mockResolvedValue({ kind: 'resolved', tenantId: 'tenant-z' }),
+    });
+    const body = messagePayloadObj();
+    const req = rawReq(body);
+    await controller.receive(body, sign(req.rawBody.toString('utf8')), req);
+    expect(ingestSpy).toHaveBeenCalledWith(expect.objectContaining({ tenantId: 'tenant-z' }));
+    expect(musicChat.handleInboundMessage).toHaveBeenCalledWith('tenant-z', expect.anything());
+  });
+
+  it('find-b4201eb2: ingest e MusicChat rodam DENTRO do contexto do tenant resolvido', async () => {
+    const seen: Array<{ step: string; tenant: string | null }> = [];
+    const ctl = makeController({
+      findTenant: jest.fn().mockResolvedValue({ kind: 'resolved', tenantId: 'tenant-q' }),
+    });
+    ctl.ingestSpy.mockImplementation(async () => { seen.push({ step: 'ingest', tenant: ctl.activeTenant() }); return { isDuplicate: false, eventId: 'evt-1', status: 'pending' }; });
+    ctl.musicChat.handleInboundMessage.mockImplementation(async () => { seen.push({ step: 'musicchat', tenant: ctl.activeTenant() }); return { action: 'received' }; });
+    ctl.markProcessedSpy.mockImplementation(async () => { seen.push({ step: 'mark', tenant: ctl.activeTenant() }); });
+    const body = messagePayloadObj();
+    const req = rawReq(body);
+    await ctl.controller.receive(body, sign(req.rawBody.toString('utf8')), req);
+    expect(seen).toEqual([
+      { step: 'ingest', tenant: 'tenant-q' },
+      { step: 'musicchat', tenant: 'tenant-q' },
+      { step: 'mark', tenant: 'tenant-q' },
+    ]);
+  });
+
+  it('find-b4201eb2: falha no MusicChat registra "failed" numa transação separada (nunca na já abortada)', async () => {
+    const ctl = makeController({ handleInboundMessage: jest.fn().mockRejectedValue(new Error('RLS/DB error')) });
+    const body = messagePayloadObj();
+    const req = rawReq(body);
+    await expect(ctl.controller.receive(body, sign(req.rawBody.toString('utf8')), req)).rejects.toThrow();
+    // ingest, tentativa de processamento, registro da falha: 3 contextos distintos
+    expect(ctl.dbContext.runInTenantContext).toHaveBeenCalledTimes(3);
+    expect(ctl.markProcessedSpy).toHaveBeenLastCalledWith('evt-1', 'failed', 'RLS/DB error');
   });
 
   // ── Regressão: falha interna não pode virar perda silenciosa (200 sempre) ────
