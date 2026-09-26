@@ -67,7 +67,7 @@ function initConsistencyHooks(): void {
 
       if (IS_DEV) {
         console.info(
-          `[consistency] Transação criada: ${type} R$${valor?.toFixed(2)} → P&L marcado como desatualizado`,
+          `[consistency] Transaction created: ${type} R$${valor?.toFixed(2)} → P&L marked as stale`,
         );
       }
     } catch {
@@ -87,7 +87,7 @@ function initConsistencyHooks(): void {
   // ── MUSIC_REGISTERED → Valida integridade do catálogo ───────────────────
   subscribe(DomainEvents.MUSIC_REGISTERED, ({ work_id, title }) => {
     if (IS_DEV) {
-      console.info(`[consistency] Música registrada: "${title}" (${work_id})`);
+      console.info(`[consistency] Work registered: "${title}" (${work_id})`);
     }
   });
 }

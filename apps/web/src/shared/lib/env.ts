@@ -165,8 +165,8 @@ export function validateFrontendEnv(): boolean {
   const bannedRef = SUPABASE_REF_DENYLIST.find((ref) => supabaseUrl.includes(ref));
   if (bannedRef) {
     console.error(
-      `[MUSIC OS 360] ❌ VITE_SUPABASE_URL aponta para o ref Supabase banido "${bannedRef}" ` +
-      "(branch preview sem tabelas públicas). O app não pode iniciar com este ambiente.",
+      `[MUSIC OS 360] ❌ VITE_SUPABASE_URL points to the banned Supabase ref "${bannedRef}" ` +
+      "(preview branch without public tables). The app cannot start with this environment.",
     );
     const root = document.getElementById("root");
     if (root) {
