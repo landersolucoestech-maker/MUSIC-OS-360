@@ -8,6 +8,8 @@ import { FileText, Calendar, Building2, MapPin, Mail, ExternalLink, Pencil, Rece
 import { formatCurrency, formatDate, getCurrencyToneClass } from "@/shared/lib/format-utils";
 import { formatCpfCnpj } from "@/shared/lib/br-validators";
 import { parseOperationType } from "@/modules/accounting/types/invoice-type";
+import { openStoredFile } from "@/shared/lib/stored-file";
+import { toast } from "sonner";
 
 interface InvoiceViewModalProps {
   open: boolean;
@@ -240,7 +242,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
               <CardContent className="p-4 flex items-center gap-3">
                 <FileText className="h-5 w-5 text-primary" />
                 <span className="text-sm flex-1">PDF da Nota Fiscal</span>
-                <Button variant="outline" size="sm" onClick={() => window.open(invoice.url_pdf, "_blank")}>
+                <Button variant="outline" size="sm" onClick={() => { openStoredFile(invoice.url_pdf).catch(() => toast.error("Não foi possível abrir o arquivo.")); }}>
                   <ExternalLink className="h-4 w-4 mr-1" />Abrir
                 </Button>
               </CardContent>

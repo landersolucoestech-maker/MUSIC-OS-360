@@ -21,6 +21,8 @@ import { DocumentTimeline } from "@/modules/contracts/components/DocumentTimelin
 import { SIGNER_ROLE_LABEL } from "@/modules/contracts/lib/contract-schema";
 import { SigningPlatformBadge } from "@/modules/contracts/components/SigningPlatformBadge";
 import { SendForSigningDialog } from "@/modules/contracts/components/SendForSigningDialog";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
+import { storedFileDisplayName } from "@/shared/lib/stored-file";
 import { WorkflowTransitionPanel } from "@/shared/components/WorkflowTransitionPanel";
 import { useWorkflowTransition } from "@/shared/hooks/useWorkflowTransition";
 import { useEntityDetail } from "@/shared/hooks/useEntityDetail";
@@ -363,14 +365,14 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                       <div>
                         <p className="font-semibold text-sm mb-1">{contrato.title}</p>
                         <p className="text-xs text-muted-foreground font-sans break-all max-w-sm mx-auto">
-                          {contrato.arquivo_url}
+                          {storedFileDisplayName(contrato.arquivo_url)}
                         </p>
                       </div>
                       <Button asChild className="gap-2" data-testid="button-open-arquivo">
-                        <a href={contrato.arquivo_url} target="_blank" rel="noopener noreferrer">
+                        <StoredFileLink url={contrato.arquivo_url}>
                           <ExternalLink className="h-4 w-4" />
                           Abrir PDF
-                        </a>
+                        </StoredFileLink>
                       </Button>
                     </CardContent>
                   </Card>
@@ -421,10 +423,10 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                         </div>
                         {v.url && (
                           <Button variant="outline" size="sm" className="h-7 text-xs gap-1 shrink-0" asChild>
-                            <a href={v.url} target="_blank" rel="noopener noreferrer">
+                            <StoredFileLink url={v.url}>
                               <ExternalLink className="h-3 w-3" />
                               Abrir
-                            </a>
+                            </StoredFileLink>
                           </Button>
                         )}
                       </div>
@@ -460,10 +462,10 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                         </div>
                         {(d.url ?? d.path) && (
                           <Button variant="outline" size="sm" className="h-7 text-xs gap-1 shrink-0" asChild>
-                            <a href={d.url ?? d.path} target="_blank" rel="noopener noreferrer">
+                            <StoredFileLink url={d.url ?? d.path}>
                               <ExternalLink className="h-3 w-3" />
                               Abrir
-                            </a>
+                            </StoredFileLink>
                           </Button>
                         )}
                       </div>

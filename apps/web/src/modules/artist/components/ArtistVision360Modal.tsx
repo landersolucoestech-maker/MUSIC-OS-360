@@ -94,6 +94,8 @@ import { useEvents } from "@/modules/events/hooks/useEvents";
 import { getBackendEventTypeLabel } from "@/modules/events/lib/event-type";
 import { useMarketingContents } from "@/modules/marketing/hooks/useMarketingContents";
 import { useMarketingCampaigns } from "@/modules/marketing/hooks/useMarketingCampaigns";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
+import { storedFileDisplayName } from "@/shared/lib/stored-file";
 
 // ── Marketing: rótulos de campanha/canal ──────────────────────────────────
 const CAMPAIGN_STATUS_LABELS: Record<string, string> = {
@@ -1805,17 +1807,13 @@ export function ArtistVision360Modal({
                                 {doc.nome}
                               </p>
                               <p className="text-xs text-muted-foreground truncate">
-                                {doc.url}
+                                {storedFileDisplayName(doc.url)}
                               </p>
                             </div>
                           </div>
-                          <a
-                            href={doc.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <StoredFileLink url={doc.url}
                             className="shrink-0 ml-4"
-                            data-testid={`link-documento-${idx}`}
-                          >
+                            data-testid={`link-documento-${idx}`}>
                             <Button
                               variant="outline"
                               size="sm"
@@ -1824,7 +1822,7 @@ export function ArtistVision360Modal({
                               <ExternalLink className="h-3.5 w-3.5" />
                               Abrir
                             </Button>
-                          </a>
+                          </StoredFileLink>
                         </div>
                       ))}
                     </div>
@@ -1850,28 +1848,20 @@ export function ArtistVision360Modal({
                     <h3 className="font-semibold mb-3">Arquivos Rápidos</h3>
                     <div className="space-y-2">
                       {artista.documentos_pessoais_url && (
-                        <a
-                          href={artista.documentos_pessoais_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 p-2 hover:bg-muted/50 rounded text-sm text-primary"
-                        >
+                        <StoredFileLink url={artista.documentos_pessoais_url}
+                          className="flex items-center gap-2 p-2 hover:bg-muted/50 rounded text-sm text-primary">
                           <FileText className="h-4 w-4" />
                           Documentos Pessoais
                           <ExternalLink className="h-3 w-3 ml-auto" />
-                        </a>
+                        </StoredFileLink>
                       )}
                       {artista.presskit_url && (
-                        <a
-                          href={artista.presskit_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 p-2 hover:bg-muted/50 rounded text-sm text-primary"
-                        >
+                        <StoredFileLink url={artista.presskit_url}
+                          className="flex items-center gap-2 p-2 hover:bg-muted/50 rounded text-sm text-primary">
                           <Link2 className="h-4 w-4" />
                           Press Kit
                           <ExternalLink className="h-3 w-3 ml-auto" />
-                        </a>
+                        </StoredFileLink>
                       )}
                     </div>
                   </CardContent>
@@ -2333,12 +2323,8 @@ export function ArtistVision360Modal({
                             <div className="flex items-center gap-2 shrink-0">
                               <ContractStatusBadge contratos={[contract]} />
                               {contract.arquivo_url && (
-                                <a
-                                  href={contract.arquivo_url as string}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  data-testid={`link-contrato-pdf-${contract.id}`}
-                                >
+                                <StoredFileLink url={contract.arquivo_url as string}
+                                  data-testid={`link-contrato-pdf-${contract.id}`}>
                                   <Button
                                     variant="outline"
                                     size="sm"
@@ -2347,7 +2333,7 @@ export function ArtistVision360Modal({
                                     <ExternalLink className="h-3 w-3" />
                                     PDF
                                   </Button>
-                                </a>
+                                </StoredFileLink>
                               )}
                             </div>
                           </div>

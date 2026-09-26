@@ -24,6 +24,9 @@ import {
   shareStatusBadge,
   funcaoLabel,
 } from "@/modules/releases/lib/share-format";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
+import { openStoredFile } from "@/shared/lib/stored-file";
+import { toast } from "sonner";
 
 interface ShareViewModalProps {
   open: boolean;
@@ -149,9 +152,9 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
                     <Field
                       label="Documentos"
                       value={
-                        <a href={str("documents")} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
+                        <StoredFileLink url={str("documents")} className="inline-flex items-center gap-1 text-primary hover:underline">
                           Abrir <ExternalLink className="h-3 w-3" />
-                        </a>
+                        </StoredFileLink>
                       }
                     />
                   )}
@@ -194,7 +197,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
                     variant="outline"
                     size="sm"
                     className="h-8 text-xs gap-1.5"
-                    onClick={() => window.open(share.acordo_url as string, "_blank")}
+                    onClick={() => { openStoredFile(share.acordo_url as string).catch(() => toast.error("Não foi possível abrir o arquivo.")); }}
                     data-testid="btn-acordo-url"
                   >
                     <ExternalLink className="h-3.5 w-3.5" />

@@ -88,6 +88,7 @@ import {
 import type { EmployeeDocument } from "@/modules/rh/hooks/useEmployeeDocuments";
 import { Label } from "@/shared/ui/label";
 import { FeatureGate } from '@/shared/components/FeatureGate';
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
 const STATUS_VARIANT_FUNCIONARIO: Record<string, BadgeVariant> = {
   active: "success",
   inactive: "neutral",
@@ -1098,15 +1099,11 @@ export default function RH() {
                               <Badge variant="secondary">{doc.tipo_documento || "Outro"}</Badge>
                             </TableCell>
                             <TableCell>
-                              <a
-                                href={doc.url_arquivo ?? undefined}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                              <StoredFileLink url={doc.url_arquivo ?? undefined}
                                 className="text-primary hover:underline"
-                                data-testid={`link-doc-${doc.id}`}
-                              >
+                                data-testid={`link-doc-${doc.id}`}>
                                 {doc.nome_arquivo}
-                              </a>
+                              </StoredFileLink>
                             </TableCell>
                             <TableCell className="text-muted-foreground">{doc.descricao || "-"}</TableCell>
                             <TableCell className="text-muted-foreground">{formatDate(doc.created_at)}</TableCell>

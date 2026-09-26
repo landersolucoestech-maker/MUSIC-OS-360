@@ -9,6 +9,8 @@ import {
   DialogTitle,
 } from "@/shared/ui/dialog";
 import { ScrollArea } from "@/shared/ui/scroll-area";
+import { fetchStoredFileBytes, openStoredFile, uploadFileIdFromUrl } from "@/shared/lib/stored-file";
+import { toast } from "sonner";
 
 const pdfWorkerUrl = "/pdf.worker.min.mjs";
 const pdfRuntimeUrl = "/pdf.mjs";
@@ -75,6 +77,12 @@ function isWordDocument(attachment: ChatAttachmentData) {
 }
 
 function downloadAttachment(attachment: ChatAttachmentData) {
+  // Documents open through the tenant-checked signed download (find-df79ea88);
+  // images/audio keep their direct link (public media categories).
+  if (attachment.kind === "document" && uploadFileIdFromUrl(attachment.url)) {
+    openStoredFile(attachment.url).catch(() => toast.error("Não foi possível abrir o arquivo."));
+    return;
+  }
   const anchor = document.createElement("a");
   anchor.href = attachment.url;
   anchor.download = attachment.name;
@@ -189,17 +197,14 @@ export function ChatAttachment({ attachment }: { attachment: ChatAttachmentData 
       }
 
       if (isPdf(attachment)) {
-        const response = await fetch(attachment.url);
-        const blob = await response.blob();
-        const arrayBuffer = await blob.arrayBuffer();
+        const arrayBuffer = await fetchStoredFileBytes(attachment.url);
         setPreview({ type: "pdf", data: new Uint8Array(arrayBuffer) });
         setViewerOpen(true);
         return;
       }
 
       if (isDocx(attachment)) {
-        const response = await fetch(attachment.url);
-        const arrayBuffer = await response.arrayBuffer();
+        const arrayBuffer = await fetchStoredFileBytes(attachment.url);
         const mammoth = await import("mammoth");
         const result = await mammoth.convertToHtml({ arrayBuffer });
         // Sanitize the converted HTML before it ever reaches the DOM (CWE-79):

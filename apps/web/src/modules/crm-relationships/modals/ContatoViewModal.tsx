@@ -22,6 +22,7 @@ import { TIPO_INTERACAO_OPTIONS } from "../shared/interacoes";
 import type { Contact } from "../types";
 import { useSkillRun } from "@/shared/hooks/useSkillRun";
 import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
 
 // ─────────────────────────────────────────────
 // Tipos
@@ -231,9 +232,9 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
                   >
                     <FileText className="h-4 w-4 shrink-0 text-primary" />
                     {att.url ? (
-                      <a href={att.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      <StoredFileLink url={att.url} className="hover:underline">
                         {att.fileName}
-                      </a>
+                      </StoredFileLink>
                     ) : (
                       att.fileName
                     )}

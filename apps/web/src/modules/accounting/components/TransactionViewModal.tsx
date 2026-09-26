@@ -29,6 +29,8 @@ import {
   XCircle,
   type LucideIcon,
 } from "lucide-react";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
+import { storedFileDisplayName } from "@/shared/lib/stored-file";
 
 type Detail = Record<string, unknown>;
 
@@ -520,10 +522,10 @@ export function TransactionViewModal({ open, onOpenChange, transactionId }: Tran
                 <Section title="Anexos" icon={FileText}>
                   <div className="rounded-3xl border border-border/70 bg-card p-5">
                     <p className="text-sm text-muted-foreground">Arquivo</p>
-                    <a href={attachmentsUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex max-w-full items-center gap-2 rounded-xl border border-border/70 bg-muted/30 px-3 py-2 text-sm font-medium text-primary transition hover:bg-muted/40">
+                    <StoredFileLink url={attachmentsUrl} className="mt-2 inline-flex max-w-full items-center gap-2 rounded-xl border border-border/70 bg-muted/30 px-3 py-2 text-sm font-medium text-primary transition hover:bg-muted/40">
                       <FileText className="h-4 w-4" />
-                      {attachmentsName ?? attachmentsUrl}
-                    </a>
+                      {attachmentsName ?? storedFileDisplayName(attachmentsUrl)}
+                    </StoredFileLink>
                     {attachmentIsImage && (
                       <img src={attachmentsUrl} alt={attachmentsName ?? "Anexo"} className="mt-4 max-h-44 w-full rounded-2xl object-contain" />
                     )}

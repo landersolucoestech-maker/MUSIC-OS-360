@@ -10,6 +10,7 @@ import { EcadIcon } from "@/shared/ui/brand-icons";
 import { CheckCircle, AlertTriangle, Clock, FileText } from "lucide-react";
 import type { EcadReport, CatalogObraRef } from "@/modules/monitoring/rights/types";
 import { formatRightsDate } from "@/modules/monitoring/rights/utils/date-format";
+import { StoredFileLink } from "@/shared/components/StoredFileLink";
 
 export interface EcadReportRow extends EcadReport {
   obra?: CatalogObraRef;
@@ -94,9 +95,9 @@ export function ECADViewModal({ open, onOpenChange, report }: ECADViewModalProps
             <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
               <span>Criado em {formatRightsDate(report.created_at)}</span>
               {report.arquivo_url && (
-                <a href={report.arquivo_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
+                <StoredFileLink url={report.arquivo_url} className="inline-flex items-center gap-1 text-primary hover:underline">
                   <FileText className="h-3.5 w-3.5" />Ver arquivo original
-                </a>
+                </StoredFileLink>
               )}
             </div>
           </div>
