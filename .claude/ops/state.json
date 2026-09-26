@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T04:03:57.954Z",
+  "updatedAt": "2026-09-26T09:23:35.553Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -773,6 +773,69 @@
         }
       ],
       "createdAt": "2026-09-26T03:59:59.003Z"
+    },
+    {
+      "id": "req-68820396",
+      "text": "CLUSTER ZERO (owner mandate 2026-09-26): engineering names in English, Portuguese only in end-user visible frontend content; no blind rename (trace definition->exports->imports->callers->consumers->contracts->DB->API->tests->docs); naming matrix + rename ledger + exceptions (7 classes); compatible migration for DB/public/event/env names; permanent ratchet",
+      "nonRequirements": [
+        "No destructive DB rename just to translate; no production env/deploy cutover from this environment"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-80f330d9",
+          "text": "Z1 permanent census + ratchet (scripts/naming, CI step, root script) with mutation check",
+          "evidenceIds": [
+            "evid-88878db5",
+            "evid-e3028099",
+            "evid-104870bb",
+            "evid-43880ef6",
+            "evid-32cc8439",
+            "evid-efca0182",
+            "evid-f787abfe"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-b6bfb292",
+          "text": "Z2 PT file/folder names in apps/packages renamed to English (or exception-classified), all importers updated; typecheck/lint/test/build green",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-ffaa4498",
+          "text": "Z3 PT declared symbols (components, hooks, types, interfaces, functions, methods, local variables) renamed; wire/DB properties classified as exceptions or migrated at a boundary",
+          "evidenceIds": [
+            "evid-4fbf9c97",
+            "evid-d3be2af0"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-667c2fe9",
+          "text": "Z4 PT test titles translated to English (api + web)",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-3ac1239c",
+          "text": "Z5 PT technical comments translated to English (api + web + packages + scripts)",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-c0436ea8",
+          "text": "Z6 DB/API/events/queues/env/i18n/enum values classified; compatible migrations where safe; blockers documented",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-e2607588",
+          "text": "Z7 canonical map updated with Cluster Zero concepts; NAMING_NORMALIZATION_STATUS regenerated from the map; naming matrix + rename ledger + exception list delivered",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-09-26T04:09:29.761Z"
     }
   ],
   "findings": [
@@ -1822,7 +1885,16 @@
     "evid-2221585e",
     "evid-bb5e46dc",
     "evid-4227864c",
-    "evid-151587b8"
+    "evid-151587b8",
+    "evid-88878db5",
+    "evid-e3028099",
+    "evid-104870bb",
+    "evid-43880ef6",
+    "evid-4fbf9c97",
+    "evid-d3be2af0",
+    "evid-32cc8439",
+    "evid-efca0182",
+    "evid-f787abfe"
   ],
   "checkpointIds": [
     "chec-e661a7aa",
@@ -1831,5 +1903,53 @@
     "chec-99522873"
   ],
   "touchedFiles": [],
-  "blockers": []
+  "blockers": [],
+  "phaseMachine": {
+    "sequence": [
+      "PHASE_0_NAMING",
+      "PHASE_1_KNOWN_FIXES",
+      "PHASE_2_TENANCY_SECURITY",
+      "PHASE_3_WEBHOOKS_BILLING",
+      "PHASE_4_IDENTITY_METRICS",
+      "PHASE_5_DATABASE_MIGRATIONS",
+      "PHASE_6_FRONTEND_BACKEND_CONTRACTS",
+      "PHASE_7_MUSICCHAT_MARKETING",
+      "PHASE_8_GAP_REVERIFICATION",
+      "PHASE_9_DEPENDENCIES",
+      "PHASE_10_AGENT_PACK_REAUDIT",
+      "PHASE_11_AGENT_PACK_GAP_ANALYSIS",
+      "PHASE_12_AGENT_PACK_REBUILD",
+      "PHASE_13_AGENT_PACK_VALIDATION",
+      "COMPLETE"
+    ],
+    "source": "owner directive 2026-09-26 (scratchpad/mission-phase-order.md) — immutable order",
+    "currentPhase": "PHASE_0_NAMING",
+    "phaseStatus": "IN_PROGRESS",
+    "completedPhases": [],
+    "nextPhase": "PHASE_1_KNOWN_FIXES",
+    "blockedItems": [],
+    "readyItems": [
+      "web release-domain renames (implementation-engineer, dispatched)",
+      "api misc renames + /stats/genres alias (implementation-engineer, dispatched)",
+      "props-web classification (repo-intelligence, re-dispatched)",
+      "remaining web concept renames CZ-001/002/005-014/017-019 (sequential, single web writer)",
+      "remaining test titles (~1106) and technical comments (~4773)",
+      "variables/parameters classification + renames",
+      "exception ledger population from classifications",
+      "gate report A-F"
+    ],
+    "proven": {
+      "d902ace": "naming authority JSON + generated map/status + live-schema validator (validated: render --check, validate, determinism)",
+      "3fe046e": "census + strict ratchet baseline + 20 guard tests + naming:check in CI (proven: allowed state passes, PT symbol fails, UX strings pass, stale baseline fails, missing/malformed baseline exit!=0)",
+      "4dc5521": "semantic decisions CZ-001..CZ-021 recorded before renames (repo-investigator + requirements-analyst, VERDICT PASS)",
+      "9bc45d4": "census covers event unions / any-case event tables; object keys report-only (22 guard tests)",
+      "569af15,26dd0f1,40efb2e": "partial test-title/comment translation (AST-verified text-only; test:ci 2714, e2e 230, vitest 897 green); testTitle debt 1924->1106, comment 5103->4773"
+    },
+    "dispatchMechanism": "Task tool not available in this orchestrator session; pack agents run as nested sessions: claude -p --agent <name> --allowedTools <bounded> (verified 2026-09-26)",
+    "updatedAt": "2026-09-26T09:35:57.093Z",
+    "agentFailures": [
+      "8 nested agents killed by account session limit at ~09:0x UTC; recorded as failure records; work re-dispatched with concurrency <= 3"
+    ],
+    "localVerificationDb": "disposable Postgres 16 at /var/lib/postgresql/musicos-verify-42651823 port 55432 (restart with pg_ctl after session resets)"
+  }
 }

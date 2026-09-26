@@ -1,0 +1,11 @@
+{
+  "id": "p0-titles-t2",
+  "createdAt": "2026-09-26T04:30:49.857Z",
+  "title": "Translate PT test titles/comments in test files (t2)",
+  "criterionIds": [
+    "ac-667c2fe9"
+  ],
+  "assignedAgent": "qa-engineer",
+  "status": "DISPATCHED",
+  "phase": "PHASE_0_NAMING"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "evid-e3028099",
+  "createdAt": "2026-09-26T04:35:42.498Z",
+  "type": "COMMAND",
+  "label": "sh -c 'cd /tmp/claude-0/-home-user-MUSIC-OS-360/42651823-7ba2-5828-a4bd-beabdea74755/scratchpad/wtb && node scripts/naming/technical-naming-census.mjs --check && node scripts/naming/validate-canonical-map.mjs && node scripts/naming/render-naming-docs.mjs --check && node --test scripts/naming/technical-naming-census.test.mjs'",
+  "command": "sh -c 'cd /tmp/claude-0/-home-user-MUSIC-OS-360/42651823-7ba2-5828-a4bd-beabdea74755/scratchpad/wtb && node scripts/naming/technical-naming-census.mjs --check && node scripts/naming/validate-canonical-map.mjs && node scripts/naming/render-naming-docs.mjs --check && node --test scripts/naming/technical-naming-census.test.mjs'",
+  "status": "FAIL",
+  "exitCode": 2,
+  "stdoutTail": "",
+  "stderrTail": "/tmp/claude-0/-home-user-MUSIC-OS-360/42651823-7ba2-5828-a4bd-beabdea74755/scratchpad/wtb: 1: Syntax error: Unterminated quoted string",
+  "workspaceFingerprint": "ea80e0a78474d82d5cf1f66d624551dc4bcee169d9fc10194bd74b58195d218d",
+  "fingerprintStatus": "BOUND",
+  "head": "d902ace6cda844c054fcc183c841a1df815e9a29",
+  "durationMs": 4
+}

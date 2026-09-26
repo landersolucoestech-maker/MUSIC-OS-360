@@ -1,0 +1,11 @@
+{
+  "id": "p0-sem-investigator",
+  "createdAt": "2026-09-26T04:38:28.018Z",
+  "title": "Semantic proofs rh/Contato/Lancamento",
+  "criterionIds": [
+    "ac-ffaa4498"
+  ],
+  "assignedAgent": "repo-investigator",
+  "status": "COMPLETED",
+  "result": "VERDICT PASS"
+}

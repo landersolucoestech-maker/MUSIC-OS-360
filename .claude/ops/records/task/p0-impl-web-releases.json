@@ -1,0 +1,11 @@
+{
+  "id": "p0-impl-web-releases",
+  "createdAt": "2026-09-26T09:35:43.523Z",
+  "title": "Rename release domain (web) CZ-003/004/016/019/021",
+  "criterionIds": [
+    "ac-ffaa4498"
+  ],
+  "assignedAgent": "implementation-engineer",
+  "status": "DISPATCHED",
+  "phase": "PHASE_0_NAMING"
+}

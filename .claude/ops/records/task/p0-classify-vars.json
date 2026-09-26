@@ -1,0 +1,12 @@
+{
+  "id": "p0-classify-vars",
+  "createdAt": "2026-09-26T04:25:26.739Z",
+  "title": "Classify PT variables/parameters",
+  "criterionIds": [
+    "ac-80f330d9"
+  ],
+  "assignedAgent": "repo-intelligence",
+  "status": "DISPATCHED",
+  "phase": "PHASE_0_NAMING",
+  "dispatch": "claude -p --agent repo-intelligence (Task tool unavailable in orchestrator session)"
+}

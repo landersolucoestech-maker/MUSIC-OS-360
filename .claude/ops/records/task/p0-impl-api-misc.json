@@ -1,0 +1,11 @@
+{
+  "id": "p0-impl-api-misc",
+  "createdAt": "2026-09-26T09:35:43.599Z",
+  "title": "API symbols CZ-015/016/020 + misc",
+  "criterionIds": [
+    "ac-ffaa4498"
+  ],
+  "assignedAgent": "implementation-engineer",
+  "status": "DISPATCHED",
+  "phase": "PHASE_0_NAMING"
+}

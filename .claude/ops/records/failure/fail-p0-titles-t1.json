@@ -1,0 +1,7 @@
+{
+  "id": "fail-p0-titles-t1",
+  "createdAt": "2026-09-26T09:34:37Z",
+  "fingerprint": "nested-agent-session-limit",
+  "summary": "p0-titles-t1 killed by account session limit (reset 09:20 UTC); partial title edits validated (AST titles/comments only; test:ci, e2e, vitest green) and committed 569af15/26dd0f1/40efb2e; work re-dispatched with lower concurrency",
+  "taskId": "p0-titles-t1"
+}

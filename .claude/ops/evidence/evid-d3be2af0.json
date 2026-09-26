@@ -1,0 +1,12 @@
+{
+  "id": "evid-d3be2af0",
+  "createdAt": "2026-09-26T04:38:27.930Z",
+  "type": "REVIEW",
+  "reviewer": "requirements-analyst",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "p0-sem-requirements: 21 PT page/component concepts defined from code; literal-translation traps: SharePendente is the generic ShareFormModal; RegistroMusicas is a works+phonograms catalog registry; Agenda (events calendar) vs Calendario (marketing content calendar) must not share 'Calendar'; MusicaData/Faixa are project/release tracks (glossary 'track'); ArtistaSignupPublic creates a Lead; ContatoEquipe/ArtistTeamContact/Contact are three distinct shapes",
+  "workspaceFingerprint": "92302969d31b3e8e5eb60776b9103821893b79bce2147aa363b77c1f971dda37",
+  "fingerprintStatus": "BOUND",
+  "head": "3fe046e540e615c79b25080ca2d83cab384d5a92"
+}
