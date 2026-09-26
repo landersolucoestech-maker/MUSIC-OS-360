@@ -444,11 +444,6 @@ const PROVIDER_LOGO: Partial<Record<string, IntegrationLogoId>> = {
   onerpm: "onerpm", distrokid: "distrokid", symphonic: "symphonic",
   soundon: "soundon", somvibe: "somvibe", musicpro: "musicpro",
 };
-const ENV_BADGE: Record<string, string> = {
-  production: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  sandbox: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-  disabled: "bg-muted text-muted-foreground border-border",
-};
 
 function TabIntegracoes() {
   const { data: integrations, isLoading, isError, error, refetch } = useAdminIntegrations();

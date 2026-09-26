@@ -848,3 +848,49 @@ describe('BillingService', () => {
     });
   });
 });
+
+/**
+ * find-340abf0b / Gotcha #20 — modo Stripe exposto ao Painel Admin.
+ * Nunca retorna a chave; LIVE nunca vira 'production' (é recusada).
+ */
+describe('BillingService.getStripeMode', () => {
+  async function build(secret: string | undefined) {
+    const module = await Test.createTestingModule({
+      providers: [
+        BillingService,
+        { provide: ConfigService, useValue: { get: (k: string) => (k === 'STRIPE_SECRET_KEY' ? secret : undefined) } },
+        { provide: DATA_SOURCE, useValue: null },
+        { provide: RealtimeService, useValue: {} },
+        { provide: EventsService, useValue: { emitTyped: jest.fn() } },
+        { provide: BillingEnforcementService, useValue: {} },
+        { provide: BillingPlansService, useValue: {} },
+        { provide: DatabaseContextService, useValue: {} },
+      ],
+    }).compile();
+    return module.get(BillingService);
+  }
+
+  const prevEnv = process.env.STRIPE_SECRET_KEY;
+  beforeEach(() => { delete process.env.STRIPE_SECRET_KEY; });
+  afterAll(() => { if (prevEnv === undefined) delete process.env.STRIPE_SECRET_KEY; else process.env.STRIPE_SECRET_KEY = prevEnv; });
+
+  it('chave sk_test_ => sandbox (TEST MODE)', async () => {
+    const svc = await build('sk_test_abc');
+    expect(svc.getStripeMode()).toEqual({ environment: 'sandbox', keyState: 'VALID_TEST_KEY' });
+  });
+
+  it('chave sk_live_ => disabled (recusada), nunca production', async () => {
+    const svc = await build('sk_live_abc');
+    expect(svc.getStripeMode()).toEqual({ environment: 'disabled', keyState: 'LIVE_KEY_REJECTED' });
+  });
+
+  it('sem chave => disabled/MISSING', async () => {
+    const svc = await build(undefined);
+    expect(svc.getStripeMode()).toEqual({ environment: 'disabled', keyState: 'MISSING' });
+  });
+
+  it('a resposta nunca contém o valor da chave', async () => {
+    const svc = await build('sk_test_supersecretvalue');
+    expect(JSON.stringify(svc.getStripeMode())).not.toContain('supersecretvalue');
+  });
+});

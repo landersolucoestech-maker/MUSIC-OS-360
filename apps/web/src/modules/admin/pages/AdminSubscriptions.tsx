@@ -3,12 +3,9 @@
 // Fonte central de assinaturas: consulta de status, histórico de cobranças,
 // cancelamentos e renovações. Real e live-wired via adminBillingService
 // (GET/POST /billing/admin/**) -- NÃO é modo mock. billing.service.ts recusa
-// ativamente qualquer STRIPE_SECRET_KEY que não seja uma chave TEST (ver
-// classifyStripeSecretKeyFormat/'LIVE_KEY_REJECTED'), então este projeto hoje
-// só opera contra o Stripe TEST MODE -- mas essa informação não é exposta
-// nesta tela hoje (CODEBASE_MAP Gotcha #20, ainda em aberto: falta um
-// indicador visível de TEST MODE para o admin, requer expor o estado real da
-// chave via um endpoint dedicado antes de renderizar aqui).
+// ativamente qualquer STRIPE_SECRET_KEY que não seja uma chave TEST; o modo
+// real é exibido no cabeçalho via GET /billing/admin/stripe-mode (badge no
+// padrão ENV_BADGE — find-340abf0b / Gotcha #20).
 // ============================================================================
 
 import { useMemo, useState } from "react";
@@ -36,6 +33,7 @@ import {
 } from "@/shared/ui/dropdown-menu";
 import type { AdminSubscription, PlanTier, SubscriptionStatus } from "../types";
 import { adminBillingService, type AdminBillingStateStatus } from "../services/admin-billing.service";
+import { ENV_BADGE, STRIPE_ENV_LABEL } from "../constants/environment-badge";
 import {
   Search, MoreHorizontal, XCircle, Receipt, DollarSign,
   CheckCircle2, Clock, AlertTriangle, Lock, Unlock, ShieldCheck, ShieldOff,
@@ -237,6 +235,12 @@ export default function AdminSubscriptions() {
     queryFn: adminBillingService.listSubscriptions,
   });
 
+  const stripeModeQuery = useQuery({
+    queryKey: ["admin", "billing", "stripe-mode"],
+    queryFn: adminBillingService.getStripeMode,
+    staleTime: 5 * 60 * 1000,
+  });
+
   const subs = subscriptionsQuery.data ?? [];
 
   const filtered = useMemo(() => {
@@ -306,9 +310,28 @@ export default function AdminSubscriptions() {
     <AdminLayout>
       <div className="p-6 space-y-6 animate-fade-in">
         {/* Header */}
-        <div>
-          <h1 className="text-xl font-bold text-foreground">Assinaturas</h1>
-          <p className="text-[12px] text-muted-foreground mt-0.5">Gestão de assinaturas, cobranças, cancelamentos e renovações</p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-xl font-bold text-foreground">Assinaturas</h1>
+            <p className="text-[12px] text-muted-foreground mt-0.5">Gestão de assinaturas, cobranças, cancelamentos e renovações</p>
+          </div>
+          {/* find-340abf0b / Gotcha #20: modo real do Stripe, vindo do backend. */}
+          {stripeModeQuery.isError ? (
+            <span
+              className="inline-flex items-center rounded-md border border-destructive/40 bg-destructive/10 px-2.5 py-1 text-[11px] font-medium text-destructive"
+              data-testid="stripe-mode-badge-error"
+            >
+              Modo do Stripe indisponível
+            </span>
+          ) : stripeModeQuery.data ? (
+            <span
+              className={`inline-flex items-center rounded-md border px-2.5 py-1 text-[11px] font-medium ${ENV_BADGE[stripeModeQuery.data.environment]}`}
+              data-testid="stripe-mode-badge"
+              data-environment={stripeModeQuery.data.environment}
+            >
+              {STRIPE_ENV_LABEL[stripeModeQuery.data.environment]}
+            </span>
+          ) : null}
         </div>
 
         {/* KPIs */}

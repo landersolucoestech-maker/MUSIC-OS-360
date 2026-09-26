@@ -13,7 +13,7 @@ import { RealtimeService } from '../../core/realtime/realtime.service';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { BillingEnforcementService, TenantBillingStatus } from './billing-enforcement.service';
 import { BillingPlansService } from './billing-plans.service';
-import { classifyStripeSecretKeyFormat } from '../../core/config/stripe-key-guard';
+import { classifyStripeSecretKeyFormat, type StripeKeyFormatState } from '../../core/config/stripe-key-guard';
 import { AdminListQueryDto, UpdateAdminTenantDto } from './dto/admin-billing.dto';
 import { DatabaseContextService } from '../../database/database-context.service';
 
@@ -183,6 +183,8 @@ function normalizeInvoiceStatus(status: string | null | undefined): string {
 @Injectable()
 export class BillingService {
   private readonly stripe: StripeClient | null = null;
+  /** Estado do formato da chave (enum) — nunca o valor da chave. */
+  private readonly stripeKeyState: StripeKeyFormatState;
   private readonly logger = new Logger(BillingService.name);
   private readonly subRepo: Repository<BillingSubscriptionEntity> | null = null;
   private readonly tenantRepo: Repository<TenantEntity> | null = null;
@@ -206,6 +208,7 @@ export class BillingService {
     }
     const key = this.config?.get<string>('STRIPE_SECRET_KEY') ?? process.env.STRIPE_SECRET_KEY;
     const keyState = classifyStripeSecretKeyFormat(key);
+    this.stripeKeyState = keyState;
     switch (keyState) {
       case 'VALID_TEST_KEY':
         this.stripe = new StripeClass(key as string, { apiVersion: '2026-04-22.dahlia' });
@@ -221,6 +224,18 @@ export class BillingService {
       default:
         this.logger.warn('STRIPE_SECRET_KEY nao configurada - Billing desativado');
     }
+  }
+
+  /**
+   * find-340abf0b / Gotcha #20: expõe ao Painel Admin o modo real do Stripe
+   * neste ambiente, no mesmo vocabulário do ENV_BADGE (production/sandbox/
+   * disabled). 'production' nunca é retornado: chaves LIVE são sempre
+   * recusadas (stripe-key-guard.ts). Retorna só o estado classificado — a
+   * chave em si nunca sai do servidor.
+   */
+  getStripeMode(): { environment: 'sandbox' | 'disabled'; keyState: StripeKeyFormatState } {
+    const environment = this.stripe && this.stripeKeyState === 'VALID_TEST_KEY' ? 'sandbox' : 'disabled';
+    return { environment, keyState: this.stripeKeyState };
   }
 
   private get stripeRequired(): StripeClient {

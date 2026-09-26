@@ -18,7 +18,17 @@ export interface AdminBillingActionResponse {
   manualOverrideUntil?: string | null;
 }
 
+/** GET /billing/admin/stripe-mode — só o estado classificado, nunca a chave. */
+export interface AdminStripeMode {
+  environment: "sandbox" | "disabled";
+  keyState: "MISSING" | "INVALID_FORMAT" | "LIVE_KEY_REJECTED" | "VALID_TEST_KEY";
+}
+
 export const adminBillingService = {
+  getStripeMode() {
+    return api.get<AdminStripeMode>("/billing/admin/stripe-mode");
+  },
+
   listSubscriptions() {
     return api.get<AdminSubscription[]>("/billing/admin/subscriptions");
   },

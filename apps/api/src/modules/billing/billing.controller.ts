@@ -155,6 +155,13 @@ export class BillingController {
     return this.billing.updateAdminTenant(tenantId, body);
   }
 
+  @Get('admin/stripe-mode')
+  @RequireRole('super_admin')
+  @ApiOperation({ summary: 'Modo do Stripe neste ambiente (sandbox = TEST MODE, disabled) — nunca expõe a chave' })
+  getAdminStripeMode() {
+    return this.billing.getStripeMode();
+  }
+
   @Get('admin/subscriptions')
   @RequireRole('super_admin')
   @ApiOperation({ summary: 'Listar assinaturas reais para o painel Admin SaaS' })
