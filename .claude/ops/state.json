@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T03:04:42.019Z",
+  "updatedAt": "2026-09-26T03:05:51.094Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -623,8 +623,8 @@
       "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-16T02:04:47.304Z",
-      "justification": "Fixed: both dependencies switched to workspace:* in apps/api/package.json, pnpm-lock.yaml refreshed (resolved 'version' unchanged -- link:../../packages/X both before and after, only the specifier protocol differs). turbo --dry=json confirms api#build/typecheck/test now correctly depend on ai-skills#build+types#build. Full cold-cache 'pnpm turbo build typecheck' (12/12 tasks) and both apps' direct tsc typecheck pass.",
-      "resolvedAt": "2026-09-16T02:04:52.408Z"
+      "justification": "S19=CORRIGIDO (prior mission a5c14661, evidence on its criteria) | Fixed: both dependencies switched to workspace:* in apps/api/package.json, pnpm-lock.yaml refreshed (resolved 'version' unchanged -- link:../../packages/X both before and after, only the specifier protocol differs). turbo --dry=json confirms api#build/typecheck/test now correctly depend on ai-skills#build+types#build. Full cold-cache 'pnpm turbo build typecheck' (12/12 tasks) and both apps' direct tsc typecheck pass.",
+      "resolvedAt": "2026-09-26T03:05:28.757Z"
     },
     {
       "id": "find-e875f6a8",
@@ -637,8 +637,8 @@
       "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-16T07:32:56.103Z",
-      "justification": "All 18 migrations patched with ALTER COLUMN SET DEFAULT (up) and reverse (down); verified via fresh-Postgres pg_attrdef/pg_constraint cross-check showing all defaults now valid, plus full test:e2e and test:ci passing",
-      "resolvedAt": "2026-09-16T07:33:10.203Z"
+      "justification": "S19=CORRIGIDO (prior mission a5c14661) | All 18 migrations patched with ALTER COLUMN SET DEFAULT (up) and reverse (down); verified via fresh-Postgres pg_attrdef/pg_constraint cross-check showing all defaults now valid, plus full test:e2e and test:ci passing",
+      "resolvedAt": "2026-09-26T03:05:28.851Z"
     },
     {
       "id": "find-6566150f",
@@ -651,8 +651,8 @@
       "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-16T07:33:02.182Z",
-      "justification": "Fixed 4 status-literal write sites in AutentiqueService/DocuSignService plus AnalyticsService count query and verify-critical-rls.ts fixture; verified via phase3n-context.e2e-spec.ts real webhook flow test passing",
-      "resolvedAt": "2026-09-16T07:33:10.336Z"
+      "justification": "S19=CORRIGIDO (prior mission a5c14661) | Fixed 4 status-literal write sites in AutentiqueService/DocuSignService plus AnalyticsService count query and verify-critical-rls.ts fixture; verified via phase3n-context.e2e-spec.ts real webhook flow test passing",
+      "resolvedAt": "2026-09-26T03:05:28.944Z"
     },
     {
       "id": "find-77a9ca1c",
@@ -665,8 +665,8 @@
       "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-16T07:33:02.327Z",
-      "justification": "Fixed precedence in all 12 files; proven via relation-does-not-exist isolation test against explicit local DATABASE_URL with no migrations applied; read-only residue audit of real DEV found no session-attributable residue",
-      "resolvedAt": "2026-09-16T07:33:10.466Z"
+      "justification": "S19=CORRIGIDO (prior mission a5c14661) | Fixed precedence in all 12 files; proven via relation-does-not-exist isolation test against explicit local DATABASE_URL with no migrations applied; read-only residue audit of real DEV found no session-attributable residue",
+      "resolvedAt": "2026-09-26T03:05:29.030Z"
     },
     {
       "id": "find-d39fe364",
@@ -679,8 +679,8 @@
       "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-16T10:30:14.964Z",
-      "justification": "Added ['convertido','closed'] to ptToEn with documented audit trail; new regression spec (6 tests) covers all 10 mappings, fail-closed guard, DEFAULT, and CHECK constraint; behaviorally verified against fresh local Postgres for both happy-path backfill and unweakened fail-closed rollback on a genuinely unmapped value",
-      "resolvedAt": "2026-09-16T10:30:21.040Z"
+      "justification": "S19=CORRIGIDO (prior mission a5c14661) | Added ['convertido','closed'] to ptToEn with documented audit trail; new regression spec (6 tests) covers all 10 mappings, fail-closed guard, DEFAULT, and CHECK constraint; behaviorally verified against fresh local Postgres for both happy-path backfill and unweakened fail-closed rollback on a genuinely unmapped value",
+      "resolvedAt": "2026-09-26T03:05:29.120Z"
     },
     {
       "id": "find-10c37104",
@@ -707,8 +707,8 @@
       "disposition": "LEGITIMA",
       "evidenceIds": [],
       "createdAt": "2026-09-24T08:05:45.586Z",
-      "justification": "Real census confirmed zero drift: 274 migration files, 272 registered (exact match with imports), 2 deliberately unregistered files both documented and enforced by a real CI guard (scripts/verify-migration-source-of-truth.mjs's INTENTIONALLY_UNREGISTERED_MIGRATIONS allowlist). No defect found, recorded as confirmed-clean evidence.",
-      "resolvedAt": "2026-09-24T16:25:37.149Z"
+      "justification": "S19=CORRETO | Real census confirmed zero drift: 274 migration files, 272 registered (exact match with imports), 2 deliberately unregistered files both documented and enforced by a real CI guard (scripts/verify-migration-source-of-truth.mjs's INTENTIONALLY_UNREGISTERED_MIGRATIONS allowlist). No defect found, recorded as confirmed-clean evidence.",
+      "resolvedAt": "2026-09-26T03:05:29.210Z"
     },
     {
       "id": "find-4dddf862",
@@ -721,8 +721,8 @@
       "disposition": "LEGITIMA",
       "evidenceIds": [],
       "createdAt": "2026-09-24T08:05:49.926Z",
-      "justification": "Real cross-reference of migration-classification.ts against all 274 migrations' actual DDL confirmed zero classification mismatches -- the sole EXTERNAL_MANAGED migration is the only one performing real DDL against a non-public schema; all other schema-qualified-identifier matches are read-only predicates or false-positive substring hits. No defect found.",
-      "resolvedAt": "2026-09-24T16:25:37.328Z"
+      "justification": "S19=CORRETO | Real cross-reference of migration-classification.ts against all 274 migrations' actual DDL confirmed zero classification mismatches -- the sole EXTERNAL_MANAGED migration is the only one performing real DDL against a non-public schema; all other schema-qualified-identifier matches are read-only predicates or false-positive substring hits. No defect found.",
+      "resolvedAt": "2026-09-26T03:05:29.299Z"
     },
     {
       "id": "find-d1fd67bd",
@@ -735,8 +735,8 @@
       "disposition": "LEGITIMA",
       "evidenceIds": [],
       "createdAt": "2026-09-24T08:05:57.244Z",
-      "justification": "Real RLS census across all 274 migrations found zero tenant-scoped tables missing RLS. 3 initial diff candidates all resolved as non-issues on manual read (2 false-negatives from a regex extraction blind spot, both tables confirmed to have real RLS; 1 deliberately tenant-less public-data-cache table by design). No defect found.",
-      "resolvedAt": "2026-09-24T16:25:37.532Z"
+      "justification": "S19=CORRETO | Real RLS census across all 274 migrations found zero tenant-scoped tables missing RLS. 3 initial diff candidates all resolved as non-issues on manual read (2 false-negatives from a regex extraction blind spot, both tables confirmed to have real RLS; 1 deliberately tenant-less public-data-cache table by design). No defect found.",
+      "resolvedAt": "2026-09-26T03:05:29.403Z"
     },
     {
       "id": "find-0dbee8c2",
@@ -749,8 +749,8 @@
       "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
       "createdAt": "2026-09-24T08:06:14.060Z",
-      "justification": "Real audit confirmed the schema-reconciliation e2e guard exercises only 5 of ~171 current tables via live-Postgres repo.save/find calls; entities.ts<->migration drift is otherwise caught only by per-incident targeted specs written reactively after real bugs. Spot-checked InvoiceEntity against its most recent migration and found zero drift -- no active bug exists today. Not expanded to full 171-table coverage in this pass: building an exhaustive live-Postgres schema-reconciliation harness for every table is a real, scoped engineering task warranting its own review, not an incidental fix. Accepted as known coverage debt, documented in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md's audit trail.",
-      "resolvedAt": "2026-09-24T16:25:50.210Z"
+      "justification": "S19=RISCO_NAO_RESOLVIDO (no current drift instance found; coverage gap 5/171 tables is scheduled in cluster B4 database/migrations, where it gets a real exhaustive guard or a proven disposition) | Real audit confirmed the schema-reconciliation e2e guard exercises only 5 of ~171 current tables via live-Postgres repo.save/find calls; entities.ts<->migration drift is otherwise caught only by per-incident targeted specs written reactively after real bugs. Spot-checked InvoiceEntity against its most recent migration and found zero drift -- no active bug exists today. Not expanded to full 171-table coverage in this pass: building an exhaustive live-Postgres schema-reconciliation harness for every table is a real, scoped engineering task warranting its own review, not an incidental fix. Accepted as known coverage debt, documented in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md's audit trail.",
+      "resolvedAt": "2026-09-26T03:05:29.706Z"
     },
     {
       "id": "find-5ea21067",
@@ -763,8 +763,8 @@
       "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:24:13.225Z",
-      "justification": "Confirmed via real command execution (evid-a5fc16b8, PASS) that no waiver has expired or broken CI as of 2026-09-26; the underlying NestJS 10->11 and react-router 6->7 major migrations are genuine unstarted engineering efforts requiring their own dedicated regression-scoped mission, not a same-day incidental fix. Flagged to product owner: waivers expire 2026-09-30 (4 days) and need either the migrations started or a justified, time-bound extension before then -- this mission's runtime cannot decide that unilaterally (dependent on product/eng-management scheduling decision).",
-      "resolvedAt": "2026-09-26T01:24:23.868Z"
+      "justification": "S19=DEPENDENTE_DECISAO_DE_PRODUTO -> decision RECEIVED 2026-09-26 from the user (extend the 7 waivers to 2026-10-15 with a per-exception register; investigate xlsx/file-type for an isolated upgrade now; blast-radius audits for NestJS 10->11 and React Router 6->7 as isolated clusters). Executed in item 15. | Confirmed via real command execution (evid-a5fc16b8, PASS) that no waiver has expired or broken CI as of 2026-09-26; the underlying NestJS 10->11 and react-router 6->7 major migrations are genuine unstarted engineering efforts requiring their own dedicated regression-scoped mission, not a same-day incidental fix. Flagged to product owner: waivers expire 2026-09-30 (4 days) and need either the migrations started or a justified, time-bound extension before then -- this mission's runtime cannot decide that unilaterally (dependent on product/eng-management scheduling decision).",
+      "resolvedAt": "2026-09-26T03:05:29.798Z"
     },
     {
       "id": "find-8ae5b06f",
@@ -777,8 +777,8 @@
       "disposition": "LEGITIMA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:31:34.518Z",
-      "justification": "Re-audit confirmed the register's OPEN status is stale; current code already has the real backend module (/finance-category-rules) wired and a permanent regression guard test preventing recurrence. No further action needed.",
-      "resolvedAt": "2026-09-26T01:31:43.274Z"
+      "justification": "S19=CORRETO (fixed by an earlier effort; gap register status was stale) | Re-audit confirmed the register's OPEN status is stale; current code already has the real backend module (/finance-category-rules) wired and a permanent regression guard test preventing recurrence. No further action needed.",
+      "resolvedAt": "2026-09-26T03:05:29.498Z"
     },
     {
       "id": "find-9e7bc94e",
@@ -791,8 +791,8 @@
       "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:31:34.717Z",
-      "justification": "Root cause fully traced end-to-end (producer/consumer/persistence) per mission Section 6. Not fixed in this pass: (a) wiring largestRemainder/fn_largest_remainder/transaction_allocations into a real allocation flow would contradict an existing, explicit Product Owner architectural decision (GAP-0009, REMOVE_SECOND_ACCOUNTING_LAYER) -- doing so unilaterally would be worse than leaving it inert; (b) making FinancialRulesService's computed penalty/interest actually create a real financial consequence (adjustment transaction, invoice line, etc.) is a genuine new-feature/business-rule design decision (which trigger, which ledger entry, tax treatment, reversal semantics) that this audit cannot infer safely -- flagged for explicit product decision, not attempted as a speculative implementation.",
-      "resolvedAt": "2026-09-26T01:31:43.365Z"
+      "justification": "S19=DEPENDENTE_DECISAO_DE_PRODUTO for the business consequence of a triggered financial rule; GAP-0009 part re-audited 2026-09-26 per the user order (audit only, no wiring): no accidental execution (triggers fire only on writes to transaction_allocations, which nothing performs), no dangerous partial flow, the rateio UI (ManagerialLinksSection) is not rendered anywhere, residual entityLinks wire is always [] and stripped by Zod (SEM_IMPACTO). Misleading FinancialRules copy (\"disparam automaticamente\" while the only effect is a notification without the computed amount) is handled in cluster B2. | Root cause fully traced end-to-end (producer/consumer/persistence) per mission Section 6. Not fixed in this pass: (a) wiring largestRemainder/fn_largest_remainder/transaction_allocations into a real allocation flow would contradict an existing, explicit Product Owner architectural decision (GAP-0009, REMOVE_SECOND_ACCOUNTING_LAYER) -- doing so unilaterally would be worse than leaving it inert; (b) making FinancialRulesService's computed penalty/interest actually create a real financial consequence (adjustment transaction, invoice line, etc.) is a genuine new-feature/business-rule design decision (which trigger, which ledger entry, tax treatment, reversal semantics) that this audit cannot infer safely -- flagged for explicit product decision, not attempted as a speculative implementation.",
+      "resolvedAt": "2026-09-26T03:05:29.886Z"
     },
     {
       "id": "find-870087b6",
@@ -833,8 +833,8 @@
       "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:35:47.255Z",
-      "justification": "Blocked on real per-platform OAuth/API credentials and adapter implementation for each ad/content platform -- genuine external dependency (Section 16: credencial ausente), not a code defect. Current fail-closed behavior (explicit error, status=falhou, no silent success) is correct and requires no immediate change.",
-      "resolvedAt": "2026-09-26T01:35:47.392Z"
+      "justification": "S19=BLOQUEADO_DEPENDENCIA_EXTERNA (real per-platform publish adapters need Meta/TikTok/Google app credentials and platform review; current behavior fails closed honestly). Re-audited again in cluster B6 marketing. | Blocked on real per-platform OAuth/API credentials and adapter implementation for each ad/content platform -- genuine external dependency (Section 16: credencial ausente), not a code defect. Current fail-closed behavior (explicit error, status=falhou, no silent success) is correct and requires no immediate change.",
+      "resolvedAt": "2026-09-26T03:05:29.969Z"
     },
     {
       "id": "find-c44a5ea6",
@@ -889,8 +889,8 @@
       "disposition": "LEGITIMA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:40:30.123Z",
-      "justification": "Confirmed already correctly implemented as an honest, disclosed stub -- reads report true empty state, writes fail explicitly and loudly, no fake data. No defect found.",
-      "resolvedAt": "2026-09-26T01:40:30.258Z"
+      "justification": "S19=CORRETO | Confirmed already correctly implemented as an honest, disclosed stub -- reads report true empty state, writes fail explicitly and loudly, no fake data. No defect found.",
+      "resolvedAt": "2026-09-26T03:05:29.623Z"
     },
     {
       "id": "find-6511fe37",
@@ -1067,6 +1067,48 @@
       "justification": "S19=CORRIGIDO | commit=d18be7f | oauth/exchange + Spotify callback writes in tenant context (ensureTenantContext for the dual-path callback), scheduler admin enumeration + per-tenant context. Real-Postgres e2e evid-b57f1530/evid-85e1cfca; api test:ci evid-b14997fb.",
       "resolvedAt": "2026-09-26T03:04:42.019Z",
       "restoredAfterLostUpdate": "dec-ops-lost-update-restoration"
+    },
+    {
+      "id": "find-2536e948",
+      "category": "L",
+      "severity": "HIGH",
+      "file": ".claude/runtime/ops.mjs",
+      "line": null,
+      "summary": "Pack runtime: 'ops.mjs evidence run' saved the state snapshot loaded before its command ran, silently dropping every finding/requirement/criterion recorded concurrently (8 findings lost 2026-09-26). The evidence ledger's integrity depended on the operator never running two ops.mjs commands at once.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:05:42.655Z",
+      "justification": "S19=CORRIGIDO | commit=4ecc90a | Re-read state after the command; regression test tests/evidence-run-lost-update.regression.mjs fails without / passes with the fix; runtime regression set 30/30. Lost records restored (27e7695). Residual: a real file lock is a pack-rework candidate.",
+      "resolvedAt": "2026-09-26T03:05:51.093Z"
+    },
+    {
+      "id": "find-c92aae8d",
+      "category": "L",
+      "severity": "LOW",
+      "file": ".claude/runtime/tests",
+      "line": null,
+      "summary": "Pack runtime: regression tests document 'node --test .claude/runtime/tests/' as the run command, which on Node 22 treats the directory as a single file and reports 1 failing pseudo-test instead of running the suite.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:05:42.831Z",
+      "justification": "S19=RISCO_NAO_RESOLVIDO | Correct form is the glob .claude/runtime/tests/*.regression.mjs. To be fixed in the pack reconstruction (item 19), together with wiring these tests into a CI/verify entrypoint so they actually run.",
+      "resolvedAt": "2026-09-26T03:05:42.917Z"
+    },
+    {
+      "id": "find-82eda864",
+      "category": "L",
+      "severity": "MEDIUM",
+      "file": ".claude/runtime/ops.mjs",
+      "line": null,
+      "summary": "Pack runtime: the finding disposition enum (CORRIGIDA, LEGITIMA, CONTRATO_EXTERNO, HISTORICO_MIGRATION, DADO_HISTORICO, GENERATED, DOCUMENTACAO_HISTORICA, ARTEFATO_DESCARTAVEL, FALSO_POSITIVO, DIVIDA_ACEITA) cannot express the mission's Section 19 destinations (DEPENDENTE_DECISAO_DE_PRODUTO, BLOQUEADO_DEPENDENCIA_EXTERNA, RISCO_NAO_RESOLVIDO, SEM_IMPACTO_COMPROVADO, OBSOLETO, DUPLICADO_POR_IMPLEMENTACAO_CANONICA). Workaround used: explicit 'S19=<DESTINO>' prefix in every justification.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:05:43.000Z",
+      "justification": "S19=RISCO_NAO_RESOLVIDO | Contract/schema change to .claude/contracts finding schema + ops.mjs belongs to the pack reconstruction (item 19); until then the S19= prefix convention is applied to 100% of findings and checked mechanically.",
+      "resolvedAt": "2026-09-26T03:05:43.084Z"
     }
   ],
   "evidenceIds": [
