@@ -58,9 +58,9 @@ export function checkGateJobWiring(jobBlock, jobName = 'db-verify-supabase-dev')
   return { ok: reasons.length === 0, reasons };
 }
 
-// Parte 72: a antiga "db-verify-supabase-dev" foi separada em duas jobs
-// (ver migration-classification.ts / CI) — ambas dependem do mesmo gate e
-// precisam da mesma checagem de wiring.
+// Part 72: the old "db-verify-supabase-dev" was split into two jobs
+// (see migration-classification.ts / CI) — both depend on the same gate and
+// need the same wiring check.
 const GATED_JOB_NAMES = ['db-verify-application-dev', 'db-verify-realtime-external-dev'];
 
 function main() {

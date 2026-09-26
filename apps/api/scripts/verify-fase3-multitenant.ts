@@ -2,18 +2,18 @@
 /**
  * scripts/verify-fase3-multitenant.ts
  *
- * FASE 3 — Validação Multi-Tenant via HTTP real.
+ * PHASE 3 — Multi-tenant validation via real HTTP.
  *
- * Roda os 9 sub-testes definidos no plano:
- *   3.1 Preparação (tenants + auth/context)
- *   3.2 Criação de dados isolados em A e B
- *   3.3 Listagem isolada
- *   3.4 Detail cross-tenant
- *   3.5 Update cross-tenant
- *   3.6 Delete cross-tenant
- *   3.7 JOIN tenant-safe (releases ↔ artist)
- *   3.8 Analytics tenant-safe
- *   3.9 Audit/Activity tenant-safe
+ * Runs the 9 sub-tests defined in the plan:
+ *   3.1 Preparation (tenants + auth/context)
+ *   3.2 Creation of isolated data in A and B
+ *   3.3 Isolated listing
+ *   3.4 Cross-tenant detail
+ *   3.5 Cross-tenant update
+ *   3.6 Cross-tenant delete
+ *   3.7 Tenant-safe JOIN (releases ↔ artist)
+ *   3.8 Tenant-safe analytics
+ *   3.9 Tenant-safe audit/activity
  *
  * Usage:
  *   npx tsx apps/api/scripts/verify-fase3-multitenant.ts
@@ -30,7 +30,7 @@ try {
 const API_URL = (process.env['API_URL'] ?? 'http://localhost:3001').replace(/\/$/, '');
 const ENCRYPTION_KEY = process.env['ENCRYPTION_KEY'] ?? '';
 
-// Tenants já existentes no banco
+// Tenants already existing in the database
 const TENANT_A = {
   tenantId: '10000000-0000-0000-0000-000000000002',
   orgId:    '10000000-0000-0000-0000-000000000001',
@@ -40,7 +40,7 @@ const TENANT_A = {
 const TENANT_B = {
   tenantId: '20000000-0000-0000-0000-000000000002',
   orgId:    '20000000-0000-0000-0000-000000000001',
-  userId:   '025d7498-52a9-4a9c-938d-99519c96b053', // mesmo usuário (membro em ambos)
+  userId:   '025d7498-52a9-4a9c-938d-99519c96b053', // same user (member of both)
   name:     'FASE 3 Tenant B',
 };
 
@@ -122,7 +122,7 @@ function extractList(body: any): any[] {
 }
 
 // ============================================================================
-// FASE 3.1 — PREPARAÇÃO
+// PHASE 3.1 — PREPARATION
 // ============================================================================
 
 async function fase31(): Promise<void> {
@@ -258,10 +258,10 @@ async function createSetFor(
     failed++;
   }
 
-  // Transação — schema usa nomes pt-BR (Zod validator)
-  // NB: categoria é obrigatória no DB (NOT NULL) mas o validator aceita
-  // transferencia sem categoria → service não inclui no payload → 500.
-  // Mandamos categoria explícita para destravar.
+  // Transaction — the schema uses pt-BR names (Zod validator)
+  // NB: categoria is mandatory in the DB (NOT NULL) but the validator accepts a
+  // transferencia without categoria → the service does not include it in the payload → 500.
+  // We send an explicit categoria to unblock it.
   const tx = await call('POST', '/transactions', {
     token, tenantId: tenant.tenantId,
     body: {
@@ -346,7 +346,7 @@ async function fase33(): Promise<void> {
     expect(`${ep.path} — B não vê dados A`, !seesAInB);
   }
 
-  // audit-logs & activity-logs (não criamos directamente, mas listas devem responder)
+  // audit-logs & activity-logs (we do not create them directly, but the lists must respond)
   const auditA = await call('GET', '/audit-logs?limit=10', { token: TOKEN_A, tenantId: TENANT_A.tenantId });
   const auditB = await call('GET', '/audit-logs?limit=10', { token: TOKEN_B, tenantId: TENANT_B.tenantId });
   expect('GET /audit-logs (A) → 200', auditA.status === 200, `status=${auditA.status}`);
@@ -482,7 +482,7 @@ async function fase37(): Promise<void> {
     expect(label, isSame, detail);
   }
 
-  // Releases: detail deve trazer artist do mesmo tenant
+  // Releases: the detail must bring the artist of the same tenant
   if (DATA_A.releaseId) {
     const r = await call('GET', `/releases/${DATA_A.releaseId}`, { token: TOKEN_A, tenantId: TENANT_A.tenantId });
     expect('GET release A retorna 200', r.status === 200, `got=${r.status}`);
@@ -498,7 +498,7 @@ async function fase37(): Promise<void> {
     checkArtistRef('Release B só referencia Artist B (mesmo tenant)', artistInRelease, DATA_B.artistId, TAG_B);
   }
 
-  // Contratos: detail deve trazer artista/cliente do mesmo tenant
+  // Contracts: the detail must bring the artist/client of the same tenant
   if (DATA_A.contractId) {
     const r = await call('GET', `/contracts/${DATA_A.contractId}`, { token: TOKEN_A, tenantId: TENANT_A.tenantId });
     expect('GET contract A retorna 200', r.status === 200, `got=${r.status}`);
@@ -530,8 +530,8 @@ async function fase38(): Promise<void> {
   expect('/analytics/dashboard A → 200', dashA.status === 200, `got=${dashA.status}`);
   expect('/analytics/dashboard B → 200', dashB.status === 200, `got=${dashB.status}`);
 
-  // Coleta números: B só tem 1 de cada (criado agora). A acumulou histórico anterior + 1.
-  // Esperamos que sejam diferentes (ou que pelo menos B reflita o nosso 1).
+  // Collect numbers: B has only 1 of each (created now). A accumulated previous history + 1.
+  // We expect them to differ (or at least B to reflect our 1).
   const a = dashA.body?.data ?? dashA.body;
   const b = dashB.body?.data ?? dashB.body;
 
@@ -546,7 +546,7 @@ async function fase38(): Promise<void> {
     releases:    b?.totalReleases ?? b?.releases ?? b?.releasesCount ?? b?.summary?.releases,
   })}`);
 
-  // Comparação direta dos JSONs — se forem exatamente iguais com dados diferentes nos tenants, há global leak.
+  // Direct comparison of the JSONs — if they are exactly equal with different data in the tenants, there is a global leak.
   const aStr = JSON.stringify(a);
   const bStr = JSON.stringify(b);
   expect('Analytics A e B retornam corpos distintos', aStr !== bStr, 'corpos idênticos → suspeita de vazamento global');

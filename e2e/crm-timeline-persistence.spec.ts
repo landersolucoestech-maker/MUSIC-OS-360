@@ -1,25 +1,25 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * crm-timeline-persistence.spec.ts  (Parte 80)
+ * crm-timeline-persistence.spec.ts  (Part 80)
  *
- * E2E real via navegador — prova que a Timeline de um Contato (Contato =
- * Cliente, tabela física `clients`, eventos persistidos em `activity_logs`
- * via /clients/:id/timeline) sobrevive a reload, em vez de viver apenas em
- * estado React/Zustand em memória.
+ * Real browser E2E — proves that a Contact's Timeline (Contact =
+ * Client, physical table `clients`, events persisted in `activity_logs`
+ * via /clients/:id/timeline) survives a reload, instead of living only in
+ * in-memory React/Zustand state.
  *
- * Login real → abre Contatos → abre o primeiro contato existente → registra
- * uma nota de teste claramente identificada → confirma que ela aparece na
- * tela → recarrega a página do zero → reabre o mesmo contato → confirma que
- * a nota AINDA está lá (só é possível se veio do backend, não de estado
- * local perdido no reload).
+ * Real login → opens Contacts → opens the first existing contact → records
+ * a clearly identified test note → confirms it appears on
+ * screen → reloads the page from scratch → reopens the same contact → confirms
+ * the note is STILL there (only possible if it came from the backend, not from local
+ * state lost on reload).
  *
- * A nota fica registrada permanentemente (timeline/activity_logs é um
- * histórico imutável por design — não há endpoint de exclusão de entrada de
- * timeline, de propósito). Por isso o texto da nota se autoidentifica como
- * verificação automatizada, nunca inventa dado de cliente.
+ * The note stays recorded permanently (timeline/activity_logs is an
+ * immutable history by design — there is no endpoint to delete a
+ * timeline entry, on purpose). That is why the note text identifies itself as an
+ * automated check, never inventing client data.
  *
- * Credenciais só via variáveis de ambiente — ausentes ⇒ suíte pulada.
+ * Credentials only via environment variables — absent ⇒ suite skipped.
  */
 const EMAIL = process.env.E2E_INSTITUTIONAL_EMAIL;
 const PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;

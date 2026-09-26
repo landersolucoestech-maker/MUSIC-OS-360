@@ -1,16 +1,16 @@
 /**
  * scripts/verify-canonical-column-order.ts
  *
- * Compara a ordem física real (information_schema.columns.ordinal_position)
- * de uma tabela com a ordem canônica documentada (extraída do formulário
- * real). Usado após cada reconstrução física de tabela (Rebuild*InCanonicalFormOrder).
+ * Compares a table's real physical order (information_schema.columns.ordinal_position)
+ * with the documented canonical order (extracted from the real
+ * form). Used after each physical table rebuild (Rebuild*InCanonicalFormOrder).
  *
- * Uso: tsx scripts/verify-canonical-column-order.ts <tabela>
+ * Usage: tsx scripts/verify-canonical-column-order.ts <table>
  */
 import 'reflect-metadata';
 import { AppDataSource } from '../src/database/datasource';
 
-// Ordem canônica documentada por tabela — atualizada a cada reconstrução física.
+// Canonical order documented per table — updated on every physical rebuild.
 const CANONICAL_ORDER: Record<string, string[]> = {
   artists: [
     'id', 'tenant_id', 'foto_url', 'nome_artistico', 'music_genre', 'especialidades',

@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
- * FASE 6 — Production Simulated Smoke
- * Testa CRUD ponta-a-ponta na API em modo HTTP real + endpoints de saúde.
+ * PHASE 6 — Production Simulated Smoke
+ * Tests end-to-end CRUD on the API in real HTTP mode + health endpoints.
  */
 import 'reflect-metadata';
 import * as path from 'path';
@@ -84,8 +84,8 @@ async function main() {
   }
 
   console.log('\n── 6.5 — Relatórios endpoints (sem mock leak runtime) ──');
-  // Não há endpoint real /reports/imports — frontend deve mostrar empty state.
-  // Apenas garantimos que /audit-logs serve histórico real:
+  // There is no real /reports/imports endpoint — the frontend must show an empty state.
+  // We only ensure /audit-logs serves real history:
   {
     const r = await call('GET', '/audit-logs?limit=10');
     ok('/audit-logs → 200', r.status === 200);
@@ -121,7 +121,7 @@ async function main() {
       const list = r.body?.data ?? r.body;
       ok('providers list inclui mock_provider flag', Array.isArray(list) && list.some((p: any) => p.mock === true), JSON.stringify(list).slice(0,200));
     } else {
-      // Endpoint pode ter caminho diferente — não bloqueia, apenas não testa.
+      // The endpoint may have a different path — does not block, just not tested.
       console.log(`  →  /integrations/external-data/providers indisponível (${r.status}); aceitável`);
     }
   }
@@ -150,7 +150,7 @@ async function main() {
   const dash2 = await call('GET', '/analytics/dashboard');
   ok('/analytics/dashboard reload consistente', dash2.status === 200 && typeof dash2.body?.data?.artists === 'number');
 
-  // Persistência: ler artista de volta
+  // Persistence: read the artist back
   if (artistId) {
     const reread = await call('GET', `/artists/${artistId}`);
     ok('Artista persistido (GET by id) → 200', reread.status === 200);

@@ -1,6 +1,6 @@
-// ─── Logger interface (isomórfica: browser + Node) ───────────────────────────
-// No browser: usa console.* colorido.
-// No servidor: implementado pelo consumidor com Pino ou Winston.
+// ─── Logger interface (isomorphic: browser + Node) ───────────────────────────
+// In the browser: uses colored console.*.
+// On the server: implemented by the consumer with Pino or Winston.
 
 export type LogLevel = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
 

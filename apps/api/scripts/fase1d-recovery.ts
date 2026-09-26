@@ -1,20 +1,20 @@
 #!/usr/bin/env tsx
 /**
- * FASE 1D — Recovery Probe (sem restart)
+ * PHASE 1D — Recovery Probe (no restart)
  *
- * Loop contínuo que probas em paralelo:
- *   - /health/live                  (processo Node vivo)
- *   - /health/ready                 (DB + deps ok pelo indicador)
- *   - Redis PING direto via ioredis (Redis alcançável)
+ * Continuous loop that probes in parallel:
+ *   - /health/live                  (Node process alive)
+ *   - /health/ready                 (DB + deps ok according to the indicator)
+ *   - direct Redis PING via ioredis (Redis reachable)
  *
- * Imprime UMA linha por segundo com timestamps + status; ao receber SIGINT
- * grava um JSONL completo em apps/api/logs/fase1d-recovery-<ts>.jsonl.
+ * Prints ONE line per second with timestamps + status; on SIGINT it
+ * writes a full JSONL to apps/api/logs/fase1d-recovery-<ts>.jsonl.
  *
- * Uso:
+ * Usage:
  *   pnpm tsx apps/api/scripts/fase1d-recovery.ts
- *   (Ctrl+C para encerrar e gravar o relatório.)
+ *   (Ctrl+C to stop and write the report.)
  *
- * O orquestrador (PowerShell) é quem dispara `docker stop` / `docker start`.
+ * The orchestrator (PowerShell) is the one that triggers `docker stop` / `docker start`.
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs';

@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * crm-no-mocks.spec.ts  (Parte 79)
+ * crm-no-mocks.spec.ts  (Part 79)
  *
- * E2E real via navegador — trava a regressão dos mocks do CRM/Leads
- * eliminados nesta Parte. Login real → abre /leads (CRM) → confirma que a
- * página chama de fato os endpoints reais (/leads, /clients) e que os nomes
- * fictícios do antigo mock em memória (Marina Torres, Rafael Azevedo, Casa
- * Aurora, Beat Press, João Silva, Maria Santos, Pedro Costa) NUNCA aparecem
- * na tela — a única forma de aparecerem seria o código ter voltado a usar o
- * array estático em vez do backend real.
+ * Real browser E2E — locks in the regression of the CRM/Leads mocks
+ * eliminated in this Part. Real login → opens /leads (CRM) → confirms the
+ * page actually calls the real endpoints (/leads, /clients) and that the
+ * fictitious names of the old in-memory mock (`Marina Torres`, `Rafael Azevedo`,
+ * `Casa Aurora`, `Beat Press`, `João Silva`, `Maria Santos`, `Pedro Costa`) NEVER appear
+ * on screen — the only way they could appear is if the code went back to using the
+ * static array instead of the real backend.
  *
- * Credenciais só via variáveis de ambiente — ausentes ⇒ suíte pulada.
+ * Credentials only via environment variables — absent ⇒ suite skipped.
  */
 const EMAIL = process.env.E2E_INSTITUTIONAL_EMAIL;
 const PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;

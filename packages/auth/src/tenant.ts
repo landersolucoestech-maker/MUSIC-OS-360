@@ -11,8 +11,8 @@ export interface TenantScopedQuery {
 }
 
 /**
- * Garante que uma query inclua o tenant_id correto.
- * Impede cross-tenant data leakage.
+ * Ensures a query includes the correct tenant_id.
+ * Prevents cross-tenant data leakage.
  */
 export function scopeToTenant<T extends object>(
   data: T,
@@ -22,8 +22,8 @@ export function scopeToTenant<T extends object>(
 }
 
 /**
- * Valida que um recurso pertence ao tenant correto.
- * Lança erro se tenant_id não bate (prevenção de IDOR).
+ * Validates that a resource belongs to the correct tenant.
+ * Throws if the tenant_id does not match (IDOR prevention).
  */
 export function assertTenantOwnership(
   resourceTenantId: string,
@@ -38,7 +38,7 @@ export function assertTenantOwnership(
 }
 
 /**
- * Extrai tenant_id de um JWT payload padrão Music OS 360.
+ * Extracts the tenant_id from a standard Music OS 360 JWT payload.
  */
 export function extractTenantFromPayload(
   payload: Record<string, unknown>,

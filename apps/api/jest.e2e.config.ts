@@ -14,8 +14,8 @@ const config: Config = {
   // created by a sibling spec file — parallel workers race against that
   // shared state. Must run sequentially, one file at a time.
   maxWorkers: 1,
-  // Guard fail-closed: aborta antes de qualquer spec se o alvo de banco não
-  // for autorizado para o NODE_ENV (test → nenhum Supabase remoto).
+  // Fail-closed guard: aborts before any spec if the database target is not
+  // authorized for NODE_ENV (test → no remote Supabase).
   setupFiles: ['<rootDir>/test/e2e/e2e-db-guard.ts'],
 };
 

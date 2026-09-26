@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 /**
- * release-check.mjs — Gate de corte (go-live) do MUSIC OS 360.
+ * release-check.mjs — Cutover (go-live) gate of MUSIC OS 360.
  *
- * Dois modos:
- *   node scripts/release-check.mjs            → "check"  (READ-ONLY, seguro a qualquer hora)
- *   node scripts/release-check.mjs --migrate  → "migrate" (aplica db:migrate antes das verificações)
+ * Two modes:
+ *   node scripts/release-check.mjs            → "check"  (READ-ONLY, safe at any time)
+ *   node scripts/release-check.mjs --migrate  → "migrate" (applies db:migrate before the checks)
  *
- * Encadeia as etapas em ordem, FALHA RÁPIDO na primeira que quebrar e imprime
- * um sumário PASS/FAIL no fim. As etapas de banco exigem que o Postgres esteja
- * acessível (DATABASE_URL); se não estiver, a etapa é reportada como FAIL com a
- * causa (ECONNREFUSED) — rode num ambiente onde o banco responde.
+ * Chains the steps in order, FAILS FAST at the first one that breaks and prints
+ * a PASS/FAIL summary at the end. The database steps require Postgres to be
+ * reachable (DATABASE_URL); if it is not, the step is reported as FAIL with the
+ * cause (ECONNREFUSED) — run it in an environment where the database responds.
  *
- * Nenhuma etapa de "check" escreve no banco. Apenas "--migrate" aplica schema.
+ * No "check" step writes to the database. Only "--migrate" applies schema.
  */
 import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -22,7 +22,7 @@ const MIGRATE = process.argv.includes("--migrate");
 
 /** @type {{ name: string, cmd: string, writes?: boolean }[]} */
 const steps = [
-  // Checks baratos e sem build primeiro (RELEASE-01, RBAC-SHADOW-01, DBCTX-01).
+  // Cheap, build-free checks first (RELEASE-01, RBAC-SHADOW-01, DBCTX-01).
   { name: "Workflows críticos presentes",   cmd: "node scripts/verify-critical-workflows.mjs" },
   { name: "Flags de produção (RBAC/DBCTX)", cmd: "corepack pnpm --filter @music-os-360/api verify:production-flags" },
   { name: "Web typecheck (0 erros)",        cmd: "corepack pnpm --filter @music-os-360/web typecheck" },

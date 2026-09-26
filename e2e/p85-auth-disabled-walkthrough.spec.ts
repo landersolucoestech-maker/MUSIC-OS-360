@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * p85-auth-disabled-walkthrough.spec.ts  (Parte 85)
+ * p85-auth-disabled-walkthrough.spec.ts  (Part 85)
  *
- * Verifica que o bypass AUTH_DISABLED (dev-only) funciona fim-a-fim: abrir
- * "/" leva direto ao dashboard, sem login, exibindo a identidade real do
- * tenant-zero (LANDER RECORDS) — e que nenhum módulo do menu redireciona
- * para /auth ou /login. Não roda contra staging/produção (lá AUTH_DISABLED
- * é sempre false, fail-closed — ver apps/api/src/core/auth-disabled.ts).
+ * Verifies that the AUTH_DISABLED bypass (dev-only) works end to end: opening
+ * "/" goes straight to the dashboard, without login, showing the real
+ * tenant-zero identity (LANDER RECORDS) — and that no menu module redirects
+ * to /auth or /login. Does not run against staging/production (there AUTH_DISABLED
+ * is always false, fail-closed — see apps/api/src/core/auth-disabled.ts).
  *
- * Pré-requisito local: AUTH_DISABLED=true (API) e VITE_AUTH_DISABLED=true
- * (WEB) no ambiente onde `pnpm dev` está rodando. Ausente/false ⇒ suíte
- * pulada (mesmo padrão dos demais specs em e2e/, ver p84-product-walkthrough.spec.ts).
+ * Local prerequisite: AUTH_DISABLED=true (API) and VITE_AUTH_DISABLED=true
+ * (WEB) in the environment where `pnpm dev` is running. Absent/false ⇒ suite
+ * skipped (same pattern as the other specs in e2e/, see p84-product-walkthrough.spec.ts).
  */
 const MODULES: Array<{ name: string; path: string }> = [
   { name: 'Dashboard', path: '/dashboard' },

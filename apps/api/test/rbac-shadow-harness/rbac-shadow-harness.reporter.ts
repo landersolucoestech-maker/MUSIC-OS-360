@@ -1,6 +1,6 @@
 /**
- * PASSO 12-J.5 — Reporter do harness. Agrega os resultados HTTP e escreve um resumo.
- * NÃO consulta rbac_decision_logs (isso é o go/no-go via SQL, passo separado).
+ * STEP 12-J.5 — The harness reporter. Aggregates the HTTP results and writes a summary.
+ * Does NOT query rbac_decision_logs (that is the go/no-go via SQL, a separate step).
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -17,7 +17,7 @@ export interface RequestRecord {
   path: string;
   status: number;
   expectedAllow: boolean;
-  rbacPass: boolean; // a decisão RBAC observada bate com o esperado?
+  rbacPass: boolean; // does the observed RBAC decision match the expected one?
   error?: string;
 }
 

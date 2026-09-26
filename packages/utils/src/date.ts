@@ -1,4 +1,4 @@
-// ─── Date utilities (sem dependência date-fns para manter o package leve) ─────
+// ─── Date utilities (no date-fns dependency, to keep the package light) ───────
 
 export function addDays(date: Date, days: number): Date {
   const d = new Date(date);

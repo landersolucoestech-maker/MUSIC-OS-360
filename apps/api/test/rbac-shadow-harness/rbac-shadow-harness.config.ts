@@ -1,8 +1,8 @@
 /**
- * PASSO 12-J.5 — Configuração do harness E2E de tráfego RBAC SHADOW.
+ * STEP 12-J.5 — Configuration of the RBAC SHADOW traffic E2E harness.
  *
- * Lê tudo de variáveis de ambiente (.env de STAGING). NUNCA commitar segredos.
- * Não fabrica dados: apenas parametriza requests HTTP reais contra a API deployada.
+ * Reads everything from environment variables (STAGING .env). NEVER commit secrets.
+ * Fabricates no data: it only parameterizes real HTTP requests against the deployed API.
  */
 
 export type HarnessRole =

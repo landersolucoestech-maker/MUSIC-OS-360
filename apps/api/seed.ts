@@ -1,12 +1,12 @@
 /**
- * seed.ts — dados iniciais para desenvolvimento.
+ * seed.ts — initial data for development.
  *
- * Cria:
- *   - 1 organização "Music OS 360 Demo"
+ * Creates:
+ *   - 1 organization "Music OS 360 Demo"
  *   - 1 tenant "Demo Label"
  *   - 1 billing subscription (trial)
  *
- * Uso:  cd apps/api && npx ts-node --transpile-only seed.ts
+ * Usage:  cd apps/api && npx ts-node --transpile-only seed.ts
  */
 import 'dotenv/config';
 import { DataSource } from 'typeorm';
@@ -37,7 +37,7 @@ async function seed() {
   const qr = ds.createQueryRunner();
 
   try {
-    // ── 1. Organização ──────────────────────────────────────────────────────
+    // ── 1. Organization ─────────────────────────────────────────────────────
     const existingOrg = await qr.query(
       `SELECT id FROM organizations WHERE slug = $1 LIMIT 1`,
       ['music-os-360-demo'],

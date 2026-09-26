@@ -2,17 +2,17 @@
 /**
  * scripts/verify-fase5-dashboard.ts
  *
- * FASE 5 — Validação do Dashboard Real.
+ * PHASE 5 — Validation of the real Dashboard.
  *
- *   5.1 Dataset controlado DASH_A_* e DASH_B_*
- *   5.2 /analytics/dashboard cruzado com banco
- *   5.4 Agenda (eventos de hoje vs amanhã via /events list)
- *   5.5 Activity feed (audit-logs e activity-logs)
- *   5.6 Artistas destaque (releases/projects count, streams=null se sem fonte)
- *   5.7 Financeiro mês atual tenant-scoped
- *   5.8 Operational alerts (sem mock fabricado)
+ *   5.1 Controlled DASH_A_* and DASH_B_* dataset
+ *   5.2 /analytics/dashboard cross-checked with the database
+ *   5.4 Calendar (today's vs tomorrow's events via the /events list)
+ *   5.5 Activity feed (audit-logs and activity-logs)
+ *   5.6 Featured artists (releases/projects count, streams=null when there is no source)
+ *   5.7 Tenant-scoped current-month financials
+ *   5.8 Operational alerts (no fabricated mock)
  *
- *   5.3 (UI browser) e 5.9 (network/console) requerem smoke manual.
+ *   5.3 (browser UI) and 5.9 (network/console) require a manual smoke.
  */
 
 import 'reflect-metadata';
@@ -127,13 +127,13 @@ async function seedTenant(tenant: string, token: string, tag: string, opts: {
     const r = await call('POST', '/events', { ...ctx, body: { title: `${tag}_EVENT_TODAY_${i}_${TS}`, type: 'show', startsAt: todayIso } });
     const id = pickId(r.body); if (id) out.events.push(id); else console.log(`  !  event POST status=${r.status} ${JSON.stringify(r.body).slice(0,150)}`);
   }
-  // Eventos: amanhã
+  // Events: tomorrow
   const tomorrowIso = new Date(Date.now() + 86400000).toISOString();
   for (let i = 0; i < opts.eventsTomorrow; i++) {
     const r = await call('POST', '/events', { ...ctx, body: { title: `${tag}_EVENT_FUTURE_${i}_${TS}`, type: 'show', startsAt: tomorrowIso } });
     const id = pickId(r.body); if (id) out.events.push(id); else console.log(`  !  event(tom) POST status=${r.status} ${JSON.stringify(r.body).slice(0,150)}`);
   }
-  // Transações receita exige tipoCliente. categoria='outros' evita exigência de artista/subcategoria.
+  // Revenue transactions require tipoCliente. categoria='outros' avoids requiring an artist/subcategory.
   const today = new Date().toISOString().slice(0,10);
   for (let i = 0; i < opts.txRevenueThisMonth; i++) {
     const r = await call('POST', '/transactions', { ...ctx, body: { tipoTransacao: 'receita', tipoCliente: 'empresa', categoria: 'outros', descricao: `${tag}_TX_REV_${i}_${TS}`, valor: '1000.00', dataTransacao: today, formaPagamento: 'pix', status: 'pago' } });
@@ -143,7 +143,7 @@ async function seedTenant(tenant: string, token: string, tag: string, opts: {
     const r = await call('POST', '/transactions', { ...ctx, body: { tipoTransacao: 'despesa', tipoCliente: 'empresa', categoria: 'outros', descricao: `${tag}_TX_EXP_${i}_${TS}`, valor: '300.00', dataTransacao: today, formaPagamento: 'pix', status: 'pago' } });
     const id = pickId(r.body); if (id) out.tx.push(id); else console.log(`  !  tx-exp POST status=${r.status} ${JSON.stringify(r.body).slice(0,200)}`);
   }
-  // Transação de outro mês (há 60 dias)
+  // A transaction from another month (60 days ago)
   const other = new Date(Date.now() - 60 * 86400000).toISOString().slice(0,10);
   for (let i = 0; i < opts.txRevenueOtherMonth; i++) {
     const r = await call('POST', '/transactions', { ...ctx, body: { tipoTransacao: 'receita', tipoCliente: 'empresa', categoria: 'outros', descricao: `${tag}_TX_OLD_${i}_${TS}`, valor: '9999.00', dataTransacao: other, formaPagamento: 'pix', status: 'pago' } });
@@ -210,7 +210,7 @@ async function f52(): Promise<void> {
   console.log('  Tenant A counters:', JSON.stringify({ artists: DASH_A.artists, contracts: DASH_A.contracts, leads: DASH_A.leads, revenue: DASH_A.revenue_current_month, expenses: DASH_A.expenses_current_month, net: DASH_A.net_result_current_month }));
   console.log('  Tenant B counters:', JSON.stringify({ artists: DASH_B.artists, contracts: DASH_B.contracts, leads: DASH_B.leads, revenue: DASH_B.revenue_current_month, expenses: DASH_B.expenses_current_month, net: DASH_B.net_result_current_month }));
 
-  // Cross-check: para cada contador-chave, query banco direto e bater
+  // Cross-check: for each key counter, query the database directly and compare
   const checks: Array<{ label: string; sql: string; tenant: string; expect: number }> = [
     { label: 'A artists count = banco',   sql: 'SELECT COUNT(*)::int AS c FROM artists   WHERE tenant_id=$1 AND deleted_at IS NULL', tenant: TA, expect: DASH_A.artists },
     { label: 'A contracts count = banco', sql: 'SELECT COUNT(*)::int AS c FROM contracts WHERE tenant_id=$1 AND deleted_at IS NULL', tenant: TA, expect: DASH_A.contracts },
@@ -224,11 +224,11 @@ async function f52(): Promise<void> {
     expect(c.label, r.rows[0]?.c === c.expect, `db=${r.rows[0]?.c} dashboard=${c.expect}`);
   }
 
-  // Tenant isolation: dashboards têm contadores diferentes
+  // Tenant isolation: dashboards have different counters
   expect('Dashboard A ≠ Dashboard B (artists)', DASH_A.artists !== DASH_B.artists);
   expect('Dashboard A ≠ Dashboard B (contracts)', DASH_A.contracts !== DASH_B.contracts);
 
-  // Métricas operacionais não fabricadas — quando não há fonte, deve ser 0 (e a chave existe)
+  // Non-fabricated operational metrics — when there is no source, it must be 0 (and the key exists)
   const operationalKeys = ['pending_tasks_count','overdue_tasks_count','onboarding_in_progress_count','overdue_followups_count','pending_distribution_setups','pending_external_syncs','failed_external_syncs','successful_external_syncs','distributor_submissions_count','society_submissions_count','external_validation_errors_count','pending_provider_requirements_count'];
   for (const k of operationalKeys) {
     expect(`Dashboard A contém '${k}' (não inventado)`, typeof DASH_A[k] === 'number' && DASH_A[k] >= 0, `value=${DASH_A[k]}`);
@@ -241,7 +241,7 @@ async function f52(): Promise<void> {
 
 async function f54(): Promise<void> {
   section('5.4 — AGENDA DE HOJE');
-  // Lista todos os eventos do Tenant A, filtra por data
+  // Lists all of Tenant A's events, filters by date
   const r = await call('GET', '/events?limit=200', { auth: TOKEN_A, tenant: TA });
   expect('GET /events A → 200', r.status === 200);
   const list: any[] = Array.isArray(r.body?.data) ? r.body.data : (r.body?.data?.data ?? r.body?.items ?? []);
@@ -253,7 +253,7 @@ async function f54(): Promise<void> {
   const ours = eventosHojeTotal.filter((e) => (e.title ?? e.titulo ?? '').includes(`DASH_A_${TS}_EVENT_TODAY`));
   expect('eventos com data=hoje incluem os criados nesta passada', ours.length === OPTS_A.eventsToday, `match=${ours.length} esperado=${OPTS_A.eventsToday}`);
 
-  // Confirmar que eventos amanhã NÃO entram no recorte hoje
+  // Confirm that tomorrow's events do NOT enter today's slice
   const amanha = list.filter((e) => (e.title ?? e.titulo ?? '').includes(`DASH_A_${TS}_EVENT_FUTURE`));
   expect('eventos do dia seguinte criados', amanha.length === OPTS_A.eventsTomorrow);
   const tomorrowSetAlsoHoje = amanha.filter((e) => {
@@ -269,10 +269,10 @@ async function f54(): Promise<void> {
 
 async function f55(): Promise<void> {
   section('5.5 — ACTIVITY FEED');
-  // Esperar a fila assíncrona de audit drainar
+  // Wait for the asynchronous audit queue to drain
   await new Promise((r) => setTimeout(r, 3000));
 
-  // Retry: até 3 tentativas se a 1ª retornar não-200
+  // Retry: up to 3 attempts if the 1st returns non-200
   let r = await call('GET', '/audit-logs?limit=200', { auth: TOKEN_A, tenant: TA });
   for (let i = 0; i < 3 && r.status !== 200; i++) {
     await new Promise((res) => setTimeout(res, 1500));
@@ -290,7 +290,7 @@ async function f55(): Promise<void> {
   const list2 = extractList(r2.body);
   expect('audit-logs persistente (2ª chamada igual/maior)', list2.length >= list.length, `1st=${list.length} 2nd=${list2.length}`);
 
-  // activity-logs também
+  // activity-logs too
   const ra = await call('GET', '/activity-logs?limit=100', { auth: TOKEN_A, tenant: TA });
   expect('GET /activity-logs A → 200', ra.status === 200, `status=${ra.status}`);
 }
@@ -301,24 +301,24 @@ async function f55(): Promise<void> {
 
 async function f56(): Promise<void> {
   section('5.6 — ARTISTAS DESTAQUE');
-  // Cria projeto vinculado ao primeiro artista A
+  // Creates a project linked to the first artist of A
   const artistA0 = SEED_A.artists[0];
   if (!artistA0) {
     console.log('  →  sem artistA0, pulando');
     return;
   }
 
-  // Cria projeto via /projects (se existir)
+  // Creates a project via /projects (if it exists)
   const pj = await call('POST', '/projects', { auth: TOKEN_A, tenant: TA, body: { nome: `DASH_A_PROJECT_${TS}`, artista_id: artistA0, status: 'em_andamento' } });
   console.log('  POST /projects =>', pj.status);
 
-  // Lista artistas e valida campos esperados (não exige endpoint "destaques" dedicado — frontend deriva)
+  // Lists artists and validates the expected fields (does not require a dedicated "featured" endpoint — the frontend derives it)
   const r = await call('GET', '/artists?limit=200', { auth: TOKEN_A, tenant: TA });
   const list = Array.isArray(r.body?.data) ? r.body.data : (r.body?.data?.data ?? r.body?.items ?? []);
   const myArtists = list.filter((a: any) => (a.nome_artistico ?? '').includes(`DASH_A_${TS}_ARTIST`));
   expect('artistas DASH_A_* listados', myArtists.length === OPTS_A.artists, `got=${myArtists.length}`);
 
-  // O artista com spotify_ouvintes=12345 (índice 0) deve preservar; outros podem ter null ou undefined
+  // The artist with spotify_ouvintes=12345 (index 0) must keep it; others may have null or undefined
   const a0 = myArtists.find((a: any) => (a.nome_artistico ?? '').endsWith(`_0_${TS}`));
   expect('artistA0 retorna spotify_ouvintes=12345 (streams reais)', a0?.spotify_ouvintes === 12345, `got=${a0?.spotify_ouvintes}`);
   const a1 = myArtists.find((a: any) => (a.nome_artistico ?? '').endsWith(`_1_${TS}`));
@@ -327,12 +327,12 @@ async function f56(): Promise<void> {
 }
 
 // ============================================================================
-// 5.7 — FINANCEIRO TENANT-SCOPED, MÊS ACTUAL
+// 5.7 — TENANT-SCOPED FINANCIALS, CURRENT MONTH
 // ============================================================================
 
 async function f57(): Promise<void> {
   section('5.7 — FINANCEIRO MÊS ACTUAL');
-  // Para Tenant A, recalcular o que esperamos
+  // For Tenant A, recompute what we expect
   const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0,0,0,0);
   const dbA = await DB.query<{ receitas: string; despesas: string }>(`
     SELECT
@@ -346,7 +346,7 @@ async function f57(): Promise<void> {
   expect('expenses_current_month A bate com banco', Math.abs(DASH_A.expenses_current_month - expectedExpA) < 0.01, `dashboard=${DASH_A.expenses_current_month} db=${expectedExpA}`);
   expect('net_result_current_month A correto', Math.abs(DASH_A.net_result_current_month - (expectedRevA - expectedExpA)) < 0.01);
 
-  // Mesma checagem para B
+  // Same check for B
   const dbB = await DB.query<{ receitas: string; despesas: string }>(`
     SELECT
       COALESCE(SUM(CASE WHEN tipo='receita' AND status NOT IN ('cancelado','cancelled') THEN valor::numeric ELSE 0 END),0)::numeric AS receitas,
@@ -358,10 +358,10 @@ async function f57(): Promise<void> {
   expect('revenue_current_month B bate com banco', Math.abs(DASH_B.revenue_current_month - expectedRevB) < 0.01, `dashboard=${DASH_B.revenue_current_month} db=${expectedRevB}`);
   expect('expenses_current_month B bate com banco', Math.abs(DASH_B.expenses_current_month - expectedExpB) < 0.01);
 
-  // Transação antiga (60 dias) NÃO entra
-  // — para A, criamos 1 receita antiga de 9999. Se entrasse, revenue seria muito maior.
-  // Verifico: revenue_current_month deve ser < 9999 (i.e., não inclui a antiga isolada).
-  // Mais robusto: somar só as desta passada (created in OPTS_A.txRevenueThisMonth * 1000)
+  // An old transaction (60 days) does NOT enter
+  // — for A, we create 1 old revenue of 9999. If it entered, revenue would be much larger.
+  // Check: revenue_current_month must be < 9999 (i.e. it does not include the isolated old one).
+  // More robust: sum only this run's ones (created in OPTS_A.txRevenueThisMonth * 1000)
   const ourMonthRevenue = OPTS_A.txRevenueThisMonth * 1000;
   expect('A revenue exclui transação de 60 dias atrás', DASH_A.revenue_current_month < 9999 + ourMonthRevenue || DASH_A.revenue_current_month === expectedRevA, `db=${expectedRevA}`);
 
@@ -375,14 +375,14 @@ async function f57(): Promise<void> {
 
 async function f58(): Promise<void> {
   section('5.8 — OPERATIONAL ALERTS');
-  // Contratos vencendo: criamos contratos com data_fim '2026-12-31' → não vencem em 30 dias
-  // Logo, o counter `contracts_expiring_soon_count` reflete somente contratos reais com data_fim <30 dias.
+  // Expiring contracts: we create contracts with data_fim '2026-12-31' → they do not expire within 30 days
+  // So the `contracts_expiring_soon_count` counter reflects only real contracts with data_fim <30 days.
   expect('contracts_expiring_soon_count é numérico', typeof DASH_A.contracts_expiring_soon_count === 'number');
   expect('open_tickets é numérico', typeof DASH_A.open_tickets === 'number');
   expect('overdue_invoices_count é numérico', typeof DASH_A.overdue_invoices_count === 'number');
   expect('failed_external_syncs é numérico', typeof DASH_A.failed_external_syncs === 'number');
 
-  // Validar que os contadores são consistentes com queries diretas (não chumbados)
+  // Validate that the counters are consistent with direct queries (not hardcoded)
   const r1 = await DB.query<{ c: number }>(`SELECT COUNT(*)::int AS c FROM support_tickets WHERE tenant_id=$1 AND status NOT IN ('resolved','closed') AND deleted_at IS NULL`, [TA]);
   expect('open_tickets bate com banco', DASH_A.open_tickets === r1.rows[0]?.c, `db=${r1.rows[0]?.c} dash=${DASH_A.open_tickets}`);
   const r2 = await DB.query<{ c: number }>(`SELECT COUNT(*)::int AS c FROM crm_tasks WHERE tenant_id=$1 AND status='pending'`, [TA]);

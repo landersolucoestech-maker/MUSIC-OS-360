@@ -1,11 +1,11 @@
 /**
- * PASSO 12-J.5 — Runner do harness E2E de tráfego RBAC SHADOW.
+ * STEP 12-J.5 — Runner of the RBAC SHADOW traffic E2E harness.
  *
- * Faz requests HTTP REAIS contra a API de staging, autenticando usuários reais via
- * Supabase (password grant). NÃO toca em rbac_decision_logs (a API o popula sozinha
- * ao processar cada request). NÃO mocka JWT/tenant/guards.
+ * Makes REAL HTTP requests against the staging API, authenticating real users via
+ * Supabase (password grant). Does NOT touch rbac_decision_logs (the API populates it by itself
+ * when processing each request). Does NOT mock JWT/tenant/guards.
  *
- * Uso: STAGING_API_URL=... SUPABASE_URL=... ... npx tsx test/rbac-shadow-harness/rbac-shadow-harness.runner.ts
+ * Usage: STAGING_API_URL=... SUPABASE_URL=... ... npx tsx test/rbac-shadow-harness/rbac-shadow-harness.runner.ts
  */
 import { randomUUID } from 'crypto';
 import { loadHarnessConfig, ROLE_LEVEL, type HarnessRole, type RoleCredential } from './rbac-shadow-harness.config';
@@ -71,7 +71,7 @@ async function main() {
   const cfg = loadHarnessConfig();
   console.log(`[harness] runId=${runId} api=${cfg.apiUrl} tenants=${cfg.tenants.length} roles=${cfg.credentials.length} alvo=${cfg.targets.requests} requests`);
 
-  // 1) Autenticação real de cada role
+  // 1) Real authentication of each role
   const sessions: Session[] = [];
   for (const cred of cfg.credentials) {
     const s = await login(cfg, cred);
@@ -90,7 +90,7 @@ async function main() {
       const allow = expectedAllow(session.role, a.minLevel);
       try {
         const { status, json } = await callApi(cfg, session, tenantId, a.method, path, a.body?.());
-        // Correção RBAC: deny ⇒ 403; allow ⇒ qualquer coisa != 403/401 (400/422 = passou guard, body inválido).
+        // RBAC correctness: deny ⇒ 403; allow ⇒ anything != 403/401 (400/422 = passed the guard, invalid body).
         const rbacPass = allow ? status !== 403 && status !== 401 : status === 403;
         records.push({ role: session.role, tenantId, controller: ctrl.name, resource: ctrl.resource, action: a.kind, method: a.method, path, status, expectedAllow: allow, rbacPass });
         if (a.kind === 'create' && status >= 200 && status < 300 && json?.id) {
@@ -102,14 +102,14 @@ async function main() {
     }
   };
 
-  // 2) Passada completa: roles × tenants × controllers × ações
+  // 2) Full pass: roles × tenants × controllers × actions
   for (const session of sessions) {
     for (const tenantId of cfg.tenants) {
       for (const ctrl of MATRIX) await exec(session, tenantId, ctrl);
     }
   }
 
-  // 3) Repetir READS até atingir o alvo de requests
+  // 3) Repeat READS until the request target is reached
   let guard = 0;
   while (records.length < cfg.targets.requests && guard < 50) {
     guard++;
@@ -127,7 +127,7 @@ async function main() {
     }
   }
 
-  // 4) Cleanup best-effort (somente o que o harness criou; respeita RBAC)
+  // 4) Best-effort cleanup (only what the harness created; respects RBAC)
   let cleaned = 0, cleanupBlocked = 0;
   for (const c of created) {
     try {

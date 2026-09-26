@@ -1,19 +1,19 @@
 #!/usr/bin/env ts-node
 /**
- * scripts/verify-realtime-external.ts  (Parte 72)
+ * scripts/verify-realtime-external.ts  (Part 72)
  *
- * I/O real para o verificador físico de `realtime.messages` — a lógica de
- * avaliação (pura, testável) vive em src/database/realtime-external-verifier.ts.
- * Nunca confia na tabela de tracking `musicos360_migrations`: consulta
- * diretamente pg_class, pg_policy e o owner real da tabela.
+ * Real I/O for the physical verifier of `realtime.messages` — the evaluation
+ * logic (pure, testable) lives in src/database/realtime-external-verifier.ts.
+ * It never trusts the `musicos360_migrations` tracking table: it queries
+ * pg_class, pg_policy and the table's real owner directly.
  *
- * Uso:
+ * Usage:
  *   npm run verify:realtime-external
  *
  * Exit code:
- *   0 — APPLIED_AND_VERIFIED ou PENDING_EXTERNAL_PRIVILEGE (bloqueio externo
- *       conhecido, não uma regressão da aplicação)
- *   1 — DRIFT, INVALID_POLICY ou UNSAFE_PUBLIC_ACCESS (falhas reais)
+ *   0 — APPLIED_AND_VERIFIED or PENDING_EXTERNAL_PRIVILEGE (a known external
+ *       block, not an application regression)
+ *   1 — DRIFT, INVALID_POLICY or UNSAFE_PUBLIC_ACCESS (real failures)
  */
 import * as path from 'path';
 
@@ -92,8 +92,8 @@ async function main(): Promise<void> {
     if (state === 'DRIFT' || state === 'INVALID_POLICY' || state === 'UNSAFE_PUBLIC_ACCESS') {
       process.exitCode = 1;
     }
-    // APPLIED_AND_VERIFIED e PENDING_EXTERNAL_PRIVILEGE: exit 0 — bloqueio
-    // externo conhecido não é uma regressão da aplicação.
+    // APPLIED_AND_VERIFIED and PENDING_EXTERNAL_PRIVILEGE: exit 0 — a known external
+    // block is not an application regression.
   } finally {
     await client.end();
   }

@@ -24,9 +24,9 @@ export interface JwtRefreshPayload {
 // ─── Token Utilities (pure, no crypto deps) ───────────────────────────────────
 
 /**
- * Decodifica a parte payload de um JWT sem verificar assinatura.
- * Use APENAS para leitura de claims no cliente (ex: exibir nome do usuário).
- * A verificação real da assinatura ocorre no servidor (NestJS JwtStrategy).
+ * Decodes the payload part of a JWT without verifying the signature.
+ * Use ONLY to read claims on the client (e.g. to display the user's name).
+ * The real signature verification happens on the server (NestJS JwtStrategy).
  */
 export function decodeJwtPayload<T = JwtPayload>(token: string): T | null {
   try {
@@ -41,7 +41,7 @@ export function decodeJwtPayload<T = JwtPayload>(token: string): T | null {
 }
 
 /**
- * Verifica se um JWT (decodificado) está expirado.
+ * Checks whether a (decoded) JWT is expired.
  */
 export function isTokenExpired(payload: { exp?: number }): boolean {
   if (!payload.exp) return false;
@@ -49,8 +49,8 @@ export function isTokenExpired(payload: { exp?: number }): boolean {
 }
 
 /**
- * Retorna quantos segundos faltam para o token expirar.
- * Retorna 0 se já expirou ou sem `exp`.
+ * Returns how many seconds are left until the token expires.
+ * Returns 0 when already expired or without `exp`.
  */
 export function tokenTtlSeconds(payload: { exp?: number }): number {
   if (!payload.exp) return 0;

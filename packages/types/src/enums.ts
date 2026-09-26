@@ -17,8 +17,8 @@ export enum BillingStatus {
 // ─── RBAC — System Roles (stored in org_members.role) ────────────────────────
 
 /**
- * SystemRole — roles hierárquicos de sistema (armazenados em OrgMemberEntity.role).
- * Alinhado com roles.guard.ts ROLE_HIERARCHY.
+ * SystemRole — hierarchical system roles (stored in OrgMemberEntity.role).
+ * Aligned with roles.guard.ts ROLE_HIERARCHY.
  */
 export enum SystemRole {
   SUPER_ADMIN  = "super_admin",
@@ -31,9 +31,9 @@ export enum SystemRole {
 }
 
 /**
- * FunctionalRole — roles funcionais/domínio usados no RBAC service.
- * Não são roles de sistema; representam funções operacionais dentro do tenant.
- * Inclui todos os roles de negócio presentes no frontend (auth.ts AppRole).
+ * FunctionalRole — functional/domain roles used in the RBAC service.
+ * They are not system roles; they represent operational functions within the tenant.
+ * Includes every business role present in the frontend (auth.ts AppRole).
  */
 export enum FunctionalRole {
   FINANCIAL          = "financial",
@@ -51,16 +51,16 @@ export enum FunctionalRole {
   TV                 = "tv",
 }
 
-/** Union de todos os roles reconhecidos pelo sistema */
+/** Union of every role recognized by the system */
 export type AnyRole = SystemRole | FunctionalRole;
 
 // ─── Artistas ─────────────────────────────────────────────────────────────────
 
 /**
- * ArtistStatus — superset de todos os status possíveis para artistas.
- * Cobre status de cadastro geral (active/inactive) e status de relacionamento
- * contratual (signed/in_negotiation/onboarding).
- * Frontend deriva: type ArtistaStatus = `${ArtistStatus}`
+ * ArtistStatus — superset of every possible artist status.
+ * Covers the general registration status (active/inactive) and the contractual
+ * relationship status (signed/in_negotiation/onboarding).
+ * The frontend derives: type ArtistaStatus = `${ArtistStatus}`
  */
 export enum ArtistStatus {
   SIGNED         = "signed",
@@ -81,11 +81,11 @@ export enum ArtistStatusCadastro {
 }
 
 /**
- * ArtistRelationshipType — classificação do vínculo contratual do artista
- * (nunca persistida; computada em runtime a partir de `contracts.exclusivo`
- * + status de contrato ativo — ver `ArtistsService.vinculoStats`). Fonte
- * única: antes duplicada como union type PT solto em 6 lugares (backend
- * service x3, DTO, e frontend types/labels x2).
+ * ArtistRelationshipType — classification of the artist's contractual link
+ * (never persisted; computed at runtime from `contracts.exclusivo`
+ * + the active contract status — see `ArtistsService.vinculoStats`). Single
+ * source: previously duplicated as a loose PT union type in 6 places (backend
+ * service x3, DTO, and frontend types/labels x2).
  */
 export enum ArtistRelationshipType {
   EXCLUSIVE   = "exclusive",
@@ -114,7 +114,7 @@ export enum ContractStatus {
   CANCELLED           = "cancelled",
 }
 
-// ─── Catálogo — Obras ─────────────────────────────────────────────────────────
+// ─── Catalog — Works ───────────────────────────────────────────────────────────
 
 /**
  * WorkStatus — lifecycle of a musical work.
@@ -132,7 +132,7 @@ export enum WorkStatus {
   ARCHIVED     = "archived",
 }
 
-// ─── Catálogo — Fonogramas ────────────────────────────────────────────────────
+// ─── Catalog — Phonograms ─────────────────────────────────────────────────────
 
 /**
  * PhonogramStatus — lifecycle of a phonogram.
@@ -149,11 +149,11 @@ export enum PhonogramStatus {
   ARCHIVED     = "archived",
 }
 
-// ─── Releases (Lançamentos) ───────────────────────────────────────────────────
+// ─── Releases ─────────────────────────────────────────────────────────────────
 
 /**
- * ReleaseStatus — ciclo de vida de um lançamento musical.
- * Conforme spec: draft → metadata_pending → assets_pending → review → approved →
+ * ReleaseStatus — lifecycle of a music release.
+ * Per spec: draft → metadata_pending → assets_pending → review → approved →
  *                scheduled → distributed → released → archived / cancelled
  */
 export enum ReleaseStatus {
@@ -169,7 +169,7 @@ export enum ReleaseStatus {
   CANCELLED        = "cancelled",
 }
 
-// ─── Shares (Participações) ───────────────────────────────────────────────────
+// ─── Shares ───────────────────────────────────────────────────────────────────
 
 export enum ShareStatus {
   ACTIVE   = "active",
@@ -318,7 +318,7 @@ export enum EventStatus {
   POSTPONED  = "postponed",
 }
 
-// ─── RH / Funcionários ────────────────────────────────────────────────────────
+// ─── HR / Employees ───────────────────────────────────────────────────────────
 
 export enum EmployeeStatus {
   ACTIVE      = "active",
@@ -352,7 +352,7 @@ export enum UploadStatus {
   DELETED    = "deleted",
 }
 
-// ─── Integrações ─────────────────────────────────────────────────────────────
+// ─── Integrations ─────────────────────────────────────────────────────────────
 
 export enum IntegrationStatus {
   DISCONNECTED = "disconnected",
@@ -363,21 +363,21 @@ export enum IntegrationStatus {
 }
 
 /**
- * Classificação arquitetural de uma integração. Separa conceitos que NUNCA
- * podem substituir uns aos outros (wave de refatoração 2026-08-24):
+ * Architectural classification of an integration. Separates concepts that can
+ * NEVER replace one another (refactoring wave 2026-08-24):
  *
- *   A. PUBLIC ARTIST DATA — métricas públicas de artista (Spotify, YouTube,
- *      Deezer…). NÃO vive neste catálogo: chega via Soundcharts e é
- *      normalizada em artists/platform-profiles. Não é conectável pelo cliente.
- *   B. INTERNAL_PLATFORM  — o MUSIC OS 360 usa com credenciais DA PLATAFORMA.
- *      O cliente não conecta, não configura e não deve vê-las no catálogo
- *      comercial (Soundcharts, ACRCloud, Resend).
- *   C. COMMERCIAL         — o CLIENTE conecta a própria conta. Governadas por
- *      publicação + audiência + entitlement do plano + capacidade técnica.
- *   D. COMMERCIAL_FUTURE  — comerciais por natureza, mas ainda sem adapter
- *      real. Existem para governança/roadmap; nunca utilizáveis.
- *   E. PLATFORM_BILLING   — infraestrutura de cobrança da própria plataforma
- *      (Stripe). Não é integração de cliente nem entitlement.
+ *   A. PUBLIC ARTIST DATA — public artist metrics (Spotify, YouTube,
+ *      Deezer…). It does NOT live in this catalog: it arrives via Soundcharts and is
+ *      normalized in artists/platform-profiles. Not connectable by the customer.
+ *   B. INTERNAL_PLATFORM  — MUSIC OS 360 uses it with THE PLATFORM's credentials.
+ *      The customer does not connect, does not configure and must not see them in the
+ *      commercial catalog (Soundcharts, ACRCloud, Resend).
+ *   C. COMMERCIAL         — the CUSTOMER connects their own account. Governed by
+ *      publication + audience + plan entitlement + technical capability.
+ *   D. COMMERCIAL_FUTURE  — commercial by nature, but still without a real
+ *      adapter. They exist for governance/roadmap; never usable.
+ *   E. PLATFORM_BILLING   — the platform's own billing infrastructure
+ *      (Stripe). Neither a customer integration nor an entitlement.
  */
 export enum IntegrationClassification {
   INTERNAL_PLATFORM = "internal_platform",
@@ -386,9 +386,9 @@ export enum IntegrationClassification {
 }
 
 /**
- * Só COMMERCIAL participa de catálogo comercial, entitlement de plano e da tela
- * de governança client-facing. "Futuro" NÃO é uma classificação: um provedor
- * comercial ainda não operacional é COMMERCIAL com technicalState=PLANNED e
+ * Only COMMERCIAL takes part in the commercial catalog, plan entitlement and the
+ * client-facing governance screen. "Future" is NOT a classification: a
+ * commercial provider not yet operational is COMMERCIAL with technicalState=PLANNED and
  * publication=COMING_SOON.
  */
 export const CUSTOMER_FACING_CLASSIFICATIONS: readonly IntegrationClassification[] = [
@@ -396,9 +396,9 @@ export const CUSTOMER_FACING_CLASSIFICATIONS: readonly IntegrationClassification
 ];
 
 /**
- * Estado TÉCNICO/operacional do adapter — governado pelo admin, distinto da
- * capacidade em código (existe adapter?) e da publicação (rollout comercial).
- * Nunca reduzir a um booleano `enabled`.
+ * TECHNICAL/operational state of the adapter — governed by the admin, distinct from the
+ * in-code capability (does an adapter exist?) and from publication (commercial rollout).
+ * Never reduce it to an `enabled` boolean.
  */
 export enum IntegrationTechnicalState {
   PLANNED           = "planned",
@@ -412,14 +412,14 @@ export enum IntegrationTechnicalState {
   RETIRED           = "retired",
 }
 
-/** Estados técnicos em que o provedor pode de facto operar. */
+/** Technical states in which the provider can actually operate. */
 export const OPERATIONAL_TECHNICAL_STATES: readonly IntegrationTechnicalState[] = [
   IntegrationTechnicalState.READY,
   IntegrationTechnicalState.HOMOLOGATING,
   IntegrationTechnicalState.DEGRADED,
 ];
 
-/** Rollout comercial — separado de técnico, entitlement e conexão. */
+/** Commercial rollout — separate from technical state, entitlement and connection. */
 export enum IntegrationPublicationState {
   HIDDEN                  = "hidden",
   COMING_SOON             = "coming_soon",
@@ -429,8 +429,8 @@ export enum IntegrationPublicationState {
 }
 
 /**
- * Reason codes ESTÁVEIS. O frontend ramifica por estes valores — nunca por
- * texto humano.
+ * STABLE reason codes. The frontend branches on these values — never on
+ * human text.
  */
 export enum IntegrationReasonCode {
   HIDDEN                  = "HIDDEN",
@@ -448,38 +448,38 @@ export enum IntegrationReasonCode {
 }
 
 /**
- * Chave dentro de `billing_plans.features` que guarda a lista DINÂMICA de slugs
- * comerciais incluídos no plano. Estrutura genérica de propósito: adicionar uma
- * integração comercial nova não exige schema nem código por provedor.
+ * Key inside `billing_plans.features` that holds the DYNAMIC list of commercial
+ * slugs included in the plan. A generic structure on purpose: adding a new
+ * commercial integration requires neither schema nor per-provider code.
  *
  *   billing_plans.features = { ..., "integrations": ["docusign","whatsapp"] }
  */
 export const PLAN_INTEGRATIONS_FEATURE_KEY = "integrations";
 
 /**
- * Estado de governança de um PROVEDOR EXTERNO (serviço de terceiros que um
- * tenant conecta com credenciais próprias). Distinto de IntegrationStatus, que
- * é o valor persistido na coluna `integrations.status`: este aqui é derivado
- * pelo backend a partir do estado real (pré-requisitos de plataforma +
- * credenciais do tenant + saúde da última chamada) e é o contrato que o
- * frontend consome.
+ * Governance state of an EXTERNAL PROVIDER (a third-party service a
+ * tenant connects with its own credentials). Distinct from IntegrationStatus, which
+ * is the value persisted in the `integrations.status` column: this one is derived
+ * by the backend from the real state (platform prerequisites +
+ * tenant credentials + health of the last call) and is the contract the
+ * frontend consumes.
  *
- * NÃO usar para módulos internos/infraestrutura (storage, filas, observabilidade,
- * IA interna, CRM/financeiro/suporte internos) — governança externa cobre só
- * quem é, de facto, um provedor de terceiros.
+ * Do NOT use for internal/infrastructure modules (storage, queues, observability,
+ * internal AI, internal CRM/finance/support) — external governance only covers
+ * what really is a third-party provider.
  *
- * O frontend deve ramificar por ESTES valores, nunca por texto humano.
+ * The frontend must branch on THESE values, never on human text.
  */
 export enum ExternalProviderStatus {
-  /** Pré-requisito de plataforma ausente (ex.: credenciais de app no ambiente) — o tenant não consegue sequer tentar conectar. */
+  /** Missing platform prerequisite (e.g. app credentials in the environment) — the tenant cannot even try to connect. */
   DEPENDENCY_NOT_MET      = "dependency_not_met",
-  /** Pré-requisitos satisfeitos, mas este tenant ainda não conectou. */
+  /** Prerequisites satisfied, but this tenant has not connected yet. */
   AVAILABLE_NOT_CONNECTED = "available_not_connected",
-  /** Conectado e sem falha registada. */
+  /** Connected and without a recorded failure. */
   CONNECTED               = "connected",
-  /** Token expirado/revogado — precisa de nova autorização. */
+  /** Expired/revoked token — needs a new authorization. */
   REQUIRES_REAUTH         = "requires_reauth",
-  /** Conectado, mas a última interação com o provedor falhou. */
+  /** Connected, but the last interaction with the provider failed. */
   PROVIDER_ERROR          = "provider_error",
 }
 

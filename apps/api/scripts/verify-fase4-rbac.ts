@@ -2,18 +2,18 @@
 /**
  * scripts/verify-fase4-rbac.ts
  *
- * FASE 4 — Validação Auth e RBAC via HTTP real.
+ * PHASE 4 — Auth and RBAC validation via real HTTP.
  *
- *   4.2 Auth básico (sem token, token inválido, sem X-Tenant-ID)
- *   4.3 Tenant membership (sem membership, mismatch tenant)
- *   4.4 Matriz role × endpoint × método
+ *   4.2 Basic auth (no token, invalid token, no X-Tenant-ID)
+ *   4.3 Tenant membership (no membership, tenant mismatch)
+ *   4.4 role × endpoint × method matrix
  *   4.5 Admin / super_admin
- *   4.7 Audit logs RBAC-aware
+ *   4.7 RBAC-aware audit logs
  *
- * Pré-requisitos:
- *   - backend rodando em http://localhost:3001
- *   - ENCRYPTION_KEY em apps/api/.env.development (HS256 dev tokens)
- *   - org_members criados via SQL (ver migrate/seed na conversa)
+ * Prerequisites:
+ *   - backend running at http://localhost:3001
+ *   - ENCRYPTION_KEY in apps/api/.env.development (HS256 dev tokens)
+ *   - org_members created via SQL (see migrate/seed in the conversation)
  */
 
 import 'reflect-metadata';
@@ -85,7 +85,7 @@ function check(label: string, status: number, wantSet: number[]): boolean {
 function section(t: string) { console.log(`\n── ${t} ──`); }
 
 // ============================================================================
-// 4.2 — AUTH BÁSICO
+// 4.2 — BASIC AUTH
 // ============================================================================
 
 async function f42(): Promise<void> {
@@ -104,14 +104,14 @@ async function f42(): Promise<void> {
     check(`SEM token ${m} ${p}`, r.status, [401, 403]);
   }
 
-  // token inválido
+  // invalid token
   const badToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.payload';
   for (const [m, p] of noAuthEndpoints) {
     const r = await call(m, p, { auth: badToken, tenant: TENANT_A });
     check(`TOKEN inválido ${m} ${p}`, r.status, [401]);
   }
 
-  // token válido sem X-Tenant-ID
+  // valid token without X-Tenant-ID
   const noTenantEndpoints = [
     ['GET', '/artists'],
     ['GET', '/releases'],
@@ -131,7 +131,7 @@ async function f42(): Promise<void> {
 async function f43(): Promise<void> {
   section('4.3 — TENANT MEMBERSHIP');
 
-  // ghost user (sem org_member) com X-Tenant-ID A
+  // ghost user (no org_member) with X-Tenant-ID A
   const ghostEndpoints = [
     ['GET','/auth/context'], ['GET','/artists'], ['POST','/artists', { nome_artistico: 'X' }],
     ['GET','/analytics/dashboard'],
@@ -141,7 +141,7 @@ async function f43(): Promise<void> {
     check(`GHOST (sem membership) ${m} ${p}`, r.status, [401, 403]);
   }
 
-  // Usuário membro só de Tenant B tentando Tenant A
+  // A user who is a member only of Tenant B trying Tenant A
   for (const [m, p] of [['GET','/artists'],['GET','/auth/context']] as const) {
     const r = await call(m, p, { auth: tokens.tenantB, tenant: TENANT_A });
     check(`Membro B → header A ${m} ${p}`, r.status, [401, 403]);
@@ -165,8 +165,8 @@ interface Case {
 const SEED_IDS: Record<string, string> = {};
 
 async function seedFor44(): Promise<void> {
-  // Cria 1 artista, 1 release, 1 contrato, 1 evento, 1 transação, 1 lead, 1 cliente
-  // como owner para ter IDs reutilizáveis no PATCH/DELETE/Detail.
+  // Creates 1 artist, 1 release, 1 contract, 1 event, 1 transaction, 1 lead, 1 client
+  // as owner to have reusable IDs for PATCH/DELETE/Detail.
   const opts = { auth: tokens.owner, tenant: TENANT_A };
   const cli = await call('POST', '/clients', { ...opts, body: { name: `F4_CLIENT_${Date.now()}`, type: 'company' } });
   SEED_IDS['client'] = cli.body?.data?.id ?? cli.body?.id;
@@ -189,22 +189,22 @@ async function f44(): Promise<void> {
   await seedFor44();
   console.log('  →  seed ids:', SEED_IDS);
 
-  // Tabela de expectativas por role (níveis):
+  // Expectations table per role (levels):
   //   super_admin=100, owner=90, admin=80, manager=70, editor=60, financial=60, viewer=10
   //
-  // Endpoints classes:
-  //   GET (viewer 10):   todos passam
-  //   POST/PATCH (editor 60): viewer falha; editor+, manager+, admin+, owner+, super+ passam; financial=60 passa
-  //   DELETE (manager 70): viewer e editor falham; manager+ passa; financial(60) falha
-  //   /transactions POST/PATCH (financial 60): viewer falha; demais com nivel>=60 passam (editor=60 também passa)
-  //   /transactions DELETE (manager 70): viewer/editor/financial(60) falham; demais passam
-  //   /audit-logs/:id (admin 80): viewer/editor/financial/manager falham; admin+ passa
+  // Endpoint classes:
+  //   GET (viewer 10):   all pass
+  //   POST/PATCH (editor 60): viewer fails; editor+, manager+, admin+, owner+, super+ pass; financial=60 passes
+  //   DELETE (manager 70): viewer and editor fail; manager+ passes; financial(60) fails
+  //   /transactions POST/PATCH (financial 60): viewer fails; the others with level>=60 pass (editor=60 passes too)
+  //   /transactions DELETE (manager 70): viewer/editor/financial(60) fail; the others pass
+  //   /audit-logs/:id (admin 80): viewer/editor/financial/manager fail; admin+ passes
 
   const ALLOW = [200, 201, 204];
   const DENY  = [403];
   const NOT_F = [404]; // for missing ids
 
-  // Cada item testa o status para cada role chave. Roles ausentes não são testadas.
+  // Each item tests the status for each key role. Absent roles are not tested.
   const cases: Array<{ method: string; path: () => string; body?: () => any; perRole: Partial<Record<UserKey, number[]>> }> = [
     // GET LIST — viewer+
     ...['artists','releases','contracts','events','transactions','leads','clients'].map((res) => ({
@@ -232,7 +232,7 @@ async function f44(): Promise<void> {
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
     { method: 'POST', path: () => `/clients`, body: () => ({ name: `RB_CLI_${Math.random().toString(36).slice(2,6)}`, type: 'company' }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
-    // POST /transactions — financial+ (editor nível 60 também passa)
+    // POST /transactions — financial+ (editor level 60 passes too)
     { method: 'POST', path: () => `/transactions`, body: () => ({ tipoTransacao: 'transferencia', descricao: `RB_TX_${Math.random().toString(36).slice(2,6)}`, valor: '50', dataTransacao: '2026-05-23', formaPagamento: 'pix' }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
 
@@ -241,24 +241,24 @@ async function f44(): Promise<void> {
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, viewer: DENY } as any },
     { method: 'PATCH', path: () => `/releases/${SEED_IDS['release']}`, body: () => ({ title: `RB_PATCH_${Math.random().toString(36).slice(2,6)}` }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, viewer: DENY } as any },
-    // UpdateContractDto extende PartialType(Create) que tem default status='draft';
-    // enviamos status atual ('rascunho') explícito para evitar workflow disparar.
+    // UpdateContractDto extends PartialType(Create), which has the default status='draft';
+    // we send the current status ('rascunho') explicitly to avoid triggering the workflow.
     { method: 'PATCH', path: () => `/contracts/${SEED_IDS['contract']}`, body: () => ({ observacoes: `RB_PATCH_${Math.random().toString(36).slice(2,6)}`, status: 'rascunho' }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, viewer: DENY } as any },
-    // PATCH /transactions exige role 'financial' (nível 60). Editor também é nível 60 → passa o guard.
-    // Isso é correto pelo design RBAC hierárquico (compara níveis, não nomes).
+    // PATCH /transactions requires role 'financial' (level 60). Editor is also level 60 → passes the guard.
+    // This is correct by the hierarchical RBAC design (compares levels, not names).
     { method: 'PATCH', path: () => `/transactions/${SEED_IDS['transaction']}`, body: () => ({ descricao: `RB_PATCH_${Math.random().toString(36).slice(2,6)}` }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, financial: ALLOW, editor: ALLOW, viewer: DENY } as any },
 
-    // DELETE — manager+ (transactions DELETE = manager+; financial e editor NÃO podem)
-    // Estes serão executados ao final (são destrutivos); usamos somente os roles que falham; depois owner faz cleanup.
-    // Aqui só asseguramos que viewer/editor/financial recebem 403.
+    // DELETE — manager+ (transactions DELETE = manager+; financial and editor CANNOT)
+    // These run at the end (they are destructive); we use only the roles that fail; then owner cleans up.
+    // Here we only ensure viewer/editor/financial receive 403.
     { method: 'DELETE', path: () => `/artists/${SEED_IDS['artist']}`, perRole: { viewer: DENY, editor: DENY } as any },
     { method: 'DELETE', path: () => `/releases/${SEED_IDS['release']}`, perRole: { viewer: DENY, editor: DENY } as any },
     { method: 'DELETE', path: () => `/transactions/${SEED_IDS['transaction']}`, perRole: { viewer: DENY, editor: DENY, financial: DENY } as any },
 
-    // /audit-logs/:id — admin+ (detalhe). Endpoint exige UUID válido (não usamos o real para evitar leak),
-    // mas com UUID fake ainda passa o guard de role, retornando 404 quando admin+. Para viewer/editor/manager/financial deve dar 403.
+    // /audit-logs/:id — admin+ (detail). The endpoint requires a valid UUID (we do not use the real one to avoid a leak),
+    // but with a fake UUID it still passes the role guard, returning 404 for admin+. For viewer/editor/manager/financial it must be 403.
     { method: 'GET', path: () => `/audit-logs/00000000-0000-0000-0000-000000000000`,
       perRole: { owner: NOT_F.concat(ALLOW), admin: NOT_F.concat(ALLOW), super: NOT_F.concat(ALLOW), manager: DENY, editor: DENY, financial: DENY, viewer: DENY } as any },
 
@@ -309,7 +309,7 @@ async function f45(): Promise<void> {
 async function f47(): Promise<void> {
   section('4.7 — AUDIT / ACTIVITY');
 
-  // Criar ação como editor (permitida) e como viewer (proibida); então confirmar que apenas a permitida aparece em audit.
+  // Create an action as editor (allowed) and as viewer (forbidden); then confirm only the allowed one appears in audit.
   const tag = `F47_${Date.now()}`;
   const allowed = await call('POST', '/artists', { auth: tokens.editor, tenant: TENANT_A, body: { nome_artistico: `${tag}_OK` } });
   check('editor cria artista (permitido)', allowed.status, [200, 201]);
@@ -320,21 +320,21 @@ async function f47(): Promise<void> {
   // Esperar a fila de audit (interceptor)
   await new Promise((r) => setTimeout(r, 1500));
 
-  // Buscar audit-logs como owner
+  // Fetch audit-logs as owner
   const auditRes = await call('GET', '/audit-logs?limit=100', { auth: tokens.owner, tenant: TENANT_A });
   check('owner GET /audit-logs', auditRes.status, [200]);
   const auditList: any[] = Array.isArray(auditRes.body?.data) ? auditRes.body.data
                        : Array.isArray(auditRes.body) ? auditRes.body
                        : (auditRes.body?.items ?? []);
-  // procurar evento da ação permitida
+  // look for the allowed action's event
   const seenAllow = auditList.some((e: any) => {
     const s = JSON.stringify(e);
     return s.includes(`${tag}_OK`) || s.includes('artist.created');
   });
   check('audit registra ação permitida', seenAllow ? 200 : 0, [200]);
 
-  // a ação negada não deve ter criado linha no banco (artist com tag _FAIL)
-  // confirmação indireta via /artists list
+  // the denied action must not have created a row in the database (artist tagged _FAIL)
+  // indirect confirmation via the /artists list
   const artists = await call('GET', '/artists?limit=200', { auth: tokens.owner, tenant: TENANT_A });
   const denyLeaked = (artists.body?.data ?? []).some((a: any) => (a.nome_artistico ?? '').includes(`${tag}_FAIL`));
   check('ação negada NÃO criou linha em artists', denyLeaked ? 0 : 200, [200]);

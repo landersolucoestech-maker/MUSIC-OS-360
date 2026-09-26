@@ -2,22 +2,22 @@
 /**
  * scripts/verify-tenant-isolation.ts
  *
- * Fase 18 — Prova automatizada de tenant isolation no banco real.
+ * Phase 18 — Automated proof of tenant isolation on the real database.
  *
- * Fluxo:
- *   1. Cria Tenant A (UUID temporário)
- *   2. Cria Tenant B (UUID temporário)
- *   3. Insere artista em Tenant A com app.current_tenant_id = Tenant A
- *   4. Insere artista em Tenant B com app.current_tenant_id = Tenant B
- *   5. Tenta ler artistas de A com app.current_tenant_id = Tenant B
- *      → deve retornar 0 linhas (RLS bloqueia)
- *   6. Tenta ler artistas de B com app.current_tenant_id = Tenant A
- *      → deve retornar 0 linhas (RLS bloqueia)
- *   7. Tenta UPDATE cross-tenant
- *      → deve atualizar 0 linhas (RLS bloqueia)
- *   8. Cleanup de dados temporários
+ * Flow:
+ *   1. Creates Tenant A (temporary UUID)
+ *   2. Creates Tenant B (temporary UUID)
+ *   3. Inserts an artist in Tenant A with app.current_tenant_id = Tenant A
+ *   4. Inserts an artist in Tenant B with app.current_tenant_id = Tenant B
+ *   5. Tries to read A's artists with app.current_tenant_id = Tenant B
+ *      → must return 0 rows (RLS blocks)
+ *   6. Tries to read B's artists with app.current_tenant_id = Tenant A
+ *      → must return 0 rows (RLS blocks)
+ *   7. Tries a cross-tenant UPDATE
+ *      → must update 0 rows (RLS blocks)
+ *   8. Cleanup of temporary data
  *
- * Uso:
+ * Usage:
  *   npm run verify:tenant-isolation
  */
 
@@ -46,7 +46,7 @@ const databaseUrl = process.env['DATABASE_URL'] || apiEnvDatabaseUrl;
 let databaseHost = '';
 try {
   databaseHost = new URL(databaseUrl ?? '').hostname;
-} catch { /* sem URL válida */ }
+} catch { /* no valid URL */ }
 const dbSslDisabled = (process.env['DB_SSL'] ?? apiEnvDbSsl) === 'false'
   || ['localhost', '127.0.0.1', '::1'].includes(databaseHost);
 if (dbSslDisabled) {
@@ -103,7 +103,7 @@ async function main(): Promise<void> {
   info(`Tenant B: ${tenantB}`);
 
   try {
-    // ── Setup: criar orgs e tenants ───────────────────────────────────────────
+    // ── Setup: create orgs and tenants ────────────────────────────────────────
     await client.query('BEGIN');
 
     await client.query(
@@ -150,7 +150,7 @@ async function main(): Promise<void> {
     ok('TEST 2: INSERT Artista B como Tenant B');
     passed++;
 
-    // ── Teste 3: SELECT de A como Tenant A → deve ver 1 ──────────────────────
+    // ── Test 3: SELECT of A as Tenant A → must see 1 ────────────────────────
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     const resA = await client.query(
@@ -166,7 +166,7 @@ async function main(): Promise<void> {
       failed++;
     }
 
-    // ── Teste 4: SELECT de B como Tenant A → deve ver 0 (RLS bloqueia) ───────
+    // ── Test 4: SELECT of B as Tenant A → must see 0 (RLS blocks) ───────────
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     const crossRead = await client.query(
@@ -182,7 +182,7 @@ async function main(): Promise<void> {
       failed++;
     }
 
-    // ── Teste 5: UPDATE de B como Tenant A → deve atualizar 0 ────────────────
+    // ── Test 5: UPDATE of B as Tenant A → must update 0 ─────────────────────
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     const crossUpdate = await client.query(
@@ -198,7 +198,7 @@ async function main(): Promise<void> {
       failed++;
     }
 
-    // ── Teste 6: DELETE de B como Tenant A → deve deletar 0 ──────────────────
+    // ── Test 6: DELETE of B as Tenant A → must delete 0 ─────────────────────
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     const crossDelete = await client.query(
@@ -214,12 +214,12 @@ async function main(): Promise<void> {
       failed++;
     }
 
-    // ── Teste 7: Sem SET tenant → deve bloquear tudo ─────────────────────────
+    // ── Test 7: No SET tenant → must block everything ────────────────────────
     try {
       await client.query('BEGIN');
-      // Simula um usuário autenticado sem app.current_tenant_id. A conexão
-      // DATABASE_URL pode ser privilegiada; sem SET ROLE, PostgreSQL pode
-      // bypassar RLS por design e invalidar o teste.
+      // Simulates an authenticated user without app.current_tenant_id. The
+      // DATABASE_URL connection may be privileged; without SET ROLE, PostgreSQL may
+      // bypass RLS by design and invalidate the test.
       await client.query(`SET LOCAL ROLE TO authenticated`);
       const noCtx = await client.query(
         `SELECT id FROM artists WHERE tenant_id = $1 LIMIT 1`, [tenantA],
@@ -242,7 +242,7 @@ async function main(): Promise<void> {
     // ── Cleanup ────────────────────────────────────────────────────────────────
     info('Limpando dados de teste…');
     try {
-      // Deletar sem RLS (privileged context) via transação separada
+      // Delete without RLS (privileged context) via a separate transaction
       await client.query(`DELETE FROM artists WHERE id IN ($1, $2)`,   [artistA, artistB]);
       await client.query(`DELETE FROM tenants WHERE id IN ($1, $2)`,   [tenantA, tenantB]);
       await client.query(`DELETE FROM organizations WHERE id IN ($1, $2)`, [orgA, orgB]);

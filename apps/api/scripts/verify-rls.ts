@@ -2,20 +2,20 @@
 /**
  * scripts/verify-rls.ts
  *
- * Fase 16 — Verificação detalhada de RLS e políticas.
+ * Phase 16 — Detailed verification of RLS and policies.
  *
- * Verifica por tabela:
- *   - RLS habilitado
- *   - Política SELECT existe
- *   - Política INSERT existe
- *   - Política UPDATE existe
- *   - Política DELETE existe
- *   - Políticas referenciam tenant_id corretamente
+ * Checks per table:
+ *   - RLS enabled
+ *   - SELECT policy exists
+ *   - INSERT policy exists
+ *   - UPDATE policy exists
+ *   - DELETE policy exists
+ *   - Policies reference tenant_id correctly
  *   - RBAC decision log parent/partitions use FORCE RLS and explicit policies
  *
- * Uso:
+ * Usage:
  *   npm run verify:rls
- *   npm run verify:rls -- --fix    (aplica RLS em tabelas que faltam)
+ *   npm run verify:rls -- --fix    (applies RLS on the tables missing it)
  */
 
 import 'reflect-metadata';
@@ -42,7 +42,7 @@ const databaseUrl = process.env['DATABASE_URL'] || apiEnvDatabaseUrl;
 let databaseHost = '';
 try {
   databaseHost = new URL(databaseUrl ?? '').hostname;
-} catch { /* sem URL válida */ }
+} catch { /* no valid URL */ }
 const dbSslDisabled = (process.env['DB_SSL'] ?? apiEnvDbSsl) === 'false'
   || ['localhost', '127.0.0.1', '::1'].includes(databaseHost);
 if (dbSslDisabled) {

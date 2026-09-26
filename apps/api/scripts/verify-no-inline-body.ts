@@ -1,15 +1,15 @@
 /**
- * Guarda permanente (Fase 4): impede a reintrodução do anti-padrão
- * "@Body()/@Query() tipado como interface/type/inline/any/Record<string,unknown>"
- * — esses tipos são apagados em tempo de compilação e o ValidationPipe global
- * (whitelist+forbidNonWhitelisted+transform) não valida nada em runtime para eles.
+ * Permanent guard (Phase 4): prevents the reintroduction of the anti-pattern
+ * "@Body()/@Query() typed as interface/type/inline/any/Record<string,unknown>"
+ * — those types are erased at compile time and the global ValidationPipe
+ * (whitelist+forbidNonWhitelisted+transform) validates nothing at runtime for them.
  *
- * Usa a TypeScript Compiler API (typescript já é dependência direta do
- * projeto — nenhuma dependência nova foi adicionada).
+ * Uses the TypeScript Compiler API (typescript is already a direct dependency of the
+ * project — no new dependency was added).
  *
- * Exceções legítimas (payload de terceiro/webhook sem shape fixo nosso, ou
- * validação via pipe customizado) são permitidas com o comentário
- * `// dto-guard-allow: <motivo>` na linha imediatamente anterior ao parâmetro.
+ * Legitimate exceptions (a third-party/webhook payload without a fixed shape of ours, or
+ * validation via a custom pipe) are allowed with the comment
+ * `// dto-guard-allow: <reason>` on the line immediately before the parameter.
  */
 import * as ts from 'typescript';
 import { readdirSync, statSync } from 'fs';

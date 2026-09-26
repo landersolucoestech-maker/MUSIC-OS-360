@@ -2,12 +2,12 @@
 /**
  * scripts/dump-migrations-sql.ts
  *
- * Gera um arquivo SQL consolidado com todas as migrations TypeORM.
- * Útil para executar no Supabase SQL Editor quando a conexão TCP não está disponível.
+ * Generates a consolidated SQL file with all TypeORM migrations.
+ * Useful to run in the Supabase SQL Editor when the TCP connection is not available.
  *
- * Uso:
+ * Usage:
  *   ts-node --transpile-only scripts/dump-migrations-sql.ts > migrations-complete.sql
- *   # Ou:
+ *   # Or:
  *   npm run dump:sql
  */
 

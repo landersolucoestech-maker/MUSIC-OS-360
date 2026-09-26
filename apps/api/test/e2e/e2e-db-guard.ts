@@ -1,12 +1,12 @@
 /**
- * test/e2e/e2e-db-guard.ts — guard fail-closed do bootstrap E2E (setupFiles).
+ * test/e2e/e2e-db-guard.ts — fail-closed guard of the E2E bootstrap (setupFiles).
  *
- * Executa ANTES de qualquer spec: se as variáveis de banco do processo
- * apontarem para um alvo não autorizado para o NODE_ENV (em jest, `test` →
- * nenhum projeto Supabase remoto; Postgres local permitido), o processo aborta
- * antes de qualquer DataSource ser criado. Specs E2E contra um branch remoto
- * autorizado exigem decisão explícita (NODE_ENV e env coerentes com a matriz
- * de docs/SUPABASE_ENVIRONMENTS.md).
+ * Runs BEFORE any spec: if the process's database variables
+ * point to a target not authorized for NODE_ENV (in jest, `test` →
+ * no remote Supabase project; local Postgres allowed), the process aborts
+ * before any DataSource is created. E2E specs against an authorized remote
+ * branch require an explicit decision (NODE_ENV and env coherent with the matrix
+ * in docs/SUPABASE_ENVIRONMENTS.md).
  */
 import { assertDatabaseCommandEnv } from '../../src/core/config/env.schema';
 

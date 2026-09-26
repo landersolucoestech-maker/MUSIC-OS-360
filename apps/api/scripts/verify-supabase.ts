@@ -2,20 +2,20 @@
 /**
  * scripts/verify-supabase.ts
  *
- * Fase 16 — Verificação completa de provisionamento Supabase.
+ * Phase 16 — Full verification of the Supabase provisioning.
  *
- * Verifica:
- *   1. Variáveis de ambiente obrigatórias
- *   2. Conectividade com o banco PostgreSQL (Supabase)
- *   3. Migrations executadas (schema sincronizado)
- *   4. Existência física de todas as tabelas operacionais
- *   5. Presença de tenant_id em tabelas multi-tenant
- *   6. RLS enabled em todas as tabelas multi-tenant
- *   7. Políticas RLS existentes
+ * Checks:
+ *   1. Mandatory environment variables
+ *   2. Connectivity to the PostgreSQL database (Supabase)
+ *   3. Executed migrations (schema in sync)
+ *   4. Physical existence of every operational table
+ *   5. Presence of tenant_id in multi-tenant tables
+ *   6. RLS enabled on every multi-tenant table
+ *   7. Existing RLS policies
  *
- * Uso:
+ * Usage:
  *   npm run verify:supabase
- *   npm run verify:supabase -- --fix    (aplica migrations pendentes)
+ *   npm run verify:supabase -- --fix    (applies pending migrations)
  */
 
 import 'reflect-metadata';
@@ -43,7 +43,7 @@ function fail(msg: string) { console.log(`  ${FAIL}  ${msg}`); }
 function warn(msg: string) { console.log(`  ${WARN}  ${msg}`); }
 function info(msg: string) { console.log(`  ${INFO}  ${msg}`); }
 
-// ── Variáveis requeridas ───────────────────────────────────────────────────────
+// ── Required variables ────────────────────────────────────────────────────────
 const REQUIRED_VARS = [
   { key: 'DATABASE_URL',                description: 'PostgreSQL connection string (Supabase)' },
   { key: 'SUPABASE_URL',               description: 'Supabase project URL (https://xxx.supabase.co)' },
@@ -113,7 +113,7 @@ const EXPECTED_TABLES: string[] = [
   'ai_usage_logs',
 ];
 
-// ── Tabelas multi-tenant (devem ter RLS + tenant_id) ─────────────────────────
+// ── Multi-tenant tables (must have RLS + tenant_id) ──────────────────────────
 const MULTITENANT_TABLES: string[] = [
   'artists', 'works', 'phonograms', 'contracts', 'contract_templates',
   'transactions', 'invoices', 'clients', 'leads', 'lead_interactions',
@@ -138,7 +138,7 @@ async function main(): Promise<void> {
   console.log('║   MUSIC OS 360 — Verificação de Provisionamento Supabase  ║');
   console.log('╚══════════════════════════════════════════════════════════╝\n');
 
-  // ── 1. Variáveis obrigatórias ────────────────────────────────────────────
+  // ── 1. Mandatory variables ───────────────────────────────────────────────
   console.log('── 1. Variáveis de Ambiente ──────────────────────────────────\n');
 
   let missingRequired = 0;
@@ -170,7 +170,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  // Validação extra: ENCRYPTION_KEY deve ter 64 hex chars
+  // Extra validation: ENCRYPTION_KEY must have 64 hex chars
   const encKey = process.env['ENCRYPTION_KEY'] ?? '';
   if (!/^[0-9a-fA-F]{64}$/.test(encKey)) {
     fail('ENCRYPTION_KEY deve ter 64 caracteres hexadecimais (AES-256)');
@@ -245,7 +245,7 @@ async function main(): Promise<void> {
     totalWarns++;
   }
 
-  // ── 4. Tabelas físicas ────────────────────────────────────────────────────
+  // ── 4. Physical tables ─────────────────────────────────────────────────────
   console.log('\n── 4. Tabelas Físicas no Supabase ───────────────────────────\n');
 
   const existingRes = await client.query<{ tablename: string }>(
@@ -278,7 +278,7 @@ async function main(): Promise<void> {
 
   let rlsFails = 0;
   for (const table of MULTITENANT_TABLES) {
-    if (!existingTables.has(table)) continue; // já reportado acima
+    if (!existingTables.has(table)) continue; // already reported above
     const hasRls = rlsMap.get(table);
     if (hasRls) {
       ok(`RLS habilitado: ${table}`);
@@ -293,7 +293,7 @@ async function main(): Promise<void> {
     ok('Todas as tabelas multi-tenant têm RLS habilitado');
   }
 
-  // ── 6. Políticas RLS ───────────────────────────────────────────────────────
+  // ── 6. RLS policies ────────────────────────────────────────────────────────
   console.log('\n── 6. Políticas RLS ─────────────────────────────────────────\n');
 
   const policiesRes = await client.query<{ tablename: string; policyname: string }>(
@@ -323,7 +323,7 @@ async function main(): Promise<void> {
     ok('Todas as tabelas multi-tenant têm políticas RLS');
   }
 
-  // ── 7. tenant_id em tabelas multi-tenant ─────────────────────────────────
+  // ── 7. tenant_id in multi-tenant tables ──────────────────────────────────
   console.log('\n── 7. Coluna tenant_id nas Tabelas Multi-Tenant ────────────\n');
 
   const colRes = await client.query<{ table_name: string; column_name: string }>(

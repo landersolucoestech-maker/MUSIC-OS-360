@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 /**
- * env-check.mjs — gate de coerência de ambiente Supabase (pnpm env:check).
+ * env-check.mjs — Supabase environment coherence gate (pnpm env:check).
  *
- * Valida, sem imprimir secrets:
- *   1. Nenhum ref Supabase banido (denylist) em .env*, código rastreado, workflows ou scripts.
- *   2. Frontend (VITE_SUPABASE_URL) e backend (SUPABASE_URL/DATABASE_URL/APP_DATABASE_URL)
- *      apontam para o MESMO projeto Supabase.
- *   3. Ref em uso pertence à allowlist do ambiente.
- *   4. Envs obrigatórios presentes e não vazios.
- *   5. Mock/auth-bypass proibidos fora de development e coerentes entre web e api.
+ * Validates, without printing secrets:
+ *   1. No banned Supabase ref (denylist) in .env*, tracked code, workflows or scripts.
+ *   2. Frontend (VITE_SUPABASE_URL) and backend (SUPABASE_URL/DATABASE_URL/APP_DATABASE_URL)
+ *      point to the SAME Supabase project.
+ *   3. The ref in use belongs to the environment's allowlist.
+ *   4. Mandatory envs present and non-empty.
+ *   5. Mock/auth-bypass forbidden outside development and coherent between web and api.
  *
- * Espelha as constantes de:
+ * Mirrors the constants of:
  *   - apps/api/src/core/config/env.schema.ts
  *   - apps/web/scripts/assert-supabase-env.mjs
- * Qualquer alteração de refs deve ser replicada nos três lugares.
+ * Any change of refs must be replicated in all three places.
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -22,13 +22,13 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-// MATRIZ DE AMBIENTES (espelho de env.schema.ts; incidente 2026-07-16/17):
-//   development→DEV_REF · test→nenhum remoto · staging→STAGING_REF · production→PROD_REF.
-// O projeto Supabase main é o alvo de produção e permanece bloqueado até a liberação formal.
+// ENVIRONMENT MATRIX (mirror of env.schema.ts; incident 2026-07-16/17):
+//   development→DEV_REF · test→no remote · staging→STAGING_REF · production→PROD_REF.
+// The main Supabase project is the production target and stays blocked until the formal release.
 const SUPABASE_PROD_REF = "sxmfeocztlztvpdnxayk";
-// Branch STAGING persistente do projeto MAIN, criada na Parte 65 (2026-08-01).
-// Substitui o placeholder reservado ('khnaxcgjnvhhtgkozsif') que nunca
-// correspondeu a um recurso real.
+// Persistent STAGING branch of the MAIN project, created in Part 65 (2026-08-01).
+// Replaces the reserved placeholder ('khnaxcgjnvhhtgkozsif') that never
+// matched a real resource.
 const SUPABASE_STAGING_REF = "jjnnjnxjkqipgqebijen";
 const SUPABASE_DEV_REF = "rypnevnfipygyhysqpdo";
 const SUPABASE_REF_DENYLIST = ["mkyvkciwyhfawmvluugb", "sxdhnhoupjrnntrmjtyn"];
@@ -36,8 +36,8 @@ const SUPABASE_ALLOWED_REFS = [SUPABASE_PROD_REF, SUPABASE_STAGING_REF, SUPABASE
 const SUPABASE_KNOWN_REFS = [SUPABASE_PROD_REF, SUPABASE_STAGING_REF, SUPABASE_DEV_REF];
 
 /**
- * Ref Supabase esperado para cada NODE_ENV — isolamento absoluto de ambientes.
- * `null` (test) = nenhum projeto remoto aceito, sem fallback silencioso.
+ * Expected Supabase ref for each NODE_ENV — absolute environment isolation.
+ * `null` (test) = no remote project accepted, no silent fallback.
  */
 function expectedRefFor(nodeEnv) {
   if (nodeEnv === "production") return SUPABASE_PROD_REF;
@@ -52,7 +52,7 @@ function forbiddenRefsFor(nodeEnv) {
   return SUPABASE_KNOWN_REFS.filter((ref) => ref !== expected);
 }
 
-/** Decodifica só o payload público do JWT e devolve { ref, role }. Nunca imprime o token. */
+/** Decodes only the JWT's public payload and returns { ref, role }. Never prints the token. */
 function jwtClaims(token) {
   if (!token || typeof token !== "string" || token.split(".").length < 2) return null;
   try {
@@ -63,7 +63,7 @@ function jwtClaims(token) {
   }
 }
 
-// Únicos arquivos autorizados a MENCIONAR refs banidos: são os próprios guards.
+// The only files authorized to MENTION banned refs: they are the guards themselves.
 const GUARD_FILE_ALLOWLIST = new Set([
   "apps/api/src/core/config/env.schema.ts",
   "apps/api/src/core/config/env.schema.spec.ts",
@@ -90,7 +90,7 @@ function extractSupabaseRef(value) {
   return null;
 }
 
-/** Parser KEY=VALUE idêntico ao loadLocalEnv de apps/api/src/main.ts. */
+/** KEY=VALUE parser identical to loadLocalEnv in apps/api/src/main.ts. */
 function parseEnvFile(filePath) {
   if (!fs.existsSync(filePath)) return null;
   const vars = {};
@@ -106,7 +106,7 @@ function parseEnvFile(filePath) {
   return vars;
 }
 
-// ── 1. Denylist em arquivos rastreados (código, workflows, configs) ───────────
+// ── 1. Denylist in tracked files (code, workflows, configs) ───────────────────
 for (const banned of SUPABASE_REF_DENYLIST) {
   let hits = "";
   try {
@@ -115,7 +115,7 @@ for (const banned of SUPABASE_REF_DENYLIST) {
       encoding: "utf8",
     });
   } catch {
-    // exit code 1 = sem matches (o resultado desejado)
+    // exit code 1 = no matches (the desired result)
   }
   for (const file of hits.split(/\r?\n/).filter(Boolean)) {
     if (GUARD_FILE_ALLOWLIST.has(file.replace(/\\/g, "/"))) continue;
@@ -123,7 +123,7 @@ for (const banned of SUPABASE_REF_DENYLIST) {
   }
 }
 
-// ── 1b. Denylist em todos os .env* (não rastreados) ───────────────────────────
+// ── 1b. Denylist in all .env* files (untracked) ───────────────────────────────
 const envFiles = [
   ".env.development",
   ".env.staging",
@@ -146,7 +146,7 @@ for (const file of envFiles) {
   }
 }
 
-// ── 2–5. Coerência dos envs efetivos ─────────────────────────────────────────
+// ── 2–5. Coherence of the effective envs ─────────────────────────────────────
 const rootEnv = parseEnvFile(path.join(repoRoot, ".env.development")) ?? {};
 const apiFileEnv = parseEnvFile(path.join(repoRoot, "apps/api/.env.development"));
 const webEnv = parseEnvFile(path.join(repoRoot, "apps/web/.env.development"));
@@ -154,14 +154,14 @@ const webEnv = parseEnvFile(path.join(repoRoot, "apps/web/.env.development"));
 if (!apiFileEnv) warnings.push("apps/api/.env.development ausente — API dependerá do .env.development da raiz/process.env");
 if (!webEnv) errors.push("apps/web/.env.development ausente — frontend sem VITE_SUPABASE_URL definido");
 
-// Precedência real: main.ts carrega apps/api/.env.development primeiro e NÃO sobrescreve com o da raiz.
+// Real precedence: main.ts loads apps/api/.env.development first and does NOT overwrite it with the root one.
 const apiEnv = { ...rootEnv, ...(apiFileEnv ?? {}) };
 const web = webEnv ?? {};
 
 const nodeEnv = apiEnv.NODE_ENV ?? "development";
 const isProdLike = nodeEnv === "production" || nodeEnv === "staging";
 
-// Envs obrigatórios não vazios
+// Mandatory non-empty envs
 const requiredApi = ["DATABASE_URL", "SUPABASE_URL", "SUPABASE_ANON_KEY"];
 const requiredWeb = ["VITE_SUPABASE_URL", "VITE_SUPABASE_ANON_KEY", "VITE_API_URL"];
 for (const key of requiredApi) {
@@ -188,8 +188,8 @@ for (const [label, ref] of refSources) {
     errors.push(`${label} usa o ref banido "${ref}" (branch preview sem tabelas públicas)`);
     continue;
   }
-  // Denylist cruzada: ref conhecido de OUTRO ambiente é sempre proibido,
-  // mesmo que uma allowlist tenha sido editada incorretamente.
+  // Cross denylist: a known ref of ANOTHER environment is always forbidden,
+  // even if an allowlist was edited incorrectly.
   if (forbiddenRefs.includes(ref)) {
     errors.push(
       `${label} usa ref "${ref}" de OUTRO ambiente — proibido em NODE_ENV=${nodeEnv} (denylist cruzada)`,
@@ -217,8 +217,8 @@ if (distinct.length > 1) {
   );
 }
 
-// ── Coerência ref × payload dos JWTs (anon e service role) ────────────────────
-// O ref do token DEVE bater com o ref das URLs; anon nunca pode ser service_role.
+// ── ref × JWT payload coherence (anon and service role) ──────────────────────
+// The token's ref MUST match the URLs' ref; anon can never be service_role.
 const jwtSources = [
   ["SUPABASE_ANON_KEY (api)", apiEnv.SUPABASE_ANON_KEY, "anon"],
   ["VITE_SUPABASE_ANON_KEY (web)", web.VITE_SUPABASE_ANON_KEY, "anon"],
@@ -271,7 +271,7 @@ if (apiMock !== webMock) {
   );
 }
 
-// ── Relatório ─────────────────────────────────────────────────────────────────
+// ── Report ────────────────────────────────────────────────────────────────────
 for (const warning of warnings) console.warn(`⚠️  ${warning}`);
 if (errors.length > 0) {
   console.error("❌ env:check FALHOU:");

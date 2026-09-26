@@ -1,18 +1,18 @@
 #!/usr/bin/env ts-node
 /**
- * scripts/verify-contract-service-types-crud.ts  (Parte 83 — oneoff)
+ * scripts/verify-contract-service-types-crud.ts  (Part 83 — one-off)
  *
- * Prova física de CRUD real em contract_service_types no banco DEV, além do
- * schema/RLS já cobertos por verify:rls e verify:tenant-isolation.
+ * Physical proof of real CRUD on contract_service_types in the DEV database, beyond the
+ * schema/RLS already covered by verify:rls and verify:tenant-isolation.
  *
- * Fluxo: cria Tenant A e Tenant B sintéticos → INSERT como A → SELECT ativo
- * como A (vê) → conflito de slug duplicado no mesmo tenant (deve falhar) →
- * INSERT como B → SELECT do registro de A como B (RLS bloqueia, 0 linhas) →
- * UPDATE como A → soft-delete (active=false) como A → confirma ausência na
- * listagem "ativos" → confirma presença física (soft delete, não hard) →
- * cleanup total (hard delete real + tenants/orgs sintéticos).
+ * Flow: creates synthetic Tenant A and Tenant B → INSERT as A → active SELECT
+ * as A (sees it) → duplicate slug conflict in the same tenant (must fail) →
+ * INSERT as B → SELECT of A's record as B (RLS blocks, 0 rows) →
+ * UPDATE as A → soft delete (active=false) as A → confirms absence from the
+ * "active" listing → confirms physical presence (soft delete, not hard) →
+ * full cleanup (real hard delete + synthetic tenants/orgs).
  *
- * Uso: npm run verify:contract-service-types
+ * Usage: npm run verify:contract-service-types
  */
 
 import 'reflect-metadata';
@@ -40,7 +40,7 @@ const databaseUrl = process.env['DATABASE_URL'] || apiEnvDatabaseUrl;
 let databaseHost = '';
 try {
   databaseHost = new URL(databaseUrl ?? '').hostname;
-} catch { /* sem URL válida */ }
+} catch { /* no valid URL */ }
 const dbSslDisabled = (process.env['DB_SSL'] ?? apiEnvDbSsl) === 'false'
   || ['localhost', '127.0.0.1', '::1'].includes(databaseHost);
 if (dbSslDisabled) {
@@ -120,7 +120,7 @@ async function main(): Promise<void> {
     await client.query('COMMIT');
     ok('TEST 1: INSERT como Tenant A'); passed++;
 
-    // TEST 2: SELECT ativo como Tenant A → vê o próprio registro
+    // TEST 2: active SELECT as Tenant A → sees its own record
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     const own = await client.query(
@@ -130,7 +130,7 @@ async function main(): Promise<void> {
     if (own.rowCount === 1) { ok('TEST 2: SELECT do próprio tenant retorna o registro ativo'); passed++; }
     else { fail('TEST 2: SELECT do próprio tenant não retornou o registro'); failed++; }
 
-    // TEST 3: slug duplicado no mesmo tenant → violação de unicidade
+    // TEST 3: duplicate slug in the same tenant → uniqueness violation
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     let dupRejected = false;
@@ -147,7 +147,7 @@ async function main(): Promise<void> {
     if (dupRejected) { ok('TEST 3: slug duplicado no mesmo tenant rejeitado (uq_contract_service_types_tenant_slug)'); passed++; }
     else { fail('TEST 3: FALHA — slug duplicado foi aceito, unicidade tenant-scoped não está funcionando'); failed++; }
 
-    // TEST 4: INSERT como Tenant B (mesmo slug, tenant diferente — deve funcionar)
+    // TEST 4: INSERT as Tenant B (same slug, different tenant — must work)
     await client.query('BEGIN');
     await setTenant(client, tenantB);
     await client.query(
@@ -158,7 +158,7 @@ async function main(): Promise<void> {
     await client.query('COMMIT');
     ok('TEST 4: INSERT como Tenant B com mesmo slug (unicidade é por tenant, não global)'); passed++;
 
-    // TEST 5: SELECT do registro de A como Tenant B → RLS bloqueia (0 linhas)
+    // TEST 5: SELECT of A's record as Tenant B → RLS blocks (0 rows)
     await client.query('BEGIN');
     await setTenant(client, tenantB);
     const crossRead = await client.query(`SELECT id FROM contract_service_types WHERE id = $1`, [cstA]);
@@ -187,7 +187,7 @@ async function main(): Promise<void> {
     if ((afterSoftDelete.rowCount ?? 0) === 0) { ok('TEST 7: soft-delete confirmado — registro não aparece mais em queries "deleted_at IS NULL"'); passed++; }
     else { fail('TEST 7: FALHA — soft-delete não excluiu o registro da listagem ativa'); failed++; }
 
-    // TEST 8: registro ainda existe fisicamente (soft delete, não hard delete)
+    // TEST 8: the record still exists physically (soft delete, not hard delete)
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     const stillPhysical = await client.query(`SELECT id FROM contract_service_types WHERE id = $1`, [cstA]);

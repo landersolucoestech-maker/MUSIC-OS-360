@@ -1,18 +1,18 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * playwright.config.ts  (Parte 77)
+ * playwright.config.ts  (Part 77)
  *
- * E2E mínimo real: exercita o navegador de verdade contra o WEB local
- * (http://localhost:5000) e a API local (http://localhost:3001), nunca
- * substituindo o fluxo por chamadas diretas ao Supabase. Requer que ambos
- * já estejam rodando (`pnpm dev`) e que as credenciais institucionais de
- * teste estejam nas variáveis de ambiente abaixo — os specs pulam
- * graciosamente (test.skip) quando ausentes, para nunca quebrar `pnpm test`
- * de quem não tem acesso a essas credenciais.
+ * Minimal real E2E: exercises the real browser against the local WEB
+ * (http://localhost:5000) and the local API (http://localhost:3001), never
+ * replacing the flow with direct Supabase calls. Requires both
+ * to be already running (`pnpm dev`) and the institutional test
+ * credentials to be in the environment variables below — the specs skip
+ * gracefully (test.skip) when absent, so they never break `pnpm test`
+ * for whoever has no access to those credentials.
  *
- * Nunca grava vídeo/trace com senha, nunca tira screenshot com campos
- * preenchidos — ver e2e/login-and-password-change.spec.ts.
+ * Never records video/trace with a password, never takes a screenshot with filled
+ * fields — see e2e/login-and-password-change.spec.ts.
  */
 export default defineConfig({
   testDir: './e2e',

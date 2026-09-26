@@ -3,23 +3,23 @@ import * as fs from 'fs';
 import * as XLSX from 'xlsx';
 
 /**
- * reports-export.spec.ts  (Parte 78)
+ * reports-export.spec.ts  (Part 78)
  *
- * E2E real via navegador — reproduz e trava a regressão da exportação de
- * "Clientes" na Central de Relatórios (/relatorios): login real → aciona
- * exportação → aguarda o download real → ABRE o arquivo e valida conteúdo
- * (cabeçalhos pt-BR, ausência de dados técnicos/cifrados). Não declara
- * sucesso apenas por o download ter ocorrido.
+ * Real browser E2E — reproduces and locks in the regression of the
+ * "Clientes" export in the Reports Center (/relatorios): real login → triggers the
+ * export → waits for the real download → OPENS the file and validates the content
+ * (pt-BR headers, absence of technical/encrypted data). It does not declare
+ * success merely because the download happened.
  *
- * Causa raiz original (corrigida nesta Parte): a migration
- * 20260719000010_RebuildClientsInCanonicalFormOrder removeu fisicamente as
- * colunas segmento/endereco/responsavel/prioridade/cpf/cnpj de `clients`,
- * mas `ClientEntity` nunca foi atualizada — toda leitura gerava
+ * Original root cause (fixed in this Part): migration
+ * 20260719000010_RebuildClientsInCanonicalFormOrder physically removed the
+ * segmento/endereco/responsavel/prioridade/cpf/cnpj columns from `clients`,
+ * but `ClientEntity` was never updated — every read generated
  * `QueryFailedError: column "segmento" does not exist` (500).
  *
- * Credenciais só via variáveis de ambiente, nunca hardcoded — ausentes ⇒
- * toda a suíte é pulada (test.skip), igual ao spec de login desta mesma
- * pasta.
+ * Credentials only via environment variables, never hardcoded — absent ⇒
+ * the whole suite is skipped (test.skip), like the login spec in this same
+ * folder.
  */
 const EMAIL = process.env.E2E_INSTITUTIONAL_EMAIL;
 const PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;
@@ -63,10 +63,10 @@ test.describe('Central de Relatórios — exportação de Clientes', () => {
       expect(wb.SheetNames.length).toBeGreaterThan(0);
 
       const rows = XLSX.utils.sheet_to_json<unknown[]>(wb.Sheets[wb.SheetNames[0]], { header: 1 });
-      expect(rows.length).toBeGreaterThanOrEqual(1); // ao menos o cabeçalho
+      expect(rows.length).toBeGreaterThanOrEqual(1); // at least the header
 
       const header = (rows[0] as string[]).map(String);
-      // Cabeçalho sempre pt-BR, nunca a chave técnica nem coluna cifrada/interna.
+      // The header is always pt-BR, never the technical key nor an encrypted/internal column.
       expect(header).toContain('Nome');
       expect(header.some((h) => /_encrypted|tenant_id/i.test(h))).toBe(false);
 

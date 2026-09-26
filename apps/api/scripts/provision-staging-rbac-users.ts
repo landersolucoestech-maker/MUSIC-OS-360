@@ -36,8 +36,8 @@ async function main(): Promise<void> {
   }
   const emailSuffix = process.env['EMAIL_SUFFIX'] ?? '';
 
-  // Guard fail-closed: este script SÓ pode atingir o projeto STAGING canônico.
-  // MAIN, DEV, PROD, refs desconhecidos ou URLs sem ref extraível são recusados.
+  // Fail-closed guard: this script may ONLY reach the canonical STAGING project.
+  // MAIN, DEV, PROD, unknown refs or URLs without an extractable ref are refused.
   for (const [name, value] of [['STAGING_SUPABASE_URL', supabaseUrl], ['STAGING_DATABASE_URL', dbUrl]] as const) {
     const ref = extractSupabaseRef(value);
     if (ref !== SUPABASE_STAGING_REF) {

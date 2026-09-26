@@ -1,5 +1,5 @@
 // ─── OpenTelemetry helpers ────────────────────────────────────────────────────
-// Instrumentação mínima; o SDK completo é configurado no apps/api.
+// Minimal instrumentation; the full SDK is configured in apps/api.
 
 export interface SpanAttributes {
   tenantId?: string;
@@ -10,8 +10,8 @@ export interface SpanAttributes {
 }
 
 /**
- * Cria um span manual simples (browser).
- * Em produção, substituído pelo SDK OTel via apps/api.
+ * Creates a simple manual span (browser).
+ * In production, replaced by the OTel SDK via apps/api.
  */
 export function createSpan(
   name: string,
@@ -30,7 +30,7 @@ export function createSpan(
 }
 
 /**
- * Decorador de função para rastreamento automático.
+ * Function decorator for automatic tracing.
  */
 export function traced<T extends (...args: unknown[]) => Promise<unknown>>(
   name: string,

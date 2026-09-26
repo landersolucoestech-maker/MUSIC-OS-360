@@ -1,12 +1,12 @@
 /**
- * seed.mjs — dados iniciais para desenvolvimento.
+ * seed.mjs — initial data for development.
  *
- * Cria:
- *   - 1 organização "Music OS 360 Demo"
+ * Creates:
+ *   - 1 organization "Music OS 360 Demo"
  *   - 1 tenant "Demo Label"
- *   - 1 billing subscription (trial 14 dias)
+ *   - 1 billing subscription (14-day trial)
  *
- * Uso: node seed.mjs
+ * Usage: node seed.mjs
  */
 import { neon } from '@neondatabase/serverless';
 
@@ -24,7 +24,7 @@ const sql = neon(url);
 async function seed() {
   console.log('🌱  A iniciar seed...');
 
-  // ── 1. Organização ─────────────────────────────────────────────────────────
+  // ── 1. Organization ────────────────────────────────────────────────────────
   const existingOrgs = await sql`
     SELECT id FROM organizations WHERE slug = 'music-os-360-demo' LIMIT 1
   `;

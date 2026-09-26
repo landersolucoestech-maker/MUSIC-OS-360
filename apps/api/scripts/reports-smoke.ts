@@ -1,6 +1,6 @@
 /**
- * Smoke HTTP real da Central de Relatórios contra API e PostgreSQL em execução.
- * Valida exportação XLSX estrutural, importação, create-only, rollback e tenant.
+ * Real HTTP smoke of the Reports Center against a running API and PostgreSQL.
+ * Validates structural XLSX export, import, create-only, rollback and tenant isolation.
  */
 import 'reflect-metadata';
 import * as fs from 'fs';

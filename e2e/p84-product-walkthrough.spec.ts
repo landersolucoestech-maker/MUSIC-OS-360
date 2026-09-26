@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * p84-product-walkthrough.spec.ts  (Parte 84)
+ * p84-product-walkthrough.spec.ts  (Part 84)
  *
- * Varredura funcional real via navegador: login → percorre os módulos
- * visíveis no menu → registra erro de console, request 5xx e corpo vazio
- * por rota. Não substitui os specs focados (crm-timeline-persistence etc.);
- * o valor aqui é achar regressões visuais/funcionais amplas rapidamente.
+ * Real functional sweep via the browser: login → walks through the modules
+ * visible in the menu → records console errors, 5xx requests and empty bodies
+ * per route. It does not replace the focused specs (crm-timeline-persistence etc.);
+ * the value here is finding broad visual/functional regressions quickly.
  *
- * Credenciais só via variáveis de ambiente, nunca hardcoded — ausentes ⇒
- * suíte pulada (mesmo padrão dos demais specs em e2e/).
- *   E2E_QA_EMAIL / E2E_QA_PASSWORD — conta sintética descartável (não a
- *   institucional).
+ * Credentials only via environment variables, never hardcoded — absent ⇒
+ * suite skipped (same pattern as the other specs in e2e/).
+ *   E2E_QA_EMAIL / E2E_QA_PASSWORD — a disposable synthetic account (not the
+ *   institutional one).
  */
 const EMAIL = process.env.E2E_QA_EMAIL;
 const PASSWORD = process.env.E2E_QA_PASSWORD;
@@ -49,7 +49,7 @@ test.describe('Parte 84 — varredura funcional de produto', () => {
   test.skip(!EMAIL || !PASSWORD, 'E2E_QA_EMAIL/E2E_QA_PASSWORD ausentes — pulando varredura real.');
 
   test('login real + percorre todos os módulos visíveis, registrando bugs reais', async ({ page }) => {
-    test.setTimeout(5 * 60_000); // 17 módulos com networkidle — 30s default é curto demais
+    test.setTimeout(5 * 60_000); // 17 modules with networkidle — the 30s default is too short
 
     await test.step('login com conta sintética', async () => {
       await page.goto('/auth', { waitUntil: 'networkidle' });

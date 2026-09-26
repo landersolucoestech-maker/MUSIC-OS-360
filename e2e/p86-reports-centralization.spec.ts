@@ -3,10 +3,10 @@ import * as XLSX from 'xlsx';
 import * as fs from 'fs';
 
 /**
- * p86-reports-centralization.spec.ts  (Parte 86)
+ * p86-reports-centralization.spec.ts  (Part 86)
  *
- * Importação/Exportação devem existir SOMENTE na página Relatórios — nenhum
- * módulo pode ter botão próprio. Roda com AUTH_DISABLED=true (dev), sem login.
+ * Import/Export must exist ONLY on the Reports page — no
+ * module may have its own button. Runs with AUTH_DISABLED=true (dev), without login.
  */
 const MODULES_WITHOUT_IMPORT_EXPORT: Array<{ name: string; path: string }> = [
   { name: 'Projetos', path: '/projetos' },
@@ -20,9 +20,9 @@ const MODULES_WITHOUT_IMPORT_EXPORT: Array<{ name: string; path: string }> = [
 
 async function assertNoImportExportButtons(page: Page, path: string) {
   await page.goto(path, { waitUntil: 'networkidle' });
-  // Espera algo real ter renderizado (não só o esqueleto de loading) antes de
-  // afirmar ausência — do contrário "0 botões" pode só significar "página
-  // ainda carregando", uma falsa confiança.
+  // Waits for something real to have rendered (not just the loading skeleton) before
+  // asserting absence — otherwise "0 buttons" might only mean "page
+  // still loading", a false confidence.
   await expect(page.locator('table, [role="table"], main, [data-testid$="-loading"]').first()).toBeVisible({ timeout: 15_000 });
   await page.waitForTimeout(1500);
   const importBtn = page.locator('[data-testid*="import" i], [data-testid*="importar" i]');
@@ -40,8 +40,8 @@ test.describe('Parte 86 — centralização de Importar/Exportar em Relatórios'
 
   test('Relatórios: sem abas/seções (estrutura da página)', async ({ page }) => {
     await page.goto('/relatorios', { waitUntil: 'networkidle' });
-    // A página inteira é uma lista única (sem <Tabs>) — confirma ausência
-    // estrutural de qualquer aba.
+    // The whole page is a single list (no <Tabs>) — confirms the structural
+    // absence of any tab.
     await expect(page.locator('[role="tab"], [role="tablist"]')).toHaveCount(0);
   });
 
@@ -59,8 +59,8 @@ test.describe('Parte 86 — centralização de Importar/Exportar em Relatórios'
     await page.goto('/relatorios', { waitUntil: 'networkidle' });
     await expect(page.locator('[data-testid="entity-row-projects"]')).toBeVisible({ timeout: 10_000 });
 
-    // Fora dos 22 módulos autorizados (Bloco 2) — inclui as entidades técnicas
-    // e as que ainda não têm contrato/autorização para aparecer em Relatórios.
+    // Outside the 22 authorized modules (Block 2) — includes the technical entities
+    // and those that do not yet have a contract/authorization to appear in Reports.
     const removedTables = [
       'artist_goals', 'assets', 'audiovisual_assets', 'audiovisual_deliverables',
       'audiovisual_tasks', 'lead_interactions', 'marketing_assets',

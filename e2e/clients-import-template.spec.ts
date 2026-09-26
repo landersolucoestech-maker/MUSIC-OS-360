@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * clients-import-template.spec.ts  (Parte 80)
+ * clients-import-template.spec.ts  (Part 80)
  *
- * E2E real via navegador — confirma que a Central de Relatórios expõe
- * importação real para "Clientes" (entity-driven via GET /reports/definitions,
- * sem lista fixa no frontend) e que o botão "Baixar template" baixa um XLSX
- * de verdade emitido pelo backend (GET /reports/entities/clients/import/template),
- * não um arquivo estático do frontend.
+ * Real browser E2E — confirms the Reports Center exposes a
+ * real import for "Clientes" (entity-driven via GET /reports/definitions,
+ * no fixed list in the frontend) and that the "Baixar template" button downloads a real
+ * XLSX emitted by the backend (GET /reports/entities/clients/import/template),
+ * not a static frontend file.
  *
- * Somente leitura/download — não cria, edita nem remove nenhum registro.
+ * Read/download only — creates, edits or removes no record.
  *
- * Credenciais só via variáveis de ambiente — ausentes ⇒ suíte pulada.
+ * Credentials only via environment variables — absent ⇒ suite skipped.
  */
 const EMAIL = process.env.E2E_INSTITUTIONAL_EMAIL;
 const PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;

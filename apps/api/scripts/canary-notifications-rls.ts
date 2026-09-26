@@ -48,7 +48,7 @@ function dsFor(url: string) {
 async function main() {
   if (!OWNER_URL || !APP_URL) throw new Error('DATABASE_URL and APP_DATABASE_URL required');
 
-  // Valida as URLs realmente usadas (parseadas do .env), não só process.env.
+  // Validates the URLs actually used (parsed from .env), not only process.env.
   assertDatabaseCommandEnv('canary-notifications-rls', {
     ...process.env,
     DATABASE_URL: OWNER_URL,

@@ -1,16 +1,16 @@
 /**
- * scripts/validate-i18n.ts  ·  FASE 2.1 — Build guard de i18n (pt-BR) BLOQUEANTE.
+ * scripts/validate-i18n.ts  ·  PHASE 2.1 — BLOCKING i18n (pt-BR) build guard.
  *
- * Falha o build (exit ≠ 0) se houver QUALQUER:
- *   - coluna reportável visível sem label;
- *   - coluna de contrato (export/import/filter/sort/search/identity/display/date)
- *     sem label;
- *   - coluna sensível listada como exportável/importável;
- *   - label vazio / igual à chave crua / com termo proibido em inglês;
- *   - ambiguidade no reverse map dos rótulos críticos.
+ * Fails the build (exit ≠ 0) if there is ANY:
+ *   - visible reportable column without a label;
+ *   - contract column (export/import/filter/sort/search/identity/display/date)
+ *     without a label;
+ *   - sensitive column listed as exportable/importable;
+ *   - empty label / equal to the raw key / containing a forbidden English term;
+ *   - ambiguity in the reverse map of the critical labels.
  *
- * Critério: 0 untranslated · 0 unsafe · 0 ambiguous · 0 forbidden.
- * Uso: npm run validate:i18n   (integrável ao CI)
+ * Criterion: 0 untranslated · 0 unsafe · 0 ambiguous · 0 forbidden.
+ * Usage: npm run validate:i18n   (CI-integrable)
  */
 import {
   FIELD_LABELS_PT_BR, FIELD_KEYS_BY_LABEL_PT_BR, tryGetFieldLabelPtBr,
@@ -27,7 +27,7 @@ const FORBIDDEN_ENGLISH = [
 const errors: string[] = [];
 const entries = Object.entries(FIELD_LABELS_PT_BR);
 
-// 1: integridade do dicionário.
+// 1: dictionary integrity.
 for (const [key, label] of entries) {
   if (!label || !label.trim()) errors.push(`Label vazio para "${key}".`);
   if (label.trim() === key) errors.push(`Label expõe a chave crua: "${key}".`);
@@ -38,7 +38,7 @@ for (const [key, label] of entries) {
   }
 }
 
-// 2: reverse map dos rótulos críticos.
+// 2: reverse map of the critical labels.
 for (const [label, expected] of [
   ['link do spotify', 'spotifyUrl'],
   ['link do youtube', 'youtubeUrl'],
@@ -51,7 +51,7 @@ for (const [label, expected] of [
   }
 }
 
-// 3: TODA coluna reportável visível precisa de label (BLOQUEANTE).
+// 3: EVERY visible reportable column needs a label (BLOCKING).
 const inv = new EntityMetadataService().scan();
 for (const e of inv.entities) {
   if (!e.reportable) continue;
@@ -67,7 +67,7 @@ for (const e of inv.entities) {
   }
 }
 
-// 4: TODA coluna usada nos contratos precisa de label; sensível não exportável.
+// 4: EVERY column used in the contracts needs a label; sensitive ones are not exportable.
 const defs = new ReportEntityDefinitionService(new EntityMetadataService()).getDefinitions();
 for (const d of defs) {
   const contractCols = new Set([

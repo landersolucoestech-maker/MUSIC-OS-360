@@ -1,7 +1,7 @@
 /**
- * Regressão entity↔schema contra PostgreSQL real.
- * Mantém somente contratos que continuam vivos no schema canônico atual.
- * Todas as escritas rodam em transação com rollback.
+ * entity↔schema regression against a real PostgreSQL.
+ * Keeps only contracts that are still alive in the current canonical schema.
+ * Every write runs in a transaction with rollback.
  */
 import 'reflect-metadata';
 import * as fs from 'fs';

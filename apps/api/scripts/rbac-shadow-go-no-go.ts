@@ -1,10 +1,10 @@
 /**
- * PASSO 12-J.5 — GO/NO-GO automático do cutover RBAC.
+ * STEP 12-J.5 — automatic GO/NO-GO of the RBAC cutover.
  *
- * Lê (somente leitura) rbac_decision_logs, aplica a query oficial e emite o veredito.
- * NÃO altera dados. Exit 0 = APROVADO, exit 3 = REPROVADO.
+ * Reads (read-only) rbac_decision_logs, applies the official query and emits the verdict.
+ * Does NOT change data. Exit 0 = APPROVED, exit 3 = REJECTED.
  *
- * Uso: DATABASE_URL=... DB_SSL=false npx tsx scripts/rbac-shadow-go-no-go.ts
+ * Usage: DATABASE_URL=... DB_SSL=false npx tsx scripts/rbac-shadow-go-no-go.ts
  */
 import 'reflect-metadata';
 import { AppDataSource } from '../src/database/datasource';

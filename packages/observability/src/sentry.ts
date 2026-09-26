@@ -1,6 +1,6 @@
 // ─── Sentry configuration helpers ────────────────────────────────────────────
-// Este módulo exporta funções de setup; o peer dep @sentry/* é resolvido
-// pelo consumidor (apps/web usa @sentry/react, apps/api usa @sentry/node).
+// This module exports setup functions; the @sentry/* peer dep is resolved
+// by the consumer (apps/web uses @sentry/react, apps/api uses @sentry/node).
 
 export interface SentryInitOptions {
   dsn: string;
@@ -24,11 +24,11 @@ export const DEFAULT_SENTRY_OPTIONS: Partial<SentryInitOptions> = {
 };
 
 /**
- * Gera o objeto de configuração para Sentry.init().
- * Chamado por apps/web/src/main.tsx e apps/api/src/main.ts.
+ * Builds the configuration object for Sentry.init().
+ * Called by apps/web/src/main.tsx and apps/api/src/main.ts.
  *
  * @example
- * // No main.tsx:
+ * // In main.tsx:
  * import * as Sentry from "@sentry/react";
  * import { buildSentryConfig } from "@music-os-360/observability/sentry";
  * Sentry.init(buildSentryConfig({ dsn: import.meta.env.VITE_SENTRY_DSN, environment: "production" }));
@@ -38,7 +38,7 @@ export function buildSentryConfig(options: SentryInitOptions): SentryInitOptions
 }
 
 /**
- * Captura erro com contexto de tenant para melhor agrupamento no Sentry.
+ * Captures an error with tenant context for better grouping in Sentry.
  */
 export function captureWithTenantContext(
   error: unknown,
@@ -46,7 +46,7 @@ export function captureWithTenantContext(
   extra?: Record<string, unknown>,
 ): void {
   try {
-    // Evita import estático de @sentry para não quebrar o build se DSN estiver vazio
+    // Avoids a static @sentry import so the build does not break when the DSN is empty
     const Sentry = (globalThis as Record<string, unknown>)["__Sentry__"] as
       | { captureException: (e: unknown, ctx: unknown) => void }
       | undefined;
@@ -55,6 +55,6 @@ export function captureWithTenantContext(
       extra,
     });
   } catch {
-    // Silencioso se Sentry não inicializado
+    // Silent if Sentry is not initialized
   }
 }

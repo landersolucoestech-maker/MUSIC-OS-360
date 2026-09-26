@@ -1,22 +1,22 @@
 /**
- * scripts/rbac-roleid-backfill.ts  (PASSO 12-G)
+ * scripts/rbac-roleid-backfill.ts  (STEP 12-G)
  *
- * Dry-run / backfill controlado de org_members.role_id a partir de org_members.role.
- * - SEM fallback viewer: role sem correspondência NÃO é preenchida (reportada).
- * - Idempotente: só toca linhas com role_id IS NULL.
- * - Transacional e reversível (role_id volta a NULL; `role` nunca é alterado).
+ * Controlled dry-run / backfill of org_members.role_id from org_members.role.
+ * - NO viewer fallback: an unmatched role is NOT filled (it is reported).
+ * - Idempotent: only touches rows with role_id IS NULL.
+ * - Transactional and reversible (role_id goes back to NULL; `role` is never changed).
  *
- * Uso:
- *   MODE=dryrun      tsx scripts/rbac-roleid-backfill.ts   (default — não escreve)
- *   MODE=apply       tsx scripts/rbac-roleid-backfill.ts   (só aplica se dry-run 100% válido)
- *   MODE=rollback-sim tsx scripts/rbac-roleid-backfill.ts  (simula reversão; não escreve)
+ * Usage:
+ *   MODE=dryrun      tsx scripts/rbac-roleid-backfill.ts   (default — does not write)
+ *   MODE=apply       tsx scripts/rbac-roleid-backfill.ts   (only applies if the dry-run is 100% valid)
+ *   MODE=rollback-sim tsx scripts/rbac-roleid-backfill.ts  (simulates the reversal; does not write)
  */
 import 'reflect-metadata';
 import { AppDataSource } from '../src/database/datasource';
 
 type Cls = 'OK' | 'ALIAS' | 'SEM_CORRESPONDENCIA' | 'CROSS_TENANT' | 'ARQUIVADA' | 'REMOVIDA' | 'ALIAS_INVALIDO';
 
-// Detecta uma vez se a coluna roles.archived_at existe (DBs pré-Enterprise-006 não a têm).
+// Detects once whether the roles.archived_at column exists (pre-Enterprise-006 DBs do not have it).
 async function hasArchivedColumn(ds: any): Promise<boolean> {
   const r = await ds.query(`SELECT 1 FROM information_schema.columns WHERE table_name='roles' AND column_name='archived_at'`);
   return r.length > 0;
@@ -89,7 +89,7 @@ async function main() {
       for (const r of report) {
         if (r.status === 'A_PREENCHER' && r.expected_role_id) {
           const res = await qr.query(`UPDATE org_members SET role_id=$1, updated_at=now() WHERE id=$2 AND role_id IS NULL RETURNING id`, [r.expected_role_id, r.membership_id]);
-          // TypeORM (pg) retorna [rows, affected]; contamos linhas efetivamente retornadas pelo RETURNING.
+          // TypeORM (pg) returns [rows, affected]; we count the rows actually returned by RETURNING.
           const rows = Array.isArray(res) && Array.isArray(res[0]) ? res[0] : res;
           updated += Array.isArray(rows) ? rows.length : 0;
         }

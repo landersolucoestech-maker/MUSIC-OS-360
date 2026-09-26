@@ -1,4 +1,4 @@
-// ─── Resposta padrão da API ────────────────────────────────────────────────────
+// ─── Standard API response ────────────────────────────────────────────────────
 
 export interface ApiResponse<T> {
   data: T;
@@ -14,7 +14,7 @@ export interface ApiMeta {
   hasPrev?: boolean;
 }
 
-// ─── Erro padrão da API ───────────────────────────────────────────────────────
+// ─── Standard API error ───────────────────────────────────────────────────────
 
 export interface ApiError {
   statusCode: number;
@@ -25,7 +25,7 @@ export interface ApiError {
   requestId?: string;
 }
 
-// ─── Paginação ────────────────────────────────────────────────────────────────
+// ─── Pagination ───────────────────────────────────────────────────────────────
 
 export interface PaginationParams {
   page?: number;

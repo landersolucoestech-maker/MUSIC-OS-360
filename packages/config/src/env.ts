@@ -1,6 +1,6 @@
 // ─── App-level env config ─────────────────────────────────────────────────────
-// Lido pelo backend (process.env) e pelo frontend (import.meta.env).
-// Use as funções helper em vez de acessar process.env diretamente.
+// Read by the backend (process.env) and by the frontend (import.meta.env).
+// Use the helper functions instead of accessing process.env directly.
 
 export type AppEnvironment = "development" | "staging" | "production" | "test";
 
@@ -28,12 +28,12 @@ export function isTest(): boolean {
 
 export function getApiBaseUrl(): string {
   if (typeof window !== "undefined") {
-    // Browser: usa variável Vite ou cai para relativo
+    // Browser: uses the Vite variable or falls back to a relative URL
     return (
       (import.meta as unknown as { env?: Record<string, string> }).env
         ?.VITE_API_URL ?? "/api/v1"
     );
   }
-  // Server-side: usa variável de ambiente Node
+  // Server-side: uses the Node environment variable
   return process.env["API_URL"] ?? "http://localhost:3001/api/v1";
 }

@@ -1,16 +1,16 @@
 #!/usr/bin/env tsx
 /**
- * FASE 7 — Storage e Upload (R2)
+ * PHASE 7 — Storage and Upload (R2)
  *
- * Validação ponta-a-ponta:
- *   7.1 Degradação sem R2 (verificação estática + dispatch teste)
- *   7.2 Upload real (presign → PUT → confirm)
- *   7.3 Persistência (banco + reload)
- *   7.4 Troca/remoção
- *   7.5 Segurança (mime fake, oversize, sem auth, sem tenant, cross-tenant)
+ * End-to-end validation:
+ *   7.1 Degradation without R2 (static check + test dispatch)
+ *   7.2 Real upload (presign → PUT → confirm)
+ *   7.3 Persistence (database + reload)
+ *   7.4 Replacement/removal
+ *   7.5 Security (fake mime, oversize, no auth, no tenant, cross-tenant)
  *   7.6 Network checks (status codes, content-type)
- *   7.7 Audit runtime (tenant prefix, collision)
- *   7.8 Build prod compatibilidade
+ *   7.7 Runtime audit (tenant prefix, collision)
+ *   7.8 Production build compatibility
  */
 import 'reflect-metadata';
 import * as path from 'path';
@@ -68,14 +68,14 @@ async function call(
 }
 
 // ============================================================================
-// 7.1 — Sem R2 (verificação estática + edge cases)
+// 7.1 — Without R2 (static check + edge cases)
 // ============================================================================
 async function f71(): Promise<void> {
   section('7.1 — DEGRADAÇÃO SEM R2 (estática + edge)');
-  // R2 está ativo nesta execução (env tem R2_*). Provamos:
-  //  - StorageService.getClient() lança 503 + code R2_NOT_CONFIGURED quando r2Client=null
-  //  - StorageModule.useFactory devolve null quando vars ausentes
-  // (já lido no source apps/api/src/storage/storage.{service,module}.ts)
+  // R2 is active in this run (env has R2_*). We prove:
+  //  - StorageService.getClient() throws 503 + code R2_NOT_CONFIGURED when r2Client=null
+  //  - StorageModule.useFactory returns null when the vars are missing
+  // (already read in the source apps/api/src/storage/storage.{service,module}.ts)
   info('R2 está ativo neste ambiente — provamos cenário-A via inspecção estática.');
   info('Code path: getClient() → ServiceUnavailableException({ code: R2_NOT_CONFIGURED, statusCode:503 })');
   info('Module factory: retorna null quando R2_ACCOUNT_ID || R2_ACCESS_KEY || R2_SECRET_KEY ausentes');
@@ -131,7 +131,7 @@ async function f72(): Promise<void> {
     0x00,0x00,0x00,0x00,0x49,0x45,0x4E,0x44,0xAE,0x42,0x60,0x82,
   ]);
   const r1 = await uploadCycle(TOKEN_A, TA, { fileName: `cover_${TS}.png`, mimeType: 'image/png', sizeBytes: PNG_1x1.length, category: 'images', entity: 'release', entityId: TS.toString(), body: PNG_1x1 });
-  // Cycle considera "OK do code path" se presign sucedeu (200) e PUT só falhou por AccessDenied de credencial.
+  // The cycle counts as "code path OK" if presign succeeded (200) and PUT only failed on a credential AccessDenied.
   const r1CodeOK = r1.ok || (r1.phase === 'put' && r1.detail?.includes('AccessDenied'));
   ok('Upload capa release — presign + PUT R2 (code path)', r1CodeOK, r1.detail ?? '');
   if (r1.ok) { UPLOAD_FILE_ID_A = r1.fileId!; UPLOAD_KEY_A = r1.key!; UPLOAD_PUBLIC_URL_A = r1.publicUrl!; }
@@ -145,13 +145,13 @@ async function f72(): Promise<void> {
   ok('Upload contrato (PDF) — presign + PUT (code path)', r2CodeOK, r2.detail ?? '');
   if (r2.fileId) { UPLOAD_FILE_ID_PDF = r2.fileId; UPLOAD_KEY_PDF = r2.key!; }
 
-  // Avatar artista (JPEG mínimo)
+  // Artist avatar (minimal JPEG)
   const JPG = Buffer.from('FFD8FFE000104A46494600010100000100010000FFDB004300080606070605080707070909080A0C140D0C0B0B0C1912130F141D1A1F1E1D1A1C1C20242E2720222C231C1C2837292C30313434341F27393D38323C2E333432FFC0000B080001000101011100FFC4001F0000010501010101010100000000000000000102030405060708090A0BFFC400B5100002010303020403050504040000017D01020300041105122131410613516107227114328191A1082342B1C11552D1F02433627282090A161718191A25262728292A3435363738393A434445464748494A535455565758595A636465666768696A737475767778797A838485868788898A92939495969798999AA2A3A4A5A6A7A8A9AAB2B3B4B5B6B7B8B9BAC2C3C4C5C6C7C8C9CAD2D3D4D5D6D7D8D9DAE1E2E3E4E5E6E7E8E9EAF1F2F3F4F5F6F7F8F9FAFFC4001F010003010101010101010101000000000000000102030405060708090A0BFFC400B511000201020404030407050404000102771000020103110421253105511604617122713213081441A1B1C1091523338852D1F0246272821A23435315161709A1B1C1D1E1F1F1F1F1F1F1F1F1F1F1F1F1F1FFD9', 'hex');
   const r3 = await uploadCycle(TOKEN_A, TA, { fileName: `avatar_${TS}.jpg`, mimeType: 'image/jpeg', sizeBytes: JPG.length, category: 'images', entity: 'artist', entityId: TS.toString(), body: JPG });
   const r3CodeOK = r3.ok || (r3.phase === 'put' && r3.detail?.includes('AccessDenied'));
   ok('Upload avatar artista (JPEG) — presign + PUT (code path)', r3CodeOK, r3.detail ?? '');
 
-  // GET download URL para arquivo recém criado (requer confirm; só roda se PUT subiu de facto)
+  // GET download URL for the just-created file (requires confirm; only runs if the PUT actually uploaded)
   if (UPLOAD_FILE_ID_A && r1.ok) {
     const d = await call('GET', `/uploads/${UPLOAD_FILE_ID_A}/download`, { token: TOKEN_A, tenant: TA });
     ok('GET /uploads/:id/download → 200', d.status === 200, `status=${d.status}`);
@@ -165,7 +165,7 @@ async function f72(): Promise<void> {
 }
 
 // ============================================================================
-// 7.3 — Persistência (banco + reload)
+// 7.3 — Persistence (database + reload)
 // ============================================================================
 let DB: Client;
 async function f73(): Promise<void> {
@@ -173,7 +173,7 @@ async function f73(): Promise<void> {
   DB = new Client({ connectionString: DB_URL, ssl: { rejectUnauthorized: false } });
   await DB.connect();
 
-  // Verifica registro em uploads (status pode ser PENDING se PUT R2 falhou por credencial)
+  // Checks the record in uploads (status may be PENDING if the R2 PUT failed on credentials)
   if (UPLOAD_FILE_ID_A) {
     const r = await DB.query<{ tenant_id: string; status: string; r2_key: string; size_bytes: number; mime_type: string; entity: string; }>(
       `SELECT tenant_id, status, r2_key, size_bytes, mime_type, entity FROM uploads WHERE file_id=$1`, [UPLOAD_FILE_ID_A],
@@ -190,7 +190,7 @@ async function f73(): Promise<void> {
     }
   }
 
-  // Reload via HTTP: segunda chamada GET download deve devolver URL nova (presigned diff toda vez)
+  // Reload via HTTP: a second GET download call must return a new URL (the presigned one differs every time)
   if (UPLOAD_FILE_ID_A) {
     const d1 = await call('GET', `/uploads/${UPLOAD_FILE_ID_A}/download`, { token: TOKEN_A, tenant: TA });
     const d2 = await call('GET', `/uploads/${UPLOAD_FILE_ID_A}/download`, { token: TOKEN_A, tenant: TA });
@@ -202,39 +202,39 @@ async function f73(): Promise<void> {
 }
 
 // ============================================================================
-// 7.4 — Troca/remoção
+// 7.4 — Replacement/removal
 // ============================================================================
 async function f74(): Promise<void> {
   section('7.4 — TROCA E (sem endpoint DELETE público)');
-  // Upload novo arquivo para mesma entity (release_TS) — substitui
+  // Uploads a new file for the same entity (release_TS) — replaces it
   const PNG2 = Buffer.from([0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A, 0,0,0,0x0D,0x49,0x48,0x44,0x52,0,0,0,1,0,0,0,1,0x08,0x06,0,0,0,0x1F,0x15,0xC4,0x89, 0,0,0,0x0A,0x49,0x44,0x41,0x54,0x78,0x9C,0x63,0,0,0,0,0,0,0,1, 0,0,0,0,0x49,0x45,0x4E,0x44,0xAE,0x42,0x60,0x82]);
   const replace = await uploadCycle(TOKEN_A, TA, { fileName: `cover_${TS}_v2.png`, mimeType: 'image/png', sizeBytes: PNG2.length, category: 'images', entity: 'release', entityId: TS.toString(), body: PNG2 });
   const newId = replace.fileId;
   const codeOK = !!newId && newId !== UPLOAD_FILE_ID_A;
   ok('Upload de SUBSTITUIÇÃO gera novo fileId (presign)', codeOK, `oldId=${UPLOAD_FILE_ID_A?.slice(0,8)} newId=${newId?.slice(0,8)}`);
 
-  // Confirmar ambos existem em uploads (sem cascata de delete — service não tem endpoint DELETE público)
+  // Confirm both exist in uploads (no delete cascade — the service has no public DELETE endpoint)
   if (replace.fileId) {
     const r = await DB.query<{ c: number }>('SELECT COUNT(*)::int AS c FROM uploads WHERE tenant_id=$1 AND entity=$2 AND entity_id=$3', [TA, 'release', TS.toString()]);
     ok('Banco mantém ambos os uploads (sem orfão)', r.rows[0].c >= 2, `count=${r.rows[0].c}`);
   }
 
-  // Não há DELETE no UploadsController público. Side-finding documentado.
+  // There is no DELETE in the public UploadsController. Side finding documented.
   info('Endpoint DELETE público inexistente — remoção via integração interna (StorageService.delete)');
   ok('Substituição registra novo file_id sem destruir o anterior', true);
 }
 
 // ============================================================================
-// 7.5 — Segurança
+// 7.5 — Security
 // ============================================================================
 async function f75(): Promise<void> {
   section('7.5 — SEGURANÇA');
 
-  // Mime fake (executável) em categoria images
+  // Fake mime (executable) in the images category
   const r1 = await call('POST', '/uploads/presign', { token: TOKEN_A, tenant: TA, body: { fileName: 'malware.exe', mimeType: 'application/x-msdownload', sizeBytes: 100, category: 'images' } });
   ok('mime fake (.exe em images) → 400', r1.status === 400, `status=${r1.status}`);
 
-  // Mime images mas extensão suspeita
+  // Images mime but a suspicious extension
   const r2 = await call('POST', '/uploads/presign', { token: TOKEN_A, tenant: TA, body: { fileName: 'fake.png', mimeType: 'image/png', sizeBytes: 100, category: 'documents' } });
   ok('mime image/png em categoria documents → 400', r2.status === 400, `status=${r2.status}`);
 
@@ -246,7 +246,7 @@ async function f75(): Promise<void> {
   const r4 = await fetch(`${API_URL}/api/v1/uploads/presign`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fileName: 'x.png', mimeType: 'image/png', sizeBytes: 100, category: 'images' }) });
   ok('sem auth → 401', r4.status === 401, `status=${r4.status}`);
 
-  // Sem tenant (token A sem X-Tenant-ID)
+  // No tenant (token A without X-Tenant-ID)
   const r5 = await fetch(`${API_URL}/api/v1/uploads/presign`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN_A}` }, body: JSON.stringify({ fileName: 'x.png', mimeType: 'image/png', sizeBytes: 100, category: 'images' }) });
   ok('sem X-Tenant-ID → 403', r5.status === 403, `status=${r5.status}`);
 
@@ -272,12 +272,12 @@ async function f75(): Promise<void> {
 // ============================================================================
 async function f77(): Promise<void> {
   section('7.7 — AUDIT RUNTIME STORAGE');
-  // Validar via banco que TODOS os uploads desta passada têm prefix tenants/{TA}/
+  // Validate via the database that ALL uploads of this run have the tenants/{TA}/ prefix
   const rA = await DB.query<{ key: string }>(`SELECT r2_key AS key FROM uploads WHERE tenant_id=$1 AND created_at > NOW() - INTERVAL '10 minutes'`, [TA]);
   const allHavePrefix = rA.rows.every(r => r.key.startsWith(`tenants/${TA}/`));
   ok('Todas r2_keys têm prefixo tenants/{TA}/', allHavePrefix, `total=${rA.rowCount} match=${rA.rows.filter(r=>r.key.startsWith(`tenants/${TA}/`)).length}`);
 
-  // Colisão: cada upload tem fileId UUID único → keys únicos
+  // Collision: each upload has a unique UUID fileId → unique keys
   const keys = new Set(rA.rows.map(r => r.key));
   ok('keys únicos (sem colisão)', keys.size === rA.rowCount, `keys=${keys.size} rows=${rA.rowCount}`);
 
@@ -286,15 +286,15 @@ async function f77(): Promise<void> {
   const leak = rB.rows.find(r => r.key.includes(`tenants/${TA}/`));
   ok('Nenhuma key do tenant B contém path do tenant A', !leak, `leak=${leak?.key}`);
 
-  // Public URL: r2PublicUrl está como 'https://pub-xxx.r2.dev' (placeholder no .env) → URLs públicas seriam dummy.
-  // Validamos que presigned (assinada) é usada para download, não a public.
+  // Public URL: r2PublicUrl is 'https://pub-xxx.r2.dev' (placeholder in .env) → public URLs would be dummies.
+  // We validate that the presigned (signed) URL is used for download, not the public one.
   info('R2_PUBLIC_URL = "https://pub-xxx.r2.dev" no .env (placeholder)');
   info('Downloads em runtime usam presigned URL (GetObjectCommand) — segurança adequada.');
   ok('Downloads usam presigned URLs (não public direct)', true);
 }
 
 // ============================================================================
-// 7.8 — Build prod compatibilidade (estática)
+// 7.8 — Production build compatibility (static)
 // ============================================================================
 async function f78(): Promise<void> {
   section('7.8 — BUILD PROD COMPATIBILIDADE');

@@ -3,24 +3,24 @@ import { randomUUID } from 'node:crypto';
 import type { QueryRunner } from 'typeorm';
 import { AppDataSource } from '../src/database/datasource';
 
-// Resincronizado (auditoria forense 2026-09-20): as tabelas contacts,
-// contact_contracts e contact_timeline nao existem mais no banco -- foram
-// consolidadas em "clients" (decisao "Contato = Cliente", ver
-// ContactsService) durante uma limpeza pre-existente desta base. Apenas
-// clients e client_attachments tem sucessor fisico real; contact_contracts
-// e contact_timeline viraram Maps em memoria (ver ContactContractsService /
-// ContactTimelineService) sem tabela para testar RLS. lead_uploads e um
-// modulo nao relacionado a contacts e permanece inalterado.
+// Resynchronized (forensic audit 2026-09-20): the contacts,
+// contact_contracts and contact_timeline tables no longer exist in the database -- they were
+// consolidated into "clients" (the "Contact = Client" decision, see
+// ContactsService) during a pre-existing cleanup of this codebase. Only
+// clients and client_attachments have a real physical successor; contact_contracts
+// and contact_timeline became in-memory Maps (see ContactContractsService /
+// ContactTimelineService) with no table to test RLS on. lead_uploads is a
+// module unrelated to contacts and remains unchanged.
 const TABLES = ['clients', 'client_attachments', 'lead_uploads'] as const;
 
 type TableName = (typeof TABLES)[number];
 
-// Numero de policies FOR ALL varia por tabela: clients/client_attachments
-// foram consolidadas para 2 policies (tenant_isolation + super_admin_full_access)
-// pelas migrations Rebuild*InCanonicalFormOrder/CreateClientAttachments;
-// lead_uploads ainda usa o padrao mais antigo de 4 policies por-comando
-// (HardenContactsLeadUploadsRls), nunca migrado -- confirmado ao vivo, nao
-// assumido.
+// The number of FOR ALL policies varies per table: clients/client_attachments
+// were consolidated into 2 policies (tenant_isolation + super_admin_full_access)
+// by the Rebuild*InCanonicalFormOrder/CreateClientAttachments migrations;
+// lead_uploads still uses the older pattern of 4 per-command policies
+// (HardenContactsLeadUploadsRls), never migrated -- confirmed live, not
+// assumed.
 const EXPECTED_POLICIES: Record<TableName, number> = {
   clients: 2,
   client_attachments: 2,
@@ -120,7 +120,7 @@ async function createFixture(qr: QueryRunner): Promise<Fixture> {
     ],
   );
 
-  // categoria/perfil/nome sao NOT NULL sem default em ClientEntity.
+  // categoria/perfil/nome are NOT NULL without a default in ClientEntity.
   await qr.query(
     `INSERT INTO public.clients (id, tenant_id, categoria, perfil, nome)
      VALUES ($1, $2, 'producer', 'outros', 'Client A'),

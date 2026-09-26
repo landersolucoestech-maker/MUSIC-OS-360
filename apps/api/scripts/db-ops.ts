@@ -2,16 +2,16 @@
 /**
  * scripts/db-ops.ts
  *
- * Wrapper TypeScript para operações de banco de dados.
- * Chamado pelos scripts npm: db:migrate, db:rollback, db:seed, db:reset, db:check, db:generate
+ * TypeScript wrapper for database operations.
+ * Called by the npm scripts: db:migrate, db:rollback, db:seed, db:reset, db:check, db:generate
  *
- * Uso (via npm run):
- *   npm run db:migrate              — aplica todas as migrations pendentes
- *   npm run db:rollback             — reverte a última migration
- *   npm run db:seed                 — executa seeds (dev/staging)
- *   npm run db:reset                — [dev only] dropa tudo + migrate + seed
- *   npm run db:check                — lista migrations pendentes/aplicadas
- *   npm run db:generate -- NomeMig  — gera nova migration baseada nas entidades
+ * Usage (via npm run):
+ *   npm run db:migrate              — applies all pending migrations
+ *   npm run db:rollback             — reverts the last migration
+ *   npm run db:seed                 — runs seeds (dev/staging)
+ *   npm run db:reset                — [dev only] drops everything + migrate + seed
+ *   npm run db:check                — lists pending/applied migrations
+ *   npm run db:generate -- MigName  — generates a new migration based on the entities
  */
 
 import 'reflect-metadata';
@@ -38,19 +38,19 @@ async function migrate(): Promise<void> {
 }
 
 /**
- * migrate:application  (Parte 72)
+ * migrate:application  (Part 72)
  *
- * Aplica somente migrations classificadas como APPLICATION (ver
- * migration-classification.ts), pulando EXTERNAL_MANAGED/PRIVILEGED sem
- * abortar a fila inteira — ao contrário de `db:migrate` (TypeORM puro), que
- * para na primeira falha, mesmo quando a migration seguinte não tem nenhuma
- * relação real com a que falhou.
+ * Applies only migrations classified as APPLICATION (see
+ * migration-classification.ts), skipping EXTERNAL_MANAGED/PRIVILEGED without
+ * aborting the whole queue — unlike `db:migrate` (plain TypeORM), which
+ * stops at the first failure, even when the next migration has no
+ * real relation to the failed one.
  *
- * Usa apenas API pública do TypeORM (MigrationExecutor.getPendingMigrations
- * + .insertMigration) — não reimplementa o SQL de tracking. Cada migration
- * roda na sua própria transação (mesma semântica de `transaction: 'each'`):
- * o tracking só é inserido depois do up() físico ter sucesso, e ambos fazem
- * parte da mesma transação — se o INSERT falhar, o up() também é revertido.
+ * Uses only TypeORM's public API (MigrationExecutor.getPendingMigrations
+ * + .insertMigration) — does not reimplement the tracking SQL. Each migration
+ * runs in its own transaction (same semantics as `transaction: 'each'`):
+ * tracking is only inserted after the physical up() succeeds, and both are
+ * part of the same transaction — if the INSERT fails, up() is rolled back too.
  */
 async function migrateApplication(): Promise<void> {
   console.log('\n[db:migrate:application] Inicializando DataSource…');
@@ -75,9 +75,9 @@ async function migrateApplication(): Promise<void> {
 }
 
 /**
- * check:application  (Parte 72) — como db:check, mas só considera migrations
- * APPLICATION. Uma migration EXTERNAL_MANAGED pendente nunca faz este
- * comando falhar (ver verify:realtime-external para o estado dela).
+ * check:application  (Part 72) — like db:check, but only considers APPLICATION
+ * migrations. A pending EXTERNAL_MANAGED migration never makes this
+ * command fail (see verify:realtime-external for its state).
  */
 async function checkApplication(): Promise<void> {
   console.log('\n[db:check:application] Verificando migrations APPLICATION…\n');
@@ -148,7 +148,7 @@ async function reset(): Promise<void> {
   await AppDataSource.runMigrations({ transaction: 'each' });
 
   console.log('[db:reset] Executando seeds…');
-  // Importação dinâmica para evitar execução automática
+  // Dynamic import to avoid automatic execution
   const { seedDefaultTenant } = await import('../src/database/seeds/01_default_tenant');
   const { seedAdminUser }     = await import('../src/database/seeds/02_admin_user');
   const tenant = await seedDefaultTenant(AppDataSource);
@@ -170,9 +170,9 @@ async function seedOperational(): Promise<void> {
 
   if (!AppDataSource.isInitialized) await AppDataSource.initialize();
 
-  // seedOperational() assume o tenant/org default ja semeado (mesmos IDs
-  // de 01_default_tenant.ts) -- precisa do SeedResult retornado por ele,
-  // nao apenas do DataSource (mesmo padrao ja usado em resetDb() acima).
+  // seedOperational() assumes the default tenant/org already seeded (same IDs
+  // as 01_default_tenant.ts) -- it needs the SeedResult returned by it,
+  // not only the DataSource (same pattern already used in resetDb() above).
   const { seedDefaultTenant } = await import('../src/database/seeds/01_default_tenant');
   const { seedOperational: runSeed } = await import('../src/database/seeds/03_operational_seed');
   const tenant = await seedDefaultTenant(AppDataSource);

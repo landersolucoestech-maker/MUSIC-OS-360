@@ -1,11 +1,11 @@
 /**
- * PASSO 12-J.5 — Matriz de controllers × ações × tier mínimo de role.
+ * STEP 12-J.5 — Matrix of controllers × actions × minimum role tier.
  *
- * `minLevel` = nível de hierarquia exigido pelo @RequireRole/@RequirePermission da rota
- * (espelha o baseline do backend: read→viewer(10), create/update→editor(60),
- *  delete/cancel/archive→manager(70); financeiro create/update→financial(60),
+ * `minLevel` = hierarchy level required by the route's @RequireRole/@RequirePermission
+ * (mirrors the backend baseline: read→viewer(10), create/update→editor(60),
+ *  delete/cancel/archive→manager(70); finance create/update→financial(60),
  *  financial_rule create/update→manager(70), financial_rule delete→admin(80)).
- * Usado APENAS para prever o resultado esperado (allow/deny) e validar a paridade.
+ * Used ONLY to predict the expected result (allow/deny) and validate parity.
  */
 
 export type ActionKind =
@@ -15,9 +15,9 @@ export type ActionKind =
 export interface MatrixAction {
   kind: ActionKind;
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT';
-  /** sufixo do path; `:id` substituído por um id criado/conhecido. */
+  /** path suffix; `:id` replaced by a created/known id. */
   pathSuffix: string;
-  minLevel: number; // nível de role mínimo para ALLOW
+  minLevel: number; // minimum role level for ALLOW
   needsId?: boolean;
   body?: () => Record<string, unknown>;
 }

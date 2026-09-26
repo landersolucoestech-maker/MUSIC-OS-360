@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 /**
- * cleanup-check.mjs — gate anti-peso-morto (pnpm cleanup:check).
+ * cleanup-check.mjs — anti-dead-weight gate (pnpm cleanup:check).
  *
- * REGRAS PERMANENTES DO REPO (falha se violadas por material NOVO):
- *   1. Nada de arquivos temporários rastreados (*.log, *.tmp, *.bak, .DS_Store...).
- *   2. Nada de auditoria/doc histórico novo rastreado (AUDITORIA_*, P0_*, P1_*,
- *      *_REPORT.md, EXECUCAO_* ...) — relatórios são efêmeros, não entram no git.
- *   3. Nada de ref Supabase banido (branch preview) em qualquer arquivo ou .env.
- *   4. Nada de asset em apps/web/public sem referência comprovada.
- *   5. Nada de script de package.json apontando para arquivo inexistente.
- *   6. Nada de workspace dep (@music-os-360/*) declarada sem uso.
- *   7. Nada de nome de arquivo .env alternativo rastreado — só .env.development/
- *      .env.staging/.env.production (raiz, apps/api, apps/web).
+ * PERMANENT REPO RULES (fails if violated by NEW material):
+ *   1. No tracked temporary files (*.log, *.tmp, *.bak, .DS_Store...).
+ *   2. No new tracked audit/historical doc (AUDITORIA_*, P0_*, P1_*,
+ *      *_REPORT.md, EXECUCAO_* ...) — reports are ephemeral, they do not go into git.
+ *   3. No banned Supabase ref (preview branch) in any file or .env.
+ *   4. No asset in apps/web/public without a proven reference.
+ *   5. No package.json script pointing to a nonexistent file.
+ *   6. No workspace dep (@music-os-360/*) declared without use.
+ *   7. No tracked alternative .env file name — only .env.development/
+ *      .env.staging/.env.production (root, apps/api, apps/web).
  *
- * Detecção de imports mortos/deps npm sem uso é delegada a `pnpm typecheck` +
- * knip/depcheck/ts-prune (root devDeps) — rodar manualmente antes de releases.
+ * Detecting dead imports/unused npm deps is delegated to `pnpm typecheck` +
+ * knip/depcheck/ts-prune (root devDeps) — run them manually before releases.
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -25,7 +25,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 
 const SUPABASE_REF_DENYLIST = ["mkyvkciwyhfawmvluugb"];
 
-// Únicos arquivos autorizados a MENCIONAR refs banidos: são os próprios guards.
+// The only files authorized to MENTION banned refs: they are the guards themselves.
 const GUARD_FILE_ALLOWLIST = new Set([
   "apps/api/src/core/config/env.schema.ts",
   "apps/web/src/shared/lib/env.ts",
@@ -34,10 +34,10 @@ const GUARD_FILE_ALLOWLIST = new Set([
   "scripts/cleanup/cleanup-check.mjs",
 ]);
 
-// Docs históricos que JÁ existiam quando o gate foi criado (2026-07-04).
-// Não adicionar itens novos aqui sem decisão explícita de arquitetura.
-// CLEANUP_REPORT.md mudou de root/ (rastreado, baseline abaixo) para reports/
-// (não rastreado, mesma convenção de todo o resto de reports/) — Parte 81.
+// Historical docs that ALREADY existed when the gate was created (2026-07-04).
+// Do not add new items here without an explicit architecture decision.
+// CLEANUP_REPORT.md moved from root/ (tracked, baseline below) to reports/
+// (untracked, the same convention as everything else in reports/) — Part 81.
 const HISTORICAL_DOC_BASELINE = new Set([]);
 
 const JUNK_PATTERN = /\.(log|tmp|bak|orig|rej)$|~$|(^|\/)\.DS_Store$|(^|\/)Thumbs\.db$|(^|\/)\.tmp-/i;
@@ -56,14 +56,14 @@ function git(args) {
 
 const trackedFiles = git(["ls-files"]).split(/\r?\n/).filter(Boolean);
 
-// ── 1. Arquivos temporários rastreados ────────────────────────────────────────
+// ── 1. Tracked temporary files ───────────────────────────────────────────────
 for (const file of trackedFiles) {
   if (JUNK_PATTERN.test(file)) {
     errors.push(`arquivo temporário rastreado: ${file}`);
   }
 }
 
-// ── 2. Docs históricos novos (apenas .md) ─────────────────────────────────────
+// ── 2. New historical docs (.md only) ────────────────────────────────────────
 for (const file of trackedFiles) {
   if (!file.endsWith(".md")) continue;
   if (HISTORICAL_DOC_PATTERN.test(file) && !HISTORICAL_DOC_BASELINE.has(file)) {
@@ -93,9 +93,9 @@ for (const rel of envCandidates) {
   }
 }
 
-// ── 3b. Nomenclatura de .env — só .env.development/.env.staging/.env.production ──
-// (Homologação sistêmica: apps/api e apps/web consolidados para o mesmo padrão
-// já usado na raiz. Qualquer nome alternativo rastreado é regressão.)
+// ── 3b. .env naming — only .env.development/.env.staging/.env.production ──
+// (Systemic homologation: apps/api and apps/web consolidated to the same pattern
+// already used at the root. Any tracked alternative name is a regression.)
 const LEGACY_ENV_PATTERN = /(^|\/)\.env(\.example|\.dev\.example|\.production\.template|\.local|\.staging\.example|\.production\.example|\.backup.*|\.fase\d+.*)?$/;
 for (const file of trackedFiles) {
   const normalized = file.replace(/\\/g, "/");
@@ -107,7 +107,7 @@ for (const file of trackedFiles) {
   }
 }
 
-// ── 4. Assets órfãos em apps/web/public ──────────────────────────────────────
+// ── 4. Orphan assets in apps/web/public ──────────────────────────────────────
 function listFiles(dir) {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -139,7 +139,7 @@ for (const asset of listFiles(publicDir)) {
   }
 }
 
-// ── 5. Scripts de package.json apontando para arquivos inexistentes ──────────
+// ── 5. package.json scripts pointing to nonexistent files ───────────────────
 const pkgFiles = ["package.json", "apps/api/package.json", "apps/web/package.json"].concat(
   fs.readdirSync(path.join(repoRoot, "packages")).map((p) => `packages/${p}/package.json`),
 );
@@ -169,7 +169,7 @@ for (const rel of ["apps/api/package.json", "apps/web/package.json"]) {
   }
 }
 
-// ── Relatório ─────────────────────────────────────────────────────────────────
+// ── Report ────────────────────────────────────────────────────────────────────
 if (errors.length > 0) {
   console.error("❌ cleanup:check FALHOU — peso morto novo detectado:");
   for (const err of errors) console.error(`  • ${err}`);

@@ -23,8 +23,8 @@ let yaml = null;
 try {
   ({ default: yaml } = await import("js-yaml"));
 } catch {
-  // js-yaml não resolvível (não é dependência direta) — segue só com a
-  // checagem estrutural de presença/tamanho, sem parse profundo.
+  // js-yaml is not resolvable (not a direct dependency) — continues with only the
+  // structural presence/size check, without deep parsing.
 }
 
 const errors = [];
@@ -71,6 +71,6 @@ console.log(
     `${yaml ? " e com YAML válido" : ""} no working tree atual.`,
 );
 
-// O mesmo gate barato também garante que nenhum formato de planilha legado
-// reapareça em código, configuração, documentação ou dependências.
+// The same cheap gate also ensures no legacy spreadsheet format
+// reappears in code, configuration, documentation or dependencies.
 await import("./verify-xlsx-only.mjs");

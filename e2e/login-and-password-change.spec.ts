@@ -1,21 +1,21 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * login-and-password-change.spec.ts  (Parte 77)
+ * login-and-password-change.spec.ts  (Part 77)
  *
- * E2E real via navegador — login institucional → redirect seguro para
- * /change-required-password → validações → troca real → wizard. Nunca
- * substitui isto por uma chamada direta ao Supabase (essa cobertura já
- * existe nos testes unitários do backend); o valor deste spec é
- * exatamente confirmar que o NAVEGADOR real não quebra durante o fluxo
- * (ver a regressão de removeChild corrigida nesta mesma Parte).
+ * Real browser E2E — institutional login → safe redirect to
+ * /change-required-password → validations → real change → wizard. Never
+ * replaces this with a direct Supabase call (that coverage already
+ * exists in the backend unit tests); the value of this spec is
+ * exactly confirming the real BROWSER does not break during the flow
+ * (see the removeChild regression fixed in this same Part).
  *
- * Credenciais só via variáveis de ambiente, nunca hardcoded:
- *   E2E_INSTITUTIONAL_EMAIL    — e-mail do owner institucional
- *   E2E_INSTITUTIONAL_PASSWORD — senha provisória ATUAL (válida agora)
- *   E2E_TEST_PASSWORD          — senha sintética só para este teste trocar PARA
- * Ausentes → toda a suíte é pulada (test.skip), nunca falha CI por falta
- * de segredo que a maioria dos ambientes não tem.
+ * Credentials only via environment variables, never hardcoded:
+ *   E2E_INSTITUTIONAL_EMAIL    — the institutional owner's e-mail
+ *   E2E_INSTITUTIONAL_PASSWORD — the CURRENT temporary password (valid now)
+ *   E2E_TEST_PASSWORD          — a synthetic password this test only changes TO
+ * Absent → the whole suite is skipped (test.skip), never failing CI for lack
+ * of a secret most environments do not have.
  */
 const EMAIL = process.env.E2E_INSTITUTIONAL_EMAIL;
 const CURRENT_PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;
@@ -65,7 +65,7 @@ test.describe('Login institucional → troca obrigatória de senha', () => {
     });
 
     await test.step('encerra a sessão', async () => {
-      // Nunca deixa a sessão de teste aberta no navegador.
+      // Never leaves the test session open in the browser.
       await page.evaluate(() => localStorage.clear());
     });
   });
