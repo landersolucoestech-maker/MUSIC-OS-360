@@ -32,12 +32,12 @@ async function main(): Promise<void> {
   const ref = extractSupabaseRef(databaseUrl);
 
   if (ref === SUPABASE_PROD_REF) {
-    console.error('::error::DATABASE_URL aponta para a branch MAIN do Supabase — recusado.');
+    console.error('::error::DATABASE_URL points to the Supabase MAIN branch — refused.');
     process.exitCode = 1;
     return;
   }
   if (ref && SUPABASE_REF_DENYLIST.includes(ref)) {
-    console.error(`::error::DATABASE_URL aponta para um ref banido ("${ref}") — recusado.`);
+    console.error(`::error::DATABASE_URL points to a banned ref ("${ref}") — refused.`);
     process.exitCode = 1;
     return;
   }
@@ -51,7 +51,7 @@ async function main(): Promise<void> {
     const tableExists = existsResult.rows[0]?.exists === true;
 
     if (!tableExists) {
-      console.error('::error::realtime.messages não existe neste projeto (ref inesperado ou projeto sem extensão Realtime).');
+      console.error('::error::realtime.messages does not exist in this project (unexpected ref or project without the Realtime extension).');
       process.exitCode = 1;
       return;
     }

@@ -59,7 +59,7 @@ async function setTenant(client: import('pg').Client, tenantId: string) {
 async function main(): Promise<void> {
   const targetRef = extractSupabaseRef(databaseUrl);
   if (targetRef === SUPABASE_PROD_REF) {
-    console.error('\n  ✗ ABORTADO: DATABASE_URL aponta para o ref de PRODUÇÃO Supabase.\n');
+    console.error('\n  ✗ ABORTED: DATABASE_URL points to the Supabase PRODUCTION ref.\n');
     process.exit(1);
   }
 
@@ -107,7 +107,7 @@ async function main(): Promise<void> {
       [tenantB, orgB, `cst-tenant-b-${tenantB.slice(0, 8)}`],
     );
     await client.query('COMMIT');
-    ok('Orgs e tenants sintéticos criados');
+    ok('Synthetic orgs and tenants created');
 
     // TEST 1: INSERT como Tenant A
     await client.query('BEGIN');
@@ -127,8 +127,8 @@ async function main(): Promise<void> {
       `SELECT id, active FROM contract_service_types WHERE id = $1 AND active = true`, [cstA],
     );
     await client.query('ROLLBACK');
-    if (own.rowCount === 1) { ok('TEST 2: SELECT do próprio tenant retorna o registro ativo'); passed++; }
-    else { fail('TEST 2: SELECT do próprio tenant não retornou o registro'); failed++; }
+    if (own.rowCount === 1) { ok('TEST 2: SELECT of own tenant returns the active record'); passed++; }
+    else { fail('TEST 2: SELECT of own tenant did not return the record'); failed++; }
 
     // TEST 3: duplicate slug in the same tenant → uniqueness violation
     await client.query('BEGIN');
@@ -145,7 +145,7 @@ async function main(): Promise<void> {
     }
     await client.query('ROLLBACK');
     if (dupRejected) { ok('TEST 3: slug duplicado no mesmo tenant rejeitado (uq_contract_service_types_tenant_slug)'); passed++; }
-    else { fail('TEST 3: FALHA — slug duplicado foi aceito, unicidade tenant-scoped não está funcionando'); failed++; }
+    else { fail('TEST 3: FAIL — duplicate slug was accepted, tenant-scoped uniqueness is not working'); failed++; }
 
     // TEST 4: INSERT as Tenant B (same slug, different tenant — must work)
     await client.query('BEGIN');
@@ -156,7 +156,7 @@ async function main(): Promise<void> {
       [cstB, tenantB],
     );
     await client.query('COMMIT');
-    ok('TEST 4: INSERT como Tenant B com mesmo slug (unicidade é por tenant, não global)'); passed++;
+    ok('TEST 4: INSERT as Tenant B with the same slug (uniqueness is per tenant, not global)'); passed++;
 
     // TEST 5: SELECT of A's record as Tenant B → RLS blocks (0 rows)
     await client.query('BEGIN');
@@ -164,7 +164,7 @@ async function main(): Promise<void> {
     const crossRead = await client.query(`SELECT id FROM contract_service_types WHERE id = $1`, [cstA]);
     await client.query('ROLLBACK');
     if ((crossRead.rowCount ?? 0) === 0) { ok('TEST 5: SELECT cross-tenant bloqueado por RLS — 0 linhas'); passed++; }
-    else { fail(`TEST 5: FALHA CRÍTICA — RLS permitiu leitura cross-tenant (${crossRead.rowCount} linhas)`); failed++; }
+    else { fail(`TEST 5: CRITICAL FAILURE — RLS allowed cross-tenant read (${crossRead.rowCount} rows)`); failed++; }
 
     // TEST 6: UPDATE como Tenant A
     await client.query('BEGIN');
@@ -173,8 +173,8 @@ async function main(): Promise<void> {
       `UPDATE contract_service_types SET name = 'Distribuição Teste (editado)' WHERE id = $1`, [cstA],
     );
     await client.query('COMMIT');
-    if (upd.rowCount === 1) { ok('TEST 6: UPDATE como Tenant A afetou 1 linha'); passed++; }
-    else { fail('TEST 6: UPDATE não afetou a linha esperada'); failed++; }
+    if (upd.rowCount === 1) { ok('TEST 6: UPDATE as Tenant A affected 1 row'); passed++; }
+    else { fail('TEST 6: UPDATE did not affect the expected row'); failed++; }
 
     // TEST 7: soft-delete (active=false) como Tenant A
     await client.query('BEGIN');
@@ -184,24 +184,24 @@ async function main(): Promise<void> {
       `SELECT active, deleted_at FROM contract_service_types WHERE id = $1 AND deleted_at IS NULL`, [cstA],
     );
     await client.query('COMMIT');
-    if ((afterSoftDelete.rowCount ?? 0) === 0) { ok('TEST 7: soft-delete confirmado — registro não aparece mais em queries "deleted_at IS NULL"'); passed++; }
-    else { fail('TEST 7: FALHA — soft-delete não excluiu o registro da listagem ativa'); failed++; }
+    if ((afterSoftDelete.rowCount ?? 0) === 0) { ok('TEST 7: soft-delete confirmed — record no longer appears in "deleted_at IS NULL" queries'); passed++; }
+    else { fail('TEST 7: FAIL — soft-delete did not remove the record from the active listing'); failed++; }
 
     // TEST 8: the record still exists physically (soft delete, not hard delete)
     await client.query('BEGIN');
     await setTenant(client, tenantA);
     const stillPhysical = await client.query(`SELECT id FROM contract_service_types WHERE id = $1`, [cstA]);
     await client.query('ROLLBACK');
-    if (stillPhysical.rowCount === 1) { ok('TEST 8: registro ainda existe fisicamente após soft-delete (nunca DELETE físico)'); passed++; }
-    else { fail('TEST 8: FALHA — soft-delete removeu a linha fisicamente'); failed++; }
+    if (stillPhysical.rowCount === 1) { ok('TEST 8: record still exists physically after soft-delete (never a physical DELETE)'); passed++; }
+    else { fail('TEST 8: FAIL — soft-delete removed the row physically'); failed++; }
 
   } finally {
-    info('Limpando dados sintéticos…');
+    info('Cleaning up synthetic data…');
     try {
       await client.query(`DELETE FROM contract_service_types WHERE id IN ($1, $2)`, [cstA, cstB]);
       await client.query(`DELETE FROM tenants WHERE id IN ($1, $2)`, [tenantA, tenantB]);
       await client.query(`DELETE FROM organizations WHERE id IN ($1, $2)`, [orgA, orgB]);
-      ok('Dados sintéticos removidos — zero resíduo');
+      ok('Synthetic data removed — zero residue');
     } catch (cleanErr) {
       console.warn(`  ⚠  Cleanup parcial: ${(cleanErr as Error).message}`);
     }
@@ -215,12 +215,12 @@ async function main(): Promise<void> {
   if (failed === 0) {
     console.log('\n  ✓ contract_service_types CRUD + tenant isolation VALIDADOS na DEV real.\n');
   } else {
-    console.log('\n  ✗ FALHAS CRÍTICAS detectadas em contract_service_types.\n');
+    console.log('\n  ✗ CRITICAL FAILURES detected in contract_service_types.\n');
     process.exit(1);
   }
 }
 
 main().catch((err) => {
-  console.error('\n[verify:contract-service-types] Erro fatal:', (err as Error).message);
+  console.error('\n[verify:contract-service-types] Fatal error:', (err as Error).message);
   process.exit(1);
 });

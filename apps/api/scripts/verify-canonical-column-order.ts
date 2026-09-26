@@ -224,18 +224,18 @@ async function main() {
   const max = Math.max(actual.length, expected.length);
   for (let i = 0; i < max; i++) {
     if (actual[i] !== expected[i]) {
-      mismatches.push(`  posição ${i + 1}: esperado="${expected[i] ?? '<ausente>'}" real="${actual[i] ?? '<ausente>'}"`);
+      mismatches.push(`  position ${i + 1}: expected="${expected[i] ?? '<missing>'}" actual="${actual[i] ?? '<missing>'}"`);
     }
   }
 
   await AppDataSource.destroy();
 
   if (mismatches.length > 0) {
-    console.error(`[verify-canonical-column-order] "${table}" DIVERGE da ordem canônica:`);
+    console.error(`[verify-canonical-column-order] "${table}" DIVERGES from the canonical order:`);
     console.error(mismatches.join('\n'));
     process.exit(1);
   }
-  console.log(`[verify-canonical-column-order] "${table}" ✓ ordem física == ordem canônica (${actual.length} colunas).`);
+  console.log(`[verify-canonical-column-order] "${table}" ✓ physical order == canonical order (${actual.length} columns).`);
 }
 
 main().catch((err) => {

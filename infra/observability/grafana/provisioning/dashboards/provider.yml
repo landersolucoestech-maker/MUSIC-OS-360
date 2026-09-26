@@ -1,4 +1,4 @@
-# PASSO 12-J.7 — Provider de dashboards do Grafana.
+# STEP 12-J.7 — Grafana dashboards provider.
 apiVersion: 1
 providers:
   - name: 'MusicOS RBAC'

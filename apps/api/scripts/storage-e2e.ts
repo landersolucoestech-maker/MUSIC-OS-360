@@ -40,9 +40,9 @@ function loadEnv(): Record<string, string> {
 }
 
 const env = loadEnv();
-const results: Array<[string, 'OK' | 'FALHA', string]> = [];
+const results: Array<[string, 'OK' | 'FAIL', string]> = [];
 function record(step: string, ok: boolean, detail = ''): void {
-  results.push([step, ok ? 'OK' : 'FALHA', detail]);
+  results.push([step, ok ? 'OK' : 'FAIL', detail]);
   // eslint-disable-next-line no-console
   console.log(`[storage-e2e] ${ok ? 'OK  ' : 'FAIL'} ${step}${detail ? ` — ${detail}` : ''}`);
 }
@@ -129,7 +129,7 @@ async function main(): Promise<number> {
       let stillThere = true;
       try { await client.send(new HeadObjectCommand({ Bucket: bucket, Key: key })); }
       catch { stillThere = false; }
-      record('DeleteObject+confirm', !stillThere, stillThere ? 'objeto ainda existe' : 'removido');
+      record('DeleteObject+confirm', !stillThere, stillThere ? 'object still exists' : 'removido');
     } catch (e) { record('DeleteObject+confirm', false, (e as Error).message); }
   } finally {
     // Best-effort cleanup
@@ -141,7 +141,7 @@ async function main(): Promise<number> {
     try { client.destroy(); } catch { /* ignore */ }
   }
 
-  const failed = results.filter((r) => r[1] === 'FALHA');
+  const failed = results.filter((r) => r[1] === 'FAIL');
   console.log(`\n[storage-e2e] ${results.length - failed.length}/${results.length} passos OK.`);
   return failed.length === 0 ? 0 : 1;
 }

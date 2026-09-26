@@ -156,7 +156,7 @@ function signExpired(orgId: string, userId: string) {
 
 async function getAuthA() {
   const auth = await http('GET', '/dev-auth/token');
-  expect('auth', auth.res.ok, 'dev-auth nao retornou 200', { status: auth.res.status, body: auth.json });
+  expect('auth', auth.res.ok, 'dev-auth did not return 200', { status: auth.res.status, body: auth.json });
   return { token: auth.json?.token as string, tenantId: auth.json?.tenantId as string, userId: auth.json?.user?.id as string };
 }
 
@@ -173,7 +173,7 @@ async function createCoreData(token: string, tenantId: string, tag: string) {
       metadata: { runId, tag },
     },
   });
-  expect('setup', artist.res.ok, 'POST /artists setup falhou', { status: artist.res.status, body: artist.json });
+  expect('setup', artist.res.ok, 'POST /artists setup failed', { status: artist.res.status, body: artist.json });
   const artistId = idOf(artist.json);
 
   const client = await http('POST', '/clients', {
@@ -181,7 +181,7 @@ async function createCoreData(token: string, tenantId: string, tag: string) {
     tenantId,
     body: { name: `F8 Client ${tag}`, type: 'company', email: `f8.client.${tag}@example.com`, metadata: { runId, tag } },
   });
-  expect('setup', client.res.ok, 'POST /clients setup falhou', { status: client.res.status, body: client.json });
+  expect('setup', client.res.ok, 'POST /clients setup failed', { status: client.res.status, body: client.json });
   const clientId = idOf(client.json);
 
   const release = await http('POST', '/releases', {
@@ -189,7 +189,7 @@ async function createCoreData(token: string, tenantId: string, tag: string) {
     tenantId,
     body: { title: `F8 Release ${tag}`, type: 'single', artistId, releasedAt: '2026-05-23T12:00:00-03:00', metadata: { runId, tag } },
   });
-  expect('setup', release.res.ok, 'POST /releases setup falhou', { status: release.res.status, body: release.json });
+  expect('setup', release.res.ok, 'POST /releases setup failed', { status: release.res.status, body: release.json });
   const releaseId = idOf(release.json);
 
   const contract = await http('POST', '/contracts', {
@@ -206,7 +206,7 @@ async function createCoreData(token: string, tenantId: string, tag: string) {
       metadata: { runId, tag },
     },
   });
-  expect('setup', contract.res.ok, 'POST /contracts setup falhou', { status: contract.res.status, body: contract.json });
+  expect('setup', contract.res.ok, 'POST /contracts setup failed', { status: contract.res.status, body: contract.json });
   const contractId = idOf(contract.json);
 
   const event = await http('POST', '/events', {
@@ -222,7 +222,7 @@ async function createCoreData(token: string, tenantId: string, tag: string) {
       metadata: { runId, tag },
     },
   });
-  expect('setup', event.res.ok, 'POST /events setup falhou', { status: event.res.status, body: event.json });
+  expect('setup', event.res.ok, 'POST /events setup failed', { status: event.res.status, body: event.json });
   const eventId = idOf(event.json);
 
   const tx = await http('POST', '/transactions', {
@@ -241,7 +241,7 @@ async function createCoreData(token: string, tenantId: string, tag: string) {
       artistaVinculado: artistId,
     },
   });
-  expect('setup', tx.res.ok, 'POST /transactions setup falhou', { status: tx.res.status, body: tx.json });
+  expect('setup', tx.res.ok, 'POST /transactions setup failed', { status: tx.res.status, body: tx.json });
   const transactionId = idOf(tx.json);
 
   return { artistId, clientId, releaseId, contractId, eventId, transactionId };
@@ -268,13 +268,13 @@ async function uploadObject(token: string, tenantId: string, params: {
       entityId: params.entityId,
     },
   });
-  expect('uploads', presign.res.ok, 'POST /uploads/presign falhou', { status: presign.res.status, body: presign.json });
+  expect('uploads', presign.res.ok, 'POST /uploads/presign failed', { status: presign.res.status, body: presign.json });
   const put = await putPresigned(presign.json.presignedUrl, params.body, params.mimeType);
-  expect('uploads', put.ok, 'PUT presigned falhou', put);
+  expect('uploads', put.ok, 'presigned PUT failed', put);
   const confirm = await http('POST', `/uploads/${presign.json.fileId}/confirm`, { token, tenantId });
-  expect('uploads', confirm.res.ok, 'POST /uploads/:id/confirm falhou', { status: confirm.res.status, body: confirm.json });
+  expect('uploads', confirm.res.ok, 'POST /uploads/:id/confirm failed', { status: confirm.res.status, body: confirm.json });
   const download = await http('GET', `/uploads/${presign.json.fileId}/download`, { token, tenantId });
-  expect('uploads', download.res.ok && Boolean(download.json?.url), 'GET /uploads/:id/download falhou', { status: download.res.status, body: download.json });
+  expect('uploads', download.res.ok && Boolean(download.json?.url), 'GET /uploads/:id/download failed', { status: download.res.status, body: download.json });
   return { fileId: presign.json.fileId as string, key: presign.json.key as string, put, confirm: confirm.json, download: download.json };
 }
 
@@ -289,9 +289,9 @@ async function validateHealth(token: string, tenantId: string) {
     artists: artists.res.status,
     dashboard: dashboard.res.status,
   };
-  expect('banco', live.res.status === 200, '/health/live nao ficou 200', evidence.health);
-  expect('banco', ready.res.status === 200, '/health/ready atual nao ficou 200', evidence.health);
-  expect('banco', artists.res.ok && dashboard.res.ok, 'endpoints DB base nao responderam 2xx', evidence.health);
+  expect('banco', live.res.status === 200, '/health/live did not become 200', evidence.health);
+  expect('banco', ready.res.status === 200, 'current /health/ready did not become 200', evidence.health);
+  expect('banco', artists.res.ok && dashboard.res.ok, 'base DB endpoints did not respond 2xx', evidence.health);
 }
 
 async function validateRedisDegraded(token: string, tenantId: string, core: Awaited<ReturnType<typeof createCoreData>>) {
@@ -306,7 +306,7 @@ async function validateRedisDegraded(token: string, tenantId: string, core: Awai
     body: PNG_1X1,
   });
   evidence.redis = { audit: audit.res.status, uploadConfirmStatus: upload.confirm?.status, fileId: upload.fileId };
-  expect('redis', audit.res.ok, 'audit logs nao responderam com Redis degradado', evidence.redis);
+  expect('redis', audit.res.ok, 'audit logs did not respond with Redis degraded', evidence.redis);
 }
 
 async function validateR2FailurePath(pg: PgClient, token: string, tenantId: string, releaseId: string) {
@@ -322,7 +322,7 @@ async function validateR2FailurePath(pg: PgClient, token: string, tenantId: stri
       entityId: releaseId,
     },
   });
-  expect('r2', presign.res.ok, 'presign para ghost falhou', { status: presign.res.status, body: presign.json });
+  expect('r2', presign.res.ok, 'presign for ghost failed', { status: presign.res.status, body: presign.json });
   const confirm = await http('POST', `/uploads/${presign.json.fileId}/confirm`, { token, tenantId, expected: [400] });
   const row = await pg.query('select status, confirmed_at from uploads where file_id = $1', [presign.json.fileId]);
   evidence.r2 = {
@@ -331,7 +331,7 @@ async function validateR2FailurePath(pg: PgClient, token: string, tenantId: stri
     dbStatus: row.rows[0]?.status,
     confirmedAt: row.rows[0]?.confirmed_at ?? null,
   };
-  expect('r2', confirm.res.status === 400, 'confirm sem objeto R2 deveria retornar 400', evidence.r2);
+  expect('r2', confirm.res.status === 400, 'confirm without an R2 object should return 400', evidence.r2);
   expect('r2', row.rows[0]?.status === 'pending' && !row.rows[0]?.confirmed_at, 'upload fantasma ficou confirmado no DB', evidence.r2);
 }
 
@@ -380,10 +380,10 @@ async function validateRace(pg: PgClient, token: string, tenantId: string, core:
     putBeforeDoubleConfirm: put.status,
     uploadRows: uploadRows.rows[0],
   };
-  expect('race', badPatch.length === 0 && artistReload.res.ok, 'PATCH concorrente de artista teve falha', evidence.race);
+  expect('race', badPatch.length === 0 && artistReload.res.ok, 'concurrent artist PATCH had a failure', evidence.race);
   expect('race', ![del.res.status, patchAfter.res.status].some((s) => s >= 500), 'DELETE+PATCH simultaneo gerou 5xx', evidence.race);
   expect('race', up1.key !== up2.key, 'uploads simultaneos geraram r2_key duplicado', evidence.race);
-  expect('race', c1.res.ok && c2.res.ok, 'double confirm nao foi idempotente', evidence.race);
+  expect('race', c1.res.ok && c2.res.ok, 'double confirm was not idempotent', evidence.race);
   expect('race', uploadRows.rows[0]?.count === 3 && uploadRows.rows[0]?.unique_keys === 3, 'uploads concorrentes corromperam rows/keys', evidence.race);
 }
 
@@ -419,9 +419,9 @@ async function validateTenantStress(pg: PgClient, authA: { token: string; tenant
     dbTenants: byTenant.rows,
     crossStatus: cross.res.status,
   };
-  expect('multi-tenant', results.every((r) => r.res.ok), 'stress multi-tenant teve request nao 2xx', evidence.multiTenantStress);
+  expect('multi-tenant', results.every((r) => r.res.ok), 'multi-tenant stress had a non-2xx request', evidence.multiTenantStress);
   expect('multi-tenant', [403, 404].includes(cross.res.status), 'cross-tenant detail vazou', evidence.multiTenantStress);
-  expect('multi-tenant', byTenant.rows.length === 2, 'DB nao manteve dados em dois tenants separados', evidence.multiTenantStress);
+  expect('multi-tenant', byTenant.rows.length === 2, 'DB did not keep data in two separate tenants', evidence.multiTenantStress);
 }
 
 async function validateSecurity(pg: PgClient, token: string, tenantId: string, core: Awaited<ReturnType<typeof createCoreData>>) {
@@ -481,16 +481,16 @@ async function validateSecurity(pg: PgClient, token: string, tenantId: string, c
     xss: xss.res.status,
     downloadAfterDelete: downloadAfterDeleteStatus,
   };
-  expect('seguranca', invalidJwt.res.status === 401, 'JWT invalido nao retornou 401', evidence.security);
-  expect('seguranca', expiredJwt.res.status === 401, 'JWT expirado nao retornou 401', evidence.security);
-  expect('seguranca', badTenant.res.status === 403, 'tenant header invalido nao retornou 403', evidence.security);
-  expect('seguranca', noAuth.res.status === 401, 'sem auth nao retornou 401', evidence.security);
-  expect('seguranca', noTenant.res.status === 403, 'sem tenant nao retornou 403', evidence.security);
-  expect('seguranca', invalidExt.res.status === 400, 'extensao/MIME invalido nao retornou 400', evidence.security);
-  expect('seguranca', oversize.res.status === 400, 'oversize nao retornou 400', evidence.security);
-  expect('seguranca', traversal.res.ok && !String(traversal.json?.key ?? '').includes('/../'), 'path traversal nao foi neutralizado no key', evidence.security);
-  expect('seguranca', injection.res.ok && xss.res.ok, 'payloads SQL/XSS causaram erro HTTP', evidence.security);
-  expect('seguranca', downloadAfterDeleteStatus === 404, 'download apos delete nao retornou 404', evidence.security);
+  expect('seguranca', invalidJwt.res.status === 401, 'invalid JWT did not return 401', evidence.security);
+  expect('seguranca', expiredJwt.res.status === 401, 'expired JWT did not return 401', evidence.security);
+  expect('seguranca', badTenant.res.status === 403, 'invalid tenant header did not return 403', evidence.security);
+  expect('seguranca', noAuth.res.status === 401, 'no auth did not return 401', evidence.security);
+  expect('seguranca', noTenant.res.status === 403, 'no tenant did not return 403', evidence.security);
+  expect('seguranca', invalidExt.res.status === 400, 'invalid extension/MIME did not return 400', evidence.security);
+  expect('seguranca', oversize.res.status === 400, 'oversize did not return 400', evidence.security);
+  expect('seguranca', traversal.res.ok && !String(traversal.json?.key ?? '').includes('/../'), 'path traversal was not neutralized in the key', evidence.security);
+  expect('seguranca', injection.res.ok && xss.res.ok, 'SQL/XSS payloads caused an HTTP error', evidence.security);
+  expect('seguranca', downloadAfterDeleteStatus === 404, 'download after delete did not return 404', evidence.security);
 }
 
 async function validateRecovery(token: string, tenantId: string, releaseId: string) {
@@ -503,7 +503,7 @@ async function validateRecovery(token: string, tenantId: string, releaseId: stri
   const confirm = await http('POST', `/uploads/${before.json.fileId}/confirm`, { token, tenantId });
   const dashboard = await http('GET', '/analytics/dashboard', { token, tenantId });
   evidence.recovery = { presign: before.res.status, put: put.status, confirm: confirm.res.status, dashboard: dashboard.res.status };
-  expect('recovery', before.res.ok && put.ok && confirm.res.ok && dashboard.res.ok, 'ciclo de recuperacao/logical reload falhou', evidence.recovery);
+  expect('recovery', before.res.ok && put.ok && confirm.res.ok && dashboard.res.ok, 'recovery/logical reload cycle failed', evidence.recovery);
 }
 
 async function main() {
@@ -531,7 +531,7 @@ async function main() {
 
   const summary = {
     runId,
-    result: failures.length ? 'FALHOU' : 'PASSOU',
+    result: failures.length ? 'FAILED' : 'PASSOU',
     failures,
     evidence,
     httpStatusCounts: requests.reduce<Record<string, number>>((acc, r) => {
@@ -547,7 +547,7 @@ async function main() {
 main().catch((err) => {
   console.error(JSON.stringify(redactSensitiveObject({
     runId,
-    result: 'FALHOU',
+    result: 'FAILED',
     fatal: {
       name: err instanceof Error ? err.name : 'Error',
       message: err instanceof Error ? err.message : String(err),

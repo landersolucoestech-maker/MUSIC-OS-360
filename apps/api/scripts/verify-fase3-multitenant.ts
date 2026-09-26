@@ -126,10 +126,10 @@ function extractList(body: any): any[] {
 // ============================================================================
 
 async function fase31(): Promise<void> {
-  section('FASE 3.1 — PREPARAÇÃO');
+  section('PHASE 3.1 — SETUP');
 
   if (!ENCRYPTION_KEY) {
-    fail('ENCRYPTION_KEY não encontrada em apps/api/.env.development — abortando');
+    fail('ENCRYPTION_KEY not found in apps/api/.env.development — aborting');
     process.exit(2);
   }
 
@@ -148,13 +148,13 @@ async function fase31(): Promise<void> {
   const tenantIdB = ctxB.body?.data?.workspace?.id ?? ctxB.body?.data?.tenant?.id ?? ctxB.body?.workspace?.id;
   expect('Tenant B retorna workspace.id correto', tenantIdB === TENANT_B.tenantId, `got=${tenantIdB}`);
 
-  // X-Tenant-ID errado deve falhar (token A + header B)
+  // Wrong X-Tenant-ID must fail (token A + header B)
   const wrong = await call('GET', '/auth/context', { token: TOKEN_A, tenantId: TENANT_B.tenantId });
   expect('Token A + Header B → 403', wrong.status === 403, `status=${wrong.status}`);
 }
 
 // ============================================================================
-// FASE 3.2 — CRIAR DADOS ISOLADOS
+// PHASE 3.2 — CREATE ISOLATED DATA
 // ============================================================================
 
 interface CreatedSet {
@@ -275,7 +275,7 @@ async function createSetFor(
   });
   if (tx.status === 201 || tx.status === 200) {
     set.transactionId = pickId(tx.body) ?? undefined;
-    ok(`[${tag}] Transação criada id=${set.transactionId?.slice(0, 8)}…`);
+    ok(`[${tag}] Transaction created id=${set.transactionId?.slice(0, 8)}…`);
     passed++;
   } else {
     fail(`[${tag}] POST /transactions → ${tx.status} ${JSON.stringify(tx.body).slice(0, 200)}`);
@@ -303,13 +303,13 @@ let DATA_A: CreatedSet = {};
 let DATA_B: CreatedSet = {};
 
 async function fase32(): Promise<void> {
-  section('FASE 3.2 — CRIAR DADOS ISOLADOS');
+  section('PHASE 3.2 — CREATE ISOLATED DATA');
   DATA_A = await createSetFor(TENANT_A, TOKEN_A, TAG_A);
   DATA_B = await createSetFor(TENANT_B, TOKEN_B, TAG_B);
 }
 
 // ============================================================================
-// FASE 3.3 — LISTAGEM ISOLADA
+// PHASE 3.3 — ISOLATED LISTING
 // ============================================================================
 
 const ENDPOINTS = [
@@ -342,8 +342,8 @@ async function fase33(): Promise<void> {
       const v = ep.tagMatcher(r);
       return typeof v === 'string' && v.includes(TAG_A);
     });
-    expect(`${ep.path} — A não vê dados B`, !seesBInA);
-    expect(`${ep.path} — B não vê dados A`, !seesAInB);
+    expect(`${ep.path} — A does not see B data`, !seesBInA);
+    expect(`${ep.path} — B does not see A data`, !seesAInB);
   }
 
   // audit-logs & activity-logs (we do not create them directly, but the lists must respond)
@@ -365,7 +365,7 @@ async function fase33(): Promise<void> {
 }
 
 // ============================================================================
-// FASE 3.4 — DETAIL CROSS-TENANT
+// PHASE 3.4 — DETAIL CROSS-TENANT
 // ============================================================================
 
 const DETAIL_TARGETS = [
@@ -401,7 +401,7 @@ async function fase34(): Promise<void> {
 }
 
 // ============================================================================
-// FASE 3.5 — UPDATE CROSS-TENANT
+// PHASE 3.5 — UPDATE CROSS-TENANT
 // ============================================================================
 
 async function fase35(): Promise<void> {
@@ -429,7 +429,7 @@ async function fase35(): Promise<void> {
 }
 
 // ============================================================================
-// FASE 3.6 — DELETE CROSS-TENANT
+// PHASE 3.6 — DELETE CROSS-TENANT
 // ============================================================================
 
 async function fase36(): Promise<void> {
@@ -457,7 +457,7 @@ async function fase36(): Promise<void> {
 }
 
 // ============================================================================
-// FASE 3.7 — JOIN TENANT-SAFE
+// PHASE 3.7 — JOIN TENANT-SAFE
 // ============================================================================
 
 async function fase37(): Promise<void> {
@@ -465,7 +465,7 @@ async function fase37(): Promise<void> {
 
   function checkArtistRef(label: string, artistRef: any, expectedArtistId: string | undefined, tag: string): void {
     if (artistRef === undefined || artistRef === null) {
-      info(`${label}: release não devolveu artist embed/ref — nada a vazar`);
+      info(`${label}: release did not return an artist embed/ref — nothing to leak`);
       return;
     }
     let isSame = false;
@@ -488,14 +488,14 @@ async function fase37(): Promise<void> {
     expect('GET release A retorna 200', r.status === 200, `got=${r.status}`);
     const releaseA = r.body?.data ?? r.body ?? {};
     const artistInRelease = releaseA?.artist ?? releaseA?.artista ?? releaseA?.artistId ?? releaseA?.artist_id ?? releaseA?.artista_id;
-    checkArtistRef('Release A só referencia Artist A (mesmo tenant)', artistInRelease, DATA_A.artistId, TAG_A);
+    checkArtistRef('Release A only references Artist A (same tenant)', artistInRelease, DATA_A.artistId, TAG_A);
   }
   if (DATA_B.releaseId) {
     const r = await call('GET', `/releases/${DATA_B.releaseId}`, { token: TOKEN_B, tenantId: TENANT_B.tenantId });
     expect('GET release B retorna 200', r.status === 200, `got=${r.status}`);
     const releaseB = r.body?.data ?? r.body ?? {};
     const artistInRelease = releaseB?.artist ?? releaseB?.artista ?? releaseB?.artistId ?? releaseB?.artist_id ?? releaseB?.artista_id;
-    checkArtistRef('Release B só referencia Artist B (mesmo tenant)', artistInRelease, DATA_B.artistId, TAG_B);
+    checkArtistRef('Release B only references Artist B (same tenant)', artistInRelease, DATA_B.artistId, TAG_B);
   }
 
   // Contracts: the detail must bring the artist/client of the same tenant
@@ -520,7 +520,7 @@ async function fase37(): Promise<void> {
 }
 
 // ============================================================================
-// FASE 3.8 — ANALYTICS TENANT-SAFE
+// PHASE 3.8 — ANALYTICS TENANT-SAFE
 // ============================================================================
 
 async function fase38(): Promise<void> {
@@ -549,7 +549,7 @@ async function fase38(): Promise<void> {
   // Direct comparison of the JSONs — if they are exactly equal with different data in the tenants, there is a global leak.
   const aStr = JSON.stringify(a);
   const bStr = JSON.stringify(b);
-  expect('Analytics A e B retornam corpos distintos', aStr !== bStr, 'corpos idênticos → suspeita de vazamento global');
+  expect('Analytics A e B retornam corpos distintos', aStr !== bStr, 'identical bodies → suspected global leak');
 
   // revenue endpoint
   const revA = await call('GET', '/analytics/revenue?months=3', { token: TOKEN_A, tenantId: TENANT_A.tenantId });
@@ -559,7 +559,7 @@ async function fase38(): Promise<void> {
 }
 
 // ============================================================================
-// FASE 3.9 — AUDIT / ACTIVITY TENANT-SAFE
+// PHASE 3.9 — AUDIT / ACTIVITY TENANT-SAFE
 // ============================================================================
 
 async function fase39(): Promise<void> {
@@ -575,10 +575,10 @@ async function fase39(): Promise<void> {
 
   const tenantIdsInA = new Set(auditListA.map((r: any) => r.tenant_id ?? r.tenantId).filter(Boolean));
   const tenantIdsInB = new Set(auditListB.map((r: any) => r.tenant_id ?? r.tenantId).filter(Boolean));
-  expect('audit-logs A só contém tenant_id=A',
+  expect('audit-logs A only contains tenant_id=A',
     tenantIdsInA.size === 0 || (tenantIdsInA.size === 1 && tenantIdsInA.has(TENANT_A.tenantId)),
     `tenants observados: ${[...tenantIdsInA].join(',')}`);
-  expect('audit-logs B só contém tenant_id=B',
+  expect('audit-logs B only contains tenant_id=B',
     tenantIdsInB.size === 0 || (tenantIdsInB.size === 1 && tenantIdsInB.has(TENANT_B.tenantId)),
     `tenants observados: ${[...tenantIdsInB].join(',')}`);
 
@@ -590,10 +590,10 @@ async function fase39(): Promise<void> {
   const actListB = extractList(actB.body);
   const actTenantsA = new Set(actListA.map((r: any) => r.tenant_id ?? r.tenantId).filter(Boolean));
   const actTenantsB = new Set(actListB.map((r: any) => r.tenant_id ?? r.tenantId).filter(Boolean));
-  expect('activity-logs A só contém tenant_id=A',
+  expect('activity-logs A only contains tenant_id=A',
     actTenantsA.size === 0 || (actTenantsA.size === 1 && actTenantsA.has(TENANT_A.tenantId)),
     `tenants observados: ${[...actTenantsA].join(',')}`);
-  expect('activity-logs B só contém tenant_id=B',
+  expect('activity-logs B only contains tenant_id=B',
     actTenantsB.size === 0 || (actTenantsB.size === 1 && actTenantsB.has(TENANT_B.tenantId)),
     `tenants observados: ${[...actTenantsB].join(',')}`);
 }
@@ -604,7 +604,7 @@ async function fase39(): Promise<void> {
 
 async function main(): Promise<void> {
   console.log('\n╔══════════════════════════════════════════════════════════╗');
-  console.log('║  MUSIC OS 360 — FASE 3: Validação Multi-Tenant (HTTP)    ║');
+  console.log('║  MUSIC OS 360 — PHASE 3: Multi-Tenant Validation (HTTP)  ║');
   console.log('╚══════════════════════════════════════════════════════════╝');
   console.log(`  API_URL    : ${API_URL}`);
   console.log(`  Tenant A   : ${TENANT_A.tenantId} (${TENANT_A.name})`);
@@ -623,7 +623,7 @@ async function main(): Promise<void> {
     await fase38();
     await fase39();
   } catch (err) {
-    console.error('\n[FATAL] Erro durante execução:', (err as Error).message);
+    console.error('\n[FATAL] Error during execution:', (err as Error).message);
     failed++;
     errors.push({ where: 'main', detail: (err as Error).message });
   }
@@ -644,12 +644,12 @@ async function main(): Promise<void> {
     console.log('\n  ✓ FASE 3 PASSOU — multi-tenant isolado ponta-a-ponta.\n');
     process.exit(0);
   } else {
-    console.log('\n  ✗ FASE 3 FALHOU — vazamentos ou erros detectados.\n');
+    console.log('\n  ✗ PHASE 3 FAILED — leaks or errors detected.\n');
     process.exit(1);
   }
 }
 
 main().catch((err) => {
-  console.error('\n[verify:fase3] Erro fatal:', err);
+  console.error('\n[verify:fase3] Fatal error:', err);
   process.exit(1);
 });

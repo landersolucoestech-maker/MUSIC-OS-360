@@ -131,7 +131,7 @@ async function main(): Promise<void> {
       credentials.push(`RBAC_HARNESS_${role.toUpperCase()}_EMAIL=${email}`);
     }
 
-    console.log('\n# Credenciais para o harness:');
+    console.log('\n# Credentials for the harness:');
     // Never print the password (CWE-312/532). Set PROVISION_PASSWORD explicitly
     // so you control/know the value; it is not echoed to logs.
     console.log('# RBAC_HARNESS_*_PASSWORD = (defina/leia via env PROVISION_PASSWORD)');
@@ -143,6 +143,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((error: unknown) => {
-  console.error('ERRO:', error instanceof Error ? error.message : error);
+  console.error('ERROR:', error instanceof Error ? error.message : error);
   process.exit(1);
 });

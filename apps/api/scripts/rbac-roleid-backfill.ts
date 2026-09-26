@@ -69,17 +69,17 @@ async function main() {
   console.table(report);
   const byCls: Record<string, number> = {};
   for (const r of report) byCls[r.cls] = (byCls[r.cls] ?? 0) + 1;
-  console.log('classificações:', byCls, '| válidos:', valid, '| inválidos:', invalid, '| já preenchidos:', alreadyFilled);
+  console.log('classifications:', byCls, '| valid:', valid, '| invalid:', invalid, '| already filled:', alreadyFilled);
 
   if (mode === 'rollback-sim') {
     const filled = report.filter((r) => r.status === 'JA_PREENCHIDO').length;
-    console.log(`\n[ROLLBACK-SIM] registros com role_id preenchido que voltariam a NULL: ${filled}. Reversível: SIM. Dependências: nenhuma (role permanece fonte legada). NENHUMA ESCRITA.`);
+    console.log(`\n[ROLLBACK-SIM] records with role_id filled that would go back to NULL: ${filled}. Reversible: YES. Dependencies: none (role remains the legacy source). NO WRITES.`);
     await ds.destroy(); return;
   }
 
   if (mode === 'apply') {
     if (invalid > 0) {
-      console.error(`\n[APPLY ABORTADO] ${invalid} membership(s) sem role_id resolvível — dry-run não 100% válido. Backfill NÃO executado.`);
+      console.error(`\n[APPLY ABORTED] ${invalid} membership(s) without a resolvable role_id — dry-run not 100% valid. Backfill NOT executed.`);
       await ds.destroy(); process.exit(2);
     }
     const qr = ds.createQueryRunner();
@@ -98,13 +98,13 @@ async function main() {
       console.log(`\n[APPLY] backfill commit OK — linhas atualizadas: ${updated} (idempotente: role_id IS NULL).`);
     } catch (e) {
       await qr.rollbackTransaction();
-      console.error('[APPLY] rollback por erro:', (e as Error).message); process.exitCode = 1;
+      console.error('[APPLY] rollback due to error:', (e as Error).message); process.exitCode = 1;
     } finally { await qr.release(); }
   } else {
-    console.log('\n[DRY-RUN] nenhuma escrita realizada.');
+    console.log('\n[DRY-RUN] no writes performed.');
   }
 
   console.log(`tempo: ${Date.now() - t0}ms`);
   await ds.destroy();
 }
-main().catch((e) => { console.error('ERRO:', e?.message ?? e); process.exit(1); });
+main().catch((e) => { console.error('ERROR:', e?.message ?? e); process.exit(1); });

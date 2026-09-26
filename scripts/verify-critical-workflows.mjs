@@ -45,30 +45,30 @@ for (const name of REQUIRED) {
     try {
       yaml.load(content);
     } catch (err) {
-      errors.push(`${name}: YAML inválido — ${String(err.message ?? err).split("\n")[0]}`);
+      errors.push(`${name}: invalid YAML — ${String(err.message ?? err).split("\n")[0]}`);
     }
   } else {
-    warnings.push(`${name}: presente (js-yaml indisponível — parse de sintaxe pulado)`);
+    warnings.push(`${name}: present (js-yaml unavailable — syntax parse skipped)`);
   }
 }
 
 for (const w of warnings) console.warn(`⚠️  ${w}`);
 
 if (errors.length > 0) {
-  console.error("❌ verify:critical-workflows FALHOU (RELEASE-01):");
+  console.error("❌ verify:critical-workflows FAILED (RELEASE-01):");
   for (const e of errors) console.error(`  • ${e}`);
   console.error(
-    "\nEstes 4 workflows são exigidos pelo release gate (release-check.mjs) e pelo " +
+    "\nThese 4 workflows are required by the release gate (release-check.mjs) and by the " +
       "runbook docs/runbooks/staging-to-production.md. Lembrete: isto valida o WORKING " +
-      "TREE atual — confirmar separadamente que estão mesclados em `main` " +
+      "current TREE — confirm separately that they are merged into `main` " +
       "(git ls-tree origin/main -- .github/workflows).\n",
   );
   process.exit(1);
 }
 
 console.log(
-  `✓ verify:critical-workflows — ${REQUIRED.length} workflows presentes, não vazios` +
-    `${yaml ? " e com YAML válido" : ""} no working tree atual.`,
+  `✓ verify:critical-workflows — ${REQUIRED.length} workflows present, not empty` +
+    `${yaml ? " and with valid YAML" : ""} in the current working tree.`,
 );
 
 // The same cheap gate also ensures no legacy spreadsheet format

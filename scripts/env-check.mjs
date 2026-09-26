@@ -119,7 +119,7 @@ for (const banned of SUPABASE_REF_DENYLIST) {
   }
   for (const file of hits.split(/\r?\n/).filter(Boolean)) {
     if (GUARD_FILE_ALLOWLIST.has(file.replace(/\\/g, "/"))) continue;
-    errors.push(`ref banido "${banned}" encontrado em arquivo rastreado: ${file}`);
+    errors.push(`banned ref "${banned}" found in a tracked file: ${file}`);
   }
 }
 
@@ -141,7 +141,7 @@ for (const file of envFiles) {
   const content = fs.readFileSync(file, "utf8");
   for (const banned of SUPABASE_REF_DENYLIST) {
     if (content.includes(banned)) {
-      errors.push(`ref banido "${banned}" encontrado em ${path.relative(repoRoot, file)}`);
+      errors.push(`banned ref "${banned}" found in ${path.relative(repoRoot, file)}`);
     }
   }
 }
@@ -151,8 +151,8 @@ const rootEnv = parseEnvFile(path.join(repoRoot, ".env.development")) ?? {};
 const apiFileEnv = parseEnvFile(path.join(repoRoot, "apps/api/.env.development"));
 const webEnv = parseEnvFile(path.join(repoRoot, "apps/web/.env.development"));
 
-if (!apiFileEnv) warnings.push("apps/api/.env.development ausente — API dependerá do .env.development da raiz/process.env");
-if (!webEnv) errors.push("apps/web/.env.development ausente — frontend sem VITE_SUPABASE_URL definido");
+if (!apiFileEnv) warnings.push("apps/api/.env.development missing — the API will depend on the root .env.development/process.env");
+if (!webEnv) errors.push("apps/web/.env.development missing — frontend without VITE_SUPABASE_URL defined");
 
 // Real precedence: main.ts loads apps/api/.env.development first and does NOT overwrite it with the root one.
 const apiEnv = { ...rootEnv, ...(apiFileEnv ?? {}) };
@@ -165,10 +165,10 @@ const isProdLike = nodeEnv === "production" || nodeEnv === "staging";
 const requiredApi = ["DATABASE_URL", "SUPABASE_URL", "SUPABASE_ANON_KEY"];
 const requiredWeb = ["VITE_SUPABASE_URL", "VITE_SUPABASE_ANON_KEY", "VITE_API_URL"];
 for (const key of requiredApi) {
-  if (!apiEnv[key]) errors.push(`env obrigatório ausente/vazio no backend: ${key}`);
+  if (!apiEnv[key]) errors.push(`required backend env missing/empty: ${key}`);
 }
 for (const key of requiredWeb) {
-  if (!web[key]) errors.push(`env obrigatório ausente/vazio no frontend (apps/web/.env.development): ${key}`);
+  if (!web[key]) errors.push(`required frontend env missing/empty (apps/web/.env.development): ${key}`);
 }
 
 // Refs por origem
@@ -185,24 +185,24 @@ const forbiddenRefs = forbiddenRefsFor(nodeEnv);
 for (const [label, ref] of refSources) {
   if (!ref) continue;
   if (SUPABASE_REF_DENYLIST.includes(ref)) {
-    errors.push(`${label} usa o ref banido "${ref}" (branch preview sem tabelas públicas)`);
+    errors.push(`${label} uses the banned ref "${ref}" (preview branch without public tables)`);
     continue;
   }
   // Cross denylist: a known ref of ANOTHER environment is always forbidden,
   // even if an allowlist was edited incorrectly.
   if (forbiddenRefs.includes(ref)) {
     errors.push(
-      `${label} usa ref "${ref}" de OUTRO ambiente — proibido em NODE_ENV=${nodeEnv} (denylist cruzada)`,
+      `${label} uses ref "${ref}" from ANOTHER environment — forbidden with NODE_ENV=${nodeEnv} (cross denylist)`,
     );
     continue;
   }
   if (expectedRef === null) {
     errors.push(
-      `${label} usa ref remoto "${ref}" mas NODE_ENV=${nodeEnv} não aceita nenhum projeto Supabase remoto`,
+      `${label} uses remote ref "${ref}" but NODE_ENV=${nodeEnv} accepts no remote Supabase project`,
     );
   } else if (ref !== expectedRef) {
     errors.push(
-      `${label} usa ref "${ref}" mas NODE_ENV=${nodeEnv} exige o projeto ${nodeEnv} "${expectedRef}"`,
+      `${label} uses ref "${ref}" but NODE_ENV=${nodeEnv} requires the ${nodeEnv} project "${expectedRef}"`,
     );
   }
 }
@@ -211,7 +211,7 @@ const resolved = refSources.filter(([, ref]) => ref !== null);
 const distinct = [...new Set(resolved.map(([, ref]) => ref))];
 if (distinct.length > 1) {
   errors.push(
-    `frontend e backend apontam para projetos Supabase DIFERENTES: ${resolved
+    `frontend and backend point to DIFFERENT Supabase projects: ${resolved
       .map(([label, ref]) => `${label}=${ref}`)
       .join(" · ")}`,
   );
@@ -228,24 +228,24 @@ for (const [label, token, expectedRole] of jwtSources) {
   if (!token) continue;
   const claims = jwtClaims(token);
   if (!claims) {
-    errors.push(`${label} não é um JWT decodificável`);
+    errors.push(`${label} is not a decodable JWT`);
     continue;
   }
   if (claims.ref && forbiddenRefs.includes(claims.ref)) {
-    errors.push(`${label} tem payload ref "${claims.ref}" de OUTRO ambiente — proibido em NODE_ENV=${nodeEnv}`);
+    errors.push(`${label} has payload ref "${claims.ref}" from ANOTHER environment — forbidden with NODE_ENV=${nodeEnv}`);
   } else if (claims.ref && expectedRef !== null && claims.ref !== expectedRef) {
-    errors.push(`${label} tem payload ref "${claims.ref}" ≠ projeto esperado "${expectedRef}"`);
+    errors.push(`${label} has payload ref "${claims.ref}" ≠ expected project "${expectedRef}"`);
   } else if (claims.ref && expectedRef === null) {
-    errors.push(`${label} tem payload ref "${claims.ref}" mas NODE_ENV=${nodeEnv} não aceita projeto remoto`);
+    errors.push(`${label} has payload ref "${claims.ref}" but NODE_ENV=${nodeEnv} accepts no remote project`);
   }
   if (claims.role && claims.role !== expectedRole) {
-    errors.push(`${label} tem role "${claims.role}" no payload (esperado "${expectedRole}" — chaves invertidas?)`);
+    errors.push(`${label} has role "${claims.role}" in the payload (expected "${expectedRole}" — swapped keys?)`);
   }
 }
 
 // VITE_API_URL bem formada
 if (web.VITE_API_URL && !/^https?:\/\//.test(web.VITE_API_URL)) {
-  errors.push(`VITE_API_URL inválida: "${web.VITE_API_URL}" (esperado http(s)://host[:porta])`);
+  errors.push(`invalid VITE_API_URL: "${web.VITE_API_URL}" (expected http(s)://host[:port])`);
 }
 
 // Mock / auth bypass
@@ -257,31 +257,31 @@ const mockFlags = [
 ];
 if (isProdLike) {
   for (const [label, value] of mockFlags) {
-    if (value === "true") errors.push(`${label}=true é proibido com NODE_ENV=${nodeEnv}`);
+    if (value === "true") errors.push(`${label}=true is forbidden with NODE_ENV=${nodeEnv}`);
   }
   if (apiEnv.AUTH_DISABLED === "true" || web.VITE_AUTH_DISABLED === "true") {
-    errors.push(`bypass de auth (AUTH_DISABLED/VITE_AUTH_DISABLED) é proibido com NODE_ENV=${nodeEnv}`);
+    errors.push(`auth bypass (AUTH_DISABLED/VITE_AUTH_DISABLED) is forbidden with NODE_ENV=${nodeEnv}`);
   }
 }
 const apiMock = apiEnv.USE_MOCK === "true" || apiEnv.MOCK_MODE === "true";
 const webMock = web.VITE_USE_MOCK === "true" || web.VITE_MOCK_MODE === "true";
 if (apiMock !== webMock) {
   errors.push(
-    `modo mock divergente: api=${apiMock} vs web=${webMock} — frontend e backend devem operar no mesmo modo`,
+    `mock mode mismatch: api=${apiMock} vs web=${webMock} — frontend and backend must run in the same mode`,
   );
 }
 
 // ── Report ────────────────────────────────────────────────────────────────────
 for (const warning of warnings) console.warn(`⚠️  ${warning}`);
 if (errors.length > 0) {
-  console.error("❌ env:check FALHOU:");
+  console.error("❌ env:check FAILED:");
   for (const err of errors) console.error(`  • ${err}`);
   process.exit(1);
 }
 
 const envLabel =
   distinct[0] === SUPABASE_PROD_REF
-    ? "produção"
+    ? "production"
     : distinct[0] === SUPABASE_STAGING_REF
       ? "staging"
       : distinct[0] === SUPABASE_DEV_REF

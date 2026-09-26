@@ -129,11 +129,11 @@ async function main() {
   }
 
   const failedChecks = checks.filter((check) => !check.ok);
-  console.log(JSON.stringify({ result: failedChecks.length ? 'FALHOU' : 'PASSOU', checks }, null, 2));
+  console.log(JSON.stringify({ result: failedChecks.length ? 'FAILED' : 'PASSOU', checks }, null, 2));
   process.exit(failedChecks.length ? 1 : 0);
 }
 
 main().catch((error) => {
-  console.error(JSON.stringify({ result: 'FALHOU', error: error instanceof Error ? error.message : String(error) }, null, 2));
+  console.error(JSON.stringify({ result: 'FAILED', error: error instanceof Error ? error.message : String(error) }, null, 2));
   process.exit(1);
 });

@@ -42,7 +42,7 @@ test('new advisory without a waiver -> FAIL', () => {
   const waivers = loadWaivers(waiverFileWith([]));
   const { unauthorized } = evaluate(advisories, waivers, NOW);
   assert.equal(unauthorized.length, 1);
-  assert.match(unauthorized[0].cause, /sem waiver/);
+  assert.match(unauthorized[0].cause, /no waiver/);
 });
 
 test('new HIGH advisory without a waiver -> FAIL (severity does not exempt from waiver)', () => {
@@ -66,7 +66,7 @@ test('waiver with wrong package -> FAIL', () => {
   const waivers = loadWaivers(waiverFileWith([{ advisoryId: 5, package: 'different-pkg' }]));
   const { unauthorized } = evaluate(advisories, waivers, NOW);
   assert.equal(unauthorized.length, 1);
-  assert.match(unauthorized[0].cause, /outro pacote/);
+  assert.match(unauthorized[0].cause, /another package/);
 });
 
 test('resolved advisory but leftover waiver -> reported as orphaned, does not fail the build', () => {
@@ -79,20 +79,20 @@ test('resolved advisory but leftover waiver -> reported as orphaned, does not fa
 });
 
 test('invalid JSON in the audit -> throws an error (fails the process)', () => {
-  assert.throws(() => loadAuditAdvisories('{ not valid json'), /não é JSON válido/);
+  assert.throws(() => loadAuditAdvisories('{ not valid json'), /is not valid JSON/);
 });
 
 test('invalid JSON in the waivers file -> throws an error (fails the process)', () => {
-  assert.throws(() => loadWaivers('{ not valid json'), /não é JSON válido/);
+  assert.throws(() => loadWaivers('{ not valid json'), /is not valid JSON/);
 });
 
 test('waiver missing a required field -> throws an error', () => {
   const bad = JSON.stringify({ waivers: [{ advisoryId: 7, package: 'x' }] });
-  assert.throws(() => loadWaivers(bad), /campo obrigatório/);
+  assert.throws(() => loadWaivers(bad), /required field/);
 });
 
 test('pnpm audit with no usable output (e.g., the process failed) -> treated as invalid input', () => {
-  assert.throws(() => loadAuditAdvisories(''), /não é JSON válido/);
+  assert.throws(() => loadAuditAdvisories(''), /is not valid JSON/);
 });
 
 test('mixed advisories: accepted + unauthorized are reported separately', () => {

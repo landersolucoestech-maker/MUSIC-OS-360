@@ -39,14 +39,14 @@ function runPnpmAudit() {
     shell: true,
   });
   if (result.error) {
-    throw new Error(`Falha ao executar pnpm audit: ${result.error.message}`);
+    throw new Error(`Failed to run pnpm audit: ${result.error.message}`);
   }
   // pnpm audit exits non-zero when vulnerabilities are found — that is
   // expected and NOT itself a failure. Only missing/unparseable stdout is.
   const stdout = result.stdout ?? '';
   if (!stdout.trim()) {
     throw new Error(
-      `pnpm audit não produziu saída (exit code ${result.status}). stderr: ${(result.stderr ?? '').slice(0, 2000)}`,
+      `pnpm audit produced no output (exit code ${result.status}). stderr: ${(result.stderr ?? '').slice(0, 2000)}`,
     );
   }
   return stdout;
@@ -57,7 +57,7 @@ export function loadAuditAdvisories(jsonText) {
   try {
     data = JSON.parse(jsonText);
   } catch (err) {
-    throw new Error(`Saída do pnpm audit não é JSON válido: ${err.message}`);
+    throw new Error(`pnpm audit output is not valid JSON: ${err.message}`);
   }
   const advisories = data.advisories && typeof data.advisories === 'object' ? data.advisories : {};
   return Object.values(advisories).map((a) => ({
@@ -73,15 +73,15 @@ export function loadWaivers(jsonText) {
   try {
     data = JSON.parse(jsonText);
   } catch (err) {
-    throw new Error(`Arquivo de waivers não é JSON válido: ${err.message}`);
+    throw new Error(`Waivers file is not valid JSON: ${err.message}`);
   }
   if (!Array.isArray(data.waivers)) {
-    throw new Error('Arquivo de waivers deve ter um array "waivers".');
+    throw new Error('Waivers file must have a "waivers" array.');
   }
   for (const w of data.waivers) {
     for (const field of ['advisoryId', 'package', 'severity', 'reason', 'owner', 'introduced', 'reviewBy', 'closeCondition']) {
       if (w[field] === undefined || w[field] === null || w[field] === '') {
-        throw new Error(`Waiver para advisory ${w.advisoryId ?? '?'} está sem o campo obrigatório "${field}".`);
+        throw new Error(`Waiver for advisory ${w.advisoryId ?? '?'} is missing the required field "${field}".`);
       }
     }
   }
@@ -106,13 +106,13 @@ export function evaluate(advisories, waivers, now = new Date()) {
     const waiver = waiverById.get(advisory.advisoryId);
 
     if (!waiver) {
-      unauthorized.push({ ...advisory, cause: 'sem waiver — advisory novo/desconhecido' });
+      unauthorized.push({ ...advisory, cause: 'no waiver — new/unknown advisory' });
       continue;
     }
     if (waiver.package !== advisory.package) {
       unauthorized.push({
         ...advisory,
-        cause: `waiver existe para este advisoryId mas para outro pacote ("${waiver.package}")`,
+        cause: `a waiver exists for this advisoryId but for another package ("${waiver.package}")`,
       });
       continue;
     }
@@ -140,7 +140,7 @@ function main() {
 
   for (const w of orphaned) {
     console.warn(
-      `[WARN] waiver órfão: advisory ${w.advisoryId} (${w.package}) não aparece mais no pnpm audit — provavelmente já corrigido. Considere remover a entrada de ${path.basename(args.waivers)}.`,
+      `[WARN] orphan waiver: advisory ${w.advisoryId} (${w.package}) no longer appears in pnpm audit — probably already fixed. Consider removing the entry from ${path.basename(args.waivers)}.`,
     );
   }
 

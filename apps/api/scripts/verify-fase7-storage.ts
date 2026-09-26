@@ -71,21 +71,21 @@ async function call(
 // 7.1 — Without R2 (static check + edge cases)
 // ============================================================================
 async function f71(): Promise<void> {
-  section('7.1 — DEGRADAÇÃO SEM R2 (estática + edge)');
+  section('7.1 — DEGRADATION WITHOUT R2 (static + edge)');
   // R2 is active in this run (env has R2_*). We prove:
   //  - StorageService.getClient() throws 503 + code R2_NOT_CONFIGURED when r2Client=null
   //  - StorageModule.useFactory returns null when the vars are missing
   // (already read in the source apps/api/src/storage/storage.{service,module}.ts)
-  info('R2 está ativo neste ambiente — provamos cenário-A via inspecção estática.');
+  info('R2 is active in this environment — scenario A proven via static inspection.');
   info('Code path: getClient() → ServiceUnavailableException({ code: R2_NOT_CONFIGURED, statusCode:503 })');
   info('Module factory: retorna null quando R2_ACCOUNT_ID || R2_ACCESS_KEY || R2_SECRET_KEY ausentes');
   ok('storage.service.ts implementa 503 R2_NOT_CONFIGURED', true);
-  ok('storage.module.ts retorna r2Client=null sem credenciais', true);
+  ok('storage.module.ts returns r2Client=null without credentials', true);
   ok('useUploadToR2 (frontend) trata R2NotConfiguredError 503', true);
 }
 
 // ============================================================================
-// 7.2 — Upload real com R2 (presign → PUT → confirm)
+// 7.2 — Real upload with R2 (presign → PUT → confirm)
 // ============================================================================
 let UPLOAD_FILE_ID_A: string;
 let UPLOAD_KEY_A: string;
@@ -115,13 +115,13 @@ async function uploadCycle(token: string, tenant: string, dto: {
   // 3) Confirm
   const conf = await call('POST', `/uploads/${fileId}/confirm`, { token, tenant, body: {} });
   if (conf.status !== 200 && conf.status !== 201) {
-    return { ok: false, status: conf.status, detail: 'confirm falhou', fileId, key, publicUrl, phase: 'confirm' };
+    return { ok: false, status: conf.status, detail: 'confirm failed', fileId, key, publicUrl, phase: 'confirm' };
   }
   return { ok: true, fileId, key, publicUrl, status: 200 };
 }
 
 async function f72(): Promise<void> {
-  section('7.2 — UPLOAD REAL COM R2');
+  section('7.2 — REAL UPLOAD WITH R2');
 
   // Image (capa release): PNG 1x1 pixel
   const PNG_1x1 = Buffer.from([
@@ -136,7 +136,7 @@ async function f72(): Promise<void> {
   ok('Upload capa release — presign + PUT R2 (code path)', r1CodeOK, r1.detail ?? '');
   if (r1.ok) { UPLOAD_FILE_ID_A = r1.fileId!; UPLOAD_KEY_A = r1.key!; UPLOAD_PUBLIC_URL_A = r1.publicUrl!; }
   if (r1.fileId) { UPLOAD_FILE_ID_A = r1.fileId; UPLOAD_KEY_A = r1.key!; UPLOAD_PUBLIC_URL_A = r1.publicUrl!; }
-  if (r1.phase === 'put' && r1.detail?.includes('AccessDenied')) info('R2 credencial sem WRITE — bug de ambiente, não código');
+  if (r1.phase === 'put' && r1.detail?.includes('AccessDenied')) info('R2 credential without WRITE — environment bug, not code');
 
   // PDF (contrato)
   const PDF_MIN = Buffer.from('%PDF-1.4\n1 0 obj <<>> endobj\ntrailer <<>>\n%%EOF', 'utf-8');
@@ -160,7 +160,7 @@ async function f72(): Promise<void> {
     const fr = await fetch(url);
     ok('Fetch download URL retorna 200 e bytes', fr.status === 200 && (parseInt(fr.headers.get('content-length') ?? '0') > 0), `status=${fr.status} length=${fr.headers.get('content-length')}`);
   } else if (UPLOAD_FILE_ID_A) {
-    info('GET download skip — PUT falhou por credencial; presign+entity persistidos no banco como PENDING');
+    info('GET download skipped — PUT failed due to credential; presign+entity persisted in the database as PENDING');
   }
 }
 
@@ -169,7 +169,7 @@ async function f72(): Promise<void> {
 // ============================================================================
 let DB: Client;
 async function f73(): Promise<void> {
-  section('7.3 — PERSISTÊNCIA E RELAÇÃO');
+  section('7.3 — PERSISTENCE AND RELATION');
   DB = new Client({ connectionString: DB_URL, ssl: { rejectUnauthorized: false } });
   await DB.connect();
 
@@ -183,7 +183,7 @@ async function f73(): Promise<void> {
     if (row) {
       ok('uploads.tenant_id = Tenant A', row.tenant_id === TA, `db=${row.tenant_id}`);
       ok('uploads.status registado (pending ou confirmed)', ['pending','confirmed'].includes(row.status), `status=${row.status}`);
-      ok('uploads.r2_key tem prefixo tenants/{TA}/images/', row.r2_key.startsWith(`tenants/${TA}/images/`), `key=${row.r2_key}`);
+      ok('uploads.r2_key has the tenants/{TA}/images/ prefix', row.r2_key.startsWith(`tenants/${TA}/images/`), `key=${row.r2_key}`);
       ok('uploads.mime_type correto', row.mime_type === 'image/png');
       ok('uploads.size_bytes > 0', row.size_bytes > 0);
       ok('uploads.entity = release', row.entity === 'release');
@@ -205,30 +205,30 @@ async function f73(): Promise<void> {
 // 7.4 — Replacement/removal
 // ============================================================================
 async function f74(): Promise<void> {
-  section('7.4 — TROCA E (sem endpoint DELETE público)');
+  section('7.4 — REPLACE AND (no public DELETE endpoint)');
   // Uploads a new file for the same entity (release_TS) — replaces it
   const PNG2 = Buffer.from([0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A, 0,0,0,0x0D,0x49,0x48,0x44,0x52,0,0,0,1,0,0,0,1,0x08,0x06,0,0,0,0x1F,0x15,0xC4,0x89, 0,0,0,0x0A,0x49,0x44,0x41,0x54,0x78,0x9C,0x63,0,0,0,0,0,0,0,1, 0,0,0,0,0x49,0x45,0x4E,0x44,0xAE,0x42,0x60,0x82]);
   const replace = await uploadCycle(TOKEN_A, TA, { fileName: `cover_${TS}_v2.png`, mimeType: 'image/png', sizeBytes: PNG2.length, category: 'images', entity: 'release', entityId: TS.toString(), body: PNG2 });
   const newId = replace.fileId;
   const codeOK = !!newId && newId !== UPLOAD_FILE_ID_A;
-  ok('Upload de SUBSTITUIÇÃO gera novo fileId (presign)', codeOK, `oldId=${UPLOAD_FILE_ID_A?.slice(0,8)} newId=${newId?.slice(0,8)}`);
+  ok('REPLACEMENT upload generates a new fileId (presign)', codeOK, `oldId=${UPLOAD_FILE_ID_A?.slice(0,8)} newId=${newId?.slice(0,8)}`);
 
   // Confirm both exist in uploads (no delete cascade — the service has no public DELETE endpoint)
   if (replace.fileId) {
     const r = await DB.query<{ c: number }>('SELECT COUNT(*)::int AS c FROM uploads WHERE tenant_id=$1 AND entity=$2 AND entity_id=$3', [TA, 'release', TS.toString()]);
-    ok('Banco mantém ambos os uploads (sem orfão)', r.rows[0].c >= 2, `count=${r.rows[0].c}`);
+    ok('Database keeps both uploads (no orphan)', r.rows[0].c >= 2, `count=${r.rows[0].c}`);
   }
 
   // There is no DELETE in the public UploadsController. Side finding documented.
-  info('Endpoint DELETE público inexistente — remoção via integração interna (StorageService.delete)');
-  ok('Substituição registra novo file_id sem destruir o anterior', true);
+  info('No public DELETE endpoint — removal via internal integration (StorageService.delete)');
+  ok('Replacement records a new file_id without destroying the previous one', true);
 }
 
 // ============================================================================
 // 7.5 — Security
 // ============================================================================
 async function f75(): Promise<void> {
-  section('7.5 — SEGURANÇA');
+  section('7.5 — SECURITY');
 
   // Fake mime (executable) in the images category
   const r1 = await call('POST', '/uploads/presign', { token: TOKEN_A, tenant: TA, body: { fileName: 'malware.exe', mimeType: 'application/x-msdownload', sizeBytes: 100, category: 'images' } });
@@ -240,15 +240,15 @@ async function f75(): Promise<void> {
 
   // Oversize: 11MB em images (limite 10MB)
   const r3 = await call('POST', '/uploads/presign', { token: TOKEN_A, tenant: TA, body: { fileName: 'big.png', mimeType: 'image/png', sizeBytes: 11 * 1024 * 1024, category: 'images' } });
-  ok('oversize 11MB em images (limite 10MB) → 400', r3.status === 400, `status=${r3.status}`);
+  ok('oversize 11MB in images (limit 10MB) → 400', r3.status === 400, `status=${r3.status}`);
 
-  // Sem auth
+  // No auth
   const r4 = await fetch(`${API_URL}/api/v1/uploads/presign`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fileName: 'x.png', mimeType: 'image/png', sizeBytes: 100, category: 'images' }) });
-  ok('sem auth → 401', r4.status === 401, `status=${r4.status}`);
+  ok('no auth → 401', r4.status === 401, `status=${r4.status}`);
 
   // No tenant (token A without X-Tenant-ID)
   const r5 = await fetch(`${API_URL}/api/v1/uploads/presign`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN_A}` }, body: JSON.stringify({ fileName: 'x.png', mimeType: 'image/png', sizeBytes: 100, category: 'images' }) });
-  ok('sem X-Tenant-ID → 403', r5.status === 403, `status=${r5.status}`);
+  ok('no X-Tenant-ID → 403', r5.status === 403, `status=${r5.status}`);
 
   // Cross-tenant download (token B tenta acessar file de A)
   if (UPLOAD_FILE_ID_A) {
@@ -275,22 +275,22 @@ async function f77(): Promise<void> {
   // Validate via the database that ALL uploads of this run have the tenants/{TA}/ prefix
   const rA = await DB.query<{ key: string }>(`SELECT r2_key AS key FROM uploads WHERE tenant_id=$1 AND created_at > NOW() - INTERVAL '10 minutes'`, [TA]);
   const allHavePrefix = rA.rows.every(r => r.key.startsWith(`tenants/${TA}/`));
-  ok('Todas r2_keys têm prefixo tenants/{TA}/', allHavePrefix, `total=${rA.rowCount} match=${rA.rows.filter(r=>r.key.startsWith(`tenants/${TA}/`)).length}`);
+  ok('All r2_keys have the tenants/{TA}/ prefix', allHavePrefix, `total=${rA.rowCount} match=${rA.rows.filter(r=>r.key.startsWith(`tenants/${TA}/`)).length}`);
 
   // Collision: each upload has a unique UUID fileId → unique keys
   const keys = new Set(rA.rows.map(r => r.key));
-  ok('keys únicos (sem colisão)', keys.size === rA.rowCount, `keys=${keys.size} rows=${rA.rowCount}`);
+  ok('unique keys (no collision)', keys.size === rA.rowCount, `keys=${keys.size} rows=${rA.rowCount}`);
 
   // Tenant isolation no path
   const rB = await DB.query<{ key: string }>(`SELECT r2_key AS key FROM uploads WHERE tenant_id=$1`, [TB]);
   const leak = rB.rows.find(r => r.key.includes(`tenants/${TA}/`));
-  ok('Nenhuma key do tenant B contém path do tenant A', !leak, `leak=${leak?.key}`);
+  ok('No tenant B key contains a tenant A path', !leak, `leak=${leak?.key}`);
 
   // Public URL: r2PublicUrl is 'https://pub-xxx.r2.dev' (placeholder in .env) → public URLs would be dummies.
   // We validate that the presigned (signed) URL is used for download, not the public one.
   info('R2_PUBLIC_URL = "https://pub-xxx.r2.dev" no .env (placeholder)');
-  info('Downloads em runtime usam presigned URL (GetObjectCommand) — segurança adequada.');
-  ok('Downloads usam presigned URLs (não public direct)', true);
+  info('Runtime downloads use presigned URLs (GetObjectCommand) — adequate security.');
+  ok('Downloads use presigned URLs (not public direct)', true);
 }
 
 // ============================================================================
@@ -298,10 +298,10 @@ async function f77(): Promise<void> {
 // ============================================================================
 async function f78(): Promise<void> {
   section('7.8 — BUILD PROD COMPATIBILIDADE');
-  info('Web bundle (FASE 6) confirma useUploadToR2 incluído e MOCK_MODE=false em prod.');
-  info('Backend dist construído via `tsc -p tsconfig.build.json` (FASE 6.1).');
-  info('Fluxo presign→PUT→confirm é puramente HTTP — funciona em qualquer ambiente onde a API está acessível.');
-  ok('Fluxo prod-compatible: HTTP/REST sem dependência client-only', true);
+  info('Web bundle (PHASE 6) confirms useUploadToR2 included and MOCK_MODE=false in prod.');
+  info('Backend dist built via `tsc -p tsconfig.build.json` (PHASE 6.1).');
+  info('The presign→PUT→confirm flow is pure HTTP — works in any environment where the API is reachable.');
+  ok('Prod-compatible flow: HTTP/REST with no client-only dependency', true);
 }
 
 // ============================================================================

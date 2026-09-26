@@ -15,10 +15,10 @@ import { collectProductionAuthorityErrors } from '../src/core/config/env.schema'
 const errors = collectProductionAuthorityErrors(process.env as Record<string, string | undefined>);
 
 if (errors.length > 0) {
-  console.error('\n❌ verify:production-flags FALHOU:');
+  console.error('\n❌ verify:production-flags FAILED:');
   for (const err of errors) console.error(`  • ${err}`);
   console.error(
-    '\nEstas flags só são obrigatórias quando NODE_ENV=production. ' +
+    '\nThese flags are only required when NODE_ENV=production. ' +
       'Ver apps/api/.env.production.\n',
   );
   process.exit(1);
@@ -28,8 +28,8 @@ const nodeEnv = process.env['NODE_ENV'] ?? 'development';
 if (nodeEnv === 'production') {
   console.log(
     '✓ verify:production-flags — RBAC_PERSISTED_AUTHORITY e DATABASE_SESSION_CONTEXT_ENABLED ' +
-      'corretas para produção.',
+      'correct for production.',
   );
 } else {
-  console.log(`✓ verify:production-flags — NODE_ENV=${nodeEnv} (flags só são obrigatórias em production).`);
+  console.log(`✓ verify:production-flags — NODE_ENV=${nodeEnv} (flags are only required in production).`);
 }

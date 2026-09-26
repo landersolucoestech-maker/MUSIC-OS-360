@@ -44,16 +44,16 @@ async function main() {
   const ds = AppDataSource;
   await ds.initialize();
   const reg = (await ds.query("SELECT to_regclass('public.rbac_decision_logs') AS t"))[0].t;
-  if (!reg) { console.error('rbac_decision_logs NAO EXISTE — instrumentação ausente.'); await ds.destroy(); process.exit(3); }
+  if (!reg) { console.error('rbac_decision_logs DOES NOT EXIST — instrumentation missing.'); await ds.destroy(); process.exit(3); }
   const row = (await ds.query(SQL))[0];
   console.table([row]);
   const aprovado = row.veredito === 'APROVADO';
   console.log(`\nGO/NO-GO: ${row.veredito}  →  ${aprovado ? 'APTO PARA ON' : 'MANTER SHADOW'}`);
   if (!aprovado) {
-    console.log('Critérios não atendidos (esperado: requests≥1000, endpoints≥10, roles≥5, tenants≥3, would_allow=0, would_deny=0, cross_tenant=0, resolver_divergence=0).');
+    console.log('Criteria not met (expected: requests≥1000, endpoints≥10, roles≥5, tenants≥3, would_allow=0, would_deny=0, cross_tenant=0, resolver_divergence=0).');
   }
   await ds.destroy();
   process.exit(aprovado ? 0 : 3);
 }
 
-main().catch((e) => { console.error('ERRO:', e?.message ?? e); process.exit(1); });
+main().catch((e) => { console.error('ERROR:', e?.message ?? e); process.exit(1); });

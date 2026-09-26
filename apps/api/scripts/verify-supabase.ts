@@ -32,7 +32,7 @@ try {
 
 const FIX_MODE = process.argv.includes('--fix');
 
-// ── Cores para output ─────────────────────────────────────────────────────────
+// ── Output colors ─────────────────────────────────────────────────────────────
 const OK   = '✓';
 const FAIL = '✗';
 const WARN = '⚠';
@@ -135,11 +135,11 @@ async function main(): Promise<void> {
   let totalWarns = 0;
 
   console.log('\n╔══════════════════════════════════════════════════════════╗');
-  console.log('║   MUSIC OS 360 — Verificação de Provisionamento Supabase  ║');
+  console.log('║   MUSIC OS 360 — Supabase Provisioning Verification       ║');
   console.log('╚══════════════════════════════════════════════════════════╝\n');
 
   // ── 1. Mandatory variables ───────────────────────────────────────────────
-  console.log('── 1. Variáveis de Ambiente ──────────────────────────────────\n');
+  console.log('── 1. Environment Variables ─────────────────────────────────\n');
 
   let missingRequired = 0;
   for (const v of REQUIRED_VARS) {
@@ -156,7 +156,7 @@ async function main(): Promise<void> {
   for (const v of RECOMMENDED_VARS) {
     const val = process.env[v.key];
     if (!val) {
-      warn(`${v.key} — não configurado (opcional) — ${v.description}`);
+      warn(`${v.key} — not configured (optional) — ${v.description}`);
       totalWarns++;
     } else {
       const masked = val.length > 12 ? val.substring(0, 8) + '…' + val.slice(-4) : '***';
@@ -165,8 +165,8 @@ async function main(): Promise<void> {
   }
 
   if (missingRequired > 0) {
-    console.log(`\n  BLOQUEADO: ${missingRequired} variável(is) obrigatória(s) ausente(s).`);
-    console.log('  Configure o .env ou secrets do provedor antes de continuar.\n');
+    console.log(`\n  BLOCKED: ${missingRequired} required variable(s) missing.`);
+    console.log('  Configure .env or the provider secrets before continuing.\n');
     process.exit(1);
   }
 
@@ -176,11 +176,11 @@ async function main(): Promise<void> {
     fail('ENCRYPTION_KEY deve ter 64 caracteres hexadecimais (AES-256)');
     totalFails++;
   } else {
-    ok('ENCRYPTION_KEY formato válido (64 hex chars)');
+    ok('ENCRYPTION_KEY valid format (64 hex chars)');
   }
 
-  // ── 2. Conectividade com Supabase ─────────────────────────────────────────
-  console.log('\n── 2. Conectividade com Supabase (PostgreSQL) ───────────────\n');
+  // ── 2. Supabase connectivity ──────────────────────────────────────────────
+  console.log('\n── 2. Supabase Connectivity (PostgreSQL) ────────────────────\n');
 
   const { Client } = await import('pg');
   const databaseUrl = process.env['DATABASE_URL'];
@@ -188,7 +188,7 @@ async function main(): Promise<void> {
   try {
     databaseHost = new URL(databaseUrl ?? '').hostname;
   } catch {
-    fail('DATABASE_URL inválida');
+    fail('invalid DATABASE_URL');
     process.exit(1);
   }
   const sslDisabled = process.env['DB_SSL'] === 'false'
@@ -200,13 +200,13 @@ async function main(): Promise<void> {
 
   try {
     await client.connect();
-    ok('Conexão PostgreSQL estabelecida');
+    ok('PostgreSQL connection established');
 
     const res = await client.query('SELECT version()');
     ok(`PostgreSQL: ${(res.rows[0] as { version: string }).version.split(' ').slice(0, 2).join(' ')}`);
   } catch (err) {
-    fail(`Falha ao conectar ao PostgreSQL: ${(err as Error).message}`);
-    console.log('\n  BLOQUEADO: Sem conectividade com o banco de dados.\n');
+    fail(`Failed to connect to PostgreSQL: ${(err as Error).message}`);
+    console.log('\n  BLOCKED: No connectivity to the database.\n');
     process.exit(1);
   }
 
@@ -219,7 +219,7 @@ async function main(): Promise<void> {
 
     const hasPending = await AppDataSource.showMigrations();
     if (!hasPending) {
-      ok('Nenhuma migration pendente — schema sincronizado');
+      ok('No pending migrations — schema in sync');
     } else {
       warn('Existem migrations pendentes');
       if (FIX_MODE) {
@@ -241,12 +241,12 @@ async function main(): Promise<void> {
       info(`  ${row.name}`);
     }
   } catch (err) {
-    warn(`Não foi possível verificar migrations via TypeORM: ${(err as Error).message}`);
+    warn(`Could not check migrations via TypeORM: ${(err as Error).message}`);
     totalWarns++;
   }
 
   // ── 4. Physical tables ─────────────────────────────────────────────────────
-  console.log('\n── 4. Tabelas Físicas no Supabase ───────────────────────────\n');
+  console.log('\n── 4. Physical Tables in Supabase ───────────────────────────\n');
 
   const existingRes = await client.query<{ tablename: string }>(
     `SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename`
@@ -290,11 +290,11 @@ async function main(): Promise<void> {
   }
 
   if (rlsFails === 0) {
-    ok('Todas as tabelas multi-tenant têm RLS habilitado');
+    ok('All multi-tenant tables have RLS enabled');
   }
 
   // ── 6. RLS policies ────────────────────────────────────────────────────────
-  console.log('\n── 6. Políticas RLS ─────────────────────────────────────────\n');
+  console.log('\n── 6. RLS Policies ──────────────────────────────────────────\n');
 
   const policiesRes = await client.query<{ tablename: string; policyname: string }>(
     `SELECT tablename, policyname FROM pg_policies WHERE schemaname = 'public' ORDER BY tablename, policyname`
@@ -313,18 +313,18 @@ async function main(): Promise<void> {
     if (policies.length > 0) {
       ok(`${table}: ${policies.join(', ')}`);
     } else {
-      fail(`${table}: SEM POLÍTICAS RLS`);
+      fail(`${table}: NO RLS POLICIES`);
       policyFails++;
       totalFails++;
     }
   }
 
   if (policyFails === 0) {
-    ok('Todas as tabelas multi-tenant têm políticas RLS');
+    ok('All multi-tenant tables have RLS policies');
   }
 
   // ── 7. tenant_id in multi-tenant tables ──────────────────────────────────
-  console.log('\n── 7. Coluna tenant_id nas Tabelas Multi-Tenant ────────────\n');
+  console.log('\n── 7. tenant_id Column on Multi-Tenant Tables ──────────────\n');
 
   const colRes = await client.query<{ table_name: string; column_name: string }>(
     `SELECT table_name, column_name
@@ -338,23 +338,23 @@ async function main(): Promise<void> {
     if (tablesWithTenantId.has(table)) {
       ok(`${table}.tenant_id ✓`);
     } else {
-      fail(`${table} — SEM COLUNA tenant_id`);
+      fail(`${table} — NO tenant_id COLUMN`);
       totalFails++;
     }
   }
 
   // ── Resumo ────────────────────────────────────────────────────────────────
   console.log('\n╔══════════════════════════════════════════════════════════╗');
-  console.log('║   RESUMO DE VERIFICAÇÃO                                    ║');
+  console.log('║   VERIFICATION SUMMARY                                     ║');
   console.log('╚══════════════════════════════════════════════════════════╝\n');
 
   if (totalFails === 0 && totalWarns === 0) {
     console.log('  ✓ PLATAFORMA TOTALMENTE PROVISIONADA E OPERACIONAL\n');
   } else if (totalFails === 0) {
-    console.log(`  ✓ Verificação concluída com ${totalWarns} aviso(s) — não bloqueantes\n`);
+    console.log(`  ✓ Verification completed with ${totalWarns} warning(s) — non-blocking\n`);
   } else {
-    console.log(`  ✗ ${totalFails} falha(s) encontrada(s) — provisionamento INCOMPLETO\n`);
-    console.log('  Resolva as falhas acima antes de colocar em produção.\n');
+    console.log(`  ✗ ${totalFails} failure(s) found — provisioning INCOMPLETE\n`);
+    console.log('  Resolve the failures above before going to production.\n');
   }
 
   await client.end();
@@ -363,6 +363,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => {
-  console.error('\n[verify:supabase] Erro fatal:', (err as Error).message);
+  console.error('\n[verify:supabase] Fatal error:', (err as Error).message);
   process.exit(1);
 });

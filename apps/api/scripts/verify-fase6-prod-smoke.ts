@@ -62,7 +62,7 @@ async function main() {
     ok('/auth/context → 200', r.status === 200, `status=${r.status}`);
     const ws = r.body?.data?.workspace;
     ok('workspace.id correto', ws?.id === TA, `got=${ws?.id}`);
-    ok('claims real (não mock)', typeof r.body?.data?.claims?.orgId === 'string' && r.body.data.claims.orgId === OA);
+    ok('real claims (not mock)', typeof r.body?.data?.claims?.orgId === 'string' && r.body.data.claims.orgId === OA);
   }
 
   console.log('\n── 6.4 — Admin/super_admin endpoints ──');
@@ -71,7 +71,7 @@ async function main() {
     const r = await call('GET', '/users');
     ok('/users (owner) → 200', r.status === 200, `status=${r.status}`);
     const arr = Array.isArray(r.body?.data) ? r.body.data : (r.body?.data?.data ?? []);
-    ok('/users retorna array (sem mock fake)', Array.isArray(arr));
+    ok('/users returns an array (no fake mock)', Array.isArray(arr));
   }
   {
     // /billing/subscription (admin+)
@@ -80,10 +80,10 @@ async function main() {
   }
   {
     const r = await call('GET', '/admin');
-    ok('GET /admin → 404 (não existe)', r.status === 404, `status=${r.status}`);
+    ok('GET /admin → 404 (does not exist)', r.status === 404, `status=${r.status}`);
   }
 
-  console.log('\n── 6.5 — Relatórios endpoints (sem mock leak runtime) ──');
+  console.log('\n── 6.5 — Reports endpoints (no runtime mock leak) ──');
   // There is no real /reports/imports endpoint — the frontend must show an empty state.
   // We only ensure /audit-logs serves real history:
   {
@@ -93,7 +93,7 @@ async function main() {
     ok('/audit-logs retorna entradas reais', arr.length >= 0); // 0 ou mais
   }
 
-  console.log('\n── 6.6 — Marketing métricas (sem integrações reais → vazio) ──');
+  console.log('\n── 6.6 — Marketing metrics (no real integrations → empty) ──');
   {
     const r = await call('GET', '/analytics/revenue?months=3');
     ok('/analytics/revenue → 200', r.status === 200);
@@ -122,11 +122,11 @@ async function main() {
       ok('providers list inclui mock_provider flag', Array.isArray(list) && list.some((p: any) => p.mock === true), JSON.stringify(list).slice(0,200));
     } else {
       // The endpoint may have a different path — does not block, just not tested.
-      console.log(`  →  /integrations/external-data/providers indisponível (${r.status}); aceitável`);
+      console.log(`  →  /integrations/external-data/providers unavailable (${r.status}); acceptable`);
     }
   }
 
-  console.log('\n── 6.10 — CRUD smoke produção ──');
+  console.log('\n── 6.10 — Production CRUD smoke ──');
   const tag = `PROD_SMOKE_${TS}`;
   const cli = await call('POST', '/clients', { name: `${tag}_CLIENT`, type: 'company' });
   ok('POST /clients', [200,201].includes(cli.status));
@@ -154,7 +154,7 @@ async function main() {
   if (artistId) {
     const reread = await call('GET', `/artists/${artistId}`);
     ok('Artista persistido (GET by id) → 200', reread.status === 200);
-    ok('Artista mantém nome', reread.body?.data?.nome_artistico === `${tag}_ARTIST`);
+    ok('Artist keeps its name', reread.body?.data?.nome_artistico === `${tag}_ARTIST`);
   }
 
   console.log('\n── RESULTADO ──');

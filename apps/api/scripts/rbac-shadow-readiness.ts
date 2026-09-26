@@ -125,21 +125,21 @@ async function main(): Promise<void> {
       resolverFailures === 0 &&
       crossTenant === 0;
 
-    console.log(`PASSO 12-J.3A
+    console.log(`STEP 12-J.3A
 
 STATUS:
-${sampleReady ? 'OK' : 'PARCIAL'}
+${sampleReady ? 'OK' : 'PARTIAL'}
 
-REQUESTS_OBSERVADOS:
+OBSERVED_REQUESTS:
 ${requests}
 
-TENANTS_OBSERVADOS:
+OBSERVED_TENANTS:
 ${tenants}
 
-ROLES_OBSERVADAS:
+OBSERVED_ROLES:
 ${roles}
 
-ENDPOINTS_OBSERVADOS:
+OBSERVED_ENDPOINTS:
 ${endpoints}
 
 ALLOW_MATCH:
@@ -155,22 +155,22 @@ WOULD_DENY:
 ${wouldDeny}
 
 CACHE:
-${requests > 0 && resolverFailures === 0 ? 'OK' : 'RISCO'}
+${requests > 0 && resolverFailures === 0 ? 'OK' : 'RISK'}
 
 MULTI_TENANCY:
-${crossTenant === 0 ? 'OK' : 'FALHA'}
+${crossTenant === 0 ? 'OK' : 'FAIL'}
 
-OBSERVABILIDADE:
-${sampleReady ? 'OK' : 'PARCIAL'}
+OBSERVABILITY:
+${sampleReady ? 'OK' : 'PARTIAL'}
 
 READINESS:
-${approved ? 'APROVADO' : 'REPROVADO'}
+${approved ? 'APPROVED' : 'REJECTED'}
 
 RBAC_PERSISTED_AUTHORITY:
 SHADOW
 
-PROMOCAO PARA ON:
-${approved ? 'SIM' : 'NAO'}`);
+PROMOTION TO ON:
+${approved ? 'YES' : 'NO'}`);
 
     const divergences = await client.query(`
       SELECT resource, action, endpoint, tenant_id, role_slug, permission,

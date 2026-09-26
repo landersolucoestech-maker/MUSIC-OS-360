@@ -338,7 +338,7 @@ async function main(): Promise<void> {
     );
     const orgA = tenants.find((row: { id: string }) => row.id === TENANT_A)?.org_id ?? '';
     const orgB = tenants.find((row: { id: string }) => row.id === TENANT_B)?.org_id ?? '';
-    assert(orgA && orgB, 'Tenants reais A/B nao encontrados ou inativos');
+    assert(orgA && orgB, 'Real tenants A/B not found or inactive');
 
     await owner.query(
       `INSERT INTO org_members
@@ -363,7 +363,7 @@ async function main(): Promise<void> {
     const conversationB = seededConversations.find(
       (row: { tenant_id: string }) => row.tenant_id === TENANT_B,
     )?.id as string;
-    assert(conversationA && conversationB, 'Conversas A/B nao foram semeadas');
+    assert(conversationA && conversationB, 'Conversations A/B were not seeded');
 
     const sign = (userId: string, orgId: string) => jwt.sign(
       {
@@ -469,26 +469,26 @@ async function main(): Promise<void> {
     const evidenceB = unwrap(responseB.body as Record<string, unknown>) as Record<string, any>;
     console.log('[3K-A][TENANT_B]', JSON.stringify(evidenceB));
     assert(responseA.status === 200, `Tenant A HTTP status=${responseA.status}`);
-    assert(evidenceA.tenantJwt === orgA, 'Tenant A JWT divergente');
-    assert(evidenceA.tenantRequest === TENANT_A, 'Tenant A request divergente');
-    assert(evidenceA.private_tenant_id === TENANT_A, 'private_get_tenant_id() nao retornou A');
+    assert(evidenceA.tenantJwt === orgA, 'Tenant A JWT mismatch');
+    assert(evidenceA.tenantRequest === TENANT_A, 'Tenant A request mismatch');
+    assert(evidenceA.private_tenant_id === TENANT_A, 'private_get_tenant_id() did not return A');
     assert(evidenceA.connection_role === 'musicos_app', `Role inesperada: ${evidenceA.connection_role}`);
     assert(evidenceA.request_role === 'owner', `Request role inesperada: ${evidenceA.request_role}`);
     assert(
       JSON.stringify(evidenceA.rows.map((row: { subject: string }) => row.subject))
         === JSON.stringify([`${tag}_A`]),
-      'Tenant A nao ficou isolado pela RLS',
+      'Tenant A was not isolated by RLS',
     );
     assert(responseB.status === 200, `Tenant B HTTP status=${responseB.status}`);
-    assert(evidenceB.tenantJwt === orgB, 'Tenant B JWT divergente');
-    assert(evidenceB.tenantRequest === TENANT_B, 'Tenant B request divergente');
-    assert(evidenceB.private_tenant_id === TENANT_B, 'private_get_tenant_id() nao retornou B');
+    assert(evidenceB.tenantJwt === orgB, 'Tenant B JWT mismatch');
+    assert(evidenceB.tenantRequest === TENANT_B, 'Tenant B request mismatch');
+    assert(evidenceB.private_tenant_id === TENANT_B, 'private_get_tenant_id() did not return B');
     assert(evidenceB.connection_role === 'musicos_app', `Role inesperada: ${evidenceB.connection_role}`);
     assert(evidenceB.request_role === 'owner', `Request role inesperada: ${evidenceB.request_role}`);
     assert(
       JSON.stringify(evidenceB.rows.map((row: { subject: string }) => row.subject))
         === JSON.stringify([`${tag}_B`]),
-      'Tenant B nao ficou isolado pela RLS',
+      'Tenant B was not isolated by RLS',
     );
 
     const executionEvidence: Record<string, Record<string, any>> = {};
@@ -508,10 +508,10 @@ async function main(): Promise<void> {
       assert(response.status === 200, `Executions HTTP ${label} status=${response.status}`);
       assert(evidence.tenantJwt === orgId, `Executions HTTP ${label} JWT incorreto`);
       assert(evidence.tenantRequest === tenantId, `Executions HTTP ${label} request tenant incorreto`);
-      assert(evidence.private_tenant_id === tenantId, `Executions HTTP ${label} contexto incorreto`);
+      assert(evidence.private_tenant_id === tenantId, `Executions HTTP ${label} wrong context`);
       assert(evidence.connection_role === 'musicos_app', `Executions HTTP ${label} role incorreta`);
-      assert(evidence.skillRuns.length === 1, `Executions HTTP ${label} skill_runs sem isolamento`);
-      assert(evidence.workflowExecutions.length === 1, `Executions HTTP ${label} workflow sem isolamento`);
+      assert(evidence.skillRuns.length === 1, `Executions HTTP ${label} skill_runs not isolated`);
+      assert(evidence.workflowExecutions.length === 1, `Executions HTTP ${label} workflow not isolated`);
       assert(evidence.skillRuns[0].tenant_id === tenantId, `Executions HTTP ${label} skill tenant incorreto`);
       assert(
         evidence.workflowExecutions[0].tenant_id === tenantId,
@@ -528,7 +528,7 @@ async function main(): Promise<void> {
         { table, tenantId: TENANT_A, tag: `${tag}_${table}_CRUD` },
       );
       const created = unwrap(create.body as Record<string, unknown>) as Record<string, any>;
-      assert(create.status === 201 && created.ok === true, `${table} HTTP create falhou`);
+      assert(create.status === 201 && created.ok === true, `${table} HTTP create failed`);
       const id = created.rows[0].id as string;
 
       const update = await request(
@@ -539,7 +539,7 @@ async function main(): Promise<void> {
         { table, id },
       );
       const updated = unwrap(update.body as Record<string, unknown>) as Record<string, any>;
-      assert(update.status === 200 && updated.rows.length === 1, `${table} HTTP update falhou`);
+      assert(update.status === 200 && updated.rows.length === 1, `${table} HTTP update failed`);
 
       const remove = await request(
         'DELETE',
@@ -549,7 +549,7 @@ async function main(): Promise<void> {
         { table, id },
       );
       const removed = unwrap(remove.body as Record<string, unknown>) as Record<string, any>;
-      assert(remove.status === 200 && removed.rows.length === 1, `${table} HTTP delete falhou`);
+      assert(remove.status === 200 && removed.rows.length === 1, `${table} HTTP delete failed`);
 
       const cross = await request(
         'POST',
@@ -560,7 +560,7 @@ async function main(): Promise<void> {
       );
       const crossed = unwrap(cross.body as Record<string, unknown>) as Record<string, any>;
       assert(cross.status === 201, `${table} HTTP cross status=${cross.status}`);
-      assert(crossed.ok === false && crossed.code === '42501', `${table} HTTP cross nao retornou 42501`);
+      assert(crossed.ok === false && crossed.code === '42501', `${table} HTTP cross did not return 42501`);
     }
 
     const workflowBId = seededWorkflowExecutions.find(
@@ -686,7 +686,7 @@ async function main(): Promise<void> {
         conversation_id: result.data?.conversation_id,
       }));
       assert(response.status === 201, `Notification ${label} status=${response.status}`);
-      assert(result.created === true, `Notification ${label} nao foi criada`);
+      assert(result.created === true, `Notification ${label} was not created`);
       assert(result.data?.tenant_id === tenantId, `Notification ${label} tenant incorreto`);
     };
 
@@ -705,13 +705,13 @@ async function main(): Promise<void> {
       assert(response.status === 200, `MusicChat probe ${label} status=${response.status}`);
       assert(evidence.tenantJwt === orgId, `MusicChat probe ${label} JWT incorreto`);
       assert(evidence.tenantRequest === tenantId, `MusicChat probe ${label} request tenant incorreto`);
-      assert(evidence.private_tenant_id === tenantId, `MusicChat probe ${label} contexto incorreto`);
+      assert(evidence.private_tenant_id === tenantId, `MusicChat probe ${label} wrong context`);
       assert(evidence.connection_role === 'musicos_app', `MusicChat probe ${label} role incorreta`);
-      assert(evidence.settings.length === 1, `MusicChat probe ${label} settings nao isolado`);
+      assert(evidence.settings.length === 1, `MusicChat probe ${label} settings not isolated`);
       assert(evidence.settings[0].tenant_id === tenantId, `MusicChat probe ${label} settings cross-tenant`);
       assert(
         evidence.events.some((row: Record<string, any>) => row.conversation_id === ownConversationId),
-        `MusicChat probe ${label} nao encontrou evento proprio`,
+        `MusicChat probe ${label} did not find its own event`,
       );
       assert(
         evidence.events.every((row: Record<string, any>) => row.conversation_id !== otherConversationId),
@@ -721,7 +721,7 @@ async function main(): Promise<void> {
         evidence.notifications.some(
           (row: Record<string, any>) => row.conversation_id === ownConversationId,
         ),
-        `MusicChat probe ${label} nao encontrou notificacao propria`,
+        `MusicChat probe ${label} did not find its own notification`,
       );
       assert(
         evidence.notifications.every(
@@ -740,8 +740,8 @@ async function main(): Promise<void> {
       [[inboundConversationA, inboundConversationB]],
     );
     console.log('[3K-B][PERSISTENCE]', JSON.stringify(persisted[0]));
-    assert(persisted[0].events > 0, 'Eventos HTTP nao foram persistidos');
-    assert(persisted[0].notifications === 2, 'Notificacoes HTTP nao foram persistidas');
+    assert(persisted[0].events > 0, 'HTTP events were not persisted');
+    assert(persisted[0].notifications === 2, 'HTTP notifications were not persisted');
 
     const validInsert = await request(
       'POST',
@@ -753,7 +753,7 @@ async function main(): Promise<void> {
     const validResult = unwrap(validInsert.body as Record<string, unknown>) as Record<string, any>;
     console.log('[3K-A][INSERT_VALIDO]', JSON.stringify(validResult));
     assert(validInsert.status === 201, `INSERT valido HTTP status=${validInsert.status}`);
-    assert(validResult.ok === true, 'INSERT valido foi negado');
+    assert(validResult.ok === true, 'valid INSERT was denied');
     assert(validResult.rows[0].tenant_id === TENANT_A, 'INSERT valido gravou tenant incorreto');
 
     const validUpdate = await request(
@@ -766,7 +766,7 @@ async function main(): Promise<void> {
     const validUpdateResult = unwrap(validUpdate.body as Record<string, unknown>) as Record<string, any>;
     console.log('[3L][UPDATE_VALIDO]', JSON.stringify(validUpdateResult));
     assert(validUpdate.status === 200, `UPDATE valido HTTP status=${validUpdate.status}`);
-    assert(validUpdateResult.rows.length === 1, 'UPDATE valido nao afetou a conversa A');
+    assert(validUpdateResult.rows.length === 1, 'valid UPDATE did not affect conversation A');
     assert(validUpdateResult.rows[0].tenant_id === TENANT_A, 'UPDATE valido afetou tenant incorreto');
 
     const crossUpdate = await request(
@@ -779,7 +779,7 @@ async function main(): Promise<void> {
     const crossUpdateResult = unwrap(crossUpdate.body as Record<string, unknown>) as Record<string, any>;
     console.log('[3L][UPDATE_CROSS]', JSON.stringify(crossUpdateResult));
     assert(crossUpdate.status === 200, `UPDATE cross HTTP status=${crossUpdate.status}`);
-    assert(crossUpdateResult.rows.length === 0, 'UPDATE cross-tenant afetou linha B');
+    assert(crossUpdateResult.rows.length === 0, 'cross-tenant UPDATE affected row B');
 
     const crossInsert = await request(
       'POST',
@@ -791,12 +791,12 @@ async function main(): Promise<void> {
     const crossResult = unwrap(crossInsert.body as Record<string, unknown>) as Record<string, any>;
     console.log('[3K-A][INSERT_CROSS]', JSON.stringify(crossResult));
     assert(crossInsert.status === 201, `INSERT cross HTTP status=${crossInsert.status}`);
-    assert(crossResult.ok === false && crossResult.code === '42501', 'Cross-tenant nao retornou 42501');
+    assert(crossResult.ok === false && crossResult.code === '42501', 'Cross-tenant did not return 42501');
     const leaked = await owner.query(
       `SELECT count(*)::int AS count FROM conversations WHERE subject = $1`,
       [`${tag}_INSERT_CROSS`],
     );
-    assert(leaked[0].count === 0, 'INSERT cross-tenant vazou linha');
+    assert(leaked[0].count === 0, 'cross-tenant INSERT leaked a row');
 
     console.log('\nHTTP_CONTEXT_OK');
   } finally {

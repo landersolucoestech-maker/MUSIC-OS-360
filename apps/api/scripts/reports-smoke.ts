@@ -96,18 +96,18 @@ async function main(): Promise<void> {
       { headers },
     );
     const exportBuffer = Buffer.from(await exportResponse.arrayBuffer());
-    check('exportação responde 200', exportResponse.status === 200, `status=${exportResponse.status}`);
+    check('export responds 200', exportResponse.status === 200, `status=${exportResponse.status}`);
     check(
-      'exportação usa MIME XLSX',
+      'export uses the XLSX MIME type',
       exportResponse.headers.get('content-type')?.includes(
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       ) === true,
     );
-    check('arquivo possui assinatura ZIP', exportBuffer[0] === 0x50 && exportBuffer[1] === 0x4b);
+    check('file has a ZIP signature', exportBuffer[0] === 0x50 && exportBuffer[1] === 0x4b);
 
     const exportedWorkbook = XLSX.read(exportBuffer, { type: 'buffer', cellDates: true });
     check(
-      'workbook possui uma única aba Artistas',
+      'workbook has a single Artistas sheet',
       exportedWorkbook.SheetNames.length === 1 && exportedWorkbook.SheetNames[0] === 'Artistas',
       `abas=${exportedWorkbook.SheetNames.join(',')}`,
     );
@@ -116,7 +116,7 @@ async function main(): Promise<void> {
       { header: 1, raw: true },
     );
     check(
-      'cabeçalho é pt-BR e não expõe chave física',
+      'header is pt-BR and does not expose the physical key',
       exportedRows[0]?.includes('Nome artístico') === true &&
         exportedRows[0]?.includes('nome_artistico') === false,
     );
@@ -126,10 +126,10 @@ async function main(): Promise<void> {
       '/reports/entities/artists/export?format=xml',
       headers,
     );
-    check('formato não suportado é rejeitado', unsupported.status === 400, `status=${unsupported.status}`);
+    check('unsupported format is rejected', unsupported.status === 400, `status=${unsupported.status}`);
 
     const noToken = await api('GET', '/reports/entities/artists/export?format=xlsx');
-    check('exportação sem token é bloqueada', [401, 403].includes(noToken.status), `status=${noToken.status}`);
+    check('export without token is blocked', [401, 403].includes(noToken.status), `status=${noToken.status}`);
 
     const validateName = `${TAG}_V`;
     const validation = await api(
@@ -139,7 +139,7 @@ async function main(): Promise<void> {
       workbookBody([validateName]),
     );
     check(
-      'preview valida uma linha',
+      'preview validates one row',
       [200, 201].includes(validation.status) && unwrap(validation.data)?.validRows === 1,
       `status=${validation.status}`,
     );
@@ -147,7 +147,7 @@ async function main(): Promise<void> {
       'SELECT COUNT(*)::int AS count FROM artists WHERE nome_artistico=$1',
       [validateName],
     );
-    check('preview não persiste', previewCount[0].count === 0);
+    check('preview does not persist', previewCount[0].count === 0);
 
     const commitName = `${TAG}_C`;
     const firstCommit = await api(
@@ -157,7 +157,7 @@ async function main(): Promise<void> {
       workbookBody([commitName]),
     );
     check(
-      'commit importa uma linha',
+      'commit imports one row',
       unwrap(firstCommit.data)?.importedRows === 1,
       `status=${firstCommit.status}`,
     );
@@ -190,7 +190,7 @@ async function main(): Promise<void> {
       'SELECT COUNT(*)::int AS count FROM artists WHERE nome_artistico=$1',
       [rollbackName],
     );
-    check('erro em lote executa rollback total', rollbackCount[0].count === 0);
+    check('batch error performs a full rollback', rollbackCount[0].count === 0);
   } finally {
     try {
       await dataSource.query('DELETE FROM artists WHERE nome_artistico LIKE $1', [`${TAG}%`]);
@@ -200,12 +200,12 @@ async function main(): Promise<void> {
   }
 
   console.log(
-    `\n[reports:smoke] ${failures === 0 ? 'OK — todos os fluxos passaram' : `FALHOU — ${failures} falha(s)`}\n`,
+    `\n[reports:smoke] ${failures === 0 ? 'OK — all flows passed' : `FAILED — ${failures} failure(s)`}\n`,
   );
   process.exit(failures === 0 ? 0 : 1);
 }
 
 main().catch((error) => {
-  console.error('[reports:smoke] erro fatal:', error instanceof Error ? error.stack : error);
+  console.error('[reports:smoke] fatal error:', error instanceof Error ? error.stack : error);
   process.exit(1);
 });

@@ -127,20 +127,20 @@ function todayIsoAt(hour, minute = 0) {
 
 async function main() {
   const auth = await http("GET", "/dev-auth/token");
-  expect(auth.res.ok, "dev-auth falhou", { status: auth.res.status, body: auth.json });
+  expect(auth.res.ok, "dev-auth failed", { status: auth.res.status, body: auth.json });
   const authData = auth.json;
   const token = authData?.token;
   const tenantId = authData?.tenantId;
   const orgId = authData?.orgId;
-  expect(Boolean(token), "dev-auth nao retornou token");
-  expect(Boolean(tenantId), "dev-auth nao retornou tenantId");
+  expect(Boolean(token), "dev-auth did not return a token");
+  expect(Boolean(tenantId), "dev-auth did not return a tenantId");
   if (!token || !tenantId) {
-    console.log(JSON.stringify({ runId, result: "FALHOU", failures, authResponsePreview: JSON.stringify(auth.json).slice(0, 500) }, null, 2));
+    console.log(JSON.stringify({ runId, result: "FAILED", failures, authResponsePreview: JSON.stringify(auth.json).slice(0, 500) }, null, 2));
     process.exit(1);
   }
 
   const context = await http("GET", "/auth/context", { token, tenantId: orgId });
-  expect(context.res.ok, "/auth/context nao respondeu 200", { status: context.res.status });
+  expect(context.res.ok, "/auth/context did not respond 200", { status: context.res.status });
   checks.auth = {
     tenantId,
     orgId,
@@ -174,14 +174,14 @@ async function main() {
   };
   const artistCreate = await http("POST", "/artists", { token, tenantId, body: artistCreatePayload });
   const artistId = getId(artistCreate.json);
-  expect(artistCreate.res.status === 200 || artistCreate.res.status === 201, "POST /artists nao retornou 200/201", { status: artistCreate.res.status });
-  expect(Boolean(artistId), "POST /artists nao retornou id", { body: artistCreate.json });
+  expect(artistCreate.res.status === 200 || artistCreate.res.status === 201, "POST /artists did not return 200/201", { status: artistCreate.res.status });
+  expect(Boolean(artistId), "POST /artists did not return an id", { body: artistCreate.json });
 
   const artistList = await http("GET", `/artists?search=${encodeURIComponent(base.artistName)}`, { token, tenantId });
   const listedArtist = listRows(artistList.json).find((a) => a.id === artistId || a.nome_artistico === base.artistName);
   const artistDetail = await http("GET", `/artists/${artistId}`, { token, tenantId });
-  expect(Boolean(listedArtist), "Artista criado nao apareceu na listagem", { artistId, list: artistList.json });
-  expect(artistDetail.res.ok && getId(artistDetail.json) === artistId, "GET detail artista falhou", { artistDetail: artistDetail.json });
+  expect(Boolean(listedArtist), "Created artist did not appear in the listing", { artistId, list: artistList.json });
+  expect(artistDetail.res.ok && getId(artistDetail.json) === artistId, "GET artist detail failed", { artistDetail: artistDetail.json });
 
   const artistPatchPayload = {
     nome_artistico: base.artistNameEdited,
@@ -191,13 +191,13 @@ async function main() {
   };
   const artistPatch = await http("PATCH", `/artists/${artistId}`, { token, tenantId, body: artistPatchPayload });
   const artistReload = await http("GET", `/artists/${artistId}`, { token, tenantId });
-  expect(artistPatch.res.ok, "PATCH /artists falhou", { status: artistPatch.res.status, body: artistPatch.json });
-  expect(artistReload.json?.nome_artistico === base.artistNameEdited, "Artista nao persistiu nome editado apos reload", { artistReload: artistReload.json });
+  expect(artistPatch.res.ok, "PATCH /artists failed", { status: artistPatch.res.status, body: artistPatch.json });
+  expect(artistReload.json?.nome_artistico === base.artistNameEdited, "Artist did not persist the edited name after reload", { artistReload: artistReload.json });
   checks.artists = { id: artistId, created: artistCreate.res.status, patched: artistPatch.res.status, reloadedName: artistReload.json?.nome_artistico };
 
   const dbArtist = await dbOne(pg, "select id, tenant_id, nome_artistico, genero_musical, metadata from artists where id = $1", [artistId]);
   expect(dbArtist?.tenant_id === tenantId, "DB artista tenant_id incorreto", { dbArtist });
-  expect(dbArtist?.nome_artistico === base.artistNameEdited, "DB artista nao persistiu edicao", { dbArtist });
+  expect(dbArtist?.nome_artistico === base.artistNameEdited, "DB artist did not persist the edit", { dbArtist });
 
   const releasePayload = {
     title: base.releaseTitle,
@@ -210,13 +210,13 @@ async function main() {
   };
   const releaseCreate = await http("POST", "/releases", { token, tenantId, body: releasePayload });
   const releaseId = getId(releaseCreate.json);
-  expect(releaseCreate.res.status === 200 || releaseCreate.res.status === 201, "POST /releases nao retornou 200/201", { status: releaseCreate.res.status });
-  expect(Boolean(releaseId), "POST /releases nao retornou id", { body: releaseCreate.json });
+  expect(releaseCreate.res.status === 200 || releaseCreate.res.status === 201, "POST /releases did not return 200/201", { status: releaseCreate.res.status });
+  expect(Boolean(releaseId), "POST /releases did not return an id", { body: releaseCreate.json });
   const releaseList = await http("GET", `/releases?search=${encodeURIComponent(base.releaseTitle)}`, { token, tenantId });
   const listedRelease = listRows(releaseList.json).find((r) => r.id === releaseId);
   const releaseDetail = await http("GET", `/releases/${releaseId}`, { token, tenantId });
   const releaseArtistName = listedRelease?.artistas?.nome_artistico || releaseDetail.json?.artistas?.nome_artistico;
-  expect(releaseArtistName === base.artistNameEdited, "Release nao trouxe artista via JOIN", { listedRelease, detail: releaseDetail.json });
+  expect(releaseArtistName === base.artistNameEdited, "Release did not bring the artist via JOIN", { listedRelease, detail: releaseDetail.json });
 
   const releaseNextStatus = (releaseDetail.json?.allowed_transitions || []).find((t) => t.to && t.to !== releaseDetail.json?.status)?.to || "metadata_pending";
   const releasePatchPayload = {
@@ -227,10 +227,10 @@ async function main() {
   };
   const releasePatch = await http("PATCH", `/releases/${releaseId}`, { token, tenantId, body: releasePatchPayload });
   const releaseReload = await http("GET", `/releases/${releaseId}`, { token, tenantId });
-  expect(releasePatch.res.ok, "PATCH /releases falhou", { status: releasePatch.res.status, body: releasePatch.json, payload: releasePatchPayload });
-  expect(releaseReload.json?.titulo === releasePatchPayload.title, "Release nao persistiu titulo editado", { releaseReload: releaseReload.json });
-  expect(releaseReload.json?.artistas?.nome_artistico === base.artistNameEdited, "Release perdeu JOIN artista apos reload", { releaseReload: releaseReload.json });
-  expect(releaseReload.json?.metadata?.edited === true, "Release perdeu metadata apos reload", { releaseReload: releaseReload.json });
+  expect(releasePatch.res.ok, "PATCH /releases failed", { status: releasePatch.res.status, body: releasePatch.json, payload: releasePatchPayload });
+  expect(releaseReload.json?.titulo === releasePatchPayload.title, "Release did not persist the edited title", { releaseReload: releaseReload.json });
+  expect(releaseReload.json?.artistas?.nome_artistico === base.artistNameEdited, "Release lost the artist JOIN after reload", { releaseReload: releaseReload.json });
+  expect(releaseReload.json?.metadata?.edited === true, "Release lost metadata after reload", { releaseReload: releaseReload.json });
   checks.releases = { id: releaseId, created: releaseCreate.res.status, patched: releasePatch.res.status, artist: releaseReload.json?.artistas?.nome_artistico, status: releaseReload.json?.status };
 
   const dbRelease = await dbOne(pg, "select id, tenant_id, artista_id, titulo, metadata from releases where id = $1", [releaseId]);
@@ -247,7 +247,7 @@ async function main() {
   };
   const clientCreate = await http("POST", "/clients", { token, tenantId, body: clientPayload });
   const clientId = getId(clientCreate.json);
-  expect(clientCreate.res.ok && Boolean(clientId), "Cliente real nao foi criado", { status: clientCreate.res.status, body: clientCreate.json });
+  expect(clientCreate.res.ok && Boolean(clientId), "Real client was not created", { status: clientCreate.res.status, body: clientCreate.json });
 
   const contractPayload = {
     titulo: base.contractTitle,
@@ -262,15 +262,15 @@ async function main() {
   };
   const contractCreate = await http("POST", "/contracts", { token, tenantId, body: contractPayload });
   const contractId = getId(contractCreate.json);
-  expect(contractCreate.res.status === 200 || contractCreate.res.status === 201, "POST /contracts nao retornou 200/201", { status: contractCreate.res.status, body: contractCreate.json });
-  expect(Boolean(contractId), "POST /contracts nao retornou id", { body: contractCreate.json });
+  expect(contractCreate.res.status === 200 || contractCreate.res.status === 201, "POST /contracts did not return 200/201", { status: contractCreate.res.status, body: contractCreate.json });
+  expect(Boolean(contractId), "POST /contracts did not return an id", { body: contractCreate.json });
   const contractList = await http("GET", `/contracts?search=${encodeURIComponent(base.contractTitle)}`, { token, tenantId });
   const listedContract = listRows(contractList.json).find((c) => c.id === contractId);
   const contractDetail = await http("GET", `/contracts/${contractId}`, { token, tenantId });
   const contractArtist = listedContract?.artistas?.nome_artistico || contractDetail.json?.artistas?.nome_artistico;
   const contractClient = listedContract?.clientes?.nome || contractDetail.json?.clientes?.nome;
-  expect(contractArtist === base.artistNameEdited, "Contrato com artista undefined ou JOIN incorreto", { listedContract, detail: contractDetail.json });
-  expect(contractClient === base.clientName, "Contrato com cliente undefined ou JOIN incorreto", { listedContract, detail: contractDetail.json });
+  expect(contractArtist === base.artistNameEdited, "Contract with undefined artist or wrong JOIN", { listedContract, detail: contractDetail.json });
+  expect(contractClient === base.clientName, "Contract with undefined client or wrong JOIN", { listedContract, detail: contractDetail.json });
 
   const contractNextStatus = (contractDetail.json?.allowed_transitions || []).find((t) => t.to && t.to !== contractDetail.json?.status)?.to || "em_analise";
   const contractPatchPayload = {
@@ -280,9 +280,9 @@ async function main() {
   };
   const contractPatch = await http("PATCH", `/contracts/${contractId}`, { token, tenantId, body: contractPatchPayload });
   const contractReload = await http("GET", `/contracts/${contractId}`, { token, tenantId });
-  expect(contractPatch.res.ok, "PATCH /contracts falhou", { status: contractPatch.res.status, body: contractPatch.json, payload: contractPatchPayload });
-  expect(Number(contractReload.json?.valor) === 17500, "Contrato nao persistiu valor editado", { contractReload: contractReload.json });
-  expect(contractReload.json?.artistas?.nome_artistico === base.artistNameEdited && contractReload.json?.clientes?.nome === base.clientName, "Contrato perdeu relacoes apos reload", { contractReload: contractReload.json });
+  expect(contractPatch.res.ok, "PATCH /contracts failed", { status: contractPatch.res.status, body: contractPatch.json, payload: contractPatchPayload });
+  expect(Number(contractReload.json?.valor) === 17500, "Contract did not persist the edited amount", { contractReload: contractReload.json });
+  expect(contractReload.json?.artistas?.nome_artistico === base.artistNameEdited && contractReload.json?.clientes?.nome === base.clientName, "Contract lost relations after reload", { contractReload: contractReload.json });
   checks.contracts = { id: contractId, clientId, created: contractCreate.res.status, patched: contractPatch.res.status, artist: contractReload.json?.artistas?.nome_artistico, client: contractReload.json?.clientes?.nome, status: contractReload.json?.status };
 
   const dbContract = await dbOne(pg, "select id, tenant_id, artista_id, cliente_id, valor from contracts where id = $1", [contractId]);
@@ -301,8 +301,8 @@ async function main() {
   };
   const eventCreate = await http("POST", "/events", { token, tenantId, body: eventPayload });
   const eventId = getId(eventCreate.json);
-  expect(eventCreate.res.status === 200 || eventCreate.res.status === 201, "POST /events nao retornou 200/201", { status: eventCreate.res.status, body: eventCreate.json });
-  expect(Boolean(eventId), "POST /events nao retornou id", { body: eventCreate.json });
+  expect(eventCreate.res.status === 200 || eventCreate.res.status === 201, "POST /events did not return 200/201", { status: eventCreate.res.status, body: eventCreate.json });
+  expect(Boolean(eventId), "POST /events did not return an id", { body: eventCreate.json });
   const eventList = await http("GET", `/events?search=${encodeURIComponent(base.eventTitle)}`, { token, tenantId });
   const listedEvent = listRows(eventList.json).find((e) => e.id === eventId);
   const dashboardBeforeEventEdit = await http("GET", "/analytics/dashboard", { token, tenantId });
@@ -312,13 +312,13 @@ async function main() {
     body: { title: `${base.eventTitle} Editado`, venue: `Casa Runtime Editada ${runId}`, status: "confirmed", metadata: { phase: "2.4", runId, edited: true } },
   });
   const eventReload = await http("GET", `/events/${eventId}`, { token, tenantId });
-  expect(Boolean(listedEvent), "Evento criado nao apareceu na Agenda/listagem", { eventList: eventList.json });
-  expect(eventPatch.res.ok, "PATCH /events falhou", { status: eventPatch.res.status, body: eventPatch.json });
-  expect(eventReload.json?.titulo === `${base.eventTitle} Editado`, "Evento nao persistiu titulo editado", { eventReload: eventReload.json });
+  expect(Boolean(listedEvent), "Created event did not appear in the Agenda/listing", { eventList: eventList.json });
+  expect(eventPatch.res.ok, "PATCH /events failed", { status: eventPatch.res.status, body: eventPatch.json });
+  expect(eventReload.json?.titulo === `${base.eventTitle} Editado`, "Event did not persist the edited title", { eventReload: eventReload.json });
   const dashboardHasTodayEvent =
     Boolean(listedEvent) &&
     String(listedEvent?.data ?? eventReload.json?.data ?? "").startsWith("2026-05-23");
-  expect(dashboardHasTodayEvent, "Fonte HTTP do Dashboard nao contem evento de hoje", { eventList: eventList.json, dashboardHealth: dashboardBeforeEventEdit.json });
+  expect(dashboardHasTodayEvent, "Dashboard HTTP source does not contain today's event", { eventList: eventList.json, dashboardHealth: dashboardBeforeEventEdit.json });
   checks.events = { id: eventId, created: eventCreate.res.status, patched: eventPatch.res.status, agendaListed: Boolean(listedEvent), dashboardToday: dashboardHasTodayEvent };
 
   const dbEvent = await dbOne(pg, "select id, tenant_id, artista_id, titulo, data, local from events where id = $1", [eventId]);
@@ -342,8 +342,8 @@ async function main() {
   };
   const txCreate = await http("POST", "/transactions", { token, tenantId, body: txPayload });
   const txId = getId(txCreate.json);
-  expect(txCreate.res.status === 200 || txCreate.res.status === 201, "POST /transactions nao retornou 200/201", { status: txCreate.res.status, body: txCreate.json });
-  expect(Boolean(txId), "POST /transactions nao retornou id", { body: txCreate.json });
+  expect(txCreate.res.status === 200 || txCreate.res.status === 201, "POST /transactions did not return 200/201", { status: txCreate.res.status, body: txCreate.json });
+  expect(Boolean(txId), "POST /transactions did not return an id", { body: txCreate.json });
   const txList = await http("GET", "/transactions?limit=50", { token, tenantId });
   const listedTx = listRows(txList.json).find((t) => t.id === txId || t.descricao === base.transactionDescription);
   const txPatch = await http("PATCH", `/transactions/${txId}`, {
@@ -355,14 +355,14 @@ async function main() {
   const dashboardAfterTx = await http("GET", "/analytics/dashboard", { token, tenantId });
   const beforeDashboardText = JSON.stringify(dashboardBeforeTx.json);
   const afterDashboardText = JSON.stringify(dashboardAfterTx.json);
-  expect(Boolean(listedTx), "Transacao criada nao apareceu na listagem", { txList: txList.json });
-  expect(txPatch.res.ok, "PATCH /transactions falhou", { status: txPatch.res.status, body: txPatch.json });
-  expect(Number(txReload.json?.valor ?? txReload.json?.amount) === 1500, "Transacao nao persistiu valor editado", { txReload: txReload.json });
-  expect(beforeDashboardText !== afterDashboardText || afterDashboardText.includes(txId), "Dashboard financeiro nao refletiu alteracao observavel", { before: dashboardBeforeTx.json, after: dashboardAfterTx.json });
+  expect(Boolean(listedTx), "Created transaction did not appear in the listing", { txList: txList.json });
+  expect(txPatch.res.ok, "PATCH /transactions failed", { status: txPatch.res.status, body: txPatch.json });
+  expect(Number(txReload.json?.valor ?? txReload.json?.amount) === 1500, "Transaction did not persist the edited amount", { txReload: txReload.json });
+  expect(beforeDashboardText !== afterDashboardText || afterDashboardText.includes(txId), "Finance dashboard did not reflect an observable change", { before: dashboardBeforeTx.json, after: dashboardAfterTx.json });
   checks.financeiro = { id: txId, created: txCreate.res.status, patched: txPatch.res.status, listed: Boolean(listedTx), dashboardChanged: beforeDashboardText !== afterDashboardText || afterDashboardText.includes(txId) };
 
   const dbTx = await dbOne(pg, "select id, tenant_id, tipo, categoria, valor, status from transactions where id = $1", [txId]);
-  expect(dbTx?.tenant_id === tenantId && Number(dbTx?.valor) === 1500, "DB transacao nao persistiu valor/tenant", { dbTx });
+  expect(dbTx?.tenant_id === tenantId && Number(dbTx?.valor) === 1500, "DB transaction did not persist amount/tenant", { dbTx });
 
   const leadPayload = {
     name: base.leadName,
@@ -376,17 +376,17 @@ async function main() {
   };
   const leadCreate = await http("POST", "/leads", { token, tenantId, body: leadPayload });
   const leadId = getId(leadCreate.json);
-  expect(leadCreate.res.status === 200 || leadCreate.res.status === 201, "POST /leads nao retornou 200/201", { status: leadCreate.res.status, body: leadCreate.json });
-  expect(Boolean(leadId), "POST /leads nao retornou id", { body: leadCreate.json });
+  expect(leadCreate.res.status === 200 || leadCreate.res.status === 201, "POST /leads did not return 200/201", { status: leadCreate.res.status, body: leadCreate.json });
+  expect(Boolean(leadId), "POST /leads did not return an id", { body: leadCreate.json });
   const leadList = await http("GET", `/leads?search=${encodeURIComponent(base.leadName)}`, { token, tenantId });
   const listedLead = listRows(leadList.json).find((l) => l.id === leadId || l.nome === base.leadName || l.name === base.leadName);
   const leadDetail = await http("GET", `/leads/${leadId}`, { token, tenantId });
   const leadPatch = await http("PATCH", `/leads/${leadId}`, { token, tenantId, body: { status: "em_contato", notes: `Lead editado ${runId}`, stage: "qualified" } });
   const leadReload = await http("GET", `/leads/${leadId}`, { token, tenantId });
-  expect(Boolean(listedLead), "Lead criado nao apareceu na listagem", { leadList: leadList.json });
-  expect(leadDetail.res.ok, "GET detail lead falhou", { status: leadDetail.res.status, body: leadDetail.json });
-  expect(leadPatch.res.ok, "PATCH /leads falhou", { status: leadPatch.res.status, body: leadPatch.json });
-  expect((leadReload.json?.notes || leadReload.json?.observacoes) === `Lead editado ${runId}`, "Lead nao persistiu observacao editada", { leadReload: leadReload.json });
+  expect(Boolean(listedLead), "Created lead did not appear in the listing", { leadList: leadList.json });
+  expect(leadDetail.res.ok, "GET lead detail failed", { status: leadDetail.res.status, body: leadDetail.json });
+  expect(leadPatch.res.ok, "PATCH /leads failed", { status: leadPatch.res.status, body: leadPatch.json });
+  expect((leadReload.json?.notes || leadReload.json?.observacoes) === `Lead editado ${runId}`, "Lead did not persist the edited note", { leadReload: leadReload.json });
 
   let convertedClient = null;
   let currentLead = leadReload.json;
@@ -413,7 +413,7 @@ async function main() {
       currentLead = { ...currentLead, cliente_id: dbConvertedLead.cliente_id, status: dbConvertedLead.status };
     }
   }
-  expect(Boolean(convertedClient?.id), "Conversao lead->cliente nao criou cliente persistido", { currentLead });
+  expect(Boolean(convertedClient?.id), "lead->client conversion did not create a persisted client", { currentLead });
   checks.crm = { id: leadId, created: leadCreate.res.status, patched: leadPatch.res.status, convertedClientId: convertedClient?.id || null, finalStatus: currentLead?.status };
 
   const dbLead = await dbOne(pg, "select id, tenant_id, status, cliente_id from leads where id = $1", [leadId]);
@@ -437,7 +437,7 @@ async function main() {
       found: auditText.includes(action) && auditText.includes(id),
     });
   }
-  for (const hit of auditHits) expect(hit.found, "Audit log nao contem acao CRUD esperada", hit);
+  for (const hit of auditHits) expect(hit.found, "Audit log does not contain the expected CRUD action", hit);
 
   const activity = await http("GET", "/activity-logs?limit=100", { token, tenantId });
   const activityText = JSON.stringify(activity.json);
@@ -451,7 +451,7 @@ async function main() {
   ];
   checks.audit = { auditHits, activityHits };
   for (const hit of activityHits) {
-    expect(hit.found, "Activity feed nao contem CRUD esperado", hit);
+    expect(hit.found, "Activity feed does not contain the expected CRUD", hit);
   }
 
   await pg.end();
@@ -459,7 +459,7 @@ async function main() {
   const criticalNetwork = requests.filter((r) => [400, 401, 403, 404, 409, 422, 500].includes(r.status));
   console.log(JSON.stringify({
     runId,
-    result: failures.length ? "FALHOU" : "PASSOU",
+    result: failures.length ? "FAILED" : "PASSOU",
     checks,
     network: {
       total: requests.length,

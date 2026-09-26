@@ -69,9 +69,9 @@ async function main(): Promise<void> {
   // secret/CI variable happened to populate DATABASE_URL.
   const targetRef = extractSupabaseRef(databaseUrl);
   if (targetRef === SUPABASE_PROD_REF) {
-    console.error('\n  ✗ ABORTADO: DATABASE_URL aponta para o ref de PRODUÇÃO Supabase.');
+    console.error('\n  ✗ ABORTED: DATABASE_URL points to the Supabase PRODUCTION ref.');
     console.error('    Este script escreve/apaga linhas reais em organizations/tenants/artists.');
-    console.error('    Aponte DATABASE_URL para um branch/staging não-produtivo antes de rodar.\n');
+    console.error('    Point DATABASE_URL to a non-production branch/staging before running.\n');
     process.exit(1);
   }
 
@@ -159,10 +159,10 @@ async function main(): Promise<void> {
     await client.query('ROLLBACK');
 
     if (resA.rowCount === 1) {
-      ok('TEST 3: SELECT próprio tenant retorna dados');
+      ok('TEST 3: SELECT of own tenant returns data');
       passed++;
     } else {
-      fail('TEST 3: SELECT próprio tenant retornou 0 linhas (problema de RLS)');
+      fail('TEST 3: SELECT of own tenant returned 0 rows (RLS problem)');
       failed++;
     }
 
@@ -178,7 +178,7 @@ async function main(): Promise<void> {
       ok('TEST 4: SELECT cross-tenant bloqueado por RLS — retornou 0 linhas');
       passed++;
     } else {
-      fail(`TEST 4: FALHA CRÍTICA — RLS permitiu leitura cross-tenant (${crossRead.rowCount} linhas)`);
+      fail(`TEST 4: CRITICAL FAILURE — RLS allowed cross-tenant read (${crossRead.rowCount} rows)`);
       failed++;
     }
 
@@ -194,7 +194,7 @@ async function main(): Promise<void> {
       ok('TEST 5: UPDATE cross-tenant bloqueado por RLS — afetou 0 linhas');
       passed++;
     } else {
-      fail(`TEST 5: FALHA CRÍTICA — RLS permitiu UPDATE cross-tenant (${crossUpdate.rowCount} linha(s))`);
+      fail(`TEST 5: CRITICAL FAILURE — RLS allowed cross-tenant UPDATE (${crossUpdate.rowCount} row(s))`);
       failed++;
     }
 
@@ -210,7 +210,7 @@ async function main(): Promise<void> {
       ok('TEST 6: DELETE cross-tenant bloqueado por RLS — afetou 0 linhas');
       passed++;
     } else {
-      fail(`TEST 6: FALHA CRÍTICA — RLS permitiu DELETE cross-tenant (${crossDelete.rowCount} linha(s))`);
+      fail(`TEST 6: CRITICAL FAILURE — RLS allowed cross-tenant DELETE (${crossDelete.rowCount} row(s))`);
       failed++;
     }
 
@@ -226,27 +226,27 @@ async function main(): Promise<void> {
       );
       await client.query('ROLLBACK');
       if ((noCtx.rowCount ?? 0) === 0) {
-        ok('TEST 7: Sem contexto tenant → SELECT retorna 0 linhas (RLS bloqueia tudo)');
+        ok('TEST 7: No tenant context → SELECT returns 0 rows (RLS blocks everything)');
         passed++;
       } else {
-        fail('TEST 7: FALHA CRÍTICA — sem contexto tenant retornou dados');
+        fail('TEST 7: CRITICAL FAILURE — no tenant context returned data');
         failed++;
       }
     } catch {
       await client.query('ROLLBACK');
-      ok('TEST 7: Sem contexto tenant → RLS lançou erro (comportamento esperado)');
+      ok('TEST 7: No tenant context → RLS threw an error (expected behavior)');
       passed++;
     }
 
   } finally {
     // ── Cleanup ────────────────────────────────────────────────────────────────
-    info('Limpando dados de teste…');
+    info('Cleaning up test data…');
     try {
       // Delete without RLS (privileged context) via a separate transaction
       await client.query(`DELETE FROM artists WHERE id IN ($1, $2)`,   [artistA, artistB]);
       await client.query(`DELETE FROM tenants WHERE id IN ($1, $2)`,   [tenantA, tenantB]);
       await client.query(`DELETE FROM organizations WHERE id IN ($1, $2)`, [orgA, orgB]);
-      ok('Dados de teste removidos');
+      ok('Test data removed');
     } catch (cleanErr) {
       console.warn(`  ⚠  Cleanup parcial: ${(cleanErr as Error).message}`);
     }
@@ -262,8 +262,8 @@ async function main(): Promise<void> {
   if (failed === 0) {
     console.log('\n  ✓ TENANT ISOLATION VALIDADO — RLS funciona corretamente.\n');
   } else {
-    console.log('\n  ✗ TENANT ISOLATION COMPROMETIDO — Falhas críticas detectadas.\n');
-    console.log('  Verifique as políticas RLS e o hook de tenant no backend.\n');
+    console.log('\n  ✗ TENANT ISOLATION COMPROMISED — critical failures detected.\n');
+    console.log('  Check the RLS policies and the tenant hook in the backend.\n');
     process.exit(1);
   }
 }
@@ -271,6 +271,6 @@ async function main(): Promise<void> {
 function warn(msg: string) { console.log(`  ⚠  ${msg}`); }
 
 main().catch((err) => {
-  console.error('\n[verify:tenant-isolation] Erro fatal:', (err as Error).message);
+  console.error('\n[verify:tenant-isolation] Fatal error:', (err as Error).message);
   process.exit(1);
 });

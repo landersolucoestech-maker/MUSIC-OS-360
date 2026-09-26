@@ -74,14 +74,14 @@ for (const file of controllerFiles) {
     const method = line.match(/@(Get|Post|Put|Patch|Delete)\(([^)]*)\)/);
     if (method) methods.push(`${method[1]} ${method[2].trim() || '(root)'} @L${index + 1}`);
   });
-  controllerRows.push([rel(file), controller, methods.join('; ') || 'NÃO ENCONTRADO']);
+  controllerRows.push([rel(file), controller, methods.join('; ') || 'NOT FOUND']);
 }
 
 const entityFiles = walk(path.join(root, 'apps/api/src'), (f) => f.endsWith('.entity.ts'));
 const entityRows = entityFiles.map((file) => {
   const body = read(file);
-  const entity = body.match(/@Entity\(([^)]*)\)/)?.[1]?.trim() ?? 'NÃO ENCONTRADO';
-  const cls = body.match(/export class\s+([A-Za-z0-9_]+)/)?.[1] ?? 'NÃO ENCONTRADO';
+  const entity = body.match(/@Entity\(([^)]*)\)/)?.[1]?.trim() ?? 'NOT FOUND';
+  const cls = body.match(/export class\s+([A-Za-z0-9_]+)/)?.[1] ?? 'NOT FOUND';
   return [rel(file), cls, entity];
 });
 
@@ -98,13 +98,13 @@ const aiSkills = fs.readdirSync(path.join(root, 'packages/ai-skills/src'), { wit
 
 const appendix = [
   '',
-  '## 26. Apêndices Mecânicos Gerados Em 2026-07-09',
+  '## 26. Mechanically Generated Appendices On 2026-07-09',
   '',
-  'FATO ENCONTRADO',
+  'FACT FOUND',
   '',
-  'Os inventários abaixo foram gerados mecanicamente a partir do workspace local para reduzir omissão manual. Eles complementam, no mesmo documento, as seções analíticas anteriores.',
+  'The inventories below were generated mechanically from the local workspace to reduce manual omission. They complement, in the same document, the preceding analytical sections.',
   '',
-  'EVIDÊNCIA',
+  'EVIDENCE',
   '',
   '- Script gerador: `scripts/generate-blueprint-appendices.mjs`',
   '- Documento alvo: `docs/BLUEPRINT_ENTERPRISE_DEFINITIVO_2026-07-09.md`',
@@ -116,15 +116,15 @@ const appendix = [
   listSection('26.5 Supabase Migrations', supabaseMigrations),
   '### 26.6 Mock/Seed/Fake/Stub/Sample/Demo Files',
   '',
-  table(['arquivo', 'bytes'], mockFiles),
+  table(['file', 'bytes'], mockFiles),
   '',
   '### 26.7 API Controllers E Decorators HTTP',
   '',
-  table(['arquivo', 'controller', 'metodos encontrados'], controllerRows),
+  table(['file', 'controller', 'methods found'], controllerRows),
   '',
   '### 26.8 API Entities',
   '',
-  table(['arquivo', 'classe', '@Entity'], entityRows),
+  table(['file', 'classe', '@Entity'], entityRows),
   '',
   listSection('26.9 API DTO Files', dtoFiles.map(rel)),
   listSection('26.10 API Validator Files', validatorFiles.map(rel)),
@@ -135,7 +135,7 @@ const appendix = [
   listSection('26.15 AI Skill Source Directories', aiSkills.map((s) => `packages/ai-skills/src/${s}`)),
   'RISCO',
   '',
-  'Este apêndice lista arquivos e decorators, mas não prova execução runtime de cada endpoint. Onde não houve smoke integrado, manter `NÃO VALIDADO`.',
+  'This appendix lists files and decorators, but does not prove runtime execution of each endpoint. Where there was no integrated smoke, keep `NOT VALIDATED`.',
   '',
 ].join('\n');
 

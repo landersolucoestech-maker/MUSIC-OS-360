@@ -23,8 +23,8 @@ const MIGRATE = process.argv.includes("--migrate");
 /** @type {{ name: string, cmd: string, writes?: boolean }[]} */
 const steps = [
   // Cheap, build-free checks first (RELEASE-01, RBAC-SHADOW-01, DBCTX-01).
-  { name: "Workflows críticos presentes",   cmd: "node scripts/verify-critical-workflows.mjs" },
-  { name: "Flags de produção (RBAC/DBCTX)", cmd: "corepack pnpm --filter @music-os-360/api verify:production-flags" },
+  { name: "Critical workflows present",   cmd: "node scripts/verify-critical-workflows.mjs" },
+  { name: "Production flags (RBAC/DBCTX)", cmd: "corepack pnpm --filter @music-os-360/api verify:production-flags" },
   { name: "Web typecheck (0 erros)",        cmd: "corepack pnpm --filter @music-os-360/web typecheck" },
   { name: "API build (tsc)",                cmd: "corepack pnpm --filter @music-os-360/api build" },
   { name: "Web build (vite, MOCK off)",     cmd: "corepack pnpm --filter @music-os-360/web build" },
@@ -54,14 +54,14 @@ for (const step of steps) {
     console.log("FAIL");
     const out = `${err.stdout ?? ""}${err.stderr ?? ""}`;
     const reason = /ECONNREFUSED/.test(out)
-      ? "banco inacessível (ECONNREFUSED) — rode onde o Postgres responde"
+      ? "database unreachable (ECONNREFUSED) — run where Postgres responds"
       : (out.split("\n").filter(Boolean).slice(-3).join(" | ") || err.message);
     results.push({ name: step.name, status: "FAIL", reason });
     failed = true;
   }
 }
 
-console.log("\n=== SUMÁRIO ===");
+console.log("\n=== SUMMARY ===");
 for (const r of results) {
   const icon = r.status === "PASS" ? "✅" : r.status === "FAIL" ? "❌" : "⏭️ ";
   console.log(`${icon} ${r.status.padEnd(4)} — ${r.name}${r.reason ? `\n        ↳ ${r.reason}` : ""}`);

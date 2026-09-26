@@ -259,7 +259,7 @@ async function main() {
         ORDER BY c.relname`,
       [TABLES],
     );
-    assert(schemaRows.length === TABLES.length, 'as tabelas criticas foram encontradas');
+    assert(schemaRows.length === TABLES.length, 'critical tables were found');
     for (const row of schemaRows) {
       assert(row.relrowsecurity === true, `${row.relname}: RLS habilitado`);
       assert(row.relforcerowsecurity === true, `${row.relname}: FORCE RLS habilitado`);
@@ -288,7 +288,7 @@ async function main() {
         fn.proconfig?.includes('search_path=pg_catalog'),
         `${fn.proname}: search_path seguro`,
       );
-      assert(fn.public_execute === false, `${fn.proname}: PUBLIC sem EXECUTE`);
+      assert(fn.public_execute === false, `${fn.proname}: PUBLIC without EXECUTE`);
     }
 
     const exposedPartitions = await qr.query(`
@@ -309,7 +309,7 @@ async function main() {
       'rbac_decision_logs_2026_08',
       'rbac_decision_logs_default',
     ]]);
-    assert(exposedPartitions.length === 0, 'partições RBAC sem CRUD direto');
+    assert(exposedPartitions.length === 0, 'RBAC partitions without direct CRUD');
 
     fixture = await createFixture(qr);
 
@@ -362,7 +362,7 @@ async function main() {
           fixture!.tenantB,
         ]),
       );
-      assert(noContext.length === 0, `${table}: sem tenant context = 0`);
+      assert(noContext.length === 0, `${table}: without tenant context = 0`);
 
       const sameInsert = sameTenantInsert(table, fixture);
       const inserted = await asTenant(qr, fixture.tenantA, () =>
@@ -376,7 +376,7 @@ async function main() {
           asTenant(qr, fixture!.tenantA, () =>
             qr.query(divergent.sql, divergent.params),
           ),
-        `${table}: INSERT com tenant divergente negado`,
+        `${table}: INSERT with mismatched tenant denied`,
       );
 
       if (table !== 'clients') {
@@ -386,7 +386,7 @@ async function main() {
             asTenant(qr, fixture!.tenantA, () =>
               qr.query(crossParent.sql, crossParent.params),
             ),
-          `${table}: vínculo com pai de outro tenant negado`,
+          `${table}: link to a parent from another tenant denied`,
         );
       }
     }
@@ -399,7 +399,7 @@ async function main() {
 
 main().catch((error) => {
   console.error(
-    'FALHA verify:critical-rls:',
+    'FAIL verify:critical-rls:',
     error instanceof Error ? error.stack : error,
   );
   process.exit(1);

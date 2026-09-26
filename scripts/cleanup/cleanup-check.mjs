@@ -59,7 +59,7 @@ const trackedFiles = git(["ls-files"]).split(/\r?\n/).filter(Boolean);
 // ── 1. Tracked temporary files ───────────────────────────────────────────────
 for (const file of trackedFiles) {
   if (JUNK_PATTERN.test(file)) {
-    errors.push(`arquivo temporário rastreado: ${file}`);
+    errors.push(`tracked temporary file: ${file}`);
   }
 }
 
@@ -67,7 +67,7 @@ for (const file of trackedFiles) {
 for (const file of trackedFiles) {
   if (!file.endsWith(".md")) continue;
   if (HISTORICAL_DOC_PATTERN.test(file) && !HISTORICAL_DOC_BASELINE.has(file)) {
-    errors.push(`doc histórico/auditoria novo rastreado (proibido): ${file}`);
+    errors.push(`new tracked historical/audit doc (forbidden): ${file}`);
   }
 }
 
@@ -76,7 +76,7 @@ for (const banned of SUPABASE_REF_DENYLIST) {
   const hits = git(["grep", "-l", banned, "--", "."]);
   for (const file of hits.split(/\r?\n/).filter(Boolean)) {
     if (GUARD_FILE_ALLOWLIST.has(file.replace(/\\/g, "/"))) continue;
-    errors.push(`ref Supabase banido "${banned}" em arquivo rastreado: ${file}`);
+    errors.push(`banned Supabase ref "${banned}" in a tracked file: ${file}`);
   }
 }
 const envCandidates = [
@@ -135,7 +135,7 @@ const searchSpace =
 for (const asset of listFiles(publicDir)) {
   const name = path.basename(asset);
   if (!searchSpace.includes(name)) {
-    errors.push(`asset órfão em apps/web/public (0 referências): ${path.relative(repoRoot, asset)}`);
+    errors.push(`orphan asset in apps/web/public (0 references): ${path.relative(repoRoot, asset)}`);
   }
 }
 
@@ -151,12 +151,12 @@ for (const rel of pkgFiles) {
   for (const [name, cmd] of Object.entries(pkg.scripts ?? {})) {
     const match = /(?:^|[\s&|;])(?:node|tsx)\s+(?!-)([^\s&|;"']+\.(?:mjs|cjs|js|ts))/.exec(cmd);
     if (match && !fs.existsSync(path.resolve(pkgDir, match[1]))) {
-      errors.push(`script quebrado em ${rel} → "${name}": arquivo ${match[1]} não existe`);
+      errors.push(`broken script in ${rel} → "${name}": file ${match[1]} does not exist`);
     }
   }
 }
 
-// ── 6. Workspace deps declaradas sem uso ──────────────────────────────────────
+// ── 6. Declared but unused workspace deps ─────────────────────────────────────
 for (const rel of ["apps/api/package.json", "apps/web/package.json"]) {
   const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, rel), "utf8"));
   const deps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
@@ -164,15 +164,15 @@ for (const rel of ["apps/api/package.json", "apps/web/package.json"]) {
   for (const dep of Object.keys(deps)) {
     if (!dep.startsWith("@music-os-360/")) continue;
     if (!appSrc.includes(dep)) {
-      errors.push(`workspace dep declarada sem uso em ${rel}: ${dep}`);
+      errors.push(`workspace dep declared but unused in ${rel}: ${dep}`);
     }
   }
 }
 
 // ── Report ────────────────────────────────────────────────────────────────────
 if (errors.length > 0) {
-  console.error("❌ cleanup:check FALHOU — peso morto novo detectado:");
+  console.error("❌ cleanup:check FAILED — new dead weight detected:");
   for (const err of errors) console.error(`  • ${err}`);
   process.exit(1);
 }
-console.log("✅ cleanup:check OK — nenhum peso morto novo (temp/docs/refs/assets/scripts/deps)");
+console.log("✅ cleanup:check OK — no new dead weight (temp/docs/refs/assets/scripts/deps)");

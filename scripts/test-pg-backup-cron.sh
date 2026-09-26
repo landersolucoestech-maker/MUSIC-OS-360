@@ -70,19 +70,19 @@ uploads_called() {
   [ -f "$WORK/aws.calls" ] && [ -s "$WORK/aws.calls" ]
 }
 
-echo "Caso 1 — sem age e sem gpg -> falha fechada, sem upload"
+echo "Case 1 — no age and no gpg -> fail closed, no upload"
 run_script
 check "exit != 0" "$([ "$LAST_CODE" != "0" ] && echo 1 || echo 0)"
-check "nenhum upload chamado" "$(uploads_called && echo 0 || echo 1)"
+check "no upload called" "$(uploads_called && echo 0 || echo 1)"
 
 echo
-echo "Caso 2 — BACKUP_AGE_RECIPIENT setado mas binario 'age' ausente -> falha fechada"
+echo "Case 2 — BACKUP_AGE_RECIPIENT set but 'age' binary missing -> fail closed"
 run_script BACKUP_AGE_RECIPIENT=age1fakekeyxxxxxxxx
-check "exit != 0 (age ausente)" "$([ "$LAST_CODE" != "0" ] && echo 1 || echo 0)"
-check "nenhum upload chamado" "$(uploads_called && echo 0 || echo 1)"
+check "exit != 0 (age missing)" "$([ "$LAST_CODE" != "0" ] && echo 1 || echo 0)"
+check "no upload called" "$(uploads_called && echo 0 || echo 1)"
 
 echo
-echo "Caso 3 — age configurado e mockado -> sucesso, upload .age"
+echo "Case 3 — age configured and mocked -> success, .age upload"
 cat > "$MOCKBIN/age" <<'EOF'
 #!/usr/bin/env bash
 out=""
@@ -96,12 +96,12 @@ echo "fake-encrypted" > "$out"
 EOF
 chmod +x "$MOCKBIN/age"
 run_script BACKUP_AGE_RECIPIENT=age1fakekeyxxxxxxxx
-check "exit == 0 (age presente)" "$([ "$LAST_CODE" = "0" ] && echo 1 || echo 0)"
-check "upload chamado" "$(uploads_called && echo 1 || echo 0)"
-check "extensao .age no upload" "$(grep -q '\.sql\.age' "$WORK/aws.calls" 2>/dev/null && echo 1 || echo 0)"
+check "exit == 0 (age present)" "$([ "$LAST_CODE" = "0" ] && echo 1 || echo 0)"
+check "upload called" "$(uploads_called && echo 1 || echo 0)"
+check ".age extension in the upload" "$(grep -q '\.sql\.age' "$WORK/aws.calls" 2>/dev/null && echo 1 || echo 0)"
 
 echo
-echo "Caso 4 — gpg configurado (sem age) e mockado -> sucesso, upload .gpg"
+echo "Case 4 — gpg configured (no age) and mocked -> success, .gpg upload"
 cat > "$MOCKBIN/gpg" <<'EOF'
 #!/usr/bin/env bash
 out=""
@@ -116,11 +116,11 @@ EOF
 chmod +x "$MOCKBIN/gpg"
 rm -f "$MOCKBIN/age"
 run_script BACKUP_GPG_RECIPIENT=deadbeef00112233
-check "exit == 0 (gpg presente)" "$([ "$LAST_CODE" = "0" ] && echo 1 || echo 0)"
-check "extensao .gpg no upload" "$(grep -q '\.sql\.gpg' "$WORK/aws.calls" 2>/dev/null && echo 1 || echo 0)"
+check "exit == 0 (gpg present)" "$([ "$LAST_CODE" = "0" ] && echo 1 || echo 0)"
+check ".gpg extension in the upload" "$(grep -q '\.sql\.gpg' "$WORK/aws.calls" 2>/dev/null && echo 1 || echo 0)"
 
 echo
-echo "Caso 5 — age configurado, binario mockado mas falha ao gerar o arquivo de saida -> upload NAO executado"
+echo "Case 5 — age configured, binary mocked but fails to produce the output file -> upload NOT executed"
 cat > "$MOCKBIN/age" <<'EOF'
 #!/usr/bin/env bash
 exit 1
@@ -128,9 +128,9 @@ EOF
 chmod +x "$MOCKBIN/age"
 run_script BACKUP_AGE_RECIPIENT=age1fakekeyxxxxxxxx
 check "exit != 0 (age falhou)" "$([ "$LAST_CODE" != "0" ] && echo 1 || echo 0)"
-check "nenhum upload chamado" "$(uploads_called && echo 0 || echo 1)"
+check "no upload called" "$(uploads_called && echo 0 || echo 1)"
 
 echo
-echo "-- Resumo: $pass ok, $fail falha(s) --"
+echo "-- Summary: $pass ok, $fail failure(s) --"
 [ "$fail" -eq 0 ]
 exit $?

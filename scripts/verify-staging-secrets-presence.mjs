@@ -55,10 +55,10 @@ function listSecretNames(repo) {
   if (repo) cmdArgs.push('--repo', repo);
   const result = spawnSync('gh', cmdArgs, { encoding: 'utf8' });
   if (result.error) {
-    throw new Error(`Falha ao executar gh secret list: ${result.error.message}`);
+    throw new Error(`Failed to run gh secret list: ${result.error.message}`);
   }
   if (result.status !== 0) {
-    throw new Error(`gh secret list saiu com código ${result.status}: ${result.stderr}`);
+    throw new Error(`gh secret list exited with code ${result.status}: ${result.stderr}`);
   }
   const parsed = JSON.parse(result.stdout || '[]');
   return parsed.map((entry) => entry.name);
@@ -69,8 +69,8 @@ function main() {
   const existingNames = listSecretNames(args.repo);
   const { required, optional, ok, missingRequired } = evaluatePresence(existingNames);
 
-  console.log('=== Secrets do GitHub Environment "staging" — presença apenas, nunca valores ===\n');
-  console.log('Obrigatórios:');
+  console.log('=== Secrets of the GitHub Environment "staging" — presence only, never values ===\n');
+  console.log('Required:');
   for (const { name, present } of required) {
     console.log(`  ${present ? '✓' : '✗'}  ${name}`);
   }
@@ -84,7 +84,7 @@ function main() {
     process.exitCode = 1;
     return;
   }
-  console.log('\nTodos os secrets obrigatórios de staging estão presentes.');
+  console.log('\nAll required staging secrets are present.');
 }
 
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);

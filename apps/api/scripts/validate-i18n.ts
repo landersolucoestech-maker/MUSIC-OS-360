@@ -29,11 +29,11 @@ const entries = Object.entries(FIELD_LABELS_PT_BR);
 
 // 1: dictionary integrity.
 for (const [key, label] of entries) {
-  if (!label || !label.trim()) errors.push(`Label vazio para "${key}".`);
-  if (label.trim() === key) errors.push(`Label expõe a chave crua: "${key}".`);
+  if (!label || !label.trim()) errors.push(`Empty label for "${key}".`);
+  if (label.trim() === key) errors.push(`Label exposes the raw key: "${key}".`);
   for (const term of FORBIDDEN_ENGLISH) {
     if (new RegExp(`\\b${term.replace(/ /g, '\\s')}\\b`, 'i').test(label)) {
-      errors.push(`Label em inglês: "${key}"="${label}" contém "${term}".`);
+      errors.push(`English label: "${key}"="${label}" contains "${term}".`);
     }
   }
 }
@@ -47,7 +47,7 @@ for (const [label, expected] of [
   ['plataforma de assinatura', 'signingPlatform'],
 ] as Array<[string, string]>) {
   if (FIELD_KEYS_BY_LABEL_PT_BR[label] !== expected) {
-    errors.push(`Reverse map ambíguo: "${label}" → "${FIELD_KEYS_BY_LABEL_PT_BR[label]}" (esperado "${expected}").`);
+    errors.push(`Ambiguous reverse map: "${label}" → "${FIELD_KEYS_BY_LABEL_PT_BR[label]}" (expected "${expected}").`);
   }
 }
 
@@ -62,7 +62,7 @@ for (const e of inv.entities) {
       ['created_by', 'updated_by', 'uploaded_by', 'approved_by', 'org_slug', 'metadata'].includes(c.name);
     const sensitive = /_encrypted$|token|password|secret|hash|credential/i.test(c.name);
     if (!internal && !sensitive && c.label === null) {
-      errors.push(`Coluna reportável sem label: ${e.tableName}.${c.name}`);
+      errors.push(`Reportable column without label: ${e.tableName}.${c.name}`);
     }
   }
 }
@@ -77,20 +77,20 @@ for (const d of defs) {
   ]);
   for (const col of contractCols) {
     if (tryGetFieldLabelPtBr(col) === null) {
-      errors.push(`Coluna de contrato sem label: ${d.tableName}.${col}`);
+      errors.push(`Contract column without label: ${d.tableName}.${col}`);
     }
   }
   for (const sens of d.sensitiveColumns) {
     if (d.exportableColumns.includes(sens) || d.importableColumns.includes(sens)) {
-      errors.push(`Coluna sensível exposta em export/import: ${d.tableName}.${sens}`);
+      errors.push(`Sensitive column exposed in export/import: ${d.tableName}.${sens}`);
     }
   }
 }
 
-console.log(`[validate:i18n] dicionário: ${entries.length} campos · contratos: ${defs.length} entidades`);
+console.log(`[validate:i18n] dictionary: ${entries.length} fields · contracts: ${defs.length} entities`);
 
 if (errors.length > 0) {
-  console.error(`\n[validate:i18n] FALHOU — ${errors.length} violação(ões):`);
+  console.error(`\n[validate:i18n] FAILED — ${errors.length} violation(s):`);
   for (const e of errors.slice(0, 80)) console.error('  ✗ ' + e);
   if (errors.length > 80) console.error(`  … +${errors.length - 80}`);
   process.exit(1);

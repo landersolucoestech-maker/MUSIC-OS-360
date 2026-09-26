@@ -9,7 +9,7 @@
  */
 import { loadEnv } from "vite";
 
-// MATRIZ REAL DE AMBIENTES:
+// REAL ENVIRONMENT MATRIX:
 //   development→DEV_REF · test→nenhum remoto · staging→STAGING_REF · production→PROD_REF.
 export const SUPABASE_PROD_REF = "sxmfeocztlztvpdnxayk";
 export const SUPABASE_STAGING_REF = "jjnnjnxjkqipgqebijen";

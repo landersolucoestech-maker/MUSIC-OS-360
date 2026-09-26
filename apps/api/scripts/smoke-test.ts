@@ -143,7 +143,7 @@ async function main(): Promise<void> {
 
   await test('Health liveness publico responde 200', healthCheck);
 
-  await test('Endpoint protegido sem token -> 401/403', async () => {
+  await test('Protected endpoint without token -> 401/403', async () => {
     const r = await request('GET', '/artists', undefined, false);
     expect(r.status, 'status').toBeOneOf([401, 403]);
   });
@@ -158,7 +158,7 @@ async function main(): Promise<void> {
     expect(res.status, 'status').toBe(403);
   }, !hasAuth);
 
-  await test('GET /analytics/dashboard com auth', async () => {
+  await test('GET /analytics/dashboard with auth', async () => {
     const r = await request('GET', '/analytics/dashboard');
     expect(r.status, 'status').toBe(200);
   }, !hasTenant);
@@ -209,7 +209,7 @@ async function main(): Promise<void> {
     expect(res.status, 'status').toBeOneOf([200, 201, 404]);
   }, !SMOKE_TENANT);
 
-  await test('POST /forms/:id/submit publico sem X-Tenant-ID -> 400', async () => {
+  await test('POST /forms/:id/submit public without X-Tenant-ID -> 400', async () => {
     const demoFormId = '10000000-0000-0000-0000-000000000050';
     const res = await safeFetch(apiPath(`/forms/${demoFormId}/submit`), {
       method: 'POST',
@@ -250,11 +250,11 @@ async function main(): Promise<void> {
   console.log('\nResultado\n');
   console.log(`  Passados  : ${passed}`);
   console.log(`  Falhados  : ${failed}`);
-  console.log(`  Ignorados : ${skipped} (sem credenciais)`);
+  console.log(`  Skipped   : ${skipped} (no credentials)`);
 
   if (skipped > 0) {
-    console.log('\n  Testes ignorados porque credenciais nao foram encontradas.');
-    console.log('  Verifique se a API esta rodando e as seeds foram executadas.');
+    console.log('\n  Tests skipped because credentials were not found.');
+    console.log('  Check that the API is running and the seeds were executed.');
   }
 
   if (failed === 0 && skipped === 0) {
@@ -263,12 +263,12 @@ async function main(): Promise<void> {
     console.log('\n  SMOKE TEST INCOMPLETO - credenciais obrigatorias ausentes.\n');
     process.exit(2);
   } else {
-    console.log('\n  SMOKE TEST FALHOU - verifique as falhas acima.\n');
+    console.log('\n  SMOKE TEST FAILED - check the failures above.\n');
     process.exit(1);
   }
 }
 
 main().catch((err) => {
-  console.error('\n[smoke-test] Erro fatal:', (err as Error).message);
+  console.error('\n[smoke-test] Fatal error:', (err as Error).message);
   process.exit(1);
 });

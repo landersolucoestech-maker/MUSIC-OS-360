@@ -121,7 +121,7 @@ async function tick(): Promise<void> {
 
 async function main(): Promise<void> {
   console.log(`FASE 1D probe → API=${API_URL}  REDIS=${REDIS_URL.replace(/:[^@]*@/, ':***@')}`);
-  console.log('Pressione Ctrl+C para encerrar e gravar o relatório.\n');
+  console.log('Press Ctrl+C to stop and write the report.\n');
 
   const interval = setInterval(() => {
     tick().catch((err) => console.error('[tick error]', err));
@@ -141,7 +141,7 @@ async function main(): Promise<void> {
     const readyOk = log.filter((e) => e.ready.kind === 'http' && e.ready.status === 200).length;
     const ready503 = log.filter((e) => e.ready.kind === 'http' && e.ready.status === 503).length;
     const redisOk = log.filter((e) => e.redisPing.kind === 'http' && e.redisPing.status === 200).length;
-    console.log(`\n── ${signal} — ${log.length} ticks gravados em ${outPath}`);
+    console.log(`\n── ${signal} — ${log.length} ticks written to ${outPath}`);
     console.log(`   live  200: ${liveOk}/${log.length}`);
     console.log(`   ready 200: ${readyOk}/${log.length}  503: ${ready503}/${log.length}`);
     console.log(`   redis PING: ${redisOk}/${log.length}`);

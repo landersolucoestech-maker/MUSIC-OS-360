@@ -111,7 +111,7 @@ async function seedTenant(tenant: string, token: string, tag: string, opts: {
 
   for (let i = 0; i < opts.artists; i++) {
     const r = await call('POST', '/artists', { ...ctx, body: { nome_artistico: `${tag}_ARTIST_${i}_${TS}`, status: 'em_negociacao', spotify_ouvintes: i === 0 ? 12345 : undefined } });
-    { const id = pickId(r.body); if (id) out.artists.push(id); else console.log(`  !  artist POST falhou status=${r.status} body=${JSON.stringify(r.body).slice(0,150)}`); }
+    { const id = pickId(r.body); if (id) out.artists.push(id); else console.log(`  !  artist POST failed status=${r.status} body=${JSON.stringify(r.body).slice(0,150)}`); }
   }
   for (let i = 0; i < opts.releases; i++) {
     const r = await call('POST', '/releases', { ...ctx, body: { title: `${tag}_RELEASE_${i}_${TS}`, type: 'single', artistId: out.artists[0] ?? null } });
@@ -183,13 +183,13 @@ async function f51(): Promise<void> {
 
   expect('Tenant A seed criou todos os artistas', SEED_A.artists.length === OPTS_A.artists, `got=${SEED_A.artists.length}`);
   expect('Tenant A seed criou todos os contratos', SEED_A.contracts.length === OPTS_A.contracts, `got=${SEED_A.contracts.length}`);
-  expect('Tenant A seed criou eventos (hoje+amanhã)', SEED_A.events.length === OPTS_A.eventsToday + OPTS_A.eventsTomorrow, `got=${SEED_A.events.length}`);
-  expect('Tenant A seed criou transações (mês + antigas)', SEED_A.tx.length === OPTS_A.txRevenueThisMonth + OPTS_A.txExpenseThisMonth + OPTS_A.txRevenueOtherMonth, `got=${SEED_A.tx.length}`);
+  expect('Tenant A seed created events (today+tomorrow)', SEED_A.events.length === OPTS_A.eventsToday + OPTS_A.eventsTomorrow, `got=${SEED_A.events.length}`);
+  expect('Tenant A seed created transactions (month + older)', SEED_A.tx.length === OPTS_A.txRevenueThisMonth + OPTS_A.txExpenseThisMonth + OPTS_A.txRevenueOtherMonth, `got=${SEED_A.tx.length}`);
   expect('Tenant B seed criou todos os artistas', SEED_B.artists.length === OPTS_B.artists, `got=${SEED_B.artists.length}`);
 }
 
 // ============================================================================
-// 5.2 — /analytics/dashboard cruzado com banco
+// 5.2 — /analytics/dashboard cross-checked against the database
 // ============================================================================
 
 let DASH_A: any;
@@ -231,7 +231,7 @@ async function f52(): Promise<void> {
   // Non-fabricated operational metrics — when there is no source, it must be 0 (and the key exists)
   const operationalKeys = ['pending_tasks_count','overdue_tasks_count','onboarding_in_progress_count','overdue_followups_count','pending_distribution_setups','pending_external_syncs','failed_external_syncs','successful_external_syncs','distributor_submissions_count','society_submissions_count','external_validation_errors_count','pending_provider_requirements_count'];
   for (const k of operationalKeys) {
-    expect(`Dashboard A contém '${k}' (não inventado)`, typeof DASH_A[k] === 'number' && DASH_A[k] >= 0, `value=${DASH_A[k]}`);
+    expect(`Dashboard A contains '${k}' (not invented)`, typeof DASH_A[k] === 'number' && DASH_A[k] >= 0, `value=${DASH_A[k]}`);
   }
 }
 
@@ -251,7 +251,7 @@ async function f54(): Promise<void> {
     return typeof raw === 'string' && raw.slice(0,10) === todayPrefix;
   });
   const ours = eventosHojeTotal.filter((e) => (e.title ?? e.titulo ?? '').includes(`DASH_A_${TS}_EVENT_TODAY`));
-  expect('eventos com data=hoje incluem os criados nesta passada', ours.length === OPTS_A.eventsToday, `match=${ours.length} esperado=${OPTS_A.eventsToday}`);
+  expect('events dated today include the ones created in this run', ours.length === OPTS_A.eventsToday, `match=${ours.length} esperado=${OPTS_A.eventsToday}`);
 
   // Confirm that tomorrow's events do NOT enter today's slice
   const amanha = list.filter((e) => (e.title ?? e.titulo ?? '').includes(`DASH_A_${TS}_EVENT_FUTURE`));
@@ -260,7 +260,7 @@ async function f54(): Promise<void> {
     const raw = e.data_inicio ?? e.startsAt ?? e.data ?? e.start_date;
     return typeof raw === 'string' && raw.slice(0,10) === todayPrefix;
   });
-  expect('eventos de amanhã NÃO caem em "hoje"', tomorrowSetAlsoHoje.length === 0, `bleed=${tomorrowSetAlsoHoje.length}`);
+  expect('tomorrow events do NOT fall into "today"', tomorrowSetAlsoHoje.length === 0, `bleed=${tomorrowSetAlsoHoje.length}`);
 }
 
 // ============================================================================
@@ -283,7 +283,7 @@ async function f55(): Promise<void> {
   const expectedActions = ['artist.created', 'release.created', 'contract.created', 'event.created', 'transaction.created', 'lead.created'];
   for (const action of expectedActions) {
     const found = list.some((e: any) => (e.action === action) || (e.event_type === action));
-    expect(`audit-logs contém ação '${action}'`, found, `count=${list.length}`);
+    expect(`audit-logs contains action '${action}'`, found, `count=${list.length}`);
   }
   // Reload simulado
   const r2 = await call('GET', '/audit-logs?limit=200', { auth: TOKEN_A, tenant: TA });
@@ -304,7 +304,7 @@ async function f56(): Promise<void> {
   // Creates a project linked to the first artist of A
   const artistA0 = SEED_A.artists[0];
   if (!artistA0) {
-    console.log('  →  sem artistA0, pulando');
+    console.log('  →  no artistA0, skipping');
     return;
   }
 
@@ -323,7 +323,7 @@ async function f56(): Promise<void> {
   expect('artistA0 retorna spotify_ouvintes=12345 (streams reais)', a0?.spotify_ouvintes === 12345, `got=${a0?.spotify_ouvintes}`);
   const a1 = myArtists.find((a: any) => (a.nome_artistico ?? '').endsWith(`_1_${TS}`));
   // Hooks frontend tratam undefined/null como "–"
-  expect('artistA1 não fabrica streams (null/undefined)', a1?.spotify_ouvintes == null, `got=${a1?.spotify_ouvintes}`);
+  expect('artistA1 does not fabricate streams (null/undefined)', a1?.spotify_ouvintes == null, `got=${a1?.spotify_ouvintes}`);
 }
 
 // ============================================================================
@@ -331,7 +331,7 @@ async function f56(): Promise<void> {
 // ============================================================================
 
 async function f57(): Promise<void> {
-  section('5.7 — FINANCEIRO MÊS ACTUAL');
+  section('5.7 — CURRENT MONTH FINANCE');
   // For Tenant A, recompute what we expect
   const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0,0,0,0);
   const dbA = await DB.query<{ receitas: string; despesas: string }>(`
@@ -342,8 +342,8 @@ async function f57(): Promise<void> {
   `, [TA, monthStart]);
   const expectedRevA = parseFloat(dbA.rows[0]?.receitas ?? '0');
   const expectedExpA = parseFloat(dbA.rows[0]?.despesas ?? '0');
-  expect('revenue_current_month A bate com banco', Math.abs(DASH_A.revenue_current_month - expectedRevA) < 0.01, `dashboard=${DASH_A.revenue_current_month} db=${expectedRevA}`);
-  expect('expenses_current_month A bate com banco', Math.abs(DASH_A.expenses_current_month - expectedExpA) < 0.01, `dashboard=${DASH_A.expenses_current_month} db=${expectedExpA}`);
+  expect('revenue_current_month A matches the database', Math.abs(DASH_A.revenue_current_month - expectedRevA) < 0.01, `dashboard=${DASH_A.revenue_current_month} db=${expectedRevA}`);
+  expect('expenses_current_month A matches the database', Math.abs(DASH_A.expenses_current_month - expectedExpA) < 0.01, `dashboard=${DASH_A.expenses_current_month} db=${expectedExpA}`);
   expect('net_result_current_month A correto', Math.abs(DASH_A.net_result_current_month - (expectedRevA - expectedExpA)) < 0.01);
 
   // Same check for B
@@ -355,38 +355,38 @@ async function f57(): Promise<void> {
   `, [TB, monthStart]);
   const expectedRevB = parseFloat(dbB.rows[0]?.receitas ?? '0');
   const expectedExpB = parseFloat(dbB.rows[0]?.despesas ?? '0');
-  expect('revenue_current_month B bate com banco', Math.abs(DASH_B.revenue_current_month - expectedRevB) < 0.01, `dashboard=${DASH_B.revenue_current_month} db=${expectedRevB}`);
-  expect('expenses_current_month B bate com banco', Math.abs(DASH_B.expenses_current_month - expectedExpB) < 0.01);
+  expect('revenue_current_month B matches the database', Math.abs(DASH_B.revenue_current_month - expectedRevB) < 0.01, `dashboard=${DASH_B.revenue_current_month} db=${expectedRevB}`);
+  expect('expenses_current_month B matches the database', Math.abs(DASH_B.expenses_current_month - expectedExpB) < 0.01);
 
   // An old transaction (60 days) does NOT enter
   // — for A, we create 1 old revenue of 9999. If it entered, revenue would be much larger.
   // Check: revenue_current_month must be < 9999 (i.e. it does not include the isolated old one).
   // More robust: sum only this run's ones (created in OPTS_A.txRevenueThisMonth * 1000)
   const ourMonthRevenue = OPTS_A.txRevenueThisMonth * 1000;
-  expect('A revenue exclui transação de 60 dias atrás', DASH_A.revenue_current_month < 9999 + ourMonthRevenue || DASH_A.revenue_current_month === expectedRevA, `db=${expectedRevA}`);
+  expect('A revenue excludes a 60-day-old transaction', DASH_A.revenue_current_month < 9999 + ourMonthRevenue || DASH_A.revenue_current_month === expectedRevA, `db=${expectedRevA}`);
 
   // Tenant isolation
-  expect('Tenant B revenue isolado (não soma A)', DASH_B.revenue_current_month < DASH_A.revenue_current_month || DASH_B.revenue_current_month === expectedRevB);
+  expect('Tenant B revenue isolated (does not include A)', DASH_B.revenue_current_month < DASH_A.revenue_current_month || DASH_B.revenue_current_month === expectedRevB);
 }
 
 // ============================================================================
-// 5.8 — OPERATIONAL ALERTS (sem mock)
+// 5.8 — OPERATIONAL ALERTS (no mock)
 // ============================================================================
 
 async function f58(): Promise<void> {
   section('5.8 — OPERATIONAL ALERTS');
   // Expiring contracts: we create contracts with data_fim '2026-12-31' → they do not expire within 30 days
   // So the `contracts_expiring_soon_count` counter reflects only real contracts with data_fim <30 days.
-  expect('contracts_expiring_soon_count é numérico', typeof DASH_A.contracts_expiring_soon_count === 'number');
-  expect('open_tickets é numérico', typeof DASH_A.open_tickets === 'number');
-  expect('overdue_invoices_count é numérico', typeof DASH_A.overdue_invoices_count === 'number');
-  expect('failed_external_syncs é numérico', typeof DASH_A.failed_external_syncs === 'number');
+  expect('contracts_expiring_soon_count is numeric', typeof DASH_A.contracts_expiring_soon_count === 'number');
+  expect('open_tickets is numeric', typeof DASH_A.open_tickets === 'number');
+  expect('overdue_invoices_count is numeric', typeof DASH_A.overdue_invoices_count === 'number');
+  expect('failed_external_syncs is numeric', typeof DASH_A.failed_external_syncs === 'number');
 
   // Validate that the counters are consistent with direct queries (not hardcoded)
   const r1 = await DB.query<{ c: number }>(`SELECT COUNT(*)::int AS c FROM support_tickets WHERE tenant_id=$1 AND status NOT IN ('resolved','closed') AND deleted_at IS NULL`, [TA]);
-  expect('open_tickets bate com banco', DASH_A.open_tickets === r1.rows[0]?.c, `db=${r1.rows[0]?.c} dash=${DASH_A.open_tickets}`);
+  expect('open_tickets matches the database', DASH_A.open_tickets === r1.rows[0]?.c, `db=${r1.rows[0]?.c} dash=${DASH_A.open_tickets}`);
   const r2 = await DB.query<{ c: number }>(`SELECT COUNT(*)::int AS c FROM crm_tasks WHERE tenant_id=$1 AND status='pending'`, [TA]);
-  expect('pending_tasks_count bate com banco', DASH_A.pending_tasks_count === r2.rows[0]?.c, `db=${r2.rows[0]?.c} dash=${DASH_A.pending_tasks_count}`);
+  expect('pending_tasks_count matches the database', DASH_A.pending_tasks_count === r2.rows[0]?.c, `db=${r2.rows[0]?.c} dash=${DASH_A.pending_tasks_count}`);
 }
 
 // ============================================================================
@@ -427,12 +427,12 @@ async function main(): Promise<void> {
     for (const f of fails) console.log(`  - ${f.where}  ${f.got}`);
   }
   if (failed === 0) {
-    console.log('\n  ✓ FASE 5 PASSOU — dashboard reflete dados reais.\n');
+    console.log('\n  ✓ PHASE 5 PASSED — dashboard reflects real data.\n');
     process.exit(0);
   } else {
-    console.log('\n  ✗ FASE 5 FALHOU.\n');
+    console.log('\n  ✗ PHASE 5 FAILED.\n');
     process.exit(1);
   }
 }
 
-main().catch((e) => { console.error('\n[fase5] Erro fatal:', e); process.exit(1); });
+main().catch((e) => { console.error('\n[fase5] Fatal error:', e); process.exit(1); });

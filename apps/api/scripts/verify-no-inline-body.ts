@@ -29,13 +29,13 @@ function findControllerFiles(dir: string): string[] {
 }
 
 function isForbiddenType(type: ts.TypeNode | undefined): string | null {
-  if (!type) return 'sem anotação de tipo';
-  if (ts.isTypeLiteralNode(type)) return 'tipo inline "{ ... }"';
+  if (!type) return 'no type annotation';
+  if (ts.isTypeLiteralNode(type)) return 'inline type "{ ... }"';
   if (type.kind === ts.SyntaxKind.AnyKeyword) return '"any"';
   if (type.kind === ts.SyntaxKind.UnknownKeyword) return '"unknown"';
   if (ts.isTypeReferenceNode(type)) {
     const name = type.typeName.getText();
-    if (name === 'Record') return 'Record<...> genérico';
+    if (name === 'Record') return 'generic Record<...>';
     if (name === 'Object') return '"Object"';
   }
   return null;
@@ -74,7 +74,7 @@ function checkFile(filePath: string): string[] {
           if (forbidden && !hasAllowComment(src, node)) {
             const { line } = src.getLineAndCharacterOfPosition(node.getStart());
             violations.push(
-              `${filePath}:${line + 1} — @${decoratorName}() parâmetro "${node.name.getText()}" com ${forbidden}`,
+              `${filePath}:${line + 1} — @${decoratorName}() parameter "${node.name.getText()}" with ${forbidden}`,
             );
           }
         }
@@ -91,13 +91,13 @@ const files = findControllerFiles(ROOT);
 const allViolations = files.flatMap(checkFile);
 
 if (allViolations.length > 0) {
-  console.error(`\n❌ verify:no-inline-body — ${allViolations.length} violação(ões) encontrada(s):\n`);
+  console.error(`\n❌ verify:no-inline-body — ${allViolations.length} violation(s) found:\n`);
   for (const v of allViolations) console.error(`  ${v}`);
   console.error(
-    '\nCorrija usando uma classe DTO decorada com class-validator, ou marque a exceção\n' +
-    'legítima com "// dto-guard-allow: <motivo>" na linha anterior ao parâmetro.\n',
+    '\nFix it by using a DTO class decorated with class-validator, or mark the legitimate\n' +
+    'exception with "// dto-guard-allow: <reason>" on the line before the parameter.\n',
   );
   process.exit(1);
 } else {
-  console.log(`✓ verify:no-inline-body — ${files.length} controllers verificados, nenhuma violação.`);
+  console.log(`✓ verify:no-inline-body — ${files.length} controllers checked, no violations.`);
 }

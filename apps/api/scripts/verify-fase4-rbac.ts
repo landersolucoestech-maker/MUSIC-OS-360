@@ -89,9 +89,9 @@ function section(t: string) { console.log(`\n── ${t} ──`); }
 // ============================================================================
 
 async function f42(): Promise<void> {
-  section('4.2 — AUTH BÁSICO');
+  section('4.2 — BASIC AUTH');
 
-  // sem token
+  // no token
   const noAuthEndpoints = [
     ['GET', '/auth/context'],
     ['GET', '/artists'],
@@ -101,14 +101,14 @@ async function f42(): Promise<void> {
   ] as const;
   for (const [m, p, b] of noAuthEndpoints) {
     const r = await call(m, p, { body: b });
-    check(`SEM token ${m} ${p}`, r.status, [401, 403]);
+    check(`NO token ${m} ${p}`, r.status, [401, 403]);
   }
 
   // invalid token
   const badToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.payload';
   for (const [m, p] of noAuthEndpoints) {
     const r = await call(m, p, { auth: badToken, tenant: TENANT_A });
-    check(`TOKEN inválido ${m} ${p}`, r.status, [401]);
+    check(`INVALID token ${m} ${p}`, r.status, [401]);
   }
 
   // valid token without X-Tenant-ID
@@ -120,7 +120,7 @@ async function f42(): Promise<void> {
   ] as const;
   for (const [m, p] of noTenantEndpoints) {
     const r = await call(m, p, { auth: tokens.owner });
-    check(`SEM X-Tenant-ID ${m} ${p}`, r.status, [403]);
+    check(`NO X-Tenant-ID ${m} ${p}`, r.status, [403]);
   }
 }
 
@@ -138,7 +138,7 @@ async function f43(): Promise<void> {
   ] as const;
   for (const [m, p, b] of ghostEndpoints) {
     const r = await call(m, p, { auth: tokens.ghost, tenant: TENANT_A, body: b });
-    check(`GHOST (sem membership) ${m} ${p}`, r.status, [401, 403]);
+    check(`GHOST (no membership) ${m} ${p}`, r.status, [401, 403]);
   }
 
   // A user who is a member only of Tenant B trying Tenant A
@@ -149,7 +149,7 @@ async function f43(): Promise<void> {
 }
 
 // ============================================================================
-// 4.4 — MATRIZ ROLE × ENDPOINT
+// 4.4 — ROLE × ENDPOINT MATRIX
 // ============================================================================
 
 interface Case {
@@ -289,7 +289,7 @@ async function f44(): Promise<void> {
 // ============================================================================
 
 async function f45(): Promise<void> {
-  section('4.5 — ROTAS /admin/* (não existem) — devem dar 404 controlado');
+  section('4.5 — /admin/* ROUTES (do not exist) — must return a controlled 404');
   const adminPaths = ['/admin', '/admin/kpis', '/admin/users', '/admin/tenants', '/admin/audit'];
   for (const p of adminPaths) {
     const r = await call('GET', p, { auth: tokens.owner, tenant: TENANT_A });
@@ -299,7 +299,7 @@ async function f45(): Promise<void> {
   const sub1 = await call('GET', '/billing/metrics/saas', { auth: tokens.owner, tenant: TENANT_A });
   check('OWNER (tenant) /billing/metrics/saas (esperado 403)', sub1.status, [403]);
   const sub2 = await call('GET', '/billing/metrics/saas', { auth: tokens.super, tenant: TENANT_A });
-  check('SUPER_ADMIN /billing/metrics/saas (esperado 200/4xx-data, não 403)', sub2.status, [200, 404, 500]);
+  check('SUPER_ADMIN /billing/metrics/saas (expected 200/4xx-data, not 403)', sub2.status, [200, 404, 500]);
 }
 
 // ============================================================================
@@ -331,13 +331,13 @@ async function f47(): Promise<void> {
     const s = JSON.stringify(e);
     return s.includes(`${tag}_OK`) || s.includes('artist.created');
   });
-  check('audit registra ação permitida', seenAllow ? 200 : 0, [200]);
+  check('audit records the allowed action', seenAllow ? 200 : 0, [200]);
 
   // the denied action must not have created a row in the database (artist tagged _FAIL)
   // indirect confirmation via the /artists list
   const artists = await call('GET', '/artists?limit=200', { auth: tokens.owner, tenant: TENANT_A });
   const denyLeaked = (artists.body?.data ?? []).some((a: any) => (a.nome_artistico ?? '').includes(`${tag}_FAIL`));
-  check('ação negada NÃO criou linha em artists', denyLeaked ? 0 : 200, [200]);
+  check('denied action did NOT create a row in artists', denyLeaked ? 0 : 200, [200]);
 }
 
 // ============================================================================
@@ -346,13 +346,13 @@ async function f47(): Promise<void> {
 
 async function main(): Promise<void> {
   console.log('\n╔══════════════════════════════════════════════════════════╗');
-  console.log('║  MUSIC OS 360 — FASE 4: Validação Auth e RBAC (HTTP)     ║');
+  console.log('║  MUSIC OS 360 — PHASE 4: Auth and RBAC Validation (HTTP) ║');
   console.log('╚══════════════════════════════════════════════════════════╝');
   console.log(`  API_URL    : ${API_URL}`);
   console.log(`  Tenant A   : ${TENANT_A}`);
   console.log(`  Tenant B   : ${TENANT_B}`);
 
-  if (!KEY) { console.error('ENCRYPTION_KEY não definido — abortando'); process.exit(2); }
+  if (!KEY) { console.error('ENCRYPTION_KEY not defined — aborting'); process.exit(2); }
 
   try {
     await f42();
@@ -376,9 +376,9 @@ async function main(): Promise<void> {
     console.log('\n  ✓ FASE 4 PASSOU — Auth/RBAC validado.\n');
     process.exit(0);
   } else {
-    console.log('\n  ✗ FASE 4 FALHOU.\n');
+    console.log('\n  ✗ PHASE 4 FAILED.\n');
     process.exit(1);
   }
 }
 
-main().catch((e) => { console.error('\n[fase4] Erro fatal:', e); process.exit(1); });
+main().catch((e) => { console.error('\n[fase4] Fatal error:', e); process.exit(1); });

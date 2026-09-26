@@ -1,13 +1,12 @@
 {
  "totals": {
-  "comment": 849,
+  "comment": 848,
   "directory": 23,
   "eventQueueJob": 18,
   "filename": 83,
   "identifier": 2520
  },
  "debt": {
-  "comment::apps/api/scripts/verify-no-inline-body.ts": 1,
   "comment::apps/web/src/modules/audiovisual/modals/AudiovisualProjectFormModal.payload.test.ts": 1,
   "comment::apps/web/src/modules/audiovisual/modals/AudiovisualProjectFormModal.tsx": 5,
   "comment::apps/web/src/modules/auth/pages/ArtistaSignupPublic.route-contract.guard.test.ts": 1,

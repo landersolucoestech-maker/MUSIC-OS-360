@@ -82,7 +82,7 @@ async function main(): Promise<void> {
   let fails = 0;
 
   console.log('\n╔══════════════════════════════════════════════════════════╗');
-  console.log('║   MUSIC OS 360 — Verificação de RLS e Políticas           ║');
+  console.log('║   MUSIC OS 360 — RLS and Policies Verification            ║');
   console.log('╚══════════════════════════════════════════════════════════╝\n');
 
   const { Client } = await import('pg');
@@ -94,7 +94,7 @@ async function main(): Promise<void> {
   try {
     await client.connect();
   } catch (err) {
-    console.error(`Falha ao conectar: ${(err as Error).message}`);
+    console.error(`Failed to connect: ${(err as Error).message}`);
     process.exit(1);
   }
 
@@ -121,7 +121,7 @@ async function main(): Promise<void> {
 
   for (const table of MULTITENANT_TABLES) {
     if (!existingTables.has(table)) {
-      console.log(`  ⚠  ${table} — tabela não existe (execute db:migrate)`);
+      console.log(`  ⚠  ${table} — table does not exist (run db:migrate)`);
       continue;
     }
 
@@ -162,7 +162,7 @@ async function main(): Promise<void> {
             USING (tenant_id = current_setting('app.current_tenant_id', TRUE)::UUID)
             WITH CHECK (tenant_id = current_setting('app.current_tenant_id', TRUE)::UUID)
         `);
-        console.log('       → Política tenant_isolation criada via --fix');
+        console.log('       → tenant_isolation policy created via --fix');
       }
     }
   }
@@ -256,18 +256,18 @@ async function main(): Promise<void> {
         if (!policies.has('super_admin_full_access')) { console.log('       MISSING super_admin_full_access policy'); fails++; }
         if (anonGrants.size > 0) { console.log(`       anon grants: ${Array.from(anonGrants).join(', ')}`); fails++; }
         if (authenticatedGrants.size > 0) { console.log(`       authenticated grants: ${Array.from(authenticatedGrants).join(', ')}`); fails++; }
-        if (!appGrantOk) { console.log(`       musicos_app grants inválidos: ${Array.from(appGrants).join(', ')}`); fails++; }
+        if (!appGrantOk) { console.log(`       invalid musicos_app grants: ${Array.from(appGrants).join(', ')}`); fails++; }
       }
     }
   }
 
   console.log('\n── Resumo ──────────────────────────────────────────────────\n');
   if (fails === 0) {
-    console.log('  ✓ Todas as tabelas multi-tenant têm RLS e políticas completas.\n');
+    console.log('  ✓ All multi-tenant tables have RLS and complete policies.\n');
   } else {
-    console.log(`  ✗ ${fails} problema(s) de RLS encontrado(s).`);
+    console.log(`  ✗ ${fails} RLS problem(s) found.`);
     if (!FIX_MODE) {
-      console.log('  Execute com --fix para aplicar RLS automaticamente.\n');
+      console.log('  Run with --fix to apply RLS automatically.\n');
     }
   }
 
@@ -276,6 +276,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => {
-  console.error('\n[verify:rls] Erro fatal:', (err as Error).message);
+  console.error('\n[verify:rls] Fatal error:', (err as Error).message);
   process.exit(1);
 });

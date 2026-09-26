@@ -43,11 +43,11 @@ const TEXT_EXTENSIONS = new Set([
 
 const FORBIDDEN_PATTERNS = [
   {
-    label: 'formato delimitado legado',
+    label: 'legacy delimited format',
     regex: new RegExp(`\\b${LEGACY_TOKEN}\\b`, 'i'),
   },
   {
-    label: 'extensão delimitada legada',
+    label: 'legacy delimited extension',
     regex: new RegExp(`\\.${LEGACY_TOKEN}\\b`, 'i'),
   },
   {
@@ -55,11 +55,11 @@ const FORBIDDEN_PATTERNS = [
     regex: new RegExp(`text/${LEGACY_TOKEN}`, 'i'),
   },
   {
-    label: 'planilha binária XLS legada',
+    label: 'legacy binary XLS spreadsheet',
     regex: /application\/vnd\.ms-excel|\.xls(?!x)\b/i,
   },
   {
-    label: 'arquivo de intercâmbio legado fora do contrato XLSX',
+    label: 'legacy interchange file outside the XLSX contract',
     // Restrict the check to string literals that actually reference a file.
     // A generic /\.exp\b/ also matches legitimate JavaScript/TypeScript
     // properties such as JWT `payload.exp` and OAuth `state.exp`.
@@ -106,9 +106,9 @@ for (const file of walk(ROOT)) {
 }
 
 if (violations.length > 0) {
-  console.error('[xlsx-only] resíduos incompatíveis encontrados:');
+  console.error('[xlsx-only] incompatible residues found:');
   for (const violation of violations) console.error(`- ${violation}`);
   process.exit(1);
 }
 
-console.log('[xlsx-only] contrato validado: apenas XLSX para planilhas.');
+console.log('[xlsx-only] contract validated: XLSX only for spreadsheets.');

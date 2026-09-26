@@ -51,14 +51,14 @@ It exists only long enough for a single gitleaks scan to run against it.
 Synthetic AWS key (never real, never valid): ${SYNTHETIC_SECRET}
 EOF
 
-echo "Rodando gitleaks contra o working tree (incluindo o segredo sintético em docs/)..."
+echo "Running gitleaks against the working tree (including the synthetic secret in docs/)..."
 gitleaks detect --source "$ROOT" --no-git -v
 code=$?
 
 if [ "$code" -eq 0 ]; then
-  echo "FAIL — gitleaks NÃO detectou o segredo sintético em docs/ (a lacuna do SECRET-01 pode ter voltado)."
+  echo "FAIL — gitleaks did NOT detect the synthetic secret in docs/ (the SECRET-01 gap may be back)."
   exit 1
 fi
 
-echo "OK — gitleaks detectou o segredo sintético em docs/ (SECRET-01 permanece corrigido)."
+echo "OK — gitleaks detected the synthetic secret in docs/ (SECRET-01 remains fixed)."
 exit 0

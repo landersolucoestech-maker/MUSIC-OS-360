@@ -165,8 +165,8 @@ async function putPresigned(url: string, body: Buffer, mimeType: string) {
 
 async function authA() {
   const auth = await http('GET', '/dev-auth/token');
-  assert(auth.res.ok, 'dev-auth falhou', { status: auth.res.status, body: auth.json });
-  assert(auth.json?.token && auth.json?.tenantId, 'dev-auth nao retornou token/tenantId', auth.json);
+  assert(auth.res.ok, 'dev-auth failed', { status: auth.res.status, body: auth.json });
+  assert(auth.json?.token && auth.json?.tenantId, 'dev-auth did not return token/tenantId', auth.json);
   const decoded = jwt.decode(auth.json.token) as { app_metadata?: { org_id?: string }; org_id?: string } | null;
   const tokenOrgId = decoded?.app_metadata?.org_id ?? decoded?.org_id ?? auth.json.orgId;
   return {
@@ -177,7 +177,7 @@ async function authA() {
 }
 
 function tenantToken(params: { userId: string; orgId: string; tenantId: string }) {
-  assert(process.env.ENCRYPTION_KEY, 'ENCRYPTION_KEY ausente para token B');
+  assert(process.env.ENCRYPTION_KEY, 'ENCRYPTION_KEY missing for token B');
   return jwt.sign(
     {
       sub: params.userId,
@@ -244,16 +244,16 @@ async function presignUpload(token: string, tenantId: string, params: {
       entityId: params.entityId,
     },
   });
-  assert(presign.res.ok, 'POST /uploads/presign falhou', { status: presign.res.status, body: presign.json });
+  assert(presign.res.ok, 'POST /uploads/presign failed', { status: presign.res.status, body: presign.json });
   const put = await putPresigned(presign.json.presignedUrl, params.body, params.mimeType);
-  assert(put.ok, 'PUT presigned falhou', put);
+  assert(put.ok, 'presigned PUT failed', put);
   const confirm = await http('POST', `/uploads/${presign.json.fileId}/confirm`, { token, tenantId });
-  assert(confirm.res.ok, 'POST /uploads/:id/confirm falhou', { status: confirm.res.status, body: confirm.json });
+  assert(confirm.res.ok, 'POST /uploads/:id/confirm failed', { status: confirm.res.status, body: confirm.json });
   const download = await http('GET', `/uploads/${presign.json.fileId}/download`, { token, tenantId });
-  assert(download.res.ok && download.json?.url, 'GET /uploads/:id/download falhou', { status: download.res.status, body: download.json });
+  assert(download.res.ok && download.json?.url, 'GET /uploads/:id/download failed', { status: download.res.status, body: download.json });
   const fetched = await downloadBytes(download.json.url);
-  assert(fetched.ok, 'Download assinado retornou falha', { status: fetched.status, contentType: fetched.contentType });
-  assert(fetched.bytes.equals(params.body), 'Download retornou arquivo corrompido', {
+  assert(fetched.ok, 'Signed download returned a failure', { status: fetched.status, contentType: fetched.contentType });
+  assert(fetched.bytes.equals(params.body), 'Download returned a corrupted file', {
     expectedBytes: params.body.length,
     actualBytes: fetched.bytes.length,
   });
@@ -280,9 +280,9 @@ async function createRuntimeEntities(token: string, tenantId: string) {
       metadata: { phase: '7D', runId },
     },
   });
-  assert(artist.res.ok, 'Falha criando artista para upload', { status: artist.res.status, body: artist.json });
+  assert(artist.res.ok, 'Failed creating artist for upload', { status: artist.res.status, body: artist.json });
   const artistId = getId(artist.json);
-  assert(artistId, 'Artista sem id', artist.json);
+  assert(artistId, 'Artist without id', artist.json);
 
   const release = await http('POST', '/releases', {
     token,
@@ -295,9 +295,9 @@ async function createRuntimeEntities(token: string, tenantId: string) {
       metadata: { phase: '7D', runId },
     },
   });
-  assert(release.res.ok, 'Falha criando release para upload', { status: release.res.status, body: release.json });
+  assert(release.res.ok, 'Failed creating release for upload', { status: release.res.status, body: release.json });
   const releaseId = getId(release.json);
-  assert(releaseId, 'Release sem id', release.json);
+  assert(releaseId, 'Release without id', release.json);
 
   const client = await http('POST', '/clients', {
     token,
@@ -310,9 +310,9 @@ async function createRuntimeEntities(token: string, tenantId: string) {
       metadata: { phase: '7D', runId },
     },
   });
-  assert(client.res.ok, 'Falha criando cliente para upload', { status: client.res.status, body: client.json });
+  assert(client.res.ok, 'Failed creating client for upload', { status: client.res.status, body: client.json });
   const clientId = getId(client.json);
-  assert(clientId, 'Cliente sem id', client.json);
+  assert(clientId, 'Client without id', client.json);
 
   const contract = await http('POST', '/contracts', {
     token,
@@ -329,9 +329,9 @@ async function createRuntimeEntities(token: string, tenantId: string) {
       metadata: { phase: '7D', runId },
     },
   });
-  assert(contract.res.ok, 'Falha criando contrato para upload', { status: contract.res.status, body: contract.json });
+  assert(contract.res.ok, 'Failed creating contract for upload', { status: contract.res.status, body: contract.json });
   const contractId = getId(contract.json);
-  assert(contractId, 'Contrato sem id', contract.json);
+  assert(contractId, 'Contract without id', contract.json);
   return { artistId, releaseId, clientId, contractId };
 }
 
@@ -345,15 +345,15 @@ async function validateReleaseCover(token: string, tenantId: string, releaseId: 
     entityId: releaseId,
   });
   const patch = await http('PATCH', `/releases/${releaseId}`, { token, tenantId, body: { coverUrl: upload.downloadUrl } });
-  assert(patch.res.ok, 'Falha associando capa ao release', { status: patch.res.status, body: patch.json });
+  assert(patch.res.ok, 'Failed attaching cover to release', { status: patch.res.status, body: patch.json });
   const reloaded = await http('GET', `/releases/${releaseId}`, { token, tenantId });
-  assert(reloaded.res.ok, 'Falha recarregando release', { status: reloaded.res.status, body: reloaded.json });
-  assert(reloaded.json?.capa_url === upload.downloadUrl, 'Release nao persistiu capa_url', reloaded.json);
+  assert(reloaded.res.ok, 'Failed reloading release', { status: reloaded.res.status, body: reloaded.json });
+  assert(reloaded.json?.capa_url === upload.downloadUrl, 'Release did not persist capa_url', reloaded.json);
   const preview = await downloadBytes(reloaded.json.capa_url);
-  assert(preview.ok && preview.bytes.equals(PNG_1X1), 'Preview da capa falhou ou corrompeu', { status: preview.status });
+  assert(preview.ok && preview.bytes.equals(PNG_1X1), 'Cover preview failed or was corrupted', { status: preview.status });
   const newSession = await authA();
   const sessionReload = await http('GET', `/releases/${releaseId}`, { token: newSession.token, tenantId: newSession.tenantId });
-  assert(sessionReload.res.ok && sessionReload.json?.capa_url === upload.downloadUrl, 'Nova sessao nao recarregou capa do release', {
+  assert(sessionReload.res.ok && sessionReload.json?.capa_url === upload.downloadUrl, 'New session did not reload the release cover', {
     status: sessionReload.res.status,
     body: sessionReload.json,
   });
@@ -378,18 +378,18 @@ async function validateContractPdf(token: string, tenantId: string, contractId: 
     entityId: contractId,
   });
   const patch = await http('PATCH', `/contracts/${contractId}`, { token, tenantId, body: { arquivo_url: upload.downloadUrl } });
-  assert(patch.res.ok, 'Falha associando PDF ao contrato', { status: patch.res.status, body: patch.json });
+  assert(patch.res.ok, 'Failed attaching PDF to contract', { status: patch.res.status, body: patch.json });
   const reloaded = await http('GET', `/contracts/${contractId}`, { token, tenantId });
-  assert(reloaded.res.ok, 'Falha recarregando contrato', { status: reloaded.res.status, body: reloaded.json });
-  assert(reloaded.json?.arquivo_url === upload.downloadUrl, 'Contrato nao persistiu arquivo_url', reloaded.json);
+  assert(reloaded.res.ok, 'Failed reloading contract', { status: reloaded.res.status, body: reloaded.json });
+  assert(reloaded.json?.arquivo_url === upload.downloadUrl, 'Contract did not persist arquivo_url', reloaded.json);
   const downloaded = await downloadBytes(reloaded.json.arquivo_url);
-  assert(downloaded.ok && downloaded.bytes.equals(PDF_MIN), 'PDF baixado falhou ou corrompeu', {
+  assert(downloaded.ok && downloaded.bytes.equals(PDF_MIN), 'Downloaded PDF failed or was corrupted', {
     status: downloaded.status,
     contentType: downloaded.contentType,
   });
   const newSession = await authA();
   const sessionReload = await http('GET', `/contracts/${contractId}`, { token: newSession.token, tenantId: newSession.tenantId });
-  assert(sessionReload.res.ok && sessionReload.json?.arquivo_url === upload.downloadUrl, 'Nova sessao nao recarregou PDF do contrato', {
+  assert(sessionReload.res.ok && sessionReload.json?.arquivo_url === upload.downloadUrl, 'New session did not reload the contract PDF', {
     status: sessionReload.res.status,
     body: sessionReload.json,
   });
@@ -419,12 +419,12 @@ async function validateDelete(s3: S3Client, pg: PgClient, bucket: string, token:
   } catch {
     headDeleted = true;
   }
-  assert(headDeleted, 'HeadObject encontrou objeto apos delete', { key: upload.key });
+  assert(headDeleted, 'HeadObject found the object after delete', { key: upload.key });
   await pg.query("update uploads set status = 'deleted', deleted_at = now() where file_id = $1", [upload.fileId]);
   const row = await pg.query('select file_id, status, deleted_at from uploads where file_id = $1', [upload.fileId]);
-  assert(row.rows[0]?.status === 'deleted' && row.rows[0]?.deleted_at, 'DB nao marcou upload como deleted', row.rows[0]);
+  assert(row.rows[0]?.status === 'deleted' && row.rows[0]?.deleted_at, 'DB did not mark the upload as deleted', row.rows[0]);
   const download = await http('GET', `/uploads/${upload.fileId}/download`, { token, tenantId });
-  assert(download.res.status === 404, 'Download de upload deleted ainda retornou URL', {
+  assert(download.res.status === 404, 'Download of a deleted upload still returned a URL', {
     status: download.res.status,
     body: download.json,
   });
@@ -434,12 +434,12 @@ async function validateDelete(s3: S3Client, pg: PgClient, bucket: string, token:
 async function validateSecurity(s3: S3Client, bucket: string, token: string, tenantId: string, fileId: string) {
   const other = oppositeTenantAuth(tenantId);
   const cross = await http('GET', `/uploads/${fileId}/download`, { token: other.token, tenantId: other.tenantId });
-  assert(cross.res.status === 404, 'Cross-tenant download nao retornou 404', { status: cross.res.status, body: cross.json });
+  assert(cross.res.status === 404, 'Cross-tenant download did not return 404', { status: cross.res.status, body: cross.json });
   const noAuth = await http('POST', '/uploads/presign', {
     tenantId,
     body: { fileName: 'noauth.png', mimeType: 'image/png', sizeBytes: PNG_1X1.length, category: 'images' },
   });
-  assert(noAuth.res.status === 401, 'Upload sem auth nao retornou 401', { status: noAuth.res.status, body: noAuth.json });
+  assert(noAuth.res.status === 401, 'Upload without auth did not return 401', { status: noAuth.res.status, body: noAuth.json });
 
   const key = `diag/7d/expired-${runId}.txt`;
   await s3.send(new PutObjectCommand({ Bucket: bucket, Key: key, Body: Buffer.from('expired') }));
@@ -447,7 +447,7 @@ async function validateSecurity(s3: S3Client, bucket: string, token: string, ten
   await delay(2200);
   const expired = await fetch(expiredUrl);
   await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
-  assert(expired.status === 403, 'URL expirada nao retornou 403', { status: expired.status, body: (await expired.text()).slice(0, 300) });
+  assert(expired.status === 403, 'Expired URL did not return 403', { status: expired.status, body: (await expired.text()).slice(0, 300) });
   checks.security = { crossTenant: cross.res.status, noAuth: noAuth.res.status, expiredUrl: expired.status };
 }
 
@@ -484,6 +484,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error(JSON.stringify({ runId, result: 'FALHOU', error: errInfo(err), detail: (err as any).detail, checks, requests }, null, 2));
+  console.error(JSON.stringify({ runId, result: 'FAILED', error: errInfo(err), detail: (err as any).detail, checks, requests }, null, 2));
   process.exit(1);
 });

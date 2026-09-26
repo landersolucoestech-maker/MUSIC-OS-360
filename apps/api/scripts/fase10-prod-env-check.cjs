@@ -1,4 +1,4 @@
-// FASE 10 — simulate NODE_ENV=production boot with realistic real (non-placeholder)
+// PHASE 10 — simulate NODE_ENV=production boot with realistic real (non-placeholder)
 // secret values to confirm env.schema accepts them.
 process.env.NODE_ENV = 'production';
 process.env.DATABASE_URL = 'postgresql://user:pass@host/db';
