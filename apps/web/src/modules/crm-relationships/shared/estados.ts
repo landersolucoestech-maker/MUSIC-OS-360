@@ -1,4 +1,4 @@
-// Lista de UFs brasileiras — cópia local para evitar dependência cruzada com @/modules/leads.
+// List of Brazilian states (UFs) — a local copy to avoid a cross dependency on @/modules/leads.
 export const ESTADOS_BR = [
   "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
   "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",

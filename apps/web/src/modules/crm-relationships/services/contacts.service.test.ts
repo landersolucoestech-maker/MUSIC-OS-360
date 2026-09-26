@@ -1,16 +1,16 @@
 /**
  * contacts.service.test.ts
  *
- * Guarda permanente (Fase 3 — persistência real de Contatos/Clientes):
- * contacts.service.ts NUNCA pode voltar a conter um mock de dados em
- * memória. Antes desta fase, o arquivo mantinha `let contacts = [...5 seeds
- * fictícios]` mutado em runtime — dados desapareciam a cada reload e eram
- * idênticos para todos os tenants.
+ * Permanent guard (Phase 3 — real persistence of Contacts/Clients):
+ * contacts.service.ts may NEVER again contain an in-memory data
+ * mock. Before this phase, the file kept `let contacts = [...5 fictitious
+ * seeds]` mutated at runtime — data disappeared on every reload and was
+ * identical for every tenant.
  *
- * Este teste falha se o arquivo voltar a conter esses padrões, e confirma
- * comportamentalmente que list/create/update/remove sempre delegam para
- * `clientsService` (HTTP real, tabela `clients` → `/clients` — ver
- * clients.service.ts: "Contato" e "Cliente" são a mesma entidade física).
+ * This test fails if the file contains those patterns again, and confirms
+ * behaviorally that list/create/update/remove always delegate to
+ * `clientsService` (real HTTP, `clients` table → `/clients` — see
+ * clients.service.ts: "Contact" and "Client" are the same physical entity).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import * as fs from "fs";

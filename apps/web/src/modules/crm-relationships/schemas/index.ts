@@ -165,7 +165,7 @@ export const contactTypeSchemas: Record<ContactSchemaKey, ContactTypeSchema> = {
 
 export function schemaKey(type: ContactType): ContactSchemaKey {
   // Only the core relationship types have a dedicated operational schema; the
-  // extended role catalogue (specialists, técnicos, etc.) falls back to "other".
+  // extended role catalogue (specialists, technicians, etc.) falls back to "other".
   const keys: Partial<Record<ContactType, ContactSchemaKey>> = {
     SUPPLIER: "supplier",
     PARTNER: "partner",

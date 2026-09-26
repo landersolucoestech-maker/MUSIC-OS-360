@@ -161,7 +161,7 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
 
         <div className="grid gap-6 py-2">
 
-          {/* ══ CLASSIFICAÇÃO DO CONTATO ══ */}
+          {/* ══ CONTACT CLASSIFICATION ══ */}
           <Section title="Classificação do Contato">
             <Row icon={User} label="Tipo de Contato" value={tipoPessoaLabel} />
             <Row icon={Tag}  label="Categoria"        value={categoriaLabel} />
@@ -191,7 +191,7 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
             )}
           </Section>
 
-          {/* ══ ENDEREÇO ══ */}
+          {/* ══ ADDRESS ══ */}
           <Section title="Endereço">
             <Row icon={MapPin} label="Logradouro"  value={logradouro} />
             <Row icon={Hash}   label="Número"       value={numero} />
@@ -202,13 +202,13 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
             <Row icon={Hash}   label="CEP"          value={str("cep") || contact.zipCode} />
           </Section>
 
-          {/* ══ CLASSIFICAÇÃO ══ */}
+          {/* ══ CLASSIFICATION ══ */}
           <Section title="Classificação">
             <Row icon={Flag} label="Status do Contato" value={labelFor(contactStatusOptions, contact.status)} />
             <Row icon={Star} label="Prioridade"        value={labelFor(contactPriorityOptions, contact.priority)} />
           </Section>
 
-          {/* ══ RESPONSÁVEL (apenas Pessoa Jurídica) ══ */}
+          {/* ══ RESPONSIBLE PERSON (legal entities only) ══ */}
           {!isPF && (
             <Section title="Responsável">
               <Row icon={User}      label="Nome do Responsável"     value={respNome} />
@@ -244,14 +244,14 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
             </section>
           )}
 
-          {/* ══ OBSERVAÇÕES ══ */}
+          {/* ══ NOTES ══ */}
           {contact.notes && (
             <Section title="Observações">
               <Row icon={FileText} label="Notas" value={contact.notes} full />
             </Section>
           )}
 
-          {/* ══ HISTÓRICO DE INTERAÇÕES ══ */}
+          {/* ══ INTERACTION HISTORY ══ */}
           <section className="space-y-3">
             <h3 className="border-b pb-1 text-sm font-semibold tracking-wider text-muted-foreground">
               Histórico de Interações
@@ -281,7 +281,7 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
             )}
           </section>
 
-          {/* ══ PIPELINE COMERCIAL (AI Skill deals-crm sobre contratos reais) ══ */}
+          {/* ══ COMMERCIAL PIPELINE (deals-crm AI Skill over real contracts) ══ */}
           <section className="space-y-3" data-testid="contato-view-deals-crm">
             <h3 className="border-b pb-1 text-sm font-semibold tracking-wider text-muted-foreground">
               Pipeline Comercial (IA)

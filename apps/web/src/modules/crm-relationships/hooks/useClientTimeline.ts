@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { clientsService, type ClientTimelineEntry } from "../services/clients.service";
 
 /**
- * Timeline real de um cliente (persistida em activity_logs — sobrevive a
- * reload). Substitui o antigo useContactTimelineStore (Zustand em memória,
- * nunca usado por nenhum componente, removido na Parte 80).
+ * A client's real timeline (persisted in activity_logs — survives a
+ * reload). Replaces the old useContactTimelineStore (in-memory Zustand,
+ * never used by any component, removed in Part 80).
  */
 export function useClientTimeline(clientId: string | null) {
   const [entries, setEntries] = useState<ClientTimelineEntry[]>([]);

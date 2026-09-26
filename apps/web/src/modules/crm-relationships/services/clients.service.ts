@@ -1,13 +1,13 @@
 /**
  * services/clients.service.ts
  *
- * Cliente real do backend `/clients` (tabela `clients`, ClientsController/
- * ClientsService — apps/api/src/modules/clients). Fonte de verdade para o
- * dropdown "cliente" usado em contratos, agenda, financeiro, nota fiscal e
- * dashboard (ver useClientes() em ../hooks/useContacts.ts).
+ * Real backend client for `/clients` (`clients` table, ClientsController/
+ * ClientsService — apps/api/src/modules/clients). Source of truth for the
+ * "client" dropdown used in contracts, calendar, finance, invoices and the
+ * dashboard (see useClientes() in ../hooks/useContacts.ts).
  *
- * Substitui a implementação anterior de useClientes(), que — apesar do nome —
- * lia a tabela `contacts` (via useContacts()), nunca a tabela `clients` real.
+ * Replaces the previous implementation of useClientes(), which — despite its name —
+ * read the `contacts` table (via useContacts()), never the real `clients` table.
  */
 import { api } from "@/shared/lib/api-client";
 
@@ -34,7 +34,7 @@ export interface ApiClient {
   metadata: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
-  // Aliases amigáveis já resolvidos pelo backend (ClientsService.mapClient).
+  // Friendly aliases already resolved by the backend (ClientsService.mapClient).
   name: string;
   type: string;
   category: string;
@@ -64,7 +64,7 @@ export interface CreateApiClientInput {
 
 export type UpdateApiClientInput = Partial<CreateApiClientInput> & {
   status?: "active" | "inactive" | "blocked";
-  /** Concorrência otimista (Task L) — ver apps/api optimistic-update.util.ts. */
+  /** Optimistic concurrency (Task L) — see apps/api optimistic-update.util.ts. */
   expectedUpdatedAt?: string;
 };
 
@@ -117,11 +117,11 @@ export const clientsService = {
     if (params?.limit) query.set("limit", String(params.limit));
     if (params?.offset) query.set("offset", String(params.offset));
     const qs = query.toString();
-    // api.get() já desembrulha o envelope {data,timestamp} do TransformInterceptor;
-    // como o controller retorna {data: [...], meta} diretamente (sem novo wrap,
-    // ver TransformInterceptor: objeto que já tem `data` é preservado), o valor
-    // aqui já É o array — usar ListApiClientsResult e reler `.data` duplicava o
-    // unwrap e resultava em undefined.
+    // api.get() already unwraps the TransformInterceptor's {data,timestamp} envelope;
+    // since the controller returns {data: [...], meta} directly (no new wrap,
+    // see TransformInterceptor: an object that already has `data` is preserved), the value
+    // here already IS the array — using ListApiClientsResult and re-reading `.data` duplicated the
+    // unwrap and resulted in undefined.
     return api.get<ApiClient[]>(`/clients${qs ? `?${qs}` : ""}`);
   },
   async create(data: CreateApiClientInput): Promise<ApiClient> {
@@ -142,12 +142,12 @@ export const clientsService = {
     return api.post<ClientTimelineEntry>(`/clients/${clientId}/timeline`, data);
   },
 
-  // ── Contratos vinculados (relação real contracts.client_id) ──────────────
+  // ── Linked contracts (real contracts.client_id relation) ────────────────────
   async getContracts(clientId: string): Promise<ClientContractSummary[]> {
     return api.get<ClientContractSummary[]>(`/clients/${clientId}/contracts`);
   },
 
-  // ── Anexos reais (metadata em client_attachments; binário no R2) ──────────
+  // ── Real attachments (metadata in client_attachments; binary in R2) ─────────
   async listAttachments(clientId: string): Promise<ClientAttachment[]> {
     return api.get<ClientAttachment[]>(`/clients/${clientId}/attachments`);
   },

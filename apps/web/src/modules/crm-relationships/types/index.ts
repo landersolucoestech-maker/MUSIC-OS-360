@@ -115,7 +115,7 @@ export const contactTypes = [
 
 export type ContactType = (typeof contactTypes)[number];
 
-/** Pessoa Física (INDIVIDUAL) vs Pessoa Jurídica (COMPANY). */
+/** Individual (INDIVIDUAL) vs legal entity (COMPANY). */
 export type ContactEntityType = "INDIVIDUAL" | "COMPANY";
 
 export type ContactStatus =

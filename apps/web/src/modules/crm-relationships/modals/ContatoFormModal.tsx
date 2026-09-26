@@ -1,11 +1,11 @@
 // ============================================================================
-// ContatoFormModal — cadastro/edição de Contato (Pessoa Física ou Jurídica).
+// ContatoFormModal — create/edit a Contact (individual or legal entity).
 // ----------------------------------------------------------------------------
-// IMPORTANTE: alguns campos abaixo (foto, interacoes, funcao/cargo_responsavel,
+// IMPORTANT: some fields below (foto, interacoes, funcao/cargo_responsavel,
 // cep/logradouro/numero/complemento/bairro, status_contato, prioridade,
-// responsavel_*) NÃO existem como colunas dedicadas na tabela `contatos` atual.
-// Eles são persistidos via `payloadOperacional jsonb` no Contact (compat
-// estrutural). Para virar colunas próprias é preciso evolução de schema no
+// responsavel_*) do NOT exist as dedicated columns in the current `contatos` table.
+// They are persisted via the Contact's `payloadOperacional jsonb` (structural
+// compat). Turning them into their own columns requires a schema evolution in the
 // backend.
 // ============================================================================
 
@@ -42,25 +42,25 @@ export type TipoPessoa = "pessoa_fisica" | "pessoa_juridica";
 export type ContatoFormState = {
   tipo_pessoa: TipoPessoa;
 
-  // Pessoa Física
+  // Individual (natural person)
   nome_pf: string;
   cpf: string;
   funcao: string;
   instagram: string;
   foto: string; // data URL ou URL externa
 
-  // Pessoa Jurídica
+  // Legal entity (company)
   razao_social: string;
   nome_fantasia: string;
   cnpj: string;
 
-  // Classificação hierárquica
+  // Hierarchical classification
   categoria: string; // relacionamento → Contact.contactType
-  perfil: string;    // perfil específico → payloadOperacional.perfil
+  perfil: string;    // specific profile → payloadOperacional.perfil
   email: string;
   telefone: string;
 
-  // Endereço
+  // Address
   cep: string;
   logradouro: string;
   numero: string;
@@ -69,29 +69,29 @@ export type ContatoFormState = {
   cidade: string;
   estado: string;
 
-  // Classificação
+  // Classification
   status_contato: string;
   prioridade_contato: string;
 
-  // Responsável (referência humana)
+  // Responsible person (human reference)
   responsavel_nome: string;
   responsavel_email: string;
   responsavel_telefone: string;
   responsavel_cargo: string;
 
-  // Histórico
+  // History
   interacoes: Interacao[];
   attachments: ContactAttachment[];
 
-  // Observações
+  // Notes
   observacoes: string;
 };
 
 /**
- * Payload final emitido pelo modal.
- * Carrega TODOS os campos do formulário + alias legados (`nome`, `cpf_cnpj`,
- * `endereco`, `responsavel`, `status`) para compatibilidade com consumidores
- * antigos (`addCliente.mutate`, etc.).
+ * Final payload emitted by the modal.
+ * Carries ALL form fields + legacy aliases (`nome`, `cpf_cnpj`,
+ * `endereco`, `responsavel`, `status`) for compatibility with old
+ * consumers (`addCliente.mutate`, etc.).
  */
 export type ContatoFormPayload = ContatoFormState & {
   // Aliases legados
@@ -102,7 +102,7 @@ export type ContatoFormPayload = ContatoFormState & {
   responsavel: string;
   status: string;
   prioridade: string;
-  /** Cargo do responsável (alias legado de responsavel_cargo, usado pelo painel de contatos de Leads). */
+  /** Responsible person's position (legacy alias of responsavel_cargo, used by the Leads contacts panel). */
   cargo_responsavel?: string;
 };
 
@@ -227,8 +227,8 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
   const [submitting, setSubmitting] = useState(false);
   const [cepLoading, setCepLoading] = useState(false);
 
-  // Serializa initialValue para string estavel — garante que o formulario
-  // repopula mesmo ao editar contatos diferentes com o modal ja aberto.
+  // Serializes initialValue into a stable string — ensures the form
+  // repopulates even when editing different contacts with the modal already open.
   const initialKey = open ? JSON.stringify(initialValue) : null;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -240,7 +240,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
   const isPF = state.tipo_pessoa === "pessoa_fisica";
   const isPJ = state.tipo_pessoa === "pessoa_juridica";
 
-  // Classificação hierárquica (config-driven, em cascata)
+  // Hierarchical classification (config-driven, em cascata)
   const perfilOptions = ensurePerfilOption(getPerfis(state.tipo_pessoa, state.categoria), state.perfil);
 
   const changeTipo = (value: ContatoFormState["tipo_pessoa"]) =>
@@ -248,7 +248,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
   const changeCategoria = (value: string) =>
     setState((prev) => ({ ...prev, categoria: value, perfil: "" }));
 
-  // Busca automática por CEP
+  // Automatic lookup by CEP (postal code)
   const handleCepBlur = async () => {
     const digits = state.cep.replace(/\D/g, "");
     if (digits.length !== 8) return;
@@ -280,7 +280,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
     reader.readAsDataURL(file);
   };
 
-  // Interações
+  // Interactions
   const addInteracao = () => {
     const nova: Interacao = { id: newId(), type: "whatsapp", data: todayISO(), horario: nowHorario(), descricao: "" };
     setState((prev) => ({ ...prev, interacoes: [...prev.interacoes, nova] }));
@@ -316,7 +316,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
     setState((prev) => ({ ...prev, attachments: prev.attachments.filter((attachment) => attachment.id !== id) }));
   };
 
-  // Validação — nome derivado + classificação completa (categoria + perfil)
+  // Validation — derived name + complete classification (category + profile)
   const isValid = useMemo(
     () => Boolean(deriveNome(state).trim()) && Boolean(state.categoria) && Boolean(state.perfil),
     [state],
@@ -340,7 +340,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
     }
   };
 
-  // ── Seções reutilizáveis (mesmo conteúdo para PF/PJ) ──────────────────────
+  // ── Reusable sections (same content for individual/legal entity) ────────────
   const renderClassificacao = () => (
     <>
       <SectionHeader title="Classificação" />
@@ -470,7 +470,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          {/* CLASSIFICAÇÃO DO CONTATO (Tipo → Categoria → Perfil) ========== */}
+          {/* CONTACT CLASSIFICATION (Type → Category → Profile) ============= */}
           <SectionHeader title="Classificação do Contato" />
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -668,7 +668,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
             </>
           )}
 
-          {/* ENDEREÇO (mesma ordem para PF e PJ) ========================== */}
+          {/* ADDRESS (same order for individual and legal entity) ========== */}
           <SectionHeader title="Endereço" />
 
           <div className="grid grid-cols-2 gap-4">
@@ -707,7 +707,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
 
           {renderClassificacao()}
 
-          {/* RESPONSÁVEL — exibido apenas para Pessoa Jurídica ============= */}
+          {/* RESPONSIBLE PERSON — shown only for legal entities ============ */}
           {isPJ && (
             <>
               <SectionHeader title="Responsável" />
@@ -753,7 +753,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
             </>
           )}
 
-          {/* Final (PF e PJ): Anexos → Observações → Histórico (último) */}
+          {/* End (individual and legal entity): Attachments → Notes → History (last) */}
           {renderAnexos()}
           {renderObservacoes()}
           {renderHistorico()}

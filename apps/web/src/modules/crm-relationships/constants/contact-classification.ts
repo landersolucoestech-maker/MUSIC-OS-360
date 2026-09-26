@@ -1,13 +1,13 @@
 // ============================================================================
-// Classificação hierárquica de Contato (config-driven, fonte única).
-// Tipo de Contato → Categoria → Perfil do Contato.
+// Hierarchical Contact classification (config-driven, single source).
+// Contact type → Category → Contact profile.
 //
-// - Tipo de Contato: natureza jurídica (PF/PJ) → persiste em tipo_pessoa.
-// - Categoria: relacionamento → persiste em Contact.contactType (slugs do enum
-//   ContactType, mantendo filtros/coluna "Segmento" existentes).
-// - Perfil do Contato: identidade específica → persiste em payloadOperacional.perfil.
+// - Contact type: legal nature (individual/legal entity) → persists in tipo_pessoa.
+// - Category: relationship → persists in Contact.contactType (slugs of the
+//   ContactType enum, keeping the existing filters/"Segmento" column).
+// - Contact profile: specific identity → persists in payloadOperacional.perfil.
 //
-// Toda a relação fica centralizada aqui — sem ifs/switches espalhados.
+// The whole relationship is centralized here — no scattered ifs/switches.
 // ============================================================================
 
 export type ContatoTipoPessoa = "pessoa_fisica" | "pessoa_juridica";
@@ -22,7 +22,7 @@ export const CONTACT_TYPE_OPTIONS: ClassificationOption[] = [
   { value: "pessoa_juridica", label: "Pessoa Jurídica" },
 ];
 
-// value = slug do enum ContactType (mantém compatibilidade com tabela/filtros).
+// value = slug of the ContactType enum (keeps compatibility with the table/filters).
 export const CONTACT_CATEGORY_OPTIONS: ClassificationOption[] = [
   { value: "CORPORATE_CLIENT", label: "Cliente" },
   { value: "PARTNER", label: "Parceiro" },
@@ -138,14 +138,14 @@ export const CONTACT_PROFILES: Record<ContatoTipoPessoa, Record<string, Classifi
   },
 };
 
-/** Perfis válidos para uma combinação Tipo + Categoria. */
+/** Valid profiles for a Type + Category combination. */
 export function getPerfis(type: ContatoTipoPessoa, categoriaSlug: string): ClassificationOption[] {
   return CONTACT_PROFILES[type]?.[categoriaSlug] ?? [];
 }
 
 /**
- * Garante que um perfil salvo (possivelmente legado) apareça na lista de opções
- * para não perder o dado na edição.
+ * Ensures a saved (possibly legacy) profile appears in the options list
+ * so the data is not lost on edit.
  */
 export function ensurePerfilOption(
   list: ClassificationOption[],

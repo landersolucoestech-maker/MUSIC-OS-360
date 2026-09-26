@@ -1,28 +1,28 @@
 /**
  * services/contacts.service.ts
  *
- * Backend real `/clients` (tabela `clients`, ClientsController/ClientsService
- * — apps/api/src/modules/clients). "Contato" e "Cliente" são a MESMA entidade
- * física (decisão de domínio documentada em
+ * Real backend `/clients` (`clients` table, ClientsController/ClientsService
+ * — apps/api/src/modules/clients). "Contact" and "Client" are the SAME
+ * physical entity (a domain decision documented in
  * apps/api/src/database/migrations/20260719000010_RebuildClientsInCanonicalFormOrder.ts:
- * "Contato = Cliente" — `categoria` guarda o tipo de relacionamento:
+ * "Contact = Client" — `categoria` stores the relationship type:
  * CORPORATE_CLIENT/PARTNER/SUPPLIER/SERVICE_PROVIDER/INVESTOR/etc).
  *
- * Substitui a implementação anterior, que mantinha um array em memória com 5
- * contatos fictícios (nomes de exemplo fixos) e nunca chamava a API. Também
- * substitui o módulo backend
- * `/contacts` (ContactsController/ContactsService) descoberto nesta Parte
- * como código morto: a tabela física `contacts` foi removida por uma
- * migration de limpeza (`DropOrphanContactsSatelliteTables`, presente apenas
- * no stash local pré-existente) sem que o código correspondente fosse
- * removido — todo POST/PATCH real ali falha com
- * `relation "contacts" does not exist`. Nunca foi notado porque o frontend
- * sempre usou este mock.
+ * Replaces the previous implementation, which kept an in-memory array with 5
+ * fictitious contacts (fixed sample names) and never called the API. It also
+ * replaces the backend module
+ * `/contacts` (ContactsController/ContactsService) discovered in this Part
+ * as dead code: the physical `contacts` table was removed by a
+ * cleanup migration (`DropOrphanContactsSatelliteTables`, present only
+ * in a pre-existing local stash) without the corresponding code being
+ * removed — every real POST/PATCH there fails with
+ * `relation "contacts" does not exist`. It was never noticed because the frontend
+ * always used this mock.
  *
- * `attachments`/`tags`/`website`/`linkedArtistId`/`timeline` não têm coluna
- * física equivalente em `clients` — sempre vazios/undefined na leitura, nunca
- * enviados na escrita, em vez de fabricar dado inexistente. `priority` É uma
- * coluna real (`prioridade_contato`) — lida/escrita normalmente abaixo.
+ * `attachments`/`tags`/`website`/`linkedArtistId`/`timeline` have no equivalent
+ * physical column in `clients` — always empty/undefined on read, never
+ * sent on write, instead of fabricating nonexistent data. `priority` IS a
+ * real column (`prioridade_contato`) — read/written normally below.
  */
 import type { Contact } from "../types";
 import type { ContatoFormPayload } from "../modals/ContatoFormModal";
@@ -81,10 +81,10 @@ function toApiInput(data: Partial<Omit<Contact, "id" | "createdAt" | "updatedAt"
 }
 
 /**
- * Converte o payload emitido pelo `ContatoFormModal` no objeto de criação/edição
- * de um `Contact`. Fonte ÚNICA de verdade para essa transformação — usada tanto
- * pelo painel CRM > Contatos quanto pelo vínculo de contatos no cadastro de
- * artista (EquipeContatosCRM), evitando lógica duplicada.
+ * Converts the payload emitted by `ContatoFormModal` into the create/edit object
+ * of a `Contact`. The SINGLE source of truth for that transformation — used both
+ * by the CRM > Contacts panel and by the contact link in the artist
+ * registration (EquipeContatosCRM), avoiding duplicated logic.
  */
 export function contatoPayloadToContactData(
   payload: ContatoFormPayload,

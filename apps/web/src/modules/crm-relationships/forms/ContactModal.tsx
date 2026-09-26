@@ -1,11 +1,11 @@
 // ============================================================================
-// ContatoFormModal — cadastro/edição de Contato (Pessoa Física ou Jurídica).
+// ContatoFormModal — create/edit a Contact (individual or legal entity).
 // ----------------------------------------------------------------------------
-// IMPORTANTE: alguns campos abaixo (foto, interacoes, funcao/cargo_responsavel,
+// IMPORTANT: some fields below (foto, interacoes, funcao/cargo_responsavel,
 // cep/logradouro/numero/complemento/bairro, status_contato, prioridade,
-// responsavel_*) NÃO existem como colunas dedicadas na tabela `contatos` atual.
-// Eles são persistidos via `payloadOperacional jsonb` no Contact (compat
-// estrutural). Para virar colunas próprias é preciso evolução de schema no
+// responsavel_*) do NOT exist as dedicated columns in the current `contatos` table.
+// They are persisted via the Contact's `payloadOperacional jsonb` (structural
+// compat). Turning them into their own columns requires a schema evolution in the
 // backend.
 // ============================================================================
 
@@ -33,13 +33,13 @@ export type TipoPessoa = "pessoa_fisica" | "pessoa_juridica";
 export type ContatoFormState = {
   tipo_pessoa: TipoPessoa;
 
-  // Pessoa Física
+  // Individual (natural person)
   nome_pf: string;
   cpf: string;
   funcao: string;
   foto: string; // data URL ou URL externa
 
-  // Pessoa Jurídica
+  // Legal entity (company)
   razao_social: string;
   nome_fantasia: string;
   cnpj: string;
@@ -49,7 +49,7 @@ export type ContatoFormState = {
   email: string;
   telefone: string;
 
-  // Endereço
+  // Address
   cep: string;
   logradouro: string;
   numero: string;
@@ -58,28 +58,28 @@ export type ContatoFormState = {
   cidade: string;
   estado: string;
 
-  // Classificação
+  // Classification
   status_contato: string;
   prioridade_contato: string;
 
-  // Responsável (referência humana)
+  // Responsible person (human reference)
   responsavel_nome: string;
   responsavel_email: string;
   responsavel_telefone: string;
   responsavel_cargo: string;
 
-  // Histórico
+  // History
   interacoes: Interacao[];
 
-  // Observações
+  // Notes
   observacoes: string;
 };
 
 /**
- * Payload final emitido pelo modal.
- * Carrega TODOS os campos do formulário + alias legados (`nome`, `cpf_cnpj`,
- * `endereco`, `responsavel`, `status`) para compatibilidade com consumidores
- * antigos (`addCliente.mutate`, etc.).
+ * Final payload emitted by the modal.
+ * Carries ALL form fields + legacy aliases (`nome`, `cpf_cnpj`,
+ * `endereco`, `responsavel`, `status`) for compatibility with old
+ * consumers (`addCliente.mutate`, etc.).
  */
 export type ContatoFormPayload = ContatoFormState & {
   // Aliases legados
@@ -210,8 +210,8 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
   const [submitting, setSubmitting] = useState(false);
   const [cepLoading, setCepLoading] = useState(false);
 
-  // Serializa initialValue para string estavel — garante que o formulario
-  // repopula mesmo ao editar contatos diferentes com o modal ja aberto.
+  // Serializes initialValue into a stable string — ensures the form
+  // repopulates even when editing different contacts with the modal already open.
   const initialKey = open ? JSON.stringify(initialValue) : null;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -223,7 +223,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
   const isPF = state.tipo_pessoa === "pessoa_fisica";
   const isPJ = state.tipo_pessoa === "pessoa_juridica";
 
-  // Busca automática por CEP
+  // Automatic lookup by CEP (postal code)
   const handleCepBlur = async () => {
     const digits = state.cep.replace(/\D/g, "");
     if (digits.length !== 8) return;
@@ -255,7 +255,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
     reader.readAsDataURL(file);
   };
 
-  // Interações
+  // Interactions
   const addInteracao = () => {
     const nova: Interacao = { id: newId(), type: "whatsapp", data: todayISO(), horario: nowHorario(), descricao: "" };
     setState((prev) => ({ ...prev, interacoes: [...prev.interacoes, nova] }));
@@ -270,7 +270,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
     setState((prev) => ({ ...prev, interacoes: prev.interacoes.filter((i) => i.id !== id) }));
   };
 
-  // Validação mínima — nome derivado precisa existir
+  // Minimal validation — the derived name must exist
   const isValid = useMemo(() => Boolean(deriveNome(state).trim()), [state]);
 
   const handleSubmit = async () => {
@@ -466,7 +466,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
             </Field>
           </div>
 
-          {/* 4. ENDEREÇO ==================================================== */}
+          {/* 4. ADDRESS ===================================================== */}
           <SectionHeader number={4} title="Endereço" />
 
           <div className="grid grid-cols-3 gap-4">
@@ -540,7 +540,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
             </Field>
           </div>
 
-          {/* 5. CLASSIFICAÇÃO =============================================== */}
+          {/* 5. CLASSIFICATION ============================================== */}
           <SectionHeader number={5} title="Classificação" />
 
           <div className="grid grid-cols-2 gap-4">
@@ -570,7 +570,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
             </Field>
           </div>
 
-          {/* 6. RESPONSÁVEL ================================================= */}
+          {/* 6. RESPONSIBLE PERSON ========================================== */}
           <SectionHeader number={6} title="Responsável" />
 
           <div className="grid grid-cols-2 gap-4">
@@ -612,7 +612,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
             </Field>
           </div>
 
-          {/* 7. HISTÓRICO DE INTERAÇÕES ===================================== */}
+          {/* 7. INTERACTION HISTORY ========================================= */}
           <div className="flex items-center justify-between border-b pb-1 pt-2">
             <p className="text-sm font-semibold tracking-wider text-muted-foreground">
               7. Histórico de Interações
@@ -690,7 +690,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
             </div>
           ))}
 
-          {/* 8. OBSERVAÇÕES =================================================== */}
+          {/* 8. NOTES ======================================================== */}
           <SectionHeader number={8} title="Observações" />
 
           <Field label="Notas">

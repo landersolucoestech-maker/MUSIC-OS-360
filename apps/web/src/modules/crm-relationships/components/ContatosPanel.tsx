@@ -11,7 +11,7 @@ import { ContatoViewModal } from "../modals/ContatoViewModal";
 import type { Contact, ContactType } from "../types";
 
 // ─────────────────────────────────────────────
-// Filtros rápidos por categoria
+// Quick filters by category
 // ─────────────────────────────────────────────
 type FiltroTipo =
   | "todos"
@@ -26,21 +26,21 @@ const FILTROS: ReadonlyArray<{ value: FiltroTipo; label: string; types: ContactT
   { value: "clientes",     label: "Clientes",     types: ["CORPORATE_CLIENT"] },
   { value: "parceiros",    label: "Parceiros",    types: ["PARTNER"] },
   { value: "fornecedores", label: "Fornecedores", types: ["SUPPLIER"] },
-  // ✅ "BRAND" removido — não existe em ContactType
+  // ✅ "BRAND" removed — it does not exist in ContactType
   { value: "contratantes", label: "Contratantes", types: ["CORPORATE_CLIENT"] },
   { value: "prestadores",  label: "Prestadores",  types: ["SERVICE_PROVIDER"] },
 ];
 
 // ─────────────────────────────────────────────
-// Converte Contact → ContatoFormPayload inicial
-// para preencher o modal de edição
+// Converts Contact → the initial ContatoFormPayload
+// to fill the edit modal
 // ─────────────────────────────────────────────
 function contactToFormPayload(contact: Contact): Partial<ContatoFormPayload> {
   const po = (contact.payloadOperacional ?? {}) as Record<string, unknown>;
   const str = (k: string) => (typeof po[k] === "string" ? (po[k] as string) : "");
 
-  // Normaliza tipo_pessoa: aceita todos os formatos legados e sempre devolve
-  // "pessoa_fisica" | "pessoa_juridica" — que é o único valor que ContatoFormModal entende.
+  // Normalizes tipo_pessoa: accepts every legacy format and always returns
+  // "pessoa_fisica" | "pessoa_juridica" — the only value ContatoFormModal understands.
   const rawTipo = str("tipo_pessoa");
   const tipoPessoa: "pessoa_fisica" | "pessoa_juridica" =
     rawTipo === "pessoa_juridica" ||
@@ -55,25 +55,25 @@ function contactToFormPayload(contact: Contact): Partial<ContatoFormPayload> {
     // Entidade
     tipo_pessoa: tipoPessoa, // sempre "pessoa_fisica" | "pessoa_juridica"
 
-    // Pessoa Física
+    // Individual (natural person)
     nome_pf:           isIndividual ? contact.name : "",
     cpf:               str("cpf"),
     funcao:            str("funcao"),
     foto:              str("foto"),
 
-    // Pessoa Jurídica
+    // Legal entity (company)
     razao_social:      !isIndividual ? contact.name : "",
     nome_fantasia:     str("nome_fantasia"),
     cnpj:              str("cnpj"),
 
-    // Classificação hierárquica
+    // Hierarchical classification
     categoria:         contact.contactType ?? "",
     perfil:            str("perfil"),
     instagram:         contact.instagram ?? "",
     email:             contact.email ?? "",
     telefone:          contact.whatsapp ?? contact.phone ?? "",
 
-    // Endereço
+    // Address
     cep:               str("cep") || contact.zipCode || "",
     logradouro:        str("logradouro"),
     numero:            str("numero"),
@@ -82,22 +82,22 @@ function contactToFormPayload(contact: Contact): Partial<ContatoFormPayload> {
     cidade:            contact.city ?? "",
     estado:            contact.state ?? "",
 
-    // Classificação
+    // Classification
     status_contato:    contact.status ?? "active",
     prioridade_contato: contact.priority ?? "medium",
 
-    // Responsável
+    // Responsible person
     responsavel_nome:     str("responsavel_nome") || contact.responsible || "",
     responsavel_email:    str("responsavel_email"),
     responsavel_telefone: str("responsavel_telefone"),
-    // lê responsavel_cargo (campo atual) com fallback para cargo_responsavel (campo legado)
+    // reads responsavel_cargo (current field) with a fallback to cargo_responsavel (legacy field)
     responsavel_cargo:    str("responsavel_cargo") || str("cargo_responsavel"),
 
-    // Histórico
+    // History
     interacoes: Array.isArray(po.interacoes) ? (po.interacoes as never[]) : [],
     attachments: contact.attachments ?? [],
 
-    // Observações
+    // Notes
     observacoes: contact.notes ?? "",
 
     // Aliases legados
@@ -216,7 +216,7 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
           />
         )}
 
-        {/* Modal de visualização */}
+        {/* View modal */}
         <ContatoViewModal
           open={viewContact !== null}
           onOpenChange={(next) => { if (!next) setViewContact(null); }}
@@ -227,7 +227,7 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
           }}
         />
 
-        {/* Modal de criação / edição */}
+        {/* Create / edit modal */}
         <ContatoFormModal
           open={formOpen}
           mode={editContact ? "edit" : "create"}

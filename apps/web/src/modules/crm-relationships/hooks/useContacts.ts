@@ -64,9 +64,9 @@ export function useSimpleContacts() {
   };
 }
 
-/** Mapeia a resposta real de `/clients` (ClientsService.mapClient) para o
- * view-model `Cliente` consumido pelos formulários de contratos/agenda/
- * financeiro/nota fiscal/dashboard. */
+/** Maps the real `/clients` response (ClientsService.mapClient) to the
+ * `Cliente` view model consumed by the contracts/calendar/
+ * finance/invoice/dashboard forms. */
 function apiClientToCliente(c: ApiClient): Cliente {
   const isPF = c.type === "pessoa_fisica";
   const endereco = c.address ?? null;
@@ -120,11 +120,11 @@ function clienteUpdateToApiInput(data: ClienteUpdate): UpdateApiClientInput {
 }
 
 /**
- * Clientes reais (tabela `clients`, backend `/clients`) — usado por
- * contratos, agenda, financeiro, nota fiscal e dashboard para selecionar/
- * exibir o cliente de um registro. Não deve ser confundido com Contatos do
- * CRM (useContacts/useSimpleContacts acima) — são entidades físicas
- * distintas; ver Parte 79 para o modelo canônico completo.
+ * Real clients (`clients` table, backend `/clients`) — used by
+ * contracts, calendar, finance, invoices and the dashboard to select/
+ * display a record's client. Must not be confused with CRM Contacts
+ * (useContacts/useSimpleContacts above) — they are distinct physical
+ * entities; see Part 79 for the full canonical model.
  */
 export function useClientes() {
   const [apiClientes, setApiClientes] = useState<ApiClient[]>([]);

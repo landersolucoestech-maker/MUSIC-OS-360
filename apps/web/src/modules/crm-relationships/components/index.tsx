@@ -1,4 +1,4 @@
-// Re-exports do módulo crm-relationships/components
+// Re-exports of the crm-relationships/components module
 export {
   ContactHeader,
   ContactFilters,

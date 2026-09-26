@@ -1,5 +1,5 @@
-// Tipos e constantes de interação compartilhados dentro do módulo crm-relationships.
-// Anteriormente importados de @/modules/leads/modals/LeadFormModal (dependência cruzada incorreta).
+// Interaction types and constants shared within the crm-relationships module.
+// Previously imported from @/modules/leads/modals/LeadFormModal (an incorrect cross dependency).
 
 export const TIPO_INTERACAO_OPTIONS = [
   { value: "ligacao",    label: "Ligação"    },

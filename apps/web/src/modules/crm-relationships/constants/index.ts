@@ -151,9 +151,9 @@ export const relationshipUploadRules = {
 };
 
 /**
- * Retorna a lista de categorias filtrada pelo tipo de entidade.
- * Aceita tanto "INDIVIDUAL"/"COMPANY" (padrão da API) quanto
- * "pessoa_fisica"/"pessoa_juridica" (legado) para retrocompatibilidade.
+ * Returns the category list filtered by the entity type.
+ * Accepts both "INDIVIDUAL"/"COMPANY" (the API standard) and
+ * "pessoa_fisica"/"pessoa_juridica" (legacy) for backward compatibility.
  */
 export function getContactTypeOptionsByEntityType(
   entityType?: ContactEntityType | string
