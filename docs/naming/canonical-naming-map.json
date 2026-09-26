@@ -1,0 +1,1737 @@
+{
+  "$comment": "SINGLE SOURCE OF TRUTH for technical naming in MUSIC OS 360. Edit this file only. docs/NAMING_NORMALIZATION_CANONICAL_MAP.md and docs/NAMING_NORMALIZATION_STATUS.md are GENERATED from it by scripts/naming/render-naming-docs.mjs (CI: --check). Narrative background lives in docs/naming/decision-records.md (non-authoritative).",
+  "schemaVersion": 1,
+  "statusVocabulary": {
+    "status": [
+      "proposed",
+      "approved",
+      "migrating",
+      "done"
+    ],
+    "disposition": [
+      "DONE",
+      "RESOLVED",
+      "BUG",
+      "LEGACY_ALIAS_INTENTIONAL",
+      "LEGAL_DOMAIN_INTENTIONAL",
+      "HISTORICAL_ONLY",
+      "MIGRATION_REQUIRED",
+      "TEMPORARY_ALIAS_REQUIRED",
+      "DEAD_SCHEMA",
+      "NEEDS_DATA_RECONCILIATION",
+      "NEEDS_PRODUCT_DECISION",
+      "BLOCKED_PRODUCT_DECISION",
+      "EXCEPTION"
+    ],
+    "exceptionClass": [
+      "UX_TEXT",
+      "EXTERNAL_CONTRACT",
+      "LEGACY_DATABASE_COMPATIBILITY",
+      "PUBLIC_API_COMPATIBILITY",
+      "PROVIDER_DEFINED",
+      "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION"
+    ],
+    "databaseClass": [
+      "SAFE_INTERNAL_RENAME",
+      "MIGRATION_REQUIRED",
+      "LEGACY_DATABASE_COMPATIBILITY",
+      "PUBLIC_CONTRACT",
+      "EXTERNAL_DEPENDENCY",
+      "TEMPORARY_ALIAS_REQUIRED"
+    ],
+    "routeClass": [
+      "internal-only",
+      "frontend-only",
+      "public",
+      "externally-consumed",
+      "webhook",
+      "provider-callback"
+    ],
+    "barrelClass": [
+      "compatibility",
+      "active",
+      "empty-dead",
+      "obsolete"
+    ]
+  },
+  "conventions": {
+    "languageRule": "Engineering = English (files, folders, modules, symbols, DTOs, schemas, events, queues, jobs, routes, tables, columns, migrations, test descriptions, technical comments, technical docs, env/config keys, i18n keys). Portuguese only in what the end user sees in the frontend (labels, titles, messages, placeholders, tooltips, visible errors, buttons, options, confirmations) and in tests that assert that visible text.",
+    "acronyms": "Acronyms and abbreviations are cased as words inside identifiers: Dto, Id, Url, Api, Uuid, Json, Http, Ai, Hr, Crm, Rbac, Kpi, Isrc, Upc, Ecad, Pdf (measured 2026-09-26: Dto 1782 vs DTO 5, Id 14975 vs ID 0, Url 1747 vs URL 87 (mostly the URL global), Api 2613 vs API 3, Ai 386 vs AI 219, Hr 42 vs HR 1, Crm 213 vs CRM 93, Isrc 111 vs ISRC 33). ALL-CAPS only in SCREAMING_SNAKE constants and env vars, and in library-defined names (IsUUID, ParseUUIDPipe, URL, JSON, URLSearchParams).",
+    "pluralization": {
+      "databaseTable": "plural snake_case (artists, releases, project_tracks)",
+      "databaseColumn": "singular snake_case; foreign keys <entity>_id (artist_id, release_id)",
+      "entityClass": "singular PascalCase + Entity (ArtistEntity, ReleaseEntity)",
+      "apiModuleFolder": "plural kebab-case resource (artists/, releases/, contract-templates/)",
+      "controllerServiceRepository": "plural resource + role (ArtistsController, ArtistsService); single-purpose services are named by responsibility (ReleaseReadinessService)",
+      "routePath": "plural kebab-case resource (/artists, /releases/:id/tracks)",
+      "dto": "verb/purpose + singular + Dto (CreateArtistDto, UpdateReleaseDto, QueryContractDto)",
+      "frontendModuleFolder": "kebab-case domain (catalog/, releases/, crm-relationships/)",
+      "component": "singular PascalCase for a single record (ReleaseFormModal, ContactViewModal); plural for list pages (Releases.tsx)",
+      "hook": "use + plural for collections (useReleases), use + singular for one record (useRelease)",
+      "typeInterface": "singular PascalCase (Release, ReleaseInsert, ReleaseWithRelations)",
+      "eventName": "<aggregate>.<past-tense verb> lowercase (release.distributed, contract.signed)",
+      "queueJobName": "kebab-case (ai-jobs, integrations-sync; job names kebab or <provider>:<action>)",
+      "envVar": "SCREAMING_SNAKE_CASE English (VITE_ prefix for frontend-exposed)",
+      "testDescription": "English behavior sentence; quoted Portuguese only for the user-visible text being asserted (it(\"shows 'Salvar projeto' when editing a project\"))"
+    }
+  },
+  "glossary": [
+    {
+      "term": "project",
+      "definition": "A music or audiovisual production effort owned by a tenant (projects / audiovisual_projects / marketing_projects are distinct aggregates — qualify when ambiguous: AudiovisualProject, MarketingProject).",
+      "disallowedUsages": [
+        "bare 'project' for marketing or audiovisual work"
+      ],
+      "relatedTerms": [
+        "track",
+        "audiovisual project",
+        "marketing project"
+      ],
+      "idNamespace": "projectId = projects.id (tenant-scoped uuid); audiovisual/marketing projects use audiovisualProjectId / marketingProjectId"
+    },
+    {
+      "term": "artist",
+      "definition": "A performer/creator managed by the tenant (artists table). Identity on external platforms is an ArtistPlatformProfile, never the artist id itself.",
+      "disallowedUsages": [
+        "artistId holding a provider/platform id — use <provider>ArtistId or externalId"
+      ],
+      "relatedTerms": [
+        "platform",
+        "artist platform profile",
+        "track"
+      ],
+      "idNamespace": "artistId = artists.id (internal uuid). External ids are namespaced: spotifyArtistId, soundchartsArtistUuid, youtubeChannelId, instagramUserId"
+    },
+    {
+      "term": "release",
+      "definition": "A MUSIC release (single/EP/album) distributed to DSPs (releases table, ReleaseEntity). Portuguese UX: 'Lançamento'. Not a software release and not an accounting entry.",
+      "disallowedUsages": [
+        "'release' for deployments (use 'deployment'/'appRelease') and 'lancamento' for ledger entries (use 'transaction')"
+      ],
+      "relatedTerms": [
+        "track",
+        "distribution",
+        "phonogram"
+      ],
+      "idNamespace": "releaseId = releases.id; distributor-side ids: <distributor>ReleaseId, upc"
+    },
+    {
+      "term": "track",
+      "definition": "One recording inside a release or project (release tracks, project_tracks). Portuguese UX: 'Faixa'/'Música'.",
+      "disallowedUsages": [
+        "'music'/'song' as structural names"
+      ],
+      "relatedTerms": [
+        "release",
+        "project",
+        "phonogram"
+      ],
+      "idNamespace": "projectTrackId = project_tracks.id; isrc identifies the recording externally"
+    },
+    {
+      "term": "work",
+      "definition": "A musical composition (works table) — the copyright in the song. Portuguese UX: 'Obra'.",
+      "disallowedUsages": [
+        "'song' for the composition"
+      ],
+      "relatedTerms": [
+        "phonogram",
+        "split"
+      ],
+      "idNamespace": "workId = works.id; iswc and society work codes are external"
+    },
+    {
+      "term": "phonogram",
+      "definition": "A sound recording of a work (phonograms table) — the master/recording right. Portuguese UX: 'Fonograma'.",
+      "disallowedUsages": [
+        "'recording' as a table/FK name (no recordings table exists)"
+      ],
+      "relatedTerms": [
+        "work",
+        "track"
+      ],
+      "idNamespace": "phonogramId = phonograms.id; isrc external"
+    },
+    {
+      "term": "contract",
+      "definition": "A legal agreement managed in contracts (artist/client/licensing agreements, signed via Autentique/DocuSign).",
+      "disallowedUsages": [
+        "'contract' for API/type contracts in domain code — use 'apiContract'/'schema'"
+      ],
+      "relatedTerms": [
+        "customer",
+        "artist",
+        "provider"
+      ],
+      "idNamespace": "contractId = contracts.id; provider document ids: autentiqueDocumentId / docusignEnvelopeId (stored as autentique_doc_id / metadata.provider_doc_id)"
+    },
+    {
+      "term": "transaction",
+      "definition": "A financial ledger entry (transactions v1; financial_transactions v2 scaffolded). Portuguese UX: 'Lançamento financeiro'/'Transação'.",
+      "disallowedUsages": [
+        "'transaction' for DB transactions in domain names — use 'dbTransaction'/'manager'"
+      ],
+      "relatedTerms": [
+        "invoice",
+        "payment",
+        "split"
+      ],
+      "idNamespace": "transactionId = transactions.id (v1 ledger)"
+    },
+    {
+      "term": "invoice",
+      "definition": "A billing document: tenant fiscal invoices (NFS-e, type != stripe_subscription) or SaaS Stripe invoices (type = stripe_subscription) in the same invoices table — always qualify (FiscalInvoice / StripeSubscriptionInvoice) when the distinction matters.",
+      "disallowedUsages": [
+        "treating both invoice kinds as one concept in dunning"
+      ],
+      "relatedTerms": [
+        "transaction",
+        "payment",
+        "subscription"
+      ],
+      "idNamespace": "invoiceId = invoices.id; stripeInvoiceId for SaaS invoices"
+    },
+    {
+      "term": "subscription",
+      "definition": "The tenant's SaaS plan subscription with the platform (billing_subscriptions, Stripe).",
+      "disallowedUsages": [
+        "'subscription' for realtime/event subscriptions without qualification"
+      ],
+      "relatedTerms": [
+        "billing",
+        "organization",
+        "payment"
+      ],
+      "idNamespace": "billing_subscriptions.id; stripeSubscriptionId; scoped by orgId"
+    },
+    {
+      "term": "customer",
+      "definition": "A client of the tenant (clients table). Portuguese UX: 'Cliente'/'Contato'. The Stripe customer of the platform is 'stripeCustomer'.",
+      "disallowedUsages": [
+        "bare 'customer' for the Stripe customer"
+      ],
+      "relatedTerms": [
+        "contact",
+        "lead",
+        "organization"
+      ],
+      "idNamespace": "clientId = clients.id (tenant customer); stripeCustomerId = the platform customer in Stripe"
+    },
+    {
+      "term": "account",
+      "definition": "Never bare. Qualify: userAccount (auth identity), billingAccount/stripeCustomer (SaaS billing), socialAccount/oauthConnection (connected provider login), societyAccount (collecting society), bankAccount (payout).",
+      "disallowedUsages": [
+        "bare 'account'"
+      ],
+      "relatedTerms": [
+        "user",
+        "member",
+        "integration",
+        "subscription"
+      ],
+      "idNamespace": "never bare accountId: societyAccountId, stripeCustomerId, oauthConnectionId, bankAccountId"
+    },
+    {
+      "term": "tenant",
+      "definition": "The isolation boundary for business data (tenants table, tenant_id, RLS app_current_tenant_id()).",
+      "disallowedUsages": [
+        "'user' or 'account' meaning tenant"
+      ],
+      "relatedTerms": [
+        "organization",
+        "workspace",
+        "member"
+      ],
+      "idNamespace": "tenantId = tenants.id (RLS key app_current_tenant_id())"
+    },
+    {
+      "term": "organization",
+      "definition": "The owner of one or more tenants (organizations table, org_id); billing and subscription are org-scoped.",
+      "disallowedUsages": [
+        "'company' for this boundary"
+      ],
+      "relatedTerms": [
+        "tenant",
+        "subscription",
+        "billing"
+      ],
+      "idNamespace": "orgId = organizations.id (RLS key app_current_org_id())"
+    },
+    {
+      "term": "workspace",
+      "definition": "Product term for the org+tenant pair created at signup (WorkspaceProvisioningService). Not a separate table.",
+      "disallowedUsages": [
+        "using 'workspace' as a third isolation key"
+      ],
+      "relatedTerms": [
+        "organization",
+        "tenant"
+      ],
+      "idNamespace": "no own id: a workspace is (orgId, tenantId)"
+    },
+    {
+      "term": "user",
+      "definition": "An authenticated person (users table, auth_user_id); tenant membership is an OrgMember/membership with a role.",
+      "disallowedUsages": [
+        "'user' meaning tenant or member role"
+      ],
+      "relatedTerms": [
+        "member",
+        "tenant"
+      ],
+      "idNamespace": "userId = users.id (internal); authUserId = identity-provider (Supabase auth) user id"
+    },
+    {
+      "term": "member",
+      "definition": "A user's membership in an org/tenant with a role (org_members).",
+      "disallowedUsages": [
+        "'user' when the membership is meant"
+      ],
+      "relatedTerms": [
+        "user",
+        "organization",
+        "tenant"
+      ],
+      "idNamespace": "memberId = org_members.id"
+    },
+    {
+      "term": "lead",
+      "definition": "A CRM prospect not yet converted (leads table). Portuguese UX: 'Lead'.",
+      "disallowedUsages": [
+        "'contact' for leads"
+      ],
+      "relatedTerms": [
+        "contact",
+        "customer",
+        "campaign"
+      ],
+      "idNamespace": "leadId = leads.id"
+    },
+    {
+      "term": "contact",
+      "definition": "A CRM contact, physically a clients row ('Contato = Cliente', ContactsService facade over ClientsService).",
+      "disallowedUsages": [
+        "'contact' for a lead or for artist team contacts (ArtistTeamContact)"
+      ],
+      "relatedTerms": [
+        "customer",
+        "lead"
+      ],
+      "idNamespace": "contactId = clientId (same clients row)"
+    },
+    {
+      "term": "campaign",
+      "definition": "A marketing campaign (campaigns table).",
+      "disallowedUsages": [
+        "'campaign' for lead conditional payloads without qualification"
+      ],
+      "relatedTerms": [
+        "lead",
+        "metric",
+        "project"
+      ],
+      "idNamespace": "campaignId = campaigns.id"
+    },
+    {
+      "term": "distribution",
+      "definition": "Delivery of a release to DSPs through a distributor (release status DISTRIBUTED, distributor). Portuguese UX: 'Distribuição'.",
+      "disallowedUsages": [
+        "'distribution' for statistical distributions in domain code"
+      ],
+      "relatedTerms": [
+        "release",
+        "provider"
+      ],
+      "idNamespace": "distributor ids are namespaced per distributor"
+    },
+    {
+      "term": "royalty",
+      "definition": "Income owed to rights holders from exploitation of works/phonograms.",
+      "disallowedUsages": [
+        "'royalty' for platform fees"
+      ],
+      "relatedTerms": [
+        "split",
+        "transaction",
+        "work",
+        "phonogram"
+      ],
+      "idNamespace": "—"
+    },
+    {
+      "term": "split",
+      "definition": "A percentage share of rights/royalties (shares table: party_role, percentage). Portuguese UX: 'Share'/'Rateio'.",
+      "disallowedUsages": [
+        "'split' for string splitting in domain names"
+      ],
+      "relatedTerms": [
+        "royalty",
+        "work",
+        "phonogram",
+        "release"
+      ],
+      "idNamespace": "shareId = shares.id"
+    },
+    {
+      "term": "payment",
+      "definition": "Money movement settling an invoice/transaction (payment_events for Stripe; transaction payment fields).",
+      "disallowedUsages": [
+        "'payment' for the SaaS subscription itself"
+      ],
+      "relatedTerms": [
+        "invoice",
+        "transaction",
+        "subscription"
+      ],
+      "idNamespace": "payment_events.stripe_event_id (Stripe event), transaction payment fields"
+    },
+    {
+      "term": "billing",
+      "definition": "The platform's SaaS billing of tenants (billing_* tables, Stripe, dunning via tenant_billing_state).",
+      "disallowedUsages": [
+        "'billing' for the tenant's own invoicing of its customers (use 'invoicing')"
+      ],
+      "relatedTerms": [
+        "subscription",
+        "invoice",
+        "organization"
+      ],
+      "idNamespace": "tenant_billing_state keyed by tenantId; billing_subscriptions by orgId"
+    },
+    {
+      "term": "platform",
+      "definition": "An external music/social platform (Spotify, YouTube, Instagram, ...) where an artist has a profile (artist_platform_profiles).",
+      "disallowedUsages": [
+        "'platform' for the MUSIC OS 360 product itself (use 'app'/'system')"
+      ],
+      "relatedTerms": [
+        "artist",
+        "provider",
+        "metric"
+      ],
+      "idNamespace": "platform = enum key (spotify, youtube, instagram, ...); platform-side ids are <platform>...Id"
+    },
+    {
+      "term": "provider",
+      "definition": "An external service vendor behind an integration (Stripe, Autentique, DocuSign, Soundcharts, WhatsApp Cloud).",
+      "disallowedUsages": [
+        "mixing 'provider' (vendor) with 'platform' (where the artist is)"
+      ],
+      "relatedTerms": [
+        "integration",
+        "platform"
+      ],
+      "idNamespace": "provider = enum key of the vendor (stripe, autentique, docusign, soundcharts, whatsapp)"
+    },
+    {
+      "term": "integration",
+      "definition": "A configured connection between a tenant and a provider (integrations / oauth_connections).",
+      "disallowedUsages": [
+        "'integration' for integration tests in domain names"
+      ],
+      "relatedTerms": [
+        "provider",
+        "account"
+      ],
+      "idNamespace": "integrationId = integrations.id; oauthConnectionId = oauth_connections.id"
+    },
+    {
+      "term": "metric",
+      "definition": "A measured value (followers, streams) captured as a snapshot (artist_metric_snapshots).",
+      "disallowedUsages": [
+        "estimated values presented as measured metrics"
+      ],
+      "relatedTerms": [
+        "platform",
+        "insight",
+        "artist"
+      ],
+      "idNamespace": "artist_metric_snapshots.id; metric keys are English snake_case"
+    },
+    {
+      "term": "insight",
+      "definition": "A derived, AI/automation-produced interpretation of metrics (analytics-insights automation), never a raw metric.",
+      "disallowedUsages": [
+        "'insight' for raw data"
+      ],
+      "relatedTerms": [
+        "metric"
+      ],
+      "idNamespace": "—"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "NC-001",
+      "concept": "Artist reference (FK)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`artist_id` (15+ tables)",
+      "application": "`artistId`",
+      "api": "`artistId`",
+      "displayPtBr": "Artista",
+      "legacyAliases": [
+        "artista_id"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-002",
+      "concept": "Work reference (FK)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`work_id`",
+      "application": "`workId`",
+      "api": "`workId`",
+      "displayPtBr": "Obra",
+      "legacyAliases": [
+        "obra_id"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-003",
+      "concept": "Client reference (FK)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`client_id`",
+      "application": "`clientId`",
+      "api": "`clientId`",
+      "displayPtBr": "Cliente",
+      "legacyAliases": [
+        "cliente_id"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-004",
+      "concept": "Project reference (FK)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`project_id`",
+      "application": "`projectId`",
+      "api": "`projectId`",
+      "displayPtBr": "Projeto",
+      "legacyAliases": [
+        "projeto_id"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-005",
+      "concept": "Campaign reference (FK)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`campaign_id`",
+      "application": "`campaignId`",
+      "api": "`campaignId`",
+      "displayPtBr": "Campanha",
+      "legacyAliases": [
+        "campanha_id"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-006",
+      "concept": "Release reference (FK)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`release_id`",
+      "application": "`releaseId`",
+      "api": "`releaseId`",
+      "displayPtBr": "Lançamento",
+      "legacyAliases": [
+        "lancamento_id"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-007",
+      "concept": "Phonogram reference (FK)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`phonogram_id` (shares, transaction_allocations, performance_metric_entries, audiovisual_projects)",
+      "application": "`phonogramId`",
+      "api": "`phonogram_id` (`trackId` legacy alias, deprecated)",
+      "displayPtBr": "Fonograma",
+      "legacyAliases": [
+        "fonograma_id"
+      ],
+      "notes": "**DONE (2026-09-20)** — resolved this session's own prior REQUIRES_REVIEW; `phonogram_id` chosen over `recording_id` on live-precedent evidence (3 other tables already used it; zero `recordings` table/precedent exists)"
+    },
+    {
+      "id": "NC-008",
+      "concept": "Title",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`title` (10+ tables)",
+      "application": "`title`",
+      "api": "`title`",
+      "displayPtBr": "Título",
+      "legacyAliases": [
+        "titulo"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-009",
+      "concept": "Type/category classifier (generic)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`type` (18+ tables)",
+      "application": "`type`",
+      "api": "`type`",
+      "displayPtBr": "Tipo",
+      "legacyAliases": [
+        "tipo"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-010",
+      "concept": "Start/end dates",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`start_date`/`end_date`",
+      "application": "`startDate`/`endDate`",
+      "api": "`startDate`/`endDate`",
+      "displayPtBr": "Data de início / término",
+      "legacyAliases": [
+        "data_inicio",
+        "data_fim",
+        "startsAt",
+        "expiresAt"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-011",
+      "concept": "Attachments/documents field",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`documents` (artists, contracts, shares, employees)",
+      "application": "`documents`",
+      "api": "`documents`",
+      "displayPtBr": "Documentos",
+      "legacyAliases": [
+        "documentos"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-012",
+      "concept": "Notes/observations",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`notes` (12+ tables)",
+      "application": "`notes`",
+      "api": "`notes`",
+      "displayPtBr": "Observações",
+      "legacyAliases": [
+        "observacoes"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-013",
+      "concept": "Description",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`description` (8+ tables)",
+      "application": "`description`",
+      "api": "`description`",
+      "displayPtBr": "Descrição",
+      "legacyAliases": [
+        "descricao"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-014",
+      "concept": "Duration (text form)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`duration_text` (works, phonograms)",
+      "application": "`durationText`",
+      "api": "`duration_text`",
+      "displayPtBr": "Duração",
+      "legacyAliases": [
+        "duracao"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-015",
+      "concept": "Genre/music genre",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`music_genre` (artists, phonograms, projects, project_tracks, releases, works)",
+      "application": "`musicGenre`",
+      "api": "`music_genre`",
+      "displayPtBr": "Gênero Musical",
+      "legacyAliases": [
+        "genero",
+        "genero_musical"
+      ],
+      "notes": "DONE — `artists.genero` (distinct concept, personal gender) and `works.tipo_obra`/`type` collision are separate, see below"
+    },
+    {
+      "id": "NC-016",
+      "concept": "Name",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`name` (employees, inventory_items, financial_rules, work_participants, project_tracks, project_track_participants)",
+      "application": "`name`",
+      "api": "`name`",
+      "displayPtBr": "Nome",
+      "legacyAliases": [
+        "nome"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-017",
+      "concept": "Name — clients / leads (corrected 2026-09-26: the row above previously listed clients and leads as DONE, but both still store `nome`)",
+      "section": "Closed concepts",
+      "disposition": "MIGRATION_REQUIRED",
+      "status": "approved",
+      "database": "`nome` (clients, leads)",
+      "application": "`name` at the API/form boundary",
+      "api": "`name`",
+      "displayPtBr": "Nome",
+      "legacyAliases": [],
+      "notes": "MIGRATION_REQUIRED — Cluster Zero DB class; see the Cluster Zero section"
+    },
+    {
+      "id": "NC-018",
+      "concept": "Category",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`category` (inventory_items, financial_rules)",
+      "application": "`category`",
+      "api": "`category`",
+      "displayPtBr": "Categoria",
+      "legacyAliases": [
+        "categoria"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-019",
+      "concept": "Category — transactions (corrected 2026-09-26: previously listed as DONE, but `transactions` still stores `categoria`/`subcategoria` next to `financial_category_id`)",
+      "section": "Closed concepts",
+      "disposition": "MIGRATION_REQUIRED",
+      "status": "approved",
+      "database": "`categoria`, `subcategoria` (transactions)",
+      "application": "—",
+      "api": "—",
+      "displayPtBr": "Categoria",
+      "legacyAliases": [],
+      "notes": "MIGRATION_REQUIRED — tied to the transactions v1/v2 decision below (NEEDS_PRODUCT_DECISION); see the Cluster Zero section"
+    },
+    {
+      "id": "NC-020",
+      "concept": "Active flag",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`active` (contract_templates, financial_rules)",
+      "application": "`active`",
+      "api": "`active`",
+      "displayPtBr": "Ativo",
+      "legacyAliases": [
+        "ativo"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-021",
+      "concept": "Sort order",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`sort_order` (work_participants, project_tracks, project_track_participants, contract_service_types, knowledge_categories)",
+      "application": "`sortOrder`",
+      "api": "`sortOrder`",
+      "displayPtBr": "Ordem",
+      "legacyAliases": [
+        "ordem"
+      ],
+      "notes": "DONE"
+    },
+    {
+      "id": "NC-022",
+      "concept": "Leads client/service type",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`client_type`/`service_type` (leads only)",
+      "application": "`clientType`/`serviceType`",
+      "api": "`clientType`/`serviceType`",
+      "displayPtBr": "Tipo de cliente / Tipo de serviço",
+      "legacyAliases": [
+        "tipo_cliente",
+        "tipo_servico",
+        "tipoCliente",
+        "tipoServico"
+      ],
+      "notes": "**DONE (2026-09-20)** — `transactions.tipo_cliente` is a DIFFERENT concept (counterparty type), deliberately not renamed here; label key `tipoCliente` kept alongside new `clientType` for that reason"
+    },
+    {
+      "id": "NC-023",
+      "concept": "Share party role / percentage / holder identity",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`party_role`, `percentage`, `holder_name`, `holder_document`, `direction`, `music_title`, `holder`, `recipient` (shares)",
+      "application": "matching camelCase",
+      "api": "matching",
+      "displayPtBr": "Papel, Percentual, Titular, Documento, Direção, Título, Participante, Destinatário",
+      "legacyAliases": [
+        "papel",
+        "percentual",
+        "titular_nome",
+        "titular_doc",
+        "direcao",
+        "nome_musica",
+        "detentor",
+        "destinatario"
+      ],
+      "notes": "DONE (2026-09-13, commit `82b98a8b`/`502d41d5`, `20260913000001_RenameSharePartyFieldsToEnglish`) — re-verified live this session; discovery-log §8/§9's shares rows were stale, corrected here"
+    },
+    {
+      "id": "NC-024",
+      "concept": "Invoice due date (internal nota fiscal)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`data_vencimento` (invoices)",
+      "application": "n/a",
+      "api": "`vencimento` (documented API/form alias)",
+      "displayPtBr": "Vencimento",
+      "legacyAliases": [
+        "vencimento"
+      ],
+      "notes": "**DONE (2026-09-20)** — distinct from `invoices.due_date` (Stripe-owned, see below)"
+    },
+    {
+      "id": "NC-025",
+      "concept": "Invoice due date (Stripe SaaS billing)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`due_date` (invoices, `type='stripe_subscription'` rows only)",
+      "application": "n/a",
+      "api": "n/a (webhook-populated)",
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "DONE — THIRD_PARTY_CONTRACT, mirrors Stripe's `Invoice.due_date` 1:1, never renamed"
+    },
+    {
+      "id": "NC-026",
+      "concept": "Invoice payer tax ID (CPF or CNPJ)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": "`tomador_cnpj` (invoices)",
+      "application": "`tomador_cnpj`",
+      "api": "`tomador_cnpj`",
+      "displayPtBr": "CNPJ / CPF",
+      "legacyAliases": [],
+      "notes": "DONE as a legal identifier (see fiscal cluster); **field is misnamed** (holds CPF or CNPJ, not just CNPJ) — tracked as an **open finding**, canonical target `tomador_cpf_cnpj` (matches the `artists.cpf_cnpj_encrypted`/`clients.cpf_cnpj_encrypted` precedent), not yet executed"
+    },
+    {
+      "id": "NC-027",
+      "concept": "Works registry-field pairs (`idioma`→`language`, `outros_titulos`→`alternative_titles`, `criada_por_ia`+`ia_harmonia`/`ia_melodia`/`ia_letra`→`ai_used`/`ai_tools`/`ai_prompts`, `instrumental`→`is_instrumental`(derived only, column stays varchar 'sim'/'nao' form field — see below), `duration_text`→`duration_seconds`, `letra_completa`→`lyrics`)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": null,
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "`work-registry-fields.util.ts`'s `deriveWorkRegistryFields()`, wired into `works.service.ts`'s `create()`/`update()` (the latter merges the incoming patch over the current entity's PT fields before deriving, so partial PATCH still derives correctly) · EN Registry Fields side (consumed by `society-payload-builder.service.ts`'s `buildWorkPayload()`) · **DONE (2026-09-21)** — `idioma`→`language` uses an explicit `LANGUAGE_LABEL_TO_ISO` map (ISO 639-1, with 639-2/3 fallbacks for Cantonês/Filipino/Multilíngue and explicit null for non-language values), not heuristics; `ai_tools`/`ai_prompts` extracted from the `ia_*` trio's `.ferramenta`/`.prompt` so the derivation itself satisfies `entity-validators.ts`'s AI-declaration check; `lyrics` mirrors `letra_completa` (kept, not dropped, for Registry Fields Phase 1 consistency)"
+    },
+    {
+      "id": "NC-028",
+      "concept": "Phonograms registry-field pairs (`gravacao_original`→`recording_date`, `data_lancamento`→`release_date`, `duracao_min`+`duracao_seg`→`duration_seconds`, `pais_origem`→`country_of_recording`)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": null,
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "`phonogram-registry-fields.util.ts`'s `derivePhonogramRegistryFields()`, wired into `phonograms.service.ts`'s `buildEntityPayload()` (used by both `create()`/`update()`, same merge-before-derive pattern) · EN Registry Fields side (`society-payload-builder.service.ts`'s `buildRecordingPayload()`) · **DONE (2026-09-21)** — `pais_origem`→`country_of_recording` uses an explicit `PAIS_ORIGEM_TO_ISO` map over the fixed frontend option list (`brazil`/`usa`/`uk`/`portugal`/`argentina`); `\"uk\"`→`\"GB\"` is a real correction (the actual ISO 3166-1 alpha-2 code), not a case change"
+    },
+    {
+      "id": "NC-029",
+      "concept": "Phonograms `arquivo_audio` (jsonb, display metadata: name/size/url) vs `audio_file_id` (uuid, FK-shaped, indexed)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": null,
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "`useUploadToR2()` already returned `fileId` alongside `publicUrl`; `FonogramaFormModal.tsx` discarded it · Both stay live — distinct concepts: `arquivo_audio` is UI display metadata, `audio_file_id` is the canonical FK into `uploads` (file lifecycle/permissions/future signed-download) · **DONE (2026-09-21)** — `fileId` now captured into `arquivoAudio.fileId` and submitted as `audio_file_id`; DTO/service pass it through unchanged (no derivation needed, plain passthrough); no consumer reads `audio_file_id` yet (view modal still only renders `arquivo_audio.name`/`.size` — a future signed-download feature, out of this naming mission's scope)"
+    },
+    {
+      "id": "NC-030",
+      "concept": "Phonograms `instrumental` (was varchar 'sim'/'nao') → `is_instrumental`",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": null,
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "Column already boolean-typed correctly (`@Column({ type: 'boolean' })`) — a prior audit agent's varchar claim was stale/wrong, re-verified against the live entity · `is_instrumental` · **DONE (2026-09-21)**, migration `20260921000002_RenamePhonogramInstrumentalToEnglish` — pure rename, no type change, no data transform; no registry payload read it (`buildRecordingPayload()`'s `recording` object has no `is_instrumental` field)"
+    },
+    {
+      "id": "NC-031",
+      "concept": "Works `tipo_obra` vs `type`",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": null,
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "`works.service.ts`'s `dto.type ?? dto.tipo_obra ?? 'composicao'` fallback always evaluated to `dto.tipo_obra` in real usage — `registro-musicas.mapper.ts`'s `formToObraPayload()` never sends a `type` key at all, only `tipo_obra` · Both stay live as genuinely distinct concepts (catalog origin vs. ABRAMUS/ECAD work-type classification) — fallback removed, `type` now defaults to `'composicao'` when absent, `tipo_obra` never feeds it · **DONE (2026-09-21) as a BUG fix, not a product decision** — code trace proved 100%-reproducible technical authority (the fallback always fired in production, conflating two concepts), matching this mission's instruction not to declare NEEDS_PRODUCT_DECISION when code/usage determine technical authority; migration `20260921000001_FixWorksTypeTipoObraCollision` defensively corrects any `type IN ('autoral','referencia')` back to `'composicao'` (DEV: 0 affected rows)"
+    },
+    {
+      "id": "NC-032",
+      "concept": "Phonograms `compositores`/`interpretes`/`produtores` (3 legacy `text` columns)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": null,
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "Not present in `CreatePhonogramDto` (would be rejected by `forbidNonWhitelisted`), zero writers anywhere; declared `ro()`/`importable:false` in `PHONOGRAMS_CONTRACT`, so the Reports bulk-import engine can't reach them either (`ImportMapperService` resolves uploaded headers only against `importableColumns`) · Dropped — superseded by `participacao` (jsonb, the real form's own field) · **DONE (2026-09-23)**, migration `20260923000002_DropDeadPhonogramsLegacyParticipantColumns` — plain `DROP COLUMN`, zero data loss (0 non-null on all 3, confirmed on DEV)"
+    },
+    {
+      "id": "NC-033",
+      "concept": "Works `compositor` (singular) vs `compositores` (plural, jsonb)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": null,
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "`compositor` looked equally dead by the same form/DTO trace (`ObraFormModal.tsx` only ever populates `compositores`) — **this session initially dropped it by mistake** · Both stay live — **not** a naming collision: `compositor` is `col()` (importable) in `WORKS_CONTRACT`, and the Reports import-commit engine writes raw SQL `INSERT`s directly against `importableColumns`, bypassing `CreateWorkDto` entirely. A pre-existing guard test (`work-participants-normalization.spec.ts`, \"mantém `compositor`... writer real via bulk-import (Reports)\") caught the mistake on the first full test run, before the migration reached DEV · **DONE (2026-09-23) — self-corrected before any DEV impact.** Root-cause lesson for the rest of this audit: a field's \"zero writers\" claim must be checked against the Reports bulk-import engine's `importableColumns` (derived from each contract's `col()`/`ro()` distinction), not just the real UI form + DTO layer — those are two independent writer paths"
+    },
+    {
+      "id": "NC-034",
+      "concept": "Phonograms `participacao` DTO shape (`@IsArray() participacao?: unknown[]`)",
+      "section": "Closed concepts",
+      "disposition": "DONE",
+      "status": "done",
+      "database": null,
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "**Severe, independent, pre-existing bug** found while tracing `interpretes`' live replacement: `FonogramaFormModal.tsx` has always sent participacao as an OBJECT (`{ produtorFonografico, interprete, musicoAcompanhante }`, each an array), confirmed by direct component inspection — `@IsArray()` rejected this on every real submit with participant data, verified empirically (`plainToInstance`+`validate()` with the real payload shape reproduces `\"participacao must be an array\"`). No real fonograma submission with participants has ever succeeded · New `ParticipacaoDto`/`ParticipanteDto` (`@IsObject() @ValidateNested() @Type(...)`, matching the codebase's established nested-DTO pattern from `update-company-settings.dto.ts`) · **DONE (2026-09-23) — real functional bug fix, not a naming issue per se, surfaced by this audit.** `entities.ts`'s `PhonogramEntity.participacao` retyped to the real shape (`PhonogramParticipacao`, not `unknown[]`); `release-readiness.service.ts`'s interpreter requirement and `catalog-metadata-validator.automation.ts`'s AI-skill `performers`/`producers` input (a hard requirement of `validateCatalogMetadataValidatorInput()` for `type=recording`) both rewired to read the real `participacao.interprete`/`.produtorFonografico`, restoring invariants that had been silently satisfied by always-empty data before"
+    },
+    {
+      "id": "NC-035",
+      "concept": "Clients `cidade`/`estado` → `city`/`state`",
+      "section": "Open findings requiring further technical work (specs below are execution-ready, from this session's audit agents — not executed due to session scope)",
+      "disposition": "DONE",
+      "status": "done",
+      "database": null,
+      "application": "`city`/`state` (English precedent already live in `rights_holders.country`; no `counterparties` table exists in this schema — the earlier open-finding's claim of a second precedent there was stale)",
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "Current state: `ClientsService.normalizeClientPayload()` already translated an English `city`/`state` DTO onto these physical columns on every write · Blocker/resolution: **DONE (2026-09-22)**, migration `20260921000003_RenameClientsGeoFieldsToEnglish` — plain rename, no data transform; eliminated the now-redundant translation step in the service, `report-form-contracts.ts`'s `formFieldAliases`, and the `client-entity-schema-alignment.spec.ts` guard"
+    },
+    {
+      "id": "NC-036",
+      "concept": "Leads `cidade`/`estado`/`pais` → `city`/`state`/`country`",
+      "section": "Open findings requiring further technical work (specs below are execution-ready, from this session's audit agents — not executed due to session scope)",
+      "disposition": "DONE",
+      "status": "done",
+      "database": null,
+      "application": "`city`/`state`/`country`",
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "Current state: `cidade`/`estado` are real form inputs (`LeadFormModal.tsx`, distinct from the unrelated `evento`/`campanha`/`influenciador` sub-payloads' own jsonb-nested `cidade`/`estado` keys inside `payload_servico`, not touched); `pais` has zero form input — every real row was hardcoded `'Brasil'` by the app itself (`LeadsPage.tsx`/`SupportCenterView.tsx`'s `payloadToLead()`) · Blocker/resolution: **DONE (2026-09-22)**, migration `20260921000004_RenameLeadsGeoFieldsToEnglish` — plain rename for city/state; `pais`→`country` data normalized via one explicit mapping (`'Brasil'`→`'BR'`, the only distinct value found on DEV), the app now emits `'BR'` directly instead of `'Brasil'` going forward; full stack propagated (DTO, service, report contract, `lead-entity-schema-alignment.spec.ts` guard, and every `apps/web/src/modules/leads` consumer — `LeadFormPayload`'s own top-level `cidade`/`estado` field names deliberately left PT, translated at the `payloadToLead()`/`leadToFormInitial()` boundary, matching this file's established `tipo_lead`/`servico` pattern)"
+    },
+    {
+      "id": "NC-037",
+      "concept": "Leads dual-storage: `origem_lead`/`responsavel`/`prioridade`/`temperatura`/`estimated_value`/`probabilidade_fechamento`/`proximo_follow_up` (physical columns) vs `dados_internos_crm.{origemLead,responsavel,prioridade,temperatura,valorEstimado,probabilidadeFechamento,proximoFollowUp}` (jsonb)",
+      "section": "Open findings requiring further technical work (specs below are execution-ready, from this session's audit agents — not executed due to session scope)",
+      "disposition": "DONE",
+      "status": "done",
+      "database": null,
+      "application": "`dados_internos_crm` (jsonb) — no case for migrating data/UI onto the physical columns instead: nothing currently filters/sorts/aggregates on them, and the jsonb side was already the report layer's sole read path",
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "Current state: Live DEV data determined technical authority with no legitimate second semantic in active use: all 7 physical columns were 100% null (0/62 rows); `dados_internos_crm.{responsavel,prioridade,temperatura,origemLead}` had real data (1-3 rows each) written exclusively by the real CRM form (`LeadFormModal.tsx` via `payloadToLead()`); none of the 7 were even reachable through `CreateLeadDto`/`UpdateLeadDto` (`forbidNonWhitelisted` would reject them); the sole writer of any physical column anywhere in the codebase was `origemLead`, one internal non-DTO `repo.create()` in `submitPublicArtistApplication()`, itself never exercised in DEV and inconsistent with the rest of the app · Blocker/resolution: **DONE (2026-09-22) as a technical determination, not a product decision** — matches this mission's explicit instruction not to declare `NEEDS_PRODUCT_DECISION` when code/usage determine authority; migration `20260921000005_DropDeadLeadsCrmDualStorageColumns` dropped all 7 dead columns (zero data loss, verified null beforehand) and the one live writer was redirected into `dados_internos_crm.origemLead`"
+    },
+    {
+      "id": "NC-038",
+      "concept": "`shares.type` vs `party_role`",
+      "section": "Open findings requiring further technical work (specs below are execution-ready, from this session's audit agents — not executed due to session scope)",
+      "disposition": "RESOLVED",
+      "status": "done",
+      "database": null,
+      "application": "`party_role`",
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "Current state: **RESOLVED (2026-09-23) — overturned by fresh evidence, not a genuine two-domain merge.** `party_role` is not a competing EN enum: migration `20260913000001_RenameSharePartyFieldsToEnglish` already renamed the PT `papel` (role/function) column directly to `party_role` — it already *is* the PT \"função\" concept, just under an English column name, per this repo's established boundary-translation precedent. Real domain confirmed by `entity-validators.ts`'s `isInterpreterRole`/`isPublisherRole`/`isProducerRole` substring predicates (`'interpret'`, `'produtor'`, `'editora'`, `'cantor'`, etc.) and by `shares.service.ts::baseQb()`, which already implements `s.party_role = :partyRole` correctly. `shares.type` by contrast has **zero writers anywhere** in `shares.service.ts`'s create/update paths (full-file grep) and was 100%-null on DEV (1/1 rows) — a write-dead phantom column, not a second live domain. The apparent \"two domains\" in the prior entry were an artifact of one bug: `apps/web/.../GestaoShares.tsx` had a filter dropdown literally labeled \"Função\" with real `party_role`-domain values (`interprete`/`compositor`/`produtor`/`editora`/`gravadora`/`empresario`) wired to send `filters.type` (the dead column) instead of `filters.party_role` (the live, already-correct server-side filter) · Blocker/resolution: **DONE (2026-09-23)** — frontend-only fix (`useSharesPaginated.ts`, `GestaoShares.tsx`): renamed the hook param `type`→`partyRole`, filter key `type`→`party_role`; no schema/service change needed since the server-side `party_role` filter was already correct. `shares.type` itself is now proven fully dead (never written, never correctly read) but its physical drop is **deliberately deferred** (not blocked) as a separate, lower-risk follow-up migration — dropping it is not required to close this bug, and bundling an unrelated schema change into a pure filter-wiring fix would violate this mission's own scope-minimality discipline"
+    },
+    {
+      "id": "NC-039",
+      "concept": "`shares.role`",
+      "section": "Open findings requiring further technical work (specs below are execution-ready, from this session's audit agents — not executed due to session scope)",
+      "disposition": "NEEDS_PRODUCT_DECISION",
+      "status": "proposed",
+      "database": null,
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "Current state: **Re-investigated exhaustively (2026-09-23), classification confirmed unchanged.** `CreateShareDto.role` (the EN `ROLES` alias) is deliberately mapped onto `party_role` then deleted (`shares.service.ts` lines 96/99) before persistence — it never reaches the physical `role` column. Full-repo grep for writers of `role`/`rights_holder_id`/`publisher_id`/`credited_name`/`is_primary`/`is_featured` (the entire migration `20260601000001_RegistryFieldsPhase1` block) found **zero** write sites anywhere in `apps/api/src`, only the two documented reads (`entity-validators.ts`, `society-payload-builder.service.ts`). Unlike `shares.type`, this is not resolvable by \"code/usage determine authority\" — there is no real usage to find; a registry-share creation flow was scaffolded (columns + readers) but never built (no controller/service path creates it) · Blocker/resolution: **NEEDS_PRODUCT_DECISION (confirmed, not newly discoverable)** — wire a registry-share creation path, or give the block an explicit disposition. Do not drop in isolation (changes read behavior)"
+    },
+    {
+      "id": "NC-040",
+      "concept": "`leads.observacoesInternas`",
+      "section": "Open findings requiring further technical work (specs below are execution-ready, from this session's audit agents — not executed due to session scope)",
+      "disposition": "NEEDS_PRODUCT_DECISION",
+      "status": "proposed",
+      "database": null,
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "Current state: No column, no DTO field, zero backend references — UI writes into a jsonb key nothing ever reads back · Blocker/resolution: **NEEDS_PRODUCT_DECISION** — not a naming issue: an unwired field, flag for product"
+    },
+    {
+      "id": "NC-041",
+      "concept": "`transactions.forma_pagamento`/`tipo_pagamento` (unwritten columns — values live in `metadata.formaPagamento`/`tipoPagamento`)",
+      "section": "Open findings requiring further technical work (specs below are execution-ready, from this session's audit agents — not executed due to session scope)",
+      "disposition": "NEEDS_PRODUCT_DECISION",
+      "status": "proposed",
+      "database": null,
+      "application": "`financial_transactions`'s already-chosen names",
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "Current state: `financial_transactions` (a second, fully English-named table: `payment_method`, `payment_type`, `client_type`, `collecting_agency`, `investment_item`, `travel_reason`, `attachment_url`, `attachment_name`, `due_date`) already exists as the declared v2 canonical ledger, 0 rows, no entity wired up · Blocker/resolution: **NEEDS_PRODUCT_DECISION at a larger scope** — this is \"finish the v2 ledger cutover\", not a column rename on `transactions`"
+    },
+    {
+      "id": "NC-042",
+      "concept": "`billing.service.ts` `upsertStripeInvoice`/`upsertStripeSubscription` correctness bugs",
+      "section": "Open findings requiring further technical work (specs below are execution-ready, from this session's audit agents — not executed due to session scope)",
+      "disposition": "BUG",
+      "status": "done",
+      "database": null,
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "Current state: **Fixed 2026-09-20** (commit `6631bfe0`): `valor`→`legacy_amount`, `ON CONFLICT` partial-index predicate, Stripe status vocabulary mapping · Blocker/resolution: **BUG** (fixed) — closed, listed here for the record: real bugs surfaced by this naming audit, not naming issues themselves"
+    },
+    {
+      "id": "NC-043",
+      "concept": "`works.origem_externa`",
+      "section": "Phase 2 individual classification — physical-column PT identifiers (2026-09-23)",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
+      "status": "proposed",
+      "database": "works.origem_externa",
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "db existence: exists (`entities.ts:717`) · population (dev, current): 0/0 rows non-null · readers: `report-form-contracts.ts` `ro('origem_externa')` only · writers: none found repo-wide · entity: mapped, `string | null` · dto: absent from `CreateWorkDto`/`UpdateWorkDto` · frontend: absent · integration: none found · migration: baseline `f840fc7f` (2026-06-21), pre-dates all Cluster commits · semantics: presumably \"external source system name\" for a planned catalog-sync · technical conclusion: scaffolded, read-only-in-contract, zero live producer or consumer anywhere in-repo · exact unresolved question: is an external-catalog-sync integration (Soundcharts or similar) still planned, or was this abandoned scaffolding? · classification: BLOCKED_PRODUCT_DECISION"
+    },
+    {
+      "id": "NC-044",
+      "concept": "`works.origem_externa_id`",
+      "section": "Phase 2 individual classification — physical-column PT identifiers (2026-09-23)",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
+      "status": "proposed",
+      "database": "works.origem_externa_id",
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "db existence: exists (`entities.ts:718`) · population (dev, current): 0/0 rows non-null · readers: none found (absent from both report contracts entirely) · writers: none found · entity: mapped, `string | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: presumably \"external system's ID for this work\" · technical conclusion: scaffolded, not even contract-declared (weaker footprint than its siblings) · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION"
+    },
+    {
+      "id": "NC-045",
+      "concept": "`works.origem_externa_sincronizado_em`",
+      "section": "Phase 2 individual classification — physical-column PT identifiers (2026-09-23)",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
+      "status": "proposed",
+      "database": "works.origem_externa_sincronizado_em",
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "db existence: exists (`entities.ts:719`) · population (dev, current): 0/0 rows non-null · readers: `report-form-contracts.ts` `ro('origem_externa_sincronizado_em')` only · writers: none found · entity: mapped, `Date | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: presumably \"last sync timestamp\" · technical conclusion: scaffolded, read-only-in-contract, zero live producer or consumer · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION"
+    },
+    {
+      "id": "NC-046",
+      "concept": "`phonograms.origem_externa`",
+      "section": "Phase 2 individual classification — physical-column PT identifiers (2026-09-23)",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
+      "status": "proposed",
+      "database": "phonograms.origem_externa",
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "db existence: exists (`entities.ts:838`) · population (dev, current): 0/0 rows non-null · readers: `ro('origem_externa')` in the phonograms contract only · writers: none found · entity: mapped, `string | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: same pattern, phonograms side · technical conclusion: scaffolded · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION"
+    },
+    {
+      "id": "NC-047",
+      "concept": "`phonograms.origem_externa_id`",
+      "section": "Phase 2 individual classification — physical-column PT identifiers (2026-09-23)",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
+      "status": "proposed",
+      "database": "phonograms.origem_externa_id",
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "db existence: exists (`entities.ts:839`) · population (dev, current): 0/0 rows non-null · readers: none found · writers: none found · entity: mapped, `string | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: same pattern · technical conclusion: scaffolded, not contract-declared · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION"
+    },
+    {
+      "id": "NC-048",
+      "concept": "`phonograms.origem_externa_sincronizado_em`",
+      "section": "Phase 2 individual classification — physical-column PT identifiers (2026-09-23)",
+      "disposition": "BLOCKED_PRODUCT_DECISION",
+      "status": "proposed",
+      "database": "phonograms.origem_externa_sincronizado_em",
+      "application": null,
+      "api": null,
+      "displayPtBr": "—",
+      "legacyAliases": [],
+      "notes": "db existence: exists (`entities.ts:840`) · population (dev, current): 0/0 rows non-null · readers: `ro('origem_externa_sincronizado_em')` in the phonograms contract only · writers: none found · entity: mapped, `Date | null` · dto: absent · frontend: absent · integration: none found · migration: same baseline · semantics: same pattern · technical conclusion: scaffolded · exact unresolved question: same as above · classification: BLOCKED_PRODUCT_DECISION"
+    }
+  ],
+  "renames": [],
+  "exceptions": [
+    {
+      "item": "DB/API identifier `cpf`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "cpf",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `cpf_encrypted`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "cpf_encrypted",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `cnpj`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "cnpj",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `cnpj_encrypted`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "cnpj_encrypted",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `cpf_cnpj`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "cpf_cnpj",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `cpf_cnpj_encrypted`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "cpf_cnpj_encrypted",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `cfop`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "cfop",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `iss`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "iss",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `issqn`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "issqn",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `aliquota_iss`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "aliquota_iss",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `iss_retido`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "iss_retido",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `pis`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "pis",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `cofins`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "cofins",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `inss`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "inss",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `ir`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "ir",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `ir_amount`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "ir_amount",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `csll`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "csll",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `base_calculo`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "base_calculo",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `aliquota`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "aliquota",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `natureza_operacao`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "natureza_operacao",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `codigo_servico_municipal`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "codigo_servico_municipal",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `codigo_municipio`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "codigo_municipio",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `inscricao_estadual`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "inscricao_estadual",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `inscricao_municipal`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "inscricao_municipal",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `regime_tributario`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "regime_tributario",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `simples_nacional`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "simples_nacional",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `lucro_presumido`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "lucro_presumido",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `lucro_real`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "lucro_real",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `nfse`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "nfse",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `nfe`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "nfe",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `nfce`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "nfce",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `tipo_nota`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "tipo_nota",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `serie`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "serie",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `tomador`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "tomador",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `prestador`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "prestador",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `tomador_uf`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "tomador_uf",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `tomador_cep`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "tomador_cep",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `numero_nota_fiscal`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "numero_nota_fiscal",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    },
+    {
+      "item": "DB/API identifier `nota_fiscal`",
+      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "currentName": "nota_fiscal",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Official Brazilian tax/legal term (NFS-e / fiscal registry); translating the identifier would lose legal precision. Display label is already pt-BR.",
+      "consumer": "invoices / fiscal (NFS-e) module, clients/artists tax identity",
+      "owner": "fiscal domain owner",
+      "removalCondition": "none while the Brazilian fiscal regime is the supported regime",
+      "targetState": "permanent legal-domain identifier",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE"
+    }
+  ],
+  "blockers": []
+}
