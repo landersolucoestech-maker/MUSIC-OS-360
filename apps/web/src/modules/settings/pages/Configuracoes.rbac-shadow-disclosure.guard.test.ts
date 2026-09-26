@@ -1,8 +1,9 @@
 /**
  * Configuracoes.rbac-shadow-disclosure.guard.test.ts
  *
- * Guarda permanente (CODEBASE_MAP Gotcha #17 -- "the most significant
- * UX-integrity finding in the whole map"): the "Papéis e Permissões" editor
+ * Permanent guard (CODEBASE_MAP Gotcha #17 --
+ * "the most significant UX-integrity finding in the whole map"): the
+ * "Papéis e Permissões" editor
  * is fully backend-wired (create role, toggle permission, set inheritance)
  * with zero indication that RBAC_PERSISTED_AUTHORITY can default to SHADOW
  * on the backend -- an admin unchecking a permission saw full success

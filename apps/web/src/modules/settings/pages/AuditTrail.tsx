@@ -1,11 +1,11 @@
 /**
  * settings/pages/AuditTrail.tsx
  *
- * Audit Trail — historial de todas as mutações auditadas no sistema.
- * Acesso restrito a OWNER/ADMIN.
+ * Audit Trail — history of every audited mutation in the system.
+ * Access restricted to OWNER/ADMIN.
  *
  *
- * Filtros: search free-text, entity_type, action_group, date range (from/to)
+ * Filters: free-text search, entity_type, action_group, date range (from/to)
  */
 
 import { Fragment, useState, useMemo } from "react";
@@ -270,7 +270,7 @@ export default function AuditTrail() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap items-center gap-3">
-              {/* Seletor de datas — sempre imediatamente à esquerda da busca */}
+              {/* Date picker — always immediately to the left of the search */}
               <DatePickerField
                 value={fromDate}
                 onChange={setFromDate}

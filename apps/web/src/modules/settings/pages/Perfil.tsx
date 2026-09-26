@@ -65,7 +65,7 @@ export default function Perfil() {
     nivelAcesso: resolvedRole,
   });
 
-  // Sincroniza o formulário quando userSettings carrega do localStorage ou user muda
+  // Syncs the form when userSettings loads from localStorage or the user changes
   useEffect(() => {
     if (loading) return;
     setFormData({
@@ -202,7 +202,7 @@ export default function Perfil() {
                   onChange={handleFileChange}
                 />
 
-                {/* Botões de acção abaixo do avatar */}
+                {/* Action buttons below the avatar */}
                 <div className="flex items-center gap-2 mt-1">
                   <Button
                     variant="outline"

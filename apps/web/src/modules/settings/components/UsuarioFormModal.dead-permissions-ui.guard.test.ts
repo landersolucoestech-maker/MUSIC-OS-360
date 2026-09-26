@@ -1,15 +1,15 @@
 /**
- * Guarda permanente (Wave 13 — item 7): UsuarioFormModal.tsx tinha uma aba
- * "Permissões" inteira (grade de checkboxes por módulo, templates, seletor de
- * setor, vínculo de artista) que nunca era enviada em onSubmit — o admin
- * marcava/desmarcava permissões, salvava, e nada persistia. O único campo
- * real daquela aba era o seletor de Nível de Acesso (nivel_acesso -> cargo ->
- * PATCH /users/:id/role, com autorização/auditoria próprias do RBAC).
+ * Permanent guard (Wave 13 — item 7): UsuarioFormModal.tsx had a whole
+ * "Permissões" tab (per-module checkbox grid, templates, department
+ * selector, artist link) that was never sent in onSubmit — the admin
+ * checked/unchecked permissions, saved, and nothing persisted. The only real
+ * field of that tab was the access level selector (nivel_acesso -> cargo ->
+ * PATCH /users/:id/role, with the RBAC's own authorization/auditing).
  *
- * Este teste impede a reintrodução da UI morta: nenhuma grade de permissões
- * por módulo, template de permissão ou vínculo de artista client-side-only
- * neste arquivo — a fonte única de verdade para permissões é o sistema de
- * roles (useRoles/rbac-admin.controller.ts), gerenciado em /usuarios.
+ * This test prevents the reintroduction of the dead UI: no per-module permission
+ * grid, permission template or client-side-only artist link
+ * in this file — the single source of truth for permissions is the
+ * roles system (useRoles/rbac-admin.controller.ts), managed at /usuarios.
  */
 import { describe, expect, it } from "vitest";
 import * as fs from "fs";

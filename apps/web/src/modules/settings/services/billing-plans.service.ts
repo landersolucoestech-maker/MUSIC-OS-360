@@ -1,31 +1,31 @@
 /**
- * billing-plans.service.ts — fonte ÚNICA dos planos de billing.
+ * billing-plans.service.ts — the SINGLE source of the billing plans.
  *
- * GOVERNANÇA (fonte da verdade):
- *   Painel Admin → Banco de Dados → Sincronização Stripe → Workspaces → Tela Billing.
+ * GOVERNANCE (source of truth):
+ *   Admin Panel → Database → Stripe Sync → Workspaces → Billing screen.
  *
- *   Os planos, preços, recursos, limites, assentos e IDs de Stripe (Product/Price)
- *   NÃO podem ser hardcoded na tela. São criados/editados pelo Painel Admin e
- *   persistidos no banco; o Stripe é apenas sincronizado a partir do banco.
+ *   Plans, prices, features, limits, seats and Stripe IDs (Product/Price)
+ *   may NOT be hardcoded on the screen. They are created/edited by the Admin Panel and
+ *   persisted in the database; Stripe is only synced from the database.
  *
- *   - Produção: busca os planos ativos no backend (a implementar), que os lê do
- *     banco controlado pelo Admin.
+ *   - Production: fetches the active plans from the backend (to be implemented), which reads them from the
+ *     Admin-controlled database.
  *
- * CONTRATO BACKEND (futuro):
- *   GET /billing/plans  ->  ApiResponse<BillingPlan[]>   (apenas planos ativos/visíveis, ordenados)
+ * BACKEND CONTRACT (future):
+ *   GET /billing/plans  ->  ApiResponse<BillingPlan[]>   (only active/visible plans, sorted)
  */
 import { api } from "@/shared/lib/api-client";
 import { adminPlansService } from "@/modules/admin/services/admin-plans.service";
 
 export interface BillingPlan {
-  /** Identificador estável (uuid em produção; casa com tenant.plan). */
+  /** Stable identifier (uuid in production; matches tenant.plan). */
   id: string;
   name: string;
-  /** Rótulo de preço exibido (ex.: "R$ 390/mês"). Fonte: banco (Admin). */
+  /** Displayed price label (e.g. "R$ 390/mês"). Source: database (Admin). */
   price: string;
-  /** Valor numérico do preço, quando aplicável (centavos ou unidade — definido pelo Admin). */
+  /** Numeric price value, when applicable (cents or units — defined by the Admin). */
   priceAmount?: number | null;
-  /** Período de cobrança. */
+  /** Billing period. */
   interval?: "mensal" | "anual" | null;
   /** Recursos exibidos no card. */
   features: string[];
@@ -33,9 +33,9 @@ export interface BillingPlan {
   seats?: number | null;
   /** Limites por recurso (artists, contracts, storageGb...). */
   limits?: Record<string, number | null>;
-  /** Referência Stripe — sincronizada a partir do banco, nunca hardcoded na UI. */
+  /** Stripe reference — synced from the database, never hardcoded in the UI. */
   stripePriceId?: string | null;
-  /** Ordem de exibição definida pelo Admin. */
+  /** Display order defined by the Admin. */
   order: number;
 }
 
@@ -45,8 +45,8 @@ function sortByOrder(plans: BillingPlan[]): BillingPlan[] {
 
 export const billingPlansService = {
   /**
-   * Lista os planos publicados pelo Admin (ativos/visíveis), ordenados.
-   * A fonte é o Painel Admin (adminPlansService) — nada hardcoded aqui.
+   * Lists the plans published by the Admin (active/visible), sorted.
+   * The source is the Admin Panel (adminPlansService) — nothing hardcoded here.
    */
   async listPlans(): Promise<BillingPlan[]> {
     const plans = await api.get<BillingPlan[]>("/billing/plans");

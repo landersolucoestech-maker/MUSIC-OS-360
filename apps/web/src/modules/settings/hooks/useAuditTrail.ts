@@ -37,7 +37,7 @@ export interface AuditTrailFilters {
   offset?: number;
 }
 
-// Referência estável — ver shared/hooks/useDataQuery.ts para o motivo.
+// Stable reference — see shared/hooks/useDataQuery.ts for the reason.
 const EMPTY_AUDIT_LOGS: AuditLogEntry[] = [];
 
 export function useAuditTrail(filters: AuditTrailFilters = {}) {

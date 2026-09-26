@@ -39,7 +39,7 @@ export function UsuarioViewModal({ open, onOpenChange, usuario }: UsuarioViewMod
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Avatar e Nome */}
+          {/* Avatar and name */}
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center shrink-0">
               <span className="text-primary-foreground text-xl font-semibold">
@@ -60,7 +60,7 @@ export function UsuarioViewModal({ open, onOpenChange, usuario }: UsuarioViewMod
             {getStatusBadge(usuario.status)}
           </div>
 
-          {/* Grid de Informações */}
+          {/* Information grid */}
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Status</p>

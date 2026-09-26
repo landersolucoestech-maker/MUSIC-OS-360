@@ -11,9 +11,9 @@ import {
 } from "@/modules/settings/services/company-logo.service";
 
 /**
- * LogoUploader — upload/gestão da logo da empresa (Configurações → Identidade Visual).
- * Persiste via companyLogoService (isolado por workspace) e reflete no TenantContext
- * para que a identidade apareça automaticamente nas demais áreas.
+ * LogoUploader — upload/management of the company logo (Settings → Visual Identity).
+ * Persists via companyLogoService (isolated per workspace) and reflects in TenantContext
+ * so the identity appears automatically in the other areas.
  */
 export function LogoUploader() {
   const { tenant, setTenant } = useTenant();
@@ -80,7 +80,7 @@ export function LogoUploader() {
   function onInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) void handleFile(file);
-    e.target.value = ""; // permite re-selecionar o mesmo arquivo
+    e.target.value = ""; // allows re-selecting the same file
   }
 
   function onDrop(e: React.DragEvent) {

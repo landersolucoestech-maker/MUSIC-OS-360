@@ -63,10 +63,10 @@ import {
 } from "@/modules/integrations/hooks/useExternalProviders";
 
 /**
- * Provedores sob governança administrativa (platform_integrations). Para estes,
- * o backend decide a visibilidade; os demais cards desta página (portais de
- * distribuição, captação de leads) não são provedores governados e permanecem
- * com o sinal local.
+ * Providers under administrative governance (platform_integrations). For these,
+ * the backend decides visibility; the other cards on this page (distribution
+ * portals, lead capture) are not governed providers and keep
+ * the local signal.
  */
 const GOVERNED_PROVIDER_KEYS = new Set([
   "autentique", "docusign", "clicksign", "abramus", "ubc", "ecad", "nfe",
@@ -74,9 +74,9 @@ const GOVERNED_PROVIDER_KEYS = new Set([
   "resend", "whatsapp",
 ]);
 
-/** Item do catálogo único de Integrações — mesma forma para provedores
- *  configuráveis (autentique, ecad, ...) e distribuidoras (apenas `portalUrl`,
- *  sempre acesso externo, nunca adapter/Connect). */
+/** Item of the single Integrations catalog — the same shape for configurable
+ *  providers (autentique, ecad, ...) and distributors (only `portalUrl`,
+ *  always external access, never adapter/Connect). */
 interface IntegrationCatalogItem {
   id: string;
   name: string;
@@ -84,21 +84,21 @@ interface IntegrationCatalogItem {
   icon?: React.ComponentType<{ className?: string }>;
   iconClassName?: string;
   iconBackgroundClassName?: string;
-  // Estado de máquina vindo da governança do backend (ExternalProviderStatus).
-  // Nunca ramificar por texto humano — o rótulo vem de
-  // EXTERNAL_PROVIDER_PRESENTATION, que é derivado deste enum.
+  // Machine state coming from the backend governance (ExternalProviderStatus).
+  // Never branch on human text — the label comes from
+  // EXTERNAL_PROVIDER_PRESENTATION, which is derived from this enum.
   status: ExternalProviderStatus;
   description: string;
   category: string;
   configurable?: boolean;
   notices?: IntegrationNotice[];
-  /** Presente somente para distribuidoras: conexão é sempre via link externo,
-   *  nunca OAuth/credenciais — não há adapter, não há "Connect" funcional. */
+  /** Present only for distributors: the connection is always via an external link,
+   *  never OAuth/credentials — there is no adapter, no working "Connect". */
   portalUrl?: string;
 }
 
-/** Mesmo mapeamento de ClientIntegrationCard — badge de reasonCode (governança/plano),
- *  usado nas linhas do catálogo único para os itens governados/resolvidos pelo backend. */
+/** Same mapping as ClientIntegrationCard — reasonCode badge (governance/plan),
+ *  used in the single catalog's rows for the items governed/resolved by the backend. */
 const REASON_TONE_VARIANT: Record<string, BadgeVariant> = {
   success: "success",
   neutral: "neutral",
@@ -106,12 +106,12 @@ const REASON_TONE_VARIANT: Record<string, BadgeVariant> = {
   danger: "danger",
   info: "info",
 };
-// Seção "Streaming" (Spotify/YouTube Music/Deezer/SoundCloud/Apple Music) removida em
-// 2026-08-23: essas métricas de catálogo por plataforma vêm hoje do Soundcharts, através
-// de artists/platform-profiles/providers/* — manter cards de configuração individuais aqui
-// duplicava a mesma capacidade analítica em duas superfícies. Os serviços de backend
-// (incluindo o OAuth real do Spotify) e seus endpoints continuam existindo e NÃO foram
-// removidos: só a exposição configurável redundante saiu daqui.
+// "Streaming" section (Spotify/YouTube Music/Deezer/SoundCloud/Apple Music) removed on
+// 2026-08-23: those per-platform catalog metrics now come from Soundcharts, through
+// artists/platform-profiles/providers/* — keeping individual configuration cards here
+// duplicated the same analytics capability on two surfaces. The backend services
+// (including the real Spotify OAuth) and their endpoints still exist and were NOT
+// removed: only the redundant configurable exposure left this page.
 import {
   IntegrationStatusBadges,
   type IntegrationNotice,
@@ -151,13 +151,13 @@ export default function Configuracoes() {
     api.post<OnDemandSkillResult<OnboardingCroOutput>>("/auth/onboarding/ai/progress-analysis", {}),
   );
 
-  // Planos de billing — fonte dinâmica (Admin → Banco). Nunca hardcoded na tela.
+  // Billing plans — dynamic source (Admin → Database). Never hardcoded on the screen.
   const billingPlansQuery = useQuery({
     queryKey: ["billing-plans"],
     queryFn: () => billingPlansService.listPlans(),
     staleTime: 60_000,
   });
-  // Faturas — fonte dinâmica (Stripe via backend). Sem mock na tela.
+  // Invoices — dynamic source (Stripe via backend). No mock on the screen.
   const billingInvoicesQuery = useQuery({
     queryKey: ["billing-invoices"],
     queryFn: () => billingInvoicesService.listInvoices(),
@@ -243,7 +243,7 @@ export default function Configuracoes() {
     confirm: "",
   });
 
-  // Estados para modal de criar papel
+  // State for the create-role modal
   const [createRoleModalOpen, setCreateRoleModalOpen] = useState(false);
   const [newRoleName, setNewRoleName] = useState("");
   const [newRoleDescription, setNewRoleDescription] = useState("");
@@ -271,7 +271,7 @@ export default function Configuracoes() {
   } = useMarketingOAuth();
   const { data: nfeStatus } = useNfeStatus();
 
-  // Estados para aba de Usuários
+  // State for the Users tab
   const [usuarioFormModal, setUsuarioFormModal] = useState<{ open: boolean; mode: "create" | "edit"; usuario?: Usuario }>({ open: false, mode: "create" });
   const [usuarioViewModal, setUsuarioViewModal] = useState<{ open: boolean; usuario?: Usuario }>({ open: false });
   const [usuarioSearchTerm, setUsuarioSearchTerm] = useState("");
@@ -448,17 +448,17 @@ export default function Configuracoes() {
   };
 
   /**
-   * Estado de um card de integração.
+   * State of an integration card.
    *
-   * Provedores sob governança externa (GET /integrations/providers) usam o
-   * estado resolvido pelo BACKEND — que distingue DEPENDENCY_NOT_MET,
-   * REQUIRES_REAUTH e PROVIDER_ERROR, coisas que um booleano `connected` não
-   * consegue representar.
+   * Providers under external governance (GET /integrations/providers) use the
+   * state resolved by the BACKEND — which distinguishes DEPENDENCY_NOT_MET,
+   * REQUIRES_REAUTH and PROVIDER_ERROR, things a `connected` boolean
+   * cannot represent.
    *
-   * `fallbackConnected` cobre apenas as entradas que NÃO são provedores
-   * externos governados (portais de distribuição, captação de leads): elas
-   * continuam com o sinal local, normalizado para o mesmo enum para que o
-   * render tenha um único contrato.
+   * `fallbackConnected` covers only the entries that are NOT governed external
+   * providers (distribution portals, lead capture): they
+   * keep the local signal, normalized to the same enum so the
+   * render has a single contract.
    */
   const providerStatus = (
     id: string,
@@ -474,9 +474,9 @@ export default function Configuracoes() {
   };
 
   /**
-   * Governança do backend: se o provedor é governado e NÃO foi resolvido para
-   * este cliente, ele não aparece. O endpoint já filtra por canView; isto evita
-   * renderizar um card órfão caso a lista local cite um provedor não liberado.
+   * Backend governance: if the provider is governed and was NOT resolved for
+   * this customer, it does not appear. The endpoint already filters by canView; this avoids
+   * rendering an orphan card in case the local list cites a provider that is not enabled.
    */
   const isGovernedButHidden = (id: string): boolean =>
     externalProviders.length > 0
@@ -494,11 +494,11 @@ export default function Configuracoes() {
       category: "Assinatura Digital",
       configurable: true,
     },
-    // Clicksign e DocuSign removidos das opções de produção (Decision Gate
-    // item 13): nenhum dos dois é uma integração de assinatura real hoje —
-    // ver useSigningProviders.ts. Arquitetura de providers preservada para
-    // quando isso mudar.
-    // ── Direitos Autorais ─────────────────────────────────────────────────────
+    // Clicksign and DocuSign removed from the production options (Decision Gate
+    // item 13): neither is a real signature integration today —
+    // see useSigningProviders.ts. Provider architecture preserved for
+    // when that changes.
+    // ── Copyright ─────────────────────────────────────────────────────────────
     {
       id: "ecad",
       name: "ECAD",
@@ -527,14 +527,14 @@ export default function Configuracoes() {
       configurable: true,
     },
     // ── Streaming ─────────────────────────────────────────────────────────────
-    // Removida em 2026-08-23. Métricas de catálogo por plataforma (Spotify, YouTube,
-    // Deezer, SoundCloud, Apple Music) chegam pelo Soundcharts, normalizadas em
-    // artists/platform-profiles/providers/* — não há mais integração analítica
-    // individual a configurar aqui. O backend de cada plataforma continua existindo.
-    // ── Marketing Digital — contas corporativas (métricas + tráfego pago) ──────
-    // Todas as plataformas coexistem num único ecossistema operacional.
-    // Plataformas de ARTISTAS são automáticas via links do cadastro de cada artista.
-    // ── Métricas corporativas — contas oficiais da empresa (login obrigatório)
+    // Removed on 2026-08-23. Per-platform catalog metrics (Spotify, YouTube,
+    // Deezer, SoundCloud, Apple Music) arrive through Soundcharts, normalized in
+    // artists/platform-profiles/providers/* — there is no longer an individual
+    // analytics integration to configure here. Each platform's backend still exists.
+    // ── Digital Marketing — corporate accounts (metrics + paid traffic) ─────────
+    // All platforms coexist in a single operational ecosystem.
+    // ARTIST platforms are automatic via the links in each artist's registration.
+    // ── Corporate metrics — the company's official accounts (login required)
     {
       id: "meta_business",
       name: "Meta Business Suite",
@@ -562,7 +562,7 @@ export default function Configuracoes() {
       category: "Marketing Digital",
       configurable: true,
     },
-    // ── Tráfego pago corporativo
+    // ── Corporate paid traffic
     {
       id: "spotify_ads",
       name: "Spotify Ad Studio",
@@ -582,8 +582,8 @@ export default function Configuracoes() {
       category: "Fiscal",
       configurable: true,
     },
-    // ── Captação de Leads ─────────────────────────────────────────────────────
-    // Integração via snippet de código (pixel JS + webhook + iframe) — sem OAuth.
+    // ── Lead Capture ──────────────────────────────────────────────────────────
+    // Integration via a code snippet (JS pixel + webhook + iframe) — no OAuth.
     {
       id: "website_leads",
       name: "Website / Captação de Leads",
@@ -613,11 +613,11 @@ export default function Configuracoes() {
   ];
 
   /**
-   * Catálogo único (Parte de consolidação): distribuidoras nunca tiveram
-   * governança de plano/backend — sempre acesso externo direto, sem adapter —
-   * então entram no mesmo catálogo com logos sob a categoria "Distribuição
-   * Digital" em vez de permanecer num segundo Card visualmente separado.
-   * status é um placeholder nunca lido: a linha ramifica por `portalUrl`.
+   * Single catalog (consolidation Part): distributors never had
+   * plan/backend governance — always direct external access, no adapter —
+   * so they enter the same catalog with logos under the
+   * "Distribuição Digital" category instead of staying in a visually separate second Card.
+   * status is a placeholder that is never read: the row branches on `portalUrl`.
    */
   const catalogItems: IntegrationCatalogItem[] = [
     ...integracoes,
@@ -632,17 +632,17 @@ export default function Configuracoes() {
     })),
   ];
 
-  // IDs das plataformas corporativas de Marketing Digital (OAuth inline, sem modal separado)
-  // Inclui TODAS as contas da empresa — métricas + tráfego pago.
-  // Artistas funcionam automaticamente via links do cadastro: NÃO estão aqui.
+  // IDs of the corporate Digital Marketing platforms (inline OAuth, no separate modal)
+  // Includes ALL of the company's accounts — metrics + paid traffic.
+  // Artists work automatically via the registration links: they are NOT here.
   const MARKETING_PLATFORM_IDS = new Set<string>([
-    // Métricas corporativas (contas oficiais da empresa)
+    // Corporate metrics (the company's official accounts)
     "meta_business", "tiktok_business", "google_business",
-    // Tráfego pago (contas de anúncios da empresa)
+    // Paid traffic (the company's ad accounts)
     "spotify_ads",
   ]);
 
-  // Handlers para plataformas que abrem um ConfigDialog dedicado
+  // Handlers for platforms that open a dedicated ConfigDialog
   const integrationConfigHandlers: Record<string, () => void> = {
     autentique:    () => setAutentiqueConfigOpen(true),
     ecad:          () => setEcadConfigOpen(true),
@@ -688,7 +688,7 @@ export default function Configuracoes() {
     const saved = await saveCompanySettings(companySettings);
     if (!saved) return;
 
-    // Sincroniza o nome da organização na sidebar e no TenantContext
+    // Syncs the organization name in the sidebar and in TenantContext
     const displayName = companySettings.fantasy_name?.trim() || companySettings.company_name?.trim();
     if (displayName) {
       setTenant(prev => ({ ...prev, name: displayName }));
@@ -857,7 +857,7 @@ export default function Configuracoes() {
                 </CardContent>
               </Card>
 
-              {/* Formulário — Dados da Empresa */}
+              {/* Form — Company Data */}
               <Card className="lg:col-span-2">
                 <CardHeader className="flex flex-row items-start justify-between gap-4">
                   <div>
@@ -990,7 +990,7 @@ export default function Configuracoes() {
 
           </TabsContent>
 
-          {/* Automações */}
+          {/* Automations */}
           <TabsContent value="automacoes" className="mt-6 space-y-6">
             <Card>
               <CardHeader>
@@ -1001,7 +1001,7 @@ export default function Configuracoes() {
                 <CardDescription>Configure quando, como e por qual canal o sistema deve notificar</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Canais de Notificação */}
+                {/* Notification Channels */}
                 <div className="space-y-4">
                   <h4 className="font-medium flex items-center gap-2">
                     <Bell className="h-4 w-4" />
@@ -1132,7 +1132,7 @@ export default function Configuracoes() {
 
                 <Separator />
 
-                {/* Relatórios & Resumos */}
+                {/* Reports & Summaries */}
                 <div className="space-y-4">
                   <h4 className="font-medium flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
@@ -1197,7 +1197,7 @@ export default function Configuracoes() {
 
                 <Separator />
 
-                {/* Frequência & Regras */}
+                {/* Frequency & Rules */}
                 <div className="space-y-4">
                   <h4 className="font-medium flex items-center gap-2">
                     <Clock className="h-4 w-4" />
@@ -1249,7 +1249,7 @@ export default function Configuracoes() {
             </Card>
           </TabsContent>
 
-          {/* Segurança */}
+          {/* Security */}
           <TabsContent value="seguranca" className="mt-6 space-y-6">
             <Card>
               <CardHeader>
@@ -1367,7 +1367,7 @@ export default function Configuracoes() {
             </Card>
           </TabsContent>
 
-          {/* Integrações */}
+          {/* Integrations */}
           <TabsContent value="integracoes" className="mt-6 space-y-6">
             <Card>
               <CardHeader>
@@ -1380,14 +1380,14 @@ export default function Configuracoes() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Catálogo único: cada integração aparece exatamente uma vez, com logo.
-                    Para itens governados pelo backend (publicação + capacidade técnica +
-                    entitlement do plano + conexão), a linha usa a apresentação por
-                    reasonCode (badge/ação/bloqueio de plano) em vez do texto local — a
-                    integração de plano superior aparece BLOQUEADA, nunca escondida.
-                    Internos/billing não chegam aqui — o resolver os exclui por
-                    classificação, nunca um filtro de frontend. Distribuidoras (sempre
-                    acesso externo, sem adapter) entram como categoria própria abaixo. */}
+                {/* Single catalog: each integration appears exactly once, with a logo.
+                    For items governed by the backend (publication + technical capability +
+                    plan entitlement + connection), the row uses the presentation by
+                    reasonCode (badge/action/plan block) instead of the local text — the
+                    higher-plan integration appears BLOCKED, never hidden.
+                    Internal/billing ones do not get here — the resolver excludes them by
+                    classification, never a frontend filter. Distributors (always
+                    external access, no adapter) come in as their own category below. */}
                 {[
                   { key: "Assinatura Digital",   icon: <FileText className="h-4 w-4" /> },
                   { key: "Direitos Autorais",     icon: <Shield className="h-4 w-4" /> },
@@ -1403,7 +1403,7 @@ export default function Configuracoes() {
                   if (items.length === 0) return null;
                   return (
                     <div key={category} className="space-y-3">
-                      {/* Cabeçalho de categoria */}
+                      {/* Category header */}
                       <div className="flex items-center gap-2 pb-1 border-b border-border/50">
                         <span className="text-muted-foreground">{catIcon}</span>
                         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -1411,11 +1411,11 @@ export default function Configuracoes() {
                         </p>
                       </div>
 
-                      {/* Linhas do catálogo único — logo + governança/plano quando o backend
-                          resolve o provedor, texto local nos demais casos. */}
+                      {/* Rows of the single catalog — logo + governance/plan when the backend
+                          resolves the provider, local text in the other cases. */}
                       {items.map((integracao) => {
                         if (integracao.portalUrl) {
-                          // Distribuidora: sempre acesso externo, nunca adapter/Connect.
+                          // Distributor: always external access, never adapter/Connect.
                           return (
                             <div
                               key={integracao.id}
@@ -1447,15 +1447,15 @@ export default function Configuracoes() {
                         const isConnecting = connectingPlatform === integracao.id;
                         const handler = integrationConfigHandlers[integracao.id];
                         const isConfigurable = Boolean(handler);
-                        // Governança do backend (publicação + capacidade técnica + entitlement
-                        // do plano + conexão) para este slug, se ele for um provedor governado
-                        // resolvido para este tenant — ver useExternalProviders.ts.
+                        // Backend governance (publication + technical capability + plan
+                        // entitlement + connection) for this slug, if it is a governed provider
+                        // resolved for this tenant — see useExternalProviders.ts.
                         const governed: ClientIntegration | undefined = findProviderState(externalProviders, integracao.id);
                         const presentation = governed ? INTEGRATION_PRESENTATION[governed.reasonCode] : null;
                         const lockedByPlan = governed?.reasonCode === IntegrationReasonCode.PLAN_NOT_INCLUDED;
-                        // Nenhuma ação (Connect/Configure) quando o backend não autoriza —
-                        // "Coming soon"/"ainda não operacional"/etc. nunca oferecem botão
-                        // funcional, mesmo que exista handler local ou fluxo de OAuth.
+                        // No action (Connect/Configure) when the backend does not authorize it —
+                        // "Coming soon"/"not yet operational"/etc. never offer a working
+                        // button, even if a local handler or OAuth flow exists.
                         const noAction = Boolean(presentation) && presentation!.action === "none";
                         return (
                           <div
@@ -1463,7 +1463,7 @@ export default function Configuracoes() {
                             className="flex items-center justify-between p-4 bg-muted/30 rounded-lg"
                             data-testid={`integration-row-${integracao.id}`}
                           >
-                            {/* Esquerda: ícone + textos */}
+                            {/* Left: icon + texts */}
                             <div className="flex items-center gap-4">
                               {integracao.logoId ? (
                                 <IntegrationLogo id={integracao.logoId} />
@@ -1490,7 +1490,7 @@ export default function Configuracoes() {
                               </div>
                             </div>
 
-                            {/* Direita: badge + botão */}
+                            {/* Right: badge + button */}
                             <div className="flex items-center gap-3 shrink-0 ml-4">
                               {presentation ? (
                                 <Badge
@@ -1581,7 +1581,7 @@ export default function Configuracoes() {
               </CardContent>
             </Card>
 
-            {/* Dialog — Website / Captação de Leads (snippet de código, sem OAuth) */}
+            {/* Dialog — Website / Lead Capture (code snippet, no OAuth) */}
             <Dialog open={websiteLeadOpen} onOpenChange={setWebsiteLeadOpen}>
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
@@ -1704,7 +1704,7 @@ export default function Configuracoes() {
                   />
                 </div>
 
-                {/* Link público */}
+                {/* Public link */}
                 <div className="space-y-2">
                   <Label>Link público</Label>
                   <div className="flex flex-col gap-2 sm:flex-row">
@@ -1732,7 +1732,7 @@ export default function Configuracoes() {
                   )}
                 </div>
 
-                {/* Métricas */}
+                {/* Metrics */}
                 <div className="space-y-2">
                   <div className="grid gap-4 sm:grid-cols-3">
                     {[
@@ -1751,7 +1751,7 @@ export default function Configuracoes() {
                   </p>
                 </div>
 
-                {/* Ações */}
+                {/* Actions */}
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
                     <Button variant="outline" disabled title="Disponível quando o backend de cadastro público estiver ativo">
@@ -1891,7 +1891,7 @@ export default function Configuracoes() {
                     </Card>
                   </div>
 
-                  {/* ── Método de Pagamento ─────────────────────────────────────────────── */}
+                  {/* ── Payment Method ──────────────────────────────────────────────────── */}
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-base">
@@ -1926,7 +1926,7 @@ export default function Configuracoes() {
                     </CardContent>
                   </Card>
 
-                  {/* ── Histórico de Faturas ────────────────────────────────────────────── */}
+                  {/* ── Invoice History ─────────────────────────────────────────────────── */}
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-base">
@@ -1996,7 +1996,7 @@ export default function Configuracoes() {
                     </CardContent>
                   </Card>
 
-                  {/* ── Comparação de Planos / Upgrade ─────────────────────────────────── */}
+                  {/* ── Plan Comparison / Upgrade ───────────────────────────────────────── */}
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-base">
@@ -2075,9 +2075,9 @@ export default function Configuracoes() {
             })()}
           </TabsContent>
 
-          {/* Usuários */}
+          {/* Users */}
           <TabsContent value="usuarios" className="mt-6 space-y-6">
-            {/* Métricas */}
+            {/* Metrics */}
             <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
               {[
                 { label: "Usuários Ativos", value: usuarios.filter((u) => (u.status ?? "ativo") === "ativo").length, icon: Users },
@@ -2109,7 +2109,7 @@ export default function Configuracoes() {
                 <CardDescription>Gerencie o acesso dos usuários</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Convite de Usuário */}
+                {/* User Invitation */}
                 <div className="flex items-center gap-4">
                   <div className="relative flex-1">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -2155,7 +2155,7 @@ export default function Configuracoes() {
                   />
                 ) : (
                   <div className="space-y-2">
-                    {/* Usuários ativos */}
+                    {/* Active users */}
                     {filteredUsuarios.map((usuario) => (
                       <div 
                         key={usuario.id} 
@@ -2259,7 +2259,7 @@ export default function Configuracoes() {
               </CardContent>
             </Card>
 
-            {/* Papéis e Permissões */}
+            {/* Roles and Permissions */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between gap-4">
                 <div>
@@ -2364,7 +2364,7 @@ export default function Configuracoes() {
         mode={usuarioFormModal.mode} 
       />
 
-      {/* Modal de Permissões */}
+      {/* Permissions Modal */}
       <Dialog open={permissionsModalOpen} onOpenChange={setPermissionsModalOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>

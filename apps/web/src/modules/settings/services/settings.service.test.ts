@@ -1,16 +1,16 @@
 import { describe, it, expect, vi } from "vitest";
 
 /**
- * settings.service.test.ts  (Parte 79)
+ * settings.service.test.ts  (Part 79)
  *
- * Guarda permanente: `storage.getRaw`/`setRaw` são stubs que sempre lançam
- * (nunca migrados de localStorage para um endpoint real). Uma chamada
- * síncrona a `settingsService.getOperationalLists()` dentro de
- * `useState(() => ...)` (useOperationalSettings) derrubava a árvore React
- * inteira ao montar QUALQUER componente que a use (LeadFormModal,
- * ArtistaFormModal, ContratoWizard, etc.) — reproduzido via navegador real
- * na página /leads. As quatro leituras nunca podem lançar; devolvem um
- * valor vazio seguro em vez de fabricar dado ou derrubar o app.
+ * Permanent guard: `storage.getRaw`/`setRaw` are stubs that always throw
+ * (never migrated from localStorage to a real endpoint). A synchronous
+ * call to `settingsService.getOperationalLists()` inside
+ * `useState(() => ...)` (useOperationalSettings) brought down the whole React
+ * tree when mounting ANY component using it (LeadFormModal,
+ * ArtistaFormModal, ContratoWizard, etc.) — reproduced via a real browser
+ * on the /leads page. The four reads may never throw; they return a
+ * safe empty value instead of fabricating data or bringing the app down.
  */
 vi.mock("@/shared/lib/storage", () => ({
   storage: {

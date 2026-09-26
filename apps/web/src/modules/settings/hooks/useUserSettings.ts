@@ -4,12 +4,12 @@ import { getSupabaseClient } from "@/lib/supabase";
 import { toast } from "sonner";
 
 /**
- * Configurações pessoais do usuário (notificações/automação) em localStorage,
- * e o slug de cadastro público da organização.
+ * The user's personal settings (notifications/automation) in localStorage,
+ * and the organization's public sign-up slug.
  *
- * Persiste em localStorage por usuário (chave `musicos360_user_settings:<id>`).
- * Dados cadastrais da empresa (razão social, CNPJ, endereço…) NÃO vivem aqui —
- * ver useCompanySettings.ts, que fala com o backend real (GET/PATCH
+ * Persists in localStorage per user (key `musicos360_user_settings:<id>`).
+ * The company's registration data (legal name, CNPJ, address…) does NOT live here —
+ * see useCompanySettings.ts, which talks to the real backend (GET/PATCH
  * /company-settings).
  */
 
@@ -128,8 +128,8 @@ export function useUserSettings() {
       writeJSON(userKey(user.id), updated);
       setUserSettings(updated);
 
-      // Sincroniza full_name e avatar_url com Supabase user_metadata
-      // para refletir na sidebar e em todos os componentes que lêem user.user_metadata
+      // Syncs full_name and avatar_url with Supabase user_metadata
+      // so it reflects in the sidebar and in every component that reads user.user_metadata
       const metaUpdate: Record<string, unknown> = {};
       if (settings.full_name !== undefined) metaUpdate.full_name = settings.full_name;
       if (settings.avatar_url !== undefined) metaUpdate.avatar_url = settings.avatar_url;

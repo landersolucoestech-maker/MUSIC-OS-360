@@ -16,12 +16,12 @@ export interface Usuario {
   created_at: string;
 }
 
-// Referência estável — ver mesmo comentário em shared/hooks/useDataQuery.ts:
-// o default `= []` na desestruturação abaixo alocaria um array novo a cada
-// render enquanto não há dado, quebrando useMemo/useEffect de quem consome
-// (ex.: useAgendaParticipants, que combina esta lista com outras 3 — o loop
-// "Maximum update depth exceeded" reproduzido em SchedulerFormModal vinha
-// daqui).
+// Stable reference — see the same comment in shared/hooks/useDataQuery.ts:
+// the `= []` default in the destructuring below would allocate a new array on every
+// render while there is no data, breaking the consumers' useMemo/useEffect
+// (e.g. useAgendaParticipants, which combines this list with 3 others — the
+// "Maximum update depth exceeded" loop reproduced in SchedulerFormModal came
+// from here).
 const EMPTY_USUARIOS: Usuario[] = [];
 
 interface ApiUser {
@@ -54,7 +54,7 @@ export interface UpdateUsuarioInput {
   phone?: string;
   status?: "ativo" | "inativo";
   role?: string;
-  /** Compatibilidade do formulário legado: `cargo` sempre representou o slug do papel. */
+  /** Legacy form compatibility: `cargo` always represented the role slug. */
   cargo?: string;
 }
 
@@ -95,17 +95,17 @@ export function useUsuarios() {
         await api.patch(`/users/${id}`, profilePayload);
       }
 
-      // Task L: status usa o endpoint dedicado PATCH /users/:id/status (gate
-      // 'owner', protege o último owner) — o PATCH genérico de perfil não
-      // aceita mais este campo.
+      // Task L: status uses the dedicated endpoint PATCH /users/:id/status (gate
+      // 'owner', protects the last owner) — the generic profile PATCH no longer
+      // accepts this field.
       if (status !== undefined) {
         await api.patch(`/users/${id}/status`, { status: status === "ativo" ? "active" : "inactive" });
       }
 
       const effectiveRole = role ?? cargo;
-      // Alteração de papel possui endpoint, autorização e auditoria próprios.
-      // Enviar `role` pelo PATCH genérico contornava a hierarquia do RBAC e
-      // não garantia atualização de role_id.
+      // A role change has its own endpoint, authorization and auditing.
+      // Sending `role` through the generic PATCH bypassed the RBAC hierarchy and
+      // did not guarantee a role_id update.
       if (effectiveRole !== undefined) {
         await api.patch(`/users/${id}/role`, { role: effectiveRole });
       }

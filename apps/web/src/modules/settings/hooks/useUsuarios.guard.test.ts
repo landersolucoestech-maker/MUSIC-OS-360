@@ -1,10 +1,10 @@
 /**
- * Guarda permanente para o contrato HTTP de atualização de usuários.
+ * Permanent guard for the users update HTTP contract.
  *
- * Dados de perfil usam PATCH /users/:id. Alterações de papel devem usar o
- * endpoint RBAC dedicado PATCH /users/:id/role, que possui autorização e
- * auditoria próprias. O alias legado `cargo` pode alimentar o papel, mas nunca
- * deve ser enviado como chave literal ao backend.
+ * Profile data uses PATCH /users/:id. Role changes must use the
+ * dedicated RBAC endpoint PATCH /users/:id/role, which has its own authorization and
+ * auditing. The legacy `cargo` alias may feed the role, but must never
+ * be sent as a literal key to the backend.
  */
 import { describe, expect, it } from "vitest";
 import * as fs from "fs";

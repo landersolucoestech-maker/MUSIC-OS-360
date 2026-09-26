@@ -1,17 +1,17 @@
 /**
- * company-logo.service.ts — gestão da logo da empresa/workspace.
+ * company-logo.service.ts — management of the company/workspace logo.
  *
- * MULTI-TENANT: a logo é sempre isolada por workspaceId. Nunca compartilhar
- * entre organizações.
+ * MULTI-TENANT: the logo is always isolated per workspaceId. Never share it
+ * across organizations.
  *
- *   `company-logo:{workspaceId}`. Espelha a última logo numa chave de preview
- *   público (`company-logo:__public__`) só para demonstrar, em dev, a
- *   renderização na página pública /cadastro/:slug.
- * - Produção: envia/lê via backend, usando o storage já existente do projeto
- *   (Cloudflare R2) sob `company-logos/{workspaceId}/logo`. Endpoints abaixo
- *   serão implementados no backend posteriormente.
+ *   `company-logo:{workspaceId}`. Mirrors the last logo into a public preview
+ *   key (`company-logo:__public__`) only to demonstrate, in dev, the
+ *   rendering on the public /cadastro/:slug page.
+ * - Production: sends/reads via the backend, using the project's already existing storage
+ *   (Cloudflare R2) under `company-logos/{workspaceId}/logo`. The endpoints below
+ *   will be implemented in the backend later.
  *
- * CONTRATO BACKEND (futuro):
+ * BACKEND CONTRACT (future):
  *   POST   /workspaces/{id}/logo   (multipart file)  -> { logoUrl }
  *   DELETE /workspaces/{id}/logo                       -> 204
  *   GET    /public/workspaces/{slug}                   -> { ..., logoUrl }
@@ -40,7 +40,7 @@ function extOf(name: string): string {
   return i >= 0 ? name.slice(i + 1).toLowerCase() : "";
 }
 
-/** Lê os bytes mágicos e confirma que o conteúdo bate com um formato de imagem permitido. */
+/** Reads the magic bytes and confirms the content matches an allowed image format. */
 async function hasValidMagicBytes(file: File): Promise<boolean> {
   const buf = new Uint8Array(await file.slice(0, 12).arrayBuffer());
   const b = (i: number) => buf[i];
@@ -57,8 +57,8 @@ async function hasValidMagicBytes(file: File): Promise<boolean> {
 }
 
 /**
- * Valida o arquivo de logo no frontend: formato, tamanho e integridade real
- * (bytes mágicos — bloqueia executáveis e extensões mascaradas).
+ * Validates the logo file in the frontend: format, size and real integrity
+ * (magic bytes — blocks executables and masked extensions).
  */
 export async function validateLogoFile(file: File): Promise<LogoValidationResult> {
   const ext = extOf(file.name);
@@ -90,24 +90,24 @@ function readAsDataUrl(file: File): Promise<string> {
 }
 
 export const companyLogoService = {
-  /** Retorna a logo do workspace (URL/dataURL) ou null se não houver. */
+  /** Returns the workspace logo (URL/dataURL) or null when there is none. */
   async getLogo(workspaceId: string): Promise<string | null> {
     if (!workspaceId) return null;
-    // Produção: o logoUrl vem agregado nos dados do workspace (backend).
-    // Mantido aqui só por simetria — normalmente já existe no TenantConfig.
+    // Production: logoUrl comes aggregated in the workspace data (backend).
+    // Kept here only for symmetry — it normally already exists in TenantConfig.
     return null;
   },
 
   /**
-   * Valida e salva a logo. Retorna a URL/dataURL final.
-   * Lança Error com mensagem amigável em caso de validação inválida.
+   * Validates and saves the logo. Returns the final URL/dataURL.
+   * Throws an Error with a friendly message on an invalid validation.
    */
   async saveLogo(workspaceId: string, file: File): Promise<string> {
     if (!workspaceId) throw new Error("Workspace não identificado.");
     const validation = await validateLogoFile(file);
     if (!validation.ok) throw new Error(validation.error ?? "Arquivo inválido.");
 
-    // Produção: upload multipart ao backend (R2). Endpoint a implementar no backend.
+    // Production: multipart upload to the backend (R2). Endpoint to be implemented in the backend.
     const form = new FormData();
     form.append("file", file);
     const token = getAccessToken();
@@ -116,7 +116,7 @@ export const companyLogoService = {
       `${API_BASE_URL}/api/v1/workspaces/${encodeURIComponent(workspaceId)}/logo`,
       {
         method: "POST",
-        body: form, // sem Content-Type manual: o browser define o boundary multipart
+        body: form, // no manual Content-Type: the browser sets the multipart boundary
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
           ...(tenantId ? { "X-Tenant-ID": tenantId } : {}),

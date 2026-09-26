@@ -1,19 +1,19 @@
 import { storage } from "@/shared/lib/storage";
 
 /**
- * `storage.getRaw`/`setRaw` são stubs que sempre lançam (ver
- * apps/web/src/shared/lib/storage.ts) — sinalizam código nunca migrado do
- * antigo localStorage para um endpoint real. Chamadas síncronas a esses
- * métodos (ex.: dentro de `useState(() => ...)`, como em useOperationalSettings)
- * lançavam durante a montagem do componente, derrubando a árvore React inteira
- * (crash "removeChild" — reproduzido via navegador real na Parte 79, na
- * página /leads, que monta LeadFormModal/useOperationalSettings mesmo fechado).
+ * `storage.getRaw`/`setRaw` are stubs that always throw (see
+ * apps/web/src/shared/lib/storage.ts) — they flag code never migrated from the
+ * old localStorage to a real endpoint. Synchronous calls to those
+ * methods (e.g. inside `useState(() => ...)`, as in useOperationalSettings)
+ * threw during component mount, bringing down the whole React tree
+ * ("removeChild" crash — reproduced via a real browser in Part 79, on the
+ * /leads page, which mounts LeadFormModal/useOperationalSettings even when closed).
  *
- * Sem backend real para integrations/company_profile/notification_prefs/
- * operational_lists ainda, o comportamento correto é falhar de forma
- * silenciosa e segura (valor vazio), não derrubar o app — a classificação
- * real é "não suportado", não "sucesso fabricado": nenhum dado é inventado,
- * apenas a leitura/escrita vira no-op documentado.
+ * Without a real backend for integrations/company_profile/notification_prefs/
+ * operational_lists yet, the correct behavior is to fail in a
+ * silent and safe way (empty value), not to bring the app down — the real
+ * classification is "not supported", not "fabricated success": no data is invented,
+ * only the read/write becomes a documented no-op.
  */
 function safeGetRaw<T>(key: string, fallback: T): T {
   try {
@@ -27,7 +27,7 @@ function safeSetRaw<T>(key: string, value: T): void {
   try {
     storage.setRaw(key, value);
   } catch {
-    // Sem endpoint real ainda — no-op documentado, nunca derruba o app.
+    // No real endpoint yet — a documented no-op, it never brings the app down.
   }
 }
 

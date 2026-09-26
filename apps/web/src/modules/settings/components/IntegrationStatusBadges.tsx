@@ -8,11 +8,11 @@ import { ExternalProviderStatus } from "@music-os-360/types";
 
 
 /**
- * O badge passou a renderizar o enum de governança (ExternalProviderStatus) em
- * vez do par "conectado"/"desconectado". Motivo: aquele booleano não conseguia
- * distinguir "indisponível na plataforma", "precisa reautenticar" e "erro no
- * provedor" — os três apareciam como "Desconectado", o que escondia do
- * utilizador qual era a ação necessária.
+ * The badge now renders the governance enum (ExternalProviderStatus) instead
+ * of the "connected"/"disconnected" pair. Reason: that boolean could not
+ * distinguish "unavailable on the platform", "needs re-authentication" and "provider
+ * error" — all three showed up as "Desconectado", which hid from the
+ * user which action was needed.
  */
 export type IntegrationConnectionStatus = ExternalProviderStatus;
 
@@ -37,8 +37,8 @@ const noticeBadgeVariant: Record<IntegrationNoticeVariant, BadgeVariant> = {
   destructive: "danger",
 };
 
-/** Tom da apresentação → variante do design system. */
-/** Rótulo/tom por estado de CONEXÃO do tenant (dimensão separada da política). */
+/** Presentation tone → design-system variant. */
+/** Label/tone per tenant CONNECTION state (a dimension separate from policy). */
 const CONNECTION_PRESENTATION: Record<ExternalProviderStatus, { label: string; variant: BadgeVariant }> = {
   [ExternalProviderStatus.CONNECTED]:               { label: 'Conectado',            variant: 'success' },
   [ExternalProviderStatus.AVAILABLE_NOT_CONNECTED]: { label: 'Não conectado',        variant: 'neutral' },

@@ -4,10 +4,10 @@ import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 
 /**
- * Configuração cadastral da empresa — persistida no backend real
- * (GET/PATCH /company-settings, tenant-scoped, RLS + CNPJ criptografado).
- * Mantém o mesmo shape plano em pt-BR usado pela tela de Configurações e pelo
- * formulário de Nota Fiscal, mapeando de/para o DTO aninhado do backend.
+ * The company's registration settings — persisted in the real backend
+ * (GET/PATCH /company-settings, tenant-scoped, RLS + encrypted CNPJ).
+ * Keeps the same flat pt-BR shape used by the Settings screen and by the
+ * invoice form, mapping to/from the backend's nested DTO.
  */
 export interface CompanySettings {
   id?: string;

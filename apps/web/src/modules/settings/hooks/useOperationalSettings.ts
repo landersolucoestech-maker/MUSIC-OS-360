@@ -69,15 +69,15 @@ export const DEFAULT_LEAD_CATEGORIES: OperationalListItem[] = [
   { id: "lead-category-agencia", kind: "lead_category", name: "Agência", slug: "agencia", description: "Agência, produtora ou parceiro comercial.", active: true, order: 40, group: "Leads" },
 ];
 
-// Slugs alinhados 1:1 ao enum real LeadStatus (@music-os-360/types) e ao
-// workflow apps/api/src/core/workflow/definitions/leads.workflow.ts — os
-// slugs anteriores (novo_lead/proposta_enviada) não existem no backend;
-// qualquer PATCH /leads com esses valores era rejeitado por @IsIn(STATUSES).
-// 2026-09-10: LeadStatus foi renomeado para inglês (NOVO->NEW, CONTATO->CONTACTED,
+// Slugs aligned 1:1 with the real LeadStatus enum (@music-os-360/types) and with the
+// workflow apps/api/src/core/workflow/definitions/leads.workflow.ts — the
+// previous slugs (novo_lead/proposta_enviada) do not exist in the backend;
+// any PATCH /leads with those values was rejected by @IsIn(STATUSES).
+// 2026-09-10: LeadStatus was renamed to English (NOVO->NEW, CONTATO->CONTACTED,
 // EM_CONTATO->IN_CONTACT, QUALIFICADO->QUALIFIED, PROPOSTA->PROPOSAL,
 // NEGOCIACAO->NEGOTIATION, FECHADO->CLOSED, PERDIDO->LOST, INATIVO->INACTIVE) —
-// os slugs abaixo são o valor físico realmente gravado em leads.status via
-// LeadFormModal/InternalCRMFields; mantidos em sincronia com o enum canônico.
+// the slugs below are the physical value actually written to leads.status via
+// LeadFormModal/InternalCRMFields; kept in sync with the canonical enum.
 export const DEFAULT_LEAD_STATUSES: OperationalListItem[] = [
   { id: "lead-status-novo", kind: "lead_status", name: "Novo", slug: "new", description: "Lead recebido e ainda não qualificado.", active: true, order: 10, group: "Pipeline" },
   { id: "lead-status-contato", kind: "lead_status", name: "Contato", slug: "contacted", description: "Primeiro contato realizado.", active: true, order: 20, group: "Pipeline" },

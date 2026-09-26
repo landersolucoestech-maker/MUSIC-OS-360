@@ -1,23 +1,23 @@
 /**
- * billing-invoices.service.ts — histórico de faturas do workspace.
+ * billing-invoices.service.ts — the workspace's invoice history.
  *
- * Fonte da verdade: Stripe (via backend). NUNCA dados falsos na tela.
- *     A tela exibe empty state honesto (nada de faturas fake).
- *   - Produção: backend agrega as faturas do Stripe.
+ * Source of truth: Stripe (via backend). NEVER fake data on the screen.
+ *     The screen shows an honest empty state (no fake invoices).
+ *   - Production: the backend aggregates the Stripe invoices.
  *
- * CONTRATO BACKEND (futuro):
+ * BACKEND CONTRACT (future):
  *   GET /billing/invoices -> ApiResponse<BillingInvoice[]>
  */
 import { api } from "@/shared/lib/api-client";
 
 export interface BillingInvoice {
   id: string;
-  /** Número/identificador da fatura. */
+  /** Invoice number/identifier. */
   number?: string | null;
   date: string;
   amount: string;
   status: string;
-  /** Classe de cor do status (mesmo padrão da tabela). */
+  /** Status color class (same pattern as the table). */
   statusColor?: string;
   pdfUrl?: string | null;
   stripeUrl?: string | null;

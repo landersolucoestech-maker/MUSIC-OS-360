@@ -1,8 +1,8 @@
 /**
  * settings/pages/Billing.tsx
  *
- * Página de Billing — plano actual, upgrade e portal de gestão Stripe.
- * Subscreve ao WebSocket 'billing:plan_upgraded' para atualizar UI em tempo real.
+ * Billing page — current plan, upgrade and the Stripe management portal.
+ * Subscribes to the 'billing:plan_upgraded' WebSocket event to update the UI in real time.
  */
 
 import { useEffect } from "react";
@@ -99,7 +99,7 @@ export default function Billing() {
     retry:    false,
   });
 
-  // WebSocket: atualiza plano em tempo real após upgrade
+  // WebSocket: updates the plan in real time after an upgrade
   useWsEvent("billing:plan_upgraded", () => {
     queryClient.invalidateQueries({ queryKey: ["billing", "subscription"] });
     toast.success("Plano atualizado!", { description: "O seu plano foi atualizado com sucesso." });
@@ -133,7 +133,7 @@ export default function Billing() {
     onError:    () => toast.error("Erro ao abrir portal"),
   });
 
-  // Parâmetros de URL após redirect do Stripe
+  // URL parameters after the Stripe redirect
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("success") === "1") {
@@ -212,7 +212,7 @@ export default function Billing() {
         </CardContent>
       </Card>
 
-      {/* Planos disponíveis */}
+      {/* Available plans */}
       <div>
         <h2 className="text-sm font-medium text-muted-foreground mb-4  tracking-wide">
           Planos disponíveis
