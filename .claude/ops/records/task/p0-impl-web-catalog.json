@@ -1,0 +1,10 @@
+{
+  "id": "p0-impl-web-catalog",
+  "createdAt": "2026-09-26T10:07:09.207Z",
+  "title": "Rename catalog domain (web) CZ-005/006/007",
+  "criterionIds": [
+    "ac-ffaa4498"
+  ],
+  "assignedAgent": "implementation-engineer",
+  "status": "DISPATCHED"
+}

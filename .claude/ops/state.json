@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T09:23:35.553Z",
+  "updatedAt": "2026-09-26T09:59:48.738Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -806,7 +806,21 @@
           "text": "Z3 PT declared symbols (components, hooks, types, interfaces, functions, methods, local variables) renamed; wire/DB properties classified as exceptions or migrated at a boundary",
           "evidenceIds": [
             "evid-4fbf9c97",
-            "evid-d3be2af0"
+            "evid-d3be2af0",
+            "evid-2635ae91",
+            "evid-4a852ae0",
+            "evid-15647910",
+            "evid-1427ae72",
+            "evid-e377113e",
+            "evid-610b4644",
+            "evid-ddd2c2e8",
+            "evid-0245c08c",
+            "evid-d875ed33",
+            "evid-b81a7ea1",
+            "evid-ab849885",
+            "evid-a0379cd4",
+            "evid-e11eaa49",
+            "evid-94f4f697"
           ],
           "status": "closed"
         },
@@ -1894,7 +1908,21 @@
     "evid-d3be2af0",
     "evid-32cc8439",
     "evid-efca0182",
-    "evid-f787abfe"
+    "evid-f787abfe",
+    "evid-2635ae91",
+    "evid-4a852ae0",
+    "evid-15647910",
+    "evid-1427ae72",
+    "evid-e377113e",
+    "evid-610b4644",
+    "evid-ddd2c2e8",
+    "evid-0245c08c",
+    "evid-d875ed33",
+    "evid-b81a7ea1",
+    "evid-ab849885",
+    "evid-a0379cd4",
+    "evid-e11eaa49",
+    "evid-94f4f697"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

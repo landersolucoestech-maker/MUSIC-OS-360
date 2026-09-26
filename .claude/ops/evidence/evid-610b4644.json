@@ -1,0 +1,15 @@
+{
+  "id": "evid-610b4644",
+  "createdAt": "2026-09-26T09:52:26.331Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter web exec vitest run src/modules/releases src/modules/dashboard/hooks/useMetrics.test.ts src/test/ArtistVision360Modal.test.tsx src/test/no-module-level-import-export.guard.test.ts src/modules/marketing --config vitest.config.mjs",
+  "command": "pnpm --filter web exec vitest run src/modules/releases src/modules/dashboard/hooks/useMetrics.test.ts src/test/ArtistVision360Modal.test.tsx src/test/no-module-level-import-export.guard.test.ts src/modules/marketing --config vitest.config.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "RUN  v2.1.9 /home/user/MUSIC-OS-360/apps/web\n\n ✓ src/modules/marketing/pages/Calendario.creative.test.ts (14 tests) 16ms\n ✓ src/modules/marketing/creative/static-export.test.ts (9 tests) 34ms\n ✓ src/modules/marketing/pages/creative-template-surface.test.tsx (15 tests) 203ms\n ✓ src/modules/marketing/services/marketing.service.test.ts (6 tests) 21ms\n ✓ src/modules/releases/services/form-to-payload.mapper.test.ts (17 tests) 12ms\n ✓ src/modules/dashboard/hooks/useMetrics.test.ts (2 tests) 60ms\n ✓ src/test/no-module-level-import-export.guard.test.ts (24 tests) 11ms\n ✓ src/modules/marketing/pages/Campanhas.estimated-metrics-disclosure.guard.test.ts (3 tests) 5ms\n ✓ src/modules/marketing/components/campaign-builder/campaign-builder.helpers.estimated-metrics.guard.test.ts (2 tests) 9ms\n ✓ src/modules/releases/components/ReleaseFormModal.no-fake-distribution.guard.test.ts (2 tests) 4ms\n ✓ src/test/ArtistVision360Modal.test.tsx (3 tests) 1660ms\n   ✓ <ArtistVision360Modal /> cards de plataforma na aba Perfil > renderiza traço quando nenhuma URL de plataforma está configurada 990ms\n   ✓ <ArtistVision360Modal /> cards de plataforma na aba Perfil > renderiza 'Não sincronizado' quando ha URL mas nenhum snapshot ainda 390ms\n\n Test Files  11 passed (11)\n      Tests  97 passed (97)\n   Start at  09:52:15\n   Duration  11.05s (transform 2.20s, setup 4.14s, collect 6.69s, tests 2.04s, environment 10.44s, prepare 1.52s)",
+  "stderrTail": "",
+  "workspaceFingerprint": "0326feb521e8970a168301f4117bde8dfc1ba685f135b1a3b364948abe71e006",
+  "fingerprintStatus": "BOUND",
+  "head": "c8c4399e24dfce3dec58ad90d87372e44f2289fa",
+  "durationMs": 12503
+}
