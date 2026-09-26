@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T03:44:45.149Z",
+  "updatedAt": "2026-09-26T03:49:39.558Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -715,6 +715,34 @@
         }
       ],
       "createdAt": "2026-09-26T03:40:31.257Z"
+    },
+    {
+      "id": "req-eba5c073",
+      "text": "Log/audit/telemetry sinks never record credential-bearing query-string values (OAuth code/state, hub.verify_token, token/secret-like keys): HTTP access log, exception filter log + Sentry path tag, persisted audit httpPath, guard error messages",
+      "nonRequirements": [
+        "Do not change response bodies or routing"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-dab34fba",
+          "text": "redactUrl unit spec + LoggingInterceptor spec (success and error lines) pass; interceptor mutation (raw url) fails 2/2",
+          "evidenceIds": [
+            "evid-306119e9"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-98d7b5a7",
+          "text": "Regression: api typecheck, lint, test:ci exit 0 on final workspace",
+          "evidenceIds": [
+            "evid-f6627606",
+            "evid-e835dd8e",
+            "evid-37d6a96e"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-26T03:47:08.617Z"
     }
   ],
   "findings": [
@@ -1137,11 +1165,11 @@
       "line": null,
       "summary": "HTTP access log records the full URL including query string, so OAuth callback ?code=/state= values reach logs.",
       "rootCause": null,
-      "disposition": "DIVIDA_ACEITA",
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T02:40:00.000Z",
-      "justification": "S19=RISCO_NAO_RESOLVIDO | Low: codes single-use and short-lived, state HMAC-signed and expiring. Fix candidate: log path without query or redact code/state/token params via core/security/redact.ts. Scheduled with the observability cluster.",
-      "resolvedAt": "2026-09-26T03:04:42.019Z",
+      "justification": "S19=CORRIGIDO | commit=ec59061 | redactUrl applied to access log, exception filter log + Sentry tag, audit httpPath, guard messages | tests: redact spec (code/state, hub.verify_token, secret-like keys, encoded/case/no-query), LoggingInterceptor spec success+error lines; mutation fails 2/2 evid-306119e9 | regression: test:ci evid-37d6a96e | consumers re-audited: all request.url/originalUrl uses in src (rbac-decision endpoint uses route pattern; billing/must-change-password/rate-limit guards use path only for matching, not logging)",
+      "resolvedAt": "2026-09-26T03:49:39.557Z",
       "restoredAfterLostUpdate": "dec-ops-lost-update-restoration"
     },
     {
@@ -1754,7 +1782,11 @@
     "evid-1044229d",
     "evid-4ebf6111",
     "evid-018dfaeb",
-    "evid-a443ac5c"
+    "evid-a443ac5c",
+    "evid-306119e9",
+    "evid-f6627606",
+    "evid-e835dd8e",
+    "evid-37d6a96e"
   ],
   "checkpointIds": [
     "chec-e661a7aa",
