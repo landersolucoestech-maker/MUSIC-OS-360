@@ -29,6 +29,11 @@
     "cleanup:check": "node scripts/cleanup/cleanup-check.mjs",
     "verify:critical-workflows": "node scripts/verify-critical-workflows.mjs",
     "verify:xlsx-only": "node scripts/verify-xlsx-only.mjs",
+    "naming:census": "node scripts/naming/technical-naming-census.mjs --report",
+    "naming:baseline": "node scripts/naming/technical-naming-census.mjs --write",
+    "naming:generate": "node scripts/naming/render-naming-docs.mjs",
+    "naming:validate": "node scripts/naming/validate-canonical-map.mjs",
+    "naming:check": "node scripts/naming/technical-naming-census.mjs --check && node scripts/naming/validate-canonical-map.mjs && node scripts/naming/render-naming-docs.mjs --check && node --test scripts/naming/technical-naming-census.test.mjs",
     "release:check": "node scripts/release-check.mjs",
     "release:migrate": "node scripts/release-check.mjs --migrate"
   },

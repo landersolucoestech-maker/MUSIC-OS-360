@@ -44,6 +44,9 @@ jobs:
       - name: Verify permanent branch topology
         run: node scripts/verify-branch-topology.mjs
 
+      - name: Naming check (ratchet, canonical map vs schema, generated docs in sync, guard tests)
+        run: pnpm run naming:check
+
       - name: TypeCheck (all workspaces)
         run: pnpm turbo typecheck
 
