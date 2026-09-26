@@ -12,7 +12,8 @@
  *                     and members, methods, properties, variables, parameters),
  *                     file names, directory names, env var names, event / queue /
  *                     job names, API route paths, test titles, technical comments
- *   report-only       frontend route paths, migration file names (historical),
+ *   report-only       frontend route paths, object-literal keys (mostly wire/DB
+ *                     field names), migration file names (historical),
  *                     DB columns (enforced separately by
  *                     apps/api/src/database/pt-column-naming-baseline.guard.spec.ts)
  *   not scanned       user-facing strings (JSX text, string values, labels),
@@ -83,21 +84,33 @@ export function scanSource(relPath, text) {
     if (ts.isFunctionDeclaration(n)) ident("function", n.name, n);
     else if (ts.isClassDeclaration(n)) ident("class", n.name, n);
     else if (ts.isInterfaceDeclaration(n)) ident("interface", n.name, n);
-    else if (ts.isTypeAliasDeclaration(n)) ident("type", n.name, n);
+    else if (ts.isTypeAliasDeclaration(n)) {
+      ident("type", n.name, n);
+      // event/analytics name unions: type AnalyticsEventName = "release.created" | ...
+      if (/event|queue|job/i.test(n.name.text)) {
+        const lits = [];
+        const collect = (t) => { if (ts.isUnionTypeNode(t)) t.types.forEach(collect); else if (ts.isLiteralTypeNode(t) && ts.isStringLiteral(t.literal)) lits.push(t.literal); };
+        collect(n.type);
+        for (const l of lits) evt(l.text, l);
+      }
+    }
     else if (ts.isEnumDeclaration(n)) ident("enum", n.name, n);
     else if (ts.isEnumMember(n)) ident("enum-member", n.name, n);
     else if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name)) {
       ident("variable", n.name, n);
       let init = n.initializer;
       while (init && (ts.isAsExpression(init) || ts.isParenthesizedExpression(init) || (ts.isSatisfiesExpression && ts.isSatisfiesExpression(init)))) init = init.expression;
-      if (init && ts.isObjectLiteralExpression(init) && /EVENT|QUEUE|JOB/.test(n.name.text)) {
+      if (init && ts.isObjectLiteralExpression(init) && /event|queue|job/i.test(n.name.text)) {
         for (const p of init.properties) if (ts.isPropertyAssignment(p) && ts.isStringLiteral(p.initializer)) evt(p.initializer.text, p);
       }
     } else if (ts.isMethodDeclaration(n) || ts.isMethodSignature(n)) ident("method", n.name, n);
     else if (ts.isPropertyDeclaration(n) || ts.isPropertySignature(n)) ident("property", n.name, n);
-    else if (ts.isPropertyAssignment(n)) {
+    else if (ts.isPropertyAssignment(n) || ts.isShorthandPropertyAssignment(n)) {
       if (isEnvSchema && ts.isIdentifier(n.name)) env(n.name.text, n);
       else if (ts.isStringLiteral(n.name) && TECHNICAL_NAME.test(n.name.text) && n.name.text.includes(".")) ident("i18n-key", n.name, n);
+      else if ((ts.isIdentifier(n.name) || ts.isStringLiteral(n.name)) && TECHNICAL_NAME.test(n.name.text.replace(/[A-Z]/g, (c) => c.toLowerCase())) && ptWords(n.name.text).length) {
+        add("objectKey", "object-key", n.name.text, lineOf(n)); // report-only: mostly wire/DB field names
+      }
     } else if (ts.isParameter(n) && ts.isIdentifier(n.name)) ident("parameter", n.name, n);
     else if (ts.isPropertyAccessExpression(n) && isEnvAccess(n.expression)) env(n.name.text, n);
     else if (ts.isElementAccessExpression(n) && isEnvAccess(n.expression) && ts.isStringLiteral(n.argumentExpression)) env(n.argumentExpression.text, n);
@@ -145,7 +158,7 @@ const isMigration = (f) => f.includes("/migrations/");
 export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
   const debt = {};
   const excepted = {};
-  const reportOnly = { migrationFiles: 0, frontendRoutes: {} };
+  const reportOnly = { migrationFiles: 0, frontendRoutes: {}, objectKeys: {} };
   const surfaces = Object.fromEntries(["apiRoute", "comment", "directory", "envVar", "eventQueueJob", "filename", "identifier", "testTitle"].map((k) => [k, { candidates: 0, exceptions: 0 }]));
   let filesScanned = 0;
   const dirs = new Set();
@@ -158,6 +171,7 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
       continue; // historical: published migration names and SQL are immutable history
     }
     for (const h of scanSource(f, text)) {
+      if (h.surface === "objectKey") { reportOnly.objectKeys[h.name] = (reportOnly.objectKeys[h.name] ?? 0) + 1; continue; }
       {
         const key = h.surface === "comment" ? `comment::${f}` : h.surface === "directory" ? `directory::${h.name}` : `${h.surface}::${f}::${h.kind}::${h.name}`;
         const exc = h.name && exceptions.get(h.name);
@@ -178,7 +192,11 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
     surfaces: sorted(surfaces),
     debt: sorted(debt),
     excepted: sorted(excepted),
-    reportOnly: { migrationFiles: reportOnly.migrationFiles, frontendRoutes: Object.keys(reportOnly.frontendRoutes).sort() },
+    reportOnly: {
+      migrationFiles: reportOnly.migrationFiles,
+      frontendRoutes: Object.keys(reportOnly.frontendRoutes).sort(),
+      objectKeys: sorted(reportOnly.objectKeys),
+    },
   };
 }
 

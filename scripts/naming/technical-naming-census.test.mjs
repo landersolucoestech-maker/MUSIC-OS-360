@@ -158,3 +158,17 @@ test("tooling error: a missing baseline fails explicitly (exit 2), never false s
   assert.equal(r.status, 2, r.stderr);
   assert.match(r.stderr, /baseline not found/);
 });
+
+test("events: string-literal unions of *Event* types and camelCase/PascalCase event tables are checked", () => {
+  const bad = `export type AnalyticsEventName = "lancamento.created" | "release.created";
+    export const DomainEvents = { A: "contrato.signed" };`;
+  assert.deepEqual(names(scanSource("apps/web/src/e.ts", bad), "eventQueueJob"), ["lancamento.created", "contrato.signed"]);
+  const good = `export type AnalyticsEventName = "release.created" | "contract.signed";`;
+  assert.deepEqual(names(scanSource("apps/web/src/e.ts", good), "eventQueueJob"), []);
+});
+
+test("object-literal keys are a report-only surface (wire/DB field names), never debt", () => {
+  const hits = scanSource("apps/web/src/m.ts", `export const payload = { data_lancamento: x, nome: y };`);
+  assert.deepEqual(names(hits, "objectKey"), ["data_lancamento", "nome"]);
+  assert.deepEqual(names(hits, "identifier"), []);
+});
