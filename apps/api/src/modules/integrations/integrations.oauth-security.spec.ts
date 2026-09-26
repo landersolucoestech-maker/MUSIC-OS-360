@@ -37,7 +37,7 @@ describe('IntegrationsController OAuth token boundary', () => {
       }),
     };
     integrationBase.saveOAuthTokens.mockImplementation(async () => {
-      if (!insideContext) throw new Error('saveOAuthTokens chamado fora do contexto de tenant');
+      if (!insideContext) throw new Error('saveOAuthTokens called outside the tenant context');
     });
 
     const noop = {};

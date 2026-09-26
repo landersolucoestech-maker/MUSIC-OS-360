@@ -320,10 +320,10 @@ export class ImportCommitService {
 
     if (!repeatingGroup || !hasRepeatingItems) return;
     const insertedId = (result as Array<{ id: string }>)[0]?.id;
-    if (!insertedId) throw new Error(`[reports-import] INSERT sem id retornado para grupo repetível: ${def.tableName}`);
+    if (!insertedId) throw new Error(`[reports-import] INSERT returned no id for repeatable group: ${def.tableName}`);
 
     const writer = REPEATING_GROUP_IMPORT_WRITERS[`${def.tableName}.${repeatingGroup.key}`];
-    if (!writer) throw new Error(`[reports-import] grupo repetível sem writer registrado: ${def.tableName}.${repeatingGroup.key}`);
+    if (!writer) throw new Error(`[reports-import] repeatable group without a registered writer: ${def.tableName}.${repeatingGroup.key}`);
 
     await writer(qr, tenantId, insertedId, items);
   }

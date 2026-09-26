@@ -94,7 +94,7 @@ describe('ExternalDataProcessor — job desconhecido falha visivelmente', () => 
 
   for (const name of [WORKFLOW_JOB_NAMES.DISTRIBUTION_SYNC, SPOTIFY_JOB_NAMES.ACCOUNT_SYNC, 'qualquer-outro']) {
     it(`'${name}' lança erro em vez de ser concluído sem trabalho`, async () => {
-      await expect(processor.process({ name, id: 'j', data: { tenantId: 't1' } } as never)).rejects.toThrow(/sem handler/);
+      await expect(processor.process({ name, id: 'j', data: { tenantId: 't1' } } as never)).rejects.toThrow(/without a handler/);
     });
   }
 });

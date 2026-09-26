@@ -35,7 +35,7 @@ describe('RebuildMarketingProjectsInCanonicalFormOrder20260719000008', () => {
   it('drops organization_id (proven orphan) with fail-fast validation', () => {
     expect(migrationSrc).not.toMatch(/newColumns = `[^`]*organization_id/);
     expect(migrationSrc).toMatch(/count\(organization_id\)::int AS non_null/);
-    expect(migrationSrc).toMatch(/presumida órfã, mas há dado real/);
+    expect(migrationSrc).toMatch(/column presumed orphaned, but real data exists/);
   });
 
   it('the audit block is created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
@@ -64,7 +64,7 @@ describe('RebuildMarketingProjectsInCanonicalFormOrder20260719000008', () => {
     expect(migrationSrc).toMatch(/fk_marketing_projects_financial_project/);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
-    expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });
 });

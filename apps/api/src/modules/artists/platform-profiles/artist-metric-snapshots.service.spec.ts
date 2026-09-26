@@ -202,7 +202,7 @@ describe('ArtistMetricSnapshotsService', () => {
     const result = await service.recordFromProfileSnapshot(
       baseSnapshot({
         sync_status: 'failed',
-        last_error: 'Spotify API respondeu 429',
+        last_error: 'Spotify API responded 429',
         monthly_listeners: null,
         raw_payload: { observed_at: '2026-08-01T00:00:00.000Z' },
       }),

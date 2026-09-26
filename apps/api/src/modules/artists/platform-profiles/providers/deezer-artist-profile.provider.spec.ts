@@ -79,7 +79,7 @@ describe('DeezerArtistProfileProvider.resolve (Metrics Phase 1 — protection ag
   it('a real Soundcharts error (not 404) during resolution propagates as a genuine failure (retry must happen)', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
-      resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: serviço indisponível')),
+      resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: service unavailable')),
       getDeezerFans: jest.fn(),
     } as unknown as SoundchartsService;
     const provider = new DeezerArtistProfileProvider(soundcharts);
@@ -90,6 +90,6 @@ describe('DeezerArtistProfileProvider.resolve (Metrics Phase 1 — protection ag
       externalId: '9635624',
       externalUrl: null,
       canonicalUrls: {},
-    })).rejects.toThrow('Soundcharts 503: serviço indisponível');
+    })).rejects.toThrow('Soundcharts 503: service unavailable');
   });
 });

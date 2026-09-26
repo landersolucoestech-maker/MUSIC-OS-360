@@ -14,7 +14,7 @@ describe('parseExportParams — XLSX contract without pagination', () => {
     for (const format of ['xml', 'pdf', 'txt']) {
       try {
         parseExportParams({ format });
-        throw new Error('deveria ter lançado');
+        throw new Error('should have thrown');
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
         expect((error as BadRequestException).getStatus()).toBe(400);

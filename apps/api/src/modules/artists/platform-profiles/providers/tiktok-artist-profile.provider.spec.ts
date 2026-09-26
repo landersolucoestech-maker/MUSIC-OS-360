@@ -196,7 +196,7 @@ describe('TikTokArtistProfileProvider.resolve (Phase 1.3 — the registered hand
 
       await expect(
         provider.resolve({ tenantId: 't1', artistId: 'a1', externalId: null, externalUrl: 'https://twitter.com/djstayoficial', canonicalUrls: CANONICAL_URLS }),
-      ).rejects.toThrow('TikTok username ausente ou inválido');
+      ).rejects.toThrow('TikTok username missing or invalid');
     });
 
     it('an empty identifier is rejected', async () => {
@@ -208,7 +208,7 @@ describe('TikTokArtistProfileProvider.resolve (Phase 1.3 — the registered hand
 
       await expect(
         provider.resolve({ tenantId: 't1', artistId: 'a1', externalId: null, externalUrl: '', canonicalUrls: CANONICAL_URLS }),
-      ).rejects.toThrow('TikTok username ausente ou inválido');
+      ).rejects.toThrow('TikTok username missing or invalid');
     });
   });
 });

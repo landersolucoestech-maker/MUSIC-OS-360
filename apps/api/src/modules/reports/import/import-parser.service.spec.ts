@@ -33,7 +33,7 @@ function mutateFirstCentralDirectoryEntry(
       return copy;
     }
   }
-  throw new Error('Diretório central não encontrado no fixture.');
+  throw new Error('Central directory not found in the fixture.');
 }
 
 describe('ImportParserService — hardening XLSX', () => {
@@ -59,7 +59,7 @@ describe('ImportParserService — hardening XLSX', () => {
     const content = workbookBuffer([['Campo']]);
     try {
       service.parse('artists.txt', content);
-      throw new Error('deveria ter lançado');
+      throw new Error('should have thrown');
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequestException);
       expect((error as BadRequestException).getResponse()).toMatchObject({
@@ -72,7 +72,7 @@ describe('ImportParserService — hardening XLSX', () => {
     const fakeContent = Buffer.from('nome;email\nAna;a@example.com\n', 'utf8');
     try {
       service.parse('artists.xlsx', fakeContent);
-      throw new Error('deveria ter lançado');
+      throw new Error('should have thrown');
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequestException);
       expect((error as BadRequestException).getResponse()).toMatchObject({

@@ -25,7 +25,7 @@ function makeAi(content: string) {
 }
 
 function makeFailingAi() {
-  return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
+  return { complete: jest.fn(async () => { throw new Error('No AI provider configured'); }) };
 }
 
 /** Routes by table: tenants -> tenantRow; counts -> counts[table]. */
@@ -98,7 +98,7 @@ describe('OnboardingCroAutomation (ON_DEMAND: POST /auth/onboarding/ai/progress-
     const ds = makeDs({ name: 'Gravadora X', onboarding_completed: true }, FULL_COUNTS);
     const handler = new OnboardingCroAutomation(ds as never, skillRun as never, ai as never);
 
-    await expect(handler.run('t1', 'u1')).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.run('t1', 'u1')).rejects.toThrow('No AI provider configured');
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'onboarding-cro', expect.any(Error));
   });
 });

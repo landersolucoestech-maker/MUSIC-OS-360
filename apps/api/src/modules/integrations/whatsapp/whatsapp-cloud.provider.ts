@@ -66,7 +66,7 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
   private async listPhoneNumberBindings(): Promise<Array<{ tenantId: string; phoneNumberId: string }>> {
     const ds = this.adminDs ?? null;
     if (!ds) {
-      throw new Error('ADMIN_DATA_SOURCE indisponível — resolução de identidade WhatsApp não pode rodar sem conexão de sistema');
+      throw new Error('ADMIN_DATA_SOURCE unavailable — WhatsApp identity resolution cannot run without a system connection');
     }
     const rows = await ds.getRepository(IntegrationEntity)
       .createQueryBuilder('i')

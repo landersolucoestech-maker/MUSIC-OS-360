@@ -277,7 +277,7 @@ describe('SoundchartsService', () => {
     it('resolveCanonicalArtistUuid: uses the first candidate that resolves and ignores the rest', async () => {
       const resolveSpy = jest.spyOn(service, 'resolveArtistByPlatform').mockImplementation(async (platform: string) => {
         if (platform === 'youtube') return 'sc-uuid-yt';
-        throw new Error('não encontrado');
+        throw new Error('not found');
       });
 
       const uuid = await service.resolveCanonicalArtistUuid([

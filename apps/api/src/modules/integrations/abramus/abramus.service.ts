@@ -46,7 +46,7 @@ export class AbramusService extends IntegrationBaseService {
 
   private async request<T>(tenantId: string, path: string, init: RequestInit = {}): Promise<T> {
     const creds = await this.loadCredentials<AbramusCreds>(tenantId, PROVIDER);
-    if (!creds) throw new Error('Abramus não configurado para este tenant');
+    if (!creds) throw new Error('Abramus not configured for this tenant');
     const token = await this.getAuthToken(creds);
     const res = await this.fetch(`${creds.base_url}${path}`, {
       ...init,

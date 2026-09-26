@@ -55,8 +55,8 @@ export class RebuildRightsHoldersInCanonicalFormOrder20260719000013 implements M
     const [{ non_null }] = await queryRunner.query(`SELECT count(email_encrypted)::int + count(phone_encrypted)::int AS non_null FROM rights_holders`);
     if (Number(non_null) > 0) {
       throw new Error(
-        `RebuildRightsHoldersInCanonicalFormOrder: rights_holders.(email_encrypted/phone_encrypted) têm ${non_null} ` +
-        `valor(es) não-nulo(s) — colunas presumidas órfãs, mas há dado real. Migration abortada.`,
+        `RebuildRightsHoldersInCanonicalFormOrder: rights_holders.(email_encrypted/phone_encrypted) have ${non_null} ` +
+        `non-null value(s) — columns presumed orphaned, but real data exists. Migration aborted.`,
       );
     }
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM rights_holders`);
@@ -66,7 +66,7 @@ export class RebuildRightsHoldersInCanonicalFormOrder20260719000013 implements M
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM rights_holders_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildRightsHoldersInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildRightsHoldersInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE rights_holders_new ADD CONSTRAINT rights_holders_new_pkey PRIMARY KEY (id)`);
@@ -143,7 +143,7 @@ export class RebuildRightsHoldersInCanonicalFormOrder20260719000013 implements M
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM rights_holders_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildRightsHoldersInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildRightsHoldersInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE rights_holders_restore ADD CONSTRAINT rights_holders_restore_pkey PRIMARY KEY (id)`);

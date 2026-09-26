@@ -49,7 +49,7 @@ export class RebuildInventoryItemsInCanonicalFormOrder20260719000017 implements 
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM inventory_items_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildInventoryItemsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildInventoryItemsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE inventory_items_new ADD CONSTRAINT inventory_items_new_pkey PRIMARY KEY (id)`);
@@ -117,7 +117,7 @@ export class RebuildInventoryItemsInCanonicalFormOrder20260719000017 implements 
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM inventory_items_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildInventoryItemsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildInventoryItemsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE inventory_items_restore ADD CONSTRAINT inventory_items_restore_pkey PRIMARY KEY (id)`);

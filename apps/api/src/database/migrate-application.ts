@@ -47,7 +47,7 @@ export async function migrateApplication(dataSource: DataSource): Promise<Migrat
     const applied: string[] = [];
     for (const migration of applicationPending) {
       if (!migration.instance) {
-        throw new Error(`Migration "${migration.name}" sem instância carregada — verifique migrations/index.ts.`);
+        throw new Error(`Migration "${migration.name}" has no loaded instance — check migrations/index.ts.`);
       }
 
       // Respects the per-migration override (e.g. `transaction = false` in
@@ -65,7 +65,7 @@ export async function migrateApplication(dataSource: DataSource): Promise<Migrat
         applied.push(migration.name);
       } catch (err) {
         if (useTransaction) await queryRunner.rollbackTransaction().catch(() => { /* we rethrow the original error below */ });
-        throw new Error(`Migration APPLICATION "${migration.name}" falhou: ${(err as Error).message}`);
+        throw new Error(`APPLICATION migration "${migration.name}" failed: ${(err as Error).message}`);
       }
     }
 

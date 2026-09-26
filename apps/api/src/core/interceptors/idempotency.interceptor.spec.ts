@@ -180,7 +180,7 @@ describe('IdempotencyInterceptor', () => {
     const interceptor = makeInterceptor(store);
     const key         = `error-retry-${Date.now()}`;
     const ctx         = makeContext({ key, userId: 'user-err' });
-    const next        = { handle: jest.fn().mockReturnValue(throwError(() => new Error('falha DB'))) };
+    const next        = { handle: jest.fn().mockReturnValue(throwError(() => new Error('DB failure'))) };
 
     interceptor.intercept(ctx, next).subscribe({
       error: () => {

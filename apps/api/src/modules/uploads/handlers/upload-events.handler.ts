@@ -37,7 +37,7 @@ function getMaxSize(mimeType: string): number {
   for (const [prefix, limit] of Object.entries(MAX_SIZE_BYTES)) {
     if (mimeType.startsWith(prefix)) return limit;
   }
-  throw new Error(`Categoria MIME sem limite explícito: ${mimeType}`);
+  throw new Error(`MIME category without an explicit limit: ${mimeType}`);
 }
 
 @Injectable()
@@ -64,7 +64,7 @@ export class UploadEventsHandler {
     );
     if (result.affected !== 1) {
       throw new Error(
-        `Upload rejeitado não pôde ser atualizado: upload=${uploadId} tenant=${tenantId} affected=${result.affected ?? 0}`,
+        `Rejected upload could not be updated: upload=${uploadId} tenant=${tenantId} affected=${result.affected ?? 0}`,
       );
     }
   }
@@ -73,7 +73,7 @@ export class UploadEventsHandler {
   async onAssetUploaded(event: DomainEvent<AssetUploadedPayload>): Promise<void> {
     const { uploadId, tenantId, fileName, mimeType } = event.payload;
     if (!tenantId) {
-      throw new Error(`UploadEventsHandler recebeu evento sem tenant: upload=${uploadId}`);
+      throw new Error(`UploadEventsHandler received an event without tenant: upload=${uploadId}`);
     }
 
     const runInContext = <T>(work: (manager: EntityManager | undefined) => Promise<T>): Promise<T> =>
@@ -85,7 +85,7 @@ export class UploadEventsHandler {
       const repository = manager ? manager.getRepository(UploadEntity) : this.uploadRepo;
       if (!repository) {
         throw new Error(
-          `UploadEventsHandler sem repositório disponível: upload=${uploadId} tenant=${tenantId}`,
+          `UploadEventsHandler without an available repository: upload=${uploadId} tenant=${tenantId}`,
         );
       }
 
@@ -94,7 +94,7 @@ export class UploadEventsHandler {
         select: ['size_bytes', 'mime_type'],
       });
       if (!record) {
-        throw new Error(`Upload não encontrado no tenant: upload=${uploadId} tenant=${tenantId}`);
+        throw new Error(`Upload not found in tenant: upload=${uploadId} tenant=${tenantId}`);
       }
       if (record.mime_type && record.mime_type !== mimeType) {
         const reason = `MIME do evento diverge do registro persistido`;
@@ -133,7 +133,7 @@ export class UploadEventsHandler {
       );
       if (result.affected !== 1) {
         throw new Error(
-          `Falha ao confirmar upload: upload=${uploadId} tenant=${tenantId} affected=${result.affected ?? 0}`,
+          `Failed to confirm upload: upload=${uploadId} tenant=${tenantId} affected=${result.affected ?? 0}`,
         );
       }
       this.logger.log(

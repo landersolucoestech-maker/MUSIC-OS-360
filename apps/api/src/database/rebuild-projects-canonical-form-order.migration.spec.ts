@@ -37,7 +37,7 @@ describe('RebuildProjectsInCanonicalFormOrder20260719000005', () => {
     expect(migrationSrc).not.toMatch(/newColumns = `[^`]*data_inicio/);
     expect(migrationSrc).not.toMatch(/newColumns = `[^`]*data_fim/);
     expect(migrationSrc).toMatch(/count\(data_inicio\)::int \+ count\(data_fim\)::int/);
-    expect(migrationSrc).toMatch(/presumidas órfãs, mas há dado real/);
+    expect(migrationSrc).toMatch(/columns presumed orphaned, but real data exists/);
   });
 
   it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {
@@ -64,7 +64,7 @@ describe('RebuildProjectsInCanonicalFormOrder20260719000005', () => {
   it('recreates RLS + FORCE RLS + policies, validates counts before swapping and has an honest down()', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
-    expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });
 });

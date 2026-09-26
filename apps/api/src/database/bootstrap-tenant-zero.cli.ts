@@ -39,7 +39,7 @@ async function resolveRealOwner(rawEmail: string): Promise<{ owner: RealOwnerInp
   const supabaseUrl = process.env['SUPABASE_URL'];
   const serviceRoleKey = process.env['SUPABASE_SERVICE_ROLE_KEY'];
   if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error('SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY são obrigatórias para provisionar um owner real (TENANT_ZERO_OWNER_EMAIL).');
+    throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required to provision a real owner (TENANT_ZERO_OWNER_EMAIL).');
   }
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
@@ -48,7 +48,7 @@ async function resolveRealOwner(rawEmail: string): Promise<{ owner: RealOwnerInp
   // being true, paginate here.
   const { data: existing, error: listError } = await supabase.auth.admin.listUsers({ perPage: 200 });
   if (listError) {
-    throw new Error(`Falha ao listar usuários Supabase Auth: ${listError.message}`);
+    throw new Error(`Failed to list Supabase Auth users: ${listError.message}`);
   }
   const found = existing.users.find((u) => u.email && normalizeEmail(u.email) === email);
   if (found) {
@@ -65,7 +65,7 @@ async function resolveRealOwner(rawEmail: string): Promise<{ owner: RealOwnerInp
     email_confirm: true,
   });
   if (createError || !created.user) {
-    throw new Error(`Falha ao criar usuário Supabase Auth para "${email}": ${createError?.message ?? 'resposta vazia'}`);
+    throw new Error(`Failed to create Supabase Auth user for "${email}": ${createError?.message ?? 'empty response'}`);
   }
 
   return { owner: { authUserId: created.user.id, email, fullName: null }, created: true, provisionalPassword };
@@ -80,7 +80,7 @@ async function applyOwnerAppMetadata(authUserId: string, orgId: string): Promise
     app_metadata: { org_id: orgId, role: 'owner', must_change_password: true },
   });
   if (error) {
-    throw new Error(`Falha ao definir app_metadata do owner real: ${error.message}`);
+    throw new Error(`Failed to set the real owner's app_metadata: ${error.message}`);
   }
 }
 

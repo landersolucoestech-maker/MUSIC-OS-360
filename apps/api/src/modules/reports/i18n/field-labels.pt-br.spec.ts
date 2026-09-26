@@ -63,7 +63,7 @@ describe('field-labels.pt-br — central label layer', () => {
 
   // ── Test 5: missing label throws (no visual fallback) ──────────────────────
   it('getFieldLabelPtBr throws when the label does not exist', () => {
-    expect(() => getFieldLabelPtBr('unknownField')).toThrow(/Label pt-BR ausente/);
+    expect(() => getFieldLabelPtBr('unknownField')).toThrow(/Missing pt-BR label/);
     expect(() => getFieldLabelPtBr('shippingMethod')).toThrow();
   });
 

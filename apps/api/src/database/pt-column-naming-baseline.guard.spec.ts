@@ -118,9 +118,9 @@ describe('Permanent guard: the census of PT-suspect physical columns does not di
     const newHits = [...current].filter((h) => !baseline.has(h));
     if (newHits.length > 0) {
       throw new Error(
-        `Coluna(s) física(s) PT-suspeita(s) nova(s), ainda não classificada(s): ${newHits.join(', ')}. ` +
+        `New PT-suspect physical column(s), not yet classified: ${newHits.join(', ')}. ` +
         'Regenere e classifique via .audit-runtime/census-pt-columns.ts + classify-pt-census.ts, documente ' +
-        'a decisão em docs/NAMING_NORMALIZATION_CANONICAL_MAP.md, e commite os .jsonl atualizados.',
+        'the decision in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md, and commit the updated .jsonl files.',
       );
     }
   });
@@ -131,9 +131,9 @@ describe('Permanent guard: the census of PT-suspect physical columns does not di
     const stale = [...baseline].filter((h) => !current.has(h));
     if (stale.length > 0) {
       throw new Error(
-        `Coluna(s) do baseline não existem mais em entities.ts: ${stale.join(', ')}. ` +
+        `Baseline column(s) no longer exist in entities.ts: ${stale.join(', ')}. ` +
         'Se foram legitimamente dropadas/renomeadas, regenere .audit-runtime/pt-column-census.jsonl ' +
-        '(e pt-census-classified.jsonl) e commite a versão atualizada junto com a migration.',
+        '(and pt-census-classified.jsonl) and commit the updated version together with the migration.',
       );
     }
   });

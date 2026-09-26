@@ -64,7 +64,7 @@ export class RebuildOrgMembersInCanonicalFormOrder20260719000020 implements Migr
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM org_members_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildOrgMembersInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildOrgMembersInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE org_members_new ADD CONSTRAINT org_members_new_pkey PRIMARY KEY (id)`);
@@ -159,7 +159,7 @@ export class RebuildOrgMembersInCanonicalFormOrder20260719000020 implements Migr
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM org_members_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildOrgMembersInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildOrgMembersInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE org_members_restore ADD CONSTRAINT org_members_restore_pkey PRIMARY KEY (id)`);

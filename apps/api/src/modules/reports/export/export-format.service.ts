@@ -56,7 +56,7 @@ export function sanitizeExcelCellValue(value: unknown, context: CellContext): st
     // eslint-disable-next-line no-console
     console.warn(
       `[reports-export] field truncated for export: ${context.entity}.${context.column} ` +
-      `tinha ${text.length} caracteres (limite Excel: ${EXCEL_CELL_MAX_CHARS})`,
+      `had ${text.length} characters (Excel limit: ${EXCEL_CELL_MAX_CHARS})`,
     );
     text = text.slice(0, EXCEL_CELL_SAFE_CHARS - TRUNCATION_SUFFIX.length) + TRUNCATION_SUFFIX;
   }

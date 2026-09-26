@@ -537,7 +537,7 @@ describe('ArtistPlatformSyncProcessor', () => {
     };
     const spotify = {
       platform: 'spotify',
-      resolve: jest.fn().mockRejectedValue(new Error('Spotify API respondeu 429: limite de requisições excedido')),
+      resolve: jest.fn().mockRejectedValue(new Error('Spotify API responded 429: request limit exceeded')),
     };
     const processor = new ArtistPlatformSyncProcessor(
       ds as never,
@@ -557,14 +557,14 @@ describe('ArtistPlatformSyncProcessor', () => {
     // attempts:3/backoff dead configuration (job always looked 'completed').
     await expect(
       processor.process({ name: ARTIST_PLATFORM_PROFILE_JOB_NAMES.SYNC, data: payload } as never),
-    ).rejects.toThrow('Spotify API respondeu 429: limite de requisições excedido');
+    ).rejects.toThrow('Spotify API responded 429: request limit exceeded');
 
     expect(profiles.upsertSuccess).not.toHaveBeenCalled();
     expect(profiles.markFailed).toHaveBeenCalledWith(expect.objectContaining({
       tenantId: 'tenant-1',
       artistId: 'artist-1',
       platform: 'spotify',
-      error: 'Spotify API respondeu 429: limite de requisições excedido',
+      error: 'Spotify API responded 429: request limit exceeded',
     }));
   });
 

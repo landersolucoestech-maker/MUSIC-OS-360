@@ -55,7 +55,7 @@ export class TikTokArtistProfileProvider implements ArtistPlatformProvider {
     // always through the same normalization, whether the value comes from external_id or external_url,
     // so an "@" or formatting variation never leaks into the exact resolution.
     const username = this.extractUsername(input.externalId ?? input.externalUrl ?? '');
-    if (!username) throw new Error('TikTok username ausente ou inválido');
+    if (!username) throw new Error('TikTok username missing or invalid');
 
     let followers: number | null = null;
     let observedAt = new Date();

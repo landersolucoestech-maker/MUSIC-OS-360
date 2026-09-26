@@ -48,21 +48,21 @@ export class ProjectsFormFieldAlignment20260718000013 implements MigrationInterf
           parsed = JSON.parse(trimmed);
         } catch {
           throw new Error(
-            `ProjectsFormFieldAlignment: projeto ${row.id} tem descricao iniciando com "[" mas não é JSON ` +
-            `válido — migration abortada; verificar manualmente antes de reexecutar.`,
+            `ProjectsFormFieldAlignment: project ${row.id} has descricao starting with "[" but it is not valid ` +
+            `JSON — migration aborted; check manually before re-running.`,
           );
         }
         if (!Array.isArray(parsed)) {
           throw new Error(
-            `ProjectsFormFieldAlignment: projeto ${row.id} tem descricao JSON que não é array — ` +
-            `formato desconhecido, migration abortada.`,
+            `ProjectsFormFieldAlignment: project ${row.id} has JSON descricao that is not an array — ` +
+            `unknown format, migration aborted.`,
           );
         }
         for (const item of parsed) {
           if (typeof item !== 'object' || item === null || !('nome' in (item as object))) {
             throw new Error(
-              `ProjectsFormFieldAlignment: projeto ${row.id} tem item de musicas[] sem a chave ` +
-              `"nome" — formato desconhecido, migration abortada.`,
+              `ProjectsFormFieldAlignment: project ${row.id} has a musicas[] item without the ` +
+              `"nome" key — unknown format, migration aborted.`,
             );
           }
         }
@@ -169,8 +169,8 @@ export class ProjectsFormFieldAlignment20260718000013 implements MigrationInterf
     `);
     if (remaining > 0) {
       throw new Error(
-        `ProjectsFormFieldAlignment: ${remaining} projeto(s) ainda com descricao em formato ` +
-        `JSON de musicas[] após o backfill — migration abortada antes de liberar o uso normal de descricao.`,
+        `ProjectsFormFieldAlignment: ${remaining} project(s) still with descricao in musicas[] ` +
+        `JSON format after the backfill — migration aborted before releasing normal use of descricao.`,
       );
     }
 

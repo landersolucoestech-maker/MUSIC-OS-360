@@ -62,7 +62,7 @@ describe('RebuildCampaignTasksInCanonicalFormOrder20260719000022', () => {
     for (const policy of ['campaign_tasks_tenant_select', 'campaign_tasks_tenant_insert', 'campaign_tasks_tenant_update', 'campaign_tasks_tenant_delete', 'tenant_isolation']) {
       expect(migrationSrc.match(new RegExp(`CREATE POLICY ${policy}`, 'g'))?.length).toBeGreaterThanOrEqual(2);
     }
-    expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });
 });

@@ -86,8 +86,8 @@ export class RebuildMarketingProjectsInCanonicalFormOrder20260719000008 implemen
     const [{ non_null }] = await queryRunner.query(`SELECT count(organization_id)::int AS non_null FROM marketing_projects`);
     if (Number(non_null) > 0) {
       throw new Error(
-        `RebuildMarketingProjectsInCanonicalFormOrder: marketing_projects.organization_id tem ${non_null} ` +
-        `valor(es) não-nulo(s) — coluna presumida órfã, mas há dado real. Migration abortada.`,
+        `RebuildMarketingProjectsInCanonicalFormOrder: marketing_projects.organization_id has ${non_null} ` +
+        `non-null value(s) — column presumed orphaned, but real data exists. Migration aborted.`,
       );
     }
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM marketing_projects`);
@@ -97,7 +97,7 @@ export class RebuildMarketingProjectsInCanonicalFormOrder20260719000008 implemen
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM marketing_projects_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildMarketingProjectsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildMarketingProjectsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE marketing_projects_new ADD CONSTRAINT marketing_projects_new_pkey PRIMARY KEY (id)`);
@@ -209,7 +209,7 @@ export class RebuildMarketingProjectsInCanonicalFormOrder20260719000008 implemen
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM marketing_projects_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildMarketingProjectsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildMarketingProjectsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE marketing_projects_restore ADD CONSTRAINT marketing_projects_restore_pkey PRIMARY KEY (id)`);

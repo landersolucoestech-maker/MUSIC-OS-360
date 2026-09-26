@@ -35,10 +35,10 @@ export class MakeShareRegistryFieldsNullable20260715000001 implements MigrationI
 
     if (badCount > 0) {
       throw new Error(
-        `Rollback abortado: ${badCount} linha(s) em "shares" possuem titular_nome ` +
-        `ou percentual NULL. Restaurar NOT NULL exigiria inventar dado nessas ` +
-        `linhas (o que esta migration foi feita para eliminar). Resolva ` +
-        `manualmente os registros afetados antes de reverter — nenhuma alteração foi feita.`,
+        `Rollback aborted: ${badCount} row(s) in "shares" have NULL titular_nome ` +
+        `or percentual. Restoring NOT NULL would require inventing data in those ` +
+        `rows (which is what this migration was made to eliminate). Resolve ` +
+        `the affected records manually before reverting — no change was made.`,
       );
     }
 

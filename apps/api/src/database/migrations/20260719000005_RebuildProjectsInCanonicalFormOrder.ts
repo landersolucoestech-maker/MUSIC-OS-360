@@ -62,8 +62,8 @@ export class RebuildProjectsInCanonicalFormOrder20260719000005 implements Migrat
     );
     if (Number(non_null) > 0) {
       throw new Error(
-        `RebuildProjectsInCanonicalFormOrder: projects.data_inicio/data_fim têm ${non_null} valor(es) ` +
-        `não-nulo(s) — colunas presumidas órfãs, mas há dado real. Migration abortada.`,
+        `RebuildProjectsInCanonicalFormOrder: projects.data_inicio/data_fim have ${non_null} value(s) ` +
+        `non-null — columns presumed orphaned, but real data exists. Migration aborted.`,
       );
     }
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM projects`);
@@ -73,7 +73,7 @@ export class RebuildProjectsInCanonicalFormOrder20260719000005 implements Migrat
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM projects_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildProjectsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildProjectsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE projects_new ADD CONSTRAINT projects_new_pkey PRIMARY KEY (id)`);
@@ -164,7 +164,7 @@ export class RebuildProjectsInCanonicalFormOrder20260719000005 implements Migrat
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM projects_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildProjectsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildProjectsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE projects_restore ADD CONSTRAINT projects_restore_pkey PRIMARY KEY (id)`);

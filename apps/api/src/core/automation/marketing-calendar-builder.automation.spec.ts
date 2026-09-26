@@ -14,7 +14,7 @@ function makeAi(content: string) {
   return { complete: jest.fn(async () => ({ content, provider: 'openai', model: 'gpt-4o-mini', inputTokens: 1, outputTokens: 1, costUsd: 0, latencyMs: 1 })) };
 }
 function makeFailingAi() {
-  return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
+  return { complete: jest.fn(async () => { throw new Error('No AI provider configured'); }) };
 }
 function makeDs(releaseRows: unknown[], skillRunRows: unknown[] = []) {
   const query = jest.fn(async (sql: string) => {

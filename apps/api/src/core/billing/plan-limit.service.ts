@@ -85,7 +85,7 @@ export class PlanLimitService {
 
     if (current >= cap) {
       this.logger.warn(
-        `Plano ${plan} atingiu limite: tenant=${tenantId} resource=${resource} ` +
+        `Plan ${plan} reached its limit: tenant=${tenantId} resource=${resource} ` +
         `current=${current} cap=${cap}`,
       );
       throw new ForbiddenException(

@@ -86,7 +86,7 @@ describe('SpotifyArtistProfileProvider.resolve (Metrics Phase 1 — protection a
   it('a real Soundcharts error (not 404) during resolution propagates as a genuine failure (retry must happen)', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
-      resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: serviço indisponível')),
+      resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: service unavailable')),
       getSpotifyMonthlyListeners: jest.fn(),
     } as unknown as SoundchartsService;
     const provider = new SpotifyArtistProfileProvider(soundcharts);
@@ -97,6 +97,6 @@ describe('SpotifyArtistProfileProvider.resolve (Metrics Phase 1 — protection a
       externalId: '6qqNVTkY8uBg9cP3Jd7DAH',
       externalUrl: null,
       canonicalUrls: {},
-    })).rejects.toThrow('Soundcharts 503: serviço indisponível');
+    })).rejects.toThrow('Soundcharts 503: service unavailable');
   });
 });

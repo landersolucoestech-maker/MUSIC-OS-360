@@ -25,7 +25,7 @@ function makeAi(content: string) {
 }
 
 function makeFailingAi() {
-  return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
+  return { complete: jest.fn(async () => { throw new Error('No AI provider configured'); }) };
 }
 
 const TASK_ROW = { title: 'Escrever copy', description: 'Copy para e-mail marketing do lançamento', kind: 'email' };
@@ -117,7 +117,7 @@ describe('CopywritingAutomation (ON_DEMAND: POST /marketing/tasks/:id/ai/copywri
     const ds = makeDs();
     const handler = new CopywritingAutomation(ds as never, skillRun as never, ai as never, tasks as never);
 
-    await expect(handler.run('t1', 'u1', 'task-1', undefined, undefined)).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.run('t1', 'u1', 'task-1', undefined, undefined)).rejects.toThrow('No AI provider configured');
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'copywriting', expect.any(Error));
   });
 });

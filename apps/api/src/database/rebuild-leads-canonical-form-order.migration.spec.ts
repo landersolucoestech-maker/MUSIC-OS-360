@@ -37,7 +37,7 @@ describe('RebuildLeadsInCanonicalFormOrder20260719000011', () => {
     expect(block).not.toMatch(/\bscore\b/);
     expect(block).not.toMatch(/\bpipeline_stage\b/);
     expect(migrationSrc).toMatch(/count\(score\)::int \+ count\(pipeline_stage\)::int/);
-    expect(migrationSrc).toMatch(/presumidas órfãs, mas há dado real/);
+    expect(migrationSrc).toMatch(/columns presumed orphaned, but real data exists/);
   });
 
   it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {
@@ -60,7 +60,7 @@ describe('RebuildLeadsInCanonicalFormOrder20260719000011', () => {
     }
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
-    expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });
 });

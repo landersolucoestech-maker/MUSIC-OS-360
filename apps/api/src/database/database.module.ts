@@ -93,7 +93,7 @@ export async function createAdminDataSource(config: ConfigService): Promise<Data
   } catch (err) {
     const message = err instanceof Error ? (err.message || err.name) : String(err);
     logger.error('Failed to initialize ADMIN_DATA_SOURCE', message);
-    throw new Error(`ADMIN_DATA_SOURCE não inicializou: ${message}`);
+    throw new Error(`ADMIN_DATA_SOURCE did not initialize: ${message}`);
   }
 }
 
@@ -216,7 +216,7 @@ export async function createProvisioningDataSource(
               }))}`
             : message;
           logger.error('Failed to connect to PostgreSQL via TypeORM', detail);
-          throw new Error(`DATABASE_URL configurado, mas PostgreSQL nao inicializou: ${detail}`);
+          throw new Error(`DATABASE_URL configured, but PostgreSQL did not initialize: ${detail}`);
         }
       },
     },

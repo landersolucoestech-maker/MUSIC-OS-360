@@ -105,7 +105,7 @@ export class ExternalDataProcessor extends WorkerHost {
         // find-721c845e: an unknown job must never be marked completed without work
         // (before: a debug "ignored" + silent success, which happened to every
         // 'distribution-sync'). Visible failure.
-        throw new Error(`[external-data] job sem handler neste processor: '${job.name}' (id=${job.id})`);
+        throw new Error(`[external-data] job without a handler in this processor: '${job.name}' (id=${job.id})`);
     }
   }
 }

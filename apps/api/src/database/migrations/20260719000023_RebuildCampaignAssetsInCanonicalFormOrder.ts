@@ -38,8 +38,8 @@ export class RebuildCampaignAssetsInCanonicalFormOrder20260719000023 implements 
     const [{ non_null }] = await queryRunner.query(`SELECT count(file_size)::int + count(mime_type)::int AS non_null FROM campaign_assets`);
     if (Number(non_null) > 0) {
       throw new Error(
-        `RebuildCampaignAssetsInCanonicalFormOrder: campaign_assets.(file_size/mime_type) têm ${non_null} ` +
-        `valor(es) não-nulo(s) — colunas presumidas órfãs, mas há dado real. Migration abortada.`,
+        `RebuildCampaignAssetsInCanonicalFormOrder: campaign_assets.(file_size/mime_type) have ${non_null} ` +
+        `non-null value(s) — columns presumed orphaned, but real data exists. Migration aborted.`,
       );
     }
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM campaign_assets`);
@@ -49,7 +49,7 @@ export class RebuildCampaignAssetsInCanonicalFormOrder20260719000023 implements 
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM campaign_assets_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildCampaignAssetsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildCampaignAssetsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE campaign_assets_new ADD CONSTRAINT campaign_assets_new_pkey PRIMARY KEY (id)`);
@@ -137,7 +137,7 @@ export class RebuildCampaignAssetsInCanonicalFormOrder20260719000023 implements 
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM campaign_assets_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildCampaignAssetsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildCampaignAssetsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE campaign_assets_restore ADD CONSTRAINT campaign_assets_restore_pkey PRIMARY KEY (id)`);

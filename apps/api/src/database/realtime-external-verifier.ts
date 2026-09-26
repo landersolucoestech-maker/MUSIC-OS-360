@@ -59,7 +59,7 @@ const EXPECTED_POLICIES: Record<string, { qualIncludes: string[] }> = {
 
 export function evaluateRealtimeState(input: RealtimeStateInput): RealtimeStateResult {
   if (!input.tableExists) {
-    throw new Error('realtime.messages não existe neste projeto — confirme o project ref antes de interpretar qualquer estado.');
+    throw new Error('realtime.messages does not exist in this project — confirm the project ref before interpreting any state.');
   }
 
   const publicPolicy = input.policies.find((p) => (p.qual ?? '').trim() === 'true');

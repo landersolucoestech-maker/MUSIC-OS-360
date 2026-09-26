@@ -74,7 +74,7 @@ function buildFakeDataSource(seed?: { organizations?: any[]; tenants?: any[] }) 
       state.audit_logs.push({ params });
       return [];
     }
-    throw new Error(`Query não mapeada no fake DataSource: ${s}`);
+    throw new Error(`Query not mapped in the fake DataSource: ${s}`);
   });
 
   return { query, state } as unknown as { query: jest.Mock; state: typeof state };

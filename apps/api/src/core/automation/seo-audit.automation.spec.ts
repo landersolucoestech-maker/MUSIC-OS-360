@@ -25,7 +25,7 @@ function makeAi(content: string) {
 }
 
 function makeFailingAi() {
-  return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
+  return { complete: jest.fn(async () => { throw new Error('No AI provider configured'); }) };
 }
 
 const STORED_CAMPAIGN = {
@@ -123,7 +123,7 @@ describe('SeoAuditAutomation (ON_DEMAND+STALE_REFRESH: POST .../ai/seo-audit)', 
     const campaignBuilder = makeCampaignBuilder();
     const handler = new SeoAuditAutomation(skillRun as never, ai as never, campaignBuilder as never);
 
-    await expect(handler.run('t1', 'u1', 'camp-1', false)).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.run('t1', 'u1', 'camp-1', false)).rejects.toThrow('No AI provider configured');
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'seo-audit', expect.any(Error));
   });
 });

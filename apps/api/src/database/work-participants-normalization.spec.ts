@@ -24,9 +24,9 @@ const migrationSrc = fs.readFileSync(
 
 function entityBlock(entityClassName: string): string {
   const start = entitiesSrc.indexOf(`export class ${entityClassName}`);
-  if (start === -1) throw new Error(`Entity ${entityClassName} não encontrada em entities.ts`);
+  if (start === -1) throw new Error(`Entity ${entityClassName} not found in entities.ts`);
   const closingBrace = /\r?\n\}\r?\n/.exec(entitiesSrc.slice(start));
-  if (!closingBrace) throw new Error(`Não foi possível localizar o fechamento da classe ${entityClassName}`);
+  if (!closingBrace) throw new Error(`Could not locate the end of class ${entityClassName}`);
   return entitiesSrc.slice(start, start + closingBrace.index);
 }
 

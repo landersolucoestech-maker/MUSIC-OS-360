@@ -208,7 +208,7 @@ async function sdkCycle(s3: S3Client, bucket: string) {
   const del = await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
   try {
     await s3.send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
-    throw new Error('SDK HEAD apos delete ainda encontrou objeto');
+    throw new Error('SDK HEAD after delete still found the object');
   } catch (err) {
     const info = errInfo(err);
     if (!['NotFound', 'NoSuchKey', 'Forbidden', 'UnknownError'].includes(info.name) && (info.metadata as any)?.httpStatusCode !== 404) {

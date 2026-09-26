@@ -45,7 +45,7 @@ describe('UploadEventsHandler — P2-9', () => {
         payload: { ...basePayload, tenantId: undefined },
         correlationId: null,
       } as any),
-    ).rejects.toThrow('UploadEventsHandler recebeu evento sem tenant: upload=up1');
+    ).rejects.toThrow('UploadEventsHandler received an event without tenant: upload=up1');
     expect(dbContext.runInTenantContext).not.toHaveBeenCalled();
     expect(uploadRepo.findOne).not.toHaveBeenCalled();
     expect(uploadRepo.update).not.toHaveBeenCalled();

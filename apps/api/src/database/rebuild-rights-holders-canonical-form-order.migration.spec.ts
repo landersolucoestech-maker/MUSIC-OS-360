@@ -27,7 +27,7 @@ describe('RebuildRightsHoldersInCanonicalFormOrder20260719000013', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     expect(block).not.toMatch(/email_encrypted|phone_encrypted/);
     expect(migrationSrc).toMatch(/count\(email_encrypted\)::int \+ count\(phone_encrypted\)::int/);
-    expect(migrationSrc).toMatch(/presumidas órfãs, mas há dado real/);
+    expect(migrationSrc).toMatch(/columns presumed orphaned, but real data exists/);
   });
 
   it('the audit block is created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
@@ -54,7 +54,7 @@ describe('RebuildRightsHoldersInCanonicalFormOrder20260719000013', () => {
     expect(migrationSrc).toMatch(/uq_rights_holders_tenant_doc/);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
-    expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });
 });

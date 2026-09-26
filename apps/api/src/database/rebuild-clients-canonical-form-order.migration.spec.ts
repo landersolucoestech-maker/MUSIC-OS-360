@@ -37,7 +37,7 @@ describe('RebuildClientsInCanonicalFormOrder20260719000010', () => {
     expect(block).not.toMatch(/\bcpf\s+varchar/);
     expect(block).not.toMatch(/\bcnpj\s+varchar/);
     expect(migrationSrc).toMatch(/count\(segmento\)::int \+ count\(endereco\)::int/);
-    expect(migrationSrc).toMatch(/presumidas órfãs, mas há dado real/);
+    expect(migrationSrc).toMatch(/columns presumed orphaned, but real data exists/);
   });
 
   it('fixes categoria/perfil to NOT NULL with fail-fast validation of existing data', () => {
@@ -63,7 +63,7 @@ describe('RebuildClientsInCanonicalFormOrder20260719000010', () => {
     expect(migrationSrc.match(/ALTER TABLE counterparties ADD CONSTRAINT/g)?.length).toBeGreaterThanOrEqual(1);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
-    expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });
 });

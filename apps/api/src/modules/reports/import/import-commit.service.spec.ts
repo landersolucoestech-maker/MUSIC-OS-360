@@ -181,7 +181,7 @@ describe('ImportCommitService — repeating group on the same sheet', () => {
 
   it('fails explicitly if the parent insert does not return an id', async () => {
     const { svc } = makeSvc({ def: PROJECTS_DEF, validation: projectsValidation([{ nome_musica: 'Faixa' }]), queryImpl: () => [] });
-    await expect(svc.commit('projects', { filename: 'projects.xlsx', content: Buffer.from('xlsx') }, 'tenant-1', 'user-1')).rejects.toThrow(/sem id retornado/);
+    await expect(svc.commit('projects', { filename: 'projects.xlsx', content: Buffer.from('xlsx') }, 'tenant-1', 'user-1')).rejects.toThrow(/returned no id/);
   });
 });
 
@@ -217,7 +217,7 @@ describe('ImportCommitService — transactions: physical columns and category (T
     const encryption = { encryptNullable: jest.fn() } as any;
     const financeCategoryRules = {
       suggestCategoryForTransaction: opts.suggestThrows
-        ? jest.fn().mockRejectedValue(new Error('matcher indisponível'))
+        ? jest.fn().mockRejectedValue(new Error('matcher unavailable'))
         : jest.fn().mockResolvedValue(opts.suggestion ?? null),
     } as any;
     const svc = new ImportCommitService(ds, engine, definitions, audit, encryption, financeCategoryRules);

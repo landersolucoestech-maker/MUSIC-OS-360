@@ -25,7 +25,7 @@ function makeAi(content: string) {
 }
 
 function makeFailingAi() {
-  return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
+  return { complete: jest.fn(async () => { throw new Error('No AI provider configured'); }) };
 }
 
 const CLIENT = { name: 'Banda Aurora Produções', category: 'CORPORATE_CLIENT' };
@@ -93,7 +93,7 @@ describe('DealsCrmAutomation (ON_DEMAND: POST /clients/:id/ai/deals-crm)', () =>
     const clients = makeClients();
     const handler = new DealsCrmAutomation(skillRun as never, ai as never, clients as never);
 
-    await expect(handler.run('t1', 'u1', 'client-1')).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.run('t1', 'u1', 'client-1')).rejects.toThrow('No AI provider configured');
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'deals-crm', expect.any(Error));
   });
 });

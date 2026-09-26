@@ -31,7 +31,7 @@ describe('RebuildTakedownsInCanonicalFormOrder20260719000016', () => {
     expect(block).not.toMatch(/\bartista_id\b/);
     expect(block).not.toMatch(/\burl\s+text/);
     expect(migrationSrc).toMatch(/count\(url\)::int \+ count\(resposta\)::int/);
-    expect(migrationSrc).toMatch(/presumidas órfãs, mas há dado real/);
+    expect(migrationSrc).toMatch(/columns presumed orphaned, but real data exists/);
   });
 
   it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {
@@ -48,7 +48,7 @@ describe('RebuildTakedownsInCanonicalFormOrder20260719000016', () => {
   it('recria RLS + policies e possui down() honesto', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
-    expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });
 });

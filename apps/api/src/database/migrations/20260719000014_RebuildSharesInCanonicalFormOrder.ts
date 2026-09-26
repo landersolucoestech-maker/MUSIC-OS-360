@@ -97,7 +97,7 @@ export class RebuildSharesInCanonicalFormOrder20260719000014 implements Migratio
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM shares_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildSharesInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildSharesInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE shares_new ADD CONSTRAINT shares_new_pkey PRIMARY KEY (id)`);
@@ -197,7 +197,7 @@ export class RebuildSharesInCanonicalFormOrder20260719000014 implements Migratio
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM shares_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildSharesInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildSharesInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE shares_restore ADD CONSTRAINT shares_restore_pkey PRIMARY KEY (id)`);

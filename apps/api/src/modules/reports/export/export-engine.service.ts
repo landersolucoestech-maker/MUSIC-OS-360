@@ -188,7 +188,7 @@ export class ExportEngineService {
     if (entity === ACCOUNTING_SUMMARY_TABLE_NAME) {
       return fetchAccountingSummaryRows(this.ds!, tenantId) as unknown as Record<string, unknown>[];
     }
-    throw new Error(`[reports-export] relatório computado sem resolver registrado: ${entity}`);
+    throw new Error(`[reports-export] computed report without a registered resolver: ${entity}`);
   }
 
   private async exportWithRepeatingGroup(
@@ -216,7 +216,7 @@ export class ExportEngineService {
 
     const resolver = REPEATING_GROUP_EXPORT_RESOLVERS[`${entity}.${group.key}`];
     if (!resolver) {
-      throw new Error(`[reports-export] grupo repetível sem resolver registrado: ${entity}.${group.key}`);
+      throw new Error(`[reports-export] repeatable group without a registered resolver: ${entity}.${group.key}`);
     }
 
     const parentIds = rawRows.map((row) => String(row.__internal_id));

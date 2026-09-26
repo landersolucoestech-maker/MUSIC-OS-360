@@ -71,6 +71,6 @@ export async function reportHarness(input: HarnessReportInput): Promise<void> {
   console.log(`rbac mismatch (status observado ≠ esperado): ${rbacMismatch.length}`);
   console.log(`criados=${input.createdCount} limpos=${input.cleaned} bloqueados_no_cleanup=${input.cleanupBlocked}`);
   console.log(`alvos atingidos: ${JSON.stringify(summary.targetsMet)}`);
-  console.log(`relatório salvo: ${out}`);
-  console.log('\n>> Próximo passo: rode `npm run rbac:shadow:go-no-go` (lê rbac_decision_logs populado pela API).');
+  console.log(`report saved: ${out}`);
+  console.log('\n>> Next step: run `npm run rbac:shadow:go-no-go` (reads rbac_decision_logs populated by the API).');
 }

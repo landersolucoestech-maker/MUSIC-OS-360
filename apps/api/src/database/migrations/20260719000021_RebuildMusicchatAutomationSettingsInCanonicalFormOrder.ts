@@ -59,7 +59,7 @@ export class RebuildMusicchatAutomationSettingsInCanonicalFormOrder2026071900002
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM musicchat_automation_settings_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildMusicchatAutomationSettingsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildMusicchatAutomationSettingsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE musicchat_automation_settings_new ADD CONSTRAINT musicchat_automation_settings_new_pkey PRIMARY KEY (id)`);
@@ -120,7 +120,7 @@ export class RebuildMusicchatAutomationSettingsInCanonicalFormOrder2026071900002
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM musicchat_automation_settings_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildMusicchatAutomationSettingsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildMusicchatAutomationSettingsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE musicchat_automation_settings_restore ADD CONSTRAINT musicchat_automation_settings_restore_pkey PRIMARY KEY (id)`);

@@ -276,7 +276,7 @@ export class DunningService implements OnApplicationBootstrap {
 
   private withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
     return new Promise<T>((resolve, reject) => {
-      const timer = setTimeout(() => reject(new Error(`${label} excedeu o tempo limite de ${ms}ms`)), ms);
+      const timer = setTimeout(() => reject(new Error(`${label} exceeded the ${ms}ms timeout`)), ms);
       promise.then(
         (value) => { clearTimeout(timer); resolve(value); },
         (err) => { clearTimeout(timer); reject(err); },
@@ -316,7 +316,7 @@ export class DunningService implements OnApplicationBootstrap {
       const streak = rows[0]?.streak ?? 1;
       if (streak >= FAILURE_STREAK_THRESHOLD) {
         this.logger.error(
-          `Dunning[${runId}]: tenant ${tenantId} ESCALATION — ${streak} falhas consecutivas de ciclo (limite=${FAILURE_STREAK_THRESHOLD})`,
+          `Dunning[${runId}]: tenant ${tenantId} ESCALATION — ${streak} consecutive cycle failures (threshold=${FAILURE_STREAK_THRESHOLD})`,
         );
       }
     } catch (err) {

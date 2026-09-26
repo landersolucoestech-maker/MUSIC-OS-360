@@ -25,7 +25,7 @@ function makeAi(content: string) {
 }
 
 function makeFailingAi() {
-  return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
+  return { complete: jest.fn(async () => { throw new Error('No AI provider configured'); }) };
 }
 
 const STORED_CAMPAIGN = {
@@ -118,7 +118,7 @@ describe('CampaignBuilderInsightsAutomation.runAdCreative (ON_DEMAND: POST .../a
     const campaignBuilder = makeCampaignBuilder();
     const handler = new CampaignBuilderInsightsAutomation(skillRun as never, ai as never, campaignBuilder as never);
 
-    await expect(handler.runAdCreative('t1', 'u1', 'camp-1', 'META_ADS', 'META_STORIES')).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.runAdCreative('t1', 'u1', 'camp-1', 'META_ADS', 'META_STORIES')).rejects.toThrow('No AI provider configured');
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'ad-creative', expect.any(Error));
   });
 });
@@ -159,7 +159,7 @@ describe('CampaignBuilderInsightsAutomation.runPaidAdsStrategy (ON_DEMAND: POST 
     const campaignBuilder = makeCampaignBuilder();
     const handler = new CampaignBuilderInsightsAutomation(skillRun as never, ai as never, campaignBuilder as never);
 
-    await expect(handler.runPaidAdsStrategy('t1', 'u1', 'camp-1')).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.runPaidAdsStrategy('t1', 'u1', 'camp-1')).rejects.toThrow('No AI provider configured');
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'paid-ads', expect.any(Error));
   });
 });

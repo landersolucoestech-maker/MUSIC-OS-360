@@ -69,7 +69,7 @@ export class RebuildEmployeesInCanonicalFormOrder20260719000018 implements Migra
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM employees_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildEmployeesInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildEmployeesInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE employees_new ADD CONSTRAINT employees_new_pkey PRIMARY KEY (id)`);
@@ -159,7 +159,7 @@ export class RebuildEmployeesInCanonicalFormOrder20260719000018 implements Migra
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM employees_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildEmployeesInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildEmployeesInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE employees_restore ADD CONSTRAINT employees_restore_pkey PRIMARY KEY (id)`);

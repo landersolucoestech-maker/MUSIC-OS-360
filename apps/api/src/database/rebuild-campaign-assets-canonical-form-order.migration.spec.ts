@@ -28,7 +28,7 @@ describe('RebuildCampaignAssetsInCanonicalFormOrder20260719000023', () => {
 
   it('drops file_size/mime_type with a non-null count guard (fail-fast)', () => {
     expect(migrationSrc).toMatch(/count\(file_size\)::int \+ count\(mime_type\)::int/);
-    expect(migrationSrc).toMatch(/órfãs, mas há dado real/);
+    expect(migrationSrc).toMatch(/columns presumed orphaned, but real data exists/);
     const b = block();
     expect(b).not.toMatch(/file_size|mime_type/);
   });
@@ -62,7 +62,7 @@ describe('RebuildCampaignAssetsInCanonicalFormOrder20260719000023', () => {
     for (const policy of ['campaign_assets_tenant_select', 'campaign_assets_tenant_insert', 'campaign_assets_tenant_update', 'campaign_assets_tenant_delete', 'tenant_isolation']) {
       expect(migrationSrc.match(new RegExp(`CREATE POLICY ${policy}`, 'g'))?.length).toBeGreaterThanOrEqual(2);
     }
-    expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });
 });

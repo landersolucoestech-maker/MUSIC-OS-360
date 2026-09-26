@@ -25,7 +25,7 @@ function makeAi(content: string) {
 }
 
 function makeFailingAi() {
-  return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
+  return { complete: jest.fn(async () => { throw new Error('No AI provider configured'); }) };
 }
 
 const CAREER_STAGE_RESULT = {
@@ -152,7 +152,7 @@ describe('AudienceHealthAutomation (ON_DEMAND: POST /artists/:id/audience-health
     const marketBenchmark = makeMarketBenchmark();
     const handler = new AudienceHealthAutomation(skillRun as never, ai as never, careerStage as never, marketBenchmark as never);
 
-    await expect(handler.run('t1', 'u1', 'a1', 'Banda Aurora', false)).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.run('t1', 'u1', 'a1', 'Banda Aurora', false)).rejects.toThrow('No AI provider configured');
 
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'audience-health', expect.any(Error));
     expect(skillRun.succeed).not.toHaveBeenCalled();

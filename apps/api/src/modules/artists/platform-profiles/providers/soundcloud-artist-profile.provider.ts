@@ -34,7 +34,7 @@ export class SoundCloudArtistProfileProvider implements ArtistPlatformProvider {
     }
 
     const slug = input.externalId ?? this.extractSlug(input.externalUrl ?? '');
-    if (!slug) throw new Error('SoundCloud profile slug ausente ou inválido');
+    if (!slug) throw new Error('SoundCloud profile slug missing or invalid');
 
     // find-4e35ea8e: a SoundCloud slug that resolves successfully (it really
     // exists) but is not indexed on Soundcharts is a VALID 404 response

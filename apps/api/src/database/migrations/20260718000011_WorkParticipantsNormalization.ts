@@ -37,9 +37,9 @@ export class WorkParticipantsNormalization20260718000011 implements MigrationInt
     `);
     if (badShape.length > 0) {
       throw new Error(
-        `WorkParticipantsNormalization: ${badShape.length}+ obra(s) com item de ` +
-        `participantes em formato desconhecido (sem chave "nome") — ex.: ${badShape.map((r) => r.id).join(', ')}. ` +
-        `Migration abortada; corrigir os dados manualmente antes de reexecutar.`,
+        `WorkParticipantsNormalization: ${badShape.length}+ work(s) with a participants ` +
+        `item in an unknown format (no "nome" key) — e.g.: ${badShape.map((r) => r.id).join(', ')}. ` +
+        `Migration aborted; fix the data manually before re-running.`,
       );
     }
 
@@ -54,10 +54,10 @@ export class WorkParticipantsNormalization20260718000011 implements MigrationInt
     `);
     if (Number(orphanData[0]?.count ?? '0') > 0) {
       throw new Error(
-        `WorkParticipantsNormalization: ${orphanData[0].count} obra(s) possuem dado em ` +
-        `detentores/co_compositores. Nenhum writer ativo grava essas colunas hoje — ` +
-        `triagem manual necessária (migrar para work_participants/rights_holders ou ` +
-        `confirmar descarte) antes de remover as colunas. Migration abortada.`,
+        `WorkParticipantsNormalization: ${orphanData[0].count} work(s) have data in ` +
+        `detentores/co_compositores. No active writer populates these columns today — ` +
+        `manual triage required (migrate to work_participants/rights_holders or ` +
+        `confirm discarding) before removing the columns. Migration aborted.`,
       );
     }
 
@@ -105,8 +105,8 @@ export class WorkParticipantsNormalization20260718000011 implements MigrationInt
     if (source_count !== target_count) {
       throw new Error(
         `WorkParticipantsNormalization: backfill incompleto — works.participantes tinha ` +
-        `${source_count} itens, work_participants recebeu ${target_count}. Migration abortada ` +
-        `antes de remover as colunas de origem.`,
+        `${source_count} items, work_participants received ${target_count}. Migration aborted ` +
+        `before removing the source columns.`,
       );
     }
 

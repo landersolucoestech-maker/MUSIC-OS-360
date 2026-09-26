@@ -162,7 +162,7 @@ describe('YouTubeArtistProfileProvider.resolve', () => {
 
   it('a real Soundcharts error (not 404) during resolution propagates as a genuine failure (retry must happen)', async () => {
     const soundcharts = {
-      resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: serviço indisponível')),
+      resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: service unavailable')),
       getYouTubeAudience: jest.fn(),
       isConfigured: jest.fn().mockReturnValue(true),
     } as unknown as SoundchartsService;
@@ -174,7 +174,7 @@ describe('YouTubeArtistProfileProvider.resolve', () => {
       externalId: channelId,
       externalUrl: null,
       canonicalUrls: {},
-    })).rejects.toThrow('Soundcharts 503: serviço indisponível');
+    })).rejects.toThrow('Soundcharts 503: service unavailable');
   });
 });
 

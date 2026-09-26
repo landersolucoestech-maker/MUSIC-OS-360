@@ -25,7 +25,7 @@ function makeAi(content: string) {
 }
 
 function makeFailingAi() {
-  return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
+  return { complete: jest.fn(async () => { throw new Error('No AI provider configured'); }) };
 }
 
 const CONTENT_ROW = { title: 'Teaser do single', channel: 'instagram', copy: 'Chegou o teaser!' };
@@ -118,7 +118,7 @@ describe('PostizAutomation (ON_DEMAND: POST /marketing/contents/:id/ai/postiz)',
     const ds = makeDs();
     const handler = new PostizAutomation(ds as never, skillRun as never, ai as never, makeInstagram() as never, makeTikTok() as never, makeYouTube() as never);
 
-    await expect(handler.run('t1', 'u1', 'post-1')).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.run('t1', 'u1', 'post-1')).rejects.toThrow('No AI provider configured');
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'postiz', expect.any(Error));
   });
 });

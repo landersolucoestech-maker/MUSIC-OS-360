@@ -21,7 +21,7 @@ async function login(cfg: ReturnType<typeof loadHarnessConfig>, cred: RoleCreden
     body: JSON.stringify({ email: cred.email, password: cred.password }),
   });
   if (!res.ok) {
-    console.error(`[harness] login falhou para ${cred.role} (${res.status})`);
+    console.error(`[harness] login failed for ${cred.role} (${res.status})`);
     return null;
   }
   const json = (await res.json()) as { access_token?: string };
@@ -77,7 +77,7 @@ async function main() {
     const s = await login(cfg, cred);
     if (s) sessions.push(s);
   }
-  if (sessions.length === 0) throw new Error('[harness] nenhuma sessão autenticada — abortando');
+  if (sessions.length === 0) throw new Error('[harness] no authenticated session — aborting');
 
   const records: RequestRecord[] = [];
   const created: Array<{ ctrl: MatrixController; tenantId: string; session: Session; id: string }> = [];
@@ -139,4 +139,4 @@ async function main() {
   await reportHarness({ runId, cfg, records, createdCount: created.length, cleaned, cleanupBlocked });
 }
 
-main().catch((e) => { console.error('[harness] ERRO:', e?.message ?? e); process.exit(1); });
+main().catch((e) => { console.error('[harness] ERROR:', e?.message ?? e); process.exit(1); });

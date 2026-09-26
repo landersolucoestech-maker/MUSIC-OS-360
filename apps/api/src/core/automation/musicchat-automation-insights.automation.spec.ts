@@ -25,7 +25,7 @@ function makeAi(content: string) {
 }
 
 function makeFailingAi() {
-  return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
+  return { complete: jest.fn(async () => { throw new Error('No AI provider configured'); }) };
 }
 
 const SETTINGS = {
@@ -111,7 +111,7 @@ describe('MusicChatAutomationInsightsAutomation.runAudit (ON_DEMAND: POST .../au
     const automation = makeAutomationService();
     const handler = new MusicChatAutomationInsightsAutomation(skillRun as never, ai as never, automation as never);
 
-    await expect(handler.runAudit('t1', 'u1', false)).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.runAudit('t1', 'u1', false)).rejects.toThrow('No AI provider configured');
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'automation-audit', expect.any(Error));
   });
 });
@@ -158,7 +158,7 @@ describe('MusicChatAutomationInsightsAutomation.runBuilderSuggestions (ON_DEMAND
     const automation = makeAutomationService();
     const handler = new MusicChatAutomationInsightsAutomation(skillRun as never, ai as never, automation as never);
 
-    await expect(handler.runBuilderSuggestions('t1', 'u1')).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.runBuilderSuggestions('t1', 'u1')).rejects.toThrow('No AI provider configured');
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'automation-builder', expect.any(Error));
   });
 });

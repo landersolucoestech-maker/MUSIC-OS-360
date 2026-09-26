@@ -118,7 +118,7 @@ describe('SoundCloudArtistProfileProvider.resolve (Metrics Phase 1 — protectio
         externalUrl: 'https://not-soundcloud.com/x',
         canonicalUrls: CANONICAL_URLS,
       }),
-    ).rejects.toThrow('SoundCloud profile slug ausente ou inválido');
+    ).rejects.toThrow('SoundCloud profile slug missing or invalid');
     expect(soundcharts.resolveArtistByPlatform).not.toHaveBeenCalled();
   });
 
@@ -126,7 +126,7 @@ describe('SoundCloudArtistProfileProvider.resolve (Metrics Phase 1 — protectio
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockResolvedValue('uuid-x'),
-      resolveCanonicalArtistUuid: jest.fn().mockRejectedValue(new Error('não encontrado')),
+      resolveCanonicalArtistUuid: jest.fn().mockRejectedValue(new Error('not found')),
       getSoundCloudFollowers: jest.fn().mockResolvedValue({
         value: 42, observedAt: new Date(), source: 'soundcharts', endpoint: '/x', field: 'y',
       }),
@@ -171,7 +171,7 @@ describe('SoundCloudArtistProfileProvider.resolve (Metrics Phase 1 — protectio
   it('a real Soundcharts error (not 404) during resolution propagates as a genuine failure (retry must happen)', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
-      resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: serviço indisponível')),
+      resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: service unavailable')),
       getSoundCloudFollowers: jest.fn(),
     } as unknown as SoundchartsService;
     const provider = new SoundCloudArtistProfileProvider(soundcharts);
@@ -182,6 +182,6 @@ describe('SoundCloudArtistProfileProvider.resolve (Metrics Phase 1 — protectio
       externalId: 'deejaystay',
       externalUrl: null,
       canonicalUrls: {},
-    })).rejects.toThrow('Soundcharts 503: serviço indisponível');
+    })).rejects.toThrow('Soundcharts 503: service unavailable');
   });
 });

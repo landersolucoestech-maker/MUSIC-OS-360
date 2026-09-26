@@ -32,7 +32,7 @@ export class DeezerArtistProfileProvider implements ArtistPlatformProvider {
     }
 
     const artistId = input.externalId ?? this.extractArtistId(input.externalUrl ?? '');
-    if (!artistId) throw new Error('Deezer artist id ausente ou inválido');
+    if (!artistId) throw new Error('Deezer artist id missing or invalid');
 
     // find-4e35ea8e: a Deezer artistId that resolves successfully (it really
     // exists) but is not indexed on Soundcharts is a VALID 404 response

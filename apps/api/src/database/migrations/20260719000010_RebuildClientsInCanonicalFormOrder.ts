@@ -100,7 +100,7 @@ export class RebuildClientsInCanonicalFormOrder20260719000010 implements Migrati
     if (Number(non_null) > 0) {
       throw new Error(
         `RebuildClientsInCanonicalFormOrder: clients.(segmento/endereco/responsavel/prioridade/cpf/cnpj) ` +
-        `têm ${non_null} valor(es) não-nulo(s) — colunas presumidas órfãs, mas há dado real. Migration abortada.`,
+        `have ${non_null} non-null value(s) — columns presumed orphaned, but real data exists. Migration aborted.`,
       );
     }
     const [{ non_null: null_required }] = await queryRunner.query(`
@@ -108,8 +108,8 @@ export class RebuildClientsInCanonicalFormOrder20260719000010 implements Migrati
     `);
     if (Number(null_required) > 0) {
       throw new Error(
-        `RebuildClientsInCanonicalFormOrder: ${null_required} linha(s) com categoria/perfil NULL — ` +
-        `não é seguro aplicar NOT NULL. Migration abortada.`,
+        `RebuildClientsInCanonicalFormOrder: ${null_required} row(s) with NULL categoria/perfil — ` +
+        `it is not safe to apply NOT NULL. Migration aborted.`,
       );
     }
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM clients`);
@@ -119,7 +119,7 @@ export class RebuildClientsInCanonicalFormOrder20260719000010 implements Migrati
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM clients_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildClientsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildClientsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE clients_new ADD CONSTRAINT clients_new_pkey PRIMARY KEY (id)`);
@@ -235,7 +235,7 @@ export class RebuildClientsInCanonicalFormOrder20260719000010 implements Migrati
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM clients_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildClientsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildClientsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE clients_restore ADD CONSTRAINT clients_restore_pkey PRIMARY KEY (id)`);

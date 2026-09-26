@@ -155,7 +155,7 @@ describe('InstagramArtistProfileProvider.resolve (Phase 1.3 — the registered h
 
     await expect(
       provider.resolve({ tenantId: 't1', artistId: 'a1', externalId: null, externalUrl: 'https://not-instagram.com/x', canonicalUrls: CANONICAL_URLS }),
-    ).rejects.toThrow('Instagram username ausente ou inválido');
+    ).rejects.toThrow('Instagram username missing or invalid');
     expect(soundcharts.resolveArtistByPlatform).not.toHaveBeenCalled();
   });
 
@@ -196,7 +196,7 @@ describe('InstagramArtistProfileProvider.resolve (Phase 1.3 — the registered h
 
       await expect(
         provider.resolve({ tenantId: 't1', artistId: 'a1', externalId: null, externalUrl: 'https://twitter.com/djstayofc', canonicalUrls: CANONICAL_URLS }),
-      ).rejects.toThrow('Instagram username ausente ou inválido');
+      ).rejects.toThrow('Instagram username missing or invalid');
     });
 
     it('an empty identifier is rejected', async () => {
@@ -208,7 +208,7 @@ describe('InstagramArtistProfileProvider.resolve (Phase 1.3 — the registered h
 
       await expect(
         provider.resolve({ tenantId: 't1', artistId: 'a1', externalId: null, externalUrl: '', canonicalUrls: CANONICAL_URLS }),
-      ).rejects.toThrow('Instagram username ausente ou inválido');
+      ).rejects.toThrow('Instagram username missing or invalid');
     });
   });
 });

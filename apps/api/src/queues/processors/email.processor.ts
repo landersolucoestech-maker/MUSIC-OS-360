@@ -162,7 +162,7 @@ export class EmailProcessor extends WorkerHost {
       }
 
       default:
-        this.logger.warn(`[emails] job desconhecido: "${job.name}" — ignorado`);
+        this.logger.warn(`[emails] unknown job: "${job.name}" — ignored`);
         return;
     }
 

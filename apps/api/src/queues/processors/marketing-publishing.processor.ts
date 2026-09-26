@@ -24,7 +24,7 @@ export class MarketingPublishingProcessor extends WorkerHost {
     if (job.name !== MARKETING_PUBLISHING_JOB_NAMES.PUBLISH_CONTENT) return;
     if (!this.ds) throw new Error('Database unavailable');
     // Fail-closed: an async job without a tenant must NOT touch tenant-scoped data.
-    if (!job.data.tenantId) throw new Error('[marketing-publishing] job sem tenantId — abortado (fail-closed)');
+    if (!job.data.tenantId) throw new Error('[marketing-publishing] job without tenantId — aborted (fail-closed)');
 
     const work = (manager: EntityManager) => this.processContent(manager, job.data);
     await (this.dbContext
@@ -94,7 +94,7 @@ export class MarketingPublishingProcessor extends WorkerHost {
 
   private async publish(row: MarketingContentPostEntity): Promise<{ providerPostId: string }> {
     throw new Error(
-      `Publicacao real para ${row.channel} nao configurada. Configure provider OAuth/API e defina o adaptador de publicacao.`,
+      `Real publishing for ${row.channel} is not configured. Configure the OAuth/API provider and define the publishing adapter.`,
     );
   }
 }

@@ -50,7 +50,7 @@ export class NotificationsProcessor extends WorkerHost {
       case NOTIFICATION_JOB_NAMES.SEND:            return this.handleSend(job);
       case NOTIFICATION_JOB_NAMES.BROADCAST_TENANT: return this.handleBroadcast(job);
       default:
-        this.logger.warn(`[notifications] job desconhecido: "${job.name}" — ignorado`);
+        this.logger.warn(`[notifications] unknown job: "${job.name}" — ignored`);
         return null;
     }
   }

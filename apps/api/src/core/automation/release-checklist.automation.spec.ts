@@ -28,7 +28,7 @@ function makeAi(content: string) {
 }
 
 function makeFailingAi() {
-  return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
+  return { complete: jest.fn(async () => { throw new Error('No AI provider configured'); }) };
 }
 
 /**
@@ -252,7 +252,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
   });
 
   it('B1: an error BEFORE start (load throws) does not propagate and records a best-effort fail', async () => {
-    const boom = new Error('db indisponível no load');
+    const boom = new Error('db unavailable during load');
     const query = jest.fn(async (sql: string) => {
       if (/FROM\s+skill_runs/i.test(sql)) return [];
       if (/FROM\s+releases/i.test(sql)) throw boom; // load() throws

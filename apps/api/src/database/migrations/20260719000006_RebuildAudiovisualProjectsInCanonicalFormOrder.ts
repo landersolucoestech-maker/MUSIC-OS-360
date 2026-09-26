@@ -121,7 +121,7 @@ export class RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006 implem
     if (Number(non_null) > 0) {
       throw new Error(
         `RebuildAudiovisualProjectsInCanonicalFormOrder: audiovisual_projects.organization_id/archived_at ` +
-        `têm ${non_null} valor(es) não-nulo(s) — colunas presumidas órfãs, mas há dado real. Migration abortada.`,
+        `have ${non_null} non-null value(s) — columns presumed orphaned, but real data exists. Migration aborted.`,
       );
     }
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM audiovisual_projects`);
@@ -131,7 +131,7 @@ export class RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006 implem
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM audiovisual_projects_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildAudiovisualProjectsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildAudiovisualProjectsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE audiovisual_projects_new ADD CONSTRAINT audiovisual_projects_new_pkey PRIMARY KEY (id)`);
@@ -271,7 +271,7 @@ export class RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006 implem
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM audiovisual_projects_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildAudiovisualProjectsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildAudiovisualProjectsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE audiovisual_projects_restore ADD CONSTRAINT audiovisual_projects_restore_pkey PRIMARY KEY (id)`);

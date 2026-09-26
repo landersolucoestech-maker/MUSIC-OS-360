@@ -25,7 +25,7 @@ function makeAi(content: string) {
 }
 
 function makeFailingAi() {
-  return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
+  return { complete: jest.fn(async () => { throw new Error('No AI provider configured'); }) };
 }
 
 function makePostHog(configured: boolean) {
@@ -93,7 +93,7 @@ describe('AnalyticsTrackingAutomation (ON_DEMAND: POST /analytics/tracking-cover
     const postHog = makePostHog(true);
     const handler = new AnalyticsTrackingAutomation(skillRun as never, ai as never, postHog as never);
 
-    await expect(handler.run('t1', 'u1')).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.run('t1', 'u1')).rejects.toThrow('No AI provider configured');
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'analytics-tracking', expect.any(Error));
   });
 });

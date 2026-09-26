@@ -35,7 +35,7 @@ export class ACRCloudService {
   async recognize(audioBase64: string): Promise<ACRCloudResult> {
     const host      = this.config.get<string>('ACRCLOUD_HOST');
     const key       = this.config.get<string>('ACRCLOUD_ACCESS_KEY');
-    if (!host || !key) throw new Error('ACRCloud não configurado (ACRCLOUD_HOST / ACRCLOUD_ACCESS_KEY em falta)');
+    if (!host || !key) throw new Error('ACRCloud not configured (ACRCLOUD_HOST / ACRCLOUD_ACCESS_KEY missing)');
 
     const timestamp = Math.floor(Date.now() / 1000);
     const signature = this.buildSignature('POST', '/v1/identify', timestamp);
@@ -53,7 +53,7 @@ export class ACRCloudService {
     const data = await res.json() as any;
 
     if (data.status?.code !== 0) {
-      throw new Error(`ACRCloud erro: ${data.status?.msg}`);
+      throw new Error(`ACRCloud error: ${data.status?.msg}`);
     }
 
     const music = data.metadata?.music?.[0];

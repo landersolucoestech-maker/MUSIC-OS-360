@@ -32,7 +32,7 @@ export function assertTenantOwnership(
 ): void {
   if (resourceTenantId !== requestingTenantId) {
     throw new Error(
-      `Acesso negado: ${resourceName} não pertence ao tenant ${requestingTenantId}`,
+      `Access denied: ${resourceName} does not belong to tenant ${requestingTenantId}`,
     );
   }
 }

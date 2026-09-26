@@ -29,9 +29,9 @@ function readArtistEntitySource(): string {
   const entitiesPath = path.resolve(__dirname, '../../database/entities.ts');
   const content = fs.readFileSync(entitiesPath, 'utf8');
   const start = content.indexOf("@Entity('artists')");
-  if (start === -1) throw new Error("Não encontrei @Entity('artists') em entities.ts");
+  if (start === -1) throw new Error("@Entity('artists') not found in entities.ts");
   const nextEntity = content.indexOf('@Entity(', start + 1);
-  if (nextEntity === -1) throw new Error('Não encontrei o fim de ArtistEntity em entities.ts');
+  if (nextEntity === -1) throw new Error('End of ArtistEntity not found in entities.ts');
   return content.slice(start, nextEntity);
 }
 

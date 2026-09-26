@@ -73,7 +73,7 @@ export class AnalyticsInsightsAutomation {
     forceRefresh: boolean,
   ): Promise<OnDemandSkillResult<ReportingAnalysisOutput>> {
     const dashboard = (await this.analytics.getDashboard(tenantId)) as DashboardSnapshot | null;
-    if (!dashboard) throw new Error('Dashboard operacional indisponível');
+    if (!dashboard) throw new Error('Operational dashboard unavailable');
 
     const input: ReportingAnalysisInput = {
       artists: dashboard.artists,
@@ -119,7 +119,7 @@ export class AnalyticsInsightsAutomation {
     months: number,
   ): Promise<OnDemandSkillResult<PerformanceReportOutput>> {
     const overview = await this.analytics.getRevenueOverview(tenantId, months);
-    if (!overview) throw new Error('Visão de receita indisponível');
+    if (!overview) throw new Error('Revenue overview unavailable');
 
     const input: PerformanceReportInput = {
       months: overview.months,

@@ -57,8 +57,8 @@ export class RebuildTakedownsInCanonicalFormOrder20260719000016 implements Migra
     `);
     if (Number(non_null) > 0) {
       throw new Error(
-        `RebuildTakedownsInCanonicalFormOrder: takedowns.(url/resposta/obra_id/artista_id) têm ${non_null} ` +
-        `valor(es) não-nulo(s) — colunas presumidas órfãs, mas há dado real. Migration abortada.`,
+        `RebuildTakedownsInCanonicalFormOrder: takedowns.(url/resposta/obra_id/artista_id) have ${non_null} ` +
+        `non-null value(s) — columns presumed orphaned, but real data exists. Migration aborted.`,
       );
     }
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM takedowns`);
@@ -68,7 +68,7 @@ export class RebuildTakedownsInCanonicalFormOrder20260719000016 implements Migra
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM takedowns_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildTakedownsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildTakedownsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE takedowns_new ADD CONSTRAINT takedowns_new_pkey PRIMARY KEY (id)`);
@@ -149,7 +149,7 @@ export class RebuildTakedownsInCanonicalFormOrder20260719000016 implements Migra
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM takedowns_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildTakedownsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildTakedownsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE takedowns_restore ADD CONSTRAINT takedowns_restore_pkey PRIMARY KEY (id)`);

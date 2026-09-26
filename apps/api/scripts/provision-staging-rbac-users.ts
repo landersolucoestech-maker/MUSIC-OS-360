@@ -21,7 +21,7 @@ function reqEnv(name: string): string {
 
 async function main(): Promise<void> {
   if (process.env['PROVISION_CONFIRM'] !== 'YES') {
-    throw new Error('Recusado: defina PROVISION_CONFIRM=YES para confirmar o staging descartavel.');
+    throw new Error('Refused: set PROVISION_CONFIRM=YES to confirm the disposable staging.');
   }
 
   const supabaseUrl = reqEnv('STAGING_SUPABASE_URL');
@@ -32,7 +32,7 @@ async function main(): Promise<void> {
     .map((value) => value.trim())
     .filter(Boolean);
   if (tenantIds.length < 1) {
-    throw new Error('STAGING_TENANT_IDS precisa conter pelo menos 1 tenant.');
+    throw new Error('STAGING_TENANT_IDS must contain at least 1 tenant.');
   }
   const emailSuffix = process.env['EMAIL_SUFFIX'] ?? '';
 
@@ -42,7 +42,7 @@ async function main(): Promise<void> {
     const ref = extractSupabaseRef(value);
     if (ref !== SUPABASE_STAGING_REF) {
       throw new Error(
-        `Recusado: ${name} resolve para o ref "${ref ?? 'não identificável'}" — somente o projeto staging "${SUPABASE_STAGING_REF}" é aceito.`,
+        `Refused: ${name} resolves to ref "${ref ?? 'unidentifiable'}" — only the staging project "${SUPABASE_STAGING_REF}" is accepted.`,
       );
     }
   }
@@ -100,7 +100,7 @@ async function main(): Promise<void> {
       } else if (error) {
         throw error;
       }
-      if (!userId) throw new Error(`Supabase nao retornou userId para ${email}`);
+      if (!userId) throw new Error(`Supabase did not return a userId for ${email}`);
 
       for (const tenantId of tenantIds) {
         await query(

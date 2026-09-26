@@ -89,7 +89,7 @@ describe('AppleMusicArtistProfileProvider.resolve (Phase 1.3 — the registered 
 
     await expect(
       provider.resolve({ tenantId: 't1', artistId: 'a1', externalId: null, externalUrl: 'https://not-apple-music.com/x', canonicalUrls: CANONICAL_URLS }),
-    ).rejects.toThrow('Apple Music artist id ausente ou inválido');
+    ).rejects.toThrow('Apple Music artist id missing or invalid');
     expect(soundcharts.resolveArtistByPlatform).not.toHaveBeenCalled();
   });
 });

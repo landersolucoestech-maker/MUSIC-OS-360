@@ -25,7 +25,7 @@ function makeAi(content: string) {
 }
 
 function makeFailingAi() {
-  return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
+  return { complete: jest.fn(async () => { throw new Error('No AI provider configured'); }) };
 }
 
 const DASHBOARD = {
@@ -123,7 +123,7 @@ describe('AnalyticsInsightsAutomation.runReportingAnalysis (ON_DEMAND: POST /ana
     const analytics = makeAnalytics();
     const handler = new AnalyticsInsightsAutomation(skillRun as never, ai as never, analytics as never);
 
-    await expect(handler.runReportingAnalysis('t1', 'u1', false)).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.runReportingAnalysis('t1', 'u1', false)).rejects.toThrow('No AI provider configured');
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'reporting-analysis', expect.any(Error));
   });
 });
@@ -168,7 +168,7 @@ describe('AnalyticsInsightsAutomation.runPerformanceReport (ON_DEMAND: POST /ana
     const analytics = makeAnalytics();
     const handler = new AnalyticsInsightsAutomation(skillRun as never, ai as never, analytics as never);
 
-    await expect(handler.runPerformanceReport('t1', 'u1', 3)).rejects.toThrow('Nenhum provider de AI configurado');
+    await expect(handler.runPerformanceReport('t1', 'u1', 3)).rejects.toThrow('No AI provider configured');
     expect(skillRun.fail).toHaveBeenCalledWith('run-1', 't1', 'performance-report', expect.any(Error));
   });
 });

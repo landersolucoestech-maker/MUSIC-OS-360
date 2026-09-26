@@ -131,7 +131,7 @@ describe('AIService.complete — monthly-budget race (find-ff83efc6)', () => {
     const service = new AIService(config as never, ds as never);
 
     await expect(service.complete({ tenantId: 't1', userId: 'u1', skill: 'x', prompt: 'hi' }))
-      .rejects.toThrow('Nenhum provider de AI configurado'); // no API keys configured in this test -- proves we got PAST the lock/limit check
+      .rejects.toThrow('No AI provider configured'); // no API keys configured in this test -- proves we got PAST the lock/limit check
 
     expect(manager.query).toHaveBeenCalledWith('SELECT pg_advisory_xact_lock(hashtext($1))', ['ai-budget:t1']);
     expect(manager.getRepository).toHaveBeenCalled(); // enforceMonthlyLimit read spend via the SAME manager, not a fresh connection

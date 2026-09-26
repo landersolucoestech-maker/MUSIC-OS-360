@@ -19,7 +19,7 @@ export const RequirePermission = (...permissions: string[]) => {
   for (const permission of permissions) {
     if (!PERMISSION_KEY_FORMAT.test(permission)) {
       throw new Error(
-        `@RequirePermission: chave inválida "${permission}" — use o padrão resource:action (ex.: artist:read).`,
+        `@RequirePermission: invalid key "${permission}" — use the resource:action pattern (e.g. artist:read).`,
       );
     }
   }

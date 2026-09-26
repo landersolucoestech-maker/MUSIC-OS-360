@@ -59,7 +59,7 @@ export class RebuildLeaveRequestsInCanonicalFormOrder20260719000025 implements M
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM leave_requests_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildLeaveRequestsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildLeaveRequestsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE leave_requests_new ADD CONSTRAINT leave_requests_new_pkey PRIMARY KEY (id)`);
@@ -134,7 +134,7 @@ export class RebuildLeaveRequestsInCanonicalFormOrder20260719000025 implements M
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM leave_requests_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildLeaveRequestsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildLeaveRequestsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE leave_requests_restore ADD CONSTRAINT leave_requests_restore_pkey PRIMARY KEY (id)`);

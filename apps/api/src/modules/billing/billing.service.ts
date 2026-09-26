@@ -215,7 +215,7 @@ export class BillingService {
         this.logger.log('Stripe Billing inicializado (TEST MODE)');
         break;
       case 'LIVE_KEY_REJECTED':
-        this.logger.error('STRIPE_SECRET_KEY e uma chave LIVE - recusada. Este projeto opera exclusivamente em TEST MODE. Billing desativado.');
+        this.logger.error('STRIPE_SECRET_KEY is a LIVE key - refused. This project runs exclusively in TEST MODE. Billing disabled.');
         break;
       case 'INVALID_FORMAT':
         this.logger.warn('STRIPE_SECRET_KEY does not have a recognized Stripe format - Billing disabled');
@@ -738,7 +738,7 @@ export class BillingService {
         await this.onInvoiceUncollectible(event.data.object as StripeInvoice, resolvedTenantId);
         break;
       default:
-        this.logger.debug(`Evento Stripe ignorado: ${event.type}`);
+        this.logger.debug(`Stripe event ignored: ${event.type}`);
     }
   }
 
@@ -750,7 +750,7 @@ export class BillingService {
       // without provisioning the tenant — not a processing error, but it needs
       // visibility.
       this.logger.warn(
-        `checkout.session.completed ignorado: metadata incompleta ` +
+        `checkout.session.completed ignored: incomplete metadata ` +
           `(customer=${session.customer ?? '∅'}, subscription=${session.subscription ?? '∅'}, ` +
           `tenant_id=${tenant_id ?? '∅'}, org_id=${org_id ?? '∅'}, plan=${plan ?? '∅'}).`,
       );
@@ -896,7 +896,7 @@ export class BillingService {
 
     const state = await this.enforcement.getState(tenantId);
     if (this.isStaleInvoiceEvent(state, eventCreatedAtSec)) {
-      this.logger.log(`invoice.payment_succeeded ignorado (stale): tenant=${tenantId} invoice=${invoice.id}`);
+      this.logger.log(`invoice.payment_succeeded ignored (stale): tenant=${tenantId} invoice=${invoice.id}`);
       return;
     }
     // find-329e1db7: the pre-read check above can't stop two genuinely
@@ -922,7 +922,7 @@ export class BillingService {
 
     const state = await this.enforcement.getState(tenantId);
     if (this.isStaleInvoiceEvent(state, eventCreatedAtSec)) {
-      this.logger.log(`invoice.payment_failed ignorado (stale): tenant=${tenantId} invoice=${invoice.id}`);
+      this.logger.log(`invoice.payment_failed ignored (stale): tenant=${tenantId} invoice=${invoice.id}`);
       return;
     }
     // find-329e1db7: see onPaymentSucceeded's comment -- the atomic WHERE

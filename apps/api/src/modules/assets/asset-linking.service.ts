@@ -103,7 +103,7 @@ export class AssetLinkingService {
           where: { id: payload.uploadId, tenant_id: payload.tenantId },
         });
         if (!upload) {
-          throw new Error(`Upload "${payload.uploadId}" não encontrado para o tenant ${payload.tenantId}`);
+          throw new Error(`Upload "${payload.uploadId}" not found for tenant ${payload.tenantId}`);
         }
 
         const assetType = AssetLinkingService.classify(upload.mime_type, upload.original_name);

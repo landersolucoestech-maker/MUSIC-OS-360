@@ -59,7 +59,7 @@ describe('RebuildPhonogramsInCanonicalFormOrder20260719000003', () => {
   });
 
   it('validates counts before swapping (up and down) and has an honest down()', () => {
-    expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });
 });

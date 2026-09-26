@@ -221,7 +221,7 @@ async function execute<TRow, TInput>(
     if (validation && !validation.valid) {
       await skillRun.fail(
         runId, tenantId, skillName,
-        new Error(`input inválido: ${validation.errors.join('; ')}`),
+        new Error(`invalid input: ${validation.errors.join('; ')}`),
       );
       return;
     }

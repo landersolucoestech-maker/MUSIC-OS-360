@@ -128,8 +128,8 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
     const [{ non_null }] = await queryRunner.query(`SELECT count(org_slug)::int AS non_null FROM artists`);
     if (Number(non_null) > 0) {
       throw new Error(
-        `RebuildArtistsInCanonicalFormOrder: artists.org_slug tem ${non_null} valor(es) não-nulo(s) — ` +
-        `coluna presumida órfã, mas há dado real. Migration abortada.`,
+        `RebuildArtistsInCanonicalFormOrder: artists.org_slug has ${non_null} non-null value(s) — ` +
+        `column presumed orphaned, but real data exists. Migration aborted.`,
       );
     }
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM artists`);
@@ -144,8 +144,8 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM artists_new`);
     if (Number(newCount) !== Number(total)) {
       throw new Error(
-        `RebuildArtistsInCanonicalFormOrder: contagem divergente após cópia ` +
-        `(original=${total}, nova=${newCount}) — migration abortada, artists_new não trocada.`,
+        `RebuildArtistsInCanonicalFormOrder: count mismatch after copy ` +
+        `(original=${total}, new=${newCount}) — migration aborted, artists_new not swapped.`,
       );
     }
 
@@ -323,8 +323,8 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM artists_restore`);
     if (Number(restoredCount) !== Number(total)) {
       throw new Error(
-        `RebuildArtistsInCanonicalFormOrder.down: contagem divergente (original=${total}, ` +
-        `restaurada=${restoredCount}) — down abortado, artists não trocada.`,
+        `RebuildArtistsInCanonicalFormOrder.down: count mismatch (original=${total}, ` +
+        `restored=${restoredCount}) — down aborted, artists not swapped.`,
       );
     }
 

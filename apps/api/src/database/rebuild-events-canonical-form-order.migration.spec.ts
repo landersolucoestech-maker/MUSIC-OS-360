@@ -35,7 +35,7 @@ describe('RebuildEventsInCanonicalFormOrder20260719000007', () => {
   it('drops valor (proven orphan) with fail-fast validation', () => {
     expect(migrationSrc).not.toMatch(/newColumns = `[^`]*\bvalor\b(?!_cache)/);
     expect(migrationSrc).toMatch(/count\(valor\)::int AS non_null/);
-    expect(migrationSrc).toMatch(/presumida órfã, mas há dado real/);
+    expect(migrationSrc).toMatch(/column presumed orphaned, but real data exists/);
   });
 
   it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {
@@ -54,7 +54,7 @@ describe('RebuildEventsInCanonicalFormOrder20260719000007', () => {
     expect(migrationSrc.match(/ALTER TABLE financial_transactions ADD CONSTRAINT/g)?.length).toBeGreaterThanOrEqual(1);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
-    expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });
 });

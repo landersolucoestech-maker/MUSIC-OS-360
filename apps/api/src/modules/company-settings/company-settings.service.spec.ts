@@ -39,7 +39,7 @@ function buildFakeDataSource(seed: {
       state.tenants.settings = JSON.parse(settings);
       return [];
     }
-    throw new Error(`Query não mapeada no fake DataSource: ${s}`);
+    throw new Error(`Query not mapped in the fake DataSource: ${s}`);
   });
 
   const ds = {

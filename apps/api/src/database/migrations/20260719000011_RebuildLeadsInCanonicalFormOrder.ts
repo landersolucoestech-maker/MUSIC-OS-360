@@ -91,8 +91,8 @@ export class RebuildLeadsInCanonicalFormOrder20260719000011 implements Migration
     const [{ non_null }] = await queryRunner.query(`SELECT count(score)::int + count(pipeline_stage)::int AS non_null FROM leads`);
     if (Number(non_null) > 0) {
       throw new Error(
-        `RebuildLeadsInCanonicalFormOrder: leads.(score/pipeline_stage) têm ${non_null} valor(es) não-nulo(s) — ` +
-        `colunas presumidas órfãs, mas há dado real. Migration abortada.`,
+        `RebuildLeadsInCanonicalFormOrder: leads.(score/pipeline_stage) have ${non_null} non-null value(s) — ` +
+        `columns presumed orphaned, but real data exists. Migration aborted.`,
       );
     }
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM leads`);
@@ -102,7 +102,7 @@ export class RebuildLeadsInCanonicalFormOrder20260719000011 implements Migration
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM leads_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildLeadsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildLeadsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE leads_new ADD CONSTRAINT leads_new_pkey PRIMARY KEY (id)`);
@@ -254,7 +254,7 @@ export class RebuildLeadsInCanonicalFormOrder20260719000011 implements Migration
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM leads_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildLeadsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildLeadsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE leads_restore ADD CONSTRAINT leads_restore_pkey PRIMARY KEY (id)`);

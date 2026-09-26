@@ -45,9 +45,9 @@ export class RemoveLegacySocietyCodeColumns20260718000016 implements MigrationIn
     `);
     if (orphans.length > 0) {
       throw new Error(
-        `RemoveLegacySocietyCodeColumns: ${orphans.length} valor(es) de ${table}.${column} sem ` +
-        `correspondência em external_identifiers (identifier_type=${identifierType}) — migration abortada. ` +
-        `Exemplo: id=${orphans[0].id} tenant_id=${orphans[0].tenant_id} value=${orphans[0].value}`,
+        `RemoveLegacySocietyCodeColumns: ${orphans.length} value(s) of ${table}.${column} without ` +
+        `a match in external_identifiers (identifier_type=${identifierType}) — migration aborted. ` +
+        `Example: id=${orphans[0].id} tenant_id=${orphans[0].tenant_id} value=${orphans[0].value}`,
       );
     }
   }

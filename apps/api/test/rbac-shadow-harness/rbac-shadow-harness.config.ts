@@ -39,7 +39,7 @@ function env(name: string): string | undefined {
 
 function requireEnv(name: string): string {
   const v = env(name);
-  if (!v) throw new Error(`[harness] variável obrigatória ausente: ${name}`);
+  if (!v) throw new Error(`[harness] missing required variable: ${name}`);
   return v;
 }
 
@@ -49,7 +49,7 @@ function credFor(role: HarnessRole, optional: boolean): RoleCredential | null {
   const password = env(`RBAC_HARNESS_${key}_PASSWORD`);
   if (!email || !password) {
     if (optional) return null;
-    throw new Error(`[harness] credenciais obrigatórias ausentes para role '${role}'`);
+    throw new Error(`[harness] missing required credentials for role '${role}'`);
   }
   return { role, email, password };
 }

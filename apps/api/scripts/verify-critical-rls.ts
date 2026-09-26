@@ -74,7 +74,7 @@ async function expectDenied(action: () => Promise<unknown>, message: string) {
     console.log(`OK  ${message}`);
     return;
   }
-  throw new Error(`${message}: operação foi aceita`);
+  throw new Error(`${message}: operation was accepted`);
 }
 
 async function createFixture(qr: QueryRunner): Promise<Fixture> {

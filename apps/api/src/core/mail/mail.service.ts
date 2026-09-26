@@ -116,7 +116,7 @@ export class MailService {
 
     if (!res.ok) {
       const body = await res.text();
-      throw new Error(`Resend erro ${res.status}: ${body}`);
+      throw new Error(`Resend error ${res.status}: ${body}`);
     }
 
     const data = await res.json() as { id: string };

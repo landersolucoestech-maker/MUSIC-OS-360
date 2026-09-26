@@ -52,7 +52,7 @@ describe('RebuildMusicchatAutomationSettingsInCanonicalFormOrder20260719000021',
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc.match(/CREATE POLICY tenant_isolation ON musicchat_automation_settings\s*\n\s*AS PERMISSIVE FOR ALL TO public/g)?.length).toBeGreaterThanOrEqual(2);
-    expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/async down/);
   });
 });

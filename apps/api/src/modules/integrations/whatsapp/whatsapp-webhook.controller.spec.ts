@@ -272,20 +272,20 @@ describe('WhatsAppWebhookController', () => {
 
   it('handleInboundMessage fails: does NOT silently return 200 — throws to trigger Meta\'s retry', async () => {
     const { controller, markProcessedSpy } = makeController({
-      handleInboundMessage: jest.fn().mockRejectedValue(new Error('DB indisponível')),
+      handleInboundMessage: jest.fn().mockRejectedValue(new Error('DB unavailable')),
     });
     const body = messagePayloadObj();
     const req = rawReq(body);
     const validSig = sign(req.rawBody.toString('utf8'));
 
     await expect(controller.receive(body, validSig, req)).rejects.toBeInstanceOf(BadGatewayException);
-    expect(markProcessedSpy).toHaveBeenCalledWith('evt-1', 'failed', 'DB indisponível');
+    expect(markProcessedSpy).toHaveBeenCalledWith('evt-1', 'failed', 'DB unavailable');
   });
 
   it('payload with multiple messages, one failing: still throws (no 200 hiding the partial failure)', async () => {
     const handleInboundMessage = jest.fn()
       .mockResolvedValueOnce({ action: 'received' })
-      .mockRejectedValueOnce(new Error('falha na segunda'));
+      .mockRejectedValueOnce(new Error('failure on the second call'));
     const ingestSpy = jest.fn()
       .mockResolvedValueOnce({ isDuplicate: false, eventId: 'evt-1', status: 'pending' })
       .mockResolvedValueOnce({ isDuplicate: false, eventId: 'evt-2', status: 'pending' });

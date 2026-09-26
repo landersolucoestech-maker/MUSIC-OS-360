@@ -45,7 +45,7 @@ export class AppleMusicArtistProfileProvider implements ArtistPlatformProvider {
     }
 
     const appleId = input.externalId ?? extractAppleMusicId(input.externalUrl ?? '');
-    if (!appleId) throw new Error('Apple Music artist id ausente ou inválido');
+    if (!appleId) throw new Error('Apple Music artist id missing or invalid');
 
     // PRIMARY: exact resolution by the registered Apple Music ID.
     let uuid: string | null = null;

@@ -72,7 +72,7 @@ describe('RebuildArtistsInCanonicalFormOrder20260719000001', () => {
   });
 
   it('validates row counts before swapping the table (up and down)', () => {
-    expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(migrationSrc.match(/count mismatch/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
   it('has an honest down() that reverts to the original structure (including org_slug)', () => {

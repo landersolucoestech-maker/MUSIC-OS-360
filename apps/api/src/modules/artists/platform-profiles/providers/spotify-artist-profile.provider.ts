@@ -34,7 +34,7 @@ export class SpotifyArtistProfileProvider implements ArtistPlatformProvider {
     }
 
     const artistId = input.externalId ?? parseSpotifyArtistId(input.externalUrl ?? '');
-    if (!artistId) throw new Error('Spotify artist id ausente ou inválido');
+    if (!artistId) throw new Error('Spotify artist id missing or invalid');
 
     // find-4e35ea8e: a Spotify artistId that resolves successfully (it really
     // exists) but is not indexed on Soundcharts is a VALID 404 response

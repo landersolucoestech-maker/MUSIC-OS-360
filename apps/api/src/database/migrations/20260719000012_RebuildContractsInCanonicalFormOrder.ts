@@ -71,7 +71,7 @@ export class RebuildContractsInCanonicalFormOrder20260719000012 implements Migra
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM contracts_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildContractsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildContractsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE contracts_new ADD CONSTRAINT contracts_new_pkey PRIMARY KEY (id)`);
@@ -171,7 +171,7 @@ export class RebuildContractsInCanonicalFormOrder20260719000012 implements Migra
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM contracts_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildContractsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildContractsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE contracts_restore ADD CONSTRAINT contracts_restore_pkey PRIMARY KEY (id)`);

@@ -128,6 +128,6 @@ describe('evaluateRealtimeState', () => {
       owner: '',
       currentUser: '',
       policies: [],
-    })).toThrow(/não existe neste projeto/);
+    })).toThrow(/does not exist in this project/);
   });
 });

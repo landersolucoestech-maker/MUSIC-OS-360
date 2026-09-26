@@ -89,7 +89,7 @@ export class RebuildWorksInCanonicalFormOrder20260719000002 implements Migration
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM works_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildWorksInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildWorksInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE works_new ADD CONSTRAINT works_new_pkey PRIMARY KEY (id)`);
@@ -234,7 +234,7 @@ export class RebuildWorksInCanonicalFormOrder20260719000002 implements Migration
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM works_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildWorksInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildWorksInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE works_restore ADD CONSTRAINT works_restore_pkey PRIMARY KEY (id)`);

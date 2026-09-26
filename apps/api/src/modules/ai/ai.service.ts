@@ -91,7 +91,7 @@ export class AIService {
     if (this.config.get('GOOGLE_AI_API_KEY'))  providers.push(() => this.gemini(opts));
 
     if (providers.length === 0) {
-      throw new Error('Nenhum provider de AI configurado');
+      throw new Error('No AI provider configured');
     }
 
     let lastError: unknown;
@@ -105,7 +105,7 @@ export class AIService {
         this.logger.warn(`AI provider failed, trying next: ${String(err)}`);
       }
     }
-    throw new Error(`Todos os providers AI falharam. Último erro: ${String(lastError)}`);
+    throw new Error(`All AI providers failed. Last error: ${String(lastError)}`);
   }
 
   private async enforceMonthlyLimit(tenantId: string, manager?: EntityManager): Promise<void> {

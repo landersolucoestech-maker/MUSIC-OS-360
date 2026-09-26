@@ -768,7 +768,7 @@ export class PermissionResolverService implements OnModuleInit {
     )) as GraphRoleRow[];
 
     if (rows.some((row) => Number(row.depth) > 32)) {
-      throw new Error('profundidade maxima do grafo de roles excedida');
+      throw new Error('maximum role graph depth exceeded');
     }
     return new Set(rows.map((row) => row.id));
   }
@@ -815,7 +815,7 @@ export class PermissionResolverService implements OnModuleInit {
     )) as PermissionRoleRow[];
 
     if (rows.some((row) => Number(row.permission_depth) > 32)) {
-      throw new Error('profundidade maxima do grafo de dependencias excedida');
+      throw new Error('maximum dependency graph depth exceeded');
     }
     return this.loadDescendantRoleIds(
       ds,

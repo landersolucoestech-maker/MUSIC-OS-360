@@ -59,7 +59,7 @@ describe('evaluateCrossPlatformEvidence (Phase 1.3 — purely diagnostic, never 
   it('3) CROSS_PLATFORM_DIVERGENT when the independent UUID DIVERGES from the UUID resolved from the own handle — no registry available', async () => {
     const soundcharts = {
       resolveCanonicalArtistUuid: jest.fn().mockResolvedValue('canonical-uuid-artist-a'),
-      getArtistIdentifiers: jest.fn().mockRejectedValue(new Error('não encontrado')),
+      getArtistIdentifiers: jest.fn().mockRejectedValue(new Error('not found')),
     } as unknown as SoundchartsService;
 
     const result = await evaluateCrossPlatformEvidence(soundcharts, URLS, 'soundcloud', 'own-resolved-uuid');
@@ -87,7 +87,7 @@ describe('evaluateCrossPlatformEvidence (Phase 1.3 — purely diagnostic, never 
 
   it('4) CROSS_PLATFORM_UNKNOWN when other anchors exist but none resolves on Soundcharts', async () => {
     const soundcharts = {
-      resolveCanonicalArtistUuid: jest.fn().mockRejectedValue(new Error('não encontrado')),
+      resolveCanonicalArtistUuid: jest.fn().mockRejectedValue(new Error('not found')),
     } as unknown as SoundchartsService;
 
     const result = await evaluateCrossPlatformEvidence(soundcharts, URLS, 'soundcloud', 'own-uuid');
@@ -176,7 +176,7 @@ describe('resolveCanonicalUuidForProvider — cross-platform UUID reuse (Soundch
     const soundcharts = new SoundchartsService(fakeConfig);
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       if (platform === 'spotify') return 'sc-uuid-1';
-      throw new Error(`não deveria consultar ${platform}`);
+      throw new Error(`should not query ${platform}`);
     }) as never;
 
     const uuid = await resolveCanonicalUuidForProvider(soundcharts, URLS, 'instagram', 'billieeilish');
@@ -190,7 +190,7 @@ describe('resolveCanonicalUuidForProvider — cross-platform UUID reuse (Soundch
     const soundcharts = new SoundchartsService(fakeConfig);
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       if (platform === 'spotify') return 'sc-uuid-1';
-      throw new Error(`não deveria consultar ${platform}`);
+      throw new Error(`should not query ${platform}`);
     }) as never;
 
     const uuid = await resolveCanonicalUuidForProvider(soundcharts, URLS, 'tiktok', 'billieeilish');
@@ -205,9 +205,9 @@ describe('resolveCanonicalUuidForProvider — cross-platform UUID reuse (Soundch
     const attempted: string[] = [];
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       attempted.push(platform);
-      if (platform === 'spotify') throw new Error('não encontrado');
+      if (platform === 'spotify') throw new Error('not found');
       if (platform === 'youtube') return 'sc-uuid-2';
-      throw new Error(`não deveria consultar ${platform}`);
+      throw new Error(`should not query ${platform}`);
     }) as never;
 
     const uuid = await resolveCanonicalUuidForProvider(soundcharts, URLS, 'instagram', 'billieeilish');
@@ -222,7 +222,7 @@ describe('resolveCanonicalUuidForProvider — cross-platform UUID reuse (Soundch
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       attempted.push(platform);
       if (platform === 'deezer') return 'sc-uuid-3';
-      throw new Error('não encontrado');
+      throw new Error('not found');
     }) as never;
 
     const uuid = await resolveCanonicalUuidForProvider(soundcharts, URLS, 'tiktok', 'billieeilish');
@@ -237,7 +237,7 @@ describe('resolveCanonicalUuidForProvider — cross-platform UUID reuse (Soundch
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       attempted.push(platform);
       if (platform === 'instagram') return 'sc-uuid-own';
-      throw new Error('não encontrado');
+      throw new Error('not found');
     }) as never;
 
     const uuid = await resolveCanonicalUuidForProvider(soundcharts, URLS, 'instagram', 'billieeilish');
@@ -250,7 +250,7 @@ describe('resolveCanonicalUuidForProvider — cross-platform UUID reuse (Soundch
     const soundcharts = new SoundchartsService(fakeConfig);
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       if (platform === 'tiktok') return 'sc-uuid-own';
-      throw new Error(`não deveria consultar ${platform}`);
+      throw new Error(`should not query ${platform}`);
     }) as never;
 
     const uuid = await resolveCanonicalUuidForProvider(soundcharts, undefined, 'tiktok', 'billieeilish');
@@ -262,7 +262,7 @@ describe('resolveCanonicalUuidForProvider — cross-platform UUID reuse (Soundch
 
   it('every attempt (including ownPlatform) fails → aggregated error, no invented UUID', async () => {
     const soundcharts = new SoundchartsService(fakeConfig);
-    soundcharts.resolveArtistByPlatform = jest.fn(async () => { throw new Error('não encontrado'); }) as never;
+    soundcharts.resolveArtistByPlatform = jest.fn(async () => { throw new Error('not found'); }) as never;
 
     await expect(
       resolveCanonicalUuidForProvider(soundcharts, URLS, 'instagram', 'billieeilish'),

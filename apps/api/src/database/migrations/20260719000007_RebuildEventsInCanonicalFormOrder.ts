@@ -67,8 +67,8 @@ export class RebuildEventsInCanonicalFormOrder20260719000007 implements Migratio
     const [{ non_null }] = await queryRunner.query(`SELECT count(valor)::int AS non_null FROM events`);
     if (Number(non_null) > 0) {
       throw new Error(
-        `RebuildEventsInCanonicalFormOrder: events.valor tem ${non_null} valor(es) não-nulo(s) — ` +
-        `coluna presumida órfã, mas há dado real. Migration abortada.`,
+        `RebuildEventsInCanonicalFormOrder: events.valor has ${non_null} non-null value(s) — ` +
+        `column presumed orphaned, but real data exists. Migration aborted.`,
       );
     }
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM events`);
@@ -78,7 +78,7 @@ export class RebuildEventsInCanonicalFormOrder20260719000007 implements Migratio
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM events_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildEventsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildEventsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE events_new ADD CONSTRAINT events_new_pkey PRIMARY KEY (id)`);
@@ -173,7 +173,7 @@ export class RebuildEventsInCanonicalFormOrder20260719000007 implements Migratio
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM events_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildEventsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildEventsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE events_restore ADD CONSTRAINT events_restore_pkey PRIMARY KEY (id)`);

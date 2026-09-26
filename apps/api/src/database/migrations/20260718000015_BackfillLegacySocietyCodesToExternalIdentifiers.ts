@@ -71,8 +71,8 @@ export class BackfillLegacySocietyCodesToExternalIdentifiers20260718000015 imple
     // only adds (ON CONFLICT DO NOTHING is idempotent, never removes).
     if (Number(after) < Number(before)) {
       throw new Error(
-        `BackfillLegacySocietyCodesToExternalIdentifiers: contagem de external_identifiers ` +
-        `diminuiu (antes=${before}, depois=${after}) — migration abortada.`,
+        `BackfillLegacySocietyCodesToExternalIdentifiers: external_identifiers count ` +
+        `decreased (before=${before}, after=${after}) — migration aborted.`,
       );
     }
   }

@@ -74,7 +74,7 @@ export class RebuildReleasesInCanonicalFormOrder20260719000004 implements Migrat
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM releases_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildReleasesInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildReleasesInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE releases_new ADD CONSTRAINT releases_new_pkey PRIMARY KEY (id)`);
@@ -167,7 +167,7 @@ export class RebuildReleasesInCanonicalFormOrder20260719000004 implements Migrat
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM releases_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildReleasesInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildReleasesInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE releases_restore ADD CONSTRAINT releases_restore_pkey PRIMARY KEY (id)`);

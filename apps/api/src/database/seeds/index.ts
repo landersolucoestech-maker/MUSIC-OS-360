@@ -24,7 +24,7 @@ async function run(): Promise<void> {
   if (env === 'production' && !force) {
     console.error(
       '\n[MUSIC OS 360] Seeds in production require the --force flag.\n' +
-      'Exemplo: npm run db:seed -- --force\n' +
+      'Example: npm run db:seed -- --force\n' +
       'WARNING: seeds overwrite existing data.\n',
     );
     process.exit(1);
@@ -38,7 +38,7 @@ async function run(): Promise<void> {
   if (targetRef === SUPABASE_PROD_REF) {
     console.error(
       '\n[MUSIC OS 360] Refused: DATABASE_URL points to the Supabase MAIN branch.\n' +
-      'Seeds nunca podem rodar contra MAIN, independente de NODE_ENV ou --force.\n',
+      'Seeds can never run against MAIN, regardless of NODE_ENV or --force.\n',
     );
     process.exit(1);
   }

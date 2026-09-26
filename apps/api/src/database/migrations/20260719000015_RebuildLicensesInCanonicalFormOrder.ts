@@ -63,7 +63,7 @@ export class RebuildLicensesInCanonicalFormOrder20260719000015 implements Migrat
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM licenses_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildLicensesInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildLicensesInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE licenses_new ADD CONSTRAINT licenses_new_pkey PRIMARY KEY (id)`);
@@ -138,7 +138,7 @@ export class RebuildLicensesInCanonicalFormOrder20260719000015 implements Migrat
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM licenses_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildLicensesInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildLicensesInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE licenses_restore ADD CONSTRAINT licenses_restore_pkey PRIMARY KEY (id)`);

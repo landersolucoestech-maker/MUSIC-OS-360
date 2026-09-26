@@ -59,7 +59,7 @@ export class RebuildPayrollEntriesInCanonicalFormOrder20260719000019 implements 
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM payroll_entries_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildPayrollEntriesInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildPayrollEntriesInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE payroll_entries_new ADD CONSTRAINT payroll_entries_new_pkey PRIMARY KEY (id)`);
@@ -139,7 +139,7 @@ export class RebuildPayrollEntriesInCanonicalFormOrder20260719000019 implements 
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM payroll_entries_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildPayrollEntriesInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildPayrollEntriesInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE payroll_entries_restore ADD CONSTRAINT payroll_entries_restore_pkey PRIMARY KEY (id)`);

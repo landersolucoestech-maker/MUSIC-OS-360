@@ -103,7 +103,7 @@ export class RebuildPhonogramsInCanonicalFormOrder20260719000003 implements Migr
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM phonograms_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildPhonogramsInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildPhonogramsInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE phonograms_new ADD CONSTRAINT phonograms_new_pkey PRIMARY KEY (id)`);
@@ -247,7 +247,7 @@ export class RebuildPhonogramsInCanonicalFormOrder20260719000003 implements Migr
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM phonograms_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildPhonogramsInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildPhonogramsInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE phonograms_restore ADD CONSTRAINT phonograms_restore_pkey PRIMARY KEY (id)`);

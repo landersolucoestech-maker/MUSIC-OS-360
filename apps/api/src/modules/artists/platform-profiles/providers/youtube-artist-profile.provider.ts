@@ -59,9 +59,9 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
 
     const apiKey = this.config.get<string>('YOUTUBE_API_KEY') ?? '';
     const ref = this.parseRef(input.externalId ?? input.externalUrl ?? '');
-    if (!ref) throw new Error('YouTube channel ref ausente ou inválido');
+    if (!ref) throw new Error('YouTube channel ref missing or invalid');
     const channelId = await this.resolveChannelId(ref, apiKey);
-    if (!channelId) throw new Error('Canal do YouTube não encontrado para o link informado');
+    if (!channelId) throw new Error('YouTube channel not found for the given link');
 
     // find-4e35ea8e: a YouTube channel resolved successfully (it really
     // exists) but not indexed in Soundcharts is a VALID 404 response

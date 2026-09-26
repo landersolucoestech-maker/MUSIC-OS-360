@@ -75,7 +75,7 @@ export async function runOnDemandSkill<TInput, TOutput>(
   const { skillRun, ai } = deps;
   const { skillName, tenantId, entityId } = params;
 
-  if (!tenantId) throw new Error(`[${skillName}] tenantId é obrigatório`);
+  if (!tenantId) throw new Error(`[${skillName}] tenantId is required`);
 
   if (params.freshnessMinutes && !params.forceRefresh) {
     const recent = await skillRun.findRecentSuccess(tenantId, skillName, entityId ?? null, params.freshnessMinutes);

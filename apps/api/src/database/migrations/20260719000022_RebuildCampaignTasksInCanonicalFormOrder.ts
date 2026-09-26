@@ -53,7 +53,7 @@ export class RebuildCampaignTasksInCanonicalFormOrder20260719000022 implements M
 
     const [{ c: newCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM campaign_tasks_new`);
     if (Number(newCount) !== Number(total)) {
-      throw new Error(`RebuildCampaignTasksInCanonicalFormOrder: contagem divergente (original=${total}, nova=${newCount}) — abortada.`);
+      throw new Error(`RebuildCampaignTasksInCanonicalFormOrder: count mismatch (original=${total}, new=${newCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE campaign_tasks_new ADD CONSTRAINT campaign_tasks_new_pkey PRIMARY KEY (id)`);
@@ -139,7 +139,7 @@ export class RebuildCampaignTasksInCanonicalFormOrder20260719000022 implements M
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM campaign_tasks_restore`);
     if (Number(restoredCount) !== Number(total)) {
-      throw new Error(`RebuildCampaignTasksInCanonicalFormOrder.down: contagem divergente (original=${total}, restaurada=${restoredCount}) — abortado.`);
+      throw new Error(`RebuildCampaignTasksInCanonicalFormOrder.down: count mismatch (original=${total}, restored=${restoredCount}) — aborted.`);
     }
 
     await queryRunner.query(`ALTER TABLE campaign_tasks_restore ADD CONSTRAINT campaign_tasks_restore_pkey PRIMARY KEY (id)`);

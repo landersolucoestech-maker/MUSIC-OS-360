@@ -694,7 +694,7 @@ export function getFieldLabelPtBr(fieldKey: string): string {
   const normalized = normalizeFieldKey(fieldKey);
   const label = (FIELD_LABELS_PT_BR as Record<string, string>)[normalized];
   if (!label) {
-    throw new Error(`[i18n] Label pt-BR ausente para o campo: ${fieldKey}`);
+    throw new Error(`[i18n] Missing pt-BR label for field: ${fieldKey}`);
   }
   return label;
 }
