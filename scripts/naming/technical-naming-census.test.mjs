@@ -177,3 +177,15 @@ test("API routes declared as path arrays: each Portuguese alias is reported", ()
   const src = `@Controller('works') class C { @Get(['stats/genres', 'stats/generos']) a() {} }`;
   assert.deepEqual(names(scanSource("apps/api/src/c.controller.ts", src), "apiRoute"), ["/works/stats/generos"]);
 });
+
+test("exceptions are exact: one name in one file (or '*' only for legal-domain terms), never a substring allowlist", async () => {
+  const { exceptionIndex } = await import("./canonical-map.mjs");
+  const idx = exceptionIndex({ exceptions: [
+    { currentName: "/works/stats/generos", path: "apps/api/src/modules/works/works.controller.ts", status: "ACTIVE" },
+    { currentName: "cnpj", path: "*", status: "ACTIVE" },
+  ] });
+  assert.ok(idx.get("apps/api/src/modules/works/works.controller.ts", "/works/stats/generos"));
+  assert.equal(idx.get("apps/api/src/modules/other.controller.ts", "/works/stats/generos"), undefined);
+  assert.equal(idx.get("apps/api/src/modules/works/works.controller.ts", "/works/stats/generosX"), undefined);
+  assert.ok(idx.get("apps/web/src/any.ts", "cnpj"));
+});

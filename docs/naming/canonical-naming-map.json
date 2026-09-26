@@ -1568,7 +1568,7 @@
   "exceptions": [
     {
       "item": "DB/API identifier `cpf`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "cpf",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1583,7 +1583,7 @@
     },
     {
       "item": "DB/API identifier `cpf_encrypted`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "cpf_encrypted",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1598,7 +1598,7 @@
     },
     {
       "item": "DB/API identifier `cnpj`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "cnpj",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1613,7 +1613,7 @@
     },
     {
       "item": "DB/API identifier `cnpj_encrypted`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "cnpj_encrypted",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1628,7 +1628,7 @@
     },
     {
       "item": "DB/API identifier `cpf_cnpj`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "cpf_cnpj",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1643,7 +1643,7 @@
     },
     {
       "item": "DB/API identifier `cpf_cnpj_encrypted`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "cpf_cnpj_encrypted",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1658,7 +1658,7 @@
     },
     {
       "item": "DB/API identifier `cfop`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "cfop",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1673,7 +1673,7 @@
     },
     {
       "item": "DB/API identifier `iss`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "iss",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1688,7 +1688,7 @@
     },
     {
       "item": "DB/API identifier `issqn`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "issqn",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1703,7 +1703,7 @@
     },
     {
       "item": "DB/API identifier `aliquota_iss`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "aliquota_iss",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1718,7 +1718,7 @@
     },
     {
       "item": "DB/API identifier `iss_retido`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "iss_retido",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1733,7 +1733,7 @@
     },
     {
       "item": "DB/API identifier `pis`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "pis",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1748,7 +1748,7 @@
     },
     {
       "item": "DB/API identifier `cofins`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "cofins",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1763,7 +1763,7 @@
     },
     {
       "item": "DB/API identifier `inss`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "inss",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1778,7 +1778,7 @@
     },
     {
       "item": "DB/API identifier `ir`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "ir",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1793,7 +1793,7 @@
     },
     {
       "item": "DB/API identifier `ir_amount`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "ir_amount",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1808,7 +1808,7 @@
     },
     {
       "item": "DB/API identifier `csll`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "csll",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1823,7 +1823,7 @@
     },
     {
       "item": "DB/API identifier `base_calculo`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "base_calculo",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1838,7 +1838,7 @@
     },
     {
       "item": "DB/API identifier `aliquota`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "aliquota",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1853,7 +1853,7 @@
     },
     {
       "item": "DB/API identifier `natureza_operacao`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "natureza_operacao",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1868,7 +1868,7 @@
     },
     {
       "item": "DB/API identifier `codigo_servico_municipal`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "codigo_servico_municipal",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1883,7 +1883,7 @@
     },
     {
       "item": "DB/API identifier `codigo_municipio`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "codigo_municipio",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1898,7 +1898,7 @@
     },
     {
       "item": "DB/API identifier `inscricao_estadual`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "inscricao_estadual",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1913,7 +1913,7 @@
     },
     {
       "item": "DB/API identifier `inscricao_municipal`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "inscricao_municipal",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1928,7 +1928,7 @@
     },
     {
       "item": "DB/API identifier `regime_tributario`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "regime_tributario",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1943,7 +1943,7 @@
     },
     {
       "item": "DB/API identifier `simples_nacional`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "simples_nacional",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1958,7 +1958,7 @@
     },
     {
       "item": "DB/API identifier `lucro_presumido`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "lucro_presumido",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1973,7 +1973,7 @@
     },
     {
       "item": "DB/API identifier `lucro_real`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "lucro_real",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -1988,7 +1988,7 @@
     },
     {
       "item": "DB/API identifier `nfse`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "nfse",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -2003,7 +2003,7 @@
     },
     {
       "item": "DB/API identifier `nfe`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "nfe",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -2018,7 +2018,7 @@
     },
     {
       "item": "DB/API identifier `nfce`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "nfce",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -2033,7 +2033,7 @@
     },
     {
       "item": "DB/API identifier `tipo_nota`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "tipo_nota",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -2048,7 +2048,7 @@
     },
     {
       "item": "DB/API identifier `serie`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "serie",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -2063,7 +2063,7 @@
     },
     {
       "item": "DB/API identifier `tomador`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "tomador",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -2078,7 +2078,7 @@
     },
     {
       "item": "DB/API identifier `prestador`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "prestador",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -2093,7 +2093,7 @@
     },
     {
       "item": "DB/API identifier `tomador_uf`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "tomador_uf",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -2108,7 +2108,7 @@
     },
     {
       "item": "DB/API identifier `tomador_cep`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "tomador_cep",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -2123,7 +2123,7 @@
     },
     {
       "item": "DB/API identifier `numero_nota_fiscal`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "numero_nota_fiscal",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
@@ -2138,7 +2138,7 @@
     },
     {
       "item": "DB/API identifier `nota_fiscal`",
-      "path": "apps/api/src/database/entities.ts (and DTO/form consumers)",
+      "path": "*",
       "currentName": "nota_fiscal",
       "layer": "database",
       "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",

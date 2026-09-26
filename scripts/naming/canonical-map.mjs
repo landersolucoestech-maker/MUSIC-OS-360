@@ -40,7 +40,7 @@ export function validateStructure(map) {
   for (const e of map.exceptions ?? []) {
     const label = e.item ?? e.currentName;
     if (!v.exceptionClass?.includes(e.exceptionClass)) p.push(`exception ${label}: invalid class '${e.exceptionClass}'`);
-    for (const f of ["currentName", "layer", "reason", "removalCondition", "status"]) if (!e[f]) p.push(`exception ${label}: missing ${f}`);
+    for (const f of ["currentName", "path", "layer", "reason", "removalCondition", "status"]) if (!e[f]) p.push(`exception ${label}: missing ${f}`);
     if (e.exceptionClass === "TEMPORARY_MIGRATION_COMPATIBILITY" && (!e.owner || !e.targetState || !e.removalCondition || /never|none|permanent/i.test(e.removalCondition))) {
       p.push(`exception ${label}: TEMPORARY_MIGRATION_COMPATIBILITY needs owner, targetState and a real removal condition (it must not become permanent)`);
     }
@@ -55,9 +55,17 @@ export function validateStructure(map) {
   return p;
 }
 
-/** Index of exceptions by exact technical name, used by the guard as the ONLY suppression list. */
+/**
+ * Exception lookup used by the guard as the ONLY suppression list. An exception
+ * applies to one exact name in one exact file (`path`), or to every file only
+ * when `path` is "*" (reserved for legal-domain terms such as cpf/cnpj).
+ */
 export function exceptionIndex(map) {
   const idx = new Map();
-  for (const e of map.exceptions ?? []) if (e.status !== "REMOVED") idx.set(e.currentName, e);
-  return idx;
+  for (const e of map.exceptions ?? []) {
+    if (e.status === "REMOVED") continue;
+    const paths = e.path === "*" ? ["*"] : String(e.path).split(/\s*,\s*/);
+    for (const p of paths) idx.set(`${p}::${e.currentName}`, e);
+  }
+  return { get: (file, name) => idx.get(`${file}::${name}`) ?? idx.get(`*::${name}`) };
 }

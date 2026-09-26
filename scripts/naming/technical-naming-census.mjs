@@ -176,7 +176,7 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
       if (h.surface === "objectKey") { reportOnly.objectKeys[h.name] = (reportOnly.objectKeys[h.name] ?? 0) + 1; continue; }
       {
         const key = h.surface === "comment" ? `comment::${f}` : h.surface === "directory" ? `directory::${h.name}` : `${h.surface}::${f}::${h.kind}::${h.name}`;
-        const exc = h.name && exceptions.get(h.name);
+        const exc = h.name && exceptions.get(f, h.name);
         const bucket = exc ? excepted : debt;
         bucket[key] = (bucket[key] ?? 0) + 1;
         surfaces[h.surface] = surfaces[h.surface] ?? { candidates: 0, exceptions: 0 };
