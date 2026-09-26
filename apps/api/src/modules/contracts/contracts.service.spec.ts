@@ -91,7 +91,7 @@ describe('ContractsService.create — template_id/signers/type default (C1 prere
     expect(created(repo)['type']).toBe('outro');
   });
 
-  it('preserva o type enviado quando presente (não aplica o default)', async () => {
+  it('keeps the sent type when present (default not applied)', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       title: 'Contrato X', type: 'gravacao',
@@ -100,7 +100,7 @@ describe('ContractsService.create — template_id/signers/type default (C1 prere
     expect(created(repo)['type']).toBe('gravacao');
   });
 
-  it('template_id ausente não é persistido (filtro final remove null/undefined)', async () => {
+  it('absent template_id is not persisted (final filter drops null/undefined)', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       title: 'Contrato X', type: 'gravacao',
@@ -180,7 +180,7 @@ const baseContractRow = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-describe('ContractsService.create — consolidação de aliases (Fase 5 / C1)', () => {
+describe('ContractsService.create — alias consolidation (Phase 5 / C1)', () => {
   it('payload PT canônico persiste somente chaves canônicas', async () => {
     const { svc, repo } = makeServiceC1();
     await svc.create('tenant-1', 'user-1', {
@@ -199,7 +199,7 @@ describe('ContractsService.create — consolidação de aliases (Fase 5 / C1)', 
     expect(row['value']).toBeUndefined();
   });
 
-  it('payload com aliases PT legados (titulo/tipo) + alias EN (value) é traduzido para as colunas canônicas', async () => {
+  it('payload with legacy PT aliases (titulo/tipo) + EN alias (value) is translated to the canonical columns', async () => {
     const { svc, repo } = makeServiceC1();
     await svc.create('tenant-1', 'user-1', {
       titulo: 'Contrato PT legado', tipo: 'recording', value: '10',
@@ -238,7 +238,7 @@ describe('ContractsService.create — consolidação de aliases (Fase 5 / C1)', 
     expect(repo.save).not.toHaveBeenCalled();
   });
 
-  it('título ausente (nem title nem titulo) rejeita antes do repository', async () => {
+  it('absent title (neither title nor titulo) is rejected before the repository', async () => {
     const { svc, repo } = makeServiceC1();
     await expect(svc.create('tenant-1', 'user-1', {
       type: 'gravacao',
@@ -246,7 +246,7 @@ describe('ContractsService.create — consolidação de aliases (Fase 5 / C1)', 
     expect(repo.create).not.toHaveBeenCalled();
   });
 
-  it('título null/vazio/whitespace rejeita antes do repository', async () => {
+  it('a null/empty/whitespace title is rejected before the repository', async () => {
     const { svc, repo } = makeServiceC1();
     await expect(svc.create('tenant-1', 'user-1', { title: null } as unknown as CreateContractDto))
       .rejects.toMatchObject({ response: { code: 'CONTRACT_TITLE_INVALID' } });
@@ -257,13 +257,13 @@ describe('ContractsService.create — consolidação de aliases (Fase 5 / C1)', 
     expect(repo.create).not.toHaveBeenCalled();
   });
 
-  it('type ausente aplica default "outro" (já coberto no pré-requisito; reconfirmado após a integração com o resolver)', async () => {
+  it('absent type applies the "outro" default (covered by the prerequisite; reconfirmed after resolver integration)', async () => {
     const { svc, repo } = makeServiceC1();
     await svc.create('tenant-1', 'user-1', { title: 'X' } as unknown as CreateContractDto);
     expect(createdC1(repo)['type']).toBe('outro');
   });
 
-  it('valor zero é preservado (não tratado como ausente)', async () => {
+  it('a zero value is preserved (not treated as absent)', async () => {
     const { svc, repo } = makeServiceC1();
     await svc.create('tenant-1', 'user-1', { title: 'X', valor: 0 } as unknown as CreateContractDto);
     expect(createdC1(repo)['fixed_value']).toBe('0');
@@ -282,8 +282,8 @@ describe('ContractsService.create — consolidação de aliases (Fase 5 / C1)', 
   });
 });
 
-describe('ContractsService.update — consolidação de aliases (Fase 5 / C1)', () => {
-  it('PATCH parcial (só um campo não-alias) é preservado', async () => {
+describe('ContractsService.update — alias consolidation (Phase 5 / C1)', () => {
+  it('partial PATCH (a single non-alias field) is preserved', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.update('tenant-1', 'user-1', 'contract-1', { notes: 'nova nota' } as unknown as UpdateContractDto);
 
@@ -292,7 +292,7 @@ describe('ContractsService.update — consolidação de aliases (Fase 5 / C1)', 
     expect(row['title']).toBeUndefined();
   });
 
-  it('null isolado em campo opcional não altera a coluna (comportamento atual preservado)', async () => {
+  it('an isolated null on an optional field does not change the column (current behavior preserved)', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.update('tenant-1', 'user-1', 'contract-1', { arquivo_url: null } as unknown as UpdateContractDto);
 
@@ -300,7 +300,7 @@ describe('ContractsService.update — consolidação de aliases (Fase 5 / C1)', 
     expect(row['arquivo_url']).toBeUndefined();
   });
 
-  it('alias legado isolado é traduzido', async () => {
+  it('an isolated legacy alias is translated', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.update('tenant-1', 'user-1', 'contract-1', { fileUrl: 'https://a.com/x.pdf' } as unknown as UpdateContractDto);
 
@@ -327,29 +327,29 @@ describe('ContractsService.update — consolidação de aliases (Fase 5 / C1)', 
     expect(repo.update).not.toHaveBeenCalled();
   });
 
-  it('título inválido em update (vazio) rejeita', async () => {
+  it('an invalid (empty) title on update is rejected', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await expect(svc.update('tenant-1', 'user-1', 'contract-1', { title: '' } as unknown as UpdateContractDto))
       .rejects.toMatchObject({ response: { code: 'CONTRACT_TITLE_INVALID' } });
     expect(repo.update).not.toHaveBeenCalled();
   });
 
-  it('update sem type/type enviados NÃO aplica default "outro"', async () => {
+  it('update without a sent type does NOT apply the "outro" default', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.update('tenant-1', 'user-1', 'contract-1', { notes: 'x' } as unknown as UpdateContractDto);
 
     expect(updatedC1(repo)['type']).toBeUndefined();
   });
 
-  it('repository não é chamado quando a validação falha', async () => {
+  it('the repository is not called when validation fails', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await expect(svc.update('tenant-1', 'user-1', 'contract-1', { title: null } as unknown as UpdateContractDto)).rejects.toThrow();
     expect(repo.update).not.toHaveBeenCalled();
   });
 });
 
-describe('ContractsService.list — filtros canônicos e legados (Fase 5 / C1)', () => {
-  it('filtra por type canônico', async () => {
+describe('ContractsService.list — canonical and legacy filters (Phase 5 / C1)', () => {
+  it('filters by canonical type', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.list('tenant-1', { type: 'gravacao' } as unknown as QueryContractDto);
     expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type = :type', { type: 'gravacao' });
@@ -361,7 +361,7 @@ describe('ContractsService.list — filtros canônicos e legados (Fase 5 / C1)',
     expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type = :type', { type: 'gravacao' });
   });
 
-  it('type e tipo equivalentes são aceitos', async () => {
+  it('equivalent type and tipo are accepted', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.list('tenant-1', { type: 'gravacao', tipo: 'gravacao' } as unknown as QueryContractDto);
     expect(repo._qb['andWhere']).toHaveBeenCalledWith('c.type = :type', { type: 'gravacao' });
@@ -374,7 +374,7 @@ describe('ContractsService.list — filtros canônicos e legados (Fase 5 / C1)',
     expect(repo._qb['getManyAndCount']).not.toHaveBeenCalled();
   });
 
-  it('filtra por artist_id canônico', async () => {
+  it('filters by canonical artist_id', async () => {
     const uuid = '11111111-1111-4111-8111-111111111111';
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.list('tenant-1', { artist_id: uuid } as unknown as QueryContractDto);
@@ -395,7 +395,7 @@ describe('ContractsService.list — filtros canônicos e legados (Fase 5 / C1)',
     } as unknown as QueryContractDto)).rejects.toMatchObject({ response: { code: 'CONTRACT_ALIAS_CONFLICT' } });
   });
 
-  it('query builder nunca recebe os nomes legados como parâmetro', async () => {
+  it('the query builder never receives the legacy names as parameters', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.list('tenant-1', { tipo: 'gravacao' } as unknown as QueryContractDto);
     const calls = (repo._qb['andWhere'] as jest.Mock).mock.calls;
@@ -411,7 +411,7 @@ describe('ContractsService.list — filtros canônicos e legados (Fase 5 / C1)',
     warnSpy.mockRestore();
   });
 
-  it('ausência de type/artist_id não adiciona filtro nenhum', async () => {
+  it('absent type/artist_id adds no filter', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await svc.list('tenant-1', {} as unknown as QueryContractDto);
     const calls = (repo._qb['andWhere'] as jest.Mock).mock.calls;
@@ -420,22 +420,22 @@ describe('ContractsService.list — filtros canônicos e legados (Fase 5 / C1)',
   });
 });
 
-describe('ContractsService.findById — não afetado pelo C1 (regressão)', () => {
-  it('continua lançando NotFoundException quando o contrato não existe', async () => {
+describe('ContractsService.findById — unaffected by C1 (regression)', () => {
+  it('still throws NotFoundException when the contract does not exist', async () => {
     const { svc } = makeServiceC1([]);
     await expect(svc.findById('tenant-1', 'inexistente')).rejects.toThrow(NotFoundException);
   });
 });
 
 describe('ContractsService.create — FK cross-tenant (P1)', () => {
-  it('rejeita artist_id que não pertence ao tenant (ou não existe)', async () => {
+  it('rejects an artist_id that does not belong to the tenant (or does not exist)', async () => {
     const { svc } = makeServiceC1([], jest.fn(async () => []));
     await expect(svc.create('tenant-1', 'user-1', {
       title: 'X', type: 'gravacao', artist_id: '11111111-1111-4111-8111-111111111111',
     } as unknown as CreateContractDto)).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('rejeita client_id que não pertence ao tenant (ou não existe)', async () => {
+  it('rejects a client_id that does not belong to the tenant (or does not exist)', async () => {
     const { svc } = makeServiceC1([], jest.fn(async () => []));
     await expect(svc.create('tenant-1', 'user-1', {
       title: 'X', type: 'gravacao', client_id: '22222222-2222-4222-8222-222222222222',
