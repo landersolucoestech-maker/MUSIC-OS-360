@@ -83,6 +83,7 @@ export class InvoiceOverdueScheduler implements OnApplicationBootstrap {
       .andWhere('i.status IN (:...statuses)', { statuses: ACTIVE_STATUSES })
       .andWhere('i.deleted_at IS NULL')
       .andWhere('i.tenant_id IS NOT NULL')
+      .andWhere("i.type != 'stripe_subscription'") // SaaS rows are never tenant-invoice dunning (see processTenant)
       .getRawMany<{ tenant_id: string }>();
     return rows.map((r) => r.tenant_id).filter(Boolean);
   }
@@ -113,6 +114,14 @@ export class InvoiceOverdueScheduler implements OnApplicationBootstrap {
       .andWhere('i.data_vencimento < :now', { now })
       .andWhere('i.status IN (:...statuses)', { statuses: ACTIVE_STATUSES })
       .andWhere('i.deleted_at IS NULL')
+      // find-675e3eb4 (Gotcha #4/#5): `invoices` also stores the tenant's own Stripe SaaS
+      // subscription invoices (type 'stripe_subscription', dunned by
+      // BillingEnforcementService from Stripe events). They must never enter
+      // this tenant-invoice overdue flow (INVOICE_OVERDUE event, financial
+      // rules, "Nota fiscal vencida" notifications). Previously excluded only
+      // by accident (they carry due_date, not data_vencimento); made explicit
+      // like REM-06 in invoices.service list()/findById().
+      .andWhere("i.type != 'stripe_subscription'")
       .getMany();
 
     for (const invoice of overdueInvoices) {
