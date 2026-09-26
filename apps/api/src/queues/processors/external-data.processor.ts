@@ -102,7 +102,10 @@ export class ExternalDataProcessor extends WorkerHost {
       }
 
       default:
-        this.logger.debug(`[external-data] ignored job=${job.name}`);
+        // find-721c845e: um job desconhecido nunca pode ser marcado como
+        // concluído sem trabalho (antes: debug "ignored" + sucesso silencioso,
+        // o que acontecia com todo 'distribution-sync'). Falha visível.
+        throw new Error(`[external-data] job sem handler neste processor: '${job.name}' (id=${job.id})`);
     }
   }
 }

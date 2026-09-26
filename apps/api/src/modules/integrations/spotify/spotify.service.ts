@@ -8,7 +8,7 @@ import { OAuthConnectionEntity } from '../../../database/entities';
 import { EncryptionService } from '../../../core/security/encryption.service';
 import { CircuitBreakerRegistry } from '../../../core/resilience/circuit-breaker.registry';
 import { assertAllowedHost, assertSafePathSegment } from '../../../core/resilience/safe-url';
-import { QUEUE_NAMES } from '../../../queues/queue.constants';
+import { QUEUE_NAMES, SPOTIFY_JOB_NAMES } from '../../../queues/queue.constants';
 import { parseSpotifyArtistId } from './spotify-url.util';
 
 const PROVIDER = 'spotify';
@@ -182,7 +182,16 @@ export class SpotifyService {
     const tokens = await tokenRes.json() as any;
     await this.upsertConnection(tenantId, userId, tokens);
 
-    if (this.syncQueue) await this.syncQueue.add('spotify:sync', { tenantId, userId }, { delay: 1000 });
+    // find-721c845e: 'spotify:sync' não tem handler em nenhum processor da
+    // fila streaming-sync (antes caía no default do ExternalDataProcessor e era
+    // marcado como concluído sem trabalho). Semântica indefinida
+    // (DEPENDENTE_DECISÃO_DE_PRODUTO) — não é enfileirado; a conexão OAuth já
+    // está persistida acima (oauth_connections).
+    void this.syncQueue;
+    this.logger.warn(
+      `[streaming-sync] job '${SPOTIFY_JOB_NAMES.ACCOUNT_SYNC}' NÃO enfileirado: sem consumidor/semântica definida ` +
+      `(find-721c845e, DEPENDENTE_DECISAO_DE_PRODUTO) tenant=${tenantId}`,
+    );
     this.logger.log(`Spotify OAuth: ${userId}@${tenantId} conectado`);
   }
 

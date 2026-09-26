@@ -56,6 +56,27 @@ export const WORKFLOW_JOB_NAMES = {
 
 export type WorkflowJobName = (typeof WORKFLOW_JOB_NAMES)[keyof typeof WORKFLOW_JOB_NAMES];
 
+/** Jobs produzidos por SpotifyService na fila streaming-sync. */
+export const SPOTIFY_JOB_NAMES = {
+  ACCOUNT_SYNC: 'spotify:sync',
+} as const;
+
+/**
+ * find-721c845e — jobs SEM consumidor. Produzi-los enchia Redis
+ * (integrations-sync não tem @Processor) ou gerava "concluído" sem trabalho
+ * (distribution-sync cai no default do ExternalDataProcessor). A semântica é
+ * DEPENDENTE_DECISÃO_DE_PRODUTO; WorkflowQueueService não os enfileira e
+ * `preservedAs` aponta o evento de domínio (persistido em domain_event_log)
+ * que já guarda o fato de origem. queue-topology.spec.ts garante que todo
+ * job produzido tem consumidor real OU está nesta lista.
+ */
+export const UNCONSUMED_QUEUE_JOBS = {
+  [WORKFLOW_JOB_NAMES.ONBOARDING_CHECK]:  { queue: 'integrations-sync', preservedAs: 'artist.onboarding_started' },
+  [WORKFLOW_JOB_NAMES.WORKFLOW_FOLLOWUP]: { queue: 'integrations-sync', preservedAs: 'contract.signed | contract.expiring_soon' },
+  [WORKFLOW_JOB_NAMES.DISTRIBUTION_SYNC]: { queue: 'streaming-sync',    preservedAs: 'distribution.setup_requested' },
+  [SPOTIFY_JOB_NAMES.ACCOUNT_SYNC]:       { queue: 'streaming-sync',    preservedAs: 'oauth_connections (linha upsertada por SpotifyService.handleCallback)' },
+} as const;
+
 export const MARKETING_PUBLISHING_JOB_NAMES = {
   PUBLISH_CONTENT: 'publish-content',
 } as const;

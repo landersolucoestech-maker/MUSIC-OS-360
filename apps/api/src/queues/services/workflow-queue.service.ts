@@ -8,7 +8,7 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { InjectQueue }        from '@nestjs/bullmq';
 import { Queue, JobsOptions } from 'bullmq';
-import { QUEUE_NAMES, WORKFLOW_JOB_NAMES } from '../queue.constants';
+import { QUEUE_NAMES, WORKFLOW_JOB_NAMES, UNCONSUMED_QUEUE_JOBS } from '../queue.constants';
 
 @Injectable()
 export class WorkflowQueueService {
@@ -27,6 +27,32 @@ export class WorkflowQueueService {
   private get integrationsAvailable(): boolean { return this.integrationsQueue != null; }
   private get streamingAvailable(): boolean     { return this.streamingQueue != null; }
 
+  /**
+   * find-721c845e — contenção de jobs sem consumidor.
+   *
+   * `onboarding-check` e `workflow-followup` (fila integrations-sync) não têm
+   * nenhum @Processor registrado; `distribution-sync` (fila streaming-sync)
+   * cai no `default` do ExternalDataProcessor. Enfileirá-los fazia jobs
+   * crescerem sem limite em `wait` (integrations-sync) ou serem marcados como
+   * concluídos sem nenhum trabalho (distribution-sync) — falsa impressão de
+   * processamento. A semântica de negócio desses jobs está indefinida
+   * (DEPENDENTE_DECISÃO_DE_PRODUTO): não é inventada aqui.
+   *
+   * O job NÃO é enfileirado; o fato que o originou já está persistido em
+   * `domain_event_log` pelo UniversalEventLogHandler (evento indicado em
+   * `preservedAs`), cujo payload é um superconjunto do payload do job. Quando
+   * a semântica for decidida, um processor real pode ser registrado e o
+   * nome removido de UNCONSUMED_QUEUE_JOBS.
+   */
+  private containUnconsumed(jobName: string, queueName: string, payload: { tenantId: string }): void {
+    const c = UNCONSUMED_QUEUE_JOBS[jobName as keyof typeof UNCONSUMED_QUEUE_JOBS];
+    this.logger.warn(
+      `[${queueName}] job '${jobName}' NÃO enfileirado: sem consumidor/semântica definida ` +
+      `(find-721c845e, DEPENDENTE_DECISAO_DE_PRODUTO). Fato preservado em domain_event_log ` +
+      `como '${c?.preservedAs ?? 'desconhecido'}' tenant=${payload.tenantId}`,
+    );
+  }
+
   async enqueueDistributionSync(payload: {
     tenantId:    string;
     artistId:    string;
@@ -34,9 +60,8 @@ export class WorkflowQueueService {
     providerHint: string | null;
     correlationId?: string | null;
   }, opts?: Partial<JobsOptions>): Promise<void> {
-    if (!this.streamingAvailable) return;
-    const job = await this.streamingQueue!.add(WORKFLOW_JOB_NAMES.DISTRIBUTION_SYNC, payload, { attempts: 3, ...opts });
-    this.logger.log(`[streaming-sync] enqueued ${WORKFLOW_JOB_NAMES.DISTRIBUTION_SYNC} jobId=${job.id} artistId=${payload.artistId}`);
+    void opts;
+    this.containUnconsumed(WORKFLOW_JOB_NAMES.DISTRIBUTION_SYNC, QUEUE_NAMES.STREAMING_SYNC, payload);
   }
 
   async enqueueExternalDataSync(payload: {
@@ -111,9 +136,8 @@ export class WorkflowQueueService {
     tasks:     string[];
     correlationId?: string | null;
   }, opts?: Partial<JobsOptions>): Promise<void> {
-    if (!this.integrationsAvailable) return;
-    const job = await this.integrationsQueue!.add(WORKFLOW_JOB_NAMES.ONBOARDING_CHECK, payload, { attempts: 2, ...opts });
-    this.logger.log(`[integrations-sync] enqueued ${WORKFLOW_JOB_NAMES.ONBOARDING_CHECK} jobId=${job.id} artistId=${payload.artistId}`);
+    void opts;
+    this.containUnconsumed(WORKFLOW_JOB_NAMES.ONBOARDING_CHECK, QUEUE_NAMES.INTEGRATIONS_SYNC, payload);
   }
 
   async enqueueWorkflowFollowup(payload: {
@@ -123,9 +147,8 @@ export class WorkflowQueueService {
     trigger:     string;
     correlationId?: string | null;
   }, opts?: Partial<JobsOptions>): Promise<void> {
-    if (!this.integrationsAvailable) return;
-    const job = await this.integrationsQueue!.add(WORKFLOW_JOB_NAMES.WORKFLOW_FOLLOWUP, payload, { attempts: 2, ...opts });
-    this.logger.log(`[integrations-sync] enqueued ${WORKFLOW_JOB_NAMES.WORKFLOW_FOLLOWUP} jobId=${job.id} ${payload.entityType}=${payload.entityId}`);
+    void opts;
+    this.containUnconsumed(WORKFLOW_JOB_NAMES.WORKFLOW_FOLLOWUP, QUEUE_NAMES.INTEGRATIONS_SYNC, payload);
   }
 
 }
