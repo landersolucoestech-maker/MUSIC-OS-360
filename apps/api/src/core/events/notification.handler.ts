@@ -17,6 +17,14 @@ import { DatabaseContextService } from '../../database/database-context.service'
 import { NotificationEntity } from '../../database/entities';
 import type { DomainEvent } from './events.service';
 
+export function financialRuleLabel(p: Record<string, unknown>): string {
+  const name = String(p['ruleName'] ?? '');
+  const computed = Number((p['result'] as Record<string, unknown> | undefined)?.['computed']);
+  if (!Number.isFinite(computed)) return `Regra financeira disparada: ${name}`;
+  const brl = computed.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  return `Regra financeira disparada: ${name} — valor calculado ${brl} (nenhum lançamento foi criado)`;
+}
+
 const EVENT_LABELS: Record<string, (p: Record<string, unknown>) => string> = {
   [DOMAIN_EVENTS.ARTIST_CREATED]: (p) => `Artista criado: ${p['nomeArtistico'] ?? ''}`,
   [DOMAIN_EVENTS.ARTIST_UPDATED]: (p) => `Artista atualizado: ${p['nomeArtistico'] ?? ''}`,
@@ -45,7 +53,10 @@ const EVENT_LABELS: Record<string, (p: Record<string, unknown>) => string> = {
   [DOMAIN_EVENTS.INVOICE_STATUS_CHANGED]: (p) => `Nota fiscal "${p['numero'] ?? ''}" -> ${p['newStatus'] ?? ''}`,
   [DOMAIN_EVENTS.INVOICE_ISSUED]: (p) => `Nota fiscal emitida: ${p['numero'] ?? ''}`,
   [DOMAIN_EVENTS.INVOICE_OVERDUE]: (p) => `Nota fiscal vencida: ${p['numero'] ?? ''} (${p['dataVencimento'] ?? ''})`,
-  [DOMAIN_EVENTS.FINANCIAL_RULE_TRIGGERED]: (p) => `Regra financeira disparada: ${p['ruleName'] ?? ''}`,
+  // find-9e7bc94e: disparar uma regra financeira NÃO cria lançamento — o único
+  // efeito é esta notificação; ela precisa ao menos carregar o valor que a
+  // regra calculou (antes era descartado).
+  [DOMAIN_EVENTS.FINANCIAL_RULE_TRIGGERED]: (p) => financialRuleLabel(p),
   [DOMAIN_EVENTS.ARTIST_ONBOARDING_STARTED]: (p) => `Onboarding iniciado: ${p['nomeArtistico'] ?? ''}`,
   [DOMAIN_EVENTS.DISTRIBUTION_SETUP_REQUESTED]: (p) => `Setup distribuicao solicitado: artista ${p['artistId'] ?? ''}`,
   [DOMAIN_EVENTS.EXTERNAL_DATA_SYNC_REQUESTED]: (p) => `Troca de dados externa solicitada: artista ${p['artistId'] ?? ''}`,

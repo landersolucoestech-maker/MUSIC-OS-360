@@ -158,7 +158,9 @@ export default function FinancialRules() {
     <FeatureGate feature="moduleAccounting" featureName="Financeiro">
       <MainLayout
         title="Automações Financeiras"
-        description="Regras que disparam automaticamente ao assinar contratos, criar/pagar transações e vencer notas fiscais"
+        // find-9e7bc94e: o único efeito de uma regra disparada é uma
+        // notificação com o valor calculado — nenhum lançamento é criado.
+        description="Regras avaliadas automaticamente ao assinar contratos, criar/pagar transações e vencer notas fiscais. Ao disparar, a regra calcula o valor e envia uma notificação; nenhum lançamento financeiro é criado automaticamente."
         actions={
           <div className="flex items-center gap-2">
             <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
