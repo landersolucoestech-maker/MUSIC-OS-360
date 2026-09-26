@@ -1,9 +1,9 @@
 /**
  * queues/queue.constants.ts
  *
- * Nomes das filas BullMQ do Music OS 360.
- * Usar estas constantes em vez de strings literais elimina erros de digitação
- * e centraliza o registo de todas as filas da plataforma.
+ * BullMQ queue names for Music OS 360.
+ * Using these constants instead of string literals removes typos and
+ * centralizes the registry of every platform queue.
  */
 
 export const QUEUE_NAMES = {
@@ -19,7 +19,7 @@ export const QUEUE_NAMES = {
 
 export type QueueName = (typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES];
 
-// ─── Job names da fila EMAILS ─────────────────────────────────────────────────
+// ─── EMAILS queue job names ──────────────────────────────────────────────────
 
 export const EMAIL_JOB_NAMES = {
   WELCOME:            'welcome',
@@ -32,7 +32,7 @@ export const EMAIL_JOB_NAMES = {
 
 export type EmailJobName = (typeof EMAIL_JOB_NAMES)[keyof typeof EMAIL_JOB_NAMES];
 
-// ─── Job names da fila NOTIFICATIONS ─────────────────────────────────────────
+// ─── NOTIFICATIONS queue job names ──────────────────────────────────────────
 
 export const NOTIFICATION_JOB_NAMES = {
   SEND:               'send',
@@ -41,7 +41,7 @@ export const NOTIFICATION_JOB_NAMES = {
 
 export type NotificationJobName = (typeof NOTIFICATION_JOB_NAMES)[keyof typeof NOTIFICATION_JOB_NAMES];
 
-// ─── Job names das filas de workflow/integrações ──────────────────────────────
+// ─── Workflow/integration queue job names ─────────────────────────────────────
 
 export const WORKFLOW_JOB_NAMES = {
   DISTRIBUTION_SYNC:    'distribution-sync',
@@ -62,13 +62,14 @@ export const SPOTIFY_JOB_NAMES = {
 } as const;
 
 /**
- * find-721c845e — jobs SEM consumidor. Produzi-los enchia Redis
- * (integrations-sync não tem @Processor) ou gerava "concluído" sem trabalho
- * (distribution-sync cai no default do ExternalDataProcessor). A semântica é
- * DEPENDENTE_DECISÃO_DE_PRODUTO; WorkflowQueueService não os enfileira e
- * `preservedAs` aponta o evento de domínio (persistido em domain_event_log)
- * que já guarda o fato de origem. queue-topology.spec.ts garante que todo
- * job produzido tem consumidor real OU está nesta lista.
+ * find-721c845e — jobs WITHOUT a consumer. Producing them filled Redis
+ * (integrations-sync has no @Processor) or produced "completed" without work
+ * (distribution-sync falls into ExternalDataProcessor's default branch). The
+ * semantics are pending a product decision; WorkflowQueueService does not
+ * enqueue them, and `preservedAs` names the domain event (persisted in
+ * domain_event_log) that already holds the originating fact.
+ * queue-topology.spec.ts ensures every produced job has a real consumer OR is
+ * in this list.
  */
 export const UNCONSUMED_QUEUE_JOBS = {
   [WORKFLOW_JOB_NAMES.ONBOARDING_CHECK]:  { queue: 'integrations-sync', preservedAs: 'artist.onboarding_started' },
@@ -91,8 +92,8 @@ export const ARTIST_PLATFORM_PROFILE_JOB_NAMES = {
 export type ArtistPlatformProfileJobName =
   (typeof ARTIST_PLATFORM_PROFILE_JOB_NAMES)[keyof typeof ARTIST_PLATFORM_PROFILE_JOB_NAMES];
 
-// Fase 3.2 — refresh em background da coorte externa do Market Benchmark
-// (item 4: nenhuma chamada pesada à Soundcharts dentro do request HTTP).
+// Phase 3.2 — background refresh of the Market Benchmark external cohort
+// (item 4: no heavy Soundcharts call inside the HTTP request).
 export const ANALYTICS_REFRESH_JOB_NAMES = {
   MARKET_BENCHMARK_REFRESH: 'market-benchmark-refresh',
 } as const;

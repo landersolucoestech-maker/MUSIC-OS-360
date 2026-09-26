@@ -28,28 +28,28 @@ export class WorkflowQueueService {
   private get streamingAvailable(): boolean     { return this.streamingQueue != null; }
 
   /**
-   * find-721c845e — contenção de jobs sem consumidor.
+   * find-721c845e — containment of jobs without a consumer.
    *
-   * `onboarding-check` e `workflow-followup` (fila integrations-sync) não têm
-   * nenhum @Processor registrado; `distribution-sync` (fila streaming-sync)
-   * cai no `default` do ExternalDataProcessor. Enfileirá-los fazia jobs
-   * crescerem sem limite em `wait` (integrations-sync) ou serem marcados como
-   * concluídos sem nenhum trabalho (distribution-sync) — falsa impressão de
-   * processamento. A semântica de negócio desses jobs está indefinida
-   * (DEPENDENTE_DECISÃO_DE_PRODUTO): não é inventada aqui.
+   * `onboarding-check` and `workflow-followup` (integrations-sync queue) have
+   * no registered @Processor; `distribution-sync` (streaming-sync queue) falls
+   * into ExternalDataProcessor's `default` branch. Enqueuing them made jobs
+   * grow without bound in `wait` (integrations-sync) or be marked completed
+   * without doing any work (distribution-sync) — a false impression of
+   * processing. The business semantics of these jobs are undefined
+   * (pending a product decision) and are not invented here.
    *
-   * O job NÃO é enfileirado; o fato que o originou já está persistido em
-   * `domain_event_log` pelo UniversalEventLogHandler (evento indicado em
-   * `preservedAs`), cujo payload é um superconjunto do payload do job. Quando
-   * a semântica for decidida, um processor real pode ser registrado e o
-   * nome removido de UNCONSUMED_QUEUE_JOBS.
+   * The job is NOT enqueued; the fact that triggered it is already persisted in
+   * `domain_event_log` by UniversalEventLogHandler (event named in
+   * `preservedAs`), whose payload is a superset of the job payload. Once the
+   * semantics are decided, a real processor can be registered and the name
+   * removed from UNCONSUMED_QUEUE_JOBS.
    */
   private containUnconsumed(jobName: string, queueName: string, payload: { tenantId: string }): void {
     const c = UNCONSUMED_QUEUE_JOBS[jobName as keyof typeof UNCONSUMED_QUEUE_JOBS];
     this.logger.warn(
-      `[${queueName}] job '${jobName}' NÃO enfileirado: sem consumidor/semântica definida ` +
-      `(find-721c845e, DEPENDENTE_DECISAO_DE_PRODUTO). Fato preservado em domain_event_log ` +
-      `como '${c?.preservedAs ?? 'desconhecido'}' tenant=${payload.tenantId}`,
+      `[${queueName}] job '${jobName}' NOT enqueued: no consumer/defined semantics ` +
+      `(find-721c845e, pending a product decision). Fact preserved in domain_event_log ` +
+      `as '${c?.preservedAs ?? 'unknown'}' tenant=${payload.tenantId}`,
     );
   }
 

@@ -183,7 +183,7 @@ function normalizeInvoiceStatus(status: string | null | undefined): string {
 @Injectable()
 export class BillingService {
   private readonly stripe: StripeClient | null = null;
-  /** Estado do formato da chave (enum) — nunca o valor da chave. */
+  /** Key format state (enum) — never the key value. */
   private readonly stripeKeyState: StripeKeyFormatState;
   private readonly logger = new Logger(BillingService.name);
   private readonly subRepo: Repository<BillingSubscriptionEntity> | null = null;
@@ -227,11 +227,11 @@ export class BillingService {
   }
 
   /**
-   * find-340abf0b / Gotcha #20: expõe ao Painel Admin o modo real do Stripe
-   * neste ambiente, no mesmo vocabulário do ENV_BADGE (production/sandbox/
-   * disabled). 'production' nunca é retornado: chaves LIVE são sempre
-   * recusadas (stripe-key-guard.ts). Retorna só o estado classificado — a
-   * chave em si nunca sai do servidor.
+   * find-340abf0b / Gotcha #20: exposes to the admin panel the real Stripe mode
+   * of this environment, using the ENV_BADGE vocabulary (production/sandbox/
+   * disabled). 'production' is never returned: LIVE keys are always rejected
+   * (stripe-key-guard.ts). Returns only the classified state — the key itself
+   * never leaves the server.
    */
   getStripeMode(): { environment: 'sandbox' | 'disabled'; keyState: StripeKeyFormatState } {
     const environment = this.stripe && this.stripeKeyState === 'VALID_TEST_KEY' ? 'sandbox' : 'disabled';
@@ -569,7 +569,7 @@ export class BillingService {
   }) {
     this.assertBillingRepositories();
 
-    // Fonte primária do preço = banco (plano). NUNCA STRIPE_PRICE_* do env.
+    // The price's primary source is the database (plan). NEVER STRIPE_PRICE_* from env.
     if (!params.planRef) throw new BadRequestException('Plano não informado (planId ou planSlug)');
     const plan = await this.plans.resolve(params.planRef);
     if (!plan || !plan.active) throw new BadRequestException(`Plano inválido ou inativo: ${params.planRef}`);
@@ -745,9 +745,10 @@ export class BillingService {
   private async onCheckoutCompleted(session: StripeCheckoutSession) {
     const { tenant_id, org_id, plan, plan_id, stripe_price_id } = session.metadata ?? {};
     if (!tenant_id || !org_id || !plan) {
-      // Contrato produtor↔consumidor: createCheckoutSession DEVE injetar metadata
-      // {tenant_id, org_id, plan}. Sem isso, a assinatura pode ter sido paga sem
-      // provisionar o tenant — não é erro de processamento, mas exige visibilidade.
+      // Producer↔consumer contract: createCheckoutSession MUST inject metadata
+      // {tenant_id, org_id, plan}. Without it the subscription may have been paid
+      // without provisioning the tenant — not a processing error, but it needs
+      // visibility.
       this.logger.warn(
         `checkout.session.completed ignorado: metadata incompleta ` +
           `(customer=${session.customer ?? '∅'}, subscription=${session.subscription ?? '∅'}, ` +

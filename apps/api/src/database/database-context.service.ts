@@ -92,13 +92,13 @@ export class DatabaseContextService {
   }
 
   /**
-   * find-b4201eb2 (classe: escrita/leitura tenant-scoped a partir de caminho
-   * sem contexto — rota @Public, callback OAuth, scheduler). Se já existe um
-   * contexto ativo (requisição autenticada / job já contextualizado), executa
-   * `work` NESSE contexto — `runInTenantContext` não aninha: abriria outra
-   * conexão/transação, quebrando atomicidade com a transação externa. Caso
-   * contrário abre um contexto para `ctx.tenantId`. Com contexto externo de
-   * outro tenant, o WITH CHECK do RLS continua negando a escrita (fail-closed).
+   * find-b4201eb2 (class: tenant-scoped write/read from a path without
+   * context — @Public route, OAuth callback, scheduler). If a context is already
+   * active (authenticated request / already-contextualized job), runs `work` IN
+   * THAT context — `runInTenantContext` does not nest: it would open another
+   * connection/transaction and break atomicity with the outer transaction.
+   * Otherwise opens a context for `ctx.tenantId`. With an outer context of
+   * another tenant, RLS WITH CHECK still denies the write (fail-closed).
    */
   async ensureTenantContext<T>(ctx: TenantDbContext, work: () => Promise<T>): Promise<T> {
     if (currentTenantManager()) return work();
@@ -132,10 +132,10 @@ export class DatabaseContextService {
         ctx.role ?? '',
       ]);
 
-      // Liga o manager contextualizado ao ALS: assim, repositórios GLOBAIS usados
-      // dentro de `work` (inclusive os capturados no construtor dos services, via
-      // o Proxy de DATA_SOURCE) executam nesta MESMA transação com o contexto de
-      // tenant aplicado — sem cada service precisar receber o manager manualmente.
+      // Binds the contextualized manager to the ALS: GLOBAL repositories used inside
+      // `work` (including those captured in service constructors via the
+      // DATA_SOURCE Proxy) run in this SAME transaction with the tenant context
+      // applied — no service has to receive the manager manually.
       const result = await runWithTenantManager(queryRunner.manager, () => work(queryRunner.manager));
       await queryRunner.commitTransaction();
       return result;

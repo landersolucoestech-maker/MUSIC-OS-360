@@ -28,9 +28,9 @@ interface WhatsAppChangeValue {
 }
 
 /**
- * Webhook Meta para WhatsApp Cloud API. Termina no domínio de conversas já
- * existente do MusicChat (MusicChatAutomationService.handleInboundMessage) —
- * não é um segundo sistema de conversas.
+ * Meta webhook for the WhatsApp Cloud API. It ends in MusicChat's existing
+ * conversations domain (MusicChatAutomationService.handleInboundMessage) —
+ * it is not a second conversations system.
  */
 @ApiExcludeController()
 @Controller('integrations/whatsapp')
@@ -42,9 +42,9 @@ export class WhatsAppWebhookController {
     private readonly webhookSvc: WebhookService,
     private readonly musicChat: MusicChatAutomationService,
     private readonly config: ConfigService,
-    // find-b4201eb2: rota @Public não recebe contexto de tenant do
-    // RequestTenantContextInterceptor; sem ele, ingest (webhook_events) e o
-    // MusicChat (conversations) são negados pelo RLS em produção.
+    // find-b4201eb2: a @Public route gets no tenant context from
+    // RequestTenantContextInterceptor; without it, ingest (webhook_events) and
+    // MusicChat (conversations) are denied by RLS in production.
     private readonly dbContext: DatabaseContextService,
   ) {}
 
@@ -76,8 +76,8 @@ export class WhatsAppWebhookController {
     this.verifySignature(req, signature);
 
     if (payload?.object !== 'whatsapp_business_account') {
-      // Evento de um objeto que não é WhatsApp (ex.: outro produto Meta no
-      // mesmo app) — ignora com segurança, não é um erro.
+      // Event for a non-WhatsApp object (e.g. another Meta product on the same
+      // app) — safely ignored, not an error.
       return { received: true };
     }
 
@@ -91,11 +91,11 @@ export class WhatsAppWebhookController {
       }
     }
 
-    // Meta só reenvia o webhook em resposta não-2xx. Um ACK 200 mesmo com falha
-    // interna significa perda silenciosa e permanente da mensagem — em vez disso,
-    // devolvemos um erro para acionar o retry nativo da Meta. A mensagem já
-    // processada com sucesso no mesmo payload não é reprocessada no reenvio
-    // (idempotência via WebhookService.ingest — só falhas voltam a PENDING).
+    // Meta only redelivers the webhook on a non-2xx response. A 200 ACK despite an
+    // internal failure means silent, permanent message loss — instead we return an
+    // error to trigger Meta's native retry. A message already processed
+    // successfully in the same payload is not reprocessed on redelivery
+    // (idempotency via WebhookService.ingest — only failures go back to PENDING).
     if (anyFailed) {
       throw new BadGatewayException('Falha ao processar uma ou mais mensagens — solicitando reenvio');
     }
@@ -104,16 +104,16 @@ export class WhatsAppWebhookController {
   }
 
   /**
-   * Barreira de segurança do POST — roda ANTES de qualquer parse/ingest/
-   * processamento. HMAC calculado sobre o raw body (req.rawBody, capturado
-   * globalmente via `rawBody: true` no bootstrap — ver create-app.ts; já
-   * usado pelo webhook Stripe em billing.controller.ts, nada foi alterado
-   * aqui), nunca sobre `JSON.stringify(payload)` (reserializar não reproduz
-   * byte-a-byte o corpo que a Meta assinou).
+   * POST security barrier — runs BEFORE any parse/ingest/processing. The HMAC
+   * is computed over the raw body (req.rawBody, captured globally via
+   * `rawBody: true` at bootstrap — see create-app.ts; already used by the
+   * Stripe webhook in billing.controller.ts, nothing changed here), never over
+   * `JSON.stringify(payload)` (reserializing does not reproduce, byte for byte,
+   * the body Meta signed).
    *
-   * META_APP_SECRET ausente é uma falha de configuração explícita (503), não
-   * um "pular a verificação silenciosamente". Assinatura ausente ou inválida
-   * é sempre 403 — nunca "processa mesmo assim".
+   * An absent META_APP_SECRET is an explicit configuration failure (503), not a
+   * silent "skip verification". A missing or invalid signature is always
+   * 403 — never "process anyway".
    */
   private verifySignature(req: RawBodyRequest<Request>, signature: string | undefined): void {
     const appSecret = this.config.get<string>('META_APP_SECRET') ?? '';
@@ -137,7 +137,7 @@ export class WhatsAppWebhookController {
     }
   }
 
-  /** Retorna true se alguma mensagem do payload falhou ao processar (aciona retry da Meta). */
+  /** Returns true if any message in the payload failed to process (triggers Meta's retry). */
   private async processMessagesChange(value: WhatsAppChangeValue): Promise<boolean> {
     const phoneNumberId = value.metadata?.phone_number_id;
     const messages = value.messages ?? [];
@@ -149,8 +149,8 @@ export class WhatsAppWebhookController {
       return false;
     }
     if (resolution.kind === 'conflict') {
-      // find-2220a85e: ambiguidade de identidade nunca é resolvida por
-      // "primeira linha". Não roteia para nenhum tenant (fail-closed).
+      // find-2220a85e: identity ambiguity is never resolved by "first row".
+      // Routes to no tenant (fail-closed).
       this.logger.error(
         `[whatsapp/webhook] CONFLITO de identidade: phone_number_id=${phoneNumberId} vinculado a ${resolution.tenantCount} tenants — evento NÃO roteado`,
       );
@@ -161,13 +161,12 @@ export class WhatsAppWebhookController {
 
     let anyFailed = false;
     for (const message of messages) {
-      if (message.type !== 'text' || !message.text?.body) continue; // foundation: só texto por enquanto
+      if (message.type !== 'text' || !message.text?.body) continue; // foundation: text only for now
 
-      // find-b4201eb2: cada mensagem roda no seu PRÓPRIO contexto de tenant
-      // (transação isolada). Rota @Public não tem contexto do interceptor;
-      // e um erro de banco numa mensagem aborta só a transação dela — o
-      // registro de falha é gravado em outro contexto, nunca na transação
-      // já abortada.
+      // find-b4201eb2: each message runs in its OWN tenant context (isolated
+      // transaction). A @Public route has no interceptor context, and a database
+      // error in one message aborts only that message's transaction — the failure
+      // record is written in another context, never in the aborted transaction.
       const ingestResult = await this.dbContext.runInTenantContext(ctx, () => this.webhookSvc.ingest({
         provider: 'whatsapp',
         eventType: 'message',

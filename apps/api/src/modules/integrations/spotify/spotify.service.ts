@@ -44,8 +44,8 @@ export class SpotifyService {
     private readonly cbRegistry: CircuitBreakerRegistry,
     @Optional()
     @InjectQueue(QUEUE_NAMES.STREAMING_SYNC) private readonly syncQueue: Queue | null,
-    // find-b4201eb2: o callback GET é @Public (sem contexto de tenant); a
-    // gravação em oauth_connections (FORCE RLS) era negada em produção.
+    // find-b4201eb2: the GET callback is @Public (no tenant context); the write to
+    // oauth_connections (FORCE RLS) was denied in production.
     @Optional() private readonly dbContext?: DatabaseContextService,
   ) {
     if (ds) this.repo = ds.getRepository(OAuthConnectionEntity);
@@ -184,25 +184,25 @@ export class SpotifyService {
     });
 
     const tokens = await tokenRes.json() as any;
-    // tenantId/userId vêm do state assinado pelo servidor (verifyState), nunca
-    // de parâmetro livre. Reusa o contexto se a chamada já vier autenticada
-    // (POST /spotify/callback); senão abre um para esse tenant.
+    // tenantId/userId come from the server-signed state (verifyState), never from
+    // a free parameter. Reuses the context when the call is already authenticated
+    // (POST /spotify/callback); otherwise opens one for that tenant.
     const persist = () => this.upsertConnection(tenantId, userId, tokens);
     await (this.dbContext
       ? this.dbContext.ensureTenantContext({ tenantId, orgId: null, role: null }, persist)
       : persist());
 
-    // find-721c845e: 'spotify:sync' não tem handler em nenhum processor da
-    // fila streaming-sync (antes caía no default do ExternalDataProcessor e era
-    // marcado como concluído sem trabalho). Semântica indefinida
-    // (DEPENDENTE_DECISÃO_DE_PRODUTO) — não é enfileirado; a conexão OAuth já
-    // está persistida acima (oauth_connections).
+    // find-721c845e: 'spotify:sync' has no handler in any streaming-sync processor
+    // (it used to fall into ExternalDataProcessor's default branch and was marked
+    // completed without work). Semantics undefined (pending a product decision)
+    // — it is not enqueued; the OAuth connection is already persisted above
+    // (oauth_connections).
     void this.syncQueue;
     this.logger.warn(
-      `[streaming-sync] job '${SPOTIFY_JOB_NAMES.ACCOUNT_SYNC}' NÃO enfileirado: sem consumidor/semântica definida ` +
-      `(find-721c845e, DEPENDENTE_DECISAO_DE_PRODUTO) tenant=${tenantId}`,
+      `[streaming-sync] job '${SPOTIFY_JOB_NAMES.ACCOUNT_SYNC}' NOT enqueued: no consumer/defined semantics ` +
+      `(find-721c845e, pending a product decision) tenant=${tenantId}`,
     );
-    this.logger.log(`Spotify OAuth: ${userId}@${tenantId} conectado`);
+    this.logger.log(`Spotify OAuth: ${userId}@${tenantId} connected`);
   }
 
   async syncArtistMetrics(tenantId: string, spotifyUrlOrId: string): Promise<{ listeners: number | null; popularity: number; name: string; image: string | null } | null> {

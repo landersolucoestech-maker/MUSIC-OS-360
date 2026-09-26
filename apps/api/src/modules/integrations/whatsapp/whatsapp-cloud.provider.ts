@@ -12,8 +12,8 @@ import { EncryptionService } from '../../../core/security/encryption.service';
 import { IntegrationBaseService } from '../integration-base.service';
 import { WhatsAppError } from './whatsapp.errors';
 
-// Mesma versão da Graph API já usada pela integração Meta ativa do projeto
-// (InstagramService — ver apps/api/src/modules/integrations/instagram/instagram.service.ts).
+// Same Graph API version already used by the project's active Meta integration
+// (InstagramService — see apps/api/src/modules/integrations/instagram/instagram.service.ts).
 const GRAPH_API = 'https://graph.facebook.com/v19.0';
 const PROVIDER = 'whatsapp';
 
@@ -23,13 +23,13 @@ export interface WhatsAppCredentials {
   wabaId: string;
 }
 
-/** Resultado da resolução de identidade phone_number_id -> tenant (find-2220a85e). */
+/** Result of the phone_number_id -> tenant identity resolution (find-2220a85e). */
 export type WhatsAppTenantResolution =
   | { kind: 'resolved'; tenantId: string }
   | { kind: 'unknown' }
   | { kind: 'conflict'; tenantCount: number };
 
-/** IDs de número da Cloud API são numéricos (Graph object id). */
+/** Cloud API phone number IDs are numeric (Graph object id). */
 const PHONE_NUMBER_ID_PATTERN = /^\d{5,30}$/;
 
 export interface WhatsAppSendResult {
@@ -37,9 +37,9 @@ export interface WhatsAppSendResult {
 }
 
 /**
- * Responsabilidade isolada: enviar/validar/normalizar chamadas ao WhatsApp
- * Cloud API (Meta). Não conhece o domínio de conversas do MusicChat — isso é
- * responsabilidade de quem chama (ver WhatsAppWebhookController).
+ * Isolated responsibility: send/validate/normalize calls to the WhatsApp
+ * Cloud API (Meta). It knows nothing about the MusicChat conversations domain —
+ * that belongs to the caller (see WhatsAppWebhookController).
  */
 @Injectable()
 export class WhatsAppCloudProvider extends IntegrationBaseService {
@@ -49,19 +49,19 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
     @Inject(DATA_SOURCE) ds: DataSource | null,
     enc: EncryptionService,
     private readonly config: ConfigService,
-    // find-2220a85e: resolução de identidade no webhook público (sem contexto
-    // de tenant). Com DATABASE_SESSION_CONTEXT_ENABLED=true o DATA_SOURCE é o
-    // role NOBYPASSRLS e a varredura cross-tenant retorna 0 linhas (provado em
-    // Postgres real) — nenhuma mensagem inbound jamais era roteada. Usa a
-    // conexão owner somente-leitura já documentada para enumeração de sistema.
+    // find-2220a85e: identity resolution on the public webhook (no tenant
+    // context). With DATABASE_SESSION_CONTEXT_ENABLED=true, DATA_SOURCE is the
+    // NOBYPASSRLS role and the cross-tenant scan returns 0 rows (proven against a
+    // real Postgres) — no inbound message was ever routed. Uses the read-only
+    // owner connection already documented for system enumeration.
     @Optional() @Inject(ADMIN_DATA_SOURCE) private readonly adminDs?: DataSource | null,
   ) {
     super(ds, enc);
   }
 
   /**
-   * Todas as vinculações phone_number_id -> tenant existentes (credenciais
-   * não nulas; desconectar zera credentials_encrypted). Somente leitura.
+   * Every existing phone_number_id -> tenant link (non-null credentials;
+   * disconnecting clears credentials_encrypted). Read-only.
    */
   private async listPhoneNumberBindings(): Promise<Array<{ tenantId: string; phoneNumberId: string }>> {
     const ds = this.adminDs ?? null;
@@ -79,7 +79,7 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
         const creds = JSON.parse(this.enc.decrypt(row.credentials_encrypted as string)) as Partial<WhatsAppCredentials>;
         if (creds.phoneNumberId) out.push({ tenantId: row.tenant_id, phoneNumberId: String(creds.phoneNumberId) });
       } catch {
-        // credencial ilegível não vira vínculo de identidade
+        // an unreadable credential never becomes an identity link
       }
     }
     return out;
@@ -91,13 +91,13 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
   }
 
   /**
-   * find-2220a85e — vínculo de identidade explícito (Seção 9: igualdade de
-   * string não prova equivalência). Antes de gravar:
-   *  1. formato: phoneNumberId numérico, token e wabaId não vazios;
-   *  2. posse: a própria Graph API confirma que ESTE token acessa ESTE
-   *     phone_number_id (senão um tenant poderia pré-registrar o número de
-   *     outro e receber as mensagens inbound dele);
-   *  3. unicidade: o número não pode estar vinculado a outro tenant.
+   * find-2220a85e — explicit identity link (Section 9: string equality does
+   * not prove equivalence). Before writing:
+   *  1. format: numeric phoneNumberId, non-empty token and wabaId;
+   *  2. ownership: the Graph API itself confirms THIS token can access THIS
+   *     phone_number_id (otherwise a tenant could pre-register another
+   *     tenant's number and receive its inbound messages);
+   *  3. uniqueness: the number cannot be linked to another tenant.
    */
   async configure(tenantId: string, phoneNumberId: string, accessToken: string, wabaId: string): Promise<void> {
     const pid = typeof phoneNumberId === 'string' ? phoneNumberId.trim() : '';
@@ -122,7 +122,7 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
     await this.saveCredentials(tenantId, PROVIDER, { phoneNumberId: pid, accessToken: token, wabaId: waba });
   }
 
-  /** GET /{phone_number_id} com o token do tenant: 200 prova acesso ao número. */
+  /** GET /{phone_number_id} with the tenant's token: a 200 proves access to the number. */
   private async assertTokenOwnsPhoneNumber(phoneNumberId: string, accessToken: string): Promise<void> {
     let res: Response;
     try {
@@ -148,9 +148,9 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
   }
 
   /**
-   * Resolve a que tenant um phone_number_id do webhook pertence. Nunca
-   * "primeira linha que bate": 0 -> unknown, 1 -> resolved, >1 -> conflict
-   * (fail-closed; nada é roteado).
+   * Resolves which tenant a webhook phone_number_id belongs to. Never
+   * "first matching row": 0 -> unknown, 1 -> resolved, >1 -> conflict
+   * (fail-closed; nothing is routed).
    */
   async resolveTenantByPhoneNumberId(phoneNumberId: string): Promise<WhatsAppTenantResolution> {
     const tenants = new Set(
@@ -196,7 +196,7 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
     if (status === 429 || metaCode === 4 || metaCode === 80007) {
       return new WhatsAppError('WHATSAPP_RATE_LIMITED', `WhatsApp Cloud API respondeu 429: ${metaMessage}`);
     }
-    // 131030 (destinatário fora da allowlist do modo teste), 131026 (não é usuário WhatsApp válido)
+    // 131030 (recipient outside the test-mode allowlist), 131026 (not a valid WhatsApp user)
     if (metaCode === 131030 || metaCode === 131026 || metaCode === 100) {
       return new WhatsAppError('WHATSAPP_INVALID_RECIPIENT', `WhatsApp Cloud API rejeitou o destinatário: ${metaMessage}`);
     }
@@ -204,9 +204,9 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
   }
 
   /**
-   * Validação da verificação de webhook do Meta (GET). Retorna o challenge a
-   * ecoar de volta quando o verify_token bate; lança WHATSAPP_WEBHOOK_INVALID
-   * caso contrário (inclui verify token não configurado no ambiente).
+   * Validates Meta's webhook verification (GET). Returns the challenge to
+   * echo back when verify_token matches; otherwise throws
+   * WHATSAPP_WEBHOOK_INVALID (including when no verify token is configured).
    */
   verifyWebhookChallenge(mode: string | undefined, token: string | undefined, challenge: string | undefined): string {
     const expected = this.config.get<string>('WHATSAPP_WEBHOOK_VERIFY_TOKEN') ?? '';

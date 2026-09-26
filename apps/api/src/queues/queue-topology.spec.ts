@@ -5,14 +5,14 @@ import { ExternalDataProcessor } from './processors/external-data.processor';
 import { QUEUE_NAMES, UNCONSUMED_QUEUE_JOBS, WORKFLOW_JOB_NAMES, SPOTIFY_JOB_NAMES } from './queue.constants';
 
 /**
- * find-721c845e — topologia producer/consumer das filas BullMQ.
+ * find-721c845e — producer/consumer topology of the BullMQ queues.
  *
- * Invariante: todo job efetivamente enfileirado tem um consumidor real que o
- * trata (não o `default`), e todo job sem consumidor está em
- * UNCONSUMED_QUEUE_JOBS e NUNCA é enfileirado. Antes: onboarding-check /
- * workflow-followup cresciam sem limite em integrations-sync (sem
- * @Processor) e distribution-sync / spotify:sync eram "concluídos" sem
- * trabalho pelo default silencioso do ExternalDataProcessor.
+ * Invariant: every job actually enqueued has a real consumer that handles it
+ * (not `default`), and every job without a consumer is in
+ * UNCONSUMED_QUEUE_JOBS and is NEVER enqueued. Before: onboarding-check /
+ * workflow-followup grew without bound in integrations-sync (no
+ * @Processor) and distribution-sync / spotify:sync were "completed" without
+ * work by ExternalDataProcessor's silent default branch.
  */
 const SRC = path.resolve(__dirname, '..');
 

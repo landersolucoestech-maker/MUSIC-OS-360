@@ -11,8 +11,8 @@
  * NestJS ValidationPipe runs with { whitelist: true, forbidNonWhitelisted: true } —
  * any snake_case or unknown field causes a 400. Only DTO fields must be sent.
  *
- * Regra de produto 2026-07-12 (migration ReleasesFormFieldColumns20260718000010):
- * cada campo do formulário tem coluna própria — nenhum campo formal vai para `metadata`.
+ * Product rule 2026-07-12 (migration ReleasesFormFieldColumns20260718000010):
+ * every form field has its own column — no formal field goes into `metadata`.
  */
 
 import type { ReleaseFormFields } from "./entity-to-form.mapper";
@@ -67,15 +67,15 @@ export function formToReleasePayload(f: ReleaseFormFields, mode: "create" | "edi
   if (hasAssets)               payload["assets"]         = assets;
   if (hasCron)                 payload["cronograma"]     = cronograma;
 
-  // find-ed7823e9 (consumidor incompatível): o formulário NÃO escreve status.
-  // O status é somente-leitura na UI ("Controlado pelo sistema") e o único
-  // escritor canônico é o workflow (ReleaseViewModal → useWorkflowTransition,
-  // guiado por allowed_transitions do backend). O mapeamento antigo
-  // backend→form→backend era com perda (distributed→scheduled,
-  // archived→released, assets_pending→metadata_pending, null→review), e toda
-  // edição de metadados desses lançamentos disparava uma transição inexistente
-  // no workflow e falhava com 400. `mode` é mantido na assinatura por
-  // compatibilidade com os chamadores.
+  // find-ed7823e9 (incompatible consumer): the form does NOT write status.
+  // Status is read-only in the UI ("Controlado pelo sistema") and the only
+  // canonical writer is the workflow (ReleaseViewModal → useWorkflowTransition,
+  // driven by the backend's allowed_transitions). The old
+  // backend→form→backend mapping was lossy (distributed→scheduled,
+  // archived→released, assets_pending→metadata_pending, null→review), and every
+  // metadata edit of those releases triggered a nonexistent workflow
+  // transition and failed with 400. `mode` stays in the signature for caller
+  // compatibility.
   void mode;
 
   return payload;

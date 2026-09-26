@@ -11,11 +11,11 @@ const REFRESH_WINDOW_DAYS = 7;
 const META_PROVIDERS = ['instagram', 'corp_instagram', 'meta_business', 'meta_ads'];
 
 /**
- * Renova proativamente tokens de longa duração do Meta/Instagram antes de
- * expirarem (~60 dias). Sem isto, a única renovação acontecia sob-demanda em
- * InstagramService.getAccountMetrics() — suficiente para o uso orgânico
- * (acedido com frequência), mas insuficiente para conexões corporativas que
- * podem ficar semanas sem serem acedidas e perder o token silenciosamente.
+ * Proactively renews long-lived Meta/Instagram tokens before they expire
+ * (~60 days). Without this, the only renewal happened on demand in
+ * InstagramService.getAccountMetrics() — enough for organic use (accessed
+ * often), but not for corporate connections that can go weeks without access
+ * and silently lose the token.
  */
 @Injectable()
 export class InstagramTokenRefreshScheduler implements OnApplicationBootstrap {
@@ -23,12 +23,12 @@ export class InstagramTokenRefreshScheduler implements OnApplicationBootstrap {
   private readonly repo: Repository<OAuthConnectionEntity> | null = null;
 
   /**
-   * find-b4201eb2: oauth_connections é FORCE RLS. Com o DATA_SOURCE (role
-   * NOBYPASSRLS) e sem contexto de tenant, a varredura cross-tenant retornava
-   * 0 linhas (provado em Postgres real) e nenhum token era renovado. Padrão
-   * canônico dos schedulers (contract-expiry / invoice-overdue / dunning):
-   * enumerar via ADMIN_DATA_SOURCE (owner, somente leitura) e processar cada
-   * conexão dentro do contexto do seu tenant.
+   * find-b4201eb2: oauth_connections is FORCE RLS. With DATA_SOURCE (a
+   * NOBYPASSRLS role) and no tenant context, the cross-tenant scan returned
+   * 0 rows (proven against a real Postgres) and no token was renewed.
+   * Canonical scheduler pattern (contract-expiry / invoice-overdue / dunning):
+   * enumerate via ADMIN_DATA_SOURCE (owner, read-only) and process each
+   * connection inside its own tenant's context.
    */
   constructor(
     @Inject(DATA_SOURCE) @Optional() ds: DataSource | null,
