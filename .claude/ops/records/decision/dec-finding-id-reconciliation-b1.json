@@ -1,0 +1,8 @@
+{
+  "id": "dec-finding-id-reconciliation-b1",
+  "createdAt": "2026-09-26T02:41:16.555Z",
+  "topic": "Provisional finding tag used before ledger registration",
+  "decidedBy": "mission-orchestrator",
+  "decision": "The tag find-8d2e71a4 appeared in B1 working-copy code comments and in criterion texts ac-4776921b / ac-78962150 before any ledger entry existed (an orchestrator error: the ID was not runtime-issued). Real ledger IDs: WhatsApp inbound identity -> find-2220a85e; public/system-path tenant-context defect class -> find-b4201eb2. Code comments, tests and docs are rewritten to the real IDs before commit; criterion texts are left unchanged (ledger history is append-only) and are to be read through this mapping.",
+  "rationale": "evidence-governance.md: findings/evidence must have real provenance; never let a fabricated identifier stand as if it were a ledger record."
+}

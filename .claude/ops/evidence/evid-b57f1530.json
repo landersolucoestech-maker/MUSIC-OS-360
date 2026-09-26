@@ -1,0 +1,15 @@
+{
+  "id": "evid-b57f1530",
+  "createdAt": "2026-09-26T02:52:08.909Z",
+  "type": "COMMAND",
+  "label": "env DATABASE_URL=postgresql://musicos360@127.0.0.1:55432/musicos360 APP_DATABASE_URL=postgresql://musicos_app:local_only_ephemeral_musicos_app_pw@127.0.0.1:55432/musicos360 DB_SSL=false NODE_ENV=test ENCRYPTION_KEY=33b29b3d331d95a7a029160cbbb4c64cc7e094271b0a6f501da19a596ade7217 pnpm --filter api exec jest --config jest.e2e.config.ts test/e2e/integrations",
+  "command": "env DATABASE_URL=postgresql://musicos360@127.0.0.1:55432/musicos360 APP_DATABASE_URL=postgresql://musicos_app:local_only_ephemeral_musicos_app_pw@127.0.0.1:55432/musicos360 DB_SSL=false NODE_ENV=test ENCRYPTION_KEY=33b29b3d331d95a7a029160cbbb4c64cc7e094271b0a6f501da19a596ade7217 pnpm --filter api exec jest --config jest.e2e.config.ts test/e2e/integrations",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[32m[Nest] 32548  - \u001b[39m09/26/2026, 2:52:08 AM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[InstagramTokenRefreshScheduler] \u001b[39m\u001b[32mInstagramTokenRefreshScheduler: 0 verificados, 0 renovados, 0 falhas\u001b[39m\n\u001b[32m[Nest] 32548  - \u001b[39m09/26/2026, 2:52:08 AM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[InstagramTokenRefreshScheduler] \u001b[39m\u001b[32mInstagramTokenRefreshScheduler: 3 verificados, 3 renovados, 0 falhas\u001b[39m",
+  "stderrTail": "",
+  "workspaceFingerprint": "29375f7365e0267b6796a227abb49d457d49a13e137a732fb98319100ae7cc62",
+  "fingerprintStatus": "BOUND",
+  "head": "47034214299935acbd0a2412c1e1525fedd6b2e5",
+  "durationMs": 10108
+}

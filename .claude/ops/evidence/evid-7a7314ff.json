@@ -1,0 +1,15 @@
+{
+  "id": "evid-7a7314ff",
+  "createdAt": "2026-09-26T02:52:31.765Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter api run typecheck",
+  "command": "pnpm --filter api run typecheck",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "> @music-os-360/api@0.0.1 typecheck /home/user/MUSIC-OS-360/apps/api\n> tsc -p tsconfig.build.json --noEmit",
+  "stderrTail": "",
+  "workspaceFingerprint": "29375f7365e0267b6796a227abb49d457d49a13e137a732fb98319100ae7cc62",
+  "fingerprintStatus": "BOUND",
+  "head": "47034214299935acbd0a2412c1e1525fedd6b2e5",
+  "durationMs": 6226
+}

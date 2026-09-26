@@ -1,0 +1,9 @@
+[
+  {
+    "id": "imp-5b069cb3",
+    "text": "Commit hygiene: always stage, then review 'git diff --cached --name-status' in a separate step, then commit. On 2026-09-26 a previously 'git rm'-staged file (server/ai-proxy.ts) was swept into an unrelated commit (cd7ab30) because staging+stat+commit ran in one command. Candidate deterministic control: a pre-commit hook or ops.mjs commit helper that refuses to commit when staged paths fall outside the declared cluster path set.",
+    "scope": "runtime",
+    "createdAt": "2026-09-26T03:01:44.515Z",
+    "appliedAt": null
+  }
+]

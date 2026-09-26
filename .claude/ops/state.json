@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T02:32:44.977Z",
+  "updatedAt": "2026-09-26T03:02:28.222Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -540,12 +540,75 @@
             "evid-a6a9e808",
             "evid-0b9f5c9d",
             "evid-0013f7a2",
-            "evid-5f95d694"
+            "evid-5f95d694",
+            "evid-761ab68a",
+            "evid-d7cb6ce3",
+            "evid-7bf42405",
+            "evid-8d74ee47",
+            "evid-2f8c9055",
+            "evid-a6fdd26d",
+            "evid-7a7314ff",
+            "evid-f35be837",
+            "evid-470ebd6a",
+            "evid-14ed2a90"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-78962150",
+          "text": "B1.2 find-8d2e71a4 class: public/system paths without tenant DB context - oauth/exchange (@Public) and Spotify GET callback token writes were rejected by RLS on oauth_connections (proven on real Postgres), Instagram token-refresh scheduler saw 0 rows; fixed with runInTenantContext at public entry points, ensureTenantContext (reuse-or-open, no parallel tx) for the dual-path Spotify callback, and admin enumeration + per-tenant context for the scheduler; real-Postgres e2e covers denial, fix, cross-tenant fail-closed, reuse semantics and scheduler",
+          "evidenceIds": [
+            "evid-e42a89b8",
+            "evid-028d0953",
+            "evid-c911e202",
+            "evid-a67252a5",
+            "evid-454f0754",
+            "evid-845fb2e4",
+            "evid-b57f1530",
+            "evid-2406d5dc",
+            "evid-f9ac7784",
+            "evid-2f883ca4",
+            "evid-b14997fb",
+            "evid-85e1cfca"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-f994fa0d",
+          "text": "B1.3 find-10c37104: orphaned unauthenticated wildcard-CORS OpenAI passthrough server/ai-proxy.ts removed after proving no launch path (Dockerfiles, compose, package scripts, CI, serverless config), no client caller, and a port collision with the real API; canonical docs corrected",
+          "evidenceIds": [
+            "evid-76225ad0",
+            "evid-319c2e9a",
+            "evid-fea6b221",
+            "evid-1df087f2",
+            "evid-42ceec9c",
+            "evid-e282b06b",
+            "evid-15f1eedf",
+            "evid-ecb95896",
+            "evid-30942a48",
+            "evid-20745888",
+            "evid-ee67e111"
           ],
           "status": "closed"
         }
       ],
       "createdAt": "2026-09-26T02:22:36.728Z"
+    },
+    {
+      "id": "req-677a652e",
+      "text": "Tooling: root 'pnpm run lint' (eslint .) fails on a pre-existing error inside .audit-runtime forensic census artifacts, which the root ignore list omitted while ignoring the analogous .tmp-audit/**",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-f4e349ac",
+          "text": "root eslint ignores .audit-runtime/** like .tmp-audit/**; pnpm run lint exits 0 (0 errors)",
+          "evidenceIds": [
+            "evid-6182ca56"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-26T02:49:55.529Z"
     }
   ],
   "findings": [
@@ -627,11 +690,11 @@
       "line": 141,
       "summary": "Independently confirmed (read-only re-audit): server/ai-proxy.ts is a standalone http server (not part of apps/api's NestJS auth stack) exposing POST /api/ai/generate (raw OpenAI passthrough, billed to OPENAI_API_KEY) and POST /api/acrcloud/:endpoint with zero authentication, zero tenant scoping, zero rate limiting, and Access-Control-Allow-Origin: * on every response (line 131). Confirmed exhaustively unreferenced: no docker-compose/Dockerfile/package.json script/workflow starts this process, and apps/web has 0 callers of /api/ai/generate -- not a live production vulnerability today, but a real footgun if ever started manually. Already documented in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md (2026-09-24 entry); recorded here for this independent security-audit pass's own evidence trail. Grep for Access-Control-Allow-Origin.*\\* repo-wide confirms this is the ONLY file with a wildcard-CORS pattern.",
       "rootCause": null,
-      "disposition": "DIVIDA_ACEITA",
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-24T07:59:19.397Z",
-      "justification": "server/ai-proxy.ts confirmed HIGH-severity by design (zero auth, wildcard CORS, OPENAI_API_KEY-billed passthrough) but exhaustively confirmed unreachable in current deployment: zero references in any docker-compose*.yml, either Dockerfile, any package.json script, or .github/workflows/**, and zero frontend callers. Not fixed because the two real remediations (delete the file, or harden it to match the backend's real auth/tenancy model) both require a product/eng decision on whether this file is still needed for some undocumented deployment target -- a naming/audit mission cannot answer that unilaterally. Fully documented with the exact decision question in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md (2026-09-24 entry). Accepted as known debt pending that decision, not silently ignored.",
-      "resolvedAt": "2026-09-24T16:25:26.153Z"
+      "justification": "S19=CORRIGIDO | commits=cd7ab30 (file deletion, staging error) + 0c81467 (config/docs) | Replaces earlier 'awaiting product decision' disposition: repository reality proves no launch path (Dockerfiles, compose, package scripts, CI, serverless config), no client callers, port collision with the real API. Gates: api/web typecheck evid-e282b06b/evid-20745888, web build evid-ee67e111, root lint evid-42ceec9c, api test:ci evid-ecb95896.",
+      "resolvedAt": "2026-09-26T03:02:28.040Z"
     },
     {
       "id": "find-dbd79703",
@@ -870,6 +933,20 @@
       "createdAt": "2026-09-26T02:32:36.529Z",
       "justification": "S19=CORRIGIDO | commit=671d334 | Unconsumed jobs are no longer produced (Redis growth stopped at the source), unknown job names fail visibly, trigger facts preserved in domain_event_log / oauth_connections; queue-topology.spec enforces the producer/consumer invariant. Tests: evid-6236de6e (queues/spotify/handlers), evid-1bf1a5b2 (api test:ci). Residual: jobs already waiting in deployed Redis require an operator cleanup (not executed: external production write).",
       "resolvedAt": "2026-09-26T02:32:44.976Z"
+    },
+    {
+      "id": "find-20f7af5c",
+      "category": "L",
+      "severity": "LOW",
+      "file": "eslint.config.js",
+      "line": null,
+      "summary": "Root 'pnpm run lint' (eslint .) failed on a pre-existing error in .audit-runtime/forensic-20260924 (committed 2e9874a); root ignore list omitted .audit-runtime/** while ignoring the analogous .tmp-audit/**.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:02:28.138Z",
+      "justification": "S19=CORRIGIDO | commit=1840c19 | Added .audit-runtime/** to root ignores; root lint 0 errors (evid-6182ca56). CI gate (turbo lint) unaffected before and after.",
+      "resolvedAt": "2026-09-26T03:02:28.222Z"
     }
   ],
   "evidenceIds": [
@@ -1086,7 +1163,41 @@
     "evid-8c10dd85",
     "evid-73a9848d",
     "evid-d250e7f4",
-    "evid-5f95d694"
+    "evid-5f95d694",
+    "evid-761ab68a",
+    "evid-e42a89b8",
+    "evid-d7cb6ce3",
+    "evid-028d0953",
+    "evid-c911e202",
+    "evid-a67252a5",
+    "evid-7bf42405",
+    "evid-454f0754",
+    "evid-845fb2e4",
+    "evid-8d74ee47",
+    "evid-76225ad0",
+    "evid-319c2e9a",
+    "evid-fea6b221",
+    "evid-1df087f2",
+    "evid-6182ca56",
+    "evid-42ceec9c",
+    "evid-2f8c9055",
+    "evid-a6fdd26d",
+    "evid-b57f1530",
+    "evid-2406d5dc",
+    "evid-7a7314ff",
+    "evid-f35be837",
+    "evid-470ebd6a",
+    "evid-14ed2a90",
+    "evid-f9ac7784",
+    "evid-2f883ca4",
+    "evid-b14997fb",
+    "evid-85e1cfca",
+    "evid-e282b06b",
+    "evid-15f1eedf",
+    "evid-ecb95896",
+    "evid-30942a48",
+    "evid-20745888",
+    "evid-ee67e111"
   ],
   "checkpointIds": [
     "chec-e661a7aa",
