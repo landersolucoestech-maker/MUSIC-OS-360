@@ -13,7 +13,7 @@ if (typeof g.ResizeObserver === 'undefined') {
   g.ResizeObserver = ResizeObserverPolyfill;
 }
 
-// jsdom não implementa scrollIntoView nem PointerEvent helpers usados por Radix Select.
+// jsdom does not implement scrollIntoView nor the PointerEvent helpers used by Radix Select.
 if (typeof Element !== 'undefined') {
   const proto = Element.prototype as unknown as Record<string, unknown>;
   if (!proto.scrollIntoView) {
@@ -33,7 +33,7 @@ if (typeof Element !== 'undefined') {
   }
 }
 
-// Limpa o DOM após cada teste
+// Clean up the DOM after each test
 afterEach(() => {
   cleanup();
 });

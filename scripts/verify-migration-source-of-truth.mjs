@@ -19,7 +19,7 @@
  *      AND database.module.ts import) has exactly one entry per migration
  *      file on disk, and vice versa — this is what used to be impossible to
  *      check meaningfully (database.module.ts had its own, separate, silently
- *      drifting list) until Parte 61 unified both consumers onto one file.
+ *      drifting list) until Part 61 unified both consumers onto one file.
  *
  * Usage:
  *   node scripts/verify-migration-source-of-truth.mjs
@@ -120,7 +120,7 @@ export function checkCanonicalRunnerConfig(datasourceSource) {
 // migrations/index.ts is the single shared registry — every file on disk
 // must have exactly one entry there, and every entry must correspond to a
 // real file. This is the "registry parity" check: with one shared file
-// (Parte 61) instead of two independently-maintained lists, a real,
+// (Part 61) instead of two independently-maintained lists, a real,
 // meaningful comparison against disk finally exists.
 //
 // Takes the *actual* exported class names (read from each file's `export

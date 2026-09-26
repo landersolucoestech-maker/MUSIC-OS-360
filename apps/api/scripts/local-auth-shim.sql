@@ -116,7 +116,7 @@ CREATE EVENT TRIGGER supabase_shim_grant_new_relations_trigger
   WHEN TAG IN ('CREATE TABLE', 'CREATE SEQUENCE')
   EXECUTE FUNCTION supabase_shim_grant_new_relations();
 
--- Realtime Authorization shim (Parte 66 — WS→Supabase Realtime migration).
+-- Realtime Authorization shim (Part 66 — WS→Supabase Realtime migration).
 -- Real Supabase's Realtime server validates channel access by inserting a
 -- row into realtime.messages and rolling back the transaction, checking the
 -- RLS policies along the way; realtime.topic() returns the channel topic

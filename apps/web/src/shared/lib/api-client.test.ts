@@ -62,7 +62,7 @@ describe("api-client response contract", () => {
     await expect(api.delete("/financial-categories/category-1")).resolves.toBeUndefined();
   });
 
-  it("maps a 403 MUST_CHANGE_PASSWORD body to PasswordChangeRequiredError (Parte 74)", async () => {
+  it("maps a 403 MUST_CHANGE_PASSWORD body to PasswordChangeRequiredError (Part 74)", async () => {
     mockResponse({ statusCode: 403, error: "MUST_CHANGE_PASSWORD", message: "Troca de senha obrigatória." }, 403);
 
     await expect(api.get("/artists")).rejects.toBeInstanceOf(PasswordChangeRequiredError);

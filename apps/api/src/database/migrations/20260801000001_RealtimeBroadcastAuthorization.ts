@@ -1,7 +1,7 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * 20260801000001_RealtimeBroadcastAuthorization  (Parte 66 — WS→Supabase Realtime)
+ * 20260801000001_RealtimeBroadcastAuthorization  (Part 66 — WS→Supabase Realtime)
  *
  * Replaces the Socket.IO WsGateway with Supabase Realtime Broadcast, since
  * Vercel Functions cannot hold a persistent WebSocket connection between

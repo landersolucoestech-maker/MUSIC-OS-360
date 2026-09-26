@@ -131,8 +131,8 @@ export default {
           "3": "hsl(var(--surface-3))",
         },
 
-        // Escopado a `.landing-theme` (ver index.css) — não usado fora da
-        // landing institucional.
+        // Scoped to `.landing-theme` (see index.css) — not used outside the
+        // institutional landing page.
         landing: {
           dark: "hsl(var(--landing-dark))",
           darker: "hsl(var(--landing-darker))",

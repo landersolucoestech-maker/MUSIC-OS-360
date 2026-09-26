@@ -1,5 +1,5 @@
 /**
- * no-module-level-import-export.guard.test.ts  (Parte 86)
+ * no-module-level-import-export.guard.test.ts  (Part 86)
  *
  * Permanent guard: data Import and Export must exist ONLY in the Reports
  * Center (modules/reports/). The modules below had their own Import/Export
@@ -9,12 +9,13 @@
  *
  * Scope deliberately restricted to the files fixed in this Part, not the
  * entire repository: VariableRegistry.tsx / CategoryRegistry.tsx (contract
- * registries, with no equivalent entity in Reports), the "Importar Relatório
- * ECAD" button in RightsMonitoring.tsx (non-functional stub, full dialog
- * already implemented), the "Exportar OFX" button in Accounting.tsx (bank
+ * registries, with no equivalent entity in Reports), the
+ * "Importar Relatório ECAD" button in RightsMonitoring.tsx (non-functional
+ * stub, full dialog already implemented), the "Exportar OFX" button in
+ * Accounting.tsx (bank
  * reconciliation domain, not entity data), and already-unrendered dead code
  * (Metricas.tsx `ExportDropdown`) are NOT covered by this guard — these are
- * remaining divergences documented in the Parte 86 final report, not
+ * remaining divergences documented in the Part 86 final report, not
  * silently ignored.
  *
  * AudiovisualProductionWorkspace.tsx (previously referenced here) was removed
@@ -38,7 +39,7 @@ const FIXED_MODULE_FILES = [
   // Task T (continuation): the "Exportar" button in Shares.tsx had no
   // onClick at all — clicking did nothing. Shares is already a reportable
   // entity in the Reports Center (REPORT_MODULE_REGISTRY); removed instead
-  // of duplicating a local export, same policy as Parte 86.
+  // of duplicating a local export, same policy as Part 86.
   "modules/releases/pages/Shares.tsx",
 ];
 
@@ -50,7 +51,7 @@ const BUTTON_TEXT_PATTERNS = [
   /data-testid="button-export"/i,
 ];
 
-describe("Permanent guard: modules fixed in Parte 86 do not reintroduce their own Import/Export", () => {
+describe("Permanent guard: modules fixed in Part 86 do not reintroduce their own Import/Export", () => {
   for (const rel of FIXED_MODULE_FILES) {
     const full = path.resolve(SRC_ROOT, rel);
 

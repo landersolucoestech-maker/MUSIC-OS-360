@@ -13,11 +13,11 @@ const guardMode =
 
 assertWebSupabaseEnv(guardMode, __dirname);
 
-// Parte 75 — commit realmente empacotado no bundle, para a tela de login
-// exibir um identificador seguro de ambiente/build (nunca URLs/keys completas)
-// e eliminar ambiguidade sobre "qual deploy é este". Vercel expõe o SHA via
-// VERCEL_GIT_COMMIT_SHA (não prefixado com VITE_, então nunca chega ao
-// cliente sozinho); fora da Vercel (build local), cai para o HEAD real do git.
+// Part 75 — the commit actually packaged into the bundle, so the login screen
+// can show a safe environment/build identifier (never full URLs/keys) and
+// remove ambiguity about "which deploy is this". Vercel exposes the SHA via
+// VERCEL_GIT_COMMIT_SHA (not VITE_-prefixed, so it never reaches the client on
+// its own); outside Vercel (local build), it falls back to the real git HEAD.
 function resolveCommitSha() {
   if (process.env.VERCEL_GIT_COMMIT_SHA) return process.env.VERCEL_GIT_COMMIT_SHA;
   try {

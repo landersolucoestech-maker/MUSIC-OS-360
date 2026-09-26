@@ -27,7 +27,7 @@ beforeEach(() => {
 // find-d4f19636 (Wave 13): this hook is deliberately synchronous/localStorage-backed,
 // NOT wired to the real /operational-list-items backend API — storage.setRaw/getRaw
 // are documented stubs (see settings.service.ts's own header comment) chosen on
-// purpose after a real crash (Parte 79: a synchronous throw during mount brought
+// purpose after a real crash (Part 79: a synchronous throw during mount brought
 // down the whole React tree). This test previously asserted an async,
 // listOperationalListItems-backed contract that was never actually shipped —
 // reclassified as REAL_PRODUCT_DECISION (wire vs. keep client-only) rather than a

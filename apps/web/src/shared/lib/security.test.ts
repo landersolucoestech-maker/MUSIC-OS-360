@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, vi } from "vitest";
 import { authRateLimiter } from "./security";
 
-describe("AuthRateLimiter (Parte 77)", () => {
+describe("AuthRateLimiter (Part 77)", () => {
   beforeEach(() => {
     authRateLimiter.reset("user@example.com");
     vi.useRealTimers();

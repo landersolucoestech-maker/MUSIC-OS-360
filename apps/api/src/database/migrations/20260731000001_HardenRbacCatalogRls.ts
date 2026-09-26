@@ -1,7 +1,7 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * 20260731000001_HardenRbacCatalogRls  (Parte 58 — Security Advisor remediation)
+ * 20260731000001_HardenRbacCatalogRls  (Part 58 — Security Advisor remediation)
  *
  * Adds fail-closed RLS to the 8 RBAC catalog tables left out of
  * 20260610000007_EnableRlsOnRbacTables (decision D3: global catalogs, no

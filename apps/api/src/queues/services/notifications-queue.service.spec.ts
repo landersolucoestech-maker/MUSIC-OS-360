@@ -3,7 +3,7 @@ import { NOTIFICATION_JOB_NAMES } from '../queue.constants';
 import type { NotificationPayload } from '../processors/notifications.processor';
 
 /**
- * Regression test for a real bug found in Parte 68: the producer enqueued
+ * Regression test for a real bug found in Part 68: the producer enqueued
  * jobs under the literal name 'notification', while NotificationsProcessor's
  * switch(job.name) only handles NOTIFICATION_JOB_NAMES.SEND ('send') and
  * BROADCAST_TENANT ('broadcast-tenant') — every notification silently fell
