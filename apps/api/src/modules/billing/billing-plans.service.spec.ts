@@ -66,11 +66,11 @@ describe('BillingPlansService', () => {
       await expect(service.create({ slug: 'x', name: 'X', amount: 0 })).rejects.toThrow(BadRequestException);
     });
 
-    it('rejeita currency inválida', async () => {
+    it('rejects an invalid currency', async () => {
       await expect(service.create({ slug: 'x', name: 'X', amount: 100, currency: 'BRL' })).rejects.toThrow(BadRequestException);
     });
 
-    it('rejeita interval inválido', async () => {
+    it('rejects an invalid interval', async () => {
       await expect(service.create({ slug: 'x', name: 'X', amount: 100, interval: 'week' })).rejects.toThrow(BadRequestException);
     });
 
@@ -80,7 +80,7 @@ describe('BillingPlansService', () => {
     });
   });
 
-  describe('listPublic (Decision Gate item 1 — rota pública da Landing)', () => {
+  describe('listPublic (Decision Gate item 1 — public landing route)', () => {
     function mockPlansQuery(rows: Record<string, unknown>[]) {
       const qb = {
         orderBy: jest.fn().mockReturnThis(),
@@ -134,7 +134,7 @@ describe('BillingPlansService', () => {
       expect(keys).not.toContain('updated_at');
     });
 
-    it('só considera planos ativos (list() já filtra active=true por padrão)', async () => {
+    it('considers active plans only (list() already filters active=true by default)', async () => {
       const qb = mockPlansQuery([]);
       await service.listPublic();
       expect(qb.where).toHaveBeenCalledWith('p.active = true');
@@ -161,7 +161,7 @@ describe('BillingPlansService', () => {
       features: {}, limits: {}, stripe_product_id: 'prod_1', stripe_price_id: 'price_1',
     };
 
-    it('cria NOVO Price quando amount muda e desativa o antigo (sem recriar Product)', async () => {
+    it('creates a NEW Price when the amount changes and deactivates the old one (without recreating the Product)', async () => {
       repo.findOne.mockResolvedValueOnce({ ...existing });
       await service.update('plan-1', { amount: 39900 });
       expect(stripe().products.create).not.toHaveBeenCalled();    // product já existe → update
@@ -170,7 +170,7 @@ describe('BillingPlansService', () => {
       expect(stripe().prices.update).toHaveBeenCalledWith('price_1', { active: false }); // desativa antigo
     });
 
-    it('NÃO recria Price quando muda apenas o nome', async () => {
+    it('does NOT recreate the Price when only the name changes', async () => {
       repo.findOne.mockResolvedValueOnce({ ...existing });
       await service.update('plan-1', { name: 'Pro Plus' });
       expect(stripe().prices.create).not.toHaveBeenCalled();

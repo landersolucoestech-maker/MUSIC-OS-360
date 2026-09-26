@@ -20,12 +20,12 @@ async function validatePayload(dto: new () => object, payload: Record<string, un
 }
 
 describe('RegisterAbramusWorkDto', () => {
-  it('aceita um payload válido mínimo', async () => {
+  it('accepts a minimal valid payload', async () => {
     const errors = await validatePayload(RegisterAbramusWorkDto, { titulo: 'Obra X', compositor: 'Fulano' });
     expect(errors).toEqual([]);
   });
 
-  it('aceita um payload válido completo', async () => {
+  it('accepts a complete valid payload', async () => {
     const errors = await validatePayload(RegisterAbramusWorkDto, {
       titulo: 'Obra X', compositor: 'Fulano', iswc: 'T-123', genero: 'Pop',
       duracao: '3:20', editora: 'Editora Y', coautores: ['Fulano', 'Beltrano'],
@@ -43,7 +43,7 @@ describe('RegisterAbramusWorkDto', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejeita coautores com item não-string (invalid nested/type)', async () => {
+  it('rejects coautores with a non-string item (invalid nested/type)', async () => {
     const errors = await validatePayload(RegisterAbramusWorkDto, {
       titulo: 'Obra X', compositor: 'Fulano', coautores: [123],
     });
@@ -59,7 +59,7 @@ describe('RegisterAbramusWorkDto', () => {
 });
 
 describe('ConfigureSoundCloudDto', () => {
-  it('aceita um payload válido', async () => {
+  it('accepts a valid payload', async () => {
     const errors = await validatePayload(ConfigureSoundCloudDto, { clientId: 'abc', clientSecret: 'def' });
     expect(errors).toEqual([]);
   });
@@ -71,7 +71,7 @@ describe('ConfigureSoundCloudDto', () => {
 });
 
 describe('OAuthCodeStateDto (Instagram/TikTok/Google Ads callbacks)', () => {
-  it('aceita um payload válido', async () => {
+  it('accepts a valid payload', async () => {
     const errors = await validatePayload(OAuthCodeStateDto, { code: 'abc123', state: 'xyz' });
     expect(errors).toEqual([]);
   });
@@ -83,7 +83,7 @@ describe('OAuthCodeStateDto (Instagram/TikTok/Google Ads callbacks)', () => {
 });
 
 describe('AutentiqueWebhookDto (webhook externo — sem whitelist fechado no controller)', () => {
-  it('aceita o payload real usado no teste do serviço (event/event_id/document_id)', async () => {
+  it('accepts the real payload used in the service test (event/event_id/document_id)', async () => {
     const errors = await validatePayload(
       AutentiqueWebhookDto,
       { event: 'document.signed', event_id: 'event-a', document_id: 'doc-a' },
@@ -91,7 +91,7 @@ describe('AutentiqueWebhookDto (webhook externo — sem whitelist fechado no con
     expect(errors).toEqual([]);
   });
 
-  it('rejeita event com tipo inválido (invalid type)', async () => {
+  it('rejects an event with an invalid type (invalid type)', async () => {
     const errors = await validatePayload(AutentiqueWebhookDto, { event: 123 });
     expect(errors.length).toBeGreaterThan(0);
   });

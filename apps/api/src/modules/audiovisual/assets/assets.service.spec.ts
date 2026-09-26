@@ -41,7 +41,7 @@ function buildMockDs(updateResult: { affected: number } = { affected: 1 }) {
   };
 }
 
-describe('AudiovisualAssetsService — Task L concorrência otimista em update()', () => {
+describe('AudiovisualAssetsService — Task L optimistic concurrency in update()', () => {
   let service: AudiovisualAssetsService;
   let mockDs: ReturnType<typeof buildMockDs>;
 
@@ -56,7 +56,7 @@ describe('AudiovisualAssetsService — Task L concorrência otimista em update()
     return module.get<AudiovisualAssetsService>(AudiovisualAssetsService);
   }
 
-  it('sem expectedUpdatedAt: aplica incondicionalmente (retrocompatível)', async () => {
+  it('without expectedUpdatedAt: applies unconditionally (backward compatible)', async () => {
     service = await buildService({ affected: 1 });
     await service.update(TENANT, ASSET_ID, { name: 'Take 2' });
     expect(mockDs._assetsRepo.update).toHaveBeenCalledWith(
@@ -65,7 +65,7 @@ describe('AudiovisualAssetsService — Task L concorrência otimista em update()
     );
   });
 
-  it('cenário A/B: A lê v.X, salva (v.Y); B tenta salvar contra v.X -> 409, nunca sobrescreve A em silêncio', async () => {
+  it('A/B scenario: A reads v.X, saves (v.Y); B saves against v.X -> 409, never silently overwrites A', async () => {
     service = await buildService({ affected: 0 });
     await expect(
       service.update(TENANT, ASSET_ID, {
@@ -76,7 +76,7 @@ describe('AudiovisualAssetsService — Task L concorrência otimista em update()
     expect(mockDs._assetsRepo.update).toHaveBeenCalledTimes(1);
   });
 
-  it('expectedUpdatedAt nunca vaza para a coluna persistida (não é um campo real da entidade)', async () => {
+  it('expectedUpdatedAt never leaks into the persisted column (it is not a real entity field)', async () => {
     service = await buildService({ affected: 1 });
     await service.update(TENANT, ASSET_ID, {
       name: 'x',
@@ -86,14 +86,14 @@ describe('AudiovisualAssetsService — Task L concorrência otimista em update()
     expect(payload).not.toHaveProperty('expectedUpdatedAt');
   });
 
-  it('expectedUpdatedAt malformado -> 400, não ignora silenciosamente', async () => {
+  it('malformed expectedUpdatedAt -> 400, not silently ignored', async () => {
     service = await buildService({ affected: 1 });
     await expect(
       service.update(TENANT, ASSET_ID, { name: 'x', expectedUpdatedAt: 'não-é-data' } as never),
     ).rejects.toThrow(BadRequestException);
   });
 
-  it('asset inexistente continua 404 (comportamento pré-existente preservado)', async () => {
+  it('a missing asset still returns 404 (pre-existing behavior preserved)', async () => {
     service = await buildService();
     mockDs._assetsRepo.findOne.mockResolvedValueOnce(null);
     await expect(service.update(TENANT, 'nao-existe', { name: 'x' })).rejects.toThrow(NotFoundException);

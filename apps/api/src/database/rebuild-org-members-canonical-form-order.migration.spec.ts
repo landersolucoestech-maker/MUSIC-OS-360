@@ -16,7 +16,7 @@ const migrationSrc = fs.readFileSync(
 describe('RebuildOrgMembersInCanonicalFormOrder20260719000020', () => {
   const block = () => migrationSrc.split('newColumns = `')[1].split('`;')[0];
 
-  it('email/full_name/phone/role/is_active ficam na zona funcional, antes das relações técnicas', () => {
+  it('email/full_name/phone/role/is_active sit in the functional zone, before the technical relations', () => {
     const b = block();
     const emailIdx = b.indexOf('email');
     const fullNameIdx = b.indexOf('full_name');
@@ -33,7 +33,7 @@ describe('RebuildOrgMembersInCanonicalFormOrder20260719000020', () => {
     expect(roleIdIdx).toBeGreaterThan(orgIdIdx);
   });
 
-  it('relações técnicas (org_id/role_id/department_id/position_id) vêm antes de joined_at e da auditoria', () => {
+  it('technical relations (org_id/role_id/department_id/position_id) come before joined_at and the audit block', () => {
     const b = block();
     const positionIdIdx = b.indexOf('position_id');
     const joinedAtIdx = b.indexOf('joined_at');
@@ -42,7 +42,7 @@ describe('RebuildOrgMembersInCanonicalFormOrder20260719000020', () => {
     expect(createdAtIdx).toBeGreaterThan(joinedAtIdx);
   });
 
-  it('bloco de auditoria é created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
+  it('the audit block is created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
     const b = block();
     const createdAtIdx = b.indexOf('created_at');
     const updatedAtIdx = b.indexOf('updated_at');
@@ -55,7 +55,7 @@ describe('RebuildOrgMembersInCanonicalFormOrder20260719000020', () => {
     expect(deletedAtIdx).toBeGreaterThan(updatedByIdx);
   });
 
-  it('não remove nenhuma coluna (reconstrução pura de ordem)', () => {
+  it('removes no column (pure order rebuild)', () => {
     const newBlock = block();
     const origBlock = migrationSrc.split('originalColumns = `')[1].split('`;')[0];
     const extractCols = (b: string) => [...b.matchAll(/^\s*(\w+)\s+/gm)].map((m) => m[1]);
@@ -65,11 +65,11 @@ describe('RebuildOrgMembersInCanonicalFormOrder20260719000020', () => {
     for (const col of origCols) expect(newCols.has(col)).toBe(true);
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('derruba e recria a FK dependente (membership_job_functions) e os 3 FKs próprios (role/department/position)', () => {
+  it('drops and recreates the dependent FK (membership_job_functions) and the 3 own FKs (role/department/position)', () => {
     expect(migrationSrc).toMatch(/ALTER TABLE membership_job_functions DROP CONSTRAINT fk_mjf_membership/);
     expect(migrationSrc.match(/FOREIGN KEY \(membership_id\) REFERENCES org_members\(id\) ON DELETE CASCADE/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc.match(/FOREIGN KEY \(role_id\) REFERENCES roles\(id\) ON DELETE RESTRICT/g)?.length).toBeGreaterThanOrEqual(2);

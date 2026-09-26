@@ -24,15 +24,15 @@ const FORBIDDEN_PATTERNS: Array<{ name: string; pattern: RegExp }> = [
   { name: "delay simulado", pattern: /setTimeout\s*\(\s*resolve/ },
 ];
 
-describe("contacts.service.ts — guarda permanente contra reintrodução de mock", () => {
-  it("não contém nenhum padrão de mock de dados de negócio", () => {
+describe("contacts.service.ts — permanent guard against reintroducing a mock", () => {
+  it("contains no business-data mock pattern", () => {
     const violations = FORBIDDEN_PATTERNS
       .filter(({ pattern }) => pattern.test(SOURCE))
       .map(({ name }) => name);
     expect(violations).toEqual([]);
   });
 
-  it("importa e usa o `clientsService` real (nenhum array próprio de contatos)", () => {
+  it("imports and uses the real `clientsService` (no own contacts array)", () => {
     expect(SOURCE).toMatch(/from\s+["']\.\/clients\.service["']/);
     expect(SOURCE).not.toMatch(/:\s*Contact\[\]\s*=\s*\[/);
   });
@@ -62,7 +62,7 @@ const wireRow = {
   updated_at: "2026-01-01T00:00:00.000Z",
 };
 
-describe("contactsService — delega sempre para o clientsService real (sem estado local)", () => {
+describe("contactsService — always delegates to the real clientsService (no local state)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("list() chama clientsService.list() e traduz o formato da API para Contact", async () => {
@@ -76,7 +76,7 @@ describe("contactsService — delega sempre para o clientsService real (sem esta
     ]);
   });
 
-  it("create() delega para clientsService.create(...) sem gerar id localmente", async () => {
+  it("create() delegates to clientsService.create(...) without generating an id locally", async () => {
     vi.mocked(clientsService.create).mockResolvedValue({ ...wireRow, id: "server-id" } as never);
 
     const result = await contactsService.create({
@@ -96,7 +96,7 @@ describe("contactsService — delega sempre para o clientsService real (sem esta
     expect(result.id).toBe("server-id");
   });
 
-  it("update() só envia campos alterados (payload parcial repassado ao clientsService)", async () => {
+  it("update() sends only changed fields (partial payload passed to clientsService)", async () => {
     vi.mocked(clientsService.update).mockResolvedValue(wireRow as never);
 
     await contactsService.update("c1", { notes: "nova observação" });

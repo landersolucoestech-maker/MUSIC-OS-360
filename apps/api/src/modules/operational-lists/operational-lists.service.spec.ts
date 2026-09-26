@@ -47,7 +47,7 @@ function makeService(rows: Record<string, unknown>[] = []) {
 
 describe('OperationalListsService', () => {
   describe('list — bootstrap idempotente', () => {
-    it('semeia os itens padrão quando o tenant não tem nenhum item', async () => {
+    it('seeds the default items when the tenant has none', async () => {
       const { svc, repo } = makeService([]);
 
       await svc.list('tenant-1', {} as any);
@@ -59,7 +59,7 @@ describe('OperationalListsService', () => {
       expect(inserted).toHaveLength(OPERATIONAL_LIST_DEFAULTS.length);
     });
 
-    it('não re-semeia quando o tenant já tem itens', async () => {
+    it('does not reseed when the tenant already has items', async () => {
       const { svc, repo } = makeService([{ id: 'x', tenant_id: 'tenant-1' }]);
 
       await svc.list('tenant-1', {} as any);
@@ -78,7 +78,7 @@ describe('OperationalListsService', () => {
   });
 
   describe('create', () => {
-    it('rejeita criação duplicada para o mesmo tenant+kind+slug (409)', async () => {
+    it('rejects a duplicate create for the same tenant+kind+slug (409)', async () => {
       const { svc, repo } = makeService([]);
       (repo._qb['getOne'] as jest.Mock).mockResolvedValueOnce({ id: 'existing' });
 
@@ -102,7 +102,7 @@ describe('OperationalListsService', () => {
   });
 
   describe('findById', () => {
-    it('lança NotFoundException quando o item não pertence ao tenant ou não existe', async () => {
+    it('throws NotFoundException when the item does not belong to the tenant or does not exist', async () => {
       const { svc, repo } = makeService([]);
       (repo._qb['getOne'] as jest.Mock).mockResolvedValue(null);
 
@@ -111,7 +111,7 @@ describe('OperationalListsService', () => {
   });
 
   describe('update', () => {
-    it('atualiza apenas os campos informados e sempre grava updated_by', async () => {
+    it('updates only the given fields and always writes updated_by', async () => {
       const existing = { id: 'uuid-1', tenant_id: 'tenant-1', kind: 'lead_type', slug: 'x', name: 'X', active: true };
       const { svc, repo } = makeService([existing]);
       (repo._qb['getOne'] as jest.Mock).mockImplementation(async () => existing);
@@ -138,7 +138,7 @@ describe('OperationalListsService', () => {
       expect(updateCall['deleted_at']).toBeInstanceOf(Date);
     });
 
-    it('lança NotFoundException ao remover item de outro tenant', async () => {
+    it('throws NotFoundException when removing another tenant\'s item', async () => {
       const { svc, repo } = makeService([]);
       (repo._qb['getOne'] as jest.Mock).mockResolvedValue(null);
 

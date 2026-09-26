@@ -42,7 +42,7 @@ function makeDs(opts: {
 const baseWork = { id: 'w1', tenant_id: 't1', title: 'Obra', deleted_at: null, alternative_titles: [], ai_tools: [], ai_prompts: [] };
 
 describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de shares (Fase 5 / C6)', () => {
-  it('inclui uma share elegível (share_type null, não deletada) no payload', async () => {
+  it('includes an eligible share (share_type null, not deleted) in the payload', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
       shares: [{ id: 's1', share_type: null, deleted_at: null, holder_name: 'Autor A', percentage: '100', party_role: 'autor' }],
@@ -61,7 +61,7 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
     expect(payload.splits).toHaveLength(0);
   });
 
-  it('exclui uma share soft-deleted mesmo com share_type null', async () => {
+  it('excludes a soft-deleted share even with share_type null', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
       shares: [{ id: 's1', share_type: null, deleted_at: new Date(), holder_name: 'X', percentage: '100', party_role: 'autor' }],
@@ -70,7 +70,7 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
     expect(payload.splits).toHaveLength(0);
   });
 
-  it('conjunto misto: preserva apenas as shares elegíveis, com percentuais corretos', async () => {
+  it('mixed set: keeps only the eligible shares, with correct percentages', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
       shares: [
@@ -84,7 +84,7 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
     expect(payload.splits.reduce((sum, p) => sum + (p.percentage ?? 0), 0)).toBe(100);
   });
 
-  it('lança BadRequestException quando uma share elegível está sem holder_name (dado de registro incompleto)', async () => {
+  it('throws BadRequestException when an eligible share has no holder_name (incomplete registration data)', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
       shares: [{ id: 's1', share_type: null, deleted_at: null, holder_name: null, credited_name: null, percentage: '100', party_role: 'autor' }],
@@ -92,7 +92,7 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
     await expect(svc.buildWorkPayload('t1', 'w1')).rejects.toThrow(BadRequestException);
   });
 
-  it('lança BadRequestException quando uma share elegível está sem percentage (não coage para 0)', async () => {
+  it('throws BadRequestException when an eligible share has no percentage (not coerced to 0)', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       works: [baseWork],
       shares: [{ id: 's1', share_type: null, deleted_at: null, holder_name: 'A', percentage: null, party_role: 'autor' }],
@@ -100,7 +100,7 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
     await expect(svc.buildWorkPayload('t1', 'w1')).rejects.toThrow(BadRequestException);
   });
 
-  it('lança NotFoundException quando a obra não existe/foi deletada', async () => {
+  it('throws NotFoundException when the work does not exist/was deleted', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({ works: [] }));
     await expect(svc.buildWorkPayload('t1', 'inexistente')).rejects.toThrow(NotFoundException);
   });
@@ -109,7 +109,7 @@ describe('SocietyPayloadBuilderService.buildWorkPayload — elegibilidade de sha
 describe('SocietyPayloadBuilderService.buildRecordingPayload — elegibilidade de shares (Fase 5 / C6)', () => {
   const baseRec = { id: 'r1', tenant_id: 't1', title: 'Faixa', deleted_at: null };
 
-  it('contributors só inclui shares elegíveis', async () => {
+  it('contributors includes only eligible shares', async () => {
     const svc = new SocietyPayloadBuilderService(makeDs({
       phonograms: [baseRec],
       shares: [

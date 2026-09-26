@@ -11,7 +11,7 @@ const basePayload = {
 };
 
 describe("leadValidationSchema — dadosInternosCRM.valorEstimado/probabilidadeFechamento", () => {
-  it("aceita payload válido completo", () => {
+  it("accepts a complete valid payload", () => {
     const result = leadValidationSchema.safeParse({
       ...basePayload,
       dadosInternosCRM: { statusLead: "novo", valorEstimado: 5000, probabilidadeFechamento: 50 },
@@ -19,13 +19,13 @@ describe("leadValidationSchema — dadosInternosCRM.valorEstimado/probabilidadeF
     expect(result.success).toBe(true);
   });
 
-  it("trata campo numérico ausente (undefined) como não informado", () => {
+  it("treats an absent (undefined) numeric field as not provided", () => {
     const result = leadValidationSchema.safeParse(basePayload);
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.dadosInternosCRM.valorEstimado).toBeUndefined();
   });
 
-  it("trata NaN (input DOM limpo via valueAsNumber) como não informado, não como erro", () => {
+  it("treats NaN (cleared DOM input via valueAsNumber) as not provided, not as an error", () => {
     // register(..., { valueAsNumber: true }) produz NaN quando o campo é limpo —
     // sem o preprocess, isso quebrava a validação com "Expected number, received nan".
     const result = leadValidationSchema.safeParse({
@@ -60,20 +60,20 @@ describe("leadValidationSchema — dadosInternosCRM.valorEstimado/probabilidadeF
     expect(result.success).toBe(false);
   });
 
-  it("rejeita campo desconhecido no nível raiz (.strict())", () => {
+  it("rejects an unknown root-level field (.strict())", () => {
     const result = leadValidationSchema.safeParse({ ...basePayload, campoInventado: "x" });
     expect(result.success).toBe(false);
   });
 });
 
 describe("serviceLeadSchemas — payloadServico por tipo (.strict())", () => {
-  it("aceita apenas os campos definidos para o tipo de serviço selecionado", () => {
+  it("accepts only the fields defined for the selected service type", () => {
     const schema = serviceLeadSchemas.producaoMusical;
     const result = schema.validation.safeParse({ objetivo: "Lançamento de single" });
     expect(result.success).toBe(true);
   });
 
-  it("rejeita campo de outro tipo de serviço vazado no payloadServico", () => {
+  it("rejects a field from another service type leaked into payloadServico", () => {
     const schema = serviceLeadSchemas.producaoMusical;
     const result = schema.validation.safeParse({ campoDeOutroTipoDeServico: "x" });
     expect(result.success).toBe(false);

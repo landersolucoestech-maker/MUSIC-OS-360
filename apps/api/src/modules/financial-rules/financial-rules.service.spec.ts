@@ -33,7 +33,7 @@ function makeService() {
   return { svc, repo };
 }
 
-describe('FinancialRulesService.update — concorrência otimista (Task K)', () => {
+describe('FinancialRulesService.update — optimistic concurrency (Task K)', () => {
   it('sem expectedUpdatedAt: aplica update incondicional (compatibilidade retroativa)', async () => {
     const { svc, repo } = makeService();
 
@@ -43,7 +43,7 @@ describe('FinancialRulesService.update — concorrência otimista (Task K)', () 
     expect(criteria).toEqual({ id: 'rule-1', tenant_id: 'tenant-1' });
   });
 
-  it('com expectedUpdatedAt correto: inclui updated_at no critério do UPDATE', async () => {
+  it('with a correct expectedUpdatedAt: includes updated_at in the UPDATE criteria', async () => {
     const { svc, repo } = makeService();
 
     await svc.update('tenant-1', 'user-1', 'rule-1', {
@@ -60,7 +60,7 @@ describe('FinancialRulesService.update — concorrência otimista (Task K)', () 
     expect(op._objectLiteralParameters).toEqual({ expected: NOW });
   });
 
-  it('com expectedUpdatedAt desatualizado (0 linhas afetadas): lança ConflictException, não sobrescreve', async () => {
+  it('with a stale expectedUpdatedAt (0 rows affected): throws ConflictException, does not overwrite', async () => {
     const { svc, repo } = makeService();
     (repo.update as jest.Mock).mockResolvedValueOnce({ affected: 0 });
 
@@ -80,7 +80,7 @@ describe('FinancialRulesService.update — concorrência otimista (Task K)', () 
  * FINANCIAL_RULE_TRIGGERED como se fosse um resultado real. Agora pula a
  * regra e avisa — nunca fabrica um resultado.
  */
-describe('FinancialRulesService.evaluateRules — calculo não implementado (REM-03)', () => {
+describe('FinancialRulesService.evaluateRules — unimplemented calculo (REM-03)', () => {
   function makeEvalService(rule: Record<string, unknown>) {
     const qb = {
       where: jest.fn().mockReturnThis(),
@@ -93,7 +93,7 @@ describe('FinancialRulesService.evaluateRules — calculo não implementado (REM
     return { svc, events };
   }
 
-  it("calculo:'faixa' não emite FINANCIAL_RULE_TRIGGERED (nunca fabrica computed=0)", async () => {
+  it("calculo:'faixa' does not emit FINANCIAL_RULE_TRIGGERED (never fabricates computed=0)", async () => {
     const { svc, events } = makeEvalService({
       id: 'rule-faixa', tenant_id: 'tenant-1', name: 'Comissão em faixas', type: 'comissao',
       calculo: 'faixa', value: '10', active: true, condicoes: {},
@@ -104,7 +104,7 @@ describe('FinancialRulesService.evaluateRules — calculo não implementado (REM
     expect(events.emitTyped).not.toHaveBeenCalled();
   });
 
-  it("calculo:'percentual' continua emitindo normalmente (regressão)", async () => {
+  it("calculo:'percentual' still emits normally (regression)", async () => {
     const { svc, events } = makeEvalService({
       id: 'rule-pct', tenant_id: 'tenant-1', name: 'Comissão padrão', type: 'comissao',
       calculo: 'percentual', value: '10', active: true, condicoes: {},

@@ -5,18 +5,18 @@ function fakeJob(state: string) {
 }
 
 describe('MarketBenchmarkRefreshQueueService', () => {
-  it('fila indisponível (Redis off / BullMQ no-op): retorna unavailable, nunca lança', async () => {
+  it('queue unavailable (Redis off / BullMQ no-op): returns unavailable, never throws', async () => {
     const service = new MarketBenchmarkRefreshQueueService(null);
     const outcome = await service.enqueueRefresh('t1', 'a1', 'uuid-1', '2.0.0', 'cold');
     expect(outcome).toBe('unavailable');
   });
 
-  it('getRefreshState com fila indisponível: not_found', async () => {
+  it('getRefreshState with the queue unavailable: not_found', async () => {
     const service = new MarketBenchmarkRefreshQueueService(null);
     expect(await service.getRefreshState('t1', 'a1', '2.0.0')).toBe('not_found');
   });
 
-  it('enfileira normalmente quando não há job anterior com o mesmo jobId', async () => {
+  it('enqueues normally when there is no previous job with the same jobId', async () => {
     const add = jest.fn().mockResolvedValue({ id: 'job-1' });
     const getJob = jest.fn().mockResolvedValue(null);
     const queue = { add, getJob } as never;
@@ -33,7 +33,7 @@ describe('MarketBenchmarkRefreshQueueService', () => {
 
   // Regressão: BullMQ (Job.validateOptions) lança "Custom Id cannot contain :"
   // — descoberto na validação real do worker (Fase 3.2), não pelo mock.
-  it('jobId nunca contém ":" — regressão do "Custom Id cannot contain :"', () => {
+  it('jobId never contains ":" — regression of "Custom Id cannot contain :"', () => {
     const service = new MarketBenchmarkRefreshQueueService(null);
     expect(service.dedupKey('t1', 'a1', '2.0.0')).not.toContain(':');
   });
@@ -63,7 +63,7 @@ describe('MarketBenchmarkRefreshQueueService', () => {
     expect(outcome).toBe('enqueued');
   });
 
-  it('add() lança (erro inesperado do BullMQ): retorna error, nunca propaga a exceção', async () => {
+  it('add() throws (unexpected BullMQ error): returns error, never propagates the exception', async () => {
     const add = jest.fn().mockRejectedValue(new Error('redis down mid-add'));
     const getJob = jest.fn().mockResolvedValue(null);
     const queue = { add, getJob } as never;
@@ -73,7 +73,7 @@ describe('MarketBenchmarkRefreshQueueService', () => {
     expect(outcome).toBe('error');
   });
 
-  it('jobId é determinístico por (tenant, artist, engineVersion) — mesma combinação sempre produz a mesma chave', () => {
+  it('jobId is deterministic per (tenant, artist, engineVersion) — the same combination always yields the same key', () => {
     const service = new MarketBenchmarkRefreshQueueService(null);
     const a = service.dedupKey('t1', 'a1', '2.0.0');
     const b = service.dedupKey('t1', 'a1', '2.0.0');

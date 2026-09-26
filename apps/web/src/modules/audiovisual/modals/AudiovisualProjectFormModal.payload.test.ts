@@ -36,8 +36,8 @@ const BASE_FORM = {
   observations: "Nenhuma",
 };
 
-describe("buildAudiovisualProjectPayload — contrato canônico de audiovisual_projects", () => {
-  it("nunca envia music_id/budget/real_cost/name — não são colunas reais", () => {
+describe("buildAudiovisualProjectPayload — canonical audiovisual_projects contract", () => {
+  it("never sends music_id/budget/real_cost/name — they are not real columns", () => {
     const payload = buildAudiovisualProjectPayload(BASE_FORM, "create");
     expect(payload).not.toHaveProperty("music_id");
     expect(payload).not.toHaveProperty("budget");
@@ -45,23 +45,23 @@ describe("buildAudiovisualProjectPayload — contrato canônico de audiovisual_p
     expect(payload).not.toHaveProperty("name");
   });
 
-  it("mapeia music_id selecionado para phonogram_id (mesma relação, nome real)", () => {
+  it("maps the selected music_id to phonogram_id (same relation, real name)", () => {
     const payload = buildAudiovisualProjectPayload({ ...BASE_FORM, music_id: "phono-1" }, "create");
     expect(payload.phonogram_id).toBe("phono-1");
   });
 
-  it("omite phonogram_id quando nenhuma música foi selecionada (não envia string vazia)", () => {
+  it("omits phonogram_id when no track is selected (does not send an empty string)", () => {
     const payload = buildAudiovisualProjectPayload(BASE_FORM, "create");
     expect(payload.phonogram_id).toBeUndefined();
   });
 
-  it("mapeia budget/real_cost para budget_estimated/budget_actual (mesma coluna somada pelo dashboard)", () => {
+  it("maps budget/real_cost to budget_estimated/budget_actual (the same column the dashboard sums)", () => {
     const payload = buildAudiovisualProjectPayload(BASE_FORM, "create");
     expect(payload.budget_estimated).toBe("1000");
     expect(payload.budget_actual).toBe("500");
   });
 
-  it("envia todos os campos do formulário real como colunas de topo", () => {
+  it("sends every real form field as a top-level column", () => {
     const payload = buildAudiovisualProjectPayload(BASE_FORM, "create");
     expect(payload).toMatchObject({
       music_title: "Minha Música",

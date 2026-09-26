@@ -18,7 +18,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('GrantMusicosAppOnAllTables20260802000001', () => {
-  it('é classificada como APPLICATION (não EXTERNAL_MANAGED) — deve rodar via db:migrate:application', () => {
+  it('is classified as APPLICATION (not EXTERNAL_MANAGED) — must run via db:migrate:application', () => {
     expect(isApplicationMigration('GrantMusicosAppOnAllTables20260802000001')).toBe(true);
   });
 
@@ -26,14 +26,14 @@ describe('GrantMusicosAppOnAllTables20260802000001', () => {
     expect(migrationSrc).toMatch(/GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public\."\$\{table\}" TO musicos_app/);
   });
 
-  it('concede apenas SELECT/INSERT às tabelas de auditoria/log (nunca editadas nem apagadas pela app)', () => {
+  it('grants only SELECT/INSERT on audit/log tables (never updated or deleted by the app)', () => {
     expect(migrationSrc).toMatch(/GRANT SELECT, INSERT ON TABLE public\."\$\{table\}" TO musicos_app/);
     for (const auditTable of ['audit_logs', 'domain_event_log', 'rbac_decision_logs', 'webhook_events']) {
       expect(migrationSrc).toMatch(new RegExp(`'${auditTable}'`));
     }
   });
 
-  it('itera sobre listas de tabelas (não SQL desenrolado) e cobre ~114 tabelas ao todo, cada GRANT condicionado a IF EXISTS', () => {
+  it('iterates over table lists (not unrolled SQL) and covers ~114 tables in total, each GRANT conditioned on IF EXISTS', () => {
     // Parametrizado via arrays + loop, não 114 blocos SQL literais — a
     // proteção "só roda se a tabela existir" vem do template reutilizado.
     expect(migrationSrc).toMatch(/IF EXISTS \(SELECT 1 FROM pg_tables/);
@@ -43,7 +43,7 @@ describe('GrantMusicosAppOnAllTables20260802000001', () => {
     expect(totalTables).toBeGreaterThan(100);
   });
 
-  it('define ALTER DEFAULT PRIVILEGES para musicos_migrator — tabelas FUTURAS já nascem com o grant certo', () => {
+  it('sets ALTER DEFAULT PRIVILEGES for musicos_migrator — FUTURE tables are created with the right grant', () => {
     expect(migrationSrc).toMatch(/ALTER DEFAULT PRIVILEGES FOR ROLE musicos_migrator IN SCHEMA public/);
     expect(migrationSrc).toMatch(/GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO musicos_app/);
     expect(migrationSrc).toMatch(/GRANT USAGE, SELECT ON SEQUENCES TO musicos_app/);
@@ -56,12 +56,12 @@ describe('GrantMusicosAppOnAllTables20260802000001', () => {
     expect(downBlock).toMatch(/REVOKE ALL ON TABLE public/);
   });
 
-  it('nunca usa DROP TABLE nem qualquer DDL destrutivo — só GRANT/REVOKE', () => {
+  it('never uses DROP TABLE or any destructive DDL — only GRANT/REVOKE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+TABLE/i);
     expect(migrationSrc).not.toMatch(/TRUNCATE/i);
   });
 
-  it('está registrada no index.ts de migrations', () => {
+  it('is registered in the migrations index.ts', () => {
     const indexSrc = fs.readFileSync(path.resolve(__dirname, 'migrations/index.ts'), 'utf8');
     expect(indexSrc).toMatch(/GrantMusicosAppOnAllTables20260802000001/);
   });

@@ -18,7 +18,7 @@ function point(date: string, followers: number | null): MetricEvolutionPoint {
 }
 
 describe("<PlatformMiniTrend />", () => {
-  it("não renderiza nada quando não há histórico e showEmptyState é false (padrão)", () => {
+  it("renders nothing when there is no history and showEmptyState is false (default)", () => {
     const { container } = renderWithProviders(
       <PlatformMiniTrend points={[]} testIdPrefix="mini-spotify" />,
     );
@@ -31,7 +31,7 @@ describe("<PlatformMiniTrend />", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renderiza placeholder '— sem histórico' quando showEmptyState=true e não há pontos", () => {
+  it("renders the '— sem histórico' placeholder when showEmptyState=true and there are no points", () => {
     renderWithProviders(
       <PlatformMiniTrend
         points={[]}
@@ -48,7 +48,7 @@ describe("<PlatformMiniTrend />", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renderiza placeholder também com apenas 1 snapshot (trend ainda indeterminado)", () => {
+  it("also renders the placeholder with a single snapshot (trend still undetermined)", () => {
     renderWithProviders(
       <PlatformMiniTrend
         points={[point("2026-04-30T06:20:00Z", 1234)]}
@@ -61,7 +61,7 @@ describe("<PlatformMiniTrend />", () => {
     ).toBeInTheDocument();
   });
 
-  it("renderiza badge 'em crescimento' com percentual positivo quando há crescimento", () => {
+  it("renders the 'em crescimento' badge with a positive percentage when growing", () => {
     renderWithProviders(
       <PlatformMiniTrend
         points={[
@@ -84,7 +84,7 @@ describe("<PlatformMiniTrend />", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renderiza badge 'em queda' quando o snapshot mais recente é menor", () => {
+  it("renders the 'em queda' badge when the latest snapshot is lower", () => {
     renderWithProviders(
       <PlatformMiniTrend
         points={[
@@ -102,7 +102,7 @@ describe("<PlatformMiniTrend />", () => {
     );
   });
 
-  it("renderiza badge 'estável' quando os snapshots são iguais", () => {
+  it("renders the 'estável' badge when snapshots are equal", () => {
     renderWithProviders(
       <PlatformMiniTrend
         points={[
@@ -139,7 +139,7 @@ describe("<PlatformMiniTrend />", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renderiza sparkline por padrão quando há histórico suficiente", () => {
+  it("renders a sparkline by default when history is sufficient", () => {
     renderWithProviders(
       <PlatformMiniTrend
         points={[

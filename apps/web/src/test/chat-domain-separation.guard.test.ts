@@ -38,29 +38,29 @@ const INTERNAL_TEAM_TERMS = [
   /internalChatService/, /useInternalConversations/, /useInternalMessages/,
 ];
 
-describe("Guarda permanente: Chat Interno e Central de Atendimento não se misturam", () => {
+describe("Permanent guard: internal chat and the support center never mix", () => {
   it("ChatInternoView.tsx e SupportCenterView.tsx existem como componentes isolados", () => {
     expect(fs.existsSync(path.resolve(SRC_ROOT, CHAT_INTERNO_VIEW))).toBe(true);
     expect(fs.existsSync(path.resolve(SRC_ROOT, SUPPORT_CENTER_VIEW))).toBe(true);
   });
 
-  it("ChatInternoView.tsx não importa nada de modules/musicchat/ (Central de Atendimento)", () => {
+  it("ChatInternoView.tsx imports nothing from modules/musicchat/ (support center)", () => {
     const content = read(CHAT_INTERNO_VIEW);
     expect(content).not.toMatch(/from ["']@\/modules\/musicchat\//);
   });
 
-  it("ChatInternoView.tsx não referencia nenhum termo de canal externo/atendimento", () => {
+  it("ChatInternoView.tsx references no external-channel/support term", () => {
     const content = read(CHAT_INTERNO_VIEW);
     const hits = EXTERNAL_CHANNEL_TERMS.filter((pattern) => pattern.test(content)).map(String);
     expect(hits).toEqual([]);
   });
 
-  it("SupportCenterView.tsx não importa nada de modules/musicchat-interno/ (Chat Interno)", () => {
+  it("SupportCenterView.tsx imports nothing from modules/musicchat-interno/ (internal chat)", () => {
     const content = read(SUPPORT_CENTER_VIEW);
     expect(content).not.toMatch(/from ["']@\/modules\/musicchat-interno\//);
   });
 
-  it("SupportCenterView.tsx não referencia os hooks/serviço do Chat Interno", () => {
+  it("SupportCenterView.tsx references none of the internal chat hooks/service", () => {
     const content = read(SUPPORT_CENTER_VIEW);
     const hits = INTERNAL_TEAM_TERMS.filter((pattern) => pattern.test(content)).map(String);
     expect(hits).toEqual([]);
@@ -71,7 +71,7 @@ describe("Guarda permanente: Chat Interno e Central de Atendimento não se mistu
     expect(readCode(SUPPORT_CENTER_VIEW)).not.toMatch(/forceMount/);
   });
 
-  it("MusicChat.tsx (página agregadora) não usa forceMount em nenhum TabsContent", () => {
+  it("MusicChat.tsx (aggregator page) uses forceMount on no TabsContent", () => {
     expect(readCode(MUSICCHAT_PAGE)).not.toMatch(/forceMount/);
   });
 
@@ -81,7 +81,7 @@ describe("Guarda permanente: Chat Interno e Central de Atendimento não se mistu
     expect(content).toMatch(/<SupportCenterView/);
   });
 
-  it("chat.routes.tsx expõe uma única rota /chat (não duas rotas separadas por domínio)", () => {
+  it("chat.routes.tsx exposes a single /chat route (not two routes split by domain)", () => {
     const content = read(CHAT_ROUTES);
     expect(content).toMatch(/path="\/chat"/);
     expect(content).not.toMatch(/path="\/chat\/interno"/);

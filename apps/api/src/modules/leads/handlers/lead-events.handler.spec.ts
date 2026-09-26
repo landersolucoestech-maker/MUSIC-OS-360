@@ -62,7 +62,7 @@ function makeEvent(): DomainEvent<LeadConvertedPayload> {
 }
 
 describe('LeadEventsHandler.onLeadConverted', () => {
-  it('cria o cliente usando categoria/perfil/responsavel_nome (colunas físicas reais), nunca segmento/responsavel (removidas)', async () => {
+  it('creates the client using categoria/perfil/responsavel_nome (real physical columns), never segmento/responsavel (removed)', async () => {
     const clientRepo = makeRepo();
     const leadRepo = makeRepo();
     const artistRepo = makeRepo();
@@ -81,7 +81,7 @@ describe('LeadEventsHandler.onLeadConverted', () => {
     expect(clientRepo.save).toHaveBeenCalledTimes(1);
   });
 
-  it('emite client.created (client_created) SÓ APÓS o commit, nunca dentro da transação, com o clientId/categoria/tipoPessoa reais', async () => {
+  it('emits client.created (client_created) ONLY AFTER commit, never inside the transaction, with the real clientId/categoria/tipoPessoa', async () => {
     const clientRepo = makeRepo();
     const leadRepo = makeRepo();
     const artistRepo = makeRepo();
@@ -110,7 +110,7 @@ describe('LeadEventsHandler.onLeadConverted', () => {
     );
   });
 
-  it('idempotência: não emite client.created quando o lead já foi convertido antes', async () => {
+  it('idempotency: does not emit client.created when the lead was already converted', async () => {
     const clientRepo = makeRepo();
     const leadRepo = makeRepo();
     leadRepo.findOne = jest.fn(async () => ({ client_id: 'client-already-there' }));
@@ -124,7 +124,7 @@ describe('LeadEventsHandler.onLeadConverted', () => {
     expect(events.emitTyped).not.toHaveBeenCalled();
   });
 
-  it('vincula lead.client_id após criar o cliente com sucesso', async () => {
+  it('links lead.client_id after successfully creating the client', async () => {
     const clientRepo = makeRepo();
     const leadRepo = makeRepo();
     const artistRepo = makeRepo();
@@ -139,7 +139,7 @@ describe('LeadEventsHandler.onLeadConverted', () => {
     );
   });
 
-  it('find-22ec2dfa: não cria um SEGUNDO client/artist quando o lead já foi convertido antes (re-progressão CLOSED->INACTIVE->NEW->CLOSED)', async () => {
+  it('find-22ec2dfa: does not create a SECOND client/artist when the lead was already converted (re-progression CLOSED->INACTIVE->NEW->CLOSED)', async () => {
     const clientRepo = makeRepo();
     const leadRepo = makeRepo();
     leadRepo.findOne = jest.fn(async () => ({ id: 'lead-1', tenant_id: 'tenant-1', client_id: 'client-already-there' }));
@@ -155,7 +155,7 @@ describe('LeadEventsHandler.onLeadConverted', () => {
     expect(leadRepo.update).not.toHaveBeenCalled();
   });
 
-  it('find-aca0fb58: abre uma transação com lock consultivo por leadId antes de checar/gravar', async () => {
+  it('find-aca0fb58: opens a transaction with an advisory lock per leadId before checking/writing', async () => {
     const clientRepo = makeRepo();
     const leadRepo = makeRepo();
     const artistRepo = makeRepo();

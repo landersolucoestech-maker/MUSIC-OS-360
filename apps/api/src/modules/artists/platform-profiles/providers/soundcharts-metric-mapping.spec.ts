@@ -25,7 +25,7 @@ function fakeSoundcharts(overrides: Partial<Record<keyof SoundchartsService, jes
 
 const metric = (value: number) => ({ value, observedAt: new Date('2026-08-18T00:00:00Z'), source: 'soundcharts' as const });
 
-describe('Fonte única Soundcharts por card de métrica do artista', () => {
+describe('Single Soundcharts source per artist metric card', () => {
   it('Spotify: monthly_listeners vem de getSpotifyMonthlyListeners — nunca de followers', async () => {
     const getSpotifyMonthlyListeners = jest.fn().mockResolvedValue(metric(78_029_948));
     const soundcharts = fakeSoundcharts({ getSpotifyMonthlyListeners });
@@ -44,7 +44,7 @@ describe('Fonte única Soundcharts por card de métrica do artista', () => {
     expect(snapshot.followers).toBeNull();
   });
 
-  it('Instagram: followers vem de getInstagramFollowers, uuid resolvido pelo handle CADASTRADO (primário, Fase 1.3 — cadeia canônica nem é consultada quando o handle resolve sozinho)', async () => {
+  it('Instagram: followers come from getInstagramFollowers, uuid resolved from the REGISTERED handle (primary, Phase 1.3 — the canonical chain is not queried when the handle resolves alone)', async () => {
     const getInstagramFollowers = jest.fn().mockResolvedValue(metric(124_221_841));
     const soundcharts = fakeSoundcharts({ getInstagramFollowers });
     const provider = new InstagramArtistProfileProvider(soundcharts);
@@ -63,7 +63,7 @@ describe('Fonte única Soundcharts por card de métrica do artista', () => {
     expect(snapshot.followers).toBe(124_221_841);
   });
 
-  it('TikTok: followers vem de getTikTokFollowers, uuid resolvido pelo handle CADASTRADO (primário, Fase 1.3 — cadeia canônica nem é consultada quando o handle resolve sozinho)', async () => {
+  it('TikTok: followers come from getTikTokFollowers, uuid resolved from the REGISTERED handle (primary, Phase 1.3 — the canonical chain is not queried when the handle resolves alone)', async () => {
     const getTikTokFollowers = jest.fn().mockResolvedValue(metric(75_000_000));
     const soundcharts = fakeSoundcharts({ getTikTokFollowers });
     const provider = new TikTokArtistProfileProvider(soundcharts);
@@ -82,7 +82,7 @@ describe('Fonte única Soundcharts por card de métrica do artista', () => {
     expect(snapshot.followers).toBe(75_000_000);
   });
 
-  it('YouTube: subscribers/total_views/total_videos vêm TODOS de getYouTubeAudience (Soundcharts) — a YouTube Data API nunca é chamada para métrica (auditoria 2026-08-31, regra SOUNDCHARTS ONLY)', async () => {
+  it('YouTube: subscribers/total_views/total_videos ALL come from getYouTubeAudience (Soundcharts) — the YouTube Data API is never called for metrics (audit 2026-08-31, SOUNDCHARTS ONLY rule)', async () => {
     const getYouTubeAudience = jest.fn().mockResolvedValue({
       subscribers: { value: 58_500_000, observedAt: new Date('2026-08-18T00:00:00Z'), source: 'soundcharts', endpoint: '/audience/youtube', field: 'items[].followerCount' },
       videos: { value: 42, observedAt: new Date('2026-08-18T00:00:00Z'), source: 'soundcharts', endpoint: '/audience/youtube', field: 'items[].postCount' },
@@ -110,7 +110,7 @@ describe('Fonte única Soundcharts por card de métrica do artista', () => {
     fetchSpy.mockRestore();
   });
 
-  it('Deezer: followers (fãs) vem de getDeezerFans', async () => {
+  it('Deezer: followers (fans) come from getDeezerFans', async () => {
     const getDeezerFans = jest.fn().mockResolvedValue(metric(9_223_417));
     const soundcharts = fakeSoundcharts({ getDeezerFans });
     const provider = new DeezerArtistProfileProvider(soundcharts);
@@ -147,7 +147,7 @@ describe('Fonte única Soundcharts por card de métrica do artista', () => {
     fetchSpy.mockRestore();
   });
 
-  it('Apple Music: permanece NOT_SUPPORTED (nenhum provider de métrica de artista existe para Apple Music)', () => {
+  it('Apple Music: stays NOT_SUPPORTED (no artist-metric provider exists for Apple Music)', () => {
     const config = { get: jest.fn() } as unknown as ConfigService;
     expect(new SoundchartsService(config).getAppleMusicSupport()).toBe('NOT_SUPPORTED');
   });
