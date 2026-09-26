@@ -63,7 +63,7 @@ export class AutentiqueService {
 
   private assertRepos(): void {
     if (!this.integRepo || !this.contractRepo) {
-      throw new ServiceUnavailableException('Autentique persistence unavailable');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
   }
 
@@ -96,7 +96,7 @@ export class AutentiqueService {
       .where('i.tenant_id = :tenantId AND i.provider = :provider', { tenantId, provider: 'autentique' })
       .getOne();
     if (!row?.credentials_encrypted) {
-      throw new ServiceUnavailableException('Autentique not configured for this tenant');
+      throw new ServiceUnavailableException('Autentique não está configurada para este workspace.');
     }
     const creds = this.encryption.decrypt(row.credentials_encrypted);
     return (JSON.parse(creds) as { api_token: string }).api_token;

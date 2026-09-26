@@ -67,7 +67,7 @@ export class SocietyPayloadBuilderService {
 
   private assertDb(): void {
     if (!this.works || !this.phonograms || !this.shares || !this.identifiers) {
-      throw new BadRequestException('Database unavailable');
+      throw new BadRequestException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
   }
 

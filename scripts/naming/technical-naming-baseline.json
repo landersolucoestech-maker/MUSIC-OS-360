@@ -4,7 +4,7 @@
   "directory": 23,
   "eventQueueJob": 18,
   "filename": 83,
-  "identifier": 2520
+  "identifier": 2521
  },
  "debt": {
   "comment::apps/web/src/modules/audiovisual/modals/AudiovisualProjectFormModal.payload.test.ts": 1,
@@ -339,6 +339,7 @@
   "identifier::apps/api/src/core/events/domain-events.types.ts::property::prestadorId": 1,
   "identifier::apps/api/src/core/events/domain-events.types.ts::property::tipoPessoa": 1,
   "identifier::apps/api/src/core/events/domain-events.types.ts::property::valor": 8,
+  "identifier::apps/api/src/core/pipes/validation-messages.spec.ts::property::nomeArtistico": 1,
   "identifier::apps/api/src/database/entities.ts::property::acordo_notas": 1,
   "identifier::apps/api/src/database/entities.ts::property::acordo_url": 1,
   "identifier::apps/api/src/database/entities.ts::property::anexo_nome": 1,

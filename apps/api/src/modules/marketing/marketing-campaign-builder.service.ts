@@ -61,7 +61,7 @@ export class MarketingCampaignBuilderService {
   }
 
   private get repo(): Repository<CampaignEntity> {
-    if (!this.campaigns) throw new ServiceUnavailableException('Database unavailable');
+    if (!this.campaigns) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.campaigns;
   }
 
@@ -84,7 +84,7 @@ export class MarketingCampaignBuilderService {
         deleted_at: null,
       } as never,
     });
-    if (!row) throw new NotFoundException('Campaign not found');
+    if (!row) throw new NotFoundException('Campanha não encontrada.');
     return this.toStored(row);
   }
 

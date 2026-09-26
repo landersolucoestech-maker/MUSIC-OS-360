@@ -27,7 +27,7 @@ export class InvoicesService {
   }
 
   private get repository(): Repository<InvoiceEntity> {
-    if (!this.repo) throw new ServiceUnavailableException('Database unavailable for invoices');
+    if (!this.repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 

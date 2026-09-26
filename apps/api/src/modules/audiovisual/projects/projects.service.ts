@@ -41,7 +41,7 @@ export class AudiovisualProjectsService {
   }
 
   private get r(): Repository<AudiovisualProjectEntity> {
-    if (!this.repo) throw new ServiceUnavailableException('Database unavailable');
+    if (!this.repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 

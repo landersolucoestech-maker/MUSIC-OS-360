@@ -21,7 +21,7 @@ function assertSystemPromptAllowed(req: any, systemPrompt?: string): void {
   const level = ROLE_HIERARCHY[role] ?? 0;
   const required = ROLE_HIERARCHY.manager ?? 70;
   if (level < required) {
-    throw new ForbiddenException('Client-supplied systemPrompt requires manager role or higher');
+    throw new ForbiddenException('Apenas gestores ou superiores podem definir instruções personalizadas para a IA.');
   }
 }
 

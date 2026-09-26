@@ -133,7 +133,7 @@ export class RolesGuard implements CanActivate {
         startedAt,
       );
       throw new ForbiddenException(
-        `Permissao insuficiente. Role atual: ${memberRole}. Necessario: ${requiredLabels}`,
+        `Permissão insuficiente. Papel atual: ${memberRole}. Necessário: ${requiredLabels}`,
       );
     }
 

@@ -76,7 +76,7 @@ export class DevAuthController implements OnModuleInit {
 
       if (createErr) {
         this.logger.error('Failed to create dev user:', createErr.message);
-        throw new ForbiddenException(`Não foi possível criar usuário dev: ${createErr.message}`);
+        throw new ForbiddenException(`Could not create dev user: ${createErr.message}`);
       }
 
       this.logger.log(`Dev user created: ${created.user?.id}`);

@@ -19,7 +19,7 @@ export class ArtistPlatformProfilesService {
   }
 
   private requireRepo(): Repository<ArtistPlatformProfileEntity> {
-    if (!this.repo) throw new ServiceUnavailableException('Artist platform profile persistence unavailable');
+    if (!this.repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 

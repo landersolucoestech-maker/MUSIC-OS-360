@@ -16,7 +16,7 @@ export class InventoryService {
 
   private get repository(): Repository<InventoryItemEntity> {
     if (!this.repo) {
-      throw new ServiceUnavailableException('Database unavailable for inventory');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
     return this.repo;
   }

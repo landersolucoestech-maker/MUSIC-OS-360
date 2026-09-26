@@ -13,7 +13,7 @@ export class MarketingAiSuggestionsService {
   }
 
   private get repo(): Repository<ActivityLogEntity> {
-    if (!this.logs) throw new ServiceUnavailableException('Database unavailable');
+    if (!this.logs) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.logs;
   }
 

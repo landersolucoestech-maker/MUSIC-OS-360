@@ -15,7 +15,7 @@ export class SocietyAccountsService {
   }
 
   private get repository(): Repository<SocietyAccountEntity> {
-    if (!this.repo) throw new BadRequestException('Database unavailable');
+    if (!this.repo) throw new BadRequestException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 

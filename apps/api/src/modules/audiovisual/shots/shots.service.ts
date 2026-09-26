@@ -38,7 +38,7 @@ export class AudiovisualShotsService {
   }
 
   private get r(): Repository<AudiovisualShotEntity> {
-    if (!this.repo) throw new ServiceUnavailableException('Database unavailable');
+    if (!this.repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 
@@ -101,7 +101,7 @@ export class AudiovisualShotsService {
    */
   async reorder(tenantId: string, projectId: string, ids: string[]) {
     await this.assertProject(tenantId, projectId);
-    if (!this.ds) throw new ServiceUnavailableException('Database unavailable');
+    if (!this.ds) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     // ids comes from the request body: materializes a validated local list
     // (strings only) before iterating, avoiding iteration over a
     // user-controlled object (CWE-915).
@@ -141,7 +141,7 @@ export class AudiovisualShotsService {
   }
 
   private async assertProject(tenantId: string, projectId: string) {
-    if (!this.projects) throw new ServiceUnavailableException('Database unavailable');
+    if (!this.projects) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     const p = await this.projects.findOne({ where: { id: projectId, tenant_id: tenantId, deleted_at: null } as never });
     if (!p) throw new NotFoundException('Projeto não encontrado');
   }

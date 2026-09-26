@@ -43,8 +43,8 @@ export class ContactAttachmentsService {
     const mimeType = String(payload['mimeType'] ?? '');
     const extension = String(payload['extension'] ?? '').replace(/^\./, '').toLowerCase();
     const size = Number(payload['size'] ?? 0);
-    if (!ALLOWED_MIME_TYPES.has(mimeType)) throw new BadRequestException('Invalid attachment mime type');
-    if (!ALLOWED_EXTENSIONS.has(extension)) throw new BadRequestException('Invalid attachment extension');
-    if (!Number.isFinite(size) || size <= 0 || size > MAX_SIZE) throw new BadRequestException('Invalid attachment size');
+    if (!ALLOWED_MIME_TYPES.has(mimeType)) throw new BadRequestException('Tipo de arquivo de anexo inválido.');
+    if (!ALLOWED_EXTENSIONS.has(extension)) throw new BadRequestException('Extensão de arquivo de anexo inválida.');
+    if (!Number.isFinite(size) || size <= 0 || size > MAX_SIZE) throw new BadRequestException('Tamanho de arquivo de anexo inválido.');
   }
 }

@@ -75,7 +75,7 @@ export class IntegrationAdminService {
 
   private assertRepos(): void {
     if (!this.platformRepo || !this.categoryRepo) {
-      throw new BadRequestException('Integration governance persistence unavailable');
+      throw new BadRequestException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
   }
 
@@ -244,7 +244,7 @@ export class IntegrationAdminService {
     if (patch.categoryId !== undefined) {
       if (patch.categoryId) {
         const cat = await this.categoryRepo!.findOne({ where: { id: patch.categoryId } });
-        if (!cat) throw new BadRequestException('Categoria inexistente');
+        if (!cat) throw new BadRequestException('Categoria inexistente.');
       }
       updates.category_id = patch.categoryId;
     }

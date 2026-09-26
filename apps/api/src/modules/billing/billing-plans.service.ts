@@ -54,7 +54,7 @@ export class BillingPlansService {
   }
 
   private get repo(): Repository<BillingPlanEntity> {
-    if (!this.planRepo) throw new ServiceUnavailableException('Billing persistence unavailable');
+    if (!this.planRepo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.planRepo;
   }
 
@@ -127,10 +127,10 @@ export class BillingPlansService {
     if (requireAll) {
       if (!input.slug) throw new BadRequestException('slug é obrigatório');
       if (!input.name) throw new BadRequestException('name é obrigatório');
-      if (input.amount == null) throw new BadRequestException('amount é obrigatório');
+      if (input.amount == null) throw new BadRequestException('O valor é obrigatório.');
     }
     if (input.amount != null && (!Number.isInteger(input.amount) || input.amount <= 0)) {
-      throw new BadRequestException('amount deve ser inteiro em centavos > 0');
+      throw new BadRequestException('O valor deve ser um número inteiro de centavos maior que zero.');
     }
     if (input.currency != null && !/^[a-z]{3}$/.test(input.currency)) {
       throw new BadRequestException('currency deve ser ISO de 3 letras minúsculas (ex: brl)');

@@ -48,7 +48,7 @@ export class CircuitBreaker {
     this.transitionIfNeeded();
 
     if (this.state === 'OPEN') {
-      throw new ServiceUnavailableException(`Integration ${this.name} unavailable — circuit breaker OPEN`);
+      throw new ServiceUnavailableException('Integração temporariamente indisponível. Tente novamente em instantes.');
     }
 
     try {

@@ -2,6 +2,7 @@ import {
   Controller, Post, Get, Delete, Body, Param, Query, Redirect,
   HttpCode, HttpStatus, Request, BadRequestException, InternalServerErrorException,
   UseInterceptors,
+  Logger,
 } from '@nestjs/common';
 import { ConfigService }              from '@nestjs/config';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
@@ -54,6 +55,20 @@ const OAUTH_PROVIDER_ALIASES: Readonly<Record<string, string>> = {
   spotify_ads: 'spotify',
 };
 
+
+const oauthExchangeLogger = new Logger('IntegrationsOAuthExchange');
+
+/**
+ * Provider token-exchange rejection. The provider's `error`/`error_description`
+ * is an internal diagnostic (English, logged); the end user gets PT-BR copy.
+ * Only the error fields are logged — never tokens or client secrets.
+ */
+function providerOAuthExchangeFailure(provider: string, error: unknown, description: unknown): BadRequestException {
+  oauthExchangeLogger.warn(
+    `[oauth/${provider}] token exchange rejected: error=${String(error ?? '-')} description=${String(description ?? '-')}`,
+  );
+  return new BadRequestException('Não foi possível concluir a conexão com a plataforma. Tente novamente.');
+}
 
 @ApiTags('Integrations')
 @ApiBearerAuth()
@@ -194,9 +209,7 @@ export class IntegrationsController {
         const json = await res.json() as Record<string, unknown>;
         if (!res.ok || json['error']) {
           const errObj = json['error'] as Record<string, unknown> | undefined;
-          throw new BadRequestException(
-            (errObj?.['message'] as string | undefined) ?? 'Meta OAuth error',
-          );
+          throw providerOAuthExchangeFailure('meta', errObj?.['type'] ?? res.status, errObj?.['message']);
         }
 
         const shortToken = asString(json['access_token']);
@@ -240,11 +253,7 @@ export class IntegrationsController {
         });
         const json = await res.json() as Record<string, unknown>;
         if (!res.ok || json['error']) {
-          throw new BadRequestException(
-            (json['error_description'] as string | undefined) ??
-            (json['error'] as string | undefined) ??
-            'TikTok OAuth error',
-          );
+          throw providerOAuthExchangeFailure('tiktok', json['error'] ?? res.status, json['error_description']);
         }
 
         const accessToken = asString(json['access_token']);
@@ -279,11 +288,7 @@ export class IntegrationsController {
         });
         const json = await res.json() as Record<string, unknown>;
         if (!res.ok || json['error']) {
-          throw new BadRequestException(
-            (json['error_description'] as string | undefined) ??
-            (json['error'] as string | undefined) ??
-            'Google OAuth error',
-          );
+          throw providerOAuthExchangeFailure('google', json['error'] ?? res.status, json['error_description']);
         }
 
         const accessToken = asString(json['access_token']);
@@ -322,11 +327,7 @@ export class IntegrationsController {
         });
         const json = await res.json() as Record<string, unknown>;
         if (!res.ok || json['error']) {
-          throw new BadRequestException(
-            (json['error_description'] as string | undefined) ??
-            (json['error'] as string | undefined) ??
-            'DocuSign OAuth error',
-          );
+          throw providerOAuthExchangeFailure('docusign', json['error'] ?? res.status, json['error_description']);
         }
 
         const accessToken = asString(json['access_token']);
@@ -358,11 +359,7 @@ export class IntegrationsController {
         });
         const json = await res.json() as Record<string, unknown>;
         if (!res.ok || json['error']) {
-          throw new BadRequestException(
-            (json['error_description'] as string | undefined) ??
-            (json['error'] as string | undefined) ??
-            'Stripe Connect OAuth error',
-          );
+          throw providerOAuthExchangeFailure('stripe-connect', json['error'] ?? res.status, json['error_description']);
         }
 
         const accessToken = asString(json['access_token']);
@@ -374,10 +371,12 @@ export class IntegrationsController {
         });
       }
 
-      throw new BadRequestException(`Plataforma não suportada para troca OAuth: ${platform}`);
+      oauthExchangeLogger.warn(`[oauth] unsupported platform for token exchange: ${platform}`);
+      throw new BadRequestException('Plataforma não suportada para conexão.');
     } catch (err) {
       if (err instanceof BadRequestException) throw err;
-      throw new InternalServerErrorException(`Falha na troca OAuth: ${(err as Error).message}`);
+      oauthExchangeLogger.error(`[oauth/${platform}] token exchange failed: ${(err as Error).message}`, (err as Error).stack);
+      throw new InternalServerErrorException('Não foi possível concluir a conexão com a plataforma. Tente novamente.');
     }
   }
 

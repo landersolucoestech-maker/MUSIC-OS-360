@@ -11,7 +11,7 @@ export class CreateShareDto {
   // shares.service.ts) — there is no direct `holder_name` field in the DTO.
   // Rejects empty/whitespace-only instead of accepting and persisting a blank holder.
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255)
-  @Matches(/\S/, { message: 'holderName não pode ser vazio ou conter apenas espaços' })
+  @Matches(/\S/, { message: 'O nome do titular não pode ser vazio ou conter apenas espaços.' })
   holderName?: string;
   @ApiPropertyOptional({ enum: ROLES }) @IsOptional() @IsIn(ROLES) role?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() workId?: string;

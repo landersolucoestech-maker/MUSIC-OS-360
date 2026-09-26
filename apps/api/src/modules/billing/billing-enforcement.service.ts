@@ -92,7 +92,7 @@ export class BillingEnforcementService {
   ) {}
 
   private assertDb(): DataSource {
-    if (!this.ds) throw new ServiceUnavailableException('Billing enforcement persistence unavailable');
+    if (!this.ds) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.ds;
   }
 
@@ -497,7 +497,7 @@ export class BillingEnforcementService {
   }): Promise<TenantBillingState> {
     const settings = await this.getSettings();
     if (!settings.manual_override_allowed) {
-      throw new ServiceUnavailableException('Manual billing override is disabled');
+      throw new ServiceUnavailableException('O ajuste manual de cobrança está desabilitado.');
     }
     const maxUntil = addDays(new Date(), settings.manual_override_max_days);
     const until = input.until > maxUntil ? maxUntil : input.until;

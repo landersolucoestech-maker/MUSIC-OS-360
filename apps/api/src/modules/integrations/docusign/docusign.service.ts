@@ -84,7 +84,7 @@ export class DocuSignService {
 
   private assertRepos(): void {
     if (!this.integRepo || !this.contractRepo) {
-      throw new ServiceUnavailableException('DocuSign persistence unavailable');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
   }
 

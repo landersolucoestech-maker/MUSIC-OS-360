@@ -32,7 +32,7 @@ describe('MarketingCampaignBuilderService tenant persistence', () => {
   it('does not return a campaign belonging to another tenant', async () => {
     repo.findOne.mockResolvedValue(null);
     const service = new MarketingCampaignBuilderService(dataSource as never);
-    await expect(service.find('tenant-a', 'campaign-b')).rejects.toThrow('Campaign not found');
+    await expect(service.find('tenant-a', 'campaign-b')).rejects.toThrow('Campanha não encontrada.');
     expect(repo.findOne).toHaveBeenCalledWith({
       where: expect.objectContaining({ tenant_id: 'tenant-a', id: 'campaign-b' }),
     });

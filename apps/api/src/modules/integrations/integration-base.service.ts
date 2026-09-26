@@ -198,7 +198,7 @@ export class IntegrationBaseService {
   verifySignedState(state: string): Record<string, string> {
     if (typeof state !== 'string' || state.length > 2048) throw new UnauthorizedException('OAuth state inválido');
     const dot = state.lastIndexOf('.');
-    if (dot === -1 || dot === 0 || dot === state.length - 1) throw new UnauthorizedException('OAuth state malformado');
+    if (dot === -1 || dot === 0 || dot === state.length - 1) throw new UnauthorizedException('Autorização da integração inválida. Tente conectar novamente.');
     const b64 = state.slice(0, dot);
     const sig  = state.slice(dot + 1);
     const hmacKey  = this.enc.getKeyBytes();
@@ -208,9 +208,9 @@ export class IntegrationBaseService {
     if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) throw new UnauthorizedException('OAuth state com assinatura inválida');
     let parsed: Record<string, string>;
     try { parsed = JSON.parse(Buffer.from(b64, 'base64url').toString('utf-8')) as Record<string, string>; }
-    catch { throw new UnauthorizedException('OAuth state malformado'); }
+    catch { throw new UnauthorizedException('Autorização da integração inválida. Tente conectar novamente.'); }
     const iat = Number(parsed['iat'] ?? 0);
-    if (!iat || Date.now() - iat > IntegrationBaseService.STATE_TTL_MS) throw new UnauthorizedException('OAuth state expirado');
+    if (!iat || Date.now() - iat > IntegrationBaseService.STATE_TTL_MS) throw new UnauthorizedException('A autorização da integração expirou. Tente conectar novamente.');
     return parsed;
   }
 }

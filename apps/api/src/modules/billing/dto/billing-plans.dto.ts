@@ -21,7 +21,7 @@ export class CreatePlanDto {
   amount: number;
 
   @ApiPropertyOptional({ example: 'brl', default: 'brl' })
-  @IsOptional() @IsString() @Matches(/^[a-z]{3}$/, { message: 'currency deve ser ISO 3 letras minúsculas' })
+  @IsOptional() @IsString() @Matches(/^[a-z]{3}$/, { message: 'A moeda deve ser um código ISO de 3 letras minúsculas (ex.: brl).' })
   currency?: string;
 
   @ApiPropertyOptional({ enum: ['month', 'year'], default: 'month' })

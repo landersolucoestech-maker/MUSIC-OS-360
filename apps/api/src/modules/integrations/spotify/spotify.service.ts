@@ -56,14 +56,14 @@ export class SpotifyService {
   }
 
   private requireRepo(): Repository<OAuthConnectionEntity> {
-    if (!this.repo) throw new ServiceUnavailableException('OAuth persistence unavailable');
+    if (!this.repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 
   private getStateSecret(): string {
     const secret = process.env['SPOTIFY_OAUTH_STATE_SECRET'] ?? process.env['ENCRYPTION_KEY'] ?? '';
     if (!secret || /^0+$/.test(secret)) {
-      throw new ServiceUnavailableException('Spotify OAuth state secret unavailable');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
     return secret;
   }
@@ -87,7 +87,7 @@ export class SpotifyService {
   private verifyState(rawState: string): SpotifyOAuthState {
     const [payload, signature] = rawState.split('.');
     if (!payload || !signature) {
-      throw new BadRequestException('Invalid Spotify OAuth state');
+      throw new BadRequestException('Autorização do Spotify inválida. Tente conectar novamente.');
     }
 
     const expected = this.sign(payload);
@@ -95,22 +95,22 @@ export class SpotifyService {
     const expectedBuffer = Buffer.from(expected);
 
     if (providedBuffer.length !== expectedBuffer.length || !timingSafeEqual(providedBuffer, expectedBuffer)) {
-      throw new BadRequestException('Invalid Spotify OAuth state signature');
+      throw new BadRequestException('Autorização do Spotify inválida. Tente conectar novamente.');
     }
 
     let state: SpotifyOAuthState;
     try {
       state = JSON.parse(base64UrlDecode(payload)) as SpotifyOAuthState;
     } catch {
-      throw new BadRequestException('Invalid Spotify OAuth state payload');
+      throw new BadRequestException('Autorização do Spotify inválida. Tente conectar novamente.');
     }
 
     if (!state.tenantId || !state.userId || !state.nonce || !state.exp) {
-      throw new BadRequestException('Incomplete Spotify OAuth state');
+      throw new BadRequestException('Autorização do Spotify incompleta. Tente conectar novamente.');
     }
 
     if (state.exp < Date.now()) {
-      throw new BadRequestException('Expired Spotify OAuth state');
+      throw new BadRequestException('A autorização do Spotify expirou. Tente conectar novamente.');
     }
 
     return state;
@@ -124,7 +124,7 @@ export class SpotifyService {
     const clientId = process.env['SPOTIFY_CLIENT_ID'] ?? '';
     const redirectUri = process.env['SPOTIFY_REDIRECT_URI'] ?? '';
     if (!clientId || !redirectUri) {
-      throw new ServiceUnavailableException('Spotify OAuth not configured');
+      throw new ServiceUnavailableException('A integração com o Spotify não está configurada.');
     }
 
     const state = this.createState(tenantId, userId);
@@ -142,7 +142,7 @@ export class SpotifyService {
     const clientId = process.env['SPOTIFY_CLIENT_ID'] ?? '';
     const clientSecret = process.env['SPOTIFY_CLIENT_SECRET'] ?? '';
     if (!clientId || !clientSecret) {
-      throw new ServiceUnavailableException('Spotify client credentials unavailable');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
 
     const res = await this.fetch(`${SPOTIFY_ACCOUNTS}/api/token`, {
@@ -162,7 +162,7 @@ export class SpotifyService {
   }
 
   async handleCallback(code: string, state: string): Promise<void> {
-    if (!code) throw new BadRequestException('Spotify authorization code missing');
+    if (!code) throw new BadRequestException('Autorização do Spotify não recebida. Tente conectar novamente.');
     const verifiedState = this.verifyState(state);
     const { tenantId, userId } = verifiedState;
 
@@ -171,7 +171,7 @@ export class SpotifyService {
     const redirectUri = process.env['SPOTIFY_REDIRECT_URI'] ?? '';
 
     if (!clientId || !clientSecret || !redirectUri) {
-      throw new ServiceUnavailableException('Spotify OAuth not configured');
+      throw new ServiceUnavailableException('A integração com o Spotify não está configurada.');
     }
 
     const tokenRes = await this.fetch(`${SPOTIFY_ACCOUNTS}/api/token`, {
@@ -281,7 +281,7 @@ export class SpotifyService {
     const refreshToken = this.encryption.decrypt(conn.refresh_token_encrypted ?? '');
 
     if (!clientId || !clientSecret || !refreshToken) {
-      throw new ServiceUnavailableException('Spotify refresh credentials unavailable');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
 
     const res = await fetch(`${SPOTIFY_ACCOUNTS}/api/token`, {

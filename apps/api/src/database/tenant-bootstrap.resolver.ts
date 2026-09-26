@@ -74,7 +74,7 @@ export class TenantBootstrapResolver {
 
   private requireDataSource(): DataSource {
     if (!this.bootstrapDataSource?.isInitialized) {
-      throw new ServiceUnavailableException('Tenant bootstrap database unavailable');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
     return this.bootstrapDataSource;
   }

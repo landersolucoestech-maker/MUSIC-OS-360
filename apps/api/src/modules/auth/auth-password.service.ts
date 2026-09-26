@@ -17,7 +17,7 @@
  * written. Only after success is confirmed do we record
  * `user.password_changed`.
  */
-import { BadRequestException, Inject, Injectable, Optional, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger, Optional, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient } from '@supabase/supabase-js';
 import { DataSource } from 'typeorm';
@@ -29,6 +29,8 @@ import type { ChangeRequiredPasswordDto } from './dto/change-required-password.d
 
 @Injectable()
 export class AuthPasswordService {
+  private readonly logger = new Logger(AuthPasswordService.name);
+
   constructor(
     @Optional() private readonly config: ConfigService | undefined,
     @Inject(DATA_SOURCE) @Optional() private readonly ds: DataSource | null,
@@ -104,7 +106,8 @@ export class AuthPasswordService {
       app_metadata: { ...currentAppMetadata, must_change_password: false },
     });
     if (error) {
-      throw new ServiceUnavailableException(`Falha ao trocar a senha: ${error.message}`);
+      this.logger.error(`GoTrue updateUserById failed for user=${auth.userId}: ${error.message}`);
+      throw new ServiceUnavailableException('Não foi possível trocar a senha. Tente novamente.');
     }
 
     // Best-effort: revokes this account's sessions other than the current one (e.g.

@@ -3,7 +3,8 @@ import {
   Injectable,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { ZodSchema, ZodError } from 'zod';
+import { ZodSchema } from 'zod';
+import { zodMessagesPtBr } from './validation-messages';
 
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {
@@ -16,17 +17,10 @@ export class ZodValidationPipe implements PipeTransform {
       throw new UnprocessableEntityException({
         statusCode: 422,
         error: 'Unprocessable Entity',
-        message: formatZodErrors(result.error),
+        message: zodMessagesPtBr(result.error),
       });
     }
 
     return result.data;
   }
-}
-
-function formatZodErrors(error: ZodError): string[] {
-  return error.errors.map((e) => {
-    const field = e.path.join('.');
-    return field ? `${field}: ${e.message}` : e.message;
-  });
 }

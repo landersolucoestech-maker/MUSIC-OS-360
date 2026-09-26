@@ -124,7 +124,7 @@ export class WhatsAppWebhookController {
 
     if (!signature) {
       this.logger.warn('[whatsapp/webhook] Request without X-Hub-Signature-256 — rejected');
-      throw new ForbiddenException('X-Hub-Signature-256 ausente');
+      throw new ForbiddenException('X-Hub-Signature-256 missing');
     }
 
     const rawBody = req.rawBody ? req.rawBody.toString('utf8') : '';

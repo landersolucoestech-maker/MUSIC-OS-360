@@ -49,7 +49,7 @@ export class FinancialCategoriesService {
 
   private get db(): DataSource {
     if (!this.dataSource) {
-      throw new ServiceUnavailableException('Database unavailable for financial categories');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
     return this.dataSource;
   }

@@ -24,7 +24,7 @@ export class SocietySyncService {
   }
 
   private get repo(): Repository<SocietySyncJobEntity> {
-    if (!this.jobs) throw new BadRequestException('Database unavailable');
+    if (!this.jobs) throw new BadRequestException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.jobs;
   }
 

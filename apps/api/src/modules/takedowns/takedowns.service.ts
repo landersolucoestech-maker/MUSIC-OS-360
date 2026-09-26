@@ -18,7 +18,7 @@ export class TakedownsService {
   }
 
   private get repository(): Repository<TakedownEntity> {
-    if (!this.repo) throw new ServiceUnavailableException('Database unavailable for takedowns');
+    if (!this.repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 

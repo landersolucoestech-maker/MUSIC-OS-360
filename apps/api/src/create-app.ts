@@ -19,6 +19,7 @@ import compression = require('compression');
 import * as express from 'express';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './core/filters/global-exception.filter';
+import { validationExceptionFactory } from './core/pipes/validation-messages';
 import { TransformInterceptor } from './core/interceptors/transform.interceptor';
 import { LoggingInterceptor } from './core/interceptors/logging.interceptor';
 import { collectSupabaseEnvErrors } from './core/config/env.schema';
@@ -169,6 +170,9 @@ export async function createApp(): Promise<INestApplication> {
       forbidNonWhitelisted: true,
       transform: true,
       transformOptions: { enableImplicitConversion: true },
+      // Default class-validator messages are English/technical; the factory
+      // returns PT-BR end-user copy and logs the technical detail.
+      exceptionFactory: validationExceptionFactory,
     }),
   );
   app.useGlobalFilters(new GlobalExceptionFilter());

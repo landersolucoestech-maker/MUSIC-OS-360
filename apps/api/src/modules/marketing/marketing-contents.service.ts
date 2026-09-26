@@ -21,7 +21,7 @@ export class MarketingContentsService {
   }
 
   private get r(): Repository<MarketingContentPostEntity> {
-    if (!this.repo) throw new ServiceUnavailableException('Database unavailable');
+    if (!this.repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 

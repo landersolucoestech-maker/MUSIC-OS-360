@@ -144,7 +144,7 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
     const token = this.extractToken(request);
 
     if (!token) {
-      throw new UnauthorizedException('Authentication token missing');
+      throw new UnauthorizedException('Sessão não autenticada. Faça login novamente.');
     }
 
     // In non-prod-like envs only, accept dev tokens signed with ENCRYPTION_KEY (HS256).
@@ -173,7 +173,7 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
     const claims = await this.verifyToken(token);
 
     if (!claims.sub || typeof claims.sub !== 'string') {
-      throw new UnauthorizedException('JWT subject missing');
+      throw new UnauthorizedException('Sessão inválida. Faça login novamente.');
     }
 
     request.auth = {
@@ -225,13 +225,13 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
         (err, decoded) => {
           if (err) {
             if (err instanceof jwt.TokenExpiredError) {
-              return reject(new UnauthorizedException('Token expired'));
+              return reject(new UnauthorizedException('Sua sessão expirou. Faça login novamente.'));
             }
             this.logger.warn(`JWT verification failed: ${err.message}`);
-            return reject(new UnauthorizedException('Invalid or expired token'));
+            return reject(new UnauthorizedException('Sessão inválida ou expirada. Faça login novamente.'));
           }
           if (!decoded || typeof decoded !== 'object') {
-            return reject(new UnauthorizedException('Invalid token'));
+            return reject(new UnauthorizedException('Sessão inválida. Faça login novamente.'));
           }
           resolve(decoded as AuthClaims);
         },

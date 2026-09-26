@@ -37,7 +37,7 @@ export class MarketingStrategyService {
   }
 
   private ensure<T extends ObjectLiteral>(repo: Repository<T> | null): Repository<T> {
-    if (!repo) throw new ServiceUnavailableException('Database unavailable');
+    if (!repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return repo;
   }
 

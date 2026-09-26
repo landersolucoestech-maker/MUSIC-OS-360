@@ -62,7 +62,7 @@ export class SocietySubmissionService {
   }
 
   private get repo(): Repository<SocietySubmissionEntity> {
-    if (!this.subs) throw new BadRequestException('Database unavailable');
+    if (!this.subs) throw new BadRequestException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.subs;
   }
 
@@ -104,7 +104,7 @@ export class SocietySubmissionService {
 
   async getEvents(tenantId: string, id: string) {
     await this.findById(tenantId, id);
-    if (!this.events) throw new BadRequestException('Database unavailable');
+    if (!this.events) throw new BadRequestException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     const data = await this.events.find({
       where: { tenant_id: tenantId, submission_id: id },
       order: { created_at: 'ASC' },
@@ -197,7 +197,7 @@ export class SocietySubmissionService {
    * submission at it. Snapshots are never updated — a new file = a new version.
    */
   async createSnapshot(tenantId: string, userId: string, submissionId: string, payload: Record<string, unknown>) {
-    if (!this.ds || !this.snapshots) throw new BadRequestException('Database unavailable');
+    if (!this.ds || !this.snapshots) throw new BadRequestException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     await this.findById(tenantId, submissionId);
 
     return this.ds.transaction(async (em) => {

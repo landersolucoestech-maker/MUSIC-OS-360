@@ -109,7 +109,7 @@ export class ArtistMetricSnapshotsService {
   }
 
   private requireRepo(): Repository<ArtistMetricSnapshotEntity> {
-    if (!this.repo) throw new ServiceUnavailableException('Artist metric snapshot persistence unavailable');
+    if (!this.repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 

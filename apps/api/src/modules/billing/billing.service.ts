@@ -245,12 +245,12 @@ export class BillingService {
 
   private assertBillingRepositories(): void {
     if (!this.ds || !this.subRepo || !this.tenantRepo || !this.orgRepo) {
-      throw new ServiceUnavailableException('Billing persistence unavailable');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
   }
 
   private assertDataSource(): DataSource {
-    if (!this.ds) throw new ServiceUnavailableException('Billing persistence unavailable');
+    if (!this.ds) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.ds;
   }
 

@@ -41,7 +41,7 @@ export class MarketingProjectsService {
   }
 
   private get r(): Repository<MarketingProjectEntity> {
-    if (!this.repo) throw new ServiceUnavailableException('Database unavailable');
+    if (!this.repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 
@@ -74,7 +74,7 @@ export class MarketingProjectsService {
 
   async findById(tenantId: string, id: string): Promise<MarketingProjectEntity> {
     const entity = await this.r.findOne({ where: { id, tenant_id: tenantId, deleted_at: null } as never });
-    if (!entity) throw new NotFoundException('Marketing Project not found');
+    if (!entity) throw new NotFoundException('Projeto de marketing não encontrado.');
     return entity;
   }
 

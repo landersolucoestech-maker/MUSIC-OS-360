@@ -69,13 +69,13 @@ function requireObject(value: unknown, field: string): Record<string, unknown> {
 
 function requireTime(value: unknown, field: string): void {
   if (typeof value !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(value)) {
-    throw new BadRequestException(`${field} deve usar o formato HH:mm`);
+    throw new BadRequestException('O horário deve usar o formato HH:mm.');
   }
 }
 
 function requireWeekday(value: unknown, field: string): void {
   if (!Number.isInteger(value) || Number(value) < 0 || Number(value) > 6) {
-    throw new BadRequestException(`${field} deve estar entre 0 e 6`);
+    throw new BadRequestException('O dia da semana informado é inválido.');
   }
 }
 
@@ -112,7 +112,7 @@ function validateConfig(key: NotificationSettingKey, input: SettingConfig): Sett
   if (key === 'delivery_channels') {
     for (const channel of ['email', 'sms', 'push']) {
       if (typeof config[channel] !== 'boolean') {
-        throw new BadRequestException(`config.${channel} deve ser booleano`);
+        throw new BadRequestException('Configuração de canais inválida.');
       }
     }
   }
@@ -128,7 +128,7 @@ function validateConfig(key: NotificationSettingKey, input: SettingConfig): Sett
   if (key === 'low_balance') {
     const amount = config['minimumAmountCents'];
     if (!Number.isInteger(amount) || Number(amount) < 0 || Number(amount) > 999999999999) {
-      throw new BadRequestException('config.minimumAmountCents deve ser um inteiro positivo');
+      throw new BadRequestException('O valor mínimo deve ser um número inteiro positivo.');
     }
   }
 
@@ -139,11 +139,11 @@ function validateConfig(key: NotificationSettingKey, input: SettingConfig): Sett
 
   if (key === 'weekly_activity_report') {
     if (typeof config['frequency'] !== 'string' || !FREQUENCIES.includes(config['frequency'])) {
-      throw new BadRequestException('config.frequency não é suportada');
+      throw new BadRequestException('Frequência não suportada.');
     }
     const recipients = requireStringList(config['recipients'], 'config.recipients');
     if (recipients.some((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
-      throw new BadRequestException('config.recipients contém e-mail inválido');
+      throw new BadRequestException('A lista de destinatários contém um e-mail inválido.');
     }
   }
 
@@ -151,14 +151,14 @@ function validateConfig(key: NotificationSettingKey, input: SettingConfig): Sett
     const channels = requireObject(config['channels'], 'config.channels');
     for (const channel of ['system', 'email', 'push', 'websocket']) {
       if (typeof channels[channel] !== 'boolean') {
-        throw new BadRequestException(`config.channels.${channel} deve ser booleano`);
+        throw new BadRequestException('Configuração de canais inválida.');
       }
     }
   }
 
   if (key === 'delivery_preferences') {
     if (typeof config['frequency'] !== 'string' || !FREQUENCIES.includes(config['frequency'])) {
-      throw new BadRequestException('config.frequency não é suportada');
+      throw new BadRequestException('Frequência não suportada.');
     }
     requireTime(config['preferredTime'], 'config.preferredTime');
   }
@@ -217,7 +217,7 @@ export class NotificationSettingsService {
     context?: NotificationDbContext,
   ): Promise<ResolvedNotificationSetting[]> {
     if (new Set(inputs.map((input) => input.notificationKey)).size !== inputs.length) {
-      throw new BadRequestException('notificationKey duplicada');
+      throw new BadRequestException('Notificação duplicada na configuração.');
     }
 
     return this.dbContext.runInTenantContext(

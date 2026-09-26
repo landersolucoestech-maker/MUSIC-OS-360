@@ -79,14 +79,14 @@ export class BillingEnforcementGuard implements CanActivate {
     if (state.status === 'suspended') {
       throw new ForbiddenException({
         error: 'TENANT_SUSPENDED',
-        message: 'Subscription payment overdue',
+        message: 'Pagamento da assinatura em atraso.',
       });
     }
 
     if (state.status === 'read_only' && !READ_METHODS.has((request.method ?? '').toUpperCase())) {
       throw new ForbiddenException({
         error: 'TENANT_READ_ONLY',
-        message: 'Subscription payment overdue. Workspace is temporarily read-only.',
+        message: 'Pagamento da assinatura em atraso. O workspace está temporariamente somente leitura.',
       });
     }
 

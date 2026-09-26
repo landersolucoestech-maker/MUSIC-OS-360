@@ -88,6 +88,6 @@ export class MembershipRoleResolverService {
     this.logger.warn(
       `role.invalid membership=${ctx.membershipId ?? '-'} tenant=${tenantId} role='${roleSlug}' class=${res.classification} (${res.detail})`,
     );
-    throw new BadRequestException(`role_id não resolvível para '${roleSlug}': ${res.classification} — ${res.detail}`);
+    throw new BadRequestException('Papel inválido para este membro. Contate o administrador do workspace.');
   }
 }

@@ -344,7 +344,7 @@ export class LeadsService {
     }>;
     const tenant = rows[0];
     if (!tenant) throw new NotFoundException('Workspace nao encontrado');
-    if (!tenant.active || tenant.deleted_at) throw new NotFoundException('Cadastro indisponivel');
+    if (!tenant.active || tenant.deleted_at) throw new NotFoundException('Cadastro indisponível.');
     // find-a22e0dad / req-ea44db5a: unlike the Type-B external-reconciliation webhooks
     // (Autentique/DocuSign/external-data), public lead-capture is a repeatable, unauthenticated,
     // attacker-triggerable NEW write with ongoing storage/automation cost — it is billing-gated,
@@ -352,7 +352,7 @@ export class LeadsService {
     // "not found" cases above so billing status is never leaked to an unauthenticated caller.
     const billingState = await this.billing.getState(tenant.id);
     if (billingState && (billingState.status === 'suspended' || billingState.status === 'read_only')) {
-      throw new NotFoundException('Cadastro indisponivel');
+      throw new NotFoundException('Cadastro indisponível.');
     }
     if (!tenant.allow_public_registration || tenant.public_registration_blocked || tenant.public_registration_revoked_at) {
       throw new NotFoundException('Cadastro indisponivel para este workspace');

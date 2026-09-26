@@ -11,7 +11,7 @@
  * information_schema). When the DataSource is unavailable, the guard degrades
  * safely (it does not block wrongly — the engine already handles a missing database).
  */
-import { Injectable, Inject, Optional, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, Inject, Logger, Optional, UnprocessableEntityException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import type { EntityReport } from './entity-metadata.types';
@@ -19,6 +19,7 @@ import { REPORT_MODULE_REGISTRY_BY_TABLE } from './report-module-registry';
 
 @Injectable()
 export class ReportTableGuardService {
+  private readonly logger = new Logger(ReportTableGuardService.name);
   private cache: Promise<Set<string> | null> | null = null;
 
   constructor(@Inject(DATA_SOURCE) @Optional() private readonly ds: DataSource | null) {}
@@ -78,8 +79,9 @@ export class ReportTableGuardService {
     if (report.hasTenantId) {
       const hasTenantColumn = report.columns.some((c) => c.isTenantId);
       if (!hasTenantColumn) {
+        this.logger.error(`Multi-tenant entity "${tableName}" has no tenant_id column; refusing to export/import it`);
         throw new UnprocessableEntityException(
-          `A entidade multi-tenant "${tableName}" não possui coluna tenant_id e não pode ser isolada com segurança.`,
+          'Esta entidade não pode ser exportada com segurança.',
         );
       }
     }

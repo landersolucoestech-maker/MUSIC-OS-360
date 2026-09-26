@@ -65,13 +65,13 @@ export class TenantGuard implements CanActivate {
     const auth = request.auth;
 
     if (!auth?.orgId) {
-      throw new UnauthorizedException('Organization not identified in token');
+      throw new UnauthorizedException('Organização não identificada na sessão. Faça login novamente.');
     }
 
     const tenantHeader = readTenantHeader(request);
 
     if (!tenantHeader) {
-      throw new ForbiddenException('X-Tenant-ID header is required for protected tenant routes');
+      throw new ForbiddenException('Workspace não selecionado. Selecione um workspace e tente novamente.');
     }
 
     const tenantKey = `tenant:${auth.orgId}`;
@@ -86,7 +86,7 @@ export class TenantGuard implements CanActivate {
     // enforcement (suspended/read_only/payment_grace) is a separate concern handled
     // by BillingEnforcementGuard, never conflated with this lifecycle gate.
     if (!tenant || !tenant.active) {
-      throw new UnauthorizedException('Tenant not found or inactive');
+      throw new UnauthorizedException('Workspace não encontrado ou inativo.');
     }
     await this.distributedCache?.set(tenantKey, tenant, [], 60);
 
@@ -100,7 +100,7 @@ export class TenantGuard implements CanActivate {
       tenantHeader !== tenantExternalOrgId &&
       tenantHeader !== auth.orgId
     ) {
-      throw new ForbiddenException('Tenant header does not match resolved tenant');
+      throw new ForbiddenException('Workspace selecionado não corresponde à sessão. Recarregue a página.');
     }
 
     const membershipKey = `membership:${tenant.id}:${auth.userId}`;
@@ -109,7 +109,7 @@ export class TenantGuard implements CanActivate {
       (await this.bootstrapResolver.resolveMembership(tenant.id, auth.userId));
 
     if (!member) {
-      throw new ForbiddenException('User is not an active member of this tenant');
+      throw new ForbiddenException('Você não é um membro ativo deste workspace.');
     }
     await this.distributedCache?.set(
       membershipKey,

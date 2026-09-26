@@ -18,7 +18,7 @@ export class LicensingService {
   }
 
   private get repository(): Repository<LicenseEntity> {
-    if (!this.repo) throw new ServiceUnavailableException('Database unavailable for licensing');
+    if (!this.repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 

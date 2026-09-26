@@ -29,14 +29,14 @@ describe('CreateShareDto/UpdateShareDto — holderName does not accept empty/whi
     const errors = await validatePayload(CreateShareDto, { holderName: '' });
     expect(errors.length).toBeGreaterThan(0);
     const messages = errors.flatMap((e) => Object.values(e.constraints ?? {}));
-    expect(messages.some((m) => m.includes('holderName'))).toBe(true);
+    expect(messages.some((m) => m.includes('nome do titular'))).toBe(true);
   });
 
   it('rejects holderName: "   " (spaces only)', async () => {
     const errors = await validatePayload(CreateShareDto, { holderName: '   ' });
     expect(errors.length).toBeGreaterThan(0);
     const messages = errors.flatMap((e) => Object.values(e.constraints ?? {}));
-    expect(messages.some((m) => m.includes('holderName'))).toBe(true);
+    expect(messages.some((m) => m.includes('nome do titular'))).toBe(true);
   });
 
   it('rejects empty holderName also in UpdateShareDto (PartialType inherits the validators)', async () => {

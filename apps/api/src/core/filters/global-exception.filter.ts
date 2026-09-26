@@ -57,7 +57,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       if (errObj.type === 'entity.too.large' || errObj.status === 413 || /entity too large|request entity too large/i.test(errObj.message)) {
         statusCode = HttpStatus.PAYLOAD_TOO_LARGE;
         error = 'PayloadTooLargeException';
-        message = 'Request body excede o limite permitido (1MB)';
+        message = 'O conteúdo enviado excede o limite permitido (1 MB).';
       } else if (/^CORS:/.test(errObj.message)) {
         statusCode = HttpStatus.FORBIDDEN;
         error = 'CorsException';

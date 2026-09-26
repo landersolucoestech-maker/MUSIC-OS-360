@@ -42,7 +42,7 @@ export class MarketingAssetsService {
 
   private get assets(): Repository<MarketingAssetEntity> {
     if (!this.assetRepo || !this.versionRepo || !this.approvalRepo || !this.ds) {
-      throw new ServiceUnavailableException('Database unavailable');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
     return this.assetRepo;
   }
@@ -89,7 +89,7 @@ export class MarketingAssetsService {
 
   async findById(tenantId: string, id: string): Promise<MarketingAssetEntity> {
     const asset = await this.assets.findOne({ where: { id, tenant_id: tenantId, deleted_at: null } as never });
-    if (!asset) throw new NotFoundException('Marketing asset not found');
+    if (!asset) throw new NotFoundException('Ativo de marketing não encontrado.');
     return asset;
   }
 
@@ -201,7 +201,7 @@ export class MarketingAssetsService {
       source_upload_id: dto.sourceUploadId,
     });
     const incomingFileUrl = dto.fileUrl ?? current.file_url;
-    if (!incomingFileUrl) throw new BadRequestException('fileUrl is required');
+    if (!incomingFileUrl) throw new BadRequestException('Informe o arquivo.');
 
     const fileChanged = Boolean(dto.fileUrl && dto.fileUrl !== current.file_url);
     if (current.status === 'approved' && !fileChanged) {
@@ -254,9 +254,9 @@ export class MarketingAssetsService {
 
   async requestApproval(tenantId: string, userId: string, id: string): Promise<MarketingAssetApprovalEntity> {
     const asset = await this.findById(tenantId, id);
-    if (!asset.current_version_id) throw new BadRequestException('Asset has no current version');
-    if (asset.status === 'approved') throw new BadRequestException('Approved asset is already available');
-    if (asset.status === 'archived') throw new BadRequestException('Archived asset cannot be reviewed');
+    if (!asset.current_version_id) throw new BadRequestException('O ativo não possui uma versão atual.');
+    if (asset.status === 'approved') throw new BadRequestException('O ativo aprovado já está disponível.');
+    if (asset.status === 'archived') throw new BadRequestException('Ativos arquivados não podem ser revisados.');
 
     await this.assets.update({ id, tenant_id: tenantId } as never, { status: 'in_review', updated_by: userId } as never);
     await this.versionRepo!.update(
@@ -282,8 +282,8 @@ export class MarketingAssetsService {
   ): Promise<MarketingAssetApprovalEntity> {
     void this.assets;
     const approval = await this.approvalRepo!.findOne({ where: { id: approvalId, tenant_id: tenantId } as never });
-    if (!approval) throw new NotFoundException('Marketing asset approval not found');
-    if (approval.status !== 'pending') throw new BadRequestException('Approval already decided');
+    if (!approval) throw new NotFoundException('Aprovação do ativo não encontrada.');
+    if (approval.status !== 'pending') throw new BadRequestException('Esta aprovação já foi decidida.');
 
     const nextAssetStatus = dto.status === 'approved' ? 'approved' : 'rejected';
     const decidedAt = new Date();

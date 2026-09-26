@@ -18,7 +18,7 @@ export class AudiovisualBriefingsService {
   }
 
   private get r(): Repository<AudiovisualBriefingEntity> {
-    if (!this.repo) throw new ServiceUnavailableException('Database unavailable');
+    if (!this.repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 
@@ -58,7 +58,7 @@ export class AudiovisualBriefingsService {
   }
 
   private async assertProject(tenantId: string, projectId: string) {
-    if (!this.projects) throw new ServiceUnavailableException('Database unavailable');
+    if (!this.projects) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     const p = await this.projects.findOne({ where: { id: projectId, tenant_id: tenantId, deleted_at: null } as never });
     if (!p) throw new NotFoundException('Projeto audiovisual não encontrado');
   }

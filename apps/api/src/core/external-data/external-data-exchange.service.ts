@@ -144,7 +144,7 @@ export class ExternalDataExchangeService {
 
   async submitDistributor(input: SubmitDistributorInput): Promise<ExternalDataSubmissionResult> {
     this.assertDb();
-    if (!input.providerId) throw new BadRequestException('providerId is required to submit to a distributor');
+    if (!input.providerId) throw new BadRequestException('Selecione o distribuidor para enviar.');
     const providerId = input.providerId;
     const provider = this.registry.getDistributor(providerId);
     const payload = await this.buildDistributorPayload(input, providerId);
@@ -211,12 +211,12 @@ export class ExternalDataExchangeService {
 
   async submitSociety(input: SubmitSocietyInput): Promise<ExternalDataSubmissionResult> {
     this.assertDb();
-    if (!input.providerId) throw new BadRequestException('providerId is required to submit to a society');
+    if (!input.providerId) throw new BadRequestException('Selecione a sociedade de gestão coletiva para enviar.');
     const providerId = input.providerId;
     const provider = this.registry.getSociety(providerId);
     const payload = await this.buildSocietyPayload(input, providerId);
     const entityId = input.artistId ?? input.workIds?.[0] ?? input.phonogramIds?.[0];
-    if (!entityId) throw new BadRequestException('At least one artist/work/phonogram id is required');
+    if (!entityId) throw new BadRequestException('Selecione ao menos um artista, obra ou fonograma.');
     const context = this.context(input.tenantId, input.userId, providerId, input.idempotencyKey);
 
     this.events.emitTyped(DOMAIN_EVENTS.EXTERNAL_DATA_SYNC_STARTED, {
@@ -279,7 +279,7 @@ export class ExternalDataExchangeService {
   }
 
   async checkDistributorStatus(input: StatusCheckInput): Promise<ExternalDataSubmissionResult> {
-    if (!input.providerId) throw new BadRequestException('providerId is required to check distributor status');
+    if (!input.providerId) throw new BadRequestException('Selecione o distribuidor para consultar o status.');
     const providerId = input.providerId;
     const result = await this.registry.getDistributor(providerId)
       .checkStatus(input.submissionId, this.context(input.tenantId, input.userId, providerId, input.idempotencyKey));
@@ -303,7 +303,7 @@ export class ExternalDataExchangeService {
   }
 
   async checkSocietyStatus(input: StatusCheckInput): Promise<ExternalDataSubmissionResult> {
-    if (!input.providerId) throw new BadRequestException('providerId is required to check society status');
+    if (!input.providerId) throw new BadRequestException('Selecione a sociedade de gestão coletiva para consultar o status.');
     const providerId = input.providerId;
     const result = await this.registry.getSociety(providerId)
       .checkStatus(input.submissionId, this.context(input.tenantId, input.userId, providerId, input.idempotencyKey));
@@ -554,7 +554,7 @@ export class ExternalDataExchangeService {
   ): Promise<void> {
     const repo = this.repoFor(entityType);
     const row = await repo.findOne({ where: { id: entityId, tenant_id: tenantId, deleted_at: null } as any });
-    if (!row) throw new BadRequestException(`${entityType} not found in tenant`);
+    if (!row) throw new BadRequestException('Registro não encontrado.');
     const metadata = { ...((row as any).metadata ?? {}) };
     const exchange = { ...(metadata['external_data_exchange'] as Record<string, unknown> | undefined ?? {}) };
     exchange[result.providerId] = {
@@ -614,7 +614,7 @@ export class ExternalDataExchangeService {
 
   private async assertArtist(tenantId: string, artistId: string): Promise<ArtistEntity> {
     const artist = await this.artists!.findOne({ where: { id: artistId, tenant_id: tenantId, deleted_at: null } as any });
-    if (!artist) throw new BadRequestException('Artist not found in tenant');
+    if (!artist) throw new BadRequestException('Artista não encontrado.');
     return artist;
   }
 

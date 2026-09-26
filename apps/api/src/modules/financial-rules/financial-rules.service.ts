@@ -26,7 +26,7 @@ export class FinancialRulesService {
 
   private get repository(): Repository<FinancialRuleEntity> {
     if (!this.repo) {
-      throw new ServiceUnavailableException('Database unavailable for financial rules');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
     return this.repo;
   }

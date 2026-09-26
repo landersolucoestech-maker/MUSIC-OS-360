@@ -36,7 +36,7 @@ export class WorkspaceProvisioningService {
     dto: ProvisionWorkspaceDto,
   ) {
     if (!this.ds?.isInitialized) {
-      throw new ServiceUnavailableException('Workspace provisioning database unavailable');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
     const email = typeof user.claims['email'] === 'string'
       ? user.claims['email']
@@ -89,7 +89,7 @@ export class WorkspaceProvisioningService {
           [dto.workspaceSlug],
         ) as unknown[];
         if (slugExists.length > 0) {
-          throw new ConflictException('Workspace slug is already in use');
+          throw new ConflictException('Este endereço de workspace já está em uso.');
         }
 
         const ownerRoles = await queryRunner.query(
@@ -104,7 +104,7 @@ export class WorkspaceProvisioningService {
         ) as Array<{ id: string }>;
         const ownerRoleId = ownerRoles[0]?.id;
         if (!ownerRoleId) {
-          throw new ServiceUnavailableException('Canonical owner role is unavailable');
+          throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
         }
 
         const organizations = await queryRunner.query(

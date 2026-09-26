@@ -24,7 +24,7 @@ export class AudiovisualApprovalsService {
   }
 
   private get r(): Repository<AudiovisualApprovalEntity> {
-    if (!this.repo) throw new ServiceUnavailableException('Database unavailable');
+    if (!this.repo) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     return this.repo;
   }
 
@@ -45,12 +45,12 @@ export class AudiovisualApprovalsService {
   }
 
   async request(tenantId: string, userId: string, projectId: string, dto: RequestApprovalDto) {
-    if (!this.projects) throw new ServiceUnavailableException('Database unavailable');
+    if (!this.projects) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     const project = await this.projects.findOne({ where: { id: projectId, tenant_id: tenantId, deleted_at: null } as never });
     if (!project) throw new NotFoundException('Projeto não encontrado');
 
     if (dto.deliverable_id) {
-      if (!this.deliverables) throw new ServiceUnavailableException('Database unavailable');
+      if (!this.deliverables) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
       const d = await this.deliverables.findOne({
         where: { id: dto.deliverable_id, tenant_id: tenantId, audiovisual_project_id: projectId, deleted_at: null } as never,
       });

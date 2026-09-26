@@ -27,7 +27,7 @@ export class MarketingTasksService {
 
   private get repo(): Repository<MarketingTaskEntity> {
     if (!this.tasks || !this.projects) {
-      throw new ServiceUnavailableException('Database unavailable');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
     return this.tasks;
   }
@@ -61,7 +61,7 @@ export class MarketingTasksService {
     const task = await this.repo.findOne({
       where: { id, tenant_id: tenantId, deleted_at: null } as never,
     });
-    if (!task) throw new NotFoundException('Marketing task not found');
+    if (!task) throw new NotFoundException('Tarefa de marketing não encontrada.');
     return task;
   }
 
@@ -133,6 +133,6 @@ export class MarketingTasksService {
     const project = await this.projects!.findOne({
       where: { id: projectId, tenant_id: tenantId, deleted_at: null } as never,
     });
-    if (!project) throw new NotFoundException('Marketing project not found');
+    if (!project) throw new NotFoundException('Projeto de marketing não encontrado.');
   }
 }

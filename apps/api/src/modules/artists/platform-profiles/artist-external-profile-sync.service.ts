@@ -178,7 +178,7 @@ export class ArtistExternalProfileSyncService {
         err instanceof Error ? err.stack : undefined,
       );
       throw new ServiceUnavailableException(
-        `Falha ao enfileirar sincronização de ${platform} no BullMQ: ${message}`,
+        'Falha ao enfileirar sincronização. Tente novamente em instantes.',
       );
     }
 

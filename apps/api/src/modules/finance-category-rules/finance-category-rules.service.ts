@@ -27,7 +27,7 @@ export class FinanceCategoryRulesService {
 
   private get repository(): Repository<FinanceCategoryKeywordRuleEntity> {
     if (!this.repo) {
-      throw new ServiceUnavailableException('Database unavailable for finance category rules');
+      throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente em instantes.');
     }
     return this.repo;
   }
