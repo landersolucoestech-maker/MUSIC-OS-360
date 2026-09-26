@@ -2,10 +2,10 @@ import { ROLES_KEY } from '../../core/decorators/roles.decorator';
 import { BillingController } from './billing.controller';
 
 /**
- * find-340abf0b — GET /billing/admin/stripe-mode é rota do Painel Admin SaaS:
- * precisa exigir super_admin como as demais rotas admin/*. Sem essa
- * metadata, RolesGuard trataria a rota GET como aberta a qualquer usuário
- * autenticado do tenant.
+ * find-340abf0b — GET /billing/admin/stripe-mode is a SaaS admin panel route:
+ * it must require super_admin like the other admin/* routes. Without that
+ * metadata, RolesGuard would treat the GET route as open to any authenticated
+ * user of the tenant.
  */
 describe('BillingController.getAdminStripeMode — authorization', () => {
   it('exige exatamente super_admin', () => {

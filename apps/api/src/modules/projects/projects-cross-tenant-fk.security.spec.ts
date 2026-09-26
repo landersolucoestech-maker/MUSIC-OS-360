@@ -74,7 +74,7 @@ describe('ProjectsService — cross-tenant FK ownership (find-50dd3726)', () => 
     expect(query).not.toHaveBeenCalled();
   });
 
-  // GAP-0001 / DEC-001: agora o ProjectFormModal envia artist_id em edições.
+  // GAP-0001 / DEC-001: ProjectFormModal now sends artist_id on edits.
   it('update: rejects an artist_id belonging to another tenant (IDOR via PATCH)', async () => {
     const { service, repo } = makeService(jest.fn(async () => []));
     await expect(

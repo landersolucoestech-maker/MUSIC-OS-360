@@ -76,19 +76,19 @@ export class RealtimeService implements OnModuleDestroy {
   }
 
   /**
-   * Resolve tenants.id -> tenants.org_id (o identificador real do tópico RLS/frontend).
+   * Resolves tenants.id -> tenants.org_id (the real RLS/frontend topic identifier).
    *
-   * broadcastToTenant() dispara isto fire-and-forget (nunca aguardado pelo
-   * caller) — se o caller estiver dentro de RequestTenantContextInterceptor /
+   * broadcastToTenant() fires this fire-and-forget (never awaited by the
+   * caller) — if the caller is inside RequestTenantContextInterceptor /
    * DatabaseContextService.runInTenantContext (DATABASE_SESSION_CONTEXT_ENABLED=true),
-   * o QueryRunner request-scoped pode já ter sido liberado (finally do
-   * runInTenantContext) antes desta query assíncrona terminar, lançando
-   * QueryRunnerAlreadyReleasedError. A consulta usa ADMIN_DATA_SOURCE (owner,
-   * somente leitura) — o service_role do Supabase vale só para o broadcast,
-   * não para esta leitura no Postgres.
-   * `tenantAls.exit()` garante que o Proxy de DATA_SOURCE (tenant-als.ts) NUNCA
-   * veja um store ativo aqui, então esta query sempre usa uma conexão própria
-   * do pool, independente do ciclo de vida de qualquer QueryRunner de request.
+   * the request-scoped QueryRunner may already be released (runInTenantContext's
+   * finally) before this async query finishes, throwing
+   * QueryRunnerAlreadyReleasedError. The query uses ADMIN_DATA_SOURCE (owner,
+   * read-only) — Supabase's service_role applies only to the broadcast, not to
+   * this Postgres read.
+   * `tenantAls.exit()` guarantees the DATA_SOURCE Proxy (tenant-als.ts) NEVER
+   * sees an active store here, so this query always uses its own pool
+   * connection, independent of any request QueryRunner's lifecycle.
    */
   private async resolveOrgId(tenantId: string): Promise<string | null> {
     const cached = this.orgIdCache.get(tenantId);
@@ -141,16 +141,15 @@ export class RealtimeService implements OnModuleDestroy {
     });
   }
 
-  /** Emite evento para todos os clientes do tenant. */
+  /** Emits an event to every client of the tenant. */
   sendToTenant(tenantId: string, event: string, data: unknown): void {
     this.broadcastToTenant(tenantId, event, data);
   }
 
   /**
-   * Emite evento para um utilizador específico E para o tenant — preserva o
-   * comportamento dual do WsGateway original (`.to(tenant).to(user).emit()`),
-   * já que dashboards a observar o canal do tenant também esperavam ver
-   * notificações individuais.
+   * Emits an event to a specific user AND to the tenant — keeps the original
+   * WsGateway's dual behavior (`.to(tenant).to(user).emit()`), since dashboards
+   * watching the tenant channel also expected to see individual notifications.
    */
   sendToUser(tenantId: string, userId: string, event: string, data: unknown): void {
     this.broadcast(`user:${userId}`, event, data);
@@ -158,18 +157,18 @@ export class RealtimeService implements OnModuleDestroy {
   }
 
   /**
-   * Emite evento SOMENTE para o utilizador — sem o fan-out para o canal do
-   * tenant que sendToUser() faz. Usar para eventos privados ponto-a-ponto
-   * (ex.: chat interno) onde o próprio ID da conversa/mensagem não deve ser
-   * visível para membros do tenant que não participam dela.
+   * Emits an event ONLY to the user — without the fan-out to the tenant channel
+   * that sendToUser() does. Use for private point-to-point events (e.g. internal
+   * chat) where the conversation/message ID itself must not be visible to tenant
+   * members who are not part of it.
    */
   sendToUserOnly(userId: string, event: string, data: unknown): void {
     this.broadcast(`user:${userId}`, event, data);
   }
 
   /**
-   * Notifica o tenant que um recurso foi alterado.
-   * O frontend invalida a query correspondente ao receber este evento.
+   * Notifies the tenant that a resource changed.
+   * The frontend invalidates the matching query when it receives this event.
    */
   notifyDataChanged(tenantId: string, entity: string, id: string): void {
     this.broadcastToTenant(tenantId, 'data:changed', { entity, id });

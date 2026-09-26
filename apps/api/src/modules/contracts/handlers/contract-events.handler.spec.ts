@@ -1,10 +1,11 @@
 import { ContractEventsHandler } from './contract-events.handler';
 
 /**
- * Decision Gate item 2+3 (GAP-02/03): contract.signed já disparava evaluateRules,
- * mas a transação provisória criada aqui também emite TRANSACTION_CREATED —
- * marcada com source:'contract.signed' para que TransactionEventsHandler não
- * avalie financial-rules DUAS vezes para a mesma assinatura de contrato.
+ * Decision Gate items 2+3 (GAP-02/03): contract.signed already triggered
+ * evaluateRules, but the provisional transaction created here also emits
+ * TRANSACTION_CREATED — tagged with source:'contract.signed' so
+ * TransactionEventsHandler does not evaluate financial rules TWICE for the same
+ * contract signature.
  */
 function build() {
   const artistRepo = { update: jest.fn().mockResolvedValue(undefined) };
@@ -81,9 +82,9 @@ describe('ContractEventsHandler — onContractSigned', () => {
     );
   });
 
-  // GAP-0055: a transação provisória deve usar a data de início real do
-  // contrato quando disponível, não sempre "hoje" (data em que o webhook/evento
-  // de assinatura foi processado, que pode ser muito depois do início real).
+  // GAP-0055: the provisional transaction must use the contract's real start
+  // date when available, not always "today" (the date the signature
+  // webhook/event was processed, which can be long after the real start).
   it('uses contract.start_date as the provisional transaction date when available', async () => {
     const { handler, transactionRepo } = buildWithContract({ id: 'c1', fixed_value: '5000', start_date: new Date('2026-03-01T00:00:00.000Z') });
     await handler.onContractSigned({ tenantId: 't1', payload, correlationId: null } as any);

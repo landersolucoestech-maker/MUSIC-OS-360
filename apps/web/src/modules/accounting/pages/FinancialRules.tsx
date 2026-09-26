@@ -132,7 +132,7 @@ export default function FinancialRules() {
       }
       setModalOpen(false);
     } catch {
-      // erro já reportado via toast pelo hook
+      // the hook already reported the error via toast
     }
   }
 
@@ -142,7 +142,7 @@ export default function FinancialRules() {
       await deleteRule.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
     } catch {
-      // erro já reportado via toast pelo hook
+      // the hook already reported the error via toast
     }
   }
 
@@ -150,7 +150,7 @@ export default function FinancialRules() {
     try {
       await updateRule.mutateAsync({ id: rule.id, active: !rule.active } as never);
     } catch {
-      // erro já reportado via toast pelo hook
+      // the hook already reported the error via toast
     }
   }
 
@@ -158,8 +158,8 @@ export default function FinancialRules() {
     <FeatureGate feature="moduleAccounting" featureName="Financeiro">
       <MainLayout
         title="Automações Financeiras"
-        // find-9e7bc94e: o único efeito de uma regra disparada é uma
-        // notificação com o valor calculado — nenhum lançamento é criado.
+        // find-9e7bc94e: the only effect of a triggered rule is a notification with
+        // the computed amount — no ledger entry is created.
         description="Regras avaliadas automaticamente ao assinar contratos, criar/pagar transações e vencer notas fiscais. Ao disparar, a regra calcula o valor e envia uma notificação; nenhum lançamento financeiro é criado automaticamente."
         actions={
           <div className="flex items-center gap-2">

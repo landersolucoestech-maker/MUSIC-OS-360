@@ -1,29 +1,29 @@
 /**
  * docusign.service.ts
  *
- * Adapter de assinatura DocuSign eSignature REST API v2.1.
+ * DocuSign eSignature REST API v2.1 signing adapter.
  *
- * Completa a integração que já existia pela metade: o fluxo OAuth
- * authorization_code real (troca de token + persistência em
- * OAuthConnectionEntity) já vivia em integrations.controller.ts:283-323 — o que
- * faltava era o adapter de assinatura em si. Este serviço é o espelho do
- * AutentiqueService (mesma persistência, mesmo webhook pipeline, mesmo modelo de
- * eventos/auditoria); NÃO é um segundo sistema de assinatura.
+ * Completes an integration that already existed halfway: the real OAuth
+ * authorization_code flow (token exchange + persistence in
+ * OAuthConnectionEntity) already lived in integrations.controller.ts:283-323 —
+ * what was missing was the signing adapter itself. This service mirrors
+ * AutentiqueService (same persistence, same webhook pipeline, same
+ * event/audit model); it is NOT a second signing system.
  *
- * Contrato verificado contra as fontes oficiais do DocuSign (não deduzido):
+ * Contract verified against DocuSign's official sources (not inferred):
  *   - envelope:   POST {base_uri}/restapi/v2.1/accounts/{accountId}/envelopes
  *                 body { emailSubject, documents[{documentBase64,name,fileExtension,documentId}],
  *                        recipients.signers[{email,name,recipientId,routingOrder}], status:'sent' }
  *                 (docusign/code-examples-node — lib/eSignature/examples/signingViaEmail.js)
  *   - userinfo:   GET {authBaseUrl}/oauth/userinfo → accounts[{account_id,base_uri,is_default}]
  *                 (docusign/code-examples-node — lib/DSAuthCodeGrant.js)
- *   - webhook:    HMAC-SHA256 do RAW body, digest em base64, header
+ *   - webhook:    HMAC-SHA256 of the RAW body, base64 digest, header
  *                 X-DocuSign-Signature-1
  *                 (docusign/connect-node-listener-aws — index.js)
  *
- * Persistência sem migration: reaproveita as colunas genéricas já existentes em
- * ContractEntity (`signing_platform` varchar + `metadata` jsonb). Nenhuma coluna
- * vendor-specific nova (ao contrário de `autentique_doc_id`, que é legado).
+ * Persistence without a migration: reuses the generic columns that already
+ * exist on ContractEntity (`signing_platform` varchar + `metadata` jsonb). No new
+ * vendor-specific column (unlike `autentique_doc_id`, which is legacy).
  */
 
 import {
@@ -45,7 +45,7 @@ import { applyProviderSignature } from '../../contracts/contract-provider-signat
 const PROVIDER          = 'docusign';
 const FETCH_TIMEOUT_MS  = 15_000;
 
-/** Evento do Connect que representa assinatura concluída de fato. */
+/** Connect event that represents a truly completed signature. */
 const EVENT_COMPLETED = 'envelope-completed';
 
 interface DocuSignAccount {
@@ -117,7 +117,7 @@ export class DocuSignService {
     // Boundary Policy Matrix.
   }
 
-  /** Fetch com AbortController — mesma política de timeout do AutentiqueService. */
+  /** Fetch with AbortController — same timeout policy as AutentiqueService. */
   private async timedFetch(tenantId: string, url: string, init: RequestInit): Promise<Response> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -149,7 +149,7 @@ export class DocuSignService {
           updated_at: new Date(),
         } as any);
       }
-    } catch { /* best-effort — nunca derrubar o fluxo principal por telemetria */ }
+    } catch { /* best-effort — never break the main flow because of telemetry */ }
   }
 
   private async recordFailure(tenantId: string, reason: string): Promise<void> {
@@ -167,11 +167,12 @@ export class DocuSignService {
   }
 
   /**
-   * Resolve accountId + base_uri da conta default do utilizador.
+   * Resolves accountId + base_uri of the user's default account.
    *
-   * O callback OAuth existente guarda apenas o token — não o account/base_uri,
-   * que o DocuSign só expõe via /oauth/userinfo. Resolvemos aqui e cacheamos no
-   * metadata da própria OAuthConnection para não repetir a chamada a cada envio.
+   * The existing OAuth callback stores only the token — not the account/base_uri,
+   * which DocuSign exposes only via /oauth/userinfo. We resolve them here and
+   * cache them in the OAuthConnection's own metadata so the call is not repeated
+   * on every send.
    */
   private async resolveAccount(tenantId: string, userId: string, accessToken: string): Promise<DocuSignAccount> {
     const conn = await this.integrationBase.getOAuthConnection(tenantId, userId, PROVIDER);
@@ -222,10 +223,10 @@ export class DocuSignService {
   // ── Public API ─────────────────────────────────────────────────────────────
 
   /**
-   * Cria e envia um envelope DocuSign. Espelha AutentiqueService.sendForSignature:
-   * mesma assinatura de entrada (+ userId, porque o token DocuSign é por
-   * utilizador) e mesmo retorno { documentId }, para o frontend poder tratar os
-   * dois provedores pelo mesmo contrato.
+   * Creates and sends a DocuSign envelope. Mirrors AutentiqueService.sendForSignature:
+   * the same input signature (+ userId, because the DocuSign token is per user)
+   * and the same { documentId } return, so the frontend can handle both
+   * providers through the same contract.
    */
   async sendForSignature(params: {
     tenantId:   string;
@@ -361,8 +362,8 @@ export class DocuSignService {
   }
 
   /**
-   * Webhook DocuSign Connect (JSON/Aggregate). Fail-closed: sem
-   * DOCUSIGN_WEBHOOK_SECRET configurado ou com HMAC inválido, nada é processado.
+   * DocuSign Connect webhook (JSON/Aggregate). Fail-closed: without a configured
+   * DOCUSIGN_WEBHOOK_SECRET or with an invalid HMAC, nothing is processed.
    */
   async handleWebhook(
     payload: any,
@@ -375,7 +376,7 @@ export class DocuSignService {
     if (!expectedSecret) throw new ServiceUnavailableException('DOCUSIGN_WEBHOOK_SECRET not configured');
     if (!signature)      throw new UnauthorizedException('Missing X-DocuSign-Signature-1 header');
 
-    // DocuSign Connect: HMAC-SHA256 sobre o RAW body, digest em base64.
+    // DocuSign Connect: HMAC-SHA256 over the RAW body, base64 digest.
     const valid = this.webhookSvc?.validateHmacSignature({
       rawBody,
       secret:   expectedSecret,
@@ -414,10 +415,10 @@ export class DocuSignService {
         throw new ServiceUnavailableException('DocuSign tenant bootstrap unavailable');
       }
 
-      // Bootstrap read-only: resolve o tenant sem depender do contexto RLS.
-      // Sem coluna vendor-specific — casa pelo provider_doc_id genérico no
-      // metadata. Até dois resultados: envelope ligado a mais de um contrato é
-      // ambíguo e falha fechado (nunca "a primeira linha vence").
+      // Read-only bootstrap: resolves the tenant without depending on the RLS
+      // context. No vendor-specific column — matches the generic provider_doc_id in
+      // metadata. Up to two results: an envelope linked to more than one contract is
+      // ambiguous and fails closed (never "the first row wins").
       const matches = await this.adminContractRepo
         .createQueryBuilder('c')
         .where(`c.signing_platform = :provider AND c.metadata->>'provider_doc_id' = :envelopeId`, {

@@ -24,9 +24,9 @@ describe('IntegrationsController OAuth token boundary', () => {
       } as Record<string, string>)[key]),
     };
 
-    // find-b4201eb2: oauth/exchange é @Public; a gravação precisa rodar dentro
-    // do contexto de tenant (RLS em oauth_connections). O stub registra se
-    // saveOAuthTokens foi chamado DENTRO do contexto e para qual tenant.
+    // find-b4201eb2: oauth/exchange is @Public; the write must run inside the
+    // tenant context (RLS on oauth_connections). The stub records whether
+    // saveOAuthTokens was called INSIDE the context and for which tenant.
     const contextLog: Array<{ tenantId: string | null }> = [];
     let insideContext = false;
     const dbContext = {

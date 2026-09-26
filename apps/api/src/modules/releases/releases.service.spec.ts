@@ -2,9 +2,9 @@ import { ReleaseStatus } from '@music-os-360/types';
 import { ReleasesService } from './releases.service';
 
 /**
- * find-ed7823e9 — prova do estado inicial real: todo lançamento criado nasce
- * em DRAFT, independentemente do que o cliente mande. Qualquer consumidor que
- * trate "recém-criado" como distribuído está errado por construção.
+ * find-ed7823e9 — proof of the real initial state: every created release starts
+ * in DRAFT, regardless of what the client sends. Any consumer that treats
+ * "just created" as distributed is wrong by construction.
  */
 describe('ReleasesService.create — estado inicial', () => {
   function build() {

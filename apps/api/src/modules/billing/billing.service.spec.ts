@@ -539,7 +539,7 @@ describe('BillingService', () => {
       );
       const r = await service.handleWebhook('sig', Buffer.from('{}'));
       expect(r).toEqual({ received: true });
-      // acceptance: "tenant recebe customer/subscription" — via update chain + ativação
+      // acceptance: "the tenant receives customer/subscription" — via the update chain + activation
       expect(mockDs._repo._qb.execute).toHaveBeenCalled();
       expect(enforcement.activateTenant).toHaveBeenCalledWith('tenant-1', 'checkout.session.completed');
     });
@@ -549,7 +549,7 @@ describe('BillingService', () => {
       stripe.webhooks.constructEvent.mockReturnValueOnce(buildEvent({ org_id: 'org-1' }));
       const r = await service.handleWebhook('sig', Buffer.from('{}'));
       expect(r).toEqual({ received: true });
-      // idempotência registra o evento, mas nenhum efeito de provisionamento ocorre
+      // idempotency records the event, but no provisioning effect happens
       expect(enforcement.recordWebhookProcessed).toHaveBeenCalled();
       expect(enforcement.activateTenant).not.toHaveBeenCalled();
     });
@@ -854,8 +854,8 @@ describe('BillingService', () => {
 });
 
 /**
- * find-340abf0b / Gotcha #20 — modo Stripe exposto ao Painel Admin.
- * Nunca retorna a chave; LIVE nunca vira 'production' (é recusada).
+ * find-340abf0b / Gotcha #20 — Stripe mode exposed to the admin panel.
+ * Never returns the key; LIVE never becomes 'production' (it is rejected).
  */
 describe('BillingService.getStripeMode', () => {
   async function build(secret: string | undefined) {

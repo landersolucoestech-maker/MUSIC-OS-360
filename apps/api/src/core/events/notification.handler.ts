@@ -53,9 +53,9 @@ const EVENT_LABELS: Record<string, (p: Record<string, unknown>) => string> = {
   [DOMAIN_EVENTS.INVOICE_STATUS_CHANGED]: (p) => `Nota fiscal "${p['numero'] ?? ''}" -> ${p['newStatus'] ?? ''}`,
   [DOMAIN_EVENTS.INVOICE_ISSUED]: (p) => `Nota fiscal emitida: ${p['numero'] ?? ''}`,
   [DOMAIN_EVENTS.INVOICE_OVERDUE]: (p) => `Nota fiscal vencida: ${p['numero'] ?? ''} (${p['dataVencimento'] ?? ''})`,
-  // find-9e7bc94e: disparar uma regra financeira NÃO cria lançamento — o único
-  // efeito é esta notificação; ela precisa ao menos carregar o valor que a
-  // regra calculou (antes era descartado).
+  // find-9e7bc94e: triggering a financial rule does NOT create a ledger entry —
+  // its only effect is this notification, which must at least carry the amount
+  // the rule computed (it used to be discarded).
   [DOMAIN_EVENTS.FINANCIAL_RULE_TRIGGERED]: (p) => financialRuleLabel(p),
   [DOMAIN_EVENTS.ARTIST_ONBOARDING_STARTED]: (p) => `Onboarding iniciado: ${p['nomeArtistico'] ?? ''}`,
   [DOMAIN_EVENTS.DISTRIBUTION_SETUP_REQUESTED]: (p) => `Setup distribuicao solicitado: artista ${p['artistId'] ?? ''}`,

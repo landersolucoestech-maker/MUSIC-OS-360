@@ -8,31 +8,31 @@ const TYPES = ['album', 'ep', 'single', 'video', 'tour', 'podcast', 'other'] as 
 const STATUSES = Object.values(ProjectStatus) as string[];
 
 /**
- * Contrato canônico (auditoria 2026-07-18): nomes EXATOS do formulário real
- * ativo (ProjetoFormModal.tsx / bulk-import em Projetos.tsx), não os nomes em
- * inglês do DTO anterior (title/type/artistId/budget/currency/startsAt/
- * deadlineAt/releasedAt) — que nunca tinham writer real e, mesmo se
- * aceitos, não batiam com as colunas físicas (title/type/status/description).
+ * Canonical contract (audit 2026-07-18): the EXACT names of the real active form
+ * (ProjetoFormModal.tsx / bulk import in Projetos.tsx), not the English names of
+ * the previous DTO (title/type/artistId/budget/currency/startsAt/deadlineAt/
+ * releasedAt) — which never had a real writer and, even if accepted, did not
+ * match the physical columns (title/type/status/description).
  */
 export class CreateProjectDto {
   @ApiProperty() @IsString() @MaxLength(500) title!: string;
   @ApiProperty({ enum: TYPES }) @IsIn(TYPES) type!: typeof TYPES[number];
   @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
-  // GAP-0001: orçamento de produção nunca negativo — validação autoritativa no servidor.
+  // GAP-0001: the production budget is never negative — authoritative server-side validation.
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) orcamento?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) music_genre?: string;
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
 
-  // Lista de faixas em desenvolvimento — normalizada em project_tracks pelo
-  // service (não é mais serializada em `description`).
+  // Tracks under development — normalized into project_tracks by the service
+  // (no longer serialized into `description`).
   @ApiPropertyOptional({ type: [Object] }) @IsOptional() @IsArray() musicas?: Record<string, unknown>[];
 }
 
 export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   @ApiPropertyOptional({ enum: ProjectStatus }) @IsOptional() @IsIn(STATUSES) status?: string;
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 
