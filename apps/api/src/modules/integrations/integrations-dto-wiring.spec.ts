@@ -9,6 +9,7 @@
  * apenas os services externos mockados. Sem guards (RequireRole não é
  * enforced fora do AppModule real, mesmo padrão do resto do módulo).
  */
+import { DatabaseContextService } from '../../database/database-context.service';
 import 'reflect-metadata';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
@@ -68,6 +69,7 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
         { provide: ConfigService, useValue: { get: jest.fn() } },
         { provide: CacheService, useValue: { get: jest.fn(), set: jest.fn(), delete: jest.fn() } },
         { provide: IntegrationPolicyService, useValue: noop },
+        { provide: DatabaseContextService, useValue: { runInTenantContext: jest.fn((_c: unknown, w: () => unknown) => w()) } },
         IdempotencyStore,
       ],
     }).compile();

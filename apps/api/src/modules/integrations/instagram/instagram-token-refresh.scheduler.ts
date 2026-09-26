@@ -1,6 +1,8 @@
 import { Injectable, Logger, OnApplicationBootstrap, Inject, Optional } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
+import { ADMIN_DATA_SOURCE } from '../../../database/database.tokens';
+import { DatabaseContextService } from '../../../database/database-context.service';
 import { OAuthConnectionEntity } from '../../../database/entities';
 import { InstagramService } from './instagram.service';
 
@@ -20,11 +22,22 @@ export class InstagramTokenRefreshScheduler implements OnApplicationBootstrap {
   private readonly logger = new Logger(InstagramTokenRefreshScheduler.name);
   private readonly repo: Repository<OAuthConnectionEntity> | null = null;
 
+  /**
+   * find-b4201eb2: oauth_connections é FORCE RLS. Com o DATA_SOURCE (role
+   * NOBYPASSRLS) e sem contexto de tenant, a varredura cross-tenant retornava
+   * 0 linhas (provado em Postgres real) e nenhum token era renovado. Padrão
+   * canônico dos schedulers (contract-expiry / invoice-overdue / dunning):
+   * enumerar via ADMIN_DATA_SOURCE (owner, somente leitura) e processar cada
+   * conexão dentro do contexto do seu tenant.
+   */
   constructor(
     @Inject(DATA_SOURCE) @Optional() ds: DataSource | null,
     private readonly instagram: InstagramService,
+    @Inject(ADMIN_DATA_SOURCE) @Optional() adminDs?: DataSource | null,
+    @Optional() private readonly dbContext?: DatabaseContextService,
   ) {
-    if (ds) this.repo = ds.getRepository(OAuthConnectionEntity);
+    const enumDs = adminDs ?? ds;
+    if (enumDs) this.repo = enumDs.getRepository(OAuthConnectionEntity);
   }
 
   onApplicationBootstrap(): void {
@@ -55,7 +68,10 @@ export class InstagramTokenRefreshScheduler implements OnApplicationBootstrap {
     let failed = 0;
     for (const row of rows) {
       try {
-        const ok = await this.instagram.refreshLongLivedToken(row.tenant_id, row.user_id, row.provider);
+        const refresh = () => this.instagram.refreshLongLivedToken(row.tenant_id, row.user_id, row.provider);
+        const ok = this.dbContext
+          ? await this.dbContext.runInTenantContext({ tenantId: row.tenant_id, orgId: null, role: null }, refresh)
+          : await refresh();
         if (ok) refreshed++; else failed++;
       } catch (err) {
         failed++;

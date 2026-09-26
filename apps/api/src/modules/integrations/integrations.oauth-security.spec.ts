@@ -24,6 +24,22 @@ describe('IntegrationsController OAuth token boundary', () => {
       } as Record<string, string>)[key]),
     };
 
+    // find-b4201eb2: oauth/exchange é @Public; a gravação precisa rodar dentro
+    // do contexto de tenant (RLS em oauth_connections). O stub registra se
+    // saveOAuthTokens foi chamado DENTRO do contexto e para qual tenant.
+    const contextLog: Array<{ tenantId: string | null }> = [];
+    let insideContext = false;
+    const dbContext = {
+      runInTenantContext: jest.fn(async (ctx: { tenantId: string | null }, work: () => Promise<unknown>) => {
+        contextLog.push({ tenantId: ctx.tenantId });
+        insideContext = true;
+        try { return await work(); } finally { insideContext = false; }
+      }),
+    };
+    integrationBase.saveOAuthTokens.mockImplementation(async () => {
+      if (!insideContext) throw new Error('saveOAuthTokens chamado fora do contexto de tenant');
+    });
+
     const noop = {};
     const controller = new IntegrationsController(
       noop as never,
@@ -42,9 +58,10 @@ describe('IntegrationsController OAuth token boundary', () => {
       config as never,
       cache as never,
       noop as never,
+      dbContext as never,
     );
 
-    return { controller, cache, integrationBase };
+    return { controller, cache, integrationBase, dbContext, contextLog };
   };
 
   afterEach(() => {
@@ -52,7 +69,7 @@ describe('IntegrationsController OAuth token boundary', () => {
   });
 
   it('persists TikTok tokens server-side and returns no credential', async () => {
-    const { controller, integrationBase, cache } = buildController();
+    const { controller, integrationBase, cache, contextLog } = buildController();
     jest.spyOn(global, 'fetch').mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -81,6 +98,8 @@ describe('IntegrationsController OAuth token boundary', () => {
       expiresIn: 3600,
       scopes: 'user.info.basic,video.list',
     });
+    // gravado dentro do contexto do tenant da entrada server-side do cache
+    expect(contextLog).toEqual([{ tenantId: 'tenant-1' }]);
   });
 
   it('uses the persisted provider alias for Spotify status and disconnect', async () => {

@@ -13,6 +13,7 @@ import { Public }        from '../../core/decorators/public.decorator';
 import { Audit }         from '../../core/interceptors/audit.interceptor';
 import { IdempotencyInterceptor } from '../../core/interceptors/idempotency.interceptor';
 import { CacheService }  from '../../core/cache/cache.service';
+import { DatabaseContextService } from '../../database/database-context.service';
 import { ACRCloudService }    from './acrcloud/acrcloud.service';
 import { AutentiqueService }  from './autentique/autentique.service';
 import { SpotifyService }     from './spotify/spotify.service';
@@ -76,6 +77,9 @@ export class IntegrationsController {
     private readonly config:      ConfigService,
     private readonly cache:       CacheService,
     private readonly integrationPolicy: IntegrationPolicyService,
+    // find-b4201eb2: oauth/exchange é @Public — sem contexto de tenant do
+    // interceptor, a gravação em oauth_connections (FORCE RLS) é negada.
+    private readonly dbContext: DatabaseContextService,
   ) {}
 
   // ─── OAuth init (authenticated) ────────────────────────────────────────────
@@ -163,7 +167,9 @@ export class IntegrationsController {
       expiresIn?: number;
       scopes?: string;
     }): Promise<{ connected: true; platform: string }> => {
-      await this.integrationBase.saveOAuthTokens({
+      // tenantId vem da entrada server-side do cache de exchange (emitida para
+      // um usuário autenticado no passo 1), nunca do corpo desta requisição.
+      await this.dbContext.runInTenantContext({ tenantId: entry.tenantId!, orgId: null, role: null }, () => this.integrationBase.saveOAuthTokens({
         tenantId: entry.tenantId!,
         userId: entry.userId!,
         provider: platform,
@@ -171,7 +177,7 @@ export class IntegrationsController {
         refreshToken: params.refreshToken,
         expiresIn: params.expiresIn,
         scopes: params.scopes,
-      });
+      }));
       return { connected: true, platform };
     };
 

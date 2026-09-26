@@ -9,6 +9,7 @@ import { EncryptionService } from '../../../core/security/encryption.service';
 import { CircuitBreakerRegistry } from '../../../core/resilience/circuit-breaker.registry';
 import { assertAllowedHost, assertSafePathSegment } from '../../../core/resilience/safe-url';
 import { QUEUE_NAMES, SPOTIFY_JOB_NAMES } from '../../../queues/queue.constants';
+import { DatabaseContextService } from '../../../database/database-context.service';
 import { parseSpotifyArtistId } from './spotify-url.util';
 
 const PROVIDER = 'spotify';
@@ -43,6 +44,9 @@ export class SpotifyService {
     private readonly cbRegistry: CircuitBreakerRegistry,
     @Optional()
     @InjectQueue(QUEUE_NAMES.STREAMING_SYNC) private readonly syncQueue: Queue | null,
+    // find-b4201eb2: o callback GET é @Public (sem contexto de tenant); a
+    // gravação em oauth_connections (FORCE RLS) era negada em produção.
+    @Optional() private readonly dbContext?: DatabaseContextService,
   ) {
     if (ds) this.repo = ds.getRepository(OAuthConnectionEntity);
   }
@@ -180,7 +184,13 @@ export class SpotifyService {
     });
 
     const tokens = await tokenRes.json() as any;
-    await this.upsertConnection(tenantId, userId, tokens);
+    // tenantId/userId vêm do state assinado pelo servidor (verifyState), nunca
+    // de parâmetro livre. Reusa o contexto se a chamada já vier autenticada
+    // (POST /spotify/callback); senão abre um para esse tenant.
+    const persist = () => this.upsertConnection(tenantId, userId, tokens);
+    await (this.dbContext
+      ? this.dbContext.ensureTenantContext({ tenantId, orgId: null, role: null }, persist)
+      : persist());
 
     // find-721c845e: 'spotify:sync' não tem handler em nenhum processor da
     // fila streaming-sync (antes caía no default do ExternalDataProcessor e era

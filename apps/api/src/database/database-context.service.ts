@@ -34,7 +34,7 @@ import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DataSource, EntityManager } from 'typeorm';
 import { DATA_SOURCE } from './database.tokens';
-import { runWithTenantManager } from './tenant-als';
+import { runWithTenantManager, currentTenantManager } from './tenant-als';
 
 export interface TenantDbContext {
   tenantId?: string | null;
@@ -68,6 +68,20 @@ export class DatabaseContextService {
    * @param work  receives the EntityManager that MUST be used for the work to be
    *              covered by the session context (when enabled).
    */
+  /**
+   * find-b4201eb2 (classe: escrita/leitura tenant-scoped a partir de caminho
+   * sem contexto — rota @Public, callback OAuth, scheduler). Se já existe um
+   * contexto ativo (requisição autenticada / job já contextualizado), executa
+   * `work` NESSE contexto — `runInTenantContext` não aninha: abriria outra
+   * conexão/transação, quebrando atomicidade com a transação externa. Caso
+   * contrário abre um contexto para `ctx.tenantId`. Com contexto externo de
+   * outro tenant, o WITH CHECK do RLS continua negando a escrita (fail-closed).
+   */
+  async ensureTenantContext<T>(ctx: TenantDbContext, work: () => Promise<T>): Promise<T> {
+    if (currentTenantManager()) return work();
+    return this.runInTenantContext(ctx, () => work());
+  }
+
   async runInTenantContext<T>(
     ctx: TenantDbContext,
     work: (manager: EntityManager) => Promise<T>,
