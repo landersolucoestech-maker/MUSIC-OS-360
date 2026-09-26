@@ -127,7 +127,7 @@ function buildService(overrides: {
   return { service, participantRepo, convRepo, msgRepo, memberRepo, mockWs };
 }
 
-describe('InternalChatService — participant authorization (isolation from Central de Atendimento)', () => {
+describe("InternalChatService — participant authorization (isolation from 'Central de Atendimento')", () => {
   it('participant can list messages in their conversation', async () => {
     const { service } = buildService();
     await expect(service.listMessages(TENANT, ME, CONV_ID)).resolves.toEqual([]);

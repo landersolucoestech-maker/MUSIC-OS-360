@@ -51,7 +51,7 @@ const VALID_JSON = JSON.stringify({
 });
 
 describe('SeoAuditAutomation (ON_DEMAND+STALE_REFRESH: POST .../ai/seo-audit)', () => {
-  it('audita apenas com dados reais já conhecidos, nunca faz fetch HTTP externo', async () => {
+  it('audits only with real, already-known data, never makes an external HTTP fetch', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const campaignBuilder = makeCampaignBuilder();
@@ -66,7 +66,7 @@ describe('SeoAuditAutomation (ON_DEMAND+STALE_REFRESH: POST .../ai/seo-audit)', 
     expect(result.parsed.unavailableMetrics).toEqual(expect.arrayContaining(['ranking de busca']));
   });
 
-  it('ANTI-FABRICAÇÃO: descarta qualquer check marcado como external_measurement pelo provider', async () => {
+  it('ANTI-FABRICATION: discards any check marked as external_measurement by the provider', async () => {
     const withExternal = JSON.stringify({
       auditSummary: 'x',
       checks: [
@@ -87,7 +87,7 @@ describe('SeoAuditAutomation (ON_DEMAND+STALE_REFRESH: POST .../ai/seo-audit)', 
     expect(result.parsed.unavailableMetrics).toEqual(expect.arrayContaining(['ranking de busca', 'Core Web Vitals']));
   });
 
-  it('sem destinationUrl: monta input sem essa evidência', async () => {
+  it('without destinationUrl: builds input without that evidence', async () => {
     const row = { ...STORED_CAMPAIGN, destinationUrl: undefined, utm: undefined };
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
@@ -100,7 +100,7 @@ describe('SeoAuditAutomation (ON_DEMAND+STALE_REFRESH: POST .../ai/seo-audit)', 
     expect(aiCalls[0][0].prompt).toContain('Nenhuma URL de destino configurada');
   });
 
-  it('reaproveita auditoria recente (stale-refresh de 7 dias) sem nova chamada de IA', async () => {
+  it('reuses a recent audit (7-day stale-refresh) without a new AI call', async () => {
     const cachedRun = {
       id: 'run-old',
       finished_at: new Date().toISOString(),
@@ -117,7 +117,7 @@ describe('SeoAuditAutomation (ON_DEMAND+STALE_REFRESH: POST .../ai/seo-audit)', 
     expect(ai.complete).not.toHaveBeenCalled();
   });
 
-  it('falha da IA registra fail e relança', async () => {
+  it('AI failure records fail and rethrows', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const campaignBuilder = makeCampaignBuilder();

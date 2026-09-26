@@ -79,7 +79,7 @@ const PERFORMANCE_JSON = JSON.stringify({
 });
 
 describe('AnalyticsInsightsAutomation.runReportingAnalysis (ON_DEMAND: POST /analytics/reporting-analysis)', () => {
-  it('sintetiza o dashboard real, registra skill_run e retorna o resultado', async () => {
+  it('synthesizes the real dashboard, records skill_run and returns the result', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(REPORTING_JSON);
     const analytics = makeAnalytics();
@@ -100,7 +100,7 @@ describe('AnalyticsInsightsAutomation.runReportingAnalysis (ON_DEMAND: POST /ana
     expect(result.parsed.healthStatus).toBe('healthy');
   });
 
-  it('reaproveita análise recente (stale-refresh de 1 dia) sem nova chamada de IA', async () => {
+  it('reuses a recent analysis (1-day stale-refresh) without a new AI call', async () => {
     const cachedRun = {
       id: 'run-old',
       finished_at: new Date().toISOString(),
@@ -117,7 +117,7 @@ describe('AnalyticsInsightsAutomation.runReportingAnalysis (ON_DEMAND: POST /ana
     expect(ai.complete).not.toHaveBeenCalled();
   });
 
-  it('falha da IA registra fail e relança', async () => {
+  it('AI failure records fail and rethrows', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const analytics = makeAnalytics();
@@ -129,7 +129,7 @@ describe('AnalyticsInsightsAutomation.runReportingAnalysis (ON_DEMAND: POST /ana
 });
 
 describe('AnalyticsInsightsAutomation.runPerformanceReport (ON_DEMAND: POST /analytics/performance-report)', () => {
-  it('ANTI-FABRICAÇÃO: monthlyBreakdown da resposta é sempre a série real, mesmo quando o provider tenta reportar outros valores', async () => {
+  it('ANTI-FABRICATION: the response monthlyBreakdown is always the real series, even when the provider tries to report other values', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(PERFORMANCE_JSON);
     const analytics = makeAnalytics();
@@ -146,7 +146,7 @@ describe('AnalyticsInsightsAutomation.runPerformanceReport (ON_DEMAND: POST /ana
     expect(result.parsed.trend).toBe('growing');
   });
 
-  it('cada chamada gera novamente (sem cache), já que períodos diferentes produzem relatórios diferentes', async () => {
+  it('each call regenerates (no cache), since different periods produce different reports', async () => {
     const skillRun = makeSkillRun({
       id: 'run-old',
       finished_at: new Date().toISOString(),
@@ -162,7 +162,7 @@ describe('AnalyticsInsightsAutomation.runPerformanceReport (ON_DEMAND: POST /ana
     expect(ai.complete).toHaveBeenCalled();
   });
 
-  it('falha da IA registra fail e relança', async () => {
+  it('AI failure records fail and rethrows', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const analytics = makeAnalytics();

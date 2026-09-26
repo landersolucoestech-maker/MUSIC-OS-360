@@ -48,8 +48,8 @@ function fakeRefreshQueue(overrides: Partial<{ getRefreshState: () => Promise<st
   } as unknown as MarketBenchmarkRefreshQueueService;
 }
 
-describe('MarketBenchmarkService.computeAndPersist (worker path — matemática inalterada da Fase 3.1)', () => {
-  it('coorte externa real >= mínimo, mesmo país do artista-alvo: fallbackLevel=1, status OK', async () => {
+describe('MarketBenchmarkService.computeAndPersist (worker path — Phase 3.1 math unchanged)', () => {
+  it('real external cohort >= minimum, same country as the target artist: fallbackLevel=1, status OK', async () => {
     const { ds } = buildFakeDs([ownRow('spotify', { monthly_listeners: 5000 })]);
     const candidates = candidatePool(MINIMUM_COHORT_SIZE, 'BR');
     const metrics = candidates.map((c, i) => candidateMetric(c.uuid, 'spotify.monthly_listeners', 1000 + i * 100));
@@ -62,7 +62,7 @@ describe('MarketBenchmarkService.computeAndPersist (worker path — matemática 
     expect(result.cohortDefinition.countryFilter).toBe('BR');
   });
 
-  it('país desconhecido/coorte insuficiente no país: cai para fallbackLevel=2', async () => {
+  it('unknown country/insufficient cohort in the country: falls back to fallbackLevel=2', async () => {
     const { ds } = buildFakeDs([ownRow('spotify', { monthly_listeners: 5000 })]);
     const candidates = [...candidatePool(3, 'BR'), ...candidatePool(MINIMUM_COHORT_SIZE, 'US')];
     const metrics = candidates.map((c, i) => candidateMetric(c.uuid, 'spotify.monthly_listeners', 1000 + i * 50));
@@ -74,7 +74,7 @@ describe('MarketBenchmarkService.computeAndPersist (worker path — matemática 
     expect(result.sampleSize).toBe(candidates.length);
   });
 
-  it('coorte insuficiente: INSUFFICIENT_MARKET_DATA, nunca percentil fictício', async () => {
+  it('insufficient cohort: INSUFFICIENT_MARKET_DATA, never a fictitious percentile', async () => {
     const { ds } = buildFakeDs([ownRow('spotify', { monthly_listeners: 5000 })]);
     const candidates = candidatePool(3, null);
     const metrics = candidates.map((c, i) => candidateMetric(c.uuid, 'spotify.monthly_listeners', 1000 + i));
@@ -86,7 +86,7 @@ describe('MarketBenchmarkService.computeAndPersist (worker path — matemática 
     expect(result.score).toBeNull();
   });
 
-  it('persiste um snapshot append-only por refresh', async () => {
+  it('persists an append-only snapshot per refresh', async () => {
     const inserted: unknown[] = [];
     const { ds } = buildFakeDs([ownRow('spotify', { monthly_listeners: 5000 })], null, inserted);
     const candidates = candidatePool(MINIMUM_COHORT_SIZE, 'BR');
@@ -98,7 +98,7 @@ describe('MarketBenchmarkService.computeAndPersist (worker path — matemática 
     expect(inserted).toHaveLength(1);
   });
 
-  it('SNAPSHOT DEDUP (item 24/25): resultado idêntico ao último snapshot não grava linha nova', async () => {
+  it('SNAPSHOT DEDUP (item 24/25): a result identical to the last snapshot does not write a new row', async () => {
     const inserted: unknown[] = [];
     const candidates = candidatePool(MINIMUM_COHORT_SIZE, 'BR');
     const metrics = candidates.map((c, i) => candidateMetric(c.uuid, 'spotify.monthly_listeners', 1000 + i));
@@ -110,7 +110,7 @@ describe('MarketBenchmarkService.computeAndPersist (worker path — matemática 
     const { result: firstResult } = await service1.computeAndPersist('t1', 'a1', 'target-uuid');
     expect(inserted).toHaveLength(1);
 
-    // Segunda rodada: mesmo resultado exato — findOne deve devolver o snapshot recém-gravado.
+    // Second round: exact same result — findOne must return the just-written snapshot.
     const lastRow = snapshotRow({
       engine_version: firstResult.engineVersion, status: firstResult.status,
       score: firstResult.score != null ? firstResult.score.toFixed(2) : null, label: firstResult.label,
@@ -119,10 +119,10 @@ describe('MarketBenchmarkService.computeAndPersist (worker path — matemática 
     const { ds: ds2 } = buildFakeDs([ownRow('spotify', { monthly_listeners: 5000 })], lastRow, inserted);
     const service2 = new MarketBenchmarkService(ds2, soundcharts, fakeReferenceCache(candidates, metrics), fakeRefreshQueue());
     await service2.computeAndPersist('t1', 'a1', 'target-uuid');
-    expect(inserted).toHaveLength(1); // ainda 1 — não duplicou
+    expect(inserted).toHaveLength(1); // still 1 — did not duplicate
   });
 
-  it('CROSS-TENANT: coorte externa nunca carrega tenant_id — dado público compartilhável', async () => {
+  it('CROSS-TENANT: external cohort never carries tenant_id — shareable public data', async () => {
     const { ds } = buildFakeDs([ownRow('spotify', { monthly_listeners: 5000 })]);
     const candidates = candidatePool(MINIMUM_COHORT_SIZE, 'BR');
     const metrics = candidates.map((c, i) => candidateMetric(c.uuid, 'spotify.monthly_listeners', 1000 + i));
@@ -134,8 +134,8 @@ describe('MarketBenchmarkService.computeAndPersist (worker path — matemática 
   });
 });
 
-describe('MarketBenchmarkService.getStatus (read path — item 26: sempre rápido, sem chamada Soundcharts)', () => {
-  it('sem UUID Soundcharts resolvido: READY instantâneo com resultado vazio, nunca enfileira refresh', async () => {
+describe('MarketBenchmarkService.getStatus (read path — item 26: always fast, no Soundcharts call)', () => {
+  it('no resolved Soundcharts UUID: instant READY with empty result, never enqueues a refresh', async () => {
     const { ds } = buildFakeDs([]);
     const soundcharts = {} as unknown as SoundchartsService;
     const referenceCache = { ensureFreshCohort: jest.fn() } as unknown as MarketReferenceCacheService;
@@ -149,7 +149,7 @@ describe('MarketBenchmarkService.getStatus (read path — item 26: sempre rápid
     expect(referenceCache.ensureFreshCohort).not.toHaveBeenCalled();
   });
 
-  it('snapshot fresco (dentro do TTL, mesma engine_version): READY, serve na hora, NUNCA chama Soundcharts', async () => {
+  it('fresh snapshot (within TTL, same engine_version): READY, serves immediately, NEVER calls Soundcharts', async () => {
     const { ds } = buildFakeDs([ownRow('spotify')], snapshotRow({ calculated_at: new Date() }));
     const soundcharts = { getArtistCountryCode: jest.fn() } as unknown as SoundchartsService;
     const referenceCache = { ensureFreshCohort: jest.fn() } as unknown as MarketReferenceCacheService;
@@ -164,7 +164,7 @@ describe('MarketBenchmarkService.getStatus (read path — item 26: sempre rápid
     expect(soundcharts.getArtistCountryCode).not.toHaveBeenCalled();
   });
 
-  it('snapshot stale (fora do TTL): STALE, serve o último resultado E enfileira refresh em background', async () => {
+  it('stale snapshot (outside the TTL): STALE, serves the last result AND enqueues a background refresh', async () => {
     const staleDate = new Date(Date.now() - 48 * 60 * 60 * 1000);
     const { ds } = buildFakeDs([ownRow('spotify')], snapshotRow({ calculated_at: staleDate }));
     const soundcharts = {} as unknown as SoundchartsService;
@@ -174,13 +174,13 @@ describe('MarketBenchmarkService.getStatus (read path — item 26: sempre rápid
 
     const status = await service.getStatus('t1', 'a1');
     expect(status.readStatus).toBe('STALE');
-    expect(status.result?.score).toBe(77.2); // último resultado, não null
+    expect(status.result?.score).toBe(77.2); // last result, not null
     expect(status.staleSince).toBe(staleDate.toISOString());
     expect(refreshQueue.enqueueRefresh).toHaveBeenCalledWith('t1', 'a1', 'target-uuid', MARKET_BENCHMARK_ENGINE_VERSION, 'stale');
-    expect(referenceCache.ensureFreshCohort).not.toHaveBeenCalled(); // getStatus NUNCA calcula direto
+    expect(referenceCache.ensureFreshCohort).not.toHaveBeenCalled(); // getStatus NEVER computes directly
   });
 
-  it('engine_version mudou desde o último snapshot: tratado como STALE (nunca apresentado como resultado da versão atual)', async () => {
+  it('engine_version changed since the last snapshot: treated as STALE (never presented as the current version\'s result)', async () => {
     const { ds } = buildFakeDs([ownRow('spotify')], snapshotRow({ engine_version: '1.0.0', calculated_at: new Date() }));
     const soundcharts = {} as unknown as SoundchartsService;
     const refreshQueue = fakeRefreshQueue();
@@ -188,11 +188,11 @@ describe('MarketBenchmarkService.getStatus (read path — item 26: sempre rápid
 
     const status = await service.getStatus('t1', 'a1');
     expect(status.readStatus).toBe('STALE');
-    expect(status.result?.engineVersion).toBe('1.0.0'); // preserva a versão antiga no resultado servido — nunca finge ser a atual
+    expect(status.result?.engineVersion).toBe('1.0.0'); // preserves the old version in the served result — never pretends it's current
     expect(refreshQueue.enqueueRefresh).toHaveBeenCalled();
   });
 
-  it('nenhum snapshot ainda: REFRESHING, enfileira refresh, result=null (nunca calcula na hora)', async () => {
+  it('no snapshot yet: REFRESHING, enqueues a refresh, result=null (never computes on the spot)', async () => {
     const { ds } = buildFakeDs([ownRow('spotify')], null);
     const soundcharts = {} as unknown as SoundchartsService;
     const referenceCache = { ensureFreshCohort: jest.fn() } as unknown as MarketReferenceCacheService;
@@ -206,7 +206,7 @@ describe('MarketBenchmarkService.getStatus (read path — item 26: sempre rápid
     expect(referenceCache.ensureFreshCohort).not.toHaveBeenCalled();
   });
 
-  it('CONCORRÊNCIA (item 8): refresh já em andamento (job active) e sem snapshot: REFRESHING, NÃO reenfileira outro job', async () => {
+  it('CONCURRENCY (item 8): refresh already in progress (job active) and no snapshot: REFRESHING, does NOT re-enqueue another job', async () => {
     const { ds } = buildFakeDs([ownRow('spotify')], null);
     const soundcharts = {} as unknown as SoundchartsService;
     const refreshQueue = fakeRefreshQueue({ getRefreshState: jest.fn().mockResolvedValue('active') });
@@ -217,7 +217,7 @@ describe('MarketBenchmarkService.getStatus (read path — item 26: sempre rápid
     expect(refreshQueue.enqueueRefresh).not.toHaveBeenCalled();
   });
 
-  it('CONCORRÊNCIA: refresh já em andamento (job waiting) e HÁ snapshot antigo: STALE servido, sem reenfileirar', async () => {
+  it('CONCURRENCY: refresh already in progress (job waiting) and an old snapshot EXISTS: STALE served, no re-enqueue', async () => {
     const { ds } = buildFakeDs([ownRow('spotify')], snapshotRow({ calculated_at: new Date(Date.now() - 48 * 60 * 60 * 1000) }));
     const soundcharts = {} as unknown as SoundchartsService;
     const refreshQueue = fakeRefreshQueue({ getRefreshState: jest.fn().mockResolvedValue('waiting') });
@@ -229,7 +229,7 @@ describe('MarketBenchmarkService.getStatus (read path — item 26: sempre rápid
     expect(refreshQueue.enqueueRefresh).not.toHaveBeenCalled();
   });
 
-  it('fila indisponível (Redis off) e sem snapshot: INTEGRATION_UNAVAILABLE', async () => {
+  it('queue unavailable (Redis off) and no snapshot: INTEGRATION_UNAVAILABLE', async () => {
     const { ds } = buildFakeDs([ownRow('spotify')], null);
     const soundcharts = {} as unknown as SoundchartsService;
     const refreshQueue = fakeRefreshQueue({ enqueueRefresh: jest.fn().mockResolvedValue('unavailable') });
@@ -240,7 +240,7 @@ describe('MarketBenchmarkService.getStatus (read path — item 26: sempre rápid
     expect(status.result).toBeNull();
   });
 
-  it('falha ao enfileirar (erro inesperado) e sem snapshot: ERROR', async () => {
+  it('failure to enqueue (unexpected error) and no snapshot: ERROR', async () => {
     const { ds } = buildFakeDs([ownRow('spotify')], null);
     const soundcharts = {} as unknown as SoundchartsService;
     const refreshQueue = fakeRefreshQueue({ enqueueRefresh: jest.fn().mockResolvedValue('error') });
@@ -250,7 +250,7 @@ describe('MarketBenchmarkService.getStatus (read path — item 26: sempre rápid
     expect(status.readStatus).toBe('ERROR');
   });
 
-  it('fila indisponível MAS já existe snapshot: STALE servido (nunca ERROR quando há algo pra mostrar)', async () => {
+  it('queue unavailable BUT a snapshot already exists: STALE served (never ERROR when there is something to show)', async () => {
     const { ds } = buildFakeDs([ownRow('spotify')], snapshotRow({ calculated_at: new Date(Date.now() - 48 * 60 * 60 * 1000) }));
     const soundcharts = {} as unknown as SoundchartsService;
     const refreshQueue = fakeRefreshQueue({ enqueueRefresh: jest.fn().mockResolvedValue('unavailable') });

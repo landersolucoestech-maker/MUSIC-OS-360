@@ -1,15 +1,15 @@
 /**
  * external-data-exchange.service.spec.ts
  *
- * Fase 5 / C6: buildSocietyPayload() (privado) monta metadata.contributors/
- * rightHolders a partir de shares — só shares elegíveis para registro
- * (share_type IS NULL, não soft-deleted) podem entrar; shares financeiras/
- * pendentes nunca são tratadas como titular/autor numa submissão externa.
+ * Phase 5 / C6: buildSocietyPayload() (private) builds metadata.contributors/
+ * rightHolders from shares — only shares eligible for registration
+ * (share_type IS NULL, not soft-deleted) may be included; financial/pending
+ * shares are never treated as a rights holder/author in an external submission.
  *
- * O método é privado e chamado por submitSociety(), que também orquestra
- * provider/eventos/persistResult — irrelevante para o que o C6 mudou aqui.
- * Testamos buildSocietyPayload() isoladamente via cast, para não precisar
- * mockar toda a orquestração só para provar o filtro de elegibilidade.
+ * The method is private and called by submitSociety(), which also orchestrates
+ * provider/events/persistResult — irrelevant to what C6 changed here.
+ * We test buildSocietyPayload() in isolation via a cast, to avoid having to
+ * mock the entire orchestration just to prove the eligibility filter.
  *
  * find-bc7c20a6 (CRITICAL): ingestWebhook used to resolve the target tenant
  * from a caller-supplied `tenantId` param (itself sourced from the
@@ -120,10 +120,10 @@ function makeServiceWithWebhookRepo(
   return { svc, webhookEventsRepo: ds.webhookEventsRepo };
 }
 
-describe('ExternalDataExchangeService.buildSocietyPayload — elegibilidade de shares (Fase 5 / C6)', () => {
+describe('ExternalDataExchangeService.buildSocietyPayload — share eligibility (Fase 5 / C6)', () => {
   const work = { id: 'w1', title: 'Obra', compositores: null, compositor: null, co_compositores: null, editora: null, detentores: null, music_genre: null, isrc: null, iswc: null };
 
-  it('contributors/rightHolders só incluem shares elegíveis (share_type null)', async () => {
+  it('contributors/rightHolders only include eligible shares (share_type null)', async () => {
     const svc = makeService({
       works: [work],
       shares: [
@@ -143,7 +143,7 @@ describe('ExternalDataExchangeService.buildSocietyPayload — elegibilidade de s
     expect(metadata.rightHolders[0].name).toBe('Autor Elegível');
   });
 
-  it('nenhuma share elegível quando todas são financeiras/pendentes', async () => {
+  it('no share is eligible when all are financial/pending', async () => {
     const svc = makeService({
       works: [work],
       shares: [{ holder_name: 'Financeiro', party_role: 'autor', percentage: '100', holder_document: null, status: 'ativo', share_type: 'pendente' }],
@@ -159,7 +159,7 @@ describe('ExternalDataExchangeService.buildSocietyPayload — elegibilidade de s
 });
 
 describe('ExternalDataExchangeService.ingestWebhook — find-bc7c20a6: tenant resolved server-side, never from caller input', () => {
-  it('rejeita um webhook cujo submission_id não corresponde a nenhuma submissão registrada (não existe header para "atacar" mais — mesmo assim, sem submission conhecida, nada é aceito)', async () => {
+  it('rejects a webhook whose submission_id does not match any registered submission (there is no header left to "attack" — either way, with no known submission, nothing is accepted)', async () => {
     const registry = makeRegistry({ providerEventId: 'evt-1', submissionId: 'sub-unknown' });
     const svc = makeService({ submissions: [{ provider: 'abramus', submission_id: 'sub-real', tenant_id: 'tenant-real' }] }, makeTenantResolver(), registry);
 
@@ -168,7 +168,7 @@ describe('ExternalDataExchangeService.ingestWebhook — find-bc7c20a6: tenant re
     ).rejects.toThrow('Webhook does not reference a known submission');
   });
 
-  it('rejeita um webhook sem submission_id algum no payload normalizado (não pode ser atribuído a nenhum tenant)', async () => {
+  it('rejects a webhook with no submission_id at all in the normalized payload (cannot be attributed to any tenant)', async () => {
     const registry = makeRegistry({ providerEventId: 'evt-1' }); // no submissionId
     const svc = makeService({}, makeTenantResolver(), registry);
 
@@ -177,7 +177,7 @@ describe('ExternalDataExchangeService.ingestWebhook — find-bc7c20a6: tenant re
     ).rejects.toThrow('Webhook does not reference a known submission');
   });
 
-  it('resolve o tenant correto a partir da submissão registrada — nunca de um valor fornecido pelo chamador', async () => {
+  it('resolves the correct tenant from the registered submission — never from a caller-supplied value', async () => {
     const registry = makeRegistry({ providerEventId: 'evt-1', submissionId: 'sub-real', entityType: 'artist', entityId: 'artist-1' });
     const resolver = makeTenantResolver(true);
     const svc = makeService(
@@ -198,7 +198,7 @@ describe('ExternalDataExchangeService.ingestWebhook — find-bc7c20a6: tenant re
     expect(resolver.resolveTenant).toHaveBeenCalledWith('tenant-real');
   });
 
-  it('tenant inativo: rejeita ANTES de qualquer escrita em webhookEvents', async () => {
+  it('inactive tenant: rejects BEFORE any write to webhookEvents', async () => {
     const registry = makeRegistry({ providerEventId: 'evt-1', submissionId: 'sub-real' });
     const resolver = makeTenantResolver(false); // resolveTenant → null
     const svc = makeService(
@@ -214,7 +214,7 @@ describe('ExternalDataExchangeService.ingestWebhook — find-bc7c20a6: tenant re
     expect(resolver.resolveTenant).toHaveBeenCalledWith('tenant-1');
   });
 
-  it('find-e5ca49de: sem secret configurado, rejeita fail-closed antes de qualquer resolução de tenant', async () => {
+  it('find-e5ca49de: with no secret configured, fails closed before any tenant resolution', async () => {
     const registry = makeRegistry({ providerEventId: 'evt-1', submissionId: 'sub-real' });
     const resolver = makeTenantResolver();
     const svc = makeService(
@@ -230,7 +230,7 @@ describe('ExternalDataExchangeService.ingestWebhook — find-bc7c20a6: tenant re
     expect(resolver.resolveTenant).not.toHaveBeenCalled();
   });
 
-  it('find-ee81e34d: um external_id já visto mas ainda não PROCESSED é reprocessado, não tratado como duplicata permanente', async () => {
+  it('find-ee81e34d: an already-seen external_id that is not yet PROCESSED is reprocessed, not treated as a permanent duplicate', async () => {
     const registry = makeRegistry({ providerEventId: 'evt-1', submissionId: 'sub-real', raw: {} });
     const existingRow = {
       id: 'event-1', external_id: 'abramus:evt-1', status: WebhookEventStatus.FAILED, retry_count: 1,
@@ -255,7 +255,7 @@ describe('ExternalDataExchangeService.ingestWebhook — find-bc7c20a6: tenant re
     expect(webhookEventsRepo._rows.get('event-1')).toMatchObject({ status: WebhookEventStatus.PROCESSED });
   });
 
-  it('find-ee81e34d: um external_id já PROCESSED continua sendo tratado como duplicata verdadeira', async () => {
+  it('find-ee81e34d: an already-PROCESSED external_id continues to be treated as a true duplicate', async () => {
     const registry = makeRegistry({ providerEventId: 'evt-1', submissionId: 'sub-real' });
     const existingRow = {
       id: 'event-1', external_id: 'abramus:evt-1', status: WebhookEventStatus.PROCESSED, retry_count: 0,

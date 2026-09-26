@@ -28,7 +28,7 @@ function env(key: string): string {
     .replace(/^["']|["']$/g, '');
 }
 
-describe('FASE 3N - runtime tenant context (PostgreSQL real)', () => {
+describe('FASE 3N - runtime tenant context (real PostgreSQL)', () => {
   let owner: DataSource;
   let appReal: DataSource;
   let app: DataSource;
@@ -82,7 +82,7 @@ describe('FASE 3N - runtime tenant context (PostgreSQL real)', () => {
     if (appReal?.isInitialized) await appReal.destroy();
   });
 
-  it('executa start, log, complete e fail de skill com tenant e role corretos', async () => {
+  it('runs start, log, complete and fail of a skill with correct tenant and role', async () => {
     const evidence = await dbContext.runInTenantContext(
       { tenantId: TENANT_A, orgId: null, role: 'system' },
       async () => {
@@ -125,7 +125,7 @@ describe('FASE 3N - runtime tenant context (PostgreSQL real)', () => {
     console.log('FASE3N_SKILL_EVIDENCE', evidence);
   });
 
-  it('registra falha pre-start em uma nova transacao tenant-scoped', async () => {
+  it('records a pre-start failure in a new tenant-scoped transaction', async () => {
     await runNativeSkillAutomation({
       ds: app,
       dbContext,
@@ -169,7 +169,7 @@ describe('FASE 3N - runtime tenant context (PostgreSQL real)', () => {
     ]);
   });
 
-  it('executa AssetLinkingHandler somente depois de abrir o tenant context', async () => {
+  it('runs AssetLinkingHandler only after opening the tenant context', async () => {
     let contextEvidence: { tenant_id: string; role: string } | null = null;
     const assetLinking = {
       processUpload: jest.fn(async () => {
@@ -194,7 +194,7 @@ describe('FASE 3N - runtime tenant context (PostgreSQL real)', () => {
     console.log('FASE3P_ASSET_LINKING_EVIDENCE', contextEvidence);
   });
 
-  it('executa workflow listener, start, logAction e finish no contexto do evento', async () => {
+  it('runs workflow listener, start, logAction and finish in the event context', async () => {
     const automation = new WorkflowAutomationService(
       app,
       events as never,
@@ -241,7 +241,7 @@ describe('FASE 3N - runtime tenant context (PostgreSQL real)', () => {
     console.log('FASE3N_WORKFLOW_EVIDENCE', contextEvidence);
   });
 
-  it('resolve webhook Autentique por OWNER read-only e executa negócio com tenant context', async () => {
+  it('resolves Autentique webhook via OWNER read-only and runs business logic with tenant context', async () => {
     await owner.query(
       `INSERT INTO contracts (tenant_id, title, type, status, autentique_doc_id)
        VALUES ($1, $2, 'teste', 'awaiting_signature', $3)`,

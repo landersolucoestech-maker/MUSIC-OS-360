@@ -41,7 +41,7 @@ describe('RateLimitGuard categories', () => {
     ['/api/v1/uploads/presign', 'upload'],
     ['/api/v1/billing/webhook/stripe', 'webhook'],
     ['/api/v1/artists', 'api'],
-  ])('aplica categoria %s -> %s', async (path, category) => {
+  ])('applies category %s -> %s', async (path, category) => {
     const service = { check: jest.fn().mockResolvedValue(undefined) };
     const guard = new RateLimitGuard(service as unknown as RateLimitService);
 
@@ -61,7 +61,7 @@ describe('RateLimitGuard — find-fd6b5b2b: client IP cannot be spoofed via forw
     else process.env['RATE_LIMIT_TRUST_PROXY'] = ORIGINAL_ENV;
   });
 
-  it('sem RATE_LIMIT_TRUST_PROXY: duas requisições da mesma conexão com X-Forwarded-For diferentes caem no mesmo bucket (spoofing não funciona mais)', async () => {
+  it('without RATE_LIMIT_TRUST_PROXY: two requests from the same connection with different X-Forwarded-For fall into the same bucket (spoofing no longer works)', async () => {
     delete process.env['RATE_LIMIT_TRUST_PROXY'];
     const service = { check: jest.fn().mockResolvedValue(undefined) };
     const guard = new RateLimitGuard(service as unknown as RateLimitService);
@@ -77,7 +77,7 @@ describe('RateLimitGuard — find-fd6b5b2b: client IP cannot be spoofed via forw
     void secondIdentifier;
   });
 
-  it('sem RATE_LIMIT_TRUST_PROXY: CF-Connecting-IP e X-Real-IP também são ignorados, mesma conexão sempre no mesmo bucket', async () => {
+  it('without RATE_LIMIT_TRUST_PROXY: CF-Connecting-IP and X-Real-IP are also ignored, same connection always in the same bucket', async () => {
     delete process.env['RATE_LIMIT_TRUST_PROXY'];
     const service = { check: jest.fn().mockResolvedValue(undefined) };
     const guard = new RateLimitGuard(service as unknown as RateLimitService);
@@ -89,7 +89,7 @@ describe('RateLimitGuard — find-fd6b5b2b: client IP cannot be spoofed via forw
     expect(service.check.mock.calls[0]![1]).not.toContain('8.8.8.8');
   });
 
-  it('com RATE_LIMIT_TRUST_PROXY=true: volta a honrar CF-Connecting-IP (opt-in explícito de operador)', async () => {
+  it('with RATE_LIMIT_TRUST_PROXY=true: honors CF-Connecting-IP again (explicit operator opt-in)', async () => {
     process.env['RATE_LIMIT_TRUST_PROXY'] = 'true';
     const service = { check: jest.fn().mockResolvedValue(undefined) };
     const guard = new RateLimitGuard(service as unknown as RateLimitService);

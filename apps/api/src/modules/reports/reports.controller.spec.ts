@@ -1,16 +1,16 @@
 import { BadRequestException } from '@nestjs/common';
 import { parseExportParams } from './reports.controller';
 
-describe('parseExportParams — contrato XLSX sem paginação', () => {
-  it('usa xlsx como formato padrão', () => {
+describe('parseExportParams — XLSX contract without pagination', () => {
+  it('uses xlsx as the default format', () => {
     expect(parseExportParams({}).format).toBe('xlsx');
   });
 
-  it('aceita xlsx explícito', () => {
+  it('accepts explicit xlsx', () => {
     expect(parseExportParams({ format: 'xlsx' }).format).toBe('xlsx');
   });
 
-  it('rejeita qualquer formato não implementado com código estável', () => {
+  it('rejects any unimplemented format with a stable error code', () => {
     for (const format of ['xml', 'pdf', 'txt']) {
       try {
         parseExportParams({ format });
@@ -25,7 +25,7 @@ describe('parseExportParams — contrato XLSX sem paginação', () => {
     }
   });
 
-  it('deduplica colunas, preserva filtros seguros e ignora paginação legada', () => {
+  it('deduplicates columns, preserves safe filters and ignores legacy pagination', () => {
     const params = parseExportParams({
       format: 'xlsx',
       columns: 'a, b ,a,c',
@@ -43,7 +43,7 @@ describe('parseExportParams — contrato XLSX sem paginação', () => {
     expect(params).not.toHaveProperty('pageSize');
   });
 
-  it('descarta chaves inseguras de filtro', () => {
+  it('discards unsafe filter keys', () => {
     const query = Object.create(null) as Record<string, string>;
     query.status = 'ativo';
     query.__proto__ = 'contaminado';

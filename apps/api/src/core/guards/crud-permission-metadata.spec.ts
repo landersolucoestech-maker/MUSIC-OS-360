@@ -78,7 +78,7 @@ const expectedRoutes: ExpectedRoute[] = [
   { controller: ClientsController, methodName: 'create', httpMethod: RequestMethod.POST, path: '', role: 'editor', permission: 'client:create' },
   { controller: ClientsController, methodName: 'update', httpMethod: RequestMethod.PATCH, path: ':id', role: 'editor', permission: 'client:update' },
   { controller: ClientsController, methodName: 'remove', httpMethod: RequestMethod.DELETE, path: ':id', role: 'manager', permission: 'client:delete' },
-  // Parte 80 — timeline, contratos vinculados e anexos (sub-rotas de clients).
+  // Part 80 — timeline, linked contracts and attachments (clients sub-routes).
   { controller: ClientsController, methodName: 'getTimeline', httpMethod: RequestMethod.GET, path: ':id/timeline', role: 'viewer', permission: 'client:read' },
   { controller: ClientsController, methodName: 'addTimelineEntry', httpMethod: RequestMethod.POST, path: ':id/timeline', role: 'editor', permission: 'client:update' },
   { controller: ClientsController, methodName: 'getContracts', httpMethod: RequestMethod.GET, path: ':id/contracts', role: 'viewer', permission: 'client:read' },
@@ -126,7 +126,7 @@ const expectedRoutes: ExpectedRoute[] = [
   { controller: InventoryController, methodName: 'remove', httpMethod: RequestMethod.DELETE, path: ':id', role: 'manager', permission: 'inventory:delete' },
 
   { controller: LicensingController, methodName: 'list', httpMethod: RequestMethod.GET, path: '', role: 'viewer', permission: 'license:read' },
-  // Task H: contagem + soma de valor por status sobre o tenant inteiro (KPIs exatos).
+  // Task H: count + sum of value by status across the entire tenant (exact KPIs).
   { controller: LicensingController, methodName: 'stats', httpMethod: RequestMethod.GET, path: 'stats', role: 'viewer', permission: 'license:read' },
   { controller: LicensingController, methodName: 'findById', httpMethod: RequestMethod.GET, path: ':id', role: 'viewer', permission: 'license:read' },
   { controller: LicensingController, methodName: 'create', httpMethod: RequestMethod.POST, path: '', role: 'editor', permission: 'license:create' },
@@ -173,16 +173,16 @@ const expectedRoutes: ExpectedRoute[] = [
   { controller: InvoicesController, methodName: 'update', httpMethod: RequestMethod.PATCH, path: ':id', role: 'financial', permission: 'invoice:update' },
   { controller: InvoicesController, methodName: 'remove', httpMethod: RequestMethod.DELETE, path: ':id', role: 'manager', permission: 'invoice:cancel' },
 
-  // FASE 6.6 — Contracts (DELETE tem semântica de cancelamento → contract:cancel, não delete).
+  // FASE 6.6 — Contracts (DELETE has cancellation semantics → contract:cancel, not delete).
   { controller: ContractsController, methodName: 'list', httpMethod: RequestMethod.GET, path: '', role: 'viewer', permission: 'contract:read' },
-  // Task H: contagem + soma de valor por status sobre o tenant inteiro (KPIs exatos).
+  // Task H: count + sum of value by status across the entire tenant (exact KPIs).
   { controller: ContractsController, methodName: 'stats', httpMethod: RequestMethod.GET, path: 'stats', role: 'viewer', permission: 'contract:read' },
   { controller: ContractsController, methodName: 'findById', httpMethod: RequestMethod.GET, path: ':id', role: 'viewer', permission: 'contract:read' },
   { controller: ContractsController, methodName: 'create', httpMethod: RequestMethod.POST, path: '', role: 'editor', permission: 'contract:create' },
   { controller: ContractsController, methodName: 'update', httpMethod: RequestMethod.PATCH, path: ':id', role: 'editor', permission: 'contract:update' },
   { controller: ContractsController, methodName: 'remove', httpMethod: RequestMethod.DELETE, path: ':id', role: 'manager', permission: 'contract:cancel' },
 
-  // FASE 6.6 — Contract Templates (DELETE tem semântica de arquivamento → contract_template:archive).
+  // FASE 6.6 — Contract Templates (DELETE has archiving semantics → contract_template:archive).
   { controller: ContractTemplatesController, methodName: 'list', httpMethod: RequestMethod.GET, path: '', role: 'viewer', permission: 'contract_template:read' },
   { controller: ContractTemplatesController, methodName: 'findById', httpMethod: RequestMethod.GET, path: ':id', role: 'viewer', permission: 'contract_template:read' },
   { controller: ContractTemplatesController, methodName: 'create', httpMethod: RequestMethod.POST, path: '', role: 'editor', permission: 'contract_template:create' },
@@ -239,16 +239,16 @@ describe('FASE 6.1 CRUD controller permission metadata', () => {
     ]);
   });
 
-  it('FASE 6.6: contract/template delete routes use cancel/archive (não delete nem update)', () => {
-    // contracts DELETE = "Cancelar contrato (soft delete auditável)" → contract:cancel
+  it('FASE 6.6: contract/template delete routes use cancel/archive (not delete or update)', () => {
+    // contracts DELETE means "Cancelar contrato (soft delete auditável)" → contract:cancel
     expect(Reflect.getMetadata(PERMISSIONS_KEY, ContractsController.prototype.remove)).toEqual([
       'contract:cancel',
     ]);
-    // contract-templates DELETE = "Arquivar template" → contract_template:archive
+    // contract-templates DELETE means "Arquivar template" → contract_template:archive
     expect(Reflect.getMetadata(PERMISSIONS_KEY, ContractTemplatesController.prototype.remove)).toEqual([
       'contract_template:archive',
     ]);
-    // garante que NÃO mascaram a semântica como update/delete
+    // ensures they do NOT mask the semantics as update/delete
     expect(Reflect.getMetadata(PERMISSIONS_KEY, ContractsController.prototype.remove)).not.toContain('contract:update');
     expect(Reflect.getMetadata(PERMISSIONS_KEY, ContractsController.prototype.remove)).not.toContain('contract:delete');
   });

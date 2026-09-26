@@ -1,17 +1,17 @@
 /**
  * artist-tipo-removed.guard.spec.ts
  *
- * Proteção permanente (Artists Schema 15): o campo "tipo" (formação do
- * artista — solo/banda/duo/trio/grupo/coletivo, e a forma antiga
- * "artista_solo") foi REMOVIDO do domínio Artist em todas as camadas —
- * não normalizado para um vocabulário canônico, não substituído por outro
- * campo, não mantido como enum. Este guard falha se ele reaparecer sem
- * essa ser uma decisão de produto deliberada e revisada.
+ * Permanent guard (Artists Schema 15): the "tipo" field (artist
+ * formation — solo/banda/duo/trio/grupo/coletivo, and the old
+ * "artista_solo" shape) was REMOVED from the Artist domain across all
+ * layers — not normalized to a canonical vocabulary, not replaced by
+ * another field, not kept as an enum. This guard fails if it reappears
+ * without that being a deliberate, reviewed product decision.
  *
- * NÃO faz grep ingênuo por "tipo" — a palavra é legítima em dezenas de
- * outros domínios (contracts.tipo, works.tipo, transactions.tipo,
+ * Does NOT do a naive grep for "tipo" — the word is legitimate in dozens
+ * of other domains (contracts.tipo, works.tipo, transactions.tipo,
  * ArtistGoalEntity.tipo, ArtistaRelacionamento.tipo, artists.tipo_perfil).
- * Cada checagem aqui é pontual: a propriedade exata no lugar exato.
+ * Each check here is pointed: the exact property in the exact place.
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -35,18 +35,18 @@ function readArtistEntitySource(): string {
   return content.slice(start, nextEntity);
 }
 
-describe('Guarda permanente: artists.tipo (formação do artista) foi removido, não normalizado', () => {
-  it('ArtistEntity não declara a propriedade tipo', () => {
+describe('Permanent guard: artists.tipo (artist formation) was removed, not normalized', () => {
+  it('ArtistEntity does not declare the tipo property', () => {
     const source = readArtistEntitySource();
     expect(source).not.toMatch(/\btipo\s*[?!]?\s*:\s*/);
   });
 
-  it('CreateArtistDto/UpdateArtistDto não têm "tipo" como propriedade validada', () => {
+  it('CreateArtistDto/UpdateArtistDto do not have "tipo" as a validated property', () => {
     expect(decoratedPropertyNames(CreateArtistDto)).not.toContain('tipo');
     expect(decoratedPropertyNames(UpdateArtistDto)).not.toContain('tipo');
   });
 
-  it('o contrato de import/export de artists não expõe a coluna tipo', () => {
+  it('the artists import/export contract does not expose the tipo column', () => {
     const contract = getReportFormContract('artists');
     expect(contract).not.toBeNull();
     const fieldKeys = contract!.fields.map((f) => f.key);
@@ -54,15 +54,15 @@ describe('Guarda permanente: artists.tipo (formação do artista) foi removido, 
     expect(contract!.filterableColumns ?? []).not.toContain('tipo');
   });
 
-  it('LeadEventsHandler não escreve tipo ao criar o ArtistEntity da conversão', () => {
+  it('LeadEventsHandler does not write tipo when creating the ArtistEntity from a conversion', () => {
     const handlerPath = path.resolve(__dirname, '../leads/handlers/lead-events.handler.ts');
     const source = fs.readFileSync(handlerPath, 'utf8');
     expect(source).not.toMatch(/\btipo\s*:\s*/);
   });
 
-  it('@music-os-360/types não exporta mais um enum ArtistTipo', () => {
-    // Import dinâmico para não quebrar a compilação caso o pacote precise
-    // ser reconstruído — o teste falha explicitamente se o símbolo voltar.
+  it('@music-os-360/types no longer exports an ArtistTipo enum', () => {
+    // Dynamic import so a package rebuild does not break compilation —
+    // the test fails explicitly if the symbol comes back.
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const types = require('@music-os-360/types');
     expect(types.ArtistTipo).toBeUndefined();

@@ -1,16 +1,17 @@
 /**
  * test/e2e/integrations/whatsapp-identity.e2e-spec.ts  ·  find-2220a85e
  *
- * Contra PostgreSQL REAL (migrations aplicadas, role musicos_app NOBYPASSRLS +
- * FORCE RLS em `integrations`):
+ * Against REAL PostgreSQL (migrations applied, musicos_app role NOBYPASSRLS +
+ * FORCE RLS on `integrations`):
  *
- *  1. Documenta a causa raiz: a varredura cross-tenant feita pela conexão de
- *     aplicação SEM contexto de tenant (caminho do webhook @Public) retorna 0
- *     linhas — com o código antigo nenhuma mensagem WhatsApp inbound era
- *     roteada em produção (DATABASE_SESSION_CONTEXT_ENABLED=true).
- *  2. Prova o fix: WhatsAppCloudProvider.resolveTenantByPhoneNumberId via
- *     ADMIN_DATA_SOURCE (owner) resolve exatamente o tenant vinculado.
- *  3. Prova o fail-closed: um vínculo duplicado legado vira `conflict`.
+ *  1. Documents the root cause: the cross-tenant scan performed by the
+ *     application connection WITHOUT tenant context (@Public webhook path)
+ *     returns 0 rows — with the old code no inbound WhatsApp message was
+ *     ever routed in production (DATABASE_SESSION_CONTEXT_ENABLED=true).
+ *  2. Proves the fix: WhatsAppCloudProvider.resolveTenantByPhoneNumberId via
+ *     ADMIN_DATA_SOURCE (owner) resolves exactly the linked tenant.
+ *  3. Proves the fail-closed behavior: a legacy duplicate link becomes
+ *     `conflict`.
  */
 import 'reflect-metadata';
 import * as fs from 'fs';
@@ -66,18 +67,18 @@ describe('WhatsApp identity resolution — Postgres real (find-2220a85e)', () =>
     if (app?.isInitialized) await app.destroy();
   });
 
-  it('causa raiz: conexão de aplicação sem contexto de tenant enxerga 0 linhas de integrations (RLS)', async () => {
+  it('root cause: application connection without tenant context sees 0 rows of integrations (RLS)', async () => {
     const rows = await app.query(`SELECT count(*)::int AS n FROM integrations WHERE provider = 'whatsapp' AND tenant_id = ANY($1)`, [[TENANT_A, TENANT_B]]);
     expect(rows[0].n).toBe(0);
   });
 
-  it('fix: resolve via ADMIN_DATA_SOURCE o tenant vinculado ao phone_number_id', async () => {
+  it('fix: resolves the tenant linked to phone_number_id via ADMIN_DATA_SOURCE', async () => {
     const provider = new WhatsAppCloudProvider(app, enc, { get: () => undefined } as never, owner);
     await expect(provider.resolveTenantByPhoneNumberId(PHONE_A)).resolves.toEqual({ kind: 'resolved', tenantId: TENANT_A });
     await expect(provider.resolveTenantByPhoneNumberId('5599999999999')).resolves.toEqual({ kind: 'unknown' });
   });
 
-  it('fail-closed: mesmo phone_number_id em dois tenants vira conflict (nunca "primeira linha")', async () => {
+  it('fail-closed: same phone_number_id in two tenants becomes conflict (never "first row")', async () => {
     for (const tid of [TENANT_A, TENANT_B]) {
       await owner.query(`DELETE FROM integrations WHERE tenant_id = $1 AND provider = 'whatsapp'`, [tid]);
       await owner.query(

@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { ProjectPlanningAutomation } from './project-planning.automation';
 import { passThroughTenantContext } from '../../../test/helpers/tenant-context.mock';
 
-// ─── Mocks de fronteira (DB / SkillRunService / AIService) ────────────────────
+// ─── Boundary mocks (DB / SkillRunService / AIService) ────────────────────────
 
 function makeSkillRun() {
   return {
@@ -32,8 +32,8 @@ function makeFailingAi() {
 }
 
 /**
- * Mock de DataSource que roteia por SQL:
- *  - SELECT ... FROM skill_runs → skillRunRows (guarda de idempotência)
+ * DataSource mock that routes by SQL:
+ *  - SELECT ... FROM skill_runs → skillRunRows (idempotency guard)
  *  - SELECT ... FROM projects   → projectRows
  *  - UPDATE                     → undefined
  */
@@ -84,7 +84,7 @@ const VALID_PLAN_JSON = JSON.stringify({
 const IDEMPOTENCY_KEY = 'project.completed:t1:p1';
 
 describe('ProjectPlanningAutomation (project.completed → project-planning)', () => {
-  it('Item 6/7: executa, registra skill_run e grava projects.metadata.aiPlan no sucesso', async () => {
+  it('Item 6/7: executes, records skill_run and writes projects.metadata.aiPlan on success', async () => {
     const { ds, query } = makeDs([PROJECT_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_PLAN_JSON);
@@ -92,7 +92,7 @@ describe('ProjectPlanningAutomation (project.completed → project-planning)', (
 
     await handler.onProjectCompleted(makeEvent() as never);
 
-    // skill_run start com os campos corretos
+    // skill_run start with the correct fields
     expect(skillRun.start).toHaveBeenCalledWith(
       expect.objectContaining({
         tenantId: 't1',
@@ -102,14 +102,14 @@ describe('ProjectPlanningAutomation (project.completed → project-planning)', (
         input: { idempotencyKey: IDEMPOTENCY_KEY },
       }),
     );
-    // sucesso registrado, sem falha
+    // success recorded, no failure
     expect(skillRun.succeed).toHaveBeenCalledWith(
       'run-1', 't1', 'project-planning',
       expect.objectContaining({ idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' }),
     );
     expect(skillRun.fail).not.toHaveBeenCalled();
 
-    // aiPlan gravado via UPDATE
+    // aiPlan written via UPDATE
     const updateCall = query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string));
     expect(updateCall).toBeDefined();
     const params = (updateCall as unknown as [string, string[]])[1];
@@ -123,7 +123,7 @@ describe('ProjectPlanningAutomation (project.completed → project-planning)', (
     expect(meta.aiPlan.parsed.summary).toContain('Plano operacional');
   });
 
-  it('Item 8: idempotência — não reprocessa se aiPlan com a mesma chave já existe', async () => {
+  it('Item 8: idempotency — does not reprocess if aiPlan with the same key already exists', async () => {
     const rowWithPlan = {
       ...PROJECT_ROW,
       metadata: { aiPlan: { idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' } },
@@ -137,12 +137,12 @@ describe('ProjectPlanningAutomation (project.completed → project-planning)', (
 
     expect(skillRun.start).not.toHaveBeenCalled();
     expect(ai.complete).not.toHaveBeenCalled();
-    // apenas o SELECT; nenhum UPDATE
+    // only the SELECT; no UPDATE
     const updateCall = query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string));
     expect(updateCall).toBeUndefined();
   });
 
-  it('R2: idempotência (skill_runs) — não reprocessa se já houver run de sucesso com a mesma chave', async () => {
+  it('R2: idempotency (skill_runs) — does not reprocess if a successful run with the same key already exists', async () => {
     const { ds, query } = makeDs([PROJECT_ROW], [{ '1': 1 }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_PLAN_JSON);
@@ -156,13 +156,13 @@ describe('ProjectPlanningAutomation (project.completed → project-planning)', (
     expect(updateCall).toBeUndefined();
   });
 
-  it('Item 9: falha da IA registra fail, não relança e não grava aiPlan', async () => {
+  it('Item 9: AI failure records fail, does not rethrow and does not write aiPlan', async () => {
     const { ds, query } = makeDs([PROJECT_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const handler = new ProjectPlanningAutomation(ds as never, skillRun as never, ai as never, passThroughTenantContext(ds) as never);
 
-    // Não deve lançar (project.completed não é revertido)
+    // Must not throw (project.completed is not rolled back)
     await expect(handler.onProjectCompleted(makeEvent() as never)).resolves.toBeUndefined();
 
     expect(skillRun.start).toHaveBeenCalled();
@@ -172,7 +172,7 @@ describe('ProjectPlanningAutomation (project.completed → project-planning)', (
     expect(updateCall).toBeUndefined();
   });
 
-  it('Guarda: projeto não-musical é ignorado (sem run, sem query)', async () => {
+  it('Guard: non-music project is ignored (no run, no query)', async () => {
     const { ds, query } = makeDs([PROJECT_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_PLAN_JSON);
@@ -180,7 +180,7 @@ describe('ProjectPlanningAutomation (project.completed → project-planning)', (
 
     await handler.onProjectCompleted(makeEvent('financeiro') as never);
 
-    // M2: isEligible=false barra ANTES de qualquer load/IA/start.
+    // M2: isEligible=false blocks BEFORE any load/AI/start.
     expect(skillRun.start).not.toHaveBeenCalled();
     expect(ai.complete).not.toHaveBeenCalled();
     expect(query).not.toHaveBeenCalled();

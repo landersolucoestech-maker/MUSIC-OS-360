@@ -11,27 +11,27 @@ describe('AssetLinkingHandler — P2-9', () => {
 
   const payload = { uploadId: 'up1', tenantId: 't1' };
 
-  it('tenantId válido → processa dentro de runInTenantContext', async () => {
+  it('valid tenantId → processes within runInTenantContext', async () => {
     const { handler, assetLinking, dbContext } = build();
     await handler.onAssetUploaded({ tenantId: 't1', payload, correlationId: null } as any);
     expect(dbContext.runInTenantContext).toHaveBeenCalledWith({ tenantId: 't1', orgId: null, role: null }, expect.any(Function));
     expect(assetLinking.processUpload).toHaveBeenCalledWith(payload);
   });
 
-  it('usa tenantId do payload quando o evento não tem top-level tenantId', async () => {
+  it('uses tenantId from the payload when the event has no top-level tenantId', async () => {
     const { handler, dbContext } = build();
     await handler.onAssetUploaded({ payload, correlationId: null } as any);
     expect(dbContext.runInTenantContext).toHaveBeenCalledWith({ tenantId: 't1', orgId: null, role: null }, expect.any(Function));
   });
 
-  it('tenantId ausente → aborta (fail-closed), service não é chamado', async () => {
+  it('missing tenantId → aborts (fail-closed), service is not called', async () => {
     const { handler, assetLinking, dbContext } = build();
     await handler.onAssetUploaded({ payload: { uploadId: 'up1' }, correlationId: null } as any);
     expect(dbContext.runInTenantContext).not.toHaveBeenCalled();
     expect(assetLinking.processUpload).not.toHaveBeenCalled();
   });
 
-  it('DatabaseContextService ausente → aborta (fail-closed), service não é chamado', async () => {
+  it('missing DatabaseContextService → aborts (fail-closed), service is not called', async () => {
     const assetLinking = { processUpload: jest.fn().mockResolvedValue(undefined) };
     const handler = new AssetLinkingHandler(assetLinking as any, undefined);
 

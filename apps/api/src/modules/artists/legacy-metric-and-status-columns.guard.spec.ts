@@ -1,29 +1,29 @@
 /**
  * legacy-metric-and-status-columns.guard.spec.ts
  *
- * Proteção permanente: as 9 colunas físicas removidas de `artists` por
+ * Permanent guard: the 9 physical columns removed from `artists` by
  * RemoveArtistLegacyMetricColumns20260821000001 (spotify_ouvintes,
  * youtube_inscritos, deezer_fas, instagram_seguidores, tiktok_seguidores,
- * apple_music_albuns, soundcloud_seguidores, instagram, tiktok) nunca foram
- * mapeadas por ArtistEntity — o valor real desses campos de formulário
- * sempre viveu em `artists.metadata` (jsonb), via
- * METADATA_FIELDS/report-form-contracts.ts. Se `ArtistEntity` ganhar um
- * `@Column` para qualquer um desses nomes, o TypeORM volta a fazer SELECT
- * dessas colunas — e elas não existem mais no banco a partir da migration
- * acima. Isso não pode acontecer sem uma decisão explícita (nova migration
- * de ADD COLUMN + justificativa), nunca por acidente.
+ * apple_music_albuns, soundcloud_seguidores, instagram, tiktok) were never
+ * mapped by ArtistEntity — the real value of these form fields has always
+ * lived in `artists.metadata` (jsonb), via
+ * METADATA_FIELDS/report-form-contracts.ts. If `ArtistEntity` gains a
+ * `@Column` for any of these names, TypeORM goes back to SELECTing those
+ * columns — and they no longer exist in the database since the migration
+ * above. This cannot happen without an explicit decision (a new ADD COLUMN
+ * migration + justification), never by accident.
  *
- * NÃO confundir com os nomes de campo de metadata/DTO — `spotify_ouvintes`,
- * `youtube_inscritos`, `deezer_fas`, `instagram_seguidores` e
- * `tiktok_seguidores` continuam sendo chaves legítimas de `metadata` e
- * propriedades de CreateArtistDto/UpdateArtistDto (contadores manuais do
- * formulário) — só a COLUNA FÍSICA (`@Column` em ArtistEntity) é proibida.
+ * Do NOT confuse this with the metadata/DTO field names — `spotify_ouvintes`,
+ * `youtube_inscritos`, `deezer_fas`, `instagram_seguidores` and
+ * `tiktok_seguidores` remain legitimate `metadata` keys and
+ * CreateArtistDto/UpdateArtistDto properties (manual form counters) — only
+ * the PHYSICAL COLUMN (`@Column` on ArtistEntity) is forbidden.
  *
- * `status_cadastro` foi DELIBERADAMENTE EXCLUÍDA desta lista — ao contrário
- * das 9 acima, ela É mapeada por ArtistEntity e é escrita por
- * `LeadEventsHandler` (módulo leads) na conversão de lead→artista. Este
- * guard também prova que ela permanece mapeada, para que ninguém a remova
- * futuramente sem repetir essa checagem.
+ * `status_cadastro` was DELIBERATELY EXCLUDED from this list — unlike the 9
+ * above, it IS mapped by ArtistEntity and is written by `LeadEventsHandler`
+ * (leads module) on lead→artist conversion. This guard also proves it
+ * remains mapped, so nobody removes it in the future without repeating this
+ * check.
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -45,7 +45,7 @@ function readArtistEntitySource(): string {
   const content = fs.readFileSync(entitiesPath, 'utf8');
   const start = content.indexOf("@Entity('artists')");
   if (start === -1) throw new Error("Não encontrei @Entity('artists') em entities.ts");
-  // A próxima declaração @Entity(...) depois de ArtistEntity marca o fim da classe.
+  // The next @Entity(...) declaration after ArtistEntity marks the end of the class.
   const nextEntity = content.indexOf('@Entity(', start + 1);
   if (nextEntity === -1) throw new Error('Não encontrei o fim de ArtistEntity em entities.ts');
   return content.slice(start, nextEntity);
@@ -56,24 +56,24 @@ function propertyIsDeclared(source: string, column: string): boolean {
   return propertyDeclaration.test(source);
 }
 
-describe('Guarda permanente: colunas físicas removidas de artists nunca voltam a ArtistEntity', () => {
+describe('Permanent guard: physical columns removed from artists never come back to ArtistEntity', () => {
   const artistEntitySource = readArtistEntitySource();
 
   it.each(REMOVED_COLUMNS)(
-    'ArtistEntity não declara @Column para "%s" (removida por RemoveArtistLegacyMetricColumns20260821000001)',
+    'ArtistEntity does not declare @Column for "%s" (removed by RemoveArtistLegacyMetricColumns20260821000001)',
     (column) => {
       expect(propertyIsDeclared(artistEntitySource, column)).toBe(false);
     },
   );
 
-  it('status_cadastro CONTINUA mapeada — mantida de propósito (write real de LeadEventsHandler), não remover sem reauditar', () => {
+  it('status_cadastro REMAINS mapped — kept on purpose (real write from LeadEventsHandler), do not remove without re-auditing', () => {
     expect(propertyIsDeclared(artistEntitySource, 'status_cadastro')).toBe(true);
     const handlerPath = path.resolve(__dirname, '../leads/handlers/lead-events.handler.ts');
     const handlerSource = fs.readFileSync(handlerPath, 'utf8');
     expect(handlerSource).toMatch(/status_cadastro\s*:\s*ArtistStatusCadastro\.ACTIVE/);
   });
 
-  it('a migration de remoção existe e está registrada em migrations/index.ts', () => {
+  it('the removal migration exists and is registered in migrations/index.ts', () => {
     const migrationPath = path.resolve(
       __dirname,
       '../../database/migrations/20260821000001_RemoveArtistLegacyMetricColumns.ts',
@@ -85,7 +85,7 @@ describe('Guarda permanente: colunas físicas removidas de artists nunca voltam 
     expect(indexSource).toMatch(/RemoveArtistLegacyMetricColumns20260821000001/);
   });
 
-  it('verify-canonical-column-order.ts não lista mais as colunas removidas para artists (mas mantém status_cadastro)', () => {
+  it('verify-canonical-column-order.ts no longer lists the removed columns for artists (but keeps status_cadastro)', () => {
     const scriptPath = path.resolve(__dirname, '../../../scripts/verify-canonical-column-order.ts');
     const source = fs.readFileSync(scriptPath, 'utf8');
     const artistsBlockMatch = source.match(/artists:\s*\[([\s\S]*?)\],\n\s*works:/);

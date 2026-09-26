@@ -16,8 +16,8 @@ const context = () => ({
   ),
 });
 
-describe('WorkflowAutomationService.processEvent (persistência por execução)', () => {
-  it('executa ações e registra execução com sucesso', async () => {
+describe('WorkflowAutomationService.processEvent (per-execution persistence)', () => {
+  it('executes actions and records a successful execution', async () => {
     const execution = makeExecution();
     const notifQueue = { add: jest.fn(async () => undefined) };
     const dbContext = context();
@@ -39,9 +39,9 @@ describe('WorkflowAutomationService.processEvent (persistência por execução)'
     );
   });
 
-  it('ação que falha é registrada como failed e enviada ao DLQ', async () => {
+  it('a failing action is recorded as failed and sent to the DLQ', async () => {
     const execution = makeExecution();
-    // add lança no primeiro uso (notification); enqueueDlq engole o erro internamente.
+    // add throws on first use (notification); enqueueDlq swallows the error internally.
     const notifQueue = { add: jest.fn(async (name: string) => { if (name === 'notification') throw new Error('queue down'); }) };
     const svc = new WorkflowAutomationService(
       null, events() as never, {} as never, execution as never, notifQueue as never,
@@ -55,17 +55,17 @@ describe('WorkflowAutomationService.processEvent (persistência por execução)'
     expect(execution.finish).toHaveBeenCalledWith('exec-1', expect.objectContaining({ succeeded: 0, failed: 1 }));
   });
 
-  it('não há ação "tag" no engine (stub removido)', () => {
+  it('there is no "tag" action in the engine (stub removed)', () => {
     const svc = new WorkflowAutomationService(
       null, events() as never, {} as never, makeExecution() as never, null as never,
       context() as never,
     );
-    // getTriggers expõe as regras registadas; nenhuma usa "tag".
+    // getTriggers exposes the registered rules; none uses "tag".
     const hasTag = svc.getTriggers().some((r) => r.actions.some((a) => (a as { type: string }).type === 'tag'));
     expect(hasTag).toBe(false);
   });
 
-  it('falha fechado sem tenant e não inicia workflow_execution', async () => {
+  it('fails closed without a tenant and does not start workflow_execution', async () => {
     const execution = makeExecution();
     const dbContext = context();
     const svc = new WorkflowAutomationService(
@@ -80,7 +80,7 @@ describe('WorkflowAutomationService.processEvent (persistência por execução)'
     expect(execution.start).not.toHaveBeenCalled();
   });
 
-  it('mantém start, logAction e finish dentro do mesmo contexto assíncrono', async () => {
+  it('keeps start, logAction and finish within the same async context', async () => {
     let contextActive = false;
     const writes: boolean[] = [];
     const execution = {

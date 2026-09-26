@@ -37,7 +37,7 @@ const goodAssets = [
 ];
 
 describe('ReleaseReadinessService.evaluate', () => {
-  it('ready=true quando todos os requisitos obrigatórios estão atendidos', async () => {
+  it('ready=true when all mandatory requirements are met', async () => {
     const svc = new ReleaseReadinessService(makeDs(fullPhonogram) as never, skillRuns() as never, assetLinking(goodAssets) as never);
     const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
     expect(out.ready).toBe(true);
@@ -45,7 +45,7 @@ describe('ReleaseReadinessService.evaluate', () => {
     expect(out.requirements.find((r) => r.id === 'work')?.status).toBe('not_applicable');
   });
 
-  it('ready=false quando falta capa', async () => {
+  it('ready=false when cover art is missing', async () => {
     const assets = [{ assetType: 'master', status: 'active' }];
     const svc = new ReleaseReadinessService(makeDs(fullPhonogram) as never, skillRuns() as never, assetLinking(assets) as never);
     const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
@@ -53,14 +53,14 @@ describe('ReleaseReadinessService.evaluate', () => {
     expect(out.missing).toContain('cover_art');
   });
 
-  it('ready=false quando falta ISRC', async () => {
+  it('ready=false when ISRC is missing', async () => {
     const svc = new ReleaseReadinessService(makeDs({ ...fullPhonogram, isrc: null }) as never, skillRuns() as never, assetLinking(goodAssets) as never);
     const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
     expect(out.ready).toBe(false);
     expect(out.missing).toContain('isrc');
   });
 
-  it('obra obrigatória quando há work_id: met se a obra existe', async () => {
+  it('work required when work_id is present: met if the work exists', async () => {
     const ph = { ...fullPhonogram, work_id: 'work-1' };
     const svc = new ReleaseReadinessService(makeDs(ph, { id: 'work-1', tenant_id: 't1' }) as never, skillRuns() as never, assetLinking(goodAssets) as never);
     const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
@@ -68,20 +68,20 @@ describe('ReleaseReadinessService.evaluate', () => {
     expect(out.ready).toBe(true);
   });
 
-  it('sem fonograma → bloqueia (phonogram + isrc + metadados missing)', async () => {
+  it('without a phonogram → blocks (phonogram + isrc + metadata missing)', async () => {
     const svc = new ReleaseReadinessService(makeDs(null) as never, skillRuns() as never, assetLinking(goodAssets) as never);
     const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: null });
     expect(out.ready).toBe(false);
     expect(out.missing).toEqual(expect.arrayContaining(['phonogram', 'isrc', 'metadata']));
   });
 
-  // ── Requisito de intérprete (participacao.interprete[]) ─────────────────────
-  // Real shape confirmada contra FonogramaFormModal.tsx (ParticipacaoCategoria)
-  // e contra o fix da DTO em create-phonogram.dto.ts (ParticipacaoDto) --
-  // um objeto com categorias de array, não um array como a antiga
-  // `@IsArray() participacao?: unknown[]` esperava.
-  describe('metadados obrigatórios exigem ao menos um intérprete real (participacao.interprete)', () => {
-    it('participacao ausente (undefined) → missing', async () => {
+  // ── Performer requirement (participacao.interprete[]) ─────────────────────
+  // Real shape confirmed against FonogramaFormModal.tsx (ParticipacaoCategoria)
+  // and against the DTO fix in create-phonogram.dto.ts (ParticipacaoDto) --
+  // an object with array categories, not an array like the old
+  // `@IsArray() participacao?: unknown[]` expected.
+  describe('mandatory metadata requires at least one real performer (participacao.interprete)', () => {
+    it('participacao absent (undefined) → missing', async () => {
       const ph = { ...fullPhonogram, participacao: undefined };
       const svc = new ReleaseReadinessService(makeDs(ph) as never, skillRuns() as never, assetLinking(goodAssets) as never);
       const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
@@ -96,14 +96,14 @@ describe('ReleaseReadinessService.evaluate', () => {
       expect(out.requirements.find((r) => r.id === 'metadata')?.status).toBe('missing');
     });
 
-    it('participacao com todas as categorias vazias → missing', async () => {
+    it('participacao with all categories empty → missing', async () => {
       const ph = { ...fullPhonogram, participacao: { produtorFonografico: [], interprete: [], musicoAcompanhante: [] } };
       const svc = new ReleaseReadinessService(makeDs(ph) as never, skillRuns() as never, assetLinking(goodAssets) as never);
       const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
       expect(out.requirements.find((r) => r.id === 'metadata')?.status).toBe('missing');
     });
 
-    it('participantes presentes mas sem nenhum intérprete (só produtor) → missing', async () => {
+    it('participants present but without any performer (only a producer) → missing', async () => {
       const ph = { ...fullPhonogram, participacao: { produtorFonografico: [{ id: 'p1', name: 'Produtor Y', percentual: '100' }], interprete: [] } };
       const svc = new ReleaseReadinessService(makeDs(ph) as never, skillRuns() as never, assetLinking(goodAssets) as never);
       const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
@@ -111,14 +111,14 @@ describe('ReleaseReadinessService.evaluate', () => {
       expect(out.requirements.find((r) => r.id === 'metadata')?.detail).toContain('intérpretes');
     });
 
-    it('interprete com nome em branco não conta como intérprete real → missing', async () => {
+    it('a performer with a blank name does not count as a real performer → missing', async () => {
       const ph = { ...fullPhonogram, participacao: { interprete: [{ id: 'p1', name: '   ', percentual: '100' }] } };
       const svc = new ReleaseReadinessService(makeDs(ph) as never, skillRuns() as never, assetLinking(goodAssets) as never);
       const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
       expect(out.requirements.find((r) => r.id === 'metadata')?.status).toBe('missing');
     });
 
-    it('um intérprete válido → met', async () => {
+    it('one valid performer → met', async () => {
       const ph = { ...fullPhonogram, participacao: { interprete: [{ id: 'p1', name: 'Banda Aurora', percentual: '100' }] } };
       const svc = new ReleaseReadinessService(makeDs(ph) as never, skillRuns() as never, assetLinking(goodAssets) as never);
       const out = await svc.evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
@@ -126,7 +126,7 @@ describe('ReleaseReadinessService.evaluate', () => {
       expect(out.ready).toBe(true);
     });
 
-    it('múltiplos intérpretes → met', async () => {
+    it('multiple performers → met', async () => {
       const ph = {
         ...fullPhonogram,
         participacao: {
@@ -141,7 +141,7 @@ describe('ReleaseReadinessService.evaluate', () => {
       expect(out.requirements.find((r) => r.id === 'metadata')?.status).toBe('met');
     });
 
-    it('demais campos obrigatórios ausentes individualmente ainda bloqueiam mesmo com intérprete presente', async () => {
+    it('other mandatory fields missing individually still block even with a performer present', async () => {
       const semTitulo = { ...fullPhonogram, title: null };
       const out1 = await new ReleaseReadinessService(makeDs(semTitulo) as never, skillRuns() as never, assetLinking(goodAssets) as never)
         .evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });

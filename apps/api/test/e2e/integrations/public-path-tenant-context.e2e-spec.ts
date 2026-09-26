@@ -1,19 +1,20 @@
 /**
  * test/e2e/integrations/public-path-tenant-context.e2e-spec.ts  ·  find-b4201eb2
  *
- * Classe de defeito: leitura/escrita tenant-scoped a partir de caminhos SEM
- * contexto de tenant (rota @Public, callback OAuth, scheduler). Prova contra
- * PostgreSQL REAL (role musicos_app NOBYPASSRLS, FORCE RLS), usando a MESMA
- * maquinaria de produção (makeTenantAwareDataSource + DatabaseContextService):
+ * Defect class: tenant-scoped read/write from paths WITHOUT tenant context
+ * (@Public route, OAuth callback, scheduler). Proof against REAL PostgreSQL
+ * (musicos_app role NOBYPASSRLS, FORCE RLS), using the SAME production
+ * machinery (makeTenantAwareDataSource + DatabaseContextService):
  *
- *  1. escrita de token OAuth sem contexto é NEGADA pelo RLS (causa raiz do
- *     callback Spotify GET e do oauth/exchange);
- *  2. a mesma escrita dentro de runInTenantContext / ensureTenantContext
- *     persiste para o tenant certo;
- *  3. ensureTenantContext reusa um contexto já ativo (não abre transação
- *     paralela);
- *  4. InstagramTokenRefreshScheduler enumera via ADMIN_DATA_SOURCE e renova
- *     cada conexão dentro do contexto do seu tenant (antes: 0 linhas vistas).
+ *  1. writing an OAuth token without context is DENIED by RLS (root cause of
+ *     the Spotify GET callback and oauth/exchange);
+ *  2. the same write inside runInTenantContext / ensureTenantContext
+ *     persists for the correct tenant;
+ *  3. ensureTenantContext reuses an already-active context (does not open a
+ *     parallel transaction);
+ *  4. InstagramTokenRefreshScheduler enumerates via ADMIN_DATA_SOURCE and
+ *     refreshes each connection inside its own tenant's context (before: 0
+ *     rows seen).
  */
 import 'reflect-metadata';
 import * as fs from 'fs';
@@ -37,7 +38,7 @@ function env(key: string): string {
     .trim().replace(/^["']|["']$/g, '');
 }
 
-describe('Caminhos públicos/sistema com contexto de tenant — Postgres real (find-b4201eb2)', () => {
+describe('Public/system paths with tenant context — real Postgres (find-b4201eb2)', () => {
   let owner: DataSource;
   let appReal: DataSource;
   let app: DataSource;
@@ -72,23 +73,23 @@ describe('Caminhos públicos/sistema com contexto de tenant — Postgres real (f
     tenantId, userId: 'u-e2e', provider, accessToken: 'tok', refreshToken: 'ref', expiresIn: 3600,
   });
 
-  it('1. causa raiz: gravar token OAuth sem contexto é negado pelo RLS', async () => {
+  it('1. root cause: writing an OAuth token without context is denied by RLS', async () => {
     await expect(save(TENANT_A, 'spotify')).rejects.toThrow(/row-level security/);
   });
 
-  it('2. dentro de runInTenantContext grava para o tenant certo', async () => {
+  it('2. inside runInTenantContext writes for the correct tenant', async () => {
     await dbContext.runInTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, () => save(TENANT_A, 'spotify'));
     const rows = await owner.query(`SELECT tenant_id FROM oauth_connections WHERE provider = 'spotify' AND tenant_id = ANY($1)`, [[TENANT_A, TENANT_B]]);
     expect(rows).toEqual([{ tenant_id: TENANT_A }]);
   });
 
-  it('2b. contexto de OUTRO tenant não permite gravar para A (fail-closed)', async () => {
+  it('2b. another tenant\'s context does not allow writing for A (fail-closed)', async () => {
     await expect(
       dbContext.runInTenantContext({ tenantId: TENANT_B, orgId: null, role: null }, () => save(TENANT_A, 'tiktok_business')),
     ).rejects.toThrow(/row-level security/);
   });
 
-  it('3. ensureTenantContext abre contexto quando ausente e reusa quando presente', async () => {
+  it('3. ensureTenantContext opens context when absent and reuses it when present', async () => {
     let managersSeen: unknown[] = [];
     await dbContext.ensureTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, async () => {
       managersSeen.push(currentTenantManager());
@@ -105,7 +106,7 @@ describe('Caminhos públicos/sistema com contexto de tenant — Postgres real (f
     expect(managersSeen[0]).toBe(managersSeen[1]);
   });
 
-  it('4. InstagramTokenRefreshScheduler enumera via admin e renova dentro do contexto de cada tenant', async () => {
+  it('4. InstagramTokenRefreshScheduler enumerates via admin and refreshes inside each tenant\'s context', async () => {
     await owner.query(`DELETE FROM oauth_connections WHERE tenant_id = ANY($1)`, [[TENANT_A, TENANT_B]]);
     for (const tid of [TENANT_A, TENANT_B]) {
       await owner.query(
@@ -114,7 +115,7 @@ describe('Caminhos públicos/sistema com contexto de tenant — Postgres real (f
         [tid],
       );
     }
-    // Sem admin: a conexão de app (RLS) enxerga 0 — era o comportamento em produção.
+    // Without admin: the app connection (RLS) sees 0 — this was the production behavior.
     const before = new InstagramTokenRefreshScheduler(app, { refreshLongLivedToken: jest.fn() } as never, null, dbContext);
     const beforeResult = await before.runCheck();
     expect(beforeResult.checked).toBe(0);
@@ -122,7 +123,7 @@ describe('Caminhos públicos/sistema com contexto de tenant — Postgres real (f
     const calls: Array<{ tenantId: string; hadContext: boolean; visible: number }> = [];
     const instagram = {
       refreshLongLivedToken: jest.fn(async (tenantId: string) => {
-        // dentro do contexto, a conexão de app enxerga só as linhas do próprio tenant
+        // inside the context, the app connection sees only its own tenant's rows
         const visible = await app.query(`SELECT count(*)::int AS n FROM oauth_connections WHERE provider = 'instagram'`);
         calls.push({ tenantId, hadContext: currentTenantManager() != null, visible: visible[0].n });
         return true;
@@ -139,25 +140,25 @@ describe('Caminhos públicos/sistema com contexto de tenant — Postgres real (f
     expect(result.refreshed).toBeGreaterThanOrEqual(2);
   });
 
-  it('5. contexto só com tenantId completa o org (tabelas org-isoladas: tenants/organizations/billing_subscriptions)', async () => {
+  it('5. context with only tenantId completes the org (org-isolated tables: tenants/organizations/billing_subscriptions)', async () => {
     const readOwnTenant = () => app.query(`SELECT count(*)::int AS n FROM tenants WHERE id = $1`, [TENANT_A]);
     const readOtherTenant = () => app.query(`SELECT count(*)::int AS n FROM tenants WHERE id = $1`, [TENANT_B]);
 
-    // Sem ADMIN_DATA_SOURCE (comportamento antigo): org vazio -> 0 linhas.
+    // Without ADMIN_DATA_SOURCE (old behavior): empty org -> 0 rows.
     const noAdmin = new DatabaseContextService(app, { get: () => 'true' } as never);
     const before = await noAdmin.runInTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, readOwnTenant);
     expect(before[0].n).toBe(0);
 
-    // Com ADMIN_DATA_SOURCE: org resolvido a partir do tenant.
+    // With ADMIN_DATA_SOURCE: org resolved from the tenant.
     const withAdmin = new DatabaseContextService(app, { get: () => 'true' } as never, owner);
     const own = await withAdmin.runInTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, readOwnTenant);
     expect(own[0].n).toBe(1);
-    // ...e continua sem enxergar o tenant de OUTRO org.
+    // ...and still does not see the tenant from ANOTHER org.
     const other = await withAdmin.runInTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, readOtherTenant);
     expect(other[0].n).toBe(0);
   });
 
-  it('6. RealtimeService resolve tenant -> org fora de contexto (antes: broadcast sempre pulado)', async () => {
+  it('6. RealtimeService resolves tenant -> org outside context (before: broadcast always skipped)', async () => {
     const expected = (await owner.query(`SELECT org_id FROM tenants WHERE id = $1`, [TENANT_A]))[0].org_id;
     const cfg = { get: () => undefined } as never;
     const legacy = new RealtimeService(cfg, app) as unknown as { resolveOrgId(t: string): Promise<string | null> };

@@ -20,9 +20,9 @@ const url = (ref: string) => `https://${ref}.supabase.co`;
 const pooler = (ref: string) => `postgresql://musicos_migrator.${ref}:pw@aws-0-us-east-1.pooler.supabase.com:5432/postgres`;
 const direct = (ref: string) => `postgresql://postgres:pw@db.${ref}.supabase.co:5432/postgres`;
 
-describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2026-07-16/17)', () => {
+describe('env.schema — Supabase environment isolation matrix (2026-07-16/17 incident)', () => {
   describe('expectedSupabaseRef / forbiddenSupabaseRefs', () => {
-    it('development → DEV_REF; test → null (nenhum remoto); staging → STAGING_REF; production → PROD_REF', () => {
+    it('development → DEV_REF; test → null (no remote); staging → STAGING_REF; production → PROD_REF', () => {
       expect(expectedSupabaseRef('development')).toBe(SUPABASE_DEV_REF);
       expect(expectedSupabaseRef(undefined)).toBe(SUPABASE_DEV_REF);
       expect(expectedSupabaseRef('test')).toBeNull();
@@ -30,7 +30,7 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
       expect(expectedSupabaseRef('production')).toBe(SUPABASE_PROD_REF);
     });
 
-    it('MAIN_REF é alias do projeto de produção real', () => {
+    it('MAIN_REF is an alias for the real production project', () => {
       expect(SUPABASE_MAIN_REF).toBe(SUPABASE_PROD_REF);
       expect(SUPABASE_PROD_REF).toBe('sxmfeocztlztvpdnxayk');
       expect(expectedSupabaseRef('production')).toBe(SUPABASE_MAIN_REF);
@@ -38,32 +38,32 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
     });
   });
 
-  describe('collectSupabaseEnvErrors — matriz obrigatória', () => {
-    it('development + DEV_REF → passa', () => {
+  describe('collectSupabaseEnvErrors — mandatory matrix', () => {
+    it('development + DEV_REF → passes', () => {
       expect(collectSupabaseEnvErrors({ SUPABASE_URL: url(SUPABASE_DEV_REF), DATABASE_URL: pooler(SUPABASE_DEV_REF) }, 'development')).toEqual([]);
     });
 
-    it('development + MAIN_REF → falha (denylist cruzada)', () => {
+    it('development + MAIN_REF → fails (cross denylist)', () => {
       const errors = collectSupabaseEnvErrors({ DATABASE_URL: pooler(SUPABASE_MAIN_REF) }, 'development');
       expect(errors.some((e) => e.includes('OUTRO ambiente') && e.includes(SUPABASE_MAIN_REF))).toBe(true);
     });
 
-    it('development + DEV antigo excluído (sxdhnhoupjrnntrmjtyn) → falha (denylist absoluta)', () => {
+    it('development + old excluded DEV (sxdhnhoupjrnntrmjtyn) → fails (absolute denylist)', () => {
       const errors = collectSupabaseEnvErrors({ SUPABASE_URL: url('sxdhnhoupjrnntrmjtyn') }, 'development');
       expect(errors.some((e) => e.includes('banido'))).toBe(true);
     });
 
-    it('development + PROD_REF → falha', () => {
+    it('development + PROD_REF → fails', () => {
       const errors = collectSupabaseEnvErrors({ SUPABASE_URL: url(SUPABASE_PROD_REF) }, 'development');
       expect(errors.length).toBeGreaterThan(0);
     });
 
-    it('development + STAGING_REF → falha', () => {
+    it('development + STAGING_REF → fails', () => {
       const errors = collectSupabaseEnvErrors({ SUPABASE_URL: url(SUPABASE_STAGING_REF) }, 'development');
       expect(errors.length).toBeGreaterThan(0);
     });
 
-    it('production + PROD_REF → passa (com variáveis obrigatórias presentes)', () => {
+    it('production + PROD_REF → passes (with required variables present)', () => {
       const errors = collectSupabaseEnvErrors({
         SUPABASE_URL: url(SUPABASE_PROD_REF),
         DATABASE_URL: pooler(SUPABASE_PROD_REF),
@@ -72,7 +72,7 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
       expect(errors).toEqual([]);
     });
 
-    it('production + MAIN_REF → passa porque MAIN é produção', () => {
+    it('production + MAIN_REF → passes because MAIN is production', () => {
       const errors = collectSupabaseEnvErrors({
         SUPABASE_URL: url(SUPABASE_MAIN_REF),
         DATABASE_URL: pooler(SUPABASE_MAIN_REF),
@@ -81,12 +81,12 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
       expect(errors).toEqual([]);
     });
 
-    it('production + DEV_REF → falha', () => {
+    it('production + DEV_REF → fails', () => {
       const errors = collectSupabaseEnvErrors({ SUPABASE_URL: url(SUPABASE_DEV_REF) }, 'production');
       expect(errors.some((e) => e.includes('OUTRO ambiente'))).toBe(true);
     });
 
-    it('staging + STAGING_REF → passa', () => {
+    it('staging + STAGING_REF → passes', () => {
       const errors = collectSupabaseEnvErrors({
         SUPABASE_URL: url(SUPABASE_STAGING_REF),
         DATABASE_URL: pooler(SUPABASE_STAGING_REF),
@@ -95,21 +95,21 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
       expect(errors).toEqual([]);
     });
 
-    it('staging + DEV_REF → falha', () => {
+    it('staging + DEV_REF → fails', () => {
       const errors = collectSupabaseEnvErrors({ SUPABASE_URL: url(SUPABASE_DEV_REF) }, 'staging');
       expect(errors.some((e) => e.includes('OUTRO ambiente'))).toBe(true);
     });
 
-    it('test + qualquer ref remoto → falha (sem fallback silencioso)', () => {
+    it('test + any remote ref → fails (no silent fallback)', () => {
       const errors = collectSupabaseEnvErrors({ DATABASE_URL: pooler(SUPABASE_DEV_REF) }, 'test');
       expect(errors.some((e) => e.includes('não aceita nenhum projeto Supabase remoto') || e.includes('OUTRO ambiente'))).toBe(true);
     });
 
-    it('test + Postgres local (não-Supabase) → passa', () => {
+    it('test + local Postgres (non-Supabase) → passes', () => {
       expect(collectSupabaseEnvErrors({ DATABASE_URL: 'postgresql://postgres:pw@localhost:5432/test' }, 'test')).toEqual([]);
     });
 
-    it('SUPABASE_URL e DATABASE_URL com refs diferentes → falha por divergência', () => {
+    it('SUPABASE_URL and DATABASE_URL with different refs → fails due to divergence', () => {
       const errors = collectSupabaseEnvErrors({
         SUPABASE_URL: url(SUPABASE_DEV_REF),
         DATABASE_URL: pooler(SUPABASE_STAGING_REF),
@@ -117,7 +117,7 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
       expect(errors.some((e) => e.includes('divergentes'))).toBe(true);
     });
 
-    it('URL e JWT com refs diferentes → falha', () => {
+    it('URL and JWT with different refs → fails', () => {
       const errors = collectSupabaseEnvErrors({
         SUPABASE_URL: url(SUPABASE_DEV_REF),
         SUPABASE_ANON_KEY: jwtFor(SUPABASE_MAIN_REF, 'anon'),
@@ -125,7 +125,7 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
       expect(errors.some((e) => e.includes('SUPABASE_ANON_KEY') && e.includes('OUTRO ambiente'))).toBe(true);
     });
 
-    it('variável obrigatória ausente em production → falha', () => {
+    it('required variable missing in production → fails', () => {
       const errors = collectSupabaseEnvErrors({}, 'production');
       expect(errors).toEqual(expect.arrayContaining([
         expect.stringContaining('DATABASE_URL e obrigatorio'),
@@ -134,7 +134,7 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
       ]));
     });
 
-    it('ref desconhecido (fora dos KNOWN_REFS) → falha em qualquer ambiente', () => {
+    it('unknown ref (outside KNOWN_REFS) → fails in any environment', () => {
       const stranger = 'aaaabbbbccccddddeeee';
       for (const env of ['development', 'staging', 'production']) {
         const errors = collectSupabaseEnvErrors({ SUPABASE_URL: url(stranger) }, env);
@@ -142,27 +142,27 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
       }
     });
 
-    it('denylist absoluta (branch preview banido) prevalece em qualquer ambiente', () => {
+    it('absolute denylist (banned preview branch) prevails in any environment', () => {
       const errors = collectSupabaseEnvErrors({ SUPABASE_URL: url('mkyvkciwyhfawmvluugb') }, 'development');
       expect(errors.some((e) => e.includes('banido'))).toBe(true);
     });
 
-    it('hostname Supabase malformado (ref não extraível) → falha', () => {
+    it('malformed Supabase hostname (ref not extractable) → fails', () => {
       const errors = collectSupabaseEnvErrors({ SUPABASE_URL: 'https://.supabase.co' }, 'development');
       expect(errors.some((e) => e.includes('malformado'))).toBe(true);
     });
 
-    it('ref extraído do pooler é validado (denylist cruzada via connection string)', () => {
+    it('ref extracted from the pooler is validated (cross denylist via connection string)', () => {
       const errors = collectSupabaseEnvErrors({ DATABASE_URL: pooler(SUPABASE_PROD_REF) }, 'development');
       expect(errors.some((e) => e.includes('DATABASE_URL') && e.includes('OUTRO ambiente'))).toBe(true);
     });
 
-    it('ref extraído da URL direta (db.<ref>) é validado, incluindo DIRECT_DATABASE_URL', () => {
+    it('ref extracted from the direct URL (db.<ref>) is validated, including DIRECT_DATABASE_URL', () => {
       const errors = collectSupabaseEnvErrors({ DIRECT_DATABASE_URL: direct(SUPABASE_MAIN_REF) }, 'development');
       expect(errors.some((e) => e.includes('DIRECT_DATABASE_URL') && e.includes('OUTRO ambiente'))).toBe(true);
     });
 
-    it('JWT com role invertida (service_role em ANON_KEY) → falha', () => {
+    it('JWT with inverted role (service_role in ANON_KEY) → fails', () => {
       const errors = collectSupabaseEnvErrors({
         SUPABASE_URL: url(SUPABASE_DEV_REF),
         SUPABASE_ANON_KEY: jwtFor(SUPABASE_DEV_REF, 'service_role'),
@@ -171,8 +171,8 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
     });
   });
 
-  describe('extractSupabaseRef — formatos suportados', () => {
-    it('extrai de URL https, host direto db.<ref> e usuário do pooler', () => {
+  describe('extractSupabaseRef — supported formats', () => {
+    it('extracts from an https URL, direct db.<ref> host, and pooler username', () => {
       expect(extractSupabaseRef(url(SUPABASE_DEV_REF))).toBe(SUPABASE_DEV_REF);
       expect(extractSupabaseRef(direct(SUPABASE_DEV_REF))).toBe(SUPABASE_DEV_REF);
       expect(extractSupabaseRef(pooler(SUPABASE_DEV_REF))).toBe(SUPABASE_DEV_REF);
@@ -180,43 +180,43 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
     });
   });
 
-  describe('collectDatabaseCommandErrors — guard de comandos de banco (fail-closed)', () => {
-    it('development + DATABASE_URL do novo DEV → permitido', () => {
+  describe('collectDatabaseCommandErrors — database command guard (fail-closed)', () => {
+    it('development + DATABASE_URL from the new DEV → allowed', () => {
       expect(collectDatabaseCommandErrors({ DATABASE_URL: pooler(SUPABASE_DEV_REF) }, 'development')).toEqual([]);
     });
 
-    it('development + MAIN → bloqueado', () => {
+    it('development + MAIN → blocked', () => {
       const errors = collectDatabaseCommandErrors({ DATABASE_URL: pooler(SUPABASE_MAIN_REF) }, 'development');
       expect(errors.some((e) => e.includes('OUTRO ambiente'))).toBe(true);
     });
 
-    it('development + PROD → bloqueado', () => {
+    it('development + PROD → blocked', () => {
       expect(collectDatabaseCommandErrors({ DATABASE_URL: direct(SUPABASE_PROD_REF) }, 'development').length).toBeGreaterThan(0);
     });
 
-    it('development + DEV antigo excluído → bloqueado (denylist)', () => {
+    it('development + old excluded DEV → blocked (denylist)', () => {
       const errors = collectDatabaseCommandErrors({ DATABASE_URL: direct('sxdhnhoupjrnntrmjtyn') }, 'development');
       expect(errors.some((e) => e.includes('banido'))).toBe(true);
     });
 
-    it('development + ref aleatório desconhecido → bloqueado', () => {
+    it('development + unknown random ref → blocked', () => {
       expect(collectDatabaseCommandErrors({ DATABASE_URL: direct('aaaabbbbccccddddeeee') }, 'development').length).toBeGreaterThan(0);
     });
 
-    it('DATABASE_URL ausente → bloqueado', () => {
+    it('missing DATABASE_URL → blocked', () => {
       expect(collectDatabaseCommandErrors({}, 'development').some((e) => e.includes('ausente'))).toBe(true);
     });
 
-    it('DATABASE_URL vazia → bloqueado', () => {
+    it('empty DATABASE_URL → blocked', () => {
       expect(collectDatabaseCommandErrors({ DATABASE_URL: '   ' }, 'development').some((e) => e.includes('ausente'))).toBe(true);
     });
 
-    it('DATABASE_URL malformada (não parseável) → bloqueado', () => {
+    it('malformed DATABASE_URL (not parseable) → blocked', () => {
       const errors = collectDatabaseCommandErrors({ DATABASE_URL: 'not a url at all' }, 'development');
       expect(errors.some((e) => e.includes('não identificável') || e.includes('malformada'))).toBe(true);
     });
 
-    it('host remoto não-Supabase → bloqueado (ambiente não identificável)', () => {
+    it('non-Supabase remote host → blocked (unidentifiable environment)', () => {
       const errors = collectDatabaseCommandErrors(
         { DATABASE_URL: 'postgresql://user:pw@db.example-somewhere.com:5432/postgres' },
         'development',
@@ -224,7 +224,7 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
       expect(errors.some((e) => e.includes('não identificável'))).toBe(true);
     });
 
-    it('URL e ref divergentes (SUPABASE_URL=DEV, DATABASE_URL=MAIN) → bloqueado', () => {
+    it('divergent URL and ref (SUPABASE_URL=DEV, DATABASE_URL=MAIN) → blocked', () => {
       const errors = collectDatabaseCommandErrors(
         { SUPABASE_URL: url(SUPABASE_DEV_REF), DATABASE_URL: pooler(SUPABASE_MAIN_REF) },
         'development',
@@ -233,58 +233,58 @@ describe('env.schema — matriz de isolamento de ambientes Supabase (incidente 2
       expect(errors.some((e) => e.includes('divergentes') || e.includes('OUTRO ambiente'))).toBe(true);
     });
 
-    it('senha com caracteres especiais no pooler do DEV → parse seguro, permitido', () => {
+    it('password with special characters in the DEV pooler → safe parse, allowed', () => {
       const weird = `postgresql://musicos_migrator.${SUPABASE_DEV_REF}:p%40s$!x*(1)@aws-0-us-east-1.pooler.supabase.com:5432/postgres`;
       expect(collectDatabaseCommandErrors({ DATABASE_URL: weird }, 'development')).toEqual([]);
     });
 
-    it('test + Postgres local (com senha especial) → permitido', () => {
+    it('test + local Postgres (with special password) → allowed', () => {
       expect(collectDatabaseCommandErrors(
         { DATABASE_URL: 'postgresql://postgres:p%23w!x@localhost:5432/musicos_test' },
         'test',
       )).toEqual([]);
     });
 
-    it('test + remoto (mesmo o DEV autorizado de development) → bloqueado', () => {
+    it('test + remote (even the DEV authorized for development) → blocked', () => {
       expect(collectDatabaseCommandErrors({ DATABASE_URL: pooler(SUPABASE_DEV_REF) }, 'test').length).toBeGreaterThan(0);
     });
   });
 });
 
-describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Parte 45)', () => {
+describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Part 45)', () => {
   const base = { APP_DATABASE_URL: 'postgresql://musicos_app@host/db' };
 
-  it('development, RBAC ausente, DB context ausente → passa (flags só se aplicam em produção/staging)', () => {
+  it('development, missing RBAC, missing DB context → passes (flags only apply in production/staging)', () => {
     expect(collectProductionAuthorityErrors({}, 'development')).toEqual([]);
   });
 
-  it('test, RBAC ausente, DB context ausente → passa', () => {
+  it('test, missing RBAC, missing DB context → passes', () => {
     expect(collectProductionAuthorityErrors({}, 'test')).toEqual([]);
   });
 
-  // find-902e12f6 (Wave 4): .github/workflows/staging.yml declara NODE_ENV=staging.
-  // Antes desta correção o gate só disparava para nodeEnv==='production' literal,
-  // deixando o deploy de staging herdar os defaults silenciosos (RLS/RBAC desligados).
-  it('staging, RBAC ausente, DB context ausente → falha (mesmo gate de produção agora cobre staging)', () => {
+  // find-902e12f6 (Wave 4): .github/workflows/staging.yml declares NODE_ENV=staging.
+  // Before this fix the gate only triggered for the literal nodeEnv==='production',
+  // letting the staging deploy inherit the silent defaults (RLS/RBAC off).
+  it('staging, missing RBAC, missing DB context → fails (the same production gate now covers staging)', () => {
     const errors = collectProductionAuthorityErrors({}, 'staging');
     expect(errors.some((e) => e.includes('DATABASE_SESSION_CONTEXT_ENABLED') && e.includes('não declarado'))).toBe(true);
     expect(errors.some((e) => e.includes('RBAC_PERSISTED_AUTHORITY') && e.includes('não declarado'))).toBe(true);
   });
 
-  it('staging, RBAC=ON, DB context=true, APP_DATABASE_URL presente → passa', () => {
+  it('staging, RBAC=ON, DB context=true, APP_DATABASE_URL present → passes', () => {
     expect(collectProductionAuthorityErrors(
       { ...base, DATABASE_SESSION_CONTEXT_ENABLED: 'true', RBAC_PERSISTED_AUTHORITY: 'ON' },
       'staging',
     )).toEqual([]);
   });
 
-  it('production, RBAC ausente, DB context ausente → falha (ambas as flags reportadas)', () => {
+  it('production, missing RBAC, missing DB context → fails (both flags reported)', () => {
     const errors = collectProductionAuthorityErrors({}, 'production');
     expect(errors.some((e) => e.includes('DATABASE_SESSION_CONTEXT_ENABLED') && e.includes('não declarado'))).toBe(true);
     expect(errors.some((e) => e.includes('RBAC_PERSISTED_AUTHORITY') && e.includes('não declarado'))).toBe(true);
   });
 
-  it('production, RBAC=SHADOW declarado, DB context=true, sem waiver → falha', () => {
+  it('production, RBAC=SHADOW declared, DB context=true, no waiver → fails', () => {
     const errors = collectProductionAuthorityErrors(
       { ...base, DATABASE_SESSION_CONTEXT_ENABLED: 'true', RBAC_PERSISTED_AUTHORITY: 'SHADOW' },
       'production',
@@ -292,7 +292,7 @@ describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Parte 
     expect(errors.some((e) => e.includes('SHADOW') && e.includes('sem waiver'))).toBe(true);
   });
 
-  it('production, RBAC=SHADOW, DB context=true, com waiver explícito → passa temporariamente', () => {
+  it('production, RBAC=SHADOW, DB context=true, with explicit waiver → passes temporarily', () => {
     const errors = collectProductionAuthorityErrors(
       {
         ...base,
@@ -305,14 +305,14 @@ describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Parte 
     expect(errors).toEqual([]);
   });
 
-  it('production, RBAC=ON, DB context=true, APP_DATABASE_URL presente → passa', () => {
+  it('production, RBAC=ON, DB context=true, APP_DATABASE_URL present → passes', () => {
     expect(collectProductionAuthorityErrors(
       { ...base, DATABASE_SESSION_CONTEXT_ENABLED: 'true', RBAC_PERSISTED_AUTHORITY: 'ON' },
       'production',
     )).toEqual([]);
   });
 
-  it('production, RBAC=ON, DB context=false → falha (DB context)', () => {
+  it('production, RBAC=ON, DB context=false → fails (DB context)', () => {
     const errors = collectProductionAuthorityErrors(
       { DATABASE_SESSION_CONTEXT_ENABLED: 'false', RBAC_PERSISTED_AUTHORITY: 'ON' },
       'production',
@@ -320,12 +320,12 @@ describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Parte 
     expect(errors.some((e) => e.includes('DATABASE_SESSION_CONTEXT_ENABLED=false'))).toBe(true);
   });
 
-  it('production, RBAC=ON, DB context ausente → falha (DB context não declarado)', () => {
+  it('production, RBAC=ON, missing DB context → fails (DB context not declared)', () => {
     const errors = collectProductionAuthorityErrors({ RBAC_PERSISTED_AUTHORITY: 'ON' }, 'production');
     expect(errors.some((e) => e.includes('DATABASE_SESSION_CONTEXT_ENABLED') && e.includes('não declarado'))).toBe(true);
   });
 
-  it('production, RBAC=OFF → falha, mesmo com DB context correto', () => {
+  it('production, RBAC=OFF → fails, even with correct DB context', () => {
     const errors = collectProductionAuthorityErrors(
       { ...base, DATABASE_SESSION_CONTEXT_ENABLED: 'true', RBAC_PERSISTED_AUTHORITY: 'OFF' },
       'production',
@@ -333,7 +333,7 @@ describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Parte 
     expect(errors.some((e) => e.includes('OFF') && e.includes('proibido'))).toBe(true);
   });
 
-  it('production, DB context=true sem APP_DATABASE_URL → falha (fallback silencioso para bypassrls)', () => {
+  it('production, DB context=true without APP_DATABASE_URL → fails (silent fallback to bypassrls)', () => {
     const errors = collectProductionAuthorityErrors(
       { DATABASE_SESSION_CONTEXT_ENABLED: 'true', RBAC_PERSISTED_AUTHORITY: 'ON' },
       'production',
@@ -341,7 +341,7 @@ describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Parte 
     expect(errors.some((e) => e.includes('APP_DATABASE_URL ausente'))).toBe(true);
   });
 
-  it('production, waiver=true mas RBAC=ON → waiver é ignorado (não é mais SHADOW, nada a perdoar)', () => {
+  it('production, waiver=true but RBAC=ON → waiver is ignored (no longer SHADOW, nothing to forgive)', () => {
     expect(collectProductionAuthorityErrors(
       { ...base, DATABASE_SESSION_CONTEXT_ENABLED: 'true', RBAC_PERSISTED_AUTHORITY: 'ON', ALLOW_RBAC_SHADOW_IN_PRODUCTION: 'true' },
       'production',

@@ -1,6 +1,6 @@
 /**
- * E2E real contra PostgreSQL: serviços reais de exportação, validação e commit.
- * Todos os fluxos de planilha usam XLSX OpenXML e inspecionam o workbook.
+ * Real E2E against PostgreSQL: real export, validation and commit services.
+ * All spreadsheet flows use XLSX OpenXML and inspect the workbook.
  */
 import 'reflect-metadata';
 import * as fs from 'fs';
@@ -28,7 +28,7 @@ try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   require('dotenv').config({ path: path.resolve(__dirname, '../../../.env.development') });
 } catch {
-  // dotenv é opcional no PostgreSQL efêmero da CI.
+  // dotenv is optional on CI's ephemeral PostgreSQL.
 }
 
 const TENANT_A = '10000000-0000-0000-0000-000000000002';
@@ -60,7 +60,7 @@ function readWorkbook(buffer: Buffer, expectedSheet: string) {
   return matrix;
 }
 
-describe('Reports E2E — PostgreSQL real e XLSX', () => {
+describe('Reports E2E — real PostgreSQL and XLSX', () => {
   let ds: DataSource;
   let exportEngine: ExportEngineService;
   let importEngine: ImportEngineService;
@@ -157,7 +157,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     return result[0].count as number;
   };
 
-  it('export XLSX: labels pt-BR, conteúdo e isolamento de tenant', async () => {
+  it('export XLSX: pt-BR labels, content and tenant isolation', async () => {
     const result = await exportEngine.export(
       'artists',
       { format: 'xlsx', page: 1, pageSize: 1000 },
@@ -177,7 +177,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     expect(serialized).not.toContain(`${TAG}_B`);
   });
 
-  it('export XLSX: possui ZIP íntegro e uma única aba', async () => {
+  it('export XLSX: has an intact ZIP and a single sheet', async () => {
     const result = await exportEngine.export(
       'artists',
       { format: 'xlsx', page: 1, pageSize: 10 },
@@ -189,7 +189,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     expect(matrix.length).toBeGreaterThan(1);
   });
 
-  it('import VALIDATE não persiste', async () => {
+  it('import VALIDATE does not persist', async () => {
     const name = `${TAG}_V`;
     const before = await countArtists(name);
     const validation = await importEngine.validateFile(
@@ -201,7 +201,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     expect(await countArtists(name)).toBe(before);
   });
 
-  it('import COMMIT persiste com tenant correto e create-only', async () => {
+  it('import COMMIT persists with correct tenant, create-only', async () => {
     const name = `${TAG}_C`;
     const result = await commit.commit(
       'artists',
@@ -218,7 +218,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     expect(row[0].tenant_id).toBe(TENANT_A);
   });
 
-  it('create-only rejeita segunda importação sem sobrescrever', async () => {
+  it('create-only rejects a second import without overwriting', async () => {
     const name = `${TAG}_C`;
     const result = await commit.commit(
       'artists',
@@ -231,7 +231,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     expect(await countArtists(name)).toBe(1);
   });
 
-  it('rollback transacional impede persistência parcial', async () => {
+  it('transactional rollback prevents partial persistence', async () => {
     const duplicate = `${TAG}_C`;
     const fresh = `${TAG}_R`;
     const result = await commit.commit(
@@ -244,7 +244,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     expect(await countArtists(fresh)).toBe(0);
   });
 
-  it('tenant informado no workbook é ignorado e não permite spoofing', async () => {
+  it('tenant provided in the workbook is ignored and does not allow spoofing', async () => {
     const name = `${TAG}_T`;
     const result = await commit.commit(
       'artists',
@@ -260,7 +260,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     expect(row[0]?.tenant_id).toBe(TENANT_A);
   });
 
-  it('export de entidade sem tabela física retorna 422 controlado', async () => {
+  it('export of an entity without a physical table returns a controlled 422', async () => {
     await expect(
       exportEngine.export(
         'crm_contacts',
@@ -271,7 +271,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     ).rejects.toMatchObject({ status: 422 });
   });
 
-  it('tabelas materializadas existem', async () => {
+  it('materialized tables exist', async () => {
     const profiles = await ds.query(
       `SELECT to_regclass('public.artist_platform_profiles') AS table_name`,
     );
@@ -282,7 +282,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     expect(releaseWorks[0].table_name).toBe('release_works');
   });
 
-  it('soft delete usa colunas existentes nas tabelas operacionais', async () => {
+  it('soft delete uses existing columns in operational tables', async () => {
     await expect(
       ds.query(`SELECT id, deleted_at FROM payroll_entries WHERE deleted_at IS NULL LIMIT 1`),
     ).resolves.toBeDefined();
@@ -294,7 +294,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     ).resolves.toBeDefined();
   });
 
-  it('INSERT em audiovisual_approvals preenche timestamps e permite rollback', async () => {
+  it('INSERT into audiovisual_approvals fills timestamps and allows rollback', async () => {
     const runner = ds.createQueryRunner();
     await runner.connect();
     await runner.startTransaction();
@@ -321,7 +321,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
     }
   });
 
-  it('coluna sensível não pode ser exportada', async () => {
+  it('sensitive column cannot be exported', async () => {
     const definitions = new ReportEntityDefinitionService(
       new EntityMetadataService(),
     ).getDefinitions();
@@ -377,7 +377,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
       await ds.query(`DELETE FROM leads WHERE nome LIKE $1`, [`${LEAD_TAG}%`]);
     });
 
-    it('export XLSX inclui campos reconciliados e isola tenant', async () => {
+    it('export XLSX includes reconciled fields and isolates tenant', async () => {
       const result = await exportEngine.export(
         'leads',
         { format: 'xlsx', page: 1, pageSize: 1000 },
@@ -402,7 +402,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
       expect(serialized).not.toContain(`${LEAD_TAG}_B`);
     });
 
-    it('export XLSX usa cabeçalhos pt-BR sem chaves técnicas', async () => {
+    it('export XLSX uses pt-BR headers without technical keys', async () => {
       const result = await exportEngine.export(
         'leads',
         { format: 'xlsx', page: 1, pageSize: 10 },
@@ -415,7 +415,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
       expect(headers).not.toContain('serviceType');
     });
 
-    it('import VALIDATE não persiste', async () => {
+    it('import VALIDATE does not persist', async () => {
       const name = `${LEAD_TAG}_V`;
       const before = await countLeads(name);
       const validation = await importEngine.validateFile(
@@ -427,7 +427,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
       expect(await countLeads(name)).toBe(before);
     });
 
-    it('import COMMIT persiste com tenant correto', async () => {
+    it('import COMMIT persists with correct tenant', async () => {
       const name = `${LEAD_TAG}_C`;
       const result = await commit.commit(
         'leads',
@@ -441,7 +441,7 @@ describe('Reports E2E — PostgreSQL real e XLSX', () => {
       expect(row[0].tenant_id).toBe(TENANT_A);
     });
 
-    it('rollback de leads impede persistência parcial', async () => {
+    it('leads rollback prevents partial persistence', async () => {
       const duplicate = `${LEAD_TAG}_C`;
       const fresh = `${LEAD_TAG}_R`;
       const result = await commit.commit(

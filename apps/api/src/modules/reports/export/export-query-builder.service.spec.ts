@@ -18,10 +18,10 @@ const DEF: ReportEntityDefinition = {
 };
 const base = (p: Partial<ExportQueryParams> = {}): ExportQueryParams => ({ format: 'xlsx', ...p });
 
-describe('ExportQueryBuilderService — query segura entity-driven', () => {
+describe('ExportQueryBuilderService — entity-driven safe query', () => {
   const svc = new ExportQueryBuilderService();
 
-  it('monta SELECT com colunas explícitas (nunca SELECT *) + tenant sempre', () => {
+  it('builds SELECT with explicit columns (never SELECT *) + tenant always', () => {
     const q = svc.build(DEF, base(), 'tenant-1');
     expect(q.sql).toContain('SELECT "nome_artistico", "email_encrypted" AS "email", "status" FROM "artists"');
     expect(q.sql).not.toContain('*');
@@ -29,51 +29,51 @@ describe('ExportQueryBuilderService — query segura entity-driven', () => {
     expect(q.parameters[0]).toBe('tenant-1');
   });
 
-  it('sem tenant → ForbiddenException', () => {
+  it('without tenant → ForbiddenException', () => {
     expect(() => svc.build(DEF, base(), '')).toThrow(ForbiddenException);
   });
 
-  it('coluna fora do contrato → 400', () => {
+  it('column outside the contract → 400', () => {
     expect(() => svc.build(DEF, base({ columns: ['email', 'segredo'] }), 't')).toThrow(BadRequestException);
   });
 
-  it('coluna sensível → 400 (nunca exportada)', () => {
+  it('sensitive column → 400 (never exported)', () => {
     expect(() => svc.build(DEF, base({ columns: ['cpf_encrypted'] }), 't')).toThrow(BadRequestException);
   });
 
-  it('filtro permitido aplica WHERE parametrizado; filtro proibido → 400', () => {
+  it('allowed filter applies a parameterized WHERE; forbidden filter → 400', () => {
     const q = svc.build(DEF, base({ filters: { status: 'ativo' } }), 't');
     expect(q.sql).toContain('"status" = $2');
     expect(q.parameters).toContain('ativo');
     expect(() => svc.build(DEF, base({ filters: { email: 'x@y' } }), 't')).toThrow(BadRequestException);
   });
 
-  it('ordenação permitida; proibida → 400', () => {
+  it('allowed ordering; forbidden → 400', () => {
     const q = svc.build(DEF, base({ sort: 'created_at', order: 'DESC' }), 't');
     expect(q.sql).toContain('ORDER BY "created_at" DESC');
     expect(() => svc.build(DEF, base({ sort: 'email' } as ExportQueryParams), 't')).toThrow(BadRequestException);
   });
 
-  it('consulta o conjunto completo até a linha sentinela, sem OFFSET ou paginação silenciosa', () => {
+  it('queries the full set up to the sentinel row, without OFFSET or silent pagination', () => {
     const q = svc.build(DEF, base(), 't');
     expect(q.sql).toContain(`LIMIT $${q.parameters.length}`);
     expect(q.sql).not.toContain('OFFSET');
     expect(q.parameters.at(-1)).toBe(EXPORT_DETECTION_LIMIT);
   });
 
-  it('soft delete aplica deleted_at IS NULL quando informado', () => {
+  it('soft delete applies deleted_at IS NULL when provided', () => {
     const q = svc.build(DEF, base(), 't', { softDeleteColumn: 'deleted_at' });
     expect(q.sql).toContain('"deleted_at" IS NULL');
   });
 
-  it('sem baseWhere declarado, nenhuma condição extra é adicionada (comportamento existente preservado)', () => {
+  it('without a declared baseWhere, no extra condition is added (existing behavior preserved)', () => {
     const q = svc.build(DEF, base(), 't');
     expect(q.sql).toBe(
       `SELECT "nome_artistico", "email_encrypted" AS "email", "status" FROM "artists" WHERE "tenant_id" = $1 LIMIT $2`,
     );
   });
 
-  it('baseWhere (REM-06: invoices dual-purpose) é sempre aplicado no export genérico, mesmo sem filtro do chamador', () => {
+  it('baseWhere (REM-06: invoices dual-purpose) is always applied in the generic export, even without a caller filter', () => {
     const invoicesDef: ReportEntityDefinition = {
       ...DEF, tableName: 'invoices', baseWhere: ["type != 'stripe_subscription'"],
     };
@@ -81,22 +81,22 @@ describe('ExportQueryBuilderService — query segura entity-driven', () => {
     expect(q.sql).toContain(`WHERE "tenant_id" = $1 AND type != 'stripe_subscription'`);
   });
 
-  // Regressão: seleção de colunas nunca pode determinar a ordem — apenas QUAIS
-  // colunas entram. A ORDEM vem sempre de def.exportableColumns (config canônica).
-  describe('ordem das colunas selecionadas — seleção filtra, nunca ordena', () => {
-    it('subconjunto enviado na ordem canônica preserva a ordem canônica', () => {
+  // Regression: column selection can never determine the order — only WHICH
+  // columns are included. The ORDER always comes from def.exportableColumns (canonical config).
+  describe('order of selected columns — selection filters, never orders', () => {
+    it('subset sent in canonical order preserves the canonical order', () => {
       const q = svc.build(DEF, base({ columns: ['nome_artistico', 'status'] }), 't');
       expect(q.columns).toEqual(['nome_artistico', 'status']);
     });
 
-    it('subconjunto enviado FORA da ordem canônica é reordenado pela config canônica', () => {
-      // Canônico: nome_artistico, email, status. Chamador envia status antes de nome_artistico.
+    it('subset sent OUT of canonical order is reordered by the canonical config', () => {
+      // Canonical: nome_artistico, email, status. Caller sends status before nome_artistico.
       const q = svc.build(DEF, base({ columns: ['status', 'nome_artistico'] }), 't');
       expect(q.columns).toEqual(['nome_artistico', 'status']);
       expect(q.sql).toContain('SELECT "nome_artistico", "status" FROM "artists"');
     });
 
-    it('ordem dos cliques não interfere: duas seleções do mesmo conjunto em ordens diferentes produzem a mesma saída', () => {
+    it('click order does not interfere: two selections of the same set in different orders produce the same output', () => {
       const q1 = svc.build(DEF, base({ columns: ['email', 'nome_artistico'] }), 't');
       const q2 = svc.build(DEF, base({ columns: ['nome_artistico', 'email'] }), 't');
       expect(q1.columns).toEqual(['nome_artistico', 'email']);
@@ -104,7 +104,7 @@ describe('ExportQueryBuilderService — query segura entity-driven', () => {
       expect(q1.columns).toEqual(q2.columns);
     });
 
-    it('sem seleção (export completo) usa exportableColumns na ordem declarada', () => {
+    it('without selection (full export) uses exportableColumns in the declared order', () => {
       const q = svc.build(DEF, base(), 't');
       expect(q.columns).toEqual(['nome_artistico', 'email', 'status']);
     });

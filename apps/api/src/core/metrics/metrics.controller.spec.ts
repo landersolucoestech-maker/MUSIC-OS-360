@@ -24,7 +24,7 @@ function makeRequest(auth?: string, query: Record<string, unknown> = {}) {
 }
 
 describe('MetricsController security', () => {
-  it('rejeita token por query string', async () => {
+  it('rejects a token passed via query string', async () => {
     const controller = makeController({ NODE_ENV: 'development', METRICS_TOKEN: 'secret' });
 
     await expect(
@@ -32,13 +32,13 @@ describe('MetricsController security', () => {
     ).rejects.toThrow(ForbiddenException);
   });
 
-  it('exige METRICS_TOKEN em staging', async () => {
+  it('requires METRICS_TOKEN in staging', async () => {
     const controller = makeController({ NODE_ENV: 'staging' });
 
     await expect(controller.scrape(makeRequest())).rejects.toThrow(ForbiddenException);
   });
 
-  it('aceita somente Authorization Bearer correto em staging', async () => {
+  it('accepts only the correct Authorization Bearer in staging', async () => {
     const controller = makeController({ NODE_ENV: 'staging', METRICS_TOKEN: 'secret' });
 
     await expect(controller.scrape(makeRequest('Bearer secret'))).resolves.toBe('ok');

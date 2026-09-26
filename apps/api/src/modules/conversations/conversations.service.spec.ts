@@ -5,9 +5,9 @@ import { ConversationEntity } from '../../database/entities';
 import { DOMAIN_EVENTS } from '../../core/events/events.service';
 
 /**
- * Task M — gap real fechado: `transfer()` usava `convRepo.update()` direto
- * (sem casUpdate), diferente de `updateConversation()` que já estava
- * protegido desde a Task K. Este spec prova o cenário A/B para `transfer()`.
+ * Task M — real gap closed: `transfer()` used `convRepo.update()` directly
+ * (without casUpdate), unlike `updateConversation()` which was already
+ * protected since Task K. This spec proves the A/B scenario for `transfer()`.
  */
 const TENANT = 'tenant-test';
 const CONV_ID = 'conv-test';
@@ -73,8 +73,8 @@ describe('ConversationsService.createConversation() — emits the correct domain
   });
 });
 
-describe('ConversationsService.transfer() — Task M concorrência otimista', () => {
-  it('sem expectedUpdatedAt: aplica incondicionalmente (retrocompatível)', async () => {
+describe('ConversationsService.transfer() — Task M optimistic concurrency', () => {
+  it('without expectedUpdatedAt: applies unconditionally (backward compatible)', async () => {
     const { service, mockDs } = buildService({ affected: 1 });
     await service.transfer(TENANT, 'user-b', CONV_ID, { assignee_id: 'user-b' });
     expect(mockDs._convRepo.update).toHaveBeenCalledWith(
@@ -83,7 +83,7 @@ describe('ConversationsService.transfer() — Task M concorrência otimista', ()
     );
   });
 
-  it('cenário A/B: A abre v.X e transfere (v.Y); B tenta transferir contra v.X -> 409, nunca sobrescreve A em silêncio', async () => {
+  it('A/B scenario: A opens v.X and transfers (v.Y); B tries to transfer against v.X -> 409, never silently overwrites A', async () => {
     const { service, mockDs } = buildService({ affected: 0 });
     await expect(
       service.transfer(TENANT, 'user-b', CONV_ID, {
@@ -94,7 +94,7 @@ describe('ConversationsService.transfer() — Task M concorrência otimista', ()
     expect(mockDs._convRepo.update).toHaveBeenCalledTimes(1);
   });
 
-  it('expectedUpdatedAt nunca vaza para a coluna persistida', async () => {
+  it('expectedUpdatedAt never leaks into the persisted column', async () => {
     const { service, mockDs } = buildService({ affected: 1 });
     await service.transfer(TENANT, 'user-b', CONV_ID, {
       assignee_id: 'user-b',
@@ -106,16 +106,16 @@ describe('ConversationsService.transfer() — Task M concorrência otimista', ()
 });
 
 /**
- * Section 13 (MusicChat Inbox — decisão de produto 2026-08-22): revisão de
- * tenant isolation server-side. Toda query real usa createQueryBuilder com
- * tenant_id no WHERE (defesa em profundidade — RLS em
- * 20260521000040_ConversationsAndForms é a garantia de banco). Este teste
- * prova a garantia de código: nunca é possível montar uma query sem o
- * filtro de tenant_id, mesmo que a chamada passe um id de conversa que
- * pertence a outro tenant.
+ * Section 13 (MusicChat Inbox — product decision 2026-08-22): server-side
+ * tenant isolation review. Every real query uses createQueryBuilder with
+ * tenant_id in the WHERE (defense in depth — RLS in
+ * 20260521000040_ConversationsAndForms is the database-level guarantee). This
+ * test proves the code-level guarantee: it is never possible to build a
+ * query without the tenant_id filter, even if the call passes a conversation
+ * id that belongs to another tenant.
  */
 describe('ConversationsService — tenant isolation (Section 13)', () => {
-  it('listConversations sempre filtra por tenant_id no WHERE inicial', async () => {
+  it('listConversations always filters by tenant_id in the initial WHERE', async () => {
     const { service: svc, mockDs } = buildService();
     const qb = { where: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), orderBy: jest.fn().mockReturnThis(), skip: jest.fn().mockReturnThis(), take: jest.fn().mockReturnThis(), getManyAndCount: jest.fn().mockResolvedValue([[], 0]) };
     mockDs._convRepo.createQueryBuilder = jest.fn(() => qb);
@@ -124,7 +124,7 @@ describe('ConversationsService — tenant isolation (Section 13)', () => {
     expect(qb.where).toHaveBeenCalledWith('c.tenant_id = :tenantId', { tenantId: 'tenant-a' });
   });
 
-  it('findConversationById filtra por id E tenant_id juntos — não retorna conversa de outro tenant mesmo com id correto', async () => {
+  it("findConversationById filters by id AND tenant_id together — never returns another tenant's conversation even with the correct id", async () => {
     const { service: svc, mockDs } = buildService();
     const qb = { where: jest.fn().mockReturnThis(), getOne: jest.fn().mockResolvedValue(null) };
     mockDs._convRepo.createQueryBuilder = jest.fn(() => qb);
@@ -136,11 +136,11 @@ describe('ConversationsService — tenant isolation (Section 13)', () => {
     );
   });
 
-  it('listMessages filtra mensagens por conversation_id E tenant_id juntos', async () => {
+  it('listMessages filters messages by conversation_id AND tenant_id together', async () => {
     const { service: svc, mockDs } = buildService();
-    // ds.getRepository(...) do mock genérico devolve o mesmo objeto para
-    // qualquer entidade (convRepo === msgRepo aqui) — um único qb precisa
-    // satisfazer tanto findConversationById() (.where().getOne()) quanto
+    // ds.getRepository(...) from the generic mock returns the same object for
+    // any entity (convRepo === msgRepo here) — a single qb needs to
+    // satisfy both findConversationById() (.where().getOne()) and
     // listMessages() (.where().orderBy().skip().take().getManyAndCount()).
     const qb = {
       where: jest.fn().mockReturnThis(),
@@ -161,13 +161,14 @@ describe('ConversationsService — tenant isolation (Section 13)', () => {
 });
 
 /**
- * addMessage() nunca despachava a nenhum provider externo — uma resposta do
- * agente numa conversa WhatsApp nunca chegava de fato ao contact (só ficava
- * gravada no banco). Corrigido: canal whatsapp + sender_type='user' agora
- * despacha via WhatsAppCloudProvider real, com delivery_status honesto.
+ * addMessage() never dispatched to any external provider — an agent's reply
+ * in a WhatsApp conversation never actually reached the contact (it was only
+ * written to the database). Fixed: the whatsapp channel + sender_type='user'
+ * now dispatches via the real WhatsAppCloudProvider, with an honest
+ * delivery_status.
  */
-describe('ConversationsService.addMessage() — entrega real no canal externo', () => {
-  it("conversa whatsapp: despacha via WhatsAppCloudProvider e marca delivery_status='sent'", async () => {
+describe('ConversationsService.addMessage() — real delivery on the external channel', () => {
+  it("whatsapp conversation: dispatches via WhatsAppCloudProvider and marks delivery_status='sent'", async () => {
     const sendTextMessage = jest.fn().mockResolvedValue({ externalMessageId: 'wamid.123' });
     const { service, mockDs, mockWhatsapp } = buildService({ affected: 1 }, { sendTextMessage });
     mockDs._convRepo.createQueryBuilder = jest.fn(() => ({
@@ -184,7 +185,7 @@ describe('ConversationsService.addMessage() — entrega real no canal externo', 
     expect(metadataUpdate?.[1]).toMatchObject({ metadata: { delivery_status: 'sent', external_message_id: 'wamid.123' } });
   });
 
-  it('falha no provider: nunca lança — persiste a mensagem e marca delivery_status=failed', async () => {
+  it('provider failure: never throws — persists the message and marks delivery_status=failed', async () => {
     const sendTextMessage = jest.fn().mockRejectedValue(new Error('WhatsApp Cloud API respondeu 401'));
     const { service, mockDs } = buildService({ affected: 1 }, { sendTextMessage });
     mockDs._convRepo.createQueryBuilder = jest.fn(() => ({
@@ -199,7 +200,7 @@ describe('ConversationsService.addMessage() — entrega real no canal externo', 
     expect(metadataUpdate).toBeDefined();
   });
 
-  it("canal internal: nunca despacha externamente, marca delivery_status='internal_only'", async () => {
+  it("internal channel: never dispatches externally, marks delivery_status='internal_only'", async () => {
     const sendTextMessage = jest.fn();
     const { service, mockDs, mockWhatsapp } = buildService({ affected: 1 }, { sendTextMessage });
     mockDs._convRepo.createQueryBuilder = jest.fn(() => ({
@@ -216,7 +217,7 @@ describe('ConversationsService.addMessage() — entrega real no canal externo', 
     expect(metadataUpdate).toBeDefined();
   });
 
-  it("mensagem inbound (sender_type='contact') nunca dispara despacho outbound", async () => {
+  it("inbound message (sender_type='contact') never triggers an outbound dispatch", async () => {
     const sendTextMessage = jest.fn();
     const { service, mockDs, mockWhatsapp } = buildService({ affected: 1 }, { sendTextMessage });
     mockDs._convRepo.createQueryBuilder = jest.fn(() => ({

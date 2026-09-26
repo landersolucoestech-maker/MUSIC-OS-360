@@ -22,7 +22,7 @@ function makeEvents() {
 }
 
 describe('SkillRunService', () => {
-  it('start emite skill.started mesmo sem DATA_SOURCE (noop de persistência)', async () => {
+  it('start emits skill.started even without DATA_SOURCE (persistence noop)', async () => {
     const events = makeEvents();
     const svc = new SkillRunService(null, events as never);
     const runId = await svc.start({ tenantId: 't1', skillName: 'asset-linking' });
@@ -30,7 +30,7 @@ describe('SkillRunService', () => {
     expect(events.emitTyped).toHaveBeenCalledWith('skill.started', expect.objectContaining({ tenantId: 't1' }));
   });
 
-  it('run() executa, persiste e emite started + completed', async () => {
+  it('run() executes, persists, and emits started + completed', async () => {
     const { ds, repo } = makeDs();
     const events = makeEvents();
     const svc = new SkillRunService(ds as never, events as never);
@@ -38,7 +38,7 @@ describe('SkillRunService', () => {
     const result = await svc.run(
       { tenantId: 't1', skillName: 'asset-linking', entityType: 'upload', entityId: 'u1' },
       async (ctx) => {
-        await ctx.log('info', 'passo 1');
+        await ctx.log('info', 'step 1');
         return { result: 'ok', output: { done: true } };
       },
     );
@@ -54,7 +54,7 @@ describe('SkillRunService', () => {
     expect(emitted).toContain('skill.completed');
   });
 
-  it('run() em falha marca failed, emite skill.failed e relança', async () => {
+  it('run() on failure marks failed, emits skill.failed and rethrows', async () => {
     const { ds, repo } = makeDs();
     const events = makeEvents();
     const svc = new SkillRunService(ds as never, events as never);
@@ -73,7 +73,7 @@ describe('SkillRunService', () => {
     expect(emitted).toContain('skill.failed');
   });
 
-  it('listRuns retorna paginado e respeita limites; getRun traz run + logs', async () => {
+  it('listRuns returns a paginated result and respects limits; getRun brings run + logs', async () => {
     const { ds, repo } = makeDs();
     const svc = new SkillRunService(ds as never, makeEvents() as never);
 
@@ -88,7 +88,7 @@ describe('SkillRunService', () => {
     expect(detail?.logs).toHaveLength(1);
   });
 
-  it('listRuns sem DATA_SOURCE retorna vazio', async () => {
+  it('listRuns without DATA_SOURCE returns empty', async () => {
     const svc = new SkillRunService(null, makeEvents() as never);
     const page = await svc.listRuns('t1');
     expect(page).toEqual({ data: [], total: 0, limit: 25, offset: 0 });

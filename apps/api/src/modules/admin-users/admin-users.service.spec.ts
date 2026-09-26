@@ -14,8 +14,8 @@ const listUsersMock = () => {
 };
 
 /**
- * Decision Gate item 6 (GAP-07): Admin Users precisa de MFA/last-login reais sem
- * N+1 por usuário — listUsers() paginado uma vez, com cache curto, montado num Map.
+ * Decision Gate item 6 (GAP-07): Admin Users needs real MFA/last-login without
+ * N+1 per user — listUsers() paginated once, with a short cache, assembled into a Map.
  */
 function makeService() {
   const ds = { query: jest.fn().mockResolvedValue([]) };
@@ -29,7 +29,7 @@ describe('AdminUsersService', () => {
     jest.clearAllMocks();
   });
 
-  it('junta org_members + tenants + roles e enriquece com MFA/last_login por auth_user_id', async () => {
+  it('joins org_members + tenants + roles and enriches with MFA/last_login by auth_user_id', async () => {
     const { svc, ds } = makeService();
     ds.query.mockResolvedValueOnce([
       {
@@ -52,7 +52,7 @@ describe('AdminUsersService', () => {
     ]);
   });
 
-  it('nunca fabrica sessions_count — sempre null mesmo com auth resolvido', async () => {
+  it('never fabricates sessions_count — always null even when auth resolves', async () => {
     const { svc, ds } = makeService();
     ds.query.mockResolvedValueOnce([
       { id: 'm1', auth_user_id: 'auth-1', name: 'Ana', email: 'ana@x.com', role_slug: 'admin', role_name: 'Administrador', tenant_id: 't1', tenant_name: 'T1', status: 'active', joined_at: null },
@@ -63,7 +63,7 @@ describe('AdminUsersService', () => {
     expect(row!.sessions_count).toBeNull();
   });
 
-  it('marca MFA/last_login como indisponível (null) quando o membro não aparece no auth', async () => {
+  it('marks MFA/last_login as unavailable (null) when the member does not appear in auth', async () => {
     const { svc, ds } = makeService();
     ds.query.mockResolvedValueOnce([
       { id: 'm1', auth_user_id: 'auth-orphan', name: 'Ana', email: 'ana@x.com', role_slug: 'admin', role_name: 'Administrador', tenant_id: 't1', tenant_name: 'T1', status: 'active', joined_at: null },
@@ -75,7 +75,7 @@ describe('AdminUsersService', () => {
     expect(row!.mfa_enabled).toBeNull();
   });
 
-  it('não fabrica dados quando listUsers falha — segue com auth indisponível para todos', async () => {
+  it('does not fabricate data when listUsers fails — proceeds with auth unavailable for everyone', async () => {
     const { svc, ds } = makeService();
     ds.query.mockResolvedValueOnce([
       { id: 'm1', auth_user_id: 'auth-1', name: 'Ana', email: 'ana@x.com', role_slug: 'admin', role_name: 'Administrador', tenant_id: 't1', tenant_name: 'T1', status: 'active', joined_at: null },
@@ -87,7 +87,7 @@ describe('AdminUsersService', () => {
     expect(row!.mfa_enabled).toBeNull();
   });
 
-  it('reutiliza o cache de auth dentro da janela de TTL — não chama listUsers de novo', async () => {
+  it('reuses the auth cache within the TTL window — does not call listUsers again', async () => {
     const { svc, ds } = makeService();
     ds.query.mockResolvedValue([]);
     listUsersMock().mockResolvedValue({ data: { users: [] }, error: null });
@@ -98,7 +98,7 @@ describe('AdminUsersService', () => {
     expect(listUsersMock()).toHaveBeenCalledTimes(1);
   });
 
-  it('aplica filtro de busca por email/nome/tenant como parâmetro (sem concatenação insegura)', async () => {
+  it('applies the email/name/tenant search filter as a parameter (no unsafe concatenation)', async () => {
     const { svc, ds } = makeService();
     listUsersMock().mockResolvedValueOnce({ data: { users: [] }, error: null });
 
@@ -110,7 +110,7 @@ describe('AdminUsersService', () => {
     );
   });
 
-  it('filtra por status active/blocked via m.is_active', async () => {
+  it('filters by status active/blocked via m.is_active', async () => {
     const { svc, ds } = makeService();
     listUsersMock().mockResolvedValueOnce({ data: { users: [] }, error: null });
 

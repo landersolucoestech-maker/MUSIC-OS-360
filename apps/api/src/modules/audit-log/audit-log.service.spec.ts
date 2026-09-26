@@ -17,7 +17,7 @@ function makeService() {
 }
 
 describe('AuditLogService.listAdmin', () => {
-  it('nunca filtra por tenant_id — só join real com tenants para tenant_name', async () => {
+  it('never filters by tenant_id — only a real join with tenants for tenant_name', async () => {
     const { svc, ds } = makeService();
     await svc.listAdmin({});
 
@@ -27,7 +27,7 @@ describe('AuditLogService.listAdmin', () => {
     expect(sql).toMatch(/tn\.name AS tenant_name/);
   });
 
-  it('aplica filtros de action/entity como parâmetros e respeita o teto de limit', async () => {
+  it('applies action/entity filters as parameters and respects the limit ceiling', async () => {
     const { svc, ds } = makeService();
     await svc.listAdmin({ action: 'contract.updated', entity: 'contract', limit: 999 });
 

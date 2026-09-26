@@ -52,7 +52,7 @@ const READY_JSON = JSON.stringify({
 });
 
 describe('PostizAutomation (ON_DEMAND: POST /marketing/contents/:id/ai/postiz)', () => {
-  it('canal instagram conectado + copy presente: readyToRequestPublish=true', async () => {
+  it('instagram channel connected + copy present: readyToRequestPublish=true', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(READY_JSON);
     const ds = makeDs();
@@ -66,9 +66,9 @@ describe('PostizAutomation (ON_DEMAND: POST /marketing/contents/:id/ai/postiz)',
     expect(skillRun.succeed).toHaveBeenCalled();
   });
 
-  it('ANTI-FABRICAÇÃO: canal não conectado força readyToRequestPublish=false mesmo se o provider reivindicar true', async () => {
+  it('ANTI-FABRICATION: disconnected channel forces readyToRequestPublish=false even if the provider claims true', async () => {
     const skillRun = makeSkillRun();
-    const ai = makeAi(READY_JSON); // provider tenta reivindicar readyToRequestPublish=true
+    const ai = makeAi(READY_JSON); // provider tries to claim readyToRequestPublish=true
     const ds = makeDs([{ ...CONTENT_ROW, channel: 'tiktok' }]);
     const handler = new PostizAutomation(ds as never, skillRun as never, ai as never, makeInstagram() as never, makeTikTok({ connected: false }) as never, makeYouTube() as never);
 
@@ -78,7 +78,7 @@ describe('PostizAutomation (ON_DEMAND: POST /marketing/contents/:id/ai/postiz)',
     expect(result.parsed.blockers.length).toBeGreaterThan(0);
   });
 
-  it('canal facebook/twitter/threads sem serviço de integração: reporta not_implemented, nunca fabricado', async () => {
+  it('facebook/twitter/threads channel without an integration service: reports not_implemented, never fabricated', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(READY_JSON);
     const ds = makeDs([{ ...CONTENT_ROW, channel: 'facebook' }]);
@@ -91,7 +91,7 @@ describe('PostizAutomation (ON_DEMAND: POST /marketing/contents/:id/ai/postiz)',
     expect(result.parsed.readyToRequestPublish).toBe(false);
   });
 
-  it('sem copy: blocker obrigatório', async () => {
+  it('without copy: mandatory blocker', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(READY_JSON);
     const ds = makeDs([{ ...CONTENT_ROW, copy: null }]);
@@ -102,7 +102,7 @@ describe('PostizAutomation (ON_DEMAND: POST /marketing/contents/:id/ai/postiz)',
     expect(result.parsed.readyToRequestPublish).toBe(false);
   });
 
-  it('post inexistente: lança NotFoundException', async () => {
+  it('nonexistent post: throws NotFoundException', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(READY_JSON);
     const ds = makeDs([]);
@@ -112,7 +112,7 @@ describe('PostizAutomation (ON_DEMAND: POST /marketing/contents/:id/ai/postiz)',
     expect(ai.complete).not.toHaveBeenCalled();
   });
 
-  it('falha da IA registra fail e relança', async () => {
+  it('AI failure records fail and rethrows', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const ds = makeDs();

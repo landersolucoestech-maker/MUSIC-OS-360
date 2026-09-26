@@ -62,7 +62,7 @@ function makeContext(opts: {
 describe('IdempotencyInterceptor', () => {
   afterEach(() => jest.clearAllMocks());
 
-  it('sem X-Idempotency-Key passa directamente ao handler', (done) => {
+  it('without X-Idempotency-Key passes directly to the handler', (done) => {
     const interceptor = makeInterceptor();
     const ctx         = makeContext();
     const next        = { handle: jest.fn().mockReturnValue(of({ id: '1' })) };
@@ -76,7 +76,7 @@ describe('IdempotencyInterceptor', () => {
     });
   });
 
-  it('key com formato inválido é ignorada (handler executa normalmente)', (done) => {
+  it('malformed key is ignored (handler executes normally)', (done) => {
     const interceptor = makeInterceptor();
     const ctx         = makeContext({ key: '../../../etc/passwd' });
     const next        = { handle: jest.fn().mockReturnValue(of({ id: '2' })) };
@@ -90,7 +90,7 @@ describe('IdempotencyInterceptor', () => {
     });
   });
 
-  it('primeira chamada com key válida executa handler e cacheia resposta', (done) => {
+  it('first call with a valid key executes the handler and caches the response', (done) => {
     const interceptor = makeInterceptor();
     const key         = `test-first-call-${Date.now()}`;
     const ctx         = makeContext({ key, userId: 'user-abc', statusCode: 201 });
@@ -106,7 +106,7 @@ describe('IdempotencyInterceptor', () => {
     });
   });
 
-  it('segunda chamada com mesma key retorna resposta cacheada sem executar handler', (done) => {
+  it('second call with the same key returns the cached response without executing the handler', (done) => {
     const store       = makeFakeStore();
     const interceptor = makeInterceptor(store);
     const key         = `test-replay-${Date.now()}`;
@@ -129,7 +129,7 @@ describe('IdempotencyInterceptor', () => {
     });
   });
 
-  it('keys diferentes para o mesmo utilizador executam handlers independentes', (done) => {
+  it('different keys for the same user execute independent handlers', (done) => {
     const store = makeFakeStore();
     const interceptor = makeInterceptor(store);
     const ts    = Date.now();
@@ -152,7 +152,7 @@ describe('IdempotencyInterceptor', () => {
     });
   });
 
-  it('mesma key de utilizadores diferentes executa handlers independentes', (done) => {
+  it('the same key from different users executes independent handlers', (done) => {
     const store = makeFakeStore();
     const interceptor = makeInterceptor(store);
     const key   = `shared-key-${Date.now()}`;
@@ -175,7 +175,7 @@ describe('IdempotencyInterceptor', () => {
     });
   });
 
-  it('quando handler lança erro, o placeholder é removido (retry permitido)', (done) => {
+  it('when the handler throws, the placeholder is removed (retry allowed)', (done) => {
     const store       = makeFakeStore();
     const interceptor = makeInterceptor(store);
     const key         = `error-retry-${Date.now()}`;
@@ -197,7 +197,7 @@ describe('IdempotencyInterceptor', () => {
     });
   });
 
-  it('in-flight placeholder lança ConflictException para requisição concorrente', (done) => {
+  it('in-flight placeholder throws ConflictException for a concurrent request', (done) => {
     const store = makeFakeStore();
     // Pre-seed an in-flight placeholder
     const cacheKey = 'no-tenant:user-concurrent:test-concurrent-key';
@@ -219,7 +219,7 @@ describe('IdempotencyInterceptor', () => {
   // find-37b2adef: the same user acting in two different tenants, replaying
   // the same client-generated X-Idempotency-Key, must NEVER see tenant A's
   // cached response body returned for a tenant B request.
-  it('mesmo userId + mesma idempotency key em tenants diferentes: NUNCA replaya a resposta do outro tenant', (done) => {
+  it('same userId + same idempotency key across different tenants: NEVER replays the other tenant\'s response', (done) => {
     const store = makeFakeStore();
     const interceptor = makeInterceptor(store);
     const keyOpts = { key: 'shared-key', userId: 'user-shared' };

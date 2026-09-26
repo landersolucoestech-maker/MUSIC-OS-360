@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { SupportTriageAutomation } from './support-triage.automation';
 import { passThroughTenantContext } from '../../../test/helpers/tenant-context.mock';
 
-// ─── Mocks de fronteira (DB / SkillRunService / AIService) ────────────────────
+// ─── Boundary mocks (DB / SkillRunService / AIService) ────────────────────────
 
 function makeSkillRun() {
   return {
@@ -32,8 +32,8 @@ function makeFailingAi() {
 }
 
 /**
- * Mock de DataSource que roteia por SQL:
- *  - SELECT ... FROM skill_runs      → skillRunRows (guarda de idempotência)
+ * DataSource mock that routes by SQL:
+ *  - SELECT ... FROM skill_runs      → skillRunRows (idempotency guard)
  *  - SELECT ... FROM support_tickets → ticketRows
  *  - UPDATE                          → undefined
  */
@@ -83,7 +83,7 @@ const VALID_TRIAGE_JSON = JSON.stringify({
 const IDEMPOTENCY_KEY = 'support.ticket.created:t1:k1';
 
 describe('SupportTriageAutomation (support.ticket.created → support-triage)', () => {
-  it('Fluxo: executa, registra skill_run e grava support_tickets.metadata.aiTriage no sucesso', async () => {
+  it('Flow: executes, records skill_run and writes support_tickets.metadata.aiTriage on success', async () => {
     const { ds, query } = makeDs([TICKET_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_TRIAGE_JSON);
@@ -106,14 +106,14 @@ describe('SupportTriageAutomation (support.ticket.created → support-triage)', 
     );
     expect(skillRun.fail).not.toHaveBeenCalled();
 
-    // input montado a partir do ticket: subject + message(description) + affectedModule(category)
+    // input built from the ticket: subject + message(description) + affectedModule(category)
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string; jsonMode: boolean }]>;
     const aiArg = aiCalls[0][0];
     expect(aiArg.jsonMode).toBe(true);
     expect(aiArg.prompt).toContain('Cobrança duplicada');
     expect(aiArg.prompt).toContain('financial');
 
-    // aiTriage gravado via UPDATE
+    // aiTriage written via UPDATE
     const updateCall = query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string));
     expect(updateCall).toBeDefined();
     const params = (updateCall as unknown as [string, string[]])[1];
@@ -127,7 +127,7 @@ describe('SupportTriageAutomation (support.ticket.created → support-triage)', 
     expect(meta.aiTriage.parsed.category).toBe('Erro financeiro');
   });
 
-  it('Idempotência (metadata): não reprocessa se aiTriage com a mesma chave já existe', async () => {
+  it('Idempotency (metadata): does not reprocess if aiTriage with the same key already exists', async () => {
     const rowWithTriage = {
       ...TICKET_ROW,
       metadata: { aiTriage: { idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' } },
@@ -145,7 +145,7 @@ describe('SupportTriageAutomation (support.ticket.created → support-triage)', 
     expect(updateCall).toBeUndefined();
   });
 
-  it('Idempotência (skill_runs): não reprocessa se já houver run de sucesso com a mesma chave', async () => {
+  it('Idempotency (skill_runs): does not reprocess if a successful run with the same key already exists', async () => {
     const { ds, query } = makeDs([TICKET_ROW], [{ '1': 1 }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_TRIAGE_JSON);
@@ -159,13 +159,13 @@ describe('SupportTriageAutomation (support.ticket.created → support-triage)', 
     expect(updateCall).toBeUndefined();
   });
 
-  it('Falha da IA registra fail, não relança e não grava aiTriage', async () => {
+  it('AI failure records fail, does not rethrow and does not write aiTriage', async () => {
     const { ds, query } = makeDs([TICKET_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const handler = new SupportTriageAutomation(ds as never, skillRun as never, ai as never, passThroughTenantContext(ds) as never);
 
-    // Não deve lançar (support.ticket.created não é revertido)
+    // Must not throw (support.ticket.created is not rolled back)
     await expect(handler.onSupportTicketCreated(makeEvent() as never)).resolves.toBeUndefined();
 
     expect(skillRun.start).toHaveBeenCalled();
@@ -175,7 +175,7 @@ describe('SupportTriageAutomation (support.ticket.created → support-triage)', 
     expect(updateCall).toBeUndefined();
   });
 
-  it('Guarda: tenantId/ticketId ausente é ignorado (sem run, sem query)', async () => {
+  it('Guard: missing tenantId/ticketId is ignored (no run, no query)', async () => {
     const { ds, query } = makeDs([TICKET_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_TRIAGE_JSON);

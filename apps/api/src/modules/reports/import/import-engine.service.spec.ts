@@ -44,8 +44,8 @@ function makeEngine(opts: { reportable?: boolean; hasEntity?: boolean; def?: Rep
   return new ImportEngineService(metadata, definitions, new ImportParserService(), new ImportMapperService(), new ImportValidationService(), tableGuard, new ExportFormatService());
 }
 
-describe('ImportEngineService — XLSX de aba única', () => {
-  it('mapeia cabeçalhos pt-BR e valida', async () => {
+describe('ImportEngineService — single-sheet XLSX', () => {
+  it('maps pt-BR headers and validates', async () => {
     const result = await makeEngine().validateFile(
       'artists', workbook('Artistas', [['Nome artístico', 'E-mail', 'Situação', 'Categoria'], ['João', 'joao@x.com', 'ativo', 'solo']]), 'tenant-1',
     );
@@ -53,7 +53,7 @@ describe('ImportEngineService — XLSX de aba única', () => {
     expect(result.rows[0].data).toMatchObject({ nome_artistico: 'João', email: 'joao@x.com', status: 'ativo', categoria: 'solo' });
   });
 
-  it('rejeita coluna obrigatória ausente ou vazia', async () => {
+  it('rejects missing or empty required column', async () => {
     const defWithRequiredCategory = { ...DEF, requiredImportColumns: ['nome_artistico', 'categoria'] };
     const absent = await makeEngine({ def: defWithRequiredCategory }).validateFile(
       'artists', workbook('Artistas', [['Nome artístico'], ['Ana']]), 't',
@@ -65,7 +65,7 @@ describe('ImportEngineService — XLSX de aba única', () => {
     expect(empty.rows[0].valid).toBe(false);
   });
 
-  it('rejeita enum inválido, coluna sensível e extensão não-XLSX', async () => {
+  it('rejects invalid enum, sensitive column and non-XLSX extension', async () => {
     const enumResult = await makeEngine().validateFile('artists', workbook('Artistas', [['Nome artístico', 'Categoria', 'Situação'], ['Ana', 'solo', 'explodido']]), 't');
     expect(enumResult.rows[0].valid).toBe(false);
     const sensitive = await makeEngine().validateFile('artists', workbook('Artistas', [['Nome artístico', 'Categoria', 'cpf_encrypted'], ['Ana', 'solo', '123']]), 't');
@@ -75,7 +75,7 @@ describe('ImportEngineService — XLSX de aba única', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('ignora tenant_id e avisa sobre coluna desconhecida', async () => {
+  it('ignores tenant_id and warns about unknown column', async () => {
     const result = await makeEngine().validateFile(
       'artists', workbook('Artistas', [['Nome artístico', 'Categoria', 'tenant_id', 'Campo Maluco'], ['Ana', 'solo', 'outro', 'x']]), 't',
     );
@@ -84,7 +84,7 @@ describe('ImportEngineService — XLSX de aba única', () => {
     expect(result.rows[0].data).not.toHaveProperty('tenant_id');
   });
 
-  it('template contém exatamente uma aba', async () => {
+  it('template contains exactly one sheet', async () => {
     const result = await makeEngine().buildTemplate('artists', 't');
     const wb = XLSX.read(result.body, { type: 'buffer' });
     expect(wb.SheetNames).toEqual(['Artistas']);
@@ -92,16 +92,16 @@ describe('ImportEngineService — XLSX de aba única', () => {
     expect(rows[0]).toHaveLength(DEF.importableColumns.length);
   });
 
-  it('template gera headers na ordem canônica de def.importableColumns (não Object.keys, não alfabética)', async () => {
+  it('template generates headers in the canonical order of def.importableColumns (not Object.keys, not alphabetical)', async () => {
     const result = await makeEngine().buildTemplate('artists', 't');
     const wb = XLSX.read(result.body, { type: 'buffer' });
     const rows = XLSX.utils.sheet_to_json<unknown[]>(wb.Sheets.Artistas!, { header: 1 });
     expect(rows[0]).toEqual(['Nome artístico', 'E-mail', 'Situação', 'Categoria']);
   });
 
-  it('mapeia por HEADER, não por posição física: colunas fora de ordem resolvem para a mesma key canônica', async () => {
-    // Ordem física do arquivo é a inversa da ordem canônica do contrato — o
-    // mapper resolve por rótulo/nome, nunca por índice de coluna.
+  it('maps by HEADER, not physical position: out-of-order columns resolve to the same canonical key', async () => {
+    // The physical order of the file is the reverse of the contract's canonical order — the
+    // mapper resolves by label/name, never by column index.
     const result = await makeEngine().validateFile(
       'artists',
       workbook('Artistas', [
@@ -115,7 +115,7 @@ describe('ImportEngineService — XLSX de aba única', () => {
     });
   });
 
-  it('exportação e importação concordam: template exportado é aceito de volta pelo importador sem colunas desconhecidas', async () => {
+  it('export and import agree: exported template is accepted back by the importer without unknown columns', async () => {
     const engine = makeEngine();
     const template = await engine.buildTemplate('artists', 't');
     const wb = XLSX.read(template.body, { type: 'buffer' });
@@ -134,7 +134,7 @@ describe('ImportEngineService — XLSX de aba única', () => {
     }));
   });
 
-  it('mantém guardas de tenant, entidade e suporte de importação', async () => {
+  it('keeps tenant, entity and import-support guards', async () => {
     const file = workbook('Artistas', [['Nome artístico', 'Categoria'], ['A', 'solo']]);
     await expect(makeEngine().validateFile('artists', file, undefined)).rejects.toBeInstanceOf(ForbiddenException);
     await expect(makeEngine({ hasEntity: false }).validateFile('nope', file, 't')).rejects.toBeInstanceOf(NotFoundException);
@@ -142,7 +142,7 @@ describe('ImportEngineService — XLSX de aba única', () => {
   });
 });
 
-describe('ImportEngineService — projetos em uma única aba', () => {
+describe('ImportEngineService — projects on a single sheet', () => {
   const PROJECTS_DEF: ReportEntityDefinition = {
     entityName: 'ProjectEntity', tableName: 'projects', category: EntityCategory.REPORTABLE,
     identityColumn: 'nome_ep_album', displayColumn: 'nome_ep_album', dateColumn: 'created_at',
@@ -168,7 +168,7 @@ describe('ImportEngineService — projetos em uma única aba', () => {
     new ExportFormatService(),
   );
 
-  it('mantém uma linha de preview por música; o commit agrupa linhas consecutivas pelo projeto', async () => {
+  it('keeps one preview row per track; the commit groups consecutive rows by project', async () => {
     const file = workbook('Projetos', [
       ['Tipo de Lançamento', 'Nome do EP/Álbum', 'Status', 'Nome da música', 'Compositores'],
       ['ep', 'Meu EP', 'planejamento', 'Faixa 1', 'Fulano | Ciclano'],
@@ -188,7 +188,7 @@ describe('ImportEngineService — projetos em uma única aba', () => {
     });
   });
 
-  it('template de projetos contém uma única aba e todas as colunas', async () => {
+  it('projects template contains a single sheet and all columns', async () => {
     const result = await makeProjectsEngine().buildTemplate('projects', 't');
     const wb = XLSX.read(result.body, { type: 'buffer' });
     expect(wb.SheetNames).toEqual(['Projetos']);

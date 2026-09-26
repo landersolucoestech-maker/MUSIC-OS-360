@@ -1,16 +1,16 @@
 /**
  * test/e2e/rls/request-context.e2e-spec.ts  ·  FASE 3J
  *
- * Prova, contra PostgreSQL REAL (role musicos_app, RLS+FORCE), que o mecanismo
- * de contexto de request-path corrige o achado da FASE 3I:
+ * Proves, against REAL PostgreSQL (musicos_app role, RLS+FORCE), that the
+ * request-path context mechanism fixes the finding from FASE 3I:
  *
- *  - um repositório CAPTURADO no construtor (antes de qualquer contexto), como os
- *    services fazem (`this.repo = ds.getRepository(X)`), passa a rodar dentro do
- *    contexto de tenant quando a operação ocorre dentro de runInTenantContext;
- *  - private_get_tenant_id() retorna o tenant correto;
- *  - isolamento cross-tenant é garantido pelo RLS (não pelo filtro app-layer).
+ *  - a repository CAPTURED in the constructor (before any context), as
+ *    services do (`this.repo = ds.getRepository(X)`), now runs inside the
+ *    tenant context when the operation happens inside runInTenantContext;
+ *  - private_get_tenant_id() returns the correct tenant;
+ *  - cross-tenant isolation is guaranteed by RLS (not by the app-layer filter).
  *
- * Reusa o MESMO código de produção: makeTenantAwareDataSource + DatabaseContextService.
+ * Reuses the SAME production code: makeTenantAwareDataSource + DatabaseContextService.
  */
 import 'reflect-metadata';
 import * as fs from 'fs';
@@ -119,17 +119,17 @@ async function ensureE2eTenants(owner: DataSource): Promise<void> {
 
   if (rows.length !== 2) {
     throw new Error(
-      `Falha ao criar tenants E2E: esperados 2, encontrados ${rows.length}`,
+      `Failed to create E2E tenants: expected 2, found ${rows.length}`,
     );
   }
 }
 
-describe('FASE 3J — contexto de tenant transparente no request-path (PostgreSQL real)', () => {
+describe('FASE 3J — transparent tenant context in the request-path (real PostgreSQL)', () => {
   let owner: DataSource;
   let appReal: DataSource;
   let appProxied: DataSource;
   let dbContext: DatabaseContextService;
-  // Capturado UMA vez, fora de qualquer contexto — exatamente como os services.
+  // Captured ONCE, outside any context — exactly like the services do.
   let convRepoCapturadoNoConstrutor: Repository<ConversationEntity>;
   const TAG = `RC_${Date.now()}`;
   const tagA = `${TAG}_A`;
@@ -148,7 +148,7 @@ describe('FASE 3J — contexto de tenant transparente no request-path (PostgreSQ
       appProxied,
       { get: () => 'true' } as unknown as ConstructorParameters<typeof DatabaseContextService>[1],
     );
-    // ↓↓↓ captura no "construtor" (sem contexto ativo) — o ponto que quebrava na 3I
+    // ↓↓↓ captured in the "constructor" (no active context) — the point that broke in 3I
     convRepoCapturadoNoConstrutor = appProxied.getRepository(ConversationEntity);
 
     await owner.query(
@@ -167,24 +167,24 @@ describe('FASE 3J — contexto de tenant transparente no request-path (PostgreSQ
     if (appReal?.isInitialized) await appReal.destroy();
   });
 
-  it('SEM contexto (bug 3I reproduzido): repo capturado vê 0 linhas em conversations FORCE-RLS', async () => {
+  it('WITHOUT context (bug 3I reproduced): captured repo sees 0 rows in conversations FORCE-RLS', async () => {
     const rows = await convRepoCapturadoNoConstrutor.find({ where: { subject: tagA as never } });
     expect(rows.length).toBe(0); // private_get_tenant_id() = NULL → deny
   });
 
-  it('COM contexto (Tenant A): private_get_tenant_id()=A e o MESMO repo vê só A', async () => {
+  it('WITH context (Tenant A): private_get_tenant_id()=A and the SAME repo sees only A', async () => {
     await dbContext.runInTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, async () => {
       const pid = (await appProxied.query(`SELECT private_get_tenant_id() p`))[0].p;
       expect(pid).toBe(TENANT_A);
 
       const a = await convRepoCapturadoNoConstrutor.find({ where: { subject: tagA as never } });
       const b = await convRepoCapturadoNoConstrutor.find({ where: { subject: tagB as never } });
-      expect(a.length).toBe(1);   // vê A
-      expect(b.length).toBe(0);   // NÃO vê B (isolamento por RLS)
+      expect(a.length).toBe(1);   // sees A
+      expect(b.length).toBe(0);   // does NOT see B (RLS isolation)
     });
   });
 
-  it('COM contexto (Tenant B): o MESMO repo vê só B', async () => {
+  it('WITH context (Tenant B): the SAME repo sees only B', async () => {
     await dbContext.runInTenantContext({ tenantId: TENANT_B, orgId: null, role: null }, async () => {
       const a = await convRepoCapturadoNoConstrutor.find({ where: { subject: tagA as never } });
       const b = await convRepoCapturadoNoConstrutor.find({ where: { subject: tagB as never } });
@@ -193,9 +193,9 @@ describe('FASE 3J — contexto de tenant transparente no request-path (PostgreSQ
     });
   });
 
-  it('INSERT/SELECT no contexto A: válido passa; cross-tenant (tenant B) é bloqueado (42501)', async () => {
-    // INSERT válido (rollback no fim do contexto não há — runInTenantContext comita;
-    // por isso usamos subject com TAG e limpamos no afterAll).
+  it('INSERT/SELECT in context A: valid passes; cross-tenant (tenant B) is blocked (42501)', async () => {
+    // Valid INSERT (there's no rollback at the end of the context — runInTenantContext commits;
+    // that's why we use a subject with TAG and clean up in afterAll).
     await dbContext.runInTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, async () => {
       const saved = await convRepoCapturadoNoConstrutor.save(
         convRepoCapturadoNoConstrutor.create({
@@ -204,11 +204,11 @@ describe('FASE 3J — contexto de tenant transparente no request-path (PostgreSQ
       );
       expect(saved.id).toBeTruthy();
     });
-    // confirma persistido via OWNER
+    // confirms persisted via OWNER
     const persisted = await owner.query(`SELECT count(*)::int n FROM conversations WHERE subject=$1`, [`${TAG}_INS_A`]);
     expect(persisted[0].n).toBe(1);
 
-    // cross-tenant: contexto A, tenant_id B → WITH CHECK rejeita
+    // cross-tenant: context A, tenant_id B → WITH CHECK rejects
     let code = '';
     try {
       await dbContext.runInTenantContext({ tenantId: TENANT_A, orgId: null, role: null }, async () => {
@@ -224,12 +224,12 @@ describe('FASE 3J — contexto de tenant transparente no request-path (PostgreSQ
     }
     expect(code).toBe('42501');
     const leaked = await owner.query(`SELECT count(*)::int n FROM conversations WHERE subject=$1`, [`${TAG}_INS_X`]);
-    expect(leaked[0].n).toBe(0); // nada vazou
+    expect(leaked[0].n).toBe(0); // nothing leaked
   });
 
-  it('fora do contexto novamente: private_get_tenant_id() volta a NULL (sem vazamento entre operações)', async () => {
-    // Null-safe: a função usa NULLIF(current_setting(...),'') → NULL quando não há
-    // contexto, mesmo após o GUC custom ter sido resetado para '' por uma tx prévia.
+  it('outside the context again: private_get_tenant_id() goes back to NULL (no leakage between operations)', async () => {
+    // Null-safe: the function uses NULLIF(current_setting(...),'') → NULL when there is
+    // no context, even after the custom GUC was reset to '' by a previous tx.
     const pid = (await appProxied.query(`SELECT private_get_tenant_id() p`))[0].p;
     expect(pid).toBeNull();
   });

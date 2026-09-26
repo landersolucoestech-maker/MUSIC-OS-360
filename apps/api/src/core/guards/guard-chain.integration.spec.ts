@@ -1,14 +1,14 @@
 /**
- * TEST-04 (auditoria 2026-07-05): os 6 guards globais de app.module.ts eram testados
- * apenas isoladamente (ExecutionContext mockado à mão) — nenhum teste provava que a
- * ORDEM real de execução (RateLimit → JWT → MustChangePassword → Tenant → Billing →
- * Roles) produz o comportamento esperado quando montada via APP_GUARD, como em
- * produção. Este spec sobe um módulo Nest mínimo com os guards reais nessa ordem e
- * bate via HTTP real (supertest), para que um reordenamento acidental do array
- * APP_GUARD em app.module.ts quebre este teste.
+ * TEST-04 (2026-07-05 audit): the 6 global guards in app.module.ts were only
+ * tested in isolation (ExecutionContext mocked by hand) — no test proved that the
+ * real execution ORDER (RateLimit → JWT → MustChangePassword → Tenant → Billing →
+ * Roles) produces the expected behavior when assembled via APP_GUARD, as in
+ * production. This spec boots a minimal Nest module with the real guards in that
+ * order and hits it via real HTTP (supertest), so that an accidental reordering of
+ * the APP_GUARD array in app.module.ts breaks this test.
  *
- * MustChangePasswordGuard (Parte 73) foi adicionado à cadeia real logo após
- * JwtAuthGuard — coberto abaixo.
+ * MustChangePasswordGuard (Part 73) was added to the real chain right after
+ * JwtAuthGuard — covered below.
  */
 import 'reflect-metadata';
 import { generateKeyPairSync } from 'crypto';
@@ -77,16 +77,16 @@ class TestController {
     return { ok: true };
   }
 
-  // Rota allowlisted pelo MustChangePasswordGuard mesmo quando a flag está true.
+  // Route allowlisted by MustChangePasswordGuard even when the flag is true.
   @Roles('viewer')
   @Get('auth/context')
   authContext() {
     return { ok: true };
   }
 
-  // Endpoint atômico de troca obrigatória de senha (Parte 74) — também
-  // precisa estar acessível enquanto a flag está true, senão ninguém
-  // consegue sair desse estado.
+  // Atomic mandatory-password-change endpoint (Part 74) — also needs to
+  // remain accessible while the flag is true, otherwise no one can
+  // get out of that state.
   @Roles('viewer')
   @Get('auth/change-required-password')
   changeRequiredPassword() {
@@ -123,7 +123,7 @@ describe('Guard chain composition (RateLimit -> JWT -> Tenant -> Billing -> Role
         { provide: TenantBootstrapResolver, useValue: { resolveTenant, resolveMembership } },
         { provide: BillingEnforcementService, useValue: { getStateWithEscalation: getBillingState } },
         { provide: RbacDecisionService, useValue: { evaluate: jest.fn().mockResolvedValue(undefined) } },
-        // Ordem exata de apps/api/src/app.module.ts — não reordenar sem atualizar as expectativas abaixo.
+        // Exact order from apps/api/src/app.module.ts — do not reorder without updating the expectations below.
         { provide: APP_GUARD, useClass: RateLimitGuard },
         { provide: APP_GUARD, useClass: JwtAuthGuard },
         { provide: APP_GUARD, useClass: MustChangePasswordGuard },
@@ -143,17 +143,17 @@ describe('Guard chain composition (RateLimit -> JWT -> Tenant -> Billing -> Role
 
   afterEach(() => jest.clearAllMocks());
 
-  it('rota @Public() nao exige JWT/Tenant/Roles', async () => {
+  it('@Public() route does not require JWT/Tenant/Roles', async () => {
     await request(app.getHttpServer()).get('/public').expect(200);
     expect(resolveTenant).not.toHaveBeenCalled();
   });
 
-  it('sem token -> 401 do JwtAuthGuard (Tenant/Billing/Roles nunca rodam)', async () => {
+  it('without token -> 401 from JwtAuthGuard (Tenant/Billing/Roles never run)', async () => {
     await request(app.getHttpServer()).get('/artists').expect(401);
     expect(resolveTenant).not.toHaveBeenCalled();
   });
 
-  it('JWT valido mas sem X-Tenant-ID -> 403 do TenantGuard (prova que Tenant roda apos JWT)', async () => {
+  it('valid JWT but no X-Tenant-ID -> 403 from TenantGuard (proves Tenant runs after JWT)', async () => {
     const token = makeToken({ sub: 'user-1', app_metadata: { org_id: 'org-1', role: 'admin' } });
     await request(app.getHttpServer())
       .get('/artists')
@@ -161,7 +161,7 @@ describe('Guard chain composition (RateLimit -> JWT -> Tenant -> Billing -> Role
       .expect(403);
   });
 
-  it('tenant suspenso (billing) bloqueia mesmo com role suficiente -> prova que Billing roda antes de Roles', async () => {
+  it('suspended tenant (billing) blocks even with a sufficient role -> proves Billing runs before Roles', async () => {
     const token = makeToken({ sub: 'user-1', app_metadata: { org_id: 'org-1', role: 'admin' } });
     resolveTenant.mockResolvedValue({ id: 'tenant-1', org_id: 'org-1', active: true });
     resolveMembership.mockResolvedValue({ role: 'admin', role_id: 'role-admin' });
@@ -177,10 +177,10 @@ describe('Guard chain composition (RateLimit -> JWT -> Tenant -> Billing -> Role
       });
   });
 
-  it('role insuficiente -> 403 do RolesGuard apos Tenant/Billing passarem', async () => {
+  it('insufficient role -> 403 from RolesGuard after Tenant/Billing pass', async () => {
     const token = makeToken({ sub: 'user-1', app_metadata: { org_id: 'org-1', role: 'guest' } });
     resolveTenant.mockResolvedValue({ id: 'tenant-1', org_id: 'org-1', active: true });
-    // "guest" nao existe em ROLE_HIERARCHY -> nivel 0, abaixo do minimo exigido por @Roles('viewer') (10).
+    // "guest" does not exist in ROLE_HIERARCHY -> level 0, below the minimum required by @Roles('viewer') (10).
     resolveMembership.mockResolvedValue({ role: 'guest', role_id: 'role-guest' });
     getBillingState.mockResolvedValue({ status: 'active' });
 
@@ -191,7 +191,7 @@ describe('Guard chain composition (RateLimit -> JWT -> Tenant -> Billing -> Role
       .expect(403);
   });
 
-  it('fluxo feliz completo: JWT + Tenant + Billing ativo + role suficiente -> 200', async () => {
+  it('full happy path: JWT + Tenant + Billing active + sufficient role -> 200', async () => {
     const token = makeToken({ sub: 'user-1', app_metadata: { org_id: 'org-1', role: 'admin' } });
     resolveTenant.mockResolvedValue({ id: 'tenant-1', org_id: 'org-1', active: true });
     resolveMembership.mockResolvedValue({ role: 'admin', role_id: 'role-admin' });
@@ -207,7 +207,7 @@ describe('Guard chain composition (RateLimit -> JWT -> Tenant -> Billing -> Role
     expect(resolveTenant).toHaveBeenCalledWith('org-1');
   });
 
-  it('must_change_password=true bloqueia rota comum mesmo com tenant/role válidos (prova que MustChangePassword roda logo após JWT)', async () => {
+  it('must_change_password=true blocks a common route even with valid tenant/role (proves MustChangePassword runs right after JWT)', async () => {
     const token = makeToken({ sub: 'user-1', app_metadata: { org_id: 'org-1', role: 'admin', must_change_password: true } });
     resolveTenant.mockResolvedValue({ id: 'tenant-1', org_id: 'org-1', active: true });
     resolveMembership.mockResolvedValue({ role: 'admin', role_id: 'role-admin' });
@@ -221,11 +221,11 @@ describe('Guard chain composition (RateLimit -> JWT -> Tenant -> Billing -> Role
       .expect((res) => {
         expect(res.body.message?.error ?? res.body.error).toBe('MUST_CHANGE_PASSWORD');
       });
-    // Nunca chega a resolver tenant — bloqueado antes do TenantGuard rodar.
+    // Never reaches tenant resolution — blocked before TenantGuard runs.
     expect(resolveTenant).not.toHaveBeenCalled();
   });
 
-  it('must_change_password=true ainda permite rota allowlisted (/auth/context)', async () => {
+  it('must_change_password=true still allows the allowlisted route (/auth/context)', async () => {
     const token = makeToken({ sub: 'user-1', app_metadata: { org_id: 'org-1', role: 'admin', must_change_password: true } });
     resolveTenant.mockResolvedValue({ id: 'tenant-1', org_id: 'org-1', active: true });
     resolveMembership.mockResolvedValue({ role: 'admin', role_id: 'role-admin' });
@@ -238,7 +238,7 @@ describe('Guard chain composition (RateLimit -> JWT -> Tenant -> Billing -> Role
       .expect(200);
   });
 
-  it('must_change_password=true ainda permite o endpoint atômico de troca (/auth/change-required-password)', async () => {
+  it('must_change_password=true still allows the atomic change endpoint (/auth/change-required-password)', async () => {
     const token = makeToken({ sub: 'user-1', app_metadata: { org_id: 'org-1', role: 'admin', must_change_password: true } });
     resolveTenant.mockResolvedValue({ id: 'tenant-1', org_id: 'org-1', active: true });
     resolveMembership.mockResolvedValue({ role: 'admin', role_id: 'role-admin' });
@@ -251,7 +251,7 @@ describe('Guard chain composition (RateLimit -> JWT -> Tenant -> Billing -> Role
       .expect(200);
   });
 
-  it('must_change_password ausente (default) não afeta rotas comuns', async () => {
+  it('must_change_password absent (default) does not affect common routes', async () => {
     const token = makeToken({ sub: 'user-1', app_metadata: { org_id: 'org-1', role: 'admin' } });
     resolveTenant.mockResolvedValue({ id: 'tenant-1', org_id: 'org-1', active: true });
     resolveMembership.mockResolvedValue({ role: 'admin', role_id: 'role-admin' });

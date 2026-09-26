@@ -33,22 +33,22 @@ function setup(status: string | null) {
 }
 
 describe('BillingEnforcementGuard', () => {
-  it('bloqueia rota tenant-scoped quando tenant esta suspended', async () => {
+  it('blocks a tenant-scoped route when the tenant is suspended', async () => {
     const { guard } = setup('suspended');
     await expect(guard.canActivate(context('GET', '/api/v1/artists'))).rejects.toThrow(ForbiddenException);
   });
 
-  it('permite /billing mesmo quando tenant esta suspended', async () => {
+  it('allows /billing even when the tenant is suspended', async () => {
     const { guard } = setup('suspended');
     await expect(guard.canActivate(context('POST', '/api/v1/billing/portal'))).resolves.toBe(true);
   });
 
-  it('permite leitura em read_only', async () => {
+  it('allows reads in read_only', async () => {
     const { guard } = setup('read_only');
     await expect(guard.canActivate(context('GET', '/api/v1/contracts'))).resolves.toBe(true);
   });
 
-  it('bloqueia mutacao em read_only', async () => {
+  it('blocks mutation in read_only', async () => {
     const { guard } = setup('read_only');
     await expect(guard.canActivate(context('POST', '/api/v1/contracts'))).rejects.toThrow(ForbiddenException);
   });
@@ -63,14 +63,14 @@ describe('BillingEnforcementGuard', () => {
    * blanket-deny-except-allowlist model: an entirely unmapped route, never
    * present in the old list, still gets blocked.
    */
-  it('P0-A-R2: bloqueia rota nao mapeada por nenhuma allowlist quando suspended (regressao fechada)', async () => {
+  it('P0-A-R2: blocks a route not covered by any allowlist when suspended (closed regression)', async () => {
     const { guard } = setup('suspended');
     await expect(guard.canActivate(context('GET', '/api/v1/notifications'))).rejects.toThrow(ForbiddenException);
     await expect(guard.canActivate(context('GET', '/api/v1/rbac'))).rejects.toThrow(ForbiddenException);
     await expect(guard.canActivate(context('POST', '/api/v1/integrations/whatsapp/send'))).rejects.toThrow(ForbiddenException);
   });
 
-  it('P0-A-R2: allowlist explicita continua permitida quando suspended', async () => {
+  it('P0-A-R2: explicit allowlist remains allowed when suspended', async () => {
     const { guard } = setup('suspended');
     await expect(guard.canActivate(context('GET', '/api/v1/auth/logout'))).resolves.toBe(true);
     await expect(guard.canActivate(context('GET', '/api/v1/support'))).resolves.toBe(true);
@@ -78,7 +78,7 @@ describe('BillingEnforcementGuard', () => {
     await expect(guard.canActivate(context('GET', '/api/v1/metrics'))).resolves.toBe(true);
   });
 
-  it('P0-A-R2: tenant active nao e bloqueado em nenhuma rota', async () => {
+  it('P0-A-R2: an active tenant is not blocked on any route', async () => {
     const { guard } = setup('active');
     await expect(guard.canActivate(context('GET', '/api/v1/notifications'))).resolves.toBe(true);
     await expect(guard.canActivate(context('POST', '/api/v1/artists'))).resolves.toBe(true);
@@ -93,7 +93,7 @@ describe('BillingEnforcementGuard', () => {
    * billing ever gets a chance to establish a row. This test pins the
    * intentional fail-open behavior against regression.
    */
-  it('find-9e311421: permite requisicao quando o tenant ainda nao tem tenant_billing_state (novo tenant)', async () => {
+  it('find-9e311421: allows the request when the tenant does not yet have a tenant_billing_state (new tenant)', async () => {
     const { guard, billing } = setup(null);
     await expect(guard.canActivate(context('POST', '/api/v1/artists'))).resolves.toBe(true);
     expect(billing.getStateWithEscalation).toHaveBeenCalledWith('tenant-1');
@@ -106,7 +106,7 @@ describe('BillingEnforcementGuard', () => {
    * still match the ALWAYS_ALLOWED_PREFIXES allowlist and the /api/vN strip
    * regex, not bypass it and fall through to the suspended-tenant block.
    */
-  it('find-0837dbc3/cf172810: allowlist e o strip de /api/vN sao case-insensitive', async () => {
+  it('find-0837dbc3/cf172810: the allowlist and the /api/vN strip are case-insensitive', async () => {
     const { guard } = setup('suspended');
     await expect(guard.canActivate(context('POST', '/API/V1/billing/portal'))).resolves.toBe(true);
     await expect(guard.canActivate(context('GET', '/api/v1/Billing/status'))).resolves.toBe(true);

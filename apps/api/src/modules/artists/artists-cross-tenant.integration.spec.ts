@@ -1,13 +1,14 @@
 /**
- * TEST-05 (auditoria 2026-07-05): nenhum teste no repositorio faz uma requisicao
- * HTTP real (supertest/INestApplication) contra um controller para confirmar que
- * GET /artists/:id de um recurso do tenant B retorna 403/404 quando autenticado
- * como tenant A — toda a suite de specs testa services/guards isolados com
- * ExecutionContext ou repositorio mockado. Este teste sobe o ArtistsController
- * real atras da cadeia real de guards (JWT -> Tenant -> Roles) e prova as duas
- * camadas de defesa via HTTP: (1) o service so retorna artistas do tenant
- * autenticado; (2) o TenantGuard rejeita X-Tenant-ID de um tenant do qual o
- * usuario nao e membro, mesmo que o cliente tente forjar o header.
+ * TEST-05 (2026-07-05 audit): no test in the repository makes a real HTTP
+ * request (supertest/INestApplication) against a controller to confirm that
+ * GET /artists/:id for a tenant B resource returns 403/404 when authenticated
+ * as tenant A — the whole spec suite tests services/guards in isolation with
+ * a mocked ExecutionContext or repository. This test boots the real
+ * ArtistsController behind the real guard chain (JWT -> Tenant -> Roles) and
+ * proves both defense layers via HTTP: (1) the service only returns artists
+ * from the authenticated tenant; (2) the TenantGuard rejects an X-Tenant-ID
+ * for a tenant the user is not a member of, even if the client tries to
+ * forge the header.
  */
 import 'reflect-metadata';
 import { generateKeyPairSync } from 'crypto';
@@ -65,8 +66,9 @@ function makeToken(payload: Record<string, unknown>): string {
   } as jwt.SignOptions);
 }
 
-// ParseUUIDPipe exige UUID valido no :id — dataset com dois tenants gerados pela
-// factory (nunca hardcoded), simulando o que o RLS/tenant_id garantiria no banco real.
+// ParseUUIDPipe requires a valid UUID in :id — dataset with two tenants generated
+// by the factory (never hardcoded), simulating what RLS/tenant_id would enforce
+// in the real database.
 const tenantA = createTestTenant();
 const tenantB = createTestTenant();
 const userA = createTestUser();
@@ -79,7 +81,7 @@ const ARTISTS_BY_TENANT: Record<string, Record<string, { id: string; nome_artist
   [tenantB.tenantId]: { [ARTIST_B_ID]: { id: ARTIST_B_ID, nome_artistico: artistB.nomeArtistico } },
 };
 
-describe('Cross-tenant IDOR — GET /artists/:id via HTTP real', () => {
+describe('Cross-tenant IDOR — GET /artists/:id via real HTTP', () => {
   let app: INestApplication;
   let resolveTenant: jest.Mock;
   let resolveMembership: jest.Mock;
@@ -137,7 +139,7 @@ describe('Cross-tenant IDOR — GET /artists/:id via HTTP real', () => {
 
   afterEach(() => jest.clearAllMocks());
 
-  it('tenant A autenticado le o proprio artista -> 200', async () => {
+  it('authenticated tenant A reads its own artist -> 200', async () => {
     const token = makeToken({ sub: userA.userId, app_metadata: { org_id: tenantA.orgId, role: userA.role } });
     resolveTenant.mockResolvedValue({ id: tenantA.tenantId, org_id: tenantA.orgId, active: true });
     resolveMembership.mockResolvedValue({ role: userA.role, role_id: 'role-viewer' });
@@ -152,7 +154,7 @@ describe('Cross-tenant IDOR — GET /artists/:id via HTTP real', () => {
       });
   });
 
-  it('tenant A autenticado pede o ID do artista da tenant B -> 404 (service filtra por tenant_id)', async () => {
+  it('authenticated tenant A requests tenant B artist ID -> 404 (service filters by tenant_id)', async () => {
     const token = makeToken({ sub: userA.userId, app_metadata: { org_id: tenantA.orgId, role: userA.role } });
     resolveTenant.mockResolvedValue({ id: tenantA.tenantId, org_id: tenantA.orgId, active: true });
     resolveMembership.mockResolvedValue({ role: userA.role, role_id: 'role-viewer' });
@@ -164,10 +166,10 @@ describe('Cross-tenant IDOR — GET /artists/:id via HTTP real', () => {
       .expect(404);
   });
 
-  it('usuario da tenant A tenta forjar X-Tenant-ID da tenant B sem ser membro -> 403 do TenantGuard (nunca chega no controller)', async () => {
+  it('tenant A user tries to forge tenant B X-Tenant-ID without being a member -> 403 from TenantGuard (never reaches the controller)', async () => {
     const token = makeToken({ sub: userA.userId, app_metadata: { org_id: tenantA.orgId, role: userA.role } });
-    // auth.orgId (tenantA) diverge do X-Tenant-ID forjado (tenantB) -> TenantGuard
-    // rejeita antes mesmo de resolver o tenant/membership.
+    // auth.orgId (tenantA) diverges from the forged X-Tenant-ID (tenantB) -> TenantGuard
+    // rejects before even resolving the tenant/membership.
     resolveTenant.mockResolvedValue({ id: tenantA.tenantId, org_id: tenantA.orgId, active: true });
 
     await request(app.getHttpServer())

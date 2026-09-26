@@ -53,7 +53,7 @@ const buildMockDs = (getOneValue: any = mockEvent) => {
   };
 };
 
-describe('EventsService — Estado P (pré-C3, comportamento atual documentado)', () => {
+describe('EventsService — State P (pre-C3, current documented behavior)', () => {
   let service: EventsService;
   let mockDs: ReturnType<typeof buildMockDs>;
 
@@ -69,9 +69,9 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
     service = module.get<EventsService>(EventsService);
   });
 
-  describe('CreateEventDto — validação', () => {
-    // Payload real do SchedulerFormModal.buildPayload() (create): title/type
-    // obrigatórios, startsAt/endsAt ISO, venue/artistId/capacity/metadata.
+  describe('CreateEventDto — validation', () => {
+    // Real payload from SchedulerFormModal.buildPayload() (create): title/type
+    // required, startsAt/endsAt ISO, venue/artistId/capacity/metadata.
     const realFormPayload = {
       title: 'Show de Lançamento',
       type: 'show',
@@ -83,12 +83,12 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
       metadata: { endereco: 'Rua X', valor_cache: '1000.00' },
     };
 
-    it('aceita o payload real do SchedulerFormModal', async () => {
+    it('accepts the real payload from SchedulerFormModal', async () => {
       const errors = await validateDto(realFormPayload);
       expect(errors).toEqual([]);
     });
 
-    it('aceita os campos do formulário com coluna própria (regra 2026-07-12)', async () => {
+    it('accepts the form fields with their own column (rule 2026-07-12)', async () => {
       const errors = await validateDto({
         title: 'Show', type: 'show',
         endereco: 'Rua X, 100', contato_local: 'Fulano',
@@ -98,19 +98,19 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
       expect(errors).toEqual([]);
     });
 
-    it('rejeita campo desconhecido (whitelist)', async () => {
+    it('rejects an unknown field (whitelist)', async () => {
       const errors = await validateDto({ title: 'X', type: 'show', campo_inexistente: 'y' });
       expect(errors.some((e) => e.property === 'campo_inexistente')).toBe(true);
     });
 
-    it('rejeita startsAt inválido (data não parseável)', async () => {
+    it('rejects invalid startsAt (unparseable date)', async () => {
       const errors = await validateDto({ title: 'X', type: 'show', startsAt: 'nao-e-data' });
       expect(errors.some((e) => e.property === 'startsAt')).toBe(true);
     });
   });
 
-  describe('create() — mapeamento dtoToEntity atual', () => {
-    it('startsAt persiste na coluna data', async () => {
+  describe('create() — current dtoToEntity mapping', () => {
+    it('startsAt persists in the data column', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Show', type: 'show', startsAt: new Date('2026-08-01T20:00:00Z'),
       } as never);
@@ -119,7 +119,7 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
       );
     });
 
-    it('endsAt persiste na coluna end_date', async () => {
+    it('endsAt persists in the end_date column', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Show', type: 'show',
         startsAt: new Date('2026-08-01T20:00:00Z'),
@@ -130,7 +130,7 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
       );
     });
 
-    it('campos do formulário são persistidos nas colunas próprias', async () => {
+    it('form fields are persisted in their own columns', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Show', type: 'show', startsAt: new Date(),
         endereco: 'Rua X', contato_local: 'Fulano',
@@ -149,7 +149,7 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
       );
     });
 
-    it('create sem startsAt usa o fallback atual (data = agora, coluna NOT NULL)', async () => {
+    it('create without startsAt uses the current fallback (data = now, NOT NULL column)', async () => {
       const before = Date.now();
       await service.create(TENANT, 'u1', { title: 'Show', type: 'show' } as never);
       const created = mockDs._repo.create.mock.calls[0][0] as { data: Date };
@@ -157,9 +157,9 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
       expect(created.data.getTime()).toBeGreaterThanOrEqual(before);
     });
 
-    // C3/E2 — ajuste legítimo: a resposta agora contém também starts_at
-    // (dual-write). `data` permanece presente até a fase E6.
-    it('resposta contém data e starts_at com o mesmo instante (E2)', async () => {
+    // C3/E2 — legitimate adjustment: the response now also contains starts_at
+    // (dual-write). `data` remains present until phase E6.
+    it('response contains data and starts_at with the same instant (E2)', async () => {
       const saved = await service.create(TENANT, 'u1', {
         title: 'Show', type: 'show', startsAt: new Date('2026-08-01T20:00:00Z'),
       } as never) as { data: Date; starts_at: Date };
@@ -172,22 +172,22 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
   });
 
   describe('create()/update() — dual-write data/starts_at (C3/E2)', () => {
-    it('startsAt explícito grava data e starts_at com a MESMA referência Date', async () => {
+    it('explicit startsAt writes data and starts_at with the SAME Date reference', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Show', type: 'show', startsAt: new Date('2026-08-01T20:00:00Z'),
       } as never);
       const created = mockDs._repo.create.mock.calls[0][0] as { data: Date; starts_at: Date };
-      expect(created.starts_at).toBe(created.data); // mesma referência, não só mesmo valor
+      expect(created.starts_at).toBe(created.data); // same reference, not just the same value
       expect(created.data.getTime()).toBe(new Date('2026-08-01T20:00:00Z').getTime());
     });
 
-    it('fallback sem startsAt grava o mesmo instante em ambas (uma única new Date())', async () => {
+    it('fallback without startsAt writes the same instant in both (a single new Date())', async () => {
       await service.create(TENANT, 'u1', { title: 'Show', type: 'show' } as never);
       const created = mockDs._repo.create.mock.calls[0][0] as { data: Date; starts_at: Date };
       expect(created.starts_at).toBe(created.data);
     });
 
-    it('endsAt continua indo somente para end_date — não alimenta starts_at', async () => {
+    it('endsAt still only goes to end_date — does not feed starts_at', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { endsAt: new Date('2026-08-01T23:00:00Z') } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).toMatchObject({ end_date: new Date('2026-08-01T23:00:00Z') });
@@ -195,7 +195,7 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
       expect(updateCall[1]).not.toHaveProperty('data');
     });
 
-    it('update com startsAt atualiza ambos com o mesmo valor', async () => {
+    it('update with startsAt updates both with the same value', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { startsAt: new Date('2026-09-01T20:00:00Z') } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).toMatchObject({
@@ -204,21 +204,21 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
       });
     });
 
-    it('PATCH sem startsAt não envia data nem starts_at', async () => {
+    it('PATCH without startsAt does not send data or starts_at', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { venue: 'Novo Local' } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('data');
       expect(updateCall[1]).not.toHaveProperty('starts_at');
     });
 
-    it('startsAt null não envia data nem starts_at (semântica atual preservada)', async () => {
+    it('startsAt null does not send data or starts_at (current semantics preserved)', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { startsAt: null } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('data');
       expect(updateCall[1]).not.toHaveProperty('starts_at');
     });
 
-    it('nenhum caminho de create escreve apenas uma das colunas quando há valor de início', async () => {
+    it('no create path writes only one of the columns when a start value is present', async () => {
       await service.create(TENANT, 'u1', {
         title: 'A', type: 'show', startsAt: new Date('2026-08-01T20:00:00Z'),
       } as never);
@@ -231,45 +231,45 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
       }
     });
 
-    it('list() continua ordenando por e.data — leitura canônica só na fase E4', async () => {
+    it('list() still orders by e.data — canonical read only in phase E4', async () => {
       await service.list(TENANT, {} as never);
       expect(mockDs._repo._qb.orderBy).toHaveBeenCalledWith('e.data', 'DESC');
       expect(mockDs._repo._qb.orderBy).not.toHaveBeenCalledWith('e.starts_at', expect.anything());
     });
   });
 
-  describe('update() — PATCH parcial', () => {
-    it('PATCH sem startsAt não altera data', async () => {
+  describe('update() — partial PATCH', () => {
+    it('PATCH without startsAt does not change data', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { venue: 'Novo Local' } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('data');
     });
 
-    it('PATCH sem endsAt não altera end_date', async () => {
+    it('PATCH without endsAt does not change end_date', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { venue: 'Novo Local' } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('end_date');
     });
 
-    it('startsAt no PATCH atualiza data', async () => {
+    it('startsAt in the PATCH updates data', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { startsAt: new Date('2026-09-01T20:00:00Z') } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).toMatchObject({ data: new Date('2026-09-01T20:00:00Z') });
     });
 
-    it('endsAt no PATCH atualiza end_date', async () => {
+    it('endsAt in the PATCH updates end_date', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { endsAt: new Date('2026-09-01T23:00:00Z') } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).toMatchObject({ end_date: new Date('2026-09-01T23:00:00Z') });
     });
 
-    it('campos do formulário são atualizáveis', async () => {
+    it('form fields are updatable', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { endereco: 'Rua Nova' } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).toMatchObject({ endereco: 'Rua Nova' });
     });
 
-    it('null preserva a semântica atual de "não alterar" (dtoToEntity usa != null)', async () => {
+    it('null preserves the current "do not change" semantics (dtoToEntity uses != null)', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { startsAt: null, venue: null } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('data');
@@ -277,37 +277,37 @@ describe('EventsService — Estado P (pré-C3, comportamento atual documentado)'
     });
   });
 
-  describe('list() — comportamento atual documentado (pré-C3, sem correção)', () => {
-    it('ordena por e.data (coluna legada)', async () => {
+  describe('list() — current documented behavior (pre-C3, no fix)', () => {
+    it('orders by e.data (legacy column)', async () => {
       await service.list(TENANT, {} as never);
       expect(mockDs._repo._qb.orderBy).toHaveBeenCalledWith('e.data', 'DESC');
     });
 
-    // Documentação do bug pré-existente (dívida C3.5): o DTO declarava type/artistId
-    // (EN) enquanto o service lia tipo/artist_id/dateFrom/dateTo — o filtro type
-    // nunca funcionava via HTTP real. A normalização de nomenclatura (2026-09-05,
-    // tipo -> type) corrigiu esse mismatch especificamente para type (a coluna
-    // física passou a se chamar type, igual ao nome já declarado no DTO).
-    // artistId continua com o mismatch documentado abaixo — dívida C3.5 separada.
-    it('filtro type (nome declarado no DTO) agora É aplicado pelo service (corrigido por tipo -> type)', async () => {
+    // Documentation of the pre-existing bug (C3.5 debt): the DTO declared type/artistId
+    // (EN) while the service read tipo/artist_id/dateFrom/dateTo — the type filter
+    // never worked over real HTTP. The naming normalization (2026-09-05,
+    // tipo -> type) fixed this mismatch specifically for type (the physical
+    // column was renamed to type, matching the name already declared in the DTO).
+    // artistId still has the mismatch documented below — a separate C3.5 debt.
+    it('type filter (name declared in the DTO) is now applied by the service (fixed via tipo -> type)', async () => {
       await service.list(TENANT, { type: 'show' } as never);
       const calls = mockDs._repo._qb.andWhere.mock.calls.map((c: unknown[]) => c[0]);
       expect(calls).toContain('e.type = :type');
     });
 
-    it('filtro artistId (nome declarado no DTO) NÃO é aplicado pelo service', async () => {
+    it('artistId filter (name declared in the DTO) is NOT applied by the service', async () => {
       await service.list(TENANT, { artistId: 'a-1' } as never);
       const calls = mockDs._repo._qb.andWhere.mock.calls.map((c: unknown[]) => c[0]);
       expect(calls).not.toContain('e.artist_id = :artistId');
     });
 
-    it('status (único filtro alinhado DTO↔service) é aplicado', async () => {
+    it('status (the only filter aligned between DTO and service) is applied', async () => {
       await service.list(TENANT, { status: 'scheduled' } as never);
       expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith('e.status = :status', { status: 'scheduled' });
     });
   });
 
-  it('findById lança NotFoundException para evento inexistente', async () => {
+  it('findById throws NotFoundException for a nonexistent event', async () => {
     mockDs._repo._qb.getOne.mockResolvedValueOnce(null);
     await expect(service.findById(TENANT, 'nao-existe')).rejects.toThrow(NotFoundException);
   });

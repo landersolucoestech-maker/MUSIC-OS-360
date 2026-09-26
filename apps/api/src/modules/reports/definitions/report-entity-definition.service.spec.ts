@@ -8,34 +8,34 @@ import {
   getReportFormContract,
 } from '../form-contracts/report-form-contracts';
 
-/** FASE 2.1 — contratos por entidade reportável, ancorados na metadata real. */
-describe('ReportEntityDefinitionService — contratos', () => {
+/** PHASE 2.1 — contracts per reportable entity, anchored in real metadata. */
+describe('ReportEntityDefinitionService — contracts', () => {
   const metadata = new EntityMetadataService();
   const inv = metadata.scan();
   const reportable = inv.entities.filter((e) => e.reportable);
   const defs = new ReportEntityDefinitionService(metadata).getDefinitions();
   const colsByTable = new Map(inv.entities.map((e) => [e.tableName, new Set(e.columns.map((c) => c.name))]));
 
-  it('toda entidade reportável efetiva possui ReportEntityDefinition', () => {
+  it('every effectively reportable entity has a ReportEntityDefinition', () => {
     expect(defs.length).toBe(reportable.length);
     for (const e of reportable) {
       expect(defs.find((d) => d.tableName === e.tableName)).toBeDefined();
     }
   });
 
-  it('REM-06: a definição real de invoices exclui type=stripe_subscription do export/import genérico', () => {
+  it('REM-06: the real invoices definition excludes type=stripe_subscription from generic export/import', () => {
     const invoicesDef = defs.find((d) => d.tableName === 'invoices');
     expect(invoicesDef).toBeDefined();
     expect(invoicesDef!.baseWhere).toEqual(["type != 'stripe_subscription'"]);
   });
 
-  it('tabelas sem exclusão declarada continuam com baseWhere vazio (comportamento existente preservado)', () => {
+  it('tables without a declared exclusion keep an empty baseWhere (existing behavior preserved)', () => {
     const artistsDef = defs.find((d) => d.tableName === 'artists');
     expect(artistsDef).toBeDefined();
     expect(artistsDef!.baseWhere).toEqual([]);
   });
 
-  it('toda coluna declarada no contrato possui lastro físico ou resolver repetível', () => {
+  it('every column declared in the contract has physical backing or a repeating resolver', () => {
     const offenders: string[] = [];
     for (const d of defs) {
       const real = colsByTable.get(d.tableName)!;
@@ -65,7 +65,7 @@ describe('ReportEntityDefinitionService — contratos', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('toda coluna visível do contrato possui label pt-BR', () => {
+  it('every visible contract column has a pt-BR label', () => {
     const offenders: string[] = [];
     for (const d of defs) {
       const visible = new Set([
@@ -78,7 +78,7 @@ describe('ReportEntityDefinitionService — contratos', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('colunas sensíveis NUNCA aparecem como exportáveis/importáveis', () => {
+  it('sensitive columns NEVER appear as exportable/importable', () => {
     const offenders: string[] = [];
     for (const d of defs) {
       for (const s of d.sensitiveColumns) {
@@ -90,7 +90,7 @@ describe('ReportEntityDefinitionService — contratos', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('identityColumn, displayColumn e dateColumn possuem lastro e label', () => {
+  it('identityColumn, displayColumn and dateColumn have backing and a label', () => {
     for (const d of defs) {
       const real = colsByTable.get(d.tableName)!;
       const contract = getReportFormContract(d.tableName);
@@ -103,7 +103,7 @@ describe('ReportEntityDefinitionService — contratos', () => {
     }
   });
 
-  it('importação deriva SEMPRE do mesmo schema da exportação', () => {
+  it('import ALWAYS derives from the same schema as export', () => {
     const offenders: string[] = [];
     for (const d of defs) {
       for (const col of d.importableColumns) {
@@ -113,7 +113,7 @@ describe('ReportEntityDefinitionService — contratos', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('nenhuma entidade reportável expõe relacionamento completo como coluna de export/import', () => {
+  it('no reportable entity exposes a full relationship as an export/import column', () => {
     const offenders: string[] = [];
     for (const e of reportable) {
       const d = defs.find((x) => x.tableName === e.tableName)!;
@@ -126,7 +126,7 @@ describe('ReportEntityDefinitionService — contratos', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('contratos núcleo têm forma coerente', () => {
+  it('core contracts have a coherent shape', () => {
     const artists = defs.find((d) => d.tableName === 'artists')!;
     expect(artists.supportsExport).toBe(true);
     expect(artists.exportableColumns.length).toBeGreaterThan(0);
@@ -135,7 +135,7 @@ describe('ReportEntityDefinitionService — contratos', () => {
     expect(artists.requiredImportColumns.length).toBeGreaterThan(0);
   });
 
-  describe('entidade REPORTABLE sem contrato explícito nunca aparece', () => {
+  describe('REPORTABLE entity without an explicit contract never appears', () => {
     function defsFor(columns: Array<Partial<import('../entity-metadata.types').ColumnMeta> & { name: string }>) {
       const fakeMetadata = {
         scan: () => ({
@@ -153,7 +153,7 @@ describe('ReportEntityDefinitionService — contratos', () => {
       return new ReportEntityDefinitionService(fakeMetadata).getDefinitions();
     }
 
-    it('fake_table sem contrato registrado produz ZERO definições', () => {
+    it('fake_table without a registered contract produces ZERO definitions', () => {
       const result = defsFor([
         { name: 'nome', type: 'varchar' },
         { name: 'tags', type: 'simple-array' },

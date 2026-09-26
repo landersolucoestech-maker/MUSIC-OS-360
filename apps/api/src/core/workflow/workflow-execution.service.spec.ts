@@ -18,7 +18,7 @@ const makeDs = () => {
 const ev = () => ({ emitTyped: jest.fn() });
 
 describe('WorkflowExecutionService', () => {
-  it('start persiste e emite workflow.execution.started', async () => {
+  it('start persists and emits workflow.execution.started', async () => {
     const { ds, repo } = makeDs();
     const events = ev();
     const svc = new WorkflowExecutionService(ds as never, events as never);
@@ -28,7 +28,7 @@ describe('WorkflowExecutionService', () => {
     expect(events.emitTyped).toHaveBeenCalledWith('workflow.execution.started', expect.any(Object));
   });
 
-  it('rejeita start sem tenantId antes de persistir', async () => {
+  it('rejects start without tenantId before persisting', async () => {
     const { ds, repo } = makeDs();
     const svc = new WorkflowExecutionService(ds as never, ev() as never);
 
@@ -42,7 +42,7 @@ describe('WorkflowExecutionService', () => {
     expect(repo.save).not.toHaveBeenCalled();
   });
 
-  it('logAction exige tenantId', async () => {
+  it('logAction requires tenantId', async () => {
     const { ds, repo } = makeDs();
     const svc = new WorkflowExecutionService(ds as never, ev() as never);
 
@@ -52,7 +52,7 @@ describe('WorkflowExecutionService', () => {
     expect(repo.save).not.toHaveBeenCalled();
   });
 
-  it('finish → success quando não há falhas (emite completed)', async () => {
+  it('finish → success when there are no failures (emits completed)', async () => {
     const { ds } = makeDs();
     const events = ev();
     const svc = new WorkflowExecutionService(ds as never, events as never);
@@ -61,7 +61,7 @@ describe('WorkflowExecutionService', () => {
     expect(events.emitTyped).toHaveBeenCalledWith('workflow.execution.completed', expect.any(Object));
   });
 
-  it('finish rejeita tenantId vazio antes de atualizar', async () => {
+  it('finish rejects an empty tenantId before updating', async () => {
     const { ds, repo } = makeDs();
     const svc = new WorkflowExecutionService(ds as never, ev() as never);
 
@@ -74,7 +74,7 @@ describe('WorkflowExecutionService', () => {
     expect(repo.update).not.toHaveBeenCalled();
   });
 
-  it('finish → partial quando há sucesso e falha', async () => {
+  it('finish → partial when there is both success and failure', async () => {
     const { ds } = makeDs();
     const events = ev();
     const svc = new WorkflowExecutionService(ds as never, events as never);
@@ -83,7 +83,7 @@ describe('WorkflowExecutionService', () => {
     expect(events.emitTyped).toHaveBeenCalledWith('workflow.execution.completed', expect.any(Object));
   });
 
-  it('finish → failed quando tudo falha (emite failed)', async () => {
+  it('finish → failed when everything fails (emits failed)', async () => {
     const { ds } = makeDs();
     const events = ev();
     const svc = new WorkflowExecutionService(ds as never, events as never);
@@ -92,7 +92,7 @@ describe('WorkflowExecutionService', () => {
     expect(events.emitTyped).toHaveBeenCalledWith('workflow.execution.failed', expect.any(Object));
   });
 
-  it('list clampa limites; get retorna execução + logs', async () => {
+  it('list clamps limits; get returns execution + logs', async () => {
     const { ds } = makeDs();
     const svc = new WorkflowExecutionService(ds as never, ev() as never);
     const page = await svc.list('t1', { limit: 999, offset: -1 });
@@ -102,7 +102,7 @@ describe('WorkflowExecutionService', () => {
     expect(detail?.logs).toHaveLength(1);
   });
 
-  it('sem DATA_SOURCE: start tenant-scoped retorna "" e list vazio', async () => {
+  it('without DATA_SOURCE: tenant-scoped start returns "" and list is empty', async () => {
     const svc = new WorkflowExecutionService(null, ev() as never);
     expect(await svc.start({ tenantId: 't1', ruleId: 'r', ruleName: 'R', eventType: 'e', actionsTotal: 0 })).toBe('');
     expect(await svc.list('t1')).toEqual({ data: [], total: 0, limit: 25, offset: 0 });

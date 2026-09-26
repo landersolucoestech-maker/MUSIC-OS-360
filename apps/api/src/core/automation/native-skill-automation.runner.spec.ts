@@ -81,7 +81,7 @@ describe('runNativeSkillAutomation — P2-9 context propagation', () => {
     expect(load).not.toHaveBeenCalled();
   });
 
-  it('reabre contexto para registrar falha pre-start depois do rollback', async () => {
+  it('reopens context to record a pre-start failure after the rollback', async () => {
     const d = deps();
     let contextActive = false;
     const writes: boolean[] = [];
@@ -127,7 +127,7 @@ describe('runNativeSkillAutomation — P2-9 context propagation', () => {
     );
   });
 
-  it('não executa writes quando DatabaseContextService não está disponível', async () => {
+  it('does not execute writes when DatabaseContextService is unavailable', async () => {
     const d = deps();
     const load = jest.fn(async () => ({ metadata: {} }));
 

@@ -24,7 +24,7 @@ function buildInsertRepo(existingLatest: unknown = null) {
 }
 
 describe('CareerStageService.calculate', () => {
-  it('calcula a partir de current-state + growth já ingeridos, sem chamar nenhuma API externa (só os services injetados)', async () => {
+  it('calculates from already-ingested current-state + growth, without calling any external API (only the injected services)', async () => {
     const profiles = {
       findByArtist: jest.fn().mockResolvedValue([
         baseSnapshot({ platform: 'spotify', monthly_listeners: 1_000_000 }),
@@ -47,7 +47,7 @@ describe('CareerStageService.calculate', () => {
     expect(result.dimensions.find((d) => d.key === 'STREAMING')?.status).toBe('AVAILABLE');
   });
 
-  it('persiste um snapshot append-only por cálculo (nunca UPDATE)', async () => {
+  it('persists an append-only snapshot per calculation (never UPDATE)', async () => {
     const profiles = {
       findByArtist: jest.fn().mockResolvedValue([baseSnapshot({ platform: 'spotify', monthly_listeners: 2_000_000 })]),
     } as unknown as ArtistPlatformProfilesService;
@@ -69,7 +69,7 @@ describe('CareerStageService.calculate', () => {
     expect(row.engine_version).toBe('1.1.0');
   });
 
-  it('SNAPSHOT DEDUP (item 25/26): resultado idêntico ao último snapshot não grava linha nova a cada GET', async () => {
+  it('SNAPSHOT DEDUP (item 25/26): a result identical to the last snapshot does not write a new row on every GET', async () => {
     const profiles = {
       findByArtist: jest.fn().mockResolvedValue([baseSnapshot({ platform: 'spotify', monthly_listeners: 2_000_000 })]),
     } as unknown as ArtistPlatformProfilesService;
@@ -84,13 +84,13 @@ describe('CareerStageService.calculate', () => {
     await service.calculate('t1', 'a1');
     expect(inserted).toHaveLength(1);
 
-    // Segunda chamada com o MESMO input (simula 2 aberturas de tela seguidas): o
-    // fake repo devolve o snapshot recém-gravado via findOne — deve pular o insert.
+    // Second call with the SAME input (simulates 2 consecutive screen openings):
+    // the fake repo returns the just-written snapshot via findOne — should skip the insert.
     (fakeRepo.findOne as jest.Mock).mockResolvedValue(inserted[0]);
     await service.calculate('t1', 'a1');
-    expect(inserted).toHaveLength(1); // ainda 1 — não duplicou
+    expect(inserted).toHaveLength(1); // still 1 — did not duplicate
 
-    // Terceira chamada com input DIFERENTE (métrica mudou de verdade): deve gravar.
+    // Third call with a DIFFERENT input (metric actually changed): should write.
     const profiles2 = {
       findByArtist: jest.fn().mockResolvedValue([baseSnapshot({ platform: 'spotify', monthly_listeners: 5_000_000 })]),
     } as unknown as ArtistPlatformProfilesService;
@@ -99,7 +99,7 @@ describe('CareerStageService.calculate', () => {
     expect(inserted).toHaveLength(2);
   });
 
-  it('falha ao persistir não derruba o resultado (audit trail é best-effort)', async () => {
+  it('a persistence failure does not bring down the result (audit trail is best-effort)', async () => {
     const profiles = {
       findByArtist: jest.fn().mockResolvedValue([]),
     } as unknown as ArtistPlatformProfilesService;
@@ -115,7 +115,7 @@ describe('CareerStageService.calculate', () => {
     expect(result.status).toBe('INSUFFICIENT_DATA');
   });
 
-  it('ignora perfis com sync_status != success (pending/failed nunca alimentam o engine)', async () => {
+  it('ignores profiles with sync_status != success (pending/failed never feed the engine)', async () => {
     const profiles = {
       findByArtist: jest.fn().mockResolvedValue([
         baseSnapshot({ platform: 'spotify', monthly_listeners: 1_000_000, sync_status: 'failed' }),
@@ -133,7 +133,7 @@ describe('CareerStageService.calculate', () => {
     expect(result.dimensions.find((d) => d.key === 'STREAMING')?.status).toBe('UNAVAILABLE');
   });
 
-  it('busca growth para as métricas elegíveis, nunca para apple-music (sem histórico de audiência)', async () => {
+  it('fetches growth for eligible metrics, never for apple-music (no audience history)', async () => {
     const profiles = { findByArtist: jest.fn().mockResolvedValue([]) } as unknown as ArtistPlatformProfilesService;
     const growthCalls: string[] = [];
     const snapshots = {

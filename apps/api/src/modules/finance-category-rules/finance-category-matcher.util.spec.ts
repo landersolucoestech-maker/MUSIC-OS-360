@@ -10,51 +10,51 @@ function rule(overrides: Partial<MatchableCategoryRule> & Pick<MatchableCategory
 }
 
 describe('normalizeMatchText', () => {
-  it('remove acentos, baixa caixa e colapsa espaços', () => {
+  it('strips accents, lowercases and collapses whitespace', () => {
     expect(normalizeMatchText('  Pagamento SPOTIFY   Assinatura  ')).toBe('pagamento spotify assinatura');
     expect(normalizeMatchText('São Paulo — Café')).toBe('sao paulo — cafe');
   });
 });
 
 describe('matchCategoryRule — match simples', () => {
-  it('encontra regra cuja keyword aparece na descrição', () => {
+  it('finds a rule whose keyword appears in the description', () => {
     const rules = [rule({ id: 'r1', keywords: ['spotify'] })];
     const result = matchCategoryRule(rules, { descricao: 'Pagamento Spotify mensal', transactionType: 'DESPESA' });
     expect(result?.id).toBe('r1');
   });
 
-  it('retorna null quando nenhuma keyword corresponde', () => {
+  it('returns null when no keyword matches', () => {
     const rules = [rule({ id: 'r1', keywords: ['spotify'] })];
     const result = matchCategoryRule(rules, { descricao: 'Aluguel do escritório', transactionType: 'DESPESA' });
     expect(result).toBeNull();
   });
 
-  it('retorna null para descrição vazia', () => {
+  it('returns null for an empty description', () => {
     const rules = [rule({ id: 'r1', keywords: ['spotify'] })];
     expect(matchCategoryRule(rules, { descricao: '', transactionType: 'DESPESA' })).toBeNull();
   });
 });
 
-describe('matchCategoryRule — múltiplas keywords', () => {
-  it('casa se QUALQUER keyword da regra aparecer na descrição', () => {
+describe('matchCategoryRule — multiple keywords', () => {
+  it('matches if ANY keyword of the rule appears in the description', () => {
     const rules = [rule({ id: 'r1', keywords: ['netflix', 'spotify', 'deezer'] })];
     expect(matchCategoryRule(rules, { descricao: 'Assinatura Deezer Premium', transactionType: 'DESPESA' })?.id).toBe('r1');
   });
 });
 
-describe('matchCategoryRule — prioridade', () => {
-  it('prefere a regra de menor número de prioridade quando mais de uma corresponde', () => {
+describe('matchCategoryRule — priority', () => {
+  it('prefers the rule with the lower priority number when more than one matches', () => {
     const rules = [
       rule({ id: 'generic', keywords: ['show'], priority: 200 }),
       rule({ id: 'specific', keywords: ['show'], priority: 10 }),
     ];
-    // Ambas correspondem — a de prioridade 10 deve ganhar SE já estiver ordenada
-    // primeiro na lista recebida (contrato: chamador ordena por priority ASC).
+    // Both match — the priority-10 one must win IF it is already ordered
+    // first in the received list (contract: caller sorts by priority ASC).
     const ordered = [...rules].sort((a, b) => a.priority - b.priority);
     expect(matchCategoryRule(ordered, { descricao: 'Show ao vivo', transactionType: 'DESPESA' })?.id).toBe('specific');
   });
 
-  it('em empate de prioridade, a primeira da lista recebida vence (ordem estável)', () => {
+  it('on a priority tie, the first item in the received list wins (stable order)', () => {
     const rules = [
       rule({ id: 'first', keywords: ['aluguel'], priority: 50 }),
       rule({ id: 'second', keywords: ['aluguel'], priority: 50 }),
@@ -63,13 +63,13 @@ describe('matchCategoryRule — prioridade', () => {
   });
 });
 
-describe('matchCategoryRule — regra inativa', () => {
-  it('nunca corresponde a uma regra inativa, mesmo com keyword correspondente', () => {
+describe('matchCategoryRule — inactive rule', () => {
+  it('never matches an inactive rule, even with a matching keyword', () => {
     const rules = [rule({ id: 'inactive', keywords: ['spotify'], active: false })];
     expect(matchCategoryRule(rules, { descricao: 'Pagamento Spotify', transactionType: 'DESPESA' })).toBeNull();
   });
 
-  it('ignora a regra inativa e cai para a próxima ativa que também corresponde', () => {
+  it('ignores the inactive rule and falls through to the next active one that also matches', () => {
     const rules = [
       rule({ id: 'inactive', keywords: ['spotify'], active: false, priority: 1 }),
       rule({ id: 'active', keywords: ['spotify'], active: true, priority: 999 }),
@@ -79,7 +79,7 @@ describe('matchCategoryRule — regra inativa', () => {
 });
 
 describe('matchCategoryRule — transaction_type', () => {
-  it('nunca corresponde a uma regra de tipo de transação diferente', () => {
+  it('never matches a rule with a different transaction type', () => {
     const rules = [rule({ id: 'r1', keywords: ['spotify'], transaction_type: 'RECEITA' })];
     expect(matchCategoryRule(rules, { descricao: 'Pagamento Spotify', transactionType: 'DESPESA' })).toBeNull();
   });

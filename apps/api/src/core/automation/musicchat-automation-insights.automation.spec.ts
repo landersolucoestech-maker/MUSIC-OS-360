@@ -64,7 +64,7 @@ const BUILDER_JSON = JSON.stringify({
 });
 
 describe('MusicChatAutomationInsightsAutomation.runAudit (ON_DEMAND: POST .../automation/audit)', () => {
-  it('agrega contadores reais de eventos e settings, registra skill_run e retorna o resultado', async () => {
+  it('aggregates real event/settings counters, records skill_run and returns the result', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(AUDIT_JSON);
     const automation = makeAutomationService();
@@ -88,7 +88,7 @@ describe('MusicChatAutomationInsightsAutomation.runAudit (ON_DEMAND: POST .../au
     expect(skillRun.succeed).toHaveBeenCalled();
   });
 
-  it('reaproveita auditoria recente (stale-refresh de 1 dia) sem nova chamada de IA', async () => {
+  it('reuses a recent audit (1-day stale-refresh) without a new AI call', async () => {
     const cachedRun = {
       id: 'run-old',
       finished_at: new Date().toISOString(),
@@ -105,7 +105,7 @@ describe('MusicChatAutomationInsightsAutomation.runAudit (ON_DEMAND: POST .../au
     expect(ai.complete).not.toHaveBeenCalled();
   });
 
-  it('falha da IA registra fail e relança', async () => {
+  it('AI failure records fail and rethrows', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const automation = makeAutomationService();
@@ -117,7 +117,7 @@ describe('MusicChatAutomationInsightsAutomation.runAudit (ON_DEMAND: POST .../au
 });
 
 describe('MusicChatAutomationInsightsAutomation.runBuilderSuggestions (ON_DEMAND: POST .../automation/builder-suggestions)', () => {
-  it('extrai amostras reais de mensagens sem correspondência e nunca aplica a configuração', async () => {
+  it('extracts real samples of unmatched messages and never applies the configuration', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(BUILDER_JSON);
     const automation = makeAutomationService();
@@ -134,12 +134,12 @@ describe('MusicChatAutomationInsightsAutomation.runBuilderSuggestions (ON_DEMAND
     expect(aiCalls[0][0].prompt).toContain('quero cancelar meu contrato');
     expect(aiCalls[0][0].prompt).toContain('como funciona o repasse de royalties');
 
-    // updateSettings nunca é chamado por esta skill — sugestão apenas
+    // updateSettings is never called by this skill — suggestion only
     expect((automation as unknown as { updateSettings?: unknown }).updateSettings).toBeUndefined();
     expect(result.parsed.suggestedMenuChanges).toHaveLength(1);
   });
 
-  it('sem amostras sem correspondência, monta input com lista vazia', async () => {
+  it('without unmatched samples, builds input with an empty list', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(BUILDER_JSON);
     const automation = makeAutomationService(SETTINGS, []);
@@ -152,7 +152,7 @@ describe('MusicChatAutomationInsightsAutomation.runBuilderSuggestions (ON_DEMAND
     expect(aiCalls[0][0].prompt).toContain('Nenhuma amostra');
   });
 
-  it('falha da IA registra fail e relança', async () => {
+  it('AI failure records fail and rethrows', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const automation = makeAutomationService();

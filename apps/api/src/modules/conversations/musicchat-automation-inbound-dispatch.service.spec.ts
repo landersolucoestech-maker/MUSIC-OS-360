@@ -2,12 +2,12 @@ import 'reflect-metadata';
 import { MusicChatAutomationService } from './musicchat-automation.service';
 
 /**
- * MusicChat Inbox wave (decisão de produto 2026-08-22): sendSystemMessage()
- * (usada pelas respostas automáticas de boas-vindas/menu do bot de triagem)
- * só gravava a mensagem no banco — nunca despachava de fato ao WhatsApp real.
- * O cliente nunca via a mensagem de boas-vindas no app dele. Corrigido:
- * addConversationMessage() agora despacha via WhatsAppCloudProvider quando
- * senderType='system' numa conversa de canal whatsapp.
+ * MusicChat Inbox wave (product decision 2026-08-22): sendSystemMessage()
+ * (used by the triage bot's automatic welcome/menu replies) only wrote the
+ * message to the database — it never actually dispatched it to real WhatsApp.
+ * The customer never saw the welcome message in their app. Fixed:
+ * addConversationMessage() now dispatches via WhatsAppCloudProvider when
+ * senderType='system' in a whatsapp-channel conversation.
  */
 function makeQb(overrides: Partial<Record<string, unknown>> = {}) {
   const qb: Record<string, jest.Mock> = {
@@ -34,12 +34,12 @@ function makeService() {
       menu_options: [], templates: [], return_to_menu_rule: { enabled: true, commands: [] },
     }),
   };
-  const convQb = makeQb({ getOne: jest.fn().mockResolvedValue(null) }); // findOrCreateConversation: nenhuma existente
+  const convQb = makeQb({ getOne: jest.fn().mockResolvedValue(null) }); // findOrCreateConversation: none exists
   const convRepo = {
     createQueryBuilder: jest.fn(() => convQb),
     create: jest.fn((v: unknown) => ({ id: 'conv-1', ...(v as object) })),
     save: jest.fn(async (v: unknown) => ({ ...conv, ...(v as object) })),
-    findOne: jest.fn().mockResolvedValue(conv), // findConversation (usado dentro do dispatch)
+    findOne: jest.fn().mockResolvedValue(conv), // findConversation (used inside the dispatch)
     update: jest.fn().mockResolvedValue({ affected: 1 }),
   };
   const msgRepo = {
@@ -71,8 +71,8 @@ function makeService() {
   return { svc, whatsapp, msgRepo, ws };
 }
 
-describe('MusicChatAutomationService.handleInboundMessage — mensagem de boas-vindas chega ao WhatsApp real', () => {
-  it('despacha a mensagem de boas-vindas via WhatsAppCloudProvider usando external_contact_id (telefone ainda não gravado em metadata neste ponto)', async () => {
+describe('MusicChatAutomationService.handleInboundMessage — the welcome message reaches real WhatsApp', () => {
+  it('dispatches the welcome message via WhatsAppCloudProvider using external_contact_id (phone not yet written to metadata at this point)', async () => {
     const { svc, whatsapp } = makeService();
 
     await svc.handleInboundMessage('t1', {
@@ -86,7 +86,7 @@ describe('MusicChatAutomationService.handleInboundMessage — mensagem de boas-v
     expect(whatsapp.sendTextMessage).toHaveBeenCalledWith('t1', '5511999999999', 'Bem-vindo!\n\n1. Falar com atendente');
   });
 
-  it('marca delivery_status=sent na mensagem do sistema após despacho bem-sucedido', async () => {
+  it('marks delivery_status=sent on the system message after a successful dispatch', async () => {
     const { svc, msgRepo } = makeService();
 
     await svc.handleInboundMessage('t1', {

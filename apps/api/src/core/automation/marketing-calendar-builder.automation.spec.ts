@@ -35,7 +35,7 @@ const VALID_JSON = JSON.stringify({
 const IDEMPOTENCY_KEY = 'release.approved:t1:rel1';
 
 describe('MarketingCalendarBuilderAutomation (release.approved → marketing-calendar-builder)', () => {
-  it('executa e grava releases.metadata.aiMarketingCalendar com datas e plataformas default', async () => {
+  it('executes and writes releases.metadata.aiMarketingCalendar with default dates and platforms', async () => {
     const { ds, query } = makeDs([RELEASE_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
@@ -60,7 +60,7 @@ describe('MarketingCalendarBuilderAutomation (release.approved → marketing-cal
     expect(meta.aiMarketingCalendar.status).toBe('generated');
   });
 
-  it('idempotência metadata bloqueia reprocesso', async () => {
+  it('metadata idempotency blocks reprocessing', async () => {
     const row = { ...RELEASE_ROW, metadata: { aiMarketingCalendar: { idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' } } };
     const { ds, query } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -71,7 +71,7 @@ describe('MarketingCalendarBuilderAutomation (release.approved → marketing-cal
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('falha da IA registra fail e não grava', async () => {
+  it('AI failure records fail and does not write', async () => {
     const { ds, query } = makeDs([RELEASE_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
@@ -81,7 +81,7 @@ describe('MarketingCalendarBuilderAutomation (release.approved → marketing-cal
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('guarda releaseId ausente', async () => {
+  it('guards against missing releaseId', async () => {
     const { ds, query } = makeDs([RELEASE_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

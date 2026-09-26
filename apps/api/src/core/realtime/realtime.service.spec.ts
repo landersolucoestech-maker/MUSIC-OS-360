@@ -28,13 +28,14 @@ function flush() {
 }
 
 /**
- * Regressão: RealtimeService.sendToTenant recebia tenants.id (PK) de todos os
- * callers e publicava em `tenant:<tenants.id>` — mas a policy RLS de autorização
- * do canal (20260801000001_RealtimeBroadcastAuthorization) e o frontend
- * (ws-client.ts) autorizam/assinam `tenant:<org_id>`. Broadcasts nunca chegavam.
- * O fix resolve tenants.id -> tenants.org_id internamente antes de publicar, sem
- * exigir que nenhum caller mude — este teste prova que o tópico publicado usa
- * org_id, não o tenantId passado pelo caller.
+ * Regression: RealtimeService.sendToTenant received tenants.id (PK) from all
+ * callers and published to `tenant:<tenants.id>` — but the channel's RLS
+ * authorization policy (20260801000001_RealtimeBroadcastAuthorization) and the
+ * frontend (ws-client.ts) authorize/subscribe to `tenant:<org_id>`. Broadcasts
+ * never arrived. The fix resolves tenants.id -> tenants.org_id internally
+ * before publishing, without requiring any caller to change — this test
+ * proves that the published topic uses org_id, not the tenantId passed by
+ * the caller.
  */
 describe('RealtimeService — canonical tenant topic (tenants.id -> org_id)', () => {
   function makeService(tenantRow: { org_id: string } | null = { org_id: 'org-xyz-canonical' }) {
@@ -55,7 +56,7 @@ describe('RealtimeService — canonical tenant topic (tenants.id -> org_id)', ()
 
   beforeEach(() => jest.clearAllMocks());
 
-  it('sendToTenant publica em tenant:<org_id>, nunca em tenant:<tenants.id>', async () => {
+  it('sendToTenant publishes to tenant:<org_id>, never to tenant:<tenants.id>', async () => {
     const { service, findOne } = makeService({ org_id: 'org-xyz-canonical' });
 
     service.sendToTenant('tenant-pk-123', 'conversation:message', { hello: 'world' });
@@ -66,7 +67,7 @@ describe('RealtimeService — canonical tenant topic (tenants.id -> org_id)', ()
     expect(channelMock()).not.toHaveBeenCalledWith('tenant:tenant-pk-123', expect.anything());
   });
 
-  it('resolve org_id apenas uma vez por tenant (cache) em chamadas subsequentes', async () => {
+  it('resolves org_id only once per tenant (cache) on subsequent calls', async () => {
     const { service, findOne } = makeService({ org_id: 'org-cached' });
 
     service.sendToTenant('tenant-1', 'conversation:created', {});
@@ -78,7 +79,7 @@ describe('RealtimeService — canonical tenant topic (tenants.id -> org_id)', ()
     expect(channelMock()).toHaveBeenCalledWith('tenant:org-cached', expect.anything());
   });
 
-  it('tenant inexistente: não publica em um tópico com o tenantId cru como fallback', async () => {
+  it('nonexistent tenant: does not publish to a topic using the raw tenantId as a fallback', async () => {
     const { service } = makeService(null);
 
     service.sendToTenant('tenant-desconhecido', 'conversation:message', {});
@@ -88,7 +89,7 @@ describe('RealtimeService — canonical tenant topic (tenants.id -> org_id)', ()
     expect(channelMock()).not.toHaveBeenCalled();
   });
 
-  it('sendToUser publica no canal do usuário com o id literal E no tenant:<org_id> resolvido', async () => {
+  it('sendToUser publishes to the user channel with the literal id AND to the resolved tenant:<org_id>', async () => {
     const { service } = makeService({ org_id: 'org-for-user' });
 
     service.sendToUser('tenant-pk-999', 'user-abc', 'notification:new', {});
@@ -98,7 +99,7 @@ describe('RealtimeService — canonical tenant topic (tenants.id -> org_id)', ()
     expect(channelMock()).toHaveBeenCalledWith('tenant:org-for-user', expect.anything());
   });
 
-  it('sendToUserOnly publica apenas no canal do usuário, nunca no canal do tenant (evento privado ponto-a-ponto)', async () => {
+  it('sendToUserOnly publishes only to the user channel, never to the tenant channel (private point-to-point event)', async () => {
     const { service } = makeService({ org_id: 'org-for-user' });
 
     service.sendToUserOnly('user-abc', 'internalConversation:message', {});
@@ -110,18 +111,19 @@ describe('RealtimeService — canonical tenant topic (tenants.id -> org_id)', ()
 });
 
 /**
- * Regressão (Métricas Fase 1.1 — P1 investigado): sendToTenant/notifyDataChanged
- * são fire-and-forget — se chamados de dentro de
+ * Regression (Metrics Phase 1.1 — investigated P1): sendToTenant/notifyDataChanged
+ * are fire-and-forget — if called from inside
  * RequestTenantContextInterceptor/DatabaseContextService.runInTenantContext
- * (DATABASE_SESSION_CONTEXT_ENABLED=true), o QueryRunner request-scoped pode já
- * ter sido liberado (finally do runInTenantContext) antes da query assíncrona de
- * resolveOrgId terminar, lançando QueryRunnerAlreadyReleasedError — RealtimeService
- * usa service_role e nunca precisou do contexto de tenant/ALS para esta consulta.
- * Simula exatamente isso: um repo cujo findOne lança se visto de dentro de um
- * ALS store ativo (como aconteceria com o manager de um QueryRunner já liberado).
+ * (DATABASE_SESSION_CONTEXT_ENABLED=true), the request-scoped QueryRunner may
+ * already have been released (runInTenantContext's finally) before the async
+ * resolveOrgId query finishes, throwing QueryRunnerAlreadyReleasedError —
+ * RealtimeService uses service_role and never needed the tenant/ALS context
+ * for this query. This simulates exactly that: a repo whose findOne throws if
+ * seen from inside an active ALS store (as would happen with the manager of
+ * an already-released QueryRunner).
  */
-describe('RealtimeService — não depende do EntityManager/QueryRunner request-scoped do ALS (Métricas Fase 1.1)', () => {
-  it('resolveOrgId nunca vê o ALS store ativo — nunca lança mesmo chamado de dentro de um contexto de tenant', async () => {
+describe('RealtimeService — does not depend on the ALS request-scoped EntityManager/QueryRunner (Metrics Phase 1.1)', () => {
+  it('resolveOrgId never sees the active ALS store — never throws even when called from inside a tenant context', async () => {
     const config = {
       get: jest.fn((key: string) => {
         if (key === 'SUPABASE_URL') return 'https://example.supabase.co';
@@ -131,11 +133,11 @@ describe('RealtimeService — não depende do EntityManager/QueryRunner request-
     } as unknown as ConfigService;
 
     const findOne = jest.fn(async () => {
-      // Simula o manager de um QueryRunner request-scoped já liberado: se o
-      // Proxy de DATA_SOURCE ainda enxergar um ALS store ativo aqui, é sinal de
-      // que a query rotearia para esse manager — exatamente o bug.
+      // Simulates the manager of an already-released request-scoped QueryRunner:
+      // if the DATA_SOURCE Proxy still sees an active ALS store here, that's a
+      // sign the query would route to that manager — exactly the bug.
       if (tenantAls.getStore()) {
-        throw new Error('QueryRunnerAlreadyReleasedError (simulado): manager request-scoped já liberado');
+        throw new Error('QueryRunnerAlreadyReleasedError (simulated): request-scoped manager already released');
       }
       return { org_id: 'org-safe' };
     });
@@ -143,8 +145,8 @@ describe('RealtimeService — não depende do EntityManager/QueryRunner request-
     const ds = { getRepository: jest.fn(() => tenantRepo) } as unknown as DataSource;
     const service = new RealtimeService(config, ds);
 
-    // Simula estar dentro de runInTenantContext (interceptor/job) no momento em
-    // que o broadcast fire-and-forget é disparado.
+    // Simulates being inside runInTenantContext (interceptor/job) at the
+    // moment the fire-and-forget broadcast is triggered.
     const fakeManager = {} as never;
     await tenantAls.run({ manager: fakeManager }, async () => {
       service.sendToTenant('tenant-1', 'conversation:message', { hello: 'world' });

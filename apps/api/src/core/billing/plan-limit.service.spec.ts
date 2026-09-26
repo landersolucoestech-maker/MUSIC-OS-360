@@ -13,33 +13,33 @@ function makeDs(count: number) {
 }
 
 describe('PlanLimitService', () => {
-  it('resolvePlan retorna "starter" quando DS é null', async () => {
+  it('resolvePlan returns "starter" when DS is null', async () => {
     const svc = new PlanLimitService(null);
     const plan = await svc.resolvePlan('org-1');
     expect(plan).toBe('starter');
   });
 
-  it('enforce retorna sem erros quando DS é null (noop)', async () => {
+  it('enforce returns without errors when DS is null (noop)', async () => {
     const svc = new PlanLimitService(null);
     await expect(svc.enforce('t1', 'org-1', 'artists')).resolves.toBeUndefined();
   });
 
-  it('enforce passa quando abaixo do limite', async () => {
-    const ds = makeDs(3); // limit = 5 para starter
+  it('enforce passes when below the limit', async () => {
+    const ds = makeDs(3); // limit = 5 for starter
     const svc = new PlanLimitService(ds as any);
 
     await expect(svc.enforce('t1', 'org-1', 'artists')).resolves.toBeUndefined();
     expect(ds.query).toHaveBeenCalled();
   });
 
-  it('enforce lança ForbiddenException quando no limite', async () => {
+  it('enforce throws ForbiddenException when at the limit', async () => {
     const ds = makeDs(5); // starter limit for artists = 5
     const svc = new PlanLimitService(ds as any);
 
     await expect(svc.enforce('t1', 'org-1', 'artists')).rejects.toThrow(ForbiddenException);
   });
 
-  it('enforce passa quando limite é null (ilimitado — enterprise)', async () => {
+  it('enforce passes when the limit is null (unlimited — enterprise)', async () => {
     const ds = makeDs(9999);
     // Override plan to enterprise
     ds.getRepository = jest.fn(() => ({
@@ -50,7 +50,7 @@ describe('PlanLimitService', () => {
     await expect(svc.enforce('t1', 'org-1', 'artists')).resolves.toBeUndefined();
   });
 
-  it('getUsageSummary retorna usage, limits e percent', async () => {
+  it('getUsageSummary returns usage, limits and percent', async () => {
     const ds = makeDs(2);
     const svc = new PlanLimitService(ds as any);
 
@@ -61,7 +61,7 @@ describe('PlanLimitService', () => {
     expect(result).toHaveProperty('percent');
   });
 
-  it('getUsageSummary retorna null percentage para plano ilimitado', async () => {
+  it('getUsageSummary returns null percentage for an unlimited plan', async () => {
     const ds = makeDs(10);
     ds.getRepository = jest.fn(() => ({
       findOne: jest.fn().mockResolvedValue({ plan: 'enterprise' }),

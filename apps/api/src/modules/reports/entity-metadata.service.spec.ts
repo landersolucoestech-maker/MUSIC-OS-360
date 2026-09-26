@@ -2,42 +2,42 @@ import { EntityMetadataService } from './entity-metadata.service';
 import { EntityCategory } from './entity-metadata.types';
 
 /**
- * FASE 1 — garante uma varredura real, classificada e sem entidade UNKNOWN.
- * Roda sem banco (lê metadados de decorator via getMetadataArgsStorage).
+ * PHASE 1 — ensures a real, classified scan with no UNKNOWN entity.
+ * Runs without a database (reads decorator metadata via getMetadataArgsStorage).
  */
-describe('EntityMetadataService — inventário entity-driven', () => {
+describe('EntityMetadataService — entity-driven inventory', () => {
   const inv = new EntityMetadataService().scan();
   const byTable = new Map(inv.entities.map((e) => [e.tableName, e]));
 
-  it('varre um conjunto real de entidades registradas', () => {
+  it('scans a real set of registered entities', () => {
     expect(inv.totalEntities).toBeGreaterThan(100);
     expect(inv.entities.length).toBe(inv.totalEntities);
     expect(inv.reportableEntities + inv.nonReportableEntities).toBe(inv.totalEntities);
   });
 
-  // ── VALIDAÇÃO 1 / 4: nenhuma entidade sem classificação ────────────────────
-  it('não deixa NENHUMA entidade UNKNOWN (toda operacional classificada)', () => {
+  // ── VALIDATION 1 / 4: no entity without a classification ────────────────────
+  it('leaves NO entity UNKNOWN (every operational entity classified)', () => {
     const unknown = inv.entities.filter((e) => e.category === EntityCategory.UNKNOWN);
     expect(unknown.map((e) => e.tableName)).toEqual([]);
     expect(inv.unknownEntities).toBe(0);
   });
 
-  // ── VALIDAÇÃO 2: toda entidade reportável tem tenant_id ────────────────────
-  it('toda entidade reportável possui tenant_id', () => {
+  // ── VALIDATION 2: every reportable entity has tenant_id ────────────────────
+  it('every reportable entity has tenant_id', () => {
     const offenders = inv.entities.filter((e) => e.reportable && !e.hasTenantId);
     expect(offenders.map((e) => e.tableName)).toEqual([]);
   });
 
-  // ── VALIDAÇÃO 3: toda entidade reportável tem coluna identificável ─────────
-  it('toda entidade reportável possui coluna identificável', () => {
+  // ── VALIDATION 3: every reportable entity has an identifiable column ─────────
+  it('every reportable entity has an identifiable column', () => {
     const offenders = inv.entities.filter(
       (e) => e.reportable && e.risks.includes('NO_IDENTIFIABLE_COLUMN'),
     );
     expect(offenders.map((e) => e.tableName)).toEqual([]);
   });
 
-  // ── VALIDAÇÃO 4: toda entidade REPORTABLE tem label pt-BR (label é produto) ─
-  it('toda entidade REPORTABLE possui label pt-BR na camada central', () => {
+  // ── VALIDATION 4: every REPORTABLE entity has a pt-BR label (label is product) ─
+  it('every REPORTABLE entity has a pt-BR label in the central layer', () => {
     const offenders = inv.entities.filter(
       (e) => e.category === EntityCategory.REPORTABLE && e.label === null,
     );
@@ -46,8 +46,8 @@ describe('EntityMetadataService — inventário entity-driven', () => {
     expect(untranslated.map((e) => e.tableName)).toEqual([]);
   });
 
-  // ── VALIDAÇÃO 5: infra/segurança/billing/ia/junção NÃO reportáveis ─────────
-  it('audit_logs, billing, auth, health, ai_* e junções não são reportáveis', () => {
+  // ── VALIDATION 5: infra/security/billing/ai/junction are NOT reportable ─────────
+  it('audit_logs, billing, auth, health, ai_* and junctions are not reportable', () => {
     const mustNotBeReportable: Array<[string, EntityCategory]> = [
       ['audit_logs', EntityCategory.SECURITY],
       ['auth', EntityCategory.SECURITY],
@@ -62,15 +62,15 @@ describe('EntityMetadataService — inventário entity-driven', () => {
     ];
     for (const [table, expectedCat] of mustNotBeReportable) {
       const e = byTable.get(table);
-      if (!e) continue; // pode não estar registrado no DataSource
+      if (!e) continue; // may not be registered in the DataSource
       expect(e.reportable).toBe(false);
       expect(e.category).toBe(expectedCat);
     }
   });
 
-  // Parte 89: núcleo reportável é exatamente o registry fechado (22 módulos
-  // autorizados) — ver report-module-registry.ts.
-  it('entidades operacionais núcleo são reportáveis (com tenant_id)', () => {
+  // Part 89: the reportable core is exactly the closed registry (22 authorized
+  // modules) — see report-module-registry.ts.
+  it('core operational entities are reportable (with tenant_id)', () => {
     for (const table of [
       'artists', 'works', 'phonograms', 'contracts', 'clients', 'employees', 'projects',
       'content_detections', 'licenses', 'takedowns', 'releases', 'shares',
@@ -85,7 +85,7 @@ describe('EntityMetadataService — inventário entity-driven', () => {
     }
   });
 
-  it('entidades fora do registry fechado (Parte 89) são NOT_REPORTABLE', () => {
+  it('entities outside the closed registry (Part 89) are NOT_REPORTABLE', () => {
     for (const table of ['contract_templates', 'operational_tasks', 'artist_goals', 'support_tickets']) {
       const e = byTable.get(table);
       if (!e) continue;
@@ -94,7 +94,7 @@ describe('EntityMetadataService — inventário entity-driven', () => {
     }
   });
 
-  it('cada entity report tem o shape esperado', () => {
+  it('each entity report has the expected shape', () => {
     const e = byTable.get('artists');
     expect(e).toBeDefined();
     expect(e!.entityName).toBeTruthy();

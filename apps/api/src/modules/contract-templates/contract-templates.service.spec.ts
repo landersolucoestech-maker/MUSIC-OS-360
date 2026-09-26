@@ -1,12 +1,12 @@
 /**
  * contract-templates.service.spec.ts
  *
- * Task U — prova que o contrato real do formulário (name/tipo_servico/
+ * Task U — proves that the form's real contract (name/tipo_servico/
  * conteudo/active/description/variables_manifest/header_image/footer_image)
- * persiste 1:1 nas colunas físicas. Antes desta correção, o DTO usava chaves
- * em inglês (title/type/content/variables/metadata) que nunca eram enviadas
- * pelo único formulário real (ContractImportWorkspace.tsx) — toda criação/
- * edição de template retornava 400 (forbidNonWhitelisted).
+ * persists 1:1 into the physical columns. Before this fix, the DTO used English
+ * keys (title/type/content/variables/metadata) that were never sent by the
+ * only real form (ContractImportWorkspace.tsx) — every template create/edit
+ * returned 400 (forbidNonWhitelisted).
  */
 import 'reflect-metadata';
 import { ConflictException } from '@nestjs/common';
@@ -45,8 +45,8 @@ function updated(repo: ReturnType<typeof makeRepo>) {
   return (repo.update as jest.Mock).mock.calls[0][1] as Record<string, unknown>;
 }
 
-describe('ContractTemplatesService — contrato real do formulário (Task U)', () => {
-  it('create: persiste name/tipo_servico/conteudo/active exatamente como enviados', async () => {
+describe("ContractTemplatesService — the form's real contract (Task U)", () => {
+  it('create: persists name/tipo_servico/conteudo/active exactly as sent', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       name: 'Template Exclusividade', tipo_servico: 'semantico', conteudo: '{{NOME}}', active: true,
@@ -60,7 +60,7 @@ describe('ContractTemplatesService — contrato real do formulário (Task U)', (
     expect(row['tenant_id']).toBe('tenant-1');
   });
 
-  it('create: persiste description/variables_manifest/header_image/footer_image', async () => {
+  it('create: persists description/variables_manifest/header_image/footer_image', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       name: 'X', conteudo: 'Y',
@@ -77,7 +77,7 @@ describe('ContractTemplatesService — contrato real do formulário (Task U)', (
     expect(row['footer_image']).toBeNull();
   });
 
-  it('update: escopa por tenant e grava os campos do formulário', async () => {
+  it('update: scopes by tenant and writes the form fields', async () => {
     const { svc, repo } = makeService();
     await svc.update('tenant-1', 'template-1', {
       name: 'Renomeado', active: false,
@@ -89,7 +89,7 @@ describe('ContractTemplatesService — contrato real do formulário (Task U)', (
     expect(row['active']).toBe(false);
   });
 
-  it('update: nunca grava chaves antigas em inglês (title/type/content/variables/metadata)', async () => {
+  it('update: never writes the old English keys (title/type/content/variables/metadata)', async () => {
     const { svc, repo } = makeService();
     await svc.update('tenant-1', 'template-1', { name: 'X' } as unknown as UpdateContractTemplateDto);
 
@@ -103,13 +103,13 @@ describe('ContractTemplatesService — contrato real do formulário (Task U)', (
 });
 
 /**
- * Task W — CAS/expectedUpdatedAt em Contract Templates (item 1 do DEPOIS):
- * update() antes sobrescrevia incondicionalmente. Mesmo padrão de
- * shares/finance-category-rules — sem expectedUpdatedAt, comportamento
- * idêntico ao anterior; com ele desatualizado, 409 em vez de perder a edição
- * concorrente silenciosamente.
+ * Task W — CAS/expectedUpdatedAt in Contract Templates (item 1 of AFTER):
+ * update() previously overwrote unconditionally. Same pattern as
+ * shares/finance-category-rules — without expectedUpdatedAt, behavior
+ * identical to before; with a stale one, 409 instead of silently losing the
+ * concurrent edit.
  */
-describe('ContractTemplatesService — concorrência otimista (Task W)', () => {
+describe('ContractTemplatesService — optimistic concurrency (Task W)', () => {
   const NOW = new Date('2026-08-16T12:00:00.000Z');
 
   function makeCasRepo(updateResult: { affected: number } = { affected: 1 }) {
@@ -133,7 +133,7 @@ describe('ContractTemplatesService — concorrência otimista (Task W)', () => {
     return { svc, repo };
   }
 
-  it('sem expectedUpdatedAt: aplica update incondicional (compatibilidade retroativa)', async () => {
+  it('without expectedUpdatedAt: applies an unconditional update (backward compatibility)', async () => {
     const { svc, repo } = makeCasService();
     await svc.update('tenant-1', 'template-1', { name: 'Novo nome' } as unknown as UpdateContractTemplateDto);
 
@@ -141,7 +141,7 @@ describe('ContractTemplatesService — concorrência otimista (Task W)', () => {
     expect(criteria).toEqual({ id: 'template-1', tenant_id: 'tenant-1' });
   });
 
-  it('com expectedUpdatedAt correto: inclui updated_at no critério do UPDATE', async () => {
+  it('with correct expectedUpdatedAt: includes updated_at in the UPDATE criteria', async () => {
     const { svc, repo } = makeCasService();
     await svc.update('tenant-1', 'template-1', {
       name: 'Novo nome',
@@ -151,16 +151,16 @@ describe('ContractTemplatesService — concorrência otimista (Task W)', () => {
     const [criteria] = (repo.update as jest.Mock).mock.calls[0];
     expect(criteria.id).toBe('template-1');
     expect(criteria.tenant_id).toBe('tenant-1');
-    // Task X — updated_at deixou de ser igualdade exata (timestamp sem tz
-    // perde precisão no round-trip Date/JSON); agora é Raw() truncado a
-    // milissegundos — ver optimistic-update.util.ts.
+    // Task X — updated_at is no longer an exact equality (a timestamp without tz
+    // loses precision in the Date/JSON round-trip); it is now Raw() truncated to
+    // milliseconds — see optimistic-update.util.ts.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const op = criteria.updated_at as any;
     expect(op._type).toBe('raw');
     expect(op._objectLiteralParameters).toEqual({ expected: NOW });
   });
 
-  it('com expectedUpdatedAt desatualizado (0 linhas afetadas): lança ConflictException, não sobrescreve', async () => {
+  it('with a stale expectedUpdatedAt (0 rows affected): throws ConflictException, does not overwrite', async () => {
     const { svc } = makeCasService({ affected: 0 });
 
     await expect(
@@ -171,7 +171,7 @@ describe('ContractTemplatesService — concorrência otimista (Task W)', () => {
     ).rejects.toThrow(ConflictException);
   });
 
-  it('expectedUpdatedAt nunca é persistido como coluna', async () => {
+  it('expectedUpdatedAt is never persisted as a column', async () => {
     const { svc, repo } = makeCasService();
     await svc.update('tenant-1', 'template-1', {
       name: 'X',

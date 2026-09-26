@@ -4,10 +4,10 @@ import { MusicChatAutomationService } from './musicchat-automation.service';
 import { WhatsAppError } from '../integrations/whatsapp/whatsapp.errors';
 
 /**
- * Decision Gate item 14 (GAP-18): escalonamento WhatsApp real, com controles
- * de produção — canal precisa estar habilitado, provedor configurado,
- * destinatário com telefone, limite anti-spam por minuto, status honesto
- * (sent/failed, nunca fabricado), retry controlado e limitado.
+ * Decision Gate item 14 (GAP-18): real WhatsApp escalation, with production
+ * controls — the channel must be enabled, the provider configured, the
+ * recipient must have a phone, an anti-spam per-minute limit, an honest
+ * status (sent/failed, never fabricated), and a controlled, limited retry.
  */
 function makeQb(overrides: Partial<Record<string, unknown>> = {}) {
   const qb: Record<string, jest.Mock> = {
@@ -74,8 +74,8 @@ const baseDto = {
   channel: 'whatsapp' as const, title: 'Escalonamento', body: 'Conversa sem resposta',
 };
 
-describe('MusicChatAutomationService — escalonamento WhatsApp (Decision Gate item 14)', () => {
-  it('não envia e marca CHANNEL_DISABLED quando o canal whatsapp está desabilitado nas configurações', async () => {
+describe('MusicChatAutomationService — WhatsApp escalation (Decision Gate item 14)', () => {
+  it('does not send and marks CHANNEL_DISABLED when the whatsapp channel is disabled in settings', async () => {
     const { svc, notificationRepo } = makeService({ channelEnabled: false });
     await svc.sendNotification('t1', baseDto);
 
@@ -88,7 +88,7 @@ describe('MusicChatAutomationService — escalonamento WhatsApp (Decision Gate i
     );
   });
 
-  it('não envia e marca PROVIDER_NOT_CONFIGURED quando o WhatsApp Cloud API não está configurado', async () => {
+  it('does not send and marks PROVIDER_NOT_CONFIGURED when the WhatsApp Cloud API is not configured', async () => {
     const { svc, notificationRepo, whatsapp } = makeService({ configured: false });
     await svc.sendNotification('t1', baseDto);
 
@@ -99,7 +99,7 @@ describe('MusicChatAutomationService — escalonamento WhatsApp (Decision Gate i
     );
   });
 
-  it('não envia e marca INVALID_RECIPIENT quando o destinatário não tem telefone cadastrado', async () => {
+  it('does not send and marks INVALID_RECIPIENT when the recipient has no registered phone', async () => {
     const { svc, notificationRepo, whatsapp } = makeService({ memberPhone: null });
     await svc.sendNotification('t1', baseDto);
 
@@ -110,7 +110,7 @@ describe('MusicChatAutomationService — escalonamento WhatsApp (Decision Gate i
     );
   });
 
-  it('não envia e marca RATE_LIMITED quando o limite por minuto do tenant é atingido', async () => {
+  it("does not send and marks RATE_LIMITED when the tenant's per-minute limit is reached", async () => {
     const { svc, notificationRepo, whatsapp } = makeService({ recentSends: 20 });
     await svc.sendNotification('t1', baseDto);
 
@@ -121,7 +121,7 @@ describe('MusicChatAutomationService — escalonamento WhatsApp (Decision Gate i
     );
   });
 
-  it('envia de verdade e marca status=sent com o id real da mensagem quando todos os controles passam', async () => {
+  it('actually sends and marks status=sent with the real message id when all controls pass', async () => {
     const { svc, notificationRepo, whatsapp } = makeService();
     await svc.sendNotification('t1', baseDto);
 
@@ -135,7 +135,7 @@ describe('MusicChatAutomationService — escalonamento WhatsApp (Decision Gate i
     );
   });
 
-  it('marca status=failed honestamente (nunca "sent" fictício) quando a Meta API rejeita o envio', async () => {
+  it('honestly marks status=failed (never a fake "sent") when the Meta API rejects the send', async () => {
     const { svc, notificationRepo, whatsapp } = makeService();
     whatsapp.sendTextMessage.mockRejectedValueOnce(new WhatsAppError('WHATSAPP_INVALID_RECIPIENT', 'Número inválido'));
 
@@ -150,7 +150,7 @@ describe('MusicChatAutomationService — escalonamento WhatsApp (Decision Gate i
     );
   });
 
-  it('canal sms permanece honestamente prepared_not_sent_in_production — nunca chama o provedor WhatsApp', async () => {
+  it('sms channel honestly remains prepared_not_sent_in_production — never calls the WhatsApp provider', async () => {
     const { svc, whatsapp } = makeService();
     await svc.sendNotification('t1', { ...baseDto, channel: 'sms' });
     expect(whatsapp.sendTextMessage).not.toHaveBeenCalled();
@@ -159,31 +159,31 @@ describe('MusicChatAutomationService — escalonamento WhatsApp (Decision Gate i
 });
 
 describe('MusicChatAutomationService.retryNotification', () => {
-  it('404 quando a notificação não existe', async () => {
+  it('404 when the notification does not exist', async () => {
     const { svc, notificationRepo } = makeService();
     notificationRepo.findOne.mockResolvedValueOnce(null);
     await expect(svc.retryNotification('t1', 'missing')).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('rejeita reenvio de canal que não é whatsapp', async () => {
+  it('rejects a resend for a channel that is not whatsapp', async () => {
     const { svc, notificationRepo } = makeService();
     notificationRepo.findOne.mockResolvedValueOnce({ id: 'n1', channel: 'sms', status: 'failed', metadata: {} });
     await expect(svc.retryNotification('t1', 'n1')).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('rejeita reenvio de notificação que não está com status failed', async () => {
+  it('rejects a resend of a notification that is not in failed status', async () => {
     const { svc, notificationRepo } = makeService();
     notificationRepo.findOne.mockResolvedValueOnce({ id: 'n1', channel: 'whatsapp', status: 'sent', metadata: {} });
     await expect(svc.retryNotification('t1', 'n1')).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('rejeita reenvio após atingir o limite de tentativas', async () => {
+  it('rejects a resend after reaching the retry limit', async () => {
     const { svc, notificationRepo } = makeService();
     notificationRepo.findOne.mockResolvedValueOnce({ id: 'n1', channel: 'whatsapp', status: 'failed', metadata: { retryCount: 3 } });
     await expect(svc.retryNotification('t1', 'n1')).rejects.toThrow(/Limite de 3 tentativas/);
   });
 
-  it('reenvia com sucesso e incrementa retryCount', async () => {
+  it('resends successfully and increments retryCount', async () => {
     const { svc, notificationRepo } = makeService();
     notificationRepo.findOne
       .mockResolvedValueOnce({ id: 'n1', conversation_id: 'conv-1', channel: 'whatsapp', status: 'failed', metadata: { retryCount: 0 } })

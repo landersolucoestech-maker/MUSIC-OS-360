@@ -3,7 +3,7 @@ import {
   normalizeFieldKey, getFieldLabelPtBr, fieldKeyForLabelPtBr,
 } from './field-labels.pt-br';
 
-/** FASE 2 — garante que nenhum label visível nasce de chave técnica em inglês. */
+/** PHASE 2 — ensures no visible label is derived from an English technical key. */
 
 const FORBIDDEN_ENGLISH = [
   'Name', 'Phone', 'Email', 'Website', 'Address', 'Country', 'State', 'Notes',
@@ -11,11 +11,11 @@ const FORBIDDEN_ENGLISH = [
   'Contact Type', 'Signing Platform', 'Soundcloud Url', 'Apple Music Url', 'Url',
 ];
 
-describe('field-labels.pt-br — camada central de labels', () => {
+describe('field-labels.pt-br — central label layer', () => {
   const entries = Object.entries(FIELD_LABELS_PT_BR);
 
-  // ── Teste 1: cobertura — todo label existe e é não-vazio ───────────────────
-  it('todo campo do dicionário tem label pt-BR não-vazio', () => {
+  // ── Test 1: coverage — every label exists and is non-empty ───────────────────
+  it('every field in the dictionary has a non-empty pt-BR label', () => {
     for (const [key, label] of entries) {
       expect(typeof label).toBe('string');
       expect(label.trim().length).toBeGreaterThan(0);
@@ -23,17 +23,17 @@ describe('field-labels.pt-br — camada central de labels', () => {
     }
   });
 
-  // ── Teste 2: nenhum label expõe a chave técnica crua ───────────────────────
-  // (case-sensitive: capitalização/acentuação pt-BR de uma chave pt é válida —
-  //  ex.: "vencimento" → "Vencimento"; inglês cru é barrado no Teste 3.)
-  it('nenhum label é exatamente a chave técnica crua', () => {
+  // ── Test 2: no label exposes the raw technical key ───────────────────────────
+  // (case-sensitive: pt-BR capitalization/accentuation of a pt key is valid —
+  //  e.g.: "vencimento" → "Vencimento"; raw English is blocked in Test 3.)
+  it('no label is exactly the raw technical key', () => {
     for (const [key, label] of entries) {
       expect(label).not.toBe(key);
     }
   });
 
-  // ── Teste 3: nenhum termo proibido em inglês ───────────────────────────────
-  it('nenhum label contém termo proibido em inglês', () => {
+  // ── Test 3: no forbidden English term ───────────────────────────────────────
+  it('no label contains a forbidden English term', () => {
     const offenders: string[] = [];
     for (const [key, label] of entries) {
       for (const term of FORBIDDEN_ENGLISH) {
@@ -45,8 +45,8 @@ describe('field-labels.pt-br — camada central de labels', () => {
     expect(offenders).toEqual([]);
   });
 
-  // ── Teste 4: round-trip label ↔ chave ──────────────────────────────────────
-  it('round-trip: chave técnica → label pt-BR → chave canônica', () => {
+  // ── Test 4: round-trip label ↔ key ──────────────────────────────────────────
+  it('round-trip: technical key → pt-BR label → canonical key', () => {
     const cases: Array<[string, string, string]> = [
       ['manager_name', 'Nome do empresário', 'managerName'],
       ['company_name', 'Empresa', 'companyName'],
@@ -61,13 +61,13 @@ describe('field-labels.pt-br — camada central de labels', () => {
     }
   });
 
-  // ── Teste 5: label ausente quebra (sem fallback visual) ────────────────────
-  it('getFieldLabelPtBr lança erro quando o label não existe', () => {
+  // ── Test 5: missing label throws (no visual fallback) ──────────────────────
+  it('getFieldLabelPtBr throws when the label does not exist', () => {
     expect(() => getFieldLabelPtBr('unknownField')).toThrow(/Label pt-BR ausente/);
     expect(() => getFieldLabelPtBr('shippingMethod')).toThrow();
   });
 
-  it('normalizeFieldKey reconhece snake/camel/Pascal/kebab', () => {
+  it('normalizeFieldKey recognizes snake/camel/Pascal/kebab', () => {
     expect(normalizeFieldKey('manager_name')).toBe('managerName');
     expect(normalizeFieldKey('managerName')).toBe('managerName');
     expect(normalizeFieldKey('ManagerName')).toBe('managerName');
@@ -75,7 +75,7 @@ describe('field-labels.pt-br — camada central de labels', () => {
     expect(normalizeFieldKey('spotify_url')).toBe('spotifyUrl');
   });
 
-  it('reverse map não tem ambiguidade nos rótulos críticos', () => {
+  it('reverse map has no ambiguity in critical labels', () => {
     expect(FIELD_KEYS_BY_LABEL_PT_BR['link do spotify']).toBe('spotifyUrl');
     expect(FIELD_KEYS_BY_LABEL_PT_BR['nome do empresário']).toBe('managerName');
   });

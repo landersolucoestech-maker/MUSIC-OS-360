@@ -26,7 +26,7 @@ function controllerFiles(directory: string): string[] {
 }
 
 describe('CurrentUser().sub regression guard', () => {
-  it('nenhum controller lê .sub de um @CurrentUser() — o campo correto é .userId', () => {
+  it('no controller reads .sub from a @CurrentUser() — the correct field is .userId', () => {
     const violations: string[] = [];
     for (const file of controllerFiles(MODULES_ROOT)) {
       const content = readFileSync(file, 'utf8');

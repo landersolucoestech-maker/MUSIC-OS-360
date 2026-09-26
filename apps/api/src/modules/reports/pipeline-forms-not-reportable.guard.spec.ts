@@ -1,17 +1,17 @@
 /**
- * pipeline-forms-not-reportable.guard.spec.ts  ·  Parte 87 (atualizado Parte 88)
+ * pipeline-forms-not-reportable.guard.spec.ts  ·  Part 87 (updated Part 88)
  *
- * Guarda permanente: "pipelines" (Pipelines) e "pipeline_opportunities"
- * (Oportunidades de Pipeline) nunca podem aparecer na Central de Relatórios
- * — nem no inventário de entidades, nem em /definitions, nem via
- * export/import/template diretos. Continuam existindo normalmente em seus
- * próprios módulos, apenas fora do escopo de Relatórios.
- * Parte 88: pipeline_opportunities removida explicitamente do registry
- * (ainda sem contrato explícito auditado) — deixou de ser exceção.
- * 2026-08-22: "forms" removida deste guard — o módulo genérico Forms
- * (DropGenericFormsModule20260822000005) deixou de existir por decisão de
- * produto; a tabela não existe mais, então não há mais o que "excluir de
- * Relatórios".
+ * Permanent guard: "pipelines" (Pipelines) and "pipeline_opportunities"
+ * (Oportunidades de Pipeline) can never appear in the Reports Center
+ * — neither in the entity inventory, nor in /definitions, nor via
+ * direct export/import/template. They keep existing normally in their
+ * own modules, just outside the scope of Reports.
+ * Part 88: pipeline_opportunities explicitly removed from the registry
+ * (still without an audited explicit contract) — it stopped being an exception.
+ * 2026-08-22: "forms" removed from this guard — the generic Forms module
+ * (DropGenericFormsModule20260822000005) stopped existing by product
+ * decision; the table no longer exists, so there is nothing left to
+ * "exclude from Reports".
  */
 import { EntityMetadataService } from './entity-metadata.service';
 import { ReportEntityDefinitionService } from './definitions/report-entity-definition.service';
@@ -26,27 +26,27 @@ import { ReportTableGuardService } from './report-table-guard.service';
 
 const BLOCKED_TABLES = ['pipelines', 'pipeline_opportunities'];
 
-describe('Guarda permanente: pipelines nunca reportáveis (Parte 87)', () => {
+describe('Permanent guard: pipelines are never reportable (Part 87)', () => {
   const metadata = new EntityMetadataService();
   const inv = metadata.scan();
 
-  it.each(BLOCKED_TABLES)('%s: category NOT_REPORTABLE e reportable=false no inventário', (table) => {
+  it.each(BLOCKED_TABLES)('%s: category NOT_REPORTABLE and reportable=false in the inventory', (table) => {
     const entity = inv.entities.find((e) => e.tableName === table);
     expect(entity).toBeDefined();
     expect(entity!.reportable).toBe(false);
     expect(entity!.category).toBe('NOT_REPORTABLE');
   });
 
-  it.each(BLOCKED_TABLES)('%s: ausente de ReportEntityDefinitionService.getDefinitions()', (table) => {
+  it.each(BLOCKED_TABLES)('%s: absent from ReportEntityDefinitionService.getDefinitions()', (table) => {
     const defs = new ReportEntityDefinitionService(metadata).getDefinitions();
     expect(defs.find((d) => d.tableName === table)).toBeUndefined();
   });
 
-  describe.each(BLOCKED_TABLES)('%s: export/import diretos retornam REPORT_ENTITY_NOT_AVAILABLE', (table) => {
+  describe.each(BLOCKED_TABLES)('%s: direct export/import return REPORT_ENTITY_NOT_AVAILABLE', (table) => {
     const tableGuard = { assertTableUsable: jest.fn().mockResolvedValue(undefined) } as unknown as ReportTableGuardService;
     const definitions = new ReportEntityDefinitionService(metadata);
 
-    it('export() rejeita com REPORT_ENTITY_NOT_AVAILABLE', async () => {
+    it('export() rejects with REPORT_ENTITY_NOT_AVAILABLE', async () => {
       const engine = new ExportEngineService(
         { query: jest.fn() } as never,
         metadata,
@@ -62,7 +62,7 @@ describe('Guarda permanente: pipelines nunca reportáveis (Parte 87)', () => {
       ).rejects.toMatchObject({ response: { error: 'REPORT_ENTITY_NOT_AVAILABLE' } });
     });
 
-    it('buildTemplate() rejeita com REPORT_ENTITY_NOT_AVAILABLE', async () => {
+    it('buildTemplate() rejects with REPORT_ENTITY_NOT_AVAILABLE', async () => {
       const engine = new ImportEngineService(
         metadata,
         definitions,

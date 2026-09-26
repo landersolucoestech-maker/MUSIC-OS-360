@@ -14,12 +14,12 @@ describe('CompanySettingsController', () => {
     controller = new CompanySettingsController(svc as unknown as CompanySettingsService);
   });
 
-  it('get() deriva tenantId/orgId do tenant da sessão, nunca do cliente', async () => {
+  it('get() derives tenantId/orgId from the session tenant, never from the client', async () => {
     await controller.get(tenant);
     expect(svc.get).toHaveBeenCalledWith('tenant-1', 'org-1');
   });
 
-  it('update() deriva tenantId/orgId/userId da sessão e repassa o dto', async () => {
+  it('update() derives tenantId/orgId/userId from the session and forwards the dto', async () => {
     const user = { userId: 'user-1', orgRole: 'owner' } as never;
     const dto = { legalName: 'Nova Empresa' };
     await controller.update(user, tenant, dto as never);

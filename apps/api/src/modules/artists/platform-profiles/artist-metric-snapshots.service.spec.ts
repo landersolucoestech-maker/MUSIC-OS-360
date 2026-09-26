@@ -3,12 +3,12 @@ import { METRIC_KEYS } from './metric-keys';
 import type { SocialPlatformProfileSnapshot } from './social-platform-sync.types';
 
 /**
- * Fake repo com store em memória que reproduz o comportamento real que a
- * lógica depende: UNIQUE (tenant_id, artist_id, platform, metric,
- * observed_at) com ON CONFLICT DO NOTHING (orIgnore), e leitura filtrada
- * por tenant/artist/platform/metric/from/to. Não é um mock raso — a
- * deduplicação e o isolamento por tenant precisam ser reais para as
- * asserções de idempotência e de segurança fazerem sentido.
+ * Fake repo with an in-memory store that reproduces the real behavior the
+ * logic depends on: UNIQUE (tenant_id, artist_id, platform, metric,
+ * observed_at) with ON CONFLICT DO NOTHING (orIgnore), and reads filtered
+ * by tenant/artist/platform/metric/from/to. Not a shallow mock — dedup and
+ * tenant isolation need to be real for the idempotency and security
+ * assertions to make sense.
  */
 function buildFakeRepo() {
   const store: any[] = [];
@@ -113,7 +113,7 @@ function baseSnapshot(overrides: Partial<SocialPlatformProfileSnapshot> & { raw_
 }
 
 describe('ArtistMetricSnapshotsService', () => {
-  it('1. primeiro snapshot: grava um ponto histórico real', async () => {
+  it('1. first snapshot: writes a real historical point', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     const snapshot = baseSnapshot({
@@ -129,7 +129,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(repo.__store[0].value).toBe(1000);
   });
 
-  it('2. segundo snapshot (data diferente): acumula, não substitui o primeiro', async () => {
+  it('2. second snapshot (different date): accumulates, does not replace the first', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     await service.recordFromProfileSnapshot(
@@ -144,7 +144,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(repo.__store.map((r) => r.value)).toEqual([1000, 1100]);
   });
 
-  it('3. observed_at duplicado entre dois syncs distintos: o segundo é descartado (unicidade lógica)', async () => {
+  it('3. duplicate observed_at between two distinct syncs: the second one is discarded (logical uniqueness)', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     await service.recordFromProfileSnapshot(
@@ -158,7 +158,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(repo.__store).toHaveLength(1);
   });
 
-  it('4. mesmo valor em timestamps diferentes: ambos gravados (chave é observed_at, não valor)', async () => {
+  it('4. same value at different timestamps: both are written (key is observed_at, not value)', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     await service.recordFromProfileSnapshot(
@@ -173,7 +173,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(repo.__store.every((r) => r.value === 500)).toBe(true);
   });
 
-  it('5. zero real: valor 0 é gravado como ponto legítimo, não descartado', async () => {
+  it('5. real zero: value 0 is written as a legitimate point, not discarded', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     const result = await service.recordFromProfileSnapshot(
@@ -185,7 +185,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(repo.__store[0].value).toBe(0);
   });
 
-  it('6. métrica null/indisponível: nenhum ponto é fabricado', async () => {
+  it('6. null/unavailable metric: no point is fabricated', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     const result = await service.recordFromProfileSnapshot(
@@ -196,7 +196,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(repo.__store).toHaveLength(0);
   });
 
-  it('7. erro de provider (sync_status=failed): nada é gravado no histórico', async () => {
+  it('7. provider error (sync_status=failed): nothing is written to history', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     const result = await service.recordFromProfileSnapshot(
@@ -212,7 +212,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(repo.__store).toHaveLength(0);
   });
 
-  it('8. perfil não encontrado (PROFILE_NOT_FOUND): nada é gravado no histórico', async () => {
+  it('8. profile not found (PROFILE_NOT_FOUND): nothing is written to history', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     const result = await service.recordFromProfileSnapshot(
@@ -228,7 +228,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(repo.__store).toHaveLength(0);
   });
 
-  it('9. dois artistas: isolamento — histórico de um nunca aparece no outro', async () => {
+  it('9. two artists: isolation — one\'s history never shows up in the other\'s', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     await service.recordFromProfileSnapshot(
@@ -242,7 +242,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(historyA).toEqual([{ value: 100, observedAt: new Date('2026-08-01T00:00:00.000Z') }]);
   });
 
-  it('10. dois tenants: isolamento — tenant A nunca vê snapshots do tenant B', async () => {
+  it('10. two tenants: isolation — tenant A never sees tenant B\'s snapshots', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     await service.recordFromProfileSnapshot(
@@ -256,7 +256,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(historyTenantA).toEqual([{ value: 100, observedAt: new Date('2026-08-01T00:00:00.000Z') }]);
   });
 
-  it('11. duas plataformas: gravadas de forma independente para o mesmo artista', async () => {
+  it('11. two platforms: written independently for the same artist', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     await service.recordFromProfileSnapshot(
@@ -271,7 +271,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(platforms).toEqual(['deezer', 'spotify']);
   });
 
-  it('12. duas métricas do mesmo sync (YouTube subscribers vs views): séries independentes', async () => {
+  it('12. two metrics from the same sync (YouTube subscribers vs views): independent series', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     await service.recordFromProfileSnapshot(

@@ -5,18 +5,18 @@ import { ContactContractsService } from '../contact-contracts/contact-contracts.
 import { ContactTimelineService } from '../contact-timeline/contact-timeline.service';
 
 /**
- * contacts-tenant-isolation.spec.ts  (reescrito na Parte 80)
+ * contacts-tenant-isolation.spec.ts  (rewritten in Part 80)
  *
- * ContactsService deixou de ser um Map em memória e virou uma facade sobre
- * ClientsService (a tabela física `contacts` não existe — ver
- * contacts.service.ts). Tenant isolation real já é coberta em
- * clients.service.spec.ts / client-entity-schema-alignment.spec.ts; este
- * spec agora garante que a facade REPASSA o tenantId corretamente para
- * ClientsService em toda operação, sem vazar nem substituir por outro.
+ * ContactsService stopped being an in-memory Map and became a facade over
+ * ClientsService (the physical `contacts` table does not exist — see
+ * contacts.service.ts). Real tenant isolation is already covered in
+ * clients.service.spec.ts / client-entity-schema-alignment.spec.ts; this
+ * spec now guarantees that the facade correctly FORWARDS the tenantId to
+ * ClientsService on every operation, without leaking or swapping it for another.
  *
- * A facade nunca repassa um `id` vindo do chamador para ClientsService.create()
- * (IDs são sempre gerados no servidor) — o mock abaixo reflete esse mesmo
- * comportamento; os testes capturam o id retornado em vez de assumir um fixo.
+ * The facade never forwards an `id` coming from the caller to ClientsService.create()
+ * (IDs are always generated server-side) — the mock below reflects this same
+ * behavior; the tests capture the returned id instead of assuming a fixed one.
  */
 function makeClientsServiceMock() {
   const store = new Map<string, Map<string, Record<string, unknown>>>();
@@ -53,7 +53,7 @@ function makeClientsServiceMock() {
   };
 }
 
-describe('ContactsService (facade) — repassa tenant corretamente para ClientsService', () => {
+describe('ContactsService (facade) — correctly forwards tenant to ClientsService', () => {
   let clients: ReturnType<typeof makeClientsServiceMock>;
   let contacts: ContactsService;
   let attachments: ContactAttachmentsService;
@@ -68,7 +68,7 @@ describe('ContactsService (facade) — repassa tenant corretamente para ClientsS
     timeline = new ContactTimelineService(contacts);
   });
 
-  it('isola contatos por tenant mesmo com o mesmo nome em ambos', async () => {
+  it('isolates contacts by tenant even with the same name in both', async () => {
     const a = await contacts.create('tenant-a', { name: 'Tenant A Contact' });
     const b = await contacts.create('tenant-b', { name: 'Tenant B Contact' });
 
@@ -78,14 +78,14 @@ describe('ContactsService (facade) — repassa tenant corretamente para ClientsS
     expect(clients.findById).toHaveBeenCalledWith('tenant-b', b.id);
   });
 
-  it('não permite que o tenant A acesse um contato do tenant B por id', async () => {
+  it('does not allow tenant A to access a tenant B contact by id', async () => {
     const b = await contacts.create('tenant-b', { name: 'Tenant B Contact' });
 
     await expect(contacts.getById('tenant-a', b.id as string)).rejects.toThrow('Cliente não encontrado');
     await expect(contacts.update('tenant-a', b.id as string, { name: 'Changed' })).rejects.toThrow();
   });
 
-  it('escopa anexos, contratos vinculados e timeline ao tenant do contato (via assertBelongsToTenant)', async () => {
+  it("scopes attachments, linked contracts and timeline to the contact's tenant (via assertBelongsToTenant)", async () => {
     const a = await contacts.create('tenant-a', { name: 'Tenant A Contact' });
     const b = await contacts.create('tenant-b', { name: 'Tenant B Contact' });
     const contactA = a.id as string;
@@ -109,7 +109,7 @@ describe('ContactsService (facade) — repassa tenant corretamente para ClientsS
     await expect(timeline.list('tenant-b', contactB)).resolves.toEqual([]);
   });
 
-  it('bloqueia acesso via subrota quando o contato pertence a outro tenant', async () => {
+  it('blocks access via subroute when the contact belongs to another tenant', async () => {
     const b = await contacts.create('tenant-b', { name: 'Tenant B Contact' });
     const contactB = b.id as string;
 

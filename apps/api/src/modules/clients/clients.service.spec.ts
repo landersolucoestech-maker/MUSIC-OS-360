@@ -227,7 +227,7 @@ describe('ClientsService — encryption', () => {
     });
   });
 
-  describe('update — concorrência otimista (Task K)', () => {
+  describe('update — optimistic concurrency (Task K)', () => {
     const NOW = new Date('2026-08-14T12:00:00.000Z');
     const existing = {
       id: 'uuid-6', tenant_id: 'tenant-1', name: 'Gustavo',
@@ -235,7 +235,7 @@ describe('ClientsService — encryption', () => {
       updated_at: NOW,
     };
 
-    it('sem expectedUpdatedAt: aplica update incondicional (compatibilidade retroativa)', async () => {
+    it('without expectedUpdatedAt: applies an unconditional update (backward compatibility)', async () => {
       const { svc, repo } = makeService([existing]);
       (repo._qb['getOne'] as jest.Mock).mockImplementation(async () => existing);
 
@@ -245,7 +245,7 @@ describe('ClientsService — encryption', () => {
       expect(criteria).toEqual({ id: 'uuid-6', tenant_id: 'tenant-1' });
     });
 
-    it('com expectedUpdatedAt correto: inclui updated_at no critério', async () => {
+    it('with correct expectedUpdatedAt: includes updated_at in the criteria', async () => {
       const { svc, repo } = makeService([existing]);
       (repo._qb['getOne'] as jest.Mock).mockImplementation(async () => existing);
 
@@ -263,7 +263,7 @@ describe('ClientsService — encryption', () => {
       expect(op._objectLiteralParameters).toEqual({ expected: NOW });
     });
 
-    it('com expectedUpdatedAt desatualizado (0 linhas afetadas): lança ConflictException, não sobrescreve', async () => {
+    it('with a stale expectedUpdatedAt (0 rows affected): throws ConflictException, does not overwrite', async () => {
       const { svc, repo } = makeService([existing]);
       (repo._qb['getOne'] as jest.Mock).mockImplementation(async () => existing);
       (repo.update as jest.Mock).mockResolvedValueOnce({ affected: 0 });
@@ -277,8 +277,8 @@ describe('ClientsService — encryption', () => {
     });
   });
 
-  describe('create — campos de CRM (Parte 79: Contato = Cliente, mesma tabela física)', () => {
-    it('mapeia city/state/instagram/zipCode/responsible/notes para as colunas físicas reais', async () => {
+  describe('create — CRM fields (Part 79: Contact = Client, same physical table)', () => {
+    it('maps city/state/instagram/zipCode/responsible/notes to the real physical columns', async () => {
       const { svc, repo } = makeService();
 
       await svc.create('tenant-1', 'user-1', {
@@ -299,7 +299,7 @@ describe('ClientsService — encryption', () => {
       expect(saved['cep']).toBe('01000-000');
       expect(saved['responsavel_nome']).toBe('Operacoes');
       expect(saved['notes']).toBe('Venue estrategico');
-      // Nunca reintroduz as colunas removidas pela migration canônica.
+      // Never reintroduces the columns removed by the canonical migration.
       expect(saved['segmento']).toBeUndefined();
       expect(saved['endereco']).toBeUndefined();
     });

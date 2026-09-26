@@ -46,7 +46,7 @@ function makeEngine(options: {
 }
 
 describe('ExportEngineService', () => {
-  it('exporta XLSX tenant-scoped e audita', async () => {
+  it('exports tenant-scoped XLSX and audits', async () => {
     const { engine, ds, audit } = makeEngine();
     const result = await engine.export('artists', params(), 'tenant-1', 'user-1');
     expect(result.format).toBe('xlsx');
@@ -56,12 +56,12 @@ describe('ExportEngineService', () => {
     expect(audit.record).toHaveBeenCalledWith(expect.objectContaining({ entity: 'artists', tenantId: 'tenant-1', status: 'success' }));
   });
 
-  it('rejeita formato não suportado', async () => {
+  it('rejects unsupported format', async () => {
     const { engine } = makeEngine();
     await expect(engine.export('artists', params({ format: 'other' as any }), 't', 'u')).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('usa cabeçalhos pt-BR', async () => {
+  it('uses pt-BR headers', async () => {
     const { engine } = makeEngine();
     const result = await engine.export('artists', params(), 't', 'u');
     const workbook = XLSX.read(result.body as Buffer, { type: 'buffer' });
@@ -70,7 +70,7 @@ describe('ExportEngineService', () => {
     expect(rows[0]).not.toContain('nome_artistico');
   });
 
-  it('falha explicitamente e audita quando o conjunto excede o limite; nunca gera arquivo parcial', async () => {
+  it('fails explicitly and audits when the result set exceeds the limit; never generates a partial file', async () => {
     const rows = Array.from({ length: EXPORT_DETECTION_LIMIT }, (_, index) => ({
       nome_artistico: `Artista ${index}`,
       email: `artista${index}@example.com`,
@@ -88,19 +88,19 @@ describe('ExportEngineService', () => {
     }));
   });
 
-  it('rejeita entidade indisponível, contrato sem export e tenant ausente', async () => {
+  it('rejects unavailable entity, contract without export and missing tenant', async () => {
     await expect(makeEngine({ hasEntity: false }).engine.export('nope', params(), 't', 'u')).rejects.toBeInstanceOf(UnprocessableEntityException);
     await expect(makeEngine({ reportable: false }).engine.export('artists', params(), 't', 'u')).rejects.toBeInstanceOf(UnprocessableEntityException);
     await expect(makeEngine({ definition: { ...ARTISTS_DEF, supportsExport: false } }).engine.export('artists', params(), 't', 'u')).rejects.toBeInstanceOf(BadRequestException);
     await expect(makeEngine().engine.export('artists', params(), undefined, 'u')).rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  // Regressão: ordem final do XLSX = ordem canônica (definition.exportableColumns)
-  // filtrada pela seleção — nunca a ordem em que o chamador enviou `columns`.
-  it('seleção fora da ordem canônica é reordenada pela config canônica (headers e valores seguem a mesma sequência)', async () => {
+  // Regression: final XLSX order = canonical order (definition.exportableColumns)
+  // filtered by the selection — never the order the caller sent in `columns`.
+  it('selection out of canonical order is reordered by the canonical config (headers and values follow the same sequence)', async () => {
     const query = jest.fn().mockResolvedValue([{ nome_artistico: 'A', status: 'ativo' }]);
     const { engine } = makeEngine({ query });
-    // Canônico: nome_artistico, email, status. Chamador seleciona status antes de nome_artistico.
+    // Canonical: nome_artistico, email, status. Caller selects status before nome_artistico.
     const result = await engine.export('artists', params({ columns: ['status', 'nome_artistico'] }), 'tenant-1', 'user-1');
     const workbook = XLSX.read(result.body as Buffer, { type: 'buffer' });
     const rows = XLSX.utils.sheet_to_json<unknown[]>(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
@@ -109,7 +109,7 @@ describe('ExportEngineService', () => {
   });
 });
 
-describe('ExportEngineService — relatório computado (Contabilidade): ordem canônica também se aplica', () => {
+describe('ExportEngineService — computed report (Contabilidade): canonical order also applies', () => {
   const ACCOUNTING_DEF: ReportEntityDefinition = {
     entityName: 'AccountingSummary', tableName: ACCOUNTING_SUMMARY_TABLE_NAME, category: EntityCategory.REPORTABLE,
     identityColumn: 'artista', displayColumn: 'artista', dateColumn: 'created_at',
@@ -118,12 +118,12 @@ describe('ExportEngineService — relatório computado (Contabilidade): ordem ca
     sensitiveColumns: [], requiredImportColumns: ['artista'], supportsExport: true, supportsImport: false,
   };
 
-  it('seleção fora de ordem no relatório computado também é reordenada pela config canônica', async () => {
+  it('selection out of order in the computed report is also reordered by the canonical config', async () => {
     const query = jest.fn().mockResolvedValue([{ artista: 'Artista X', receitas: '1000', despesas: '400' }]);
     const { engine } = makeEngine({
       tableName: ACCOUNTING_SUMMARY_TABLE_NAME, label: 'Contabilidade', definition: ACCOUNTING_DEF, query,
     });
-    // Canônico: artista, receitas, despesas, resultado, margem. Chamador seleciona fora de ordem.
+    // Canonical: artista, receitas, despesas, resultado, margem. Caller selects out of order.
     const result = await engine.export(
       ACCOUNTING_SUMMARY_TABLE_NAME,
       params({ columns: ['margem', 'artista', 'receitas'] }),
@@ -135,7 +135,7 @@ describe('ExportEngineService — relatório computado (Contabilidade): ordem ca
   });
 });
 
-describe('Projetos — workbook fiel ao modal e com uma única aba', () => {
+describe('Projetos — workbook faithful to the modal and with a single sheet', () => {
   const PROJECTS_DEF: ReportEntityDefinition = {
     entityName: 'ProjectEntity', tableName: 'projects', category: EntityCategory.REPORTABLE,
     identityColumn: 'nome_ep_album', displayColumn: 'nome_ep_album', dateColumn: 'created_at',
@@ -149,7 +149,7 @@ describe('Projetos — workbook fiel ao modal e com uma única aba', () => {
     sensitiveColumns: [], requiredImportColumns: ['nome_ep_album'], supportsExport: true, supportsImport: true,
   };
 
-  it('repete dados gerais por música, sem IDs técnicos nem segunda aba', async () => {
+  it('repeats general data per track, without technical IDs or a second sheet', async () => {
     const query = jest.fn()
       .mockResolvedValueOnce([{
         __internal_id: '00000000-0000-0000-0000-000000000001',

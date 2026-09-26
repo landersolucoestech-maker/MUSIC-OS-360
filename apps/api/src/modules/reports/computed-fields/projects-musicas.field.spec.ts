@@ -1,8 +1,8 @@
 import { fetchProjectsMusicasForExport, insertProjectsMusicasForImport } from './projects-musicas.field';
 
-describe('projects-musicas.field — grupo repetível "Músicas do Projeto"', () => {
+describe('projects-musicas.field — repeating group "Músicas do Projeto"', () => {
   describe('fetchProjectsMusicasForExport', () => {
-    it('lista vazia de projectIds → não consulta o banco, retorna mapa vazio', async () => {
+    it('empty list of projectIds → does not query the database, returns an empty map', async () => {
       const query = jest.fn();
       const ds = { query } as any;
       const result = await fetchProjectsMusicasForExport(ds, 'tenant-1', []);
@@ -10,7 +10,7 @@ describe('projects-musicas.field — grupo repetível "Músicas do Projeto"', ()
       expect(result.size).toBe(0);
     });
 
-    it('agrupa faixas por projeto e participantes por papel, isolado por tenant_id', async () => {
+    it('groups tracks by project and participants by role, isolated by tenant_id', async () => {
       const tracks = [
         {
           id: 'track-1', project_id: 'proj-1', name: 'Faixa 1', solo_feat: 'solo',
@@ -53,7 +53,7 @@ describe('projects-musicas.field — grupo repetível "Músicas do Projeto"', ()
       }]);
     });
 
-    it('projeto sem faixas → não aparece no mapa', async () => {
+    it('project without tracks → does not appear in the map', async () => {
       const query = jest.fn().mockResolvedValueOnce([]);
       const ds = { query } as any;
       const result = await fetchProjectsMusicasForExport(ds, 'tenant-1', ['proj-vazio']);
@@ -69,13 +69,13 @@ describe('projects-musicas.field — grupo repetível "Músicas do Projeto"', ()
       return { qr, calls };
     }
 
-    it('valor não-array → no-op', async () => {
+    it('non-array value → no-op', async () => {
       const { qr, calls } = makeQR();
       await insertProjectsMusicasForImport(qr, 'tenant-1', 'proj-1', 'não é array');
       expect(calls).toHaveLength(0);
     });
 
-    it('insere uma project_track por música + participantes por papel, tenant forçado', async () => {
+    it('inserts one project_track per track + participants per role, tenant forced', async () => {
       const { qr, calls } = makeQR();
       const musicas = [{
         nome_musica: 'Faixa importada',
@@ -107,7 +107,7 @@ describe('projects-musicas.field — grupo repetível "Músicas do Projeto"', ()
       for (const [, params] of participantInserts) expect(params[1]).toBe('tenant-1');
     });
 
-    it('item inválido é ignorado e item canônico válido é inserido', async () => {
+    it('invalid item is ignored and a valid canonical item is inserted', async () => {
       const { qr, calls } = makeQR();
       await insertProjectsMusicasForImport(qr, 'tenant-1', 'proj-1', [
         null,

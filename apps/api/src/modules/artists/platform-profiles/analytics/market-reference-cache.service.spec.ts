@@ -36,7 +36,7 @@ function metric(value: number) {
 }
 
 describe('MarketReferenceCacheService.ensureFreshCohort', () => {
-  it('descobre candidatos via /related e busca métricas ao vivo quando o cache está vazio (cache frio)', async () => {
+  it('discovers candidates via /related and fetches live metrics when the cache is empty (cold cache)', async () => {
     const { repo, inserted } = buildFakeRepo([]);
     const soundcharts = {
       getRelatedArtists: jest.fn().mockResolvedValue({ items: relatedItems(2), total: 2 }),
@@ -55,14 +55,14 @@ describe('MarketReferenceCacheService.ensureFreshCohort', () => {
     expect(soundcharts.getRelatedArtists).toHaveBeenCalledWith('target-uuid', 0, 100);
     expect(candidates).toHaveLength(2);
     expect(candidates[0]).toEqual({ uuid: 'cand-0', name: 'Candidate 0', countryCode: 'BR' });
-    // 2 candidatos × 6 métricas = 12 pontos buscados/gravados.
+    // 2 candidates × 6 metrics = 12 points fetched/written.
     expect(metrics).toHaveLength(12);
     expect(inserted.length).toBe(12);
     expect(stats).toEqual({ candidatesConsidered: 2, metricRequestCount: 12, cacheHits: 0, cacheMisses: 12 });
   });
 
-  it('cache fresco (dentro do TTL): reusa o valor cacheado, NUNCA chama a Soundcharts de novo para essa métrica', async () => {
-    const fresh = new Date(); // agora — bem dentro do TTL de 24h
+  it('fresh cache (within TTL): reuses the cached value, NEVER calls Soundcharts again for that metric', async () => {
+    const fresh = new Date(); // now — well within the 24h TTL
     const cachedRows: FakeRow[] = [
       { candidate_uuid: 'cand-0', metric: 'spotify.monthly_listeners', value: '9999', candidate_name: 'Candidate 0', candidate_country_code: 'BR', updated_at: fresh },
       { candidate_uuid: 'cand-0', metric: 'youtube.subscribers', value: '8888', candidate_name: 'Candidate 0', candidate_country_code: 'BR', updated_at: fresh },
@@ -87,13 +87,13 @@ describe('MarketReferenceCacheService.ensureFreshCohort', () => {
     const { metrics } = await service.ensureFreshCohort('target-uuid');
 
     expect(soundcharts.getSpotifyMonthlyListeners).not.toHaveBeenCalled();
-    expect(soundcharts.getArtistCountryCode).not.toHaveBeenCalled(); // país também fresco, não refaz
+    expect(soundcharts.getArtistCountryCode).not.toHaveBeenCalled(); // country also fresh, does not redo
     const spotify = metrics.find((m) => m.metricKey === 'spotify.monthly_listeners');
-    expect(spotify?.value).toBe(9999); // valor do cache, não um novo valor
+    expect(spotify?.value).toBe(9999); // cached value, not a new value
   });
 
-  it('cache stale (fora do TTL): busca de novo e sobrescreve', async () => {
-    const stale = new Date(Date.now() - 48 * 60 * 60 * 1000); // 48h atrás > TTL de 24h
+  it('stale cache (outside the TTL): fetches again and overwrites', async () => {
+    const stale = new Date(Date.now() - 48 * 60 * 60 * 1000); // 48h ago > 24h TTL
     const cachedRows: FakeRow[] = [
       { candidate_uuid: 'cand-0', metric: 'spotify.monthly_listeners', value: '1', candidate_name: 'Candidate 0', candidate_country_code: 'BR', updated_at: stale },
     ];
@@ -118,7 +118,7 @@ describe('MarketReferenceCacheService.ensureFreshCohort', () => {
     expect(inserted.length).toBeGreaterThan(0);
   });
 
-  it('candidato sem uma plataforma indexada (SoundchartsNotFoundError): métrica vira null, não derruba os demais candidatos', async () => {
+  it('candidate without an indexed platform (SoundchartsNotFoundError): metric becomes null, does not bring down the other candidates', async () => {
     const { repo } = buildFakeRepo([]);
     const soundcharts = {
       getRelatedArtists: jest.fn().mockResolvedValue({ items: relatedItems(1), total: 1 }),
@@ -139,10 +139,10 @@ describe('MarketReferenceCacheService.ensureFreshCohort', () => {
     expect(youtube?.value).toBe(1);
   });
 
-  // Fase 3.2, item 9: 429/5xx NUNCA viram cohort vazio silencioso — devem
-  // propagar para que o job de refresh falhe e o retry/backoff do BullMQ
-  // (já configurado globalmente) assuma, em vez de mascarar como "sem dado".
-  it('Soundcharts 429 (rate limit): o erro PROPAGA (não vira métrica null/cohort vazio)', async () => {
+  // Phase 3.2, item 9: 429/5xx NEVER become a silent empty cohort — they must
+  // propagate so the refresh job fails and BullMQ's retry/backoff (already
+  // configured globally) takes over, instead of masking it as "no data".
+  it('Soundcharts 429 (rate limit): the error PROPAGATES (does not become a null metric/empty cohort)', async () => {
     const { repo } = buildFakeRepo([]);
     const soundcharts = {
       getRelatedArtists: jest.fn().mockResolvedValue({ items: relatedItems(1), total: 1 }),
@@ -154,7 +154,7 @@ describe('MarketReferenceCacheService.ensureFreshCohort', () => {
     await expect(service.ensureFreshCohort('target-uuid')).rejects.toBeInstanceOf(SoundchartsRateLimitError);
   });
 
-  it('Soundcharts 5xx (erro genérico da API): o erro PROPAGA', async () => {
+  it('Soundcharts 5xx (generic API error): the error PROPAGATES', async () => {
     const { repo } = buildFakeRepo([]);
     const soundcharts = {
       getRelatedArtists: jest.fn().mockResolvedValue({ items: relatedItems(1), total: 1 }),
@@ -166,7 +166,7 @@ describe('MarketReferenceCacheService.ensureFreshCohort', () => {
     await expect(service.ensureFreshCohort('target-uuid')).rejects.toBeInstanceOf(SoundchartsApiError);
   });
 
-  it('timeout/erro de rede genérico: também PROPAGA', async () => {
+  it('timeout/generic network error: also PROPAGATES', async () => {
     const { repo } = buildFakeRepo([]);
     const soundcharts = {
       getRelatedArtists: jest.fn().mockResolvedValue({ items: relatedItems(1), total: 1 }),
@@ -178,7 +178,7 @@ describe('MarketReferenceCacheService.ensureFreshCohort', () => {
     await expect(service.ensureFreshCohort('target-uuid')).rejects.toThrow('Timeout after 10000ms');
   });
 
-  it(`respeita o orçamento MAX_CANDIDATES_PER_REFRESH (${MAX_CANDIDATES_PER_REFRESH}) mesmo quando /related devolve mais`, async () => {
+  it(`respects the MAX_CANDIDATES_PER_REFRESH budget (${MAX_CANDIDATES_PER_REFRESH}) even when /related returns more`, async () => {
     const { repo } = buildFakeRepo([]);
     const soundcharts = {
       getRelatedArtists: jest.fn().mockResolvedValue({ items: relatedItems(100), total: 100 }),
@@ -196,7 +196,7 @@ describe('MarketReferenceCacheService.ensureFreshCohort', () => {
     expect(candidates).toHaveLength(MAX_CANDIDATES_PER_REFRESH);
   });
 
-  it('/related sem candidatos (artista sem relacionados): retorna listas vazias, sem nenhuma chamada de métrica', async () => {
+  it('/related with no candidates (artist with no related artists): returns empty lists, with no metric call at all', async () => {
     const { repo } = buildFakeRepo([]);
     const soundcharts = {
       getRelatedArtists: jest.fn().mockResolvedValue({ items: [], total: 0 }),

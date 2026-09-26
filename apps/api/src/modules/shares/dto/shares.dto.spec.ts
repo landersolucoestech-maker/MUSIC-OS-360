@@ -1,13 +1,13 @@
 /**
  * shares.dto.spec.ts
  *
- * Fase 5 / C6: holderName é a única entrada do DTO que alimenta holder_name
- * (toColumns() em shares.service.ts). Reproduz o ValidationPipe global
- * (whitelist + forbidNonWhitelisted, ver main.ts) para provar, sem subir a
- * app inteira, que vazio/whitespace-only é rejeitado com 400 — nunca
- * persistido como titular em branco. class-validator só roda por este
- * caminho; um teste no nível do service (shares.service.spec.ts) não o
- * exercita.
+ * Phase 5 / C6: holderName is the only DTO input that feeds holder_name
+ * (toColumns() in shares.service.ts). Reproduces the global ValidationPipe
+ * (whitelist + forbidNonWhitelisted, see main.ts) to prove, without
+ * bootstrapping the whole app, that empty/whitespace-only is rejected with
+ * 400 — never persisted as a blank holder. class-validator only runs
+ * through this path; a service-level test (shares.service.spec.ts) does not
+ * exercise it.
  */
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
@@ -24,65 +24,65 @@ function decoratedPropertyNames(dto: new () => object): string[] {
   return Array.from(new Set(metas.map((m) => m.propertyName)));
 }
 
-describe('CreateShareDto/UpdateShareDto — holderName não aceita vazio/whitespace (Fase 5 / C6)', () => {
-  it('rejeita holderName: "" (string vazia)', async () => {
+describe('CreateShareDto/UpdateShareDto — holderName does not accept empty/whitespace (Phase 5 / C6)', () => {
+  it('rejects holderName: "" (empty string)', async () => {
     const errors = await validatePayload(CreateShareDto, { holderName: '' });
     expect(errors.length).toBeGreaterThan(0);
     const messages = errors.flatMap((e) => Object.values(e.constraints ?? {}));
     expect(messages.some((m) => m.includes('holderName'))).toBe(true);
   });
 
-  it('rejeita holderName: "   " (somente espaços)', async () => {
+  it('rejects holderName: "   " (spaces only)', async () => {
     const errors = await validatePayload(CreateShareDto, { holderName: '   ' });
     expect(errors.length).toBeGreaterThan(0);
     const messages = errors.flatMap((e) => Object.values(e.constraints ?? {}));
     expect(messages.some((m) => m.includes('holderName'))).toBe(true);
   });
 
-  it('rejeita holderName vazio também em UpdateShareDto (PartialType herda os validators)', async () => {
+  it('rejects empty holderName also in UpdateShareDto (PartialType inherits the validators)', async () => {
     const errors = await validatePayload(UpdateShareDto, { holderName: '' });
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('aceita holderName ausente (campo opcional)', async () => {
+  it('accepts absent holderName (optional field)', async () => {
     const errors = await validatePayload(CreateShareDto, { holder: 'João' });
     expect(errors).toEqual([]);
   });
 
-  it('aceita holderName com valor real, junto de percentage', async () => {
+  it('accepts holderName with a real value, along with percentage', async () => {
     const errors = await validatePayload(CreateShareDto, { holderName: 'Maria Autora', percentage: 50 });
     expect(errors).toEqual([]);
   });
 
-  it('holderName: null passa pelo pipe (class-validator trata null como "ausente" via @IsOptional) — a limpeza explícita da coluna é responsabilidade do service, não do DTO', async () => {
-    // @IsOptional() do class-validator ignora todos os outros validators
-    // quando o valor é null (mesmo tratamento de undefined) — só @Matches
-    // rejeita string vazia/whitespace, que é um valor NÃO-null. Este teste
-    // documenta esse comportamento real para não ser confundido com
-    // "holderName vazio é aceito": string vazia É rejeitada (testes acima);
-    // null explícito passa e é tratado no service (ver shares.service.spec.ts).
+  it("holderName: null passes the pipe (class-validator treats null as \"absent\" via @IsOptional) — explicit column clearing is the service's responsibility, not the DTO's", async () => {
+    // class-validator's @IsOptional() ignores all other validators
+    // when the value is null (same treatment as undefined) — only @Matches
+    // rejects an empty/whitespace string, which is a NON-null value. This test
+    // documents this real behavior so it isn't confused with
+    // "empty holderName is accepted": empty string IS rejected (tests above);
+    // explicit null passes through and is handled in the service (see shares.service.spec.ts).
     const errors = await validatePayload(UpdateShareDto, { holderName: null });
     expect(errors).toEqual([]);
   });
 
-  it('rejeita propriedade não whitelisted (contrato fechado)', async () => {
+  it('rejects non-whitelisted property (closed contract)', async () => {
     const errors = await validatePayload(CreateShareDto, { holderName: 'X', campo_inexistente: 'y' });
     expect(errors.length).toBeGreaterThan(0);
   });
 });
 
-describe('CreateShareDto — regressão: campos do share financeiro permanecem intactos (Fase 5 / C6)', () => {
-  // O C6 isolou holder_name/percentage (registro) de holder/artista_externo/
-  // pagador/recipient (financeiro) — nunca removeu ou renomeou os campos
-  // financeiros em si. Esta regressão falha se algum deles for removido/renomeado.
+describe('CreateShareDto — regression: financial share fields remain intact (Phase 5 / C6)', () => {
+  // C6 isolated holder_name/percentage (registry) from holder/artista_externo/
+  // pagador/recipient (financial) — it never removed or renamed the financial
+  // fields themselves. This regression fails if any of them is removed/renamed.
   const FINANCIAL_FIELDS = ['holder', 'artista_externo', 'pagador', 'recipient', 'share_type', 'percentage', 'direction', 'type'];
 
-  it('CreateShareDto ainda declara todos os campos financeiros', () => {
+  it('CreateShareDto still declares all financial fields', () => {
     const props = decoratedPropertyNames(CreateShareDto);
     for (const field of FINANCIAL_FIELDS) expect(props).toContain(field);
   });
 
-  it('um payload só com campos financeiros continua sendo aceito pelo pipe (nenhum deles virou obrigatório/removido)', async () => {
+  it('a payload with only financial fields is still accepted by the pipe (none of them became required/removed)', async () => {
     const errors = await validatePayload(CreateShareDto, {
       holder: 'D', artista_externo: 'AE', pagador: 'P', recipient: 'DEST', share_type: 'pendente', percentage: 100,
     });

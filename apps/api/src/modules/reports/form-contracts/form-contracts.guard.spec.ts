@@ -1,5 +1,5 @@
 /**
- * GUARDA PERMANENTE — formulário (DTO) ↔ contrato central ↔ importador.
+ * PERMANENT GUARD — form (DTO) ↔ central contract ↔ importer.
  */
 import 'reflect-metadata';
 import { getMetadataStorage } from 'class-validator';
@@ -57,8 +57,8 @@ const FORM_DTO_BY_TABLE: Record<string, new () => object> = {
 };
 
 /**
- * Exceções temporárias e auditáveis do contrato de relatórios. A persistência
- * desses campos continua protegida por database/form-field-dto-parity.spec.ts.
+ * Temporary, auditable exceptions to the report contract. Persistence of
+ * these fields remains protected by database/form-field-dto-parity.spec.ts.
  */
 const REPORT_DTO_EXCLUSIONS: Record<string, Record<string, string>> = {
   licenses: {
@@ -75,7 +75,7 @@ function dtoFields(dto: new () => object): string[] {
   return Array.from(new Set(metas.map((m) => m.propertyName)));
 }
 
-describe('form-contracts — guarda permanente formulário ↔ contrato ↔ import/export', () => {
+describe('form-contracts — permanent guard form ↔ contract ↔ import/export', () => {
   const metadata = new EntityMetadataService();
   const inv = metadata.scan();
   const defs = new ReportEntityDefinitionService(metadata);
@@ -83,13 +83,13 @@ describe('form-contracts — guarda permanente formulário ↔ contrato ↔ impo
     inv.entities.map((e) => [e.tableName, new Set(e.columns.map((c) => c.name))]),
   );
 
-  it('toda tabela com DTO de formulário mapeado possui contrato central registrado', () => {
+  it('every table with a mapped form DTO has a registered central contract', () => {
     for (const table of Object.keys(FORM_DTO_BY_TABLE)) {
       expect(REPORT_FORM_CONTRACTS[table]).toBeDefined();
     }
   });
 
-  it('TODO campo do DTO está no contrato, em alias físico ou em exclusão documentada', () => {
+  it('EVERY DTO field is in the contract, in a physical alias, or in a documented exclusion', () => {
     const offenders: string[] = [];
     for (const [table, dto] of Object.entries(FORM_DTO_BY_TABLE)) {
       const contract = REPORT_FORM_CONTRACTS[table];
@@ -112,7 +112,7 @@ describe('form-contracts — guarda permanente formulário ↔ contrato ↔ impo
     expect(offenders).toEqual([]);
   });
 
-  it('toda exclusão adicional referencia campo real do DTO e possui motivo', () => {
+  it('every additional exclusion references a real DTO field and has a reason', () => {
     for (const [table, exclusions] of Object.entries(REPORT_DTO_EXCLUSIONS)) {
       const fields = new Set(dtoFields(FORM_DTO_BY_TABLE[table]));
       for (const [field, reason] of Object.entries(exclusions)) {
@@ -122,7 +122,7 @@ describe('form-contracts — guarda permanente formulário ↔ contrato ↔ impo
     }
   });
 
-  it('todo alias aponta para uma key existente do contrato', () => {
+  it('every alias points to an existing contract key', () => {
     const offenders: string[] = [];
     for (const [table, contract] of Object.entries(REPORT_FORM_CONTRACTS)) {
       const keys = new Set(contract.fields.map((f) => f.key));
@@ -133,7 +133,7 @@ describe('form-contracts — guarda permanente formulário ↔ contrato ↔ impo
     expect(offenders).toEqual([]);
   });
 
-  it('toda coluna principal do contrato tem lastro físico', () => {
+  it('every main contract column has physical backing', () => {
     const offenders: string[] = [];
     for (const [table, contract] of Object.entries(REPORT_FORM_CONTRACTS)) {
       if (table === 'accounting_summary') continue;
@@ -157,7 +157,7 @@ describe('form-contracts — guarda permanente formulário ↔ contrato ↔ impo
     expect(offenders).toEqual([]);
   });
 
-  it('todo grupo repetível tem resolver de export e writer de import registrados', () => {
+  it('every repeating group has a registered export resolver and import writer', () => {
     const offenders: string[] = [];
     for (const [table, contract] of Object.entries(REPORT_FORM_CONTRACTS)) {
       const group = contract.repeatingGroup;
@@ -177,7 +177,7 @@ describe('form-contracts — guarda permanente formulário ↔ contrato ↔ impo
     expect(offenders).toEqual([]);
   });
 
-  it('definição publicada = contrato central', () => {
+  it('published definition = central contract', () => {
     for (const [table, contract] of Object.entries(REPORT_FORM_CONTRACTS)) {
       const def = defs.getDefinition(table);
       expect(def).not.toBeNull();
@@ -190,7 +190,7 @@ describe('form-contracts — guarda permanente formulário ↔ contrato ↔ impo
     }
   });
 
-  it('nenhuma coluna principal é sensível/interna', () => {
+  it('no main column is sensitive/internal', () => {
     const offenders: string[] = [];
     for (const [table, contract] of Object.entries(REPORT_FORM_CONTRACTS)) {
       for (const f of contract.fields) {
@@ -205,7 +205,7 @@ describe('form-contracts — guarda permanente formulário ↔ contrato ↔ impo
     expect(offenders).toEqual([]);
   });
 
-  it('toda coluna principal e repetível possui label pt-BR', () => {
+  it('every main and repeating column has a pt-BR label', () => {
     const offenders: string[] = [];
     for (const [table, contract] of Object.entries(REPORT_FORM_CONTRACTS)) {
       for (const f of contract.fields) {
@@ -220,7 +220,7 @@ describe('form-contracts — guarda permanente formulário ↔ contrato ↔ impo
     expect(offenders).toEqual([]);
   });
 
-  it('grupo "Dados Bancários" de artists exporta consecutivo, na ordem visual do formulário (regressão: agência não pode voltar a ficar solta em Equipe e negócios)', () => {
+  it('artists\' "Dados Bancários" group exports consecutively, in the form\'s visual field order (regression: "agência" must not become detached again in "Equipe e negócios")', () => {
     const keys = REPORT_FORM_CONTRACTS.artists.fields.map((f) => f.key);
     const bankGroup = ['banco', 'agencia', 'conta', 'chave_pix', 'titular_conta'];
     const indices = bankGroup.map((key) => keys.indexOf(key));
@@ -231,7 +231,7 @@ describe('form-contracts — guarda permanente formulário ↔ contrato ↔ impo
     }
   });
 
-  it('identityColumn é coluna direta importável ou o contrato é export-only', () => {
+  it('identityColumn is a direct importable column or the contract is export-only', () => {
     for (const contract of Object.values(REPORT_FORM_CONTRACTS)) {
       const exportOnly = contract.fields.every((f) => f.importable === false);
       if (exportOnly) continue;

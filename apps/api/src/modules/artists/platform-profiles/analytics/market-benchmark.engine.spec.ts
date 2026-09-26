@@ -21,7 +21,7 @@ function baseInput(overrides: Partial<MarketBenchmarkEngineInput> = {}): MarketB
 }
 
 describe('computeMarketBenchmark', () => {
-  it('coorte válida (>= minimumCohortSize): status OK, score/percentil reais', () => {
+  it('valid cohort (>= minimumCohortSize): status OK, real score/percentile', () => {
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS, artistValue: 5000, cohortValues: bigCohort(15) },
     ];
@@ -35,7 +35,7 @@ describe('computeMarketBenchmark', () => {
     expect(m.sampleQuality).toBe('MEDIUM'); // 15 < 30
   });
 
-  it('coorte insuficiente (< minimumCohortSize): INSUFFICIENT_MARKET_DATA no agregado, nunca percentil fictício', () => {
+  it('insufficient cohort (< minimumCohortSize): INSUFFICIENT_MARKET_DATA in the aggregate, never a fictitious percentile', () => {
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS, artistValue: 5000, cohortValues: bigCohort(3) },
     ];
@@ -50,7 +50,7 @@ describe('computeMarketBenchmark', () => {
     expect(m.sampleQuality).toBe('INSUFFICIENT');
   });
 
-  it(`exatamente no limite (${MINIMUM_COHORT_SIZE}): considerado suficiente, qualidade MEDIUM`, () => {
+  it(`exactly at the limit (${MINIMUM_COHORT_SIZE}): considered sufficient, MEDIUM quality`, () => {
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.DEEZER_FANS, artistValue: 2000, cohortValues: bigCohort(MINIMUM_COHORT_SIZE) },
     ];
@@ -60,7 +60,7 @@ describe('computeMarketBenchmark', () => {
     expect(m.sampleQuality).toBe('MEDIUM');
   });
 
-  it(`amostra >= ${HIGH_QUALITY_SAMPLE_SIZE}: qualidade HIGH`, () => {
+  it(`sample >= ${HIGH_QUALITY_SAMPLE_SIZE}: HIGH quality`, () => {
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.DEEZER_FANS, artistValue: 2000, cohortValues: bigCohort(HIGH_QUALITY_SAMPLE_SIZE) },
     ];
@@ -69,7 +69,7 @@ describe('computeMarketBenchmark', () => {
     expect(m.sampleQuality).toBe('HIGH');
   });
 
-  it('fallback determinístico: fallbackLevel e cohortDefinition retornados exatamente como fornecidos pelo chamador', () => {
+  it('deterministic fallback: fallbackLevel and cohortDefinition returned exactly as provided by the caller', () => {
     const result = computeMarketBenchmark(
       baseInput({ fallbackLevel: 1, cohortSize: 12, cohortDefinition: { sourceArtistUuid: 'sc-uuid-9', countryFilter: 'BR', candidateCount: 40 } }),
     );
@@ -77,7 +77,7 @@ describe('computeMarketBenchmark', () => {
     expect(result.cohortDefinition).toEqual({ sourceArtistUuid: 'sc-uuid-9', countryFilter: 'BR', candidateCount: 40 });
   });
 
-  it('mediana calculada corretamente (par e ímpar) e exposta mesmo quando coorte é insuficiente', () => {
+  it('median calculated correctly (even and odd) and exposed even when the cohort is insufficient', () => {
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS, artistValue: 100, cohortValues: [1, 2] },
     ];
@@ -86,7 +86,7 @@ describe('computeMarketBenchmark', () => {
     expect(m.cohortMedian).toBe(1.5);
   });
 
-  it('empates na coorte: percentil não quebra, usa rank médio', () => {
+  it('ties in the cohort: percentile does not break, uses average rank', () => {
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS, artistValue: 5000, cohortValues: Array(12).fill(5000) },
     ];
@@ -95,7 +95,7 @@ describe('computeMarketBenchmark', () => {
     expect(m.percentile).toBe(50);
   });
 
-  it('outlier na coorte não trava o cálculo', () => {
+  it('an outlier in the cohort does not lock up the calculation', () => {
     const cohort = [...bigCohort(11), 999_999_999];
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS, artistValue: 1500, cohortValues: cohort },
@@ -107,7 +107,7 @@ describe('computeMarketBenchmark', () => {
     expect(m.percentile).toBeLessThanOrEqual(100);
   });
 
-  it('métrica sem valor do artista (mas coorte suficiente): ARTIST_VALUE_UNAVAILABLE, nunca comparado a 0', () => {
+  it('metric with no artist value (but sufficient cohort): ARTIST_VALUE_UNAVAILABLE, never compared to 0', () => {
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.TIKTOK_FOLLOWERS, artistValue: null, cohortValues: bigCohort(15) },
     ];
@@ -117,7 +117,7 @@ describe('computeMarketBenchmark', () => {
     expect(m.percentile).toBeNull();
   });
 
-  it('amostras de tamanhos diferentes por métrica (item 20): cada métrica avaliada com sua própria sampleSize', () => {
+  it('different sample sizes per metric (item 20): each metric evaluated with its own sampleSize', () => {
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS, artistValue: 5000, cohortValues: bigCohort(20) },
       { metricKey: METRIC_KEYS.INSTAGRAM_FOLLOWERS, artistValue: 5000, cohortValues: bigCohort(2) },
@@ -129,13 +129,13 @@ describe('computeMarketBenchmark', () => {
     expect(instagram.status).toBe('INSUFFICIENT_COHORT');
   });
 
-  it('nenhuma coorte (todas as métricas sem dado): INSUFFICIENT_MARKET_DATA, nunca P68 inventado', () => {
+  it('no cohort (all metrics with no data): INSUFFICIENT_MARKET_DATA, never a made-up P68', () => {
     const result = computeMarketBenchmark(baseInput({ cohortSize: 0 }));
     expect(result.status).toBe('INSUFFICIENT_MARKET_DATA');
     expect(result.score).toBeNull();
   });
 
-  it('todos os valores da coorte iguais entre si: percentil bem definido (50), não NaN/Infinity', () => {
+  it('all cohort values equal to each other: well-defined percentile (50), not NaN/Infinity', () => {
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.DEEZER_FANS, artistValue: 42, cohortValues: Array(10).fill(42) },
     ];
@@ -145,7 +145,7 @@ describe('computeMarketBenchmark', () => {
     expect(m.percentile).toBe(50);
   });
 
-  it('métrica única disponível: score agregado igual ao percentil dessa métrica', () => {
+  it('single available metric: aggregate score equal to that metric\'s percentile', () => {
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS, artistValue: 5000, cohortValues: bigCohort(15) },
     ];
@@ -154,7 +154,7 @@ describe('computeMarketBenchmark', () => {
     expect(result.score).toBe(m.percentile);
   });
 
-  it('múltiplas métricas: score é a média dos percentis disponíveis', () => {
+  it('multiple metrics: score is the average of the available percentiles', () => {
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS, artistValue: 1_000_000, cohortValues: bigCohort(15) },
       { metricKey: METRIC_KEYS.INSTAGRAM_FOLLOWERS, artistValue: 1, cohortValues: bigCohort(15) },
@@ -165,12 +165,12 @@ describe('computeMarketBenchmark', () => {
     expect(result.score).toBeCloseTo(((spotify.percentile as number) + (instagram.percentile as number)) / 2, 5);
   });
 
-  it('engineVersion sempre retornado', () => {
+  it('engineVersion always returned', () => {
     const result = computeMarketBenchmark(baseInput());
     expect(result.engineVersion).toBe(MARKET_BENCHMARK_ENGINE_VERSION);
   });
 
-  it('determinismo: mesma entrada produz exatamente o mesmo resultado', () => {
+  it('determinism: the same input produces exactly the same result', () => {
     const metrics: BenchmarkMetricInput[] = [
       { metricKey: METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS, artistValue: 12345, cohortValues: bigCohort(15) },
     ];
@@ -178,9 +178,9 @@ describe('computeMarketBenchmark', () => {
     expect(computeMarketBenchmark(input)).toEqual(computeMarketBenchmark(input));
   });
 
-  // ── Sensibilidade do mínimo (item 15) ───────────────────────────────────
-  describe('sensibilidade de minimumCohortSize', () => {
-    it.each([10, 20, 30, 50])('amostra de tamanho %i produz percentil válido e determinístico', (n) => {
+  // ── Minimum sensitivity (item 15) ───────────────────────────────────────
+  describe('minimumCohortSize sensitivity', () => {
+    it.each([10, 20, 30, 50])('sample of size %i produces a valid, deterministic percentile', (n) => {
       const metrics: BenchmarkMetricInput[] = [
         { metricKey: METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS, artistValue: 5000, cohortValues: bigCohort(n) },
       ];
@@ -191,7 +191,7 @@ describe('computeMarketBenchmark', () => {
       expect(m.percentile).toBeLessThanOrEqual(100);
     });
 
-    it('amostra de 9 (abaixo do mínimo): INSUFFICIENT_COHORT; amostra de 10: AVAILABLE — prova a fronteira exata', () => {
+    it('sample of 9 (below the minimum): INSUFFICIENT_COHORT; sample of 10: AVAILABLE — proves the exact boundary', () => {
       const nine: BenchmarkMetricInput[] = [{ metricKey: METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS, artistValue: 5000, cohortValues: bigCohort(9) }];
       const ten: BenchmarkMetricInput[] = [{ metricKey: METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS, artistValue: 5000, cohortValues: bigCohort(10) }];
       const r9 = computeMarketBenchmark(baseInput({ cohortSize: 9, metrics: nine }));
@@ -202,9 +202,9 @@ describe('computeMarketBenchmark', () => {
   });
 });
 
-// ── Propriedades (item 41) ────────────────────────────────────────────────
-describe('propriedades — monotonicidade do percentil', () => {
-  it('percentil é não-decrescente com o valor do artista (mesma coorte)', () => {
+// ── Properties (item 41) ────────────────────────────────────────────────
+describe('properties — percentile monotonicity', () => {
+  it('percentile is non-decreasing with the artist value (same cohort)', () => {
     const cohort = bigCohort(20);
     const values = [500, 1000, 1500, 2000, 3000, 5000];
     const percentiles = values.map((v) => {

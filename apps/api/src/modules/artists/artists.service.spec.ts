@@ -80,23 +80,23 @@ function makeDataSource(getOneValue: unknown = artistA) {
 
   return {
     getRepository: jest.fn(() => repo),
-    // Task H: list() enriquece cada artista com o vínculo (exclusivo/
-    // parceiro/independente) via uma query bruta restrita aos IDs da
-    // página — sem nenhum contrato mockado, isso resolve pra "independente".
+    // Task H: list() enriches each artist with the linkage type (exclusive/
+    // partner/independent) via a raw query restricted to the page's IDs —
+    // with no contract mocked, this resolves to "independent".
     query: jest.fn().mockResolvedValue([]),
     _repo: repo,
   };
 }
 
 describe('ArtistsService', () => {
-  it('list() retorna artistas filtrados pelo tenant correcto', async () => {
+  it('list() returns artists filtered by the correct tenant', async () => {
     const ds = makeDataSource();
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
 
     const result = await service.list(TENANT_A, {});
 
-    // Contrato de resposta: ciphertext NUNCA sai da API; os campos PII voltam
-    // decifrados nos nomes usados pelo formulário (null quando não preenchidos).
+    // Response contract: ciphertext NEVER leaves the API; PII fields come back
+    // decrypted under the names used by the form (null when not filled in).
     const { email_encrypted, telefone_encrypted, cpf_cnpj_encrypted, ...artistAPublic } = artistA;
     expect(result.data).toEqual([{
       ...artistAPublic,
@@ -114,7 +114,7 @@ describe('ArtistsService', () => {
     );
   });
 
-  it('find-924ed503: list() ignora um orderBy fora da allow-list (tentativa de SQL injection) e usa o fallback created_at', async () => {
+  it('find-924ed503: list() ignores an orderBy outside the allow-list (SQL injection attempt) and uses the created_at fallback', async () => {
     const ds = makeDataSource();
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
 
@@ -123,7 +123,7 @@ describe('ArtistsService', () => {
     expect(ds._repo._qb.orderBy).toHaveBeenCalledWith('a.created_at', 'DESC');
   });
 
-  it('find-924ed503: list() aceita um orderBy da allow-list normalmente', async () => {
+  it('find-924ed503: list() accepts an orderBy from the allow-list normally', async () => {
     const ds = makeDataSource();
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
 
@@ -132,21 +132,21 @@ describe('ArtistsService', () => {
     expect(ds._repo._qb.orderBy).toHaveBeenCalledWith('a.nome_artistico', 'ASC');
   });
 
-  it('findById() retorna artista quando pertence ao tenant', async () => {
+  it('findById() returns the artist when it belongs to the tenant', async () => {
     const ds = makeDataSource();
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
 
     await expect(service.findById(TENANT_A, 'artist-001')).resolves.toEqual(artistA);
   });
 
-  it('findById() lanca NotFoundException para artista nao encontrado', async () => {
+  it('findById() throws NotFoundException for an artist that does not exist', async () => {
     const ds = makeDataSource(null);
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
 
     await expect(service.findById(TENANT_A, 'inexistente')).rejects.toThrow(NotFoundException);
   });
 
-  it('create() encripta email, telefone e CPF/CNPJ antes de persistir', async () => {
+  it('create() encrypts email, telefone and cpf_cnpj before persisting', async () => {
     const ds = makeDataSource();
     const enc = makeEncryptionMock();
     const events = makeEventsMock();
@@ -174,14 +174,14 @@ describe('ArtistsService', () => {
     );
     expect(ds._repo.save).toHaveBeenCalled();
     expect(events.emitTyped).toHaveBeenCalled();
-    // Round-trip: a resposta devolve o valor decifrado e nunca o ciphertext.
+    // Round-trip: the response returns the decrypted value and never the ciphertext.
     expect(result.email).toBe(dto.email);
     expect(result.telefone).toBe(dto.telefone);
     expect(result.cpf_cnpj).toBe(dto.cpf_cnpj);
     expect(result).not.toHaveProperty('email_encrypted');
   });
 
-  it('update() limpa campo anulável com null e não toca campos omitidos', async () => {
+  it('update() clears a nullable field with null and does not touch omitted fields', async () => {
     const ds = makeDataSource();
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
 
@@ -199,7 +199,7 @@ describe('ArtistsService', () => {
     expect(updates).not.toHaveProperty('email_encrypted');
   });
 
-  it('softDelete() define deleted_at e updated_by sem apagar fisicamente', async () => {
+  it('softDelete() sets deleted_at and updated_by without physically deleting', async () => {
     const ds = makeDataSource();
     const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
 

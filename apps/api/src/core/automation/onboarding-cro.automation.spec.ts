@@ -28,7 +28,7 @@ function makeFailingAi() {
   return { complete: jest.fn(async () => { throw new Error('Nenhum provider de AI configurado'); }) };
 }
 
-/** Roteia por tabela: tenants -> tenantRow; contagens -> counts[table]. */
+/** Routes by table: tenants -> tenantRow; counts -> counts[table]. */
 function makeDs(tenantRow: unknown, counts: Record<string, number>) {
   const query = jest.fn(async (sql: string) => {
     if (/FROM tenants/i.test(sql)) return [tenantRow];
@@ -50,7 +50,7 @@ const VALID_JSON = JSON.stringify({
 });
 
 describe('OnboardingCroAutomation (ON_DEMAND: POST /auth/onboarding/ai/progress-analysis)', () => {
-  it('deriva cada passo deterministicamente de contagens reais — tenant com progresso avançado', async () => {
+  it('derives each step deterministically from real counts — tenant with advanced progress', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const ds = makeDs({ name: 'Gravadora X', onboarding_completed: true }, FULL_COUNTS);
@@ -68,7 +68,7 @@ describe('OnboardingCroAutomation (ON_DEMAND: POST /auth/onboarding/ai/progress-
     expect(skillRun.succeed).toHaveBeenCalled();
   });
 
-  it('ANTI-FABRICAÇÃO: tenant novo sem nenhum dado real — todos os passos pendentes, nunca uma taxa inventada', async () => {
+  it('ANTI-FABRICATION: brand-new tenant with no real data — all steps pending, never an invented rate', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const ds = makeDs({ name: 'Novo Tenant', onboarding_completed: false }, EMPTY_COUNTS);
@@ -79,10 +79,10 @@ describe('OnboardingCroAutomation (ON_DEMAND: POST /auth/onboarding/ai/progress-
     expect(result.parsed.completedStepsCount).toBe(0);
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string }]>;
     expect(aiCalls[0][0].prompt).toContain('company_profile=pendente');
-    expect(aiCalls[0][0].prompt).toContain('invite_team=pendente'); // org_members=1 (só o dono) não conta como time convidado
+    expect(aiCalls[0][0].prompt).toContain('invite_team=pendente'); // org_members=1 (only the owner) does not count as an invited team
   });
 
-  it('tenant inexistente: lança NotFoundException', async () => {
+  it('nonexistent tenant: throws NotFoundException', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
     const ds = { query: jest.fn(async () => []) };
@@ -92,7 +92,7 @@ describe('OnboardingCroAutomation (ON_DEMAND: POST /auth/onboarding/ai/progress-
     expect(ai.complete).not.toHaveBeenCalled();
   });
 
-  it('falha da IA registra fail e relança', async () => {
+  it('AI failure records fail and rethrows', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const ds = makeDs({ name: 'Gravadora X', onboarding_completed: true }, FULL_COUNTS);

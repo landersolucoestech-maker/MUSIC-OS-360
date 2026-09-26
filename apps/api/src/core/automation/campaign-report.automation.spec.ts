@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { CampaignReportAutomation } from './campaign-report.automation';
 import { passThroughTenantContext } from '../../../test/helpers/tenant-context.mock';
 
-// ─── Mocks de fronteira (DB / SkillRunService / AIService) ────────────────────
+// ─── Boundary mocks (DB / SkillRunService / AIService) ────────────────────────
 
 function makeSkillRun() {
   return {
@@ -32,9 +32,9 @@ function makeFailingAi() {
 }
 
 /**
- * Mock de DataSource que roteia por SQL:
+ * DataSource mock that routes by SQL:
  *  - SELECT ... FROM skill_runs → skillRunRows
- *  - SELECT ... FROM campaigns  → campaignRows (inclui subselects de campaign_tasks/campaign_assets)
+ *  - SELECT ... FROM campaigns  → campaignRows (includes campaign_tasks/campaign_assets subselects)
  *  - UPDATE                     → undefined
  */
 function makeDs(campaignRows: unknown[], skillRunRows: unknown[] = []) {
@@ -73,9 +73,9 @@ const CAMPAIGN_ROW = {
   assets_used_count: '3',
 };
 
-// Resposta do provider TENTA reivindicar dados medidos mesmo sem externalMetrics real no input —
-// o parser da skill (enforceNoFabricatedMetrics) deve rebaixar isso independentemente do que o
-// modelo disse, já que o runner nunca chama validateOutput.
+// The provider response TRIES to claim measured data even without real externalMetrics in the
+// input — the skill's parser (enforceNoFabricatedMetrics) must downgrade this regardless of what
+// the model said, since the runner never calls validateOutput.
 const FABRICATING_JSON = JSON.stringify({
   executionSummary: 'Campanha concluída com sucesso.',
   hasMeasuredPerformanceData: true,
@@ -87,7 +87,7 @@ const FABRICATING_JSON = JSON.stringify({
 const IDEMPOTENCY_KEY = 'campaign.ended:t1:c1';
 
 describe('CampaignReportAutomation (campaign.ended → campaign-report)', () => {
-  it('executa, registra skill_run e grava campaigns.metadata.aiCampaignReport no sucesso', async () => {
+  it('executes, records skill_run and writes campaigns.metadata.aiCampaignReport on success', async () => {
     const { ds, query } = makeDs([CAMPAIGN_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(FABRICATING_JSON);
@@ -121,7 +121,7 @@ describe('CampaignReportAutomation (campaign.ended → campaign-report)', () => 
     expect(meta.aiCampaignReport.status).toBe('generated');
   });
 
-  it('ANTI-FABRICAÇÃO: sem externalMetrics no input, hasMeasuredPerformanceData é forçado a false e availability="actual" é rebaixado, mesmo quando o provider reivindica dados medidos', async () => {
+  it('ANTI-FABRICATION: without externalMetrics in the input, hasMeasuredPerformanceData is forced to false and availability="actual" is downgraded, even when the provider claims measured data', async () => {
     const { ds, query } = makeDs([CAMPAIGN_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(FABRICATING_JSON);
@@ -137,7 +137,7 @@ describe('CampaignReportAutomation (campaign.ended → campaign-report)', () => 
     expect(parsed.metricSummaries.every((m: { availability: string }) => m.availability !== 'actual')).toBe(true);
   });
 
-  it('campanha com status cancelled monta outcomeStatus=cancelled', async () => {
+  it('campaign with status cancelled builds outcomeStatus=cancelled', async () => {
     const row = { ...CAMPAIGN_ROW, status: 'cancelled' };
     const { ds } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -150,7 +150,7 @@ describe('CampaignReportAutomation (campaign.ended → campaign-report)', () => 
     expect(aiCalls[0][0].prompt).toContain('cancelada');
   });
 
-  it('sem tarefas/assets registrados, monta input sem esses campos opcionais', async () => {
+  it('without registered tasks/assets, builds input without those optional fields', async () => {
     const row = { ...CAMPAIGN_ROW, tasks_total: '0', tasks_completed: '0', assets_used_count: '0' };
     const { ds } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -163,7 +163,7 @@ describe('CampaignReportAutomation (campaign.ended → campaign-report)', () => 
     expect(aiCalls[0][0].prompt).not.toContain('concluídas');
   });
 
-  it('idempotência metadata — não reprocessa se já gerado com a mesma chave', async () => {
+  it('metadata idempotency — does not reprocess if already generated with the same key', async () => {
     const row = { ...CAMPAIGN_ROW, metadata: { aiCampaignReport: { idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' } } };
     const { ds, query } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -177,7 +177,7 @@ describe('CampaignReportAutomation (campaign.ended → campaign-report)', () => 
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('idempotência skill_runs — run em andamento/sucesso bloqueia', async () => {
+  it('skill_runs idempotency — an in-progress/successful run blocks', async () => {
     const { ds, query } = makeDs([CAMPAIGN_ROW], [{ '1': 1 }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(FABRICATING_JSON);
@@ -190,7 +190,7 @@ describe('CampaignReportAutomation (campaign.ended → campaign-report)', () => 
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('falha da IA registra fail, não relança e não grava aiCampaignReport', async () => {
+  it('AI failure records fail, does not rethrow and does not write aiCampaignReport', async () => {
     const { ds, query } = makeDs([CAMPAIGN_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
@@ -203,7 +203,7 @@ describe('CampaignReportAutomation (campaign.ended → campaign-report)', () => 
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('guarda: tenantId/campaignId ausente é ignorado (sem run, sem query)', async () => {
+  it('guard: missing tenantId/campaignId is ignored (no run, no query)', async () => {
     const { ds, query } = makeDs([CAMPAIGN_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(FABRICATING_JSON);

@@ -4,7 +4,7 @@ import {
   neutralizeFormulaInjection,
 } from './export-format.service';
 
-describe('ExportFormatService — serialização XLSX', () => {
+describe('ExportFormatService — XLSX serialization', () => {
   const svc = new ExportFormatService();
 
   function readFirstSheetRows(buf: Buffer): unknown[][] {
@@ -13,14 +13,14 @@ describe('ExportFormatService — serialização XLSX', () => {
     return XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1 });
   }
 
-  it('cabeçalhos usam label pt-BR, nunca a chave técnica', () => {
+  it('headers use pt-BR label, never the technical key', () => {
     const buf = svc.toXlsx('artists', 'Artistas', ['nome_artistico'], [{ nome_artistico: 'Ana' }]);
     const rows = readFirstSheetRows(buf);
     expect(rows[0]).toContain('Nome artístico');
     expect(rows[0]).not.toContain('nome_artistico');
   });
 
-  it('campo de texto que excede o limite de célula do Excel é truncado (nunca derruba a exportação)', () => {
+  it('text field exceeding the Excel cell limit is truncated (never breaks the export)', () => {
     const huge = 'A'.repeat(40000);
     const buf = svc.toXlsx('contract_templates', 'Contratos', ['conteudo'], [{ conteudo: huge }]);
     const rows = readFirstSheetRows(buf);
@@ -29,20 +29,20 @@ describe('ExportFormatService — serialização XLSX', () => {
     expect(cell).toContain('truncado');
   });
 
-  it('valor dentro do limite não é alterado', () => {
+  it('value within the limit is not altered', () => {
     const normal = 'Texto normal de observação.';
     const buf = svc.toXlsx('artists', 'Artistas', ['notes'], [{ notes: normal }]);
     const rows = readFirstSheetRows(buf);
     expect(rows[1][0]).toBe(normal);
   });
 
-  describe('sanitizeExcelCellValue — última barreira antes do Excel (todas as entidades)', () => {
-    it('null/undefined viram célula vazia', () => {
+  describe('sanitizeExcelCellValue — last barrier before Excel (all entities)', () => {
+    it('null/undefined become an empty cell', () => {
       expect(sanitizeExcelCellValue(null, { entity: 'artists', column: 'x' })).toBe('');
       expect(sanitizeExcelCellValue(undefined, { entity: 'artists', column: 'x' })).toBe('');
     });
 
-    it('objeto/array cru NUNCA vira célula (defesa em profundidade, mesmo que já devesse ter sido excluído antes)', () => {
+    it('raw object/array NEVER becomes a cell (defense in depth, even though it should already have been excluded earlier)', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
       expect(sanitizeExcelCellValue({ a: 1 }, { entity: 'artists', column: 'metadata' })).toBe('');
       expect(sanitizeExcelCellValue([1, 2, 3], { entity: 'artists', column: 'tags' })).toBe('');
@@ -50,7 +50,7 @@ describe('ExportFormatService — serialização XLSX', () => {
       warn.mockRestore();
     });
 
-    it('loga entidade, coluna e tamanho quando trunca (rastreável em produção)', () => {
+    it('logs entity, column and size when truncating (traceable in production)', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
       const huge = 'X'.repeat(50000);
       sanitizeExcelCellValue(huge, { entity: 'contract_templates', column: 'conteudo' });
@@ -59,14 +59,14 @@ describe('ExportFormatService — serialização XLSX', () => {
       warn.mockRestore();
     });
 
-    it('garante que o resultado nunca ultrapassa EXCEL_CELL_MAX_CHARS mesmo para entradas absurdamente grandes', () => {
+    it('ensures the result never exceeds EXCEL_CELL_MAX_CHARS even for absurdly large inputs', () => {
       const absurd = 'Z'.repeat(200000);
       const out = sanitizeExcelCellValue(absurd, { entity: 'briefings', column: 'descricao' });
       expect(out.length).toBeLessThanOrEqual(EXCEL_CELL_MAX_CHARS);
     });
 
-    describe('injeção de fórmula em planilha (OWASP) — nenhuma célula pode virar fórmula ao abrir no Excel/LibreOffice', () => {
-      it('neutraliza payloads clássicos de injeção de fórmula', () => {
+    describe('spreadsheet formula injection (OWASP) — no cell can become a formula when opened in Excel/LibreOffice', () => {
+      it('neutralizes classic formula-injection payloads', () => {
         expect(sanitizeExcelCellValue('=HYPERLINK("http://evil.test","clique")', { entity: 'clients', column: 'nome' })).toBe(
           "'=HYPERLINK(\"http://evil.test\",\"clique\")",
         );
@@ -79,22 +79,22 @@ describe('ExportFormatService — serialização XLSX', () => {
         );
       });
 
-      it('neutraliza tab/CR como primeiro caractere (vetores menos comuns de injeção)', () => {
+      it('neutralizes tab/CR as the first character (less common injection vectors)', () => {
         expect(sanitizeExcelCellValue('\t=1+1', { entity: 'clients', column: 'nome' })).toBe("'\t=1+1");
       });
 
-      it('NÃO neutraliza telefone legítimo começado por "+" (dado real e comum nesta aplicação)', () => {
+      it('does NOT neutralize a legitimate phone number starting with "+" (real and common data in this application)', () => {
         expect(sanitizeExcelCellValue('+5511999990000', { entity: 'clients', column: 'telefone' })).toBe(
           '+5511999990000',
         );
       });
 
-      it('NÃO neutraliza valor monetário negativo legítimo começado por "-"', () => {
+      it('does NOT neutralize a legitimate negative monetary value starting with "-"', () => {
         expect(sanitizeExcelCellValue('-42.50', { entity: 'transactions', column: 'valor' })).toBe('-42.50');
         expect(sanitizeExcelCellValue('-1234,56', { entity: 'transactions', column: 'valor' })).toBe('-1234,56');
       });
 
-      it('texto comum sem prefixo perigoso não é alterado', () => {
+      it('plain text without a dangerous prefix is not altered', () => {
         expect(neutralizeFormulaInjection('Cliente Exemplo Ltda')).toBe('Cliente Exemplo Ltda');
       });
     });

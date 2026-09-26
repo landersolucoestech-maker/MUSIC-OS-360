@@ -1,19 +1,19 @@
 /**
  * test/e2e/realtime/realtime-broadcast-authorization.e2e-spec.ts
  *
- * Teste FUNCIONAL (Postgres real, não apenas texto de SQL mockado — ver
- * database/realtime-broadcast-authorization.migration.spec.ts para o teste de
- * forma) das policies de 20260801000001_RealtimeBroadcastAuthorization.
+ * FUNCTIONAL test (real Postgres, not just mocked SQL text — see
+ * database/realtime-broadcast-authorization.migration.spec.ts for the shape
+ * test) of the policies from 20260801000001_RealtimeBroadcastAuthorization.
  *
- * Usa uma única conexão `pg.Client` (não um pool) porque `SET ROLE` e as GUCs
- * de sessão (request.jwt.claims, realtime.topic) só têm efeito na conexão
- * física exata em que foram definidas — um DataSource/pool não garante isso
- * entre chamadas .query() sucessivas.
+ * Uses a single `pg.Client` connection (not a pool) because `SET ROLE` and
+ * the session GUCs (request.jwt.claims, realtime.topic) only take effect on
+ * the exact physical connection where they were set — a DataSource/pool does
+ * not guarantee that across successive .query() calls.
  *
- * Espelha exatamente o mecanismo real do Supabase Realtime: o servidor decide
- * quem pode entrar num canal fazendo o Postgres avaliar as policies de SELECT
- * em realtime.messages sob o role `authenticated`, com `auth.jwt()` a ler o
- * JWT do cliente e `realtime.topic()` a ler o tópico requisitado.
+ * Mirrors exactly the real Supabase Realtime mechanism: the server decides
+ * who can join a channel by having Postgres evaluate the SELECT policies on
+ * realtime.messages under the `authenticated` role, with `auth.jwt()` reading
+ * the client's JWT and `realtime.topic()` reading the requested topic.
  */
 import { Client } from 'pg';
 
@@ -35,8 +35,8 @@ d('Realtime broadcast authorization (RLS real) — realtime.messages', () => {
   beforeAll(async () => {
     client = new Client({ connectionString: readDatabaseUrl(), ssl: false });
     await client.connect();
-    // service_role (owner) semeia as duas mensagens de teste — bypassa RLS,
-    // tal como o RealtimeService real ao publicar via service_role key.
+    // service_role (owner) seeds the two test messages — bypasses RLS,
+    // just like the real RealtimeService when publishing via the service_role key.
     await client.query(
       `INSERT INTO realtime.messages (topic, extension, event, payload) VALUES
          ($1, 'broadcast', 'notification:new', '{}'),
@@ -60,48 +60,48 @@ d('Realtime broadcast authorization (RLS real) — realtime.messages', () => {
 
   async function selectAs(jwtClaims: Record<string, unknown> | null, topic: string): Promise<number> {
     await client.query(`SET ROLE authenticated`);
-    // SET/SET LOCAL não aceitam parâmetros ($1) — set_config() é a forma
-    // parametrizável equivalente (mesma semântica de GUC de sessão).
+    // SET/SET LOCAL do not accept parameters ($1) — set_config() is the
+    // equivalent parameterizable form (same session GUC semantics).
     if (jwtClaims) await client.query(`SELECT set_config('request.jwt.claims', $1, false)`, [JSON.stringify(jwtClaims)]);
     await client.query(`SELECT set_config('realtime.topic', $1, false)`, [topic]);
     const res = await client.query(`SELECT * FROM realtime.messages WHERE topic = $1`, [topic]);
     return res.rowCount ?? 0;
   }
 
-  it('1. tenant A assinando tenant:A vê a mensagem do seu tenant', async () => {
+  it('1. tenant A subscribing to tenant:A sees its own tenant\'s message', async () => {
     const rows = await selectAs({ sub: USER_A, role: 'authenticated', app_metadata: { org_id: TENANT_A } }, `tenant:${TENANT_A}`);
     expect(rows).toBe(1);
   });
 
-  it('2. tenant B assinando tenant:A NÃO recebe (RLS bloqueia — org_id não bate)', async () => {
+  it('2. tenant B subscribing to tenant:A does NOT receive it (RLS blocks — org_id mismatch)', async () => {
     const rows = await selectAs({ sub: USER_B, role: 'authenticated', app_metadata: { org_id: TENANT_B } }, `tenant:${TENANT_A}`);
     expect(rows).toBe(0);
   });
 
-  it('3. utilizador A assinando user:<subA> vê a sua própria notificação', async () => {
+  it('3. user A subscribing to user:<subA> sees their own notification', async () => {
     const rows = await selectAs({ sub: USER_A, role: 'authenticated', app_metadata: { org_id: TENANT_A } }, `user:${USER_A}`);
     expect(rows).toBe(1);
   });
 
-  it('4. utilizador B assinando user:<subA> NÃO recebe (sub não bate)', async () => {
+  it('4. user B subscribing to user:<subA> does NOT receive it (sub mismatch)', async () => {
     const rows = await selectAs({ sub: USER_B, role: 'authenticated', app_metadata: { org_id: TENANT_B } }, `user:${USER_A}`);
     expect(rows).toBe(0);
   });
 
-  it('5. sem JWT (claims vazias) é negado em qualquer canal', async () => {
+  it('5. without a JWT (empty claims) is denied on any channel', async () => {
     const rows = await selectAs({}, `tenant:${TENANT_A}`);
     expect(rows).toBe(0);
   });
 
-  it('6. authenticated sem org_id no app_metadata não recebe o canal de tenant', async () => {
+  it('6. authenticated without org_id in app_metadata does not receive the tenant channel', async () => {
     const rows = await selectAs({ sub: USER_A, role: 'authenticated' }, `tenant:${TENANT_A}`);
     expect(rows).toBe(0);
   });
 
-  it('9. o nome do canal não é livre — o utilizador não escolhe qual tenant: consegue ler, só o seu', async () => {
-    // Mesmo JWT válido do tenant A tentando ler o tópico de um tenant arbitrário
-    // (não o seu) continua bloqueado — a policy amarra topic ao claim, não ao
-    // valor que o cliente pede.
+  it('9. the channel name is not free-form — the user does not choose which tenant they can read, only their own', async () => {
+    // Even a valid JWT from tenant A trying to read the topic of an arbitrary
+    // tenant (not its own) is still blocked — the policy ties the topic to the
+    // claim, not to the value the client requests.
     const rows = await selectAs({ sub: USER_A, role: 'authenticated', app_metadata: { org_id: TENANT_A } }, `tenant:${TENANT_B}`);
     expect(rows).toBe(0);
   });

@@ -1,12 +1,12 @@
 /**
  * create-artist.dto.spec.ts
  *
- * Regressão: o contrato de criação/edição de Artista trabalha exclusivamente
- * com URLs (spotify_url/youtube_url/foto_url). Reproduz exatamente o
- * ValidationPipe global (whitelist + forbidNonWhitelisted) de main.ts para
- * provar, sem precisar subir a app inteira, que:
- *   - um payload com os campos legados removidos é REJEITADO (400);
- *   - um payload com apenas as URLs corretas é ACEITO.
+ * Regression: the Artist create/edit contract works exclusively with URLs
+ * (spotify_url/youtube_url/foto_url). Reproduces exactly the global
+ * ValidationPipe (whitelist + forbidNonWhitelisted) from main.ts to prove,
+ * without needing to boot the whole app, that:
+ *   - a payload with the removed legacy fields is REJECTED (400);
+ *   - a payload with only the correct URLs is ACCEPTED.
  */
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
@@ -14,7 +14,7 @@ import { validate, getMetadataStorage } from 'class-validator';
 import { CreateArtistDto } from './create-artist.dto';
 import { UpdateArtistDto } from './update-artist.dto';
 
-/** Nomes de propriedade com pelo menos um decorator class-validator (o contrato real do DTO). */
+/** Property names with at least one class-validator decorator (the DTO's real contract). */
 function decoratedPropertyNames(dto: new () => object): string[] {
   const metas = getMetadataStorage().getTargetValidationMetadatas(dto, '', false, false);
   return Array.from(new Set(metas.map((m) => m.propertyName)));
@@ -25,7 +25,7 @@ async function validatePayload(dto: object, payload: Record<string, unknown>) {
   return validate(instance, { whitelist: true, forbidNonWhitelisted: true });
 }
 
-describe('CreateArtistDto/UpdateArtistDto — domínio exclusivamente por URL', () => {
+describe('CreateArtistDto/UpdateArtistDto — URL-only domain', () => {
   const LEGACY_FIELDS = {
     spotify_artist_id: '4NHQUGzhtTLFvgF5SZesLK',
     youtube_artist_id: 'UC_x5XG1OV2P6uZZ5FSM9Ttw',
@@ -35,7 +35,7 @@ describe('CreateArtistDto/UpdateArtistDto — domínio exclusivamente por URL', 
   };
 
   it.each(Object.entries(LEGACY_FIELDS))(
-    'rejeita payload de criação contendo "%s" (propriedade não whitelisted)',
+    'rejects payload for creation containing "%s" (non-whitelisted property)',
     async (field, value) => {
       const errors = await validatePayload(CreateArtistDto, {
         nome_artistico: 'Teste',
@@ -48,14 +48,14 @@ describe('CreateArtistDto/UpdateArtistDto — domínio exclusivamente por URL', 
   );
 
   it.each(Object.entries(LEGACY_FIELDS))(
-    'rejeita payload de atualização contendo "%s" (propriedade não whitelisted)',
+    'rejects payload for update containing "%s" (non-whitelisted property)',
     async (field, value) => {
       const errors = await validatePayload(UpdateArtistDto, { [field]: value });
       expect(errors.length).toBeGreaterThan(0);
     },
   );
 
-  it('aceita payload contendo somente foto_url/spotify_url/youtube_url', async () => {
+  it('accepts payload containing only foto_url/spotify_url/youtube_url', async () => {
     const errors = await validatePayload(CreateArtistDto, {
       nome_artistico: 'Teste',
       foto_url: 'https://cdn.example.com/foto.png',
@@ -65,7 +65,7 @@ describe('CreateArtistDto/UpdateArtistDto — domínio exclusivamente por URL', 
     expect(errors).toEqual([]);
   });
 
-  it('CreateArtistDto/UpdateArtistDto não declaram nenhuma propriedade legada, e declaram as 3 corretas', () => {
+  it('CreateArtistDto/UpdateArtistDto declare no legacy property, and declare the 3 correct ones', () => {
     const createProps = decoratedPropertyNames(CreateArtistDto);
     const updateProps = decoratedPropertyNames(UpdateArtistDto);
     for (const legacyField of Object.keys(LEGACY_FIELDS)) {

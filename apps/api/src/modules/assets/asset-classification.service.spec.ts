@@ -26,7 +26,7 @@ const skillRuns = () => ({
   }),
 });
 
-describe('AssetClassificationService.classify (heurística)', () => {
+describe('AssetClassificationService.classify (heuristic)', () => {
   const cases: Array<[string, string, string]> = [
     ['audio/wav', 'track.wav', 'wav'],
     ['audio/mpeg', 'track.mp3', 'mp3'],
@@ -44,13 +44,13 @@ describe('AssetClassificationService.classify (heurística)', () => {
     ['application/pdf', 'rider.pdf', 'document'],
     ['application/zip', 'pacote.zip', 'unknown'],
   ];
-  it.each(cases)('classifica %s / %s → %s', (mime, name, expected) => {
+  it.each(cases)('classifies %s / %s → %s', (mime, name, expected) => {
     expect(AssetClassificationService.classify(mime, name).assetType).toBe(expected);
   });
 });
 
 describe('AssetClassificationService.classifyAndApply', () => {
-  it('persiste o type e registra log de uso "classified"', async () => {
+  it('persists the type and logs a "classified" usage entry', async () => {
     const { ds, repos } = makeDs();
     const svc = new AssetClassificationService(ds as never, skillRuns() as never);
 
@@ -66,7 +66,7 @@ describe('AssetClassificationService.classifyAndApply', () => {
 });
 
 describe('AssetClassificationService.review (manual)', () => {
-  it('aplica classificação manual (confidence 1, method manual)', async () => {
+  it('applies manual classification (confidence 1, method manual)', async () => {
     const { ds, repos } = makeDs();
     const svc = new AssetClassificationService(ds as never, skillRuns() as never);
 
@@ -79,7 +79,7 @@ describe('AssetClassificationService.review (manual)', () => {
     );
   });
 
-  it('sem DATA_SOURCE não quebra (noop de persistência)', async () => {
+  it('without DATA_SOURCE does not break (persistence noop)', async () => {
     const svc = new AssetClassificationService(null, skillRuns() as never);
     const result = await svc.review('t1', 'asset-1', 'wav', 'user-1');
     expect(result.method).toBe('manual');

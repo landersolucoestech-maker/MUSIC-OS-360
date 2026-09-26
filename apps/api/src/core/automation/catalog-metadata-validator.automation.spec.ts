@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { CatalogMetadataValidatorAutomation } from './catalog-metadata-validator.automation';
 import { passThroughTenantContext } from '../../../test/helpers/tenant-context.mock';
 
-// ─── Mocks de fronteira (DB / SkillRunService / AIService) ────────────────────
+// ─── Boundary mocks (DB / SkillRunService / AIService) ────────────────────────
 
 function makeSkillRun() {
   return {
@@ -32,7 +32,7 @@ function makeFailingAi() {
 }
 
 /**
- * Mock de DataSource que roteia por SQL:
+ * DataSource mock that routes by SQL:
  *  - SELECT ... FROM skill_runs → skillRunRows
  *  - SELECT ... FROM works      → workRows
  *  - SELECT ... FROM phonograms → recordingRows
@@ -93,9 +93,9 @@ function recordingEvent() {
 }
 
 describe('CatalogMetadataValidatorAutomation', () => {
-  // ── Obra (work) ─────────────────────────────────────────────────────────────
+  // ── Work ────────────────────────────────────────────────────────────────────
 
-  it('work: executa, registra skill_run e grava works.metadata.aiCatalogValidation', async () => {
+  it('work: executes, records skill_run and writes works.metadata.aiCatalogValidation', async () => {
     const { ds, query } = makeDs({ works: [WORK_ROW] });
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
@@ -114,8 +114,8 @@ describe('CatalogMetadataValidatorAutomation', () => {
     expect(skillRun.succeed).toHaveBeenCalled();
     expect(skillRun.fail).not.toHaveBeenCalled();
 
-    // input: type=work + compositores (plural, form real) mesclados com
-    // compositor (singular, bulk-import) deduplicados por nome no prompt
+    // input: type=work + compositores (plural, real form field) merged with
+    // compositor (singular, bulk-import), deduplicated by name in the prompt
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string; jsonMode: boolean }]>;
     expect(aiCalls[0][0].prompt).toContain('obra musical (work)');
     expect(aiCalls[0][0].prompt).toContain('Ana Lima');
@@ -132,7 +132,7 @@ describe('CatalogMetadataValidatorAutomation', () => {
     expect(meta.aiCatalogValidation.status).toBe('generated');
   });
 
-  it('work: idempotência metadata — não reprocessa se já gerado com a mesma chave', async () => {
+  it('work: metadata idempotency — does not reprocess if already generated with the same key', async () => {
     const row = { ...WORK_ROW, metadata: { aiCatalogValidation: { idempotencyKey: 'catalog.work.created:t1:w1', status: 'generated' } } };
     const { ds, query } = makeDs({ works: [row] });
     const skillRun = makeSkillRun();
@@ -146,7 +146,7 @@ describe('CatalogMetadataValidatorAutomation', () => {
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('work: falha da IA registra fail, não relança e não grava', async () => {
+  it('work: AI failure records fail, does not rethrow and does not write', async () => {
     const { ds, query } = makeDs({ works: [WORK_ROW] });
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
@@ -159,9 +159,9 @@ describe('CatalogMetadataValidatorAutomation', () => {
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  // ── Fonograma (recording) ───────────────────────────────────────────────────
+  // ── Recording ───────────────────────────────────────────────────────────────
 
-  it('recording: executa e grava phonograms.metadata.aiCatalogValidation com type=recording', async () => {
+  it('recording: executes and writes phonograms.metadata.aiCatalogValidation with type=recording', async () => {
     const { ds, query } = makeDs({ recordings: [RECORDING_ROW] });
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
@@ -178,9 +178,9 @@ describe('CatalogMetadataValidatorAutomation', () => {
     );
     expect(skillRun.succeed).toHaveBeenCalled();
 
-    // input: type=recording + intérpretes/produtor (de participacao, jsonb
-    // estruturado -- substituiu as colunas legadas interpretes/produtores,
-    // texto livre, dropadas por não ter writer real) + label no prompt
+    // input: type=recording + performers/producer (from participacao, structured
+    // jsonb -- replaced the legacy interpretes/produtores free-text columns,
+    // dropped for having no real writer) + label in the prompt
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string }]>;
     expect(aiCalls[0][0].prompt).toContain('fonograma/gravação (recording)');
     expect(aiCalls[0][0].prompt).toContain('Banda Aurora');
@@ -193,7 +193,7 @@ describe('CatalogMetadataValidatorAutomation', () => {
     expect(meta.aiCatalogValidation.idempotencyKey).toBe('catalog.recording.created:t1:r1');
   });
 
-  it('recording: sem intérprete em participacao registra fail (skill exige performers não-vazio para type=recording)', async () => {
+  it('recording: no performer in participacao records fail (skill requires non-empty performers for type=recording)', async () => {
     const noInterpreter = { ...RECORDING_ROW, participacao: { interprete: [], produtorFonografico: [] } };
     const { ds } = makeDs({ recordings: [noInterpreter] });
     const skillRun = makeSkillRun();
@@ -207,7 +207,7 @@ describe('CatalogMetadataValidatorAutomation', () => {
     expect(ai.complete).not.toHaveBeenCalled();
   });
 
-  it('recording: idempotência skill_runs — run em andamento/sucesso bloqueia', async () => {
+  it('recording: skill_runs idempotency — an in-progress/successful run blocks', async () => {
     const { ds, query } = makeDs({ recordings: [RECORDING_ROW], skillRuns: [{ '1': 1 }] });
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
@@ -220,7 +220,7 @@ describe('CatalogMetadataValidatorAutomation', () => {
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('guarda: tenantId/entityId ausente é ignorado (sem run, sem query)', async () => {
+  it('guard: missing tenantId/entityId is ignored (no run, no query)', async () => {
     const { ds, query } = makeDs({ works: [WORK_ROW] });
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

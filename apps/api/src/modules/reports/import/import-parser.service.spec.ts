@@ -39,7 +39,7 @@ function mutateFirstCentralDirectoryEntry(
 describe('ImportParserService — hardening XLSX', () => {
   const service = new ImportParserService();
 
-  it('preserva Unicode, acentos e zeros à esquerda em células textuais', () => {
+  it('preserves Unicode, accents and leading zeros in text cells', () => {
     const content = workbookBuffer([
       ['Nome artístico', 'Código'],
       ['João d’Ávila 🎵', '00123'],
@@ -51,11 +51,11 @@ describe('ImportParserService — hardening XLSX', () => {
     ]);
   });
 
-  it('rejeita arquivo vazio', () => {
+  it('rejects empty file', () => {
     expect(() => service.parse('artists.xlsx', Buffer.alloc(0))).toThrow(BadRequestException);
   });
 
-  it('rejeita extensão não suportada com código estável', () => {
+  it('rejects unsupported extension with stable error code', () => {
     const content = workbookBuffer([['Campo']]);
     try {
       service.parse('artists.txt', content);
@@ -68,7 +68,7 @@ describe('ImportParserService — hardening XLSX', () => {
     }
   });
 
-  it('rejeita texto plano renomeado como workbook', () => {
+  it('rejects plain text renamed as workbook', () => {
     const fakeContent = Buffer.from('nome;email\nAna;a@example.com\n', 'utf8');
     try {
       service.parse('artists.xlsx', fakeContent);
@@ -81,73 +81,73 @@ describe('ImportParserService — hardening XLSX', () => {
     }
   });
 
-  it('rejeita conteúdo acima do limite antes do parser OpenXML', () => {
+  it('rejects content above the limit before the OpenXML parser', () => {
     const oversized = Buffer.alloc(IMPORT_MAX_BYTES + 1, 0x41);
     expect(() => service.parse('artists.xlsx', oversized)).toThrow(/limite de .* bytes/);
   });
 
-  it('rejeita workbook com mais de uma aba', () => {
+  it('rejects workbook with more than one sheet', () => {
     const content = workbookBuffer([['a'], ['1']], ['Principal', 'Auxiliar']);
     expect(() => service.parse('artists.xlsx', content)).toThrow(BadRequestException);
   });
 
-  it('rejeita nome de aba divergente do contrato', () => {
+  it('rejects sheet name that diverges from the contract', () => {
     const content = workbookBuffer([['a'], ['1']], ['Outra']);
     expect(() => service.parse('artists.xlsx', content, 'Artistas')).toThrow(/Nome da aba inválido/);
   });
 
-  it('rejeita aba oculta', () => {
+  it('rejects hidden sheet', () => {
     const content = workbookBuffer([['a'], ['1']], ['Dados'], (workbook) => {
       workbook.Workbook = { Sheets: [{ Hidden: 1 }] };
     });
     expect(() => service.parse('artists.xlsx', content)).toThrow(/deve estar visível/);
   });
 
-  it('rejeita células mescladas', () => {
+  it('rejects merged cells', () => {
     const content = workbookBuffer([['a', 'b'], ['1', '2']], ['Dados'], (_workbook, worksheet) => {
       worksheet['!merges'] = [XLSX.utils.decode_range('A1:B1')];
     });
     expect(() => service.parse('artists.xlsx', content)).toThrow(/mescladas/);
   });
 
-  it('rejeita fórmulas', () => {
+  it('rejects formulas', () => {
     const content = workbookBuffer([['a'], ['valor']], ['Dados'], (_workbook, worksheet) => {
       worksheet.A2 = { t: 'n', f: '1+1', v: 2 };
     });
     expect(() => service.parse('artists.xlsx', content)).toThrow(/Fórmula não permitida/);
   });
 
-  it('rejeita cabeçalhos duplicados após normalização Unicode e caixa', () => {
+  it('rejects duplicate headers after Unicode and case normalization', () => {
     const content = workbookBuffer([['Nome', 'NOME'], ['A', 'B']]);
     expect(() => service.parse('artists.xlsx', content)).toThrow(/Cabeçalho duplicado/);
   });
 
-  it('rejeita cabeçalho vazio entre colunas utilizadas', () => {
+  it('rejects empty header between used columns', () => {
     const content = workbookBuffer([['Nome', '', 'E-mail'], ['A', '', 'a@example.com']]);
     expect(() => service.parse('artists.xlsx', content)).toThrow(/Cabeçalho vazio/);
   });
 
-  it('rejeita quantidade de colunas acima do limite', () => {
+  it('rejects column count above the limit', () => {
     const headers = Array.from({ length: IMPORT_MAX_COLUMNS + 1 }, (_, index) => `Campo ${index}`);
     const content = workbookBuffer([headers, headers.map(() => 'x')]);
     expect(() => service.parse('artists.xlsx', content)).toThrow(/colunas excede/);
   });
 
-  it('rejeita arquivo com mais linhas que o limite sem truncamento silencioso', () => {
+  it('rejects file with more rows than the limit without silent truncation', () => {
     const rows: string[][] = [['nome']];
     for (let index = 0; index < IMPORT_MAX_ROWS + 5; index += 1) rows.push([`Artista ${index}`]);
     const content = workbookBuffer(rows);
     expect(() => service.parse('artists.xlsx', content)).toThrow(/limite de \d+ registros/);
   });
 
-  it('aceita exatamente o limite de linhas', () => {
+  it('accepts exactly the row limit', () => {
     const rows: string[][] = [['nome']];
     for (let index = 0; index < IMPORT_MAX_ROWS; index += 1) rows.push([`Artista ${index}`]);
     const result = service.parse('artists.xlsx', workbookBuffer(rows));
     expect(result.rows).toHaveLength(IMPORT_MAX_ROWS);
   });
 
-  it('rejeita entrada ZIP criptografada antes de interpretar o workbook', () => {
+  it('rejects encrypted ZIP input before interpreting the workbook', () => {
     const content = mutateFirstCentralDirectoryEntry(
       workbookBuffer([['a'], ['1']]),
       (copy, offset) => copy.writeUInt16LE(copy.readUInt16LE(offset + 8) | 0x1, offset + 8),
@@ -155,7 +155,7 @@ describe('ImportParserService — hardening XLSX', () => {
     expect(() => service.parse('artists.xlsx', content)).toThrow(/criptografadas/);
   });
 
-  it('rejeita expansão descompactada incompatível com o limite', () => {
+  it('rejects decompressed expansion incompatible with the limit', () => {
     const content = mutateFirstCentralDirectoryEntry(
       workbookBuffer([['a'], ['1']]),
       (copy, offset) => copy.writeUInt32LE(IMPORT_MAX_UNCOMPRESSED_BYTES + 1, offset + 24),
@@ -163,7 +163,7 @@ describe('ImportParserService — hardening XLSX', () => {
     expect(() => service.parse('artists.xlsx', content)).toThrow(/descompactada excede/);
   });
 
-  it('rejeita workbook truncado', () => {
+  it('rejects truncated workbook', () => {
     const valid = workbookBuffer([['a'], ['1']]);
     expect(() => service.parse('artists.xlsx', valid.subarray(0, valid.length - 32))).toThrow(
       /Diretório central ZIP ausente|truncado/,

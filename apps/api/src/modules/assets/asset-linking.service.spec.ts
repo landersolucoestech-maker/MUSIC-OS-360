@@ -36,11 +36,11 @@ function makeDs(uploadRow: Record<string, unknown> | null) {
 }
 
 const events = () => ({ emitTyped: jest.fn() });
-// AssetClassificationService fake (a classificação é testada no seu próprio spec).
+// AssetClassificationService fake (classification is tested in its own spec).
 const classification = () => ({
   classifyAndApply: jest.fn(async () => ({ assetType: 'wav', confidence: 0.7, method: 'heuristic' })),
 });
-// SkillRunService fake: executa o corpo e devolve o result.
+// SkillRunService fake: runs the body and returns the result.
 const skillRuns = () => ({
   run: jest.fn(async (_params: unknown, fn: (ctx: { runId: string; log: () => Promise<void> }) => Promise<{ result: unknown }>) => {
     const out = await fn({ runId: 'r1', log: async () => undefined });
@@ -60,7 +60,7 @@ const basePayload: AssetUploadedPayload = {
 };
 
 describe('AssetLinkingService.classify', () => {
-  it('classifica WAV/MP3/master/imagem/vídeo/documento', () => {
+  it('classifies WAV/MP3/master/image/video/document', () => {
     expect(AssetLinkingService.classify('audio/wav', 'song.wav')).toBe('wav');
     expect(AssetLinkingService.classify('audio/mpeg', 'song.mp3')).toBe('mp3');
     expect(AssetLinkingService.classify('audio/wav', 'final_master.wav')).toBe('master');
@@ -84,7 +84,7 @@ describe('AssetLinkingService.processUpload', () => {
     entity_id: 'proj-1',
   };
 
-  it('cria asset central + versão e vincula ao projeto, emitindo asset.linked_to_project', async () => {
+  it('creates the central asset + version and links it to the project, emitting asset.linked_to_project', async () => {
     const { ds, repos } = makeDs(uploadRow);
     const ev = events();
     const svc = new AssetLinkingService(ds as never, ev as never, skillRuns() as never, classification() as never);
@@ -99,7 +99,7 @@ describe('AssetLinkingService.processUpload', () => {
     expect(emitted).toContain('asset.linked_to_project');
   });
 
-  it('vincula à tarefa quando a origem é task', async () => {
+  it('links to the task when the origin is task', async () => {
     const { ds, repos } = makeDs({ ...uploadRow, entity: 'task', entity_id: 'task-9' });
     const ev = events();
     const svc = new AssetLinkingService(ds as never, ev as never, skillRuns() as never, classification() as never);
@@ -112,14 +112,14 @@ describe('AssetLinkingService.processUpload', () => {
     expect(emitted).toContain('asset.linked_to_task');
   });
 
-  it('sem DATA_SOURCE retorna null (noop seguro)', async () => {
+  it('without DATA_SOURCE returns null (safe noop)', async () => {
     const svc = new AssetLinkingService(null, events() as never, skillRuns() as never, classification() as never);
     await expect(svc.processUpload(basePayload)).resolves.toBeNull();
   });
 });
 
 describe('AssetLinkingService.getProjectAssetsDetailed', () => {
-  it('enriquece os vínculos com nome/type/URL da versão corrente', async () => {
+  it('enriches the links with name/type/URL of the current version', async () => {
     const link = { id: 'pa-1', asset_id: 'asset-1', role: 'reference', source_event: 'asset.uploaded', linked_by: 'user-1', created_at: new Date() };
     const asset = { id: 'asset-1', name: 'master.wav', asset_type: 'wav', mime_type: 'audio/wav', status: 'active', current_version_id: 'ver-1' };
     const version = { id: 'ver-1', file_url: 'tenant/t1/u1.wav' };

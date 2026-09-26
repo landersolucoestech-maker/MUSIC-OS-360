@@ -34,7 +34,7 @@ describe('ContractServiceTypesService', () => {
   });
 
   describe('list', () => {
-    it('filtra por tenant, exclui soft-deleted e ordena por sort_order', async () => {
+    it('filters by tenant, excludes soft-deleted and orders by sort_order', async () => {
       await service.list('tenant-1');
       expect(qb.where).toHaveBeenCalledWith('t.tenant_id = :tenantId', { tenantId: 'tenant-1' });
       expect(qb.andWhere).toHaveBeenCalledWith('t.deleted_at IS NULL');
@@ -43,11 +43,11 @@ describe('ContractServiceTypesService', () => {
   });
 
   describe('findById', () => {
-    it('lança NotFoundException quando não existe no tenant', async () => {
+    it('throws NotFoundException when it does not exist in the tenant', async () => {
       await expect(service.findById('tenant-1', 'missing')).rejects.toThrow(NotFoundException);
     });
 
-    it('retorna a entidade quando existe', async () => {
+    it('returns the entity when it exists', async () => {
       qb.getOne.mockResolvedValueOnce({ id: 'cst-1', slug: 'dist' });
       await expect(service.findById('tenant-1', 'cst-1')).resolves.toEqual({ id: 'cst-1', slug: 'dist' });
     });
@@ -63,7 +63,7 @@ describe('ContractServiceTypesService', () => {
       updated_at: '2020-01-01T00:00:00.000Z',
     };
 
-    it('cria com tenant_id e sem os timestamps enviados pelo cliente', async () => {
+    it('creates with tenant_id and without the timestamps sent by the client', async () => {
       const result = await service.create('tenant-1', dto as never);
       expect(repo.create).toHaveBeenCalledWith(
         expect.objectContaining({ tenant_id: 'tenant-1', name: 'Distribuição', slug: 'distribuicao' }),
@@ -74,20 +74,20 @@ describe('ContractServiceTypesService', () => {
       expect(result).toEqual(expect.objectContaining({ id: 'cst-1' }));
     });
 
-    it('rejeita slug duplicado no mesmo tenant', async () => {
+    it('rejects a duplicate slug in the same tenant', async () => {
       qb.getOne.mockResolvedValueOnce({ id: 'other', slug: 'distribuicao' });
       await expect(service.create('tenant-1', dto as never)).rejects.toThrow(BadRequestException);
     });
   });
 
   describe('update', () => {
-    it('lança NotFoundException se o registro não existe no tenant', async () => {
+    it('throws NotFoundException if the record does not exist in the tenant', async () => {
       await expect(service.update('tenant-1', 'missing', { name: 'X' } as never)).rejects.toThrow(NotFoundException);
     });
 
-    it('rejeita troca de slug para um já em uso por outro registro', async () => {
+    it('rejects changing the slug to one already used by another record', async () => {
       qb.getOne
-        .mockResolvedValueOnce({ id: 'cst-1' }) // findById inicial
+        .mockResolvedValueOnce({ id: 'cst-1' }) // initial findById
         .mockResolvedValueOnce({ id: 'cst-2', slug: 'distribuicao' }); // assertSlugAvailable
       await expect(
         service.update('tenant-1', 'cst-1', { slug: 'distribuicao' } as never),
@@ -96,7 +96,7 @@ describe('ContractServiceTypesService', () => {
   });
 
   describe('remove', () => {
-    it('faz soft-delete (deleted_at), nunca DELETE físico', async () => {
+    it('performs a soft-delete (deleted_at), never a physical DELETE', async () => {
       qb.getOne.mockResolvedValueOnce({ id: 'cst-1' });
       const result = await service.remove('tenant-1', 'cst-1');
       expect(repo.update).toHaveBeenCalledWith(

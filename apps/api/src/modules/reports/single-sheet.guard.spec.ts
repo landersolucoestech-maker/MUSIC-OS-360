@@ -38,8 +38,8 @@ function sourceFiles(directory: string): string[] {
 }
 
 /**
- * Comentários históricos podem documentar a migração de abas auxiliares para
- * grupos repetíveis. O guard deve analisar código executável, não documentação.
+ * Historical comments may document the migration from auxiliary sheets to
+ * repeating groups. The guard must analyze executable code, not documentation.
  */
 function stripComments(source: string): string {
   return source
@@ -47,8 +47,8 @@ function stripComments(source: string): string {
     .replace(/(^|[^:])\/\/.*$/gm, '$1');
 }
 
-describe('Central de Relatórios — arquitetura XLSX de aba única', () => {
-  it('não contém APIs executáveis da arquitetura antiga de múltiplas abas', () => {
+describe('Reports Center — single-sheet XLSX architecture', () => {
+  it('contains no executable APIs from the old multi-sheet architecture', () => {
     const violations: string[] = [];
     for (const file of sourceFiles(REPORTS_ROOT)) {
       const content = stripComments(readFileSync(file, 'utf8'));
@@ -61,7 +61,7 @@ describe('Central de Relatórios — arquitetura XLSX de aba única', () => {
     expect(violations).toEqual([]);
   });
 
-  it('nenhum contrato ativo exporta ID técnico ou label de aba auxiliar', () => {
+  it('no active contract exports a technical ID or auxiliary-sheet label', () => {
     const violations: string[] = [];
     for (const [table, contract] of Object.entries(REPORT_FORM_CONTRACTS)) {
       const columns = contractExportableColumns(contract);
@@ -81,7 +81,7 @@ describe('Central de Relatórios — arquitetura XLSX de aba única', () => {
     expect(violations).toEqual([]);
   });
 
-  it('mantém Contatos e Leads sem prefixo CRM na Central de Relatórios', () => {
+  it("keeps 'Contatos' and 'Leads' without the CRM prefix in the Reports Center", () => {
     const registry = readFileSync(join(REPORTS_ROOT, 'report-module-registry.ts'), 'utf8');
     expect(registry).toContain("label: 'Contatos'");
     expect(registry).toContain("label: 'Leads'");

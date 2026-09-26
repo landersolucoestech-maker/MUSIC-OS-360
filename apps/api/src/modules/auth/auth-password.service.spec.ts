@@ -62,7 +62,7 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
     signOutAnonMock.mockReset().mockResolvedValue({ error: null });
   });
 
-  it('rejeita quando newPassword e confirmPassword divergem, sem chamar o Supabase', async () => {
+  it('rejects when newPassword and confirmPassword diverge, without calling Supabase', async () => {
     const audit = { log: jest.fn() };
     const svc = new AuthPasswordService(fullConfig, null, audit as any);
 
@@ -73,7 +73,7 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
     expect(audit.log).not.toHaveBeenCalled();
   });
 
-  it('rejeita senha fraca antes de chamar o Supabase, listando os requisitos pendentes', async () => {
+  it('rejects a weak password before calling Supabase, listing the pending requirements', async () => {
     const audit = { log: jest.fn() };
     const svc = new AuthPasswordService(fullConfig, null, audit as any);
 
@@ -84,7 +84,7 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
     expect(audit.log).not.toHaveBeenCalled();
   });
 
-  it('rejeita reutilização da senha provisória atual quando tecnicamente verificável (sign-in de teste bem-sucedido)', async () => {
+  it('rejects reuse of the current provisional password when technically verifiable (successful test sign-in)', async () => {
     signInWithPasswordMock.mockResolvedValue({ data: { session: { access_token: 'x' } }, error: null });
     const audit = { log: jest.fn() };
     const svc = new AuthPasswordService(fullConfig, null, audit as any);
@@ -94,10 +94,10 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
     ).rejects.toThrow(BadRequestException);
     expect(updateUserByIdMock).not.toHaveBeenCalled();
     expect(audit.log).not.toHaveBeenCalled();
-    expect(signOutAnonMock).toHaveBeenCalled(); // não deixa a sessão de teste viva
+    expect(signOutAnonMock).toHaveBeenCalled(); // does not leave the test session alive
   });
 
-  it('não bloqueia a troca quando a checagem de reuso não é verificável (sem SUPABASE_ANON_KEY)', async () => {
+  it('does not block the change when the reuse check is not verifiable (no SUPABASE_ANON_KEY)', async () => {
     const configSemAnon = {
       get: (key: string) => ({ SUPABASE_URL: 'https://test.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'service-role-key' })[key],
     } as any;
@@ -111,7 +111,7 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
     expect(signInWithPasswordMock).not.toHaveBeenCalled();
   });
 
-  it('troca a senha e limpa must_change_password NA MESMA chamada Admin API, preservando o resto do app_metadata', async () => {
+  it('changes the password and clears must_change_password IN THE SAME Admin API call, preserving the rest of app_metadata', async () => {
     updateUserByIdMock.mockResolvedValue({ data: {}, error: null });
     const audit = { log: jest.fn() };
     const svc = new AuthPasswordService(fullConfig, null, audit as any);
@@ -130,7 +130,7 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
     });
   });
 
-  it('audita user.password_changed somente após sucesso confirmado', async () => {
+  it('audits user.password_changed only after confirmed success', async () => {
     updateUserByIdMock.mockResolvedValue({ data: {}, error: null });
     const audit = { log: jest.fn() };
     const svc = new AuthPasswordService(fullConfig, null, audit as any);
@@ -148,7 +148,7 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
     }));
   });
 
-  it('se o Supabase rejeitar a troca, must_change_password permanece true (nada muda) e nunca audita', async () => {
+  it('if Supabase rejects the change, must_change_password remains true (nothing changes) and it never audits', async () => {
     updateUserByIdMock.mockResolvedValue({ data: null, error: { message: 'boom' } });
     const audit = { log: jest.fn() };
     const svc = new AuthPasswordService(fullConfig, null, audit as any);
@@ -159,7 +159,7 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
     expect(audit.log).not.toHaveBeenCalled();
   });
 
-  it('lança ServiceUnavailableException sem SUPABASE_URL/SERVICE_ROLE_KEY, nunca tenta chamar a API', async () => {
+  it('throws ServiceUnavailableException without SUPABASE_URL/SERVICE_ROLE_KEY, never attempts to call the API', async () => {
     const emptyConfig = { get: () => undefined } as any;
     const audit = { log: jest.fn() };
     const svc = new AuthPasswordService(emptyConfig, null, audit as any);
@@ -170,7 +170,7 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
     expect(updateUserByIdMock).not.toHaveBeenCalled();
   });
 
-  it('revoga outras sessões via admin.signOut(accessToken, "others") quando um access token é fornecido', async () => {
+  it('revokes other sessions via admin.signOut(accessToken, "others") when an access token is provided', async () => {
     updateUserByIdMock.mockResolvedValue({ data: {}, error: null });
     const audit = { log: jest.fn() };
     const svc = new AuthPasswordService(fullConfig, null, audit as any);
@@ -180,7 +180,7 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
     expect(signOutAdminMock).toHaveBeenCalledWith('current-access-token', 'others');
   });
 
-  it('falha ao revogar outras sessões não derruba o sucesso já confirmado da troca de senha', async () => {
+  it('failing to revoke other sessions does not undo the already-confirmed success of the password change', async () => {
     updateUserByIdMock.mockResolvedValue({ data: {}, error: null });
     signOutAdminMock.mockRejectedValue(new Error('revoke failed'));
     const audit = { log: jest.fn() };
@@ -192,7 +192,7 @@ describe('AuthPasswordService.changeRequiredPassword', () => {
     expect(audit.log).toHaveBeenCalled();
   });
 
-  it('nunca inclui a senha em texto plano na chamada de auditoria', async () => {
+  it('never includes the password in plain text in the audit call', async () => {
     updateUserByIdMock.mockResolvedValue({ data: {}, error: null });
     const audit = { log: jest.fn() };
     const svc = new AuthPasswordService(fullConfig, null, audit as any);

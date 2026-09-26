@@ -58,7 +58,7 @@ const buildMockDs = (getOneValue: any = mockPhono) => {
   };
 };
 
-describe('PhonogramsService — Estado B (pré-C2, comportamento atual documentado)', () => {
+describe('PhonogramsService — State B (pre-C2, current behavior documented)', () => {
   let service: PhonogramsService;
   let mockDs: ReturnType<typeof buildMockDs>;
 
@@ -75,7 +75,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
     service = module.get<PhonogramsService>(PhonogramsService);
   });
 
-  describe('CreatePhonogramDto — validação', () => {
+  describe('CreatePhonogramDto — validation', () => {
     const realFormPayload = {
       title: 'Noite Estrelada',
       work_id: '123e4567-e89b-12d3-a456-426614174000',
@@ -108,12 +108,12 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       arquivo_audio: null,
     };
 
-    it('aceita o payload PT-BR real do frontend (todos os 21 campos físicos da migration)', async () => {
+    it('accepts the real PT-BR payload from the frontend (all 21 physical fields from the migration)', async () => {
       const errors = await validateDto(realFormPayload);
       expect(errors).toEqual([]);
     });
 
-    it('ainda aceita o payload EN legado (title/workId/artistId)', async () => {
+    it('still accepts the legacy EN payload (title/workId/artistId)', async () => {
       const errors = await validateDto({
         title: 'Noite Estrelada',
         workId: '123e4567-e89b-12d3-a456-426614174000',
@@ -122,14 +122,14 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       expect(errors).toEqual([]);
     });
 
-    // participacao: bug real encontrado durante naming-closure Phase 2 --
-    // o shape anterior (`@IsArray() participacao?: unknown[]`) rejeitava o
-    // objeto real que FonogramaFormModal.tsx sempre enviou
+    // participacao: real bug found during naming-closure Phase 2 --
+    // the previous shape (`@IsArray() participacao?: unknown[]`) rejected the
+    // real object that FonogramaFormModal.tsx always sent
     // (ParticipacaoCategoria: { produtorFonografico, interprete,
-    // musicoAcompanhante }), com "participacao must be an array" em TODO
-    // submit real com participantes preenchidos -- verificado
-    // empiricamente antes do fix. ParticipacaoDto corrige o shape.
-    it('aceita o shape real de participacao (objeto com categorias de array, não um array)', async () => {
+    // musicoAcompanhante }), with "participacao must be an array" on EVERY
+    // real submit with participants filled in -- verified
+    // empirically before the fix. ParticipacaoDto fixes the shape.
+    it('accepts the real participacao shape (object with array categories, not an array)', async () => {
       const errors = await validateDto({
         title: 'Noite Estrelada',
         participacao: {
@@ -141,7 +141,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       expect(errors).toEqual([]);
     });
 
-    it('rejeita participacao no shape antigo incorreto (array, não objeto)', async () => {
+    it('rejects participacao in the old incorrect shape (array, not object)', async () => {
       const errors = await validateDto({
         title: 'Noite Estrelada',
         participacao: [{ role: 'interprete', name: 'X' }],
@@ -149,7 +149,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       expect(errors.some((e) => e.property === 'participacao')).toBe(true);
     });
 
-    it('rejeita participante malformado dentro de uma categoria (percentual não-string)', async () => {
+    it('rejects malformed participant inside a category (non-string percentual)', async () => {
       const errors = await validateDto({
         title: 'Noite Estrelada',
         participacao: { interprete: [{ id: '1', name: 'X', percentual: 50 }] },
@@ -157,21 +157,21 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       expect(errors.some((e) => e.property === 'participacao')).toBe(true);
     });
 
-    it('rejeita campo desconhecido (whitelist)', async () => {
+    it('rejects unknown field (whitelist)', async () => {
       const errors = await validateDto({ title: 'X', campo_inexistente: 'y' });
       expect(errors.some((e) => e.property === 'campo_inexistente')).toBe(true);
     });
   });
 
-  describe('create() — obrigatoriedade de título', () => {
-    it('lança BadRequestException quando title e titulo estão ausentes, sem chamar o repositório', async () => {
+  describe('create() — title required', () => {
+    it('throws BadRequestException when title and titulo are absent, without calling the repository', async () => {
       await expect(
         service.create(TENANT, 'u1', {} as any),
       ).rejects.toThrow(BadRequestException);
       expect(mockDs._repo.save).not.toHaveBeenCalled();
     });
 
-    it('lança BadRequestException quando title e titulo são strings em branco', async () => {
+    it('throws BadRequestException when title and titulo are blank strings', async () => {
       await expect(
         service.create(TENANT, 'u1', { title: '   ', titulo: '' } as any),
       ).rejects.toThrow(BadRequestException);
@@ -179,32 +179,32 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
     });
   });
 
-  describe('create() — resolução PT/EN via normalizador (C2)', () => {
-    it('titulo (PT legado) sozinho é persistido em title', async () => {
+  describe('create() — PT/EN resolution via normalizer (C2)', () => {
+    it('titulo (PT legacy) alone is persisted to title', async () => {
       await service.create(TENANT, 'u1', { titulo: 'Nome PT' } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
         expect.objectContaining({ title: 'Nome PT' }),
       );
     });
 
-    it('title (EN, canônico) sozinho é persistido', async () => {
+    it('title (EN, canonical) alone is persisted', async () => {
       await service.create(TENANT, 'u1', { title: 'Nome EN' } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
         expect.objectContaining({ title: 'Nome EN' }),
       );
     });
 
-    // C2: mudança intencional de contrato — antes PT vencia silenciosamente;
-    // agora valores conflitantes (não-equivalentes) são rejeitados com 400
-    // antes de qualquer chamada ao repository.
-    it('quando ambos presentes e diferentes: 400 PHONOGRAM_ALIAS_CONFLICT, repository não chamado', async () => {
+    // C2: intentional contract change — previously PT silently won;
+    // now conflicting (non-equivalent) values are rejected with 400
+    // before any call to the repository.
+    it('when both present and different: 400 PHONOGRAM_ALIAS_CONFLICT, repository not called', async () => {
       await expect(
         service.create(TENANT, 'u1', { title: 'Nome EN', titulo: 'Nome PT' } as any),
       ).rejects.toMatchObject({ response: { code: 'PHONOGRAM_ALIAS_CONFLICT' } });
       expect(mockDs._repo.create).not.toHaveBeenCalled();
     });
 
-    it('work_id (PT) e workId (EN) diferentes: 400 PHONOGRAM_ALIAS_CONFLICT, repository não chamado', async () => {
+    it('work_id (PT) and workId (EN) different: 400 PHONOGRAM_ALIAS_CONFLICT, repository not called', async () => {
       await expect(
         service.create(TENANT, 'u1', {
           title: 'X',
@@ -215,7 +215,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       expect(mockDs._repo.create).not.toHaveBeenCalled();
     });
 
-    it('artist_id (PT) e artistId (EN) diferentes: 400 PHONOGRAM_ALIAS_CONFLICT, repository não chamado', async () => {
+    it('artist_id (PT) and artistId (EN) different: 400 PHONOGRAM_ALIAS_CONFLICT, repository not called', async () => {
       await expect(
         service.create(TENANT, 'u1', {
           title: 'X',
@@ -226,14 +226,14 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       expect(mockDs._repo.create).not.toHaveBeenCalled();
     });
 
-    it('titulo ausente (undefined explícito) + title=valor → title persistido com o valor de title', async () => {
+    it('absent titulo (explicit undefined) + title=value → title persisted with the value of title', async () => {
       await service.create(TENANT, 'u1', { title: 'ok', titulo: undefined } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
         expect.objectContaining({ title: 'ok' }),
       );
     });
 
-    it('work_id e workId equivalentes (mesmo UUID, case-insensitive): aceito, valor canônico persistido', async () => {
+    it('work_id and workId equivalent (same UUID, case-insensitive): accepted, canonical value persisted', async () => {
       await service.create(TENANT, 'u1', {
         title: 'X',
         work_id: '123e4567-e89b-12d3-a456-426614174000',
@@ -244,7 +244,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       );
     });
 
-    it('warning é emitido quando um alias legado é efetivamente recebido', async () => {
+    it('warning is emitted when a legacy alias is actually received', async () => {
       const warnSpy = jest.spyOn((service as any).logger, 'warn');
       await service.create(TENANT, 'u1', { titulo: 'Nome PT' } as any);
       expect(warnSpy).toHaveBeenCalledWith(
@@ -252,14 +252,14 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       );
     });
 
-    it('nenhum warning é emitido quando apenas campos canônicos são usados', async () => {
+    it('no warning is emitted when only canonical fields are used', async () => {
       const warnSpy = jest.spyOn((service as any).logger, 'warn');
       await service.create(TENANT, 'u1', { title: 'X' } as any);
       expect(warnSpy).not.toHaveBeenCalled();
     });
   });
 
-  describe('create() — type default aplicado somente no create', () => {
+  describe('create() — type default applied only on create', () => {
     it("aplica type='master' quando o DTO não envia type", async () => {
       await service.create(TENANT, 'u1', { title: 'X' } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
@@ -267,10 +267,10 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       );
     });
 
-    // C2: payload reescrito para usar aliases equivalentes (não mais
-    // conflitantes) — o objetivo original do teste (resposta contém somente
-    // nomes canônicos, sem aliases legados) é preservado.
-    it('resposta do create não contém aliases legados (titulo/workId/artistId/duration/fileUrl)', async () => {
+    // C2: payload rewritten to use equivalent aliases (no longer
+    // conflicting) — the original test goal (response contains only
+    // canonical names, no legacy aliases) is preserved.
+    it('create response does not contain legacy aliases (titulo/workId/artistId/duration/fileUrl)', async () => {
       await service.create(TENANT, 'u1', {
         title: 'X', titulo: 'X',
         work_id: '123e4567-e89b-12d3-a456-426614174000',
@@ -293,22 +293,22 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
     });
   });
 
-  describe('update() — PATCH parcial não sobrescreve type', () => {
-    it('não inclui type no payload de update quando o DTO não o envia', async () => {
+  describe('update() — partial PATCH does not overwrite type', () => {
+    it('does not include type in the update payload when the DTO does not send it', async () => {
       await service.update(TENANT, 'u1', PHONO_ID, { notes: 'x' } as any);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('type');
     });
 
-    it('preserva type enviado explicitamente no update', async () => {
+    it('preserves type explicitly sent in the update', async () => {
       await service.update(TENANT, 'u1', PHONO_ID, { type: 'remix' } as any);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).toHaveProperty('type', 'remix');
     });
   });
 
-  describe('update() — resolução de aliases (C2)', () => {
-    it('PATCH sem title/titulo/work_id/artist_id: nenhum desses campos é alterado (ausência não altera)', async () => {
+  describe('update() — alias resolution (C2)', () => {
+    it('PATCH without title/titulo/work_id/artist_id: none of these fields is changed (absence does not change)', async () => {
       await service.update(TENANT, 'u1', PHONO_ID, { notes: 'x' } as any);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('title');
@@ -316,14 +316,14 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       expect(updateCall[1]).not.toHaveProperty('artist_id');
     });
 
-    it('alias legado em update: aceito e resolvido para o nome canônico', async () => {
+    it('legacy alias in update: accepted and resolved to the canonical name', async () => {
       await service.update(TENANT, 'u1', PHONO_ID, { titulo: 'Novo Nome' } as any);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).toMatchObject({ title: 'Novo Nome' });
       expect(updateCall[1]).not.toHaveProperty('titulo');
     });
 
-    it('warning emitido no update quando alias legado é usado (inclui phonogramId)', async () => {
+    it('warning emitted on update when a legacy alias is used (includes phonogramId)', async () => {
       const warnSpy = jest.spyOn((service as any).logger, 'warn');
       await service.update(TENANT, 'u1', PHONO_ID, { titulo: 'Novo Nome' } as any);
       expect(warnSpy).toHaveBeenCalledWith(
@@ -331,36 +331,36 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       );
     });
 
-    it('conflito PT/EN no update: 400, repository.update não chamado', async () => {
+    it('PT/EN conflict on update: 400, repository.update not called', async () => {
       await expect(
         service.update(TENANT, 'u1', PHONO_ID, { title: 'A', titulo: 'B' } as any),
       ).rejects.toMatchObject({ response: { code: 'PHONOGRAM_ALIAS_CONFLICT' } });
       expect(mockDs._repo.update).not.toHaveBeenCalled();
     });
 
-    it('title inválido (vazio) no update: 400, repository.update não chamado', async () => {
+    it('invalid title (empty) on update: 400, repository.update not called', async () => {
       await expect(
         service.update(TENANT, 'u1', PHONO_ID, { title: '' } as any),
       ).rejects.toMatchObject({ response: { code: 'PHONOGRAM_TITLE_INVALID' } });
       expect(mockDs._repo.update).not.toHaveBeenCalled();
     });
 
-    it('null opcional (work_id) sozinho no update: aceito, removido antes da persistência (não limpa coluna nesta fase)', async () => {
+    it('optional null (work_id) alone on update: accepted, removed before persistence (does not clear the column at this stage)', async () => {
       await service.update(TENANT, 'u1', PHONO_ID, { work_id: null } as any);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('work_id');
     });
   });
 
-  describe('list() — resolução de aliases de work_id/artist_id (C2)', () => {
-    it('work_id: filtra pelo canônico', async () => {
+  describe('list() — work_id/artist_id alias resolution (C2)', () => {
+    it('work_id: filters by the canonical field', async () => {
       await service.list(TENANT, { work_id: '123e4567-e89b-12d3-a456-426614174000' } as any);
       expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith(
         'p.work_id = :workId', { workId: '123e4567-e89b-12d3-a456-426614174000' },
       );
     });
 
-    it('workId (alias legado): filtra pelo canônico e emite warning', async () => {
+    it('workId (legacy alias): filters by the canonical field and emits a warning', async () => {
       const warnSpy = jest.spyOn((service as any).logger, 'warn');
       await service.list(TENANT, { workId: '123e4567-e89b-12d3-a456-426614174000' } as any);
       expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith(
@@ -369,7 +369,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('alias=workId operation=list'));
     });
 
-    it('work_id e workId iguais: aceita e filtra normalmente', async () => {
+    it('work_id and workId equal: accepts and filters normally', async () => {
       await service.list(TENANT, {
         work_id: '123e4567-e89b-12d3-a456-426614174000',
         workId: '123e4567-e89b-12d3-a456-426614174000',
@@ -379,7 +379,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       );
     });
 
-    it('work_id e workId conflitantes: 400 antes do query builder', async () => {
+    it('work_id and workId conflicting: 400 before the query builder', async () => {
       await expect(
         service.list(TENANT, {
           work_id: '123e4567-e89b-12d3-a456-426614174000',
@@ -389,21 +389,21 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       expect(mockDs._repo._qb.getManyAndCount).not.toHaveBeenCalled();
     });
 
-    it('artist_id: filtra pelo canônico', async () => {
+    it('artist_id: filters by the canonical field', async () => {
       await service.list(TENANT, { artist_id: '123e4567-e89b-12d3-a456-426614174000' } as any);
       expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith(
         'p.artist_id = :artistId', { artistId: '123e4567-e89b-12d3-a456-426614174000' },
       );
     });
 
-    it('artistId (alias legado): filtra pelo canônico e emite warning', async () => {
+    it('artistId (legacy alias): filters by the canonical field and emits a warning', async () => {
       await service.list(TENANT, { artistId: '123e4567-e89b-12d3-a456-426614174000' } as any);
       expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith(
         'p.artist_id = :artistId', { artistId: '123e4567-e89b-12d3-a456-426614174000' },
       );
     });
 
-    it('artist_id e artistId conflitantes: 400', async () => {
+    it('artist_id and artistId conflicting: 400', async () => {
       await expect(
         service.list(TENANT, {
           artist_id: '123e4567-e89b-12d3-a456-426614174000',
@@ -412,7 +412,7 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       ).rejects.toMatchObject({ response: { code: 'PHONOGRAM_ALIAS_CONFLICT' } });
     });
 
-    it('ausência de work_id/artist_id: não adiciona filtro para esses campos', async () => {
+    it('absence of work_id/artist_id: does not add a filter for those fields', async () => {
       await service.list(TENANT, { status: 'active' } as any);
       const calledWithObraId = mockDs._repo._qb.andWhere.mock.calls.some((c: unknown[]) => c[0] === 'p.work_id = :workId');
       const calledWithArtistaId = mockDs._repo._qb.andWhere.mock.calls.some((c: unknown[]) => c[0] === 'p.artist_id = :artistId');
@@ -420,14 +420,14 @@ describe('PhonogramsService — Estado B (pré-C2, comportamento atual documenta
       expect(calledWithArtistaId).toBe(false);
     });
 
-    it('demais filtros (status, search) continuam funcionando', async () => {
+    it('other filters (status, search) keep working', async () => {
       await service.list(TENANT, { status: 'active', search: 'noite' } as any);
       expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith('p.status = :status', { status: 'active' });
       expect(mockDs._repo._qb.andWhere).toHaveBeenCalledWith('p.title ILIKE :search', { search: '%noite%' });
     });
   });
 
-  it('findById lança NotFoundException para fonograma inexistente', async () => {
+  it('findById throws NotFoundException for a nonexistent phonogram', async () => {
     mockDs._repo._qb.getOne.mockResolvedValueOnce(null);
     await expect(service.findById(TENANT, 'nao-existe')).rejects.toThrow(NotFoundException);
   });

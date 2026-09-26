@@ -72,10 +72,10 @@ const buildMockDs = (getOneValue: any = mockWork, participantRows: any[] = []) =
   const getRepository = jest.fn((entity: any) => (entity === WorkParticipantEntity ? participantsRepo : repo));
   return {
     getRepository,
-    // Task L: create()/update() agora rodam dentro de uma transação (obra +
-    // participantes atômicos) — o mock executa o callback com um "EntityManager"
-    // que resolve para os MESMOS mocks de repo, então as asserções existentes
-    // contra mockDs._repo/_participantsRepo continuam válidas inalteradas.
+    // Task L: create()/update() now run inside a transaction (work +
+    // participants atomic) — the mock executes the callback with an "EntityManager"
+    // that resolves to the SAME repo mocks, so the existing assertions
+    // against mockDs._repo/_participantsRepo remain valid unchanged.
     transaction: jest.fn((cb: any) => cb({ getRepository })),
     // assertSameTenantFk's ownership check — a truthy row means "found, same
     // tenant", so tests not focused on that behavior aren't coupled to it.
@@ -102,7 +102,7 @@ describe('WorksService', () => {
     service = module.get<WorksService>(WorksService);
   });
 
-  it('cria obra com dados corretos', async () => {
+  it('creates a work with correct data', async () => {
     await service.create(TENANT, 'u1', { title: 'Nova', type: 'original' } as any);
     expect(mockDs._repo.save).toHaveBeenCalled();
     expect(mockDs._repo.create).toHaveBeenCalledWith(
@@ -110,7 +110,7 @@ describe('WorksService', () => {
     );
   });
 
-  it('softDelete define deleted_at (não executa DELETE SQL)', async () => {
+  it('softDelete sets deleted_at (does not run a SQL DELETE)', async () => {
     await service.softDelete(TENANT, WORK_ID);
     expect(mockDs._repo.update).toHaveBeenCalledWith(
       expect.objectContaining({ id: WORK_ID, tenant_id: TENANT }),
@@ -118,17 +118,17 @@ describe('WorksService', () => {
     );
   });
 
-  it('findById lança NotFoundException para obra inexistente', async () => {
+  it('findById throws NotFoundException for a nonexistent work', async () => {
     mockDs._repo._qb.getOne.mockResolvedValueOnce(null);
     await expect(service.findById(TENANT, 'nao-existe')).rejects.toThrow(NotFoundException);
   });
 
-  it('findById usa where com tenant_id correto', async () => {
+  it('findById uses where with the correct tenant_id', async () => {
     await service.findById(TENANT, WORK_ID);
     expect(mockDs._repo._qb.where).toHaveBeenCalled();
   });
 
-  describe('CreateWorkDto — payload real do formulário (Estado B, pré-C2)', () => {
+  describe('CreateWorkDto — real form payload (State B, pre-C2)', () => {
     const realFormPayload = {
       title: 'Minha Obra',
       music_genre: 'pop',
@@ -154,49 +154,49 @@ describe('WorksService', () => {
       tipo_obra: 'musica',
     };
 
-    it('aceita o payload real do frontend (formToObraPayload), incluindo project_id', async () => {
+    it('accepts the real frontend payload (formToObraPayload), including project_id', async () => {
       const errors = await validateDto(realFormPayload);
       expect(errors).toEqual([]);
     });
 
-    it('rejeita project_id com UUID inválido', async () => {
+    it('rejects project_id with an invalid UUID', async () => {
       const errors = await validateDto({ ...realFormPayload, project_id: 'nao-e-uuid' });
       expect(errors.some((e) => e.property === 'project_id')).toBe(true);
     });
 
-    it('rejeita campo desconhecido (whitelist)', async () => {
+    it('rejects unknown field (whitelist)', async () => {
       const errors = await validateDto({ ...realFormPayload, campo_inexistente: 'x' });
       expect(errors.some((e) => e.property === 'campo_inexistente')).toBe(true);
     });
   });
 
-  describe('create() — type e tipo_obra são campos independentes (works.type é NOT NULL)', () => {
-    // tipo_obra (origem do catálogo: 'autoral'|'referencia') nunca alimenta
-    // type (classificação ABRAMUS/ECAD: 'composicao'|'original'|...) — eram
-    // conceitos distintos colididos por um fallback incorreto, removido em
+  describe('create() — type and tipo_obra are independent fields (works.type is NOT NULL)', () => {
+    // tipo_obra (catalog origin: 'autoral'|'referencia') never feeds
+    // type (ABRAMUS/ECAD classification: 'composicao'|'original'|...) — these were
+    // distinct concepts collided by an incorrect fallback, removed in
     // 20260921000001_FixWorksTypeTipoObraCollision.
-    it('usa composicao quando type está ausente, mesmo com tipo_obra presente', async () => {
+    it('uses composicao when type is absent, even with tipo_obra present', async () => {
       await service.create(TENANT, 'u1', { title: 'Nova', tipo_obra: 'musica' } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'composicao', tipo_obra: 'musica' }),
       );
     });
 
-    it('usa composicao quando type e tipo_obra estão ausentes', async () => {
+    it('uses composicao when type and tipo_obra are both absent', async () => {
       await service.create(TENANT, 'u1', { title: 'Nova' } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'composicao' }),
       );
     });
 
-    it('type explícito é sempre respeitado, independente de tipo_obra', async () => {
+    it('explicit type is always respected, regardless of tipo_obra', async () => {
       await service.create(TENANT, 'u1', { title: 'Nova', type: 'original', tipo_obra: 'musica' } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'original', tipo_obra: 'musica' }),
       );
     });
 
-    it('persiste compositores como array', async () => {
+    it('persists compositores as an array', async () => {
       await service.create(TENANT, 'u1', { title: 'Nova', type: 'original', compositores: ['A', 'B'] } as any);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
         expect.objectContaining({ compositores: ['A', 'B'] }),
@@ -204,16 +204,16 @@ describe('WorksService', () => {
     });
   });
 
-  describe('update() — PATCH parcial não força default de type', () => {
-    it('não inclui type no payload de update quando o DTO não o envia', async () => {
+  describe('update() — partial PATCH does not force a type default', () => {
+    it('does not include type in the update payload when the DTO does not send it', async () => {
       await service.update(TENANT, 'u1', WORK_ID, { observacoes: 'x' } as any);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('type');
     });
   });
 
-  describe('participantes — normalizado em work_participants (migration 20260718000011)', () => {
-    it('create() não envia participantes para o repo de WorkEntity (não é mais coluna)', async () => {
+  describe('participantes — normalized into work_participants (migration 20260718000011)', () => {
+    it('create() does not send participantes to the WorkEntity repo (no longer a column)', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Nova', type: 'original',
         participantes: [{ id: 'p1', name: 'Fulano', classeFuncao: 'compositor/autor', link: '', percentual: '50' }],
@@ -223,7 +223,7 @@ describe('WorksService', () => {
       );
     });
 
-    it('create() persiste cada participante como linha própria em work_participants', async () => {
+    it('create() persists each participant as its own row in work_participants', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Nova', type: 'original',
         participantes: [
@@ -237,7 +237,7 @@ describe('WorksService', () => {
       ]);
     });
 
-    it('findById() reidrata participantes no formato esperado pelo frontend (id/name/classeFuncao/link/percentual)', async () => {
+    it('findById() rehydrates participantes in the format expected by the frontend (id/name/classeFuncao/link/percentual)', async () => {
       const rows = [
         { id: 'p1', work_id: WORK_ID, name: 'Fulano', classe_funcao: 'compositor/autor', link: null, percentual: '60' },
       ];
@@ -257,7 +257,7 @@ describe('WorksService', () => {
       ]);
     });
 
-    it('update() substitui os participantes (delete + insert) quando o DTO envia o array', async () => {
+    it('update() replaces the participants (delete + insert) when the DTO sends the array', async () => {
       await service.update(TENANT, 'u1', WORK_ID, {
         participantes: [{ id: 'p1', name: 'Novo Nome', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
       } as any);
@@ -267,15 +267,15 @@ describe('WorksService', () => {
       ]);
     });
 
-    it('update() não mexe em participantes quando o DTO não envia o campo', async () => {
+    it('update() does not touch participantes when the DTO does not send the field', async () => {
       await service.update(TENANT, 'u1', WORK_ID, { observacoes: 'x' } as any);
       expect(mockDs._participantsRepo.delete).not.toHaveBeenCalled();
       expect(mockDs._participantsRepo.save).not.toHaveBeenCalled();
     });
   });
 
-  describe('Task L — atomicidade obra + participantes (casUpdate + replaceParticipantes na mesma transação)', () => {
-    it('update() roda dentro de ds.transaction() (obra e participantes não são operações independentes)', async () => {
+  describe('Task L — work + participants atomicity (casUpdate + replaceParticipantes in the same transaction)', () => {
+    it('update() runs inside ds.transaction() (work and participants are not independent operations)', async () => {
       await service.update(TENANT, 'u1', WORK_ID, {
         observacoes: 'x',
         participantes: [{ id: 'p1', name: 'X', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
@@ -283,7 +283,7 @@ describe('WorksService', () => {
       expect(mockDs.transaction).toHaveBeenCalledTimes(1);
     });
 
-    it('create() também roda obra + participantes na mesma transação', async () => {
+    it('create() also runs work + participants in the same transaction', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Nova', type: 'original',
         participantes: [{ id: 'p1', name: 'X', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
@@ -291,7 +291,7 @@ describe('WorksService', () => {
       expect(mockDs.transaction).toHaveBeenCalledTimes(1);
     });
 
-    it('se a gravação dos participantes falhar, update() inteiro rejeita — nunca reporta sucesso com obra e participantes inconsistentes entre si', async () => {
+    it('if writing the participants fails, the entire update() rejects — it never reports success with work and participants inconsistent with each other', async () => {
       mockDs._participantsRepo.save.mockRejectedValueOnce(new Error('constraint violation'));
       await expect(
         service.update(TENANT, 'u1', WORK_ID, {
@@ -299,15 +299,15 @@ describe('WorksService', () => {
           participantes: [{ id: 'p1', name: 'X', classeFuncao: 'compositor/autor', link: '', percentual: '100' }],
         } as any),
       ).rejects.toThrow('constraint violation');
-      // A mesma chamada de transaction() que tentou o update da obra é a que
-      // falhou nos participantes — não há um segundo commit "parcial" da obra
-      // fora dessa transação.
+      // The same transaction() call that attempted the work update is the one
+      // that failed on the participants — there is no second "partial" commit of the work
+      // outside that transaction.
       expect(mockDs.transaction).toHaveBeenCalledTimes(1);
     });
 
-    it('cenário A/B: B tenta salvar obra+participantes contra versão já sobrescrita por A -> 409, participantes de B nunca são persistidos', async () => {
-      // A e B leram updated_at = T0. Simulamos que A já salvou (WHERE do CAS
-      // de B não bate mais -> 0 linhas afetadas).
+    it("scenario A/B: B tries to save work+participants against a version already overwritten by A -> 409, B's participants are never persisted", async () => {
+      // A and B read updated_at = T0. We simulate that A already saved (B's CAS
+      // WHERE no longer matches -> 0 rows affected).
       mockDs._repo.update.mockResolvedValueOnce({ affected: 0 });
       await expect(
         service.update(TENANT, 'u1', WORK_ID, {
@@ -316,8 +316,8 @@ describe('WorksService', () => {
           expectedUpdatedAt: new Date('2026-08-14T10:00:00.000Z').toISOString(),
         } as any),
       ).rejects.toThrow(ConflictException);
-      // casUpdate lança ANTES de replaceParticipantes ser chamado (mesma
-      // transação, ordem sequencial) — os dados de B nunca tocam o banco.
+      // casUpdate throws BEFORE replaceParticipantes is called (same
+      // transaction, sequential order) — B's data never touches the database.
       expect(mockDs._participantsRepo.delete).not.toHaveBeenCalled();
       expect(mockDs._participantsRepo.save).not.toHaveBeenCalled();
     });

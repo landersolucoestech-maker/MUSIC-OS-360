@@ -1,9 +1,9 @@
 /**
- * report-module-registry.spec.ts  ·  Parte 89, Bloco 31
+ * report-module-registry.spec.ts  ·  Part 89, Block 31
  *
- * Guarda permanente: a Central de Relatórios deve listar EXATAMENTE os 22
- * módulos autorizados, nesta ordem — nem um a mais, nem um a menos, nunca
- * fora de ordem.
+ * Permanent guard: the Reports Center must list EXACTLY the 22
+ * authorized modules, in this order — not one more, not one less, never
+ * out of order.
  */
 import { EntityMetadataService } from './entity-metadata.service';
 import { REPORT_MODULE_ORDERED_LABELS, REPORT_MODULE_REGISTRY } from './report-module-registry';
@@ -33,43 +33,43 @@ const EXPECTED_ORDERED_LABELS = [
   'Briefing',
 ];
 
-describe('REPORT_MODULE_REGISTRY — lista fechada e ordem exata (Bloco 31)', () => {
-  it('possui exatamente 22 itens', () => {
+describe('REPORT_MODULE_REGISTRY — closed list and exact order (Block 31)', () => {
+  it('has exactly 22 items', () => {
     expect(REPORT_MODULE_REGISTRY.length).toBe(22);
   });
 
-  it('a ordem exata das labels é a lista autorizada pelo usuário, sem faltar nem sobrar item', () => {
+  it('the exact order of labels is the user-authorized list, with no item missing or extra', () => {
     expect(REPORT_MODULE_ORDERED_LABELS).toEqual(EXPECTED_ORDERED_LABELS);
   });
 
-  it('nenhuma chave duplicada no registry', () => {
+  it('no duplicate key in the registry', () => {
     const keys = REPORT_MODULE_REGISTRY.map((e) => e.tableName);
     expect(new Set(keys).size).toBe(keys.length);
   });
 
-  describe('inventário real (EntityMetadataService) reflete o registry', () => {
+  describe('real inventory (EntityMetadataService) reflects the registry', () => {
     const inv = new EntityMetadataService().scan();
     const reportable = inv.entities.filter((e) => e.reportable);
 
-    it('exatamente os 22 tableNames do registry são reportable=true — nada a mais, nada a menos', () => {
+    it('exactly the 22 registry tableNames are reportable=true — nothing more, nothing less', () => {
       const reportableTables = reportable.map((e) => e.tableName).sort();
       const registryTables = REPORT_MODULE_REGISTRY.map((e) => e.tableName).sort();
       expect(reportableTables).toEqual(registryTables);
     });
 
-    it('a ordem das entidades reportáveis no inventário segue exatamente a ordem do registry', () => {
+    it('the order of reportable entities in the inventory exactly follows the registry order', () => {
       const orderedLabels = reportable.map((e) => e.label);
       expect(orderedLabels).toEqual(EXPECTED_ORDERED_LABELS);
     });
 
-    it('"pipelines" nunca é reportável', () => {
+    it('"pipelines" is never reportable', () => {
       for (const table of ['pipelines']) {
         const e = inv.entities.find((x) => x.tableName === table);
         expect(e?.reportable).toBe(false);
       }
     });
 
-    it('entidades explicitamente removidas da lista autorizada não são reportáveis', () => {
+    it('entities explicitly removed from the authorized list are not reportable', () => {
       const explicitlyRemoved = [
         'artist_goals', 'assets', 'audiovisual_assets', 'audiovisual_deliverables',
         'audiovisual_tasks', 'lead_interactions', 'marketing_assets',

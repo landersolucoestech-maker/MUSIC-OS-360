@@ -76,24 +76,24 @@ function makeContext(opts: { authHeader?: string } = {}) {
 describe('JwtAuthGuard', () => {
   afterEach(() => jest.clearAllMocks());
 
-  it('rota @Public() retorna true sem verificar token', async () => {
+  it('@Public() route returns true without verifying the token', async () => {
     const guard = makeGuard(true);
     await expect(guard.canActivate(makeContext())).resolves.toBe(true);
   });
 
-  it('ausencia de token lanca UnauthorizedException', async () => {
+  it('missing token throws UnauthorizedException', async () => {
     const guard = makeGuard(false);
     await expect(guard.canActivate(makeContext())).rejects.toThrow(UnauthorizedException);
   });
 
-  it('token JWT malformado lanca UnauthorizedException', async () => {
+  it('malformed JWT token throws UnauthorizedException', async () => {
     const guard = makeGuard(false);
     await expect(
       guard.canActivate(makeContext({ authHeader: 'Bearer not-a-jwt' })),
     ).rejects.toThrow(UnauthorizedException);
   });
 
-  it('token expirado lanca UnauthorizedException', async () => {
+  it('expired token throws UnauthorizedException', async () => {
     const expired = jwt.sign(
       { sub: 'user_1', iat: Math.floor(Date.now() / 1000) - 7200, exp: Math.floor(Date.now() / 1000) - 3600 },
       privateKey,
@@ -105,7 +105,7 @@ describe('JwtAuthGuard', () => {
     ).rejects.toThrow(UnauthorizedException);
   });
 
-  it('token Bearer valido com app_metadata define request.auth e retorna true', async () => {
+  it('valid Bearer token with app_metadata sets request.auth and returns true', async () => {
     const token = makeToken({
       sub: 'user-abc123',
       session_id: 'sess-xyz',
@@ -125,7 +125,7 @@ describe('JwtAuthGuard', () => {
     expect(request.auth.sessionId).toBe('sess-xyz');
   });
 
-  it('token sem app_metadata resulta em orgId null', async () => {
+  it('token without app_metadata results in orgId null', async () => {
     const token = makeToken({ sub: 'user-no-org' });
     const guard = makeGuard(false);
     const ctx = makeContext({ authHeader: `Bearer ${token}` });
@@ -137,11 +137,11 @@ describe('JwtAuthGuard', () => {
     expect(request.auth.orgRole).toBeNull();
   });
 
-  it('IS_PUBLIC_KEY e exportado', () => {
+  it('IS_PUBLIC_KEY is exported', () => {
     expect(IS_PUBLIC_KEY).toBe('isPublic');
   });
 
-  describe('SEC-01: dev-token bypass deve ser bloqueado em staging', () => {
+  describe('SEC-01: dev-token bypass must be blocked in staging', () => {
     function makeDevToken(): string {
       return jwt.sign(
         { sub: 'attacker', app_metadata: { org_id: 'victim-tenant', role: 'admin' } },
@@ -150,21 +150,21 @@ describe('JwtAuthGuard', () => {
       );
     }
 
-    it('aceita dev-token HS256 quando NODE_ENV=development (comportamento existente)', async () => {
+    it('accepts an HS256 dev-token when NODE_ENV=development (existing behavior)', async () => {
       const guard = makeGuard(false, { NODE_ENV: 'development' });
       const ctx = makeContext({ authHeader: `Bearer ${makeDevToken()}` });
       await expect(guard.canActivate(ctx)).resolves.toBe(true);
       expect(ctx.switchToHttp().getRequest().auth.userId).toBe('attacker');
     });
 
-    it('rejeita dev-token HS256 quando NODE_ENV=staging (deve cair para verificacao JWKS real e falhar)', async () => {
+    it('rejects an HS256 dev-token when NODE_ENV=staging (must fall back to real JWKS verification and fail)', async () => {
       const guard = makeGuard(false, { NODE_ENV: 'staging' });
       const ctx = makeContext({ authHeader: `Bearer ${makeDevToken()}` });
       await expect(guard.canActivate(ctx)).rejects.toThrow(UnauthorizedException);
     });
 
     it.each(['Production', ' production ', 'STAGING', 'Staging'])(
-      'rejeita dev-token HS256 quando NODE_ENV=%j (variacao de caixa/espaco deve continuar prod-like -- CODEBASE_MAP Gotcha #9)',
+      'rejects an HS256 dev-token when NODE_ENV=%j (case/whitespace variation must still be treated as prod-like -- CODEBASE_MAP Gotcha #9)',
       async (nodeEnv) => {
         const guard = makeGuard(false, { NODE_ENV: nodeEnv });
         const ctx = makeContext({ authHeader: `Bearer ${makeDevToken()}` });

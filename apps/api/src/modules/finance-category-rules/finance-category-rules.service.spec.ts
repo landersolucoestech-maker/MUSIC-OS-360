@@ -43,7 +43,7 @@ function makeService(rows?: unknown[]) {
 }
 
 describe('FinanceCategoryRulesService', () => {
-  it('list: escopa por tenant e retorna meta de paginação', async () => {
+  it('list: scopes by tenant and returns pagination meta', async () => {
     const { svc, repo } = makeService([RULE]);
     const result = await svc.list('tenant-1', {} as any);
 
@@ -52,14 +52,14 @@ describe('FinanceCategoryRulesService', () => {
     expect(repo.createQueryBuilder).toHaveBeenCalled();
   });
 
-  it('findById: lança NotFoundException quando não encontrada', async () => {
+  it('findById: throws NotFoundException when not found', async () => {
     const { svc, repo } = makeService();
     (repo.findOne as jest.Mock).mockResolvedValueOnce(null);
 
     await expect(svc.findById('tenant-1', 'missing')).rejects.toThrow(NotFoundException);
   });
 
-  it('create: associa tenant_id e created_by/updated_by', async () => {
+  it('create: associates tenant_id and created_by/updated_by', async () => {
     const { svc, repo } = makeService();
 
     await svc.create('tenant-1', 'user-1', {
@@ -72,7 +72,7 @@ describe('FinanceCategoryRulesService', () => {
   });
 
   // find-de6031eb: category_id had no cross-tenant ownership check.
-  it('create: rejeita category_id de outro tenant', async () => {
+  it('create: rejects a category_id from another tenant', async () => {
     const { svc, repo } = makeService();
     (repo.manager.connection.query as jest.Mock).mockResolvedValueOnce([]);
 
@@ -81,7 +81,7 @@ describe('FinanceCategoryRulesService', () => {
     } as any)).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('update: rejeita mudar category_id para outro tenant', async () => {
+  it('update: rejects changing category_id to another tenant', async () => {
     const { svc, repo } = makeService();
     (repo.manager.connection.query as jest.Mock).mockResolvedValueOnce([]);
 
@@ -90,13 +90,13 @@ describe('FinanceCategoryRulesService', () => {
     } as any)).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('update: não revalida category_id quando o patch não o inclui', async () => {
+  it('update: does not re-validate category_id when the patch omits it', async () => {
     const { svc, repo } = makeService();
     await svc.update('tenant-1', 'user-1', 'rule-1', { priority: 50 } as any);
     expect(repo.manager.connection.query).not.toHaveBeenCalled();
   });
 
-  it('update sem expectedUpdatedAt: aplica update incondicional', async () => {
+  it('update without expectedUpdatedAt: applies an unconditional update', async () => {
     const { svc, repo } = makeService();
 
     await svc.update('tenant-1', 'user-1', 'rule-1', { priority: 50 } as any);
@@ -105,7 +105,7 @@ describe('FinanceCategoryRulesService', () => {
     expect(criteria).toEqual({ id: 'rule-1', tenant_id: 'tenant-1' });
   });
 
-  it('update com expectedUpdatedAt correto: inclui updated_at no critério', async () => {
+  it('update with correct expectedUpdatedAt: includes updated_at in the criteria', async () => {
     const { svc, repo } = makeService();
 
     await svc.update('tenant-1', 'user-1', 'rule-1', {
@@ -122,7 +122,7 @@ describe('FinanceCategoryRulesService', () => {
     expect(op._objectLiteralParameters).toEqual({ expected: NOW });
   });
 
-  it('update com expectedUpdatedAt desatualizado (0 linhas afetadas): lança ConflictException', async () => {
+  it('update with a stale expectedUpdatedAt (0 rows affected): throws ConflictException', async () => {
     const { svc, repo } = makeService();
     (repo.update as jest.Mock).mockResolvedValueOnce({ affected: 0 });
 
@@ -134,7 +134,7 @@ describe('FinanceCategoryRulesService', () => {
     ).rejects.toThrow(ConflictException);
   });
 
-  it('softDelete: escopa por tenant e marca deleted_at', async () => {
+  it('softDelete: scopes by tenant and marks deleted_at', async () => {
     const { svc, repo } = makeService();
 
     await svc.softDelete('tenant-1', 'rule-1');
@@ -176,7 +176,7 @@ describe('FinanceCategoryRulesService.suggestCategoryForTransaction (Task W)', (
     transaction_type: 'DESPESA', priority: 100, active: true,
   };
 
-  it('retorna a categoria (slug) da regra correspondente', async () => {
+  it('returns the category (slug) of the matching rule', async () => {
     const { svc, repo } = makeSuggestService([activeRule], [{ category_name: 'streaming' }]);
 
     const result = await svc.suggestCategoryForTransaction('tenant-1', 'DESPESA', 'Pagamento Spotify mensal');
@@ -185,20 +185,20 @@ describe('FinanceCategoryRulesService.suggestCategoryForTransaction (Task W)', (
     expect(repo.createQueryBuilder).toHaveBeenCalled();
   });
 
-  it('retorna null quando nenhuma regra corresponde à descrição', async () => {
+  it('returns null when no rule matches the description', async () => {
     const { svc } = makeSuggestService([activeRule], [{ category_name: 'streaming' }]);
     const result = await svc.suggestCategoryForTransaction('tenant-1', 'DESPESA', 'Aluguel do escritório');
     expect(result).toBeNull();
   });
 
-  it('retorna null para descrição vazia (não executa a query)', async () => {
+  it('returns null for an empty description (does not run the query)', async () => {
     const { svc, repo } = makeSuggestService([activeRule], [{ category_name: 'streaming' }]);
     const result = await svc.suggestCategoryForTransaction('tenant-1', 'DESPESA', '');
     expect(result).toBeNull();
     expect(repo.createQueryBuilder).not.toHaveBeenCalled();
   });
 
-  it('retorna null quando a categoria vinculada não tem slug (categoria removida)', async () => {
+  it('returns null when the linked category has no slug (category removed)', async () => {
     const { svc } = makeSuggestService([activeRule], [{ category_name: null }]);
     const result = await svc.suggestCategoryForTransaction('tenant-1', 'DESPESA', 'Pagamento Spotify');
     expect(result).toBeNull();
@@ -206,7 +206,7 @@ describe('FinanceCategoryRulesService.suggestCategoryForTransaction (Task W)', (
 });
 
 describe('FinanceCategoryRulesService.suggestCategoryForTransaction — where clauses (Task W)', () => {
-  it('filtra por tenant_id, active=true e transaction_type na query', async () => {
+  it('filters by tenant_id, active=true and transaction_type in the query', async () => {
     const qb: any = {
       innerJoin: jest.fn(() => qb),
       addSelect: jest.fn(() => qb),

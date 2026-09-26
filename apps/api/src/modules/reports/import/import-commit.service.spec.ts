@@ -47,8 +47,8 @@ function makeSvc(opts: { validation?: ImportValidationResult; def?: ReportEntity
 
 const file = { filename: 'artists.xlsx', content: Buffer.from('xlsx') };
 
-describe('ImportCommitService — commit transacional', () => {
-  it('import válido faz commit atômico e força tenant', async () => {
+describe('ImportCommitService — transactional commit', () => {
+  it('valid import commits atomically and forces tenant', async () => {
     const { svc, qr, audit } = makeSvc();
     const result = await svc.commit('artists', file, 'tenant-1', 'user-1');
     expect(qr.commitTransaction).toHaveBeenCalledTimes(1);
@@ -60,7 +60,7 @@ describe('ImportCommitService — commit transacional', () => {
     expect(audit.record).toHaveBeenCalledWith(expect.objectContaining({ status: 'committed', successCount: 2 }));
   });
 
-  it('validação inválida não abre transação', async () => {
+  it('invalid validation does not open a transaction', async () => {
     const bad = validResult(1);
     bad.invalidRows = 1;
     bad.validRows = 0;
@@ -72,7 +72,7 @@ describe('ImportCommitService — commit transacional', () => {
     expect(result.importedRows).toBe(0);
   });
 
-  it('duplicado ou relacionamento inválido causa rollback total', async () => {
+  it('duplicate or invalid relationship causes full rollback', async () => {
     const duplicated = makeSvc({ queryImpl: (sql) => (sql.startsWith('SELECT 1') ? [{}] : []) });
     const duplicateResult = await duplicated.svc.commit('artists', file, 't', 'u');
     expect(duplicated.qr.rollbackTransaction).toHaveBeenCalled();
@@ -86,19 +86,19 @@ describe('ImportCommitService — commit transacional', () => {
     expect(relationResult.errors.some((e) => /relacionamento inválido/i.test(e))).toBe(true);
   });
 
-  it('exceção de banco causa rollback e propaga', async () => {
+  it('database exception causes rollback and propagates', async () => {
     const { svc, qr } = makeSvc({ queryImpl: (sql) => { if (sql.startsWith('INSERT')) throw new Error('db boom'); return []; } });
     await expect(svc.commit('artists', file, 't', 'u')).rejects.toThrow('db boom');
     expect(qr.rollbackTransaction).toHaveBeenCalled();
   });
 
-  it('sem tenant retorna 403', async () => {
+  it('returns 403 without tenant', async () => {
     const { svc } = makeSvc();
     await expect(svc.commit('artists', file, undefined, 'u')).rejects.toBeInstanceOf(ForbiddenException);
   });
 });
 
-describe('ImportCommitService — normalização/validação de ISRC (find-fb2cfb1b)', () => {
+describe('ImportCommitService — ISRC normalization/validation (find-fb2cfb1b)', () => {
   const PHONOGRAMS_DEF: ReportEntityDefinition = {
     entityName: 'PhonogramEntity', tableName: 'phonograms', category: EntityCategory.REPORTABLE,
     identityColumn: 'title', displayColumn: 'title', dateColumn: 'created_at',
@@ -116,7 +116,7 @@ describe('ImportCommitService — normalização/validação de ISRC (find-fb2cf
     };
   }
 
-  it('normaliza ISRC hifenizado/minúsculo para a forma canônica antes do INSERT', async () => {
+  it('normalizes hyphenated/lowercase ISRC to canonical form before INSERT', async () => {
     const { svc, qr } = makeSvc({ def: PHONOGRAMS_DEF, validation: phonogramsValidation('br-abc-26-00001') });
     const result = await svc.commit('phonograms', file, 'tenant-1', 'user-1');
     expect(result.importedRows).toBe(1);
@@ -124,7 +124,7 @@ describe('ImportCommitService — normalização/validação de ISRC (find-fb2cf
     expect(insert?.[1]).toContain('BRABC2600001');
   });
 
-  it('rejeita ISRC malformado com rollback total e erro por linha', async () => {
+  it('rejects malformed ISRC with full rollback and per-row error', async () => {
     const { svc, qr } = makeSvc({ def: PHONOGRAMS_DEF, validation: phonogramsValidation('not-an-isrc') });
     const result = await svc.commit('phonograms', file, 'tenant-1', 'user-1');
     expect(qr.rollbackTransaction).toHaveBeenCalled();
@@ -133,7 +133,7 @@ describe('ImportCommitService — normalização/validação de ISRC (find-fb2cf
   });
 });
 
-describe('ImportCommitService — grupo repetível na mesma aba', () => {
+describe('ImportCommitService — repeating group on the same sheet', () => {
   const PROJECTS_DEF: ReportEntityDefinition = {
     entityName: 'ProjectEntity', tableName: 'projects', category: EntityCategory.REPORTABLE,
     identityColumn: 'nome_ep_album', displayColumn: 'nome_ep_album', dateColumn: 'created_at',
@@ -157,7 +157,7 @@ describe('ImportCommitService — grupo repetível na mesma aba', () => {
     };
   }
 
-  it('retorna id do registro pai e grava itens repetíveis', async () => {
+  it('returns parent record id and writes repeating items', async () => {
     const queryImpl = (sql: string) => sql.startsWith('INSERT INTO "projects"') ? [{ id: 'proj-gerado' }] : [];
     const { svc, qr } = makeSvc({
       def: PROJECTS_DEF,
@@ -172,20 +172,20 @@ describe('ImportCommitService — grupo repetível na mesma aba', () => {
     expect(trackInsert).toBeDefined();
   });
 
-  it('sem itens repetíveis faz insert simples', async () => {
+  it('performs a simple insert when there are no repeating items', async () => {
     const { svc, qr } = makeSvc({ def: PROJECTS_DEF, validation: projectsValidation(), queryImpl: () => [] });
     await svc.commit('projects', { filename: 'projects.xlsx', content: Buffer.from('xlsx') }, 'tenant-1', 'user-1');
     const parentInsert = qr.query.mock.calls.find((call: any[]) => String(call[0]).startsWith('INSERT INTO "projects"'));
     expect(parentInsert?.[0]).not.toContain('RETURNING');
   });
 
-  it('falha explicitamente se o insert pai não retornar id', async () => {
+  it('fails explicitly if the parent insert does not return an id', async () => {
     const { svc } = makeSvc({ def: PROJECTS_DEF, validation: projectsValidation([{ nome_musica: 'Faixa' }]), queryImpl: () => [] });
     await expect(svc.commit('projects', { filename: 'projects.xlsx', content: Buffer.from('xlsx') }, 'tenant-1', 'user-1')).rejects.toThrow(/sem id retornado/);
   });
 });
 
-describe('ImportCommitService — transações: colunas físicas e categoria (Task X)', () => {
+describe('ImportCommitService — transactions: physical columns and category (Task X)', () => {
   const TRANSACTIONS_DEF: ReportEntityDefinition = {
     entityName: 'TransactionEntity', tableName: 'transactions', category: EntityCategory.REPORTABLE,
     identityColumn: 'descricao', displayColumn: 'descricao', dateColumn: 'created_at',
@@ -229,7 +229,7 @@ describe('ImportCommitService — transações: colunas físicas e categoria (Ta
     return { sql: String(call?.[0]), params: call?.[1] as unknown[] };
   }
 
-  it('grava tipo_transacao/data_transacao nas colunas físicas reais (type/data), não nas colunas de formulário', async () => {
+  it('writes tipo_transacao/data_transacao to the real physical columns (type/data), not the form columns', async () => {
     const { svc, qr } = makeTxSvc({ row: { tipo_transacao: 'despesa', categoria: 'aluguel', descricao: 'Aluguel sala', data_transacao: '2026-01-05' } });
     await svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
     const { sql, params } = insertCall(qr);
@@ -240,7 +240,7 @@ describe('ImportCommitService — transações: colunas físicas e categoria (Ta
     expect(params).toContain('despesa');
   });
 
-  it('categoria explícita (não "outros") é preservada e o matcher não é consultado', async () => {
+  it('explicit category (not "outros") is preserved and the matcher is not consulted', async () => {
     const { svc, qr, financeCategoryRules } = makeTxSvc({ row: { tipo_transacao: 'despesa', categoria: 'aluguel', descricao: 'Aluguel sala' } });
     await svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
     expect(financeCategoryRules.suggestCategoryForTransaction).not.toHaveBeenCalled();
@@ -248,7 +248,7 @@ describe('ImportCommitService — transações: colunas físicas e categoria (Ta
     expect(params).toContain('aluguel');
   });
 
-  it('categoria vazia na planilha aciona o matcher e aplica a sugestão (mesmo serviço da criação manual)', async () => {
+  it('empty category in the spreadsheet triggers the matcher and applies the suggestion (same service as manual creation)', async () => {
     const { svc, qr, financeCategoryRules } = makeTxSvc({
       row: { tipo_transacao: 'despesa', categoria: '', descricao: 'Compra de cabos' },
       suggestion: { categoryId: 'cat-1', categoryName: 'equipamentos', ruleId: 'rule-1' },
@@ -259,7 +259,7 @@ describe('ImportCommitService — transações: colunas físicas e categoria (Ta
     expect(params).toContain('equipamentos');
   });
 
-  it('categoria vazia sem match cai em "outros" e o INSERT ainda satisfaz a coluna NOT NULL', async () => {
+  it('empty category with no match falls back to "outros" and the INSERT still satisfies the NOT NULL column', async () => {
     const { svc, qr } = makeTxSvc({ row: { tipo_transacao: 'despesa', categoria: '', descricao: 'Item desconhecido' }, suggestion: null });
     const result = await svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
     expect(result.importedRows).toBe(1);
@@ -268,7 +268,7 @@ describe('ImportCommitService — transações: colunas físicas e categoria (Ta
     expect(params).toContain('outros');
   });
 
-  it('matcher indisponível (exceção) não derruba a importação — cai em "outros"', async () => {
+  it('unavailable matcher (exception) does not break the import — falls back to "outros"', async () => {
     const { svc, qr } = makeTxSvc({ row: { tipo_transacao: 'despesa', categoria: '', descricao: 'Item X' }, suggestThrows: true });
     const result = await svc.commit('transactions', { filename: 'tx.xlsx', content: Buffer.from('x') }, 'tenant-1', 'user-1');
     expect(result.importedRows).toBe(1);

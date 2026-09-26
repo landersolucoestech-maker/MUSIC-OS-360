@@ -68,37 +68,37 @@ function makeService(
 
 describe('SharesService — split budget invariant (P1)', () => {
   describe('create', () => {
-    it('permite um share elegível dentro do orçamento (obra ainda incompleta)', async () => {
+    it('allows an eligible share within budget (work still incomplete)', async () => {
       const { svc } = makeService({ existingSum: 40 });
       await expect(svc.create('tenant-1', {
         holderName: 'Autor A', percentage: 30, workId: 'work-1',
       } as unknown as CreateShareDto)).resolves.toBeDefined();
     });
 
-    it('rejeita quando a soma elegível excederia 100% (existente 60% + novo 50% = 110%)', async () => {
+    it('rejects when the eligible sum would exceed 100% (existing 60% + new 50% = 110%)', async () => {
       const { svc } = makeService({ existingSum: 60 });
       await expect(svc.create('tenant-1', {
         holderName: 'Autor B', percentage: 50, workId: 'work-1',
       } as unknown as CreateShareDto)).rejects.toBeInstanceOf(BadRequestException);
     });
 
-    it('permite exatamente 100% (existente 60% + novo 40% = 100%, dentro da tolerância)', async () => {
+    it('allows exactly 100% (existing 60% + new 40% = 100%, within tolerance)', async () => {
       const { svc } = makeService({ existingSum: 60 });
       await expect(svc.create('tenant-1', {
         holderName: 'Autor C', percentage: 40, workId: 'work-1',
       } as unknown as CreateShareDto)).resolves.toBeDefined();
     });
 
-    it('NÃO valida orçamento para shares financeiros (share_type definido) — conceito distinto (Fase 5/C6)', async () => {
+    it('does NOT validate budget for financial shares (share_type set) — distinct concept (Phase 5/C6)', async () => {
       const { svc } = makeService({ existingSum: 90 });
-      // share_type definido explicitamente marca como financeiro/pendente —
-      // nunca conta no orçamento de splits de registro.
+      // explicitly setting share_type marks it as financial/pending —
+      // it never counts toward the registry split budget.
       await expect(svc.create('tenant-1', {
         share_type: 'pendente', percentage: 50, workId: 'work-1',
       } as unknown as CreateShareDto)).resolves.toBeDefined();
     });
 
-    it('não valida orçamento quando não há work_id nem fonograma_id (share sem contexto de registro)', async () => {
+    it('does not validate budget when there is no work_id or fonograma_id (share without registry context)', async () => {
       const { svc, repo } = makeService();
       await expect(svc.create('tenant-1', {
         holderName: 'Sem Obra', percentage: 50,
@@ -109,7 +109,7 @@ describe('SharesService — split budget invariant (P1)', () => {
   });
 
   describe('update', () => {
-    it('rejeita quando a atualização faria a soma exceder 100%, herdando work_id da linha atual', async () => {
+    it('rejects when the update would make the sum exceed 100%, inheriting work_id from the current row', async () => {
       const { svc } = makeService({
         existingSum: 70,
         findByIdRow: { id: 'share-1', tenant_id: 'tenant-1', work_id: 'work-1', percentage: 10, share_type: null },
@@ -119,7 +119,7 @@ describe('SharesService — split budget invariant (P1)', () => {
       } as unknown as UpdateShareDto)).rejects.toBeInstanceOf(BadRequestException);
     });
 
-    it('exclui a própria linha da soma existente (não conta a si mesma duas vezes)', async () => {
+    it('excludes its own row from the existing sum (does not count itself twice)', async () => {
       const { svc, repo } = makeService({
         existingSum: 30, // already excludes share-1 per the mocked query (asserted below)
         findByIdRow: { id: 'share-1', tenant_id: 'tenant-1', work_id: 'work-1', percentage: 30, share_type: null },
@@ -198,21 +198,21 @@ describe('SharesService — concurrent write serialization (find-a192e412)', () 
 });
 
 describe('SharesService.create — FK cross-tenant (P1)', () => {
-  it('rejeita work_id (workId) de outro tenant (ou inexistente)', async () => {
+  it('rejects work_id (workId) from another tenant (or nonexistent)', async () => {
     const { svc } = makeService({}, jest.fn(async () => []));
     await expect(svc.create('tenant-1', {
       holderName: 'X', percentage: 10, workId: 'work-from-another-tenant',
     } as unknown as CreateShareDto)).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('rejeita fonograma_id (trackId) de outro tenant (ou inexistente)', async () => {
+  it('rejects fonograma_id (trackId) from another tenant (or nonexistent)', async () => {
     const { svc } = makeService({}, jest.fn(async () => []));
     await expect(svc.create('tenant-1', {
       holderName: 'X', percentage: 10, trackId: 'track-from-another-tenant',
     } as unknown as CreateShareDto)).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('permite quando a referência pertence ao tenant', async () => {
+  it('allows when the reference belongs to the tenant', async () => {
     const { svc } = makeService({}, jest.fn(async () => [{ exists: 1 }]));
     await expect(svc.create('tenant-1', {
       holderName: 'X', percentage: 10, workId: 'work-1',

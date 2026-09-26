@@ -1,28 +1,28 @@
 import { normalizeEmail } from './normalize-email';
 
 describe('normalizeEmail', () => {
-  it('converte para minúsculas', () => {
+  it('converts to lowercase', () => {
     expect(normalizeEmail('Deyvisson@LanderRecords.com')).toBe('deyvisson@landerrecords.com');
   });
 
-  it('remove espaços no início', () => {
+  it('trims leading spaces', () => {
     expect(normalizeEmail('  deyvisson@landerrecords.com')).toBe('deyvisson@landerrecords.com');
   });
 
-  it('remove espaços no fim', () => {
+  it('trims trailing spaces', () => {
     expect(normalizeEmail('deyvisson@landerrecords.com  ')).toBe('deyvisson@landerrecords.com');
   });
 
-  it('e-mail em caixa mista com espaços nas duas pontas', () => {
+  it('mixed-case email with spaces on both ends', () => {
     expect(normalizeEmail('  Deyvisson@LANDERRECORDS.com  ')).toBe('deyvisson@landerrecords.com');
   });
 
-  it('input vazio permanece vazio (validação de formato é responsabilidade do chamador)', () => {
+  it('empty input remains empty (format validation is the caller\'s responsibility)', () => {
     expect(normalizeEmail('')).toBe('');
     expect(normalizeEmail('   ')).toBe('');
   });
 
-  it('já normalizado permanece idêntico (idempotente)', () => {
+  it('already normalized input remains identical (idempotent)', () => {
     expect(normalizeEmail('deyvisson@landerrecords.com')).toBe('deyvisson@landerrecords.com');
   });
 });

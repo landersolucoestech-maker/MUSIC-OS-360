@@ -28,33 +28,33 @@ function setup(reflectorOverrides: { isPublic?: boolean; isAuthBootstrap?: boole
 }
 
 describe('MustChangePasswordGuard', () => {
-  it('bloqueia rota comum quando must_change_password=true', () => {
+  it('blocks a common route when must_change_password=true', () => {
     const guard = setup();
     expect(() => guard.canActivate(context('/api/v1/artists', { must_change_password: true }))).toThrow(ForbiddenException);
   });
 
-  it('permite rota allowlisted (/auth/context) mesmo com must_change_password=true', () => {
+  it('allows the allowlisted route (/auth/context) even with must_change_password=true', () => {
     const guard = setup();
     expect(guard.canActivate(context('/api/v1/auth/context', { must_change_password: true }))).toBe(true);
   });
 
-  it('permite /auth/change-required-password mesmo com a flag true (única forma de sair do estado)', () => {
+  it('allows /auth/change-required-password even with the flag true (the only way out of this state)', () => {
     const guard = setup();
     expect(guard.canActivate(context('/api/v1/auth/change-required-password', { must_change_password: true }))).toBe(true);
   });
 
-  it('permite rota comum quando must_change_password é false ou ausente', () => {
+  it('allows a common route when must_change_password is false or absent', () => {
     const guard = setup();
     expect(guard.canActivate(context('/api/v1/artists', {}))).toBe(true);
     expect(guard.canActivate(context('/api/v1/artists', undefined))).toBe(true);
   });
 
-  it('rota @Public() ignora a checagem mesmo com must_change_password=true', () => {
+  it('@Public() route ignores the check even with must_change_password=true', () => {
     const guard = setup({ isPublic: true });
     expect(guard.canActivate(context('/api/v1/artists', { must_change_password: true }))).toBe(true);
   });
 
-  it('rota @AuthBootstrap() ignora a checagem mesmo com must_change_password=true', () => {
+  it('@AuthBootstrap() route ignores the check even with must_change_password=true', () => {
     const guard = setup({ isPublic: false, isAuthBootstrap: true });
     expect(guard.canActivate(context('/api/v1/artists', { must_change_password: true }))).toBe(true);
   });

@@ -33,7 +33,7 @@ describe('MailService', () => {
     service = await makeModule(true);
   });
 
-  it('chama Resend API com Authorization header correto', async () => {
+  it('calls the Resend API with the correct Authorization header', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({ id: 'email_1' }),
@@ -72,15 +72,15 @@ describe('MailService', () => {
     expect(init.headers).not.toHaveProperty('Idempotency-Key');
   });
 
-  it('retorna skipped:true quando sem API key', async () => {
+  it('returns skipped:true when there is no API key', async () => {
     const svc = await makeModule(false);
     const r = await svc.send({ to: 'x@x.com', subject: 'T', html: '<p>H</p>' });
     expect(r).toEqual({ skipped: true });
     expect(mockFetch).not.toHaveBeenCalled();
   });
 
-  describe('STAGING-01 — allowlist e prefixo em NODE_ENV=staging', () => {
-    it('prefixa o assunto com [STAGING] e envia normalmente para um domínio permitido', async () => {
+  describe('STAGING-01 — allowlist and prefix in NODE_ENV=staging', () => {
+    it('prefixes the subject with [STAGING] and sends normally to an allowed domain', async () => {
       const svc = await makeModule(true, 'staging', 'example.com');
       mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ id: 'email_1' }) });
 
@@ -91,14 +91,14 @@ describe('MailService', () => {
       expect(body.to).toEqual(['qa@example.com']);
     });
 
-    it('bloqueia destinatários fora do allowlist e não chama a API do Resend se nenhum sobrar', async () => {
+    it('blocks recipients outside the allowlist and does not call the Resend API if none remain', async () => {
       const svc = await makeModule(true, 'staging', 'example.com');
       const r = await svc.send({ to: 'usuario.real@gmail.com', subject: 'T', html: '<p>H</p>' });
       expect(r).toEqual({ skipped: true });
       expect(mockFetch).not.toHaveBeenCalled();
     });
 
-    it('envia só para os destinatários permitidos quando a lista é mista', async () => {
+    it('sends only to allowed recipients when the list is mixed', async () => {
       const svc = await makeModule(true, 'staging', 'example.com');
       mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ id: 'email_1' }) });
 
@@ -108,7 +108,7 @@ describe('MailService', () => {
       expect(body.to).toEqual(['qa@example.com']);
     });
 
-    it('não filtra nem prefixa em produção (comportamento inalterado)', async () => {
+    it('does not filter or prefix in production (unchanged behavior)', async () => {
       const svc = await makeModule(true, 'production');
       mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ id: 'email_1' }) });
 
@@ -120,32 +120,32 @@ describe('MailService', () => {
     });
   });
 
-  it('welcomeHtml contém o nome do usuário', () => {
+  it('welcomeHtml contains the user name', () => {
     const html = service.welcomeHtml('João');
     expect(html).toContain('João');
     expect(html).toMatch(/<html/i);
   });
 
-  it('contractExpiringHtml contém título e dias', () => {
+  it('contractExpiringHtml contains title and days', () => {
     const html = service.contractExpiringHtml('Contrato XYZ', 7);
     expect(html).toContain('Contrato XYZ');
     expect(html).toContain('7');
   });
 
   describe('escapeHtml (MAIL-01)', () => {
-    it('escapa os 5 caracteres HTML-significativos', () => {
+    it('escapes the 5 HTML-significant characters', () => {
       expect(escapeHtml(`<img src=x onerror="alert('xss')">&`)).toBe(
         '&lt;img src=x onerror=&quot;alert(&#39;xss&#39;)&quot;&gt;&amp;',
       );
     });
 
-    it('welcomeHtml neutraliza markup injetado no nome do usuário', () => {
+    it('welcomeHtml neutralizes markup injected in the user name', () => {
       const html = service.welcomeHtml('<img src=x onerror=alert(1)>');
       expect(html).not.toContain('<img src=x onerror=alert(1)>');
       expect(html).toContain('&lt;img src=x onerror=alert(1)&gt;');
     });
 
-    it('contractExpiringHtml neutraliza markup injetado no título do contrato', () => {
+    it('contractExpiringHtml neutralizes markup injected in the contract title', () => {
       const html = service.contractExpiringHtml('<script>alert(1)</script>', 7);
       expect(html).not.toContain('<script>alert(1)</script>');
       expect(html).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');

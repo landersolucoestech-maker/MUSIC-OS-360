@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
-// auth.guard (importado transitivamente por IS_PUBLIC_KEY) puxa jwks-rsa→jose (ESM).
-// Mockamos jwks-rsa para o jest não tentar transpilar o pacote ESM — mesmo padrão do auth.guard.spec.
+// auth.guard (transitively imported via IS_PUBLIC_KEY) pulls in jwks-rsa→jose (ESM).
+// We mock jwks-rsa so jest does not try to transpile the ESM package — same pattern as auth.guard.spec.
 jest.mock('jwks-rsa', () => jest.fn(() => ({ getSigningKey: jest.fn() })));
 
 import { ForbiddenException, type ExecutionContext } from '@nestjs/common';
@@ -16,7 +16,7 @@ class KLASS {}
 
 function makeReflector(required: string[]): Reflector {
   return {
-    getAllAndOverride: jest.fn().mockReturnValue(false), // rota não-pública
+    getAllAndOverride: jest.fn().mockReturnValue(false), // non-public route
     get: jest.fn((key: string, target: unknown) => {
       if (key === PERMISSIONS_KEY) return target === HANDLER ? required : [];
       return undefined;
@@ -70,14 +70,14 @@ function enforcementOn(): void {
   process.env['RBAC_PERSISTED_AUTHORITY'] = 'ON';
 }
 
-// ── Enforcement OFF (modo observação) ─────────────────────────────────────────
+// ── Enforcement OFF (observation mode) ────────────────────────────────────────
 describe('PermissionsGuard — enforcement OFF (default)', () => {
-  it('não bloqueia mesmo sem a permissão (apenas observa/loga)', async () => {
-    const guard = makeGuard(['artist:read'], []); // membro sem permissões
+  it('does not block even without the permission (only observes/logs)', async () => {
+    const guard = makeGuard(['artist:read'], []); // member without permissions
     await expect(guard.canActivate(makeContext(MEMBER))).resolves.toBe(true);
   });
 
-  it('rota sem @RequirePermission é no-op (não chama o resolver)', async () => {
+  it('route without @RequirePermission is a no-op (does not call the resolver)', async () => {
     const decisions = makeDecisions([]);
     const guard = new PermissionsGuard(makeReflector([]), decisions);
     await expect(guard.canActivate(makeContext(MEMBER))).resolves.toBe(true);
@@ -89,75 +89,75 @@ describe('PermissionsGuard — enforcement OFF (default)', () => {
 describe('PermissionsGuard — enforcement ON', () => {
   beforeEach(enforcementOn);
 
-  it('usuário com artist:read acessa GET', async () => {
+  it('user with artist:read can access GET', async () => {
     await expect(makeGuard(['artist:read'], ['artist:read']).canActivate(makeContext(MEMBER))).resolves.toBe(true);
   });
 
-  it('usuário sem artist:read recebe 403', async () => {
+  it('user without artist:read receives 403', async () => {
     await expect(makeGuard(['artist:read'], ['catalog:read']).canActivate(makeContext(MEMBER)))
       .rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('usuário com artist:create acessa POST', async () => {
+  it('user with artist:create can access POST', async () => {
     await expect(makeGuard(['artist:create'], ['artist:create']).canActivate(makeContext(MEMBER))).resolves.toBe(true);
   });
 
-  it('usuário só com artist:read NÃO consegue POST (artist:create)', async () => {
+  it('user with only artist:read CANNOT POST (artist:create)', async () => {
     await expect(makeGuard(['artist:create'], ['artist:read']).canActivate(makeContext(MEMBER)))
       .rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('usuário com artist:update acessa PATCH', async () => {
+  it('user with artist:update can access PATCH', async () => {
     await expect(makeGuard(['artist:update'], ['artist:update']).canActivate(makeContext(MEMBER))).resolves.toBe(true);
   });
 
-  it('usuário com artist:delete acessa DELETE', async () => {
+  it('user with artist:delete can access DELETE', async () => {
     await expect(makeGuard(['artist:delete'], ['artist:delete']).canActivate(makeContext(MEMBER))).resolves.toBe(true);
   });
 
-  it('múltiplas permissões (AND): falta uma → 403', async () => {
+  it('multiple permissions (AND): missing one → 403', async () => {
     await expect(makeGuard(['artist:read', 'artist:export'], ['artist:read']).canActivate(makeContext(MEMBER)))
       .rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('múltiplas permissões (AND): tem todas → libera', async () => {
+  it('multiple permissions (AND): has all of them → allows', async () => {
     await expect(
       makeGuard(['artist:read', 'artist:export'], ['artist:read', 'artist:export']).canActivate(makeContext(MEMBER)),
     ).resolves.toBe(true);
   });
 
-  it('role_id ausente → usa fallback legado (resolver retorna permissões legadas)', async () => {
-    const guard = makeGuard(['artist:read'], ['artist:read']); // resolver já encapsula fallback (FASE 5)
+  it('missing role_id → uses legacy fallback (resolver returns legacy permissions)', async () => {
+    const guard = makeGuard(['artist:read'], ['artist:read']); // resolver already encapsulates the fallback (FASE 5)
     await expect(guard.canActivate(makeContext({ role: 'viewer', role_id: null, tenant_id: 't-1' }))).resolves.toBe(true);
   });
 
-  it('role custom do tenant correto funciona (resolver retorna a permissão)', async () => {
+  it('custom role from the correct tenant works (resolver returns the permission)', async () => {
     await expect(makeGuard(['artist:read'], ['artist:read']).canActivate(makeContext(MEMBER))).resolves.toBe(true);
   });
 
-  it('role custom de outro tenant NÃO funciona (resolver retorna vazio → 403)', async () => {
+  it('custom role from another tenant does NOT work (resolver returns empty → 403)', async () => {
     await expect(makeGuard(['artist:read'], []).canActivate(makeContext(MEMBER)))
       .rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('erro no resolver gera DENY, não allow', async () => {
+  it('resolver error results in DENY, not allow', async () => {
     await expect(makeGuard(['artist:read'], new Error('db down')).canActivate(makeContext(MEMBER)))
       .rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('sem membro no contexto → DENY', async () => {
+  it('no member in context → DENY', async () => {
     await expect(makeGuard(['artist:read'], ['artist:read']).canActivate(makeContext(undefined)))
       .rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('permissões vazias não liberam acesso', async () => {
+  it('empty permissions do not grant access', async () => {
     await expect(makeGuard(['artist:read'], []).canActivate(makeContext(MEMBER)))
       .rejects.toBeInstanceOf(ForbiddenException);
   });
 });
 
-// ── Paridade / coexistência @RequireRole + @RequirePermission ─────────────────
-describe('Coexistência @RequireRole + @RequirePermission (paridade do piloto)', () => {
+// ── Parity / coexistence @RequireRole + @RequirePermission ────────────────────
+describe('Coexistence @RequireRole + @RequirePermission (pilot parity)', () => {
   class PilotoArtistsController {
     @RequireRole('viewer')
     @RequirePermission('artist:read')
@@ -173,7 +173,7 @@ describe('Coexistência @RequireRole + @RequirePermission (paridade do piloto)',
   }
   const proto = PilotoArtistsController.prototype;
 
-  it('cada rota carrega AMBAS as metadatas (role + permission)', () => {
+  it('each route carries BOTH metadata sets (role + permission)', () => {
     expect(Reflect.getMetadata(ROLES_KEY, proto.list)).toEqual(['viewer']);
     expect(Reflect.getMetadata(PERMISSIONS_KEY, proto.list)).toEqual(['artist:read']);
     expect(Reflect.getMetadata(ROLES_KEY, proto.create)).toEqual(['editor']);
@@ -183,13 +183,13 @@ describe('Coexistência @RequireRole + @RequirePermission (paridade do piloto)',
   });
 });
 
-// ── Validação de formato da chave ─────────────────────────────────────────────
-describe('@RequirePermission — formato resource:action', () => {
-  it('rejeita chave malformada em tempo de decoração', () => {
+// ── Key format validation ──────────────────────────────────────────────────────
+describe('@RequirePermission — resource:action format', () => {
+  it('rejects a malformed key at decoration time', () => {
     expect(() => RequirePermission('ArtistRead')).toThrow(/resource:action/);
     expect(() => RequirePermission('artist:')).toThrow();
   });
-  it('aceita chave válida', () => {
+  it('accepts a valid key', () => {
     expect(() => RequirePermission('artist:read')).not.toThrow();
   });
 });
