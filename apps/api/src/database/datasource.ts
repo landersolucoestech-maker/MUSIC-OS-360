@@ -1,11 +1,11 @@
 /**
  * database/datasource.ts
  *
- * TypeORM DataSource standalone — usado pelo TypeORM CLI e scripts de migration.
- * NÃO importar dentro do NestJS (usa database.module.ts para injeção).
+ * Standalone TypeORM DataSource — used by the TypeORM CLI and migration scripts.
+ * Do NOT import inside NestJS (use database.module.ts for injection).
  *
- * Uso:
- *   npx typeorm migration:generate -d src/database/datasource.ts migrations/MeuNome
+ * Usage:
+ *   npx typeorm migration:generate -d src/database/datasource.ts migrations/MyName
  *   npx typeorm migration:run     -d src/database/datasource.ts
  *   npx typeorm migration:revert  -d src/database/datasource.ts
  *   npx typeorm schema:log        -d src/database/datasource.ts
@@ -18,7 +18,7 @@ import { ALL_ENTITIES } from './entities';
 import { ALL_MIGRATIONS } from './migrations/index';
 import { assertDatabaseCommandEnv } from '../core/config/env.schema';
 
-// ─── Carregar variáveis de ambiente se dotenv estiver disponível ───────────────
+// ─── Load environment variables if dotenv is available ───────────────────────
 try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const dotenv = require('dotenv');
@@ -37,9 +37,9 @@ if (!DATABASE_URL) {
   process.exit(1);
 }
 
-// Guard fail-closed em NÍVEL DE MÓDULO: qualquer importador (db-ops, seeds,
-// verify-*, TypeORM CLI) é bloqueado ANTES de existir um DataSource se o alvo
-// não for o autorizado para o NODE_ENV (dev → somente o branch DEV).
+// MODULE-LEVEL fail-closed guard: any importer (db-ops, seeds,
+// verify-*, TypeORM CLI) is blocked BEFORE a DataSource exists if the target
+// is not the one authorized for NODE_ENV (dev → only the DEV branch).
 assertDatabaseCommandEnv('datasource');
 
 const isProduction = process.env['NODE_ENV'] === 'production';
@@ -49,7 +49,7 @@ export const AppDataSource = new DataSource({
   type:        'postgres',
   url:          DATABASE_URL,
   entities:     ALL_ENTITIES,
-  synchronize:  false,  // NUNCA true — só migrations versionadas
+  synchronize:  false,  // NEVER true — versioned migrations only
   logging:      !isProduction,
   ssl:          dbSslDisabled ? false : { rejectUnauthorized: false },
 

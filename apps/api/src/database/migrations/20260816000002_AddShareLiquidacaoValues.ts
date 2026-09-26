@@ -1,12 +1,12 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Task T (continuidade) — "Registrar Recebimento"/"Registrar Envio" em
- * GestaoShares.tsx já chamava updateShare({ status, valor_liquidado, ... }),
- * mas `valor_liquidado` (e o `valor_total` do qual seu quick-action deriva)
- * nunca existiram como coluna: a mudança de status persistia, o valor
- * liquidado era descartado silenciosamente pelo DTO. Mesma regra de produto
- * de 20260712000004 — coluna física por campo do formulário.
+ * Task T (continuity) — "Registrar Recebimento"/"Registrar Envio" in
+ * GestaoShares.tsx already called updateShare({ status, valor_liquidado, ... }),
+ * but `valor_liquidado` (and the `valor_total` its quick action derives from)
+ * never existed as a column: the status change persisted, the settled
+ * value was silently discarded by the DTO. Same product rule
+ * as 20260712000004 — a physical column per form field.
  */
 export class AddShareLiquidacaoValues20260816000002 implements MigrationInterface {
   name = 'AddShareLiquidacaoValues20260816000002';

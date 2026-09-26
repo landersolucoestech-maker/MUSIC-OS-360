@@ -117,10 +117,10 @@ export class HardenSupabaseDataApiSurface20260620000006 implements MigrationInte
   }
 
   async down(queryRunner: QueryRunner): Promise<void> {
-    // Reverte exclusivamente a policy administrativa adicionada nesta correção.
-    // O restante do hardening desta migration permanece intencionalmente
-    // irreversível: restaurar grants anônimos reabriria a superfície pública
-    // e exigiria uma migration explícita própria.
+    // Reverts exclusively the administrative policy added in this fix.
+    // The rest of this migration's hardening remains intentionally
+    // irreversible: restoring anonymous grants would reopen the public surface
+    // and would require its own explicit migration.
     await queryRunner.query(`
       DO $$
       BEGIN

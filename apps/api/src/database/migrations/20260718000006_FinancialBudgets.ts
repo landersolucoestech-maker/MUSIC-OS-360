@@ -1,14 +1,14 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fase 13A / M6 — orçamento por projeto (Fase 12 §2.8–2.9; Fase 11 §17).
+ * Phase 13A / M6 — budget per project (Phase 12 §2.8–2.9; Phase 11 §17).
  *
- * - UM orçamento vigente por projeto (unique parcial is_active + não deletado);
- * - realizado/comprometido/saldo NUNCA persistidos (derivados das transações);
- * - revisão NUNCA sobrescreve silenciosamente: budget_revisions é APPEND-ONLY
- *   (trigger bloqueia UPDATE/DELETE) com valor anterior, novo e motivo;
- * - moeda com CHECK ISO-4217; BRL operacional (Q5);
- * - linhas por categoria/períodos/versões formais: onda 2 (NÃO criadas aqui).
+ * - ONE active budget per project (partial unique on is_active + not deleted);
+ * - actual/committed/balance NEVER persisted (derived from the transactions);
+ * - a revision NEVER overwrites silently: budget_revisions is APPEND-ONLY
+ *   (a trigger blocks UPDATE/DELETE) with the previous value, the new one and the reason;
+ * - currency with an ISO-4217 CHECK; BRL operational (Q5);
+ * - per-category lines/periods/formal versions: wave 2 (NOT created here).
  */
 export class FinancialBudgets20260718000006 implements MigrationInterface {
   name = 'FinancialBudgets20260718000006';
@@ -56,9 +56,9 @@ export class FinancialBudgets20260718000006 implements MigrationInterface {
           REFERENCES "budgets" ("tenant_id", "id") ON DELETE CASCADE
       )
     `);
-    // CASCADE justificado: revisões são satélites do orçamento; o DELETE físico
-    // de budgets em produção é evitado por soft delete — o CASCADE só atua em
-    // manutenção administrativa.
+    // Justified CASCADE: revisions are satellites of the budget; a physical DELETE
+    // of budgets in production is avoided by soft delete — the CASCADE only applies to
+    // administrative maintenance.
     await queryRunner.query(`
       CREATE INDEX "idx_budget_revisions_tenant_budget"
         ON "budget_revisions" ("tenant_id", "budget_id")

@@ -7,8 +7,8 @@
  * Graceful standalone mode: if DATABASE_URL is not set the provider returns
  * null — services and guards check for this and bypass DB calls safely.
  *
- * Inclui MigrationValidatorService que verifica, no boot, se existem
- * migrations pendentes (fatal em produção, warn em dev).
+ * Includes MigrationValidatorService, which checks at boot whether there are
+ * pending migrations (fatal in production, warn in dev).
  */
 
 import { Module, Global, Logger } from '@nestjs/common';
@@ -69,9 +69,9 @@ export async function createAdminDataSource(config: ConfigService): Promise<Data
     type:                'postgres',
     url,
     entities:            ALL_ENTITIES,
-    // Metadata apenas (nunca executa: migrationsRun=false). Permite ao
-    // MigrationValidatorService rodar showMigrations() na conexão owner —
-    // musicos360_migrations tem RLS sem policy e fica invisível ao app role.
+    // Metadata only (never runs: migrationsRun=false). Lets
+    // MigrationValidatorService run showMigrations() on the owner connection —
+    // musicos360_migrations has RLS without a policy and is invisible to the app role.
     migrations:          [...ALL_MIGRATIONS],
     synchronize:         false,
     migrationsRun:       false,
@@ -191,10 +191,10 @@ export async function createProvisioningDataSource(
         try {
           await ds.initialize();
           logger.log('PostgreSQL conectado via TypeORM');
-          // FASE 3J: quando session-context está ativo, envolve o DataSource num
-          // Proxy ALS-aware para que TODA query do request-path HTTP (e dos jobs)
-          // rode no contexto de tenant aberto por runInTenantContext. Sem o flag,
-          // retorna o DataSource cru (zero mudança de comportamento).
+          // PHASE 3J: when session-context is active, wraps the DataSource in an
+          // ALS-aware Proxy so that EVERY query of the HTTP request path (and of the jobs)
+          // runs in the tenant context opened by runInTenantContext. Without the flag,
+          // returns the raw DataSource (zero behavior change).
           return useAppUrl ? makeTenantAwareDataSource(ds) : ds;
         } catch (err) {
           const aggregateErrors = err && typeof err === 'object' && 'errors' in err

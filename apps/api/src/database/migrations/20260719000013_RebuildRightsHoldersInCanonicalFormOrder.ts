@@ -1,19 +1,19 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `rights_holders` — auditoria 2026-07-19.
+ * Physical rebuild of `rights_holders` — 2026-07-19 audit.
  *
- * Não há formulário visual real (`rights_holders` é um registro interno do
- * módulo `registry` — sincronização ABRAMUS/ECAD, sem página própria no
- * frontend). Ordem canônica segue `CreateRightsHolderDto`, único contrato
- * realmente exercitado (`RightsHoldersService.create()`), que já batia com
- * a ordem física, exceto por dois pontos:
+ * There is no real visual form (`rights_holders` is an internal record of the
+ * `registry` module — ABRAMUS/ECAD sync, with no page of its own in the
+ * frontend). The canonical order follows `CreateRightsHolderDto`, the only contract
+ * actually exercised (`RightsHoldersService.create()`), which already matched
+ * the physical order, except for two points:
  *
- * 1. `email_encrypted`/`phone_encrypted` não existem no DTO e nunca são
- *    escritas por `RightsHoldersService` nem por nenhum outro módulo — órfãs
- *    comprovadas, removidas (mesmo critério de artists.org_slug).
- * 2. Bloco de auditoria estava `created_at, updated_at, deleted_at,
- *    created_by, updated_by`; corrigido para o padrão canônico
+ * 1. `email_encrypted`/`phone_encrypted` do not exist in the DTO and are never
+ *    written by `RightsHoldersService` nor any other module — proven
+ *    orphans, removed (same criterion as artists.org_slug).
+ * 2. The audit block was `created_at, updated_at, deleted_at,
+ *    created_by, updated_by`; fixed to the canonical pattern
  *    `created_at, updated_at, created_by, updated_by, deleted_at`.
  */
 export class RebuildRightsHoldersInCanonicalFormOrder20260719000013 implements MigrationInterface {
@@ -136,9 +136,9 @@ export class RebuildRightsHoldersInCanonicalFormOrder20260719000013 implements M
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM rights_holders`);
 
     await queryRunner.query(`CREATE TABLE rights_holders_restore (${this.originalColumns})`);
-    // email_encrypted/phone_encrypted não existem mais (removidas no up(),
-    // comprovadamente órfãs) — sempre NULL na reversão, mesmo padrão de
-    // org_slug em RebuildArtistsInCanonicalFormOrder20260719000001.
+    // email_encrypted/phone_encrypted no longer exist (removed in up(),
+    // proven orphans) — always NULL on reversal, same pattern as
+    // org_slug in RebuildArtistsInCanonicalFormOrder20260719000001.
     await queryRunner.query(`INSERT INTO rights_holders_restore (${this.restoreCopyColumns}) SELECT ${this.restoreCopyColumns} FROM rights_holders`);
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM rights_holders_restore`);

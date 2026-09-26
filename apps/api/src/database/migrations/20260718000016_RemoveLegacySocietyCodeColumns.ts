@@ -1,24 +1,24 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Remove as colunas físicas fixas por sociedade (`cod_abramus`, `cod_ecad` em
- * `works`/`phonograms`) e a coluna órfã `abramus_protocol` (nunca escrita por
- * nenhum fluxo real — `RegistryFieldsPhase1` 20260601000001) — auditoria
- * Rodada 8, 2026-07-18: a plataforma não é exclusiva de uma entidade de
- * gestão coletiva (ABRAMUS/ECAD/UBC/SBACEM/AMAR/SICAM/SOCINPRO/ASSIM/...) e
- * não pode ter uma coluna canônica por sociedade.
+ * Removes the fixed per-society physical columns (`cod_abramus`, `cod_ecad` in
+ * `works`/`phonograms`) and the orphan column `abramus_protocol` (never written by
+ * any real flow — `RegistryFieldsPhase1` 20260601000001) — audit
+ * Round 8, 2026-07-18: the platform is not exclusive to one collective
+ * management society (ABRAMUS/ECAD/UBC/SBACEM/AMAR/SICAM/SOCINPRO/ASSIM/...) and
+ * cannot have one canonical column per society.
  *
- * O substituto — `external_identifiers` (genérica, já existente desde
- * 20260601000002) — já foi backfilled a partir dos valores legados pela
+ * The replacement — `external_identifiers` (generic, existing since
+ * 20260601000002) — was already backfilled from the legacy values by
  * migration BackfillLegacySocietyCodesToExternalIdentifiers20260718000015.
- * Esta migration valida, antes de remover qualquer coluna, que TODO valor
- * não-nulo em cod_abramus/cod_ecad tem uma linha correspondente em
- * external_identifiers (mesmo tenant_id/entity_type/entity_id/identifier_type/
- * identifier_value) — aborta com erro (fail-fast) se encontrar qualquer valor
- * órfão (não migrado), sem tentar corrigir silenciosamente.
+ * Before removing any column, this migration validates that EVERY non-null
+ * value in cod_abramus/cod_ecad has a matching row in
+ * external_identifiers (same tenant_id/entity_type/entity_id/identifier_type/
+ * identifier_value) — aborts with an error (fail-fast) if it finds any orphan
+ * (unmigrated) value, without trying to fix it silently.
  *
- * Não usa CASCADE. Nenhum índice/constraint/FK referencia estas colunas
- * (confirmado por busca exaustiva nas migrations existentes).
+ * Does not use CASCADE. No index/constraint/FK references these columns
+ * (confirmed by an exhaustive search of the existing migrations).
  */
 export class RemoveLegacySocietyCodeColumns20260718000016 implements MigrationInterface {
   name = 'RemoveLegacySocietyCodeColumns20260718000016';
@@ -53,15 +53,15 @@ export class RemoveLegacySocietyCodeColumns20260718000016 implements MigrationIn
   }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // 1-4. Validação fail-fast: todo cod_abramus/cod_ecad não-nulo já está em external_identifiers.
+    // 1-4. Fail-fast validation: every non-null cod_abramus/cod_ecad is already in external_identifiers.
     await this.assertFullyMigrated(queryRunner, 'works', 'WORK', 'cod_abramus', 'ABRAMUS_PROTOCOL');
     await this.assertFullyMigrated(queryRunner, 'works', 'WORK', 'cod_ecad', 'ECAD_WORK_CODE');
     await this.assertFullyMigrated(queryRunner, 'phonograms', 'RECORDING', 'cod_abramus', 'ABRAMUS_PROTOCOL');
     await this.assertFullyMigrated(queryRunner, 'phonograms', 'RECORDING', 'cod_ecad', 'ECAD_WORK_CODE');
 
-    // 5-6. Nenhum índice/constraint/CHECK depende destas colunas (confirmado por
-    // busca exaustiva). abramus_protocol nunca teve dado real escrito (verificado:
-    // nenhum DTO/service/frontend jamais leu ou gravou nesta coluna).
+    // 5-6. No index/constraint/CHECK depends on these columns (confirmed by an
+    // exhaustive search). abramus_protocol never had real data written (verified:
+    // no DTO/service/frontend ever read or wrote this column).
     await queryRunner.query(`
       ALTER TABLE works
         DROP COLUMN IF EXISTS cod_abramus,
@@ -90,9 +90,9 @@ export class RemoveLegacySocietyCodeColumns20260718000016 implements MigrationIn
         ADD COLUMN IF NOT EXISTS abramus_protocol VARCHAR(100)
     `);
 
-    // Reversão honesta: só reidrata a coluna quando existe EXATAMENTE UM
-    // identificador correspondente (sem CASCADE, sem escolher arbitrariamente
-    // entre múltiplos registros quando o work/phonogram tem mais de um).
+    // Honest reversal: only rehydrates the column when there is EXACTLY ONE
+    // matching identifier (no CASCADE, no arbitrary choice
+    // among multiple records when the work/phonogram has more than one).
     const restore = async (
       table: 'works' | 'phonograms',
       entityType: 'WORK' | 'RECORDING',

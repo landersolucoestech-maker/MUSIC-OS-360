@@ -1,34 +1,34 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `shares` — auditoria 2026-07-19. Reconstrução pura
- * de ordem (sem remoção de colunas).
+ * Physical rebuild of `shares` — 2026-07-19 audit. A pure order
+ * rebuild (no column removal).
  *
- * `shares` serve DOIS domínios reais simultâneos na mesma tabela física:
+ * `shares` serves TWO real domains simultaneously in the same physical table:
  *
- * 1. Titularidade/registro (submissão ABRAMUS/ECAD): obra_id, fonograma_id,
- *    titular_nome, titular_doc, papel (aliases EN legados holderName/
- *    holderDoc/role/workId/trackId em CreateShareDto, resolvidos por
- *    `SharesService.toColumns()`) + os campos de "Registry Fields Phase 1"
+ * 1. Ownership/registration (ABRAMUS/ECAD submission): obra_id, fonograma_id,
+ *    titular_nome, titular_doc, papel (legacy EN aliases holderName/
+ *    holderDoc/role/workId/trackId in CreateShareDto, resolved by
+ *    `SharesService.toColumns()`) + the "Registry Fields Phase 1" fields
  *    (migration 20260601000001): rights_holder_id, publisher_id, role,
  *    territory, instrument, credited_name, is_primary, is_featured,
- *    start_date, end_date. `rights_holder_id` tem backfill real (migration
- *    20260601000002); `role`/`territory`/`credited_name`/`is_primary` têm
- *    leitores reais em `society-payload-builder.service.ts`/
- *    `entity-validators.ts` (fallback `s.role ?? s.papel`). Nenhum desses 10
- *    campos tem formulário visual — mantidos como bloco técnico/reservado
- *    (mesmo critério de `financial_project_id` em marketing_projects/
- *    audiovisual_projects), não removidos.
+ *    start_date, end_date. `rights_holder_id` has a real backfill (migration
+ *    20260601000002); `role`/`territory`/`credited_name`/`is_primary` have
+ *    real readers in `society-payload-builder.service.ts`/
+ *    `entity-validators.ts` (fallback `s.role ?? s.papel`). None of these 10
+ *    fields has a visual form — kept as a technical/reserved block
+ *    (same criterion as `financial_project_id` in marketing_projects/
+ *    audiovisual_projects), not removed.
  *
- * 2. Share financeiro (formulário real `SharePendenteFormModal.tsx`, chaves
- *    EXATAS documentadas em `CreateShareDto`): share_type → percentual/
- *    status (comuns às duas seções, posição do formulário) → acordo_notas/
+ * 2. Financial share (the real form `SharePendenteFormModal.tsx`, EXACT keys
+ *    documented in `CreateShareDto`): share_type → percentual/
+ *    status (common to both sections, form position) → acordo_notas/
  *    acordo_url/observacoes → direcao → lancamento_id/detentor/destinatario/
- *    tipo (ramo "Release Interno") OU nome_musica/artista_externo/
+ *    tipo ("Release Interno" branch) OR nome_musica/artista_externo/
  *    artista_projeto_id/artista_id/pagador/pagador_contato/origem_acordo/
- *    data_prevista/documentos (ramo "Share Externo a Receber", mutuamente
- *    exclusivo — mesma linha física acomoda os dois formatos) → versao/
- *    historico (apenas na criação).
+ *    data_prevista/documentos ("Share Externo a Receber" branch, mutually
+ *    exclusive — the same physical row accommodates both formats) → versao/
+ *    historico (only on creation).
  */
 export class RebuildSharesInCanonicalFormOrder20260719000014 implements MigrationInterface {
   name = 'RebuildSharesInCanonicalFormOrder20260719000014';

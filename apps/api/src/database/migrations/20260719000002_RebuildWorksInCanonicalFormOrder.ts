@@ -1,19 +1,19 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `works` na ordem canônica do formulário real
- * (ObraFormModal) — auditoria 2026-07-19. Mesmo padrão de
- * RebuildArtistsInCanonicalFormOrder20260719000001: PostgreSQL não tem ALTER
- * COLUMN POSITION, então a única forma de reordenar é criar uma tabela
- * substituta, copiar os dados coluna a coluna, trocar via RENAME (nunca
- * CASCADE) e recriar toda a cadeia de dependências.
+ * Physical rebuild of `works` in the canonical order of the real form
+ * (ObraFormModal) — 2026-07-19 audit. Same pattern as
+ * RebuildArtistsInCanonicalFormOrder20260719000001: PostgreSQL has no ALTER
+ * COLUMN POSITION, so the only way to reorder is to create a replacement
+ * table, copy the data column by column, swap via RENAME (never
+ * CASCADE) and recreate the whole dependency chain.
  *
- * Ordem visual real do form (Vincular a Projeto Concluído aparece primeiro,
- * antes de "Dados Principais da Obra"): projeto_id, cod_entidade, cod_ecad,
+ * Real visual order of the form ("Vincular a Projeto Concluído" appears first,
+ * before "Dados Principais da Obra"): projeto_id, cod_entidade, cod_ecad,
  * iswc, titulo, genero, idioma, duracao, instrumental, criada_por_ia, status,
  * tipo_ia, ia_harmonia, ia_melodia, ia_letra, outros_titulos,
- * referencias_conexas, letra_completa. `isrc` NÃO aparece neste formulário
- * (identifica fonogramas, não obras) — vai para o bloco legado.
+ * referencias_conexas, letra_completa. `isrc` does NOT appear in this form
+ * (it identifies phonograms, not works) — it goes to the legacy block.
  */
 export class RebuildWorksInCanonicalFormOrder20260719000002 implements MigrationInterface {
   name = 'RebuildWorksInCanonicalFormOrder20260719000002';
@@ -102,15 +102,15 @@ export class RebuildWorksInCanonicalFormOrder20260719000002 implements Migration
     await queryRunner.query(`CREATE INDEX idx_works_artista_id_new ON works_new (artista_id)`);
     await queryRunner.query(`CREATE INDEX idx_works_registry_status_new ON works_new (tenant_id, registry_status)`);
 
-    // FKs de outras tabelas apontando para works — precisam ser recriadas após o swap.
+    // FKs of other tables pointing to works — they must be recreated after the swap.
     await queryRunner.query(`ALTER TABLE release_works DROP CONSTRAINT "FK_release_works_work"`);
     await queryRunner.query(`ALTER TABLE phonograms DROP CONSTRAINT fk_phonograms_obra_id`);
     await queryRunner.query(`ALTER TABLE shares DROP CONSTRAINT fk_shares_obra_id`);
     await queryRunner.query(`ALTER TABLE work_participants DROP CONSTRAINT work_participants_work_id_fkey`);
 
-    // release_works.tenant_isolation referencia `works` numa subquery EXISTS — a
-    // policy fica presa ao OID da relação e bloqueia o DROP TABLE works_old se
-    // não for recriada depois do swap.
+    // release_works.tenant_isolation references `works` in an EXISTS subquery — the
+    // policy stays bound to the relation's OID and blocks DROP TABLE works_old if
+    // it is not recreated after the swap.
     await queryRunner.query(`DROP POLICY tenant_isolation ON release_works`);
 
     await queryRunner.query(`ALTER TABLE works RENAME TO works_old`);
@@ -141,7 +141,7 @@ export class RebuildWorksInCanonicalFormOrder20260719000002 implements Migration
     await queryRunner.query(`ALTER TABLE shares ADD CONSTRAINT fk_shares_obra_id FOREIGN KEY (obra_id) REFERENCES works(id) ON DELETE SET NULL`);
     await queryRunner.query(`ALTER TABLE work_participants ADD CONSTRAINT work_participants_work_id_fkey FOREIGN KEY (work_id) REFERENCES works(id) ON DELETE CASCADE`);
 
-    // Recria a policy de release_works (idêntica — apenas religada ao novo OID de works).
+    // Recreates the release_works policy (identical — only rebound to the new works OID).
     await queryRunner.query(`
       CREATE POLICY tenant_isolation ON release_works
         AS PERMISSIVE FOR ALL TO authenticated
@@ -175,7 +175,7 @@ export class RebuildWorksInCanonicalFormOrder20260719000002 implements Migration
     await queryRunner.query(`ANALYZE works`);
   }
 
-  // Ordem/tipos ORIGINAIS (pré-migration) — para reverter de forma honesta.
+  // ORIGINAL (pre-migration) order/types — to revert honestly.
   private readonly originalColumns = `
     id                                  uuid NOT NULL DEFAULT gen_random_uuid(),
     tenant_id                           uuid NOT NULL,

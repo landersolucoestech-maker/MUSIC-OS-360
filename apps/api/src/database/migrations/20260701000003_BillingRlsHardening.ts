@@ -1,26 +1,26 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Hardening RLS das tabelas de billing gerenciadas por sistema.
+ * RLS hardening of the system-managed billing tables.
  *
- * PROBLEMA (evidência): billing.service / billing-enforcement.service usam
- * DATA_SOURCE, que em produção (DATABASE_SESSION_CONTEXT_ENABLED=true) conecta
- * como `musicos_app` — role LOGIN NOBYPASSRLS, membro de `authenticated`.
- * As tabelas tenant_billing_state / payment_events / billing_settings tinham
- * RLS ENABLE mas NENHUMA policy → para uma role não-owner isso é DENY-ALL
- * (o webhook não grava payment_events/tenant_billing_state; enforcement quebra).
+ * PROBLEM (evidence): billing.service / billing-enforcement.service use
+ * DATA_SOURCE, which in production (DATABASE_SESSION_CONTEXT_ENABLED=true) connects
+ * as `musicos_app` — a LOGIN NOBYPASSRLS role, member of `authenticated`.
+ * The tenant_billing_state / payment_events / billing_settings tables had
+ * RLS ENABLE but NO policy → for a non-owner role that is DENY-ALL
+ * (the webhook does not write payment_events/tenant_billing_state; enforcement breaks).
  *
- * CORREÇÃO: FORCE ROW LEVEL SECURITY (fail-closed, consistente com as demais
- * tabelas) + policies mínimas usando os helpers portáveis app_current_tenant_id()
- * e app_is_super_admin() (migration 20260612000001).
+ * FIX: FORCE ROW LEVEL SECURITY (fail-closed, consistent with the other
+ * tables) + minimal policies using the portable helpers app_current_tenant_id()
+ * and app_is_super_admin() (migration 20260612000001).
  *
- * Modelo de acesso:
- *  - Caminho de SISTEMA (webhook @Public / schedulers): sem app.current_tenant_id
- *    → app_current_tenant_id() = NULL → acesso liberado (necessário p/ idempotência
- *    do webhook e enforcement). Rotas de tenant SEMPRE têm contexto setado, então
- *    nunca caem nesse ramo.
- *  - Sessão de TENANT: vê/altera apenas a própria linha (tenant_id).
- *  - super_admin: acesso total (endpoints admin de suspensão/reativação).
+ * Access model:
+ *  - SYSTEM path (@Public webhook / schedulers): no app.current_tenant_id
+ *    → app_current_tenant_id() = NULL → access granted (needed for webhook
+ *    idempotency and enforcement). Tenant routes ALWAYS have the context set, so they
+ *    never fall into this branch.
+ *  - TENANT session: sees/changes only its own row (tenant_id).
+ *  - super_admin: full access (admin suspension/reactivation endpoints).
  */
 export class BillingRlsHardening20260701000003 implements MigrationInterface {
   name = 'BillingRlsHardening20260701000003';

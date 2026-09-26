@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Sincronização formulário ↔ banco (Shares de lançamento + Contratos/Wizard).
+ * Form ↔ database sync (release Shares + Contracts/Wizard).
  *
- * REGRA DE PRODUTO (2026-07-12): cada campo do formulário tem a SUA coluna
- * física com o nome EXATO da chave enviada pelo form (SharePendenteFormModal,
+ * PRODUCT RULE (2026-07-12): each form field has ITS OWN physical
+ * column with the EXACT name of the key sent by the form (SharePendenteFormModal,
  * ContratoWizard).
  */
 export class SharesContractsFormFieldColumns20260712000004 implements MigrationInterface {

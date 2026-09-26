@@ -1,39 +1,39 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `audiovisual_projects` na ordem canônica do
- * formulário real (AudiovisualProjectFormModal) — auditoria 2026-07-19.
- * Mesmo padrão das anteriores (artists/works/phonograms/releases/projects).
+ * Physical rebuild of `audiovisual_projects` in the canonical order of the
+ * real form (AudiovisualProjectFormModal) — 2026-07-19 audit.
+ * Same pattern as the previous ones (artists/works/phonograms/releases/projects).
  *
- * Ordem visual real (grid 3 colunas, linha a linha): Música (phonogram_id/
- * music_title, com `title` como duplicata derivada enviada junto) → Artista
- * (artist_name) → Tipo de Produção (type) → Formato (format) → Diretor →
- * Videomaker → Editor → Data da Gravação (shooting_date) → Local da
- * Gravação (location) → Status Captação/Edição/Aprovação → Pré-Lançamento →
- * Lançamento → Orçamento (budget_estimated) → Custo Real (budget_actual) →
- * Roteiro Inicial (concept) → Observações. `status`/`final_status` são
- * setados pelo próprio submit do formulário (não têm campo visível, mas são
- * escritos a cada create/edit); `completed_at`/`publish_date` são setados
- * pela lógica de transição de status no service (nunca pelo formulário).
+ * Real visual order (3-column grid, row by row): Track (phonogram_id/
+ * music_title, with `title` as a derived duplicate sent along) → Artist
+ * (artist_name) → Production Type (type) → Format (format) → Director →
+ * Videomaker → Editor → Shooting Date (shooting_date) → Shooting
+ * Location (location) → Capture/Editing/Approval Status → Pre-Release →
+ * Release → Budget (budget_estimated) → Actual Cost (budget_actual) →
+ * Initial Script (concept) → Notes. `status`/`final_status` are
+ * set by the form's own submit (they have no visible field, but are
+ * written on every create/edit); `completed_at`/`publish_date` are set
+ * by the status transition logic in the service (never by the form).
  *
  * `artist_id`/`release_id`/`campaign_id`/`event_id`/`financial_project_id`
- * são relações técnicas: aceitas pelo DTO e usadas em filtros/joins, mas sem
- * seletor dedicado no formulário de produção ativo. `financial_project_id`
- * nasce sempre NULL por design (migration FinancialOperationalBridges
- * 20260718000009 — vínculo é decisão explícita futura do usuário).
+ * are technical relations: accepted by the DTO and used in filters/joins, but without a
+ * dedicated selector in the active production form. `financial_project_id`
+ * is always born NULL by design (migration FinancialOperationalBridges
+ * 20260718000009 — the link is a future explicit user decision).
  *
  * `slug`/`description`/`objective`/`priority`/`stage`/`production_company`/
- * `producer`/`start_date`/`recording_date`/`delivery_date` são aceitos pelo
- * DTO mas não têm campo correspondente no formulário ativo (era anterior do
- * domínio) — `priority` tem default aplicado pelo service, `description` é
- * lida no filtro de busca, `recording_date` é lida como fallback de exibição
- * de `shooting_date`, `delivery_date` é lida no dashboard de métricas.
- * Mantidos como legado/reservado (mesmo critério de `projects.orcamento`).
+ * `producer`/`start_date`/`recording_date`/`delivery_date` are accepted by the
+ * DTO but have no matching field in the active form (an earlier era of the
+ * domain) — `priority` has a default applied by the service, `description` is
+ * read in the search filter, `recording_date` is read as a display fallback
+ * of `shooting_date`, `delivery_date` is read in the metrics dashboard.
+ * Kept as legacy/reserved (same criterion as `projects.orcamento`).
  *
- * `organization_id`/`archived_at` são removidas: órfãs comprovadas — ausentes
- * do CreateAudiovisualProjectDto/UpdateAudiovisualProjectDto, sem nenhum
- * leitor/escritor em nenhum controller/service/UI do domínio (grep completo
- * em apps/api/src e apps/web/src/modules/audiovisual) — mesmo padrão de
+ * `organization_id`/`archived_at` are removed: proven orphans — absent
+ * from CreateAudiovisualProjectDto/UpdateAudiovisualProjectDto, without any
+ * reader/writer in any controller/service/UI of the domain (full grep
+ * in apps/api/src and apps/web/src/modules/audiovisual) — same pattern as
  * `artists.org_slug`/`projects.data_inicio`.
  */
 export class RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006 implements MigrationInterface {
@@ -114,7 +114,7 @@ export class RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006 implem
     `'social_content'::character varying, 'other'::character varying])::text[])))`;
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // 0. Validação fail-fast: organization_id/archived_at precisam estar genuinamente vazias.
+    // 0. Fail-fast validation: organization_id/archived_at must be genuinely empty.
     const [{ non_null }] = await queryRunner.query(
       `SELECT count(organization_id)::int + count(archived_at)::int AS non_null FROM audiovisual_projects`,
     );
@@ -264,9 +264,9 @@ export class RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006 implem
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM audiovisual_projects`);
 
     await queryRunner.query(`CREATE TABLE audiovisual_projects_restore (${this.originalColumns})`);
-    // organization_id/archived_at não existem mais (removidas no up(),
-    // comprovadamente órfãs) — sempre NULL na reversão, mesmo padrão de
-    // org_slug em RebuildArtistsInCanonicalFormOrder20260719000001.
+    // organization_id/archived_at no longer exist (removed in up(), proven
+    // orphans) — always NULL on reversal, same pattern as
+    // org_slug in RebuildArtistsInCanonicalFormOrder20260719000001.
     await queryRunner.query(`INSERT INTO audiovisual_projects_restore (${this.restoreCopyColumns}) SELECT ${this.restoreCopyColumns} FROM audiovisual_projects`);
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM audiovisual_projects_restore`);

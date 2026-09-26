@@ -3,11 +3,11 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20240101000000_InitialSchema
  *
- * Schema inicial do MUSIC OS 360.
- * Cria todas as tabelas, índices e constraints.
- * Gerado a partir de src/database/entities.ts.
+ * Initial schema of MUSIC OS 360.
+ * Creates all tables, indexes and constraints.
+ * Generated from src/database/entities.ts.
  *
- * Rollback: down() dropa todas as tabelas em ordem inversa (FK-safe).
+ * Rollback: down() drops all tables in reverse order (FK-safe).
  */
 export class InitialSchema20240101000000 implements MigrationInterface {
   name = 'InitialSchema20240101000000';
@@ -859,7 +859,7 @@ export class InitialSchema20240101000000 implements MigrationInterface {
   }
 
   async down(queryRunner: QueryRunner): Promise<void> {
-    // Ordem inversa à criação para respeitar dependências implícitas
+    // Reverse order of creation to respect implicit dependencies
     const tables = [
       'leave_requests', 'payroll_entries', 'employees',
       'ecad_reports', 'content_detections', 'artist_goals', 'ai_jobs',

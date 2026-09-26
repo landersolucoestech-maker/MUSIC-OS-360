@@ -1,12 +1,12 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Sincronização formulário ↔ banco (CRM, Financeiro e Operação).
+ * Form ↔ database sync (CRM, Finance and Operations).
  *
- * REGRA DE PRODUTO (2026-07-12): cada campo de cada formulário tem a SUA
- * coluna física com o nome EXATO da chave enviada pelo form.
- * Módulos: Leads, Contatos (clients), Transações, Notas Fiscais (invoices),
- * Takedowns, Eventos, Licenças.
+ * PRODUCT RULE (2026-07-12): each field of each form has ITS OWN
+ * physical column with the EXACT name of the key sent by the form.
+ * Modules: Leads, Contacts (clients), Transactions, Invoices (invoices),
+ * Takedowns, Events, Licenses.
  */
 export class CrmFinanceOpsFormFieldColumns20260712000005 implements MigrationInterface {
   name = 'CrmFinanceOpsFormFieldColumns20260712000005';

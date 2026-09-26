@@ -1,40 +1,40 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `clients` na ordem canônica do formulário real
- * (ContatoFormModal — "Contato = Cliente", decisão Fase 3 de unificação) —
- * auditoria 2026-07-19. Mesmo padrão das anteriores.
+ * Physical rebuild of `clients` in the canonical order of the real form
+ * (ContatoFormModal — "Contact = Client", Phase 3 unification decision) —
+ * 2026-07-19 audit. Same pattern as the previous ones.
  *
- * Ordem visual real: "Classificação do Contato" (tipo_pessoa → categoria →
- * perfil) → "Dados da Pessoa Física/Jurídica" (foto/nome_pf/cpf ou
+ * Real visual order: "Classificação do Contato" (tipo_pessoa → categoria →
+ * perfil) → "Dados da Pessoa Física/Jurídica" (foto/nome_pf/cpf or
  * razao_social/nome_fantasia/cnpj, email/telefone/instagram/funcao — cpf/
- * cnpj/email/telefone são sempre encriptados, nunca em texto puro:
+ * cnpj/email/telefone are always encrypted, never in plain text:
  * cpf_cnpj_encrypted/email_encrypted/telefone_encrypted) → "Endereço"
- * (logradouro/numero/complemento/bairro/cidade/estado/cep, com
- * endereco_completo derivado no submit — buildEnderecoCompleto) →
+ * (logradouro/numero/complemento/bairro/cidade/estado/cep, with
+ * endereco_completo derived on submit — buildEnderecoCompleto) →
  * "Classificação" (status_contato/prioridade_contato) → "Responsável"
- * (PJ apenas: responsavel_nome/cargo/email/telefone) → "Anexos" →
- * "Observações" → "Histórico de Interações" (interacoes, sempre por
- * último). `nome` é derivada (nome_pf ou razao_social, calculada pelo
- * próprio ClientsService para busca/resposta), posicionada junto da
- * identidade. `status` (ClientStatus de negócio, distinto de
- * status_contato) não tem campo visível no formulário ativo — legado/
- * reservado, mantido (aceito pelo DTO, default 'ativo').
+ * (legal entities only: responsavel_nome/cargo/email/telefone) → "Anexos" →
+ * "Observações" → "Histórico de Interações" (interacoes, always
+ * last). `nome` is derived (nome_pf or razao_social, computed by
+ * ClientsService itself for search/response), positioned next to the
+ * identity. `status` (the business ClientStatus, distinct from
+ * status_contato) has no visible field in the active form — legacy/
+ * reserved, kept (accepted by the DTO, default 'ativo').
  *
- * `segmento`/`endereco`/`responsavel`/`prioridade`/`cpf`/`cnpj` são
- * removidas: órfãs comprovadas. As quatro primeiras nunca aparecem em
- * `ClientsService.FIELDS` (whitelist real de escrita) nem no formulário —
- * os nomes homônimos usados por `useClientes()` (adaptador legado) são
- * campos de um view-model local traduzido para os nomes reais antes de
- * qualquer chamada à API, nunca chegam a estas colunas. `cpf`/`cnpj` (texto
- * puro) nunca são escritas por design de segurança — a única forma real de
- * persistir CPF/CNPJ é via `cpf_cnpj_encrypted`; o service explicitamente
- * exclui `cpf`/`cnpj` do objeto final e `mapClient()` sempre sobrescreve
- * essas chaves na resposta a partir do valor decriptado, então a coluna
- * físicas nunca é lida OU escrita de fato.
+ * `segmento`/`endereco`/`responsavel`/`prioridade`/`cpf`/`cnpj` are
+ * removed: proven orphans. The first four never appear in
+ * `ClientsService.FIELDS` (the real write whitelist) nor in the form —
+ * the homonymous names used by `useClientes()` (legacy adapter) are
+ * fields of a local view model translated to the real names before
+ * any API call; they never reach these columns. `cpf`/`cnpj` (plain
+ * text) are never written by security design — the only real way to
+ * persist a CPF/CNPJ is via `cpf_cnpj_encrypted`; the service explicitly
+ * excludes `cpf`/`cnpj` from the final object and `mapClient()` always overwrites
+ * those keys in the response with the decrypted value, so the physical
+ * column is never actually read OR written.
  *
- * `categoria`/`perfil` corrigidas para NOT NULL: exigidas por
- * `CreateClientDto` (sem `@IsOptional()`) — tabela vazia no DEV, sem risco.
+ * `categoria`/`perfil` fixed to NOT NULL: required by
+ * `CreateClientDto` (no `@IsOptional()`) — empty table in DEV, no risk.
  */
 export class RebuildClientsInCanonicalFormOrder20260719000010 implements MigrationInterface {
   name = 'RebuildClientsInCanonicalFormOrder20260719000010';
@@ -228,9 +228,9 @@ export class RebuildClientsInCanonicalFormOrder20260719000010 implements Migrati
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM clients`);
 
     await queryRunner.query(`CREATE TABLE clients_restore (${this.originalColumns})`);
-    // segmento/endereco/responsavel/prioridade/cpf/cnpj não existem mais
-    // (removidas no up(), comprovadamente órfãs) — sempre NULL na reversão,
-    // mesmo padrão de org_slug em RebuildArtistsInCanonicalFormOrder20260719000001.
+    // segmento/endereco/responsavel/prioridade/cpf/cnpj no longer exist
+    // (removed in up(), proven orphans) — always NULL on reversal,
+    // same pattern as org_slug in RebuildArtistsInCanonicalFormOrder20260719000001.
     await queryRunner.query(`INSERT INTO clients_restore (${this.restoreCopyColumns}) SELECT ${this.restoreCopyColumns} FROM clients`);
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM clients_restore`);

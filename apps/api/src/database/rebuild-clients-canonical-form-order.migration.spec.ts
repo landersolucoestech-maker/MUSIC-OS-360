@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `clients` na ordem do formulário real (ContatoFormModal — "Contato =
- * Cliente"). Classificação do Contato (tipo_pessoa/categoria/perfil) é a
- * primeira seção real.
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `clients` in the real form's order (ContatoFormModal — "Contact =
+ * Client"). The contact classification (tipo_pessoa/categoria/perfil) is the
+ * first real section.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000010_RebuildClientsInCanonicalFormOrder.ts'),

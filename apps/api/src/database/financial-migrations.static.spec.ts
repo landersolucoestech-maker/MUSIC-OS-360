@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Fase 13A Etapa 15 — testes ESTÁTICOS das migrations financeiras M0–M9.
- * Leem os arquivos como texto; NUNCA conectam a banco, NUNCA executam SQL.
+ * Phase 13A Step 15 — STATIC tests of the financial migrations M0–M9.
+ * They read the files as text; they NEVER connect to a database, NEVER run SQL.
  */
 const MIGRATIONS_DIR = path.join(__dirname, 'migrations');
 
@@ -50,7 +50,7 @@ describe('financial migrations M0–M9 — static contracts', () => {
     const src = all();
     for (const forbidden of [
       'sxmfeocztlztvpdnxayk', // MAIN
-      'sxdhnhoupjrnntrmjtyn', // DEV antigo excluído
+      'sxdhnhoupjrnntrmjtyn', // old DEV deleted
       'remote_schema',
       'SUPABASE_ACCESS_TOKEN',
       'db_pass',
@@ -72,23 +72,23 @@ describe('financial migrations M0–M9 — static contracts', () => {
     const src = all();
     expect(/DROP\s+\w+[^;`]*CASCADE/i.test(src)).toBe(false);
     const onDeleteCascades = src.match(/ON DELETE CASCADE/g) ?? [];
-    // 2 do schema novo (allocations←transaction, revisions←budget) + 3 na
-    // RESTAURAÇÃO legada do down() da M2 (transcrição fiel do DDL Enterprise:
+    // 2 from the new schema (allocations←transaction, revisions←budget) + 3 in the
+    // legacy RESTORATION of M2's down() (a faithful transcription of the Enterprise DDL:
     // category_centers/links/favorites ← categories).
     expect(onDeleteCascades.length).toBe(5);
   });
 
   it('revised M2: fail-fast replacement of the legacy module (Phase 13B authorization)', () => {
     const src = read(FILES[2]);
-    // valida existência explícita + zero registros + assinatura, não só IF EXISTS
+    // validates explicit existence + zero records + signature, not only IF EXISTS
     expect(src).toContain(`to_regclass('public.' || v_table) IS NULL`);
     expect(src).toMatch(/possui % registro\(s\)/);
     expect(src).toContain(`column_name = 'slug'`);
     expect(src).toMatch(/nature', 'includes_in_pnl/);
-    // dependências externas via catálogo (FKs de fora do conjunto + views)
+    // external dependencies via the catalog (FKs from outside the set + views)
     expect(src).toContain('pg_constraint');
     expect(src).toContain('view_table_usage');
-    // remoção em ordem reversa e SEM CASCADE nos DROPs
+    // removal in reverse order and WITHOUT CASCADE in the DROPs
     const order = [
       'financial_category_rule_runs', 'financial_category_rules',
       'financial_category_favorites', 'financial_category_links',
@@ -101,19 +101,19 @@ describe('financial migrations M0–M9 — static contracts', () => {
       last = i;
     }
     expect(/DROP TABLE [^;`]*CASCADE/.test(src)).toBe(false);
-    // estrutura nova criada SOMENTE depois da remoção
+    // new structure created ONLY after the removal
     const lastDrop = src.indexOf('DROP TABLE "${table}"');
     const firstCreate = src.indexOf('CREATE TABLE "financial_category_templates"');
     expect(lastDrop).toBeGreaterThan(-1);
     expect(firstCreate).toBeGreaterThan(lastDrop);
-    // down(): restauração completa do módulo legado (Opção 1), sem seeds
+    // down(): full restoration of the legacy module (Option 1), without seeds
     const down = src.slice(src.indexOf('public async down'));
     expect(down).toContain('CREATE TABLE financial_categories');
     expect(down).toContain('CREATE TABLE financial_category_rule_runs');
     expect(down).toContain('depth_level');
     expect(down).toContain('tenant_isolation_');
     expect(/INSERT INTO/i.test(down)).toBe(false);
-    // shape do ponto da cadeia: junction SEM center_id (D8) e rules SEM colunas flat (D7)
+    // shape of the chain point: junction WITHOUT center_id (D8) and rules WITHOUT flat columns (D7)
     expect(down.includes('center_id')).toBe(false);
     expect(down.includes('counterparty_type')).toBe(false);
   });
@@ -176,7 +176,7 @@ describe('financial migrations M0–M9 — static contracts', () => {
     const src = all();
     const composite = src.match(/REFERENCES "\w+" \("tenant_id", "id"\)/g) ?? [];
     expect(composite.length).toBeGreaterThanOrEqual(18);
-    // nenhuma FK simples para tabelas tenant-owned do domínio:
+    // no simple FK to tenant-owned tables of the domain:
     expect(/REFERENCES "financial_transactions" \("id"\)/.test(src)).toBe(false);
     expect(/REFERENCES "projects" \("id"\)/.test(src)).toBe(false);
     expect(/REFERENCES "artists" \("id"\)/.test(src)).toBe(false);
@@ -186,8 +186,8 @@ describe('financial migrations M0–M9 — static contracts', () => {
     const src = read(FILES[7]) + read(FILES[8]);
     const enable = src.match(/ENABLE ROW LEVEL SECURITY/g) ?? [];
     const force = src.match(/FORCE ROW LEVEL SECURITY/g) ?? [];
-    // 8 tenant-tables + templates (M7) + metric_entries (M8) = 10 enable/force
-    // (down() usa NO FORCE/DISABLE — contam só os do up por padrão de escrita)
+    // 8 tenant tables + templates (M7) + metric_entries (M8) = 10 enable/force
+    // (down() uses NO FORCE/DISABLE — only the up ones count by writing pattern)
     expect(enable.filter((s) => s === 'ENABLE ROW LEVEL SECURITY').length).toBeGreaterThanOrEqual(2);
     expect(force.length).toBeGreaterThanOrEqual(2);
     expect(src).toContain('private_get_tenant_id()');

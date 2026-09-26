@@ -1,16 +1,16 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fase 13A / M0 — pré-requisitos do domínio financeiro (Fase 12 §14).
+ * Phase 13A / M0 — prerequisites of the financial domain (Phase 12 §14).
  *
- * 1. pgcrypto (idempotente, já presente na cadeia — reafirmado aqui porque o
- *    domínio financeiro depende de gen_random_uuid()).
- * 2. UNIQUE ("tenant_id","id") nas tabelas-alvo de FK COMPOSTA do domínio
- *    financeiro (invariante I6: vínculo cross-tenant impossível no banco, não
- *    apenas na RLS). Constraint aditiva: não altera dados nem comportamento.
+ * 1. pgcrypto (idempotent, already present in the chain — restated here because the
+ *    financial domain depends on gen_random_uuid()).
+ * 2. UNIQUE ("tenant_id","id") on the target tables of the financial domain's COMPOSITE
+ *    FKs (invariant I6: a cross-tenant link is impossible in the database, not
+ *    only in RLS). Additive constraint: changes neither data nor behavior.
  *
- * Dependência externa: nenhuma role de cluster é exigida aqui. A propriedade
- * dos objetos permanece com o executor da migração (sem transferência).
+ * External dependency: no cluster role is required here. Ownership
+ * of the objects stays with the migration executor (no transfer).
  */
 export class FinancialPrereqs20260718000000 implements MigrationInterface {
   name = 'FinancialPrereqs20260718000000';
@@ -36,8 +36,8 @@ export class FinancialPrereqs20260718000000 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Ordem inversa; a extensão pgcrypto é compartilhada pela plataforma e NÃO
-    // é removida (Fase 13A Etapa 14 — objetos globais não derrubados).
+    // Reverse order; the pgcrypto extension is shared by the platform and is NOT
+    // removed (Phase 13A Step 14 — global objects are not dropped).
     for (const table of [...FinancialPrereqs20260718000000.TARGETS].reverse()) {
       await queryRunner.query(`
         ALTER TABLE "${table}" DROP CONSTRAINT "uq_${table}_tenant_id_id"

@@ -1,19 +1,19 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * FASE 3B — Sub-lote A (corretivo): cria a policy padrão portável nas três
- * tabelas que a auditoria 3A apontou com RLS=ENABLED, FORCE RLS=ENABLED e
- * ZERO policies — ou seja, hoje em DENY TOTAL para o role da aplicação
+ * PHASE 3B — Sub-batch A (corrective): creates the standard portable policy on the three
+ * tables the 3A audit flagged with RLS=ENABLED, FORCE RLS=ENABLED and
+ * ZERO policies — i.e. currently in TOTAL DENY for the application role
  * (musicos_app, NOBYPASSRLS).
  *
  *   inventory_items, licenses, financial_rules
  *
- * Padrão obrigatório do projeto (portável, NUNCA auth.jwt direto):
+ * Mandatory project pattern (portable, NEVER auth.jwt directly):
  *   USING      (tenant_id = private_get_tenant_id())
  *   WITH CHECK (tenant_id = private_get_tenant_id())
  *
- * Idempotente: a policy só é criada se ainda não existir (consulta pg_policy).
- * NÃO altera ENABLE/FORCE RLS (já ativos), NÃO remove objetos existentes.
+ * Idempotent: the policy is only created if it does not exist yet (queries pg_policy).
+ * Does NOT change ENABLE/FORCE RLS (already active), does NOT remove existing objects.
  */
 export class RlsPoliciesInventoryLicensesFinancial20260613000006 implements MigrationInterface {
   name = 'RlsPoliciesInventoryLicensesFinancial20260613000006';
@@ -42,7 +42,7 @@ export class RlsPoliciesInventoryLicensesFinancial20260613000006 implements Migr
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Reverte apenas a policy criada por esta migration (ENABLE/FORCE preservados).
+    // Reverts only the policy created by this migration (ENABLE/FORCE preserved).
     for (const table of RlsPoliciesInventoryLicensesFinancial20260613000006.TABLES) {
       await queryRunner.query(
         `DROP POLICY IF EXISTS "${RlsPoliciesInventoryLicensesFinancial20260613000006.POLICY}" ON "${table}"`,

@@ -1,18 +1,18 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * 20260610000007_EnableRlsOnRbacTables  (M7 — FASE 4 RBAC Enterprise)
+ * 20260610000007_EnableRlsOnRbacTables  (M7 — PHASE 4 Enterprise RBAC)
  *
- * Ativa RLS no padrão EXISTENTE (private_get_tenant_id() + super_admin_full_access), criado em
- * 20260520000020_RLSPolicies (executa antes desta).
+ * Enables RLS following the EXISTING pattern (private_get_tenant_id() + super_admin_full_access), created in
+ * 20260520000020_RLSPolicies (runs before this one).
  *
  *  - departments, positions, job_functions, membership_job_functions → tenant_isolation (FORCE RLS).
- *  - roles → globais (tenant_id IS NULL) visíveis a todos; escrita só no próprio tenant.
- *  - permissions e role_permissions → SEM RLS (catálogo global; sem tenant_id — decisão D3).
- *    A API conecta via service role; RLS é a 2ª defesa para conexões diretas PostgREST/Realtime.
- *  - org_members já possui RLS adequada desde 20260520000020 — não é re-tocada.
+ *  - roles → globals (tenant_id IS NULL) visible to everyone; writes only in the own tenant.
+ *  - permissions and role_permissions → NO RLS (global catalog; no tenant_id — decision D3).
+ *    The API connects via the service role; RLS is the 2nd defense for direct PostgREST/Realtime connections.
+ *  - org_members already has adequate RLS since 20260520000020 — not touched again.
  *
- * Idempotente (DROP POLICY IF EXISTS antes de CREATE). Reversível via down().
+ * Idempotent (DROP POLICY IF EXISTS before CREATE). Reversible via down().
  */
 export class EnableRlsOnRbacTables20260610000007 implements MigrationInterface {
   name = 'EnableRlsOnRbacTables20260610000007';
@@ -25,7 +25,7 @@ export class EnableRlsOnRbacTables20260610000007 implements MigrationInterface {
   ];
 
   async up(qr: QueryRunner): Promise<void> {
-    // ── Tabelas tenant-scoped: padrão idêntico ao RLSPolicies ───────────────────
+    // ── Tenant-scoped tables: pattern identical to RLSPolicies ───────────────────
     for (const table of this.TENANT_TABLES) {
       await qr.query(`ALTER TABLE "${table}" ENABLE ROW LEVEL SECURITY`);
       await qr.query(`ALTER TABLE "${table}" FORCE ROW LEVEL SECURITY`);
@@ -45,7 +45,7 @@ export class EnableRlsOnRbacTables20260610000007 implements MigrationInterface {
       `);
     }
 
-    // ── roles: globais visíveis (tenant_id NULL); custom isolado por tenant ─────
+    // ── roles: globals visible (tenant_id NULL); custom ones isolated per tenant ─────
     await qr.query(`ALTER TABLE "roles" ENABLE ROW LEVEL SECURITY`);
     await qr.query(`ALTER TABLE "roles" FORCE ROW LEVEL SECURITY`);
     await qr.query(`DROP POLICY IF EXISTS "roles_visibility"        ON "roles"`);

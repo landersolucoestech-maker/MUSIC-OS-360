@@ -1,14 +1,14 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Naming-closure Cluster D audit: leads.cidade/estado are live, DTO-exposed,
+ * Naming-closure Cluster D audit: `leads.cidade`/`estado` are live, DTO-exposed,
  * form-editable columns (real inputs in LeadFormModal.tsx, distinct from the
  * per-service-type `evento`/`campanha`/`influenciador` sub-payloads' own
- * unrelated cidade/estado jsonb keys inside payload_servico, not touched
- * here). leads.pais is a third physical column, DTO-exposed but with zero
+ * unrelated `cidade`/`estado` jsonb keys inside `payload_servico`, not touched
+ * here). `leads.pais` is a third physical column, DTO-exposed but with zero
  * real form input (report-form-contracts.ts's LEADS_CONTRACT already
- * excludes it: "fixado em 'Brasil' pelo formulário -- não é um input do
- * usuário") -- surveyed on DEV: the only distinct non-null value across all
+ * excludes it: the form pins it to 'Brasil', it is not a user
+ * input) -- surveyed on DEV: the only distinct non-null value across all
  * 62 rows is the literal string 'Brasil'. Renamed and normalized to the
  * ISO 3166-1 alpha-2 code, matching the existing `rights_holders.country`
  * precedent, via an explicit one-value mapping (not a heuristic) --

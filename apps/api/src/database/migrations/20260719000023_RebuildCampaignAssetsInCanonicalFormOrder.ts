@@ -1,16 +1,16 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `campaign_assets` — auditoria 2026-07-19.
+ * Physical rebuild of `campaign_assets` — 2026-07-19 audit.
  *
- * `CreateCampaignAssetDto`/`CampaignOperationsService.addAsset()` batem com
- * name/asset_type/file_url/description. `file_size`/`mime_type` NUNCA
- * aparecem no DTO nem são escritas por nenhum serviço (grep completo em
- * apps/api/src/modules/campaigns — zero ocorrências) — órfãs comprovadas,
- * removidas (mesmo critério de rights_holders.email_encrypted). `created_by`
- * estava ANTES de created_at — movido para o fim do bloco de auditoria
- * (não existe updated_at/updated_by nesta tabela — assets só são
- * adicionados/soft-deletados, nunca editados).
+ * `CreateCampaignAssetDto`/`CampaignOperationsService.addAsset()` match
+ * name/asset_type/file_url/description. `file_size`/`mime_type` NEVER
+ * appear in the DTO nor are written by any service (full grep in
+ * apps/api/src/modules/campaigns — zero occurrences) — proven orphans,
+ * removed (same criterion as rights_holders.email_encrypted). `created_by`
+ * was BEFORE created_at — moved to the end of the audit block
+ * (there is no updated_at/updated_by in this table — assets are only
+ * added/soft-deleted, never edited).
  */
 export class RebuildCampaignAssetsInCanonicalFormOrder20260719000023 implements MigrationInterface {
   name = 'RebuildCampaignAssetsInCanonicalFormOrder20260719000023';
@@ -130,8 +130,8 @@ export class RebuildCampaignAssetsInCanonicalFormOrder20260719000023 implements 
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM campaign_assets`);
 
     await queryRunner.query(`CREATE TABLE campaign_assets_restore (${this.originalColumns})`);
-    // file_size/mime_type não existem mais (removidas no up(), comprovadamente
-    // órfãs) — sempre NULL na reversão, mesmo padrão de
+    // file_size/mime_type no longer exist (removed in up(), proven
+    // orphans) — always NULL on reversal, same pattern as
     // rights_holders.email_encrypted/phone_encrypted.
     await queryRunner.query(`INSERT INTO campaign_assets_restore (${this.restoreCopyColumns}) SELECT ${this.restoreCopyColumns} FROM campaign_assets`);
 

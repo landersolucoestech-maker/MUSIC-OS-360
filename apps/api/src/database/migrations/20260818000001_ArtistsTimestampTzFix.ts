@@ -1,35 +1,35 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * ROOT CAUSE do 409 espúrio ao editar Artista (reproduzido: `expectedUpdatedAt`
- * enviado pelo frontend era byte-idêntico ao `updated_at` retornado pela API —
- * e ainda assim `casUpdate` rejeitava com 0 linhas afetadas).
+ * ROOT CAUSE of the spurious 409 when editing an Artist (reproduced: the `expectedUpdatedAt`
+ * sent by the frontend was byte-identical to the `updated_at` returned by the API —
+ * and still `casUpdate` rejected with 0 affected rows).
  *
- * `artists.updated_at`/`created_at` eram `timestamp` (SEM timezone) — o único
- * par de colunas assim nesta tabela entre ~80 outras entidades do projeto,
- * que corretamente usam `timestamptz`. Uma coluna `timestamp` naive é
- * ambígua: o driver `pg`/TypeORM, ao LER o valor de volta para a API,
- * interpreta os dígitos crus usando o timezone LOCAL do processo Node (ex.:
- * America/Sao_Paulo, UTC-3) — mas `casUpdate`
- * (common/persistence/optimistic-update.util.ts) compara via SQL usando um
- * cast implícito `timestamp -> timestamptz` que usa o TimeZone da SESSÃO do
- * Postgres (UTC). As duas interpretações divergem exatamente pelo offset do
- * processo Node (3h neste ambiente) — todo CAS de artista estava
- * matematicamente fadado a nunca bater, mesmo sem nenhuma edição concorrente
- * real. Comprovado com SQL direto:
+ * `artists.updated_at`/`created_at` were `timestamp` (WITHOUT time zone) — the only
+ * such column pair in this table among ~80 other project entities,
+ * which correctly use `timestamptz`. A naive `timestamp` column is
+ * ambiguous: the `pg`/TypeORM driver, when READING the value back for the API,
+ * interprets the raw digits using the Node process's LOCAL time zone (e.g.
+ * America/Sao_Paulo, UTC-3) — but `casUpdate`
+ * (common/persistence/optimistic-update.util.ts) compares via SQL using an
+ * implicit `timestamp -> timestamptz` cast that uses the Postgres SESSION TimeZone
+ * (UTC). The two interpretations diverge by exactly the Node process's offset
+ * (3h in this environment) — every artist CAS was
+ * mathematically doomed to never match, even without any real concurrent
+ * edit. Proven with direct SQL:
  *   date_trunc('milliseconds', updated_at) = date_trunc('milliseconds', $1::timestamptz)
- *   -> false, com $1 sendo o EXATO valor devolvido pela API segundos antes.
+ *   -> false, with $1 being the EXACT value returned by the API seconds earlier.
  *
- * `timestamptz` armazena um instante inequívoco — elimina essa classe de bug
- * definitivamente, em qualquer timezone de processo/sessão, sempre.
+ * `timestamptz` stores an unambiguous instant — it eliminates this bug class
+ * for good, in any process/session time zone, always.
  *
- * `AT TIME ZONE 'UTC'` no USING é uma conversão não-destrutiva: preserva os
- * dígitos crus já gravados como o mesmo instante UTC (sem tentar "adivinhar"
- * retroativamente qual timezone de processo gravou cada linha histórica —
- * isso é ambíguo e arriscado de inferir por ambiente/deploy). Escopo
- * deliberadamente restrito a `artists` (a tabela do bug reportado); as
- * demais ~39 entidades do projeto com o mesmo padrão `timestamp` sem tz
- * ficam fora desta migration.
+ * `AT TIME ZONE 'UTC'` in USING is a non-destructive conversion: it preserves the
+ * raw digits already written as the same UTC instant (without trying to "guess"
+ * retroactively which process time zone wrote each historical row —
+ * that is ambiguous and risky to infer per environment/deploy). Scope
+ * deliberately restricted to `artists` (the table of the reported bug); the
+ * other ~39 project entities with the same tz-less `timestamp` pattern
+ * stay out of this migration.
  */
 export class ArtistsTimestampTzFix20260818000001 implements MigrationInterface {
   name = 'ArtistsTimestampTzFix20260818000001';

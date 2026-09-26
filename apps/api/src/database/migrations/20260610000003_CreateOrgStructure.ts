@@ -1,14 +1,14 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * 20260610000003_CreateOrgStructure  (M3 — FASE 4 RBAC Enterprise)
+ * 20260610000003_CreateOrgStructure  (M3 — PHASE 4 Enterprise RBAC)
  *
- * Organograma: departments, positions, job_functions.
- * - tenant_id OBRIGATÓRIO; soft delete (deleted_at); auditoria (created_by/updated_by).
- * - UNIQUE parcial por (tenant_id, slug) ignorando soft-deletados.
- * - REGRA CRÍTICA: NENHUMA destas tabelas referencia role/permission (não concedem acesso).
+ * Org chart: departments, positions, job_functions.
+ * - tenant_id MANDATORY; soft delete (deleted_at); auditing (created_by/updated_by).
+ * - Partial UNIQUE per (tenant_id, slug) ignoring soft-deleted rows.
+ * - CRITICAL RULE: NONE of these tables references role/permission (they grant no access).
  *
- * Idempotente. Reversível via down().
+ * Idempotent. Reversible via down().
  */
 export class CreateOrgStructure20260610000003 implements MigrationInterface {
   name = 'CreateOrgStructure20260610000003';

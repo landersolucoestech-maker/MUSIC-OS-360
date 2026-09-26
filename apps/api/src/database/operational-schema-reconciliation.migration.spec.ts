@@ -21,9 +21,9 @@ describe('ReconcileOperationalSchema20260620000004', () => {
       expect(sql).toContain(
         `ALTER TABLE public."${table}" FORCE ROW LEVEL SECURITY`,
       );
-      // Policies são criadas com a lista de roles resolvida em runtime
-      // (policy_roles) — invariante fail-closed verificada abaixo — não com
-      // um nome de role fixo.
+      // Policies are created with the role list resolved at runtime
+      // (policy_roles) — a fail-closed invariant verified below — not with
+      // a fixed role name.
       expect(sql).toContain(
         `EXECUTE format('CREATE POLICY %I ON public.%I FOR SELECT TO %s USING ("tenant_id" = (SELECT public.app_current_tenant_id()))', '${table}_tenant_select', '${table}', policy_roles)`,
       );
@@ -42,9 +42,9 @@ describe('ReconcileOperationalSchema20260620000004', () => {
     expect(sql).toContain('fk_campaign_tasks_campaign_tenant');
     expect(sql).toContain('fk_campaign_assets_campaign_tenant');
 
-    // Invariante fail-closed: policy_roles só inclui roles que realmente
-    // existem no banco — nunca hardcoded, para não falhar aberto num banco
-    // novo/local sem os roles 'authenticated'/'musicos_app'.
+    // Fail-closed invariant: policy_roles only includes roles that really
+    // exist in the database — never hardcoded, so it does not fail open on a
+    // new/local database without the 'authenticated'/'musicos_app' roles.
     expect(sql).toContain("SELECT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') INTO has_authenticated");
     expect(sql).toContain("SELECT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'musicos_app') INTO has_musicos_app");
     expect(sql).toContain('IF policy_roles IS NOT NULL THEN');

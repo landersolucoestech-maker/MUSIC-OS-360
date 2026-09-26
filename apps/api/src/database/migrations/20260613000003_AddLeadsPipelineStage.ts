@@ -1,14 +1,14 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * FASE 2B — Reconciliação leads: adiciona a coluna `pipeline_stage` que a
- * `LeadEntity`, o `LeadsService` (SELECT via repositório) e a automação de CRM
+ * PHASE 2B — Leads reconciliation: adds the `pipeline_stage` column that
+ * `LeadEntity`, `LeadsService` (SELECT via the repository) and the CRM automation
  * (`crm-followup.automation.ts`, raw SQL `SELECT ... pipeline_stage ... FROM leads`)
- * já assumem, mas que NUNCA existiu no banco. Sem a coluna, todo `list()`/`findById()`
- * de leads e a automação quebram em runtime ("column l.pipeline_stage does not exist").
+ * already assume, but that NEVER existed in the database. Without the column, every leads
+ * `list()`/`findById()` and the automation break at runtime ("column l.pipeline_stage does not exist").
  *
- * Mudança puramente ADITIVA e reversível: coluna nullable, sem default, sem backfill,
- * sem alteração de coluna existente, sem perda de dados. Idempotente via IF NOT EXISTS.
+ * A purely ADDITIVE and reversible change: nullable column, no default, no backfill,
+ * no change to an existing column, no data loss. Idempotent via IF NOT EXISTS.
  */
 export class AddLeadsPipelineStage20260613000003 implements MigrationInterface {
   name = 'AddLeadsPipelineStage20260613000003';
@@ -20,7 +20,7 @@ export class AddLeadsPipelineStage20260613000003 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Reverte apenas a coluna adicionada por esta migration.
+    // Reverts only the column added by this migration.
     await queryRunner.query(`ALTER TABLE "leads" DROP COLUMN IF EXISTS "pipeline_stage"`);
   }
 }

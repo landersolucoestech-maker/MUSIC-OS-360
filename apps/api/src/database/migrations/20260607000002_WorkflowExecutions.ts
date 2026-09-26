@@ -1,9 +1,9 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fatia 4 — Persistência de execução do Workflow Automation Engine.
- * Cria workflow_executions + workflow_execution_logs (rastreabilidade completa
- * de cada disparo de regra → ações → resultado), sem alterar o motor existente.
+ * Slice 4 — Execution persistence of the Workflow Automation Engine.
+ * Creates workflow_executions + workflow_execution_logs (full traceability
+ * of every rule trigger → actions → result), without changing the existing engine.
  */
 export class WorkflowExecutions20260607000002 implements MigrationInterface {
   name = 'WorkflowExecutions20260607000002';

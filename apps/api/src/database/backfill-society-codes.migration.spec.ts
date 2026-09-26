@@ -4,14 +4,14 @@ import * as path from 'path';
 /**
  * backfill-society-codes.migration.spec.ts
  *
- * Guarda permanente (auditoria 2026-07-18 — generalização de entidades de
- * gestão coletiva): a migration completa uma generalização que já estava
- * parcialmente construída (`external_identifiers`, 2026-06-01) mas nunca
- * teve os dados legados (`works.cod_abramus`/`cod_ecad`,
- * `phonograms.cod_abramus`/`cod_ecad`) migrados. Não remove as colunas
- * legadas (ainda usadas por formulário ativo, contrato de Reports e
- * integração real com a API da ABRAMUS) — apenas populate a tabela
- * genérica, de forma aditiva e idempotente.
+ * Permanent guard (2026-07-18 audit — generalization of collective
+ * management entities): the migration completes a generalization that was already
+ * partially built (`external_identifiers`, 2026-06-01) but never
+ * had the legacy data (`works.cod_abramus`/`cod_ecad`,
+ * `phonograms.cod_abramus`/`cod_ecad`) migrated. It does not remove the legacy
+ * columns (still used by an active form, the Reports contract and the
+ * real integration with the ABRAMUS API) — it only populates the generic
+ * table, additively and idempotently.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260718000015_BackfillLegacySocietyCodesToExternalIdentifiers.ts'),

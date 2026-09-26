@@ -1,30 +1,30 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `leads` na ordem canônica do formulário real
- * (LeadFormModal) — auditoria 2026-07-19. Mesmo padrão das anteriores.
+ * Physical rebuild of `leads` in the canonical order of the real form
+ * (LeadFormModal) — 2026-07-19 audit. Same pattern as the previous ones.
  *
- * Ordem visual real: "Dados do Contato" (nome/empresa/email/telefone→whatsapp/
+ * Real visual order: "Dados do Contato" (nome/empresa/email/telefone→whatsapp/
  * instagram/website→payload_servico/endereco→payload_servico/cidade/estado)
  * → "Classificação do Lead" (tipo_lead→tipo_cliente/servico→tipo_servico/
- * demais campos→payload_servico) → "Origem e Gestão Comercial" (origem_lead/
+ * other fields→payload_servico) → "Origem e Gestão Comercial" (origem_lead/
  * campanha_marketing→dados_internos_crm/data_entrada→payload_servico/
  * responsavel/status_lead→status/prioridade/proximo_follow_up/valor_estimado/
- * temperatura) → Detalhes de Evento/Campanha/Influenciador/Empresário
- * (condicionais, todos dentro de payload_servico — sem coluna dedicada) →
- * "Anexos" (uploads). `pais`/`probabilidade_fechamento` são aceitos pelo DTO
- * mas sem campo visível no formulário ativo — legado/reservado. `nome_artistico`/
- * `telefone_encrypted`/`cliente_id`/`fonte`/`tags` são escritos apenas por
- * `submitPublicArtistApplication` (formulário público de cadastro de artista,
- * outro fluxo real) ou pelo handler de conversão de lead — relações/campos
- * técnicos, não do formulário CRM principal.
+ * temperatura) → Event/Campaign/Influencer/Manager details
+ * (conditional, all inside payload_servico — no dedicated column) →
+ * "Anexos" (uploads). `pais`/`probabilidade_fechamento` are accepted by the DTO
+ * but have no visible field in the active form — legacy/reserved. `nome_artistico`/
+ * `telefone_encrypted`/`cliente_id`/`fonte`/`tags` are written only by
+ * `submitPublicArtistApplication` (the public artist sign-up form,
+ * another real flow) or by the lead conversion handler — technical
+ * relations/fields, not from the main CRM form.
  *
- * `tipoServico`/`origemLead`/`probabilidadeFechamento` renomeadas para
- * snake_case (tipo_servico/origem_lead/probabilidade_fechamento) — o
- * comentário anterior da entity já sinalizava a inconsistência como
- * "normalização fica para fase futura" (migration 20260528000002); esta é
- * essa fase. `score`/`pipeline_stage` removidas: órfãs comprovadas — zero
- * leitor/escritor em todo o domínio de leads (frontend ou backend).
+ * `tipoServico`/`origemLead`/`probabilidadeFechamento` renamed to
+ * snake_case (tipo_servico/origem_lead/probabilidade_fechamento) — the
+ * entity's previous comment already flagged the inconsistency as
+ * "normalization is left for a future phase" (migration 20260528000002); this is
+ * that phase. `score`/`pipeline_stage` removed: proven orphans — zero
+ * readers/writers in the whole leads domain (frontend or backend).
  */
 export class RebuildLeadsInCanonicalFormOrder20260719000011 implements MigrationInterface {
   name = 'RebuildLeadsInCanonicalFormOrder20260719000011';
@@ -247,8 +247,8 @@ export class RebuildLeadsInCanonicalFormOrder20260719000011 implements Migration
       'probabilidade_fechamento AS "probabilidadeFechamento"', 'proximo_follow_up', 'tags',
       'uploads',
     ].join(', ');
-    // score/pipeline_stage não existem mais (removidas no up(), comprovadamente
-    // órfãs) — sempre valor default na reversão, mesmo padrão de org_slug em
+    // score/pipeline_stage no longer exist (removed in up(), proven
+    // orphans) — always the default value on reversal, same pattern as org_slug in
     // RebuildArtistsInCanonicalFormOrder20260719000001.
     await queryRunner.query(`INSERT INTO leads_restore (${restoreInsertColumns}) SELECT ${restoreSelectColumns} FROM leads`);
 

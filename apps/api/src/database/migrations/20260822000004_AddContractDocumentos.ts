@@ -4,14 +4,14 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * 20260822000004_AddContractDocumentos
  *
  * REM-01/REM-02 (Remaining Product Completion Backlog) — "Documentos Anexos"
- * no ContratoFormModal fazia upload real para o R2 (via FileUpload/useUploadToR2,
- * já existente), mas o array resultante nunca era incluído no payload salvo —
- * falso sucesso: o upload funcionava, mas a referência nunca sobrevivia a um
- * reload. Adiciona `documentos` como coluna jsonb dedicada em `contracts`,
- * seguindo o mesmo padrão já usado por `versoes`/`signers` na mesma tabela
- * (1 array jsonb por campo estruturado — não reaproveita a coluna `metadata`).
+ * in ContratoFormModal did a real upload to R2 (via FileUpload/useUploadToR2,
+ * already existing), but the resulting array was never included in the saved payload —
+ * a false success: the upload worked, but the reference never survived a
+ * reload. Adds `documentos` as a dedicated jsonb column in `contracts`,
+ * following the same pattern already used by `versoes`/`signers` in the same table
+ * (1 jsonb array per structured field — does not reuse the `metadata` column).
  *
- * ADITIVA e NÃO-DESTRUTIVA: apenas ADD COLUMN com DEFAULT, IF NOT EXISTS.
+ * ADDITIVE and NON-DESTRUCTIVE: only ADD COLUMN with a DEFAULT, IF NOT EXISTS.
  */
 export class AddContractDocumentos20260822000004 implements MigrationInterface {
   name = 'AddContractDocumentos20260822000004';

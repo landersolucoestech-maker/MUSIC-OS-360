@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de `events`
- * na ordem do formulário real (SchedulerFormModal) — titulo/tipo são os
- * primeiros campos reais. Esta migration NÃO interfere na fase ativa de
- * dual-write `data`→`starts_at` (C3/E2): apenas reordena colunas.
+ * Permanent guard (2026-07-19 audit): physical rebuild of `events`
+ * in the real form's order (SchedulerFormModal) — titulo/tipo are the
+ * first real fields. This migration does NOT interfere with the active
+ * `data`→`starts_at` dual-write phase (C3/E2): it only reorders columns.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000007_RebuildEventsInCanonicalFormOrder.ts'),

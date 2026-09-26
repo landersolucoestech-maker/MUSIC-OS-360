@@ -3,14 +3,14 @@ import * as path from 'path';
 import { isApplicationMigration } from './migration-classification';
 
 /**
- * create-client-attachments.migration.spec.ts  (Parte 80)
+ * create-client-attachments.migration.spec.ts  (Part 80)
  *
- * Guarda permanente: client_attachments é a metadata real de anexos de
- * clientes (nunca o binário — apenas a chave do objeto no R2). Confirma que
- * a tabela segue o mesmo padrão de tenant isolation, RLS e grants já
- * estabelecido para clients/leads, e que ClientAttachmentEntity (entities.ts)
- * corresponde exatamente às colunas físicas — o mesmo tipo de guarda que
- * pegou os bugs reais de segmento/score nas Partes 78/79.
+ * Permanent guard: client_attachments is the real metadata of client
+ * attachments (never the binary — only the object key in R2). Confirms that
+ * the table follows the same tenant isolation, RLS and grants pattern already
+ * established for clients/leads, and that ClientAttachmentEntity (entities.ts)
+ * matches the physical columns exactly — the same kind of guard that
+ * caught the real segmento/score bugs in Parts 78/79.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260803000001_CreateClientAttachments.ts'),

@@ -1,15 +1,15 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fase 13A / M1 — enums do domínio financeiro (Fase 12 §3).
+ * Phase 13A / M1 — financial domain enums (Phase 12 §3).
  *
- * Conjuntos FECHADOS e aprovados nas Fases 11/12 — nada além do decidido:
- * - transaction_status NÃO inclui estados de pagamento/recebimento separados
- *   (unificados em settled), nem o estado de atraso (DERIVADO: pending com
- *   due_date vencida — nunca persistido), nem liquidação parcial (reservada
- *   para a onda 2; será adicionada via ALTER TYPE quando autorizada — não
- *   criada por antecipação).
- * - currency NÃO é enum (char(3) ISO-4217 com CHECK de formato, ver M4).
+ * CLOSED sets approved in Phases 11/12 — nothing beyond what was decided:
+ * - transaction_status does NOT include separate payment/receipt states
+ *   (unified into settled), nor the overdue state (DERIVED: pending with an
+ *   expired due_date — never persisted), nor partial settlement (reserved
+ *   for wave 2; it will be added via ALTER TYPE when authorized — not
+ *   created in advance).
+ * - currency is NOT an enum (ISO-4217 char(3) with a format CHECK, see M4).
  */
 export class FinancialEnums20260718000001 implements MigrationInterface {
   name = 'FinancialEnums20260718000001';
@@ -53,7 +53,7 @@ export class FinancialEnums20260718000001 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Enums só podem cair depois de TODAS as colunas que os usam (M2–M8 down).
+    // Enums can only be dropped after ALL the columns that use them (M2–M8 down).
     await queryRunner.query(`DROP TYPE "metric_source"`);
     await queryRunner.query(`DROP TYPE "performance_metric_type"`);
     await queryRunner.query(`DROP TYPE "installment_interval"`);

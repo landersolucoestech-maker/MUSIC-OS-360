@@ -2,11 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `org_members`. Sem formulário de criação real (fluxo de convite via
- * UsersService); `phone` (presa após auditoria) volta para a zona
- * funcional; `role_id`/`department_id`/`position_id`/`org_id` são relações
- * técnicas reposicionadas antes da auditoria.
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `org_members`. No real creation form (invite flow via
+ * UsersService); `phone` (stuck after the audit block) goes back to the functional
+ * zone; `role_id`/`department_id`/`position_id`/`org_id` are technical
+ * relations repositioned before the audit block.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000020_RebuildOrgMembersInCanonicalFormOrder.ts'),

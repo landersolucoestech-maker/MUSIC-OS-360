@@ -1,19 +1,19 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `licenses` — auditoria 2026-07-19. Reconstrução
- * pura de ordem (sem remoção de colunas — todas aceitas por
- * `CreateLicenseDto` e persistidas diretamente por `LicensingService.create()`
- * via spread do DTO).
+ * Physical rebuild of `licenses` — 2026-07-19 audit. A pure order
+ * rebuild (no column removal — all accepted by
+ * `CreateLicenseDto` and persisted directly by `LicensingService.create()`
+ * via the DTO spread).
  *
- * Ordem já batia quase integralmente com `CreateLicenseDto` (única fonte
- * real): titulo → obra_id/obra_musical/artista (identidade da obra) →
+ * The order already matched `CreateLicenseDto` (the only real source) almost
+ * entirely: titulo → obra_id/obra_musical/artista (work identity) →
  * cliente_id/cliente → projeto → tipo/tipo_uso/midia_destino/territorio →
  * status → data_inicio/data_fim → valor/moeda → observacoes →
- * remuneration_type/artista_id (campos do formulário, migration posterior
- * — estavam após deleted_at, corrigido). Bloco de auditoria corrigido de
- * `created_by, updated_by, created_at, updated_at, deleted_at` para o
- * padrão canônico `created_at, updated_at, created_by, updated_by,
+ * remuneration_type/artista_id (form fields, a later migration
+ * — they were after deleted_at, fixed). Audit block fixed from
+ * `created_by, updated_by, created_at, updated_at, deleted_at` to the
+ * canonical pattern `created_at, updated_at, created_by, updated_by,
  * deleted_at`.
  */
 export class RebuildLicensesInCanonicalFormOrder20260719000015 implements MigrationInterface {

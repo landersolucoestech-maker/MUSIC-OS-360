@@ -12,9 +12,9 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * 1:1 rename.
  *
  * Discovery for this sub-concept found the same UI-text-corruption risk
- * already known from `tipo`: "documentos" is a common Portuguese noun
- * that appears in ordinary lowercase prose ("Envie documentos usando o
- * formulário...", "Gerencie contratos, documentos..."). The blind sed
+ * already known from `tipo`: `documentos` is a common Portuguese noun
+ * that appears in ordinary lowercase UI prose (e.g. the upload hint and the
+ * contracts module description). The blind sed
  * corrupted ~15 real UI strings (labels, tab titles, Swagger
  * descriptions, an error message, a field-labels.pt-br.ts dictionary
  * VALUE) into broken PT/EN mixes; all found via the same sweep technique

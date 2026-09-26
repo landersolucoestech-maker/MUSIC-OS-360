@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `payroll_entries` — segue FolhaPagamentoFormModal.tsx. Pares mirrorados
- * funcionario_id/employee_id e mes_referencia/competencia; arquivo_url/
- * pago_em mantidos como zona legada (DTO-aceitos, sem campo visual atual).
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `payroll_entries` — follows FolhaPagamentoFormModal.tsx. Mirrored pairs
+ * funcionario_id/employee_id and mes_referencia/competencia; arquivo_url/
+ * pago_em kept as a legacy zone (DTO-accepted, no current visual field).
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000019_RebuildPayrollEntriesInCanonicalFormOrder.ts'),

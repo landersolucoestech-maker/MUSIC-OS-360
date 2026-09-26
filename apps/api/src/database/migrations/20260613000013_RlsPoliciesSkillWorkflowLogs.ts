@@ -1,21 +1,21 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * FASE 3T — Fecha a trilha principal de RLS: protege os logs-filhos por HERANÇA
- * de tenant via FK real ao parent já tenantizado e protegido (FASE 3R).
+ * PHASE 3T — Closes the main RLS track: protects the child logs by tenant
+ * INHERITANCE via a real FK to the already tenantized and protected parent (PHASE 3R).
  *
  *   skill_run_logs.skill_run_id        → skill_runs.id          (RLS ON)
  *   workflow_execution_logs.execution_id → workflow_executions.id (RLS ON, tenant NOT NULL)
  *
- * Faz, por tabela:
- *   1. FK real ON DELETE CASCADE (logs são filhos do parent) — pré-check 3S = 0 órfãos;
- *      ADD ... NOT VALID + VALIDATE (lock curto), idempotente via guard em pg_constraint.
- *   2. ENABLE ROW LEVEL SECURITY (no-op se já ativo). NÃO ativa FORCE.
- *   3. policy `tenant_isolation` por EXISTS no parent, usando o padrão portável
- *      private_get_tenant_id() — sem current_setting, sem auth.uid, sem cast ::text.
+ * Does, per table:
+ *   1. Real FK ON DELETE CASCADE (logs are children of the parent) — 3S pre-check = 0 orphans;
+ *      ADD ... NOT VALID + VALIDATE (short lock), idempotent via a pg_constraint guard.
+ *   2. ENABLE ROW LEVEL SECURITY (no-op if already active). Does NOT enable FORCE.
+ *   3. `tenant_isolation` policy via EXISTS on the parent, using the portable pattern
+ *      private_get_tenant_id() — no current_setting, no auth.uid, no ::text cast.
  *
- * Idempotente e reversível. NÃO altera skill_runs/workflow_executions nem qualquer
- * outra tabela. Não harmoniza policies legadas.
+ * Idempotent and reversible. Does NOT change skill_runs/workflow_executions nor any
+ * other table. Does not harmonize legacy policies.
  */
 export class RlsPoliciesSkillWorkflowLogs20260613000013 implements MigrationInterface {
   name = 'RlsPoliciesSkillWorkflowLogs20260613000013';

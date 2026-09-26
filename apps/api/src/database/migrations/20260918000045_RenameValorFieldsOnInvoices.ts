@@ -6,14 +6,14 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * Cluster G (naming-normalization mandate) — final table, closes the
  * cluster. Renames every `valor*` column on `invoices`:
  *
- *  - valor           -> legacy_amount  ("Coluna legada ainda usada por
- *                       eventos e telas antigas; espelha service_amount"
+ *  - valor           -> legacy_amount  (a legacy column still used by old
+ *                       events and screens, mirroring service_amount
  *                       — a deliberate mirror of valor_servicos kept for
  *                       backward compat, InvoicesService.normalizePayload)
  *  - valor_servicos   -> service_amount
  *  - valor_deducoes   -> deductions_amount
- *  - valor_iss        -> iss_amount   (ISS = Imposto sobre Serviços,
- *                       Brazilian tax code — kept as a LEGAL_PROPER_NOUN,
+ *  - valor_iss        -> iss_amount   (ISS = Brazilian municipal service tax
+ *                       code — kept as a LEGAL_PROPER_NOUN,
  *                       only the generic "valor" token is translated)
  *  - valor_pis        -> pis_amount   (PIS)
  *  - valor_cofins     -> cofins_amount (COFINS)

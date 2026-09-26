@@ -1,29 +1,29 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `marketing_projects` — auditoria 2026-07-19.
+ * Physical rebuild of `marketing_projects` — 2026-07-19 audit.
  *
- * DIFERENÇA IMPORTANTE em relação às tabelas anteriores: não existe
- * formulário visual real para criar/editar `MarketingProject` — `projectFields`/
+ * IMPORTANT DIFFERENCE from the previous tables: there is no real
+ * visual form to create/edit a `MarketingProject` — `projectFields`/
  * `useCreateProject`/`useUpdateProject` (apps/web/src/modules/marketing/forms/
- * marketing-forms.ts, hooks/useMarketingProjects.ts) são exportados mas nunca
- * importados por nenhuma página; a única leitura é uma lista somente-leitura
- * usada por Tarefas.tsx para popular o seletor de projeto da tarefa. Na
- * ausência de árvore de renderização real, a ordem canônica segue a ordem
- * declarada em `CreateMarketingProjectDto` (apps/api/.../marketing-projects.dto.ts),
- * que é o único contrato realmente exercitado (via `POST/PATCH /marketing/projects`,
- * chamado por `projectsApi.create/update` em marketing.service.ts) — e que já
- * bate com a ordem física atual, exceto por três pontos corrigidos aqui:
+ * marketing-forms.ts, hooks/useMarketingProjects.ts) are exported but never
+ * imported by any page; the only read is a read-only list
+ * used by Tarefas.tsx to populate the task's project selector. In the
+ * absence of a real render tree, the canonical order follows the order
+ * declared in `CreateMarketingProjectDto` (apps/api/.../marketing-projects.dto.ts),
+ * which is the only contract actually exercised (via `POST/PATCH /marketing/projects`,
+ * called by `projectsApi.create/update` in marketing.service.ts) — and which already
+ * matches the current physical order, except for three points fixed here:
  *
- * 1. `organization_id` não existe no DTO e não tem nenhum leitor/escritor no
- *    módulo — órfã comprovada, removida (mesmo critério de artists.org_slug).
- * 2. `financial_project_id` (ponte financeira opcional, migration
- *    FinancialOperationalBridges 20260718000009 — nasce sempre NULL por
- *    design) estava após `deleted_at`; movida para junto das demais relações
- *    técnicas (source_project_id..campaign_id).
- * 3. Bloco de auditoria estava `created_by, updated_by, created_at, updated_at,
- *    deleted_at`; corrigido para `created_at, updated_at, created_by,
- *    updated_by, deleted_at` (padrão canônico das reconstruções anteriores).
+ * 1. `organization_id` does not exist in the DTO and has no reader/writer in the
+ *    module — a proven orphan, removed (same criterion as artists.org_slug).
+ * 2. `financial_project_id` (optional financial bridge, migration
+ *    FinancialOperationalBridges 20260718000009 — always born NULL by
+ *    design) was after `deleted_at`; moved next to the other technical
+ *    relations (source_project_id..campaign_id).
+ * 3. The audit block was `created_by, updated_by, created_at, updated_at,
+ *    deleted_at`; fixed to `created_at, updated_at, created_by,
+ *    updated_by, deleted_at` (the canonical pattern of the previous rebuilds).
  */
 export class RebuildMarketingProjectsInCanonicalFormOrder20260719000008 implements MigrationInterface {
   name = 'RebuildMarketingProjectsInCanonicalFormOrder20260719000008';
@@ -202,8 +202,8 @@ export class RebuildMarketingProjectsInCanonicalFormOrder20260719000008 implemen
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM marketing_projects`);
 
     await queryRunner.query(`CREATE TABLE marketing_projects_restore (${this.originalColumns})`);
-    // organization_id não existe mais (removida no up(), comprovadamente
-    // órfã) — sempre NULL na reversão, mesmo padrão de org_slug em
+    // organization_id no longer exists (removed in up(), proven
+    // orphan) — always NULL on reversal, same pattern as org_slug in
     // RebuildArtistsInCanonicalFormOrder20260719000001.
     await queryRunner.query(`INSERT INTO marketing_projects_restore (${this.restoreCopyColumns}) SELECT ${this.restoreCopyColumns} FROM marketing_projects`);
 

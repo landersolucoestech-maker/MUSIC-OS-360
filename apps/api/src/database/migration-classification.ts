@@ -1,38 +1,38 @@
 /**
- * migration-classification.ts  (Parte 72 — desacoplamento de migrations gerenciadas externamente)
+ * migration-classification.ts  (Part 72 — decoupling of externally managed migrations)
  *
- * Fonte canônica única: qual categoria cada migration pertence. Nenhum outro
- * arquivo deve decidir isso por conta própria (padrão de nome, timestamp,
- * heurística) — sempre importar `getMigrationCategory` daqui.
+ * Single canonical source: which category each migration belongs to. No other
+ * file may decide this on its own (name pattern, timestamp,
+ * heuristic) — always import `getMigrationCategory` from here.
  *
- * Contexto: `RealtimeBroadcastAuthorization20260801000001` altera
- * `realtime.messages`, uma tabela pertencente ao schema `realtime` —
- * gerenciado pela extensão Realtime do Supabase, não pela aplicação. Em
- * DEV/STAGING/PROD reais, essa tabela pertence à role `supabase_realtime_admin`,
- * não à role de conexão da aplicação (confirmado empiricamente na Parte 72:
- * `error: must be owner of table messages`). O runner de migrations do
- * TypeORM aplica em ordem e para na primeira falha — então uma migration
- * EXTERNAL_MANAGED pendente bloqueava toda e qualquer migration APPLICATION
- * posterior, mesmo sem nenhuma relação real entre elas.
+ * Context: `RealtimeBroadcastAuthorization20260801000001` alters
+ * `realtime.messages`, a table belonging to the `realtime` schema —
+ * managed by Supabase's Realtime extension, not by the application. In
+ * real DEV/STAGING/PROD, that table belongs to the `supabase_realtime_admin` role,
+ * not to the application's connection role (confirmed empirically in Part 72:
+ * `error: must be owner of table messages`). The TypeORM migration runner
+ * applies in order and stops at the first failure — so a pending
+ * EXTERNAL_MANAGED migration blocked every later APPLICATION
+ * migration, even without any real relation between them.
  *
- * Categorias:
+ * Categories:
  *
- *  - APPLICATION: schema controlado inteiramente pelo MUSIC OS 360 (schema
- *    `public`). Deve ser aplicável pela role normal da aplicação. Categoria
- *    DEFAULT — uma migration só é outra coisa se listada explicitamente
- *    abaixo.
+ *  - APPLICATION: schema controlled entirely by MUSIC OS 360 (the `public`
+ *    schema). Must be applicable by the normal application role. DEFAULT
+ *    category — a migration is only something else if explicitly listed
+ *    below.
  *
- *  - EXTERNAL_MANAGED: altera objeto pertencente a um serviço gerenciado
- *    externamente (ex.: schema `realtime`, `auth`, `storage` do Supabase).
- *    Pode exigir privilégio que a role de conexão normal não tem. Não deve
- *    bloquear migrations APPLICATION posteriores — só a funcionalidade que
- *    dela depende. Precisa de um verificador físico próprio (ver
- *    verify-realtime-external.ts), nunca apenas a linha de tracking.
+ *  - EXTERNAL_MANAGED: alters an object belonging to an externally managed
+ *    service (e.g. Supabase's `realtime`, `auth`, `storage` schemas).
+ *    It may require a privilege the normal connection role lacks. It must not
+ *    block later APPLICATION migrations — only the functionality that
+ *    depends on it. It needs its own physical verifier (see
+ *    verify-realtime-external.ts), never just the tracking row.
  *
- *  - PRIVILEGED: exige credencial administrativa especial, mas ainda é um
- *    objeto que a aplicação possui/controla (diferente de EXTERNAL_MANAGED).
- *    Não deve executar silenciosamente; precisa de preflight e verificação
- *    posterior. Nenhuma migration usa esta categoria ainda.
+ *  - PRIVILEGED: requires a special administrative credential, but is still an
+ *    object the application owns/controls (unlike EXTERNAL_MANAGED).
+ *    It must not run silently; it needs a preflight and later
+ *    verification. No migration uses this category yet.
  */
 
 export enum MigrationCategory {
@@ -41,7 +41,7 @@ export enum MigrationCategory {
   PRIVILEGED = 'PRIVILEGED',
 }
 
-/** Nunca remover uma entrada daqui sem confirmar fisicamente que a migration deixou de tocar schema externo. */
+/** Never remove an entry from here without physically confirming that the migration no longer touches an external schema. */
 const EXTERNAL_MANAGED_MIGRATIONS: ReadonlySet<string> = new Set([
   'RealtimeBroadcastAuthorization20260801000001',
 ]);

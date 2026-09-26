@@ -1,30 +1,30 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `org_members` — auditoria 2026-07-19.
+ * Physical rebuild of `org_members` — 2026-07-19 audit.
  *
- * Não há formulário de criação real: membros são criados via fluxo de
- * convite (`UsersService.invite()` → Supabase auth admin + `create()`) e via
- * bootstrap de workspace (`tenant-bootstrap.resolver.ts`,
- * `workspace-provisioning.service.ts`, `dev-auth.controller.ts`). A tela
- * `UsuarioFormModal.tsx` hoje só EDITA (full_name/phone/role) e o hook
- * `useUsuarios.ts` ainda usa `storage.ts` (mock em memória) em vez do
- * `UsersService` real — gap de fiação pré-existente, registrado como
- * pendência, fora do escopo desta reconstrução física (que segue o
- * contrato real do backend: `CreateUserDto`/`UsersService.create()`).
+ * There is no real creation form: members are created via the
+ * invite flow (`UsersService.invite()` → Supabase auth admin + `create()`) and via
+ * workspace bootstrap (`tenant-bootstrap.resolver.ts`,
+ * `workspace-provisioning.service.ts`, `dev-auth.controller.ts`). The
+ * `UsuarioFormModal.tsx` screen today only EDITS (full_name/phone/role) and the
+ * `useUsuarios.ts` hook still uses `storage.ts` (in-memory mock) instead of the
+ * real `UsersService` — a pre-existing wiring gap, recorded as
+ * pending, out of scope for this physical rebuild (which follows the
+ * real backend contract: `CreateUserDto`/`UsersService.create()`).
  *
- * Ordem canônica: `phone` (adicionada depois via migration isolada, presa
- * após o bloco de auditoria) volta para a zona funcional, ao lado de
- * email/full_name. `role` é o slug legado ainda lido por
- * `UsersService.list()` — mantido funcional. `role_id`/`department_id`/
- * `position_id` são relações técnicas (FK) de provisionamento
- * (roles/departments/positions), sem campo visual — zona técnica. `org_id`
- * é relação técnica (sem FK declarada — lacuna preexistente, não
- * inventada aqui). `joined_at` é timestamp de negócio setado pelo
- * bootstrap, não pelo usuário. Bloco de auditoria corrigido para
+ * Canonical order: `phone` (added later via an isolated migration, stuck
+ * after the audit block) goes back to the functional zone, next to
+ * email/full_name. `role` is the legacy slug still read by
+ * `UsersService.list()` — kept functional. `role_id`/`department_id`/
+ * `position_id` are technical (FK) provisioning relations
+ * (roles/departments/positions), without a visual field — technical zone. `org_id`
+ * is a technical relation (no declared FK — a pre-existing gap, not
+ * invented here). `joined_at` is a business timestamp set by the
+ * bootstrap, not by the user. Audit block fixed to
  * `created_at, updated_at, created_by, updated_by, deleted_at`. Zero
- * colunas removidas — todas comprovadamente escritas por código real
- * (service, resolver de bootstrap ou dev-auth).
+ * columns removed — all proven to be written by real code
+ * (service, bootstrap resolver or dev-auth).
  */
 export class RebuildOrgMembersInCanonicalFormOrder20260719000020 implements MigrationInterface {
   name = 'RebuildOrgMembersInCanonicalFormOrder20260719000020';
@@ -79,7 +79,7 @@ export class RebuildOrgMembersInCanonicalFormOrder20260719000020 implements Migr
     await queryRunner.query(`CREATE INDEX member_auth_user_idx_new ON org_members_new (auth_user_id)`);
     await queryRunner.query(`CREATE UNIQUE INDEX member_tenant_user_idx_new ON org_members_new (tenant_id, auth_user_id)`);
 
-    // FK dependente precisa ser derrubada antes do rename dance.
+    // The dependent FK must be dropped before the rename dance.
     await queryRunner.query(`ALTER TABLE membership_job_functions DROP CONSTRAINT fk_mjf_membership`);
 
     await queryRunner.query(`ALTER TABLE org_members RENAME TO org_members_old`);

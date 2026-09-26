@@ -1,19 +1,19 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Adiciona colunas que existem nas entities mas faltam no banco real, de forma
- * ADITIVA e NÃO-DESTRUTIVA (nenhum DROP, nenhuma alteração de coluna existente).
+ * Adds columns that exist in the entities but are missing from the real database, in an
+ * ADDITIVE and NON-DESTRUCTIVE way (no DROP, no change to an existing column).
  *
  * - payroll_entries.deleted_at        — soft delete (nullable)
  * - leave_requests.deleted_at         — soft delete (nullable)
  * - leave_requests.documento_url      — nullable
  * - leave_requests.created_by         — nullable
- * - audiovisual_approvals.created_at  — NOT NULL DEFAULT now() (backfill seguro)
- * - audiovisual_approvals.updated_at  — NOT NULL DEFAULT now() (backfill seguro)
+ * - audiovisual_approvals.created_at  — NOT NULL DEFAULT now() (safe backfill)
+ * - audiovisual_approvals.updated_at  — NOT NULL DEFAULT now() (safe backfill)
  * - audiovisual_approvals.deleted_at  — soft delete (nullable)
  *
- * created_at/updated_at usam DEFAULT now() para que linhas existentes recebam um
- * valor válido no momento do ALTER, sem violar NOT NULL. Tudo idempotente via
+ * created_at/updated_at use DEFAULT now() so existing rows receive a
+ * valid value at ALTER time, without violating NOT NULL. Everything idempotent via
  * IF NOT EXISTS.
  */
 export class AddMissingSafeColumns20260613000002 implements MigrationInterface {
@@ -49,7 +49,7 @@ export class AddMissingSafeColumns20260613000002 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Reversão somente das colunas adicionadas por esta migration.
+    // Reverts only the columns added by this migration.
     await queryRunner.query(`ALTER TABLE "audiovisual_approvals" DROP COLUMN IF EXISTS "deleted_at"`);
     await queryRunner.query(`ALTER TABLE "audiovisual_approvals" DROP COLUMN IF EXISTS "updated_at"`);
     await queryRunner.query(`ALTER TABLE "audiovisual_approvals" DROP COLUMN IF EXISTS "created_at"`);

@@ -1,18 +1,18 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Audiovisual Assets — biblioteca de arquivos do projeto.
+ * Audiovisual Assets — the project's file library.
  *
- * Diferente de deliverables (que são entregas finais ao cliente), assets são:
- *   - referências visuais
- *   - fotos de locação
+ * Unlike deliverables (which are final deliveries to the client), assets are:
+ *   - visual references
+ *   - location photos
  *   - BTS (backstage)
  *   - moodboards
- *   - inspirações
- *   - documentos
+ *   - inspirations
+ *   - documents
  *
- * O upload em si é feito pelo cliente direto no provider de storage
- * (Supabase/R2/S3). Esta tabela só guarda metadata + URL final.
+ * The upload itself is done by the client directly to the storage provider
+ * (Supabase/R2/S3). This table only stores metadata + the final URL.
  */
 export class AudiovisualAssets20260527000005 implements MigrationInterface {
   name = 'AudiovisualAssets20260527000005';

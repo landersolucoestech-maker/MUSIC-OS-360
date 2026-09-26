@@ -25,10 +25,10 @@ describe('HardenContactsLeadUploadsRls20260620000002', () => {
       expect(sql).toContain(
         `ALTER TABLE public."${table}" FORCE ROW LEVEL SECURITY`,
       );
-      // Policies são criadas com a lista de roles resolvida em runtime
-      // (policy_roles), não com um nome de role fixo — ver invariante de
-      // "fail-closed por role ausente" abaixo. O texto do EXECUTE format(...)
-      // em si permanece literal e é verificado por completo.
+      // Policies are created with the role list resolved at runtime
+      // (policy_roles), not with a fixed role name — see the
+      // "fail-closed on a missing role" invariant below. The text of the EXECUTE format(...)
+      // itself stays literal and is verified in full.
       expect(sql).toContain(
         `EXECUTE format('CREATE POLICY %I ON public.%I FOR SELECT TO %s USING ("tenant_id" = (SELECT public.app_current_tenant_id()))', '${table}_tenant_select', '${table}', policy_roles)`,
       );
@@ -43,18 +43,18 @@ describe('HardenContactsLeadUploadsRls20260620000002', () => {
       );
     }
 
-    // 4 policies (select/insert/update/delete) por tabela — número decorre da
-    // lista de tabelas, não de um valor mágico independente dela.
+    // 4 policies (select/insert/update/delete) per table — the number follows from the
+    // table list, not from a magic value independent of it.
     expect(sql.match(/CREATE POLICY %I ON public\.%I/g)).toHaveLength(TABLES.length * 4);
     expect(sql).toContain(
       '"tenant_id" = (SELECT public.app_current_tenant_id())',
     );
     expect(sql).not.toMatch(/USING\s*\(\s*true\s*\)|WITH CHECK\s*\(\s*true\s*\)/i);
 
-    // Invariante fail-closed: policy_roles só inclui roles que realmente
-    // existem no banco (checado dinamicamente), e a policy inteira só é
-    // criada quando pelo menos um role qualifica — nunca cai para um nome de
-    // role hardcoded que poderia não existir num banco novo/local.
+    // Fail-closed invariant: policy_roles only includes roles that really
+    // exist in the database (checked dynamically), and the whole policy is only
+    // created when at least one role qualifies — it never falls back to a hardcoded
+    // role name that might not exist in a new/local database.
     expect(sql).toContain(
       "SELECT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') INTO has_authenticated",
     );

@@ -1,18 +1,18 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * FASE 3V-B — Lote final de harmonização: migra as 15 policies legadas que usam
- * `(tenant_id)::text = current_setting('app.current_tenant_id', true)` (RISCO_MÉDIO
- * na FASE 3U — já possuem WITH CHECK e são ''-safe, porém não-portáveis) para o
- * padrão oficial:
+ * PHASE 3V-B — Final harmonization batch: migrates the 15 legacy policies that use
+ * `(tenant_id)::text = current_setting('app.current_tenant_id', true)` (MEDIUM_RISK
+ * in PHASE 3U — they already have WITH CHECK and are ''-safe, but not portable) to the
+ * official pattern:
  *
  *   USING      (tenant_id = private_get_tenant_id())
  *   WITH CHECK (tenant_id = private_get_tenant_id())
  *
- * Preserva o NOME EXATO de cada policy (financial_* usam tenant_isolation_<tabela>;
- * marketing_* usam tenant_isolation). NÃO altera schema, dados, RLS habilitado nem
- * FORCE. NÃO toca em outras policies nem nos lotes já concluídos (3V-A ::uuid).
- * Idempotente (DROP+CREATE) e reversível (down recria a forma RAW ::text original).
+ * Preserves the EXACT NAME of each policy (financial_* use tenant_isolation_<table>;
+ * marketing_* use tenant_isolation). Does NOT change schema, data, enabled RLS nor
+ * FORCE. Does NOT touch other policies nor the already completed batches (3V-A ::uuid).
+ * Idempotent (DROP+CREATE) and reversible (down recreates the original RAW ::text form).
  */
 export class HarmonizeRawTextPolicies20260613000015 implements MigrationInterface {
   name = 'HarmonizeRawTextPolicies20260613000015';

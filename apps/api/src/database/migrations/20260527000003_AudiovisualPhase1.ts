@@ -3,19 +3,19 @@ import type { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * Audiovisual — Phase 1 schema.
  *
- * 7 tabelas operacionais para o ciclo de produção de vídeo:
- *  - audiovisual_projects       (entidade central — clipe/teaser/visualizer/...)
- *  - audiovisual_briefings      (1:1 com project — conceito, referências, mood)
- *  - audiovisual_shots          (shotlist — N por project)
- *  - audiovisual_production_days(controle de gravação — N por project)
- *  - audiovisual_team_members   (equipe envolvida)
- *  - audiovisual_deliverables   (entregáveis finais — youtube_master, reels, etc.)
- *  - audiovisual_approvals      (aprovações por project ou por deliverable)
+ * 7 operational tables for the video production cycle:
+ *  - audiovisual_projects       (central entity — clip/teaser/visualizer/...)
+ *  - audiovisual_briefings      (1:1 with project — concept, references, mood)
+ *  - audiovisual_shots          (shotlist — N per project)
+ *  - audiovisual_production_days(shoot control — N per project)
+ *  - audiovisual_team_members   (team involved)
+ *  - audiovisual_deliverables   (final deliverables — youtube_master, reels, etc.)
+ *  - audiovisual_approvals      (approvals per project or per deliverable)
  *
- * Reuso de entidades existentes via UUID nullable sem FK constraint dura
- * (padrão do repo): artist_id, release_id, phonogram_id, campaign_id, event_id.
+ * Reuse of existing entities via nullable UUID without a hard FK constraint
+ * (repo pattern): artist_id, release_id, phonogram_id, campaign_id, event_id.
  *
- * Multi-tenant: toda tabela tem tenant_id NOT NULL. Soft delete via deleted_at.
+ * Multi-tenant: every table has tenant_id NOT NULL. Soft delete via deleted_at.
  */
 export class AudiovisualPhase120260527000003 implements MigrationInterface {
   name = 'AudiovisualPhase120260527000003';

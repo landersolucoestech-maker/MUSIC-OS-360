@@ -1,18 +1,18 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * 20260610000002_CreateRolesAndRolePermissions  (M2 — FASE 4 RBAC Enterprise)
+ * 20260610000002_CreateRolesAndRolePermissions  (M2 — PHASE 4 Enterprise RBAC)
  *
- * - roles: catálogo de roles. tenant_id NULL = role global/sistema; non-null = custom do tenant.
- *   canonical_role_id resolve aliases (artista→artist, tenant_owner→owner) sem apagar nada.
- *   hierarchy_level preserva EXATAMENTE o ROLE_HIERARCHY atual (compatibilidade do RolesGuard).
- * - role_permissions: N:N role↔permission, sem duplicidade (UNIQUE role_id,permission_id).
+ * - roles: role catalog. tenant_id NULL = global/system role; non-null = tenant custom role.
+ *   canonical_role_id resolves aliases (artista→artist, tenant_owner→owner) without deleting anything.
+ *   hierarchy_level preserves the current ROLE_HIERARCHY EXACTLY (RolesGuard compatibility).
+ * - role_permissions: N:N role↔permission, without duplicates (UNIQUE role_id,permission_id).
  *
- * Seed estrutural (NÃO manual): insere os 20 roles canônicos GLOBAIS (is_system=true) para que
- * o backfill M6 seja autossuficiente. A matriz role_permissions (FASE 8) NÃO é populada aqui.
+ * Structural seed (NOT manual): inserts the 20 GLOBAL canonical roles (is_system=true) so that
+ * the M6 backfill is self-sufficient. The role_permissions matrix (PHASE 8) is NOT populated here.
  *
- * Department/Position/JobFunction NÃO referenciam role/permission — só Role concede acesso.
- * Idempotente. Reversível via down().
+ * Department/Position/JobFunction do NOT reference role/permission — only Role grants access.
+ * Idempotent. Reversible via down().
  */
 export class CreateRolesAndRolePermissions20260610000002 implements MigrationInterface {
   name = 'CreateRolesAndRolePermissions20260610000002';
@@ -40,7 +40,7 @@ export class CreateRolesAndRolePermissions20260610000002 implements MigrationInt
         CONSTRAINT "chk_roles_hierarchy" CHECK ("hierarchy_level" BETWEEN 0 AND 100)
       )
     `);
-    // Unicidade: slug único entre roles globais; e único por tenant nos custom (ignora soft-deletados).
+    // Uniqueness: slug unique among global roles; and unique per tenant among custom ones (ignores soft-deleted).
     await qr.query(`CREATE UNIQUE INDEX IF NOT EXISTS "uq_roles_global_slug" ON "roles" ("slug")              WHERE "tenant_id" IS NULL     AND "deleted_at" IS NULL`);
     await qr.query(`CREATE UNIQUE INDEX IF NOT EXISTS "uq_roles_tenant_slug" ON "roles" ("tenant_id", "slug") WHERE "tenant_id" IS NOT NULL AND "deleted_at" IS NULL`);
     await qr.query(`CREATE INDEX IF NOT EXISTS "idx_roles_tenant_id" ON "roles" ("tenant_id")`);
@@ -61,7 +61,7 @@ export class CreateRolesAndRolePermissions20260610000002 implements MigrationInt
     `);
     await qr.query(`CREATE INDEX IF NOT EXISTS "idx_rp_permission" ON "role_permissions" ("permission_id")`);
 
-    // ── Seed estrutural: 20 roles canônicos globais (hierarchy_level == ROLE_HIERARCHY atual) ──
+    // ── Structural seed: 20 global canonical roles (hierarchy_level == current ROLE_HIERARCHY) ──
     await qr.query(`
       INSERT INTO "roles" ("tenant_id", "slug", "name", "hierarchy_level", "is_system", "is_assignable")
       SELECT v.tenant_id, v.slug, v.name, v.lvl, TRUE, v.assignable
@@ -93,7 +93,7 @@ export class CreateRolesAndRolePermissions20260610000002 implements MigrationInt
        )
     `);
 
-    // Aliases canônicos (não apagam; só apontam para o canônico).
+    // Canonical aliases (not deleted; they only point to the canonical one).
     await qr.query(`
       UPDATE "roles" a
          SET "canonical_role_id" = c."id"

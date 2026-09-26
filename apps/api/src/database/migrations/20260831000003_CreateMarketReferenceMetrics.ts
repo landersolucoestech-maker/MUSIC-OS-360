@@ -3,26 +3,26 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20260831000003_CreateMarketReferenceMetrics
  *
- * Fase 3.1 — corrige o defeito conceitual do Market Benchmark ("coorte =
- * artistas do mesmo tenant" não é mercado — tenant é fronteira de
- * segurança/ownership, não população de mercado). A coorte real agora vem
- * de artistas EXTERNOS descobertos via Soundcharts `/related` (candidate
- * discovery real, confirmado ao vivo) e suas próprias métricas Soundcharts
- * (`/audience/{platform}`, `/streaming/spotify/listening`, buscadas
- * diretamente pelo UUID Soundcharts do candidato — sem precisar do link
- * cadastrado, porque o candidato não é um artista do tenant).
+ * Phase 3.1 — fixes the conceptual defect of the Market Benchmark ("cohort =
+ * artists of the same tenant" is not a market — a tenant is a security/ownership
+ * boundary, not a market population). The real cohort now comes
+ * from EXTERNAL artists discovered via Soundcharts `/related` (real candidate
+ * discovery, confirmed live) and their own Soundcharts metrics
+ * (`/audience/{platform}`, `/streaming/spotify/listening`, fetched
+ * directly by the candidate's Soundcharts UUID — without needing the registered
+ * link, because the candidate is not a tenant artist).
  *
- * `market_reference_metrics` é um CACHE TÉCNICO deliberadamente SEM
- * tenant_id e SEM RLS — não contém nenhum dado de propriedade de tenant,
- * apenas métricas públicas de artistas externos (terceiros, não clientes do
- * produto) usadas como referência de mercado. Compartilhado entre todos os
- * tenants por design (item 9/10 da Fase 3.1: "não duplicar milhares de
- * artistas por tenant sem necessidade" — o mesmo artista externo relacionado
- * a dois artistas de tenants diferentes reaproveita a mesma linha de cache).
- * Diferente de artist_metric_snapshots (append-only, auditoria de dado do
- * PRÓPRIO tenant): esta tabela é um cache com TTL, permite UPDATE
- * (upsert por refresh), porque não é histórico auditável de negócio — é
- * side-cache de uma chamada de API idempotente e pública.
+ * `market_reference_metrics` is a TECHNICAL CACHE deliberately WITHOUT
+ * tenant_id and WITHOUT RLS — it contains no tenant-owned data,
+ * only public metrics of external artists (third parties, not customers of the
+ * product) used as a market reference. Shared across all
+ * tenants by design (items 9/10 of Phase 3.1: "do not duplicate thousands of
+ * artists per tenant without need" — the same external artist related
+ * to two artists of different tenants reuses the same cache row).
+ * Unlike artist_metric_snapshots (append-only, an audit of the tenant's OWN
+ * data): this table is a cache with a TTL, allows UPDATE
+ * (upsert per refresh), because it is not auditable business history — it is a
+ * side cache of an idempotent, public API call.
  */
 export class CreateMarketReferenceMetrics20260831000003 implements MigrationInterface {
   name = 'CreateMarketReferenceMetrics20260831000003';
@@ -49,9 +49,9 @@ export class CreateMarketReferenceMetrics20260831000003 implements MigrationInte
     await queryRunner.query(`CREATE INDEX idx_market_reference_metrics_candidate ON market_reference_metrics (candidate_uuid)`);
     await queryRunner.query(`CREATE INDEX idx_market_reference_metrics_fetched_at ON market_reference_metrics (fetched_at)`);
 
-    // Sem RLS: nenhuma coluna de tenant, nenhum dado de propriedade de
-    // tenant — ver comentário do arquivo. Nunca exposta diretamente por
-    // nenhum endpoint tenant-scoped; consumida só internamente pelo
+    // No RLS: no tenant column, no tenant-owned data — see the
+    // file comment. Never exposed directly by any tenant-scoped
+    // endpoint; consumed only internally by
     // MarketBenchmarkService.
     await queryRunner.query(`ALTER TABLE market_reference_metrics OWNER TO musicos_migrator`);
     await queryRunner.query(`GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON market_reference_metrics TO musicos_migrator`);

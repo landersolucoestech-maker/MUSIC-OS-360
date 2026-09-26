@@ -1,35 +1,35 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fase 13A / M2 — classificação financeira (Fase 12 §2.1–2.2), REVISADA na
- * Fase 13B (autorização formal) para resolver o conflito comprovado com o
- * módulo legado de categorias (20260526000002_FinancialCategoriesEnterprise).
+ * Phase 13A / M2 — financial classification (Phase 12 §2.1–2.2), REVISED in
+ * Phase 13B (formal authorization) to resolve the proven conflict with the
+ * legacy categories module (20260526000002_FinancialCategoriesEnterprise).
  *
- * CONTEXTO DO CONFLITO: a cadeia legada cria `financial_categories` (+5
- * satélites vivos no ponto desta migration: category_centers [sem center_id,
- * removido por D8], links, favorites, rules [shape Enterprise pós-D7] e
- * rule_runs). A `financial_category_templates` legada e a `financial_centers`
- * já foram removidas pela própria cadeia (D5/D8 em 20260705000003). A Fase 12
- * classificou o módulo legado como SUBSTITUÍDO pela definição nova.
+ * CONFLICT CONTEXT: the legacy chain creates `financial_categories` (+5
+ * satellites alive at this migration's point: category_centers [without center_id,
+ * removed by D8], links, favorites, rules [post-D7 Enterprise shape] and
+ * rule_runs). The legacy `financial_category_templates` and `financial_centers`
+ * were already removed by the chain itself (D5/D8 in 20260705000003). Phase 12
+ * classified the legacy module as SUPERSEDED by the new definition.
  *
- * ESTRATÉGIA (normativa da autorização):
- *  1. fail-fast: as 6 tabelas legadas devem EXISTIR, ter a ASSINATURA legada
- *     esperada e estar com 0 REGISTROS; a estrutura nova não pode existir;
- *  2. checagem de dependências no catálogo: nenhuma FK externa ao conjunto e
- *     nenhuma view pode referenciar as tabelas; caso contrário ABORTA;
- *  3. remoção em ordem reversa de dependência, SEM CASCADE;
- *  4. criação da estrutura oficial nova (templates global + categorias tenant).
+ * STRATEGY (normative, per the authorization):
+ *  1. fail-fast: the 6 legacy tables must EXIST, have the expected legacy
+ *     SIGNATURE and hold 0 RECORDS; the new structure must not exist;
+ *  2. catalog dependency check: no FK external to the set and
+ *     no view may reference the tables; otherwise it ABORTS;
+ *  3. removal in reverse dependency order, WITHOUT CASCADE;
+ *  4. creation of the new official structure (global templates + tenant categories).
  *
- * down(): Opção 1 da autorização — RESTAURAÇÃO COMPLETA: remove a estrutura
- * nova e recria fielmente as 6 tabelas legadas no shape exato do ponto da
- * cadeia (DDL transcrito de 20260526000002, ajustado por 20260705000003
- * D7/D8), com índices, RLS FORCE e policies harmonizadas
- * (20260613000015). Sem qualquer seed/dado.
+ * down(): Option 1 of the authorization — FULL RESTORATION: removes the new
+ * structure and faithfully recreates the 6 legacy tables in the exact shape of that point of the
+ * chain (DDL transcribed from 20260526000002, adjusted by 20260705000003
+ * D7/D8), with indexes, FORCE RLS and harmonized policies
+ * (20260613000015). No seed/data at all.
  */
 export class FinancialCategories20260718000002 implements MigrationInterface {
   name = 'FinancialCategories20260718000002';
 
-  /** Ordem REVERSA de dependência para remoção (satélites antes da base). */
+  /** REVERSE dependency order for removal (satellites before the base). */
   private static readonly LEGACY_TABLES_REVERSE = [
     'financial_category_rule_runs',
     'financial_category_rules',
@@ -40,7 +40,7 @@ export class FinancialCategories20260718000002 implements MigrationInterface {
   ] as const;
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // ── 1. Pré-condições fail-fast (existência, assinatura e zero registros) ──
+    // ── 1. Fail-fast preconditions (existence, signature and zero records) ─────
     await queryRunner.query(`
       DO $$
       DECLARE
@@ -88,7 +88,7 @@ export class FinancialCategories20260718000002 implements MigrationInterface {
       END $$
     `);
 
-    // ── 2. Dependências externas no catálogo (FKs de fora do conjunto, views) ─
+    // ── 2. External dependencies in the catalog (FKs from outside the set, views) ─
     await queryRunner.query(`
       DO $$
       DECLARE
@@ -127,12 +127,12 @@ export class FinancialCategories20260718000002 implements MigrationInterface {
       END $$
     `);
 
-    // ── 3. Remoção validada, ordem reversa, SEM CASCADE ───────────────────────
+    // ── 3. Validated removal, reverse order, WITHOUT CASCADE ─────────────────────
     for (const table of FinancialCategories20260718000002.LEGACY_TABLES_REVERSE) {
       await queryRunner.query(`DROP TABLE "${table}"`);
     }
 
-    // ── 4. Estrutura oficial nova (definição aprovada na Fase 12) ─────────────
+    // ── 4. New official structure (definition approved in Phase 12) ─────────────
     await queryRunner.query(`
       CREATE TABLE "financial_category_templates" (
         "id"              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -218,10 +218,10 @@ export class FinancialCategories20260718000002 implements MigrationInterface {
     await queryRunner.query(`DROP TABLE "financial_categories"`);
     await queryRunner.query(`DROP TABLE "financial_category_templates"`);
 
-    // ── Restauração COMPLETA do módulo legado no shape do ponto da cadeia ─────
-    // DDL transcrito de 20260526000002 (Enterprise), ajustado por 20260705000003:
-    // D7 (rules sem as colunas flat) e D8 (junction sem a coluna de centro).
-    // Sem seeds, sem dados, sem CASCADE.
+    // ── FULL restoration of the legacy module in the shape of that chain point ──
+    // DDL transcribed from 20260526000002 (Enterprise), adjusted by 20260705000003:
+    // D7 (rules without the flat columns) and D8 (junction without the center column).
+    // No seeds, no data, no CASCADE.
     await queryRunner.query(`
       CREATE TABLE financial_categories (
         id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),

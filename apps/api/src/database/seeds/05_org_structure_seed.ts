@@ -1,11 +1,11 @@
 /**
- * seeds/05_org_structure_seed.ts  (FASE 8 — Organograma)
+ * seeds/05_org_structure_seed.ts  (PHASE 8 — Org chart)
  *
- * Cria, POR TENANT, o organograma padrão: departments, positions, job_functions.
- * Idempotente por (tenant_id, slug). Nomes em PT-BR acentuado.
+ * Creates, PER TENANT, the default org chart: departments, positions, job_functions.
+ * Idempotent per (tenant_id, slug). Accented PT-BR display names.
  *
- * SEGURANÇA: nenhum destes concede permissão — não há FK para role/permission.
- * Apenas role_permissions concede acesso (seed 04).
+ * SECURITY: none of these grants permission — there is no FK to role/permission.
+ * Only role_permissions grants access (seed 04).
  */
 import { DataSource } from 'typeorm';
 
@@ -27,7 +27,7 @@ const DEPARTMENTS: Array<{ slug: string; name: string }> = [
   { slug: 'tecnologia', name: 'Tecnologia' },
 ];
 
-/** Cargos padrão; departmentSlug vincula ao departamento quando aplicável. */
+/** Default positions; departmentSlug links to the department when applicable. */
 const POSITIONS: Array<{ slug: string; name: string; departmentSlug: string | null }> = [
   { slug: 'diretor-financeiro', name: 'Diretor Financeiro', departmentSlug: 'financeiro' },
   { slug: 'gerente-financeiro', name: 'Gerente Financeiro', departmentSlug: 'financeiro' },

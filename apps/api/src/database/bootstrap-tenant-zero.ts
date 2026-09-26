@@ -1,37 +1,37 @@
 /**
- * bootstrap-tenant-zero.ts  (Parte 69 — formalização do tenant-zero)
+ * bootstrap-tenant-zero.ts  (Part 69 — formalization of tenant-zero)
  *
- * Cria ou valida a LANDER RECORDS — o tenant institucional inicial do
- * MUSIC OS 360 — de forma idempotente. Deliberadamente separado do runner
- * de seeds genérico (`seeds/index.ts`): LANDER RECORDS não é uma fixture
- * descartável, então não deve depender de flags de seed genéricas nem ser
- * confundida com o tenant de demonstração criado por `01_default_tenant.ts`.
+ * Creates or validates LANDER RECORDS — the initial institutional tenant of
+ * MUSIC OS 360 — idempotently. Deliberately separate from the generic seed
+ * runner (`seeds/index.ts`): LANDER RECORDS is not a disposable
+ * fixture, so it must not depend on generic seed flags nor be
+ * confused with the demo tenant created by `01_default_tenant.ts`.
  *
- * Este módulo expõe a função pura `bootstrapTenantZero(ds)` — sem I/O de
- * conexão — para poder ser unit-testado sem Postgres real. O CLI real
- * (`npm run db:bootstrap:tenant-zero`, flags: `--force` para produção) vive
- * em `bootstrap-tenant-zero.cli.ts`.
+ * This module exposes the pure function `bootstrapTenantZero(ds)` — no connection
+ * I/O — so it can be unit tested without a real Postgres. The real CLI
+ * (`npm run db:bootstrap:tenant-zero`, flags: `--force` for production) lives
+ * in `bootstrap-tenant-zero.cli.ts`.
  *
- * Garantias:
- *  - Nunca roda contra a branch MAIN do Supabase, com ou sem --force.
- *  - Idempotente: rodar duas vezes não duplica nem diverge a identidade.
- *  - Nunca promove um tenant/organização existente diferente do ID
- *    canônico para tenant-zero (a UNIQUE INDEX parcial da migration
- *    20260801000002 barra isso no nível de banco; este script também
- *    valida antes, para uma mensagem de erro legível).
- *  - Não concede nenhum bypass de RLS/RBAC/billing — a linha criada é um
- *    tenant/organização comum com `plan='enterprise'`,
- *    `billing_status='active'` (o mesmo caminho de billing usado por
- *    qualquer cliente enterprise real, não uma isenção especial).
- *  - Em produção, exige um owner real (falha se ausente) — nunca cria o
- *    owner sintético de DEV/STAGING em produção.
- *  - Fora de produção, um owner real (`realOwner`) é opcional — quando
- *    fornecido (ex.: TENANT_ZERO_OWNER_EMAIL setado, ver
- *    bootstrap-tenant-zero.cli.ts), substitui o sintético mesmo em DEV/
- *    STAGING. Só na primeira criação da linha, também semeia
- *    `tenants.settings.onboarding.completed = false` para que o primeiro
- *    login do owner real caia no assistente de configuração da empresa já
- *    existente no frontend (nunca reseta isso em reruns).
+ * Guarantees:
+ *  - Never runs against the MAIN Supabase branch, with or without --force.
+ *  - Idempotent: running twice neither duplicates nor diverges the identity.
+ *  - Never promotes an existing tenant/organization other than the canonical
+ *    ID to tenant-zero (the partial UNIQUE INDEX of migration
+ *    20260801000002 blocks that at the database level; this script also
+ *    validates beforehand, for a readable error message).
+ *  - Grants no RLS/RBAC/billing bypass — the row created is an ordinary
+ *    tenant/organization with `plan='enterprise'`,
+ *    `billing_status='active'` (the same billing path used by
+ *    any real enterprise customer, not a special exemption).
+ *  - In production, requires a real owner (fails if absent) — never creates the
+ *    DEV/STAGING synthetic owner in production.
+ *  - Outside production, a real owner (`realOwner`) is optional — when
+ *    provided (e.g. TENANT_ZERO_OWNER_EMAIL set, see
+ *    bootstrap-tenant-zero.cli.ts), it replaces the synthetic one even in DEV/
+ *    STAGING. Only on the row's first creation, it also seeds
+ *    `tenants.settings.onboarding.completed = false` so the real owner's first
+ *    login lands in the company setup wizard that already
+ *    exists in the frontend (never resets it on reruns).
  */
 import type { DataSource } from 'typeorm';
 import {
@@ -53,11 +53,11 @@ export interface BootstrapTenantZeroResult {
 }
 
 /**
- * Owner real do tenant-zero — já deve existir como usuário Supabase Auth de
- * verdade (ver bootstrap-tenant-zero.cli.ts, que cria/localiza esse usuário
- * e seta app_metadata.must_change_password=true antes de chamar esta
- * função). Esta função pura nunca fala com a API do Supabase — só grava as
- * linhas relacionais que apontam para o auth_user_id já existente.
+ * Real tenant-zero owner — must already exist as a real Supabase Auth
+ * user (see bootstrap-tenant-zero.cli.ts, which creates/finds that user
+ * and sets app_metadata.must_change_password=true before calling this
+ * function). This pure function never talks to the Supabase API — it only writes the
+ * relational rows that point to the already existing auth_user_id.
  */
 export interface RealOwnerInput {
   authUserId: string;
@@ -68,10 +68,10 @@ export interface RealOwnerInput {
 class TenantZeroInvariantError extends Error {}
 
 /**
- * Falha alto e claro se uma linha diferente do ID canônico já reivindicou
- * `is_system_tenant = true` — nunca "vence" silenciosamente pela ordem de
- * execução. A UNIQUE INDEX parcial da migration garante isto no banco;
- * esta checagem só existe para dar um erro legível antes de tentar o INSERT.
+ * Fails loud and clear if a row other than the canonical ID has already claimed
+ * `is_system_tenant = true` — it never silently "wins" by execution
+ * order. The migration's partial UNIQUE INDEX guarantees this in the database;
+ * this check only exists to give a readable error before attempting the INSERT.
  */
 async function assertNoConflictingSystemTenant(ds: DataSource, table: 'organizations' | 'tenants', canonicalId: string): Promise<void> {
   const rows = await ds.query(
@@ -87,9 +87,9 @@ async function assertNoConflictingSystemTenant(ds: DataSource, table: 'organizat
 }
 
 /**
- * Se a linha canônica já existir, valida que sua identidade (nome/slug)
- * ainda é a esperada — nunca sobrescreve silenciosamente um tenant que
- * porventura já exista com esse ID mas com dados divergentes.
+ * If the canonical row already exists, validates that its identity (name/slug)
+ * is still the expected one — never silently overwrites a tenant that
+ * may already exist with this ID but with divergent data.
  */
 async function assertIdentityMatchesIfExists(
   ds: DataSource,
@@ -134,10 +134,10 @@ export async function bootstrapTenantZero(ds: DataSource, realOwner?: RealOwnerI
     [TENANT_ZERO_ORG_ID, TENANT_ZERO_NAME, TENANT_ZERO_SLUG],
   );
 
-  // `settings` só é definido no INSERT (nunca no ON CONFLICT UPDATE) — assim
-  // reruns do bootstrap nunca resetam o progresso de onboarding que o owner
-  // real já tenha feito. Só semeia onboarding incompleto quando um owner
-  // real está sendo atribuído — o owner sintético não passa por wizard.
+  // `settings` is only set on INSERT (never on the ON CONFLICT UPDATE) — so
+  // bootstrap reruns never reset the onboarding progress the real owner
+  // has already made. Only seeds incomplete onboarding when a real owner
+  // is being assigned — the synthetic owner does not go through the wizard.
   const initialTenantSettings = realOwner
     ? JSON.stringify({ onboarding: { completed: false, currentStep: 'company_profile' } })
     : JSON.stringify({});
@@ -152,13 +152,13 @@ export async function bootstrapTenantZero(ds: DataSource, realOwner?: RealOwnerI
     [TENANT_ZERO_TENANT_ID, TENANT_ZERO_ORG_ID, TENANT_ZERO_NAME, TENANT_ZERO_SLUG, initialTenantSettings],
   );
 
-  // Billing: mesmo caminho normal de qualquer tenant enterprise ativo — não
-  // é `manual_override`/isenção especial (ver docstring do módulo).
-  // tenant_id populado (nao so org_id): upsertStripeSubscription
-  // (billing.service.ts) faz upsert real de webhook Stripe chaveado em
-  // UNIQUE(tenant_id) -- uma linha com tenant_id NULL nunca bateria nesse
-  // ON CONFLICT, deixando um webhook real inserir uma segunda linha em vez
-  // de atualizar esta.
+  // Billing: the same normal path as any active enterprise tenant — it is not
+  // a `manual_override`/special exemption (see the module docstring).
+  // tenant_id populated (not only org_id): upsertStripeSubscription
+  // (billing.service.ts) does a real Stripe webhook upsert keyed on
+  // UNIQUE(tenant_id) -- a row with a NULL tenant_id would never match that
+  // ON CONFLICT, letting a real webhook insert a second row instead
+  // of updating this one.
   await ds.query(
     `
     INSERT INTO billing_subscriptions (org_id, tenant_id, plan, status, seats, seats_used)

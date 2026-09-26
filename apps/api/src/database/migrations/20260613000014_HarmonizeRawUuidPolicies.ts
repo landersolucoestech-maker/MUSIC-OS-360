@@ -1,24 +1,24 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * FASE 3V-A — Harmoniza as 21 policies `tenant_isolation` legadas que usavam
- * `tenant_id = current_setting('app.current_tenant_id', true)::uuid` SEM WITH CHECK
- * explícito (classificadas RISCO_ALTO na FASE 3U):
+ * PHASE 3V-A — Harmonizes the 21 legacy `tenant_isolation` policies that used
+ * `tenant_id = current_setting('app.current_tenant_id', true)::uuid` WITHOUT an explicit
+ * WITH CHECK (classified HIGH_RISK in PHASE 3U):
  *
- *   - cast `::uuid` quebra quando o GUC custom volta a '' numa conexão reusada;
- *   - ignora o fallback JWT do padrão portável;
- *   - WITH CHECK só existia implicitamente (= USING).
+ *   - the `::uuid` cast breaks when the custom GUC goes back to '' on a reused connection;
+ *   - it ignores the JWT fallback of the portable pattern;
+ *   - WITH CHECK only existed implicitly (= USING).
  *
- * Substitui pelo padrão oficial, idêntico funcionalmente (mesmo tenant_id),
- * porém portável e null-safe, com WITH CHECK EXPLÍCITO:
+ * Replaces them with the official pattern, functionally identical (same tenant_id),
+ * but portable and null-safe, with an EXPLICIT WITH CHECK:
  *
  *   USING      (tenant_id = private_get_tenant_id())
  *   WITH CHECK (tenant_id = private_get_tenant_id())
  *
- * NÃO altera schema, dados, RLS habilitado nem FORCE. NÃO toca em outras policies
- * (super_admin_full_access, org_isolation, roles_visibility) nem nos lotes 3V-B
- * (financial_*, marketing_projects/strategies/tasks…). Idempotente (DROP+CREATE)
- * e reversível (down recria a forma RAW ::uuid original, sem WITH CHECK).
+ * Does NOT change schema, data, enabled RLS nor FORCE. Does NOT touch other policies
+ * (super_admin_full_access, org_isolation, roles_visibility) nor the 3V-B batches
+ * (financial_*, marketing_projects/strategies/tasks…). Idempotent (DROP+CREATE)
+ * and reversible (down recreates the original RAW ::uuid form, without WITH CHECK).
  */
 export class HarmonizeRawUuidPolicies20260613000014 implements MigrationInterface {
   name = 'HarmonizeRawUuidPolicies20260613000014';
@@ -49,7 +49,7 @@ export class HarmonizeRawUuidPolicies20260613000014 implements MigrationInterfac
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Reverte para a forma RAW ::uuid original (USING apenas, sem WITH CHECK).
+    // Reverts to the original RAW ::uuid form (USING only, without WITH CHECK).
     for (const table of HarmonizeRawUuidPolicies20260613000014.TABLES) {
       await queryRunner.query(
         `DROP POLICY IF EXISTS "${HarmonizeRawUuidPolicies20260613000014.POLICY}" ON "${table}"`,

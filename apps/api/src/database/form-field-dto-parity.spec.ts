@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda estática: campos persistidos pelos formulários devem existir no DTO
- * aceito pelo backend. O teste evita regressões em que a UI exibe e envia um
- * campo, mas whitelist/forbidNonWhitelisted o rejeita ou descarta.
+ * Static guard: fields persisted by the forms must exist in the DTO
+ * accepted by the backend. The test prevents regressions in which the UI displays and sends a
+ * field, but whitelist/forbidNonWhitelisted rejects or discards it.
  */
 const entitiesSrc = fs.readFileSync(path.resolve(__dirname, 'entities.ts'), 'utf8');
 

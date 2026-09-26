@@ -1,8 +1,8 @@
 /**
  * seeds/01_default_tenant.ts
  *
- * Seed inicial: cria a organização e tenant padrão de desenvolvimento.
- * Executado apenas em dev/staging — nunca em produção sem confirmação explícita.
+ * Initial seed: creates the default development organization and tenant.
+ * Run only in dev/staging — never in production without explicit confirmation.
  */
 
 import { DataSource } from 'typeorm';

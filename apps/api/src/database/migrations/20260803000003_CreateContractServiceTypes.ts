@@ -1,10 +1,10 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Cria "contract_service_types" — o frontend (useContractServiceTypes.ts,
- * ContratoFormModal "Tipo de Serviço") já dependia desta tabela, mas ela
- * nunca tinha sido criada: toda abertura do formulário de novo contrato
- * disparava um 503 sintético (PENDING_TABLES) no dropdown obrigatório.
+ * Creates "contract_service_types" — the frontend (useContractServiceTypes.ts,
+ * ContratoFormModal "Tipo de Serviço") already depended on this table, but it
+ * had never been created: every opening of the new contract form
+ * triggered a synthetic 503 (PENDING_TABLES) in the mandatory dropdown.
  */
 export class CreateContractServiceTypes20260803000003
   implements MigrationInterface

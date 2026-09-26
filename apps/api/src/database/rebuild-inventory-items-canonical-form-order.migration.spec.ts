@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `inventory_items` — reconstrução pura de ordem, seguindo
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `inventory_items` — a pure order rebuild, following
  * CreateInventoryItemDto.
  */
 const migrationSrc = fs.readFileSync(

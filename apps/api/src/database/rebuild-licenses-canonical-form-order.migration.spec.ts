@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `licenses` — reconstrução pura de ordem, seguindo CreateLicenseDto.
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `licenses` — a pure order rebuild, following CreateLicenseDto.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000015_RebuildLicensesInCanonicalFormOrder.ts'),

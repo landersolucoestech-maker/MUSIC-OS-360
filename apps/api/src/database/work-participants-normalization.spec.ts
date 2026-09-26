@@ -4,17 +4,17 @@ import * as path from 'path';
 /**
  * work-participants-normalization.spec.ts
  *
- * Guarda permanente (auditoria 2026-07-18): `works.participantes` era uma
- * única coluna jsonb representando uma lista de registros relacionados
- * (autoria) — normalizada em `work_participants` (migration
- * WorkParticipantsNormalization20260718000011). `works.detentores` e
- * `works.co_compositores` foram removidas por não terem nenhum writer ativo
- * comprovado (sem input no formulário, ausentes do DTO, `importable: false`
- * no contrato de Reports).
+ * Permanent guard (2026-07-18 audit): `works.participantes` was a
+ * single jsonb column representing a list of related records
+ * (authorship) — normalized into `work_participants` (migration
+ * WorkParticipantsNormalization20260718000011). `works.detentores` and
+ * `works.co_compositores` were removed for having no proven active
+ * writer (no input in the form, absent from the DTO, `importable: false`
+ * in the Reports contract).
  *
- * Este teste é estático: garante que a entity não reintroduza as colunas
- * removidas e que a migration possui as validações fail-fast exigidas
- * (não perder dado, não usar CASCADE indiscriminado, down() honesto).
+ * This test is static: it ensures the entity does not reintroduce the removed
+ * columns and that the migration has the required fail-fast validations
+ * (do not lose data, do not use indiscriminate CASCADE, an honest down()).
  */
 const entitiesSrc = fs.readFileSync(path.resolve(__dirname, 'entities.ts'), 'utf8');
 const migrationSrc = fs.readFileSync(

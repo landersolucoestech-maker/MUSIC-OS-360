@@ -1,25 +1,25 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `leave_requests` — auditoria 2026-07-19.
+ * Physical rebuild of `leave_requests` — 2026-07-19 audit.
  *
- * Formulário real: `FeriasAusenciasFormModal.tsx`. `CreateLeaveRequestDto`
- * documenta explicitamente o par funcionario_id/employee_id como aliases
- * mirrorados ("O formulário envia funcionario_id; employee_id é o alias
- * legado. O service exige um dos dois e espelha ambos."). `motivo` e
- * `documento_url` são aceitos pelo DTO e gravados por
- * `HrService.createLeaveRequest()` sempre que o chamador os envia, mas não
- * têm campo visual no form atual — mantidos como zona legada (mesmo
- * critério de `employees.departamento`/`salario`), não removidos. Zero
- * colunas removidas.
+ * Real form: `FeriasAusenciasFormModal.tsx`. `CreateLeaveRequestDto`
+ * explicitly documents the funcionario_id/employee_id pair as mirrored
+ * aliases ("the form sends funcionario_id; employee_id is the legacy
+ * alias. The service requires one of the two and mirrors both."). `motivo` and
+ * `documento_url` are accepted by the DTO and written by
+ * `HrService.createLeaveRequest()` whenever the caller sends them, but have
+ * no visual field in the current form — kept as a legacy zone (same
+ * criterion as `employees.departamento`/`salario`), not removed. Zero
+ * columns removed.
  *
- * Ordem original tinha o bloco "campos do formulário" (2ª era) inteiro
- * após o bloco de auditoria. Reconstrução pura de ordem: funcionais em
- * ordem visual (funcionario_id → tipo → data_inicio → data_fim →
- * dias_totais → status → aprovado_por → observacoes) → legado adjacente
- * ao campo real correspondente → metadata → auditoria (`created_at,
- * updated_at, created_by, deleted_at` — não existe `updated_by` nesta
- * tabela, lacuna preexistente não inventada).
+ * The original order had the whole "form fields" block (2nd era)
+ * after the audit block. A pure order rebuild: functional fields in
+ * visual order (funcionario_id → tipo → data_inicio → data_fim →
+ * dias_totais → status → aprovado_por → observacoes) → legacy next
+ * to the matching real field → metadata → auditing (`created_at,
+ * updated_at, created_by, deleted_at` — there is no `updated_by` in this
+ * table, a pre-existing gap not invented here).
  */
 export class RebuildLeaveRequestsInCanonicalFormOrder20260719000025 implements MigrationInterface {
   name = 'RebuildLeaveRequestsInCanonicalFormOrder20260719000025';

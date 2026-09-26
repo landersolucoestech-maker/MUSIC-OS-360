@@ -4,12 +4,12 @@ import * as path from 'path';
 /**
  * restore-ecad-add-entity-code-column.migration.spec.ts
  *
- * Guarda permanente (correção de produto sobre a Rodada 8, 2026-07-18):
- * `cod_ecad` continua existindo como coluna própria (ECAD é entidade central
- * e obrigatória — não deveria ter sido removida). `cod_abramus` foi
- * corretamente renomeado para `cod_entidade` (continua sendo UMA coluna
- * simples — o valor pode ser um código em qualquer entidade de gestão
- * coletiva: ABRAMUS, UBC, SOCINPRO, entre outras).
+ * Permanent guard (product correction over Round 8, 2026-07-18):
+ * `cod_ecad` keeps existing as its own column (ECAD is a central, mandatory
+ * entity — it should not have been removed). `cod_abramus` was
+ * correctly renamed to `cod_entidade` (still ONE simple
+ * column — the value may be a code at any collective management
+ * society: ABRAMUS, UBC, SOCINPRO, among others).
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260718000017_RestoreEcadAddEntityCodeColumn.ts'),

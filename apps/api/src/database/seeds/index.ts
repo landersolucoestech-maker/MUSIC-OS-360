@@ -1,11 +1,11 @@
 /**
  * seeds/index.ts
  *
- * Runner de seeds — executa todos os seeds em ordem.
- * Invocado pelo script npm run db:seed.
+ * Seed runner — runs all seeds in order.
+ * Invoked by the npm run db:seed script.
  *
  * Flags:
- *   --force   Executa mesmo em NODE_ENV=production (requer confirmação explícita)
+ *   --force   Runs even with NODE_ENV=production (requires explicit confirmation)
  */
 
 import 'reflect-metadata';
@@ -30,10 +30,10 @@ async function run(): Promise<void> {
     process.exit(1);
   }
 
-  // Fail-closed independente de NODE_ENV/--force: nenhuma execução deste
-  // runner pode atingir a branch MAIN do Supabase, mesmo que alguém rode com
-  // --force por engano. --force existe para permitir produção legítima
-  // (fora do projeto MAIN), não para contornar este guard.
+  // Fail-closed regardless of NODE_ENV/--force: no run of this
+  // runner may reach the MAIN Supabase branch, even if someone runs it with
+  // --force by mistake. --force exists to allow legitimate production
+  // (outside the MAIN project), not to bypass this guard.
   const targetRef = extractSupabaseRef(process.env['DATABASE_URL']);
   if (targetRef === SUPABASE_PROD_REF) {
     console.error(

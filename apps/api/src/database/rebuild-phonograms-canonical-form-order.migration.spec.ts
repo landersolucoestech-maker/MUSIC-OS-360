@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `phonograms` na ordem do formulário real (FonogramaFormModal) — obra_id é
- * o primeiro campo funcional ("Título da Obra Vinculada" é a 1ª seção).
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `phonograms` in the real form's order (FonogramaFormModal) — obra_id is
+ * the first functional field ("Título da Obra Vinculada" is the 1st section).
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000003_RebuildPhonogramsInCanonicalFormOrder.ts'),

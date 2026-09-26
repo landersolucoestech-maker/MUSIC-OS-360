@@ -1,16 +1,16 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Task X — achado via validação de runtime real (OBJETIVO 1).
+ * Task X — finding from real runtime validation (OBJECTIVE 1).
  *
- * A migration 20260816000003 renomeou `contract_templates.tipo` para
- * `tipo_servico`, mas manteve a constraint NOT NULL herdada da coluna
- * antiga. `CreateContractTemplateDto.tipo_servico` é `@IsOptional()` (o
- * único formulário ativo, ContractImportWorkspace.tsx, não exige o campo) —
- * toda criação de template sem tipo_servico quebrava em runtime com
+ * Migration 20260816000003 renamed `contract_templates.tipo` to
+ * `tipo_servico`, but kept the NOT NULL constraint inherited from the old
+ * column. `CreateContractTemplateDto.tipo_servico` is `@IsOptional()` (the
+ * only active form, ContractImportWorkspace.tsx, does not require the field) —
+ * every template creation without tipo_servico broke at runtime with
  * "null value in column tipo_servico violates not-null constraint",
- * nunca coberto pelos testes (mocks não validam NOT NULL). Relaxa a
- * constraint para alinhar com o contrato real do formulário.
+ * never covered by the tests (mocks do not validate NOT NULL). Relaxes the
+ * constraint to align with the form's real contract.
  */
 export class ContractTemplatesTipoServicoOptional20260816000004
   implements MigrationInterface

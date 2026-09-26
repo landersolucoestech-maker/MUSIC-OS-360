@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de `leads`
- * na ordem do formulário real (LeadFormModal) — "Dados do Contato" é a
- * primeira seção real. Renomeia tipoServico/origemLead/probabilidadeFechamento
- * para snake_case e remove score/pipeline_stage (órfãs comprovadas).
+ * Permanent guard (2026-07-19 audit): physical rebuild of `leads`
+ * in the real form's order (LeadFormModal) — "Dados do Contato" is the
+ * first real section. Renames tipoServico/origemLead/probabilidadeFechamento
+ * to snake_case and removes score/pipeline_stage (proven orphans).
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000011_RebuildLeadsInCanonicalFormOrder.ts'),

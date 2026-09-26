@@ -2,14 +2,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * lead-entity-schema-alignment.spec.ts  (Parte 79)
+ * lead-entity-schema-alignment.spec.ts  (Part 79)
  *
- * Guarda permanente: RebuildLeadsInCanonicalFormOrder (2026-07-19) removeu
- * fisicamente `score`/`pipeline_stage` de `leads` (órfãs comprovadas), mas
- * `LeadEntity` continuava declarando ambas via @Column. Todo POST /leads
- * (criação real) falhava com `QueryFailedError: column "score" of relation
- * "leads" does not exist` — reproduzido ao ligar o frontend real do CRM ao
- * backend pela primeira vez (o mock em memória nunca expôs este bug).
+ * Permanent guard: RebuildLeadsInCanonicalFormOrder (2026-07-19) physically
+ * removed `score`/`pipeline_stage` from `leads` (proven orphans), but
+ * `LeadEntity` kept declaring both via @Column. Every POST /leads
+ * (real creation) failed with `QueryFailedError: column "score" of relation
+ * "leads" does not exist` — reproduced when wiring the real CRM frontend to the
+ * backend for the first time (the in-memory mock never exposed this bug).
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000011_RebuildLeadsInCanonicalFormOrder.ts'),
@@ -17,13 +17,13 @@ const migrationSrc = fs.readFileSync(
 );
 const entitiesSrc = fs.readFileSync(path.resolve(__dirname, 'entities.ts'), 'utf8');
 
-// Colunas renomeadas por migrations POSTERIORES à reconstrução canônica
-// (naming-normalization mandate, 2026-09-05): a migration histórica nunca é
-// editada, então seu texto ainda diz o nome antigo — mapeamos aqui para o
-// nome físico atual real.
-// 20260918000039_RenameValorEstimadoToEstimatedValueOnLeads renomeou
+// Columns renamed by migrations LATER than the canonical rebuild
+// (naming-normalization mandate, 2026-09-05): a historical migration is never
+// edited, so its text still states the old name — we map it here to the
+// real current physical name.
+// 20260918000039_RenameValorEstimadoToEstimatedValueOnLeads renamed
 // valor_estimado -> estimated_value (Cluster G, naming-normalization).
-// 20260920000007 renomeou tipo_cliente/tipo_servico -> client_type/
+// 20260920000007 renamed tipo_cliente/tipo_servico -> client_type/
 // service_type (final naming-closure mission).
 const POST_REBUILD_RENAMES: Record<string, string> = {
   cliente_id: 'client_id',
@@ -57,10 +57,10 @@ function extractEntityColumns(): string[] {
   const start = entitiesSrc.indexOf('export class LeadEntity');
   const end = entitiesSrc.indexOf('\n}', start);
   const block = entitiesSrc.slice(start, end);
-  // Propriedades TypeScript declaradas via @Column (usa `name:` para mapear
-  // para a coluna física real quando o nome TS diverge -- nenhuma atualmente
-  // em LeadEntity; origemLead/probabilidadeFechamento, os únicos exemplos
-  // anteriores, foram removidas por completo em
+  // TypeScript properties declared via @Column (uses `name:` to map
+  // to the real physical column when the TS name diverges -- none currently
+  // in LeadEntity; origemLead/probabilidadeFechamento, the only previous
+  // examples, were removed entirely in
   // 20260921000005_DropDeadLeadsCrmDualStorageColumns).
   const nameOverrides = [...block.matchAll(/name:\s*'([a-z_]+)'/g)].map((m) => m[1]);
   const tsProps = [...block.matchAll(/\)\s*([A-Za-z_]+):\s/g)].map((m) => m[1]);

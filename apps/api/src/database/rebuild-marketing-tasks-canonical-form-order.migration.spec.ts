@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `marketing_tasks` na ordem de CreateMarketingTaskDto/taskCreateFields.
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `marketing_tasks` in the order of CreateMarketingTaskDto/taskCreateFields.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000009_RebuildMarketingTasksInCanonicalFormOrder.ts'),

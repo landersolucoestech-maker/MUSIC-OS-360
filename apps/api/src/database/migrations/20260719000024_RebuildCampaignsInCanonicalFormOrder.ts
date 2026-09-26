@@ -1,33 +1,33 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `campaigns` — auditoria 2026-07-19.
+ * Physical rebuild of `campaigns` — 2026-07-19 audit.
  *
- * ACHADO CRÍTICO (registrado como pendência, NÃO corrigido aqui — fora do
- * escopo de reordenação física): `CreateCampaignDto` usa nomes de campo
- * (title/type/artistId/budget/currency/startsAt/endsAt/platforms) que NÃO
- * batem com as colunas físicas da entidade (nome/tipo/artista_id/orcamento/
- * data_inicio/data_fim) — `CampaignsService.create()` faz apenas um spread
- * do DTO sobre a entidade, então esses campos nunca chegam às colunas
- * reais (nome/tipo, ambas NOT NULL sem default, quebrariam o INSERT). Além
- * disso, não há chamador real no frontend para o recurso REST `/campaigns`
- * — a página "Campanhas" do frontend (`Campanhas.tsx` via
- * `marketingService.campaigns`) opera sobre `/marketing/campaigns`
- * (tabelas `marketing_projects`/`marketing_tasks`, já reconstruídas), um
- * recurso homônimo mas fisicamente distinto. `campaign_tasks`/
- * `campaign_assets` (filhas desta tabela, já reconstruídas nas migrations
- * anteriores) têm DTOs corretos e são exercitadas via
- * `CampaignOperationsService`, mas dependem de uma campanha-mãe que hoje
- * não tem via real de criação.
+ * CRITICAL FINDING (recorded as pending, NOT fixed here — out of the
+ * physical reordering scope): `CreateCampaignDto` uses field names
+ * (title/type/artistId/budget/currency/startsAt/endsAt/platforms) that do NOT
+ * match the entity's physical columns (nome/tipo/artista_id/orcamento/
+ * data_inicio/data_fim) — `CampaignsService.create()` only spreads
+ * the DTO onto the entity, so those fields never reach the real columns
+ * (nome/tipo, both NOT NULL without a default, would break the INSERT). In
+ * addition, there is no real frontend caller for the `/campaigns` REST resource
+ * — the frontend's "Campanhas" page (`Campanhas.tsx` via
+ * `marketingService.campaigns`) operates on `/marketing/campaigns`
+ * (the `marketing_projects`/`marketing_tasks` tables, already rebuilt), a
+ * homonymous but physically distinct resource. `campaign_tasks`/
+ * `campaign_assets` (children of this table, already rebuilt in the previous
+ * migrations) have correct DTOs and are exercised via
+ * `CampaignOperationsService`, but depend on a parent campaign that today
+ * has no real creation path.
  *
- * Dado o exposto, esta migration faz APENAS a correção de ordem já
- * comprovadamente segura e no escopo mandatado (bloco de auditoria):
- * `created_by`/`updated_by` estavam ANTES de `deleted_at` — nenhum problema
- * ali é resolvido quanto à nomenclatura DTO×entidade (fica registrado para
- * decisão de produto futura). Zero colunas funcionais reordenadas ou
- * removidas — nome/tipo/status/objetivo/orcamento/data_inicio/data_fim/
- * artista_id/metadata já seguem a ordem de declaração da própria entidade,
- * a única fonte confiável disponível hoje.
+ * Given the above, this migration ONLY makes the order fix already
+ * proven safe and within the mandated scope (the audit block):
+ * `created_by`/`updated_by` were BEFORE `deleted_at` — no problem
+ * there is resolved regarding the DTO×entity naming (it stays recorded for a
+ * future product decision). Zero functional columns reordered or
+ * removed — nome/tipo/status/objetivo/orcamento/data_inicio/data_fim/
+ * artista_id/metadata already follow the entity's own declaration order,
+ * the only reliable source available today.
  */
 export class RebuildCampaignsInCanonicalFormOrder20260719000024 implements MigrationInterface {
   name = 'RebuildCampaignsInCanonicalFormOrder20260719000024';
@@ -73,9 +73,9 @@ export class RebuildCampaignsInCanonicalFormOrder20260719000024 implements Migra
     await queryRunner.query(`CREATE INDEX idx_campaigns_tenant_id_new ON campaigns_new (tenant_id)`);
     await queryRunner.query(`CREATE INDEX idx_campaigns_tenant_active_new ON campaigns_new (tenant_id, deleted_at, created_at DESC) WHERE (deleted_at IS NULL)`);
 
-    // FKs dependentes precisam ser derrubadas antes do rename dance —
-    // incluindo as compostas (campaign_id, tenant_id) que dependem do
-    // índice único ux_campaigns_id_tenant.
+    // Dependent FKs must be dropped before the rename dance —
+    // including the composite ones (campaign_id, tenant_id) that depend on the
+    // unique index ux_campaigns_id_tenant.
     await queryRunner.query(`ALTER TABLE campaign_tasks DROP CONSTRAINT campaign_tasks_campaign_id_fkey`);
     await queryRunner.query(`ALTER TABLE campaign_tasks DROP CONSTRAINT fk_campaign_tasks_campaign_tenant`);
     await queryRunner.query(`ALTER TABLE campaign_assets DROP CONSTRAINT campaign_assets_campaign_id_fkey`);

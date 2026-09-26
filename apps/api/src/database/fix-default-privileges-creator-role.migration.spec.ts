@@ -3,16 +3,16 @@ import * as path from 'path';
 import { isApplicationMigration } from './migration-classification';
 
 /**
- * fix-default-privileges-creator-role.migration.spec.ts  (Parte 80)
+ * fix-default-privileges-creator-role.migration.spec.ts  (Part 80)
  *
- * Guarda permanente: 20260802000001_GrantMusicosAppOnAllTables (Parte 78)
- * configurou `ALTER DEFAULT PRIVILEGES FOR ROLE musicos_migrator`, supondo
- * que isso protegeria toda tabela tenant-scoped futura. Não protegia nada —
- * confirmado ao vivo nesta Parte: `client_attachments` (criada pela migration
- * imediatamente anterior, seguindo o padrão RLS + OWNER TO musicos_migrator)
- * ficou sem NENHUM grant para musicos_app. Postgres aplica default privileges
- * ao role que executa o CREATE TABLE (aqui, sempre `postgres`, confirmado via
- * SELECT current_user), não ao owner final definido por um ALTER posterior.
+ * Permanent guard: 20260802000001_GrantMusicosAppOnAllTables (Part 78)
+ * configured `ALTER DEFAULT PRIVILEGES FOR ROLE musicos_migrator`, assuming
+ * that would protect every future tenant-scoped table. It protected nothing —
+ * confirmed live in this Part: `client_attachments` (created by the
+ * immediately preceding migration, following the RLS + OWNER TO musicos_migrator pattern)
+ * ended up with NO grant at all for musicos_app. Postgres applies default privileges
+ * to the role that runs CREATE TABLE (here, always `postgres`, confirmed via
+ * SELECT current_user), not to the final owner set by a later ALTER.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260803000002_FixDefaultPrivilegesCreatorRole.ts'),

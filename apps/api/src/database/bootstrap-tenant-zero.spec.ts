@@ -2,11 +2,11 @@ import { bootstrapTenantZero } from './bootstrap-tenant-zero';
 import { TENANT_ZERO_ORG_ID, TENANT_ZERO_TENANT_ID, TENANT_ZERO_SLUG, TENANT_ZERO_NAME } from './tenant-zero.constants';
 
 /**
- * Fake DataSource in-memory: modela apenas o suficiente das tabelas
- * organizations/tenants/billing_subscriptions/org_members/audit_logs para
- * exercitar as invariantes do bootstrap sem precisar de um Postgres real —
- * o e2e/CI (verify:tenant-isolation, DB Verify) cobre o comportamento real
- * de RLS/constraints contra um banco de verdade.
+ * In-memory fake DataSource: models just enough of the
+ * organizations/tenants/billing_subscriptions/org_members/audit_logs tables to
+ * exercise the bootstrap invariants without a real Postgres —
+ * e2e/CI (verify:tenant-isolation, DB Verify) covers the real
+ * RLS/constraints behavior against a real database.
  */
 function buildFakeDataSource(seed?: { organizations?: any[]; tenants?: any[] }) {
   const state = {

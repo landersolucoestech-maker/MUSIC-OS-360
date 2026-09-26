@@ -1,13 +1,13 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * 20260610000005_CreateMembershipJobFunctions  (M5 — FASE 4 RBAC Enterprise)
+ * 20260610000005_CreateMembershipJobFunctions  (M5 — PHASE 4 Enterprise RBAC)
  *
- * N:N entre Membership (org_members) e JobFunction. tenant_id denormalizado p/ RLS.
- * UNIQUE(membership_id, job_function_id) evita duplicidade.
- * REGRA CRÍTICA: JobFunction não concede permissão — este vínculo é só organizacional.
+ * N:N between Membership (org_members) and JobFunction. tenant_id denormalized for RLS.
+ * UNIQUE(membership_id, job_function_id) prevents duplicates.
+ * CRITICAL RULE: JobFunction grants no permission — this link is organizational only.
  *
- * Idempotente. Reversível via down().
+ * Idempotent. Reversible via down().
  */
 export class CreateMembershipJobFunctions20260610000005 implements MigrationInterface {
   name = 'CreateMembershipJobFunctions20260610000005';

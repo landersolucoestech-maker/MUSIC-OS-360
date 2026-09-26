@@ -13,8 +13,8 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f
 
 describe('tenant-zero.constants', () => {
   it('derives org/tenant IDs deterministically via UUIDv5 from the frozen namespace', () => {
-    // Recomputa de forma independente — prova que os exports não são
-    // literais soltos, e sim resultado da fórmula documentada.
+    // Recomputes independently — proves the exports are not loose
+    // literals, but the result of the documented formula.
     expect(TENANT_ZERO_ORG_ID).toBe(uuidv5(`${TENANT_ZERO_SLUG}:organization`, MUSICOS360_NAMESPACE_UUID));
     expect(TENANT_ZERO_TENANT_ID).toBe(uuidv5(`${TENANT_ZERO_SLUG}:tenant`, MUSICOS360_NAMESPACE_UUID));
     expect(TENANT_ZERO_SYNTHETIC_OWNER_AUTH_USER_ID).toBe(uuidv5(`${TENANT_ZERO_SLUG}:synthetic-owner`, MUSICOS360_NAMESPACE_UUID));
@@ -41,8 +41,8 @@ describe('tenant-zero.constants', () => {
   });
 
   it('canonical IDs are frozen: changing the namespace or seed breaks compatibility', () => {
-    // Snapshot explícito — se este teste falhar, o namespace ou a seed mudaram
-    // e TODO ambiente (DEV/STAGING/PROD) precisa de um plano de migração de dados.
+    // Explicit snapshot — if this test fails, the namespace or the seed changed
+    // and EVERY environment (DEV/STAGING/PROD) needs a data migration plan.
     expect(TENANT_ZERO_ORG_ID).toMatchSnapshot();
     expect(TENANT_ZERO_TENANT_ID).toMatchSnapshot();
   });

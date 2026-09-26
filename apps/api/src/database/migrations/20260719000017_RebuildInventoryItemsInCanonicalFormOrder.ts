@@ -1,13 +1,13 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `inventory_items` — auditoria 2026-07-19.
- * Reconstrução pura de ordem (sem remoção de colunas — todas aceitas por
- * `CreateInventoryItemDto` e persistidas diretamente por
- * `InventoryService.create()` via spread do DTO). A ordem já batia
- * integralmente com o DTO; único ponto corrigido é o bloco de auditoria,
- * que estava `created_by, updated_by, created_at, updated_at, deleted_at`
- * e passa para o padrão canônico `created_at, updated_at, created_by,
+ * Physical rebuild of `inventory_items` — 2026-07-19 audit.
+ * A pure order rebuild (no column removal — all accepted by
+ * `CreateInventoryItemDto` and persisted directly by
+ * `InventoryService.create()` via the DTO spread). The order already matched
+ * the DTO entirely; the only point fixed is the audit block,
+ * which was `created_by, updated_by, created_at, updated_at, deleted_at`
+ * and becomes the canonical pattern `created_at, updated_at, created_by,
  * updated_by, deleted_at`.
  */
 export class RebuildInventoryItemsInCanonicalFormOrder20260719000017 implements MigrationInterface {

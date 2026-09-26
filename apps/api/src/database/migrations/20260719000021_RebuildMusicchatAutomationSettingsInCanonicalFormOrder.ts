@@ -1,20 +1,20 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `musicchat_automation_settings` — auditoria
- * 2026-07-19. Formulário real: `MusicChatAutomationSettings.tsx`
- * (Configurações → MusicChat). A ordem já batia com
+ * Physical rebuild of `musicchat_automation_settings` — 2026-07-19
+ * audit. Real form: `MusicChatAutomationSettings.tsx`
+ * (Settings → MusicChat). The order already matched
  * `UpdateMusicChatAutomationSettingsDto` (enabled → welcome_message →
  * main_menu_message → menu_options → templates → required_fields →
  * optional_fields → invalid_option_message → absence_message →
  * out_of_hours_message → closing_message → return_to_menu_rule →
  * escalation_rules → notification_channels → supervisor_user_id →
- * manager_user_id), exceto por `updated_by`, que estava ANTES de
- * created_at/updated_at (violando a regra de que nenhum campo de controle
- * de auditoria aparece antes do bloco de timestamps). Corrigido para
- * created_at, updated_at, updated_by (não existe created_by/deleted_at
- * nesta tabela — settings singleton por tenant, sem soft delete). Zero
- * colunas removidas.
+ * manager_user_id), except for `updated_by`, which was BEFORE
+ * created_at/updated_at (violating the rule that no audit control field
+ * appears before the timestamp block). Fixed to
+ * created_at, updated_at, updated_by (there is no created_by/deleted_at
+ * in this table — a singleton settings row per tenant, no soft delete). Zero
+ * columns removed.
  */
 export class RebuildMusicchatAutomationSettingsInCanonicalFormOrder20260719000021 implements MigrationInterface {
   name = 'RebuildMusicchatAutomationSettingsInCanonicalFormOrder20260719000021';

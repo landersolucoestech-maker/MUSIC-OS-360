@@ -1,21 +1,21 @@
 /**
- * migrate-application.ts  (Parte 72 — desacoplamento de migrations gerenciadas externamente)
+ * migrate-application.ts  (Part 72 — decoupling of externally managed migrations)
  *
- * Executor e verificador segmentados: operam apenas sobre migrations
- * classificadas como APPLICATION (ver migration-classification.ts),
- * deixando EXTERNAL_MANAGED/PRIVILEGED de fora sem abortar a fila inteira —
- * ao contrário de `dataSource.runMigrations()` puro, que para na primeira
- * falha mesmo quando a migration seguinte não depende da que falhou.
+ * Segmented executor and verifier: they operate only on migrations
+ * classified as APPLICATION (see migration-classification.ts),
+ * leaving EXTERNAL_MANAGED/PRIVILEGED out without aborting the whole queue —
+ * unlike a plain `dataSource.runMigrations()`, which stops at the first
+ * failure even when the next migration does not depend on the failed one.
  *
- * Usa só API pública do TypeORM (MigrationExecutor.getPendingMigrations +
- * .insertMigration) — não reimplementa o SQL de tracking. O tracking só é
- * inserido depois do up() físico ter sucesso, dentro da mesma transação
- * (mesma semântica de `transaction: 'each'`): se o INSERT falhar, o up()
- * também é revertido.
+ * Uses only TypeORM's public API (MigrationExecutor.getPendingMigrations +
+ * .insertMigration) — does not reimplement the tracking SQL. Tracking is only
+ * inserted after the physical up() succeeds, inside the same transaction
+ * (same semantics as `transaction: 'each'`): if the INSERT fails, up()
+ * is rolled back too.
  *
- * Funções puras recebendo um DataSource já pronto — sem I/O de conexão —
- * para serem testáveis sem depender do módulo de import-time-guard de
- * datasource.ts (mesmo padrão de bootstrap-tenant-zero.ts).
+ * Pure functions receiving an already prepared DataSource — no connection I/O —
+ * so they are testable without depending on the import-time-guard module of
+ * datasource.ts (same pattern as bootstrap-tenant-zero.ts).
  */
 import type { DataSource, Migration } from 'typeorm';
 import { MigrationExecutor } from 'typeorm';
@@ -50,11 +50,11 @@ export async function migrateApplication(dataSource: DataSource): Promise<Migrat
         throw new Error(`Migration "${migration.name}" sem instância carregada — verifique migrations/index.ts.`);
       }
 
-      // Respeita o override por-migration (ex.: `transaction = false` em
-      // PerformanceIndexes20260521000030, que usa CREATE INDEX CONCURRENTLY —
-      // proibido dentro de um bloco de transação). Mesma regra que
-      // MigrationExecutor.executePendingMigrations() aplica internamente;
-      // ignorá-la faz qualquer migration assim falhar sempre neste executor.
+      // Respects the per-migration override (e.g. `transaction = false` in
+      // PerformanceIndexes20260521000030, which uses CREATE INDEX CONCURRENTLY —
+      // forbidden inside a transaction block). The same rule
+      // MigrationExecutor.executePendingMigrations() applies internally;
+      // ignoring it makes any such migration always fail in this executor.
       const useTransaction = migration.instance.transaction !== false;
 
       if (useTransaction) await queryRunner.startTransaction();
@@ -64,7 +64,7 @@ export async function migrateApplication(dataSource: DataSource): Promise<Migrat
         if (useTransaction) await queryRunner.commitTransaction();
         applied.push(migration.name);
       } catch (err) {
-        if (useTransaction) await queryRunner.rollbackTransaction().catch(() => { /* re-lançamos o erro original abaixo */ });
+        if (useTransaction) await queryRunner.rollbackTransaction().catch(() => { /* we rethrow the original error below */ });
         throw new Error(`Migration APPLICATION "${migration.name}" falhou: ${(err as Error).message}`);
       }
     }

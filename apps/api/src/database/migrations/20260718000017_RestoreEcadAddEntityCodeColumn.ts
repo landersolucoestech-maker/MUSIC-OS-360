@@ -1,27 +1,27 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Correção de produto sobre a migration anterior (RemoveLegacySocietyCodeColumns
- * 20260718000016): a determinação real é mais restrita do que a Rodada 8 havia
- * mandatado —
+ * Product correction over the previous migration (RemoveLegacySocietyCodeColumns
+ * 20260718000016): the real determination is narrower than what Round 8 had
+ * mandated —
  *
- *   - `cod_ecad` CONTINUA existindo como coluna própria (ECAD é uma entidade
- *     central e obrigatória, não uma entre várias sociedades alternativas —
- *     não deveria ter sido removida).
- *   - `cod_abramus` estava genuinamente errado, mas não porque devesse virar
- *     uma lista genérica (`external_identifiers`) — o campo continua sendo
- *     UMA coluna simples, só que com o nome errado: o valor pode ser um
- *     código na ABRAMUS, na UBC, na SOCINPRO, entre outras entidades de
- *     gestão coletiva, então o nome canônico correto é `cod_entidade`.
+ *   - `cod_ecad` KEEPS existing as its own column (ECAD is a central,
+ *     mandatory entity, not one among several alternative societies —
+ *     it should not have been removed).
+ *   - `cod_abramus` was genuinely wrong, but not because it should become
+ *     a generic list (`external_identifiers`) — the field is still
+ *     ONE simple column, only with the wrong name: the value may be a
+ *     code at ABRAMUS, UBC, SOCINPRO, among other collective
+ *     management societies, so the correct canonical name is `cod_entidade`.
  *
- * Como `cod_ecad`/`cod_abramus` já foram fisicamente removidas por
- * 20260718000016 (migration já aplicada e registrada — não reescrita para
- * preservar histórico fiel do que foi executado), esta migration é a
- * correção seguinte: recria `cod_ecad` e cria `cod_entidade` (substituta de
- * `cod_abramus`), restaurando os dados a partir de `external_identifiers`
- * (que já tinha sido populada por BackfillLegacySocietyCodesToExternalIdentifiers
- * 20260718000015 antes da remoção) sempre que existir exatamente um registro
- * correspondente por entidade.
+ * Since `cod_ecad`/`cod_abramus` were already physically removed by
+ * 20260718000016 (a migration already applied and recorded — not rewritten, to
+ * preserve a faithful history of what was executed), this migration is the
+ * follow-up fix: it recreates `cod_ecad` and creates `cod_entidade` (replacement for
+ * `cod_abramus`), restoring the data from `external_identifiers`
+ * (which had already been populated by BackfillLegacySocietyCodesToExternalIdentifiers
+ * 20260718000015 before the removal) whenever exactly one matching record
+ * exists per entity.
  */
 export class RestoreEcadAddEntityCodeColumn20260718000017 implements MigrationInterface {
   name = 'RestoreEcadAddEntityCodeColumn20260718000017';
@@ -38,9 +38,9 @@ export class RestoreEcadAddEntityCodeColumn20260718000017 implements MigrationIn
         ADD COLUMN IF NOT EXISTS cod_entidade VARCHAR(100)
     `);
 
-    // Restaura valores a partir de external_identifiers, só quando há
-    // EXATAMENTE UM identificador daquele tipo por entidade (sem escolher
-    // arbitrariamente entre múltiplos).
+    // Restores values from external_identifiers, only when there is
+    // EXACTLY ONE identifier of that type per entity (no arbitrary choice
+    // among multiple).
     const restore = async (
       table: 'works' | 'phonograms',
       entityType: 'WORK' | 'RECORDING',

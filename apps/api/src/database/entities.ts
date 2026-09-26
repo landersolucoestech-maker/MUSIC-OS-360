@@ -72,7 +72,7 @@ export class OrganizationEntity {
   @Column({ type: 'jsonb', default: {} }) address: Record<string, unknown>;
   @Column({ type: 'jsonb', default: {} }) config: Record<string, unknown>;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
-  /** Marca o tenant-zero institucional (LANDER RECORDS). Nunca lido por RLS/RBAC/billing — ver tenant-zero.constants.ts. */
+  /** Marks the institutional tenant-zero (LANDER RECORDS). Never read by RLS/RBAC/billing — see tenant-zero.constants.ts. */
   @Column({ type: 'boolean', default: false }) is_system_tenant: boolean;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamp' }) updated_at: Date;
@@ -99,7 +99,7 @@ export class TenantEntity {
   @Column({ type: 'timestamptz', nullable: true }) public_registration_revoked_at: Date | null;
   @Column({ type: 'integer', default: 0 }) public_registration_access_count: number;
   @Column({ type: 'integer', default: 0 }) public_registration_conversion_count: number;
-  /** Marca o tenant-zero institucional (LANDER RECORDS). Nunca lido por RLS/RBAC/billing — ver tenant-zero.constants.ts. */
+  /** Marks the institutional tenant-zero (LANDER RECORDS). Never read by RLS/RBAC/billing — see tenant-zero.constants.ts. */
   @Column({ type: 'boolean', default: false }) is_system_tenant: boolean;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamp' }) updated_at: Date;
@@ -122,9 +122,9 @@ export class OrgMemberEntity {
   @Column({ type: 'varchar', length: 255 }) email: string;
   @Column({ type: 'varchar', length: 255, nullable: true }) full_name: string | null;
   @Column({ type: 'varchar', length: 30, nullable: true }) phone: string | null;
-  /** Role armazenado como string — fonte LEGADA, mantida durante a transição RBAC. */
+  /** Role stored as a string — LEGACY source, kept during the RBAC transition. */
   @Column({ type: 'varchar', length: 50, default: SystemRole.VIEWER }) role: string;
-  /** RBAC Enterprise (FASE 4) — colunas aditivas nullable; coexistem com `role`. */
+  /** Enterprise RBAC (PHASE 4) — additive nullable columns; coexist with `role`. */
   @Column({ type: 'uuid', nullable: true }) role_id: string | null;
   @Column({ type: 'uuid', nullable: true }) department_id: string | null;
   @Column({ type: 'uuid', nullable: true }) position_id: string | null;
@@ -137,11 +137,11 @@ export class OrgMemberEntity {
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
 }
 
-// ─── RBAC Enterprise (FASE 4) — Autorização, Organograma e Funções ─────────────
-// Department / Position / JobFunction NÃO concedem permissão (sem FK role/permission).
-// Apenas Role concede permissão (via role_permissions). Permission é catálogo global.
+// ─── Enterprise RBAC (PHASE 4) — Authorization, Org Chart and Functions ──────────
+// Department / Position / JobFunction do NOT grant permission (no role/permission FK).
+// Only Role grants permission (via role_permissions). Permission is a global catalog.
 
-// ─── Permission groups (catálogo GLOBAL — domínio p/ UX + governança) ─────────
+// ─── Permission groups (GLOBAL catalog — domain for UX + governance) ──────────
 @Entity('permission_groups')
 @Index(['domain'])
 export class PermissionGroupEntity {
@@ -163,7 +163,7 @@ export class PermissionEntity {
   @Column({ type: 'varchar', length: 64 }) action: string;
   @Column({ type: 'varchar', length: 160, unique: true }) key: string;
   @Column({ type: 'text', nullable: true }) description: string | null;
-  /** FK → permission_groups. NULLABLE até backfill (FASE 4) popular o vínculo. */
+  /** FK → permission_groups. NULLABLE until the backfill (PHASE 4) populates the link. */
   @Column({ type: 'uuid', nullable: true }) group_id: string | null;
   @Column({ type: 'varchar', length: 160, nullable: true }) label: string | null;
   @Column({ type: 'integer', default: 1 }) since_version: number;
@@ -174,7 +174,7 @@ export class PermissionEntity {
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
 }
 
-// ─── Permission aliases (catálogo GLOBAL — vocabulário legado → novo) ──────────
+// ─── Permission aliases (GLOBAL catalog — legacy vocabulary → new) ────────────
 @Entity('permission_aliases')
 export class PermissionAliasEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
@@ -242,7 +242,7 @@ export class RoleEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   /** NULL = role global/sistema; non-null = role custom do tenant. */
   @Column({ type: 'uuid', nullable: true }) tenant_id: string | null;
-  /** Alias → role canônico (ex.: artista→artist, tenant_owner→owner). */
+  /** Alias → canonical role (e.g. artista→artist, tenant_owner→owner). */
   @Column({ type: 'uuid', nullable: true }) canonical_role_id: string | null;
   @Column({ type: 'varchar', length: 64 }) slug: string;
   @Column({ type: 'varchar', length: 120 }) name: string;
@@ -442,7 +442,7 @@ export class BillingSettingsEntity {
   @UpdateDateColumn({ type: 'timestamp' }) updated_at: Date;
 }
 
-// Planos são a fonte PRIMÁRIA (admin/banco); o Stripe recebe só a sincronização.
+// Plans are the PRIMARY source (admin/database); Stripe only receives the sync.
 @Entity('billing_plans')
 @Index(['active'])
 export class BillingPlanEntity {
@@ -450,20 +450,20 @@ export class BillingPlanEntity {
   @Column({ type: 'varchar', length: 60, unique: true }) slug: string;
   @Column({ type: 'varchar', length: 120 }) name: string;
   @Column({ type: 'text', nullable: true }) description: string | null;
-  /** Valor em centavos. */
+  /** Value in cents. */
   @Column({ type: 'integer' }) amount: number;
   @Column({ type: 'varchar', length: 3, default: 'brl' }) currency: string;
   @Column({ type: 'varchar', length: 10, default: 'month' }) interval: string;
   @Column({ type: 'boolean', default: true }) active: boolean;
-  // Lista de rótulos exibidos no card do plano (nunca um mapa de flags) — o
-  // admin form e as telas de billing/landing sempre tratam como array
-  // (.map/.push/.filter). Coluna corrigida de default {} para [] (Parte 84 —
-  // causava "features.map is not a function" em Configurações/Billing);
-  // BillingPlansService.list()/get() normaliza defensivamente linhas
-  // legadas que já persistiram {}.
+  // List of labels displayed on the plan card (never a map of flags) — the
+  // admin form and the billing/landing screens always treat it as an array
+  // (.map/.push/.filter). Column default fixed from {} to [] (Part 84 —
+  // it caused "features.map is not a function" in Settings/Billing);
+  // BillingPlansService.list()/get() defensively normalizes legacy rows
+  // that already persisted {}.
   @Column({ type: 'jsonb', default: [] }) features: unknown[];
   @Column({ type: 'jsonb', default: {} }) limits: Record<string, unknown>;
-  /** Slugs comerciais incluídos no plano (entitlements). Lista dinâmica. */
+  /** Commercial slugs included in the plan (entitlements). Dynamic list. */
   @Column({ type: 'jsonb', default: [] }) integrations: string[];
   @Column({ type: 'varchar', length: 255, nullable: true }) stripe_product_id: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) stripe_price_id: string | null;
@@ -561,11 +561,11 @@ export class ArtistPlatformProfileEntity {
 }
 
 /**
- * Fase 2 — série histórica append-only por (artista, plataforma, métrica,
- * observed_at). `artist_platform_profiles` acima continua sendo a projeção
- * current-state; esta tabela é a verdade temporal que a alimenta. Nunca
- * UPDATE/DELETE pelo app (grants em 20260831000001_CreateArtistMetricSnapshots) —
- * a unicidade abaixo é a chave de idempotência de um mesmo ponto observado.
+ * Phase 2 — append-only historical series per (artist, platform, metric,
+ * observed_at). `artist_platform_profiles` above remains the
+ * current-state projection; this table is the temporal truth that feeds it. Never
+ * UPDATE/DELETE by the app (grants in 20260831000001_CreateArtistMetricSnapshots) —
+ * the uniqueness below is the idempotency key of the same observed point.
  */
 @Entity('artist_metric_snapshots')
 @Index(['tenant_id'])
@@ -597,10 +597,10 @@ export class ArtistMetricSnapshotEntity {
 }
 
 /**
- * Fase 3 — resultado append-only do Career Stage Engine. Cada cálculo grava
- * uma linha nova (nunca UPDATE/DELETE pelo app — grants em
- * 20260831000002_CreateAnalyticsSnapshots); engine_version muda sem apagar
- * resultados anteriores.
+ * Phase 3 — append-only result of the Career Stage Engine. Each computation writes
+ * a new row (never UPDATE/DELETE by the app — grants in
+ * 20260831000002_CreateAnalyticsSnapshots); engine_version changes without deleting
+ * previous results.
  */
 @Entity('career_stage_snapshots')
 @Index(['tenant_id', 'artist_id'])
@@ -628,8 +628,8 @@ export class CareerStageSnapshotEntity {
 }
 
 /**
- * Fase 3 — resultado append-only do Market Benchmark Engine. Mesmo padrão
- * append-only de CareerStageSnapshotEntity.
+ * Phase 3 — append-only result of the Market Benchmark Engine. Same
+ * append-only pattern as CareerStageSnapshotEntity.
  */
 @Entity('market_benchmark_snapshots')
 @Index(['tenant_id', 'artist_id'])
@@ -655,11 +655,11 @@ export class MarketBenchmarkSnapshotEntity {
 }
 
 /**
- * Fase 3.1 — cache técnico de métricas de artistas EXTERNOS (candidatos de
- * mercado descobertos via Soundcharts /related), deliberadamente SEM
- * tenant_id/RLS — não é dado de propriedade de nenhum tenant, é referência
- * pública compartilhada (ver 20260831000003_CreateMarketReferenceMetrics).
- * Nunca exposta diretamente por endpoint tenant-scoped.
+ * Phase 3.1 — technical cache of metrics of EXTERNAL artists (market
+ * candidates discovered via Soundcharts /related), deliberately WITHOUT
+ * tenant_id/RLS — it is not data owned by any tenant, it is shared public
+ * reference data (see 20260831000003_CreateMarketReferenceMetrics).
+ * Never exposed directly by a tenant-scoped endpoint.
  */
 @Entity('market_reference_metrics')
 @Index(['candidate_uuid'])
@@ -690,24 +690,24 @@ export class WorkEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 500 }) title: string;
-  // `compositores`/`letristas` são derivados de `participantes` (hoje work_participants)
-  // e persistidos para leitura rápida em listas/relatórios sem join — justificativa
-  // técnica (auditoria 2026-07-18). `co_compositores`/`detentores` removidos: sem
-  // writer ativo (migration WorkParticipantsNormalization20260718000011).
-  // `compositor` (singular) PERMANECE apesar de parecer igualmente morto pelo
-  // form/DTO real: é `col()` (importável) em WORKS_CONTRACT, e o motor de
-  // bulk-import de Reports escreve INSERT SQL direto contra
-  // importableColumns, contornando CreateWorkDto por completo -- um writer
-  // real (naming-closure Phase 2 quase removeu esta coluna por engano; ver
-  // work-participants-normalization.spec.ts, que já documentava esse writer).
+  // `compositores`/`letristas` are derived from `participantes` (now work_participants)
+  // and persisted for fast reads in lists/reports without a join — technical
+  // justification (2026-07-18 audit). `co_compositores`/`detentores` removed: no
+  // active writer (migration WorkParticipantsNormalization20260718000011).
+  // `compositor` (singular) REMAINS despite looking equally dead from the real
+  // form/DTO: it is a `col()` (importable) in WORKS_CONTRACT, and the Reports
+  // bulk-import engine writes INSERT SQL directly against
+  // importableColumns, bypassing CreateWorkDto entirely -- a real
+  // writer (naming-closure Phase 2 almost removed this column by mistake; see
+  // work-participants-normalization.spec.ts, which already documented that writer).
   @Column({ type: 'varchar', length: 255, nullable: true }) compositor: string | null;
   @Column({ type: 'jsonb', nullable: true }) compositores: unknown[] | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) editora: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) isrc: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) iswc: string | null;
-  // Renomeada de `cod_abramus` (20260718000017) — o valor pode ser um código
-  // em ABRAMUS, UBC, SOCINPRO ou outra entidade de gestão coletiva; coluna
-  // física já recriada com este nome pela migration, entity estava defasada.
+  // Renamed from `cod_abramus` (20260718000017) — the value may be a code
+  // at ABRAMUS, UBC, SOCINPRO or another collective management society; the physical
+  // column was already recreated with this name by the migration, the entity was out of date.
   @Column({ type: 'varchar', length: 100, nullable: true }) cod_entidade: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) cod_ecad: string | null;
   @Column({ type: 'varchar', length: 100 }) type: string;
@@ -737,7 +737,7 @@ export class WorkEntity {
   @Column({ type: 'jsonb', nullable: true }) ai_tools: unknown[] | null;
   @Column({ type: 'jsonb', nullable: true }) ai_prompts: unknown[] | null;
 
-  // ── Campos do formulário (1 coluna por campo — nome EXATO da chave do form) ──
+  // ── Form fields (1 column per field — EXACT name of the form key) ──────────────
   @Column({ type: 'varchar', length: 20, nullable: true }) idioma: string | null;
   @Column({ type: 'varchar', length: 10, nullable: true }) instrumental: string | null;
   @Column({ type: 'boolean', nullable: true }) criada_por_ia: boolean | null;
@@ -748,8 +748,8 @@ export class WorkEntity {
   @Column({ type: 'jsonb', nullable: true }) outros_titulos: unknown[] | null;
   @Column({ type: 'jsonb', nullable: true }) referencias_conexas: unknown[] | null;
   @Column({ type: 'text', nullable: true }) letra_completa: string | null;
-  // `participantes` normalizado em work_participants (migration
-  // WorkParticipantsNormalization20260718000011) — não é mais coluna jsonb.
+  // `participantes` normalized into work_participants (migration
+  // WorkParticipantsNormalization20260718000011) — no longer a jsonb column.
   @Column({ type: 'jsonb', nullable: true }) letristas: unknown[] | null;
   @Column({ type: 'uuid', nullable: true }) project_id: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) tipo_obra: string | null;
@@ -773,9 +773,9 @@ export class WorkEntity {
 }
 
 // ─── Work Participants (migration 20260718000011) ─────────────────────────────
-// Tabela filha normalizada para autoria de `works` — substitui a antiga coluna
-// jsonb `works.participantes`. Participante nunca precisa ser uma entidade
-// cadastrada (o formulário real não vincula a `artists`); `nome` é texto livre.
+// Normalized child table for `works` authorship — replaces the old jsonb
+// column `works.participantes`. A participant never needs to be a registered
+// entity (the real form does not link to `artists`); `nome` is free text.
 @Entity('work_participants')
 @Index(['tenant_id', 'work_id'])
 export class WorkParticipantEntity {
@@ -824,15 +824,15 @@ export class PhonogramEntity {
   @Column({ type: 'varchar', length: 20, nullable: true }) duration_text: string | null;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 50, default: PhonogramStatus.PENDING }) status: PhonogramStatus;
-  // compositores/interpretes/produtores (legacy free-text columns) removidas
+  // compositores/interpretes/produtores (legacy free-text columns) removed
   // (naming-closure Phase 2, 20260923000002_DropDeadPhonogramsLegacyParticipantColumns)
-  // -- zero writers em todo o repositório (nem sequer aceitas por
-  // CreatePhonogramDto), superseded por `participacao` (jsonb estruturado,
-  // abaixo, o que o formulário real de Fonograma efetivamente grava).
+  // -- zero writers in the whole repository (not even accepted by
+  // CreatePhonogramDto), superseded by `participacao` (structured jsonb,
+  // below, which is what the real Phonogram form actually writes).
   @Column({ type: 'varchar', length: 255, nullable: true }) gravadora: string | null;
-  // Renomeada de `cod_abramus` (20260718000017) — o valor pode ser um código
-  // em ABRAMUS, UBC, SOCINPRO ou outra entidade de gestão coletiva; coluna
-  // física já recriada com este nome pela migration, entity estava defasada.
+  // Renamed from `cod_abramus` (20260718000017) — the value may be a code
+  // at ABRAMUS, UBC, SOCINPRO or another collective management society; the physical
+  // column was already recreated with this name by the migration, the entity was out of date.
   @Column({ type: 'varchar', length: 100, nullable: true }) cod_entidade: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) cod_ecad: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) origem_externa: string | null;
@@ -862,7 +862,7 @@ export class PhonogramEntity {
   // migration 20260605000001_AddGenreToPhonograms
   @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
 
-  // ── Campos do formulário (1 coluna por campo — nome EXATO da chave do form) ──
+  // ── Form fields (1 column per field — EXACT name of the form key) ──────────────
   @Column({ type: 'varchar', length: 100, nullable: true }) agregadora: string | null;
   @Column({ type: 'varchar', length: 5, nullable: true }) isrc_pais: string | null;
   @Column({ type: 'varchar', length: 10, nullable: true }) isrc_registrante: string | null;
@@ -882,10 +882,10 @@ export class PhonogramEntity {
   @Column({ type: 'varchar', length: 100, nullable: true }) pais_origem: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) pais_publicacao: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  // Shape real: objeto com 3 categorias de array de participante
-  // (produtorFonografico/interprete/musicoAcompanhante), não um array --
-  // ver ParticipacaoDto em modules/phonograms/dto/create-phonogram.dto.ts
-  // (fonte de verdade do shape, confirmada contra FonogramaFormModal.tsx).
+  // Real shape: an object with 3 participant array categories
+  // (produtorFonografico/interprete/musicoAcompanhante), not an array --
+  // see ParticipacaoDto in modules/phonograms/dto/create-phonogram.dto.ts
+  // (source of truth for the shape, confirmed against FonogramaFormModal.tsx).
   @Column({ type: 'jsonb', nullable: true }) participacao: PhonogramParticipacao | null;
   @Column({ type: 'jsonb', nullable: true }) arquivo_audio: Record<string, unknown> | null;
 
@@ -924,7 +924,7 @@ export class ContractEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) autentique_doc_id: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) signing_platform: string | null;
   @Column({ type: 'jsonb', default: [] }) versoes: unknown[];
-  // ── Campos do formulário/wizard (1 coluna por campo — nome exato) ────────────
+  // ── Form/wizard fields (1 column per field — exact name) ──────────────────────
   @Column({ type: 'uuid', nullable: true }) template_id: string | null;
   @Column({ type: 'jsonb', nullable: true }) signers: unknown[] | null;
   @Column({ type: 'jsonb', default: [] }) documents: unknown[];
@@ -1020,13 +1020,13 @@ export class TransactionEntity {
   @Column({ type: 'uuid', nullable: true }) project_id: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) referencia: string | null;
   @Column({ type: 'text', nullable: true }) comprovante_url: string | null;
-  // Categorização financeira (tabela financial_categories). Referência lógica
-  // — a tabela transactions NÃO possui FK física hoje (criar FK é Fase 2). O
-  // snapshot guarda a categoria materializada no momento do lançamento (jsonb
-  // NOT NULL DEFAULT '{}' no banco).
+  // Financial categorization (financial_categories table). A logical reference
+  // — the transactions table has NO physical FK today (creating the FK is Phase 2). The
+  // snapshot keeps the category materialized at the time of the entry (jsonb
+  // NOT NULL DEFAULT '{}' in the database).
   @Column({ type: 'uuid', nullable: true }) financial_category_id: string | null;
   @Column({ type: 'jsonb', default: {} }) financial_category_snapshot: Record<string, unknown>;
-  // ── Campos do formulário (1 coluna por campo — nome EXATO da chave do form) ──
+  // ── Form fields (1 column per field — EXACT name of the form key) ──────────────
   @Column({ type: 'varchar', length: 50, nullable: true }) tipo_transacao: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) tipo_cliente: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) subcategoria: string | null;
@@ -1083,7 +1083,7 @@ export class InvoiceEntity {
   @Column({ type: 'timestamp', nullable: true }) data_emissao: Date | null;
   @Column({ type: 'timestamp', nullable: true }) data_vencimento: Date | null;
   @Column({ type: 'text', nullable: true }) arquivo_url: string | null;
-  // ── Campos do formulário de Nota Fiscal (1 coluna por campo — nome exato) ────
+  // ── Invoice form fields (1 column per field — exact name) ─────────────────────
   @Column({ type: 'varchar', length: 20, nullable: true }) serie: string | null;
   @Column({ type: 'varchar', length: 30, nullable: true }) tipo_nota: string | null;
   @Column({ type: 'uuid', nullable: true }) client_id: string | null;
@@ -1173,10 +1173,10 @@ export class ClientEntity {
 }
 
 // ─── Client Attachments ─────────────────────────────────────────────────────────
-// Parte 80: metadata real de anexos (nunca o binário — apenas a chave do
-// objeto no Cloudflare R2 via StorageService). Distinta da coluna jsonb
-// `attachments` legada em ClientEntity (nunca populada por nenhum fluxo
-// real; mantida intocada, não é a fonte de verdade daqui em diante).
+// Part 80: real attachment metadata (never the binary — only the object key
+// in Cloudflare R2 via StorageService). Distinct from the legacy jsonb column
+// `attachments` in ClientEntity (never populated by any real
+// flow; kept untouched, it is not the source of truth from here on).
 @Entity('client_attachments')
 @Index(['tenant_id'])
 @Index(['tenant_id', 'client_id'])
@@ -1211,9 +1211,9 @@ export class LeadEntity {
   @Column({ type: 'varchar', length: 100, nullable: true }) fonte: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
 
-  // ── Colunas operacionais reais (FASE 2B — reconciliação leads) ───────────────
-  // Nomes físicos preservados EXATAMENTE como existem no banco (camelCase e
-  // snake_case coexistem por decisão desta fase; normalização fica para fase futura).
+  // ── Real operational columns (PHASE 2B — leads reconciliation) ────────────────
+  // Physical names preserved EXACTLY as they exist in the database (camelCase and
+  // snake_case coexist by decision of this phase; normalization is left for a future phase).
   @Column({ type: 'varchar', length: 255, nullable: true }) nome_completo: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) nome_artistico: string | null;
   @Column({ type: 'varchar', length: 50, nullable: true }) whatsapp: string | null;
@@ -1222,19 +1222,19 @@ export class LeadEntity {
   @Column({ type: 'varchar', length: 80, nullable: true }) state: string | null;
   @Column({ type: 'varchar', length: 80, nullable: true }) country: string | null;
   @Column({ type: 'varchar', length: 80, nullable: true }) client_type: string | null;
-  // tipo_servico/tipo_cliente (this one, above) were translated to English
-  // (service_type/client_type) by the naming-normalization mission.
-  // origem_lead/responsavel/prioridade/temperatura/estimated_value/
-  // probabilidade_fechamento/proximo_follow_up were a second, dead physical
+  // `tipo_servico`/`tipo_cliente` (this one, above) were translated to English
+  // (`service_type`/`client_type`) by the naming-normalization mission.
+  // `origem_lead`/`responsavel`/`prioridade`/`temperatura`/`estimated_value`/
+  // `probabilidade_fechamento`/`proximo_follow_up` were a second, dead physical
   // storage location for concepts real usage always wrote into
-  // dados_internos_crm (jsonb) -- dropped by naming-closure Cluster E
+  // `dados_internos_crm` (jsonb) -- dropped by naming-closure Cluster E
   // (20260921000005_DropDeadLeadsCrmDualStorageColumns; 0 non-null rows on
   // all 7 columns, live data confirmed exclusively on the jsonb side).
   @Column({ type: 'varchar', length: 120, nullable: true }) service_type: string | null;
   @Column({ type: 'jsonb', default: {} }) payload_servico: Record<string, unknown>;
   @Column({ type: 'jsonb', default: {} }) dados_internos_crm: Record<string, unknown>;
   @Column({ type: 'text', array: true, default: () => "'{}'" }) tags: string[];
-  // Campo do formulário de Lead (regra 2026-07-12: 1 coluna por campo)
+  // Lead form field (2026-07-12 rule: 1 column per field)
   @Column({ type: 'jsonb', nullable: true }) uploads: unknown[] | null;
 
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
@@ -1329,13 +1329,13 @@ export class EventEntity {
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 50, default: EventStatus.SCHEDULED }) status: EventStatus;
   @Column({ type: 'timestamp' }) data: Date;
-  // C3/E1 (migration 20260716000001): coluna canônica futura de início do evento.
-  // Nullable até a fase E5; dual-written com `data` a partir da fase E2.
+  // C3/E1 (migration 20260716000001): future canonical event start column.
+  // Nullable until phase E5; dual-written with `data` from phase E2 onwards.
   @Column({ type: 'timestamp', nullable: true }) starts_at: Date | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) local: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  // ── Campos do formulário de Evento (1 coluna por campo — nome exato) ─────────
+  // ── Event form fields (1 column per field — exact name) ───────────────────────
   @Column({ type: 'timestamp', nullable: true }) end_date: Date | null;
   @Column({ type: 'varchar', length: 300, nullable: true }) endereco: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) contato_local: string | null;
@@ -1357,14 +1357,14 @@ export class EventEntity {
 export class ProjectEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
-  // Renomeada de `nome` (migration ProjectsFormFieldAlignment20260718000013) —
-  // `title` é o nome real e único enviado pelo formulário ativo.
+  // Renamed from `nome` (migration ProjectsFormFieldAlignment20260718000013) —
+  // `title` is the real and only name sent by the active form.
   @Column({ type: 'varchar', length: 255 }) title: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 50, default: ProjectStatus.PLANNING }) status: ProjectStatus;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) orcamento: string | null;
-  // `description` volta a ser texto livre puro — musicas[] normalizada em project_tracks.
+  // `description` is pure free text again — musicas[] normalized into project_tracks.
   @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) music_genre: string | null;
@@ -1380,8 +1380,8 @@ export class ProjectEntity {
 }
 
 // ─── Project Tracks (migration 20260718000013) ────────────────────────────────
-// Tabela filha normalizada para as músicas em desenvolvimento de um projeto
-// (álbum/EP/single) — substitui a antiga serialização JSON dentro de
+// Normalized child table for the tracks in development of a project
+// (album/EP/single) — replaces the old JSON serialization inside
 // `projects.descricao`.
 @Entity('project_tracks')
 @Index(['tenant_id', 'project_id'])
@@ -1412,8 +1412,8 @@ export class ProjectTrackEntity {
 }
 
 // ─── Project Track Participants (migration 20260718000013) ────────────────────
-// compositores/interpretes/produtores de uma faixa — mesma estrutura (nome
-// livre, sem vínculo a artista cadastrado), diferindo apenas pelo papel.
+// composers/performers/producers of a track — same structure (free-text
+// name, no link to a registered artist), differing only by role.
 @Entity('project_track_participants')
 @Index(['tenant_id', 'project_track_id'])
 export class ProjectTrackParticipantEntity {
@@ -1430,7 +1430,7 @@ export class ProjectTrackParticipantEntity {
   track: Relation<ProjectTrackEntity>;
 }
 
-// ─── Releases (Lançamentos) ───────────────────────────────────────────────────
+// ─── Releases ─────────────────────────────────────────────────────────────────
 @Entity('releases')
 @Index(['tenant_id'])
 @Index(['artist_id'])
@@ -1447,7 +1447,7 @@ export class ReleaseEntity {
   @Column({ type: 'jsonb', default: [] }) plataformas: unknown[];
   @Column({ type: 'text', nullable: true }) capa_url: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
-  // ── Campos do formulário de Lançamento (1 coluna por campo — nome exato) ─────
+  // ── Release form fields (1 column per field — exact name) ─────────────────────
   @Column({ type: 'varchar', length: 50, nullable: true }) isrc_global: string | null;
   @Column({ type: 'text', nullable: true }) notas_internas: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
@@ -1477,7 +1477,7 @@ export class ReleaseEntity {
   works: Relation<WorkEntity[]>;
 }
 
-// ─── Shares (Participações) ───────────────────────────────────────────────────
+// ─── Shares ───────────────────────────────────────────────────────────────────
 @Entity('shares')
 @Index(['tenant_id'])
 @Index(['work_id'])
@@ -1508,7 +1508,7 @@ export class ShareEntity {
   @Column({ type: 'timestamp', nullable: true }) start_date: Date | null;
   @Column({ type: 'timestamp', nullable: true }) end_date: Date | null;
 
-  // ── Campos do formulário de Share (1 coluna por campo — nome exato) ──────────
+  // ── Share form fields (1 column per field — exact name) ───────────────────────
   @Column({ type: 'varchar', length: 30, nullable: true }) share_type: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) direction: string | null;
   @Column({ type: 'uuid', nullable: true }) release_id: string | null;
@@ -1553,7 +1553,7 @@ export class TakedownEntity {
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'text', nullable: true }) motivo: string | null;
   @Column({ type: 'text', nullable: true }) resposta: string | null;
-  // ── Campos do formulário de Takedown (1 coluna por campo — nome exato) ───────
+  // ── Takedown form fields (1 column per field — exact name) ────────────────────
   @Column({ type: 'varchar', length: 30, nullable: true }) type: string | null;
   @Column({ type: 'varchar', length: 500, nullable: true }) obra_afetada: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) artista: string | null;
@@ -1634,9 +1634,9 @@ export class SupportRequestEntity {
   @Column({ type: 'timestamp', nullable: true }) deleted_at: Date | null;
 }
 
-// ─── Knowledge Base (Central de Suporte) ───────────────────────────────────────
-// Global content (não tenant-scoped) — Music OS 360 escreve a documentação da
-// plataforma uma vez, todos os tenants leem. Ver 20260822000003_CreateKnowledgeBase.
+// ─── Knowledge Base (Support Center) ──────────────────────────────────────────
+// Global content (not tenant-scoped) — Music OS 360 writes the platform
+// documentation once, every tenant reads it. See 20260822000003_CreateKnowledgeBase.
 @Entity('knowledge_categories')
 export class KnowledgeCategoryEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
@@ -1681,7 +1681,7 @@ export class NotificationEntity {
   @Column({ type: 'varchar', length: 255 }) user_id: string;
   @Column({ type: 'varchar', length: 255 }) title: string;
   @Column({ type: 'text', nullable: true }) body: string | null;
-  /** Notification type — pode ser enum genérico (NotificationType) ou event identifier (e.g. 'contract:expiring') */
+  /** Notification type — may be the generic enum (NotificationType) or an event identifier (e.g. 'contract:expiring') */
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 100, nullable: true }) entity: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) entity_id: string | null;
@@ -2020,8 +2020,8 @@ export class PayrollEntryEntity {
   @Column({ type: 'timestamp', nullable: true }) deleted_at: Date | null;
 
   // ── Relations ───────────────────────────────────────────────────────────────
-  // FK física = fk_payroll_entries_employee_id ON DELETE RESTRICT (FASE 2C.1):
-  // preserva histórico financeiro/RH — não cascateia exclusão de funcionário.
+  // Physical FK = fk_payroll_entries_employee_id ON DELETE RESTRICT (PHASE 2C.1):
+  // preserves financial/HR history — does not cascade an employee deletion.
   @ManyToOne(() => EmployeeEntity, (e) => e.payroll_entries, { nullable: false, onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'employee_id' })
   employee: Relation<EmployeeEntity>;
@@ -2049,14 +2049,14 @@ export class LeaveRequestEntity {
   @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
 
   // ── Relations ───────────────────────────────────────────────────────────────
-  // FK física = fk_leave_requests_employee_id ON DELETE RESTRICT (FASE 2C.1):
-  // preserva histórico operacional/RH — não cascateia exclusão de funcionário.
+  // Physical FK = fk_leave_requests_employee_id ON DELETE RESTRICT (PHASE 2C.1):
+  // preserves operational/HR history — does not cascade an employee deletion.
   @ManyToOne(() => EmployeeEntity, (e) => e.leave_requests, { nullable: false, onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'employee_id' })
   employee: Relation<EmployeeEntity>;
 }
 
-// ─── Workflow Transitions (histórico de transições de estado) ─────────────────
+// ─── Workflow Transitions (state transition history) ──────────────────────────
 @Entity('workflow_transitions')
 @Index(['tenant_id', 'entity_type', 'entity_id'])
 @Index(['tenant_id'])
@@ -2137,8 +2137,8 @@ export class ActivityLogEntity {
 }
 
 // ─── Conversations ────────────────────────────────────────────────────────────
-// Unions espelhando os enums nativos do PostgreSQL (não há DDL gerado — apenas
-// representação fiel do schema existente).
+// Unions mirroring the native PostgreSQL enums (no DDL is generated — only a
+// faithful representation of the existing schema).
 export type ConversationStatus = 'open' | 'pending' | 'closed' | 'spam';
 export type ConversationChannel =
   | 'internal' | 'email' | 'whatsapp' | 'telegram' | 'instagram'
@@ -2155,8 +2155,8 @@ export class ConversationEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid', nullable: true }) contact_id: string | null;
   @Column({ type: 'text', default: '' }) subject: string;
-  // Tipos nativos do banco (enum). enumName aponta para o tipo existente; sem DDL
-  // (synchronize=false) — apenas reflete o schema real para reads/writes corretos.
+  // Native database types (enum). enumName points to the existing type; no DDL
+  // (synchronize=false) — it only reflects the real schema for correct reads/writes.
   @Column({ type: 'enum', enum: ['open', 'pending', 'closed', 'spam'], enumName: 'conversation_status', default: 'open' })
   status: string;
   @Column({ type: 'enum', enum: ['internal', 'email', 'whatsapp', 'telegram', 'instagram', 'sms', 'discord', 'facebook', 'tiktok', 'custom'], enumName: 'conversation_channel', default: 'internal' })
@@ -2212,11 +2212,11 @@ export class ConversationNoteEntity {
   conversation: Relation<ConversationEntity>;
 }
 
-// Chat Interno (equipe <-> equipe) — arquiteturalmente isolado da Central de
-// Atendimento (ConversationEntity/ConversationMessageEntity acima, equipe <->
-// público externo): entidades, identidade de participante (org_members, sem
-// telefone/canal externo) e autorização próprias. Nunca reutilizar as tabelas
-// `conversations`/`conversation_messages` para este domínio.
+// Internal Chat (team <-> team) — architecturally isolated from the Service
+// Center (ConversationEntity/ConversationMessageEntity above, team <->
+// external public): its own entities, participant identity (org_members, no
+// phone/external channel) and authorization. Never reuse the
+// `conversations`/`conversation_messages` tables for this domain.
 @Entity('internal_conversations')
 @Index(['tenant_id'])
 export class InternalConversationEntity {
@@ -2331,16 +2331,16 @@ export class MusicChatAutomationNotificationEntity {
 }
 
 // ─── Forms & Submissions ──────────────────────────────────────────────────────
-// FormEntity/FormSubmissionEntity (forms/form_submissions) removidas por
-// DropGenericFormsModule20260822000005 — decisão de produto (2026-08-22):
-// nenhum Form Builder genérico. Zero consumidor aprovado (captação de
-// artistas usa Artist Public Form; suporte usa Support Ticket). Tabelas
-// dropadas; conversations/conversation_messages/conversation_notes do
-// MusicChat, criadas na mesma migration original, foram preservadas.
+// FormEntity/FormSubmissionEntity (forms/form_submissions) removed by
+// DropGenericFormsModule20260822000005 — product decision (2026-08-22):
+// no generic Form Builder. Zero approved consumers (artist
+// acquisition uses the Artist Public Form; support uses Support Ticket). Tables
+// dropped; MusicChat's conversations/conversation_messages/conversation_notes,
+// created in the same original migration, were preserved.
 
 // ─── CRM Canonical (Phase 7) ──────────────────────────────────────────────────
 // crm_companies/crm_contacts/crm_tags/crm_contact_tags/crm_timeline_events were
-// removed by RemoveDeadCrmClusterD1D8 (0 linhas, substituídas por contacts/leads).
+// removed by RemoveDeadCrmClusterD1D8 (0 rows, replaced by contacts/leads).
 
 // Compatibility class name retained while the persisted model is now the
 // domain-neutral operational task queue. CRM itself is contacts/leads based.
@@ -2573,7 +2573,7 @@ export class LicenseEntity {
   @Column({ type: 'decimal', precision: 14, scale: 2, nullable: true }) valor: string | null;
   @Column({ type: 'varchar', length: 10, default: 'BRL' }) moeda: string;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  // Campos do formulário de Licença (regra 2026-07-12: 1 coluna por campo)
+  // License form fields (2026-07-12 rule: 1 column per field)
   @Column({ type: 'varchar', length: 50, nullable: true }) remuneration_type: string | null;
   @Column({ type: 'decimal', precision: 7, scale: 4, nullable: true }) percentage: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
@@ -2607,11 +2607,11 @@ export class FinancialRuleEntity {
 }
 
 // ─── Finance Category Keyword Rules ────────────────────────────────────────────
-// Nota: "financial_category_rules" JÁ EXISTE (migration 20260526000003) como uma
-// tabela de taxonomia dinâmica seedada por tenant — schema e propósito totalmente
-// diferentes (transaction_type/counterparty_type/category/subcategory), sem
-// service/controller vivo. Para não colidir, esta tabela de regras de
-// categorização automática por palavra-chave usa nome próprio.
+// Note: "financial_category_rules" ALREADY EXISTS (migration 20260526000003) as a
+// dynamic taxonomy table seeded per tenant — a completely different schema and purpose
+// (transaction_type/counterparty_type/category/subcategory), with no
+// live service/controller. To avoid colliding, this table of automatic
+// keyword categorization rules uses its own name.
 @Entity('finance_category_keyword_rules')
 @Index(['tenant_id', 'active'])
 @Index(['tenant_id', 'transaction_type'])
@@ -2631,8 +2631,8 @@ export class FinanceCategoryKeywordRuleEntity {
 }
 
 // ─── Skills runtime (skill_runs / skill_run_logs) ─────────────────────────────
-// Tabelas criadas pela migration 20260607000001_SkillsAndCentralAssets.
-// Entidades adicionadas para que SkillRunService obtenha repositórios reais.
+// Tables created by migration 20260607000001_SkillsAndCentralAssets.
+// Entities added so SkillRunService gets real repositories.
 
 @Entity('skill_runs')
 export class SkillRunEntity {
@@ -3163,10 +3163,10 @@ export class AudiovisualProjectEntity {
   @Column({ type: 'date', nullable: true }) publish_date: string | null;
   @Column({ type: 'timestamptz', nullable: true }) completed_at: Date | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
-  // ── Campos do formulário (1 coluna por campo — nome EXATO da chave do form) ──
+  // ── Form fields (1 column per field — EXACT name of the form key) ──────────────
   // migration AudiovisualProjectsFormFieldColumns20260718000012. music_id→phonogram_id
-  // e budget/real_cost→budget_estimated/budget_actual foram resolvidos no
-  // frontend (mesma coluna já existente), não geraram coluna nova.
+  // and budget/real_cost→budget_estimated/budget_actual were resolved in the
+  // frontend (the same already existing column), they did not generate a new column.
   @Column({ type: 'varchar', length: 500, nullable: true }) music_title: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) artist_name: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) format: string | null;
@@ -3521,9 +3521,9 @@ export class WorkflowExecutionLogEntity {
 }
 
 // ─── Integration governance (migration 20260823000001) ───────────────────────
-// Config GLOBAL da plataforma (sem tenant_id): governa publicação e audiência
-// de cada integração. Capacidade técnica NÃO vive aqui — é derivada do registry
-// de adapters em código, porque implementação técnica é código, não governança.
+// GLOBAL platform config (no tenant_id): governs the publication and audience
+// of each integration. Technical capability does NOT live here — it is derived from the
+// in-code adapter registry, because a technical implementation is code, not governance.
 
 export interface IntegrationAudience {
   mode: 'none' | 'all' | 'plans' | 'tenants';
@@ -3556,9 +3556,9 @@ export class PlatformIntegrationEntity {
   /** commercial | internal_platform | platform_billing */
   @Column({ type: 'varchar', length: 32, default: 'commercial' }) classification: string;
   /**
-   * Estado operacional do adapter (planned…ready…retired), governável pelo
-   * admin. NÃO é o entitlement (isso vive em billing_plans.features.integrations)
-   * nem a capability em código (existe adapter?).
+   * Operational state of the adapter (planned…ready…retired), governable by the
+   * admin. It is NOT the entitlement (that lives in billing_plans.features.integrations)
+   * nor the in-code capability (does an adapter exist?).
    */
   @Column({ type: 'varchar', length: 32, default: 'planned' }) technical_state: string;
   @Column({ type: 'boolean', default: false }) is_core: boolean;

@@ -1,14 +1,14 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * 20260610000004_AlterOrgMembersAddRbacColumns  (M4 — FASE 4 RBAC Enterprise)
+ * 20260610000004_AlterOrgMembersAddRbacColumns  (M4 — PHASE 4 Enterprise RBAC)
  *
- * Evolui org_members (Membership) de forma ADITIVA e não-destrutiva:
- *   role_id, department_id, position_id, deleted_at, created_by, updated_by — todos NULLABLE.
- * NÃO remove `role` (string legada) — coexistência durante toda a transição.
+ * Evolves org_members (Membership) ADDITIVELY and non-destructively:
+ *   role_id, department_id, position_id, deleted_at, created_by, updated_by — all NULLABLE.
+ * Does NOT remove `role` (legacy string) — coexistence throughout the transition.
  *
- * FKs idempotentes via guarda em pg_constraint (ADD CONSTRAINT não tem IF NOT EXISTS portável).
- * Reversível via down() (remove apenas o que esta migration adicionou).
+ * Idempotent FKs via a pg_constraint guard (ADD CONSTRAINT has no portable IF NOT EXISTS).
+ * Reversible via down() (removes only what this migration added).
  */
 export class AlterOrgMembersAddRbacColumns20260610000004 implements MigrationInterface {
   name = 'AlterOrgMembersAddRbacColumns20260610000004';
@@ -62,6 +62,6 @@ export class AlterOrgMembersAddRbacColumns20260610000004 implements MigrationInt
         DROP COLUMN IF EXISTS "created_by",
         DROP COLUMN IF EXISTS "updated_by"
     `);
-    // NÃO toca em "role" (string legada permanece).
+    // Does NOT touch "role" (the legacy string remains).
   }
 }

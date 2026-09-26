@@ -1,24 +1,24 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `payroll_entries` — auditoria 2026-07-19.
+ * Physical rebuild of `payroll_entries` — 2026-07-19 audit.
  *
- * Formulário real: `FolhaPagamentoFormModal.tsx`. `CreatePayrollEntryDto`
- * documenta explicitamente os pares funcionario_id/employee_id e
- * mes_referencia/competencia como aliases mirrorados ("O formulário envia
- * funcionario_id/mes_referencia; employee_id/competencia são os aliases
- * legados. O service exige um de cada par e espelha ambos.") —
- * `HrService.createPayroll()` sempre grava os dois de cada par. Nenhuma
- * coluna é órfã: `arquivo_url`/`pago_em` não têm campo visual no form atual,
- * mas são aceitas pelo DTO e gravadas por `HrService` sempre que o chamador
- * as envia — mantidas como zona legada, apenas reposicionadas.
+ * Real form: `FolhaPagamentoFormModal.tsx`. `CreatePayrollEntryDto`
+ * explicitly documents the funcionario_id/employee_id and
+ * mes_referencia/competencia pairs as mirrored aliases ("the form sends
+ * funcionario_id/mes_referencia; employee_id/competencia are the legacy
+ * aliases. The service requires one of each pair and mirrors both.") —
+ * `HrService.createPayroll()` always writes both of each pair. No
+ * column is an orphan: `arquivo_url`/`pago_em` have no visual field in the current form,
+ * but are accepted by the DTO and written by `HrService` whenever the caller
+ * sends them — kept as a legacy zone, only repositioned.
  *
- * Ordem original tinha o bloco "campos do formulário" (2ª era) inteiro após
- * o bloco de auditoria. Reconstrução pura de ordem (zero remoção): campos
- * funcionais em ordem visual → legado adjacente ao campo real correspondente
- * → arquivo_url/pago_em (sem campo visual) → metadata → auditoria. Não
- * existem `created_by`/`updated_by` nesta tabela — lacuna preexistente, não
- * inventada.
+ * The original order had the whole "form fields" block (2nd era) after
+ * the audit block. A pure order rebuild (zero removal): functional
+ * fields in visual order → legacy next to the matching real field
+ * → arquivo_url/pago_em (no visual field) → metadata → auditing. There are
+ * no `created_by`/`updated_by` in this table — a pre-existing gap, not
+ * invented here.
  */
 export class RebuildPayrollEntriesInCanonicalFormOrder20260719000019 implements MigrationInterface {
   name = 'RebuildPayrollEntriesInCanonicalFormOrder20260719000019';

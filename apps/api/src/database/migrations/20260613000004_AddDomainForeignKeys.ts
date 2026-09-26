@@ -1,26 +1,26 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * FASE 2C — Materializa a integridade referencial das relações JÁ declaradas
- * pela ORM (@ManyToOne/@JoinColumn) que não tinham FK física no banco.
+ * PHASE 2C — Materializes the referential integrity of relations ALREADY declared
+ * by the ORM (@ManyToOne/@JoinColumn) that had no physical FK in the database.
  *
- * Pré-check READ-ONLY executado antes desta migration confirmou, para cada FK:
- * tabela referenciada existente, tipos uuid↔uuid compatíveis, nenhuma FK pré-
- * existente e ZERO órfãos. Apenas FKs SEGURAS entram aqui.
+ * A READ-ONLY pre-check run before this migration confirmed, for each FK:
+ * existing referenced table, compatible uuid↔uuid types, no pre-existing
+ * FK and ZERO orphans. Only SAFE FKs go in here.
  *
- * ON DELETE alinhado ao contrato da ORM e às regras da fase:
- *   - colunas NULLABLE → ON DELETE SET NULL (a relação é opcional);
- *   - lead_interactions.lead_id (NOT NULL) → ON DELETE CASCADE — composição pura:
- *     o log de interações pertence ao lead e não tem valor independente.
+ * ON DELETE aligned with the ORM contract and the phase's rules:
+ *   - NULLABLE columns → ON DELETE SET NULL (the relation is optional);
+ *   - lead_interactions.lead_id (NOT NULL) → ON DELETE CASCADE — pure composition:
+ *     the interaction log belongs to the lead and has no independent value.
  *
- * FORA desta migration (REQUER DECISÃO DE NEGÓCIO, não materializadas):
- *   - payroll_entries.employee_id e leave_requests.employee_id: a ORM declara
- *     CASCADE, mas cascatear exclusão de folha/férias ao remover um funcionário
- *     destrói histórico financeiro/RH. RESTRICT vs CASCADE depende de regra de
- *     negócio — deixadas para decisão explícita.
+ * OUTSIDE this migration (REQUIRES A BUSINESS DECISION, not materialized):
+ *   - payroll_entries.employee_id and leave_requests.employee_id: the ORM declares
+ *     CASCADE, but cascading the deletion of payroll/leave when removing an employee
+ *     destroys financial/HR history. RESTRICT vs CASCADE depends on a business
+ *     rule — left for an explicit decision.
  *
- * Nenhum dado é alterado. Constraints têm nomes explícitos e são reversíveis.
- * Índice criado apenas onde faltava (briefings.campanha_id) — os demais já têm.
+ * No data is changed. Constraints have explicit names and are reversible.
+ * An index is created only where it was missing (briefings.campanha_id) — the others already have one.
  */
 export class AddDomainForeignKeys20260613000004 implements MigrationInterface {
   name = 'AddDomainForeignKeys20260613000004';
@@ -38,14 +38,14 @@ export class AddDomainForeignKeys20260613000004 implements MigrationInterface {
   ];
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Índice ausente na única coluna FK sem índice (acelera SET NULL/lookups).
+    // Missing index on the only FK column without an index (speeds up SET NULL/lookups).
     await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "idx_briefings_campanha_id" ON "briefings" ("campanha_id")`,
     );
 
     for (const [table, col, refTable, refCol, onDelete, name] of AddDomainForeignKeys20260613000004.FKS) {
-      // NOT VALID evita lock prolongado de validação; VALIDATE em seguida confirma
-      // a integridade (pré-check garante zero órfãos → sempre passa).
+      // NOT VALID avoids a long validation lock; VALIDATE right after confirms
+      // integrity (the pre-check guarantees zero orphans → always passes).
       await queryRunner.query(
         `ALTER TABLE "${table}" ADD CONSTRAINT "${name}" ` +
         `FOREIGN KEY ("${col}") REFERENCES "${refTable}" ("${refCol}") ON DELETE ${onDelete} NOT VALID`,

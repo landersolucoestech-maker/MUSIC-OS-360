@@ -1,25 +1,25 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `campaign_tasks` — auditoria 2026-07-19.
+ * Physical rebuild of `campaign_tasks` — 2026-07-19 audit.
  *
- * `CreateCampaignTaskDto`/`CampaignOperationsService.createTask()` batem
- * integralmente com as colunas físicas (title, description, priority,
- * assigned_to, due_date; status/completed_at por lógica de negócio na
- * transição para 'done'). Único ponto corrigido: `created_by` estava ANTES
- * de created_at/updated_at — movido para o fim do bloco de auditoria (não
- * existe updated_by/deleted_at nesta tabela — tarefas são hard-deleted via
- * `.delete()`, lacuna preexistente, não inventada). Zero colunas removidas.
+ * `CreateCampaignTaskDto`/`CampaignOperationsService.createTask()` match
+ * the physical columns entirely (title, description, priority,
+ * assigned_to, due_date; status/completed_at by business logic on the
+ * transition to 'done'). The only point fixed: `created_by` was BEFORE
+ * created_at/updated_at — moved to the end of the audit block (there is
+ * no updated_by/deleted_at in this table — tasks are hard-deleted via
+ * `.delete()`, a pre-existing gap, not invented here). Zero columns removed.
  *
- * NOTA (pendência registrada, não corrigida aqui): a tabela-mãe `campaigns`
- * tem um DTO (`CreateCampaignDto`: title/type/artistId/budget/startsAt/
- * endsAt) cujos nomes de campo NÃO batem com as colunas físicas da entidade
- * (nome/tipo/artista_id/orcamento/data_inicio/data_fim), e não há chamador
- * real no frontend para o recurso REST `/campaigns` (a página "Campanhas"
- * do frontend opera sobre `marketing_projects`/`marketing_tasks`, recurso
- * diferente). `campaign_tasks`/`campaign_assets` (este arquivo e o
- * seguinte) têm DTOs corretos e são exercitados apenas via
- * `CampaignOperationsService`, dependente de uma campanha-mãe existente.
+ * NOTE (recorded pending item, not fixed here): the parent table `campaigns`
+ * has a DTO (`CreateCampaignDto`: title/type/artistId/budget/startsAt/
+ * endsAt) whose field names do NOT match the entity's physical columns
+ * (nome/tipo/artista_id/orcamento/data_inicio/data_fim), and there is no real
+ * frontend caller for the `/campaigns` REST resource (the frontend's "Campanhas" page
+ * operates on `marketing_projects`/`marketing_tasks`, a different
+ * resource). `campaign_tasks`/`campaign_assets` (this file and the
+ * next) have correct DTOs and are exercised only via
+ * `CampaignOperationsService`, which depends on an existing parent campaign.
  */
 export class RebuildCampaignTasksInCanonicalFormOrder20260719000022 implements MigrationInterface {
   name = 'RebuildCampaignTasksInCanonicalFormOrder20260719000022';

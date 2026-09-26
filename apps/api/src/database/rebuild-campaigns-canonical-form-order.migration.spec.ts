@@ -2,11 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `campaigns` — restrita ao bloco de auditoria (created_by/updated_by
- * antes de deleted_at). Pendência de nomenclatura DTO×entidade
- * (CreateCampaignDto vs colunas físicas) registrada no cabeçalho da
- * migration, não corrigida aqui.
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `campaigns` — restricted to the audit block (created_by/updated_by
+ * before deleted_at). The DTO×entity naming pending item
+ * (CreateCampaignDto vs physical columns) is recorded in the migration
+ * header, not fixed here.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000024_RebuildCampaignsInCanonicalFormOrder.ts'),
@@ -49,7 +49,7 @@ describe('RebuildCampaignsInCanonicalFormOrder20260719000024', () => {
   });
 
   it('documents the pending DTO×entity naming issue and the absence of a real frontend caller', () => {
-    expect(migrationSrc).toMatch(/ACHADO CRÍTICO/);
+    expect(migrationSrc).toMatch(/CRITICAL FINDING/);
     expect(migrationSrc).toMatch(/CreateCampaignDto/);
     expect(migrationSrc).toMatch(/marketing\/campaigns/);
   });

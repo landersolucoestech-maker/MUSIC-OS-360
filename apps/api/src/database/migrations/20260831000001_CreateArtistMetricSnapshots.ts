@@ -3,22 +3,22 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20260831000001_CreateArtistMetricSnapshots
  *
- * Fase 2 — Time-Series Foundation. `artist_platform_profiles` (índice único
- * (tenant_id, artist_id, platform)) é current-state puro: cada sync faz
- * UPSERT e sobrescreve followers/subscribers/monthly_listeners/raw_payload —
- * comportamento confirmado lendo ArtistPlatformProfilesService.upsertSuccess
- * antes desta migration. Não existe, em nenhuma tabela do schema, um
- * armazenamento append-only de métrica por (artista, plataforma, métrica,
- * tempo) — busca prévia em domain_event_log/audit_logs/activity_logs
- * confirmou que nenhuma é adequada (event_type/aggregate_id genéricos, sem
- * coluna de métrica/valor/observed_at tipada, sem índice para range query
- * artist+metric+time).
+ * Phase 2 — Time-Series Foundation. `artist_platform_profiles` (unique index
+ * (tenant_id, artist_id, platform)) is pure current state: every sync does an
+ * UPSERT and overwrites followers/subscribers/monthly_listeners/raw_payload —
+ * behavior confirmed by reading ArtistPlatformProfilesService.upsertSuccess
+ * before this migration. No table in the schema has an
+ * append-only metric store per (artist, platform, metric,
+ * time) — a prior search of domain_event_log/audit_logs/activity_logs
+ * confirmed none is suitable (generic event_type/aggregate_id, no
+ * typed metric/value/observed_at column, no index for an
+ * artist+metric+time range query).
  *
- * `artist_metric_snapshots` é somente-acréscimo por design: nenhum
- * UPDATE/DELETE é concedido a musicos_app (grants abaixo), e a unicidade
- * (tenant_id, artist_id, platform, metric, observed_at) é a chave de
- * idempotência — o mesmo observed_at nunca duplica logicamente (retry seguro
- * via ON CONFLICT DO NOTHING no código, não nesta migration).
+ * `artist_metric_snapshots` is append-only by design: no
+ * UPDATE/DELETE is granted to musicos_app (grants below), and the uniqueness
+ * (tenant_id, artist_id, platform, metric, observed_at) is the idempotency
+ * key — the same observed_at never duplicates logically (safe retry
+ * via ON CONFLICT DO NOTHING in the code, not in this migration).
  */
 export class CreateArtistMetricSnapshots20260831000001 implements MigrationInterface {
   name = 'CreateArtistMetricSnapshots20260831000001';
@@ -51,9 +51,9 @@ export class CreateArtistMetricSnapshots20260831000001 implements MigrationInter
       )
     `);
 
-    // Índice líder (tenant_id, artist_id, platform, metric, observed_at) já
-    // vem da UNIQUE constraint acima e cobre a consulta típica "artist +
-    // metric + time range" (Fase 2, item 43) sem índice adicional.
+    // The leading index (tenant_id, artist_id, platform, metric, observed_at) already
+    // comes from the UNIQUE constraint above and covers the typical "artist +
+    // metric + time range" query (Phase 2, item 43) without an additional index.
     await queryRunner.query(`CREATE INDEX idx_artist_metric_snapshots_tenant ON artist_metric_snapshots (tenant_id)`);
     await queryRunner.query(`CREATE INDEX idx_artist_metric_snapshots_observed_at ON artist_metric_snapshots (observed_at)`);
 
@@ -72,8 +72,8 @@ export class CreateArtistMetricSnapshots20260831000001 implements MigrationInter
 
     await queryRunner.query(`ALTER TABLE artist_metric_snapshots OWNER TO musicos_migrator`);
     await queryRunner.query(`GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON artist_metric_snapshots TO musicos_migrator`);
-    // Somente SELECT + INSERT para o app — append-only por design (item 15:
-    // "IMMUTABLE / APPEND-ORIENTED"), sem UPDATE/DELETE mesmo por engano.
+    // Only SELECT + INSERT for the app — append-only by design (item 15:
+    // "IMMUTABLE / APPEND-ORIENTED"), no UPDATE/DELETE even by mistake.
     await queryRunner.query(`GRANT SELECT, INSERT ON artist_metric_snapshots TO musicos_app`);
   }
 

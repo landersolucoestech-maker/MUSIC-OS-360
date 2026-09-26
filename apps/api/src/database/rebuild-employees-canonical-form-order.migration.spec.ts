@@ -2,11 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `employees` — segue FuncionarioFormModal.tsx (abas Dados Pessoais →
- * Profissional). nome/nome_completo mirrorados; departamento/salario/
- * data_demissao/documentos mantidos como zona legada (DTO-aceitos, sem
- * campo visual atual).
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `employees` — follows FuncionarioFormModal.tsx (personal data →
+ * professional tabs). nome/nome_completo mirrored; departamento/salario/
+ * data_demissao/documentos kept as a legacy zone (DTO-accepted, no
+ * current visual field).
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000018_RebuildEmployeesInCanonicalFormOrder.ts'),

@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `takedowns` na ordem do formulário real (TakedownFormModal) — titulo é o
- * primeiro campo real, plataforma (NOT NULL original) é visualmente a
- * segunda seção, não a primeira.
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `takedowns` in the real form's order (TakedownFormModal) — titulo is the
+ * first real field, plataforma (original NOT NULL) is visually the
+ * second section, not the first.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000016_RebuildTakedownsInCanonicalFormOrder.ts'),

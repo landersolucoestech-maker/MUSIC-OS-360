@@ -4,10 +4,10 @@ import * as path from 'path';
 /**
  * remove-legacy-society-code-columns.migration.spec.ts
  *
- * Guarda permanente (auditoria 2026-07-18 Rodada 8): a migration remove
- * definitivamente `cod_abramus`/`cod_ecad`/`abramus_protocol` de
- * works/phonograms, com validação fail-fast de que tudo já está em
- * external_identifiers antes de dropar qualquer coluna.
+ * Permanent guard (2026-07-18 audit, Round 8): the migration definitively
+ * removes `cod_abramus`/`cod_ecad`/`abramus_protocol` from
+ * works/phonograms, with a fail-fast validation that everything is already in
+ * external_identifiers before dropping any column.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260718000016_RemoveLegacySocietyCodeColumns.ts'),

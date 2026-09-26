@@ -1,14 +1,14 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fase 13A / M9 — pontes operacionais → projeto financeiro (Fase 12 §2.11;
- * decisões Q6/Q7).
+ * Phase 13A / M9 — operational bridges → financial project (Phase 12 §2.11;
+ * decisions Q6/Q7).
  *
- * `projects` é o projeto financeiro UNIVERSAL. Projetos de marketing e
- * audiovisual podem apontar OPCIONALMENTE para um projeto financeiro via
- * financial_project_id (FK composta, RESTRICT). NENHUMA associação automática
- * é feita — a coluna nasce NULL para todas as linhas e o preenchimento é
- * sempre decisão explícita do usuário (a UI deve indicar ausência de vínculo).
+ * `projects` is the UNIVERSAL financial project. Marketing and
+ * audiovisual projects may OPTIONALLY point to a financial project via
+ * financial_project_id (composite FK, RESTRICT). NO automatic association
+ * is made — the column is born NULL for every row and filling it is
+ * always an explicit user decision (the UI must indicate the absence of a link).
  */
 export class FinancialOperationalBridges20260718000009 implements MigrationInterface {
   name = 'FinancialOperationalBridges20260718000009';

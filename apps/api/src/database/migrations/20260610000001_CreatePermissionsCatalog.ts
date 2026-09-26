@@ -1,14 +1,14 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * 20260610000001_CreatePermissionsCatalog  (M1 — FASE 4 RBAC Enterprise)
+ * 20260610000001_CreatePermissionsCatalog  (M1 — PHASE 4 Enterprise RBAC)
  *
- * Catálogo GLOBAL de permissões no formato `resource:action`.
- * - Sem tenant_id (capacidades de sistema, não dados de tenant).
- * - Sem soft delete (relação/catálogo gerido por migrations/seeds).
- * - O seed do catálogo é responsabilidade da FASE 8; aqui só a estrutura.
+ * GLOBAL catalog of permissions in the `resource:action` format.
+ * - No tenant_id (system capabilities, not tenant data).
+ * - No soft delete (relation/catalog managed by migrations/seeds).
+ * - Seeding the catalog is PHASE 8's responsibility; only the structure here.
  *
- * Idempotente. Reversível via down().
+ * Idempotent. Reversible via down().
  */
 export class CreatePermissionsCatalog20260610000001 implements MigrationInterface {
   name = 'CreatePermissionsCatalog20260610000001';

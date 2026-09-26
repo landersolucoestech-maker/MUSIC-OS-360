@@ -1,14 +1,14 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fatia 1 — Fundação backend de Skills + Modelo Central de Assets (aditivo).
+ * Slice 1 — Backend foundation for Skills + Central Asset Model (additive).
  *
- * Cria a persistência de execução de skills (skill_runs / skill_run_logs) e o
- * modelo central de assets (assets / asset_versions / project_assets /
- * task_assets / asset_usage_logs), CONVIVENDO com as tabelas específicas já
- * existentes (uploads, marketing_assets, audiovisual_assets, campaign_assets).
+ * Creates the skill execution persistence (skill_runs / skill_run_logs) and the
+ * central asset model (assets / asset_versions / project_assets /
+ * task_assets / asset_usage_logs), COEXISTING with the already existing specific
+ * tables (uploads, marketing_assets, audiovisual_assets, campaign_assets).
  *
- * Vínculos lógicos por uuid indexado (padrão do projeto — sem FK rígida).
+ * Logical links via indexed uuid (project pattern — no rigid FK).
  */
 export class SkillsAndCentralAssets20260607000001 implements MigrationInterface {
   name = 'SkillsAndCentralAssets20260607000001';

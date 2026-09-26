@@ -1,14 +1,14 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * 20260610000006_BackfillOrgMembersRoleId  (M6 — FASE 4 RBAC Enterprise)
+ * 20260610000006_BackfillOrgMembersRoleId  (M6 — PHASE 4 Enterprise RBAC)
  *
- * Preenche org_members.role_id a partir de org_members.role (string legada), usando os roles
- * globais seedados em M2 e o mapa legado→canônico (artista→artist, tenant_owner→owner).
- * Valores fora do mapa caem em 'viewer' (fail-safe). NÃO altera org_members.role.
+ * Fills org_members.role_id from org_members.role (legacy string), using the global roles
+ * seeded in M2 and the legacy→canonical map (artista→artist, tenant_owner→owner).
+ * Values outside the map fall into 'viewer' (fail-safe). Does NOT change org_members.role.
  *
- * Idempotente (só toca role_id IS NULL). Não depende de dado manual. Emite relatório de divergências
- * via RAISE NOTICE. Reversível via down() (zera role_id; a fonte legada `role` permanece intacta).
+ * Idempotent (only touches role_id IS NULL). Does not depend on manual data. Emits a divergence report
+ * via RAISE NOTICE. Reversible via down() (clears role_id; the legacy `role` source stays intact).
  */
 export class BackfillOrgMembersRoleId20260610000006 implements MigrationInterface {
   name = 'BackfillOrgMembersRoleId20260610000006';
@@ -25,7 +25,7 @@ export class BackfillOrgMembersRoleId20260610000006 implements MigrationInterfac
          AND m."role_id" IS NULL
     `);
 
-    // 2) Resolve aliases para o role canônico (artista→artist, tenant_owner→owner).
+    // 2) Resolves aliases to the canonical role (artista→artist, tenant_owner→owner).
     await qr.query(`
       UPDATE "org_members" m
          SET "role_id" = r."canonical_role_id"
@@ -43,7 +43,7 @@ export class BackfillOrgMembersRoleId20260610000006 implements MigrationInterfac
          AND m."role_id" IS NULL
     `);
 
-    // 4) Relatório de divergências (roles legados sem correspondência canônica).
+    // 4) Divergence report (legacy roles without a canonical match).
     await qr.query(`
       DO $$
       DECLARE divergentes INTEGER;
@@ -59,7 +59,7 @@ export class BackfillOrgMembersRoleId20260610000006 implements MigrationInterfac
   }
 
   async down(qr: QueryRunner): Promise<void> {
-    // A fonte de verdade legada é org_members.role; zerar role_id é seguro e reversível.
+    // The legacy source of truth is org_members.role; clearing role_id is safe and reversible.
     await qr.query(`UPDATE "org_members" SET "role_id" = NULL`);
   }
 }

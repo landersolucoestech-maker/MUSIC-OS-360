@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `campaign_tasks` — segue CreateCampaignTaskDto; created_by movido para o
- * fim do bloco de auditoria.
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `campaign_tasks` — follows CreateCampaignTaskDto; created_by moved to the
+ * end of the audit block.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000022_RebuildCampaignTasksInCanonicalFormOrder.ts'),

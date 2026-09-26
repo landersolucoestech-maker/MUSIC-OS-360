@@ -1,18 +1,18 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `releases` na ordem canônica do formulário real
- * (LancamentoFormModal) — auditoria 2026-07-19. Mesmo padrão das anteriores.
+ * Physical rebuild of `releases` in the canonical order of the real form
+ * (LancamentoFormModal) — 2026-07-19 audit. Same pattern as the previous ones.
  *
- * Ordem visual real: seção "Metadata" (título, tipo, artista principal,
- * gênero, idioma) → "Copyright Info" (gravadora, copyright, upc) →
- * distribuidora/data de lançamento (Release Preferences) → capa/plataformas/
- * isrc global/assets/cronograma (Track Upload/Preview) → notas/observações
- * (Notes) → status (controlado pelo sistema, não editável diretamente).
+ * Real visual order: "Metadata" section (title, type, main artist,
+ * genre, language) → "Copyright Info" (label, copyright, upc) →
+ * distributor/release date (Release Preferences) → cover/platforms/
+ * global isrc/assets/schedule (Track Upload/Preview) → notes/remarks
+ * (Notes) → status (controlled by the system, not directly editable).
  *
- * `release_works.tenant_isolation` tem uma subquery EXISTS referenciando
- * `releases` (mesma situação de `works` na migration 20260719000002) — a
- * policy precisa ser derrubada e recriada no swap.
+ * `release_works.tenant_isolation` has an EXISTS subquery referencing
+ * `releases` (same situation as `works` in migration 20260719000002) — the
+ * policy must be dropped and recreated in the swap.
  */
 export class RebuildReleasesInCanonicalFormOrder20260719000004 implements MigrationInterface {
   name = 'RebuildReleasesInCanonicalFormOrder20260719000004';

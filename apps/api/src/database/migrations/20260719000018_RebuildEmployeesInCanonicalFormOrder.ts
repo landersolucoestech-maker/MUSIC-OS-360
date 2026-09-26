@@ -1,24 +1,24 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `employees` — auditoria 2026-07-19.
+ * Physical rebuild of `employees` — 2026-07-19 audit.
  *
- * Formulário real: `FuncionarioFormModal.tsx` (abas "Dados Pessoais" e
- * "Profissional"). `CreateEmployeeDto` documenta explicitamente o par
- * nome/nome_completo como aliases mirrorados ("O formulário envia
- * nome_completo; nome é o alias legado. O service exige um dos dois.") —
- * `HrService.createEmployee()` sempre grava os dois. Nenhuma coluna é órfã
- * (zero leitor + zero escritor): `departamento`, `salario`, `data_demissao`
- * e `documentos` não têm campo visual no form atual, mas são aceitas pelo
- * DTO e gravadas por `HrService` sempre que o chamador as envia — mantidas
- * como zona legada, apenas reposicionadas.
+ * Real form: `FuncionarioFormModal.tsx` ("Dados Pessoais" and
+ * "Profissional" tabs). `CreateEmployeeDto` explicitly documents the
+ * nome/nome_completo pair as mirrored aliases ("the form sends
+ * nome_completo; nome is the legacy alias. The service requires one of the two.") —
+ * `HrService.createEmployee()` always writes both. No column is an orphan
+ * (zero readers + zero writers): `departamento`, `salario`, `data_demissao`
+ * and `documentos` have no visual field in the current form, but are accepted by the
+ * DTO and written by `HrService` whenever the caller sends them — kept
+ * as a legacy zone, only repositioned.
  *
- * Ordem original tinha o bloco "campos do formulário" (2ª era, comentário
- * "1 coluna por campo") inteiro após o bloco de auditoria. Reconstrução pura
- * de ordem (zero remoção): funcionais em ordem visual → legado adjacente ao
- * campo real correspondente → `documentos` (jsonb sem campo visual) →
- * `metadata` → auditoria (`created_at, updated_at, created_by, deleted_at`
- * — não existe `updated_by` nesta tabela, lacuna preexistente não inventada).
+ * The original order had the whole "form fields" block (2nd era, comment
+ * "1 column per field") after the audit block. A pure order rebuild
+ * (zero removal): functional fields in visual order → legacy next to the
+ * matching real field → `documentos` (jsonb without a visual field) →
+ * `metadata` → auditing (`created_at, updated_at, created_by, deleted_at`
+ * — there is no `updated_by` in this table, a pre-existing gap not invented here).
  */
 export class RebuildEmployeesInCanonicalFormOrder20260719000018 implements MigrationInterface {
   name = 'RebuildEmployeesInCanonicalFormOrder20260719000018';
@@ -76,7 +76,7 @@ export class RebuildEmployeesInCanonicalFormOrder20260719000018 implements Migra
     await queryRunner.query(`CREATE INDEX idx_employees_tenant_id_new ON employees_new (tenant_id)`);
     await queryRunner.query(`CREATE INDEX idx_employees_status_new ON employees_new (status)`);
 
-    // FKs de tabelas dependentes precisam ser derrubadas antes do rename dance.
+    // Dependent tables' FKs must be dropped before the rename dance.
     await queryRunner.query(`ALTER TABLE payroll_entries DROP CONSTRAINT fk_payroll_entries_employee_id`);
     await queryRunner.query(`ALTER TABLE leave_requests DROP CONSTRAINT fk_leave_requests_employee_id`);
 

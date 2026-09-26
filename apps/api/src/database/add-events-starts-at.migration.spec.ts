@@ -15,18 +15,18 @@ describe('AddEventsStartsAt20260716000001 (C3/E1 — expansion)', () => {
     expect(sql).toContain('CREATE INDEX IF NOT EXISTS "idx_events_tenant_starts_at"');
     expect(sql).toContain('ON "events" ("tenant_id", "starts_at")');
 
-    // Nullable nesta fase: nenhum NOT NULL, nenhum default, nenhuma cópia de dados.
+    // Nullable in this phase: no NOT NULL, no default, no data copy.
     expect(sql).not.toMatch(/NOT NULL/i);
     expect(sql).not.toMatch(/DEFAULT/i);
     expect(sql).not.toMatch(/UPDATE\s+"?events"?/i);
-    // data permanece intocada: nenhum DROP/RENAME/ALTER da coluna legada.
+    // data stays untouched: no DROP/RENAME/ALTER of the legacy column.
     expect(sql).not.toMatch(/DROP COLUMN\s+"?data"?/i);
     expect(sql).not.toMatch(/RENAME/i);
     expect(sql).not.toMatch(/ALTER COLUMN\s+"?data"?/i);
-    // nenhum trigger e nenhuma outra tabela.
+    // no trigger and no other table.
     expect(sql).not.toMatch(/TRIGGER/i);
     expect(sql.match(/ALTER TABLE "(\w+)"/g)).toEqual(['ALTER TABLE "events"']);
-    // índice antigo não é tocado.
+    // the old index is not touched.
     expect(sql).not.toContain('idx_events_tenant_data');
   });
 
@@ -39,7 +39,7 @@ describe('AddEventsStartsAt20260716000001 (C3/E1 — expansion)', () => {
     expect(sql).toContain('ALTER TABLE "events" DROP COLUMN IF EXISTS "starts_at"');
     expect(sql).not.toMatch(/DROP COLUMN\s+(IF EXISTS\s+)?"data"/i);
     expect(sql).not.toContain('idx_events_tenant_data');
-    // down não inventa nem copia dados.
+    // down neither invents nor copies data.
     expect(sql).not.toMatch(/UPDATE|INSERT/i);
   });
 

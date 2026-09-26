@@ -1,22 +1,22 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Sincronização formulário ↔ banco: Lançamentos (releases).
+ * Form ↔ database sync: Releases (releases).
  *
- * REGRA DE PRODUTO (2026-07-12): cada campo do formulário tem a SUA coluna
- * física com o nome EXATO da chave enviada pelo form. `releases` ficou de
- * fora do rollout original (2026-07-12) — o mapper de leitura do frontend
- * (entity-to-form.mapper.ts) já lê estes campos como colunas de topo
- * (l?.genero, l?.copyright, l?.isrc_global, etc.) com fallback para
- * `metadata`, mas o mapper de escrita (form-to-payload.mapper.ts) ainda
- * gravava tudo dentro de `metadata` por não existir DTO/coluna dedicados.
- * Esta migration fecha essa lacuna.
+ * PRODUCT RULE (2026-07-12): each form field has ITS OWN physical
+ * column with the EXACT name of the key sent by the form. `releases` was left
+ * out of the original rollout (2026-07-12) — the frontend read mapper
+ * (entity-to-form.mapper.ts) already reads these fields as top-level columns
+ * (l?.genero, l?.copyright, l?.isrc_global, etc.) with a fallback to
+ * `metadata`, but the write mapper (form-to-payload.mapper.ts) still
+ * wrote everything inside `metadata` because no dedicated DTO/column existed.
+ * This migration closes that gap.
  *
- * `assets` e `cronograma` permanecem jsonb dedicados (não genéricos): cada um
- * tem um conjunto fixo e conhecido de subchaves (7 e 3, respectivamente),
- * já usado hoje como `metadata.assets` / `metadata.cronograma` — não é dado
- * dinâmico/imprevisível, é um sub-registro estruturado com nome próprio,
- * no mesmo padrão de `plataformas` (jsonb já existente nesta entidade).
+ * `assets` and `cronograma` stay dedicated (not generic) jsonb: each one
+ * has a fixed, known set of subkeys (7 and 3, respectively),
+ * already used today as `metadata.assets` / `metadata.cronograma` — it is not
+ * dynamic/unpredictable data, it is a structured sub-record with its own name,
+ * following the same pattern as `plataformas` (jsonb already existing on this entity).
  */
 export class ReleasesFormFieldColumns20260718000010 implements MigrationInterface {
   name = 'ReleasesFormFieldColumns20260718000010';

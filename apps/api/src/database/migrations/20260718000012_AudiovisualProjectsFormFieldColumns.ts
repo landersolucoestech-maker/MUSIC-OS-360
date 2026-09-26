@@ -1,40 +1,40 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Sincronização formulário ↔ banco: Produções Audiovisuais (audiovisual_projects).
+ * Form ↔ database sync: Audiovisual Productions (audiovisual_projects).
  *
- * Achado CRÍTICO confirmado (auditoria 2026-07-18): o formulário real e ativo
- * (AudiovisualProjectFormModal.tsx) envia, sem NENHUM mapper intermediário
- * (audiovisual.service.ts chama `api.post`/`api.patch` com o payload cru),
- * campos que CreateAudiovisualProjectDto/UpdateAudiovisualProjectDto não
- * declaravam. Com ValidationPipe global (whitelist + forbidNonWhitelisted),
- * TODA criação/edição de produção audiovisual retornava 400 — bug real, não
- * hipotético. Esta migration cria as colunas que faltavam.
+ * CRITICAL finding confirmed (2026-07-18 audit): the real, active form
+ * (AudiovisualProjectFormModal.tsx) sends, without ANY intermediate mapper
+ * (audiovisual.service.ts calls `api.post`/`api.patch` with the raw payload),
+ * fields that CreateAudiovisualProjectDto/UpdateAudiovisualProjectDto did not
+ * declare. With the global ValidationPipe (whitelist + forbidNonWhitelisted),
+ * EVERY audiovisual production create/edit returned 400 — a real bug, not a
+ * hypothetical one. This migration creates the missing columns.
  *
- * Duas divergências de nome foram resolvidas SEM criar coluna nova, porque a
- * evidência prova que já são o mesmo conceito de uma coluna já existente:
- *   - `music_id` (form) → a UI já lê/grava por meio da FK existente
- *     `phonogram_id`; o formulário foi corrigido para usar o nome real
- *     (nenhuma coluna nova).
- *   - `budget`/`real_cost` (form) → todo lugar do frontend que exibe estes
- *     valores usa os rótulos "Orçamento Previsto"/"Custo Real", e o dashboard
- *     (`projects.service.ts::dashboard`) já soma `budget_estimated`/
- *     `budget_actual` desta mesma tabela — se o form continuasse gravando em
- *     colunas novas, o dashboard financeiro ficaria zerado silenciosamente.
- *     Formulário corrigido para usar os nomes reais (nenhuma coluna nova).
+ * Two name divergences were resolved WITHOUT creating a new column, because the
+ * evidence proves they are already the same concept as an existing column:
+ *   - `music_id` (form) → the UI already reads/writes through the existing FK
+ *     `phonogram_id`; the form was fixed to use the real name
+ *     (no new column).
+ *   - `budget`/`real_cost` (form) → every place in the frontend that displays these
+ *     values uses the labels "Orçamento Previsto"/"Custo Real", and the dashboard
+ *     (`projects.service.ts::dashboard`) already sums `budget_estimated`/
+ *     `budget_actual` of this same table — had the form kept writing into
+ *     new columns, the financial dashboard would silently show zero.
+ *     Form fixed to use the real names (no new column).
  *
- * `shooting_date` é adicionada como coluna NOVA (não uma renomeação de
- * `recording_date`): todo ponto de leitura do frontend já faz
- * `project.shooting_date ?? project.recording_date` — ou seja, o produto já
- * trata `shooting_date` como o nome canônico novo e `recording_date` como
- * fallback legado, sem necessidade de dual-write no backend (o frontend já
- * faz o fallback na leitura).
+ * `shooting_date` is added as a NEW column (not a rename of
+ * `recording_date`): every frontend read point already does
+ * `project.shooting_date ?? project.recording_date` — i.e. the product already
+ * treats `shooting_date` as the new canonical name and `recording_date` as the
+ * legacy fallback, with no need for a backend dual-write (the frontend already
+ * does the fallback on read).
  *
- * `release_date` é mantida como coluna nova e DISTINTA de `publish_date`
- * (que continua sendo escrita automaticamente pela transição de status para
- * "published" em `transitionStatus()`) — não há evidência de que sejam o
- * mesmo conceito; `release_date` é a data planejada, `publish_date` é a data
- * real de publicação.
+ * `release_date` is kept as a new column DISTINCT from `publish_date`
+ * (which is still written automatically by the status transition to
+ * "published" in `transitionStatus()`) — there is no evidence that they are the
+ * same concept; `release_date` is the planned date, `publish_date` is the actual
+ * publication date.
  */
 export class AudiovisualProjectsFormFieldColumns20260718000012 implements MigrationInterface {
   name = 'AudiovisualProjectsFormFieldColumns20260718000012';

@@ -3,22 +3,22 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20260823000001_CreateIntegrationGovernance
  *
- * Governança administrativa de integrações, persistida em banco.
+ * Administrative integration governance, persisted in the database.
  *
- * MOTIVO: até aqui, "quem enxerga/usa qual integração" estava CODIFICADO
- * (um catálogo .ts decidia que docusign era governado e clicksign não). Regra de
- * governança em código exige deploy para mudar e não é auditável pelo admin —
- * errado. O que é código de facto é a CAPACIDADE TÉCNICA (existe adapter ou
- * não); isso continua derivado do registry em código e NÃO é editável por admin.
+ * REASON: until now, "who sees/uses which integration" was HARDCODED
+ * (a .ts catalog decided that docusign was governed and clicksign was not). A
+ * governance rule in code requires a deploy to change and is not auditable by the admin —
+ * wrong. What really is code is the TECHNICAL CAPABILITY (an adapter exists or
+ * not); that remains derived from the in-code registry and is NOT editable by an admin.
  *
- * Separação de responsabilidades:
- *   - platform_integrations  → governança (publicação + audiência VIEW/USE)
- *   - registry em código     → capacidade técnica (adapter existe?)
- *   - integrations/oauth_connections → conexão do tenant (inalterado)
+ * Separation of responsibilities:
+ *   - platform_integrations  → governance (publication + VIEW/USE audience)
+ *   - in-code registry       → technical capability (does an adapter exist?)
+ *   - integrations/oauth_connections → the tenant connection (unchanged)
  *
- * RLS: config GLOBAL da plataforma (sem tenant_id). Mesmo padrão de
- * billing_plans — RLS habilitada com policy permissiva para manter a postura
- * fail-closed, e autorização de escrita feita na camada RBAC (super_admin).
+ * RLS: GLOBAL platform config (no tenant_id). Same pattern as
+ * billing_plans — RLS enabled with a permissive policy to keep the
+ * fail-closed posture, and write authorization done in the RBAC layer (super_admin).
  */
 export class CreateIntegrationGovernance20260823000001 implements MigrationInterface {
   name = 'CreateIntegrationGovernance20260823000001';
@@ -80,14 +80,14 @@ export class CreateIntegrationGovernance20260823000001 implements MigrationInter
       ON CONFLICT ("slug") DO NOTHING
     `);
 
-    // ── Seed: integrações ───────────────────────────────────────────────────
-    // Provedores COM adapter real entram publicados e visíveis/usáveis por todos
-    // — preserva exatamente o comportamento atual, sem regressão.
-    // Provedores SEM adapter (clicksign/ubc/ecad/nfe) entram como 'draft': passam
-    // a EXISTIR como linha governável (o admin vê e decide), em vez de serem
-    // invisíveis por omissão de um arquivo .ts. A capacidade técnica deles
-    // continua sendo 'not_implemented', derivada do código — publicar não
-    // inventa adapter, e o resolver nunca deixa USE passar sem capacidade.
+    // ── Seed: integrations ──────────────────────────────────────────────────
+    // Providers WITH a real adapter come in published and visible/usable by everyone
+    // — preserves exactly the current behavior, with no regression.
+    // Providers WITHOUT an adapter (clicksign/ubc/ecad/nfe) come in as 'draft': they now
+    // EXIST as a governable row (the admin sees it and decides), instead of being
+    // invisible by omission from a .ts file. Their technical capability
+    // remains 'not_implemented', derived from the code — publishing does not
+    // invent an adapter, and the resolver never lets USE through without capability.
     const seed = (
       key: string, name: string, cat: string, kind: string,
       env: string[], published: boolean, core = false,

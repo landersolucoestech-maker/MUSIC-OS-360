@@ -5,12 +5,12 @@ import { isApplicationMigration } from './migration-classification';
 /**
  * grant-musicos-app-on-all-tables.migration.spec.ts
  *
- * Guarda permanente (Parte 77): a série "RebuildXInCanonicalFormOrder"
- * (2026-07-19) recriou dezenas de tabelas concedendo grants só a
- * `musicos_migrator`, nunca re-concedendo a `musicos_app` — resultado: 114
- * das ~120 tabelas de `public` ficaram com "permission denied" para o role
- * usado por todo o tráfego normal da aplicação (APP_DATABASE_URL). Isso
- * derrubava /auth/context (500) e qualquer página de domínio real.
+ * Permanent guard (Part 77): the "RebuildXInCanonicalFormOrder" series
+ * (2026-07-19) recreated dozens of tables granting only to
+ * `musicos_migrator`, never re-granting to `musicos_app` — result: 114
+ * of the ~120 tables in `public` became "permission denied" for the role
+ * used by all normal application traffic (APP_DATABASE_URL). That
+ * brought down /auth/context (500) and any real domain page.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260802000001_GrantMusicosAppOnAllTables.ts'),
@@ -34,8 +34,8 @@ describe('GrantMusicosAppOnAllTables20260802000001', () => {
   });
 
   it('iterates over table lists (not unrolled SQL) and covers ~114 tables in total, each GRANT conditioned on IF EXISTS', () => {
-    // Parametrizado via arrays + loop, não 114 blocos SQL literais — a
-    // proteção "só roda se a tabela existir" vem do template reutilizado.
+    // Parameterized via arrays + a loop, not 114 literal SQL blocks — the
+    // "only runs if the table exists" protection comes from the reused template.
     expect(migrationSrc).toMatch(/IF EXISTS \(SELECT 1 FROM pg_tables/);
     const readWriteBlock = migrationSrc.split('const READ_WRITE_TABLES = [')[1].split('] as const;')[0];
     const appendOnlyBlock = migrationSrc.split('const APPEND_ONLY_TABLES = [')[1].split('] as const;')[0];

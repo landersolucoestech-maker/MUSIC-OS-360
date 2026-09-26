@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `rights_holders` — sem formulário visual (registro interno do módulo
- * registry). Ordem segue CreateRightsHolderDto.
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `rights_holders` — no visual form (an internal record of the registry
+ * module). The order follows CreateRightsHolderDto.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000013_RebuildRightsHoldersInCanonicalFormOrder.ts'),

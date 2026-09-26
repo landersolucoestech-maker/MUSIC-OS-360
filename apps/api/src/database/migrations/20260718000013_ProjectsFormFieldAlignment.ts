@@ -1,40 +1,40 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Alinha `projects` ao contrato real do formulário ativo (ProjetoFormModal.tsx).
+ * Aligns `projects` with the real contract of the active form (ProjetoFormModal.tsx).
  *
- * Achado CRÍTICO confirmado (auditoria 2026-07-18): `useProjetos()` grava via
+ * CRITICAL finding confirmed (2026-07-18 audit): `useProjetos()` writes via
  * `storage.create("projetos", ...)` → `TABLE_ENDPOINT["projetos"] = "/projects"`
- * → `CreateProjectDto`. O payload real é 100% em português
- * (titulo/tipo/status/observacoes/descricao/genero/artista_id); o DTO antigo
- * só aceitava campos em inglês (title/type/artistId/budget/currency/
- * startsAt/deadlineAt/releasedAt) — zero sobreposição. Com
- * forbidNonWhitelisted, toda criação/edição de projeto retornava 400. Mesmo
- * que o DTO antigo fosse whitelisted, o service fazia spread direto
- * (`...dto`) sobre a entity, cujas colunas físicas já eram `nome`/`tipo`/
- * `status`/`descricao` (português) — os campos do DTO antigo nunca teriam
- * persistido de qualquer forma.
+ * → `CreateProjectDto`. The real payload is 100% Portuguese
+ * (titulo/tipo/status/observacoes/descricao/genero/artista_id); the old DTO
+ * only accepted English fields (title/type/artistId/budget/currency/
+ * startsAt/deadlineAt/releasedAt) — zero overlap. With
+ * forbidNonWhitelisted, every project create/edit returned 400. Even
+ * if the old DTO had been whitelisted, the service spread the DTO directly
+ * (`...dto`) onto the entity, whose physical columns were already `nome`/`tipo`/
+ * `status`/`descricao` (Portuguese) — the old DTO fields would never have
+ * persisted anyway.
  *
- * `nome` renomeada para `titulo` (contrato canônico exigido: nome real do
- * formulário ativo). DEV não possui dado de negócio (0 linhas) — RENAME
- * COLUMN é seguro e não perde dado mesmo assim.
+ * `nome` renamed to `titulo` (required canonical contract: the real name in the
+ * active form). DEV has no business data (0 rows) — RENAME
+ * COLUMN is safe and loses no data regardless.
  *
- * `musicas[]` (lista rica por música: nome, soloFeat, originalRemix,
- * instrumental, duração, gênero, idioma, compositores[], intérpretes[],
- * produtores[], letra, audioUrl) era serializada com JSON.stringify() dentro
- * de `projects.descricao` (texto livre) — proibido pela regra de produto.
- * Normalizada em `project_tracks` (uma linha por música) +
- * `project_track_participants` (compositores/intérpretes/produtores, que
- * têm a mesma estrutura — nome livre, sem vínculo a artista cadastrado — e
- * diferem apenas pelo papel, por isso uma tabela única com `role`).
+ * `musicas[]` (rich per-track list: name, soloFeat, originalRemix,
+ * instrumental, duration, genre, language, composers[], performers[],
+ * producers[], lyrics, audioUrl) was serialized with JSON.stringify() inside
+ * `projects.descricao` (free text) — forbidden by the product rule.
+ * Normalized into `project_tracks` (one row per track) +
+ * `project_track_participants` (composers/performers/producers, which
+ * have the same structure — free-text name, no link to a registered artist — and
+ * differ only by role, hence a single table with `role`).
  */
 export class ProjectsFormFieldAlignment20260718000013 implements MigrationInterface {
   name = 'ProjectsFormFieldAlignment20260718000013';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // ── 1. Fail-fast: aborta se `descricao` tiver conteúdo que NÃO é nem o
-    //    marcador JSON legado de musicas[] nem texto livre simples (nunca
-    //    deveria acontecer, mas não presumimos formato sem checar).
+    // ── 1. Fail-fast: aborts if `descricao` holds content that is neither the
+    //    legacy JSON marker of musicas[] nor simple free text (it should never
+    //    happen, but we do not presume a format without checking).
     const rows: Array<{ id: string; descricao: string }> = await queryRunner.query(`
       SELECT id, descricao FROM projects
       WHERE descricao IS NOT NULL AND btrim(descricao) <> ''
@@ -68,10 +68,10 @@ export class ProjectsFormFieldAlignment20260718000013 implements MigrationInterf
         }
         legacyMusicasByProject.set(row.id, parsed as unknown[]);
       }
-      // Caso contrário: texto livre real — preservado, nada a migrar.
+      // Otherwise: real free text — preserved, nothing to migrate.
     }
 
-    // ── 2. Renomeia nome → titulo (contrato canônico) e adiciona colunas novas ──
+    // ── 2. Renames nome → titulo (canonical contract) and adds new columns ──────
     await queryRunner.query(`
       ALTER TABLE "projects" RENAME COLUMN "nome" TO "titulo"
     `);
@@ -119,7 +119,7 @@ export class ProjectsFormFieldAlignment20260718000013 implements MigrationInterf
     `);
     await queryRunner.query(`CREATE INDEX IF NOT EXISTS idx_project_track_participants_tenant_track ON project_track_participants (tenant_id, project_track_id)`);
 
-    // ── 4. Backfill: migra musicas[] legadas (se existirem) ─────────────────
+    // ── 4. Backfill: migrates legacy musicas[] (if any) ───────────────────────
     for (const [projectId, musicas] of legacyMusicasByProject) {
       const [{ tenant_id }] = await queryRunner.query(
         `SELECT tenant_id FROM projects WHERE id = $1`,
@@ -158,11 +158,11 @@ export class ProjectsFormFieldAlignment20260718000013 implements MigrationInterf
           }
         }
       }
-      // Descricao só continha o JSON de musicas — limpa após migrar.
+      // descricao only contained the musicas JSON — cleared after migrating.
       await queryRunner.query(`UPDATE projects SET descricao = NULL WHERE id = $1`, [projectId]);
     }
 
-    // ── 5. Verificação: nenhuma música legada deve restar sem migrar ────────
+    // ── 5. Verification: no legacy track may remain unmigrated ────────────────
     const [{ remaining }] = await queryRunner.query(`
       SELECT count(*)::int AS remaining FROM projects
       WHERE descricao IS NOT NULL AND btrim(descricao) LIKE '[%'
@@ -174,7 +174,7 @@ export class ProjectsFormFieldAlignment20260718000013 implements MigrationInterf
       );
     }
 
-    // ── 6. RLS nas tabelas filhas (mesmo padrão de work_participants) ───────
+    // ── 6. RLS on the child tables (same pattern as work_participants) ─────────
     for (const table of ['project_tracks', 'project_track_participants']) {
       await queryRunner.query(`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY`);
       await queryRunner.query(`

@@ -1,24 +1,24 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fase 13A / M4 — financial_transactions v2 (Fase 12 §2.6) + máquina de
- * estados (§11) + imutabilidade (I8) + optimistic locking, protegidos no banco.
+ * Phase 13A / M4 — financial_transactions v2 (Phase 12 §2.6) + state
+ * machine (§11) + immutability (I8) + optimistic locking, protected in the database.
  *
- * Decisões vinculantes materializadas:
- * - amount > 0 (I1; o sinal vem de type/natureza da categoria);
- * - competence_date obrigatória (regime de competência) e settlement_date
- *   coerente com o status (I16);
- * - transferência exige contas origem/destino distintas e dispensa categoria;
- * - estorno = transação INVERSA vinculada (reversal_of_id), única por original,
- *   nunca a si mesma; original settled → reversed;
- * - soft delete restrito a 'pending' (settled se estorna, não se apaga);
- * - colunas satélites do formulário mantidas 1-coluna-por-campo (regra de
- *   produto 2026-07-12); metadata só para extensões não estruturais;
- * - padrão de idioma do domínio novo: inglês/snake_case (Fase 12).
+ * Binding decisions materialized:
+ * - amount > 0 (I1; the sign comes from the type/nature of the category);
+ * - competence_date mandatory (accrual basis) and settlement_date
+ *   coherent with the status (I16);
+ * - a transfer requires distinct source/destination accounts and needs no category;
+ * - reversal = a linked INVERSE transaction (reversal_of_id), unique per original,
+ *   never itself; original settled → reversed;
+ * - soft delete restricted to 'pending' (settled is reversed, not deleted);
+ * - the form's satellite columns kept 1-column-per-field (product rule
+ *   2026-07-12); metadata only for non-structural extensions;
+ * - language standard of the new domain: English/snake_case (Phase 12).
  *
- * Divisão de responsabilidade (Fase 13A Etapa 12): o banco protege as
- * invariantes estruturais; a ORQUESTRAÇÃO do estorno (criar inversa + espelhar
- * alocações + flipar original na MESMA transação SQL) pertence ao backend.
+ * Division of responsibility (Phase 13A Step 12): the database protects the
+ * structural invariants; the ORCHESTRATION of the reversal (create the inverse + mirror
+ * allocations + flip the original in the SAME SQL transaction) belongs to the backend.
  */
 export class FinancialTransactions20260718000004 implements MigrationInterface {
   name = 'FinancialTransactions20260718000004';
@@ -143,7 +143,7 @@ export class FinancialTransactions20260718000004 implements MigrationInterface {
         WHERE "deleted_at" IS NULL
     `);
 
-    // Máquina de estados + imutabilidade (I8) + soft delete restrito.
+    // State machine + immutability (I8) + restricted soft delete.
     await queryRunner.query(`
       CREATE FUNCTION "fn_fintx_state_machine"() RETURNS trigger
       LANGUAGE plpgsql AS $$
@@ -196,8 +196,8 @@ export class FinancialTransactions20260718000004 implements MigrationInterface {
         FOR EACH ROW EXECUTE FUNCTION "fn_fintx_state_machine"()
     `);
 
-    // Estorno estrutural: alvo deve ser settled e não pode ser ele próprio um
-    // estorno (previne cadeias/ciclos). A orquestração completa é do backend.
+    // Structural reversal: the target must be settled and cannot itself be a
+    // reversal (prevents chains/cycles). The full orchestration belongs to the backend.
     await queryRunner.query(`
       CREATE FUNCTION "fn_fintx_reversal_guard"() RETURNS trigger
       LANGUAGE plpgsql AS $$
@@ -235,7 +235,7 @@ export class FinancialTransactions20260718000004 implements MigrationInterface {
         EXECUTE FUNCTION "fn_fintx_reversal_guard"()
     `);
 
-    // Optimistic locking: toda UPDATE deve avançar exatamente 1 versão.
+    // Optimistic locking: every UPDATE must advance exactly 1 version.
     await queryRunner.query(`
       CREATE FUNCTION "fn_financial_version_lock"() RETURNS trigger
       LANGUAGE plpgsql AS $$

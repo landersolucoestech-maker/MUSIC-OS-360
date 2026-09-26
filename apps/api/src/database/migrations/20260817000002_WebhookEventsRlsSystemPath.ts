@@ -1,23 +1,23 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Corrige RLS de `webhook_events` para o mesmo modelo de sistema já aplicado
- * a `payment_events`/`tenant_billing_state` em 20260701000003_BillingRlsHardening.
+ * Fixes the RLS of `webhook_events` to the same system model already applied
+ * to `payment_events`/`tenant_billing_state` in 20260701000003_BillingRlsHardening.
  *
- * PROBLEMA (reproduzido em homologação real): `webhook_events` ainda usa a
- * policy genérica `tenant_isolation` (20260520000020_RLSPolicies), que exige
- * `tenant_id = private_get_tenant_id()`. O webhook Stripe é `@Public()` e
- * nunca seta app.current_tenant_id (não há sessão de tenant nesse caminho) —
- * então `tenant_id = NULL` avalia NULL, a policy nega o INSERT em
- * BillingService.recordLegacyWebhook(), e a chamada quebra com 500 mesmo com
- * assinatura Stripe válida. Autentique/external-data não sofrem o mesmo
- * problema porque bootstrapam contexto de tenant antes de escrever; o webhook
- * Stripe não faz isso e não deveria precisar fazer — o modelo de sistema
- * (payment_events) já resolve isso corretamente.
+ * PROBLEM (reproduced in real staging): `webhook_events` still uses the
+ * generic `tenant_isolation` policy (20260520000020_RLSPolicies), which requires
+ * `tenant_id = private_get_tenant_id()`. The Stripe webhook is `@Public()` and
+ * never sets app.current_tenant_id (there is no tenant session on that path) —
+ * so `tenant_id = NULL` evaluates to NULL, the policy denies the INSERT in
+ * BillingService.recordLegacyWebhook(), and the call breaks with a 500 even with a
+ * valid Stripe signature. Autentique/external-data do not suffer the same
+ * problem because they bootstrap a tenant context before writing; the Stripe
+ * webhook does not do that and should not need to — the system model
+ * (payment_events) already solves this correctly.
  *
- * CORREÇÃO: mesma policy de "caminho de sistema" que payment_events já tem —
- * app_current_tenant_id() IS NULL libera (webhook/scheduler sem sessão),
- * senão exige tenant_id = app_current_tenant_id() (sessão de tenant normal).
+ * FIX: the same "system path" policy payment_events already has —
+ * app_current_tenant_id() IS NULL allows it (webhook/scheduler without a session),
+ * otherwise it requires tenant_id = app_current_tenant_id() (normal tenant session).
  */
 export class WebhookEventsRlsSystemPath20260817000002 implements MigrationInterface {
   name = 'WebhookEventsRlsSystemPath20260817000002';

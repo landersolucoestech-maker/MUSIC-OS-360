@@ -3,20 +3,20 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20260824000002_RestoreBillingPlansWritePolicy
  *
- * `billing_plans` está com RLS ativa e APENAS uma policy de SELECT
- * (`billing_plans_read_public`) — que não existe em nenhuma migration deste
- * repositório, ou seja, foi aplicada fora do toolchain.
+ * `billing_plans` has RLS active and ONLY a SELECT policy
+ * (`billing_plans_read_public`) — which does not exist in any migration of this
+ * repository, i.e. it was applied outside the toolchain.
  *
- * Efeito real, reproduzido: sob RLS, um comando sem policy correspondente
- * enxerga zero linhas. Todo UPDATE em billing_plans afeta 0 linhas e NÃO gera
- * erro — a escrita falha em silêncio. Isso quebra qualquer edição de plano pela
- * aplicação, não só os entitlements desta wave.
+ * Real, reproduced effect: under RLS, a command without a matching policy
+ * sees zero rows. Every UPDATE on billing_plans affects 0 rows and raises NO
+ * error — the write fails silently. That breaks any plan edit by the
+ * application, not only this wave's entitlements.
  *
- * Correção mínima: policies de escrita para o papel da aplicação, preservando a
- * leitura pública existente. Mesmo padrão de config global já usado por
- * platform_integrations/integration_categories neste repo. RLS continua ATIVA e
- * a autorização real permanece na camada RBAC (`@RequireRole('super_admin')`)
- * — nenhuma tabela com dimensão de tenant é afetada.
+ * Minimal fix: write policies for the application role, preserving the
+ * existing public read. The same global-config pattern already used by
+ * platform_integrations/integration_categories in this repo. RLS stays ACTIVE and
+ * real authorization remains in the RBAC layer (`@RequireRole('super_admin')`)
+ * — no table with a tenant dimension is affected.
  */
 export class RestoreBillingPlansWritePolicy20260824000002 implements MigrationInterface {
   name = 'RestoreBillingPlansWritePolicy20260824000002';

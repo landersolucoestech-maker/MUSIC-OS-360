@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `releases` na ordem do formulário real (LancamentoFormModal) — Metadata
- * (titulo/tipo/artista/genero/idioma) é a primeira seção real.
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `releases` in the real form's order (LancamentoFormModal) — Metadata
+ * (titulo/tipo/artista/genero/idioma) is the first real section.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000004_RebuildReleasesInCanonicalFormOrder.ts'),

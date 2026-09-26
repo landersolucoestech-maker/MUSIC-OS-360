@@ -5,13 +5,13 @@ import { isApplicationMigration } from './migration-classification';
 /**
  * grant-musicos-app-authenticated-membership.migration.spec.ts
  *
- * Guarda permanente (Parte 78): toda tabela reconstruída pelas migrations
- * "RebuildXInCanonicalFormOrder" tem FORCE ROW LEVEL SECURITY com policies
- * `TO authenticated`. `musicos_app` (role de todo o tráfego normal via
- * APP_DATABASE_URL) nunca foi adicionado como membro de `authenticated`
- * neste projeto — SELECT devolvia 0 linhas sem erro (deny-all silencioso) e
- * INSERT/UPDATE/DELETE falhavam com "new row violates row-level security
- * policy". Reproduzido ao tentar criar um cliente sintético via API real.
+ * Permanent guard (Part 78): every table rebuilt by the
+ * "RebuildXInCanonicalFormOrder" migrations has FORCE ROW LEVEL SECURITY with
+ * `TO authenticated` policies. `musicos_app` (the role of all normal traffic via
+ * APP_DATABASE_URL) was never added as a member of `authenticated`
+ * in this project — SELECT returned 0 rows without an error (silent deny-all) and
+ * INSERT/UPDATE/DELETE failed with "new row violates row-level security
+ * policy". Reproduced while trying to create a synthetic client via the real API.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260802000002_GrantMusicosAppAuthenticatedMembership.ts'),

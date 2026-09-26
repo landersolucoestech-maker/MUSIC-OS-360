@@ -1,12 +1,12 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Audiovisual Tasks — tabela de tarefas atreladas a projetos audiovisuais.
+ * Audiovisual Tasks — table of tasks attached to audiovisual projects.
  *
- * Reusa o padrão de campaign_tasks/crm_tasks: status simples, due_date,
- * priority, assigned_to (UUID nullable do user). Auto-criadas pelo Projects
- * service em transições de status (briefing → pre_production cria "Cast",
- * "Locação", "Roteiro" etc.) ou manualmente pela UI.
+ * Reuses the campaign_tasks/crm_tasks pattern: simple status, due_date,
+ * priority, assigned_to (nullable user UUID). Auto-created by the Projects
+ * service on status transitions (briefing → pre_production creates "Cast",
+ * "Locação", "Roteiro" etc.) or manually through the UI.
  */
 export class AudiovisualTasks20260527000004 implements MigrationInterface {
   name = 'AudiovisualTasks20260527000004';

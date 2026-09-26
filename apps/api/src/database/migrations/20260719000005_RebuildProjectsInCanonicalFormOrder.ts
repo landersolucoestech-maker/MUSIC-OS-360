@@ -1,31 +1,31 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `projects` na ordem canônica do formulário real
- * (ProjetoFormModal) — auditoria 2026-07-19. Mesmo padrão das anteriores
+ * Physical rebuild of `projects` in the canonical order of the real form
+ * (ProjetoFormModal) — 2026-07-19 audit. Same pattern as the previous ones
  * (artists/works/phonograms/releases).
  *
- * Ordem visual real: "Tipo de Lançamento" (tipo) → "Nome do EP/Álbum"
- * (titulo, condicional; para single vem de musicas[0].nome) → seção de
- * Músicas (subform normalizado em `project_tracks`, sem coluna própria aqui;
- * `genero` é derivado de musicas[0].genero e persistido como atalho de
- * filtro) → "Observações" → "Status" (último campo do formulário).
+ * Real visual order: "Tipo de Lançamento" (tipo) → "Nome do EP/Álbum"
+ * (titulo, conditional; for a single it comes from musicas[0].nome) → the
+ * tracks section (subform normalized into `project_tracks`, no column of its own here;
+ * `genero` is derived from musicas[0].genero and persisted as a filter
+ * shortcut) → "Observações" → "Status" (the form's last field).
  *
- * `artista_id` nunca é enviado pelo ProjetoFormModal (create/edit) — só é
- * escrito pelo import em massa (Projetos.tsx, fluxo XLSX real, não órfão) —
- * mantido como relação técnica após os campos do formulário interativo.
+ * `artista_id` is never sent by ProjetoFormModal (create/edit) — it is only
+ * written by the bulk import (Projetos.tsx, a real XLSX flow, not an orphan) —
+ * kept as a technical relation after the interactive form's fields.
  *
- * `orcamento` e `descricao` são aceitos pelo CreateProjectDto/UpdateProjectDto
- * (validação real) mas não têm nenhum writer ativo em nenhuma UI (descricao
- * foi suplantada por musicas[]/project_tracks; orcamento nunca foi
- * conectado a um campo) — mantidos como legado/reservado, não removidos
- * (diferente de data_inicio/data_fim, que são órfãs comprovadas).
+ * `orcamento` and `descricao` are accepted by CreateProjectDto/UpdateProjectDto
+ * (real validation) but have no active writer in any UI (descricao
+ * was superseded by musicas[]/project_tracks; orcamento was never
+ * wired to a field) — kept as legacy/reserved, not removed
+ * (unlike data_inicio/data_fim, which are proven orphans).
  *
- * `data_inicio`/`data_fim` são removidas nesta migration: órfãs comprovadas
- * — ausentes do CreateProjectDto/UpdateProjectDto, nunca lidas/escritas em
- * nenhum controller/service/UI do domínio `projects` (grep completo em
- * apps/api/src e apps/web/src/modules/projects, mesmo padrão de validação
- * fail-fast usado para `artists.org_slug` na migration 20260719000001).
+ * `data_inicio`/`data_fim` are removed in this migration: proven orphans
+ * — absent from CreateProjectDto/UpdateProjectDto, never read/written in
+ * any controller/service/UI of the `projects` domain (full grep in
+ * apps/api/src and apps/web/src/modules/projects, same fail-fast
+ * validation pattern used for `artists.org_slug` in migration 20260719000001).
  */
 export class RebuildProjectsInCanonicalFormOrder20260719000005 implements MigrationInterface {
   name = 'RebuildProjectsInCanonicalFormOrder20260719000005';
@@ -56,7 +56,7 @@ export class RebuildProjectsInCanonicalFormOrder20260719000005 implements Migrat
   ].join(', ');
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // 0. Validação fail-fast: data_inicio/data_fim precisam estar genuinamente vazias.
+    // 0. Fail-fast validation: data_inicio/data_fim must be genuinely empty.
     const [{ non_null }] = await queryRunner.query(
       `SELECT count(data_inicio)::int + count(data_fim)::int AS non_null FROM projects`,
     );
@@ -157,9 +157,9 @@ export class RebuildProjectsInCanonicalFormOrder20260719000005 implements Migrat
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM projects`);
 
     await queryRunner.query(`CREATE TABLE projects_restore (${this.originalColumns})`);
-    // data_inicio/data_fim não existem mais em `projects` (removidas no up(),
-    // comprovadamente órfãs) — sempre NULL na reversão, mesmo padrão de
-    // org_slug em RebuildArtistsInCanonicalFormOrder20260719000001.
+    // data_inicio/data_fim no longer exist in `projects` (removed in up(),
+    // proven orphans) — always NULL on reversal, same pattern as
+    // org_slug in RebuildArtistsInCanonicalFormOrder20260719000001.
     await queryRunner.query(`INSERT INTO projects_restore (${this.restoreCopyColumns}) SELECT ${this.restoreCopyColumns} FROM projects`);
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM projects_restore`);

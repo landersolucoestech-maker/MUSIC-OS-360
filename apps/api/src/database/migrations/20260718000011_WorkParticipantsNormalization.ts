@@ -1,34 +1,34 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Normaliza a autoria de `works`.
+ * Normalizes the authorship of `works`.
  *
- * Evidência real (auditoria 2026-07-18):
- *   - `works.participantes` (jsonb) é a fonte rica e ativa de autoria do
- *     formulário interativo (ObraFormModal.tsx), com forma fixa e conhecida
- *     por item: { id, nome, classeFuncao, link, percentual }. Uma lista de
- *     registros relacionados não deve viver em uma única coluna jsonb —
- *     vira tabela filha `work_participants`.
- *   - `works.detentores` e `works.co_compositores` NÃO possuem nenhum writer
- *     ativo: sem input no formulário, ausentes de CreateWorkDto/UpdateWorkDto,
- *     e marcados `importable: false` no contrato de Reports (não graváveis
- *     nem por bulk-import). São colunas órfãs — nenhum fluxo real as
- *     popula desde que o contrato atual existe. `up()` valida que não há
- *     dado remanescente incompatível antes de removê-las (fail-fast).
- *   - `works.compositor` e `works.editora` PERMANECEM: possuem writer real
- *     (bulk-import via Reports, `importable: true` no contrato) e leitor
- *     real (`catalog-metadata-validator`, `external-data-exchange`).
+ * Real evidence (2026-07-18 audit):
+ *   - `works.participantes` (jsonb) is the rich, active authorship source of the
+ *     interactive form (ObraFormModal.tsx), with a fixed, known shape
+ *     per item: { id, nome, classeFuncao, link, percentual }. A list of
+ *     related records must not live in a single jsonb column —
+ *     it becomes the child table `work_participants`.
+ *   - `works.detentores` and `works.co_compositores` have NO active
+ *     writer: no input in the form, absent from CreateWorkDto/UpdateWorkDto,
+ *     and marked `importable: false` in the Reports contract (not writable
+ *     even through bulk import). They are orphan columns — no real flow
+ *     has populated them since the current contract exists. `up()` validates that there is no
+ *     remaining incompatible data before removing them (fail-fast).
+ *   - `works.compositor` and `works.editora` REMAIN: they have a real writer
+ *     (bulk import via Reports, `importable: true` in the contract) and a real
+ *     reader (`catalog-metadata-validator`, `external-data-exchange`).
  *
- * Participante do formulário nunca precisa ser uma entidade cadastrada
- * (ParticipanteForm não tem artista_id) — por isso `nome` é texto livre,
- * não FK obrigatória.
+ * A form participant never needs to be a registered entity
+ * (ParticipanteForm has no artista_id) — which is why `nome` is free text,
+ * not a mandatory FK.
  */
 export class WorkParticipantsNormalization20260718000011 implements MigrationInterface {
   name = 'WorkParticipantsNormalization20260718000011';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // ── 1. Fail-fast: aborta se `participantes` contiver item em formato
-    //    desconhecido (fora do shape {id,nome,classeFuncao,link,percentual}).
+    // ── 1. Fail-fast: aborts if `participantes` contains an item in an unknown
+    //    format (outside the {id,nome,classeFuncao,link,percentual} shape).
     const badShape: Array<{ id: string }> = await queryRunner.query(`
       SELECT w.id
       FROM works w, jsonb_array_elements(COALESCE(w.participantes, '[]'::jsonb)) AS item
@@ -43,10 +43,10 @@ export class WorkParticipantsNormalization20260718000011 implements MigrationInt
       );
     }
 
-    // ── 2. Fail-fast: aborta se `detentores`/`co_compositores` tiverem dado
-    //    remanescente (nenhum writer ativo os popula — qualquer valor hoje
-    //    seria legado anterior ao contrato atual e precisa de triagem manual
-    //    antes de a coluna ser removida).
+    // ── 2. Fail-fast: aborts if `detentores`/`co_compositores` hold remaining
+    //    data (no active writer populates them — any value today
+    //    would be legacy predating the current contract and needs manual triage
+    //    before the column is removed).
     const orphanData: Array<{ count: string }> = await queryRunner.query(`
       SELECT count(*)::text AS count FROM works
       WHERE (detentores IS NOT NULL AND btrim(detentores) <> '')
@@ -96,7 +96,7 @@ export class WorkParticipantsNormalization20260718000011 implements MigrationInt
       ON CONFLICT (id) DO NOTHING
     `);
 
-    // ── 5. Verifica que o backfill não perdeu nenhum item ───────────────────
+    // ── 5. Verifies the backfill lost no item ─────────────────────────────────
     const [{ source_count, target_count }] = await queryRunner.query(`
       SELECT
         (SELECT COALESCE(SUM(jsonb_array_length(COALESCE(participantes, '[]'::jsonb))), 0) FROM works)::text AS source_count,
@@ -110,7 +110,7 @@ export class WorkParticipantsNormalization20260718000011 implements MigrationInt
       );
     }
 
-    // ── 6. RLS na tabela filha (mesmo padrão de 20260613000008) ─────────────
+    // ── 6. RLS on the child table (same pattern as 20260613000008) ──────────────
     await queryRunner.query(`ALTER TABLE work_participants ENABLE ROW LEVEL SECURITY`);
     await queryRunner.query(`
       DO $$
@@ -126,7 +126,7 @@ export class WorkParticipantsNormalization20260718000011 implements MigrationInt
       END $$;
     `);
 
-    // ── 7. Remove as colunas de origem, já migradas/comprovadamente órfãs ───
+    // ── 7. Removes the source columns, already migrated/proven orphans ──────────
     await queryRunner.query(`
       ALTER TABLE works
         DROP COLUMN IF EXISTS participantes,

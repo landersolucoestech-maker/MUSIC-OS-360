@@ -1,39 +1,39 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fase 3B — remoção segura do módulo `contacts` e dos 3 satélites
+ * Phase 3B — safe removal of the `contacts` module and its 3 satellites
  * (`contact_attachments`, `contact_contracts`, `contact_timeline`).
  *
- * Decisão (Fase 3): Contato = Cliente, unificado em `clients`/ClientEntity.
- * `contacts` duplicava esse domínio sem responsabilidade distinta comprovada
- * (zero consumidor real, zero mapeamento em TABLE_ENDPOINT, service em raw
- * SQL sem entity/repository). Os 3 satélites nunca tiveram consumidor real:
- * `attachments`/`interações` já são servidos de verdade por
+ * Decision (Phase 3): Contact = Client, unified in `clients`/ClientEntity.
+ * `contacts` duplicated that domain without a proven distinct responsibility
+ * (zero real consumers, zero mapping in TABLE_ENDPOINT, a raw-SQL service
+ * without entity/repository). The 3 satellites never had a real consumer:
+ * `attachments`/`interações` are already really served by
  * `clients.attachments`/`clients.interacoes` (jsonb); `contact_contracts`
- * (N:N contato↔contrato) é redundante com o `cliente_id` já existente em
- * `ContractEntity` e nunca teve UI ou requisito comprovado.
+ * (N:N contact↔contract) is redundant with the `cliente_id` already existing in
+ * `ContractEntity` and never had a UI or a proven requirement.
  *
- * Confirmado via SQL direto antes desta migration: as 4 tabelas têm 0 linhas
- * em todos os tenants — nenhum dado real é descartado.
+ * Confirmed via direct SQL before this migration: the 4 tables have 0 rows
+ * across all tenants — no real data is discarded.
  *
- * Ordem de DROP respeita as FKs (filhas antes do pai). O DROP TABLE remove
- * automaticamente policies, constraints e índices próprios das 4 tabelas —
- * nenhum objeto compartilhado (funções de tenant, índices de `leads`/
- * `contracts`, tabela `lead_uploads`) é tocado por esta migration.
+ * The DROP order respects the FKs (children before the parent). DROP TABLE
+ * automatically removes the 4 tables' own policies, constraints and indexes —
+ * no shared object (tenant functions, `leads`/`contracts` indexes,
+ * the `lead_uploads` table) is touched by this migration.
  *
- * DECISÃO (req-a6155d65, mission-e39d21fa, 2026-09-12): este arquivo
- * PERMANECE NÃO REGISTRADO em `index.ts`/`ALL_MIGRATIONS` deliberadamente.
- * A verificação de 0 linhas acima está documentada mas não foi re-executada
- * nem autorizada nesta sessão contra um ambiente real — DROP TABLE é
- * destrutivo e irreversível em produção (mesmo com down() funcional, dados
- * gravados no intervalo entre o DROP e um eventual rollback seriam
- * perdidos), exigindo autorização explícita do operador por
- * `.claude/rules/data-governance.md` (L5) antes do registro, não apenas a
- * revisão de código. Um agente futuro NÃO deve registrar este arquivo sem
- * antes: (1) confirmar que as 4 tabelas ainda têm 0 linhas em todos os
- * tenants no ambiente-alvo, e (2) obter autorização explícita do operador
- * para a operação destrutiva. Ver finding correspondente em
- * `.claude/ops/state.json` para o registro formal desta decisão.
+ * DECISION (req-a6155d65, mission-e39d21fa, 2026-09-12): this file
+ * deliberately REMAINS UNREGISTERED in `index.ts`/`ALL_MIGRATIONS`.
+ * The 0-row check above is documented but was neither re-run
+ * nor authorized in this session against a real environment — DROP TABLE is
+ * destructive and irreversible in production (even with a working down(), data
+ * written between the DROP and an eventual rollback would be
+ * lost), requiring explicit operator authorization per
+ * `.claude/rules/data-governance.md` (L5) before registration, not only
+ * code review. A future agent must NOT register this file without
+ * first: (1) confirming the 4 tables still have 0 rows across all
+ * tenants in the target environment, and (2) obtaining explicit operator authorization
+ * for the destructive operation. See the corresponding finding in
+ * `.claude/ops/state.json` for the formal record of this decision.
  */
 export class DropOrphanContactsSatelliteTables20260713000002
   implements MigrationInterface

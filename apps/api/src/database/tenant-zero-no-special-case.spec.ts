@@ -2,13 +2,13 @@ import { readdirSync, readFileSync, statSync } from 'fs';
 import { join, relative } from 'path';
 
 /**
- * Regressão estrutural: a identidade do tenant-zero (Blocos 6/7 da Parte 69)
- * não pode vazar para RLS, RBAC, guards ou services como um special-case.
- * Só o próprio módulo de constantes, o bootstrap e os testes têm permissão
- * de referenciar os símbolos canônicos — qualquer outro arquivo que os
- * importe é, por definição, uma tentativa de comparar contra o tenant-zero
- * (`if (tenantId === TENANT_ZERO_TENANT_ID)`), exatamente o padrão proibido
- * pelas regras absolutas da Parte 69.
+ * Structural regression: the tenant-zero identity (Blocks 6/7 of Part 69)
+ * must not leak into RLS, RBAC, guards or services as a special case.
+ * Only the constants module itself, the bootstrap and the tests are allowed
+ * to reference the canonical symbols — any other file that
+ * imports them is, by definition, an attempt to compare against tenant-zero
+ * (`if (tenantId === TENANT_ZERO_TENANT_ID)`), exactly the pattern forbidden
+ * by the absolute rules of Part 69.
  */
 const SRC_ROOT = join(__dirname, '..');
 
@@ -69,7 +69,7 @@ describe('tenant-zero: nenhum special-case de RLS/RBAC/billing/guard', () => {
       const relPath = relative(SRC_ROOT, file).replace(/\\/g, '/');
       if (relPath.startsWith('database/migrations/20260801000002')) continue;
       if (ALLOWED_FILES.has(relPath)) continue;
-      if (relPath === 'database/entities.ts') continue; // apenas a definição da coluna
+      if (relPath === 'database/entities.ts') continue; // only the column definition
 
       const content = readFileSync(file, 'utf8');
       if (content.includes('is_system_tenant')) {

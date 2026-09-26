@@ -1,15 +1,15 @@
 /**
- * seeds/04_rbac_seed.ts  (FASE 8 — RBAC Enterprise)
+ * seeds/04_rbac_seed.ts  (PHASE 8 — Enterprise RBAC)
  *
- * Popula o catálogo GLOBAL de autorização (tenant-independente):
- *   - permissions     → união das chaves resource:action da matriz legada ROLE_PERMISSIONS;
- *   - roles           → garante os 20 roles globais (idempotente; preserva hierarchy_level);
- *   - role_permissions → derivado EXATAMENTE de ROLE_PERMISSIONS, garantindo paridade.
+ * Populates the GLOBAL authorization catalog (tenant-independent):
+ *   - permissions     → union of the resource:action keys of the legacy ROLE_PERMISSIONS matrix;
+ *   - roles           → ensures the 20 global roles (idempotent; preserves hierarchy_level);
+ *   - role_permissions → derived EXACTLY from ROLE_PERMISSIONS, guaranteeing parity.
  *
- * Aliases (artista→artist, tenant_owner→owner) NÃO recebem role_permissions próprias:
- * herdam do canônico via roles.canonical_role_id (resolvido na FASE 5).
+ * Aliases (artista→artist, tenant_owner→owner) do NOT receive their own role_permissions:
+ * they inherit from the canonical role via roles.canonical_role_id (resolved in PHASE 5).
  *
- * Idempotente: pode rodar N vezes sem duplicar. Não cria roles custom.
+ * Idempotent: can run N times without duplicating. Creates no custom roles.
  */
 import { DataSource } from 'typeorm';
 import { ROLE_PERMISSIONS, ROLE_HIERARCHY } from '../../core/rbac/rbac.service';
@@ -20,7 +20,7 @@ const ALIASES: Record<string, string> = {
   tenant_owner: 'owner',
 };
 
-/** Nomes PT-BR dos roles globais (alinhado à migration M2). */
+/** PT-BR display names of the global roles (aligned with migration M2). */
 const ROLE_NAMES: Record<string, string> = {
   super_admin: 'Super Administrador',
   tenant_owner: 'Proprietário do Tenant',
@@ -77,10 +77,10 @@ const FINANCIAL_PERMISSION_GRANTS: Record<string, string[]> = {
   'financial_category_rule:delete': ['super_admin', 'owner', 'admin', 'manager'],
 };
 
-// Listas de roles por limiar de hierarquia legada (canônicos; aliases herdam do canônico).
-//   viewer+    (nível >= 10) = todos os roles canônicos
-//   financial+ (nível >= 60) = super_admin..accounting
-//   manager+   (nível >= 70) = super_admin..manager
+// Role lists by legacy hierarchy threshold (canonical; aliases inherit from the canonical one).
+//   viewer+    (level >= 10) = all canonical roles
+//   financial+ (level >= 60) = super_admin..accounting
+//   manager+   (level >= 70) = super_admin..manager
 const VIEWER_PLUS = [
   'super_admin', 'owner', 'admin', 'manager', 'editor', 'financial', 'accounting',
   'juridico', 'marketing_manager', 'marketing', 'comercial', 'produtor', 'radio',
@@ -89,9 +89,9 @@ const VIEWER_PLUS = [
 const FINANCIAL_PLUS = ['super_admin', 'owner', 'admin', 'manager', 'editor', 'financial', 'accounting'];
 const MANAGER_PLUS = ['super_admin', 'owner', 'admin', 'manager'];
 
-// FASE 8.3: permissões de transactions/invoices em paridade com o baseline @RequireRole dos
-// controllers (read→viewer+, create/update→financial+, cancel→manager+). DELETE não é mapeado:
-// a rota DELETE tem semântica de cancelamento/soft delete → usa-se *:cancel, não *:delete.
+// PHASE 8.3: transactions/invoices permissions at parity with the controllers' @RequireRole
+// baseline (read→viewer+, create/update→financial+, cancel→manager+). DELETE is not mapped:
+// the DELETE route has cancel/soft-delete semantics → *:cancel is used, not *:delete.
 const TRANSACTION_INVOICE_PERMISSION_GRANTS: Record<string, string[]> = {
   'transaction:read': VIEWER_PLUS,
   'transaction:create': FINANCIAL_PLUS,
@@ -103,10 +103,10 @@ const TRANSACTION_INVOICE_PERMISSION_GRANTS: Record<string, string[]> = {
   'invoice:cancel': MANAGER_PLUS,
 };
 
-// FASE 8.4: permissões de contracts/contract-templates em paridade com o baseline @RequireRole
-// dos controllers (read→viewer+, create/update→editor+, cancel/archive→manager+).
-// editor+ (nível >= 60) é exatamente o mesmo conjunto que financial+ (editor e financial = nível 60).
-// DELETE não vira *:delete: a semântica é cancelamento (contract) / arquivamento (template).
+// PHASE 8.4: contracts/contract-templates permissions at parity with the controllers'
+// @RequireRole baseline (read→viewer+, create/update→editor+, cancel/archive→manager+).
+// editor+ (level >= 60) is exactly the same set as financial+ (editor and financial = level 60).
+// DELETE does not become *:delete: the semantics are cancellation (contract) / archiving (template).
 const EDITOR_PLUS = FINANCIAL_PLUS;
 const CONTRACT_PERMISSION_GRANTS: Record<string, string[]> = {
   'contract:read': VIEWER_PLUS,
@@ -123,12 +123,12 @@ const CONTRACT_PERMISSION_GRANTS: Record<string, string[]> = {
   'contract_service_type:archive': MANAGER_PLUS,
 };
 
-// FASE 8.5: fecha o GAP crítico catálogo×controller. CRUD granular dos controllers já migrados
+// PHASE 8.5: closes the critical catalog×controller GAP. Granular CRUD of the already migrated controllers
 // (works/phonograms/shares/clients/contacts/leads/lead-interactions/licensing/events/projects/
-// artist-goals) em paridade EXATA com o @RequireRole de cada rota:
+// artist-goals) at EXACT parity with each route's @RequireRole:
 //   read→viewer+, create/update→editor+, delete→manager+.
-// Exceções derivadas dos controllers (fonte da verdade): contact não tem rota DELETE;
-// lead_interaction não tem rota PATCH/update → não recebem essas chaves.
+// Exceptions derived from the controllers (source of truth): contact has no DELETE route;
+// lead_interaction has no PATCH/update route → they do not receive those keys.
 const GRANULAR_CRUD_PERMISSION_GRANTS: Record<string, string[]> = {
   'work:read': VIEWER_PLUS, 'work:create': EDITOR_PLUS, 'work:update': EDITOR_PLUS, 'work:delete': MANAGER_PLUS,
   'phonogram:read': VIEWER_PLUS, 'phonogram:create': EDITOR_PLUS, 'phonogram:update': EDITOR_PLUS, 'phonogram:delete': MANAGER_PLUS,
@@ -143,10 +143,10 @@ const GRANULAR_CRUD_PERMISSION_GRANTS: Record<string, string[]> = {
   'artist_goal:read': VIEWER_PLUS, 'artist_goal:create': EDITOR_PLUS, 'artist_goal:update': EDITOR_PLUS, 'artist_goal:delete': MANAGER_PLUS,
 };
 
-// FASE 8.6: realinha a DISTRIBUIÇÃO de artist:* e inventory:* ao baseline @RequireRole dos seus
-// controllers (read→viewer+, create/update→editor+, delete→manager+). Essas permissões já existem
-// no catálogo (vindas da matriz legada com distribuição mais estreita); aqui apenas COMPLEMENTAMOS
-// os grants faltantes via ON CONFLICT DO NOTHING. Nenhuma permissão nova é criada; nada é removido.
+// PHASE 8.6: realigns the DISTRIBUTION of artist:* and inventory:* to their controllers'
+// @RequireRole baseline (read→viewer+, create/update→editor+, delete→manager+). These permissions already exist
+// in the catalog (coming from the legacy matrix with a narrower distribution); here we only ADD
+// the missing grants via ON CONFLICT DO NOTHING. No new permission is created; nothing is removed.
 const ARTIST_INVENTORY_PERMISSION_GRANTS: Record<string, string[]> = {
   'artist:read': VIEWER_PLUS, 'artist:create': EDITOR_PLUS, 'artist:update': EDITOR_PLUS, 'artist:delete': MANAGER_PLUS,
   'inventory:read': VIEWER_PLUS, 'inventory:create': EDITOR_PLUS, 'inventory:update': EDITOR_PLUS, 'inventory:delete': MANAGER_PLUS,
@@ -159,7 +159,7 @@ export interface RbacSeedResult {
 }
 
 export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
-  // ── 1) permissions: catálogo = união das chaves da matriz legada ────────────
+  // ── 1) permissions: catalog = union of the legacy matrix keys ────────────────
   const keys = new Set<string>();
   for (const perms of Object.values(ROLE_PERMISSIONS)) {
     for (const key of perms) keys.add(key);
@@ -230,7 +230,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
     }
   }
 
-  // FASE 8.1: permissões financeiras incrementais sem alterar a matriz legada.
+  // PHASE 8.1: incremental financial permissions without changing the legacy matrix.
   for (const [key, slugs] of Object.entries(FINANCIAL_PERMISSION_GRANTS)) {
     for (const slug of slugs) {
       if (ALIASES[slug]) continue; // aliases herdam do canônico
@@ -246,7 +246,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
     }
   }
 
-  // FASE 8.3: permissões de transactions/invoices em paridade com o baseline dos controllers.
+  // PHASE 8.3: transactions/invoices permissions at parity with the controllers' baseline.
   for (const [key, slugs] of Object.entries(TRANSACTION_INVOICE_PERMISSION_GRANTS)) {
     for (const slug of slugs) {
       if (ALIASES[slug]) continue; // aliases herdam do canônico
@@ -262,7 +262,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
     }
   }
 
-  // FASE 8.4: permissões de contracts/contract-templates em paridade com o baseline dos controllers.
+  // PHASE 8.4: contracts/contract-templates permissions at parity with the controllers' baseline.
   for (const [key, slugs] of Object.entries(CONTRACT_PERMISSION_GRANTS)) {
     for (const slug of slugs) {
       if (ALIASES[slug]) continue; // aliases herdam do canônico
@@ -278,7 +278,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
     }
   }
 
-  // FASE 8.5: CRUD granular dos controllers migrados (fecha o gap catálogo×controller).
+  // PHASE 8.5: granular CRUD of the migrated controllers (closes the catalog×controller gap).
   for (const [key, slugs] of Object.entries(GRANULAR_CRUD_PERMISSION_GRANTS)) {
     for (const slug of slugs) {
       if (ALIASES[slug]) continue; // aliases herdam do canônico
@@ -294,7 +294,7 @@ export async function seedRbac(ds: DataSource): Promise<RbacSeedResult> {
     }
   }
 
-  // FASE 8.6: realinhamento de distribuição de artist:* e inventory:* (complementa grants faltantes).
+  // PHASE 8.6: realignment of the artist:* and inventory:* distribution (adds missing grants).
   for (const [key, slugs] of Object.entries(ARTIST_INVENTORY_PERMISSION_GRANTS)) {
     for (const slug of slugs) {
       if (ALIASES[slug]) continue; // aliases herdam do canônico

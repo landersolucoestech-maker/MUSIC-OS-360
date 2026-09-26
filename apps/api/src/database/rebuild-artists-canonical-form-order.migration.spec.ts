@@ -4,11 +4,11 @@ import * as path from 'path';
 /**
  * rebuild-artists-canonical-form-order.migration.spec.ts
  *
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de `artists`
- * na ordem do formulário real (avatar/foto é o primeiro campo funcional após
- * id/tenant_id). Sem CASCADE. Recria todas as 8 FKs de tabelas dependentes,
- * RLS, policies, índices, owner e grants. Remove `org_slug` (órfã
- * comprovada).
+ * Permanent guard (2026-07-19 audit): physical rebuild of `artists`
+ * in the real form's order (avatar/photo is the first functional field after
+ * id/tenant_id). No CASCADE. Recreates all 8 FKs of dependent tables,
+ * RLS, policies, indexes, owner and grants. Removes `org_slug` (proven
+ * orphan).
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000001_RebuildArtistsInCanonicalFormOrder.ts'),

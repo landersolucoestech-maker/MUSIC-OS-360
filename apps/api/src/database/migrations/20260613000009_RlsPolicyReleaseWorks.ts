@@ -1,20 +1,20 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * FASE 3F — RLS por HERANÇA DE FK em release_works (tabela de junção N:N sem
- * tenant_id próprio; PK composta release_id+work_id).
+ * PHASE 3F — RLS by FK INHERITANCE on release_works (N:N join table without
+ * its own tenant_id; composite PK release_id+work_id).
  *
- * Isolamento herdado dos DOIS pais já tenantizados e protegidos por RLS:
+ * Isolation inherited from the TWO parents, already tenantized and protected by RLS:
  *   release_works.release_id → releases.id   (releases.tenant_id NOT NULL, RLS ON)
  *   release_works.work_id    → works.id      (works.tenant_id    NOT NULL, RLS ON)
  *
- * A policy exige que AMBOS os pais pertençam ao tenant atual (AND), fechando o
- * caso teórico release.tenant ≠ work.tenant. Usa o padrão portável
- * private_get_tenant_id() — sem current_setting, sem auth.uid, sem cast ::text.
+ * The policy requires BOTH parents to belong to the current tenant (AND), closing the
+ * theoretical release.tenant ≠ work.tenant case. Uses the portable pattern
+ * private_get_tenant_id() — no current_setting, no auth.uid, no ::text cast.
  *
- * Aplica APENAS: ENABLE ROW LEVEL SECURITY + policy. NÃO ativa FORCE RLS.
- * Não altera releases/works nem qualquer outra tabela. Idempotente (ENABLE é
- * no-op se já ativo; policy só criada se ausente). Reversível.
+ * Applies ONLY: ENABLE ROW LEVEL SECURITY + policy. Does NOT enable FORCE RLS.
+ * Does not change releases/works nor any other table. Idempotent (ENABLE is a
+ * no-op if already active; the policy is only created if absent). Reversible.
  */
 export class RlsPolicyReleaseWorks20260613000009 implements MigrationInterface {
   name = 'RlsPolicyReleaseWorks20260613000009';

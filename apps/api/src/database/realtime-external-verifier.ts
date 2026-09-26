@@ -1,17 +1,17 @@
 /**
- * realtime-external-verifier.ts  (Parte 72)
+ * realtime-external-verifier.ts  (Part 72)
  *
- * Lógica pura de avaliação do estado físico de `realtime.messages` —
- * independente da tabela de tracking `musicos360_migrations`.
- * RealtimeBroadcastAuthorization20260801000001 é EXTERNAL_MANAGED (ver
- * migration-classification.ts): sua linha de tracking pode nunca existir
- * mesmo com as policies corretas (aplicadas manualmente via Dashboard), e
- * pode existir uma expectativa de tracking sem que o efeito físico esteja
- * realmente lá. Esta função nunca confia na tabela de tracking — recebe o
- * estado já consultado diretamente de pg_class/pg_policies (ver
- * scripts/verify-realtime-external.ts, que faz o I/O real).
+ * Pure logic evaluating the physical state of `realtime.messages` —
+ * independent of the `musicos360_migrations` tracking table.
+ * RealtimeBroadcastAuthorization20260801000001 is EXTERNAL_MANAGED (see
+ * migration-classification.ts): its tracking row may never exist
+ * even with the correct policies (applied manually via the Dashboard), and
+ * a tracking expectation may exist without the physical effect actually
+ * being there. This function never trusts the tracking table — it receives the
+ * state already queried directly from pg_class/pg_policies (see
+ * scripts/verify-realtime-external.ts, which does the real I/O).
  *
- * Função pura e testável sem banco de dados.
+ * Pure function, testable without a database.
  */
 
 export type RealtimeExternalState =
@@ -42,12 +42,12 @@ export interface RealtimeStateResult {
   reason: string;
 }
 
-// Fragmentos deliberadamente simples: apenas os literais de string da
-// migration (20260801000001), que o deparser do Postgres preserva verbatim
-// independente de como formata parênteses/casts dos operadores jsonb ao
-// redor. Casar contra a expressão de operadores inteira seria frágil —
-// pg_get_expr() pode reformatar isso de formas que variam por versão do
-// Postgres.
+// Deliberately simple fragments: only the migration's string literals
+// (20260801000001), which the Postgres deparser preserves verbatim
+// regardless of how it formats the parentheses/casts of the surrounding jsonb
+// operators. Matching against the whole operator expression would be fragile —
+// pg_get_expr() may reformat it in ways that vary by Postgres
+// version.
 const EXPECTED_POLICIES: Record<string, { qualIncludes: string[] }> = {
   tenant_can_receive_broadcast: {
     qualIncludes: ["'broadcast'", "'tenant:'", "'app_metadata'", "'org_id'"],
@@ -67,14 +67,14 @@ export function evaluateRealtimeState(input: RealtimeStateInput): RealtimeStateR
     return { state: 'UNSAFE_PUBLIC_ACCESS', reason: `Policy "${publicPolicy.policyname}" usa USING (true) — acesso público a canais privados.` };
   }
 
-  // Nenhuma policy ainda — a migration simplesmente não foi aplicada. Isto
-  // vale independente de rlsEnabled: Supabase provisiona realtime.messages
-  // com RLS já habilitada por padrão (fail-closed) antes de qualquer policy
-  // existir (confirmado empiricamente na Parte 72 contra Supabase DEV real —
-  // ALTER TABLE ENABLE ROW LEVEL SECURITY falha por ownership mesmo já
-  // estando habilitada, então "RLS=true, zero policies" é o estado inicial
-  // normal, não uma migration parcialmente aplicada). Tratar isso como DRIFT
-  // classificaria o estado inicial normal do Supabase como uma regressão.
+  // No policy yet — the migration simply was not applied. This
+  // holds regardless of rlsEnabled: Supabase provisions realtime.messages
+  // with RLS already enabled by default (fail-closed) before any policy
+  // exists (confirmed empirically in Part 72 against real DEV Supabase —
+  // ALTER TABLE ENABLE ROW LEVEL SECURITY fails on ownership even though it is
+  // already enabled, so "RLS=true, zero policies" is the normal initial
+  // state, not a partially applied migration). Treating it as DRIFT
+  // would classify Supabase's normal initial state as a regression.
   if (input.policies.length === 0) {
     const ownerNote = input.owner === input.currentUser
       ? 'a role de conexão já é a owner, mas a migration ainda não foi aplicada'

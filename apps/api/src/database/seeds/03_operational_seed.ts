@@ -1,7 +1,7 @@
 /**
  * seeds/03_operational_seed.ts
  *
- * Seed operacional minimo para validar a plataforma sem recriar o CRM legado.
+ * Minimal operational seed to validate the platform without recreating the legacy CRM.
  */
 
 import { DataSource } from 'typeorm';
@@ -41,13 +41,13 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
     ON CONFLICT (id) DO UPDATE SET active = TRUE
   `, [tenantId, orgId, orgName, `${orgSlug}-tenant`]);
 
-  // billing_subscriptions ja e semeado por seedDefaultTenant() (01_default_tenant.ts)
-  // para o mesmo orgId -- inserir aqui tambem duplicava a linha a cada
-  // execucao (billing_subscriptions nao tem UNIQUE(org_id), so PK(id) e
-  // UNIQUE(stripe_customer_id/stripe_sub_id), sempre NULL aqui, entao
-  // ON CONFLICT DO NOTHING nunca tinha alvo para casar).
+  // billing_subscriptions is already seeded by seedDefaultTenant() (01_default_tenant.ts)
+  // for the same orgId -- inserting here too duplicated the row on every
+  // run (billing_subscriptions has no UNIQUE(org_id), only PK(id) and
+  // UNIQUE(stripe_customer_id/stripe_sub_id), always NULL here, so
+  // ON CONFLICT DO NOTHING never had a target to match).
 
-  // Dual-write (PASSO 12-G): grava role legado E role_id canônico.
+  // Dual-write (STEP 12-G): writes the legacy role AND the canonical role_id.
   await ds.query(`
     INSERT INTO org_members (org_id, tenant_id, auth_user_id, email, full_name, role, role_id, is_active)
     VALUES ($1, $2, $3, $4, $5, 'owner',
@@ -68,10 +68,10 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
     ON CONFLICT (id) DO NOTHING
   `, [artistId, tenantId, effectiveAdminSub]);
 
-  // "contacts" (+ satelites) foi removida em favor de "clients" (decisao
-  // "Contato = Cliente", ver ContactsService) -- semeia direto na tabela
-  // canonica, com o evento de criacao gravado em clients.interacoes (jsonb),
-  // que e o substituto documentado de contact_timeline.
+  // "contacts" (+ satellites) was removed in favor of "clients" (the
+  // "Contact = Client" decision, see ContactsService) -- seeds directly into the canonical
+  // table, with the creation event recorded in clients.interacoes (jsonb),
+  // which is the documented replacement for contact_timeline.
   const contactId = '10000000-0000-0000-0000-000000000021';
   await ds.query(`
     INSERT INTO clients
@@ -99,10 +99,10 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
     ON CONFLICT (id) DO NOTHING
   `, [campaignTaskId, tenantId, campaignId, end, effectiveAdminSub]);
 
-  // "forms" (generic Form Builder) foi removida em
-  // 20260822000005_DropGenericFormsModule -- zero consumidor real, decisao
-  // final do produto (Artist Public Form / Support Ticket / MusicChat
-  // cobrem os 3 canais reais). Nada a semear aqui.
+  // "forms" (generic Form Builder) was removed in
+  // 20260822000005_DropGenericFormsModule -- zero real consumers, final
+  // product decision (Artist Public Form / Support Ticket / MusicChat
+  // cover the 3 real channels). Nothing to seed here.
 
   const contractId = '10000000-0000-0000-0000-000000000060';
   await ds.query(`

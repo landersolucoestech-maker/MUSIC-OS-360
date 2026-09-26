@@ -1,15 +1,15 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * 20260614000003_CreatePermissionAliases  (PASSO 1 / Migration 003 — RBAC Enterprise)
+ * 20260614000003_CreatePermissionAliases  (STEP 1 / Migration 003 — Enterprise RBAC)
  *
- * Mapa GLOBAL de aliases de chave de permissão (vocabulário legado → novo), usado no backfill
- * e na compatibilidade durante o cutover (ex.: `accounting:read` → `billing.read`).
- * - Sem tenant_id (catálogo de plataforma) → sem RLS.
- * - `legacy_key` único (lookup determinístico no backfill).
- * - Aditiva e não-destrutiva. Idempotente. Reversível via down().
+ * GLOBAL map of permission key aliases (legacy vocabulary → new), used in the backfill
+ * and for compatibility during the cutover (e.g. `accounting:read` → `billing.read`).
+ * - No tenant_id (platform catalog) → no RLS.
+ * - Unique `legacy_key` (deterministic lookup in the backfill).
+ * - Additive and non-destructive. Idempotent. Reversible via down().
  *
- * Escopo PASSO 1: apenas a estrutura. O seed dos aliases pertence à etapa de backfill (FASE 4).
+ * STEP 1 scope: structure only. Seeding the aliases belongs to the backfill stage (PHASE 4).
  */
 export class CreatePermissionAliases20260614000003 implements MigrationInterface {
   name = 'CreatePermissionAliases20260614000003';

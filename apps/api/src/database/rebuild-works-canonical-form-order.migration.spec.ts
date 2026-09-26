@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de `works`
- * na ordem do formulário real (ObraFormModal) — projeto_id é o primeiro
- * campo funcional (vínculo de projeto aparece antes de "Dados Principais da
- * Obra" na árvore de renderização real).
+ * Permanent guard (2026-07-19 audit): physical rebuild of `works`
+ * in the real form's order (ObraFormModal) — projeto_id is the first
+ * functional field (the project link appears before
+ * "Dados Principais da Obra" in the real render tree).
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000002_RebuildWorksInCanonicalFormOrder.ts'),

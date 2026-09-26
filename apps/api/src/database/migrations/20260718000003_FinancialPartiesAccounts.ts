@@ -1,15 +1,15 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fase 13A / M3 — contas financeiras, contrapartes e centros de custo
- * (Fase 12 §2.3–2.5). Substituem os campos de texto livre do legado
- * (conta_origem/destino, fornecedor_cliente, centro_custo) — que NÃO são
- * recriados como modelo principal.
+ * Phase 13A / M3 — financial accounts, counterparties and cost centers
+ * (Phase 12 §2.3–2.5). They replace the legacy free-text fields
+ * (conta_origem/destino, fornecedor_cliente, centro_custo) — which are NOT
+ * recreated as the main model.
  *
- * - Saldo de conta NUNCA é persistido (derivado: opening_balance + Σ liquidadas).
- * - Contraparte pode referenciar cadastros reais por FK COMPOSTA tipada
- *   (artist_id OU client_id — no máximo um), sem polimorfismo sem FK.
- * - Desativação/soft delete preservam histórico (I9: FKs RESTRICT em M4).
+ * - An account balance is NEVER persisted (derived: opening_balance + Σ settled).
+ * - A counterparty may reference real registrations via a typed COMPOSITE FK
+ *   (artist_id OR client_id — at most one), without FK-less polymorphism.
+ * - Deactivation/soft delete preserve history (I9: RESTRICT FKs in M4).
  */
 export class FinancialPartiesAccounts20260718000003 implements MigrationInterface {
   name = 'FinancialPartiesAccounts20260718000003';

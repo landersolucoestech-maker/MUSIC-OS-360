@@ -1,27 +1,27 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Remove `artists.tipo` (formação do artista: solo/banda/duo/trio/grupo/
- * coletivo) — decisão de produto (Artists Schema 15): o conceito deixou de
- * fazer parte do domínio Artist, não foi normalizado nem substituído.
+ * Removes `artists.tipo` (the artist's lineup: solo/band/duo/trio/group/
+ * collective) — product decision (Artists Schema 15): the concept stopped
+ * being part of the Artist domain; it was neither normalized nor replaced.
  *
- * Auditoria antes do drop (2026-08-21):
- *   - ArtistEntity nunca teve `tipo` como propriedade real de negócio além
- *     do próprio armazenamento (nenhuma leitura/filtro/exibição usava o
- *     valor) — confirmado por grep exaustivo em apps/api e apps/web.
- *   - Nenhuma CHECK constraint, índice, view, função ou trigger referencia
- *     `artists.tipo` em nenhuma migration existente.
- *   - Único consumidor de escrita fora do próprio `ArtistsService.create()`
- *     era `LeadEventsHandler` (conversão lead→artista, sempre gravava
- *     'solo') — removido junto na mesma limpeza de código desta parte.
- *   - Seed operacional (`03_operational_seed.ts`) e ~9 scripts de
- *     verify/smoke também gravavam/enviavam 'solo' — todos ajustados.
+ * Audit before the drop (2026-08-21):
+ *   - ArtistEntity never had `tipo` as a real business property beyond
+ *     its own storage (no read/filter/display used the
+ *     value) — confirmed by exhaustive grep in apps/api and apps/web.
+ *   - No CHECK constraint, index, view, function or trigger references
+ *     `artists.tipo` in any existing migration.
+ *   - The only write consumer outside `ArtistsService.create()` itself
+ *     was `LeadEventsHandler` (lead→artist conversion, always wrote
+ *     'solo') — removed along with it in this part's code cleanup.
+ *   - The operational seed (`03_operational_seed.ts`) and ~9 verify/smoke
+ *     scripts also wrote/sent 'solo' — all adjusted.
  *
- * down() recria a coluna com o tipo/default/nullability originais (ver
+ * down() recreates the column with the original type/default/nullability (see
  * RebuildArtistsInCanonicalFormOrder20260719000001.originalColumns:
- * `tipo varchar(50) NOT NULL DEFAULT 'solo'`) — mas não restaura dado, já
- * que 100% das linhas reais em DEV tinham o mesmo valor 'solo' (nenhuma
- * variação a preservar).
+ * `tipo varchar(50) NOT NULL DEFAULT 'solo'`) — but restores no data, since
+ * 100% of the real rows in DEV had the same value 'solo' (no
+ * variation to preserve).
  */
 export class DropArtistTipoColumn20260821000002 implements MigrationInterface {
   name = 'DropArtistTipoColumn20260821000002';

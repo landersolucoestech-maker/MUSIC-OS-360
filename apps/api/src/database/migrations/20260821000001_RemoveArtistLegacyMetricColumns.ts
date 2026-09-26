@@ -1,47 +1,47 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Remove 9 colunas físicas de `artists` órfãs desde a migration
- * ArtistsFormFieldColumns20260712000001, que as criou com a intenção de dar
- * a cada campo do formulário sua própria coluna. Essa intenção nunca foi
- * concluída: o service (`ArtistsService`) continuou (ou voltou a) persistir
- * esses mesmos campos em `metadata` (jsonb), via METADATA_FIELDS derivado de
- * `report-form-contracts.ts`. `ArtistEntity` nunca mapeou estas 9 colunas —
- * nenhum SELECT/INSERT/UPDATE do TypeORM as toca.
+ * Removes 9 physical `artists` columns orphaned since migration
+ * ArtistsFormFieldColumns20260712000001, which created them intending to give
+ * each form field its own column. That intention was never
+ * completed: the service (`ArtistsService`) kept (or went back to) persisting
+ * these same fields in `metadata` (jsonb), via METADATA_FIELDS derived from
+ * `report-form-contracts.ts`. `ArtistEntity` never mapped these 9 columns —
+ * no TypeORM SELECT/INSERT/UPDATE touches them.
  *
- * Auditoria (Métricas 09/10/11, Artists Schema 11 — 2026-08-21), grep
- * exaustivo em apps/api e apps/web, incluindo handlers de automação fora do
- * módulo artists (leads/contracts/external-data): zero leitura/escrita fora
- * de migrations, do script `verify-canonical-column-order.ts` (só confere
- * ordem física) e dos dumps de schema (drizzle/, migrations-complete.sql).
+ * Audit (Metrics 09/10/11, Artists Schema 11 — 2026-08-21), exhaustive
+ * grep in apps/api and apps/web, including automation handlers outside the
+ * artists module (leads/contracts/external-data): zero reads/writes outside
+ * migrations, the `verify-canonical-column-order.ts` script (it only checks
+ * physical order) and the schema dumps (drizzle/, migrations-complete.sql).
  *
- * Comparação físico vs metadata no DEV real antes deste drop (3 artistas
- * ativos, população total, não amostra):
+ * Physical vs metadata comparison on real DEV before this drop (3 active
+ * artists, total population, not a sample):
  *   - spotify_ouvintes, youtube_inscritos, deezer_fas, instagram_seguidores,
- *     tiktok_seguidores, apple_music_albuns, soundcloud_seguidores: 0 valores
- *     não-nulos em NENHUM dos dois lados, em todos os 3 artistas.
- *   - instagram/tiktok: 1 artista (Dj Stay) tem valor nos dois lados; tiktok
- *     idêntico; instagram difere só por barra final
- *     ("...djstayofc/" vs "...djstayofc") — mesmo handle, sem dado histórico
- *     distinto preso na coluna física.
- * Nenhuma linha tinha dado físico ausente em metadata (physical_only = 0 em
- * todas as 9 colunas) — não há DATA_MIGRATION_REQUIRED.
+ *     tiktok_seguidores, apple_music_albuns, soundcloud_seguidores: 0 non-null
+ *     values on EITHER side, across all 3 artists.
+ *   - instagram/tiktok: 1 artist (Dj Stay) has a value on both sides; tiktok
+ *     identical; instagram differs only by a trailing slash
+ *     ("...djstayofc/" vs "...djstayofc") — the same handle, no distinct historical
+ *     data stuck in the physical column.
+ * No row had physical data missing from metadata (physical_only = 0 on
+ * all 9 columns) — there is no DATA_MIGRATION_REQUIRED.
  *
- * `status_cadastro` foi auditada e INTENCIONALMENTE MANTIDA — ao contrário
- * das 9 acima, ELA É mapeada por ArtistEntity (@Column real) e é escrita por
- * uma automação real fora do módulo artists: `LeadEventsHandler` (módulo
- * leads) cria o ArtistEntity da conversão de lead com
- * `status_cadastro: ArtistStatusCadastro.ATIVO` explícito. Dropar a coluna
- * sem also remover o `@Column`/o `ArtistStatusCadastro` do entity e esse
- * write quebraria a conversão de lead→artista em runtime. Fora de escopo
- * desta limpeza "segura agora" — decisão separada e deliberada.
+ * `status_cadastro` was audited and INTENTIONALLY KEPT — unlike
+ * the 9 above, IT IS mapped by ArtistEntity (a real @Column) and is written by
+ * a real automation outside the artists module: `LeadEventsHandler` (leads
+ * module) creates the lead-conversion ArtistEntity with an explicit
+ * `status_cadastro: ArtistStatusCadastro.ATIVO`. Dropping the column
+ * without also removing the entity's `@Column`/`ArtistStatusCadastro` and that
+ * write would break the lead→artist conversion at runtime. Out of scope
+ * for this "safe right now" cleanup — a separate, deliberate decision.
  *
- * `tipo`/`status` (as duas outras colunas com "status" no nome) também NÃO
- * são tocadas aqui — auditoria anterior confirmou CANONICAL para ambas.
+ * `tipo`/`status` (the two other columns with "status" in the name) are also NOT
+ * touched here — a previous audit confirmed CANONICAL for both.
  *
- * down() recria as 9 colunas com tipo/default/nullability originais
- * (ver RebuildArtistsInCanonicalFormOrder20260719000001.originalColumns) —
- * mas não restaura dado, já que nenhum foi perdido (nada fora de metadata).
+ * down() recreates the 9 columns with the original type/default/nullability
+ * (see RebuildArtistsInCanonicalFormOrder20260719000001.originalColumns) —
+ * but restores no data, since none was lost (nothing outside metadata).
  */
 export class RemoveArtistLegacyMetricColumns20260821000001
   implements MigrationInterface

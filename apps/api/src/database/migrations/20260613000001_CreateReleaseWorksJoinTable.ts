@@ -1,14 +1,14 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Cria a join table M2M `release_works` (ReleaseEntity @ManyToMany WorkEntity).
- * A relação já existe nas entities (entities.ts), mas a tabela física nunca foi
- * criada por migration — só no dump consolidado. Esta migration materializa a
- * tabela de forma reversível e não-destrutiva.
+ * Creates the M2M join table `release_works` (ReleaseEntity @ManyToMany WorkEntity).
+ * The relation already exists in the entities (entities.ts), but the physical table was never
+ * created by a migration — only in the consolidated dump. This migration materializes the
+ * table in a reversible, non-destructive way.
  *
- * Chaves: PK composta (release_id, work_id). FKs com ON DELETE CASCADE para que
- * a remoção de um release/obra limpe automaticamente os vínculos. Índice no lado
- * inverso (work_id) para navegação Work → Releases.
+ * Keys: composite PK (release_id, work_id). FKs with ON DELETE CASCADE so that
+ * removing a release/work automatically cleans up the links. Index on the inverse
+ * side (work_id) for Work → Releases navigation.
  */
 export class CreateReleaseWorksJoinTable20260613000001 implements MigrationInterface {
   name = 'CreateReleaseWorksJoinTable20260613000001';

@@ -3,20 +3,20 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20260822000005_DropGenericFormsModule
  *
- * Decisão de produto (2026-08-22): não haverá Form Builder genérico no
- * Music OS 360. `forms`/`form_submissions` (criadas em
- * 20260521000040_ConversationsAndForms, junto com as tabelas de
- * conversations do MusicChat — preservadas intactas, não tocadas aqui)
- * nunca tiveram um consumidor real aprovado: zero UI no frontend, zero
- * service/controller de outro módulo depende delas, e
- * entity-metadata.service.ts já as excluía explicitamente da Central de
- * Relatórios ("nunca podem aparecer"). Captação de artistas usa o Artist
- * Public Form (fluxo especializado próprio); suporte usa Support Ticket;
- * nenhum dos dois nunca dependeu deste módulo genérico.
+ * Product decision (2026-08-22): there will be no generic Form Builder in
+ * Music OS 360. `forms`/`form_submissions` (created in
+ * 20260521000040_ConversationsAndForms, together with MusicChat's
+ * conversations tables — preserved intact, not touched here)
+ * never had an approved real consumer: zero UI in the frontend, zero
+ * service/controller of another module depends on them, and
+ * entity-metadata.service.ts already explicitly excluded them from the Reports
+ * Center ("they may never appear"). Artist acquisition uses the Artist
+ * Public Form (its own specialized flow); support uses Support Ticket;
+ * neither ever depended on this generic module.
  *
- * Aditiva/segura: apenas DROP das duas tabelas do módulo forms (que nunca
- * tiveram um fluxo real de escrita em produção) e do enum form_status.
- * NÃO toca conversations/conversation_messages/conversation_notes (MusicChat).
+ * Additive/safe: only DROPs the two forms-module tables (which never
+ * had a real write flow in production) and the form_status enum.
+ * Does NOT touch conversations/conversation_messages/conversation_notes (MusicChat).
  */
 export class DropGenericFormsModule20260822000005 implements MigrationInterface {
   name = 'DropGenericFormsModule20260822000005';

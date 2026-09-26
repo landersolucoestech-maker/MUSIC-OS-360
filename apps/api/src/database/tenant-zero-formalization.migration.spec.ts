@@ -21,7 +21,7 @@ describe('TenantZeroFormalization20260801000002', () => {
 
     expect(sql).toContain('CREATE UNIQUE INDEX IF NOT EXISTS organizations_single_system_tenant');
     expect(sql).toContain('CREATE UNIQUE INDEX IF NOT EXISTS tenants_single_system_tenant');
-    // A constraint real está no WHERE parcial — sem ele, o índice não limitaria nada.
+    // The real constraint is in the partial WHERE — without it, the index would limit nothing.
     expect(sql.match(/WHERE is_system_tenant = true/g)).toHaveLength(2);
   });
 

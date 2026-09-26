@@ -1,14 +1,14 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * 20260614000001_CreatePermissionGroups  (PASSO 1 / Migration 001 — RBAC Enterprise)
+ * 20260614000001_CreatePermissionGroups  (STEP 1 / Migration 001 — Enterprise RBAC)
  *
- * Catálogo GLOBAL de grupos de permissões (domínio para UX + governança).
- * - Sem tenant_id (capacidade de plataforma, não dado de tenant) → sem RLS.
- * - Sem soft delete (catálogo gerido por migrations/seeds).
- * - Aditiva e não-destrutiva. Idempotente. Reversível via down().
+ * GLOBAL catalog of permission groups (domain for UX + governance).
+ * - No tenant_id (platform capability, not tenant data) → no RLS.
+ * - No soft delete (catalog managed by migrations/seeds).
+ * - Additive and non-destructive. Idempotent. Reversible via down().
  *
- * Escopo PASSO 1: apenas a estrutura. O seed dos grupos pertence à etapa de backfill (FASE 4).
+ * STEP 1 scope: structure only. Seeding the groups belongs to the backfill stage (PHASE 4).
  */
 export class CreatePermissionGroups20260614000001 implements MigrationInterface {
   name = 'CreatePermissionGroups20260614000001';

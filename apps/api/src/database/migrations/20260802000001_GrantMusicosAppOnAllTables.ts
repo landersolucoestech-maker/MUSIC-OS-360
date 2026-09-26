@@ -1,27 +1,27 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Parte 77 — a série de migrations "RebuildXInCanonicalFormOrder" (2026-07-19,
- * 25 arquivos) recriou dezenas de tabelas do zero (`DROP`/`CREATE`), sempre
- * concedendo grants a `musicos_migrator` (o role que executa migrations),
- * mas NUNCA re-concedendo nada a `musicos_app` (o role usado pelo tráfego
- * normal da aplicação, via APP_DATABASE_URL). O resultado: 114 das ~120
- * tabelas de `public` ficaram com "permission denied" para `musicos_app` —
- * não um problema de RLS (que restringe LINHAS), mas de GRANT ausente (que
- * bloqueia a tabela inteira). Isso explicava tanto o 500 em /auth/context
- * quanto qualquer página de domínio real travando após o login.
+ * Part 77 — the "RebuildXInCanonicalFormOrder" migration series (2026-07-19,
+ * 25 files) recreated dozens of tables from scratch (`DROP`/`CREATE`), always
+ * granting to `musicos_migrator` (the role that runs migrations),
+ * but NEVER re-granting anything to `musicos_app` (the role used by the
+ * application's normal traffic, via APP_DATABASE_URL). The result: 114 of the ~120
+ * tables in `public` became "permission denied" for `musicos_app` —
+ * not an RLS problem (which restricts ROWS), but a missing GRANT (which
+ * blocks the whole table). That explained both the 500 on /auth/context
+ * and any real domain page hanging after login.
  *
- * Fix em duas partes:
- *   1) concede retroativamente o necessário em toda tabela hoje presente;
- *   2) `ALTER DEFAULT PRIVILEGES FOR ROLE musicos_migrator` garante que
- *      TABELAS FUTURAS criadas por rebuilds/migrations já nasçam com o
- *      grant certo — sem isso, a próxima "reconstrução física" repete o
- *      mesmo problema.
+ * Two-part fix:
+ *   1) retroactively grants what is needed on every table present today;
+ *   2) `ALTER DEFAULT PRIVILEGES FOR ROLE musicos_migrator` ensures that
+ *      FUTURE TABLES created by rebuilds/migrations are born with the
+ *      right grant — without it, the next "physical rebuild" repeats the
+ *      same problem.
  *
- * Tabelas de auditoria/log (nunca editadas nem apagadas pela aplicação)
- * recebem apenas SELECT+INSERT, preservando a mesma politica já usada em
- * `rbac_error_logs` (20260621000001) — GRANT é defesa em profundidade,
- * RLS continua sendo o controle real de linha.
+ * Audit/log tables (never edited nor deleted by the application)
+ * receive only SELECT+INSERT, preserving the same policy already used in
+ * `rbac_error_logs` (20260621000001) — GRANT is defense in depth,
+ * RLS remains the real row control.
  */
 
 const READ_WRITE_TABLES = [
@@ -52,7 +52,7 @@ const READ_WRITE_TABLES = [
   'work_participants', 'workflow_executions', 'workflow_transitions', 'works',
 ] as const;
 
-/** Log/auditoria — a aplicação só lê e insere, nunca edita nem apaga. */
+/** Log/audit — the application only reads and inserts, never edits nor deletes. */
 const APPEND_ONLY_TABLES = [
   'audit_logs', 'financial_category_audit_logs', 'domain_event_log',
   'rbac_decision_logs', 'rbac_decision_logs_2026_06', 'rbac_decision_logs_2026_07',
@@ -87,14 +87,14 @@ export class GrantMusicosAppOnAllTables20260802000001 implements MigrationInterf
       `);
     }
 
-    // Sequências: necessárias para colunas serial/identity (a maioria das
-    // tabelas usa UUID + gen_random_uuid(), mas conceder é inofensivo onde
-    // não se aplica e evita a mesma classe de bug para o que ainda usa serial).
+    // Sequences: needed for serial/identity columns (most
+    // tables use UUID + gen_random_uuid(), but granting is harmless where
+    // it does not apply and avoids the same bug class for what still uses serial).
     await qr.query(`GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO musicos_app`);
 
-    // Prevenção: qualquer tabela futura criada por musicos_migrator (o role
-    // usado por todas as migrations) já nasce com o grant certo — sem isso,
-    // a próxima "reconstrução física" reintroduz exatamente este bug.
+    // Prevention: any future table created by musicos_migrator (the role
+    // used by all migrations) is born with the right grant — without it,
+    // the next "physical rebuild" reintroduces exactly this bug.
     await qr.query(`
       ALTER DEFAULT PRIVILEGES FOR ROLE musicos_migrator IN SCHEMA public
         GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO musicos_app

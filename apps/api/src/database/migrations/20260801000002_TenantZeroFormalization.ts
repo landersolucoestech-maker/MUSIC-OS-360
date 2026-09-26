@@ -1,25 +1,25 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * 20260801000002_TenantZeroFormalization  (Parte 69 — LANDER RECORDS tenant-zero)
+ * 20260801000002_TenantZeroFormalization  (Part 69 — LANDER RECORDS tenant-zero)
  *
- * Adiciona uma coluna explícita `is_system_tenant` a `organizations` e
- * `tenants`, marcando qual linha é o tenant institucional inicial (LANDER
- * RECORDS). Não é um bypass de RLS/RBAC/billing — nenhuma policy, guard ou
- * regra de negócio deve ler esta coluna para conceder acesso; ela existe
- * apenas para que o bootstrap (`bootstrap-tenant-zero.ts`) e ferramentas
- * administrativas possam identificar a linha sem depender de nome, slug ou
- * ordem de criação (`ORDER BY created_at LIMIT 1` continua proibido).
+ * Adds an explicit `is_system_tenant` column to `organizations` and
+ * `tenants`, marking which row is the initial institutional tenant (LANDER
+ * RECORDS). It is not an RLS/RBAC/billing bypass — no policy, guard or
+ * business rule may read this column to grant access; it exists
+ * only so the bootstrap (`bootstrap-tenant-zero.ts`) and administrative
+ * tools can identify the row without depending on name, slug or
+ * creation order (`ORDER BY created_at LIMIT 1` remains forbidden).
  *
- * A constraint real está no índice único parcial: como o índice cobre
- * apenas as linhas onde `is_system_tenant = true`, o Postgres rejeita
- * qualquer segunda linha com o mesmo valor — no máximo um tenant-zero por
- * tabela, sempre, independente do que o código da aplicação faça.
+ * The real constraint is in the partial unique index: since the index covers
+ * only the rows where `is_system_tenant = true`, Postgres rejects
+ * any second row with the same value — at most one tenant-zero per
+ * table, always, regardless of what the application code does.
  *
- * Idempotente: `ADD COLUMN IF NOT EXISTS` / `CREATE UNIQUE INDEX IF NOT
- * EXISTS` seguros para rodar em bancos já existentes (DEV/STAGING/PROD),
- * default `false` não promove nenhum tenant existente, e down() reverte
- * sem apagar nenhum tenant.
+ * Idempotent: `ADD COLUMN IF NOT EXISTS` / `CREATE UNIQUE INDEX IF NOT
+ * EXISTS` are safe to run on existing databases (DEV/STAGING/PROD),
+ * the `false` default promotes no existing tenant, and down() reverts
+ * without deleting any tenant.
  */
 export class TenantZeroFormalization20260801000002 implements MigrationInterface {
   name = 'TenantZeroFormalization20260801000002';

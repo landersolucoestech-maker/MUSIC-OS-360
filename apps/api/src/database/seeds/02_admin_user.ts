@@ -1,8 +1,8 @@
 /**
  * seeds/02_admin_user.ts
  *
- * Seed: cria o OrgMember admin padrão de desenvolvimento.
- * Depende de 01_default_tenant.ts (org + tenant já existem).
+ * Seed: creates the default development admin OrgMember.
+ * Depends on 01_default_tenant.ts (org + tenant already exist).
  */
 
 import { DataSource } from 'typeorm';
@@ -18,7 +18,7 @@ export async function seedAdminUser(
   const adminEmail     = process.env['SEED_ADMIN_EMAIL'] ?? 'admin@musicos360.dev';
   const adminName      = process.env['SEED_ADMIN_NAME']  ?? 'Admin Dev (Seed)';
 
-  // Dual-write (PASSO 12-G): grava role legado E role_id canônico (subquery do catálogo global).
+  // Dual-write (STEP 12-G): writes the legacy role AND the canonical role_id (global catalog subquery).
   await ds.query(`
     INSERT INTO org_members (org_id, tenant_id, auth_user_id, email, full_name, role, role_id, is_active)
     VALUES ($1, $2, $3, $4, $5, 'owner',

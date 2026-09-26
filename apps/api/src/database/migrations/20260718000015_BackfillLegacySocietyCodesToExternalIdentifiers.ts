@@ -1,33 +1,33 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Completa a generalização de vinculação a entidades de gestão coletiva
- * (ABRAMUS/ECAD/UBC/SBACEM/...) que já estava PARCIALMENTE construída no
- * sistema desde 2026-06-01 (`RegistryRightsHoldersIdentifiers`), mas nunca
- * teve os dados legados migrados para lá.
+ * Completes the generalization of links to collective management societies
+ * (ABRAMUS/ECAD/UBC/SBACEM/...) that was already PARTIALLY built in the
+ * system since 2026-06-01 (`RegistryRightsHoldersIdentifiers`), but never
+ * had the legacy data migrated there.
  *
- * Evidência de que a generalização já era a direção do produto — não uma
- * invenção desta migration: `society-payload-builder.service.ts` (código
- * real e ativo do módulo Registry) já lê `work.cod_abramus`/`cod_ecad` e os
- * converte on-the-fly para o formato genérico ao montar o payload de
- * submissão à sociedade:
+ * Evidence that the generalization was already the product direction — not an
+ * invention of this migration: `society-payload-builder.service.ts` (real,
+ * active code of the Registry module) already reads `work.cod_abramus`/`cod_ecad` and
+ * converts them on the fly into the generic format when building the society
+ * submission payload:
  *
  *   if (work.cod_abramus) legacy.push({ provider: 'ABRAMUS', type: 'ABRAMUS_PROTOCOL', value: work.cod_abramus });
  *   if (work.cod_ecad)    legacy.push({ provider: 'ECAD',    type: 'ECAD_WORK_CODE',   value: work.cod_ecad });
  *
- * Esta migration faz a mesma conversão, mas persistindo em `external_identifiers`
- * (a tabela genérica e extensível já existente, com CHECK que já suporta
- * ABRAMUS/ECAD/CISAC/IFPI/PRO_MUSICA/ISRC/INTERNAL/OTHER — não uma coluna
- * por sociedade). Não remove `works.cod_abramus`/`cod_ecad`/`phonograms.cod_abramus`/
- * `cod_ecad` nesta rodada: essas colunas ainda são o único campo exposto no
- * formulário interativo ativo (ObraFormModal.tsx), no contrato oficial de
- * Reports (WORKS_CONTRACT) e no módulo de integração real com a API externa
- * da ABRAMUS (`abramus.service.ts`) — removê-las exige antes redesenhar o
- * formulário para suportar múltiplas entidades por obra (decisão de
- * produto/UX, não uma correção de bug; ver docs).
+ * This migration does the same conversion, but persisting into `external_identifiers`
+ * (the already existing generic, extensible table, with a CHECK that already supports
+ * ABRAMUS/ECAD/CISAC/IFPI/PRO_MUSICA/ISRC/INTERNAL/OTHER — not one column
+ * per society). It does not remove `works.cod_abramus`/`cod_ecad`/`phonograms.cod_abramus`/
+ * `cod_ecad` in this round: those columns are still the only field exposed in the
+ * active interactive form (ObraFormModal.tsx), in the official Reports
+ * contract (WORKS_CONTRACT) and in the real integration module with the external
+ * ABRAMUS API (`abramus.service.ts`) — removing them first requires redesigning the
+ * form to support multiple societies per work (a product/UX
+ * decision, not a bug fix; see docs).
  *
- * Idempotente (ON CONFLICT DO NOTHING na UNIQUE já existente
- * `uq_ext_id_entity_value`). Não usa CASCADE. Não remove nenhuma coluna.
+ * Idempotent (ON CONFLICT DO NOTHING on the already existing UNIQUE
+ * `uq_ext_id_entity_value`). Does not use CASCADE. Removes no column.
  */
 export class BackfillLegacySocietyCodesToExternalIdentifiers20260718000015 implements MigrationInterface {
   name = 'BackfillLegacySocietyCodesToExternalIdentifiers20260718000015';
@@ -67,8 +67,8 @@ export class BackfillLegacySocietyCodesToExternalIdentifiers20260718000015 imple
       SELECT count(*)::int AS after FROM external_identifiers
       WHERE identifier_type IN ('ABRAMUS_PROTOCOL', 'ECAD_WORK_CODE')
     `);
-    // Nunca deve haver MENOS linhas do que já existiam antes de rodar — INSERT
-    // só adiciona (ON CONFLICT DO NOTHING é idempotente, nunca remove).
+    // There must never be FEWER rows than existed before running — the INSERT
+    // only adds (ON CONFLICT DO NOTHING is idempotent, never removes).
     if (Number(after) < Number(before)) {
       throw new Error(
         `BackfillLegacySocietyCodesToExternalIdentifiers: contagem de external_identifiers ` +
@@ -78,9 +78,9 @@ export class BackfillLegacySocietyCodesToExternalIdentifiers20260718000015 imple
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Remove apenas o que esta migration pode ter inserido (heurística: mesmo
-    // valor already present nas colunas legadas) — não apaga vinculações
-    // criadas por outros fluxos (ex.: cadastro manual via tela de Registry).
+    // Removes only what this migration may have inserted (heuristic: same
+    // value already present in the legacy columns) — does not delete links
+    // created by other flows (e.g. manual registration through the Registry screen).
     await queryRunner.query(`
       DELETE FROM external_identifiers ei
       WHERE ei.identifier_type = 'ABRAMUS_PROTOCOL'

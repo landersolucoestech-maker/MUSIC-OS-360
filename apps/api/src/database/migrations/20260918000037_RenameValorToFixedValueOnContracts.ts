@@ -4,8 +4,8 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * 20260918000037_RenameValorToFixedValueOnContracts
  *
  * Cluster G (naming-normalization mandate, `valor` -> `fixed_value`):
- * contracts.valor is the contract's canonical monetary value ("Valor
- * Fixo do Serviço" / "Valor do Contrato" in ContractFormModal.tsx,
+ * contracts.valor is the contract's canonical monetary value
+ * ("Valor Fixo do Serviço" / "Valor do Contrato" in ContractFormModal.tsx,
  * whose local form field is already named `fixed_value`).
  *
  * Unlike most Cluster F/G renames, this column already had a legacy

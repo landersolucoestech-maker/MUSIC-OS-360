@@ -3,32 +3,32 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20260802000002_GrantMusicosAppAuthenticatedMembership
  *
- * Parte 78 — causa raiz sistêmica descoberta ao reproduzir "criar cliente"
- * via API real (não apenas o export reportado): toda tabela reconstruída
- * pelas migrations "RebuildXInCanonicalFormOrder" (2026-07-19) tem
- * `FORCE ROW LEVEL SECURITY` com policies `tenant_isolation`/
- * `super_admin_full_access` escopadas `TO authenticated` (convenção
- * Supabase). `musicos_app` — o role usado por TODO o tráfego normal da API
- * via APP_DATABASE_URL — nunca foi adicionado como MEMBRO do role
- * `authenticated` neste projeto Supabase (confirmado via
- * pg_auth_members: apenas postgres/authenticator/musicos_migrator são
- * membros).
+ * Part 78 — systemic root cause discovered while reproducing "create client"
+ * via the real API (not only the reported export): every table rebuilt
+ * by the "RebuildXInCanonicalFormOrder" migrations (2026-07-19) has
+ * `FORCE ROW LEVEL SECURITY` with `tenant_isolation`/
+ * `super_admin_full_access` policies scoped `TO authenticated` (Supabase
+ * convention). `musicos_app` — the role used by ALL normal API traffic
+ * via APP_DATABASE_URL — was never added as a MEMBER of the
+ * `authenticated` role in this Supabase project (confirmed via
+ * pg_auth_members: only postgres/authenticator/musicos_migrator are
+ * members).
  *
- * Efeito prático, silencioso, anterior a esta migration: com FORCE RLS e
- * nenhuma policy aplicável ao role conectado, Postgres nega por padrão —
- * SELECT devolve 0 linhas SEM ERRO (parecia "tabela vazia") e INSERT/UPDATE/
- * DELETE falham com "new row violates row-level security policy". Isso
- * afeta TODAS as ~40+ tabelas reconstruídas com este padrão (artists,
- * clients, works, contracts, leads, releases, events, projects, etc.), não
- * apenas `clients` — a exportação de clientes só expôs o sintoma porque foi
- * o primeiro fluxo de escrita/leitura de negócio testado via API real nesta
- * sessão (sessões anteriores validaram login/auth/context, que não passam
- * por estas tabelas).
+ * Practical, silent effect before this migration: with FORCE RLS and
+ * no policy applicable to the connected role, Postgres denies by default —
+ * SELECT returns 0 rows WITHOUT AN ERROR (it looked like an "empty table") and INSERT/UPDATE/
+ * DELETE fail with "new row violates row-level security policy". This
+ * affects ALL ~40+ tables rebuilt with this pattern (artists,
+ * clients, works, contracts, leads, releases, events, projects, etc.), not
+ * only `clients` — the clients export only exposed the symptom because it was
+ * the first business write/read flow tested via the real API in this
+ * session (earlier sessions validated login/auth/context, which do not go
+ * through these tables).
  *
- * A própria provisão documentada do role (scripts/create-app-db-user.sql,
- * passo 3b) já previa exatamente este GRANT — só não foi aplicado (ou foi
- * perdido) neste projeto Supabase DEV. Esta migration apenas completa essa
- * provisão de forma idempotente e versionada.
+ * The role's own documented provisioning (scripts/create-app-db-user.sql,
+ * step 3b) already foresaw exactly this GRANT — it just was not applied (or was
+ * lost) in this DEV Supabase project. This migration only completes that
+ * provisioning in an idempotent, versioned way.
  */
 export class GrantMusicosAppAuthenticatedMembership20260802000002 implements MigrationInterface {
   name = 'GrantMusicosAppAuthenticatedMembership20260802000002';
@@ -37,12 +37,12 @@ export class GrantMusicosAppAuthenticatedMembership20260802000002 implements Mig
     const [{ exists: authenticatedExists }] = await queryRunner.query(`
       SELECT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') AS exists
     `);
-    if (!authenticatedExists) return; // Postgres vanilla (sem convenção Supabase) — nada a fazer.
+    if (!authenticatedExists) return; // Vanilla Postgres (no Supabase convention) — nothing to do.
 
     const [{ exists: appRoleExists }] = await queryRunner.query(`
       SELECT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'musicos_app') AS exists
     `);
-    if (!appRoleExists) return; // ambiente sem o role app dedicado (ex.: alguns specs) — nada a fazer.
+    if (!appRoleExists) return; // environment without the dedicated app role (e.g. some specs) — nothing to do.
 
     const [{ is_member: alreadyMember }] = await queryRunner.query(`
       SELECT EXISTS (

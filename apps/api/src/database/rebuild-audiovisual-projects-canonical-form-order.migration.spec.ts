@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `audiovisual_projects` na ordem do formulário real
- * (AudiovisualProjectFormModal) — a seção "Música" (phonogram_id/
- * music_title/title/artist_name) é a primeira do grid real.
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `audiovisual_projects` in the real form's order
+ * (AudiovisualProjectFormModal) — the "Música" section (phonogram_id/
+ * music_title/title/artist_name) is the first one in the real grid.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000006_RebuildAudiovisualProjectsInCanonicalFormOrder.ts'),

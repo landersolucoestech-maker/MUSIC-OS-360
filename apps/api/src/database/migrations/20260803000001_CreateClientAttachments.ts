@@ -3,19 +3,19 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20260803000001_CreateClientAttachments
  *
- * Parte 80 — metadata real de anexos para `clients` (a mesma entidade física
- * usada como "Contato" no CRM). Nunca guarda o binário no banco: apenas a
- * chave do objeto no Cloudflare R2 (StorageService já existente e real,
- * apps/api/src/storage/storage.service.ts), permitindo listar/baixar/excluir
- * anexos mesmo quando R2 não está configurado no ambiente (nesse caso o
- * upload real fica bloqueado — BLOCKED_EXTERNAL — sem fabricar sucesso).
+ * Part 80 — real attachment metadata for `clients` (the same physical entity
+ * used as "Contact" in the CRM). Never stores the binary in the database: only the
+ * object key in Cloudflare R2 (the already existing, real StorageService,
+ * apps/api/src/storage/storage.service.ts), allowing attachments to be listed/downloaded/deleted
+ * even when R2 is not configured in the environment (in that case the
+ * real upload stays blocked — BLOCKED_EXTERNAL — without fabricating success).
  *
- * Segue o mesmo padrão de RLS/grants das migrations RebuildXInCanonicalFormOrder
- * (Parte 78/79): FORCE RLS, tenant_isolation + super_admin_full_access,
- * OWNER musicos_migrator. Os grants para musicos_app vêm automaticamente do
- * ALTER DEFAULT PRIVILEGES já configurado em
+ * Follows the same RLS/grants pattern as the RebuildXInCanonicalFormOrder migrations
+ * (Parts 78/79): FORCE RLS, tenant_isolation + super_admin_full_access,
+ * OWNER musicos_migrator. The grants for musicos_app come automatically from the
+ * ALTER DEFAULT PRIVILEGES already configured in
  * 20260802000001_GrantMusicosAppOnAllTables (musicos_migrator → musicos_app),
- * confirmado ao vivo nesta mesma Parte (ver relatório).
+ * confirmed live in this same Part (see report).
  */
 export class CreateClientAttachments20260803000001 implements MigrationInterface {
   name = 'CreateClientAttachments20260803000001';
@@ -58,9 +58,9 @@ export class CreateClientAttachments20260803000001 implements MigrationInterface
 
     await queryRunner.query(`ALTER TABLE client_attachments OWNER TO musicos_migrator`);
     await queryRunner.query(`GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON client_attachments TO musicos_migrator`);
-    // Explícito por tabela (defesa em profundidade) — ver
-    // 20260803000002_FixDefaultPrivilegesCreatorRole para a correção da
-    // fonte da verdade (default privileges não protegiam tabelas novas).
+    // Explicit per table (defense in depth) — see
+    // 20260803000002_FixDefaultPrivilegesCreatorRole for the fix of the
+    // source of truth (default privileges did not protect new tables).
     await queryRunner.query(`GRANT SELECT, INSERT, UPDATE, DELETE ON client_attachments TO musicos_app`);
   }
 

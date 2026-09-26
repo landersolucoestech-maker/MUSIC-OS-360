@@ -1,18 +1,18 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fase 13A / M5 — transaction_allocations (Fase 12 §2.7) + fn_largest_remainder
- * (§10, algoritmo normativo) + constraint trigger de somas (I5/I7).
+ * Phase 13A / M5 — transaction_allocations (Phase 12 §2.7) + fn_largest_remainder
+ * (§10, normative algorithm) + sums constraint trigger (I5/I7).
  *
- * Modelo 4 aprovado com DIMENSÕES PARALELAS (project/artist/phonogram/release):
- * cada dimensão fecha até 100% separadamente; dimensões NUNCA são somadas entre
- * si (I13). O resto (<100%) é o grupo implícito "Sem vínculo" — NENHUMA linha
- * física é criada para ele (decisão expressa Fase 12/13A).
+ * Approved Model 4 with PARALLEL DIMENSIONS (project/artist/phonogram/release):
+ * each dimension closes up to 100% separately; dimensions are NEVER summed with
+ * each other (I13). The remainder (<100%) is the implicit "Sem vínculo" (unallocated) group — NO
+ * physical row is created for it (explicit Phase 12/13A decision).
  *
- * allocated_amount é calculado NA ESCRITA pelo backend (maior resto) e
- * PERSISTIDO; o trigger DEFERRED confere o agregado por (transaction, dimension)
- * no commit — a função SQL fn_largest_remainder fica disponível para import de
- * dados e validação, com o MESMO algoritmo da versão TypeScript
+ * allocated_amount is computed AT WRITE TIME by the backend (largest remainder) and
+ * PERSISTED; the DEFERRED trigger checks the aggregate per (transaction, dimension)
+ * at commit — the SQL function fn_largest_remainder is available for data
+ * import and validation, with the SAME algorithm as the TypeScript version
  * (apps/api/src/modules/financial/domain/largest-remainder.ts).
  */
 export class TransactionAllocations20260718000005 implements MigrationInterface {
@@ -61,10 +61,10 @@ export class TransactionAllocations20260718000005 implements MigrationInterface 
           FOREIGN KEY ("tenant_id", "release_id") REFERENCES "releases" ("tenant_id", "id")
       )
     `);
-    // Nota: o CASCADE da fk_txalloc_transaction é intencional e limitado —
-    // alocações são satélites da transação; a exclusão física da transação em
-    // si já é bloqueada pelo trigger de M4, logo o efeito em cascata só atua
-    // em manutenção administrativa via migrator.
+    // Note: the CASCADE of fk_txalloc_transaction is intentional and limited —
+    // allocations are satellites of the transaction; the physical deletion of the transaction
+    // itself is already blocked by the M4 trigger, so the cascading effect only applies
+    // to administrative maintenance via the migrator.
 
     await queryRunner.query(`
       CREATE INDEX "idx_txalloc_tenant_transaction" ON "transaction_allocations" ("tenant_id", "transaction_id")
@@ -82,8 +82,8 @@ export class TransactionAllocations20260718000005 implements MigrationInterface 
       CREATE INDEX "idx_txalloc_tenant_release" ON "transaction_allocations" ("tenant_id", "dimension", "release_id")
     `);
 
-    // Algoritmo normativo de maior resto (Fase 12 §10) — determinístico:
-    // desempate por maior fração e, em igualdade, MENOR índice de entrada.
+    // Normative largest-remainder algorithm (Phase 12 §10) — deterministic:
+    // tie-break by largest fraction and, when equal, the LOWEST input index.
     await queryRunner.query(`
       CREATE FUNCTION "fn_largest_remainder"("p_amount" numeric, "p_percentages" numeric[])
       RETURNS numeric[]
@@ -153,8 +153,8 @@ export class TransactionAllocations20260718000005 implements MigrationInterface 
       END $$
     `);
 
-    // I5 + I7 por (transaction, dimension), avaliado no COMMIT (deferred) para
-    // permitir gravar/substituir o conjunto completo na mesma transação SQL.
+    // I5 + I7 per (transaction, dimension), evaluated at COMMIT (deferred) to
+    // allow writing/replacing the full set in the same SQL transaction.
     await queryRunner.query(`
       CREATE FUNCTION "fn_txalloc_check_sums"() RETURNS trigger
       LANGUAGE plpgsql AS $$

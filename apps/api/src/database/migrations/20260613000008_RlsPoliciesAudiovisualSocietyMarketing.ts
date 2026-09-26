@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * FASE 3D — Lote 3C-A: habilita RLS e cria a policy padrão portável nas 19
- * tabelas aprovadas pela auditoria 3C (tenantizadas, tenant_id NOT NULL uuid,
- * indexado, grant ao app role, sem RLS e sem policy).
+ * PHASE 3D — Batch 3C-A: enables RLS and creates the standard portable policy on the 19
+ * tables approved by the 3C audit (tenantized, tenant_id NOT NULL uuid,
+ * indexed, granted to the app role, no RLS and no policy).
  *
  *   Audiovisual (9): audiovisual_projects, _briefings, _shots, _production_days,
  *                    _team_members, _deliverables, _approvals, _tasks, _assets
@@ -11,16 +11,16 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  *                    society_submissions, society_submission_events,
  *                    society_payload_snapshots, society_validation_errors,
  *                    society_sync_jobs
- *   Outros (2):      marketing_content_posts, artist_platform_profiles
+ *   Others (2):      marketing_content_posts, artist_platform_profiles
  *
- * Aplica APENAS:  ENABLE ROW LEVEL SECURITY  +  policy padrão
+ * Applies ONLY:  ENABLE ROW LEVEL SECURITY  +  standard policy
  *   USING      (tenant_id = private_get_tenant_id())
  *   WITH CHECK (tenant_id = private_get_tenant_id())
  *
- * NÃO ativa FORCE RLS (estado esperado: RLS=ON, FORCE=OFF). Idempotente:
- * ENABLE RLS é no-op se já ativo; a policy só é criada se ainda não existir.
- * Não remove nem altera policies existentes. Mesmo padrão das migrations
- * 20260613000006 e 20260613000007.
+ * Does NOT enable FORCE RLS (expected state: RLS=ON, FORCE=OFF). Idempotent:
+ * ENABLE RLS is a no-op if already active; the policy is only created if it does not exist yet.
+ * Does not remove or change existing policies. Same pattern as migrations
+ * 20260613000006 and 20260613000007.
  */
 export class RlsPoliciesAudiovisualSocietyMarketing20260613000008 implements MigrationInterface {
   name = 'RlsPoliciesAudiovisualSocietyMarketing20260613000008';
@@ -58,7 +58,7 @@ export class RlsPoliciesAudiovisualSocietyMarketing20260613000008 implements Mig
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Reverte policy + desabilita RLS (estado original: sem RLS, sem policy).
+    // Reverts policy + disables RLS (original state: no RLS, no policy).
     for (const table of RlsPoliciesAudiovisualSocietyMarketing20260613000008.TABLES) {
       await queryRunner.query(
         `DROP POLICY IF EXISTS "${RlsPoliciesAudiovisualSocietyMarketing20260613000008.POLICY}" ON "${table}"`,

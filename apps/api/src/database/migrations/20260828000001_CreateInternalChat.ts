@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Chat Interno (equipe <-> equipe) — schema isolado da Central de Atendimento
- * (`conversations`/`conversation_messages`, equipe <-> público externo).
- * Participante identificado por `auth_user_id` (org_members), sem telefone
- * nem qualquer identificador de canal externo.
+ * Internal Chat (team <-> team) — a schema isolated from the Service Center
+ * (`conversations`/`conversation_messages`, team <-> external public).
+ * The participant is identified by `auth_user_id` (org_members), with no phone
+ * nor any external channel identifier.
  */
 export class CreateInternalChat20260828000001 implements MigrationInterface {
   name = 'CreateInternalChat20260828000001';

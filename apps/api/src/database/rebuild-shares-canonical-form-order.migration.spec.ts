@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de `shares`
- * — reconstrução pura de ordem (nenhuma coluna removida). Combina o bloco
- * de titularidade/registro com o bloco "Registry Fields Phase 1" (técnico/
- * reservado, sem formulário visual) e o formulário financeiro real
+ * Permanent guard (2026-07-19 audit): physical rebuild of `shares`
+ * — a pure order rebuild (no column removed). Combines the ownership/
+ * registration block with the "Registry Fields Phase 1" block (technical/
+ * reserved, no visual form) and the real financial form
  * (SharePendenteFormModal.tsx).
  */
 const migrationSrc = fs.readFileSync(

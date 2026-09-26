@@ -3,17 +3,17 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20260705000001_ReconcileInventoryLicensesColumns
  *
- * Reconciliação schema↔entity (auditoria 2026-07-05).
+ * schema↔entity reconciliation (2026-07-05 audit).
  *
- * A migração InventoryLicensingFinancialRules20260521000060 criou
- * inventory_items/licenses com `CREATE TABLE IF NOT EXISTS`, mas as tabelas já
- * existiam em produção com um shape anterior — a migração foi registrada sem
- * efeito e as colunas abaixo ficaram só na entity/DTO. Resultado: qualquer
- * SELECT via repositório TypeORM (InventoryService/LicensingService usa
- * createQueryBuilder) falha com 42703 em produção.
+ * Migration InventoryLicensingFinancialRules20260521000060 created
+ * inventory_items/licenses with `CREATE TABLE IF NOT EXISTS`, but the tables already
+ * existed in production with an earlier shape — the migration was recorded without
+ * effect and the columns below existed only in the entity/DTO. Result: any
+ * SELECT via the TypeORM repository (InventoryService/LicensingService use
+ * createQueryBuilder) fails with 42703 in production.
  *
- * Correção ADITIVA (forward-only, colunas anuláveis/idempotentes), no mesmo
- * padrão de AddLeadsPipelineStage20260613000003.
+ * ADDITIVE fix (forward-only, nullable/idempotent columns), following the same
+ * pattern as AddLeadsPipelineStage20260613000003.
  */
 export class ReconcileInventoryLicensesColumns20260705000001 implements MigrationInterface {
   name = 'ReconcileInventoryLicensesColumns20260705000001';

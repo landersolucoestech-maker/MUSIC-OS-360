@@ -2,17 +2,17 @@ import type { MigrationInterface, QueryRunner } from 'typeorm';
 import { OPERATIONAL_LIST_DEFAULTS } from '../../modules/operational-lists/operational-lists.defaults';
 
 /**
- * Correção do achado B01 da auditoria técnica (2026-07-12): `storage.getRaw`/
- * `storage.setRaw` no frontend sempre lançavam exceção; o hook
- * `useOperationalSettings` (consumido por Leads, Contatos, Eventos e
- * Marketing) dependia desse stub sem tratamento, quebrando o render dessas
- * telas.
+ * Fix for finding B01 of the technical audit (2026-07-12): `storage.getRaw`/
+ * `storage.setRaw` in the frontend always threw; the
+ * `useOperationalSettings` hook (consumed by Leads, Contacts, Events and
+ * Marketing) depended on that stub without handling, breaking the render of those
+ * screens.
  *
- * Esta migration cria a tabela real (tenant-scoped, com RLS) que passa a
- * armazenar a taxonomia hoje hardcoded em `DEFAULT_OPERATIONAL_LISTS` no
- * frontend, e semeia (bootstrap idempotente) os itens padrão para cada
- * tenant já existente — cada tenant pode então customizar/desativar itens
- * via a API real, em vez de depender de um array estático no navegador.
+ * This migration creates the real table (tenant-scoped, with RLS) that now
+ * stores the taxonomy currently hardcoded in `DEFAULT_OPERATIONAL_LISTS` in the
+ * frontend, and seeds (idempotent bootstrap) the default items for every
+ * already existing tenant — each tenant can then customize/deactivate items
+ * through the real API, instead of depending on a static array in the browser.
  */
 export class CreateOperationalListItems20260713000001
   implements MigrationInterface
@@ -67,9 +67,9 @@ export class CreateOperationalListItems20260713000001
         END IF;
       END $$;
     `);
-    // musicos_migrator precisa de policy própria para o bootstrap de seeds
-    // abaixo (INSERT multi-tenant não tem app.current_tenant_id() resolvido
-    // na conexão de migração) — mesmo papel de bypass usado nas demais tabelas.
+    // musicos_migrator needs its own policy for the seed bootstrap
+    // below (a multi-tenant INSERT has no resolved app.current_tenant_id()
+    // on the migration connection) — the same bypass role used on the other tables.
     await qr.query(`
       DO $$
       BEGIN
@@ -81,10 +81,10 @@ export class CreateOperationalListItems20260713000001
       END $$;
     `);
 
-    // Bootstrap idempotente: semeia os itens padrão para cada tenant já
-    // existente. Novos tenants recebem o mesmo bootstrap sob demanda no
-    // primeiro GET (OperationalListsService.list), a partir da mesma fonte
-    // canônica (OPERATIONAL_LIST_DEFAULTS), nunca duplicando a lista.
+    // Idempotent bootstrap: seeds the default items for every already
+    // existing tenant. New tenants receive the same bootstrap on demand on the
+    // first GET (OperationalListsService.list), from the same canonical
+    // source (OPERATIONAL_LIST_DEFAULTS), never duplicating the list.
     const { rows: tenants } = { rows: await qr.query(`SELECT "id" FROM "tenants"`) } as {
       rows: Array<{ id: string }>;
     };

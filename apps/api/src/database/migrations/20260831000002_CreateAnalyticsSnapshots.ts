@@ -3,20 +3,20 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20260831000002_CreateAnalyticsSnapshots
  *
- * Fase 3 — Estágio da Carreira + Benchmark de Mercado. Busca prévia
- * (SEARCH BEFORE CREATE) confirmou que não existe, em nenhuma tabela do
- * schema, um armazenamento de resultado analítico versionado — o único
- * campo relacionado (`artista.estagio_carreira` na UI) nunca é populado por
- * nenhum código real (grep confirma zero escritor), e o módulo
- * `musicIntelligenceEngine` (marketing/IA Criativa) usa heurísticas de texto
- * para prompt de LLM, não um engine determinístico — domínio inteiramente
- * diferente, não reaproveitável aqui.
+ * Phase 3 — Career Stage + Market Benchmark. A prior search
+ * (SEARCH BEFORE CREATE) confirmed that no table in the
+ * schema stores a versioned analytics result — the only
+ * related field (`artista.estagio_carreira` in the UI) is never populated by
+ * any real code (grep confirms zero writers), and the
+ * `musicIntelligenceEngine` module (marketing/Creative AI) uses text heuristics
+ * for an LLM prompt, not a deterministic engine — an entirely
+ * different domain, not reusable here.
  *
- * Ambas as tabelas seguem o mesmo padrão append-only de
- * `artist_metric_snapshots` (20260831000001): nenhum UPDATE/DELETE
- * concedido a musicos_app — cada cálculo grava uma nova linha, nunca
- * sobrescreve a anterior, mesmo quando engine_version muda (item 38: "não
- * sobrescrever histórico").
+ * Both tables follow the same append-only pattern as
+ * `artist_metric_snapshots` (20260831000001): no UPDATE/DELETE
+ * granted to musicos_app — each computation writes a new row, never
+ * overwrites the previous one, even when engine_version changes (item 38: "do not
+ * overwrite history").
  */
 export class CreateAnalyticsSnapshots20260831000002 implements MigrationInterface {
   name = 'CreateAnalyticsSnapshots20260831000002';

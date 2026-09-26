@@ -3,41 +3,41 @@ import type { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20260705000003_RemoveDeadStructuresD1D8
  *
- * Migração destrutiva forward-only cobrindo os achados D1–D8 da auditoria
- * completa de banco (2026-07-05, `docs/AUDITORIA_DB_2026-07-05.md`). Cada
- * estrutura removida aqui foi confirmada com 0 referências de código vivo
- * (fora de migrations/entities órfãs) antes desta migração ser escrita.
+ * Forward-only destructive migration covering findings D1–D8 of the full
+ * database audit (2026-07-05, `docs/AUDITORIA_DB_2026-07-05.md`). Every
+ * structure removed here was confirmed to have 0 live code references
+ * (outside orphan migrations/entities) before this migration was written.
  *
- * NÃO EXECUTAR contra produção sem Go explícito (ver runbook de release).
+ * DO NOT RUN against production without an explicit Go (see the release runbook).
  *
- * D1: cluster CRM legado 0-linhas (crm_companies, crm_contacts, crm_tags,
- *     crm_contact_tags, crm_timeline_events) — substituído por contacts/leads.
- * D2: crm_tasks (4 linhas) — migradas para operational_tasks (mesmo shape,
- *     já é a tabela real por trás de CrmTaskEntity) antes do DROP.
- * D3: 13 tabelas conversation_* de configuração (CustomerCareConversationExtensions),
- *     0 linhas, 0 referências vivas. conversations/conversation_messages/
- *     conversation_notes NÃO são afetadas (essas ficam).
- * D4: organization_members — criada fora do fluxo de migrations, sem entidade,
- *     sem RLS/policies, 0 linhas, duplica org_members (esta é a oficial).
- * D5: financial_category_templates — 0 linhas, 0 referências.
- * D7: colunas flat legadas de financial_category_rules (transaction_type,
- *     counterparty_type, category, subcategory, links, sort_order) — modelo
- *     substituído por conditions/actions (jsonb); entity atual já não as mapeia.
- * D8: financial_centers (22 linhas seedadas, nunca lidas/escritas pelo código)
- *     + coluna/FK financial_category_centers.center_id.
+ * D1: legacy 0-row CRM cluster (crm_companies, crm_contacts, crm_tags,
+ *     crm_contact_tags, crm_timeline_events) — replaced by contacts/leads.
+ * D2: crm_tasks (4 rows) — migrated to operational_tasks (same shape,
+ *     already the real table behind CrmTaskEntity) before the DROP.
+ * D3: 13 conversation_* configuration tables (CustomerCareConversationExtensions),
+ *     0 rows, 0 live references. conversations/conversation_messages/
+ *     conversation_notes are NOT affected (those stay).
+ * D4: organization_members — created outside the migration flow, no entity,
+ *     no RLS/policies, 0 rows, duplicates org_members (the latter is the official one).
+ * D5: financial_category_templates — 0 rows, 0 references.
+ * D7: legacy flat columns of financial_category_rules (transaction_type,
+ *     counterparty_type, category, subcategory, links, sort_order) — model
+ *     replaced by conditions/actions (jsonb); the current entity no longer maps them.
+ * D8: financial_centers (22 seeded rows, never read/written by the code)
+ *     + the financial_category_centers.center_id column/FK.
  *
- * Nota de correção da auditoria: o item D6 (colunas artists.spotify_url/
- * youtube_url/instagram_url/tiktok_url) NÃO está incluído aqui — na
- * verificação desta migração, spotify_url e youtube_url continuam sendo
- * escritos/lidos ativamente por CreateArtistDto/ArtistsService/
- * ArtistaEvolucaoSection, e instagram_url/tiktok_url nunca existiram como
- * colunas de `artists` (o relatório estava desatualizado nesse ponto).
+ * Audit correction note: item D6 (columns artists.spotify_url/
+ * youtube_url/instagram_url/tiktok_url) is NOT included here — while
+ * verifying this migration, spotify_url and youtube_url were still being
+ * actively written/read by CreateArtistDto/ArtistsService/
+ * ArtistaEvolucaoSection, and instagram_url/tiktok_url never existed as
+ * `artists` columns (the report was out of date on that point).
  */
 export class RemoveDeadStructuresD1D8_20260705000003 implements MigrationInterface {
   name = 'RemoveDeadStructuresD1D8_20260705000003';
 
   public async up(qr: QueryRunner): Promise<void> {
-    // ── D2: migrar crm_tasks → operational_tasks antes do DROP (mesmo shape) ──
+    // ── D2: migrate crm_tasks → operational_tasks before the DROP (same shape) ──
     await qr.query(`
       INSERT INTO operational_tasks (
         id, tenant_id, title, description, status, priority, type,
@@ -64,7 +64,7 @@ export class RemoveDeadStructuresD1D8_20260705000003 implements MigrationInterfa
       await qr.query(`DROP TABLE IF EXISTS ${table} CASCADE`);
     }
 
-    // ── D3: 13 tabelas conversation_* de configuração, 0 uso vivo ─────────────
+    // ── D3: 13 conversation_* configuration tables, 0 live usage ──────────────
     for (const table of [
       'conversation_channel_accounts',
       'conversation_sectors',
@@ -110,9 +110,9 @@ export class RemoveDeadStructuresD1D8_20260705000003 implements MigrationInterfa
   }
 
   public async down(qr: QueryRunner): Promise<void> {
-    // Reversão de schema (best-effort). Dados das tabelas dropadas em D1/D3/D4/D5
-    // e das linhas seedadas de financial_centers (D8) NÃO são restaurados — só a
-    // migração de crm_tasks→operational_tasks (D2) é reversível com dado real.
+    // Schema reversal (best-effort). Data of the tables dropped in D1/D3/D4/D5
+    // and the seeded financial_centers rows (D8) are NOT restored — only the
+    // crm_tasks→operational_tasks migration (D2) is reversible with real data.
 
     await qr.query(`
       CREATE TABLE IF NOT EXISTS financial_centers (

@@ -1,11 +1,11 @@
 /**
  * database/migration-validator.service.ts
  *
- * Serviço NestJS que valida, no boot da aplicação, se existem migrations
- * pendentes. Em produção, o processo termina imediatamente se o schema não
- * estiver sincronizado — prevenindo deploys com schema desatualizado.
+ * NestJS service that validates, at application boot, whether there are pending
+ * migrations. In production, the process terminates immediately if the schema is not
+ * in sync — preventing deploys with an outdated schema.
  *
- * Injectar no AppModule como provider para activar a verificação.
+ * Inject it into AppModule as a provider to enable the check.
  */
 
 import {
@@ -25,10 +25,10 @@ export class MigrationValidatorService implements OnApplicationBootstrap {
 
   constructor(
     @Optional() @Inject(DATA_SOURCE) private readonly appDs: DataSource | null,
-    // musicos360_migrations tem RLS habilitado sem policy: sob APP_DATABASE_URL
-    // (role NOBYPASSRLS, session-context ON) o SELECT volta vazio e showMigrations()
-    // acusaria 80 pendentes — em produção isso mataria o boot. A validação precisa
-    // da conexão owner (sempre DATABASE_URL), que enxerga a tabela de migrations.
+    // musicos360_migrations has RLS enabled without a policy: under APP_DATABASE_URL
+    // (NOBYPASSRLS role, session-context ON) the SELECT comes back empty and showMigrations()
+    // would report 80 pending — in production that would kill the boot. The validation needs
+    // the owner connection (always DATABASE_URL), which can see the migrations table.
     @Optional() @Inject(ADMIN_DATA_SOURCE) private readonly adminDs: DataSource | null,
     @Optional() private readonly config?: ConfigService,
   ) {}
@@ -68,7 +68,7 @@ export class MigrationValidatorService implements OnApplicationBootstrap {
 
         if (isProduction) {
           this.logger.error(`[FATAL] ${msg}`);
-          // Dar tempo aos logs de flush antes de terminar
+          // Give the logs time to flush before terminating
           await new Promise(r => setTimeout(r, 200));
           process.exit(1);
         } else {
@@ -78,7 +78,7 @@ export class MigrationValidatorService implements OnApplicationBootstrap {
         this.logger.log('Schema sincronizado — sem migrations pendentes.');
       }
     } catch (err) {
-      // Falha na validação não deve impedir boot em dev
+      // A validation failure must not prevent boot in dev
       if (isProduction) {
         this.logger.error('Falha ao verificar migrations:', (err as Error).message);
         process.exit(1);

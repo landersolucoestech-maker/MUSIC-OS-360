@@ -1,30 +1,30 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `events` na ordem canônica do formulário real
- * (SchedulerFormModal) — auditoria 2026-07-19. Mesmo padrão das anteriores.
+ * Physical rebuild of `events` in the canonical order of the real form
+ * (SchedulerFormModal) — 2026-07-19 audit. Same pattern as the previous ones.
  *
- * Ordem visual real: Título → Tipo de Evento → Participantes (subform real,
- * jsonb) → Status → Data/Horário de Início (`data`, dual-write para
- * `starts_at` — ver migrations 20260716000001/commit "dual-write event start
- * timestamps") → Data/Horário de Fim (`data_fim`) → campos de Local
- * (condicional: nome, contato, endereço) → campos exclusivos de Shows
- * (Cachê/Público Esperado — "Capacidade do Público" mapeia para `capacity`,
- * que não tem coluna física própria e é descartado no service; fora do
- * escopo desta migration) → Descrição → Observações. `artista_id` é relação
- * técnica (derivada do primeiro participante do tipo artista, sem campo
- * visível dedicado).
+ * Real visual order: Title → Event Type → Participants (real subform,
+ * jsonb) → Status → Start Date/Time (`data`, dual-written to
+ * `starts_at` — see migrations 20260716000001/commit "dual-write event start
+ * timestamps") → End Date/Time (`data_fim`) → Venue fields
+ * (conditional: name, contact, address) → Show-only fields
+ * (fee/expected audience — "Capacidade do Público" maps to `capacity`,
+ * which has no physical column of its own and is discarded in the service; out of
+ * this migration's scope) → Description → Notes. `artista_id` is a technical
+ * relation (derived from the first participant of the artist type, with no dedicated
+ * visible field).
  *
- * IMPORTANTE: esta tabela está em migração de fase ativa e deliberada
- * (C3/E2 — dual-write `data`→`starts_at`, leitura canônica só na fase E4,
- * remoção de `data` só na E6). Esta migration NÃO toca nesse processo: não
- * renomeia, não altera semântica, não remove `data`/`starts_at` — apenas
- * corrige a ORDEM FÍSICA das colunas, mantendo ambas lado a lado.
+ * IMPORTANT: this table is in an active, deliberate phased migration
+ * (C3/E2 — dual-write `data`→`starts_at`, canonical reads only in phase E4,
+ * removal of `data` only in E6). This migration does NOT touch that process: it does not
+ * rename, change semantics, or remove `data`/`starts_at` — it only
+ * fixes the PHYSICAL ORDER of the columns, keeping both side by side.
  *
- * `valor` é removida: órfã comprovada — sem nenhum leitor/escritor em
- * nenhum controller/service/DTO/UI do domínio de eventos (superada por
- * `valor_cache`, que é a coluna real usada pelo formulário) — mesmo padrão
- * de `artists.org_slug`/`projects.data_inicio`/`audiovisual_projects.organization_id`.
+ * `valor` is removed: a proven orphan — with no reader/writer in
+ * any controller/service/DTO/UI of the events domain (superseded by
+ * `valor_cache`, which is the real column used by the form) — same pattern
+ * as `artists.org_slug`/`projects.data_inicio`/`audiovisual_projects.organization_id`.
  */
 export class RebuildEventsInCanonicalFormOrder20260719000007 implements MigrationInterface {
   name = 'RebuildEventsInCanonicalFormOrder20260719000007';
@@ -63,7 +63,7 @@ export class RebuildEventsInCanonicalFormOrder20260719000007 implements Migratio
   ].join(', ');
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // 0. Validação fail-fast: valor precisa estar genuinamente vazia.
+    // 0. Fail-fast validation: valor must be genuinely empty.
     const [{ non_null }] = await queryRunner.query(`SELECT count(valor)::int AS non_null FROM events`);
     if (Number(non_null) > 0) {
       throw new Error(
@@ -166,8 +166,8 @@ export class RebuildEventsInCanonicalFormOrder20260719000007 implements Migratio
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM events`);
 
     await queryRunner.query(`CREATE TABLE events_restore (${this.originalColumns})`);
-    // `valor` não existe mais (removida no up(), comprovadamente órfã) —
-    // sempre NULL na reversão, mesmo padrão de org_slug em
+    // `valor` no longer exists (removed in up(), proven orphan) —
+    // always NULL on reversal, same pattern as org_slug in
     // RebuildArtistsInCanonicalFormOrder20260719000001.
     await queryRunner.query(`INSERT INTO events_restore (${this.restoreCopyColumns}) SELECT ${this.restoreCopyColumns} FROM events`);
 

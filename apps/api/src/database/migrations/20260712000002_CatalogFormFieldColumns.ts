@@ -1,15 +1,15 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Sincronização formulário ↔ banco (Catálogo: Obras e Fonogramas).
+ * Form ↔ database sync (Catalog: Works and Phonograms).
  *
- * REGRA DE PRODUTO (2026-07-12): cada campo do formulário tem a SUA coluna
- * física com o nome EXATO da chave enviada pelo form (formToObraPayload /
- * buildPayload do FonogramaFormModal). Campos compostos do próprio form
- * (participantes, ia_*, participacao, arquivo_audio) são jsonb — um por coluna.
+ * PRODUCT RULE (2026-07-12): each form field has ITS OWN physical
+ * column with the EXACT name of the key sent by the form (formToObraPayload /
+ * FonogramaFormModal's buildPayload). Composite fields of the form itself
+ * (participantes, ia_*, participacao, arquivo_audio) are jsonb — one per column.
  *
- * `works.compositores` era text; o formulário envia string[] (derivado de
- * participantes) — convertido para jsonb preservando valores legados.
+ * `works.compositores` was text; the form sends string[] (derived from
+ * participantes) — converted to jsonb preserving legacy values.
  */
 export class CatalogFormFieldColumns20260712000002 implements MigrationInterface {
   name = 'CatalogFormFieldColumns20260712000002';
@@ -33,7 +33,7 @@ export class CatalogFormFieldColumns20260712000002 implements MigrationInterface
         ADD COLUMN IF NOT EXISTS "projeto_id" uuid,
         ADD COLUMN IF NOT EXISTS "tipo_obra" varchar(50)
     `);
-    // compositores text → jsonb (string vira array de um item; 'A, B' vira ["A","B"])
+    // compositores text → jsonb (a string becomes a one-item array; 'A, B' becomes ["A","B"])
     await queryRunner.query(`
       ALTER TABLE "works"
         ALTER COLUMN "compositores" TYPE jsonb

@@ -3,10 +3,10 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20240601000001_WorkflowTransitions
  *
- * Cria a tabela `workflow_transitions` para persistência do histórico de
- * transições de estado do Workflow Engine.
+ * Creates the `workflow_transitions` table to persist the history of
+ * Workflow Engine state transitions.
  *
- * Rollback: down() dropa tabela e índices.
+ * Rollback: down() drops the table and indexes.
  */
 export class WorkflowTransitions20240601000001 implements MigrationInterface {
   name = 'WorkflowTransitions20240601000001';

@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `leave_requests` — segue FeriasAusenciasFormModal.tsx. Par mirrorado
- * funcionario_id/employee_id; motivo/documento_url mantidos como zona
- * legada (DTO-aceitos, sem campo visual atual).
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `leave_requests` — follows FeriasAusenciasFormModal.tsx. Mirrored pair
+ * funcionario_id/employee_id; motivo/documento_url kept as a legacy
+ * zone (DTO-accepted, no current visual field).
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000025_RebuildLeaveRequestsInCanonicalFormOrder.ts'),

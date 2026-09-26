@@ -1,22 +1,22 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `takedowns` na ordem canônica do formulário real
- * (TakedownFormModal) — auditoria 2026-07-19.
+ * Physical rebuild of `takedowns` in the canonical order of the real form
+ * (TakedownFormModal) — 2026-07-19 audit.
  *
- * Ordem visual real: título/tipo/obra afetada/artista/status/prioridade →
- * plataforma/URL do conteúdo infrator → motivo/data de identificação/
- * descrição/evidências/observações. `plataforma` (coluna NOT NULL original,
- * usada como fallback de `titulo` em `TakedownsService.create()`) é
- * visualmente a segunda seção do formulário, não a primeira — movida para
- * essa posição.
+ * Real visual order: title/type/affected work/artist/status/priority →
+ * platform/URL of the infringing content → reason/identification date/
+ * description/evidence/notes. `plataforma` (original NOT NULL column,
+ * used as the fallback of `titulo` in `TakedownsService.create()`) is
+ * visually the form's second section, not the first — moved to
+ * that position.
  *
- * `url`/`resposta`/`obra_id`/`artista_id` são removidas: órfãs comprovadas
- * — nenhuma está em `CreateTakedownDto`/`QueryTakedownDto`; `artista_id` só
- * aparece num filtro morto em `TakedownsService.list()` (propriedade que o
- * `QueryTakedownDto` nunca declara — o ValidationPipe descarta antes de
- * chegar ali, tornando o filtro inalcançável). Superadas por
- * `obra_afetada`/`artista` (texto livre) e `url_infracao`.
+ * `url`/`resposta`/`obra_id`/`artista_id` are removed: proven orphans
+ * — none is in `CreateTakedownDto`/`QueryTakedownDto`; `artista_id` only
+ * appears in a dead filter in `TakedownsService.list()` (a property that
+ * `QueryTakedownDto` never declares — the ValidationPipe discards it before it
+ * gets there, making the filter unreachable). Superseded by
+ * `obra_afetada`/`artista` (free text) and `url_infracao`.
  */
 export class RebuildTakedownsInCanonicalFormOrder20260719000016 implements MigrationInterface {
   name = 'RebuildTakedownsInCanonicalFormOrder20260719000016';
@@ -142,9 +142,9 @@ export class RebuildTakedownsInCanonicalFormOrder20260719000016 implements Migra
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM takedowns`);
 
     await queryRunner.query(`CREATE TABLE takedowns_restore (${this.originalColumns})`);
-    // url/resposta/obra_id/artista_id não existem mais (removidas no up(),
-    // comprovadamente órfãs) — sempre NULL na reversão, mesmo padrão de
-    // org_slug em RebuildArtistsInCanonicalFormOrder20260719000001.
+    // url/resposta/obra_id/artista_id no longer exist (removed in up(),
+    // proven orphans) — always NULL on reversal, same pattern as
+    // org_slug in RebuildArtistsInCanonicalFormOrder20260719000001.
     await queryRunner.query(`INSERT INTO takedowns_restore (${this.restoreCopyColumns}) SELECT ${this.restoreCopyColumns} FROM takedowns`);
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM takedowns_restore`);

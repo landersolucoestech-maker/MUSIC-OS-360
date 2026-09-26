@@ -1,22 +1,22 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Cria "finance_category_keyword_rules" — regras de categorização automática
- * de transações por palavra-chave (keywords → categoria financeira), um
- * conceito distinto de "financial_rules" (motor de taxa/comissão/imposto,
- * calculado por percentual/fixo sobre eventos de transação/fatura/contrato)
- * E também distinto de "financial_category_rules" (migration
- * 20260526000003 — tabela de taxonomia dinâmica seedada por tenant,
- * transaction_type/counterparty_type/category/subcategory, sem service/
- * controller vivo; nome evitado propositalmente para não colidir).
+ * Creates "finance_category_keyword_rules" — rules for automatic categorization
+ * of transactions by keyword (keywords → financial category), a
+ * concept distinct from "financial_rules" (the fee/commission/tax engine,
+ * computed as a percentage/fixed amount over transaction/invoice/contract events)
+ * AND also distinct from "financial_category_rules" (migration
+ * 20260526000003 — a dynamic taxonomy table seeded per tenant,
+ * transaction_type/counterparty_type/category/subcategory, with no live service/
+ * controller; the name was avoided on purpose so as not to collide).
  *
- * O frontend (TransacaoRules.tsx, FinanceCategoryRuleModal, e o matcher
- * client-side matchTransactionCategory em financialCategorizationRules.utils.ts)
- * já existia inteiramente pronto, mas chamava endpoints inexistentes em
- * /financial-categories/rules* — toda ação na página resultava em 404/400.
- * A correspondência keyword→transação é sempre avaliada no cliente (não há
- * lógica de avaliação server-side aqui, ao contrário de financial_rules);
- * esta tabela só precisa persistir as definições das regras em si.
+ * The frontend (TransacaoRules.tsx, FinanceCategoryRuleModal, and the
+ * client-side matcher matchTransactionCategory in financialCategorizationRules.utils.ts)
+ * already existed entirely ready, but called nonexistent endpoints at
+ * /financial-categories/rules* — every action on the page resulted in 404/400.
+ * The keyword→transaction matching is always evaluated on the client (there is no
+ * server-side evaluation logic here, unlike financial_rules);
+ * this table only needs to persist the rule definitions themselves.
  */
 export class CreateFinancialCategoryRules20260816000001
   implements MigrationInterface

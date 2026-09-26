@@ -1,12 +1,12 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * billing_plans — fonte primária dos planos/valores (definidos pelo admin/banco).
- * O Stripe recebe apenas a sincronização (product/price) via backend; NÃO é fonte
- * primária. Substitui a dependência de STRIPE_PRICE_* fixos no .env.
+ * billing_plans — primary source of plans/prices (defined by the admin/database).
+ * Stripe only receives the sync (product/price) via the backend; it is NOT the primary
+ * source. Replaces the dependency on fixed STRIPE_PRICE_* in .env.
  *
- * Planos são GLOBAIS (tiers do SaaS), seguindo o padrão existente (PLAN_FEATURES /
- * enum TenantPlan / Painel Admin global) — por isso não há tenant_id.
+ * Plans are GLOBAL (SaaS tiers), following the existing pattern (PLAN_FEATURES /
+ * TenantPlan enum / global Admin Panel) — which is why there is no tenant_id.
  */
 export class BillingPlans20260701000002 implements MigrationInterface {
   name = 'BillingPlans20260701000002';
@@ -35,8 +35,8 @@ export class BillingPlans20260701000002 implements MigrationInterface {
     `);
     await queryRunner.query(`CREATE INDEX IF NOT EXISTS "idx_billing_plans_active" ON "billing_plans" ("active")`);
 
-    // Seed dos 3 tiers existentes (amounts em centavos, BRL). stripe_* nulos até sync.
-    // Amounts são placeholders editáveis pelo admin.
+    // Seed of the 3 existing tiers (amounts in cents, BRL). stripe_* null until sync.
+    // Amounts are placeholders editable by the admin.
     await queryRunner.query(`
       INSERT INTO "billing_plans" ("slug","name","description","amount","currency","interval","active","features","limits")
       VALUES
@@ -52,9 +52,9 @@ export class BillingPlans20260701000002 implements MigrationInterface {
       ON CONFLICT ("slug") DO NOTHING
     `);
 
-    // RLS: config GLOBAL (sem isolamento de tenant). Habilita RLS para manter a
-    // postura fail-closed consistente com billing_settings, com policy permissiva —
-    // a autorização de escrita é feita na camada RBAC (endpoints admin).
+    // RLS: GLOBAL config (no tenant isolation). Enables RLS to keep the
+    // fail-closed posture consistent with billing_settings, with a permissive policy —
+    // write authorization is done in the RBAC layer (admin endpoints).
     await queryRunner.query(`ALTER TABLE "billing_plans" ENABLE ROW LEVEL SECURITY`);
     await queryRunner.query(`
       DO $$ BEGIN

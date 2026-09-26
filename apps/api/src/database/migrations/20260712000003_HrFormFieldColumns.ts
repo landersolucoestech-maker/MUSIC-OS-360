@@ -1,15 +1,15 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Sincronização formulário ↔ banco (RH: Funcionários, Folha, Férias/Ausências).
+ * Form ↔ database sync (HR: Employees, Payroll, Vacations/Absences).
  *
- * REGRA DE PRODUTO (2026-07-12): cada campo do formulário tem a SUA coluna
- * física com o nome EXATO da chave enviada pelo form (FuncionarioFormModal,
+ * PRODUCT RULE (2026-07-12): each form field has ITS OWN physical
+ * column with the EXACT name of the key sent by the form (FuncionarioFormModal,
  * FolhaPagamentoFormModal, FeriasAusenciasFormModal).
  *
- * Colunas legadas NOT NULL (employees.nome, payroll.employee_id/competencia,
- * leave_requests.employee_id) são espelhadas pelo service a partir dos campos
- * do formulário — nunca o contrário.
+ * Legacy NOT NULL columns (employees.nome, payroll.employee_id/competencia,
+ * leave_requests.employee_id) are mirrored by the service from the
+ * form fields — never the other way around.
  */
 export class HrFormFieldColumns20260712000003 implements MigrationInterface {
   name = 'HrFormFieldColumns20260712000003';

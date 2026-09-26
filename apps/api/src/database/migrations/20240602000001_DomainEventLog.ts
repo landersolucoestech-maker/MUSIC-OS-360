@@ -3,16 +3,16 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20240602000001_DomainEventLog
  *
- * Cria a tabela `domain_event_log` para persistência append-only de todos
- * os domain events emitidos pelo sistema MUSIC OS 360.
+ * Creates the `domain_event_log` table for append-only persistence of every
+ * domain event emitted by the MUSIC OS 360 system.
  *
- * Campos:
- *   - aggregate_type / aggregate_id — rastreabilidade por entidade de domínio
- *   - processed_at   — timestamp do processamento pelo handler (null = pendente)
- *   - error          — mensagem de erro se o handler falhou
+ * Fields:
+ *   - aggregate_type / aggregate_id — traceability per domain entity
+ *   - processed_at   — timestamp of processing by the handler (null = pending)
+ *   - error          — error message if the handler failed
  *
- * A tabela é append-only: sem soft-delete, sem updates (excepto processed_at/error).
- * Rollback: down() dropa tabela e índices.
+ * The table is append-only: no soft delete, no updates (except processed_at/error).
+ * Rollback: down() drops the table and indexes.
  */
 export class DomainEventLog20240602000001 implements MigrationInterface {
   name = 'DomainEventLog20240602000001';

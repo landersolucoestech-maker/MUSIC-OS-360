@@ -1,16 +1,16 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Sincronização formulário ↔ banco (módulo Artistas).
+ * Form ↔ database sync (Artists module).
  *
- * REGRA DE PRODUTO: cada campo do formulário de artista tem a SUA coluna física,
- * com o nome EXATO da chave enviada pelo formulário (formValuesToArtistaPayload).
- * Nada de agregar campos em jsonb `metadata`.
+ * PRODUCT RULE: each artist form field has ITS OWN physical column,
+ * with the EXACT name of the key sent by the form (formValuesToArtistaPayload).
+ * No aggregating fields into the jsonb `metadata`.
  *
- * Campos compostos (arrays/objetos do próprio formulário — relacionamentos,
- * distribuidoras, contatos vinculados) são jsonb, mas cada um na SUA coluna.
- * PII (email/telefone/cpf_cnpj/manager_contato) permanece nas colunas cifradas
- * já existentes (*_encrypted) — uma coluna por campo.
+ * Composite fields (arrays/objects of the form itself — relationships,
+ * distributors, linked contacts) are jsonb, but each in ITS OWN column.
+ * PII (email/telefone/cpf_cnpj/manager_contato) stays in the already existing
+ * encrypted columns (*_encrypted) — one column per field.
  */
 export class ArtistsFormFieldColumns20260712000001 implements MigrationInterface {
   name = 'ArtistsFormFieldColumns20260712000001';
@@ -65,8 +65,8 @@ export class ArtistsFormFieldColumns20260712000001 implements MigrationInterface
         ADD COLUMN IF NOT EXISTS "presskit_url" text
     `);
 
-    // Dados legados: linhas antigas guardavam estes campos dentro de metadata.
-    // Migra cada chave para a sua coluna (uma vez), sem apagar o metadata original.
+    // Legacy data: old rows kept these fields inside metadata.
+    // Migrates each key to its column (once), without deleting the original metadata.
     await queryRunner.query(`
       UPDATE "artists" SET
         "slug_artistico" = COALESCE("slug_artistico", metadata->>'slug_artistico'),

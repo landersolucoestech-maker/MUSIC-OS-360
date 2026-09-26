@@ -1,20 +1,20 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Task Z — achado via validação de runtime real.
+ * Task Z — finding from real runtime validation.
  *
- * 20260718000007_FinancialRls concedeu apenas SELECT/INSERT/UPDATE em
- * "financial_categories" ("exclusão é lógica" — arquivar via is_active,
- * já implementado em FinancialCategoriesService.archive()). Só que o
- * serviço TAMBÉM tem um remove() genuinamente distinto — um hard delete
- * guardado por checagens de aplicação (zero subcategorias, zero
- * transações vinculadas, e agora — Task Z — zero regras de categorização
- * vinculadas) para o caso de categoria criada por engano e nunca usada.
- * Sem o GRANT, mesmo uma categoria 100% sem uso nunca conseguia ser
- * excluída: toda chamada quebrava com "permission denied for table
- * financial_categories" (42501) — nunca chegava a testar a FK. RLS
- * (tenant_id = private_get_tenant_id()) já garante que o DELETE nunca
- * cruza tenant, então conceder aqui é seguro.
+ * 20260718000007_FinancialRls granted only SELECT/INSERT/UPDATE on
+ * "financial_categories" ("deletion is logical" — archiving via is_active,
+ * already implemented in FinancialCategoriesService.archive()). But the
+ * service ALSO has a genuinely distinct remove() — a hard delete
+ * guarded by application checks (zero subcategories, zero
+ * linked transactions, and now — Task Z — zero linked categorization
+ * rules) for the case of a category created by mistake and never used.
+ * Without the GRANT, even a 100% unused category could never be
+ * deleted: every call broke with "permission denied for table
+ * financial_categories" (42501) — it never even got to test the FK. RLS
+ * (tenant_id = private_get_tenant_id()) already guarantees the DELETE never
+ * crosses tenants, so granting here is safe.
  */
 export class GrantFinancialCategoriesDelete20260817000001
   implements MigrationInterface

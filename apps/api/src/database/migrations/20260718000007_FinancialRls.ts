@@ -1,20 +1,20 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fase 13A / M7 — RLS, policies e grants do núcleo financeiro (Fase 12 §8).
+ * Phase 13A / M7 — RLS, policies and grants of the financial core (Phase 12 §8).
  *
- * Padrão AUDITADO do projeto (mesmo de operational_list_items):
- * - ENABLE + FORCE ROW LEVEL SECURITY em toda tabela tenant-owned;
- * - policy "<tabela>_isolation" com private_get_tenant_id() (contexto de tenant
- *   resolvido SERVER-SIDE pela cadeia — nunca por dado enviado pelo cliente);
- * - policy "migrator_admin_all" e GRANTs CONDICIONAIS à existência das roles
- *   musicos_app/musicos_migrator (dependência de provisionamento DOCUMENTADA:
- *   roles de cluster nunca são criadas em migration e nenhuma senha aparece
- *   aqui; sem as roles, grants são pulados e a policy de isolamento permanece).
- * - templates globais: somente leitura para a role de app.
+ * The project's AUDITED pattern (same as operational_list_items):
+ * - ENABLE + FORCE ROW LEVEL SECURITY on every tenant-owned table;
+ * - a "<table>_isolation" policy with private_get_tenant_id() (tenant context
+ *   resolved SERVER-SIDE by the chain — never from data sent by the client);
+ * - a "migrator_admin_all" policy and GRANTs CONDITIONAL on the existence of the
+ *   musicos_app/musicos_migrator roles (DOCUMENTED provisioning dependency:
+ *   cluster roles are never created in a migration and no credential appears
+ *   here; without the roles, grants are skipped and the isolation policy remains).
+ * - global templates: read-only for the app role.
  *
- * DELETE físico concedido SOMENTE onde o domínio permite:
- * transaction_allocations (delete auditado). Nas demais, exclusão é lógica.
+ * Physical DELETE granted ONLY where the domain allows it:
+ * transaction_allocations (audited delete). Elsewhere, deletion is logical.
  */
 export class FinancialRls20260718000007 implements MigrationInterface {
   name = 'FinancialRls20260718000007';
@@ -66,8 +66,8 @@ export class FinancialRls20260718000007 implements MigrationInterface {
       END $$;
     `);
 
-    // Templates globais: RLS habilitada com leitura livre e escrita restrita ao
-    // migrator (catálogo de fábrica imutável para tenants).
+    // Global templates: RLS enabled with free reads and writes restricted to the
+    // migrator (factory catalog, immutable for tenants).
     await queryRunner.query(`ALTER TABLE "financial_category_templates" ENABLE ROW LEVEL SECURITY`);
     await queryRunner.query(`ALTER TABLE "financial_category_templates" FORCE ROW LEVEL SECURITY`);
     await queryRunner.query(`
@@ -99,7 +99,7 @@ export class FinancialRls20260718000007 implements MigrationInterface {
       await queryRunner.query(`ALTER TABLE "${table}" NO FORCE ROW LEVEL SECURITY`);
       await queryRunner.query(`ALTER TABLE "${table}" DISABLE ROW LEVEL SECURITY`);
     }
-    // Grants não são revogados individualmente: as tabelas caem nos downs de
-    // M2–M6 e os privilégios caem junto (sem REVOKE amplo aqui).
+    // Grants are not revoked individually: the tables are dropped in the downs of
+    // M2–M6 and the privileges go with them (no broad REVOKE here).
   }
 }

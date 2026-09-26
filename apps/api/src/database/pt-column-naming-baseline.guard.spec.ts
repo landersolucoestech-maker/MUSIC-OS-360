@@ -1,34 +1,34 @@
 /**
  * pt-column-naming-baseline.guard.spec.ts
  *
- * Proteção permanente (naming-closure Fase 4): converte o censo mecânico de
- * `.audit-runtime/census-pt-columns.ts` — que encontrou e permitiu a
- * classificação individual de 96 colunas físicas PT-suspeitas nesta missão
- * (ver docs/NAMING_NORMALIZATION_CANONICAL_MAP.md, "Phase 2 individual
- * classification") — de auditoria pontual em portão de CI permanente.
+ * Permanent protection (naming-closure Phase 4): turns the mechanical census of
+ * `.audit-runtime/census-pt-columns.ts` — which found and allowed the
+ * individual classification of 96 PT-suspect physical columns in this mission
+ * (see docs/NAMING_NORMALIZATION_CANONICAL_MAP.md, "Phase 2 individual
+ * classification") — from a one-off audit into a permanent CI gate.
  *
- * Reimplementa aqui a MESMA heurística do script standalone (não importa o
- * script em si: ele roda como ESM `import.meta.url`, incompatível com o
- * ambiente CommonJS do Jest desta suíte) e compara o resultado atual contra
- * o baseline já commitado em `.audit-runtime/pt-column-census.jsonl`.
+ * Reimplements here the SAME heuristic as the standalone script (it does not import the
+ * script itself: it runs as ESM `import.meta.url`, incompatible with the
+ * CommonJS Jest environment of this suite) and compares the current result against
+ * the baseline already committed in `.audit-runtime/pt-column-census.jsonl`.
  *
- * Se este teste falhar, significa que uma nova coluna física com nome
- * PT-suspeito foi adicionada (ou uma existente foi removida/renomeada) sem
- * passar pelo mesmo processo de classificação individual desta missão:
- *   1. rode `npx tsx .audit-runtime/census-pt-columns.ts` a partir da raiz
- *      do monorepo para regenerar `pt-column-census.jsonl`;
- *   2. rode `npx tsx .audit-runtime/classify-pt-census.ts` para classificar
- *      cada item novo (LIVE_CANONICAL_PT / REPORT_ONLY / DEAD_CANDIDATE);
- *   3. trace manualmente qualquer DEAD_CANDIDATE antes de agir (nunca
- *      renomear/dropar por suspeita mecânica isolada — ver o near-miss de
- *      `works.compositor` documentado no canonical map);
- *   4. documente a decisão em docs/NAMING_NORMALIZATION_CANONICAL_MAP.md;
- *   5. commite os dois arquivos `.jsonl` regenerados junto com a mudança —
- *      isso atualiza o baseline que este guard lê, fazendo o teste passar
- *      de novo.
+ * If this test fails, it means a new physical column with a
+ * PT-suspect name was added (or an existing one was removed/renamed) without
+ * going through this mission's individual classification process:
+ *   1. run `npx tsx .audit-runtime/census-pt-columns.ts` from the monorepo
+ *      root to regenerate `pt-column-census.jsonl`;
+ *   2. run `npx tsx .audit-runtime/classify-pt-census.ts` to classify
+ *      each new item (LIVE_CANONICAL_PT / REPORT_ONLY / DEAD_CANDIDATE);
+ *   3. manually trace any DEAD_CANDIDATE before acting (never
+ *      rename/drop on isolated mechanical suspicion — see the
+ *      `works.compositor` near-miss documented in the canonical map);
+ *   4. document the decision in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md;
+ *   5. commit the two regenerated `.jsonl` files together with the change —
+ *      that updates the baseline this guard reads, making the test pass
+ *      again.
  *
- * Isto NÃO substitui a checagem individual (que exige julgamento humano) —
- * só garante que ela nunca é pulada silenciosamente.
+ * This does NOT replace the individual check (which requires human judgment) —
+ * it only ensures it is never skipped silently.
  */
 import * as fs from 'fs';
 import * as path from 'path';
@@ -36,7 +36,7 @@ import * as path from 'path';
 const ENTITIES_PATH = path.resolve(__dirname, 'entities.ts');
 const BASELINE_PATH = path.resolve(__dirname, '../../../../.audit-runtime/pt-column-census.jsonl');
 
-// Idêntico a .audit-runtime/census-pt-columns.ts — mantenha os dois em sincronia.
+// Identical to .audit-runtime/census-pt-columns.ts — keep the two in sync.
 const ALLOWLIST = new Set([
   'cpf', 'cpf_encrypted', 'cnpj', 'cnpj_encrypted', 'cpf_cnpj', 'cpf_cnpj_encrypted',
   'cfop', 'iss', 'issqn', 'aliquota_iss', 'iss_retido', 'pis', 'cofins', 'inss',
@@ -138,23 +138,23 @@ describe('Permanent guard: the census of PT-suspect physical columns does not di
     }
   });
 
-  // Prova positiva/negativa da heurística isPtSuspect, isolada de entities.ts real
-  // (evidência direta de que o mecanismo detecta certo, não só "funcionou uma vez").
+  // Positive/negative proof of the isPtSuspect heuristic, isolated from the real entities.ts
+  // (direct evidence that the mechanism detects correctly, not just "it worked once").
   describe('isPtSuspect: true positive on a known dead column, true negative on an intentional legal-domain term', () => {
     it.each([
-      // Reintrodução simulada das 3 colunas mortas dropadas por 20260923000002 --
-      // se algum dia voltarem a aparecer como @Column, isto prova que o guard as pegaria.
+      // Simulated reintroduction of the 3 dead columns dropped by 20260923000002 --
+      // if they ever reappear as @Column, this proves the guard would catch them.
       'compositores', 'interpretes', 'produtores',
-      // Amostra dos tokens PT-suspeitos reais já classificados LIVE_CANONICAL_PT
-      // (a heurística os marca "suspeitos" corretamente -- suspeito != morto;
-      // a classificação individual é quem decide LIVE vs DEAD, não este guard).
+      // Sample of real PT-suspect tokens already classified LIVE_CANONICAL_PT
+      // (the heuristic correctly marks them "suspect" -- suspect != dead;
+      // the individual classification decides LIVE vs DEAD, not this guard).
       'nome_completo', 'telefone_encrypted', 'razao_social', 'data_prevista',
     ])('"%s" É detectado como PT-suspeito', (field) => {
       expect(isPtSuspect(field)).toBe(true);
     });
 
     it.each([
-      // LEGAL_DOMAIN_INTENTIONAL -- nunca deveriam disparar o guard mesmo sendo PT.
+      // LEGAL_DOMAIN_INTENTIONAL -- should never trigger the guard even though they are PT.
       'cpf', 'cnpj', 'cpf_cnpj_encrypted', 'inscricao_estadual', 'tomador_razao_social',
       'nfse', 'aliquota_iss', 'regime_tributario',
       // Termos EN puros -- nunca deveriam disparar.

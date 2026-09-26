@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `campaign_assets` — segue CreateCampaignAssetDto; file_size/mime_type
- * removidas (órfãs comprovadas); created_by movido para depois de
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `campaign_assets` — follows CreateCampaignAssetDto; file_size/mime_type
+ * removed (proven orphans); created_by moved after
  * created_at.
  */
 const migrationSrc = fs.readFileSync(

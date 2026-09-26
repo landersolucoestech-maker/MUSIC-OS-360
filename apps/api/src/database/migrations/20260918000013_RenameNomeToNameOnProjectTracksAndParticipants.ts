@@ -8,8 +8,8 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * project_track_participants.nome (a track participant's own name —
  * composer/performer/producer) are both plain varchar passthroughs
  * with no boundary mapper. Same rationale as work_participants
- * (20260918000012): ProjectsService's "para que o contrato de API não
- * mude" comment was about the prior JSONB->table normalization
+ * (20260918000012): ProjectsService's "keep the API contract unchanged"
+ * comment was about the prior JSONB->table normalization
  * (20260718000013), not a permanent constraint.
  *
  * `RENAME COLUMN` is metadata-only in Postgres (no rewrite, no data

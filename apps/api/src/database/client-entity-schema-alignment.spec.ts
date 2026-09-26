@@ -2,20 +2,20 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * client-entity-schema-alignment.spec.ts  (Parte 78)
+ * client-entity-schema-alignment.spec.ts  (Part 78)
  *
- * Guarda permanente: 20260719000010_RebuildClientsInCanonicalFormOrder
- * removeu fisicamente segmento/endereco/responsavel/prioridade/cpf/cnpj de
- * `clients`, mas `ClientEntity` (entities.ts) nunca foi atualizada — continuou
- * declarando as colunas mortas via @Column(), lado a lado com as novas. Toda
- * leitura (`GET /clients`, `GET /reports/entities/clients/export`) gerava
- * `SELECT ..., segmento, ... FROM clients` e quebrava com
- * `QueryFailedError: column "segmento" does not exist` — reproduzido via
- * Playwright real na Central de Relatórios.
+ * Permanent guard: 20260719000010_RebuildClientsInCanonicalFormOrder
+ * physically removed segmento/endereco/responsavel/prioridade/cpf/cnpj from
+ * `clients`, but `ClientEntity` (entities.ts) was never updated — it kept
+ * declaring the dead columns via @Column(), side by side with the new ones. Every
+ * read (`GET /clients`, `GET /reports/entities/clients/export`) generated
+ * `SELECT ..., segmento, ... FROM clients` and broke with
+ * `QueryFailedError: column "segmento" does not exist` — reproduced via
+ * real Playwright in the Reports Center.
  *
- * Este teste fixa a lista de colunas físicas da migration como fonte de
- * verdade e falha se `ClientEntity` divergir para qualquer lado (coluna
- * fantasma OU coluna física sem mapeamento TypeORM).
+ * This test pins the migration's physical column list as the source of
+ * truth and fails if `ClientEntity` diverges in either direction (phantom
+ * column OR a physical column without a TypeORM mapping).
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000010_RebuildClientsInCanonicalFormOrder.ts'),
@@ -23,13 +23,13 @@ const migrationSrc = fs.readFileSync(
 );
 const entitiesSrc = fs.readFileSync(path.resolve(__dirname, 'entities.ts'), 'utf8');
 
-// Colunas renomeadas por migrations POSTERIORES à reconstrução canônica
-// (20260719000010) — a canônica é a fonte de verdade para a FORMA da
-// tabela, mas não para nomes de coluna renomeados depois dela.
-// 20260918000015_RenameNomePfNomeFantasiaOnClients renomeou nome_pf ->
-// individual_name e nome_fantasia -> trade_name (Cluster D,
+// Columns renamed by migrations LATER than the canonical rebuild
+// (20260719000010) — the canonical one is the source of truth for the table's SHAPE,
+// but not for column names renamed after it.
+// 20260918000015_RenameNomePfNomeFantasiaOnClients renamed nome_pf ->
+// individual_name and nome_fantasia -> trade_name (Cluster D,
 // naming-normalization mandate). 20260918000029_RenameObservacoesToNotesOnClients
-// renomeou observacoes -> notes (Cluster F, mesmo mandato).
+// renamed observacoes -> notes (Cluster F, same mandate).
 const RENAMED_AFTER_CANONICAL: Record<string, string> = {
   nome_pf: 'individual_name',
   nome_fantasia: 'trade_name',

@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `musicchat_automation_settings` — ordem já batia com
- * UpdateMusicChatAutomationSettingsDto, exceto updated_by (estava antes de
- * created_at/updated_at) — corrigido para o fim do bloco de auditoria.
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `musicchat_automation_settings` — the order already matched
+ * UpdateMusicChatAutomationSettingsDto, except updated_by (it was before
+ * created_at/updated_at) — fixed to the end of the audit block.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000021_RebuildMusicchatAutomationSettingsInCanonicalFormOrder.ts'),

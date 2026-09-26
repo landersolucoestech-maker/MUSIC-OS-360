@@ -1,30 +1,30 @@
 /**
  * bootstrap-tenant-zero.cli.ts
  *
- * Entry point de `npm run db:bootstrap:tenant-zero`. Separado de
- * `bootstrap-tenant-zero.ts` de propósito: aquele módulo é puro (só recebe
- * um `DataSource` já pronto) para ser testável em unit tests sem abrir
- * conexão nenhuma; este arquivo é quem importa `./datasource`
- * (que valida env/DATABASE_URL no import — ver datasource.ts:43), fala com
- * a Supabase Admin API quando um owner real é solicitado, e decide quando
- * abrir/fechar a conexão real.
+ * Entry point of `npm run db:bootstrap:tenant-zero`. Deliberately separate from
+ * `bootstrap-tenant-zero.ts`: that module is pure (it only receives
+ * an already prepared `DataSource`) so it can be unit tested without opening
+ * any connection; this file is the one that imports `./datasource`
+ * (which validates env/DATABASE_URL on import — see datasource.ts:43), talks to
+ * the Supabase Admin API when a real owner is requested, and decides when to
+ * open/close the real connection.
  *
- * Owner real (Parte 73): quando TENANT_ZERO_OWNER_EMAIL está definida,
- * cria (ou localiza, se já existir) um usuário Supabase Auth de verdade
- * para esse e-mail, com uma senha provisória forte e
- * `app_metadata.must_change_password = true`, e passa isso para a função
- * pura em vez do owner sintético. A senha provisória:
- *   - nunca é logada, commitada ou persistida por este script;
- *   - só é impressa em stdout quando rodando interativamente num terminal
- *     local (`process.stdout.isTTY`) — nunca em CI/execução não-interativa,
- *     onde o log seria um artefato persistente e visível a qualquer pessoa
- *     com acesso de leitura ao repositório;
- *   - EXCEÇÃO explícita e opt-in: TENANT_ZERO_PRINT_PASSWORD_I_ACCEPT_THE_RISK=yes
- *     força a impressão mesmo fora de TTY. Existe só para uma execução única
- *     e deliberada onde o operador já decidiu aceitar o risco (equivalente ao
- *     padrão CONFIRM_ROLLBACK=YES_I_KNOW_WHAT_I_AM_DOING de db-ops.ts) — a
- *     senha ainda expira no primeiro login (must_change_password=true), mas
- *     fica visível no log até então. Nunca usar isso como padrão operacional.
+ * Real owner (Part 73): when TENANT_ZERO_OWNER_EMAIL is defined,
+ * creates (or finds, if it already exists) a real Supabase Auth user
+ * for that e-mail, with a strong temporary password and
+ * `app_metadata.must_change_password = true`, and passes it to the pure
+ * function instead of the synthetic owner. The temporary password:
+ *   - is never logged, committed or persisted by this script;
+ *   - is only printed to stdout when running interactively in a local
+ *     terminal (`process.stdout.isTTY`) — never in CI/non-interactive runs,
+ *     where the log would be a persistent artifact visible to anyone
+ *     with read access to the repository;
+ *   - explicit, opt-in EXCEPTION: TENANT_ZERO_PRINT_PASSWORD_I_ACCEPT_THE_RISK=yes
+ *     forces printing even outside a TTY. It exists only for a single,
+ *     deliberate run where the operator has already decided to accept the risk (equivalent to the
+ *     CONFIRM_ROLLBACK=YES_I_KNOW_WHAT_I_AM_DOING pattern of db-ops.ts) — the
+ *     password still expires on the first login (must_change_password=true), but
+ *     stays visible in the log until then. Never use this as an operational default.
  */
 import 'reflect-metadata';
 import { createClient } from '@supabase/supabase-js';
@@ -43,9 +43,9 @@ async function resolveRealOwner(rawEmail: string): Promise<{ owner: RealOwnerInp
   }
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-  // Não existe getUserByEmail na Admin API — busca na primeira página de
-  // listUsers(). Adequado nesta fase (poucos usuários); se isso deixar de
-  // ser verdade, paginar aqui.
+  // There is no getUserByEmail in the Admin API — searches the first page of
+  // listUsers(). Adequate in this phase (few users); if that stops
+  // being true, paginate here.
   const { data: existing, error: listError } = await supabase.auth.admin.listUsers({ perPage: 200 });
   if (listError) {
     throw new Error(`Falha ao listar usuários Supabase Auth: ${listError.message}`);
@@ -55,9 +55,9 @@ async function resolveRealOwner(rawEmail: string): Promise<{ owner: RealOwnerInp
     return { owner: { authUserId: found.id, email, fullName: null }, created: false, provisionalPassword: null };
   }
 
-  // app_metadata (org_id/role/must_change_password) é setado depois, por
-  // applyOwnerAppMetadata() — só depois que o bootstrap relacional tiver
-  // sucesso (ver run()), nunca aqui.
+  // app_metadata (org_id/role/must_change_password) is set later, by
+  // applyOwnerAppMetadata() — only after the relational bootstrap has
+  // succeeded (see run()), never here.
   const provisionalPassword = generateStrongPassword();
   const { data: created, error: createError } = await supabase.auth.admin.createUser({
     email,
@@ -74,7 +74,7 @@ async function resolveRealOwner(rawEmail: string): Promise<{ owner: RealOwnerInp
 async function applyOwnerAppMetadata(authUserId: string, orgId: string): Promise<void> {
   const supabaseUrl = process.env['SUPABASE_URL'];
   const serviceRoleKey = process.env['SUPABASE_SERVICE_ROLE_KEY'];
-  if (!supabaseUrl || !serviceRoleKey) return; // já validado em resolveRealOwner; guarda por robustez
+  if (!supabaseUrl || !serviceRoleKey) return; // already validated in resolveRealOwner; guard for robustness
   const supabase = createClient(supabaseUrl, serviceRoleKey);
   const { error } = await supabase.auth.admin.updateUserById(authUserId, {
     app_metadata: { org_id: orgId, role: 'owner', must_change_password: true },
@@ -131,9 +131,9 @@ async function run(): Promise<void> {
     const result = await bootstrapTenantZero(AppDataSource, realOwner);
 
     if (realOwner) {
-      // app_metadata (org_id/role/must_change_password) é setado depois do
-      // bootstrap relacional ter sucesso — nunca deixa um usuário Supabase
-      // Auth "meio-configurado" apontando para um tenant que falhou ao ser criado.
+      // app_metadata (org_id/role/must_change_password) is set after the
+      // relational bootstrap succeeds — never leaves a "half-configured" Supabase
+      // Auth user pointing to a tenant that failed to be created.
       await applyOwnerAppMetadata(realOwner.authUserId, result.orgId);
     }
 

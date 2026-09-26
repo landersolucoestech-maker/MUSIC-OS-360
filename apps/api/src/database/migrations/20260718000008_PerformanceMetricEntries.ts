@@ -1,20 +1,20 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fase 13A / M8 — performance_metric_entries (Fase 12 §2.10; Fase 11 §24).
+ * Phase 13A / M8 — performance_metric_entries (Phase 12 §2.10; Phase 11 §24).
  *
- * REGRA VINCULANTE: métrica de desempenho NUNCA é transação financeira — esta
- * tabela não referencia a tabela de transações do domínio financeiro e nenhum
- * caminho de escrita cruzada existe (I12). Nunca gera receita.
+ * BINDING RULE: a performance metric is NEVER a financial transaction — this
+ * table does not reference the financial domain's transactions table and no
+ * cross-write path exists (I12). It never generates revenue.
  *
- * - alvo exatamente-um (fonograma | lançamento | artista) com FK composta;
- * - tipos de PERFIL (followers/subscribers/monthly_listeners) exigem artista;
- *   tipos de CONSUMO exigem fonograma ou lançamento;
- * - quantity = INCREMENTO do período (nunca acumulado);
- * - anti-duplicidade: UNIQUE parcial NULLS NOT DISTINCT sobre entradas ativas;
- * - correção NUNCA edita o núcleo nem apaga: novo registro + superseded_by_id
- *   no original (histórico preservado); DELETE físico bloqueado por trigger;
- * - RLS própria nesta migration (Fase 12 §14).
+ * - exactly-one target (phonogram | release | artist) with a composite FK;
+ * - PROFILE types (followers/subscribers/monthly_listeners) require an artist;
+ *   CONSUMPTION types require a phonogram or a release;
+ * - quantity = the period's INCREMENT (never cumulative);
+ * - anti-duplication: partial UNIQUE NULLS NOT DISTINCT over active entries;
+ * - a correction NEVER edits the core nor deletes: a new record + superseded_by_id
+ *   on the original (history preserved); physical DELETE blocked by a trigger;
+ * - its own RLS in this migration (Phase 12 §14).
  */
 export class PerformanceMetricEntries20260718000008 implements MigrationInterface {
   name = 'PerformanceMetricEntries20260718000008';
@@ -89,7 +89,7 @@ export class PerformanceMetricEntries20260718000008 implements MigrationInterfac
         ON "performance_metric_entries" ("tenant_id", "platform", "metric_type")
     `);
 
-    // Núcleo imutável + sem exclusão física: correção só via supersede.
+    // Immutable core + no physical deletion: corrections only via supersede.
     await queryRunner.query(`
       CREATE FUNCTION "fn_metric_immutability"() RETURNS trigger
       LANGUAGE plpgsql AS $$
@@ -123,7 +123,7 @@ export class PerformanceMetricEntries20260718000008 implements MigrationInterfac
         FOR EACH ROW EXECUTE FUNCTION "fn_metric_immutability"()
     `);
 
-    // RLS própria (padrão do projeto).
+    // Own RLS (project pattern).
     await queryRunner.query(`ALTER TABLE "performance_metric_entries" ENABLE ROW LEVEL SECURITY`);
     await queryRunner.query(`ALTER TABLE "performance_metric_entries" FORCE ROW LEVEL SECURITY`);
     await queryRunner.query(`

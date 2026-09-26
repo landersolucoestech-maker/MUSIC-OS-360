@@ -3,25 +3,25 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20260824000001_AddBillingPlanIntegrationEntitlements
  *
- * Entitlements de integração por plano, na TABELA CANÔNICA de planos.
+ * Per-plan integration entitlements, in the CANONICAL plans TABLE.
  *
- * POR QUE NÃO `billing_plans.features`:
- * `features` é, por contrato deste projeto, uma LISTA DE RÓTULOS exibida no card
- * do plano — "nunca um mapa de flags" (ver comentário em BillingPlanEntity). O
- * admin form, billing e landing fazem `.map/.push/.filter` nela, e um `{}`
- * persistido ali já causou o bug real "features.map is not a function"
- * (Parte 84), com normalização defensiva em BillingPlansService.list()/get().
- * Guardar `{integrations:[…]}` em `features` reintroduziria exatamente esse bug.
+ * WHY NOT `billing_plans.features`:
+ * `features` is, by this project's contract, a LIST OF LABELS displayed on the
+ * plan card — "never a map of flags" (see the comment in BillingPlanEntity). The
+ * admin form, billing and landing do `.map/.push/.filter` on it, and a persisted `{}`
+ * there already caused the real bug "features.map is not a function"
+ * (Part 84), with defensive normalization in BillingPlansService.list()/get().
+ * Storing `{integrations:[…]}` in `features` would reintroduce exactly that bug.
  *
- * POR QUE NÃO UMA TABELA NOVA:
- * Seria um segundo sistema de planos — proibido. Esta coluna vive na mesma
- * tabela, é lida/escrita pelo mesmo serviço de planos e participa do mesmo
- * ciclo de vida. É a menor evolução de schema que resolve o requisito.
+ * WHY NOT A NEW TABLE:
+ * It would be a second plans system — forbidden. This column lives in the same
+ * table, is read/written by the same plans service and takes part in the same
+ * lifecycle. It is the smallest schema evolution that solves the requirement.
  *
- * Formato: lista DINÂMICA de slugs comerciais.
+ * Format: a DYNAMIC list of commercial slugs.
  *   billing_plans.integrations = ["docusign","whatsapp"]
- * Sem chave por provedor, sem nome de plano em código — adicionar uma
- * integração comercial nova não exige schema nem código.
+ * No per-provider key, no plan name in code — adding a new commercial
+ * integration requires neither schema nor code.
  */
 export class AddBillingPlanIntegrationEntitlements20260824000001 implements MigrationInterface {
   name = 'AddBillingPlanIntegrationEntitlements20260824000001';
@@ -32,8 +32,8 @@ export class AddBillingPlanIntegrationEntitlements20260824000001 implements Migr
         ADD COLUMN IF NOT EXISTS "integrations" jsonb NOT NULL DEFAULT '[]'::jsonb
     `);
 
-    // Estado inicial coerente com os módulos que cada plano já anuncia.
-    // Só provedores COMMERCIAL com adapter real entram — nada aspiracional.
+    // Initial state coherent with the modules each plan already advertises.
+    // Only COMMERCIAL providers with a real adapter go in — nothing aspirational.
     const seed: Array<[string, string[]]> = [
       ['starter',      []],
       ['professional', ['autentique', 'whatsapp', 'google_ads']],

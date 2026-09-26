@@ -1,22 +1,22 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `artists` na ordem canônica do formulário real
- * (ArtistaFormModal / artist-form.definition.ts) — auditoria 2026-07-19.
+ * Physical rebuild of `artists` in the canonical order of the real form
+ * (ArtistaFormModal / artist-form.definition.ts) — 2026-07-19 audit.
  *
- * PostgreSQL não permite ALTER COLUMN POSITION; a única forma de mudar a
- * ordem física é criar uma tabela substituta com a ordem correta, copiar os
- * dados coluna a coluna (nunca `SELECT *`), trocar os nomes numa transação e
- * recriar toda a cadeia de dependências (constraints, índices, RLS, policies,
- * grants, owner, e as FKs que 8 outras tabelas mantêm apontando para
+ * PostgreSQL does not allow ALTER COLUMN POSITION; the only way to change the
+ * physical order is to create a replacement table with the correct order, copy the
+ * data column by column (never `SELECT *`), swap the names in a transaction and
+ * recreate the whole dependency chain (constraints, indexes, RLS, policies,
+ * grants, owner, and the FKs that 8 other tables keep pointing to
  * `artists`).
  *
- * Ordem canônica (id/tenant_id → campos funcionais na ordem exata do
- * formulário, com foto/avatar como primeiro campo funcional → relação
- * técnica não exibida (contrato_id) → campos legados/pass-through não
- * visíveis no formulário atual → controle (metadata) → auditoria → soft
- * delete). `org_slug` é removida nesta migration: órfã comprovada (nunca lida
- * nem escrita por nenhum fluxo real — grep exaustivo em apps/api e apps/web).
+ * Canonical order (id/tenant_id → functional fields in the exact form
+ * order, with photo/avatar as the first functional field → undisplayed technical
+ * relation (contrato_id) → legacy/pass-through fields not
+ * visible in the current form → control (metadata) → auditing → soft
+ * delete). `org_slug` is removed in this migration: a proven orphan (never read
+ * nor written by any real flow — exhaustive grep in apps/api and apps/web).
  */
 export class RebuildArtistsInCanonicalFormOrder20260719000001 implements MigrationInterface {
   name = 'RebuildArtistsInCanonicalFormOrder20260719000001';
@@ -102,7 +102,7 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
     deleted_at                            timestamp
   `;
 
-  // Colunas na ordem ORIGINAL — usadas para o INSERT...SELECT (nunca SELECT *).
+  // Columns in the ORIGINAL order — used for the INSERT...SELECT (never SELECT *).
   private readonly copyColumns = [
     'id', 'tenant_id', 'foto_url', 'nome_artistico', 'genero_musical', 'especialidades',
     'documentos_pessoais_url', 'presskit_url', 'observacoes', 'nome_civil', 'data_nascimento',
@@ -124,7 +124,7 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
   ].join(', ');
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // 0. Validação fail-fast: org_slug precisa estar genuinamente vazia antes de remover.
+    // 0. Fail-fast validation: org_slug must be genuinely empty before removal.
     const [{ non_null }] = await queryRunner.query(`SELECT count(org_slug)::int AS non_null FROM artists`);
     if (Number(non_null) > 0) {
       throw new Error(
@@ -134,10 +134,10 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
     }
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM artists`);
 
-    // 1. Tabela substituta com a ordem canônica.
+    // 1. Replacement table with the canonical order.
     await queryRunner.query(`CREATE TABLE artists_new (${this.newColumns})`);
 
-    // 2. Copia os dados coluna a coluna (nunca SELECT *).
+    // 2. Copies the data column by column (never SELECT *).
     await queryRunner.query(`INSERT INTO artists_new (${this.copyColumns}) SELECT ${this.copyColumns} FROM artists`);
 
     // 3. Valida contagem antes de trocar.
@@ -149,10 +149,10 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
       );
     }
 
-    // 4. Constraints/índices na tabela nova — nomes com sufixo temporário porque
-    // nomes de índice/constraint são únicos por SCHEMA no Postgres (não por
-    // tabela), e a tabela antiga ainda existe neste ponto. Renomeados para os
-    // nomes canônicos (sem sufixo) logo após o swap no passo 6.
+    // 4. Constraints/indexes on the new table — names with a temporary suffix because
+    // index/constraint names are unique per SCHEMA in Postgres (not per
+    // table), and the old table still exists at this point. Renamed to the
+    // canonical names (without suffix) right after the swap in step 6.
     await queryRunner.query(`ALTER TABLE artists_new ADD CONSTRAINT artists_new_pkey PRIMARY KEY (id)`);
     await queryRunner.query(`ALTER TABLE artists_new ADD CONSTRAINT uq_artists_tenant_id_id_new UNIQUE (tenant_id, id)`);
     await queryRunner.query(`CREATE INDEX idx_artists_tenant_id_new ON artists_new (tenant_id)`);
@@ -162,8 +162,8 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
     await queryRunner.query(`CREATE INDEX idx_artists_status_new ON artists_new (tenant_id, status) WHERE (deleted_at IS NULL)`);
     await queryRunner.query(`CREATE INDEX idx_artists_name_trgm_new ON artists_new USING gin (nome_artistico gin_trgm_ops)`);
 
-    // 5. Drop das FKs de outras tabelas que apontam para artists — precisam ser
-    // recriadas depois do swap (constraints referenciam o OID da relação, não o nome).
+    // 5. Drop the FKs of other tables pointing to artists — they must be
+    // recreated after the swap (constraints reference the relation's OID, not its name).
     await queryRunner.query(`ALTER TABLE artist_platform_profiles DROP CONSTRAINT "FK_artist_platform_profiles_artist"`);
     await queryRunner.query(`ALTER TABLE works DROP CONSTRAINT fk_works_artista_id`);
     await queryRunner.query(`ALTER TABLE phonograms DROP CONSTRAINT fk_phonograms_artista_id`);
@@ -173,8 +173,8 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
     await queryRunner.query(`ALTER TABLE transaction_allocations DROP CONSTRAINT fk_txalloc_artist`);
     await queryRunner.query(`ALTER TABLE performance_metric_entries DROP CONSTRAINT fk_metric_artist`);
 
-    // 6. Swap (rename), sem CASCADE. Libera os nomes canônicos renomeando primeiro
-    // os da tabela antiga, depois promove os da tabela nova para esses nomes.
+    // 6. Swap (rename), without CASCADE. Frees the canonical names by first renaming
+    // those of the old table, then promotes those of the new table to these names.
     await queryRunner.query(`ALTER TABLE artists RENAME TO artists_old`);
     await queryRunner.query(`ALTER TABLE artists_old RENAME CONSTRAINT artists_pkey TO artists_old_pkey`);
     await queryRunner.query(`ALTER TABLE artists_old RENAME CONSTRAINT uq_artists_tenant_id_id TO uq_artists_tenant_id_id_old`);
@@ -195,7 +195,7 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
     await queryRunner.query(`ALTER INDEX idx_artists_status_new RENAME TO idx_artists_status`);
     await queryRunner.query(`ALTER INDEX idx_artists_name_trgm_new RENAME TO idx_artists_name_trgm`);
 
-    // 7. Recria as FKs das 8 tabelas dependentes, agora apontando para a nova artists.
+    // 7. Recreates the FKs of the 8 dependent tables, now pointing to the new artists.
     await queryRunner.query(`ALTER TABLE artist_platform_profiles ADD CONSTRAINT "FK_artist_platform_profiles_artist" FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE`);
     await queryRunner.query(`ALTER TABLE works ADD CONSTRAINT fk_works_artista_id FOREIGN KEY (artista_id) REFERENCES artists(id) ON DELETE SET NULL`);
     await queryRunner.query(`ALTER TABLE phonograms ADD CONSTRAINT fk_phonograms_artista_id FOREIGN KEY (artista_id) REFERENCES artists(id) ON DELETE SET NULL`);
@@ -205,7 +205,7 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
     await queryRunner.query(`ALTER TABLE transaction_allocations ADD CONSTRAINT fk_txalloc_artist FOREIGN KEY (tenant_id, artist_id) REFERENCES artists(tenant_id, id)`);
     await queryRunner.query(`ALTER TABLE performance_metric_entries ADD CONSTRAINT fk_metric_artist FOREIGN KEY (tenant_id, artist_id) REFERENCES artists(tenant_id, id)`);
 
-    // 8. RLS + policies (idênticas às da tabela antiga).
+    // 8. RLS + policies (identical to the old table's).
     await queryRunner.query(`ALTER TABLE artists ENABLE ROW LEVEL SECURITY`);
     await queryRunner.query(`ALTER TABLE artists FORCE ROW LEVEL SECURITY`);
     await queryRunner.query(`
@@ -219,18 +219,18 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
         USING (tenant_id = private_get_tenant_id()) WITH CHECK (tenant_id = private_get_tenant_id())
     `);
 
-    // 9. Owner + grants idênticos aos da tabela antiga.
+    // 9. Owner + grants identical to the old table's.
     await queryRunner.query(`ALTER TABLE artists OWNER TO musicos_migrator`);
     await queryRunner.query(`GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON artists TO musicos_migrator`);
 
-    // 10. Remove a tabela antiga só depois de tudo validado e recriado.
+    // 10. Removes the old table only after everything was validated and recreated.
     await queryRunner.query(`DROP TABLE artists_old`);
 
-    // 11. Estatísticas atualizadas para o novo layout físico.
+    // 11. Statistics updated for the new physical layout.
     await queryRunner.query(`ANALYZE artists`);
   }
 
-  // Ordem/tipos ORIGINAIS (pré-migration) — para reverter de forma honesta.
+  // ORIGINAL (pre-migration) order/types — to revert honestly.
   private readonly originalColumns = `
     id                                    uuid NOT NULL DEFAULT gen_random_uuid(),
     tenant_id                             uuid NOT NULL,
@@ -317,7 +317,7 @@ export class RebuildArtistsInCanonicalFormOrder20260719000001 implements Migrati
     const [{ total }] = await queryRunner.query(`SELECT count(*)::int AS total FROM artists`);
 
     await queryRunner.query(`CREATE TABLE artists_restore (${this.originalColumns})`);
-    // org_slug não existe mais em `artists` (removida no up()) — sempre NULL na reversão.
+    // org_slug no longer exists in `artists` (removed in up()) — always NULL on reversal.
     await queryRunner.query(`INSERT INTO artists_restore (${this.copyColumns}) SELECT ${this.copyColumns} FROM artists`);
 
     const [{ c: restoredCount }] = await queryRunner.query(`SELECT count(*)::int AS c FROM artists_restore`);

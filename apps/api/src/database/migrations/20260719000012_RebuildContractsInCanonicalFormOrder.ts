@@ -1,29 +1,29 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `contracts` — auditoria 2026-07-19. Mesmo padrão
- * das anteriores. Reconstrução pura de ordem (sem remoção de colunas): TODAS
- * as colunas têm escritor real comprovado — `artista_id`/`cliente_id`/
- * `exclusivo`/`autentique_doc_id` não têm campo visível em NENHUM dos dois
- * formulários ativos (ContratoWizard.tsx — fluxo principal em Contratos.tsx;
- * ContratoFormModal.tsx — fluxo usado em RegistroMusicas.tsx), mas são
- * aceitos por `CreateContractDto`/persistidos por `ContractsService` e
- * `artista_id` é escrito também por `contract-events.handler.ts` — DTO-
- * suportados e alcançáveis via API real, mesmo critério de
- * `projects.orcamento`/`audiovisual_projects.slug` (legado/reservado,
- * mantidos).
+ * Physical rebuild of `contracts` — 2026-07-19 audit. Same pattern
+ * as the previous ones. A pure order rebuild (no column removal): ALL
+ * columns have a proven real writer — `artista_id`/`cliente_id`/
+ * `exclusivo`/`autentique_doc_id` have no visible field in EITHER of the two
+ * active forms (ContratoWizard.tsx — main flow in Contratos.tsx;
+ * ContratoFormModal.tsx — flow used in RegistroMusicas.tsx), but they are
+ * accepted by `CreateContractDto`/persisted by `ContractsService` and
+ * `artista_id` is also written by `contract-events.handler.ts` — DTO-
+ * supported and reachable via the real API, same criterion as
+ * `projects.orcamento`/`audiovisual_projects.slug` (legacy/reserved,
+ * kept).
  *
- * Ordem real combinando os dois formulários: `template_id` (1º passo do
- * ContratoWizard) → titulo/tipo/status (revisão final do wizard) →
- * artista_id/cliente_id (relações técnicas, sem picker ativo) →
- * lancamento_id (campo real em ContratoFormModal) → data_inicio/data_fim →
- * valor (campo real "Valor do Contrato/Serviço" em ContratoFormModal) →
- * exclusivo (legado/reservado) → observacoes → arquivo_url (real em
- * ContratoFormModal) → autentique_doc_id (legado/reservado) →
- * signing_platform (real, passo "Signatários" do wizard) → versoes (real,
- * escrita por ContratoFormModal ao trocar o arquivo) → signers (real, ambos
- * os formulários) → controle/auditoria. `signers`/`template_id` estavam após
- * created_by/updated_by (migrations posteriores) — corrigido.
+ * Real order combining the two forms: `template_id` (ContratoWizard's 1st
+ * step) → titulo/tipo/status (the wizard's final review) →
+ * artista_id/cliente_id (technical relations, no active picker) →
+ * lancamento_id (real field in ContratoFormModal) → data_inicio/data_fim →
+ * valor (the real "Valor do Contrato/Serviço" field in ContratoFormModal) →
+ * exclusivo (legacy/reserved) → observacoes → arquivo_url (real in
+ * ContratoFormModal) → autentique_doc_id (legacy/reserved) →
+ * signing_platform (real, the wizard's "Signatários" step) → versoes (real,
+ * written by ContratoFormModal when replacing the file) → signers (real, both
+ * forms) → control/auditing. `signers`/`template_id` were after
+ * created_by/updated_by (later migrations) — fixed.
  */
 export class RebuildContractsInCanonicalFormOrder20260719000012 implements MigrationInterface {
   name = 'RebuildContractsInCanonicalFormOrder20260719000012';

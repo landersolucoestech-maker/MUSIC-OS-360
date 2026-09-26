@@ -3,27 +3,27 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 /**
  * 20260824000000_AddIntegrationClassificationAndEntitlement
  *
- * Wave 2026-08-24: separa conceitos que estavam colapsados no catálogo.
+ * Wave 2026-08-24: separates concepts that were collapsed in the catalog.
  *
- * ADITIVA — nada é apagado. Os 4 provedores reclassificados mantêm linha,
- * credenciais e histórico; apenas deixam de ser catálogo comercial.
+ * ADDITIVE — nothing is deleted. The 4 reclassified providers keep their row,
+ * credentials and history; they only stop being part of the commercial catalog.
  *
  * 1. `classification` — COMMERCIAL | INTERNAL_PLATFORM | PLATFORM_BILLING.
- *    "Futuro" NÃO é classificação: é COMMERCIAL + technical=planned +
- *    publication=coming_soon (ex.: ONErpm).
+ *    "Future" is NOT a classification: it is COMMERCIAL + technical=planned +
+ *    publication=coming_soon (e.g. ONErpm).
  *
- * 2. `technical_state` — estado operacional do adapter, governável pelo admin
- *    (planned…ready…retired). Distinto da capability em código (existe adapter?),
- *    que continua vetando READY desonesto.
+ * 2. `technical_state` — the adapter's operational state, governable by the admin
+ *    (planned…ready…retired). Distinct from the in-code capability (does an adapter exist?),
+ *    which keeps vetoing a dishonest READY.
  *
- * 3. `publication_state` — passa de draft/published/retired para o rollout
- *    comercial real: hidden | coming_soon | beta | available |
+ * 3. `publication_state` — goes from draft/published/retired to the real commercial
+ *    rollout: hidden | coming_soon | beta | available |
  *    temporarily_unavailable.
  *
- * ENTITLEMENT NÃO ENTRA AQUI: a lista de integrações por plano vive em
- * `billing_plans.features.integrations` (mecanismo canônico já existente).
- * Nenhuma tabela nem coluna de entitlement é criada — a especificação proíbe um
- * segundo sistema de planos.
+ * ENTITLEMENT IS NOT PART OF THIS: the list of integrations per plan lives in
+ * `billing_plans.features.integrations` (the already existing canonical mechanism).
+ * No entitlement table or column is created — the specification forbids a
+ * second plans system.
  */
 export class AddIntegrationClassificationAndEntitlement20260824000000 implements MigrationInterface {
   name = 'AddIntegrationClassificationAndEntitlement20260824000000';
@@ -35,7 +35,7 @@ export class AddIntegrationClassificationAndEntitlement20260824000000 implements
         ADD COLUMN IF NOT EXISTS "technical_state" varchar(32) NOT NULL DEFAULT 'planned'
     `);
 
-    // publication_state ganha o vocabulário de rollout comercial.
+    // publication_state gains the commercial rollout vocabulary.
     await queryRunner.query(`
       ALTER TABLE "platform_integrations"
         DROP CONSTRAINT IF EXISTS "platform_integrations_publication_state_chk"
@@ -76,14 +76,14 @@ export class AddIntegrationClassificationAndEntitlement20260824000000 implements
         ON "platform_integrations" ("classification")
     `);
 
-    // ── Categoria para distribuidoras (novos provedores comerciais) ──────────
+    // ── Category for distributors (new commercial providers) ────────────────────
     await queryRunner.query(`
       INSERT INTO "integration_categories" ("slug","name","display_order")
       VALUES ('distribution','Distribuição Digital',55)
       ON CONFLICT ("slug") DO NOTHING
     `);
 
-    // ── B/E: reclassificação (mantêm linha, credenciais e histórico) ─────────
+    // ── B/E: reclassification (they keep their row, credentials and history) ───
     await queryRunner.query(`
       UPDATE "platform_integrations"
          SET "classification"='internal_platform', "technical_state"='ready',
@@ -103,17 +103,17 @@ export class AddIntegrationClassificationAndEntitlement20260824000000 implements
        WHERE "provider_key"='stripe'
     `);
 
-    // ── C: estado técnico honesto, por evidência de adapter real ────────────
+    // ── C: honest technical state, by evidence of a real adapter ──────────────
     const technical: Array<[string, string, string]> = [
       // provider,        technical_state,      publication_state
       ['autentique',      'ready',              'available'],
-      // DocuSign tem adapter real, mas sem E2E live comprovado contra a conta.
+      // DocuSign has a real adapter, but no live E2E proven against the account.
       ['docusign',        'homologating',       'beta'],
       ['abramus',         'ready',              'available'],
       ['google_ads',      'ready',              'available'],
       ['meta_business',   'ready',              'available'],
       ['whatsapp',        'ready',              'available'],
-      // Sem adapter em apps/api/src — Connect precisa ficar impossível.
+      // No adapter in apps/api/src — Connect must stay impossible.
       ['clicksign',       'awaiting_provider',  'coming_soon'],
       ['ubc',             'awaiting_provider',  'coming_soon'],
       ['ecad',            'awaiting_provider',  'coming_soon'],
@@ -128,7 +128,7 @@ export class AddIntegrationClassificationAndEntitlement20260824000000 implements
       );
     }
 
-    // ── Bootstrap comercial: provedores previstos, ainda sem adapter ─────────
+    // ── Commercial bootstrap: planned providers, still without an adapter ───────
     const bootstrap: Array<[string, string, string, string]> = [
       // provider_key,  name,                   category_slug,  connection_kind
       ['spotify_ads',   'Spotify Ads',          'marketing',    'oauth'],
@@ -155,8 +155,8 @@ export class AddIntegrationClassificationAndEntitlement20260824000000 implements
       );
     }
 
-    // Comerciais em coming_soon continuam visíveis (Em breve) — VIEW aberta,
-    // USE fechada. Quem veta o Connect é technical_state, não a audiência.
+    // Commercial providers in coming_soon stay visible ("Em breve") — VIEW open,
+    // USE closed. What vetoes Connect is technical_state, not the audience.
     await queryRunner.query(`
       UPDATE "platform_integrations"
          SET "view_audience"='{"mode":"all","plans":[],"tenantIds":[]}'::jsonb, "updated_at"=now()

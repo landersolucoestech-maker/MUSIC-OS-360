@@ -23,18 +23,18 @@ describe('HardenSupabaseDataApiSurface20260620000006', () => {
       'REVOKE ALL ON FUNCTION public.private_get_tenant_id() FROM PUBLIC, anon',
     );
 
-    // A migration TEM uma policy legítima com USING (true): migrator_admin_all,
-    // em public.musicos360_migrations, escopada exclusivamente ao role
-    // musicos_migrator (bookkeeping do próprio TypeORM — sem ela, FORCE RLS
-    // bloquearia a migration seguinte de se registrar). Um "not.toMatch"
-    // genérico para USING(true) daria falso-negativo aqui; a invariante real
-    // de segurança é que USING(true) NUNCA aparece associado a nenhum role
-    // que sirva tráfego de aplicação (authenticated/anon/musicos_app/
-    // service_role/PUBLIC) — só ao role administrativo do migrator.
-    // Extrai cada statement CREATE POLICY inteiro (até o ';' que o fecha) —
-    // não "até a próxima CREATE POLICY", que vazaria statements não
-    // relacionados (ex.: os GRANT EXECUTE ... TO authenticated do bloco de
-    // hardening dos resolvers, que não têm relação com esta policy).
+    // The migration HAS one legitimate policy with USING (true): migrator_admin_all,
+    // on public.musicos360_migrations, scoped exclusively to the
+    // musicos_migrator role (TypeORM's own bookkeeping — without it, FORCE RLS
+    // would block the next migration from registering itself). A generic
+    // "not.toMatch" for USING(true) would give a false negative here; the real
+    // security invariant is that USING(true) NEVER appears associated with any role
+    // that serves application traffic (authenticated/anon/musicos_app/
+    // service_role/PUBLIC) — only with the migrator's administrative role.
+    // Extracts each whole CREATE POLICY statement (up to the ';' that closes it) —
+    // not "up to the next CREATE POLICY", which would leak unrelated
+    // statements (e.g. the GRANT EXECUTE ... TO authenticated of the resolvers'
+    // hardening block, which are unrelated to this policy).
     const trueUsingBlocks = (sql.match(/CREATE POLICY[\s\S]*?;/g) ?? [])
       .filter((block) => /USING\s*\(\s*true\s*\)/i.test(block));
 

@@ -1,19 +1,19 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Fase 5 / C6 — corrige a contaminação entre campos financeiros (detentor,
- * artista_externo, pagador, destinatario) e os campos de titularidade usados
- * pela submissão ABRAMUS/ECAD (titular_nome, percentual).
+ * Phase 5 / C6 — fixes the contamination between financial fields (detentor,
+ * artista_externo, pagador, destinatario) and the ownership fields used
+ * by the ABRAMUS/ECAD submission (titular_nome, percentual).
  *
- * `titular_nome`/`percentual` eram NOT NULL sem default, o que forçava
- * shares.service.ts::create() a derivar `titular_nome` de um campo financeiro
- * não relacionado (ou usar o literal 'N/D') sempre que o formulário
- * financeiro (SharePendenteFormModal) criava uma share sem dado registral.
- * Isso contaminava o payload de submissão a sociedades de direitos autorais.
+ * `titular_nome`/`percentual` were NOT NULL without a default, which forced
+ * shares.service.ts::create() to derive `titular_nome` from an unrelated financial
+ * field (or use the literal 'N/D') whenever the financial
+ * form (SharePendenteFormModal) created a share without registration data.
+ * That contaminated the submission payload sent to copyright societies.
  *
- * Esta migration apenas relaxa a constraint NOT NULL — não altera tipo,
- * precision, scale nem qualquer outro comportamento da coluna `percentual`
- * (numeric(7,4), sem transformer, retornado como string pelo TypeORM).
+ * This migration only relaxes the NOT NULL constraint — it does not change the type,
+ * precision, scale nor any other behavior of the `percentual` column
+ * (numeric(7,4), no transformer, returned as a string by TypeORM).
  */
 export class MakeShareRegistryFieldsNullable20260715000001 implements MigrationInterface {
   name = 'MakeShareRegistryFieldsNullable20260715000001';

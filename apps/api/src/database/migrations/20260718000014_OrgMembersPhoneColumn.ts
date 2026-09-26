@@ -1,15 +1,15 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Sincronização formulário ↔ banco: Usuários (Configurações).
+ * Form ↔ database sync: Users (Settings).
  *
- * Achado confirmado (auditoria 2026-07-18): UsuarioFormModal.tsx envia
+ * Confirmed finding (2026-07-18 audit): UsuarioFormModal.tsx sends
  * full_name/phone/cargo via useUsuarios() -> storage.update("usuarios", ...)
- * -> PATCH /users/:id -> UpdateUserDto. `phone` nunca teve coluna nem campo
- * de DTO — a atualização de telefone sempre falhava (whitelist) ou era
- * descartada. `full_name` e `cargo` foram corrigidos apenas no
- * hook/DTO (full_name -> fullName já existente; cargo -> role já existente,
- * dual-write de role_id); nenhum dos dois precisa de coluna nova.
+ * -> PATCH /users/:id -> UpdateUserDto. `phone` never had a column nor a DTO
+ * field — updating the phone always failed (whitelist) or was
+ * discarded. `full_name` and `cargo` were fixed only in the
+ * hook/DTO (full_name -> the already existing fullName; cargo -> the already existing role,
+ * dual-write of role_id); neither needs a new column.
  */
 export class OrgMembersPhoneColumn20260718000014 implements MigrationInterface {
   name = 'OrgMembersPhoneColumn20260718000014';

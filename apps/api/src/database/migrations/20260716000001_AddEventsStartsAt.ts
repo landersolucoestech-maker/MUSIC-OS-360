@@ -1,12 +1,12 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * C3 / Fase E1 — expansão (expand-and-contract) de events.data → events.starts_at.
+ * C3 / Phase E1 — expansion (expand-and-contract) of events.data → events.starts_at.
  *
- * Adiciona a coluna canônica futura `starts_at` com a MESMA semântica física da
- * coluna legada `data` (timestamp without time zone, precisão padrão 6), porém
- * nullable nesta fase — o NOT NULL só chega na fase E5, após dual-write (E2) e
- * backfill abortivo (E3). Nenhum dado é copiado aqui e `data` permanece intacta.
+ * Adds the future canonical column `starts_at` with the SAME physical semantics as the
+ * legacy `data` column (timestamp without time zone, default precision 6), but
+ * nullable in this phase — NOT NULL only arrives in phase E5, after the dual-write (E2) and
+ * the aborting backfill (E3). No data is copied here and `data` stays intact.
  */
 export class AddEventsStartsAt20260716000001 implements MigrationInterface {
   name = 'AddEventsStartsAt20260716000001';

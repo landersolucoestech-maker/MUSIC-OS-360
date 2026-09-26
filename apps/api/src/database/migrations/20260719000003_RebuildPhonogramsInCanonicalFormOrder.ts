@@ -1,18 +1,18 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
- * Reconstrução física de `phonograms` na ordem canônica do formulário real
- * (FonogramaFormModal) — auditoria 2026-07-19. Mesmo padrão de
+ * Physical rebuild of `phonograms` in the canonical order of the real form
+ * (FonogramaFormModal) — 2026-07-19 audit. Same pattern as
  * RebuildWorksInCanonicalFormOrder20260719000002.
  *
- * Ordem visual real: "Título da Obra Vinculada" (obra_id) é a primeira seção
- * do form; `titulo`/`observacoes` não têm input próprio visível (titulo é
- * herdado da obra vinculada ou preenchido só programaticamente) mas são
- * campos de identidade do registro, posicionados logo após a seção a que
- * pertencem. "Participação" (produtor/intérprete/músico — `participacao`
- * jsonb) e "Upload de Áudio" (`arquivo_audio` jsonb) são seções reais e
- * visíveis. `compositores`/`interpretes`/`produtores` (texto livre) são
- * campos legados derivados, sem input próprio — vão para o bloco legado.
+ * Real visual order: "Título da Obra Vinculada" (obra_id) is the first section
+ * of the form; `titulo`/`observacoes` have no visible input of their own (titulo is
+ * inherited from the linked work or filled only programmatically) but they are
+ * identity fields of the record, positioned right after the section they
+ * belong to. "Participação" (producer/performer/musician — `participacao`
+ * jsonb) and "Upload de Áudio" (`arquivo_audio` jsonb) are real, visible
+ * sections. `compositores`/`interpretes`/`produtores` (free text) are
+ * derived legacy fields without their own input — they go to the legacy block.
  */
 export class RebuildPhonogramsInCanonicalFormOrder20260719000003 implements MigrationInterface {
   name = 'RebuildPhonogramsInCanonicalFormOrder20260719000003';
@@ -176,7 +176,7 @@ export class RebuildPhonogramsInCanonicalFormOrder20260719000003 implements Migr
     await queryRunner.query(`ANALYZE phonograms`);
   }
 
-  // Ordem/tipos ORIGINAIS (pré-migration) — para reverter de forma honesta.
+  // ORIGINAL (pre-migration) order/types — to revert honestly.
   private readonly originalColumns = `
     id                                  uuid NOT NULL DEFAULT gen_random_uuid(),
     tenant_id                           uuid NOT NULL,

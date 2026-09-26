@@ -2,11 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `contracts` combinando os dois formulários reais (ContratoWizard.tsx —
- * fluxo principal; ContratoFormModal.tsx — fluxo em RegistroMusicas.tsx).
- * Reconstrução pura de ordem — nenhuma coluna removida (todas têm escritor
- * real comprovado, direta ou via DTO/automação).
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `contracts` combining the two real forms (ContratoWizard.tsx —
+ * main flow; ContratoFormModal.tsx — flow in RegistroMusicas.tsx).
+ * A pure order rebuild — no column removed (all have a proven real
+ * writer, directly or via DTO/automation).
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000012_RebuildContractsInCanonicalFormOrder.ts'),

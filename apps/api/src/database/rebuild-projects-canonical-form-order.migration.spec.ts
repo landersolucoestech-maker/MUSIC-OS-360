@@ -2,10 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Guarda permanente (auditoria 2026-07-19): reconstrução física de
- * `projects` na ordem do formulário real (ProjetoFormModal) — "Tipo de
- * Lançamento" é a primeira seção real, seguida de "Nome do EP/Álbum".
- * `data_inicio`/`data_fim` são removidas por serem órfãs comprovadas.
+ * Permanent guard (2026-07-19 audit): physical rebuild of
+ * `projects` in the real form's order (ProjetoFormModal) —
+ * "Tipo de Lançamento" is the first real section, followed by "Nome do EP/Álbum".
+ * `data_inicio`/`data_fim` are removed as proven orphans.
  */
 const migrationSrc = fs.readFileSync(
   path.resolve(__dirname, 'migrations/20260719000005_RebuildProjectsInCanonicalFormOrder.ts'),
