@@ -61,7 +61,7 @@ function buildPolicy(opts: {
 const CTX = { tenantId: 'tenant-1', userId: 'user-1', planSlug: 'enterprise' };
 const CONNECTED = [{ provider: 'docusign', metadata: {}, expires_at: null }];
 
-describe('Entitlement por plano — composição', () => {
+describe('Per-plan entitlement — composition', () => {
   it('ready + entitled + conectado → canUse', async () => {
     const [r] = await buildPolicy({ oauth: CONNECTED }).resolveAll(CTX);
     expect(r.entitled).toBe(true);
@@ -69,14 +69,14 @@ describe('Entitlement por plano — composição', () => {
     expect(r.reasonCode).toBe(IntegrationReasonCode.CONNECTED);
   });
 
-  it('ready + entitled + NÃO conectado → canConnect, sem canUse', async () => {
+  it('ready + entitled + NOT connected → canConnect, no canUse', async () => {
     const [r] = await buildPolicy().resolveAll(CTX);
     expect(r.canConnect).toBe(true);
     expect(r.canUse).toBe(false);
     expect(r.reasonCode).toBe(IntegrationReasonCode.NOT_CONNECTED);
   });
 
-  it('VIEW permitido + SEM entitlement → VISÍVEL e bloqueado (nunca escondido)', async () => {
+  it('VIEW allowed + NO entitlement → VISIBLE and blocked (never hidden)', async () => {
     const [r] = await buildPolicy({ plans: [{ slug: 'enterprise', integrations: [] }] }).resolveAll(CTX);
     expect(r.canDiscover).toBe(true);        // continua no catálogo
     expect(r.entitled).toBe(false);
@@ -85,7 +85,7 @@ describe('Entitlement por plano — composição', () => {
     expect(r.reasonCode).toBe(IntegrationReasonCode.PLAN_NOT_INCLUDED);
   });
 
-  it('technical NÃO pronto + entitled → sem Connect (entitlement não cria implementação)', async () => {
+  it('technical NOT ready + entitled → no Connect (entitlement does not create an implementation)', async () => {
     const [r] = await buildPolicy({
       rows: [row({ provider_key: 'clicksign', technical_state: IntegrationTechnicalState.AWAITING_PROVIDER,
                    publication_state: IntegrationPublicationState.COMING_SOON })],
@@ -97,7 +97,7 @@ describe('Entitlement por plano — composição', () => {
     expect(r.reasonCode).toBe(IntegrationReasonCode.COMING_SOON);
   });
 
-  it('upgrade hint é DESCOBERTO por consulta — nenhum nome de plano hardcoded', async () => {
+  it('the upgrade hint is DISCOVERED by query — no hardcoded plan name', async () => {
     const p = buildPolicy({ plans: [
       { slug: 'starter', integrations: [], amount: 1 },
       { slug: 'professional', integrations: ['docusign'], amount: 2 },
@@ -126,7 +126,7 @@ describe('Entitlement por plano — composição', () => {
   });
 });
 
-describe('Classificação — interno/billing fora do catálogo comercial', () => {
+describe('Classification — internal/billing outside the commercial catalog', () => {
   for (const c of [IntegrationClassification.INTERNAL_PLATFORM, IntegrationClassification.PLATFORM_BILLING]) {
     it(`${c} nunca é descoberto nem usável, mesmo publicado e com audiência all`, async () => {
       const [r] = await buildPolicy({
@@ -141,7 +141,7 @@ describe('Classificação — interno/billing fora do catálogo comercial', () =
 });
 
 /** §61 — regressão específica do bug tenant.plan vs plan_slug. */
-describe('REGRESSÃO: audiência por plano usa tenant.plan', () => {
+describe('REGRESSION: per-plan audience uses tenant.plan', () => {
   it('tenant.plan="enterprise" + audience plans=["enterprise"] → MATCH', async () => {
     const [r] = await buildPolicy({
       rows: [row({ view_audience: aud('plans', ['enterprise']), use_audience: aud('plans', ['enterprise']) })],
@@ -161,7 +161,7 @@ describe('REGRESSÃO: audiência por plano usa tenant.plan', () => {
     expect(r.reasonCode).toBe(IntegrationReasonCode.AUDIENCE_NOT_ALLOWED);
   });
 
-  it('planSlug ausente nunca casa audiência por plano (fail-closed)', async () => {
+  it('an absent planSlug never matches a per-plan audience (fail-closed)', async () => {
     const [r] = await buildPolicy({
       rows: [row({ view_audience: aud('plans', ['enterprise']), use_audience: aud('plans', ['enterprise']) })],
     }).resolveAll({ tenantId: 't', userId: 'u', planSlug: null });
@@ -177,12 +177,12 @@ describe('IntegrationUsageGuard — enforcement', () => {
   const reflectorFor = (v: unknown) => ({ getAllAndOverride: jest.fn(() => v) }) as never;
   const req = { tenant: { id: 'tenant-1', plan: 'enterprise' }, auth: { userId: 'user-1' } };
 
-  it('sem exigência declarada → passa', async () => {
+  it('no declared requirement → passes', async () => {
     const g = new IntegrationUsageGuard(reflectorFor(undefined), buildPolicy());
     await expect(g.canActivate(ctxFor(req))).resolves.toBe(true);
   });
 
-  it('BLOQUEIA uso direto quando o plano não inclui', async () => {
+  it('BLOCKS direct use when the plan does not include it', async () => {
     const g = new IntegrationUsageGuard(
       reflectorFor({ providerKey: 'docusign', mode: 'use' }),
       buildPolicy({ plans: [{ slug: 'enterprise', integrations: [] }], oauth: CONNECTED }),
@@ -190,7 +190,7 @@ describe('IntegrationUsageGuard — enforcement', () => {
     await expect(g.canActivate(ctxFor(req))).rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('mode=connect NÃO exige conexão prévia (senão conectar seria impossível)', async () => {
+  it('mode=connect does NOT require a prior connection (otherwise connecting would be impossible)', async () => {
     const g = new IntegrationUsageGuard(
       reflectorFor({ providerKey: 'docusign', mode: 'connect' }),
       buildPolicy(), // sem oauth → não conectado
@@ -206,7 +206,7 @@ describe('IntegrationUsageGuard — enforcement', () => {
     await expect(g.canActivate(ctxFor(req))).rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('fail-closed: sem tenant e sem política registada', async () => {
+  it('fail-closed: no tenant and no registered policy', async () => {
     const g1 = new IntegrationUsageGuard(reflectorFor({ providerKey: 'docusign', mode: 'use' }), buildPolicy());
     await expect(g1.canActivate(ctxFor({ auth: { userId: 'u' } }))).rejects.toBeInstanceOf(ForbiddenException);
     const g2 = new IntegrationUsageGuard(reflectorFor({ providerKey: 'x', mode: 'use' }), buildPolicy({ rows: [] }));

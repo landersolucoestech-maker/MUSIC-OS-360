@@ -86,7 +86,7 @@ describe('WhatsAppWebhookController', () => {
 
   // ── GET verification (inalterado pelo hardening do POST) ─────────────────────
 
-  it('webhook verification válida: responde 200 com o challenge em texto puro', () => {
+  it('valid webhook verification: responds 200 with the challenge as plain text', () => {
     const { controller, whatsapp } = makeController({ verify: jest.fn(() => 'challenge-123') });
     const res = makeRes();
 
@@ -97,7 +97,7 @@ describe('WhatsAppWebhookController', () => {
     expect(res.send).toHaveBeenCalledWith('challenge-123');
   });
 
-  it('webhook verification inválida: responde 403, nunca ecoa o challenge', () => {
+  it('invalid webhook verification: responds 403, never echoes the challenge', () => {
     const { controller } = makeController({
       verify: jest.fn(() => { throw Object.assign(new Error('bad token'), { code: 'WHATSAPP_WEBHOOK_INVALID' }); }),
     });
@@ -111,7 +111,7 @@ describe('WhatsAppWebhookController', () => {
 
   // ── POST: assinatura obrigatória (algoritmo HMAC real, não mockado) ──────────
 
-  it('POST sem X-Hub-Signature-256: rejeitado com 403, nada é processado', async () => {
+  it('POST without X-Hub-Signature-256: rejected with 403, nothing processed', async () => {
     const { controller, ingestSpy, musicChat } = makeController();
     const body = messagePayloadObj();
 
@@ -121,7 +121,7 @@ describe('WhatsAppWebhookController', () => {
     expect(musicChat.handleInboundMessage).not.toHaveBeenCalled();
   });
 
-  it('POST com assinatura incorreta: rejeitado com 403, nada é processado', async () => {
+  it('POST with a wrong signature: rejected with 403, nothing processed', async () => {
     const { controller, ingestSpy, musicChat } = makeController();
     const body = messagePayloadObj();
 
@@ -133,7 +133,7 @@ describe('WhatsAppWebhookController', () => {
     expect(musicChat.handleInboundMessage).not.toHaveBeenCalled();
   });
 
-  it('POST com META_APP_SECRET ausente: rejeitado explicitamente (503), nunca processa silenciosamente', async () => {
+  it('POST with META_APP_SECRET absent: explicitly rejected (503), never processed silently', async () => {
     delete process.env['META_APP_SECRET'];
     const { controller, ingestSpy, musicChat } = makeController();
     const body = messagePayloadObj();
@@ -164,7 +164,7 @@ describe('WhatsAppWebhookController', () => {
     expect(markProcessedSpy).toHaveBeenCalledWith('evt-1', 'processed');
   });
 
-  it('POST válido duplicado: idempotência continua funcionando (handleInboundMessage não roda de novo)', async () => {
+  it('duplicate valid POST: idempotency still holds (handleInboundMessage does not run again)', async () => {
     const { controller, musicChat, markProcessedSpy } = makeController({
       ingest: jest.fn().mockResolvedValue({ isDuplicate: true, eventId: 'evt-1', status: 'processed' }),
     });
@@ -178,7 +178,7 @@ describe('WhatsAppWebhookController', () => {
     expect(markProcessedSpy).not.toHaveBeenCalled();
   });
 
-  it('evento sem mensagem (field !== messages, ex.: statuses): ignora com segurança após assinatura válida', async () => {
+  it('event without a message (field !== messages, e.g. statuses): safely ignored after a valid signature', async () => {
     const { controller, musicChat, ingestSpy } = makeController();
     const body = {
       object: 'whatsapp_business_account',
@@ -193,7 +193,7 @@ describe('WhatsAppWebhookController', () => {
     expect(musicChat.handleInboundMessage).not.toHaveBeenCalled();
   });
 
-  it('payload desconhecido (object diferente de whatsapp_business_account): ignora com segurança após assinatura válida', async () => {
+  it('unknown payload (object other than whatsapp_business_account): safely ignored after a valid signature', async () => {
     const { controller, musicChat, ingestSpy } = makeController();
     const body = { object: 'page' };
     const req = rawReq(body);
@@ -206,7 +206,7 @@ describe('WhatsAppWebhookController', () => {
     expect(musicChat.handleInboundMessage).not.toHaveBeenCalled();
   });
 
-  it('provider não configurado (nenhum tenant com esse phone_number_id): ignora com segurança após assinatura válida', async () => {
+  it('provider not configured (no tenant with that phone_number_id): safely ignored after a valid signature', async () => {
     const { controller, musicChat, ingestSpy } = makeController({ findTenant: jest.fn().mockResolvedValue({ kind: 'unknown' }) });
     const body = messagePayloadObj();
     const req = rawReq(body);
@@ -218,7 +218,7 @@ describe('WhatsAppWebhookController', () => {
     expect(musicChat.handleInboundMessage).not.toHaveBeenCalled();
   });
 
-  it('find-2220a85e: phone_number_id vinculado a mais de um tenant NÃO é roteado para nenhum (fail-closed)', async () => {
+  it('find-2220a85e: a phone_number_id linked to more than one tenant is routed to NONE (fail-closed)', async () => {
     const { controller, musicChat, ingestSpy } = makeController({
       findTenant: jest.fn().mockResolvedValue({ kind: 'conflict', tenantCount: 2 }),
     });
@@ -258,7 +258,7 @@ describe('WhatsAppWebhookController', () => {
     ]);
   });
 
-  it('find-b4201eb2: falha no MusicChat registra "failed" numa transação separada (nunca na já abortada)', async () => {
+  it('find-b4201eb2: a MusicChat failure records "failed" in a separate transaction (never in the aborted one)', async () => {
     const ctl = makeController({ handleInboundMessage: jest.fn().mockRejectedValue(new Error('RLS/DB error')) });
     const body = messagePayloadObj();
     const req = rawReq(body);
@@ -270,7 +270,7 @@ describe('WhatsAppWebhookController', () => {
 
   // ── Regressão: falha interna não pode virar perda silenciosa (200 sempre) ────
 
-  it('handleInboundMessage falha: NÃO retorna 200 silenciosamente — lança erro para acionar o retry da Meta', async () => {
+  it('handleInboundMessage fails: does NOT silently return 200 — throws to trigger Meta\'s retry', async () => {
     const { controller, markProcessedSpy } = makeController({
       handleInboundMessage: jest.fn().mockRejectedValue(new Error('DB indisponível')),
     });
@@ -282,7 +282,7 @@ describe('WhatsAppWebhookController', () => {
     expect(markProcessedSpy).toHaveBeenCalledWith('evt-1', 'failed', 'DB indisponível');
   });
 
-  it('payload com múltiplas mensagens, uma falha: ainda lança erro (não retorna 200 escondendo a falha parcial)', async () => {
+  it('payload with multiple messages, one failing: still throws (no 200 hiding the partial failure)', async () => {
     const handleInboundMessage = jest.fn()
       .mockResolvedValueOnce({ action: 'received' })
       .mockRejectedValueOnce(new Error('falha na segunda'));
@@ -303,7 +303,7 @@ describe('WhatsAppWebhookController', () => {
     expect(handleInboundMessage).toHaveBeenCalledTimes(2);
   });
 
-  it('reenvio de evento previamente FAILED (isDuplicate=false, status pending após retry): reprocessa em vez de pular', async () => {
+  it('redelivery of a previously FAILED event (isDuplicate=false, status pending after retry): reprocesses instead of skipping', async () => {
     // Reflete o comportamento real de WebhookService.ingest após o fix: um external_id
     // conhecido cujo status anterior era FAILED volta como isDuplicate=false (retryable),
     // não isDuplicate=true — só um evento já PROCESSED é um duplicado de verdade.

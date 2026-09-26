@@ -85,7 +85,7 @@ describe('WhatsAppCloudProvider', () => {
 
   // ── configuração ────────────────────────────────────────────────────────────
 
-  it('provider não configurado: rejeita o envio sem chamar a Meta', async () => {
+  it('provider not configured: rejects the send without calling Meta', async () => {
     await expect(provider.sendTextMessage(TENANT_A, '5511999999999', 'oi')).rejects.toMatchObject({
       code: 'WHATSAPP_NOT_CONFIGURED',
     });
@@ -143,7 +143,7 @@ describe('WhatsAppCloudProvider', () => {
     });
   });
 
-  it('destinatário inválido (code 131030): WHATSAPP_INVALID_RECIPIENT', async () => {
+  it('invalid recipient (code 131030): WHATSAPP_INVALID_RECIPIENT', async () => {
     await configureOk(TENANT_A, '1234567890', 'token', 'waba-456');
     fetchMock.mockResolvedValueOnce({
       ok: false, status: 400,
@@ -155,7 +155,7 @@ describe('WhatsAppCloudProvider', () => {
     });
   });
 
-  it('nunca converte falha upstream em sucesso silencioso (sem messages[0].id)', async () => {
+  it('never turns an upstream failure into silent success (no messages[0].id)', async () => {
     await configureOk(TENANT_A, '1234567890', 'token', 'waba-456');
     fetchMock.mockResolvedValueOnce({ ok: true, json: async () => ({}) });
 
@@ -166,13 +166,13 @@ describe('WhatsAppCloudProvider', () => {
 
   // ── webhook verification (GET) ────────────────────────────────────────────────
 
-  it('webhook verification válida: retorna o challenge quando o verify_token bate', () => {
+  it('valid webhook verification: returns the challenge when verify_token matches', () => {
     process.env['WHATSAPP_WEBHOOK_VERIFY_TOKEN'] = 'my-verify-token';
     const challenge = provider.verifyWebhookChallenge('subscribe', 'my-verify-token', 'challenge-123');
     expect(challenge).toBe('challenge-123');
   });
 
-  it('webhook verification inválida: verify_token errado é rejeitado', () => {
+  it('invalid webhook verification: a wrong verify_token is rejected', () => {
     process.env['WHATSAPP_WEBHOOK_VERIFY_TOKEN'] = 'my-verify-token';
     expect(() => provider.verifyWebhookChallenge('subscribe', 'wrong-token', 'challenge-123')).toThrow(WhatsAppError);
     try {
@@ -182,7 +182,7 @@ describe('WhatsAppCloudProvider', () => {
     }
   });
 
-  it('webhook verification: sem WHATSAPP_WEBHOOK_VERIFY_TOKEN no ambiente, rejeita como não configurado', () => {
+  it('webhook verification: without WHATSAPP_WEBHOOK_VERIFY_TOKEN in the environment, rejects as not configured', () => {
     delete process.env['WHATSAPP_WEBHOOK_VERIFY_TOKEN'];
     expect(() => provider.verifyWebhookChallenge('subscribe', 'anything', 'challenge-123')).toThrow(
       expect.objectContaining({ code: 'WHATSAPP_NOT_CONFIGURED' }),
@@ -191,7 +191,7 @@ describe('WhatsAppCloudProvider', () => {
 
   // ── identidade phone_number_id -> tenant (find-2220a85e) ───────────────────
 
-  it('resolveTenantByPhoneNumberId: resolve o tenant certo entre vários configurados', async () => {
+  it('resolveTenantByPhoneNumberId: resolves the right tenant among several configured ones', async () => {
     await configureOk(TENANT_A, '1111111111', 'token-a', 'waba-a');
     await configureOk(TENANT_B, '2222222222', 'token-b', 'waba-b');
 
@@ -199,19 +199,19 @@ describe('WhatsAppCloudProvider', () => {
     expect(await provider.resolveTenantByPhoneNumberId('9999999999')).toEqual({ kind: 'unknown' });
   });
 
-  it('configure: recusa o mesmo phone_number_id já vinculado a outro tenant (409)', async () => {
+  it('configure: refuses a phone_number_id already linked to another tenant (409)', async () => {
     await configureOk(TENANT_A, '1111111111', 'token-a', 'waba-a');
     fetchMock.mockResolvedValueOnce({ ok: true, json: async () => ({ id: '1111111111' }) });
     await expect(provider.configure(TENANT_B, '1111111111', 'token-b', 'waba-b')).rejects.toMatchObject({ status: 409 });
     expect(await provider.resolveTenantByPhoneNumberId('1111111111')).toEqual({ kind: 'resolved', tenantId: TENANT_A });
   });
 
-  it('configure: o mesmo tenant pode reconfigurar o próprio número', async () => {
+  it('configure: the same tenant may reconfigure its own number', async () => {
     await configureOk(TENANT_A, '1111111111', 'token-a', 'waba-a');
     await expect(configureOk(TENANT_A, '1111111111', 'token-a2', 'waba-a')).resolves.toBeUndefined();
   });
 
-  it('configure: sem prova de posse (Graph API recusa o token) não grava nada (400)', async () => {
+  it('configure: without proof of ownership (Graph API rejects the token) nothing is written (400)', async () => {
     fetchMock.mockResolvedValueOnce({ ok: false, status: 400, json: async () => ({ error: { code: 100 } }) });
     await expect(provider.configure(TENANT_B, '1111111111', 'token-alheio', 'waba-b')).rejects.toMatchObject({ status: 400 });
     expect(integRepo._rows.size).toBe(0);
@@ -220,17 +220,17 @@ describe('WhatsAppCloudProvider', () => {
     expect(init.headers.Authorization).toBe('Bearer token-alheio');
   });
 
-  it('configure: Graph API respondendo outro id não prova posse (400)', async () => {
+  it('configure: a Graph API response with another id does not prove ownership (400)', async () => {
     fetchMock.mockResolvedValueOnce({ ok: true, json: async () => ({ id: '3333333333' }) });
     await expect(provider.configure(TENANT_B, '1111111111', 't', 'w')).rejects.toMatchObject({ status: 400 });
   });
 
-  it('configure: phoneNumberId não numérico é rejeitado sem chamar a Meta (400)', async () => {
+  it('configure: a non-numeric phoneNumberId is rejected without calling Meta (400)', async () => {
     await expect(provider.configure(TENANT_A, '../../me/accounts', 't', 'w')).rejects.toMatchObject({ status: 400 });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('resolveTenantByPhoneNumberId: vínculo duplicado legado vira conflito (fail-closed), nunca "primeira linha"', async () => {
+  it('resolveTenantByPhoneNumberId: a legacy duplicate link becomes a conflict (fail-closed), never "first row"', async () => {
     await configureOk(TENANT_A, '1111111111', 'token-a', 'waba-a');
     // simula uma linha legada gravada antes da checagem de unicidade
     integRepo._rows.set(`${TENANT_B}:whatsapp`, {
@@ -240,7 +240,7 @@ describe('WhatsAppCloudProvider', () => {
     expect(await provider.resolveTenantByPhoneNumberId('1111111111')).toEqual({ kind: 'conflict', tenantCount: 2 });
   });
 
-  it('resolução sem ADMIN_DATA_SOURCE falha explicitamente (não cai para a conexão RLS que retorna 0 linhas)', async () => {
+  it('resolution without ADMIN_DATA_SOURCE fails explicitly (does not fall back to the RLS connection that returns 0 rows)', async () => {
     const ds: any = { getRepository: jest.fn(() => integRepo) };
     const noAdmin = new WhatsAppCloudProvider(ds, makeEncryption(), { get: jest.fn() } as never, null);
     await expect(noAdmin.resolveTenantByPhoneNumberId('1111111111')).rejects.toThrow(/ADMIN_DATA_SOURCE/);

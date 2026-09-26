@@ -25,8 +25,8 @@ const read = (file: string): string =>
 
 const all = (): string => FILES.map(read).join('\n');
 
-describe('migrations financeiras M0–M9 — contratos estáticos', () => {
-  it('as 10 migrations existem, em ordem, com nomes/timestamps únicos', () => {
+describe('financial migrations M0–M9 — static contracts', () => {
+  it('the 10 migrations exist, in order, with unique names/timestamps', () => {
     const timestamps = FILES.map((f) => f.slice(0, 14));
     expect(new Set(timestamps).size).toBe(10);
     expect([...timestamps].sort()).toEqual(timestamps);
@@ -46,7 +46,7 @@ describe('migrations financeiras M0–M9 — contratos estáticos', () => {
     }
   });
 
-  it('nenhum secret, ref proibido ou dependência do snapshot legado', () => {
+  it('no secret, forbidden ref or dependency on the legacy snapshot', () => {
     const src = all();
     for (const forbidden of [
       'sxmfeocztlztvpdnxayk', // MAIN
@@ -68,7 +68,7 @@ describe('migrations financeiras M0–M9 — contratos estáticos', () => {
     expect(src.includes('synchronize')).toBe(false);
   });
 
-  it('nenhum DROP ... CASCADE amplo (CASCADE só como ON DELETE justificado)', () => {
+  it('no broad DROP ... CASCADE (CASCADE only as a justified ON DELETE)', () => {
     const src = all();
     expect(/DROP\s+\w+[^;`]*CASCADE/i.test(src)).toBe(false);
     const onDeleteCascades = src.match(/ON DELETE CASCADE/g) ?? [];
@@ -78,7 +78,7 @@ describe('migrations financeiras M0–M9 — contratos estáticos', () => {
     expect(onDeleteCascades.length).toBe(5);
   });
 
-  it('M2 revisada: substituição fail-fast do módulo legado (autorização Fase 13B)', () => {
+  it('revised M2: fail-fast replacement of the legacy module (Phase 13B authorization)', () => {
     const src = read(FILES[2]);
     // valida existência explícita + zero registros + assinatura, não só IF EXISTS
     expect(src).toContain(`to_regclass('public.' || v_table) IS NULL`);
@@ -118,7 +118,7 @@ describe('migrations financeiras M0–M9 — contratos estáticos', () => {
     expect(down.includes('counterparty_type')).toBe(false);
   });
 
-  it('nenhum seed de dados reais (INSERTs apenas ausentes nas migrations)', () => {
+  it('no real-data seed (no INSERTs in the migrations)', () => {
     expect(/INSERT INTO/i.test(all())).toBe(false);
   });
 
@@ -146,7 +146,7 @@ describe('migrations financeiras M0–M9 — contratos estáticos', () => {
     }
   });
 
-  it('M4: invariantes estruturais da transação (I1, I16, transferência, estorno, parcelas)', () => {
+  it('M4: structural transaction invariants (I1, I16, transfer, reversal, installments)', () => {
     const src = read(FILES[4]);
     expect(src).toContain('CHECK ("amount" > 0)');
     expect(src).toContain('ck_fintx_settlement_status');
@@ -161,7 +161,7 @@ describe('migrations financeiras M0–M9 — contratos estáticos', () => {
     expect(src).toMatch(/exclusão física proibida/);
   });
 
-  it('M5: dimensões paralelas, maior resto e somas por dimensão (I5/I7)', () => {
+  it('M5: parallel dimensions, largest remainder and per-dimension sums (I5/I7)', () => {
     const src = read(FILES[5]);
     expect(src).toContain('ck_txalloc_dimension_target');
     expect(src).toContain('UNIQUE NULLS NOT DISTINCT');
@@ -172,7 +172,7 @@ describe('migrations financeiras M0–M9 — contratos estáticos', () => {
     expect(src).toContain('CHECK ("allocated_amount" > 0)');
   });
 
-  it('FKs compostas com tenant em todas as referências tenant-owned (I6)', () => {
+  it('composite FKs with tenant on every tenant-owned reference (I6)', () => {
     const src = all();
     const composite = src.match(/REFERENCES "\w+" \("tenant_id", "id"\)/g) ?? [];
     expect(composite.length).toBeGreaterThanOrEqual(18);
@@ -182,7 +182,7 @@ describe('migrations financeiras M0–M9 — contratos estáticos', () => {
     expect(/REFERENCES "artists" \("id"\)/.test(src)).toBe(false);
   });
 
-  it('RLS: ENABLE+FORCE nas 10 tabelas do domínio (M7 + M8)', () => {
+  it('RLS: ENABLE+FORCE on the domain\'s 10 tables (M7 + M8)', () => {
     const src = read(FILES[7]) + read(FILES[8]);
     const enable = src.match(/ENABLE ROW LEVEL SECURITY/g) ?? [];
     const force = src.match(/FORCE ROW LEVEL SECURITY/g) ?? [];
@@ -195,7 +195,7 @@ describe('migrations financeiras M0–M9 — contratos estáticos', () => {
     expect(src.includes('musicos_app')).toBe(true);
   });
 
-  it('M8: métricas nunca referenciam transações financeiras (I12) e têm dedupe (I17)', () => {
+  it('M8: metrics never reference financial transactions (I12) and are deduplicated (I17)', () => {
     const src = read(FILES[8]);
     expect(src.includes('financial_transactions')).toBe(false);
     expect(src).toContain('uq_metric_active_dedupe');
@@ -204,13 +204,13 @@ describe('migrations financeiras M0–M9 — contratos estáticos', () => {
     expect(src).toContain('fn_metric_immutability');
   });
 
-  it('M9: pontes opcionais sem associação automática (coluna nasce NULL, sem UPDATE)', () => {
+  it('M9: optional bridges without automatic association (column created NULL, no UPDATE)', () => {
     const src = read(FILES[9]);
     expect(src).toContain('"financial_project_id" uuid NULL');
     expect(/UPDATE\s+"?(marketing|audiovisual)/i.test(src)).toBe(false);
   });
 
-  it('downs: policies/triggers/funções antes de tabelas; enums por último; extensão preservada', () => {
+  it('downs: policies/triggers/functions before tables; enums last; extension preserved', () => {
     const m7 = read(FILES[7]);
     const downM7 = m7.slice(m7.indexOf('public async down'));
     expect(downM7.indexOf('DROP POLICY')).toBeGreaterThanOrEqual(0);

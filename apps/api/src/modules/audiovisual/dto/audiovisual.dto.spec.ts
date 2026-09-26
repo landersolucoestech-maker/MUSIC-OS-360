@@ -22,7 +22,7 @@ async function validatePayload(dto: new () => object, payload: Record<string, un
 }
 
 describe('CreateShotDto', () => {
-  it('aceita um payload válido completo', async () => {
+  it('accepts a complete valid payload', async () => {
     const errors = await validatePayload(CreateShotDto, {
       scene_title: 'Cena 1', description: 'Abertura', location: 'Estúdio A',
       actors: ['Ator 1'], props: ['guitarra'], wardrobe: ['jaqueta'], equipment: ['câmera RED'],
@@ -31,12 +31,12 @@ describe('CreateShotDto', () => {
     expect(errors).toEqual([]);
   });
 
-  it('aceita payload vazio (todos os campos são opcionais)', async () => {
+  it('accepts an empty payload (every field is optional)', async () => {
     const errors = await validatePayload(CreateShotDto, {});
     expect(errors).toEqual([]);
   });
 
-  it('rejeita tipo inválido (estimated_duration_sec como string não-numérica)', async () => {
+  it('rejects an invalid type (estimated_duration_sec as a non-numeric string)', async () => {
     const errors = await validatePayload(CreateShotDto, { estimated_duration_sec: 'abc' });
     expect(errors.length).toBeGreaterThan(0);
   });
@@ -58,7 +58,7 @@ describe('CreateShotDto', () => {
 });
 
 describe('UpdateShotDto', () => {
-  it('aceita atualização parcial de um único campo', async () => {
+  it('accepts a partial update of a single field', async () => {
     const errors = await validatePayload(UpdateShotDto, { notes: 'apenas isso' });
     expect(errors).toEqual([]);
   });
@@ -75,14 +75,14 @@ describe('UpdateShotDto', () => {
 });
 
 describe('ReorderShotsDto', () => {
-  it('aceita uma lista de UUIDs válidos', async () => {
+  it('accepts a list of valid UUIDs', async () => {
     const errors = await validatePayload(ReorderShotsDto, {
       ids: ['4b7f2b7e-8b0a-4b4a-9b0a-8b0a4b4a9b0a', '4b7f2b7e-8b0a-4b4a-9b0a-8b0a4b4a9b0b'],
     });
     expect(errors).toEqual([]);
   });
 
-  it('rejeita item não-UUID na lista (invalid UUID)', async () => {
+  it('rejects a non-UUID item in the list (invalid UUID)', async () => {
     const errors = await validatePayload(ReorderShotsDto, { ids: ['nao-e-um-uuid'] });
     expect(errors.length).toBeGreaterThan(0);
   });
@@ -100,7 +100,7 @@ describe('ReorderShotsDto', () => {
 });
 
 describe('CreateTaskDto / UpdateTaskDto', () => {
-  it('aceita um payload válido com todos os campos', async () => {
+  it('accepts a valid payload with every field', async () => {
     const errors = await validatePayload(CreateTaskDto, {
       title: 'Fechar shotlist', description: 'desc', status: 'pending', priority: 'high',
       assigned_to: '4b7f2b7e-8b0a-4b4a-9b0a-8b0a4b4a9b0a', due_date: '2026-08-01',
@@ -124,17 +124,17 @@ describe('CreateTaskDto / UpdateTaskDto', () => {
     expect(TASK_STATUSES).toEqual(['pending', 'in_progress', 'blocked', 'done', 'cancelled']);
   });
 
-  it('rejeita assigned_to que não é UUID (invalid UUID)', async () => {
+  it('rejects an assigned_to that is not a UUID (invalid UUID)', async () => {
     const errors = await validatePayload(CreateTaskDto, { title: 'x', assigned_to: 'nao-e-uuid' });
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('UpdateTaskDto aceita atualização parcial de um único campo', async () => {
+  it('UpdateTaskDto accepts a partial update of a single field', async () => {
     const errors = await validatePayload(UpdateTaskDto, { status: 'done' });
     expect(errors).toEqual([]);
   });
 
-  it('UpdateTaskDto rejeita campos imutáveis não pertencentes ao contrato (id/tenant_id)', async () => {
+  it('UpdateTaskDto rejects immutable fields outside the contract (id/tenant_id)', async () => {
     const errors = await validatePayload(UpdateTaskDto, {
       status: 'done', id: '4b7f2b7e-8b0a-4b4a-9b0a-8b0a4b4a9b0a', tenant_id: 'x',
     });
@@ -143,7 +143,7 @@ describe('CreateTaskDto / UpdateTaskDto', () => {
 });
 
 describe('CreateTeamMemberDto', () => {
-  it('aceita um payload válido', async () => {
+  it('accepts a valid payload', async () => {
     const errors = await validatePayload(CreateTeamMemberDto, {
       role: 'camera', external_name: 'Fulano', contact: 'fulano@example.com',
     });
@@ -162,7 +162,7 @@ describe('CreateTeamMemberDto', () => {
     expect(errors.length).toBeGreaterThan(0);
   });
 
-  it('rejeita user_id que não é UUID (invalid UUID)', async () => {
+  it('rejects a user_id that is not a UUID (invalid UUID)', async () => {
     const errors = await validatePayload(CreateTeamMemberDto, { role: 'camera', user_id: 'abc' });
     expect(errors.length).toBeGreaterThan(0);
   });
@@ -173,7 +173,7 @@ describe('CreateTeamMemberDto', () => {
   });
 });
 
-describe('CreateAudiovisualProjectDto — regressão do bug real (auditoria 2026-07-18)', () => {
+describe('CreateAudiovisualProjectDto — regression of the real bug (audit 2026-07-18)', () => {
   // Payload exatamente como AudiovisualProjectFormModal.tsx monta e envia
   // hoje (sem nenhum mapper intermediário — audiovisual.service.ts chama
   // api.post/api.patch com o payload cru). Antes desta migration, TODO este
@@ -204,12 +204,12 @@ describe('CreateAudiovisualProjectDto — regressão do bug real (auditoria 2026
     final_status: 'planned',
   };
 
-  it('aceita o payload real do formulário (antes rejeitado inteiro por forbidNonWhitelisted)', async () => {
+  it('accepts the real form payload (previously rejected entirely by forbidNonWhitelisted)', async () => {
     const errors = await validatePayload(CreateAudiovisualProjectDto, REAL_FORM_PAYLOAD);
     expect(errors).toEqual([]);
   });
 
-  it('rejeita `music_id`/`budget`/`real_cost`/`name` — não são nomes de coluna reais', async () => {
+  it('rejects `music_id`/`budget`/`real_cost`/`name` — they are not real column names', async () => {
     for (const key of ['music_id', 'budget', 'real_cost', 'name']) {
       const errors = await validatePayload(CreateAudiovisualProjectDto, { ...REAL_FORM_PAYLOAD, [key]: 'x' });
       expect(errors.some((e) => e.property === key)).toBe(true);

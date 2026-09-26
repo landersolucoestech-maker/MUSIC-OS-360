@@ -52,8 +52,8 @@ function buildMockDs(updateResult: { affected: number } = { affected: 1 }) {
   return { getRepository: jest.fn(() => repo), _repo: repo, _qb: qb };
 }
 
-describe('toTransactionDetails — contrato de saída em inglês (naming-canonical)', () => {
-  it('mapeia colunas PT e chaves de metadata PT para os nomes de campo em inglês do DTO', () => {
+describe('toTransactionDetails — English output contract (naming-canonical)', () => {
+  it('maps PT columns and PT metadata keys to the DTO\'s English field names', () => {
     const entity = {
       id: 'tx-1',
       type: 'despesa',
@@ -105,7 +105,7 @@ describe('toTransactionDetails — contrato de saída em inglês (naming-canonic
   });
 });
 
-describe('TransactionsService — concorrência otimista em update/patch', () => {
+describe('TransactionsService — optimistic concurrency on update/patch', () => {
   let service: TransactionsService;
   let mockDs: ReturnType<typeof buildMockDs>;
 
@@ -130,7 +130,7 @@ describe('TransactionsService — concorrência otimista em update/patch', () =>
     );
   });
 
-  it('com expectedUpdatedAt correto: inclui updated_at no critério e aplica normalmente', async () => {
+  it('with a correct expectedUpdatedAt: includes updated_at in the criteria and applies normally', async () => {
     service = await buildService({ affected: 1 });
     await service.patch(TENANT, 'u1', TX_ID, {
       description: 'Editado',
@@ -147,7 +147,7 @@ describe('TransactionsService — concorrência otimista em update/patch', () =>
     expect(payload).toEqual(expect.objectContaining({ descricao: 'Editado' }));
   });
 
-  it('com expectedUpdatedAt desatualizado (0 linhas afetadas): lança ConflictException (409), não sobrescreve', async () => {
+  it('with a stale expectedUpdatedAt (0 rows affected): throws ConflictException (409), does not overwrite', async () => {
     service = await buildService({ affected: 0 });
     await expect(
       service.patch(TENANT, 'u1', TX_ID, {
@@ -157,7 +157,7 @@ describe('TransactionsService — concorrência otimista em update/patch', () =>
     ).rejects.toThrow(ConflictException);
   });
 
-  it('mesma proteção se aplica a update() (PUT), não só patch()', async () => {
+  it('the same protection applies to update() (PUT), not only patch()', async () => {
     service = await buildService({ affected: 0 });
     await expect(
       service.update(TENANT, 'u1', TX_ID, {
@@ -167,7 +167,7 @@ describe('TransactionsService — concorrência otimista em update/patch', () =>
     ).rejects.toThrow(ConflictException);
   });
 
-  it('expectedUpdatedAt com formato inválido: 400, não 500 nem silêncio', async () => {
+  it('expectedUpdatedAt with an invalid format: 400, not 500 or silence', async () => {
     service = await buildService({ affected: 1 });
     await expect(
       service.patch(TENANT, 'u1', TX_ID, {
@@ -183,7 +183,7 @@ describe('TransactionsService — concorrência otimista em update/patch', () =>
  * Cobre o único ponto de criação real usado tanto pelo formulário manual
  * quanto pela importação OFX (ambos chamam create() com o mesmo contrato).
  */
-describe('TransactionsService.create — auto-categorização por regras (Task W)', () => {
+describe('TransactionsService.create — rule-based auto-categorization (Task W)', () => {
   function buildCreateDs() {
     const savedEntities: any[] = [];
     const repo = {
@@ -209,7 +209,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     return { service, mockDs, suggestFn };
   }
 
-  it('categoria explícita e real: NUNCA aciona o matcher, categoria preservada', async () => {
+  it('an explicit real category: NEVER triggers the matcher, category preserved', async () => {
     const { service, mockDs, suggestFn } = await buildServiceWithMatcher(null);
 
     const saved = await service.create(TENANT, 'u1', {
@@ -241,7 +241,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     expect(saved.categoria).toBe('servicos');
   });
 
-  it("categoria 'outros' sem nenhuma regra correspondente: mantém 'outros'", async () => {
+  it("category 'outros' with no matching rule: keeps 'outros'", async () => {
     const { service, suggestFn } = await buildServiceWithMatcher(null);
 
     const saved = await service.create(TENANT, 'u1', {
@@ -263,7 +263,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     expect(suggestFn).toHaveBeenCalledWith(otherTenant, 'DESPESA', 'Pagamento Spotify');
   });
 
-  it('type transferencia: nunca aciona o matcher (finance-category-rules só cobre RECEITA/DESPESA)', async () => {
+  it('type transferencia: never triggers the matcher (finance-category-rules only covers RECEITA/DESPESA)', async () => {
     const { service, suggestFn } = await buildServiceWithMatcher({ categoryId: 'c', categoryName: 's', ruleId: 'r' });
 
     const saved = await service.create(TENANT, 'u1', {
@@ -274,7 +274,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     expect(saved.categoria).toBe('outros');
   });
 
-  it('matcher indisponível/erro: não bloqueia a criação, cai para outros', async () => {
+  it('matcher unavailable/error: does not block creation, falls back to outros', async () => {
     const { service } = await buildServiceWithMatcher(new Error('finance-category-rules DB down'));
 
     const saved = await service.create(TENANT, 'u1', {
@@ -284,7 +284,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     expect(saved.categoria).toBe('outros');
   });
 
-  it('importação em lote (múltiplas transações OFX em sequência): cada uma é categorizada de forma independente e determinística', async () => {
+  it('batch import (multiple OFX transactions in sequence): each is categorized independently and deterministically', async () => {
     const mockDs = buildCreateDs();
     const suggestFn = jest.fn(async (_tenant: string, _type: string, description: string) => {
       if (description.toLowerCase().includes('spotify')) return { categoryId: 'cat-1', categoryName: 'streaming', ruleId: 'r1' };
@@ -309,7 +309,7 @@ describe('TransactionsService.create — auto-categorização por regras (Task W
     expect(suggestFn).toHaveBeenCalledTimes(3);
   });
 
-  it('matcher indisponível (não injetado, undefined): cria a transação normalmente com a categoria fornecida', async () => {
+  it('matcher unavailable (not injected, undefined): creates the transaction normally with the given category', async () => {
     const mockDs = buildCreateDs();
     const service = new TransactionsService(mockDs as any, undefined as any, undefined as any, undefined as any);
 
