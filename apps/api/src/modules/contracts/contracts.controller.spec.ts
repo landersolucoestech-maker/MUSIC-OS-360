@@ -82,7 +82,7 @@ describe('ContractsController — contrato HTTP real (Fase 5 / C1)', () => {
 
   afterEach(() => jest.clearAllMocks());
 
-  it('create sem título → 400', async () => {
+  it('create without a title → 400', async () => {
     await request(app.getHttpServer())
       .post('/contracts')
       .send({ type: 'gravacao' })
@@ -93,7 +93,7 @@ describe('ContractsController — contrato HTTP real (Fase 5 / C1)', () => {
     expect(repo.create).not.toHaveBeenCalled();
   });
 
-  it('create somente com title (canônico) válido → passa da validação, chega ao repository mock', async () => {
+  it('create with only a valid (canonical) title → passes validation, reaches the repository mock', async () => {
     await request(app.getHttpServer())
       .post('/contracts')
       .send({ title: 'Contrato Canônico' })
@@ -102,7 +102,7 @@ describe('ContractsController — contrato HTTP real (Fase 5 / C1)', () => {
     expect(repo.create.mock.calls[0][0].title).toBe('Contrato Canônico');
   });
 
-  it('title/titulo conflitantes → 400 e repository não chamado', async () => {
+  it('conflicting title/titulo → 400 and the repository is not called', async () => {
     await request(app.getHttpServer())
       .post('/contracts')
       .send({ title: 'A', titulo: 'B' })
@@ -113,7 +113,7 @@ describe('ContractsController — contrato HTTP real (Fase 5 / C1)', () => {
     expect(repo.create).not.toHaveBeenCalled();
   });
 
-  it('query com type (canônico) continua funcional (200, filtro aplicado)', async () => {
+  it('a query with the (canonical) type still works (200, filter applied)', async () => {
     await request(app.getHttpServer())
       .get('/contracts')
       .query({ type: 'gravacao' })
@@ -131,7 +131,7 @@ describe('ContractsController — contrato HTTP real (Fase 5 / C1)', () => {
   });
 });
 
-describe('Swagger/OpenAPI — metadados de depreciação dos aliases (Fase 5 / C1)', () => {
+describe('Swagger/OpenAPI — alias deprecation metadata (Phase 5 / C1)', () => {
   let schemas: Record<string, { properties?: Record<string, { deprecated?: boolean }> }>;
   let queryParams: Array<{ name: string; deprecated?: boolean }>;
 
@@ -157,21 +157,21 @@ describe('Swagger/OpenAPI — metadados de depreciação dos aliases (Fase 5 / C
     await swaggerApp.close();
   });
 
-  it('CreateContractDto: os 9 aliases legados restantes estão deprecated (title/type/start_date/end_date passaram a canônicos em 2026-09-05; fixed_value em Cluster G)', () => {
+  it('CreateContractDto: the 9 remaining legacy aliases are deprecated (title/type/start_date/end_date became canonical on 2026-09-05; fixed_value in Cluster G)', () => {
     const props = schemas['CreateContractDto'].properties!;
     for (const field of ['tipo', 'artistId', 'value', 'valor', 'data_inicio', 'data_fim', 'startsAt', 'expiresAt', 'fileUrl']) {
       expect(props[field]?.deprecated).toBe(true);
     }
   });
 
-  it('CreateContractDto: os campos canônicos NÃO estão deprecated', () => {
+  it('CreateContractDto: the canonical fields are NOT deprecated', () => {
     const props = schemas['CreateContractDto'].properties!;
     for (const field of ['title', 'type', 'artist_id', 'fixed_value', 'start_date', 'end_date', 'arquivo_url']) {
       expect(props[field]?.deprecated).toBeUndefined();
     }
   });
 
-  it('QueryContractDto: tipo e artistId estão deprecated; type e artist_id não (parâmetros de query no path /contracts)', () => {
+  it('QueryContractDto: tipo and artistId are deprecated; type and artist_id are not (query parameters on /contracts)', () => {
     const byName = Object.fromEntries(queryParams.map((p) => [p.name, p]));
     expect(byName['tipo']?.deprecated).toBe(true);
     expect(byName['artistId']?.deprecated).toBe(true);

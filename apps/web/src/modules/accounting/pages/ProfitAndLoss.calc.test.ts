@@ -10,17 +10,17 @@ import { toNumber, sum } from "./profit-and-loss-calc";
  * parsear — daí o "R$ NaN" em Despesa Total / Lucro Líquido na ProfitAndLoss.
  */
 describe("toNumber", () => {
-  it("normaliza string numérica (formato que a API realmente envia)", () => {
+  it("normalizes a numeric string (the format the API actually sends)", () => {
     expect(toNumber("500.00")).toBe(500);
     expect(toNumber("10")).toBe(10);
   });
 
-  it("mantém number válido inalterado", () => {
+  it("keeps a valid number unchanged", () => {
     expect(toNumber(42)).toBe(42);
     expect(toNumber(0)).toBe(0);
   });
 
-  it("normaliza valores inválidos para 0 explicitamente (nunca propaga NaN)", () => {
+  it("normalizes invalid values to 0 explicitly (never propagates NaN)", () => {
     expect(toNumber("não é número")).toBe(0);
     expect(toNumber(Number.NaN)).toBe(0);
     expect(toNumber(null)).toBe(0);
@@ -29,8 +29,8 @@ describe("toNumber", () => {
   });
 });
 
-describe("sum — reproduz e prova a correção do bug de ProfitAndLoss", () => {
-  it("reproduz o bug: reduce ingênuo com string produz um valor que vira NaN", () => {
+describe("sum — reproduces and proves the fix for the ProfitAndLoss bug", () => {
+  it("reproduces the bug: a naive reduce over strings produces a value that becomes NaN", () => {
     // `any` de propósito: reproduz exatamente como `transactions` chega da API
     // (useTransactions() não tipa `valor` como number — ele chega como string).
     const despesas: any[] = [{ valor: "500.00" }, { valor: "100.00" }, { valor: "10.00" }];
@@ -41,12 +41,12 @@ describe("sum — reproduz e prova a correção do bug de ProfitAndLoss", () => 
     expect(Number(naiveSum)).toBeNaN();
   });
 
-  it("soma corretamente transações com valor em string (payload real da API)", () => {
+  it("correctly sums transactions with string amounts (the real API payload)", () => {
     const despesas = [{ valor: "500.00" }, { valor: "100.00" }, { valor: "10.00" }];
     expect(sum(despesas, "valor")).toBe(610);
   });
 
-  it("o total bate exatamente com a soma das linhas exibidas por categoria", () => {
+  it("the total matches exactly the sum of the rows shown per category", () => {
     const despesas = [
       { categoria: "Equipamentos Task X", valor: "500.00" },
       { categoria: "Aluguel", valor: "100.00" },
@@ -58,11 +58,11 @@ describe("sum — reproduz e prova a correção do bug de ProfitAndLoss", () => 
     expect(porCategoria).toBe(total);
   });
 
-  it("array vazio soma 0 (caso que mascarava o bug quando só despesas tinham dados)", () => {
+  it("an empty array sums to 0 (the case that masked the bug when only expenses had data)", () => {
     expect(sum([], "valor")).toBe(0);
   });
 
-  it("ignora com segurança um valor corrompido isolado, sem derrubar o total inteiro", () => {
+  it("safely ignores a single corrupted value without breaking the whole total", () => {
     const despesas = [{ valor: "500.00" }, { valor: "não é número" }, { valor: "10.00" }];
     expect(sum(despesas, "valor")).toBe(510);
   });

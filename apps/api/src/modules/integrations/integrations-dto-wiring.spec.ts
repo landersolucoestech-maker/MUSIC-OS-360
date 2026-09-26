@@ -91,7 +91,7 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
   afterEach(() => jest.clearAllMocks());
 
   describe('POST /integrations/abramus/register-work', () => {
-    it('titulo ausente → 400, service não chamado', async () => {
+    it('absent titulo → 400, service not called', async () => {
       await request(app.getHttpServer())
         .post('/integrations/abramus/register-work')
         .send({ compositor: 'Fulano' })
@@ -99,7 +99,7 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
       expect(abramus.registerWork).not.toHaveBeenCalled();
     });
 
-    it('payload válido → 201, mapeado titulo→title no service', async () => {
+    it('valid payload → 201, mapped titulo→title in the service', async () => {
       await request(app.getHttpServer())
         .post('/integrations/abramus/register-work')
         .send({ titulo: 'Obra X', compositor: 'Fulano' })
@@ -112,7 +112,7 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
   });
 
   describe('POST /integrations/soundcloud/configure', () => {
-    it('clientSecret ausente → 400, service não chamado', async () => {
+    it('absent clientSecret → 400, service not called', async () => {
       await request(app.getHttpServer())
         .post('/integrations/soundcloud/configure')
         .send({ clientId: 'abc' })
@@ -120,7 +120,7 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
       expect(soundcloud.configure).not.toHaveBeenCalled();
     });
 
-    it('payload válido → 200', async () => {
+    it('valid payload → 200', async () => {
       await request(app.getHttpServer())
         .post('/integrations/soundcloud/configure')
         .send({ clientId: 'abc', clientSecret: 'def' })
@@ -130,7 +130,7 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
   });
 
   describe('POST /integrations/instagram/callback (OAuthCodeStateDto)', () => {
-    it('state ausente → 400, service não chamado', async () => {
+    it('absent state → 400, service not called', async () => {
       await request(app.getHttpServer())
         .post('/integrations/instagram/callback')
         .send({ code: 'abc123' })
@@ -138,7 +138,7 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
       expect(instagram.handleCallback).not.toHaveBeenCalled();
     });
 
-    it('payload válido → 200', async () => {
+    it('valid payload → 200', async () => {
       await request(app.getHttpServer())
         .post('/integrations/instagram/callback')
         .send({ code: 'abc123', state: 'xyz' })
@@ -148,7 +148,7 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
   });
 
   describe('POST /integrations/autentique/webhook (whitelist:false escopado)', () => {
-    it('event com tipo inválido → 400, service não chamado', async () => {
+    it('event with an invalid type → 400, service not called', async () => {
       await request(app.getHttpServer())
         .post('/integrations/autentique/webhook')
         .send({ event: 123, event_id: 'e1', document_id: 'd1' })
@@ -156,7 +156,7 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
       expect(autentique.handleWebhook).not.toHaveBeenCalled();
     });
 
-    it('campo extra não modelado do provedor → aceito (200), não 400', async () => {
+    it('an extra unmodeled provider field → accepted (200), not 400', async () => {
       await request(app.getHttpServer())
         .post('/integrations/autentique/webhook')
         .send({

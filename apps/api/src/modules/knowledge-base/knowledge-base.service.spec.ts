@@ -52,7 +52,7 @@ function makeService() {
 
 describe('KnowledgeBaseService', () => {
   describe('listPublicArticles', () => {
-    it('filtra apenas publicado e nunca internal_doc', async () => {
+    it('filters published only and never internal_doc', async () => {
       const { svc, articleQb } = makeService();
       await svc.listPublicArticles();
       expect(articleQb.where).toHaveBeenCalledWith(
@@ -68,7 +68,7 @@ describe('KnowledgeBaseService', () => {
       await expect(svc.createCategory({ slug: 'faq', name: 'FAQ' })).rejects.toBeInstanceOf(BadRequestException);
     });
 
-    it('cria categoria quando slug é único', async () => {
+    it('creates a category when the slug is unique', async () => {
       const { svc, categoryRepo } = makeService();
       const result = await svc.createCategory({ slug: 'faq', name: 'FAQ' });
       expect(categoryRepo.save).toHaveBeenCalled();
@@ -77,13 +77,13 @@ describe('KnowledgeBaseService', () => {
   });
 
   describe('deleteCategory', () => {
-    it('bloqueia exclusão quando há artigos vinculados', async () => {
+    it('blocks deletion when articles are linked', async () => {
       const { svc, articleQb } = makeService();
       articleQb.getCount.mockResolvedValueOnce(3);
       await expect(svc.deleteCategory('cat-1')).rejects.toBeInstanceOf(BadRequestException);
     });
 
-    it('404 quando a categoria não existe', async () => {
+    it('404 when the category does not exist', async () => {
       const { svc, articleQb, categoryQb } = makeService();
       articleQb.getCount.mockResolvedValueOnce(0);
       categoryQb.execute.mockResolvedValueOnce({ affected: 0 });
@@ -92,7 +92,7 @@ describe('KnowledgeBaseService', () => {
   });
 
   describe('createArticle', () => {
-    it('rejeita categoria inválida', async () => {
+    it('rejects an invalid category', async () => {
       const { svc, categoryQb } = makeService();
       categoryQb.getOne.mockResolvedValueOnce(null);
       await expect(
@@ -115,7 +115,7 @@ describe('KnowledgeBaseService', () => {
   });
 
   describe('moveArticle', () => {
-    it('troca sort_order com o vizinho anterior ao mover para cima', async () => {
+    it('swaps sort_order with the previous neighbor when moving up', async () => {
       const { svc, articleQb, articleRepo } = makeService();
       articleQb.getMany.mockResolvedValueOnce([
         { id: 'a1', sort_order: 0 },
@@ -128,7 +128,7 @@ describe('KnowledgeBaseService', () => {
       ]);
     });
 
-    it('não faz nada ao mover o primeiro item para cima', async () => {
+    it('does nothing when moving the first item up', async () => {
       const { svc, articleQb, articleRepo } = makeService();
       articleQb.getMany.mockResolvedValueOnce([
         { id: 'a1', sort_order: 0 },
@@ -138,7 +138,7 @@ describe('KnowledgeBaseService', () => {
       expect(articleRepo.save).not.toHaveBeenCalled();
     });
 
-    it('404 quando o artigo não existe', async () => {
+    it('404 when the article does not exist', async () => {
       const { svc, articleQb } = makeService();
       articleQb.getMany.mockResolvedValueOnce([]);
       await expect(svc.moveArticle('missing', 'up')).rejects.toBeInstanceOf(NotFoundException);

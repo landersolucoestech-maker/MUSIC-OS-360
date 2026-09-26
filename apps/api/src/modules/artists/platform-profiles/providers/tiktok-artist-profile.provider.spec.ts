@@ -6,8 +6,8 @@ const CANONICAL_URLS = {
   spotifyUrl: 'https://open.spotify.com/artist/6qqNVTkY8uBg9cP3Jd7DAH',
 };
 
-describe('TikTokArtistProfileProvider.resolve (Fase 1.3 — handle cadastrado é PRIMÁRIO, canônico é fallback secundário)', () => {
-  it('1) handle cadastrado resolve diretamente (exato, primário): followers persistidos, resolution=own_handle, VERIFIED_EXACT — nem consulta a cadeia canônica', async () => {
+describe('TikTokArtistProfileProvider.resolve (Phase 1.3 — the registered handle is PRIMARY, the canonical is a secondary fallback)', () => {
+  it('1) the registered handle resolves directly (exact, primary): followers persisted, resolution=own_handle, VERIFIED_EXACT — the canonical chain is not even queried', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockResolvedValue('own-uuid'),
@@ -38,7 +38,7 @@ describe('TikTokArtistProfileProvider.resolve (Fase 1.3 — handle cadastrado é
     expect(snapshot.raw_payload.primary_identity_status).toBe('VERIFIED_EXACT');
   });
 
-  it('@handle e URL normalizam para o mesmo username', async () => {
+  it('@handle and URL normalize to the same username', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockResolvedValue('own-uuid'),
@@ -53,7 +53,7 @@ describe('TikTokArtistProfileProvider.resolve (Fase 1.3 — handle cadastrado é
     expect(byUrl.username).toBe('djstayoficial');
   });
 
-  it('2) handle cadastrado não indexado standalone (404): cai para o canônico, registry CONFIRMA o handle → ainda VERIFIED_EXACT', async () => {
+  it('2) the registered handle is not indexed standalone (404): falls back to the canonical, the registry CONFIRMS the handle → still VERIFIED_EXACT', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found', 404)),
@@ -80,7 +80,7 @@ describe('TikTokArtistProfileProvider.resolve (Fase 1.3 — handle cadastrado é
     expect(snapshot.raw_payload.primary_identity_status).toBe('VERIFIED_EXACT');
   });
 
-  it('3) handle cadastrado não indexado, canônico tem dado mas registry NÃO lista TikTok: dado ainda é usado, mas rotulado INSUFFICIENT_EVIDENCE (nunca VERIFIED_EXACT sem prova)', async () => {
+  it('3) the registered handle is not indexed, the canonical has data but the registry does NOT list TikTok: data is still used but labeled INSUFFICIENT_EVIDENCE (never VERIFIED_EXACT without proof)', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found', 404)),
@@ -132,7 +132,7 @@ describe('TikTokArtistProfileProvider.resolve (Fase 1.3 — handle cadastrado é
     expect(snapshot.raw_payload.source).not.toBe('dev_mock');
   });
 
-  it('5) conta não indexada em nenhum caminho (404 nos dois): followers=null, sync_status=success (NUNCA "Erro"), sem mock (USE_MOCK off)', async () => {
+  it('5) account not indexed on any path (404 on both): followers=null, sync_status=success (NEVER "Erro"), no mock (USE_MOCK off)', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       // Own-handle 404 (não indexado standalone); canônico resolve via Spotify,
@@ -159,7 +159,7 @@ describe('TikTokArtistProfileProvider.resolve (Fase 1.3 — handle cadastrado é
     expect(snapshot.raw_payload.source).not.toBe('dev_mock');
   });
 
-  describe('normalização do handle cadastrado (o identifier EXATO usado na resolução primária)', () => {
+  describe('registered handle normalization (the EXACT identifier used by the primary resolution)', () => {
     const cases: Array<[string, string, string]> = [
       ['@handle', '@djstayoficial', 'djstayoficial'],
       ['URL completa', 'https://www.tiktok.com/@djstayoficial', 'djstayoficial'],
@@ -187,7 +187,7 @@ describe('TikTokArtistProfileProvider.resolve (Fase 1.3 — handle cadastrado é
       expect(snapshot.username).toBe(expected);
     });
 
-    it('URL malformada (host errado) é rejeitada, nunca tratada como handle', async () => {
+    it('a malformed URL (wrong host) is rejected, never treated as a handle', async () => {
       const soundcharts = {
         isConfigured: jest.fn().mockReturnValue(true),
         resolveArtistByPlatform: jest.fn(),
@@ -199,7 +199,7 @@ describe('TikTokArtistProfileProvider.resolve (Fase 1.3 — handle cadastrado é
       ).rejects.toThrow('TikTok username ausente ou inválido');
     });
 
-    it('identifier vazio é rejeitado', async () => {
+    it('an empty identifier is rejected', async () => {
       const soundcharts = {
         isConfigured: jest.fn().mockReturnValue(true),
         resolveArtistByPlatform: jest.fn(),

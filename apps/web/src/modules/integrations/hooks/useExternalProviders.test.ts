@@ -33,8 +33,8 @@ function integration(over: Partial<ClientIntegration> = {}): ClientIntegration {
   };
 }
 
-describe("Catálogo comercial do tenant — contrato de estados", () => {
-  it("tem apresentação para TODOS os reason codes (nenhum cai em render vazio)", () => {
+describe("Tenant commercial catalog — state contract", () => {
+  it("has a presentation for EVERY reason code (none falls into an empty render)", () => {
     for (const code of Object.values(IntegrationReasonCode)) {
       const p = INTEGRATION_PRESENTATION[code];
       expect(p, `sem apresentação para ${code}`).toBeDefined();
@@ -42,7 +42,7 @@ describe("Catálogo comercial do tenant — contrato de estados", () => {
     }
   });
 
-  it("PLAN_NOT_INCLUDED e COMING_SOON são estados DIFERENTES", () => {
+  it("PLAN_NOT_INCLUDED and COMING_SOON are DIFFERENT states", () => {
     const locked = INTEGRATION_PRESENTATION[IntegrationReasonCode.PLAN_NOT_INCLUDED];
     const soon = INTEGRATION_PRESENTATION[IntegrationReasonCode.COMING_SOON];
 
@@ -57,7 +57,7 @@ describe("Catálogo comercial do tenant — contrato de estados", () => {
     expect(INTEGRATION_PRESENTATION[IntegrationReasonCode.CONNECTED].action).toBe("manage");
   });
 
-  it("REQUIRES_REAUTH e PROVIDER_ERROR não são 'não conectado'", () => {
+  it("REQUIRES_REAUTH and PROVIDER_ERROR are not 'not connected'", () => {
     const reauth = INTEGRATION_PRESENTATION[IntegrationReasonCode.REQUIRES_REAUTH];
     const err = INTEGRATION_PRESENTATION[IntegrationReasonCode.PROVIDER_ERROR];
     const notConn = INTEGRATION_PRESENTATION[IntegrationReasonCode.NOT_CONNECTED];
@@ -67,7 +67,7 @@ describe("Catálogo comercial do tenant — contrato de estados", () => {
     expect(reauth.action).toBe("reconnect");
   });
 
-  it("COMING_SOON nunca oferece conexão, mesmo entitled", () => {
+  it("COMING_SOON never offers a connection, even when entitled", () => {
     const soon = integration({
       entitled: true, canConnect: false,
       publicationState: IntegrationPublicationState.COMING_SOON,
@@ -77,7 +77,7 @@ describe("Catálogo comercial do tenant — contrato de estados", () => {
     expect(canOfferConnection(soon)).toBe(false);
   });
 
-  it("sem entitlement nunca oferece conexão (mas continua visível)", () => {
+  it("without entitlement never offers a connection (but stays visible)", () => {
     const locked = integration({
       entitled: false, canConnect: false,
       reasonCode: IntegrationReasonCode.PLAN_NOT_INCLUDED,
@@ -87,12 +87,12 @@ describe("Catálogo comercial do tenant — contrato de estados", () => {
     expect(locked.eligiblePlans).toEqual(["professional"]);
   });
 
-  it("platform_credentials nunca oferece botão de conectar ao cliente", () => {
+  it("platform_credentials never offers the customer a connect button", () => {
     const p = integration({ connectionKind: "platform_credentials", canConnect: true });
     expect(canOfferConnection(p)).toBe(false);
   });
 
-  it("findProviderState devolve undefined para o que o backend não resolveu", () => {
+  it("findProviderState returns undefined for what the backend did not resolve", () => {
     const list = [integration()];
     expect(findProviderState(list, "docusign")?.slug).toBe("docusign");
     // Internos nunca chegam ao catálogo do cliente.

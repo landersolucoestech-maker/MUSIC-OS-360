@@ -7,8 +7,8 @@ const CANONICAL_URLS = {
   youtubeUrl: 'https://www.youtube.com/channel/UCiGm_E4ZwYSHV3bcW1pnSeQ',
 };
 
-describe('SoundCloudArtistProfileProvider.resolve (Métricas Fase 1 — proteção contra conta homônima)', () => {
-  it('6) segue persistindo followers normalmente quando o UUID do próprio handle bate com o canônico (regressão do caminho saudável)', async () => {
+describe('SoundCloudArtistProfileProvider.resolve (Metrics Phase 1 — protection against a same-name account)', () => {
+  it('6) keeps persisting followers normally when the own-handle UUID matches the canonical one (healthy-path regression)', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockResolvedValue('artist-a-uuid'),
@@ -35,7 +35,7 @@ describe('SoundCloudArtistProfileProvider.resolve (Métricas Fase 1 — proteç�
     expect(snapshot.sync_status).toBe('success');
   });
 
-  it('7) FASE 1.3 — reprodução do bug real DJ Stay: resolução EXATA pelo slug cadastrado (deejaystay) nunca é bloqueada só porque outra âncora (Spotify) resolve para uma entidade Soundcharts diferente (fragmentação de catalogação, não erro de cadastro). A métrica real da conta cadastrada é aceita, com a divergência anotada como diagnóstico.', async () => {
+  it('7) PHASE 1.3 — reproduction of the real DJ Stay bug: EXACT resolution by the registered slug (deejaystay) is never blocked just because another anchor (Spotify) resolves to a different Soundcharts entity (catalog fragmentation, not a registration error). The real metric of the registered account is accepted, with the divergence recorded as a diagnostic.', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       // Resolução EXATA by-platform do slug cadastrado "deejaystay".
@@ -75,7 +75,7 @@ describe('SoundCloudArtistProfileProvider.resolve (Métricas Fase 1 — proteç�
     expect(snapshot.raw_payload.cross_platform_registry_identifier).toBe('djstay-sc');
   });
 
-  it('8) sem nenhuma outra âncora cadastrada (só SoundCloud): sem dado para cross-checar, segue o caminho normal', async () => {
+  it('8) with no other registered anchor (SoundCloud only): no data to cross-check, follows the normal path', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockResolvedValue('only-soundcloud-uuid'),
@@ -103,7 +103,7 @@ describe('SoundCloudArtistProfileProvider.resolve (Métricas Fase 1 — proteç�
     expect(snapshot.sync_status).toBe('success');
   });
 
-  it('9) requested identifier ausente/inválido → erro antes de qualquer resolução (PROFILE_NOT_FOUND real nunca é confundido com mismatch de identidade)', async () => {
+  it('9) absent/invalid requested identifier → error before any resolution (a real PROFILE_NOT_FOUND is never confused with an identity mismatch)', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn(),
@@ -122,7 +122,7 @@ describe('SoundCloudArtistProfileProvider.resolve (Métricas Fase 1 — proteç�
     expect(soundcharts.resolveArtistByPlatform).not.toHaveBeenCalled();
   });
 
-  it('10) sem nenhuma outra âncora resolvível: cross-platform evidence fica UNKNOWN, métrica ainda é persistida normalmente', async () => {
+  it('10) with no other resolvable anchor: cross-platform evidence stays UNKNOWN, the metric is still persisted normally', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockResolvedValue('uuid-x'),
@@ -146,7 +146,7 @@ describe('SoundCloudArtistProfileProvider.resolve (Métricas Fase 1 — proteç�
     expect(snapshot.raw_payload.cross_platform_status).toBe('CROSS_PLATFORM_UNKNOWN');
   });
 
-  it('find-4e35ea8e: slug resolvido com sucesso (existe de verdade) mas não indexado na Soundcharts (404): followers=null, sync_status=success (NUNCA "failed")', async () => {
+  it('find-4e35ea8e: slug resolved successfully (it really exists) but not indexed on Soundcharts (404): followers=null, sync_status=success (NEVER "failed")', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found', 404)),
@@ -168,7 +168,7 @@ describe('SoundCloudArtistProfileProvider.resolve (Métricas Fase 1 — proteç�
     expect(snapshot.external_id).toBe('deejaystay');
   });
 
-  it('erro real da Soundcharts (não 404) durante a resolução propaga como falha genuína (retry deve acontecer)', async () => {
+  it('a real Soundcharts error (not 404) during resolution propagates as a genuine failure (retry must happen)', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: serviço indisponível')),

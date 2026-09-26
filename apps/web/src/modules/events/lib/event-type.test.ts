@@ -32,7 +32,7 @@ function item(slug: string, backendType: string): OperationalListItem {
 }
 
 describe("buildGranularToBackendTypeMap", () => {
-  it("lê metadata.backend_type de cada item operacional", () => {
+  it("reads metadata.backend_type from each operational item", () => {
     const map = buildGranularToBackendTypeMap([
       item("sessoes_estudio", "recording"),
       item("shows", "show"),
@@ -40,7 +40,7 @@ describe("buildGranularToBackendTypeMap", () => {
     expect(map).toEqual({ sessoes_estudio: "recording", shows: "show" });
   });
 
-  it("ignora itens sem metadata.backend_type válido (não injeta lixo no filtro)", () => {
+  it("ignores items without a valid metadata.backend_type (injects no garbage into the filter)", () => {
     const semMetadata: OperationalListItem = { ...item("x", "recording"), metadata: undefined };
     const backendTypeInvalido: OperationalListItem = { ...item("y", "not-a-real-type") };
     const map = buildGranularToBackendTypeMap([semMetadata, backendTypeInvalido]);
@@ -54,38 +54,38 @@ describe("normalizeToBackendType", () => {
     item("reunioes", "meeting"),
   ]);
 
-  it("traduz um slug granular configurado para o enum coarse real", () => {
+  it("maps a configured granular slug to the real coarse enum", () => {
     expect(normalizeToBackendType("sessoes_estudio", map)).toBe("recording");
     expect(normalizeToBackendType("reunioes", map)).toBe("meeting");
   });
 
-  it("mantém um valor que já é um enum coarse válido", () => {
+  it("keeps a value that is already a valid coarse enum", () => {
     for (const t of BACKEND_EVENT_TYPES) {
       expect(normalizeToBackendType(t, map)).toBe(t);
     }
   });
 
-  it("cai em 'other' para valor desconhecido/ausente (nunca quebra o filtro)", () => {
+  it("falls back to 'other' for an unknown/absent value (never breaks the filter)", () => {
     expect(normalizeToBackendType("categoria-inexistente", map)).toBe("other");
     expect(normalizeToBackendType(undefined, map)).toBe("other");
     expect(normalizeToBackendType(null, map)).toBe("other");
     expect(normalizeToBackendType("", map)).toBe("other");
   });
 
-  it("é insensível a maiúsculas/minúsculas", () => {
+  it("is case-insensitive", () => {
     expect(normalizeToBackendType("SESSOES_ESTUDIO", map)).toBe("recording");
     expect(normalizeToBackendType("Show", map)).toBe("show");
   });
 });
 
 describe("getBackendEventTypeLabel", () => {
-  it("resolve o rótulo pt-BR de cada valor coarse real", () => {
+  it("resolves the pt-BR label of each real coarse value", () => {
     for (const t of BACKEND_EVENT_TYPES) {
       expect(getBackendEventTypeLabel(t)).toBe(backendEventTypeLabels[t]);
     }
   });
 
-  it("nunca lança e sempre retorna algo exibível para valor ausente/desconhecido", () => {
+  it("never throws and always returns something displayable for an absent/unknown value", () => {
     expect(getBackendEventTypeLabel(undefined)).toBe("Evento");
     expect(getBackendEventTypeLabel(null)).toBe("Evento");
     expect(getBackendEventTypeLabel("valor-nunca-visto")).toBe("valor-nunca-visto");

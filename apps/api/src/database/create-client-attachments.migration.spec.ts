@@ -19,25 +19,25 @@ const migrationSrc = fs.readFileSync(
 const entitiesSrc = fs.readFileSync(path.resolve(__dirname, 'entities.ts'), 'utf8');
 
 describe('CreateClientAttachments20260803000001', () => {
-  it('é classificada como APPLICATION', () => {
+  it('is classified as APPLICATION', () => {
     expect(isApplicationMigration('CreateClientAttachments20260803000001')).toBe(true);
   });
 
-  it('possui tenant_id, FK composta para clients(tenant_id, id), e nunca guarda o binário', () => {
+  it('has tenant_id, a composite FK to clients(tenant_id, id), and never stores the binary', () => {
     expect(migrationSrc).toMatch(/tenant_id\s+uuid NOT NULL/);
     expect(migrationSrc).toMatch(/FOREIGN KEY \(tenant_id, client_id\) REFERENCES clients \(tenant_id, id\)/);
     expect(migrationSrc).toMatch(/storage_key/);
     expect(migrationSrc).not.toMatch(/bytea|binary_data/);
   });
 
-  it('tem FORCE ROW LEVEL SECURITY com policies tenant_isolation e super_admin_full_access', () => {
+  it('has FORCE ROW LEVEL SECURITY with tenant_isolation and super_admin_full_access policies', () => {
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/FORCE ROW LEVEL SECURITY/);
     expect(migrationSrc).toMatch(/CREATE POLICY tenant_isolation/);
     expect(migrationSrc).toMatch(/CREATE POLICY super_admin_full_access/);
   });
 
-  it('concede grants explícitos para musicos_migrator e musicos_app (defesa em profundidade)', () => {
+  it('grants explicit privileges to musicos_migrator and musicos_app (defense in depth)', () => {
     expect(migrationSrc).toMatch(/OWNER TO musicos_migrator/);
     expect(migrationSrc).toMatch(/GRANT SELECT, INSERT, UPDATE, DELETE ON client_attachments TO musicos_app/);
   });
@@ -47,11 +47,11 @@ describe('CreateClientAttachments20260803000001', () => {
     expect(downBlock).toMatch(/DROP TABLE IF EXISTS client_attachments/);
   });
 
-  it('ClientAttachmentEntity está registrada em ALL_ENTITIES', () => {
+  it('ClientAttachmentEntity is registered in ALL_ENTITIES', () => {
     expect(entitiesSrc).toMatch(/ClientAttachmentEntity,/);
   });
 
-  it('ClientAttachmentEntity mapeia exatamente as colunas físicas da migration', () => {
+  it('ClientAttachmentEntity maps exactly the migration\'s physical columns', () => {
     const block = migrationSrc.split('CREATE TABLE client_attachments (')[1].split(')\n    `)')[0];
     const migCols = [...block.matchAll(/^\s*([a-z_]+)\s+\w/gm)].map((m) => m[1]).filter((c) => c !== 'CONSTRAINT');
 
@@ -65,7 +65,7 @@ describe('CreateClientAttachments20260803000001', () => {
     }
   });
 
-  it('está registrada no index.ts de migrations', () => {
+  it('is registered in the migrations index.ts', () => {
     const indexSrc = fs.readFileSync(path.resolve(__dirname, 'migrations/index.ts'), 'utf8');
     expect(indexSrc).toMatch(/CreateClientAttachments20260803000001/);
   });

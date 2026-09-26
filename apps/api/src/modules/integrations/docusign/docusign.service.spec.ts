@@ -101,7 +101,7 @@ const completedPayload = {
 };
 
 describe('DocuSignService.handleWebhook', () => {
-  it('rejeita assinatura HMAC inválida sem tocar no contrato', async () => {
+  it('rejects an invalid HMAC signature without touching the contract', async () => {
     const { service, adminQb } = buildHarness();
     const { raw } = signedBody(completedPayload);
 
@@ -112,7 +112,7 @@ describe('DocuSignService.handleWebhook', () => {
     expect(adminQb.getMany).not.toHaveBeenCalled();
   });
 
-  it('rejeita quando o header de assinatura está ausente (fail-closed)', async () => {
+  it('rejects when the signature header is absent (fail-closed)', async () => {
     const { service, adminQb } = buildHarness();
     const { raw } = signedBody(completedPayload);
 
@@ -121,7 +121,7 @@ describe('DocuSignService.handleWebhook', () => {
     expect(adminQb.getMany).not.toHaveBeenCalled();
   });
 
-  it('aceita HMAC base64 válido, resolve o tenant e assina o contrato no contexto correto', async () => {
+  it('accepts a valid base64 HMAC, resolves the tenant and signs the contract in the right context', async () => {
     const { service, adminQb, contextualContractRepo, manager, dbContext, events, webhookSvc } = buildHarness();
     const { raw, signature } = signedBody(completedPayload);
 
@@ -179,7 +179,7 @@ describe('DocuSignService.handleWebhook', () => {
     expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-a', 'processed');
   });
 
-  it('ignora eventos que não são envelope-completed sem alterar contrato', async () => {
+  it('ignores events other than envelope-completed without changing the contract', async () => {
     const { service, adminQb, events } = buildHarness();
     const payload = { ...completedPayload, event: 'envelope-sent' };
     const { raw, signature } = signedBody(payload);
@@ -190,7 +190,7 @@ describe('DocuSignService.handleWebhook', () => {
     expect(events.emitTyped).not.toHaveBeenCalled();
   });
 
-  it('não explode quando nenhum contrato casa com o envelopeId', async () => {
+  it('does not blow up when no contract matches the envelopeId', async () => {
     const { service, events, contextualContractRepo } = buildHarness({ contract: null });
     const { raw, signature } = signedBody(completedPayload);
 
@@ -211,7 +211,7 @@ describe('DocuSignService.handleWebhook', () => {
   });
 
   describe('P0-3: tenant desativado', () => {
-    it('assinatura válida + tenant inativo: NÃO assina o contrato (webhook é @Public, TenantGuard nunca roda)', async () => {
+    it('valid signature + inactive tenant: does NOT sign the contract (the webhook is @Public, TenantGuard never runs)', async () => {
       const { service, dbContext, events, tenantResolver, webhookSvc } =
         buildHarness({ tenantActive: false });
       const { raw, signature } = signedBody(completedPayload);
@@ -226,7 +226,7 @@ describe('DocuSignService.handleWebhook', () => {
       expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-a', 'failed', expect.any(String));
     });
 
-    it('tenant desconhecido (resolveTenant retorna null): mesma proteção, mesmo caminho fail-closed', async () => {
+    it('unknown tenant (resolveTenant returns null): same protection, same fail-closed path', async () => {
       const { service, dbContext, tenantResolver } = buildHarness();
       tenantResolver.resolveTenant.mockResolvedValueOnce(null as never);
       const { raw, signature } = signedBody(completedPayload);
@@ -247,7 +247,7 @@ describe('DocuSignService.handleWebhook', () => {
       expect(webhookSvc.markProcessed).toHaveBeenCalledWith('webhook-a', 'failed', expect.any(String));
     });
 
-    it('assinatura válida + tenant ativo: assina normalmente (regressão — não quebrou o caminho feliz)', async () => {
+    it('valid signature + active tenant: signs normally (regression — the happy path still works)', async () => {
       const { service, dbContext, events } = buildHarness({ tenantActive: true });
       const { raw, signature } = signedBody(completedPayload);
 

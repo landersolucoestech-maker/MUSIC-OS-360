@@ -17,7 +17,7 @@ const CANONICAL_USER_POLICY: RealtimePolicyRow = {
 };
 
 describe('evaluateRealtimeState', () => {
-  it('APPLIED_AND_VERIFIED: RLS habilitada, as duas policies canônicas com predicados corretos', () => {
+  it('APPLIED_AND_VERIFIED: RLS enabled, both canonical policies with correct predicates', () => {
     const result = evaluateRealtimeState({
       tableExists: true,
       rlsEnabled: true,
@@ -28,7 +28,7 @@ describe('evaluateRealtimeState', () => {
     expect(result.state).toBe('APPLIED_AND_VERIFIED');
   });
 
-  it('PENDING_EXTERNAL_PRIVILEGE: RLS desabilitada, nenhuma policy, role não é owner (caso real confirmado na Parte 72)', () => {
+  it('PENDING_EXTERNAL_PRIVILEGE: RLS disabled, no policy, role is not owner (real case confirmed in Part 72)', () => {
     const result = evaluateRealtimeState({
       tableExists: true,
       rlsEnabled: false,
@@ -40,7 +40,7 @@ describe('evaluateRealtimeState', () => {
     expect(result.reason).toContain('não é a owner');
   });
 
-  it('PENDING_EXTERNAL_PRIVILEGE: RLS desabilitada, nenhuma policy, mesmo quando a role já é owner (só ainda não aplicada)', () => {
+  it('PENDING_EXTERNAL_PRIVILEGE: RLS disabled, no policy, even when the role is already owner (just not applied yet)', () => {
     const result = evaluateRealtimeState({
       tableExists: true,
       rlsEnabled: false,
@@ -52,7 +52,7 @@ describe('evaluateRealtimeState', () => {
     expect(result.reason).toContain('ainda não foi aplicada');
   });
 
-  it('PENDING_EXTERNAL_PRIVILEGE: RLS já habilitada por padrão do Supabase, mas nenhuma policy ainda (caso real confirmado contra Supabase DEV na Parte 72 — não é DRIFT)', () => {
+  it('PENDING_EXTERNAL_PRIVILEGE: RLS already enabled by Supabase default but no policy yet (real case confirmed against Supabase DEV in Part 72 — not DRIFT)', () => {
     const result = evaluateRealtimeState({
       tableExists: true,
       rlsEnabled: true,
@@ -63,7 +63,7 @@ describe('evaluateRealtimeState', () => {
     expect(result.state).toBe('PENDING_EXTERNAL_PRIVILEGE');
   });
 
-  it('UNSAFE_PUBLIC_ACCESS: qualquer policy com USING (true), mesmo com as outras corretas', () => {
+  it('UNSAFE_PUBLIC_ACCESS: any policy with USING (true), even when the others are correct', () => {
     const result = evaluateRealtimeState({
       tableExists: true,
       rlsEnabled: true,
@@ -74,7 +74,7 @@ describe('evaluateRealtimeState', () => {
     expect(result.state).toBe('UNSAFE_PUBLIC_ACCESS');
   });
 
-  it('DRIFT: RLS habilitada mas falta uma das duas policies canônicas', () => {
+  it('DRIFT: RLS enabled but one of the two canonical policies is missing', () => {
     const result = evaluateRealtimeState({
       tableExists: true,
       rlsEnabled: true,
@@ -85,7 +85,7 @@ describe('evaluateRealtimeState', () => {
     expect(result.state).toBe('DRIFT');
   });
 
-  it('DRIFT: RLS habilitada com uma policy extra não reconhecida', () => {
+  it('DRIFT: RLS enabled with an extra unrecognized policy', () => {
     const result = evaluateRealtimeState({
       tableExists: true,
       rlsEnabled: true,
@@ -96,7 +96,7 @@ describe('evaluateRealtimeState', () => {
     expect(result.state).toBe('DRIFT');
   });
 
-  it('DRIFT: policies existem mas RLS está desabilitada (estado inconsistente)', () => {
+  it('DRIFT: policies exist but RLS is disabled (inconsistent state)', () => {
     const result = evaluateRealtimeState({
       tableExists: true,
       rlsEnabled: false,
@@ -121,7 +121,7 @@ describe('evaluateRealtimeState', () => {
     expect(result.state).toBe('INVALID_POLICY');
   });
 
-  it('lança erro claro quando a tabela não existe — nunca finge um dos 5 estados nesse caso', () => {
+  it('throws a clear error when the table does not exist — never fakes one of the 5 states in that case', () => {
     expect(() => evaluateRealtimeState({
       tableExists: false,
       rlsEnabled: false,
