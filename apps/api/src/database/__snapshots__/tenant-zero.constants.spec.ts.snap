@@ -1,9 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`tenant-zero.constants IDs canônicos são congelados: mudar o namespace ou a seed é uma quebra de compatibilidade 1`] = `"724f035f-3034-5ea3-9b53-0785b558d4ec"`;
-
-exports[`tenant-zero.constants IDs canônicos são congelados: mudar o namespace ou a seed é uma quebra de compatibilidade 2`] = `"a900b3a8-fa1c-5a6b-a852-1b0689e27fe3"`;
-
 exports[`tenant-zero.constants canonical IDs are frozen: changing the namespace or seed breaks compatibility 1`] = `"724f035f-3034-5ea3-9b53-0785b558d4ec"`;
 
 exports[`tenant-zero.constants canonical IDs are frozen: changing the namespace or seed breaks compatibility 2`] = `"a900b3a8-fa1c-5a6b-a852-1b0689e27fe3"`;

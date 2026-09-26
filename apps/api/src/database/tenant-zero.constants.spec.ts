@@ -12,7 +12,7 @@ const MUSICOS360_NAMESPACE_UUID = '142d39d6-8454-4ba1-b2f0-695b120ae83f';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 describe('tenant-zero.constants', () => {
-  it('deriva org/tenant IDs deterministicamente via UUIDv5 do namespace congelado', () => {
+  it('derives org/tenant IDs deterministically via UUIDv5 from the frozen namespace', () => {
     // Recomputa de forma independente — prova que os exports não são
     // literais soltos, e sim resultado da fórmula documentada.
     expect(TENANT_ZERO_ORG_ID).toBe(uuidv5(`${TENANT_ZERO_SLUG}:organization`, MUSICOS360_NAMESPACE_UUID));
