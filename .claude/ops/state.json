@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T03:05:51.094Z",
+  "updatedAt": "2026-09-26T03:31:52.173Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -609,6 +609,73 @@
         }
       ],
       "createdAt": "2026-09-26T02:49:55.529Z"
+    },
+    {
+      "id": "req-40ee1de8",
+      "text": "B2 webhooks/billing: Stripe webhook tenant/org resolution works under the NOBYPASSRLS app role and fails closed on ambiguity; dunning clock never restarts on a failure without semantic transition (replay, duplicate, out-of-order, already in grace/read_only/suspended/cancelled); invoice upsert and failure bookkeeping are durable; org-isolated tables are reachable from worker/webhook contexts; SaaS invoices are not dunned by the tenant-invoice overdue scheduler; financial rules UI/notification do not suggest ledger entries are created (GAP-0009 audit-only)",
+      "nonRequirements": [
+        "No production/external writes; no Stripe live calls"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-5872b2f3",
+          "text": "Stripe webhook on real Postgres with real signatures: tenant resolved via ADMIN_DATA_SOURCE (fail-closed on ambiguity/metadata mismatch), invoice upsert persists, subscription writes hit org-isolated rows, failure record survives rollback (stripe-webhook-real-context e2e)",
+          "evidenceIds": [
+            "evid-78107c97"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-20b3eff1",
+          "text": "Dunning invariant: payment_failed for tenant in payment_grace/read_only/suspended/cancelled writes nothing and returns null; replay/out-of-order do not move grace_until (billing unit suites + e2e)",
+          "evidenceIds": [
+            "evid-dfea7c8b"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-84bed057",
+          "text": "Overdue scheduler excludes type=stripe_subscription in discovery and processing (invoice-overdue-saas-exclusion e2e, mutation-verified)",
+          "evidenceIds": [
+            "evid-1bdb7c05"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-48e5eaa6",
+          "text": "Financial rules: notification label and page disclosure state no ledger entry is created (financial-rule-label spec + FinancialRules disclosure guard)",
+          "evidenceIds": [
+            "evid-54fb3aef",
+            "evid-d70eddc1"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-e56be27d",
+          "text": "runInTenantContext completes orgId from tenantId via ADMIN_DATA_SOURCE; RealtimeService resolves org outside request context (public-path-tenant-context e2e tests 5-6)",
+          "evidenceIds": [
+            "evid-9e36e2ef"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-cb219d6c",
+          "text": "Regression: api typecheck, lint, test:ci, full test:e2e; web typecheck, lint, build, vitest all exit 0 on the final workspace",
+          "evidenceIds": [
+            "evid-e58c0015",
+            "evid-4ddebe4f",
+            "evid-c1106ea3",
+            "evid-d08cbf2c",
+            "evid-68155096",
+            "evid-65eca2d0",
+            "evid-b8e7ec2f",
+            "evid-5d0e821b",
+            "evid-e61b6340"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-26T03:22:53.268Z"
     }
   ],
   "findings": [
@@ -791,8 +858,8 @@
       "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:31:34.717Z",
-      "justification": "S19=DEPENDENTE_DECISAO_DE_PRODUTO for the business consequence of a triggered financial rule; GAP-0009 part re-audited 2026-09-26 per the user order (audit only, no wiring): no accidental execution (triggers fire only on writes to transaction_allocations, which nothing performs), no dangerous partial flow, the rateio UI (ManagerialLinksSection) is not rendered anywhere, residual entityLinks wire is always [] and stripped by Zod (SEM_IMPACTO). Misleading FinancialRules copy (\"disparam automaticamente\" while the only effect is a notification without the computed amount) is handled in cluster B2. | Root cause fully traced end-to-end (producer/consumer/persistence) per mission Section 6. Not fixed in this pass: (a) wiring largestRemainder/fn_largest_remainder/transaction_allocations into a real allocation flow would contradict an existing, explicit Product Owner architectural decision (GAP-0009, REMOVE_SECOND_ACCOUNTING_LAYER) -- doing so unilaterally would be worse than leaving it inert; (b) making FinancialRulesService's computed penalty/interest actually create a real financial consequence (adjustment transaction, invoice line, etc.) is a genuine new-feature/business-rule design decision (which trigger, which ledger entry, tax treatment, reversal semantics) that this audit cannot infer safely -- flagged for explicit product decision, not attempted as a speculative implementation.",
-      "resolvedAt": "2026-09-26T03:05:29.886Z"
+      "justification": "S19=DEPENDENTE_DECISAO_DE_PRODUTO for the business consequence of a triggered financial rule; GAP-0009 part re-audited 2026-09-26 per the user order (audit only, no wiring): no accidental execution (triggers fire only on writes to transaction_allocations, which nothing performs), no dangerous partial flow, the rateio UI (ManagerialLinksSection) is not rendered anywhere, residual entityLinks wire is always [] and stripped by Zod (SEM_IMPACTO). Misleading FinancialRules copy (\"disparam automaticamente\" while the only effect is a notification without the computed amount) was corrected in cluster B2 (commit 7fcdca6: notification states computed BRL value and \"nenhum lançamento foi criado\"; page disclosure; guard test evid-d70eddc1, spec evid-54fb3aef). | Root cause fully traced end-to-end (producer/consumer/persistence) per mission Section 6. Not fixed in this pass: (a) wiring largestRemainder/fn_largest_remainder/transaction_allocations into a real allocation flow would contradict an existing, explicit Product Owner architectural decision (GAP-0009, REMOVE_SECOND_ACCOUNTING_LAYER) -- doing so unilaterally would be worse than leaving it inert; (b) making FinancialRulesService's computed penalty/interest actually create a real financial consequence (adjustment transaction, invoice line, etc.) is a genuine new-feature/business-rule design decision (which trigger, which ledger entry, tax treatment, reversal semantics) that this audit cannot infer safely -- flagged for explicit product decision, not attempted as a speculative implementation.",
+      "resolvedAt": "2026-09-26T03:31:52.173Z"
     },
     {
       "id": "find-870087b6",
@@ -1109,6 +1176,118 @@
       "createdAt": "2026-09-26T03:05:43.000Z",
       "justification": "S19=RISCO_NAO_RESOLVIDO | Contract/schema change to .claude/contracts finding schema + ops.mjs belongs to the pack reconstruction (item 19); until then the S19= prefix convention is applied to 100% of findings and checked mechanically.",
       "resolvedAt": "2026-09-26T03:05:43.084Z"
+    },
+    {
+      "id": "find-3cdb4c15",
+      "category": "F",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/billing/billing-enforcement.service.ts",
+      "line": null,
+      "summary": "Stripe webhook tenant resolution returns 0 rows under the NOBYPASSRLS app role: findTenantIdByStripe queried tenant-scoped billing_subscriptions/tenant_billing_state from the @Public webhook path with no tenant context, so invoice.* and customer.subscription.* events became no-ops (a paying suspended tenant stayed suspended). Also accepted first match without ambiguity/metadata check.",
+      "rootCause": "Webhook path has no RequestTenantContext; tenant lookup used the app DataSource instead of ADMIN_DATA_SOURCE (same defect class as find-b4201eb2), and no fail-closed rule for ambiguous/mismatched mappings.",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:22:05.962Z",
+      "justification": "S19=CORRIGIDO | commit=091ec12 | ADMIN_DATA_SOURCE resolution, fail-closed on ambiguity/metadata mismatch | tests: billing-enforcement spec (first checkout/conflict/ambiguous) + stripe-webhook-real-context e2e (real signatures, real RLS) evid-78107c97 | regression: api test:ci evid-c1106ea3, full e2e evid-d08cbf2c | consumers re-audited: handleWebhook, all invoice.*/customer.subscription.* handlers, resolveOrgIdForTenant",
+      "resolvedAt": "2026-09-26T03:31:47.112Z"
+    },
+    {
+      "id": "find-2202a169",
+      "category": "F",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/billing/billing-enforcement.service.ts",
+      "line": null,
+      "summary": "Dunning clock restart: invoice.payment_failed for a tenant already in payment_grace/read_only/suspended/cancelled re-entered payment_grace with a fresh grace_until, regressing suspension and restarting the clock (replay/duplicate/out-of-order failure without semantic transition).",
+      "rootCause": "startPaymentGrace upsert ON CONFLICT only had a staleness guard, not an entry-state guard; billing_subscriptions was updated unconditionally before the upsert outcome was known.",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:22:06.048Z",
+      "justification": "S19=CORRIGIDO | commit=091ec12 | entry-state guard {active,trial} in code AND ON CONFLICT WHERE; billing_subscriptions update only when applied | tests: unit loop over payment_grace/read_only/suspended/cancelled (null, no INSERT/UPDATE) evid-dfea7c8b; e2e replay/duplicate/out-of-order/trial/grace/suspension/reinstatement/first-failure-timestamp cases, mutation check (reopening old states fails 4 cases) evid-78107c97",
+      "resolvedAt": "2026-09-26T03:31:47.199Z"
+    },
+    {
+      "id": "find-475adb34",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/billing/billing.service.ts",
+      "line": null,
+      "summary": "upsertStripeInvoice fails on real Postgres: untyped $4/$5 used both as integer columns and in ($4/100.0) arithmetic makes pg infer conflicting types; every invoice.* webhook threw after tenant resolution was fixed.",
+      "rootCause": "Parameter type inference ambiguity never exercised because mocks replaced the boundary (false-green).",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:22:06.134Z",
+      "justification": "S19=CORRIGIDO | commit=091ec12 | explicit ::integer casts | test: e2e invoice.* upsert persists row on real Postgres evid-78107c97 (failed before fix)",
+      "resolvedAt": "2026-09-26T03:31:47.289Z"
+    },
+    {
+      "id": "find-8e0c28b4",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/billing/billing.service.ts",
+      "line": null,
+      "summary": "Webhook failure bookkeeping (markWebhookFailed + legacy failure record) ran inside the same tenant transaction that just failed, so it rolled back with it: failed Stripe events left no durable failure trace and the claim row was not marked failed.",
+      "rootCause": "Failure path shared the aborted transaction instead of recording in a separate context.",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:22:06.227Z",
+      "justification": "S19=CORRIGIDO | commit=091ec12 | recordWebhookFailure in a separate context after rollback | test: e2e failing handler leaves FAILED payment_events row evid-78107c97",
+      "resolvedAt": "2026-09-26T03:31:47.373Z"
+    },
+    {
+      "id": "find-c703b56c",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/core/realtime/realtime.service.ts",
+      "line": null,
+      "summary": "RealtimeService.resolveOrgId read FORCE-RLS 'tenants' via the app DataSource; outside a request (workers/webhooks) it returned null so realtime broadcasts were silently skipped.",
+      "rootCause": "tenants is org_isolation RLS; lookup must use ADMIN_DATA_SOURCE (read-only identity lookup).",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:22:06.320Z",
+      "justification": "S19=CORRIGIDO | commit=2423c33 | tenants lookup via ADMIN_DATA_SOURCE | test: public-path-tenant-context e2e test 6 evid-9e36e2ef",
+      "resolvedAt": "2026-09-26T03:31:47.458Z"
+    },
+    {
+      "id": "find-b4641a0f",
+      "category": "F",
+      "severity": "HIGH",
+      "file": "apps/api/src/database/database-context.service.ts",
+      "line": null,
+      "summary": "runInTenantContext set app.current_org_id only when the caller passed orgId; workers/schedulers/webhooks pass only tenantId, so org-isolated tables (tenants, organizations, billing_subscriptions) read 0 rows / rejected writes: AI plan subquery fell back to 'starter', onboarding-cro org-less read empty, billing_subscriptions updates hit 0 rows.",
+      "rootCause": "Two RLS keys (tenant and org) but the context primitive completed only one; callers were expected to supply orgId they do not have.",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:22:06.409Z",
+      "justification": "S19=CORRIGIDO | commit=2423c33 | runInTenantContext completes orgId from tenantId (admin DS, cached) | test: public-path-tenant-context e2e test 5 (org-isolated read inside tenant-only context) evid-9e36e2ef | consumers re-audited: 34 orgId:null call sites now get org; explicit orgId still wins",
+      "resolvedAt": "2026-09-26T03:31:47.541Z"
+    },
+    {
+      "id": "find-675e3eb4",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/invoices/schedulers/invoice-overdue.scheduler.ts",
+      "line": null,
+      "summary": "Invoice overdue scheduler marked SaaS Stripe subscription invoices (type=stripe_subscription) overdue, a second dunning system competing with the Stripe webhook dunning state machine.",
+      "rootCause": "Two dunning authorities over the same invoices; the canonical one for SaaS billing is the Stripe webhook -> tenant_billing_state path.",
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:22:06.495Z",
+      "justification": "S19=CORRIGIDO | commit=9539a90 | type != stripe_subscription in discovery and processing | test: invoice-overdue-saas-exclusion e2e, mutation-verified evid-1bdb7c05",
+      "resolvedAt": "2026-09-26T03:31:47.623Z"
+    },
+    {
+      "id": "find-d675e4f6",
+      "category": "N",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/billing/billing-enforcement.service.ts",
+      "line": null,
+      "summary": "organizations.billing_status is a denormalized second source of truth for billing state alongside tenant_billing_state.status; they can drift independently. Routed to database/naming cluster.",
+      "rootCause": "Legacy column still written/read in parallel with the canonical enforcement state.",
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T03:22:06.582Z",
+      "justification": "S19=RISCO_NAO_RESOLVIDO | Routed to item 10/13 (database + naming): organizations.billing_status is written by billing.service (active/cancelled/past_due) in parallel with tenant_billing_state.status; resolution requires declaring one canonical in the map and migrating readers. Not closed by this cluster.",
+      "resolvedAt": "2026-09-26T03:31:47.716Z"
     }
   ],
   "evidenceIds": [
@@ -1359,7 +1538,22 @@
     "evid-ecb95896",
     "evid-30942a48",
     "evid-20745888",
-    "evid-ee67e111"
+    "evid-ee67e111",
+    "evid-78107c97",
+    "evid-dfea7c8b",
+    "evid-1bdb7c05",
+    "evid-54fb3aef",
+    "evid-d70eddc1",
+    "evid-9e36e2ef",
+    "evid-e58c0015",
+    "evid-4ddebe4f",
+    "evid-c1106ea3",
+    "evid-d08cbf2c",
+    "evid-68155096",
+    "evid-65eca2d0",
+    "evid-b8e7ec2f",
+    "evid-5d0e821b",
+    "evid-e61b6340"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

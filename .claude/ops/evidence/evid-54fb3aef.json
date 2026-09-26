@@ -1,0 +1,15 @@
+{
+  "id": "evid-54fb3aef",
+  "createdAt": "2026-09-26T03:24:01.893Z",
+  "type": "COMMAND",
+  "label": "pnpm --filter api exec jest --config jest.config.ts src/core/events/financial-rule-label.spec.ts",
+  "command": "pnpm --filter api exec jest --config jest.config.ts src/core/events/financial-rule-label.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "c4859a5383e723ad139e686ccb94a8acdb470cd0224755920c33848e99d0622b",
+  "fingerprintStatus": "BOUND",
+  "head": "822dc93340c7f87eb40d67046af54bc9ab47d704",
+  "durationMs": 8882
+}
