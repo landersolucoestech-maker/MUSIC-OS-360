@@ -1,8 +1,14 @@
 // ============================================================================
 // AdminSubscriptions — gestão de assinaturas dos clientes (Painel Admin).
 // Fonte central de assinaturas: consulta de status, histórico de cobranças,
-// cancelamentos e renovações. Modo mock (sem backend); a Stripe permanece
-// responsável apenas pelo processamento financeiro real.
+// cancelamentos e renovações. Real e live-wired via adminBillingService
+// (GET/POST /billing/admin/**) -- NÃO é modo mock. billing.service.ts recusa
+// ativamente qualquer STRIPE_SECRET_KEY que não seja uma chave TEST (ver
+// classifyStripeSecretKeyFormat/'LIVE_KEY_REJECTED'), então este projeto hoje
+// só opera contra o Stripe TEST MODE -- mas essa informação não é exposta
+// nesta tela hoje (CODEBASE_MAP Gotcha #20, ainda em aberto: falta um
+// indicador visível de TEST MODE para o admin, requer expor o estado real da
+// chave via um endpoint dedicado antes de renderizar aqui).
 // ============================================================================
 
 import { useMemo, useState } from "react";
