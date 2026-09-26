@@ -211,6 +211,7 @@ Tenant isolation pattern used uniformly: app-layer `tenant_id` filtering + `asse
 **`e2e/**`** (Playwright, root `playwright.config.ts`): 8 real-browser, real-backend specs including regression locks proving CRM pages call real endpoints (never legacy mocks), timeline persistence across reload, and an architectural invariant that import/export controls exist only on the Reports page (asserted absent from 7 other modules).
 
 **`server/ai-proxy.ts`**: a standalone Node HTTP server used in production when Vite's dev proxy isn't available. Its OpenAI chat-completion endpoint is real; its **ACRCloud endpoints are a permanent stub that always returns 501**, despite validating credentials as if wired up.
+  > **Correction (2026-09-26, find-10c37104):** no launch path ever existed in this repo (no Dockerfile, compose file, package script, CI workflow or serverless config starts it; no client calls `/api/ai/generate` or `/api/acrcloud/*`; it defaulted to the real API's port 3001). It was an orphaned, unauthenticated, wildcard-CORS OpenAI passthrough and has been **removed**. AI features live in `apps/api` behind the normal guard chain.
 
 ## Security Boundaries
 
@@ -272,6 +273,7 @@ Tenant isolation pattern used uniformly: app-layer `tenant_id` filtering + `asse
 29. **`pnpm.overrides` in root `package.json` silently stopped being read by pnpm** — 13 CVE pins had to be moved to `pnpm-workspace.yaml`, discovered only via a live CI dependency-audit failure; a real supply-chain risk window existed undetected until then.
 30. **8 dependency-audit waivers are all past their `reviewBy: 2026-09-30` date** as of this scan (today is 2026-09-15, so they're due this month, not yet overdue) — `xlsx`, `file-type`, `@nestjs/core`, `react-router` CVEs tracked but unresolved pending major-version migrations.
 31. **`server/ai-proxy.ts`'s ACRCloud endpoints always return 501** despite validating credentials as if a real integration exists — a convincing-looking but permanently unimplemented stub.
+   > **Resolved 2026-09-26 (find-10c37104):** the whole orphaned file was removed (see correction above).
 32. **A repo-wide empty-scaffold-barrel pattern**: `constants/index.ts`, `forms/index.ts`, `services/index.ts`, `schemas/index.ts`, `utils/index.ts` exist under nearly every frontend module as `export {};` placeholders — real logic lives in sibling files instead; harmless but easy to mistake for missing functionality.
 
 ## Specification & Planning Documentation

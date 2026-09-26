@@ -163,6 +163,8 @@ Spot-check of `packages/*` (real shared-package boundary, not part of the naming
 
 ## Security/architecture finding (2026-09-24): orphaned, unauthenticated `server/ai-proxy.ts`
 
+> **Resolution (2026-09-26, find-10c37104):** removed. The open question below ("still needed for an undocumented deployment target?") was answered from repository reality: no Dockerfile, compose file, package script, CI workflow or serverless config references it, no client calls its routes, and it would have collided with the real API on port 3001. Restoring it is a `git revert` away if an out-of-repo target ever surfaces.
+
 `server/` (repo root, outside both `apps/api` and `apps/web`) contains exactly one file: `ai-proxy.ts` — a standalone Node `http` server (not NestJS, not Express) exposing `POST /api/ai/generate` (raw OpenAI passthrough) and `POST /api/acrcloud/:endpoint` (a stub, always returns `501`). Audited per `.claude/rules/architecture.md`'s "second entrypoint"/"provider leakage" concern and `.claude/rules/security.md`'s auth-boundary concern, since this is exactly the "AI proxy/parallel server" pattern that needs proving, not assuming.
 
 **Entrypoint?** Yes — a real, independent `http.createServer`, started via `npx tsx server/ai-proxy.ts`, default port 3001.
