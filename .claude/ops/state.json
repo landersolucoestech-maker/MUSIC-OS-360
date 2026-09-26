@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T02:03:39.468Z",
+  "updatedAt": "2026-09-26T02:32:44.977Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -480,9 +480,72 @@
             "evid-2c087296"
           ],
           "status": "closed"
+        },
+        {
+          "id": "ac-018a5307",
+          "text": "A4 dead code: all 135 candidate items (25 repos, 26 module entities, 32 *.store.ts, 37 empty barrels, 14 store barrels, 1 spec) classified individually via a resolver-based importer graph + runtime reachability from real entrypoints + symbol/path-string search + DI/generator/config/CI checks; only SEGURO_PARA_REMOVER removed (131 files); api/web typecheck, lint, full test suites, web build pass; final reference search empty",
+          "evidenceIds": [
+            "evid-e48cd62b",
+            "evid-f2b05242",
+            "evid-db86933c",
+            "evid-d89356e7",
+            "evid-8978da5c",
+            "evid-565e20dc",
+            "evid-c4d1e106",
+            "evid-e18ac160",
+            "evid-668881c6",
+            "evid-395e1a3a",
+            "evid-35d806b2",
+            "evid-bbef96fb",
+            "evid-d2c523b8",
+            "evid-72e6aacd",
+            "evid-795d6942",
+            "evid-4a958b3b",
+            "evid-3b5610af",
+            "evid-8c10dd85",
+            "evid-73a9848d",
+            "evid-d250e7f4"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-e30c5722",
+          "text": "A5 integrations-sync containment: producers proven (artist-workflow onboarding-check, contract-workflow followup on signed/expiring_soon, artist onboarding distribution-sync, spotify OAuth spotify:sync); no consumer proven (@Processor scan; ExternalDataProcessor default); intent searched (product-tasks doc contradicts current producers -> semantics DEPENDENTE_DECISAO_DE_PRODUTO); unconsumed jobs no longer enqueued (Redis growth stopped at the source), unknown job names fail visibly instead of silent completion, trigger facts preserved in domain_event_log/oauth_connections; queue-topology.spec enforces producer/consumer invariant",
+          "evidenceIds": [
+            "evid-6236de6e",
+            "evid-c9b80e75",
+            "evid-52aa1291",
+            "evid-fe74fced",
+            "evid-1bf1a5b2",
+            "evid-22cac2fa"
+          ],
+          "status": "closed"
         }
       ],
       "createdAt": "2026-09-26T01:50:25.297Z"
+    },
+    {
+      "id": "req-2585071f",
+      "text": "Fase 3 Parte B1 (P0): tenancy/security audit - auth->tenant->RBAC->RLS across routes, workers, queues, webhooks, cron, cache, storage/signed URLs, logs; IDOR, tenantless cache keys, predictable storage paths, service role/admin bypasses, internal endpoints, sensitive logs; RBAC SHADOW enforcement (Gotcha #2)",
+      "nonRequirements": [
+        "Do not flip RBAC_PERSISTED_AUTHORITY to ON without product decision; no production writes"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-4776921b",
+          "text": "B1.1 find-8d2e71a4 WhatsApp inbound identity: root cause proven on real Postgres (app role, no tenant context -> RLS returns 0 rows -> no inbound message ever routed; textual-equality first-match design would also allow cross-tenant misrouting where RLS is off); fix: resolution via ADMIN_DATA_SOURCE collecting all matches (0 unknown / 1 resolved / >1 conflict fail-closed), configure proves ownership via Graph API and enforces cross-tenant uniqueness, validates input; unsafe findAllCredentials helper removed; unit + controller + real-Postgres e2e tests",
+          "evidenceIds": [
+            "evid-55e76c38",
+            "evid-c1ad7369",
+            "evid-a6a9e808",
+            "evid-0b9f5c9d",
+            "evid-0013f7a2",
+            "evid-5f95d694"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-26T02:22:36.728Z"
     }
   ],
   "findings": [
@@ -693,8 +756,8 @@
       "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:35:19.777Z",
-      "justification": "Root cause and full producer/consumer trace complete (2 real production call sites confirmed). Not implemented in this pass: the job payloads (tasks: string[] for onboarding-check; entityType/entityId/trigger for workflow-followup) imply real business logic (which onboarding tasks get checked/how, what a workflow-followup actually does per trigger) that is not specified anywhere in the codebase -- inventing a processor now would fabricate unreviewed business behavior rather than restore a known contract, which mission Section 4/17 explicitly warns against ('no permanent scaffolding disguised as a fix'). Flagged as a real, currently-active P1 (functional loss + unbounded queue growth), needing either a scoped feature implementation (with product input on the intended onboarding-check/follow-up semantics) or, as a minimal interim mitigation, an explicit decision to stop enqueueing to this queue until a processor exists (also a product-visible behavior change, not applied unilaterally here).",
-      "resolvedAt": "2026-09-26T01:35:37.171Z"
+      "justification": "S19=DEPENDENTE_DECISAO_DE_PRODUTO | Semantics only: what onboarding-check / workflow-followup / distribution-sync / spotify:sync should do is undefined; the sole design doc (docs/product-tasks/task-queue-processors.md) contradicts the actual producers. Decision needed: define each job's behavior (then register a real processor and remove it from UNCONSUMED_QUEUE_JOBS) or retire the producers. The operational defect (unbounded growth + false completion) is split into find-queue-containment and CORRIGIDO in commit 671d334. (runtime enum has no S19 value; DIVIDA_ACEITA is the runtime-schema carrier only).",
+      "resolvedAt": "2026-09-26T02:32:36.438Z"
     },
     {
       "id": "find-c4adcf5d",
@@ -718,11 +781,11 @@
       "line": null,
       "summary": "CODEBASE_MAP Gotcha #10 (dead stub entity/repository pairs) CONFIRMED across at least 24 modules (ai, audit-log, auth, billing, briefings, campaigns, clients, content-detections, contracts, ecad-reports, events, health, invoices, integrations, lead-interactions, leads, notifications, phonograms, releases, shares, support-tickets, transactions, uploads, users, works -- full list per repositories-tenant-isolation.spec.ts's own import list). Verified for 3 sample pairs (transactions/leads/invoices): each module-local *.entity.ts is imported ONLY by its sibling *.repository.ts, never registered in database.module.ts's real entity list (all real entities centralize in apps/api/src/database/entities.ts per this repo's documented convention), and neither entity nor repository is ever provided/injected in any real @Module providers array -- confirmed dead at runtime. However, unlike a simple abandoned-file situation, an entire dedicated spec file (repositories-tenant-isolation.spec.ts) exists that imports and unit-tests all ~24 pairs' tenant-scoping behavior in isolation -- meaning this is either (a) deliberate defense-in-depth scaffolding kept 'just in case' a future module adopts the repository pattern, or (b) momentum-driven dead code that even accrued its own test suite. Blast radius of a wrong guess here is real: deleting these files would also require touching/removing this shared cross-module spec, which is a broader, riskier change than a same-pass incidental cleanup should attempt.",
       "rootCause": null,
-      "disposition": "DIVIDA_ACEITA",
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:36:01.617Z",
-      "justification": "Real, confirmed dead code across 24 modules, but removal blast radius (shared cross-module test file, 24 module pairs) exceeds a safe incidental fix within this cluster's scope -- needs a dedicated dead-code-removal cluster with an explicit decision on whether the stub-repository pattern itself should be kept as a future convention or fully retired.",
-      "resolvedAt": "2026-09-26T01:36:01.745Z"
+      "justification": "S19=CORRIGIDO | commit=67a12c6 | Earlier Fase 2 text (removal deferred, blast radius not vetted) superseded: full per-item proof (importer graph over 2568 files + runtime reachability + symbol/path search + DI: no TypeOrmModule exists, so @InjectRepository stubs are not injectable). Removed 25 repos + 25 stub entities + the false-green repositories-tenant-isolation.spec.ts; user.entity.ts kept (real UserEntity). Gates: evid-795d6942 (api test:ci), evid-5f95d694 (api test:e2e real Postgres), evid-d250e7f4 (web vitest), evid-73a9848d (web build).",
+      "resolvedAt": "2026-09-26T02:32:36.183Z"
     },
     {
       "id": "find-ed7823e9",
@@ -774,11 +837,11 @@
       "line": null,
       "summary": "Gotcha #24 (dead Zustand stores) CONFIRMED: repo-wide scan found 20 *.store.ts files exporting a Zustand create() hook across catalog/projects/monitoring/releases/events/leads(x4)/settings/artist/accounting/inventory/rh/crm-relationships(x4)/licensing/contracts modules. Sampled 3 (catalog, projects, contracts) and confirmed each exported hook (useCatalogStore/useProjectsStore/useContractsStore) has ZERO importers anywhere else in apps/web/src -- pages use local useState instead, exactly as CODEBASE_MAP describes. Not removed in this pass: 20 files across ~15 modules is a broad mechanical cleanup better suited to its own dedicated dead-code-removal cluster with a full regression sweep, not a same-pass addition to a UX-integrity cluster.",
       "rootCause": null,
-      "disposition": "DIVIDA_ACEITA",
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:40:58.975Z",
-      "justification": "Confirmed real, safe-to-remove dead code, but 20 files across ~15 modules exceeds this cluster's scope -- flagged as a concrete, low-risk candidate for a dedicated dead-code-removal cluster.",
-      "resolvedAt": "2026-09-26T01:40:59.122Z"
+      "justification": "S19=CORRIGIDO | commit=67a12c6 | Earlier sampling (3 of 20) replaced by full classification of all 32 *.store.ts: 2 ATIVO (lead-filters, landing contact-modal), 30 removed (+13 store barrels), including 3 lead stores loaded via export* with no consumed symbol. No persist middleware anywhere.",
+      "resolvedAt": "2026-09-26T02:32:36.271Z"
     },
     {
       "id": "find-dfa5ec4d",
@@ -788,11 +851,25 @@
       "line": null,
       "summary": "Gotcha #32 (empty barrel scaffolds) CONFIRMED: 37 apps/web/src/modules/**/index.ts files are exactly 'export {};' placeholders (constants/forms/services/schemas/utils barrels per module), real logic lives in sibling files. Harmless -- no consumer imports anything from these barrels expecting real exports -- but confirmed real as a repo-wide pattern. Not removed in this pass: same reasoning as the dead-Zustand-stores finding, a 37-file mechanical cleanup belongs in a dedicated dead-code-removal cluster, not squeezed into this UX-integrity pass.",
       "rootCause": null,
-      "disposition": "DIVIDA_ACEITA",
+      "disposition": "CORRIGIDA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T01:40:59.206Z",
-      "justification": "Confirmed real and harmless; batched into the same future dead-code-removal cluster as the Zustand stores finding rather than fixed incidentally here.",
-      "resolvedAt": "2026-09-26T01:40:59.333Z"
+      "justification": "S19=CORRIGIDO | commit=67a12c6 | All 37 exact-empty barrels (count reconciled: the 37th hid behind a block comment) verified zero importers incl. directory imports; removed.",
+      "resolvedAt": "2026-09-26T02:32:36.353Z"
+    },
+    {
+      "id": "find-ab35080a",
+      "category": "L",
+      "severity": "HIGH",
+      "file": "apps/api/src/queues/services/workflow-queue.service.ts",
+      "line": null,
+      "summary": "Queue containment defect (split from find-721c845e): unconsumed jobs grew without bound in integrations-sync 'wait' (no @Processor) and distribution-sync / spotify:sync were marked completed without work by ExternalDataProcessor's silent default branch (false impression of processing).",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T02:32:36.529Z",
+      "justification": "S19=CORRIGIDO | commit=671d334 | Unconsumed jobs are no longer produced (Redis growth stopped at the source), unknown job names fail visibly, trigger facts preserved in domain_event_log / oauth_connections; queue-topology.spec enforces the producer/consumer invariant. Tests: evid-6236de6e (queues/spotify/handlers), evid-1bf1a5b2 (api test:ci). Residual: jobs already waiting in deployed Redis require an operator cleanup (not executed: external production write).",
+      "resolvedAt": "2026-09-26T02:32:44.976Z"
     }
   ],
   "evidenceIds": [
@@ -977,7 +1054,39 @@
     "evid-8ab2a93d",
     "evid-e556a28c",
     "evid-0a27ffc6",
-    "evid-2c087296"
+    "evid-2c087296",
+    "evid-e48cd62b",
+    "evid-f2b05242",
+    "evid-db86933c",
+    "evid-d89356e7",
+    "evid-8978da5c",
+    "evid-565e20dc",
+    "evid-c4d1e106",
+    "evid-6236de6e",
+    "evid-c9b80e75",
+    "evid-52aa1291",
+    "evid-fe74fced",
+    "evid-e18ac160",
+    "evid-668881c6",
+    "evid-395e1a3a",
+    "evid-35d806b2",
+    "evid-bbef96fb",
+    "evid-d2c523b8",
+    "evid-72e6aacd",
+    "evid-55e76c38",
+    "evid-c1ad7369",
+    "evid-a6a9e808",
+    "evid-0b9f5c9d",
+    "evid-0013f7a2",
+    "evid-1bf1a5b2",
+    "evid-795d6942",
+    "evid-4a958b3b",
+    "evid-22cac2fa",
+    "evid-3b5610af",
+    "evid-8c10dd85",
+    "evid-73a9848d",
+    "evid-d250e7f4",
+    "evid-5f95d694"
   ],
   "checkpointIds": [
     "chec-e661a7aa",
