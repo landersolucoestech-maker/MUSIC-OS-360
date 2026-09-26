@@ -20,11 +20,11 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('FixDefaultPrivilegesCreatorRole20260803000002', () => {
-  it('é classificada como APPLICATION — deve rodar via db:migrate:application', () => {
+  it('is classified as APPLICATION — must run via db:migrate:application', () => {
     expect(isApplicationMigration('FixDefaultPrivilegesCreatorRole20260803000002')).toBe(true);
   });
 
-  it('lê o role criador real via SELECT current_user, não hardcoda "musicos_migrator" no código executável', () => {
+  it('reads the real creator role via SELECT current_user, does not hardcode "musicos_migrator" in executable code', () => {
     const codeOnly = migrationSrc.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
     expect(codeOnly).toMatch(/SELECT current_user/);
     expect(codeOnly).not.toMatch(/FOR ROLE musicos_migrator/);
@@ -37,18 +37,18 @@ describe('FixDefaultPrivilegesCreatorRole20260803000002', () => {
     expect(migrationSrc).toMatch(/GRANT USAGE, SELECT ON SEQUENCES TO musicos_app/);
   });
 
-  it('corrige retroativamente client_attachments (criada antes desta correção existir)', () => {
+  it('retroactively fixes client_attachments (created before this fix existed)', () => {
     expect(migrationSrc).toMatch(/client_attachments/);
     expect(migrationSrc).toMatch(/IF EXISTS \(SELECT 1 FROM pg_tables/);
   });
 
-  it('down() reverte via REVOKE simétrico', () => {
+  it('down() reverts via a symmetric REVOKE', () => {
     const downBlock = migrationSrc.split('async down')[1];
     expect(downBlock).toMatch(/REVOKE SELECT, INSERT, UPDATE, DELETE ON TABLES FROM musicos_app/);
     expect(downBlock).toMatch(/REVOKE USAGE, SELECT ON SEQUENCES FROM musicos_app/);
   });
 
-  it('está registrada no index.ts de migrations', () => {
+  it('is registered in the migrations index.ts', () => {
     const indexSrc = fs.readFileSync(path.resolve(__dirname, 'migrations/index.ts'), 'utf8');
     expect(indexSrc).toMatch(/FixDefaultPrivilegesCreatorRole20260803000002/);
   });

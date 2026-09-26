@@ -12,7 +12,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildMarketingProjectsInCanonicalFormOrder20260719000008', () => {
-  it('type/title vêm logo após id/tenant_id, seguindo a ordem do DTO', () => {
+  it('type/title come right after id/tenant_id, following the DTO order', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -23,7 +23,7 @@ describe('RebuildMarketingProjectsInCanonicalFormOrder20260719000008', () => {
     expect(titleIdx).toBeGreaterThan(typeIdx);
   });
 
-  it('financial_project_id fica junto das relações técnicas (antes de starts_at), não após deleted_at', () => {
+  it('financial_project_id sits with the technical relations (before starts_at), not after deleted_at', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const campaignIdx = block.indexOf('campaign_id');
     const financialIdx = block.indexOf('financial_project_id');
@@ -32,13 +32,13 @@ describe('RebuildMarketingProjectsInCanonicalFormOrder20260719000008', () => {
     expect(startsAtIdx).toBeGreaterThan(financialIdx);
   });
 
-  it('remove organization_id (órfã comprovada) com validação fail-fast', () => {
+  it('drops organization_id (proven orphan) with fail-fast validation', () => {
     expect(migrationSrc).not.toMatch(/newColumns = `[^`]*organization_id/);
     expect(migrationSrc).toMatch(/count\(organization_id\)::int AS non_null/);
     expect(migrationSrc).toMatch(/presumida órfã, mas há dado real/);
   });
 
-  it('bloco de auditoria é created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
+  it('the audit block is created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const createdAtIdx = block.indexOf('created_at');
     const updatedAtIdx = block.indexOf('updated_at');
@@ -53,7 +53,7 @@ describe('RebuildMarketingProjectsInCanonicalFormOrder20260719000008', () => {
     expect(afterDeletedAt.replace(/timestamptz,?/, '').trim()).toBe('');
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 

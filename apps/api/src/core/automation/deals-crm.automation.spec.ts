@@ -87,7 +87,7 @@ describe('DealsCrmAutomation (ON_DEMAND: POST /clients/:id/ai/deals-crm)', () =>
     expect(aiCalls[0][0].prompt).toContain('Nenhum deal');
   });
 
-  it('falha da IA registra fail e relança', async () => {
+  it('an AI failure records fail and rethrows', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const clients = makeClients();

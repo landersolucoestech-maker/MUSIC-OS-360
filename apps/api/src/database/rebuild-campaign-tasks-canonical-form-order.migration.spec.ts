@@ -40,7 +40,7 @@ describe('RebuildCampaignTasksInCanonicalFormOrder20260719000022', () => {
     expect(createdByIdx).toBeGreaterThan(updatedAtIdx);
   });
 
-  it('não remove nenhuma coluna (reconstrução pura de ordem)', () => {
+  it('removes no column (pure order rebuild)', () => {
     const newBlock = block();
     const origBlock = migrationSrc.split('originalColumns = `')[1].split('`;')[0];
     const extractCols = (b: string) => [...b.matchAll(/^\s*(\w+)\s+/gm)].map((m) => m[1]);
@@ -50,11 +50,11 @@ describe('RebuildCampaignTasksInCanonicalFormOrder20260719000022', () => {
     for (const col of origCols) expect(newCols.has(col)).toBe(true);
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria FKs para campaigns (simples e composta) e RLS + as 5 policies, com down() honesto', () => {
+  it('recreates the FKs to campaigns (simple and composite) and RLS + the 5 policies, with an honest down()', () => {
     expect(migrationSrc.match(/FOREIGN KEY \(campaign_id\) REFERENCES campaigns\(id\) ON DELETE CASCADE/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc.match(/FOREIGN KEY \(campaign_id, tenant_id\) REFERENCES campaigns\(id, tenant_id\) ON DELETE CASCADE/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);

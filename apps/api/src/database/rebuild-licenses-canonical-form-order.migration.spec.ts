@@ -11,7 +11,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildLicensesInCanonicalFormOrder20260719000015', () => {
-  it('titulo/obra_id vêm logo após id/tenant_id (ordem do DTO)', () => {
+  it('titulo/obra_id come right after id/tenant_id (DTO order)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -22,7 +22,7 @@ describe('RebuildLicensesInCanonicalFormOrder20260719000015', () => {
     expect(obraIdx).toBeGreaterThan(tituloIdx);
   });
 
-  it('remuneration_type/artista_id (nome histórico da migration) ficam antes do bloco de auditoria (não mais após deleted_at)', () => {
+  it('remuneration_type/artista_id (the migration\'s historical name) sit before the audit block (no longer after deleted_at)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const observacoesIdx = block.indexOf('observacoes ');
     const remunerationIdx = block.indexOf('remuneration_type');
@@ -31,7 +31,7 @@ describe('RebuildLicensesInCanonicalFormOrder20260719000015', () => {
     expect(createdAtIdx).toBeGreaterThan(remunerationIdx);
   });
 
-  it('bloco de auditoria é created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
+  it('the audit block is created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const createdAtIdx = block.indexOf('created_at');
     const updatedAtIdx = block.indexOf('updated_at');
@@ -46,7 +46,7 @@ describe('RebuildLicensesInCanonicalFormOrder20260719000015', () => {
     expect(afterDeletedAt.replace(/timestamptz,?/, '').trim()).toBe('');
   });
 
-  it('não remove nenhuma coluna (reconstrução pura de ordem)', () => {
+  it('removes no column (pure order rebuild)', () => {
     const newBlock = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const origBlock = migrationSrc.split('originalColumns = `')[1].split('`;')[0];
     const extractCols = (block: string) => [...block.matchAll(/^\s*(\w+)\s+/gm)].map((m) => m[1]);
@@ -56,7 +56,7 @@ describe('RebuildLicensesInCanonicalFormOrder20260719000015', () => {
     for (const col of origCols) expect(newCols.has(col)).toBe(true);
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 

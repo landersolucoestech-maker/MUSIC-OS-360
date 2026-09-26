@@ -15,7 +15,7 @@ const migrationSrc = fs.readFileSync(
 describe('RebuildLeaveRequestsInCanonicalFormOrder20260719000025', () => {
   const block = () => migrationSrc.split('newColumns = `')[1].split('`;')[0];
 
-  it('funcionario_id/employee_id ficam adjacentes (campo real primeiro) logo após tenant_id', () => {
+  it('funcionario_id/employee_id sit next to each other (real field first) right after tenant_id', () => {
     const b = block();
     const tenantIdx = b.indexOf('tenant_id');
     const funcionarioIdx = b.indexOf('funcionario_id');
@@ -41,7 +41,7 @@ describe('RebuildLeaveRequestsInCanonicalFormOrder20260719000025', () => {
     expect(obsIdx).toBeGreaterThan(aprovadoIdx);
   });
 
-  it('motivo/documento_url (zona legada, sem campo visual) vêm depois de observacoes e antes de metadata', () => {
+  it('motivo/documento_url (legacy zone, no visual field) come after observacoes and before metadata', () => {
     const b = block();
     const obsIdx = b.indexOf('observacoes');
     const motivoIdx = b.indexOf('motivo');
@@ -52,7 +52,7 @@ describe('RebuildLeaveRequestsInCanonicalFormOrder20260719000025', () => {
     expect(metadataIdx).toBeGreaterThan(docIdx);
   });
 
-  it('bloco de auditoria é created_at -> updated_at -> created_by -> deleted_at (sem updated_by, lacuna preexistente)', () => {
+  it('the audit block is created_at -> updated_at -> created_by -> deleted_at (no updated_by, pre-existing gap)', () => {
     const b = block();
     const createdAtIdx = b.indexOf('created_at');
     const updatedAtIdx = b.indexOf('updated_at');
@@ -64,7 +64,7 @@ describe('RebuildLeaveRequestsInCanonicalFormOrder20260719000025', () => {
     expect(b).not.toMatch(/updated_by/);
   });
 
-  it('não remove nenhuma coluna (reconstrução pura de ordem)', () => {
+  it('removes no column (pure order rebuild)', () => {
     const newBlock = block();
     const origBlock = migrationSrc.split('originalColumns = `')[1].split('`;')[0];
     const extractCols = (b: string) => [...b.matchAll(/^\s*(\w+)\s+/gm)].map((m) => m[1]);
@@ -74,7 +74,7 @@ describe('RebuildLeaveRequestsInCanonicalFormOrder20260719000025', () => {
     for (const col of origCols) expect(newCols.has(col)).toBe(true);
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 

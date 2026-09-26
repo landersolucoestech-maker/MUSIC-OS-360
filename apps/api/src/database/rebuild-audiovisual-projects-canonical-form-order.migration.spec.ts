@@ -13,7 +13,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006', () => {
-  it('phonogram_id/music_title/title/artist_name vêm antes de type (seção Música é a primeira)', () => {
+  it('phonogram_id/music_title/title/artist_name come before type (the music section is first)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -26,7 +26,7 @@ describe('RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006', () => {
     expect(typeIdx).toBeGreaterThan(titleIdx);
   });
 
-  it('status/final_status vêm depois dos campos do formulário, e completed_at/publish_date (derivados do service) depois deles', () => {
+  it('status/final_status come after the form fields, and completed_at/publish_date (service-derived) after them', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const observacoesIdx = block.indexOf('observations ');
     const statusIdx = block.search(/\bstatus\s+varchar/);
@@ -35,7 +35,7 @@ describe('RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006', () => {
     expect(completedIdx).toBeGreaterThan(statusIdx);
   });
 
-  it('remove organization_id/archived_at (órfãs comprovadas) com validação fail-fast', () => {
+  it('drops organization_id/archived_at (proven orphans) with fail-fast validation', () => {
     expect(migrationSrc).not.toMatch(/newColumns = `[^`]*organization_id/);
     expect(migrationSrc).not.toMatch(/newColumns = `[^`]*archived_at/);
     expect(migrationSrc).toMatch(/count\(organization_id\)::int \+ count\(archived_at\)::int/);
@@ -49,11 +49,11 @@ describe('RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006', () => {
     expect(afterDeletedAt.replace(/timestamptz,?/, '').trim()).toBe('');
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria os 2 CHECK constraints (status/type), a FK financeira e a única policy (tenant_isolation, sem super_admin)', () => {
+  it('recreates the 2 CHECK constraints (status/type), the financial FK and the single policy (tenant_isolation, no super_admin)', () => {
     expect(migrationSrc).toMatch(/chk_av_projects_status/);
     expect(migrationSrc).toMatch(/chk_av_projects_type/);
     expect(migrationSrc).toMatch(/fk_audiovisual_projects_financial_project/);

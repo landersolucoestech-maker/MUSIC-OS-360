@@ -57,7 +57,7 @@ describe("usePaginatedDataQuery", () => {
     mockedListPaged.mockImplementation(fakeBackend as typeof storage.listPaged);
   });
 
-  it("alcança registros além do 50º via paginação real (dataset com 75 registros)", async () => {
+  it("reaches records beyond the 50th via real pagination (75-record dataset)", async () => {
     // Página 6 com pageSize 10 = offset 50 → itens 51-60, inacessíveis sob o
     // antigo limit=50 default do backend sem paginação real.
     const { result } = renderHook(
@@ -74,7 +74,7 @@ describe("usePaginatedDataQuery", () => {
     expect(result.current.totalPages).toBe(8);
   });
 
-  it("alcança a última página parcial (registros 71-75)", async () => {
+  it("reaches the last partial page (records 71-75)", async () => {
     const { result } = renderHook(
       () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 8, pageSize: 10 }),
       { wrapper: createWrapper() },
@@ -86,7 +86,7 @@ describe("usePaginatedDataQuery", () => {
     expect(result.current.items[4].id).toBe("id-75");
   });
 
-  it("refaz a busca ao trocar de página (queryKey inclui page)", async () => {
+  it("refetches when the page changes (queryKey includes page)", async () => {
     const { result, rerender } = renderHook(
       ({ page }: { page: number }) => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page, pageSize: 10 }),
       { wrapper: createWrapper(), initialProps: { page: 1 } },
@@ -116,7 +116,7 @@ describe("usePaginatedDataQuery", () => {
     expect(result.current.total).toBeLessThan(75);
   });
 
-  it("filtros extra (ex.: status) chegam ao backend e podem zerar o resultado sem quebrar a paginação", async () => {
+  it("extra filters (e.g. status) reach the backend and may empty the result without breaking pagination", async () => {
     const { result } = renderHook(
       () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 1, pageSize: 10, filters: { status: "ativo" } }),
       { wrapper: createWrapper() },
@@ -129,7 +129,7 @@ describe("usePaginatedDataQuery", () => {
     expect(result.current.totalPages).toBe(1);
   });
 
-  it("gera queryKeys diferentes para filtros diferentes (não reaproveita cache entre filtros)", async () => {
+  it("produces different queryKeys for different filters (no cache reuse across filters)", async () => {
     const { result, rerender } = renderHook(
       ({ filters }: { filters: Record<string, unknown> }) =>
         usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 1, pageSize: 10, filters }),
@@ -157,7 +157,7 @@ describe("usePaginatedDataQuery", () => {
     expect(calledOptions.signal).toBeInstanceOf(AbortSignal);
   });
 
-  it("não busca quando enabled=false", async () => {
+  it("does not fetch when enabled=false", async () => {
     renderHook(
       () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 1, pageSize: 10, enabled: false }),
       { wrapper: createWrapper() },

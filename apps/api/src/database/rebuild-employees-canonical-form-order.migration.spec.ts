@@ -16,7 +16,7 @@ const migrationSrc = fs.readFileSync(
 describe('RebuildEmployeesInCanonicalFormOrder20260719000018', () => {
   const block = () => migrationSrc.split('newColumns = `')[1].split('`;')[0];
 
-  it('nome_completo/nome vêm logo após id/tenant_id (par mirrorado, campo real primeiro)', () => {
+  it('nome_completo/nome come right after id/tenant_id (mirrored pair, real field first)', () => {
     const b = block();
     const idIdx = b.indexOf('id ');
     const tenantIdx = b.indexOf('tenant_id ');
@@ -40,7 +40,7 @@ describe('RebuildEmployeesInCanonicalFormOrder20260719000018', () => {
     expect(salarioIdx).toBeGreaterThan(salarioBaseIdx);
   });
 
-  it('documentos (sem campo visual) vem antes de metadata e depois dos campos funcionais', () => {
+  it('documentos (no visual field) comes before metadata and after the functional fields', () => {
     const b = block();
     const vinculoIdx = b.indexOf('vinculo_usuario_id');
     const documentosIdx = b.indexOf('documentos');
@@ -49,7 +49,7 @@ describe('RebuildEmployeesInCanonicalFormOrder20260719000018', () => {
     expect(metadataIdx).toBeGreaterThan(documentosIdx);
   });
 
-  it('bloco de auditoria é created_at -> updated_at -> created_by -> deleted_at (sem updated_by, lacuna preexistente)', () => {
+  it('the audit block is created_at -> updated_at -> created_by -> deleted_at (no updated_by, pre-existing gap)', () => {
     const b = block();
     const createdAtIdx = b.indexOf('created_at');
     const updatedAtIdx = b.indexOf('updated_at');
@@ -62,7 +62,7 @@ describe('RebuildEmployeesInCanonicalFormOrder20260719000018', () => {
     expect(migrationSrc.split('originalColumns = `')[1].split('`;')[0]).not.toMatch(/updated_by/);
   });
 
-  it('não remove nenhuma coluna (reconstrução pura de ordem)', () => {
+  it('removes no column (pure order rebuild)', () => {
     const newBlock = block();
     const origBlock = migrationSrc.split('originalColumns = `')[1].split('`;')[0];
     const extractCols = (b: string) => [...b.matchAll(/^\s*(\w+)\s+/gm)].map((m) => m[1]);
@@ -72,7 +72,7 @@ describe('RebuildEmployeesInCanonicalFormOrder20260719000018', () => {
     for (const col of origCols) expect(newCols.has(col)).toBe(true);
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 

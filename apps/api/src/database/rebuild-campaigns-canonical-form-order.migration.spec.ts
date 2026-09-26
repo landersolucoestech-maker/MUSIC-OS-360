@@ -16,7 +16,7 @@ const migrationSrc = fs.readFileSync(
 describe('RebuildCampaignsInCanonicalFormOrder20260719000024', () => {
   const block = () => migrationSrc.split('newColumns = `')[1].split('`;')[0];
 
-  it('mantém a ordem funcional já existente: nome -> tipo -> status -> objetivo -> orcamento -> data_inicio -> data_fim -> artista_id', () => {
+  it('keeps the existing functional order: nome -> tipo -> status -> objetivo -> orcamento -> data_inicio -> data_fim -> artista_id', () => {
     const b = block();
     const nomeIdx = b.search(/\bnome\s+varchar/);
     const tipoIdx = b.indexOf('tipo');
@@ -35,7 +35,7 @@ describe('RebuildCampaignsInCanonicalFormOrder20260719000024', () => {
     expect(artistaIdx).toBeGreaterThan(fimIdx);
   });
 
-  it('bloco de auditoria é created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
+  it('the audit block is created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
     const b = block();
     const createdAtIdx = b.indexOf('created_at');
     const updatedAtIdx = b.indexOf('updated_at');
@@ -48,13 +48,13 @@ describe('RebuildCampaignsInCanonicalFormOrder20260719000024', () => {
     expect(deletedAtIdx).toBeGreaterThan(updatedByIdx);
   });
 
-  it('documenta a pendência de nomenclatura DTO×entidade e a ausência de chamador real no frontend', () => {
+  it('documents the pending DTO×entity naming issue and the absence of a real frontend caller', () => {
     expect(migrationSrc).toMatch(/ACHADO CRÍTICO/);
     expect(migrationSrc).toMatch(/CreateCampaignDto/);
     expect(migrationSrc).toMatch(/marketing\/campaigns/);
   });
 
-  it('não remove nenhuma coluna (reconstrução pura de ordem)', () => {
+  it('removes no column (pure order rebuild)', () => {
     const newBlock = block();
     const origBlock = migrationSrc.split('originalColumns = `')[1].split('`;')[0];
     const extractCols = (b: string) => [...b.matchAll(/^\s*(\w+)\s+/gm)].map((m) => m[1]);
@@ -64,7 +64,7 @@ describe('RebuildCampaignsInCanonicalFormOrder20260719000024', () => {
     for (const col of origCols) expect(newCols.has(col)).toBe(true);
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 

@@ -26,14 +26,14 @@ describe('RebuildCampaignAssetsInCanonicalFormOrder20260719000023', () => {
     expect(descIdx).toBeGreaterThan(fileUrlIdx);
   });
 
-  it('remove file_size/mime_type com guarda de contagem não-nula (fail-fast)', () => {
+  it('drops file_size/mime_type with a non-null count guard (fail-fast)', () => {
     expect(migrationSrc).toMatch(/count\(file_size\)::int \+ count\(mime_type\)::int/);
     expect(migrationSrc).toMatch(/órfãs, mas há dado real/);
     const b = block();
     expect(b).not.toMatch(/file_size|mime_type/);
   });
 
-  it('created_by vem depois de created_at (não antes)', () => {
+  it('created_by comes after created_at (not before)', () => {
     const b = block();
     const createdAtIdx = b.indexOf('created_at');
     const createdByIdx = b.indexOf('created_by');
@@ -42,7 +42,7 @@ describe('RebuildCampaignAssetsInCanonicalFormOrder20260719000023', () => {
     expect(deletedAtIdx).toBeGreaterThan(createdByIdx);
   });
 
-  it('não remove nenhuma OUTRA coluna além de file_size/mime_type', () => {
+  it('drops no OTHER column besides file_size/mime_type', () => {
     const newCols = new Set([...block().matchAll(/^\s*(\w+)\s+/gm)].map((m) => m[1]));
     const origBlock = migrationSrc.split('originalColumns = `')[1].split('`;')[0];
     const origCols = new Set([...origBlock.matchAll(/^\s*(\w+)\s+/gm)].map((m) => m[1]));
@@ -50,11 +50,11 @@ describe('RebuildCampaignAssetsInCanonicalFormOrder20260719000023', () => {
     expect(removed.sort()).toEqual(['file_size', 'mime_type']);
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria FKs para campaigns (simples e composta) e RLS + as 5 policies, com down() honesto', () => {
+  it('recreates the FKs to campaigns (simple and composite) and RLS + the 5 policies, with an honest down()', () => {
     expect(migrationSrc.match(/FOREIGN KEY \(campaign_id\) REFERENCES campaigns\(id\) ON DELETE CASCADE/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc.match(/FOREIGN KEY \(campaign_id, tenant_id\) REFERENCES campaigns\(id, tenant_id\) ON DELETE CASCADE/g)?.length).toBeGreaterThanOrEqual(2);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);

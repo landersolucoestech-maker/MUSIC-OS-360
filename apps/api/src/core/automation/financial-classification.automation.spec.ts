@@ -139,7 +139,7 @@ describe('FinancialClassificationAutomation (transaction.created → financial-c
     expect(aiCalls[0][0].prompt).toContain('receita (income)');
   });
 
-  it('idempotência metadata — não reprocessa se já gerado com a mesma chave', async () => {
+  it('metadata idempotency — does not reprocess if already generated with the same key', async () => {
     const row = { ...TX_ROW, metadata: { aiClassification: { idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' } } };
     const { ds, query } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -153,7 +153,7 @@ describe('FinancialClassificationAutomation (transaction.created → financial-c
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('idempotência skill_runs — run em andamento/sucesso bloqueia', async () => {
+  it('skill_runs idempotency — an in-progress/successful run blocks', async () => {
     const { ds, query } = makeDs([TX_ROW], [{ '1': 1 }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

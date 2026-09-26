@@ -12,7 +12,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildRightsHoldersInCanonicalFormOrder20260719000013', () => {
-  it('legal_name/artistic_name vêm logo após id/tenant_id (ordem do DTO)', () => {
+  it('legal_name/artistic_name come right after id/tenant_id (DTO order)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -23,14 +23,14 @@ describe('RebuildRightsHoldersInCanonicalFormOrder20260719000013', () => {
     expect(artisticIdx).toBeGreaterThan(legalIdx);
   });
 
-  it('remove email_encrypted/phone_encrypted (órfãs comprovadas) com validação fail-fast', () => {
+  it('drops email_encrypted/phone_encrypted (proven orphans) with fail-fast validation', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     expect(block).not.toMatch(/email_encrypted|phone_encrypted/);
     expect(migrationSrc).toMatch(/count\(email_encrypted\)::int \+ count\(phone_encrypted\)::int/);
     expect(migrationSrc).toMatch(/presumidas órfãs, mas há dado real/);
   });
 
-  it('bloco de auditoria é created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
+  it('the audit block is created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const createdAtIdx = block.indexOf('created_at');
     const updatedAtIdx = block.indexOf('updated_at');
@@ -45,11 +45,11 @@ describe('RebuildRightsHoldersInCanonicalFormOrder20260719000013', () => {
     expect(afterDeletedAt.replace(/timestamp,?/, '').trim()).toBe('');
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria o CHECK de holder_type, o índice único parcial, RLS + policy e possui down() honesto', () => {
+  it('recreates the holder_type CHECK, the partial unique index, RLS + policy and has an honest down()', () => {
     expect(migrationSrc).toMatch(/chk_rights_holders_holder_type/);
     expect(migrationSrc).toMatch(/uq_rights_holders_tenant_doc/);
     expect(migrationSrc).toMatch(/ENABLE ROW LEVEL SECURITY/);

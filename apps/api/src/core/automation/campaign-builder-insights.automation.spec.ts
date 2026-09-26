@@ -76,7 +76,7 @@ const PAID_ADS_JSON = JSON.stringify({
 });
 
 describe('CampaignBuilderInsightsAutomation.runAdCreative (ON_DEMAND: POST .../ai/ad-creative)', () => {
-  it('carrega a campanha real, valida a plataforma selecionada e retorna sugestões de criativo', async () => {
+  it('loads the real campaign, validates the selected platform and returns creative suggestions', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(AD_CREATIVE_JSON);
     const campaignBuilder = makeCampaignBuilder();
@@ -99,7 +99,7 @@ describe('CampaignBuilderInsightsAutomation.runAdCreative (ON_DEMAND: POST .../a
     expect(skillRun.succeed).toHaveBeenCalled();
   });
 
-  it('rejeita uma plataforma que não está selecionada na campanha', async () => {
+  it('rejects a platform not selected on the campaign', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(AD_CREATIVE_JSON);
     const campaignBuilder = makeCampaignBuilder();
@@ -112,7 +112,7 @@ describe('CampaignBuilderInsightsAutomation.runAdCreative (ON_DEMAND: POST .../a
     expect(skillRun.start).not.toHaveBeenCalled();
   });
 
-  it('falha da IA registra fail e relança', async () => {
+  it('an AI failure records fail and rethrows', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const campaignBuilder = makeCampaignBuilder();
@@ -124,7 +124,7 @@ describe('CampaignBuilderInsightsAutomation.runAdCreative (ON_DEMAND: POST .../a
 });
 
 describe('CampaignBuilderInsightsAutomation.runPaidAdsStrategy (ON_DEMAND: POST .../ai/paid-ads-strategy)', () => {
-  it('sugere alocação de orçamento entre as plataformas reais selecionadas, somando 100%', async () => {
+  it('suggests a budget allocation across the real selected platforms, summing to 100%', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(PAID_ADS_JSON);
     const campaignBuilder = makeCampaignBuilder();
@@ -143,7 +143,7 @@ describe('CampaignBuilderInsightsAutomation.runPaidAdsStrategy (ON_DEMAND: POST 
     expect(sum).toBe(100);
   });
 
-  it('rejeita quando nenhuma plataforma foi selecionada ainda', async () => {
+  it('rejects when no platform has been selected yet', async () => {
     const skillRun = makeSkillRun();
     const ai = makeAi(PAID_ADS_JSON);
     const campaignBuilder = makeCampaignBuilder({ ...STORED_CAMPAIGN, platforms: [] });
@@ -153,7 +153,7 @@ describe('CampaignBuilderInsightsAutomation.runPaidAdsStrategy (ON_DEMAND: POST 
     expect(ai.complete).not.toHaveBeenCalled();
   });
 
-  it('falha da IA registra fail e relança', async () => {
+  it('an AI failure records fail and rethrows', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const campaignBuilder = makeCampaignBuilder();

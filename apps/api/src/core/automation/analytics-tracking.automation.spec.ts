@@ -87,7 +87,7 @@ describe('AnalyticsTrackingAutomation (ON_DEMAND: POST /analytics/tracking-cover
     expect(ai.complete).not.toHaveBeenCalled();
   });
 
-  it('falha da IA registra fail e relança', async () => {
+  it('an AI failure records fail and rethrows', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const postHog = makePostHog(true);

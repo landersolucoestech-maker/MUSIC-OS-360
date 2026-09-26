@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 import { deriveAuthEnvironmentLabel, deriveMaskedSupabaseRef, extractSupabaseRef } from "./env";
 
 describe("extractSupabaseRef", () => {
-  it("extrai o ref de uma URL Supabase válida", () => {
+  it("extracts the ref from a valid Supabase URL", () => {
     expect(extractSupabaseRef("https://rypnevnfipygyhysqpdo.supabase.co")).toBe("rypnevnfipygyhysqpdo");
   });
 
-  it("retorna null para undefined ou URL inválida", () => {
+  it("returns null for undefined or an invalid URL", () => {
     expect(extractSupabaseRef(undefined)).toBeNull();
     expect(extractSupabaseRef("not-a-url")).toBeNull();
   });
@@ -21,18 +21,18 @@ describe("deriveAuthEnvironmentLabel", () => {
     expect(deriveAuthEnvironmentLabel("https://jjnnjnxjkqipgqebijen.supabase.co")).toBe("STAGING");
   });
 
-  it("identifica o ref MAIN e sinaliza que é proibido", () => {
+  it("identifies the MAIN ref and flags it as forbidden", () => {
     expect(deriveAuthEnvironmentLabel("https://sxmfeocztlztvpdnxayk.supabase.co")).toBe("MAIN (proibido)");
   });
 
-  it("retorna 'desconhecido' para um ref não mapeado ou URL ausente", () => {
+  it("returns 'desconhecido' for an unmapped ref or absent URL", () => {
     expect(deriveAuthEnvironmentLabel("https://outroref123456.supabase.co")).toBe("desconhecido");
     expect(deriveAuthEnvironmentLabel(undefined)).toBe("desconhecido");
   });
 });
 
 describe("deriveMaskedSupabaseRef", () => {
-  it("mascara o ref mostrando só os 4 primeiros/últimos caracteres", () => {
+  it("masks the ref, showing only the first/last 4 characters", () => {
     expect(deriveMaskedSupabaseRef("https://rypnevnfipygyhysqpdo.supabase.co")).toBe("rypn…qpdo");
   });
 
@@ -41,7 +41,7 @@ describe("deriveMaskedSupabaseRef", () => {
     expect(masked).not.toContain("rypnevnfipygyhysqpdo");
   });
 
-  it("retorna um placeholder quando não há URL", () => {
+  it("returns a placeholder when there is no URL", () => {
     expect(deriveMaskedSupabaseRef(undefined)).toBe("????…????");
   });
 });

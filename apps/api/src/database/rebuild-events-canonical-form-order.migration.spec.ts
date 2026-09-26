@@ -45,7 +45,7 @@ describe('RebuildEventsInCanonicalFormOrder20260719000007', () => {
     expect(afterDeletedAt.replace(/timestamp,?/, '').trim()).toBe('');
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 

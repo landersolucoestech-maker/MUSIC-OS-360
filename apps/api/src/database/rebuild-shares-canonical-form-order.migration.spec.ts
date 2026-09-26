@@ -34,7 +34,7 @@ describe('RebuildSharesInCanonicalFormOrder20260719000014', () => {
     expect(shareTypeIdx).toBeGreaterThan(endDateIdx);
   });
 
-  it('não remove nenhuma coluna (reconstrução pura de ordem)', () => {
+  it('removes no column (pure order rebuild)', () => {
     const newBlock = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const origBlock = migrationSrc.split('originalColumns = `')[1].split('`;')[0];
     const extractCols = (block: string) => [...block.matchAll(/^\s*(\w+)\s+/gm)].map((m) => m[1]);
@@ -51,7 +51,7 @@ describe('RebuildSharesInCanonicalFormOrder20260719000014', () => {
     expect(afterDeletedAt.replace(/timestamp,?/, '').trim()).toBe('');
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 

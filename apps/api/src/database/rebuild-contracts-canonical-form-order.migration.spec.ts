@@ -14,7 +14,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildContractsInCanonicalFormOrder20260719000012', () => {
-  it('template_id (1º passo do wizard) vem logo após id/tenant_id, seguido de titulo/tipo/status', () => {
+  it('template_id (the wizard\'s first step) comes right after id/tenant_id, followed by titulo/tipo/status', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
@@ -27,14 +27,14 @@ describe('RebuildContractsInCanonicalFormOrder20260719000012', () => {
     expect(statusIdx).toBeGreaterThan(tituloIdx);
   });
 
-  it('signers/template_id não ficam mais depois de created_by/updated_by', () => {
+  it('signers/template_id no longer sit after created_by/updated_by', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const signersIdx = block.indexOf('signers ');
     const createdByIdx = block.indexOf('created_by ');
     expect(signersIdx).toBeLessThan(createdByIdx);
   });
 
-  it('não remove nenhuma coluna (reconstrução pura de ordem)', () => {
+  it('removes no column (pure order rebuild)', () => {
     const newBlock = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const origBlock = migrationSrc.split('originalColumns = `')[1].split('`;')[0];
     const extractCols = (block: string) => [...block.matchAll(/^\s*(\w+)\s+/gm)].map((m) => m[1]);
@@ -51,11 +51,11 @@ describe('RebuildContractsInCanonicalFormOrder20260719000012', () => {
     expect(afterDeletedAt.replace(/timestamp,?/, '').trim()).toBe('');
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('recria a FK própria (artista_id — nome histórico da migration), a FK dependente (financial_transactions), RLS + policies e possui down() honesto', () => {
+  it('recreates its own FK (artista_id — the migration\'s historical name), the dependent FK (financial_transactions), RLS + policies and has an honest down()', () => {
     expect(migrationSrc).toMatch(/fk_contracts_artista_id/);
     expect(migrationSrc.match(/ALTER TABLE financial_transactions DROP CONSTRAINT/g)?.length).toBeGreaterThanOrEqual(1);
     expect(migrationSrc.match(/ALTER TABLE financial_transactions ADD CONSTRAINT/g)?.length).toBeGreaterThanOrEqual(1);

@@ -8,11 +8,11 @@ vi.mock("sonner", () => ({
 import { toast } from "sonner";
 
 describe("getExpectedUpdatedAt", () => {
-  it("lê updated_at (snake_case) quando presente", () => {
+  it("reads updated_at (snake_case) when present", () => {
     expect(getExpectedUpdatedAt({ updated_at: "2026-08-14T10:00:00.000Z" })).toBe("2026-08-14T10:00:00.000Z");
   });
 
-  it("cai para updatedAt (camelCase) quando snake_case ausente", () => {
+  it("falls back to updatedAt (camelCase) when snake_case is absent", () => {
     expect(getExpectedUpdatedAt({ updatedAt: "2026-08-14T10:00:00.000Z" })).toBe("2026-08-14T10:00:00.000Z");
   });
 
@@ -21,13 +21,13 @@ describe("getExpectedUpdatedAt", () => {
     expect(getExpectedUpdatedAt(undefined)).toBeUndefined();
   });
 
-  it("undefined quando o valor não é string (nunca inventa um timestamp)", () => {
+  it("undefined when the value is not a string (never invents a timestamp)", () => {
     expect(getExpectedUpdatedAt({ updated_at: 12345 })).toBeUndefined();
   });
 });
 
 describe("isConcurrencyConflict", () => {
-  it("true apenas para ConflictError — é o que api-client.ts realmente lança em HTTP 409", () => {
+  it("true only for ConflictError — what api-client.ts really throws on HTTP 409", () => {
     expect(isConcurrencyConflict(new ConflictError("conflict"))).toBe(true);
     expect(isConcurrencyConflict(new IntegrationError("api", "not found", { statusCode: 404 }))).toBe(false);
     expect(isConcurrencyConflict(new IntegrationError("api", "conflict", { statusCode: 409 }))).toBe(false);
@@ -39,7 +39,7 @@ describe("isConcurrencyConflict", () => {
 describe("handleConcurrencyConflict", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("409: mostra toast específico, retorna true (chamador NÃO fecha o formulário)", () => {
+  it("409: shows a specific toast, returns true (the caller does NOT close the form)", () => {
     const err = new ConflictError("conflict");
     const handled = handleConcurrencyConflict(err, "contrato");
     expect(handled).toBe(true);
@@ -49,7 +49,7 @@ describe("handleConcurrencyConflict", () => {
     expect(message).toContain("alterado por outra pessoa");
   });
 
-  it("não-409: retorna false, não mostra toast (deixa o chamador tratar)", () => {
+  it("non-409: returns false, shows no toast (lets the caller handle it)", () => {
     const handled = handleConcurrencyConflict(new Error("falha de rede"), "contrato");
     expect(handled).toBe(false);
     expect(toast.error).not.toHaveBeenCalled();

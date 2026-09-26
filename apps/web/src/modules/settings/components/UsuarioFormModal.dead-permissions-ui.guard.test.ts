@@ -18,8 +18,8 @@ import * as path from "path";
 const FILE_PATH = path.resolve(__dirname, "UsuarioFormModal.tsx");
 const SOURCE = fs.readFileSync(FILE_PATH, "utf8");
 
-describe("UsuarioFormModal.tsx — sem UI morta de permissões por módulo", () => {
-  it("não declara mais a grade de permissões por módulo (MODULOS/ModulePermissions/togglePermission)", () => {
+describe("UsuarioFormModal.tsx — no dead per-module permissions UI", () => {
+  it("no longer declares the per-module permission grid (MODULOS/ModulePermissions/togglePermission)", () => {
     expect(SOURCE).not.toMatch(/\bMODULOS\b/);
     expect(SOURCE).not.toMatch(/\bModulePermissions\b/);
     expect(SOURCE).not.toMatch(/\btogglePermission\b/);
@@ -27,16 +27,16 @@ describe("UsuarioFormModal.tsx — sem UI morta de permissões por módulo", () 
     expect(SOURCE).not.toMatch(/\bSETOR_PERMISSIONS\b/);
   });
 
-  it("não declara mais o vínculo de artista fictício (dropdown sempre vazio, nunca enviado)", () => {
+  it("no longer declares the fake artist link (dropdown always empty, never sent)", () => {
     expect(SOURCE).not.toMatch(/\bartistaVinculado\b/);
     expect(SOURCE).not.toMatch(/\bARTISTAS_OPCOES\b/);
   });
 
-  it("não declara mais o seletor de setor (sem campo correspondente no backend de usuários)", () => {
+  it("no longer declares the department selector (no matching field in the users backend)", () => {
     expect(SOURCE).not.toMatch(/\bSETORES\b/);
   });
 
-  it("onSubmit só envia campos com suporte real no backend (full_name/phone/cargo)", () => {
+  it("onSubmit sends only fields the backend really supports (full_name/phone/cargo)", () => {
     const onSubmitStart = SOURCE.indexOf("const onSubmit");
     const onSubmitEnd = SOURCE.indexOf("const selectedNivel", onSubmitStart);
     const onSubmitBody = SOURCE.slice(onSubmitStart, onSubmitEnd);
@@ -46,7 +46,7 @@ describe("UsuarioFormModal.tsx — sem UI morta de permissões por módulo", () 
     expect(onSubmitBody).not.toMatch(/permissions|setor|artistaVinculado/);
   });
 
-  it("mantém o único campo real de acesso (nivel_acesso) visível no formulário", () => {
+  it("keeps the only real access field (nivel_acesso) visible in the form", () => {
     expect(SOURCE).toMatch(/nivel_acesso/);
     expect(SOURCE).toMatch(/NIVEIS_ACESSO/);
   });

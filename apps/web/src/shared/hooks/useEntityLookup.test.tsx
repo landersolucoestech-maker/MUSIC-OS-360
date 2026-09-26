@@ -58,7 +58,7 @@ describe("useEntityLookup", () => {
     await waitFor(() => expect(result.current.items.some((i) => i.id === "id-75")).toBe(true), { timeout: 2000 });
   });
 
-  it("debounce: digitação rápida não dispara uma request por tecla", async () => {
+  it("debounce: fast typing does not fire one request per keystroke", async () => {
     const { rerender } = renderHook(
       ({ search }: { search: string }) => useEntityLookup<FakeRow>({ table: "artistas", search, enabled: true }),
       { wrapper: createWrapper(), initialProps: { search: "" } },
@@ -76,7 +76,7 @@ describe("useEntityLookup", () => {
     expect((mockedListPaged.mock.calls[0][1] as { filters?: Record<string, unknown> }).filters?.search).toBe("Artista");
   });
 
-  it("busca vazia + enabled não gera storm de requests repetidas", async () => {
+  it("an empty search + enabled does not cause a storm of repeated requests", async () => {
     const { rerender } = renderHook(
       ({ enabled }: { enabled: boolean }) => useEntityLookup<FakeRow>({ table: "artistas", search: "", enabled }),
       { wrapper: createWrapper(), initialProps: { enabled: false } },
@@ -93,7 +93,7 @@ describe("useEntityLookup", () => {
     expect(mockedListPaged).toHaveBeenCalledTimes(1);
   });
 
-  it("não busca quando enabled=false (ex.: popover fechado)", async () => {
+  it("does not fetch when enabled=false (e.g. closed popover)", async () => {
     renderHook(
       () => useEntityLookup<FakeRow>({ table: "artistas", search: "qualquer coisa", enabled: false }),
       { wrapper: createWrapper() },
@@ -102,7 +102,7 @@ describe("useEntityLookup", () => {
     expect(mockedListPaged).not.toHaveBeenCalled();
   });
 
-  it("troca de busca gera uma nova query (queryKey/AbortSignal distintos), nunca reaproveita a request obsoleta", async () => {
+  it("changing the search creates a new query (distinct queryKey/AbortSignal), never reuses the stale request", async () => {
     const signals: AbortSignal[] = [];
     // Delay artificial: a primeira request precisa continuar "em voo" quando
     // a segunda busca dispara, para provar que são requests independentes
@@ -141,7 +141,7 @@ describe("useEntityById", () => {
     mockedFindById.mockReset();
   });
 
-  it("resolve um registro fora dos primeiros 50 via GET /:resource/:id direto", async () => {
+  it("resolves a record beyond the first 50 via a direct GET /:resource/:id", async () => {
     mockedFindById.mockResolvedValue({ id: "id-75", nome: "Artista 75" });
     const { result } = renderHook(() => useEntityById<FakeRow>("artistas", "id-75"), { wrapper: createWrapper() });
 
@@ -149,7 +149,7 @@ describe("useEntityById", () => {
     expect(mockedFindById).toHaveBeenCalledWith("artistas", "id-75");
   });
 
-  it("não busca quando id é null/undefined", async () => {
+  it("does not fetch when the id is null/undefined", async () => {
     renderHook(() => useEntityById<FakeRow>("artistas", undefined), { wrapper: createWrapper() });
     expect(mockedFindById).not.toHaveBeenCalled();
   });

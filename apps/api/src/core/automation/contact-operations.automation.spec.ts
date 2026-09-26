@@ -117,7 +117,7 @@ describe('ContactOperationsAutomation (client.created → contact-operations)', 
     expect(meta.aiContactOperations.parsed.recommendedActions).toHaveLength(2);
   });
 
-  it('sem responsável definido, monta input sem responsavelNome', async () => {
+  it('without an assigned owner, builds the input without responsavelNome', async () => {
     const row = { ...CLIENT_ROW, responsavel_nome: null };
     const { ds } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -130,7 +130,7 @@ describe('ContactOperationsAutomation (client.created → contact-operations)', 
     expect(aiCalls[0][0].prompt).toContain('Nenhum responsável foi definido');
   });
 
-  it('idempotência metadata — não reprocessa se já gerado com a mesma chave', async () => {
+  it('metadata idempotency — does not reprocess if already generated with the same key', async () => {
     const row = { ...CLIENT_ROW, metadata: { aiContactOperations: { idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' } } };
     const { ds, query } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -144,7 +144,7 @@ describe('ContactOperationsAutomation (client.created → contact-operations)', 
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('idempotência skill_runs — run em andamento/sucesso bloqueia', async () => {
+  it('skill_runs idempotency — an in-progress/successful run blocks', async () => {
     const { ds, query } = makeDs([CLIENT_ROW], [{ '1': 1 }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
@@ -157,7 +157,7 @@ describe('ContactOperationsAutomation (client.created → contact-operations)', 
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('falha da IA registra fail, não relança e não grava aiContactOperations', async () => {
+  it('an AI failure records fail, does not rethrow and does not write aiContactOperations', async () => {
     const { ds, query } = makeDs([CLIENT_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
@@ -170,7 +170,7 @@ describe('ContactOperationsAutomation (client.created → contact-operations)', 
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('guarda: tenantId/clientId ausente é ignorado (sem run, sem query)', async () => {
+  it('guard: absent tenantId/clientId is ignored (no run, no query)', async () => {
     const { ds, query } = makeDs([CLIENT_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

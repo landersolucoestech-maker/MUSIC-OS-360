@@ -23,7 +23,7 @@ describe('RebuildInventoryItemsInCanonicalFormOrder20260719000017', () => {
     expect(categoriaIdx).toBeGreaterThan(nomeIdx);
   });
 
-  it('bloco de auditoria é created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
+  it('the audit block is created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const createdAtIdx = block.indexOf('created_at');
     const updatedAtIdx = block.indexOf('updated_at');
@@ -38,7 +38,7 @@ describe('RebuildInventoryItemsInCanonicalFormOrder20260719000017', () => {
     expect(afterDeletedAt.replace(/timestamptz,?/, '').trim()).toBe('');
   });
 
-  it('não remove nenhuma coluna (reconstrução pura de ordem)', () => {
+  it('removes no column (pure order rebuild)', () => {
     const newBlock = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const origBlock = migrationSrc.split('originalColumns = `')[1].split('`;')[0];
     const extractCols = (block: string) => [...block.matchAll(/^\s*(\w+)\s+/gm)].map((m) => m[1]);
@@ -48,7 +48,7 @@ describe('RebuildInventoryItemsInCanonicalFormOrder20260719000017', () => {
     for (const col of origCols) expect(newCols.has(col)).toBe(true);
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 

@@ -122,7 +122,7 @@ describe('SocialContentAutomation (marketing.content_created → social-content)
     expect(query.mock.calls.find((c: unknown[]) => /SET\s+copy/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('sem campanha relacionada, monta input sem relatedCampaign', async () => {
+  it('without a related campaign, builds the input without relatedCampaign', async () => {
     const row = { ...CONTENT_ROW, campaign_name: null };
     const { ds } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -135,7 +135,7 @@ describe('SocialContentAutomation (marketing.content_created → social-content)
     expect(aiCalls[0][0].prompt).not.toContain('Lançamento Single Verão');
   });
 
-  it('idempotência metadata — não reprocessa se já gerado com a mesma chave', async () => {
+  it('metadata idempotency — does not reprocess if already generated with the same key', async () => {
     const row = { ...CONTENT_ROW, metadata: { aiSocialContent: { idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' } } };
     const { ds, query } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -149,7 +149,7 @@ describe('SocialContentAutomation (marketing.content_created → social-content)
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('idempotência skill_runs — run em andamento/sucesso bloqueia', async () => {
+  it('skill_runs idempotency — an in-progress/successful run blocks', async () => {
     const { ds, query } = makeDs([CONTENT_ROW], [{ '1': 1 }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
@@ -162,7 +162,7 @@ describe('SocialContentAutomation (marketing.content_created → social-content)
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('falha da IA registra fail, não relança e não grava aiSocialContent', async () => {
+  it('an AI failure records fail, does not rethrow and does not write aiSocialContent', async () => {
     const { ds, query } = makeDs([CONTENT_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
@@ -175,7 +175,7 @@ describe('SocialContentAutomation (marketing.content_created → social-content)
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('guarda: tenantId/contentId ausente é ignorado (sem run, sem query)', async () => {
+  it('guard: absent tenantId/contentId is ignored (no run, no query)', async () => {
     const { ds, query } = makeDs([CONTENT_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

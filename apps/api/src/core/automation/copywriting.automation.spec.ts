@@ -110,7 +110,7 @@ describe('CopywritingAutomation (ON_DEMAND: POST /marketing/tasks/:id/ai/copywri
     expect(aiCalls[0][0].prompt).toContain('rascunho de texto genérico');
   });
 
-  it('falha da IA registra fail e relança', async () => {
+  it('an AI failure records fail and rethrows', async () => {
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
     const tasks = makeTasks();

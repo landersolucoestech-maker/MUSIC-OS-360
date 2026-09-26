@@ -19,7 +19,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('GrantMusicosAppAuthenticatedMembership20260802000002', () => {
-  it('é classificada como APPLICATION — deve rodar via db:migrate:application', () => {
+  it('is classified as APPLICATION — must run via db:migrate:application', () => {
     expect(isApplicationMigration('GrantMusicosAppAuthenticatedMembership20260802000002')).toBe(true);
   });
 
@@ -45,7 +45,7 @@ describe('GrantMusicosAppAuthenticatedMembership20260802000002', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+TABLE/i);
   });
 
-  it('está registrada no index.ts de migrations', () => {
+  it('is registered in the migrations index.ts', () => {
     const indexSrc = fs.readFileSync(path.resolve(__dirname, 'migrations/index.ts'), 'utf8');
     expect(indexSrc).toMatch(/GrantMusicosAppAuthenticatedMembership20260802000002/);
   });

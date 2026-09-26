@@ -34,7 +34,7 @@ describe('RebuildMusicchatAutomationSettingsInCanonicalFormOrder20260719000021',
     expect(updatedByIdx).toBeGreaterThan(updatedAtIdx);
   });
 
-  it('não remove nenhuma coluna (reconstrução pura de ordem)', () => {
+  it('removes no column (pure order rebuild)', () => {
     const newBlock = block();
     const origBlock = migrationSrc.split('originalColumns = `')[1].split('`;')[0];
     const extractCols = (b: string) => [...b.matchAll(/^\s*(\w+)\s+/gm)].map((m) => m[1]);
@@ -44,7 +44,7 @@ describe('RebuildMusicchatAutomationSettingsInCanonicalFormOrder20260719000021',
     for (const col of origCols) expect(newCols.has(col)).toBe(true);
   });
 
-  it('não usa DROP ... CASCADE', () => {
+  it('does not use DROP ... CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 

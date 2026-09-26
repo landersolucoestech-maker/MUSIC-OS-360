@@ -27,8 +27,8 @@ function capturedSheet(data: Record<string, unknown>[]): unknown[][] {
   return lastAoa!;
 }
 
-describe("exportToXlsx — proteção contra injeção de fórmula em planilha (OWASP)", () => {
-  it("neutraliza payload de fórmula (=) com prefixo de aspas simples", () => {
+describe("exportToXlsx — spreadsheet formula injection protection (OWASP)", () => {
+  it("neutralizes a formula payload (=) with a single-quote prefix", () => {
     const aoa = capturedSheet([{ nome: '=HYPERLINK("http://evil.test")', valor: 1 }]);
     expect(aoa[1][0]).toBe('\'=HYPERLINK("http://evil.test")');
   });
@@ -38,22 +38,22 @@ describe("exportToXlsx — proteção contra injeção de fórmula em planilha (
     expect(aoa[1][0]).toBe("'@SUM(1+1)");
   });
 
-  it("NÃO neutraliza telefone legítimo iniciado por +", () => {
+  it("does NOT neutralize a legitimate phone number starting with +", () => {
     const aoa = capturedSheet([{ nome: "Cliente", valor: "+5511999990000" }]);
     expect(aoa[1][1]).toBe("+5511999990000");
   });
 
-  it("NÃO neutraliza valor monetário negativo legítimo", () => {
+  it("does NOT neutralize a legitimate negative money value", () => {
     const aoa = capturedSheet([{ nome: "Cliente", valor: "-42.50" }]);
     expect(aoa[1][1]).toBe("-42.50");
   });
 
-  it("neutraliza fórmula disfarçada de subtração (- seguido de payload, não número puro)", () => {
+  it("neutralizes a formula disguised as subtraction (- followed by a payload, not a plain number)", () => {
     const aoa = capturedSheet([{ nome: "Cliente", valor: "-2+3+cmd|' /c calc'!A1" }]);
     expect(aoa[1][1]).toBe("'-2+3+cmd|' /c calc'!A1");
   });
 
-  it("texto comum não é alterado", () => {
+  it("plain text is not changed", () => {
     const aoa = capturedSheet([{ nome: "Cliente Exemplo Ltda", valor: 100 }]);
     expect(aoa[1][0]).toBe("Cliente Exemplo Ltda");
   });

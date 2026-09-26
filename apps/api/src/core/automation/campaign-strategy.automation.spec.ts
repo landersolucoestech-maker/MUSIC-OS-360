@@ -120,7 +120,7 @@ describe('CampaignStrategyAutomation (campaign.started → campaign-strategy)', 
     expect(meta.aiCampaignStrategy.parsed.targetAudience).toBe('Fãs de pop nacional, 18-24 anos');
   });
 
-  it('sem plano tático prévio, monta input sem existingPlanSummary', async () => {
+  it('without a prior tactical plan, builds the input without existingPlanSummary', async () => {
     const row = { ...CAMPAIGN_ROW, metadata: {} };
     const { ds } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -133,7 +133,7 @@ describe('CampaignStrategyAutomation (campaign.started → campaign-strategy)', 
     expect(aiCalls[0][0].prompt).not.toContain('Foco em redes sociais');
   });
 
-  it('idempotência metadata — não reprocessa se já gerado com a mesma chave', async () => {
+  it('metadata idempotency — does not reprocess if already generated with the same key', async () => {
     const row = { ...CAMPAIGN_ROW, metadata: { aiCampaignStrategy: { idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' } } };
     const { ds, query } = makeDs([row]);
     const skillRun = makeSkillRun();
@@ -147,7 +147,7 @@ describe('CampaignStrategyAutomation (campaign.started → campaign-strategy)', 
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('idempotência skill_runs — run em andamento/sucesso bloqueia', async () => {
+  it('skill_runs idempotency — an in-progress/successful run blocks', async () => {
     const { ds, query } = makeDs([CAMPAIGN_ROW], [{ '1': 1 }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
@@ -160,7 +160,7 @@ describe('CampaignStrategyAutomation (campaign.started → campaign-strategy)', 
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('falha da IA registra fail, não relança e não grava aiCampaignStrategy', async () => {
+  it('an AI failure records fail, does not rethrow and does not write aiCampaignStrategy', async () => {
     const { ds, query } = makeDs([CAMPAIGN_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
@@ -173,7 +173,7 @@ describe('CampaignStrategyAutomation (campaign.started → campaign-strategy)', 
     expect(query.mock.calls.find((c: unknown[]) => /UPDATE/i.test(c[0] as string))).toBeUndefined();
   });
 
-  it('guarda: tenantId/campaignId ausente é ignorado (sem run, sem query)', async () => {
+  it('guard: absent tenantId/campaignId is ignored (no run, no query)', async () => {
     const { ds, query } = makeDs([CAMPAIGN_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
