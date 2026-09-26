@@ -1,8 +1,8 @@
 /**
  * ai.service.ts
  *
- * AI Gateway — OpenAI (primário) → Anthropic Claude (fallback) → Google Gemini (último recurso).
- * Regista cada request na tabela ai_jobs (custo, latência, tokens).
+ * AI Gateway — OpenAI (primary) → Anthropic Claude (fallback) → Google Gemini (last resort).
+ * Records every request in the ai_jobs table (cost, latency, tokens).
  */
 
 import { Injectable, Logger, Inject, ForbiddenException } from '@nestjs/common';

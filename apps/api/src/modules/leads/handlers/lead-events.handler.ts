@@ -58,10 +58,10 @@ export class LeadEventsHandler {
         });
       });
 
-      // Emitido SÓ APÓS o commit da transação (fora do bloco acima) — o
-      // listener de automação faz sua própria leitura via conexão separada;
-      // emitir dentro da transação arriscaria uma leitura-suja da linha
-      // clients ainda não commitada (race entre commit e o listener).
+      // Emitted ONLY AFTER the transaction commits (outside the block above) — the
+      // automation listener does its own read via a separate connection;
+      // emitting inside the transaction would risk a dirty read of the not yet
+      // committed clients row (race between the commit and the listener).
       if (created) {
         this.events?.emitTyped(DOMAIN_EVENTS.CLIENT_CREATED, {
           tenantId,

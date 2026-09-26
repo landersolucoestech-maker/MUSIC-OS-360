@@ -1,6 +1,6 @@
 /**
- * Automações acionadas por eventos de upload.
- * Valida MIME e tamanho no contexto do tenant antes de marcar o arquivo pronto.
+ * Automations triggered by upload events.
+ * Validates MIME and size in the tenant context before marking the file as ready.
  */
 import { Injectable, Inject, Logger, Optional } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';

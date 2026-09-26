@@ -1,9 +1,9 @@
 /**
  * health/indicators/database.indicator.ts
  *
- * Terminus health indicator para verificar se o PostgreSQL está acessível.
- * Executa um SELECT 1 para confirmar conectividade real.
- * Nunca lança excepção — retorna status 'down' com detalhe de erro.
+ * Terminus health indicator that checks whether PostgreSQL is reachable.
+ * Runs a SELECT 1 to confirm real connectivity.
+ * Never throws — returns status 'down' with the error detail.
  */
 
 import { Injectable, Inject, Optional } from '@nestjs/common';

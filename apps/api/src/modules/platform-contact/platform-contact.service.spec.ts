@@ -4,10 +4,10 @@ import { PlatformContactService } from './platform-contact.service';
 import type { PlatformContactDto } from './dto/platform-contact.dto';
 
 /**
- * Platform Commercial Contact (decisão de produto 2026-08-22): contato
- * institucional da landing do Music OS 360 — nunca cria Support
- * Ticket/MusicChat/lead/tenant record; encaminha por e-mail via MailService
- * real para PLATFORM_CONTACT_RECIPIENT_EMAIL (nunca um endereço inventado).
+ * Platform Commercial Contact (2026-08-22 product decision): institutional
+ * contact from the Music OS 360 landing page — never creates a Support
+ * Ticket/MusicChat/lead/tenant record; forwards by e-mail via the real MailService
+ * to PLATFORM_CONTACT_RECIPIENT_EMAIL (never an invented address).
  */
 function makeService(hasRecipient = true) {
   const recipient = hasRecipient ? 'contato@musicos360.com.br' : undefined;

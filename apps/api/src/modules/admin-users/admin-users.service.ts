@@ -18,7 +18,7 @@ export interface AdminUserRow {
   joined_at: string | null;
   last_login: string | null;
   mfa_enabled: boolean | null;
-  /** Supabase Admin API não expõe uma lista de sessões ativas — nunca fabricar este valor. */
+  /** The Supabase Admin API does not expose a list of active sessions — never fabricate this value. */
   sessions_count: null;
 }
 
@@ -32,13 +32,13 @@ const MAX_PAGES = 20;
 const PAGE_SIZE = 1000;
 
 /**
- * Decision Gate item 6 (product-completion audit, GAP-07): Admin Users precisa de
- * dados reais de MFA/last-login sem N+1 por usuário. `supabase.auth.admin.listUsers()`
- * é paginado e GLOBAL ao projeto (não por tenant) — buscamos todas as páginas UMA
- * vez por janela de cache e montamos um Map por auth_user_id, em vez de uma chamada
- * getUserById por membro. `sessions_count`: a Admin API do Supabase não expõe
- * contagem de sessões ativas — nunca fabricado, sempre `null` (frontend mostra
- * "Indisponível" honestamente).
+ * Decision Gate item 6 (product-completion audit, GAP-07): Admin Users needs
+ * real MFA/last-login data without an N+1 per user. `supabase.auth.admin.listUsers()`
+ * is paginated and GLOBAL to the project (not per tenant) — we fetch all pages ONCE
+ * per cache window and build a Map by auth_user_id, instead of one
+ * getUserById call per member. `sessions_count`: the Supabase Admin API does not expose
+ * an active session count — never fabricated, always `null` (the frontend honestly shows
+ * "Indisponível").
  */
 @Injectable()
 export class AdminUsersService {

@@ -64,14 +64,14 @@ export class BillingPlansService {
   }
 
   // ── Reads ────────────────────────────────────────────────────────────────
-  // Normaliza `features` para array em toda leitura: linhas criadas antes da
-  // correção do default (Parte 84) ainda podem ter {} persistido em jsonb, o
-  // que quebra .map() em todo consumidor (tela de billing/configurações/
-  // landing — únicos que leem via este service; o editor admin usa
-  // AdminPlansService, que já desembrulha `.labels` do lado dele). Quando o
-  // valor legado é o objeto {labels, color, price_annual, tier} gravado pelo
-  // editor admin, extrai `labels` em vez de descartar os rótulos já
-  // cadastrados. Guard único aqui em vez de em cada tela.
+  // Normalizes `features` to an array on every read: rows created before the
+  // default fix (Part 84) may still have {} persisted in jsonb, which
+  // breaks .map() in every consumer (billing/settings/landing screens —
+  // the only ones reading via this service; the admin editor uses
+  // AdminPlansService, which already unwraps `.labels` on its side). When the
+  // legacy value is the {labels, color, price_annual, tier} object written by the
+  // admin editor, extracts `labels` instead of discarding the already
+  // registered labels. A single guard here instead of in each screen.
   private normalize(plan: BillingPlanEntity): BillingPlanEntity {
     if (Array.isArray(plan.features)) return plan;
     const labels = (plan.features as { labels?: unknown } | null)?.labels;
@@ -87,9 +87,9 @@ export class BillingPlansService {
   }
 
   /**
-   * Decision Gate item 1: público, sem autenticação — consumido pela Landing.
-   * Allow-list estrita de campos, nunca retorna a entidade bruta (que carrega
-   * stripe_product_id/stripe_price_id/limits — dados administrativos internos).
+   * Decision Gate item 1: public, no authentication — consumed by the Landing page.
+   * Strict field allow-list, never returns the raw entity (which carries
+   * stripe_product_id/stripe_price_id/limits — internal administrative data).
    */
   async listPublic(): Promise<Array<{
     slug: string; name: string; description: string | null;
@@ -113,7 +113,7 @@ export class BillingPlansService {
     return this.normalize(plan);
   }
 
-  /** Resolve por id (uuid) ou slug; usado pelo checkout. */
+  /** Resolves by id (uuid) or slug; used by checkout. */
   async resolve(idOrSlug: string): Promise<BillingPlanEntity | null> {
     const plan = await this.repo
       .createQueryBuilder('p')
@@ -159,8 +159,8 @@ export class BillingPlansService {
       stripe_price_id: null,
     }));
 
-    // Sincroniza (product + price). Erro Stripe não invalida o plano — fica
-    // "não sincronizado" e pode ser re-sincronizado via /sync-stripe.
+    // Syncs (product + price). A Stripe error does not invalidate the plan — it stays
+    // "not synced" and can be re-synced via /sync-stripe.
     return this.syncSafe(plan, { recreatePrice: true });
   }
 
@@ -173,7 +173,7 @@ export class BillingPlansService {
       if (dup) throw new BadRequestException(`Já existe um plano com slug '${input.slug}'`);
     }
 
-    // Price no Stripe é IMUTÁVEL: mudança de amount/currency/interval exige novo Price.
+    // A Stripe Price is IMMUTABLE: changing amount/currency/interval requires a new Price.
     const pricingChanged =
       (input.amount != null && input.amount !== plan.amount) ||
       (input.currency != null && input.currency !== plan.currency) ||
@@ -195,7 +195,7 @@ export class BillingPlansService {
     return this.syncSafe(plan, { recreatePrice: pricingChanged });
   }
 
-  /** Endpoint explícito de re-sincronização. */
+  /** Explicit re-sync endpoint. */
   async syncStripe(id: string): Promise<BillingPlanEntity> {
     const plan = await this.get(id);
     return this.syncPlanToStripe(plan, { recreatePrice: !plan.stripe_price_id });
@@ -210,14 +210,14 @@ export class BillingPlansService {
       return await this.syncPlanToStripe(plan, opts);
     } catch (err) {
       this.logger.error(`Falha ao sincronizar plano '${plan.slug}' com Stripe: ${(err as Error).message}`);
-      return plan; // plano persistido; sincronização pendente
+      return plan; // plan persisted; sync pending
     }
   }
 
   /**
-   * Sincroniza um plano com o Stripe:
-   *  - Product é atualizável (upsert).
-   *  - Price é imutável → recria quando não existe ou opts.recreatePrice; desativa o antigo.
+   * Syncs a plan with Stripe:
+   *  - Product is updatable (upsert).
+   *  - Price is immutable → recreated when missing or opts.recreatePrice; the old one is deactivated.
    */
   async syncPlanToStripe(
     plan: BillingPlanEntity,
@@ -240,7 +240,7 @@ export class BillingPlansService {
       await stripe.products.update(productId, productParams);
     }
 
-    // 2. Price (imutável)
+    // 2. Price (immutable)
     let priceId = plan.stripe_price_id;
     if (opts.recreatePrice || !priceId) {
       const oldPriceId = priceId;

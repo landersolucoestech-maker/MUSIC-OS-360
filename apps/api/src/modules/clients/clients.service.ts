@@ -137,10 +137,10 @@ export class ClientsService {
     return { deleted: true };
   }
 
-  // ── Timeline (Parte 80) ──────────────────────────────────────────────────────
-  // Reaproveita activity_logs (real, tenant-scoped, já usado por LeadsService
-  // para o mesmo propósito) em vez de criar uma tabela paralela — evita
-  // duplicar o mesmo tipo de evento em duas fontes sem correlação.
+  // ── Timeline (Part 80) ───────────────────────────────────────────────────────
+  // Reuses activity_logs (real, tenant-scoped, already used by LeadsService
+  // for the same purpose) instead of creating a parallel table — avoids
+  // duplicating the same kind of event in two uncorrelated sources.
 
   async getTimeline(tenantId: string, id: string, limit = 50) {
     await this.findById(tenantId, id);
@@ -148,8 +148,8 @@ export class ClientsService {
     return this.activityLogs.list(tenantId, { entityType: TIMELINE_ENTITY_TYPE, entityId: id, limit });
   }
 
-  /** Entrada manual de timeline (nota, ligação, reunião, etc). Cria/edição/
-   * remoção do cliente já registram eventos automaticamente via recordActivity. */
+  /** Manual timeline entry (note, call, meeting, etc). Client creation/editing/
+   * removal already records events automatically via recordActivity. */
   async addTimelineEntry(
     tenantId: string,
     userId: string,
@@ -185,14 +185,14 @@ export class ClientsService {
         metadata,
       });
     } catch {
-      // Timeline é auxiliar — falha ao registrar não pode derrubar a operação
-      // real do cliente (mesmo padrão de LeadsService.recordActivity).
+      // The timeline is auxiliary — a failure to record must not bring down the client's
+      // real operation (same pattern as LeadsService.recordActivity).
     }
   }
 
-  // ── Contratos vinculados (Parte 80) ──────────────────────────────────────────
-  // Reaproveita a relação física já existente (contracts.client_id) — sem
-  // tabela de junção nova.
+  // ── Linked contracts (Part 80) ───────────────────────────────────────────────
+  // Reuses the already existing physical relation (contracts.client_id) — no
+  // new join table.
 
   async getContracts(tenantId: string, id: string) {
     await this.findById(tenantId, id);
@@ -205,10 +205,10 @@ export class ClientsService {
     );
   }
 
-  // ── Anexos (Parte 80) ─────────────────────────────────────────────────────────
-  // Metadata real em client_attachments; binário só no R2 (StorageService).
-  // Sem R2 configurado, presign() falha explicitamente (503 R2_NOT_CONFIGURED)
-  // em vez de fabricar sucesso — ver StorageService.getClient().
+  // ── Attachments (Part 80) ────────────────────────────────────────────────────
+  // Real metadata in client_attachments; binary only in R2 (StorageService).
+  // Without R2 configured, presign() fails explicitly (503 R2_NOT_CONFIGURED)
+  // instead of fabricating success — see StorageService.getClient().
 
   async listAttachments(tenantId: string, id: string) {
     await this.findById(tenantId, id);
@@ -240,8 +240,8 @@ export class ClientsService {
     });
   }
 
-  /** Confirma que o upload direto ao R2 (via URL pré-assinada) terminou e
-   * persiste a metadata. Nunca recebe nem grava o binário. */
+  /** Confirms that the direct upload to R2 (via presigned URL) finished and
+   * persists the metadata. Never receives nor writes the binary. */
   async confirmAttachmentUpload(
     tenantId: string,
     userId: string,
@@ -281,7 +281,7 @@ export class ClientsService {
       try {
         await this.storage.delete(attachment.storage_key);
       } catch {
-        // Metadata já marcada como removida; falha ao apagar do R2 fica só no log do StorageService.
+        // Metadata already marked as removed; a failure to delete from R2 stays only in the StorageService log.
       }
     }
     await this.recordActivity(tenantId, userId, id, 'attachment_removed', `Anexo "${attachment.filename}" removido`, {
@@ -290,10 +290,10 @@ export class ClientsService {
     return { deleted: true };
   }
 
-  /** categoria/perfil são NOT NULL na tabela física; a DTO pública não expõe
-   * `perfil` e trata `category` como opcional — mantemos o contrato aceitando
-   * ambos ausentes, com fallback explícito em vez de deixar o INSERT falhar
-   * por violação de NOT NULL. */
+  /** categoria/perfil are NOT NULL in the physical table; the public DTO does not expose
+   * `perfil` and treats `category` as optional — we keep the contract accepting
+   * both absent, with an explicit fallback instead of letting the INSERT fail
+   * with a NOT NULL violation. */
   private static readonly DEFAULT_CATEGORIA = 'CORPORATE_CLIENT';
   private static readonly DEFAULT_PERFIL = 'outros';
 

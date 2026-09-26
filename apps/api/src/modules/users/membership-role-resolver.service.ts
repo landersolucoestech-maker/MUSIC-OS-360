@@ -3,15 +3,15 @@ import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 
 /**
- * MembershipRoleResolverService (PASSO 12-G — dual-write role → role_id).
+ * MembershipRoleResolverService (STEP 12-G — dual-write role → role_id).
  *
- * Resolve a string legada `org_members.role` para o `role_id` canônico, respeitando:
- *  - escopo de tenant (role do próprio tenant OU global);
- *  - alias (`canonical_role_id`) → resolve para o canônico;
- *  - rejeição de role arquivada / removida / cross-tenant / sem correspondência.
+ * Resolves the legacy `org_members.role` string to the canonical `role_id`, respecting:
+ *  - tenant scope (the tenant's own role OR a global one);
+ *  - alias (`canonical_role_id`) → resolves to the canonical one;
+ *  - rejection of an archived / removed / cross-tenant / unmatched role.
  *
- * REGRA 12-G: PROIBIDO fallback para 'viewer'. Sem correspondência → erro (classificação).
- * NÃO altera autorização nem `org_members.role`; apenas deriva `role_id`.
+ * RULE 12-G: a fallback to 'viewer' is FORBIDDEN. No match → error (classification).
+ * Does NOT change authorization nor `org_members.role`; only derives `role_id`.
  */
 export type RoleResolutionClass =
   | 'OK'
@@ -34,7 +34,7 @@ export class MembershipRoleResolverService {
 
   constructor(@Inject(DATA_SOURCE) private readonly ds: DataSource | null) {}
 
-  /** Versão não-lançadora: classifica a resolução (usada pelo dry-run e pelos logs). */
+  /** Non-throwing variant: classifies the resolution (used by the dry-run and the logs). */
   async classify(tenantId: string, roleSlug: string): Promise<RoleResolution> {
     if (!this.ds) throw new ServiceUnavailableException('DB indisponível para resolução de role');
 
@@ -76,7 +76,7 @@ export class MembershipRoleResolverService {
     return { roleId: r.id, classification: 'OK', detail: `role '${roleSlug}'` };
   }
 
-  /** Versão lançadora (usada nos writers em dual-write). Sem fallback viewer. */
+  /** Throwing variant (used by the dual-write writers). No viewer fallback. */
   async resolveOrThrow(tenantId: string, roleSlug: string, ctx: { membershipId?: string } = {}): Promise<string> {
     const res = await this.classify(tenantId, roleSlug);
     if (res.roleId) {

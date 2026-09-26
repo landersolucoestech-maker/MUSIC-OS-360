@@ -47,11 +47,11 @@ export class TakedownsService {
   }
 
   /**
-   * Contagem por status, sobre o tenant inteiro (não a página atual) —
-   * Task H: KPIs exatos sem baixar a tabela inteira. O bucket-mapping
-   * (pendente/em_andamento/concluído) continua no frontend (Takedowns.tsx),
-   * que agora itera sobre este mapa pequeno {status: count} em vez da lista
-   * completa de takedowns.
+   * Count per status, over the whole tenant (not the current page) —
+   * Task H: exact KPIs without downloading the whole table. The bucket mapping
+   * (`pendente`/`em_andamento`/`concluído`) remains in the frontend (Takedowns.tsx),
+   * which now iterates over this small {status: count} map instead of the full
+   * takedown list.
    */
   async stats(tenantId: string): Promise<GroupStatsResult> {
     const qb = this.repository

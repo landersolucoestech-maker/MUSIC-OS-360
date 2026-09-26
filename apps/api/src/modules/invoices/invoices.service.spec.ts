@@ -3,12 +3,12 @@ import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { InvoicesService } from './invoices.service';
 
 /**
- * REM-06 (Remaining Product Completion Backlog): `invoices` mistura Notas
- * Fiscais (o tenant fatura os SEUS clientes) com faturas Stripe da própria
- * assinatura SaaS do tenant (billing.service.ts upsertStripeInvoice,
- * type='stripe_subscription'). GET /invoices e GET /invoices/:id (
- * RequireRole('viewer')) vazavam essas faturas Stripe — o mesmo dado só
- * deveria ser acessível via /billing/subscription (RequireRole('admin')).
+ * REM-06 (Remaining Product Completion Backlog): `invoices` mixes service
+ * invoices (the tenant bills ITS clients) with Stripe invoices of the tenant's own
+ * SaaS subscription (billing.service.ts upsertStripeInvoice,
+ * type='stripe_subscription'). GET /invoices and GET /invoices/:id (
+ * RequireRole('viewer')) leaked those Stripe invoices — the same data should
+ * only be reachable via /billing/subscription (RequireRole('admin')).
  */
 function makeQb(rows: unknown[], one: unknown = null) {
   return {

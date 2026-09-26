@@ -287,11 +287,11 @@ export class MarketingAssetsService {
 
     const nextAssetStatus = dto.status === 'approved' ? 'approved' : 'rejected';
     const decidedAt = new Date();
-    // Guarda status='pending' na PRÓPRIA condição do UPDATE (não só no
-    // pre-check acima) — fecha a janela entre a leitura e este UPDATE em que
-    // duas decisões concorrentes poderiam sobrescrever uma à outra
-    // silenciosamente. Esta entidade não tem updated_at gerenciado, então o
-    // próprio status é o guard de concorrência otimista aqui.
+    // Keeps status='pending' in the UPDATE's OWN condition (not only in the
+    // pre-check above) — closes the window between the read and this UPDATE in which
+    // two concurrent decisions could silently overwrite each other.
+    // This entity has no managed updated_at, so the
+    // status itself is the optimistic concurrency guard here.
     const decisionResult = await this.approvalRepo!.update(
       { id: approvalId, tenant_id: tenantId, status: 'pending' } as never,
       {

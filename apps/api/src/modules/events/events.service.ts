@@ -58,9 +58,9 @@ export class EventsService {
   }
 
   /**
-   * KPIs do tenant inteiro (nunca calculados só sobre o período do calendário
-   * visível): contagem exata por status + "próximos 7 dias" (janela móvel,
-   * não é um GROUP BY — query separada e simples).
+   * KPIs for the whole tenant (never computed only over the visible calendar
+   * period): exact count per status + "next 7 days" (rolling window,
+   * not a GROUP BY — a separate, simple query).
    */
   async stats(tenantId: string): Promise<GroupStatsResult & { upcoming7Days: number }> {
     const byStatus = await groupCount(
@@ -90,7 +90,7 @@ export class EventsService {
 
   /**
    * Maps CreateEventDto / UpdateEventDto (camelCase EN) → EventEntity columns (snake_case PT).
-   * Backend DTO usa title/type/startsAt/venue/artistId; tabela usa title/type/data/local/artist_id.
+   * The backend DTO uses title/type/startsAt/venue/artistId; the table uses title/type/data/local/artist_id.
    */
   private dtoToEntity(dto: Partial<CreateEventDto & UpdateEventDto>): Partial<EventEntity> {
     const d = dto as Record<string, unknown>;
@@ -100,9 +100,9 @@ export class EventsService {
     if (d['artistId']  != null) out['artist_id'] = d['artistId'];
     if (d['venue']     != null) out['local']      = d['venue'];
     if (d['startsAt']  != null) {
-      // C3/E2 — dual-write: o MESMO objeto Date alimenta a coluna legada `data`
-      // e a canônica futura `starts_at` (zero janela de divergência; leitura
-      // canônica só na fase E4, remoção de `data` só na E6).
+      // C3/E2 — dual-write: the SAME Date object feeds the legacy `data` column
+      // and the future canonical `starts_at` (zero divergence window; canonical
+      // reads only in phase E4, removal of `data` only in E6).
       const startValue = new Date(d['startsAt'] as string | Date);
       out['data']      = startValue;
       out['starts_at'] = startValue;
@@ -110,7 +110,7 @@ export class EventsService {
     if (d['endsAt']    != null) out['end_date']   = new Date(d['endsAt'] as string | Date);
     if (d['status']    != null) out['status']     = d['status'];
     if (d['metadata']  != null) out['metadata']   = d['metadata'];
-    // Campos do formulário (regra 2026-07-12: coluna própria, sem metadata)
+    // Form fields (2026-07-12 rule: own column, no metadata)
     if (d['endereco']         != null) out['endereco']         = d['endereco'];
     if (d['contato_local']    != null) out['contato_local']    = d['contato_local'];
     if (d['fee_amount']       != null) out['fee_amount']       = String(d['fee_amount']);
@@ -127,9 +127,9 @@ export class EventsService {
     // event could silently reference another tenant's artist.
     await assertSameTenantFk(this.ds!, 'artists', mapped.artist_id, tenantId, 'Artista');
     if (!mapped.data) {
-      // Coluna NOT NULL — usa "agora" como fallback seguro se startsAt não veio.
-      // C3/E2 — dual-write: o mesmo instante alimenta `data` e `starts_at`
-      // (uma única chamada a new Date(); duas chamadas poderiam divergir em ms).
+      // NOT NULL column — uses "now" as a safe fallback when startsAt was not sent.
+      // C3/E2 — dual-write: the same instant feeds `data` and `starts_at`
+      // (a single new Date() call; two calls could diverge by ms).
       const fallbackValue = new Date();
       mapped.data = fallbackValue;
       mapped.starts_at = fallbackValue;

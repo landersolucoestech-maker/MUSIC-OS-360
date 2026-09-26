@@ -4,11 +4,11 @@ import { ConversationsController } from './conversations.controller';
 import { IdempotencyInterceptor } from '../../core/interceptors/idempotency.interceptor';
 
 /**
- * PD-1 (2026-08-23): message send + conversation create precisam de proteção real contra
- * duplicação em nível de rede (timeout+retry), não só o guard de UI (isSending em
- * MusicChat.tsx). Confirma que @UseInterceptors(IdempotencyInterceptor) está realmente
- * aplicado aos dois métodos — não basta o decorator existir no arquivo, o metadata do
- * NestJS precisa realmente listar o interceptor no handler certo.
+ * PD-1 (2026-08-23): message send + conversation create need real protection against
+ * network-level duplication (timeout+retry), not only the UI guard (isSending in
+ * MusicChat.tsx). Confirms that @UseInterceptors(IdempotencyInterceptor) is really
+ * applied to both methods — the decorator existing in the file is not enough, the
+ * NestJS metadata must really list the interceptor on the right handler.
  */
 describe('ConversationsController — idempotency wiring (PD-1)', () => {
   it('addMessage (POST :id/messages) has IdempotencyInterceptor attached', () => {

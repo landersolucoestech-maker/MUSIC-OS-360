@@ -41,10 +41,10 @@ export class WorksService {
   }
 
   /**
-   * `works.participantes` foi normalizada em `work_participants`
-   * (migration WorkParticipantsNormalization20260718000011). Reidrata o
-   * array no MESMO formato que o frontend sempre consumiu, para que o
-   * contrato de API não mude.
+   * `works.participantes` was normalized into `work_participants`
+   * (migration WorkParticipantsNormalization20260718000011). Rehydrates the
+   * array into the SAME format the frontend always consumed, so the
+   * API contract does not change.
    */
   private async hydrateParticipantes(works: WorkEntity[]): Promise<WorkWithParticipantes[]> {
     if (works.length === 0) return [];
@@ -71,9 +71,9 @@ export class WorksService {
     return works.map((w) => Object.assign(w, { participantes: byWork.get(w.id) ?? [] }));
   }
 
-  /** Recebe o repo explicitamente (em vez de usar sempre this.participantsRepo)
-   * para poder rodar dentro da MESMA transação do update/create da obra —
-   * ver comentário em update(). */
+  /** Receives the repo explicitly (instead of always using this.participantsRepo)
+   * so it can run inside the SAME transaction as the work's update/create —
+   * see the comment in update(). */
   private async replaceParticipantes(
     repo: Repository<WorkParticipantEntity>,
     tenantId: string,
@@ -97,7 +97,7 @@ export class WorksService {
     if (rows.length > 0) await repo.save(rows);
   }
 
-  /** QueryBuilder base (tenant + not-deleted + filtros) partilhado por list() e stats(). */
+  /** Base QueryBuilder (tenant + not-deleted + filters) shared by list() and stats(). */
   private baseQb(tenantId: string, query: QueryWorkDto) {
     const q = query as Record<string, unknown>;
     const qb = this.repo!
@@ -133,12 +133,12 @@ export class WorksService {
     return { data: hydrated, meta: { total, offset: (query as any).offset ?? 0, limit: (query as any).limit ?? 50 } };
   }
 
-  /** Contagem exata por status, tenant inteiro — nunca só a página carregada. */
+  /** Exact count per status, whole tenant — never only the loaded page. */
   async stats(tenantId: string, query: QueryWorkDto): Promise<GroupStatsResult> {
     return groupCount(this.baseQb(tenantId, query), 'w', 'status');
   }
 
-  /** Gêneros distintos do tenant — usado no filtro (dropdown não pode ficar preso aos 50 primeiros registros). */
+  /** The tenant's distinct genres — used in the filter (the dropdown cannot be stuck on the first 50 records). */
   async distinctMusicGenres(tenantId: string): Promise<string[]> {
     const rows = await this.repo!
       .createQueryBuilder('w')
@@ -181,16 +181,16 @@ export class WorksService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateWorkDto): Promise<WorkWithParticipantes> {
-    // works.type é NOT NULL. find-tipo-obra-type-collision: o form real
-    // (formToObraPayload) NUNCA envia `type` -- só `tipo_obra` ('autoral'|
-    // 'referencia', a origem do registro no catálogo, ver
-    // ObraTipoSelectorModal.tsx). O fallback `?? dto.tipo_obra` que existia
-    // aqui portanto SEMPRE disparava em uso real, gravando 'autoral'/
-    // 'referencia' na coluna que o registro ABRAMUS/ECAD lê como a
-    // classificação musical da obra (ex. 'composicao') -- dois conceitos
-    // distintos sendo silenciosamente confundidos em 100% das obras criadas
-    // pela UI real. `tipo_obra` permanece sua própria coluna, intocada;
-    // `type` agora só usa o default real quando o chamador não o envia.
+    // works.type is NOT NULL. find-tipo-obra-type-collision: the real form
+    // (formToObraPayload) NEVER sends `type` -- only `tipo_obra` ('autoral'|
+    // 'referencia', the record's origin in the catalog, see
+    // ObraTipoSelectorModal.tsx). The `?? dto.tipo_obra` fallback that existed
+    // here therefore ALWAYS fired in real use, writing 'autoral'/
+    // 'referencia' into the column that ABRAMUS/ECAD registration reads as the
+    // work's musical classification (e.g. 'composicao') -- two distinct
+    // concepts silently conflated in 100% of the works created
+    // through the real UI. `tipo_obra` remains its own column, untouched;
+    // `type` now only uses the real default when the caller does not send it.
     const type = dto.type ?? 'composicao';
     const { participantes, ...rest } = dto as CreateWorkDto & { participantes?: unknown[] };
     // find-f81eebf2: artist_id had no FK (DB or app-layer) — a work could
@@ -207,9 +207,9 @@ export class WorksService {
     // create so both sides finally agree.
     const registryFields = deriveWorkRegistryFields(rest as WorkRegistrySourceFields);
 
-    // Obra + participantes na mesma transação: se a gravação dos participantes
-    // falhar, a criação da obra também reverte — nunca fica uma obra "órfã"
-    // sem os participantes que o formulário enviou junto.
+    // Work + participants in the same transaction: if writing the participants
+    // fails, the work creation also rolls back — there is never an "orphan" work
+    // without the participants the form sent along with it.
     const saved = await this.ds!.transaction(async (em) => {
       const workRepo = em.getRepository(WorkEntity);
       const participantsRepo = em.getRepository(WorkParticipantEntity);
@@ -226,8 +226,8 @@ export class WorksService {
       return savedWork;
     });
 
-    // Dispara automações nativas internas (ex.: catalog-metadata-validator). Os
-    // handlers são assíncronos e à prova de falha — nunca revertem a criação da obra.
+    // Triggers internal native automations (e.g. catalog-metadata-validator). The
+    // handlers are asynchronous and failure-proof — they never revert the work creation.
     this.events.emitTyped(DOMAIN_EVENTS.CATALOG_WORK_CREATED, {
       tenantId,
       userId,
@@ -264,12 +264,12 @@ export class WorksService {
     };
     const registryFields = deriveWorkRegistryFields(mergedForRegistry);
 
-    // Task L: casUpdate() e replaceParticipantes() rodavam como duas operações
-    // independentes — se a gravação dos participantes falhasse depois do
-    // casUpdate já ter aplicado, a obra ficava com os campos principais
-    // atualizados mas os participantes antigos (ou parcialmente apagados),
-    // um estado inconsistente. Agora ambas rodam na mesma transação: qualquer
-    // falha (incluindo o 409 do CAS) reverte as duas por igual.
+    // Task L: casUpdate() and replaceParticipantes() ran as two independent
+    // operations — if writing the participants failed after the
+    // casUpdate had already applied, the work kept its main fields
+    // updated but the old (or partially deleted) participants,
+    // an inconsistent state. Now both run in the same transaction: any
+    // failure (including the CAS 409) rolls both back equally.
     await this.ds!.transaction(async (em) => {
       const workRepo = em.getRepository(WorkEntity);
       const participantsRepo = em.getRepository(WorkParticipantEntity);

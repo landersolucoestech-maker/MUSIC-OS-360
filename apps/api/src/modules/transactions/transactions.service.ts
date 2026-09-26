@@ -21,15 +21,15 @@ const PAID_STATUSES      = new Set(['paid', 'confirmed', 'completed']);
 const CANCELLED_STATUSES = new Set(['cancelled']);
 
 /**
- * Categoria "sem escolha real" — nunca oferecida como opção no formulário
- * manual (só existe como fallback defensivo do backend e como placeholder
- * fixo da importação OFX, que não tem como saber a categoria real do banco).
- * Único valor tratado como "elegível para auto-categorização" — qualquer
- * outra categoria explícita é sempre preservada (nunca sobrescrita).
+ * The "no real choice" category — never offered as an option in the manual
+ * form (it only exists as a defensive backend fallback and as the fixed
+ * placeholder of the OFX import, which cannot know the bank's real category).
+ * The only value treated as "eligible for auto-categorization" — any
+ * other explicit category is always preserved (never overwritten).
  */
 export const UNCATEGORIZED_PLACEHOLDER = 'outros';
 
-/** finance_category_keyword_rules só cobre RECEITA/DESPESA — demais tipos (investimento, imposto, transferencia) nunca são elegíveis. */
+/** finance_category_keyword_rules only covers RECEITA/DESPESA — other types (investimento, imposto, transferencia) are never eligible. */
 export function toRuleTransactionType(tipoTransacao: unknown): 'RECEITA' | 'DESPESA' | null {
   if (tipoTransacao === 'receita') return 'RECEITA';
   if (tipoTransacao === 'despesa') return 'DESPESA';
@@ -75,8 +75,8 @@ function buildPersistencePayload(
   if (!existing) {
     payload.tenant_id = tenantId;
     payload.created_by = userId;
-    // categoria é NOT NULL no DB; o validator não exige para `transferencia`,
-    // então aplicamos default defensivo na criação para evitar 23502 → 500.
+    // categoria is NOT NULL in the DB; the validator does not require it for `transferencia`,
+    // so we apply a defensive default on creation to avoid 23502 → 500.
     payload.categoria = (dto.category && String(dto.category).trim()) || 'outros';
   } else if (dto.category !== undefined) {
     payload.categoria = dto.category || 'outros';
@@ -203,9 +203,9 @@ export class TransactionsService {
   }
 
   /**
-   * Distribuição exata type×status + soma de valor (tenant inteiro, ignora
-   * os filtros de data/busca da tabela — os KPIs sempre refletem o total
-   * real, nunca a página ou o intervalo de datas atualmente visível).
+   * Exact type×status distribution + value sum (whole tenant, ignores
+   * the table's date/search filters — the KPIs always reflect the real
+   * total, never the page or the currently visible date range).
    */
   async stats(tenantId: string): Promise<Array<{ type: string; status: string; cnt: number; sum: number }>> {
     const qb = this.repo!
@@ -378,13 +378,13 @@ export class TransactionsService {
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
   /**
-   * Task W — auto-categorização por palavra-chave na criação de transações
-   * (cobre criação manual e importação OFX, que reutiliza este mesmo
-   * endpoint). Só atua quando a categoria resolvida é o placeholder
-   * "outros" — qualquer categoria real, escolhida manualmente ou por
-   * qualquer outro fluxo, nunca é sobrescrita. Nunca cruza tenant (a busca
-   * de regras já é escopada por tenantId). Se não houver regra
-   * correspondente, ou o matcher estiver indisponível, mantém "outros".
+   * Task W — keyword auto-categorization on transaction creation
+   * (covers manual creation and the OFX import, which reuses this same
+   * endpoint). Acts only when the resolved category is the placeholder
+   * "outros" — any real category, chosen manually or by
+   * any other flow, is never overwritten. Never crosses tenants (the rules
+   * lookup is already scoped by tenantId). If there is no matching
+   * rule, or the matcher is unavailable, keeps "outros".
    */
   private async resolveCategory(
     tenantId: string,

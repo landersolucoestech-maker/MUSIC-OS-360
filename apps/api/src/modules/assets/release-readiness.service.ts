@@ -1,17 +1,17 @@
 /**
  * modules/assets/release-readiness.service.ts
  *
- * Release Readiness Skill (real). Avalia os requisitos OBRIGATÓRIOS antes de
- * liberar um lançamento para distribuição, reusando o modelo central de assets:
- *   - Capa aprovada (cover_art vinculada ao projeto)
- *   - WAV Master (wav/master vinculado ao projeto)
- *   - ISRC (no fonograma)
- *   - Registro de fonograma (fonograma existente)
- *   - Registro de obra (quando há obra associada)
- *   - Metadados obrigatórios (título, artista, gênero, intérpretes)
+ * Release Readiness Skill (real). Evaluates the MANDATORY requirements before
+ * releasing a release for distribution, reusing the central asset model:
+ *   - Approved cover (cover_art linked to the project)
+ *   - WAV master (wav/master linked to the project)
+ *   - ISRC (on the phonogram)
+ *   - Phonogram registration (existing phonogram)
+ *   - Work registration (when there is an associated work)
+ *   - Mandatory metadata (title, artist, genre, performers)
  *
- * Executa via SkillRunService → persistência/auditoria/eventos skill.* automáticos.
- * Apenas avaliação (não publica). Infraestrutura interna.
+ * Runs via SkillRunService → automatic persistence/auditing/skill.* events.
+ * Evaluation only (does not publish). Internal infrastructure.
  */
 
 import { Injectable, Inject, Optional, Logger } from '@nestjs/common';
@@ -62,7 +62,7 @@ export class ReleaseReadinessService {
     }
   }
 
-  /** Avalia a prontidão para distribuição (executa como skill com auditoria). */
+  /** Evaluates distribution readiness (runs as a skill with auditing). */
   async evaluate(tenantId: string, input: ReleaseReadinessInput, actorId?: string): Promise<ReleaseReadinessResult> {
     return this.skillRuns.run<ReleaseReadinessResult>(
       {
@@ -76,7 +76,7 @@ export class ReleaseReadinessService {
       async (ctx) => {
         const requirements: ReadinessRequirement[] = [];
 
-        // ── Assets vinculados ao projeto (capa + master) ───────────────────────
+        // ── Assets linked to the project (cover + master) ─────────────────────────
         const assets = input.projectId
           ? await this.assetLinking.getProjectAssetsDetailed(tenantId, input.projectId)
           : [];

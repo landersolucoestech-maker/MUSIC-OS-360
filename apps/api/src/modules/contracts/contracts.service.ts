@@ -39,7 +39,7 @@ export class ContractsService {
     }
   }
 
-  /** Um warning por alias legado efetivamente recebido nesta requisição. Nunca loga valores. */
+  /** One warning per legacy alias actually received in this request. Never logs values. */
   private logLegacyAliasUsage(
     aliases: string[],
     operation: 'create' | 'update' | 'list',
@@ -97,11 +97,11 @@ export class ContractsService {
   }
 
   /**
-   * Contagem + soma de `fixed_value` por status, sobre o tenant inteiro (não a
-   * página atual) — Task H: KPIs exatos sem baixar a tabela inteira. O
-   * bucket-mapping (vigente/assinado/aguardando/análise/encerrado) continua
-   * no frontend (Contratos.tsx), que agora itera sobre este mapa pequeno
-   * {status: count} em vez da lista completa de contratos.
+   * Count + sum of `fixed_value` per status, over the whole tenant (not the
+   * current page) — Task H: exact KPIs without downloading the whole table. The
+   * bucket mapping (`vigente`/`assinado`/`aguardando`/`análise`/`encerrado`) remains
+   * in the frontend (Contratos.tsx), which now iterates over this small
+   * {status: count} map instead of the full contract list.
    */
   async stats(tenantId: string): Promise<GroupStatsResult> {
     const qb = this.repo!
@@ -138,10 +138,10 @@ export class ContractsService {
   }
 
   /**
-   * Monta o payload final para persistência a partir dos campos canônicos já
-   * resolvidos (title/type/artist_id/start_date/end_date/arquivo_url/fixed_value
-   * — ver resolveContractAliases()) e dos demais campos não relacionados a
-   * aliases, que continuam passando direto para a entity.
+   * Builds the final payload for persistence from the already resolved canonical
+   * fields (title/type/artist_id/start_date/end_date/arquivo_url/fixed_value
+   * — see resolveContractAliases()) and the other fields unrelated to
+   * aliases, which keep passing straight through to the entity.
    */
   private buildEntityPayload(dto: Record<string, unknown>, resolved: ResolvedContractWriteFields): Record<string, unknown> {
     const out: Record<string, unknown> = { ...resolved };
@@ -155,7 +155,7 @@ export class ContractsService {
     out.signing_platform  = dto['signing_platform']  ?? null;
     out.versoes       = (dto['versoes'] as unknown[] | undefined) ?? [];
     out.documents    = (dto['documents'] as unknown[] | undefined) ?? [];
-    // Campos do wizard (regra 2026-07-12: 1 coluna por campo, nome exato) — não são aliases.
+    // Wizard fields (2026-07-12 rule: 1 column per field, exact name) — they are not aliases.
     out.template_id   = dto['template_id'] ?? null;
     if (Array.isArray(dto['signers'])) out.signers = dto['signers'];
 
@@ -167,7 +167,7 @@ export class ContractsService {
     if (dto['signedAt'])                meta['signed_at'] = dto['signedAt'];
     if (Object.keys(meta).length > 0)   out.metadata = meta;
 
-    // Remove nulls/undefined — preserva a semântica atual de PATCH (null não limpa coluna).
+    // Removes nulls/undefined — preserves the current PATCH semantics (null does not clear a column).
     return Object.fromEntries(Object.entries(out).filter(([, v]) => v !== null && v !== undefined));
   }
 
@@ -187,7 +187,7 @@ export class ContractsService {
     this.logLegacyAliasUsage(legacyAliasesUsed, 'create', tenantId);
 
     const normalized = this.buildEntityPayload(rest, resolved);
-    // contracts.type é NOT NULL; o wizard pode não ter tipo de serviço definido.
+    // contracts.type is NOT NULL; the wizard may not have a service type defined.
     if (normalized['type'] == null) normalized['type'] = 'outro';
 
     await assertSameTenantFk(this.ds!, 'artists', normalized['artist_id'] as string | undefined, tenantId, 'Artista');
@@ -237,12 +237,12 @@ export class ContractsService {
     void _s;
 
     const { normalized: resolved, legacyAliasesUsed } = resolveContractAliases(restFields);
-    // update: ausência de título é válida (PATCH parcial); se enviado, o
-    // próprio resolveContractAliases() já garantiu conteúdo/conflito válidos.
+    // update: an absent title is valid (partial PATCH); if sent,
+    // resolveContractAliases() itself already guaranteed valid content/conflict.
     this.logLegacyAliasUsage(legacyAliasesUsed, 'update', tenantId, id);
 
     const normalized = this.buildEntityPayload(restFields, resolved);
-    // Sem default de type='outro' aqui — PATCH ausente não deve forçar um valor.
+    // No type='outro' default here — an absent PATCH must not force a value.
     // A client metadata update replaces the column: carry the server-owned
     // provider linkage over, or the signature webhook can no longer find the
     // contract (DocuSign resolves by metadata.provider_doc_id).
@@ -272,11 +272,11 @@ export class ContractsService {
       };
       await this.ds!.transaction(async (em) => {
         await this.workflowService.transitionInTx(req, em);
-        // CAS aqui, dentro da mesma transação da mudança de status: se o
-        // contrato foi editado por outra pessoa desde a leitura de `current`
-        // acima, a transação inteira (incluindo o histórico de transição já
-        // gravado por transitionInTx) faz rollback — nunca aplica uma
-        // transição de status validada contra um fromStatus desatualizado.
+        // CAS here, inside the same transaction as the status change: if the
+        // contract was edited by someone else since `current` was read
+        // above, the whole transaction (including the transition history already
+        // written by transitionInTx) rolls back — it never applies a
+        // status transition validated against a stale fromStatus.
         await casUpdate(
           em.getRepository(ContractEntity),
           { id, tenant_id: tenantId },

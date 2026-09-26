@@ -22,8 +22,8 @@ export class CreateReleaseDto {
   @ApiPropertyOptional() @IsOptional() coverUrl?: string;
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
 
-  // ── Campos do formulário (chaves EXATAS do LancamentoFormModal) ──────────────
-  // Regra de produto 2026-07-12: cada campo do form tem a sua coluna física.
+  // ── Form fields (EXACT keys of LancamentoFormModal) ─────────────────────────
+  // Product rule 2026-07-12: each form field has its own physical column.
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) isrc_global?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() notas_internas?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
@@ -41,7 +41,7 @@ export class UpdateReleaseDto extends PartialType(CreateReleaseDto) {
   @IsEnum(ReleaseStatus)
   status?: ReleaseStatus;
 
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 

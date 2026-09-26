@@ -5,23 +5,23 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 /**
- * CreateContractDto aceita BOTH English camelCase e pt-BR snake_case.
+ * CreateContractDto accepts BOTH English camelCase and pt-BR snake_case.
  *
- * Fase 5 / C1: pt-BR é o contrato canônico para artistId/value/fileUrl —
- * os aliases EN correspondentes estão em depreciação temporária, ainda
- * aceitos, resolvidos e validados por contract-legacy-alias.util.ts, mas
- * marcados `deprecated` no Swagger.
- * Exceção: `title`/`type`/`start_date`/`end_date` passaram a ser os campos
- * canônicos (normalização de nomenclatura, 2026-09-05) — `titulo`/`tipo`
- * (pt-BR) e, para as datas, tanto `data_inicio`/`data_fim` (pt-BR) quanto
- * `startsAt`/`expiresAt` (o alias EN já existente antes desta migração)
- * são aceitos como aliases legados agora — três nomes por campo.
- * Conflitos entre quaisquer dos nomes aceitos são rejeitados com 400
- * (CONTRACT_ALIAS_CONFLICT). currency/signedAt/parties não fazem parte
- * desta depreciação (ver C1.1 — dívida separada, fora deste escopo).
+ * Phase 5 / C1: pt-BR is the canonical contract for artistId/value/fileUrl —
+ * the corresponding EN aliases are temporarily deprecated, still
+ * accepted, resolved and validated by contract-legacy-alias.util.ts, but
+ * marked `deprecated` in Swagger.
+ * Exception: `title`/`type`/`start_date`/`end_date` became the canonical
+ * fields (naming normalization, 2026-09-05) — `titulo`/`tipo`
+ * (pt-BR) and, for the dates, both `data_inicio`/`data_fim` (pt-BR) and
+ * `startsAt`/`expiresAt` (the EN alias that existed before this migration)
+ * are now accepted as legacy aliases — three names per field.
+ * Conflicts between any of the accepted names are rejected with 400
+ * (CONTRACT_ALIAS_CONFLICT). currency/signedAt/parties are not part of
+ * this deprecation (see C1.1 — separate debt, out of this scope).
  */
 export class CreateContractDto {
-  // ── English (canônico desde a normalização de nomenclatura 2026-09-05) ─────
+  // ── English (canonical since the 2026-09-05 naming normalization) ─────────────
   @ApiPropertyOptional({ example: 'Contrato de Gravação — Artista ABC' })
   @IsOptional()
   @IsString()
@@ -39,9 +39,9 @@ export class CreateContractDto {
   @IsUUID()
   artistId?: string;
 
-  // Sem default — service.create() força ContractStatus.DRAFT na criação.
-  // Manter default aqui injectava 'draft' em PATCH parcial (via PartialType)
-  // e disparava workflow 'draft → draft' indevido.
+  // No default — service.create() forces ContractStatus.DRAFT on creation.
+  // Keeping a default here injected 'draft' into a partial PATCH (via PartialType)
+  // and triggered a wrongful 'draft → draft' workflow.
   @ApiPropertyOptional({ example: 'draft' })
   @IsOptional()
   @IsString()

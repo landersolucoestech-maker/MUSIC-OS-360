@@ -1,9 +1,9 @@
 /**
  * modules/uploads/uploads.module.ts
  *
- * Módulo de uploads presignados via Cloudflare R2.
- * StorageModule é @Global — StorageService injectável sem importar explicitamente.
- * DatabaseModule é @Global — DATA_SOURCE injectável sem importar explicitamente.
+ * Module for presigned uploads via Cloudflare R2.
+ * StorageModule is @Global — StorageService is injectable without an explicit import.
+ * DatabaseModule is @Global — DATA_SOURCE is injectable without an explicit import.
  */
 
 import { Module } from '@nestjs/common';

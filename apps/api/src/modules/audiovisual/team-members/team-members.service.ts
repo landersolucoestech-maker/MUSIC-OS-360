@@ -14,7 +14,7 @@ export interface CreateTeamMemberInput {
   payment_amount?: number;
   payment_status?: string;
   notes?: string;
-  /** Concorrência otimista (Task L) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task L) — see optimistic-update.util.ts. Optional. */
   expectedUpdatedAt?: string;
 }
 

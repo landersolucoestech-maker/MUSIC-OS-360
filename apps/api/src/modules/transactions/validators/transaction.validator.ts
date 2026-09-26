@@ -284,10 +284,10 @@ export const updateTransactionSchema = z.object({
   amount:        amountField,
   dataTransacao: z.string().optional(),
   ...commonFields,
-  // Concorrência otimista (Task J — fase de continuidade): quando enviado, o
-  // update só é aplicado se updated_at no banco ainda for exatamente este —
-  // detecta "lost update" quando dois usuários editam a mesma transação em
-  // paralelo. Opcional para não quebrar chamadores existentes.
+  // Optimistic concurrency (Task J — continuity phase): when sent, the
+  // update is only applied if updated_at in the database is still exactly this value —
+  // detects a "lost update" when two users edit the same transaction in
+  // parallel. Optional so existing callers do not break.
   expectedUpdatedAt: z.string().optional(),
 }).superRefine((data, ctx) => {
   if (data.amount !== undefined) {
@@ -315,7 +315,7 @@ export const patchTransactionSchema = z.object({
   amount:        amountField,
   dataTransacao: z.string().optional(),
   ...commonFields,
-  // Concorrência otimista — ver comentário em updateTransactionSchema.
+  // Optimistic concurrency — see the comment in updateTransactionSchema.
   expectedUpdatedAt: z.string().optional(),
 }).superRefine((data, ctx) => {
   if (data.amount !== undefined) {

@@ -5,8 +5,8 @@ import { ContractServiceTypeEntity } from '../../database/entities';
 import type { CreateContractServiceTypeDto } from './dto/create-contract-service-type.dto';
 import type { UpdateContractServiceTypeDto } from './dto/update-contract-service-type.dto';
 
-// created_at/updated_at nunca vêm do cliente (@CreateDateColumn/@UpdateDateColumn
-// cuidam disso); strip explícito evita que um valor de input vaze para o insert/update.
+// created_at/updated_at never come from the client (@CreateDateColumn/@UpdateDateColumn
+// handle that); an explicit strip prevents an input value from leaking into the insert/update.
 function stripClientTimestamps(dto: Record<string, unknown>): Record<string, unknown> {
   const { created_at: _createdAt, updated_at: _updatedAt, ...rest } = dto;
   return rest;

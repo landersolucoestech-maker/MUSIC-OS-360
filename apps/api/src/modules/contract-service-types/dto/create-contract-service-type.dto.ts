@@ -94,9 +94,9 @@ export class CreateContractServiceTypeDto {
   @ApiPropertyOptional() @IsOptional() @IsInt() @Min(0)
   financial_due_days?: number | null;
 
-  // Enviados pelo frontend (ContractServiceTypeInsert) mas ignorados no
-  // servidor — created_at/updated_at reais vêm de @CreateDateColumn /
-  // @UpdateDateColumn, nunca do cliente (nunca confiar em timestamp de input).
+  // Sent by the frontend (ContractServiceTypeInsert) but ignored on the
+  // server — the real created_at/updated_at come from @CreateDateColumn /
+  // @UpdateDateColumn, never from the client (never trust an input timestamp).
   @ApiPropertyOptional() @IsOptional() @IsString()
   created_at?: string;
 

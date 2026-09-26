@@ -60,10 +60,10 @@ export class ReleasesService {
   }
 
   /**
-   * Distribuição exata por `status` (+ se os campos obrigatórios de submissão
-   * estão preenchidos, único outro fator do qual a classificação de exibição
-   * depende — ver resolveStatusFromRawStatus() no frontend). Tenant inteiro,
-   * nunca só a página carregada.
+   * Exact distribution by `status` (+ whether the mandatory submission fields
+   * are filled, the only other factor the display classification
+   * depends on — see resolveStatusFromRawStatus() in the frontend). Whole tenant,
+   * never only the loaded page.
    */
   async stats(tenantId: string, q: QueryReleaseDto): Promise<Array<{ status: string; has_required: boolean; cnt: number }>> {
     const qb = this.baseQb(tenantId, q);
@@ -133,8 +133,8 @@ export class ReleasesService {
       artistId: saved.artist_id,
     });
 
-    // Dispara automações nativas internas (ex.: release-checklist). Os handlers são
-    // assíncronos e à prova de falha — nunca revertem a criação do lançamento.
+    // Triggers internal native automations (e.g. release-checklist). The handlers are
+    // asynchronous and failure-proof — they never revert the release creation.
     this.events.emitTyped(DOMAIN_EVENTS.RELEASE_CREATED, {
       tenantId,
       userId,
@@ -199,10 +199,10 @@ export class ReleasesService {
       };
       await this.ds!.transaction(async (em) => {
         await this.workflowService.transitionInTx(req, em);
-        // CAS na mesma transação da mudança de status — se o lançamento foi
-        // editado por outra pessoa desde a leitura de `current`, a transação
-        // inteira (incluindo o histórico já gravado por transitionInTx) faz
-        // rollback, nunca aplica uma transição validada contra status stale.
+        // CAS in the same transaction as the status change — if the release was
+        // edited by someone else since `current` was read, the whole
+        // transaction (including the history already written by transitionInTx) rolls
+        // back; it never applies a transition validated against a stale status.
         await casUpdate(
           em.getRepository(ReleaseEntity),
           { id, tenant_id: tenantId },

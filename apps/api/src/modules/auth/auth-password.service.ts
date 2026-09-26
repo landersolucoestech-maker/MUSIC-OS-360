@@ -1,20 +1,20 @@
 /**
- * auth-password.service.ts  (Parte 73, refeito na Parte 74)
+ * auth-password.service.ts  (Part 73, redone in Part 74)
  *
- * Parte 73 tinha duas fontes de verdade concorrentes: o frontend trocava a
- * senha direto no Supabase (client-side, updateUser({password})) e DEPOIS
- * chamava um endpoint separado só para limpar `must_change_password` — sem
- * nenhuma prova de que a troca realmente aconteceu. Isso não é atômico: o
- * frontend nunca chegou a implementar essa segunda chamada (Parte 74,
- * Bloco 2), e mesmo que implementasse, um cliente malicioso podia chamar só
- * o "clear" sem nunca trocar a senha de fato.
+ * Part 73 had two competing sources of truth: the frontend changed the
+ * password directly in Supabase (client-side, updateUser({password})) and THEN
+ * called a separate endpoint only to clear `must_change_password` — without
+ * any proof that the change actually happened. That is not atomic: the
+ * frontend never got to implement that second call (Part 74,
+ * Block 2), and even if it had, a malicious client could call only
+ * the "clear" without ever actually changing the password.
  *
- * Parte 74: uma única operação atômica. `changeRequiredPassword()` valida a
- * senha nova, troca-a fisicamente no Supabase Auth via Admin API E limpa
- * `must_change_password` NA MESMA CHAMADA (`updateUserById({ password,
- * app_metadata })`) — se o GoTrue rejeitar (senha fraca por regra própria,
- * rate limit, etc.), nada muda: a flag permanece true, nenhuma auditoria é
- * escrita. Só depois de confirmado sucesso é que registamos
+ * Part 74: a single atomic operation. `changeRequiredPassword()` validates the
+ * new password, physically changes it in Supabase Auth via the Admin API AND clears
+ * `must_change_password` IN THE SAME CALL (`updateUserById({ password,
+ * app_metadata })`) — if GoTrue rejects it (weak password by its own rule,
+ * rate limit, etc.), nothing changes: the flag stays true, no audit record is
+ * written. Only after success is confirmed do we record
  * `user.password_changed`.
  */
 import { BadRequestException, Inject, Injectable, Optional, ServiceUnavailableException } from '@nestjs/common';
@@ -49,12 +49,12 @@ export class AuthPasswordService {
   }
 
   /**
-   * Tentativa de bloquear reutilização da senha provisória atual, "quando
-   * tecnicamente verificável" (Parte 74, Bloco 5): a única forma de provar
-   * que `candidate` é igual à senha atual sem ter o hash é tentar logar com
-   * ela. Best-effort — se SUPABASE_ANON_KEY ou o e-mail não estiverem
-   * disponíveis, ou a chamada falhar por qualquer motivo de rede, apenas
-   * pula a checagem (nunca bloqueia a troca real por causa disso).
+   * Attempt to block reuse of the current temporary password, "when
+   * technically verifiable" (Part 74, Block 5): the only way to prove
+   * that `candidate` equals the current password without the hash is to try to log in with
+   * it. Best-effort — if SUPABASE_ANON_KEY or the e-mail are not
+   * available, or the call fails for any network reason, it simply
+   * skips the check (never blocks the real change because of it).
    */
   private async isSameAsCurrentPassword(email: string | undefined, candidate: string): Promise<boolean> {
     const url = this.env('SUPABASE_URL');
@@ -64,7 +64,7 @@ export class AuthPasswordService {
       const anon = createClient(url, anonKey);
       const { data, error } = await anon.auth.signInWithPassword({ email, password: candidate });
       if (data?.session) {
-        // Não precisamos (nem queremos) manter essa sessão de teste viva.
+        // We do not need (nor want) to keep this test session alive.
         await anon.auth.signOut().catch(() => {});
       }
       return !error && !!data?.session;
@@ -96,9 +96,9 @@ export class AuthPasswordService {
     const currentAppMetadata = (auth.claims['app_metadata'] as Record<string, unknown> | undefined) ?? {};
     const supabase = this.supabaseAdmin();
 
-    // Atômico: senha e app_metadata mudam na MESMA chamada Admin API. Se o
-    // GoTrue rejeitar, nem a senha nem a flag mudam — o catch abaixo garante
-    // que nada é auditado nesse caso.
+    // Atomic: password and app_metadata change in the SAME Admin API call. If
+    // GoTrue rejects it, neither the password nor the flag change — the catch below ensures
+    // nothing is audited in that case.
     const { error } = await supabase.auth.admin.updateUserById(auth.userId, {
       password: dto.newPassword,
       app_metadata: { ...currentAppMetadata, must_change_password: false },
@@ -107,9 +107,9 @@ export class AuthPasswordService {
       throw new ServiceUnavailableException(`Falha ao trocar a senha: ${error.message}`);
     }
 
-    // Best-effort: revoga sessões desta conta que não sejam a atual (ex.:
-    // alguém mais usando a senha provisória comprometida em outro lugar).
-    // Nunca deve derrubar o sucesso já confirmado da troca de senha.
+    // Best-effort: revokes this account's sessions other than the current one (e.g.
+    // someone else using the compromised temporary password elsewhere).
+    // Must never undo the already confirmed success of the password change.
     if (accessToken) {
       await supabase.auth.admin.signOut(accessToken, 'others').catch(() => {});
     }

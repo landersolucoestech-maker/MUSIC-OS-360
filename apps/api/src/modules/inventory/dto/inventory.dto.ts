@@ -21,7 +21,7 @@ export class CreateInventoryItemDto {
 }
 
 export class UpdateInventoryItemDto extends PartialType(CreateInventoryItemDto) {
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 

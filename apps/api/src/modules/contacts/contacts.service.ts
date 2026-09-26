@@ -2,24 +2,24 @@ import { Injectable, Optional } from '@nestjs/common';
 import { ClientsService } from '../clients/clients.service';
 
 /**
- * ContactsService — Parte 80.
+ * ContactsService — Part 80.
  *
- * Facade explícita sobre ClientsService. "Contato" e "Cliente" são a MESMA
- * entidade física (tabela `clients`) — decisão documentada em
+ * Explicit facade over ClientsService. "Contact" and "Client" are the SAME
+ * physical entity (the `clients` table) — a decision documented in
  * apps/api/src/database/migrations/20260719000010_RebuildClientsInCanonicalFormOrder.ts
- * ("Contato = Cliente") e confirmada na Parte 79: a tabela física `contacts`
- * foi removida por uma migration de limpeza que nunca chegou a este
- * repositório (só existe em um stash pré-existente), deixando o antigo
- * ContactsService::listDb/createDb/... apontando para uma tabela inexistente
- * — 100% não funcional, nunca notado porque o frontend usava um mock.
+ * ("Contact = Client") and confirmed in Part 79: the physical `contacts` table
+ * was removed by a cleanup migration that never reached this
+ * repository (it exists only in a pre-existing stash), leaving the old
+ * ContactsService::listDb/createDb/... pointing to a nonexistent table
+ * — 100% non-functional, never noticed because the frontend used a mock.
  *
- * Mantido apenas por compatibilidade com contact-attachments/contact-timeline/
- * contact-contracts (que ainda chamam assertBelongsToTenant) e com qualquer
- * integrador externo que já use /contacts. Nenhuma lógica própria: tudo
- * delega a ClientsService, incluindo tenant isolation, RBAC e persistência.
- * Novo código deve usar /clients diretamente — ver
- * apps/api/src/modules/clients/clients.controller.ts para o endpoint
- * canônico com timeline/anexos/contratos reais.
+ * Kept only for compatibility with contact-attachments/contact-timeline/
+ * contact-contracts (which still call assertBelongsToTenant) and with any
+ * external integrator already using /contacts. No logic of its own: everything
+ * delegates to ClientsService, including tenant isolation, RBAC and persistence.
+ * New code must use /clients directly — see
+ * apps/api/src/modules/clients/clients.controller.ts for the canonical
+ * endpoint with real timeline/attachments/contracts.
  */
 @Injectable()
 export class ContactsService {

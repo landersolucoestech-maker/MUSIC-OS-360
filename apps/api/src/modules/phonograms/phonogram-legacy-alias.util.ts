@@ -1,17 +1,17 @@
 import { BadRequestException } from '@nestjs/common';
 
 /**
- * Resolução de aliases EN legados para os campos canônicos pt-BR de Phonograms
- * (C2): title/titulo, work_id/workId, artist_id/artistId. Puro: não loga,
- * não conhece tenant/operação, não acessa repository, não importa Swagger,
- * não aplica defaults de negócio (ex.: type='master') — isso é
- * responsabilidade do PhonogramsService.
+ * Resolution of legacy EN aliases to the canonical pt-BR Phonograms fields
+ * (C2): title/titulo, work_id/workId, artist_id/artistId. Pure: does not log,
+ * knows nothing of tenant/operation, does not access a repository, does not import Swagger,
+ * does not apply business defaults (e.g. type='master') — that is
+ * PhonogramsService's responsibility.
  *
- * Regra de presença: `hasOwnProperty` decide presença; `undefined` é tratado
- * como ausente; `null` é tratado como fornecido (participa de conflito, mas
- * nunca vira erro de conteúdo para os campos opcionais — só título rejeita
- * null). A remoção de chaves `null` antes da persistência (para não alterar
- * a semântica atual de PATCH) é feita pelo chamador, não aqui.
+ * Presence rule: `hasOwnProperty` decides presence; `undefined` is treated
+ * as absent; `null` is treated as provided (it takes part in conflicts, but
+ * never becomes a content error for optional fields — only the title rejects
+ * null). Removing `null` keys before persistence (so the current PATCH
+ * semantics do not change) is done by the caller, not here.
  */
 
 export interface PhonogramFieldRef {
@@ -46,7 +46,7 @@ export interface PhonogramAliasResolution<T> {
   legacyAliasesUsed: string[];
 }
 
-// ── Helpers de presença/valor ────────────────────────────────────────────────
+// ── Presence/value helpers ───────────────────────────────────────────────────
 
 function isAbsent(input: Record<string, unknown>, key: string): boolean {
   if (!Object.prototype.hasOwnProperty.call(input, key)) return true;
@@ -82,7 +82,7 @@ function throwInvalidTitle(field: string): never {
   throw new BadRequestException(body);
 }
 
-// ── Par genérico de UUID (work_id/workId, artist_id/artistId) ──────────────
+// ── Generic UUID pair (work_id/workId, artist_id/artistId) ────────────────────
 
 interface UuidPairSpec {
   canonical: string;
@@ -131,7 +131,7 @@ function resolveUuidPair(
 
   if (ptV.toLowerCase() === enV.toLowerCase()) {
     legacyUsed.add(spec.legacy);
-    return ptV; // persiste o valor original (case do lado canônico)
+    return ptV; // persists the original value (casing of the canonical side)
   }
   throwConflict(spec.canonical, spec.legacy);
 }
@@ -139,7 +139,7 @@ function resolveUuidPair(
 const WORK_ID_SPEC: UuidPairSpec = { canonical: 'work_id', legacy: 'workId' };
 const ARTIST_ID_SPEC: UuidPairSpec = { canonical: 'artist_id', legacy: 'artistId' };
 
-// ── Título — obrigatoriedade tratada pelo chamador; aqui só conteúdo/conflito ─
+// ── Title — mandatory-ness handled by the caller; here only content/conflict ─
 
 function assertTitleContent(v: unknown, field: string): asserts v is string {
   if (v === null || typeof v !== 'string' || v.trim() === '') {
@@ -148,9 +148,9 @@ function assertTitleContent(v: unknown, field: string): asserts v is string {
 }
 
 /**
- * Após a normalização de nomenclatura (2026-09-05), a coluna física passou
- * de `titulo` para `title`. `titulo` agora é o alias legado PT aceito para
- * chamadores antigos — mesma estrutura de antes, papéis invertidos.
+ * After the naming normalization (2026-09-05), the physical column changed
+ * from `titulo` to `title`. `titulo` is now the legacy PT alias accepted for
+ * old callers — same structure as before, roles inverted.
  */
 function resolveTitle(input: Record<string, unknown>, legacyUsed: Set<string>): string | undefined {
   const enAbsent = isAbsent(input, 'title');
@@ -176,16 +176,16 @@ function resolveTitle(input: Record<string, unknown>, legacyUsed: Set<string>): 
   assertTitleContent(enV, 'title');
   assertTitleContent(ptV, 'titulo');
   legacyUsed.add('titulo');
-  if (enV.trim() === ptV.trim()) return enV; // persiste o valor original do lado EN, sem trim
+  if (enV.trim() === ptV.trim()) return enV; // persists the original value of the EN side, without trim
   throwConflict('title', 'titulo');
 }
 
-// ── API pública ──────────────────────────────────────────────────────────────
+// ── Public API ────────────────────────────────────────────────────────────────
 
 /**
- * Resolve os 3 aliases de escrita (create/update). Não valida obrigatoriedade
- * de título (isso é decisão de create-vs-update, portanto do service) — só
- * conteúdo/conflito quando um valor é efetivamente enviado.
+ * Resolves the 3 write aliases (create/update). Does not validate that the title is
+ * mandatory (that is a create-vs-update decision, hence the service's) — only
+ * content/conflict when a value is actually sent.
  */
 export function resolvePhonogramAliases(
   input: Record<string, unknown>,
@@ -206,9 +206,9 @@ export function resolvePhonogramAliases(
 }
 
 /**
- * Resolve exclusivamente os 2 aliases de consulta (work_id/workId,
- * artist_id/artistId). Não conhece nem processa titulo/title — impossível
- * vazarem pela query.
+ * Resolves exclusively the 2 query aliases (work_id/workId,
+ * artist_id/artistId). Knows nothing of and does not process titulo/title — they cannot
+ * leak through the query.
  */
 export function resolvePhonogramQueryAliases(
   input: Record<string, unknown>,

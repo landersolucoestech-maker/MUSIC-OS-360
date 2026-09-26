@@ -130,10 +130,10 @@ export class FinancialRulesService {
       if (rule.calculo === 'percentual') computed = (valor * ruleVal) / 100;
       else if (rule.calculo === 'fixo')  computed = ruleVal;
       else {
-        // REM-03: 'faixa' (tiered/bracket) ainda não tem estrutura de faixas
-        // persistida (schema de brackets é decisão de produto em aberto — ver
-        // FinancialRules.tsx "Faixa (em breve)"). Nunca fabricar computed=0
-        // como se fosse um resultado real — pula a regra e avisa.
+        // REM-03: 'faixa' (tiered/bracket) still has no persisted bracket
+        // structure (the bracket schema is an open product decision — see
+        // FinancialRules.tsx "Faixa (em breve)"). Never fabricate computed=0
+        // as if it were a real result — skip the rule and warn.
         this.logger.warn(
           `evaluateRules: regra "${rule.name}" (${rule.id}) usa calculo="${rule.calculo}" ainda não implementado — pulando, nenhum evento emitido`,
         );

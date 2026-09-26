@@ -6,9 +6,9 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { TakedownEntity } from '../../database/entities';
 
 /**
- * Task K — concorrência otimista em TakedownsService.update().
- * Antes: repo.update() incondicional. Agora, com `expectedUpdatedAt`, 0
- * linhas afetadas -> 409 (ConflictException). Sem, comportamento idêntico.
+ * Task K — optimistic concurrency in TakedownsService.update().
+ * Before: an unconditional repo.update(). Now, with `expectedUpdatedAt`, 0
+ * affected rows -> 409 (ConflictException). Without it, identical behavior.
  */
 
 const TENANT = 'tenant-test';

@@ -1,18 +1,18 @@
 /**
  * modules/assets/asset-linking.service.ts
  *
- * Asset Linking Skill (real). Ao confirmar um upload (evento asset.uploaded):
- *   1. garante um registro CENTRAL de asset (assets + asset_versions v1);
- *   2. classifica de forma mínima pelo MIME/nome (a classificação completa é a
- *      Asset Classification Skill, fase posterior);
- *   3. vincula o asset ao projeto e/ou à tarefa de origem (project_assets /
- *      task_assets), de forma idempotente;
- *   4. registra uso (asset_usage_logs);
- *   5. emite asset.linked_to_project / asset.linked_to_task.
+ * Asset Linking Skill (real). When an upload is confirmed (asset.uploaded event):
+ *   1. ensures a CENTRAL asset record (assets + asset_versions v1);
+ *   2. performs a minimal classification by MIME/name (the full classification is the
+ *      Asset Classification Skill, a later phase);
+ *   3. links the asset to the originating project and/or task (project_assets /
+ *      task_assets), idempotently;
+ *   4. records usage (asset_usage_logs);
+ *   5. emits asset.linked_to_project / asset.linked_to_task.
  *
- * Toda a execução roda dentro de SkillRunService.run() → persistência, logs,
- * auditoria e eventos skill.* automáticos. Infraestrutura interna, invisível
- * ao usuário final.
+ * The whole execution runs inside SkillRunService.run() → automatic persistence, logs,
+ * auditing and skill.* events. Internal infrastructure, invisible
+ * to the end user.
  */
 
 import { Injectable, Inject, Optional, Logger } from '@nestjs/common';
@@ -66,7 +66,7 @@ export class AssetLinkingService {
     }
   }
 
-  /** Classificação mínima por MIME/nome (a skill dedicada refina depois). */
+  /** Minimal classification by MIME/name (the dedicated skill refines it later). */
   static classify(mimeType: string, fileName: string): string {
     const name = (fileName ?? '').toLowerCase();
     const mime = (mimeType ?? '').toLowerCase();
@@ -141,7 +141,7 @@ export class AssetLinkingService {
           await this.assets!.update({ id: asset.id }, { current_version_id: version.id });
           await ctx.log('info', 'Asset central criado', { assetId: asset.id, versionId: version.id });
 
-          // Classificação automática (skill dedicada) refina o asset_type + auditoria.
+          // Automatic classification (dedicated skill) refines asset_type + auditing.
           const classified = await this.classification.classifyAndApply(
             payload.tenantId, asset.id, upload.mime_type, upload.original_name, upload.category, payload.uploadedBy,
           );
@@ -149,7 +149,7 @@ export class AssetLinkingService {
           await ctx.log('info', `Classificado como "${classified.assetType}"`, classified as unknown as Record<string, unknown>);
         }
 
-        // 2. Vínculo com projeto/tarefa conforme a origem polimórfica do upload.
+        // 2. Link to project/task according to the upload's polymorphic origin.
         const entity = (upload.entity ?? payload.entityType ?? '').toLowerCase();
         const entityId = upload.entity_id ?? payload.entityId ?? null;
         let linkedProjectId: string | null = null;
@@ -186,7 +186,7 @@ export class AssetLinkingService {
     );
   }
 
-  /** Vincula um asset a um projeto (idempotente) + log + evento. */
+  /** Links an asset to a project (idempotent) + log + event. */
   async linkAssetToProject(
     tenantId: string,
     assetId: string,
@@ -232,7 +232,7 @@ export class AssetLinkingService {
     });
   }
 
-  /** Vincula um asset a uma tarefa (idempotente) + log + evento. */
+  /** Links an asset to a task (idempotent) + log + event. */
   async linkAssetToTask(
     tenantId: string,
     assetId: string,
@@ -299,19 +299,19 @@ export class AssetLinkingService {
     );
   }
 
-  /** Consulta os assets vinculados a um projeto (uso futuro: Conteúdo/Agendamento). */
+  /** Queries the assets linked to a project (future use: Content/Scheduling). */
   async listProjectAssets(tenantId: string, projectId: string): Promise<ProjectAssetEntity[]> {
     if (!this.projectAssets) return [];
     return this.projectAssets.find({ where: { tenant_id: tenantId, project_id: projectId } });
   }
 
-  /** Consulta os assets vinculados a uma tarefa. */
+  /** Queries the assets linked to a task. */
   async listTaskAssets(tenantId: string, taskId: string): Promise<TaskAssetEntity[]> {
     if (!this.taskAssets) return [];
     return this.taskAssets.find({ where: { tenant_id: tenantId, task_id: taskId } });
   }
 
-  /** Enriquece vínculos com os dados do asset + URL da versão corrente. */
+  /** Enriches links with the asset data + URL of the current version. */
   private async enrich(
     tenantId: string,
     links: Array<{ id: string; asset_id: string; role: string; source_event: string | null; linked_by: string | null; created_at: Date }>,
@@ -346,19 +346,19 @@ export class AssetLinkingService {
     });
   }
 
-  /** Assets do projeto com detalhes (consumo: Conteúdo/Agendamento, UI futura). */
+  /** Project assets with details (consumer: Content/Scheduling, future UI). */
   async getProjectAssetsDetailed(tenantId: string, projectId: string): Promise<LinkedAssetView[]> {
     const links = await this.listProjectAssets(tenantId, projectId);
     return this.enrich(tenantId, links);
   }
 
-  /** Assets da tarefa com detalhes. */
+  /** Task assets with details. */
   async getTaskAssetsDetailed(tenantId: string, taskId: string): Promise<LinkedAssetView[]> {
     const links = await this.listTaskAssets(tenantId, taskId);
     return this.enrich(tenantId, links);
   }
 
-  /** Detalhe de um asset central + suas versões. */
+  /** Detail of a central asset + its versions. */
   async getAssetById(
     tenantId: string,
     assetId: string,

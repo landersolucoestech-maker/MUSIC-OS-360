@@ -1,11 +1,11 @@
 /**
  * modules/assets/assets.controller.ts
  *
- * Exposição READ-ONLY do modelo central de assets + execuções de skills.
- * Isolamento por tenant em todas as queries; RBAC via @RequireRole.
+ * READ-ONLY exposure of the central asset model + skill executions.
+ * Tenant isolation in every query; RBAC via @RequireRole.
  *
- * Assets vinculados (projeto/tarefa) → consumo por Conteúdo/Agendamento e UI.
- * skill-runs → rastreabilidade/histórico (uso interno/operacional).
+ * Linked assets (project/task) → consumed by Content/Scheduling and the UI.
+ * skill-runs → traceability/history (internal/operational use).
  */
 
 import { Controller, Get, Post, Body, Param, Query, ParseUUIDPipe, NotFoundException, BadRequestException } from '@nestjs/common';

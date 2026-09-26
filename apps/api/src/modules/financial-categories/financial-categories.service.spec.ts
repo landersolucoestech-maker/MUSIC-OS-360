@@ -2,14 +2,14 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import { FinancialCategoriesService } from './financial-categories.service';
 
 /**
- * Task Z — remove() é um hard delete guardado por checagens de aplicação
- * (children/transações/regras de categorização), distinto de archive()
- * (soft delete via is_active=false). Achado em validação de runtime real:
- * o grant de DELETE em financial_categories nunca existia (42501 —
- * "permission denied"), então mesmo uma categoria 100% sem uso nunca
- * conseguia ser excluída; e a checagem de uso nunca considerava
- * finance_category_keyword_rules (Task W), então uma categoria referenciada
- * por regra ativa quebrava na FK (23503) em vez de um 409 de domínio claro.
+ * Task Z — remove() is a hard delete guarded by application checks
+ * (children/transactions/categorization rules), distinct from archive()
+ * (soft delete via is_active=false). Found in real runtime validation:
+ * the DELETE grant on financial_categories never existed (42501 —
+ * "permission denied"), so even a 100% unused category could never
+ * be deleted; and the usage check never considered
+ * finance_category_keyword_rules (Task W), so a category referenced
+ * by an active rule broke on the FK (23503) instead of a clear domain 409.
  */
 describe('FinancialCategoriesService.remove()', () => {
   const TENANT = 'tenant-1';

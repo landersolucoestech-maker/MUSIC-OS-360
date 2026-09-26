@@ -191,11 +191,11 @@ export class FinancialCategoriesService {
     set('updated_by', userId || null);
     assignments.push('updated_at = NOW()');
 
-    // CAS opcional: se o chamador enviou o updated_at que leu, exige que a
-    // linha ainda esteja nesse estado — 0 linhas afetadas = outra pessoa
-    // editou a categoria entretanto (mesmo mecanismo de casUpdate(), só que
-    // esta service usa SQL cru em vez de Repository<T>, então o WHERE
-    // condicional é montado manualmente aqui).
+    // Optional CAS: if the caller sent the updated_at it read, requires the
+    // row to still be in that state — 0 affected rows = someone else
+    // edited the category in the meantime (same mechanism as casUpdate(), except
+    // this service uses raw SQL instead of Repository<T>, so the conditional
+    // WHERE is built manually here).
     let casWhere = '';
     if (dto.expectedUpdatedAt) {
       const expected = new Date(dto.expectedUpdatedAt);
@@ -346,10 +346,10 @@ export class FinancialCategoriesService {
       throw new ConflictException('Categoria vinculada a regra de categorização automática não pode ser excluída');
     }
 
-    // Guarda de aplicação acima cobre os casos de uso esperados — mas a FK de
-    // finance_category_keyword_rules (ON DELETE RESTRICT) continua como
-    // última linha de defesa contra corrida (regra criada entre a checagem e
-    // este DELETE). rethrowDatabaseError() já traduz 23503 -> 409.
+    // The application guard above covers the expected use cases — but the FK of
+    // finance_category_keyword_rules (ON DELETE RESTRICT) remains the
+    // last line of defense against a race (a rule created between the check and
+    // this DELETE). rethrowDatabaseError() already translates 23503 -> 409.
     try {
       const result = await this.db.query<Array<{ id: string }>>(
         'DELETE FROM financial_categories WHERE tenant_id = $1 AND id = $2 RETURNING id',

@@ -3,10 +3,10 @@ import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 /**
- * Um participante dentro de uma categoria de `participacao` (produtor
- * fonográfico / intérprete / músico acompanhante). Shape real produzido por
- * FonogramaFormModal.tsx (`Participante` interface) -- confirmado por
- * inspeção direta do componente, não suposto.
+ * A participant within a `participacao` category (phonographic
+ * producer / performer / accompanying musician). Real shape produced by
+ * FonogramaFormModal.tsx (`Participante` interface) -- confirmed by
+ * direct inspection of the component, not assumed.
  */
 export class ParticipanteDto {
   @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
@@ -16,18 +16,18 @@ export class ParticipanteDto {
 }
 
 /**
- * Shape real de `participacao`: um OBJETO com três categorias de array
- * (produtorFonografico/interprete/musicoAcompanhante) -- confirmado por
- * inspeção direta de FonogramaFormModal.tsx (`ParticipacaoCategoria`
- * interface, `participacao: participacao as unknown as Json` no submit).
- * O campo físico ANTERIOR era `@IsArray() participacao?: unknown[]` --
- * `@IsArray()` rejeita este objeto real com "participacao must be an
- * array" em TODO submit real com participantes preenchidos (verificado
- * empiricamente: plainToInstance + validate() com o payload real do
- * frontend produz esse erro). Naming-closure Phase 2 audit encontrou este
- * bug ao investigar a coluna legada `interpretes` (dropada por não ter
- * writer -- este é o motivo raiz: o campo vivo que deveria tê-la
- * substituído nunca aceitou dados reais).
+ * Real shape of `participacao`: an OBJECT with three array categories
+ * (produtorFonografico/interprete/musicoAcompanhante) -- confirmed by
+ * direct inspection of FonogramaFormModal.tsx (`ParticipacaoCategoria`
+ * interface, `participacao: participacao as unknown as Json` on submit).
+ * The PREVIOUS physical field was `@IsArray() participacao?: unknown[]` --
+ * `@IsArray()` rejects this real object with "participacao must be an
+ * array" on EVERY real submit with participants filled in (verified
+ * empirically: plainToInstance + validate() with the real frontend
+ * payload produces that error). The naming-closure Phase 2 audit found this
+ * bug while investigating the legacy `interpretes` column (dropped for having no
+ * writer -- this is the root reason: the live field that should have
+ * replaced it never accepted real data).
  */
 export class ParticipacaoDto {
   @ApiPropertyOptional({ type: [ParticipanteDto] })
@@ -44,10 +44,10 @@ export class ParticipacaoDto {
 }
 
 export class CreatePhonogramDto {
-  // Title: `title` é o campo canônico (normalização de nomenclatura,
-  // 2026-09-05); `titulo` é o alias PT legado, aceito temporariamente
-  // (C2 — deprecated, sem remoção nesta fase). O service exige pelo
-  // menos um dos dois.
+  // Title: `title` is the canonical field (naming normalization,
+  // 2026-09-05); `titulo` is the legacy PT alias, temporarily accepted
+  // (C2 — deprecated, not removed in this phase). The service requires at
+  // least one of the two.
   @ApiPropertyOptional({ example: 'Noite Estrelada (Ao Vivo)' })
   @IsOptional()
   @IsString()
@@ -104,11 +104,11 @@ export class CreatePhonogramDto {
   @IsObject()
   metadata?: Record<string, unknown>;
 
-  // ── Campos do formulário de Fonograma (chaves EXATAS do buildPayload) ────────
-  // Regra de produto 2026-07-12: cada campo do form tem a sua coluna física.
+  // ── Phonogram form fields (EXACT keys of buildPayload) ───────────────────────
+  // Product rule 2026-07-12: each form field has its own physical column.
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) cod_ecad?: string;
-  // Renomeado de `cod_abramus` (20260718000017) — código em qualquer entidade
-  // de gestão coletiva (ABRAMUS, UBC, SOCINPRO, ...), não só ABRAMUS.
+  // Renamed from `cod_abramus` (20260718000017) — code at any collective
+  // management society (ABRAMUS, UBC, SOCINPRO, ...), not only ABRAMUS.
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) cod_entidade?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) agregadora?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(5) isrc_pais?: string;

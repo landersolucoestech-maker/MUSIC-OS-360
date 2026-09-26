@@ -6,11 +6,11 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { LicenseEntity } from '../../database/entities';
 
 /**
- * Task K — concorrência otimista em LicensingService.update().
- * Antes: repo.update() incondicional — dois usuários editando a mesma
- * licença em paralelo, o segundo save sobrescrevia o primeiro em silêncio.
- * Agora, com `expectedUpdatedAt`, 0 linhas afetadas -> 409 (ConflictException).
- * Sem `expectedUpdatedAt`, comportamento idêntico ao anterior.
+ * Task K — optimistic concurrency in LicensingService.update().
+ * Before: an unconditional repo.update() — with two users editing the same
+ * license in parallel, the second save silently overwrote the first.
+ * Now, with `expectedUpdatedAt`, 0 affected rows -> 409 (ConflictException).
+ * Without `expectedUpdatedAt`, the behavior is identical to before.
  */
 
 const TENANT = 'tenant-test';

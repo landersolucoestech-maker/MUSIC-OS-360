@@ -42,9 +42,9 @@ export class BriefingsService {
     return result;
   }
 
-  // O DTO usa nomes em inglês (title/content/campaignId/dueAt) — desde a
-  // normalização de nomenclatura (Cluster E), as colunas físicas da
-  // entidade também usam esses nomes (title/content/campaign_id/prazo).
+  // The DTO uses English names (title/content/campaignId/dueAt) — since the
+  // naming normalization (Cluster E), the entity's physical columns
+  // also use these names (title/content/campaign_id/prazo).
   private toEntityFields(dto: CreateBriefingDto | UpdateBriefingDto): Record<string, unknown> {
     const out: Record<string, unknown> = {};
     if (dto.title !== undefined) out.title = dto.title;

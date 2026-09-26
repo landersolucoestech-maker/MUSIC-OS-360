@@ -1,16 +1,16 @@
 /**
- * company-settings.service.ts  (Parte 73 — Bloco 6)
+ * company-settings.service.ts  (Part 73 — Block 6)
  *
- * Configuração cadastral da empresa (razão social, nome fantasia, CNPJ,
- * endereço, contatos, branding, domínio, timezone/moeda/idioma) —
- * tenant-scoped, auditável. CNPJ é criptografado em repouso via
- * EncryptionService (mesmo padrão de qualquer outro campo PII do projeto).
+ * The company's registration settings (legal name, trade name, CNPJ,
+ * address, contacts, branding, domain, timezone/currency/language) —
+ * tenant-scoped, auditable. The CNPJ is encrypted at rest via
+ * EncryptionService (same pattern as any other PII field in the project).
  *
- * Campos "legais/cadastrais" (nome, CNPJ, endereço, contatos, branding)
- * vivem em `organizations` (o limite de billing/entidade legal). Campos
- * regionais (timezone/moeda/idioma) vivem em `tenants.settings`, seguindo a
- * mesma convenção que OnboardingService já usa para esses três campos —
- * nunca duplicar a fonte de verdade entre os dois módulos.
+ * "Legal/registration" fields (name, CNPJ, address, contacts, branding)
+ * live in `organizations` (the billing/legal-entity boundary). Regional
+ * fields (timezone/currency/language) live in `tenants.settings`, following the
+ * same convention OnboardingService already uses for these three fields —
+ * never duplicate the source of truth between the two modules.
  */
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
@@ -148,9 +148,9 @@ export class CompanySettingsService {
 
     const after = await this.get(tenantId, orgId);
 
-    // O CNPJ é criptografado em repouso justamente para não circular em texto
-    // plano — audit_logs não criptografa suas colunas jsonb, então nunca
-    // persistir o valor decifrado ali. Só registra se mudou, não o valor.
+    // The CNPJ is encrypted at rest precisely so it does not circulate in plain
+    // text — audit_logs does not encrypt its jsonb columns, so never
+    // persist the decrypted value there. Records only that it changed, not the value.
     const redactCnpj = <T extends { cnpj: string | null }>(snapshot: T) => ({ ...snapshot, cnpj: snapshot.cnpj ? '[REDACTED]' : null });
 
     await this.audit.log({

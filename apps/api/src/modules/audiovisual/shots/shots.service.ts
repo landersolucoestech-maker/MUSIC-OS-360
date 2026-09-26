@@ -21,7 +21,7 @@ export interface CreateShotInput {
 
 export interface UpdateShotInput extends Partial<CreateShotInput> {
   shooting_status?: string;
-  /** Concorrência otimista (Task L) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task L) — see optimistic-update.util.ts. Optional. */
   expectedUpdatedAt?: string;
 }
 
@@ -91,20 +91,20 @@ export class AudiovisualShotsService {
   }
 
   /**
-   * Task M — auditoria de concorrência: reorder() fazia N updates sequenciais
-   * sem transação (falha no meio deixava ordering parcialmente aplicado) e
-   * sem checar se a lista de ids ainda batia com o estado atual (dois
-   * usuários reordenando ao mesmo tempo, ou um shot criado/removido entre a
-   * leitura e o submit, produzia ordering corrompido em silêncio). Corrigido
-   * com transação real (tudo ou nada) + checagem de "mesmo conjunto de ids"
-   * como guarda de staleness — não requer coluna de versão nova.
+   * Task M — concurrency audit: reorder() made N sequential updates
+   * without a transaction (a failure midway left the ordering partially applied) and
+   * without checking whether the id list still matched the current state (two
+   * users reordering at the same time, or a shot created/removed between the
+   * read and the submit, silently produced a corrupted ordering). Fixed
+   * with a real transaction (all or nothing) + a "same set of ids" check
+   * as a staleness guard — no new version column required.
    */
   async reorder(tenantId: string, projectId: string, ids: string[]) {
     await this.assertProject(tenantId, projectId);
     if (!this.ds) throw new ServiceUnavailableException('Database unavailable');
-    // ids vem do corpo da requisição: materializa uma lista local validada
-    // (apenas strings) antes de iterar, evitando iteração sobre objeto
-    // controlado pelo usuário (CWE-915).
+    // ids comes from the request body: materializes a validated local list
+    // (strings only) before iterating, avoiding iteration over a
+    // user-controlled object (CWE-915).
     const safeIds = (Array.isArray(ids) ? ids : []).filter(
       (id): id is string => typeof id === 'string',
     );

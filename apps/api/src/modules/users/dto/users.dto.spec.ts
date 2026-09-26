@@ -6,18 +6,18 @@ import { UpdateUserDto } from './users.dto';
 /**
  * users.dto.spec.ts
  *
- * Guarda permanente (auditoria 2026-07-18 — settings/usuários): o hook
- * useUsuarios() enviava `full_name`/`phone`/`cargo` — `phone` nunca teve
- * coluna nem campo de DTO (sempre descartado/rejeitado); `full_name`/`cargo`
- * não batiam com os nomes reais do DTO (`fullName`/`role`). Corrigido no
- * hook (envia fullName/phone) e aqui no DTO (phone adicionado).
+ * Permanent guard (2026-07-18 audit — settings/users): the
+ * useUsuarios() hook sent `full_name`/`phone`/`cargo` — `phone` never had a
+ * column nor a DTO field (always discarded/rejected); `full_name`/`cargo`
+ * did not match the real DTO names (`fullName`/`role`). Fixed in the
+ * hook (sends fullName/phone) and here in the DTO (phone added).
  *
- * Task L: `role` e `status` foram REMOVIDOS deste DTO — eram aceitos aqui via
- * PATCH /users/:id (gate apenas 'manager') sem passar pelas checagens de
- * autorização/hierarquia dos endpoints dedicados (PATCH /users/:id/role,
- * gate 'admin'; PATCH /users/:id/status, gate 'owner'). Um 'manager'
- * conseguia se auto-promover a 'owner' pelo PATCH genérico. O hook
- * useUsuarios() já foi corrigido para usar os endpoints dedicados.
+ * Task L: `role` and `status` were REMOVED from this DTO — they were accepted here via
+ * PATCH /users/:id (gate 'manager' only) without going through the
+ * authorization/hierarchy checks of the dedicated endpoints (PATCH /users/:id/role,
+ * gate 'admin'; PATCH /users/:id/status, gate 'owner'). A 'manager'
+ * could self-promote to 'owner' through the generic PATCH. The
+ * useUsuarios() hook was already fixed to use the dedicated endpoints.
  */
 async function validatePayload(payload: Record<string, unknown>) {
   const instance = plainToInstance(UpdateUserDto, payload);

@@ -1,15 +1,15 @@
 /**
  * internal-chat/internal-chat.service.ts
  *
- * Chat Interno (equipe <-> equipe) — arquiteturalmente isolado da Central de
- * Atendimento (modules/conversations, equipe <-> público externo). Nenhuma
- * entidade, tabela, serviço ou identidade de participante é partilhada entre
- * os dois domínios.
+ * Internal Chat (team <-> team) — architecturally isolated from the Service
+ * Center (modules/conversations, team <-> external public). No
+ * entity, table, service or participant identity is shared between
+ * the two domains.
  *
- * Autorização: toda leitura/escrita exige tenant match E participação
- * confirmada na conversa (checada aqui, além do RLS tenant-only no banco —
- * ver migration RlsPoliciesInternalChat). sender_auth_user_id nunca é
- * confiado do payload do cliente, sempre derivado de CurrentUser().
+ * Authorization: every read/write requires a tenant match AND confirmed
+ * participation in the conversation (checked here, in addition to the tenant-only RLS in the database —
+ * see migration RlsPoliciesInternalChat). sender_auth_user_id is never
+ * trusted from the client payload, always derived from CurrentUser().
  */
 
 import { Injectable, Inject, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
@@ -196,7 +196,7 @@ export class InternalChatService {
     return this.participantRepo!.save(participant);
   }
 
-  /** Membros da organização elegíveis para iniciar uma conversa interna — nunca clientes/contatos externos. */
+  /** Organization members eligible to start an internal conversation — never external clients/contacts. */
   async searchMembers(tenantId: string, authUserId: string, query: QueryInternalMembersDto) {
     const qb = this.memberRepo!
       .createQueryBuilder('m')

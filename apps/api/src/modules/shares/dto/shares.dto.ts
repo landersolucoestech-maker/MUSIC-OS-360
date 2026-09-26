@@ -6,10 +6,10 @@ import { PaginationDto } from '../../../common/dto/pagination.dto';
 const ROLES = ['author', 'composer', 'producer', 'performer', 'publisher', 'master-owner', 'other'] as const;
 
 export class CreateShareDto {
-  // ── Aliases EN legados (integrações/registry) — opcionais ────────────────────
-  // holderName é a única entrada que alimenta holder_name (toColumns() em
-  // shares.service.ts) — não existe um campo `holder_name` direto no DTO.
-  // Rejeita vazio/só-espaços em vez de aceitar e persistir um titular em branco.
+  // ── Legacy EN aliases (integrations/registry) — optional ────────────────────
+  // holderName is the only input that feeds holder_name (toColumns() in
+  // shares.service.ts) — there is no direct `holder_name` field in the DTO.
+  // Rejects empty/whitespace-only instead of accepting and persisting a blank holder.
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255)
   @Matches(/\S/, { message: 'holderName não pode ser vazio ou conter apenas espaços' })
   holderName?: string;
@@ -19,10 +19,10 @@ export class CreateShareDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) holderDoc?: string;
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
 
-  // ── Campos do formulário (chaves EXATAS do SharePendenteFormModal) ───────────
-  // Regra de produto 2026-07-12: cada campo do form tem a sua coluna física.
-  // `percentage` também cobre o antigo alias EN legado (mesmo nome, mesma
-  // coluna desde 2026-09-13/RenameSharePartyFieldsToEnglish — ver toColumns()).
+  // ── Form fields (EXACT keys of SharePendenteFormModal) ───────────────────────
+  // Product rule 2026-07-12: each form field has its own physical column.
+  // `percentage` also covers the old legacy EN alias (same name, same
+  // column since 2026-09-13/RenameSharePartyFieldsToEnglish — see toColumns()).
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) share_type?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Max(100) @Type(() => Number) percentage?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
@@ -50,7 +50,7 @@ export class CreateShareDto {
 }
 
 export class UpdateShareDto extends PartialType(CreateShareDto) {
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 

@@ -54,11 +54,11 @@ export class ProjectsService {
   }
 
   /**
-   * `projects.description` (antes `descricao`, JSON de musicas[]) foi
-   * normalizada em `project_tracks` + `project_track_participants`
-   * (migration ProjectsFormFieldAlignment20260718000013). Reidrata no MESMO
-   * formato que o frontend sempre consumiu, para que o contrato de API não
-   * mude.
+   * `projects.description` (formerly `descricao`, JSON of musicas[]) was
+   * normalized into `project_tracks` + `project_track_participants`
+   * (migration ProjectsFormFieldAlignment20260718000013). Rehydrates into the SAME
+   * format the frontend always consumed, so the API contract does not
+   * change.
    */
   private async hydrateTracks(projects: ProjectEntity[]): Promise<ProjectWithTracks[]> {
     if (projects.length === 0) return [];
@@ -165,10 +165,10 @@ export class ProjectsService {
       .where('p.tenant_id = :tenantId', { tenantId })
       .andWhere('p.deleted_at IS NULL');
 
-    // Task H: chaves alinhadas com QueryProjectDto (type/artistId, não
-    // type/artist_id — bug pré-existente: o DTO valida "type"/"artistId",
-    // mas o service lia "type"/"artist_id", que nunca existiam no objeto
-    // validado; os dois filtros eram efetivamente inertes).
+    // Task H: keys aligned with QueryProjectDto (type/artistId, not
+    // type/artist_id — a pre-existing bug: the DTO validates "type"/"artistId",
+    // but the service read "type"/"artist_id", which never existed on the
+    // validated object; both filters were effectively inert).
     if (q['status'])   qb.andWhere('p.status = :status',         { status:    q['status'] });
     if (q['type'])     qb.andWhere('p.type = :type',              { type:      q['type'] });
     if (q['artistId']) qb.andWhere('p.artist_id = :artistId',   { artistId: q['artistId'] });
@@ -192,9 +192,9 @@ export class ProjectsService {
   }
 
   /**
-   * Contagem por status, sobre o tenant inteiro (não a página atual) —
-   * Task H: KPIs exatos sem baixar a tabela inteira. Sem SUM (KPI de
-   * Projetos é só contagem por status — ativos/concluídos/rascunhos/total).
+   * Count per status, over the whole tenant (not the current page) —
+   * Task H: exact KPIs without downloading the whole table. No SUM (the
+   * Projects KPI is only a count per status — active/completed/drafts/total).
    */
   async stats(tenantId: string): Promise<GroupStatsResult> {
     const qb = this.repo!
@@ -276,10 +276,10 @@ export class ProjectsService {
       };
       await this.ds!.transaction(async (em) => {
         await this.workflowService.transitionInTx(req, em);
-        // CAS na mesma transação da mudança de status — se o projeto foi
-        // editado por outra pessoa desde a leitura de `current`, a transação
-        // inteira (incluindo o histórico já gravado por transitionInTx) faz
-        // rollback, nunca aplica uma transição validada contra status stale.
+        // CAS in the same transaction as the status change — if the project was
+        // edited by someone else since `current` was read, the whole
+        // transaction (including the history already written by transitionInTx) rolls
+        // back; it never applies a transition validated against a stale status.
         await casUpdate(
           em.getRepository(ProjectEntity),
           { id, tenant_id: tenantId },

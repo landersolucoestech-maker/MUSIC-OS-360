@@ -1,18 +1,18 @@
 /**
  * finance-category-matcher.util.ts
  *
- * Task W — motor de correspondência determinístico entre uma transação
- * (type + descrição) e as regras de categorização por palavra-chave
- * (finance_category_keyword_rules). Porta fiel do algoritmo já usado (mas
- * nunca chamado em produção) pelo frontend em
+ * Task W — deterministic matching engine between a transaction
+ * (type + description) and the keyword categorization rules
+ * (finance_category_keyword_rules). A faithful port of the algorithm already used (but
+ * never called in production) by the frontend in
  * apps/web/src/modules/accounting/utils/financialCategorizationRules.utils.ts
- * (matchTransactionCategory) — mesma normalização, mesmo critério de
- * prioridade — para que o comportamento seja idêntico entre as duas pontas
- * e exista UMA ÚNICA implementação real do matcher (o backend, ponto certo
- * da arquitetura para aplicar a regra na criação/importação de transações).
+ * (matchTransactionCategory) — same normalization, same priority
+ * criterion — so the behavior is identical on both ends
+ * and there is ONE SINGLE real implementation of the matcher (the backend, the right
+ * place in the architecture to apply the rule when creating/importing transactions).
  *
- * Único, puro, sem I/O — testável isoladamente e reutilizável por qualquer
- * caminho de criação de transação (manual, OFX, importação em lote).
+ * Single, pure, no I/O — testable in isolation and reusable by any
+ * transaction creation path (manual, OFX, bulk import).
  */
 
 export interface MatchableCategoryRule {
@@ -25,7 +25,7 @@ export interface MatchableCategoryRule {
 
 const DIACRITICS_REGEX = /[̀-ͯ]/g;
 
-/** Mesma normalização do frontend: remove acentos, minúsculas, espaços colapsados. */
+/** Same normalization as the frontend: strips accents, lowercases, collapses spaces. */
 export function normalizeMatchText(value: string): string {
   return value
     .normalize('NFD')
@@ -36,12 +36,12 @@ export function normalizeMatchText(value: string): string {
 }
 
 /**
- * Encontra a regra ativa de maior precedência cuja alguma keyword aparece na
- * descrição normalizada. Determinístico: assume que `rules` já chega ordenada
- * por um critério estável (priority ASC, created_at ASC — mesmo padrão de
- * FinanceCategoryRulesService.list()); em caso de empate de priority, a
- * primeira da lista recebida vence. Regra inativa ou de tipo de transação
- * diferente nunca participa.
+ * Finds the active rule with the highest precedence for which some keyword appears in the
+ * normalized description. Deterministic: assumes `rules` already arrives sorted
+ * by a stable criterion (priority ASC, created_at ASC — same pattern as
+ * FinanceCategoryRulesService.list()); on a priority tie, the
+ * first one in the received list wins. An inactive rule or one for a different transaction
+ * type never takes part.
  */
 export function matchCategoryRule<T extends MatchableCategoryRule>(
   rules: T[],

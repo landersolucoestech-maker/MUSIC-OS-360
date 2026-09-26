@@ -110,8 +110,8 @@ describe('ContractsService.create — template_id/signers/type default (C1 prere
   });
 });
 
-// ── Fase 5 / C1: consolidação de aliases (novos testes; helpers próprios,
-//    não reutilizam makeRepo/makeService acima para não alterar o pré-requisito) ──
+// ── Phase 5 / C1: alias consolidation (new tests; own helpers,
+//    they do not reuse makeRepo/makeService above so the prerequisite is not altered) ──
 
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import type { UpdateContractDto } from './dto/update-contract.dto';

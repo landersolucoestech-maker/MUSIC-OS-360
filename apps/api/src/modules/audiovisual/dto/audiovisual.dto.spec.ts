@@ -1,9 +1,9 @@
 /**
  * audiovisual.dto.spec.ts
  *
- * Fase 4 — testes obrigatórios para os DTOs recém-migrados de interface para
- * class-validator (shots/tasks/team-members). Reproduz o ValidationPipe global
- * (whitelist + forbidNonWhitelisted + transform) sem subir a app inteira.
+ * Phase 4 — mandatory tests for the DTOs recently migrated from interface to
+ * class-validator (shots/tasks/team-members). Reproduces the global ValidationPipe
+ * (whitelist + forbidNonWhitelisted + transform) without booting the whole app.
  */
 import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
@@ -114,8 +114,8 @@ describe('CreateTaskDto / UpdateTaskDto', () => {
   });
 
   it('rejeita status fora do enum real do banco (invalid enum)', async () => {
-    // TASK_STATUSES reflete o CHECK constraint da migration 20260527000004 —
-    // 'todo'/'doing' NÃO são valores válidos (ver correção nesta mesma fase).
+    // TASK_STATUSES mirrors the CHECK constraint of migration 20260527000004 —
+    // 'todo'/'doing' are NOT valid values (see the fix in this same phase).
     const errors = await validatePayload(CreateTaskDto, { title: 'x', status: 'todo' });
     expect(errors.length).toBeGreaterThan(0);
   });
@@ -156,8 +156,8 @@ describe('CreateTeamMemberDto', () => {
   });
 
   it('rejeita role fora do enum TEAM_ROLES reconciliado (invalid enum)', async () => {
-    // "videomaker" era o valor divergente do frontend antes da reconciliação
-    // desta fase — não existe mais em TEAM_ROLES.
+    // "videomaker" was the frontend's divergent value before this phase's
+    // reconciliation — it no longer exists in TEAM_ROLES.
     const errors = await validatePayload(CreateTeamMemberDto, { role: 'videomaker' });
     expect(errors.length).toBeGreaterThan(0);
   });
@@ -174,11 +174,11 @@ describe('CreateTeamMemberDto', () => {
 });
 
 describe('CreateAudiovisualProjectDto — regression of the real bug (audit 2026-07-18)', () => {
-  // Payload exatamente como AudiovisualProjectFormModal.tsx monta e envia
-  // hoje (sem nenhum mapper intermediário — audiovisual.service.ts chama
-  // api.post/api.patch com o payload cru). Antes desta migration, TODO este
-  // payload era rejeitado com 400 (forbidNonWhitelisted) — nenhuma criação ou
-  // edição de produção audiovisual funcionava.
+  // Payload exactly as AudiovisualProjectFormModal.tsx builds and sends it
+  // today (without any intermediate mapper — audiovisual.service.ts calls
+  // api.post/api.patch with the raw payload). Before this migration, this WHOLE
+  // payload was rejected with 400 (forbidNonWhitelisted) — no creation or
+  // editing of an audiovisual production worked.
   const REAL_FORM_PAYLOAD = {
     phonogram_id: undefined,
     music_title: 'Minha Música',

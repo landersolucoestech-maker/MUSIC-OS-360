@@ -45,7 +45,7 @@ export class AuthContextService {
     const tenantId = asString(tenant?.['id'], auth.orgId ?? '');
     const orgId = asString(tenant?.['org_id'], auth.orgId ?? tenantId);
 
-    // DUAL-SOURCE (FASE 5): permissões do banco quando role_id existir; senão, matriz legada.
+    // DUAL-SOURCE (PHASE 5): database permissions when role_id exists; otherwise, the legacy matrix.
     const permissions = await this.rbac.getEffectivePermissions({
       role,
       role_id: roleId,

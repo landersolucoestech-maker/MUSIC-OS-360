@@ -1,8 +1,8 @@
 /**
  * billing/billing.module.ts
  *
- * Módulo Stripe Billing — checkout, portal, webhooks, features por plano.
- * RealtimeService é @Global() — não precisa de importar RealtimeModule explicitamente.
+ * Stripe Billing module — checkout, portal, webhooks, per-plan features.
+ * RealtimeService is @Global() — RealtimeModule does not need to be imported explicitly.
  */
 
 import { Module }           from '@nestjs/common';

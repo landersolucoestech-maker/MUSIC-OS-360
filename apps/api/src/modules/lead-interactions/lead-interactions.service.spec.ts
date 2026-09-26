@@ -3,13 +3,13 @@ import { LeadInteractionsService } from './lead-interactions.service';
 import type { CreateLeadInteractionDto, QueryLeadInteractionDto } from './dto/lead-interactions.dto';
 
 /**
- * REM-04 (Remaining Product Completion Backlog): dois bugs reais descobertos
- * ao integrar `historicoInteracoes` (sempre []) ao endpoint real:
- * - list() lia `query.lead_id`, mas o DTO expõe `leadId` — o filtro por
- *   lead nunca funcionava (retornava interações de todos os leads do tenant).
- * - create() espalhava o DTO (leadId/type/notes) direto na entity, cujas
- *   colunas reais são lead_id/type/notes — todo POST violava NOT NULL
- *   em lead_id/type.
+ * REM-04 (Remaining Product Completion Backlog): two real bugs discovered
+ * while wiring `historicoInteracoes` (always []) to the real endpoint:
+ * - list() read `query.lead_id`, but the DTO exposes `leadId` — the per-lead
+ *   filter never worked (it returned interactions of every lead in the tenant).
+ * - create() spread the DTO (leadId/type/notes) straight into the entity, whose
+ *   real columns are lead_id/type/notes — every POST violated NOT NULL
+ *   on lead_id/type.
  */
 function makeQb(rows: unknown[]) {
   return {

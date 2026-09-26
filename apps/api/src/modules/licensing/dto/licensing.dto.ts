@@ -32,21 +32,21 @@ export class CreateLicenseDto {
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) amount?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Max(100) @Type(() => Number) percentage?: number;
 
-  /** Campos físicos legados, aceitos apenas para interoperabilidade. */
+  /** Legacy physical fields, accepted only for interoperability. */
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) valor?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(10) moeda?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
 }
 
 export class UpdateLicenseDto extends PartialType(CreateLicenseDto) {
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 
 export class QueryLicenseDto extends PaginationDto {
-  /** Aceita um único status ("ativa") ou vários separados por vírgula
-   * ("negociacao,proposta") — a aba "Propostas" do Licenciamento.tsx
-   * abrange dois status (Task H). */
+  /** Accepts a single status ("ativa") or several separated by commas
+   * ("negociacao,proposta") — the "Propostas" tab of Licenciamento.tsx
+   * spans two statuses (Task H). */
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() type?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() work_id?: string;

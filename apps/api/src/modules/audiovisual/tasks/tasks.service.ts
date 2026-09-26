@@ -17,13 +17,13 @@ export interface CreateTaskInput {
 
 export type UpdateTaskInput = Partial<CreateTaskInput> & {
   completed_at?: string | null;
-  /** Concorrência otimista (Task L) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task L) — see optimistic-update.util.ts. Optional. */
   expectedUpdatedAt?: string;
 };
 
 /**
- * Templates de tarefas auto-geradas por transição de status.
- * Mapeamento: status_destino → array de tarefas a criar.
+ * Templates of tasks auto-generated per status transition.
+ * Mapping: target_status → array of tasks to create.
  */
 const AUTO_TASK_TEMPLATES: Record<string, Array<{ title: string; priority?: string; due_days_from_now?: number }>> = {
   briefing: [
@@ -130,9 +130,9 @@ export class AudiovisualTasksService {
   }
 
   /**
-   * Gera tarefas automáticas para o status destino. Usado pelo ProjectsService
-   * dentro da transição. Não cria duplicatas: se já existir task com mesmo
-   * `auto_stage` + `title` para o projeto, pula.
+   * Generates automatic tasks for the target status. Used by ProjectsService
+   * inside the transition. Does not create duplicates: if a task with the same
+   * `auto_stage` + `title` already exists for the project, it is skipped.
    */
   async generateForStage(tenantId: string, userId: string, projectId: string, stage: string) {
     const tpl = AUTO_TASK_TEMPLATES[stage];

@@ -93,7 +93,7 @@ export class KnowledgeBaseService {
   }
 
   // ── Articles ────────────────────────────────────────────────────────────
-  /** Leitura pública (tenant autenticado): só publicado e nunca internal_doc. */
+  /** Public read (authenticated tenant): published only and never internal_doc. */
   async listPublicArticles(): Promise<KnowledgeArticleEntity[]> {
     return this.articleRepo!
       .createQueryBuilder('a')
@@ -103,7 +103,7 @@ export class KnowledgeBaseService {
       .getMany();
   }
 
-  /** Autoria (super_admin): todos os status e tipos. */
+  /** Authoring (super_admin): all statuses and types. */
   async listAllArticles(): Promise<KnowledgeArticleEntity[]> {
     return this.articleRepo!
       .createQueryBuilder('a')
@@ -179,7 +179,7 @@ export class KnowledgeBaseService {
     if (!result.affected) throw new NotFoundException('Artigo não encontrado');
   }
 
-  /** Troca sort_order com o vizinho adjacente na lista completa (todos os status). */
+  /** Swaps sort_order with the adjacent neighbor in the full list (all statuses). */
   async moveArticle(id: string, direction: 'up' | 'down'): Promise<KnowledgeArticleEntity> {
     const all = await this.articleRepo!
       .createQueryBuilder('a')

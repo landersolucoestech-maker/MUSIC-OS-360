@@ -4,11 +4,11 @@ import { FinancialRulesService } from './financial-rules.service';
 import { EventsService } from '../../core/events/events.service';
 
 /**
- * Task K — mesma proteção de concorrência otimista aplicada a
- * TransactionsService/ClientsService: FinancialRulesService.update() usava
- * repo.update() incondicional — duas pessoas editando a mesma regra
- * financeira em paralelo faziam a segunda gravação sobrescrever a primeira
- * em silêncio. Sem `expectedUpdatedAt`, o comportamento continua idêntico.
+ * Task K — same optimistic concurrency protection applied to
+ * TransactionsService/ClientsService: FinancialRulesService.update() used an
+ * unconditional repo.update() — two people editing the same financial
+ * rule in parallel made the second write silently overwrite the first.
+ * Without `expectedUpdatedAt`, the behavior stays identical.
  */
 
 const NOW = new Date('2026-08-14T12:00:00.000Z');
@@ -74,11 +74,11 @@ describe('FinancialRulesService.update — optimistic concurrency (Task K)', () 
 });
 
 /**
- * REM-03 (Remaining Product Completion Backlog): calculo:'faixa' não tem
- * estrutura de brackets persistida (feature "em breve" no frontend —
- * FinancialRules.tsx). evaluateRules() computava 0 em silêncio e emitia
- * FINANCIAL_RULE_TRIGGERED como se fosse um resultado real. Agora pula a
- * regra e avisa — nunca fabrica um resultado.
+ * REM-03 (Remaining Product Completion Backlog): calculo:'faixa' has no
+ * persisted bracket structure ("em breve" feature in the frontend —
+ * FinancialRules.tsx). evaluateRules() silently computed 0 and emitted
+ * FINANCIAL_RULE_TRIGGERED as if it were a real result. Now it skips the
+ * rule and warns — it never fabricates a result.
  */
 describe('FinancialRulesService.evaluateRules — unimplemented calculo (REM-03)', () => {
   function makeEvalService(rule: Record<string, unknown>) {

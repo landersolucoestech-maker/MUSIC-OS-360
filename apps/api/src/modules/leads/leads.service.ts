@@ -55,7 +55,7 @@ export class LeadsService {
       phone:              this.enc.decryptNullable(l.telefone_encrypted),
       email_encrypted:    undefined as unknown as string,
       telefone_encrypted: undefined as unknown as string,
-      // Aliases camelCase para o CRM musical (mesmas colunas físicas de `l`).
+      // camelCase aliases for the music CRM (same physical columns of `l`).
       nomeArtistico:      l.nome_artistico,
       clientType:         l.client_type,
       serviceType:        l.service_type,
@@ -187,15 +187,15 @@ export class LeadsService {
     const phone = dto.phone?.trim() ?? '';
     if (!tenant) throw new NotFoundException('Organização não encontrada ou inativa');
 
-    // Formulário público sem autenticação: duplo-clique/retry no submit é o
-    // cenário normal, não uma exceção. Idempotency-Key não se aplica (não há
-    // como garantir que o embed externo do formulário o envie). Em vez
-    // disso, deduplicamos por e-mail dentro de uma janela curta — email é
-    // criptografado (IV aleatório), então não dá para comparar via SQL;
-    // varremos só os candidatos recentes (mesmo tenant+origem, últimos 5min).
-    // ponytail: scan limitado (20 linhas) em vez de índice — se o volume de
-    // candidaturas por tenant crescer muito, considerar HMAC determinístico
-    // do e-mail como coluna de dedupe indexável.
+    // Public form without authentication: a double click/retry on submit is the
+    // normal scenario, not an exception. Idempotency-Key does not apply (there is no
+    // way to guarantee the form's external embed sends it). Instead,
+    // we deduplicate by e-mail within a short window — the email is
+    // encrypted (random IV), so it cannot be compared via SQL;
+    // we scan only the recent candidates (same tenant+origin, last 5min).
+    // ponytail: bounded scan (20 rows) instead of an index — if the volume of
+    // applications per tenant grows a lot, consider a deterministic HMAC
+    // of the e-mail as an indexable dedupe column.
     const recentCandidates = await this.repo!
       .createQueryBuilder('l')
       .where('l.tenant_id = :tenantId', { tenantId: tenant.id })
@@ -232,14 +232,14 @@ export class LeadsService {
           fonte: 'public_artist_application',
           status: LeadStatus.NEW,
           tags: ['artist_application', 'public_form'],
-          // origemLead: escrita redirecionada para dados_internos_crm (Cluster
-          // E, naming-closure) -- a coluna física origem_lead nunca foi lida
-          // por nenhum caminho real (só o formulário de CRM populava leads
-          // visíveis no produto, sempre via dados_internos_crm.origemLead);
-          // este era o único writer da coluna física em todo o sistema,
-          // inconsistente com o resto do app. Migration
-          // 20260921000005_DropDeadLeadsCrmDualStorageColumns removeu a
-          // coluna física (0 valores não-nulos confirmados em DEV).
+          // origemLead: write redirected to dados_internos_crm (Cluster
+          // E, naming-closure) -- the physical origem_lead column was never read
+          // by any real path (only the CRM form populated leads
+          // visible in the product, always via dados_internos_crm.origemLead);
+          // this was the only writer of the physical column in the whole system,
+          // inconsistent with the rest of the app. Migration
+          // 20260921000005_DropDeadLeadsCrmDualStorageColumns removed the
+          // physical column (0 non-null values confirmed in DEV).
           dados_internos_crm: { origemLead: 'public_artist_application' },
           metadata: {
             musicalGenre: dto.musicalGenre,
@@ -417,11 +417,11 @@ export class LeadsService {
       };
       await this.ds!.transaction(async (em) => {
         await this.workflowService.transitionInTx(req, em);
-        // CAS dentro da mesma transação da mudança de status: se o lead foi
-        // editado por outra pessoa desde a leitura de `current` acima, a
-        // transação inteira (incluindo o histórico de transição já gravado
-        // por transitionInTx) faz rollback — nunca aplica uma transição
-        // validada contra um fromStatus desatualizado (mesmo padrão de
+        // CAS inside the same transaction as the status change: if the lead was
+        // edited by someone else since `current` was read above, the
+        // whole transaction (including the transition history already written
+        // by transitionInTx) rolls back — it never applies a transition
+        // validated against a stale fromStatus (same pattern as
         // ContractsService.update()).
         await casUpdate(
           em.getRepository(LeadEntity),
@@ -504,8 +504,8 @@ export class LeadsService {
     const mapped: Record<string, unknown> = { ...rest };
     if (name !== undefined) mapped['nome'] = name;
     if (source !== undefined) mapped['fonte'] = source;
-    // `pipeline_stage` foi removida fisicamente (RebuildLeadsInCanonicalFormOrder,
-    // órfã comprovada) — `stage` do DTO vai para metadata, como notes/assignedTo/value.
+    // `pipeline_stage` was physically removed (RebuildLeadsInCanonicalFormOrder,
+    // proven orphan) — the DTO's `stage` goes to metadata, like notes/assignedTo/value.
     if (nomeArtistico !== undefined) mapped['nome_artistico'] = nomeArtistico;
     if (empresa !== undefined) mapped['empresa'] = empresa;
     if (whatsapp !== undefined) mapped['whatsapp'] = whatsapp;

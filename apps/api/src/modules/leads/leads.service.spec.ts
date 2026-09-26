@@ -7,16 +7,16 @@ import { WorkflowService } from '../../core/workflow/workflow.service';
 import { EventsService } from '../../core/events/events.service';
 
 /**
- * leads.service.spec.ts  (Parte 79)
+ * leads.service.spec.ts  (Part 79)
  *
- * Guarda permanente do bug real reproduzido nesta Parte: `LeadEntity`
- * declarava `score`/`pipeline_stage`, colunas removidas fisicamente pela
- * migration RebuildLeadsInCanonicalFormOrder — todo POST /leads real
- * falhava com "column \"score\" of relation \"leads\" does not exist".
- * Nunca detectado porque o frontend usava um mock em memória. Cobre também
- * o mapeamento dos campos ricos do CRM musical (nomeArtistico/empresa/
- * payloadServico/dadosInternosCRM/etc, adicionados nesta Parte para eliminar
- * o mock do frontend).
+ * Permanent guard for the real bug reproduced in this Part: `LeadEntity`
+ * declared `score`/`pipeline_stage`, columns physically removed by the
+ * RebuildLeadsInCanonicalFormOrder migration — every real POST /leads
+ * failed with "column \"score\" of relation \"leads\" does not exist".
+ * Never detected because the frontend used an in-memory mock. Also covers
+ * the mapping of the rich music CRM fields (nomeArtistico/empresa/
+ * payloadServico/dadosInternosCRM/etc, added in this Part to eliminate
+ * the frontend mock).
  */
 function makeBilling(status: string | null = 'active') {
   return {
@@ -93,7 +93,7 @@ describe('LeadsService.create — real physical columns (never score/pipeline_st
     expect(saved['service_type']).toBe('marketingMusical');
     expect(saved['payload_servico']).toEqual({ tipo_lead: 'artista_banda' });
     expect(saved['dados_internos_crm']).toEqual({ responsavel: 'QA' });
-    // Nunca reintroduz as colunas removidas pela migration canônica.
+    // Never reintroduces the columns removed by the canonical migration.
     expect(saved['score']).toBeUndefined();
     expect(saved['pipeline_stage']).toBeUndefined();
   });
@@ -110,11 +110,11 @@ describe('LeadsService.create — real physical columns (never score/pipeline_st
 });
 
 /**
- * Task K — mesma proteção de concorrência otimista aplicada a
- * ContractsService.update(): quando a mudança inclui troca de status,
- * o CAS roda DENTRO da mesma transação de transitionInTx (via
- * em.getRepository), então uma edição concorrente reverte a transação
- * inteira em vez de deixar um histórico de transição órfão.
+ * Task K — same optimistic concurrency protection applied to
+ * ContractsService.update(): when the change includes a status change,
+ * the CAS runs INSIDE the same transaction as transitionInTx (via
+ * em.getRepository), so a concurrent edit rolls back the whole
+ * transaction instead of leaving an orphan transition history.
  */
 describe('LeadsService.update — optimistic concurrency (Task K)', () => {
   const NOW = new Date('2026-08-14T12:00:00.000Z');
@@ -179,8 +179,8 @@ describe('LeadsService.submitPublicArtistApplication — tenant suspenso por bil
     org_id: 'org-1',
     name: 'Suspended Co',
     slug: 'suspended-co',
-    // `active` reflete apenas o ciclo de vida do tenant, não o billing —
-    // tenant_billing_state.status = 'suspended' não altera esta coluna.
+    // `active` reflects only the tenant lifecycle, not billing —
+    // tenant_billing_state.status = 'suspended' does not change this column.
     active: true,
     deleted_at: null,
     allow_public_registration: true,

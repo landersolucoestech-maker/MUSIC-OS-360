@@ -31,7 +31,7 @@ export class PhonogramsService {
     if (ds) this.repo = ds.getRepository(PhonogramEntity);
   }
 
-  /** Um warning por alias legado efetivamente recebido nesta requisição. Nunca loga valores. */
+  /** One warning per legacy alias actually received in this request. Never logs values. */
   private logLegacyAliasUsage(
     aliases: string[],
     operation: 'create' | 'update' | 'list',
@@ -44,7 +44,7 @@ export class PhonogramsService {
     }
   }
 
-  /** QueryBuilder base (tenant + not-deleted + filtros) partilhado por list() e stats(). */
+  /** Base QueryBuilder (tenant + not-deleted + filters) shared by list() and stats(). */
   private baseQb(tenantId: string, query: QueryPhonogramDto): { qb: SelectQueryBuilder<PhonogramEntity>; legacyAliasesUsed: string[] } {
     const q = query as Record<string, unknown>;
     const { normalized: resolvedQuery, legacyAliasesUsed } = resolvePhonogramQueryAliases(q);
@@ -90,13 +90,13 @@ export class PhonogramsService {
     };
   }
 
-  /** Contagem exata por status, tenant inteiro — nunca só a página carregada. */
+  /** Exact count per status, whole tenant — never only the loaded page. */
   async stats(tenantId: string, query: QueryPhonogramDto): Promise<GroupStatsResult> {
     const { qb } = this.baseQb(tenantId, query);
     return groupCount(qb, 'p', 'status');
   }
 
-  /** Gêneros distintos do tenant — usado no filtro (dropdown não pode ficar preso aos 50 primeiros registros). */
+  /** The tenant's distinct genres — used in the filter (the dropdown cannot be stuck on the first 50 records). */
   async distinctMusicGenres(tenantId: string): Promise<string[]> {
     const rows = await this.repo!
       .createQueryBuilder('p')
@@ -119,11 +119,11 @@ export class PhonogramsService {
   }
 
   /**
-   * Monta o payload final para persistência a partir dos campos canônicos já
-   * resolvidos (title/work_id/artist_id — ver resolvePhonogramAliases()) e
-   * dos demais campos não relacionados a aliases (21 campos físicos do
-   * formulário, duration/duration_text, metadata, status, ISRC etc.), que
-   * continuam passando direto para a entity, inalterados.
+   * Builds the final payload for persistence from the already resolved canonical
+   * fields (title/work_id/artist_id — see resolvePhonogramAliases()) and
+   * the other fields unrelated to aliases (the form's 21 physical
+   * fields, duration/duration_text, metadata, status, ISRC etc.), which
+   * keep passing straight through to the entity, unchanged.
    */
   private buildEntityPayload(
     input: Record<string, unknown>,
@@ -143,8 +143,8 @@ export class PhonogramsService {
     // below from duracao_min/duracao_seg, the PT fields the real
     // FonogramaFormModal actually writes.
     out['duration_seconds'] = input['duration_seconds'] ?? input['duration'];
-    // type: default apenas quando explicitamente ausente no CREATE (ver create());
-    // num PATCH sem type, não sobrescrever o valor persistido.
+    // type: default only when explicitly absent on CREATE (see create());
+    // in a PATCH without type, do not overwrite the persisted value.
     if (input['type'] !== undefined) out['type'] = input['type'];
 
     // find-registry-null-fields: gravacao_original/data_lancamento/
@@ -195,8 +195,8 @@ export class PhonogramsService {
       out['isrc'] = canonicalIsrc;
     }
 
-    // Remove null/undefined — preserva a semântica atual de PATCH (null não
-    // limpa coluna nesta fase; ver dívida C2.4).
+    // Removes null/undefined — preserves the current PATCH semantics (null does not
+    // clear a column in this phase; see debt C2.4).
     Object.keys(out).forEach((key) => (out[key] === undefined || out[key] === null) && delete out[key]);
     return out;
   }
@@ -228,8 +228,8 @@ export class PhonogramsService {
     } as Partial<PhonogramEntity>);
     const saved = (await this.repo!.save(entity as PhonogramEntity)) as PhonogramEntity;
 
-    // Dispara automações nativas internas (ex.: catalog-metadata-validator). Os
-    // handlers são assíncronos e à prova de falha — nunca revertem a criação do fonograma.
+    // Triggers internal native automations (e.g. catalog-metadata-validator). The
+    // handlers are asynchronous and failure-proof — they never revert the phonogram creation.
     this.events.emitTyped(DOMAIN_EVENTS.CATALOG_RECORDING_CREATED, {
       tenantId,
       userId,
@@ -245,8 +245,8 @@ export class PhonogramsService {
     const current = await this.findById(tenantId, id);
     const input = dto as unknown as Record<string, unknown>;
     const { normalized: resolved, legacyAliasesUsed } = resolvePhonogramAliases(input);
-    // update: ausência de título é válida (PATCH parcial); se enviado, o
-    // próprio resolvePhonogramAliases() já garantiu conteúdo/conflito válidos.
+    // update: an absent title is valid (partial PATCH); if sent,
+    // resolvePhonogramAliases() itself already guaranteed valid content/conflict.
     this.logLegacyAliasUsage(legacyAliasesUsed, 'update', tenantId, id);
     // find-f81eebf2: only validate when the patch actually sets work_id/artist_id
     // — an omitted field means "unchanged", already validated at its own create time.

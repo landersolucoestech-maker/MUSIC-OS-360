@@ -16,14 +16,14 @@ import type {
 import { casUpdate } from '../../../common/persistence/optimistic-update.util';
 
 /**
- * AudiovisualProjectsService — CRUD + ciclo de status + dashboard.
+ * AudiovisualProjectsService — CRUD + status lifecycle + dashboard.
  *
  * Status order:
  *   draft → briefing → pre_production → production → post_production →
  *   approval → delivered → published
- *   (qualquer status → cancelled é permitido)
+ *   (any status → cancelled is allowed)
  *
- * Mudanças de status são validadas para evitar regressões inválidas.
+ * Status changes are validated to prevent invalid regressions.
  */
 @Injectable()
 export class AudiovisualProjectsService {
@@ -114,12 +114,12 @@ export class AudiovisualProjectsService {
       'Este projeto audiovisual foi alterado por outro usuário desde que você o carregou. Recarregue e tente novamente.',
     );
 
-    // Auto-cria tarefas padrão do novo estágio (idempotente — não duplica)
+    // Auto-creates the new stage's default tasks (idempotent — does not duplicate)
     if (dto.status !== 'cancelled' && dto.status !== current.status) {
       try {
         await this.tasks.generateForStage(tenantId, userId, id, dto.status);
       } catch {
-        // não bloqueia transição se geração de tasks falhar
+        // does not block the transition if task generation fails
       }
     }
 
@@ -136,9 +136,9 @@ export class AudiovisualProjectsService {
   }
 
   /**
-   * Dashboard — agregados por tenant e janela opcional.
-   * Métricas: total ativos, por status, gravações próximas (publish_date 7d),
-   * aprovações pendentes, entregáveis atrasados, orçamento consumido total.
+   * Dashboard — aggregates per tenant and optional window.
+   * Metrics: total active, per status, upcoming shoots (publish_date 7d),
+   * pending approvals, overdue deliverables, total budget consumed.
    */
   async dashboard(tenantId: string, q: QueryDashboardDto) {
     const qb = this.r.createQueryBuilder('p')
@@ -194,7 +194,7 @@ export class AudiovisualProjectsService {
   // ── Helpers ─────────────────────────────────────────────────────────────────
   private assertValidTransition(from: string, to: string): void {
     if (from === to) return;
-    if (to === 'cancelled') return; // pode cancelar de qualquer estado
+    if (to === 'cancelled') return; // may cancel from any state
     const order = [
       'draft', 'briefing', 'pre_production', 'production', 'post_production',
       'approval', 'delivered', 'published',
@@ -204,7 +204,7 @@ export class AudiovisualProjectsService {
     if (fromIdx === -1 || toIdx === -1) {
       throw new BadRequestException(`Transição inválida: ${from} → ${to}`);
     }
-    // permite avançar 1+, ou voltar 1 (revisão), mas não saltar para frente > 2 nem voltar > 1
+    // allows moving forward 1+, or back 1 (revision), but not jumping forward > 2 nor back > 1
     if (toIdx < fromIdx - 1) {
       throw new BadRequestException(`Regressão de status não permitida: ${from} → ${to}. Use cancelled se for o caso.`);
     }

@@ -1,8 +1,8 @@
 /**
  * modules/assets/handlers/asset-linking.handler.ts
  *
- * Liga o evento REAL existente asset.uploaded ao Asset Linking Skill.
- * Infraestrutura interna — sem exposição ao usuário.
+ * Connects the REAL existing asset.uploaded event to the Asset Linking Skill.
+ * Internal infrastructure — no exposure to the user.
  */
 
 import { Injectable, Logger, Optional } from '@nestjs/common';
@@ -43,7 +43,7 @@ export class AssetLinkingHandler {
         work,
       );
     } catch (err) {
-      // A falha já é persistida no skill_run; aqui apenas log técnico interno.
+      // The failure is already persisted in the skill_run; here only an internal technical log.
       this.logger.error(
         `Asset linking falhou para upload "${event.payload.uploadId}"`,
         err instanceof Error ? err.stack : String(err),

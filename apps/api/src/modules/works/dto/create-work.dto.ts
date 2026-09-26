@@ -65,12 +65,12 @@ export class CreateWorkDto {
   @IsObject()
   metadata?: Record<string, unknown>;
 
-  // ── Campos do formulário de Obra (chaves EXATAS de formToObraPayload) ────────
-  // Regra de produto 2026-07-12: cada campo do form tem a sua coluna física.
+  // ── Work form fields (EXACT keys of formToObraPayload) ───────────────────────
+  // Product rule 2026-07-12: each form field has its own physical column.
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) idioma?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) cod_ecad?: string;
-  // Renomeado de `cod_abramus` (20260718000017) — código em qualquer entidade
-  // de gestão coletiva (ABRAMUS, UBC, SOCINPRO, ...), não só ABRAMUS.
+  // Renamed from `cod_abramus` (20260718000017) — code at any collective
+  // management society (ABRAMUS, UBC, SOCINPRO, ...), not only ABRAMUS.
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) cod_entidade?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) duration_text?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(10) instrumental?: string;

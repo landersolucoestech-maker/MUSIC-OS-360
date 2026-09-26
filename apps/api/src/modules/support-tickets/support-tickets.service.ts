@@ -124,8 +124,8 @@ export class SupportTicketsService {
     } as Partial<SupportTicketEntity>);
     const saved = await this.repo!.save(entity as SupportTicketEntity);
 
-    // Dispara automações nativas internas (ex.: support-triage). Os handlers são
-    // assíncronos e à prova de falha — nunca revertem a criação do ticket.
+    // Triggers internal native automations (e.g. support-triage). The handlers are
+    // asynchronous and failure-proof — they never revert the ticket creation.
     this.events.emitTyped(DOMAIN_EVENTS.SUPPORT_TICKET_CREATED, {
       tenantId,
       userId,
@@ -177,10 +177,10 @@ export class SupportTicketsService {
       };
       await this.ds!.transaction(async (em) => {
         await this.workflowService.transitionInTx(req, em);
-        // CAS na mesma transação da mudança de status — se o ticket foi
-        // editado por outra pessoa desde a leitura de `current`, a transação
-        // inteira (incluindo o histórico já gravado por transitionInTx) faz
-        // rollback, nunca aplica uma transição validada contra status stale.
+        // CAS in the same transaction as the status change — if the ticket was
+        // edited by someone else since `current` was read, the whole
+        // transaction (including the history already written by transitionInTx) rolls
+        // back; it never applies a transition validated against a stale status.
         await casUpdate(
           em.getRepository(SupportTicketEntity),
           { id, tenant_id: tenantId },

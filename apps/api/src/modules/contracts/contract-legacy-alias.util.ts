@@ -1,16 +1,16 @@
 import { BadRequestException } from '@nestjs/common';
 
 /**
- * Resolução de aliases EN legados para os campos canônicos pt-BR de Contracts
- * (Fase 5 / C1). Puro: não loga, não conhece tenant/operação, não acessa
- * repository, não importa Swagger, não aplica defaults de negócio (ex.:
- * tipo='outro') — isso é responsabilidade do ContractsService.
+ * Resolution of legacy EN aliases to the canonical pt-BR Contracts fields
+ * (Phase 5 / C1). Pure: does not log, knows nothing of tenant/operation, does not access
+ * a repository, does not import Swagger, does not apply business defaults (e.g.
+ * tipo='outro') — that is ContractsService's responsibility.
  *
- * Regra de presença: `hasOwnProperty` decide presença; `undefined` é tratado
- * como ausente; `null` é tratado como fornecido (participa de conflito, mas
- * nunca vira erro de conteúdo para os campos opcionais — só título rejeita
- * null). A remoção de chaves `null` antes da persistência (para não alterar
- * a semântica atual de PATCH) é feita pelo chamador, não aqui.
+ * Presence rule: `hasOwnProperty` decides presence; `undefined` is treated
+ * as absent; `null` is treated as provided (it takes part in conflicts, but
+ * never becomes a content error for optional fields — only the title rejects
+ * null). Removing `null` keys before persistence (so the current PATCH
+ * semantics do not change) is done by the caller, not here.
  */
 
 export interface ContractFieldRef {
@@ -51,7 +51,7 @@ export interface ContractAliasResolution<T> {
   legacyAliasesUsed: string[];
 }
 
-// ── Helpers de presença/valor ────────────────────────────────────────────────
+// ── Presence/value helpers ───────────────────────────────────────────────────
 
 function isAbsent(input: Record<string, unknown>, key: string): boolean {
   if (!Object.prototype.hasOwnProperty.call(input, key)) return true;
@@ -60,7 +60,7 @@ function isAbsent(input: Record<string, unknown>, key: string): boolean {
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** Converte para a representação canônica final (string) usada pela entity, ou 'invalid'. */
+/** Converts to the final canonical representation (string) used by the entity, or 'invalid'. */
 function parseCanonicalValue(v: unknown): string | 'invalid' {
   if (typeof v === 'number') return Number.isFinite(v) ? String(v) : 'invalid';
   if (typeof v === 'string') {
@@ -71,7 +71,7 @@ function parseCanonicalValue(v: unknown): string | 'invalid' {
   return 'invalid';
 }
 
-/** Só valida formato (getTime() finito) — nunca lança RangeError, nunca converte null em epoch. */
+/** Validates only the format (finite getTime()) — never throws RangeError, never converts null to epoch. */
 function parseStrictDate(v: unknown): string | 'invalid' {
   if (typeof v !== 'string') return 'invalid';
   const d = new Date(v);
@@ -96,24 +96,24 @@ function throwInvalid(code: ContractAliasErrorCode, canonical: string, field: st
   throw new BadRequestException(body);
 }
 
-// ── Resolução genérica de par (campos opcionais: type, artist_id, datas, valor) ─
+// ── Generic pair resolution (optional fields: type, artist_id, dates, value) ─
 
 interface PairSpec {
   canonical: string;
   /**
-   * Um ou mais aliases legados aceitos. Array usado quando um campo já teve
-   * mais de um nome legado historicamente aceito simultaneamente (ex.:
-   * data_inicio -> start_date manteve tanto o nome PT antigo quanto o alias
-   * EN `startsAt` já existente — nenhum dos dois pode deixar de ser aceito
-   * sem quebrar chamadores reais).
+   * One or more accepted legacy aliases. An array is used when a field historically had
+   * more than one legacy name accepted simultaneously (e.g.
+   * data_inicio -> start_date kept both the old PT name and the already existing EN alias
+   * `startsAt` — neither of them can stop being accepted
+   * without breaking real callers).
    */
   legacy: string | string[];
   invalidCode?: ContractAliasErrorCode;
-  /** true se o valor não-null é aceitável; ausente = qualquer valor é aceito. */
+  /** true when the non-null value is acceptable; absent = any value is accepted. */
   validate?: (v: unknown) => boolean;
-  /** compara dois valores não-null já validados. */
+  /** compares two already validated non-null values. */
   isEquivalent: (a: unknown, b: unknown) => boolean;
-  /** mapeia um valor não-null já validado para a forma final persistida. */
+  /** maps an already validated non-null value to the final persisted form. */
   transform: (v: unknown) => unknown;
 }
 
@@ -175,18 +175,18 @@ const ARTIST_ID_SPEC: PairSpec = {
   transform: (v) => v,
 };
 
-// Normalização de nomenclatura (2026-09-05): a coluna física passou de
-// data_inicio/data_fim para start_date/end_date. Ambos os aliases legados
-// pré-existentes (o nome PT antigo e o alias EN `startsAt`/`expiresAt` já
-// aceito antes da migração física) continuam aceitos — nenhum caller real
-// pode deixar de ser reconhecido só porque o nome canônico mudou de novo.
+// Naming normalization (2026-09-05): the physical column changed from
+// data_inicio/data_fim to start_date/end_date. Both pre-existing legacy aliases
+// (the old PT name and the EN alias `startsAt`/`expiresAt` already
+// accepted before the physical migration) remain accepted — no real caller
+// may stop being recognized just because the canonical name changed again.
 const START_DATE_SPEC: PairSpec = {
   canonical: 'start_date',
   legacy: ['data_inicio', 'startsAt'],
   invalidCode: 'CONTRACT_DATE_INVALID',
   validate: (v) => parseStrictDate(v) !== 'invalid',
   isEquivalent: (a, b) => parseStrictDate(a) === parseStrictDate(b),
-  transform: (v) => v, // persiste o valor original, não o ISO normalizado
+  transform: (v) => v, // persists the original value, not the normalized ISO
 };
 
 const END_DATE_SPEC: PairSpec = {
@@ -214,10 +214,10 @@ const VALOR_SPEC: PairSpec = {
   invalidCode: 'CONTRACT_VALUE_INVALID',
   validate: (v) => parseCanonicalValue(v) !== 'invalid',
   isEquivalent: (a, b) => parseCanonicalValue(a) === parseCanonicalValue(b),
-  transform: (v) => parseCanonicalValue(v), // única responsabilidade de coerção do valor
+  transform: (v) => parseCanonicalValue(v), // the only value-coercion responsibility
 };
 
-// ── Título — obrigatoriedade tratada pelo chamador; aqui só conteúdo/conflito ──
+// ── Title — mandatory-ness handled by the caller; here only content/conflict ──
 
 function assertTitleContent(v: unknown, field: string): asserts v is string {
   if (v === null || typeof v !== 'string' || v.trim() === '') {
@@ -226,9 +226,9 @@ function assertTitleContent(v: unknown, field: string): asserts v is string {
 }
 
 /**
- * Após a normalização de nomenclatura (2026-09-05), a coluna física passou
- * de `titulo` para `title`. `titulo` agora é o alias legado PT aceito para
- * chamadores antigos — mesma estrutura de antes, papéis invertidos.
+ * After the naming normalization (2026-09-05), the physical column changed
+ * from `titulo` to `title`. `titulo` is now the legacy PT alias accepted for
+ * old callers — same structure as before, roles inverted.
  */
 function resolveTitle(input: Record<string, unknown>, legacyUsed: Set<string>): string | undefined {
   const enAbsent = isAbsent(input, 'title');
@@ -258,12 +258,12 @@ function resolveTitle(input: Record<string, unknown>, legacyUsed: Set<string>): 
   throwConflict('title', 'titulo');
 }
 
-// ── API pública ──────────────────────────────────────────────────────────────
+// ── Public API ────────────────────────────────────────────────────────────────
 
 /**
- * Resolve os 7 aliases de escrita (create/update). Não valida obrigatoriedade
- * de título (isso é decisão de create-vs-update, portanto do service) — só
- * conteúdo/conflito quando um valor é efetivamente enviado.
+ * Resolves the 7 write aliases (create/update). Does not validate that the title is
+ * mandatory (that is a create-vs-update decision, hence the service's) — only
+ * content/conflict when a value is actually sent.
  */
 export function resolveContractAliases(input: Record<string, unknown>): ContractAliasResolution<ResolvedContractWriteFields> {
   const legacyUsed = new Set<string>();
@@ -294,8 +294,8 @@ export function resolveContractAliases(input: Record<string, unknown>): Contract
 }
 
 /**
- * Resolve exclusivamente os 2 aliases de consulta (type/tipo, artist_id/artistId).
- * Não conhece nem processa title/value/datas — impossível vazarem pela query.
+ * Resolves exclusively the 2 query aliases (type/tipo, artist_id/artistId).
+ * Knows nothing of and does not process title/value/dates — they cannot leak through the query.
  */
 export function resolveContractQueryAliases(input: Record<string, unknown>): ContractAliasResolution<ResolvedContractQueryFields> {
   const legacyUsed = new Set<string>();

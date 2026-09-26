@@ -18,9 +18,9 @@ export class LeadInteractionsService {
       .createQueryBuilder('i')
       .where('i.tenant_id = :tenantId', { tenantId });
 
-    // REM-04: DTO expõe `leadId` (camelCase) — `q.lead_id` nunca existia,
-    // então o filtro por lead nunca funcionou (retornava todas as
-    // interações do tenant, não só as do lead pedido).
+    // REM-04: the DTO exposes `leadId` (camelCase) — `q.lead_id` never existed,
+    // so the per-lead filter never worked (it returned every
+    // interaction in the tenant, not only those of the requested lead).
     if (q.leadId) qb.andWhere('i.lead_id = :leadId', { leadId: q.leadId });
 
     qb.orderBy('i.created_at', q.ascending ? 'ASC' : 'DESC')
@@ -32,11 +32,11 @@ export class LeadInteractionsService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateLeadInteractionDto): Promise<LeadInteractionEntity> {
-    // REM-04: o spread `...dto` gravava campos inexistentes na entity
-    // (leadId/type/notes) e deixava as colunas reais (lead_id/type NOT NULL)
-    // vazias — todo POST falhava com violação de constraint. Mapeado
-    // explicitamente para as colunas reais; `metadata` do DTO não tem
-    // coluna correspondente nesta entity e não é persistido.
+    // REM-04: the `...dto` spread wrote fields that do not exist on the entity
+    // (leadId/type/notes) and left the real columns (lead_id/type NOT NULL)
+    // empty — every POST failed with a constraint violation. Mapped
+    // explicitly to the real columns; the DTO's `metadata` has no
+    // matching column on this entity and is not persisted.
     const entity = this.repo!.create({
       tenant_id:  tenantId,
       lead_id:    dto.leadId,

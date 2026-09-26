@@ -6,9 +6,9 @@ const recording = new RecordingRegistryValidationService();
 
 const asWork = (o: Partial<WorkEntity>): WorkEntity => o as unknown as WorkEntity;
 const asRec = (o: Partial<PhonogramEntity>): PhonogramEntity => o as unknown as PhonogramEntity;
-// share_type: null = elegível para registro (ver share-eligibility.util.ts). Mocks que
-// representam shares de registro precisam declarar isso explicitamente — sem essa
-// propriedade, share_type fica `undefined` e o predicado de elegibilidade as excluiria.
+// share_type: null = eligible for registration (see share-eligibility.util.ts). Mocks that
+// represent registration shares must declare this explicitly — without this
+// property, share_type is `undefined` and the eligibility predicate would exclude them.
 const share = (o: Partial<ShareEntity>): ShareEntity => ({ share_type: null, ...o } as unknown as ShareEntity);
 const financialShare = (o: Partial<ShareEntity>): ShareEntity => ({ share_type: 'pendente', ...o } as unknown as ShareEntity);
 const codes = (issues: { code: string }[]) => issues.map((i) => i.code);

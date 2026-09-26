@@ -1,9 +1,9 @@
 /**
  * knowledge-base/knowledge-base.controller.ts
  *
- * Central de Suporte — base de conhecimento. Conteúdo GLOBAL (não
- * tenant-scoped): Music OS 360 escreve a documentação da plataforma
- * (super_admin), todo tenant autenticado lê o publicado.
+ * Support Center — knowledge base. GLOBAL content (not
+ * tenant-scoped): Music OS 360 writes the platform documentation
+ * (super_admin), every authenticated tenant reads what is published.
  */
 import {
   Controller, Get, Post, Patch, Delete,

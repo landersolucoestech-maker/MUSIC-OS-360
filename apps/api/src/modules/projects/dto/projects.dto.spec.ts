@@ -6,15 +6,15 @@ import { CreateProjectDto } from './projects.dto';
 /**
  * projects.dto.spec.ts
  *
- * Guarda permanente (auditoria 2026-07-18 — bug real confirmado): o DTO
- * antigo usava nomes em inglês (type/artistId/budget/currency/
- * startsAt/deadlineAt/releasedAt) que NUNCA batiam com o payload real
- * enviado por ProjetoFormModal.tsx/Projetos.tsx (title/type/status/
- * notes/description/music_genre/artist_id/musicas[]) nem com as colunas
- * físicas da entity (title/type/status/description). Com
- * ValidationPipe (whitelist + forbidNonWhitelisted), toda criação/edição de
- * projeto retornava 400. `title` passou de nome legado a canônico na
- * normalização de nomenclatura (2026-09-05).
+ * Permanent guard (2026-07-18 audit — real bug confirmed): the old
+ * DTO used English names (type/artistId/budget/currency/
+ * startsAt/deadlineAt/releasedAt) that NEVER matched the real payload
+ * sent by ProjetoFormModal.tsx/Projetos.tsx (title/type/status/
+ * notes/description/music_genre/artist_id/musicas[]) nor the entity's
+ * physical columns (title/type/status/description). With
+ * ValidationPipe (whitelist + forbidNonWhitelisted), every project
+ * create/edit returned 400. `title` went from legacy name to canonical in the
+ * naming normalization (2026-09-05).
  */
 async function validatePayload(payload: Record<string, unknown>) {
   const instance = plainToInstance(CreateProjectDto, payload);

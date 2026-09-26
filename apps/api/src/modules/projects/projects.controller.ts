@@ -18,7 +18,7 @@ export class ProjectsController {
     return this.svc.list(t.id, q);
   }
 
-  // Precisa vir ANTES de @Get(':id') — senão o Nest casa "stats" como :id.
+  // Must come BEFORE @Get(':id') — otherwise Nest matches "stats" as :id.
   @Get('stats') @RequireRole('viewer') @RequirePermission('project:read') @ApiOperation({ summary: 'Contagem por status, sobre o tenant inteiro' })
   stats(@CurrentTenant() t: { id: string }) {
     return this.svc.stats(t.id);

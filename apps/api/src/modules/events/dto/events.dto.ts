@@ -27,8 +27,8 @@ export class CreateEventDto {
   @ApiPropertyOptional() @IsOptional() @IsString() ticketUrl?: string;
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
 
-  // ── Campos do formulário (chaves EXATAS do SchedulerFormModal) ───────────────
-  // Regra de produto 2026-07-12: cada campo do form tem a sua coluna física.
+  // ── Form fields (EXACT keys of SchedulerFormModal) ──────────────────────────
+  // Product rule 2026-07-12: each form field has its own physical column.
   @ApiPropertyOptional() @IsOptional() @IsString() endereco?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() contato_local?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) fee_amount?: number;
@@ -40,16 +40,16 @@ export class CreateEventDto {
 
 export class UpdateEventDto extends PartialType(CreateEventDto) {
   @ApiPropertyOptional({ enum: EventStatus }) @IsOptional() @IsEnum(EventStatus) status?: EventStatus;
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 
 export class QueryEventDto extends PaginationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
 
-  // Nomes efetivamente lidos por EventsService.list(). "type"/"artistId" (aliases
-  // em inglês) existiam aqui sem nenhum caller real e sem leitura no service —
-  // removidos (eram um filtro 200-mas-silenciosamente-ignorado à espera de acontecer).
+  // Names actually read by EventsService.list(). "type"/"artistId" (English
+  // aliases) existed here without any real caller and without being read in the service —
+  // removed (they were a 200-but-silently-ignored filter waiting to happen).
   @ApiPropertyOptional() @IsOptional() @IsString() type?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() artist_id?: string;
   @ApiPropertyOptional({ type: String, format: 'date-time' }) @IsOptional() @IsDateString() dateFrom?: string;

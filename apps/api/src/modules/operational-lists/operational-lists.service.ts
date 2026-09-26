@@ -18,10 +18,10 @@ export class OperationalListsService {
   }
 
   /**
-   * Bootstrap idempotente: um tenant sem NENHUM item (tenant novo, criado
-   * após a migration 20260713000001) recebe os itens padrão na primeira
-   * leitura. `orIgnore()` faz ON CONFLICT DO NOTHING — seguro mesmo sob
-   * corrida de duas requisições simultâneas.
+   * Idempotent bootstrap: a tenant with NO items at all (a new tenant, created
+   * after migration 20260713000001) receives the default items on the first
+   * read. `orIgnore()` does ON CONFLICT DO NOTHING — safe even under a
+   * race between two simultaneous requests.
    */
   private async bootstrapIfEmpty(tenantId: string): Promise<void> {
     const count = await this.repo!.count({ where: { tenant_id: tenantId } });

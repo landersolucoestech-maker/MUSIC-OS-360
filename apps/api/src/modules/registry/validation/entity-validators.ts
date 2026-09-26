@@ -51,9 +51,9 @@ export class WorkRegistryValidationService {
   validate(work: WorkEntity, shares: ShareEntity[]): RegistryValidationIssue[] {
     const issues: RegistryValidationIssue[] = [];
     const active = shares.filter((s) => !s.deleted_at);
-    // share_type IS NULL = elegibilidade transitória de registro — shares
-    // financeiras/pendentes (ver Fase 5 / C6) nunca contam como autor nem
-    // entram na soma de splits.
+    // share_type IS NULL = transitional registration eligibility — financial/
+    // pending shares (see Phase 5 / C6) never count as an author nor
+    // enter the splits sum.
     const eligible = active.filter(isRegistryEligibleShare);
 
     if (!work.title || !work.title.trim()) {
@@ -107,7 +107,7 @@ export class RecordingRegistryValidationService {
   validate(recording: PhonogramEntity, shares: ShareEntity[]): RegistryValidationIssue[] {
     const issues: RegistryValidationIssue[] = [];
     const active = shares.filter((s) => !s.deleted_at);
-    // share_type IS NULL = elegibilidade transitória de registro (ver Fase 5 / C6).
+    // share_type IS NULL = transitional registration eligibility (see Phase 5 / C6).
     const eligible = active.filter(isRegistryEligibleShare);
 
     if (!recording.work_id) {

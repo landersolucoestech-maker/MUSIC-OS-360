@@ -23,9 +23,9 @@ export class LicensingService {
   }
 
   /**
-   * `amount` e `currency` correspondem às colunas físicas legadas valor/moeda.
-   * `percentage` corresponde à coluna física canônica `licenses.percentage`.
-   * O mapeamento é explícito e simétrico para criar, editar e reler o modal.
+   * `amount` and `currency` correspond to the legacy physical columns valor/moeda.
+   * `percentage` corresponds to the canonical physical column `licenses.percentage`.
+   * The mapping is explicit and symmetric for creating, editing and re-reading the modal.
    */
   private normalizePayload(
     dto: CreateLicenseDto | UpdateLicenseDto,
@@ -63,8 +63,8 @@ export class LicensingService {
       .andWhere('l.deleted_at IS NULL');
 
     if (query.status) {
-      // Aba "Propostas" do Licenciamento.tsx abrange negociacao+proposta —
-      // aceita status separados por vírgula e usa IN quando há mais de um.
+      // The "Propostas" tab of Licenciamento.tsx spans negociacao+proposta —
+      // accepts comma-separated statuses and uses IN when there is more than one.
       const statuses = query.status.split(',').map((s) => s.trim()).filter(Boolean);
       if (statuses.length > 1) qb.andWhere('l.status IN (:...statuses)', { statuses });
       else if (statuses.length === 1) qb.andWhere('l.status = :status', { status: statuses[0] });
@@ -92,11 +92,11 @@ export class LicensingService {
   }
 
   /**
-   * Contagem + soma de `valor` por status, sobre o tenant inteiro (não a
-   * página atual) — Task H: KPIs exatos sem baixar a tabela inteira. As 3
-   * abas (catálogo/propostas/ativas) e o cartão "Valor Total" (soma apenas
-   * de status=ativa) do Licenciamento.tsx passam a ler este mapa em vez da
-   * lista completa de licenças.
+   * Count + sum of `valor` per status, over the whole tenant (not the
+   * current page) — Task H: exact KPIs without downloading the whole table. The 3
+   * tabs (catalog/proposals/active) and the "Valor Total" card (sum only
+   * of status=ativa) of Licenciamento.tsx now read this map instead of the
+   * full license list.
    */
   async stats(tenantId: string): Promise<GroupStatsResult> {
     const qb = this.repository

@@ -44,7 +44,7 @@ export class UpdateSocietyAccountDto {
   @IsOptional() @IsEnum(SocietyDriver)
   driver?: SocietyDriver;
 
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @IsOptional() @IsString()
   expectedUpdatedAt?: string;
 }
@@ -66,7 +66,7 @@ export class UpdateSubmissionStatusDto {
   @IsOptional() @IsString() @MaxLength(2000)
   failure_reason?: string;
 
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @IsOptional() @IsString()
   expectedUpdatedAt?: string;
 }

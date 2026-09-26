@@ -134,7 +134,7 @@ export class UpdateMarketingAssetDto extends PartialType(CreateMarketingAssetDto
   @IsString()
   changeNotes?: string | null;
 
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()

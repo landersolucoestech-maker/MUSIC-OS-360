@@ -13,7 +13,7 @@ export class QueryTransactionDto extends PaginationDto {
   @IsUUID()
   artistId?: string;
 
-  // Nomes efetivamente lidos por TransactionsService.list().
+  // Names actually read by TransactionsService.list().
   @ApiPropertyOptional({ example: 'receita' })
   @IsOptional()
   @IsString()

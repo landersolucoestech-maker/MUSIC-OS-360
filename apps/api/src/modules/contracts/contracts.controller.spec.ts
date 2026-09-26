@@ -1,15 +1,15 @@
 /**
  * contracts.controller.spec.ts
  *
- * Fase 5 / C1: prova o contrato HTTP real — ContractsController e
- * ContractsService REAIS, ValidationPipe real (mesmas opções globais:
- * transform/whitelist/forbidNonWhitelisted), somente o repository (via
- * DATA_SOURCE) e as dependências externas (Workflow/Events/PlanLimit)
- * mockados. Não conecta ao Supabase/Postgres real. Reaproveita o padrão
- * de `Test.createTestingModule` + `supertest` já usado em
- * `artists-cross-tenant.integration.spec.ts`, sem os guards de auth
- * (irrelevantes para o que este teste verifica: resolução de aliases,
- * conflito, obrigatoriedade de título).
+ * Phase 5 / C1: proves the real HTTP contract — REAL ContractsController and
+ * ContractsService, real ValidationPipe (same global options:
+ * transform/whitelist/forbidNonWhitelisted), only the repository (via
+ * DATA_SOURCE) and the external dependencies (Workflow/Events/PlanLimit)
+ * mocked. Does not connect to the real Supabase/Postgres. Reuses the
+ * `Test.createTestingModule` + `supertest` pattern already used in
+ * `artists-cross-tenant.integration.spec.ts`, without the auth guards
+ * (irrelevant to what this test verifies: alias resolution,
+ * conflict, title mandatory-ness).
  */
 import 'reflect-metadata';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
@@ -64,10 +64,10 @@ describe('ContractsController — contrato HTTP real (Fase 5 / C1)', () => {
     }).compile();
 
     app = moduleRef.createNestApplication();
-    // Mesmas opções do ValidationPipe global (main.ts).
+    // Same options as the global ValidationPipe (main.ts).
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
-    // Injeta tenant/user autenticados diretamente — os guards de auth (JWT/Tenant/Roles)
-    // não são o que este teste verifica; resolução de aliases/DTO/service, sim.
+    // Injects the authenticated tenant/user directly — the auth guards (JWT/Tenant/Roles)
+    // are not what this test verifies; alias/DTO/service resolution is.
     app.use((req: { tenant?: unknown; auth?: unknown }, _res: unknown, next: () => void) => {
       req.tenant = { id: 'tenant-1', org_id: 'org-1' };
       req.auth = { userId: 'user-1', sessionId: 's1', orgId: 'org-1', orgRole: 'editor', claims: {} };

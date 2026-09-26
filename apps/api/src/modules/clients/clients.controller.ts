@@ -59,7 +59,7 @@ export class ClientsController {
     return this.dealsCrm.run(t.id, u?.userId ?? '', id);
   }
 
-  // ── Anexos (metadata real; binário no Cloudflare R2) ────────────────────
+  // ── Attachments (real metadata; binary in Cloudflare R2) ──────────────────
   @Get(':id/attachments') @RequireRole('viewer') @RequirePermission('client:read') @ApiOperation({ summary: 'Listar anexos do cliente' })
   listAttachments(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.listAttachments(t.id, id);

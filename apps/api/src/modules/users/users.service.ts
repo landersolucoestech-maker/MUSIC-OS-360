@@ -77,12 +77,12 @@ export class UsersService {
       .getOne();
     if (!anyMember) throw new NotFoundException('Tenant sem organização associada');
 
-    // find-f7bfdd94: create() escrevia dto.role directo em org_members.role sem
-    // passar por assertCanAssignRole — mesma classe de bypass de find-5cc269d3,
-    // só que via POST /users em vez de PATCH /users/:id/role.
+    // find-f7bfdd94: create() wrote dto.role straight into org_members.role without
+    // going through assertCanAssignRole — same bypass class as find-5cc269d3,
+    // only via POST /users instead of PATCH /users/:id/role.
     await this.assertCanAssignRole(tenantId, actorRole, dto.role);
 
-    // Dual-write (PASSO 12-G): grava `role` (legado) E `role_id` (canônico resolvido).
+    // Dual-write (STEP 12-G): writes `role` (legacy) AND `role_id` (resolved canonical).
     const roleId = await this.roleResolver.resolveOrThrow(tenantId, dto.role);
     const entity = this.repo!.create({
       org_id:        anyMember.org_id,
@@ -116,13 +116,13 @@ export class UsersService {
   }
 
   /**
-   * Task L: apenas campos de PERFIL (full_name/phone/avatar/metadata) — role
-   * e status (is_active) foram removidos do UpdateUserDto e NÃO são
-   * aceites aqui. Alterações de papel passam por assignRole() (checa
-   * hierarquia via assertCanAssignRole); desativação passa por remove()
-   * (protege o último owner via assertNotLastOwner). Misturar essas
-   * operações RBAC neste update genérico (gate apenas 'manager') permitia
-   * contornar as duas checagens.
+   * Task L: PROFILE fields only (full_name/phone/avatar/metadata) — role
+   * and status (is_active) were removed from UpdateUserDto and are NOT
+   * accepted here. Role changes go through assignRole() (checks the
+   * hierarchy via assertCanAssignRole); deactivation goes through remove()
+   * (protects the last owner via assertNotLastOwner). Mixing those RBAC
+   * operations into this generic update (gate 'manager' only) allowed
+   * bypassing both checks.
    */
   async update(tenantId: string, id: string, dto: UpdateUserDto): Promise<OrgMemberEntity> {
     const current = await this.findById(tenantId, id);
@@ -319,11 +319,11 @@ export class UsersService {
     if ((current.role === 'owner' || current.role === 'tenant_owner') && role !== current.role) {
       await this.assertNotLastOwner(tenantId, id);
     }
-    // Dual-write (PASSO 12-G): grava `role` (legado) E `role_id` (canônico).
-    // A autorização acima (assertCanAssignRole/assertNotLastOwner) roda ANTES
-    // do CAS — a proteção de concorrência nunca substitui nem enfraquece essas
-    // checagens, só evita que duas atribuições de papel concorrentes se
-    // sobrescrevam silenciosamente.
+    // Dual-write (STEP 12-G): writes `role` (legacy) AND `role_id` (canonical).
+    // The authorization above (assertCanAssignRole/assertNotLastOwner) runs BEFORE
+    // the CAS — concurrency protection never replaces nor weakens those
+    // checks, it only prevents two concurrent role assignments from
+    // silently overwriting each other.
     const roleId = await this.roleResolver.resolveOrThrow(tenantId, role, { membershipId: id });
     await casUpdate(
       this.repo!,
@@ -347,9 +347,9 @@ export class UsersService {
   }
 
   /**
-   * Task L: endpoint dedicado para reativar/desativar/suspender — extraído do
-   * PATCH /users/:id genérico (ver comentário em UpdateUserDto). Mesma
-   * proteção de último-owner que remove() já tinha, mais CAS opcional.
+   * Task L: dedicated endpoint to reactivate/deactivate/suspend — extracted from the
+   * generic PATCH /users/:id (see the comment in UpdateUserDto). Same
+   * last-owner protection remove() already had, plus an optional CAS.
    */
   async setStatus(
     tenantId: string,

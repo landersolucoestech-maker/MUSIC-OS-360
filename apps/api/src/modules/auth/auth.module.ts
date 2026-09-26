@@ -1,11 +1,11 @@
 /**
  * modules/auth/auth.module.ts
  *
- * Módulo de autenticação JWT do MUSIC OS 360.
- * Fornece endpoints de login/registro/refresh/logout.
+ * JWT authentication module of MUSIC OS 360.
+ * Provides login/register/refresh/logout endpoints.
  *
- * Os guards globais (JwtAuthGuard, TenantGuard, RolesGuard)
- * são registados no AppModule via APP_GUARD para cobertura total.
+ * The global guards (JwtAuthGuard, TenantGuard, RolesGuard)
+ * are registered in AppModule via APP_GUARD for full coverage.
  */
 
 import { Module } from '@nestjs/common';

@@ -27,8 +27,8 @@ export class InventoryService {
       .andWhere('i.deleted_at IS NULL');
 
     if (query.status)   qb.andWhere('i.status = :status',       { status: query.status });
-    // ILIKE sem wildcard = igualdade case-insensitive — preserva o filtro
-    // de category case-insensitive que existia no client (Inventario.tsx).
+    // ILIKE without a wildcard = case-insensitive equality — preserves the
+    // case-insensitive category filter that existed in the client (Inventario.tsx).
     if (query.category) qb.andWhere('i.category ILIKE :category', { category: query.category });
     if (query.localizacao) qb.andWhere('i.localizacao = :localizacao', { localizacao: query.localizacao });
     if (query.search)   qb.andWhere('i.name ILIKE :search',     { search: `%${query.search}%` });
@@ -42,16 +42,16 @@ export class InventoryService {
   }
 
   /**
-   * Contagem por status + soma de valor patrimonial, sobre o tenant inteiro
-   * (não a página atual) — Task H: GET /inventory/stats.
+   * Count per status + sum of asset value, over the whole tenant
+   * (not the current page) — Task H: GET /inventory/stats.
    *
-   * Não reusa groupCount() (common/stats/group-count.util.ts): seu parâmetro
-   * `valueColumn` assume uma única coluna (`${alias}.${valueColumn}`), mas o
-   * valor patrimonial do item é `quantidade * unit_price` — um produto de
-   * duas colunas. Replica aqui a mesma agregação, com a expressão SQL
-   * correta. Mantém a regra de negócio existente no client (ver
-   * Inventario.tsx pré-migração): quantidade 0/nula conta como 1 no cálculo
-   * do valor (COALESCE(NULLIF(quantidade,0), 1)).
+   * Does not reuse groupCount() (common/stats/group-count.util.ts): its
+   * `valueColumn` parameter assumes a single column (`${alias}.${valueColumn}`), but the
+   * item's asset value is `quantidade * unit_price` — a product of
+   * two columns. Replicates the same aggregation here, with the correct SQL
+   * expression. Keeps the business rule that existed in the client (see
+   * pre-migration Inventario.tsx): a 0/null quantity counts as 1 in the
+   * value computation (COALESCE(NULLIF(quantidade,0), 1)).
    */
   async stats(tenantId: string): Promise<GroupStatsResult> {
     const rows = await this.repository

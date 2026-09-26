@@ -1,53 +1,53 @@
 /**
- * Um conceito, um nome canônico (ver docs/NAMING_NORMALIZATION_CANONICAL_MAP.md
- * e .claude/rules/naming-canonical.md). O CONTRATO TÉCNICO INTERNO é sempre em
- * INGLÊS — isso vale tanto para campos originados de uma coluna física quanto
- * para campos originados de `entity.metadata` (jsonb). O banco de dados legado
- * em português (`TransactionEntity`, `apps/api/src/database/entities.ts`) é uma
- * fronteira EXTERNA: o mapeamento PT (coluna/chave real) <-> EN (campo deste
- * DTO) acontece exclusivamente em `toTransactionDetails()` (leitura) e em
- * `buildPersistencePayload()` (escrita), ambos em `transactions.service.ts`.
- * Nenhum nome de coluna/chave em português deve vazar para fora desses dois
- * pontos de tradução.
+ * One concept, one canonical name (see docs/NAMING_NORMALIZATION_CANONICAL_MAP.md
+ * and .claude/rules/naming-canonical.md). The INTERNAL TECHNICAL CONTRACT is always in
+ * ENGLISH — this holds both for fields originating from a physical column and
+ * for fields originating from `entity.metadata` (jsonb). The legacy
+ * Portuguese-named database (`TransactionEntity`, `apps/api/src/database/entities.ts`) is an
+ * EXTERNAL boundary: the PT (real column/key) <-> EN (field of this
+ * DTO) mapping happens exclusively in `toTransactionDetails()` (read) and in
+ * `buildPersistencePayload()` (write), both in `transactions.service.ts`.
+ * No Portuguese column/key name may leak outside those two
+ * translation points.
  *
- * Origem física de cada campo (para quem for mexer no mapper):
+ * Physical origin of each field (for whoever touches the mapper):
  *  - type, description, amount, transactionDate, category, artistId,
- *    contractId, projectId, created_at, updated_at: colunas físicas de
+ *    contractId, projectId, created_at, updated_at: physical columns of
  *    `transactions` (`type`, `descricao`, `valor`, `data`, `categoria`,
  *    `artist_id`, `contrato_id`, `project_id`, `created_at`, `updated_at`).
  *  - note, paymentMethod, paymentType, installments, subcategory,
- *    supplierOrClient: chaves de `entity.metadata`
+ *    supplierOrClient: keys of `entity.metadata`
  *    (`observacao`, `formaPagamento`, `tipoPagamento`, `quantidadeParcelas`,
  *    `subcategoria`, `fornecedorCliente`).
- *  - linkedEventId: a entity TEM uma coluna física `evento_id`, mas ela nunca
- *    é escrita nem lida por este service — o valor real sempre vem de
- *    `entity.metadata.eventoVinculado`. Manter o nome `evento_id`/`eventoId`
- *    no DTO seria enganoso (implica coluna FK), por isso o nome canônico aqui
- *    é `linkedEventId`. A coluna `evento_id` morta é uma questão de
- *    `entities.ts`, fora do escopo desta mudança.
- *  - `id`/`created_at`/`updated_at`: já colunas físicas sem equivalente PT
- *    diferente do próprio nome, mantidos como estão (`created_at`/`updated_at`
- *    seguem snake_case por serem timestamps de auditoria já consumidos assim
- *    por outros pontos do sistema — não é um nome em português, é convenção
- *    de coluna de auditoria).
+ *  - linkedEventId: the entity HAS a physical `evento_id` column, but it is never
+ *    written nor read by this service — the real value always comes from
+ *    `entity.metadata.eventoVinculado`. Keeping the name `evento_id`/`eventoId`
+ *    in the DTO would be misleading (it implies an FK column), which is why the canonical name here
+ *    is `linkedEventId`. The dead `evento_id` column is a matter for
+ *    `entities.ts`, out of this change's scope.
+ *  - `id`/`created_at`/`updated_at`: already physical columns with no PT equivalent
+ *    different from the name itself, kept as they are (`created_at`/`updated_at`
+ *    stay snake_case because they are audit timestamps already consumed that way
+ *    by other parts of the system — not a Portuguese name, it is the audit
+ *    column convention).
  *
- * Decisões de nomenclatura registradas (para não haver retrabalho futuro):
- *  - `data` (PT, coluna física, data do lançamento) -> `transactionDate`, e
- *    não `date`, porque o DTO já tem `dueDate`, `paidAt` e `competence` — um
- *    campo genérico `date` seria ambíguo entre essas quatro datas distintas.
- *  - `observacao` (PT, metadata) -> `note` (singular). Não existe `notes` no
- *    DTO, então não há colisão.
- *  - `quantidadeParcelas` (PT, metadata, número TOTAL de parcelas) ->
- *    `installments`. Mantido distinto de `installmentCurrent` (que já é EN e
- *    representa a parcela ATUAL, um conceito diferente) — nenhuma colisão.
- *  - `fornecedorCliente` (PT, metadata, string livre preenchida pelo
- *    formulário) -> `supplierOrClient`. O campo `supplier` pré-existente é
- *    OUTRO metadata key (`metadata.supplier`) que nenhum writer deste service
- *    jamais popula — não há nenhum caminho de escrita para ele em
- *    `buildPersistencePayload`. São conceitos que já viviam desacoplados no
- *    metadata; `supplier` fica registrado aqui como dado morto/nunca escrito,
- *    não como sinônimo de `supplierOrClient`. Renomear ou remover `supplier`
- *    está fora do escopo desta mudança (nenhuma tarefa pediu isso).
+ * Recorded naming decisions (to avoid future rework):
+ *  - `data` (PT, physical column, entry date) -> `transactionDate`, and
+ *    not `date`, because the DTO already has `dueDate`, `paidAt` and `competence` — a
+ *    generic `date` field would be ambiguous among those four distinct dates.
+ *  - `observacao` (PT, metadata) -> `note` (singular). There is no `notes` in the
+ *    DTO, so there is no collision.
+ *  - `quantidadeParcelas` (PT, metadata, TOTAL number of installments) ->
+ *    `installments`. Kept distinct from `installmentCurrent` (which is already EN and
+ *    represents the CURRENT installment, a different concept) — no collision.
+ *  - `fornecedorCliente` (PT, metadata, free string filled in by the
+ *    form) -> `supplierOrClient`. The pre-existing `supplier` field is
+ *    ANOTHER metadata key (`metadata.supplier`) that no writer of this service
+ *    ever populates — there is no write path for it in
+ *    `buildPersistencePayload`. They are concepts that already lived decoupled in
+ *    metadata; `supplier` is recorded here as dead/never-written data,
+ *    not as a synonym of `supplierOrClient`. Renaming or removing `supplier`
+ *    is out of this change's scope (no task asked for it).
  */
 export interface TransactionDetailsDTO {
   id: string;

@@ -15,7 +15,7 @@ export interface CreateProductionDayInput {
   team_notes?: string;
   production_notes?: string;
   status?: string;
-  /** Concorrência otimista (Task L) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task L) — see optimistic-update.util.ts. Optional. */
   expectedUpdatedAt?: string;
 }
 

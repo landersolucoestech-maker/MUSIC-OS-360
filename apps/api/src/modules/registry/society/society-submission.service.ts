@@ -171,9 +171,9 @@ export class SocietySubmissionService {
     if (to === SocietySubmissionStatus.REJECTED) updates.rejected_at = now;
     if (to === SocietySubmissionStatus.FAILED && dto.failure_reason) updates.failure_reason = dto.failure_reason;
 
-    // CAS: se a submissão foi alterada por outra pessoa/processo desde a
-    // leitura de `sub` (ex.: duas transições concorrentes), rejeita com 409
-    // em vez de aplicar uma transição validada contra um status já obsoleto.
+    // CAS: if the submission was changed by someone/some process since
+    // `sub` was read (e.g. two concurrent transitions), rejects with 409
+    // instead of applying a transition validated against an already obsolete status.
     await casUpdate(
       this.repo,
       { id, tenant_id: tenantId } as never,

@@ -1,11 +1,11 @@
 /**
  * audit-log/audit-log.controller.ts
  *
- * GET /audit-logs   — lista paginada com filtros (OWNER/ADMIN only)
- * GET /audit-logs/:id — detalhe com diff completo (OWNER/ADMIN only)
+ * GET /audit-logs   — paginated list with filters (OWNER/ADMIN only)
+ * GET /audit-logs/:id — detail with the full diff (OWNER/ADMIN only)
  *
- * Append-only — sem POST, PATCH ou DELETE.
- * Isolation garante por tenant_id em todas as queries.
+ * Append-only — no POST, PATCH or DELETE.
+ * Isolation is guaranteed by tenant_id in every query.
  */
 
 import { Controller, Get, Param, Query, ParseUUIDPipe } from '@nestjs/common';
@@ -31,7 +31,7 @@ export class AuditLogController {
     return this.svc.list(t.id, q);
   }
 
-  // Rota admin ANTES de ':id' — do contrário ':id' capturaria 'admin'.
+  // Admin route BEFORE ':id' — otherwise ':id' would capture 'admin'.
   @Get('admin')
   @RequireRole('super_admin')
   @ApiOperation({ summary: 'Listar audit trail de todos os tenants (painel Admin SaaS, super_admin)' })

@@ -1,32 +1,32 @@
 /**
- * Elegibilidade de share para submissão de registro (ABRAMUS/ECAD/etc.).
+ * Share eligibility for registration submission (ABRAMUS/ECAD/etc.).
  *
- * Regra TRANSITÓRIA (Fase 5 / C6): `share_type` só é gravado pelo fluxo
- * financeiro/pendente (SharePendenteFormModal → shares.service.ts::toColumns()).
- * O fluxo de registro (campos holder_name/party_role/percentage/
- * holder_document, alimentados via os aliases holderName/role/holderDoc)
- * nunca seta
- * `share_type` — não existe hoje uma via de criação própria para shares de
- * registro. Por isso NULL é o único sinal disponível para "não veio do
- * formulário financeiro".
+ * TRANSITIONAL rule (Phase 5 / C6): `share_type` is only written by the
+ * financial/pending flow (SharePendenteFormModal → shares.service.ts::toColumns()).
+ * The registration flow (fields holder_name/party_role/percentage/
+ * holder_document, fed via the holderName/role/holderDoc aliases)
+ * never sets
+ * `share_type` — today there is no dedicated creation path for registration
+ * shares. That is why NULL is the only available signal for "did not come from the
+ * financial form".
  *
- * Isto NÃO é uma extração de FK/entidade nem uma consolidação de conceitos —
- * `share_type` continua sendo escrito apenas pelo fluxo financeiro. Este
- * predicado só documenta e centraliza a regra de LEITURA usada pelos
- * consumidores de registro (society-payload-builder, entity-validators,
- * external-data-exchange), para eles nunca divergirem entre si.
+ * This is NOT an FK/entity extraction nor a consolidation of concepts —
+ * `share_type` is still written only by the financial flow. This
+ * predicate only documents and centralizes the READ rule used by the
+ * registration consumers (society-payload-builder, entity-validators,
+ * external-data-exchange), so they never diverge from each other.
  *
- * TODO (normalização futura, fora do escopo do C6): introduzir um valor
- * explícito (ex.: `share_type = 'registry'`) quando o fluxo de registro
- * ganhar uma via de criação própria, eliminando a dependência de NULL.
+ * TODO (future normalization, out of C6's scope): introduce an explicit
+ * value (e.g. `share_type = 'registry'`) when the registration flow
+ * gets its own creation path, removing the dependency on NULL.
  *
- * Chamado sobre entidades já lidas do banco — `share_type` nunca é
- * `undefined` nesse caso (coluna ausente do SELECT não ocorre nas queries
- * atuais); o predicado não trata `undefined` como elegível.
+ * Called on entities already read from the database — `share_type` is never
+ * `undefined` in that case (a column missing from the SELECT does not occur in the current
+ * queries); the predicate does not treat `undefined` as eligible.
  */
 export function isRegistryEligibleShare(share: { share_type: string | null }): boolean {
   return share.share_type === null;
 }
 
-/** Fragmento SQL equivalente ao predicado acima, para uso em query builders. */
+/** SQL fragment equivalent to the predicate above, for use in query builders. */
 export const REGISTRY_ELIGIBLE_SHARE_SQL = 'share_type IS NULL';

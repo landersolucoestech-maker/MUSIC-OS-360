@@ -15,9 +15,9 @@ import {
 } from './dto/internal-chat.dto';
 
 /**
- * Chat Interno (equipe <-> equipe) — API isolada da Central de Atendimento
- * (`/conversations`, equipe <-> público externo). Nunca compartilha rota,
- * serviço, entidade ou modelo de autorização com aquele módulo.
+ * Internal Chat (team <-> team) — API isolated from the Service Center
+ * (`/conversations`, team <-> external public). It never shares a route,
+ * service, entity or authorization model with that module.
  */
 @ApiTags('Internal Chat')
 @ApiBearerAuth()

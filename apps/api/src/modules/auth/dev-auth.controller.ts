@@ -102,7 +102,7 @@ export class DevAuthController implements OnModuleInit {
         .getOne();
 
       if (!exists) {
-        // Dual-write (PASSO 12-G): resolve role_id canônico de 'owner' (role global seedada).
+        // Dual-write (STEP 12-G): resolves the canonical role_id of 'owner' (seeded global role).
         const ownerRows = this.ds
           ? (await this.ds.query(
               `SELECT "id" FROM "roles" WHERE "slug" = 'owner' AND "tenant_id" IS NULL AND "deleted_at" IS NULL AND "archived_at" IS NULL LIMIT 1`,

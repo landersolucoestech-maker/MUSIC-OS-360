@@ -28,7 +28,7 @@ export class SupportTicketsController {
     return this.svc.list(t.id, q);
   }
 
-  // Rota pública admin ANTES de ':id' — do contrário ':id' capturaria 'admin'.
+  // Public admin route BEFORE ':id' — otherwise ':id' would capture 'admin'.
   @Get('admin') @RequireRole('super_admin')
   @ApiOperation({ summary: 'Listar tickets de todos os tenants (painel Admin SaaS, super_admin)' })
   listAdmin(@Query() q: AdminListSupportTicketsDto) {

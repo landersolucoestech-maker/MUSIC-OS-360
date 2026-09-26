@@ -4,8 +4,8 @@ import { Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
 /**
- * Chaves EXATAS do hook `useOperationalSettings` (frontend) — regra de
- * produto: 1 campo do formulário = 1 nome idêntico em toda camada.
+ * EXACT keys of the `useOperationalSettings` hook (frontend) — product
+ * rule: 1 form field = 1 identical name across every layer.
  */
 export class CreateOperationalListItemDto {
   @ApiProperty() @IsString() @MaxLength(50) kind!: string;

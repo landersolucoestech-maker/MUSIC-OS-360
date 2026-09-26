@@ -1,9 +1,9 @@
 /**
  * modules/assets/assets.module.ts
  *
- * Módulo do modelo central de assets + Asset Linking Skill.
- * DatabaseModule / DomainEventsModule / SkillsModule são @Global — DATA_SOURCE,
- * EventsService e SkillRunService são injetáveis sem import explícito.
+ * Module of the central asset model + Asset Linking Skill.
+ * DatabaseModule / DomainEventsModule / SkillsModule are @Global — DATA_SOURCE,
+ * EventsService and SkillRunService are injectable without an explicit import.
  */
 
 import { Module } from '@nestjs/common';

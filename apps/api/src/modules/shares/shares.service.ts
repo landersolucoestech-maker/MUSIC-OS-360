@@ -57,7 +57,7 @@ export class SharesService {
     };
   }
 
-  /** Distribuição exata direção×status (tenant inteiro) — os 4 baldes de KPI vêm daqui. */
+  /** Exact direction×status distribution (whole tenant) — the 4 KPI buckets come from here. */
   async stats(tenantId: string, query: QueryShareDto): Promise<Array<{ direction: string | null; status: string; cnt: number }>> {
     const qb = this.baseQb(tenantId, query);
     qb.select('s.direction', 'direction')
@@ -79,18 +79,18 @@ export class SharesService {
   }
 
   /**
-   * Chaves do formulário persistem 1:1 nas suas colunas (regra 2026-07-12).
-   * Aliases EN legados (holderName/role/workId/trackId/holderDoc) são
-   * mapeados para as colunas físicas; as NOT NULL (holder_name, percentage)
-   * são espelhadas a partir dos campos do formulário. `percentage` deixou de
-   * ser um alias em 2026-09-13 (RenameSharePartyFieldsToEnglish): o campo do
-   * formulário já se chama `percentage` (era `percentual`), então o antigo
-   * alias e o campo direto convergiram no mesmo nome — sem mapeamento a fazer.
+   * Form keys persist 1:1 into their columns (2026-07-12 rule).
+   * Legacy EN aliases (holderName/role/workId/trackId/holderDoc) are
+   * mapped to the physical columns; the NOT NULL ones (holder_name, percentage)
+   * are mirrored from the form fields. `percentage` stopped
+   * being an alias on 2026-09-13 (RenameSharePartyFieldsToEnglish): the form
+   * field is already called `percentage` (it was `percentual`), so the old
+   * alias and the direct field converged on the same name — nothing to map.
    */
   private toColumns(dto: CreateShareDto | UpdateShareDto): Record<string, unknown> {
     const d = dto as Record<string, unknown>;
     const out: Record<string, unknown> = { ...d };
-    // Aliases EN → colunas legadas (nunca sobrescrevem campos do form)
+    // EN aliases → legacy columns (never overwrite form fields)
     if (d['holderName'] !== undefined) out['holder_name']     = d['holderName'];
     if (d['holderDoc']  !== undefined) out['holder_document'] = d['holderDoc'];
     if (d['role']       !== undefined) out['party_role']      = d['role'];
@@ -166,11 +166,11 @@ export class SharesService {
   }
 
   async create(tenantId: string, dto: CreateShareDto): Promise<ShareEntity> {
-    // holder_name/percentage (campos de titularidade — usados na submissão
-    // ABRAMUS/ECAD) só recebem valor quando o chamador envia holderName/
-    // percentage explicitamente. Nunca são derivados de holder/
-    // artista_externo/pagador/recipient (campos do share financeiro —
-    // conceito distinto, ver Fase 5 / C6) nem preenchidos com default artificial.
+    // holder_name/percentage (ownership fields — used in the ABRAMUS/ECAD
+    // submission) only receive a value when the caller sends holderName/
+    // percentage explicitly. They are never derived from holder/
+    // artista_externo/pagador/recipient (financial share fields — a
+    // distinct concept, see Phase 5 / C6) nor filled with an artificial default.
     const cols = this.toColumns(dto);
     await assertSameTenantFk(this.ds!, 'works',      cols['work_id']      as string | undefined, tenantId, 'Obra');
     await assertSameTenantFk(this.ds!, 'phonograms', cols['phonogram_id'] as string | undefined, tenantId, 'Fonograma');

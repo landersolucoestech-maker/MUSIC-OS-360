@@ -8,9 +8,9 @@ import type { JwtAuth } from '../../core/guards/auth.guard';
 import { ContactsService } from './contacts.service';
 
 /**
- * /contacts — endpoint de compatibilidade. Delega inteiramente a
- * ClientsService via ContactsService (facade); ver o comentário lá para o
- * porquê. Novo código deve usar /clients diretamente.
+ * /contacts — compatibility endpoint. Delegates entirely to
+ * ClientsService via ContactsService (facade); see the comment there for the
+ * why. New code must use /clients directly.
  */
 @Controller('contacts')
 export class ContactsController {

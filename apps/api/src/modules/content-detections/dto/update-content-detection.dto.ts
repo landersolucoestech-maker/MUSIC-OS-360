@@ -3,6 +3,6 @@ import { IsOptional, IsString } from 'class-validator';
 import { CreateContentDetectionDto } from './create-content-detection.dto';
 
 export class UpdateContentDetectionDto extends PartialType(CreateContentDetectionDto) {
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }

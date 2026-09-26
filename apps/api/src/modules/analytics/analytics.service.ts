@@ -152,7 +152,7 @@ export class AnalyticsService {
         FROM transactions
         WHERE tenant_id = $1 AND deleted_at IS NULL AND data >= $2
       `, [tenantId, monthStart]),
-      // Pending receivables (receita pendente/agendada, não cancelada)
+      // Pending receivables (pending/scheduled revenue, not cancelled)
       this.ds.query<[{ total: string }]>(`
         SELECT COALESCE(SUM(valor::numeric), 0)::numeric AS total
         FROM transactions

@@ -5,15 +5,15 @@ import type { DomainEvent } from '../../../core/events/events.service';
 import type { LeadConvertedPayload } from '../../../core/events/domain-events.types';
 
 /**
- * lead-events.handler.spec.ts  (Parte 78)
+ * lead-events.handler.spec.ts  (Part 78)
  *
- * Guarda permanente: onLeadConverted() criava ClientEntity com
- * segmento/responsavel — colunas removidas fisicamente de `clients` pela
- * migration 20260719000010 (mesma causa raiz do bug de exportação de
- * clientes). Como o catch silencioso só loga o erro, toda conversão de lead
- * em cliente falhava sem nenhum sinal visível: nenhum cliente era criado,
- * `lead.client_id` nunca era vinculado. Não havia spec algum para este
- * handler antes desta Parte.
+ * Permanent guard: onLeadConverted() created a ClientEntity with
+ * segmento/responsavel — columns physically removed from `clients` by
+ * migration 20260719000010 (same root cause as the client export
+ * bug). Since the silent catch only logs the error, every lead-to-client
+ * conversion failed without any visible signal: no client was created,
+ * `lead.client_id` was never linked. There was no spec at all for this
+ * handler before this Part.
  */
 function makeRepo() {
   return {

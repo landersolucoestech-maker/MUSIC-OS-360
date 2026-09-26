@@ -1,13 +1,13 @@
 /**
- * TEST-03 (auditoria 2026-07-05): o fix do 400 no webhook Stripe (commit b728b133)
- * nao tinha nenhuma cobertura automatizada — nenhum spec referenciava `rawBody`.
- * Uma futura mudanca em main.ts (reordenar middlewares, trocar parser, remover o
- * `verify:` callback) poderia reintroduzir o bug silenciosamente.
+ * TEST-03 (2026-07-05 audit): the fix for the Stripe webhook 400 (commit b728b133)
+ * had no automated coverage — no spec referenced `rawBody`.
+ * A future change in main.ts (reordering middlewares, swapping the parser, removing the
+ * `verify:` callback) could silently reintroduce the bug.
  *
- * Este teste reproduz o pipeline real: `express.json({ verify })` (exatamente como
- * configurado em apps/api/src/main.ts) seguido de um handler que chama o SDK real
- * do Stripe (`stripe.webhooks.constructEvent`) contra o `req.rawBody` populado pelo
- * `verify` callback — a mesma cadeia usada por BillingController.webhook().
+ * This test reproduces the real pipeline: `express.json({ verify })` (exactly as
+ * configured in apps/api/src/main.ts) followed by a handler that calls the real Stripe
+ * SDK (`stripe.webhooks.constructEvent`) against the `req.rawBody` populated by the
+ * `verify` callback — the same chain used by BillingController.webhook().
  */
 import * as express from 'express';
 import * as request from 'supertest';
@@ -92,8 +92,8 @@ describe('Stripe webhook rawBody wiring (regressao do fix b728b133)', () => {
   });
 
   it('REGRESSION: without the verify callback (req.rawBody never populated), a valid webhook is rejected with 400', async () => {
-    // Parser "ingenuo" sem `verify` — reproduz exatamente o bug do commit b728b133
-    // (req.rawBody fica undefined -> constructEvent nunca roda -> 400 sempre).
+    // "Naive" parser without `verify` — reproduces exactly the bug of commit b728b133
+    // (req.rawBody stays undefined -> constructEvent never runs -> always 400).
     const naiveParser = express.json({ limit: '1mb' });
     const app = makeAppWithWebhookRoute(naiveParser);
     const { payload, header } = makeSignedPayload();

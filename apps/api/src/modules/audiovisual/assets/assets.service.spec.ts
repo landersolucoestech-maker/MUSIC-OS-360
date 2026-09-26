@@ -6,11 +6,11 @@ import { DATA_SOURCE } from '../../../database/database.tokens';
 import { AudiovisualAssetEntity, AudiovisualProjectEntity } from '../../../database/entities';
 
 /**
- * Task L — concorrência otimista aplicada à "cauda audiovisual" (assets,
- * production-days, shots, tasks, team-members — mesmo padrão de blind
- * overwrite confirmado na auditoria, corrigido com o mesmo casUpdate
- * genérico). Este spec cobre `assets` como representante do grupo — os
- * outros 4 seguem exatamente a mesma forma de correção.
+ * Task L — optimistic concurrency applied to the "audiovisual tail" (assets,
+ * production-days, shots, tasks, team-members — same blind-overwrite
+ * pattern confirmed in the audit, fixed with the same generic
+ * casUpdate). This spec covers `assets` as the group's representative — the
+ * other 4 follow exactly the same fix shape.
  */
 const TENANT = 'tenant-test';
 const ASSET_ID = 'asset-test';

@@ -59,16 +59,16 @@ export class CreateAudiovisualProjectDto {
   @ApiPropertyOptional() @IsOptional() @IsUUID() event_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsObject() metadata?: Record<string, unknown>;
 
-  // ── Campos do formulário (chaves EXATAS de AudiovisualProjectFormModal) ──────
-  // Regra de produto: cada campo do form tem a sua coluna física
-  // (migration 20260718000012). music_id/budget/real_cost usam os nomes
-  // reais já existentes (phonogram_id/budget_estimated/budget_actual).
+  // ── Form fields (EXACT keys of AudiovisualProjectFormModal) ───────────────────
+  // Product rule: each form field has its own physical column
+  // (migration 20260718000012). music_id/budget/real_cost use the
+  // already existing real names (phonogram_id/budget_estimated/budget_actual).
   //
-  // find (Wave 13): estes campos estavam declarados em QueryAudiovisualProjectDto
-  // (um DTO de query params de listagem) em vez de aqui -- o corpo real de
-  // create/update era rejeitado inteiro por forbidNonWhitelisted, exatamente o
-  // bug que audiovisual.dto.spec.ts's "regressao do bug real" foi escrito para
-  // prevenir. Movidos para o DTO correto.
+  // find (Wave 13): these fields were declared in QueryAudiovisualProjectDto
+  // (a listing query-params DTO) instead of here -- the real create/update
+  // body was rejected entirely by forbidNonWhitelisted, exactly the
+  // bug that audiovisual.dto.spec.ts's "regression of the real bug" suite was written to
+  // prevent. Moved to the correct DTO.
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(500) music_title?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) artist_name?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) format?: string;
@@ -87,14 +87,14 @@ export class CreateAudiovisualProjectDto {
 }
 
 export class UpdateAudiovisualProjectDto extends PartialType(CreateAudiovisualProjectDto) {
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 
 export class TransitionProjectStatusDto {
   @ApiProperty({ enum: PROJECT_STATUSES }) @IsIn(PROJECT_STATUSES) status!: typeof PROJECT_STATUSES[number];
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(2000) reason?: string;
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 
@@ -127,7 +127,7 @@ export class UpsertBriefingDto {
   @ApiPropertyOptional() @IsOptional() @IsString() manager_notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() technical_notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsObject() metadata?: Record<string, unknown>;
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 
@@ -149,7 +149,7 @@ export class UpdateDeliverableDto extends PartialType(CreateDeliverableDto) {
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() approved?: boolean;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() published?: boolean;
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 
@@ -167,7 +167,7 @@ export class RequestApprovalDto {
 export class ApprovalDecisionDto {
   @ApiProperty({ enum: APPROVAL_STATUSES }) @IsIn(APPROVAL_STATUSES) status!: typeof APPROVAL_STATUSES[number];
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(4000) comments?: string;
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 

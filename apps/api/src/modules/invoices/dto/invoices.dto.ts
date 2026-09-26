@@ -17,13 +17,13 @@ export class InvoiceItemDto {
 }
 
 /**
- * Contrato canônico do NotaFiscalFormModal.
+ * Canonical contract of NotaFiscalFormModal.
  *
- * O DTO antigo descrevia um objeto Stripe/inglês (`type`, `amount`,
- * `issuerName`, `recipientDoc`) que não correspondia ao payload real da tela.
- * Com whitelist/forbidNonWhitelisted, o formulário completo era rejeitado ou
- * tinha campos descartados. Este DTO acompanha os nomes efetivamente exibidos,
- * validados e persistidos pela interface.
+ * The old DTO described a Stripe/English object (`type`, `amount`,
+ * `issuerName`, `recipientDoc`) that did not match the screen's real payload.
+ * With whitelist/forbidNonWhitelisted, the full form was rejected or
+ * had fields discarded. This DTO follows the names actually displayed,
+ * validated and persisted by the interface.
  */
 export class CreateInvoiceDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) numero?: string;
@@ -52,7 +52,7 @@ export class CreateInvoiceDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(2) tomador_uf?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(10) tomador_cep?: string;
 
-  /** Coluna legada ainda usada por eventos e telas antigas; espelha service_amount. */
+  /** Legacy column still used by events and old screens; mirrors service_amount. */
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) legacy_amount?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) service_amount?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) deductions_amount?: number;
@@ -80,7 +80,7 @@ export class CreateInvoiceDto {
 }
 
 export class UpdateInvoiceDto extends PartialType(CreateInvoiceDto) {
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 
@@ -90,8 +90,8 @@ export class QueryInvoiceDto extends PaginationDto {
   @ApiPropertyOptional() @IsOptional() @IsUUID() client_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() search?: string;
 
-  // Aliases legados mantidos somente para clientes antigos; o service deve
-  // priorizar os campos canônicos acima.
+  // Legacy aliases kept only for old clients; the service must
+  // prioritize the canonical fields above.
   @ApiPropertyOptional() @IsOptional() @IsString() type?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() artistId?: string;
 }

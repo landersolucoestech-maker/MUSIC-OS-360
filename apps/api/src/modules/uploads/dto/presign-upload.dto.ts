@@ -1,7 +1,7 @@
 /**
  * modules/uploads/dto/presign-upload.dto.ts
  *
- * DTO para requisição de URL pré-assinada de upload directo ao R2.
+ * DTO for requesting a presigned URL for a direct upload to R2.
  */
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';

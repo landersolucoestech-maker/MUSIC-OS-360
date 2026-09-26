@@ -29,7 +29,7 @@ export class CreateLeadDto {
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
 
-  // ── Campos do CRM musical (colunas físicas reais de `leads`) ───────────────
+  // ── Music CRM fields (real physical columns of `leads`) ─────────────────────
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) nomeArtistico?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) empresa?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50)  whatsapp?: string;

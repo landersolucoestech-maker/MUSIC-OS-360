@@ -25,26 +25,26 @@ export class CreateUserDto {
 }
 
 /**
- * Atualização do perfil de membership.
+ * Update of the membership profile.
  *
- * `email` e `userId` não pertencem a este endpoint: ambos vivem no provedor de
- * autenticação e exigem fluxos próprios de confirmação/admin.
+ * `email` and `userId` do not belong to this endpoint: both live in the
+ * authentication provider and require their own confirmation/admin flows.
  *
- * Task L: `status` (is_active) e `role` foram REMOVIDOS deste DTO — eram
- * aceites aqui via `PATCH /users/:id` (gate apenas 'manager') sem passar
- * pelas checagens de autorização/hierarquia que os endpoints dedicados têm
- * (`PATCH /users/:id/role`, gate 'admin', valida hierarquia via
- * assertCanAssignRole; `PATCH /users/:id/status`, gate 'owner', protege o
- * último owner via assertNotLastOwner). Um 'manager' conseguia se
- * auto-promover a 'owner' ou desativar o último owner do tenant contornando
- * essas proteções. Este DTO agora só cobre campos de perfil puro.
+ * Task L: `status` (is_active) and `role` were REMOVED from this DTO — they were
+ * accepted here via `PATCH /users/:id` (gate 'manager' only) without going through
+ * the authorization/hierarchy checks the dedicated endpoints have
+ * (`PATCH /users/:id/role`, gate 'admin', validates the hierarchy via
+ * assertCanAssignRole; `PATCH /users/:id/status`, gate 'owner', protects the
+ * last owner via assertNotLastOwner). A 'manager' could
+ * self-promote to 'owner' or deactivate the tenant's last owner by bypassing
+ * those protections. This DTO now covers only pure profile fields.
  */
 export class UpdateUserDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) fullName?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) phone?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() avatarUrl?: string;
   @ApiPropertyOptional() @IsOptional() @IsObject() metadata?: Record<string, unknown>;
-  /** Concorrência otimista (Task L) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task L) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 
@@ -53,15 +53,15 @@ export class AssignRoleDto {
   @IsString()
   @Matches(/^[a-z0-9_-]+$/)
   role!: string;
-  /** Concorrência otimista (Task L) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task L) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 
-/** Task L: endpoint dedicado (PATCH /users/:id/status), separado de UpdateUserDto
- * para manter a mesma proteção contra o último owner que remove() já tinha. */
+/** Task L: dedicated endpoint (PATCH /users/:id/status), separate from UpdateUserDto
+ * to keep the same last-owner protection that remove() already had. */
 export class SetStatusDto {
   @ApiProperty({ enum: STATUSES }) @IsIn(STATUSES) status!: string;
-  /** Concorrência otimista (Task L) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task L) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 

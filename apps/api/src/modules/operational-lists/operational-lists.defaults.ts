@@ -1,13 +1,13 @@
 /**
- * Itens padrão da taxonomia operacional (Leads, Contatos, Eventos, Marketing,
- * Briefing). Fonte canônica usada pelo bootstrap idempotente de novos tenants
- * (OperationalListsService.list) e pela migration que semeia os tenants já
- * existentes (20260713000001_CreateOperationalListItems).
+ * Default items of the operational taxonomy (Leads, Contacts, Events, Marketing,
+ * Briefing). Canonical source used by the idempotent bootstrap of new tenants
+ * (OperationalListsService.list) and by the migration that seeds the already
+ * existing tenants (20260713000001_CreateOperationalListItems).
  *
- * Conteúdo portado 1:1 de DEFAULT_OPERATIONAL_LISTS em
- * apps/web/src/modules/settings/hooks/useOperationalSettings.ts — mesma
- * fonte de negócio, duplicada apenas porque backend (Node) e frontend
- * (browser) são runtimes distintos que não compartilham módulo TS.
+ * Content ported 1:1 from DEFAULT_OPERATIONAL_LISTS in
+ * apps/web/src/modules/settings/hooks/useOperationalSettings.ts — same
+ * business source, duplicated only because the backend (Node) and the frontend
+ * (browser) are distinct runtimes that do not share a TS module.
  */
 export interface OperationalListItemDefault {
   kind: string;

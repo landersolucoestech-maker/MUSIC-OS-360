@@ -22,9 +22,9 @@ function isPublisher(role: string | null | undefined): boolean {
 }
 
 /**
- * Só é chamada com shares já filtradas por isRegistryEligibleShare() — uma
- * share elegível sem holder_name/percentage é dado de registro incompleto,
- * não "ausência aceitável". Nunca silenciosamente vira '' ou 0 (ver Fase 5 / C6).
+ * Only called with shares already filtered by isRegistryEligibleShare() — an
+ * eligible share without holder_name/percentage is incomplete registration data,
+ * not an "acceptable absence". It never silently becomes '' or 0 (see Phase 5 / C6).
  */
 function shareToParty(s: ShareEntity): PayloadParty {
   const name = s.credited_name ?? s.holder_name;
@@ -92,7 +92,7 @@ export class SocietyPayloadBuilderService {
     this.assertDb();
     const work = await this.works!.findOne({ where: { id: workId, tenant_id: tenantId } });
     if (!work || work.deleted_at) throw new NotFoundException('Obra não encontrada');
-    // share_type IS NULL = elegibilidade transitória de registro (ver share-eligibility.util.ts).
+    // share_type IS NULL = transitional registration eligibility (see share-eligibility.util.ts).
     const shares = (await this.shares!.find({ where: { tenant_id: tenantId, work_id: workId, share_type: IsNull() } }))
       .filter((s) => !s.deleted_at && isRegistryEligibleShare(s));
 
@@ -132,7 +132,7 @@ export class SocietyPayloadBuilderService {
     this.assertDb();
     const rec = await this.phonograms!.findOne({ where: { id: recordingId, tenant_id: tenantId } });
     if (!rec || rec.deleted_at) throw new NotFoundException('Fonograma não encontrado');
-    // share_type IS NULL = elegibilidade transitória de registro (ver share-eligibility.util.ts).
+    // share_type IS NULL = transitional registration eligibility (see share-eligibility.util.ts).
     const shares = (await this.shares!.find({ where: { tenant_id: tenantId, phonogram_id: recordingId, share_type: IsNull() } }))
       .filter((s) => !s.deleted_at && isRegistryEligibleShare(s));
 

@@ -5,10 +5,10 @@ import { PlatformContactService } from './platform-contact.service';
 import { PlatformContactDto } from './dto/platform-contact.dto';
 
 /**
- * Platform Commercial Contact — contato institucional/comercial sobre o
- * próprio Music OS 360 (landing page). Deliberadamente sem @CurrentTenant()
- * e sem qualquer relação com tenant, Support Ticket ou MusicChat — ver
- * decisão de produto 2026-08-22.
+ * Platform Commercial Contact — institutional/commercial contact about
+ * Music OS 360 itself (landing page). Deliberately without @CurrentTenant()
+ * and without any relation to tenant, Support Ticket or MusicChat — see
+ * the 2026-08-22 product decision.
  */
 @ApiTags('Public') @Controller('public')
 export class PlatformContactController {

@@ -135,7 +135,7 @@ export class CreateMarketingProjectDto {
 }
 
 export class UpdateMarketingProjectDto extends PartialType(CreateMarketingProjectDto) {
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 

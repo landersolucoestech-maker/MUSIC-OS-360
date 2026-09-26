@@ -1,9 +1,9 @@
 /**
  * conversations/conversations.service.ts
  *
- * Inbox operacional multi-canal.
- * Toda conversa pertence a um tenant; toda mensagem pertence a uma conversa.
- * Nota interna (note) é visível apenas para a equipe, nunca para o contact.
+ * Multi-channel operational inbox.
+ * Every conversation belongs to a tenant; every message belongs to a conversation.
+ * An internal note is visible only to the team, never to the contact.
  */
 
 import {
@@ -243,13 +243,13 @@ export class ConversationsService {
     });
     let saved = await this.msgRepo!.save(msg);
 
-    // Entrega externa real: uma resposta do agente (senderType='user') numa
-    // conversa de canal externo precisa realmente chegar ao contact, não só
-    // ficar gravada no banco — antes desta correção, addMessage() nunca
-    // despachava a nenhum provider (WhatsAppCloudProvider já injetado só era
-    // usado para notificações de escalonamento, nunca para respostas reais).
-    // Nunca lança em caso de falha de entrega — a mensagem já é um registo
-    // válido internamente; delivery_status honesto fica em metadata para a UI.
+    // Real external delivery: an agent reply (senderType='user') in an
+    // external-channel conversation must actually reach the contact, not just
+    // be stored in the database — before this fix, addMessage() never
+    // dispatched to any provider (the already injected WhatsAppCloudProvider was only
+    // used for escalation notifications, never for real replies).
+    // Never throws on a delivery failure — the message is already a valid
+    // internal record; an honest delivery_status stays in metadata for the UI.
     if (senderType === 'user') {
       saved = await this.dispatchOutbound(tenantId, conv, saved);
     }
@@ -272,11 +272,11 @@ export class ConversationsService {
   }
 
   /**
-   * Entrega real da mensagem no canal externo da conversa. Canais sem
-   * provider real (email/telegram/instagram/facebook/tiktok/sms/custom)
-   * ficam 'internal_only' honestamente — nunca finge que foi entregue.
-   * Falha de entrega nunca lança: a mensagem já foi persistida (registo
-   * interno válido), só o delivery_status reflete a falha real.
+   * Real delivery of the message on the conversation's external channel. Channels without
+   * a real provider (email/telegram/instagram/facebook/tiktok/sms/custom)
+   * honestly stay 'internal_only' — never pretends it was delivered.
+   * A delivery failure never throws: the message was already persisted (valid internal
+   * record), only delivery_status reflects the real failure.
    */
   private async dispatchOutbound(
     tenantId: string,
@@ -427,8 +427,8 @@ export class ConversationsService {
     dto: CloseConversationDto,
   ): Promise<ConversationEntity> {
     const conv = await this.findConversationById(tenantId, conversationId);
-    // Idempotência: já fechada — não sobrescrever o audit trail (closure.closed_by/closed_at)
-    // original de uma race/double-submit com os valores da chamada atual.
+    // Idempotency: already closed — do not overwrite the original audit trail (closure.closed_by/closed_at)
+    // of a race/double-submit with the current call's values.
     if (conv.status === 'closed') return conv;
 
     const metadata = {
@@ -462,8 +462,8 @@ export class ConversationsService {
     dto: ReopenConversationDto,
   ): Promise<ConversationEntity> {
     const conv = await this.findConversationById(tenantId, conversationId);
-    // Idempotência: já aberta — não sobrescrever reopened.reopened_by/reopened_at de uma
-    // race/double-submit com os valores da chamada atual.
+    // Idempotency: already open — do not overwrite reopened.reopened_by/reopened_at of a
+    // race/double-submit with the current call's values.
     if (conv.status === 'open') return conv;
 
     const metadata = {

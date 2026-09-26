@@ -1,8 +1,8 @@
 /**
  * modules/notifications/notifications.service.ts
  *
- * NotificationsService — CRUD de notificações + enqueue para a fila BullMQ.
- * Quando Redis não está disponível, enqueue() é no-op silencioso.
+ * NotificationsService — notification CRUD + enqueue to the BullMQ queue.
+ * When Redis is not available, enqueue() is a silent no-op.
  */
 
 import { Injectable, Inject, Optional, NotFoundException } from '@nestjs/common';

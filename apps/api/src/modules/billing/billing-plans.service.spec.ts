@@ -164,7 +164,7 @@ describe('BillingPlansService', () => {
     it('creates a NEW Price when the amount changes and deactivates the old one (without recreating the Product)', async () => {
       repo.findOne.mockResolvedValueOnce({ ...existing });
       await service.update('plan-1', { amount: 39900 });
-      expect(stripe().products.create).not.toHaveBeenCalled();    // product já existe → update
+      expect(stripe().products.create).not.toHaveBeenCalled();    // product already exists → update
       expect(stripe().products.update).toHaveBeenCalledWith('prod_1', expect.any(Object));
       expect(stripe().prices.create).toHaveBeenCalledTimes(1);    // novo price
       expect(stripe().prices.update).toHaveBeenCalledWith('price_1', { active: false }); // desativa antigo

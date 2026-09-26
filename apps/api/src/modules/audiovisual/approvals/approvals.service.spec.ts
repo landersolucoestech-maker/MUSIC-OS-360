@@ -6,15 +6,15 @@ import { DATA_SOURCE } from '../../../database/database.tokens';
 import { AudiovisualApprovalEntity } from '../../../database/entities';
 
 /**
- * Task K — concorrência otimista em AudiovisualApprovalsService.decide().
+ * Task K — optimistic concurrency in AudiovisualApprovalsService.decide().
  *
- * Antes: `if (current.status !== 'pending') throw ...` era checado ANTES do
- * UPDATE, mas o UPDATE em si não repetia essa condição — duas decisões
- * concorrentes (dois managers decidindo a mesma aprovação ao mesmo tempo)
- * passavam ambas no pre-check e a segunda sobrescrevia a primeira em
- * silêncio. Agora: status='pending' faz parte da PRÓPRIA condição do
- * UPDATE (não só do pre-check) — 0 linhas afetadas -> 409. Opcionalmente
- * também aceita `expectedUpdatedAt` para o guard genérico de Task K.
+ * Before: `if (current.status !== 'pending') throw ...` was checked BEFORE the
+ * UPDATE, but the UPDATE itself did not repeat that condition — two concurrent
+ * decisions (two managers deciding the same approval at the same time)
+ * both passed the pre-check and the second silently overwrote the first.
+ * Now: status='pending' is part of the UPDATE's OWN condition
+ * (not only the pre-check) — 0 affected rows -> 409. Optionally
+ * also accepts `expectedUpdatedAt` for the generic Task K guard.
  */
 
 const TENANT = 'tenant-test';
@@ -84,10 +84,10 @@ describe('AudiovisualApprovalsService — optimistic concurrency in decide()', (
   });
 
   it('with a correct expectedUpdatedAt: includes updated_at in the criteria besides the status guard', async () => {
-    // Task Y — decide() passou a reaproveitar o casUpdate compartilhado
-    // (Task X); updated_at deixou de ser igualdade exata de Date (timestamp
-    // sem tz perde precisão no round-trip Date/JSON) e virou Raw() truncado
-    // a milissegundos — ver optimistic-update.util.ts.
+    // Task Y — decide() now reuses the shared casUpdate
+    // (Task X); updated_at stopped being an exact Date equality (a timestamp
+    // without tz loses precision in the Date/JSON round-trip) and became a Raw()
+    // truncated to milliseconds — see optimistic-update.util.ts.
     service = await buildService({ affected: 1 });
     await service.decide(TENANT, 'manager1', APPROVAL_ID, {
       status: 'approved',

@@ -1,15 +1,15 @@
 /**
  * billing/billing.controller.ts
  *
- * Controller Stripe Billing — 4 rotas:
- *   POST /api/v1/billing/checkout         — criar sessão de checkout
- *   POST /api/v1/billing/portal           — abrir portal de gestão
- *   GET  /api/v1/billing/subscription     — assinatura actual
- *   POST /api/v1/billing/webhooks/stripe  — webhook HMAC validado (público)
+ * Stripe Billing controller — 4 routes:
+ *   POST /api/v1/billing/checkout         — create a checkout session
+ *   POST /api/v1/billing/portal           — open the management portal
+ *   GET  /api/v1/billing/subscription     — current subscription
+ *   POST /api/v1/billing/webhooks/stripe  — HMAC-validated webhook (public)
  *
- * JwtAuthGuard + TenantGuard correm globalmente (APP_GUARD).
- * checkout/portal/subscription exigem role owner+ (gestão financeira crítica).
- * O webhook é marcado @Public() — verificação HMAC feita no BillingService.
+ * JwtAuthGuard + TenantGuard run globally (APP_GUARD).
+ * checkout/portal/subscription require role owner+ (critical financial management).
+ * The webhook is marked @Public() — HMAC verification is done in BillingService.
  */
 
 import {
@@ -40,9 +40,9 @@ export class BillingController {
     private readonly plans: BillingPlansService,
   ) {}
 
-  // ── Gestão de Planos (fonte primária = banco/admin; Stripe é sincronizado) ──
+  // ── Plan management (primary source = database/admin; Stripe is synced) ──
 
-  // Rota pública ANTES de plans/:id — do contrário ':id' capturaria 'public'.
+  // Public route BEFORE plans/:id — otherwise ':id' would capture 'public'.
   @Get('plans/public')
   @Public()
   @ApiOperation({ summary: 'Listar planos ativos publicamente (Landing) — sem autenticação' })
@@ -237,13 +237,13 @@ export class BillingController {
     );
   }
 
-  // Sem @Audit(): não há actor de usuário neste caminho (Stripe é o autor), o
-  // registo real do evento já existe em payment_events/webhook_events, e
-  // body.id aqui é o id do evento Stripe (evt_...), não um id de
-  // billing_subscriptions — o before-snapshot genérico do AuditInterceptor
-  // (SELECT ... WHERE id = $1) quebrava com "invalid input syntax for type
-  // uuid", envenenando a transação aberta por BillingService.handleWebhook()
-  // e derrubando o webhook inteiro com 500 mesmo com assinatura válida.
+  // No @Audit(): there is no user actor on this path (Stripe is the author), the
+  // real record of the event already exists in payment_events/webhook_events, and
+  // body.id here is the Stripe event id (evt_...), not a
+  // billing_subscriptions id — the AuditInterceptor's generic before-snapshot
+  // (SELECT ... WHERE id = $1) broke with "invalid input syntax for type
+  // uuid", poisoning the transaction opened by BillingService.handleWebhook()
+  // and bringing the whole webhook down with a 500 even with a valid signature.
   @Post('webhooks/stripe')
   @Public()
   @ApiOperation({ summary: 'Webhook Stripe (HMAC validado, sem autenticação)' })

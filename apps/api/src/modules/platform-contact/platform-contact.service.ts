@@ -1,13 +1,13 @@
 /**
  * modules/platform-contact/platform-contact.service.ts
  *
- * Platform Commercial Contact (decisão de produto 2026-08-22): contato
- * institucional/comercial sobre o próprio Music OS 360 — NÃO pertence a
- * nenhum tenant operacional. Encaminha por e-mail via MailService (Resend,
- * já real e existente — core/mail/mail.service.ts) para
- * PLATFORM_CONTACT_RECIPIENT_EMAIL. Nunca cria Support Ticket, conversation
- * do MusicChat, lead ou qualquer registro dentro de um tenant. Não persiste
- * nada — o requisito é apenas encaminhar por e-mail.
+ * Platform Commercial Contact (2026-08-22 product decision): institutional/
+ * commercial contact about Music OS 360 itself — it does NOT belong to
+ * any operational tenant. Forwards by e-mail via MailService (Resend,
+ * already real and existing — core/mail/mail.service.ts) to
+ * PLATFORM_CONTACT_RECIPIENT_EMAIL. Never creates a Support Ticket, a MusicChat
+ * conversation, a lead or any record inside a tenant. Persists
+ * nothing — the requirement is only to forward by e-mail.
  */
 import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -24,9 +24,9 @@ export class PlatformContactService {
   ) {}
 
   async submit(dto: PlatformContactDto): Promise<{ accepted: true }> {
-    // Honeypot — mesmo padrão já usado no Artist Public Form
-    // (leads.service.ts submitPublicArtistApplication): aceita em silêncio,
-    // nunca revela ao bot que foi detectado.
+    // Honeypot — same pattern already used in the Artist Public Form
+    // (leads.service.ts submitPublicArtistApplication): silently accepts,
+    // never reveals to the bot that it was detected.
     if (dto.website) {
       return { accepted: true };
     }

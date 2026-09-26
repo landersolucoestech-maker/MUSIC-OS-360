@@ -2,19 +2,19 @@ import { ConflictException, BadRequestException } from '@nestjs/common';
 import { UsersService } from './users.service';
 
 /**
- * Task L — dois riscos corrigidos juntos neste módulo:
+ * Task L — two risks fixed together in this module:
  *
- * 1) update() (PATCH /users/:id, gate 'manager') aceitava `role`/`status` sem
- *    passar pelas checagens de autorização (assertCanAssignRole) nem de
- *    último-owner (assertNotLastOwner) que os endpoints dedicados têm — um
- *    'manager' conseguia se auto-promover a 'owner' pelo PATCH genérico.
- *    UpdateUserDto não aceita mais esses campos; update() só toca full_name/
- *    phone. Provado aqui a nível de service (a rejeição do DTO em si já é
- *    coberta pelo whitelist do ValidationPipe).
+ * 1) update() (PATCH /users/:id, gate 'manager') accepted `role`/`status` without
+ *    going through the authorization checks (assertCanAssignRole) nor the
+ *    last-owner check (assertNotLastOwner) the dedicated endpoints have — a
+ *    'manager' could self-promote to 'owner' through the generic PATCH.
+ *    UpdateUserDto no longer accepts these fields; update() only touches full_name/
+ *    phone. Proven here at the service level (the DTO rejection itself is already
+ *    covered by the ValidationPipe whitelist).
  *
- * 2) lost update: update()/assignRole()/setStatus() sobrescreviam sem checar
- *    se o registro mudou desde a leitura. Agora usam casUpdate — cenário A/B
- *    provado abaixo.
+ * 2) lost update: update()/assignRole()/setStatus() overwrote without checking
+ *    whether the record changed since it was read. They now use casUpdate — A/B scenario
+ *    proven below.
  */
 describe('UsersService — Task L (RBAC separation + concurrency)', () => {
   const TENANT = 'tenant-a';
@@ -63,8 +63,8 @@ describe('UsersService — Task L (RBAC separation + concurrency)', () => {
   describe('profile vs RBAC separation', () => {
     it('update() only writes full_name/phone — never role/role_id/is_active even if present in the object', async () => {
       const { service, repo } = buildService();
-      // Simula um dto "vazado" com role/status (não deveria acontecer via
-      // DTO real, mas prova que o SERVICE em si não os processa).
+      // Simulates a "leaked" dto with role/status (should not happen via the
+      // real DTO, but proves the SERVICE itself does not process them).
       await service.update(TENANT, MEMBER_ID, {
         fullName: 'Novo Nome',
         phone: '123',
@@ -102,9 +102,9 @@ describe('UsersService — Task L (RBAC separation + concurrency)', () => {
       await expect(
         service.assignRole(TENANT, MEMBER_ID, 'admin', 'owner', NOW.toISOString()),
       ).rejects.toThrow(ConflictException);
-      // roleResolver (parte da resolução role -> role_id, pós-autorização)
-      // ainda foi chamado antes do CAS falhar — confirma que a ordem é
-      // autorização -> resolução -> CAS, nunca CAS pulando a autorização.
+      // roleResolver (part of the role -> role_id resolution, post-authorization)
+      // was still called before the CAS failed — confirms the order is
+      // authorization -> resolution -> CAS, never CAS skipping authorization.
       expect(repo.update).toHaveBeenCalledTimes(1);
     });
 

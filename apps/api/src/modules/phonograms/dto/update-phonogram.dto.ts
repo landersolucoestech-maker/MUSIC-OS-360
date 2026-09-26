@@ -3,6 +3,6 @@ import { IsOptional, IsString } from 'class-validator';
 import { CreatePhonogramDto } from './create-phonogram.dto';
 
 export class UpdatePhonogramDto extends PartialType(CreatePhonogramDto) {
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }

@@ -1,17 +1,17 @@
 /**
  * modules/assets/asset-classification.service.ts
  *
- * Asset Classification Skill (real). Classifica o asset central em categorias
- * operacionais (wav, mp3, master, instrumental, guia, cover_art, banner, teaser,
+ * Asset Classification Skill (real). Classifies the central asset into operational
+ * categories (wav, mp3, master, instrumental, guia, cover_art, banner, teaser,
  * reel, story, short, lyric_video, visualizer, videoclipe, document, contrato…)
- * a partir de MIME + nome do arquivo + categoria de upload.
+ * from MIME + file name + upload category.
  *
- *   - classifyAndApply(): usado automaticamente pelo Asset Linking ao criar o
- *     asset (método "heuristic"), persistindo type + metadados de classificação.
- *   - review(): revisão MANUAL (método "manual"), executada como skill própria
- *     (skill_runs) com auditoria e log de uso.
+ *   - classifyAndApply(): used automatically by Asset Linking when creating the
+ *     asset ("heuristic" method), persisting type + classification metadata.
+ *   - review(): MANUAL review ("manual" method), executed as its own skill
+ *     (skill_runs) with auditing and a usage log.
  *
- * Infraestrutura interna — invisível ao usuário final.
+ * Internal infrastructure — invisible to the end user.
  */
 
 import { Injectable, Inject, Optional, Logger, NotFoundException } from '@nestjs/common';
@@ -42,7 +42,7 @@ export class AssetClassificationService {
     }
   }
 
-  /** Heurística pura de classificação (sem persistência). */
+  /** Pure classification heuristic (no persistence). */
   static classify(mimeType: string, fileName: string, category?: string | null): ClassificationResult {
     const name = `${fileName ?? ''} ${category ?? ''}`.toLowerCase();
     const mime = (mimeType ?? '').toLowerCase();
@@ -80,7 +80,7 @@ export class AssetClassificationService {
     return { assetType: 'unknown', confidence: 0.2, method: 'heuristic' };
   }
 
-  /** Aplica uma classificação ao asset (persistência + log de uso). */
+  /** Applies a classification to the asset (persistence + usage log). */
   async applyClassification(
     tenantId: string,
     assetId: string,
@@ -118,7 +118,7 @@ export class AssetClassificationService {
     }
   }
 
-  /** Classificação automática (heurística) — usada pelo Asset Linking. */
+  /** Automatic (heuristic) classification — used by Asset Linking. */
   async classifyAndApply(
     tenantId: string,
     assetId: string,
@@ -132,7 +132,7 @@ export class AssetClassificationService {
     return result;
   }
 
-  /** Revisão MANUAL da classificação — executa como skill com auditoria própria. */
+  /** MANUAL classification review — runs as a skill with its own auditing. */
   async review(tenantId: string, assetId: string, assetType: string, actorId: string): Promise<ClassificationResult> {
     return this.skillRuns.run<ClassificationResult>(
       {

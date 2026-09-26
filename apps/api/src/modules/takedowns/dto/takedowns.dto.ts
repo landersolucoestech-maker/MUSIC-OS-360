@@ -7,12 +7,12 @@ const PRIORIDADES = ['alta', 'media', 'baixa'] as const;
 const STATUSES = ['pendente', 'em_andamento', 'concluido', 'rejeitado'] as const;
 
 /**
- * Contrato canônico do modal TakedownFormModal.
+ * Canonical contract of the TakedownFormModal modal.
  *
- * O DTO anterior descrevia outro produto (`platform`, `trackId`, `reason`,
- * `requestedAt`) e fazia o ValidationPipe rejeitar o payload real em
- * snake_case enviado pela interface. Estes campos correspondem 1:1 aos inputs
- * persistidos pelo formulário e às colunas físicas de `takedowns`.
+ * The previous DTO described another product (`platform`, `trackId`, `reason`,
+ * `requestedAt`) and made the ValidationPipe reject the real snake_case payload
+ * sent by the interface. These fields correspond 1:1 to the inputs
+ * persisted by the form and to the physical columns of `takedowns`.
  */
 export class CreateTakedownDto {
   @ApiProperty() @IsString() @MaxLength(255) title!: string;
@@ -29,15 +29,15 @@ export class CreateTakedownDto {
   @ApiPropertyOptional() @IsOptional() @IsString() evidencias?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
 
-  // Relações opcionais preenchidas por fluxos internos, sem substituir os
-  // campos legíveis exibidos no formulário.
+  // Optional relations filled by internal flows, without replacing the
+  // readable fields displayed in the form.
   @ApiPropertyOptional() @IsOptional() @IsUUID() work_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsObject() metadata?: Record<string, unknown>;
 }
 
 export class UpdateTakedownDto extends PartialType(CreateTakedownDto) {
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   @ApiPropertyOptional() @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 

@@ -6,15 +6,15 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { TransactionEntity } from '../../database/entities';
 
 /**
- * Task J — fase de continuidade (concurrent writes / stale-lost updates).
- * update()/patch() antes sobrescreviam incondicionalmente (repo.update sem
- * checar version/updated_at) — dois usuários editando a mesma transação em
- * paralelo perdiam a edição de um deles silenciosamente. Agora, quando o
- * chamador manda `expectedUpdatedAt`, o UPDATE só aplica se `updated_at` no
- * banco ainda for exatamente esse valor (CAS via coluna já existente, sem
- * migração); 0 linhas afetadas -> 409, nunca sobrescreve silenciosamente.
- * Sem `expectedUpdatedAt`, o comportamento é idêntico ao anterior
- * (compatibilidade retroativa).
+ * Task J — continuity phase (concurrent writes / stale lost updates).
+ * update()/patch() used to overwrite unconditionally (repo.update without
+ * checking version/updated_at) — two users editing the same transaction in
+ * parallel silently lost one of the edits. Now, when the
+ * caller sends `expectedUpdatedAt`, the UPDATE only applies if `updated_at` in the
+ * database is still exactly that value (CAS via an already existing column, no
+ * migration); 0 affected rows -> 409, never overwrites silently.
+ * Without `expectedUpdatedAt`, the behavior is identical to before
+ * (backward compatibility).
  */
 
 const TENANT = 'tenant-test';
@@ -98,7 +98,7 @@ describe('toTransactionDetails — English output contract (naming-canonical)', 
     expect(dto.contractId).toBe('contract-1');
     expect(dto.projectId).toBe('project-1');
     expect(dto.transactionDate).toBe('2026-08-01T00:00:00.000Z');
-    // nenhum nome de campo em português deve vazar no DTO de saída
+    // no Portuguese field name may leak into the output DTO
     expect(dto).not.toHaveProperty('descricao');
     expect(dto).not.toHaveProperty('valor');
     expect(dto).not.toHaveProperty('categoria');
@@ -179,9 +179,9 @@ describe('TransactionsService — optimistic concurrency on update/patch', () =>
 });
 
 /**
- * Task W — auto-categorização por palavra-chave na criação de transações.
- * Cobre o único ponto de criação real usado tanto pelo formulário manual
- * quanto pela importação OFX (ambos chamam create() com o mesmo contrato).
+ * Task W — keyword auto-categorization on transaction creation.
+ * Covers the only real creation point used both by the manual form
+ * and by the OFX import (both call create() with the same contract).
  */
 describe('TransactionsService.create — rule-based auto-categorization (Task W)', () => {
   function buildCreateDs() {

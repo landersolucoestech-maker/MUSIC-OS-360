@@ -31,7 +31,7 @@ export type CampaignBuilderPayload = {
   endDate?: string;
   audience?: Record<string, unknown>;
   utm?: Record<string, unknown>;
-  /** Concorrência otimista (Task K) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task K) — see optimistic-update.util.ts. Optional. */
   expectedUpdatedAt?: string;
 };
 

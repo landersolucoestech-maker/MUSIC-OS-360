@@ -57,7 +57,7 @@ export class AudiovisualApprovalsService {
       if (!d) throw new NotFoundException('Entregável não pertence ao projeto');
     }
 
-    // Próximo revision_round = max + 1 da combinação project+deliverable
+    // Next revision_round = max + 1 of the project+deliverable combination
     const previous = await this.r.createQueryBuilder('a')
       .where('a.tenant_id = :tenantId AND a.audiovisual_project_id = :pid', { tenantId, pid: projectId })
       .andWhere(dto.deliverable_id ? 'a.deliverable_id = :did' : 'a.deliverable_id IS NULL', { did: dto.deliverable_id })
@@ -93,19 +93,19 @@ export class AudiovisualApprovalsService {
       patch.rejected_by = userId; patch.rejected_at = now;
     }
 
-    // Guarda status='pending' na PRÓPRIA condição do UPDATE (não só no
-    // pre-check acima) — fecha a janela entre o findById e este UPDATE em
-    // que duas decisões concorrentes (dois managers) poderiam sobrescrever
-    // uma à outra silenciosamente. 0 linhas afetadas = outra decisão já
-    // venceu a corrida (ou o registro mudou desde expectedUpdatedAt) — SEMPRE
-    // vira 409, mesmo sem expectedUpdatedAt (o guard de status por si só já
-    // detecta a corrida). Isso difere do casUpdate() compartilhado, que só
-    // checa affected===0 quando expectedUpdatedAt é fornecido (retrocompat
-    // com chamadores sem guard adicional) — por isso não dá para delegar a
-    // chamada inteira a ele. Reaproveita só a parte que importa (Task Y): o
-    // critério de updated_at truncado a milissegundos, extraído do mesmo
-    // casUpdate — nunca duplica a lógica de comparação/o bug de precisão
-    // que ela já teve (Task X).
+    // Keeps status='pending' in the UPDATE's OWN condition (not only in the
+    // pre-check above) — closes the window between findById and this UPDATE in
+    // which two concurrent decisions (two managers) could silently overwrite
+    // each other. 0 affected rows = another decision already
+    // won the race (or the record changed since expectedUpdatedAt) — it ALWAYS
+    // becomes 409, even without expectedUpdatedAt (the status guard alone already
+    // detects the race). This differs from the shared casUpdate(), which only
+    // checks affected===0 when expectedUpdatedAt is provided (backward compatibility
+    // with callers without an extra guard) — which is why the whole call cannot be
+    // delegated to it. Reuses only the part that matters (Task Y): the
+    // updated_at-truncated-to-milliseconds criterion, extracted from the same
+    // casUpdate — never duplicates the comparison logic/the precision bug
+    // it once had (Task X).
     const criteria: Record<string, unknown> = { id, tenant_id: tenantId, status: 'pending' };
     if (dto.expectedUpdatedAt) {
       criteria.updated_at = buildExpectedUpdatedAtCriterion(dto.expectedUpdatedAt);
@@ -115,8 +115,8 @@ export class AudiovisualApprovalsService {
       throw new ConflictException('Esta aprovação já foi decidida (ou alterada) por outro usuário. Recarregue e tente novamente.');
     }
 
-    // Se aprovação de entregável, marca deliverable.approved = true — só
-    // depois que a decisão em si foi persistida com sucesso.
+    // If it is a deliverable approval, marks deliverable.approved = true — only
+    // after the decision itself was persisted successfully.
     if (dto.status === 'approved' && current.deliverable_id && this.deliverables) {
       await this.deliverables.update(
         { id: current.deliverable_id, tenant_id: tenantId } as never,

@@ -6,11 +6,11 @@ import { DATA_SOURCE } from '../../../database/database.tokens';
 import { AudiovisualShotEntity, AudiovisualProjectEntity } from '../../../database/entities';
 
 /**
- * Task M — reorder() fazia N updates sequenciais sem transação e sem checar
- * staleness (dois usuários reordenando ao mesmo tempo, ou um shot
- * criado/removido entre a leitura e o submit, corrompia o ordering em
- * silêncio). Corrigido com transação real + guarda de "mesmo conjunto de
- * ids". Este spec prova atomicidade, o guard de staleness e rollback.
+ * Task M — reorder() made N sequential updates without a transaction and without checking
+ * staleness (two users reordering at the same time, or a shot
+ * created/removed between the read and the submit, silently corrupted the ordering).
+ * Fixed with a real transaction + a "same set of
+ * ids" guard. This spec proves atomicity, the staleness guard and rollback.
  */
 const TENANT = 'tenant-test';
 const PROJECT_ID = 'proj-test';
@@ -62,11 +62,11 @@ describe('AudiovisualShotsService.reorder() — Task M concurrency/atomicity', (
   });
 
   it('A/B scenario: A adds/removes a shot; B reorders with the old list -> 409, no write applied', async () => {
-    const mockDs = buildMockDs(['a', 'b', 'c', 'd']); // servidor já tem 'd' (adicionado por A)
+    const mockDs = buildMockDs(['a', 'b', 'c', 'd']); // the server already has 'd' (added by A)
     const service = await buildService(mockDs);
 
     await expect(
-      service.reorder(TENANT, PROJECT_ID, ['a', 'b', 'c']), // B ainda não viu 'd'
+      service.reorder(TENANT, PROJECT_ID, ['a', 'b', 'c']), // B has not seen 'd' yet
     ).rejects.toThrow(ConflictException);
 
     expect(mockDs._txShotsRepo.update).not.toHaveBeenCalled();

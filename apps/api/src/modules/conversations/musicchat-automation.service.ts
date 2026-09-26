@@ -109,7 +109,7 @@ export class MusicChatAutomationService {
   private readonly notificationRepo: Repository<MusicChatAutomationNotificationEntity> | null = null;
   private readonly orgMemberRepo: Repository<OrgMemberEntity> | null = null;
 
-  /** Limite simples anti-spam: no máx. N envios WhatsApp de escalonamento por tenant/minuto. */
+  /** Simple anti-spam limit: at most N escalation WhatsApp sends per tenant/minute. */
   private static readonly WHATSAPP_RATE_LIMIT_PER_MINUTE = 20;
   private static readonly WHATSAPP_MAX_RETRIES = 3;
 
@@ -244,10 +244,10 @@ export class MusicChatAutomationService {
   }
 
   async sendNotification(tenantId: string, dto: SendMusicChatNotificationDto): Promise<{ created: boolean; data: MusicChatAutomationNotificationEntity }> {
-    // Idempotência real: UNIQUE (tenant_id, conversation_id, level) no banco
-    // (uq_musicchat_escalation_notification) garante que nunca existe mais de
-    // uma notificação por conversa+nível, mesmo sob concorrência — este
-    // findOne é só a checagem otimista para retornar cedo no caso comum.
+    // Real idempotency: UNIQUE (tenant_id, conversation_id, level) in the database
+    // (uq_musicchat_escalation_notification) guarantees there is never more than
+    // one notification per conversation+level, even under concurrency — this
+    // findOne is only the optimistic check to return early in the common case.
     const existing = await this.notificationRepo!.findOne({
       where: { tenant_id: tenantId, conversation_id: dto.conversationId, level: dto.level } as any,
     });
@@ -282,22 +282,22 @@ export class MusicChatAutomationService {
     } else if (dto.channel === 'whatsapp') {
       await this.dispatchWhatsApp(tenantId, saved);
     }
-    // 'sms': sem provedor real — permanece honestamente 'prepared' com
-    // externalDelivery: 'prepared_not_sent_in_production' (nunca fabricado).
+    // 'sms': no real provider — honestly stays 'prepared' with
+    // externalDelivery: 'prepared_not_sent_in_production' (never fabricated).
 
     await this.recordEvent(tenantId, dto.conversationId, 'automation.notification_created', dto.title, { channel: dto.channel, level: dto.level, status: saved.status });
     return { created: true, data: saved };
   }
 
   /**
-   * Decision Gate item 14 (GAP-18): envio real de escalonamento via WhatsApp
-   * Cloud API, com controles de produção — nunca enviado fora de produção
-   * (guardado pelo próprio isConfigured: sem credenciais reais = sem envio),
-   * canal precisa estar habilitado explicitamente nas configurações do
-   * tenant (consentimento/compliance do lado do operador), destinatário
-   * precisa ter telefone cadastrado, limite anti-spam por tenant/minuto,
-   * status final honesto (sent/failed — nunca "sent" fictício), erro nunca
-   * expõe credenciais (WhatsAppError só carrega a resposta da Meta).
+   * Decision Gate item 14 (GAP-18): real escalation sending via the WhatsApp
+   * Cloud API, with production controls — never sent outside production
+   * (guarded by isConfigured itself: no real credentials = no sending),
+   * the channel must be explicitly enabled in the tenant's
+   * settings (consent/compliance on the operator's side), the recipient
+   * must have a registered phone, anti-spam limit per tenant/minute,
+   * honest final status (sent/failed — never a fictitious "sent"), errors never
+   * expose credentials (WhatsAppError only carries Meta's response).
    */
   private async dispatchWhatsApp(tenantId: string, notification: MusicChatAutomationNotificationEntity): Promise<void> {
     const fail = async (reason: string, code: string) => {
@@ -362,9 +362,9 @@ export class MusicChatAutomationService {
   }
 
   /**
-   * Retry controlado (humano, não automático) para notificações WhatsApp que
-   * falharam — limitado a WHATSAPP_MAX_RETRIES tentativas para nunca virar um
-   * loop de reenvio.
+   * Controlled (human, not automatic) retry for WhatsApp notifications that
+   * failed — limited to WHATSAPP_MAX_RETRIES attempts so it never becomes a
+   * resend loop.
    */
   async retryNotification(tenantId: string, notificationId: string): Promise<MusicChatAutomationNotificationEntity> {
     const notification = await this.notificationRepo!.findOne({
@@ -455,11 +455,11 @@ export class MusicChatAutomationService {
       metadata,
     }));
 
-    // Mensagens do bot de triagem (senderType='system') precisam realmente
-    // chegar ao contact no WhatsApp real, não só ficar gravadas — sem isto,
-    // o cliente nunca via a mensagem de boas-vindas/menu no WhatsApp de
-    // verdade. 'contact' nunca é despachado (é o que o próprio cliente já
-    // enviou — ecoar de volta seria um bug).
+    // Triage bot messages (senderType='system') must actually
+    // reach the contact on real WhatsApp, not just be stored — without this,
+    // the customer never saw the welcome/menu message on the real
+    // WhatsApp. 'contact' is never dispatched (it is what the customer already
+    // sent — echoing it back would be a bug).
     if (senderType === 'system') {
       saved = await this.dispatchOutboundIfExternal(tenantId, conversationId, saved);
     }

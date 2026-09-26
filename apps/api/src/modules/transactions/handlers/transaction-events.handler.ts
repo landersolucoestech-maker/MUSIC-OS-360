@@ -38,8 +38,8 @@ export class TransactionEventsHandler {
     if (!this.financialRules) return;
 
     const { transactionId, type, category, valor, source } = event.payload;
-    // A transação provisória criada por contract.signed já avalia regras sob
-    // esse trigger — evita disparo duplicado para a mesma ação de negócio.
+    // The provisional transaction created by contract.signed already evaluates rules under
+    // that trigger — avoids a duplicate trigger for the same business action.
     if (source === 'contract.signed') return;
 
     try {

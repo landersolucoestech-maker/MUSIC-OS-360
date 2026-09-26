@@ -18,7 +18,7 @@ export class InventoryController {
     return this.svc.list(t.id, q);
   }
 
-  // Precisa vir antes de @Get(':id') — senão o Nest casa "stats" como :id.
+  // Must come before @Get(':id') — otherwise Nest matches "stats" as :id.
   @Get('stats') @RequireRole('viewer') @RequirePermission('inventory:read') @ApiOperation({ summary: 'Contagem por status + soma de valor, sobre o tenant inteiro' })
   stats(@CurrentTenant() t: { id: string }) {
     return this.svc.stats(t.id);

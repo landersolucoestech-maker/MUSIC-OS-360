@@ -74,8 +74,8 @@ export class AudiovisualDeliverablesService {
   }
 
   /**
-   * Cria entregáveis padrão para o tipo de projeto.
-   * Apenas chamado quando explicitamente requisitado.
+   * Creates the default deliverables for the project type.
+   * Only called when explicitly requested.
    */
   async seedDefaults(tenantId: string, projectId: string, projectType: string) {
     await this.assertProject(tenantId, projectId);

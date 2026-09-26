@@ -1,11 +1,11 @@
 /**
  * society-payload-builder.service.spec.ts
  *
- * Fase 5 / C6: buildWorkPayload()/buildRecordingPayload() só incluem shares
- * elegíveis para registro (share_type IS NULL, não soft-deleted); shares
- * financeiras/pendentes nunca entram no payload de submissão à sociedade.
- * shareToParty() lança BadRequestException para dado de registro incompleto
- * em vez de silenciosamente virar '' ou 0.
+ * Phase 5 / C6: buildWorkPayload()/buildRecordingPayload() only include shares
+ * eligible for registration (share_type IS NULL, not soft-deleted); financial/
+ * pending shares never enter the society submission payload.
+ * shareToParty() throws BadRequestException for incomplete registration data
+ * instead of silently becoming '' or 0.
  */
 import 'reflect-metadata';
 import { BadRequestException, NotFoundException } from '@nestjs/common';

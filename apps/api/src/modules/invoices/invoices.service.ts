@@ -78,12 +78,12 @@ export class InvoicesService {
       .createQueryBuilder('i')
       .where('i.tenant_id = :tenantId', { tenantId })
       .andWhere('i.deleted_at IS NULL')
-      // REM-06: `invoices` também recebe as faturas Stripe da assinatura SaaS
-      // do próprio tenant (billing.service.ts upsertStripeInvoice, type=
-      // 'stripe_subscription'). Este endpoint (RequireRole('viewer')) é a
-      // listagem de Notas Fiscais emitidas pelo tenant aos SEUS clientes —
-      // sem este filtro, um viewer via /invoices contornava a barreira
-      // RequireRole('admin') que protege os mesmos dados em /billing/subscription.
+      // REM-06: `invoices` also receives the Stripe invoices of the tenant's own SaaS
+      // subscription (billing.service.ts upsertStripeInvoice, type=
+      // 'stripe_subscription'). This endpoint (RequireRole('viewer')) is the
+      // list of service invoices issued by the tenant to ITS clients —
+      // without this filter, a viewer via /invoices bypassed the
+      // RequireRole('admin') barrier that protects the same data in /billing/subscription.
       .andWhere("i.type != 'stripe_subscription'");
 
     if (query.status) qb.andWhere('i.status = :status', { status: query.status });
@@ -116,8 +116,8 @@ export class InvoicesService {
     const result = await this.repository
       .createQueryBuilder('i')
       .where('i.id = :id AND i.tenant_id = :tenantId AND i.deleted_at IS NULL', { id, tenantId })
-      // REM-06: mesma exclusão de list() — nunca expor uma fatura Stripe de
-      // assinatura SaaS via GET /invoices/:id.
+      // REM-06: same exclusion as list() — never expose a SaaS subscription
+      // Stripe invoice via GET /invoices/:id.
       .andWhere("i.type != 'stripe_subscription'")
       .getOne();
     if (!result) throw new NotFoundException('Nota fiscal não encontrada');
@@ -169,7 +169,7 @@ export class InvoicesService {
             numero: saved.numero,
           },
         });
-      } catch { /* auditoria não bloqueia a operação principal */ }
+      } catch { /* auditing does not block the main operation */ }
     }
 
     return mapped;
@@ -223,7 +223,7 @@ export class InvoicesService {
           description: `Nota fiscal${current['numero'] ? ` nº ${String(current['numero'])}` : ''} cancelada`,
           metadata: { numero: current['numero'], valor: String((current['service_amount'] ?? current['legacy_amount']) ?? 0) },
         });
-      } catch { /* auditoria não bloqueia a operação principal */ }
+      } catch { /* auditing does not block the main operation */ }
     }
     return { deleted: true };
   }
@@ -298,7 +298,7 @@ export class InvoicesService {
           description: `Nota fiscal ${String(before['status'] ?? '')} → ${newStatus}`,
           metadata: { previousStatus: before['status'], newStatus, numero },
         });
-      } catch { /* auditoria não bloqueia a operação principal */ }
+      } catch { /* auditing does not block the main operation */ }
     }
   }
 }

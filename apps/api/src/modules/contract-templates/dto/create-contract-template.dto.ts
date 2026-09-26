@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional, IsBoolean, MaxLength } from 'class-validator';
 
-// Campos do formulário (chaves EXATAS do ContractImportWorkspace.tsx) —
-// regra de produto: cada campo do form tem a sua coluna física.
+// Form fields (EXACT keys of ContractImportWorkspace.tsx) —
+// product rule: each form field has its own physical column.
 export class CreateContractTemplateDto {
   @ApiProperty({ example: 'Template Contrato de Exclusividade' })
   @IsString() @MaxLength(500)

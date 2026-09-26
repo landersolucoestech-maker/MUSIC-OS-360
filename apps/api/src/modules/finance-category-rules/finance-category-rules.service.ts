@@ -93,17 +93,17 @@ export class FinanceCategoryRulesService {
   }
 
   /**
-   * Task W — ponto único de auto-categorização por palavra-chave, usado na
-   * criação/importação de transações (ver TransactionsService.create()).
-   * Só considera regras ATIVAS do tenant informado, do mesmo transaction_type,
-   * ordenadas por prioridade (empate: created_at mais antigo primeiro — mesmo
-   * critério de list()). Nunca cruza tenant (WHERE tenant_id sempre presente).
-   * Retorna null se nenhuma regra corresponder — o chamador decide o fallback.
+   * Task W — single point of keyword auto-categorization, used on
+   * transaction creation/import (see TransactionsService.create()).
+   * Only considers ACTIVE rules of the given tenant, with the same transaction_type,
+   * sorted by priority (tie: oldest created_at first — same
+   * criterion as list()). Never crosses tenants (WHERE tenant_id always present).
+   * Returns null when no rule matches — the caller decides the fallback.
    *
-   * `financial_categories` não tem `slug` nem `deleted_at` (schema real —
-   * ver information_schema; a versão com slug era de um schema antigo já
-   * substituído). Usa `name` (o único identificador legível da categoria) e
-   * `is_active` (o soft-delete real da tabela).
+   * `financial_categories` has neither `slug` nor `deleted_at` (real schema —
+   * see information_schema; the slug version belonged to an old schema already
+   * replaced). Uses `name` (the category's only readable identifier) and
+   * `is_active` (the table's real soft delete).
    */
   async suggestCategoryForTransaction(
     tenantId: string,

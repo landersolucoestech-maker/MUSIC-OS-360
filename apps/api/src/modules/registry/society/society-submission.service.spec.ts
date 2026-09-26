@@ -7,14 +7,14 @@ import { SocietySubmissionEntity } from '../../../database/entities';
 import { SocietySubmissionStatus } from '@music-os-360/types';
 
 /**
- * Task K — concorrência otimista em SocietySubmissionService.transition().
+ * Task K — optimistic concurrency in SocietySubmissionService.transition().
  *
- * Antes: `sub.status = to; ...; this.repo.save(sub)` — leitura fora de
- * transação, sem WHERE guard, dois processos/usuários decidindo a mesma
- * transição concorrentemente sobrescreviam um ao outro em silêncio. Agora:
- * a mudança é persistida via `casUpdate` (repo.update com WHERE por
- * id+tenant, e opcionalmente updated_at); 0 linhas afetadas -> 409.
- * Sem `expectedUpdatedAt`, comportamento equivalente ao anterior.
+ * Before: `sub.status = to; ...; this.repo.save(sub)` — a read outside a
+ * transaction, without a WHERE guard; two processes/users deciding the same
+ * transition concurrently silently overwrote each other. Now:
+ * the change is persisted via `casUpdate` (repo.update with WHERE by
+ * id+tenant, and optionally updated_at); 0 affected rows -> 409.
+ * Without `expectedUpdatedAt`, the behavior is equivalent to before.
  */
 
 const TENANT = 'tenant-test';

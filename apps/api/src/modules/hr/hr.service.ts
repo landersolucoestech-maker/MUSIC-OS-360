@@ -52,7 +52,7 @@ export class HrService {
       .where('e.tenant_id = :tenantId AND e.deleted_at IS NULL', { tenantId });
 
     if (query.status) qb.andWhere('e.status = :status', { status: query.status });
-    // Frontend usa "setor"; a coluna física é `departamento` (mesmo campo, nome legado).
+    // The frontend uses "setor"; the physical column is `departamento` (same field, legacy name).
     if (query.setor)  qb.andWhere('e.departamento = :setor', { setor: query.setor });
     if (query.search) qb.andWhere('(e.name ILIKE :search OR e.cargo ILIKE :search)', { search: `%${query.search}%` });
 
@@ -64,7 +64,7 @@ export class HrService {
     return { data: rows.map(e => this.mapEmployee(e)), meta: { total, offset: query.offset ?? 0, limit: query.limit ?? 50 } };
   }
 
-  /** Contagem exata de funcionários por status, tenant inteiro (KPIs da página de RH). */
+  /** Exact employee count per status, whole tenant (HR page KPIs). */
   async employeeStats(tenantId: string): Promise<GroupStatsResult> {
     return groupCount(
       this.empRepo!.createQueryBuilder('e').where('e.tenant_id = :tenantId AND e.deleted_at IS NULL', { tenantId }),

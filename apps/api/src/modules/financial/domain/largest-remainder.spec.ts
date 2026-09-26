@@ -1,9 +1,9 @@
 import { LargestRemainderError, largestRemainder } from './largest-remainder';
 
 /**
- * Fase 13A Etapa 12 — testes unitários PUROS do algoritmo normativo de maior
- * resto (sem banco, sem rede). Casos mínimos exigidos pelo mandato + casos
- * normativos da Fase 12 §10.
+ * Phase 13A Step 12 — PURE unit tests of the normative largest-remainder
+ * algorithm (no database, no network). Minimum cases required by the mandate + the
+ * normative cases of Phase 12 §10.
  */
 describe('largestRemainder — algoritmo normativo (Fases 11/12)', () => {
   it('R$ 1.000,00 → 60/40 = 600,00 + 400,00', () => {
@@ -81,8 +81,8 @@ describe('largestRemainder — algoritmo normativo (Fases 11/12)', () => {
     const a = largestRemainder('100.00', ['33.3333', '33.3333', '33.3333']);
     const b = largestRemainder('100.00', ['33.3333', '33.3333', '33.3333']);
     expect(a).toEqual(b);
-    // o centavo residual segue a MAIOR fração (0,66 de 33,3333% > 0,34 de
-    // 66,6667%), independentemente da ordem — posição acompanha a entrada.
+    // the residual cent follows the LARGEST fraction (0.66 of 33.3333% > 0.34 of
+    // 66.6667%), regardless of order — position follows the input.
     const c = largestRemainder('200.00', ['66.6667', '33.3333']);
     const d = largestRemainder('200.00', ['33.3333', '66.6667']);
     expect(c).toEqual(['133.33', '66.67']);

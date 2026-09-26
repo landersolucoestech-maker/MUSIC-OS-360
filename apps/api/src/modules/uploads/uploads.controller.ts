@@ -1,12 +1,12 @@
 /**
  * modules/uploads/uploads.controller.ts
  *
- * Upload presignado directo browser→R2.
- * Backend nunca recebe o arquivo — apenas gera URLs e regista metadados.
+ * Presigned direct browser→R2 upload.
+ * The backend never receives the file — it only generates URLs and records metadata.
  *
- * POST /uploads/presign        → URL pré-assinada (PUT) + registo no banco
- * POST /uploads/:fileId/confirm → marca status='confirmed' + emite ASSET_UPLOADED
- * GET  /uploads/:fileId/download → URL temporária de download (GET signed)
+ * POST /uploads/presign        → presigned URL (PUT) + database record
+ * POST /uploads/:fileId/confirm → marks status='confirmed' + emits ASSET_UPLOADED
+ * GET  /uploads/:fileId/download → temporary download URL (signed GET)
  */
 
 import {
@@ -45,7 +45,7 @@ export class UploadsController {
     if (ds) this.repo = ds.getRepository(UploadEntity);
   }
 
-  /** Lança 503 se a base de dados não estiver disponível */
+  /** Throws 503 when the database is not available */
   private requireRepo(): Repository<UploadEntity> {
     if (!this.repo) {
       throw new ServiceUnavailableException(
@@ -175,10 +175,10 @@ export class UploadsController {
   }
 
   // ── GET /uploads/:fileId/raw ─────────────────────────────────────────────────
-  // Serve o byte-stream através do backend (mesma política CORS controlada da
-  // API), em vez do domínio R2 directo -- necessário para composição em
-  // <canvas> (crossOrigin) sem tainting, usada pela exportação estática do
-  // editor criativo de marketing.
+  // Serves the byte stream through the backend (same controlled CORS policy as the
+  // API), instead of the direct R2 domain -- required for composition in
+  // <canvas> (crossOrigin) without tainting, used by the static export of the
+  // marketing creative editor.
 
   @Get(':fileId/raw')
   @RequireRole('viewer')

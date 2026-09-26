@@ -15,7 +15,7 @@ export interface CreateAssetInput {
   size_bytes?: number;
   description?: string;
   tags?: string[];
-  /** Concorrência otimista (Task L) — ver optimistic-update.util.ts. Opcional. */
+  /** Optimistic concurrency (Task L) — see optimistic-update.util.ts. Optional. */
   expectedUpdatedAt?: string;
 }
 

@@ -1,24 +1,24 @@
 /**
- * Algoritmo normativo de MAIOR RESTO para rateios financeiros
- * (Fases 11 §13 / 12 §10 / 13A Etapa 12) — equivalente exato da função SQL
+ * Normative LARGEST REMAINDER algorithm for financial allocations
+ * (Phases 11 §13 / 12 §10 / 13A Step 12) — exact equivalent of the SQL function
  * fn_largest_remainder (migration 20260718000005_TransactionAllocations).
  *
- * Aritmética 100% inteira (BigInt) — NUNCA float (invariante de precisão):
- * - valores monetários em centavos (amount com até 2 casas decimais);
- * - percentuais em décimos-de-milésimo (numeric(7,4) → inteiro ×10.000).
+ * 100% integer arithmetic (BigInt) — NEVER float (precision invariant):
+ * - monetary values in cents (amount with up to 2 decimal places);
+ * - percentages in ten-thousandths (numeric(7,4) → integer ×10,000).
  *
- * Regras:
- * 1. total_alvo = round(amount × Σpct / 100, 2)  [half-up]
- * 2. bruto_i = amount × pct_i / 100 (exato); piso_i = trunc(bruto_i, 2)
- * 3. resíduo (centavos) distribuído em passos de 0,01 por MAIOR fração;
- *    empate → MENOR índice de entrada (determinístico e estável)
- * 4. Σ resultado = total_alvo (conciliação exata — I7)
- * 5. Σpct > 100, pct ≤ 0, pct > 100, amount ≤ 0 → erro (I5/validações)
- * 6. parcela resultante de R$ 0,00 → erro (CHECK allocated_amount > 0)
+ * Rules:
+ * 1. target_total = round(amount × Σpct / 100, 2)  [half-up]
+ * 2. raw_i = amount × pct_i / 100 (exact); floor_i = trunc(raw_i, 2)
+ * 3. the residue (cents) is distributed in steps of 0.01 by LARGEST fraction;
+ *    tie → LOWEST input index (deterministic and stable)
+ * 4. Σ result = target_total (exact reconciliation — I7)
+ * 5. Σpct > 100, pct ≤ 0, pct > 100, amount ≤ 0 → error (I5/validations)
+ * 6. a resulting share of R$ 0.00 → error (CHECK allocated_amount > 0)
  */
 
 const PCT_SCALE = 10_000n; // numeric(7,4)
-const HUNDRED = 100n * PCT_SCALE; // 100% em décimos-de-milésimo
+const HUNDRED = 100n * PCT_SCALE; // 100% in ten-thousandths
 
 export class LargestRemainderError extends Error {
   constructor(
@@ -35,7 +35,7 @@ export class LargestRemainderError extends Error {
   }
 }
 
-/** "1234.56" | 1234.56 → 123456n (centavos). Rejeita >2 casas e não-numérico. */
+/** "1234.56" | 1234.56 → 123456n (cents). Rejects >2 decimal places and non-numeric input. */
 function toCents(value: string | number): bigint {
   const s = typeof value === 'number' ? value.toFixed(2) : String(value).trim();
   const m = /^(\d+)(?:\.(\d{1,2}))?$/.exec(s);
@@ -44,7 +44,7 @@ function toCents(value: string | number): bigint {
   return BigInt(m[1]) * 100n + BigInt(frac);
 }
 
-/** "33.3333" | 60 → 333333n | 600000n (décimos-de-milésimo). Máx. 4 casas. */
+/** "33.3333" | 60 → 333333n | 600000n (ten-thousandths). At most 4 decimal places. */
 function toPctScaled(value: string | number, index: number): bigint {
   const s = typeof value === 'number' ? value.toFixed(4) : String(value).trim();
   const m = /^(\d+)(?:\.(\d{1,4}))?$/.exec(s);
@@ -61,8 +61,8 @@ function centsToString(cents: bigint): string {
 }
 
 /**
- * Distribui `amount` pelos `percentages` de UMA dimensão.
- * Retorna os valores alocados como strings decimais de 2 casas ("600.00").
+ * Distributes `amount` over the `percentages` of ONE dimension.
+ * Returns the allocated values as 2-decimal strings ("600.00").
  */
 export function largestRemainder(
   amount: string | number,
@@ -107,8 +107,8 @@ export function largestRemainder(
   }
 
   let residue = targetCents - floors.reduce((a, b) => a + b, 0n);
-  // resíduo < n centavos por construção; distribui por maior fração,
-  // empate → menor índice (varredura ascendente com comparação estrita).
+  // residue < n cents by construction; distributed by largest fraction,
+  // tie → lowest index (ascending scan with strict comparison).
   while (residue > 0n) {
     let pick = -1;
     let best = -1n;
