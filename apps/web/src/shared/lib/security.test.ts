@@ -35,11 +35,11 @@ describe("AuthRateLimiter (Parte 77)", () => {
   });
 
   it("a network/server error must never call recordFailure — simulates the correct Auth.tsx flow", () => {
-    // Este teste documenta o contrato: o chamador só invoca recordFailure()
-    // para erros de credencial confirmados, nunca para falhas de rede/servidor.
+    // This test documents the contract: the caller only invokes recordFailure()
+    // for confirmed credential errors, never for network/server failures.
     const email = "network-error@example.com";
     const remainingBefore = authRateLimiter.getRemainingAttempts(email);
-    // Simula um erro de rede: nada é chamado além de isBlocked (leitura).
+    // Simulates a network error: nothing is called besides isBlocked (read).
     authRateLimiter.isBlocked(email);
     expect(authRateLimiter.getRemainingAttempts(email)).toBe(remainingBefore);
   });

@@ -34,7 +34,7 @@ describe("fetchAllPages", () => {
     expect(result.items).toHaveLength(75);
     expect(result.items.map((i) => i.id)).toContain("id-75");
     expect(result.truncated).toBe(false);
-    // 75 registros / 20 por página = 4 chamadas (20+20+20+15).
+    // 75 records / 20 per page = 4 calls (20+20+20+15).
     expect(mockedListPaged).toHaveBeenCalledTimes(4);
   });
 

@@ -1,5 +1,5 @@
-// Validadores brasileiros: CPF, CNPJ, CEP, e-mail.
-// Implementa o algoritmo de dígito verificador oficial.
+// Brazilian validators: CPF, CNPJ, CEP, e-mail.
+// Implements the official check-digit algorithm.
 
 export function onlyDigits(v: string | null | undefined): string {
   return String(v || "").replace(/\D/g, "");

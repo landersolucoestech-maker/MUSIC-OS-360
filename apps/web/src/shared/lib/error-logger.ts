@@ -1,6 +1,6 @@
 /**
- * Error Logger - Abstração para logging de erros
- * Pode ser facilmente integrada com Sentry, LogRocket, Bugsnag, etc.
+ * Error Logger - abstraction for error logging
+ * Can easily be integrated with Sentry, LogRocket, Bugsnag, etc.
  */
 
 export interface ErrorLogContext {
@@ -17,7 +17,7 @@ export interface ErrorLogger {
   setUser: (userId: string | null) => void;
 }
 
-// Logger padrão - console (desenvolvimento)
+// Default logger - console (development)
 const consoleLogger: ErrorLogger = {
   captureError: (error, context) => {
     console.error("[ErrorLogger] Error captured:", {
@@ -36,7 +36,7 @@ const consoleLogger: ErrorLogger = {
   },
 };
 
-// Placeholder para Sentry - descomente e configure quando tiver o DSN
+// Sentry placeholder - uncomment and configure once the DSN exists
 /*
 import * as Sentry from "@sentry/react";
 
@@ -54,7 +54,7 @@ const sentryLogger: ErrorLogger = {
   },
 };
 
-// Inicialização do Sentry
+// Sentry initialization
 export function initSentry(dsn: string) {
   Sentry.init({
     dsn,
@@ -70,7 +70,7 @@ export function initSentry(dsn: string) {
 }
 */
 
-// Logger ativo - troque para sentryLogger quando configurar Sentry
+// Active logger - switch to sentryLogger once Sentry is configured
 let activeLogger: ErrorLogger = consoleLogger;
 
 export function setErrorLogger(logger: ErrorLogger) {
@@ -85,7 +85,7 @@ export function getErrorLogger(): ErrorLogger {
   return activeLogger;
 }
 
-// Funções de conveniência
+// Convenience functions
 export function captureError(error: Error, context?: ErrorLogContext) {
   activeLogger.captureError(error, {
     ...context,

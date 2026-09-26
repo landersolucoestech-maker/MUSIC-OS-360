@@ -1,24 +1,24 @@
 /**
- * Formatação de nomes de pessoas — APENAS camada de apresentação.
+ * Formatting of people's names — PRESENTATION layer ONLY.
  *
- * Aplica title-case por palavra, mantendo minúsculas as partículas pt-BR
- * (de, da, do, das, dos, e, …) quando não são a primeira palavra do nome.
+ * Applies per-word title case, keeping pt-BR particles lowercase
+ * (de, da, do, das, dos, e, …) when they are not the first word of the name.
  *
- * NÃO altera dados persistidos, DTOs, services nem o banco. Não deve ser usado
- * para nomes artísticos (módulo `artistas`), que podem ter capitalização intencional.
+ * Does NOT change persisted data, DTOs, services nor the database. Must not be used
+ * for stage names (`artistas` module), which may have intentional capitalization.
  */
 
-/** Partículas que permanecem minúsculas quando não iniciam o nome. */
+/** Particles that stay lowercase when they do not start the name. */
 const LOWERCASE_PARTICLES = new Set([
   "de", "da", "do", "das", "dos",
   "e",
   "di", "du", "del", "della", "van", "von", "der", "la", "le",
 ]);
 
-/** Capitaliza um único token, preservando hífens (Ana-Maria) e apóstrofos (D'Angelo). */
+/** Capitalizes a single token, preserving hyphens (Ana-Maria) and apostrophes (D'Angelo). */
 function capitalizeToken(token: string): string {
   if (!token) return token;
-  // Divide em sub-tokens por hífen/apóstrofo, capitaliza cada um e re-junta com o separador.
+  // Splits into sub-tokens by hyphen/apostrophe, capitalizes each and rejoins with the separator.
   return token.replace(/[^-'\s]+/g, (part) => {
     const lower = part.toLocaleLowerCase("pt-BR");
     return lower.charAt(0).toLocaleUpperCase("pt-BR") + lower.slice(1);
@@ -26,9 +26,9 @@ function capitalizeToken(token: string): string {
 }
 
 /**
- * Formata um nome de pessoa para exibição.
- * - `null`/`undefined`/vazio → retorna o fallback (default: string vazia).
- * - Colapsa espaços; capitaliza cada palavra; partículas pt-BR em minúsculo (exceto a 1ª).
+ * Formats a person's name for display.
+ * - `null`/`undefined`/empty → returns the fallback (default: empty string).
+ * - Collapses spaces; capitalizes each word; pt-BR particles in lowercase (except the 1st).
  */
 export function formatPersonName(name: string | null | undefined, fallback = ""): string {
   if (name == null) return fallback;

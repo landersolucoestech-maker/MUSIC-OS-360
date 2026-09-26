@@ -1,27 +1,27 @@
 /**
  * shared/governance/entities.ts
  * ─────────────────────────────────────────────────────────────────────────────
- * MUSIC OS 360 — Catálogo Canónico de Entidades e Relacionamentos
+ * MUSIC OS 360 — Canonical Catalog of Entities and Relationships
  *
- * Fonte única de verdade para:
- *   - Todas as entidades do domínio
- *   - Campos obrigatórios e opcionais
- *   - Relacionamentos (cardinalidade e direcção)
- *   - Módulo dono de cada entidade
- *   - Localização dos tipos TypeScript
- *   - Campos de identidade externa (ISRC, ISWC, CNPJ, etc.)
+ * Single source of truth for:
+ *   - Every domain entity
+ *   - Mandatory and optional fields
+ *   - Relationships (cardinality and direction)
+ *   - Owning module of each entity
+ *   - Location of the TypeScript types
+ *   - External identity fields (ISRC, ISWC, CNPJ, etc.)
  *
- * REGRA: qualquer nova entidade de domínio deve ser registada aqui
- *        antes de ser implementada nos módulos.
+ * RULE: any new domain entity must be registered here
+ *        before it is implemented in the modules.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-// ─── Tipos do catálogo ────────────────────────────────────────────────────────
+// ─── Catalog types ────────────────────────────────────────────────────────────
 
 export type RelationshipCardinality =
-  | "1:1"    // um para um
-  | "1:N"    // um para muitos
-  | "N:1"    // muitos para um
+  | "1:1"    // one to one
+  | "1:N"    // one to many
+  | "N:1"    // many to one
   | "N:N";   // muitos para muitos
 
 export interface EntityRelationship {
@@ -29,34 +29,34 @@ export interface EntityRelationship {
   target: string;
   /** Cardinalidade */
   cardinality: RelationshipCardinality;
-  /** Campo(s) que implementa(m) o relacionamento */
+  /** Field(s) implementing the relationship */
   via: string;
-  /** Relacionamento obrigatório? */
+  /** Mandatory relationship? */
   required: boolean;
-  /** Descrição do relacionamento */
+  /** Relationship description */
   description: string;
 }
 
 export interface EntityDefinition {
-  /** Nome da entidade (PascalCase, Português) */
+  /** Entity name (PascalCase; the current catalog uses Portuguese entity names) */
   name: string;
-  /** Módulo dono (fonte dos tipos e serviços) */
+  /** Owning module (source of the types and services) */
   ownerModule: string;
-  /** Localização do ficheiro de tipos */
+  /** Location of the types file */
   typesFile: string;
-  /** Chave primária */
+  /** Primary key */
   primaryKey: string;
-  /** Campos de identificação externa (padrões da indústria) */
+  /** External identification fields (industry standards) */
   externalIds: string[];
-  /** Campos obrigatórios na criação */
+  /** Mandatory fields on creation */
   requiredFields: string[];
   /** Relacionamentos com outras entidades */
   relationships: EntityRelationship[];
-  /** Breve descrição */
+  /** Short description */
   description: string;
 }
 
-// ─── Catálogo de entidades ────────────────────────────────────────────────────
+// ─── Entity catalog ───────────────────────────────────────────────────────────
 
 export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
 
@@ -660,7 +660,7 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
   },
 };
 
-// ─── Helpers de acesso ao catálogo ───────────────────────────────────────────
+// ─── Catalog access helpers ───────────────────────────────────────────────────
 
 export function getEntity(name: string): EntityDefinition | undefined {
   return ENTITY_CATALOG[name];
@@ -679,8 +679,8 @@ export function getEntityRelationships(name: string): EntityRelationship[] {
 }
 
 /**
- * Devolve todas as entidades que têm relacionamento com a entidade dada.
- * Útil para detectar dependências cross-domain.
+ * Returns every entity that has a relationship with the given entity.
+ * Useful to detect cross-domain dependencies.
  */
 export function getRelatedEntities(name: string): string[] {
   const direct = getEntityRelationships(name).map(r => r.target);

@@ -1,16 +1,16 @@
 /**
  * STEP 4 — Global Error Hierarchy
  *
- * Sistema de erros tipados para todo o stack da aplicação.
- * Services, use-cases e integrações DEVEM lançar apenas estes tipos.
- * A UI pode fazer `instanceof` para interpretar erros de forma segura.
+ * Typed error system for the whole application stack.
+ * Services, use cases and integrations MUST throw only these types.
+ * The UI can use `instanceof` to interpret errors safely.
  */
 
 // ─── Base ────────────────────────────────────────────────────────────────────
 
-/** Erro raiz de domínio. Todos os erros de negócio estendem este. */
+/** Root domain error. Every business error extends it. */
 export class DomainError extends Error {
-  /** Código de máquina para i18n e logging estruturado. */
+  /** Machine code for i18n and structured logging. */
   readonly code: string;
   /** Severidade para logging. */
   readonly severity: "info" | "warn" | "error" | "fatal";
@@ -29,9 +29,9 @@ export class DomainError extends Error {
 
 // ─── Validation ──────────────────────────────────────────────────────────────
 
-/** Falha de validação de dados de entrada. */
+/** Input data validation failure. */
 export class ValidationError extends DomainError {
-  /** Mapa campo → mensagem de erro (para renderizar em formulários). */
+  /** field → error message map (to render in forms). */
   readonly fields: Record<string, string>;
 
   constructor(message: string, fields: Record<string, string> = {}) {
@@ -40,12 +40,12 @@ export class ValidationError extends DomainError {
     this.fields = fields;
   }
 
-  /** Factory para erros de campo único. */
+  /** Factory for single-field errors. */
   static field(field: string, message: string): ValidationError {
     return new ValidationError(message, { [field]: message });
   }
 
-  /** Factory para lista de erros sem campo específico. */
+  /** Factory for a list of errors without a specific field. */
   static list(errors: string[]): ValidationError {
     const fields = Object.fromEntries(errors.map((e, i) => [`_${i}`, e]));
     return new ValidationError(errors.join(", "), fields);
@@ -54,7 +54,7 @@ export class ValidationError extends DomainError {
 
 // ─── Tenant ──────────────────────────────────────────────────────────────────
 
-/** Violação de isolamento multi-tenant. */
+/** Multi-tenant isolation violation. */
 export class TenantError extends DomainError {
   readonly currentOrgId: string;
   readonly recordOrgId: string | null;
@@ -77,7 +77,7 @@ export class TenantError extends DomainError {
 
 // ─── Password change required ───────────────────────────────────────────────
 
-/** Backend recusou a requisição porque a conta tem troca de senha obrigatória pendente (Parte 74). */
+/** The backend refused the request because the account has a pending mandatory password change (Part 74). */
 export class PasswordChangeRequiredError extends DomainError {
   constructor(message = "Troca de senha obrigatória antes de continuar.") {
     super(message, "MUST_CHANGE_PASSWORD", "warn");
@@ -87,7 +87,7 @@ export class PasswordChangeRequiredError extends DomainError {
 
 // ─── Not Found ───────────────────────────────────────────────────────────────
 
-/** Recurso não encontrado. */
+/** Resource not found. */
 export class NotFoundError extends DomainError {
   readonly entity: string;
   readonly id: string;
@@ -102,7 +102,7 @@ export class NotFoundError extends DomainError {
 
 // ─── Transaction ─────────────────────────────────────────────────────────────
 
-/** Falha em operação transacional — rollback foi executado. */
+/** Transactional operation failure — a rollback was executed. */
 export class TransactionError extends DomainError {
   readonly cause: unknown;
 
@@ -117,7 +117,7 @@ export class TransactionError extends DomainError {
 
 // ─── Integration ─────────────────────────────────────────────────────────────
 
-/** Falha de integração com serviço externo. */
+/** Integration failure with an external service. */
 export class IntegrationError extends DomainError {
   readonly service: string;
   readonly statusCode?: number;
@@ -154,7 +154,7 @@ export class IntegrationError extends DomainError {
 
 // ─── Not Implemented ─────────────────────────────────────────────────────────
 
-/** Funcionalidade ainda não implementada (stub de integração real). */
+/** Functionality not implemented yet (real integration stub). */
 export class NotImplementedError extends DomainError {
   readonly feature: string;
 
@@ -167,7 +167,7 @@ export class NotImplementedError extends DomainError {
 
 // ─── Conflict ────────────────────────────────────────────────────────────────
 
-/** Conflito de dados — duplicata, concorrência, etc. */
+/** Data conflict — duplicate, concurrency, etc. */
 export class ConflictError extends DomainError {
   readonly field?: string;
 
@@ -180,7 +180,7 @@ export class ConflictError extends DomainError {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/** Retorna true se o erro é de domínio tipado (seguro para UI interpretar). */
+/** Returns true if the error is a typed domain error (safe for the UI to interpret). */
 export function isDomainError(err: unknown): err is DomainError {
   return err instanceof DomainError;
 }

@@ -1,21 +1,21 @@
 import { storage } from "@/shared/lib/storage";
 
 /**
- * Task J — busca TODOS os registros de uma tabela (paginação real, sem cap
- * fixo) e extrai um rótulo de cada um. Uso: pickers legados que armazenam o
- * NOME (não o id) como valor do campo e filtram client-side (ex.: campo
- * "select" com `searchable: true` do MarketingFormModal, ou um `<Select>`
- * simples) — diferente de useEntityLookup (busca server-side por termo
- * digitado), aqui não há id pra resolver "o selecionado" via useEntityById,
- * então o único jeito de nunca perder um registro é ter o conjunto completo
- * de rótulos disponível para o filtro local.
+ * Task J — fetches ALL records of a table (real pagination, no fixed
+ * cap) and extracts a label from each. Use: legacy pickers that store the
+ * NAME (not the id) as the field value and filter client-side (e.g. a
+ * "select" field with `searchable: true` of MarketingFormModal, or a simple
+ * `<Select>`) — unlike useEntityLookup (server-side search by typed
+ * term), here there is no id to resolve "the selected one" via useEntityById,
+ * so the only way to never lose a record is to have the full set
+ * of labels available for the local filter.
  *
- * ponytail: uma query por tabela custa N/pageSize round-trips para tenants
- * muito grandes — aceitável para popular um dropdown de nomes (poucos KB por
- * página). Teto de segurança em 50 páginas (5000 registros) evita loop
- * infinito se o backend nunca zerar `items`. Upgrade: se esses campos algum
- * dia migrarem de "nome como valor" para "id como valor", trocar por
- * useEntityLookup + AsyncEntityCombobox (busca real server-side).
+ * ponytail: one query per table costs N/pageSize round trips for very
+ * large tenants — acceptable to populate a dropdown of names (a few KB per
+ * page). A safety ceiling of 50 pages (5000 records) avoids an infinite
+ * loop if the backend never empties `items`. Upgrade: if these fields some
+ * day migrate from "name as value" to "id as value", switch to
+ * useEntityLookup + AsyncEntityCombobox (real server-side search).
  */
 export async function fetchAllLabels(
   table: string,

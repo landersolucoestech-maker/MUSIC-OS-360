@@ -1,9 +1,9 @@
 /**
- * Helper compartilhado pelas integrações externas (Spotify, YouTube,
- * Apple Music, Deezer, SoundCloud, ABRAMUS, Autentique, Resend, IA
- * Criativa, Meta Ads). Todas essas integrações devolvem o mesmo
- * erro padronizado enquanto o backend substituto não estiver configurado.
- * A UI renderiza "Integração desativada — backend não configurado".
+ * Helper shared by the external integrations (Spotify, YouTube,
+ * Apple Music, Deezer, SoundCloud, ABRAMUS, Autentique, Resend, Creative
+ * AI, Meta Ads). All these integrations return the same
+ * standardized error while the replacement backend is not configured.
+ * The UI renders "Integração desativada — backend não configurado".
  */
 
 export const INTEGRATION_DISABLED_CODE = "integration_disabled";

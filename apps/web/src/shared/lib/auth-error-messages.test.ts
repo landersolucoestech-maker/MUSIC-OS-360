@@ -31,8 +31,8 @@ describe("describeAuthError", () => {
   });
 
   it("never reveals whether a specific email exists (same generic message for wrong password and missing account)", () => {
-    // Supabase retorna a MESMA "Invalid login credentials" para ambos os casos —
-    // este teste documenta que não introduzimos nenhuma lógica que diferencie os dois.
+    // Supabase returns the SAME "Invalid login credentials" for both cases —
+    // this test documents that we introduced no logic that tells the two apart.
     expect(describeAuthError({ message: "Invalid login credentials" })).toBe("Credenciais inválidas.");
   });
 });

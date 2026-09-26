@@ -1,19 +1,19 @@
 /**
  * shared/governance/modules.ts
  * ─────────────────────────────────────────────────────────────────────────────
- * MUSIC OS 360 — Registo Canónico de Módulos
+ * MUSIC OS 360 — Canonical Module Registry
  *
- * Fonte única de verdade para:
- *   - Lista de todos os módulos do sistema
- *   - Rota raiz de cada módulo
- *   - Chave de permissão RBAC (TenantModuleKey)
- *   - Feature flag que controla o acesso
- *   - Entidades primárias do módulo
- *   - Dependências entre módulos
- *   - Estado de implementação
+ * Single source of truth for:
+ *   - The list of every module in the system
+ *   - Each module's root route
+ *   - RBAC permission key (TenantModuleKey)
+ *   - Feature flag controlling access
+ *   - The module's primary entities
+ *   - Dependencies between modules
+ *   - Implementation status
  *
- * REGRA: nenhum módulo novo pode ser adicionado ao sistema sem ser
- *        primeiro registado aqui, com todas as propriedades preenchidas.
+ * RULE: no new module may be added to the system without first
+ *        being registered here, with every property filled in.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -22,33 +22,33 @@ import type { TenantModuleKey } from "@/app/providers/TenantContext";
 // ─── Tipos do registo ─────────────────────────────────────────────────────────
 
 export type ModuleStatus =
-  | "production"    // activo, em produção (modo standalone)
+  | "production"    // active, in production (standalone mode)
   | "beta"          // funcional mas incompleto
-  | "stub"          // estrutura presente, conteúdo a desenvolver
-  | "planned";      // planeado, ainda não implementado
+  | "stub"          // structure present, content to be developed
+  | "planned";      // planned, not implemented yet
 
 export interface ModuleDefinition {
-  /** Identificador único do módulo (TenantModuleKey) */
+  /** Unique module identifier (TenantModuleKey) */
   key: TenantModuleKey;
-  /** Nome de apresentação */
+  /** Display name */
   name: string;
   /** Rota raiz no React Router */
   route: string;
   /** Feature flag em FeatureFlags */
   featureFlag: string;
-  /** Entidades primárias geridas pelo módulo */
+  /** Primary entities managed by the module */
   primaryEntities: string[];
-  /** Módulos dos quais este depende (lê dados de) */
+  /** Modules this one depends on (reads data from) */
   dependsOn: TenantModuleKey[];
-  /** Módulos que dependem deste (consomem dados deste) */
+  /** Modules that depend on this one (consume its data) */
   consumedBy: TenantModuleKey[];
-  /** Estado actual de implementação */
+  /** Current implementation status */
   status: ModuleStatus;
-  /** Breve descrição funcional */
+  /** Short functional description */
   description: string;
 }
 
-// ─── Registo de módulos ───────────────────────────────────────────────────────
+// ─── Module registry ──────────────────────────────────────────────────────────
 
 export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
 
@@ -302,7 +302,7 @@ export const MODULE_REGISTRY: Record<TenantModuleKey, ModuleDefinition> = {
     key:             "settings",
     name:            "Configurações",
     route:           "/configuracoes",
-    featureFlag:     "moduleArtists",  // sempre acessível
+    featureFlag:     "moduleArtists",  // always accessible
     primaryEntities: ["Tenant", "User", "Role"],
     dependsOn:       [],
     consumedBy:      [],
@@ -359,26 +359,26 @@ export function getModuleConsumers(key: TenantModuleKey): ModuleDefinition[] {
 // ─── Regras de camada compartilhada ──────────────────────────────────────────
 
 /**
- * REGRA: o que pode e o que NÃO pode ir em shared/.
+ * RULE: what may and what may NOT go into shared/.
  *
- * PODE ir em shared/:
- *   - Tipos usados por 2+ módulos (refs.ts, enums.ts)
- *   - Componentes UI primitivos (shadcn/Radix wrappers)
- *   - Componentes genuinamente cross-domain (MainLayout, PageHeader,
+ * MAY go into shared/:
+ *   - Types used by 2+ modules (refs.ts, enums.ts)
+ *   - Primitive UI components (shadcn/Radix wrappers)
+ *   - Genuinely cross-domain components (MainLayout, PageHeader,
  *     ContratoStatusBadge, DataTable, FinanceChart, AIGenerateButton)
- *   - Infra-estrutura de app (ErrorBoundary, RouteErrorBoundary, AdminRoute)
+ *   - App infrastructure (ErrorBoundary, RouteErrorBoundary, AdminRoute)
  *   - Providers (AuthProvider, TenantProvider)
  *   - Config (queryClient, CACHE_TIMES)
- *   - Hooks cross-domain (useCommandPalette, useTenant, useAuth)
- *   - Utilitários puros (utils.ts, normalize.ts, tenant-isolation.ts)
- *   - Contratos de integração (shared/integrations/contracts/)
+ *   - Cross-domain hooks (useCommandPalette, useTenant, useAuth)
+ *   - Pure utilities (utils.ts, normalize.ts, tenant-isolation.ts)
+ *   - Integration contracts (shared/integrations/contracts/)
  *   - Governance (shared/governance/)
  *
- * NÃO PODE ir em shared/:
- *   - Lógica específica de um único módulo
- *   - Componentes que só fazem sentido num módulo
- *   - Serviços com conhecimento de domínio específico
- *   - Mappers de entidade (pertencem ao módulo dono da entidade)
+ * May NOT go into shared/:
+ *   - Logic specific to a single module
+ *   - Components that only make sense in one module
+ *   - Services with specific domain knowledge
+ *   - Entity mappers (they belong to the entity's owning module)
  */
 export const SHARED_LAYER_RULES = {
   allowed: [

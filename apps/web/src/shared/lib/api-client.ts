@@ -1,12 +1,12 @@
 /**
- * HTTP API Client — singleton que gerencia tokens e faz requisições ao backend.
+ * HTTP API Client — singleton that manages tokens and makes requests to the backend.
  *
- * - Injeta Authorization: Bearer <token> automaticamente
- * - Injeta X-Tenant-ID automaticamente
- * - Converte erros HTTP para subclasses de DomainError (instanceof funciona)
- * - Token lifecycle gerenciado pelo Supabase SDK via AuthContext.tsx
- *   (auto-refresh, persistência e rotação são responsabilidade do SDK)
- * - Tabelas sem endpoint backend → fallback para dados em memória (mock)
+ * - Injects Authorization: Bearer <token> automatically
+ * - Injects X-Tenant-ID automatically
+ * - Converts HTTP errors into DomainError subclasses (instanceof works)
+ * - Token lifecycle managed by the Supabase SDK via AuthContext.tsx
+ *   (auto-refresh, persistence and rotation are the SDK's responsibility)
+ * - Tables without a backend endpoint → fallback to in-memory data (mock)
  */
 import {
   ValidationError,
@@ -112,10 +112,10 @@ async function mapError(res: Response): Promise<never> {
     case 400:
       throw new ValidationError(msg);
     case 403:
-      // GlobalExceptionFilter preserva o `error` code de guards como
-      // MustChangePasswordGuard (ver apps/api/.../global-exception.filter.ts) —
-      // sem isso, todo 403 virava um TenantError genérico e o frontend não
-      // tinha como saber que precisava mostrar a tela de troca de senha.
+      // GlobalExceptionFilter preserves the `error` code of guards such as
+      // MustChangePasswordGuard (see apps/api/.../global-exception.filter.ts) —
+      // without it, every 403 became a generic TenantError and the frontend had
+      // no way to know it needed to show the password change screen.
       if (body.error === "MUST_CHANGE_PASSWORD") {
         throw new PasswordChangeRequiredError(msg);
       }
@@ -146,20 +146,20 @@ export function clearAuthBackoff(): void {
   _authFailUntil = 0;
 }
 
-// Timeout de rede: sem isso, um backend indisponível cuja conexão fica presa
-// em SYN (dropada em vez de recusada — comportamento observado em alguns
-// ambientes/proxies) faz `fetch()` pendurar por dezenas de segundos sem
-// nunca resolver nem rejeitar, mantendo `isLoading` do React Query preso
-// indefinidamente (a UI nunca chega ao estado de erro já previsto). Um
-// timeout finito garante que toda chamada sempre resolve ou rejeita em
-// tempo limitado, deixando a query settlar (sucesso ou erro) normalmente.
+// Network timeout: without it, an unavailable backend whose connection hangs
+// in SYN (dropped instead of refused — behavior observed in some
+// environments/proxies) makes `fetch()` hang for dozens of seconds without
+// ever resolving or rejecting, keeping React Query's `isLoading` stuck
+// indefinitely (the UI never reaches the already planned error state). A
+// finite timeout ensures every call always resolves or rejects in
+// bounded time, letting the query settle (success or error) normally.
 const REQUEST_TIMEOUT_MS = 10_000;
 
-// Combina o AbortSignal externo (ex.: o do React Query — dispara quando a
-// query fica obsoleta: componente desmontou, queryKey mudou) com o timeout
-// interno, sem depender de AbortSignal.any (evita risco de compatibilidade
-// dado o lib/target atual do projeto). Qualquer um dos dois abortando aborta
-// o fetch; o timeout continua funcionando mesmo sem signal externo.
+// Combines the external AbortSignal (e.g. React Query's — it fires when the
+// query becomes obsolete: component unmounted, queryKey changed) with the internal
+// timeout, without depending on AbortSignal.any (avoids a compatibility risk
+// given the project's current lib/target). Either one aborting aborts
+// the fetch; the timeout keeps working even without an external signal.
 function combineSignals(a: AbortSignal, b?: AbortSignal): AbortSignal {
   if (!b) return a;
   if (a.aborted || b.aborted) {
@@ -216,14 +216,14 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 
   if (res.status === 401) {
     setAccessToken(null);
-    // DEV ONLY (VITE_DISABLE_AUTH=true): sob o bypass de frontend, chamadas
-    // autenticadas sem token real vão 401 de forma esperada e repetida (o
-    // backend não foi alterado). Não armamos o circuit-breaker de 30s aqui —
-    // ele existe para parar tempestades de pollers quando uma sessão REAL
-    // caiu, não para o caso em que já sabemos, por design, que não há sessão
-    // nenhuma. Cada chamada continua retornando seu próprio erro 401 mapeado
-    // abaixo (mapError) — nada é escondido, só evitamos que a navegação
-    // inteira fique pausada por 30s a cada request autenticado.
+    // DEV ONLY (VITE_DISABLE_AUTH=true): under the frontend bypass, authenticated
+    // calls without a real token get 401 expectedly and repeatedly (the
+    // backend was not changed). We do not arm the 30s circuit breaker here —
+    // it exists to stop poller storms when a REAL session
+    // dropped, not for the case where we already know, by design, that there is no session
+    // at all. Each call still returns its own 401 error mapped
+    // below (mapError) — nothing is hidden, we only avoid the whole navigation
+    // being paused for 30s on every authenticated request.
     if (!DEV_AUTH_BYPASS && _authFailUntil < Date.now()) {
       _authFailUntil = Date.now() + AUTH_BACKOFF_MS;
       _authBus.dispatchEvent(new Event('invalid'));

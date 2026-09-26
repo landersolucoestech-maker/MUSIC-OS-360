@@ -1,62 +1,64 @@
 /**
  * shared/governance/naming.ts
  * ─────────────────────────────────────────────────────────────────────────────
- * MUSIC OS 360 — Convenções Obrigatórias de Nomenclatura
+ * MUSIC OS 360 — Mandatory Naming Conventions
  *
- * Este ficheiro é NORMATIVO. Toda a contribuição ao codebase deve seguir
- * estas convenções sem excepção. São as regras canónicas do projecto.
+ * This file is NORMATIVE. Every contribution to the codebase must follow
+ * these conventions without exception. They are the project's canonical rules.
+ * Language policy (binding): everything technical/internal is ENGLISH; only
+ * end-user-visible frontend copy is PT-BR (see docs/NAMING_NORMALIZATION_CANONICAL_MAP.md).
  *
- * Categorias:
- *   1. Ficheiros e directórios
- *   2. Componentes React
+ * Categories:
+ *   1. Files and directories
+ *   2. React components
  *   3. Hooks
- *   4. Serviços e utilitários
- *   5. Entidades e tipos
+ *   4. Services and utilities
+ *   5. Entities and types
  *   6. DTOs
- *   7. Constantes e enums
- *   8. Rotas e URLs
- *   9. Chaves localStorage
- *  10. Eventos customizados
- *  11. IDs de teste (data-testid)
+ *   7. Constants and enums
+ *   8. Routes and URLs
+ *   9. localStorage keys
+ *  10. Custom events
+ *  11. Test IDs (data-testid)
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 1. FICHEIROS E DIRECTÓRIOS
+// 1. FILES AND DIRECTORIES
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * REGRA: kebab-case para todos os ficheiros. PascalCase apenas para
- *        componentes React (*.tsx que exportam um componente por defeito).
+ * RULE: kebab-case for every file. PascalCase only for
+ *        React components (*.tsx exporting a component by default).
  *
- * Extensões obrigatórias por type:
- *   .tsx  → componentes React (JSX)
- *   .ts   → lógica pura, tipos, hooks, serviços, utilitários
- *   .css  → estilos standalone (raramente usado; preferir Tailwind)
- *   .md   → documentação
+ * Mandatory extensions per type:
+ *   .tsx  → React components (JSX)
+ *   .ts   → pure logic, types, hooks, services, utilities
+ *   .css  → standalone styles (rarely used; prefer Tailwind)
+ *   .md   → documentation
  *
- * Padrões de nomenclatura por camada:
- *   Componente       → PascalCase.tsx              ex: ArtistCard.tsx
- *   Hook             → camelCase.ts (prefixo use)  ex: useArtistForm.ts
- *   Serviço          → kebab-case.ts (sufixo .service) ex: artist.service.ts
- *   Mapper           → kebab-case.ts (sufixo Mappers) ex: artistaMappers.ts
- *   Tipos            → kebab-case.ts (sufixo .types)  ex: artista.types.ts
- *   Contrato         → kebab-case.ts (sufixo .contract) ex: auth.contract.ts
- *   Adaptador        → kebab-case.ts (sufixo .adapter) ex: streaming.adapter.ts
- *   Constantes       → kebab-case.ts (sufixo -constants) ex: transaction-constants.ts
- *   Rotas            → kebab-case.tsx (sufixo .routes) ex: artist.routes.tsx
+ * Naming patterns per layer:
+ *   Component        → PascalCase.tsx              e.g. ArtistCard.tsx
+ *   Hook             → camelCase.ts (use prefix)   e.g. useArtistForm.ts
+ *   Service          → kebab-case.ts (.service suffix) e.g. artist.service.ts
+ *   Mapper           → kebab-case.ts (.mapper suffix) e.g. artist.mapper.ts
+ *   Types            → kebab-case.ts (.types suffix)  e.g. artist.types.ts
+ *   Contract         → kebab-case.ts (.contract suffix) e.g. auth.contract.ts
+ *   Adapter          → kebab-case.ts (.adapter suffix) e.g. streaming.adapter.ts
+ *   Constants        → kebab-case.ts (-constants suffix) e.g. transaction-constants.ts
+ *   Routes           → kebab-case.tsx (.routes suffix) e.g. artist.routes.tsx
  *
- * Estrutura interna de módulo (ordem obrigatória):
- *   modules/<domínio>/
- *     adapters/   → adaptadores de integração (domínio → contrato externo)
- *     application/→ use-cases e orquestradores de UI
- *     components/ → componentes React do módulo
- *     domain/     → regras de negócio puras (sem dependência de UI)
- *     hooks/      → hooks React do módulo
- *     mappers/    → mappers form ↔ entidade (fonte única de verdade)
- *     pages/      → páginas (route components)
- *     services/   → acesso a dados (localStorage, API futura)
- *     types/      → interfaces e tipos do domínio
+ * Internal module structure (mandatory order):
+ *   modules/<domain>/
+ *     adapters/   → integration adapters (domain → external contract)
+ *     application/→ use cases and UI orchestrators
+ *     components/ → the module's React components
+ *     domain/     → pure business rules (no UI dependency)
+ *     hooks/      → the module's React hooks
+ *     mappers/    → form ↔ entity mappers (single source of truth)
+ *     pages/      → pages (route components)
+ *     services/   → data access (localStorage, future API)
+ *     types/      → domain interfaces and types
  */
 export const FILE_NAMING_RULES = {
   component:  "PascalCase.tsx",
@@ -75,29 +77,29 @@ export const FILE_NAMING_RULES = {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * REGRA: PascalCase. Sempre um componente por ficheiro.
- *        Nomes descrevem o que o componente É, não o que FAZ.
+ * RULE: PascalCase. Always one component per file.
+ *        Names describe what the component IS, not what it DOES.
  *
- * Sufixos obrigatórios por papel:
- *   Card     → item de lista compacto               ex: ArtistaCard
- *   Table    → tabela de dados paginada             ex: TransacaoTable
- *   Modal    → diálogo/modal (Dialog do Radix)      ex: ContractFormModal
- *   Form     → formulário standalone                ex: ArtistaForm
- *   Page     → componente de rota (página)          ex: ArtistaListPage
- *   Badge    → badge de estado inline               ex: ContractStatusBadge
- *   Panel    → painel colapsável ou lateral         ex: FiltrosPanel
- *   Drawer   → drawer lateral (Sheet do Radix)      ex: ArtistaDrawer
- *   Section  → secção de página                    ex: FinanceiroSummarySection
- *   Widget   → widget de dashboard                  ex: ReceitaWidget
- *   Chart    → gráfico (recharts)                   ex: FluxoCaixaChart
- *   Skeleton → estado de carregamento               ex: ArtistaCardSkeleton
- *   Empty    → estado vazio                         ex: CatalogoEmpty
- *   Header   → cabeçalho de secção                  ex: PageHeader
+ * Mandatory suffixes per role:
+ *   Card     → compact list item                    e.g. ArtistCard
+ *   Table    → paginated data table                 e.g. TransactionTable
+ *   Modal    → dialog/modal (Radix Dialog)          e.g. ContractFormModal
+ *   Form     → standalone form                      e.g. ArtistForm
+ *   Page     → route component (page)               e.g. ArtistListPage
+ *   Badge    → inline status badge                  e.g. ContractStatusBadge
+ *   Panel    → collapsible or side panel            e.g. FiltersPanel
+ *   Drawer   → side drawer (Radix Sheet)            e.g. ArtistDrawer
+ *   Section  → page section                         e.g. FinanceSummarySection
+ *   Widget   → dashboard widget                     e.g. RevenueWidget
+ *   Chart    → chart (recharts)                     e.g. CashFlowChart
+ *   Skeleton → loading state                        e.g. ArtistCardSkeleton
+ *   Empty    → empty state                          e.g. CatalogEmpty
+ *   Header   → section header                       e.g. PageHeader
  *
- * PROIBIDO:
- *   - Nomes genéricos: Component, Container, Wrapper, Index
- *   - Nomes com "Manager", "Handler", "Controller" (papel de serviço, não componente)
- *   - Abreviações opacas: ArtCtrl, TxModal, etc.
+ * FORBIDDEN:
+ *   - Generic names: Component, Container, Wrapper, Index
+ *   - Names with "Manager", "Handler", "Controller" (a service role, not a component)
+ *   - Opaque abbreviations: ArtCtrl, TxModal, etc.
  */
 export const COMPONENT_NAMING = {
   suffixes: ["Card", "Table", "Modal", "Form", "Page", "Badge",
@@ -112,27 +114,27 @@ export const COMPONENT_NAMING = {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * REGRA: prefixo `use` obrigatório. camelCase. Verbo ou substantivo após `use`.
+ * RULE: the `use` prefix is mandatory. camelCase. A verb or noun after `use`.
  *
- * Categorias e padrões:
- *   Dados       → use{Entity}List, use{Entity}Detail   ex: useArtistaList
- *   Formulário  → use{Entity}Form                      ex: useContratoForm
- *   Mutação     → use{Verb}{Entity}                    ex: useCreateTransacao
- *   Integração  → use{ServiceName}                     ex: useSpotify, useAbramus
- *   UI/Estado   → use{Concern}                         ex: useCommandPalette
- *   Contexto    → use{ContextName}                     ex: useTenant, useAuth
+ * Categories and patterns:
+ *   Data        → use{Entity}List, use{Entity}Detail   e.g. useArtistList
+ *   Form        → use{Entity}Form                      e.g. useContractForm
+ *   Mutation    → use{Verb}{Entity}                    e.g. useCreateTransaction
+ *   Integration → use{ServiceName}                     e.g. useSpotify, useAbramus
+ *   UI/State    → use{Concern}                         e.g. useCommandPalette
+ *   Context     → use{ContextName}                     e.g. useTenant, useAuth
  *
- * Regras de retorno:
- *   - Hooks de dados devem retornar o objecto UseQueryResult completo
- *     ou desestruturar explicitamente: { data, isLoading, error }
- *   - Hooks de mutação devem expor { mutate, isPending, error }
- *   - Hooks de formulário devem retornar o objecto form (react-hook-form)
- *   - Hooks de integração desabilitada devem retornar IntegrationRuntimeStatus
+ * Return rules:
+ *   - Data hooks must return the full UseQueryResult object
+ *     or explicitly destructure: { data, isLoading, error }
+ *   - Mutation hooks must expose { mutate, isPending, error }
+ *   - Form hooks must return the form object (react-hook-form)
+ *   - Disabled-integration hooks must return IntegrationRuntimeStatus
  *
- * PROIBIDO:
- *   - Hooks sem prefixo `use`
- *   - Lógica de negócio dentro de componentes (extrair para hook)
- *   - Chamadas a serviços directamente em componentes (usar hook intermediário)
+ * FORBIDDEN:
+ *   - Hooks without the `use` prefix
+ *   - Business logic inside components (extract to a hook)
+ *   - Calling services directly in components (use an intermediate hook)
  */
 export const HOOK_NAMING = {
   prefix:     "use",
@@ -147,32 +149,32 @@ export const HOOK_NAMING = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 4. SERVIÇOS E UTILITÁRIOS
+// 4. SERVICES AND UTILITIES
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * REGRA: camelCase para funções, kebab-case para ficheiros.
+ * RULE: camelCase for functions, kebab-case for files.
  *
- * Serviços (sufixo .service.ts):
- *   - Único ponto de acesso a localStorage / API futura por domínio
- *   - Funções puras: getAll, getById, create, update, remove
- *   - Sem lógica de UI, sem useState, sem useEffect
- *   - Tipos de retorno explícitos (nunca `any`)
+ * Services (.service.ts suffix):
+ *   - Single point of access to localStorage / future API per domain
+ *   - Pure functions: getAll, getById, create, update, remove
+ *   - No UI logic, no useState, no useEffect
+ *   - Explicit return types (never `any`)
  *
- * Mappers (sufixo Mappers.ts):
- *   - ÚNICA fonte de verdade para transformações form ↔ entidade
- *   - Funções: toForm{Entity}, fromForm{Entity}, normalize{Entity}
- *   - Importados apenas por hooks de formulário e serviços
+ * Mappers (.mapper.ts suffix):
+ *   - The ONLY source of truth for form ↔ entity transformations
+ *   - Functions: toForm{Entity}, fromForm{Entity}, normalize{Entity}
+ *   - Imported only by form hooks and services
  *
- * Utilitários (shared/lib/):
- *   - Funções puras sem dependências de UI ou domínio
- *   - Nomes descritivos: formatCurrency, slugify, truncate
- *   - Exportados individualmente (sem namespace objects)
+ * Utilities (shared/lib/):
+ *   - Pure functions with no UI or domain dependency
+ *   - Descriptive names: formatCurrency, slugify, truncate
+ *   - Exported individually (no namespace objects)
  *
- * Adaptadores (adapters/):
- *   - Convertem entidades locais ↔ formato de APIs externas
- *   - Sem efeitos colaterais; apenas transformações de dados
- *   - Funções: to{ExternalFormat}, from{ExternalFormat}
+ * Adapters (adapters/):
+ *   - Convert local entities ↔ external API formats
+ *   - No side effects; data transformations only
+ *   - Functions: to{ExternalFormat}, from{ExternalFormat}
  */
 export const SERVICE_NAMING = {
   localStorageGet:  "getAll{Entities} | get{Entity}ById",
@@ -184,33 +186,36 @@ export const SERVICE_NAMING = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 5. ENTIDADES E TIPOS
+// 5. ENTITIES AND TYPES
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * REGRA: Português para nomes de domínio (entidades, campos, enums).
- *        Inglês para infra-estrutura (props, estado UI, utilitários).
+ * RULE: ENGLISH for every technical name — domain entities, fields, enums,
+ *        props, UI state and utilities. PT-BR is reserved for end-user-visible copy.
  *
- * Entidades de domínio (Português):
- *   Artista, Obra, Fonograma, Lançamento, Contrato, Transacao,
- *   NotaFiscal, Cliente, Lead, Campanha, Evento, Projeto,
- *   Funcionario, Inventario, Licenca, Takedown, Share
+ * Domain entities (canonical English names):
+ *   Artist, Work, Phonogram, Release, Contract, Transaction,
+ *   Invoice, Client, Lead, Campaign, Event, Project,
+ *   Employee, InventoryItem, License, Takedown, Share
+ *   Legacy Portuguese identifiers still present in the code (e.g. Artista, Obra,
+ *   Fonograma, Contrato, Transacao) are tracked naming debt in
+ *   scripts/naming/technical-naming-baseline.json — never introduce new ones.
  *
- * Interfaces de entidade:
- *   interface {NomeEntidade}          → entidade completa (ex: Artista)
- *   type {NomeEntidade}Insert         → campos para criação (sem id, timestamps)
- *   type {NomeEntidade}Update         → campos para atualização (Partial<Insert>)
- *   interface {NomeEntidade}WithRelations → entidade com refs expandidas
+ * Entity interfaces:
+ *   interface {EntityName}          → full entity (e.g. Artist)
+ *   type {EntityName}Insert         → creation fields (no id, timestamps)
+ *   type {EntityName}Update         → update fields (Partial<Insert>)
+ *   interface {EntityName}WithRelations → entity with expanded refs
  *
  * EntityRef (shared/types/refs.ts):
- *   interface {NomeEntidade}Ref → referência leve cross-domain
- *   Regra: sem index signature; apenas campos explícitos.
+ *   interface {EntityName}Ref → lightweight cross-domain reference
+ *   Rule: no index signature; explicit fields only.
  *
- * PROIBIDO:
- *   - Campos `any` — usar `unknown` ou type específico
- *   - Index signatures em refs (ex: [key: string]: unknown) — usar campos explícitos
- *   - Tipos inline em componentes (extrair para .types.ts do módulo)
- *   - Duplicação de tipos entre módulos (usar EntityRef cross-domain)
+ * FORBIDDEN:
+ *   - `any` fields — use `unknown` or a specific type
+ *   - Index signatures in refs (e.g. [key: string]: unknown) — use explicit fields
+ *   - Inline types in components (extract to the module's .types.ts)
+ *   - Duplicating types across modules (use a cross-domain EntityRef)
  */
 export const ENTITY_NAMING = {
   full:          "interface {NomeEntidade}",
@@ -225,25 +230,25 @@ export const ENTITY_NAMING = {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * REGRA: DTOs descrevem dados em trânsito (API, localStorage, forms).
- *        Distinção obrigatória entre entidade (domínio) e DTO (transporte).
+ * RULE: DTOs describe data in transit (API, localStorage, forms).
+ *        A mandatory distinction between entity (domain) and DTO (transport).
  *
- * Padrões de DTO:
- *   {Entity}FormValues    → valores do formulário react-hook-form
- *   {Entity}ApiPayload    → corpo da requisição para API (futura)
- *   {Entity}ApiResponse   → resposta da API (futura)
- *   {Entity}LocalPayload  → payload para localStorage (modo standalone)
- *   {Entity}ExportRow     → linha de exportação XLSX/PDF
+ * DTO patterns:
+ *   {Entity}FormValues    → react-hook-form form values
+ *   {Entity}ApiPayload    → request body for the API (future)
+ *   {Entity}ApiResponse   → API response (future)
+ *   {Entity}LocalPayload  → payload for localStorage (standalone mode)
+ *   {Entity}ExportRow     → XLSX/PDF export row
  *
- * Localização:
- *   FormValues → no módulo que usa o formulário
- *   ApiPayload/Response → em shared/types/ ou no módulo de serviço
- *   LocalPayload → no serviço do módulo
+ * Location:
+ *   FormValues → in the module that uses the form
+ *   ApiPayload/Response → in shared/types/ or in the service module
+ *   LocalPayload → in the module's service
  *
- * Validação:
- *   - Todos os formulários usam zodResolver + schema Zod
- *   - Schemas Zod nomeados: {entity}FormSchema
- *   - Schemas de inserção: {entity}InsertSchema
+ * Validation:
+ *   - Every form uses zodResolver + a Zod schema
+ *   - Named Zod schemas: {entity}FormSchema
+ *   - Insert schemas: {entity}InsertSchema
  */
 export const DTO_NAMING = {
   formValues:    "{Entity}FormValues",
@@ -260,20 +265,20 @@ export const DTO_NAMING = {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * REGRA: SCREAMING_SNAKE_CASE para constantes de valor fixo.
- *        Literal union types (não enum TypeScript) para campos enumerados.
+ * RULE: SCREAMING_SNAKE_CASE for fixed-value constants.
+ *        Literal union types (not TypeScript enums) for enumerated fields.
  *
- * Localização:
- *   Enums de domínio    → shared/types/enums.ts (fonte única de verdade)
- *   Constantes visuais  → design tokens em index.css (CSS vars)
- *   Constantes de rota  → no ficheiro de rotas do módulo
- *   Constantes de forma → no módulo (ex: transaction-constants.ts)
- *   Constantes de integração → shared/integrations/registry.ts
+ * Location:
+ *   Domain enums        → shared/types/enums.ts (single source of truth)
+ *   Visual constants    → design tokens in index.css (CSS vars)
+ *   Route constants     → in the module's routes file
+ *   Form constants      → in the module (e.g. transaction-constants.ts)
+ *   Integration constants → shared/integrations/registry.ts
  *
- * PROIBIDO:
- *   - enum TypeScript (usar literal union type)
- *   - Constantes de domínio definidas em componentes
- *   - Strings mágicas — extrair para constante nomeada
+ * FORBIDDEN:
+ *   - TypeScript enum (use a literal union type)
+ *   - Domain constants defined in components
+ *   - Magic strings — extract to a named constant
  */
 export const CONSTANTS_NAMING = {
   value:       "SCREAMING_SNAKE_CASE",
@@ -286,33 +291,35 @@ export const CONSTANTS_NAMING = {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * REGRA: kebab-case. Português para nomes de domínio. Sem trailing slash.
+ * RULE: kebab-case. No trailing slash. New routes use English path segments;
+ *        the existing Portuguese segments below are the current published URLs
+ *        (legacy, kept for link compatibility until a redirect-backed migration).
  *
- * Estrutura de rotas por módulo:
- *   /artistas                  → lista de artistas
- *   /artistas/:id              → detalhe de artista
- *   /artistas/:id/editar       → edição de artista
- *   /catalogo/obras            → catálogo de obras
- *   /catalogo/fonogramas       → catálogo de fonogramas
- *   /accounting/*              → módulo de contabilidade
- *   /contratos                 → lista de contratos
- *   /crm/clientes              → CRM — clientes
- *   /leads                     -> Leads comerciais
- *   /marketing/campanhas       → marketing — campanhas
- *   /lancamentos               → lançamentos musicais
- *   /gestao-shares             → gestão de shares/participações
- *   /monitoramento             → monitoramento e takedowns
- *   /licencas                  → licenciamento
- *   /operacoes/eventos         → eventos
- *   /operacoes/inventario      → inventário
- *   /operacoes/rh              → recursos humanos
- *   /projetos                  → projetos
+ * Current route structure per module:
+ *   /artistas                  → artist list
+ *   /artistas/:id              → artist detail
+ *   /artistas/:id/editar       → artist editing
+ *   /catalogo/obras            → works catalog
+ *   /catalogo/fonogramas       → phonograms catalog
+ *   /accounting/*              → accounting module
+ *   /contratos                 → contract list
+ *   /crm/clientes              → CRM — clients
+ *   /leads                     -> commercial leads
+ *   /marketing/campanhas       → marketing — campaigns
+ *   /lancamentos               → music releases
+ *   /gestao-shares             → shares management
+ *   /monitoramento             → monitoring and takedowns
+ *   /licencas                  → licensing
+ *   /operacoes/eventos         → events
+ *   /operacoes/inventario      → inventory
+ *   /operacoes/rh              → human resources
+ *   /projetos                  → projects
  *   /chat                      → MusicChat
- *   /configuracoes             → configurações
- *   /admin/*                   → área administrativa (AdminRoute)
+ *   /configuracoes             → settings
+ *   /admin/*                   → administrative area (AdminRoute)
  *
- * Query params: snake_case.  ex: ?page=1&per_page=20&status=ativo
- * Params de rota: :id, :slug — sempre snake_case.
+ * Query params: snake_case.  e.g. ?page=1&per_page=20&status=ativo
+ * Route params: :id, :slug — always snake_case.
  */
 export const ROUTE_PATTERNS = {
   list:   "/:dominio",
@@ -327,20 +334,20 @@ export const ROUTE_PATTERNS = {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * REGRA: Prefixo obrigatório `musicos360_`. snake_case após o prefixo.
+ * RULE: the `musicos360_` prefix is mandatory. snake_case after the prefix.
  *
- * Chaves registadas:
- *   musicos360_mock_data               → dados mock principais (MOCK_DATA)
- *   musicos360_rt                      → refresh token de autenticação
- *   musicos360_tenant                  → dados do tenant activo
- *   musicos360_<id>_credentials        → credenciais de integração por ID
- *   musicos360_sidebar_collapsed       → estado da sidebar
- *   musicos360_command_palette_history → histórico do command palette
+ * Registered keys:
+ *   musicos360_mock_data               → main mock data (MOCK_DATA)
+ *   musicos360_rt                      → authentication refresh token
+ *   musicos360_tenant                  → active tenant data
+ *   musicos360_<id>_credentials        → integration credentials per ID
+ *   musicos360_sidebar_collapsed       → sidebar state
+ *   musicos360_command_palette_history → command palette history
  *
- * PROIBIDO:
- *   - Chaves sem prefixo `musicos360_`
- *   - Chaves com prefixo antigo `lander_` ou `lander360_` (obsoletas)
- *   - Dados sensíveis em localStorage sem encriptação
+ * FORBIDDEN:
+ *   - Keys without the `musicos360_` prefix
+ *   - Keys with the old `lander_` or `lander360_` prefix (obsolete)
+ *   - Unencrypted sensitive data in localStorage
  */
 export const LOCALSTORAGE_KEYS = {
   mockData:          "musicos360_mock_data",
@@ -356,16 +363,16 @@ export const LOCALSTORAGE_KEYS = {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * REGRA: Prefixo `musicos360:`. camelCase após o prefixo.
+ * RULE: the `musicos360:` prefix. camelCase after the prefix.
  *
- * Eventos registados:
- *   musicos360:dataChanged   → MOCK_DATA foi alterado (trigger de refetch)
- *   musicos360:tenantChanged → tenant activo foi alterado
- *   musicos360:authChanged   → estado de autenticação alterado
+ * Registered events:
+ *   musicos360:dataChanged   → MOCK_DATA was changed (refetch trigger)
+ *   musicos360:tenantChanged → the active tenant was changed
+ *   musicos360:authChanged   → authentication state changed
  *
- * PROIBIDO:
- *   - Eventos sem prefixo `musicos360:`
- *   - Eventos sem tipo de detalhe tipado (CustomEvent<T>)
+ * FORBIDDEN:
+ *   - Events without the `musicos360:` prefix
+ *   - Events without a typed detail type (CustomEvent<T>)
  */
 export const CUSTOM_EVENTS = {
   dataChanged:   "musicos360:dataChanged",
@@ -378,25 +385,25 @@ export const CUSTOM_EVENTS = {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * REGRA: Formato `{type}-{alvo}` para elementos interactivos.
- *        Formato `{type}-{conteúdo}-{id}` para listas dinâmicas.
+ * RULE: `{type}-{target}` format for interactive elements.
+ *        `{type}-{content}-{id}` format for dynamic lists.
  *
- * Tipos de prefixo por categoria:
- *   button-   → botões                ex: button-create-artista
- *   input-    → campos de formulário  ex: input-nome-artistico
- *   link-     → links de navegação    ex: link-artista-profile
- *   select-   → dropdowns             ex: select-status
- *   table-    → tabelas               ex: table-artistas
- *   row-      → linhas de tabela      ex: row-artista-{id}
- *   card-     → cards                 ex: card-artista-{id}
- *   badge-    → badges de estado      ex: badge-status-ativo
- *   modal-    → modais                ex: modal-contrato-form
- *   text-     → textos dinâmicos      ex: text-saldo-total
- *   img-      → imagens               ex: img-artista-avatar
- *   status-   → mensagens de estado   ex: status-payment-pending
+ * Prefix types per category:
+ *   button-   → buttons              e.g. button-create-artist
+ *   input-    → form fields          e.g. input-stage-name
+ *   link-     → navigation links     e.g. link-artist-profile
+ *   select-   → dropdowns            e.g. select-status
+ *   table-    → tables               e.g. table-artists
+ *   row-      → table rows           e.g. row-artist-{id}
+ *   card-     → cards                e.g. card-artist-{id}
+ *   badge-    → status badges        e.g. badge-status-active
+ *   modal-    → modals               e.g. modal-contract-form
+ *   text-     → dynamic texts        e.g. text-total-balance
+ *   img-      → images               e.g. img-artist-avatar
+ *   status-   → status messages      e.g. status-payment-pending
  *
- * REGRA: IDs estáveis — não usar índices de array, usar IDs de entidade.
- * OBRIGATORIO: todo elemento interactivo e todo dado dinâmico relevante.
+ * RULE: stable IDs — do not use array indexes, use entity IDs.
+ * MANDATORY: every interactive element and every relevant dynamic datum.
  */
 export const TEST_ID_PATTERNS = {
   interactive:   "{type}-{alvo}",

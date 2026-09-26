@@ -1,9 +1,9 @@
 /**
- * image-contrast — utilitário central de contraste sobre imagens (capas de release etc.).
+ * image-contrast — central utility for contrast over images (release covers etc.).
  *
- * Analisa a luminância média de uma imagem para decidir se o conteúdo sobreposto
- * deve usar texto escuro (capa clara) ou texto claro (capa escura), garantindo
- * legibilidade/contraste sobre qualquer arte. Sem dependências externas.
+ * Analyzes an image's average luminance to decide whether the overlaid content
+ * should use dark text (light cover) or light text (dark cover), ensuring
+ * legibility/contrast over any artwork. No external dependencies.
  */
 
 export type ContrastMode = "lightBackground" | "darkBackground";
@@ -11,17 +11,17 @@ export type ContrastMode = "lightBackground" | "darkBackground";
 const cache = new Map<string, ContrastMode>();
 const inflight = new Map<string, Promise<ContrastMode>>();
 
-/** Luminância relativa (WCAG) de um canal 0-255 normalizado. */
+/** Relative luminance (WCAG) of a normalized 0-255 channel. */
 function channelLuminance(c: number): number {
   const s = c / 255;
   return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
 }
 
 /**
- * Decide o modo de contraste para uma imagem.
- * Faz downscale para um canvas pequeno e calcula a luminância relativa média.
- * Em erro/CORS (canvas "tainted") ou ausência de capa retorna `lightBackground`
- * (padrão seguro: o app tem fundo claro, então texto escuro permanece legível).
+ * Decides the contrast mode for an image.
+ * Downscales to a small canvas and computes the average relative luminance.
+ * On error/CORS ("tainted" canvas) or a missing cover it returns `lightBackground`
+ * (safe default: the app has a light background, so dark text stays legible).
  */
 export function getImageContrastMode(src: string | null | undefined): Promise<ContrastMode> {
   if (!src) return Promise.resolve("lightBackground");
@@ -65,10 +65,10 @@ export function getImageContrastMode(src: string | null | undefined): Promise<Co
           count++;
         }
         const avg = count > 0 ? sum / count : 1;
-        // Só usa texto claro quando a capa é positivamente escura (avg baixo).
+        // Only uses light text when the cover is positively dark (low avg).
         settle(avg < 0.45 ? "darkBackground" : "lightBackground");
       } catch {
-        settle("lightBackground"); // canvas tainted (CORS) ou indisponível
+        settle("lightBackground"); // tainted canvas (CORS) or unavailable
       }
     };
     img.onerror = () => settle("lightBackground");
@@ -79,23 +79,23 @@ export function getImageContrastMode(src: string | null | undefined): Promise<Co
   return task;
 }
 
-// ── Classes utilitárias (design system) por modo de contraste ───────────────────
+// ── Utility classes (design system) per contrast mode ───────────────────────────
 
 /** Texto principal sobre capa. */
 export const contrastText = (mode: ContrastMode): string =>
   mode === "lightBackground" ? "text-slate-900" : "text-slate-50";
 
-/** Texto secundário/subtítulo sobre capa. */
+/** Secondary text/subtitle over the cover. */
 export const contrastSubtext = (mode: ContrastMode): string =>
   mode === "lightBackground" ? "text-slate-700" : "text-slate-200";
 
-/** "Chrome" sobreposto (ícones, bordas, botões, blocos translúcidos) sobre capa. */
+/** Overlaid "chrome" (icons, borders, buttons, translucent blocks) over the cover. */
 export const contrastChrome = (mode: ContrastMode): string =>
   mode === "lightBackground"
     ? "text-slate-900 border-slate-900/20 bg-white/30"
     : "text-slate-50 border-white/20 bg-black/30";
 
-/** Scrim (gradiente) que reforça a legibilidade do conteúdo na base do card. */
+/** Scrim (gradient) that reinforces the legibility of the content at the bottom of the card. */
 export const contrastScrim = (mode: ContrastMode): string =>
   mode === "lightBackground"
     ? "bg-gradient-to-t from-white/85 via-white/35 to-transparent"

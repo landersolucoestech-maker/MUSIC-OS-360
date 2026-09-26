@@ -1,4 +1,4 @@
-// Funções de máscara para formatação de campos
+// Mask functions for formatting fields
 
 export const maskCPF = (value: string): string => {
   const digits = value.replace(/\D/g, '').slice(0, 11);

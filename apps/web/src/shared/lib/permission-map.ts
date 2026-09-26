@@ -1,15 +1,15 @@
 /**
  * permission-map.ts
  *
- * Tradução de NOMES de módulo (UI) para o `resource` do backend e da ação coarse
- * da UI (read/write/delete/export) para as ações `resource:action`.
+ * Translation of module NAMES (UI) to the backend `resource`, and of the UI's coarse
+ * action (read/write/delete/export) to `resource:action` actions.
  *
- * IMPORTANTE: isto NÃO é uma matriz de autorização. É apenas um mapa de nomes.
- * A autorização vem exclusivamente de `membership.permissions` (ver usePermissions).
+ * IMPORTANT: this is NOT an authorization matrix. It is only a map of names.
+ * Authorization comes exclusively from `membership.permissions` (see usePermissions).
  */
 import type { TenantModuleKey, TenantModulePermission } from "@/app/providers/TenantContext";
 
-/** Nome de módulo (UI) → resource do backend. */
+/** Module name (UI) → backend resource. */
 export const MODULE_RESOURCE: Record<string, string> = {
   artists: "artist",
   catalog: "catalog",
@@ -31,7 +31,7 @@ export const MODULE_RESOURCE: Record<string, string> = {
   admin: "settings",
 };
 
-/** Ação coarse da UI → ações `resource:action` do backend (qualquer uma satisfaz). */
+/** UI coarse action → backend `resource:action` actions (any one satisfies). */
 const TENANT_ACTION_BACKEND: Record<keyof TenantModulePermission, string[]> = {
   read: ["read"],
   write: ["update", "create"],
@@ -39,7 +39,7 @@ const TENANT_ACTION_BACKEND: Record<keyof TenantModulePermission, string[]> = {
   export: ["export"],
 };
 
-/** Converte (módulo, ação coarse) → lista de chaves `resource:action` candidatas. */
+/** Converts (module, coarse action) → list of candidate `resource:action` keys. */
 export function tenantModulePermissionKeys(
   module: TenantModuleKey,
   action: keyof TenantModulePermission,

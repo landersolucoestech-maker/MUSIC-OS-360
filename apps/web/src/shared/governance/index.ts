@@ -1,30 +1,30 @@
 /**
  * shared/governance/index.ts
  * ─────────────────────────────────────────────────────────────────────────────
- * MUSIC OS 360 — Barrel da camada de Governança
+ * MUSIC OS 360 — Barrel of the Governance layer
  *
- * Exporta todas as convenções, registos e documentação operacional
- * da plataforma para uso em qualquer ponto do codebase.
+ * Exports every convention, registry and piece of operational documentation
+ * of the platform for use anywhere in the codebase.
  *
- * Importação recomendada:
+ * Recommended import:
  *   import { MODULE_REGISTRY, ENTITY_CATALOG, ... }
  *     from "@/shared/governance";
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-// ── Convenções de nomenclatura ────────────────────────────────────────────────
+// ── Naming conventions ────────────────────────────────────────────────────────
 export * from "./naming";
 
-// ── Registo de módulos ────────────────────────────────────────────────────────
+// ── Module registry ───────────────────────────────────────────────────────────
 export * from "./modules";
 
-// ── Catálogo de entidades e relacionamentos ───────────────────────────────────
+// ── Entity and relationship catalog ───────────────────────────────────────────
 export * from "./entities";
 
-// ── Máquinas de estado ────────────────────────────────────────────────────────
+// ── State machines ────────────────────────────────────────────────────────────
 export * from "./states";
 
-// ── Sistema de permissões RBAC ────────────────────────────────────────────────
+// ── RBAC permission system ────────────────────────────────────────────────────
 export * from "./permissions";
 
 // ── Fluxos operacionais ───────────────────────────────────────────────────────

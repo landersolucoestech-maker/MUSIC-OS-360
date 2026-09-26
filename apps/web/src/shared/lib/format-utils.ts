@@ -76,7 +76,7 @@ export function formatDateDashes(date: string | Date | null | undefined): string
   return `${dd}/${mm}/${d.getFullYear()}`;
 }
 
-/** Data e hora no formato DD/MM/YYYY HH:mm. Retorna "—" quando vazia. */
+/** Date and time in the DD/MM/YYYY HH:mm format. Returns "—" when empty. */
 export function formatDateTimeDashes(date: string | Date | null | undefined): string {
   const d = toDate(date);
   if (!d) return "—";

@@ -1,31 +1,31 @@
 import { storage, type PagedListOptions } from "@/shared/lib/storage";
 
 export interface FetchAllPagesOptions extends Omit<PagedListOptions, "page" | "pageSize"> {
-  /** Registros por página durante a coleta. Default: 200 (limite máximo do backend). */
+  /** Records per page during collection. Default: 200 (the backend's maximum limit). */
   pageSize?: number;
-  /** Teto de segurança — nunca busca infinitamente. Default: 5000. */
+  /** Safety ceiling — never fetches infinitely. Default: 5000. */
   maxRecords?: number;
 }
 
 export interface FetchAllPagesResult<T> {
   items: T[];
-  /** Total real do backend (pode ser maior que items.length se truncado pelo maxRecords). */
+  /** Real backend total (may be larger than items.length if truncated by maxRecords). */
   total: number;
-  /** true quando o teto de segurança foi atingido antes de cobrir `total`. */
+  /** true when the safety ceiling was reached before covering `total`. */
   truncated: boolean;
 }
 
 /**
- * Task I — coleta TODOS os registros que casam com os filtros atuais, via
- * paginação iterativa server-side (nunca um único `limit` fixo maior).
- * Substitui o padrão "exportar a lista já carregada na tela" (que herdava o
- * limit=50 default do backend quando ninguém pedia paginação) por uma
- * varredura completa e explícita, respeitando os filtros ativos.
+ * Task I — collects ALL records matching the current filters, via
+ * iterative server-side pagination (never a single larger fixed `limit`).
+ * Replaces the "export the list already loaded on screen" pattern (which inherited the
+ * backend's default limit=50 when nobody asked for pagination) with a
+ * complete, explicit sweep that respects the active filters.
  *
- * `maxRecords` é um teto de SEGURANÇA (evita um export runaway em tenants
- * absurdamente grandes), não uma solução de paginação — quando atingido,
- * `truncated: true` avisa o chamador para alertar o usuário, nunca corta
- * silenciosamente.
+ * `maxRecords` is a SAFETY ceiling (avoids a runaway export on absurdly
+ * large tenants), not a pagination solution — when reached,
+ * `truncated: true` tells the caller to warn the user; it never cuts
+ * silently.
  */
 export async function fetchAllPages<T extends object>(
   table: string,

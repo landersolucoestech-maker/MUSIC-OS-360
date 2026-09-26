@@ -1,23 +1,23 @@
 /**
  * shared/governance/permissions.ts
  * ─────────────────────────────────────────────────────────────────────────────
- * MUSIC OS 360 — Sistema de Permissões RBAC (Role-Based Access Control)
+ * MUSIC OS 360 — RBAC Permission System (Role-Based Access Control)
  *
- * Documenta o modelo de permissões do sistema: papéis, módulos,
- * operações e restrições por plano de billing.
+ * Documents the system's permission model: roles, modules,
+ * operations and restrictions per billing plan.
  *
- * Fonte de implementação: app/providers/TenantContext.tsx
- * Tipos: TenantRole, TenantModuleKey, TenantModulePermission, TenantPermissions
+ * Implementation source: app/providers/TenantContext.tsx
+ * Types: TenantRole, TenantModuleKey, TenantModulePermission, TenantPermissions
  *
- * REGRA: toda UI que restringe acesso DEVE usar useTenant().hasPermission()
- *        ou verificar features flags via tenant.features.
- *        PROIBIDO: verificar papéis directamente em componentes.
+ * RULE: every UI that restricts access MUST use useTenant().hasPermission()
+ *        or check feature flags via tenant.features.
+ *        FORBIDDEN: checking roles directly in components.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
 import type { TenantRole, TenantModuleKey } from "@/app/providers/TenantContext";
 
-// ─── Tipos de documentação ────────────────────────────────────────────────────
+// ─── Documentation types ──────────────────────────────────────────────────────
 
 export interface RoleDescription {
   role: TenantRole;
@@ -45,11 +45,11 @@ export interface ModuleAccessPolicy {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * Hierarquia de papéis (ordem decrescente de poder):
+ * Role hierarchy (descending order of power):
  *   owner > admin > manager > editor > viewer
  *
- * REGRA: um utilizador só pode convidar utilizadores com papéis
- *        iguais ou inferiores ao seu próprio.
+ * RULE: a user may only invite users with roles
+ *        equal to or lower than their own.
  */
 export const ROLE_DESCRIPTIONS: Record<TenantRole, RoleDescription> = {
 
@@ -128,17 +128,17 @@ export const ROLE_DESCRIPTIONS: Record<TenantRole, RoleDescription> = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// MATRIZ DE PERMISSÕES POR MÓDULO
+// PERMISSION MATRIX PER MODULE
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * Tabela de permissões por módulo e papel.
- * Implementação em: ROLE_PERMISSIONS (TenantContext.tsx).
+ * Permission table per module and role.
+ * Implemented in: ROLE_PERMISSIONS (TenantContext.tsx).
  *
- * Legenda:
- *   ✓ = permitido    ✗ = proibido    R = apenas leitura
+ * Legend:
+ *   ✓ = allowed    ✗ = forbidden    R = read only
  *
- * Módulo         | owner | admin | manager | editor | viewer
+ * Module         | owner | admin | manager | editor | viewer
  * ─────────────────────────────────────────────────────────────
  * artists        |  ✓✓✓✓ |  ✓✓✓✓ |   ✓✓✓✓  |  ✓✓✗✓  |  R
  * catalog        |  ✓✓✓✓ |  ✓✓✓✓ |   ✓✓✓✓  |  ✓✓✗✓  |  R
@@ -157,7 +157,7 @@ export const ROLE_DESCRIPTIONS: Record<TenantRole, RoleDescription> = {
  * audit          |  ✓✓✓✓ |  ✓✓✓✓ |     R   |  ✗✗✗✗  | ✗✗✗✗
  * settings       |  ✓✓✓✓ |  ✓✓✓✓ |     R   |  ✗✗✗✗  | ✗✗✗✗
  *
- * Formato ✓✓✓✓: read.write.delete.export
+ * Format ✓✓✓✓: read.write.delete.export
  */
 export const PERMISSION_MATRIX_DOCS = `
 Módulo         | owner | admin | manager | editor | viewer
@@ -186,27 +186,27 @@ E    = export
 `;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// RESTRIÇÕES POR PLANO
+// RESTRICTIONS PER PLAN
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * Módulos bloqueados por plano de billing.
- * Implementação em: PLAN_FLAGS (shared/lib/feature-flags.ts).
+ * Modules blocked per billing plan.
+ * Implemented in: PLAN_FLAGS (shared/lib/feature-flags.ts).
  *
  * starter (entry-level):
- *   - monitoring desabilitado
- *   - licensing desabilitado
- *   - rh desabilitado
- *   - auditLog desabilitado
- *   - bulkActions desabilitado
- *   - analyticsAdvanced desabilitado
+ *   - monitoring disabled
+ *   - licensing disabled
+ *   - rh disabled
+ *   - auditLog disabled
+ *   - bulkActions disabled
+ *   - analyticsAdvanced disabled
  *
  * professional (mid-tier):
- *   - analyticsAdvanced desabilitado
- * *   - multiTenantAdmin desabilitado
+ *   - analyticsAdvanced disabled
+ * *   - multiTenantAdmin disabled
  *
  * enterprise (full):
- *   - todos os módulos e features habilitados
+ *   - every module and feature enabled
  */
 export const PLAN_ACCESS_RESTRICTIONS: Record<
   "starter" | "professional" | "enterprise",
@@ -229,33 +229,33 @@ export const PLAN_ACCESS_RESTRICTIONS: Record<
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// PADRÃO DE USO NA UI
+// USAGE PATTERN IN THE UI
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * COMO VERIFICAR PERMISSÕES NA UI:
+ * HOW TO CHECK PERMISSIONS IN THE UI:
  *
- * 1. Verificação de módulo (read access):
+ * 1. Module check (read access):
  *    const { tenant } = useTenant();
  *    if (!tenant.permissions.artists.read) return <NoAccess />;
  *
- * 2. Verificação de operação:
+ * 2. Operation check:
  *    const canWrite = tenant.permissions.accounting.write;
- *    <Button disabled={!canWrite}>Criar Transação</Button>
+ *    <Button disabled={!canWrite}>{createTransactionLabel}</Button>
  *
- * 3. Verificação de feature flag:
+ * 3. Feature flag check:
  *    const { tenant } = useTenant();
  *    if (!tenant.features.moduleMonitoring) return <UpgradePrompt />;
  *
- * 4. Rota protegida (AdminRoute):
+ * 4. Protected route (AdminRoute):
  *    <AdminRoute roles={["owner", "admin"]}>
  *      <AuditPage />
  *    </AdminRoute>
  *
- * PROIBIDO:
- *   - Verificar tenant.role directamente (usar permissions object)
- *   - Esconder elementos via CSS em vez de não os renderizar
- *   - Verificar permissões em serviços (apenas na UI ou no backend futuro)
+ * FORBIDDEN:
+ *   - Checking tenant.role directly (use the permissions object)
+ *   - Hiding elements via CSS instead of not rendering them
+ *   - Checking permissions in services (only in the UI or the future backend)
  */
 export const PERMISSION_USAGE_PATTERN = {
   moduleAccess:   "tenant.permissions[moduleKey].read",
@@ -272,34 +272,34 @@ export const PERMISSION_USAGE_PATTERN = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// DADOS SENSÍVEIS — Política de acesso
+// SENSITIVE DATA — Access policy
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /**
- * Campos que requerem tratamento especial de acesso:
+ * Fields that require special access handling:
  *
  * CPF/CNPJ:
- *   - Visíveis apenas para owner, admin, manager
- *   - Mascarados para editor e viewer (ex: ***.123.456-**)
- *   - FUTURO: encriptação em repouso no backend
+ *   - Visible only to owner, admin, manager
+ *   - Masked for editor and viewer (e.g. ***.123.456-**)
+ *   - FUTURE: encryption at rest in the backend
  *
- * Salários (Funcionario.salario):
- *   - Visíveis apenas para owner e admin
- *   - Completamente ocultos para manager, editor, viewer
+ * Salaries (Funcionario.salario):
+ *   - Visible only to owner and admin
+ *   - Completely hidden for manager, editor, viewer
  *
- * Credenciais de integração (musicos360_<id>_credentials):
- *   - Nunca visíveis na UI (apenas asteriscos)
- *   - Eliminadas no logout
- *   - FUTURO: armazenadas no backend encriptadas (Vault)
+ * Integration credentials (musicos360_<id>_credentials):
+ *   - Never visible in the UI (asterisks only)
+ *   - Deleted on logout
+ *   - FUTURE: stored encrypted in the backend (Vault)
  *
- * Dados financeiros (Transacao.valor, NotaFiscal.valor_total):
- *   - Visíveis para owner, admin, manager (com exportação)
- *   - Visíveis para editor (sem exportação de relatórios completos)
- *   - Mascarados para viewer em contextos de lista
+ * Financial data (Transacao.valor, NotaFiscal.valor_total):
+ *   - Visible to owner, admin, manager (with export)
+ *   - Visible to editor (without full report export)
+ *   - Masked for viewer in list contexts
  *
- * Chaves de autenticação:
- *   - musicos360_rt → eliminado no logout
- *   - Nunca exposto em logs ou consola
+ * Authentication keys:
+ *   - musicos360_rt → deleted on logout
+ *   - Never exposed in logs or the console
  */
 export const SENSITIVE_DATA_POLICY = {
   cpfCnpj: {

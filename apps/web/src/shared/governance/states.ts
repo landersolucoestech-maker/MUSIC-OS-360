@@ -1,34 +1,34 @@
 /**
  * shared/governance/states.ts
  * ─────────────────────────────────────────────────────────────────────────────
- * MUSIC OS 360 — Máquinas de Estado Canónicas
+ * MUSIC OS 360 — Canonical State Machines
  *
- * Documenta os ciclos de vida de cada entidade: estados válidos,
- * transições permitidas, estado inicial, estados finais e
- * cor semântica na UI.
+ * Documents each entity's lifecycle: valid states,
+ * allowed transitions, initial state, final states and
+ * semantic color in the UI.
  *
- * REGRA DE COR SEMÂNTICA (obrigatória em toda a UI):
- *   Verde    → activo / publicado / concluído / aprovado / emitido
- *   Azul     → em curso / produção / processando / agendado / enviado
- *   Amarelo  → pendente / rascunho / análise / planejamento
- *   Cinza    → inactivo / arquivado / encerrado / liquidado
- *   Vermelho → EXCLUSIVO para: cancelado / rejeitado / vencido /
- *              desligado / falhou / valores negativos
+ * SEMANTIC COLOR RULE (mandatory across the whole UI):
+ *   Green    → active / published / completed / approved / issued
+ *   Blue     → in progress / production / processing / scheduled / sent
+ *   Yellow   → pending / draft / review / planning
+ *   Gray     → inactive / archived / closed / settled
+ *   Red      → EXCLUSIVELY for: cancelled / rejected / overdue /
+ *              terminated / failed / negative values
  *
- * PROIBIDO: usar vermelho para estados neutros ou de progresso.
+ * FORBIDDEN: using red for neutral or progress states.
  *
- * Fonte de tipos: shared/types/enums.ts
+ * Types source: shared/types/enums.ts
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-// ─── Tipos da máquina de estados ─────────────────────────────────────────────
+// ─── State machine types ──────────────────────────────────────────────────────
 
 export type UiColor =
-  | "green"    // activo / positivo / concluído
-  | "blue"     // em curso / agendado
-  | "yellow"   // pendente / rascunho / análise
+  | "green"    // active / positive / completed
+  | "blue"     // in progress / scheduled
+  | "yellow"   // pending / draft / review
   | "gray"     // inactivo / arquivado / neutro
-  | "red";     // cancelado / rejeitado / vencido / falhou (APENAS estes)
+  | "red";     // cancelled / rejected / overdue / failed (ONLY these)
 
 export interface StateDefinition {
   value: string;
@@ -125,7 +125,7 @@ export const CONTRATO_STATE_MACHINE: StateMachine = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// TRANSAÇÃO — Estado de pagamento
+// TRANSACTION — Payment state
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const TRANSACAO_STATE_MACHINE: StateMachine = {
@@ -150,7 +150,7 @@ export const TRANSACAO_STATE_MACHINE: StateMachine = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// NOTA FISCAL — Ciclo de emissão
+// INVOICE — Issuing cycle
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const NOTA_FISCAL_STATE_MACHINE: StateMachine = {
@@ -209,7 +209,7 @@ export const OBRA_STATE_MACHINE: StateMachine = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// LANÇAMENTO — Ciclo editorial
+// RELEASE — Editorial cycle
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const LANCAMENTO_STATE_MACHINE: StateMachine = {
@@ -273,7 +273,7 @@ export const LEAD_STATE_MACHINE: StateMachine = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// TAKEDOWN — Processo de remoção
+// TAKEDOWN — Removal process
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const TAKEDOWN_STATE_MACHINE: StateMachine = {
@@ -304,7 +304,7 @@ export const TAKEDOWN_STATE_MACHINE: StateMachine = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// EVENTO — Ciclo de produção
+// EVENT — Production cycle
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const EVENTO_STATE_MACHINE: StateMachine = {
@@ -332,7 +332,7 @@ export const EVENTO_STATE_MACHINE: StateMachine = {
   ],
 };
 
-// ─── Registo centralizado de todas as máquinas de estado ─────────────────────
+// ─── Centralized registry of every state machine ─────────────────────────────
 
 export const ALL_STATE_MACHINES: StateMachine[] = [
   ARTISTA_STATE_MACHINE,
@@ -369,9 +369,9 @@ export function isFinalState(entity: string, value: string): boolean {
 }
 
 /**
- * REGRA SEMÂNTICA DE COR — tabela de referência.
- * Todos os componentes Badge, StatusBadge e ContractStatusBadge
- * devem consultar esta tabela para determinar a variante de cor.
+ * SEMANTIC COLOR RULE — reference table.
+ * Every Badge, StatusBadge and ContractStatusBadge component
+ * must consult this table to determine the color variant.
  */
 export const SEMANTIC_COLOR_RULES = {
   green:  ["ativo", "vigente", "concluido", "aprovado", "emitida", "publicado", "registrado", "fechado"],

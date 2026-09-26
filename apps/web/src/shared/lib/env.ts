@@ -1,12 +1,12 @@
 /**
- * shared/lib/env.ts — Fonte única de verdade para variáveis de ambiente.
+ * shared/lib/env.ts — Single source of truth for environment variables.
  *
- * REGRA: nenhum outro ficheiro deve ler import.meta.env directamente
- * para flags de modo. Importar sempre daqui.
+ * RULE: no other file may read import.meta.env directly
+ * for mode flags. Always import from here.
  *
- * Não existe modo mock: o frontend consome exclusivamente o backend real.
- * (VITE_USE_MOCK/VITE_MOCK_MODE=true são bloqueadas no build pelo guard
- * assert-supabase-env.)
+ * There is no mock mode: the frontend consumes the real backend exclusively.
+ * (VITE_USE_MOCK/VITE_MOCK_MODE=true are blocked at build time by the
+ * assert-supabase-env guard.)
  *
  */
 
@@ -17,10 +17,10 @@ import { isProdLike } from "@music-os-360/config/environment";
 // AUTH_DISABLED=true in the API to bypass auth temporarily during development.
 // Set the flags to false or remove them to restore the original auth flow.
 /**
- * Modo mock foi REMOVIDO: literal false (type 'false') para que todo braço
- * 'if (MOCK_MODE)' remanescente seja código provadamente morto, eliminado do
- * bundle por dead-code-elimination. Não lê env var nenhuma — impossível ligar.
- * Remoção física dos braços restantes: ver relatório no-mock.
+ * Mock mode was REMOVED: literal false (type 'false') so every remaining
+ * 'if (MOCK_MODE)' branch is provably dead code, eliminated from the
+ * bundle by dead-code elimination. It reads no env var at all — impossible to turn on.
+ * Physical removal of the remaining branches: see the no-mock report.
  */
 export const AUTH_DISABLED: boolean =
   import.meta.env.DEV === true &&
@@ -29,21 +29,21 @@ export const AUTH_DISABLED: boolean =
 /**
  * DEV_AUTH_BYPASS — VITE_DISABLE_AUTH=true — DEV ONLY.
  *
- * Bypass de autenticação/autorização puramente de FRONTEND para navegar a
- * interface sem login durante desenvolvimento local. Diferente de
- * AUTH_DISABLED: este flag não pressupõe que o backend também tenha auth
- * desligada — chamadas de API que exigem token real continuam podendo
- * retornar 401/403 normalmente (ver api-client.ts para o único ajuste
- * relacionado: o circuit-breaker de 401 é pulado sob este flag para não
- * bloquear a navegação inteira por 30s a cada chamada autenticada).
+ * A purely FRONTEND authentication/authorization bypass to browse the
+ * interface without login during local development. Different from
+ * AUTH_DISABLED: this flag does not assume the backend also has auth
+ * off — API calls requiring a real token may still
+ * return 401/403 normally (see api-client.ts for the only related
+ * adjustment: the 401 circuit breaker is skipped under this flag so it does not
+ * block the whole navigation for 30s on every authenticated call).
  *
- * `deriveDevAuthBypass` é a derivação pura (testável sem mockar
- * import.meta.env). A garantia de segurança central: `isDev` só pode ser
- * `true` quando o Vite compila em modo de desenvolvimento (import.meta.env.DEV
- * é decidido em build-time pelo modo do build, não é uma env var lida em
- * runtime) — logo, mesmo que VITE_DISABLE_AUTH=true vaze para um `.env` de
- * staging/produção por engano, um build de produção nunca terá DEV === true
- * e o bypass permanece desativado.
+ * `deriveDevAuthBypass` is the pure derivation (testable without mocking
+ * import.meta.env). The core security guarantee: `isDev` can only be
+ * `true` when Vite compiles in development mode (import.meta.env.DEV
+ * is decided at build time by the build mode, it is not an env var read at
+ * runtime) — so even if VITE_DISABLE_AUTH=true leaks into a
+ * staging/production `.env` by mistake, a production build will never have DEV === true
+ * and the bypass stays disabled.
  */
 export function deriveDevAuthBypass(isDev: boolean, flagValue: string | undefined): boolean {
   return isDev === true && flagValue === "true";
@@ -55,16 +55,16 @@ export const DEV_AUTH_BYPASS: boolean = deriveDevAuthBypass(
 );
 
 /**
- * URL base da API backend. String vazia = URLs relativas (same-domain, proxy Vite).
+ * Base URL of the backend API. Empty string = relative URLs (same domain, Vite proxy).
  *
- * Sanitização defensiva: remove sufixos /api/v1 ou /api caso VITE_API_URL já os
- * contenha — evita a duplicação "http://host/api/api/v1/..." que ocorre quando
- * VITE_API_URL=http://localhost:3001/api e api-client.ts já anexa /api/v1.
+ * Defensive sanitization: removes /api/v1 or /api suffixes if VITE_API_URL already
+ * contains them — avoids the "http://host/api/api/v1/..." duplication that happens when
+ * VITE_API_URL=http://localhost:3001/api and api-client.ts already appends /api/v1.
  *
- * Regra: VITE_API_URL deve ser APENAS o host/porta, sem path:
- *   CORRECTO: http://localhost:3001
- *   ERRADO:   http://localhost:3001/api
- *   ERRADO:   http://localhost:3001/api/v1
+ * Rule: VITE_API_URL must be ONLY the host/port, without a path:
+ *   CORRECT: http://localhost:3001
+ *   WRONG:   http://localhost:3001/api
+ *   WRONG:   http://localhost:3001/api/v1
  */
 function sanitizeApiBase(raw: string): string {
   return raw
@@ -80,7 +80,7 @@ export const API_BASE_URL: string = sanitizeApiBase(
 /** true em ambiente de desenvolvimento Vite (npm run dev). */
 export const IS_DEV: boolean = import.meta.env.DEV === true;
 
-/** true em build de produção. */
+/** true in a production build. */
 export const IS_PROD: boolean = import.meta.env.PROD === true;
 
 /**
@@ -100,11 +100,11 @@ export const ENV_MODE: string = (import.meta.env.MODE as string) ?? "development
 export const IS_PROD_LIKE: boolean = isProdLike(ENV_MODE);
 
 /**
- * Parte 75 — identificador seguro de ambiente de autenticação, exibido na
- * tela de login (nunca a URL nem a anon key completas) para eliminar
- * ambiguidade sobre "para qual Supabase este build está apontando" — a
- * causa mais provável de um "Invalid login" real com credenciais corretas
- * é o usuário estar numa superfície apontando para o projeto/ambiente errado.
+ * Part 75 — safe authentication environment identifier, shown on the
+ * login screen (never the full URL nor the anon key) to remove
+ * ambiguity about "which Supabase this build points to" — the
+ * most likely cause of a real "Invalid login" with correct credentials
+ * is the user being on a surface pointing to the wrong project/environment.
  */
 const SUPABASE_ENV_LABELS: Readonly<Record<string, string>> = {
   rypnevnfipygyhysqpdo: "DEV",
@@ -112,7 +112,7 @@ const SUPABASE_ENV_LABELS: Readonly<Record<string, string>> = {
   sxmfeocztlztvpdnxayk: "MAIN (proibido)",
 };
 
-/** Extraída como função pura (recebe a URL em vez de ler import.meta.env) para ser testável sem mockar o Vite. */
+/** Extracted as a pure function (receives the URL instead of reading import.meta.env) so it is testable without mocking Vite. */
 export function extractSupabaseRef(url: string | undefined): string | null {
   return (url ?? "").match(/https:\/\/([a-z0-9]+)\.supabase\.co/)?.[1] ?? null;
 }
@@ -124,7 +124,7 @@ export function deriveAuthEnvironmentLabel(url: string | undefined): string {
   return SUPABASE_ENV_LABELS[ref] ?? "desconhecido";
 }
 
-/** "rypn…qpdo" — só os 4 primeiros/últimos caracteres do ref, nunca a key. */
+/** "rypn…qpdo" — only the first/last 4 characters of the ref, never the key. */
 export function deriveMaskedSupabaseRef(url: string | undefined): string {
   const ref = extractSupabaseRef(url);
   if (!ref || ref.length < 8) return "????…????";
@@ -153,8 +153,8 @@ export const BUILD_COMMIT_SHA: string =
  * Returns true if env is valid, false if the app should not render.
  */
 /**
- * Refs Supabase banidos de qualquer runtime (branch preview sem tabelas públicas).
- * Espelha apps/api/src/core/config/env.schema.ts e scripts/env-check.mjs.
+ * Supabase refs banned from any runtime (preview branch without public tables).
+ * Mirrors apps/api/src/core/config/env.schema.ts and scripts/env-check.mjs.
  */
 const SUPABASE_REF_DENYLIST: readonly string[] = ["mkyvkciwyhfawmvluugb"];
 

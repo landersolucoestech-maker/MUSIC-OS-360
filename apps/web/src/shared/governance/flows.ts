@@ -1,30 +1,30 @@
 /**
  * shared/governance/flows.ts
  * ─────────────────────────────────────────────────────────────────────────────
- * MUSIC OS 360 — Fluxos Operacionais Canónicos
+ * MUSIC OS 360 — Canonical Operational Flows
  *
- * Documenta os fluxos de negócio end-to-end que atravessam múltiplos módulos.
- * Cada fluxo descreve: actores, passos, entidades criadas/modificadas,
- * módulos envolvidos, integrações futuras e pontos de extensão.
+ * Documents the end-to-end business flows that cross multiple modules.
+ * Each flow describes: actors, steps, entities created/modified,
+ * modules involved, future integrations and extension points.
  *
- * REGRA: qualquer novo fluxo que atravesse 2+ módulos deve ser
- *        documentado aqui antes de ser implementado.
+ * RULE: any new flow crossing 2+ modules must be
+ *        documented here before it is implemented.
  *
- * Fluxos documentados:
- *   F01 — Integração de Novo Artista
- *   F02 — Lançamento Musical
- *   F03 — Ciclo de Contrato
- *   F04 — Ciclo Financeiro (Transação → P&L)
- *   F05 — Fluxo Comercial de Lead → Cliente → Contrato
- *   F06 — Campanha de Marketing de Lançamento
- *   F07 — Takedown de Conteúdo
- *   F08 — Conciliação ECAD
- *   F09 — Licenciamento de Obra
- *   F10 — Onboarding de Novo Tenant
+ * Documented flows:
+ *   F01 — New Artist Onboarding
+ *   F02 — Music Release
+ *   F03 — Contract Lifecycle
+ *   F04 — Financial Cycle (Transaction → P&L)
+ *   F05 — Commercial Flow Lead → Client → Contract
+ *   F06 — Release Marketing Campaign
+ *   F07 — Content Takedown
+ *   F08 — ECAD Reconciliation
+ *   F09 — Work Licensing
+ *   F10 — New Tenant Onboarding
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-// ─── Tipos dos fluxos ─────────────────────────────────────────────────────────
+// ─── Flow types ───────────────────────────────────────────────────────────────
 
 export interface FlowStep {
   step:            number;
@@ -49,7 +49,7 @@ export interface OperationalFlow {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// F01 — INTEGRAÇÃO DE NOVO ARTISTA
+// F01 — NEW ARTIST ONBOARDING
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const FLOW_ARTISTA_ONBOARDING: OperationalFlow = {
@@ -155,7 +155,7 @@ export const FLOW_ARTISTA_ONBOARDING: OperationalFlow = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// F02 — LANÇAMENTO MUSICAL
+// F02 — MUSIC RELEASE
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const FLOW_LANCAMENTO_MUSICAL: OperationalFlow = {
@@ -385,7 +385,7 @@ export const FLOW_LEAD_CONTRATO: OperationalFlow = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// F06 — CAMPANHA DE MARKETING DE LANÇAMENTO
+// F06 — RELEASE MARKETING CAMPAIGN
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const FLOW_CAMPANHA_MARKETING: OperationalFlow = {
@@ -428,7 +428,7 @@ export const FLOW_CAMPANHA_MARKETING: OperationalFlow = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// F07 — TAKEDOWN DE CONTEÚDO
+// F07 — CONTENT TAKEDOWN
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const FLOW_TAKEDOWN: OperationalFlow = {
@@ -469,7 +469,7 @@ export const FLOW_TAKEDOWN: OperationalFlow = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// F08 — CONCILIAÇÃO ECAD
+// F08 — ECAD RECONCILIATION
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const FLOW_CONCILIACAO_ECAD: OperationalFlow = {

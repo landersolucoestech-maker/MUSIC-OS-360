@@ -9,8 +9,8 @@ export interface ListOptions {
   limit?: number;
   offset?: number;
   _bypassTenant?: boolean;
-  /** Cancela a requisição quando a query que a originou fica obsoleta
-   * (componente desmontou, queryKey mudou) — ver React Query QueryFunctionContext. */
+  /** Cancels the request when the query that originated it becomes obsolete
+   * (component unmounted, queryKey changed) — see React Query QueryFunctionContext. */
   signal?: AbortSignal;
 }
 
@@ -137,14 +137,14 @@ const httpStorage: StoragePort = {
   },
 
   /**
-   * Paginação real server-side (Task G): a API já implementa
-   * skip/take + getManyAndCount para artistas/contratos/obras/fonogramas/
-   * lançamentos/shares/inventário/eventos/projetos/funcionários/licenças/
-   * takedowns/transações (ver PaginationDto/QueryXDto no backend) e devolve
-   * `{ data, meta: { total, offset, limit } }`. Isto só desembrulha esse
-   * envelope corretamente — `storage.list()` acima descarta `meta.total`,
-   * o que é certo para os usos "me dê tudo" (selects/lookups), mas errado
-   * para uma tabela paginada, que precisa saber o total real do tenant.
+   * Real server-side pagination (Task G): the API already implements
+   * skip/take + getManyAndCount for artists/contracts/works/phonograms/
+   * releases/shares/inventory/events/projects/employees/licenses/
+   * takedowns/transactions (see PaginationDto/QueryXDto in the backend) and returns
+   * `{ data, meta: { total, offset, limit } }`. This only unwraps that
+   * envelope correctly — `storage.list()` above discards `meta.total`,
+   * which is right for the "give me everything" uses (selects/lookups), but wrong
+   * for a paginated table, which needs to know the tenant's real total.
    */
   async listPaged<T extends StorageRow>(table: string, options: PagedListOptions): Promise<PagedResult<T>> {
     const resolved = resolveTable(table);

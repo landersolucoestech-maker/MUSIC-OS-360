@@ -1,8 +1,8 @@
 /**
  * shared/lib/get-session-org-id.ts
  *
- * Utilitário isolado para ler o org_id do JWT em memória.
- * Separado do AuthContext para compatibilidade com Vite Fast Refresh.
+ * Isolated utility to read the org_id from the in-memory JWT.
+ * Separated from AuthContext for Vite Fast Refresh compatibility.
  */
 
 import { getAccessToken } from "./api-client";
@@ -14,11 +14,11 @@ function decodeJwtPayload(token: string): Record<string, unknown> {
   } catch { return {}; }
 }
 
-/** Lê org_id do token JWT em memória (modo real) ou retorna null (mock).
+/** Reads org_id from the in-memory JWT (real mode) or returns null (mock).
  *
- * Prioridade de leitura:
- *   1. app_metadata.org_id — injetado pelo Custom Access Token Hook do Supabase
- *   2. top-level org_id    — fallback para JWTs legados ou custom templates
+ * Read priority:
+ *   1. app_metadata.org_id — injected by Supabase's Custom Access Token Hook
+ *   2. top-level org_id    — fallback for legacy JWTs or custom templates
  */
 export function getSessionOrgId(): string | null {
   const token = getAccessToken();
@@ -32,8 +32,8 @@ export function getSessionOrgId(): string | null {
   } catch { return null; }
 }
 
-/** Lê o `sub` (user id) do token JWT em memória — mesmo claim que o backend
- * usa como identificador de usuário nas policies de Realtime Authorization
+/** Reads the `sub` (user id) from the in-memory JWT — the same claim the backend
+ * uses as the user identifier in the Realtime Authorization policies
  * (`realtime.topic() = 'user:' || auth.jwt()->>'sub'`). */
 export function getSessionUserId(): string | null {
   const token = getAccessToken();

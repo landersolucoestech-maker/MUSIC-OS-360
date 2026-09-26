@@ -7,12 +7,12 @@ export const CACHE_TIMES = {
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 60 * 60 * 1000, // 1 hour (formerly cacheTime)
   },
-  // Semi-static data (catalogo, templates, configurações)
+  // Semi-static data (catalog, templates, settings)
   SEMI_STATIC: {
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes
   },
-  // Dynamic data that changes frequently (transações, comercial, eventos)
+  // Dynamic data that changes frequently (transactions, commercial, events)
   DYNAMIC: {
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -184,13 +184,13 @@ export function createQueryClient(): QueryClient {
         networkMode: "offlineFirst",
       },
       mutations: {
-        // POST/PATCH/DELETE não são seguras para retry automático: se a
-        // requisição chegou ao servidor mas a resposta se perdeu (timeout,
-        // rede caiu), reenviar duplica a escrita (artista duplicado,
-        // transação duplicada, etc.) sem nenhum aviso ao usuário — a UI já
-        // seguiu em frente (toast/fechou modal) antes do retry silencioso
-        // acontecer em background. Falhas de mutation já viram toast.error
-        // (ver useDataQuery); o usuário pode tentar de novo manualmente.
+        // POST/PATCH/DELETE are not safe for automatic retry: if the
+        // request reached the server but the response was lost (timeout,
+        // network dropped), resending duplicates the write (duplicate artist,
+        // duplicate transaction, etc.) without any warning to the user — the UI already
+        // moved on (toast/closed the modal) before the silent retry
+        // happened in the background. Mutation failures already become toast.error
+        // (see useDataQuery); the user can try again manually.
         retry: 0,
 
         // Network mode

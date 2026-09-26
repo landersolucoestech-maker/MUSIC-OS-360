@@ -1,7 +1,7 @@
 /**
- * category-labels — formatação PT-BR (apresentação) de categorias/identificadores
- * técnicos. NUNCA exibe underscore: faz match no dicionário (acentuação correta) ou,
- * no fallback, troca `_` por espaço e aplica Title Case. Não altera valores internos.
+ * category-labels — PT-BR (presentation) formatting of technical categories/identifiers.
+ * NEVER displays an underscore: matches the dictionary (correct accents) or,
+ * as a fallback, replaces `_` with a space and applies Title Case. Does not change internal values.
  */
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -31,7 +31,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   producao: "Produção",
   shows: "Shows",
   operacional: "Operacional",
-  // ── Contratos / serviços (CST) ──────────────────────────────────────────────────
+  // ── Contracts / services (CST) ──────────────────────────────────────────────────
   empresariamento: "Empresariamento",
   suporte_financeiro: "Suporte Financeiro",
   gestao: "Gestão",
@@ -58,7 +58,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   administracao_editorial: "Administração Editorial",
   sincronizacao: "Sincronização",
   estrategia_carreira: "Estratégia de Carreira",
-  // ── Projeto / marketing / conteúdo ───────────────────────────────────────────────
+  // ── Project / marketing / content ────────────────────────────────────────────────
   sessao_fotos: "Sessão de Fotos",
   conteudo_lancamento: "Conteúdo de Lançamento",
   videoclipe: "Videoclipe",
@@ -77,7 +77,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   outro: "Outro",
 };
 
-/** Title Case PT-BR mantendo conectores minúsculos. */
+/** PT-BR Title Case keeping connectors lowercase. */
 function titleCase(text: string): string {
   const minor = new Set(["de", "da", "do", "das", "dos", "e", "a", "o", "em", "para", "com"]);
   return text
@@ -92,8 +92,8 @@ function titleCase(text: string): string {
 }
 
 /**
- * Converte um valor de categoria (enum/slug) no rótulo PT-BR de exibição.
- * Apenas apresentação — não altera o valor persistido.
+ * Converts a category value (enum/slug) into the PT-BR display label.
+ * Presentation only — does not change the persisted value.
  */
 export function formatCategoryLabel(value: unknown): string {
   if (value == null || value === "") return "—";
@@ -101,6 +101,6 @@ export function formatCategoryLabel(value: unknown): string {
   const key = raw.toLowerCase();
   if (CATEGORY_LABELS[key]) return CATEGORY_LABELS[key];
   if (CATEGORY_LABELS[raw]) return CATEGORY_LABELS[raw];
-  // Fallback: remove underscores e aplica Title Case (garante ausência de "_").
+  // Fallback: removes underscores and applies Title Case (guarantees no "_").
   return titleCase(raw.replace(/_/g, " "));
 }

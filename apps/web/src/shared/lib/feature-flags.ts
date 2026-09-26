@@ -149,20 +149,20 @@ export function resolveFlagsForPlan(
 // ─── Backend completeness map ─────────────────────────────────────────────────
 
 /**
- * Módulos cuja UI existe mas cujo backend ainda é parcial.
- * Em produção, esses módulos exibem empty state real (não dados fictícios).
- * Em dev, exibem mocks com indicação clara via banner.
+ * Modules whose UI exists but whose backend is still partial.
+ * In production, these modules show a real empty state (not fictitious data).
+ * In dev, they show mocks with a clear banner indication.
  *
- * Cada entrada é o nome do módulo + razão da incompletude.
- * As páginas correspondentes já têm gates implementados em:
+ * Each entry is the module name + the reason for incompleteness.
+ * The corresponding pages already have gates implemented in:
  *   - admin: `modules/admin/data/admin-source.ts`
  *   - monitoring/rights: `modules/monitoring/rights/services/rights-source.ts`
- *   - support (parcial): `modules/support/hooks/useSupport.ts` (apenas tickets têm endpoint real)
+ *   - support (partial): `modules/support/hooks/useSupport.ts` (only tickets have a real endpoint)
  *
- * Reports: `Relatorios.tsx` já é 100% dirigido pelo backend real
- * (`/reports/entities`, `/reports/definitions`) — sem gate/mock, removido daqui.
+ * Reports: `Relatorios.tsx` is already 100% driven by the real backend
+ * (`/reports/entities`, `/reports/definitions`) — no gate/mock, removed from here.
  *
- * Quando o backend correspondente for implementado, remover da lista.
+ * When the corresponding backend is implemented, remove it from the list.
  */
 export const MODULES_WITH_INCOMPLETE_BACKEND: Record<string, string> = {
   adminKpis:           "Admin KPIs (MRR/ARR/tenants) — endpoint /admin/* ainda não existe",
@@ -172,7 +172,7 @@ export const MODULES_WITH_INCOMPLETE_BACKEND: Record<string, string> = {
   externalDataExchange: "External Data Exchange — providers reais aguardando integração",
 };
 
-/** Helper para uso em components: retorna a razão se módulo é incompleto, null caso contrário. */
+/** Helper for components: returns the reason if the module is incomplete, null otherwise. */
 export function getIncompleteBackendReason(moduleKey: string): string | null {
   return MODULES_WITH_INCOMPLETE_BACKEND[moduleKey] ?? null;
 }

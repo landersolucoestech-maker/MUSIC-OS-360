@@ -28,7 +28,7 @@ export interface WsEventMap {
   'artist.updated':               WsBasePayload & { id: string };
   'artist.deleted':               WsBasePayload & { id: string };
 
-  // ── Catálogo ─────────────────────────────────────────────────────────────────
+  // ── Catalog ──────────────────────────────────────────────────────────────────
   'catalog.music.registered':     WsBasePayload & { id: string };
   'catalog.phonogram.registered': WsBasePayload & { id: string };
 
@@ -49,7 +49,7 @@ export interface WsEventMap {
   // ── Audit ────────────────────────────────────────────────────────────────────
   'audit.entry.created':          WsBasePayload & { action: string };
 
-  // ── Notificações individuais (FASE 4) ─────────────────────────────────────
+  // ── Individual notifications (PHASE 4) ─────────────────────────────────────
   'notification:new':             WsNotificationPayload;
 
   // ── Billing (FASE 6 — Stripe) ────────────────────────────────────────────────
@@ -58,7 +58,7 @@ export interface WsEventMap {
   'billing:payment_failed':       { org_id: string; invoice_id: string };
   'billing:cancelled':            { org_id: string };
 
-  // ── Dados alterados (invalidação de cache) ───────────────────────────────────
+  // ── Changed data (cache invalidation) ────────────────────────────────────────
   'data:changed':                 { entity: string; id: string };
 
   // ── MusicChat / Conversations (Inbox operacional) ────────────────────────────
@@ -70,7 +70,7 @@ export interface WsEventMap {
   'conversation:closed':      { conversationId: string; closedBy: string };
   'conversation:reopened':    { conversationId: string; reopenedBy: string };
 
-  // ── Chat Interno (equipe <-> equipe — isolado da Central de Atendimento acima) ──
+  // ── Internal Chat (team <-> team — isolated from the Service Center above) ──
   'internalConversation:created': { conversationId: string };
   'internalConversation:message': { conversationId: string; messageId: string };
 }

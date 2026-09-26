@@ -118,11 +118,11 @@ class AuthRateLimiter {
   private blockDurationMs = 30 * 60 * 1000; // 30 minutes
 
   /**
-   * Parte 77 — somente LEITURA: diz se `identifier` está bloqueado agora,
-   * sem nunca incrementar nada. `check()` (abaixo) permanece por
-   * compatibilidade mas incrementava a cada chamada mesmo sem nenhuma
-   * tentativa de login real ter acontecido — usar `isBlocked` + `recordFailure`
-   * separadamente evita contar erro de rede/servidor como tentativa.
+   * Part 77 — READ-ONLY: tells whether `identifier` is blocked right now,
+   * without ever incrementing anything. `check()` (below) remains for
+   * compatibility but incremented on every call even when no real
+   * login attempt had happened — using `isBlocked` + `recordFailure`
+   * separately avoids counting a network/server error as an attempt.
    */
   isBlocked(identifier: string): boolean {
     const entry = this.attempts.get(identifier);
@@ -131,10 +131,10 @@ class AuthRateLimiter {
   }
 
   /**
-   * Registra uma tentativa GENUINAMENTE malsucedida (credenciais erradas
-   * confirmadas pelo Supabase) — nunca chamar para erro de rede, 5xx, ou
-   * crash do frontend, senão um problema de infraestrutura pode bloquear
-   * um usuário legítimo por 30 minutos sem nenhuma tentativa de senha errada.
+   * Records a GENUINELY failed attempt (wrong credentials
+   * confirmed by Supabase) — never call it for a network error, 5xx, or a
+   * frontend crash, otherwise an infrastructure problem could block
+   * a legitimate user for 30 minutes without any wrong-password attempt.
    */
   recordFailure(identifier: string): void {
     const now = Date.now();
@@ -152,7 +152,7 @@ class AuthRateLimiter {
     }
   }
 
-  /** @deprecated usar isBlocked() antes da tentativa e recordFailure() só após falha de credencial confirmada. */
+  /** @deprecated use isBlocked() before the attempt and recordFailure() only after a confirmed credential failure. */
   check(identifier: string): boolean {
     if (this.isBlocked(identifier)) return false;
     this.recordFailure.call(this, identifier);

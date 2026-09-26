@@ -1,22 +1,22 @@
 /**
- * auth-error-messages.ts  (Parte 75)
+ * auth-error-messages.ts  (Part 75)
  *
- * Traduz o erro cru do Supabase Auth (ou de falha de rede) para uma
- * mensagem segura e específica o suficiente para o usuário agir, sem
- * revelar se um e-mail arbitrário existe no sistema (anti-enumeração —
- * "Invalid login credentials" é a resposta deliberadamente genérica do
- * Supabase tanto para senha errada quanto para conta inexistente, e isso
- * é mantido aqui também).
+ * Translates the raw Supabase Auth error (or a network failure) into a
+ * safe message specific enough for the user to act on, without
+ * revealing whether an arbitrary e-mail exists in the system (anti-enumeration —
+ * "Invalid login credentials" is Supabase's deliberately generic response
+ * both for a wrong password and for a nonexistent account, and that
+ * is kept here too).
  */
 import type { AuthError } from "@/shared/types/auth";
 
 const INVALID_CREDENTIALS_RE = /invalid login credentials/i;
 
 /**
- * Parte 77 — só erros GENUINAMENTE de credencial devem contar contra o
- * limitador de tentativas (ver security.ts/AuthRateLimiter.recordFailure).
- * Rede, 503, 500, timeout ou crash do frontend nunca podem consumir uma
- * tentativa do usuário legítimo.
+ * Part 77 — only GENUINE credential errors may count against the
+ * attempt limiter (see security.ts/AuthRateLimiter.recordFailure).
+ * Network, 503, 500, timeout or a frontend crash may never consume an
+ * attempt of the legitimate user.
  */
 export function isCredentialsError(error: AuthError): boolean {
   return INVALID_CREDENTIALS_RE.test(error.message ?? "");
