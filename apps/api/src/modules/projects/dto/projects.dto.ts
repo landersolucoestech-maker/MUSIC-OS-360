@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsString, IsOptional, IsIn, IsNumber, IsUUID, IsArray, MaxLength } from 'class-validator';
+import { IsString, IsOptional, IsIn, IsNumber, IsUUID, IsArray, MaxLength, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ProjectStatus } from '@music-os-360/types';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
@@ -18,7 +18,8 @@ export class CreateProjectDto {
   @ApiProperty() @IsString() @MaxLength(500) title!: string;
   @ApiProperty({ enum: TYPES }) @IsIn(TYPES) type!: typeof TYPES[number];
   @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) orcamento?: number;
+  // GAP-0001: orçamento de produção nunca negativo — validação autoritativa no servidor.
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) orcamento?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) music_genre?: string;

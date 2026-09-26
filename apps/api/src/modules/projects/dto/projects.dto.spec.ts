@@ -60,3 +60,18 @@ describe('CreateProjectDto — contrato canônico real (auditoria 2026-07-18)', 
     expect(errors.some((e) => e.property === 'type')).toBe(true);
   });
 });
+
+describe('CreateProjectDto — artist_id/orcamento (GAP-0001 / DEC-001)', () => {
+  it('aceita artist_id e orcamento enviados pelo ProjectFormModal', async () => {
+    expect(await validatePayload({ ...REAL_FORM_PAYLOAD, orcamento: 15000.5 })).toEqual([]);
+  });
+
+  it('aceita artist_id/orcamento nulos (campos opcionais limpos)', async () => {
+    expect(await validatePayload({ ...REAL_FORM_PAYLOAD, artist_id: null, orcamento: null })).toEqual([]);
+  });
+
+  it('rejeita orcamento negativo no servidor (não depende do frontend)', async () => {
+    const errors = await validatePayload({ ...REAL_FORM_PAYLOAD, orcamento: -1 });
+    expect(errors.map((e) => e.property)).toContain('orcamento');
+  });
+});

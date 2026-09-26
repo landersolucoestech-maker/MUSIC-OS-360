@@ -10,6 +10,7 @@ import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Textarea } from "@/shared/ui/textarea";
 import { FormTextarea } from "@/shared/components/FormField";
+import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { toast } from "sonner";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { projectSchema } from "@/modules/projects/schemas/project-schema";
@@ -207,6 +208,12 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
     return [{ ...createEmptyMusica(), name: type === "single" ? (projeto?.title || "") : "", genero: generoHerdado }];
   });
   const [observacoes, setObservacoes] = useState(() => projeto?.notes || "");
+  // GAP-0001 / DEC-001 (MUSICAL_PROJECT_CANONICAL_HUB): artista principal e
+  // orçamento de produção são atributos legítimos do projeto musical —
+  // colunas projects.artist_id / projects.orcamento, aceitas pelo DTO real.
+  const [artistId, setArtistId] = useState<string | null>(() => (projeto?.artist_id as string | null | undefined) ?? null);
+  const [orcamento, setOrcamento] = useState<string>(() =>
+    projeto?.orcamento != null && projeto?.orcamento !== "" ? String(projeto.orcamento) : "");
   const [status, setStatus] = useState(() => normStatus(projeto?.status));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -248,6 +255,13 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         : `Digite o nome do ${tipoLancamento === "ep" ? "EP" : "Álbum"}!`);
       return;
     }
+    const orcamentoTrim = orcamento.trim();
+    const orcamentoNum = orcamentoTrim === "" ? null : Number(orcamentoTrim);
+    if (orcamentoNum !== null && (!Number.isFinite(orcamentoNum) || orcamentoNum < 0)) {
+      toast.error("Orçamento deve ser um valor numérico maior ou igual a zero.");
+      return;
+    }
+
     // Remove campos apenas locais (File metadata, flag de upload) antes de enviar —
     // musicas[] vai para colunas próprias (project_tracks), nunca mais serializada em descricao.
     const musicasParaSalvar = musicas.map(({ arquivoAudio: _a, _uploading: _u, ...m }) => m);
@@ -262,6 +276,8 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
       notes: observacoes || null,
       music_genre: genero,
       musicas: musicasParaSalvar,
+      artist_id: artistId,
+      orcamento: orcamentoNum,
     };
 
     try {
@@ -275,6 +291,8 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
           notes: observacoes || null,
           music_genre: genero,
           musicas: musicasParaSalvar,
+          artist_id: artistId,
+          orcamento: orcamentoNum,
         };
         const created = await addProject.mutateAsync(insertPayload) as { id: string };
         savedId = created?.id;
@@ -721,6 +739,38 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
                 />
               </div>
             )}
+          </div>
+
+          {/* Artista principal e orçamento (GAP-0001 / DEC-001) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Artista principal</Label>
+              <AsyncEntityCombobox<Artist>
+                table="artistas"
+                getLabel={(a) => a.stageName ?? ""}
+                value={artistId}
+                onChange={(id) => setArtistId(id || null)}
+                placeholder="Selecione o artista"
+                searchPlaceholder="Buscar artista..."
+                disabled={isViewMode}
+                data-testid="select-projeto-artista"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="projeto-orcamento">Orçamento de produção (R$)</Label>
+              <Input
+                id="projeto-orcamento"
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step="0.01"
+                value={orcamento}
+                onChange={(e) => setOrcamento(e.target.value)}
+                disabled={isViewMode}
+                placeholder="0,00"
+                data-testid="input-projeto-orcamento"
+              />
+            </div>
           </div>
 
           {/* Seção de Músicas */}

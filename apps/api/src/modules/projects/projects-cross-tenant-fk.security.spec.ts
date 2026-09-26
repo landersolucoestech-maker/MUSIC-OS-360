@@ -73,4 +73,47 @@ describe('ProjectsService — cross-tenant FK ownership (find-50dd3726)', () => 
     ).resolves.toBeDefined();
     expect(query).not.toHaveBeenCalled();
   });
+
+  // GAP-0001 / DEC-001: agora o ProjectFormModal envia artist_id em edições.
+  it('update: rejects an artist_id belonging to another tenant (IDOR via PATCH)', async () => {
+    const { service, repo } = makeService(jest.fn(async () => []));
+    await expect(
+      service.update('tenant-1', 'user-1', 'project-1', {
+        artist_id: '323e4567-e89b-12d3-a456-426614174000',
+      } as never),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(repo.update).not.toHaveBeenCalled();
+  });
+
+  it('update: persists same-tenant artist_id and orcamento scoped by tenant_id', async () => {
+    const { service, repo } = makeService(jest.fn(async () => [{ exists: 1 }]));
+    await service.update('tenant-1', 'user-1', 'project-1', {
+      artist_id: '223e4567-e89b-12d3-a456-426614174000', orcamento: 2500,
+    } as never);
+    expect(repo.update).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'project-1', tenant_id: 'tenant-1' }),
+      expect.objectContaining({ artist_id: '223e4567-e89b-12d3-a456-426614174000', orcamento: 2500 }),
+    );
+  });
+
+  it('create: persists orcamento and artist_id with the caller tenant', async () => {
+    const { service, repo } = makeService(jest.fn(async () => [{ exists: 1 }]));
+    await service.create('tenant-1', 'user-1', {
+      title: 'T', type: 'single', artist_id: '223e4567-e89b-12d3-a456-426614174000', orcamento: 15000.5,
+    } as never);
+    expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({
+      tenant_id: 'tenant-1', artist_id: '223e4567-e89b-12d3-a456-426614174000', orcamento: 15000.5,
+    }));
+  });
+
+  it('findById: readback returns artist_id/orcamento as persisted', async () => {
+    const { service, repo } = makeService(jest.fn());
+    const qb = repo.createQueryBuilder() as unknown as { getOne: jest.Mock };
+    qb.getOne.mockResolvedValue({
+      id: 'project-1', tenant_id: 'tenant-1', status: 'planning',
+      artist_id: '223e4567-e89b-12d3-a456-426614174000', orcamento: '2500.00',
+    });
+    const row = await service.findById('tenant-1', 'project-1');
+    expect(row).toMatchObject({ artist_id: '223e4567-e89b-12d3-a456-426614174000', orcamento: '2500.00' });
+  });
 });
