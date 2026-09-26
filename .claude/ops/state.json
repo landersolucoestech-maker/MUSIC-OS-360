@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T09:59:48.738Z",
+  "updatedAt": "2026-09-26T14:50:49.839786Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -1957,12 +1957,12 @@
     "nextPhase": "PHASE_1_KNOWN_FIXES",
     "blockedItems": [],
     "readyItems": [
-      "web release-domain renames (implementation-engineer, dispatched)",
-      "api misc renames + /stats/genres alias (implementation-engineer, dispatched)",
-      "props-web classification (repo-intelligence, re-dispatched)",
-      "remaining web concept renames CZ-001/002/005-014/017-019 (sequential, single web writer)",
-      "remaining test titles (~1106) and technical comments (~4773)",
-      "variables/parameters classification + renames",
+      "remaining web concept renames CZ-001/002/005-014/017-019 (semantic decisions recorded in 4dc5521)",
+      "technical comments: 5194 census hits (prioritize architecture/security/TODO/contract/business-rule comments; detector now precision-checked)",
+      "identifiers: 2520 census hits — classify (rename / UX-only / external contract / provider-defined / legacy compatibility / false positive) then rename safe internal ones",
+      "filenames (83) and directories (23) — semantic proof per concept (rh, Contato, Lancamento, ...) before git mv",
+      "events/queues/jobs (18) — producer/consumer trace and cutover strategy for persisted names",
+      "env vars and DB object classification",
       "exception ledger population from classifications",
       "gate report A-F"
     ],
@@ -1978,6 +1978,13 @@
     "agentFailures": [
       "8 nested agents killed by account session limit at ~09:0x UTC; recorded as failure records; work re-dispatched with concurrency <= 3"
     ],
-    "localVerificationDb": "disposable Postgres 16 at /var/lib/postgresql/musicos-verify-42651823 port 55432 (restart with pg_ctl after session resets)"
+    "localVerificationDb": "disposable Postgres 16 at /var/lib/postgresql/musicos-verify-42651823 port 55432 (restart with pg_ctl after session resets)",
+    "completedItems": [
+      {
+        "item": "technical test titles: debt 1106 -> 0 (detector precision fix cd83b66; translations f8b872f..db1cb5f)",
+        "at": "2026-09-26T14:50:49.839686Z"
+      }
+    ],
+    "executionNote": "Subagent tools (Agent/SendMessage) became unavailable in this session after the orchestrator died on API session limits; Phase 0 continues in the main session with per-unit validation, commit and push."
   }
 }
