@@ -140,7 +140,7 @@ describe('BillingService', () => {
   });
 
   describe('createCheckoutSession', () => {
-    it('usa stripe_price_id vindo do banco (não STRIPE_PRICE_*)', async () => {
+    it('uses stripe_price_id from the database (not STRIPE_PRICE_*)', async () => {
       const r = await service.createCheckoutSession({
         orgId: 'o1', tenantId: 't1', planRef: 'professional',
         successUrl: 'https://ok', cancelUrl: 'https://cancel',
@@ -155,13 +155,13 @@ describe('BillingService', () => {
       );
     });
 
-    it('falha se plano não informado', async () => {
+    it('fails when no plan is given', async () => {
       await expect(service.createCheckoutSession({
         orgId: 'o', tenantId: 't', successUrl: '', cancelUrl: '',
       })).rejects.toThrow(BadRequestException);
     });
 
-    it('falha se plan_id inválido (não encontrado)', async () => {
+    it('fails when plan_id is invalid (not found)', async () => {
       plans.resolve.mockResolvedValueOnce(null);
       await expect(service.createCheckoutSession({
         orgId: 'o', tenantId: 't', planRef: 'inexistente', successUrl: '', cancelUrl: '',
@@ -175,7 +175,7 @@ describe('BillingService', () => {
       })).rejects.toThrow(BadRequestException);
     });
 
-    it('falha se plano não sincronizado com Stripe', async () => {
+    it('fails when the plan is not synced with Stripe', async () => {
       plans.resolve.mockResolvedValueOnce({ id: 'p', slug: 'x', active: true, stripe_price_id: null });
       await expect(service.createCheckoutSession({
         orgId: 'o', tenantId: 't', planRef: 'x', successUrl: '', cancelUrl: '',
@@ -197,20 +197,20 @@ describe('BillingService', () => {
   });
 
   describe('createPortalSession', () => {
-    it('cria sessão de portal para customer existente', async () => {
+    it('creates a portal session for an existing customer', async () => {
       const repo = mockDs._repo;
       repo._qb.getOne.mockResolvedValueOnce({ stripe_customer_id: 'cus_portal' });
       const r = await service.createPortalSession('org-1', 'https://app.com');
       expect(r.url).toBe('https://billing.stripe.com/test');
     });
 
-    it('lança BadRequestException sem assinatura', async () => {
+    it('throws BadRequestException without a subscription', async () => {
       const repo = mockDs._repo;
       repo._qb.getOne.mockResolvedValueOnce(null);
       await expect(service.createPortalSession('org-sem-sub', 'x')).rejects.toThrow();
     });
 
-    it('lança BadRequestException com customer pending_', async () => {
+    it('throws BadRequestException for a pending_ customer', async () => {
       const repo = mockDs._repo;
       repo._qb.getOne.mockResolvedValueOnce({ stripe_customer_id: 'pending_org-1' });
       await expect(service.createPortalSession('org-1', 'x')).rejects.toThrow(BadRequestException);
@@ -218,7 +218,7 @@ describe('BillingService', () => {
   });
 
   describe('handleWebhook', () => {
-    it('rejeita assinatura inválida', async () => {
+    it('rejects an invalid signature', async () => {
       const stripe = getStripeInstance();
       stripe.webhooks.constructEvent.mockImplementationOnce(() => {
         throw new Error('signature mismatch');
@@ -226,7 +226,7 @@ describe('BillingService', () => {
       await expect(service.handleWebhook('bad_sig', Buffer.from('{}'))).rejects.toThrow('inválida');
     });
 
-    it('retorna received:true para evento já processado', async () => {
+    it('returns received:true for an already processed event', async () => {
       const stripe = getStripeInstance();
       stripe.webhooks.constructEvent.mockReturnValueOnce({
         id: 'evt_done', type: 'checkout.session.completed', data: { object: {} },
@@ -461,7 +461,7 @@ describe('BillingService', () => {
       };
     }
 
-    it('primeira execução com sucesso: marca processed, nunca failed', async () => {
+    it('successful first run: marks processed, never failed', async () => {
       const stripe = getStripeInstance();
       stripe.webhooks.constructEvent.mockReturnValueOnce(paidEvent('evt_ok'));
       await service.handleWebhook('sig', Buffer.from('{}'));
@@ -469,7 +469,7 @@ describe('BillingService', () => {
       expect(enforcement.markWebhookFailed).not.toHaveBeenCalled();
     });
 
-    it('falha transitória: marca failed (nunca processed) e propaga o erro — não retorna 200 silencioso', async () => {
+    it('transient failure: marks failed (never processed) and propagates the error — no silent 200', async () => {
       const stripe = getStripeInstance();
       stripe.webhooks.constructEvent.mockReturnValueOnce(paidEvent('evt_transient'));
       enforcement.activateTenant.mockRejectedValueOnce(new Error('db pool exhausted'));
@@ -480,7 +480,7 @@ describe('BillingService', () => {
       expect(enforcement.markWebhookProcessed).not.toHaveBeenCalled();
     });
 
-    it('retry legítimo após falha: recordWebhookProcessed reclama o evento (status=failed → processing) e reprocessa', async () => {
+    it('legitimate retry after failure: recordWebhookProcessed claims the event (status=failed → processing) and reprocesses', async () => {
       // Simulates what billing-enforcement.service.ts actually does: a FAILED
       // row is reclaimed ('inserted'), a PROCESSED one is not ('duplicate').
       // Exercised here at the BillingService boundary via the same contract
@@ -494,7 +494,7 @@ describe('BillingService', () => {
       expect(enforcement.markWebhookProcessed).toHaveBeenCalledWith('evt_retry');
     });
 
-    it('duplicate após sucesso: recordWebhookProcessed nega a reclamação — nenhum efeito reaplicado', async () => {
+    it('duplicate after success: recordWebhookProcessed denies the claim — no effect reapplied', async () => {
       const stripe = getStripeInstance();
       stripe.webhooks.constructEvent.mockReturnValueOnce(paidEvent('evt_already_done'));
       enforcement.recordWebhookProcessed.mockResolvedValueOnce('duplicate');
@@ -504,7 +504,7 @@ describe('BillingService', () => {
       expect(enforcement.markWebhookProcessed).not.toHaveBeenCalled();
     });
 
-    it('duas entregas concorrentes do mesmo evento: a segunda não reaplica o efeito', async () => {
+    it('two concurrent deliveries of the same event: the second does not reapply the effect', async () => {
       const stripe = getStripeInstance();
       // Both deliveries carry the same event.id — the enforcement layer (not
       // mocked-away here) is what actually serializes this via the DB; at
@@ -532,7 +532,7 @@ describe('BillingService', () => {
       data: { object: { customer: 'cus_1', subscription: 'sub_1', metadata } },
     });
 
-    it('vincula customer/subscription e ativa o tenant com metadata válida', async () => {
+    it('links customer/subscription and activates the tenant with valid metadata', async () => {
       const stripe = getStripeInstance();
       stripe.webhooks.constructEvent.mockReturnValueOnce(
         buildEvent({ tenant_id: 'tenant-1', org_id: 'org-1', plan: 'professional' }),
@@ -544,7 +544,7 @@ describe('BillingService', () => {
       expect(enforcement.activateTenant).toHaveBeenCalledWith('tenant-1', 'checkout.session.completed');
     });
 
-    it('não provisiona (no-op) quando metadata está incompleta', async () => {
+    it('does not provision (no-op) when metadata is incomplete', async () => {
       const stripe = getStripeInstance();
       stripe.webhooks.constructEvent.mockReturnValueOnce(buildEvent({ org_id: 'org-1' }));
       const r = await service.handleWebhook('sig', Buffer.from('{}'));
@@ -585,7 +585,7 @@ describe('BillingService', () => {
     // notification / domain event when THIS EXACT checkout's effect (same
     // stripe_sub_id + same plan, already active) is already applied — the
     // upserts are idempotent, these two side effects were not.
-    it('não reenvia notificação realtime nem TENANT_CREATED quando é retry do MESMO checkout (mesma subscription + mesmo plano)', async () => {
+    it('does not resend the realtime notification or TENANT_CREATED on a retry of the SAME checkout (same subscription + same plan)', async () => {
       const { ws, events } = buildRetryHarness();
       const retryService = await buildRetryService(ws, events);
 
@@ -611,7 +611,7 @@ describe('BillingService', () => {
     // find-9fd92b12 (cross-review): a genuine SECOND checkout for an org that
     // is already active on a DIFFERENT plan (a real upgrade) must still fire
     // both side effects — "org already active" alone is not evidence of a retry.
-    it('reenvia notificação e TENANT_CREATED para um upgrade real (mesmo org já ativo, plano diferente)', async () => {
+    it('resends the notification and TENANT_CREATED for a real upgrade (same org already active, different plan)', async () => {
       const { ws, events } = buildRetryHarness();
       const retryService = await buildRetryService(ws, events);
 
@@ -637,7 +637,7 @@ describe('BillingService', () => {
   });
 
   describe('getSubscription', () => {
-    it('retorna null quando não há subscription', async () => {
+    it('returns null when there is no subscription', async () => {
       const repo = mockDs._repo;
       repo._qb.getOne.mockResolvedValueOnce(null);
       expect(await service.getSubscription('org-x')).toBeNull();
@@ -893,7 +893,7 @@ describe('BillingService.getStripeMode', () => {
     expect(svc.getStripeMode()).toEqual({ environment: 'disabled', keyState: 'MISSING' });
   });
 
-  it('a resposta nunca contém o valor da chave', async () => {
+  it('the response never contains the key value', async () => {
     const svc = await build('sk_test_supersecretvalue');
     expect(JSON.stringify(svc.getStripeMode())).not.toContain('supersecretvalue');
   });

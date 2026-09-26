@@ -29,8 +29,8 @@ const makeDbContext = () => ({
 const SPOTIFY_ID = '4NHQUGzhtTLFvgF5SZesLK';
 const YOUTUBE_ID = 'UC_x5XG1OV2P6uZZ5FSM9Ttw';
 
-describe('Separação de domínio: métricas do artista NUNCA dependem de OAuth da organização', () => {
-  it('nenhum ArtistPlatformProvider estende IntegrationBaseService (base das conexões OAuth de tenant/Ads/Marketing)', () => {
+describe('Domain separation: artist metrics NEVER depend on organization OAuth', () => {
+  it('no ArtistPlatformProvider extends IntegrationBaseService (the base of tenant/Ads/Marketing OAuth connections)', () => {
     for (const Provider of [
       SpotifyArtistProfileProvider,
       YouTubeArtistProfileProvider,
@@ -43,7 +43,7 @@ describe('Separação de domínio: métricas do artista NUNCA dependem de OAuth 
     }
   });
 
-  it('ArtistExternalProfileSyncService não injeta nenhum serviço de integração OAuth (Instagram/TikTok/Meta/SoundCloud Ads)', () => {
+  it('ArtistExternalProfileSyncService injects no OAuth integration service (Instagram/TikTok/Meta/SoundCloud Ads)', () => {
     // Assinatura do construtor é a superfície real de dependências — se algum dia
     // alguém tentar resolver métrica de artista via conexão OAuth da organização,
     // este teste quebra porque um novo parâmetro apareceria aqui.
@@ -52,7 +52,7 @@ describe('Separação de domínio: métricas do artista NUNCA dependem de OAuth 
 });
 
 describe('ArtistExternalProfileSyncService', () => {
-  it('sync manual de Spotify resolve direto (sem BullMQ) via SpotifyArtistProfileProvider', async () => {
+  it('a manual Spotify sync resolves directly (no BullMQ) via SpotifyArtistProfileProvider', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null }),
     };
@@ -143,7 +143,7 @@ describe('ArtistExternalProfileSyncService', () => {
     expect(result.enqueued).toEqual([{ platform: 'youtube', job_id: 'job-2' }]);
   });
 
-  it('enfileira sync manual de YouTube a partir de um @handle (find-eb3c5c45-class: o extrator antigo rejeitava handles, só aceitava UC.../channel/UC...)', async () => {
+  it('enqueues a manual YouTube sync from an @handle (find-eb3c5c45 class: the old extractor rejected handles and only accepted UC.../channel/UC...)', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null }),
     };
@@ -182,7 +182,7 @@ describe('ArtistExternalProfileSyncService', () => {
     expect(result.enqueued).toEqual([{ platform: 'youtube', job_id: 'job-2b' }]);
   });
 
-  it('rejeita link de YouTube genuinamente não reconhecível em nenhum formato suportado', async () => {
+  it('rejects a YouTube link that is genuinely unrecognizable in every supported format', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null }),
     };
@@ -202,7 +202,7 @@ describe('ArtistExternalProfileSyncService', () => {
     })).rejects.toThrow('Link do YouTube inválido');
   });
 
-  it('find (Bug 1, distributed-systems-reviewer): não escreve sync_status=pending quando queue.add() lança — sem isso, a linha ficava órfã para sempre (nada jamais a processaria)', async () => {
+  it('find (Bug 1, distributed-systems-reviewer): does not write sync_status=pending when queue.add() throws — otherwise the row stayed orphaned forever (nothing would ever process it)', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null }),
     };
@@ -265,7 +265,7 @@ describe('ArtistExternalProfileSyncService', () => {
     expect(result.enqueued).toEqual([{ platform: 'deezer', job_id: 'job-3' }]);
   });
 
-  it('enfileira sync manual de SoundCloud pelo perfil publico do artista (nao exige credencial de organizacao para resolver a URL)', async () => {
+  it('enqueues a manual SoundCloud sync from the artist\'s public profile (no organization credential needed to resolve the URL)', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null, soundcloud_url: null }),
     };
@@ -301,7 +301,7 @@ describe('ArtistExternalProfileSyncService', () => {
     expect(result.enqueued).toEqual([{ platform: 'soundcloud', job_id: 'job-4' }]);
   });
 
-  it('enfileira sync manual de Instagram (métrica de artista, sem OAuth de Marketing)', async () => {
+  it('enqueues a manual Instagram sync (artist metric, no Marketing OAuth)', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null, metadata: {} }),
     };
@@ -337,7 +337,7 @@ describe('ArtistExternalProfileSyncService', () => {
     expect(result.enqueued).toEqual([{ platform: 'instagram', job_id: 'job-5' }]);
   });
 
-  it('enfileira sync manual de TikTok (métrica de artista, sem OAuth de Marketing)', async () => {
+  it('enqueues a manual TikTok sync (artist metric, no Marketing OAuth)', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null, metadata: {} }),
     };
@@ -373,7 +373,7 @@ describe('ArtistExternalProfileSyncService', () => {
     expect(result.enqueued).toEqual([{ platform: 'tiktok', job_id: 'job-6' }]);
   });
 
-  it('resolve Instagram/TikTok a partir do metadata em cache quando nenhuma profileUrl é enviada', async () => {
+  it('resolves Instagram/TikTok from cached metadata when no profileUrl is sent', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({
         id: 'artist-1',
@@ -409,7 +409,7 @@ describe('ArtistExternalProfileSyncService', () => {
     expect(result.enqueued).toEqual([{ platform: 'instagram', job_id: 'job-7' }]);
   });
 
-  it('retorna skipped quando artista nao tem perfil externo da plataforma', async () => {
+  it('returns skipped when the artist has no external profile on the platform', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null }),
     };
@@ -444,7 +444,7 @@ describe('ArtistExternalProfileSyncService', () => {
     })).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('rejeita link Spotify que nao seja de artista', async () => {
+  it('rejects a Spotify link that is not an artist link', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null }),
     };
@@ -660,7 +660,7 @@ describe('ArtistPlatformSyncProcessor', () => {
     expect(profiles.markFailed).not.toHaveBeenCalled();
   });
 
-  it('roteia job de Instagram para o InstagramArtistProfileProvider, reaproveitando o UUID já resolvido via Spotify (canonicalUrls)', async () => {
+  it('routes an Instagram job to InstagramArtistProfileProvider, reusing the UUID already resolved via Spotify (canonicalUrls)', async () => {
     const findOne = jest.fn().mockResolvedValue({
       id: 'artist-1',
       tenant_id: 'tenant-1',
@@ -710,7 +710,7 @@ describe('ArtistPlatformSyncProcessor', () => {
     expect(profiles.markFailed).not.toHaveBeenCalled();
   });
 
-  it('roteia job de TikTok para o TikTokArtistProfileProvider, reaproveitando o UUID já resolvido via Spotify (canonicalUrls)', async () => {
+  it('routes a TikTok job to TikTokArtistProfileProvider, reusing the UUID already resolved via Spotify (canonicalUrls)', async () => {
     const findOne = jest.fn().mockResolvedValue({
       id: 'artist-1',
       tenant_id: 'tenant-1',
@@ -760,7 +760,7 @@ describe('ArtistPlatformSyncProcessor', () => {
     expect(profiles.markFailed).not.toHaveBeenCalled();
   });
 
-  it('aborta fail-closed quando o job não tem tenant_id', async () => {
+  it('aborts fail-closed when the job has no tenant_id', async () => {
     const profiles = { upsertPending: jest.fn(), upsertSuccess: jest.fn(), markFailed: jest.fn() };
     const dbContext = makeDbContext();
     const processor = new ArtistPlatformSyncProcessor(

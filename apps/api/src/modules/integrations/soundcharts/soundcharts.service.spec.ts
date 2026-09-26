@@ -38,8 +38,8 @@ describe('SoundchartsService', () => {
     delete process.env['SOUNDCHARTS_CLIENT_SECRET'];
   });
 
-  describe('autenticação e cache de token', () => {
-    it('obtém um token via client_credentials (Basic auth ao endpoint de token)', async () => {
+  describe('authentication and token cache', () => {
+    it('obtains a token via client_credentials (Basic auth to the token endpoint)', async () => {
       fetchMock
         .mockResolvedValueOnce(tokenResponse())
         .mockResolvedValueOnce(jsonResponse(200, { items: [{ date: '2026-08-18', followerCount: 100 }] }));
@@ -53,7 +53,7 @@ describe('SoundchartsService', () => {
       expect(init.body).toBe('grant_type=client_credentials');
     });
 
-    it('reutiliza o token em cache enquanto ele ainda é válido (não pede um novo por chamada)', async () => {
+    it('reuses the cached token while still valid (does not request a new one per call)', async () => {
       fetchMock
         .mockResolvedValueOnce(tokenResponse())
         .mockResolvedValueOnce(jsonResponse(200, { items: [{ date: '2026-08-18', followerCount: 1 }] }))
@@ -85,7 +85,7 @@ describe('SoundchartsService', () => {
       expect(tokenCalls).toHaveLength(2);
     });
 
-    it('credencial ausente: lança SoundchartsNotConfiguredError e nunca chama fetch', async () => {
+    it('missing credential: throws SoundchartsNotConfiguredError and never calls fetch', async () => {
       delete process.env['SOUNDCHARTS_CLIENT_ID'];
       delete process.env['SOUNDCHARTS_CLIENT_SECRET'];
 
@@ -117,7 +117,7 @@ describe('SoundchartsService', () => {
       expect(dataCall![0]).not.toContain('/audience/spotify');
     });
 
-    it('seleciona o item de data mais recente da série, independente da ordem do array', async () => {
+    it('selects the most recent dated item in the series regardless of array order', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(
         jsonResponse(200, {
           items: [
@@ -155,7 +155,7 @@ describe('SoundchartsService', () => {
   });
 
   describe('getYouTubeAudience — SOUNDCHARTS ONLY (auditoria 2026-08-31)', () => {
-    it('extrai subscribers/videos/views de UMA ÚNICA chamada a /audience/youtube, nunca da YouTube Data API', async () => {
+    it('extracts subscribers/videos/views from a SINGLE /audience/youtube call, never from the YouTube Data API', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(
         jsonResponse(200, {
           items: [
@@ -183,7 +183,7 @@ describe('SoundchartsService', () => {
       expect(String(dataCalls[0][0])).not.toContain('googleapis.com');
     });
 
-    it('postCount/viewCount ausentes no payload real viram null — nunca um valor inventado ou buscado em outra API', async () => {
+    it('postCount/viewCount missing from the real payload become null — never an invented value or one fetched from another API', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(
         jsonResponse(200, { items: [{ date: '2026-08-31', followerCount: 100 }] }),
       );
@@ -198,12 +198,12 @@ describe('SoundchartsService', () => {
   });
 
   describe('erros HTTP', () => {
-    it('404: lança SoundchartsNotFoundError', async () => {
+    it('404: throws SoundchartsNotFoundError', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(jsonResponse(404, { errors: [{ message: 'not found' }] }));
       await expect(service.getInstagramFollowers('uuid-1')).rejects.toBeInstanceOf(SoundchartsNotFoundError);
     });
 
-    it('429: lança SoundchartsRateLimitError', async () => {
+    it('429: throws SoundchartsRateLimitError', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(jsonResponse(429, { errors: [{ message: 'rate limited' }] }));
       await expect(service.getInstagramFollowers('uuid-1')).rejects.toBeInstanceOf(SoundchartsRateLimitError);
     });
@@ -228,7 +228,7 @@ describe('SoundchartsService', () => {
       expect(dataCall![0]).toContain('/related?offset=0&limit=100');
     });
 
-    it('404: retorna lista vazia (artista sem relacionados é uma resposta válida, não erro)', async () => {
+    it('404: returns an empty list (an artist without related artists is a valid response, not an error)', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(jsonResponse(404, { errors: [] }));
       const result = await service.getRelatedArtists('uuid-1');
       expect(result).toEqual({ items: [], total: 0 });
@@ -248,19 +248,19 @@ describe('SoundchartsService', () => {
       expect(await service.getArtistCountryCode('uuid-1')).toBe('BR');
     });
 
-    it('countryCode vazio (Soundcharts não sabe): null, nunca país inventado', async () => {
+    it('empty countryCode (unknown to Soundcharts): null, never an invented country', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(jsonResponse(200, { object: { countryCode: '' }, errors: [] }));
       expect(await service.getArtistCountryCode('uuid-1')).toBeNull();
     });
 
-    it('404: null, sem lançar', async () => {
+    it('404: null, without throwing', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(jsonResponse(404, { errors: [] }));
       expect(await service.getArtistCountryCode('uuid-1')).toBeNull();
     });
   });
 
-  describe('resolução de artista e reuso de UUID (Soundcharts 06)', () => {
-    it('resolveArtistByPlatform: cacheia o uuid por (platform, externalId) — segunda chamada não bate na rede', async () => {
+  describe('artist resolution and UUID reuse (Soundcharts 06)', () => {
+    it('resolveArtistByPlatform: caches the uuid per (platform, externalId) — the second call does not hit the network', async () => {
       fetchMock
         .mockResolvedValueOnce(tokenResponse())
         .mockResolvedValueOnce(jsonResponse(200, { uuid: 'sc-uuid-1' }));
@@ -293,14 +293,14 @@ describe('SoundchartsService', () => {
   });
 
   describe('Apple Music', () => {
-    it('retorna NOT_SUPPORTED sem chamar a rede — nunca inventa um valor', () => {
+    it('returns NOT_SUPPORTED without calling the network — never invents a value', () => {
       expect(service.getAppleMusicSupport()).toBe('NOT_SUPPORTED');
       expect(fetchMock).not.toHaveBeenCalled();
     });
   });
 
-  describe('getArtistIdentifiers (Métricas Fase 1.1 — evidência de identidade)', () => {
-    it('retorna a lista completa de identifiers de todas as plataformas conhecidas pela Soundcharts para um UUID', async () => {
+  describe('getArtistIdentifiers (Metrics Phase 1.1 — identity evidence)', () => {
+    it('returns the full identifier list across every platform Soundcharts knows for a UUID', async () => {
       fetchMock
         .mockResolvedValueOnce(tokenResponse())
         .mockResolvedValueOnce(jsonResponse(200, {
@@ -319,7 +319,7 @@ describe('SoundchartsService', () => {
       ]);
     });
 
-    it('404 (UUID sem identifiers) retorna lista vazia, nunca lança', async () => {
+    it('404 (UUID without identifiers) returns an empty list, never throws', async () => {
       fetchMock.mockResolvedValueOnce(tokenResponse()).mockResolvedValueOnce(jsonResponse(404, { errors: [] }));
 
       const result = await service.getArtistIdentifiers('uuid-sem-identifiers');
@@ -328,7 +328,7 @@ describe('SoundchartsService', () => {
     });
   });
 
-  describe('searchArtists (Métricas Fase 1.1 — evidência auxiliar, nunca prova identidade sozinha)', () => {
+  describe('searchArtists (Metrics Phase 1.1 — auxiliary evidence, never proves identity alone)', () => {
     it('retorna uuid+nome de cada resultado da busca', async () => {
       fetchMock
         .mockResolvedValueOnce(tokenResponse())

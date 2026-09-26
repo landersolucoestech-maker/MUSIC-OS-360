@@ -26,7 +26,7 @@ describe('buildCanonicalCandidates', () => {
     ]);
   });
 
-  it('externalId null quando a URL da plataforma está ausente', () => {
+  it('externalId is null when the platform URL is absent', () => {
     expect(buildCanonicalCandidates({})).toEqual([
       { platform: 'spotify', externalId: null },
       { platform: 'youtube', externalId: null },
@@ -36,8 +36,8 @@ describe('buildCanonicalCandidates', () => {
   });
 });
 
-describe('evaluateCrossPlatformEvidence (Fase 1.3 — puramente diagnóstico, nunca bloqueia)', () => {
-  it('1) CROSS_PLATFORM_UNKNOWN quando nenhuma outra âncora está cadastrada — nada a comparar', async () => {
+describe('evaluateCrossPlatformEvidence (Phase 1.3 — purely diagnostic, never blocks)', () => {
+  it('1) CROSS_PLATFORM_UNKNOWN when no other anchor is registered — nothing to compare', async () => {
     const soundcharts = { resolveCanonicalArtistUuid: jest.fn() } as unknown as SoundchartsService;
 
     const result = await evaluateCrossPlatformEvidence(soundcharts, {}, 'soundcloud', 'own-uuid');
@@ -46,7 +46,7 @@ describe('evaluateCrossPlatformEvidence (Fase 1.3 — puramente diagnóstico, nu
     expect(soundcharts.resolveCanonicalArtistUuid).not.toHaveBeenCalled();
   });
 
-  it('2) CROSS_PLATFORM_CONSISTENT quando o UUID independente BATE com o UUID resolvido pelo próprio handle', async () => {
+  it('2) CROSS_PLATFORM_CONSISTENT when the independent UUID MATCHES the UUID resolved from the platform\'s own handle', async () => {
     const soundcharts = {
       resolveCanonicalArtistUuid: jest.fn().mockResolvedValue('same-uuid'),
     } as unknown as SoundchartsService;
@@ -56,7 +56,7 @@ describe('evaluateCrossPlatformEvidence (Fase 1.3 — puramente diagnóstico, nu
     expect(result).toEqual({ status: 'CROSS_PLATFORM_CONSISTENT', independentUuid: 'same-uuid', registryIdentifier: null });
   });
 
-  it('3) CROSS_PLATFORM_DIVERGENT quando o UUID independente DIVERGE do UUID resolvido pelo próprio handle — sem registry disponível', async () => {
+  it('3) CROSS_PLATFORM_DIVERGENT when the independent UUID DIVERGES from the UUID resolved from the own handle — no registry available', async () => {
     const soundcharts = {
       resolveCanonicalArtistUuid: jest.fn().mockResolvedValue('canonical-uuid-artist-a'),
       getArtistIdentifiers: jest.fn().mockRejectedValue(new Error('não encontrado')),
@@ -85,7 +85,7 @@ describe('evaluateCrossPlatformEvidence (Fase 1.3 — puramente diagnóstico, nu
     expect(soundcharts.getArtistIdentifiers).toHaveBeenCalledWith('canonical-uuid-artist-a');
   });
 
-  it('4) CROSS_PLATFORM_UNKNOWN quando as outras âncoras existem mas nenhuma resolve na Soundcharts', async () => {
+  it('4) CROSS_PLATFORM_UNKNOWN when other anchors exist but none resolves on Soundcharts', async () => {
     const soundcharts = {
       resolveCanonicalArtistUuid: jest.fn().mockRejectedValue(new Error('não encontrado')),
     } as unknown as SoundchartsService;
@@ -95,7 +95,7 @@ describe('evaluateCrossPlatformEvidence (Fase 1.3 — puramente diagnóstico, nu
     expect(result).toEqual({ status: 'CROSS_PLATFORM_UNKNOWN', independentUuid: null, registryIdentifier: null });
   });
 
-  it('5) nunca inclui a própria plataforma sendo verificada nos candidatos independentes (evita tautologia)', async () => {
+  it('5) never includes the platform under verification among the independent candidates (avoids tautology)', async () => {
     const resolveCanonicalArtistUuid = jest.fn().mockResolvedValue('x');
     const soundcharts = { resolveCanonicalArtistUuid } as unknown as SoundchartsService;
 
@@ -107,8 +107,8 @@ describe('evaluateCrossPlatformEvidence (Fase 1.3 — puramente diagnóstico, nu
   });
 });
 
-describe('checkRegisteredHandleAgainstRegistry (Fase 1.3 — evidência secundária de fallback)', () => {
-  it('CONFIRMED quando o registry do canônico lista exatamente o handle cadastrado', async () => {
+describe('checkRegisteredHandleAgainstRegistry (Phase 1.3 — secondary fallback evidence)', () => {
+  it('CONFIRMED when the canonical registry lists exactly the registered handle', async () => {
     const soundcharts = {
       getArtistIdentifiers: jest.fn().mockResolvedValue({
         raw: {},
@@ -121,7 +121,7 @@ describe('checkRegisteredHandleAgainstRegistry (Fase 1.3 — evidência secundá
     expect(status).toBe('CONFIRMED');
   });
 
-  it('comparação é case-insensitive', async () => {
+  it('comparison is case-insensitive', async () => {
     const soundcharts = {
       getArtistIdentifiers: jest.fn().mockResolvedValue({
         raw: {},
@@ -134,7 +134,7 @@ describe('checkRegisteredHandleAgainstRegistry (Fase 1.3 — evidência secundá
     expect(status).toBe('CONFIRMED');
   });
 
-  it('MISMATCH quando o registry lista um identifier DIFERENTE do cadastrado', async () => {
+  it('MISMATCH when the registry lists an identifier DIFFERENT from the registered one', async () => {
     const soundcharts = {
       getArtistIdentifiers: jest.fn().mockResolvedValue({
         raw: {},
@@ -147,7 +147,7 @@ describe('checkRegisteredHandleAgainstRegistry (Fase 1.3 — evidência secundá
     expect(status).toBe('MISMATCH');
   });
 
-  it('INSUFFICIENT_EVIDENCE quando o registry não lista essa plataforma — ausência de dado nunca vira CONFIRMED', async () => {
+  it('INSUFFICIENT_EVIDENCE when the registry does not list this platform — missing data never becomes CONFIRMED', async () => {
     const soundcharts = {
       getArtistIdentifiers: jest.fn().mockResolvedValue({
         raw: {},
@@ -160,7 +160,7 @@ describe('checkRegisteredHandleAgainstRegistry (Fase 1.3 — evidência secundá
     expect(status).toBe('INSUFFICIENT_EVIDENCE');
   });
 
-  it('INSUFFICIENT_EVIDENCE quando a consulta ao registry falha — indisponibilidade nunca vira CONFIRMED', async () => {
+  it('INSUFFICIENT_EVIDENCE when the registry lookup fails — unavailability never becomes CONFIRMED', async () => {
     const soundcharts = {
       getArtistIdentifiers: jest.fn().mockRejectedValue(new Error('timeout')),
     } as unknown as SoundchartsService;
@@ -172,7 +172,7 @@ describe('checkRegisteredHandleAgainstRegistry (Fase 1.3 — evidência secundá
 });
 
 describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (Soundcharts 06)', () => {
-  it('Spotify resolve UUID → Instagram usa o mesmo UUID, sem consultar YouTube/Deezer/SoundCloud/handle próprio', async () => {
+  it('Spotify resolves the UUID → Instagram reuses it without querying YouTube/Deezer/SoundCloud/own handle', async () => {
     const soundcharts = new SoundchartsService(fakeConfig);
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       if (platform === 'spotify') return 'sc-uuid-1';
@@ -186,7 +186,7 @@ describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (S
     expect(soundcharts.resolveArtistByPlatform).toHaveBeenCalledWith('spotify', '6qqNVTkY8uBg9cP3Jd7DAH');
   });
 
-  it('Spotify resolve UUID → TikTok usa o mesmo UUID, sem consultar o handle próprio', async () => {
+  it('Spotify resolves the UUID → TikTok reuses it without querying its own handle', async () => {
     const soundcharts = new SoundchartsService(fakeConfig);
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       if (platform === 'spotify') return 'sc-uuid-1';
@@ -200,7 +200,7 @@ describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (S
     expect(soundcharts.resolveArtistByPlatform).toHaveBeenCalledWith('spotify', '6qqNVTkY8uBg9cP3Jd7DAH');
   });
 
-  it('Spotify falha → YouTube resolve (Deezer/SoundCloud/handle próprio não são consultados)', async () => {
+  it('Spotify fails → YouTube resolves (Deezer/SoundCloud/own handle are not queried)', async () => {
     const soundcharts = new SoundchartsService(fakeConfig);
     const attempted: string[] = [];
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
@@ -216,7 +216,7 @@ describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (S
     expect(attempted).toEqual(['spotify', 'youtube']);
   });
 
-  it('Spotify e YouTube falham → Deezer resolve (SoundCloud/handle próprio não são consultados)', async () => {
+  it('Spotify and YouTube fail → Deezer resolves (SoundCloud/own handle are not queried)', async () => {
     const soundcharts = new SoundchartsService(fakeConfig);
     const attempted: string[] = [];
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
@@ -231,7 +231,7 @@ describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (S
     expect(attempted).toEqual(['spotify', 'youtube', 'deezer']);
   });
 
-  it('todas as 4 canônicas falham → ownPlatform (handle próprio) é o fallback final', async () => {
+  it('all 4 canonical platforms fail → ownPlatform (own handle) is the final fallback', async () => {
     const soundcharts = new SoundchartsService(fakeConfig);
     const attempted: string[] = [];
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
@@ -246,7 +246,7 @@ describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (S
     expect(attempted).toEqual(['spotify', 'youtube', 'deezer', 'soundcloud', 'instagram']);
   });
 
-  it('sem nenhuma URL canônica cadastrada, resolve direto pelo handle próprio', async () => {
+  it('with no canonical URL registered, resolves directly from the own handle', async () => {
     const soundcharts = new SoundchartsService(fakeConfig);
     soundcharts.resolveArtistByPlatform = jest.fn(async (platform: string) => {
       if (platform === 'tiktok') return 'sc-uuid-own';
@@ -260,7 +260,7 @@ describe('resolveCanonicalUuidForProvider — reuso de UUID entre plataformas (S
     expect(soundcharts.resolveArtistByPlatform).toHaveBeenCalledWith('tiktok', 'billieeilish');
   });
 
-  it('todas as tentativas (inclusive ownPlatform) falham → erro agregado, sem UUID inventado', async () => {
+  it('every attempt (including ownPlatform) fails → aggregated error, no invented UUID', async () => {
     const soundcharts = new SoundchartsService(fakeConfig);
     soundcharts.resolveArtistByPlatform = jest.fn(async () => { throw new Error('não encontrado'); }) as never;
 
