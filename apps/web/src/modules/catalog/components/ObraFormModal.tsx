@@ -70,11 +70,11 @@ import {
 } from "@/modules/catalog/mappers";
 import { obraSchema } from "@/modules/catalog/lib/obra-schema";
 
-// ── Autocomplete: busca server-side por nome_artistico/nome_civil (Task I —
-// antes filtrava só os primeiros 50 artistas do tenant, carregados via
-// useArtistas() sem filtro; agora cada tecla digitada (debounced) refaz a
-// busca no backend, alcançando qualquer artista do tenant). Texto livre
-// continua permitido — nem todo participante precisa estar cadastrado.
+// ── Autocomplete: server-side search by nome_artistico/nome_civil (Task I —
+// it used to filter only the tenant's first 50 artists, loaded via
+// an unfiltered useArtistas(); now each typed (debounced) key re-runs the
+// search in the backend, reaching any artist of the tenant). Free text
+// is still allowed — not every participant needs to be registered.
 interface ArtistNameInputProps {
   value: string;
   onChange: (val: string) => void;
@@ -183,12 +183,12 @@ interface ObraFormModalProps {
   obra?: any;
   mode: "create" | "edit" | "view";
   /**
-   * Tipo da obra escolhido no seletor (Task #288). Quando informado,
-   * força a classificação no cabeçalho. Em modo "edit"/"view" é
-   * derivado do registro `obra.tipo_obra`.
+   * Work type chosen in the selector (Task #288). When given,
+   * it forces the classification in the header. In "edit"/"view" mode it is
+   * derived from the `obra.tipo_obra` record.
    */
   tipoObra?: TipoObra;
-  /** Chamado após salvar com sucesso — usado para abrir modal de contrato pré-preenchido */
+  /** Called after a successful save — used to open a prefilled contract modal */
   onSaved?: (info: { title: string; notes: string }) => void;
 }
 
@@ -227,8 +227,8 @@ export function ObraFormModal({
   const { addObra, updateObra } = useObras();
   const { orgId } = useCurrentOrgId();
 
-  // Resolução do type da obra. Em criação vem do seletor (prop). Em
-  // edição/visualização vem do próprio registro. Default = referencia.
+  // Resolution of the work type. On creation it comes from the selector (prop). On
+  // edit/view it comes from the record itself. Default = referencia.
   const tipoObra: TipoObra = (tipoObraProp ??
     (obra?.tipo_obra as TipoObra | undefined) ??
     "referencia") as TipoObra;
@@ -298,10 +298,10 @@ export function ObraFormModal({
     setAceitaTermos(false);
   }, [open, obra]);
 
-  // Hidrata o projeto vinculado a partir de obra.project_id — busca DIRETO por
-  // ID (GET /projects/:id), não depende do projeto estar entre os primeiros
-  // registros carregados (Task J: antes usava useProjetos() sem filtro, que
-  // truncava em 50 projetos por tenant).
+  // Hydrates the linked project from obra.project_id — fetches DIRECTLY by
+  // ID (GET /projects/:id), does not depend on the project being among the first
+  // records loaded (Task J: it used to use an unfiltered useProjetos(), which
+  // truncated at 50 projects per tenant).
   const linkedProjectId: string | undefined = obra?.project_id ?? obra?.projectId;
   const { entity: linkedProjeto } = useEntityById<ProjetoWithRelations>(
     "projects",
@@ -320,16 +320,16 @@ export function ObraFormModal({
         artistaNome: (linkedProjeto.artistas?.nome_artistico ?? null) as string | null,
       });
     } else {
-      // Ainda carregando — mantém ID com placeholder até a busca por ID resolver.
+      // Still loading — keeps the ID with a placeholder until the lookup by ID resolves.
       setProjetoSelecionado({ id: linkedProjectId, nome: "Projeto vinculado" });
     }
   }, [open, linkedProjectId, linkedProjeto]);
 
-  // Busca server-side de projetos concluídos (Task J) — antes filtrava
-  // localmente só os primeiros 50 projetos do tenant carregados via
-  // useProjetos() sem filtro; agora cada tecla digitada (debounced
-  // internamente) refaz a busca no backend, alcançando qualquer projeto
-  // concluído do tenant.
+  // Server-side search of completed projects (Task J) — it used to filter
+  // locally only the tenant's first 50 projects loaded via an
+  // unfiltered useProjetos(); now each typed (internally debounced)
+  // key re-runs the search in the backend, reaching any completed
+  // project of the tenant.
   const { items: projetosConcluidosFiltrados } = useEntityLookup<ProjetoWithRelations>({
     table: "projects",
     search: buscaProjeto,
@@ -500,7 +500,7 @@ export function ObraFormModal({
 
       onOpenChange(false);
 
-      // Abre modal de contrato pré-preenchido após fechar o modal de obra
+      // Opens the prefilled contract modal after closing the work modal
       const dataHoje = new Date().toISOString().split("T")[0];
       const linhasParticipantes = participantes
         .filter((p) => p.name || p.classeFuncao)
@@ -524,7 +524,7 @@ export function ObraFormModal({
       });
     } catch (err) {
       if (handleConcurrencyConflict(err, "obra")) return;
-      // demais erros já são exibidos via toast pelo hook useDataQuery.
+      // other errors are already shown via toast by the useDataQuery hook.
     }
   };
 
@@ -539,7 +539,7 @@ export function ObraFormModal({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Vincular a Projeto Concluído */}
+          {/* Link to a completed project */}
           <div className="border border-border rounded-lg p-5 space-y-3 bg-muted/10">
             <div className="flex items-center gap-2">
               <Search className="w-4 h-4 text-muted-foreground" />
@@ -637,8 +637,8 @@ export function ObraFormModal({
                               const matched = generosMusicais.find(g => norm(g) === norm(generoRaw));
                               setGeneroMusical(matched ? matched.toLowerCase() : generoRaw.toLowerCase());
                             }
-                            // Resolve artista por ID direto \u2014 n\u00e3o depende do artista estar
-                            // entre os primeiros registros carregados (Task J).
+                            // Resolves the artist directly by ID — does not depend on the artist being
+                            // among the first loaded records (Task J).
                             const artistId = p.artist_id as string | null | undefined;
                             const artistaFoundWire = artistId
                               ? await storage.findById<ArtistWireRecord>("artistas", artistId)
@@ -736,13 +736,13 @@ export function ObraFormModal({
             )}
           </div>
 
-          {/* Dados Principais da Obra */}
+          {/* Main work data */}
           <div className="border border-border rounded-lg p-5 bg-muted/10">
             <h3 className="font-semibold text-sm mb-4">
               Dados Principais da Obra
             </h3>
             <div className="grid grid-cols-12 gap-3 items-end">
-              {/* Código de Cadastro da Entidade — col-span-2 | Row 1 */}
+              {/* Society registration code — col-span-2 | Row 1 */}
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">
                   Código de Cadastro da Sociedade
@@ -755,7 +755,7 @@ export function ObraFormModal({
                 />
               </div>
 
-              {/* Código ECAD — col-span-2 | Row 1 */}
+              {/* ECAD code — col-span-2 | Row 1 */}
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">
                   Código ECAD
@@ -782,7 +782,7 @@ export function ObraFormModal({
                 />
               </div>
 
-              {/* Título da Obra — col-span-3 | Row 1 */}
+              {/* Work title — col-span-3 | Row 1 */}
               <div className="col-span-3">
                 <span className="text-xs text-muted-foreground mb-1 block">
                   Título da Obra *
@@ -795,7 +795,7 @@ export function ObraFormModal({
                 />
               </div>
 
-              {/* Gênero Musical — col-span-2 | Row 1 */}
+              {/* Musical genre — col-span-2 | Row 1 */}
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">
                   Gênero Musical
@@ -841,7 +841,7 @@ export function ObraFormModal({
                 </Select>
               </div>
 
-              {/* Duração — col-span-3 | Row 2 */}
+              {/* Duration — col-span-3 | Row 2 */}
               <div className="col-span-3">
                 <span className="text-xs text-muted-foreground mb-1 block">
                   Duração
@@ -905,7 +905,7 @@ export function ObraFormModal({
                 </div>
               </div>
 
-              {/* Situação — col-span-3 | Row 2 */}
+              {/* Status — col-span-3 | Row 2 */}
               <div className="col-span-3">
                 <span className="text-xs text-muted-foreground mb-1 block">
                   Situação
@@ -1128,7 +1128,7 @@ export function ObraFormModal({
             </div>
           )}
 
-          {/* Participação */}
+          {/* Participation */}
           <Collapsible
             open={participacaoOpen}
             onOpenChange={setParticipacaoOpen}
@@ -1235,9 +1235,9 @@ export function ObraFormModal({
                             title="Visualizar participante"
                             disabled={!p.name}
                             onClick={async () => {
-                              // Busca por ID direto (não depende do artista estar entre os
-                              // primeiros carregados) — cai para busca por nome só quando o
-                              // participante nunca foi vinculado a um artista cadastrado.
+                              // Direct lookup by ID (does not depend on the artist being among the
+                              // first loaded) — falls back to a lookup by name only when the
+                              // participant was never linked to a registered artist.
                               const foundWire = p.artist_id
                                 ? await storage.findById<ArtistWireRecord>("artistas", p.artist_id)
                                 : p.name
@@ -1272,7 +1272,7 @@ export function ObraFormModal({
             </div>
           </Collapsible>
 
-          {/* Outros Títulos */}
+          {/* Other titles */}
           <Collapsible
             open={outrosTitulosOpen}
             onOpenChange={setOutrosTitulosOpen}
@@ -1327,7 +1327,7 @@ export function ObraFormModal({
             </div>
           </Collapsible>
 
-          {/* Referência Conexa */}
+          {/* Related reference */}
           <Collapsible open={referenciasOpen} onOpenChange={setReferenciasOpen}>
             <div className="border border-border rounded-lg bg-muted/10">
               <div className="flex items-center gap-2 p-5">
@@ -1379,7 +1379,7 @@ export function ObraFormModal({
             </div>
           </Collapsible>
 
-          {/* Letra da Música */}
+          {/* Song lyrics */}
           <Collapsible open={letraOpen} onOpenChange={setLetraOpen}>
             <div className="border border-border rounded-lg bg-muted/10">
               <CollapsibleTrigger className="flex items-center justify-between w-full p-5">

@@ -381,7 +381,7 @@ const typeField: FieldDef = {
   placeholder: "Selecione um setor primeiro",
 };
 
-/** Field shared by create/edit: Setor filtrado pelo Contexto selecionado. */
+/** Field shared by create/edit: the department ("Setor") filtered by the selected context. */
 const sectorField: FieldDef = {
   name: "sector",
   label: "Setor",
@@ -418,9 +418,9 @@ export const taskEditFields = (targetOptions: TaskTargetOptions): FieldDef[] => 
 ];
 
 /**
- * Localiza a música de referência (WAV) de um Projeto Musical entre os arquivos
- * vinculados. Usado para herdar o áudio automaticamente em tarefas do contexto
- * "projeto_musical" — sem upload manual. Retorna undefined se não houver áudio.
+ * Finds the reference track (WAV) of a music project among the linked
+ * files. Used to inherit the audio automatically in tasks of the
+ * "projeto_musical" context — no manual upload. Returns undefined when there is no audio.
  */
 export function findProjectReferenceAudio(project?: MarketingProject | null): ReferenceAudio | undefined {
   if (!project) return undefined;
@@ -436,8 +436,8 @@ export function taskInitialValues(task?: MarketingTask): FormValues {
     title: task?.title ?? "",
     targetType: task?.targetType ?? "empresa",
     targetName: task?.targetName ?? "",
-    // Setor e Tipo começam vazios na criação — Setor é obrigatório e Tipo só é
-    // habilitado/selecionável depois que um Setor compatível é escolhido.
+    // Department and type start empty on creation — the department is mandatory and the type is only
+    // enabled/selectable after a compatible department is chosen.
     type: task?.type ?? "",
     status: task?.status ?? "a_fazer",
     priority: task?.priority ?? "media",

@@ -30,11 +30,11 @@ export function createResourceHooks<
 >(key: string, repo: ResourceRepository<T>, labels: ResourceLabels) {
   const queryKey = [MARKETING_QUERY_ROOT, key] as const;
 
-  // Referência estável: sem isso, `.data` fica `undefined` enquanto não há
-  // resultado (loading, ou erro sem sucesso anterior), e todo chamador que
-  // aplica `const { data = [] } = useList()` aloca um array novo a cada
-  // render — quebra useMemo/useEffect que dependam desse valor (mesma classe
-  // de bug corrigida em shared/hooks/useDataQuery.ts).
+  // Stable reference: without it, `.data` stays `undefined` while there is no
+  // result (loading, or an error without a previous success), and every caller that
+  // applies `const { data = [] } = useList()` allocates a new array on every
+  // render — breaking the useMemo/useEffect that depend on that value (the same class
+  // of bug fixed in shared/hooks/useDataQuery.ts).
   const EMPTY_LIST: T[] = [];
 
   function useList(enabled = true) {

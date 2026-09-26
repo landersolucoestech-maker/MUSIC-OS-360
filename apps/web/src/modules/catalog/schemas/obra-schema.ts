@@ -10,8 +10,8 @@ export const obraSchema = z.object({
   situacao: z.string().optional().or(z.literal("")),
   iswc: z.string().max(20, "ISWC inválido").optional().or(z.literal("")),
   codEcad: z.string().max(50, "Código ECAD inválido").optional().or(z.literal("")),
-  // Renomeado de codAbramus — código em qualquer entidade de gestão coletiva
-  // (ABRAMUS, UBC, SOCINPRO, ...), não só ABRAMUS.
+  // Renamed from codAbramus — code at any collective management society
+  // (ABRAMUS, UBC, SOCINPRO, ...), not only ABRAMUS.
   codEntidade: z.string().max(50, "Código inválido").optional().or(z.literal("")),
   duracaoMin: z.string().optional().or(z.literal("")),
   duracaoSeg: z.string().optional().or(z.literal("")),

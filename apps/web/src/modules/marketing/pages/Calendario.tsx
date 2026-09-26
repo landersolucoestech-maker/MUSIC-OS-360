@@ -107,7 +107,7 @@ import {
   type MediaItem,
 } from "./content-form.mapper";
 
-/** Contexto do conteúdo — exclusivamente Empresa e Artista. */
+/** Content context — exclusively company and artist. */
 const CONTENT_CONTEXT_OPTIONS: { value: MarketingTarget; label: string }[] = [
   { value: "empresa", label: "Empresa" },
   { value: "artista", label: "Artista" },
@@ -343,18 +343,18 @@ function ContentScheduleModal({
   const [advancedOpen, setAdvancedOpen] = useState(true);
   const [values, setValues] = useState<ContentFormValues>(() => initialContentForm(initialData));
   const [errors, setErrors] = useState<Partial<Record<keyof ContentFormValues, string>>>({});
-  // Campo `targetName` guarda o NOME (não o id) filtrado client-side no
-  // <Select> abaixo — fetchAllLabels (paginação real, sem cap) substitui
-  // useArtistas() (capada a 50/tenant) para nunca perder um artista.
+  // The `targetName` field stores the NAME (not the id) filtered client-side in the
+  // <Select> below — fetchAllLabels (real pagination, no cap) replaces
+  // useArtistas() (capped at 50 per tenant) so an artist is never lost.
   const { data: artistOptions = [] } = useQuery({
     queryKey: ["marketing-calendar-artist-names"],
     queryFn: () => fetchAllLabels("artistas", (a) => (a.nome_artistico ?? a.nome) as string | undefined),
   });
   const { getConnectionsByCategory } = useMarketingOAuth();
 
-  // Regra ITEM 6: apenas conteúdo de Empresa pode publicar via integração.
+  // ITEM 6 rule: only company content can publish via an integration.
   const isEmpresa = values.targetType === "empresa";
-  // Contas corporativas conectadas (publicação via integrações autorizadas).
+  // Connected corporate accounts (publishing via authorized integrations).
   const integratedAccounts = getConnectionsByCategory("corporate_metrics").filter((c) => c.connected);
   const contextLabel = "Artista";
 
@@ -381,7 +381,7 @@ function ContentScheduleModal({
       targetType,
       targetName: targetType === "empresa" ? "Empresa" : "",
       releaseId: "none",
-      // Conteúdo não-Empresa é apenas agendamento interno: zera publicação/integração.
+      // Non-company content is internal scheduling only: clears publishing/integration.
       status: targetType === "empresa" ? prev.status : "agendado",
       integratedAccountId: targetType === "empresa" ? prev.integratedAccountId : "none",
     }));
@@ -389,9 +389,9 @@ function ContentScheduleModal({
   };
 
   /**
-   * Seleção MÚLTIPLA de plataformas: alterna a plataforma mantendo as demais.
-   * A primeira plataforma da lista é a principal (dirige formato/preview/type).
-   * Nunca remove outras ao adicionar; nunca substitui automaticamente; nunca fica vazia.
+   * MULTIPLE platform selection: toggles the platform keeping the others.
+   * The first platform in the list is the main one (drives format/preview/type).
+   * Never removes others when adding; never replaces automatically; never becomes empty.
    */
   const togglePlatform = (platform: SocialPlatform) => {
     setValues((prev) => {
@@ -483,19 +483,19 @@ function ContentScheduleModal({
   };
 
   /**
-   * Finaliza o conteúdo aplicando a regra de publicação (ITEM 6):
-   *  - publish=true só é permitido para Empresa e exige conta integrada → status "publicado".
-   *  - caso contrário → status "agendado" (agendamento interno).
+   * Finalizes the content applying the publishing rule (ITEM 6):
+   *  - publish=true is only allowed for company content and requires an integrated account → status "publicado".
+   *  - otherwise → status "agendado" (internal scheduling).
    */
   const finalize = (publish: boolean) => {
-    // "Publicar via Integração" (ITEM 6) precisa entrar na fila real de
-    // publicação (scheduleIfNeeded só dispara para status "agendado" — ver
-    // marketing-contents.service.ts) para efetivamente tentar publicar via
-    // MarketingPublishingProcessor. Setar "publicado" diretamente aqui pulava
-    // a fila inteira: o conteúdo ficava marcado como publicado sem que
-    // nenhuma chamada real à plataforma jamais acontecesse. delay=0 quando
-    // scheduled_for já passou/é agora, então isto ainda publica imediatamente
-    // quando a data/hora escolhida é "agora".
+    // "Publish via integration" (ITEM 6) must enter the real publishing
+    // queue (scheduleIfNeeded only fires for the "agendado" status — see
+    // marketing-contents.service.ts) to actually try to publish via
+    // MarketingPublishingProcessor. Setting "publicado" directly here skipped
+    // the whole queue: the content was marked as published without
+    // any real call to the platform ever happening. delay=0 when
+    // scheduled_for has already passed/is now, so this still publishes immediately
+    // when the chosen date/time is "now".
     const nextStatus: ContentStatus = !isEmpresa
       ? "agendado"
       : publish

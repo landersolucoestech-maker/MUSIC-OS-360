@@ -1,19 +1,19 @@
 /**
  * registro-musicas.mapper.test.ts
  *
- * Guarda permanente (auditoria 2026-07-18 — contrato de works): fixa
- * comportamentalmente o contrato canônico do formulário de obras, para que
- * nenhuma alteração futura reintroduza os anti-padrões já corrigidos:
- *   - Rodada 8 (correção): `cod_abramus` foi renomeado para `cod_entidade`
- *     (migration RestoreEcadAddEntityCodeColumn 20260718000017) — continua
- *     sendo UMA coluna simples, só que o nome não amarra o campo a uma única
- *     sociedade (o valor pode ser um código na ABRAMUS, na UBC, na SOCINPRO,
- *     entre outras). `cod_ecad` CONTINUA existindo como coluna própria — ECAD
- *     é entidade central e obrigatória, não fungível com `cod_entidade`.
- *   - `compositor` (singular) e `editora` são campos legados/bulk — o
- *     formulário interativo NUNCA os envia; a fonte real de autoria é
- *     `participantes`, da qual `compositores`/`letristas` são derivados.
- *   - `metadata` nunca recebe campos formais do formulário de obras.
+ * Permanent guard (2026-07-18 audit — works contract): behaviorally pins
+ * the canonical contract of the works form, so that
+ * no future change reintroduces the already fixed anti-patterns:
+ *   - Round 8 (fix): `cod_abramus` was renamed to `cod_entidade`
+ *     (migration RestoreEcadAddEntityCodeColumn 20260718000017) — it is still
+ *     ONE simple column, only the name no longer ties the field to a single
+ *     society (the value may be a code at ABRAMUS, UBC, SOCINPRO,
+ *     among others). `cod_ecad` KEEPS existing as its own column — ECAD
+ *     is a central, mandatory entity, not fungible with `cod_entidade`.
+ *   - `compositor` (singular) and `editora` are legacy/bulk fields — the
+ *     interactive form NEVER sends them; the real authorship source is
+ *     `participantes`, from which `compositores`/`letristas` are derived.
+ *   - `metadata` never receives formal fields of the works form.
  */
 import { describe, it, expect } from "vitest";
 import {

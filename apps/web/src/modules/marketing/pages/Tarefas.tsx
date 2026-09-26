@@ -103,10 +103,10 @@ export default function Tarefas() {
   const updateTask = useUpdateTask();
   const removeTask = useRemoveTask();
 
-  // Real registries powering the "Projeto musical, artista ou empresa" picker.
-  // Campo `targetName` guarda o NOME (não o id) e é filtrado client-side
-  // (searchable: true no FieldDef) — por isso usa fetchAllLabels (paginação
-  // real, sem cap) em vez de useArtistas()/useClientes() (capadas a 50/tenant).
+  // Real registries powering the music project / artist / company picker.
+  // The `targetName` field stores the NAME (not the id) and is filtered client-side
+  // (searchable: true in the FieldDef) — which is why it uses fetchAllLabels (real
+  // pagination, no cap) instead of useArtistas()/useClientes() (capped at 50 per tenant).
   const { data: artistaNameOptions = [] } = useQuery({
     queryKey: ["marketing-task-target-names", "artistas"],
     queryFn: () => fetchAllLabels("artistas", (a) => a.nome_artistico as string | undefined),
@@ -262,8 +262,8 @@ export default function Tarefas() {
 
   const handleSubmit = (values: FormValues) => {
     const input = toTaskInput(values);
-    // Vínculo automático do WAV — exclusivo do contexto Projeto Musical: herda a
-    // música de referência do projeto selecionado, sem upload manual.
+    // Automatic WAV link — exclusive to the music project context: inherits the
+    // selected project's reference track, without manual upload.
     if (values.targetType === "projeto_musical") {
       const project = projects.find((p) => p.name === values.targetName);
       const referenceAudio = findProjectReferenceAudio(project);
@@ -579,7 +579,7 @@ function TaskViewModal({
             <MarketingDeliverableSection taskId={task.id} readOnly />
           </div>
 
-          {/* ══ RASCUNHO DE COPY (AI Skill copywriting sobre o contexto real da tarefa) ══ */}
+          {/* ══ COPY DRAFT (copywriting AI Skill over the task's real context) ══ */}
           <section className="space-y-2 border-t border-border pt-4" data-testid="task-view-copywriting">
             <h3 className="text-sm font-semibold">Rascunho de Copy (IA)</h3>
             <SkillRunPanel

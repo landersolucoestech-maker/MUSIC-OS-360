@@ -162,10 +162,10 @@ export function AbramusSearchRow({
     );
   }
 
-  // Total disponível no banco ABRAMUS (quando a edge function consegue
-  // estimar). Para evitar falsos negativos quando o upstream expõe um
-  // `total` ambíguo (ex.: contagem da página atual), o sinal `has_more`
-  // explícito do servidor sempre prevalece.
+  // Total available in the ABRAMUS database (when the edge function can
+  // estimate it). To avoid false negatives when the upstream exposes an
+  // ambiguous `total` (e.g. the current page's count), the server's explicit
+  // `has_more` signal always prevails.
   const reportedTotal = typeof data?.total === "number" ? data.total : undefined;
   const hasMore =
     data?.has_more === true ||
@@ -199,8 +199,8 @@ export function AbramusSearchRow({
   const selectItem = async (item: AbramusSearchResult) => {
     const existing = localLookup?.get(item.external_id);
     if (existing) {
-      // Já existe localmente — não chama import_obra/import_fonograma; apenas
-      // vincula a linha local existente para que o caller atualize seu estado.
+      // Already exists locally — does not call import_obra/import_fonograma; it only
+      // links the existing local row so the caller updates its state.
       onImported?.({ ...item, localId: existing.id });
       toast.success(alreadyImportedToast);
       return;
@@ -214,7 +214,7 @@ export function AbramusSearchRow({
       const local = result.record as { id?: string };
       onImported?.({ ...item, localId: local?.id ?? "" });
     } catch {
-      /* feedback já tratado na mutation */
+      /* feedback already handled in the mutation */
     }
   };
 

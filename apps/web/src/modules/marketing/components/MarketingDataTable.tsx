@@ -50,7 +50,7 @@ interface MarketingDataTableProps<T> {
   empty?: ReactNode;
   title?: string;
   description?: string;
-  /** Rodapé opcional (ex.: paginação) renderizado dentro do card branco. */
+  /** Optional footer (e.g. pagination) rendered inside the white card. */
   footer?: React.ReactNode;
   selection?: {
     selectedIds: string[];

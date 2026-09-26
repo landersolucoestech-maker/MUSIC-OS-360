@@ -1,10 +1,10 @@
 /**
- * Marketing — Deliverables (Entregáveis) section.
+ * Marketing — Deliverables section.
  *
  * Rendered inside a task's view/edit modal. Files are produced here, in the
  * task that owns them: upload creates v1, re-uploading adds a version (history
  * preserved), and each deliverable has an approval lifecycle, comments and a
- * Ver/Editar/Baixar/Duplicar/Excluir action menu. In read-only (view) mode the
+ * view/edit/download/duplicate/delete action menu. In read-only (view) mode the
  * mutating affordances are hidden but download/preview/history stay available.
  */
 

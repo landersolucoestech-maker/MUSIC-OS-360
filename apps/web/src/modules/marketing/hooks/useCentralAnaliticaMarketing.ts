@@ -1,5 +1,5 @@
 /**
- * Central Analítica (Marketing) — dedicated hook.
+ * Marketing analytics center ("Central Analítica") — dedicated hook.
  *
  * Single owner of the page's loading / error / data / filters / refresh and the
  * data-source flag. The page stays a thin container — no heavy logic in JSX.

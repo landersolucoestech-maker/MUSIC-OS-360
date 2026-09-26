@@ -22,7 +22,7 @@ export type ContentFormValues = {
   targetName: string;
   /** Plataforma principal — dirige formato/preview/type. */
   channel: SocialPlatform;
-  /** Todas as plataformas selecionadas (publicação multiplataforma). */
+  /** Every selected platform (multi-platform publishing). */
   channels: SocialPlatform[];
   type: ContentType;
   publishDate: string;
@@ -34,7 +34,7 @@ export type ContentFormValues = {
   hashtags: string;
   location: string;
   status: ContentStatus;
-  /** Conta integrada (corporativa) usada para publicar — apenas conteúdo de Empresa. */
+  /** Integrated (corporate) account used to publish — company content only. */
   integratedAccountId: string;
   media: MediaItem[];
   creative: CreativeConfig;
@@ -46,9 +46,9 @@ function isCreativeConfig(value: unknown): value is CreativeConfig {
 }
 
 export function initialContentForm(content?: MarketingContent | null): ContentFormValues {
-  // Contexto restrito a Empresa/Artista — conteúdos legados de outro contexto viram "artista".
+  // Context restricted to company/artist — legacy contents of another context become "artista".
   const targetType: MarketingTarget = content?.targetType === "empresa" ? "empresa" : "artista";
-  // Plataformas selecionadas (multiplataforma); a primeira é a principal.
+  // Selected platforms (multi-platform); the first one is the main one.
   const rawChannels = content?.channels?.length ? content.channels : [content?.channel ?? "instagram"];
   const channels = Array.from(new Set(rawChannels.map((c) => normalizePlatform(c))));
   const channel = channels[0] ?? "instagram";
@@ -93,8 +93,8 @@ export function toMarketingContentInput(
     type: values.type,
     channel: values.channel,
     channels: values.channels,
-    // Regra de publicação: somente conteúdo de Empresa pode publicar (via integração).
-    // Artista/Projeto musical permanecem sempre "agendado" (apenas agendamento interno).
+    // Publishing rule: only company content can publish (via an integration).
+    // Artist/music project content always stays "agendado" (internal scheduling only).
     status: values.targetType === "empresa" ? values.status : "agendado",
     approval: current?.approval ?? "pendente",
     publishDate: values.publishDate,

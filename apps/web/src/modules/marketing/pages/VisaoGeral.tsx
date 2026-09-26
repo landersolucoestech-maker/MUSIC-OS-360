@@ -1,5 +1,5 @@
 /**
- * Marketing — Visão Geral (operational dashboard).
+ * Marketing — overview page (operational dashboard).
  * KPIs, operational alerts, upcoming deliveries, pending approvals,
  * recent activity and quick actions.
  */

@@ -19,8 +19,8 @@ import { ChevronDown, FileAudio, Music } from "lucide-react";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import type { ObraWithRelations } from "@/modules/catalog/hooks/useObras";
 
-// `compositores` é tipado como string[] no schema, mas em alguns registros
-// legados pode chegar como string ou null. Normaliza com segurança.
+// `compositores` is typed as string[] in the schema, but in some legacy
+// records it may arrive as a string or null. Normalizes safely.
 function compositoresToString(value: unknown): string {
   if (Array.isArray(value)) return value.filter(Boolean).join(", ");
   if (typeof value === "string") return value;
@@ -209,9 +209,9 @@ export function FonogramaViewModal({
   const [musicoOpen, setMusicoOpen] = useState(true);
   const [uploadOpen, setUploadOpen] = useState(true);
 
-  // Resolve obra vinculada DIRETO por ID (GET /works/:id) quando não veio um
-  // objeto inline — não depende da obra estar entre os primeiros registros
-  // carregados (Task J: antes usava useObras() sem filtro, truncado em 50).
+  // Resolves the linked work DIRECTLY by ID (GET /works/:id) when no inline
+  // object came — does not depend on the work being among the first records
+  // loaded (Task J: it used to use an unfiltered useObras(), truncated at 50).
   const inlineObra = fonograma?.obraVinculada ?? fonograma?.obra ?? null;
   const lookupObraId = !inlineObra ? (fonograma?.work_id ?? fonograma?.workId) : undefined;
   const { entity: foundObra } = useEntityById<ObraWithRelations>("obras", open ? lookupObraId : undefined);
@@ -228,7 +228,7 @@ export function FonogramaViewModal({
     return undefined;
   };
 
-  // Resolve obra vinculada: aceita objeto inline (legacy) ou resolve via work_id.
+  // Resolves the linked work: accepts an inline object (legacy) or resolves via work_id.
   let obraVinculada: ObraVinculadaView | null = inlineObra;
   if (!obraVinculada && lookupObraId) {
     obraVinculada = foundObra
@@ -289,7 +289,7 @@ export function FonogramaViewModal({
     pickStr(fonograma.lancamento, fonograma.data_lancamento),
   );
 
-  // Duração
+  // Duration
   let duracaoMin = pickStr(fonograma.duracaoMin, fonograma.duracao_min);
   let duracaoSeg = pickStr(fonograma.duracaoSeg, fonograma.duracao_seg);
   const duracaoFull = pickStr(fonograma.duration_text);
@@ -456,7 +456,7 @@ export function FonogramaViewModal({
 
             <Separator />
 
-            {/* Informações Gerais */}
+            {/* General information */}
             <div>
               <p className="text-xs font-semibold text-muted-foreground  tracking-wide mb-3">
                 Informações Gerais
@@ -473,7 +473,7 @@ export function FonogramaViewModal({
 
             <Separator />
 
-            {/* Códigos de Registro */}
+            {/* Registration codes */}
             <div>
               <p className="text-xs font-semibold text-muted-foreground  tracking-wide mb-3">
                 Códigos de Registro
@@ -501,7 +501,7 @@ export function FonogramaViewModal({
 
             <Separator />
 
-            {/* Características */}
+            {/* Characteristics */}
             <div>
               <p className="text-xs font-semibold text-muted-foreground  tracking-wide mb-3">
                 Características
@@ -518,7 +518,7 @@ export function FonogramaViewModal({
 
             <Separator />
 
-            {/* Participação */}
+            {/* Participation */}
             <div>
               <div className="flex items-center justify-between mb-3">
                 <p className="text-xs font-semibold text-muted-foreground  tracking-wide">
@@ -572,7 +572,7 @@ export function FonogramaViewModal({
               <>
                 <Separator />
 
-                {/* Arquivo de Áudio */}
+                {/* Audio file */}
                 <div>
                   <Collapsible open={uploadOpen} onOpenChange={setUploadOpen}>
                     <CollapsibleTrigger className="flex items-center justify-between w-full mb-3">

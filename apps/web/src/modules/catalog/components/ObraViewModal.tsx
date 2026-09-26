@@ -102,9 +102,9 @@ export function ObraViewModal({
   onOpenChange,
   obra: obraProp,
 }: ObraViewModalProps) {
-  // Busca DIRETO por ID (GET /works/:id) — não depende da obra estar entre
-  // os primeiros registros carregados (Task J: antes usava useObras() sem
-  // filtro, que truncava em 50 obras por tenant).
+  // Fetches DIRECTLY by ID (GET /works/:id) — does not depend on the work being among
+  // the first loaded records (Task J: it used to use an unfiltered useObras(),
+  // which truncated at 50 works per tenant).
   const { entity: fresh } = useEntityById<ObraWithRelations>("obras", open ? obraProp?.id : undefined);
   if (!obraProp) return null;
 
@@ -148,7 +148,7 @@ export function ObraViewModal({
         <ScrollArea className="max-h-[calc(90vh-120px)]">
           <div className="px-6 pb-6 space-y-6">
 
-            {/* Header da Obra */}
+            {/* Work header */}
             <div className="flex items-center gap-4">
               <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center shrink-0">
                 <Music className="h-5 w-5 text-primary-foreground" />
@@ -167,7 +167,7 @@ export function ObraViewModal({
               </div>
             </div>
 
-            {/* Projeto Vinculado — exibido apenas quando há vínculo */}
+            {/* Linked project — shown only when there is a link */}
             {(artistaNome || projetoTitle) && (
               <>
                 <Separator />
@@ -183,7 +183,7 @@ export function ObraViewModal({
 
             <Separator />
 
-            {/* Informações Gerais */}
+            {/* General information */}
             <div>
               <SectionTitle>Informações Gerais</SectionTitle>
               <div className="grid grid-cols-2 gap-x-6 gap-y-3">
@@ -194,7 +194,7 @@ export function ObraViewModal({
               </div>
             </div>
 
-            {/* Códigos de Registro — exibido apenas quando há algum código */}
+            {/* Registration codes — shown only when there is some code */}
             {(obra.cod_entidade || obra.cod_ecad || obra.isrc || obra.iswc) && (
               <>
                 <Separator />
@@ -210,7 +210,7 @@ export function ObraViewModal({
               </>
             )}
 
-            {/* Participantes (Nome, Função, %, Link) */}
+            {/* Participants (name, role, %, link) */}
             {participantes.length > 0 && (
               <>
                 <Separator />
@@ -259,7 +259,7 @@ export function ObraViewModal({
               </>
             )}
 
-            {/* Inteligência Artificial */}
+            {/* Artificial intelligence */}
             {criadaPorIA && (
               <>
                 <Separator />
@@ -340,7 +340,7 @@ export function ObraViewModal({
               </>
             )}
 
-            {/* Outros Títulos */}
+            {/* Other titles */}
             {outrosTitulos.length > 0 && (
               <>
                 <Separator />
@@ -357,7 +357,7 @@ export function ObraViewModal({
               </>
             )}
 
-            {/* Referências Conectadas */}
+            {/* Connected references */}
             {referenciasConexas.length > 0 && (
               <>
                 <Separator />

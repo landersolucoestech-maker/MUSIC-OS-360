@@ -194,7 +194,7 @@ export type TaskType =
   | "negociacao"
   | "follow_up"
   | "relacionamento"
-  // Distribuição Digital
+  // Digital distribution
   | "planejamento_lancamento"
   // Empresa (corporativo)
   | "material_institucional"
@@ -210,7 +210,7 @@ export type TaskType =
   | "comunicados"
   | "relacionamento_parceiros"
   | "parcerias"
-  // Artista (gestão de carreira)
+  // Artist (career management)
   | "planejamento_carreira"
   | "gestao_agenda"
   | "planejamento_estrategico"
@@ -223,7 +223,7 @@ export type TaskType =
   | "conteudo_redes_sociais"
   | "contratacoes"
   | "shows"
-  // Projeto Musical (lançamento/obra)
+  // Music project (release/work)
   | "motion_cover"
   | "arte_divulgacao"
   | "teaser"
@@ -286,13 +286,13 @@ export interface LinkedFile {
   sizeKb?: number;
 }
 
-/** Música de referência (WAV) herdada do Projeto Musical para uma tarefa. */
+/** Reference track (WAV) inherited from the music project for a task. */
 export interface ReferenceAudio {
   fileName: string;
   url: string;
-  /** Data do upload do arquivo no projeto (quando disponível). */
+  /** Upload date of the file in the project (when available). */
   uploadedAt?: ISODate;
-  /** Usuário responsável pelo upload (quando disponível). */
+  /** User responsible for the upload (when available). */
   uploadedBy?: string;
 }
 
@@ -414,7 +414,7 @@ export interface MarketingContent {
   type: ContentType;
   /** Plataforma principal (dirige formato/preview). Mantida por compatibilidade. */
   channel: ContentChannel;
-  /** Todas as plataformas de publicação selecionadas (multiplataforma). */
+  /** Every selected publishing platform (multi-platform). */
   channels?: ContentChannel[];
   status: ContentStatus;
   publishDate: ISODate;
@@ -485,15 +485,15 @@ export interface MarketingTask {
   projectId?: ID;
   campaignId?: ID;
   briefingId?: ID;
-  /** Optional link to a musical release (lançamento). */
+  /** Optional link to a musical release. */
   releaseId?: ID;
   /** Optional link to a scheduled content piece. */
   contentId?: ID;
   files: LinkedFile[];
   /**
-   * Música de referência (WAV) vinculada automaticamente a partir do Projeto
-   * Musical. Exclusivo do contexto "projeto_musical" — tarefas de Empresa/Artista
-   * não possuem este vínculo. Preenchido pelo sistema, sem upload manual.
+   * Reference track (WAV) linked automatically from the music
+   * project. Exclusive to the "projeto_musical" context — company/artist tasks
+   * do not have this link. Filled by the system, without manual upload.
    */
   referenceAudio?: ReferenceAudio;
   checklist: ChecklistItem[];
@@ -507,7 +507,7 @@ export interface MarketingTask {
 }
 
 // ---------------------------------------------------------------------------
-// Deliverables (Entregáveis)
+// Deliverables
 //
 // Creative files are produced *inside the task* responsible for them — never in
 // an isolated library. A deliverable keeps its full version history (uploading

@@ -122,10 +122,10 @@ export const PLACEMENTS_BY_PLATFORM: Record<CampaignPlatform, CampaignPlacement[
 export const ALL_OBJECTIVES = Object.keys(OBJECTIVE_LABEL) as CampaignObjective[];
 
 /**
- * Curated, de-duplicated list shown in "O que será promovido?". The full label
+ * Curated, de-duplicated list shown in the "O que será promovido?" field. The full label
  * map is kept for backward compatibility, but redundant items (TRACK/EP/ALBUM/
- * VIDEO → consolidated into Lançamento/Projeto; BRAND/INSTITUTIONAL → Empresa/
- * Outro) are no longer offered, to avoid ambiguity.
+ * VIDEO → consolidated into the release/project options; BRAND/INSTITUTIONAL → the
+ * company/other options) are no longer offered, to avoid ambiguity.
  */
 export const ALL_PROMOTED_ENTITY_TYPES: PromotedEntityType[] = [
   "ARTIST",
@@ -157,7 +157,7 @@ export function createDefaultCampaignState(campaign?: MarketingCampaign | null):
     expectedOutcome: OUTCOMES_BY_OBJECTIVE[objective][0],
     // Contexto restrito a Empresa/Artista (campanhas legadas de outro contexto viram "empresa").
     context: campaign?.targetType === "artista" ? "artista" : "empresa",
-    // Plataformas de publicação selecionadas — preserva todas ao reabrir/editar.
+    // Selected publishing platforms — preserves all of them when reopening/editing.
     publishChannels: campaign?.platforms ?? [],
     name: campaign?.name ?? "",
     artist: campaign?.owner ?? "",
@@ -201,8 +201,8 @@ export function createDefaultCampaignState(campaign?: MarketingCampaign | null):
 }
 
 export function getRequiredPlacements(platforms: CampaignPlatform[]): CampaignPlacement[] {
-  // De-duplica: posicionamentos compartilhados (ex.: YOUTUBE_IN_STREAM em Google e
-  // YouTube Ads) devem aparecer uma única vez.
+  // De-duplicates: shared placements (e.g. YOUTUBE_IN_STREAM in Google and
+  // YouTube Ads) must appear only once.
   return Array.from(new Set(platforms.flatMap((platform) => PLACEMENTS_BY_PLATFORM[platform])));
 }
 
@@ -276,7 +276,7 @@ export function toMarketingCampaignInput(state: CampaignBuilderState): CreateInp
   const promotedEntityName = state.promotedEntityName || state.artist || "Empresa";
   return {
     name: state.name,
-    // Contexto explícito (Empresa/Artista) — não derivado de promotedEntityType.
+    // Explicit context (company/artist) — not derived from promotedEntityType.
     targetType: state.context,
     targetId: state.promotedEntityId || undefined,
     targetName: promotedEntityName,
@@ -287,13 +287,13 @@ export function toMarketingCampaignInput(state: CampaignBuilderState): CreateInp
     budget: state.budget.totalBudget,
     startDate: state.budget.startDate,
     endDate: state.budget.endDate,
-    // Plataformas de publicação (sociais) selecionadas pelo usuário — multiplataforma.
+    // Publishing (social) platforms selected by the user — multi-platform.
     platforms: state.publishChannels,
     status: "rascunho",
     owner: state.owner || state.artist || "Marketing",
     projectId: state.project || undefined,
     creativeAssetIds: state.creatives.map((creative) => creative.id),
-    // Conteúdos vinculados à campanha: o selecionado em Dados + os usados como criativos.
+    // Contents linked to the campaign: the one selected in the data step + those used as creatives.
     contentIds: Array.from(
       new Set([state.contentId, ...state.creatives.map((creative) => creative.contentId)].filter(Boolean)),
     ) as string[],

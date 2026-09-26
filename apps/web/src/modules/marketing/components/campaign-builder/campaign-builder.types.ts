@@ -91,7 +91,7 @@ export interface CampaignAudience {
 
 export interface CampaignCreative {
   id: string;
-  /** Conteúdo de origem, quando o criativo foi gerado de um conteúdo existente. */
+  /** Source content, when the creative was generated from an existing content. */
   contentId?: string;
   name: string;
   platform: CampaignPlatform;
@@ -137,9 +137,9 @@ export interface CampaignValidationIssue {
 export interface CampaignBuilderState {
   objective: CampaignObjective;
   expectedOutcome: CampaignExpectedOutcome | "";
-  /** Contexto da campanha — exclusivamente Empresa ou Artista. */
+  /** Campaign context — exclusively company or artist. */
   context: MarketingTarget;
-  /** Plataformas de publicação (sociais) — seleção múltipla. */
+  /** Publishing (social) platforms — multiple selection. */
   publishChannels: ContentChannel[];
   name: string;
   artist: string;

@@ -152,7 +152,7 @@ export default function Briefing() {
   };
 
   const openEditModal = (briefing: MarketingBriefing) => {
-    // Garante modal único: fecha o ViewModal antes de abrir o EditModal.
+    // Ensures a single modal: closes the ViewModal before opening the EditModal.
     setViewBriefing(null);
     setSelectedBriefing(briefing);
     setModalMode("edit");
@@ -326,8 +326,8 @@ export default function Briefing() {
         open={modalOpen}
         onOpenChange={(open) => {
           setModalOpen(open);
-          // Ao fechar o EditModal, zera estados para o ViewModal não reaparecer
-          // caso o clique de "Editar" tenha vazado para a linha (onRowClick).
+          // When the EditModal closes, resets the state so the ViewModal does not reappear
+          // in case the "Editar" click leaked to the row (onRowClick).
           if (!open) {
             setSelectedBriefing(null);
             setViewBriefing(null);

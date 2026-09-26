@@ -11,9 +11,9 @@ export function useObras(enabled = true, artistId?: string) {
   const orgId = tenant?.id ?? "unknown";
 
   const result = useDataQuery<ObraWithRelations>({
-    // artistId entra na queryKey: sem isso, abrir a Visão 360 do artista A e
-    // depois do artista B reaproveitaria (errado) o cache de A — mesma key,
-    // filtro server-side diferente (ver Task G).
+    // artistId goes into the queryKey: without it, opening artist A's 360 View and
+    // then artist B's would (wrongly) reuse A's cache — same key,
+    // different server-side filter (see Task G).
     queryKey: artistId ? [...QUERY_KEYS.WORKS, "by-artist", artistId] : [...QUERY_KEYS.WORKS],
     table: "obras",
     select: "*, artistas(*), projetos(id, title)",

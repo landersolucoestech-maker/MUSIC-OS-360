@@ -371,8 +371,8 @@ export function formToObraPayload(input: FormToObraInput): Record<string, unknow
     input.iaLetra.ferramenta || input.iaLetra.prompt ? input.iaLetra : null;
   const outros = input.outrosTitulos.filter(Boolean);
   const refs = input.referenciasConexas.filter(Boolean);
-  // Uma chave por campo do formulário (snake_case = nome exato da coluna física).
-  // org_id não é campo do form: o tenant vem do contexto autenticado da API.
+  // One key per form field (snake_case = exact physical column name).
+  // org_id is not a form field: the tenant comes from the API's authenticated context.
   return {
     title: input.title.trim(),
     music_genre: input.generoMusical || null,
@@ -474,14 +474,14 @@ export function fonogramaToFormFields(f: any): FonogramaFormFields {
 // ── Projeto → Obra seed ──────────────────────────────────────────────────────
 
 /**
- * Converte um Projeto + primeira MusicaData em um objeto-semente que pode ser
- * passado diretamente para ObraFormModal como prop `obra`.
+ * Converts a Project + its first MusicaData into a seed object that can be
+ * passed directly to ObraFormModal as the `obra` prop.
  *
- * Garante herança contextual: ao registrar uma Obra a partir de um Projeto
- * o formulário nasce pré-preenchido com todos os dados musicais do projeto
- * (título, gênero, idioma, duração, compositores, letra) e o artista do projeto.
+ * Guarantees contextual inheritance: when registering a Work from a Project
+ * the form is born prefilled with all the project's musical data
+ * (title, genre, language, duration, composers, lyrics) and the project's artist.
  *
- * Fonte única de verdade para esta transformação. NÃO duplicar nos componentes.
+ * Single source of truth for this transformation. Do NOT duplicate it in the components.
  */
 export function projetoToObraSeed(
   projeto: {

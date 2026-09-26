@@ -1,5 +1,5 @@
 /**
- * Marketing — Deliverables (Entregáveis) hooks.
+ * Marketing — Deliverables hooks.
  *
  * Deliverables live on a task, so the list query is keyed by task id. Every
  * mutation (upload, new version, approval, comment, duplicate, edit, remove)
@@ -41,7 +41,7 @@ export function useMarketingDeliverables() {
   });
 }
 
-// Referência estável — ver shared/hooks/useDataQuery.ts para o motivo.
+// Stable reference — see shared/hooks/useDataQuery.ts for the reason.
 const EMPTY_DELIVERABLES: Awaited<ReturnType<typeof marketingService.deliverables.listByTask>> = [];
 
 /** Deliverables produced inside a task. */

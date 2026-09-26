@@ -42,8 +42,8 @@ import { useUploadToR2, R2NotConfiguredError } from "@/shared/hooks/useUploadToR
 
 type FonogramaRow = Fonograma;
 
-// `compositores` é tipado como string[] no schema, mas em alguns registros
-// legados pode chegar como string ou null. Normaliza com segurança.
+// `compositores` is typed as string[] in the schema, but in some legacy
+// records it may arrive as a string or null. Normalizes safely.
 function compositoresToString(value: unknown): string {
   if (Array.isArray(value)) return value.filter(Boolean).join(", ");
   if (typeof value === "string") return value;
@@ -100,7 +100,7 @@ interface FonogramaFormModalProps {
   onOpenChange: (open: boolean) => void;
   fonograma?: FonogramaFormInput | null;
   mode: "create" | "edit" | "view";
-  /** Chamado após salvar com sucesso — usado para abrir modal de contrato pré-preenchido */
+  /** Called after a successful save — used to open a prefilled contract modal */
   onSaved?: (info: { title: string; notes: string }) => void;
 }
 
@@ -183,10 +183,10 @@ const formatFileSize = (bytes: number) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
-// ── Autocomplete: busca server-side por nome_artistico/nome_civil (Task I —
-// antes filtrava só os primeiros 50 artistas do tenant carregados via
-// useArtistas() sem filtro; agora cada tecla digitada (debounced) refaz a
-// busca no backend). Texto livre continua permitido.
+// ── Autocomplete: server-side search by nome_artistico/nome_civil (Task I —
+// it used to filter only the tenant's first 50 artists loaded via
+// an unfiltered useArtistas(); now each typed (debounced) key re-runs the
+// search in the backend). Free text is still allowed.
 interface ArtistNameInputProps {
   value: string;
   onChange: (val: string) => void;
@@ -268,9 +268,9 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   const { orgId } = useCurrentOrgId();
   const [viewArtista, setViewArtista] = useState<Artist | null>(null);
 
-  // Build initial obra vinculada from form-shape OR DB-shape (snake_case).
-  // Em registros que vêm do banco apenas com work_id, a hidratação completa
-  // acontece no useEffect abaixo a partir da lista de obras.
+  // Build the initial linked work from the form shape OR the DB shape (snake_case).
+  // For records coming from the database with only work_id, the full hydration
+  // happens in the useEffect below from the works list.
   const toObraVinculada = (o: ObraVinculadaInput | null | undefined): ObraVinculada | null => {
     if (!o) return null;
     return {
@@ -322,7 +322,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   const [gravadora, setGravadora] = useState(pickStr(fonograma?.gravadora));
   const [observacoes, setObservacoes] = useState(pickStr(fonograma?.notes));
 
-  // Participação
+  // Participation
   const [participacao, setParticipacao] = useState<ParticipacaoCategoria>(() => {
     const fromCat = toParticipacaoCategoria(fonograma?.participacao);
     if (fromCat.produtorFonografico.length === 0 && (fonograma as any)?.produtores) {
@@ -337,7 +337,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   const [musicoOpen, setMusicoOpen] = useState(true);
   const [uploadOpen, setUploadOpen] = useState(true);
 
-  // Upload de áudio
+  // Audio upload
   const [arquivoAudio, setArquivoAudio] = useState<ArquivoAudioInput | null>(
     toArquivoAudio(fonograma?.arquivoAudio ?? fonograma?.arquivo_audio)
   );
@@ -395,11 +395,11 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, fonograma]);
 
-  // Hidrata a obra vinculada a partir de fonograma.work_id — busca DIRETO por
-  // ID (GET /works/:id via useEntityById), não depende da obra estar entre
-  // os primeiros registros carregados por useObras() (Task I: antes a obra
-  // ficava presa no placeholder "Obra vinculada" para sempre se estivesse
-  // fora dos primeiros 50 do tenant).
+  // Hydrates the linked work from fonograma.work_id — fetches DIRECTLY by
+  // ID (GET /works/:id via useEntityById), it does not depend on the work being among
+  // the first records loaded by useObras() (Task I: the work used to
+  // stay stuck on the "Obra vinculada" placeholder forever if it was
+  // outside the tenant's first 50).
   const hydratedObraId: string | undefined =
     (fonograma?.work_id as string | undefined) ??
     (fonograma as { workId?: string } | null | undefined)?.workId;
@@ -410,7 +410,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
 
   useEffect(() => {
     if (!open) return;
-    // Se o caller já enviou um objeto pronto (legacy), usa ele
+    // If the caller already sent a ready object (legacy), use it
     if (fonograma?.obraVinculada) {
       setObraVinculada(toObraVinculada(fonograma.obraVinculada));
       return;
@@ -428,7 +428,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
         status: hydratedObra.status ?? "",
       });
     } else {
-      // Ainda carregando — mantém ID com placeholder até a busca por ID resolver.
+      // Still loading — keeps the ID with a placeholder until the lookup by ID resolves.
       setObraVinculada({
         id: hydratedObraId,
         title: "Obra vinculada",
@@ -439,15 +439,15 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
     }
   }, [open, fonograma, hydratedObraId, hydratedObra]);
 
-  // Debounce do termo digitado para evitar uma chamada ABRAMUS por tecla.
+  // Debounce of the typed term to avoid one ABRAMUS call per key.
   const buscaObraDebounced = useDebounce(buscaObra, 300);
 
-  // Busca server-side (Task I) — antes filtrava só as primeiras 50 obras do
-  // tenant carregadas via useObras() sem filtro; agora cada tecla digitada
-  // (debounced) refaz a busca no backend (títulos), alcançando qualquer
-  // obra do tenant. Nota: a busca server-side casa só por título (o backend
-  // não indexa compositores/gênero) — leve estreitamento face à busca local
-  // anterior, mesma concessão já aceita nas demais migrações desta tarefa.
+  // Server-side search (Task I) — it used to filter only the tenant's first 50 works
+  // loaded via an unfiltered useObras(); now each typed (debounced) key
+  // re-runs the search in the backend (titles), reaching any
+  // work of the tenant. Note: the server-side search matches titles only (the backend
+  // does not index composers/genre) — a slight narrowing compared to the previous local
+  // search, the same concession already accepted in the other migrations of this task.
   const LOCAL_RESULTS_LIMIT = 20;
   const collatorFono = new Intl.Collator("pt-BR", { sensitivity: "base" });
   const { items: obrasBusca, total: obrasRegistradasTotal } = useEntityLookup<ObraWithRelations>({
@@ -559,7 +559,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
 
   const buildPayload = (): FonogramaInsert => {
     const tituloFinal = (title && title.trim()) || obraVinculada?.title || "Sem título";
-    // org_id não é campo do formulário — o tenant vem do contexto autenticado da API.
+    // org_id is not a form field — the tenant comes from the API's authenticated context.
     return {
       title: tituloFinal,
       cod_ecad: codEcad || null,
@@ -656,7 +656,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       const tituloSalvo = (title && title.trim()) || obraVinculada?.title || "Sem título";
       onOpenChange(false);
 
-      // Abre modal de contrato pré-preenchido após fechar o modal de fonograma
+      // Opens the prefilled contract modal after closing the phonogram modal
       onSaved?.({
         title: `Contrato de Fonograma – ${tituloSalvo}`,
         notes: [
@@ -667,7 +667,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
       });
     } catch (err) {
       if (handleConcurrencyConflict(err, "fonograma")) return;
-      // demais erros já são exibidos via toast pelo hook
+      // other errors are already shown via toast by the hook
     } finally {
       setSubmitting(false);
     }
@@ -723,9 +723,9 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                     title="Visualizar participante"
                     disabled={!p.name}
                     onClick={async () => {
-                      // Busca por ID direto — não depende do artista estar entre os
-                      // primeiros carregados; cai para busca por nome só quando o
-                      // participante nunca foi vinculado a um artista cadastrado.
+                      // Direct lookup by ID — does not depend on the artist being among the
+                      // first loaded; falls back to a lookup by name only when the
+                      // participant was never linked to a registered artist.
                       const foundWire = p.artist_id
                         ? await storage.findById<ArtistWireRecord>("artistas", p.artist_id)
                         : p.name
@@ -759,7 +759,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Título da Obra Vinculada */}
+          {/* Linked work title */}
           <div className="border border-border rounded-lg p-6 space-y-4 bg-muted/10">
             <Label className="font-semibold text-sm">Título da Obra Vinculada</Label>
             
@@ -831,7 +831,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                           obrasRegistradasFiltradas.map((obra) => {
                             const selectObra = async () => {
                               setObraVinculada(obra);
-                              // Auto-fill título if blank
+                              // Auto-fill the title if blank
                               if (!title && obra.title) setTitle(obra.title);
                               // Normalize genre: match against Select options (accent+case insensitive)
                               if (obra.genero) {
@@ -839,7 +839,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                                 const matched = generosMusicais.find(g => norm(g) === norm(obra.genero));
                                 setGeneroMusical(matched ? matched.toLowerCase() : obra.genero.toLowerCase());
                               }
-                              // Fill participação from full obra data
+                              // Fill the participation from the full work data
                               const fullObra = obrasBusca.find((o: ObraWithRelations) => o.id === obra.id);
                               if (fullObra) {
                                 const compositoresStr = Array.isArray(fullObra.compositores)
@@ -849,9 +849,9 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                                   : typeof fullObra.compositor === "string"
                                   ? fullObra.compositor
                                   : "";
-                                // Resolve músico/arranjador from project producers — busca
-                                // DIRETA por ID (Task J: antes escaneava o array `projetos`
-                                // de useProjetos() sem filtro, truncado em 50 por tenant).
+                                // Resolve the musician/arranger from the project producers — DIRECT
+                                // lookup by ID (Task J: it used to scan the `projetos` array
+                                // of an unfiltered useProjetos(), truncated at 50 per tenant).
                                 let musicosArr: Participante[] = [];
                                 if ((fullObra.project_id as string | null | undefined)) {
                                   const projeto = await storage.findById<ProjetoWithRelations>("projects", fullObra.project_id as string);
@@ -871,13 +871,13 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
                                     } catch { /* invalid JSON — leave blank */ }
                                   }
                                 }
-                                // Resolve artista for interprete:
-                                // 1) DB join (non-mock), 2) busca DIRETA por ID (Task J \u2014 antes
-                                // escaneava o array `artistas` de useArtistas() sem filtro,
-                                // truncado em 50 artistas por tenant; GET /artists/:id alcan\u00e7a
-                                // qualquer artista do tenant), 3) compositor name match (s\u00f3
-                                // quando n\u00e3o h\u00e1 artist_id \u2014 mesma concess\u00e3o j\u00e1 aceita em
-                                // outras migra\u00e7\u00f5es desta tarefa).
+                                // Resolve the artist for the performer:
+                                // 1) DB join (non-mock), 2) DIRECT lookup by ID (Task J — it used to
+                                // scan the `artistas` array of an unfiltered useArtistas(),
+                                // truncated at 50 artists per tenant; GET /artists/:id reaches
+                                // any artist of the tenant), 3) composer name match (only
+                                // when there is no artist_id — the same concession already accepted in
+                                // other migrations of this task).
                                 const norm = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
                                 let artistaNome = fullObra.artistas?.nome_artistico as string | undefined;
                                 let artistId = fullObra.artistas?.id as string | undefined;
@@ -1015,7 +1015,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
           <div className="border border-border rounded-lg p-6 space-y-4 bg-muted/10">
             <h3 className="font-semibold text-base">Dados do Fonograma</h3>
 
-            {/* Linha 1: Código de Cadastro da Sociedade | Código ECAD | Agregadora | ISRC | Criada por IA */}
+            {/* Row 1: Society registration code | ECAD code | Aggregator | ISRC | AI-created */}
             <div className="grid grid-cols-12 gap-3 items-end">
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">Código de Cadastro da Sociedade</span>
@@ -1054,7 +1054,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
               </div>
             </div>
 
-            {/* Linha 2: Instrumental | Emissão | Gravação Original | Lançamento | Duração */}
+            {/* Row 2: Instrumental | Issue | Original recording | Release | Duration */}
             <div className="grid grid-cols-12 gap-3 items-end">
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">Instrumental</span>
@@ -1102,7 +1102,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
               </div>
             </div>
 
-            {/* Linha 3: Gênero | Mídia | Nacional | Pub. Simultânea | País Origem | País Publicação */}
+            {/* Row 3: Genre | Media | National | Simultaneous publication | Country of origin | Country of publication */}
             <div className="grid grid-cols-12 gap-3 items-end">
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">Gênero Musical</span>
@@ -1154,7 +1154,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
               </div>
             </div>
 
-            {/* Linha 4: Classificação | Status */}
+            {/* Row 4: Classification | Status */}
             <div className="grid grid-cols-12 gap-3 items-end">
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">Classificação</span>
@@ -1177,7 +1177,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
             </div>
           </div>
 
-          {/* Participação */}
+          {/* Participation */}
           <div className="border border-border rounded-lg p-6 space-y-4 bg-muted/10">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-base">Participação</h3>
@@ -1191,7 +1191,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
             </div>
           </div>
 
-          {/* Upload de Áudio */}
+          {/* Audio upload */}
           <Collapsible open={uploadOpen} onOpenChange={setUploadOpen}>
             <div className="border border-border rounded-lg bg-muted/10">
               <CollapsibleTrigger className="flex items-center justify-between w-full p-6">

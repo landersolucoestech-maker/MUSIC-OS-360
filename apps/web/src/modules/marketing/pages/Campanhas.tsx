@@ -100,7 +100,7 @@ function platformLabel(platform?: ContentChannel): string {
   return PLATFORM_LABEL_BY_VALUE[platform] ?? platform;
 }
 
-/** Rotulos curtos das plataformas de publicaçãoo (sociais). */
+/** Short labels of the publishing (social) platforms. */
 const SOCIAL_PLATFORM_LABEL = PUBLISH_PLATFORMS.reduce(
   (acc, platform) => {
     acc[platform.value] = platform.label;
@@ -113,7 +113,7 @@ function socialPlatformLabel(platform: ContentChannel): string {
   return SOCIAL_PLATFORM_LABEL[platform] ?? platformLabel(platform);
 }
 
-/** Lista de todas as plataformas da campanha (multiplataforma). */
+/** List of all the campaign's platforms (multi-platform). */
 function allPlatformsLabel(platforms: ContentChannel[]): string {
   if (!platforms.length) return "-";
   return platforms.map(socialPlatformLabel).join(", ");
@@ -214,7 +214,7 @@ export default function Campanhas() {
   };
 
   const openEdit = (campaign: MarketingCampaign) => {
-    // Fecha o ViewModal e abre apenas o EditModal.
+    // Closes the ViewModal and opens only the EditModal.
     setViewCampaign(null);
     setBuilderCampaign(campaign);
     setBuilderOpen(true);
@@ -306,8 +306,8 @@ export default function Campanhas() {
           submitting={createCampaign.isPending || updateCampaign.isPending}
           onOpenChange={(open) => {
             setBuilderOpen(open);
-            // Ao fechar o EditModal, zera estados para o ViewModal não reaparecer
-            // caso o clique de "Editar" tenha vazado para a linha (onView).
+            // When the EditModal closes, resets the state so the ViewModal does not reappear
+            // in case the "Editar" click leaked to the row (onView).
             if (!open) {
               setViewCampaign(null);
               setBuilderCampaign(null);

@@ -5,7 +5,7 @@ import { getAiProviderRouter } from "../ai/providers/providerRouter";
 import { MARKETING_QUERY_ROOT } from "./useMarketingResource";
 import type { AiGenerationPayload } from "../types/marketing.types";
 
-// Referência estável — ver shared/hooks/useDataQuery.ts para o motivo.
+// Stable reference — see shared/hooks/useDataQuery.ts for the reason.
 const EMPTY_SUGGESTIONS: Awaited<ReturnType<typeof marketingService.getAiSuggestions>> = [];
 
 export function useAiSuggestions() {

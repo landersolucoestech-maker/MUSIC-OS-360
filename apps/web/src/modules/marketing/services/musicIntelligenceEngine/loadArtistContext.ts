@@ -4,11 +4,11 @@ import type { ArtistProfileContext, IntelligenceEntity, IntelligenceSources } fr
 import { estimateReleaseFrequency, inferCareerStage, mostCommon, score, stringifyValue, uniqueStrings } from "./utils";
 
 /**
- * Task J — obras/fonogramas/artistRecord chegam já resolvidos pelo chamador
- * (busca server-side escopada ao artista, via useObras(true, artistId)/
- * useFonogramas(true, artistId)/useEntityById), não mais filtrados de
- * sources.obras/sources.fonogramas/sources.artists sem filtro (capados aos
- * primeiros 50 do tenant).
+ * Task J — works/phonograms/artistRecord arrive already resolved by the caller
+ * (a server-side search scoped to the artist, via useObras(true, artistId)/
+ * useFonogramas(true, artistId)/useEntityById), no longer filtered from an unfiltered
+ * sources.obras/sources.fonogramas/sources.artists (capped at the tenant's
+ * first 50).
  */
 export function loadArtistContext(
   artist: IntelligenceEntity,

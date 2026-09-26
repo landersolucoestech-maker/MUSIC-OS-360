@@ -95,11 +95,11 @@ function bestLabel(item: EntityRow): string {
 }
 
 /**
- * Task J — versão server-side de EntitySelect: busca real (useEntityLookup)
- * em vez de um array `options` estático montado a partir de useArtistas()/
- * useProjetos() sem filtro (capado aos primeiros 50 do tenant). Mesmo
- * contrato de onChange(TargetOption) das telas que já usavam EntitySelect,
- * para não exigir mudança de layout/fluxo — só troca a fonte dos dados.
+ * Task J — server-side version of EntitySelect: real search (useEntityLookup)
+ * instead of a static `options` array built from an unfiltered useArtistas()/
+ * useProjetos() (capped at the tenant's first 50). Same
+ * onChange(TargetOption) contract as the screens already using EntitySelect,
+ * so no layout/flow change is required — only the data source changes.
  */
 export function AsyncEntitySelect({
   label,

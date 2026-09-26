@@ -44,8 +44,8 @@ export type Tone =
   | "pending";
 
 /**
- * Tom semântico → variant canônico do Badge global (5 variants).
- * `purple` e `pending` colapsam em info/neutral (sem variantes extras).
+ * Semantic tone → canonical variant of the global Badge (5 variants).
+ * `purple` and `pending` collapse into info/neutral (no extra variants).
  */
 export const TONE_VARIANT: Record<Tone, BadgeVariant> = {
   neutral: "neutral",
@@ -58,8 +58,8 @@ export const TONE_VARIANT: Record<Tone, BadgeVariant> = {
 };
 
 /**
- * Classes da paleta padrão por tom — usado por chips fora do componente Badge
- * (ex.: calendário). Mantém o mesmo contraste (fundo claro → texto escuro).
+ * Default palette classes per tone — used by chips outside the Badge component
+ * (e.g. the calendar). Keeps the same contrast (light background → dark text).
  */
 export const TONE_CLASS: Record<Tone, string> = {
   neutral: "bg-muted text-muted-foreground",
@@ -374,7 +374,7 @@ export const TASK_TYPE_OPTIONS: Option<TaskType>[] = [
   { value: "negociacao", label: "Negociação" },
   { value: "follow_up", label: "Follow-up" },
   { value: "relacionamento", label: "Relacionamento" },
-  // Distribuição Digital
+  // Digital distribution
   { value: "planejamento_lancamento", label: "Planejamento de Lançamento" },
   // Empresa (corporativo)
   { value: "material_institucional", label: "Material Institucional" },
@@ -390,7 +390,7 @@ export const TASK_TYPE_OPTIONS: Option<TaskType>[] = [
   { value: "comunicados", label: "Comunicados" },
   { value: "relacionamento_parceiros", label: "Relacionamento com Parceiros" },
   { value: "parcerias", label: "Parcerias" },
-  // Artista (gestão de carreira)
+  // Artist (career management)
   { value: "planejamento_carreira", label: "Planejamento de Carreira" },
   { value: "gestao_agenda", label: "Gestão de Agenda" },
   { value: "planejamento_estrategico", label: "Planejamento Estratégico" },
@@ -403,7 +403,7 @@ export const TASK_TYPE_OPTIONS: Option<TaskType>[] = [
   { value: "conteudo_redes_sociais", label: "Conteúdo para Redes Sociais" },
   { value: "contratacoes", label: "Contratações" },
   { value: "shows", label: "Shows" },
-  // Projeto Musical (lançamento/obra)
+  // Music project (release/work)
   { value: "motion_cover", label: "Motion Cover" },
   { value: "arte_divulgacao", label: "Arte de Divulgação" },
   { value: "teaser", label: "Teaser" },
@@ -421,9 +421,9 @@ export const TASK_TYPE_OPTIONS: Option<TaskType>[] = [
 export const TASK_TYPE_LABEL = optionLabels(TASK_TYPE_OPTIONS);
 
 /**
- * Setores operacionais (valores canônicos) e o catálogo
- * de Tipos permitido por Setor. O campo "Tipo" no modal de tarefa é filtrado por
- * este mapa: só exibe opções compatíveis com o Setor escolhido.
+ * Operational departments (canonical values) and the catalog
+ * of Types allowed per department. The "Tipo" field in the task modal is filtered by
+ * this map: it only shows options compatible with the chosen department.
  */
 export const SECTOR_OPTIONS: Option<string>[] = [
   { value: "Design", label: "Design" },
@@ -452,10 +452,10 @@ export const SECTOR_TYPE_OPTIONS: Record<string, Option<TaskType>[]> = {
 const sectorOpt = (name: string): Option<string> => ({ value: name, label: name });
 
 /**
- * Setores disponíveis por Contexto. A operação é separada: atividades de Empresa
- * (corporativas), Artista (gestão de carreira) e Projeto Musical (lançamento/obra)
- * têm catálogos distintos de Setores e Tipos. O campo Setor é filtrado por Contexto
- * e o campo Tipo por Contexto + Setor.
+ * Departments available per context. Operations are separate: company
+ * (corporate), artist (career management) and music project (release/work) activities
+ * have distinct department and type catalogs. The department field is filtered by context
+ * and the type field by context + department.
  */
 export const CONTEXT_SECTOR_OPTIONS: Record<MarketingTarget, Option<string>[]> = {
   empresa: ["Design", "Audiovisual", "Marketing", "Comunicação", "Comercial"].map(sectorOpt),
@@ -546,7 +546,7 @@ export const ASSET_CATEGORY_OPTIONS: Option<AssetCategory>[] = [
 export const ASSET_CATEGORY_LABEL = optionLabels(ASSET_CATEGORY_OPTIONS);
 
 // ---------------------------------------------------------------------------
-// Deliverables (Entregáveis)
+// Deliverables
 // ---------------------------------------------------------------------------
 
 export const DELIVERABLE_TYPE_OPTIONS: Option<DeliverableType>[] = [

@@ -25,9 +25,9 @@ export function PerfilTab({
 }) {
   const [artist, setArtist] = useState<TargetOption | null>(null);
 
-  // Task J — catálogo do artista selecionado busca direto e escopado por
-  // artist_id (server-side), nunca mais filtrando sources.obras/fonogramas
-  // sem filtro (capadas aos primeiros 50 do tenant).
+  // Task J — the selected artist's catalog is fetched directly and scoped by
+  // artist_id (server-side), no longer filtering an unfiltered sources.obras/fonogramas
+  // (capped at the tenant's first 50).
   const { entity: artistRecordWire } = useEntityById<ArtistWireRecord>("artistas", artist?.id);
   const artistRecord: Artist | undefined = artistRecordWire ? wireToArtist(artistRecordWire) : undefined;
   const { obras } = useObras(!!artist, artist?.id);

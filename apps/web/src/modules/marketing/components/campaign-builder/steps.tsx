@@ -160,8 +160,8 @@ export function CampaignBasicInfoStep({ state, setState }: BuilderStepProps) {
   const selectedOwnerId = userList.find((u) => ownerOption(u) === state.owner)?.id ?? "";
 
   const projectList = projects ?? [];
-  // Linked entity options: projetos musicais (artistas usam AsyncEntityCombobox
-  // abaixo — busca server-side, nunca capado aos primeiros 50/tenant).
+  // Linked entity options: music projects (artists use the AsyncEntityCombobox
+  // below — server-side search, never capped at the first 50 per tenant).
   const entityList = projectList.map((p) => ({ id: p.id, name: p.name }));
 
   // Content-driven flow: only PUBLISHED contents of the selected project can be
@@ -561,7 +561,7 @@ export function CampaignReviewStep({ state }: BuilderStepProps) {
   );
 }
 
-/** Plataforma de anúncio correspondente ao canal social do conteúdo. */
+/** Ad platform matching the content's social channel. */
 const CHANNEL_TO_AD_PLATFORM: Partial<Record<ContentChannel, CampaignPlatform>> = {
   instagram: "META_ADS",
   facebook: "META_ADS",
@@ -582,7 +582,7 @@ function creativeTypeFromContent(content: MarketingContent): CreativeType {
   return "imagem";
 }
 
-/** Cria um criativo a partir de um conteúdo existente, herdando mídia e legenda. */
+/** Creates a creative from an existing content, inheriting media and caption. */
 function createCreativeFromContent(content: MarketingContent, destinationUrl: string): CampaignCreative {
   const platform = CHANNEL_TO_AD_PLATFORM[content.channel] ?? "META_ADS";
   const placement = PLACEMENTS_BY_PLATFORM[platform][0];
@@ -668,7 +668,7 @@ function PreviewCard({ creative }: { creative: CampaignCreative }) {
       </p>
 
       {ratio === "n/a" ? (
-        // Spotify / áudio — simulação de player
+        // Spotify / audio — player simulation
         <div className="flex items-center gap-3 rounded-lg border border-border bg-background p-3">
           <div className="flex h-14 w-14 items-center justify-center rounded bg-emerald-500/15 text-emerald-500">
             <Music2 className="h-6 w-6" />

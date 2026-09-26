@@ -152,10 +152,10 @@ export default function RegistroMusicas() {
   const obraParam = searchParams.get("obra");
   const editObraParam = searchParams.get("editObra");
   const fonogramaParam = searchParams.get("fonograma");
-  // Deep-link resolution DIRETO por ID (Task J) — antes escaneava obras/
-  // fonogramas de useObras()/useFonogramas() sem filtro, truncados nos
-  // primeiros 50 do tenant; GET /works/:id e /phonograms/:id alcançam
-  // qualquer registro do tenant.
+  // Deep-link resolution DIRECTLY by ID (Task J) — it used to scan the works/
+  // phonograms of an unfiltered useObras()/useFonogramas(), truncated at the tenant's
+  // first 50; GET /works/:id and /phonograms/:id reach
+  // any record of the tenant.
   const { entity: deepLinkObra, isLoading: loadingDeepLinkObra } = useEntityById<Obra>("obras", obraParam ?? undefined);
   const { entity: deepLinkEditObra, isLoading: loadingDeepLinkEditObra } = useEntityById<Obra>("obras", editObraParam ?? undefined);
   const { entity: deepLinkFonograma, isLoading: loadingDeepLinkFonograma } = useEntityById<Fonograma>("fonogramas", fonogramaParam ?? undefined);
@@ -230,10 +230,10 @@ export default function RegistroMusicas() {
 
   const collator = useMemo(() => new Intl.Collator("pt-BR", { sensitivity: "base" }), []);
 
-  // Sort continua client-side (só ordena a página atual) — busca/filtros/
-  // paginação em si são server-side (Task H); reordenar por coluna em todo
-  // o tenant exigiria mapear cada SortableTableHead pra uma coluna real no
-  // backend, fora do escopo desta migração (limitação documentada).
+  // Sorting remains client-side (it only sorts the current page) — search/filters/
+  // pagination themselves are server-side (Task H); sorting by column across the whole
+  // tenant would require mapping each SortableTableHead to a real column in the
+  // backend, out of this migration's scope (documented limitation).
   const toggleFonogramaSort = (key: string) => {
     setFonogramaSort((current) => nextTableSortState(current, key));
   };
@@ -310,8 +310,8 @@ export default function RegistroMusicas() {
     return Array.from(map.entries()).map(([id, title]) => ({ id, title }));
   }, [obras, allProjetos]);
 
-  // Metrics — agregação exata do tenant inteiro (GROUP BY status), nunca
-  // calculada só sobre a página/lista atualmente carregada (Task H).
+  // Metrics — exact aggregation over the whole tenant (GROUP BY status), never
+  // computed only over the currently loaded page/list (Task H).
   const { stats: obrasStats } = useObrasStats();
   const { stats: fonogramasStats } = useFonogramasStats();
   const activeStats = activeTab === "fonogramas" ? fonogramasStats : obrasStats;
@@ -809,9 +809,9 @@ export default function RegistroMusicas() {
         onSelect={async (type) => {
           let obraSeed: Record<string, unknown> | undefined;
           if (pendingProjectId) {
-            // Busca DIRETO por ID (GET /projects/:id) — não depende do projeto
-            // estar entre os primeiros 50 carregados por useProjects() sem
-            // filtro (Task J).
+            // Fetches DIRECTLY by ID (GET /projects/:id) — does not depend on the project
+            // being among the first 50 loaded by an unfiltered useProjects()
+            // (Task J).
             const projeto = await storage.findById<ProjectWithRelations>("projects", pendingProjectId);
             if (projeto) {
               const musicas = parseMusicasFromProjeto(projeto);
@@ -827,14 +827,14 @@ export default function RegistroMusicas() {
     </MainLayout>
     )}
 
-      {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): ObraFormModal/FonogramaFormModal chamam useObras()/
-          useFonogramas() de novo só para as mutations, as mesmas queries do
-          isLoading acima. Montá-los só depois do isLoading virar false criava
-          observers novos nessas queries; em erro (backend fora do ar),
-          refetchOnMount reabria isLoading, o gate desmontava os modais de
-          novo — loop infinito de loading. Mantê-los sempre montados quebra
-          o ciclo. */}
+      {/* Outside the isLoading gate on purpose — the same bug as /artistas
+          (Task C): ObraFormModal/FonogramaFormModal call useObras()/
+          useFonogramas() again only for the mutations, the same queries as the
+          isLoading above. Mounting them only after isLoading turned false created
+          new observers on those queries; on error (backend down),
+          refetchOnMount reopened isLoading, the gate unmounted the modals
+          again — an infinite loading loop. Keeping them always mounted breaks
+          the cycle. */}
       <ObraFormModal
         open={obraModal.open}
         onOpenChange={(open) => setObraModal({ ...obraModal, open })}

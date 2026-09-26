@@ -234,7 +234,7 @@ function getPlatformBlock(platforms: PlatformBlock[], id: PlatformId) {
 }
 
 function handleExport(format: ExportFormat) {
-  // TODO técnico: conectar este handler ao endpoint real de exportação PDF/XLSX quando a API estiver disponível.
+  // Technical TODO: wire this handler to the real PDF/XLSX export endpoint once the API is available.
   toast.info(`Exportação ${format.toUpperCase()} ainda não implementada. Nenhum arquivo foi gerado.`);
 }
 

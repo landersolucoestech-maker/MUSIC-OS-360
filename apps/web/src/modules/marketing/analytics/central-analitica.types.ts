@@ -1,5 +1,5 @@
 /**
- * Central Analítica (Marketing) — domain types.
+ * Marketing analytics center ("Central Analítica") — domain types.
  *
  * Pure type declarations for the music-marketing intelligence page. A
  * "platform" is the FULL ecosystem (organic + paid + consumption + audience +
