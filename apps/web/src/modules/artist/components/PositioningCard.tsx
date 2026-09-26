@@ -18,8 +18,8 @@ const DIMENSION_LABELS: Record<CareerStageDimensionKey, string> = {
   MOMENTUM: "Momentum (90d)",
 };
 
-// Mesmos rótulos amigáveis já usados em ArtistPlatformMetrics.tsx para cada
-// plataforma — reaproveitados aqui (item 61: nunca mostrar "spotify.monthly_listeners" na UI).
+// The same friendly labels already used in ArtistPlatformMetrics.tsx for each
+// platform — reused here (item 61: never show "spotify.monthly_listeners" in the UI).
 const METRIC_LABELS: Record<string, string> = {
   "spotify.monthly_listeners": "Spotify · Ouvintes mensais",
   "youtube.subscribers": "YouTube · Inscritos",
@@ -51,16 +51,16 @@ function EmptyState({ icon, title, subtitle }: { icon: ReactNode; title: string;
 }
 
 /**
- * Fase 3.2 (Parte IV) — Posicionamento da Carreira: substitui os dois cards
- * independentes (Estágio da Carreira / Benchmark de Mercado) por UM
- * diagnóstico consolidado. Career Stage é o diagnóstico principal (nível 2-3);
- * Market Benchmark é contexto comparativo (nível 4-5), nunca um segundo
- * veredito concorrente — sem P77/"Forte" isolados na UI principal (item 60).
+ * Phase 3.2 (Part IV) — Career positioning: replaces the two independent cards
+ * (Career Stage / Market Benchmark) with ONE consolidated diagnosis. Career
+ * Stage is the main diagnosis (levels 2-3); Market Benchmark is comparative
+ * context (levels 4-5), never a second competing verdict — no isolated
+ * P77/"Forte" in the main UI (item 60).
  *
- * As duas fontes são deliberadamente independentes (item 25, eventual
- * consistency): falha/staleness do benchmark nunca esconde o diagnóstico de
- * carreira já disponível, e vice-versa. Nenhum cálculo é duplicado aqui — o
- * componente só apresenta os contratos já calculados no backend.
+ * The two sources are deliberately independent (item 25, eventual
+ * consistency): a benchmark failure/staleness never hides an already available
+ * career diagnosis, and vice versa. Nothing is recomputed here — the component
+ * only presents the contracts already computed in the backend.
  */
 export function PositioningCard({ artistId }: { artistId: string }) {
   const careerStage = useCareerStage(artistId);
@@ -101,7 +101,7 @@ export function PositioningCard({ artistId }: { artistId: string }) {
           />
         ) : (
           <>
-            {/* Nível 2 — diagnóstico principal: nota do Career Stage */}
+            {/* Level 2 — main diagnosis: Career Stage score */}
             <div className="flex items-start gap-4 mb-4">
               <div className="relative">
                 <div className="h-14 w-14 rounded-full bg-teal-500/20 border-4 border-teal-500 flex items-center justify-center">
@@ -127,7 +127,7 @@ export function PositioningCard({ artistId }: { artistId: string }) {
               </div>
             </div>
 
-            {/* Nível 3 — dimensões */}
+            {/* Level 3 — dimensions */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1.5 mb-3">
               {cs.dimensions.map((dim) => (
                 <div key={dim.key} className="flex items-center gap-2 text-xs">
@@ -167,10 +167,10 @@ export function PositioningCard({ artistId }: { artistId: string }) {
 
             <div className="h-px bg-border my-3" />
 
-            {/* Nível 4 — comparação com o mercado (contexto, não segundo diagnóstico) */}
+            {/* Level 4 — market comparison (context, not a second diagnosis) */}
             <MarketComparisonSection artistId={artistId} isLoading={benchmark.isLoading} isError={benchmark.isError} data={mb} />
 
-            {/* Nível 6 — fonte, cobertura, freshness */}
+            {/* Level 6 — source, coverage, freshness */}
             <p className="text-[10px] text-muted-foreground/60 mt-3">
               Fonte: Soundcharts · Career Stage {cs.engineVersion} · atualizado em {new Date(cs.calculatedAt).toLocaleString("pt-BR")}
             </p>

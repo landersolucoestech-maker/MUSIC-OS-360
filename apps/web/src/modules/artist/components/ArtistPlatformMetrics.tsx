@@ -47,7 +47,7 @@ function normalizeSpotifyProfileUrl(input: string | null | undefined): string | 
 // implementation shared with the form validator — imported above instead
 // of a second, narrower hand-rolled regex here.
 
-/** API pública do Deezer — só exige um artist id/URL, sem OAuth. */
+/** Deezer public API — only needs an artist id/URL, no OAuth. */
 function normalizeDeezerProfileUrl(input: string | null | undefined): string | null {
   const value = (input ?? "").trim();
   if (!value) return null;
@@ -56,7 +56,7 @@ function normalizeDeezerProfileUrl(input: string | null | undefined): string | n
   return match?.[1] ? `https://www.deezer.com/artist/${match[1]}` : null;
 }
 
-/** SoundCloud /resolve — só exige client_id de app, sem login do artista/tenant. */
+/** SoundCloud /resolve — only needs an app client_id, no artist/tenant login. */
 function normalizeSoundCloudProfileUrl(input: string | null | undefined): string | null {
   const value = (input ?? "").trim();
   if (!value) return null;
@@ -65,8 +65,8 @@ function normalizeSoundCloudProfileUrl(input: string | null | undefined): string
   return match?.[1] ? `https://soundcloud.com/${match[1]}` : null;
 }
 
-// Espelham exatamente extractInstagramUsername/extractTikTokUsername/extractAppleMusicId
-// em artist-external-profile-sync.service.ts (backend) — mesmo formato de URL canônica.
+// Mirror exactly extractInstagramUsername/extractTikTokUsername/extractAppleMusicId
+// in artist-external-profile-sync.service.ts (backend) — same canonical URL format.
 function normalizeInstagramProfileUrl(input: string | null | undefined): string | null {
   const value = (input ?? "").trim();
   if (!value) return null;
@@ -84,14 +84,13 @@ function normalizeTikTokProfileUrl(input: string | null | undefined): string | n
   return match?.[1] ? `https://www.tiktok.com/@${match[1]}` : null;
 }
 
-// Contrato canônico Apple Music (Métricas Fase 1 — corrige bug reportado
-// "Link do Apple Music inválido" para uma URL corretamente cadastrada):
-// o segmento de locale de 2 letras (/us/, /br/...) É OPCIONAL — a Apple Music
-// aceita URLs com e sem ele, e este normalizador sempre produzia a forma SEM
-// locale, enquanto o extractor espelhado no backend
-// (artist-external-profile-sync.service.ts extractAppleMusicId) exigia o
-// locale como obrigatório. Os dois regexes têm que aceitar exatamente o
-// mesmo conjunto de URLs — se um mudar, o outro precisa mudar junto.
+// Canonical Apple Music contract (Metrics Phase 1 — fixes the reported bug
+// "Link do Apple Music inválido" for a correctly registered URL): the 2-letter
+// locale segment (/us/, /br/...) IS OPTIONAL — Apple Music accepts URLs with
+// and without it, and this normalizer always produced the locale-less form,
+// while the mirrored backend extractor (artist-external-profile-sync.service.ts
+// extractAppleMusicId) required the locale. Both regexes must accept exactly
+// the same URL set — if one changes, the other must change too.
 const APPLE_MUSIC_URL_PATTERN = /^https?:\/\/(?:www\.|music\.)?apple\.com\/(?:[a-z]{2}\/)?artist\/(?:[^/?#]+\/)?(\d+)(?:[/?#].*)?$/i;
 
 function normalizeAppleMusicProfileUrl(input: string | null | undefined): string | null {
@@ -103,37 +102,37 @@ function normalizeAppleMusicProfileUrl(input: string | null | undefined): string
 }
 
 /**
- * `true` quando o snapshot veio do fallback de demonstração de dev/local
- * (dev-social-metrics-mock.ts no backend), nunca de produção — usado só
- * para rotular o valor como "dados de demonstração" e nunca confundi-lo
- * com métrica real da Soundcharts.
+ * `true` when the snapshot came from the dev/local demo fallback
+ * (dev-social-metrics-mock.ts in the backend), never from production — used
+ * only to label the value as demo data and never mistake it for a real
+ * Soundcharts metric.
  */
 function isDevMockSnapshot(snapshot: ArtistPlatformProfileSnapshot | null): boolean {
   return snapshot?.raw_payload?.["source"] === "dev_mock";
 }
 
 /**
- * Instagram/TikTok podem resolver o seguidor via UUID canônico (spotify→
- * youtube→deezer→soundcloud) quando o handle próprio não está indexado
- * standalone na Soundcharts (ver instagram-artist-profile.provider.ts) — o
- * backend já classifica essa resolução em `raw_payload.primary_identity_status`
- * ('VERIFIED_EXACT' | 'INSUFFICIENT_EVIDENCE' | 'PROFILE_NOT_FOUND') mas,
- * até este fix, nenhuma tela exibia essa distinção: um valor de fallback
- * sem confirmação de registry aparecia com a mesma confiança visual que um
- * valor exato. finding original desta correção: catálogo da Soundcharts
- * pode fragmentar um artista real em múltiplas entidades internas, e o
- * fallback canônico pode resolver para uma entidade diferente da conta
- * Instagram/TikTok real do artista.
+ * Instagram/TikTok may resolve followers via the canonical UUID (spotify→
+ * youtube→deezer→soundcloud) when the own handle is not indexed standalone on
+ * Soundcharts (see instagram-artist-profile.provider.ts) — the backend already
+ * classifies that resolution in `raw_payload.primary_identity_status`
+ * ('VERIFIED_EXACT' | 'INSUFFICIENT_EVIDENCE' | 'PROFILE_NOT_FOUND') but,
+ * until this fix, no screen showed the distinction: a fallback value without
+ * registry confirmation appeared with the same visual confidence as an exact
+ * one. Original finding of this fix: the Soundcharts catalog can fragment a
+ * real artist into several internal entities, and the canonical fallback can
+ * resolve to an entity different from the artist's real Instagram/TikTok
+ * account.
  */
 function isUnverifiedIdentitySnapshot(snapshot: ArtistPlatformProfileSnapshot | null): boolean {
   return snapshot?.raw_payload?.["primary_identity_status"] === "INSUFFICIENT_EVIDENCE";
 }
 
 /**
- * Estados comuns aos cards com sync real (perfil público do artista →
- * provider → ArtistPlatformProfileEntity). Sem perfil cadastrado é
- * "Não configurado"; com perfil mas sem sync ainda é "Não sincronizado" —
- * nenhum dos dois vira "0" ou é escondido.
+ * States shared by the cards with a real sync (artist public profile →
+ * provider → ArtistPlatformProfileEntity). With no registered profile it is
+ * "Não configurado"; with a profile but no sync yet it is "Não sincronizado" —
+ * neither becomes "0" or is hidden.
  */
 function renderSyncState(
   testId: string,
@@ -199,8 +198,8 @@ export function ArtistPlatformMetrics({
   const tiktokSnapshot = snapshots.find((profile) => profile.platform === "tiktok") ?? null;
   const appleMusicSnapshot = snapshots.find((profile) => profile.platform === "apple-music") ?? null;
 
-  // Métrica principal por plataforma, resolvida via registro de capacidades
-  // (metrics/platform-metric-capabilities.ts) em vez de campo hardcoded.
+  // Main metric per platform, resolved via the capabilities registry
+  // (metrics/platform-metric-capabilities.ts) instead of a hardcoded field.
   const instagramMetric = primaryMetricFor("instagram", instagramSnapshot);
   const tiktokMetric = primaryMetricFor("tiktok", tiktokSnapshot);
   const spotifyMetric = primaryMetricFor("spotify", spotifySnapshot);
@@ -333,10 +332,10 @@ export function ArtistPlatformMetrics({
         </p>
       ) : null}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
-        {/* Instagram — Soundcharts /audience/instagram (UUID canônico via spotify→youtube→
-            deezer→soundcloud→handle). success+followers=null é "Indisponível" (Soundcharts
-            não tem conta social vinculada para este artista) — nunca o contador manual
-            legado (metadata.instagram_seguidores) como fallback. */}
+        {/* Instagram — Soundcharts /audience/instagram (canonical UUID via spotify→youtube→
+            deezer→soundcloud→handle). success+followers=null is "Indisponível" (Soundcharts
+            has no social account linked for this artist) — never the legacy manual
+            counter (metadata.instagram_seguidores) as a fallback. */}
         <div className="rounded-lg border border-border bg-card p-2">
           <div className="flex items-center gap-1 mb-1">
             <SiInstagram className="h-3 w-3 text-foreground" />
@@ -380,9 +379,9 @@ export function ArtistPlatformMetrics({
           {hasInstagramProfileInput ? syncButton("instagram", instagramSnapshot) : null}
         </div>
 
-        {/* TikTok — mesmo contrato do Instagram: Soundcharts /audience/tiktok, mesma
-            distinção success+null ("Indisponível") vs failed ("Erro"), sem fallback
-            silencioso para metadata.tiktok_seguidores. */}
+        {/* TikTok — same contract as Instagram: Soundcharts /audience/tiktok, the same
+            success+null ("Indisponível") vs failed ("Erro") distinction, no silent
+            fallback to metadata.tiktok_seguidores. */}
         <div className="rounded-lg border border-border bg-card p-2">
           <div className="flex items-center gap-1 mb-1">
             <SiTiktok className="h-3 w-3 text-foreground" />
@@ -426,7 +425,7 @@ export function ArtistPlatformMetrics({
           {hasTikTokProfileInput ? syncButton("tiktok", tiktokSnapshot) : null}
         </div>
 
-        {/* Spotify — perfil público do artista: GET/POST /artists/:id/platform-profiles/spotify */}
+        {/* Spotify — artist public profile: GET/POST /artists/:id/platform-profiles/spotify */}
         <div className="rounded-lg border border-border bg-card p-2">
           <div className="flex items-center gap-1 mb-1">
             <SiSpotify className="h-3 w-3 text-foreground" />
@@ -445,8 +444,8 @@ export function ArtistPlatformMetrics({
               </>
             ) : (
               <>
-                {/* API pública do Spotify (client_credentials) não expõe monthly listeners —
-                    nunca usar spotifySnapshot.followers aqui como substituto. */}
+                {/* The Spotify public API (client_credentials) does not expose monthly listeners —
+                    never use spotifySnapshot.followers here as a substitute. */}
                 <p className="text-sm font-semibold text-foreground" data-testid={`metric-spotify-${artistId}`}>
                   Indisponível
                 </p>
@@ -459,7 +458,7 @@ export function ArtistPlatformMetrics({
           {hasSpotifyProfileInput ? syncButton("spotify", spotifySnapshot) : null}
         </div>
 
-        {/* YouTube — canal público do artista: GET/POST /artists/:id/platform-profiles/youtube */}
+        {/* YouTube — artist public channel: GET/POST /artists/:id/platform-profiles/youtube */}
         <div className="rounded-lg border border-border bg-card p-2">
           <div className="flex items-center gap-1 mb-1">
             <SiYoutube className="h-3 w-3 text-foreground" />
@@ -481,7 +480,7 @@ export function ArtistPlatformMetrics({
           {hasYouTubeProfileInput ? syncButton("youtube", youtubeSnapshot) : null}
         </div>
 
-        {/* Deezer — API pública (nb_fan), sem credencial/OAuth: GET/POST /artists/:id/platform-profiles/deezer */}
+        {/* Deezer — public API (nb_fan), no credential/OAuth: GET/POST /artists/:id/platform-profiles/deezer */}
         <div className="rounded-lg border border-border bg-card p-2">
           <div className="flex items-center gap-1 mb-1">
             <DeezerIcon className="h-3 w-3 text-foreground" />
@@ -501,12 +500,12 @@ export function ArtistPlatformMetrics({
           {hasDeezerProfileInput ? syncButton("deezer", deezerSnapshot) : null}
         </div>
 
-        {/* Apple Music — a Soundcharts NÃO tem métrica de audiência para Apple Music
-            (ver SoundchartsService.getAppleMusicPlaylistCount). O card conhece o
-            snapshot/status real (pending/failed/não configurado), mas o valor de
-            sucesso é SEMPRE "Indisponível" — nunca um número inventado, nunca 0, e
-            nunca o contador manual legado (metadata.apple_music_albuns) exibido como
-            se fosse audiência Soundcharts. */}
+        {/* Apple Music — Soundcharts has NO audience metric for Apple Music (see
+            SoundchartsService.getAppleMusicPlaylistCount). The card knows the real
+            snapshot/status (pending/failed/not configured), but the success value is
+            ALWAYS "Indisponível" — never an invented number, never 0, and never the
+            legacy manual counter (metadata.apple_music_albuns) shown as if it were a
+            Soundcharts audience. */}
         <div className="rounded-lg border border-border bg-card p-2">
           <div className="flex items-center gap-1 mb-1">
             <SiApplemusic className="h-3 w-3 text-foreground" />
@@ -528,7 +527,7 @@ export function ArtistPlatformMetrics({
           {hasAppleMusicProfileInput ? syncButton("apple-music", appleMusicSnapshot) : null}
         </div>
 
-        {/* SoundCloud — /resolve público (só client_id de app): GET/POST /artists/:id/platform-profiles/soundcloud */}
+        {/* SoundCloud — public /resolve (app client_id only): GET/POST /artists/:id/platform-profiles/soundcloud */}
         <div className="rounded-lg border border-border bg-card p-2">
           <div className="flex items-center gap-1 mb-1">
             <SiSoundcloud className="h-3 w-3 text-foreground" />

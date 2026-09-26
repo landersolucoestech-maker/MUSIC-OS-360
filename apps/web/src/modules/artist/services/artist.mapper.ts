@@ -1,16 +1,16 @@
 /**
  * artist.mapper.ts
  * ─────────────────────────────────────────────────────────────────
- * ÚNICA FONTE DE VERDADE para toda transformação de dados de artista.
+ * SINGLE SOURCE OF TRUTH for every artist data transformation.
  *
- * Duas fronteiras distintas de tradução vivem aqui:
- *   1. Fio da API (PT, DTO do backend — inalterado) ↔ modelo interno
- *      `Artist` (campos em inglês). Ver `wireToArtist`/`artistToWirePayload`,
- *      usadas exclusivamente no ponto onde os dados entram/saem da API
- *      (hooks `useArtist*`/`artist.service.ts`).
- *   2. Modelo interno `Artist` ↔ estado do formulário (react-hook-form).
- *      Exportação, importação e formulário devem consumir estas funções
- *      para garantir consistência total entre CREATE, EDIT, VIEW e LIST.
+ * Two distinct translation boundaries live here:
+ *   1. API wire (PT, backend DTO — unchanged) ↔ internal `Artist` model
+ *      (English fields). See `wireToArtist`/`artistToWirePayload`, used
+ *      exclusively where data enters/leaves the API
+ *      (`useArtist*` hooks/`artist.service.ts`).
+ *   2. Internal `Artist` model ↔ form state (react-hook-form).
+ *      Export, import and the form must consume these functions to guarantee
+ *      full consistency across CREATE, EDIT, VIEW and LIST.
  * ─────────────────────────────────────────────────────────────────
  */
 
@@ -44,8 +44,8 @@ function numOrNull(v: unknown): number | null {
 }
 
 /**
- * Remove diacritics e coloca em lowercase para matching
- * case-insensitive e tolerante a acentuação variada.
+ * Removes diacritics and lowercases for case-insensitive, accent-tolerant
+ * matching.
  */
 function normalizeKey(s: string): string {
   return s
@@ -56,13 +56,13 @@ function normalizeKey(s: string): string {
 }
 
 /**
- * Retorna o valor da linha Excel para o primeiro cabeçalho que corresponda,
- * comparando após normalização de Unicode/case.
- * Isso resolve casos em que Excel salva "Tipo de Perfil" com NFD diferente.
+ * Returns the Excel row value for the first matching header, comparing after
+ * Unicode/case normalization. This handles Excel saving "Tipo de Perfil" with a
+ * different NFD form.
  */
 export function pickRow(row: Record<string, unknown>, ...keys: string[]): unknown {
   for (const key of keys) {
-    // Tentativa exata primeiro (mais rápida)
+    // Exact attempt first (faster)
     if (key in row) return row[key];
     // Fallback: normalizado
     const normKey = normalizeKey(key);
@@ -74,8 +74,8 @@ export function pickRow(row: Record<string, unknown>, ...keys: string[]): unknow
 }
 
 /**
- * Normaliza o valor de "Tipo de Perfil" para o enum interno,
- * aceitando qualquer variação razoável de caixa, espaços ou acentos.
+ * Normalizes the "Tipo de Perfil" value to the internal enum, accepting any
+ * reasonable variation of case, spaces or accents.
  */
 export function normalizeProfileType(
   raw: unknown,
@@ -95,11 +95,11 @@ export function normalizeProfileType(
   return "independente";
 }
 
-// ─── Especialidades (Função) ─────────────────────────────────────
+// ─── Specialties (role) ──────────────────────────────────────────
 
 /**
- * Mapeamento canônico enum → label legível.
- * Fonte única de verdade para formulário, Visão360, export e import.
+ * Canonical enum → readable label mapping.
+ * Single source of truth for the form, the 360 view, export and import.
  */
 export const SPECIALTY_LABELS: Record<string, string> = {
   dj:               "DJ",
@@ -115,8 +115,8 @@ const SPECIALTY_ENUM: Record<string, string> = Object.fromEntries(
 );
 
 /**
- * Converte qualquer variação de label ou enum para o valor interno.
- * Retorna "" para valores não reconhecidos (serão filtrados no import).
+ * Converts any label or enum variation into the internal value.
+ * Returns "" for unrecognized values (filtered out on import).
  */
 export function normalizeSpecialty(raw: string): string {
   const v1 = normalizeKey(raw);
@@ -131,11 +131,11 @@ export function normalizeSpecialty(raw: string): string {
   return "";
 }
 
-// ─── Slug artístico ───────────────────────────────────────────────
+// ─── Artist slug ──────────────────────────────────────────────────
 
 /**
- * Gera um slug a partir do nome artístico:
- * remove acentos, converte para lowercase, substitui espaços por hífens.
+ * Generates a slug from the artist name: removes accents, lowercases and
+ * replaces spaces with hyphens.
  */
 export function generateArtisticSlug(name: string): string {
   return name
@@ -148,12 +148,11 @@ export function generateArtisticSlug(name: string): string {
     .replace(/-+/g, "-");
 }
 
-// ─── Validadores de URL de plataformas ───────────────────────────
-// O domínio trabalha exclusivamente com URLs — não existe extração nem
-// reconstrução de ID de plataforma em nenhuma camada. Os regexes abaixo
-// espelham exatamente os `@Matches` de CreateArtistDto/UpdateArtistDto no
-// backend (fonte de verdade da validação); aqui servem só de feedback
-// visual imediato no formulário.
+// ─── Platform URL validators ─────────────────────────────────────
+// The domain works exclusively with URLs — no layer extracts or rebuilds a
+// platform ID. The regexes below mirror exactly the `@Matches` of
+// CreateArtistDto/UpdateArtistDto in the backend (the validation source of
+// truth); here they only give immediate visual feedback in the form.
 
 export type UrlValidationState = "idle" | "valid" | "invalid";
 
@@ -268,12 +267,12 @@ export function validateAppleMusicUrl(url: string): UrlValidationState {
 }
 
 // ════════════════════════════════════════════════════════════════
-// ─── Fronteira 1: fio da API (PT, DTO do backend) ↔ Artist (EN) ──
+// ─── Boundary 1: API wire (PT, backend DTO) ↔ Artist (EN) ────────
 // ════════════════════════════════════════════════════════════════
-// O backend (CreateArtistDto/UpdateArtistDto/entities.ts) mistura colunas
-// físicas em português (`nome_artistico` etc) com algumas já normalizadas em
-// inglês (`music_genre`). Estas funções são o ÚNICO lugar que conhece os
-// dois nomes de cada campo.
+// The backend (CreateArtistDto/UpdateArtistDto/entities.ts) mixes physical
+// Portuguese columns (`nome_artistico` etc) with some already normalized to
+// English (`music_genre`). These functions are the ONLY place that knows both
+// names of each field.
 
 type WireDistributorEntry = { id: string; email: string; nomeCustom?: string };
 type WireResponsavel = { nome: string; telefone: string; email: string };
@@ -448,11 +447,11 @@ function teamContactToWire(c: ArtistTeamContact): WireContatoEquipe {
   };
 }
 
-/** Converte um registro vindo da API (PT, contrato do backend) no modelo interno `Artist` (EN). */
+/** Converts a record coming from the API (PT, backend contract) into the internal `Artist` model (EN). */
 export function wireToArtist(w: ArtistWireRecord): Artist {
   return {
-    // Pass-through defensivo de qualquer campo do fio não mapeado abaixo
-    // (ex.: `genero` — campo dinâmico não tipado no DTO/entidade).
+    // Defensive pass-through of any wire field not mapped below
+    // (e.g. `genero` — a dynamic field not typed in the DTO/entity).
     ...w,
     id: w.id,
     user_id: w.user_id,
@@ -535,9 +534,9 @@ export function wireToArtist(w: ArtistWireRecord): Artist {
 }
 
 /**
- * Converte um payload do modelo interno `Artist` (EN, parcial — create ou
- * update) para o formato aceito pela API (PT, contrato do backend).
- * Usada no ponto de saída (hooks `useArtist*`), nunca em componentes.
+ * Converts an internal `Artist` payload (EN, partial — create or update) into
+ * the shape the API accepts (PT, backend contract).
+ * Used at the exit point (`useArtist*` hooks), never in components.
  */
 export function artistToWirePayload(a: Partial<Artist>): Record<string, unknown> {
   const w: Record<string, unknown> = { ...a };
@@ -620,7 +619,7 @@ export function artistToWirePayload(a: Partial<Artist>): Record<string, unknown>
 }
 
 // ════════════════════════════════════════════════════════════════
-// ─── Fronteira 2: Artist (EN) ↔ estado do formulário ─────────────
+// ─── Boundary 2: Artist (EN) ↔ form state ────────────────────────
 // ════════════════════════════════════════════════════════════════
 
 export interface ArtistFormResponsible {
@@ -678,7 +677,7 @@ export interface ArtistFormFieldValues {
   appleMusicAlbuns: string;
   // relacionamentos comerciais (novo modelo relacional)
   relacionamentos: ArtistFormRelationship[];
-  // legado — mantido para backward compat com CRM select
+  // legacy — kept for backward compat with the CRM select
   tipoPerfil: "independente" | "com_empresario" | "gravadora" | "editora";
   empresarioId: string;
   empresarioNome: string;
@@ -721,7 +720,7 @@ function relationshipToFormRelationship(r: ArtistRelationship): ArtistFormRelati
   };
 }
 
-/** Constrói DistributorEntry[] a partir dos campos legados de distribuidoras. */
+/** Builds DistributorEntry[] from the legacy distributor fields. */
 function buildLegacyDistributors(
   selected: Record<string, boolean> | null | undefined,
   emails: Record<string, string> | null | undefined,
@@ -733,14 +732,14 @@ function buildLegacyDistributors(
 }
 
 /**
- * Migra campos legados para o novo array de relacionamentos quando o artista
- * não tem `relationships` mas tem campos manager* / label* preenchidos.
- * Também migra distribuidoras legadas e labelResponsible* legados.
+ * Migrates legacy fields into the new relationships array when the artist has
+ * no `relationships` but has manager* / label* fields filled in.
+ * Also migrates legacy distributors and legacy labelResponsible* fields.
  */
 function migrateLegacyRelationships(artist: Artist): ArtistFormRelationship[] {
   const rels: ArtistFormRelationship[] = [];
 
-  // Distribuidoras legadas — serão atribuídas ao primeiro manager ou label
+  // Legacy distributors — assigned to the first manager or label
   const legacyDists = buildLegacyDistributors(
     artist.selectedDistributors,
     artist.distributorEmails,
@@ -766,7 +765,7 @@ function migrateLegacyRelationships(artist: Artist): ArtistFormRelationship[] {
   if (artist.labelName) {
     const tp = str(artist.profileType);
     const relType: ArtistFormRelationship["type"] = tp === "editora" ? "editora" : "gravadora";
-    // Migrar o responsável único legado (labelResponsible*) para o array
+    // Migrate the single legacy responsible person (labelResponsible*) into the array
     const responsibles: ArtistFormResponsible[] = [];
     if (artist.labelResponsibleName) {
       responsibles.push({
@@ -783,7 +782,7 @@ function migrateLegacyRelationships(artist: Artist): ArtistFormRelationship[] {
       escritorio: "",
       crc: "",
       responsaveis: responsibles,
-      // Se já existe manager, as legacyDists foram atribuídas a ele; caso contrário atribuir aqui
+      // If a manager exists, legacyDists were assigned to it; otherwise assign them here
       distribuidoras: artist.managerName ? legacyCompanyDists : legacyDists,
     });
   }
@@ -792,8 +791,8 @@ function migrateLegacyRelationships(artist: Artist): ArtistFormRelationship[] {
 }
 
 /**
- * Converte um registro de artista (modelo interno `Artist`) no estado de formulário.
- * Usado no useEffect de ArtistFormModal quando open=true.
+ * Converts an artist record (internal `Artist` model) into form state.
+ * Used in ArtistFormModal's useEffect when open=true.
  */
 export function artistToFormFields(artist: Artist | null | undefined): ArtistFormFieldValues {
   const emptyBase: ArtistFormFieldValues = {
@@ -858,7 +857,7 @@ export function artistToFormFields(artist: Artist | null | undefined): ArtistFor
 
   if (!artist) return emptyBase;
 
-  // Relacionamentos: usa novo campo ou migra do legado
+  // Relationships: use the new field or migrate from legacy
   let relacionamentos: ArtistFormRelationship[] = [];
   if (Array.isArray(artist.relationships) && artist.relationships.length > 0) {
     relacionamentos = artist.relationships.map(relationshipToFormRelationship);
@@ -884,13 +883,13 @@ export function artistToFormFields(artist: Artist | null | undefined): ArtistFor
     endereco: str(artist.address),
     telefone: str(artist.phone),
     email: str(artist.email),
-    // Bancário
+    // Banking
     banco: str(artist.bank),
     agencia: str(artist.bankBranch),
     conta: str(artist.bankAccount),
     chavePix: str(artist.pixKey),
     titularConta: str(artist.accountHolder),
-    // Plataformas — a URL é o dado persistido (nenhuma reconstrução a partir de ID)
+    // Platforms — the URL is the persisted data (no rebuilding from an ID)
     spotify: str(artist.spotifyUrl),
     spotifyOuvintes: artist.spotifyListeners != null ? String(artist.spotifyListeners) : "",
     instagram: str(artist.instagramUrl),
@@ -938,9 +937,9 @@ export interface FormToArtistInput extends ArtistFormFieldValues {
 }
 
 /**
- * Converte o estado do formulário em payload pronto para persistência
- * (modelo interno `Artist`, EN). Salva todos os campos — incluindo type e
- * status — garantindo que exportação e re-importação não percam dados.
+ * Converts the form state into a persistence-ready payload (internal `Artist`
+ * model, EN). Saves every field — including type and status — so export and
+ * re-import lose no data.
  */
 export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "user_id" | "created_at" | "updated_at"> {
   // Converte ArtistFormRelationship[] → ArtistRelationship[]
@@ -962,8 +961,8 @@ export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "
       };
     });
 
-  // Deriva mapas legados de distribuidoras a partir do novo modelo relacional
-  // (empresario + gravadora + editora têm distribuidoras próprias no novo modelo)
+  // Derives the legacy distributor maps from the new relational model
+  // (manager + label + publisher have their own distributors in the new model)
   const managerRels = f.relacionamentos.filter((r) => r.type === "empresario");
   const labelRels    = f.relacionamentos.filter((r) => r.type === "gravadora" || r.type === "editora");
 
@@ -975,7 +974,7 @@ export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "
       if (d.email) distributorEmails[d.id] = d.email;
     }
   }
-  // Se não há manager, usa as distribuidoras do label para o mapa legado
+  // Without a manager, use the label's distributors for the legacy map
   if (managerRels.length === 0) {
     for (const rel of labelRels) {
       for (const d of rel.distribuidoras) {
@@ -984,7 +983,7 @@ export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "
       }
     }
   }
-  // Mapa "empresa" (distribuidoras do label quando também há manager)
+  // "empresa" map (the label's distributors when a manager also exists)
   const selectedCompanyDistributors: Record<string, boolean> = {};
   const companyDistributorEmails: Record<string, string>      = {};
   if (managerRels.length > 0) {
@@ -996,7 +995,7 @@ export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "
     }
   }
 
-  // Primeiro responsável do primeiro label → campos legados
+  // First responsible person of the first label → legacy fields
   const firstLabel = f.relacionamentos.find((r) => r.type === "gravadora" || r.type === "editora");
   const firstResp = firstLabel?.responsaveis?.[0];
 
@@ -1018,7 +1017,7 @@ export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "
     phone: strOrNull(f.telefone),
     email: strOrNull(f.email),
     taxId: strOrNull(f.cpfCnpj),
-    // Bancário
+    // Banking
     bank: strOrNull(f.banco),
     bankBranch: strOrNull(f.agencia),
     bankAccount: strOrNull(f.conta),
@@ -1041,7 +1040,7 @@ export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "
     tiktokFollowers: numOrNull(f.tiktokSeguidores),
     // Relacionamentos (novo)
     relationships: relationships.length > 0 ? relationships : null,
-    // Legado (mantido para backward compat — derivado do novo modelo relacional)
+    // Legacy (kept for backward compat — derived from the new relational model)
     profileType: f.tipoPerfil,
     managerId: strOrNull(f.empresarioId),
     managerName: strOrNull(f.empresarioNome),
@@ -1051,12 +1050,12 @@ export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "
     labelName: strOrNull(f.gravadoraNome),
     labelPhone: strOrNull(f.gravadoraTelefone),
     labelEmail: strOrNull(f.gravadoraEmail),
-    // Responsável do label — agora derivado do primeiro responsável do primeiro relacionamento de label
+    // Label responsible person — now derived from the first responsible person of the first label relationship
     labelResponsibleId: strOrNull(f.gravadoraResponsavelId),
     labelResponsibleName: firstResp ? firstResp.nome || null : strOrNull(f.gravadoraResponsavelNome),
     labelResponsiblePhone: firstResp ? firstResp.telefone || null : strOrNull(f.gravadoraResponsavelTelefone),
     labelResponsibleEmail: firstResp ? firstResp.email || null : strOrNull(f.gravadoraResponsavelEmail),
-    // Distribuidoras — derivadas do novo modelo relacional para não apagar dados legados
+    // Distributors — derived from the new relational model so legacy data is not erased
     selectedDistributors: Object.keys(selectedDistributors).length > 0 ? selectedDistributors : null,
     distributorEmails: Object.keys(distributorEmails).length > 0 ? distributorEmails : null,
     selectedCompanyDistributors: Object.keys(selectedCompanyDistributors).length > 0 ? selectedCompanyDistributors : null,

@@ -1,10 +1,10 @@
 /**
- * Service layer do módulo artist.
- * Ponto de acesso exclusivo ao storage para dados de artistas.
- * Ao conectar um backend real, substitua as implementações aqui.
+ * Service layer of the artist module.
+ * The exclusive storage access point for artist data.
+ * When connecting a real backend, replace the implementations here.
  *
- * Fronteira PT(wire, contrato do backend) ↔ EN(`Artist`, modelo interno) —
- * ver `artist.mapper.ts` (`wireToArtist`/`artistToWirePayload`).
+ * PT (wire, backend contract) ↔ EN (`Artist`, internal model) boundary —
+ * see `artist.mapper.ts` (`wireToArtist`/`artistToWirePayload`).
  */
 import { storage } from "@/shared/lib/storage";
 import type { Artist, ArtistInsert, ArtistUpdate } from "../types/artist.types";

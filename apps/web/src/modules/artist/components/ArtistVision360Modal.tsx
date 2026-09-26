@@ -77,7 +77,7 @@ const formatDateDMY = (d?: string | null): string => {
   return d;
 };
 
-// imports movidos para cá após remoção de CircularProgress
+// imports moved here after CircularProgress was removed
 import { formatCurrency, getCurrencyToneClass, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 import { useObras } from "@/modules/catalog/hooks/useObras";
 import { useFonogramas } from "@/modules/catalog/hooks/useFonogramas";
@@ -97,7 +97,7 @@ import { useMarketingCampaigns } from "@/modules/marketing/hooks/useMarketingCam
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
 import { storedFileDisplayName } from "@/shared/lib/stored-file";
 
-// ── Marketing: rótulos de campanha/canal ──────────────────────────────────
+// ── Marketing: campaign/channel labels ────────────────────────────────────
 const CAMPAIGN_STATUS_LABELS: Record<string, string> = {
   rascunho: "Rascunho", agendada: "Agendada", ativa: "Ativa",
   pausada: "Pausada", concluida: "Concluída", cancelada: "Cancelada",
@@ -135,11 +135,11 @@ const CONTRACT_FILTERS: Array<{ key: string; label: string; tipos?: string[] }> 
   { key: "outros", label: "Outros", tipos: ["outro"] },
 ];
 
-// ── Agenda: rótulos e filtros ──────────────────────────────────────────────
-// events.type só guarda o enum coarse do backend (show/festival/recording/
-// meeting/interview/tour/other) — ver modules/events/lib/event-type.ts para
-// os rótulos reais. "Ensaios" e "Gravações" viram um único filtro porque a
-// coluna real não distingue as duas (ambas coarseiam para "recording").
+// ── Agenda: labels and filters ─────────────────────────────────────────────
+// events.type only stores the backend's coarse enum (show/festival/recording/
+// meeting/interview/tour/other) — see modules/events/lib/event-type.ts for the
+// real labels. "Ensaios" and "Gravações" become a single filter because the
+// real column does not distinguish them (both coarsen to "recording").
 const EVENT_STATUS_LABELS: Record<string, string> = {
   planejado: "Planejado", agendado: "Agendado", confirmado: "Confirmado",
   realizado: "Realizado", concluido: "Concluído", cancelado: "Cancelado", adiado: "Adiado",
@@ -154,7 +154,7 @@ const SCHEDULE_FILTERS: Array<{ key: string; label: string; tipos?: string[] }> 
   { key: "outros", label: "Outros", tipos: ["other"] },
 ];
 
-// ── Conteúdos: rótulos e filtros ───────────────────────────────────────────
+// ── Contents: labels and filters ───────────────────────────────────────────
 const CONTENT_TYPE_LABELS: Record<string, string> = {
   post: "Post", feed: "Feed", stories: "Stories", reels: "Reels", shorts: "Shorts",
   video: "Vídeo", carrossel: "Carrossel", anuncio: "Anúncio", rede_social: "Rede Social",
@@ -300,19 +300,18 @@ export function ArtistVision360Modal({
   onOpenChange,
   artista,
 }: ArtistVision360ModalProps) {
-  // Consultas pesadas do hub 360 só fazem sentido com o modal aberto — ver
-  // Task F: mantê-las sempre ativas fazia Dashboard/Artistas baixarem ~11
-  // tabelas inteiras a cada carregamento de página, mesmo com o modal
-  // fechado. `enabled: open` preserva o comportamento de todo outro
-  // consumidor desses hooks (default `true`).
+  // The 360 hub's heavy queries only make sense while the modal is open — see
+  // Task F: keeping them always active made Dashboard/Artists download ~11 whole
+  // tables on every page load, even with the modal closed. `enabled: open` keeps
+  // the behavior of every other consumer of these hooks (default `true`).
   //
-  // Task G: cada uma agora também é filtrada por artist_id NO SERVIDOR
-  // (backend já suporta — ver QueryPhonogramDto/QueryContractDto/
-  // QueryTransactionDto/QueryEventDto/projects.dto.ts/artist-goals — works
-  // ganhou o filtro nesta task). Antes, o modal baixava a tabela inteira do
-  // tenant e filtrava no cliente com `.filter(x => x.artist_id === id)`
-  // (padrão que a Task G pede para eliminar) — trocar de artista reaproveitava
-  // até o mesmo cache incorreto, já que a queryKey não distinguia o artista.
+  // Task G: each one is now also filtered by artist_id ON THE SERVER (the
+  // backend already supports it — see QueryPhonogramDto/QueryContractDto/
+  // QueryTransactionDto/QueryEventDto/projects.dto.ts/artist-goals — works got
+  // the filter in this task). Before, the modal downloaded the tenant's whole
+  // table and filtered on the client with `.filter(x => x.artist_id === id)`
+  // (the pattern Task G removes) — switching artists even reused the same wrong
+  // cache, since the queryKey did not distinguish the artist.
   const artistId = artista?.id;
   const audienceHealth = useSkillRun<Record<string, unknown>>(`/artists/${artistId}/audience-health`);
   const { obras: actualWorks } = useObras(open, artistId);
@@ -333,7 +332,7 @@ export function ArtistVision360Modal({
   const { data: marketingContents = [] } = useMarketingContents(open);
   const { data: marketingCampaigns = [] } = useMarketingCampaigns(open);
 
-  // Resolve os contatos vinculados (referências) com os dados atuais do CRM.
+  // Resolves the linked contacts (references) with the CRM's current data.
   const linkedContactsResolved = useMemo(() => {
     const raw = (artista as Record<string, unknown> | null | undefined)?.contatos_vinculados;
     if (!Array.isArray(raw)) return [];
@@ -357,7 +356,7 @@ export function ArtistVision360Modal({
     return cfg.tipos.includes(String(e.type ?? "").toLowerCase());
   });
 
-  // ── Conteúdos (marketing contents do artista) ──────────────────────────
+  // ── Contents (the artist's marketing contents) ─────────────────────────
   const actualContent = marketingContents.filter(
     (c) => c.targetType === "artista" && c.targetId === artistId,
   );
@@ -372,7 +371,7 @@ export function ArtistVision360Modal({
     (c) => c.targetType === "artista" && c.targetId === artistId,
   );
 
-  // ── Movimentação (timeline operacional derivada dos dados do artista) ──
+  // ── Activity (operational timeline derived from the artist's data) ─────
   const activityTimelineItems: {
     id: string;
     type: string;
@@ -407,7 +406,7 @@ export function ArtistVision360Modal({
   });
   activityTimelineItems.sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
 
-  // ── Visão Geral: KPIs executivos + widgets ─────────────────────────────
+  // ── Overview: executive KPIs + widgets ─────────────────────────────────
   const nowTs = Date.now();
   const confirmedShows = (actualEvents as any[]).filter(
     (e) =>
@@ -433,7 +432,7 @@ export function ArtistVision360Modal({
     .filter((l) => l.data_lancamento && new Date(l.data_lancamento).getTime() >= nowTs)
     .sort((a, b) => new Date(a.data_lancamento).getTime() - new Date(b.data_lancamento).getTime())[0];
 
-  // ── Evolução: marcos (milestones) derivados ────────────────────────────
+  // ── Evolution: derived milestones ──────────────────────────────────────
   const evolutionMilestones: { id: string; label: string; descricao: string; data: string }[] = [];
   if (artista?.created_at) evolutionMilestones.push({ id: "m-cad", label: "Cadastro", descricao: "Artista cadastrado no sistema", data: artista.created_at });
   const firstRelease = (actualReleases as any[])
@@ -476,7 +475,7 @@ export function ArtistVision360Modal({
     .filter((t) => t.status === "pending" || t.status === "a_receber")
     .reduce((sum, t) => sum + (t.valor ?? 0), 0);
 
-  // ── Métricas de contratos ────────────────────────────────────────────
+  // ── Contract metrics ───────────────────────────────────────────────────
   const today = new Date();
   const in60Days = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000);
   const ACTIVE_STATUSES = ["signed", "in_force"];
@@ -494,7 +493,7 @@ export function ArtistVision360Modal({
     return cfg.tipos.includes(String(c.type ?? "").toLowerCase());
   });
 
-  // ── Histórico derivado de dados reais ────────────────────────────────
+  // ── History derived from real data ───────────────────────────────────
   const actualHistory: {
     id: string;
     type: string;
@@ -579,11 +578,11 @@ export function ArtistVision360Modal({
     (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime(),
   );
 
-  // Tendência da evolução (Task #361): chips de "↑/↓/—" nos cards de
-  // plataforma do dashboard 360 reusam os mesmos snapshots diários
-  // (`record_artista_metric_snapshot`) já consumidos pela aba "Evolução".
-  // Os hooks só disparam a query quando o artista tem ID configurado para
-  // a plataforma — assim evita chamadas inúteis para perfis não vinculados.
+  // Evolution trend (Task #361): the "↑/↓/—" chips on the 360 dashboard platform
+  // cards reuse the same daily snapshots (`record_artista_metric_snapshot`)
+  // already consumed by the "Evolução" tab. The hooks only fire the query when
+  // the artist has an ID configured for the platform — avoiding useless calls
+  // for unlinked profiles.
 
   const [metaForm, setMetaForm] = useState({
     title: "",
@@ -809,11 +808,11 @@ export function ArtistVision360Modal({
             </TabsTrigger>
           </TabsList>
 
-          {/* Scroll owner do modal. Usa overflow nativo em vez de ScrollArea:
-              o Viewport do Radix depende de height:100%, que NÃO resolve contra um
-              pai dimensionado por flex-grow — media 1467px dentro de um Root de 681px,
-              logo scrollHeight === clientHeight e o scroll nunca acontecia. Um container
-              de overflow nativo é dimensionado pelo próprio flex e rola de facto. */}
+          {/* Modal scroll owner. Uses native overflow instead of ScrollArea: the Radix
+              Viewport depends on height:100%, which does NOT resolve against a
+              flex-grow-sized parent — it measured 1467px inside a 681px Root, so
+              scrollHeight === clientHeight and scrolling never happened. A native
+              overflow container is sized by the flex itself and really scrolls. */}
           <div
             className="flex-1 min-h-0 overflow-y-auto overscroll-contain"
             data-testid="vision360-scroll"
@@ -821,7 +820,7 @@ export function ArtistVision360Modal({
             role="region"
             aria-label="Conteúdo da Visão 360"
           >
-            {/* Visão Geral */}
+            {/* Overview */}
             <TabsContent value="visao-geral" className="p-6 space-y-6 mt-0">
               {/* KPIs executivos */}
               <Card className="bg-muted/30">
@@ -920,13 +919,12 @@ export function ArtistVision360Modal({
                 </Card>
               </div>
 
-              {/* Posicionamento da Carreira (Fase 3.2 Parte IV — consolida
-                  Career Stage + Market Benchmark em um único diagnóstico;
-                  ambos calculados no backend a partir de métricas
-                  Soundcharts já ingeridas) */}
+              {/* Career positioning (Phase 3.2 Part IV — consolidates Career Stage +
+                  Market Benchmark into a single diagnosis; both computed in the
+                  backend from already-ingested Soundcharts metrics) */}
               <PositioningCard artistId={artista.id} />
 
-              {/* Métricas */}
+              {/* Metrics */}
               <div className="grid grid-cols-5 gap-4">
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
@@ -981,7 +979,7 @@ export function ArtistVision360Modal({
                 </Card>
               </div>
 
-              {/* Plano de Aceleração */}
+              {/* Acceleration plan */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
@@ -1001,7 +999,7 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
-              {/* Diagnóstico + Riscos */}
+              {/* Diagnosis + risks */}
               <div className="grid grid-cols-2 gap-4">
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
@@ -1124,7 +1122,7 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
-              {/* Foco dos Próximos 90 Dias */}
+              {/* Focus for the next 90 days */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-3">
@@ -1147,7 +1145,7 @@ export function ArtistVision360Modal({
 
             {/* Perfil */}
             <TabsContent value="perfil" className="p-6 space-y-6 mt-0">
-              {/* Informações Básicas */}
+              {/* Basic information */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
@@ -1245,7 +1243,7 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
-              {/* Contato e Endereço */}
+              {/* Contact and address */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
@@ -1277,7 +1275,7 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
-              {/* Dados Bancários */}
+              {/* Bank details */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
@@ -1537,7 +1535,7 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
-              {/* Distribuidoras / Agregadoras (novo formato — secção 5 do formulário) */}
+              {/* Distributors / aggregators (new format — form section 5) */}
               {(() => {
                 const generalDistributors: Array<{ id: string; email: string; nomeCustom?: string }> =
                   Array.isArray((artista as Record<string, unknown>).distribuidoras_gerais)
@@ -1617,7 +1615,7 @@ export function ArtistVision360Modal({
                 </Card>
               )}
 
-              {/* Equipe / Contactos (legado — dados embutidos antigos / auto-cadastro público) */}
+              {/* Team / contacts (legacy — old embedded data / public self-signup) */}
               {(() => {
                 type TeamContactItem = { nome: string; categoria: string; telefone: string; email: string; distribuidoras?: Array<{ id: string; email: string; nomeCustom?: string }> };
                 const team: TeamContactItem[] = Array.isArray((artista as Record<string, unknown>).contatos_equipe)
@@ -1697,7 +1695,7 @@ export function ArtistVision360Modal({
                 );
               })()}
 
-              {/* Observações */}
+              {/* Notes */}
               {artista.notes && (
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
@@ -1721,7 +1719,7 @@ export function ArtistVision360Modal({
               </div>
             </TabsContent>
 
-            {/* Mídia */}
+            {/* Media */}
             <TabsContent value="midia" className="p-6 space-y-6 mt-0">
               {/* Galeria de Fotos */}
               <Card className="bg-muted/30">
@@ -1869,9 +1867,9 @@ export function ArtistVision360Modal({
               )}
             </TabsContent>
 
-            {/* Catálogo */}
+            {/* Catalog */}
             <TabsContent value="catalogo" className="p-6 space-y-6 mt-0">
-              {/* Estatísticas */}
+              {/* Statistics */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <h3 className="font-semibold mb-4">
@@ -2166,7 +2164,7 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
-              {/* Últimas Transações */}
+              {/* Latest transactions */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <h3 className="font-semibold mb-4">
@@ -2216,7 +2214,7 @@ export function ArtistVision360Modal({
 
             {/* Contratos */}
             <TabsContent value="contratos" className="p-6 space-y-6 mt-0">
-              {/* Métricas de Contratos */}
+              {/* Contract metrics */}
               <div className="grid grid-cols-3 gap-4">
                 <Card className="bg-muted/30">
                   <CardContent className="p-4 text-center">
@@ -2606,11 +2604,11 @@ export function ArtistVision360Modal({
               </Card>
             </TabsContent>
 
-            {/* Evolução */}
+            {/* Evolution */}
             <TabsContent value="evolucao" className="p-6 space-y-6 mt-0">
               <ArtistEvolutionSection artist={artista} />
 
-              {/* ══ SAÚDE DE AUDIÊNCIA (AI Skill audience-health sobre Career Stage + Market Benchmark já calculados) ══ */}
+              {/* ══ AUDIENCE HEALTH (audience-health AI Skill over the already-computed Career Stage + Market Benchmark) ══ */}
               <section className="space-y-3" data-testid="artist-vision-audience-health">
                 <h3 className="border-b pb-1 text-sm font-semibold tracking-wider text-muted-foreground">
                   Saúde de Audiência (IA)
@@ -2651,7 +2649,7 @@ export function ArtistVision360Modal({
               )}
             </TabsContent>
 
-            {/* Histórico */}
+            {/* History */}
             {/* Agenda */}
             <TabsContent value="agenda" className="p-6 space-y-6 mt-0">
               <div className="flex flex-wrap gap-2">
@@ -2721,7 +2719,7 @@ export function ArtistVision360Modal({
               )}
             </TabsContent>
 
-            {/* Conteúdos */}
+            {/* Contents */}
             <TabsContent value="conteudos" className="p-6 space-y-6 mt-0">
               <div className="flex flex-wrap gap-2">
                 {CONTENT_FILTERS.map((f) => (
@@ -2790,7 +2788,7 @@ export function ArtistVision360Modal({
               )}
             </TabsContent>
 
-            {/* Movimentação */}
+            {/* Activity */}
             <TabsContent value="movimentacao" className="p-6 space-y-6 mt-0">
               {activityTimelineItems.length === 0 ? (
                 <Card className="bg-muted/30">

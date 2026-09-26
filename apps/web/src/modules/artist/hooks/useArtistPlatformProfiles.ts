@@ -3,9 +3,9 @@ import { toast } from "sonner";
 import { api } from "@/shared/lib/api-client";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 
-// Espelha SOCIAL_PLATFORMS de apps/api/.../social-platform-sync.types.ts — sem
-// pacote compartilhado entre web/api para este contrato ainda, então os 7
-// valores são replicados aqui (Métricas 09 fase 3).
+// Mirrors SOCIAL_PLATFORMS from apps/api/.../social-platform-sync.types.ts —
+// there is no shared web/api package for this contract yet, so the 7 values are
+// replicated here (Metrics 09 phase 3).
 export type SocialPlatform =
   | "spotify"
   | "youtube"
@@ -70,11 +70,11 @@ export function useArtistPlatformProfiles(artistId: string | null | undefined) {
     enabled: Boolean(artistId),
     retry: false,
     staleTime: 30_000,
-    // O worker BullMQ processa o sync fora do request/response do enqueue —
-    // sem isto, um snapshot "pending" nunca mais é revalidado e o card fica
-    // preso em "Sincronizando" mesmo depois do job terminar no backend
-    // (reproduzido: DB vira sync_status=success em ~1s, UI ficava presa por
-    // minutos até F5 manual). Poll só enquanto algo estiver pending.
+    // The BullMQ worker processes the sync outside the enqueue request/response —
+    // without this, a "pending" snapshot is never revalidated and the card stays
+    // stuck on "Sincronizando" even after the job finishes in the backend
+    // (reproduced: the DB becomes sync_status=success in ~1s while the UI stayed
+    // stuck for minutes until a manual F5). Polls only while something is pending.
     refetchInterval: (query) => {
       const data = query.state.data as ArtistPlatformProfileSnapshot[] | undefined;
       return data?.some((profile) => profile.sync_status === "pending") ? SYNC_POLL_INTERVAL_MS : false;

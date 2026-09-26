@@ -1,35 +1,36 @@
 /**
  * metrics/platform-metric-capabilities.ts
  *
- * SUBCLUSTER D — registry central de CAPACIDADES de métrica por plataforma.
+ * SUBCLUSTER D — central registry of metric CAPABILITIES per platform.
  *
- * Descreve ESTRUTURA, nunca dados: que métricas a fonte atual realmente fornece
- * para cada plataforma, com que rótulo, grupo semântico e prioridade visual.
- * Remove a hipótese — falsa — de que toda plataforma tem o mesmo schema.
+ * Describes STRUCTURE, never data: which metrics the current source really
+ * provides for each platform, with which label, semantic group and visual
+ * priority. Removes the false assumption that every platform has the same
+ * schema.
  *
- * FONTE DA VERDADE: os providers reais em
- * apps/api/src/modules/artists/platform-profiles/providers/*.ts, que hoje
- * preenchem exatamente estes campos (o resto fica `null`):
+ * SOURCE OF TRUTH: the real providers in
+ * apps/api/src/modules/artists/platform-profiles/providers/*.ts, which today fill
+ * exactly these fields (the rest stays `null`):
  *
  *   spotify      → monthly_listeners   (followers/subscribers null)
  *   youtube      → subscribers         (followers/monthly_listeners null)
  *   soundcloud   → followers
- *   deezer       → followers           (fans da API Deezer)
+ *   deezer       → followers           (Deezer API fans)
  *   instagram    → followers
  *   tiktok       → followers
- *   apple_music  → NENHUMA             (os três campos são null)
+ *   apple_music  → NONE                (all three fields are null)
  *
- * Apple Music não tem entrada de métrica de propósito: a Soundcharts não expõe
- * audiência para Apple Music no fluxo atual. Inventar "Ouvintes: 0" ou
- * "Ouvintes: N/A" só porque outras plataformas têm ouvintes seria fabricar
- * informação.
+ * Apple Music has no metric entry on purpose: Soundcharts does not expose an
+ * Apple Music audience in the current flow. Inventing "Ouvintes: 0" or
+ * "Ouvintes: N/A" just because other platforms have listeners would fabricate
+ * information.
  */
 
-/** Chaves de métrica que o backend realmente entrega. */
+/** Metric keys the backend really delivers. */
 export type PlatformMetricKey = "monthly_listeners" | "followers" | "subscribers";
 
 /**
- * Ordem semântica desejada quando houver dados correspondentes:
+ * Desired semantic order when matching data exists:
  * consumption → audience → reach → engagement → followers.
  */
 export type MetricSemanticGroup =
@@ -39,7 +40,7 @@ export interface PlatformMetricDefinition {
   key: PlatformMetricKey;
   label: string;
   semanticGroup: MetricSemanticGroup;
-  /** Menor = mais importante. Deriva do grupo semântico. */
+  /** Lower = more important. Derived from the semantic group. */
   priority: number;
 }
 
@@ -58,8 +59,8 @@ const def = (
 });
 
 /**
- * Capacidades por plataforma. Uma lista VAZIA é uma afirmação legítima:
- * "esta fonte não fornece métrica de audiência para esta plataforma".
+ * Capabilities per platform. An EMPTY list is a legitimate statement:
+ * "this source provides no audience metric for this platform".
  */
 export const PLATFORM_METRIC_CAPABILITIES: Record<string, readonly PlatformMetricDefinition[]> = {
   spotify:     [def("monthly_listeners", "Ouvintes mensais", "audience")],
@@ -68,11 +69,11 @@ export const PLATFORM_METRIC_CAPABILITIES: Record<string, readonly PlatformMetri
   deezer:      [def("followers", "Fãs", "followers")],
   instagram:   [def("followers", "Seguidores", "followers")],
   tiktok:      [def("followers", "Seguidores", "followers")],
-  // Sem métrica de audiência na fonte atual — ver cabeçalho.
+  // No audience metric in the current source — see the header.
   apple_music: [],
 };
 
-/** Aceita os dois formatos de slug usados no projeto (apple-music / apple_music). */
+/** Accepts both slug formats used in the project (apple-music / apple_music). */
 function normalize(platform: string): string {
   return platform.trim().toLowerCase().replace(/-/g, "_");
 }
@@ -86,13 +87,13 @@ export interface ResolvedMetric extends PlatformMetricDefinition {
 }
 
 /**
- * Resolve o que a UI deve renderizar para uma plataforma.
+ * Resolves what the UI must render for a platform.
  *
- * Regras que este resolver existe para garantir:
- *   - métrica NÃO suportada pela fonte nunca aparece, mesmo que venha valor;
- *   - métrica suportada mas ausente (null/undefined) NÃO vira 0 fabricado;
- *   - `0` real é dado e continua sendo renderizado;
- *   - ordenação por prioridade semântica, não por ordem de chegada.
+ * Rules this resolver exists to guarantee:
+ *   - a metric NOT supported by the source never appears, even if a value comes;
+ *   - a supported but missing metric (null/undefined) does NOT become a fabricated 0;
+ *   - a real `0` is data and is still rendered;
+ *   - ordering by semantic priority, not arrival order.
  */
 export function resolvePlatformMetrics(
   platform: string,
@@ -104,7 +105,7 @@ export function resolvePlatformMetrics(
     .sort((a, b) => a.priority - b.priority);
 }
 
-/** Formatação compacta pt-BR, usada por todas as plataformas. */
+/** Compact pt-BR formatting, used by every platform. */
 export function formatMetricValue(value: number): string {
   return value.toLocaleString("pt-BR", { notation: "compact", maximumFractionDigits: 1 });
 }
@@ -116,9 +117,9 @@ export interface PrimaryMetric {
 }
 
 /**
- * Métrica principal de uma plataforma: a de MAIOR prioridade semântica que a
- * fonte realmente suporta. `value: null` = suportada mas ausente (nunca 0
- * fabricado). Retorna null quando a fonte não fornece métrica alguma.
+ * A platform's main metric: the one with the HIGHEST semantic priority the
+ * source really supports. `value: null` = supported but missing (never a
+ * fabricated 0). Returns null when the source provides no metric at all.
  */
 export function primaryMetricFor(
   platform: string,

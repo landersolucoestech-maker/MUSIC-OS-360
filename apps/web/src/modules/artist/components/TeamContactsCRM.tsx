@@ -1,15 +1,15 @@
 // ============================================================================
-// TeamContactsCRM — seção "Equipe / Contatos" do cadastro/edição de artista.
+// TeamContactsCRM — the "Equipe / Contatos" section of artist create/edit.
 // ----------------------------------------------------------------------------
-// Substitui os antigos campos manuais (Nome/Categoria/Telefone/E-mail) por
-// VÍNCULOS com contatos já cadastrados no CRM (CRM > Contatos), que é a fonte
-// única. O artista armazena apenas a referência (`contactId`); os dados exibidos
-// (nome, categoria, telefone, e-mail) são resolvidos dinamicamente do CRM, então
-// qualquer alteração no CRM reflete automaticamente aqui — sem duplicação.
+// Replaces the old manual fields (name/category/phone/email) with LINKS to
+// contacts already registered in the CRM (CRM > Contatos), which is the single
+// source. The artist stores only the reference (`contactId`); the displayed
+// data (name, category, phone, email) is resolved dynamically from the CRM, so
+// any CRM change is reflected here automatically — no duplication.
 //
-// As `distribuidoras` são dado da RELAÇÃO artista↔contato (não do contato) e só
-// aparecem quando a categoria do contato no CRM for Empresário / Gravadora /
-// Editora — preservando o comportamento de distribuidoras já existente.
+// `distribuidoras` are data of the artist↔contact RELATION (not of the contact)
+// and only appear when the contact's CRM category is Empresário / Gravadora /
+// Editora — preserving the existing distributors behavior.
 // ============================================================================
 
 import { useMemo, useState } from "react";
@@ -51,8 +51,8 @@ const DISTRIBUTORS_OPTIONS = [
   { id: "outros", label: "Outros" },
 ];
 
-// Categorias do CRM (contactType) que mantêm a seção de Distribuidoras:
-// Empresário Artístico, Gravadora/Selo e Editora Musical.
+// CRM categories (contactType) that keep the distributors section:
+// artist manager, record label and music publisher.
 const DISTRIBUTOR_CONTACT_TYPES = new Set<Contact["contactType"]>([
   "ARTIST_MANAGER",
   "LABEL_RECORD",
@@ -76,7 +76,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
     return map;
   }, [contacts]);
 
-  // Resultados da busca: contatos do CRM ainda não vinculados.
+  // Search results: CRM contacts not linked yet.
   const searchResults = useMemo(() => {
     const term = search.trim().toLowerCase();
     return contacts
@@ -93,7 +93,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
       .slice(0, 8);
   }, [contacts, linkedIds, search]);
 
-  // ── Vínculos ────────────────────────────────────────────────────
+  // ── Links ───────────────────────────────────────────────────────
   function addLink(contactId: string) {
     if (linkedIds.has(contactId)) return;
     onChange([...value, { contactId, distributors: [] }]);
@@ -105,7 +105,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
     onChange(value.filter((v) => v.contactId !== contactId));
   }
 
-  // ── Distribuidoras (por vínculo) ────────────────────────────────
+  // ── Distributors (per link) ─────────────────────────────────────
   function updateDistributors(contactId: string, dists: DistributorEntry[]) {
     onChange(value.map((v) => (v.contactId === contactId ? { ...v, distributors: dists } : v)));
   }
@@ -128,7 +128,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
     );
   }
 
-  // ── Novo Contato (cria no CRM e vincula automaticamente) ────────
+  // ── New contact (creates it in the CRM and links it automatically) ──
   async function handleNewContact(payload: ContatoFormPayload) {
     const created = await createContact(contatoPayloadToContactData(payload));
     if (created?.id) addLink(created.id);
@@ -258,7 +258,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
                   </Button>
                 </div>
 
-                {/* Distribuidoras — apenas para Empresário / Gravadora / Editora */}
+                {/* Distributors — only for Empresário / Gravadora / Editora */}
                 {showDistribuidoras && (
                   <div className="mt-3 space-y-3 border-t border-border/40 pt-3">
                     <Label className="text-xs text-muted-foreground">Distribuidoras</Label>
@@ -337,7 +337,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
         </div>
       )}
 
-      {/* Modal de criação de contato no CRM */}
+      {/* CRM contact creation modal */}
       <ContatoFormModal
         open={newContactOpen}
         mode="create"

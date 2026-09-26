@@ -1,20 +1,20 @@
 /**
  * artista-tipo-canonical.guard.test.ts
  *
- * Guarda permanente (Artists Schema 15): o conceito de "tipo de formação do
- * artista" (solo/banda/duo/trio/grupo/coletivo, e a forma antiga
- * "artista_solo") foi REMOVIDO do domínio Artist — não normalizado, não
- * substituído por outro campo. `ArtistaTipo` não existe mais como tipo
- * exportado, `tipoArtista` não existe mais em nenhuma das formas de
- * formulário/mapper, e `Artista.tipo` não existe mais como propriedade.
+ * Permanent guard (Artists Schema 15): the concept of "artist line-up type"
+ * (solo/band/duo/trio/group/collective, and the old "artista_solo" form) was
+ * REMOVED from the Artist domain — not normalized, not replaced by another
+ * field. `ArtistaTipo` no longer exists as an exported type, `tipoArtista` no
+ * longer exists in any form/mapper shape, and `Artista.tipo` no longer exists
+ * as a property.
  *
- * Se este teste falhar, alguém reintroduziu o campo (com qualquer
- * vocabulário) sem essa ser uma decisão de produto deliberada e revisada.
+ * If this test fails, someone reintroduced the field (with any vocabulary)
+ * without it being a deliberate, reviewed product decision.
  *
- * NÃO usa grep ingênuo por "tipo" — a palavra é legítima em outros campos
- * (tipo_perfil, ArtistaRelacionamento.tipo, artist-form.definition.ts tem
- * dezenas de outros "tipo" não relacionados). Verifica pontualmente pelos
- * identificadores exatos do conceito removido.
+ * It does NOT use a naive grep for "tipo" — the word is legitimate in other
+ * fields (tipo_perfil, ArtistaRelacionamento.tipo, artist-form.definition.ts has
+ * dozens of unrelated "tipo"). It checks the exact identifiers of the removed
+ * concept.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

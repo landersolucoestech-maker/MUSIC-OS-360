@@ -7,22 +7,22 @@ import { ArtistRelationshipType } from "@music-os-360/types";
 import type { Artist } from "../types/artist.types";
 
 export interface UseArtistsPaginatedParams {
-  /** 0-indexado, mesma convenção de usePagination()/TablePagination. */
+  /** 0-indexed, same convention as usePagination()/TablePagination. */
   page: number;
   pageSize: number;
   search?: string;
-  /** exclusive/partner/independent — filtro server-side via EXISTS em contracts (ver artists.service.ts). */
+  /** exclusive/partner/independent — server-side filter via EXISTS on contracts (see artists.service.ts). */
   vinculo?: ArtistRelationshipType;
   genero?: string;
 }
 
 /**
- * Lista paginada server-side de artistas — companheira de useArtists()
- * (que continua servindo os usos "me dê todos os artistas": dropdowns,
- * cross-referência em useMetrics/useAgendaParticipants, mutations dos
- * modais). Task H: a tabela de /artistas usa isso para as linhas
- * exibidas; vínculo/gêneros vêm de endpoints agregados dedicados
- * (useArtistsVinculoStats/useMusicGenres), nunca da lista completa.
+ * Server-side paginated artist list — companion of useArtists() (which still
+ * serves the "give me every artist" uses: dropdowns, cross-reference in
+ * useMetrics/useAgendaParticipants, modal mutations). Task H: the /artistas
+ * table uses this for the displayed rows; contract type/genres come from
+ * dedicated aggregate endpoints (useArtistsVinculoStats/useMusicGenres), never
+ * from the full list.
  */
 export type ArtistWithRelationship = Artist & { vinculo?: ArtistRelationshipType };
 
@@ -61,7 +61,7 @@ export interface VinculoStats {
 const EMPTY_VINCULO: VinculoStats = { exclusive: 0, partner: 0, independent: 0, total: 0 };
 const EMPTY_GENRES: string[] = [];
 
-/** GET /artists/stats/vinculo — contagem exata por vínculo, tenant inteiro. */
+/** GET /artists/stats/vinculo — exact count per contract type, whole tenant. */
 export function useArtistsVinculoStats() {
   const query = useQuery<VinculoStats>({
     queryKey: [...QUERY_KEYS.ARTISTS, "stats", "vinculo"],
@@ -71,7 +71,7 @@ export function useArtistsVinculoStats() {
   return { stats: query.data ?? EMPTY_VINCULO, isLoading: query.isLoading, error: query.error };
 }
 
-/** GET /artists/stats/generos — gêneros distintos do tenant, para o filtro. */
+/** GET /artists/stats/generos — the tenant's distinct genres, for the filter. */
 export function useMusicGenres() {
   const query = useQuery<string[]>({
     queryKey: [...QUERY_KEYS.ARTISTS, "stats", "generos"],

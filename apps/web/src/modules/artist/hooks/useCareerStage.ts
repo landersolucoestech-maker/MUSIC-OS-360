@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/shared/lib/api-client";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 
-// Espelha CareerStageResult (apps/api/.../analytics/career-stage.engine.ts) —
-// sem pacote compartilhado entre web/api para este contrato ainda (mesmo
-// padrão de useArtistPlatformProfiles.ts).
+// Mirrors CareerStageResult (apps/api/.../analytics/career-stage.engine.ts) —
+// there is no shared web/api package for this contract yet (same pattern as
+// useArtistPlatformProfiles.ts).
 export type CareerStageDimensionKey = "AUDIENCE" | "STREAMING" | "SOCIAL" | "MARKET_PRESENCE" | "GROWTH" | "MOMENTUM";
 
 export interface CareerStageDimensionResult {
@@ -40,8 +40,8 @@ export interface CareerStageResult {
 export const careerStageKey = (artistId: string | null | undefined) => [...QUERY_KEYS.ARTISTS, artistId, "career-stage"];
 
 /**
- * Fase 3 — Estágio da Carreira: calculado no backend (React nunca calcula
- * score, item 39) a partir de métricas Soundcharts já ingeridas.
+ * Phase 3 — Career Stage: computed in the backend (React never computes a
+ * score, item 39) from already-ingested Soundcharts metrics.
  */
 export function useCareerStage(artistId: string | null | undefined) {
   return useQuery({

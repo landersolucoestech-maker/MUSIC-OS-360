@@ -1,12 +1,12 @@
 /**
  * metrics/AdaptivePlatformMetrics.tsx
  *
- * Renderer adaptativo: recebe a plataforma e os valores disponíveis, consulta o
- * capability registry e desenha SOMENTE o que aquela fonte realmente suporta.
+ * Adaptive renderer: receives the platform and the available values, looks up
+ * the capability registry and draws ONLY what that source really supports.
  *
- * Não decide por `if (platform === ...)`: a diferença entre plataformas vive no
- * registry. Plataformas com schemas diferentes renderizam conjuntos diferentes
- * sem código específico.
+ * It does not branch on `if (platform === ...)`: the difference between
+ * platforms lives in the registry. Platforms with different schemas render
+ * different sets without specific code.
  */
 
 import {
@@ -19,7 +19,7 @@ import {
 interface Props {
   platform: string;
   values: Partial<Record<PlatformMetricKey, number | null | undefined>>;
-  /** Texto quando a fonte suporta métrica mas o valor ainda não chegou. */
+  /** Text shown when the source supports a metric but the value has not arrived yet. */
   unavailableLabel?: string;
   testIdPrefix?: string;
 }
@@ -33,8 +33,8 @@ export function AdaptivePlatformMetrics({
   const supported = metricCapabilitiesOf(platform);
   const resolved = resolvePlatformMetrics(platform, values);
 
-  // A fonte não fornece métrica para esta plataforma (ex.: Apple Music).
-  // Não inventamos card nem "0"/"N/A" — dizemos o que é verdade.
+  // The source provides no metric for this platform (e.g. Apple Music).
+  // We invent neither a card nor "0"/"N/A" — we state what is true.
   if (supported.length === 0) {
     return (
       <p className="text-[10px] text-muted-foreground" data-testid={`${testIdPrefix}-${platform}-unsupported`}>
@@ -53,7 +53,7 @@ export function AdaptivePlatformMetrics({
               className="text-sm font-semibold text-foreground"
               data-testid={`${testIdPrefix}-${platform}-${d.key}`}
             >
-              {/* `0` real é dado e é renderizado; ausente nunca vira 0. */}
+              {/* A real `0` is data and is rendered; a missing value never becomes 0. */}
               {hit ? formatMetricValue(hit.value) : unavailableLabel}
             </span>
             <span className="text-[10px] text-muted-foreground">{d.label}</span>

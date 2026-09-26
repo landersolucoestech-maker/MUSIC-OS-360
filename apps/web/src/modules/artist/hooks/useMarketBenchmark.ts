@@ -34,10 +34,10 @@ export interface MarketBenchmarkResult {
   calculatedAt: string;
 }
 
-// Fase 3.2 — leitura sempre rápida (item 4/26): o refresh de coorte externa
-// (até ~65s de chamadas Soundcharts) roda em background; o GET nunca espera
-// por ele. `readStatus` diz o que a UI deve mostrar; `result` é o último
-// cálculo conhecido (servido mesmo quando STALE — stale-while-revalidate).
+// Phase 3.2 — reads are always fast (items 4/26): the external cohort refresh
+// (up to ~65s of Soundcharts calls) runs in the background; the GET never waits
+// for it. `readStatus` says what the UI must show; `result` is the last known
+// computation (served even when STALE — stale-while-revalidate).
 export type MarketBenchmarkReadStatus = "READY" | "STALE" | "REFRESHING" | "INTEGRATION_UNAVAILABLE" | "ERROR";
 
 export interface MarketBenchmarkReadResult {
@@ -49,10 +49,10 @@ export interface MarketBenchmarkReadResult {
 export const marketBenchmarkKey = (artistId: string | null | undefined) => ["artists", artistId, "market-benchmark"];
 
 /**
- * Fase 3.2 — Benchmark de Mercado: leitura rápida (nunca bloqueia por
- * refresh externo). Enquanto `readStatus` for REFRESHING, faz polling curto
- * para pegar o resultado assim que o worker em background terminar — sem
- * mostrar progresso inventado (item 31), só reconsultando.
+ * Phase 3.2 — Market Benchmark: fast read (never blocks on an external
+ * refresh). While `readStatus` is REFRESHING, it polls briefly to pick up the
+ * result as soon as the background worker finishes — without showing invented
+ * progress (item 31), just re-querying.
  */
 export function useMarketBenchmark(artistId: string | null | undefined) {
   return useQuery({

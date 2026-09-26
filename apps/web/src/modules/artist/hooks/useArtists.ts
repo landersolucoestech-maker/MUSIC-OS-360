@@ -20,10 +20,10 @@ export type {
 };
 
 /**
- * Fronteira PT(wire) ↔ EN(interno): `useDataQuery` fala com a API usando o
- * contrato real do backend (`ArtistWireRecord`, inalterado); este hook
- * converte para/de `Artist` (modelo interno em inglês) na entrada e saída —
- * ver `services/artist.mapper.ts` (`wireToArtist`/`artistToWirePayload`).
+ * PT (wire) ↔ EN (internal) boundary: `useDataQuery` talks to the API using the
+ * backend's real contract (`ArtistWireRecord`, unchanged); this hook converts
+ * to/from `Artist` (the internal English model) on the way in and out — see
+ * `services/artist.mapper.ts` (`wireToArtist`/`artistToWirePayload`).
  */
 export function useArtists() {
   const result = useDataQuery<ArtistWireRecord>({

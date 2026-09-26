@@ -3,21 +3,21 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 /**
- * REGRESSÃO — scroll do Artist 360 View Modal.
+ * REGRESSION — Artist 360 View Modal scrolling.
  *
- * Bug real medido em Chromium: o outer `<ScrollArea className="flex-1 min-h-0">`
- * do Radix não rolava. O Viewport do Radix usa `height: 100%`, que NÃO resolve
- * contra um pai dimensionado por flex-grow — o viewport mediu 1467px dentro de
- * um Root de 681.5px, logo `scrollHeight === clientHeight` e `scrollTop` nunca
- * saía de 0. Todo o conteúdo abaixo da dobra ficava inacessível.
+ * Real bug measured in Chromium: Radix's outer `<ScrollArea className="flex-1 min-h-0">`
+ * did not scroll. The Radix Viewport uses `height: 100%`, which does NOT resolve
+ * against a flex-grow-sized parent — the viewport measured 1467px inside a
+ * 681.5px Root, so `scrollHeight === clientHeight` and `scrollTop` never left 0.
+ * All content below the fold was unreachable.
  *
- * Correção: o scroll owner passou a ser um container de overflow NATIVO, que é
- * dimensionado pelo próprio flex e não depende de resolução de porcentagem.
+ * Fix: the scroll owner became a NATIVE overflow container, sized by the flex
+ * itself and independent of percentage resolution.
  *
- * Este guard é textual de propósito: jsdom não faz layout, então a prova real de
- * scroll é o Playwright multi-viewport. O que este teste impede é a REGRESSÃO
- * estrutural — alguém "simplificar" de volta para o ScrollArea e reintroduzir o
- * bug sem que nada falhe.
+ * This guard is textual on purpose: jsdom does no layout, so the real scroll
+ * proof is the multi-viewport Playwright run. What this test prevents is the
+ * structural REGRESSION — someone "simplifying" back to ScrollArea and
+ * reintroducing the bug without anything failing.
  */
 const FILE = join(__dirname, "ArtistVision360Modal.tsx");
 const source = readFileSync(FILE, "utf8");
@@ -29,14 +29,14 @@ describe("Artist 360 modal — scroll owner estrutural", () => {
   });
 
   it("does NOT use Radix ScrollArea as the outer scroll owner again", () => {
-    // ScrollAreas internos (h-[150px], h-[320px]) continuam legítimos; o que não
-    // pode voltar é o outer com flex-1, que é exatamente o padrão quebrado.
+    // Inner ScrollAreas (h-[150px], h-[320px]) are still legitimate; what must not
+    // come back is the outer one with flex-1, which is exactly the broken pattern.
     expect(source).not.toContain('<ScrollArea className="flex-1 min-h-0">');
   });
 
   it("a cadeia flex acima do scroll owner continua intacta", () => {
-    // Sem max-h no DialogContent o modal cresce além da viewport;
-    // sem min-h-0 nos Tabs o filho flexível nunca é constrangido.
+    // Without max-h on DialogContent the modal grows beyond the viewport;
+    // without min-h-0 on the Tabs the flexible child is never constrained.
     expect(source).toContain("max-h-[90vh]");
     expect(source).toMatch(/<Tabs[^>]*className="[^"]*flex-1[^"]*min-h-0/);
   });

@@ -146,7 +146,7 @@ function DistributorsField({
   );
 }
 
-// ─── Field renderer (dirigido pela definição) ────────────────────
+// ─── Field renderer (definition-driven) ──────────────────────────
 
 type FileFieldId = "fotoUrl" | "documentosPessoaisUrl" | "presskitUrl";
 
@@ -358,15 +358,14 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
   const { addCliente } = useClientes();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Task: CAS 409 espúrio — o modal recebia `artist` como snapshot congelado
-  // da listagem (pode estar desatualizado: staleTime da lista, tempo com a
-  // aba em segundo plano, etc.). Buscar a versão atual por ID ao abrir para
-  // editar garante que o `expectedUpdatedAt` do CAS reflita o registro real
-  // no momento da edição, não o que a lista tinha cacheado. `staleTime: 0`
-  // força refetch a cada abertura do modal (nunca reaproveita uma busca
-  // anterior da mesma sessão).
-  // `api.get` fala com o backend real (contrato PT, GET /artists/:id) —
-  // convertido para o modelo interno `Artist` (EN) via `wireToArtist`.
+  // Task: spurious CAS 409 — the modal received `artist` as a frozen snapshot of
+  // the list (it may be stale: list staleTime, time with the tab in the
+  // background, etc.). Fetching the current version by ID when opening for edit
+  // guarantees the CAS `expectedUpdatedAt` reflects the real record at edit time,
+  // not what the list had cached. `staleTime: 0` forces a refetch on every modal
+  // opening (never reuses an earlier fetch in the same session).
+  // `api.get` talks to the real backend (PT contract, GET /artists/:id) —
+  // converted to the internal `Artist` model (EN) via `wireToArtist`.
   const freshArtistQuery = useQuery({
     queryKey: ["artists", artist?.id, "edit-fresh"],
     queryFn: async () => wireToArtist(await api.get<ArtistWireRecord>(`/artists/${artist!.id}`)),
@@ -375,13 +374,12 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
     gcTime: 0,
   });
 
-  // Task: campos do formulário vinham de `artist` (snapshot da listagem)
-  // enquanto só o expectedUpdatedAt vinha da versão fresca — permitia CAS
-  // passar (comparando com a versão real do banco) enquanto o PATCH ainda
-  // carregava campos antigos por cima de uma edição concorrente já salva.
-  // `hydratedArtist` fixa a MESMA versão para os dois: é o exato objeto do
-  // GET usado para hidratar o formulário, e é o que fornece expectedUpdatedAt
-  // no submit — nunca duas fontes independentes.
+  // Task: form fields came from `artist` (the list snapshot) while only
+  // expectedUpdatedAt came from the fresh version — letting CAS pass (compared
+  // against the real database version) while the PATCH still carried old fields
+  // over a concurrent edit already saved. `hydratedArtist` pins the SAME version
+  // for both: it is the exact GET object used to hydrate the form, and it is what
+  // provides expectedUpdatedAt on submit — never two independent sources.
   const [hydratedArtist, setHydratedArtist] = useState<Artist | null>(null);
 
   // ── Non-form state ──────────────────────────────────────────────
@@ -392,12 +390,12 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
   const setFile = (id: FileFieldId, value: UploadedFile[]) =>
     setFiles((prev) => ({ ...prev, [id]: value }));
 
-  // Campos preservados em round-trip (métricas, modelo legado, contrato…)
+  // Fields preserved in the round-trip (metrics, legacy model, contract…)
   const [preserved, setPreserved] = useState<ArtistPreservedInput>(emptyPreservedInput());
-  // Legado: contatos de equipe embutidos (round-trip intacto; o painel usa linkedContacts)
+  // Legacy: embedded team contacts (round-trip intact; the panel uses linkedContacts)
   const [teamContacts, setTeamContacts] = useState<Artist["teamContacts"]>([]);
 
-  // ── react-hook-form (schema GERADO da definição do formulário) ──
+  // ── react-hook-form (schema GENERATED from the form definition) ──
   const form = useForm<ArtistFormValues>({
     resolver: zodResolver(artistSchema),
     defaultValues: emptyArtistFormValues(),
@@ -406,8 +404,8 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
 
   const tipoPerfilVal = watch("tipoPerfil");
 
-  // ── Hidrata o formulário a partir de UMA versão (fonte única) ────
-  // MESMA hidratação canônica usada pela exportação (definição única).
+  // ── Hydrates the form from ONE version (single source) ─────────
+  // The SAME canonical hydration used by the export (single definition).
   const hydrateForm = (source: Artist | null) => {
     const v = artistToFormValues(source);
     const { fotoUrl, documentosPessoaisUrl, presskitUrl, ...formValues } = v;
@@ -434,14 +432,14 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
   };
 
   // ── Load artist data on open ────────────────────────────────────
-  // Modo criação: hidrata direto (nada para buscar).
-  // Modo edição: só hidrata quando a versão fresca (GET /artists/:id) chega,
-  // e só a PRIMEIRA vez por artista/abertura — `artist` (prop da listagem)
-  // serve só para identificar o ID/loading visual antes disso, nunca para
-  // preencher campos. Um refetch em segundo plano (ex.: refocus da aba) NÃO
-  // deve chamar reset() de novo e apagar o que o usuário já digitou — por
-  // isso o guard compara com `hydratedArtist?.id`, não reage a toda mudança
-  // de `freshArtistQuery.data`.
+  // Create mode: hydrates directly (nothing to fetch).
+  // Edit mode: hydrates only when the fresh version (GET /artists/:id) arrives,
+  // and only the FIRST time per artist/opening — `artist` (list prop) only serves
+  // to identify the ID/visual loading before that, never to fill fields. A
+  // background refetch (e.g. tab refocus) must NOT call reset() again and erase
+  // what the user already typed — that is why the guard compares with
+  // `hydratedArtist?.id` and does not react to every `freshArtistQuery.data`
+  // change.
   useEffect(() => {
     if (!open) {
       setHydratedArtist(null);
@@ -477,15 +475,16 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
         presskitUrl:           files.presskitUrl[0]?.url ?? "",
       };
 
-      // MESMA conversão canônica usada pela importação (definição única).
+      // The SAME canonical conversion used by the import (single definition).
       const payload = formValuesToArtistPayload(allValues, preserved);
 
-      // Pass-through de campos do Perfil 360 que não pertencem a este formulário
-      // (Task AA: as três seções descontinuadas do cadastro/edição de artista
-      // coletavam galleryUrls, manager*Legacy, executiveProducer, bookingAgency
-      // e partnerLabel — nenhuma delas é mais coletada aqui. Omiti-las do
-      // payload preserva o valor já existente no backend (update() só toca
-      // colunas presentes no DTO — ver artists.service.ts), em vez de zerá-las).
+      // Pass-through of 360-profile fields that do not belong to this form
+      // (Task AA: the three discontinued artist create/edit sections collected
+      // galleryUrls, manager*Legacy, executiveProducer, bookingAgency and
+      // partnerLabel — none of them is collected here anymore. Omitting them from
+      // the payload preserves the value already in the backend (update() only
+      // touches columns present in the DTO — see artists.service.ts) instead of
+      // clearing it).
       const passThrough = {
         teamContacts: teamContacts && teamContacts.length > 0 ? teamContacts : null,
       };
@@ -537,7 +536,7 @@ export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: Artis
   const rendererCtx: FieldRendererCtx = { register, control, watch, files, setFile, artistId: artist?.id };
   const currentValues = watch();
 
-  // ── JSX (seções e campos iterados da definição única) ──────────
+  // ── JSX (sections and fields iterated from the single definition) ──
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col gap-0 p-0 overflow-hidden">

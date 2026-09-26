@@ -8,20 +8,20 @@ import {
 import { AdaptivePlatformMetrics } from "./AdaptivePlatformMetrics";
 
 /**
- * SUBCLUSTER D — o registry descreve o contrato REAL de cada fonte.
- * Se um provider do backend passar a fornecer outra métrica, estes testes
- * divergem do runtime — que é exatamente o sinal desejado.
+ * SUBCLUSTER D — the registry describes each source's REAL contract.
+ * If a backend provider starts supplying another metric, these tests diverge
+ * from runtime — which is exactly the desired signal.
  */
 
 describe("Capability registry — contrato por plataforma", () => {
   it("Apple Music declares NO audience metric (the source does not provide one)", () => {
     expect(metricCapabilitiesOf("apple_music")).toEqual([]);
-    // Aceita os dois formatos de slug usados no projeto.
+    // Accepts both slug formats used in the project.
     expect(metricCapabilitiesOf("apple-music")).toEqual([]);
   });
 
   it("Apple Music nunca produz listeners — nem 0, nem N/A", () => {
-    // Mesmo recebendo valores, nada é renderizado como métrica.
+    // Even with values, nothing is rendered as a metric.
     const out = resolvePlatformMetrics("apple_music", {
       monthly_listeners: 1234, followers: 99, subscribers: 5,
     });
@@ -31,7 +31,7 @@ describe("Capability registry — contrato por plataforma", () => {
   it("Spotify supports monthly listeners and NOT followers", () => {
     const keys = metricCapabilitiesOf("spotify").map((d) => d.key);
     expect(keys).toEqual(["monthly_listeners"]);
-    // followers vem null do provider; mesmo com valor, não é suportado.
+    // followers comes null from the provider; even with a value, it is not supported.
     const out = resolvePlatformMetrics("spotify", { monthly_listeners: 10, followers: 500 });
     expect(out.map((m) => m.key)).toEqual(["monthly_listeners"]);
   });
@@ -48,7 +48,7 @@ describe("Capability registry — contrato por plataforma", () => {
   });
 
   it("sorts by semantic priority, not arrival order", () => {
-    // Plataforma sintética com dois grupos distintos prova a ordenação.
+    // A synthetic platform with two distinct groups proves the ordering.
     PLATFORM_METRIC_CAPABILITIES["__test_multi"] = [
       { key: "followers", label: "Seguidores", semanticGroup: "followers", priority: 50 },
       { key: "monthly_listeners", label: "Ouvintes", semanticGroup: "audience", priority: 20 },

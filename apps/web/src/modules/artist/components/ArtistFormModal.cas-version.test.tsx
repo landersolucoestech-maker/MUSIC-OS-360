@@ -6,11 +6,11 @@ import { ArtistFormModal } from "./ArtistFormModal";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import type { ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 
-// ─── Regressão: campos do formulário e expectedUpdatedAt (CAS) devem vir
-// da MESMA versão fresca (GET /artists/:id), nunca do snapshot da listagem.
-// Antes da correção, os campos ficavam presos ao `artista` prop (lista) e só
-// o expectedUpdatedAt usava a versão fresca — permitindo que um PATCH com CAS
-// válido sobrescrevesse silenciosamente uma edição concorrente já salva.
+// ─── Regression: form fields and expectedUpdatedAt (CAS) must come from the
+// SAME fresh version (GET /artists/:id), never from the list snapshot.
+// Before the fix, the fields were tied to the `artista` prop (list) and only
+// expectedUpdatedAt used the fresh version — letting a PATCH with a valid CAS
+// silently overwrite a concurrent edit that was already saved.
 
 vi.mock("sonner", () => ({
   toast: { error: vi.fn(), success: vi.fn(), warning: vi.fn() },
@@ -33,11 +33,11 @@ vi.mock("@/shared/lib/api-client", async (importOriginal) => {
   };
 });
 
-// Estado "servidor" em memória — permite simular GET fresco, PATCH normal e
-// um conflito real (outra sessão salvando entre o GET e o PATCH desta).
-// Formato PT (contrato real do wire/backend) — o código de produção converte
-// via wireToArtist()/artistToWirePayload(), nunca recebe/envia o modelo EN
-// diretamente pela rede.
+// In-memory "server" state — simulates a fresh GET, a normal PATCH and a real
+// conflict (another session saving between this session's GET and PATCH).
+// PT shape (the real wire/backend contract) — production code converts via
+// wireToArtist()/artistToWirePayload() and never receives/sends the EN model
+// directly over the network.
 let server: ArtistWireRecord & { id: string };
 let patchCalls: Array<{ path: string; body: Record<string, unknown> }>;
 
@@ -45,7 +45,7 @@ const mockGet = vi.fn(async (path: string) => {
   if (new RegExp(`^/artists/${ARTIST_ID}$`).test(path)) {
     return server;
   }
-  return []; // listagens (artists list, clients list, contacts list) — não usadas nestes testes
+  return []; // lists (artists, clients, contacts) — not used in these tests
 });
 
 const mockPatch = vi.fn(async (path: string, body: Record<string, unknown>) => {
@@ -80,7 +80,7 @@ function renderModal(props: Partial<React.ComponentProps<typeof ArtistFormModal>
   return { queryClient, onOpenChange, onSuccess };
 }
 
-/** Snapshot desatualizado, como o que a listagem forneceria via prop `artista`. */
+/** Stale snapshot, like the one the list would provide via the `artista` prop. */
 const listSnapshot: Artist = {
   id: ARTIST_ID,
   stageName: "Versão Antiga",
@@ -111,7 +111,7 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
   it("shows the fields of the fresh version (GET), not the list snapshot, and sends the same fresh updated_at as CAS", async () => {
     renderModal({ artist: listSnapshot });
 
-    // Antes da hidratação: Salvar indisponível.
+    // Before hydration: Save is unavailable.
     expect(saveButton()).toBeDisabled();
 
     await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
@@ -120,7 +120,7 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
     fireEvent.click(saveButton());
 
     await waitFor(() => expect(patchCalls.length).toBe(1));
-    // expectedUpdatedAt enviado = Y (versão fresca do GET), nunca X (snapshot da listagem).
+    // expectedUpdatedAt sent = Y (fresh GET version), never X (list snapshot).
     expect(patchCalls[0].body.expectedUpdatedAt).toBe("2026-08-18T20:00:00.000Z");
     expect(patchCalls[0].body.expectedUpdatedAt).not.toBe(listSnapshot.updated_at);
     expect(patchCalls[0].body.nome_artistico).toBe("Versão Atual");
@@ -134,8 +134,8 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
     fireEvent.change(nomeInput(), { target: { value: "Editado pelo usuário" } });
     expect(nomeInput().value).toBe("Editado pelo usuário");
 
-    // Simula um refetch em segundo plano (ex.: refocus da aba) trazendo uma
-    // versão nova do servidor — NÃO pode apagar o que o usuário digitou.
+    // Simulates a background refetch (e.g. tab refocus) bringing a new server
+    // version — it must NOT erase what the user typed.
     server = freshVersion({ nome_artistico: "Renomeado por outra sessão", updated_at: "2026-08-18T20:30:00.000Z" });
     await act(async () => {
       await queryClient.refetchQueries({ queryKey: ["artists", ARTIST_ID, "edit-fresh"] });
@@ -166,9 +166,9 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
     await waitFor(() => expect(patchCalls).toHaveLength(1));
     const versionAfterCycle1 = server.updated_at;
 
-    // "Reabrir": nova instância do modal, artista prop agora reflete o que
-    // ficou salvo (lista ainda pode estar desatualizada quanto ao updated_at
-    // exato — o que é justamente o cenário que este fix cobre).
+    // "Reopen": a new modal instance; the artista prop now reflects what was saved
+    // (the list may still be stale about the exact updated_at — which is exactly
+    // the scenario this fix covers).
     const { onSuccess: onSuccess2 } = renderModal({
       artist: { ...listSnapshot, stageName: "Editado ciclo 1" },
     });
@@ -186,8 +186,8 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
 
     await waitFor(() => expect(onSuccess2).toHaveBeenCalledTimes(1));
     expect(patchCalls).toHaveLength(2);
-    // CAS do ciclo 2 usa a versão fresca buscada nesta segunda abertura
-    // (resultado do ciclo 1), não o snapshot antigo passado via prop.
+    // Cycle 2's CAS uses the fresh version fetched on this second opening
+    // (cycle 1's result), not the old snapshot passed via prop.
     expect(patchCalls[1].body.expectedUpdatedAt).toBe(versionAfterCycle1);
     expect(toast.error).not.toHaveBeenCalled();
     void onSuccess;
@@ -197,16 +197,16 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
     const { onSuccess, onOpenChange } = renderModal({ artist: listSnapshot });
     await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
 
-    // "A" salva primeiro, por fora desta sessão — servidor avança de versão.
+    // "A" saves first, outside this session — the server advances the version.
     server = freshVersion({ nome_artistico: "Salvo por A", updated_at: "2026-08-18T20:45:00.000Z" });
 
-    // "B" (esta sessão) ainda está com o expectedUpdatedAt antigo (da hidratação).
+    // "B" (this session) still holds the old expectedUpdatedAt (from hydration).
     fireEvent.change(nomeInput(), { target: { value: "Tentativa de B" } });
     fireEvent.click(saveButton());
 
-    // useDataQuery dispara um toast genérico de erro no onError da mutação,
-    // além do toast específico de conflito emitido pelo catch do onSubmit
-    // (handleConcurrencyConflict) — o que importa é que o específico apareça.
+    // useDataQuery fires a generic error toast in the mutation's onError, besides
+    // the specific conflict toast emitted by onSubmit's catch
+    // (handleConcurrencyConflict) — what matters is that the specific one appears.
     await waitFor(() => {
       const messages = vi.mocked(toast.error).mock.calls.map((c) => c[0] as string);
       expect(messages.some((m) => m.includes("alterado por outra pessoa"))).toBe(true);
@@ -214,7 +214,7 @@ describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
 
     expect(onSuccess).not.toHaveBeenCalled();
     expect(onOpenChange).not.toHaveBeenCalledWith(false);
-    // O servidor continua com a versão de A — B não sobrescreveu silenciosamente.
+    // The server keeps A's version — B did not silently overwrite it.
     expect(server.nome_artistico).toBe("Salvo por A");
   });
 });

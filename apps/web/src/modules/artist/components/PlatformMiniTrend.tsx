@@ -10,32 +10,31 @@ interface MetricEvolutionPoint { date: string; value?: number; [key: string]: un
 interface PlatformMiniTrendProps {
   points: MetricEvolutionPoint[] | undefined;
   metric?: "followers" | "views" | "popularity";
-  /** Cor do traço da sparkline (CSS). Default: branco translúcido. */
+  /** Sparkline stroke color (CSS). Default: translucent white. */
   strokeColor?: string;
   /** Contraste do texto: tiles coloridos usam "white", neutros podem usar "muted". */
   variant?: "white" | "muted";
-  /** Prefixo de data-testid para o badge/sparkline. */
+  /** data-testid prefix for the badge/sparkline. */
   testIdPrefix: string;
   /**
-   * Quando `true`, renderiza um placeholder discreto ("— sem histórico")
-   * caso ainda não exista snapshot suficiente. Por padrão (`false`) o
-   * componente não renderiza nada — adequado para os tiles grandes onde a
-   * ausência da sparkline já transmite a ideia.
+   * When `true`, renders a discreet placeholder ("— sem histórico") when there
+   * are not enough snapshots yet. By default (`false`) the component renders
+   * nothing — suitable for the large tiles, where the missing sparkline already
+   * conveys the idea.
    */
   showEmptyState?: boolean;
-  /** Quando `false`, oculta a sparkline mesmo havendo dados suficientes. */
+  /** When `false`, hides the sparkline even with enough data. */
   showSparkline?: boolean;
 }
 
 /**
- * Mini badge de tendência + sparkline para uso DENTRO dos tiles compactos
- * de `ArtistPlatformMetrics`. Para o card grande da aba "Evolução" use
- * `ArtistEvolutionCard`.
+ * Mini trend badge + sparkline for use INSIDE the compact `ArtistPlatformMetrics`
+ * tiles. For the large card of the "Evolução" tab use `ArtistEvolutionCard`.
  *
- * Por padrão renderiza nada se não houver pelo menos 2 pontos com valor —
- * assim os tiles não ficam "ruidosos" enquanto o histórico é coletado.
- * Use `showEmptyState` para mostrar um placeholder "—" nos lugares onde a
- * ausência precisa ficar evidente (ex.: chips do dashboard 360).
+ * By default it renders nothing unless there are at least 2 points with a value —
+ * so the tiles are not "noisy" while history is collected. Use `showEmptyState`
+ * to show a "—" placeholder where the absence must be evident (e.g. the 360
+ * dashboard chips).
  */
 export function PlatformMiniTrend({
   points,
@@ -86,8 +85,8 @@ export function PlatformMiniTrend({
   const Icon =
     direction === "up" ? ArrowUpRight : direction === "down" ? ArrowDownRight : Minus;
 
-  // Cores: em tiles coloridos preferimos contraste em branco/translúcido;
-  // em tiles neutros usamos verde/vermelho/cinza padrão.
+  // Colors: on colored tiles we prefer white/translucent contrast; on neutral
+  // tiles we use the standard green/red/gray.
   const badgeClass = onColored
     ? "bg-muted text-foreground"
     : direction === "up"

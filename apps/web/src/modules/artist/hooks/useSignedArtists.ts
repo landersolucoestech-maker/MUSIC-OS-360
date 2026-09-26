@@ -8,10 +8,10 @@ export type { SignedArtist };
 
 const cacheConfig = getCacheConfig([...QUERY_KEYS.ARTISTS]);
 
-// Referência estável — ver mesmo comentário em shared/hooks/useDataQuery.ts:
-// `query.data ?? []` alocaria um array novo a cada render sem dado (loading
-// ou erro sem sucesso anterior), quebrando useMemo/useEffect que dependem
-// deste array em quem consome o hook.
+// Stable reference — see the same comment in shared/hooks/useDataQuery.ts:
+// `query.data ?? []` would allocate a new array on every render without data
+// (loading, or an error with no previous success), breaking the
+// useMemo/useEffect that depend on this array in the hook's consumers.
 const EMPTY_ARTISTS: readonly SignedArtist[] = [];
 
 export function useSignedArtists() {

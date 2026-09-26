@@ -1,19 +1,19 @@
 /**
  * modules/artist/forms/artist-form.definition.ts
  * ─────────────────────────────────────────────────────────────────
- * FONTE ÚNICA DE VERDADE da estrutura do formulário de artista
- * (Modal Criar/Editar). Define, para cada campo: id, label, type,
- * seção, ordem (posição no array) e obrigatoriedade.
+ * SINGLE SOURCE OF TRUTH for the artist form structure (Create/Edit modal).
+ * For each field it defines: id, label, type, section, order (position in the
+ * array) and requiredness.
  *
- * Consumidores obrigatórios desta definição:
- *   1. Renderização  — ArtistFormModal itera ARTIST_FORM_SECTIONS.
- *   2. Validação     — artistSchema é GERADO daqui (buildArtistSchema).
- *   3. Exportação    — artistToExportRowFromForm itera as seções/campos.
- *   4. Importação    — parseArtistImportRow itera as seções/campos.
+ * Mandatory consumers of this definition:
+ *   1. Rendering   — ArtistFormModal iterates ARTIST_FORM_SECTIONS.
+ *   2. Validation  — artistSchema is GENERATED from here (buildArtistSchema).
+ *   3. Export      — artistToExportRowFromForm iterates the sections/fields.
+ *   4. Import      — parseArtistImportRow iterates the sections/fields.
  *
- * Regra: NÃO criar listas de colunas, mappers de exportação, DTOs de
- * exportação ou headers paralelos. Um campo novo adicionado aqui aparece
- * automaticamente no formulário, na validação, no export e no import.
+ * Rule: do NOT create parallel column lists, export mappers, export DTOs or
+ * headers. A new field added here automatically appears in the form, the
+ * validation, the export and the import.
  * ─────────────────────────────────────────────────────────────────
  */
 
@@ -38,14 +38,14 @@ import {
   type UrlValidationState,
 } from "@/modules/artist/services/artist.mapper";
 
-// ─── Valores do formulário (react-hook-form) ─────────────────────
+// ─── Form values (react-hook-form) ───────────────────────────────
 
 export interface ArtistLinkedContactValue {
   contactId: string;
   distributors: DistributorEntry[];
 }
 
-/** Campos controlados pelo react-hook-form (validados pelo schema gerado). */
+/** Fields controlled by react-hook-form (validated by the generated schema). */
 export interface ArtistFormValues {
   nomeArtistico: string;
   generoMusical: string;
@@ -77,17 +77,17 @@ export interface ArtistFormValues {
   contatosVinculados: ArtistLinkedContactValue[];
 }
 
-/** Campos de arquivo (upload) — exibidos no formulário, fora do react-hook-form. */
+/** File (upload) fields — shown in the form, outside react-hook-form. */
 export interface ArtistFormFileValues {
   fotoUrl: string;
   documentosPessoaisUrl: string;
   presskitUrl: string;
 }
 
-/** Todos os campos exibidos no Modal Criar (form + uploads). */
+/** Every field shown in the Create modal (form + uploads). */
 export type ArtistFormAllValues = ArtistFormValues & ArtistFormFileValues;
 
-// ─── Tipos da definição ──────────────────────────────────────────
+// ─── Definition types ────────────────────────────────────────────
 
 export type ArtistFieldType =
   | "text"
@@ -105,20 +105,20 @@ export type ArtistFieldType =
 export interface ArtistFormField {
   /** id do campo — chave em ArtistFormAllValues. */
   id: keyof ArtistFormAllValues;
-  /** Label exibido no formulário = header da coluna exportada. */
+  /** Label shown in the form = header of the exported column. */
   label: string;
   type: ArtistFieldType;
-  /** Obrigatoriedade única: asterisco no label E validação do schema. */
+  /** Single requiredness: the label asterisk AND the schema validation. */
   required?: boolean;
   placeholder?: string;
   testId?: string;
   /** Ocupa a linha inteira do grid (default: meia largura). */
   fullWidth?: boolean;
-  /** Opções para type="select". */
+  /** Options for type="select". */
   options?: ReadonlyArray<{ value: string; label: string }>;
-  /** Opções para type="multicheck". */
+  /** Options for type="multicheck". */
   checkOptions?: ReadonlyArray<{ value: string; label: string }>;
-  /** Validações string do schema gerado. */
+  /** String validations of the generated schema. */
   maxLength?: { value: number; message: string };
   requiredMessage?: string;
   /** Validador visual para type="url". */
@@ -130,12 +130,12 @@ export interface ArtistFormField {
 export interface ArtistFormSection {
   id: string;
   title: string;
-  /** Seção condicional — mesma regra usada na renderização. */
+  /** Conditional section — the same rule used by rendering. */
   visibleWhen?: (values: ArtistFormValues) => boolean;
   fields: ArtistFormField[];
 }
 
-// ─── Opções ──────────────────────────────────────────────────────
+// ─── Options ─────────────────────────────────────────────────────
 
 const GENEROS_MUSICAIS_OPTIONS = MUSICAL_GENRE_LABELS.map((g) => ({ value: g, label: g }));
 
@@ -151,7 +151,7 @@ export const TIPO_PERFIL_OPTIONS = [
   { value: "editora",        label: "Com editora" },
 ] as const;
 
-/** Perfis que exibem a seção Distribuidoras / Agregadoras. */
+/** Profiles that show the Distributors / Aggregators section. */
 export const PERFIS_COM_DISTRIBUIDORA = ["com_empresario", "gravadora", "editora"];
 
 export const DISTRIBUIDORAS_OPTIONS = [
@@ -170,9 +170,9 @@ const ESPECIALIDADES_OPTIONS = Object.entries(SPECIALTY_LABELS).map(
 
 const URL_MAX = { value: 300, message: "URL inválida" };
 
-// ─── A DEFINIÇÃO ─────────────────────────────────────────────────
-// A ordem dos arrays (seções e campos) é a ordem VISUAL do formulário
-// e, portanto, a ordem das colunas do arquivo exportado.
+// ─── THE DEFINITION ──────────────────────────────────────────────
+// The array order (sections and fields) is the form's VISUAL order and
+// therefore the column order of the exported file.
 
 export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
   {
@@ -323,7 +323,7 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
   },
 ];
 
-/** Todos os campos do formulário, na ordem visual (seções percorridas em sequência). */
+/** Every form field, in visual order (sections walked in sequence). */
 export function allArtistFormFields(): ArtistFormField[] {
   return ARTIST_FORM_SECTIONS.flatMap((s) => s.fields);
 }
@@ -340,7 +340,7 @@ export function emptyArtistFormValues(): ArtistFormValues {
   };
 }
 
-// ─── Validação (schema Zod GERADO da definição) ──────────────────
+// ─── Validation (Zod schema GENERATED from the definition) ───────
 
 const distribuidoraEntrySchema = z.object({
   id: z.string(),
@@ -364,16 +364,16 @@ function stringFieldSchema(field: ArtistFormField): z.ZodTypeAny {
 }
 
 /**
- * Gera o schema de validação a partir da definição do formulário.
- * required/maxLength vêm exclusivamente de ARTIST_FORM_SECTIONS.
+ * Generates the validation schema from the form definition.
+ * required/maxLength come exclusively from ARTIST_FORM_SECTIONS.
  */
 export function buildArtistSchema() {
   const shape: Record<string, z.ZodTypeAny> = {};
   for (const field of allArtistFormFields()) {
     switch (field.type) {
       case "file":
-        // Uploads são validados pelo widget (accept/maxSize da definição);
-        // não participam do schema do react-hook-form.
+        // Uploads are validated by the widget (the definition's accept/maxSize);
+        // they are not part of the react-hook-form schema.
         break;
       case "multicheck":
         shape[field.id] = z.array(z.string()).optional();
@@ -402,9 +402,9 @@ export function buildArtistSchema() {
 
 export const artistSchema = buildArtistSchema() as unknown as z.ZodType<ArtistFormValues>;
 
-// ─── Hidratação (Artist → valores do formulário) ─────────────────
-// MESMA função para abrir o modal de edição e para exportar: garante
-// que a célula exportada é exatamente o valor que o formulário exibiria.
+// ─── Hydration (Artist → form values) ────────────────────────────
+// The SAME function opens the edit modal and exports: it guarantees the
+// exported cell is exactly the value the form would show.
 
 export function artistToFormValues(artist: Artist | null | undefined): ArtistFormAllValues {
   const f = artistToFormFields(artist ?? null);
@@ -460,12 +460,12 @@ export function artistToFormValues(artist: Artist | null | undefined): ArtistFor
   };
 }
 
-// ─── Persistência (valores do formulário → payload Artist) ───────
+// ─── Persistence (form values → Artist payload) ──────────────────
 
 /**
- * Campos preservados em round-trip de edição que NÃO são exibidos no
- * formulário (métricas de plataforma, modelo legado, contrato etc.).
- * No CREATE e na IMPORTAÇÃO valem estes defaults.
+ * Fields preserved in the edit round-trip that are NOT shown in the form
+ * (platform metrics, legacy model, contract etc.).
+ * CREATE and IMPORT use these defaults.
  */
 export type ArtistPreservedInput = Omit<FormToArtistInput, keyof ArtistFormAllValues>;
 
@@ -487,8 +487,8 @@ export function emptyPreservedInput(): ArtistPreservedInput {
 }
 
 /**
- * Extrai de um artista existente os campos preservados em round-trip de
- * edição (não exibidos no formulário). Usa a MESMA hidratação canônica.
+ * Extracts from an existing artist the fields preserved in the edit
+ * round-trip (not shown in the form). Uses the SAME canonical hydration.
  */
 export function artistToPreservedInput(artist: Artist | null | undefined): ArtistPreservedInput {
   const f = artistToFormFields(artist ?? null);
@@ -526,8 +526,8 @@ export function artistToPreservedInput(artist: Artist | null | undefined): Artis
 }
 
 /**
- * Converte os valores do formulário no payload de persistência.
- * MESMA função para o submit do modal e para a importação.
+ * Converts the form values into the persistence payload.
+ * The SAME function serves the modal submit and the import.
  */
 export function formValuesToArtistPayload(
   values: ArtistFormAllValues,
@@ -574,7 +574,7 @@ export function formValuesToArtistPayload(
   } as Omit<Artist, "id" | "user_id" | "created_at" | "updated_at">;
 }
 
-// ─── Codecs de célula (por TIPO de campo, não por fluxo) ─────────
+// ─── Cell codecs (per field TYPE, not per flow) ──────────────────
 
 function serializeJsonArray(value: unknown[]): string {
   return value.length > 0 ? JSON.stringify(value) : "";
@@ -591,7 +591,7 @@ function parseJsonArray<T>(raw: unknown, isValid: (item: unknown) => boolean): T
   }
 }
 
-/** Valor de célula exportada para um campo — derivado do valor do formulário. */
+/** Exported cell value for a field — derived from the form value. */
 export function serializeArtistFieldValue(field: ArtistFormField, values: ArtistFormAllValues): string {
   const v = values[field.id];
   switch (field.type) {
@@ -607,7 +607,7 @@ export function serializeArtistFieldValue(field: ArtistFormField, values: Artist
   }
 }
 
-/** Valor de formulário a partir de uma célula importada. */
+/** Form value from an imported cell. */
 function deserializeArtistFieldValue(
   field: ArtistFormField,
   raw: unknown,
@@ -634,11 +634,11 @@ function deserializeArtistFieldValue(
   }
 }
 
-// ─── Exportação ──────────────────────────────────────────────────
+// ─── Export ──────────────────────────────────────────────────────
 
 /**
- * Linha de exportação: itera as seções/campos NA ORDEM VISUAL do formulário.
- * 1 campo do formulário = exatamente 1 coluna, com o label como header.
+ * Export row: iterates the sections/fields IN THE FORM'S VISUAL ORDER.
+ * 1 form field = exactly 1 column, with the label as the header.
  */
 export function artistToExportRowFromForm(artist: Artist): Record<string, string> {
   const values = artistToFormValues(artist);
@@ -651,11 +651,11 @@ export function artistToExportRowFromForm(artist: Artist): Record<string, string
   return row;
 }
 
-// ─── Importação ──────────────────────────────────────────────────
+// ─── Import ──────────────────────────────────────────────────────
 
 /**
- * Headers aceitos por campo no import: label canônico, id do campo e
- * aliases de compatibilidade com planilhas exportadas por versões antigas.
+ * Headers accepted per field on import: the canonical label, the field id and
+ * compatibility aliases for spreadsheets exported by older versions.
  */
 const IMPORT_HEADER_ALIASES: Partial<Record<keyof ArtistFormAllValues, string[]>> = {
   fotoUrl:               ["Foto URL"],
@@ -682,9 +682,9 @@ const IMPORT_HEADER_ALIASES: Partial<Record<keyof ArtistFormAllValues, string[]>
 };
 
 /**
- * Converte uma linha de planilha em valores de formulário, iterando a
- * MESMA definição usada para renderizar e exportar. Retorna null quando
- * a linha não tem Nome Artístico (registro inválido).
+ * Converts a spreadsheet row into form values, iterating the SAME definition
+ * used to render and export. Returns null when the row has no Nome Artístico
+ * (invalid record).
  */
 export function parseArtistImportRow(row: Record<string, unknown>): ArtistFormAllValues | null {
   const values: ArtistFormAllValues = { ...emptyArtistFormValues(), fotoUrl: "", documentosPessoaisUrl: "", presskitUrl: "" };

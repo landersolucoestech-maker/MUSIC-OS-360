@@ -16,12 +16,12 @@ export interface ArtistResponsible {
 }
 
 /**
- * Vínculo entre o artista e um contato do CRM (CRM > Contatos).
- * O artista armazena APENAS a referência (`contactId`) — Nome/Categoria/
- * Telefone/E-mail são resolvidos dinamicamente do CRM em tempo de exibição,
- * evitando duplicação de dados. Os `distributors` são específicos da relação
- * artista↔contato (não do contato) e só se aplicam quando a categoria do
- * contato no CRM for Empresário / Gravadora / Editora.
+ * Link between the artist and a CRM contact (CRM > Contatos).
+ * The artist stores ONLY the reference (`contactId`) — name/category/phone/email
+ * are resolved dynamically from the CRM at display time, avoiding data
+ * duplication. `distributors` belong to the artist↔contact relation (not the
+ * contact) and apply only when the contact's CRM category is Empresário /
+ * Gravadora / Editora.
  */
 export interface ArtistLinkedContact {
   contactId: string;
@@ -40,14 +40,13 @@ export interface ArtistRelationship {
 }
 
 /**
- * @deprecated Contatos de equipe embutidos (cópias). Mantido apenas para
- * retrocompatibilidade com dados antigos já persistidos (ainda lido/escrito
- * por `ArtistFormModal`/`artist.mapper.ts` como pass-through, para não
- * descartar dados existentes). NÃO é usado pelo fluxo público de
- * auto-cadastro (`ArtistaSignupPublic`) — esse fluxo usa seu próprio shape
- * local desconectado (`ContatoEquipe`), enviado como parte de um payload de
- * Lead, nunca convertido para este tipo. Novos cadastros/edições no painel
- * usam `linkedContacts`.
+ * @deprecated Embedded team contacts (copies). Kept only for backward
+ * compatibility with old persisted data (still read/written by
+ * `ArtistFormModal`/`artist.mapper.ts` as a pass-through, so existing data is
+ * not discarded). NOT used by the public self-signup flow
+ * (`ArtistaSignupPublic`) — that flow uses its own disconnected local shape
+ * (`ContatoEquipe`), sent as part of a Lead payload and never converted to this
+ * type. New panel creates/edits use `linkedContacts`.
  */
 export interface ArtistTeamContact {
   name: string;
@@ -142,8 +141,8 @@ export interface Artist {
   documents?: { nome: string; url: string }[] | null;
   generalDistributors?: DistributorEntry[] | null;
   /**
-   * Contatos da equipe vinculados a partir do CRM (fonte única).
-   * Substitui o antigo campo embutido no cadastro/edição de artista.
+   * Team contacts linked from the CRM (single source).
+   * Replaces the old embedded field in artist create/edit.
    */
   linkedContacts?: ArtistLinkedContact[] | null;
   /** @deprecated ver `ArtistTeamContact`. */

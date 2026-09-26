@@ -1,16 +1,15 @@
 /**
  * ArtistFormModal.sections-removed.guard.test.ts
  *
- * Guarda permanente (Task AA): as seções "Classificação e Vínculos",
- * "Equipe de Gestão" e "Mídia Adicional" deixaram de fazer parte do
- * cadastro/edição de Artista. Os campos por trás delas continuam existindo
- * no domínio (type/status/contrato_id são usados amplamente; manager_*,
- * produtor_executivo, agencia_booking, label_parceira e galeria_urls
- * seguem no contrato de Relatórios; galeria_urls, documentos e
- * contatos_equipe seguem exibidos no Perfil 360) — só a UI de
- * cadastro/edição foi removida. Este teste falha se qualquer uma das três
- * seções, seus controles, ou o estado local que as alimentava, voltarem a
- * este arquivo.
+ * Permanent guard (Task AA): the "Classificação e Vínculos",
+ * "Equipe de Gestão" and "Mídia Adicional" sections are no longer part of
+ * artist create/edit. The fields behind them still exist in the domain
+ * (type/status/contrato_id are widely used; manager_*, produtor_executivo,
+ * agencia_booking, label_parceira and galeria_urls remain in the Reports
+ * contract; galeria_urls, documentos and contatos_equipe remain shown in the
+ * 360 profile) — only the create/edit UI was removed. This test fails if any
+ * of the three sections, their controls, or the local state that fed them
+ * come back to this file.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

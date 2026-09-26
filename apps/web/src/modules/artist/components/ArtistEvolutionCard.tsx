@@ -42,9 +42,9 @@ export interface EvolutionSummary {
 }
 
 /**
- * Calcula a variação entre o snapshot mais recente e o mais antigo dentro
- * da janela. Retorna `hasEnoughData=false` quando não há ao menos 2 pontos
- * com valor numérico — nesse caso o card mostra "Sem histórico ainda".
+ * Computes the change between the most recent and the oldest snapshot within
+ * the window. Returns `hasEnoughData=false` when there are fewer than 2 points
+ * with a numeric value — the card then shows "Sem histórico ainda".
  */
 export function computeEvolutionSummary(
   points: MetricEvolutionPoint[] | undefined,
@@ -101,13 +101,13 @@ interface ArtistEvolutionCardProps {
   title: string;
   subtitle: string;
   Icon: LucideIcon;
-  /** Cor primária (formato hex) usada na linha/área e no acento de cabeçalho. */
+  /** Primary color (hex) used for the line/area and the header accent. */
   accent: string;
   isLoading: boolean;
-  /** Quando ausência de configuração/ID, renderiza estado vazio amigável. */
+  /** When configuration/ID is missing, renders a friendly empty state. */
   isMissingConfig?: boolean;
   missingConfigLabel?: string;
-  /** Erro genérico vindo da query. */
+  /** Generic error coming from the query. */
   errorMessage?: string | null;
   points: MetricEvolutionPoint[] | undefined;
   metric: "followers" | "views" | "popularity";
@@ -165,7 +165,7 @@ export function ArtistEvolutionCard({
         return {
           date: typeof rawDate === "string" ? rawDate : "",
           value: Number(p[metric]),
-          // Sem data válida não inventamos um valor: o rótulo fica "—" (transparente).
+          // Without a valid date we do not invent a value: the label stays "—" (transparent).
           label: hasValidDate ? format(dt, "dd/MM", { locale: ptBR }) : "—",
         };
       });
@@ -177,7 +177,7 @@ export function ArtistEvolutionCard({
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-0">
-        {/* Cabeçalho */}
+        {/* Header */}
         <div
           className="flex items-center gap-3 border-b bg-card px-4 py-3"
         >

@@ -4,11 +4,11 @@ import { QUERY_KEYS } from "@/shared/lib/query-config";
 import type { SocialPlatform } from "./useArtistPlatformProfiles";
 import type { MetricEvolutionPoint } from "@/modules/artist/components/ArtistEvolutionCard";
 
-// Espelha metric-keys.ts do backend (platform-profiles/metric-keys.ts) — sem
-// pacote compartilhado entre web/api para este contrato ainda (mesmo padrão
-// documentado em useArtistPlatformProfiles.ts). apple-music não tem entrada:
-// a Soundcharts não expõe audiência para Apple Music (ver
-// platform-metric-capabilities.ts) — a query fica sempre vazia, nunca inventa dado.
+// Mirrors the backend metric-keys.ts (platform-profiles/metric-keys.ts) — there
+// is no shared web/api package for this contract yet (same pattern documented in
+// useArtistPlatformProfiles.ts). apple-music has no entry: Soundcharts does not
+// expose an Apple Music audience (see platform-metric-capabilities.ts) — the
+// query stays empty and never invents data.
 const METRIC_KEY_BY_PLATFORM: Partial<Record<SocialPlatform, string>> = {
   spotify: "spotify.monthly_listeners",
   youtube: "youtube.subscribers",
@@ -23,12 +23,12 @@ interface HistoryResponse {
 }
 
 /**
- * Histórico real (Fase 2 — Time-Series Foundation) de uma plataforma, no
- * formato que ArtistEvolutionCard/PlatformMiniTrend já esperam. Substitui o
- * stub `enabled:false, queryFn: async () => []` que existia em
- * ArtistEvolutionSection — a seção "Evolução" ficava com toda a UI pronta
- * (sparkline, badge de tendência, veredito agregado) mas nunca recebia dado
- * real porque não havia retenção de histórico entre sincronizações.
+ * Real history (Phase 2 — time-series foundation) of a platform, in the shape
+ * ArtistEvolutionCard/PlatformMiniTrend already expect. Replaces the
+ * `enabled:false, queryFn: async () => []` stub that existed in
+ * ArtistEvolutionSection — the "Evolução" section had its whole UI ready
+ * (sparkline, trend badge, aggregated verdict) but never received real data
+ * because no history was retained between syncs.
  */
 export function useArtistPlatformEvolution(artistId: string | null | undefined, platform: SocialPlatform) {
   const metric = METRIC_KEY_BY_PLATFORM[platform];
