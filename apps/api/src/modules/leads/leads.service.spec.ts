@@ -64,8 +64,8 @@ function makeService(rows: Record<string, unknown>[] = []) {
   return { svc, repo, encryption };
 }
 
-describe('LeadsService.create — colunas físicas reais (nunca score/pipeline_stage)', () => {
-  it('cria lead com os campos ricos do CRM musical mapeados para colunas físicas', async () => {
+describe('LeadsService.create — real physical columns (never score/pipeline_stage)', () => {
+  it('creates a lead with the rich music-CRM fields mapped to physical columns', async () => {
     const { svc, repo } = makeService();
 
     await svc.create('tenant-1', 'user-1', {
@@ -98,7 +98,7 @@ describe('LeadsService.create — colunas físicas reais (nunca score/pipeline_s
     expect(saved['pipeline_stage']).toBeUndefined();
   });
 
-  it('DTO.stage vai para metadata (pipeline_stage não existe fisicamente)', async () => {
+  it('DTO.stage goes into metadata (pipeline_stage does not exist physically)', async () => {
     const { svc, repo } = makeService();
 
     await svc.create('tenant-1', 'user-1', { name: 'Lead Teste', stage: 'qualified' } as any);
@@ -116,7 +116,7 @@ describe('LeadsService.create — colunas físicas reais (nunca score/pipeline_s
  * em.getRepository), então uma edição concorrente reverte a transação
  * inteira em vez de deixar um histórico de transição órfão.
  */
-describe('LeadsService.update — concorrência otimista (Task K)', () => {
+describe('LeadsService.update — optimistic concurrency (Task K)', () => {
   const NOW = new Date('2026-08-14T12:00:00.000Z');
   const LEAD = {
     id: 'lead-1', tenant_id: 'tenant-1', nome: 'Fulano de Tal', status: 'novo',
@@ -140,7 +140,7 @@ describe('LeadsService.update — concorrência otimista (Task K)', () => {
     return { svc, repo };
   }
 
-  it('update sem troca de status, sem expectedUpdatedAt: aplica update incondicional', async () => {
+  it('update without a status change and without expectedUpdatedAt: applies an unconditional update', async () => {
     const { svc, repo } = makeServiceWithTransaction();
 
     await svc.update('tenant-1', 'user-1', 'lead-1', { nome: 'Novo Nome' } as any);
@@ -149,7 +149,7 @@ describe('LeadsService.update — concorrência otimista (Task K)', () => {
     expect(criteria).toEqual({ id: 'lead-1', tenant_id: 'tenant-1' });
   });
 
-  it('update com troca de status e expectedUpdatedAt desatualizado (0 linhas): ConflictException, transação não commita', async () => {
+  it('update with a status change and stale expectedUpdatedAt (0 rows): ConflictException, the transaction does not commit', async () => {
     const { svc, repo } = makeServiceWithTransaction();
     (repo.update as jest.Mock).mockResolvedValueOnce({ affected: 0 });
 
@@ -207,7 +207,7 @@ describe('LeadsService.submitPublicArtistApplication — tenant suspenso por bil
     return { svc, repo, query, billing };
   }
 
-  it('rejeita a candidatura pública quando tenant_billing_state.status = suspended, mesmo com tenants.active = true (find-a22e0dad fix)', async () => {
+  it('rejects the public application when tenant_billing_state.status = suspended, even with tenants.active = true (find-a22e0dad fix)', async () => {
     const { svc, repo, billing } = makeServiceForPublicFlow('suspended');
 
     await expect(
@@ -224,7 +224,7 @@ describe('LeadsService.submitPublicArtistApplication — tenant suspenso por bil
     expect(repo.save).not.toHaveBeenCalled();
   });
 
-  it('rejeita a candidatura pública quando tenant_billing_state.status = read_only', async () => {
+  it('rejects the public application when tenant_billing_state.status = read_only', async () => {
     const { svc, repo } = makeServiceForPublicFlow('read_only');
 
     await expect(
@@ -240,7 +240,7 @@ describe('LeadsService.submitPublicArtistApplication — tenant suspenso por bil
     expect(repo.save).not.toHaveBeenCalled();
   });
 
-  it('aceita normalmente quando o tenant não está suspenso/read_only por billing', async () => {
+  it('accepts normally when the tenant is not suspended/read_only by billing', async () => {
     const { svc, repo } = makeServiceForPublicFlow('active');
 
     const result = await svc.submitPublicArtistApplication('suspended-co', {
@@ -255,7 +255,7 @@ describe('LeadsService.submitPublicArtistApplication — tenant suspenso por bil
     expect(repo.save).toHaveBeenCalled();
   });
 
-  it('aceita normalmente quando não existe linha de billing state (tenant sem billing configurado ainda)', async () => {
+  it('accepts normally when there is no billing-state row (tenant without billing configured yet)', async () => {
     const { svc, repo } = makeServiceForPublicFlow(null);
 
     const result = await svc.submitPublicArtistApplication('suspended-co', {

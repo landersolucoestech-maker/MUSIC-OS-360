@@ -14,17 +14,17 @@ describe('largestRemainder — algoritmo normativo (Fases 11/12)', () => {
     expect(largestRemainder('1000.00', ['70', '30'])).toEqual(['700.00', '300.00']);
   });
 
-  it('R$ 100,00 → 33,33/33,33/33,34 (sem resíduo) = exatamente as frações', () => {
+  it('R$ 100.00 → 33.33/33.33/33.34 (no residue) = exactly the fractions', () => {
     expect(largestRemainder('100.00', ['33.33', '33.33', '33.34']))
       .toEqual(['33.33', '33.33', '33.34']);
   });
 
-  it('caso normativo Fase 12: 3×33,3333% de R$ 100,00 → resíduo de 1 centavo vai à maior fração (menor índice)', () => {
+  it('Phase 12 normative case: 3×33.3333% of R$ 100.00 → the 1-cent residue goes to the largest fraction (lowest index)', () => {
     expect(largestRemainder('100.00', ['33.3333', '33.3333', '33.3333']))
       .toEqual(['33.34', '33.33', '33.33']);
   });
 
-  it('conciliação exata (I7): Σ alocado = round(amount × Σpct/100, 2) em amostras', () => {
+  it('exact reconciliation (I7): Σ allocated = round(amount × Σpct/100, 2) across samples', () => {
     const cases: Array<[string, string[]]> = [
       ['999.99', ['33.33', '33.33', '33.34']],
       ['0.03', ['50', '50']],
@@ -40,7 +40,7 @@ describe('largestRemainder — algoritmo normativo (Fases 11/12)', () => {
     }
   });
 
-  it('percentuais abaixo de 100% (rateio parcial): Σ alocado = fração alocada; resto é "Sem vínculo" implícito', () => {
+  it('percentages below 100% (partial split): Σ allocated = allocated fraction; the remainder is an implicit "Sem vínculo"', () => {
     expect(largestRemainder('1000.00', ['25', '25'])).toEqual(['250.00', '250.00']);
   });
 
@@ -51,19 +51,19 @@ describe('largestRemainder — algoritmo normativo (Fases 11/12)', () => {
       .toThrow(/excede 100/);
   });
 
-  it('R$ 0,01 → 60/40: parcela de R$ 0,00 é REJEITADA (allocated_amount > 0)', () => {
+  it('R$ 0.01 → 60/40: a R$ 0.00 share is REJECTED (allocated_amount > 0)', () => {
     expect(() => largestRemainder('0.01', ['60', '40']))
       .toThrow(/R\$ 0,00/);
   });
 
-  it('percentual inválido (0, negativo, >100, texto) → rejeita', () => {
+  it('invalid percentage (0, negative, >100, text) → rejected', () => {
     expect(() => largestRemainder('100.00', ['0'])).toThrow(LargestRemainderError);
     expect(() => largestRemainder('100.00', ['-5'])).toThrow(LargestRemainderError);
     expect(() => largestRemainder('100.00', ['100.0001'])).toThrow(LargestRemainderError);
     expect(() => largestRemainder('100.00', ['abc'])).toThrow(LargestRemainderError);
   });
 
-  it('amount inválido (zero, negativo, >2 casas) → rejeita', () => {
+  it('invalid amount (zero, negative, >2 decimals) → rejected', () => {
     expect(() => largestRemainder('0.00', ['100'])).toThrow(LargestRemainderError);
     expect(() => largestRemainder('-10.00', ['100'])).toThrow(LargestRemainderError);
     expect(() => largestRemainder('10.001', ['100'])).toThrow(LargestRemainderError);
@@ -73,11 +73,11 @@ describe('largestRemainder — algoritmo normativo (Fases 11/12)', () => {
     expect(() => largestRemainder('100.00', [])).toThrow(/vazia/);
   });
 
-  it('duplicatas de percentual são aceitas pelo algoritmo (a UNIQUE de alvo é responsabilidade do banco)', () => {
+  it('duplicate percentages are accepted by the algorithm (target UNIQUE is the database\'s responsibility)', () => {
     expect(largestRemainder('100.00', ['50', '50'])).toEqual(['50.00', '50.00']);
   });
 
-  it('determinismo: mesma entrada → mesma saída; ordem de entrada define o desempate', () => {
+  it('determinism: same input → same output; input order breaks ties', () => {
     const a = largestRemainder('100.00', ['33.3333', '33.3333', '33.3333']);
     const b = largestRemainder('100.00', ['33.3333', '33.3333', '33.3333']);
     expect(a).toEqual(b);
@@ -89,7 +89,7 @@ describe('largestRemainder — algoritmo normativo (Fases 11/12)', () => {
     expect(d).toEqual(['66.67', '133.33']);
   });
 
-  it('nunca usa float no caminho monetário: aceita strings exatas e preserva 2 casas', () => {
+  it('never uses float on the money path: accepts exact strings and keeps 2 decimals', () => {
     expect(largestRemainder('0.10', ['50', '50'])).toEqual(['0.05', '0.05']);
     expect(largestRemainder('0.03', ['33.3333', '33.3333', '33.3334']))
       .toEqual(['0.01', '0.01', '0.01']);

@@ -14,7 +14,7 @@ import { AdaptivePlatformMetrics } from "./AdaptivePlatformMetrics";
  */
 
 describe("Capability registry — contrato por plataforma", () => {
-  it("Apple Music NÃO declara métrica de audiência (a fonte não fornece)", () => {
+  it("Apple Music declares NO audience metric (the source does not provide one)", () => {
     expect(metricCapabilitiesOf("apple_music")).toEqual([]);
     // Aceita os dois formatos de slug usados no projeto.
     expect(metricCapabilitiesOf("apple-music")).toEqual([]);
@@ -28,7 +28,7 @@ describe("Capability registry — contrato por plataforma", () => {
     expect(out).toEqual([]);
   });
 
-  it("Spotify suporta ouvintes mensais e NÃO followers", () => {
+  it("Spotify supports monthly listeners and NOT followers", () => {
     const keys = metricCapabilitiesOf("spotify").map((d) => d.key);
     expect(keys).toEqual(["monthly_listeners"]);
     // followers vem null do provider; mesmo com valor, não é suportado.
@@ -36,18 +36,18 @@ describe("Capability registry — contrato por plataforma", () => {
     expect(out.map((m) => m.key)).toEqual(["monthly_listeners"]);
   });
 
-  it("SoundCloud expõe apenas os campos realmente suportados", () => {
+  it("SoundCloud exposes only the fields it really supports", () => {
     expect(metricCapabilitiesOf("soundcloud").map((d) => d.key)).toEqual(["followers"]);
     const out = resolvePlatformMetrics("soundcloud", { followers: 42, monthly_listeners: 999 });
     expect(out).toHaveLength(1);
     expect(out[0].key).toBe("followers");
   });
 
-  it("YouTube usa subscribers, não followers", () => {
+  it("YouTube uses subscribers, not followers", () => {
     expect(metricCapabilitiesOf("youtube").map((d) => d.key)).toEqual(["subscribers"]);
   });
 
-  it("ordena por prioridade semântica, não por ordem de chegada", () => {
+  it("sorts by semantic priority, not arrival order", () => {
     // Plataforma sintética com dois grupos distintos prova a ordenação.
     PLATFORM_METRIC_CAPABILITIES["__test_multi"] = [
       { key: "followers", label: "Seguidores", semanticGroup: "followers", priority: 50 },
@@ -59,8 +59,8 @@ describe("Capability registry — contrato por plataforma", () => {
   });
 });
 
-describe("Zero real vs métrica ausente", () => {
-  it("0 real é DADO e é preservado", () => {
+describe("Real zero vs missing metric", () => {
+  it("a real 0 is DATA and is preserved", () => {
     const out = resolvePlatformMetrics("soundcloud", { followers: 0 });
     expect(out).toHaveLength(1);
     expect(out[0].value).toBe(0);
@@ -72,7 +72,7 @@ describe("Zero real vs métrica ausente", () => {
     expect(resolvePlatformMetrics("soundcloud", {})).toEqual([]);
   });
 
-  it("NaN não é tratado como valor", () => {
+  it("NaN is not treated as a value", () => {
     expect(resolvePlatformMetrics("soundcloud", { followers: Number.NaN })).toEqual([]);
   });
 });
@@ -91,14 +91,14 @@ describe("Renderer adaptativo — plataformas com schemas diferentes", () => {
     expect(screen.queryByTestId("metric-soundcloud-monthly_listeners")).toBeNull();
   });
 
-  it("Apple Music declara ausência de métrica, sem card fabricado", () => {
+  it("Apple Music declares a missing metric without a fabricated card", () => {
     render(<AdaptivePlatformMetrics platform="apple_music" values={{ monthly_listeners: 10 }} />);
     expect(screen.getByTestId("metric-apple_music-unsupported")).toBeInTheDocument();
     expect(screen.queryByText("0")).toBeNull();
     expect(screen.queryByText("N/A")).toBeNull();
   });
 
-  it("0 real aparece como 0; ausente aparece como Indisponível", () => {
+  it("a real 0 renders as 0; a missing metric renders as \"Indisponível\"", () => {
     const { unmount } = render(<AdaptivePlatformMetrics platform="soundcloud" values={{ followers: 0 }} />);
     expect(screen.getByTestId("metric-soundcloud-followers")).toHaveTextContent("0");
     unmount();
@@ -107,7 +107,7 @@ describe("Renderer adaptativo — plataformas com schemas diferentes", () => {
     expect(screen.getByTestId("metric-soundcloud-followers")).toHaveTextContent("Indisponível");
   });
 
-  it("não introduz copy de conexão/OAuth em métricas públicas", () => {
+  it("introduces no connection/OAuth copy into public metrics", () => {
     render(<AdaptivePlatformMetrics platform="instagram" values={{ followers: null }} />);
     for (const forbidden of [/conecte/i, /vincular conta/i, /soundcharts/i]) {
       expect(screen.queryByText(forbidden)).toBeNull();

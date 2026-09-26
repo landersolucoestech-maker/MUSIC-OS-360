@@ -16,7 +16,7 @@ import { UsersService } from './users.service';
  *    se o registro mudou desde a leitura. Agora usam casUpdate — cenário A/B
  *    provado abaixo.
  */
-describe('UsersService — Task L (separação RBAC + concorrência)', () => {
+describe('UsersService — Task L (RBAC separation + concurrency)', () => {
   const TENANT = 'tenant-a';
   const MEMBER_ID = 'member-a';
   const NOW = new Date('2026-08-14T10:00:00.000Z');
@@ -60,8 +60,8 @@ describe('UsersService — Task L (separação RBAC + concorrência)', () => {
     return { service, repo, roleResolver, rbacCache };
   }
 
-  describe('separação perfil vs RBAC', () => {
-    it('update() só grava full_name/phone — nunca role/role_id/is_active mesmo se presentes no objeto', async () => {
+  describe('profile vs RBAC separation', () => {
+    it('update() only writes full_name/phone — never role/role_id/is_active even if present in the object', async () => {
       const { service, repo } = buildService();
       // Simula um dto "vazado" com role/status (não deveria acontecer via
       // DTO real, mas prova que o SERVICE em si não os processa).
@@ -80,8 +80,8 @@ describe('UsersService — Task L (separação RBAC + concorrência)', () => {
     });
   });
 
-  describe('concorrência — cenário A/B', () => {
-    it('update(): B tenta salvar perfil contra versão já sobrescrita por A -> 409', async () => {
+  describe('concurrency — A/B scenario', () => {
+    it('update(): B saves a profile against a version already overwritten by A -> 409', async () => {
       const { service } = buildService({ updateAffected: 0 });
       await expect(
         service.update(TENANT, MEMBER_ID, {
@@ -91,13 +91,13 @@ describe('UsersService — Task L (separação RBAC + concorrência)', () => {
       ).rejects.toThrow(ConflictException);
     });
 
-    it('update(): sem expectedUpdatedAt, aplica incondicionalmente (retrocompatível)', async () => {
+    it('update(): without expectedUpdatedAt, applies unconditionally (backward compatible)', async () => {
       const { service, repo } = buildService({ updateAffected: 1 });
       await service.update(TENANT, MEMBER_ID, { fullName: 'x' } as any);
       expect(repo.update).toHaveBeenCalledWith({ id: MEMBER_ID, tenant_id: TENANT }, expect.objectContaining({ full_name: 'x' }));
     });
 
-    it('assignRole(): versão desatualizada -> 409, MAS só depois de autorização/hierarquia já terem sido checadas', async () => {
+    it('assignRole(): stale version -> 409, BUT only after authorization/hierarchy have been checked', async () => {
       const { service, repo } = buildService({ updateAffected: 0 });
       await expect(
         service.assignRole(TENANT, MEMBER_ID, 'admin', 'owner', NOW.toISOString()),
@@ -108,7 +108,7 @@ describe('UsersService — Task L (separação RBAC + concorrência)', () => {
       expect(repo.update).toHaveBeenCalledTimes(1);
     });
 
-    it('setStatus(): versão desatualizada -> 409, não desativa silenciosamente', async () => {
+    it('setStatus(): stale version -> 409, does not silently deactivate', async () => {
       const { service } = buildService({ updateAffected: 0 });
       await expect(
         service.setStatus(TENANT, MEMBER_ID, 'inactive', NOW.toISOString()),
@@ -116,8 +116,8 @@ describe('UsersService — Task L (separação RBAC + concorrência)', () => {
     });
   });
 
-  describe('setStatus() — última proteção de owner preservada', () => {
-    it('rejeita desativar o último owner ativo do tenant', async () => {
+  describe('setStatus() — last-owner protection preserved', () => {
+    it('rejects deactivating the tenant\'s last active owner', async () => {
       const { service } = buildService({
         findOneResult: { id: MEMBER_ID, tenant_id: TENANT, role: 'owner', auth_user_id: 'auth-1', updated_at: NOW },
         ownerCount: 0,
@@ -125,7 +125,7 @@ describe('UsersService — Task L (separação RBAC + concorrência)', () => {
       await expect(service.setStatus(TENANT, MEMBER_ID, 'inactive')).rejects.toThrow(BadRequestException);
     });
 
-    it('permite reativar (status=active) mesmo sendo o único owner — não é uma desativação', async () => {
+    it('allows reactivation (status=active) even as the only owner — it is not a deactivation', async () => {
       const { service, repo } = buildService({
         findOneResult: { id: MEMBER_ID, tenant_id: TENANT, role: 'owner', auth_user_id: 'auth-1', updated_at: NOW },
         ownerCount: 0,

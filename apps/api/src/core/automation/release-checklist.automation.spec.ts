@@ -157,7 +157,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     expect(meta.aiChecklist.parsed.readinessScore).toBe(42);
   });
 
-  it('Idempotência (metadata): não reprocessa se aiChecklist com a mesma chave já existe', async () => {
+  it('Idempotency (metadata): does not reprocess if an aiChecklist with the same key already exists', async () => {
     const rowWithChecklist = {
       ...RELEASE_ROW,
       metadata: { aiChecklist: { idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' } },
@@ -175,7 +175,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     expect(updateCall).toBeUndefined();
   });
 
-  it('Idempotência (skill_runs): não reprocessa se já houver run de sucesso com a mesma chave', async () => {
+  it('Idempotency (skill_runs): does not reprocess if a successful run with the same key exists', async () => {
     const { ds, query } = makeDs([RELEASE_ROW], [{ '1': 1 }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_CHECKLIST_JSON);
@@ -189,7 +189,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     expect(updateCall).toBeUndefined();
   });
 
-  it('M1: run EM ANDAMENTO RECENTE (running) com a mesma chave bloqueia a execução', async () => {
+  it('M1: a RECENT IN-PROGRESS run (running) with the same key blocks execution', async () => {
     const { ds, query } = makeDsWithRuns([RELEASE_ROW], [{ status: 'running', ageMinutes: 1 }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_CHECKLIST_JSON);
@@ -209,7 +209,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     expect(updateCall).toBeUndefined();
   });
 
-  it('M1: run EM ANDAMENTO ANTIGO/STALE (running) NÃO bloqueia (retry seguro)', async () => {
+  it('M1: an OLD/STALE IN-PROGRESS run (running) does NOT block (safe retry)', async () => {
     const { ds, query } = makeDsWithRuns([RELEASE_ROW], [{ status: 'running', ageMinutes: 60 }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_CHECKLIST_JSON);
@@ -224,7 +224,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     expect(updateCall).toBeDefined();
   });
 
-  it('M1: run de SUCESSO (success) com a mesma chave bloqueia sempre', async () => {
+  it('M1: a SUCCESSFUL run (success) with the same key always blocks', async () => {
     const { ds } = makeDsWithRuns([RELEASE_ROW], [{ status: 'success' }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_CHECKLIST_JSON);
@@ -236,7 +236,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     expect(ai.complete).not.toHaveBeenCalled();
   });
 
-  it('M1: run FALHO (failed) com a mesma chave NÃO bloqueia (retry seguro)', async () => {
+  it('M1: a FAILED run (failed) with the same key does NOT block (safe retry)', async () => {
     const { ds, query } = makeDsWithRuns([RELEASE_ROW], [{ status: 'failed' }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_CHECKLIST_JSON);
@@ -251,7 +251,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     expect(updateCall).toBeDefined();
   });
 
-  it('B1: erro ANTES do start (load lança) não propaga e registra fail best-effort', async () => {
+  it('B1: an error BEFORE start (load throws) does not propagate and records a best-effort fail', async () => {
     const boom = new Error('db indisponível no load');
     const query = jest.fn(async (sql: string) => {
       if (/FROM\s+skill_runs/i.test(sql)) return [];
@@ -277,7 +277,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     expect(updateCall).toBeUndefined();
   });
 
-  it('Falha da IA registra fail, não relança e não grava aiChecklist', async () => {
+  it('an AI failure records fail, does not rethrow and does not write aiChecklist', async () => {
     const { ds, query } = makeDs([RELEASE_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
@@ -293,7 +293,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     expect(updateCall).toBeUndefined();
   });
 
-  it('Guarda: tenantId/releaseId ausente é ignorado (sem run, sem query)', async () => {
+  it('Guard: absent tenantId/releaseId is ignored (no run, no query)', async () => {
     const { ds, query } = makeDs([RELEASE_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_CHECKLIST_JSON);

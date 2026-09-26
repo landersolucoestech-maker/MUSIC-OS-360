@@ -85,7 +85,7 @@ describe('bootstrapTenantZero', () => {
     delete process.env['NODE_ENV'];
   });
 
-  it('cria a LANDER RECORDS quando ausente (created=true) e registra auditoria de criação', async () => {
+  it('creates LANDER RECORDS when absent (created=true) and records a creation audit', async () => {
     process.env['NODE_ENV'] = 'development';
     const ds = buildFakeDataSource();
 
@@ -98,7 +98,7 @@ describe('bootstrapTenantZero', () => {
     expect(ds.state.audit_logs).toHaveLength(1);
   });
 
-  it('é idempotente: rodar duas vezes não duplica linhas e a segunda execução reporta created=false', async () => {
+  it('is idempotent: running twice does not duplicate rows and the second run reports created=false', async () => {
     process.env['NODE_ENV'] = 'development';
     const ds = buildFakeDataSource();
 
@@ -111,7 +111,7 @@ describe('bootstrapTenantZero', () => {
     expect(ds.state.tenants).toHaveLength(1);
   });
 
-  it('rejeita quando outra organização já reivindicou is_system_tenant=true', async () => {
+  it('rejects when another organization already claimed is_system_tenant=true', async () => {
     const ds = buildFakeDataSource({
       organizations: [{ id: 'some-other-org-id', slug: 'outra-org', name: 'Outra Org', is_system_tenant: true }],
     });
@@ -119,7 +119,7 @@ describe('bootstrapTenantZero', () => {
     await expect(bootstrapTenantZero(ds as never)).rejects.toThrow(/já está marcado is_system_tenant=true/);
   });
 
-  it('rejeita quando o ID canônico já existe com slug divergente (nunca sobrescreve identidade)', async () => {
+  it('rejects when the canonical ID already exists with a diverging slug (never overwrites identity)', async () => {
     const ds = buildFakeDataSource({
       organizations: [{ id: TENANT_ZERO_ORG_ID, slug: 'nome-errado', name: 'Nome Errado', is_system_tenant: true }],
     });
@@ -127,7 +127,7 @@ describe('bootstrapTenantZero', () => {
     await expect(bootstrapTenantZero(ds as never)).rejects.toThrow(/slug divergente|Identidade divergente/);
   });
 
-  it('em produção, exige um RealOwnerInput — nunca cria owner sintético', async () => {
+  it('in production, requires a RealOwnerInput — never creates a synthetic owner', async () => {
     process.env['NODE_ENV'] = 'production';
     const ds = buildFakeDataSource();
 
@@ -135,7 +135,7 @@ describe('bootstrapTenantZero', () => {
     expect(ds.state.org_members).toHaveLength(0);
   });
 
-  it('em produção com owner real fornecido, cria org_members com os dados fornecidos (não o sintético)', async () => {
+  it('in production with a real owner provided, creates org_members from the provided data (not the synthetic one)', async () => {
     process.env['NODE_ENV'] = 'production';
     const ds = buildFakeDataSource();
 
@@ -147,7 +147,7 @@ describe('bootstrapTenantZero', () => {
     expect(email).toBe('real-owner@landerrecords.com');
   });
 
-  it('owner real fora de produção também substitui o sintético (Parte 73 — owner institucional em DEV/STAGING)', async () => {
+  it('a real owner outside production also replaces the synthetic one (Part 73 — institutional owner in DEV/STAGING)', async () => {
     const ds = buildFakeDataSource();
 
     const result = await bootstrapTenantZero(ds as never, { authUserId: 'real-id', email: 'ceo@empresa.com', fullName: 'CEO' });
@@ -159,7 +159,7 @@ describe('bootstrapTenantZero', () => {
     expect(result.created).toBe(true);
   });
 
-  it('owner real na criação semeia tenants.settings.onboarding.completed=false (dispara o wizard no primeiro login)', async () => {
+  it('a real owner at creation seeds tenants.settings.onboarding.completed=false (triggers the wizard on first login)', async () => {
     const ds = buildFakeDataSource();
 
     await bootstrapTenantZero(ds as never, { authUserId: 'real-id', email: 'ceo@empresa.com' });
@@ -169,7 +169,7 @@ describe('bootstrapTenantZero', () => {
     expect(JSON.parse(settingsJson)).toEqual({ onboarding: { completed: false, currentStep: 'company_profile' } });
   });
 
-  it('owner sintético (sem realOwner) não semeia onboarding incompleto — settings fica {}', async () => {
+  it('a synthetic owner (no realOwner) does not seed incomplete onboarding — settings stays {}', async () => {
     const ds = buildFakeDataSource();
 
     await bootstrapTenantZero(ds as never);

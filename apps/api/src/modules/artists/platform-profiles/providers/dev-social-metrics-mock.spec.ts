@@ -30,25 +30,25 @@ describe('isDevMockSocialMetricsEnabled', () => {
     process.env = { ...ORIGINAL_ENV };
   });
 
-  it('false por padrão (USE_MOCK ausente)', () => {
+  it('false by default (USE_MOCK absent)', () => {
     delete process.env['USE_MOCK'];
     process.env['NODE_ENV'] = 'development';
     expect(isDevMockSocialMetricsEnabled()).toBe(false);
   });
 
-  it('true só com USE_MOCK=true E NODE_ENV=development', () => {
+  it('true only with USE_MOCK=true AND NODE_ENV=development', () => {
     process.env['USE_MOCK'] = 'true';
     process.env['NODE_ENV'] = 'development';
     expect(isDevMockSocialMetricsEnabled()).toBe(true);
   });
 
-  it('nunca true em staging, mesmo com USE_MOCK=true', () => {
+  it('never true in staging, even with USE_MOCK=true', () => {
     process.env['USE_MOCK'] = 'true';
     process.env['NODE_ENV'] = 'staging';
     expect(isDevMockSocialMetricsEnabled()).toBe(false);
   });
 
-  it('nunca true em production, mesmo com USE_MOCK=true', () => {
+  it('never true in production, even with USE_MOCK=true', () => {
     process.env['USE_MOCK'] = 'true';
     process.env['NODE_ENV'] = 'production';
     expect(isDevMockSocialMetricsEnabled()).toBe(false);
@@ -56,11 +56,11 @@ describe('isDevMockSocialMetricsEnabled', () => {
 });
 
 describe('mockFollowersFor', () => {
-  it('é determinístico para o mesmo (artistId, platform)', () => {
+  it('is deterministic for the same (artistId, platform)', () => {
     expect(mockFollowersFor('artist-1', 'instagram')).toBe(mockFollowersFor('artist-1', 'instagram'));
   });
 
-  it('nunca retorna 0 e fica em uma faixa plausível', () => {
+  it('never returns 0 and stays within a plausible range', () => {
     const v = mockFollowersFor('artist-1', 'tiktok');
     expect(v).toBeGreaterThan(0);
     expect(v).toBeLessThan(200_000);
@@ -71,13 +71,13 @@ describe('mockFollowersFor', () => {
   });
 });
 
-describe('Instagram/TikTok provider — fallback de dev quando Soundcharts não tem a conta', () => {
+describe('Instagram/TikTok provider — dev fallback when Soundcharts does not have the account', () => {
   const ORIGINAL_ENV = { ...process.env };
   afterEach(() => {
     process.env = { ...ORIGINAL_ENV };
   });
 
-  it('Instagram: USE_MOCK=false mantém "Indisponível" (followers null) — comportamento real preservado', async () => {
+  it('Instagram: USE_MOCK=false keeps "Indisponível" (followers null) — real behavior preserved', async () => {
     delete process.env['USE_MOCK'];
     process.env['NODE_ENV'] = 'development';
     const getInstagramFollowers = jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found'));
@@ -96,7 +96,7 @@ describe('Instagram/TikTok provider — fallback de dev quando Soundcharts não 
     expect((snapshot.raw_payload as Record<string, unknown>)['source']).toBe('soundcharts');
   });
 
-  it('Instagram: USE_MOCK=true em dev preenche followers com o fallback, marcado como dev_mock', async () => {
+  it('Instagram: USE_MOCK=true in dev fills followers with the fallback, flagged as dev_mock', async () => {
     process.env['USE_MOCK'] = 'true';
     process.env['NODE_ENV'] = 'development';
     const getInstagramFollowers = jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found'));
@@ -115,7 +115,7 @@ describe('Instagram/TikTok provider — fallback de dev quando Soundcharts não 
     expect((snapshot.raw_payload as Record<string, unknown>)['source']).toBe('dev_mock');
   });
 
-  it('Instagram: dado real da Soundcharts sempre vence o mock, mesmo com USE_MOCK=true', async () => {
+  it('Instagram: real Soundcharts data always wins over the mock, even with USE_MOCK=true', async () => {
     process.env['USE_MOCK'] = 'true';
     process.env['NODE_ENV'] = 'development';
     const getInstagramFollowers = jest.fn().mockResolvedValue({
@@ -153,7 +153,7 @@ describe('Instagram/TikTok provider — fallback de dev quando Soundcharts não 
     expect((snapshot.raw_payload as Record<string, unknown>)['source']).toBe('soundcharts');
   });
 
-  it('TikTok: USE_MOCK=true em dev preenche followers com o fallback, marcado como dev_mock', async () => {
+  it('TikTok: USE_MOCK=true in dev fills followers with the fallback, flagged as dev_mock', async () => {
     process.env['USE_MOCK'] = 'true';
     process.env['NODE_ENV'] = 'development';
     const getTikTokFollowers = jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found'));

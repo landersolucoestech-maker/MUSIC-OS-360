@@ -30,22 +30,22 @@ function entityBlock(entityClassName: string): string {
   return entitiesSrc.slice(start, start + closingBrace.index);
 }
 
-describe('WorkEntity não reintroduz colunas removidas', () => {
+describe('WorkEntity does not reintroduce removed columns', () => {
   const workBlock = entityBlock('WorkEntity');
 
-  it('não declara mais `participantes`, `detentores` ou `co_compositores` como @Column', () => {
+  it('no longer declares `participantes`, `detentores` or `co_compositores` as @Column', () => {
     expect(workBlock).not.toMatch(/@Column\([^)]*\)\s*participantes:/);
     expect(workBlock).not.toMatch(/@Column\([^)]*\)\s*detentores:/);
     expect(workBlock).not.toMatch(/@Column\([^)]*\)\s*co_compositores:/);
   });
 
-  it('mantém `compositor`, `compositores`, `editora` — writer real via bulk-import (Reports)', () => {
+  it('keeps `compositor`, `compositores`, `editora` — real writer via bulk-import (Reports)', () => {
     expect(workBlock).toMatch(/@Column\([^)]*\)\s*compositor:/);
     expect(workBlock).toMatch(/@Column\([^)]*\)\s*compositores:/);
     expect(workBlock).toMatch(/@Column\([^)]*\)\s*editora:/);
   });
 
-  it('possui relação para work_participants (participantes_rel)', () => {
+  it('has a relation to work_participants (participantes_rel)', () => {
     expect(workBlock).toMatch(/@OneToMany\(\(\) => WorkParticipantEntity/);
   });
 });
@@ -53,40 +53,40 @@ describe('WorkEntity não reintroduz colunas removidas', () => {
 describe('WorkParticipantEntity — tabela filha normalizada', () => {
   const block = entityBlock('WorkParticipantEntity');
 
-  it('possui as colunas reais extraídas de ParticipanteForm (name, classe_funcao, link, percentual, sort_order)', () => {
+  it('has the real columns extracted from ParticipanteForm (name, classe_funcao, link, percentual, sort_order)', () => {
     for (const field of ['tenant_id', 'work_id', 'name', 'classe_funcao', 'link', 'percentual', 'sort_order']) {
       expect(block).toMatch(new RegExp(`\\b${field}\\b`));
     }
   });
 
-  it('possui FK para works via work_id', () => {
+  it('has an FK to works via work_id', () => {
     expect(block).toMatch(/@ManyToOne\(\(\) => WorkEntity/);
     expect(block).toMatch(/@JoinColumn\(\{ name: 'work_id' \}\)/);
   });
 });
 
-describe('Migration WorkParticipantsNormalization20260718000011 — segurança de dados', () => {
+describe('Migration WorkParticipantsNormalization20260718000011 — data safety', () => {
   it('aborta (fail-fast) se houver item de participantes em formato desconhecido', () => {
     expect(migrationSrc).toMatch(/NOT \(item \? 'nome'\)/);
     expect(migrationSrc).toMatch(/throw new Error/);
   });
 
-  it('aborta (fail-fast) se detentores/co_compositores tiverem dado remanescente antes de remover as colunas', () => {
+  it('aborts (fail-fast) if detentores/co_compositores still hold data before the columns are dropped', () => {
     expect(migrationSrc).toMatch(/detentores IS NOT NULL/);
     expect(migrationSrc).toMatch(/co_compositores IS NOT NULL/);
   });
 
-  it('verifica que o backfill não perdeu nenhum item (contagem origem = destino) antes de dropar colunas', () => {
+  it('verifies the backfill lost no item (source count = target count) before dropping columns', () => {
     expect(migrationSrc).toMatch(/source_count/);
     expect(migrationSrc).toMatch(/target_count/);
   });
 
-  it('não usa DROP COLUMN CASCADE nem DROP TABLE CASCADE', () => {
+  it('uses neither DROP COLUMN CASCADE nor DROP TABLE CASCADE', () => {
     expect(migrationSrc).not.toMatch(/DROP COLUMN[^;]*CASCADE/i);
     expect(migrationSrc).not.toMatch(/DROP TABLE[^;]*CASCADE/i);
   });
 
-  it('possui down() honesto — restaura as colunas e reconstrói o jsonb a partir de work_participants', () => {
+  it('has an honest down() — restores the columns and rebuilds the jsonb from work_participants', () => {
     expect(migrationSrc).toMatch(/ADD COLUMN IF NOT EXISTS participantes jsonb/);
     expect(migrationSrc).toMatch(/ADD COLUMN IF NOT EXISTS detentores text/);
     expect(migrationSrc).toMatch(/ADD COLUMN IF NOT EXISTS co_compositores text/);
