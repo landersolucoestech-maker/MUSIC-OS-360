@@ -129,6 +129,13 @@ function isUnverifiedIdentitySnapshot(snapshot: ArtistPlatformProfileSnapshot | 
 }
 
 /**
+ * User-facing copy for a failed sync. `last_error` is an internal technical
+ * diagnostic (raw provider/HTTP/network error, English) and is NEVER rendered:
+ * the presentation layer maps the failed state to Portuguese copy.
+ */
+export const PLATFORM_SYNC_FAILED_COPY = "Não foi possível sincronizar. Verifique o link do perfil e tente novamente.";
+
+/**
  * States shared by the cards with a real sync (artist public profile →
  * provider → ArtistPlatformProfileEntity). With no registered profile it is
  * "Não configurado"; with a profile but no sync yet it is "Não sincronizado" —
@@ -160,7 +167,7 @@ function renderSyncState(
     return (
       <>
         <p className="text-sm font-semibold text-foreground" data-testid={testId}>Erro</p>
-        <p className="text-xs text-muted-foreground truncate">{snapshot.last_error ?? "Falha na sincronização"}</p>
+        <p className="text-xs text-muted-foreground">{PLATFORM_SYNC_FAILED_COPY}</p>
       </>
     );
   }

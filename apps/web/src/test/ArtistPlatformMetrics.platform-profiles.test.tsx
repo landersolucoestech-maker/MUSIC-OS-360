@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ComponentProps } from "react";
-import { ArtistPlatformMetrics } from "@/modules/artist/components/ArtistPlatformMetrics";
+import { ArtistPlatformMetrics, PLATFORM_SYNC_FAILED_COPY } from "@/modules/artist/components/ArtistPlatformMetrics";
 import { api } from "@/shared/lib/api-client";
 
 vi.mock("@/shared/lib/api-client", () => ({
@@ -352,8 +352,10 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     await waitFor(() => {
       expect(screen.getByTestId("metric-spotify-artist-1")).toHaveTextContent("...");
       expect(screen.getByTestId("metric-youtube-artist-1")).toHaveTextContent("Erro");
-      expect(screen.getByText("YouTube API error: 403")).toBeInTheDocument();
+      expect(screen.getByText(PLATFORM_SYNC_FAILED_COPY)).toBeInTheDocument();
     });
+    // last_error is an internal diagnostic: it must never reach the rendered UI.
+    expect(screen.queryByText(/YouTube API error: 403/)).not.toBeInTheDocument();
   });
 
   it("sync button calls the correct endpoint and does not break the screen", async () => {
@@ -793,7 +795,8 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     await waitFor(() => {
       expect(screen.getByTestId("metric-instagram-artist-1")).toHaveTextContent("Erro");
     });
-    expect(screen.getByText("Soundcharts: rate limit")).toBeInTheDocument();
+    expect(screen.getByText(PLATFORM_SYNC_FAILED_COPY)).toBeInTheDocument();
+    expect(screen.queryByText(/Soundcharts: rate limit/)).not.toBeInTheDocument();
     expect(screen.getByTestId("metric-instagram-artist-1")).not.toHaveTextContent("Indisponível");
   });
 
@@ -807,7 +810,8 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     await waitFor(() => {
       expect(screen.getByTestId("metric-tiktok-artist-1")).toHaveTextContent("Erro");
     });
-    expect(screen.getByText("Soundcharts: rate limit")).toBeInTheDocument();
+    expect(screen.getByText(PLATFORM_SYNC_FAILED_COPY)).toBeInTheDocument();
+    expect(screen.queryByText(/Soundcharts: rate limit/)).not.toBeInTheDocument();
   });
 
   it("Instagram/TikTok success with a profile that wasn't found (followers=null): 'Indisponivel', not 'Erro'", async () => {
