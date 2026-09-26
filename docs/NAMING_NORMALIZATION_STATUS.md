@@ -54,6 +54,27 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | NC-046 | `phonograms.origem_externa` | proposed | BLOCKED_PRODUCT_DECISION | no |
 | NC-047 | `phonograms.origem_externa_id` | proposed | BLOCKED_PRODUCT_DECISION | no |
 | NC-048 | `phonograms.origem_externa_sincronizado_em` | proposed | BLOCKED_PRODUCT_DECISION | no |
+| CZ-001 | HR / workforce administration module (web) | approved | RENAME_REQUIRED | no |
+| CZ-002 | CRM contact (web) | approved | RENAME_REQUIRED | no |
+| CZ-003 | Music release (web) | approved | RENAME_REQUIRED | no |
+| CZ-004 | Share (split) form and management page (web) | approved | RENAME_REQUIRED | no |
+| CZ-005 | Musical work (web) | approved | RENAME_REQUIRED | no |
+| CZ-006 | Phonogram (web) | approved | RENAME_REQUIRED | no |
+| CZ-007 | Catalog registry page (web) | approved | RENAME_REQUIRED | no |
+| CZ-008 | Inventory item (web) | approved | RENAME_REQUIRED | no |
+| CZ-009 | License (web) | approved | RENAME_REQUIRED | no |
+| CZ-010 | Tenant user administration (web settings) | approved | RENAME_REQUIRED | no |
+| CZ-011 | Settings page (web) | approved | RENAME_REQUIRED | no |
+| CZ-012 | Events calendar (web) | approved | RENAME_REQUIRED | no |
+| CZ-013 | Marketing module pages (web) | approved | RENAME_REQUIRED | no |
+| CZ-014 | Reports page (web) | approved | RENAME_REQUIRED | no |
+| CZ-015 | Project track | approved | RENAME_REQUIRED | no |
+| CZ-016 | Release track | approved | RENAME_REQUIRED | no |
+| CZ-017 | Public artist application (web) | approved | RENAME_REQUIRED | no |
+| CZ-018 | Integration mappers (web) | approved | RENAME_REQUIRED | no |
+| CZ-019 | Shared entity references (web) | approved | RENAME_REQUIRED | no |
+| CZ-020 | API genre stats routes | approved | RENAME_REQUIRED | no |
+| CZ-021 | Frontend domain events and analytics event names (web) | approved | RENAME_REQUIRED | no |
 
-Concepts: 48. Renames: 0. Exceptions: 39. Blockers: 0.
-By status/disposition: approved/MIGRATION_REQUIRED 2, done/BUG 1, done/DONE 35, done/RESOLVED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 69. Renames: 0. Exceptions: 39. Blockers: 0.
+By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 21, done/BUG 1, done/DONE 35, done/RESOLVED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.
