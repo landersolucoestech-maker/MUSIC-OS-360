@@ -61,13 +61,31 @@ export function ptWords(name) {
   return splitWords(name).filter(hit);
 }
 
-const PT_PROSE = /\b(n[aã]o|para|com|sem|quando|porque|pois|deve|devem|est[aá]|s[aã]o|tamb[eé]m|ent[aã]o|j[aá]|ainda|aqui|isso|este|esta|esse|essa|pelo|pela|pelos|pelas|uma|um|dos|das|nos|nas|mas|ou|se|que|como|onde|quem|mesmo|apenas|sempre|nunca|antes|depois|agora|cada|todo|toda|todos|todas|seu|sua|seus|suas|foi|ser|ter|tem|fazer|feito|pode|podem|precisa|caso|sobre|entre|via|at[eé]|voc[eê])\b/gi;
+const PT_PROSE = /\b(e|o|os|ao|aos|da|em|mesma|mesmas|mesmos|exatamente|acima|abaixo|ausente|usa|nenhum|nenhuma|efetivamente|n[aã]o|para|com|sem|quando|porque|pois|deve|devem|est[aá]|s[aã]o|tamb[eé]m|ent[aã]o|j[aá]|ainda|aqui|isso|este|esta|esse|essa|pelo|pela|pelos|pelas|uma|um|dos|das|nos|nas|mas|ou|se|que|como|onde|quem|mesmo|apenas|sempre|nunca|antes|depois|agora|cada|todo|toda|todos|todas|seu|sua|seus|suas|foi|ser|ter|tem|fazer|feito|pode|podem|precisa|caso|sobre|entre|at[eé]|voc[eê])\b/gi;
 const EN_PROSE = /\b(the|and|or|not|with|without|when|because|must|should|is|are|this|that|these|those|for|from|into|only|always|never|before|after|each|every|its|was|be|have|has|do|does|can|if|then|which|who|where)\b/gi;
+
+/**
+ * Removes spans that are not the author's own prose before scoring:
+ * quoted literals ('…', "…", `…`) are UX text or values under test, and
+ * dotted hosts/paths (customer.api.soundcharts.com, evil.com/artist) would
+ * otherwise read ".com" as the Portuguese preposition "com".
+ */
+function ownProse(text) {
+  return text
+    .replace(/(?<!\w)'[^'\n]*'(?!\w)|"[^"\n]*"|`[^`\n]*`/g, " ") // apostrophes (don't) are not quotes
+    .replace(/\b[\w-]+(?:\.[\w-]+)+(?:\/[\w./:-]*)?/g, " ")
+    .replace(/[@\w]+(?:[-/][\w]+)+/g, " "); // hyphen/slash compounds: @music-os-360/types, fail-fast
+}
 
 /** true when a free-text chunk (comment/test title) reads as Portuguese. */
 export function isPtProse(text) {
-  const t = text.normalize("NFC");
-  const pt = (t.match(PT_PROSE) || []).length + (/[ãõçáéíóúâêô]/i.test(t) ? 2 : 0);
+  const t = ownProse(text.normalize("NFC"));
+  const prose = (t.match(PT_PROSE) || []).length;
+  // Portuguese domain nouns (projeto, filtro, obra…) only reinforce text that already has a
+  // Portuguese function word: English text that merely lists legacy column names
+  // (nome -> tipo, data_inicio) must not read as Portuguese.
+  const lexicon = prose > 0 ? ptWords(t).length : 0;
+  const pt = prose + (/[ãõçáéíóúâêô]/i.test(t) ? 2 : 0) + lexicon;
   const en = (t.match(EN_PROSE) || []).length;
   return pt >= 2 && pt > en;
 }

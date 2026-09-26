@@ -16,7 +16,7 @@ const client = new S3Client({
 
 (async () => {
   const Body = Buffer.from('hello world', 'utf-8');
-  // 1) Direct PUT via SDK (sem presign)
+  // 1) Direct PUT via SDK (no presign)
   try {
     await client.send(new PutObjectCommand({ Bucket: 'musicos360-dev', Key: 'diag/direct.txt', Body, ContentType: 'text/plain' }));
     console.log('Direct PUT via SDK: OK');

@@ -34,11 +34,11 @@ export class DeezerArtistProfileProvider implements ArtistPlatformProvider {
     const artistId = input.externalId ?? this.extractArtistId(input.externalUrl ?? '');
     if (!artistId) throw new Error('Deezer artist id ausente ou inválido');
 
-    // find-4e35ea8e: um artistId do Deezer resolvido com sucesso (existe de
-    // verdade) mas não indexado na Soundcharts é uma resposta 404 VÁLIDA
-    // (mesmo padrão já aplicado em Instagram/TikTok/Apple Music/YouTube) —
-    // nunca sync_status=failed ("Erro"), sempre success com as métricas null
-    // ("Indisponível" na UI).
+    // find-4e35ea8e: a Deezer artistId that resolves successfully (it really
+    // exists) but is not indexed on Soundcharts is a VALID 404 response
+    // (same pattern already applied to Instagram/TikTok/Apple Music/YouTube) —
+    // never sync_status=failed ("Erro"), always success with null metrics
+    // ("Indisponível" in the UI).
     let uuid: string | null = null;
     try {
       uuid = await this.soundcharts.resolveArtistByPlatform('deezer', artistId);

@@ -175,7 +175,7 @@ export async function createProvisioningDataSource(
           url,
           entities:       ALL_ENTITIES,
           migrations:     [...ALL_MIGRATIONS],
-          synchronize:    false,  // NUNCA true — schema gerido via migrations
+          synchronize:    false,  // NEVER true — the schema is managed by migrations
           logging:        isProd ? ['error', 'warn'] : ['query', 'error', 'warn'],
           ssl:            dbSslDisabled ? false : { rejectUnauthorized: false },
           migrationsTableName: 'musicos360_migrations',

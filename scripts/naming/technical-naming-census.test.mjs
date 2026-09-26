@@ -9,7 +9,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { scanSource, compare, census } from "./technical-naming-census.mjs";
-import { ptWords } from "./pt-lexicon.mjs";
+import { ptWords, isPtProse } from "./pt-lexicon.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const names = (hits, surface) => hits.filter((h) => h.surface === surface).map((h) => h.name);
@@ -66,6 +66,25 @@ test("technical comments and test titles in Portuguese are flagged; English ones
   const hits = scanSource("apps/web/src/x.test.ts", src);
   assert.equal(hits.filter((h) => h.surface === "comment").length, 1);
   assert.deepEqual(names(hits, "testTitle"), ["deve salvar o projeto quando o formulário é válido"]);
+});
+
+test("prose detector: quoted UX, hostnames and English 'via' are not Portuguese; short Portuguese still is", () => {
+  // English prose that only quotes UX text or mentions hosts/paths (".com" is not the preposition "com")
+  for (const english of [
+    "renders the red 'Obra não encontrada no catálogo' alert",
+    "maps DB 'under_review' to Select 'em_análise'",
+    "SoundchartsService: metric methods only target customer.api.soundcharts.com/account.soundcharts.com hosts",
+    "rejects a hostname other than open.spotify.com (CWE-20 — evil.com/artist/x)",
+    "discovers tenants via ADMIN_DATA_SOURCE and processes via DATA_SOURCE + runInTenantContext",
+    "// don't recompute: it's cached when the tenant is set",
+  ]) assert.equal(isPtProse(english), false, english);
+  // Portuguese prose, including short comments with a single function word plus a domain noun
+  for (const portuguese of [
+    "deve salvar o projeto quando o formulário é válido",
+    "forceRefresh ignora o cache e gera novamente",
+    "// Cria projeto via /projects (se existir)",
+    "// Manter default aqui injectava 'draft' em PATCH parcial (via PartialType)",
+  ]) assert.equal(isPtProse(portuguese), true, portuguese);
 });
 
 test("API routes", () => {

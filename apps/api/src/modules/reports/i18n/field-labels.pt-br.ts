@@ -309,8 +309,8 @@ export const FIELD_LABELS_PT_BR = {
   metaValor: 'Meta de valor',
   metadata: 'Metadados',
   metrics: 'Métricas',
-  // Aba filha "Músicas do Projeto" (Parte 87) — ver
-  // computed-fields/project-tracks.field.ts e report-form-contracts.ts
+  // Child sheet "Músicas do Projeto" (Part 87) — see
+  // computed-fields/project-tracks.field.ts and report-form-contracts.ts
   // (PROJECTS_CONTRACT.childSheets).
   soloFeat: 'Solo/Feat',
   originalRemix: 'Original/Remix',
