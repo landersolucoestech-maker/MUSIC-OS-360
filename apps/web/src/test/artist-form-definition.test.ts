@@ -1,8 +1,8 @@
 /**
- * Critério de aceite do fluxo de exportação de artistas:
- * o arquivo exportado deve ter EXATAMENTE uma coluna por campo do
- * formulário Criar, com o mesmo label e na mesma ordem visual —
- * ambos derivados da definição única (ARTIST_FORM_SECTIONS).
+ * Acceptance criterion for the artist export flow:
+ * the exported file must have EXACTLY one column per Create form field,
+ * with the same label and in the same visual order — both derived from
+ * the single source of truth (ARTIST_FORM_SECTIONS).
  */
 import { describe, it, expect } from "vitest";
 import {
@@ -49,14 +49,14 @@ const ARTISTA: Artist & { genero?: string } = {
   linkedContacts: [{ contactId: "c-1", distributors: [{ id: "distrokid", email: "d@k.com" }] }],
 };
 
-describe("definição única do formulário de artista", () => {
-  it("exporta exatamente uma coluna por campo do formulário, na ordem visual", () => {
+describe("single source of truth for the artist form definition", () => {
+  it("exports exactly one column per form field, in visual order", () => {
     const row = artistToExportRowFromForm(ARTISTA);
     const labelsDoFormulario = allArtistFormFields().map((f) => f.label);
     expect(Object.keys(row)).toEqual(labelsDoFormulario);
   });
 
-  it("percorre as seções na sequência do formulário", () => {
+  it("walks the sections in form order", () => {
     expect(ARTIST_FORM_SECTIONS.map((s) => s.title)).toEqual([
       "Informações Básicas",
       "Dados Pessoais",
@@ -68,7 +68,7 @@ describe("definição única do formulário de artista", () => {
     ]);
   });
 
-  it("faz round-trip export → import → payload sem perder dados do formulário", () => {
+  it("round-trips export → import → payload without losing form data", () => {
     const row = artistToExportRowFromForm(ARTISTA);
     const values = parseArtistImportRow(row);
     expect(values).not.toBeNull();
@@ -84,8 +84,8 @@ describe("definição única do formulário de artista", () => {
     expect(payload.photoUrl).toBe("https://cdn/x/foto.png");
     expect(payload.personalDocumentsUrl).toBe("https://cdn/x/doc.pdf");
     expect(payload.pressKitUrl).toBe("https://cdn/x/press.pdf");
-    // URL do formulário é persistida diretamente — contrato do backend usa
-    // spotify_url/youtube_url, nunca um ID extraído.
+    // The form URL is persisted directly — the backend contract uses
+    // spotify_url/youtube_url, never an extracted ID.
     expect(payload.spotifyUrl).toBe("https://open.spotify.com/artist/4ZzZzZzZzZzZzZzZzZzZzZ");
     expect(payload.youtubeUrl).toBe("https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv");
     expect(payload.deezerUrl).toBe("https://deezer.com/artist/1");
@@ -100,11 +100,11 @@ describe("definição única do formulário de artista", () => {
     expect(payload.pixKey).toBe("mc@teste.com");
   });
 
-  it("rejeita linha sem Nome Artístico", () => {
+  it("rejects a row without 'Nome Artístico'", () => {
     expect(parseArtistImportRow({ "Gênero Musical": "Funk" })).toBeNull();
   });
 
-  it("aceita cabeçalhos de planilhas exportadas por versões antigas", () => {
+  it("accepts headers from spreadsheets exported by older versions", () => {
     const values = parseArtistImportRow({
       "Nome Artístico": "Antigo",
       "Foto URL": "https://cdn/old.png",

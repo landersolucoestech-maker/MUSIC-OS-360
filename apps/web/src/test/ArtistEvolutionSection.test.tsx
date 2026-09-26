@@ -1,22 +1,22 @@
 // @ts-nocheck
-// Component tests para ArtistEvolutionSection (Task #358).
+// Component tests for ArtistEvolutionSection (Task #358).
 //
-// Mocka os três hooks (useSpotifyEvolution, useYouTubeEvolution,
-// useDeezerEvolution) e verifica:
-//   * 0 plataformas com histórico → veredito "ainda não há dados"
-//   * Apenas 1 ponto disponível em todas as plataformas → veredito ainda
-//     trata como "sem histórico suficiente" (precisa de >= 2 snapshots)
-//   * 2 plataformas crescendo + 1 sem histórico → veredito "em crescimento"
-//   * Plataformas em queda → veredito "em queda"
-//   * Tendência empatada (snapshots iguais) → veredito "estável" com saldo 0
-//   * Plataformas sem ID configurado → cards mostram missing-config label
-//   * artistId null → mensagem de erro
+// Mocks the three hooks (useSpotifyEvolution, useYouTubeEvolution,
+// useDeezerEvolution) and verifies:
+//   * 0 platforms with history → verdict "ainda não há dados"
+//   * Only 1 point available across all platforms → verdict still treats it
+//     as "sem histórico suficiente" (needs >= 2 snapshots)
+//   * 2 growing platforms + 1 without history → verdict "em crescimento"
+//   * Declining platforms → verdict "em queda"
+//   * Tied trend (equal snapshots) → verdict "estável" with balance 0
+//   * Platforms without a configured ID → cards show missing-config label
+//   * null artistId → error message
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithProviders } from "./_helpers/render-with-providers";
 type MetricEvolutionPoint = { date: string; captured_at?: string; followers?: number | null; popularity?: number | null; views?: number | null; [key: string]: unknown; };
 
-// Estabiliza o ResponsiveContainer dentro dos cards.
+// Stabilizes the ResponsiveContainer inside the cards.
 vi.mock("recharts", async () => {
   const actual: any = await vi.importActual("recharts");
   return {
@@ -39,7 +39,7 @@ vi.mock("@tanstack/react-query", async () => {
     ...actual,
     useQuery: (options: any) => {
       // queryKey shape: [...QUERY_KEYS.ARTISTS, artistId, "evolution", platform]
-      // (ver useArtistPlatformEvolution.ts) — plataforma é o último elemento.
+      // (see useArtistPlatformEvolution.ts) — platform is the last element.
       const key = Array.isArray(options?.queryKey) ? options.queryKey[options.queryKey.length - 1] : "";
       if (key === "spotify") return spotifyMock();
       if (key === "youtube") return youtubeMock();
@@ -93,7 +93,7 @@ beforeEach(() => {
 });
 
 describe("<ArtistEvolutionSection />", () => {
-  it("artista sem id: renderiza mensagem de erro", () => {
+  it("artist without id: renders an error message", () => {
     spotifyMock.mockReturnValue(emptyQuery());
     youtubeMock.mockReturnValue(emptyQuery());
     deezerMock.mockReturnValue(emptyQuery());
@@ -103,7 +103,7 @@ describe("<ArtistEvolutionSection />", () => {
     ).toBeInTheDocument();
   });
 
-  it("0 plataformas com histórico: veredito mostra 'ainda não há dados'", () => {
+  it("0 platforms with history: verdict shows 'ainda não há dados'", () => {
     spotifyMock.mockReturnValue(emptyQuery());
     youtubeMock.mockReturnValue(emptyQuery());
     deezerMock.mockReturnValue(emptyQuery());
@@ -116,15 +116,15 @@ describe("<ArtistEvolutionSection />", () => {
     expect(screen.getByTestId("text-evolucao-mensagem")).toHaveTextContent(
       /ainda não há histórico suficiente/i,
     );
-    // métricas agregadas não aparecem quando trackedCount === 0
+    // aggregate metrics do not appear when trackedCount === 0
     expect(
       screen.queryByTestId("text-evolucao-pct-medio"),
     ).not.toBeInTheDocument();
   });
 
-  it("apenas 1 snapshot por plataforma: veredito ainda mostra 'sem histórico suficiente'", () => {
-    // computeEvolutionSummary requer >= 2 pontos para calcular tendência.
-    // Com 1 ponto, hasEnoughData=false → trackedCount=0 no agregado.
+  it("only 1 snapshot per platform: verdict still shows 'sem histórico suficiente'", () => {
+    // computeEvolutionSummary requires >= 2 points to compute a trend.
+    // With 1 point, hasEnoughData=false → trackedCount=0 in the aggregate.
     spotifyMock.mockReturnValue(
       dataQuery([point("2026-04-30T06:20:00Z", 1000)]),
     );
@@ -143,8 +143,8 @@ describe("<ArtistEvolutionSection />", () => {
     expect(screen.getByTestId("text-evolucao-mensagem")).toHaveTextContent(
       /ainda não há histórico suficiente/i,
     );
-    // Bloco agregado de métricas (saldo / pct médio / plataformas) só
-    // aparece quando trackedCount > 0.
+    // The aggregate metrics block (balance / avg pct / platforms) only
+    // appears when trackedCount > 0.
     expect(
       screen.queryByTestId("text-evolucao-plataformas"),
     ).not.toBeInTheDocument();
@@ -156,10 +156,10 @@ describe("<ArtistEvolutionSection />", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("plataformas com 2+ snapshots e variação zero: veredito 'estável' com saldo 0", () => {
-    // Audiência exatamente igual entre dois snapshots → delta=0,
-    // percent=0, direction='flat' em cada plataforma. Agregado deve
-    // permanecer 'estável' com saldo total 0 e pct médio 0.
+  it("platforms with 2+ snapshots and zero variation: 'estável' verdict with balance 0", () => {
+    // Audience exactly equal between two snapshots → delta=0,
+    // percent=0, direction='flat' for each platform. The aggregate must
+    // remain 'estável' with total balance 0 and avg pct 0.
     spotifyMock.mockReturnValue(
       dataQuery([
         point("2026-04-01T06:20:00Z", 1000),
@@ -184,19 +184,19 @@ describe("<ArtistEvolutionSection />", () => {
     expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
       /estável/i,
     );
-    // 3 plataformas acompanhadas, todas com variação zero
+    // 3 tracked platforms, all with zero variation
     expect(screen.getByTestId("text-evolucao-plataformas")).toHaveTextContent(
       /3 de 7/,
     );
-    // Saldo total absoluto = 0; o componente formata como "+0"
+    // Total absolute balance = 0; the component formats it as "+0"
     expect(screen.getByTestId("text-evolucao-saldo")).toHaveTextContent(
       /^\+0$/,
     );
-    // Variação média = 0%
+    // Average variation = 0%
     expect(screen.getByTestId("text-evolucao-pct-medio")).toHaveTextContent(
       /0/,
     );
-    // Mensagem do veredito menciona estabilidade nas plataformas
+    // The verdict message mentions stability across the platforms
     expect(screen.getByTestId("text-evolucao-mensagem")).toHaveTextContent(
       /est[aá]vel/i,
     );
@@ -205,7 +205,7 @@ describe("<ArtistEvolutionSection />", () => {
     );
   });
 
-  it("2 plataformas crescendo + 1 sem histórico: veredito 'em crescimento'", () => {
+  it("2 growing platforms + 1 without history: 'em crescimento' verdict", () => {
     spotifyMock.mockReturnValue(
       dataQuery([
         point("2026-04-01T06:20:00Z", 1000),
@@ -225,23 +225,23 @@ describe("<ArtistEvolutionSection />", () => {
     expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
       /em crescimento/i,
     );
-    // 2 plataformas com histórico, 1 sem histórico (deezer)
+    // 2 platforms with history, 1 without history (deezer)
     expect(screen.getByTestId("text-evolucao-plataformas")).toHaveTextContent(
       /2 de 7/,
     );
-    // saldo absoluto: +200 (spotify) + +200 (youtube) = +400
+    // absolute balance: +200 (spotify) + +200 (youtube) = +400
     expect(screen.getByTestId("text-evolucao-saldo")).toHaveTextContent(/400/);
-    // variação média: (20% + 40%) / 2 = 30%
+    // average variation: (20% + 40%) / 2 = 30%
     expect(screen.getByTestId("text-evolucao-pct-medio")).toHaveTextContent(
       /\+30/,
     );
-    // mensagem cita as plataformas acompanhadas
+    // message mentions the tracked platforms
     expect(screen.getByTestId("text-evolucao-mensagem")).toHaveTextContent(
       /Spotify, YouTube/i,
     );
   });
 
-  it("plataformas em queda: veredito 'em queda'", () => {
+  it("declining platforms: 'em queda' verdict", () => {
     spotifyMock.mockReturnValue(
       dataQuery([
         point("2026-04-01T06:20:00Z", 1000),
@@ -272,7 +272,7 @@ describe("<ArtistEvolutionSection />", () => {
     expect(screen.getByTestId("text-evolucao-saldo")).toHaveTextContent(/350/);
   });
 
-  it("plataformas sem ID cadastrado: cards mostram missing-config label", () => {
+  it("platforms without a registered ID: cards show missing-config label", () => {
     spotifyMock.mockReturnValue(emptyQuery());
     youtubeMock.mockReturnValue(emptyQuery());
     deezerMock.mockReturnValue(emptyQuery());
@@ -297,7 +297,7 @@ describe("<ArtistEvolutionSection />", () => {
     ).toBeInTheDocument();
   });
 
-  it("loading parcial: veredito já computa com base no que chegou (métricas detalhadas viram skeleton)", () => {
+  it("partial loading: verdict already computes based on what arrived (detailed metrics become skeleton)", () => {
     spotifyMock.mockReturnValue(
       dataQuery([
         point("2026-04-01T06:20:00Z", 1000),
@@ -312,9 +312,9 @@ describe("<ArtistEvolutionSection />", () => {
     expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
       /em crescimento/i,
     );
-    // O bloco detalhado (saldo / pct médio / plataformas) é substituído por
-    // um skeleton enquanto algum hook ainda está carregando. Mas a mensagem
-    // do veredito já cita a plataforma que tem histórico (Spotify).
+    // The detailed block (balance / avg pct / platforms) is replaced by a
+    // skeleton while some hook is still loading. But the verdict message
+    // already mentions the platform that has history (Spotify).
     expect(screen.getByTestId("text-evolucao-mensagem")).toHaveTextContent(
       /Spotify/,
     );

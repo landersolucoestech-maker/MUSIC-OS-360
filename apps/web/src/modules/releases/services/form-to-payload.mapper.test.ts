@@ -1,13 +1,13 @@
 /**
  * form-to-payload.mapper.test.ts
  *
- * Guarda permanente (auditoria 2026-07-18 — regra sem-metadata, lançamentos):
- * formToLancamentoPayload gravava isrc_global, notas_internas, notes,
- * gravadora, copyright, genero, idioma, assets e cronograma dentro de
- * `metadata`, apesar do mapper de leitura (entity-to-form.mapper.ts) e do
- * type `Lancamento` já esperarem essas colunas como campos de topo — a
- * migration ReleasesFormFieldColumns20260718000010 fechou essa lacuna no
- * banco/DTO; este teste garante que o mapper de escrita usa as colunas.
+ * Permanent guard (2026-07-18 audit — no-metadata rule, releases):
+ * formToLancamentoPayload used to write isrc_global, notas_internas, notes,
+ * gravadora, copyright, genero, idioma, assets and cronograma inside
+ * `metadata`, even though the read mapper (entity-to-form.mapper.ts) and the
+ * `Lancamento` type already expected these columns as top-level fields — the
+ * ReleasesFormFieldColumns20260718000010 migration closed that gap in the
+ * database/DTO; this test guarantees the write mapper uses the columns.
  */
 import { describe, it, expect } from "vitest";
 import { formToLancamentoPayload } from "./form-to-payload.mapper";
@@ -30,13 +30,13 @@ function baseFields(overrides: Partial<LancamentoFormFields> = {}): LancamentoFo
   };
 }
 
-describe("formToLancamentoPayload — contrato canônico de releases", () => {
-  it("nunca envia `metadata` — cada campo formal vai para sua própria coluna", () => {
+describe("formToLancamentoPayload — canonical releases contract", () => {
+  it("never sends `metadata` — each formal field goes to its own column", () => {
     const payload = formToLancamentoPayload(baseFields());
     expect(payload).not.toHaveProperty("metadata");
   });
 
-  it("envia isrc_global, notas_internas, gravadora, copyright, music_genre, idioma como campos de topo", () => {
+  it("sends isrc_global, notas_internas, gravadora, copyright, music_genre, idioma as top-level fields", () => {
     const payload = formToLancamentoPayload(baseFields());
     expect(payload.isrc_global).toBe("BR-XXX-25-00001");
     expect(payload.notas_internas).toBe("nota interna");
@@ -46,12 +46,12 @@ describe("formToLancamentoPayload — contrato canônico de releases", () => {
     expect(payload.idioma).toBe("pt-BR");
   });
 
-  it("mapeia notasDistribuicao (nome do form) para a coluna canônica `notes`", () => {
+  it("maps notasDistribuicao (form field name) to the canonical `notes` column", () => {
     const payload = formToLancamentoPayload(baseFields());
     expect(payload.notes).toBe("nota de distribuição");
   });
 
-  it("envia assets/cronograma como colunas jsonb dedicadas quando preenchidos", () => {
+  it("sends assets/cronograma as dedicated jsonb columns when filled", () => {
     const payload = formToLancamentoPayload(
       baseFields({ assetCapaUrl: "https://x/capa.png", cronGravacao: "2026-08-01" }),
     );
@@ -59,7 +59,7 @@ describe("formToLancamentoPayload — contrato canônico de releases", () => {
     expect(payload.cronograma).toMatchObject({ data_gravacao: "2026-08-01" });
   });
 
-  it("não envia assets/cronograma quando nenhum subcampo foi preenchido", () => {
+  it("does not send assets/cronograma when no subfield was filled", () => {
     const payload = formToLancamentoPayload(baseFields());
     expect(payload).not.toHaveProperty("assets");
     expect(payload).not.toHaveProperty("cronograma");
@@ -67,28 +67,28 @@ describe("formToLancamentoPayload — contrato canônico de releases", () => {
 });
 
 /**
- * find-ed7823e9 (consumidor incompatível): editar metadados de um lançamento
- * nunca pode enviar status. O mapeamento antigo backend→form→backend tinha
- * perda (distributed→scheduled, archived→released,
- * assets_pending→metadata_pending, null→review) e cada edição disparava uma
- * transição inexistente no workflow (400). O status só muda pelo workflow.
+ * find-ed7823e9 (incompatible consumer): editing a release's metadata must
+ * never send status. The old backend→form→backend mapping was lossy
+ * (distributed→scheduled, archived→released,
+ * assets_pending→metadata_pending, null→review) and every edit triggered a
+ * nonexistent workflow transition (400). Status only changes via the workflow.
  */
 import { lancamentoToFormFields } from "./entity-to-form.mapper";
 
-describe("formToLancamentoPayload — status nunca é escrito pelo formulário", () => {
+describe("formToLancamentoPayload — status is never written by the form", () => {
   const statuses = [
     null, "draft", "metadata_pending", "assets_pending", "review", "approved",
     "scheduled", "distributed", "released", "archived", "cancelled",
   ];
   for (const status of statuses) {
-    it(`round-trip de um lançamento em ${String(status)} não envia status na edição`, () => {
+    it(`round-trip of a lançamento in ${String(status)} does not send status on edit`, () => {
       const fields = lancamentoToFormFields({ id: "r1", title: "X", status } as never);
       const payload = formToLancamentoPayload(fields, "edit");
       expect(payload).not.toHaveProperty("status");
     });
   }
 
-  it("criação também não envia status (backend define DRAFT)", () => {
+  it("creation also does not send status (backend sets DRAFT)", () => {
     expect(formToLancamentoPayload(baseFields(), "create")).not.toHaveProperty("status");
   });
 });

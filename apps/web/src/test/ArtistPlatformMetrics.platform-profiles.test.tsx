@@ -80,7 +80,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     vi.clearAllMocks();
   });
 
-  it("mostra 'Não sincronizado' quando ha URL mas nenhum snapshot ainda", async () => {
+  it("shows 'Não sincronizado' when a URL exists but there is no snapshot yet", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([]);
 
     renderMetrics();
@@ -89,7 +89,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     expect(screen.getByTestId("metric-youtube-artist-1")).toHaveTextContent("Não sincronizado");
   });
 
-  it("mostra 'Não configurado' quando nao ha URL cadastrada", async () => {
+  it("shows 'Não configurado' when there is no registered URL", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([]);
 
     renderMetrics({ spotifyUrl: null, youtubeUrl: null });
@@ -100,7 +100,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     expect(screen.queryByTestId("button-sync-youtube-artist-1")).not.toBeInTheDocument();
   });
 
-  it("renderiza snapshot success com monthly_listeners como Ouvintes", async () => {
+  it("renders a success snapshot with monthly_listeners as 'Ouvintes'", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       {
         tenant_id: "tenant-1",
@@ -137,7 +137,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     expect(spotifyCard).not.toHaveTextContent("Seguidores");
   });
 
-  it("nunca usa followers como Ouvintes quando monthly_listeners e nulo", async () => {
+  it("never uses followers as 'Ouvintes' when monthly_listeners is null", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       {
         tenant_id: "tenant-1",
@@ -174,7 +174,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     expect(spotifyCard).not.toHaveTextContent("Seguidores");
   });
 
-  it("todas as 7 plataformas de artista sao renderizadas (sem hardcode de 2)", async () => {
+  it("all 7 artist platforms are rendered (no hardcoding of 2)", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([]);
 
     renderMetrics();
@@ -184,7 +184,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     }
   });
 
-  it("REGRESSAO: a lista de plataformas nao pode depender dos profiles retornados pela API — as 7 continuam visiveis mesmo so com Spotify/YouTube sincronizados", async () => {
+  it("REGRESSION: the platform list must not depend on the profiles returned by the API — all 7 stay visible even with only Spotify/YouTube synced", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       {
         tenant_id: "tenant-1",
@@ -234,7 +234,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
       },
     ]);
 
-    // Nenhum perfil cadastrado para as outras plataformas — apenas platformProfiles com spotify+youtube.
+    // No registered profile for the other platforms — only platformProfiles with spotify+youtube.
     renderMetrics({
       instagramUrl: null,
       tiktokUrl: null,
@@ -243,19 +243,19 @@ describe("ArtistPlatformMetrics platform profiles", () => {
       soundcloudUrl: null,
     });
 
-    // As 7 continuam presentes no DOM.
+    // All 7 remain present in the DOM.
     for (const platform of ["instagram", "tiktok", "spotify", "youtube", "deezer", "apple-music", "soundcloud"]) {
       expect(await screen.findByTestId(`metric-${platform}-artist-1`)).toBeInTheDocument();
     }
 
-    // Spotify e YouTube usam dado real.
+    // Spotify and YouTube use real data.
     expect(screen.getByTestId("metric-spotify-artist-1")).toHaveTextContent("4.321");
     expect(screen.getByTestId("metric-youtube-artist-1")).toHaveTextContent("5.555");
 
-    // Instagram/TikTok/Apple Music/Deezer/SoundCloud sao todos providers reais com sync via
-    // ArtistPlatformProfile — sem perfil (URL) cadastrado o estado e "Nao configurado" (—),
-    // igual Spotify/YouTube, nunca "0" nem "Indisponivel" (esse fica reservado para
-    // sync success sem métrica, nao para "sem URL configurada").
+    // Instagram/TikTok/Apple Music/Deezer/SoundCloud are all real providers with sync via
+    // ArtistPlatformProfile — with no registered profile (URL) the state is "Nao configurado" (—),
+    // same as Spotify/YouTube, never "0" or "Indisponivel" (that one is reserved for
+    // a sync success without a metric, not for "no URL configured").
     for (const platform of ["instagram", "tiktok", "apple-music", "deezer", "soundcloud"]) {
       const el = screen.getByTestId(`metric-${platform}-artist-1`);
       expect(el).toHaveTextContent("—");
@@ -263,7 +263,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     }
   });
 
-  it("Deezer usa fas sincronizados (ArtistPlatformProfileEntity) quando disponivel, nao o contador manual", async () => {
+  it("Deezer uses synced fans (ArtistPlatformProfileEntity) when available, not the manual counter", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       {
         tenant_id: "tenant-1",
@@ -297,7 +297,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("renderiza pending e failed por plataforma", async () => {
+  it("renders pending and failed states per platform", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       {
         tenant_id: "tenant-1",
@@ -356,7 +356,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("botao sync chama endpoint correto e nao quebra tela", async () => {
+  it("sync button calls the correct endpoint and does not break the screen", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -377,7 +377,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("renderiza botoes de sync Spotify e YouTube com type button", async () => {
+  it("renders Spotify and YouTube sync buttons with type button", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
 
     renderMetrics();
@@ -387,7 +387,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     expect(screen.getByTestId("button-atualizar-metricas-artist-1")).toHaveAttribute("type", "button");
   });
 
-  it("clique em YouTube chama endpoint com platform youtube", async () => {
+  it("clicking YouTube calls the endpoint with platform youtube", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -407,7 +407,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("artistId ausente nao chama endpoint e nao quebra", async () => {
+  it("missing artistId does not call the endpoint and does not break", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
 
     renderMetrics({ artistId: "" });
@@ -418,7 +418,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     expect(api.post).not.toHaveBeenCalled();
   });
 
-  it("erro da mutation libera botao novamente", async () => {
+  it("mutation error re-enables the button", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     let rejectPost: (reason?: unknown) => void = () => {};
     vi.mocked(api.post).mockImplementationOnce(
@@ -435,7 +435,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     await waitFor(() => expect(button).not.toBeDisabled());
   });
 
-  it("sucesso invalida e refaz query de platform profiles", async () => {
+  it("success invalidates and reruns the platform profiles query", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -457,7 +457,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("botao Atualizar dispara sync manual para Spotify e YouTube disponiveis", async () => {
+  it("'Atualizar' button triggers manual sync for available Spotify and YouTube", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -483,7 +483,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("nao exige spotifyUrl quando ha spotifyUrl valido", async () => {
+  it("does not require spotifyUrl when a valid spotifyUrl exists", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -503,7 +503,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("nao exige youtubeUrl quando ha youtubeUrl valido", async () => {
+  it("does not require youtubeUrl when a valid youtubeUrl exists", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -523,7 +523,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("link Spotify invalido bloqueia sync sem chamar endpoint", async () => {
+  it("invalid Spotify link blocks sync without calling the endpoint", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
 
     renderMetrics({ spotifyUrl: "https://open.spotify.com/track/abc" });
@@ -533,7 +533,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     expect(api.post).not.toHaveBeenCalled();
   });
 
-  it("link YouTube invalido bloqueia sync sem chamar endpoint", async () => {
+  it("invalid YouTube link blocks sync without calling the endpoint", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
 
     // find-eb3c5c45-class: /@handle is now a VALID YouTube reference (the
@@ -548,13 +548,13 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     expect(api.post).not.toHaveBeenCalled();
   });
 
-  // find-eb3c5c45-class REGRESSAO: os formatos que antes divergiam entre o
-  // validador do formulário (artista.mapper.ts) e o botão "Sincronizar
-  // agora" (ArtistPlatformMetrics) agora usam a MESMA função canônica
-  // (normalizeYoutubeProfileUrl) — @handle sozinho, /c/NAME e /user/NAME
-  // são aceitos pelo clique real em "Sincronizar agora", não só pela regex
-  // isolada do formulário.
-  it("YouTube: @handle sozinho e aceito pelo sync real (antes rejeitado pelo botao)", async () => {
+  // find-eb3c5c45-class REGRESSION: the formats that used to diverge between
+  // the form validator (artista.mapper.ts) and the "Sincronizar agora"
+  // button (ArtistPlatformMetrics) now use the SAME canonical function
+  // (normalizeYoutubeProfileUrl) — a bare @handle, /c/NAME and /user/NAME
+  // are accepted by the real click on "Sincronizar agora", not just by the
+  // form's isolated regex.
+  it("YouTube: a bare @handle is accepted by the real sync (previously rejected by the button)", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -574,7 +574,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("YouTube: /c/NAME (custom URL legado) e aceito pelo sync real", async () => {
+  it("YouTube: /c/NAME (legacy custom URL) is accepted by the real sync", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -594,7 +594,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("YouTube: /user/NAME (legado) e aceito pelo sync real", async () => {
+  it("YouTube: /user/NAME (legacy) is accepted by the real sync", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -614,11 +614,12 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  // REGRESSAO (bug reportado "Link do Apple Music inválido" para uma URL
-  // corretamente cadastrada): a URL SEM locale (/us/, /br/...) é a própria
-  // forma que este normalizador produz e sempre produziu — tem que ser aceita
-  // pelo clique real em "Sincronizar agora", não só pela função isolada.
-  it("Apple Music: link sem locale (https://music.apple.com/artist/ID) e aceito pelo sync real", async () => {
+  // REGRESSION (bug reported as "Link do Apple Music inválido" for a
+  // correctly registered URL): the URL WITHOUT a locale (/us/, /br/...) is
+  // the exact form this normalizer produces and always produced — it must be
+  // accepted by the real click on "Sincronizar agora", not just by the
+  // isolated function.
+  it("Apple Music: link without a locale (https://music.apple.com/artist/ID) is accepted by the real sync", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -638,7 +639,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("Apple Music: link com locale (https://music.apple.com/us/artist/ID) e aceito pelo sync real", async () => {
+  it("Apple Music: link with a locale (https://music.apple.com/us/artist/ID) is accepted by the real sync", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -658,7 +659,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("Apple Music: link invalido bloqueia sync sem chamar endpoint", async () => {
+  it("Apple Music: invalid link blocks sync without calling the endpoint", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
 
     renderMetrics({ appleMusicUrl: "https://fake-apple.com/us/artist/1543163588" });
@@ -668,7 +669,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     expect(api.post).not.toHaveBeenCalled();
   });
 
-  it("Deezer sincroniza pelo PERFIL PUBLICO do artista (URL), sem exigir OAuth/credencial de organizacao", async () => {
+  it("Deezer syncs via the artist's PUBLIC PROFILE (URL), without requiring an organization OAuth/credential", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -681,8 +682,8 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     fireEvent.click(await screen.findByTestId("button-sync-deezer-artist-1"));
 
     await waitFor(() => {
-      // Só o profileUrl do artista viaja no corpo — nenhum accessToken/connectionId
-      // de conexão OAuth da organização é enviado.
+      // Only the artist's profileUrl travels in the body — no organization
+      // OAuth connection accessToken/connectionId is sent.
       expect(api.post).toHaveBeenCalledWith("/artists/artist-1/platform-profiles/deezer/sync", {
         profileUrl: "https://www.deezer.com/artist/27",
         source: "profile_url",
@@ -690,7 +691,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("SoundCloud sincroniza pelo PERFIL PUBLICO do artista (URL), sem exigir OAuth/credencial de organizacao", async () => {
+  it("SoundCloud syncs via the artist's PUBLIC PROFILE (URL), without requiring an organization OAuth/credential", async () => {
     vi.mocked(api.get).mockResolvedValue([]);
     vi.mocked(api.post).mockResolvedValue({
       artist_id: "artist-1",
@@ -710,7 +711,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("recupera sozinho de sync_status=pending sem refresh manual (poll até assentar)", async () => {
+  it("recovers on its own from sync_status=pending without a manual refresh (polls until it settles)", async () => {
     const pendingSnapshot = {
       tenant_id: "tenant-1",
       artist_id: "artist-1",
@@ -736,29 +737,29 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     };
     const successSnapshot = { ...pendingSnapshot, sync_status: "success", monthly_listeners: 12345, last_synced_at: "2026-06-12T00:00:00Z" };
 
-    // Simula o worker BullMQ terminando o job entre o enqueue e o próximo poll:
-    // 1ª chamada (fetch inicial) → pending; 2ª chamada (refetchInterval) → success.
+    // Simulates the BullMQ worker finishing the job between the enqueue and the next poll:
+    // 1st call (initial fetch) → pending; 2nd call (refetchInterval) → success.
     vi.mocked(api.get).mockResolvedValueOnce([pendingSnapshot]).mockResolvedValueOnce([successSnapshot]);
 
     renderMetrics();
 
     await waitFor(() => expect(screen.getByTestId("metric-spotify-artist-1")).toHaveTextContent("..."));
-    // refetchInterval do hook é 2s — espera o poll assentar sem nenhuma ação manual do teste.
+    // the hook's refetchInterval is 2s — waits for the poll to settle without any manual test action.
     await waitFor(
       () => expect(screen.getByTestId("metric-spotify-artist-1")).toHaveTextContent("12.345"),
       { timeout: 4000, interval: 100 },
     );
-    // Escopado ao endpoint de platform-profiles: o card de sucesso com
-    // monthly_listeners agora também dispara GrowthBadge (histórico Fase 2),
-    // que chama api.get para /platform-profiles/spotify/history — uma
-    // chamada real e esperada, não uma regressão no poll de pending→success.
+    // Scoped to the platform-profiles endpoint: the success card with
+    // monthly_listeners now also triggers GrowthBadge (Phase 2 history),
+    // which calls api.get for /platform-profiles/spotify/history — a real,
+    // expected call, not a regression in the pending→success poll.
     const platformProfilesCalls = vi
       .mocked(api.get)
       .mock.calls.filter(([path]) => path === "/artists/artist-1/platform-profiles");
     expect(platformProfilesCalls).toHaveLength(2);
   });
 
-  it("Instagram success: followers=123456 renderiza 123.456 via formatCount", async () => {
+  it("Instagram success: followers=123456 renders 123.456 via formatCount", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       baseSnapshot({ platform: "instagram", followers: 123456 }),
     ]);
@@ -770,7 +771,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("TikTok success: followers=654321 renderiza corretamente", async () => {
+  it("TikTok success: followers=654321 renders correctly", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       baseSnapshot({ platform: "tiktok", followers: 654321 }),
     ]);
@@ -782,7 +783,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("Instagram failed: mostra Erro, NUNCA cai de volta para contador manual", async () => {
+  it("Instagram failed: shows 'Erro', NEVER falls back to the manual counter", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       baseSnapshot({ platform: "instagram", sync_status: "failed", last_error: "Soundcharts: rate limit" }),
     ]);
@@ -796,7 +797,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     expect(screen.getByTestId("metric-instagram-artist-1")).not.toHaveTextContent("Indisponível");
   });
 
-  it("TikTok failed: mostra Erro, NUNCA cai de volta para contador manual", async () => {
+  it("TikTok failed: shows 'Erro', NEVER falls back to the manual counter", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       baseSnapshot({ platform: "tiktok", sync_status: "failed", last_error: "Soundcharts: rate limit" }),
     ]);
@@ -809,7 +810,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     expect(screen.getByText("Soundcharts: rate limit")).toBeInTheDocument();
   });
 
-  it("Instagram/TikTok success com perfil nao localizado (followers=null): Indisponivel, nao Erro", async () => {
+  it("Instagram/TikTok success with a profile that wasn't found (followers=null): 'Indisponivel', not 'Erro'", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       baseSnapshot({ platform: "instagram", followers: null }),
       baseSnapshot({ platform: "tiktok", followers: null }),
@@ -823,7 +824,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("Apple Music: mostra Indisponivel, nunca 0, nunca usa playlist_count/apple_music_albuns como audiencia", async () => {
+  it("Apple Music: shows 'Indisponivel', never 0, never uses playlist_count/apple_music_albuns as audience", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       baseSnapshot({ platform: "apple-music", raw_payload: { soundcharts_uuid: "u1", playlist_count: 734 } }),
     ]);
@@ -838,7 +839,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     });
   });
 
-  it("YouTube: subscribers e total_views sao ambos renderizados no mesmo card", async () => {
+  it("YouTube: subscribers and total_views are both rendered in the same card", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       baseSnapshot({ platform: "youtube", subscribers: 15400, total_views: "123456789" }),
     ]);
@@ -853,7 +854,7 @@ describe("ArtistPlatformMetrics platform profiles", () => {
     expect(youtubeCard).toHaveTextContent("123.456.789");
   });
 
-  it("apos sync bem-sucedido, o card do Instagram usa o novo ArtistPlatformProfile retornado (refetch)", async () => {
+  it("after a successful sync, the Instagram card uses the new ArtistPlatformProfile returned (refetch)", async () => {
     vi.mocked(api.get)
       .mockResolvedValueOnce([baseSnapshot({ platform: "instagram", sync_status: "pending", followers: null })])
       .mockResolvedValueOnce([baseSnapshot({ platform: "instagram", sync_status: "success", followers: 4242 })]);

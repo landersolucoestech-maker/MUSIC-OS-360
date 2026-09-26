@@ -1,7 +1,7 @@
 /**
  * campaign-builder.helpers.estimated-metrics.guard.test.ts
  *
- * Guarda permanente (CODEBASE_MAP Gotcha #16 -- "Marketing campaign builder
+ * Permanent guard (CODEBASE_MAP Gotcha #16 -- "Marketing campaign builder
  * fabricates fake performance metrics ... and displays them as real,
  * unqualified KPIs once saved"): estimateCampaignResults() is a pure
  * budget*constant calculation, never a real ad-platform measurement --

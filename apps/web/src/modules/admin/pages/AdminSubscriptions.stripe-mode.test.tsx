@@ -4,10 +4,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 
 /**
- * find-340abf0b / CODEBASE_MAP Gotcha #20 — o Painel Admin de assinaturas
- * precisa mostrar o modo real do Stripe (vindo de GET
- * /billing/admin/stripe-mode), no padrão ENV_BADGE. Falha do endpoint nunca
- * pode ser renderizada como se o Stripe estivesse em algum modo específico.
+ * find-340abf0b / CODEBASE_MAP Gotcha #20 — the admin subscriptions panel
+ * must show Stripe's real mode (from GET /billing/admin/stripe-mode), in the
+ * ENV_BADGE pattern. An endpoint failure must never be rendered as if Stripe
+ * were in some specific mode.
  */
 const apiMock = vi.hoisted(() => ({ get: vi.fn(), patch: vi.fn(), post: vi.fn(), delete: vi.fn() }));
 vi.mock("@/shared/lib/api-client", () => ({ api: apiMock, setAccessToken: vi.fn(), setTenantId: vi.fn() }));
@@ -32,7 +32,7 @@ function mockStripeMode(result: Promise<unknown>) {
   });
 }
 
-describe("AdminSubscriptions — indicador de modo Stripe", () => {
+describe("AdminSubscriptions — Stripe mode indicator", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("sandbox => badge TEST MODE", async () => {
@@ -43,7 +43,7 @@ describe("AdminSubscriptions — indicador de modo Stripe", () => {
     expect(badge).toHaveAttribute("data-environment", "sandbox");
   });
 
-  it("disabled => badge 'desativado', nunca TEST MODE", async () => {
+  it("disabled => 'desativado' badge, never TEST MODE", async () => {
     mockStripeMode(Promise.resolve({ environment: "disabled", keyState: "LIVE_KEY_REJECTED" }));
     renderPage();
     const badge = await screen.findByTestId("stripe-mode-badge");
@@ -51,7 +51,7 @@ describe("AdminSubscriptions — indicador de modo Stripe", () => {
     expect(badge).not.toHaveTextContent(/TEST MODE/);
   });
 
-  it("erro do endpoint => estado de erro explícito, sem badge de modo", async () => {
+  it("endpoint error => explicit error state, no mode badge", async () => {
     mockStripeMode(Promise.reject(new Error("Network error")));
     renderPage();
     expect(await screen.findByTestId("stripe-mode-badge-error")).toBeInTheDocument();

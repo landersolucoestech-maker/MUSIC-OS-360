@@ -1,20 +1,20 @@
 // @ts-nocheck
-// Component tests para ArtistEvolutionCard (Task #358).
+// Component tests for ArtistEvolutionCard (Task #358).
 //
-// Cobre os 5 cenários da regra de negócio:
-//   * 0 snapshots → estado vazio "Sem histórico suficiente ainda"
-//   * 1 snapshot  → mostra valor atual mas ainda sem trend
-//   * 2+ growing  → trend "up" + percentual positivo + chart
-//   * 2+ declining → trend "down" + percentual negativo + chart
+// Covers the 5 business-rule scenarios:
+//   * 0 snapshots → empty state "Sem histórico suficiente ainda"
+//   * 1 snapshot  → shows the current value but still no trend
+//   * 2+ growing  → trend "up" + positive percentage + chart
+//   * 2+ declining → trend "down" + negative percentage + chart
 //   * 2+ flat     → trend "flat" + 0%
-// E também: isLoading (skeleton), isMissingConfig, errorMessage.
+// Also: isLoading (skeleton), isMissingConfig, errorMessage.
 import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithProviders } from "./_helpers/render-with-providers";
 import { Music2 } from "lucide-react";
 
-// recharts usa ResizeObserver; o setup já injeta um polyfill mas o Responsive
-// container só renderiza quando width > 0. Stub para garantir o chart no DOM.
+// recharts uses ResizeObserver; the setup already injects a polyfill but the
+// Responsive container only renders when width > 0. Stub to guarantee the chart is in the DOM.
 vi.mock("recharts", async () => {
   const actual: any = await vi.importActual("recharts");
   return {
@@ -47,7 +47,7 @@ const baseProps = {
 };
 
 describe("computeEvolutionSummary", () => {
-  it("retorna estado vazio quando não há snapshots", () => {
+  it("returns an empty state when there are no snapshots", () => {
     const s = computeEvolutionSummary([], "followers");
     expect(s).toMatchObject({
       current: null,
@@ -59,7 +59,7 @@ describe("computeEvolutionSummary", () => {
     });
   });
 
-  it("retorna current mas hasEnoughData=false com 1 snapshot", () => {
+  it("returns current but hasEnoughData=false with 1 snapshot", () => {
     const s = computeEvolutionSummary(
       [point("2026-04-01T06:20:00Z", 100)],
       "followers",
@@ -69,7 +69,7 @@ describe("computeEvolutionSummary", () => {
     expect(s.percent).toBeNull();
   });
 
-  it("calcula crescimento entre o snapshot mais antigo e o mais recente", () => {
+  it("computes growth between the oldest and the most recent snapshot", () => {
     const s = computeEvolutionSummary(
       [
         point("2026-04-01T06:20:00Z", 100),
@@ -86,7 +86,7 @@ describe("computeEvolutionSummary", () => {
     expect(s.direction).toBe("up");
   });
 
-  it("calcula queda quando o último snapshot é menor que o primeiro", () => {
+  it("computes a drop when the last snapshot is lower than the first", () => {
     const s = computeEvolutionSummary(
       [
         point("2026-04-01T06:20:00Z", 200),
@@ -99,7 +99,7 @@ describe("computeEvolutionSummary", () => {
     expect(s.percent).toBe(-25);
   });
 
-  it("considera estável quando current == previous", () => {
+  it("considers it stable when current == previous", () => {
     const s = computeEvolutionSummary(
       [
         point("2026-04-01T06:20:00Z", 100),
@@ -112,7 +112,7 @@ describe("computeEvolutionSummary", () => {
     expect(s.percent).toBe(0);
   });
 
-  it("retorna percent=null quando previous=0 (evita divisão por zero)", () => {
+  it("returns percent=null when previous=0 (avoids division by zero)", () => {
     const s = computeEvolutionSummary(
       [
         point("2026-04-01T06:20:00Z", 0),
@@ -125,7 +125,7 @@ describe("computeEvolutionSummary", () => {
     expect(s.direction).toBe("up");
   });
 
-  it("ignora pontos com valor null para a métrica selecionada", () => {
+  it("ignores points with a null value for the selected metric", () => {
     const s = computeEvolutionSummary(
       [
         point("2026-04-01T06:20:00Z", null),
@@ -141,7 +141,7 @@ describe("computeEvolutionSummary", () => {
 });
 
 describe("<ArtistEvolutionCard />", () => {
-  it("0 snapshots: renderiza estado vazio sem chart", () => {
+  it("0 snapshots: renders an empty state without a chart", () => {
     renderWithProviders(
       <ArtistEvolutionCard
         {...baseProps}
@@ -158,11 +158,11 @@ describe("<ArtistEvolutionCard />", () => {
     expect(
       screen.queryByTestId("evolucao-spotify-chart"),
     ).not.toBeInTheDocument();
-    // current ainda existe mas mostra "—" porque não há valor
+    // current still exists but shows "—" because there is no value
     expect(screen.getByTestId("evolucao-spotify-current")).toHaveTextContent("—");
   });
 
-  it("1 snapshot: mostra valor atual mas continua sem trend nem chart", () => {
+  it("1 snapshot: shows the current value but still no trend or chart", () => {
     renderWithProviders(
       <ArtistEvolutionCard
         {...baseProps}
@@ -184,7 +184,7 @@ describe("<ArtistEvolutionCard />", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("2+ snapshots crescendo: mostra trend up, percentual e chart", () => {
+  it("2+ growing snapshots: shows trend up, percentage and chart", () => {
     renderWithProviders(
       <ArtistEvolutionCard
         {...baseProps}
@@ -206,13 +206,13 @@ describe("<ArtistEvolutionCard />", () => {
       /\+50/,
     );
     expect(screen.getByTestId("evolucao-spotify-chart")).toBeInTheDocument();
-    // delta absoluto: +500 (formatado como 500)
+    // absolute delta: +500 (formatted as 500)
     expect(screen.getByTestId("evolucao-spotify-delta")).toHaveTextContent(
       /500 no per/i,
     );
   });
 
-  it("2+ snapshots em queda: mostra trend down e percentual negativo", () => {
+  it("2+ declining snapshots: shows trend down and negative percentage", () => {
     renderWithProviders(
       <ArtistEvolutionCard
         {...baseProps}
@@ -234,7 +234,7 @@ describe("<ArtistEvolutionCard />", () => {
     expect(screen.getByTestId("evolucao-spotify-chart")).toBeInTheDocument();
   });
 
-  it("2+ snapshots iguais: mostra trend flat e 0%", () => {
+  it("2+ equal snapshots: shows trend flat and 0%", () => {
     renderWithProviders(
       <ArtistEvolutionCard
         {...baseProps}
@@ -253,7 +253,7 @@ describe("<ArtistEvolutionCard />", () => {
     expect(screen.getByTestId("evolucao-spotify-chart")).toBeInTheDocument();
   });
 
-  it("isMissingConfig: renderiza label de plataforma não configurada", () => {
+  it("isMissingConfig: renders the label for an unconfigured platform", () => {
     renderWithProviders(
       <ArtistEvolutionCard
         {...baseProps}
@@ -269,7 +269,7 @@ describe("<ArtistEvolutionCard />", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("isLoading: renderiza skeletons no lugar do conteúdo", () => {
+  it("isLoading: renders skeletons in place of the content", () => {
     const { container } = renderWithProviders(
       <ArtistEvolutionCard
         {...baseProps}
@@ -280,12 +280,12 @@ describe("<ArtistEvolutionCard />", () => {
     expect(
       screen.queryByTestId("evolucao-spotify-current"),
     ).not.toBeInTheDocument();
-    // dois skeletons (valor + chart)
+    // two skeletons (value + chart)
     expect(container.querySelectorAll(".bg-muted").length)
       .toBeGreaterThanOrEqual(1);
   });
 
-  it("errorMessage: renderiza a mensagem de erro em destaque", () => {
+  it("errorMessage: renders the error message prominently", () => {
     renderWithProviders(
       <ArtistEvolutionCard
         {...baseProps}

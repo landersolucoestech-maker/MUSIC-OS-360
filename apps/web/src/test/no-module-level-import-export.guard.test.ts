@@ -1,25 +1,25 @@
 /**
  * no-module-level-import-export.guard.test.ts  (Parte 86)
  *
- * Guarda permanente: Importação e Exportação de dados devem existir SOMENTE
- * na Central de Relatórios (modules/reports/). Os módulos abaixo tiveram seus
- * botões/handlers próprios de Importar/Exportar removidos nesta Parte —
- * confirma que não reaparecem (nem o texto do botão, nem uma chamada direta
- * ao helper client-side genérico shared/lib/xlsx.ts).
+ * Permanent guard: data Import and Export must exist ONLY in the Reports
+ * Center (modules/reports/). The modules below had their own Import/Export
+ * buttons/handlers removed in this Part — confirms they don't reappear
+ * (neither the button text nor a direct call to the generic client-side
+ * helper shared/lib/xlsx.ts).
  *
- * Escopo deliberadamente restrito aos arquivos corrigidos nesta Parte, não ao
- * repositório inteiro: VariableRegistry.tsx / CategoryRegistry.tsx (registros
- * de contrato, sem entidade equivalente em Relatórios), o botão "Importar
- * Relatório ECAD" em RightsMonitoring.tsx (stub não funcional, dialog
- * completo já implementado), o "Exportar OFX" de Accounting.tsx (domínio de
- * conciliação bancária, não dado de entidade) e código morto já
- * não-renderizado (Metricas.tsx `ExportDropdown`) NÃO estão cobertos por
- * este guard — são divergências remanescentes documentadas no relatório
- * final da Parte 86, não silenciosamente ignoradas.
+ * Scope deliberately restricted to the files fixed in this Part, not the
+ * entire repository: VariableRegistry.tsx / CategoryRegistry.tsx (contract
+ * registries, with no equivalent entity in Reports), the "Importar Relatório
+ * ECAD" button in RightsMonitoring.tsx (non-functional stub, full dialog
+ * already implemented), the "Exportar OFX" button in Accounting.tsx (bank
+ * reconciliation domain, not entity data), and already-unrendered dead code
+ * (Metricas.tsx `ExportDropdown`) are NOT covered by this guard — these are
+ * remaining divergences documented in the Parte 86 final report, not
+ * silently ignored.
  *
- * AudiovisualProductionWorkspace.tsx (citado aqui anteriormente) foi removido
- * no audit de completude do produto (Decision Gate item 10) — confirmado sem
- * rota, sem consumidor, guarda de dead-code só documentava.
+ * AudiovisualProductionWorkspace.tsx (previously referenced here) was removed
+ * in the product-completeness audit (Decision Gate item 10) — confirmed with
+ * no route, no consumer; the dead-code guard was only documenting it.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";
@@ -35,10 +35,10 @@ const FIXED_MODULE_FILES = [
   "modules/inventory/pages/Inventario.tsx",
   "modules/contracts/pages/Contracts.tsx",
   "modules/accounting/pages/ProfitAndLoss.tsx",
-  // Task T (continuidade): botão "Exportar" em GestaoShares.tsx não tinha
-  // onClick algum — clicar não fazia nada. Shares já é entidade reportável
-  // na Central de Relatórios (REPORT_MODULE_REGISTRY); removido em vez de
-  // duplicar export local, mesma política da Parte 86.
+  // Task T (continuation): the "Exportar" button in GestaoShares.tsx had no
+  // onClick at all — clicking did nothing. Shares is already a reportable
+  // entity in the Reports Center (REPORT_MODULE_REGISTRY); removed instead
+  // of duplicating a local export, same policy as Parte 86.
   "modules/releases/pages/GestaoShares.tsx",
 ];
 
@@ -50,20 +50,20 @@ const BUTTON_TEXT_PATTERNS = [
   /data-testid="button-export"/i,
 ];
 
-describe("Guarda permanente: módulos corrigidos na Parte 86 não reintroduzem Importar/Exportar próprio", () => {
+describe("Permanent guard: modules fixed in Parte 86 do not reintroduce their own Import/Export", () => {
   for (const rel of FIXED_MODULE_FILES) {
     const full = path.resolve(SRC_ROOT, rel);
 
-    it(`${rel}: arquivo existe`, () => {
+    it(`${rel}: file exists`, () => {
       expect(fs.existsSync(full)).toBe(true);
     });
 
-    it(`${rel}: não importa exportToXlsx/importXlsx do helper genérico`, () => {
+    it(`${rel}: does not import exportToXlsx/importXlsx from the generic helper`, () => {
       const content = fs.readFileSync(full, "utf8");
       expect(content).not.toMatch(/from ["']@\/shared\/lib\/xlsx["']/);
     });
 
-    it(`${rel}: não contém texto/testid de botão Importar/Exportar`, () => {
+    it(`${rel}: does not contain Import/Export button text/testid`, () => {
       const content = fs.readFileSync(full, "utf8");
       const hits = BUTTON_TEXT_PATTERNS.filter((p) => p.test(content)).map((p) => String(p));
       expect(hits).toEqual([]);

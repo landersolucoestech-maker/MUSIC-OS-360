@@ -1,24 +1,24 @@
 /**
  * no-unbounded-hook-as-picker.guard.test.ts  (Task J)
  *
- * Guarda permanente: os 8 hooks "me dê tudo" abaixo buscam só os primeiros
- * ~50 registros do tenant, sem busca server-side. Usá-los como fonte de
- * select/autocomplete/relacionamento/resolução de nome/autofill/
- * cross-reference/deep-link é o padrão que a Task J eliminou — este teste
- * impede reintrodução silenciosa.
+ * Permanent guard: the 8 "give me everything" hooks below fetch only the
+ * first ~50 tenant records, with no server-side search. Using them as a
+ * source for select/autocomplete/relationship/name-resolution/autofill/
+ * cross-reference/deep-link is the pattern Task J eliminated — this test
+ * prevents silent reintroduction.
  *
- * Em vez disso, use:
- *  - useEntityLookup (shared/hooks/useEntityLookup.ts) para busca server-side;
- *  - useEntityById (mesmo arquivo) para resolver um ID já conhecido;
- *  - AsyncEntityCombobox (shared/components/AsyncEntityCombobox.tsx) para
- *    pickers com dropdown.
+ * Instead, use:
+ *  - useEntityLookup (shared/hooks/useEntityLookup.ts) for server-side search;
+ *  - useEntityById (same file) to resolve an already-known ID;
+ *  - AsyncEntityCombobox (shared/components/AsyncEntityCombobox.tsx) for
+ *    dropdown pickers.
  *
- * Qualquer arquivo que ainda chame um destes hooks precisa constar em
- * ALLOWED_CALL_SITES, com a justificativa exata do porquê é seguro (mutation-
- * only, isLoading-only, escopado por ID server-side, ou fallback só quando um
- * agregado do backend ainda não carregou). Um novo call site que apareça fora
- * dessa lista falha o teste — a correção é migrar para os hooks acima, não
- * adicionar uma entrada aqui sem revisão.
+ * Any file that still calls one of these hooks must be listed in
+ * ALLOWED_CALL_SITES, with the exact justification for why it's safe
+ * (mutation-only, isLoading-only, scoped by a server-side ID, or a fallback
+ * only used while a backend aggregate hasn't loaded yet). A new call site
+ * appearing outside that list fails the test — the fix is to migrate to the
+ * hooks above, not to add an entry here without review.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";
@@ -37,8 +37,8 @@ const UNBOUNDED_HOOKS = [
   "useEmployees",
 ];
 
-// Definições dos próprios hooks (e da infraestrutura de lookup, que os cita
-// em JSDoc) — não são call sites reais.
+// Definitions of the hooks themselves (and of the lookup infrastructure,
+// which mentions them in JSDoc) — not real call sites.
 const HOOK_DEFINITION_FILES = new Set([
   "modules/artist/hooks/useArtistas.ts",
   "modules/catalog/hooks/useObras.ts",
@@ -55,7 +55,7 @@ const HOOK_DEFINITION_FILES = new Set([
   "shared/components/AsyncEntityCombobox.tsx",
 ]);
 
-// Call sites confirmados LEGÍTIMOS na auditoria da Task J.
+// Call sites confirmed LEGITIMATE in the Task J audit.
 const ALLOWED_CALL_SITES: Record<string, string> = {
   "modules/dashboard/hooks/useMetrics.ts":
     "useArtistas()/useProjects() alimentam contagens com o agregado do backend (dashboard.artists_by_status/.artists) como fonte primária; o array capado só é usado como fallback quando o agregado ainda não carregou (mesmo padrão do HR stats).",
@@ -110,10 +110,11 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-/** Remove comentários (// de linha e /* de bloco, incluindo {/* JSX *\/}
- * multi-linha) para não confundir uma menção em prosa/JSDoc com uma chamada
- * real do hook. Mini-lexer stateful — precisa cruzar linhas porque comentário
- * de bloco/JSX pode ter texto solto em linhas de continuação sem `*` líder. */
+/** Strips comments (// line comments and /* block comments, including
+ * multi-line {/* JSX *\/} ones) so a mention in prose/JSDoc isn't confused
+ * with a real hook call. Stateful mini-lexer — needs to cross lines because a
+ * block/JSX comment can have loose text on continuation lines without a
+ * leading `*`. */
 function stripCommentLines(content: string): string {
   let out = "";
   let inBlockComment = false;
@@ -144,7 +145,7 @@ function stripCommentLines(content: string): string {
 
 const hookCallPattern = new RegExp(`\\b(${UNBOUNDED_HOOKS.join("|")})\\(`);
 
-describe("Guarda permanente (Task J): hooks 'me dê tudo' só onde revisado e justificado", () => {
+describe("Permanent guard (Task J): 'give me everything' hooks only where reviewed and justified", () => {
   const files = walk(SRC_ROOT);
   const flagged: string[] = [];
 
@@ -156,12 +157,12 @@ describe("Guarda permanente (Task J): hooks 'me dê tudo' só onde revisado e ju
     if (hookCallPattern.test(code)) flagged.push(rel);
   }
 
-  it("todo arquivo com chamada a um hook 'me dê tudo' está na allowlist revisada", () => {
+  it("every file calling a 'give me everything' hook is in the reviewed allowlist", () => {
     const unlisted = flagged.filter((rel) => !(rel in ALLOWED_CALL_SITES));
     expect(unlisted).toEqual([]);
   });
 
-  it("a allowlist não acumula entradas obsoletas (arquivo removido/renomeado ou hook removido do arquivo)", () => {
+  it("the allowlist does not accumulate stale entries (file removed/renamed or hook removed from the file)", () => {
     const stale = Object.keys(ALLOWED_CALL_SITES).filter((rel) => !flagged.includes(rel));
     expect(stale).toEqual([]);
   });

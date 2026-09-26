@@ -1,8 +1,8 @@
 /**
- * GAP-0001 / DEC-001 — ProjectFormModal deve enviar artist_id e orcamento
- * (colunas reais projects.artist_id / projects.orcamento, aceitas pelo DTO
- * real CreateProjectDto/UpdateProjectDto). Antes o formulário não tinha
- * inputs para nenhum dos dois: a única UI alcançável nunca os preenchia.
+ * GAP-0001 / DEC-001 — ProjectFormModal must send artist_id and orcamento
+ * (real projects.artist_id / projects.orcamento columns, accepted by the
+ * real CreateProjectDto/UpdateProjectDto). Previously the form had no inputs
+ * for either: the only reachable UI never populated them.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
@@ -24,7 +24,7 @@ vi.mock("@/shared/hooks/useEntityLookup", () => ({
   useEntityLookup: () => ({ items: [] }),
   useEntityById: () => ({ entity: undefined }),
 }));
-// Combobox real depende de rede — substituído por um botão que seleciona um id fixo.
+// Real combobox depends on the network — replaced by a button that selects a fixed id.
 vi.mock("@/shared/components/AsyncEntityCombobox", () => ({
   AsyncEntityCombobox: ({ onChange, "data-testid": id }: { onChange: (v: string) => void; "data-testid"?: string }) => (
     <button type="button" data-testid={id} onClick={() => onChange("11111111-1111-4111-8111-111111111111")}>pick</button>
@@ -39,14 +39,14 @@ function fillSingleName() {
   fireEvent.change(screen.getByPlaceholderText(/nome da música/i), { target: { value: "Minha Faixa" } });
 }
 
-describe("ProjectFormModal — artista principal e orçamento (GAP-0001)", () => {
+describe("ProjectFormModal — main artist and budget (GAP-0001)", () => {
   beforeEach(() => {
     addMutate.mockReset().mockResolvedValue({ id: "p-new" });
     updateMutate.mockReset().mockResolvedValue({});
     toastError.mockReset();
   });
 
-  it("create envia artist_id e orcamento numérico", async () => {
+  it("create sends artist_id and numeric orcamento", async () => {
     render(<ProjectFormModal open onOpenChange={() => {}} mode="create" />);
     fillSingleName();
     fireEvent.click(screen.getByTestId("select-projeto-artista"));
@@ -60,7 +60,7 @@ describe("ProjectFormModal — artista principal e orçamento (GAP-0001)", () =>
     });
   });
 
-  it("create sem artista/orçamento envia null (não string vazia)", async () => {
+  it("create without artist/budget sends null (not an empty string)", async () => {
     render(<ProjectFormModal open onOpenChange={() => {}} mode="create" />);
     fillSingleName();
     fireEvent.click(screen.getByRole("button", { name: /criar projeto/i }));
@@ -68,19 +68,19 @@ describe("ProjectFormModal — artista principal e orçamento (GAP-0001)", () =>
     expect(addMutate.mock.calls[0][0]).toMatchObject({ artist_id: null, orcamento: null });
   });
 
-  it("rejeita orçamento negativo sem chamar a API", async () => {
+  it("rejects a negative budget without calling the API", async () => {
     render(<ProjectFormModal open onOpenChange={() => {}} mode="create" />);
     fillSingleName();
     const input = screen.getByTestId("input-projeto-orcamento") as HTMLInputElement;
     fireEvent.change(input, { target: { value: "-10" } });
-    // submit direto no form: o min="0" nativo já bloquearia o clique no
-    // navegador; aqui provamos que a validação JS também recusa.
+    // Direct form submit: the native min="0" would already block the click in
+    // the browser; here we prove the JS validation also rejects it.
     fireEvent.submit(input.closest("form")!);
     await waitFor(() => expect(toastError).toHaveBeenCalled());
     expect(addMutate).not.toHaveBeenCalled();
   });
 
-  it("edit carrega e reenvia os valores persistidos", async () => {
+  it("edit loads and resends the persisted values", async () => {
     const projeto = {
       id: "p1", title: "Faixa", type: "single", status: "planning", updated_at: "2026-09-01T00:00:00Z",
       artist_id: "22222222-2222-4222-8222-222222222222", orcamento: "2500.00",
