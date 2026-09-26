@@ -1,0 +1,15 @@
+{
+  "id": "evid-2d6743b4",
+  "createdAt": "2026-09-26T04:00:12.154Z",
+  "type": "COMMAND",
+  "label": "env DATABASE_URL=postgresql://musicos360@127.0.0.1:55432/musicos360 APP_DATABASE_URL=postgresql://musicos_app:local_only_ephemeral_musicos_app_pw@127.0.0.1:55432/musicos360 DB_SSL=false NODE_ENV=test ENCRYPTION_KEY=33b29b3d331d95a7a029160cbbb4c64cc7e094271b0a6f501da19a596ade7217 pnpm --filter api exec jest --config jest.e2e.config.ts test/e2e/uploads/uploads-download-tenant.e2e-spec.ts",
+  "command": "env DATABASE_URL=postgresql://musicos360@127.0.0.1:55432/musicos360 APP_DATABASE_URL=postgresql://musicos_app:local_only_ephemeral_musicos_app_pw@127.0.0.1:55432/musicos360 DB_SSL=false NODE_ENV=test ENCRYPTION_KEY=33b29b3d331d95a7a029160cbbb4c64cc7e094271b0a6f501da19a596ade7217 pnpm --filter api exec jest --config jest.e2e.config.ts test/e2e/uploads/uploads-download-tenant.e2e-spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "911656f4192e11f4149edbb402a6b042d68b2fe3925ab9a740f24018572f3871",
+  "fingerprintStatus": "BOUND",
+  "head": "d6dbd0deddc37be11e05ad301d2ccb246cb6770f",
+  "durationMs": 9567
+}

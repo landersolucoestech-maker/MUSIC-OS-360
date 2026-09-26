@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T03:49:39.558Z",
+  "updatedAt": "2026-09-26T04:03:57.954Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -743,6 +743,36 @@
         }
       ],
       "createdAt": "2026-09-26T03:47:08.617Z"
+    },
+    {
+      "id": "req-66d24f6b",
+      "text": "Stored documents open through the tenant-checked signed download/raw stream, never through the permanent public bucket URL (find-df79ea88 code side); prerequisite for turning off public access to private prefixes at the storage edge",
+      "nonRequirements": [
+        "No data migration of stored URLs; no bucket/infra change from this environment; images/audio/video stay public media (decision pending)"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-edbab8d5",
+          "text": "Web: stored-file unit tests, readers guard (catches all 8 pre-fix readers), full vitest, lint, build pass",
+          "evidenceIds": [
+            "evid-5b87628d",
+            "evid-2221585e",
+            "evid-bb5e46dc",
+            "evid-4227864c",
+            "evid-151587b8"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-7b2c98d9",
+          "text": "API: real-Postgres e2e proves /uploads/:fileId/download is tenant-scoped (cross-tenant 404, no URL minted)",
+          "evidenceIds": [
+            "evid-2d6743b4"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-26T03:59:59.003Z"
     }
   ],
   "findings": [
@@ -1093,8 +1123,8 @@
       "disposition": "DIVIDA_ACEITA",
       "evidenceIds": [],
       "createdAt": "2026-09-26T02:40:00.000Z",
-      "justification": "S19=RISCO_NAO_RESOLVIDO | Real, traced (producer storage.service createPresignedUpload -> consumer useUploadToR2 -> 5 form consumers -> entity columns). Remediation is its own cluster (storage access model): sensitive categories must persist fileId and be opened through the tenant-checked signed download; existing stored public URLs need a data migration; the bucket/custom-domain public access must be turned off for sensitive prefixes (external infra action). Scheduled after B2.",
-      "resolvedAt": "2026-09-26T03:04:42.019Z",
+      "justification": "S19=BLOQUEADO_DEPENDENCIA_EXTERNA | Code side CORRIGIDO in commit 74eb299: every document reader opens uploads via tenant-checked signed download (/uploads/:fileId/download) or /raw; guard test + real-Postgres cross-tenant e2e (evid-5b87628d, evid-2d6743b4). Residual exposure is the bucket's public edge: stored public links stay readable until public access to tenants/*/documents/* and tenants/*/spreadsheets/* is blocked on the R2 custom domain / r2.dev (Cloudflare WAF or bucket access rule) — external infra action outside this environment. After that action no data migration is needed (readers derive fileId from the stored link). Open decision (DEPENDENTE_DECISAO_DE_PRODUTO): whether audio/video (unreleased masters) must also be private; images stay public media by current design.",
+      "resolvedAt": "2026-09-26T04:03:57.953Z",
       "restoredAfterLostUpdate": "dec-ops-lost-update-restoration"
     },
     {
@@ -1786,7 +1816,13 @@
     "evid-306119e9",
     "evid-f6627606",
     "evid-e835dd8e",
-    "evid-37d6a96e"
+    "evid-37d6a96e",
+    "evid-5b87628d",
+    "evid-2d6743b4",
+    "evid-2221585e",
+    "evid-bb5e46dc",
+    "evid-4227864c",
+    "evid-151587b8"
   ],
   "checkpointIds": [
     "chec-e661a7aa",
