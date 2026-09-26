@@ -76,5 +76,5 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-020 | API genre stats routes | approved | RENAME_REQUIRED | no |
 | CZ-021 | Frontend domain events and analytics event names (web) | approved | RENAME_REQUIRED | no |
 
-Concepts: 69. Renames: 0. Exceptions: 39. Blockers: 0.
+Concepts: 69. Renames: 0. Exceptions: 42. Blockers: 0.
 By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 21, done/BUG 1, done/DONE 35, done/RESOLVED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.

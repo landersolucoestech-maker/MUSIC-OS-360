@@ -172,3 +172,8 @@ test("object-literal keys are a report-only surface (wire/DB field names), never
   assert.deepEqual(names(hits, "objectKey"), ["data_lancamento", "nome"]);
   assert.deepEqual(names(hits, "identifier"), []);
 });
+
+test("API routes declared as path arrays: each Portuguese alias is reported", () => {
+  const src = `@Controller('works') class C { @Get(['stats/genres', 'stats/generos']) a() {} }`;
+  assert.deepEqual(names(scanSource("apps/api/src/c.controller.ts", src), "apiRoute"), ["/works/stats/generos"]);
+});

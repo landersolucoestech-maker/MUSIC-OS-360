@@ -117,12 +117,14 @@ export function scanSource(relPath, text) {
     else if (ts.isDecorator(n) && ts.isCallExpression(n.expression)) {
       const callee = n.expression.expression.getText(sf);
       const arg = n.expression.arguments[0];
-      const lit = arg && ts.isStringLiteral(arg) ? arg.text : null;
+      const lits = !arg ? [] : ts.isStringLiteral(arg) ? [arg.text]
+        : ts.isArrayLiteralExpression(arg) ? arg.elements.filter(ts.isStringLiteral).map((e) => e.text) : [];
+      const lit = lits[0] ?? null;
       if (callee === "Controller" && lit != null) {
         controllerBase = lit;
         if (ptWords(lit).length) add("apiRoute", "route", `/${lit}`, lineOf(n));
-      } else if (["Get", "Post", "Put", "Patch", "Delete"].includes(callee) && lit && ptWords(lit).length) {
-        add("apiRoute", "route", `/${controllerBase ?? ""}/${lit}`, lineOf(n));
+      } else if (["Get", "Post", "Put", "Patch", "Delete"].includes(callee)) {
+        for (const l of lits) if (ptWords(l).length) add("apiRoute", "route", `/${controllerBase ?? ""}/${l}`, lineOf(n));
       } else if (["OnEvent", "Processor", "InjectQueue"].includes(callee) && lit) evt(lit, n);
     } else if (ts.isCallExpression(n)) {
       const target = n.expression;

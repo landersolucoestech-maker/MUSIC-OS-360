@@ -2150,6 +2150,51 @@
       "blocker": null,
       "dependency": null,
       "status": "ACTIVE"
+    },
+    {
+      "item": "API route alias GET /artists/stats/generos",
+      "path": "apps/api/src/modules/artists/artists.controller.ts",
+      "currentName": "/artists/stats/generos",
+      "layer": "api route",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "CZ-020: canonical GET /artists/stats/genres added; the Portuguese path stays on the same handler because the deployed web build still calls it (web and api deploy independently).",
+      "consumer": "apps/web genre-stats hooks (until renamed to /stats/genres and deployed)",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "remove the alias after a web release that calls /artists/stats/genres is deployed to every environment",
+      "targetState": "only /artists/stats/genres",
+      "blocker": "deployment cutover (web release) — outside this environment",
+      "dependency": "web hook rename (CZ-005/CZ-006 batch) + deploy",
+      "status": "ACTIVE"
+    },
+    {
+      "item": "API route alias GET /works/stats/generos",
+      "path": "apps/api/src/modules/works/works.controller.ts",
+      "currentName": "/works/stats/generos",
+      "layer": "api route",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "CZ-020: canonical GET /works/stats/genres added; the Portuguese path stays on the same handler because the deployed web build still calls it (web and api deploy independently).",
+      "consumer": "apps/web genre-stats hooks (until renamed to /stats/genres and deployed)",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "remove the alias after a web release that calls /works/stats/genres is deployed to every environment",
+      "targetState": "only /works/stats/genres",
+      "blocker": "deployment cutover (web release) — outside this environment",
+      "dependency": "web hook rename (CZ-005/CZ-006 batch) + deploy",
+      "status": "ACTIVE"
+    },
+    {
+      "item": "API route alias GET /phonograms/stats/generos",
+      "path": "apps/api/src/modules/phonograms/phonograms.controller.ts",
+      "currentName": "/phonograms/stats/generos",
+      "layer": "api route",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "CZ-020: canonical GET /phonograms/stats/genres added; the Portuguese path stays on the same handler because the deployed web build still calls it (web and api deploy independently).",
+      "consumer": "apps/web genre-stats hooks (until renamed to /stats/genres and deployed)",
+      "owner": "api owner (Phase 0 naming)",
+      "removalCondition": "remove the alias after a web release that calls /phonograms/stats/genres is deployed to every environment",
+      "targetState": "only /phonograms/stats/genres",
+      "blocker": "deployment cutover (web release) — outside this environment",
+      "dependency": "web hook rename (CZ-005/CZ-006 batch) + deploy",
+      "status": "ACTIVE"
     }
   ],
   "blockers": []

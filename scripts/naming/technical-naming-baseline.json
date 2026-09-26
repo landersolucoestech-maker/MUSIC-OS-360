@@ -1,6 +1,5 @@
 {
  "totals": {
-  "apiRoute": 3,
   "comment": 4773,
   "directory": 23,
   "eventQueueJob": 24,
@@ -9,9 +8,6 @@
   "testTitle": 1106
  },
  "debt": {
-  "apiRoute::apps/api/src/modules/artists/artists.controller.ts::route::/artists/stats/generos": 1,
-  "apiRoute::apps/api/src/modules/phonograms/phonograms.controller.ts::route::/phonograms/stats/generos": 1,
-  "apiRoute::apps/api/src/modules/works/works.controller.ts::route::/works/stats/generos": 1,
   "comment::apps/api/jest.config.ts": 5,
   "comment::apps/api/jest.e2e.config.ts": 1,
   "comment::apps/api/migrate.mjs": 1,
