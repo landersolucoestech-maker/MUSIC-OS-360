@@ -299,7 +299,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(views).toEqual([{ value: 1_000_000, observedAt: new Date('2026-08-01T00:00:00.000Z') }]);
   });
 
-  it('13. troca do link cadastrado entre dois syncs: ambos os pontos preservados com sua própria proveniência', async () => {
+  it('13. registered link swap between two syncs: both points preserved with their own provenance', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     await service.recordFromProfileSnapshot(
@@ -313,7 +313,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(repo.__store.map((r) => r.registered_identifier)).toEqual(['handle-antigo', 'handle-novo']);
   });
 
-  it('14. troca da entidade Soundcharts resolvida entre dois syncs: nenhum merge silencioso — cada ponto guarda seu próprio provider_entity_id', async () => {
+  it('14. resolved Soundcharts entity swap between two syncs: no silent merge — each point keeps its own provider_entity_id', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     await service.recordFromProfileSnapshot(
@@ -326,7 +326,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(repo.__store.map((r) => r.provider_entity_id)).toEqual(['uuid-antigo', 'uuid-novo']);
   });
 
-  it('15. retry idempotente: reenviar o mesmo snapshot não duplica nenhum ponto', async () => {
+  it('15. idempotent retry: resending the same snapshot does not duplicate any point', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     const snapshot = baseSnapshot({ monthly_listeners: 100, raw_payload: { observed_at: '2026-08-01T00:00:00.000Z' } });
@@ -339,7 +339,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(repo.__store).toHaveLength(1);
   });
 
-  it('dev_mock nunca entra no histórico, mesmo com sync_status=success', async () => {
+  it('dev_mock never enters history, even with sync_status=success', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     const result = await service.recordFromProfileSnapshot(
@@ -350,7 +350,7 @@ describe('ArtistMetricSnapshotsService', () => {
     expect(repo.__store).toHaveLength(0);
   });
 
-  it('growth() usa computeGrowth sobre o histórico real filtrado por tenant/artista/plataforma/métrica', async () => {
+  it('growth() uses computeGrowth over the real history filtered by tenant/artist/platform/metric', async () => {
     const repo = buildFakeRepo();
     const service = buildService(repo);
     await service.recordFromProfileSnapshot(

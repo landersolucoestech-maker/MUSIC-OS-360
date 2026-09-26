@@ -1,11 +1,11 @@
 /**
  * contracts.service.spec.ts
  *
- * Cobre exclusivamente o pré-requisito de C1 (não relacionado a aliases
- * EN/PT): persistência de template_id/signers (colunas da migration
- * 20260712000004, já commitada) e o default `type = 'outro'` quando o
- * wizard cria um contrato sem tipo de serviço definido. Nenhum teste aqui
- * cobre resolução de aliases — isso pertence ao commit C1 propriamente dito.
+ * Covers exclusively the C1 prerequisite (unrelated to EN/PT aliases):
+ * persistence of template_id/signers (columns from migration
+ * 20260712000004, already committed) and the default `type = 'outro'` when
+ * the wizard creates a contract without a defined service type. No test
+ * here covers alias resolution — that belongs to the C1 commit proper.
  */
 import 'reflect-metadata';
 import { ContractsService } from './contracts.service';
@@ -34,8 +34,8 @@ function created(repo: ReturnType<typeof makeRepo>) {
   return (repo.create as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
 }
 
-describe('ContractsService.create — template_id/signers/type default (pré-requisito C1)', () => {
-  it('persiste template_id quando enviado', async () => {
+describe('ContractsService.create — template_id/signers/type default (C1 prerequisite)', () => {
+  it('persists template_id when sent', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       title: 'Contrato X', type: 'gravacao', template_id: '11111111-1111-4111-8111-111111111111',
@@ -44,7 +44,7 @@ describe('ContractsService.create — template_id/signers/type default (pré-req
     expect(created(repo)['template_id']).toBe('11111111-1111-4111-8111-111111111111');
   });
 
-  it('persiste signers quando enviado como array', async () => {
+  it('persists signers when sent as an array', async () => {
     const { svc, repo } = makeService();
     const signers = [{ name: 'Fulano', email: 'fulano@example.com', role: 'artista' }];
     await svc.create('tenant-1', 'user-1', {
@@ -54,7 +54,7 @@ describe('ContractsService.create — template_id/signers/type default (pré-req
     expect(created(repo)['signers']).toEqual(signers);
   });
 
-  it('não persiste signers quando não é um array', async () => {
+  it('does not persist signers when it is not an array', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       title: 'Contrato X', type: 'gravacao', signers: 'not-an-array' as unknown as unknown[],
@@ -63,7 +63,7 @@ describe('ContractsService.create — template_id/signers/type default (pré-req
     expect(created(repo)['signers']).toBeUndefined();
   });
 
-  it('REM-02: persiste documents (anexos reais do R2) quando enviado', async () => {
+  it('REM-02: persists documents (real R2 attachments) when sent', async () => {
     const { svc, repo } = makeService();
     const documents = [{ name: 'contrato.pdf', size: 1234, type: 'application/pdf', path: 'https://r2/x.pdf', url: 'https://r2/x.pdf' }];
     await svc.create('tenant-1', 'user-1', {
@@ -73,7 +73,7 @@ describe('ContractsService.create — template_id/signers/type default (pré-req
     expect(created(repo)['documents']).toEqual(documents);
   });
 
-  it('REM-02: documents ausente persiste como array vazio (mesmo padrão de versoes)', async () => {
+  it('REM-02: missing documents persists as an empty array (same pattern as versions)', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       title: 'Contrato X', type: 'gravacao',
@@ -82,7 +82,7 @@ describe('ContractsService.create — template_id/signers/type default (pré-req
     expect(created(repo)['documents']).toEqual([]);
   });
 
-  it('aplica type="outro" quando nem type nem tipo são enviados (fluxo do wizard sem template)', async () => {
+  it('applies type="outro" when neither type nor tipo is sent (wizard flow without a template)', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
       title: 'Contrato sem tipo definido',
