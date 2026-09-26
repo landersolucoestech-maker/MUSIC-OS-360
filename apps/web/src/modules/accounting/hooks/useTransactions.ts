@@ -20,10 +20,10 @@ export function useTransactions(enabled = true, artistId?: string) {
     table: "transactions",
     orderBy: { column: "data", ascending: false },
     enabled,
-    // QueryTransactionDto: "artistId" é alias legado NUNCA lido pelo service (só existe
-    // para não quebrar 400 em callers antigos) — o campo real é "artist_id". Enviar
-    // "artistId" fazia esse filtro ser silenciosamente ignorado (200 com todas as
-    // transações do tenant, não só as do artista) na aba Financeiro do Visão 360°.
+    // QueryTransactionDto: "artistId" is a legacy alias NEVER read by the service (it only exists
+    // so old callers do not get a 400) — the real field is "artist_id". Sending
+    // "artistId" made this filter silently ignored (200 with every
+    // transaction of the tenant, not only the artist's) in the finance tab of the 360° View.
     filters: artistId ? { artist_id: artistId } : undefined,
     onMutationSuccess: {
       onCreate: (t) =>

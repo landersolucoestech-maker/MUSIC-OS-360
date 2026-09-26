@@ -70,9 +70,9 @@ const EMPTY_KPIS: FinanceKPIs = {
 };
 
 /**
- * GET /transactions/stats — distribuição exata type×status + soma de valor,
- * tenant inteiro (Task H). Os KPIs de Financeiro.tsx nunca são calculados só
- * sobre a página ou o intervalo de datas atualmente filtrado na tabela.
+ * GET /transactions/stats — exact type×status distribution + value sum,
+ * whole tenant (Task H). The KPIs of Financeiro.tsx are never computed only
+ * over the page or the date range currently filtered in the table.
  */
 export function useFinanceStats() {
   const query = useQuery<TypeStatusRow[]>({

@@ -104,7 +104,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
         </DialogHeader>
 
         <div className="space-y-4 mt-2">
-          {/* Identificação */}
+          {/* Identification */}
           <Card>
             <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Receipt className="h-4 w-4" />Identificação</CardTitle></CardHeader>
             <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -137,7 +137,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
             </CardContent>
           </Card>
 
-          {/* Serviços */}
+          {/* Services */}
           {(invoice.service_description || itens.length > 0) && (
             <Card>
               <CardHeader className="pb-2"><CardTitle className="text-sm">Serviços</CardTitle></CardHeader>

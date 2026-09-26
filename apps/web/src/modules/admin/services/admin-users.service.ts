@@ -2,13 +2,13 @@ import { api } from "@/shared/lib/api-client";
 import type { AdminUser } from "../types";
 
 /**
- * Serviço real de usuários cross-tenant para o Painel Admin (Decision Gate
- * item 6/GAP-07). Usa `GET /admin/users` (super_admin), que já resolve
- * papel/tenant/MFA/last_login no backend — ver
- * apps/api/src/modules/admin-users/admin-users.service.ts para a fonte
- * (join real com `roles`/`tenants` + Supabase Admin API `listUsers()`
- * paginado, nunca N+1 por usuário; `sessions_count` é sempre null porque a
- * Admin API do Supabase não expõe essa informação — nunca fabricado).
+ * Real cross-tenant users service for the Admin Panel (Decision Gate
+ * item 6/GAP-07). Uses `GET /admin/users` (super_admin), which already resolves
+ * role/tenant/MFA/last_login in the backend — see
+ * apps/api/src/modules/admin-users/admin-users.service.ts for the source
+ * (a real join with `roles`/`tenants` + the paginated Supabase Admin API `listUsers()`,
+ * never an N+1 per user; `sessions_count` is always null because the
+ * Supabase Admin API does not expose that information — never fabricated).
  */
 interface RawAdminUser {
   id: string;

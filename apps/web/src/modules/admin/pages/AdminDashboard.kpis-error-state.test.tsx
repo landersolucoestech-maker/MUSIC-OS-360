@@ -4,14 +4,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 
 /**
- * Regressão (auditoria F3): quando GET /billing/admin/tenants ou
- * GET /billing/admin/subscriptions falha, os KPIs do Painel Executivo
- * (MRR, ARR, Clientes Ativos, etc.) caíam silenciosamente para `[] ?? []`
- * e renderizavam "R$ 0" / "0" como se fosse um valor real da plataforma —
- * indistinguível de uma plataforma genuinamente vazia. Também prova que o
- * banner permanente e desatualizado "Admin analytics indisponível" (que
- * afirmava falsamente que os endpoints administrativos não existem) saiu
- * do layout.
+ * Regression (audit F3): when GET /billing/admin/tenants or
+ * GET /billing/admin/subscriptions fails, the Executive Panel KPIs
+ * (MRR, ARR, active customers, etc.) silently fell back to `[] ?? []`
+ * and rendered "R$ 0" / "0" as if it were a real platform value —
+ * indistinguishable from a genuinely empty platform. It also proves that the
+ * permanent, outdated "Admin analytics indisponível" banner (which
+ * falsely claimed the administrative endpoints did not exist) left
+ * the layout.
  */
 
 const apiMock = vi.hoisted(() => ({ get: vi.fn(), patch: vi.fn(), post: vi.fn(), delete: vi.fn() }));

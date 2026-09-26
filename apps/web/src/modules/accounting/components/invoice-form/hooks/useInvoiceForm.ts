@@ -26,8 +26,8 @@ interface UseInvoiceFormOptions {
   onClose: () => void;
 }
 
-/** Formato bruto retornado por GET /clients (ClientsService.mapClient) —
- * suficiente para o autofill do tomador; não precisa do view-model `Cliente`. */
+/** Raw shape returned by GET /clients (ClientsService.mapClient) —
+ * enough for the service taker autofill; it does not need the `Cliente` view model. */
 export interface InvoiceClientLookup {
   id: string;
   name: string;

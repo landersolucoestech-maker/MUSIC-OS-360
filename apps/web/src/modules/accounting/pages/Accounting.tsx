@@ -41,8 +41,8 @@ export default function Accounting() {
   const { transactions, deleteTransaction, addTransaction } = useTransactions();
   const ofxInputRef = useRef<HTMLInputElement>(null);
 
-  // KPIs — agregação exata do tenant inteiro (GET /transactions/stats),
-  // nunca calculada só sobre a página/filtro de data atualmente exibido (Task H).
+  // KPIs — exact aggregation over the whole tenant (GET /transactions/stats),
+  // never computed only over the currently displayed page/date filter (Task H).
   const { kpis: metricas } = useFinanceStats();
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -263,7 +263,7 @@ export default function Accounting() {
 
         {/* ── Filter Bar ── */}
         <div className="flex flex-wrap items-center gap-3 rounded-lg bg-muted/30 p-3">
-          {/* Seletor de datas — sempre imediatamente à esquerda da busca */}
+          {/* Date picker — always immediately to the left of the search */}
           <DatePickerField
             value={startDate}
             onChange={setStartDate}

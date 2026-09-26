@@ -2,16 +2,16 @@ import { api } from "@/shared/lib/api-client";
 import type { AdminAuditLog, AuditAction } from "../types";
 
 /**
- * Serviço real de audit logs para o Painel Admin.
+ * Real audit logs service for the Admin Panel.
  *
- * REM-01 (Remaining Product Completion Backlog): usava `GET /audit-logs`
- * (tenant-scoped, RequireRole viewer) — um super_admin só via o audit trail
- * do ÚNICO tenant ao qual sua sessão estava vinculada, nunca uma visão
- * cross-tenant real. Agora usa `GET /audit-logs/admin` (RequireRole
- * super_admin, sem filtro de tenant_id — RLS `super_admin_full_access`),
- * que já retorna `tenant_name` via join real com `tenants`.
- * `user_name`/`user_email`/`details` continuam indisponíveis honestamente
- * (a entidade não tem essas colunas hoje — só `user_id`) — não fabricados.
+ * REM-01 (Remaining Product Completion Backlog): it used `GET /audit-logs`
+ * (tenant-scoped, RequireRole viewer) — a super_admin only saw the audit trail
+ * of the SINGLE tenant their session was bound to, never a real
+ * cross-tenant view. It now uses `GET /audit-logs/admin` (RequireRole
+ * super_admin, no tenant_id filter — RLS `super_admin_full_access`),
+ * which already returns `tenant_name` via a real join with `tenants`.
+ * `user_name`/`user_email`/`details` honestly remain unavailable
+ * (the entity does not have those columns today — only `user_id`) — not fabricated.
  */
 interface RawAdminAudit {
   id: string;

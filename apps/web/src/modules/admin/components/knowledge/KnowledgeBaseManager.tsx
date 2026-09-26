@@ -1,9 +1,9 @@
 // ============================================================================
-// KnowledgeBaseManager — área administrativa da Base de Conhecimento (Suporte).
-// CRUD em mock (localStorage via useKnowledgeArticles): cadastrar, editar,
-// excluir, categorizar, pesquisar, publicar/despublicar, ordenar; gerencia
-// artigos, FAQs, tutoriais e documentação interna. Fonte central para o módulo
-// de suporte e futuras integrações com IA/central de ajuda.
+// KnowledgeBaseManager — administrative area of the Knowledge Base (Support).
+// Mock CRUD (localStorage via useKnowledgeArticles): create, edit,
+// delete, categorize, search, publish/unpublish, sort; manages
+// articles, FAQs, tutorials and internal documentation. Central source for the
+// support module and future AI/help-center integrations.
 // ============================================================================
 
 import { useMemo, useState } from "react";
@@ -197,7 +197,7 @@ export function KnowledgeBaseManager() {
       }
       setFormOpen(false);
     } catch {
-      // erro já reportado via toast pelo hook (onError da mutation)
+      // error already reported via toast by the hook (the mutation's onError)
     }
   }
 
@@ -208,7 +208,7 @@ export function KnowledgeBaseManager() {
       toast.success("Conteúdo excluído.");
       setDeleteTarget(null);
     } catch {
-      // erro já reportado via toast pelo hook
+      // error already reported via toast by the hook
     }
   }
 
@@ -224,7 +224,7 @@ export function KnowledgeBaseManager() {
       setNewCategoryName("");
       setCategoryFormOpen(false);
     } catch {
-      // erro já reportado via toast pelo hook
+      // error already reported via toast by the hook
     }
   }
 
@@ -235,7 +235,7 @@ export function KnowledgeBaseManager() {
       toast.success("Categoria excluída.");
       setCategoryDeleteTarget(null);
     } catch {
-      // erro já reportado via toast pelo hook (bloqueia se houver artigos vinculados)
+      // error already reported via toast by the hook (blocks when there are linked articles)
     }
   }
 
@@ -425,7 +425,7 @@ export function KnowledgeBaseManager() {
         )}
       </CardContent>
 
-      {/* Modal de cadastro/edição */}
+      {/* Create/edit modal */}
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -533,7 +533,7 @@ export function KnowledgeBaseManager() {
         </DialogContent>
       </Dialog>
 
-      {/* Confirmação de exclusão */}
+      {/* Delete confirmation */}
       <AlertDialog open={Boolean(deleteTarget)} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -572,7 +572,7 @@ export function KnowledgeBaseManager() {
         </DialogContent>
       </Dialog>
 
-      {/* Confirmação de exclusão de categoria */}
+      {/* Category delete confirmation */}
       <AlertDialog open={Boolean(categoryDeleteTarget)} onOpenChange={(open) => !open && setCategoryDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>

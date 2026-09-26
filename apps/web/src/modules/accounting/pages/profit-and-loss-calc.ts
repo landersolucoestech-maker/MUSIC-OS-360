@@ -1,17 +1,17 @@
 /**
  * modules/accounting/pages/profit-and-loss-calc.ts
  *
- * `transacoes.valor` chega da API como STRING (Postgres NUMERIC serializado
- * sem transform — ver GET /transactions cru, diferente de /transactions/stats
- * que já agrega via `SUM(t.valor::numeric)` no SQL). `0 + "500.00"` faz
- * concatenação de string (JS só soma numericamente quando os dois operandos
- * já são number), então somar `t.valor` bruto em cadeia produz uma string
- * type "0500.00100.0010.00" — múltiplos pontos decimais, que vira NaN ao
- * passar por `Number()` em formatCurrency. `toNumber` normaliza qualquer
- * valor numérico/string-numérica para number antes de qualquer soma; um
- * valor que não é um número válido vira 0 explicitamente (nunca propaga
- * NaN). Módulo isolado (sem imports de React/providers) para ser testável
- * sem montar toda a árvore de contexto da página.
+ * `transacoes.valor` arrives from the API as a STRING (Postgres NUMERIC serialized
+ * without a transform — see the raw GET /transactions, unlike /transactions/stats
+ * which already aggregates via `SUM(t.valor::numeric)` in SQL). `0 + "500.00"` does
+ * string concatenation (JS only sums numerically when both operands
+ * are already numbers), so summing the raw `t.valor` in a chain produces a string
+ * like "0500.00100.0010.00" — multiple decimal points, which becomes NaN when
+ * passing through `Number()` in formatCurrency. `toNumber` normalizes any
+ * numeric/numeric-string value to a number before any sum; a
+ * value that is not a valid number explicitly becomes 0 (it never propagates
+ * NaN). An isolated module (no React/provider imports) so it is testable
+ * without mounting the page's whole context tree.
  */
 
 export function toNumber(value: unknown): number {

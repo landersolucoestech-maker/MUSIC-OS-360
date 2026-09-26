@@ -2,17 +2,17 @@ import { api } from "@/shared/lib/api-client";
 import type { AdminSupportTicket, SupportTicketStatus, SupportTicketPriority } from "../types";
 
 /**
- * Serviço real de tickets de suporte para o Painel Admin.
+ * Real support tickets service for the Admin Panel.
  *
- * REM-01 (Remaining Product Completion Backlog): usava `GET /support-tickets`
- * (tenant-scoped, RequireRole manager) — um super_admin só via os tickets do
- * ÚNICO tenant ao qual sua sessão estava vinculada, nunca uma visão
- * cross-tenant real, apesar do painel implicar isso. Agora usa o endpoint
- * real `GET /support-tickets/admin` (RequireRole super_admin, sem filtro de
- * tenant_id — RLS `super_admin_full_access`), que já retorna `tenant_name`
- * via join real com `tenants`. `requester_email`/`first_response_at`
- * continuam indisponíveis honestamente (a entidade não tem essas colunas
- * hoje) — não fabricados.
+ * REM-01 (Remaining Product Completion Backlog): it used `GET /support-tickets`
+ * (tenant-scoped, RequireRole manager) — a super_admin only saw the tickets of the
+ * SINGLE tenant their session was bound to, never a real
+ * cross-tenant view, even though the panel implied it. It now uses the real endpoint
+ * `GET /support-tickets/admin` (RequireRole super_admin, no
+ * tenant_id filter — RLS `super_admin_full_access`), which already returns `tenant_name`
+ * via a real join with `tenants`. `requester_email`/`first_response_at`
+ * honestly remain unavailable (the entity does not have those columns
+ * today) — not fabricated.
  */
 interface RawAdminTicket {
   id: string;

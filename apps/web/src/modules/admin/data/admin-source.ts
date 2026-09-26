@@ -1,14 +1,14 @@
 /**
  * modules/admin/data/admin-source.ts
  *
- * Gate de exposição dos dados administrativos.
- * Em produção (IS_PROD), os mocks NÃO são expostos — todas as exports retornam
- * arrays vazios / KPIs zerados. As páginas admin devem renderizar empty state
+ * Exposure gate of the administrative data.
+ * In production (IS_PROD), mocks are NOT exposed — every export returns
+ * empty arrays / zeroed KPIs. The admin pages must render the empty state
  * "Admin analytics indisponível — endpoint real ainda não implementado".
  *
  *
- * Quando endpoints `/admin/*` reais existirem, substituir esta camada por
- * hooks que consomem a API real.
+ * When real `/admin/*` endpoints exist, replace this layer with
+ * hooks that consume the real API.
  */
 import type {
   AdminKPIs, RevenueDataPoint, AdminPlan, AdminTenant,
@@ -17,7 +17,7 @@ import type {
   PlatformIntegrationProvider,
 } from "../types";
 
-/** Não existem mais dados fictícios em nenhum modo. */
+/** Fictitious data no longer exists in any mode. */
 export const ADMIN_DATA_IS_MOCK = false as const;
 
 const EMPTY_KPIS: AdminKPIs = {
@@ -32,7 +32,7 @@ export const ADMIN_REVENUE: RevenueDataPoint[] = [];
 export const ADMIN_PLANS: AdminPlan[]          = [];
 export const ADMIN_TENANTS: AdminTenant[]      = [];
 export const ADMIN_SUBSCRIPTIONS: AdminSubscription[] = [];
-// ADMIN_USERS removido — Usuários usa backend real via useAdminUsers() (GET /admin/users).
+// ADMIN_USERS removed — Users uses the real backend via useAdminUsers() (GET /admin/users).
 export const ADMIN_SECURITY_EVENTS: AdminSecurityEvent[] = [];
 export const ADMIN_NOTIFICATIONS: AdminNotification[] = [];
 export const ADMIN_INTEGRATIONS: AdminIntegration[] = [];

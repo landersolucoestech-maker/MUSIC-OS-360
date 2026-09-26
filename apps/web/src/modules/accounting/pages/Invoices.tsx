@@ -83,7 +83,7 @@ export default function Invoices() {
 
   const [isViewOpen, setIsViewOpen] = useState(false);
 
-  // Enriquecimento: anota cada nota com o type derivado das observações
+  // Enrichment: annotates each invoice with the type derived from the notes
   const invoicesWithType = useMemo(
     () =>
       invoices.map((n: any) => ({
@@ -161,7 +161,7 @@ export default function Invoices() {
 
   const { page, pageSize, total, pageItems, setPage, setPageSize } = usePagination(filteredInvoices, 10);
 
-  // Métricas
+  // Metrics
   const totalRegistered = invoicesWithType.length;
   const outgoingInvoices = invoicesWithType.filter((n: any) => n._operationType === "saida");
   const incomingInvoices = invoicesWithType.filter((n: any) => n._operationType === "entrada");
@@ -218,7 +218,7 @@ export default function Invoices() {
   return (
     <MainLayout title="Notas Fiscais" description="Registro e controle de notas fiscais de entrada e saída" actions={headerActions}>
       <div className="space-y-6">
-        {/* Metrics — padrão do sistema */}
+        {/* Metrics — system standard */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <Card>
             <CardContent className="pt-6">
@@ -294,7 +294,7 @@ export default function Invoices() {
 
         {/* Search and Filters */}
         <div className="flex flex-wrap items-center gap-3 rounded-lg bg-muted/30 p-3">
-          {/* Seletor de datas — sempre imediatamente à esquerda da busca */}
+          {/* Date picker — always immediately to the left of the search */}
           <DatePickerField
             value={startDate}
             onChange={setStartDate}

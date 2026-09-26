@@ -334,8 +334,8 @@ function TabNotificacoes() {
   );
 }
 
-// Webhooks configurados virão da API real (/admin/webhooks) quando o endpoint
-// existir. Nunca exibir dados fictícios — vazio até lá.
+// Configured webhooks will come from the real API (/admin/webhooks) once the endpoint
+// exists. Never show fictitious data — empty until then.
 const WEBHOOKS: Array<{ id: string; url: string; events: string[]; status: string; last_called: string }> = [];
 
 function TabWebhooks() {
@@ -389,7 +389,7 @@ function TabWebhooks() {
   );
 }
 
-// Chaves de API virão da API real quando o endpoint existir. Vazio até lá.
+// API keys will come from the real API once the endpoint exists. Empty until then.
 const API_KEYS: Array<{ id: string; name: string; key: string; created: string; last_used: string; scopes: string[] }> = [];
 
 function TabChavesApi() {
@@ -481,9 +481,9 @@ function TabIntegracoes() {
     return acc;
   }, {});
 
-  // LOADING / ERROR / EMPTY são três estados distintos. Um erro NUNCA pode ser
-  // renderizado como "não há integrações" — foi assim que uma falha de request
-  // passou por catálogo vazio enquanto o banco tinha 14 registros.
+  // LOADING / ERROR / EMPTY are three distinct states. An error may NEVER be
+  // rendered as "there are no integrations" — that is how a request failure
+  // passed as an empty catalog while the database had 14 records.
   if (isLoading) {
     return <p className="text-sm text-muted-foreground" data-testid="admin-integrations-loading">Carregando governança de integrações…</p>;
   }
@@ -656,8 +656,8 @@ function TabIntegracoes() {
   );
 }
 
-// Estilo de badge por slug de papel — best-effort, não é uma lista exaustiva:
-// qualquer slug não mapeado aqui ainda exibe seu role_name real, só sem cor especial.
+// Badge style per role slug — best-effort, not an exhaustive list:
+// any slug not mapped here still shows its real role_name, just without a special color.
 const ROLE_STYLE: Record<string, string> = {
   super_admin: "text-amber-400 bg-amber-500/10 border-amber-500/20",
   tenant_owner: "text-amber-400 bg-amber-500/10 border-amber-500/20",

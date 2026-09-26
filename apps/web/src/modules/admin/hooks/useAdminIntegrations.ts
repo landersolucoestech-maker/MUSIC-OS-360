@@ -14,10 +14,10 @@ const EMPTY_INTEGRATIONS: AdminIntegration[] = [];
 const EMPTY_CATEGORIES: IntegrationCategory[] = [];
 
 /**
- * `data ?? []` é conveniência de render, NÃO tratamento de erro: `isError`/`error`
- * continuam expostos e a UI é obrigada a distinguir LOADING / ERROR / EMPTY.
- * Colapsar uma falha (404/403/500/rede) em lista vazia foi exatamente o bug que
- * fez a aba do Portal Admin dizer "nenhuma integração" com 14 registros no banco.
+ * `data ?? []` is a render convenience, NOT error handling: `isError`/`error`
+ * stay exposed and the UI must distinguish LOADING / ERROR / EMPTY.
+ * Collapsing a failure (404/403/500/network) into an empty list was exactly the bug that
+ * made the Admin Portal tab say "no integrations" with 14 records in the database.
  */
 export function useAdminIntegrations() {
   const query = useQuery<AdminIntegration[]>({
@@ -42,7 +42,7 @@ export function useUpdateIntegrationGovernance() {
     mutationFn: ({ id, patch }: { id: string; patch: UpdateIntegrationGovernanceInput }) =>
       adminIntegrationsService.update(id, patch),
     onSuccess: () => {
-      // A governança muda o que os clientes resolvem — invalidar os dois lados.
+      // Governance changes what customers resolve — invalidate both sides.
       void qc.invalidateQueries({ queryKey: ["admin", "integrations"] });
       void qc.invalidateQueries({ queryKey: ["integrations", "external-providers"] });
       toast.success("Governança atualizada.");
@@ -51,7 +51,7 @@ export function useUpdateIntegrationGovernance() {
   });
 }
 
-/** Integrações comerciais disponíveis para compor um plano — vem do backend. */
+/** Commercial integrations available to compose a plan — comes from the backend. */
 export function useCommercialIntegrations() {
   const query = useAdminIntegrations();
   return { ...query, data: query.data.filter((i) => i.classification === "commercial") };
@@ -74,7 +74,7 @@ export function useSavePlanIntegrations() {
     onSuccess: (res) => {
       void qc.invalidateQueries({ queryKey: ["admin", "plan-integrations"] });
       void qc.invalidateQueries({ queryKey: ["admin", "integrations"] });
-      // Entitlement muda o catálogo do cliente sem deploy — invalida os dois lados.
+      // An entitlement changes the customer's catalog without a deploy — invalidates both sides.
       void qc.invalidateQueries({ queryKey: ["integrations", "external-providers"] });
       if (res.rejected.length > 0) {
         toast.warning(`Ignorados (não comerciais): ${res.rejected.join(", ")}`);

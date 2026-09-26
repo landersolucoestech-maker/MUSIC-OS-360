@@ -60,9 +60,9 @@ export interface AdminPlan {
   active_subscribers: number;
   mrr: number;
   color: string;
-  /** Plano ativo (disponível para novas assinaturas). Ausente = ativo. */
+  /** Active plan (available for new subscriptions). Absent = active. */
   active?: boolean;
-  /** Integração Stripe (IDs do produto/preço criados no painel Stripe). */
+  /** Stripe integration (IDs of the product/price created in the Stripe dashboard). */
   stripe_product_id?: string;
   stripe_price_id?: string;
 }
@@ -105,19 +105,19 @@ export interface AdminUser {
   id: string;
   name: string;
   email: string;
-  /** Slug real do papel (fonte: tabela `roles`/`org_members.role` — sem enum fixo, sem tradução artificial). */
+  /** The role's real slug (source: the `roles`/`org_members.role` table — no fixed enum, no artificial translation). */
   role_slug: string;
-  /** Nome legível do papel, já resolvido pelo backend (tabela `roles.name`). */
+  /** The role's readable name, already resolved by the backend (`roles.name` table). */
   role_name: string;
   tenant_id: string;
   tenant_name: string;
   status: AdminUserStatus;
-  /** null = indisponível (usuário sem correspondência no Supabase Auth). */
+  /** null = unavailable (user without a match in Supabase Auth). */
   last_login: string | null;
   joined_at: string | null;
-  /** null = indisponível (usuário sem correspondência no Supabase Auth). */
+  /** null = unavailable (user without a match in Supabase Auth). */
   mfa_enabled: boolean | null;
-  /** Supabase Admin API não expõe contagem de sessões ativas — sempre null, nunca fabricado. */
+  /** The Supabase Admin API does not expose an active session count — always null, never fabricated. */
   sessions_count: null;
 }
 
@@ -188,8 +188,8 @@ export interface AdminIntegration {
 }
 
 /**
- * Categorias de provedores GLOBAIS da plataforma SaaS (Painel Admin).
- * Distinto das integrações por tenant (App > Configurações).
+ * Categories of GLOBAL providers of the SaaS platform (Admin Panel).
+ * Distinct from the per-tenant integrations (App > Settings).
  */
 export type PlatformCategory =
   | "core" | "billing" | "email" | "observability" | "storage"
@@ -199,9 +199,9 @@ export type PlatformCategory =
 export type PlatformEnvironment = "production" | "sandbox" | "disabled";
 
 /**
- * PlatformIntegrationProvider — provedor GLOBAL da plataforma (Painel Admin SaaS).
- * Representa disponibilidade, infraestrutura, limites e status operacional global.
- * NÃO representa a conexão de um cliente (isso é TenantIntegrationConnection).
+ * PlatformIntegrationProvider — a GLOBAL platform provider (SaaS Admin Panel).
+ * Represents global availability, infrastructure, limits and operational status.
+ * It does NOT represent a customer's connection (that is TenantIntegrationConnection).
  */
 export interface PlatformIntegrationProvider {
   id: string;
@@ -226,8 +226,8 @@ export interface PlatformIntegrationProvider {
 }
 
 /**
- * TenantIntegrationConnection — conexão de um CLIENTE/workspace (App > Configurações).
- * Representa a conta conectada por aquele tenant, credenciais e sync.
+ * TenantIntegrationConnection — a CUSTOMER/workspace connection (App > Settings).
+ * Represents the account connected by that tenant, credentials and sync.
  */
 export interface TenantIntegrationConnection {
   id: string;

@@ -36,7 +36,7 @@ export function InvoiceItemsSection({
 }: InvoiceItemsSectionProps) {
   return (
     <>
-      {/* ── SERVIÇOS / ITENS ── */}
+      {/* ── SERVICES / ITEMS ── */}
       <section className="space-y-4" data-testid="section-servicos">
         <h3 className="text-base font-semibold border-b pb-1">Serviços</h3>
 

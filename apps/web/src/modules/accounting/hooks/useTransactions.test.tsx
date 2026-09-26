@@ -23,12 +23,12 @@ function createWrapper() {
   );
 }
 
-// Regressão: QueryTransactionDto (apps/api) marca "artistId" como alias legado NUNCA lido pelo
-// service (Swagger deprecated: "não lido pelo service. Use artist_id") — o campo real é
-// "artist_id". Enviar "artistId" passava no whitelist do ValidationPipe (não dava 400) mas o
-// filtro era silenciosamente ignorado: a API respondia 200 com TODAS as transações do tenant,
-// não só as do artista — pior que um 400, porque não havia nenhum sinal de erro. Isso quebrava
-// a aba Financeiro do modal Visão 360° do artista.
+// Regression: QueryTransactionDto (apps/api) marks "artistId" as a legacy alias NEVER read by the
+// service (Swagger deprecated note: it is not read by the service, use artist_id) — the real field is
+// "artist_id". Sending "artistId" passed the ValidationPipe whitelist (no 400) but the
+// filter was silently ignored: the API answered 200 with ALL of the tenant's transactions,
+// not only the artist's — worse than a 400, because there was no error signal at all. That broke
+// the finance tab of the artist's 360° View modal.
 describe("useTransactions", () => {
   beforeEach(() => {
     mockedList.mockReset();

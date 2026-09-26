@@ -34,8 +34,8 @@ function toApiPayload(draft: FinanceCategoryRuleDraft) {
 
 export const financeCategoryRulesService = {
   async list(categories: FinancialCategory[] = []) {
-    // api.get() já desembrulha o envelope {data,timestamp}; como o controller
-    // retorna {data:[...],meta} diretamente, o valor aqui já É o array.
+    // api.get() already unwraps the {data,timestamp} envelope; since the controller
+    // returns {data:[...],meta} directly, the value here already IS the array.
     const rules = await api.get<FinanceCategoryRuleApiResponse[]>("/finance-category-rules?limit=300");
     return rules.map((rule) => mapApiRule(rule, categories));
   },

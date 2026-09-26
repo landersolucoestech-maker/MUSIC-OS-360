@@ -18,7 +18,7 @@ import {
   CreditCard, ChevronRight,
 } from "lucide-react";
 
-/* ── Métricas data (merged from AdminAnalytics) ── */
+/* ── Metrics data (merged from AdminAnalytics) ── */
 const PLAN_COLORS: Record<string, string> = {
   starter: "#6B7280",
   growth: "#3B82F6",
@@ -100,9 +100,9 @@ export default function AdminDashboard() {
   const tenants = tenantsQuery.data ?? [];
   const subscriptions = subscriptionsQuery.data ?? [];
   const recentTenants = tenants.slice(0, 5);
-  // Falha real de query (endpoint fora do ar) é diferente de "0 tenants
-  // reais" — sem isto, um erro de rede silenciosamente renderizava R$0/0
-  // como se fossem KPIs reais, indistinguível de uma plataforma vazia.
+  // A real query failure (endpoint down) is different from "0 real
+  // tenants" — without this, a network error silently rendered R$0/0
+  // as if they were real KPIs, indistinguishable from an empty platform.
   const kpisUnavailable = tenantsQuery.isError || subscriptionsQuery.isError;
   const unresolvedEvents: unknown[] = [];
   const unreadNotifs: Array<{ id: string; severity: string; title: string; message: string; action_url?: string }> = [];
@@ -318,7 +318,7 @@ export default function AdminDashboard() {
             </ResponsiveContainer>
           </div>
 
-          {/* Distribuição por Plano */}
+          {/* Distribution per plan */}
           <div className="rounded-2xl border border-border bg-card p-5">
             <h2 className="text-[13px] font-semibold text-foreground mb-4">Distribuição por Plano</h2>
             <div className="space-y-3">

@@ -6,31 +6,31 @@
 import type { TransactionFormData } from "@/modules/accounting/constants/transaction-constants";
 
 /**
- * Um campo por conceito (ver .claude/rules/naming-canonical.md). O backend
- * (`POST/PUT/PATCH /transactions`, validado por createTransactionSchema em
- * apps/api/.../validators/transacao.validator.ts) só lê chaves camelCase
- * PT-BR — as mesmas do próprio formulário (`TransactionFormData`). Manter um
- * par snake_case/camelCase aqui era duplicação pura para os campos que
- * também existiam em camelCase (tipoTransacao, tipoCliente, dataTransacao,
- * observacao, artistaVinculado, projetoVinculado) — o snake_case nunca era
- * lido pelo schema e era só payload morto.
+ * One field per concept (see .claude/rules/naming-canonical.md). The backend
+ * (`POST/PUT/PATCH /transactions`, validated by createTransactionSchema in
+ * apps/api/.../validators/transacao.validator.ts) only reads camelCase
+ * PT-BR keys — the same as the form's own (`TransactionFormData`). Keeping a
+ * snake_case/camelCase pair here was pure duplication for the fields that
+ * also existed in camelCase (tipoTransacao, tipoCliente, dataTransacao,
+ * observacao, artistaVinculado, projetoVinculado) — the snake_case was never
+ * read by the schema and was only dead payload.
  *
- * Para os campos que só existiam em snake_case (contrato_id, evento_id,
+ * For the fields that only existed in snake_case (contrato_id, evento_id,
  * fornecedor_cliente, orgao_arrecadador, item_investimento, motivo_viagem,
  * nome_publicidade, forma_pagamento, tipo_pagamento, quantidade_parcelas,
- * intervalo_parcelas, data_primeira_parcela, anexo_url, anexo_nome), o nome
- * enviado não batia com nenhuma chave do schema — o backend descartava
- * silenciosamente esses valores (zod strip de chave desconhecida). Isso
- * incluía `forma_pagamento`, campo obrigatório em createTransactionSchema.
- * Renomear para a chave camelCase real corrige esse descarte silencioso,
- * não é só rename cosmético.
+ * intervalo_parcelas, data_primeira_parcela, anexo_url, anexo_nome), the name
+ * sent matched no schema key — the backend silently discarded
+ * those values (zod strips unknown keys). That
+ * included `forma_pagamento`, a mandatory field in createTransactionSchema.
+ * Renaming to the real camelCase key fixes that silent discard;
+ * it is not just a cosmetic rename.
  *
- * centro_custo/competencia/conta_origem/conta_destino não têm contraparte
- * camelCase porque o schema atual não declara esses campos (nem como
- * snake_case, nem como camelCase) — não é uma duplicação, é um campo do
- * formulário sem persistência no backend hoje; fora do escopo desta
- * consolidação (registrar como débito à parte, não inventar um campo novo
- * no schema aqui).
+ * centro_custo/competencia/conta_origem/conta_destino have no camelCase
+ * counterpart because the current schema does not declare those fields (neither as
+ * snake_case nor as camelCase) — it is not duplication, it is a form field
+ * without backend persistence today; out of scope for this
+ * consolidation (record it as separate debt, do not invent a new field
+ * in the schema here).
  */
 export interface TransactionFormPayload {
   [key: string]: string | number | null;

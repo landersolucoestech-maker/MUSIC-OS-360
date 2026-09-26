@@ -32,8 +32,8 @@ interface Props {
 }
 
 /**
- * Vínculos Gerenciais (P&L) — todo lançamento deve ser vinculado a pelo menos
- * uma entidade. Suporta múltiplos vínculos com rateio percentual (soma 100%).
+ * Managerial links (P&L) — every financial entry must be linked to at least
+ * one entity. Supports multiple links with a percentage allocation (summing to 100%).
  */
 export function ManagerialLinksSection({ links, onChange, disabled, entityOptions }: Props) {
   const update = (index: number, patch: Partial<TransactionEntityLink>) =>

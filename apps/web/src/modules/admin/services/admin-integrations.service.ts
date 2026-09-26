@@ -1,23 +1,23 @@
 /**
  * modules/admin/services/admin-integrations.service.ts
  *
- * Portal Administrador → Configurações → Integrações.
- * Governança PERSISTIDA — substitui o antigo estado local seeded por um array
- * hardcoded (ADMIN_PLATFORM_PROVIDERS, que estava literalmente vazio, deixando
- * a aba sem nada para mostrar).
+ * Admin portal → Settings → Integrations.
+ * PERSISTED governance — replaces the old local state seeded by a
+ * hardcoded array (ADMIN_PLATFORM_PROVIDERS, which was literally empty, leaving
+ * the tab with nothing to show).
  */
 
 import { api } from "@/shared/lib/api-client";
 
 export type AudienceMode = "none" | "all" | "plans" | "tenants";
-/** Rollout comercial — separado de técnico, entitlement e conexão. */
+/** Commercial rollout — separate from technical state, entitlement and connection. */
 export type PublicationState =
   | "hidden" | "coming_soon" | "beta" | "available" | "temporarily_unavailable";
-/** Estado operacional do adapter, governável pelo admin. */
+/** Operational state of the adapter, governable by the admin. */
 export type TechnicalState =
   | "planned" | "in_development" | "configuring" | "awaiting_provider"
   | "homologating" | "ready" | "degraded" | "disabled" | "retired";
-/** Capability derivada do CÓDIGO — veta um technical_state otimista. */
+/** Capability derived from the CODE — vetoes an optimistic technical_state. */
 export type TechnicalCapability = "implemented" | "not_implemented";
 export type IntegrationClassification =
   | "commercial" | "internal_platform" | "platform_billing";
@@ -39,16 +39,16 @@ export interface AdminIntegration {
   publicationState: PublicationState;
   technicalState: TechnicalState;
   classification: IntegrationClassification;
-  /** Planos que incluem este slug — read-only; edição vive no editor de plano. */
+  /** Plans that include this slug — read-only; editing lives in the plan editor. */
   includedInPlans: string[];
   viewAudience: IntegrationAudience;
   useAudience: IntegrationAudience;
   isCore: boolean;
   notes: string | null;
-  /** Somente leitura — derivado do código, não editável por admin. */
+  /** Read-only — derived from the code, not editable by an admin. */
   technicalCapability: TechnicalCapability;
   capabilityEvidence: string | null;
-  /** Publicado sem adapter: contradição que o admin precisa enxergar. */
+  /** Published without an adapter: a contradiction the admin must see. */
   publishedWithoutCapability: boolean;
 }
 
@@ -76,9 +76,9 @@ export const adminIntegrationsService = {
 };
 
 /**
- * Entitlements de integração por plano (billing_plans.integrations).
- * Lista dinâmica de slugs comerciais — o editor de plano não conhece provedor
- * nenhum em código.
+ * Per-plan integration entitlements (billing_plans.integrations).
+ * A dynamic list of commercial slugs — the plan editor knows no provider
+ * at all in code.
  */
 export const adminPlanIntegrationsService = {
   get: (planSlug: string) => api.get<string[]>(`/admin/integrations/plans/${planSlug}`),

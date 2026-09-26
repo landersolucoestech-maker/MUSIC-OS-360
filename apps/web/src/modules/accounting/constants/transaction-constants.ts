@@ -4,7 +4,7 @@ import type { TransactionEntityLink } from "@/modules/accounting/types/accountin
 // ==================== TIPOS ====================
 
 export interface TransactionFormData {
-  /** Vínculos gerenciais (P&L) — obrigatório ≥1. Múltiplos com rateio. */
+  /** Managerial links (P&L) — mandatory ≥1. Multiple ones with allocation. */
   entityLinks: TransactionEntityLink[];
   // Dados gerais
   tipoTransacao: string;
@@ -17,7 +17,7 @@ export interface TransactionFormData {
   status: string;
   observacao: string;
   
-  // Vinculações
+  // Links
   artistaVinculado: string;
   projetoVinculado: string;
   contratoVinculado: string;
@@ -30,7 +30,7 @@ export interface TransactionFormData {
   contaOrigem?: string;
   contaDestino?: string;
   
-  // Campos específicos
+  // Specific fields
   itemInvestimento: string;
   motivoViagem: string;
   advertisingName: string;
@@ -85,7 +85,7 @@ export const initialFormData: TransactionFormData = {
   anexoNome: "",
 };
 
-// ==================== TIPOS DE TRANSAÇÃO ====================
+// ==================== TRANSACTION TYPES ====================
 
 export const transactionTypes = [
   { value: "receita", label: "Receita" },
@@ -165,7 +165,7 @@ export const individualExpenseCategories = [
   { value: "reembolso", label: "Reembolso" },
 ];
 
-// Subcategorias Remuneração (Pessoa)
+// Compensation subcategories (person)
 export const individualCompensationTypes = [
   { value: "salario", label: "Salário" },
   { value: "pro-labore", label: "Pró-labore" },
@@ -175,7 +175,7 @@ export const individualCompensationTypes = [
   { value: "bonus-premiacao", label: "Bônus / Premiação" },
 ];
 
-// Subcategorias Serviços Pessoa Física (Pessoa)
+// Individual (natural person) services subcategories (person)
 export const individualServiceTypes = [
   { value: "freelancer", label: "Freelancer" },
   { value: "prestador-autonomo", label: "Prestador autônomo" },
@@ -190,7 +190,7 @@ export const individualReimbursementTypes = [
   { value: "reembolso-materiais", label: "Reembolso de materiais" },
 ];
 
-// ==================== SERVIÇOS (Despesa) ====================
+// ==================== SERVICES (expense) ====================
 
 export const expenseServiceTypes = [
   { value: "design-grafico", label: "Design gráfico" },
@@ -204,7 +204,7 @@ export const expenseServiceTypes = [
   { value: "ti-desenvolvimento-saas", label: "TI / Desenvolvimento / SaaS" },
 ];
 
-// Serviços que exigem Artista + Projeto (obrigatórios)
+// Services that require artist + project (mandatory)
 export const expenseServicesRequiringArtistAndProject = [
   "design-grafico",
   "producao-audiovisual",
@@ -222,7 +222,7 @@ export const marketingExpenseTypes = [
   { value: "brindes-promocionais", label: "Brindes promocionais" },
 ];
 
-// Marketing: Artista obrigatório, Projeto opcional
+// Marketing: artist mandatory, project optional
 
 // ==================== VIAGENS (Despesa) ====================
 
@@ -234,7 +234,7 @@ export const travelExpenseTypes = [
   { value: "locacao-equipamentos", label: "Locação de equipamentos" },
 ];
 
-// Viagens: Artista obrigatório + Motivo da viagem obrigatório
+// Travel: artist mandatory + travel reason mandatory
 
 // ==================== PRODUTOS (Despesa) ====================
 
@@ -244,8 +244,8 @@ export const expenseProductTypes = [
   { value: "cenografia-pirotecnia", label: "Cenografia / Pirotecnia" },
 ];
 
-// Equipamentos e Merchandising: apenas Artista obrigatório
-// Cenografia/Pirotecnia: Artista obrigatório + Evento/Show obrigatório
+// Equipment and merchandising: only the artist is mandatory
+// Set design/pyrotechnics: artist mandatory + event/show mandatory
 export const expenseProductsRequiringEvent = ["cenografia-pirotecnia"];
 
 // ==================== ADMINISTRATIVO (Despesa) ====================
@@ -272,14 +272,14 @@ export const artistExpenseCategories = [
   { value: "suporte-financeiro", label: "Suporte Financeiro" },
 ];
 
-// Subcategorias de Cachês (Artista)
+// Performance fee subcategories (artist)
 export const artistFeeTypes = [
   { value: "show-evento", label: "Show / Evento" },
   { value: "publicidade", label: "Publicidade" },
 ];
 
-// ==================== RECEITA - EMPRESA (e Pessoa usa as mesmas) ====================
-// SINCRONIZADO COM: src/lib/financial-items-types.ts -> FINANCIAL_CATEGORIES
+// ==================== REVENUE - COMPANY (the person counterparty uses the same) ====================
+// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> FINANCIAL_CATEGORIES
 
 export const companyRevenueCategories = [
   { value: "receitas-musicais", label: "Receitas Musicais" },
@@ -289,8 +289,8 @@ export const companyRevenueCategories = [
   { value: "receitas-internas", label: "Receitas Internas" },
 ];
 
-// Subcategorias Receitas Musicais
-// SINCRONIZADO COM: src/lib/financial-items-types.ts -> SUBCATEGORIAS_RECEITAS_MUSICAIS
+// Music revenue subcategories
+// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_RECEITAS_MUSICAIS
 export const musicRevenueTypes = [
   { value: "participacao-show-evento", label: "Participação em Show/Evento" },
   { value: "venda-show-fechado", label: "Venda de Show Fechado" },
@@ -303,7 +303,7 @@ export const musicRevenueTypes = [
   { value: "venda-beats", label: "Venda de Beats" },
 ];
 
-// Receitas musicais com Artista + Projeto
+// Music revenues with artist + project
 export const musicRevenueRequiringArtistAndProject = [
   "direitos-autorais",
   "direitos-conexos",
@@ -314,14 +314,14 @@ export const musicRevenueRequiringArtistAndProject = [
   "venda-beats",
 ];
 
-// Receitas musicais apenas com Artista (sem projeto)
+// Music revenues with the artist only (no project)
 export const musicRevenueRequiringArtistOnly = [
   "participacao-show-evento",
   "venda-show-fechado",
 ];
 
-// Subcategorias Serviços (Receita)
-// SINCRONIZADO COM: src/lib/financial-items-types.ts -> SUBCATEGORIAS_SERVICOS
+// Services subcategories (revenue)
+// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_SERVICOS
 export const revenueServiceTypes = [
   { value: "producao-musical", label: "Produção Musical" },
   { value: "producao-audiovisual", label: "Produção Audiovisual" },
@@ -340,8 +340,8 @@ export const revenueServiceTypes = [
   { value: "locacao-equipamentos", label: "Locação de Equipamentos" },
 ];
 
-// Serviços (Receita) com Artista + Projeto
-// SINCRONIZADO COM: src/lib/financial-items-types.ts -> SUBCATEGORIAS_SERVICOS (requiresArtist + requiresProject)
+// Services (revenue) with artist + project
+// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_SERVICOS (requiresArtist + requiresProject)
 export const revenueServicesRequiringArtistAndProject = [
   "producao-musical",
   "producao-audiovisual",
@@ -354,16 +354,16 @@ export const revenueServicesRequiringArtistAndProject = [
   "sessao-producao",
 ];
 
-// Serviços (Receita) apenas com Artista (sem projeto obrigatório)
-// SINCRONIZADO COM: src/lib/financial-items-types.ts -> SUBCATEGORIAS_SERVICOS (requiresArtist: true, requiresProject: false)
+// Services (revenue) with the artist only (no mandatory project)
+// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_SERVICOS (requiresArtist: true, requiresProject: false)
 export const revenueServicesRequiringArtistOnly = [
   "criacao-site",
   "gestao-redes-sociais",
   "ensaio",
 ];
 
-// Subcategorias Produtos (Receita)
-// SINCRONIZADO COM: src/lib/financial-items-types.ts -> SUBCATEGORIAS_PRODUTOS
+// Products subcategories (revenue)
+// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_PRODUTOS
 export const revenueProductTypes = [
   { value: "venda-merchandising", label: "Venda de Merchandising" },
   { value: "venda-produtos-fisicos", label: "Venda de Produtos Físicos" },
@@ -375,8 +375,8 @@ export const revenueProductTypes = [
   { value: "presets-plugins", label: "Presets / Plugins" },
 ];
 
-// Subcategorias Receitas Contratuais
-// SINCRONIZADO COM: src/lib/financial-items-types.ts -> SUBCATEGORIAS_CONTRATUAIS
+// Contractual revenue subcategories
+// KEPT IN SYNC WITH: src/lib/financial-items-types.ts -> SUBCATEGORIAS_CONTRATUAIS
 export const contractualRevenueTypes = [
   { value: "repasse-contrato", label: "Repasse de Contrato" },
   { value: "comissao", label: "Comissão" },
@@ -502,7 +502,7 @@ export const taxCategories = [
   { value: "outros", label: "Outros" },
 ];
 
-// ==================== TRANSFERÊNCIA ====================
+// ==================== TRANSFER ====================
 
 export const transferCategories = [
   { value: "entre-contas", label: "Entre contas" },
@@ -536,13 +536,13 @@ export const getCategoriesForTransactionType = (
     if (tipoTransacao === "receita") return companyRevenueCategories;
   }
 
-  // Pessoa tem categorias específicas para despesa
+  // The person counterparty has specific expense categories
   if (tipoCliente === "pessoa") {
     if (tipoTransacao === "despesa") return individualExpenseCategories;
     if (tipoTransacao === "receita") return companyRevenueCategories;
   }
 
-  // Artista tem categorias específicas
+  // The artist counterparty has specific categories
   if (tipoCliente === "artista") {
     if (tipoTransacao === "despesa") return artistExpenseCategories;
     if (tipoTransacao === "receita") return artistRevenueCategories;
@@ -586,7 +586,7 @@ export const getSubcategoriesForCategory = (
     }
   }
 
-  // Pessoa tem subcategorias específicas para despesa
+  // The person counterparty has specific expense subcategories
   if (tipoCliente === "pessoa") {
     if (tipoTransacao === "despesa") {
       switch (categoria) {
@@ -612,29 +612,29 @@ export const getSubcategoriesForCategory = (
 };
 
 
-// ==================== REGRAS DE NEGÓCIO - VERIFICADORES ====================
+// ==================== BUSINESS RULES - CHECKERS ====================
 
-// Verifica se serviço de despesa exige Artista + Projeto
+// Checks whether an expense service requires artist + project
 export const isServiceRequiringArtistAndProject = (subcategoria: string): boolean => {
   return expenseServicesRequiringArtistAndProject.includes(subcategoria);
 };
 
-// Verifica se produto de despesa exige Evento
+// Checks whether an expense product requires an event
 export const isProductRequiringEvent = (subcategoria: string): boolean => {
   return expenseProductsRequiringEvent.includes(subcategoria);
 };
 
-// Verifica se receita musical exige Artista + Projeto
+// Checks whether a music revenue requires artist + project
 export const isMusicRevenueRequiringArtistAndProject = (subcategoria: string): boolean => {
   return musicRevenueRequiringArtistAndProject.includes(subcategoria);
 };
 
-// Verifica se serviço de receita exige Artista + Projeto
+// Checks whether a revenue service requires artist + project
 export const isRevenueServiceRequiringArtistAndProject = (subcategoria: string): boolean => {
   return revenueServicesRequiringArtistAndProject.includes(subcategoria);
 };
 
-// Verifica se serviço de receita exige apenas Artista
+// Checks whether a revenue service requires only the artist
 export const isRevenueServiceRequiringArtistOnly = (subcategoria: string): boolean => {
   return revenueServicesRequiringArtistOnly.includes(subcategoria);
 };

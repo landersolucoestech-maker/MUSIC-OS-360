@@ -58,7 +58,7 @@ export function DetailsSection({
 }: DetailsSectionProps) {
   return (
     <>
-      {/* ── IDENTIFICAÇÃO ── */}
+      {/* ── IDENTIFICATION ── */}
       <section className="space-y-4" data-testid="section-identificacao">
         <h3 className="text-base font-semibold border-b pb-1">Identificação</h3>
 

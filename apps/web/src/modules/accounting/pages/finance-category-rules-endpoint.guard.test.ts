@@ -1,13 +1,13 @@
 /**
  * finance-category-rules-endpoint.guard.test.ts
  *
- * Guarda permanente (Task T): FinanceCategoryRules.tsx chamava endpoints que
- * nunca existiram no backend (/financial-categories/rules*), fazendo toda
- * ação da página (listar/criar/editar/excluir regras) falhar com 404/400. O
- * backend real para regras de categorização por palavra-chave vive em
+ * Permanent guard (Task T): FinanceCategoryRules.tsx called endpoints that
+ * never existed in the backend (/financial-categories/rules*), making every
+ * action on the page (list/create/edit/delete rules) fail with 404/400. The
+ * real backend for keyword categorization rules lives at
  * /finance-category-rules (apps/api/src/modules/finance-category-rules).
- * Este teste falha se a página ou seus serviços voltarem a apontar para o
- * endpoint inexistente.
+ * This test fails if the page or its services point back to the
+ * nonexistent endpoint.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

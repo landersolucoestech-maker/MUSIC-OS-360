@@ -9,7 +9,7 @@ import type {
 
 export type { TransactionType, TransactionStatusValue, TransactionPaymentMethod, InvoiceStatusValue, InvoiceType };
 
-/** Entidades gerenciais elegíveis para vínculo de um lançamento (rastreabilidade P&L). */
+/** Managerial entities eligible to be linked to a financial entry (P&L traceability). */
 export type TransactionEntityType =
   | "projeto"
   | "artista"
@@ -18,14 +18,14 @@ export type TransactionEntityType =
   | "evento";
 
 /**
- * Vínculo gerencial de um lançamento financeiro a uma entidade do sistema.
- * Suporta múltiplos vínculos por lançamento, com rateio percentual opcional.
+ * Managerial link of a financial entry to a system entity.
+ * Supports multiple links per entry, with an optional percentage allocation.
  */
 export interface TransactionEntityLink {
   entityType: TransactionEntityType;
   entityId: string;
   entityName: string;
-  /** Percentual de rateio (0–100). Quando há múltiplos vínculos, a soma deve ser 100. */
+  /** Allocation percentage (0–100). When there are multiple links, the sum must be 100. */
   allocationPercent?: number;
 }
 
@@ -41,7 +41,7 @@ export interface Transaction {
   artist_id?: string | null;
   client_id?: string | null;
   venda_id?: string | null;
-  /** Vínculos gerenciais obrigatórios para consolidação no P&L (≥1). */
+  /** Managerial links mandatory for P&L consolidation (≥1). */
   entityLinks?: TransactionEntityLink[];
   origem?: string | null;
   notes?: string | null;

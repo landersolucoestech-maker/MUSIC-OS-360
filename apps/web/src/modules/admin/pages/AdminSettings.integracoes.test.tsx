@@ -6,18 +6,18 @@ import { MemoryRouter } from "react-router-dom";
 import liveAdminIntegrations from "../__fixtures__/admin-integrations.live.json";
 
 /**
- * GATE C — caminho de RENDER real do Portal Admin.
+ * GATE C — the Admin Portal's real RENDER path.
  *
- * Este teste usa o COMPONENTE REAL montado pela rota /admin/configuracoes
- * (AdminSettings), seleciona a aba "Integrações" e prova que os registros
- * administrativos chegam ao DOM.
+ * This test uses the REAL COMPONENT mounted by the /admin/configuracoes route
+ * (AdminSettings), selects the "Integrações" tab and proves the administrative
+ * records reach the DOM.
  *
- * A fixture NÃO é artificial: é a resposta literal capturada de
- * GET /api/v1/admin/integrations no runtime local (somente comerciais), salva em
- * __fixtures__/admin-integrations.live.json. Se o contrato da API mudar, este
- * teste passa a divergir do runtime — que é exatamente o sinal desejado.
+ * The fixture is NOT artificial: it is the literal response captured from
+ * GET /api/v1/admin/integrations at local runtime (commercial only), saved in
+ * __fixtures__/admin-integrations.live.json. If the API contract changes, this
+ * test starts diverging from the runtime — which is exactly the desired signal.
  *
- * Regressão coberta: a aba aparecia vazia enquanto o banco tinha 14 registros.
+ * Covered regression: the tab appeared empty while the database had 14 records.
  */
 
 const apiMock = vi.hoisted(() => ({ get: vi.fn(), patch: vi.fn(), post: vi.fn(), delete: vi.fn() }));
@@ -75,7 +75,7 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
     for (const name of ["Autentique", "DocuSign", "Clicksign", "UBC"]) {
       expect(await screen.findByText(name), ).toBeInTheDocument();
     }
-    // Reclassificação 2026-08-24: internos/billing saíram do catálogo comercial.
+    // 2026-08-24 reclassification: internal/billing ones left the commercial catalog.
     for (const internal of ["Soundcharts", "ACRCloud", "Resend", "Stripe"]) {
       expect(screen.queryByText(internal), ).toBeNull();
     }
@@ -95,12 +95,12 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
     renderAdminSettings();
     await openIntegracoesTab();
 
-    // clicksign: draft + sem adapter — invisível para o tenant, visível aqui.
+    // clicksign: draft + no adapter — invisible to the tenant, visible here.
     const row = await screen.findByTestId("admin-integration-clicksign");
     expect(within(row).getByText("Sem adapter")).toBeInTheDocument();
-    // E continua editável: o select de publicação reflete o estado real.
+    // And it stays editable: the publication select reflects the real state.
     expect((screen.getByTestId("publication-clicksign") as HTMLSelectElement).value).toBe("coming_soon");
-    // Audiências governáveis presentes.
+    // Governable audiences present.
     expect(screen.getByTestId("view-audience-clicksign")).toBeInTheDocument();
     expect(screen.getByTestId("use-audience-clicksign")).toBeInTheDocument();
   });
@@ -110,7 +110,7 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
     await openIntegracoesTab();
 
     expect(await screen.findByText("Google Ads")).toBeInTheDocument();
-    // O slug aparece só como identificador técnico secundário, não como título.
+    // The slug appears only as a secondary technical identifier, not as the title.
     const row = screen.getByTestId("admin-integration-google_ads");
     const heading = within(row).getByText("Google Ads");
     expect(heading.tagName.toLowerCase()).not.toBe("code");
@@ -127,8 +127,8 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
     renderAdminSettings();
     await openIntegracoesTab();
 
-    // useAdminIntegrations usa retry: 1, então o estado de erro só assenta após
-    // a segunda tentativa — daí o timeout maior (não é lentidão do componente).
+    // useAdminIntegrations uses retry: 1, so the error state only settles after
+    // the second attempt — hence the larger timeout (it is not component slowness).
     expect(await screen.findByTestId("admin-integrations-error", {}, { timeout: 5000 }))
       .toBeInTheDocument();
     expect(screen.queryByTestId("admin-integrations-empty")).not.toBeInTheDocument();

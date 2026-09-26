@@ -196,7 +196,7 @@ export default function ProfitAndLoss() {
   const [endDate, setEndDate] = useState("");
   const [financialFilter, setFinancialFilter] = useState<"todos" | "receitas" | "despesas" | "lucro">("todos");
 
-  // Filtra por busca (descrição/categoria), intervalo de datas e type financeiro — base de todas as visões.
+  // Filters by search (description/category), date range and financial type — the base of every view.
   const filteredTransacoes = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     return transactions.filter((t: any) => {
@@ -205,7 +205,7 @@ export default function ProfitAndLoss() {
       if (endDate && data && data > endDate) return false;
       if (financialFilter === "receitas" && t.type !== "receita") return false;
       if (financialFilter === "despesas" && t.type !== "despesa") return false;
-      // "lucro" e "todos" mantêm receitas e despesas (o resultado líquido é consolidado nos KPIs).
+      // "lucro" and "todos" keep revenues and expenses (the net result is consolidated in the KPIs).
       if (!term) return true;
       return (
         String(t.descricao ?? "").toLowerCase().includes(term) ||
@@ -234,7 +234,7 @@ export default function ProfitAndLoss() {
     return Object.entries(map).map(([categoria, valor]) => ({ categoria, valor })).sort((a, b) => b.valor - a.valor);
   }, [despesas]);
 
-  // ── P&L por Projeto (cada transação = 1 projeto) ──────────────────────────
+  // ── P&L per project (each transaction = 1 project) ─────────────────────────
   const plPorProjeto = useMemo(() =>
     filteredTransacoes
       .map((t: any) => {
@@ -251,11 +251,11 @@ export default function ProfitAndLoss() {
       .sort((a, b) => b.resultado - a.resultado),
   [filteredTransacoes]);
 
-  // ── P&L por Artista ───────────────────────────────────────────────────────
-  // Agrupa direto pelas transações (já vêm com `artistas` embutido via join
-  // server-side, ver useTransacoes select: "*, artistas(*)") em vez de
-  // percorrer useArtistas() — evita depender de uma segunda lista (capada a
-  // 50 registros/tenant) só para resolver o nome de exibição.
+  // ── P&L per artist ──────────────────────────────────────────────────────────
+  // Groups directly by the transactions (they already come with `artistas` embedded via a
+  // server-side join, see useTransacoes select: "*, artistas(*)") instead of
+  // walking useArtistas() — avoids depending on a second list (capped at
+  // 50 records per tenant) just to resolve the display name.
   const plPorArtista = useMemo(() => {
     const porArtista = new Map<string, { id: string; nome: string; totalRec: number; totalDes: number }>();
     for (const t of filteredTransacoes as any[]) {
@@ -297,7 +297,7 @@ export default function ProfitAndLoss() {
 
         {/* ── Toolbar: busca + date pickers (alinhados à direita) ── */}
         <div className="flex flex-wrap items-center gap-3 rounded-lg bg-muted/30 p-3">
-          {/* Seletor de datas — sempre imediatamente à esquerda da busca */}
+          {/* Date picker — always immediately to the left of the search */}
           <DatePickerField
             value={startDate}
             onChange={setStartDate}
@@ -337,7 +337,7 @@ export default function ProfitAndLoss() {
           </div>
         </div>
 
-        {/* KPIs — sempre visíveis acima das abas */}
+        {/* KPIs — always visible above the tabs */}
         <KpiCards totalReceitas={totalReceitas} totalDespesas={totalDespesas} lucroLiquido={lucroLiquido} margemLiquida={margemLiquida} />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} data-testid="tabs-contabilidade">
@@ -348,7 +348,7 @@ export default function ProfitAndLoss() {
             <TabsTrigger value="artistas" data-testid="tab-artistas">P&amp;L Artistas</TabsTrigger>
           </TabsList>
 
-          {/* ── TODOS: todas as visões empilhadas ────────────────────────── */}
+          {/* ── ALL: every view stacked ──────────────────────────────── */}
           <TabsContent value="todos" className="space-y-6 mt-6">
             <PLEmpresaTable {...plEmpresaProps} />
 

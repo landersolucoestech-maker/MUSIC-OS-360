@@ -1,12 +1,12 @@
 // ============================================================================
-// AdminKnowledge — gestão da Base de Conhecimento dentro do Painel Admin.
+// AdminKnowledge — Knowledge Base management inside the Admin Panel.
 //
-// NÃO existe backend de Base de Conhecimento. O KnowledgeBaseManager opera
-// sobre localStorage (mock, via useKnowledgeArticles) e serve apenas para
-// iteração de UI em desenvolvimento. Por isso, em homologação/produção
-// (IS_PROD) a tela é DESABILITADA e mostra um estado "funcionalidade
-// indisponível" — nenhum localStorage/mock é usado como fonte runtime e
-// nenhum dado fictício é exibido. Os mocks ficam restritos a dev/test/storybook.
+// There is NO Knowledge Base backend. KnowledgeBaseManager operates
+// on localStorage (mock, via useKnowledgeArticles) and only serves
+// UI iteration in development. That is why, in staging/production
+// (IS_PROD), the screen is DISABLED and shows a "feature
+// unavailable" state — no localStorage/mock is used as a runtime source and
+// no fictitious data is shown. The mocks are restricted to dev/test/storybook.
 // ============================================================================
 
 import { BookOpen } from "lucide-react";

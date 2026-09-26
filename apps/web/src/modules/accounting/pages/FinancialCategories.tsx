@@ -387,7 +387,7 @@ export default function FinancialCategories() {
           </DialogContent>
         </Dialog>
 
-        {/* Confirmação de exclusão */}
+        {/* Delete confirmation */}
         <AlertDialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
           <AlertDialogContent>
             <AlertDialogHeader>

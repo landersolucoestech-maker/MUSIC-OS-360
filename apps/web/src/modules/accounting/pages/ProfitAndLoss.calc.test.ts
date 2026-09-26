@@ -2,12 +2,12 @@ import { describe, it, expect } from "vitest";
 import { toNumber, sum } from "./profit-and-loss-calc";
 
 /**
- * Regressão: GET /transactions devolve `valor` como STRING (Postgres NUMERIC
- * sem transform — diferente de /transactions/stats, que agrega via
- * `SUM(t.valor::numeric)` no SQL). Somar strings com `+` faz concatenação em
- * vez de soma ("0" + "500.00" = "0500.00"), e a cadeia de concatenações vira
- * uma string com múltiplos pontos decimais que `Number()` não consegue
- * parsear — daí o "R$ NaN" em Despesa Total / Lucro Líquido na ProfitAndLoss.
+ * Regression: GET /transactions returns `valor` as a STRING (Postgres NUMERIC
+ * without a transform — unlike /transactions/stats, which aggregates via
+ * `SUM(t.valor::numeric)` in SQL). Adding strings with `+` concatenates
+ * instead of summing ("0" + "500.00" = "0500.00"), and the chain of concatenations becomes
+ * a string with multiple decimal points that `Number()` cannot
+ * parse — hence the "R$ NaN" in total expense / net profit in ProfitAndLoss.
  */
 describe("toNumber", () => {
   it("normalizes a numeric string (the format the API actually sends)", () => {
@@ -31,12 +31,12 @@ describe("toNumber", () => {
 
 describe("sum — reproduces and proves the fix for the ProfitAndLoss bug", () => {
   it("reproduces the bug: a naive reduce over strings produces a value that becomes NaN", () => {
-    // `any` de propósito: reproduz exatamente como `transactions` chega da API
-    // (useTransactions() não tipa `valor` como number — ele chega como string).
+    // `any` on purpose: reproduces exactly how `transactions` arrives from the API
+    // (useTransactions() does not type `valor` as number — it arrives as a string).
     const despesas: any[] = [{ valor: "500.00" }, { valor: "100.00" }, { valor: "10.00" }];
     const naiveSum = despesas.reduce((s, t) => s + (t.valor ?? 0), 0);
-    // A concatenação de string produz "0500.00100.0010.00" — múltiplos pontos
-    // decimais — que Number() não parseia.
+    // String concatenation produces "0500.00100.0010.00" — multiple decimal
+    // points — which Number() cannot parse.
     expect(typeof naiveSum).toBe("string");
     expect(Number(naiveSum)).toBeNaN();
   });

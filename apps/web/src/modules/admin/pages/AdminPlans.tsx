@@ -65,7 +65,7 @@ function PlanFormDialog({ plan, onSave, onClose }: FormDialogProps) {
   const [selectedIntegrations, setSelectedIntegrations] = useState<string[]>([]);
   const [integrationsTouched, setIntegrationsTouched] = useState(false);
 
-  // Reabrir o plano deve trazer exatamente o que está persistido.
+  // Reopening the plan must bring exactly what is persisted.
   useEffect(() => {
     if (!integrationsTouched) setSelectedIntegrations(persistedIntegrations);
   }, [persistedIntegrations, integrationsTouched]);
@@ -128,7 +128,7 @@ function PlanFormDialog({ plan, onSave, onClose }: FormDialogProps) {
             </div>
           </div>
 
-          {/* Preços */}
+          {/* Prices */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-[11px] text-muted-foreground  tracking-wider">Preço Mensal (R$)</Label>
@@ -186,7 +186,7 @@ function PlanFormDialog({ plan, onSave, onClose }: FormDialogProps) {
             </div>
           </div>
 
-          {/* Integração Stripe — gerida pelo backend (sync). Display-only. */}
+          {/* Stripe integration — managed by the backend (sync). Display-only. */}
           <div className="space-y-1.5">
             <Label className="text-[11px] text-muted-foreground tracking-wider">
               Integração Stripe <span className="text-muted-foreground/60">(gerido automaticamente)</span>
@@ -206,10 +206,10 @@ function PlanFormDialog({ plan, onSave, onClose }: FormDialogProps) {
             </p>
           </div>
 
-          {/* Integrações incluídas — entitlements do plano.
-              Lista DINÂMICA vinda do backend (integrações comerciais). Internas
-              (Soundcharts/ACRCloud/Resend) e billing (Stripe) nunca aparecem:
-              o backend não as classifica como comerciais e ainda rejeita no save. */}
+          {/* Included integrations — the plan's entitlements.
+              A DYNAMIC list coming from the backend (commercial integrations). Internal ones
+              (Soundcharts/ACRCloud/Resend) and billing (Stripe) never appear:
+              the backend does not classify them as commercial and also rejects them on save. */}
           <div className="space-y-2">
             <Label className="text-[11px] text-muted-foreground tracking-wider">
               Recursos e Integrações incluídos
@@ -311,9 +311,9 @@ function PlanFormDialog({ plan, onSave, onClose }: FormDialogProps) {
             size="sm"
             className="text-xs gap-1.5"
             onClick={() => {
-              // Entitlements vivem em billing_plans.integrations e são salvos
-              // pelo endpoint dedicado — só para planos já existentes (um plano
-              // novo ainda não tem slug persistido para associar).
+              // Entitlements live in billing_plans.integrations and are saved
+              // by the dedicated endpoint — only for already existing plans (a new
+              // plan does not have a persisted slug to associate yet).
               if (plan?.tier && integrationsTouched) {
                 saveIntegrations.mutate({ planSlug: plan.tier, integrations: selectedIntegrations });
               }
@@ -343,7 +343,7 @@ function ViewPlanDialog({ plan, onClose }: { plan: AdminPlan; onClose: () => voi
         </DialogHeader>
 
         <div className="space-y-4 pt-1">
-          {/* Preço */}
+          {/* Price */}
           <div className="rounded-xl bg-muted border border-border p-4">
             <p className="text-2xl font-bold text-foreground">
               {fmtBRL(plan.price_monthly)}
@@ -542,7 +542,7 @@ function PlanCard({ plan, onView, onEdit, onToggleActive, onSyncStripe, onDelete
       {/* Assinantes */}
       <p className="text-[11px] text-muted-foreground -mt-2">{plan.active_subscribers} clientes</p>
 
-      {/* Preço */}
+      {/* Price */}
       <div>
         <p className="text-2xl font-bold text-foreground">
           {fmtBRL(plan.price_monthly)}
@@ -592,7 +592,7 @@ export default function AdminPlans() {
   const [active, setActive] = useState<AdminPlan | null>(null);
   const [mode, setMode] = useState<ModalMode>(null);
 
-  // Planos persistidos (fonte da verdade do Admin) — não mais in-memory.
+  // Persisted plans (the Admin's source of truth) — no longer in-memory.
   useEffect(() => {
     void adminPlansService.list().then(setPlans);
   }, []);

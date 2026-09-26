@@ -6,14 +6,14 @@ vi.mock("@/shared/lib/api-client", () => ({ api: apiMock }));
 import { adminIntegrationsService } from "@/modules/admin/services/admin-integrations.service";
 
 /**
- * BLOCKER 2026-08-23 — a aba Integrações do Portal Admin aparecia vazia com 14
- * registros no banco. Causa: qualquer falha de request era colapsada em lista
- * vazia pela UI, então 404/403/500/rede eram indistinguíveis de "catálogo vazio".
+ * BLOCKER 2026-08-23 — the Admin Portal's integrations tab appeared empty with 14
+ * records in the database. Cause: any request failure was collapsed into an empty
+ * list by the UI, so 404/403/500/network were indistinguishable from an "empty catalog".
  *
- * Estes testes travam o contrato administrativo:
- *  - o endpoint ADMIN é distinto do resolver do cliente;
- *  - o service devolve o array administrativo COMPLETO (draft + sem adapter);
- *  - erro PROPAGA (não vira []), para a UI poder mostrar estado de erro real.
+ * These tests lock in the administrative contract:
+ *  - the ADMIN endpoint is distinct from the customer resolver;
+ *  - the service returns the COMPLETE administrative array (draft + without adapter);
+ *  - an error PROPAGATES (it does not become []), so the UI can show a real error state.
  */
 describe("adminIntegrationsService — admin catalog", () => {
   beforeEach(() => vi.clearAllMocks());
@@ -43,7 +43,7 @@ describe("adminIntegrationsService — admin catalog", () => {
     apiMock.get.mockResolvedValue(rows);
     await adminIntegrationsService.list();
     expect(apiMock.get).toHaveBeenCalledWith("/admin/integrations");
-    // O resolver do cliente é outra superfície e não pode ser usado aqui.
+    // The customer resolver is another surface and must not be used here.
     expect(apiMock.get).not.toHaveBeenCalledWith("/integrations/providers");
   });
 
@@ -58,7 +58,7 @@ describe("adminIntegrationsService — admin catalog", () => {
   });
 
   it("does not unwrap the envelope twice: api.get already resolves payload.data (a real bug in this repo)", async () => {
-    // Shape REAL que o api-client entrega: array puro, não { data: [...] }.
+    // The REAL shape the api-client delivers: a plain array, not { data: [...] }.
     apiMock.get.mockResolvedValue(rows);
     await expect(adminIntegrationsService.list()).resolves.toHaveLength(2);
   });
@@ -67,8 +67,8 @@ describe("adminIntegrationsService — admin catalog", () => {
     const failure = Object.assign(new Error("Not Found"), { statusCode: 404 });
     apiMock.get.mockRejectedValue(failure);
 
-    // Se o service engolisse o erro e devolvesse [], a UI mostraria
-    // "nenhuma integração" — exatamente o blocker relatado.
+    // If the service swallowed the error and returned [], the UI would show
+    // "no integrations" — exactly the reported blocker.
     await expect(adminIntegrationsService.list()).rejects.toThrow("Not Found");
   });
 
