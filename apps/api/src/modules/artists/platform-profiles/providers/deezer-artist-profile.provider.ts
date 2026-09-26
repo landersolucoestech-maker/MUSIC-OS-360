@@ -10,9 +10,9 @@ import { primaryIdentityProvenance, soundchartsNotIndexedProvenance, soundcharts
 import { evaluateCrossPlatformEvidence } from '../soundcharts-canonical-candidates.util';
 
 /**
- * Fonte única do card de fãs do Deezer: Soundcharts /audience/deezer — a API
- * pública do Deezer (nb_fan) deixa de ser usada aqui para não manter duas
- * fontes concorrentes no mesmo card (Soundcharts 05).
+ * Single source of the Deezer fans card: Soundcharts /audience/deezer — the
+ * public Deezer API (nb_fan) is no longer used here, to avoid keeping two
+ * competing sources for the same card (Soundcharts 05).
  */
 @Injectable()
 export class DeezerArtistProfileProvider implements ArtistPlatformProvider {
@@ -72,8 +72,8 @@ export class DeezerArtistProfileProvider implements ArtistPlatformProvider {
       };
     }
 
-    // Fase 1.3: resolução exata by-platform do artistId cadastrado já é a
-    // prova de identidade primária. Divergência cross-platform é diagnóstico.
+    // Phase 1.3: exact by-platform resolution of the registered artistId is already the
+    // primary identity proof. Cross-platform divergence is diagnostic.
     const crossPlatform = await evaluateCrossPlatformEvidence(this.soundcharts, input.canonicalUrls, 'deezer', uuid);
 
     const fans = await this.soundcharts.getDeezerFans(uuid);

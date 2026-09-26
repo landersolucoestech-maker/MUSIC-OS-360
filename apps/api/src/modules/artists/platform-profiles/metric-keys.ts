@@ -1,10 +1,10 @@
 /**
  * platform-profiles/metric-keys.ts
  *
- * Registro central e tipado de toda métrica de plataforma persistida como
- * série histórica (Fase 2 — Time-Series Foundation). O snapshot store e a
- * API de histórico importam daqui — nenhum outro lugar deve espalhar
- * strings de métrica arbitrárias.
+ * Central typed registry of every platform metric persisted as a
+ * historical series (Phase 2 — Time-Series Foundation). The snapshot store and
+ * the history API import from here — no other place may scatter
+ * arbitrary metric strings.
  */
 
 export const METRIC_KEYS = {
@@ -21,7 +21,7 @@ export const METRIC_KEYS = {
 
 export type MetricKey = (typeof METRIC_KEYS)[keyof typeof METRIC_KEYS];
 
-/** Unidade explícita por métrica — nenhuma é intercambiável com outra (followers != listeners != views). */
+/** Explicit unit per metric — none is interchangeable with another (followers != listeners != views). */
 export const METRIC_UNIT: Record<MetricKey, 'count'> = {
   [METRIC_KEYS.SPOTIFY_MONTHLY_LISTENERS]: 'count',
   [METRIC_KEYS.YOUTUBE_SUBSCRIBERS]: 'count',
@@ -39,13 +39,13 @@ export function isMetricKey(value: string): value is MetricKey {
 }
 
 /**
- * Métrica primária (a mesma exibida no card de plataforma da UI) por
- * plataforma — reaproveitada pelos engines de Fase 3 (Career Stage/
- * Benchmark) para ler o valor atual de `SocialPlatformProfileSnapshot` sem
- * duplicar o mapeamento. Sem entrada de type string genérica: usar a chave
- * exata de `SocialPlatform` (social-platform-sync.types.ts) evita string
- * solta — replicada aqui como literal em vez de importada para não criar
- * dependência circular com esse arquivo.
+ * Primary metric (the same one shown on the UI platform card) per
+ * platform — reused by the Phase 3 engines (Career Stage/
+ * Benchmark) to read the current value from `SocialPlatformProfileSnapshot` without
+ * duplicating the mapping. No generic string-typed entry: using the exact
+ * `SocialPlatform` key (social-platform-sync.types.ts) avoids loose
+ * strings — replicated here as a literal instead of imported to avoid a
+ * circular dependency with that file.
  */
 export const PRIMARY_METRIC_BY_PLATFORM: Record<
   'spotify' | 'youtube' | 'deezer' | 'soundcloud' | 'instagram' | 'tiktok' | 'apple-music',
@@ -60,7 +60,7 @@ export const PRIMARY_METRIC_BY_PLATFORM: Record<
   'apple-music': METRIC_KEYS.APPLE_MUSIC_PLAYLIST_COUNT,
 };
 
-/** Extrai o valor atual da métrica primária de um snapshot de perfil (mesma regra do frontend: nunca fabrica 0). */
+/** Extracts the current value of the primary metric from a profile snapshot (same rule as the frontend: never fabricates 0). */
 export function primaryMetricValue(platform: keyof typeof PRIMARY_METRIC_BY_PLATFORM, snapshot: {
   followers: number | null;
   subscribers: number | null;

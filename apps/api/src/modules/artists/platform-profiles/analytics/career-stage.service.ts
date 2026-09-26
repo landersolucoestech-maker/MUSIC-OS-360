@@ -12,12 +12,12 @@ import { computeCareerStage, type CareerStageEngineInput, type CareerStageMetric
 /**
  * analytics/career-stage.service.ts
  *
- * Orquestra o Career Stage Engine (função pura em career-stage.engine.ts)
- * com dados JÁ INGERIDOS (item 58: nunca consulta a Soundcharts ao vivo
- * aqui) — current-state via ArtistPlatformProfilesService e histórico/growth
- * via ArtistMetricSnapshotsService, ambos já existentes da Fase 2. Persiste
- * cada cálculo como uma linha nova em career_stage_snapshots (append-only,
- * item 38).
+ * Orchestrates the Career Stage Engine (a pure function in
+ * career-stage.engine.ts) with ALREADY-INGESTED data (item 58: it never queries
+ * Soundcharts live here) — current state via ArtistPlatformProfilesService and
+ * history/growth via ArtistMetricSnapshotsService, both existing from Phase 2.
+ * Persists each computation as a new row in career_stage_snapshots
+ * (append-only, item 38).
  */
 @Injectable()
 export class CareerStageService {
@@ -94,12 +94,12 @@ export class CareerStageService {
   }
 
   /**
-   * Fase 3.2, item 25/26: GET é leitura, não deve encher a tabela com
-   * resultados idênticos a cada abertura de tela. `calculate()` continua
-   * computando toda vez (barato — só leituras já ingeridas, nenhuma chamada
-   * Soundcharts), mas só GRAVA uma linha nova quando o resultado realmente
-   * difere do último snapshot (mesma engine_version, status, score,
-   * classificação, confiança, cobertura e dimensões).
+   * Phase 3.2, items 25/26: GET is a read and must not fill the table with
+   * identical results on every screen opening. `calculate()` still computes
+   * every time (cheap — only already-ingested reads, no Soundcharts call), but
+   * only WRITES a new row when the result really differs from the last snapshot
+   * (same engine_version, status, score, classification, confidence, coverage
+   * and dimensions).
    */
   private async persist(
     tenantId: string,
@@ -130,8 +130,8 @@ export class CareerStageService {
         calculated_at: result.calculatedAt,
       } as never);
     } catch (err) {
-      // Append-only audit trail — nunca derruba a resposta ao usuário se a
-      // gravação falhar (mesmo padrão de ArtistMetricSnapshotsService).
+      // Append-only audit trail — never breaks the user response if the write fails
+      // (same pattern as ArtistMetricSnapshotsService).
       this.logger.error(`[career-stage] falha ao persistir snapshot (resultado OK) tenant=${tenantId} artist=${artistId}: ${err instanceof Error ? err.message : String(err)}`);
     }
   }

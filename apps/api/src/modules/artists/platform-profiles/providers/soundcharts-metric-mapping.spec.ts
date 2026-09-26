@@ -8,10 +8,10 @@ import { TikTokArtistProfileProvider } from './tiktok-artist-profile.provider';
 import { SoundchartsService } from '../../../integrations/soundcharts/soundcharts.service';
 
 /**
- * Prova, plataforma a plataforma, que o card exibido é alimentado
- * exclusivamente pela Soundcharts — nenhum provider chama uma API de
- * plataforma própria (Spotify/YouTube/Deezer/SoundCloud) para o valor do
- * card, e nenhum injeta IntegrationBaseService/OAuth de tenant
+ * Proves, platform by platform, that the displayed card is fed
+ * exclusively by Soundcharts — no provider calls a platform's own API
+ * (Spotify/YouTube/Deezer/SoundCloud) for the card value, and none injects
+ * IntegrationBaseService/tenant OAuth
  * (Soundcharts 05, item 10).
  */
 function fakeSoundcharts(overrides: Partial<Record<keyof SoundchartsService, jest.Mock>> = {}) {
@@ -100,7 +100,7 @@ describe('Single Soundcharts source per artist metric card', () => {
       externalUrl: null,
     });
 
-    // id já é UC… (sem resolução por handle) e a métrica não usa YouTube Data API: zero chamadas de rede fora da Soundcharts.
+    // the id is already UC… (no handle resolution) and the metric does not use the YouTube Data API: zero network calls outside Soundcharts.
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(soundcharts.resolveArtistByPlatform).toHaveBeenCalledWith('youtube', 'UCiGm_E4ZwYSHV3bcW1pnSeQ');
     expect(getYouTubeAudience).toHaveBeenCalledWith('sc-uuid-1');

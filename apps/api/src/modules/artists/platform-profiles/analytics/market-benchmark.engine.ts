@@ -1,14 +1,13 @@
 /**
  * analytics/market-benchmark.engine.ts
  *
- * Fase 3.1 — Market Benchmark Engine (relativo/cohort-based — ver
- * career-stage.config.ts para a distinção formal com o Career Stage, que é
- * absoluto/model-based). Função pura e determinística — o chamador
- * (market-benchmark.service.ts) monta a coorte a partir de CANDIDATOS
- * EXTERNOS REAIS (Soundcharts /related + suas próprias métricas, nunca
- * "outros artistas do tenant" — esse era o defeito conceitual corrigido
- * nesta missão). Este arquivo só calcula mediana/percentil, nunca consulta
- * rede.
+ * Phase 3.1 — Market Benchmark Engine (relative/cohort-based — see
+ * career-stage.config.ts for the formal distinction from Career Stage, which is
+ * absolute/model-based). A pure, deterministic function — the caller
+ * (market-benchmark.service.ts) builds the cohort from REAL EXTERNAL CANDIDATES
+ * (Soundcharts /related + their own metrics, never "other artists of the
+ * tenant" — that was the conceptual defect fixed in this mission). This file
+ * only computes median/percentile and never hits the network.
  */
 import type { MetricKey } from '../metric-keys';
 import { median, percentileRank } from './metric-normalization.util';
@@ -23,18 +22,18 @@ import {
 
 export interface BenchmarkMetricInput {
   metricKey: MetricKey;
-  /** null quando o próprio artista não tem valor real para esta métrica. */
+  /** null when the artist itself has no real value for this metric. */
   artistValue: number | null;
-  /** Valores reais de candidatos externos (nunca inclui o próprio artista, nunca artistas do tenant). */
+  /** Real values of external candidates (never includes the artist itself, never tenant artists). */
   cohortValues: number[];
 }
 
 export interface CohortDefinition {
   /** UUID Soundcharts do artista-alvo — origem da descoberta /related. */
   sourceArtistUuid: string | null;
-  /** country_code aplicado como filtro, ou null quando não filtrado (L2/L3). */
+  /** country_code applied as a filter, or null when unfiltered (L2/L3). */
   countryFilter: string | null;
-  /** Nº de candidatos externos considerados (antes de filtrar por métrica disponível). */
+  /** Number of external candidates considered (before filtering by available metric). */
   candidateCount: number;
 }
 
@@ -43,7 +42,7 @@ export interface MarketBenchmarkEngineInput {
   asOf: Date;
   cohortDefinition: CohortDefinition;
   fallbackLevel: CohortFallbackLevel;
-  /** Nº de candidatos externos distintos considerados (independente de cobertura por métrica). */
+  /** Number of distinct external candidates considered (independent of per-metric coverage). */
   cohortSize: number;
   metrics: BenchmarkMetricInput[];
 }
@@ -51,13 +50,13 @@ export interface MarketBenchmarkEngineInput {
 export type BenchmarkMetricStatus = 'AVAILABLE' | 'ARTIST_VALUE_UNAVAILABLE' | 'INSUFFICIENT_COHORT';
 
 /**
- * Indicador de qualidade da amostra POR MÉTRICA (item 16) — deliberadamente
- * baseado só em sampleSize (o driver mais direto e defensável da
- * confiabilidade de um percentil: o erro padrão de uma proporção escala com
- * 1/√n), em vez de uma fórmula composta com pesos inventados.
- * HIGH: n >= HIGH_QUALITY_SAMPLE_SIZE (30 — limiar clássico da aproximação
- * normal). MEDIUM: MINIMUM_COHORT_SIZE <= n < 30. INSUFFICIENT: n < mínimo
- * (o metric.status já é INSUFFICIENT_COHORT nesse caso).
+ * Sample quality indicator PER METRIC (item 16) — deliberately based only on
+ * sampleSize (the most direct, defensible driver of a percentile's reliability:
+ * a proportion's standard error scales with 1/√n), instead of a composite formula
+ * with invented weights.
+ * HIGH: n >= HIGH_QUALITY_SAMPLE_SIZE (30 — the classic normal-approximation
+ * threshold). MEDIUM: MINIMUM_COHORT_SIZE <= n < 30. INSUFFICIENT: n < minimum
+ * (metric.status is already INSUFFICIENT_COHORT in that case).
  */
 export type SampleQuality = 'HIGH' | 'MEDIUM' | 'INSUFFICIENT';
 
@@ -73,7 +72,7 @@ export interface BenchmarkMetricResult {
   artistValue: number | null;
   cohortMedian: number | null;
   percentile: number | null;
-  /** Amostra específica DESTA métrica — nem todo candidato tem toda métrica (item 20). */
+  /** THIS metric's specific sample — not every candidate has every metric (item 20). */
   sampleSize: number;
   sampleQuality: SampleQuality;
   source: 'soundcharts';
@@ -83,7 +82,7 @@ export type MarketBenchmarkStatus = 'OK' | 'INSUFFICIENT_MARKET_DATA';
 
 export interface MarketBenchmarkResult {
   status: MarketBenchmarkStatus;
-  /** 0-100, média dos percentis disponíveis. null quando status=INSUFFICIENT_MARKET_DATA. */
+  /** 0-100, the mean of the available percentiles. null when status=INSUFFICIENT_MARKET_DATA. */
   score: number | null;
   label: string | null;
   cohortDefinition: CohortDefinition;
@@ -131,8 +130,8 @@ function computeMetric(input: BenchmarkMetricInput): BenchmarkMetricResult {
     status: 'AVAILABLE',
     artistValue: input.artistValue,
     cohortMedian: median(input.cohortValues),
-    // item 19: percentil SEMPRE sobre o valor bruto da métrica — nunca sobre
-    // um score já normalizado pelo Career Stage.
+    // item 19: the percentile is ALWAYS over the raw metric value — never over a
+    // score already normalized by Career Stage.
     percentile: percentileRank(input.cohortValues, input.artistValue),
     sampleSize,
     sampleQuality,

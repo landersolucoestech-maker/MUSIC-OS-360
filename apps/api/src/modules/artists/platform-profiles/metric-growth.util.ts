@@ -1,11 +1,11 @@
 /**
  * platform-profiles/metric-growth.util.ts
  *
- * Fase 2 — camada determinística mínima para calcular variação a partir de
- * pontos históricos reais. NÃO é Momentum/Career Stage (sem classificação
- * STRONG/VERY_STRONG) — só currentValue/previousValue/absoluteChange/
- * percentageChange/period, ou INSUFFICIENT_HISTORY quando não há ponto
- * anterior confiável dentro da tolerância do período.
+ * Phase 2 — minimal deterministic layer to compute change from real
+ * historical points. It is NOT Momentum/Career Stage (no STRONG/VERY_STRONG
+ * classification) — only currentValue/previousValue/absoluteChange/
+ * percentageChange/period, or INSUFFICIENT_HISTORY when there is no
+ * reliable previous point within the period tolerance.
  */
 
 export interface GrowthPoint {
@@ -23,17 +23,18 @@ export type GrowthResult =
       previousValue: number;
       previousObservedAt: Date;
       absoluteChange: number;
-      /** null quando previousValue === 0 — variação percentual é indefinida, nunca Infinity/NaN. */
+      /** null when previousValue === 0 — percentage change is undefined, never Infinity/NaN. */
       percentageChange: number | null;
     };
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /**
- * Seleciona, entre os pontos anteriores ao mais recente, o mais próximo de
- * `asOf - periodDays` — nunca `array[0]`/`array[last]` sem garantir ordenação
- * e proximidade real do período pedido. Fora da tolerância → sem ponto
- * anterior confiável (INSUFFICIENT_HISTORY), não um valor aproximado demais.
+ * Selects, among the points before the most recent one, the one closest to
+ * `asOf - periodDays` — never `array[0]`/`array[last]` without guaranteeing
+ * ordering and real proximity to the requested period. Outside the
+ * tolerance → no reliable previous point (INSUFFICIENT_HISTORY), not an
+ * overly approximate value.
  */
 export function computeGrowth(
   points: GrowthPoint[],

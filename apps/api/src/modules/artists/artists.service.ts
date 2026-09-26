@@ -24,11 +24,11 @@ import { ArtistStatus, ArtistRelationshipType } from '@music-os-360/types';
  */
 const ACTIVE_CONTRACT_STATUSES_SQL = `('active','signed','in_force','expiring')`;
 
-// ── Fonte única do mapeamento DTO ↔ colunas da entity ─────────────────────────
-// Colunas NOT NULL: null no PATCH é ignorado (nunca sobrescreve com null).
+// ── Single source of the DTO ↔ entity column mapping ─────────────────────────
+// NOT NULL columns: null in a PATCH is ignored (never overwritten with null).
 const REQUIRED_COLUMNS = ['nome_artistico', 'status'] as const;
 
-// Colunas anuláveis: `undefined` = não tocar; `null`/valor = persistir exatamente.
+// Nullable columns: `undefined` = leave untouched; `null`/value = persist exactly.
 const NULLABLE_COLUMNS = [
   'nome_civil', 'music_genre', 'notes', 'foto_url',
   'manager_nome', 'produtor_executivo',
@@ -39,20 +39,20 @@ const NULLABLE_COLUMNS = [
 // Colunas jsonb NOT NULL DEFAULT []: null vira lista vazia.
 const JSONB_LIST_COLUMNS = ['galeria_urls', 'documents', 'especialidades'] as const;
 
-// FONTE ÚNICA: os conjuntos de campos cifrados e de metadata derivam do
-// contrato central de Relatórios (form-contracts) — o mesmo usado por
-// export/import. Antes havia uma lista própria aqui com chaves legadas
-// (instagram/tiktok sem _url) que fazia o create DESCARTAR silenciosamente
-// campos reais do formulário (instagram_url, tiktok_url, etc.).
+// SINGLE SOURCE: the sets of encrypted and metadata fields derive from the
+// central Reports contract (form-contracts) — the same one used by
+// export/import. There used to be a local list here with legacy keys
+// (instagram/tiktok without _url) that made create SILENTLY DROP real form
+// fields (instagram_url, tiktok_url, etc.).
 const ENCRYPTED_FIELDS = new Set(Object.keys(contractEncryptedFields(REPORT_FORM_CONTRACTS.artists)));
 
 const METADATA_FIELDS = new Set([
   ...Object.keys(contractMetadataFields(REPORT_FORM_CONTRACTS.artists)),
-  // Campo de formulário persistível porém NUNCA exportado (interno por política).
+  // A persistable form field that is NEVER exported (internal by policy).
   'notas_internas',
 ]);
 
-/** Shape de resposta: entity sem ciphertext + metadata achatada + PII decifrada. */
+/** Response shape: entity without ciphertext + flattened metadata + decrypted PII. */
 export type ArtistResponse =
   Omit<ArtistEntity, 'email_encrypted' | 'telefone_encrypted' | 'cpf_cnpj_encrypted' | 'manager_contato_encrypted'>
   & Record<string, unknown>;
@@ -76,10 +76,10 @@ export class ArtistsService {
   }
 
   /**
-   * Resposta ao frontend: espalha os campos de metadata como top-level e
-   * DECIFRA os campos PII de volta para os nomes usados pelo formulário
-   * (email/telefone/cpf_cnpj/manager_contato). O ciphertext nunca sai da API.
-   * Sem isto, tudo que é salvo cifrado "some" ao recarregar.
+   * Frontend response: spreads the metadata fields to the top level and
+   * DECRYPTS the PII fields back to the names the form uses
+   * (email/telefone/cpf_cnpj/manager_contato). Ciphertext never leaves the API.
+   * Without this, everything saved encrypted "disappears" on reload.
    */
   private toResponse(entity: ArtistEntity): ArtistResponse {
     const meta = (entity.metadata ?? {}) as Record<string, unknown>;
@@ -97,7 +97,7 @@ export class ArtistsService {
     };
   }
 
-  /** Ciphertext ilegível (chave trocada/valor legado) nunca derruba a leitura. */
+  /** Unreadable ciphertext (rotated key/legacy value) never breaks the read. */
   private safeDecrypt(value: string | null, field: string): string | null {
     try {
       return this.encryption.decryptNullable(value);
@@ -120,10 +120,10 @@ export class ArtistsService {
         search: `%${query.search}%`,
       });
     }
-    // Mesma classificação de vinculoStats() (ver ali para a explicação
-    // completa) — aqui como filtro WHERE em vez de agregação, pra que a
-    // tabela paginada e os KPIs concordem sobre "quem é exclusivo/parceiro/
-    // independente" (Task H: Artistas.tsx filtrava isso no cliente).
+    // Same classification as vinculoStats() (see there for the full explanation)
+    // — here as a WHERE filter instead of an aggregation, so the paginated table
+    // and the KPIs agree on "who is exclusive/partner/independent" (Task H:
+    // Artistas.tsx used to filter this on the client).
     if (query.vinculo === ArtistRelationshipType.EXCLUSIVE) {
       qb.andWhere(`EXISTS (
         SELECT 1 FROM contracts c WHERE c.artist_id = a.id AND c.tenant_id = a.tenant_id
@@ -166,8 +166,8 @@ export class ArtistsService {
     };
   }
 
-  /** Vínculo por artista, restrito aos IDs informados (ex.: só a página
-   * atual — nunca o tenant inteiro) — mesma classificação de vinculoStats(). */
+  /** Contract type per artist, restricted to the given IDs (e.g. only the current
+   * page — never the whole tenant) — same classification as vinculoStats(). */
   private async vinculoByArtistIds(tenantId: string, artistIds: string[]): Promise<Record<string, ArtistRelationshipType.EXCLUSIVE | ArtistRelationshipType.PARTNER>> {
     if (artistIds.length === 0) return {};
     const rows = await this.ds!.query<Array<{ artist_id: string; exclusivo: boolean }>>(
@@ -187,14 +187,14 @@ export class ArtistsService {
   }
 
   /**
-   * KPIs exatos sobre o TENANT INTEIRO (não a página atual) — Task H.
+   * Exact KPIs over the WHOLE TENANT (not the current page) — Task H.
    *
-   * `vinculo` reproduz exatamente a classificação que o frontend fazia no
-   * cliente (Artistas.tsx `classifyVinculo`): um artista é "exclusivo" se
-   * tiver algum contrato ativo/assinado/vigente/vencendo com exclusivo=true;
-   * "parceiro" se tiver algum desses contratos sem ser exclusivo; senão
-   * "independente". Antes: baixava artistas E contratos inteiros e cruzava
-   * no cliente. Agora: uma única query agregada.
+   * `vinculo` reproduces exactly the classification the frontend used to do on
+   * the client (Artistas.tsx `classifyVinculo`): an artist is "exclusive" if it
+   * has any active/signed/in-force/expiring contract with exclusivo=true;
+   * "partner" if it has any such contract that is not exclusive; otherwise
+   * "independent". Before: it downloaded whole artists AND contracts and
+   * cross-referenced them on the client. Now: a single aggregate query.
    */
   async vinculoStats(tenantId: string): Promise<{ exclusive: number; partner: number; independent: number; total: number }> {
     const rows = await this.ds!.query<Array<{ vinculo: string; cnt: string }>>(
@@ -240,8 +240,8 @@ export class ArtistsService {
     };
   }
 
-  /** Gêneros musicais distintos do tenant (para o dropdown de filtro) — sem
-   * baixar artistas inteiros só para extrair valores únicos de uma coluna. */
+  /** The tenant's distinct music genres (for the filter dropdown) — without
+   * downloading whole artists just to extract unique values of one column. */
   async distinctMusicGenres(tenantId: string): Promise<string[]> {
     const rows = await this.ds!.query<Array<{ music_genre: string }>>(
       `SELECT DISTINCT music_genre FROM artists WHERE tenant_id = $1 AND deleted_at IS NULL AND music_genre IS NOT NULL ORDER BY music_genre`,
@@ -332,9 +332,9 @@ export class ArtistsService {
     const updates: Record<string, unknown> = { updated_at: new Date(), updated_by: userId };
     const changedFields: string[] = [];
 
-    // Colunas diretas, dirigidas pelas listas canônicas (fonte única):
-    // NOT NULL ignoram null; anuláveis persistem exatamente o que veio (null limpa);
-    // listas jsonb NOT NULL normalizam null → [].
+    // Direct columns, driven by the canonical lists (single source):
+    // NOT NULL ignore null; nullable persist exactly what came (null clears);
+    // NOT NULL jsonb lists normalize null → [].
     const dtoRec = dto as Record<string, unknown>;
     for (const col of REQUIRED_COLUMNS) {
       if (dtoRec[col] != null) { updates[col] = dtoRec[col]; changedFields.push(col); }
@@ -346,7 +346,7 @@ export class ArtistsService {
       if (dtoRec[col] !== undefined) { updates[col] = dtoRec[col] ?? []; changedFields.push(col); }
     }
 
-    // Encrypted fields (nome do campo + sufixo _encrypted, uniforme para os 4)
+    // Encrypted fields (field name + _encrypted suffix, uniform for all 4)
     for (const field of ENCRYPTED_FIELDS) {
       if (dtoRec[field] !== undefined) {
         updates[`${field}_encrypted`] = this.encryption.encryptNullable(dtoRec[field] as string | null);
@@ -457,7 +457,7 @@ export class ArtistsService {
       if (errors.length > 0) throw new BadRequestException(errors.join('; '));
     }
 
-    // signed: contrato_id deve ser fornecido no update ou já existir
+    // signed: contrato_id must be provided in the update or already exist
     if (newStatus === ArtistStatus.SIGNED) {
       const contratoId = dto.contrato_id ?? existing.contrato_id;
       if (!contratoId) {

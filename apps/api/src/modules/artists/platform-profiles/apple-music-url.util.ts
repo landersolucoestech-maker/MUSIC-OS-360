@@ -1,11 +1,11 @@
-// Contrato canônico Apple Music (Métricas Fase 1 — corrige bug reportado
-// "Link do Apple Music inválido" para uma URL corretamente cadastrada):
-// o segmento de locale de 2 letras (/us/, /br/...) É OPCIONAL — a Apple Music
-// aceita URLs com e sem ele. Compartilhado entre os dois consumidores backend
-// (apple-music-artist-profile.provider.ts e artist-external-profile-sync.service.ts)
-// e deve ficar em sincronia com o espelho no frontend
-// (ArtistaPlatformMetrics.tsx normalizeAppleMusicProfileUrl) — se um mudar, o
-// outro precisa mudar junto.
+// Canonical Apple Music contract (Metrics Phase 1 — fixes the reported bug
+// "Link do Apple Music inválido" for a correctly registered URL):
+// the 2-letter locale segment (/us/, /br/...) IS OPTIONAL — Apple Music
+// accepts URLs with and without it. Shared by the two backend consumers
+// (apple-music-artist-profile.provider.ts and artist-external-profile-sync.service.ts)
+// and must stay in sync with the frontend mirror
+// (ArtistaPlatformMetrics.tsx normalizeAppleMusicProfileUrl) — if one changes,
+// the other must change with it.
 export const APPLE_MUSIC_URL_PATTERN =
   /^https?:\/\/(?:www\.|music\.)?apple\.com\/(?:[a-z]{2}\/)?artist\/(?:[^/?#]+\/)?(\d+)(?:[/?#].*)?$/i;
 

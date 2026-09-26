@@ -26,9 +26,9 @@ export interface ReferenceCandidateMetric {
   value: number | null;
 }
 
-// Métrica -> plataforma Soundcharts, para escolher o método correto do
-// SoundchartsService (todos aceitam UUID diretamente — o candidato é
-// externo, nunca passa por resolução de link cadastrado).
+// Metric -> Soundcharts platform, to pick the right SoundchartsService
+// method (all accept a UUID directly — the candidate is external and never
+// goes through registered-link resolution).
 const PLATFORM_BY_METRIC = new Map<MetricKey, keyof typeof PRIMARY_METRIC_BY_PLATFORM>(
   Object.entries(PRIMARY_METRIC_BY_PLATFORM).map(([platform, metric]) => [metric, platform as keyof typeof PRIMARY_METRIC_BY_PLATFORM]),
 );
@@ -36,16 +36,16 @@ const PLATFORM_BY_METRIC = new Map<MetricKey, keyof typeof PRIMARY_METRIC_BY_PLA
 /**
  * analytics/market-reference-cache.service.ts
  *
- * Fase 3.1 — descoberta e cache de candidatos de mercado REAIS via
- * Soundcharts `/related` (nunca "artistas do tenant" — esse era o defeito
- * conceitual corrigido nesta missão). Item 17 (fetch budget): a UI nunca
- * dispara isto diretamente; MarketBenchmarkService chama
- * `ensureFreshCohort()` e cada métrica de candidato só é buscada de novo
- * quando o cache (`market_reference_metrics`) está mais velho que
- * COHORT_CACHE_TTL_HOURS — dentro do TTL, reusa a linha existente, custo
- * zero de rede. Orçamento por refresh frio: no máximo
- * MAX_CANDIDATES_PER_REFRESH candidatos × (BENCHMARK_METRICS + 1 chamada de
- * país) chamadas Soundcharts.
+ * Phase 3.1 — discovery and caching of REAL market candidates via
+ * Soundcharts `/related` (never "the tenant's artists" — that was the
+ * conceptual defect fixed in this mission). Item 17 (fetch budget): the UI
+ * never triggers this directly; MarketBenchmarkService calls
+ * `ensureFreshCohort()` and each candidate metric is fetched again only
+ * when its cache row (`market_reference_metrics`) is older than
+ * COHORT_CACHE_TTL_HOURS — within the TTL the existing row is reused at
+ * zero network cost. Budget per cold refresh: at most
+ * MAX_CANDIDATES_PER_REFRESH candidates × (BENCHMARK_METRICS + 1 country
+ * call) Soundcharts calls.
  */
 @Injectable()
 export class MarketReferenceCacheService {
@@ -60,20 +60,20 @@ export class MarketReferenceCacheService {
   }
 
   /**
-   * Descobre candidatos via /related e garante que o cache de métricas de
-   * cada um esteja fresco (dentro do TTL) — buscando ao vivo só o que
-   * estiver ausente/stale. Retorna os candidatos considerados (até
-   * MAX_CANDIDATES_PER_REFRESH), um snapshot em memória das métricas (cache
-   * já atualizado no banco) e estatísticas de observabilidade (item 28).
+   * Discovers candidates via /related and ensures each one's metric cache is
+   * fresh (within the TTL) — fetching live only what is missing/stale.
+   * Returns the considered candidates (up to MAX_CANDIDATES_PER_REFRESH), an
+   * in-memory snapshot of the metrics (cache already updated in the
+   * database) and observability statistics (item 28).
    *
-   * Concorrência estritamente sequencial (CANDIDATE_FETCH_CONCURRENCY=1,
-   * item 11) — nunca `Promise.all` irrestrito. Erro transitório da
-   * Soundcharts (rate limit/5xx/timeout) é PROPAGADO (nunca vira cohort
-   * vazio silencioso — item 9): só `SoundchartsNotFoundError` (candidato
-   * genuinamente sem aquela plataforma indexada) vira `null`. Propagar faz o
-   * job de refresh (BullMQ) falhar e reusar o retry/backoff já configurado
-   * globalmente (attempts=3, backoff exponencial) — reaproveitado, não
-   * reimplementado (item 3).
+   * Strictly sequential concurrency (CANDIDATE_FETCH_CONCURRENCY=1,
+   * item 11) — never an unbounded `Promise.all`. A transient Soundcharts
+   * error (rate limit/5xx/timeout) is PROPAGATED (it never becomes a silent
+   * empty cohort — item 9): only `SoundchartsNotFoundError` (candidate
+   * genuinely without that platform indexed) becomes `null`. Propagating
+   * makes the refresh job (BullMQ) fail and reuse the globally configured
+   * retry/backoff (attempts=3, exponential backoff) — reused, not
+   * reimplemented (item 3).
    */
   async ensureFreshCohort(
     targetArtistUuid: string,
@@ -131,7 +131,7 @@ export class MarketReferenceCacheService {
     return { candidates, metrics, stats };
   }
 
-  /** `null` = candidato genuinamente sem essa plataforma indexada (SoundchartsNotFoundError). Qualquer outro erro é PROPAGADO — nunca vira cohort vazio (item 9). */
+  /** `null` = candidate genuinely without this platform indexed (SoundchartsNotFoundError). Any other error is PROPAGATED — never becomes an empty cohort (item 9). */
   private async fetchMetric(uuid: string, metricKey: MetricKey): Promise<number | null> {
     const platform = PLATFORM_BY_METRIC.get(metricKey);
     if (!platform) return null;
@@ -143,7 +143,7 @@ export class MarketReferenceCacheService {
         case 'soundcloud': return (await this.soundcharts.getSoundCloudFollowers(uuid)).value;
         case 'instagram': return (await this.soundcharts.getInstagramFollowers(uuid)).value;
         case 'tiktok': return (await this.soundcharts.getTikTokFollowers(uuid)).value;
-        case 'apple-music': return null; // sem métrica de audiência comparável — nunca usado em BENCHMARK_METRICS hoje
+        case 'apple-music': return null; // no comparable audience metric — never used in BENCHMARK_METRICS today
       }
     } catch (err) {
       if (err instanceof SoundchartsNotFoundError) return null;

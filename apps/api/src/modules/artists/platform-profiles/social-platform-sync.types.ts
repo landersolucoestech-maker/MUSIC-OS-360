@@ -52,10 +52,10 @@ export interface ArtistPlatformProviderInput {
   externalId?: string | null;
   externalUrl?: string | null;
   /**
-   * URLs canônicas do artista (independente da plataforma sendo
-   * sincronizada) — usadas para resolver o UUID Soundcharts UMA VEZ via
-   * fallback spotify→youtube→deezer→soundcloud, reutilizado por todas as
-   * métricas do artista (Soundcharts 06).
+   * The artist's canonical URLs (independent of the platform being
+   * synced) — used to resolve the Soundcharts UUID ONCE via the
+   * spotify→youtube→deezer→soundcloud fallback, reused by all of the
+   * artist's metrics (Soundcharts 06).
    */
   canonicalUrls?: {
     spotifyUrl?: string | null;

@@ -16,18 +16,18 @@ import { resilientFetch } from '../../../../core/resilience/resilient-fetch';
 const YOUTUBE_API = 'https://www.googleapis.com/youtube/v3';
 
 /**
- * REGRA "SOUNDCHARTS ONLY" (auditoria 2026-08-31): subscribers, total_views
- * e total_videos vêm TODOS de uma única chamada a Soundcharts
- * /audience/youtube (SoundchartsService.getYouTubeAudience) — confirmado
- * contra a API real que o mesmo item da série traz followerCount, postCount
- * e viewCount juntos. A YouTube Data API deixou de ser usada para métricas
- * (a antiga chamada a channels?part=statistics foi removida); ela continua
- * existindo aqui SOMENTE para RESOLUÇÃO DE IDENTIDADE — transformar o link
- * cadastrado (handle/@handle/URL customizada) no channelId exato (UC…) que a
- * Soundcharts exige para resolver a conta. Nenhuma chamada feita por
- * `resolveChannelId`/`parseRef` lê `part=statistics` nem qualquer campo de
- * métrica — é puramente id lookup, o mesmo tipo de normalização de URL que
- * cada provider já faz para seu próprio link cadastrado.
+ * "SOUNDCHARTS ONLY" RULE (2026-08-31 audit): subscribers, total_views
+ * and total_videos ALL come from a single call to Soundcharts
+ * /audience/youtube (SoundchartsService.getYouTubeAudience) — confirmed
+ * against the real API that the same series item carries followerCount, postCount
+ * and viewCount together. The YouTube Data API is no longer used for metrics
+ * (the old channels?part=statistics call was removed); it still
+ * exists here ONLY for IDENTITY RESOLUTION — turning the registered
+ * link (handle/@handle/custom URL) into the exact channelId (UC…) that
+ * Soundcharts requires to resolve the account. No call made by
+ * `resolveChannelId`/`parseRef` reads `part=statistics` or any metric
+ * field — it is purely an id lookup, the same kind of URL normalization
+ * every provider already does for its own registered link.
  */
 @Injectable()
 export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
@@ -63,11 +63,11 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
     const channelId = await this.resolveChannelId(ref, apiKey);
     if (!channelId) throw new Error('Canal do YouTube não encontrado para o link informado');
 
-    // find-4e35ea8e: um canal do YouTube resolvido com sucesso (existe de
-    // verdade) mas não indexado na Soundcharts é uma resposta 404 VÁLIDA
-    // (Soundcharts 07, mesmo padrão já aplicado em Instagram/TikTok/Apple
-    // Music) — nunca sync_status=failed ("Erro"), sempre success com as
-    // métricas null ("Indisponível" na UI).
+    // find-4e35ea8e: a YouTube channel resolved successfully (it really
+    // exists) but not indexed in Soundcharts is a VALID 404 response
+    // (Soundcharts 07, same pattern already applied to Instagram/TikTok/Apple
+    // Music) — never sync_status=failed ("Erro"), always success with
+    // null metrics ("Indisponível" in the UI).
     let uuid: string | null = null;
     try {
       uuid = await this.soundcharts.resolveArtistByPlatform('youtube', channelId);
@@ -101,8 +101,8 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
       };
     }
 
-    // Fase 1.3: resolução exata by-platform do channelId cadastrado já é a
-    // prova de identidade primária. Divergência cross-platform é diagnóstico.
+    // Phase 1.3: exact by-platform resolution of the registered channelId is already the
+    // primary identity proof. Cross-platform divergence is diagnostic.
     const crossPlatform = await evaluateCrossPlatformEvidence(this.soundcharts, input.canonicalUrls, 'youtube', uuid);
 
     const audience = await this.soundcharts.getYouTubeAudience(uuid);
@@ -130,9 +130,9 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
         soundcharts_uuid: uuid,
         observed_at: subscribers.observedAt.toISOString(),
         ...primaryIdentityProvenance(crossPlatform),
-        // subscribers/views/videos vêm TODOS da mesma chamada Soundcharts
-        // /audience/youtube — nenhuma métrica deste card usa YouTube Data
-        // API (auditoria 2026-08-31, regra "SOUNDCHARTS ONLY").
+        // subscribers/views/videos ALL come from the same Soundcharts call
+        // /audience/youtube — no metric of this card uses the YouTube Data
+        // API (2026-08-31 audit, "SOUNDCHARTS ONLY" rule).
         subscribers_provenance: soundchartsProvenance('youtube', subscribers),
         views_videos_provenance: {
           source_provider: 'soundcharts',
@@ -191,8 +191,8 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
   }
 
   /**
-   * Erro específico da YouTube Data API: status + reason/message do corpo
-   * (ex.: 403 quotaExceeded, 400 API key not valid) — nunca um genérico.
+   * Specific YouTube Data API error: status + reason/message from the body
+   * (e.g. 403 quotaExceeded, 400 API key not valid) — never a generic one.
    */
   private async describeYouTubeError(res: Response, action: string): Promise<string> {
     let reason = '';
@@ -203,7 +203,7 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
       const apiReason = body.error?.errors?.[0]?.reason;
       const apiMessage = body.error?.message;
       reason = [apiReason, apiMessage].filter(Boolean).join(' — ');
-    } catch { /* corpo não-JSON: mantém só o status */ }
+    } catch { /* non-JSON body: keep only the status */ }
     return `YouTube API respondeu ${res.status} ao ${action}${reason ? `: ${reason}` : ''}`;
   }
 }

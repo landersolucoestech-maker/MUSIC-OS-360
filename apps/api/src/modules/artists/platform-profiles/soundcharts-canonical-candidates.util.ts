@@ -1,17 +1,17 @@
 /**
  * platform-profiles/soundcharts-canonical-candidates.util.ts
  *
- * Constrói a lista de candidatos, em ordem de prioridade, para resolver o
- * UUID Soundcharts canônico de um artista — spotify → youtube → deezer →
- * soundcloud, os identificadores mais confiáveis na base da Soundcharts.
- * Usado por TODOS os providers de métrica para nunca fazer seis resoluções
- * independentes: o primeiro candidato que resolver dá o UUID reutilizado
- * pelas demais métricas do mesmo artista (Soundcharts 06).
+ * Builds the list of candidates, in priority order, to resolve an artist's
+ * canonical Soundcharts UUID — spotify → youtube → deezer →
+ * soundcloud, the most reliable identifiers in the Soundcharts database.
+ * Used by ALL metric providers so that six independent resolutions are never
+ * made: the first candidate that resolves yields the UUID reused
+ * by the artist's other metrics (Soundcharts 06).
  *
- * Extração pura/local (sem chamada de API) — para YouTube só reconhece um
- * id de canal UC… já explícito na URL; não resolve @handle aqui (isso exige
- * a YouTube Data API, mantida apenas dentro do YouTubeArtistProfileProvider
- * para o próprio caso do YouTube).
+ * Pure/local extraction (no API call) — for YouTube it only recognizes a
+ * UC… channel id already explicit in the URL; it does not resolve an @handle here (that requires
+ * the YouTube Data API, kept only inside YouTubeArtistProfileProvider
+ * for YouTube's own case).
  */
 import { parseSpotifyArtistId } from '../../integrations/spotify/spotify-url.util';
 import { parseYoutubeRef } from './youtube-ref.util';
@@ -25,9 +25,9 @@ export interface CanonicalArtistUrls {
   soundcloudUrl?: string | null;
 }
 
-/** As 4 URLs canônicas são sempre colunas dedicadas de ArtistEntity — ao contrário de
- * instagram_url/tiktok_url, que vivem em metadata (ver cachedProfileUrlFor em
- * artist-external-profile-sync.service.ts) e nunca participam da resolução canônica. */
+/** The 4 canonical URLs are always dedicated ArtistEntity columns — unlike
+ * instagram_url/tiktok_url, which live in metadata (see cachedProfileUrlFor in
+ * artist-external-profile-sync.service.ts) and never take part in canonical resolution. */
 export function canonicalUrlsFromArtist(artist: ArtistEntity): CanonicalArtistUrls {
   return {
     spotifyUrl: artist.spotify_url,
@@ -68,10 +68,10 @@ export function buildCanonicalCandidates(
 }
 
 /**
- * Resolve o UUID canônico tentando spotify/youtube/deezer/soundcloud
- * primeiro; só cai para o identificador da PRÓPRIA plataforma (ownPlatform)
- * se nenhum dos quatro canônicos resolver — relevante para Instagram/TikTok,
- * que não têm identificador canônico próprio nessa lista.
+ * Resolves the canonical UUID by trying spotify/youtube/deezer/soundcloud
+ * first; falls back to the platform's OWN identifier (ownPlatform)
+ * only if none of the four canonical ones resolves — relevant for Instagram/TikTok,
+ * which have no canonical identifier of their own in that list.
  */
 export async function resolveCanonicalUuidForProvider(
   soundcharts: SoundchartsService,
@@ -89,18 +89,18 @@ export async function resolveCanonicalUuidForProvider(
 export type RegistryMatchStatus = 'CONFIRMED' | 'INSUFFICIENT_EVIDENCE' | 'MISMATCH';
 
 /**
- * Checa o registry de identifiers da Soundcharts de um UUID canônico contra
- * o handle REGISTRADO desta plataforma — usado como evidência SECUNDÁRIA por
- * Instagram/TikTok/Apple Music (não são âncoras canônicas) quando a resolução
- * PRIMÁRIA pelo próprio handle não indexou standalone (ver providers: a
- * tentativa pelo handle cadastrado é sempre a primeira, esta função só entra
- * como fallback — Fase 1.3, corrige inversão conceitual da Fase 1.2, onde
- * isso era consultado antes de sequer tentar o handle próprio).
+ * Checks the Soundcharts identifier registry of a canonical UUID against
+ * this platform's REGISTERED handle — used as SECONDARY evidence by
+ * Instagram/TikTok/Apple Music (they are not canonical anchors) when the
+ * PRIMARY resolution by the own handle did not index standalone (see providers: the
+ * attempt by the registered handle is always first; this function only comes in
+ * as a fallback — Phase 1.3, fixes the conceptual inversion of Phase 1.2, where
+ * this was consulted before even trying the own handle).
  *
- * Três estados em vez de booleano (Fase 1.3): ausência de evidência
- * (registry indisponível ou sem entrada para a plataforma) NÃO é a mesma
- * coisa que confirmação — é rotulada distintamente para nunca ser
- * confundida com uma resolução exata comprovada.
+ * Three states instead of a boolean (Phase 1.3): absence of evidence
+ * (registry unavailable or no entry for the platform) is NOT the same
+ * as confirmation — it is labelled distinctly so it is never
+ * mistaken for a proven exact resolution.
  */
 export async function checkRegisteredHandleAgainstRegistry(
   soundcharts: SoundchartsService,
@@ -123,37 +123,37 @@ export type CrossPlatformStatus = 'CROSS_PLATFORM_CONSISTENT' | 'CROSS_PLATFORM_
 
 export interface CrossPlatformEvidence {
   status: CrossPlatformStatus;
-  /** UUID resolvido independentemente pelas outras âncoras; null quando não
-   * havia dado suficiente para comparar. */
+  /** UUID resolved independently by the other anchors; null when there
+   * was not enough data to compare. */
   independentUuid: string | null;
   /**
-   * Quando DIVERGENT, o identifier que a Soundcharts REGISTRA para esta
-   * plataforma no artista canônico independente (via getArtistIdentifiers),
-   * se houver (achado real: SoundCloud "deejaystay" cadastrado resolve para
-   * uma entidade Soundcharts diferente da que Spotify/YouTube/Deezer
-   * resolvem — confirmado via forense Fase 1.3 como fragmentação de
-   * catalogação da própria Soundcharts, NÃO um erro de cadastro: o registry
-   * da PRÓPRIA entidade "deejaystay" confirma "deejaystay" como seu
-   * SoundCloud, e a métrica real dessa entidade bateu com o valor esperado).
-   * Puramente diagnóstico — nunca aplicado automaticamente, nunca bloqueia.
+   * When DIVERGENT, the identifier that Soundcharts REGISTERS for this
+   * platform on the independent canonical artist (via getArtistIdentifiers),
+   * if any (real finding: the registered SoundCloud "deejaystay" resolves to
+   * a Soundcharts entity different from the one Spotify/YouTube/Deezer
+   * resolve to — confirmed by Phase 1.3 forensics as cataloguing
+   * fragmentation within Soundcharts itself, NOT a registration error: the registry
+   * of the "deejaystay" entity ITSELF confirms "deejaystay" as its
+   * SoundCloud, and that entity's real metric matched the expected value).
+   * Purely diagnostic — never applied automatically, never blocks.
    */
   registryIdentifier: string | null;
 }
 
 /**
- * Compara o UUID resolvido pelo PRÓPRIO handle de uma plataforma âncora
- * (spotify/youtube/deezer/soundcloud) — já resolvido por lookup EXATO do
- * identifier cadastrado, portanto já é a prova de identidade primária —
- * contra o UUID resolvido independentemente pelas OUTRAS 3 âncoras.
+ * Compares the UUID resolved by an anchor platform's OWN handle
+ * (spotify/youtube/deezer/soundcloud) — already resolved by an EXACT lookup of the
+ * registered identifier, and therefore already the primary identity proof —
+ * against the UUID resolved independently by the OTHER 3 anchors.
  *
- * Fase 1.3: essa comparação é PURAMENTE DIAGNÓSTICA. Uma divergência aqui
- * significa apenas que a Soundcharts modela esse artista em mais de uma
- * entidade interna (fragmentação de catalogação, comum quando uma conta foi
- * importada de fonte diferente e nunca passou por merge manual) — NUNCA que
- * o link cadastrado pelo artista esteja errado. A resolução exata pelo
- * identifier cadastrado já é, por construção do endpoint by-platform da
- * Soundcharts, a prova de que aquela conta pertence a essa entidade. Este
- * resultado NUNCA deve gatear persistência de métrica (ver providers).
+ * Phase 1.3: this comparison is PURELY DIAGNOSTIC. A divergence here
+ * only means that Soundcharts models this artist as more than one
+ * internal entity (cataloguing fragmentation, common when an account was
+ * imported from a different source and never went through a manual merge) — NEVER that
+ * the link registered by the artist is wrong. The exact resolution by the
+ * registered identifier is already, by construction of the Soundcharts by-platform
+ * endpoint, the proof that the account belongs to that entity. This
+ * result must NEVER gate metric persistence (see providers).
  */
 export async function evaluateCrossPlatformEvidence(
   soundcharts: SoundchartsService,

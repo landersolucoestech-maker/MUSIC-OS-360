@@ -26,13 +26,13 @@ function asSeries(value: unknown): SeriesPoint[] {
 }
 
 /**
- * Extrai os pontos candidatos a snapshot histórico de um
- * SocialPlatformProfileSnapshot já persistido com sucesso pelo provider.
- * Prioriza a série completa (raw_payload.metric_series, ou o equivalente
- * aninhado do YouTube) quando presente — backfill real sem chamada extra à
- * API (Fase 2, item 11). Sem série, cai para o ponto único do sync atual.
- * NUNCA inventa um ponto: métrica ausente/null é omitida, nunca vira 0
- * (item 9).
+ * Extracts the historical-snapshot candidate points from a
+ * SocialPlatformProfileSnapshot already persisted successfully by the provider.
+ * Prefers the full series (raw_payload.metric_series, or the nested YouTube
+ * equivalent) when present — a real backfill with no extra API call
+ * (Phase 2, item 11). Without a series, falls back to the single point of
+ * the current sync. NEVER invents a point: a missing/null metric is
+ * omitted, never turned into 0 (item 9).
  */
 function candidatesFor(snapshot: SocialPlatformProfileSnapshot): CandidatePoint[] {
   const rp = snapshot.raw_payload ?? {};
@@ -70,18 +70,18 @@ function candidatesFor(snapshot: SocialPlatformProfileSnapshot): CandidatePoint[
       break;
     }
     case 'youtube': {
-      // subscribers vem da Soundcharts, aninhado em subscribers_provenance
-      // (ver YouTubeArtistProfileProvider) — série própria, não a top-level.
+      // subscribers comes from Soundcharts, nested in subscribers_provenance
+      // (see YouTubeArtistProfileProvider) — its own series, not the top-level one.
       const subsProvenance = rp['subscribers_provenance'] as Record<string, unknown> | undefined;
       const subsSeries = asSeries(subsProvenance?.['metric_series']);
       pushSeriesOrScalar(METRIC_KEYS.YOUTUBE_SUBSCRIBERS, subsSeries, snapshot.subscribers, 'soundcharts');
 
-      // total_views/total_videos vêm da MESMA chamada Soundcharts que
-      // subscribers (auditoria 2026-08-31 — regra SOUNDCHARTS ONLY, ver
-      // YouTubeArtistProfileProvider). source_provider é lido de
-      // views_videos_provenance em vez de fixo: nunca hardcodear
-      // 'youtube_data_api' aqui, sob risco de rotular dado Soundcharts como
-      // se viesse de outra fonte assim que o provider mudar.
+      // total_views/total_videos come from the SAME Soundcharts call as
+      // subscribers (2026-08-31 audit — SOUNDCHARTS ONLY rule, see
+      // YouTubeArtistProfileProvider). source_provider is read from
+      // views_videos_provenance instead of being fixed: never hardcode
+      // 'youtube_data_api' here, at the risk of labelling Soundcharts data as
+      // coming from another source as soon as the provider changes.
       const viewsProvenance = rp['views_videos_provenance'] as Record<string, unknown> | null | undefined;
       const viewsSourceProvider = typeof viewsProvenance?.['source_provider'] === 'string' ? (viewsProvenance['source_provider'] as string) : 'soundcharts';
       const viewsFetchedAt =
@@ -114,13 +114,13 @@ export class ArtistMetricSnapshotsService {
   }
 
   /**
-   * Grava os pontos históricos reais extraídos de um snapshot de sync
-   * bem-sucedido. Nunca chamado para sync_status != 'success', e nunca para
-   * snapshots de dev_mock (auditoria/histórico não pode conter dado
-   * fabricado, mesmo rotulado — item "NÃO INVENTAR DADOS"). Idempotente por
-   * design: ON CONFLICT DO NOTHING na chave (tenant_id, artist_id, platform,
-   * metric, observed_at) — retry ou clique duplo nunca duplica um ponto
-   * logicamente igual.
+   * Writes the real historical points extracted from a successful sync
+   * snapshot. Never called for sync_status != 'success', and never for
+   * dev_mock snapshots (audit/history must not contain fabricated data,
+   * even when labelled — "DO NOT INVENT DATA" item). Idempotent by
+   * design: ON CONFLICT DO NOTHING on the key (tenant_id, artist_id, platform,
+   * metric, observed_at) — a retry or double click never duplicates a
+   * logically equal point.
    */
   async recordFromProfileSnapshot(snapshot: SocialPlatformProfileSnapshot): Promise<{ inserted: number; skipped: number }> {
     if (snapshot.sync_status !== 'success') return { inserted: 0, skipped: 0 };
@@ -173,7 +173,7 @@ export class ArtistMetricSnapshotsService {
     return { inserted, skipped };
   }
 
-  /** Leitura histórica bruta — tenant-scoped, ordenada por observed_at crescente. */
+  /** Raw historical read — tenant-scoped, ordered by ascending observed_at. */
   async history(input: {
     tenantId: string;
     artistId: string;
@@ -196,7 +196,7 @@ export class ArtistMetricSnapshotsService {
     return rows.map((r) => ({ value: Number(r.value), observedAt: r.observed_at }));
   }
 
-  /** Growth determinístico (Fase 2 — sem classificação Momentum) para um período em dias. */
+  /** Deterministic growth (Phase 2 — no Momentum classification) for a period in days. */
   async growth(input: { tenantId: string; artistId: string; platform: string; metric: MetricKey; periodDays: number; asOf?: Date }): Promise<GrowthResult> {
     const asOf = input.asOf ?? new Date();
     const points = await this.history({

@@ -15,14 +15,14 @@ function audience(subscribers: number, videos: number | null, views: number | nu
   };
 }
 
-// REGRA "SOUNDCHARTS ONLY" (auditoria 2026-08-31): subscribers, total_views e
-// total_videos vêm TODOS de uma única chamada Soundcharts
-// (getYouTubeAudience). A YouTube Data API global.fetch só pode ser chamada
-// para RESOLUÇÃO DE IDENTIDADE (handle/username/custom → channelId) — nunca
-// para métrica. Um channelId "UC…" já é o id exato: resolveChannelId nem
-// chama fetch nesse caso, então fetchSpy deve ficar sem chamadas em toda a
-// suíte abaixo — a prova mais forte possível de que a métrica não depende
-// de rede externa fora da Soundcharts.
+// "SOUNDCHARTS ONLY" RULE (2026-08-31 audit): subscribers, total_views and
+// total_videos ALL come from a single Soundcharts call
+// (getYouTubeAudience). The YouTube Data API global.fetch may only be called
+// for IDENTITY RESOLUTION (handle/username/custom → channelId) — never
+// for metrics. A "UC…" channelId is already the exact id: resolveChannelId does not even
+// call fetch in that case, so fetchSpy must stay without calls throughout the
+// suite below — the strongest possible proof that the metric does not depend
+// on any external network outside Soundcharts.
 describe('YouTubeArtistProfileProvider.resolve', () => {
   const channelId = 'UCabcdefghijklmnopqrstuv';
   let fetchSpy: jest.SpyInstance;

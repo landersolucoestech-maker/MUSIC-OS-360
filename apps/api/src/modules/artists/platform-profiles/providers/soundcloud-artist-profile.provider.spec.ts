@@ -38,10 +38,10 @@ describe('SoundCloudArtistProfileProvider.resolve (Metrics Phase 1 — protectio
   it('7) PHASE 1.3 — reproduction of the real DJ Stay bug: EXACT resolution by the registered slug (deejaystay) is never blocked just because another anchor (Spotify) resolves to a different Soundcharts entity (catalog fragmentation, not a registration error). The real metric of the registered account is accepted, with the divergence recorded as a diagnostic.', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
-      // Resolução EXATA by-platform do slug cadastrado "deejaystay".
+      // EXACT by-platform resolution of the registered slug "deejaystay".
       resolveArtistByPlatform: jest.fn().mockResolvedValue('ceb88425-soundcloud-entity'),
-      // A cadeia canônica (Spotify) resolve para uma entidade Soundcharts DIFERENTE
-      // — mesmo artista, mas catalogado separadamente pela própria Soundcharts.
+      // The canonical chain (Spotify) resolves to a DIFFERENT Soundcharts entity
+      // — same artist, but catalogued separately by Soundcharts itself.
       resolveCanonicalArtistUuid: jest.fn().mockResolvedValue('11e81bc0-spotify-entity'),
       getArtistIdentifiers: jest.fn().mockResolvedValue({
         raw: {},
@@ -65,7 +65,7 @@ describe('SoundCloudArtistProfileProvider.resolve (Metrics Phase 1 — protectio
       canonicalUrls: CANONICAL_URLS,
     });
 
-    // A métrica da conta EXATAMENTE cadastrada é buscada e persistida — nunca bloqueada.
+    // The metric of the EXACTLY registered account is fetched and persisted — never blocked.
     expect(soundcharts.getSoundCloudFollowers).toHaveBeenCalledWith('ceb88425-soundcloud-entity');
     expect(snapshot.followers).toBe(20775);
     expect(snapshot.sync_status).toBe('success');

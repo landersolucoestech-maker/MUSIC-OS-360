@@ -11,21 +11,21 @@ import { soundchartsNotIndexedProvenance, soundchartsProvenance } from '../sound
 import { extractAppleMusicId } from '../apple-music-url.util';
 
 /**
- * Apple Music não tem audiência/ouvintes na Soundcharts (ver
- * SoundchartsService.getAppleMusicPlaylistCount para os endpoints
- * verificados). A única métrica real e honesta disponível é a contagem de
- * playlists do Apple Music que incluem o artista — presença editorial, não
- * audiência. Por isso NUNCA entra em followers/subscribers/monthly_listeners
- * (esses campos ficam null); vive só em raw_payload.playlist_count, e o
- * frontend rotula o card como "Playlists", nunca "Ouvintes"/"Seguidores"
+ * Apple Music has no audience/listeners in Soundcharts (see
+ * SoundchartsService.getAppleMusicPlaylistCount for the verified
+ * endpoints). The only real and honest metric available is the count of
+ * Apple Music playlists that include the artist — editorial presence, not
+ * audience. That is why it NEVER goes into followers/subscribers/monthly_listeners
+ * (those fields stay null); it lives only in raw_payload.playlist_count, and the
+ * frontend labels the card "Playlists", never "Ouvintes"/"Seguidores"
  * (Soundcharts 07).
  *
- * Fase 1.3 — PRIMÁRIO: resolução exata by-platform do Apple Music ID
- * CADASTRADO (mesma prova de identidade que spotify/youtube/deezer/soundcloud
- * já usam) — fecha o gap reportado na Fase 1.2, onde a entidade usada vinha
- * sempre do UUID canônico sem nunca tentar o ID cadastrado diretamente. Só
- * cai para o canônico se o ID cadastrado não resolver sozinho, e mesmo assim
- * exige confirmação no registry antes de rotular como verificado.
+ * Phase 1.3 — PRIMARY: exact by-platform resolution of the REGISTERED Apple Music ID
+ * (the same identity proof spotify/youtube/deezer/soundcloud
+ * already use) — closes the gap reported in Phase 1.2, where the entity used always
+ * came from the canonical UUID without ever trying the registered ID directly. It
+ * falls back to the canonical entity only if the registered ID does not resolve on its own, and even then
+ * requires confirmation in the registry before labelling it as verified.
  */
 @Injectable()
 export class AppleMusicArtistProfileProvider implements ArtistPlatformProvider {
@@ -47,7 +47,7 @@ export class AppleMusicArtistProfileProvider implements ArtistPlatformProvider {
     const appleId = input.externalId ?? extractAppleMusicId(input.externalUrl ?? '');
     if (!appleId) throw new Error('Apple Music artist id ausente ou inválido');
 
-    // PRIMÁRIO: resolução exata pelo Apple Music ID cadastrado.
+    // PRIMARY: exact resolution by the registered Apple Music ID.
     let uuid: string | null = null;
     let primaryIdentityStatus: 'VERIFIED_EXACT' | 'INSUFFICIENT_EVIDENCE' = 'VERIFIED_EXACT';
     try {
@@ -57,17 +57,17 @@ export class AppleMusicArtistProfileProvider implements ArtistPlatformProvider {
     }
 
     if (!uuid) {
-      // SECUNDÁRIO: ID cadastrado não indexado standalone — cai para o UUID
-      // canônico, confirmando no registry antes de rotular como verificado.
+      // SECONDARY: registered ID not indexed standalone — falls back to the canonical
+      // UUID, confirming in the registry before labelling it as verified.
       uuid = await resolveCanonicalUuidForProvider(this.soundcharts, input.canonicalUrls, 'apple-music', appleId);
       const registryStatus = await checkRegisteredHandleAgainstRegistry(this.soundcharts, uuid, 'apple-music', appleId);
       primaryIdentityStatus = registryStatus === 'CONFIRMED' ? 'VERIFIED_EXACT' : 'INSUFFICIENT_EVIDENCE';
     }
 
-    // "Nenhuma playlist encontrada" é uma resposta válida da Soundcharts (não
-    // um erro de integração) — sync bem-sucedido com playlist_count null, o
-    // card mostra "Indisponível", nunca "Erro" (mesma convenção do
-    // monthly_listeners do Spotify).
+    // "No playlist found" is a valid Soundcharts response (not an
+    // integration error) — a successful sync with playlist_count null; the
+    // card shows "Indisponível", never "Erro" (same convention as
+    // Spotify's monthly_listeners).
     let playlistCount: number | null = null;
     let observedAt = new Date();
     let provenance: ReturnType<typeof soundchartsProvenance> | ReturnType<typeof soundchartsNotIndexedProvenance>;
@@ -103,11 +103,11 @@ export class AppleMusicArtistProfileProvider implements ArtistPlatformProvider {
         soundcharts_uuid: uuid,
         playlist_count: playlistCount,
         observed_at: observedAt.toISOString(),
-        // Confirmado por chamada direta à API real (auditoria 2026-08-31):
-        // /audience/apple-music responde "not a social platform" — a
-        // Soundcharts genuinamente não tem métrica de audiência para Apple
-        // Music. playlist_count é a única métrica real disponível (presença
-        // editorial, não audiência) — nunca vira followers/subscribers.
+        // Confirmed by a direct call to the real API (2026-08-31 audit):
+        // /audience/apple-music answers "not a social platform" — Soundcharts
+        // genuinely has no audience metric for Apple
+        // Music. playlist_count is the only real metric available (editorial
+        // presence, not audience) — it never becomes followers/subscribers.
         audience_metric_availability: 'SOURCE_DOES_NOT_PROVIDE_METRIC',
         primary_identity_status: primaryIdentityStatus,
         ...provenance,

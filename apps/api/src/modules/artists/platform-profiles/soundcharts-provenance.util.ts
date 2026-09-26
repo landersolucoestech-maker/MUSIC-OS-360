@@ -1,11 +1,11 @@
 /**
  * platform-profiles/soundcharts-provenance.util.ts
  *
- * Rastreabilidade obrigatória por métrica (auditoria 2026-08-31): para
- * qualquer número exibido, deve ser possível determinar de onde ele veio —
- * provider, plataforma, endpoint exato, campo exato do corpo de resposta,
- * quando foi buscado, valor bruto e valor normalizado. Um único builder
- * evita duplicar essas seis chaves em cada um dos 7 providers.
+ * Mandatory per-metric traceability (2026-08-31 audit): for
+ * any displayed number it must be possible to determine where it came from —
+ * provider, platform, exact endpoint, exact response body field,
+ * when it was fetched, raw value and normalized value. A single builder
+ * avoids duplicating these six keys in each of the 7 providers.
  */
 import type { SoundchartsMetric } from '../../integrations/soundcharts/soundcharts.types';
 import type { SocialPlatform } from './social-platform-sync.types';
@@ -21,15 +21,15 @@ export interface SoundchartsProvenance {
   raw_value: number;
   normalized_value: number;
   /**
-   * Fase 2 — série datada completa (ISO) do mesmo endpoint, quando a
-   * Soundcharts a devolveu (ver SoundchartsMetric.series). Consumida pelo
-   * snapshot store para backfill de histórico real sem chamada extra à API;
-   * nenhum consumidor de current-state lê este campo.
+   * Phase 2 — full dated series (ISO) from the same endpoint, when
+   * Soundcharts returned it (see SoundchartsMetric.series). Consumed by the
+   * snapshot store to backfill real history without an extra API call;
+   * no current-state consumer reads this field.
    */
   metric_series: Array<{ value: number; observed_at: string }>;
 }
 
-/** Provenance para uma métrica efetivamente obtida da Soundcharts. */
+/** Provenance for a metric actually obtained from Soundcharts. */
 export function soundchartsProvenance(platform: SocialPlatform, metric: SoundchartsMetric): SoundchartsProvenance {
   const normalizedAt = new Date().toISOString();
   return {
@@ -46,9 +46,9 @@ export function soundchartsProvenance(platform: SocialPlatform, metric: Soundcha
 }
 
 /**
- * Provenance para o caso "conta não indexada na Soundcharts" — sem métrica,
- * mas ainda com origem rastreável (qual endpoint respondeu "não encontrado",
- * quando). Evita raw_payload vazio quando followers/subscribers ficam null.
+ * Provenance for the "account not indexed in Soundcharts" case — no metric,
+ * but still with a traceable origin (which endpoint answered "not found",
+ * and when). Avoids an empty raw_payload when followers/subscribers stay null.
  */
 export function soundchartsNotIndexedProvenance(
   platform: SocialPlatform,
@@ -69,11 +69,11 @@ export function soundchartsNotIndexedProvenance(
 }
 
 /**
- * Evidência de identidade primária + cross-platform para uma métrica de uma
- * das 4 âncoras (spotify/youtube/deezer/soundcloud) — Fase 1.3: o link
- * cadastrado é a autoridade; a resolução exata por-plataforma do identifier
- * cadastrado já É a prova de identidade primária (`VERIFIED_EXACT`).
- * Divergência cross-platform é sempre diagnóstico, nunca bloqueia.
+ * Primary + cross-platform identity evidence for a metric of one of the
+ * 4 anchors (spotify/youtube/deezer/soundcloud) — Phase 1.3: the registered
+ * link is the authority; the exact per-platform resolution of the registered
+ * identifier already IS the primary identity proof (`VERIFIED_EXACT`).
+ * Cross-platform divergence is always diagnostic, never blocks.
  */
 export interface PrimaryIdentityProvenance {
   primary_identity_status: 'VERIFIED_EXACT';

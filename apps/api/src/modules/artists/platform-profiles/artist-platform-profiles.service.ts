@@ -89,15 +89,15 @@ export class ArtistPlatformProfilesService {
   }
 
   /**
-   * Persiste o snapshot devolvido por um provider que NÃO lançou exceção —
-   * o que inclui tanto sync_status='success' (caminho normal) quanto
-   * sync_status='failed' com raw_payload de diagnóstico (ex.: identity_status:
-   * 'IDENTITY_MISMATCH' em soundcharts-canonical-candidates.util.ts), quando o
-   * provider detecta um problema mas não quer lançar (para preservar
-   * raw_payload/last_error específicos). NUNCA sobrescreve sync_status/last_error
-   * do snapshot — respeitar exatamente o que o provider decidiu é o que torna
-   * IDENTITY_MISMATCH visível no banco em vez de mascarado como 'success'
-   * (Métricas Fase 1).
+   * Persists the snapshot returned by a provider that did NOT throw —
+   * which includes both sync_status='success' (normal path) and
+   * sync_status='failed' with a diagnostic raw_payload (e.g. identity_status:
+   * 'IDENTITY_MISMATCH' in soundcharts-canonical-candidates.util.ts), when the
+   * provider detects a problem but does not want to throw (to preserve the
+   * specific raw_payload/last_error). NEVER overwrites the snapshot's
+   * sync_status/last_error — respecting exactly what the provider decided is
+   * what makes IDENTITY_MISMATCH visible in the database instead of masked as
+   * 'success' (Metrics Phase 1).
    */
   async upsertSuccess(snapshot: SocialPlatformProfileSnapshot): Promise<SocialPlatformProfileSnapshot> {
     const repo = this.requireRepo();
@@ -137,11 +137,11 @@ export class ArtistPlatformProfilesService {
       )
       .execute();
 
-    // Fase 2 — grava a série histórica real a partir do MESMO snapshot já
-    // validado pelo provider (nunca uma segunda chamada à Soundcharts).
-    // Nunca deve derrubar a atualização de current-state acima: uma falha
-    // aqui é logada, não propagada — histórico é aditivo, current-state é
-    // a garantia principal desta chamada.
+    // Phase 2 — writes the real historical series from the SAME snapshot already
+    // validated by the provider (never a second Soundcharts call).
+    // Must never break the current-state update above: a failure here is
+    // logged, not propagated — history is additive, current state is the
+    // primary guarantee of this call.
     try {
       await this.snapshots.recordFromProfileSnapshot(snapshot);
     } catch (err) {

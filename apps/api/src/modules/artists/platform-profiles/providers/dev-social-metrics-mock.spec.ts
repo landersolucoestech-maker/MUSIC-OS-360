@@ -5,15 +5,15 @@ import { SoundchartsNotFoundError } from '../../../integrations/soundcharts/soun
 import { isDevMockSocialMetricsEnabled, mockFollowersFor } from '../dev-social-metrics-mock';
 
 /**
- * Instagram/TikTok em dev/local: quando a Soundcharts genuinamente não tem
- * conta social vinculada (404 real — confirmado contra a API, ver comentário
- * no topo dos providers), o card ficava "Indisponível" permanentemente,
- * mesmo com credenciais válidas, porque artistas sintéticos de seed nunca
- * estarão indexados na Soundcharts. Com USE_MOCK=true (flag já existente,
- * já bloqueada em staging/production por env.schema.ts) fora de
- * produção/staging, um fallback determinístico preenche o card para
- * demonstração/teste de layout — sempre depois que o dado real já foi
- * tentado e genuinamente não existe.
+ * Instagram/TikTok in dev/local: when Soundcharts genuinely has no
+ * linked social account (a real 404 — confirmed against the API, see the comment
+ * at the top of the providers), the card stayed "Indisponível" permanently,
+ * even with valid credentials, because synthetic seed artists will never
+ * be indexed in Soundcharts. With USE_MOCK=true (an existing flag,
+ * already blocked in staging/production by env.schema.ts) outside
+ * production/staging, a deterministic fallback fills the card for
+ * layout demo/testing — always after the real data has been
+ * tried and genuinely does not exist.
  */
 function fakeSoundcharts(overrides: Partial<Record<keyof SoundchartsService, jest.Mock>> = {}) {
   return {

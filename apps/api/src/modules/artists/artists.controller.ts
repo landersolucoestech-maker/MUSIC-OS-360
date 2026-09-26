@@ -122,8 +122,8 @@ export class ArtistsController {
       fromDate = new Date(from);
       if (Number.isNaN(fromDate.getTime())) throw new BadRequestException('Parâmetro "from" inválido');
     } else {
-      // Sem range explícito: janela larga o bastante para cobrir o maior
-      // período padrão (365d) + tolerância de computeGrowth.
+      // No explicit range: a window wide enough to cover the largest default period
+      // (365d) + computeGrowth's tolerance.
       fromDate = new Date(toDate.getTime() - 400 * 24 * 60 * 60 * 1000);
     }
 

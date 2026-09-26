@@ -54,16 +54,16 @@ function baseSnapshot(overrides: Partial<SocialPlatformProfileSnapshot>): Social
   };
 }
 
-// REGRESSAO (achado ao validar em produção real com dados reais — Métricas Fase 1):
-// upsertSuccess() sobrescrevia sync_status/last_error com valores fixos ('success'/null),
-// IGNORANDO o que o provider realmente decidiu. Resultado: um snapshot IDENTITY_MISMATCH
-// (sync_status='failed', last_error explicando o mismatch) virava silenciosamente
-// sync_status='success' no banco — o dado errado ficava mascarado como sucesso, exatamente
-// o oposto do que a proteção de identidade deveria garantir. Confirmado ao vivo: syncar
-// SoundCloud do Dj Stay real (Soundcharts real, sem mock) persistia followers=null +
-// identity_status=IDENTITY_MISMATCH no raw_payload, mas sync_status chegava como
-// 'success' na API — só descoberto rodando o fluxo real de ponta a ponta, não pelos
-// testes unitários dos providers (que nunca passam pelo upsert de verdade).
+// REGRESSION (found while validating in real production with real data — Metrics Phase 1):
+// upsertSuccess() overwrote sync_status/last_error with fixed values ('success'/null),
+// IGNORING what the provider actually decided. Result: an IDENTITY_MISMATCH snapshot
+// (sync_status='failed', last_error explaining the mismatch) silently became
+// sync_status='success' in the database — the wrong data was masked as success, exactly
+// the opposite of what the identity protection should guarantee. Confirmed live: syncing
+// the real Dj Stay SoundCloud (real Soundcharts, no mock) persisted followers=null +
+// identity_status=IDENTITY_MISMATCH in raw_payload, but sync_status reached the API as
+// 'success' — only discovered by running the real end-to-end flow, not by the providers'
+// unit tests (which never go through the real upsert).
 describe('ArtistPlatformProfilesService.upsertSuccess', () => {
   it('persists sync_status=success/last_error=null when the snapshot is a normal success', async () => {
     const qb = buildQb();

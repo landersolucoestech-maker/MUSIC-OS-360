@@ -22,28 +22,28 @@ export type MarketBenchmarkReadStatus = 'READY' | 'STALE' | 'REFRESHING' | 'INTE
 
 export interface MarketBenchmarkReadResult {
   readStatus: MarketBenchmarkReadStatus;
-  /** Último resultado do engine conhecido (READY ou STALE). null em REFRESHING/INTEGRATION_UNAVAILABLE/ERROR sem histórico. */
+  /** Last known engine result (READY or STALE). null in REFRESHING/INTEGRATION_UNAVAILABLE/ERROR with no history. */
   result: MarketBenchmarkResult | null;
-  /** ISO, presente só quando readStatus=STALE. */
+  /** ISO, present only when readStatus=STALE. */
   staleSince: string | null;
 }
 
 /**
  * analytics/market-benchmark.service.ts
  *
- * Fase 3.2 — separação leitura/escrita (item 26): `getStatus()` é a ÚNICA
- * entrada usada pelo controller — leitura rápida (DB local, sem chamada
- * Soundcharts), nunca bloqueia por um refresh completo. `computeAndPersist()`
- * é o trabalho PESADO (a mesma matemática validada na Fase 3.1, engine
- * inalterado) — chamado SOMENTE pelo worker
- * (MarketBenchmarkRefreshProcessor), nunca pelo controller diretamente.
+ * Phase 3.2 — read/write separation (item 26): `getStatus()` is the ONLY
+ * entry point used by the controller — a fast read (local DB, no Soundcharts
+ * call), it never blocks on a full refresh. `computeAndPersist()` is the
+ * HEAVY work (the same math validated in Phase 3.1, engine unchanged) —
+ * called ONLY by the worker (MarketBenchmarkRefreshProcessor), never by the
+ * controller directly.
  *
- * Fluxo (item 6, stale-while-revalidate):
- *   snapshot fresco (dentro do TTL, mesma engine_version) -> READY, serve na hora.
- *   snapshot existe mas stale/versão antiga -> STALE, serve o último resultado
- *     E enfileira refresh em background (dedup por jobId, item 7/8).
- *   nenhum snapshot -> REFRESHING (ou INTEGRATION_UNAVAILABLE/ERROR se não
- *     for possível enfileirar), enfileira refresh, nunca calcula na hora.
+ * Flow (item 6, stale-while-revalidate):
+ *   fresh snapshot (within TTL, same engine_version) -> READY, served immediately.
+ *   snapshot exists but is stale/old version -> STALE, serves the last result
+ *     AND enqueues a background refresh (dedup by jobId, items 7/8).
+ *   no snapshot -> REFRESHING (or INTEGRATION_UNAVAILABLE/ERROR when enqueueing
+ *     is not possible), enqueues a refresh, never computes inline.
  */
 @Injectable()
 export class MarketBenchmarkService {
@@ -61,7 +61,7 @@ export class MarketBenchmarkService {
     if (ds) this.repo = ds.getRepository(MarketBenchmarkSnapshotEntity);
   }
 
-  // ── READ PATH (chamado pelo controller — sempre rápido) ──────────────────
+  // ── READ PATH (called by the controller — always fast) ─────────────────────
 
   async getStatus(tenantId: string, artistId: string): Promise<MarketBenchmarkReadResult> {
     if (!this.repo || !this.ds) throw new ServiceUnavailableException('Persistência indisponível');
@@ -70,8 +70,8 @@ export class MarketBenchmarkService {
     const targetUuid = this.resolveTargetUuid(ownRows);
 
     if (!targetUuid) {
-      // Sem UUID Soundcharts (artista nunca sincronizou) — zero chamada
-      // externa possível ou necessária; resultado instantâneo e honesto.
+      // No Soundcharts UUID (artist never synced) — no external call is possible
+      // or needed; the result is instant and honest.
       const result = computeMarketBenchmark({
         artistId,
         asOf: new Date(),
@@ -104,12 +104,12 @@ export class MarketBenchmarkService {
       return { readStatus: 'REFRESHING', result: null, staleSince: null };
     }
 
-    // Precisa de refresh: sem snapshot, stale, ou engine_version mudou.
+    // Needs a refresh: no snapshot, stale, or engine_version changed.
     const reason = !latest ? 'cold' : 'stale';
     const outcome = await this.refreshQueue.enqueueRefresh(tenantId, artistId, targetUuid, MARKET_BENCHMARK_ENGINE_VERSION, reason);
 
     if (latest) {
-      // stale-while-revalidate — nunca deixa a UI sem nada se já houve um cálculo antes.
+      // stale-while-revalidate — never leaves the UI empty if a computation already happened.
       return { readStatus: 'STALE', result: this.snapshotToResult(latest), staleSince: latest.calculated_at.toISOString() };
     }
     if (outcome === 'unavailable') return { readStatus: 'INTEGRATION_UNAVAILABLE', result: null, staleSince: null };
@@ -205,11 +205,11 @@ export class MarketBenchmarkService {
   }
 
   /**
-   * Snapshot dedup (item 24/25): não grava uma linha nova se o resultado é
-   * idêntico ao último já persistido (mesma engine_version, status, score,
-   * label, sampleSize, fallbackLevel) — evita encher a tabela com refreshes
-   * que não mudaram nada. Sempre grava quando o resultado difere ou não há
-   * snapshot anterior.
+   * Snapshot dedup (items 24/25): does not write a new row when the result is
+   * identical to the last persisted one (same engine_version, status, score,
+   * label, sampleSize, fallbackLevel) — avoids filling the table with refreshes
+   * that changed nothing. Always writes when the result differs or there is no
+   * previous snapshot.
    */
   private async persistIfChanged(tenantId: string, artistId: string, result: MarketBenchmarkResult): Promise<void> {
     if (!this.repo) return;

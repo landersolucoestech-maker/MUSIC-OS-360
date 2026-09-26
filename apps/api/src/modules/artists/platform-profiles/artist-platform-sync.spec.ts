@@ -21,7 +21,7 @@ const payload = {
   idempotency_key: 'tenant-1__artist-1__spotify__manual__hash',
 };
 
-/** Mock do DatabaseContextService no padrão do notifications.processor.spec. */
+/** DatabaseContextService mock following the notifications.processor.spec pattern. */
 const makeDbContext = () => ({
   runInTenantContext: jest.fn((_ctx: unknown, work: (m: unknown) => unknown) => work(undefined)),
 });
@@ -44,9 +44,9 @@ describe('Domain separation: artist metrics NEVER depend on organization OAuth',
   });
 
   it('ArtistExternalProfileSyncService injects no OAuth integration service (Instagram/TikTok/Meta/SoundCloud Ads)', () => {
-    // Assinatura do construtor é a superfície real de dependências — se algum dia
-    // alguém tentar resolver métrica de artista via conexão OAuth da organização,
-    // este teste quebra porque um novo parâmetro apareceria aqui.
+    // The constructor signature is the real dependency surface — if someone ever
+    // tries to resolve artist metrics through the organization's OAuth connection,
+    // this test breaks because a new parameter would appear here.
     expect(ArtistExternalProfileSyncService.length).toBe(4);
   });
 });
@@ -102,7 +102,7 @@ describe('ArtistExternalProfileSyncService', () => {
       externalUrl: `https://open.spotify.com/artist/${SPOTIFY_ID}`,
     }));
     expect(profiles.upsertSuccess).toHaveBeenCalledWith(expect.objectContaining({ monthly_listeners: 54321 }));
-    // Spotify resolve é síncrono no request — nunca passa pelo BullMQ.
+    // Spotify resolution is synchronous in the request — it never goes through BullMQ.
     expect(queue.add).not.toHaveBeenCalled();
     expect(result.enqueued).toEqual([{ platform: 'spotify', job_id: expect.stringContaining('direct-') }]);
   });
@@ -167,9 +167,9 @@ describe('ArtistExternalProfileSyncService', () => {
       profileUrl: '@some_artist_handle',
     });
 
-    // externalId fica null (resolução do UC... exige a chamada assíncrona à
-    // YouTube Data API que só o worker faz); externalUrl carrega a
-    // referência para o worker resolver — nunca um BadRequestException.
+    // externalId stays null (resolving the UC... requires the asynchronous
+    // YouTube Data API call that only the worker makes); externalUrl carries the
+    // reference for the worker to resolve — never a BadRequestException.
     expect(queue.add).toHaveBeenCalledWith(
       ARTIST_PLATFORM_PROFILE_JOB_NAMES.SYNC,
       expect.objectContaining({

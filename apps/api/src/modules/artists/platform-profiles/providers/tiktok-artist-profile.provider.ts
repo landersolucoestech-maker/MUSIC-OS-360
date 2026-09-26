@@ -11,27 +11,27 @@ import { isDevMockSocialMetricsEnabled, mockFollowersFor } from '../dev-social-m
 import { soundchartsNotIndexedProvenance, soundchartsProvenance } from '../soundcharts-provenance.util';
 
 /**
- * Métrica pública do ARTISTA via Soundcharts /audience/tiktok — nunca a
- * conexão OAuth de Marketing/MusicChat (IntegrationsModule TikTokService,
- * uma integração tenant-scoped completamente separada) (Soundcharts 05).
+ * Public ARTIST metric via Soundcharts /audience/tiktok — never the
+ * Marketing/MusicChat OAuth connection (IntegrationsModule TikTokService,
+ * a completely separate tenant-scoped integration) (Soundcharts 05).
  *
- * Fase 1.3 — PRIMÁRIO: resolução exata by-platform do handle CADASTRADO
- * (mesma prova de identidade que spotify/youtube/deezer/soundcloud já usam).
- * Só cai para o UUID canônico (spotify→youtube→deezer→soundcloud) quando o
- * handle não está indexado standalone na Soundcharts — comum para
- * Instagram/TikTok — e mesmo assim só usa esse dado como SECUNDÁRIO, exigindo
- * confirmação no registry de identifiers do canônico (`checkRegisteredHandleAgainstRegistry`)
- * antes de rotular como identidade verificada; sem confirmação, o dado ainda
- * é usado (evita zerar audiência real por lacuna de registry) mas rotulado
- * `INSUFFICIENT_EVIDENCE`, nunca `VERIFIED_EXACT` (corrige inversão conceitual
- * da Fase 1.2, onde o canônico era tentado antes do handle próprio).
+ * Phase 1.3 — PRIMARY: exact by-platform resolution of the REGISTERED handle
+ * (the same identity proof spotify/youtube/deezer/soundcloud already use).
+ * Falls back to the canonical UUID (spotify→youtube→deezer→soundcloud) only when the
+ * handle is not indexed standalone in Soundcharts — common for
+ * Instagram/TikTok — and even then uses that data only as SECONDARY, requiring
+ * confirmation in the canonical entity's identifier registry (`checkRegisteredHandleAgainstRegistry`)
+ * before labelling it as a verified identity; without confirmation the data is still
+ * used (avoids zeroing a real audience because of a registry gap) but labelled
+ * `INSUFFICIENT_EVIDENCE`, never `VERIFIED_EXACT` (fixes the conceptual inversion
+ * of Phase 1.2, where the canonical entity was tried before the own handle).
  *
- * "Nenhuma conta social vinculada" (404) é uma resposta VÁLIDA da Soundcharts
- * — nem todo artista tem TikTok indexado lá (confirmado: Dj Stay 404 em
- * /identifiers, /audience/tiktok e /search/external/url; Billie Eilish 200
- * com followerCount real nos três) — não é falha de pipeline. Por isso vira
- * sync success com followers=null ("Indisponível" na UI), nunca
- * sync_status=failed ("Erro"), que fica reservado para falha real (rede,
+ * "No linked social account" (404) is a VALID Soundcharts response
+ * — not every artist has TikTok indexed there (confirmed: Dj Stay 404 on
+ * /identifiers, /audience/tiktok and /search/external/url; Billie Eilish
+ * 200 with a real followerCount on all three) — it is not a pipeline failure. So it
+ * becomes a sync success with followers=null ("Indisponível" in the UI), never
+ * sync_status=failed ("Erro"), which is reserved for real failures (network,
  * 429, 5xx) (Soundcharts 07).
  */
 @Injectable()
@@ -51,9 +51,9 @@ export class TikTokArtistProfileProvider implements ArtistPlatformProvider {
       );
     }
 
-    // extractUsername normaliza tanto handle bruto (com/sem @) quanto URL completa —
-    // sempre passa pela mesma normalização, venha o valor de external_id ou external_url,
-    // para nunca deixar um "@" ou variação de formatação vazar para a resolução exata.
+    // extractUsername normalizes both a raw handle (with/without @) and a full URL —
+    // always through the same normalization, whether the value comes from external_id or external_url,
+    // so an "@" or formatting variation never leaks into the exact resolution.
     const username = this.extractUsername(input.externalId ?? input.externalUrl ?? '');
     if (!username) throw new Error('TikTok username ausente ou inválido');
 
@@ -66,7 +66,7 @@ export class TikTokArtistProfileProvider implements ArtistPlatformProvider {
     let provenance: ReturnType<typeof soundchartsProvenance> | ReturnType<typeof soundchartsNotIndexedProvenance> | { source_provider: 'dev_mock'; source_platform: 'tiktok'; note: string };
     const attemptedEndpoints: string[] = [];
 
-    // PRIMÁRIO: resolução exata pelo handle cadastrado.
+    // PRIMARY: exact resolution by the registered handle.
     attemptedEndpoints.push(`/api/v2.9/artist/by-platform/tiktok/${username}`);
     let ownUuid: string | null = null;
     try {
@@ -84,9 +84,9 @@ export class TikTokArtistProfileProvider implements ArtistPlatformProvider {
       primaryIdentityStatus = 'VERIFIED_EXACT';
       provenance = soundchartsProvenance('tiktok', metric);
     } else {
-      // SECUNDÁRIO: handle não indexado standalone — tenta o UUID canônico
-      // (spotify/youtube/deezer/soundcloud), confirmando no registry antes de
-      // rotular como verificado.
+      // SECONDARY: handle not indexed standalone — tries the canonical UUID
+      // (spotify/youtube/deezer/soundcloud), confirming in the registry before
+      // labelling it as verified.
       const canonicalUuid = await resolveCanonicalUuidForProvider(this.soundcharts, input.canonicalUrls, 'tiktok', username);
       const registryStatus = await checkRegisteredHandleAgainstRegistry(this.soundcharts, canonicalUuid, 'tiktok', username);
 
@@ -110,8 +110,8 @@ export class TikTokArtistProfileProvider implements ArtistPlatformProvider {
       } else {
         resolvedUuid = canonicalUuid;
         primaryIdentityStatus = 'PROFILE_NOT_FOUND';
-        // Real "nenhuma conta social vinculada" — em dev/local com USE_MOCK=true,
-        // usa o fallback de demonstração (nunca em produção/staging, ver
+        // Real "no linked social account" — in dev/local with USE_MOCK=true,
+        // uses the demo fallback (never in production/staging, see
         // dev-social-metrics-mock.ts).
         if (isDevMockSocialMetricsEnabled()) {
           followers = mockFollowersFor(input.artistId, 'tiktok');

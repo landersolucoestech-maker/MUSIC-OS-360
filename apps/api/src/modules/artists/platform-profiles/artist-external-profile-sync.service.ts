@@ -194,10 +194,10 @@ export class ArtistExternalProfileSyncService {
   }
 
   /**
-   * instagram_url/tiktok_url não são colunas reais de ArtistEntity — vivem em
-   * `artists.metadata` (jsonb), como todo campo do formulário fora do núcleo
-   * canônico (ver report-form-contracts.ts, storage: 'metadata'). apple_music_url
-   * já é coluna dedicada (igual spotify/youtube/deezer/soundcloud).
+   * instagram_url/tiktok_url are not real ArtistEntity columns — they live in
+   * `artists.metadata` (jsonb), like every form field outside the canonical
+   * core (see report-form-contracts.ts, storage: 'metadata'). apple_music_url
+   * is already a dedicated column (like spotify/youtube/deezer/soundcloud).
    */
   private cachedProfileUrlFor(platform: SocialPlatform, artist: ArtistEntity): string | null {
     if (platform === 'spotify') return artist.spotify_url;
@@ -348,8 +348,8 @@ export class ArtistExternalProfileSyncService {
     return match?.[1] ?? null;
   }
 
-  /** Só aceita URLs de perfil (um único segmento), nunca faixa/playlist
-   * (`soundcloud.com/user/track-slug`) — evita sincronizar o recurso errado. */
+  /** Accepts only profile URLs (a single segment), never a track/playlist
+   * (`soundcloud.com/user/track-slug`) — avoids syncing the wrong resource. */
   private extractSoundCloudSlug(value: string): string | null {
     const trimmed = value.trim();
     if (/^[A-Za-z0-9_-]+$/.test(trimmed)) return trimmed;
@@ -404,8 +404,8 @@ export class ArtistExternalProfileSyncService {
     externalRef: string,
   ): string {
     const hash = createHash('sha256').update(externalRef).digest('hex').slice(0, 24);
-    // BullMQ proíbe ':' em jobId customizado (separador de chaves Redis) —
-    // Job.validateOptions lança "Custom Id cannot contain :". Usar '__'.
+    // BullMQ forbids ':' in a custom jobId (Redis key separator) —
+    // Job.validateOptions throws "Custom Id cannot contain :". Use '__'.
     return `${tenantId}__${artistId}__${platform}__manual__${hash}`;
   }
 }

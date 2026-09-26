@@ -4,19 +4,19 @@ import * as path from 'path';
 /**
  * soundcharts-only-metrics.guard.spec.ts
  *
- * Guarda permanente (auditoria 2026-08-31): TODAS as métricas de plataforma
- * do card do artista devem vir exclusivamente da Soundcharts — nunca de
- * YouTube Data API / Spotify API / SoundCloud API / Meta Graph API / TikTok
- * API / Deezer API / Apple Music API diretas. Achado real corrigido nesta
- * auditoria: YouTubeArtistProfileProvider buscava total_views/total_videos
- * via `channels?part=statistics` da YouTube Data API, enquanto subscribers
- * já vinha da Soundcharts — dois motores de métrica concorrentes no mesmo
- * card. A Soundcharts `/audience/youtube` já devolve followerCount, postCount
- * e viewCount no MESMO item, então a chamada de estatísticas foi removida
- * (ver SoundchartsService.getYouTubeAudience). Este guard escaneia o código
- * fonte real dos 7 providers para nunca deixar essa regressão voltar
- * silenciosamente — falha em CI/local, não depende de alguém lembrar de
- * atualizar um teste com mock.
+ * Permanent guard (2026-08-31 audit): ALL platform metrics
+ * on the artist card must come exclusively from Soundcharts — never from
+ * the YouTube Data API / Spotify API / SoundCloud API / Meta Graph API / TikTok
+ * API / Deezer API / Apple Music API directly. Real finding fixed in this
+ * audit: YouTubeArtistProfileProvider fetched total_views/total_videos
+ * via the YouTube Data API `channels?part=statistics`, while subscribers
+ * already came from Soundcharts — two competing metric engines on the same
+ * card. Soundcharts `/audience/youtube` already returns followerCount, postCount
+ * and viewCount in the SAME item, so the statistics call was removed
+ * (see SoundchartsService.getYouTubeAudience). This guard scans the real
+ * source code of the 7 providers so this regression never comes back
+ * silently — it fails in CI/local and does not depend on someone remembering to
+ * update a mocked test.
  */
 const PROVIDERS_DIR = path.resolve(__dirname, 'providers');
 
@@ -35,25 +35,25 @@ function readProvider(file: string): string {
 }
 
 /**
- * Remove comentários `//` e `/* *‍/` antes de escanear — os próprios
- * providers documentam em prosa o que NÃO usam mais (ex.: "não depende mais
- * de SOUNDCLOUD_CLIENT_ID"), o que faria um grep ingênuo acusar uma menção
- * histórica como se fosse uma chamada real. O guard deve escanear código
- * executável, não a explicação do código.
+ * Strips `//` and `/* *‍/` comments before scanning — the providers themselves
+ * document in prose what they NO LONGER use (e.g. "no longer depends
+ * on SOUNDCLOUD_CLIENT_ID"), which would make a naive grep flag a historical
+ * mention as if it were a real call. The guard must scan executable
+ * code, not the explanation of the code.
  */
 function stripComments(src: string): string {
   return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
 }
 
-// Padrões que só fazem sentido como CHAMADA DE MÉTRICA de provider direto —
-// nunca aparecem em resolução de identidade (id/handle lookup) legítima.
-// Verificados contra CÓDIGO (comentários já removidos), não prosa.
+// Patterns that only make sense as a direct provider METRIC CALL —
+// they never appear in legitimate identity resolution (id/handle lookup).
+// Checked against CODE (comments already stripped), not prose.
 const METRIC_ONLY_PATTERNS = [
-  /part=statistics/, // YouTube Data API — estatísticas de canal (views/videos/subscribers)
+  /part=statistics/, // YouTube Data API — channel statistics (views/videos/subscribers)
   /subscriberCount/,
-  /\.statistics\??\./, // acesso ao objeto `statistics` da resposta da YouTube Data API
+  /\.statistics\??\./, // access to the `statistics` object of the YouTube Data API response
   /SOUNDCLOUD_CLIENT_ID/,
-  /nb_fan/, // campo de métrica da API pública do Deezer
+  /nb_fan/, // metric field of the public Deezer API
   /graph\.facebook\.com|graph\.instagram\.com/,
   /open\.tiktokapis\.com/,
   /api\.spotify\.com/,
@@ -71,15 +71,15 @@ describe('SOUNDCHARTS ONLY — no platform metric provider calls a direct API', 
 
   it('YouTubeArtistProfileProvider: the YouTube Data API is referenced only for IDENTITY RESOLUTION (part=id / search), never for metrics', () => {
     const src = readProvider('youtube-artist-profile.provider.ts');
-    // As duas únicas chamadas de rede diretas permitidas: resolução de
-    // channelId por handle/username (part=id) e busca por nome (search).
+    // The only two direct network calls allowed: channelId resolution
+    // by handle/username (part=id) and search by name (search).
     const fetchCalls = [...src.matchAll(/fetch\(\s*`\$\{YOUTUBE_API\}([^`]*)`/g)].map((m) => m[1]);
     expect(fetchCalls.length).toBeGreaterThan(0);
     for (const call of fetchCalls) {
       const isIdentityLookup = call.includes('part=id') || call.startsWith('/search');
       expect(isIdentityLookup).toBe(true);
     }
-    // subscribers/total_views/total_videos devem vir todos de UMA chamada Soundcharts.
+    // subscribers/total_views/total_videos must all come from ONE Soundcharts call.
     expect(src).toContain('getYouTubeAudience');
     expect(src).not.toContain('getYouTubeSubscribers');
     expect(src).not.toContain('fetchChannelStatistics');

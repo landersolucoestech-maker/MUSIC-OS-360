@@ -111,7 +111,7 @@ describe('InstagramArtistProfileProvider.resolve (Phase 1.3 — the registered h
       canonicalUrls: CANONICAL_URLS,
     });
 
-    // Nunca busca a métrica do canônico quando o registry aponta outra conta.
+    // Never fetches the canonical entity's metric when the registry points to another account.
     expect(soundcharts.getInstagramFollowers).not.toHaveBeenCalled();
     expect(snapshot.followers).toBeNull();
     expect(snapshot.sync_status).toBe('success');
@@ -122,8 +122,8 @@ describe('InstagramArtistProfileProvider.resolve (Phase 1.3 — the registered h
   it('5) account not indexed on any path (404 on both): followers=null, sync_status=success (NEVER "Erro"), no mock (USE_MOCK off)', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
-      // Own-handle 404 (não indexado standalone); canônico resolve via Spotify,
-      // mas essa entidade também não tem Instagram indexado (404).
+      // Own-handle 404 (not indexed standalone); the canonical entity resolves via Spotify,
+      // but that entity has no Instagram indexed either (404).
       resolveArtistByPlatform: jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found', 404)),
       resolveCanonicalArtistUuid: jest.fn().mockResolvedValue('canonical-uuid'),
       getArtistIdentifiers: jest.fn().mockResolvedValue({ raw: {}, identifiers: [] }),

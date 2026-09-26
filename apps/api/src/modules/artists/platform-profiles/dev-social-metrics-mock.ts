@@ -1,24 +1,24 @@
 /**
  * platform-profiles/dev-social-metrics-mock.ts
  *
- * Fallback de DESENVOLVIMENTO para Instagram/TikTok quando a Soundcharts
- * responde "nenhuma conta social vinculada" (404 real, validado contra a API
- * — ver InstagramArtistProfileProvider/TikTokArtistProfileProvider). Isso não
- * é um bug de pipeline: artistas sintéticos de dev/seed nunca estarão
- * indexados na Soundcharts. Sem este fallback, o card fica permanentemente
- * "Indisponível" em qualquer ambiente local, mesmo com credenciais válidas.
+ * DEVELOPMENT fallback for Instagram/TikTok when Soundcharts answers
+ * "no linked social account" (a real 404, validated against the API —
+ * see InstagramArtistProfileProvider/TikTokArtistProfileProvider). This is
+ * not a pipeline bug: synthetic dev/seed artists will never be indexed in
+ * Soundcharts. Without this fallback the card stays permanently
+ * "Indisponível" (UI label) in any local environment, even with valid credentials.
  *
- * Gate igual ao de AUTH_DISABLED/USE_MOCK (env.schema.ts): só ativa com
- * AMBOS
- *   1. opt-in explícito USE_MOCK=true (flag já existente e já bloqueada em
- *      staging/production por env.schema.ts + create-app.ts +
- *      security-startup.service.ts — reaproveitada aqui, não inventamos
- *      DEV_MOCK_SOCIAL_ANALYTICS nem nenhuma flag nova);
- *   2. NODE_ENV não é production/staging (isProdLike).
- * Dado real da Soundcharts SEMPRE tem prioridade — este fallback só roda
- * depois que a resolução real (canônica + próprio handle) já retornou 404.
- * O snapshot resultante é marcado em raw_payload.source = 'dev_mock' para
- * nunca ser confundido com uma métrica real (nunca aparece em produção).
+ * Same gate as AUTH_DISABLED/USE_MOCK (env.schema.ts): activates only with
+ * BOTH
+ *   1. explicit opt-in USE_MOCK=true (an existing flag, already blocked in
+ *      staging/production by env.schema.ts + create-app.ts +
+ *      security-startup.service.ts — reused here; we did not invent
+ *      DEV_MOCK_SOCIAL_ANALYTICS or any new flag);
+ *   2. NODE_ENV is not production/staging (isProdLike).
+ * Real Soundcharts data ALWAYS takes priority — this fallback only runs
+ * after the real resolution (canonical + own handle) has already returned 404.
+ * The resulting snapshot is marked with raw_payload.source = 'dev_mock' so it
+ * is never mistaken for a real metric (it never appears in production).
  */
 import { createHash } from 'crypto';
 import { isProdLike } from '../../../core/config/runtime-environment';
@@ -28,11 +28,11 @@ export function isDevMockSocialMetricsEnabled(): boolean {
 }
 
 /**
- * Número determinístico de seguidores por (artistId, platform) — estável
- * entre re-syncs (não pisca a cada refresh), sem depender de nenhuma
- * biblioteca de random. Faixa plausível para um artista independente
- * (1.000–150.000), nunca 0 (0 real tem significado próprio: "sem seguidores
- * ainda", diferente de "sem dado disponível" — não é o que este mock simula).
+ * Deterministic follower count per (artistId, platform) — stable across
+ * re-syncs (does not flicker on every refresh), with no dependency on any
+ * random library. Plausible range for an independent artist
+ * (1,000–150,000), never 0 (a real 0 has its own meaning: "no followers
+ * yet", different from "no data available" — not what this mock simulates).
  */
 export function mockFollowersFor(artistId: string, platform: 'instagram' | 'tiktok'): number {
   const hash = createHash('sha256').update(`${artistId}:${platform}`).digest();

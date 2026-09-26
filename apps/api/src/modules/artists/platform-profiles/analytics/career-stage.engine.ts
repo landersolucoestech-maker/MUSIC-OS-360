@@ -1,11 +1,11 @@
 /**
  * analytics/career-stage.engine.ts
  *
- * Fase 3 — Career Stage Engine. Função pura e determinística: mesma entrada
- * produz exatamente a mesma saída (item 50). Não calcula com LLM, não
- * consulta rede — opera inteiramente sobre métricas Soundcharts já
- * normalizadas, fornecidas pelo chamador (career-stage.service.ts busca os
- * dados; este arquivo só calcula).
+ * Phase 3 — Career Stage Engine. A pure, deterministic function: the same input
+ * produces exactly the same output (item 50). It does not compute with an LLM
+ * and does not hit the network — it operates entirely over already-normalized
+ * Soundcharts metrics supplied by the caller (career-stage.service.ts fetches
+ * the data; this file only computes).
  */
 import type { MetricKey } from '../metric-keys';
 import type { GrowthResult } from '../metric-growth.util';
@@ -30,7 +30,7 @@ export interface CareerStageMetricPoint {
   metricKey: MetricKey;
   currentValue: number | null;
   observedAt: Date | null;
-  /** null quando a métrica não é elegível para growth ou não há histórico suficiente. */
+  /** null when the metric is not eligible for growth or there is not enough history. */
   growth30d: GrowthResult | null;
   growth90d: GrowthResult | null;
 }
@@ -39,11 +39,11 @@ export interface CareerStageEngineInput {
   artistId: string;
   asOf: Date;
   metrics: CareerStageMetricPoint[];
-  /** Nº de plataformas distintas (de 7 suportadas) com pelo menos um valor atual real. */
+  /** Number of distinct platforms (of the 7 supported) with at least one real current value. */
   platformsWithData: number;
-  /** Data mais recente entre observedAt de todas as métricas — null se nenhuma. */
+  /** Most recent observedAt across every metric — null when there is none. */
   mostRecentObservedAt: Date | null;
-  /** Dias entre o ponto histórico mais antigo e o mais recente disponível — null se não há histórico. */
+  /** Days between the oldest and the most recent available history point — null without history. */
   historyDepthDays: number | null;
 }
 
@@ -72,7 +72,7 @@ export interface CareerStageResult {
   classification: string | null;
   /** 0-100. */
   confidence: number;
-  /** 0-1: fração do peso total coberta por dimensões disponíveis. */
+  /** 0-1: fraction of the total weight covered by available dimensions. */
   coverage: number;
   dimensions: CareerStageDimensionResult[];
   positiveFactors: CareerStageExplainabilityItem[];
@@ -209,8 +209,8 @@ export function computeCareerStage(input: CareerStageEngineInput): CareerStageRe
   let classification: string | null = null;
 
   if (meetsGate) {
-    // Renormalização (item 13): dimensões indisponíveis nunca penalizam como
-    // zero — o denominador é a soma dos pesos DISPONÍVEIS, não 100.
+    // Renormalization (item 13): unavailable dimensions never penalize as zero —
+    // the denominator is the sum of AVAILABLE weights, not 100.
     const weightedSum = available.reduce((acc, d) => acc + (d.score as number) * d.weight, 0);
     const score0to100 = weightedSum / availableWeight;
     score = Math.round((score0to100 / 10) * 10) / 10; // 0-10, 1 casa decimal

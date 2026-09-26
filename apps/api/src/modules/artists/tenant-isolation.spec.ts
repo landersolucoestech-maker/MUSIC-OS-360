@@ -79,8 +79,8 @@ function makeDataSource(getOneValue: unknown = artistOfA) {
 
   return {
     getRepository: jest.fn(() => repo),
-    // Task H: list() enriquece cada artista com o vínculo via query bruta
-    // restrita aos IDs da página — sem contratos mockados, resolve "independente".
+    // Task H: list() enriches each artist with the link via a raw query
+    // restricted to the page's IDs — with no mocked contracts, it resolves to "independent".
     query: jest.fn().mockResolvedValue([]),
     _repo: repo,
   };

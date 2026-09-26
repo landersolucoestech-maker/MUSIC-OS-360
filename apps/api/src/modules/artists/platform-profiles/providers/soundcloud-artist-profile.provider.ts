@@ -10,10 +10,10 @@ import { primaryIdentityProvenance, soundchartsNotIndexedProvenance, soundcharts
 import { evaluateCrossPlatformEvidence } from '../soundcharts-canonical-candidates.util';
 
 /**
- * Fonte única do card de seguidores do SoundCloud: Soundcharts
- * /audience/soundcloud. Não depende mais de SOUNDCLOUD_CLIENT_ID/SECRET —
- * essa credencial (integração SoundCloud própria) pode continuar existindo
- * para outros usos, mas não bloqueia mais Métricas das Plataformas
+ * Single source of the SoundCloud followers card: Soundcharts
+ * /audience/soundcloud. It no longer depends on SOUNDCLOUD_CLIENT_ID/SECRET —
+ * that credential (own SoundCloud integration) may still exist
+ * for other uses, but no longer blocks Platform Metrics
  * (Soundcharts 05).
  */
 @Injectable()
@@ -74,15 +74,15 @@ export class SoundCloudArtistProfileProvider implements ArtistPlatformProvider {
       };
     }
 
-    // Fase 1.3: a resolução exata by-platform do slug CADASTRADO já é a prova
-    // de identidade primária (o endpoint da Soundcharts resolve exatamente
-    // esse identifier ou retorna 404 — nunca "outro" identifier). Divergência
-    // do UUID resolvido por outras âncoras (Spotify/YouTube/Deezer) é só
-    // fragmentação de catalogação da Soundcharts — nunca bloqueia a métrica
-    // da conta que o artista efetivamente cadastrou (achado real: SoundCloud
-    // "deejaystay" e a entidade "canônica" via Spotify são duas entidades
-    // Soundcharts distintas para o mesmo artista; a métrica de "deejaystay" é
-    // válida mesmo assim).
+    // Phase 1.3: exact by-platform resolution of the REGISTERED slug is already the
+    // primary identity proof (the Soundcharts endpoint resolves exactly
+    // that identifier or returns 404 — never "another" identifier). Divergence
+    // from the UUID resolved through other anchors (Spotify/YouTube/Deezer) is only
+    // Soundcharts cataloguing fragmentation — it never blocks the metric
+    // of the account the artist actually registered (real finding: SoundCloud
+    // "deejaystay" and the "canonical" entity via Spotify are two distinct
+    // Soundcharts entities for the same artist; the "deejaystay" metric is
+    // valid anyway).
     const crossPlatform = await evaluateCrossPlatformEvidence(this.soundcharts, input.canonicalUrls, 'soundcloud', uuid);
 
     const followers = await this.soundcharts.getSoundCloudFollowers(uuid);
@@ -117,7 +117,7 @@ export class SoundCloudArtistProfileProvider implements ArtistPlatformProvider {
     };
   }
 
-  /** Só aceita URLs de perfil (um único segmento), nunca faixa/playlist. */
+  /** Accepts only profile URLs (a single segment), never a track/playlist. */
   private extractSlug(value: string): string | null {
     const trimmed = value.trim();
     if (/^[A-Za-z0-9_-]+$/.test(trimmed)) return trimmed;

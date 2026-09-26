@@ -1,8 +1,8 @@
 /**
  * analytics/market-benchmark-refresh.types.ts
  *
- * Fase 3.2 — payload do job de refresh em background do Market Benchmark.
- * Item 27: só identifiers seguros — nenhum token/secret/credencial.
+ * Phase 3.2 — payload of the Market Benchmark background refresh job.
+ * Item 27: safe identifiers only — no token/secret/credential.
  */
 export interface MarketBenchmarkRefreshJobPayload {
   tenant_id: string;
@@ -13,7 +13,7 @@ export interface MarketBenchmarkRefreshJobPayload {
   idempotency_key: string;
 }
 
-/** Resultado observável do job (item 28), gravado nos logs — não persistido em tabela própria (reusa o snapshot já persistido + logs estruturados). */
+/** Observable job result (item 28), written to the logs — not persisted in its own table (reuses the already-persisted snapshot + structured logs). */
 export interface MarketBenchmarkRefreshJobResult {
   status: 'OK' | 'INSUFFICIENT_MARKET_DATA';
   candidateCount: number;

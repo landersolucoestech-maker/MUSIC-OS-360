@@ -11,9 +11,9 @@ import { primaryIdentityProvenance, soundchartsNotIndexedProvenance, soundcharts
 import { evaluateCrossPlatformEvidence } from '../soundcharts-canonical-candidates.util';
 
 /**
- * Fonte única do card "Ouvintes": Soundcharts /streaming/spotify/listening —
- * a API pública do Spotify não expõe monthly listeners (só followers), então
- * não há dependência dupla a resolver aqui. Nunca alimentar "Ouvintes" com
+ * Single source of the "Ouvintes" card: Soundcharts /streaming/spotify/listening —
+ * the public Spotify API does not expose monthly listeners (only followers), so
+ * there is no dual dependency to resolve here. Never feed "Ouvintes" with
  * followers (Soundcharts 05).
  */
 @Injectable()
@@ -74,9 +74,9 @@ export class SpotifyArtistProfileProvider implements ArtistPlatformProvider {
       };
     }
 
-    // Fase 1.3: resolução exata by-platform do artistId cadastrado já é a
-    // prova de identidade primária. Divergência cross-platform vs
-    // YouTube/Deezer/SoundCloud é só diagnóstico — nunca bloqueia.
+    // Phase 1.3: exact by-platform resolution of the registered artistId is already the
+    // primary identity proof. Cross-platform divergence vs
+    // YouTube/Deezer/SoundCloud is only diagnostic — it never blocks.
     const crossPlatform = await evaluateCrossPlatformEvidence(this.soundcharts, input.canonicalUrls, 'spotify', uuid);
 
     const listeners = await this.soundcharts.getSpotifyMonthlyListeners(uuid);

@@ -5,12 +5,12 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ArtistStatus } from '@music-os-360/types';
 import { APPLE_MUSIC_URL_PATTERN } from '../platform-profiles/apple-music-url.util';
 
-// Mesmos padrões usados pelos extractors de sync manual
+// The same patterns used by the manual-sync extractors
 // (artist-external-profile-sync.service.ts extractDeezerArtistId/
 // extractSoundCloudSlug/extractInstagramUsername/extractTikTokUsername) —
-// aqui aplicados também no create/update, para que o formato seja validado
-// no mesmo momento para todas as plataformas (spotify/youtube já validavam
-// aqui; as demais só eram validadas no fluxo de sync manual).
+// applied here to create/update too, so the format is validated at the same
+// time for every platform (spotify/youtube were already validated here; the
+// others were only validated in the manual sync flow).
 const DEEZER_URL_PATTERN = /^https?:\/\/(?:www\.)?deezer\.com\/(?:[a-z]{2}\/)?artist\/\d+(?:[/?#].*)?$/i;
 const SOUNDCLOUD_URL_PATTERN = /^https?:\/\/(?:www\.|m\.)?soundcloud\.com\/[A-Za-z0-9_-]+\/?(?:[?#].*)?$/i;
 const INSTAGRAM_URL_PATTERN = /^https?:\/\/(?:www\.)?instagram\.com\/[A-Za-z0-9._]{1,30}\/?(?:[?#].*)?$/i;
@@ -40,7 +40,7 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsString() rg?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() endereco?: string;
 
-  // ── Bancário ─────────────────────────────────────────────────────────────────
+  // ── Banking ──────────────────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsString() banco?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() agencia?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() conta?: string;
@@ -84,7 +84,7 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsObject() distribuidoras_empresa_emails?: Record<string, string>;
   @ApiPropertyOptional() @IsOptional() @IsArray() distribuidoras_gerais?: unknown[];
 
-  // ── Documentos / Mídia ───────────────────────────────────────────────────────
+  // ── Documents / media ────────────────────────────────────────────────────────
   @ApiPropertyOptional() @IsOptional() @IsArray() galeria_urls?: string[];
   @ApiPropertyOptional() @IsOptional() @IsArray() documents?: unknown[];
   @ApiPropertyOptional() @IsOptional() @IsString() documentos_pessoais_url?: string;
@@ -96,9 +96,9 @@ export class CreateArtistDto {
   @ApiPropertyOptional() @IsOptional() @IsString() produtor_executivo?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() agencia_booking?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() label_parceira?: string;
-  // Vínculos com contatos do CRM (apenas referências: { contactId, distribuidoras? })
+  // Links to CRM contacts (references only: { contactId, distribuidoras? })
   @ApiPropertyOptional() @IsOptional() @IsArray() contatos_vinculados?: unknown[];
-  // @deprecated Contatos embutidos (legado / auto-cadastro público). Mantido para retrocompat.
+  // @deprecated Embedded contacts (legacy / public self-signup). Kept for backward compatibility.
   @ApiPropertyOptional() @IsOptional() @IsArray() contatos_equipe?: unknown[];
 
   // ── Interno ───────────────────────────────────────────────────────────────────
