@@ -17,8 +17,8 @@ import { join } from "node:path";
 const FILE = join(__dirname, "ArtistPlatformMetrics.tsx");
 const source = readFileSync(FILE, "utf8");
 
-describe("Métricas públicas de artista não pedem conexão de conta", () => {
-  it("não sugere vincular/conectar conta para métricas públicas", () => {
+describe("Public artist metrics do not ask for an account connection", () => {
+  it("does not suggest linking/connecting an account for public metrics", () => {
     for (const forbidden of [
       "sem conta vinculada",
       "Conecte seu Instagram",
@@ -31,13 +31,13 @@ describe("Métricas públicas de artista não pedem conexão de conta", () => {
     }
   });
 
-  it("não oferece fluxo de OAuth a partir da tela de métricas", () => {
+  it("offers no OAuth flow from the metrics screen", () => {
     for (const forbidden of ["oauth/init", "oauth/exchange", "connectAccount("]) {
       expect(source).not.toContain(forbidden);
     }
   });
 
-  it("usa causa honesta quando o perfil não é localizado na fonte", () => {
+  it("uses an honest cause when the profile is not found at the source", () => {
     expect(source).toContain("perfil não localizado na fonte");
   });
 });

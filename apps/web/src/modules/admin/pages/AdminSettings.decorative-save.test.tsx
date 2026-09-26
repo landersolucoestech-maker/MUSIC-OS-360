@@ -32,19 +32,19 @@ function renderAdminSettings() {
   );
 }
 
-describe("Portal Admin → Configurações → Geral (componente real) — Salvar não finge sucesso", () => {
+describe("Admin portal → Settings → General (real component) — Save does not fake success", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     apiMock.get.mockResolvedValue([]);
   });
 
-  it("o botão Salvar Alterações está desabilitado (nenhum contrato de backend existe)", async () => {
+  it("the \"Salvar Alterações\" button is disabled (no backend contract exists)", async () => {
     renderAdminSettings();
     const button = await screen.findByTestId("button-save-settings");
     expect(button).toBeDisabled();
   });
 
-  it("clicar no botão desabilitado nunca dispara toast.success nem chamada de API", async () => {
+  it("clicking the disabled button never fires toast.success or an API call", async () => {
     renderAdminSettings();
     const button = await screen.findByTestId("button-save-settings");
     fireEvent.click(button);
@@ -53,7 +53,7 @@ describe("Portal Admin → Configurações → Geral (componente real) — Salva
     expect(apiMock.patch).not.toHaveBeenCalled();
   });
 
-  it("a seção deixa explícito que a aba ainda não persiste alterações", async () => {
+  it("the section makes explicit that the tab does not persist changes yet", async () => {
     renderAdminSettings();
     expect(await screen.findByText(/ainda não persiste alterações/i)).toBeInTheDocument();
   });

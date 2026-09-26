@@ -28,15 +28,15 @@ const FORBIDDEN_PATTERNS: Array<{ name: string; pattern: RegExp }> = [
   { name: "array de leads hardcoded", pattern: /nomeCompleto:\s*["'`]Marina/ },
 ];
 
-describe("leads.service.ts — guarda permanente contra reintrodução de mock", () => {
-  it("não contém nenhum padrão de mock de dados de negócio", () => {
+describe("leads.service.ts — permanent guard against reintroducing a mock", () => {
+  it("contains no business-data mock pattern", () => {
     const violations = FORBIDDEN_PATTERNS
       .filter(({ pattern }) => pattern.test(SOURCE))
       .map(({ name }) => name);
     expect(violations).toEqual([]);
   });
 
-  it("importa e usa exclusivamente o `api` real (nenhum array próprio)", () => {
+  it("imports and uses only the real `api` (no own array)", () => {
     expect(SOURCE).toMatch(/from\s+["']@\/shared\/lib\/api-client["']/);
     expect(SOURCE).not.toMatch(/:\s*Lead\[\]\s*=\s*\[/);
   });
@@ -77,7 +77,7 @@ const apiRow = {
   updated_at: "2026-01-01T00:00:00.000Z",
 };
 
-describe("leadsService — delega sempre para a API real (sem estado local)", () => {
+describe("leadsService — always delegates to the real API (no local state)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("list() chama GET /leads e traduz o formato da API para Lead", async () => {
@@ -89,7 +89,7 @@ describe("leadsService — delega sempre para a API real (sem estado local)", ()
     expect(result).toEqual([expect.objectContaining({ id: "1", nomeCompleto: "X" })]);
   });
 
-  it("create() delega para POST /leads sem gerar id localmente", async () => {
+  it("create() delegates to POST /leads without generating an id locally", async () => {
     const created = { ...apiRow, id: "server-generated-id" };
     vi.mocked(api.post).mockResolvedValue(created as never);
 

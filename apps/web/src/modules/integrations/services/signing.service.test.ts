@@ -68,7 +68,7 @@ describe("signingService.sendForSigning", () => {
   // 2026-08-23: DocuSign passou a ser provedor real (integrations/docusign). O
   // roteamento por provedor tem de bater no endpoint certo — mandar um envelope
   // DocuSign para o endpoint do Autentique falharia silenciosamente no provedor errado.
-  it("roteia para o endpoint do DocuSign quando esse provedor é escolhido", async () => {
+  it("routes to the DocuSign endpoint when that provider is chosen", async () => {
     const restore = mockBase64Read();
     (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
@@ -93,7 +93,7 @@ describe("signingService.sendForSigning", () => {
     restore();
   });
 
-  it("mantém Autentique como provedor padrão quando nenhum é informado", async () => {
+  it("keeps Autentique as the default provider when none is given", async () => {
     const restore = mockBase64Read();
     (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
@@ -149,14 +149,14 @@ describe("signingService.sendForSigning", () => {
     restore();
   });
 
-  it("rejeita quando não há URL de arquivo — nunca envia um documento vazio", async () => {
+  it("rejects when there is no file URL — never sends an empty document", async () => {
     await expect(
       signingService.sendForSigning({ contratoId: "c1", title: "X", fileUrl: "", signers: [{ name: "A", email: "a@x.com" }] }),
     ).rejects.toThrow(/não possui um arquivo/i);
     expect(apiClientMock.post).not.toHaveBeenCalled();
   });
 
-  it("rejeita quando não há signatários", async () => {
+  it("rejects when there are no signers", async () => {
     await expect(
       signingService.sendForSigning({ contratoId: "c1", title: "X", fileUrl: "https://x/y.pdf", signers: [] }),
     ).rejects.toThrow(/signatário/i);
@@ -172,7 +172,7 @@ describe("signingService.sendForSigning", () => {
     expect(apiClientMock.post).not.toHaveBeenCalled();
   });
 
-  it("propaga erro honesto quando o download retorna status não-OK", async () => {
+  it("propagates an honest error when the download returns a non-OK status", async () => {
     (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({ ok: false, status: 404 });
 
     await expect(

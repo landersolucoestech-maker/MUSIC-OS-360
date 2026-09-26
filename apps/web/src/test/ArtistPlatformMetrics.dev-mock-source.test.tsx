@@ -56,10 +56,10 @@ function renderMetrics(overrides: Record<string, unknown> = {}) {
  * Item 9/12 da correção: fallback de dev deve ser "claramente identificado",
  * nunca confundido com métrica real da Soundcharts.
  */
-describe("ArtistPlatformMetrics — identificação do fallback de dev (raw_payload.source)", () => {
+describe("ArtistPlatformMetrics — identification of the dev fallback (raw_payload.source)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("followers real da Soundcharts NÃO mostra rótulo de demonstração", async () => {
+  it("real Soundcharts followers do NOT show the demo label", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       baseSnapshot({ platform: "instagram", followers: 180_600, raw_payload: { source: "soundcharts" } }),
     ]);
@@ -73,7 +73,7 @@ describe("ArtistPlatformMetrics — identificação do fallback de dev (raw_payl
     expect(screen.getByTestId("metric-instagram-source-artist-1")).not.toHaveTextContent("demonstração");
   });
 
-  it("followers do fallback dev_mock mostra rótulo 'dados de demonstração (dev)'", async () => {
+  it("dev_mock fallback followers show the 'dados de demonstração (dev)' label", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       baseSnapshot({ platform: "instagram", followers: 42_000, raw_payload: { source: "dev_mock" } }),
     ]);
@@ -86,7 +86,7 @@ describe("ArtistPlatformMetrics — identificação do fallback de dev (raw_payl
     expect(screen.getByTestId("metric-instagram-source-artist-1")).toHaveTextContent("dados de demonstração (dev)");
   });
 
-  it("TikTok: mesmo contrato do Instagram para o rótulo de dev_mock", async () => {
+  it("TikTok: same contract as Instagram for the dev_mock label", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       baseSnapshot({ platform: "tiktok", followers: 77_000, raw_payload: { source: "dev_mock" } }),
     ]);
@@ -99,7 +99,7 @@ describe("ArtistPlatformMetrics — identificação do fallback de dev (raw_payl
     expect(screen.getByTestId("metric-tiktok-source-artist-1")).toHaveTextContent("dados de demonstração (dev)");
   });
 
-  it("Indisponível (followers null) nunca mostra rótulo de demonstração, mesmo se source=dev_mock por engano", async () => {
+  it("\"Indisponível\" (followers null) never shows the demo label, even if source=dev_mock by mistake", async () => {
     vi.mocked(api.get).mockResolvedValueOnce([
       baseSnapshot({ platform: "instagram", followers: null, raw_payload: { source: "dev_mock" } }),
     ]);

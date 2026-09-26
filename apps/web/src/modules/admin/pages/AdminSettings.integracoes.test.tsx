@@ -51,7 +51,7 @@ async function openIntegracoesTab() {
   fireEvent.click(tab);
 }
 
-describe("Portal Admin → Configurações → Integrações (componente real)", () => {
+describe("Admin portal → Settings → Integrations (real component)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     apiMock.get.mockImplementation((path: string) => {
@@ -81,7 +81,7 @@ describe("Portal Admin → Configurações → Integrações (componente real)",
     }
   });
 
-  it("mostra TODOS os registros administrativos comerciais, não só os disponíveis", async () => {
+  it("shows ALL commercial admin records, not only the available ones", async () => {
     renderAdminSettings();
     await openIntegracoesTab();
 
@@ -91,7 +91,7 @@ describe("Portal Admin → Configurações → Integrações (componente real)",
     expect(rendered.length).toBeGreaterThanOrEqual(14);
   });
 
-  it("coming_soon e not_implemented permanecem visíveis e governáveis para o SYSTEM ADMIN", async () => {
+  it("coming_soon and not_implemented stay visible and governable for the SYSTEM ADMIN", async () => {
     renderAdminSettings();
     await openIntegracoesTab();
 
@@ -116,7 +116,7 @@ describe("Portal Admin → Configurações → Integrações (componente real)",
     expect(heading.tagName.toLowerCase()).not.toBe("code");
   });
 
-  it("ERROR não é renderizado como EMPTY (regressão do blocker)", async () => {
+  it("ERROR is not rendered as EMPTY (blocker regression)", async () => {
     apiMock.get.mockImplementation((path: string) => {
       if (path === "/admin/integrations") {
         return Promise.reject(Object.assign(new Error("Not Found"), { statusCode: 404 }));
@@ -135,7 +135,7 @@ describe("Portal Admin → Configurações → Integrações (componente real)",
     expect(screen.getByText(/HTTP 404/)).toBeInTheDocument();
   });
 
-  it("EMPTY real (200 com lista vazia) é distinto de ERROR", async () => {
+  it("a real EMPTY (200 with an empty list) is distinct from ERROR", async () => {
     apiMock.get.mockImplementation((path: string) => {
       if (path === "/admin/integrations") return Promise.resolve([]);
       return Promise.resolve(CATEGORIES);

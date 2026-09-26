@@ -31,7 +31,7 @@ describe('YouTubeArtistProfileProvider.resolve', () => {
     fetchSpy?.mockRestore();
   });
 
-  it('A) subscribers/total_views/total_videos vêm TODOS da mesma chamada Soundcharts — nenhuma chamada à YouTube Data API', async () => {
+  it('A) subscribers/total_views/total_videos ALL come from the same Soundcharts call — no YouTube Data API call', async () => {
     const soundcharts = {
       resolveArtistByPlatform: jest.fn().mockResolvedValue('uuid-1'),
       getYouTubeAudience: jest.fn().mockResolvedValue(audience(15400, 77, 123456)),
@@ -78,7 +78,7 @@ describe('YouTubeArtistProfileProvider.resolve', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it('resolução por handle (@nome) chama a YouTube Data API SOMENTE para part=id — nunca part=statistics', async () => {
+  it('handle (@name) resolution calls the YouTube Data API ONLY for part=id — never part=statistics', async () => {
     const soundcharts = {
       resolveArtistByPlatform: jest.fn().mockResolvedValue('uuid-1'),
       getYouTubeAudience: jest.fn().mockResolvedValue(audience(15400, 77, 123456)),
@@ -105,7 +105,7 @@ describe('YouTubeArtistProfileProvider.resolve', () => {
     expect(fetchedUrl).not.toContain('statistics');
   });
 
-  it('14) FASE 1.3 — UUID do próprio handle DIVERGE do canônico (Spotify/Deezer): resolução exata pelo channelId cadastrado ainda é aceita; divergência vira só diagnóstico', async () => {
+  it('14) PHASE 1.3 — the own-handle UUID DIVERGES from the canonical (Spotify/Deezer): exact resolution by the registered channelId is still accepted; the divergence is only a diagnostic', async () => {
     const soundcharts = {
       resolveArtistByPlatform: jest.fn().mockResolvedValue('youtube-own-uuid'),
       resolveCanonicalArtistUuid: jest.fn().mockResolvedValue('canonical-uuid'),
@@ -135,7 +135,7 @@ describe('YouTubeArtistProfileProvider.resolve', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it('find-4e35ea8e: canal resolvido com sucesso (existe de verdade) mas não indexado na Soundcharts (404): subscribers=null, sync_status=success (NUNCA "failed")', async () => {
+  it('find-4e35ea8e: channel resolved successfully (it really exists) but not indexed on Soundcharts (404): subscribers=null, sync_status=success (NEVER "failed")', async () => {
     const soundcharts = {
       resolveArtistByPlatform: jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found', 404)),
       getYouTubeAudience: jest.fn(),
@@ -160,7 +160,7 @@ describe('YouTubeArtistProfileProvider.resolve', () => {
     expect(snapshot.external_id).toBe(channelId);
   });
 
-  it('erro real da Soundcharts (não 404) durante a resolução propaga como falha genuína (retry deve acontecer)', async () => {
+  it('a real Soundcharts error (not 404) during resolution propagates as a genuine failure (retry must happen)', async () => {
     const soundcharts = {
       resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: serviço indisponível')),
       getYouTubeAudience: jest.fn(),

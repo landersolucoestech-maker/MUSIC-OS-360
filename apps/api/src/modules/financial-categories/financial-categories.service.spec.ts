@@ -31,7 +31,7 @@ describe('FinancialCategoriesService.remove()', () => {
     return { children: 0, canonical_transactions: 0, legacy_transactions: 0, category_rules: 0 };
   }
 
-  it('categoria sem nenhuma referência: exclui normalmente e emite evento', async () => {
+  it('category with no reference: deletes normally and emits an event', async () => {
     const calls: string[] = [];
     const { svc, query, events } = makeService((sql) => {
       calls.push(sql);
@@ -52,7 +52,7 @@ describe('FinancialCategoriesService.remove()', () => {
     }));
   });
 
-  it('categoria com subcategorias: 409, nunca chega a executar o DELETE', async () => {
+  it('category with subcategories: 409, the DELETE never runs', async () => {
     const { svc, query } = makeService((sql) => {
       if (sql.includes('SELECT *') && sql.includes('FROM financial_categories')) return [CATEGORY_ROW];
       if (sql.includes('AS children')) return [{ ...zeroUsage(), children: 1 }];
@@ -63,7 +63,7 @@ describe('FinancialCategoriesService.remove()', () => {
     expect(query.mock.calls.some(([sql]) => String(sql).startsWith('DELETE FROM financial_categories'))).toBe(false);
   });
 
-  it('categoria com transações vinculadas (canônicas ou legado): 409, sem DELETE', async () => {
+  it('category with linked transactions (canonical or legacy): 409, no DELETE', async () => {
     const { svc, query } = makeService((sql) => {
       if (sql.includes('SELECT *') && sql.includes('FROM financial_categories')) return [CATEGORY_ROW];
       if (sql.includes('AS children')) return [{ ...zeroUsage(), legacy_transactions: 1 }];
@@ -74,7 +74,7 @@ describe('FinancialCategoriesService.remove()', () => {
     expect(query.mock.calls.some(([sql]) => String(sql).startsWith('DELETE FROM financial_categories'))).toBe(false);
   });
 
-  it('categoria referenciada por regra de categorização ativa: 409 com mensagem específica, sem DELETE', async () => {
+  it('category referenced by an active categorization rule: 409 with a specific message, no DELETE', async () => {
     const { svc, query } = makeService((sql) => {
       if (sql.includes('SELECT *') && sql.includes('FROM financial_categories')) return [CATEGORY_ROW];
       if (sql.includes('AS children')) return [{ ...zeroUsage(), category_rules: 1 }];
@@ -86,7 +86,7 @@ describe('FinancialCategoriesService.remove()', () => {
     expect(query.mock.calls.some(([sql]) => String(sql).startsWith('DELETE FROM financial_categories'))).toBe(false);
   });
 
-  it('regra soft-deletada não bloqueia a checagem de aplicação, mas a FK (23503) ainda protege e vira 409 — nunca 500', async () => {
+  it('a soft-deleted rule does not block the application check, but the FK (23503) still protects and becomes 409 — never 500', async () => {
     const { svc } = makeService((sql) => {
       if (sql.includes('SELECT *') && sql.includes('FROM financial_categories')) return [CATEGORY_ROW];
       if (sql.includes('AS children')) return [zeroUsage()];

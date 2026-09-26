@@ -1,7 +1,7 @@
 import { parseSpotifyArtistId } from './spotify-url.util';
 
 describe('parseSpotifyArtistId', () => {
-  it('extrai o id de uma URL de artista válida', () => {
+  it('extracts the id from a valid artist URL', () => {
     expect(parseSpotifyArtistId('https://open.spotify.com/artist/1Xyo4u8uXC1ZmMpatF05PJ')).toBe(
       '1Xyo4u8uXC1ZmMpatF05PJ',
     );
@@ -19,7 +19,7 @@ describe('parseSpotifyArtistId', () => {
     ).toBe('1Xyo4u8uXC1ZmMpatF05PJ');
   });
 
-  it('aceita um artist id/URI puro (sem barras)', () => {
+  it('accepts a plain artist id/URI (no slashes)', () => {
     expect(parseSpotifyArtistId('1Xyo4u8uXC1ZmMpatF05PJ')).toBe('1Xyo4u8uXC1ZmMpatF05PJ');
   });
 
@@ -35,11 +35,11 @@ describe('parseSpotifyArtistId', () => {
     expect(parseSpotifyArtistId('https://open.spotify.com/playlist/6habFhsOp2NvshLv26DqMb')).toBeNull();
   });
 
-  it('rejeita hostname diferente de open.spotify.com (CWE-20 — evil.com/artist/x)', () => {
+  it('rejects a hostname other than open.spotify.com (CWE-20 — evil.com/artist/x)', () => {
     expect(parseSpotifyArtistId('https://evil.com/artist/1Xyo4u8uXC1ZmMpatF05PJ')).toBeNull();
   });
 
-  it('rejeita hostname que apenas contém "spotify.com" como substring', () => {
+  it('rejects a hostname that only contains "spotify.com" as a substring', () => {
     expect(parseSpotifyArtistId('https://evil.com/open.spotify.com/artist/1Xyo4u8uXC1ZmMpatF05PJ')).toBeNull();
   });
 

@@ -61,7 +61,7 @@ const METRIC_ONLY_PATTERNS = [
   /itunes\.apple\.com|api\.music\.apple\.com/,
 ];
 
-describe('SOUNDCHARTS ONLY — nenhum provider de métrica de plataforma usa API direta', () => {
+describe('SOUNDCHARTS ONLY — no platform metric provider calls a direct API', () => {
   it.each(PROVIDER_FILES)('%s: nenhum padrão de métrica de API direta presente no código executável', (file) => {
     const src = stripComments(readProvider(file));
     for (const pattern of METRIC_ONLY_PATTERNS) {
@@ -69,7 +69,7 @@ describe('SOUNDCHARTS ONLY — nenhum provider de métrica de plataforma usa API
     }
   });
 
-  it('YouTubeArtistProfileProvider: a YouTube Data API só é referenciada para RESOLUÇÃO DE IDENTIDADE (part=id / search), nunca para métrica', () => {
+  it('YouTubeArtistProfileProvider: the YouTube Data API is referenced only for IDENTITY RESOLUTION (part=id / search), never for metrics', () => {
     const src = readProvider('youtube-artist-profile.provider.ts');
     // As duas únicas chamadas de rede diretas permitidas: resolução de
     // channelId por handle/username (part=id) e busca por nome (search).
@@ -85,14 +85,14 @@ describe('SOUNDCHARTS ONLY — nenhum provider de métrica de plataforma usa API
     expect(src).not.toContain('fetchChannelStatistics');
   });
 
-  it('todos os 7 providers dependem de SoundchartsService para a métrica exibida no card', () => {
+  it('all 7 providers depend on SoundchartsService for the metric shown on the card', () => {
     for (const file of PROVIDER_FILES) {
       const src = readProvider(file);
       expect(src).toContain('SoundchartsService');
     }
   });
 
-  it('SoundchartsService: métodos de métrica só apontam para hosts customer.api.soundcharts.com/account.soundcharts.com', () => {
+  it('SoundchartsService: metric methods only target customer.api.soundcharts.com/account.soundcharts.com hosts', () => {
     const src = fs.readFileSync(
       path.resolve(__dirname, '../../integrations/soundcharts/soundcharts.service.ts'),
       'utf8',

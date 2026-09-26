@@ -107,8 +107,8 @@ beforeEach(() => {
   server = freshVersion();
 });
 
-describe("ArtistFormModal — hidratação a partir da versão fresca (CAS)", () => {
-  it("exibe os campos da versão fresca (GET), não do snapshot da listagem, e envia o mesmo updated_at fresco como CAS", async () => {
+describe("ArtistFormModal — hydration from the fresh version (CAS)", () => {
+  it("shows the fields of the fresh version (GET), not the list snapshot, and sends the same fresh updated_at as CAS", async () => {
     renderModal({ artist: listSnapshot });
 
     // Antes da hidratação: Salvar indisponível.
@@ -126,7 +126,7 @@ describe("ArtistFormModal — hidratação a partir da versão fresca (CAS)", ()
     expect(patchCalls[0].body.nome_artistico).toBe("Versão Atual");
   });
 
-  it("preserva o que o usuário digitou quando um refetch em segundo plano chega depois da hidratação", async () => {
+  it("preserves what the user typed when a background refetch arrives after hydration", async () => {
     const { queryClient } = renderModal({ artist: listSnapshot });
 
     await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
@@ -158,7 +158,7 @@ describe("ArtistFormModal — hidratação a partir da versão fresca (CAS)", ()
     expect(toast.error).not.toHaveBeenCalled();
   });
 
-  it("save normal funciona (ciclo 2: reabrir → editar → salvar de novo, sem 409 espúrio)", async () => {
+  it("a normal save works (cycle 2: reopen → edit → save again, no spurious 409)", async () => {
     const { onSuccess } = renderModal({ artist: listSnapshot });
     await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
     fireEvent.change(nomeInput(), { target: { value: "Editado ciclo 1" } });
@@ -193,7 +193,7 @@ describe("ArtistFormModal — hidratação a partir da versão fresca (CAS)", ()
     void onSuccess;
   });
 
-  it("conflito A/B real: outra sessão salva entre o GET e o PATCH desta sessão → 409 (ConflictError), modal não fecha", async () => {
+  it("real A/B conflict: another session saves between this session's GET and PATCH → 409 (ConflictError), the modal stays open", async () => {
     const { onSuccess, onOpenChange } = renderModal({ artist: listSnapshot });
     await waitFor(() => expect(nomeInput().value).toBe("Versão Atual"));
 

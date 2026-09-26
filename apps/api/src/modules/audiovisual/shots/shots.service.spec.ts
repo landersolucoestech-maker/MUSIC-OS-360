@@ -49,8 +49,8 @@ async function buildService(mockDs: ReturnType<typeof buildMockDs>) {
   return module.get<AudiovisualShotsService>(AudiovisualShotsService);
 }
 
-describe('AudiovisualShotsService.reorder() — Task M concorrência/atomicidade', () => {
-  it('conjunto de ids igual ao atual: aplica todas as N atualizações via transação', async () => {
+describe('AudiovisualShotsService.reorder() — Task M concurrency/atomicity', () => {
+  it('an id set equal to the current one: applies all N updates in a transaction', async () => {
     const mockDs = buildMockDs(['a', 'b', 'c']);
     const service = await buildService(mockDs);
 
@@ -61,7 +61,7 @@ describe('AudiovisualShotsService.reorder() — Task M concorrência/atomicidade
     expect(result).toEqual({ reordered: 3 });
   });
 
-  it('cenário A/B: A adiciona/remove um shot; B reordena com a lista antiga -> 409, nenhum write aplicado', async () => {
+  it('A/B scenario: A adds/removes a shot; B reorders with the old list -> 409, no write applied', async () => {
     const mockDs = buildMockDs(['a', 'b', 'c', 'd']); // servidor já tem 'd' (adicionado por A)
     const service = await buildService(mockDs);
 
@@ -72,7 +72,7 @@ describe('AudiovisualShotsService.reorder() — Task M concorrência/atomicidade
     expect(mockDs._txShotsRepo.update).not.toHaveBeenCalled();
   });
 
-  it('rollback: falha no meio do loop rejeita a operação inteira (transação real desfaz tudo)', async () => {
+  it('rollback: a failure mid-loop rejects the whole operation (the real transaction undoes everything)', async () => {
     let calls = 0;
     const mockDs = buildMockDs(['a', 'b', 'c'], async () => {
       calls += 1;

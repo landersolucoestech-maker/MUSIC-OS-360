@@ -26,18 +26,18 @@ describe('BackfillLegacySocietyCodesToExternalIdentifiers20260718000015', () => 
     expect(migrationSrc).toMatch(/FROM phonograms WHERE cod_ecad/);
   });
 
-  it('usa os providers/identifier_types genéricos já existentes (não cria coluna por sociedade)', () => {
+  it('uses the existing generic providers/identifier_types (no per-society column)', () => {
     expect(migrationSrc).toMatch(/'ABRAMUS', 'ABRAMUS_PROTOCOL'/);
     expect(migrationSrc).toMatch(/'ECAD', 'ECAD_WORK_CODE'/);
     expect(migrationSrc).not.toMatch(/cod_ubc|cod_socinpro|cod_sbacem|cod_assim/i);
   });
 
-  it('é idempotente (ON CONFLICT DO NOTHING) e não usa DROP ... CASCADE', () => {
+  it('is idempotent (ON CONFLICT DO NOTHING) and does not use DROP ... CASCADE', () => {
     expect(migrationSrc).toMatch(/ON CONFLICT \(tenant_id, entity_type, entity_id, identifier_type, identifier_value\) DO NOTHING/);
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
-  it('não remove as colunas legadas nesta rodada (aditiva apenas)', () => {
+  it('does not drop the legacy columns in this round (additive only)', () => {
     expect(migrationSrc).not.toMatch(/DROP COLUMN.*cod_abramus/i);
     expect(migrationSrc).not.toMatch(/DROP COLUMN.*cod_ecad/i);
   });
@@ -47,7 +47,7 @@ describe('BackfillLegacySocietyCodesToExternalIdentifiers20260718000015', () => 
     expect(migrationSrc).toMatch(/throw new Error/);
   });
 
-  it('possui down() que remove apenas o que corresponde às colunas legadas ainda presentes', () => {
+  it('has a down() that removes only what matches the legacy columns still present', () => {
     expect(migrationSrc).toMatch(/async down/);
     expect(migrationSrc).toMatch(/DELETE FROM external_identifiers/);
   });

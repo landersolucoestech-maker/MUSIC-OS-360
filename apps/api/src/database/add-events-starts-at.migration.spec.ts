@@ -1,11 +1,11 @@
 import { AddEventsStartsAt20260716000001 } from './migrations/20260716000001_AddEventsStartsAt';
 
-describe('AddEventsStartsAt20260716000001 (C3/E1 — expansão)', () => {
+describe('AddEventsStartsAt20260716000001 (C3/E1 — expansion)', () => {
   function queryRunner() {
     return { query: jest.fn(async (_sql: string) => undefined) };
   }
 
-  it('up: adiciona starts_at timestamp nullable, sem default, e o índice composto tenant/starts_at', async () => {
+  it('up: adds a nullable starts_at timestamp without default, plus the composite tenant/starts_at index', async () => {
     const qr = queryRunner();
     await new AddEventsStartsAt20260716000001().up(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');
@@ -30,7 +30,7 @@ describe('AddEventsStartsAt20260716000001 (C3/E1 — expansão)', () => {
     expect(sql).not.toContain('idx_events_tenant_data');
   });
 
-  it('down: remove somente o índice novo e a coluna starts_at, preservando data', async () => {
+  it('down: drops only the new index and the starts_at column, preserving data', async () => {
     const qr = queryRunner();
     await new AddEventsStartsAt20260716000001().down(qr as never);
     const sql = qr.query.mock.calls.map(([statement]) => statement).join('\n');
@@ -43,7 +43,7 @@ describe('AddEventsStartsAt20260716000001 (C3/E1 — expansão)', () => {
     expect(sql).not.toMatch(/UPDATE|INSERT/i);
   });
 
-  it('name segue o padrão TypeORM da base (Classe+timestamp)', () => {
+  it('name follows the codebase TypeORM convention (Class+timestamp)', () => {
     expect(new AddEventsStartsAt20260716000001().name).toBe('AddEventsStartsAt20260716000001');
   });
 });

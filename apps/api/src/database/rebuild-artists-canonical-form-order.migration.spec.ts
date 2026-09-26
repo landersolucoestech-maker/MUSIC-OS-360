@@ -16,7 +16,7 @@ const migrationSrc = fs.readFileSync(
 );
 
 describe('RebuildArtistsInCanonicalFormOrder20260719000001', () => {
-  it('foto_url é a primeira coluna funcional declarada após id/tenant_id', () => {
+  it('foto_url is the first functional column declared after id/tenant_id', () => {
     const afterHeader = migrationSrc.split('newColumns = `')[1];
     const idIdx = afterHeader.indexOf('id ');
     const tenantIdx = afterHeader.indexOf('tenant_id ');
@@ -28,7 +28,7 @@ describe('RebuildArtistsInCanonicalFormOrder20260719000001', () => {
     expect(nomeArtisticoIdx).toBeGreaterThan(fotoIdx);
   });
 
-  it('não recria org_slug na tabela nova (órfã removida) mas valida sua ausência de dados antes', () => {
+  it('does not recreate org_slug in the new table (orphan removed) but validates it holds no data first', () => {
     expect(migrationSrc).toMatch(/count\(org_slug\)/);
     expect(migrationSrc).toMatch(/throw new Error/);
     const newColumnsBlock = migrationSrc.split('newColumns = `')[1].split('`;')[0];
@@ -48,7 +48,7 @@ describe('RebuildArtistsInCanonicalFormOrder20260719000001', () => {
     expect(afterDeletedAt.replace(/timestamp,?/, '').trim()).toBe('');
   });
 
-  it('não usa DROP ... CASCADE em nenhum passo', () => {
+  it('uses DROP ... CASCADE in no step', () => {
     expect(migrationSrc).not.toMatch(/DROP\s+\w+[^;]*CASCADE/i);
   });
 
@@ -75,7 +75,7 @@ describe('RebuildArtistsInCanonicalFormOrder20260719000001', () => {
     expect(migrationSrc.match(/contagem divergente/g)?.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('possui down() honesto que reverte para a estrutura original (incluindo org_slug)', () => {
+  it('has an honest down() that reverts to the original structure (including org_slug)', () => {
     expect(migrationSrc).toMatch(/async down/);
     const originalColumnsBlock = migrationSrc.split('originalColumns = `')[1].split('`;')[0];
     expect(originalColumnsBlock).toMatch(/\borg_slug\b/);

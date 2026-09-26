@@ -20,27 +20,27 @@ describe('tenant-zero.constants', () => {
     expect(TENANT_ZERO_SYNTHETIC_OWNER_AUTH_USER_ID).toBe(uuidv5(`${TENANT_ZERO_SLUG}:synthetic-owner`, MUSICOS360_NAMESPACE_UUID));
   });
 
-  it('produz UUIDv5 válidos (versão e variant corretos)', () => {
+  it('produces valid UUIDv5 values (correct version and variant)', () => {
     expect(TENANT_ZERO_ORG_ID).toMatch(UUID_RE);
     expect(TENANT_ZERO_TENANT_ID).toMatch(UUID_RE);
     expect(TENANT_ZERO_SYNTHETIC_OWNER_AUTH_USER_ID).toMatch(UUID_RE);
   });
 
-  it('org, tenant e owner sintético nunca colidem entre si', () => {
+  it('org, tenant and synthetic owner never collide with each other', () => {
     const ids = [TENANT_ZERO_ORG_ID, TENANT_ZERO_TENANT_ID, TENANT_ZERO_SYNTHETIC_OWNER_AUTH_USER_ID];
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('nome/slug canônicos são estáveis (regressão contra rename acidental)', () => {
+  it('canonical name/slug are stable (regression against an accidental rename)', () => {
     expect(TENANT_ZERO_SLUG).toBe('lander-records');
     expect(TENANT_ZERO_NAME).toBe('LANDER RECORDS');
   });
 
-  it('owner sintético usa domínio example.com — nunca um domínio real de cliente', () => {
+  it('the synthetic owner uses the example.com domain — never a real customer domain', () => {
     expect(TENANT_ZERO_SYNTHETIC_OWNER_EMAIL.endsWith('@lander-records.example.com')).toBe(true);
   });
 
-  it('IDs canônicos são congelados: mudar o namespace ou a seed é uma quebra de compatibilidade', () => {
+  it('canonical IDs are frozen: changing the namespace or seed breaks compatibility', () => {
     // Snapshot explícito — se este teste falhar, o namespace ou a seed mudaram
     // e TODO ambiente (DEV/STAGING/PROD) precisa de um plano de migração de dados.
     expect(TENANT_ZERO_ORG_ID).toMatchSnapshot();

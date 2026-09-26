@@ -31,7 +31,7 @@ const FILES_TO_SCAN = [
   path.resolve(__dirname, "./types/artist.types.ts"),
 ];
 
-describe("artists domain — o campo tipo (formação do artista) foi removido, não normalizado", () => {
+describe("artists domain — the tipo field (artist line-up) was removed, not normalized", () => {
   it.each(FILES_TO_SCAN)("%s não declara ArtistaTipo nem tipoArtista", (file) => {
     const source = fs.readFileSync(file, "utf8");
     for (const pattern of REMOVED_IDENTIFIERS) {
@@ -39,16 +39,16 @@ describe("artists domain — o campo tipo (formação do artista) foi removido, 
     }
   });
 
-  it("emptyPreservedInput() não tem propriedade tipoArtista", () => {
+  it("emptyPreservedInput() has no tipoArtista property", () => {
     expect(emptyPreservedInput()).not.toHaveProperty("tipoArtista");
   });
 
-  it("artistToFormFields() não devolve tipoArtista para nenhum artista", () => {
+  it("artistToFormFields() returns no tipoArtista for any artist", () => {
     const fields = artistToFormFields({ nome_artistico: "X" } as never);
     expect(fields).not.toHaveProperty("tipoArtista");
   });
 
-  it("artistToPreservedInput() não devolve tipoArtista", () => {
+  it("artistToPreservedInput() returns no tipoArtista", () => {
     const preserved = artistToPreservedInput({ nome_artistico: "X" } as never);
     expect(preserved).not.toHaveProperty("tipoArtista");
   });

@@ -37,8 +37,8 @@ const REAL_FORM_PAYLOAD = {
   ],
 };
 
-describe('CreateProjectDto — contrato canônico real (auditoria 2026-07-18)', () => {
-  it('aceita o payload real do formulário (antes rejeitado inteiro por forbidNonWhitelisted)', async () => {
+describe('CreateProjectDto — real canonical contract (audit 2026-07-18)', () => {
+  it('accepts the real form payload (previously rejected entirely by forbidNonWhitelisted)', async () => {
     const errors = await validatePayload(REAL_FORM_PAYLOAD);
     expect(errors).toEqual([]);
   });
@@ -50,7 +50,7 @@ describe('CreateProjectDto — contrato canônico real (auditoria 2026-07-18)', 
     }
   });
 
-  it('aceita payload mínimo (apenas title/type obrigatórios)', async () => {
+  it('accepts a minimal payload (only title/type required)', async () => {
     const errors = await validatePayload({ title: 'X', type: 'single' });
     expect(errors).toEqual([]);
   });
@@ -70,7 +70,7 @@ describe('CreateProjectDto — artist_id/orcamento (GAP-0001 / DEC-001)', () => 
     expect(await validatePayload({ ...REAL_FORM_PAYLOAD, artist_id: null, orcamento: null })).toEqual([]);
   });
 
-  it('rejeita orcamento negativo no servidor (não depende do frontend)', async () => {
+  it('rejects a negative orcamento on the server (does not rely on the frontend)', async () => {
     const errors = await validatePayload({ ...REAL_FORM_PAYLOAD, orcamento: -1 });
     expect(errors.map((e) => e.property)).toContain('orcamento');
   });

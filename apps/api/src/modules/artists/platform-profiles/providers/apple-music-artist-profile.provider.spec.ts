@@ -6,8 +6,8 @@ const CANONICAL_URLS = {
   spotifyUrl: 'https://open.spotify.com/artist/6qqNVTkY8uBg9cP3Jd7DAH',
 };
 
-describe('AppleMusicArtistProfileProvider.resolve (Fase 1.3 — ID cadastrado é PRIMÁRIO, canônico é fallback secundário)', () => {
-  it('1) Apple Music ID cadastrado resolve diretamente (exato, primário): playlist_count vem dessa entidade, VERIFIED_EXACT — nem consulta a cadeia canônica', async () => {
+describe('AppleMusicArtistProfileProvider.resolve (Phase 1.3 — the registered ID is PRIMARY, the canonical is a secondary fallback)', () => {
+  it('1) the registered Apple Music ID resolves directly (exact, primary): playlist_count comes from that entity, VERIFIED_EXACT — the canonical chain is not even queried', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockResolvedValue('own-uuid'),
@@ -27,7 +27,7 @@ describe('AppleMusicArtistProfileProvider.resolve (Fase 1.3 — ID cadastrado é
     expect(snapshot.raw_payload.primary_identity_status).toBe('VERIFIED_EXACT');
   });
 
-  it('2) ID cadastrado não indexado standalone (404): cai para o canônico, registry CONFIRMA o ID → ainda VERIFIED_EXACT', async () => {
+  it('2) the registered ID is not indexed standalone (404): falls back to the canonical, the registry CONFIRMS the ID → still VERIFIED_EXACT', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found', 404)),
@@ -46,7 +46,7 @@ describe('AppleMusicArtistProfileProvider.resolve (Fase 1.3 — ID cadastrado é
     expect(snapshot.raw_payload.primary_identity_status).toBe('VERIFIED_EXACT');
   });
 
-  it('3) ID cadastrado não indexado, canônico não confirma no registry: dado ainda é usado, mas rotulado INSUFFICIENT_EVIDENCE', async () => {
+  it('3) the registered ID is not indexed, the canonical is not confirmed by the registry: data is still used but labeled INSUFFICIENT_EVIDENCE', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found', 404)),
@@ -80,7 +80,7 @@ describe('AppleMusicArtistProfileProvider.resolve (Fase 1.3 — ID cadastrado é
     expect(snapshot.sync_status).toBe('success');
   });
 
-  it('5) Apple Music id ausente/inválido lança erro antes de qualquer chamada de rede', async () => {
+  it('5) an absent/invalid Apple Music id throws before any network call', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn(),

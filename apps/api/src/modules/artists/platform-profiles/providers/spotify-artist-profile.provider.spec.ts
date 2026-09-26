@@ -7,8 +7,8 @@ const CANONICAL_URLS = {
   deezerUrl: 'https://www.deezer.com/artist/9635624',
 };
 
-describe('SpotifyArtistProfileProvider.resolve (Métricas Fase 1 — proteção contra conta homônima)', () => {
-  it('10) UUID do próprio handle bate com o canônico independente: monthly_listeners é persistido normalmente', async () => {
+describe('SpotifyArtistProfileProvider.resolve (Metrics Phase 1 — protection against a same-name account)', () => {
+  it('10) the own-handle UUID matches the independent canonical: monthly_listeners is persisted normally', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockResolvedValue('same-uuid'),
@@ -35,7 +35,7 @@ describe('SpotifyArtistProfileProvider.resolve (Métricas Fase 1 — proteção 
     expect(snapshot.sync_status).toBe('success');
   });
 
-  it('11) FASE 1.3 — UUID do próprio handle DIVERGE do canônico (YouTube/Deezer): resolução exata pelo artistId cadastrado ainda é aceita; divergência vira só diagnóstico', async () => {
+  it('11) PHASE 1.3 — the own-handle UUID DIVERGES from the canonical (YouTube/Deezer): exact resolution by the registered artistId is still accepted; the divergence is only a diagnostic', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockResolvedValue('spotify-own-uuid'),
@@ -61,7 +61,7 @@ describe('SpotifyArtistProfileProvider.resolve (Métricas Fase 1 — proteção 
     expect(snapshot.raw_payload.cross_platform_uuid).toBe('canonical-uuid');
   });
 
-  it('find-4e35ea8e: artistId resolvido com sucesso (existe de verdade) mas não indexado na Soundcharts (404): monthly_listeners=null, sync_status=success (NUNCA "failed")', async () => {
+  it('find-4e35ea8e: artistId resolved successfully (it really exists) but not indexed on Soundcharts (404): monthly_listeners=null, sync_status=success (NEVER "failed")', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockRejectedValue(new SoundchartsNotFoundError('not found', 404)),
@@ -83,7 +83,7 @@ describe('SpotifyArtistProfileProvider.resolve (Métricas Fase 1 — proteção 
     expect(snapshot.external_id).toBe('6qqNVTkY8uBg9cP3Jd7DAH');
   });
 
-  it('erro real da Soundcharts (não 404) durante a resolução propaga como falha genuína (retry deve acontecer)', async () => {
+  it('a real Soundcharts error (not 404) during resolution propagates as a genuine failure (retry must happen)', async () => {
     const soundcharts = {
       isConfigured: jest.fn().mockReturnValue(true),
       resolveArtistByPlatform: jest.fn().mockRejectedValue(new Error('Soundcharts 503: serviço indisponível')),

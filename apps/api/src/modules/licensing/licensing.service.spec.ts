@@ -37,7 +37,7 @@ function buildMockDs(updateResult: { affected: number } = { affected: 1 }) {
   return { getRepository: jest.fn(() => repo), _repo: repo };
 }
 
-describe('LicensingService — concorrência otimista em update()', () => {
+describe('LicensingService — optimistic concurrency in update()', () => {
   let service: LicensingService;
   let mockDs: ReturnType<typeof buildMockDs>;
 
@@ -62,7 +62,7 @@ describe('LicensingService — concorrência otimista em update()', () => {
     );
   });
 
-  it('com expectedUpdatedAt correto: inclui updated_at no critério', async () => {
+  it('with a correct expectedUpdatedAt: includes updated_at in the criteria', async () => {
     service = await buildService({ affected: 1 });
     await service.update(TENANT, 'u1', LICENSE_ID, {
       title: 'Editado',
@@ -79,7 +79,7 @@ describe('LicensingService — concorrência otimista em update()', () => {
     expect(payload).toEqual(expect.objectContaining({ title: 'Editado' }));
   });
 
-  it('com expectedUpdatedAt desatualizado (0 linhas afetadas): lança ConflictException (409)', async () => {
+  it('with a stale expectedUpdatedAt (0 rows affected): throws ConflictException (409)', async () => {
     service = await buildService({ affected: 0 });
     await expect(
       service.update(TENANT, 'u1', LICENSE_ID, {
@@ -89,7 +89,7 @@ describe('LicensingService — concorrência otimista em update()', () => {
     ).rejects.toThrow(ConflictException);
   });
 
-  it('expectedUpdatedAt com formato inválido: 400, não 500 nem silêncio', async () => {
+  it('expectedUpdatedAt with an invalid format: 400, not 500 or silence', async () => {
     service = await buildService({ affected: 1 });
     await expect(
       service.update(TENANT, 'u1', LICENSE_ID, {

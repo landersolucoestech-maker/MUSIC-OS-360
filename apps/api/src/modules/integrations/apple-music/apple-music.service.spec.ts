@@ -69,7 +69,7 @@ describe('AppleMusicService', () => {
     (global as any).fetch = fetchMock;
   });
 
-  it('sem credenciais configuradas: retorna erro explícito, nunca chama a API Apple', async () => {
+  it('without credentials configured: returns an explicit error, never calls the Apple API', async () => {
     const result = await service.getArtistFromCatalog(TENANT_A, 'some-id');
     expect(result).toEqual({ error: 'Apple Music não configurado' });
     expect(fetchMock).not.toHaveBeenCalled();
@@ -83,14 +83,14 @@ describe('AppleMusicService', () => {
     expect(raw.credentials_encrypted).not.toContain('TEAM123');
   });
 
-  it('getProviderStatus(): nunca expõe a private key — só {connected, last_sync_at}', async () => {
+  it('getProviderStatus(): never exposes the private key — only {connected, last_sync_at}', async () => {
     await service.configure(TENANT_A, 'TEAM123', 'KEY456', TEST_PRIVATE_KEY);
     const status = await service.getProviderStatus(TENANT_A);
     expect(status).toEqual({ connected: true, last_sync_at: null });
     expect(JSON.stringify(status)).not.toContain('PRIVATE KEY');
   });
 
-  it('com credenciais configuradas: assina um developer token ES256 válido e chama a Apple API com Bearer', async () => {
+  it('with credentials configured: signs a valid ES256 developer token and calls the Apple API with Bearer', async () => {
     await service.configure(TENANT_A, 'TEAM123', 'KEY456', TEST_PRIVATE_KEY);
     fetchMock.mockResolvedValueOnce({
       ok: true,
@@ -114,7 +114,7 @@ describe('AppleMusicService', () => {
     expect(sig.length).toBeGreaterThan(0);
   });
 
-  it('propaga status de erro HTTP da Apple API sem mascarar como sucesso', async () => {
+  it('propagates the Apple API HTTP error status without masking it as success', async () => {
     await service.configure(TENANT_A, 'TEAM123', 'KEY456', TEST_PRIVATE_KEY);
     fetchMock.mockResolvedValueOnce({ ok: false, status: 401 });
 

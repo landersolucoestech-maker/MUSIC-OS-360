@@ -44,7 +44,7 @@ function buildMockDs(updateResult: { affected: number } = { affected: 1 }) {
   return { getRepository: jest.fn(() => genericRepo), _repo: genericRepo };
 }
 
-describe('SocietySubmissionService — concorrência otimista em transition()', () => {
+describe('SocietySubmissionService — optimistic concurrency in transition()', () => {
   let service: SocietySubmissionService;
   let mockDs: ReturnType<typeof buildMockDs>;
 
@@ -71,7 +71,7 @@ describe('SocietySubmissionService — concorrência otimista em transition()', 
     );
   });
 
-  it('com expectedUpdatedAt correto: inclui updated_at no critério', async () => {
+  it('with a correct expectedUpdatedAt: includes updated_at in the criteria', async () => {
     service = await buildService({ affected: 1 });
     await service.transition(TENANT, 'u1', SUB_ID, {
       status: SocietySubmissionStatus.VALIDATING,
@@ -88,7 +88,7 @@ describe('SocietySubmissionService — concorrência otimista em transition()', 
     expect(payload).toEqual(expect.objectContaining({ status: SocietySubmissionStatus.VALIDATING }));
   });
 
-  it('com expectedUpdatedAt desatualizado (0 linhas afetadas): lança ConflictException (409)', async () => {
+  it('with a stale expectedUpdatedAt (0 rows affected): throws ConflictException (409)', async () => {
     service = await buildService({ affected: 0 });
     await expect(
       service.transition(TENANT, 'u1', SUB_ID, {
@@ -98,7 +98,7 @@ describe('SocietySubmissionService — concorrência otimista em transition()', 
     ).rejects.toThrow(ConflictException);
   });
 
-  it('expectedUpdatedAt com formato inválido: 400, não 500 nem silêncio', async () => {
+  it('expectedUpdatedAt with an invalid format: 400, not 500 or silence', async () => {
     service = await buildService({ affected: 1 });
     await expect(
       service.transition(TENANT, 'u1', SUB_ID, {

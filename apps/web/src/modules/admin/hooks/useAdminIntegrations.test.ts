@@ -15,7 +15,7 @@ import { adminIntegrationsService } from "@/modules/admin/services/admin-integra
  *  - o service devolve o array administrativo COMPLETO (draft + sem adapter);
  *  - erro PROPAGA (não vira []), para a UI poder mostrar estado de erro real.
  */
-describe("adminIntegrationsService — catálogo administrativo", () => {
+describe("adminIntegrationsService — admin catalog", () => {
   beforeEach(() => vi.clearAllMocks());
 
   const rows = [
@@ -39,7 +39,7 @@ describe("adminIntegrationsService — catálogo administrativo", () => {
     },
   ];
 
-  it("usa o endpoint ADMIN, não o resolver client-facing", async () => {
+  it("uses the ADMIN endpoint, not the client-facing resolver", async () => {
     apiMock.get.mockResolvedValue(rows);
     await adminIntegrationsService.list();
     expect(apiMock.get).toHaveBeenCalledWith("/admin/integrations");
@@ -47,7 +47,7 @@ describe("adminIntegrationsService — catálogo administrativo", () => {
     expect(apiMock.get).not.toHaveBeenCalledWith("/integrations/providers");
   });
 
-  it("devolve estados não-disponíveis e providers sem adapter — o admin governa o catálogo inteiro", async () => {
+  it("returns unavailable states and providers without an adapter — the admin governs the whole catalog", async () => {
     apiMock.get.mockResolvedValue(rows);
     const result = await adminIntegrationsService.list();
 
@@ -57,13 +57,13 @@ describe("adminIntegrationsService — catálogo administrativo", () => {
     expect(result.find((r) => r.providerKey === "clicksign")?.technicalCapability).toBe("not_implemented");
   });
 
-  it("não re-desembrulha o envelope: api.get já resolve payload.data (bug real deste repo)", async () => {
+  it("does not unwrap the envelope twice: api.get already resolves payload.data (a real bug in this repo)", async () => {
     // Shape REAL que o api-client entrega: array puro, não { data: [...] }.
     apiMock.get.mockResolvedValue(rows);
     await expect(adminIntegrationsService.list()).resolves.toHaveLength(2);
   });
 
-  it("PROPAGA erro em vez de devolver lista vazia (404/403/500 ≠ catálogo vazio)", async () => {
+  it("PROPAGATES the error instead of returning an empty list (404/403/500 ≠ empty catalog)", async () => {
     const failure = Object.assign(new Error("Not Found"), { statusCode: 404 });
     apiMock.get.mockRejectedValue(failure);
 

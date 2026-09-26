@@ -107,12 +107,12 @@ function readBaseline(): Set<string> {
   }));
 }
 
-describe('Guarda permanente: censo de colunas físicas PT-suspeitas não diverge sem triagem (naming-closure Fase 4)', () => {
+describe('Permanent guard: the census of PT-suspect physical columns does not diverge without triage (naming-closure Phase 4)', () => {
   it('o baseline commitado existe (.audit-runtime/pt-column-census.jsonl)', () => {
     expect(fs.existsSync(BASELINE_PATH)).toBe(true);
   });
 
-  it('nenhuma coluna PT-suspeita nova aparece sem passar pela classificação individual', () => {
+  it('no new PT-suspect column appears without individual classification', () => {
     const current = computeCurrentCensus();
     const baseline = readBaseline();
     const newHits = [...current].filter((h) => !baseline.has(h));
@@ -125,7 +125,7 @@ describe('Guarda permanente: censo de colunas físicas PT-suspeitas não diverge
     }
   });
 
-  it('nenhuma coluna do baseline foi removida/renomeada sem atualizar o baseline (mantém o gate honesto)', () => {
+  it('no baseline column was removed/renamed without updating the baseline (keeps the gate honest)', () => {
     const current = computeCurrentCensus();
     const baseline = readBaseline();
     const stale = [...baseline].filter((h) => !current.has(h));
@@ -140,7 +140,7 @@ describe('Guarda permanente: censo de colunas físicas PT-suspeitas não diverge
 
   // Prova positiva/negativa da heurística isPtSuspect, isolada de entities.ts real
   // (evidência direta de que o mecanismo detecta certo, não só "funcionou uma vez").
-  describe('isPtSuspect: verdadeiro-positivo em coluna morta conhecida, verdadeiro-negativo em domínio legal intencional', () => {
+  describe('isPtSuspect: true positive on a known dead column, true negative on an intentional legal-domain term', () => {
     it.each([
       // Reintrodução simulada das 3 colunas mortas dropadas por 20260923000002 --
       // se algum dia voltarem a aparecer como @Column, isto prova que o guard as pegaria.

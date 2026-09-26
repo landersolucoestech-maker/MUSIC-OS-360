@@ -12,15 +12,15 @@ describe('migration-classification', () => {
     expect(isApplicationMigration('TenantZeroFormalization20260801000002')).toBe(true);
   });
 
-  it('qualquer nome desconhecido é APPLICATION por padrão — nunca EXTERNAL/PRIVILEGED por engano', () => {
+  it('any unknown name is APPLICATION by default — never EXTERNAL/PRIVILEGED by mistake', () => {
     expect(getMigrationCategory('AlgumaMigrationQueNuncaExistiu99999999999999')).toBe(MigrationCategory.APPLICATION);
   });
 
-  it('listExternalManagedMigrationNames expõe exatamente as migrations EXTERNAL_MANAGED conhecidas', () => {
+  it('listExternalManagedMigrationNames exposes exactly the known EXTERNAL_MANAGED migrations', () => {
     expect(listExternalManagedMigrationNames()).toEqual(['RealtimeBroadcastAuthorization20260801000001']);
   });
 
-  it('regressão: toda migration real registrada em ALL_MIGRATIONS resolve para uma categoria válida', () => {
+  it('regression: every real migration registered in ALL_MIGRATIONS resolves to a valid category', () => {
     const validCategories = new Set(Object.values(MigrationCategory));
     for (const MigrationClass of ALL_MIGRATIONS) {
       const instance = new MigrationClass();
@@ -28,7 +28,7 @@ describe('migration-classification', () => {
     }
   });
 
-  it('regressão: exatamente uma migration real é EXTERNAL_MANAGED hoje (a do Realtime) — nenhuma outra foi classificada por engano', () => {
+  it('regression: exactly one real migration is EXTERNAL_MANAGED today (the Realtime one) — no other was misclassified', () => {
     const externalNames = ALL_MIGRATIONS
       .map((MigrationClass) => new MigrationClass())
       .filter((instance) => getMigrationCategory(instance.name) === MigrationCategory.EXTERNAL_MANAGED)

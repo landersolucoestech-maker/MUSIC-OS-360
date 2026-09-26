@@ -18,14 +18,14 @@ import * as path from "path";
 
 const SOURCE = fs.readFileSync(path.resolve(__dirname, "ArtistFormModal.tsx"), "utf8");
 
-describe("ArtistFormModal — as três seções descontinuadas não reaparecem", () => {
-  it("nenhum título de seção descontinuada é renderizado", () => {
+describe("ArtistFormModal — the three discontinued sections do not reappear", () => {
+  it("no discontinued section title is rendered", () => {
     expect(SOURCE).not.toMatch(/>\s*Classificação e Vínculos\s*</);
     expect(SOURCE).not.toMatch(/>\s*Equipe de Gestão\s*</);
     expect(SOURCE).not.toMatch(/>\s*Mídia Adicional\s*</);
   });
 
-  it("nenhum controle exclusivo dessas seções é renderizado (data-testid)", () => {
+  it("no control exclusive to those sections is rendered (data-testid)", () => {
     const removedTestIds = [
       "select-type-artista",
       "select-status-artista",
@@ -45,7 +45,7 @@ describe("ArtistFormModal — as três seções descontinuadas não reaparecem",
     }
   });
 
-  it("nenhum estado local exclusivo dessas seções foi reintroduzido", () => {
+  it("no local state exclusive to those sections was reintroduced", () => {
     const removedIdentifiers = [
       "managerNome", "managerContato", "produtorExecutivo",
       "agenciaBooking", "labelParceira", "documentosList",
@@ -57,7 +57,7 @@ describe("ArtistFormModal — as três seções descontinuadas não reaparecem",
     }
   });
 
-  it("o payload de create/update não envia mais campos exclusivos dessas seções", () => {
+  it("the create/update payload no longer sends fields exclusive to those sections", () => {
     expect(SOURCE).not.toMatch(/manager_nome\s*:/);
     expect(SOURCE).not.toMatch(/manager_contato\s*:/);
     expect(SOURCE).not.toMatch(/produtor_executivo\s*:/);

@@ -32,12 +32,12 @@ describe('queue topology — static', () => {
     for (const m of src.matchAll(/@Processor\(\s*QUEUE_NAMES\.([A-Z_]+)\s*\)/g)) processed.add(QUEUE_NAMES[m[1] as keyof typeof QUEUE_NAMES]);
   }
 
-  it('todas as filas têm @Processor, exceto integrations-sync (contida)', () => {
+  it('every queue has a @Processor except integrations-sync (contained)', () => {
     const missing = Object.values(QUEUE_NAMES).filter((q) => !processed.has(q));
     expect(missing).toEqual([QUEUE_NAMES.INTEGRATIONS_SYNC]);
   });
 
-  it('nenhum arquivo de produção chama .add() com um job contido', () => {
+  it('no production file calls .add() with a contained job', () => {
     const offenders: string[] = [];
     for (const { f, src } of sources) {
       for (const job of Object.keys(UNCONSUMED_QUEUE_JOBS)) {
@@ -60,7 +60,7 @@ describe('queue topology — WorkflowQueueService (behavioral)', () => {
     return { svc, integrations, streaming };
   }
 
-  it('jobs contidos não são enfileirados em nenhuma fila', async () => {
+  it('contained jobs are enqueued on no queue', async () => {
     const { svc, integrations, streaming } = build();
     await svc.enqueueOnboardingCheck({ tenantId: 't1', artistId: 'a1', tasks: ['x'] });
     await svc.enqueueWorkflowFollowup({ tenantId: 't1', entityType: 'contract', entityId: 'c1', trigger: 'contract.signed' });
@@ -69,7 +69,7 @@ describe('queue topology — WorkflowQueueService (behavioral)', () => {
     expect(streaming.add).not.toHaveBeenCalled();
   });
 
-  it('todo job que ainda é enfileirado em streaming-sync tem handler real no ExternalDataProcessor', async () => {
+  it('every job still enqueued on streaming-sync has a real handler in ExternalDataProcessor', async () => {
     const { svc, streaming } = build();
     await svc.enqueueExternalDataSync({ tenantId: 't1', artistId: 'a1', workIds: [], societyHint: 'abramus' });
     await svc.enqueueDistributorSubmit({ tenantId: 't1', userId: 'u', providerId: 'p', artistId: 'a1', releaseId: null, phonogramIds: [] });

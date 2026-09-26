@@ -27,7 +27,7 @@ describe('BillingEnforcementService — webhook idempotency lifecycle', () => {
     expect(query.mock.calls[0][0]).toMatch(/status'?\)?\s*\n?\s*VALUES.*'processing'/s);
   });
 
-  it('evento já PROCESSED: INSERT conflita, reclaim (WHERE status=\'failed\') não afeta nenhuma linha — "duplicate"', async () => {
+  it('event already PROCESSED: the INSERT conflicts, the reclaim (WHERE status=\'failed\') affects no row — "duplicate"', async () => {
     const query = jest.fn()
       .mockResolvedValueOnce([]) // INSERT ... ON CONFLICT DO NOTHING → 0 rows (already exists)
       .mockResolvedValueOnce([]); // UPDATE ... WHERE status='failed' → 0 rows (it's 'processed', not 'failed')
@@ -43,7 +43,7 @@ describe('BillingEnforcementService — webhook idempotency lifecycle', () => {
     expect(query.mock.calls[1][0]).toMatch(/status = 'failed'/);
   });
 
-  it('evento em PROCESSING por outra entrega concorrente: reclaim também não afeta linha — "duplicate", nunca reprocessa em paralelo', async () => {
+  it('event in PROCESSING by another concurrent delivery: the reclaim affects no row either — "duplicate", never reprocessed in parallel', async () => {
     const query = jest.fn()
       .mockResolvedValueOnce([]) // INSERT conflicts — a sibling delivery already holds it
       .mockResolvedValueOnce([]); // reclaim fails — status is 'processing', not 'failed'
@@ -56,7 +56,7 @@ describe('BillingEnforcementService — webhook idempotency lifecycle', () => {
     expect(result).toBe('duplicate');
   });
 
-  it('evento FAILED (falha transitória anterior): reclaim afeta a linha — "inserted", retry legítimo acontece', async () => {
+  it('FAILED event (earlier transient failure): the reclaim affects the row — "inserted", the legitimate retry happens', async () => {
     const query = jest.fn()
       .mockResolvedValueOnce([]) // INSERT conflicts — row already exists from the failed attempt
       .mockResolvedValueOnce([{ id: 'row-1' }]); // reclaim succeeds — status was 'failed'
@@ -69,7 +69,7 @@ describe('BillingEnforcementService — webhook idempotency lifecycle', () => {
     expect(result).toBe('inserted');
   });
 
-  it('markWebhookProcessed: seta status=processed e processed_at=now() — só isso conta como aplicado de verdade', async () => {
+  it('markWebhookProcessed: sets status=processed and processed_at=now() — only that counts as really applied', async () => {
     const query = jest.fn().mockResolvedValueOnce([]);
     const service = makeService(query);
 

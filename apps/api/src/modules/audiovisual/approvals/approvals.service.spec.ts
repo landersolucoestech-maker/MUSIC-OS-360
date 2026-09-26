@@ -51,7 +51,7 @@ function buildMockDs(updateResult: { affected: number } = { affected: 1 }) {
   };
 }
 
-describe('AudiovisualApprovalsService — concorrência otimista em decide()', () => {
+describe('AudiovisualApprovalsService — optimistic concurrency in decide()', () => {
   let service: AudiovisualApprovalsService;
   let mockDs: ReturnType<typeof buildMockDs>;
 
@@ -66,7 +66,7 @@ describe('AudiovisualApprovalsService — concorrência otimista em decide()', (
     return module.get<AudiovisualApprovalsService>(AudiovisualApprovalsService);
   }
 
-  it('decisão normal (1 linha afetada): aplica e retorna sem erro', async () => {
+  it('normal decision (1 row affected): applies and returns without error', async () => {
     service = await buildService({ affected: 1 });
     await service.decide(TENANT, 'manager1', APPROVAL_ID, { status: 'approved' } as any);
 
@@ -76,14 +76,14 @@ describe('AudiovisualApprovalsService — concorrência otimista em decide()', (
     );
   });
 
-  it('decisão concorrente (0 linhas afetadas — já decidida por outro manager): lança ConflictException (409)', async () => {
+  it('concurrent decision (0 rows affected — already decided by another manager): throws ConflictException (409)', async () => {
     service = await buildService({ affected: 0 });
     await expect(
       service.decide(TENANT, 'manager2', APPROVAL_ID, { status: 'rejected' } as any),
     ).rejects.toThrow(ConflictException);
   });
 
-  it('com expectedUpdatedAt correto: inclui updated_at no critério além do status guard', async () => {
+  it('with a correct expectedUpdatedAt: includes updated_at in the criteria besides the status guard', async () => {
     // Task Y — decide() passou a reaproveitar o casUpdate compartilhado
     // (Task X); updated_at deixou de ser igualdade exata de Date (timestamp
     // sem tz perde precisão no round-trip Date/JSON) e virou Raw() truncado
@@ -105,7 +105,7 @@ describe('AudiovisualApprovalsService — concorrência otimista em decide()', (
     expect(payload).toEqual(expect.objectContaining({ status: 'approved' }));
   });
 
-  it('expectedUpdatedAt com formato inválido: 400, não 500 nem silêncio', async () => {
+  it('expectedUpdatedAt with an invalid format: 400, not 500 or silence', async () => {
     service = await buildService({ affected: 1 });
     await expect(
       service.decide(TENANT, 'manager1', APPROVAL_ID, {

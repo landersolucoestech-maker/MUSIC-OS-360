@@ -28,8 +28,8 @@ function expectFields(
   for (const field of fields) expect(text).toMatch(new RegExp(pattern(field)));
 }
 
-describe('Colunas dedicadas de formulário sempre expostas no DTO correspondente', () => {
-  it('EventEntity mantém os campos do formulário em CreateEventDto', () => {
+describe('Dedicated form columns are always exposed in the matching DTO', () => {
+  it('EventEntity keeps the form fields in CreateEventDto', () => {
     const block = entityBlock('EventEntity');
     const dto = source('../modules/events/dto/events.dto.ts');
     const fields = [
@@ -40,7 +40,7 @@ describe('Colunas dedicadas de formulário sempre expostas no DTO correspondente
     expectFields(dto, fields);
   });
 
-  it('ReleaseEntity mantém os campos do formulário em CreateReleaseDto', () => {
+  it('ReleaseEntity keeps the form fields in CreateReleaseDto', () => {
     const block = entityBlock('ReleaseEntity');
     const dto = source('../modules/releases/dto/releases.dto.ts');
     const fields = [
@@ -90,7 +90,7 @@ describe('Colunas dedicadas de formulário sempre expostas no DTO correspondente
     expect(block).not.toMatch(/\bvencimento\b/);
   });
 
-  it('Licenciamento aceita e preserva os campos condicionais de remuneração', () => {
+  it('Licensing accepts and preserves the conditional remuneration fields', () => {
     const entity = entityBlock('LicenseEntity');
     const dto = source('../modules/licensing/dto/licensing.dto.ts');
     const service = source('../modules/licensing/licensing.service.ts');

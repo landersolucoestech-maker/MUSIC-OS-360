@@ -30,7 +30,7 @@ describe("splitDateTime", () => {
     expect(result).toEqual({ date: "2026-08-20", time: "09:05" });
   });
 
-  it("retorna vazio para valor nulo/ausente/inválido — nunca lança", () => {
+  it("returns empty for a null/absent/invalid value — never throws", () => {
     expect(splitDateTime(null)).toEqual({ date: "", time: "" });
     expect(splitDateTime(undefined)).toEqual({ date: "", time: "" });
     expect(splitDateTime("não é uma data")).toEqual({ date: "", time: "" });
@@ -38,7 +38,7 @@ describe("splitDateTime", () => {
 });
 
 describe("combineDateTime", () => {
-  it("combina data + hora em um ISO datetime válido para o backend", () => {
+  it("combines date + time into a valid ISO datetime for the backend", () => {
     const iso = combineDateTime("2026-08-20", "14:30");
     expect(iso).toBeDefined();
     const d = new Date(iso!);
@@ -49,20 +49,20 @@ describe("combineDateTime", () => {
     expect(d.getMinutes()).toBe(30);
   });
 
-  it("usa 00:00 quando nenhum horário é informado", () => {
+  it("uses 00:00 when no time is given", () => {
     const iso = combineDateTime("2026-08-20", null);
     const d = new Date(iso!);
     expect(d.getHours()).toBe(0);
     expect(d.getMinutes()).toBe(0);
   });
 
-  it("retorna undefined sem data (não inventa um evento sem data real)", () => {
+  it("returns undefined without a date (does not invent an event without a real date)", () => {
     expect(combineDateTime(null, "14:30")).toBeUndefined();
     expect(combineDateTime(undefined, "14:30")).toBeUndefined();
     expect(combineDateTime("", "14:30")).toBeUndefined();
   });
 
-  it("retorna undefined para combinação que não forma uma data válida", () => {
+  it("returns undefined for a combination that does not form a valid date", () => {
     expect(combineDateTime("não é uma data", "14:30")).toBeUndefined();
   });
 });

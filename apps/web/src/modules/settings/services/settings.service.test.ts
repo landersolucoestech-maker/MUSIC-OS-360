@@ -29,23 +29,23 @@ vi.mock("@/shared/lib/storage", () => ({
 import { settingsService } from "./settings.service";
 
 describe("settingsService — nunca propaga o throw de storage.getRaw/setRaw", () => {
-  it("getOperationalLists() devolve [] em vez de lançar", () => {
+  it("getOperationalLists() returns [] instead of throwing", () => {
     expect(settingsService.getOperationalLists()).toEqual([]);
   });
 
-  it("getCompanyProfile() devolve {} em vez de lançar", () => {
+  it("getCompanyProfile() returns {} instead of throwing", () => {
     expect(settingsService.getCompanyProfile()).toEqual({});
   });
 
-  it("getNotificationPrefs() devolve {} em vez de lançar", () => {
+  it("getNotificationPrefs() returns {} instead of throwing", () => {
     expect(settingsService.getNotificationPrefs()).toEqual({});
   });
 
-  it("listIntegrations() devolve [] em vez de lançar", async () => {
+  it("listIntegrations() returns [] instead of throwing", async () => {
     await expect(settingsService.listIntegrations()).resolves.toEqual([]);
   });
 
-  it("saveOperationalLists()/saveCompanyProfile()/saveNotificationPrefs() nunca lançam", () => {
+  it("saveOperationalLists()/saveCompanyProfile()/saveNotificationPrefs() never throw", () => {
     expect(() => settingsService.saveOperationalLists([])).not.toThrow();
     expect(() => settingsService.saveCompanyProfile({})).not.toThrow();
     expect(() => settingsService.saveNotificationPrefs({})).not.toThrow();

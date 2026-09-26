@@ -19,13 +19,13 @@ import { join } from "node:path";
 const FILE = join(__dirname, "ArtistPlatformMetrics.tsx");
 const source = readFileSync(FILE, "utf8");
 
-describe("Indicador de identidade não confirmada (primary_identity_status) chega à UI", () => {
+describe("The unconfirmed-identity indicator (primary_identity_status) reaches the UI", () => {
   it("define o helper isUnverifiedIdentitySnapshot lendo primary_identity_status === INSUFFICIENT_EVIDENCE", () => {
     expect(source).toContain("function isUnverifiedIdentitySnapshot(");
     expect(source).toContain('raw_payload?.["primary_identity_status"] === "INSUFFICIENT_EVIDENCE"');
   });
 
-  it("o card do Instagram usa o helper para o indicador visual e o texto 'não confirmado'", () => {
+  it("the Instagram card uses the helper for the visual indicator and the 'não confirmado' text", () => {
     const instagramCardStart = source.indexOf("metric-instagram-${artistId}");
     const instagramCardEnd = source.indexOf("hasInstagramProfileInput ? syncButton");
     const instagramCard = source.slice(instagramCardStart, instagramCardEnd);

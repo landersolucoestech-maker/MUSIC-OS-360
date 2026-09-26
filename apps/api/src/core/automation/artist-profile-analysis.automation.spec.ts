@@ -132,7 +132,7 @@ describe('ArtistProfileAnalysisAutomation (artist.created → artist-profile-ana
     expect(meta.aiProfileAnalysis.parsed.positioning).toContain('MPB');
   });
 
-  it('Idempotência (metadata): não reprocessa se aiProfileAnalysis com a mesma chave já existe', async () => {
+  it('Idempotency (metadata): does not reprocess if an aiProfileAnalysis with the same key exists', async () => {
     const rowWithAnalysis = {
       ...ARTIST_ROW,
       metadata: { aiProfileAnalysis: { idempotencyKey: IDEMPOTENCY_KEY, status: 'generated' } },
@@ -150,7 +150,7 @@ describe('ArtistProfileAnalysisAutomation (artist.created → artist-profile-ana
     expect(updateCall).toBeUndefined();
   });
 
-  it('Idempotência (skill_runs): não reprocessa se já houver run em andamento/sucesso com a mesma chave', async () => {
+  it('Idempotency (skill_runs): does not reprocess if an in-progress/successful run with the same key exists', async () => {
     const { ds, query } = makeDs([ARTIST_ROW], [{ '1': 1 }]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_ANALYSIS_JSON);
@@ -164,7 +164,7 @@ describe('ArtistProfileAnalysisAutomation (artist.created → artist-profile-ana
     expect(updateCall).toBeUndefined();
   });
 
-  it('Falha da IA registra fail, não relança e não grava aiProfileAnalysis', async () => {
+  it('an AI failure records fail, does not rethrow and does not write aiProfileAnalysis', async () => {
     const { ds, query } = makeDs([ARTIST_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeFailingAi();
@@ -180,7 +180,7 @@ describe('ArtistProfileAnalysisAutomation (artist.created → artist-profile-ana
     expect(updateCall).toBeUndefined();
   });
 
-  it('Guarda: tenantId/artistId ausente é ignorado (sem run, sem query)', async () => {
+  it('Guard: absent tenantId/artistId is ignored (no run, no query)', async () => {
     const { ds, query } = makeDs([ARTIST_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_ANALYSIS_JSON);
