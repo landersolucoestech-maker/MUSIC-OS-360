@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T01:32:41.254Z",
+  "updatedAt": "2026-09-26T01:36:01.746Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -407,6 +407,13 @@
         }
       ],
       "createdAt": "2026-09-26T01:30:00.430Z"
+    },
+    {
+      "id": "req-7351ec18",
+      "text": "Cluster 3 (Fase 2): integration/queue reliability -- trace Gotcha #13 (integrations-sync unregistered processor), #7/#12 (marketing-publishing stub), #10 (dead stub entity/repo pairs) to real code and producers/consumers.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [],
+      "createdAt": "2026-09-26T01:35:09.727Z"
     }
   ],
   "findings": [
@@ -605,6 +612,48 @@
       "createdAt": "2026-09-26T01:31:54.234Z",
       "justification": "PO decision (DEC-001/MUSICAL_PROJECT_CANONICAL_HUB) already authorizes exposing artist_id/orcamento as real project form fields -- not blocked on a product decision. Not implemented in this pass because ProjectFormModal.tsx is a large (783-line), non-trivial existing form (song-level ArtistNameInput autocomplete, complex multi-song array state, audio upload) and correctly wiring a new project-level artist link + money-formatted budget field (submit payload, concurrency-safe patch, existing money-input conventions, component test) is bounded UI feature work that deserves its own focused change and review rather than being squeezed into this financial-rules cluster pass. Recorded as accepted, PO-authorized, ready-to-implement debt for a dedicated frontend cluster.",
       "resolvedAt": "2026-09-26T01:32:14.276Z"
+    },
+    {
+      "id": "find-721c845e",
+      "category": "L",
+      "severity": "HIGH",
+      "file": "apps/api/src/queues/queue.module.ts",
+      "line": null,
+      "summary": "CODEBASE_MAP Gotcha #13 CONFIRMED, is a live production bug (not dead code both ends): the 'integrations-sync' BullMQ queue (QUEUE_NAMES.INTEGRATIONS_SYNC) has zero registered @Processor (queue.module.ts's processors provider list has EmailProcessor/NotificationsProcessor/AIJobsProcessor/ExternalDataProcessor/MarketingPublishingProcessor/ArtistPlatformSyncProcessor/MarketBenchmarkRefreshProcessor -- no IntegrationsSyncProcessor, confirmed via grep for @Processor(QUEUE_NAMES.INTEGRATIONS_SYNC) across all processor files: zero matches), but WorkflowQueueService.enqueueOnboardingCheck() and enqueueWorkflowFollowup() (the only two producers targeting this queue) ARE called from real production code paths: apps/api/src/modules/artists/handlers/artist-workflow.handler.ts:144 (artist onboarding) and apps/api/src/modules/contracts/handlers/contract-workflow.handler.ts:139,204 (contract workflow follow-up), both real @OnEvent domain-event handlers wired to actual contract/artist lifecycle events. Every job enqueued via these two real call sites is silently and permanently unprocessed -- BullMQ 'waiting' jobs have no processor to pick them up, ever. Blast radius: (1) functional -- artist onboarding checks and contract workflow follow-ups never actually execute, silently, no error surfaced anywhere; (2) operational -- the queue's 'waiting' jobs have no TTL/removeOnComplete-equivalent (removeOnComplete/removeOnFail only apply to jobs that reach a terminal state, which these never do), so the queue grows unboundedly in Redis for as long as the app runs.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T01:35:19.777Z",
+      "justification": "Root cause and full producer/consumer trace complete (2 real production call sites confirmed). Not implemented in this pass: the job payloads (tasks: string[] for onboarding-check; entityType/entityId/trigger for workflow-followup) imply real business logic (which onboarding tasks get checked/how, what a workflow-followup actually does per trigger) that is not specified anywhere in the codebase -- inventing a processor now would fabricate unreviewed business behavior rather than restore a known contract, which mission Section 4/17 explicitly warns against ('no permanent scaffolding disguised as a fix'). Flagged as a real, currently-active P1 (functional loss + unbounded queue growth), needing either a scoped feature implementation (with product input on the intended onboarding-check/follow-up semantics) or, as a minimal interim mitigation, an explicit decision to stop enqueueing to this queue until a processor exists (also a product-visible behavior change, not applied unilaterally here).",
+      "resolvedAt": "2026-09-26T01:35:37.171Z"
+    },
+    {
+      "id": "find-c4adcf5d",
+      "category": "E",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/queues/processors/marketing-publishing.processor.ts",
+      "line": null,
+      "summary": "CODEBASE_MAP Gotcha #7/#12 (marketing-publishing stub) re-verified: the async infra (atomic TOCTOU-safe claim, tenant-context-safe RLS query, idempotency, retry via BullMQ attempts, honest failure path) is genuinely production-ready -- publish() unconditionally throws a clear, self-documented error ('Publicacao real para X nao configurada...'), which the caller correctly catches and marks the content row status='falhou'/publication_error=<message> rather than silently succeeding. This is a HONEST, correctly-fail-closed placeholder, not a landmine -- confirmed not a bug, just an unimplemented real ad-platform integration (needs per-platform OAuth/API credentials + adapter, e.g. Instagram/TikTok/Facebook Graph APIs) that this audit cannot build without those credentials.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T01:35:47.255Z",
+      "justification": "Blocked on real per-platform OAuth/API credentials and adapter implementation for each ad/content platform -- genuine external dependency (Section 16: credencial ausente), not a code defect. Current fail-closed behavior (explicit error, status=falhou, no silent success) is correct and requires no immediate change.",
+      "resolvedAt": "2026-09-26T01:35:47.392Z"
+    },
+    {
+      "id": "find-c44a5ea6",
+      "category": "L",
+      "severity": "LOW",
+      "file": "apps/api/src/modules/repositories-tenant-isolation.spec.ts",
+      "line": null,
+      "summary": "CODEBASE_MAP Gotcha #10 (dead stub entity/repository pairs) CONFIRMED across at least 24 modules (ai, audit-log, auth, billing, briefings, campaigns, clients, content-detections, contracts, ecad-reports, events, health, invoices, integrations, lead-interactions, leads, notifications, phonograms, releases, shares, support-tickets, transactions, uploads, users, works -- full list per repositories-tenant-isolation.spec.ts's own import list). Verified for 3 sample pairs (transactions/leads/invoices): each module-local *.entity.ts is imported ONLY by its sibling *.repository.ts, never registered in database.module.ts's real entity list (all real entities centralize in apps/api/src/database/entities.ts per this repo's documented convention), and neither entity nor repository is ever provided/injected in any real @Module providers array -- confirmed dead at runtime. However, unlike a simple abandoned-file situation, an entire dedicated spec file (repositories-tenant-isolation.spec.ts) exists that imports and unit-tests all ~24 pairs' tenant-scoping behavior in isolation -- meaning this is either (a) deliberate defense-in-depth scaffolding kept 'just in case' a future module adopts the repository pattern, or (b) momentum-driven dead code that even accrued its own test suite. Blast radius of a wrong guess here is real: deleting these files would also require touching/removing this shared cross-module spec, which is a broader, riskier change than a same-pass incidental cleanup should attempt.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T01:36:01.617Z",
+      "justification": "Real, confirmed dead code across 24 modules, but removal blast radius (shared cross-module test file, 24 module pairs) exceeds a safe incidental fix within this cluster's scope -- needs a dedicated dead-code-removal cluster with an explicit decision on whether the stub-repository pattern itself should be kept as a future convention or fully retired.",
+      "resolvedAt": "2026-09-26T01:36:01.745Z"
     }
   ],
   "evidenceIds": [
