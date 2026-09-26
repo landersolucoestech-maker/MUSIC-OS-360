@@ -1,0 +1,8 @@
+{
+  "id": "dec-recon-phase1",
+  "createdAt": "2026-09-26T01:22:29.110Z",
+  "topic": "Mission continuation strategy for systemic audit + agent-pack reconstruction",
+  "decidedBy": "mission-orchestrator",
+  "decision": "Continue as follow-up under existing mission-a5c14661 state rather than force-reset ops state.json, since all 11 prior AcceptanceCriteria are closed with 0 open findings/blockers and completion-gate BLOCKED reasons are pure evidence-staleness (workspace fingerprint drift), not incomplete work. New requirements/clusters for the full systemic audit + agent-pack mandate are appended to the same mission state to preserve evidence/finding history.",
+  "rationale": "git-safety.md and evidence-governance.md forbid discarding existing state without cause; the 5 archived missions already closed most CODEBASE_MAP Gotchas #5,#9,#16,#17,#19,#21,#22,#26; canonical-gap-register.json (168 gaps, 139 OPEN) is the highest-signal untouched source of real findings for cluster execution."
+}

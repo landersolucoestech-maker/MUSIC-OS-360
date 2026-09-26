@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-24T17:13:30.896Z",
+  "updatedAt": "2026-09-26T01:24:23.869Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -373,6 +373,22 @@
         }
       ],
       "createdAt": "2026-09-16T10:30:04.011Z"
+    },
+    {
+      "id": "req-9246537b",
+      "text": "Phase 0/1 (this mission cycle): reconcile inherited state (mission-a5c14661 + 5 archived missions + CODEBASE_MAP.md + canonical-gap-register.json) before any new systemic-audit discovery, per user's full audit-and-agent-pack-reconstruction mandate; then execute the audit by functional clusters (naming/DB/backend/frontend/integrations/tenancy-security/agent-pack) with real fixes, tests, and reauditing.",
+      "nonRequirements": [],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-0a6c4041",
+          "text": "Reconciliation completed: mission-a5c14661 status assessed (content-complete, gate BLOCKED only on stale-evidence workspace-fingerprint drift, not unresolved work); 5 archived missions' closed scope read and cross-referenced; CODEBASE_MAP.md's 32 Gotchas cross-checked against archived-mission dispositions (8 confirmed closed, 24 confirmed still open/candidate); canonical-gap-register.json (168 gaps, 139 OPEN) identified as richest untouched real-defect source for the next cluster phase.",
+          "evidenceIds": [
+            "evid-a5fc16b8"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-09-26T01:22:12.873Z"
     }
   ],
   "findings": [
@@ -515,6 +531,20 @@
       "createdAt": "2026-09-24T08:06:14.060Z",
       "justification": "Real audit confirmed the schema-reconciliation e2e guard exercises only 5 of ~171 current tables via live-Postgres repo.save/find calls; entities.ts<->migration drift is otherwise caught only by per-incident targeted specs written reactively after real bugs. Spot-checked InvoiceEntity against its most recent migration and found zero drift -- no active bug exists today. Not expanded to full 171-table coverage in this pass: building an exhaustive live-Postgres schema-reconciliation harness for every table is a real, scoped engineering task warranting its own review, not an incidental fix. Accepted as known coverage debt, documented in docs/NAMING_NORMALIZATION_CANONICAL_MAP.md's audit trail.",
       "resolvedAt": "2026-09-24T16:25:50.210Z"
+    },
+    {
+      "id": "find-5ea21067",
+      "category": "L",
+      "severity": "MEDIUM",
+      "file": "scripts/dependency-audit-waivers.json",
+      "line": null,
+      "summary": "P0 pre-check (Fase 2 item 1): all 7 dependency-audit waivers (xlsx x2 HIGH, file-type x2 MODERATE, @nestjs/core MODERATE, react-router x2 MODERATE) share reviewBy=2026-09-30, 4 days from today (2026-09-26). Ran the real CI check (node scripts/verify-production-audit.mjs) against current lockfile: exit 0, PASS -- no unwaived advisory currently breaks the build/CI, and the waiver expiry has NOT yet been breached. Confirmed no new advisories crept in beyond the 7 already tracked. The two underlying remediations (NestJS 10->11 major bump, react-router 6->7 major migration) remain real, substantial, unstarted engineering efforts each requiring dedicated regression -- out of scope to force through as an incidental fix in this audit; they need their own migration-scoped mission before 2026-09-30 or the waivers need a documented, justified extension (time-bound, not permanent, per supply-chain.md).",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-09-26T01:24:13.225Z",
+      "justification": "Confirmed via real command execution (evid-a5fc16b8, PASS) that no waiver has expired or broken CI as of 2026-09-26; the underlying NestJS 10->11 and react-router 6->7 major migrations are genuine unstarted engineering efforts requiring their own dedicated regression-scoped mission, not a same-day incidental fix. Flagged to product owner: waivers expire 2026-09-30 (4 days) and need either the migrations started or a justified, time-bound extension before then -- this mission's runtime cannot decide that unilaterally (dependent on product/eng-management scheduling decision).",
+      "resolvedAt": "2026-09-26T01:24:23.868Z"
     }
   ],
   "evidenceIds": [
@@ -671,7 +701,8 @@
     "evid-af1d3d89",
     "evid-c8f7aeab",
     "evid-3b63c3b0",
-    "evid-25fd4829"
+    "evid-25fd4829",
+    "evid-a5fc16b8"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

@@ -92,3 +92,4 @@
 {"name":"gate-run","at":"2026-09-24T17:01:45.804Z","gate":"completion","status":"BLOCKED","durationMs":42128,"reasonCount":4}
 {"name":"gate-run","at":"2026-09-24T17:02:34.087Z","gate":"completion","status":"BLOCKED","durationMs":36854,"reasonCount":4}
 {"name":"gate-run","at":"2026-09-24T17:15:24.915Z","gate":"completion","status":"PASS","durationMs":36085,"reasonCount":0}
+{"name":"gate-run","at":"2026-09-26T01:21:13.020Z","gate":"completion","status":"BLOCKED","durationMs":1525,"reasonCount":4}
