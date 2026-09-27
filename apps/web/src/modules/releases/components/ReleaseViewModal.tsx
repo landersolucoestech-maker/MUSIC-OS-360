@@ -316,13 +316,10 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
               <h3 className="text-[11px] font-semibold tracking-wider text-rose-600">
                 Erros de plataforma ({platformErrors.length})
               </h3>
-              <div className="space-y-1.5">
-                {platformErrors.map((err, i) => (
-                  <div key={i} className="rounded-md border border-rose-300/50 bg-rose-50 px-3 py-2 text-sm">
-                    <span className="font-sans text-xs text-rose-700">{err.fieldKey}</span>
-                    <p className="text-rose-800">{err.message}{err.code ? ` (${err.code})` : ""}</p>
-                  </div>
-                ))}
+              {/* Provider field keys, codes and messages are technical diagnostics — never rendered raw. */}
+              <div className="rounded-md border border-rose-300/50 bg-rose-50 px-3 py-2 text-sm text-rose-800">
+                A plataforma de distribuição rejeitou {platformErrors.length === 1 ? "1 campo" : `${platformErrors.length} campos`} deste lançamento.
+                Revise os metadados e tente novamente.
               </div>
             </div>
           </>

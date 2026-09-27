@@ -42,7 +42,14 @@ export default function OAuthCallbackPage() {
     const error    = params.get("error");
 
     if (error) {
-      setState({ status: "error", message: `Autorização negada pela plataforma: ${error}` });
+      // `error` is the provider's OAuth error code (e.g. access_denied) — mapped, never shown raw.
+      setState({
+        status: "error",
+        message:
+          error === "access_denied"
+            ? "A autorização foi recusada na plataforma. Inicie a conexão novamente se quiser continuar."
+            : "A plataforma não autorizou a conexão. Tente novamente.",
+      });
       return;
     }
 
@@ -72,7 +79,7 @@ export default function OAuthCallbackPage() {
     if (!nonce || !storedNonce || nonce !== storedNonce) {
       setState({
         status:  "error",
-        message: "OAuth state inválido ou nonce não encontrado. Inicie a autorização novamente.",
+        message: "A autorização expirou ou foi iniciada em outra janela. Inicie a conexão novamente.",
       });
       return;
     }
@@ -95,12 +102,13 @@ export default function OAuthCallbackPage() {
         });
 
         if (!res.ok) {
+          // The API message is PT-BR end-user copy by contract; the HTTP status is not.
           const body = await res.json().catch(() => ({})) as Record<string, unknown>;
           const msg  =
-            (body["message"] as string | undefined) ??
+            (typeof body["message"] === "string" ? body["message"] : undefined) ??
             (Array.isArray(body["message"]) ? (body["message"] as string[])[0] : undefined) ??
-            `HTTP ${res.status}`;
-          setState({ status: "error", message: `Falha na troca do código de autorização: ${msg}` });
+            "Não foi possível concluir a conexão. Tente novamente.";
+          setState({ status: "error", message: msg });
           return;
         }
 
@@ -111,7 +119,7 @@ export default function OAuthCallbackPage() {
         };
         const data = payload.data ?? payload;
         if (data.connected !== true) {
-          setState({ status: "error", message: "O backend não confirmou a persistência da conexão OAuth." });
+          setState({ status: "error", message: "Não foi possível confirmar a conexão. Tente novamente." });
           return;
         }
 
