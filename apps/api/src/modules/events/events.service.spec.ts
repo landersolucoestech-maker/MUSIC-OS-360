@@ -80,7 +80,7 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
       startsAt: '2026-08-01T20:00:00.000Z',
       endsAt: '2026-08-01T23:00:00.000Z',
       capacity: 500,
-      metadata: { endereco: 'Rua X', valor_cache: '1000.00' },
+      metadata: { note: 'Rua X', source: 'scheduler' },
     };
 
     it('accepts the real payload from SchedulerFormModal', async () => {
@@ -91,9 +91,17 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
     it('accepts the form fields with their own column (rule 2026-07-12)', async () => {
       const errors = await validateDto({
         title: 'Show', type: 'show',
-        endereco: 'Rua X, 100', contato_local: 'Fulano',
-        fee_amount: 1500.5, publico_esperado: 300,
-        description: 'desc', participantes: [{ id: 'p1' }],
+        address: 'Rua X, 100', venue_contact: 'Fulano',
+        fee_amount: 1500.5, expected_attendance: 300,
+        description: 'desc', participants: [{ id: 'p1' }],
+      });
+      expect(errors).toEqual([]);
+    });
+
+    it('still accepts the deprecated PT field names during the deploy-skew window (CZ-028)', async () => {
+      const errors = await validateDto({
+        title: 'Show', type: 'show',
+        endereco: 'Rua X, 100', contato_local: 'Fulano', publico_esperado: 300, participantes: [{ id: 'p1' }],
       });
       expect(errors).toEqual([]);
     });
@@ -133,20 +141,34 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
     it('form fields are persisted in their own columns', async () => {
       await service.create(TENANT, 'u1', {
         title: 'Show', type: 'show', startsAt: new Date(),
-        endereco: 'Rua X', contato_local: 'Fulano',
-        fee_amount: 1500.5, publico_esperado: 300,
-        description: 'desc', participantes: [{ id: 'p1' }],
+        address: 'Rua X', venue_contact: 'Fulano',
+        fee_amount: 1500.5, expected_attendance: 300,
+        description: 'desc', participants: [{ id: 'p1' }],
       } as never);
       expect(mockDs._repo.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          endereco: 'Rua X',
-          contato_local: 'Fulano',
+          address: 'Rua X',
+          venue_contact: 'Fulano',
           fee_amount: '1500.5',
-          publico_esperado: 300,
+          expected_attendance: 300,
           description: 'desc',
-          participantes: [{ id: 'p1' }],
+          participants: [{ id: 'p1' }],
         }),
       );
+    });
+
+    it('a pre-canonical payload (endereco, contato_local, publico_esperado, participantes) is persisted canonically (CZ-028)', async () => {
+      await service.create(TENANT, 'u1', {
+        title: 'Show', type: 'show', startsAt: new Date(), venue: 'Teatro',
+        endereco: 'Rua X', contato_local: 'Fulano', publico_esperado: 300, participantes: [{ id: 'p1' }],
+      } as never);
+      const created = mockDs._repo.create.mock.calls[0][0] as Record<string, unknown>;
+      expect(created).toMatchObject({
+        venue: 'Teatro', address: 'Rua X', venue_contact: 'Fulano', expected_attendance: 300, participants: [{ id: 'p1' }],
+      });
+      for (const legacy of ['local', 'endereco', 'contato_local', 'publico_esperado', 'participantes']) {
+        expect(created).not.toHaveProperty(legacy);
+      }
     });
 
     it('create without startsAt uses the current fallback (data = now, NOT NULL column)', async () => {
@@ -264,16 +286,16 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
     });
 
     it('form fields are updatable', async () => {
-      await service.update(TENANT, 'u1', EVENT_ID, { endereco: 'Rua Nova' } as never);
+      await service.update(TENANT, 'u1', EVENT_ID, { address: 'Rua Nova' } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
-      expect(updateCall[1]).toMatchObject({ endereco: 'Rua Nova' });
+      expect(updateCall[1]).toMatchObject({ address: 'Rua Nova' });
     });
 
     it('null preserves the current "do not change" semantics (dtoToEntity uses != null)', async () => {
       await service.update(TENANT, 'u1', EVENT_ID, { startsAt: null, venue: null } as never);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('data');
-      expect(updateCall[1]).not.toHaveProperty('local');
+      expect(updateCall[1]).not.toHaveProperty('venue');
     });
   });
 

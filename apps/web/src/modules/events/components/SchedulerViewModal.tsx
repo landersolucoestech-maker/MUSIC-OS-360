@@ -112,8 +112,8 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
           {/* LOCAL */}
           <Section title="Onde" icon={MapPin}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Local" value={event.local} />
-              <Field label="Endereço" value={event.endereco} />
+              <Field label="Local" value={event.venue} />
+              <Field label="Endereço" value={event.address} />
             </div>
           </Section>
 
@@ -175,42 +175,24 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
           )}
 
           {/* VENUE CONTACT */}
-          {(event.contato_local || event.contato_telefone || event.contato_email) && (
+          {event.venue_contact && (
             <Section title="Contato no Local" icon={Phone}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Field
                   label="Responsável"
-                  value={event.contato_local && (
+                  value={
                     <span className="flex items-center gap-1.5">
                       <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
-                      {event.contato_local}
+                      {event.venue_contact}
                     </span>
-                  )}
-                />
-                <Field
-                  label="Telefone"
-                  value={event.contato_telefone && (
-                    <span className="flex items-center gap-1.5">
-                      <Phone className="h-3.5 w-3.5 text-muted-foreground" />
-                      {event.contato_telefone}
-                    </span>
-                  )}
-                />
-                <Field
-                  label="E-mail"
-                  value={event.contato_email && (
-                    <span className="flex items-center gap-1.5">
-                      <Mail className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="truncate">{event.contato_email}</span>
-                    </span>
-                  )}
+                  }
                 />
               </div>
             </Section>
           )}
 
           {/* OPERATIONAL DETAILS (Show) */}
-          {(event.fee_amount != null || event.capacidade_publico != null || event.publico_esperado != null) && (
+          {(event.fee_amount != null || event.expected_attendance != null) && (
             <Section title="Detalhes Operacionais" icon={DollarSign}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {event.fee_amount != null && (
@@ -223,24 +205,13 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
                     </CardContent>
                   </Card>
                 )}
-                {event.capacidade_publico != null && (
-                  <Card>
-                    <CardContent className="p-4">
-                      <p className="text-xs text-muted-foreground">Capacidade</p>
-                      <p className="text-xl font-bold mt-1 flex items-center gap-1.5">
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                        {Number(event.capacidade_publico).toLocaleString("pt-BR")}
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-                {event.publico_esperado != null && (
+                {event.expected_attendance != null && (
                   <Card>
                     <CardContent className="p-4">
                       <p className="text-xs text-muted-foreground">Público Esperado</p>
                       <p className="text-xl font-bold mt-1 flex items-center gap-1.5">
                         <Users className="h-4 w-4 text-muted-foreground" />
-                        {Number(event.publico_esperado).toLocaleString("pt-BR")}
+                        {Number(event.expected_attendance).toLocaleString("pt-BR")}
                       </p>
                     </CardContent>
                   </Card>

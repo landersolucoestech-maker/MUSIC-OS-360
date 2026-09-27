@@ -84,9 +84,9 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at',
   ],
   events: [
-    'id', 'tenant_id', 'title', 'type', 'participantes', 'status',
-    'data', 'starts_at', 'end_date', 'local', 'contato_local', 'endereco',
-    'fee_amount', 'publico_esperado', 'description', 'notes', 'artist_id', 'metadata',
+    'id', 'tenant_id', 'title', 'type', 'participants', 'status',
+    'data', 'starts_at', 'end_date', 'venue', 'venue_contact', 'address',
+    'fee_amount', 'expected_attendance', 'description', 'notes', 'artist_id', 'metadata',
     'created_at', 'updated_at', 'created_by', 'updated_by', 'deleted_at',
   ],
   marketing_projects: [

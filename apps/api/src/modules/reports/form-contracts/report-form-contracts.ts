@@ -170,21 +170,8 @@ const CONTRACTS_CONTRACT: ReportFormContract = {
     parties: 'signature integration structure, not a tabular column',
     signers: 'signature integration structure, not a tabular column',
   },
-  formFieldAliases: {
-    titulo: 'title',
-    tipo: 'type',
-    value: 'fixed_value',
-    valor: 'fixed_value',
-    fileUrl: 'file_url',
-    arquivo_url: 'file_url',
-    exclusivo: 'exclusive',
-    versoes: 'versions',
-    data_inicio: 'start_date',
-    startsAt: 'start_date',
-    data_fim: 'end_date',
-    expiresAt: 'end_date',
-    artistId: 'artist_id',
-  },
+  // Deprecated DTO aliases are resolved by contract-legacy-alias.util.ts /
+  // ContractsService and need no contract entry (the guard skips them).
 };
 
 // ─── Works ────────────────────────────────────────────────────────────────────
@@ -318,7 +305,6 @@ const PROJECTS_CONTRACT: ReportFormContract = {
     metadata: 'raw internal jsonb object',
     artist_id: 'no matching field in the Create/Edit modal',
     budget: 'no matching field in the Create/Edit modal',
-    orcamento: 'deprecated alias of budget (deploy-skew window), moved to budget before persistence',
     description: 'no matching field in the Create/Edit modal',
     music_genre: 'derived from the tracks, not a general form field',
     musicas: 'represented by the individual columns of the repeating group on the same sheet',
@@ -491,7 +477,6 @@ const AUDIOVISUAL_PROJECTS_CONTRACT: ReportFormContract = {
   ],
   excludedFormFields: {
     title: 'automatic duplicate of music_title — same form column, no input of its own',
-    videomaker: 'deprecated alias of videographer (deploy-skew window), moved to videographer before persistence',
     slug: 'accepted by the DTO but has no input in the Create/Edit modal',
     description: 'accepted by the DTO but has no input in the Create/Edit modal',
     objective: 'accepted by the DTO but has no input in the Create/Edit modal',
@@ -583,28 +568,27 @@ const EVENTS_CONTRACT: ReportFormContract = {
   tableName: 'events',
   identityColumn: 'title',
   fields: [
-    col('title'), col('type'), col('data'), col('end_date'), col('local'),
-    col('contato_local'), col('endereco'), col('fee_amount'), col('publico_esperado'),
+    col('title'), col('type'), col('data'), col('end_date'), col('venue'),
+    col('venue_contact'), col('address'), col('fee_amount'), col('expected_attendance'),
     col('description'), col('notes'), col('status'),
   ],
   excludedFormFields: {
     city: 'accepted by the DTO but has neither a physical column nor an input in the modal',
     country: 'accepted by the DTO but has neither a physical column nor an input in the modal',
-    capacity: 'accepted by the DTO but discarded by the server — no physical column (see publico_esperado)',
+    capacity: 'accepted by the DTO but discarded by the server — no physical column (see expected_attendance)',
     ticketUrl: 'accepted by the DTO but has neither a physical column nor an input in the modal',
     metadata: 'raw internal jsonb object',
     artistId: 'technical link filled indirectly by the first participant of type artista — no input of its own',
-    participantes: 'represented by its own repeating group ("Participantes do Evento", repeatingGroup) — never packed into a single cell',
+    participants: 'represented by its own repeating group ("Participantes do Evento", repeatingGroup) — never packed into a single cell',
   },
   formFieldAliases: {
     title: 'title',
     type: 'type',
-    venue: 'local',
     startsAt: 'data',
     endsAt: 'end_date',
   },
   repeatingGroup: {
-      key: 'participantes',
+      key: 'participants',
       fields: [
         { key: 'source' }, { key: 'label' }, { key: 'email' }, { key: 'phone' }, { key: 'category' },
       ],

@@ -5,23 +5,23 @@ export type { EventType, EventStatusValue };
 
 export interface Event {
   id: string;
-  user_id?: string;
   title: string;
-  tipo_evento?: EventType | string | null;
+  type?: EventType | string | null;
   status?: EventStatusValue | string | null;
   artist_id?: string | null;
-  start_date?: string | null;
+  /** Legacy start column (C3): dual-written with starts_at until its retirement. */
+  data?: string | null;
+  starts_at?: string | null;
   end_date?: string | null;
-  horario_inicio?: string | null;
-  horario_fim?: string | null;
-  local?: string | null;
-  cidade?: string | null;
-  estado?: string | null;
-  fee_amount?: number | null;
-  valor_ingresso?: number | null;
-  capacidade?: number | null;
+  venue?: string | null;
+  venue_contact?: string | null;
+  address?: string | null;
+  fee_amount?: number | string | null;
+  expected_attendance?: number | null;
+  participants?: unknown[] | null;
   description?: string | null;
   notes?: string | null;
+  metadata?: Record<string, unknown>;
   created_at?: string;
   updated_at?: string;
   [key: string]: unknown;

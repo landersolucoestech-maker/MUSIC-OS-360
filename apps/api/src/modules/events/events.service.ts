@@ -3,6 +3,8 @@ import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { EventEntity } from '../../database/entities';
 import type { CreateEventDto, UpdateEventDto, QueryEventDto } from './dto/events.dto';
+import { EVENT_DEPRECATED_FIELDS } from './dto/events.dto';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { groupCount, GroupStatsResult } from '../../common/stats/group-count.util';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
@@ -89,16 +91,16 @@ export class EventsService {
   }
 
   /**
-   * Maps CreateEventDto / UpdateEventDto (camelCase EN) → EventEntity columns (snake_case PT).
-   * The backend DTO uses title/type/startsAt/venue/artistId; the table uses title/type/data/local/artist_id.
+   * Maps CreateEventDto / UpdateEventDto → EventEntity columns.
+   * The DTO uses title/type/startsAt/venue/artistId; the table uses title/type/data+starts_at/venue/artist_id.
    */
   private dtoToEntity(dto: Partial<CreateEventDto & UpdateEventDto>): Partial<EventEntity> {
-    const d = dto as Record<string, unknown>;
+    const d = applyDeprecatedFieldAliases(dto as Record<string, unknown>, EVENT_DEPRECATED_FIELDS);
     const out: Record<string, unknown> = {};
     if (d['title']     != null) out['title']     = d['title'];
     if (d['type']      != null) out['type']       = d['type'];
     if (d['artistId']  != null) out['artist_id'] = d['artistId'];
-    if (d['venue']     != null) out['local']      = d['venue'];
+    if (d['venue']     != null) out['venue']      = d['venue'];
     if (d['startsAt']  != null) {
       // C3/E2 — dual-write: the SAME Date object feeds the legacy `data` column
       // and the future canonical `starts_at` (zero divergence window; canonical
@@ -111,13 +113,13 @@ export class EventsService {
     if (d['status']    != null) out['status']     = d['status'];
     if (d['metadata']  != null) out['metadata']   = d['metadata'];
     // Form fields (2026-07-12 rule: own column, no metadata)
-    if (d['endereco']         != null) out['endereco']         = d['endereco'];
-    if (d['contato_local']    != null) out['contato_local']    = d['contato_local'];
+    if (d['address']             != null) out['address']             = d['address'];
+    if (d['venue_contact']       != null) out['venue_contact']       = d['venue_contact'];
     if (d['fee_amount']       != null) out['fee_amount']       = String(d['fee_amount']);
-    if (d['publico_esperado'] != null) out['publico_esperado'] = d['publico_esperado'];
+    if (d['expected_attendance'] != null) out['expected_attendance'] = d['expected_attendance'];
     if (d['description']      != null) out['description']      = d['description'];
     if (d['notes']            != null) out['notes']             = d['notes'];
-    if (d['participantes']    != null) out['participantes']    = d['participantes'];
+    if (d['participants']        != null) out['participants']        = d['participants'];
     return out as Partial<EventEntity>;
   }
 

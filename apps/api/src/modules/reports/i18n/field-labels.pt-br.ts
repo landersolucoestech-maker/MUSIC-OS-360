@@ -302,6 +302,7 @@ export const FIELD_LABELS_PT_BR = {
   language: 'Idioma',
   lastContactedAt: 'Último contato em',
   local: 'Local',
+  venue: 'Local',
   localCompra: 'Local de compra',
   localizacao: 'Localização',
   lyrics: 'Letra',
@@ -428,6 +429,7 @@ export const FIELD_LABELS_PT_BR = {
   referenciasConexas: 'Referências conexas',
   letraCompleta: 'Letra completa',
   participantes: 'Participantes',
+  participants: 'Participantes',
   letristas: 'Letristas',
   tipoObra: 'Tipo de obra',
   // ── Phonogram form fields (2026-07-12 rule) ─────────────────────────────────
@@ -464,8 +466,10 @@ export const FIELD_LABELS_PT_BR = {
   responsavelCargo: 'Cargo do responsável',
   // ── Events (2026-07-12 rule: 1 column per field) ────────────────────────────
   contatoLocal: 'Contato do local',
+  venueContact: 'Contato do local',
   feeAmount: 'Valor do cachê',
   publicoEsperado: 'Público esperado',
+  expectedAttendance: 'Público esperado',
   // ── Invoices (2026-07-12 rule: 1 column per field) ──────────────────────────
   serie: 'Série',
   tipoNota: 'Tipo de nota',

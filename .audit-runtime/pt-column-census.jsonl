@@ -20,8 +20,6 @@
 {"table":"employees","className":"EmployeeEntity","field":"data_admissao","columnOverride":null,"type":"timestamp"}
 {"table":"employees","className":"EmployeeEntity","field":"data_demissao","columnOverride":null,"type":"timestamp"}
 {"table":"employees","className":"EmployeeEntity","field":"telefone_encrypted","columnOverride":null,"type":"text"}
-{"table":"events","className":"EventEntity","field":"contato_local","columnOverride":null,"type":"varchar"}
-{"table":"events","className":"EventEntity","field":"endereco","columnOverride":null,"type":"varchar"}
 {"table":"inventory_items","className":"InventoryItemEntity","field":"data_entrada","columnOverride":null,"type":"date"}
 {"table":"inventory_items","className":"InventoryItemEntity","field":"localizacao","columnOverride":null,"type":"varchar"}
 {"table":"inventory_items","className":"InventoryItemEntity","field":"responsavel","columnOverride":null,"type":"varchar"}

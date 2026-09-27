@@ -284,6 +284,7 @@ import { RenamePortugueseColumnsOnBriefingsCampaignsProjects20260928000002 } fro
 import { CanonicalizeContentDetectionsToEnglish20260928000003 } from './20260928000003_CanonicalizeContentDetectionsToEnglish';
 import { RenamePortugueseColumnsOnContracts20260928000004 } from './20260928000004_RenamePortugueseColumnsOnContracts';
 import { CanonicalizeEcadReportsToEnglish20260928000005 } from './20260928000005_CanonicalizeEcadReportsToEnglish';
+import { RenamePortugueseColumnsOnEvents20260928000006 } from './20260928000006_RenamePortugueseColumnsOnEvents';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -579,4 +580,5 @@ export const ALL_MIGRATIONS = [
   CanonicalizeContentDetectionsToEnglish20260928000003,
   RenamePortugueseColumnsOnContracts20260928000004,
   CanonicalizeEcadReportsToEnglish20260928000005,
+  RenamePortugueseColumnsOnEvents20260928000006,
 ] as const;

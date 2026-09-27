@@ -36,7 +36,7 @@ const invoiceItems = {
 } as const;
 const eventParticipants = {
   tableName: 'events',
-  jsonColumn: 'participantes',
+  jsonColumn: 'participants',
   arrayKey: null,
 } as const;
 
@@ -44,12 +44,12 @@ export const REPEATING_GROUP_EXPORT_RESOLVERS: Record<string, RepeatingGroupExpo
   'projects.musicas': fetchProjectTracksForExport as unknown as RepeatingGroupExportResolver,
   'releases.faixas': fetchReleaseTracksForExport as unknown as RepeatingGroupExportResolver,
   'invoices.itens': makeRowEmbeddedRepeatingGroupExportResolver(invoiceItems),
-  'events.participantes': makeRowEmbeddedRepeatingGroupExportResolver(eventParticipants),
+  'events.participants': makeRowEmbeddedRepeatingGroupExportResolver(eventParticipants),
 };
 
 export const REPEATING_GROUP_IMPORT_WRITERS: Record<string, RepeatingGroupImportWriter> = {
   'projects.musicas': insertProjectTracksForImport,
   'releases.faixas': writeReleaseTracksForImport,
   'invoices.itens': makeRowEmbeddedRepeatingGroupImportWriter(invoiceItems),
-  'events.participantes': makeRowEmbeddedRepeatingGroupImportWriter(eventParticipants),
+  'events.participants': makeRowEmbeddedRepeatingGroupImportWriter(eventParticipants),
 };

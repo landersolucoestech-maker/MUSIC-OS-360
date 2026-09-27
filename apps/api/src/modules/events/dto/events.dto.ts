@@ -2,6 +2,15 @@ import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { IsString, IsOptional, IsIn, IsEnum, IsNumber, IsDate, IsDateString, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
+
+/** CZ-028 deploy-skew window: field names a pre-canonical web build still sends (see applyDeprecatedFieldAliases). */
+export const EVENT_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
+  endereco: 'address',
+  contato_local: 'venue_contact',
+  publico_esperado: 'expected_attendance',
+  participantes: 'participants',
+};
 import { EventStatus } from '@music-os-360/types';
 
 const TYPES    = ['show', 'festival', 'recording', 'meeting', 'interview', 'tour', 'other'] as const;
@@ -29,13 +38,19 @@ export class CreateEventDto {
 
   // ── Form fields (EXACT keys of SchedulerFormModal) ──────────────────────────
   // Product rule 2026-07-12: each form field has its own physical column.
-  @ApiPropertyOptional() @IsOptional() @IsString() endereco?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() contato_local?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() address?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() venue_contact?: string;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) fee_amount?: number;
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) publico_esperado?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Type(() => Number) expected_attendance?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
-  @ApiPropertyOptional() @IsOptional() participantes?: unknown[];
+  @ApiPropertyOptional() @IsOptional() participants?: unknown[];
+
+  // ── Deprecated names (CZ-028), moved to the canonical ones before persistence ──
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "address".' }) @IsOptional() @IsString() endereco?: string;
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "venue_contact".' }) @IsOptional() @IsString() contato_local?: string;
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "expected_attendance".' }) @IsOptional() @IsNumber() @Type(() => Number) publico_esperado?: number;
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "participants".' }) @IsOptional() participantes?: unknown[];
 }
 
 export class UpdateEventDto extends PartialType(CreateEventDto) {

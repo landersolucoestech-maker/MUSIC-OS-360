@@ -75,6 +75,16 @@ function dtoFields(dto: new () => object): string[] {
   return Array.from(new Set(validationMetadata.map((m) => m.propertyName)));
 }
 
+/**
+ * Deprecated DTO properties (Swagger `deprecated: true`) are transitional input
+ * aliases of a canonical field, normalized before persistence — never form
+ * fields of their own, so they need no contract entry.
+ */
+function isDeprecatedDtoField(dto: new () => object, field: string): boolean {
+  const meta = Reflect.getMetadata('swagger/apiModelProperties', dto.prototype, field) as { deprecated?: boolean } | undefined;
+  return meta?.deprecated === true;
+}
+
 describe('form-contracts — permanent guard form ↔ contract ↔ import/export', () => {
   const metadata = new EntityMetadataService();
   const inv = metadata.scan();
@@ -100,6 +110,7 @@ describe('form-contracts — permanent guard form ↔ contract ↔ import/export
       const aliases = contract.formFieldAliases ?? {};
       const reportExclusions = REPORT_DTO_EXCLUSIONS[table] ?? {};
       for (const field of dtoFields(dto)) {
+        if (isDeprecatedDtoField(dto, field)) continue;
         const covered =
           keys.has(field) ||
           physicalAliases.has(field) ||

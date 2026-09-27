@@ -2688,7 +2688,7 @@ export function ArtistVision360Modal({
                             </span>
                             <span className="truncate">{getBackendEventTypeLabel(e.type)}</span>
                             <span className="truncate font-medium">{e.title}</span>
-                            <span className="truncate text-muted-foreground">{e.local || e.cidade || "—"}</span>
+                            <span className="truncate text-muted-foreground">{e.venue || "—"}</span>
                             <span>
                               <Badge variant="outline" className="text-xs">
                                 {EVENT_STATUS_LABELS[String(e.status ?? "").toLowerCase()] ?? formatStatusPtBr(e.status)}

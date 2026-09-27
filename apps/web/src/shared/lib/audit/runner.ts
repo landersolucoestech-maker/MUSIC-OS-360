@@ -146,11 +146,11 @@ const CONFIGS: AuditConfig[] = [
     table: "events",
     entityType: "Evento",
     fixPath: (row) => editPath("/agenda", row),
-    label: (row) => entityLabel(row, ["title", "nome", "local"], "Evento sem título"),
+    label: (row) => entityLabel(row, ["title", "venue"], "Evento sem título"),
     fields: [
       { key: "title", label: "Título", severity: "obrigatorio" },
       { key: "start_date", label: "Data de início", severity: "obrigatorio" },
-      { key: "local", label: "Local", severity: "recomendado" },
+      { key: "venue", label: "Local", severity: "recomendado" },
       { key: "artist_id", label: "Artista vinculado", severity: "recomendado" },
     ],
   },

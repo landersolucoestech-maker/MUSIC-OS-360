@@ -1,5 +1,7 @@
 import { useState, useMemo, useRef } from "react";
 import { fetchAllPages } from "@/shared/lib/exportAll";
+import { statusLabelPtBr } from "@music-os-360/types";
+import { readAgendaCell, toAgendaRow, type AgendaColumn } from "@/modules/events/lib/agenda-spreadsheet";
 import { endOfWeek, endOfMonth, endOfYear, startOfDay, endOfDay, format, startOfMonth, startOfWeek, startOfYear, subWeeks, addWeeks, addMonths, subMonths, addYears, subYears } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { MainLayout } from "@/shared/components/MainLayout";
@@ -211,21 +213,21 @@ export default function Schedule() {
     const exportData = allEvents.map(e => {
       const startParts = splitDateTime(e.data);
       const endParts = splitDateTime(e.end_date);
-      return {
+      return toAgendaRow({
         title: e.title,
         type: getBackendEventTypeLabel(e.type),
-        status: e.status,
-        participantes: summarizeScheduleParticipants(getEventParticipants(e)),
-        start_date: startParts.date,
-        horario_inicio: startParts.time,
-        end_date: endParts.date,
-        horario_fim: endParts.time,
-        local: e.local || "",
-        publico_esperado: e.publico_esperado ?? "",
-        valor_cache: e.fee_amount || "",
-        descricao: e.description || "",
-        observacoes: e.notes || "",
-      };
+        status: statusLabelPtBr("event", e.status) ?? "",
+        participants: summarizeScheduleParticipants(getEventParticipants(e)),
+        startDate: startParts.date,
+        startTime: startParts.time,
+        endDate: endParts.date,
+        endTime: endParts.time,
+        venue: e.venue || "",
+        expectedAttendance: e.expected_attendance ?? "",
+        feeAmount: e.fee_amount || "",
+        description: e.description || "",
+        notes: e.notes || "",
+      });
     });
 
     const XLSX = await getXLSX();
@@ -257,18 +259,19 @@ export default function Schedule() {
         return;
       }
 
-      let importados = 0;
+      let importedCount = 0;
       for (const row of data) {
-        const title = row.title || row.Title || row.TITULO || row.Título;
+        const cell = (column: AgendaColumn) => readAgendaCell(row, column) as any;
+        const title = cell("title");
         if (!title) continue;
 
-        const startDate = row.start_date || row.data || row.Data || new Date().toISOString().split("T")[0];
-        const startTime = row.horario_inicio || row.horario || row.Horario || null;
-        const endDate = row.end_date || row["Data Fim"] || null;
-        const endTime = row.horario_fim || row["Horário Fim"] || null;
-        const rawType = String(row.tipo_evento || row.type || row.Tipo || "").toLowerCase();
-        const feeValue = row.valor_cache || row["Valor Cachê"];
-        const expectedAudience = row.publico_esperado || row["Público Esperado"] || row.capacidade || row["Capacidade"];
+        const startDate = cell("startDate") || new Date().toISOString().split("T")[0];
+        const startTime = cell("startTime") || null;
+        const endDate = cell("endDate") || null;
+        const endTime = cell("endTime") || null;
+        const rawType = String(cell("type") || "").toLowerCase();
+        const feeValue = cell("feeAmount");
+        const expectedAudience = cell("expectedAttendance");
 
         // Payload in the real CreateEventDto shape (title/type/startsAt/
         // endsAt/venue — not title/type/start_date, which do not exist in the DTO;
@@ -281,17 +284,17 @@ export default function Schedule() {
         if (startsAt) payload.startsAt = startsAt;
         const endsAt = combineDateTime(endDate, endTime);
         if (endsAt) payload.endsAt = endsAt;
-        if (row.local || row.Local) payload.venue = row.local || row.Local;
+        if (cell("venue")) payload.venue = cell("venue");
         if (feeValue) payload.fee_amount = Number(feeValue);
-        if (expectedAudience) payload.publico_esperado = Number(expectedAudience);
-        if (row.descricao || row.Descrição) payload.description = row.descricao || row.Descrição;
-        if (row.observacoes || row.Observações) payload.notes = row.observacoes || row.Observações;
+        if (expectedAudience) payload.expected_attendance = Number(expectedAudience);
+        if (cell("description")) payload.description = cell("description");
+        if (cell("notes")) payload.notes = cell("notes");
 
         await addEvent.mutateAsync(payload as any);
-        importados++;
+        importedCount++;
       }
 
-      toast.success(`${importados} evento(s) importado(s) com sucesso!`);
+      toast.success(`${importedCount} evento(s) importado(s) com sucesso!`);
       if (excelInputRef.current) excelInputRef.current.value = "";
     } catch {
       toast.error("Erro ao importar arquivo Excel");
@@ -307,7 +310,7 @@ export default function Schedule() {
     const term = searchTerm.toLowerCase();
     return scopedEvents.filter((event) =>
       event.title?.toLowerCase().includes(term) ||
-      event.local?.toLowerCase().includes(term) ||
+      event.venue?.toLowerCase().includes(term) ||
       summarizeScheduleParticipants(getEventParticipants(event)).toLowerCase().includes(term),
     );
   }, [scopedEvents, searchTerm, getEventParticipants]);
@@ -327,7 +330,7 @@ export default function Schedule() {
       artist: summarizeScheduleParticipants(getEventParticipants(event)) || undefined,
       startDate: start,
       endDate: end,
-      location: event.local,
+      location: event.venue,
       status: event.status ?? "scheduled",
       cache: event.fee_amount ?? undefined,
       type: getBackendEventTypeLabel(event.type),

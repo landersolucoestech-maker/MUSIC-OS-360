@@ -1,5 +1,5 @@
 {
- "total": 257,
+ "total": 253,
  "debt": {
   "schema::column::artists.agencia": 1,
   "schema::column::artists.agencia_booking": 1,
@@ -84,10 +84,6 @@
   "schema::column::employees.telefone_encrypted": 1,
   "schema::column::employees.tipo_contrato": 1,
   "schema::column::employees.vinculo_usuario_id": 1,
-  "schema::column::events.contato_local": 1,
-  "schema::column::events.endereco": 1,
-  "schema::column::events.participantes": 1,
-  "schema::column::events.publico_esperado": 1,
   "schema::column::inventory_items.data_entrada": 1,
   "schema::column::inventory_items.local_compra": 1,
   "schema::column::inventory_items.localizacao": 1,

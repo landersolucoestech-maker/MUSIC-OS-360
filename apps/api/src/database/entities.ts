@@ -1332,17 +1332,17 @@ export class EventEntity {
   // C3/E1 (migration 20260716000001): future canonical event start column.
   // Nullable until phase E5; dual-written with `data` from phase E2 onwards.
   @Column({ type: 'timestamp', nullable: true }) starts_at: Date | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) local: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) venue: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
   // ── Event form fields (1 column per field — exact name) ───────────────────────
   @Column({ type: 'timestamp', nullable: true }) end_date: Date | null;
-  @Column({ type: 'varchar', length: 300, nullable: true }) endereco: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) contato_local: string | null;
+  @Column({ type: 'varchar', length: 300, nullable: true }) address: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) venue_contact: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) fee_amount: string | null;
-  @Column({ type: 'integer', nullable: true }) publico_esperado: number | null;
+  @Column({ type: 'integer', nullable: true }) expected_attendance: number | null;
   @Column({ type: 'text', nullable: true }) description: string | null;
-  @Column({ type: 'jsonb', nullable: true }) participantes: unknown[] | null;
+  @Column({ type: 'jsonb', nullable: true }) participants: unknown[] | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;
