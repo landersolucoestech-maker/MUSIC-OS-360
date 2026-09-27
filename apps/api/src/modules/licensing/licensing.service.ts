@@ -34,15 +34,15 @@ export class LicensingService {
       amount,
       currency,
       percentage,
-      valor,
-      moeda,
+      valor: legacyAmount,
+      moeda: legacyCurrency,
       ...rest
     } = dto;
 
     return {
       ...rest,
-      ...(amount !== undefined || valor !== undefined ? { valor: amount ?? valor ?? null } : {}),
-      ...(currency !== undefined || moeda !== undefined ? { moeda: currency ?? moeda ?? null } : {}),
+      ...(amount !== undefined || legacyAmount !== undefined ? { valor: amount ?? legacyAmount ?? null } : {}),
+      ...(currency !== undefined || legacyCurrency !== undefined ? { moeda: currency ?? legacyCurrency ?? null } : {}),
       ...(percentage !== undefined ? { percentage } : {}),
     };
   }

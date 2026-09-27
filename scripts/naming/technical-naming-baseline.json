@@ -2,7 +2,7 @@
  "totals": {
   "eventQueueJob": 7,
   "filename": 75,
-  "identifier": 1550
+  "identifier": 1549
  },
  "debt": {
   "eventQueueJob::apps/web/src/modules/events/components/SchedulerFormModal.tsx::name::reunioes": 3,
@@ -379,7 +379,6 @@
   "identifier::apps/api/src/modules/licensing/dto/licensing.dto.ts::property::territorio": 1,
   "identifier::apps/api/src/modules/licensing/dto/licensing.dto.ts::property::tipo_uso": 1,
   "identifier::apps/api/src/modules/licensing/dto/licensing.dto.ts::property::valor": 1,
-  "identifier::apps/api/src/modules/licensing/licensing.service.ts::variable::valor": 1,
   "identifier::apps/api/src/modules/phonograms/dto/create-phonogram.dto.ts::property::arquivo_audio": 1,
   "identifier::apps/api/src/modules/phonograms/dto/create-phonogram.dto.ts::property::data_lancamento": 1,
   "identifier::apps/api/src/modules/phonograms/dto/create-phonogram.dto.ts::property::duracao_min": 1,
