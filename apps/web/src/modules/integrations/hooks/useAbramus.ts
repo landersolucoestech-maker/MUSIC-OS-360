@@ -52,7 +52,6 @@ export interface AbramusStatus {
   status?: string;
   base_url?: string | null;
   username?: string | null;
-  last_error?: string | null;
   last_sync_at?: string | null;
   last_sync_summary?: AbramusSyncSummary | null;
   sync_schedule?: AbramusSyncSchedule;

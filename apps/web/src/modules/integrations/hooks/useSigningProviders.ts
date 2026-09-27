@@ -70,7 +70,7 @@ export function useSigningProviders() {
       label:       "Autentique",
       description: autentiqueStatus?.connected
         ? "Conectado"
-        : (autentiqueStatus?.last_error ?? "Não conectado"),
+        : "Não conectado",
       connected:   autentiqueStatus?.connected ?? false,
       logo:        "A",
     },

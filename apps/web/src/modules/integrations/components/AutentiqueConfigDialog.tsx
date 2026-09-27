@@ -78,12 +78,12 @@ export function AutentiqueConfigDialog({
               </div>
             )}
 
-            {status?.status === "error" && status?.last_error && (
+            {status?.status === "error" && (
               <div
                 className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive"
                 data-testid="autentique-error-status"
               >
-                Erro na última conexão: {status.last_error}
+                A última conexão falhou. Verifique as credenciais e tente novamente.
               </div>
             )}
 

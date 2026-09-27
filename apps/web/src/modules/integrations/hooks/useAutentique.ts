@@ -17,7 +17,6 @@ export interface AutentiqueStatus {
   connected: boolean;
   status?: string;
   has_token?: boolean;
-  last_error?: string | null;
   last_sync_at?: string | null;
   has_global_fallback?: boolean;
 }
