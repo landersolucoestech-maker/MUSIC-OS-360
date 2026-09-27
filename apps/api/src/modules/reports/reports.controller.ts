@@ -32,17 +32,17 @@ const BASE64_PATTERN = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/
 
 export class ImportUploadDto {
   @IsString()
-  @Matches(/^[^/\\]+\.xlsx$/i, { message: 'filename deve terminar em .xlsx e não pode conter caminho.' })
+  @Matches(/^[^/\\]+\.xlsx$/i, { message: 'O nome do arquivo deve terminar em .xlsx e não pode conter pastas.' })
   filename: string;
 
   @IsString()
-  @Equals(XLSX_MIME, { message: `mimeType deve ser ${XLSX_MIME}.` })
+  @Equals(XLSX_MIME, { message: 'O arquivo deve ser uma planilha XLSX.' })
   mimeType: string;
 
   @IsString()
   @IsNotEmpty()
   @MaxLength(MAX_BASE64_LENGTH)
-  @Matches(BASE64_PATTERN, { message: 'contentBase64 inválido.' })
+  @Matches(BASE64_PATTERN, { message: 'O conteúdo do arquivo enviado é inválido.' })
   contentBase64: string;
 }
 

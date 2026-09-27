@@ -1,6 +1,6 @@
 /**
- * Guard: HttpException messages are end-user copy (PT-BR, rendered by the web
- * through toUserMessage()). They must never carry technical identifiers —
+ * Guard: HttpException messages and class-validator decorator messages are
+ * end-user copy (PT-BR, rendered by the web through toUserMessage()). They must never carry technical identifiers —
  * environment variable names, snake_case/camelCase field keys — nor the
  * internal term "tenant" (canonical PT-BR rendering: "workspace").
  *
@@ -15,6 +15,9 @@ import * as ts from 'typescript';
 const SRC = path.resolve(__dirname, '../..');
 
 const MACHINE_CONSUMER_FILES = new Set([
+  // Boot-time configuration validation: read by the operator in the process log, never by an end user.
+  'core/config/env.schema.ts',
+  'instrument.ts',
   'core/external-data/external-data-exchange.service.ts',
   'core/metrics/metrics.controller.ts',
   'modules/auth/dev-auth.controller.ts',
@@ -41,6 +44,12 @@ const LEADING_FIELD_KEY = /^[a-z][a-z0-9]*\s+(é|são|deve|devem|precisa|não)(?
 /** English sentence vocabulary never appears in PT-BR copy. */
 const ENGLISH_WORDS =
   /(?<!\p{L})(is|are|must|required|invalid|not found|missing|failed|unavailable|cannot|already exists|not allowed)(?!\p{L})/iu;
+/** zod methods whose string / `{ message }` argument is end-user copy. */
+const ZOD_MESSAGE_METHODS = new Set([
+  'regex', 'min', 'max', 'length', 'email', 'url', 'uuid', 'nonempty', 'refine', 'superRefine', 'addIssue',
+  'int', 'positive', 'nonnegative', 'multipleOf', 'datetime', 'startsWith', 'endsWith', 'includes',
+]);
+const ZOD_FIRST_ARG_MESSAGE = new Set(['email', 'url', 'uuid', 'nonempty', 'int', 'positive', 'nonnegative', 'datetime', 'addIssue']);
 const PATTERNS = [ENV_NAME, SNAKE_KEY, CAMEL_KEY, TENANT_WORD, LEADING_FIELD_KEY, ENGLISH_WORDS];
 
 function sourceFiles(dir: string): string[] {
@@ -78,14 +87,33 @@ function violations(): string[] {
     const rel = path.relative(SRC, file).split(path.sep).join('/');
     if (MACHINE_CONSUMER_FILES.has(rel)) continue;
     const sf = ts.createSourceFile(file, fs.readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
+    const check = (node: ts.Node, text: string): void => {
+      if (!text || MACHINE_MESSAGES.has(text)) return;
+      const hit = PATTERNS.find((re) => re.test(text));
+      if (hit) {
+        const line = sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1;
+        found.push(`${rel}:${line} ${hit} → ${text}`);
+      }
+    };
     const visit = (node: ts.Node): void => {
       if (ts.isNewExpression(node) && /Exception$/.test(node.expression.getText(sf))) {
-        const text = messageTexts(node.arguments?.[0]).join(' ').trim();
-        if (text && !MACHINE_MESSAGES.has(text)) {
-          const hit = PATTERNS.find((re) => re.test(text));
-          if (hit) {
-            const line = sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1;
-            found.push(`${rel}:${line} ${hit} → ${text}`);
+        check(node, messageTexts(node.arguments?.[0]).join(' ').trim());
+      }
+      // class-validator decorators: `{ message }` is returned to the user by the ValidationPipe.
+      if (ts.isDecorator(node) && ts.isCallExpression(node.expression)) {
+        for (const arg of node.expression.arguments) {
+          if (ts.isObjectLiteralExpression(arg)) check(node, messageTexts(arg).join(' ').trim());
+        }
+      }
+      // zod schemas: messages reach the user through ZodValidationPipe.
+      if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression) && ZOD_MESSAGE_METHODS.has(node.expression.name.text)) {
+        // Only the argument position zod reads the message from: the first one for
+        // message-only methods, the later ones otherwise (so Array#includes('X') is not read).
+        const method = node.expression.name.text;
+        const args = ZOD_FIRST_ARG_MESSAGE.has(method) ? node.arguments : node.arguments.slice(1);
+        for (const arg of args) {
+          if (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg) || ts.isTemplateExpression(arg) || ts.isObjectLiteralExpression(arg)) {
+            check(node, messageTexts(arg).join(' ').trim());
           }
         }
       }

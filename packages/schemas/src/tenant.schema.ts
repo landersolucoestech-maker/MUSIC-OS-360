@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const tenantIdSchema = z
   .string()
-  .uuid({ message: "tenant_id deve ser um UUID válido" });
+  .uuid({ message: "Workspace inválido." });
 
 export const tenantScopedSchema = z.object({
   tenant_id: tenantIdSchema,

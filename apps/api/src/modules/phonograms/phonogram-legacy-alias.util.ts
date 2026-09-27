@@ -67,7 +67,7 @@ function throwConflict(canonical: string, legacy: string): never {
 function throwInvalidUuid(canonical: string, field: string): never {
   const body: PhonogramAliasErrorBody = {
     code: 'PHONOGRAM_UUID_INVALID',
-    message: 'UUID inválido.',
+    message: 'Registro vinculado inválido. Selecione um registro existente.',
     fields: [{ canonical, legacy: field !== canonical ? field : undefined }],
   };
   throw new BadRequestException(body);

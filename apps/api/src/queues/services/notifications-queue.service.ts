@@ -49,12 +49,12 @@ export class NotificationsQueueService {
     await this.enqueue({ tenantId, userId, title: `Contrato vencendo em ${daysLeft} dias`, body: contractTitle, type: 'contract:expiring', entity: 'contract', entityId: contractId, metadata: { daysLeft } });
   }
 
-  async enqueuePaymentFailed(tenantId: string, userId: string, plan: string): Promise<void> {
-    await this.enqueueUrgent({ tenantId, userId, title: 'Falha no pagamento da assinatura', body: `Plano: ${plan}. Atualize o método de pagamento.`, type: 'billing:payment_failed', entity: 'billing', metadata: { plan } });
+  async enqueuePaymentFailed(tenantId: string, userId: string, planDisplayName: string): Promise<void> {
+    await this.enqueueUrgent({ tenantId, userId, title: 'Falha no pagamento da assinatura', body: `Plano: ${planDisplayName}. Atualize o método de pagamento.`, type: 'billing:payment_failed', entity: 'billing', metadata: { plan: planDisplayName } });
   }
 
   async enqueueAIJobCompleted(tenantId: string, userId: string, skill: string): Promise<void> {
-    await this.enqueue({ tenantId, userId, title: 'Tarefa de IA concluída', body: `Habilidade: ${skill}`, type: 'ai:job_completed', entity: 'ai_job', metadata: { skill } });
+    await this.enqueue({ tenantId, userId, title: 'Tarefa de IA concluída', body: 'O resultado já está disponível.', type: 'ai:job_completed', entity: 'ai_job', metadata: { skill } });
   }
 
   async getQueueStats(): Promise<{ waiting: number; active: number; completed: number; failed: number; delayed: number }> {
