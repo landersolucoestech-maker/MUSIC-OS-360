@@ -56,7 +56,7 @@ export function PayrollFormModal({
 
   const isViewMode = mode === "view";
 
-  const salarioLiquido =
+  const netSalary =
     (typeof salarioBruto === "number" ? salarioBruto : 0) -
     (typeof descontos === "number" ? descontos : 0) +
     (typeof bonus === "number" ? bonus : 0);
@@ -83,7 +83,7 @@ export function PayrollFormModal({
     }
   }, [open, mode, registro]);
 
-  const handleSalarioBrutoChange = (value: string) => {
+  const handleGrossSalaryChange = (value: string) => {
     const num = value === "" ? "" : parseFloat(value);
     setSalarioBruto(num === "" || isNaN(num as number) ? "" : num);
   };
@@ -137,7 +137,7 @@ export function PayrollFormModal({
       salario_bruto: typeof salarioBruto === "number" ? salarioBruto : 0,
       descontos: typeof descontos === "number" ? descontos : 0,
       bonus: typeof bonus === "number" ? bonus : 0,
-      salario_liquido: salarioLiquido,
+      salario_liquido: netSalary,
       data_pagamento: dataPagamento || null,
       status,
       observacoes: observacoes.trim() || null,
@@ -232,7 +232,7 @@ export function PayrollFormModal({
                 min="0"
                 placeholder="0,00"
                 value={salarioBruto}
-                onChange={(e) => handleSalarioBrutoChange(e.target.value)}
+                onChange={(e) => handleGrossSalaryChange(e.target.value)}
                 disabled={isViewMode}
                 data-testid="input-salario-bruto"
               />
@@ -269,7 +269,7 @@ export function PayrollFormModal({
             <Label>Salário Líquido (R$)</Label>
             <Input
               type="text"
-              value={`R$ ${salarioLiquido.toLocaleString("pt-BR", {
+              value={`R$ ${netSalary.toLocaleString("pt-BR", {
                 minimumFractionDigits: 2,
               })}`}
               disabled

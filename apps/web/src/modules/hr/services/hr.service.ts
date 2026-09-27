@@ -1,6 +1,6 @@
 import { storage } from "@/shared/lib/storage";
 
-export const rhService = {
+export const hrService = {
   async listEmployees() { return storage.list("funcionarios"); },
   async findEmployee(id: string) { return storage.findById("funcionarios", id); },
   async createEmployee(data: Record<string, unknown>) {

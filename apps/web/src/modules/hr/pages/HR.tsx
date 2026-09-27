@@ -89,7 +89,7 @@ import type { EmployeeDocument } from "@/modules/hr/hooks/useEmployeeDocuments";
 import { Label } from "@/shared/ui/label";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
-const STATUS_VARIANT_FUNCIONARIO: Record<string, BadgeVariant> = {
+const STATUS_VARIANT_EMPLOYEE: Record<string, BadgeVariant> = {
   active: "success",
   inactive: "neutral",
   on_vacation: "info",
@@ -97,7 +97,7 @@ const STATUS_VARIANT_FUNCIONARIO: Record<string, BadgeVariant> = {
   terminated: "danger",
 };
 
-const STATUS_VARIANT_PAGAMENTO: Record<string, BadgeVariant> = {
+const STATUS_VARIANT_PAYMENT: Record<string, BadgeVariant> = {
   pending: "warning",
   paid: "success",
   cancelled: "neutral",
@@ -113,7 +113,7 @@ const STATUS_VARIANT_AUSENCIA: Record<string, BadgeVariant> = {
 
 /** Resolves the employee name directly by ID (GET /hr/employees/:id) — never
  * by scanning the capped list of useEmployees() (Task J). */
-function FuncionarioNomeCell({ id }: { id: string | null }) {
+function EmployeeNameCell({ id }: { id: string | null }) {
   const { entity, isLoading } = useEntityById<Employee>("funcionarios", id);
   if (!id) return <>N/A</>;
   if (isLoading) return <>…</>;
@@ -129,7 +129,7 @@ export default function HR() {
   const { deletePayrollEntry } = usePayroll();
 
   const { usuarios = [] } = useUsuarios();
-  const getUsuarioNome = (userId: string | null) => {
+  const getUserName = (userId: string | null) => {
     if (!userId) return null;
     const u = usuarios.find((u) => u.id === userId);
     return u?.full_name || u?.email || null;
@@ -157,10 +157,10 @@ export default function HR() {
 
   const [selectedFuncIds, setSelectedFuncIds] = useState<string[]>([]);
   const toggleSelectAllFuncs = () => {
-    if (selectedFuncIds.length === filteredFuncionarios.length && filteredFuncionarios.length > 0) {
+    if (selectedFuncIds.length === filteredEmployees.length && filteredEmployees.length > 0) {
       setSelectedFuncIds([]);
     } else {
-      setSelectedFuncIds(filteredFuncionarios.map((f: any) => f.id));
+      setSelectedFuncIds(filteredEmployees.map((f: any) => f.id));
     }
   };
   const toggleSelectFunc = (id: string) => setSelectedFuncIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -227,8 +227,8 @@ export default function HR() {
   };
 
   const debouncedFuncSearch = useDebounce(funcSearch, 300);
-  const debouncedFolhaSearch = useDebounce(folhaSearch, 300);
-  const debouncedFeriasSearch = useDebounce(feriasSearch, 300);
+  const debouncedPayrollSearch = useDebounce(folhaSearch, 300);
+  const debouncedLeaveSearch = useDebounce(feriasSearch, 300);
 
   const [funcPage, setFuncPage] = useState(0);
   const [funcPageSize, setFuncPageSize] = useState(10);
@@ -238,8 +238,8 @@ export default function HR() {
   const [feriasPageSize, setFeriasPageSize] = useState(10);
 
   useEffect(() => { setFuncPage(0); }, [debouncedFuncSearch, funcStatusFilter, funcSetorFilter]);
-  useEffect(() => { setFolhaPage(0); }, [debouncedFolhaSearch, folhaMesFilter, folhaStatusFilter]);
-  useEffect(() => { setFeriasPage(0); }, [debouncedFeriasSearch, feriasStatusFilter]);
+  useEffect(() => { setFolhaPage(0); }, [debouncedPayrollSearch, folhaMesFilter, folhaStatusFilter]);
+  useEffect(() => { setFeriasPage(0); }, [debouncedLeaveSearch, feriasStatusFilter]);
 
   const {
     funcionarios: funcPageItems, total: funcTotal, isLoading: isLoadingFuncPage,
@@ -250,58 +250,58 @@ export default function HR() {
     setor: funcSetorFilter !== "all" ? funcSetorFilter : undefined,
     enabled: activeTab === "funcionarios",
   });
-  const filteredFuncionarios = funcPageItems;
-  const funcionariosPg = { pageItems: funcPageItems, total: funcTotal, page: funcPage, pageSize: funcPageSize, setPage: setFuncPage, setPageSize: setFuncPageSize };
+  const filteredEmployees = funcPageItems;
+  const employeesPg = { pageItems: funcPageItems, total: funcTotal, page: funcPage, pageSize: funcPageSize, setPage: setFuncPage, setPageSize: setFuncPageSize };
 
   const {
     folhaPagamento: folhaPageItems, total: folhaTotal, isLoading: isLoadingFolhaPage,
     error: folhaPageError, refetch: refetchFolhaPage,
   } = usePayrollPaginated({
-    page: folhaPage, pageSize: folhaPageSize, search: debouncedFolhaSearch || undefined,
+    page: folhaPage, pageSize: folhaPageSize, search: debouncedPayrollSearch || undefined,
     competencia: folhaMesFilter || undefined,
     status: folhaStatusFilter !== "all" ? folhaStatusFilter : undefined,
     enabled: activeTab === "folha",
   });
-  const filteredFolha = folhaPageItems;
-  const folhaPg = { pageItems: folhaPageItems, total: folhaTotal, page: folhaPage, pageSize: folhaPageSize, setPage: setFolhaPage, setPageSize: setFolhaPageSize };
+  const filteredPayroll = folhaPageItems;
+  const payrollPg = { pageItems: folhaPageItems, total: folhaTotal, page: folhaPage, pageSize: folhaPageSize, setPage: setFolhaPage, setPageSize: setFolhaPageSize };
 
   const {
     feriasAusencias: feriasPageItems, total: feriasTotal, isLoading: isLoadingFeriasPage,
     error: feriasPageError, refetch: refetchFeriasPage,
   } = useLeaveRequestsPaginated({
-    page: feriasPage, pageSize: feriasPageSize, search: debouncedFeriasSearch || undefined,
+    page: feriasPage, pageSize: feriasPageSize, search: debouncedLeaveSearch || undefined,
     status: feriasStatusFilter !== "all" ? feriasStatusFilter : undefined,
     enabled: activeTab === "ferias",
   });
-  const filteredFerias = feriasPageItems;
-  const feriasPg = { pageItems: feriasPageItems, total: feriasTotal, page: feriasPage, pageSize: feriasPageSize, setPage: setFeriasPage, setPageSize: setFeriasPageSize };
+  const filteredLeave = feriasPageItems;
+  const leavePg = { pageItems: feriasPageItems, total: feriasTotal, page: feriasPage, pageSize: feriasPageSize, setPage: setFeriasPage, setPageSize: setFeriasPageSize };
 
 
-  const handleDeleteFuncionario = () => {
+  const handleDeleteEmployee = () => {
     if (funcDeleteModal.funcionario) {
       deleteEmployee.mutate(funcDeleteModal.funcionario.id);
       setFuncDeleteModal({ open: false });
     }
   };
 
-  const handleDeleteFolha = () => {
+  const handleDeletePayroll = () => {
     if (folhaDeleteModal.registro) {
       deletePayrollEntry.mutate(folhaDeleteModal.registro.id);
       setFolhaDeleteModal({ open: false });
     }
   };
 
-  const toggleSelectFolha = (id: string) => {
+  const toggleSelectPayroll = (id: string) => {
     setSelectedFolhaIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   };
 
-  const toggleSelectAllFolha = () => {
-    const ids = filteredFolha.map((fp) => fp.id);
+  const toggleSelectAllPayroll = () => {
+    const ids = filteredPayroll.map((fp) => fp.id);
     const allSelected = ids.length > 0 && ids.every((id) => selectedFolhaIds.includes(id));
     setSelectedFolhaIds((current) => allSelected ? current.filter((id) => !ids.includes(id)) : Array.from(new Set([...current, ...ids])));
   };
 
-  const handleBulkDeleteFolha = async () => {
+  const handleBulkDeletePayroll = async () => {
     const ids = folhaBulkDeleteModal.ids;
     setSelectedFolhaIds((current) => current.filter((id) => !ids.includes(id)));
     setFolhaBulkDeleteModal({ open: false, ids: [] });
@@ -309,24 +309,24 @@ export default function HR() {
     reportBulkResult(result, "excluído", "registro de folha");
   };
 
-  const handleDeleteFerias = () => {
+  const handleDeleteLeave = () => {
     if (feriasDeleteModal.ausencia) {
       deleteLeaveRequest.mutate(feriasDeleteModal.ausencia.id);
       setFeriasDeleteModal({ open: false });
     }
   };
 
-  const toggleSelectFerias = (id: string) => {
+  const toggleSelectLeave = (id: string) => {
     setSelectedFeriasIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   };
 
-  const toggleSelectAllFerias = () => {
-    const ids = filteredFerias.map((fa) => fa.id);
+  const toggleSelectAllLeave = () => {
+    const ids = filteredLeave.map((fa) => fa.id);
     const allSelected = ids.length > 0 && ids.every((id) => selectedFeriasIds.includes(id));
     setSelectedFeriasIds((current) => allSelected ? current.filter((id) => !ids.includes(id)) : Array.from(new Set([...current, ...ids])));
   };
 
-  const handleBulkDeleteFerias = async () => {
+  const handleBulkDeleteLeave = async () => {
     const ids = feriasBulkDeleteModal.ids;
     setSelectedFeriasIds((current) => current.filter((id) => !ids.includes(id)));
     setFeriasBulkDeleteModal({ open: false, ids: [] });
@@ -341,7 +341,7 @@ export default function HR() {
     } as any);
   };
 
-  const handleDeleteDocumento = () => {
+  const handleDeleteDocument = () => {
     if (docDeleteModal.documento) {
       deleteDocumento.mutate(docDeleteModal.documento.id);
       setDocDeleteModal({ open: false });
@@ -601,7 +601,7 @@ export default function HR() {
           )}
 
           <TabsContent value="funcionarios" className="mt-6 space-y-6">
-            {filteredFuncionarios.length === 0 ? (
+            {filteredEmployees.length === 0 ? (
               funcPageError && funcTotal === 0 ? (
                 <UnavailableState onRetry={() => refetchFuncPage()} />
               ) : (
@@ -626,7 +626,7 @@ export default function HR() {
                 action={
                   <div className="flex flex-wrap items-center justify-end gap-3">
                     <Checkbox
-                      checked={selectedFuncIds.length === filteredFuncionarios.length && filteredFuncionarios.length > 0}
+                      checked={selectedFuncIds.length === filteredEmployees.length && filteredEmployees.length > 0}
                       onCheckedChange={toggleSelectAllFuncs}
                       data-testid="checkbox-select-all-funcs"
                       aria-label="Selecionar todos"
@@ -658,7 +658,7 @@ export default function HR() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {funcionariosPg.pageItems.map((f) => (
+                  {employeesPg.pageItems.map((f) => (
                     <TableRow key={f.id} data-testid={`row-funcionario-${f.id}`} className={selectedFuncIds.includes(f.id) ? "bg-muted/20" : ""}>
                       <TableCell>
                         <Checkbox
@@ -679,12 +679,12 @@ export default function HR() {
                       <TableCell className="text-muted-foreground">{f.tipo_contrato || "—"}</TableCell>
                       <TableCell className={`text-right ${getMonetarySemanticClass("neutral")}`}>{f.salario ? formatCurrency(Number(f.salario)) : "—"}</TableCell>
                       <TableCell>
-                        <Badge variant={STATUS_VARIANT_FUNCIONARIO[f.status || "active"] || "neutral"}>
+                        <Badge variant={STATUS_VARIANT_EMPLOYEE[f.status || "active"] || "neutral"}>
                           {(f.status || "active").charAt(0).toUpperCase() + (f.status || "active").slice(1)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-xs" data-testid={`text-usuario-vinculo-${f.id}`}>
-                        {getUsuarioNome(f.vinculo_usuario_id ?? null) || "—"}
+                        {getUserName(f.vinculo_usuario_id ?? null) || "—"}
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
@@ -711,11 +711,11 @@ export default function HR() {
                 </TableBody>
               </Table>
               <TablePagination
-                total={funcionariosPg.total}
-                page={funcionariosPg.page}
-                pageSize={funcionariosPg.pageSize}
-                onPageChange={funcionariosPg.setPage}
-                onPageSizeChange={funcionariosPg.setPageSize}
+                total={employeesPg.total}
+                page={employeesPg.page}
+                pageSize={employeesPg.pageSize}
+                onPageChange={employeesPg.setPage}
+                onPageSizeChange={employeesPg.setPageSize}
                 itemLabel="funcionários"
               />
               </CardContent>
@@ -729,7 +729,7 @@ export default function HR() {
               <div className="flex items-center justify-center h-32">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
-            ) : filteredFolha.length === 0 ? (
+            ) : filteredPayroll.length === 0 ? (
               folhaPageError && folhaTotal === 0 ? (
                 <UnavailableState onRetry={() => refetchFolhaPage()} />
               ) : (
@@ -758,7 +758,7 @@ export default function HR() {
                         variant="destructive"
                         size="sm"
                         className="h-8 text-xs gap-1.5"
-                        onClick={() => setFolhaBulkDeleteModal({ open: true, ids: filteredFolha.filter((fp) => selectedFolhaIds.includes(fp.id)).map((fp) => fp.id) })}
+                        onClick={() => setFolhaBulkDeleteModal({ open: true, ids: filteredPayroll.filter((fp) => selectedFolhaIds.includes(fp.id)).map((fp) => fp.id) })}
                         data-testid="button-delete-selected-folha"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -766,13 +766,13 @@ export default function HR() {
                       </Button>
                     )}
                     <Checkbox
-                      checked={filteredFolha.length > 0 && filteredFolha.every((fp) => selectedFolhaIds.includes(fp.id))}
-                      onCheckedChange={toggleSelectAllFolha}
+                      checked={filteredPayroll.length > 0 && filteredPayroll.every((fp) => selectedFolhaIds.includes(fp.id))}
+                      onCheckedChange={toggleSelectAllPayroll}
                       aria-label="Selecionar todos os registros de pagamento"
                       data-testid="checkbox-select-all-folha"
                     />
                     <span className="text-xs text-muted-foreground">
-                      {selectedFolhaIds.length > 0 ? `${filteredFolha.filter((fp) => selectedFolhaIds.includes(fp.id)).length} selecionado(s)` : "Selecionar todos"}
+                      {selectedFolhaIds.length > 0 ? `${filteredPayroll.filter((fp) => selectedFolhaIds.includes(fp.id)).length} selecionado(s)` : "Selecionar todos"}
                     </span>
                   </div>
                 }
@@ -794,17 +794,17 @@ export default function HR() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {folhaPg.pageItems.map((fp) => (
+                  {payrollPg.pageItems.map((fp) => (
                     <TableRow key={fp.id} data-testid={`row-folha-${fp.id}`}>
                       <TableCell>
                         <Checkbox
                           checked={selectedFolhaIds.includes(fp.id)}
-                          onCheckedChange={() => toggleSelectFolha(fp.id)}
+                          onCheckedChange={() => toggleSelectPayroll(fp.id)}
                           aria-label={`Selecionar registro de pagamento ${fp.id}`}
                           data-testid={`checkbox-folha-${fp.id}`}
                         />
                       </TableCell>
-                      <TableCell className="font-medium"><FuncionarioNomeCell id={fp.funcionario_id ?? null} /></TableCell>
+                      <TableCell className="font-medium"><EmployeeNameCell id={fp.funcionario_id ?? null} /></TableCell>
                       <TableCell className="text-muted-foreground">{fp.mes_referencia || "—"}</TableCell>
                       <TableCell className={`text-right ${getMonetarySemanticClass("neutral")}`}>{formatCurrency(Number(fp.salario_bruto) || 0)}</TableCell>
                       <TableCell className={`text-right ${getMonetarySemanticClass("negative")}`}>
@@ -818,7 +818,7 @@ export default function HR() {
                       </TableCell>
                       <TableCell className="text-muted-foreground">{fp.data_pagamento ? formatDate(fp.data_pagamento) : "—"}</TableCell>
                       <TableCell>
-                        <Badge variant={STATUS_VARIANT_PAGAMENTO[fp.status || "pending"] || "neutral"}>
+                        <Badge variant={STATUS_VARIANT_PAYMENT[fp.status || "pending"] || "neutral"}>
                           {(fp.status || "pending").charAt(0).toUpperCase() + (fp.status || "pending").slice(1)}
                         </Badge>
                       </TableCell>
@@ -847,11 +847,11 @@ export default function HR() {
                 </TableBody>
               </Table>
               <TablePagination
-                total={folhaPg.total}
-                page={folhaPg.page}
-                pageSize={folhaPg.pageSize}
-                onPageChange={folhaPg.setPage}
-                onPageSizeChange={folhaPg.setPageSize}
+                total={payrollPg.total}
+                page={payrollPg.page}
+                pageSize={payrollPg.pageSize}
+                onPageChange={payrollPg.setPage}
+                onPageSizeChange={payrollPg.setPageSize}
                 itemLabel="registros"
               />
               </CardContent>
@@ -865,7 +865,7 @@ export default function HR() {
               <div className="flex items-center justify-center h-32">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
-            ) : filteredFerias.length === 0 ? (
+            ) : filteredLeave.length === 0 ? (
               feriasPageError && feriasTotal === 0 ? (
                 <UnavailableState onRetry={() => refetchFeriasPage()} />
               ) : (
@@ -894,7 +894,7 @@ export default function HR() {
                         variant="destructive"
                         size="sm"
                         className="h-8 text-xs gap-1.5"
-                        onClick={() => setFeriasBulkDeleteModal({ open: true, ids: filteredFerias.filter((fa) => selectedFeriasIds.includes(fa.id)).map((fa) => fa.id) })}
+                        onClick={() => setFeriasBulkDeleteModal({ open: true, ids: filteredLeave.filter((fa) => selectedFeriasIds.includes(fa.id)).map((fa) => fa.id) })}
                         data-testid="button-delete-selected-ferias"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -902,13 +902,13 @@ export default function HR() {
                       </Button>
                     )}
                     <Checkbox
-                      checked={filteredFerias.length > 0 && filteredFerias.every((fa) => selectedFeriasIds.includes(fa.id))}
-                      onCheckedChange={toggleSelectAllFerias}
+                      checked={filteredLeave.length > 0 && filteredLeave.every((fa) => selectedFeriasIds.includes(fa.id))}
+                      onCheckedChange={toggleSelectAllLeave}
                       aria-label="Selecionar todos os registros de férias"
                       data-testid="checkbox-select-all-ferias"
                     />
                     <span className="text-xs text-muted-foreground">
-                      {selectedFeriasIds.length > 0 ? `${filteredFerias.filter((fa) => selectedFeriasIds.includes(fa.id)).length} selecionado(s)` : "Selecionar todos"}
+                      {selectedFeriasIds.length > 0 ? `${filteredLeave.filter((fa) => selectedFeriasIds.includes(fa.id)).length} selecionado(s)` : "Selecionar todos"}
                     </span>
                   </div>
                 }
@@ -928,17 +928,17 @@ export default function HR() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {feriasPg.pageItems.map((fa) => (
+                  {leavePg.pageItems.map((fa) => (
                     <TableRow key={fa.id} data-testid={`row-ferias-${fa.id}`}>
                       <TableCell>
                         <Checkbox
                           checked={selectedFeriasIds.includes(fa.id)}
-                          onCheckedChange={() => toggleSelectFerias(fa.id)}
+                          onCheckedChange={() => toggleSelectLeave(fa.id)}
                           aria-label={`Selecionar registro de férias ${fa.id}`}
                           data-testid={`checkbox-ferias-${fa.id}`}
                         />
                       </TableCell>
-                      <TableCell className="font-medium"><FuncionarioNomeCell id={fa.funcionario_id ?? null} /></TableCell>
+                      <TableCell className="font-medium"><EmployeeNameCell id={fa.funcionario_id ?? null} /></TableCell>
                       <TableCell className="text-muted-foreground">
                         {fa.type ? fa.type.charAt(0).toUpperCase() + fa.type.slice(1) : "—"}
                       </TableCell>
@@ -987,11 +987,11 @@ export default function HR() {
                 </TableBody>
               </Table>
               <TablePagination
-                total={feriasPg.total}
-                page={feriasPg.page}
-                pageSize={feriasPg.pageSize}
-                onPageChange={feriasPg.setPage}
-                onPageSizeChange={feriasPg.setPageSize}
+                total={leavePg.total}
+                page={leavePg.page}
+                pageSize={leavePg.pageSize}
+                onPageChange={leavePg.setPage}
+                onPageSizeChange={leavePg.setPageSize}
                 itemLabel="registros"
               />
               </CardContent>
@@ -1175,7 +1175,7 @@ export default function HR() {
       <DeleteConfirmModal
         open={funcDeleteModal.open}
         onOpenChange={(open) => setFuncDeleteModal({ ...funcDeleteModal, open })}
-        onConfirm={handleDeleteFuncionario}
+        onConfirm={handleDeleteEmployee}
         title="Excluir Funcionário"
         description={`Tem certeza que deseja excluir "${funcDeleteModal.funcionario?.name}"? Esta ação não pode ser desfeita.`}
       />
@@ -1183,7 +1183,7 @@ export default function HR() {
       <DeleteConfirmModal
         open={folhaDeleteModal.open}
         onOpenChange={(open) => setFolhaDeleteModal({ ...folhaDeleteModal, open })}
-        onConfirm={handleDeleteFolha}
+        onConfirm={handleDeletePayroll}
         title="Excluir Registro de Pagamento"
         description="Tem certeza que deseja excluir este registro de pagamento? Esta ação não pode ser desfeita."
       />
@@ -1191,7 +1191,7 @@ export default function HR() {
       <DeleteConfirmModal
         open={feriasDeleteModal.open}
         onOpenChange={(open) => setFeriasDeleteModal({ ...feriasDeleteModal, open })}
-        onConfirm={handleDeleteFerias}
+        onConfirm={handleDeleteLeave}
         title="Excluir Registro de Ausência"
         description="Tem certeza que deseja excluir este registro de férias/ausência? Esta ação não pode ser desfeita."
       />
@@ -1199,7 +1199,7 @@ export default function HR() {
       <DeleteConfirmModal
         open={folhaBulkDeleteModal.open}
         onOpenChange={(open) => setFolhaBulkDeleteModal({ ...folhaBulkDeleteModal, open })}
-        onConfirm={handleBulkDeleteFolha}
+        onConfirm={handleBulkDeletePayroll}
         title="Excluir registros de pagamento"
         description={`Tem certeza que deseja excluir ${folhaBulkDeleteModal.ids.length} registro(s) selecionado(s)? Esta ação não pode ser desfeita.`}
       />
@@ -1207,7 +1207,7 @@ export default function HR() {
       <DeleteConfirmModal
         open={feriasBulkDeleteModal.open}
         onOpenChange={(open) => setFeriasBulkDeleteModal({ ...feriasBulkDeleteModal, open })}
-        onConfirm={handleBulkDeleteFerias}
+        onConfirm={handleBulkDeleteLeave}
         title="Excluir registros de férias e ausências"
         description={`Tem certeza que deseja excluir ${feriasBulkDeleteModal.ids.length} registro(s) selecionado(s)? Esta ação não pode ser desfeita.`}
       />
@@ -1215,7 +1215,7 @@ export default function HR() {
       <DeleteConfirmModal
         open={docDeleteModal.open}
         onOpenChange={(open) => setDocDeleteModal({ ...docDeleteModal, open })}
-        onConfirm={handleDeleteDocumento}
+        onConfirm={handleDeleteDocument}
         title="Excluir Documento"
         description={`Tem certeza que deseja excluir o documento "${docDeleteModal.documento?.nome_arquivo}"? Esta ação não pode ser desfeita.`}
       />

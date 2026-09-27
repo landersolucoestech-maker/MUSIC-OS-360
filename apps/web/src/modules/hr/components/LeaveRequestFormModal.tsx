@@ -39,10 +39,10 @@ interface LeaveRequestFormModalProps {
   mode: "create" | "edit" | "view";
 }
 
-function calcDias(inicio: string, fim: string): number {
-  if (!inicio || !fim) return 0;
-  const d1 = new Date(inicio + "T00:00:00");
-  const d2 = new Date(fim + "T00:00:00");
+function countLeaveDays(start: string, end: string): number {
+  if (!start || !end) return 0;
+  const d1 = new Date(start + "T00:00:00");
+  const d2 = new Date(end + "T00:00:00");
   if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return 0;
   const diff = d2.getTime() - d1.getTime();
   return Math.max(0, Math.round(diff / (1000 * 60 * 60 * 24)) + 1);
@@ -68,7 +68,7 @@ export function LeaveRequestFormModal({
 
   const isViewMode = mode === "view";
 
-  const diasTotais = useMemo(() => calcDias(startDate, endDate), [startDate, endDate]);
+  const totalDays = useMemo(() => countLeaveDays(startDate, endDate), [startDate, endDate]);
 
   useEffect(() => {
     if (open && mode === "edit" && ausencia) {
@@ -159,7 +159,7 @@ export function LeaveRequestFormModal({
       type: type || null,
       start_date: startDate,
       end_date: endDate,
-      dias_totais: diasTotais,
+      dias_totais: totalDays,
       status,
       aprovado_por: aprovadoPor.trim() || null,
       observacoes: observacoes.trim() || null,
@@ -293,7 +293,7 @@ export function LeaveRequestFormModal({
             <Label>Dias Totais (calculado automaticamente)</Label>
             <Input
               type="number"
-              value={diasTotais}
+              value={totalDays}
               readOnly
               disabled
               data-testid="input-dias-totais"
