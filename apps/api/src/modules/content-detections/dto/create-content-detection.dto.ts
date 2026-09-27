@@ -2,7 +2,7 @@ import { IsString, IsOptional, IsUrl, IsUUID } from 'class-validator';
 
 export class CreateContentDetectionDto {
   @IsString()
-  plataforma: string;
+  platform: string;
 
   @IsOptional()
   @IsUUID()
@@ -14,7 +14,7 @@ export class CreateContentDetectionDto {
 
   @IsOptional()
   @IsString()
-  titulo_detectado?: string;
+  detected_title?: string;
 
   @IsOptional()
   @IsUrl()

@@ -193,7 +193,7 @@ const IDENTITY_COLUMN_NAMES = new Set([
   'title', 'title', 'numero', 'codigo', 'code', 'slug', 'email', 'label',
   'assunto', 'descricao', 'description', 'referencia', 'ref',
   // Part 89 — identity columns of the new modules in the closed registry.
-  'titulo_detectado', 'nome_musica', 'music_title',
+  'detected_title', 'nome_musica', 'music_title',
 ]);
 
 /**

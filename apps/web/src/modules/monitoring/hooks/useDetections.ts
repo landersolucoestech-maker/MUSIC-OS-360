@@ -6,7 +6,7 @@ export function useDetections() {
   const result = useDataQuery<ContentDetection>({
     queryKey: [...QUERY_KEYS.CONTENT_DETECTIONS],
     table: "deteccoes",
-    orderBy: { column: "detectado_em", ascending: false },
+    orderBy: { column: "detected_at", ascending: false },
   }, {
     create: { success: "Detecção registrada com sucesso!", error: "Erro ao registrar detecção" },
     update: { success: "Detecção atualizada com sucesso!", error: "Erro ao atualizar detecção" },

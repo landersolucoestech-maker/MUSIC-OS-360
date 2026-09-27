@@ -1,4 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/shared/ui/dialog";
+import { detectionTypeLabel } from "@/modules/monitoring/rights/utils/detection-labels";
 import { Badge, type BadgeVariant } from "@/shared/ui/badge";
 import { CheckCircle, AlertTriangle, XCircle, Clock, Archive, BookOpen, Tag, Hash, Clock3, Link2, Globe } from "lucide-react";
 import type { DetectionStatus } from "../types";
@@ -41,8 +42,8 @@ export function DetectionDetailModal({ detection, open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-base leading-snug">{catalog?.title ?? detection.titulo_detectado ?? "Detecção"}</DialogTitle>
-          <DialogDescription className="text-xs text-muted-foreground">{detection.plataforma}</DialogDescription>
+          <DialogTitle className="text-base leading-snug">{catalog?.title ?? detection.detected_title ?? "Detecção"}</DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground">{detection.platform}</DialogDescription>
         </DialogHeader>
 
         <div className="mt-1 space-y-4">
@@ -51,9 +52,9 @@ export function DetectionDetailModal({ detection, open, onOpenChange }: Props) {
           <div>
             <p className="text-xs font-semibold  tracking-wide text-muted-foreground mb-2">Dados da Detecção</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 rounded-lg border border-border/60 bg-muted/20 p-3">
-              <Row icon={<Globe className="h-3.5 w-3.5" />} label="Plataforma" value={detection.plataforma} />
-              <Row icon={<Tag className="h-3.5 w-3.5" />} label="Tipo" value={<span className="capitalize">{detection.type.replace(/_/g, " ")}</span>} />
-              <Row icon={<Clock3 className="h-3.5 w-3.5" />} label="Detectado em" value={formatRightsDateTime(detection.detectado_em).full} />
+              <Row icon={<Globe className="h-3.5 w-3.5" />} label="Plataforma" value={detection.platform} />
+              <Row icon={<Tag className="h-3.5 w-3.5" />} label="Tipo" value={detectionTypeLabel(detection.type)} />
+              <Row icon={<Clock3 className="h-3.5 w-3.5" />} label="Detectado em" value={formatRightsDateTime(detection.detected_at).full} />
               <Row
                 icon={<CheckCircle className="h-3.5 w-3.5" />}
                 label="Status"

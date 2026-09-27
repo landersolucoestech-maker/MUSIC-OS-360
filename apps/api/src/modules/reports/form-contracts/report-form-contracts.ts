@@ -350,10 +350,10 @@ const PROJECTS_CONTRACT: ReportFormContract = {
 // but that do not exist on the entity — a pre-existing UI bug, not reproduced here).
 const CONTENT_DETECTIONS_CONTRACT: ReportFormContract = {
   tableName: 'content_detections',
-  identityColumn: 'titulo_detectado',
+  identityColumn: 'detected_title',
   fields: [
-    ro('titulo_detectado'), ro('plataforma'), ro('type'), ro('status'),
-    ro('url'), ro('score'), ro('detectado_em'), ro('work_id'), ro('artist_id'),
+    ro('detected_title'), ro('platform'), ro('type'), ro('status'),
+    ro('url'), ro('score'), ro('detected_at'), ro('work_id'), ro('artist_id'),
   ],
   excludedFormFields: {},
 };

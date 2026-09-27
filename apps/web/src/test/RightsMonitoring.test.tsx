@@ -23,15 +23,15 @@ vi.mock("@/shared/components/MainLayout", () => ({
 const DETECTIONS = [
   {
     id: "det-001", work_id: "obra-001", artist_id: null,
-    plataforma: "YouTube", titulo_detectado: "Noite de Luz", url: "https://youtube.com/x",
-    score: "0.92", status: "completed", type: "uso_nao_autorizado",
-    detectado_em: "2026-05-08T14:32:00", metadata: {}, created_at: "2026-05-08T14:32:00", updated_at: "2026-05-08T14:32:00",
+    platform: "YouTube", detected_title: "Noite de Luz", url: "https://youtube.com/x",
+    score: "0.92", status: "completed", type: "unauthorized_use",
+    detected_at: "2026-05-08T14:32:00", metadata: {}, created_at: "2026-05-08T14:32:00", updated_at: "2026-05-08T14:32:00",
   },
   {
     id: "det-011", work_id: null, artist_id: null,
-    plataforma: "TikTok", titulo_detectado: "Track Desconhecida", url: null,
-    score: null, status: "pending", type: "uso_nao_autorizado",
-    detectado_em: "2026-05-02T11:20:00", metadata: {}, created_at: "2026-05-02T11:20:00", updated_at: "2026-05-02T11:20:00",
+    platform: "TikTok", detected_title: "Track Desconhecida", url: null,
+    score: null, status: "pending", type: "unauthorized_use",
+    detected_at: "2026-05-02T11:20:00", metadata: {}, created_at: "2026-05-02T11:20:00", updated_at: "2026-05-02T11:20:00",
   },
 ];
 

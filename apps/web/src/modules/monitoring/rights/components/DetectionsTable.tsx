@@ -1,4 +1,5 @@
 import { Badge, type BadgeVariant } from "@/shared/ui/badge";
+import { detectionTypeLabel } from "@/modules/monitoring/rights/utils/detection-labels";
 import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
@@ -55,7 +56,7 @@ export function DetectionsTable({ detections, onViewDetail, selectedIds, onToggl
         <TableBody>
           {detections.map((det) => {
             const status = STATUS_CONFIG[det.status];
-            const dt = formatRightsDateTime(det.detectado_em);
+            const dt = formatRightsDateTime(det.detected_at);
             const matched = Boolean(det.obra?.cod_ecad);
             return (
               <TableRow key={det.id} data-testid={`row-exec-${det.id}`}>
@@ -64,7 +65,7 @@ export function DetectionsTable({ detections, onViewDetail, selectedIds, onToggl
                     <Checkbox
                       checked={selectedIds?.includes(det.id)}
                       onCheckedChange={() => onToggleSelect(det.id)}
-                      aria-label={`Selecionar ${det.obra?.title ?? det.titulo_detectado ?? det.id}`}
+                      aria-label={`Selecionar ${det.obra?.title ?? det.detected_title ?? det.id}`}
                       data-testid={`checkbox-deteccao-${det.id}`}
                     />
                   </TableCell>
@@ -72,7 +73,7 @@ export function DetectionsTable({ detections, onViewDetail, selectedIds, onToggl
                 <TableCell className="py-3">
                   <div className="min-w-0 max-w-[240px]">
                     <p className="font-semibold text-foreground leading-tight truncate">
-                      {det.obra?.title ?? det.titulo_detectado ?? "—"}
+                      {det.obra?.title ?? det.detected_title ?? "—"}
                     </p>
                     {!det.obra && (
                       <p className="text-xs text-destructive mt-0.5 truncate">Sem vínculo com obra do catálogo</p>
@@ -80,11 +81,11 @@ export function DetectionsTable({ detections, onViewDetail, selectedIds, onToggl
                   </div>
                 </TableCell>
                 <TableCell className="py-3 hidden lg:table-cell">
-                  <span className="block max-w-[180px] truncate text-sm text-foreground/80">{det.plataforma}</span>
+                  <span className="block max-w-[180px] truncate text-sm text-foreground/80">{det.platform}</span>
                 </TableCell>
                 <TableCell className="py-3 hidden md:table-cell">
-                  <span className="inline-flex items-center text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-md font-medium capitalize">
-                    {det.type.replace(/_/g, " ")}
+                  <span className="inline-flex items-center text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-md font-medium">
+                    {detectionTypeLabel(det.type)}
                   </span>
                 </TableCell>
                 <TableCell className="py-3 hidden xl:table-cell">

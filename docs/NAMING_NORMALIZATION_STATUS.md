@@ -78,6 +78,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-022 | Artist goal (artist_goals): period, type, status and metadata vocabulary | done | DONE | no |
 | CZ-023 | Marketing/production columns: briefing due date, campaign objective and budget, project budget, audiovisual videographer | done | DONE | no |
 | CZ-024 | Artist relationship classification (exclusive/partner/independent) on the wire | done | DONE | no |
+| CZ-025 | Content detection (content_detections): platform, detected title, detection time, detection type | done | DONE | no |
 
-Concepts: 72. Renames: 0. Exceptions: 58. Blockers: 0.
-By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 57, done/RESOLVED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 73. Renames: 0. Exceptions: 58. Blockers: 0.
+By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 58, done/RESOLVED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.

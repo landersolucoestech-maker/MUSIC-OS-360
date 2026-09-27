@@ -550,8 +550,8 @@ export const FIELD_LABELS_PT_BR = {
   copyright: 'Titular do copyright',
 
   // ── Part 89 — Monitoring (content_detections) ────────────────────────────────
-  tituloDetectado: 'Título detectado',
-  detectadoEm: 'Detectado em',
+  detectedTitle: 'Título detectado',
+  detectedAt: 'Detectado em',
 
   // ── Part 89 — Distribution (releases) ───────────────────────────────────────
   lancamentoRef: 'Lançamento (ID de referência)',

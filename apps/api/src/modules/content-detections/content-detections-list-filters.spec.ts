@@ -14,7 +14,7 @@ describe('ContentDetectionsController.list — forwards artist_id/work_id/ascend
 
     expect(svc.list).toHaveBeenCalledWith('tenant-a', {
       status: 'flagged',
-      plataforma: 'spotify',
+      platform: 'spotify',
       artist_id: 'artist-1',
       work_id: 'work-1',
       ascending: true,

@@ -29,13 +29,13 @@ export interface ContentDetection {
   id: string;
   work_id: string | null;
   artist_id: string | null;
-  plataforma: string;
-  titulo_detectado: string | null;
+  platform: string;
+  detected_title: string | null;
   url: string | null;
   score: string | null;
   status: DetectionStatus;
   type: string;
-  detectado_em: string;
+  detected_at: string;
   metadata: Record<string, unknown>;
   created_at: string;
   updated_at: string;

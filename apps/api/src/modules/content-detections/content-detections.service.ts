@@ -6,6 +6,7 @@ import type { CreateContentDetectionDto } from './dto/create-content-detection.d
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
 
+
 @Injectable()
 export class ContentDetectionsService {
   private readonly repo: Repository<ContentDetectionEntity> | null = null;
@@ -23,11 +24,11 @@ export class ContentDetectionsService {
       .andWhere('c.deleted_at IS NULL');
 
     if (query.status)     qb.andWhere('c.status = :status',       { status:     query.status });
-    if (query.plataforma) qb.andWhere('c.plataforma = :plataforma', { plataforma: query.plataforma });
+    if (query.platform)   qb.andWhere('c.platform = :platform',   { platform:   query.platform });
     if (query.artist_id) qb.andWhere('c.artist_id = :artistId', { artistId: query.artist_id });
     if (query.work_id)    qb.andWhere('c.work_id = :workId',      { workId:     query.work_id });
 
-    qb.orderBy('c.detectado_em', query.ascending ? 'ASC' : 'DESC')
+    qb.orderBy('c.detected_at', query.ascending ? 'ASC' : 'DESC')
       .skip(query.offset ?? 0)
       .take(query.limit ?? 50);
 

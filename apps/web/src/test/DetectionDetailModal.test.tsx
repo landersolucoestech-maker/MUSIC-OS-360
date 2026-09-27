@@ -16,13 +16,13 @@ const BASE_DETECTION: DetectionRow = {
   id: "det-001",
   work_id: "obra-001",
   artist_id: null,
-  plataforma: "YouTube",
-  titulo_detectado: "Noite de Luz",
+  platform: "YouTube",
+  detected_title: "Noite de Luz",
   url: "https://youtube.com/x",
   score: "0.92",
   status: "completed",
-  type: "uso_nao_autorizado",
-  detectado_em: "2026-05-08T14:32:00",
+  type: "unauthorized_use",
+  detected_at: "2026-05-08T14:32:00",
   metadata: {},
   created_at: "2026-05-08T14:32:00",
   updated_at: "2026-05-08T14:32:00",
@@ -46,13 +46,13 @@ const ORPHAN_DETECTION: DetectionRow = {
   id: "det-011",
   work_id: null,
   artist_id: null,
-  plataforma: "TikTok",
-  titulo_detectado: "Track Desconhecida",
+  platform: "TikTok",
+  detected_title: "Track Desconhecida",
   url: null,
   score: null,
   status: "pending",
-  type: "uso_nao_autorizado",
-  detectado_em: "2026-05-02T11:20:00",
+  type: "unauthorized_use",
+  detected_at: "2026-05-02T11:20:00",
   metadata: {},
   created_at: "2026-05-02T11:20:00",
   updated_at: "2026-05-02T11:20:00",
@@ -66,7 +66,7 @@ function renderModal(detection: DetectionRow | null, open = true) {
 }
 
 describe("<DetectionDetailModal /> — with catalog data", () => {
-  it("renders dialog title and plataforma from detection props", () => {
+  it("renders dialog title and platform from detection props", () => {
     renderModal(BASE_DETECTION);
     expect(screen.getByRole("heading", { name: /Noite de Luz/i })).toBeInTheDocument();
     expect(screen.getAllByText("YouTube").length).toBeGreaterThan(0);
@@ -111,7 +111,7 @@ describe("<DetectionDetailModal /> — with catalog data", () => {
 });
 
 describe("<DetectionDetailModal /> — orphan detection (no obra)", () => {
-  it("renders dialog title from titulo_detectado", () => {
+  it("renders dialog title from detected_title", () => {
     renderModal(ORPHAN_DETECTION);
     expect(screen.getByRole("heading", { name: /Track Desconhecida/i })).toBeInTheDocument();
   });

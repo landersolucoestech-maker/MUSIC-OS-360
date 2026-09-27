@@ -1613,6 +1613,23 @@
       "definition": "Not persisted (computed from contracts). The old route stays on the same handler and the old query param is accepted as deprecated during the deploy-skew window (TEMPORARY_MIGRATION_COMPATIBILITY); responses are canonical only.",
       "producers": "ArtistsService.list / relationshipStats",
       "consumers": "apps/web Artists page (useArtistsPaginated, useArtistRelationshipStats)"
+    },
+    {
+      "id": "CZ-025",
+      "status": "done",
+      "disposition": "DONE",
+      "layer": "database, api, web",
+      "language": "Portuguese",
+      "renameRequired": "yes",
+      "migrationRequired": "yes",
+      "evidence": "migration 20260928000003 verified on disposable PostgreSQL 16 (legacy row up/down/up, db:check clean, schema census shrink only); content-detections + reports suites; detection-labels.test.ts",
+      "concept": "Content detection (content_detections): platform, detected title, detection time, detection type",
+      "businessConcept": "An automatic detection of a catalog work being used on a digital platform.",
+      "currentTechnicalName": "content_detections.plataforma / titulo_detectado / detectado_em; type 'uso_nao_autorizado' (column default); list query param plataforma",
+      "canonicalEnglishName": "content_detections.platform / detected_title / detected_at; type 'unauthorized_use'; query param platform",
+      "definition": "Column renames and one persisted value remapped by a reversible migration. No compatibility alias: no code path creates or updates detections (the web only lists and deletes them) and the web never sent the plataforma query param. The web no longer renders the raw type (it did `type.replace(/_/g, ' ')`); it shows PT-BR labels from detection-labels.ts.",
+      "producers": "none in the repository (rows arrive from outside the application code)",
+      "consumers": "ContentDetectionsService, reports export (contract + labels), apps/web RightsMonitoring / DetectionsTable / DetectionDetailModal"
     }
   ],
   "renames": [],

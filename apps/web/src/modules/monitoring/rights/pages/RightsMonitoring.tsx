@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { detectionTypeLabel } from "@/modules/monitoring/rights/utils/detection-labels";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
 import { MainLayout } from "@/shared/components/MainLayout";
 import { ListSectionHeader } from "@/shared/components/ListSectionHeader";
@@ -154,19 +155,19 @@ export default function RightsMonitoring() {
     return enrichedDetections.filter((det) => {
       if (artistFilter !== "all" && det.obra?.artista_nome !== artistFilter) return false;
       if (dateFrom) {
-        const d = det.detectado_em.split("T")[0];
+        const d = det.detected_at.split("T")[0];
         if (d < dateFrom) return false;
       }
       if (dateTo) {
-        const d = det.detectado_em.split("T")[0];
+        const d = det.detected_at.split("T")[0];
         if (d > dateTo) return false;
       }
       if (search.trim()) {
         const q = search.toLowerCase();
         const match =
-          (det.obra?.title ?? det.titulo_detectado ?? "").toLowerCase().includes(q) ||
-          det.plataforma.toLowerCase().includes(q) ||
-          det.type.toLowerCase().includes(q);
+          (det.obra?.title ?? det.detected_title ?? "").toLowerCase().includes(q) ||
+          det.platform.toLowerCase().includes(q) ||
+          detectionTypeLabel(det.type).toLowerCase().includes(q);
         if (!match) return false;
       }
       return true;
@@ -192,13 +193,13 @@ export default function RightsMonitoring() {
         id: `div-${det.id}`,
         type: det.obra ? "Obra sem código ECAD" : "Detecção sem obra vinculada",
         descricao: det.obra
-          ? `Detecção em "${det.plataforma}" está vinculada à obra "${det.obra.title}", mas ela não possui código ECAD cadastrado.`
-          : `Detecção em "${det.plataforma}" (${det.titulo_detectado ?? "sem título"}) não possui obra vinculada no catálogo interno.`,
+          ? `Detecção em "${det.platform}" está vinculada à obra "${det.obra.title}", mas ela não possui código ECAD cadastrado.`
+          : `Detecção em "${det.platform}" (${det.detected_title ?? "sem título"}) não possui obra vinculada no catálogo interno.`,
         obra: det.obra?.title,
-        origem: det.plataforma,
+        origem: det.platform,
         severity: det.obra ? "media" as const : "alta" as const,
         risco_score: det.obra ? 45 : 65,
-        data: det.detectado_em.split("T")[0],
+        data: det.detected_at.split("T")[0],
         status: "aberta" as const,
       })),
     [filtered],

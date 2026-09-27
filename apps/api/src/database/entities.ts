@@ -1931,13 +1931,13 @@ export class ContentDetectionEntity {
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid', nullable: true }) work_id: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
-  @Column({ type: 'varchar', length: 100 }) plataforma: string;
-  @Column({ type: 'varchar', length: 500, nullable: true }) titulo_detectado: string | null;
+  @Column({ type: 'varchar', length: 100 }) platform: string;
+  @Column({ type: 'varchar', length: 500, nullable: true }) detected_title: string | null;
   @Column({ type: 'text', nullable: true }) url: string | null;
   @Column({ type: 'decimal', precision: 5, scale: 4, nullable: true }) score: string | null;
   @Column({ type: 'varchar', length: 50, default: ContentDetectionStatus.PENDING }) status: ContentDetectionStatus;
-  @Column({ type: 'varchar', length: 100, default: 'uso_nao_autorizado' }) type: string;
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }) detectado_em: Date;
+  @Column({ type: 'varchar', length: 100, default: 'unauthorized_use' }) type: string;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }) detected_at: Date;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;

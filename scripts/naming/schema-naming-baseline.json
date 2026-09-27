@@ -1,5 +1,5 @@
 {
- "total": 272,
+ "total": 268,
  "debt": {
   "schema::column::artists.agencia": 1,
   "schema::column::artists.agencia_booking": 1,
@@ -69,9 +69,6 @@
   "schema::column::clients.status_contato": 1,
   "schema::column::clients.telefone_encrypted": 1,
   "schema::column::clients.tipo_pessoa": 1,
-  "schema::column::content_detections.detectado_em": 1,
-  "schema::column::content_detections.plataforma": 1,
-  "schema::column::content_detections.titulo_detectado": 1,
   "schema::column::contract_service_types.conteudo": 1,
   "schema::column::contract_templates.conteudo": 1,
   "schema::column::contract_templates.tipo_servico": 1,
@@ -258,7 +255,6 @@
   "schema::constraint::shares.chk_shares_percentual_range": 1,
   "schema::constraint::work_participants.chk_work_participants_percentual": 1,
   "schema::default-value::clients.tipo_pessoa::pessoa_juridica": 1,
-  "schema::default-value::content_detections.type::uso_nao_autorizado": 1,
   "schema::default-value::contract_service_types.financial_model::valor_fixo": 1,
   "schema::default-value::contract_service_types.financial_payment_frequency::unico": 1,
   "schema::default-value::ecad_reports.status::pendente": 1,

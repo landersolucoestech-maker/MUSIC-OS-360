@@ -28,7 +28,7 @@ describe('ContentDetectionsService — cross-tenant FK ownership (find-20d3d9bd)
     const { service } = makeService(jest.fn(async () => []));
     await expect(
       service.create('tenant-1', {
-        plataforma: 'youtube', work_id: '323e4567-e89b-12d3-a456-426614174000',
+        platform: 'youtube', work_id: '323e4567-e89b-12d3-a456-426614174000',
       } as unknown as CreateContentDetectionDto),
     ).rejects.toBeInstanceOf(BadRequestException);
   });
@@ -37,7 +37,7 @@ describe('ContentDetectionsService — cross-tenant FK ownership (find-20d3d9bd)
     const { service } = makeService(jest.fn(async () => []));
     await expect(
       service.create('tenant-1', {
-        plataforma: 'youtube', artist_id: '323e4567-e89b-12d3-a456-426614174000',
+        platform: 'youtube', artist_id: '323e4567-e89b-12d3-a456-426614174000',
       } as unknown as CreateContentDetectionDto),
     ).rejects.toBeInstanceOf(BadRequestException);
   });
@@ -46,7 +46,7 @@ describe('ContentDetectionsService — cross-tenant FK ownership (find-20d3d9bd)
     const { service, repo } = makeService(jest.fn(async () => [{ exists: 1 }]));
     await expect(
       service.create('tenant-1', {
-        plataforma: 'youtube',
+        platform: 'youtube',
         work_id: '123e4567-e89b-12d3-a456-426614174000',
         artist_id: '223e4567-e89b-12d3-a456-426614174000',
       } as unknown as CreateContentDetectionDto),
