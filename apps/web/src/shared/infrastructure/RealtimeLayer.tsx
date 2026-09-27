@@ -6,6 +6,12 @@ import { useWsEvent } from '@/shared/hooks/useWsEvent';
 import type { WsNotificationPayload } from '@/shared/lib/ws-events';
 import { QUERY_KEYS } from '@/shared/lib/query-config';
 
+/** Transaction type value (persisted, see TransactionType) → PT-BR toast title. */
+const TRANSACTION_TYPE_TOAST_TITLE: Readonly<Record<string, string>> = {
+  receita: 'Nova receita registrada',
+  despesa: 'Nova despesa registrada',
+};
+
 /**
  * Mounts all real-time subscriptions for the authenticated session.
  *
@@ -85,8 +91,11 @@ function RealtimeSyncAndNotify() {
   });
 
   useWsEvent('finance.transaction.created', (d) => {
-    const type = (d as { type?: string }).type ?? 'transação';
-    toast.info(`Nova ${type} registrada`, { description: 'Financeiro atualizado' });
+    // The persisted transaction type is a technical value; only its PT-BR label is shown.
+    const type = (d as { type?: string }).type;
+    toast.info(`${TRANSACTION_TYPE_TOAST_TITLE[type ?? ''] ?? 'Nova transação registrada'}`, {
+      description: 'Financeiro atualizado',
+    });
   });
 
   useWsEvent('finance.calculated', () => {

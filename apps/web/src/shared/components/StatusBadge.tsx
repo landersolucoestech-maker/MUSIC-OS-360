@@ -1,5 +1,6 @@
 import { Badge, type BadgeVariant } from "@/shared/ui/badge";
 import { cn } from "@/shared/lib/utils";
+import { STATUS_LABELS_PT_BR_BY_DOMAIN, statusLabelPtBr, type StatusDomain } from "@music-os-360/types";
 
 /**
  * StatusBadge — semantic resolver over the single `Badge` component.
@@ -92,6 +93,22 @@ const statusLabels: Record<string, string> = {
   encerrado: "Encerrado",
 };
 
+/**
+ * Canonical (English) status values of every shared enum → PT-BR label, for
+ * callers that do not pass a domain. Domain-specific wording wins when a
+ * `domain` is given; the legacy/PT keys above keep precedence here.
+ */
+const canonicalStatusLabels: Record<string, string> = Object.values(STATUS_LABELS_PT_BR_BY_DOMAIN).reduce<Record<string, string>>(
+  (acc, labels) => {
+    for (const [value, label] of Object.entries(labels)) acc[value] ??= label;
+    return acc;
+  },
+  {},
+);
+
+/** Copy for a status value that no map knows — never the raw technical value. */
+export const UNKNOWN_STATUS_LABEL = "Status não reconhecido";
+
 function normalizeKey(status: string | null | undefined): string {
   return status?.toLowerCase().replace(/ /g, "_") || "";
 }
@@ -101,28 +118,37 @@ export function statusToVariant(status: string | null | undefined): BadgeVariant
   return statusVariants[normalizeKey(status)] ?? "neutral";
 }
 
-/** Readable label for a known status (fallback: prettify the value itself). */
-export function statusLabel(status: string | null | undefined): string {
+/**
+ * PT-BR label of a status. With a `domain`, the canonical label of that enum
+ * is used; otherwise the legacy map, then any canonical label. An unknown
+ * value never reaches the UI raw (no English "Under Review" prettifying).
+ */
+export function statusLabel(status: string | null | undefined, domain?: StatusDomain): string {
+  if (!status) return "—";
   const key = normalizeKey(status);
   return (
-    statusLabels[key] ||
-    (status ?? "").replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    (domain ? statusLabelPtBr(domain, key) : null) ??
+    statusLabels[key] ??
+    canonicalStatusLabels[key] ??
+    UNKNOWN_STATUS_LABEL
   );
 }
 
 interface StatusBadgeProps {
   status: string;
   label?: string;
+  /** Status enum the value belongs to (exact PT-BR wording, e.g. contract "signed" = "Assinado"). */
+  domain?: StatusDomain;
   /** Overrides the resolved variant (use when the context requires it). */
   variant?: BadgeVariant;
   className?: string;
 }
 
-export function StatusBadge({ status, label, variant, className }: StatusBadgeProps) {
+export function StatusBadge({ status, label, domain, variant, className }: StatusBadgeProps) {
   const resolved = variant ?? statusToVariant(status);
   return (
     <Badge variant={resolved} className={className}>
-      {label || statusLabel(status)}
+      {label || statusLabel(status, domain)}
     </Badge>
   );
 }
@@ -157,7 +183,7 @@ export function PriorityBadge({ priority, label, variant, className }: PriorityB
   const resolved = variant ?? priorityVariants[key] ?? "neutral";
   return (
     <Badge variant={resolved} className={className}>
-      {label || priorityLabels[key] || priority}
+      {label || priorityLabels[key] || "Prioridade não reconhecida"}
     </Badge>
   );
 }
