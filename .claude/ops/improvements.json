@@ -5,5 +5,12 @@
     "scope": "runtime",
     "createdAt": "2026-09-26T03:01:44.515Z",
     "appliedAt": null
+  },
+  {
+    "id": "imp-6d9c2a67",
+    "text": "scripts/naming/technical-naming-census.mjs isPtProse() requires a raw score >=2 before flagging a comment/test-title as Portuguese prose. This let at least 21 real Portuguese test titles (describe/it in apps/api and apps/web, e.g. \"AdminDashboard — falha de query nunca vira KPI zerado fabricado\") pass --check as testTitle candidates:0 because they contained only one weak PT_PROSE function word (e.g. only 'nunca') and no PT_TOKENS lexicon noun and no accented character. Found via a manual second-pass broad regex scan during Cluster Zero Z4 closure (mission-a5c14661), not by the tool itself. Recommend: add a PT_STRONG entry for common unmarked verbs already seen in the wild (executa, grava, registra, atualiza, verifica, confirma, concede, popula, produz) and/or lower the prose threshold specifically for describe/it/test string arguments (shorter, higher-precision strings than free-form comments) so a single unambiguous PT verb is sufficient.",
+    "scope": "runtime",
+    "createdAt": "2026-09-27T17:42:53.065Z",
+    "appliedAt": null
   }
 ]

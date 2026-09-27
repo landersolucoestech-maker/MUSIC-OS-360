@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-26T14:50:49.839786Z",
+  "updatedAt": "2026-09-27T18:11:33.444Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -791,15 +791,24 @@
             "evid-43880ef6",
             "evid-32cc8439",
             "evid-efca0182",
-            "evid-f787abfe"
+            "evid-f787abfe",
+            "evid-9ed48113",
+            "evid-c5ee0ca2"
           ],
           "status": "closed"
         },
         {
           "id": "ac-b6bfb292",
           "text": "Z2 PT file/folder names in apps/packages renamed to English (or exception-classified), all importers updated; typecheck/lint/test/build green",
-          "evidenceIds": [],
-          "status": "open"
+          "evidenceIds": [
+            "evid-c5a87f30",
+            "evid-02041e60",
+            "evid-1f918a27",
+            "evid-5d5e06bf",
+            "evid-e6491df0",
+            "evid-b8180957"
+          ],
+          "status": "closed"
         },
         {
           "id": "ac-ffaa4498",
@@ -820,21 +829,38 @@
             "evid-ab849885",
             "evid-a0379cd4",
             "evid-e11eaa49",
-            "evid-94f4f697"
+            "evid-94f4f697",
+            "evid-7dcfd70e",
+            "evid-faa08ee7",
+            "evid-3059581f",
+            "evid-a096bd23",
+            "evid-80c2dda7",
+            "evid-250e9b04"
           ],
           "status": "closed"
         },
         {
           "id": "ac-667c2fe9",
           "text": "Z4 PT test titles translated to English (api + web)",
-          "evidenceIds": [],
-          "status": "open"
+          "evidenceIds": [
+            "evid-cb37376a",
+            "evid-426d6042",
+            "evid-cfd16ea9",
+            "evid-3057769c",
+            "evid-dd397ec3"
+          ],
+          "status": "closed"
         },
         {
           "id": "ac-3ac1239c",
           "text": "Z5 PT technical comments translated to English (api + web + packages + scripts)",
-          "evidenceIds": [],
-          "status": "open"
+          "evidenceIds": [
+            "evid-f426b735",
+            "evid-75a613d3",
+            "evid-d2e537c8",
+            "evid-43039143"
+          ],
+          "status": "closed"
         },
         {
           "id": "ac-c0436ea8",
@@ -1616,6 +1642,30 @@
       "createdAt": "2026-09-26T03:40:08.298Z",
       "justification": "S19=BLOQUEADO_DEPENDENCIA_EXTERNA | curl to docs.autentique.com.br -> CONNECT 403 (proxy organization policy). Handler shape unchanged except dedup key; needs verification against Autentique docs or a captured real delivery (sandbox) by someone with access.",
       "resolvedAt": "2026-09-26T03:44:45.149Z"
+    },
+    {
+      "id": "find-f3417d6e",
+      "category": "A",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/shared/governance/entities.ts,flows.ts,modules.ts,states.ts",
+      "line": null,
+      "summary": "Self-described \"single source of truth\" governance entity/flow/module/state catalog (zero importers repo-wide) still uses pre-Cluster-Zero Portuguese entity/UI-element names (Artista, Obra, Fonograma, Lancamento, Contrato, Transacao, Cliente, Evento, Projeto, Inventario, Funcionario, Licenca, Campanha, LancamentoFormModal, RelatoriosPage) though the real code was already renamed to English. Not detected by scripts/naming/technical-naming-census.mjs (object-literal string values/keys, outside its AST identifier shapes). Some via/typesFile/primaryKey string values may reflect DB columns not yet renamed (Z6 scope), so needs concept-by-concept review before a fix, not a blind rename. In-scope for Z7 (canonical map / single source of truth) closure.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-27T17:34:42.292Z"
+    },
+    {
+      "id": "find-bf6ae57b",
+      "category": "F",
+      "severity": "LOW",
+      "file": "apps/web/src/shared/lib/feature-flags.ts",
+      "line": null,
+      "summary": "MODULES_WITH_INCOMPLETE_BACKEND reason strings (adminKpis/marketingAnalytics/rightsMonitoring/supportChat/externalDataExchange) are Portuguese and getIncompleteBackendReason() has zero callers anywhere in apps/web (dead code, not currently rendered to any user). Ambiguous whether this is meant to become end-user-visible copy (stay PT-BR) or purely an internal engineering completeness registry (should be English per naming-canonical). Needs a product/architecture decision before touching; in-scope for Z6/Z7 disposition, not fixed blind.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-27T17:53:55.956Z"
     }
   ],
   "evidenceIds": [
@@ -1922,13 +1972,37 @@
     "evid-ab849885",
     "evid-a0379cd4",
     "evid-e11eaa49",
-    "evid-94f4f697"
+    "evid-94f4f697",
+    "evid-c5a87f30",
+    "evid-02041e60",
+    "evid-9ed48113",
+    "evid-1f918a27",
+    "evid-cb37376a",
+    "evid-426d6042",
+    "evid-7dcfd70e",
+    "evid-faa08ee7",
+    "evid-3059581f",
+    "evid-f426b735",
+    "evid-75a613d3",
+    "evid-d2e537c8",
+    "evid-43039143",
+    "evid-c5ee0ca2",
+    "evid-5d5e06bf",
+    "evid-e6491df0",
+    "evid-a096bd23",
+    "evid-80c2dda7",
+    "evid-cfd16ea9",
+    "evid-3057769c",
+    "evid-b8180957",
+    "evid-250e9b04",
+    "evid-dd397ec3"
   ],
   "checkpointIds": [
     "chec-e661a7aa",
     "chec-22d1d1fb",
     "chec-34ec7f42",
-    "chec-99522873"
+    "chec-99522873",
+    "chec-95050d7d"
   ],
   "touchedFiles": [],
   "blockers": [],
