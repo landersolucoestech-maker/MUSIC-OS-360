@@ -45,14 +45,14 @@ describe("reportBulkResult", () => {
     vi.clearAllMocks();
   });
 
-  it("sucesso total -> toast.success, nunca warning/error", () => {
+  it("total success -> toast.success, never warning/error", () => {
     reportBulkResult({ succeeded: ["a", "b"], failed: [] }, "excluído", "item");
     expect(toast.success).toHaveBeenCalled();
     expect(toast.warning).not.toHaveBeenCalled();
     expect(toast.error).not.toHaveBeenCalled();
   });
 
-  it("falha total -> toast.error, nunca success", () => {
+  it("total failure -> toast.error, never success", () => {
     reportBulkResult({ succeeded: [], failed: [{ id: "a", error: "x" }] }, "excluído", "item");
     expect(toast.error).toHaveBeenCalled();
     expect(toast.success).not.toHaveBeenCalled();

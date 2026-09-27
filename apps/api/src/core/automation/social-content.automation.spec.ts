@@ -84,7 +84,7 @@ const VALID_JSON = JSON.stringify({
 const IDEMPOTENCY_KEY = 'marketing.content_created:t1:p1';
 
 describe('SocialContentAutomation (marketing.content_created → social-content)', () => {
-  it('executa, registra skill_run e grava marketing_content_posts.metadata.aiSocialContent no sucesso', async () => {
+  it('executes, logs skill_run and saves marketing_content_posts.metadata.aiSocialContent on success', async () => {
     const { ds, query } = makeDs([CONTENT_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

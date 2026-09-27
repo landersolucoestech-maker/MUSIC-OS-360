@@ -34,7 +34,7 @@ function renderDashboard() {
   );
 }
 
-describe("AdminDashboard — falha de query nunca vira KPI zerado fabricado", () => {
+describe("AdminDashboard — a query failure never becomes a fabricated zeroed KPI", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("an endpoint that is down shows 'Indisponível', never a fabricated R$ 0", async () => {

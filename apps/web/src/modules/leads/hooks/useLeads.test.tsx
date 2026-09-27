@@ -32,7 +32,7 @@ describe("useLeads — real loading/success/error states", () => {
     expect(result.current.leads).toEqual([]);
   });
 
-  it("sucesso popula leads reais vindos do service", async () => {
+  it("success populates leads with real data from the service", async () => {
     const rows = [{ id: "1", nomeCompleto: "Fulano", dadosInternosCRM: {} }] as never[];
     vi.mocked(leadsService.list).mockResolvedValue(rows);
     const { result } = renderHook(() => useLeads());

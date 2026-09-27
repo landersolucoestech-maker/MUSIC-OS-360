@@ -85,7 +85,7 @@ const VALID_JSON = JSON.stringify({
 const IDEMPOTENCY_KEY = 'campaign.created:t1:c1';
 
 describe('CampaignPlanAutomation (campaign.created → campaign-plan)', () => {
-  it('executa, registra skill_run e grava campaigns.metadata.aiCampaignPlan no sucesso', async () => {
+  it('executes, logs skill_run and saves campaigns.metadata.aiCampaignPlan on success', async () => {
     const { ds, query } = makeDs([CAMPAIGN_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

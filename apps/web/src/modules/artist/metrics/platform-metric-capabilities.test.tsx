@@ -20,7 +20,7 @@ describe("Capability registry — contrato por plataforma", () => {
     expect(metricCapabilitiesOf("apple-music")).toEqual([]);
   });
 
-  it("Apple Music nunca produz listeners — nem 0, nem N/A", () => {
+  it("Apple Music never produces listeners — not 0, not N/A", () => {
     // Even with values, nothing is rendered as a metric.
     const out = resolvePlatformMetrics("apple_music", {
       monthly_listeners: 1234, followers: 99, subscribers: 5,
@@ -66,7 +66,7 @@ describe("Real zero vs missing metric", () => {
     expect(out[0].value).toBe(0);
   });
 
-  it("null/undefined NUNCA vira 0 fabricado", () => {
+  it("null/undefined NEVER becomes a fabricated 0", () => {
     expect(resolvePlatformMetrics("soundcloud", { followers: null })).toEqual([]);
     expect(resolvePlatformMetrics("soundcloud", { followers: undefined })).toEqual([]);
     expect(resolvePlatformMetrics("soundcloud", {})).toEqual([]);

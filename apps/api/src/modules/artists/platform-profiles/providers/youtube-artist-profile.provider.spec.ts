@@ -55,7 +55,7 @@ describe('YouTubeArtistProfileProvider.resolve', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it('postCount/viewCount ausentes na Soundcharts: total_views/total_videos ficam null (nunca preenchidos por outra API)', async () => {
+  it('postCount/viewCount missing from Soundcharts: total_views/total_videos stay null (never filled from another API)', async () => {
     const soundcharts = {
       resolveArtistByPlatform: jest.fn().mockResolvedValue('uuid-1'),
       getYouTubeAudience: jest.fn().mockResolvedValue(audience(15400, null, null)),

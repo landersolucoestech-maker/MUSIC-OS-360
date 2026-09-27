@@ -17,7 +17,7 @@ function qb(result: unknown) {
 }
 
 describe('ownership prechecks and tenant-scoped final operations', () => {
-  it('confirma upload valido usando update e retorno final escopados por tenant', async () => {
+  it('confirms a valid upload using update and a final tenant-scoped return', async () => {
     const upload = {
       id: 'upload-row-1',
       file_id: 'file-1',
@@ -101,7 +101,7 @@ describe('ownership prechecks and tenant-scoped final operations', () => {
     expect(repo.update).not.toHaveBeenCalled();
   });
 
-  it('atualiza e remove campaign task/asset usando id + campaign_id + tenant_id', async () => {
+  it('updates and removes campaign task/asset using id + campaign_id + tenant_id', async () => {
     const task = { id: 'task-1', campaign_id: 'campaign-1', tenant_id: 'tenant-1', completed_at: null };
     const asset = { id: 'asset-1', campaign_id: 'campaign-1', tenant_id: 'tenant-1' };
     const tasks = {

@@ -36,7 +36,7 @@ const VALID_JSON = JSON.stringify({
 const IDEMPOTENCY_KEY = 'lead.created:t1:l1';
 
 describe('CrmFollowupAutomation (lead.created → crm-followup)', () => {
-  it('executa, registra skill_run e grava leads.metadata.aiFollowup no sucesso', async () => {
+  it('executes, logs skill_run and saves leads.metadata.aiFollowup on success', async () => {
     const { ds, query } = makeDs([LEAD_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

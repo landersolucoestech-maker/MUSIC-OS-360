@@ -23,7 +23,7 @@ describe('GrantMusicosAppAuthenticatedMembership20260802000002', () => {
     expect(isApplicationMigration('GrantMusicosAppAuthenticatedMembership20260802000002')).toBe(true);
   });
 
-  it('concede GRANT authenticated TO musicos_app de forma idempotente (verifica antes de conceder)', () => {
+  it('grants GRANT authenticated TO musicos_app idempotently (checks before granting)', () => {
     expect(migrationSrc).toMatch(/GRANT authenticated TO musicos_app/);
     expect(migrationSrc).toMatch(/pg_auth_members/);
     expect(migrationSrc).toMatch(/alreadyMember/);

@@ -11,7 +11,7 @@ import * as path from "path";
  */
 const src = fs.readFileSync(path.resolve(__dirname, "FileUpload.tsx"), "utf8");
 
-describe("FileUpload — upload real (R2), nunca stub/base64", () => {
+describe("FileUpload — real upload (R2), never stub/base64", () => {
   it("uses useUploadToR2 to persist the file", () => {
     expect(src).toMatch(/useUploadToR2/);
   });

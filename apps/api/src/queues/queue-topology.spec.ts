@@ -89,7 +89,7 @@ describe('queue topology — WorkflowQueueService (behavioral)', () => {
   });
 });
 
-describe('ExternalDataProcessor — job desconhecido falha visivelmente', () => {
+describe('ExternalDataProcessor — unknown job fails visibly', () => {
   const processor = new ExternalDataProcessor({} as never, { runInTenantContext: (_c: unknown, w: () => unknown) => w() } as never);
 
   for (const name of [WORKFLOW_JOB_NAMES.DISTRIBUTION_SYNC, SPOTIFY_JOB_NAMES.ACCOUNT_SYNC, 'qualquer-outro']) {

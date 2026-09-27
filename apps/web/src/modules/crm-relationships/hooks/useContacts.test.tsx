@@ -32,7 +32,7 @@ describe("useContacts — real loading/success/error states", () => {
     expect(result.current.contacts).toEqual([]);
   });
 
-  it("sucesso popula contacts reais vindos do service", async () => {
+  it("success populates contacts with real data from the service", async () => {
     const rows = [{ id: "1", name: "Fulano" }] as never[];
     vi.mocked(contactsService.list).mockResolvedValue(rows);
     const { result } = renderHook(() => useContacts());

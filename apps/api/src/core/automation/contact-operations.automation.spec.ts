@@ -82,7 +82,7 @@ const VALID_JSON = JSON.stringify({
 const IDEMPOTENCY_KEY = 'client.created:t1:c1';
 
 describe('ContactOperationsAutomation (client.created → contact-operations)', () => {
-  it('executa, registra skill_run e grava clients.metadata.aiContactOperations no sucesso', async () => {
+  it('executes, logs skill_run and saves clients.metadata.aiContactOperations on success', async () => {
     const { ds, query } = makeDs([CLIENT_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

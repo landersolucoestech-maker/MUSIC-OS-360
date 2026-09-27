@@ -89,7 +89,7 @@ const VALID_JSON = JSON.stringify({
 const IDEMPOTENCY_KEY = 'transaction.created:t1:x1';
 
 describe('FinancialClassificationAutomation (transaction.created → financial-classification)', () => {
-  it('executa, registra skill_run e grava transactions.metadata.aiClassification no sucesso', async () => {
+  it('executes, logs skill_run and saves transactions.metadata.aiClassification on success', async () => {
     const { ds, query } = makeDs([TX_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

@@ -26,7 +26,7 @@ function fakeSoundcharts(overrides: Partial<Record<keyof SoundchartsService, jes
 const metric = (value: number) => ({ value, observedAt: new Date('2026-08-18T00:00:00Z'), source: 'soundcharts' as const });
 
 describe('Single Soundcharts source per artist metric card', () => {
-  it('Spotify: monthly_listeners vem de getSpotifyMonthlyListeners — nunca de followers', async () => {
+  it('Spotify: monthly_listeners comes from getSpotifyMonthlyListeners — never from followers', async () => {
     const getSpotifyMonthlyListeners = jest.fn().mockResolvedValue(metric(78_029_948));
     const soundcharts = fakeSoundcharts({ getSpotifyMonthlyListeners });
     const provider = new SpotifyArtistProfileProvider(soundcharts);

@@ -36,7 +36,7 @@ const VALID_JSON = JSON.stringify({
 const IDEMPOTENCY_KEY = 'release.approved:t1:rel1';
 
 describe('AudiovisualBriefingAutomation (release.approved → audiovisual-briefing)', () => {
-  it('executa e grava releases.metadata.aiAudiovisualBriefing (chave/skill distintas do marketing)', async () => {
+  it('executes and saves releases.metadata.aiAudiovisualBriefing (key/skill distinct from marketing)', async () => {
     const { ds, query } = makeDs([RELEASE_ROW]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);
