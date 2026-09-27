@@ -589,9 +589,10 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
         popup.close();
         popupRef.current = null;
         const body = await res.json().catch(() => ({})) as Record<string, unknown>;
-        const msg = (body["message"] as string | undefined) ?? `HTTP ${res.status}`;
-        console.error("[OAuth] /oauth/init failed:", msg);
-        toast.error(`Erro ao iniciar autenticação: ${msg}`);
+        // API HttpException messages are PT-BR user copy; anything else stays in the log.
+        const apiMessage = typeof body["message"] === "string" ? body["message"] : null;
+        console.error("[OAuth] /oauth/init failed:", res.status, body["message"]);
+        toast.error(apiMessage ?? "Não foi possível iniciar a conexão com a plataforma. Tente novamente.");
         return;
       }
       const data = (await res.json()) as { exchange_token: string };
@@ -600,7 +601,7 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
       popup.close();
       popupRef.current = null;
       console.error("[OAuth] /oauth/init error:", err);
-      toast.error("Não foi possível conectar à API. Verifique se o servidor está rodando.");
+      toast.error("Não foi possível conectar ao servidor. Tente novamente em instantes.");
       return;
     }
 

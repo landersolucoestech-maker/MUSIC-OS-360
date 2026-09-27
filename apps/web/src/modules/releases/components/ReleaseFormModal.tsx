@@ -861,7 +861,7 @@ export function ReleaseFormModal({
     } catch (err) {
       console.error("[CoverUpload R2]", err);
       if (err instanceof R2NotConfiguredError) {
-        toast.error("Upload indisponível — armazenamento R2 não configurado no servidor.", {
+        toast.error("Envio de arquivos indisponível no momento.", {
           description: "Contate o administrador para habilitar uploads de capa.",
         });
       } else if (err instanceof Error) {
