@@ -1,0 +1,12 @@
+{
+  "id": "evid-f75481e0",
+  "createdAt": "2026-09-27T18:31:53.575Z",
+  "type": "REVIEW",
+  "reviewer": "git-auditor",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "End-of-session git audit of commits a7fdd31..157143b (7 commits): working tree clean, HEAD on claude/exciting-wozniak-be642d, nothing pushed (origin still at a7fdd31), each commit's file list matches its message, aggregate diff (70 files) confined to the described scope (test/comment translations, CZ-020 route call-site rename, canonical-map docs, naming baseline, .claude/ops bookkeeping), zero secrets/credentials found, no destructive git ops in reflog. Flagged (not blocking): no ops.mjs record --kind baseline exists for this mission; branch-creation reflog used as the equivalent starting reference instead.",
+  "workspaceFingerprint": "0217d5f3b51a1139b8e07344cf1a6f3dd1454fd24e439654b35ca82fa358e507",
+  "fingerprintStatus": "BOUND",
+  "head": "157143b088b187e02e2f8cf16d1d4a9532b42eb7"
+}

@@ -19,5 +19,12 @@
     "scope": "runtime",
     "createdAt": "2026-09-27T18:22:55.838Z",
     "appliedAt": null
+  },
+  {
+    "id": "imp-f68f3b28",
+    "text": "In this environment, a nested 'claude -p --agent <name>' subprocess (used as a workaround for STRICT_MULTI_AGENT dispatch when the orchestrator session has no native Task/agent-launch tool -- see p0-classify-vars.json's dispatch field from an earlier session, and this session's own use of it for security-reviewer/repo-intelligence/git-auditor) gets a MORE restrictive sandbox than the parent session: read/search tools (ls/grep/wc/Read) work, but code-interpreter execution (node -e, python3 -c, and by extension node scripts/naming/technical-naming-census.mjs --report) was rejected at the tool-permission layer with no interactive user available to approve it, even though the identical command worked fine when run directly by the top-level orchestrator in the same workspace. This silently degrades a dispatched agent from 'can independently verify' to 'can only grep/read', which the agent itself has to notice and flag (as repo-intelligence did here) rather than something the runtime enforces or warns about up front. Recommend: either make nested claude -p sessions inherit the parent's already-granted permission/trust state for this workspace (it currently prints 'Ignoring 5 permissions.allow entries ... workspace has not been trusted' even though the parent session is clearly already trusted and operating in it), or have ops.mjs/completion-gate detect and reject review evidence produced by a permission-degraded nested session.",
+    "scope": "runtime",
+    "createdAt": "2026-09-27T18:34:42.145Z",
+    "appliedAt": null
   }
 ]

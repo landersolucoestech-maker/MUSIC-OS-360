@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "STRICT_MULTI_AGENT",
   "createdAt": "2026-09-16T01:10:15.717Z",
-  "updatedAt": "2026-09-27T18:21:48.206Z",
+  "updatedAt": "2026-09-27T18:34:31.087Z",
   "impact": {
     "operatorDeclared": null,
     "runtimeDetected": null,
@@ -810,7 +810,9 @@
             "evid-b8180957",
             "evid-97700d9d",
             "evid-ea2d9561",
-            "evid-7dd4e25b"
+            "evid-7dd4e25b",
+            "evid-10eb8790",
+            "evid-f75481e0"
           ],
           "status": "closed"
         },
@@ -1678,6 +1680,18 @@
       "disposition": null,
       "evidenceIds": [],
       "createdAt": "2026-09-27T17:53:55.956Z"
+    },
+    {
+      "id": "find-3a4f13ad",
+      "category": "P",
+      "severity": "INFO",
+      "file": "docs/naming/canonical-naming-map.json,apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+      "line": null,
+      "summary": "Z6 (ac-c0436ea8) triage handoff from an independent repo-intelligence pass (grep-approximated, census --report could not be executed in that nested session -- see companion improvement candidate): the raw 732-distinct-key/3770-occurrence report-only surface overstates the real remaining work. Cross-referencing the top-20 highest-occurrence keys against the 69 existing NC-*/CZ-* concepts found 12/20 already have a decided canonical concept (6 fully closed needing only a formal exceptions[] ledger line, 6 gated behind the already-known transactions v1->v2 ledger NEEDS_PRODUCT_DECISION, NC-019/NC-041). Only 8/20 have no concept at all, of which 4 are self-evident (telefone->phone, endereco->address, nome_artistico->artisticName, tipo_pessoa->personType) and 4 need a real product-owner decision (valor, tipoCliente/tipoPagamento/categoria on transactions, responsavel, genero-as-personal-gender). Single highest-leverage item: apps/api/src/modules/reports/i18n/field-labels.pt-br.ts is a 711-line PT-BR alias/label dictionary whose ~571 keys are ~50% Portuguese-shaped by design (deliberately lists every legacy spelling next to the canonical English one) -- ONE architectural exception-class decision on this file plausibly retires 150-280 of the 732 keys at once, not per-field entries. Realistic remaining business-judgment decision count: ~15-30, not 732. Batching plan (A-G, mechanical to product-decision-gated) recorded in this session's transcript for the next session to execute; this finding itself closes nothing and ac-c0436ea8 remains open pending an authoritative (code-execution-capable) census --report run plus the actual classification work.",
+      "rootCause": null,
+      "disposition": null,
+      "evidenceIds": [],
+      "createdAt": "2026-09-27T18:34:31.086Z"
     }
   ],
   "evidenceIds": [
@@ -2019,7 +2033,9 @@
     "evid-7dd4e25b",
     "evid-b16d01d9",
     "evid-0db0850e",
-    "evid-803e94c3"
+    "evid-803e94c3",
+    "evid-10eb8790",
+    "evid-f75481e0"
   ],
   "checkpointIds": [
     "chec-e661a7aa",

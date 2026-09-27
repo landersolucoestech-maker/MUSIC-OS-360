@@ -1,0 +1,12 @@
+{
+  "id": "evid-10eb8790",
+  "createdAt": "2026-09-27T18:31:45.386Z",
+  "type": "REVIEW",
+  "reviewer": "security-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Independent review of diff a7fdd31..157143b: the only behavior-shaped change (CZ-020 web hooks/queryKeys switching /stats/generos -> /stats/genres) targets an already-existing, identically-guarded (@RequireRole/@RequirePermission), tenant-scoped alias route on unmodified backend controllers; every other change is a PT->EN comment/test-title/doc-field translation with no logic/permission/dependency/secret changes. Noted gap: security-verification-engine.mjs could not run in this nested review session (sandbox approval block with no interactive user), so this PASS rests on manual-equivalent checks, not the canonical automated tool output.",
+  "workspaceFingerprint": "0217d5f3b51a1139b8e07344cf1a6f3dd1454fd24e439654b35ca82fa358e507",
+  "fingerprintStatus": "BOUND",
+  "head": "157143b088b187e02e2f8cf16d1d4a9532b42eb7"
+}
