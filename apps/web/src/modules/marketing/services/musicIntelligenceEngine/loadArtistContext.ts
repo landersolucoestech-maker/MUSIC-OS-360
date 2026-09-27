@@ -16,8 +16,8 @@ export function loadArtistContext(
   catalog: { artistRecord?: Artist; obras: WorkWithRelations[]; fonogramas: PhonogramWithRelations[] },
 ): ArtistProfileContext {
   const artistRecord = catalog.artistRecord;
-  const obras = catalog.obras;
-  const fonogramas = catalog.fonogramas;
+  const works = catalog.obras;
+  const phonograms = catalog.fonogramas;
   const releases = sources.releases.filter((item) => item.artist_id === artist.id || item.artistas?.id === artist.id);
   const projects = sources.projects.filter((item) => item.artistId === artist.id);
   const campaigns = sources.campaigns.filter((item) => item.targetType === "artista" && item.targetId === artist.id);
@@ -26,8 +26,8 @@ export function loadArtistContext(
   const pitchings = sources.suggestions.filter((item) => item.targetId === artist.id || item.targetName === artist.label);
   const genreCandidates = [
     artistRecord?.musicGenre,
-    ...obras.map((item) => item.music_genre),
-    ...fonogramas.map((item) => item.musicGenre),
+    ...works.map((item) => item.music_genre),
+    ...phonograms.map((item) => item.musicGenre),
     ...releases.map((item) => item.music_genre),
   ].filter(Boolean).map(String);
   const publicSignals = [
@@ -47,16 +47,16 @@ export function loadArtistContext(
     artistRecord,
     predominantGenre: mostCommon(genreCandidates),
     subgenres: uniqueStrings([
-      ...fonogramas.map((item) => stringifyValue(item.classificacao)),
+      ...phonograms.map((item) => stringifyValue(item.classificacao)),
       ...releases.map((item) => stringifyValue(item["subgenero"])),
     ]),
     moods: uniqueStrings([
       ...releases.map((item) => stringifyValue(item["mood"])),
-      ...fonogramas.map((item) => stringifyValue(item["mood"])),
+      ...phonograms.map((item) => stringifyValue(item["mood"])),
     ]),
     references: uniqueStrings([
-      ...obras.map((item) => stringifyValue(item.compositor || item.compositores)),
-      ...fonogramas.map((item) => stringifyValue(item.produtores || item.gravadora || item.agregadora)),
+      ...works.map((item) => stringifyValue(item.compositor || item.compositores)),
+      ...phonograms.map((item) => stringifyValue(item.produtores || item.gravadora || item.agregadora)),
       ...releases.map((item) => stringifyValue(item.distribuidora || item.gravadora)),
     ]),
     publicSignals,
@@ -64,10 +64,10 @@ export function loadArtistContext(
     growthRhythm: inferGrowthRhythm(releaseDates, publicSignals),
     catalog: {
       totalReleases: releases.length,
-      totalTracks: fonogramas.length || obras.length,
+      totalTracks: phonograms.length || works.length,
       releaseDates,
       frequency,
-      isrcs: uniqueStrings([...obras.map((item) => item.isrc), ...fonogramas.map((item) => item.isrc), ...releases.map((item) => item.isrc_global)]),
+      isrcs: uniqueStrings([...works.map((item) => item.isrc), ...phonograms.map((item) => item.isrc), ...releases.map((item) => item.isrc_global)]),
     },
     operations: {
       projects,
@@ -81,7 +81,7 @@ export function loadArtistContext(
     scores: {
       geral: score(releases.length + campaigns.length + publicSignals.length + completedTasks, 24),
       branding: score(publicSignals.length + contents.length, 16),
-      catalogo: score(releases.length + fonogramas.length, 20),
+      catalogo: score(releases.length + phonograms.length, 20),
       engajamento: score(publicSignals.length + campaigns.length, 12),
       consistencia: releaseDates.length >= 2 ? score(releaseDates.length, 10) : 20,
       crescimento: score((artistRecord?.spotifyListeners ?? 0) / 1000 + releases.length, 120),

@@ -30,12 +30,12 @@ export function PerfilTab({
   // (capped at the tenant's first 50).
   const { entity: artistRecordWire } = useEntityById<ArtistWireRecord>("artistas", artist?.id);
   const artistRecord: Artist | undefined = artistRecordWire ? wireToArtist(artistRecordWire) : undefined;
-  const { works: obras } = useWorks(!!artist, artist?.id);
-  const { phonograms: fonogramas } = usePhonograms(!!artist, artist?.id);
+  const { works } = useWorks(!!artist, artist?.id);
+  const { phonograms } = usePhonograms(!!artist, artist?.id);
 
   const bundle = useMemo<ArtistProfileBundle | null>(
-    () => artist ? loadArtistContext(artist, sources, { artistRecord, obras, fonogramas }) : null,
-    [artist, sources, artistRecord, obras, fonogramas],
+    () => artist ? loadArtistContext(artist, sources, { artistRecord, obras: works, fonogramas: phonograms }) : null,
+    [artist, sources, artistRecord, works, phonograms],
   );
   const result = useMemo<AiGeneratedResult | null>(() => (
     artist ? getLatestResult(sources.suggestions.filter((item) => item.targetId === artist.id || item.targetName === artist.label), ["analise_artista"]) : null

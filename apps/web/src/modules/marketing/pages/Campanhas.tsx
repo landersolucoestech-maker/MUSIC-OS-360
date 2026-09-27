@@ -164,7 +164,7 @@ function compactNumber(value: number): string {
   return new Intl.NumberFormat("pt-BR").format(Math.round(value));
 }
 
-export default function Campanhas() {
+export default function Campaigns() {
   const { data: campaigns = [], isLoading } = useMarketingCampaigns();
   const createCampaign = useCreateCampaign();
   const updateCampaign = useUpdateCampaign();

@@ -97,7 +97,7 @@ const MODAL_COPY: Record<TaskModalMode, { title: string; description: string; su
   },
 };
 
-export default function Tarefas() {
+export default function Tasks() {
   const { data: tasks = [], isLoading } = useMarketingTasks();
   const createTask = useCreateTask();
   const updateTask = useUpdateTask();
@@ -107,11 +107,11 @@ export default function Tarefas() {
   // The `targetName` field stores the NAME (not the id) and is filtered client-side
   // (searchable: true in the FieldDef) — which is why it uses fetchAllLabels (real
   // pagination, no cap) instead of useArtistas()/useClientes() (capped at 50 per tenant).
-  const { data: artistaNameOptions = [] } = useQuery({
+  const { data: artistNameOptions = [] } = useQuery({
     queryKey: ["marketing-task-target-names", "artistas"],
     queryFn: () => fetchAllLabels("artistas", (a) => a.nome_artistico as string | undefined),
   });
-  const { data: empresaNameOptions = [] } = useQuery({
+  const { data: companyNameOptions = [] } = useQuery({
     queryKey: ["marketing-task-target-names", "clientes"],
     queryFn: () => fetchAllLabels("clientes", (c) => c.name as string | undefined),
   });
@@ -123,13 +123,13 @@ export default function Tarefas() {
 
   const targetOptions = useMemo<TaskTargetOptions>(
     () => ({
-      artista: artistaNameOptions,
+      artista: artistNameOptions,
       projeto_musical: projects
         .map((p) => ({ value: p.name, label: p.name }))
         .filter((o) => o.value),
-      empresa: empresaNameOptions,
+      empresa: companyNameOptions,
     }),
-    [artistaNameOptions, projects, empresaNameOptions],
+    [artistNameOptions, projects, companyNameOptions],
   );
 
   const [search, setSearch] = useState("");

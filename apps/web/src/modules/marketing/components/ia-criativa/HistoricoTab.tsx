@@ -10,7 +10,7 @@ import type { GenerateAiHandler } from "./iaCriativa.types";
 import { ExportButton, StructuredResult, WorkflowSection } from "./Shared";
 import { AI_KIND_LABEL, normalizeResult } from "./iaCriativa.utils";
 
-export function HistoricoTab({
+export function HistoryTab({
   suggestions,
   onGenerate,
 }: {

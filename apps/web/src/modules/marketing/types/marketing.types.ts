@@ -821,7 +821,7 @@ export type CreateInput<T> = Omit<T, "id" | "createdAt" | "updatedAt">;
 // (artist module's 360 view). Backed by hooks/useMetas.
 // ---------------------------------------------------------------------------
 
-export type MetaTipo =
+export type GoalType =
   | "seguidores"
   | "streams"
   | "shows"
@@ -845,7 +845,7 @@ export interface Meta {
   /** Legacy artist-360 label. Prefer nome in new marketing code. */
   title?: string;
   descricao: string;
-  type: MetaTipo;
+  type: GoalType;
   /** Legacy artist-360 type. Prefer type in new marketing code. */
   tipo_meta?: string;
   categoria: string;
@@ -873,7 +873,7 @@ export interface CreateMetaInput {
   nome?: string;
   title?: string;
   descricao: string;
-  type?: MetaTipo | string;
+  type?: GoalType | string;
   tipo_meta?: string;
   categoria: string;
   valorAlvo?: number;

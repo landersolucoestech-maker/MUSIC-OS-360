@@ -151,10 +151,10 @@ export function CampaignOutcomeStep({ state, setState }: BuilderStepProps) {
 
 export function CampaignBasicInfoStep({ state, setState }: BuilderStepProps) {
   // Existing system data — no manual typing, keeps relationships consistent.
-  const { users: usuarios } = useUsers();
+  const { users } = useUsers();
   const { data: projects } = useMarketingProjects();
 
-  const userList = usuarios ?? [];
+  const userList = users ?? [];
   const ownerOption = (u: { id: string; full_name?: string | null; email?: string | null }) =>
     (u.full_name && u.full_name.trim()) || u.email || u.id;
   const selectedOwnerId = userList.find((u) => ownerOption(u) === state.owner)?.id ?? "";

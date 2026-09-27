@@ -5,7 +5,7 @@ import { MARKETING_QUERY_ROOT } from "./useMarketingResource";
 import type {
   CreateMetaInput,
   Meta,
-  MetaTipo,
+  GoalType,
   UpdateMetaInput,
 } from "../types/marketing.types";
 
@@ -23,12 +23,12 @@ function progress(current: number, target: number): number {
   return target > 0 ? Math.min(100, Math.round(current / target * 100)) : 0;
 }
 
-function normalizeType(value?: string): MetaTipo {
-  const allowed: MetaTipo[] = [
+function normalizeType(value?: string): GoalType {
+  const allowed: GoalType[] = [
     "seguidores", "streams", "shows", "receita",
     "engajamento", "lancamentos", "personalizada",
   ];
-  return allowed.includes(value as MetaTipo) ? value as MetaTipo : "personalizada";
+  return allowed.includes(value as GoalType) ? value as GoalType : "personalizada";
 }
 
 function fromApi(row: GoalRow): Meta {

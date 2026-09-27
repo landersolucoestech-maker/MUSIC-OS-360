@@ -238,14 +238,14 @@ function handleExport(format: ExportFormat) {
   toast.info(`Exportação ${format.toUpperCase()} ainda não implementada. Nenhum arquivo foi gerado.`);
 }
 
-export default function Metricas() {
+export default function Metrics() {
   const ctrl = useCentralAnaliticaMarketing();
   const [searchParams] = useSearchParams();
   const releaseId = searchParams.get("releaseId");
-  const { releases: lancamentos } = useReleases();
+  const { releases } = useReleases();
   const selectedRelease = useMemo(
-    () => (releaseId ? lancamentos.find((release) => release.id === releaseId) ?? null : null),
-    [lancamentos, releaseId],
+    () => (releaseId ? releases.find((release) => release.id === releaseId) ?? null : null),
+    [releases, releaseId],
   );
   const releaseContent = useMemo(() => {
     if (!releaseId) return ctrl.content;

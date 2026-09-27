@@ -37,7 +37,7 @@ const QUICK_LINKS = [
   { href: "/marketing/ia-criativa", icon: Sparkles, label: "IA Criativa" },
 ];
 
-export default function VisaoGeral() {
+export default function Overview() {
   const { data, isLoading } = useMarketingDashboard();
 
   return (

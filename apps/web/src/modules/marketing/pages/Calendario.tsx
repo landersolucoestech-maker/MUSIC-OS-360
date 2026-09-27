@@ -77,7 +77,7 @@ import { MarketingCalendarView, ALL_FILTER, type MarketingCalendarViewMode } fro
 import { useProjectAssetLibrary } from "../hooks/useMarketingAssets";
 import { useCreateContent, useMarketingContents, useUpdateContent } from "../hooks/useMarketingContents";
 import { CONTENT_STATUS_OPTIONS } from "../constants/marketing.constants";
-import { conteudoSchema } from "../forms/conteudo-schema";
+import { contentSchema } from "../forms/conteudo-schema";
 import {
   ASPECT_CLASS,
   PREVIEW_PLATFORM_NAME,
@@ -134,7 +134,7 @@ type ContentScheduleModalProps = {
   onSubmit: (values: ContentFormValues) => void;
 };
 
-export default function Calendario() {
+export default function Calendar() {
   const { data: contents = [], isLoading } = useMarketingContents();
   const createContent = useCreateContent();
   const updateContent = useUpdateContent();
@@ -161,15 +161,15 @@ export default function Calendario() {
     });
   }, [contents, search, channelFilter, typeFilter, statusFilter]);
 
-  const metricas = useMemo(() => {
+  const metrics = useMemo(() => {
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
     const limite = new Date(hoje);
     limite.setDate(limite.getDate() + 7);
 
-    const agendados = contents.filter((content) => content.status === "agendado").length;
-    const publicados = contents.filter((content) => content.status === "publicado").length;
-    const proximos7Dias = contents.filter((content) => {
+    const scheduled = contents.filter((content) => content.status === "agendado").length;
+    const published = contents.filter((content) => content.status === "publicado").length;
+    const next7Days = contents.filter((content) => {
       if (!content.publishDate) return false;
       const data = new Date(content.publishDate);
       if (Number.isNaN(data.getTime())) return false;
@@ -177,7 +177,7 @@ export default function Calendario() {
       return data >= hoje && data <= limite;
     }).length;
 
-    return { total: contents.length, agendados, publicados, proximos7Dias };
+    return { total: contents.length, agendados: scheduled, publicados: published, proximos7Dias: next7Days };
   }, [contents]);
 
   const periodLabel = formatPeriodLabel(view, referenceDate);
@@ -225,10 +225,10 @@ export default function Calendario() {
       >
         <div className="space-y-6">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <MetricCard title="Conteúdos" value={metricas.total} description="no total" icon={CalendarDays} accent="primary" />
-            <MetricCard title="Agendados" value={metricas.agendados} description="aguardando publicação" icon={Clock} accent="warning" />
-            <MetricCard title="Publicados" value={metricas.publicados} description="conteúdos publicados" icon={CheckCircle2} accent="success" />
-            <MetricCard title="Próximos 7 dias" value={metricas.proximos7Dias} description="na próxima semana" icon={CalendarClock} accent="primary" />
+            <MetricCard title="Conteúdos" value={metrics.total} description="no total" icon={CalendarDays} accent="primary" />
+            <MetricCard title="Agendados" value={metrics.agendados} description="aguardando publicação" icon={Clock} accent="warning" />
+            <MetricCard title="Publicados" value={metrics.publicados} description="conteúdos publicados" icon={CheckCircle2} accent="success" />
+            <MetricCard title="Próximos 7 dias" value={metrics.proximos7Dias} description="na próxima semana" icon={CalendarClock} accent="primary" />
           </div>
 
           <div className="flex flex-wrap items-center gap-2 rounded-lg bg-muted/30 p-3">
@@ -354,7 +354,7 @@ function ContentScheduleModal({
   const { getConnectionsByCategory } = useMarketingOAuth();
 
   // ITEM 6 rule: only company content can publish via an integration.
-  const isEmpresa = values.targetType === "empresa";
+  const isCompany = values.targetType === "empresa";
   // Connected corporate accounts (publishing via authorized integrations).
   const integratedAccounts = getConnectionsByCategory("corporate_metrics").filter((c) => c.connected);
   const contextLabel = "Artista";
@@ -497,14 +497,14 @@ function ContentScheduleModal({
     // any real call to the platform ever happening. delay=0 when
     // scheduled_for has already passed/is now, so this still publishes immediately
     // when the chosen date/time is "now".
-    const nextStatus: ContentStatus = !isEmpresa
+    const nextStatus: ContentStatus = !isCompany
       ? "agendado"
       : publish
         ? "agendado"
         : values.status;
     const nextValues: ContentFormValues = { ...values, status: nextStatus };
 
-    const parsed = conteudoSchema.safeParse(nextValues);
+    const parsed = contentSchema.safeParse(nextValues);
     if (!parsed.success) {
       const next: Partial<Record<keyof ContentFormValues, string>> = {};
       for (const issue of parsed.error.issues) {
@@ -515,7 +515,7 @@ function ContentScheduleModal({
       return;
     }
 
-    if (publish && isEmpresa && values.integratedAccountId === "none") {
+    if (publish && isCompany && values.integratedAccountId === "none") {
       setErrors((prev) => ({ ...prev, integratedAccountId: "Selecione a conta integrada para publicar." }));
       return;
     }
@@ -615,7 +615,7 @@ function ContentScheduleModal({
                     </SelectContent>
                   </Select>
                 </FieldBlock>
-                {!isEmpresa && (
+                {!isCompany && (
                   <FieldBlock label="Artista" required error={errors.targetName}>
                     <Select value={values.targetName} onValueChange={(value) => setValue("targetName", value)}>
                       <SelectTrigger>
@@ -735,7 +735,7 @@ function ContentScheduleModal({
                   </Button>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="mt-3 space-y-3 rounded-lg border border-border p-3">
-                  {isEmpresa ? (
+                  {isCompany ? (
                     <>
                       <FieldBlock
                         label="Conta integrada (publicação)"
@@ -818,7 +818,7 @@ function ContentScheduleModal({
             </div>
           </div>
 
-          {mode === "edit" && isEmpresa && (
+          {mode === "edit" && isCompany && (
             <div className="border-t border-border p-3">
               <SkillRunPanel
                 label="Verificar prontidão para publicação (IA)"
@@ -836,14 +836,14 @@ function ContentScheduleModal({
             </Button>
             <Button
               type="submit"
-              variant={isEmpresa ? "outline" : "default"}
+              variant={isCompany ? "outline" : "default"}
               className="h-9 sm:w-[204px]"
               disabled={submitting}
             >
               {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {mode === "edit" ? "Salvar Agendamento" : "Agendar Conteúdo"}
             </Button>
-            {isEmpresa && (
+            {isCompany && (
               <Button
                 type="button"
                 className="h-9 sm:w-[204px]"

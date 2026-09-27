@@ -16,7 +16,7 @@ import { PerfilTab } from "./PerfilTab";
 import { PitchingTab } from "./PitchingTab";
 import { TendenciasTab } from "./TendenciasTab";
 import { AnalyticsTab } from "./AnalyticsTab";
-import { HistoricoTab } from "./HistoricoTab";
+import { HistoryTab } from "./HistoricoTab";
 import { PlanejamentoTab } from "./PlanejamentoTab";
 
 const TABS: Array<{ value: AiTab; label: string; icon: typeof Sparkles }> = [
@@ -36,7 +36,7 @@ function isAiTab(value: string): value is AiTab {
 export function AiCreativeWorkspace() {
   const { tenant } = useTenant();
   const { data: suggestions = [] } = useAiSuggestions();
-  const { releases: lancamentos = [] } = useReleases();
+  const { releases: releases = [] } = useReleases();
   const { data: marketingProjects = [] } = useMarketingProjects();
   const { data: campaigns = [] } = useMarketingCampaigns();
   const { data: contents = [] } = useMarketingContents();
@@ -91,7 +91,7 @@ export function AiCreativeWorkspace() {
       <TabsContent value="perfil">
         <PerfilTab
           sources={{
-            releases: lancamentos,
+            releases,
             projects: marketingProjects,
             campaigns,
             contents,
@@ -105,7 +105,7 @@ export function AiCreativeWorkspace() {
       <TabsContent value="pitching">
         <PitchingTab
           sources={{
-            releases: lancamentos,
+            releases,
             projects: marketingProjects,
             campaigns,
             contents,
@@ -133,13 +133,13 @@ export function AiCreativeWorkspace() {
       </TabsContent>
       <TabsContent value="planejamento">
         <PlanejamentoTab
-          releaseOptions={lancamentos.map((release) => ({ id: release.id, label: release.title, helper: release.music_genre || undefined }))}
+          releaseOptions={releases.map((release) => ({ id: release.id, label: release.title, helper: release.music_genre || undefined }))}
           onGenerate={handleGenerate}
           isGenerating={generate.isPending}
         />
       </TabsContent>
       <TabsContent value="historico">
-        <HistoricoTab suggestions={suggestions} onGenerate={handleGenerate} />
+        <HistoryTab suggestions={suggestions} onGenerate={handleGenerate} />
       </TabsContent>
     </Tabs>
   );

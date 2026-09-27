@@ -15,7 +15,7 @@ export const mediaItemSchema = z.object({
 
 export type MediaItemInput = z.infer<typeof mediaItemSchema>;
 
-export const conteudoSchema = z
+export const contentSchema = z
   .object({
     title: z
       .string()
@@ -68,4 +68,4 @@ export const conteudoSchema = z
     }
   });
 
-export type ConteudoSchemaInput = z.infer<typeof conteudoSchema>;
+export type ContentSchemaInput = z.infer<typeof contentSchema>;
