@@ -9,7 +9,7 @@
 export type DetectionStatus = "pending" | "in_progress" | "completed" | "rejected" | "archived";
 export type EcadReportStatus = "pendente" | "importado" | "concluido" | "erro";
 
-export interface CatalogObraRef {
+export interface CatalogWorkRef {
   id: string;
   title: string;
   compositor: string | null;

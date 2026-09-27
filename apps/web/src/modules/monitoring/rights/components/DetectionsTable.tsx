@@ -3,7 +3,7 @@ import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { CheckCircle, AlertTriangle, XCircle, Clock, Archive, Radio, ExternalLink } from "lucide-react";
-import type { ContentDetection, DetectionStatus, CatalogObraRef } from "../types";
+import type { ContentDetection, DetectionStatus, CatalogWorkRef } from "../types";
 import { formatRightsDateTime } from "../utils/date-format";
 
 const STATUS_CONFIG: Record<DetectionStatus, { label: string; variant: BadgeVariant; icon: React.ReactNode }> = {
@@ -15,7 +15,7 @@ const STATUS_CONFIG: Record<DetectionStatus, { label: string; variant: BadgeVari
 };
 
 export interface DetectionRow extends ContentDetection {
-  obra?: CatalogObraRef;
+  obra?: CatalogWorkRef;
 }
 
 interface Props {

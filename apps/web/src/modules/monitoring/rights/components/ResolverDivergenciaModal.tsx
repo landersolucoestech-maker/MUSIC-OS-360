@@ -45,11 +45,11 @@ interface Props {
 }
 
 export function ResolverDivergenciaModal({ divergencia, open, onOpenChange, onSubmit }: Props) {
-  const [observacoes, setObservacoes] = useState("");
+  const [notes, setNotes] = useState("");
 
   // Repopulate when opening/switching the discrepancy
   useEffect(() => {
-    if (open) setObservacoes(divergencia?.observacoes ?? "");
+    if (open) setNotes(divergencia?.observacoes ?? "");
   }, [open, divergencia]);
 
   if (!divergencia) return null;
@@ -58,18 +58,18 @@ export function ResolverDivergenciaModal({ divergencia, open, onOpenChange, onSu
   const st = STATUS[divergencia.status];
   const criadaEm = divergencia.data_criacao ?? divergencia.data;
 
-  const aplicar = (novoStatus: Divergencia["status"], acao: string) => {
+  const aplicar = (newStatus: Divergencia["status"], acao: string) => {
     const data = today();
-    const historico = [
+    const history = [
       ...(divergencia.historico ?? []),
       { data, acao, por: "Você" },
     ];
     const updated: Divergencia = {
       ...divergencia,
-      status: novoStatus,
-      observacoes: observacoes.trim() || undefined,
-      data_resolucao: novoStatus === "resolvida" ? data : undefined,
-      historico,
+      status: newStatus,
+      observacoes: notes.trim() || undefined,
+      data_resolucao: newStatus === "resolvida" ? data : undefined,
+      historico: history,
     };
     onSubmit(updated);
     onOpenChange(false);
@@ -136,8 +136,8 @@ export function ResolverDivergenciaModal({ divergencia, open, onOpenChange, onSu
             </Label>
             <Textarea
               id="div-observacoes"
-              value={observacoes}
-              onChange={(e) => setObservacoes(e.target.value)}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
               placeholder="Registre o tratamento, decisões ou contexto da resolução…"
               className="min-h-[80px] text-sm"
               data-testid="textarea-observacoes-divergencia"

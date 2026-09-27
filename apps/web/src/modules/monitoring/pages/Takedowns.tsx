@@ -81,14 +81,14 @@ export default function Takedowns() {
   // (pendente/em_andamento/concluído) is the same as always, except it now
   // iterates over {status: count} (few entries) instead of the full list.
   const { stats: takedownsStats } = useTakedownsStats();
-  const metricas = useMemo(() => {
-    let pendentes = 0, resolvidos = 0, emAndamento = 0;
+  const metrics = useMemo(() => {
+    let pending = 0, resolvidos = 0, emAndamento = 0;
     for (const [status, count] of Object.entries(takedownsStats.byGroup)) {
-      if (isPending(status)) pendentes += count;
+      if (isPending(status)) pending += count;
       else if (isResolved(status)) resolvidos += count;
       else if (isInProgress(status)) emAndamento += count;
     }
-    return { total: takedownsStats.total, pendentes, resolvidos, emAndamento };
+    return { total: takedownsStats.total, pendentes: pending, resolvidos, emAndamento };
   }, [takedownsStats]);
 
   // The table renders the current page returned by the backend directly
@@ -159,10 +159,10 @@ export default function Takedowns() {
       <div className="space-y-6">
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <MetricCard title="Total" value={metricas.total} icon={AlertTriangle} accent="primary" />
-          <MetricCard title="Pendentes" value={metricas.pendentes} icon={Clock} accent="warning" />
-          <MetricCard title="Em Andamento" value={metricas.emAndamento} icon={Upload} accent="primary" />
-          <MetricCard title="Resolvidos" value={metricas.resolvidos} icon={CheckCircle} accent="success" />
+          <MetricCard title="Total" value={metrics.total} icon={AlertTriangle} accent="primary" />
+          <MetricCard title="Pendentes" value={metrics.pendentes} icon={Clock} accent="warning" />
+          <MetricCard title="Em Andamento" value={metrics.emAndamento} icon={Upload} accent="primary" />
+          <MetricCard title="Resolvidos" value={metrics.resolvidos} icon={CheckCircle} accent="success" />
         </div>
 
         <div className="flex items-center gap-2">

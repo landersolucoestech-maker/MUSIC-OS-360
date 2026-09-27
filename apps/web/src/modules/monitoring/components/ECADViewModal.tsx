@@ -8,12 +8,12 @@ import { Badge } from "@/shared/ui/badge";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { EcadIcon } from "@/shared/ui/brand-icons";
 import { CheckCircle, AlertTriangle, Clock, FileText } from "lucide-react";
-import type { EcadReport, CatalogObraRef } from "@/modules/monitoring/rights/types";
+import type { EcadReport, CatalogWorkRef } from "@/modules/monitoring/rights/types";
 import { formatRightsDate } from "@/modules/monitoring/rights/utils/date-format";
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
 
 export interface EcadReportRow extends EcadReport {
-  obra?: CatalogObraRef;
+  obra?: CatalogWorkRef;
 }
 
 interface ECADViewModalProps {
@@ -45,7 +45,7 @@ export function ECADViewModal({ open, onOpenChange, report }: ECADViewModalProps
     }
   };
 
-  const valor = Number(report.net_amount ?? report.gross_amount ?? 0);
+  const amount = Number(report.net_amount ?? report.gross_amount ?? 0);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -70,7 +70,7 @@ export function ECADViewModal({ open, onOpenChange, report }: ECADViewModalProps
                 <p className="text-sm text-muted-foreground">Valor Bruto</p>
               </div>
               <div className="p-4 bg-muted/30 rounded-lg text-center">
-                <p className="text-lg font-bold text-success">{fmtBRL(valor)}</p>
+                <p className="text-lg font-bold text-success">{fmtBRL(amount)}</p>
                 <p className="text-sm text-muted-foreground">Valor Líquido</p>
               </div>
             </div>

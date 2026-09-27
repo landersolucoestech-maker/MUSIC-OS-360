@@ -90,7 +90,7 @@ const STATUS_LABELS: Record<RightsRecord["status"], string> = {
  * FUTURE MIGRATION: receive real data from useEcadArrecadacao / useUbcDistribuicao.
  */
 export function fromRightsRecord(record: RightsRecord): MonitoringRightsEntry {
-  const valorBrl = (record.valor_bruto_cents / 100).toLocaleString("pt-BR", {
+  const grossAmountBrl = (record.valor_bruto_cents / 100).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
@@ -105,7 +105,7 @@ export function fromRightsRecord(record: RightsRecord): MonitoringRightsEntry {
     iswc: record.iswc ?? null,
     title: record.fonograma_titulo ?? record.obra_titulo ?? null,
     periodo,
-    valor_bruto_brl: valorBrl,
+    valor_bruto_brl: grossAmountBrl,
     status: record.status,
     status_label: STATUS_LABELS[record.status],
     plataformas: record.plataformas ?? [],
@@ -152,7 +152,7 @@ function formatPeriodo(iso: string): string {
  */
 function extractIsrcFromTakedown(takedown: Takedown): string | undefined {
   const isrcPattern = /[A-Z]{2}[A-Z0-9]{3}\d{7}/;
-  const motivo = takedown.motivo ?? "";
-  const match = isrcPattern.exec(motivo);
+  const reason = takedown.motivo ?? "";
+  const match = isrcPattern.exec(reason);
   return match?.[0];
 }

@@ -117,5 +117,5 @@ export const typeLabel = (type?: string | null): string =>
   type === "enviado" ? "Enviado por nós" : type === "recebido" ? "Recebido (Claim)" : "—";
 
 // ── Priority ────────────────────────────────────────────────────────────────────
-const PRIORIDADE_LABEL: Record<string, string> = { alta: "Alta", media: "Média", baixa: "Baixa" };
-export const prioridadeLabel = (p?: string | null): string => (p ? PRIORIDADE_LABEL[p] ?? p : "—");
+const PRIORITY_LABEL: Record<string, string> = { alta: "Alta", media: "Média", baixa: "Baixa" };
+export const priorityLabel = (p?: string | null): string => (p ? PRIORITY_LABEL[p] ?? p : "—");

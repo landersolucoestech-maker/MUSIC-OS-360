@@ -3,10 +3,10 @@ import {
   buildIsrcIndex,
   computeEcadMatchRate,
   findOrphanIsrcs,
-  type CatalogObra,
+  type CatalogWork,
 } from "./catalog-lookup";
 
-const makeObra = (overrides: Partial<CatalogObra> = {}): CatalogObra => ({
+const makeWork = (overrides: Partial<CatalogWork> = {}): CatalogWork => ({
   id: "obra-test-1",
   title: "Test Song",
   compositor: "Test Composer",
@@ -24,11 +24,11 @@ const makeObra = (overrides: Partial<CatalogObra> = {}): CatalogObra => ({
 
 describe("buildIsrcIndex", () => {
   it("builds a Map indexed by ISRC", () => {
-    const obras = [
-      makeObra({ isrc: "BRMSC2500001", title: "Song A" }),
-      makeObra({ id: "obra-2", isrc: "BRMSC2500002", title: "Song B" }),
+    const works = [
+      makeWork({ isrc: "BRMSC2500001", title: "Song A" }),
+      makeWork({ id: "obra-2", isrc: "BRMSC2500002", title: "Song B" }),
     ];
-    const index = buildIsrcIndex(obras);
+    const index = buildIsrcIndex(works);
     expect(index.size).toBe(2);
     expect(index.get("BRMSC2500001")?.title).toBe("Song A");
     expect(index.get("BRMSC2500002")?.title).toBe("Song B");
@@ -40,22 +40,22 @@ describe("buildIsrcIndex", () => {
   });
 
   it("skips obras with empty/falsy ISRC", () => {
-    const obras = [
-      makeObra({ isrc: "" }),
-      makeObra({ isrc: "BRMSC2500001" }),
+    const works = [
+      makeWork({ isrc: "" }),
+      makeWork({ isrc: "BRMSC2500001" }),
     ];
-    const index = buildIsrcIndex(obras);
+    const index = buildIsrcIndex(works);
     expect(index.size).toBe(1);
     expect(index.has("")).toBe(false);
     expect(index.has("BRMSC2500001")).toBe(true);
   });
 
   it("last obra wins when duplicate ISRCs exist", () => {
-    const obras = [
-      makeObra({ isrc: "BRMSC2500001", title: "First" }),
-      makeObra({ id: "obra-dup", isrc: "BRMSC2500001", title: "Second" }),
+    const works = [
+      makeWork({ isrc: "BRMSC2500001", title: "First" }),
+      makeWork({ id: "obra-dup", isrc: "BRMSC2500001", title: "Second" }),
     ];
-    const index = buildIsrcIndex(obras);
+    const index = buildIsrcIndex(works);
     expect(index.size).toBe(1);
     expect(index.get("BRMSC2500001")?.title).toBe("Second");
   });
@@ -68,11 +68,11 @@ describe("computeEcadMatchRate", () => {
   });
 
   it("returns 100 when all ISRCs have a catalog obra with cod_ecad", () => {
-    const obras = [
-      makeObra({ isrc: "ISRC-A", cod_ecad: "ECAD-001" }),
-      makeObra({ id: "obra-b", isrc: "ISRC-B", cod_ecad: "ECAD-002" }),
+    const works = [
+      makeWork({ isrc: "ISRC-A", cod_ecad: "ECAD-001" }),
+      makeWork({ id: "obra-b", isrc: "ISRC-B", cod_ecad: "ECAD-002" }),
     ];
-    const index = buildIsrcIndex(obras);
+    const index = buildIsrcIndex(works);
     expect(computeEcadMatchRate(["ISRC-A", "ISRC-B"], index)).toBe(100);
   });
 
@@ -82,44 +82,44 @@ describe("computeEcadMatchRate", () => {
   });
 
   it("returns 0 when obra exists but cod_ecad is null", () => {
-    const obra = makeObra({ isrc: "ISRC-A", cod_ecad: null });
-    const index = buildIsrcIndex([obra]);
+    const work = makeWork({ isrc: "ISRC-A", cod_ecad: null });
+    const index = buildIsrcIndex([work]);
     expect(computeEcadMatchRate(["ISRC-A"], index)).toBe(0);
   });
 
   it("computes partial match rate (rounded)", () => {
-    const obras = [
-      makeObra({ isrc: "ISRC-A", cod_ecad: "ECAD-001" }),
-      makeObra({ id: "obra-b", isrc: "ISRC-B", cod_ecad: null }),
-      makeObra({ id: "obra-c", isrc: "ISRC-C", cod_ecad: "ECAD-003" }),
+    const works = [
+      makeWork({ isrc: "ISRC-A", cod_ecad: "ECAD-001" }),
+      makeWork({ id: "obra-b", isrc: "ISRC-B", cod_ecad: null }),
+      makeWork({ id: "obra-c", isrc: "ISRC-C", cod_ecad: "ECAD-003" }),
     ];
-    const index = buildIsrcIndex(obras);
+    const index = buildIsrcIndex(works);
     const rate = computeEcadMatchRate(["ISRC-A", "ISRC-B", "ISRC-C"], index);
     expect(rate).toBe(67);
   });
 
   it("treats ISRCs missing from catalog as unmatched", () => {
-    const obra = makeObra({ isrc: "ISRC-A", cod_ecad: "ECAD-001" });
-    const index = buildIsrcIndex([obra]);
+    const work = makeWork({ isrc: "ISRC-A", cod_ecad: "ECAD-001" });
+    const index = buildIsrcIndex([work]);
     const rate = computeEcadMatchRate(["ISRC-A", "ORPHAN-001"], index);
     expect(rate).toBe(50);
   });
 
   it("rounds result (e.g. 1/3 → 33)", () => {
-    const obras = [
-      makeObra({ isrc: "ISRC-A", cod_ecad: "ECAD-001" }),
-      makeObra({ id: "obra-b", isrc: "ISRC-B", cod_ecad: null }),
-      makeObra({ id: "obra-c", isrc: "ISRC-C", cod_ecad: null }),
+    const works = [
+      makeWork({ isrc: "ISRC-A", cod_ecad: "ECAD-001" }),
+      makeWork({ id: "obra-b", isrc: "ISRC-B", cod_ecad: null }),
+      makeWork({ id: "obra-c", isrc: "ISRC-C", cod_ecad: null }),
     ];
-    const index = buildIsrcIndex(obras);
+    const index = buildIsrcIndex(works);
     expect(computeEcadMatchRate(["ISRC-A", "ISRC-B", "ISRC-C"], index)).toBe(33);
   });
 });
 
 describe("findOrphanIsrcs", () => {
   it("returns empty array when all ISRCs are in the catalog", () => {
-    const obras = [makeObra({ isrc: "ISRC-A" }), makeObra({ id: "b", isrc: "ISRC-B" })];
-    const index = buildIsrcIndex(obras);
+    const works = [makeWork({ isrc: "ISRC-A" }), makeWork({ id: "b", isrc: "ISRC-B" })];
+    const index = buildIsrcIndex(works);
     expect(findOrphanIsrcs(["ISRC-A", "ISRC-B"], index)).toEqual([]);
   });
 
@@ -130,8 +130,8 @@ describe("findOrphanIsrcs", () => {
   });
 
   it("returns only orphan ISRCs when catalog is partial", () => {
-    const obra = makeObra({ isrc: "ISRC-A" });
-    const index = buildIsrcIndex([obra]);
+    const work = makeWork({ isrc: "ISRC-A" });
+    const index = buildIsrcIndex([work]);
     const orphans = findOrphanIsrcs(["ISRC-A", "ORPHAN-B", "ORPHAN-C"], index);
     expect(orphans).toEqual(["ORPHAN-B", "ORPHAN-C"]);
   });

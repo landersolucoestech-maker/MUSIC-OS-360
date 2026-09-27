@@ -13,10 +13,10 @@ export interface UseTakedownsPaginatedParams {
   plataforma?: string;
 }
 
-export function useTakedownsPaginated({ page, pageSize, search, status, plataforma }: UseTakedownsPaginatedParams) {
+export function useTakedownsPaginated({ page, pageSize, search, status, plataforma: platform }: UseTakedownsPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
-  if (plataforma) filters.plataforma = plataforma;
+  if (platform) filters.plataforma = platform;
 
   const result = usePaginatedDataQuery<TakedownWithRelations>({
     queryKey: [...QUERY_KEYS.TAKEDOWNS],

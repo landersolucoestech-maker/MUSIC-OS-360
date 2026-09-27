@@ -6,7 +6,7 @@
  * fetch data on its own (avoids a second source of truth).
  */
 
-export interface CatalogObra {
+export interface CatalogWork {
   id: string;
   title: string;
   compositor: string;
@@ -21,10 +21,10 @@ export interface CatalogObra {
   duration_text: string;
 }
 
-export function buildIsrcIndex(obras: CatalogObra[]): Map<string, CatalogObra> {
-  const index = new Map<string, CatalogObra>();
-  for (const obra of obras) {
-    if (obra.isrc) index.set(obra.isrc, obra);
+export function buildIsrcIndex(works: CatalogWork[]): Map<string, CatalogWork> {
+  const index = new Map<string, CatalogWork>();
+  for (const work of works) {
+    if (work.isrc) index.set(work.isrc, work);
   }
   return index;
 }
@@ -35,12 +35,12 @@ export function buildIsrcIndex(obras: CatalogObra[]): Map<string, CatalogObra> {
  */
 export function computeEcadMatchRate(
   isrcs: string[],
-  isrcIndex: Map<string, CatalogObra>,
+  isrcIndex: Map<string, CatalogWork>,
 ): number {
   if (isrcs.length === 0) return 0;
   const matched = isrcs.filter((isrc) => {
-    const obra = isrcIndex.get(isrc);
-    return obra && obra.cod_ecad;
+    const work = isrcIndex.get(isrc);
+    return work && work.cod_ecad;
   }).length;
   return Math.round((matched / isrcs.length) * 100);
 }
@@ -50,7 +50,7 @@ export function computeEcadMatchRate(
  */
 export function findOrphanIsrcs(
   isrcs: string[],
-  isrcIndex: Map<string, CatalogObra>,
+  isrcIndex: Map<string, CatalogWork>,
 ): string[] {
   return isrcs.filter((isrc) => !isrcIndex.has(isrc));
 }

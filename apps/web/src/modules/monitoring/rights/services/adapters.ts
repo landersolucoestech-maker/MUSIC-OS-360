@@ -27,7 +27,7 @@ export const acrCloudAdapter = {
     throw new Error("ACRCloud integration not yet enabled. Configure VITE_ACRCLOUD_KEY to activate.");
   },
 
-  toRightsExecution(_result: ACRCloudResult, _origem: string): Record<string, unknown> {
+  toRightsExecution(_result: ACRCloudResult, _origin: string): Record<string, unknown> {
     throw new Error("ACRCloud integration not yet enabled.");
   },
 };

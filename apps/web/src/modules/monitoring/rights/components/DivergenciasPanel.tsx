@@ -11,7 +11,7 @@ import { formatRightsDate } from "../utils/date-format";
 
 export type DivergenciaSeverity = "critica" | "alta" | "media" | "baixa";
 
-export interface DivergenciaHistoricoEntry {
+export interface DivergenceHistoryEntry {
   data: string;
   acao: string;
   por?: string;
@@ -33,7 +33,7 @@ export interface Divergencia {
   responsavel?: string;
   observacoes?: string;
   data_resolucao?: string;
-  historico?: DivergenciaHistoricoEntry[];
+  historico?: DivergenceHistoryEntry[];
 }
 
 const SEVERITY_CONFIG: Record<DivergenciaSeverity, { label: string; variant: BadgeVariant; icon: ReactNode; border: string }> = {

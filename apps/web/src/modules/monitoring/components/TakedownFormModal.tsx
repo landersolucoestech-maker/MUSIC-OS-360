@@ -23,8 +23,8 @@ interface TakedownFormModalProps {
   mode: "create" | "edit" | "view";
 }
 
-const plataformas = ["YouTube", "Spotify", "Apple Music", "Deezer", "SoundCloud", "TikTok", "Instagram", "Facebook", "Twitter/X", "Outra"];
-const motivos = ["Uso não autorizado", "Violação de direitos autorais", "Plágio", "Sample não autorizado", "Distribuição ilegal", "Outro"];
+const platforms = ["YouTube", "Spotify", "Apple Music", "Deezer", "SoundCloud", "TikTok", "Instagram", "Facebook", "Twitter/X", "Outra"];
+const reasons = ["Uso não autorizado", "Violação de direitos autorais", "Plágio", "Sample não autorizado", "Distribuição ilegal", "Outro"];
 
 export function TakedownFormModal({ open, onOpenChange, takedown, mode }: TakedownFormModalProps) {
   const isViewMode = mode === "view";
@@ -262,7 +262,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
                       <SelectValue placeholder="Selecione a plataforma" />
                     </SelectTrigger>
                     <SelectContent>
-                      {plataformas.map(p => (
+                      {platforms.map(p => (
                         <SelectItem key={p} value={p}>{p}</SelectItem>
                       ))}
                     </SelectContent>
@@ -302,7 +302,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
                         <SelectValue placeholder="Selecione o motivo" />
                       </SelectTrigger>
                       <SelectContent>
-                        {motivos.map(m => (
+                        {reasons.map(m => (
                           <SelectItem key={m} value={m}>{m}</SelectItem>
                         ))}
                       </SelectContent>

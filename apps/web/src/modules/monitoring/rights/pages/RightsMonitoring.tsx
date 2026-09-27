@@ -32,7 +32,7 @@ import { useDetections } from "@/modules/monitoring/hooks/useDetections";
 import { useEcadReports } from "@/modules/monitoring/hooks/useEcadReports";
 import { storage } from "@/shared/lib/storage";
 import type { WorkWithRelations } from "@/modules/catalog/types/catalog.types";
-import type { CatalogObraRef } from "../types";
+import type { CatalogWorkRef } from "../types";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 
 type Tab = "detections" | "ecad" | "divergencias";
@@ -54,7 +54,7 @@ export default function RightsMonitoring() {
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [artistaFilter, setArtistFilter] = useState("all");
+  const [artistFilter, setArtistFilter] = useState("all");
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [selectedExec, setSelectedExec] = useState<DetectionRow | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -82,14 +82,14 @@ export default function RightsMonitoring() {
     return [...ids];
   }, [detections, reports]);
 
-  const obraQueries = useQueries({
+  const workQueries = useQueries({
     queries: workIds.map((id) => ({
       queryKey: ["byId", "obras", id],
       queryFn: () => storage.findById<WorkWithRelations & { id: string }>("obras", id),
       staleTime: 30_000,
     })),
   });
-  const loadingObras = obraQueries.some((q) => q.isLoading);
+  const loadingWorks = workQueries.some((q) => q.isLoading);
 
   function handleSync() {
     refetchDet();
@@ -99,9 +99,9 @@ export default function RightsMonitoring() {
 
   // Catalog index by work id — real enrichment (work_id is the
   // real link of content_detections/ecad_reports; there is no server-side join).
-  const obraIndex = useMemo(() => {
-    const map = new Map<string, CatalogObraRef>();
-    obraQueries.forEach((q, i) => {
+  const workIndex = useMemo(() => {
+    const map = new Map<string, CatalogWorkRef>();
+    workQueries.forEach((q, i) => {
       const o = q.data;
       if (!o) return;
       map.set(workIds[i], {
@@ -121,27 +121,27 @@ export default function RightsMonitoring() {
       });
     });
     return map;
-  }, [obraQueries, workIds]);
+  }, [workQueries, workIds]);
 
-  const artistaOptions = useMemo(() => {
+  const artistOptions = useMemo(() => {
     const names = new Set<string>();
-    for (const o of obraIndex.values()) {
+    for (const o of workIndex.values()) {
       if (o.artista_nome) names.add(o.artista_nome);
     }
     return [...names].sort((a, b) => a.localeCompare(b, "pt-BR"));
-  }, [obraIndex]);
+  }, [workIndex]);
 
   const enrichedDetections: DetectionRow[] = useMemo(
-    () => detections.map((det) => ({ ...det, obra: det.work_id ? obraIndex.get(det.work_id) : undefined })),
-    [detections, obraIndex],
+    () => detections.map((det) => ({ ...det, obra: det.work_id ? workIndex.get(det.work_id) : undefined })),
+    [detections, workIndex],
   );
 
   const enrichedReports: EcadReportRow[] = useMemo(
-    () => reports.map((r) => ({ ...r, obra: r.work_id ? obraIndex.get(r.work_id) : undefined })),
-    [reports, obraIndex],
+    () => reports.map((r) => ({ ...r, obra: r.work_id ? workIndex.get(r.work_id) : undefined })),
+    [reports, workIndex],
   );
 
-  const hasActiveFilters = search.trim() !== "" || dateFrom !== "" || dateTo !== "" || artistaFilter !== "all";
+  const hasActiveFilters = search.trim() !== "" || dateFrom !== "" || dateTo !== "" || artistFilter !== "all";
 
   function clearFilters() {
     setSearch("");
@@ -152,7 +152,7 @@ export default function RightsMonitoring() {
 
   const filtered = useMemo(() => {
     return enrichedDetections.filter((det) => {
-      if (artistaFilter !== "all" && det.obra?.artista_nome !== artistaFilter) return false;
+      if (artistFilter !== "all" && det.obra?.artista_nome !== artistFilter) return false;
       if (dateFrom) {
         const d = det.detectado_em.split("T")[0];
         if (d < dateFrom) return false;
@@ -171,7 +171,7 @@ export default function RightsMonitoring() {
       }
       return true;
     });
-  }, [enrichedDetections, search, dateFrom, dateTo, artistaFilter]);
+  }, [enrichedDetections, search, dateFrom, dateTo, artistFilter]);
 
   const detectionsPg = usePagination(filtered, 10);
 
@@ -305,13 +305,13 @@ export default function RightsMonitoring() {
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <Input placeholder="Buscar obra, plataforma, tipo..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-8 h-8 text-sm bg-card border-border" data-testid="input-search-execucoes" />
               </div>
-              <Select value={artistaFilter} onValueChange={setArtistFilter}>
+              <Select value={artistFilter} onValueChange={setArtistFilter}>
                 <SelectTrigger className="h-8 w-auto min-w-[142px] shrink-0 bg-card border-border text-sm" data-testid="select-artista-filter">
                   <SelectValue placeholder="Todos os artistas" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os artistas</SelectItem>
-                  {artistaOptions.map((a) => (
+                  {artistOptions.map((a) => (
                     <SelectItem key={a} value={a}>{a}</SelectItem>
                   ))}
                 </SelectContent>
@@ -335,7 +335,7 @@ export default function RightsMonitoring() {
                     </Button>
                   ) : undefined}
                 />
-                {loadingDet || loadingObras ? (
+                {loadingDet || loadingWorks ? (
                   <div className="py-16 text-center text-sm text-muted-foreground">Carregando...</div>
                 ) : (
                   <>
