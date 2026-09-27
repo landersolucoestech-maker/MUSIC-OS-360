@@ -42,6 +42,6 @@ describe("SchedulerFormModal — does not write formal fields into metadata", ()
   });
 
   it("reads `participantes` primarily from the entity's real column, not only from legacy metadata", () => {
-    expect(SOURCE).toMatch(/normalizeAgendaParticipants\(event\?\.participantes \?\? meta\["participants"\]\)/);
+    expect(SOURCE).toMatch(/normalizeScheduleParticipants\(event\?\.participantes \?\? meta\["participants"\]\)/);
   });
 });

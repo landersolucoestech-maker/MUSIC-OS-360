@@ -20,7 +20,7 @@ Escopo real (seguindo imports/hooks/endpoints, não a pasta `events/`):
 | Subdomínio | FRONTEND_ENTRYPOINT | ENDPOINTS | BACKEND_CONTROLLER | SERVICE | DATABASE_TABLES |
 |---|---|---|---|---|---|
 | EVENT | `Agenda.tsx` (calendário/lista), `SchedulerFormModal.tsx`, `SchedulerViewModal.tsx` | `GET/POST/PATCH/DELETE /events` | `events.controller.ts` | `events.service.ts` | `events` |
-| EVENT_PARTICIPANT | inline em `SchedulerFormModal.tsx`/`SchedulerViewModal.tsx`, via `useAgendaParticipants()` | embutido em `POST/PATCH /events` (campo `participantes`) | `events.controller.ts` | `EventsService.dtoToEntity()` | `events.participantes` (jsonb) |
+| EVENT_PARTICIPANT | inline em `SchedulerFormModal.tsx`/`SchedulerViewModal.tsx`, via `useScheduleParticipants()` | embutido em `POST/PATCH /events` (campo `participantes`) | `events.controller.ts` | `EventsService.dtoToEntity()` | `events.participantes` (jsonb) |
 | VENUE/LOCATION (texto livre, não entidade própria) | `SchedulerFormModal.tsx` (seção "Campos de Local") | idem | idem | idem | `events.local`, `.contato_local`, `.endereco` |
 | BOOKING_CRM (venue via CRM) | `SchedulerFormModal.tsx` (`shouldUseCRMLocal`, tipos show/tv/rádio/podcast) | `GET /clients` (via `useClientes()`) | `clients.controller.ts` (já auditado em `crm-relationships.md`) | — | `clients` (leitura, cópia pontual dos dados no submit) |
 
@@ -86,7 +86,7 @@ real usado pelo resto do módulo, resposta bruta de `EventsService.list()` (colu
 | HOOK | FILE | ENDPOINTS | READ/WRITE | RELATIONS | REALTIME | TENANT_DEP |
 |---|---|---|---|---|---|---|
 | `useEventos` | `hooks/useEventos.ts` | `GET/POST/PATCH/DELETE /events` (via `useDataQuery`/`storage`) | ver §5/§9 | `select: "*, artistas(*)"` — **morto**, `EventsService` nunca faz join/mapeamento de `artistas` (confirmado por leitura completa do service — mesmo padrão morto já visto em `catalog.md`, diferente do padrão real confirmado em `contracts.md`) | não | implícito |
-| `useAgendaParticipants` | `hooks/useAgendaParticipants.ts` | nenhum próprio — agrega `useArtistas()`, `useFuncionarios()` (`rh`, não auditado), `useUsuarios()` (`settings`, não auditado), `useContacts()` (`crm-relationships`, já auditado) | monta uma lista unificada `{source, id, label, email, phone, category}` para o seletor de participantes | 4 fontes cross-module | não | implícito (herdado de cada hook) |
+| `useScheduleParticipants` | `hooks/useScheduleParticipants.ts` | nenhum próprio — agrega `useArtistas()`, `useFuncionarios()` (`rh`, não auditado), `useUsuarios()` (`settings`, não auditado), `useContacts()` (`crm-relationships`, já auditado) | monta uma lista unificada `{source, id, label, email, phone, category}` para o seletor de participantes | 4 fontes cross-module | não | implícito (herdado de cada hook) |
 
 Nenhum hook ativo ficou sem classificação. `orderBy: {column: "data_inicio"}` passado por
 `useEventos()`/`eventService.list()` é **inerte** — `EventsService.list()` (backend) ignora
@@ -105,7 +105,7 @@ coluna própria no DTO/entity". `buildPayload()` produz exatamente os campos ace
 |---|---|---|---|---|---|---|
 | `titulo` | string | sim | `title` | `events.titulo` | sim | |
 | `tipoEvento` (10 opções pt-BR) | select | sim | `type` (via `mapTipoToBackendType()`, mapa explícito 17→7) | `events.tipo` | sim | 4 das 10 categorias do frontend (`sessoes_estudio`, `ensaios`, `sessoes_fotos`, `producao_conteudo`) não têm entrada no mapa e caem no default `"other"` — perda de granularidade deliberada/aceita, não um erro de mapeamento (ver Gap #2) |
-| `participantes[]` (via `useAgendaParticipants`, fontes artist/employee/user/contact) | RELATION_SELECTOR (multi) | não | `participantes` | `events.participantes` (jsonb) | sim | primeiro participante com `source==="artist"` também vira `artistId` |
+| `participantes[]` (via `useScheduleParticipants`, fontes artist/employee/user/contact) | RELATION_SELECTOR (multi) | não | `participantes` | `events.participantes` (jsonb) | sim | primeiro participante com `source==="artist"` também vira `artistId` |
 | `status` (só em edit) | select (5 opções pt-BR) | não | `status` (via `mapStatusToBackend()`, mapa explícito) | `events.status` | sim | |
 | `dataInicio` + `horarioInicio` | date + time (combinados) | `dataInicio` sim, `horarioInicio` não | `startsAt` (ISO combinado via `combineDateAndTime()`) | `events.data` **e** `events.starts_at` (dual-write deliberado, ver §11) | sim | `horarioInicio` é só um input de conveniência — nunca é uma coluna própria, sempre recombinado antes do envio |
 | `dataFim` + `horarioFim` | date + time (combinados) | não | `endsAt` (ISO combinado) | `events.data_fim` | sim | idem |
@@ -184,7 +184,7 @@ ALL_DAY_FIELD:        derivado — allDay: !evento.horario_inicio → SEMPRE tru
                        nunca existe), então TODO evento é tratado como dia inteiro pelo calendário
 TITLE_FIELD:           evento.titulo → correto
 STATUS_FIELD:          evento.status → correto
-RESOURCE_RELATIONS:    summarizeAgendaParticipants(getEventoParticipants(evento)) — via
+RESOURCE_RELATIONS:    summarizeScheduleParticipants(getEventoParticipants(evento)) — via
                        evento.metadata.participants (sempre vazio, pois participantes reais vão
                        para events.participantes, não events.metadata.participants — ver Gap #5)
                        com fallback para evento.artista_id (este sim real e funcional)
@@ -337,7 +337,7 @@ funciona, mas mostra **só o primeiro artista**, perdendo os demais participante
 
 ```
 EVENT_FIELD:      events.artista_id (FK solta, sem constraint declarada — Fase 1: foreign_key=false)
-ARTIST_ENDPOINT:  GET /artists (via useArtistas(), consumido por useAgendaParticipants())
+ARTIST_ENDPOINT:  GET /artists (via useArtistas(), consumido por useScheduleParticipants())
 DATABASE_RELATION: events.artista_id → artists.id (semântica de FK, não enforçada no schema)
 CARDINALITY:      N:1 (um evento tem no máximo 1 "artista principal"; múltiplos artistas só via
                    events.participantes, sem FK)
@@ -500,7 +500,7 @@ diretamente do array `eventos` (a mesma resposta bruta da API, com os mesmos nom
 incorretos do Gap #1) — **a maioria das colunas exportadas viria vazia** (`tipo_evento`,
 `data_inicio`, `horario_inicio`, `horario_fim`, `cidade`, `estado`, `valor_ingresso`, `capacidade`
 — todas sempre `undefined`/`""` no objeto de origem), exceto `titulo`, `status`, `participantes`
-(via `summarizeAgendaParticipants`, funcional), `data_fim`, `local`, `valor_cache`, `descricao`,
+(via `summarizeScheduleParticipants`, funcional), `data_fim`, `local`, `valor_cache`, `descricao`,
 `observacoes` (estes sim com nomes corretos). `XLSX`: `WORKSHEET_COUNT = 1` ("Agenda"),
 `XLSX_RULE_VIOLATION: NÃO` — a regra de no máximo 2 abas é respeitada tanto no export quanto no
 import (single-sheet em ambos), apesar do conteúdo estar incorreto.
@@ -536,7 +536,7 @@ módulos — nenhum filtro vira query-param HTTP real, apesar de `QueryEventDto`
 `status`/`type`/`artistId` no backend).
 
 **SEARCH**: `evento.titulo` (correto) + `evento.local` (correto) +
-`summarizeAgendaParticipants(...)` (parcial, Gap #5) — `.includes()` case-insensitive, 100%
+`summarizeScheduleParticipants(...)` (parcial, Gap #5) — `.includes()` case-insensitive, 100%
 client-side.
 
 **SORT**: nenhum controle de ordenação interativo na UI (`Agenda.tsx` não tem `SortableTableHead`

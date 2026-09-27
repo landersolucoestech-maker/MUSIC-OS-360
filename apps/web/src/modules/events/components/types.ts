@@ -5,7 +5,7 @@ import type { EventStatusValue } from "@/modules/events/types/events.types";
 // compatibility with legacy/unknown values coming from old data.
 export type SchedulerStatus = EventStatusValue | string;
 
-export type AgendaEvent = {
+export type ScheduleEvent = {
   id: string;
   title: string;
   artist?: string;

@@ -26,10 +26,10 @@ import { EntityCalendarView, type CalendarEvent } from "@/shared/components/Enti
 import type { SchedulerViewMode } from "@/modules/events/components/types";
 import { useOperationalSettings } from "@/modules/settings/hooks/useOperationalSettings";
 import {
-  normalizeAgendaParticipants,
-  summarizeAgendaParticipants,
-  useAgendaParticipants,
-} from "@/modules/events/hooks/useAgendaParticipants";
+  normalizeScheduleParticipants,
+  summarizeScheduleParticipants,
+  useScheduleParticipants,
+} from "@/modules/events/hooks/useScheduleParticipants";
 import {
   buildGranularToBackendTypeMap,
   getBackendEventTypeLabel,
@@ -128,7 +128,7 @@ function ToolbarSelect({
   );
 }
 
-export default function Agenda() {
+export default function Schedule() {
   const { events: rawEvents, isLoading: loadingUnbounded, deleteEvent, addEvent } = useEvents();
   const events = rawEvents as Event[];
   const { getOptionsByKind, getItemsByKind } = useOperationalSettings();
@@ -147,7 +147,7 @@ export default function Agenda() {
   );
   const typeFilterBackendValue = (value: string) =>
     value === "all-type" ? undefined : normalizeToBackendType(value, granularToBackendType);
-  const { getArtistParticipantById } = useAgendaParticipants();
+  const { getArtistParticipantById } = useScheduleParticipants();
 
   const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; event?: Event }>({ open: false, mode: "create" });
   const [viewModal, setViewModal] = useState<{ open: boolean; event?: Event }>({ open: false });
@@ -184,7 +184,7 @@ export default function Agenda() {
 
   const getEventParticipants = useMemo(() => (event: Event) => {
     const meta = (event.metadata as Record<string, unknown> | undefined) ?? {};
-    const stored = normalizeAgendaParticipants(meta["participants"]);
+    const stored = normalizeScheduleParticipants(meta["participants"]);
     if (stored.length > 0) return stored;
     const artist = getArtistParticipantById(event.artist_id);
     return artist ? [artist] : [];
@@ -215,7 +215,7 @@ export default function Agenda() {
         title: e.title,
         type: getBackendEventTypeLabel(e.type),
         status: e.status,
-        participantes: summarizeAgendaParticipants(getEventParticipants(e)),
+        participantes: summarizeScheduleParticipants(getEventParticipants(e)),
         start_date: startParts.date,
         horario_inicio: startParts.time,
         end_date: endParts.date,
@@ -308,7 +308,7 @@ export default function Agenda() {
     return scopedEvents.filter((event) =>
       event.title?.toLowerCase().includes(term) ||
       event.local?.toLowerCase().includes(term) ||
-      summarizeAgendaParticipants(getEventParticipants(event)).toLowerCase().includes(term),
+      summarizeScheduleParticipants(getEventParticipants(event)).toLowerCase().includes(term),
     );
   }, [scopedEvents, searchTerm, getEventParticipants]);
 
@@ -324,7 +324,7 @@ export default function Agenda() {
     return {
       id: event.id,
       title: event.title ?? "Evento",
-      artist: summarizeAgendaParticipants(getEventParticipants(event)) || undefined,
+      artist: summarizeScheduleParticipants(getEventParticipants(event)) || undefined,
       startDate: start,
       endDate: end,
       location: event.local,

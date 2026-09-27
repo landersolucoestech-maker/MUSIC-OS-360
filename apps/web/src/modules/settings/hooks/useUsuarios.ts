@@ -20,7 +20,7 @@ export interface UserAccount {
 // Stable reference — see the same comment in shared/hooks/useDataQuery.ts:
 // the `= []` default in the destructuring below would allocate a new array on every
 // render while there is no data, breaking the consumers' useMemo/useEffect
-// (e.g. useAgendaParticipants, which combines this list with 3 others — the
+// (e.g. useScheduleParticipants, which combines this list with 3 others — the
 // "Maximum update depth exceeded" loop reproduced in SchedulerFormModal came
 // from here).
 const EMPTY_USERS: UserAccount[] = [];

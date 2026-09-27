@@ -40,7 +40,7 @@ export function EscalationRuleAccordionItem({
   onRemove,
 }: Props) {
   const enabledChannels = new Set(rule.channels ?? []);
-  const destinoLabel = RECIPIENT_LABELS[rule.recipientRole] ?? rule.recipientRole;
+  const destinationLabel = RECIPIENT_LABELS[rule.recipientRole] ?? rule.recipientRole;
 
   return (
     <AccordionItem open={open} onOpenChange={onOpenChange}>
@@ -50,7 +50,7 @@ export function EscalationRuleAccordionItem({
             {rule.afterMinutes} min
           </span>
           <span className="truncate text-sm font-semibold text-foreground">{rule.level || "Sem nível"}</span>
-          <span className="text-xs text-muted-foreground">Destino: {destinoLabel}</span>
+          <span className="text-xs text-muted-foreground">Destino: {destinationLabel}</span>
           <Badge variant={rule.active ? "secondary" : "outline"} className="px-1.5 py-0 text-[10px]">
             {rule.active ? "Ativa" : "Inativa"}
           </Badge>

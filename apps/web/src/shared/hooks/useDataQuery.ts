@@ -7,7 +7,7 @@ import { toUserMessage } from "@/shared/lib/errors";
 // Stable reference: `query.data || []` would allocate a new array on every
 // render while there is no data (loading, or an error with no earlier success — e.g.
 // backend unavailable). Consumers that derive `useMemo`/`useEffect`
-// from that array (e.g. useAgendaParticipants, which combines 4 such hooks) saw
+// from that array (e.g. useScheduleParticipants, which combines 4 such hooks) saw
 // the dependency change identity on every render and entered an infinite
 // re-render loop ("Maximum update depth exceeded"), reproduced in
 // SchedulerFormModal when the backend is down.

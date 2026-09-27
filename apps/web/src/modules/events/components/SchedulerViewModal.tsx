@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/shared/ui/card";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Calendar, Clock, MapPin, User, Phone, Mail, Users, DollarSign, Tag, FileText, Pencil, Building2, CheckSquare } from "lucide-react";
 import { formatCurrency, formatDate, getMonetarySemanticClass } from "@/shared/lib/format-utils";
-import { normalizeAgendaParticipants, useAgendaParticipants } from "@/modules/events/hooks/useAgendaParticipants";
+import { normalizeScheduleParticipants, useScheduleParticipants } from "@/modules/events/hooks/useScheduleParticipants";
 import { getBackendEventTypeLabel } from "@/modules/events/lib/event-type";
 
 interface SchedulerViewModalProps {
@@ -52,13 +52,13 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: SchedulerViewModalProps) {
-  const { getArtistParticipantById } = useAgendaParticipants();
+  const { getArtistParticipantById } = useScheduleParticipants();
 
   if (!event) return null;
 
   const artist = event.artistas;
   const meta = (event.metadata as Record<string, unknown> | undefined) ?? {};
-  const storedParticipants = normalizeAgendaParticipants(meta["participants"]);
+  const storedParticipants = normalizeScheduleParticipants(meta["participants"]);
   const legacyArtistParticipant = getArtistParticipantById(event.artist_id);
   const participants = storedParticipants.length > 0
     ? storedParticipants

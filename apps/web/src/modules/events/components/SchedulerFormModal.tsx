@@ -23,12 +23,12 @@ import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { useEvents } from "@/modules/events/hooks/useEvents";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import {
-  agendaParticipantKey,
-  normalizeAgendaParticipants,
-  summarizeAgendaParticipants,
-  useAgendaParticipants,
-  type AgendaParticipant,
-} from "@/modules/events/hooks/useAgendaParticipants";
+  scheduleParticipantKey,
+  normalizeScheduleParticipants,
+  summarizeScheduleParticipants,
+  useScheduleParticipants,
+  type ScheduleParticipant,
+} from "@/modules/events/hooks/useScheduleParticipants";
 import { useOperationalSettings } from "@/modules/settings/hooks/useOperationalSettings";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { buildGranularToBackendTypeMap, normalizeToBackendType } from "@/modules/events/lib/event-type";
@@ -189,7 +189,7 @@ const getInitialFormData = (event?: any) => {
       eventTypeAliases,
     ),
     artista: event?.artista || event?.artist_id || event?.artistId || "",
-    participantes: normalizeAgendaParticipants(event?.participantes ?? meta["participants"]),
+    participantes: normalizeScheduleParticipants(event?.participantes ?? meta["participants"]),
     status: normalizeSelectValue(event?.status, statusAliases) || "agendado",
     startDate: normalizeEventDate(
       event?.startDate || event?.start_date || event?.data || event?.startsAt,
@@ -243,7 +243,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   const granularToBackendType = buildGranularToBackendTypeMap(getItemsByKind("event_type"));
   const [participantSearch, setParticipantSearch] = useState("");
   const legacyArtistId = event?.artista || event?.artist_id || event?.artistId || null;
-  const { participants, getParticipantByKey, getArtistParticipantById, pendingArtist } = useAgendaParticipants(participantSearch, legacyArtistId);
+  const { participants, getParticipantByKey, getArtistParticipantById, pendingArtist } = useScheduleParticipants(participantSearch, legacyArtistId);
 
   const hydrateFormData = (currentEvent?: any) => {
     const initial = getInitialFormData(currentEvent);
@@ -286,10 +286,10 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   
   // Check whether the event type should pull the venue from the CRM
   const shouldUseCRMLocal = venueTypesCrm.includes(formData.tipoEvento);
-  const selectedParticipantKeys = formData.participantes.map(agendaParticipantKey);
-  const selectedParticipantsSummary = summarizeAgendaParticipants(formData.participantes);
+  const selectedParticipantKeys = formData.participantes.map(scheduleParticipantKey);
+  const selectedParticipantsSummary = summarizeScheduleParticipants(formData.participantes);
 
-  const updateParticipants = (nextParticipants: AgendaParticipant[]) => {
+  const updateParticipants = (nextParticipants: ScheduleParticipant[]) => {
     const firstArtist = nextParticipants.find((participant) => participant.source === "artist");
     setFormData({
       ...formData,
@@ -301,7 +301,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   const handleParticipantToggle = (key: string) => {
     const isSelected = selectedParticipantKeys.includes(key);
     if (isSelected) {
-      updateParticipants(formData.participantes.filter((participant) => agendaParticipantKey(participant) !== key));
+      updateParticipants(formData.participantes.filter((participant) => scheduleParticipantKey(participant) !== key));
       return;
     }
     const participant = getParticipantByKey(key);
@@ -631,7 +631,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
                   {participants.length === 0 ? (
                     <div className="p-2 text-sm text-muted-foreground">Nenhum participante encontrado</div>
                   ) : participants.map((participant) => {
-                    const key = agendaParticipantKey(participant);
+                    const key = scheduleParticipantKey(participant);
                     return (
                       <DropdownMenuCheckboxItem
                         key={key}

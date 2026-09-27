@@ -3,10 +3,10 @@ import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
 import { useUsers } from "@/modules/settings/hooks/useUsuarios";
 
-export type AgendaParticipantSource = "artist" | "employee" | "user" | "contact";
+export type ScheduleParticipantSource = "artist" | "employee" | "user" | "contact";
 
-export type AgendaParticipant = {
-  source: AgendaParticipantSource;
+export type ScheduleParticipant = {
+  source: ScheduleParticipantSource;
   id: string;
   label: string;
   email?: string;
@@ -31,14 +31,14 @@ interface EmployeeLookup {
   departamento?: string | null;
 }
 
-export const agendaParticipantKey = (participant: Pick<AgendaParticipant, "source" | "id">) =>
+export const scheduleParticipantKey = (participant: Pick<ScheduleParticipant, "source" | "id">) =>
   `${participant.source}:${participant.id}`;
 
-export function normalizeAgendaParticipants(value: unknown): AgendaParticipant[] {
+export function normalizeScheduleParticipants(value: unknown): ScheduleParticipant[] {
   if (!Array.isArray(value)) return [];
   return value
     .map((item) => {
-      const record = item as Partial<AgendaParticipant>;
+      const record = item as Partial<ScheduleParticipant>;
       if (!record?.source || !record.id || !record.label) return null;
       if (!["artist", "employee", "user", "contact"].includes(record.source)) return null;
       return {
@@ -50,10 +50,10 @@ export function normalizeAgendaParticipants(value: unknown): AgendaParticipant[]
         category: record.category ? String(record.category) : undefined,
       };
     })
-    .filter(Boolean) as AgendaParticipant[];
+    .filter(Boolean) as ScheduleParticipant[];
 }
 
-export function summarizeAgendaParticipants(participants: AgendaParticipant[]) {
+export function summarizeScheduleParticipants(participants: ScheduleParticipant[]) {
   if (participants.length === 0) return "";
   if (participants.length <= 2) return participants.map((participant) => participant.label).join(", ");
   return `${participants[0].label}, ${participants[1].label} +${participants.length - 2}`;
@@ -71,14 +71,14 @@ export function summarizeAgendaParticipants(participants: AgendaParticipant[]) {
  * usuarios/contacts are not part of this migration's scope (hooks outside the
  * list of 8 flagged in Task J) — kept as they were.
  */
-export function useAgendaParticipants(search: string = "", pendingArtistId?: string | null) {
+export function useScheduleParticipants(search: string = "", pendingArtistId?: string | null) {
   const { items: artistItems } = useEntityLookup<ArtistLookup>({ table: "artistas", search, pageSize: 20 });
   const { items: employeeItems } = useEntityLookup<EmployeeLookup>({ table: "funcionarios", search, pageSize: 20 });
   const { entity: pendingArtist } = useEntityById<ArtistLookup>("artistas", pendingArtistId);
   const { users: users = [] } = useUsers();
   const { contacts = [] } = useContacts();
 
-  const participants = useMemo<AgendaParticipant[]>(() => {
+  const participants = useMemo<ScheduleParticipant[]>(() => {
     const artistSource: ArtistLookup[] =
       pendingArtist && !artistItems.some((a) => a.id === pendingArtist.id)
         ? [...artistItems, pendingArtist]
@@ -120,16 +120,16 @@ export function useAgendaParticipants(search: string = "", pendingArtistId?: str
       category: contact.contactType || contact.category ? String(contact.contactType || contact.category) : "Contato",
     }));
 
-    const byKey = new Map<string, AgendaParticipant>();
+    const byKey = new Map<string, ScheduleParticipant>();
     [...artistOptions, ...employeeOptions, ...userOptions, ...contactOptions].forEach((participant) => {
       if (!participant.id || !participant.label) return;
-      byKey.set(agendaParticipantKey(participant), participant);
+      byKey.set(scheduleParticipantKey(participant), participant);
     });
     return [...byKey.values()].sort((a, b) => a.label.localeCompare(b.label));
   }, [artistItems, employeeItems, pendingArtist, users, contacts]);
 
   const getParticipantByKey = (key: string) =>
-    participants.find((participant) => agendaParticipantKey(participant) === key);
+    participants.find((participant) => scheduleParticipantKey(participant) === key);
 
   const getArtistParticipantById = (id?: string | null) =>
     id ? participants.find((participant) => participant.source === "artist" && participant.id === id) : undefined;

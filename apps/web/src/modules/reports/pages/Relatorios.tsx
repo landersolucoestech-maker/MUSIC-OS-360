@@ -16,7 +16,7 @@ import { ImportDialog } from "../components/ImportDialog";
 import type { ReportEntityDefinition } from "../services/reports-api";
 
 import { toUserMessage } from "@/shared/lib/errors";
-export default function Relatorios() {
+export default function Reports() {
   const entitiesQ = useReportEntities();
   const definitionsQ = useReportDefinitions();
   const exportM = useReportExport();

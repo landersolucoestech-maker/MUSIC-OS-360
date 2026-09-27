@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-import { useAgendaParticipants } from "@/modules/events/hooks/useAgendaParticipants";
+import { useScheduleParticipants } from "@/modules/events/hooks/useScheduleParticipants";
 import { storage } from "@/shared/lib/storage";
 
 vi.mock("@/shared/lib/storage", async () => {
@@ -10,7 +10,7 @@ vi.mock("@/shared/lib/storage", async () => {
   return { ...actual, storage: { ...actual.storage, listPaged: vi.fn(), findById: vi.fn() } };
 });
 
-// Task J: useAgendaParticipants must no longer depend on useArtistas()/
+// Task J: useScheduleParticipants must no longer depend on useArtistas()/
 // useFuncionarios() (capped at 50/tenant) — usuarios/contacts are outside the
 // scope of this migration, mocked empty to isolate the test.
 vi.mock("@/modules/settings/hooks/useUsuarios", () => ({ useUsers: () => ({ users: [] }) }));
@@ -36,7 +36,7 @@ function createWrapper() {
 
 const settle = (ms = 350) => new Promise((r) => setTimeout(r, ms));
 
-describe("useAgendaParticipants", () => {
+describe("useScheduleParticipants", () => {
   beforeEach(() => {
     mockedListPaged.mockReset();
     mockedFindById.mockReset();
@@ -52,7 +52,7 @@ describe("useAgendaParticipants", () => {
 
   it("real search: finds artist #75 (beyond the old cap of 50) by typing the name", async () => {
     const { result, rerender } = renderHook(
-      ({ search }: { search: string }) => useAgendaParticipants(search),
+      ({ search }: { search: string }) => useScheduleParticipants(search),
       { wrapper: createWrapper(), initialProps: { search: "" } },
     );
 
@@ -66,7 +66,7 @@ describe("useAgendaParticipants", () => {
   it("pendingArtistId: resolves the legacy artist linked to the event even outside the default page, without typing a search", async () => {
     mockedFindById.mockResolvedValue({ id: "artist-75", nome_artistico: "Artista 75" });
 
-    const { result } = renderHook(() => useAgendaParticipants("", "artist-75"), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useScheduleParticipants("", "artist-75"), { wrapper: createWrapper() });
 
     await waitFor(
       () => expect(result.current.getArtistParticipantById("artist-75")?.label).toBe("Artista 75"),
@@ -76,7 +76,7 @@ describe("useAgendaParticipants", () => {
   });
 
   it("without pendingArtistId, does not call findById", async () => {
-    renderHook(() => useAgendaParticipants(""), { wrapper: createWrapper() });
+    renderHook(() => useScheduleParticipants(""), { wrapper: createWrapper() });
     await settle();
     expect(mockedFindById).not.toHaveBeenCalled();
   });

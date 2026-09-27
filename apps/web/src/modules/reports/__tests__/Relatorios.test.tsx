@@ -83,11 +83,11 @@ vi.mock("@/shared/components/MainLayout", () => ({
   MainLayout: ({ children }) => <div>{children}</div>,
 }));
 
-import Relatorios from "../pages/Relatorios";
+import Reports from "../pages/Relatorios";
 
 describe("Relatorios - API-driven contract", () => {
   it("renders only reportable entities returned by the API", () => {
-    render(<Relatorios />);
+    render(<Reports />);
 
     expect(screen.getByTestId("entity-row-artists")).toBeTruthy();
     expect(screen.getByTestId("entity-row-contracts")).toBeTruthy();
@@ -95,7 +95,7 @@ describe("Relatorios - API-driven contract", () => {
   });
 
   it("exports immediately on click, without an intermediate modal", () => {
-    render(<Relatorios />);
+    render(<Reports />);
 
     fireEvent.click(screen.getByTestId("btn-export-contracts"));
     expect(screen.queryByTestId("export-dialog")).toBeNull();
@@ -106,20 +106,20 @@ describe("Relatorios - API-driven contract", () => {
   });
 
   it("opens the import dialog for the selected entity", () => {
-    render(<Relatorios />);
+    render(<Reports />);
 
     fireEvent.click(screen.getByTestId("btn-import-artists"));
     expect(screen.getByTestId("import-dialog").textContent).toBe("artists");
   });
 
   it("disables import when the definition does not support it", () => {
-    render(<Relatorios />);
+    render(<Reports />);
 
     expect(screen.getByTestId("btn-import-contracts")).toBeDisabled();
   });
 
   it("shows 'Temporariamente indisponivel' and disables import/export when a reportable entity has no contract yet", () => {
-    render(<Relatorios />);
+    render(<Reports />);
 
     expect(screen.getByTestId("entity-row-monitoring_pending")).toBeTruthy();
     expect(screen.getByTestId("unavailable-monitoring_pending")).toBeTruthy();
