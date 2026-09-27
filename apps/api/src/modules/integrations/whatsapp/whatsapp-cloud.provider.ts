@@ -104,10 +104,10 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
     const token = typeof accessToken === 'string' ? accessToken.trim() : '';
     const waba = typeof wabaId === 'string' ? wabaId.trim() : '';
     if (!PHONE_NUMBER_ID_PATTERN.test(pid)) {
-      throw new BadRequestException('phoneNumberId inválido: deve ser o ID numérico do número na WhatsApp Cloud API');
+      throw new BadRequestException('O ID do número de telefone deve ser o identificador numérico informado pelo WhatsApp Business.');
     }
     if (!token || !waba) {
-      throw new BadRequestException('accessToken e wabaId são obrigatórios');
+      throw new BadRequestException('Informe o token de acesso e o ID da conta do WhatsApp Business.');
     }
 
     await this.assertTokenOwnsPhoneNumber(pid, token);
@@ -135,7 +135,7 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
     }
     const data = await res.json().catch(() => ({}) as Record<string, unknown>);
     if (!res.ok || String((data as { id?: unknown }).id ?? '') !== phoneNumberId) {
-      throw new BadRequestException('O accessToken informado não tem acesso a este phoneNumberId na WhatsApp Cloud API');
+      throw new BadRequestException('O token de acesso informado não tem acesso a este número do WhatsApp Business.');
     }
   }
 

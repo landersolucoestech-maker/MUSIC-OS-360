@@ -149,7 +149,7 @@ export class StorageService {
     const expectedExts = MIME_TO_EXTENSIONS[params.mimeType];
     if (!expectedExts || !expectedExts.includes(ext)) {
       throw new BadRequestException(
-        `Extensão "${ext}" incompatível com mimeType "${params.mimeType}". Esperado: ${(expectedExts ?? []).join(', ') || 'n/a'}`,
+        `A extensão "${ext}" não corresponde ao tipo do arquivo (${params.mimeType}). Extensões esperadas: ${(expectedExts ?? []).join(', ') || 'nenhuma'}.`,
       );
     }
 

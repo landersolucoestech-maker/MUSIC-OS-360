@@ -461,9 +461,7 @@ export class ArtistsService {
     if (newStatus === ArtistStatus.SIGNED) {
       const contratoId = dto.contrato_id ?? existing.contrato_id;
       if (!contratoId) {
-        throw new BadRequestException(
-          'contrato_id obrigatório ao mover artista para status "signed"',
-        );
+        throw new BadRequestException('Vincule um contrato para marcar o artista como contratado.');
       }
     }
   }

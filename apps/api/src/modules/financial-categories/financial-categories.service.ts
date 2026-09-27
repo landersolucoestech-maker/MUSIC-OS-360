@@ -200,7 +200,7 @@ export class FinancialCategoriesService {
     if (dto.expectedUpdatedAt) {
       const expected = new Date(dto.expectedUpdatedAt);
       if (Number.isNaN(expected.getTime())) {
-        throw new BadRequestException('expectedUpdatedAt inválido');
+        throw new BadRequestException('A versão do registro enviada é inválida. Recarregue e tente novamente.');
       }
       values.push(expected);
       casWhere = ` AND updated_at = $${values.length}`;

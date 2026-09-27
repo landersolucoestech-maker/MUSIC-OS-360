@@ -125,7 +125,7 @@ export class ExternalIdentifierService {
 
   private validateAndNormalizeValue(type: IdentifierType, raw: string): string {
     const value = (raw ?? '').trim();
-    if (!value) throw new BadRequestException('identifier_value é obrigatório.');
+    if (!value) throw new BadRequestException('Informe o valor do identificador.');
     if (type === IdentifierType.ISRC) {
       if (!isValidIsrc(value)) throw new BadRequestException('ISRC inválido (formato esperado: CCXXX YY NNNNN).');
       return normalizeIsrc(value);

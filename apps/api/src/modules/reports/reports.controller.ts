@@ -61,7 +61,7 @@ function decodeImportBody(body: ImportUploadDto): Buffer {
   if (normalizedInput !== normalizedDecoded) {
     throw new BadRequestException({
       error: 'INVALID_IMPORT_ENCODING',
-      message: 'contentBase64 não representa um arquivo válido.',
+      message: 'O arquivo enviado não é válido.',
     });
   }
   if (content.length === 0 || content.length > IMPORT_MAX_BYTES) {

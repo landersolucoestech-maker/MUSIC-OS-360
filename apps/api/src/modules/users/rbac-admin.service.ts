@@ -365,7 +365,7 @@ export class RbacAdminService {
       throw new ForbiddenException('Não é permitido administrar um papel igual ou superior ao próprio nível');
     }
     if (targetLevel >= 90 && actorRole !== 'super_admin') {
-      throw new ForbiddenException('Somente o sistema pode criar ou alterar papéis no nível owner');
+      throw new ForbiddenException('Somente o sistema pode criar ou alterar papéis no nível de proprietário.');
     }
   }
 
@@ -386,7 +386,7 @@ export class RbacAdminService {
       [slug],
     )) as unknown[];
     if (existing) {
-      throw new ForbiddenException(`O identificador de papel '${slug}' é reservado pelo sistema`);
+      throw new ForbiddenException(`O identificador de papel "${slug}" é reservado pelo sistema.`);
     }
   }
 

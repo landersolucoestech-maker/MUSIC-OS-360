@@ -280,7 +280,7 @@ export class ArtistExternalProfileSyncService {
 
       const resolved = this.resolveYoutubeRef(rawUrl);
       if (!resolved) {
-        throw new BadRequestException('Link do YouTube inválido: informe um @handle, um channelId UC... ou a URL do canal');
+        throw new BadRequestException('Link do YouTube inválido: informe um @handle, o ID do canal (UC...) ou a URL do canal.');
       }
       return resolved;
     }

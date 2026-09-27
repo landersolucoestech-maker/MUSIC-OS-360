@@ -66,6 +66,6 @@ export class ContractServiceTypesService {
       .where('t.tenant_id = :tenantId AND t.slug = :slug AND t.deleted_at IS NULL', { tenantId, slug });
     if (excludeId) qb.andWhere('t.id != :excludeId', { excludeId });
     const existing = await qb.getOne();
-    if (existing) throw new BadRequestException(`Já existe um tipo de serviço com o slug "${slug}"`);
+    if (existing) throw new BadRequestException(`Já existe um tipo de serviço com o identificador (URL) "${slug}".`);
   }
 }

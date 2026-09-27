@@ -39,7 +39,7 @@ export class KnowledgeBaseService {
       .createQueryBuilder('c')
       .where('c.slug = :slug AND c.deleted_at IS NULL', { slug: dto.slug })
       .getOne();
-    if (dup) throw new BadRequestException(`Já existe uma categoria com slug '${dto.slug}'`);
+    if (dup) throw new BadRequestException(`Já existe uma categoria com o identificador (URL) "${dto.slug}".`);
     const entity = this.categoryRepo!.create({
       slug: dto.slug,
       name: dto.name,
@@ -61,7 +61,7 @@ export class KnowledgeBaseService {
         .createQueryBuilder('c')
         .where('c.slug = :slug AND c.deleted_at IS NULL', { slug: dto.slug })
         .getOne();
-      if (dup) throw new BadRequestException(`Já existe uma categoria com slug '${dto.slug}'`);
+      if (dup) throw new BadRequestException(`Já existe uma categoria com o identificador (URL) "${dto.slug}".`);
     }
     Object.assign(category, {
       slug: dto.slug ?? category.slug,

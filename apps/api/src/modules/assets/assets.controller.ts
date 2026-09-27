@@ -88,7 +88,7 @@ export class AssetsController {
     @Body() body: { assetType?: string },
   ) {
     const assetType = (body?.assetType ?? '').trim();
-    if (!assetType) throw new BadRequestException('assetType é obrigatório');
+    if (!assetType) throw new BadRequestException('Informe o tipo do material.');
     return this.classification.review(t.id, id, assetType, user.userId);
   }
 

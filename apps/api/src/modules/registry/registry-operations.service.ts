@@ -134,7 +134,7 @@ export class RegistryOperationsService {
     const sub = await this.submissions.findById(tenantId, submissionId);
     const { snapshot } = await this.submissions.getCurrentPayload(tenantId, submissionId);
     if (!snapshot) {
-      throw new BadRequestException('Nenhum snapshot de payload. Gere o payload (prepare/regenerate) antes de exportar.');
+      throw new BadRequestException('Gere os dados da submissão antes de exportar.');
     }
     const adapter = this.adapters.resolve(SocietyDriver.MANUAL_EXPORT);
     const base = `submission-${sub.society}-${submissionId.slice(0, 8)}-v${snapshot.version}`;

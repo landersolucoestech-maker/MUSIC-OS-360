@@ -152,7 +152,7 @@ export class SocietySubmissionService {
       throw new BadRequestException('Mudança de status inválida para esta submissão.');
     }
     if (REQUIRES_SNAPSHOT.includes(to) && !sub.current_payload_snapshot_id) {
-      throw new BadRequestException('Gere o payload da submissão antes de avançar para este status.');
+      throw new BadRequestException('Gere os dados da submissão antes de avançar para este status.');
     }
     // A protocol, once set, cannot be silently overwritten.
     if (dto.protocol && sub.protocol && dto.protocol !== sub.protocol) {

@@ -43,7 +43,7 @@ import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 export function buildExpectedUpdatedAtCriterion(expectedUpdatedAt: string): unknown {
   const expected = new Date(expectedUpdatedAt);
   if (Number.isNaN(expected.getTime())) {
-    throw new BadRequestException('expectedUpdatedAt inválido');
+    throw new BadRequestException('A versão do registro enviada é inválida. Recarregue e tente novamente.');
   }
   return Raw(
     (alias) => `date_trunc('milliseconds', ${alias}) = date_trunc('milliseconds', :expected::timestamptz)`,

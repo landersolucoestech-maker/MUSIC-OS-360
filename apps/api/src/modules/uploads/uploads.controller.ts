@@ -120,7 +120,7 @@ export class UploadsController {
     if (!row) throw new NotFoundException('Upload não encontrado');
 
     if (!(await this.storage.exists(row.r2_key))) {
-      throw new BadRequestException('Arquivo ainda nao existe no storage R2');
+      throw new BadRequestException('O arquivo ainda não foi recebido. Aguarde o fim do envio e tente novamente.');
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

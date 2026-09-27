@@ -36,7 +36,7 @@ export class MembershipRoleResolverService {
 
   /** Non-throwing variant: classifies the resolution (used by the dry-run and the logs). */
   async classify(tenantId: string, roleSlug: string): Promise<RoleResolution> {
-    if (!this.ds) throw new ServiceUnavailableException('DB indisponível para resolução de role');
+    if (!this.ds) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente.');
 
     const rows = (await this.ds.query(
       `SELECT "id", "tenant_id", "canonical_role_id", "archived_at", "deleted_at"
