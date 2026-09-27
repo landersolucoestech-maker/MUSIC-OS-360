@@ -40,7 +40,7 @@ const getXLSX = () => import("xlsx");
 
 type Event = Record<string, any>;
 
-// events.status é o valor real persistido pelo backend — canônico em inglês
+// events.status is the real value persisted by the backend — canonical English
 // (EventStatus de @music-os-360/types: planned/scheduled/confirmed/held/
 // completed/cancelled/postponed). Ver docs/NAMING_NORMALIZATION_CANONICAL_MAP.md.
 const getStatusBadge = (status: string) => {
@@ -63,8 +63,8 @@ const VIEW_OPTIONS: { value: SchedulerViewMode; label: string }[] = [
   { value: "ano", label: "Ano" },
 ];
 
-// Cor do chip por status (mesma identidade do calendário de conteúdo).
-// Chaves = events.status real (canônico em inglês, ver getStatusBadge acima).
+// Chip color per status (same identity as the content calendar).
+// Keys = real events.status (canonical English, see getStatusBadge above).
 const STATUS_TONE: Record<string, string> = {
   confirmed: "border-emerald-300/40 bg-emerald-400/15 text-emerald-700",
   held: "border-sky-300/40 bg-sky-400/15 text-sky-700",
@@ -89,9 +89,9 @@ const TIPO_OPTIONS = [
   { value: "reunioes", label: "Reuniões" },
 ];
 
-// value = events.status real enviado como filtro ao backend (e.status = :status,
-// ver EventsService.baseQb) — precisa bater com o valor canônico em inglês
-// persistido na coluna, não com o rótulo pt-BR exibido ao usuário.
+// value = real events.status sent as a filter to the backend (e.status = :status,
+// see EventsService.baseQb) — it must match the canonical English value
+// persisted in the column, not the pt-BR label shown to the user.
 const STATUS_OPTIONS = [
   { value: "all-status", label: "Todos Status" },
   { value: "confirmed", label: "Confirmado", dot: "bg-emerald-400" },
@@ -138,9 +138,9 @@ export default function Agenda() {
     [eventTypeOptions],
   );
   // events.type só guarda o enum coarse do backend (show/festival/recording/
-  // meeting/interview/tour/other) — a categoria granular escolhida no filtro
-  // (slug configurado em Configurações → Operacional) precisa ser traduzida
-  // antes de virar filtro de query, senão nunca bate com nenhum evento real.
+  // meeting/interview/tour/other) — the granular category chosen in the filter
+  // (slug configured in Settings → Operational) must be translated
+  // before becoming a query filter, otherwise it never matches a real event.
   const granularToBackendType = useMemo(
     () => buildGranularToBackendTypeMap(getItemsByKind("event_type")),
     [getItemsByKind],
@@ -159,10 +159,10 @@ export default function Agenda() {
   const [statusFilter, setStatusFilter] = useState("all-status");
   const excelInputRef = useRef<HTMLInputElement>(null);
 
-  // Bounds do período visível (dia/semana/mês/ano) — o calendário busca só
-  // os events desse período (Task H: sem isso, o fetch ficava preso ao
+  // Bounds of the visible period (day/week/month/year) — the calendar fetches only
+  // the events of that period (Task H: without it, the fetch was stuck at the
   // limit=50 default do backend e sumia events silenciosamente em
-  // qualquer mês navegado, em tenants com mais de 50 events no total).
+  // any navigated month, in tenants with more than 50 events in total).
   const { periodStart, periodEnd } = useMemo(() => {
     if (viewMode === "dia") return { periodStart: startOfDay(currentDate), periodEnd: endOfDay(currentDate) };
     if (viewMode === "mes") return { periodStart: startOfMonth(currentDate), periodEnd: endOfMonth(currentDate) };
@@ -191,11 +191,11 @@ export default function Agenda() {
   }, [getArtistParticipantById]);
 
   const handleExcelExport = async () => {
-    // Task I: varredura completa via paginação iterativa server-side —
-    // antes exportava só `events` (useEventos() sem filtro, preso ao
+    // Task I: full sweep via iterative server-side pagination —
+    // it used to export only `events` (useEventos() without a filter, stuck at the
     // limit=50 default do backend). Preserva os filtros de type/status
-    // ativos na tela; não escopa ao período do calendário (export é "todos
-    // os events que casam com o filtro", não "só o que está visível agora").
+    // active on screen; it does not scope to the calendar period (export is "all
+    // the events matching the filter", not "only what is visible now").
     const filters: Record<string, unknown> = {};
     const backendType = typeFilterBackendValue(typeFilter);
     if (backendType) filters.type = backendType;
@@ -271,8 +271,8 @@ export default function Agenda() {
         const publicoEsperado = row.publico_esperado || row["Público Esperado"] || row.capacidade || row["Capacidade"];
 
         // Payload no formato do CreateEventDto real (title/type/startsAt/
-        // endsAt/venue — não title/type/start_date, que não existem no DTO;
-        // status é omitido pois CreateEventDto não o aceita, só UpdateEventDto).
+        // endsAt/venue — not title/type/start_date, which do not exist in the DTO;
+        // status is omitted because CreateEventDto does not accept it, only UpdateEventDto).
         const payload: Record<string, unknown> = {
           title: title,
           type: normalizeToBackendType(tipoRaw, granularToBackendType),
@@ -299,9 +299,9 @@ export default function Agenda() {
     }
   };
 
-  // Tipo/status já aplicados server-side em useEventosScoped(); a busca por
-  // texto continua client-side sobre o período já escopado (título, local E
-  // nome de participante — o backend não indexa nome de participante).
+  // Type/status already applied server-side in useEventosScoped(); the text
+  // search stays client-side over the already-scoped period (title, venue AND
+  // participant name — the backend does not index participant names).
   const filteredEvents = useMemo(() => {
     if (!searchTerm) return scopedEvents;
     const term = searchTerm.toLowerCase();
@@ -313,10 +313,10 @@ export default function Agenda() {
   }, [scopedEvents, searchTerm, getEventParticipants]);
 
   const schedulerEvents = useMemo(() => filteredEvents.map((event) => {
-    // events.data/end_date são os únicos campos reais de data+hora (coluna
-    // NOT NULL, sempre presente) — start_date/horario_inicio/horario_fim
-    // nunca existiram no backend, então essa leitura sempre caía no fallback
-    // "agora" e todo evento aparecia na data errada no calendário.
+    // events.data/end_date are the only real date+time fields (column
+    // NOT NULL, always present) — start_date/horario_inicio/horario_fim
+    // never existed in the backend, so that read always fell into the fallback
+    // "now" and every event showed on the wrong date in the calendar.
     const start = event.data ? new Date(event.data) : new Date();
     const end = event.end_date ? new Date(event.end_date) : undefined;
     const isMidnight = start.getHours() === 0 && start.getMinutes() === 0;
@@ -507,9 +507,9 @@ export default function Agenda() {
       </MainLayout>
     )}
 
-      {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): SchedulerFormModal chama useEventos() de novo só para
-          as mutations, a mesma query do isLoading acima. */}
+      {/* Outside the isLoading gate on purpose — same bug as /artistas
+          (Task C): SchedulerFormModal calls useEventos() again only for
+          the mutations, the same query as the isLoading above. */}
       <SchedulerViewModal
         open={viewModal.open}
         onOpenChange={(open) => setViewModal({ ...viewModal, open })}

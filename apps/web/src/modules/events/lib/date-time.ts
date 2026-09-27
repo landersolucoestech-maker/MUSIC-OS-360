@@ -1,9 +1,9 @@
 /**
- * events.data/end_date são timestamps completos (data + hora) — não existem
- * colunas separadas de horário. Para export/import em planilha (mais legível
- * como duas colunas), separa data (YYYY-MM-DD) e hora (HH:mm) de um
- * Date/ISO-string; e o inverso, recombina as duas colunas de volta num
- * único ISO datetime para enviar ao backend.
+ * events.data/end_date are full timestamps (date + time) — there are no
+ * separate time columns. For spreadsheet export/import (more readable
+ * as two columns), splits date (YYYY-MM-DD) and time (HH:mm) from a
+ * Date/ISO string; and the inverse, recombines both columns back into a
+ * single ISO datetime to send to the backend.
  */
 export const splitDateTime = (value: unknown): { date: string; time: string } => {
   if (!value) return { date: "", time: "" };

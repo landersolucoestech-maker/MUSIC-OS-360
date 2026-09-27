@@ -1,10 +1,10 @@
 /**
- * distribution-platforms — fonte única do catálogo de distribuidoras e do estado
- * de conexão. As plataformas conectadas vêm de `localStorage` (mesma chave usada
- * por Configurações), que é o estado REAL do app — nada é simulado aqui.
+ * distribution-platforms — single source of the distributor catalog and of the
+ * connection state. Connected platforms come from `localStorage` (same key used
+ * by Settings), which is the app's REAL state — nothing is simulated here.
  *
- * Importante: o catálogo lista o que o sistema *suporta*; somente as plataformas
- * efetivamente conectadas devem aparecer como selecionáveis no fluxo de release.
+ * Important: the catalog lists what the system *supports*; only the platforms
+ * actually connected should appear as selectable in the release flow.
  */
 
 export interface DistributionPlatform {
@@ -14,11 +14,11 @@ export interface DistributionPlatform {
 }
 
 export interface ConnectedDistributionPlatform extends DistributionPlatform {
-  /** Identificação da conta conectada (quando disponível). */
+  /** Connected account identification (when available). */
   username?: string;
 }
 
-/** Catálogo suportado (não implica disponibilidade — ver conexões). */
+/** Supported catalog (does not imply availability — see connections). */
 export const DISTRIBUTION_PLATFORMS: readonly DistributionPlatform[] = [
   { id: "onerpm", name: "ONErpm", description: "Distribuição global com analytics avançados e suporte a label" },
   { id: "distrokid", name: "DistroKid", description: "Distribuição rápida para todas as plataformas de streaming" },
@@ -28,7 +28,7 @@ export const DISTRIBUTION_PLATFORMS: readonly DistributionPlatform[] = [
   { id: "somvibe", name: "SomVibe", description: "Distribuidora brasileira independente com foco no mercado nacional" },
 ] as const;
 
-/** Chave de persistência das conexões de distribuidora (compartilhada com Configurações). */
+/** Persistence key of the distributor connections (shared with Settings). */
 export const DISTRIBUTOR_CONNECTIONS_KEY = "musicos360_distributor_connections";
 
 type ConnectionMap = Record<string, { username?: string } | undefined>;
@@ -45,7 +45,7 @@ function readConnections(): ConnectionMap {
   }
 }
 
-/** Retorna apenas as plataformas realmente conectadas/habilitadas. */
+/** Returns only the platforms actually connected/enabled. */
 export function getEnabledDistributionPlatforms(): ConnectedDistributionPlatform[] {
   const connections = readConnections();
   return DISTRIBUTION_PLATFORMS.filter((p) => Boolean(connections[p.id])).map((p) => ({
@@ -54,7 +54,7 @@ export function getEnabledDistributionPlatforms(): ConnectedDistributionPlatform
   }));
 }
 
-/** Procura uma plataforma do catálogo pelo id. */
+/** Finds a catalog platform by id. */
 export function findDistributionPlatform(id: string | null | undefined): DistributionPlatform | undefined {
   if (!id) return undefined;
   return DISTRIBUTION_PLATFORMS.find((p) => p.id === id);

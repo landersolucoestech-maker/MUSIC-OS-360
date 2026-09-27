@@ -5,12 +5,12 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 /**
- * Regressão: `periodLabel` em Agenda.tsx chamava `date-fns#format` sem
- * `{ locale: ptBR }`, então o nome do mês saía em inglês por padrão do
- * date-fns ("24 — 30 de August, 2026" / "August de 2026") mesmo com o resto
- * da tela em português. Este teste prova o mecanismo (format com/sem locale
- * produz nomes de mês diferentes) e garante que Agenda.tsx sempre passa
- * `{ locale: ptBR }` nas quatro chamadas que constroem o rótulo de período.
+ * Regression: `periodLabel` in Agenda.tsx called `date-fns#format` without
+ * `{ locale: ptBR }`, so the month name came out in English by date-fns default
+ * ("24 — 30 de August, 2026" / "August de 2026") even with the rest
+ * of the screen in Portuguese. This test proves the mechanism (format with/without locale
+ * produces different month names) and ensures Agenda.tsx always passes
+ * `{ locale: ptBR }` in the four calls that build the period label.
  */
 describe("date-fns format — locale pt-BR", () => {
   const someAugustDate = new Date(2026, 7, 24); // 24 de agosto de 2026

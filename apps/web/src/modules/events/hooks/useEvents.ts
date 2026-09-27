@@ -10,8 +10,8 @@ export function useEvents(enabled = true, artistId?: string) {
     table: "events",
     orderBy: { column: "data", ascending: true },
     enabled,
-    // EventsService.list() só lê "artist_id" (pt-BR); "artistId" (camelCase)
-    // existe no DTO só por compatibilidade e nunca é lido — ver events.dto.ts.
+    // EventsService.list() only reads "artist_id" (snake_case); "artistId" (camelCase)
+    // exists in the DTO only for compatibility and is never read — see events.dto.ts.
     filters: artistId ? { artist_id: artistId } : undefined,
   }, {
     create: { success: "Evento criado com sucesso!", error: "Erro ao criar evento" },

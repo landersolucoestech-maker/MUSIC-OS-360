@@ -2,24 +2,24 @@ import { Badge, type BadgeVariant } from "@/shared/ui/badge";
 import type { Share, ShareType } from "@/modules/releases/types";
 
 /**
- * share-format — utilidades de Shares: discrimina interno × externo e renderiza
- * status com contraste AA. Lê o campo novo `share_type` e, quando ausente (dados
- * legados), deriva o type dos campos existentes — sem inventar dados.
+ * share-format — Shares utilities: discriminates internal × external and renders
+ * status with AA contrast. Reads the new `share_type` field and, when missing (legacy
+ * data), derives the type from the existing fields — without inventing data.
  */
 
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
 
 /**
- * Resolve o type do share. Preferência: `share_type` explícito. Fallback (legado):
- * vínculo a lançamento ou função de distribuição → interno; música/pagador externo
- * → externo. Default conservador: interno (compatível com os seeds atuais de royalties).
+ * Resolves the share type. Preference: explicit `share_type`. Fallback (legacy):
+ * link to a release or distribution role → internal; external song/payer
+ * → external. Conservative default: internal (compatible with the current royalty seeds).
  */
 export function resolveShareType(share: Share & Record<string, unknown>): ShareType {
   const explicit = str(share.share_type);
   if (explicit === "internal_release" || explicit === "external_receivable") return explicit;
   if (str(share.release_id)) return "internal_release";
   if (str(share.music_title) || str(share.pagador) || str(share.artista_externo)) return "external_receivable";
-  // Royalty splits existentes (work_id + artist_id/holder) são tratados como internos.
+  // Existing royalty splits (work_id + artist_id/holder) are treated as internal.
   return "internal_release";
 }
 

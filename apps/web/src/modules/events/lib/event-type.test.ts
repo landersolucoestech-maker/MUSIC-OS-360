@@ -1,12 +1,12 @@
 /**
  * event-type.test.ts
  *
- * Task S — guarda permanente: events.type só guarda o enum coarse do
- * backend (show/festival/recording/meeting/interview/tour/other). A
- * categoria granular configurada em Configurações → Operacional
- * (metadata.backend_type) precisa ser traduzida corretamente nos dois
- * sentidos usados pela Agenda: filtro (granular → coarse, para bater com o
- * dado real) e exibição (coarse real → rótulo pt-BR).
+ * Task S — permanent guard: events.type only stores the backend's coarse
+ * enum (show/festival/recording/meeting/interview/tour/other). The
+ * granular category configured in Settings → Operational
+ * (metadata.backend_type) must be translated correctly in both
+ * directions used by the Agenda: filter (granular → coarse, to match the
+ * real data) and display (real coarse → pt-BR label).
  */
 import { describe, it, expect } from "vitest";
 import {

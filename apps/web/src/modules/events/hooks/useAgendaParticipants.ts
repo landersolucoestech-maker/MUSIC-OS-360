@@ -60,16 +60,16 @@ export function summarizeAgendaParticipants(participants: AgendaParticipant[]) {
 }
 
 /**
- * Task J — antes buscava a tabela inteira de artistas/funcionários (useArtistas/
- * useFuncionarios, capadas a 50 registros/tenant) para montar a lista de
- * participantes de um evento. Agora usa busca server-side real (useEntityLookup)
- * para as fatias de artista e funcionário — `search` é passado pelo
- * componente (input de busca no dropdown), e `pendingArtistId` garante que o
- * artista já vinculado ao evento (campo legado `artista`) sempre resolve,
- * mesmo fora da janela atual de busca/paginação (useEntityById).
+ * Task J — it used to fetch the whole artist/employee table (useArtistas/
+ * useFuncionarios, capped at 50 records/tenant) to build the event's
+ * participant list. It now uses real server-side search (useEntityLookup)
+ * for the artist and employee slices — `search` is passed by the
+ * component (search input in the dropdown), and `pendingArtistId` ensures the
+ * artist already linked to the event (legacy `artista` field) always resolves,
+ * even outside the current search/pagination window (useEntityById).
  *
- * usuarios/contacts não fazem parte do escopo desta migração (hooks fora da
- * lista de 8 sinalizada na Task J) — mantidos como estavam.
+ * usuarios/contacts are not part of this migration's scope (hooks outside the
+ * list of 8 flagged in Task J) — kept as they were.
  */
 export function useAgendaParticipants(search: string = "", pendingArtistId?: string | null) {
   const { items: artistItems } = useEntityLookup<ArtistaLookup>({ table: "artistas", search, pageSize: 20 });
@@ -138,9 +138,9 @@ export function useAgendaParticipants(search: string = "", pendingArtistId?: str
     participants,
     getParticipantByKey,
     getArtistParticipantById,
-    /** Só muda quando o artista legado (pendingArtistId) resolve — usar em vez
-     * de `participants` como dependência de efeitos de hidratação, já que
-     * `participants` muda a cada busca digitada no picker. */
+    /** Only changes when the legacy artist (pendingArtistId) resolves — use it instead
+     * of `participants` as the dependency of hydration effects, since
+     * `participants` changes on every search typed in the picker. */
     pendingArtist,
   };
 }

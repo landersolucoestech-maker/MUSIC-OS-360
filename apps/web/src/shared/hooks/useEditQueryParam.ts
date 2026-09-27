@@ -7,17 +7,17 @@ export interface HasId {
 }
 
 /**
- * Resolve `?<paramName>=<id>` para abrir um registro (ex.: modal de edição)
- * vindo de um deep link.
+ * Resolves `?<paramName>=<id>` to open a record (e.g. an edit modal)
+ * coming from a deep link.
  *
- * `items` é tipicamente a lista "me dê tudo" de um hook como useContratos()
- * — que hoje, sem paginação, fica presa ao default de 50 registros do
- * backend (ver PaginationDto). Sem o parâmetro `table`, o comportamento é
- * idêntico ao original: só resolve se o id estiver entre os `items` já
- * carregados. Passando `table` (a chave usada em TABLE_ENDPOINT), quando o
- * id não é encontrado na lista carregada, busca DIRETO por ID
- * (GET /:resource/:id) — Task I: um link `?edit=<id-do-registro-75>` agora
- * resolve mesmo que o registro esteja fora dos primeiros carregados.
+ * `items` is typically the "give me everything" list of a hook such as useContratos()
+ * — which today, without pagination, is stuck at the backend default of 50
+ * records (see PaginationDto). Without the `table` parameter, the behavior is
+ * identical to the original: it only resolves when the id is among the already
+ * loaded `items`. Passing `table` (the key used in TABLE_ENDPOINT), when the
+ * id is not found in the loaded list, it fetches DIRECTLY by ID
+ * (GET /:resource/:id) — Task I: a `?edit=<id-of-record-75>` link now
+ * resolves even when the record is outside the first ones loaded.
  */
 export function useEditQueryParam<T extends HasId>(
   paramName: string,
@@ -47,9 +47,9 @@ export function useEditQueryParam<T extends HasId>(
       return;
     }
 
-    // Não achou na lista carregada — pode estar fora dos primeiros
-    // registros (ou a lista ainda não chegou). Sem `table`, mantém o
-    // comportamento original: espera a lista carregar/crescer.
+    // Not found in the loaded list — it may be outside the first
+    // records (or the list has not arrived yet). Without `table`, keeps the
+    // original behavior: waits for the list to load/grow.
     if (!table || !items || items.length === 0) return;
 
     let cancelled = false;

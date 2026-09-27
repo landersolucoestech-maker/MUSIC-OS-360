@@ -5,18 +5,18 @@ import { AUTH_DISABLED, IS_DEV } from "@/shared/lib/env";
 import { tenantModulePermissionKeys } from "@/shared/lib/permission-map";
 
 /**
- * usePermissions — FONTE ÚNICA de autorização do frontend (FASE 7 / endurecido na 7.1).
+ * usePermissions — SINGLE frontend authorization source (PHASE 7 / hardened in 7.1).
  *
- * Consome exclusivamente `membership.permissions: string[]` (formato `resource:action`),
- * exposto pelo backend via /auth/context e armazenado em TenantContext.permissionKeys.
- * O frontend apenas oculta/bloqueia/desabilita; o backend é a autoridade final.
+ * Consumes only `membership.permissions: string[]` (`resource:action` format),
+ * exposed by the backend via /auth/context and stored in TenantContext.permissionKeys.
+ * The frontend only hides/blocks/disables; the backend is the final authority.
  *
- * Comportamento de `permissionKeys === null`:
- *  - DEV/MOCK/AUTH_DISABLED → permissivo (não trava o dev).
- *  - PRODUÇÃO real → NÃO abre (trata como "carregando/ausente" → nega). `isLoadingPermissions`
- *    sinaliza o estado para os gates renderizarem um fallback seguro.
+ * Behavior when `permissionKeys === null`:
+ *  - DEV/MOCK/AUTH_DISABLED → permissive (does not block dev).
+ *  - real PRODUCTION → does NOT open (treated as "loading/missing" → denies). `isLoadingPermissions`
+ *    signals the state so the gates render a safe fallback.
  *
- * NÃO é uma matriz de autorização: a decisão vem só do conjunto `membership.permissions`.
+ * It is NOT an authorization matrix: the decision comes only from the `membership.permissions` set.
  */
 export interface UsePermissions {
   permissions: string[];
@@ -32,8 +32,8 @@ export function usePermissions(): UsePermissions {
   const { permissionKeys } = useTenant();
 
   return useMemo<UsePermissions>(() => {
-    // Permissivo APENAS fora de produção (dev/mock/auth-disabled). Em produção real,
-    // ausência de permissões NUNCA libera.
+    // Permissive ONLY outside production (dev/mock/auth-disabled). In real production,
+    // missing permissions NEVER grant access.
     const devPermissive = AUTH_DISABLED || IS_DEV;
     const isLoadingPermissions = !devPermissive && permissionKeys === null;
     const granted = new Set(permissionKeys ?? []);

@@ -56,7 +56,7 @@ export default function Shares() {
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; share?: any }>({ open: false });
   const [formModal, setFormModal] = useState<{ open: boolean; share?: any; initialReleaseId?: string }>({ open: false });
 
-  // Abre o form com um release pré-selecionado quando vindo do fluxo de Lançamentos.
+  // Opens the form with a release preselected when coming from the Releases flow.
   const [searchParams, setSearchParams] = useSearchParams();
   useEffect(() => {
     const relId = searchParams.get(SHARE_FOR_RELEASE_PARAM);
@@ -84,17 +84,17 @@ export default function Shares() {
 
   const isLoading = loadingLancamentos || isLoadingPage;
 
-  // ── KPI counts — agregação exata do tenant inteiro (GET /shares/stats),
-  // nunca calculada só sobre a página carregada (Task H). ──────────────────────
+  // ── KPI counts — exact aggregation of the whole tenant (GET /shares/stats),
+  // never computed only over the loaded page (Task H). ──────────────────────
   const { kpis: shareKpis } = useSharesStats();
   const { aReceber, recebidos, aEnviar, enviados } = shareKpis;
 
   const filteredShares = pageShares;
   const sharesPg = { pageItems: filteredShares, total, page, pageSize, setPage, setPageSize };
 
-  // Task J: título de obra/nome de artista por linha, resolvidos por ID
-  // direto (GET /works/:id, /artists/:id) só para os registros da página
-  // atual — antes escaneava useObras()/useArtistas() sem filtro, truncado
+  // Task J: work title/artist name per row, resolved directly by ID
+  // (GET /works/:id, /artists/:id) only for the records of the current
+  // page — it used to scan useObras()/useArtistas() without a filter, truncated
   // nos primeiros 50 do tenant.
   type WorkLabel = { title?: string | null; compositor?: string | null };
   type ArtistLabel = { nome_artistico?: string | null };
@@ -519,10 +519,10 @@ export default function Shares() {
     </MainLayout>
     )}
 
-      {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): ShareFormModal chama useShares() de novo só para
-          as mutations, a mesma query do isLoading acima. Ver Artistas.tsx
-          para a explicação completa do loop. */}
+      {/* Outside the isLoading gate on purpose — same bug as /artistas
+          (Task C): ShareFormModal calls useShares() again only for
+          the mutations, the same query as the isLoading above. See Artistas.tsx
+          for the full explanation of the loop. */}
       <ShareViewModal
         open={viewModal.open}
         onOpenChange={(open) => setViewModal({ ...viewModal, open })}

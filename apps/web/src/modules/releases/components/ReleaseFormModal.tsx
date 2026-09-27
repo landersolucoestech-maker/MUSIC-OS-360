@@ -1152,7 +1152,7 @@ export function ReleaseFormModal({
             />
           </div>
 
-          {/* Tipo */}
+          {/* Type */}
           <div className="space-y-2">
             <Label>Tipo de Lançamento *</Label>
             <Select
@@ -2149,7 +2149,7 @@ export function ReleaseFormModal({
   const renderStep3 = () => {
     return (
       <div className="space-y-6">
-        {/* Distribuidora */}
+        {/* Distributor */}
         <Card className="bg-muted/30 border-border">
           <CardHeader className="pb-3">
             <CardTitle className="text-base">Distribuidora</CardTitle>

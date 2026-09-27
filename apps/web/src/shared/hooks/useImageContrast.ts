@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { getImageContrastMode, type ContrastMode } from "@/shared/lib/image-contrast";
 
 /**
- * Resolve o modo de contraste (claro/escuro) de uma imagem para escolher
- * cores de texto/chrome legíveis sobre ela. Default `darkBackground` enquanto
- * carrega ou quando não há `src`.
+ * Resolves the contrast mode (light/dark) of an image to choose
+ * readable text/chrome colors over it. Default `darkBackground` while
+ * loading or when there is no `src`.
  */
 export function useImageContrast(src: string | null | undefined): { mode: ContrastMode; isLoading: boolean } {
   const [mode, setMode] = useState<ContrastMode>("lightBackground");

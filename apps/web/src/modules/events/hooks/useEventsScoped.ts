@@ -5,7 +5,7 @@ import { api } from "@/shared/lib/api-client";
 import type { EventWithRelations } from "./useEvents";
 
 export interface UseEventsScopedParams {
-  /** ISO date-time bounds do período visível no calendário (dia/semana/mês/ano). */
+  /** ISO date-time bounds of the period visible in the calendar (day/week/month/year). */
   dateFrom: string;
   dateTo: string;
   search?: string;
@@ -14,12 +14,12 @@ export interface UseEventsScopedParams {
 }
 
 /**
- * Eventos do período do calendário atualmente visível — nunca a tabela
- * inteira. `useEventos()` sem filtros ficava presa ao default do backend
- * (limit=50, ver PaginationDto), então tenants com mais de 50 eventos no
- * total perdiam eventos silenciosamente em qualquer mês/semana navegado.
- * Escopar por dateFrom/dateTo (coluna real `data`) resolve isso: cada
- * período tem, na prática, muito menos de 200 eventos.
+ * Events of the currently visible calendar period — never the whole
+ * table. `useEventos()` without filters was stuck at the backend default
+ * (limit=50, see PaginationDto), so tenants with more than 50 events in
+ * total silently lost events in any navigated month/week.
+ * Scoping by dateFrom/dateTo (real `data` column) fixes it: each
+ * period has, in practice, far fewer than 200 events.
  */
 export function useEventsScoped({ dateFrom, dateTo, search, type, status }: UseEventsScopedParams) {
   const filters: Record<string, unknown> = { dateFrom, dateTo };
@@ -60,7 +60,7 @@ interface StatsResponse {
   upcoming7Days: number;
 }
 
-/** GET /events/stats — KPIs exatos do tenant inteiro, independentes do período do calendário. */
+/** GET /events/stats — exact tenant-wide KPIs, independent of the calendar period. */
 export function useEventsStats() {
   const query = useQuery<StatsResponse>({
     queryKey: [...QUERY_KEYS.EVENTS, "stats"],
@@ -69,7 +69,7 @@ export function useEventsStats() {
   });
 
   const data = query.data;
-  // byGroup agrupa por events.status real — valor canônico em inglês (ver
+  // byGroup groups by the real events.status — canonical English value (see
   // @music-os-360/types EventStatus / EventsService.stats()), não pt-BR.
   const kpis: EventsKPIs = !data ? EMPTY_KPIS : {
     total: data.total,

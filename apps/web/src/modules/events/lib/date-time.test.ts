@@ -1,13 +1,13 @@
 /**
  * date-time.test.ts
  *
- * Task S — guarda permanente: o calendário da Agenda lia `evento.start_date`
- * (campo que nunca existiu no backend — a coluna real é `data`, timestamp
- * completo) para montar cada evento, então TODO evento caía no fallback
- * "agora" e aparecia sempre na data errada, para qualquer tenant. splitDateTime/
- * combineDateTime são as duas conversões que substituem essa leitura errada
- * (export: timestamp real → colunas de planilha; import: colunas de planilha
- * → timestamp real para o payload do DTO).
+ * Task S — permanent guard: the Agenda calendar read `evento.start_date`
+ * (a field that never existed in the backend — the real column is `data`, a full
+ * timestamp) to build each event, so EVERY event fell into the
+ * "now" fallback and always showed on the wrong date, for any tenant. splitDateTime/
+ * combineDateTime are the two conversions that replace that wrong read
+ * (export: real timestamp → spreadsheet columns; import: spreadsheet columns
+ * → real timestamp for the DTO payload).
  */
 import { describe, it, expect } from "vitest";
 import { splitDateTime, combineDateTime } from "./date-time";

@@ -3,9 +3,9 @@ import { toast } from "sonner";
 import { toUserMessage } from "@/shared/lib/errors";
 
 /**
- * Envelope real devolvido por runOnDemandSkill() no backend
- * (apps/api/src/core/automation/on-demand-skill.runner.ts) — mantido em
- * sincronia manual aqui pois o pacote de tipos do runner não é exposto ao
+ * Real envelope returned by runOnDemandSkill() in the backend
+ * (apps/api/src/core/automation/on-demand-skill.runner.ts) — kept in
+ * manual sync here because the runner's types package is not exposed to the
  * frontend.
  */
 export interface OnDemandSkillResult<TOutput> {
@@ -18,9 +18,9 @@ export interface OnDemandSkillResult<TOutput> {
 }
 
 /**
- * Hook genérico para disparar uma AI Skill ON_DEMAND real a partir de uma
- * tela do produto. Não inventa estado: sucesso/erro vêm sempre da resposta
- * real da API (nunca de um valor de amostra local).
+ * Generic hook to trigger a real ON_DEMAND AI Skill from a
+ * product screen. Invents no state: success/error always come from the
+ * real API response (never from a local sample value).
  */
 export function useAiSkillRun<TOutput>(
   runFn: () => Promise<OnDemandSkillResult<TOutput>>,

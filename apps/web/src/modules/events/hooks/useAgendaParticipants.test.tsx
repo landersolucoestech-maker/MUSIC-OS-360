@@ -10,9 +10,9 @@ vi.mock("@/shared/lib/storage", async () => {
   return { ...actual, storage: { ...actual.storage, listPaged: vi.fn(), findById: vi.fn() } };
 });
 
-// Task J: useAgendaParticipants não deve mais depender de useArtistas()/
-// useFuncionarios() (capadas a 50/tenant) — usuarios/contacts ficam fora do
-// escopo desta migração, mockados vazios para isolar o teste.
+// Task J: useAgendaParticipants must no longer depend on useArtistas()/
+// useFuncionarios() (capped at 50/tenant) — usuarios/contacts are outside the
+// scope of this migration, mocked empty to isolate the test.
 vi.mock("@/modules/settings/hooks/useUsuarios", () => ({ useUsuarios: () => ({ usuarios: [] }) }));
 vi.mock("@/modules/crm-relationships/hooks/useContacts", () => ({ useContacts: () => ({ contacts: [] }) }));
 
@@ -21,7 +21,7 @@ const mockedFindById = vi.mocked(storage.findById);
 
 interface FakeArtist { id: string; nome_artistico: string }
 
-// 75 artistas — mais que o antigo cap de 50/tenant.
+// 75 artists — more than the old 50/tenant cap.
 const ARTISTS: FakeArtist[] = Array.from({ length: 75 }, (_, i) => ({
   id: `artist-${i + 1}`,
   nome_artistico: `Artista ${i + 1}`,

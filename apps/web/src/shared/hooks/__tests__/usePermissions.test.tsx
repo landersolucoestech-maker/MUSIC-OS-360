@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-// Estado mutável compartilhado com os mocks (hoisted para o vi.mock poder referenciar).
+// Mutable state shared with the mocks (hoisted so vi.mock can reference it).
 const state = vi.hoisted(() => ({
   env: { AUTH_DISABLED: false, IS_DEV: false },
   permissionKeys: null as string[] | null,

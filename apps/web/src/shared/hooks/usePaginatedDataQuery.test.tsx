@@ -17,9 +17,9 @@ interface FakeRow {
   nome: string;
 }
 
-// Simula um tenant com 75 registros — mais que o antigo default de 50 do
-// backend — para provar que a paginação real alcança além da página onde o
-// limite antigo travava tudo silenciosamente.
+// Simulates a tenant with 75 records — more than the backend's old default of 50
+// — to prove that real pagination reaches beyond the page where the
+// old limit silently blocked everything.
 const FAKE_DATASET: FakeRow[] = Array.from({ length: 75 }, (_, i) => ({
   id: `id-${i + 1}`,
   nome: `Registro ${i + 1}`,
@@ -34,7 +34,7 @@ function fakeBackend(_table: string, options: { page: number; pageSize: number; 
   const search = options.filters?.search as string | undefined;
   if (search) rows = rows.filter((r) => r.nome.toLowerCase().includes(search.toLowerCase()));
   const status = options.filters?.status as string | undefined;
-  if (status) rows = []; // nenhum registro fake tem status — simula filtro restritivo
+  if (status) rows = []; // no fake record has a status — simulates a restrictive filter
   const total = rows.length;
   const offset = Math.max(0, options.page - 1) * options.pageSize;
   const items = rows.slice(offset, offset + options.pageSize);
@@ -58,8 +58,8 @@ describe("usePaginatedDataQuery", () => {
   });
 
   it("reaches records beyond the 50th via real pagination (75-record dataset)", async () => {
-    // Página 6 com pageSize 10 = offset 50 → itens 51-60, inacessíveis sob o
-    // antigo limit=50 default do backend sem paginação real.
+    // Page 6 with pageSize 10 = offset 50 → items 51-60, unreachable under the
+    // backend's old limit=50 default without real pagination.
     const { result } = renderHook(
       () => usePaginatedFakeRows({ queryKey: ["fake"], table: "artistas", page: 6, pageSize: 10 }),
       { wrapper: createWrapper() },
@@ -111,7 +111,7 @@ describe("usePaginatedDataQuery", () => {
 
     const calledOptions = mockedListPaged.mock.calls[0][1] as { filters?: Record<string, unknown> };
     expect(calledOptions.filters?.search).toBe("Registro 7");
-    // "Registro 7" casa com "Registro 7" e "Registro 7x" (70-75) via includes — confirma que o filtro chegou ao backend fake.
+    // "Registro 7" matches "Registro 7" and "Registro 7x" (70-75) via includes — confirms the filter reached the fake backend.
     expect(result.current.total).toBeGreaterThan(0);
     expect(result.current.total).toBeLessThan(75);
   });

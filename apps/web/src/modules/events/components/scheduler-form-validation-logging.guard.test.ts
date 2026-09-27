@@ -3,10 +3,10 @@ import * as fs from "fs";
 import * as path from "path";
 
 /**
- * Regressão: validação client-side esperada (campo obrigatório vazio) era
- * logada via `console.error`, poluindo o monitoramento de erros (Sentry
- * captura console.error) com eventos que não são falhas de runtime — a
- * validação já tem feedback visual suficiente (toast + FieldError inline).
+ * Regression: expected client-side validation (empty required field) was
+ * logged via `console.error`, polluting error monitoring (Sentry
+ * captures console.error) with events that are not runtime failures —
+ * validation already has enough visual feedback (toast + inline FieldError).
  */
 const SOURCE = fs.readFileSync(path.resolve(__dirname, "SchedulerFormModal.tsx"), "utf8");
 

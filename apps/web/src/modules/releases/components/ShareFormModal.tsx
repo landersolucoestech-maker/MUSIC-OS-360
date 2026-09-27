@@ -25,19 +25,19 @@ interface ShareFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   share?: Share;
-  /** Pré-seleciona um lançamento (ex.: vindo do fluxo de release). */
+  /** Preselects a release (e.g. coming from the release flow). */
   initialReleaseId?: string;
   onSuccess?: () => void;
 }
 
 interface ShareFormState {
   share_type: ShareType;
-  // interno
+  // internal
   release_id: string;
-  holder: string;       // participante
+  holder: string;       // participant
   recipient: string;
   funcao: string;
-  // externo
+  // external
   music_title: string;
   artista_externo: string;
   artista_project_id: string;
@@ -46,7 +46,7 @@ interface ShareFormState {
   origem_acordo: string;
   data_prevista: string;
   documents: string;
-  // comum
+  // common
   percentage: string;
   valor_total: string;
   status: string;
@@ -184,7 +184,7 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
       return;
     }
 
-    // Bloqueia duplicidade no fluxo interno: release + participante + destinatário
+    // Blocks duplicates in the internal flow: release + participant + recipient
     if (isInternal) {
       const dup = shares.find(
         (s) =>
@@ -216,7 +216,7 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
       const payload: Record<string, unknown> = isInternal
         ? {
             ...common,
-            // direction mantém semântica de fluxo de caixa (compat KPIs)
+            // direction keeps cash-flow semantics (KPI compat)
             direction: "a_enviar",
             release_id: formData.release_id || null,
             music_title: selectedRelease?.title ?? null,
@@ -355,9 +355,9 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
               </div>
               <div className="space-y-2">
                 <Label>Artista / Projeto vinculado à empresa</Label>
-                {/* Task J: busca server-side (AsyncEntityCombobox) — antes populava
-                    o Select com useArtistas() sem filtro, truncado nos primeiros
-                    50 artistas do tenant. */}
+                {/* Task J: server-side search (AsyncEntityCombobox) — it used to fill
+                    the Select with useArtistas() without a filter, truncated to the first
+                    50 artists of the tenant. */}
                 <AsyncEntityCombobox<Artist>
                   table="artistas"
                   getLabel={(a) => a.stageName ?? ""}
@@ -400,7 +400,7 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
             </>
           )}
 
-          {/* Percentual + Valor + Status (comum) */}
+          {/* Percentage + Amount + Status (common) */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="percentage">% Share</Label>

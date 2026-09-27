@@ -6,15 +6,15 @@ export interface BulkActionResult {
 }
 
 /**
- * Task K — substitui o padrão `selectedIds.forEach(id => mutation.mutate(id))`
- * seguido de um toast de sucesso IMEDIATO (antes de qualquer request
- * terminar) — encontrado em ~27 páginas com seleção em massa. Esse padrão
- * mostra "sucesso" mesmo quando parte das operações falha, sem contar ou
- * identificar o que falhou.
+ * Task K — replaces the `selectedIds.forEach(id => mutation.mutate(id))` pattern
+ * followed by an IMMEDIATE success toast (before any request
+ * finished) — found in ~27 pages with bulk selection. That pattern
+ * shows "success" even when part of the operations fail, without counting or
+ * identifying what failed.
  *
- * `runBulkAction` espera todas as operações resolverem (Promise.allSettled —
- * uma falha não cancela as demais) e devolve contagem exata de sucesso/falha
- * para o chamador decidir a mensagem correta via `reportBulkResult`.
+ * `runBulkAction` waits for every operation to settle (Promise.allSettled —
+ * one failure does not cancel the others) and returns the exact success/failure count
+ * so the caller decides the correct message via `reportBulkResult`.
  */
 export async function runBulkAction<T>(
   ids: string[],
@@ -35,8 +35,8 @@ export async function runBulkAction<T>(
 }
 
 /**
- * Mensagem honesta sobre o resultado real: nunca "sucesso" quando houve
- * falha parcial, nunca silêncio sobre quantos itens falharam.
+ * Honest message about the real result: never "success" when there was a
+ * partial failure, never silence about how many items failed.
  */
 export function reportBulkResult(result: BulkActionResult, actionLabel: string, itemLabel: string): void {
   const { succeeded, failed } = result;

@@ -1,8 +1,8 @@
 import type { EventStatusValue } from "@/modules/events/types/events.types";
 
-// SchedulerStatus carrega o valor real de events.status (backend, canônico em
-// inglês — ver @music-os-360/types EventStatus). O `| string` preserva
-// compatibilidade com valores legados/desconhecidos vindos de dados antigos.
+// SchedulerStatus carries the real events.status value (backend, canonical
+// English — see @music-os-360/types EventStatus). The `| string` keeps
+// compatibility with legacy/unknown values coming from old data.
 export type SchedulerStatus = EventStatusValue | string;
 
 export type AgendaEvent = {

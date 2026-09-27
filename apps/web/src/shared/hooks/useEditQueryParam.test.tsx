@@ -37,7 +37,7 @@ describe("useEditQueryParam", () => {
   });
 
   it("record #75 outside the loaded list (capped at 50) resolves via a direct ID lookup when `table` is passed", async () => {
-    // Simula a lista "me dê tudo" travada nos primeiros 50 registros do tenant.
+    // Simulates the "give me everything" list stuck at the tenant's first 50 records.
     const items: FakeRow[] = Array.from({ length: 50 }, (_, i) => ({ id: `id-${i + 1}`, nome: `Registro ${i + 1}` }));
     mockedFindById.mockResolvedValue({ id: "id-75", nome: "Registro 75" });
     const onMatch = vi.fn();

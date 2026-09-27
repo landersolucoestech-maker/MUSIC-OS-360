@@ -4,13 +4,13 @@ import { api } from "@/shared/lib/api-client";
 
 import { toUserMessage } from "@/shared/lib/errors";
 /**
- * useSkillRun — invocação genérica de um AI Skill ON_DEMAND real (backend
- * runOnDemandSkill / packages/ai-skills/*). Cada skill já tem seu próprio
- * endpoint real (POST .../ai/<skill>); este hook só padroniza a chamada
- * HTTP + estado de loading/erro/toast, nunca fabrica um resultado.
+ * useSkillRun — generic invocation of a real ON_DEMAND AI Skill (backend
+ * runOnDemandSkill / packages/ai-skills/*). Each skill already has its own
+ * real endpoint (POST .../ai/<skill>); this hook only standardizes the
+ * HTTP call + loading/error/toast state, never fabricates a result.
  *
- * O envelope retornado pelo backend é sempre { parsed, provider, model,
- * generatedAt, fromCache, skillRunId } — parsed é o output tipado da skill.
+ * The envelope returned by the backend is always { parsed, provider, model,
+ * generatedAt, fromCache, skillRunId } — parsed is the skill's typed output.
  */
 export interface SkillRunEnvelope<T> {
   parsed: T;

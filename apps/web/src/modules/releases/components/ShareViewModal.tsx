@@ -62,9 +62,9 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
   const s = (share ?? {}) as Share & Record<string, unknown>;
   const str = (k: string): string => (typeof s[k] === "string" ? (s[k] as string) : "");
 
-  // Resolução DIRETA por ID (GET /works/:id, GET /artists/:id) — não depende
-  // de obra/artista estarem entre os primeiros 50 carregados por
-  // useObras()/useArtistas() sem filtro (Task J).
+  // DIRECT resolution by ID (GET /works/:id, GET /artists/:id) — does not depend
+  // on the work/artist being among the first 50 loaded by
+  // useObras()/useArtistas() without a filter (Task J).
   const { entity: obraVinculada } = useEntityById<ObraWithRelations>("obras", open ? str("work_id") || undefined : undefined);
   const { entity: artistaResolvedWire } = useEntityById<ArtistWireRecord>("artistas", open ? share?.artist_id ?? undefined : undefined);
   const artistaResolved: Artist | undefined = artistaResolvedWire ? wireToArtist(artistaResolvedWire) : undefined;
@@ -79,8 +79,8 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
   const isInternal = shareType === "internal_release";
 
   /**
-   * Título da obra/lançamento/música — replica EXATAMENTE a origem da tabela
-   * (work_id → lançamento_id → nome_musica), com fallbacks seguros adicionais.
+   * Work/release/song title — mirrors EXACTLY the table's source
+   * (work_id → lançamento_id → nome_musica), with additional safe fallbacks.
    */
   const pickShareTitle = (): string | null => {
     const obraTitle = obraVinculada?.title;
@@ -99,7 +99,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
   };
   const releaseTitle = pickShareTitle();
 
-  // Participante: artista vinculado (artist_id) → holder (igual à coluna Detentor da tabela)
+  // Participant: linked artist (artist_id) → holder (same as the table's Holder column)
   const participanteNome = artistaResolved?.stageName ?? str("holder") ?? null;
   const artistaNome = artistaResolved?.stageName ?? null;
   const vinculoNome = vinculoArtistaResolved?.stageName ?? null;
@@ -122,12 +122,12 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
 
         <div className="space-y-5">
 
-          {/* ── Tipo ─────────────────────────────────────────────────────────── */}
+          {/* ── Type ─────────────────────────────────────────────────────────── */}
           <div>
             <Badge variant={isInternal ? "info" : "success"}>{shareTypeLabel(shareType)}</Badge>
           </div>
 
-          {/* ── Dados principais ────────────────────────────────────────────── */}
+          {/* ── Main data ────────────────────────────────────────────── */}
           <Card className="bg-muted/30">
             <CardContent className="p-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
               {isInternal ? (
@@ -180,7 +180,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
             </CardContent>
           </Card>
 
-          {/* ── Acordo / Documento ──────────────────────────────────────────── */}
+          {/* ── Agreement / Document ──────────────────────────────────────────── */}
           {(share.acordo_notas || share.acordo_url) && (
             <Card className="bg-muted/30">
               <CardContent className="p-4 space-y-3">
@@ -208,7 +208,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
             </Card>
           )}
 
-          {/* ── Observações ─────────────────────────────────────────────────── */}
+          {/* ── Notes ─────────────────────────────────────────────────── */}
           {share.notes && (
             <Card className="bg-muted/30">
               <CardContent className="p-4 space-y-2">
@@ -222,7 +222,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
             </Card>
           )}
 
-          {/* ── Histórico de versões ─────────────────────────────────────────── */}
+          {/* ── Version history ─────────────────────────────────────────── */}
           {historico.length > 0 && (
             <div>
               <p className="text-xs font-semibold  tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">

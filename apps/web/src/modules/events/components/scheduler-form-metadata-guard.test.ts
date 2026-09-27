@@ -1,15 +1,15 @@
 /**
  * scheduler-form-metadata-guard.test.ts
  *
- * Guarda permanente (auditoria 2026-07-18 — regra sem-metadata, eventos):
- * SchedulerFormModal.tsx `buildPayload` gravava endereco, contato_local,
- * valor_cache, publico_esperado, descricao, observacoes e participantes
- * dentro de `metadata`, mesmo já existindo coluna própria para cada um
+ * Permanent guard (2026-07-18 audit — no-metadata rule, events):
+ * SchedulerFormModal.tsx `buildPayload` wrote endereco, contato_local,
+ * valor_cache, publico_esperado, descricao, observacoes and participantes
+ * inside `metadata`, even though each already had its own column
  * (migration CrmFinanceOpsFormFieldColumns20260712000005 / EventEntity) —
- * os dados formais do formulário nunca chegavam às colunas reais.
+ * the formal form data never reached the real columns.
  *
- * Este teste falha se o arquivo voltar a montar um objeto `metadata` a
- * partir de campos formais do formulário de evento.
+ * This test fails if the file goes back to building a `metadata` object
+ * from formal event-form fields.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

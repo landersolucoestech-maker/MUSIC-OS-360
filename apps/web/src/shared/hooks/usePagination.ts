@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 
 /**
- * Hook de paginação client-side padrão do sistema.
- * Mantém página/itens-por-página e devolve o recorte atual.
- * Reinicia para a primeira página quando o total muda (ex.: filtros).
+ * The system's standard client-side pagination hook.
+ * Keeps page/items-per-page and returns the current slice.
+ * Resets to the first page when the total changes (e.g. filters).
  */
 export function usePagination<T>(items: T[], initialPageSize = 10) {
   const [page, setPage] = useState(0);
@@ -13,7 +13,7 @@ export function usePagination<T>(items: T[], initialPageSize = 10) {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const safePage = Math.min(page, totalPages - 1);
 
-  // Volta à primeira página quando o conjunto de dados encolhe abaixo da página atual.
+  // Goes back to the first page when the data set shrinks below the current page.
   useEffect(() => {
     if (page > totalPages - 1) setPage(0);
   }, [page, totalPages]);

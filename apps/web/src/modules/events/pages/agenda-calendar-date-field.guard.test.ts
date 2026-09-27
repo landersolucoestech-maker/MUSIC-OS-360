@@ -1,13 +1,13 @@
 /**
  * agenda-calendar-date-field.guard.test.ts
  *
- * Guarda permanente (Task S): o calendário da Agenda montava cada evento
- * lendo `evento.start_date`/`evento.horario_inicio`/`evento.horario_fim` —
- * campos que nunca existiram no backend (a coluna real é `data`/`end_date`,
- * timestamp completo). Como `start_date` era sempre `undefined`, TODO
- * evento caía no fallback "agora" e aparecia sempre na data errada, para
- * qualquer tenant. Este teste falha se a leitura do cálculo do calendário
- * (schedulerEvents) voltar a usar esses campos inexistentes.
+ * Permanent guard (Task S): the Agenda calendar built each event
+ * reading `evento.start_date`/`evento.horario_inicio`/`evento.horario_fim` —
+ * fields that never existed in the backend (the real column is `data`/`end_date`,
+ * a full timestamp). Since `start_date` was always `undefined`, EVERY
+ * event fell into the "now" fallback and always showed on the wrong date, for
+ * any tenant. This test fails if the calendar computation read
+ * (schedulerEvents) goes back to using those nonexistent fields.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

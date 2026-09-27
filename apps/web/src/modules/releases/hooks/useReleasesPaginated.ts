@@ -57,11 +57,11 @@ export interface DistributionKPIs {
 const EMPTY_DISTRIBUTION_KPIS: DistributionKPIs = { total: 0, distributed: 0, pending: 0, waitingAction: 0 };
 
 /**
- * GET /releases/stats — distribuição exata (tenant inteiro) nos 4 baldes
- * operacionais que a página de Lançamentos exibe. O backend agrega só por
- * `status` + "campos obrigatórios preenchidos"; a classificação nos 4 baldes
- * usa a MESMA função (resolveStatusFromRawStatus) que já classifica cada
- * card individualmente — nenhuma regra de negócio duplicada em SQL.
+ * GET /releases/stats — exact distribution (whole tenant) in the 4 operational
+ * buckets the Releases page shows. The backend aggregates only by
+ * `status` + "required fields filled"; classification into the 4 buckets
+ * uses the SAME function (resolveStatusFromRawStatus) that already classifies each
+ * card individually — no business rule duplicated in SQL.
  */
 export function useReleasesDistributionStats() {
   const query = useQuery<RawStatusRow[]>({

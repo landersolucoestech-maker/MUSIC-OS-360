@@ -19,20 +19,20 @@ const valorField = z
   .or(z.literal(""));
 
 /**
- * Share unificado com discriminador `share_type`:
- *  - internal_release → vínculo a um lançamento interno (release + participante + percentual);
- *  - external_receivable → recebível de música externa (música + vínculo da empresa + percentual),
- *    NÃO exige lançamento.
+ * Unified share with the `share_type` discriminator:
+ *  - internal_release → link to an internal release (release + participant + percentage);
+ *  - external_receivable → receivable from an external song (song + company link + percentage),
+ *    does NOT require a release.
  */
 export const shareSchema = z
   .object({
     share_type: z.enum(["internal_release", "external_receivable"]).default("internal_release"),
-    // Interno
+    // Internal
     release_id: z.string().optional().or(z.literal("")),
     holder: z.string().max(150, "Detentor deve ter no máximo 150 caracteres").optional().or(z.literal("")),
     recipient: z.string().max(150).optional().or(z.literal("")),
     funcao: z.enum(["compositor", "interprete", "produtor", "editora", "gravadora", "empresario", "outro"]).optional(),
-    // Externo
+    // External
     music_title: z.string().max(200, "Nome deve ter no máximo 200 caracteres").optional().or(z.literal("")),
     artista_externo: z.string().max(150).optional().or(z.literal("")),
     artista_project_id: z.string().optional().or(z.literal("")),
@@ -41,7 +41,7 @@ export const shareSchema = z
     origem_acordo: z.string().max(300).optional().or(z.literal("")),
     data_prevista: z.string().optional().or(z.literal("")),
     documents: z.string().max(500).optional().or(z.literal("")),
-    // Comum
+    // Common
     percentage: percentageField,
     valor_total: valorField,
     status: z.enum(["pendente", "parcial", "enviado", "aceito", "recebido", "recusado", "erro", "cancelado"]).default("pendente"),

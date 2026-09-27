@@ -107,8 +107,8 @@ function aggregateField(faixas: any[], key: string): string {
 }
 
 export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewModalProps) {
-  // Artista principal do lançamento — busca DIRETO por ID (GET /artists/:id),
-  // não depende de estar entre os primeiros 50 carregados (Task J).
+  // Main artist of the release — looked up DIRECTLY by ID (GET /artists/:id),
+  // does not depend on being among the first 50 loaded (Task J).
   const { entity: artistaWire } = useEntityById<ArtistWireRecord>("artistas", open ? release?.artist_id ?? undefined : undefined);
   const artista: Artist | undefined = artistaWire ? wireToArtist(artistaWire) : undefined;
   const { shares } = useShares();
@@ -124,10 +124,10 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
     open,
   );
 
-  // Fallback de faixas (só usado quando metadata.faixas está vazio — releases
-  // antigos) e nomes de artista por share vinculado — resolvidos por ID
-  // direto via storage.findById, nunca escaneando useFonogramas()/
-  // useArtistas() sem filtro (Task J).
+  // Track fallback (only used when metadata.faixas is empty — old
+  // releases) and artist names per linked share — resolved directly by ID
+  // via storage.findById, never scanning useFonogramas()/
+  // useArtistas() without a filter (Task J).
   const fonogramaIds = useMemo(
     () => (Array.isArray(release?.fonograma_ids) ? (release!.fonograma_ids as string[]) : []),
     [release],
@@ -196,16 +196,16 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   const hasCronograma = Object.values(cronograma).some(Boolean);
   const hasNotes = Boolean(release.notes || release.notas_internas || metadata["observacoes"] || metadata["notas_internas"]);
 
-  // Copyright (anos + titular)
+  // Copyright (years + holder)
   const copyrightAnoLancamento = textValue(metadata["copyrightDataLancamento"]);
   const copyrightAnoGravacao = textValue(metadata["copyrightDataGravacao"]);
 
-  // Subgênero + plataformas selecionadas
+  // Subgenre + selected platforms
   const subgenero = textValue(metadata["generoSecundario"]) ?? textValue(metadata["genero_secundario"]);
   const plataformasArr = Array.isArray(release.plataformas) ? (release.plataformas as string[]).filter(Boolean) : [];
   const plataformasLabel = plataformasArr.length > 0 ? plataformasArr.join(", ") : null;
 
-  // Distribuição: interno vs plataforma (platform_status NUNCA é manual)
+  // Distribution: internal vs platform (platform_status is NEVER manual)
   const platformId = textValue(release.selected_platform_id) ?? textValue(release.distribuidora);
   const platformName = findDistributionPlatform(platformId)?.name ?? platformId;
   const platformStatus = resolvePlatformStatus(release);
@@ -213,12 +213,12 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   const lastAttempt = formatReleaseDate(textValue(release.platform_last_attempt_at));
   const lastSync = formatReleaseDate(textValue(release.platform_last_sync_at));
 
-  // Erros de plataforma
+  // Platform errors
   const platformErrors: PlatformError[] = Array.isArray(release.platform_errors)
     ? (release.platform_errors as PlatformError[])
     : [];
 
-  // Shares vinculados a este lançamento
+  // Shares linked to this release
   const linkedShares = shares.filter(
     (s) => (s as Record<string, unknown>)["release_id"] === release.id,
   );
@@ -278,7 +278,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
           </div>
         </div>
 
-        {/* Controle interno e Distribuição */}
+        {/* Internal control and Distribution */}
         <Separator />
         <div className="space-y-3">
           <h3 className="text-[11px] font-semibold tracking-wider text-muted-foreground">

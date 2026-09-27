@@ -1,9 +1,9 @@
 /**
  * shared/hooks/useUploadToR2.ts
  *
- * Upload directo ao Cloudflare R2 via presigned URL do backend.
- * Fluxo: POST /uploads/presign → PUT directo ao R2 → POST /uploads/:id/confirm
- * Retorna a publicUrl permanente para guardar na entidade.
+ * Direct upload to Cloudflare R2 via a backend presigned URL.
+ * Flow: POST /uploads/presign → direct PUT to R2 → POST /uploads/:id/confirm
+ * Returns the permanent publicUrl to store in the entity.
  */
 import { useState } from "react";
 import { api } from "@/shared/lib/api-client";
@@ -25,7 +25,7 @@ export interface UploadToR2Options {
   entityId?: string;
 }
 
-/** Sub-tipo de erro identificável: R2 não configurado no servidor. */
+/** Identifiable error subtype: R2 not configured on the server. */
 export class R2NotConfiguredError extends UserFacingError {
   constructor(userMessage = "Upload indisponível no momento. Contate o administrador do sistema.") {
     super("R2 storage not configured on the server", userMessage, "R2_NOT_CONFIGURED");
@@ -44,7 +44,7 @@ export function useUploadToR2() {
   async function upload(opts: UploadToR2Options): Promise<{ publicUrl: string; fileId: string }> {
     setIsUploading(true);
     try {
-      // 1. Obter presigned URL do backend
+      // 1. Get the presigned URL from the backend
       let presign: PresignResponse;
       try {
         presign = await api.post<PresignResponse>("/uploads/presign", {
@@ -62,7 +62,7 @@ export function useUploadToR2() {
         throw err;
       }
 
-      // 2. PUT directo ao R2 — sem headers de auth (URL já está assinada)
+      // 2. Direct PUT to R2 — no auth headers (the URL is already signed)
       const putRes = await fetch(presign.presignedUrl, {
         method:  "PUT",
         body:    opts.file,

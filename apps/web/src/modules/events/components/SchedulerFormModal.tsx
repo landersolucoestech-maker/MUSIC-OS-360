@@ -40,8 +40,8 @@ interface SchedulerFormModalProps {
   mode: "create" | "edit" | "view";
 }
 
-/** Formato bruto de GET /clients (ClientsService.mapClient) — usado para o
- * local do CRM (contatos PJ), sem depender do view-model `Cliente`. */
+/** Raw shape of GET /clients (ClientsService.mapClient) — used for the
+ * CRM venue (company contacts), without depending on the `Cliente` view-model. */
 interface LocalCRMLookup {
   id: string;
   nome: string;
@@ -85,7 +85,7 @@ const tiposRelacionadosArtista = [
   "producao_conteudo",
 ];
 
-// Tipos de evento que devem puxar o local do CRM
+// Event types that should pull the venue from the CRM
 const tiposLocalCRM = ["shows", "programas_tv", "radio", "podcasts"];
 
 const tipoEventoAliases: Record<string, string> = {
@@ -97,10 +97,10 @@ const tipoEventoAliases: Record<string, string> = {
   evento_corporativo: "shows",
   reuniao: "reunioes",
   reunioes: "reunioes",
-  // Eventos já persistidos só guardam o enum coarse do backend (events.type,
-  // sem a categoria granular original) — ao editar, o select precisa
-  // resolver esses valores para uma categoria granular representativa em
-  // vez de ficar em branco.
+  // Persisted events only keep the backend's coarse enum (events.type,
+  // without the original granular category) — when editing, the select must
+  // resolve those values to a representative granular category instead
+  // of staying blank.
   recording: "sessoes_estudio",
   meeting: "reunioes",
   interview: "entrevistas",
@@ -111,9 +111,9 @@ const statusAliases: Record<string, string> = {
   realizado: "concluido",
   concluido: "concluido",
   negociacao: "pendente",
-  // events.status real vindo do backend é canônico em inglês (EventStatus de
-  // @music-os-360/types) — sem isto, editar um evento existente não casava
-  // nenhuma option do Select (ficava em branco).
+  // The real events.status from the backend is canonical English (EventStatus from
+  // @music-os-360/types) — without this, editing an existing event matched
+  // no Select option (it stayed blank).
   scheduled: "agendado",
   planned: "agendado",
   confirmed: "confirmado",
@@ -180,7 +180,7 @@ const normalizeTimeValue = (value: unknown): string => {
 
 const getInitialFormData = (event?: any) => {
   // Backend HTTP retorna entity columns: type, data, local. Metadata armazena
-  // descricao, observacoes, valor_cache, etc. Aceita todos os formatos.
+  // descricao, observacoes, valor_cache, etc. Accepts every format.
   const meta = (event?.metadata as Record<string, unknown> | undefined) ?? {};
   return {
     title: (legacyTitle(event) as string | undefined) || "",
@@ -237,8 +237,8 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   const { getOptionsByKind, getItemsByKind } = useOperationalSettings();
   const operationalEventTypeOptions = getOptionsByKind("event_type");
   const eventTypeOptions = operationalEventTypeOptions.length > 0 ? operationalEventTypeOptions : tiposEvento;
-  // events.type só guarda o enum coarse do backend — cada categoria granular
-  // configurada em Configurações → Operacional carrega a correspondência em
+  // events.type only keeps the backend's coarse enum — each granular category
+  // configured in Settings → Operational carries the mapping in
   // metadata.backend_type (ver lib/event-type.ts).
   const granularToBackendType = buildGranularToBackendTypeMap(getItemsByKind("event_type"));
   const [participantSearch, setParticipantSearch] = useState("");
@@ -275,16 +275,16 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   const isViewMode = mode === "view";
   const title = mode === "create" ? "Novo Evento na Agenda" : mode === "edit" ? "Editar Evento" : "Visualizar Evento";
 
-  // Verificar se tipo de evento é relacionado a artista
+  // Check whether the event type is artist-related
   const isArtistaRelated = tiposRelacionadosArtista.includes(formData.tipoEvento);
   
-  // Exibir campos de local quando for relacionado a artista OU reunião
+  // Show the venue fields when artist-related OR a meeting
   const showLocalFields = isArtistaRelated || formData.tipoEvento === "reunioes";
   
-  // Exibir campos exclusivos de shows
+  // Show the show-only fields
   const isShow = formData.tipoEvento === "shows";
   
-  // Verificar se o tipo de evento deve puxar local do CRM
+  // Check whether the event type should pull the venue from the CRM
   const shouldUseCRMLocal = tiposLocalCRM.includes(formData.tipoEvento);
   const selectedParticipantKeys = formData.participantes.map(agendaParticipantKey);
   const selectedParticipantsSummary = summarizeAgendaParticipants(formData.participantes);
@@ -308,7 +308,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
     if (participant) updateParticipants([...formData.participantes, participant]);
   };
 
-  // Atualizar dados de contato quando selecionar um local do CRM
+  // Update contact data when a CRM venue is selected
   const handleLocalCRMChange = (localId: string, local?: LocalCRMLookup) => {
     if (local) {
       setFormData({
@@ -369,10 +369,10 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
       });
       setErrors(newErrors);
       const details = result.error.errors.map((e) => ({ path: e.path, message: e.message }));
-      // Validação client-side esperada (usuário deixou campo obrigatório em
-      // branco) — já comunicada via toast + FieldError inline abaixo.
-      // console.error poluiria o monitoramento de erros (Sentry captura
-      // console.error) com um evento que não é uma falha de runtime.
+      // Expected client-side validation (the user left a required field
+      // blank) — already reported via toast + inline FieldError.
+      // console.error would pollute error monitoring (Sentry captures
+      // console.error) with an event that is not a runtime failure.
       console.warn("SchedulerFormModal validation errors:", details, { formData, normalizedFormData, event });
       const firstError = result.error.errors[0];
       const firstField = firstError?.path[0] ? String(firstError.path[0]) : "";
@@ -388,11 +388,11 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
 
   // Maps frontend tipoEvento (granular, tenant-configurável) → backend
   // CreateEventDto.type enum (coarse: show|festival|recording|meeting|
-  // interview|tour|other — a única coisa que events.type realmente guarda).
-  // Fonte primária: metadata.backend_type de cada categoria configurada em
-  // Configurações → Operacional (granularToBackendType, lib/event-type.ts).
-  // A tabela abaixo é só o fallback para slugs legados/digitados à mão que
-  // não batem com nenhuma categoria configurada.
+  // interview|tour|other — the only thing events.type actually stores).
+  // Primary source: metadata.backend_type of each category configured in
+  // Settings → Operational (granularToBackendType, lib/event-type.ts).
+  // The table below is only the fallback for legacy/hand-typed slugs that
+  // match no configured category.
   const legacyTipoToBackendType: Record<string, string> = {
     shows:           "show",
     show:            "show",
@@ -467,14 +467,14 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   /**
    * Maps form state → backend CreateEventDto / UpdateEventDto shape.
    *
-   * Backend NestJS ValidationPipe roda com whitelist + forbidNonWhitelisted,
-   * então qualquer campo fora do DTO rejeita com 400. Regra de produto
-   * 2026-07-12: cada campo do formulário tem coluna própria no DTO/entity
+   * The backend NestJS ValidationPipe runs with whitelist + forbidNonWhitelisted,
+   * so any field outside the DTO is rejected with 400. Product rule
+   * 2026-07-12: each form field has its own DTO/entity column
    * (endereco, contato_local, valor_cache, publico_esperado, descricao,
-   * observacoes, participantes) — nenhum campo formal vai para `metadata`.
+   * observacoes, participantes) — no formal field goes into `metadata`.
    *
-   * @param forUpdate quando true, inclui campo `status` (válido em UpdateEventDto,
-   *                  proibido em CreateEventDto).
+   * @param forUpdate when true, includes the `status` field (valid in UpdateEventDto,
+   *                  forbidden in CreateEventDto).
    */
   const buildPayload = (data: SchedulerFormData, forUpdate = false) => {
     const startDate = normalizeEventDate(data.startDate);
@@ -545,9 +545,9 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
       await queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.EVENTS] });
       onOpenChange(false);
     } catch (error) {
-      // A mutação já dispara toast de erro genérico; aqui só precisamos do
-      // aviso específico de conflito de concorrência (409), que a mutação
-      // sozinha não sabe diferenciar de um erro qualquer.
+      // The mutation already fires a generic error toast; here we only need the
+      // specific concurrency-conflict (409) warning, which the mutation
+      // alone cannot tell apart from any other error.
       handleConcurrencyConflict(error, "evento");
     } finally {
       setIsSubmitting(false);
@@ -569,9 +569,9 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Campos Básicos */}
+          {/* Basic fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Título do Evento */}
+            {/* Event title */}
             <div className="space-y-2 md:col-span-2">
               <Label>Título do Evento *</Label>
               <Input
@@ -584,7 +584,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
               <FieldError error={errors.title} />
             </div>
 
-            {/* Tipo de Evento */}
+            {/* Event type */}
             <div className="space-y-2">
               <Label>Tipo de Evento *</Label>
               <Select 
@@ -672,9 +672,9 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
             </div>
           </div>
 
-          {/* Datas e Horários */}
+          {/* Dates and times */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Data de Início */}
+            {/* Start date */}
             <div className="space-y-2">
               <Label>Data de Início *</Label>
               <DatePickerField
@@ -688,7 +688,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
               <FieldError error={errors.startDate} />
             </div>
 
-            {/* Horário de Início */}
+            {/* Start time */}
             <div className="space-y-2">
               <Label>Horário de Início</Label>
               <div className="relative">
@@ -703,7 +703,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
               </div>
             </div>
 
-            {/* Data de Fim */}
+            {/* End date */}
             <div className="space-y-2">
               <Label>Data de Fim</Label>
               <DatePickerField
@@ -715,7 +715,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
               />
             </div>
 
-            {/* Horário de Fim */}
+            {/* End time */}
             <div className="space-y-2">
               <Label>Horário de Fim</Label>
               <div className="relative">
@@ -731,7 +731,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
             </div>
           </div>
 
-          {/* Campos de Local - Condicional */}
+          {/* Venue fields - conditional */}
           {showLocalFields && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -780,7 +780,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
             </div>
           )}
 
-          {/* Campos Exclusivos para Shows */}
+          {/* Show-only fields */}
           {isShow && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
@@ -828,7 +828,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
             </div>
           )}
 
-          {/* Descrição e Observações */}
+          {/* Description and notes */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Descrição</Label>

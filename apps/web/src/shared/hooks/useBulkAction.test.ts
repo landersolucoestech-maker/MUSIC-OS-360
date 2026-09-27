@@ -8,10 +8,10 @@ vi.mock("sonner", () => ({
 import { toast } from "sonner";
 
 /**
- * Task K — prova de que bulk delete/update não mente sobre sucesso parcial:
- * antes, `selectedIds.forEach(id => mutation.mutate(id))` seguido de um toast
- * de sucesso IMEDIATO reportava "sucesso" mesmo quando parte das operações
- * falhava, sem contar nem identificar o que falhou.
+ * Task K — proof that bulk delete/update does not lie about partial success:
+ * before, `selectedIds.forEach(id => mutation.mutate(id))` followed by an IMMEDIATE
+ * success toast reported "success" even when part of the operations
+ * failed, without counting or identifying what failed.
  */
 describe("runBulkAction", () => {
   it("awaits every operation and reports full success when all resolve", async () => {

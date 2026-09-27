@@ -19,7 +19,7 @@ export interface ReleaseFormFields {
   copyright: string;
   distribuidora: string;
   notasDistribuicao: string;
-  // ── Novos campos ──────────────────────────
+  // ── New fields ──────────────────────────
   isrcGlobal: string;
   upc: string;
   notasInternas: string;
@@ -31,7 +31,7 @@ export interface ReleaseFormFields {
   assetFichaTecnica: string;
   assetPressRelease: string;
   assetEpkUrl: string;
-  // Cronograma
+  // Schedule
   cronGravacao: string;
   cronMixMaster: string;
   cronEntregaDistribuidora: string;

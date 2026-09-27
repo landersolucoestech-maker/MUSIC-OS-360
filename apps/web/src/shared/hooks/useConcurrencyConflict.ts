@@ -2,17 +2,17 @@ import { toast } from "sonner";
 import { ConflictError } from "@/shared/lib/errors";
 
 /**
- * Task L — leitura do `updated_at` original de uma entidade carregada, para
- * reenviar como `expectedUpdatedAt` no update/patch (proteção de concorrência
- * do backend — ver apps/api/src/common/persistence/optimistic-update.util.ts).
+ * Task L — reads the original `updated_at` of a loaded entity, to
+ * resend it as `expectedUpdatedAt` in the update/patch (backend concurrency
+ * protection — see apps/api/src/common/persistence/optimistic-update.util.ts).
  *
- * Deliberadamente NÃO um hook com estado/ref: os modais de edição recebem a
- * entidade como prop no momento em que abrem e essa prop não é atualizada
- * enquanto o formulário está aberto — ler `updated_at` no submit já reflete o
- * valor ORIGINAL carregado, nunca "agora". Se algum formulário passar a
- * refazer fetch da entidade em background enquanto edita, ele precisa
- * congelar o valor lido na primeira renderização (useRef/useState inicial)
- * antes de usar este helper — isso é responsabilidade do chamador.
+ * Deliberately NOT a hook with state/ref: edit modals receive the
+ * entity as a prop when they open and that prop is not updated
+ * while the form is open — reading `updated_at` on submit already reflects the
+ * ORIGINAL loaded value, never "now". If a form starts to
+ * refetch the entity in the background while editing, it must
+ * freeze the value read on the first render (initial useRef/useState)
+ * before using this helper — that is the caller's responsibility.
  */
 export function getExpectedUpdatedAt(
   entity: { updated_at?: unknown; updatedAt?: unknown } | null | undefined,
@@ -22,22 +22,22 @@ export function getExpectedUpdatedAt(
 }
 
 /**
- * True quando o erro é um 409 do backend (versão desatualizada — outra sessão
- * salvou primeiro). `api-client.ts` mapeia todo HTTP 409 para `ConflictError`
- * (nunca `IntegrationError` — esse é só o fallback para status não mapeados),
- * então é essa classe que precisa ser checada aqui.
+ * True when the error is a backend 409 (stale version — another session
+ * saved first). `api-client.ts` maps every HTTP 409 to `ConflictError`
+ * (never `IntegrationError` — that is only the fallback for unmapped statuses),
+ * so that is the class that must be checked here.
  */
 export function isConcurrencyConflict(err: unknown): boolean {
   return err instanceof ConflictError;
 }
 
 /**
- * Trata um 409 de concorrência de forma consistente em qualquer formulário:
- * avisa que o registro mudou (nunca finge sucesso, nunca sobrescreve), e
- * devolve `true` para o chamador NÃO fechar o modal/limpar o form. Se o erro
- * não for um 409, relança para o catch do chamador tratar como erro genérico.
+ * Handles a concurrency 409 consistently in any form:
+ * warns that the record changed (never fakes success, never overwrites), and
+ * returns `true` so the caller does NOT close the modal/clear the form. If the error
+ * is not a 409, rethrows it for the caller's catch to handle as a generic error.
  *
- * Uso típico:
+ * Typical usage:
  *   } catch (err) {
  *     if (handleConcurrencyConflict(err, "contrato")) return;
  *     toast.error("Erro ao salvar contrato. Tente novamente.");

@@ -5,21 +5,21 @@ import { storage, type PagedResult } from "@/shared/lib/storage";
 
 import { toUserMessage } from "@/shared/lib/errors";
 /**
- * Paginação real server-side (Task G) — companheiro de useDataQuery.ts.
+ * Real server-side pagination (Task G) — companion of useDataQuery.ts.
  *
- * useDataQuery() busca a tabela inteira (com um limit/offset fixo passado
- * por quem chama, tipicamente nenhum → 50 registros default do backend) e é
- * o certo para "me dê tudo" (selects, cross-referência, dropdowns). Para uma
- * TABELA paginada visível ao usuário, isso é o problema descrito na Task G:
- * ou trava em 50 registros silenciosamente, ou — se alguém aumentasse o
- * limit — baixaria dezenas de milhares de linhas só pra mostrar 20.
+ * useDataQuery() fetches the whole table (with a fixed limit/offset passed
+ * by the caller, typically none → backend default of 50 records) and is
+ * right for "give me everything" (selects, cross-reference, dropdowns). For a
+ * user-visible paginated TABLE, that is the problem described in Task G:
+ * either it silently stops at 50 records, or — if someone raised the
+ * limit — it would download tens of thousands of rows just to show 20.
  *
- * Este hook busca APENAS a página atual: page/pageSize/search/filters/sort
- * entram na queryKey (páginas diferentes = cache diferente, sem misturar
- * resultados) e viram query params reais (?limit=&offset=&search=&orderBy=),
- * usando os mesmos endpoints já paginados no backend (ver PaginationDto /
- * QueryArtistDto etc.) — nenhum endpoint novo foi necessário para os
- * recursos já migrados.
+ * This hook fetches ONLY the current page: page/pageSize/search/filters/sort
+ * go into the queryKey (different pages = different cache, without mixing
+ * results) and become real query params (?limit=&offset=&search=&orderBy=),
+ * using the same endpoints already paginated in the backend (see PaginationDto /
+ * QueryArtistDto etc.) — no new endpoint was needed for the
+ * resources already migrated.
  */
 
 type MutationSuccessCallbacks<T> = {
@@ -29,13 +29,13 @@ type MutationSuccessCallbacks<T> = {
 };
 
 export type PaginatedQueryConfig<T = object> = {
-  /** Prefixo estável da queryKey — page/pageSize/search/filters/sort são anexados automaticamente. */
+  /** Stable queryKey prefix — page/pageSize/search/filters/sort are appended automatically. */
   queryKey: string[];
   table: string;
   page: number;
   pageSize: number;
   search?: string;
-  /** Nome do query param de busca no backend (ex.: "search", "q"). Default: "search". */
+  /** Name of the backend search query param (e.g. "search", "q"). Default: "search". */
   searchParam?: string;
   filters?: Record<string, unknown>;
   orderBy?: { column: string; ascending?: boolean };
@@ -81,10 +81,10 @@ export function usePaginatedDataQuery<T extends object>(
 
   const mergedFilters = search ? { ...filters, [searchParam]: search } : filters;
 
-  // page/pageSize/search/filters/sort fazem parte da identidade da query:
-  // sem isso, trocar de página reaproveitaria (incorretamente) o cache da
-  // página anterior, ou pior, uma mudança de filtro devolveria dados de
-  // outro filtro — exatamente o risco de "queryKey genérica demais".
+  // page/pageSize/search/filters/sort are part of the query identity:
+  // without it, changing page would (incorrectly) reuse the cache of the
+  // previous page, or worse, a filter change would return data from
+  // another filter — exactly the "too generic queryKey" risk.
   const queryKey = [...baseKey, "paged", page, pageSize, search ?? "", JSON.stringify(filters ?? {}), orderBy.column, orderBy.ascending ?? false] as const;
 
   const cacheConfig = getCacheConfig(baseKey);
@@ -96,8 +96,8 @@ export function usePaginatedDataQuery<T extends object>(
     enabled,
     staleTime: cacheConfig.staleTime,
     gcTime: cacheConfig.gcTime,
-    // Mantém a página anterior visível enquanto a nova carrega — troca de
-    // página não deve piscar para skeleton/vazio a cada clique.
+    // Keeps the previous page visible while the new one loads — changing
+    // page must not flash to skeleton/empty on each click.
     placeholderData: keepPreviousData,
   });
 

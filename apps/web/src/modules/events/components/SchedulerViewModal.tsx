@@ -15,7 +15,7 @@ interface SchedulerViewModalProps {
   onEdit?: () => void;
 }
 
-// events.status é o valor real persistido pelo backend — canônico em inglês
+// events.status is the real value persisted by the backend — canonical English
 // (EventStatus de @music-os-360/types). Ver docs/NAMING_NORMALIZATION_CANONICAL_MAP.md.
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -99,7 +99,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
         </DialogHeader>
 
         <div className="overflow-y-auto px-6 py-5 space-y-6 text-sm text-foreground">
-          {/* DATA E HORÁRIO */}
+          {/* DATE AND TIME */}
           <Section title="Quando" icon={Calendar}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Field label="Data Início" value={formatDate(event.data)} />
@@ -147,7 +147,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
             </Section>
           )}
 
-          {/* ARTISTA */}
+          {/* ARTIST */}
           {artista && participants.length === 0 && (
             <Section title="Artista" icon={User}>
               <Card>
@@ -174,7 +174,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
             </Section>
           )}
 
-          {/* CONTATO DO LOCAL */}
+          {/* VENUE CONTACT */}
           {(event.contato_local || event.contato_telefone || event.contato_email) && (
             <Section title="Contato no Local" icon={Phone}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -209,7 +209,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
             </Section>
           )}
 
-          {/* DETALHES OPERACIONAIS (Show) */}
+          {/* OPERATIONAL DETAILS (Show) */}
           {(event.fee_amount != null || event.capacidade_publico != null || event.publico_esperado != null) && (
             <Section title="Detalhes Operacionais" icon={DollarSign}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -249,7 +249,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
             </Section>
           )}
 
-          {/* DESCRIÇÃO */}
+          {/* DESCRIPTION */}
           {event.description && (
             <Section title="Descrição" icon={FileText}>
               <Card>
@@ -280,7 +280,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
             </Section>
           )}
 
-          {/* OBSERVAÇÕES */}
+          {/* NOTES */}
           {event.notes && (
             <Section title="Observações" icon={FileText}>
               <Card>

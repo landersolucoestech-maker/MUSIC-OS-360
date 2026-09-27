@@ -10,9 +10,9 @@ export interface UseSharesPaginatedParams {
   search?: string;
   direction?: string;
   status?: string;
-  /** Função do participante (autor/intérprete/produtor/...) -- filtra
-   * shares.party_role, não shares.type (coluna fantasma sem writer real;
-   * ver naming-closure Phase 3). */
+  /** Participant role (author/performer/producer/...) -- filters
+   * shares.party_role, not shares.type (ghost column with no real writer;
+   * see naming-closure Phase 3). */
   partyRole?: string;
   shareType?: string;
 }
@@ -59,7 +59,7 @@ export interface ShareKPIs {
 
 const EMPTY_SHARE_KPIS: ShareKPIs = { aReceber: 0, recebidos: 0, aEnviar: 0, enviados: 0 };
 
-/** GET /shares/stats — distribuição exata direção×status, tenant inteiro (Task H). */
+/** GET /shares/stats — exact direction×status distribution, whole tenant (Task H). */
 export function useSharesStats() {
   const query = useQuery<DirecaoStatusRow[]>({
     queryKey: [...QUERY_KEYS.SHARES, "stats"],

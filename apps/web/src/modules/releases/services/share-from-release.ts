@@ -1,24 +1,24 @@
 import type { Release } from "@/modules/releases/types";
 
 /**
- * Seam desacoplado entre Lançamentos e Gestão de Shares.
+ * Decoupled seam between Releases and Shares Management.
  *
- * Lançamentos NÃO importa o módulo de Shares diretamente: oferece iniciar o fluxo
- * de shares via navegação por query param (mesmo padrão de `?edit`/`?view`), que a
- * página de Shares interpreta. Assim não há acoplamento direto entre os módulos.
+ * Releases does NOT import the Shares module directly: it offers to start the
+ * shares flow via query-param navigation (same pattern as `?edit`/`?view`), which the
+ * Shares page interprets. So there is no direct coupling between the modules.
  */
 
-/** Query param lido por Gestão de Shares para abrir o form já vinculado a um release. */
+/** Query param read by Shares Management to open the form already linked to a release. */
 export const SHARE_FOR_RELEASE_PARAM = "shareForRelease";
 
-/** Rota da Gestão de Shares com o release pré-selecionado. */
+/** Shares Management route with the release preselected. */
 export function shareFlowFromReleaseUrl(releaseId: string): string {
   return `/gestao-shares?${SHARE_FOR_RELEASE_PARAM}=${encodeURIComponent(releaseId)}`;
 }
 
 /**
- * Há participantes/créditos suficientes para sugerir o fluxo de shares?
- * Conservador: exige artista principal definido. Evita abrir o fluxo sem dados.
+ * Are there enough participants/credits to suggest the shares flow?
+ * Conservative: requires a defined main artist. Avoids opening the flow without data.
  */
 export function hasEnoughParticipantsForShares(release: Pick<Release, "artist_id"> | null | undefined): boolean {
   return Boolean(release?.artist_id);

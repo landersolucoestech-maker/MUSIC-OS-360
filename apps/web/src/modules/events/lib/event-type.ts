@@ -4,7 +4,7 @@ import type { OperationalListItem } from "@/modules/settings/hooks/useOperationa
 export const BACKEND_EVENT_TYPES = ["show", "festival", "recording", "meeting", "interview", "tour", "other"] as const;
 export type BackendEventType = (typeof BACKEND_EVENT_TYPES)[number];
 
-/** Rótulos pt-BR para o enum coarse realmente persistido (não a categoria granular do formulário). */
+/** pt-BR labels for the coarse enum actually persisted (not the form's granular category). */
 export const backendEventTypeLabels: Record<BackendEventType, string> = {
   show: "Show",
   festival: "Festival",
@@ -20,13 +20,13 @@ function isBackendEventType(value: string): value is BackendEventType {
 }
 
 /**
- * A categoria de evento configurável em Configurações → Operacional é
- * granular (ex.: slug "sessoes_estudio", "ensaios") mas a coluna real
- * `events.type` só guarda o enum coarse do backend — não existe coluna para
- * a distinção granular. Cada item operacional carrega essa correspondência
- * em `metadata.backend_type` (ver useOperationalSettings.ts,
- * DEFAULT_EVENT_TYPES) — este helper lê exatamente essa fonte de verdade em
- * vez de manter uma tabela duplicada e divergente.
+ * The event category configurable in Settings → Operational is
+ * granular (e.g. slug "sessoes_estudio", "ensaios") but the real column
+ * `events.type` only stores the backend's coarse enum — there is no column for
+ * the granular distinction. Each operational item carries this mapping
+ * in `metadata.backend_type` (see useOperationalSettings.ts,
+ * DEFAULT_EVENT_TYPES) — this helper reads exactly that source of truth instead
+ * of keeping a duplicated, diverging table.
  */
 export function buildGranularToBackendTypeMap(items: OperationalListItem[]): Record<string, BackendEventType> {
   const map: Record<string, BackendEventType> = {};
@@ -39,7 +39,7 @@ export function buildGranularToBackendTypeMap(items: OperationalListItem[]): Rec
   return map;
 }
 
-/** Normaliza um valor livre (slug granular OU já um enum coarde) para o enum coarse real. */
+/** Normalizes a free value (granular slug OR already a coarse enum) to the real coarse enum. */
 export function normalizeToBackendType(
   value: string | null | undefined,
   granularMap: Record<string, BackendEventType>,
@@ -50,7 +50,7 @@ export function normalizeToBackendType(
   return granularMap[v] ?? "other";
 }
 
-/** Label pt-BR para o valor coarse real de um evento já persistido. */
+/** pt-BR label for the real coarse value of an already-persisted event. */
 export function getBackendEventTypeLabel(type: string | null | undefined): string {
   if (!type) return "Evento";
   return backendEventTypeLabels[type as BackendEventType] ?? type;

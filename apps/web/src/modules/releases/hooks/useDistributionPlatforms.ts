@@ -8,18 +8,18 @@ import {
 } from "@/modules/releases/services/distribution-platforms";
 
 interface UseDistributionPlatformsResult {
-  /** Catálogo completo suportado pelo sistema. */
+  /** Full catalog supported by the system. */
   platforms: readonly DistributionPlatform[];
-  /** Apenas as plataformas realmente conectadas/habilitadas. */
+  /** Only the platforms actually connected/enabled. */
   enabledPlatforms: ConnectedDistributionPlatform[];
-  /** Há pelo menos uma plataforma conectada? */
+  /** Is at least one platform connected? */
   hasAnyConnected: boolean;
 }
 
 /**
- * Expõe o catálogo de distribuidoras e o subconjunto efetivamente conectado.
- * Reage a mudanças de conexão (storage event) para refletir conexões feitas em
- * Configurações sem recarregar a página.
+ * Exposes the distributor catalog and the effectively connected subset.
+ * Reacts to connection changes (storage event) to reflect connections made in
+ * Settings without reloading the page.
  */
 export function useDistributionPlatforms(): UseDistributionPlatformsResult {
   const [enabledPlatforms, setEnabledPlatforms] = useState<ConnectedDistributionPlatform[]>(

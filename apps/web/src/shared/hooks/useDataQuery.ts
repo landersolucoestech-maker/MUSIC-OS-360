@@ -4,26 +4,26 @@ import { getCacheConfig } from "@/shared/lib/query-config";
 import { storage } from "@/shared/lib/storage";
 
 import { toUserMessage } from "@/shared/lib/errors";
-// Referência estável: `query.data || []` alocaria um array novo a cada
-// render enquanto não há dado (loading, ou erro sem sucesso anterior — ex.:
-// backend indisponível). Consumidores que derivam `useMemo`/`useEffect`
-// desse array (ex.: useAgendaParticipants, que combina 4 hooks assim) viam
-// a dependência mudar de identidade a cada render e entravam em loop de
-// re-render infinito ("Maximum update depth exceeded"), reproduzido em
-// SchedulerFormModal quando o backend está fora do ar.
+// Stable reference: `query.data || []` would allocate a new array on every
+// render while there is no data (loading, or an error with no earlier success — e.g.
+// backend unavailable). Consumers that derive `useMemo`/`useEffect`
+// from that array (e.g. useAgendaParticipants, which combines 4 such hooks) saw
+// the dependency change identity on every render and entered an infinite
+// re-render loop ("Maximum update depth exceeded"), reproduced in
+// SchedulerFormModal when the backend is down.
 const EMPTY_LIST: never[] = [];
 
 /**
- * Hook genérico de CRUD usado por todos os módulos.
+ * Generic CRUD hook used by every module.
  *
- * Toda leitura e escrita passa pela camada de storage (shared/lib/storage.ts),
- * que abstrai o acesso ao backend (HTTP mode) ou MOCK_DATA (dev mode).
- * Para alternar entre modos, use a variável VITE_USE_MOCK.
+ * Every read and write goes through the storage layer (shared/lib/storage.ts),
+ * which abstracts access to the backend (HTTP mode) or MOCK_DATA (dev mode).
+ * To switch modes, use the VITE_USE_MOCK variable.
  */
 
 /**
- * Callbacks opcionais invocados imediatamente após cada mutação bem-sucedida.
- * Usados pelos módulos para emitir domain events tipados sem acoplamento ao
+ * Optional callbacks invoked right after each successful mutation.
+ * Used by modules to emit typed domain events without coupling to the
  * generic useDataQuery.
  */
 type MutationSuccessCallbacks<T> = {
@@ -35,7 +35,7 @@ type MutationSuccessCallbacks<T> = {
 type QueryConfig<T = object> = {
   queryKey: string[];
   table: string;
-  /** Mantido para compatibilidade com chamadas legadas (não usado em modo mock). */
+  /** Kept for compatibility with legacy calls (not used in mock mode). */
   select?: string;
   orderBy?: { column: string; ascending?: boolean };
   filters?: Record<string, unknown>;

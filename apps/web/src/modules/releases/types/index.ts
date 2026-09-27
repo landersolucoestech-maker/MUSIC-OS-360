@@ -22,8 +22,8 @@ export interface ReleaseSchedule {
 }
 
 /**
- * Erro retornado por uma plataforma de distribuição, por campo.
- * `fieldKey` pode ser global (`upc`, `copyrightHolder`) ou de faixa (`tracks[0].isrc`).
+ * Error returned by a distribution platform, per field.
+ * `fieldKey` may be global (`upc`, `copyrightHolder`) or per track (`tracks[0].isrc`).
  */
 export interface PlatformError {
   fieldKey: string;
@@ -35,8 +35,8 @@ export interface PlatformError {
 }
 
 /**
- * Tentativa de envio a uma plataforma (scaffolding tipado — preenchido por
- * integração real no futuro; nunca simulado). Mantido fora do schema do form.
+ * Attempt to send to a platform (typed scaffolding — filled by a real
+ * integration in the future; never simulated). Kept outside the form schema.
  */
 export interface ReleasePlatformAttempt {
   id: string;
@@ -67,7 +67,7 @@ export interface Release {
   notas_internas?: string | null;
   assets?: ReleaseAssets | null;
   cronograma?: ReleaseSchedule | null;
-  // Campos adicionais presentes no mock e formulário
+  // Additional fields present in the mock and the form
   music_genre?: string | null;
   idioma?: string | null;
   gravadora?: string | null;
@@ -75,16 +75,16 @@ export interface Release {
   work_id?: string | null;
   fonograma_id?: string | null;
   codigo_upc?: string | null;
-  // ── Separação status interno × status de plataforma ──────────────────────────
-  /** Status operacional interno (controle). Ver `release-status`. */
+  // ── Internal status × platform status separation ─────────────────────────────
+  /** Internal operational status (control). See `release-status`. */
   internal_status?: string | null;
-  /** Status retornado pela plataforma — NUNCA editável manualmente; null = controle interno. */
+  /** Status returned by the platform — NEVER manually editable; null = internal control. */
   platform_status?: string | null;
-  /** Plataforma de distribuição selecionada (id do catálogo). */
+  /** Selected distribution platform (catalog id). */
   selected_platform_id?: string | null;
-  /** Dados específicos da plataforma (montados conforme schema da plataforma conectada). */
+  /** Platform-specific data (built according to the connected platform's schema). */
   platform_specific_data?: Record<string, unknown> | null;
-  /** Erros retornados pela plataforma, por campo. */
+  /** Errors returned by the platform, per field. */
   platform_errors?: PlatformError[] | null;
   platform_last_attempt_at?: string | null;
   platform_last_sync_at?: string | null;
@@ -103,7 +103,7 @@ export interface ReleaseWithRelations extends Release {
 export interface Share {
   id: string;
   user_id?: string;
-  /** Discriminador interno/externo. Quando ausente, derivar via `resolveShareType`. */
+  /** Internal/external discriminator. When missing, derive it via `resolveShareType`. */
   share_type?: ShareType | string | null;
   work_id?: string | null;
   artist_id?: string | null;
@@ -115,19 +115,19 @@ export interface Share {
   settled_amount?: number | null;
   holder?: string | null;
   recipient?: string | null;
-  // ── Fluxo interno (release) ──────────────────────────────────────────────────
+  // ── Internal flow (release) ──────────────────────────────────────────────────
   release_id?: string | null;
-  // ── Fluxo externo (recebível) ────────────────────────────────────────────────
+  // ── External flow (receivable) ───────────────────────────────────────────────
   music_title?: string | null;
   artista_externo?: string | null;
-  /** Artista/projeto da empresa vinculado ao recebível externo. */
+  /** Company artist/project linked to the external receivable. */
   artista_project_id?: string | null;
   pagador?: string | null;
   pagador_contato?: string | null;
   origem_acordo?: string | null;
   data_prevista?: string | null;
   documents?: string | null;
-  // ── Acordo / rastreabilidade (compartilhado) ─────────────────────────────────
+  // ── Agreement / traceability (shared) ─────────────────────────────────────────
   acordo_notas?: string | null;
   acordo_url?: string | null;
   notes?: string | null;
