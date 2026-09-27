@@ -60,7 +60,7 @@ function mapTriggers(value: unknown): CampaignAdjustmentTrigger[] {
 
 function buildFallback(input: CampaignStrategyInput): CampaignStrategyOutput {
   return {
-    strategicDirection: `${HEURISTIC_NOTE} Campanha "${input.campaignName}" (${input.campaignType}).`,
+    strategicDirection: `${HEURISTIC_NOTE} Campanha "${input.campaignName}".`,
     targetAudience: input.objective ? `Público alinhado ao objetivo: ${input.objective}.` : "Não determinado — dados insuficientes.",
     competitivePositioning: "Não determinado — planejamento heurístico local.",
     keyMessages: [],

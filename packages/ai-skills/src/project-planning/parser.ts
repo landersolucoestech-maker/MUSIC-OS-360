@@ -151,7 +151,7 @@ const HEURISTIC_NOTE = "Plano heurístico local: a análise detalhada do modelo 
 function buildFallback(raw: string, input: ProjectPlanningInput): ProjectPlanningOutput {
   const base = raw.trim()
     ? raw.trim()
-    : `Plano operacional para o projeto "${input.projectName}" (${input.projectType}).`;
+    : `Plano operacional para o projeto "${input.projectName}".`;
 
   return {
     summary:         `${base}\n\n${HEURISTIC_NOTE}`,

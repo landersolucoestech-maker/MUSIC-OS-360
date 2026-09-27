@@ -13,6 +13,7 @@
 import type {
   AudiovisualBriefingInput,
   AudiovisualBriefingOutput,
+  AudiovisualBudgetLevel,
   AudiovisualContentType,
   AudiovisualAssetType,
   AudiovisualScriptScene,
@@ -171,13 +172,33 @@ const DELIVERABLE_BY_TYPE: Record<AudiovisualContentType, AudiovisualDeliverable
 
 // ─── Safe structured fallback ─────────────────────────────────────────────────
 
+/** PT-BR labels for the fallback copy: enum values never reach the user. */
+const CONTENT_TYPE_LABEL: Record<AudiovisualContentType, string> = {
+  "music-video": "videoclipe",
+  "lyric-video": "lyric video",
+  visualizer: "visualizer",
+  teaser: "teaser",
+  reels: "Reels",
+  shorts: "Shorts",
+  stories: "Stories",
+  institutional: "vídeo institucional",
+  other: "peça audiovisual",
+};
+
+const BUDGET_LEVEL_LABEL: Record<AudiovisualBudgetLevel, string> = {
+  low: "baixo",
+  medium: "médio",
+  high: "alto",
+  premium: "premium",
+};
+
 function buildFallback(input: AudiovisualBriefingInput): AudiovisualBriefingOutput {
   const deliverable = DELIVERABLE_BY_TYPE[input.contentType] ?? DELIVERABLE_BY_TYPE.other;
 
   return {
     creativeConcept:
-      `Conceito base para "${input.projectTitle}" (${input.contentType}) do artista ${input.artistName}: ` +
-      `peça audiovisual alinhada ao objetivo "${input.objective}", produzida em nível de orçamento ${input.budgetLevel}. ` +
+      `Conceito base para "${input.projectTitle}" (${CONTENT_TYPE_LABEL[input.contentType] ?? CONTENT_TYPE_LABEL.other}) do artista ${input.artistName}: ` +
+      `peça audiovisual alinhada ao objetivo "${input.objective}", produzida com orçamento de nível ${BUDGET_LEVEL_LABEL[input.budgetLevel] ?? "não informado"}. ` +
       `Briefing heurístico local — refine com a direção criativa antes de produzir.`,
     script: [],
     scenes: [],

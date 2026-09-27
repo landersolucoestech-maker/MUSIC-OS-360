@@ -79,6 +79,13 @@ function inferLevel(text: string): SkillPriority {
   return "medium";
 }
 
+const PRIORITY_LABEL: Record<SkillPriority, string> = {
+  critical: "crítica",
+  high: "alta",
+  medium: "média",
+  low: "baixa",
+};
+
 const SLA_BY_LEVEL: Record<SkillPriority, { responseTime: string; resolutionTime: string }> = {
   critical: { responseTime: "1h",  resolutionTime: "8h" },
   high:     { responseTime: "2h",  resolutionTime: "1 dia útil" },
@@ -134,11 +141,11 @@ function buildFallback(input: SupportTriageInput): SupportTriageOutput {
     SLARecommendation: {
       responseTime: sla.responseTime,
       resolutionTime: sla.resolutionTime,
-      reason: `SLA sugerido pela prioridade heurística (${level}). ${HEURISTIC_NOTE}`,
+      reason: `SLA sugerido pela prioridade heurística (${PRIORITY_LABEL[level]}). ${HEURISTIC_NOTE}`,
     },
     internalNotes: [
       HEURISTIC_NOTE,
-      `Prioridade/severidade inferidas por palavras-chave: ${level}.`,
+      `Prioridade/severidade inferidas por palavras-chave: ${PRIORITY_LABEL[level]}.`,
     ],
     recommendedActions: [
       { action: "Revisar e reclassificar manualmente o ticket.", priority: "medium" },

@@ -56,7 +56,7 @@ function mapRiskFactors(value: unknown): LaunchRiskFactor[] {
 
 function buildFallback(input: LaunchStrategyInput): LaunchStrategyOutput {
   return {
-    strategicNarrative: `${HEURISTIC_NOTE} Lançamento "${input.releaseTitle}" (${input.releaseType}).`,
+    strategicNarrative: `${HEURISTIC_NOTE} Lançamento "${input.releaseTitle}".`,
     targetAudience: input.genre ? `Público de ${input.genre}.` : "Público-alvo não determinado heuristicamente.",
     competitivePositioning: "Definir posicionamento manualmente.",
     keyMessages: [],

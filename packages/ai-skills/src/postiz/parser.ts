@@ -15,6 +15,7 @@ import type {
   PostizInput,
   PostizOutput,
   PostizBlocker,
+  PostizChannelReadiness,
   PostizRecommendedAction,
 } from "./contracts";
 import type { SkillPriority } from "../shared/primitives";
@@ -58,16 +59,24 @@ function computeReadyToRequestPublish(input: PostizInput): boolean {
 
 function buildRealBlockers(input: PostizInput): PostizBlocker[] {
   const blockers: PostizBlocker[] = [];
+  const READINESS_LABEL: Record<PostizChannelReadiness, string> = {
+    dependency_not_met: "credenciais da plataforma não configuradas",
+    available_not_connected: "conta não conectada",
+    connected: "conectado",
+    requires_reauth: "autorização expirada",
+    provider_error: "erro na última interação",
+    not_implemented: "publicação ainda não disponível",
+  };
   if (input.channelReadiness !== "connected") {
     const actionByReadiness: Record<string, string> = {
       dependency_not_met: "Configurar credenciais da plataforma no ambiente",
-      available_not_connected: `Conectar a conta de ${input.channel} para este tenant`,
+      available_not_connected: `Conectar a conta de ${input.channel} neste workspace`,
       requires_reauth: `Reautorizar a conexão de ${input.channel}`,
       provider_error: `Verificar o erro reportado pela última interação com ${input.channel}`,
       not_implemented: `Publicação em ${input.channel} ainda não foi implementada nesta plataforma`,
     };
     blockers.push({
-      blocker: `Canal ${input.channel} não está conectado (estado: ${input.channelReadiness})`,
+      blocker: `Canal ${input.channel} não está conectado (${READINESS_LABEL[input.channelReadiness] ?? "situação desconhecida"})`,
       action: actionByReadiness[input.channelReadiness] ?? "Verificar conexão do canal",
     });
   }

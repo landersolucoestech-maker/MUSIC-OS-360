@@ -50,7 +50,7 @@ function mapGaps(value: unknown): ContactOperationsGap[] {
 function buildFallback(input: ContactOperationsInput): ContactOperationsOutput {
   const gaps: ContactOperationsGap[] = [];
   if (!input.responsavelNome?.trim()) {
-    gaps.push({ gap: "Nenhum responsável definido", reason: "responsavelNome não informado" });
+    gaps.push({ gap: "Nenhum responsável definido", reason: "Nome do responsável não informado" });
   }
   return {
     onboardingSummary: `${HEURISTIC_NOTE} Cliente "${input.clientName}".`,

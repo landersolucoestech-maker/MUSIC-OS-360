@@ -114,7 +114,7 @@ function mapRisks(value: unknown): CampaignPlanRisk[] {
 
 function buildFallback(input: CampaignPlanInput): CampaignPlanOutput {
   return {
-    planSummary: `${HEURISTIC_NOTE} Campanha "${input.campaignName}" (${input.campaignType}).`,
+    planSummary: `${HEURISTIC_NOTE} Campanha "${input.campaignName}".`,
     channels: [],
     milestones: [],
     suggestedTasks: [

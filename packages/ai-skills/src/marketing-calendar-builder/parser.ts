@@ -226,7 +226,7 @@ function buildFallback(input: MarketingCalendarBuilderInput): MarketingCalendarB
       strategy:            `${HEURISTIC_NOTE} Ajustar abordagem ao canal ${platform}.`,
       frequencySuggestion: freqSuggestion,
     })),
-    CTAs: ["Ouça agora", "Salve nas suas playlists", "Compartilhe", "Ative o pre-save"],
+    CTAs: ["Ouça agora", "Salve nas suas playlists", "Compartilhe", "Ative o pré-save"],
     campaignPhases: buildFallbackPhases(input),
     productionNeeds: [
       { item: "Definir identidade visual da campanha", area: "Design", priority: "high" },
