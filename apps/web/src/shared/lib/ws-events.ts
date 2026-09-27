@@ -23,7 +23,7 @@ export interface WsNotificationPayload {
 }
 
 export interface WsEventMap {
-  // ── Artistas ────────────────────────────────────────────────────────────────
+  // ── Artists ────────────────────────────────────────────────────────────────────
   'artist.created':               WsBasePayload & { id: string };
   'artist.updated':               WsBasePayload & { id: string };
   'artist.deleted':               WsBasePayload & { id: string };
@@ -32,16 +32,16 @@ export interface WsEventMap {
   'catalog.music.registered':     WsBasePayload & { id: string };
   'catalog.phonogram.registered': WsBasePayload & { id: string };
 
-  // ── Contratos ────────────────────────────────────────────────────────────────
+  // ── Contracts ──────────────────────────────────────────────────────────────────
   'contract.created':             WsBasePayload & { id: string };
   'contract.updated':             WsBasePayload & { id: string };
   'contract.signed':              WsBasePayload & { id: string };
 
-  // ── CRM ──────────────────────────────────────────────────────────────────────
+  // ── CRM ────────────────────────────────────────────────────────────────────────
   'crm.lead.captured':            WsBasePayload & { id: string };
   'crm.lead.converted':           WsBasePayload & { id: string };
 
-  // ── Financeiro ───────────────────────────────────────────────────────────────
+  // ── Finance ────────────────────────────────────────────────────────────────────
   'finance.transaction.created':  WsBasePayload & { id: string };
   'finance.transaction.updated':  WsBasePayload & { id: string };
   'finance.calculated':           WsBasePayload & { period?: string };

@@ -85,7 +85,7 @@ export const QUERY_KEYS = {
   FOLLOWUPS: ["followups"] as const,
   FINANCIAL_CATEGORIES: ["financial-categories"] as const,
   
-  // RH (Recursos Humanos)
+  // HR (Human Resources)
   EMPLOYEES: ["employees"] as const,
   PAYROLL: ["payroll"] as const,
   LEAVE_REQUESTS: ["leave-requests"] as const,

@@ -4,13 +4,13 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/shared/ui
 import { cn } from "@/shared/lib/utils";
 
 /**
- * Accordion reutilizável construído sobre o Radix Collapsible já existente no
- * projeto. Cada `AccordionItem` é independente (vários podem ficar abertos ao
- * mesmo tempo, cada um com seu próprio toggle). O conteúdo fechado é desmontado
- * pelo Collapsible — comportamento desejado para grande volume de itens.
+ * Reusable accordion built on the Radix Collapsible that already exists in the
+ * project. Each `AccordionItem` is independent (several can be open at the
+ * same time, each with its own toggle). Closed content is unmounted
+ * by the Collapsible — the desired behavior for a large number of items.
  *
- * Pode ser usado de forma controlada (`open` + `onOpenChange`) ou não
- * controlada (`defaultOpen`).
+ * It can be used controlled (`open` + `onOpenChange`) or
+ * uncontrolled (`defaultOpen`).
  */
 
 function Accordion({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {

@@ -3,21 +3,21 @@ import { cn } from "@/shared/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 
 export interface TablePaginationProps {
-  /** Total de itens (após filtros). */
+  /** Total number of items (after filters). */
   total: number;
-  /** Página atual (base 0). */
+  /** Current page (0-based). */
   page: number;
   pageSize: number;
   onPageChange: (page: number) => void;
   onPageSizeChange?: (size: number) => void;
   pageSizeOptions?: number[];
-  /** Rótulo plural do item, ex.: "produções", "contatos". */
+  /** Plural label of the item, e.g. "produções", "contatos". */
   itemLabel?: string;
   className?: string;
 }
 
 /**
- * Paginação de tabela padrão do sistema — funcional e consistente em todas as páginas.
+ * Standard system table pagination — functional and consistent across every page.
  */
 export function TablePagination({
   total,

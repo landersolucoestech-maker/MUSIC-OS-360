@@ -374,7 +374,7 @@ export function ObraViewModal({
               </>
             )}
 
-            {/* Letra */}
+            {/* Lyrics */}
             {letraCompleta && (
               <>
                 <Separator />

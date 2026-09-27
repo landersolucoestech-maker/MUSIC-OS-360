@@ -27,11 +27,11 @@ export interface BillingPlan {
   priceAmount?: number | null;
   /** Billing period. */
   interval?: "mensal" | "anual" | null;
-  /** Recursos exibidos no card. */
+  /** Features shown on the card. */
   features: string[];
-  /** Assentos inclusos no plano (null = ilimitado). */
+  /** Seats included in the plan (null = unlimited). */
   seats?: number | null;
-  /** Limites por recurso (artists, contracts, storageGb...). */
+  /** Limits per resource (artists, contracts, storageGb...). */
   limits?: Record<string, number | null>;
   /** Stripe reference — synced from the database, never hardcoded in the UI. */
   stripePriceId?: string | null;

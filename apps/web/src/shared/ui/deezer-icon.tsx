@@ -1,10 +1,10 @@
 import type { SVGProps } from "react";
 
 /**
- * Logo oficial atual do Deezer (rebrand 2023).
- * Monocromático via `currentColor` para herdar a cor do contexto (seção "Redes"
- * herda text-muted-foreground; card de métricas aplica o accent #A238FF).
- * API compatível com lucide/react-icons (aceita className, size, etc.).
+ * Current official Deezer logo (2023 rebrand).
+ * Monochrome via `currentColor` to inherit the context color (the "Redes" section
+ * inherits text-muted-foreground; the metrics card applies the #A238FF accent).
+ * API compatible with lucide/react-icons (accepts className, size, etc.).
  */
 export function DeezerIcon(props: SVGProps<SVGSVGElement>) {
   return (

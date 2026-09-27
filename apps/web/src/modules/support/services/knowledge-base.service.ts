@@ -1,10 +1,10 @@
 /**
  * services/knowledge-base.service.ts
  *
- * Central de Suporte — base de conhecimento (Decision Gate item 8). Conteúdo
- * GLOBAL (não tenant-scoped) — ver apps/api/.../knowledge-base.controller.ts.
- * /knowledge-articles retorna só publicado (leitura do tenant);
- * /knowledge-articles/admin retorna todos os status (autoria, super_admin).
+ * Support Center — knowledge base (Decision Gate item 8). GLOBAL
+ * content (not tenant-scoped) — see apps/api/.../knowledge-base.controller.ts.
+ * /knowledge-articles returns only published content (tenant read);
+ * /knowledge-articles/admin returns every status (authoring, super_admin).
  */
 import { api } from "@/shared/lib/api-client";
 

@@ -5,7 +5,7 @@ import { api } from "@/shared/lib/api-client";
 import type { InventarioItem } from "../types/inventory.types";
 
 export interface UseInventarioPaginatedParams {
-  /** 0-indexado, mesma convenção de usePagination()/TablePagination. */
+  /** 0-indexed, same convention as usePagination()/TablePagination. */
   page: number;
   pageSize: number;
   search?: string;
@@ -50,9 +50,9 @@ export interface InventarioStats {
 const EMPTY_STATS: InventarioStats = { total: 0, byGroup: {} };
 
 /**
- * Contagem por status + soma de valor patrimonial, sobre o TENANT INTEIRO —
- * GET /inventory/stats (agregado no banco). Task H: os KPIs de
- * Inventario.tsx não podem mais ser calculados só sobre a página atual.
+ * Count per status + asset value sum, over the WHOLE TENANT —
+ * GET /inventory/stats (aggregated in the database). Task H: the
+ * Inventario.tsx KPIs can no longer be computed over the current page only.
  */
 export function useInventarioStats() {
   const query = useQuery<InventarioStats>({

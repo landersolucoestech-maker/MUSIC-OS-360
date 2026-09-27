@@ -289,11 +289,11 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
     return null;
   };
 
-  // Obra vinculada
+  // Linked work
   const [obraVinculada, setObraVinculada] = useState<ObraVinculada | null>(initialObra());
   const [buscaObra, setBuscaObra] = useState("");
   const [buscaOpen, setBuscaOpen] = useState(false);
-  // Dados do Fonograma (suportam camelCase do form OU snake_case do banco)
+  // Sound recording data (supports the form's camelCase OR the database's snake_case)
   const initialDurationText = parseDurationText(fonograma?.duration_text);
   const initialIsrc = parseIsrc(fonograma?.isrc);
 
@@ -346,7 +346,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
   const audioInputRef = useRef<HTMLInputElement>(null);
   const { upload: uploadAudioToR2 } = useUploadToR2();
 
-  // Termos
+  // Terms
   const [aceitaTermos, setAceitaTermos] = useState(false);
 
   // Loading state for submit
@@ -1012,7 +1012,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
             )}
           </div>
 
-          {/* Dados do Fonograma */}
+          {/* Sound recording data */}
           <div className="border border-border rounded-lg p-6 space-y-4 bg-muted/10">
             <h3 className="font-semibold text-base">Dados do Fonograma</h3>
 
@@ -1261,7 +1261,7 @@ export function FonogramaFormModal({ open, onOpenChange, fonograma, mode, onSave
             </div>
           </Collapsible>
 
-          {/* Termos de Uso */}
+          {/* Terms of use */}
           {!isViewMode && (
             <div className="flex items-center gap-2 p-4 bg-muted/10 rounded-lg border border-border">
               <Checkbox 

@@ -32,7 +32,7 @@ const DialogContent = React.forwardRef<
 >(({ className, children, "aria-describedby": ariaDescribedby, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
-    {/* Wrapper flex: centraliza o popup sem usar translate (popup real, sem movimento lateral). */}
+    {/* Flex wrapper: centers the popup without translate (real popup, no lateral movement). */}
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
       <DialogPrimitive.Content
         ref={ref}

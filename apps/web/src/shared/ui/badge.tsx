@@ -4,15 +4,15 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/shared/lib/utils";
 
 /**
- * Badge — fonte ÚNICA de estilização de badges/tags/chips/status do app.
+ * Badge — SINGLE source of styling for the app's badges/tags/chips/status.
  *
- * Apenas 5 variants canônicos (success | info | warning | danger | neutral),
- * com paleta padrão e contraste garantido (fundo claro → texto escuro).
- * Nenhuma tela deve aplicar classes de cor de badge manualmente — sempre passar
- * por aqui (via `variant`) ou pelo resolver semântico `StatusBadge`.
+ * Only 5 canonical variants (success | info | warning | danger | neutral),
+ * with a default palette and guaranteed contrast (light background → dark text).
+ * No screen should apply badge color classes manually — always go
+ * through here (via `variant`) or through the `StatusBadge` semantic resolver.
  *
- * Os nomes legados (default/secondary/destructive/outline/muted) são mantidos
- * como aliases dos 5 canônicos para não quebrar chamadas existentes.
+ * The legacy names (default/secondary/destructive/outline/muted) are kept
+ * as aliases of the 5 canonical ones so existing calls do not break.
  */
 const badgeVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent px-2 py-0.5 text-xs font-medium leading-none transition-colors",
@@ -25,7 +25,7 @@ const badgeVariants = cva(
         warning: "bg-warning-soft text-warning",
         danger: "bg-destructive-soft text-destructive",
         neutral: "bg-muted text-muted-foreground",
-        // ── Aliases legados (mapeados aos canônicos) ──────────────────────
+        // ── Legacy aliases (mapped to the canonical ones) ──────────────────
         destructive: "bg-destructive-soft text-destructive",
         default: "bg-muted text-muted-foreground",
         secondary: "bg-muted text-muted-foreground",
@@ -39,7 +39,7 @@ const badgeVariants = cva(
   },
 );
 
-/** Os 5 variants canônicos permitidos para badges/status. */
+/** The 5 canonical variants allowed for badges/status. */
 export type BadgeVariant = "success" | "info" | "warning" | "danger" | "neutral";
 
 export interface BadgeProps

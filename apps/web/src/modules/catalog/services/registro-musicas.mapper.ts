@@ -471,7 +471,7 @@ export function fonogramaToFormFields(f: any): FonogramaFormFields {
   };
 }
 
-// ── Projeto → Obra seed ──────────────────────────────────────────────────────
+// ── Project → Work seed ──────────────────────────────────────────────────────
 
 /**
  * Converts a Project + its first MusicaData into a seed object that can be

@@ -124,7 +124,7 @@ export default function SupportKnowledge() {
   }, [incrementViews]);
 
   const filtered = articles.filter((a) => {
-    if (a.published === false) return false; // ocultar conteúdos despublicados
+    if (a.published === false) return false; // hide unpublished content
     if (selectedCategory !== "all" && a.category_id !== selectedCategory) return false;
     return true;
   });

@@ -5,7 +5,7 @@
  */
 
 const CATEGORY_LABELS: Record<string, string> = {
-  // ── Financeiro ────────────────────────────────────────────────────────────────
+  // ── Finance ─────────────────────────────────────────────────────────────────────
   "recebimentos externos de direitos": "Recebimentos externos de direitos",
   recebimentos_externos_de_direitos: "Recebimentos externos de direitos",
   cache: "Cachê de Shows",

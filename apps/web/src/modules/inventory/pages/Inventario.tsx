@@ -26,8 +26,8 @@ import { useDebounce } from "@/shared/hooks/useDebounce";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 
-// Filtros do dropdown → valores reais gravados no banco (status/localizacao).
-// Mesma tradução que existia no .filter() client-side antes da migração.
+// Dropdown filters → real values stored in the database (status/localizacao).
+// Same translation that existed in the client-side .filter() before the migration.
 const STATUS_FILTER_MAP: Record<string, string> = {
   "em-uso": "em_uso",
   disponivel: "disponivel",
@@ -69,8 +69,8 @@ export default function Inventario() {
 
   const hasActiveFilters = searchTerm !== "" || categoryFilter !== "all-category" || statusFilter !== "all-status" || localFilter !== "all-local";
 
-  // Task H: paginação real server-side — a página muda de request (nunca
-  // recorta uma lista já baixada), e volta pra página 0 quando um filtro muda.
+  // Task H: real server-side pagination — the page changes the request (it never
+  // slices an already-downloaded list), and goes back to page 0 when a filter changes.
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   useEffect(() => { setPage(0); }, [debouncedSearch, categoryFilter, statusFilter, localFilter]);
@@ -90,8 +90,8 @@ export default function Inventario() {
     localizacao: localFilter !== "all-local" ? LOCAL_FILTER_MAP[localFilter] : undefined,
   });
 
-  // KPIs: contagem por status + soma de valor patrimonial SOBRE O TENANT
-  // INTEIRO (não a página atual) — GET /inventory/stats, agregado no banco.
+  // KPIs: count per status + asset value sum OVER THE WHOLE
+  // TENANT (not the current page) — GET /inventory/stats, aggregated in the database.
   const { stats: inventarioStats } = useInventarioStats();
 
   const handleClearFilters = () => {
@@ -272,9 +272,9 @@ export default function Inventario() {
     </MainLayout>
     )}
 
-      {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): InventarioFormModal chama useInventario() de novo só
-          para as mutations, a mesma query do isLoading acima. */}
+      {/* Outside the isLoading gate on purpose — same bug as /artistas
+          (Task C): InventarioFormModal calls useInventario() again only
+          for the mutations, the same query as the isLoading above. */}
       <InventarioViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} item={viewModal.item} />
       <InventarioFormModal open={formModal.open} onOpenChange={(open) => setFormModal({ ...formModal, open })} item={formModal.item} mode={formModal.mode} />
       <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Item" description={`Tem certeza que deseja excluir "${deleteModal.item?.name}"?`} onConfirm={handleDelete} />

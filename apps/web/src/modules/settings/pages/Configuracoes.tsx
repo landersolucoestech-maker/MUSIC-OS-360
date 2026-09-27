@@ -486,7 +486,7 @@ export default function Configuracoes() {
     && !findProviderState(externalProviders, id);
 
   const integracoes: IntegrationCatalogItem[] = [
-    // ── Assinatura Digital ────────────────────────────────────────────────────
+    // ── Digital signature ───────────────────────────────────────────────────────
     {
       id: "autentique",
       name: "Autentique",
@@ -778,7 +778,7 @@ export default function Configuracoes() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Empresa */}
+          {/* Company */}
           <TabsContent value="empresa" className="mt-6 space-y-6">
             {!tenant.onboarding.completed && (
               <AiSkillRunPanel
@@ -804,7 +804,7 @@ export default function Configuracoes() {
               />
             )}
             <div className="grid gap-6 lg:grid-cols-3">
-              {/* Resumo — Identidade Visual */}
+              {/* Summary — visual identity */}
               <Card className="lg:col-span-1">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -1043,7 +1043,7 @@ export default function Configuracoes() {
 
                 <Separator />
 
-                {/* Contratos */}
+                {/* Contracts */}
                 <div className="space-y-4">
                   <h4 className="font-medium flex items-center gap-2">
                     <FileText className="h-4 w-4" />
@@ -1092,7 +1092,7 @@ export default function Configuracoes() {
 
                 <Separator />
 
-                {/* Financeiro */}
+                {/* Finance */}
                 <div className="space-y-4">
                   <h4 className="font-medium flex items-center gap-2">
                     <DollarSign className="h-4 w-4" />
@@ -1163,7 +1163,7 @@ export default function Configuracoes() {
 
                 <Separator />
 
-                {/* Sistema */}
+                {/* System */}
                 <div className="space-y-4">
                   <h4 className="font-medium flex items-center gap-2">
                     <RefreshCw className="h-4 w-4" />
@@ -1807,7 +1807,7 @@ export default function Configuracoes() {
                 <>
                   {/* ── Plano Atual + Seats ─────────────────────────────────────────────── */}
                   <div className="grid gap-6 md:grid-cols-2">
-                    {/* Plano Atual */}
+                    {/* Current plan */}
                     <Card>
                       <CardHeader className="pb-3">
                         <CardTitle className="flex items-center gap-2 text-base">
@@ -2101,7 +2101,7 @@ export default function Configuracoes() {
               ))}
             </div>
 
-            {/* Gerenciar Equipe */}
+            {/* Manage team */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -2144,7 +2144,7 @@ export default function Configuracoes() {
                   </Button>
                 </div>
 
-                {/* Lista de Membros */}
+                {/* Member list */}
                 {usuariosLoading || rolesLoading ? (
                   <div className="flex items-center justify-center py-12">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -2216,7 +2216,7 @@ export default function Configuracoes() {
                       </div>
                     ))}
 
-                    {/* Convites pendentes */}
+                    {/* Pending invitations */}
                     {teamInvites.map((invite) => (
                       <div 
                         key={invite.id} 
@@ -2504,7 +2504,7 @@ export default function Configuracoes() {
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Criar Papel */}
+      {/* Create role modal */}
       <Dialog open={createRoleModalOpen} onOpenChange={setCreateRoleModalOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>

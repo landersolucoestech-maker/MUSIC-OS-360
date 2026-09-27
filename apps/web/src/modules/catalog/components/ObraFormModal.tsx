@@ -891,7 +891,7 @@ export function ObraFormModal({
                 </div>
               </div>
 
-              {/* Criada por IA — col-span-2 | Row 2 */}
+              {/* Created by AI — col-span-2 | Row 2 */}
               <div className="col-span-2">
                 <span className="text-xs text-muted-foreground mb-1 block">
                   Criada por IA?
@@ -933,7 +933,7 @@ export function ObraFormModal({
             </div>
           </div>
 
-          {/* Criado por IA Generativa - Condicional */}
+          {/* Created by generative AI - conditional */}
           {criadaPorIA === "sim" && (
             <div className="border border-border rounded-lg p-6 space-y-5 bg-muted/10">
               <h3 className="font-semibold">Criado por IA Generativa</h3>
@@ -971,7 +971,7 @@ export function ObraFormModal({
                     artificial generativa:
                   </p>
 
-                  {/* Harmonia */}
+                  {/* Harmony */}
                   <div className="space-y-2">
                     <Label className="font-semibold">HARMONIA:</Label>
                     <div className="grid grid-cols-2 gap-4">
@@ -1023,7 +1023,7 @@ export function ObraFormModal({
                     </div>
                   </div>
 
-                  {/* Melodia */}
+                  {/* Melody */}
                   <div className="space-y-2">
                     <Label className="font-semibold">MELODIA:</Label>
                     <div className="grid grid-cols-2 gap-4">
@@ -1075,7 +1075,7 @@ export function ObraFormModal({
                     </div>
                   </div>
 
-                  {/* Letra */}
+                  {/* Lyrics */}
                   <div className="space-y-2">
                     <Label className="font-semibold">LETRA:</Label>
                     <div className="grid grid-cols-2 gap-4">
@@ -1401,7 +1401,7 @@ export function ObraFormModal({
             </div>
           </Collapsible>
 
-          {/* Termos de Uso */}
+          {/* Terms of use */}
           {!isViewMode && (
             <div className="flex items-center gap-2 p-4 bg-muted/10 rounded-lg border border-border">
               <Checkbox

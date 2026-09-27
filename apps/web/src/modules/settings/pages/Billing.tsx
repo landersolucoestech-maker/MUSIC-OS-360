@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { stripeClient, type BillingSubscription } from "@/modules/integrations/clients/stripe.client";
 import { useWsEvent } from "@/shared/hooks/useWsEvent";
 
-// ── Planos ────────────────────────────────────────────────────────────────────
+// ── Plans ───────────────────────────────────────────────────────────────────────
 const PLANS = [
   {
     id:          "starter" as const,
@@ -89,7 +89,7 @@ const STATUS_BADGE: Record<string, { label: string; variant: "default" | "second
   paused:    { label: "Pausado",    variant: "outline" },
 };
 
-// ── Componente principal ──────────────────────────────────────────────────────
+// ── Main component ──────────────────────────────────────────────────────────────
 export default function Billing() {
   const queryClient = useQueryClient();
 
@@ -158,7 +158,7 @@ export default function Billing() {
         description="Gerencie o seu plano e assinatura"
       />
 
-      {/* Plano atual */}
+      {/* Current plan */}
       <Card className="border-border/60">
         <CardHeader>
           <div className="flex items-center justify-between">

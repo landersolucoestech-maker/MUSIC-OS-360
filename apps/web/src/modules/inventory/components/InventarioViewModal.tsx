@@ -102,7 +102,7 @@ export function InventarioViewModal({ open, onOpenChange, item }: InventarioView
             </div>
           </div>
 
-          {/* Responsável */}
+          {/* Owner */}
           <div>
             <p className="text-sm text-muted-foreground mb-3">Responsável</p>
             <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">

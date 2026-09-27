@@ -117,7 +117,7 @@ export function ParticipanteViewModal({
             </div>
           </div>
 
-          {/* Row: Data de Nascimento | CPF/CNPJ | CAE */}
+          {/* Row: date of birth | CPF/CNPJ | CAE */}
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Data de Nascimento</Label>

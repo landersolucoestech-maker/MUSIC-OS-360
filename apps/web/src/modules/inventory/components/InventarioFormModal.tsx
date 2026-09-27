@@ -94,7 +94,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
   const quantidade = watch("quantidade");
   const valorUnitario = watch("valor_unitario");
 
-  // Calcular valor total automaticamente
+  // Compute the total value automatically
   const valorTotal = useMemo(() => {
     const qtd = quantidade || 0;
     const valor = valorUnitario || 0;
@@ -102,7 +102,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
     return total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   }, [quantidade, valorUnitario]);
 
-  // Atualizar dados quando item mudar (modo edição)
+  // Update the data when the item changes (edit mode)
   useEffect(() => {
     if (open) {
       if (item) {
@@ -175,7 +175,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
 
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return "";
-    // Se já está no formato YYYY-MM-DD, retorna direto
+    // If it is already in YYYY-MM-DD format, return it as is
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString;
     // Tenta converter de DD/MM/YYYY para YYYY-MM-DD
     const parts = dateString.split("/");
@@ -198,7 +198,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Seção 1 — Informações Básicas */}
+          {/* Section 1 — Basic information */}
           <Card className="bg-muted/30 border-border">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Informações Básicas</CardTitle>
@@ -319,7 +319,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
             </CardContent>
           </Card>
 
-          {/* Seção 2 — Informações de Compra */}
+          {/* Section 2 — Purchase information */}
           <Card className="bg-muted/30 border-border">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Informações de Compra</CardTitle>
@@ -379,7 +379,7 @@ export function InventarioFormModal({ open, onOpenChange, item, mode }: Inventar
             </CardContent>
           </Card>
 
-          {/* Seção 3 — Informações Adicionais */}
+          {/* Section 3 — Additional information */}
           <Card className="bg-muted/30 border-border">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Informações Adicionais</CardTitle>

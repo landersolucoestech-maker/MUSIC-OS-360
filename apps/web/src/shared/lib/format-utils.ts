@@ -67,7 +67,7 @@ export function formatDateTime(date: string | Date | null | undefined): string {
   }).format(d);
 }
 
-/** Data no formato DD/MM/YYYY. Retorna "—" quando vazia. */
+/** Date in DD/MM/YYYY format. Returns "—" when empty. */
 export function formatDateDashes(date: string | Date | null | undefined): string {
   const d = toDate(date);
   if (!d) return "—";

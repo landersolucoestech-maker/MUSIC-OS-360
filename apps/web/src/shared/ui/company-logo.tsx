@@ -1,13 +1,13 @@
 import { cn } from "@/shared/lib/utils";
 
 /**
- * CompanyLogo — identidade visual da organização com fallback automático.
+ * CompanyLogo — the organization's visual identity with automatic fallback.
  *
- * - Se `logoUrl` existir: renderiza a imagem com object-contain (sem cortar /
- *   sem distorcer / mantém proporção).
- * - Caso contrário: renderiza as iniciais do nome da empresa (placeholder).
+ * - If `logoUrl` exists: renders the image with object-contain (no cropping /
+ *   no distortion / keeps the aspect ratio).
+ * - Otherwise: renders the company name initials (placeholder).
  *
- * Usado em áreas públicas e privadas que dependem da identidade da empresa.
+ * Used in public and private areas that depend on the company identity.
  */
 function initialsOf(name: string): string {
   return name
@@ -21,9 +21,9 @@ function initialsOf(name: string): string {
 interface CompanyLogoProps {
   name: string;
   logoUrl?: string | null;
-  /** Classes do container (tamanho/raio/etc). */
+  /** Container classes (size/radius/etc). */
   className?: string;
-  /** Classes do texto de fallback (iniciais). */
+  /** Fallback text classes (initials). */
   textClassName?: string;
 }
 

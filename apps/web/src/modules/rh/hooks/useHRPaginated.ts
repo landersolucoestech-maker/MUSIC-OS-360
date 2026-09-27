@@ -48,7 +48,7 @@ export interface EmployeeStats {
 
 const EMPTY_EMPLOYEE_STATS: EmployeeStats = { total: 0, byGroup: {} };
 
-/** GET /hr/employees/stats — contagem exata por status, tenant inteiro (Task H). */
+/** GET /hr/employees/stats — exact count per status, whole tenant (Task H). */
 export function useEmployeesStats() {
   const query = useQuery<EmployeeStats>({
     queryKey: [...QUERY_KEYS.EMPLOYEES, "stats"],

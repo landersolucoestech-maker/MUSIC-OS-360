@@ -61,7 +61,7 @@ export type KnowledgeArticleStatus = "draft" | "published" | "archived";
 
 export interface KnowledgeArticle {
   id: string;
-  /** Conteúdo global (Music OS 360) — não tenant-scoped. */
+  /** Global content (Music OS 360) — not tenant-scoped. */
   category_id: string;
   category_name: string;
   title: string;
@@ -73,10 +73,10 @@ export interface KnowledgeArticle {
   created_at: string;
   updated_at: string;
   read_time: number;
-  // Campos administrativos (gestão da Base de Conhecimento)
+  // Administrative fields (Knowledge Base management)
   type?: KnowledgeArticleType;
   published?: boolean;
-  status?: KnowledgeArticleStatus; // Rascunho | Publicado | Arquivado
+  status?: KnowledgeArticleStatus; // Draft | Published | Archived
   order?: number;
 }
 

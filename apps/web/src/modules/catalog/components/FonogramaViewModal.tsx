@@ -421,7 +421,7 @@ export function FonogramaViewModal({
 
             <Separator />
 
-            {/* Obra Vinculada */}
+            {/* Linked work */}
             <div>
               <p className="text-xs font-semibold text-muted-foreground  tracking-wide mb-3">
                 Obra Vinculada
@@ -487,7 +487,7 @@ export function FonogramaViewModal({
 
             <Separator />
 
-            {/* Datas */}
+            {/* Dates */}
             <div>
               <p className="text-xs font-semibold text-muted-foreground  tracking-wide mb-3">
                 Datas

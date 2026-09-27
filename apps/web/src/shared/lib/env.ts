@@ -77,7 +77,7 @@ export const API_BASE_URL: string = sanitizeApiBase(
   (import.meta.env.VITE_API_URL as string | undefined) ?? "",
 );
 
-/** true em ambiente de desenvolvimento Vite (npm run dev). */
+/** true in the Vite development environment (npm run dev). */
 export const IS_DEV: boolean = import.meta.env.DEV === true;
 
 /** true in a production build. */
@@ -93,8 +93,8 @@ export const WS_ENABLED: boolean =
   ((import.meta.env.VITE_WS_ENABLED as string | undefined) ?? "true") !== "false";
 
 /**
- * Modo de ambiente Vite: "development" | "production" | "test".
- * Equivale a import.meta.env.MODE.
+ * Vite environment mode: "development" | "production" | "test".
+ * Equivalent to import.meta.env.MODE.
  */
 export const ENV_MODE: string = (import.meta.env.MODE as string) ?? "development";
 export const IS_PROD_LIKE: boolean = isProdLike(ENV_MODE);
@@ -117,7 +117,7 @@ export function extractSupabaseRef(url: string | undefined): string | null {
   return (url ?? "").match(/https:\/\/([a-z0-9]+)\.supabase\.co/)?.[1] ?? null;
 }
 
-/** "DEV" | "STAGING" | "MAIN (proibido)" | "desconhecido" — nunca a URL completa. */
+/** "DEV" | "STAGING" | "MAIN (proibido)" | "desconhecido" — never the full URL. */
 export function deriveAuthEnvironmentLabel(url: string | undefined): string {
   const ref = extractSupabaseRef(url);
   if (!ref) return "desconhecido";
@@ -139,7 +139,7 @@ export function maskedSupabaseRef(): string {
   return deriveMaskedSupabaseRef(import.meta.env.VITE_SUPABASE_URL as string | undefined);
 }
 
-/** 7 primeiros caracteres do commit realmente empacotado neste bundle (ver vite.config.mjs). */
+/** First 7 characters of the commit actually packaged in this bundle (see vite.config.mjs). */
 export const BUILD_COMMIT_SHA: string =
   ((import.meta.env.VITE_COMMIT_SHA as string | undefined) ?? "unknown").slice(0, 7);
 

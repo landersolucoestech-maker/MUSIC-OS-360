@@ -1,13 +1,13 @@
 /**
  * modules/support/data/support-source.ts
  *
- * Gate de exposição dos mocks de Support que não têm endpoint real ainda.
- * - SUPPORT_SYSTEM_SERVICES, SUPPORT_INCIDENTS: sem backend implementado →
- *   empty em produção.
+ * Exposure gate for the Support mocks that have no real endpoint yet.
+ * - SUPPORT_SYSTEM_SERVICES, SUPPORT_INCIDENTS: no backend implemented →
+ *   empty in production.
  *
- * Tickets reais usam /support-tickets via useTickets em useSupport.ts.
- * Base de Conhecimento (categorias/artigos) usa backend real via
- * useKnowledgeCategories/useKnowledgeArticles — não lê mais deste arquivo.
+ * Real tickets use /support-tickets via useTickets in useSupport.ts.
+ * The Knowledge Base (categories/articles) uses the real backend via
+ * useKnowledgeCategories/useKnowledgeArticles — it no longer reads from this file.
  */
 import type {
   SystemService, Incident,

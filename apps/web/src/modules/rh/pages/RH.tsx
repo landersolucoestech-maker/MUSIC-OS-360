@@ -111,8 +111,8 @@ const STATUS_VARIANT_AUSENCIA: Record<string, BadgeVariant> = {
   completed: "neutral",
 };
 
-/** Resolve o nome do funcionário direto por ID (GET /hr/employees/:id) — nunca
- * escaneando a lista capada de useEmployees() (Task J). */
+/** Resolves the employee name directly by ID (GET /hr/employees/:id) — never
+ * by scanning the capped list of useEmployees() (Task J). */
 function FuncionarioNomeCell({ id }: { id: string | null }) {
   const { entity, isLoading } = useEntityById<Employee>("funcionarios", id);
   if (!id) return <>N/A</>;
@@ -216,8 +216,8 @@ export default function RH() {
     deleteDocumento,
   } = useEmployeeDocuments(docFuncionarioId || undefined);
 
-  // KPIs — agregação exata do tenant inteiro (GET /hr/employees/stats),
-  // nunca calculada só sobre a página carregada (Task H).
+  // KPIs — exact aggregation over the whole tenant (GET /hr/employees/stats),
+  // never computed over the loaded page only (Task H).
   const { stats: funcionariosStats } = useEmployeesStats();
   const kpiCounts = {
     total: funcionariosStats.total,
@@ -537,7 +537,7 @@ export default function RH() {
           )}
           {activeTab === "folha" && (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center mt-4">
-              {/* Seletor de datas — sempre imediatamente à esquerda da busca */}
+              {/* Date picker — always immediately to the left of the search */}
               <MonthPickerField
                 value={folhaMesFilter}
                 onChange={setFolhaMesFilter}
@@ -1133,9 +1133,9 @@ export default function RH() {
     </MainLayout>
     )}
 
-      {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): EmployeeFormModal chama useEmployees() de novo só
-          para as mutations, a mesma query de loadingFuncionarios acima. */}
+      {/* Outside the isLoading gate on purpose — same bug as /artistas
+          (Task C): EmployeeFormModal calls useEmployees() again only
+          for the mutations, the same query as loadingFuncionarios above. */}
       <EmployeeFormModal
         open={funcFormModal.open && funcFormModal.mode !== "view"}
         onOpenChange={(open) => setFuncFormModal({ ...funcFormModal, open })}

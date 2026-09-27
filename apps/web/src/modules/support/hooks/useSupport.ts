@@ -16,22 +16,22 @@ import type {
 import { toUserMessage } from "@/shared/lib/errors";
 
 /**
- * Suporte — tickets e mensagens de ticket usam o backend real
- * (/support-tickets, /support-tickets/:id/messages — GAP-04 do audit de
- * completude do produto).
+ * Support — tickets and ticket messages use the real backend
+ * (/support-tickets, /support-tickets/:id/messages — GAP-04 of the product
+ * completeness audit).
  *
- * Chat ao vivo (GAP-05a) foi resolvido apontando /support/chat para o
- * MusicChat real (/chat, aba "internal") — ver app/routes/support.routes.tsx.
- * Não há hooks de chat aqui: seria um segundo sistema de chat duplicado.
+ * Live chat (GAP-05a) was resolved by pointing /support/chat to the
+ * real MusicChat (/chat, "internal" tab) — see app/routes/support.routes.tsx.
+ * There are no chat hooks here: that would be a second, duplicated chat system.
  *
- * Requests (/support-requests — GAP-05c) e Base de Conhecimento
- * (/knowledge-categories, /knowledge-articles — Decision Gate item 8) usam
- * backend real. Todos os recursos deste módulo têm endpoint real hoje.
+ * Requests (/support-requests — GAP-05c) and the Knowledge Base
+ * (/knowledge-categories, /knowledge-articles — Decision Gate item 8) use the
+ * real backend. Every resource of this module has a real endpoint today.
  */
 
 /* ── Tickets (backend real) ── */
 
-// Referência estável — ver shared/hooks/useDataQuery.ts para o motivo.
+// Stable reference — see shared/hooks/useDataQuery.ts for the reason.
 const EMPTY_TICKETS: SupportTicket[] = [];
 
 export function useTickets() {
@@ -88,7 +88,7 @@ export function useTickets() {
 
 /* ── Ticket messages (backend real) ── */
 
-// Referência estável — ver shared/hooks/useDataQuery.ts para o motivo.
+// Stable reference — see shared/hooks/useDataQuery.ts for the reason.
 const EMPTY_MESSAGES: SupportMessage[] = [];
 
 export function useTicketMessages(ticketId: string) {
@@ -122,10 +122,10 @@ export function useTicketMessages(ticketId: string) {
   return { messages, isLoading, addMessage, isSending: addMutation.isPending };
 }
 
-/* ── Knowledge Base (backend real — Decision Gate item 8). Conteúdo GLOBAL
-   (Music OS 360 escreve, todo tenant lê) — ver knowledge-base.service.ts. ── */
+/* ── Knowledge Base (real backend — Decision Gate item 8). GLOBAL content
+   (Music OS 360 writes, every tenant reads) — see knowledge-base.service.ts. ── */
 
-// Referência estável — ver shared/hooks/useDataQuery.ts para o motivo.
+// Stable reference — see shared/hooks/useDataQuery.ts for the reason.
 const EMPTY_CATEGORIES: ApiKnowledgeCategory[] = [];
 const EMPTY_ARTICLES: ApiKnowledgeArticle[] = [];
 
@@ -208,7 +208,7 @@ function mapArticle(a: ApiKnowledgeArticle, categoryName: string): KnowledgeArti
   };
 }
 
-/** Leitura pública (tenant autenticado) — só artigos publicados. */
+/** Public read (authenticated tenant) — published articles only. */
 export function useKnowledgeArticles() {
   const { rawCategories } = useKnowledgeCategories();
   const { data: raw = EMPTY_ARTICLES, isLoading } = useQuery<ApiKnowledgeArticle[]>({
@@ -227,7 +227,7 @@ export function useKnowledgeArticles() {
   return { articles, isLoading, incrementViews };
 }
 
-/** Autoria (super_admin) — todos os status/tipos, com CRUD completo. */
+/** Authoring (super_admin) — every status/type, with full CRUD. */
 export function useKnowledgeArticlesAdmin() {
   const queryClient = useQueryClient();
   const { rawCategories } = useKnowledgeCategories();
@@ -301,9 +301,9 @@ export function useKnowledgeArticlesAdmin() {
   };
 }
 
-/* ── Requests (backend real — GAP-05c do audit de completude do produto) ── */
+/* ── Requests (real backend — GAP-05c of the product completeness audit) ── */
 
-// Referência estável — ver shared/hooks/useDataQuery.ts para o motivo.
+// Stable reference — see shared/hooks/useDataQuery.ts for the reason.
 const EMPTY_REQUESTS: SupportRequest[] = [];
 
 export function useRequests() {

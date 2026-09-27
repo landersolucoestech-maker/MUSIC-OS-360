@@ -1,11 +1,11 @@
 import type { SVGProps } from "react";
 
 /**
- * Ícones de marca (logos oficiais fornecidos pelo cliente em SVG).
- * Mantêm as cores oficiais da marca (não usam currentColor).
+ * Brand icons (official logos provided by the client as SVG).
+ * They keep the official brand colors (they do not use currentColor).
  */
 
-/** ECAD — monograma "ECAD" (E azul · C · A dourado · D vermelho). Fonte: SVG oficial. */
+/** ECAD — "ECAD" monogram (blue E · C · golden A · red D). Source: official SVG. */
 export function EcadIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg

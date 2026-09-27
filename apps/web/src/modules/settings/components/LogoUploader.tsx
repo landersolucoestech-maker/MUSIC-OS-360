@@ -24,7 +24,7 @@ export function LogoUploader() {
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Carrega a logo persistida (MOCK: localStorage) na montagem.
+  // Loads the persisted logo (MOCK: localStorage) on mount.
   useEffect(() => {
     let cancelled = false;
     companyLogoService.getLogo(workspaceId).then((url) => {

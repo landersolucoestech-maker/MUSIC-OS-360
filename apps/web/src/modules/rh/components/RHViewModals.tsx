@@ -1,8 +1,8 @@
 // ============================================================================
-// RHViewModals — modais de VISUALIZAÇÃO (somente leitura) do módulo RH:
-// Funcionários, Folha de Pagamento e Férias/Ausências. Seguem o padrão
-// informativo (label + valor, sem inputs) dos demais ViewModals do sistema,
-// para não parecerem formulários de edição.
+// RHViewModals — VIEW (read-only) modals of the HR module:
+// Employees, Payroll and Vacations/Absences. They follow the
+// informational pattern (label + value, no inputs) of the other ViewModals of the system,
+// so they do not look like edit forms.
 // ============================================================================
 
 import type { ReactNode, ComponentType } from "react";
@@ -83,7 +83,7 @@ function ViewShell({
   );
 }
 
-// ── Funcionário ─────────────────────────────────────────────────────────────
+// ── Employee ──────────────────────────────────────────────────────────────────
 
 export function EmployeeViewModal({
   open,
@@ -136,7 +136,7 @@ export function EmployeeViewModal({
   );
 }
 
-// ── Folha de Pagamento ──────────────────────────────────────────────────────
+// ── Payroll ───────────────────────────────────────────────────────────────────
 
 export function PayrollViewModal({
   open,
@@ -190,7 +190,7 @@ export function PayrollViewModal({
   );
 }
 
-// ── Férias e Ausências ──────────────────────────────────────────────────────
+// ── Vacations and absences ────────────────────────────────────────────────────
 
 export function LeaveRequestViewModal({
   open,

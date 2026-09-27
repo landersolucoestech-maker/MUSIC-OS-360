@@ -81,7 +81,7 @@ export function getImageContrastMode(src: string | null | undefined): Promise<Co
 
 // ── Utility classes (design system) per contrast mode ───────────────────────────
 
-/** Texto principal sobre capa. */
+/** Main text over a cover. */
 export const contrastText = (mode: ContrastMode): string =>
   mode === "lightBackground" ? "text-slate-900" : "text-slate-50";
 

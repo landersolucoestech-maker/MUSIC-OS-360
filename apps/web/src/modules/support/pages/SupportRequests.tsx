@@ -75,8 +75,8 @@ export default function SupportRequests() {
 
   async function handleVote(id: string) {
     if (votedIds.has(id)) return;
-    // Marca localmente antes de confirmar (evita duplo-clique durante o
-    // round-trip); reverte se a chamada falhar, para não travar o voto real.
+    // Marks locally before confirming (avoids a double click during the
+    // round trip); reverts if the call fails, so the real vote is not stuck.
     setVotedIds((prev) => new Set([...prev, id]));
     try {
       await upvote(id);
