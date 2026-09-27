@@ -27,8 +27,8 @@ function textToTags(value: string) {
 }
 
 export function TriageMenuBuilder({ options, templates, onChange }: Props) {
-  // Estado de abertura é apenas UI — os dados vivem no draft da página.
-  // Por padrão tudo recolhido; só o item recém-criado abre automaticamente.
+  // Open/closed state is UI-only — the data lives in the page draft.
+  // Everything collapsed by default; only the newly created item opens automatically.
   const [openIds, setOpenIds] = useState<Record<string, boolean>>({});
 
   const sortedOptions = [...options].sort((a, b) => a.order - b.order);

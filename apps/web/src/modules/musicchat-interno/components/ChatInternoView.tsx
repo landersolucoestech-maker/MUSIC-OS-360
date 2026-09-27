@@ -1,11 +1,11 @@
 /**
  * components/ChatInternoView.tsx
  *
- * Chat Interno (equipe <-> equipe) — árvore de componentes/estado/serviço
- * próprios, isolados da Central de Atendimento (modules/musicchat). Nunca
- * importa nada desse módulo. Renderizada pelo tab "Chat Interno" em
- * modules/musicchat/pages/MusicChat.tsx — nunca junto com o tab "Central de
- * Atendimento" (o pai não usa `forceMount`, então só o tab ativo é montado).
+ * Internal Chat (team <-> team) — its own component/state/service tree,
+ * isolated from the Support Center (modules/musicchat). It never
+ * imports anything from that module. Rendered by the "Chat Interno" tab in
+ * modules/musicchat/pages/MusicChat.tsx — never together with the "Central de
+ * Atendimento" tab (the parent does not use `forceMount`, so only the active tab is mounted).
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Avatar, AvatarFallback } from "@/shared/ui/avatar";

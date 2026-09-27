@@ -1,11 +1,11 @@
 /**
  * components/SupportCenterView.tsx
  *
- * Central de Atendimento (equipe <-> público externo) — árvore de
- * componentes/estado/serviço próprios, isolados de Chat Interno
- * (modules/musicchat-interno). Renderizada pelo tab "Central de Atendimento"
- * em modules/musicchat/pages/MusicChat.tsx — nunca junto com o tab "Chat
- * Interno" (o pai não usa `forceMount`, então só o tab ativo é montado).
+ * Support Center (team <-> external public) — its own
+ * component/state/service tree, isolated from Internal Chat
+ * (modules/musicchat-interno). Rendered by the "Central de Atendimento" tab
+ * in modules/musicchat/pages/MusicChat.tsx — never together with the "Chat
+ * Interno" tab (the parent does not use `forceMount`, so only the active tab is mounted).
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Avatar, AvatarFallback } from "@/shared/ui/avatar";
@@ -98,7 +98,7 @@ export interface SupportConversation {
   remainingTimeLabel: string;
   deadlineState: DeadlineState;
   tags: string[];
-  /** Assunto do formulário do site (origem "Site"). */
+  /** Subject of the website form (origin "Site"). */
   assunto?: string;
   lastMessage: string;
   lastMessageAt: string;
@@ -113,7 +113,7 @@ export interface SupportConversation {
     stage: string;
   };
   auditTrail: string[];
-  /** Concorrência otimista (Task M) — ver useConcurrencyConflict. */
+  /** Optimistic concurrency (Task M) — see useConcurrencyConflict. */
   updated_at: string;
 }
 
@@ -450,8 +450,8 @@ export function SupportCenterView({
   pendingNewConversation,
   onConsumePendingNewConversation,
 }: {
-  /** Conversa recém-criada pelo NewConversationDialog (state vive no componente pai, que
-   *  controla o header) — consumida uma vez via useEffect para upsert + auto-seleção. */
+  /** Conversation just created by NewConversationDialog (state lives in the parent component, which
+   *  controls the header) — consumed once via useEffect for upsert + auto-selection. */
   pendingNewConversation?: SupportConversation | null;
   onConsumePendingNewConversation?: () => void;
 }) {
@@ -490,14 +490,14 @@ export function SupportCenterView({
   const recordingStreamRef = useRef<MediaStream | null>(null);
   const recordingChunksRef = useRef<BlobPart[]>([]);
   // Facebook/Instagram/TikTok/Website: isMarketingConnected() reflete só a
-  // integração de marketing (posts/ads) via OAuth — não existe webhook real
-  // de mensagens/DM para nenhum destes canais (só WhatsApp tem). Mostrar
-  // "conectado" aqui seria enganoso — sempre indisponível para mensagens
-  // até existir integração real de messaging. Website: não há widget/embed
+  // marketing integration (posts/ads) via OAuth — there is no real
+  // messages/DM webhook for any of these channels (only WhatsApp has one). Showing
+  // "connected" here would be misleading — always unavailable for messaging
+  // until a real messaging integration exists. Website: there is no widget/embed;
   // de chat do site nem endpoint público de visitor session no backend —
-  // o canal "site"/custom hoje só existe para formulário estático (campo
-  // assunto), não para conversa em tempo real. Mais um canal na lista,
-  // honestamente indisponível — não é o canal oficial/padrão.
+  // the "site"/custom channel today only exists for the static form (subject
+  // field), not for real-time conversation. One more channel in the list,
+  // honestly unavailable — it is not the official/default channel.
   const messagingChannels = [
     { id: "facebook", label: "Facebook", connected: false, icon: SiFacebook },
     { id: "instagram", label: "Instagram", connected: false, icon: SiInstagram },
@@ -528,15 +528,15 @@ export function SupportCenterView({
     return () => { active = false; };
   }, []);
 
-  // Realtime real (Section 14): backend já publica conversation:* no canal
-  // tenant:<id> (RealtimeService.sendToTenant). Ao chegar um evento,
-  // re-busca do servidor em vez de aplicar patch local — evita mensagem
-  // duplicada entre o append otimista do próprio envio e o broadcast do
-  // mesmo evento voltando pelo realtime.
-  // Escopado por conversationId (Section 26 do wave de remediação): antes cada evento
-  // refazia list() inteiro (até 200 linhas) para toda conversa do tenant, mesmo quando só
-  // uma mudou — O(eventos × tamanho da lista) por agente conectado. Agora busca só a
-  // conversa afetada e faz upsert local.
+  // Real realtime (Section 14): the backend already publishes conversation:* on the
+  // tenant:<id> channel (RealtimeService.sendToTenant). When an event arrives,
+  // refetch from the server instead of applying a local patch — avoids a message
+  // duplicated between the optimistic append of our own send and the broadcast of the
+  // same event coming back through realtime.
+  // Scoped by conversationId (Section 26 of the remediation wave): previously each event
+  // re-ran the whole list() (up to 200 rows) for every tenant conversation, even when only
+  // one changed — O(events × list size) per connected agent. Now it fetches only the
+  // affected conversation and upserts it locally.
   useWsEvent("conversation:created", (data) => refreshConversation(data.conversationId));
   useWsEvent("conversation:updated", (data) => refreshConversation(data.conversationId));
   useWsEvent("conversation:assigned", (data) => refreshConversation(data.conversationId));
@@ -544,7 +544,7 @@ export function SupportCenterView({
   useWsEvent("conversation:closed", (data) => refreshConversation(data.conversationId));
   useWsEvent("conversation:reopened", (data) => refreshConversation(data.conversationId));
   useWsEvent("conversation:message", (data) => {
-    refreshConversation(data.conversationId); // last_message_at/status vivem na conversa
+    refreshConversation(data.conversationId); // last_message_at/status live on the conversation
     if (data.conversationId) {
       void musicChatConversationsService.messages(data.conversationId)
         .then((rows) => setMessagesByConv((previous) => ({ ...previous, [data.conversationId]: rows })))
@@ -590,8 +590,8 @@ export function SupportCenterView({
     const query = searchQuery.trim().toLowerCase();
     return conversations.filter((conversation) => {
       const matchesChannel = channelFilter === "todos" || conversation.channel === channelFilter;
-      // "Arquivada" só aparece quando o filtro de status a seleciona explicitamente;
-      // na lista ativa padrão ("todos") as conversas arquivadas ficam ocultas.
+      // "Arquivada" only appears when the status filter explicitly selects it;
+      // in the default active list ("todos") archived conversations stay hidden.
       const matchesStatus =
         statusFilter === "todos"
           ? conversation.status !== "arquivada"
@@ -605,7 +605,7 @@ export function SupportCenterView({
     });
   }, [conversations, channelFilter, statusFilter, searchQuery]);
 
-  // Estatísticas reais computadas da lista carregada — nunca números fixos.
+  // Real statistics computed from the loaded list — never fixed numbers.
   const conversationStats = useMemo(() => {
     const active = conversations.filter((c) => c.status !== "arquivada");
     return {
@@ -663,8 +663,8 @@ export function SupportCenterView({
     );
   };
 
-  /** Insere/atualiza uma única conversa em memória a partir de um GET escopado —
-   *  usado pelos handlers de realtime abaixo em vez de refazer list() inteiro por evento. */
+  /** Inserts/updates a single in-memory conversation from a scoped GET —
+   *  used by the realtime handlers below instead of re-running the whole list() per event. */
   const upsertConversation = (conversation: SupportConversation) => {
     setConversations((prev) => {
       const exists = prev.some((c) => c.id === conversation.id);
@@ -809,8 +809,8 @@ export function SupportCenterView({
     toast.success("Contato criado e vinculado ao CRM.");
   };
 
-  // Envio real ao storage (R2) via presigned URL — blob: local não persiste além da
-  // sessão/aba atual e nunca deve ser tratado como sucesso de anexo (ver useUploadToR2).
+  // Real upload to storage (R2) via presigned URL — a local blob: does not persist beyond the
+  // current session/tab and must never be treated as attachment success (see useUploadToR2).
   const attachmentCategoryFor = (kind: ChatAttachmentKind): UploadCategory =>
     kind === "audio" ? "audio" : kind === "image" ? "images" : "documents";
 
@@ -965,16 +965,16 @@ export function SupportCenterView({
 
   const handleSend = async () => {
     if (!selectedConversation) return;
-    if (isSending) return; // guarda contra reentrância (duplo clique/duplo Enter)
+    if (isSending) return; // reentrancy guard (double click/double Enter)
     const body = draft.trim();
     if (!body && pendingAttachments.length === 0) return;
     const sentAt = currentTimeLabel();
     const attachments = pendingAttachments;
     const fallbackBody = attachments.length === 1 ? "Anexo enviado." : `${attachments.length} anexos enviados.`;
     setIsSending(true);
-    // Chave de idempotência por PAYLOAD: reenviar o mesmo texto após um timeout reusa a chave
-    // (backend replaya em vez de duplicar a mensagem); texto editado gera chave nova, senão a
-    // edição seria descartada em favor da resposta antiga em cache.
+    // Idempotency key per PAYLOAD: resending the same text after a timeout reuses the key
+    // (the backend replays instead of duplicating the message); edited text generates a new key, otherwise the
+    // edit would be discarded in favor of the old cached response.
     const signature = `${selectedConversation.id}|${body || fallbackBody}|${attachments.map((a) => a.url).join(",")}`;
     if (sendAttemptRef.current?.signature !== signature) {
       sendAttemptRef.current = { key: crypto.randomUUID(), signature };

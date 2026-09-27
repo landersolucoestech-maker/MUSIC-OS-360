@@ -5,7 +5,7 @@ import { api } from "@/shared/lib/api-client";
 import type { TakedownWithRelations } from "../types/monitoring.types";
 
 export interface UseTakedownsPaginatedParams {
-  /** 0-indexado, mesma convenção de usePagination()/TablePagination. */
+  /** 0-indexed, same convention as usePagination()/TablePagination. */
   page: number;
   pageSize: number;
   search?: string;
@@ -46,9 +46,9 @@ export interface TakedownStats {
 const EMPTY_STATS: TakedownStats = { total: 0, byGroup: {} };
 
 /**
- * Contagem por status, sobre o TENANT INTEIRO — GET /takedowns/stats
- * (agregado no banco). Task H: os KPIs de Takedowns.tsx não podem mais ser
- * calculados só sobre a página atual.
+ * Count per status, over the WHOLE TENANT — GET /takedowns/stats
+ * (aggregated in the database). Task H: the Takedowns.tsx KPIs can no longer be
+ * computed only over the current page.
  */
 export function useTakedownsStats() {
   const query = useQuery<TakedownStats>({

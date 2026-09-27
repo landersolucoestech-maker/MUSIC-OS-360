@@ -64,8 +64,8 @@ export function EcadImportModal({ open, onOpenChange }: Props) {
 
   const runPipeline = () => {
     if (!file) return;
-    // Importação real de relatório ECAD requer endpoint no backend; nunca
-    // simular progresso nem preview com dados fictícios.
+    // Real ECAD report import requires a backend endpoint; never
+    // simulate progress or a preview with fictitious data.
     toast.error(
       "A importação de relatório ECAD ainda não está disponível.",
     );

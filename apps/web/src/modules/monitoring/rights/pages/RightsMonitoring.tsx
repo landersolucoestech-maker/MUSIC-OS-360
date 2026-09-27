@@ -60,8 +60,8 @@ export default function RightsMonitoring() {
   const [detailOpen, setDetailOpen] = useState(false);
   const [selectedEcad, setSelectedEcad] = useState<EcadReportRow | null>(null);
   const [ecadDetailOpen, setEcadDetailOpen] = useState(false);
-  // Resolução de divergências — estado local da sessão (não há campo de
-  // resolução persistido no backend de content_detections).
+  // Discrepancy resolution — local session state (there is no persisted
+  // resolution field in the content_detections backend).
   const [divOverrides, setDivOverrides] = useState<Record<string, Partial<Divergencia>>>({});
   const [selectedDivergencia, setSelectedDivergencia] = useState<Divergencia | null>(null);
   const [resolverOpen, setResolverOpen] = useState(false);
@@ -70,11 +70,11 @@ export default function RightsMonitoring() {
   const { reports, isLoading: loadingEcad, refetch: refetchEcad } = useEcadReports();
   const queryClient = useQueryClient();
 
-  // Resolução de catálogo por work_id — SEMPRE por ID (GET /works/:id), nunca
-  // varrendo a lista truncada de useObras() (guard no-unbounded-hook-as-picker:
-  // detecções/relatórios podem referenciar mais obras do que os ~50 primeiros
-  // do tenant). Conjunto de ids é o real vínculo presente nos dados, não uma
-  // lista arbitrária.
+  // Catalog resolution by work_id — ALWAYS by ID (GET /works/:id), never
+  // scanning the truncated useObras() list (no-unbounded-hook-as-picker guard:
+  // detections/reports may reference more works than the first ~50
+  // of the tenant). The id set is the real link present in the data, not an
+  // arbitrary list.
   const workIds = useMemo(() => {
     const ids = new Set<string>();
     for (const d of detections) if (d.work_id) ids.add(d.work_id);
@@ -97,8 +97,8 @@ export default function RightsMonitoring() {
     queryClient.invalidateQueries({ queryKey: ["byId", "obras"] });
   }
 
-  // Índice de catálogo por id de obra — enriquecimento real (work_id é o
-  // vínculo real de content_detections/ecad_reports; não há join server-side).
+  // Catalog index by work id — real enrichment (work_id is the
+  // real link of content_detections/ecad_reports; there is no server-side join).
   const obraIndex = useMemo(() => {
     const map = new Map<string, CatalogObraRef>();
     obraQueries.forEach((q, i) => {
@@ -183,8 +183,8 @@ export default function RightsMonitoring() {
     .filter((r) => r.status === "concluido")
     .reduce((s, r) => s + Number(r.net_amount ?? r.gross_amount ?? 0), 0);
 
-  // Divergências dinâmicas: detecções sem obra vinculada, ou vinculadas a uma
-  // obra sem cod_ecad cadastrado (sem conciliação ECAD possível).
+  // Dynamic discrepancies: detections with no linked work, or linked to a
+  // work with no registered cod_ecad (no ECAD reconciliation possible).
   const dynamicDivergencias: Divergencia[] = useMemo(() =>
     filtered
       .filter((det) => !det.obra || !det.obra.cod_ecad)
@@ -293,7 +293,7 @@ export default function RightsMonitoring() {
             ))}
           </TabsList>
 
-          {/* ── Detecções ── */}
+          {/* ── Detections ── */}
           <TabsContent value="detections" className="mt-0">
             <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg bg-muted/30 p-3">
               <div className="flex items-center gap-1">
@@ -420,7 +420,7 @@ export default function RightsMonitoring() {
             </Card>
           </TabsContent>
 
-          {/* ── Divergências ── */}
+          {/* ── Discrepancies ── */}
           <TabsContent value="divergencias" className="mt-0">
             <Card className="border-border/60">
               <CardContent className="p-0">

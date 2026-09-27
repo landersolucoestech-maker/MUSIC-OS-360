@@ -37,7 +37,7 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Informações do Takedown */}
+          {/* Takedown information */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <FileText className="h-4 w-4" /> Informações do Takedown
@@ -56,7 +56,7 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
             </div>
           </div>
 
-          {/* Obra e Artista */}
+          {/* Work and artist */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <Music className="h-4 w-4" /> Obra Afetada
@@ -67,7 +67,7 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
             </div>
           </div>
 
-          {/* Plataforma e URL */}
+          {/* Platform and URL */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <Link2 className="h-4 w-4" /> Plataforma e Localização
@@ -95,7 +95,7 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
             )}
           </div>
 
-          {/* Motivo e Descrição */}
+          {/* Reason and description */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" /> Motivo e Descrição
@@ -109,7 +109,7 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
             )}
           </div>
 
-          {/* Evidências */}
+          {/* Evidence */}
           {n.evidencias && (
             <div className="space-y-2">
               <span className="text-sm text-muted-foreground">Evidências/Links de Prova</span>
@@ -117,7 +117,7 @@ export function TakedownViewModal({ open, onOpenChange, takedown }: TakedownView
             </div>
           )}
 
-          {/* Observações */}
+          {/* Notes */}
           {n.observacoes && (
             <div className="space-y-2">
               <span className="text-sm text-muted-foreground">Observações</span>

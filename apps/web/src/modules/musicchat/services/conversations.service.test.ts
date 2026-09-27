@@ -93,8 +93,8 @@ describe("musicChatConversationsService HTTP envelope contract", () => {
     );
   });
 
-  // PD-1 (2026-08-23): sendMessage/create devem enviar X-Idempotency-Key real — protege
-  // contra reenvio duplicado em nível de rede (timeout+retry), além do guard de UI.
+  // PD-1 (2026-08-23): sendMessage/create must send a real X-Idempotency-Key — protects
+  // against network-level duplicate resends (timeout+retry), in addition to the UI guard.
   it("sendMessage() sends a real X-Idempotency-Key header", async () => {
     apiMock.post.mockResolvedValue(rawMessage);
 

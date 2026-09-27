@@ -17,7 +17,7 @@ const CHANNELS: Array<{ value: MusicChatNotificationChannel; label: string }> = 
 ];
 
 export function EscalationRulesEditor({ rules, onChange }: Props) {
-  // Estado de abertura é apenas UI — os dados vivem no draft da página.
+  // Open/closed state is UI-only — the data lives in the page draft.
   const [openIds, setOpenIds] = useState<Record<string, boolean>>({});
 
   const sortedRules = [...rules].sort((a, b) => a.afterMinutes - b.afterMinutes);

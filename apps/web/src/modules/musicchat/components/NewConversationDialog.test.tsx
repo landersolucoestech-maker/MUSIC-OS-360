@@ -11,10 +11,10 @@ vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 import { NewConversationDialog } from "./NewConversationDialog";
 
 /**
- * PD-1/PD-3 (2026-08-23): a chave de idempotência precisa ser estável POR TENTATIVA LÓGICA.
- * Se cada chamada gerasse um UUID novo, um retry do agente após falha de rede criaria uma
- * SEGUNDA conversa — exatamente o caso que a chave existe para impedir. Este teste falha
- * contra a implementação antiga (crypto.randomUUID() dentro do service a cada chamada).
+ * PD-1/PD-3 (2026-08-23): the idempotency key must be stable PER LOGICAL ATTEMPT.
+ * If every call generated a new UUID, an agent retry after a network failure would create a
+ * SECOND conversation — exactly the case the key exists to prevent. This test fails
+ * against the old implementation (crypto.randomUUID() inside the service on every call).
  */
 describe("NewConversationDialog — idempotency key stability", () => {
   beforeEach(() => vi.clearAllMocks());
@@ -51,8 +51,8 @@ describe("NewConversationDialog — idempotency key stability", () => {
     fillAndSubmit("+5511999999999");
     await waitFor(() => expect(serviceMock.create).toHaveBeenCalledTimes(1));
 
-    // Número corrigido: reusar a chave faria o backend replayar a resposta antiga e a correção
-    // seria silenciosamente descartada.
+    // Corrected number: reusing the key would make the backend replay the old response and the correction
+    // would be silently discarded.
     fillAndSubmit("+5511888888888");
     await waitFor(() => expect(serviceMock.create).toHaveBeenCalledTimes(2));
 

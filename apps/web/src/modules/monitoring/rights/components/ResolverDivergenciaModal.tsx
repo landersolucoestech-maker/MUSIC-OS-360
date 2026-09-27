@@ -47,7 +47,7 @@ interface Props {
 export function ResolverDivergenciaModal({ divergencia, open, onOpenChange, onSubmit }: Props) {
   const [observacoes, setObservacoes] = useState("");
 
-  // Repopular ao abrir/trocar divergência
+  // Repopulate when opening/switching the discrepancy
   useEffect(() => {
     if (open) setObservacoes(divergencia?.observacoes ?? "");
   }, [open, divergencia]);
@@ -84,7 +84,7 @@ export function ResolverDivergenciaModal({ divergencia, open, onOpenChange, onSu
         </DialogHeader>
 
         <div className="mt-1 space-y-4">
-          {/* Identificação */}
+          {/* Identification */}
           <div>
             <p className="text-xs font-semibold tracking-wide text-muted-foreground mb-2">Identificação</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-lg border border-border/60 bg-muted/20 p-3">
@@ -100,7 +100,7 @@ export function ResolverDivergenciaModal({ divergencia, open, onOpenChange, onSu
             </div>
           </div>
 
-          {/* Dados relacionados */}
+          {/* Related data */}
           <div>
             <p className="text-xs font-semibold tracking-wide text-muted-foreground mb-2">Dados relacionados</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-lg border border-border/60 bg-muted/20 p-3">
@@ -111,7 +111,7 @@ export function ResolverDivergenciaModal({ divergencia, open, onOpenChange, onSu
             </div>
           </div>
 
-          {/* Histórico (quando houver) */}
+          {/* History (when present) */}
           {divergencia.historico && divergencia.historico.length > 0 && (
             <div>
               <p className="text-xs font-semibold tracking-wide text-muted-foreground mb-2 flex items-center gap-1.5">
@@ -129,7 +129,7 @@ export function ResolverDivergenciaModal({ divergencia, open, onOpenChange, onSu
             </div>
           )}
 
-          {/* Tratamento */}
+          {/* Handling */}
           <div className="space-y-1.5">
             <Label htmlFor="div-observacoes" className="text-xs font-semibold tracking-wide text-muted-foreground">
               Observações

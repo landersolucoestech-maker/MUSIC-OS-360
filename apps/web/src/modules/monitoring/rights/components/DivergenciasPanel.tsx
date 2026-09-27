@@ -28,7 +28,7 @@ export interface Divergencia {
   risco_score: number;
   data: string;
   status: "aberta" | "em_resolucao" | "resolvida";
-  // Campos de rastreabilidade (opcionais; alimentados pelo fluxo de resolução)
+  // Traceability fields (optional; fed by the resolution flow)
   data_criacao?: string;
   responsavel?: string;
   observacoes?: string;

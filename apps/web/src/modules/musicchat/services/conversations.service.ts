@@ -1,16 +1,16 @@
 /**
  * services/conversations.service.ts
  *
- * MusicChat Inbox (decisão de produto 2026-08-22): client real para o
- * backend já existente `/conversations` (ConversationsController/Service,
- * apps/api/src/modules/conversations). Mapeia a entidade real
- * (tenant/status/channel/metadata) para o modelo de UI já existente em
- * shared/pages/MusicChat.tsx (SupportConversation/SupportMessage) — esse
- * componente já estava pronto, só faltava este serviço.
+ * MusicChat Inbox (product decision 2026-08-22): real client for the
+ * existing backend `/conversations` (ConversationsController/Service,
+ * apps/api/src/modules/conversations). Maps the real entity
+ * (tenant/status/channel/metadata) to the existing UI model in
+ * shared/pages/MusicChat.tsx (SupportConversation/SupportMessage) — that
+ * component was already done; only this service was missing.
  *
- * Campos sem fonte real no backend (unread count, SLA/prazo, CRM
- * summary além de contact_id, protocolo de mensagem individual) recebem
- * um default neutro e documentado — nunca um valor fabricado/variável.
+ * Fields with no real source on the backend (unread count, SLA/deadline, CRM
+ * summary beyond contact_id, per-message protocol) get
+ * a neutral, documented default — never a fabricated/variable value.
  */
 import { api } from "@/shared/lib/api-client";
 import type { ChatAttachmentData } from "@/shared/components/ChatAttachment";
@@ -46,7 +46,7 @@ interface RawMessage {
   created_at: string;
 }
 
-// ── Tipos do modelo de UI já existente (shared/pages/MusicChat.tsx) ──────────
+// ── Types of the existing UI model (shared/pages/MusicChat.tsx) ──────────
 type SupportChannel = "whatsapp" | "instagram" | "facebook" | "tiktok" | "site" | "custom";
 type SupportStatus = "nova" | "aguardando_atendimento" | "em_atendimento" | "aguardando_cliente" | "resolvida" | "arquivada";
 type DeadlineState = "on_track" | "at_risk" | "overdue";
@@ -88,8 +88,8 @@ export interface SupportMessage {
   body: string;
   time: string;
   attachments?: ChatAttachmentData[];
-  /** Estado real de entrega calculado pelo backend (dispatchOutbound) — nunca fabricado no
-   *  frontend. Ausente para mensagens que não passam por despacho externo (ex.: do cliente). */
+  /** Real delivery state computed by the backend (dispatchOutbound) — never fabricated on the
+   *  frontend. Absent for messages that do not go through external dispatch (e.g. from the customer). */
   deliveryStatus?: "sent" | "failed" | "internal_only";
   deliveryError?: string;
 }
@@ -168,10 +168,10 @@ function mapConversation(raw: RawConversation): SupportConversation {
     status: serviceStatus || STATUS_TO_SUPPORT[raw.status],
     assignee: raw.assigned_to ?? "Sem responsável",
     protocol: protocolFromId(raw.id),
-    // Sem SLA real configurado para conversations no backend (diferente de
-    // support_tickets, que tem sla_deadline real) — default neutro fixo,
-    // nunca uma contagem fabricada. sla_state existe só como filtro de
-    // query, nunca escrito por nenhum fluxo real.
+    // No real SLA configured for conversations on the backend (unlike
+    // support_tickets, which has a real sla_deadline) — fixed neutral default,
+    // never a fabricated count. sla_state exists only as a query
+    // filter, never written by any real flow.
     sla: 100,
     remainingTimeLabel: "",
     deadlineState: "on_track",
@@ -181,7 +181,7 @@ function mapConversation(raw: RawConversation): SupportConversation {
     lastMessageAt: formatTime(raw.last_message_at),
     createdAt: formatTime(raw.created_at),
     lastReplyAt: formatTime(raw.last_message_at ?? raw.created_at),
-    // Sem coluna/contador de não-lidas no backend — nunca fabricar.
+    // No unread column/counter on the backend — never fabricate.
     unread: 0,
     value: "",
     crmSummary: {
@@ -226,12 +226,12 @@ export interface ConversationUpdatePayload {
 }
 
 export const musicChatConversationsService = {
-  /** Cria conversa nova. WhatsApp é o único canal com entrega externa real (ver
-   *  dispatchOutbound) — metadata.phone é obrigatório para esse canal funcionar de fato.
-   *  idempotencyKey: passe a MESMA chave em um retry explícito da mesma tentativa (ex.: o
-   *  usuário clicando de novo após um erro de rede) para que o backend devolva o resultado
-   *  já criado em vez de criar uma segunda conversa — gerar uma chave nova a cada chamada
-   *  só protege contra reenvio automático interno, não contra retry manual do usuário. */
+  /** Creates a new conversation. WhatsApp is the only channel with real external delivery (see
+   *  dispatchOutbound) — metadata.phone is required for that channel to actually work.
+   *  idempotencyKey: pass the SAME key on an explicit retry of the same attempt (e.g. the
+   *  user clicking again after a network error) so the backend returns the result
+   *  already created instead of creating a second conversation — generating a new key on every call
+   *  only protects against internal automatic resends, not against a manual user retry. */
   async create(
     input: { subject: string; channel: BackendConversationChannel; phone?: string; customer?: string },
     idempotencyKey: string = crypto.randomUUID(),
@@ -249,11 +249,11 @@ export const musicChatConversationsService = {
   },
 
   async list(): Promise<SupportConversation[]> {
-    // api.get() já desembrulha o envelope {data,timestamp} do TransformInterceptor;
-    // como o controller retorna {data: [...], meta} diretamente (sem novo wrap,
-    // ver TransformInterceptor: objeto que já tem `data` é preservado), o valor
-    // aqui já É o array — reler `.data` duplicava o unwrap e resultava em undefined
-    // (mesmo padrão documentado em clientsService.list()).
+    // api.get() already unwraps the {data,timestamp} envelope of the TransformInterceptor;
+    // since the controller returns {data: [...], meta} directly (no extra wrap,
+    // see TransformInterceptor: an object that already has `data` is preserved), the value
+    // here already IS the array — re-reading `.data` duplicated the unwrap and resulted in undefined
+    // (same pattern documented in clientsService.list()).
     const rows = await api.get<RawConversation[]>("/conversations?limit=200");
     return rows.map(mapConversation);
   },
@@ -263,8 +263,8 @@ export const musicChatConversationsService = {
     return rows.map(mapMessage);
   },
 
-  /** Busca uma única conversa — usado para atualizar/inserir localmente em resposta a um
-   *  evento realtime específico, em vez de refazer list() inteiro a cada evento. */
+  /** Fetches a single conversation — used to update/insert locally in response to a
+   *  specific realtime event, instead of re-running the whole list() on every event. */
   async get(conversationId: string): Promise<SupportConversation> {
     const raw = await api.get<RawConversation>(`/conversations/${conversationId}`);
     return mapConversation(raw);
@@ -280,7 +280,7 @@ export const musicChatConversationsService = {
     return mapConversation(raw);
   },
 
-  /** "Arquivar" no MusicChat mapeia para o soft-delete real do backend. */
+  /** "Arquivar" in MusicChat maps to the backend's real soft-delete. */
   async archive(conversationId: string): Promise<void> {
     await api.delete(`/conversations/${conversationId}`);
   },
@@ -296,11 +296,11 @@ export const musicChatConversationsService = {
     attachments: ChatAttachmentData[] = [],
     idempotencyKey: string = crypto.randomUUID(),
   ): Promise<SupportMessage> {
-    // X-Idempotency-Key: protege contra reenvio duplicado em nível de rede (timeout + retry),
-    // além do guard de UI (isSending) em MusicChat.tsx — mesmo padrão já usado por
+    // X-Idempotency-Key: protects against network-level duplicate resends (timeout + retry),
+    // in addition to the UI guard (isSending) in MusicChat.tsx — same pattern already used by
     // transactions/invoices/contracts/etc. (IdempotencyInterceptor no backend). Passe a mesma
-    // chave ao reenviar o MESMO conteúdo; conteúdo editado é outra tentativa e precisa de
-    // chave nova (ver attemptRef em MusicChat.tsx/NewConversationDialog.tsx).
+    // key when resending the SAME content; edited content is another attempt and needs a
+    // new key (see attemptRef in MusicChat.tsx/NewConversationDialog.tsx).
     const raw = await api.post<RawMessage>(
       `/conversations/${conversationId}/messages`,
       { body, attachments },

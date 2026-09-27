@@ -1,9 +1,9 @@
 /**
  * Catalog lookup helpers for Rights Monitoring.
- * Funções puras usadas para indexar o catálogo real (obtido via useObras())
- * por ISRC/id e calcular taxa de match ECAD / ISRCs órfãos. A busca do
- * catálogo em si acontece no componente, via hook real — este módulo não
- * busca dados sozinho (evita uma segunda fonte de verdade).
+ * Pure functions used to index the real catalog (obtained via useObras())
+ * by ISRC/id and compute the ECAD match rate / orphan ISRCs. The catalog
+ * fetch itself happens in the component, via a real hook — this module does not
+ * fetch data on its own (avoids a second source of truth).
  */
 
 export interface CatalogObra {

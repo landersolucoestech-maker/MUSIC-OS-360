@@ -1,7 +1,7 @@
 /**
  * Adapters — Rights Monitoring
- * Contratos de integração para serviços externos.
- * NÃO implementados ainda — somente interfaces e stubs.
+ * Integration contracts for external services.
+ * NOT implemented yet — interfaces and stubs only.
  */
 
 // ─── ACRCloud ────────────────────────────────────────────────────────────────

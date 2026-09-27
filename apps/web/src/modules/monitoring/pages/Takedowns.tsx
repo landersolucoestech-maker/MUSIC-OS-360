@@ -25,8 +25,8 @@ import { formatTakedownDate, normalizeTakedown, statusBadge, typeBadge, isResolv
 import { FeatureGate } from '@/shared/components/FeatureGate';
 
 export default function Takedowns() {
-  // Task H: hook antigo (baixa tudo) fica só para mutations (delete) — a
-  // tabela e os KPIs abaixo não usam mais `takedowns`.
+  // Task H: the old hook (downloads everything) stays only for mutations (delete) — the
+  // table and the KPIs below no longer use `takedowns`.
   const { isLoading, deleteTakedown } = useTakedowns();
   const [activeTab, setActiveTab] = useState("todos");
   const [takedownModal, setTakedownModal] = useState<{ open: boolean; mode: "create" | "edit"; takedown?: any }>({ open: false, mode: "create" });
@@ -43,21 +43,21 @@ export default function Takedowns() {
 
   const hasActiveFilters = searchTerm !== "" || platformFilter !== "all" || statusFilter !== "all";
 
-  // A aba (todos/pendentes/resolvidos) e o select de Status são dois filtros
-  // independentes que sempre foram combinados com AND (ver versão anterior:
-  // matchesTab && matchesStatus). O backend só aceita um único valor de
-  // `status` por vez, então resolvemos a interseção aqui: se a aba pede
-  // "pendentes" (status=pendente) e o select pede um status diferente, a
-  // interseção é vazia — não existe combinação de status que satisfaça as
-  // duas, então nem chamamos a API (equivalente ao filteredRows.length===0
+  // The tab (all/pending/resolved) and the Status select are two independent
+  // filters that were always combined with AND (see the previous version:
+  // matchesTab && matchesStatus). The backend only accepts a single `status`
+  // value at a time, so we resolve the intersection here: if the tab asks for
+  // "pendentes" (status=pendente) and the select asks for a different status, the
+  // intersection is empty — no status combination satisfies
+  // both, so we do not even call the API (equivalent to filteredRows.length===0
   // de antes).
   const tabStatus = activeTab === "pendentes" ? "pending" : activeTab === "resolvidos" ? "completed" : undefined;
   const statusContradiction = tabStatus !== undefined && statusFilter !== "all" && statusFilter !== tabStatus;
   const effectiveStatus = statusContradiction ? undefined : (tabStatus ?? (statusFilter !== "all" ? statusFilter : undefined));
 
-  // Task H: paginação real server-side — a página muda de request (nunca
-  // recorta uma lista já baixada), e volta pra página 0 quando um filtro
-  // muda (senão a página 5 de um filtro que só tem 2 páginas fica presa).
+  // Task H: real server-side pagination — the page changes the request (it never
+  // slices an already-downloaded list), and goes back to page 0 when a filter
+  // changes (otherwise page 5 of a filter with only 2 pages gets stuck).
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   useEffect(() => { setPage(0); }, [debouncedSearch, activeTab, statusFilter, platformFilter]);
@@ -76,10 +76,10 @@ export default function Takedowns() {
     plataforma: platformFilter !== "all" ? platformFilter : undefined,
   });
 
-  // KPIs: contagem por status SOBRE O TENANT INTEIRO (não a página atual) —
-  // GET /takedowns/stats, agregado no banco. O bucket-mapping
-  // (pendente/em_andamento/concluído) é o mesmo de sempre, só que agora
-  // itera sobre {status: count} (poucas entradas) em vez da lista completa.
+  // KPIs: count per status OVER THE WHOLE TENANT (not the current page) —
+  // GET /takedowns/stats, aggregated in the database. The bucket mapping
+  // (pendente/em_andamento/concluído) is the same as always, except it now
+  // iterates over {status: count} (few entries) instead of the full list.
   const { stats: takedownsStats } = useTakedownsStats();
   const metricas = useMemo(() => {
     let pendentes = 0, resolvidos = 0, emAndamento = 0;
@@ -91,8 +91,8 @@ export default function Takedowns() {
     return { total: takedownsStats.total, pendentes, resolvidos, emAndamento };
   }, [takedownsStats]);
 
-  // A tabela renderiza diretamente a página atual devolvida pelo backend
-  // (statusContradiction força uma página vazia sem round-trip).
+  // The table renders the current page returned by the backend directly
+  // (statusContradiction forces an empty page without a round trip).
   const rows = useMemo(
     () => (statusContradiction ? [] : pageRows).map(t => ({ raw: t, n: normalizeTakedown(t) })),
     [pageRows, statusContradiction],
@@ -116,8 +116,8 @@ export default function Takedowns() {
     setSelectedTakedownIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   };
 
-  // Task H: "selecionar todos" opera sobre a página atual (server-side),
-  // não mais sobre a lista filtrada inteira baixada no cliente.
+  // Task H: "select all" operates on the current page (server-side),
+  // no longer on the whole filtered list downloaded on the client.
   const toggleSelectAllTakedowns = () => {
     const ids = rows.map(({ n }) => n.id);
     const allSelected = ids.length > 0 && ids.every((id) => selectedTakedownIds.includes(id));
@@ -331,9 +331,9 @@ export default function Takedowns() {
     </MainLayout>
     )}
 
-      {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): TakedownFormModal chama useTakedowns() de novo só para
-          as mutations, a mesma query do isLoading acima. */}
+      {/* Outside the isLoading gate on purpose — same bug as /artistas
+          (Task C): TakedownFormModal calls useTakedowns() again only for
+          the mutations, the same query as the isLoading above. */}
       <TakedownFormModal open={takedownModal.open} onOpenChange={(open) => setTakedownModal({ ...takedownModal, open })} takedown={takedownModal.takedown} mode={takedownModal.mode} />
       <TakedownViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} takedown={viewModal.takedown} />
       <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Takedown" description={`Tem certeza que deseja excluir "${deleteModal.takedown?.title}"?`} onConfirm={handleDelete} />

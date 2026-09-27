@@ -1,10 +1,10 @@
 /**
  * services/internal-chat.service.ts
  *
- * Chat Interno (equipe <-> equipe) — client real para o backend
- * `/internal-chat` (apps/api/src/modules/internal-chat). Isolado da Central
- * de Atendimento: entidade, endpoint e identidade de participante próprios
- * (auth_user_id, sem telefone/canal externo).
+ * Internal Chat (team <-> team) — real client for the backend
+ * `/internal-chat` (apps/api/src/modules/internal-chat). Isolated from the Support
+ * Center: its own entity, endpoint and participant identity
+ * (auth_user_id, no phone/external channel).
  */
 import { api } from "@/shared/lib/api-client";
 

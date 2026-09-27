@@ -1,17 +1,17 @@
 /**
  * pages/MusicChat.tsx
  *
- * MusicChat — ponto de navegação único (/chat) entre dois domínios
- * arquiteturalmente independentes: Chat Interno (equipe <-> equipe,
- * modules/musicchat-interno) e Central de Atendimento (equipe <-> público
- * externo, modules/musicchat). Cada um tem árvore de componentes, estado,
- * hooks e serviço próprios — este arquivo só decide QUAL montar.
+ * MusicChat — single navigation point (/chat) between two architecturally
+ * independent domains: Internal Chat (team <-> team,
+ * modules/musicchat-interno) and Support Center (team <-> external
+ * public, modules/musicchat). Each has its own component tree, state,
+ * hooks and service — this file only decides WHICH one to mount.
  *
- * Correção da causa raiz do bug original: a implementação anterior usava
- * `<TabsContent forceMount>` na aba de atendimento, o que a mantinha
- * renderizando mesmo com "Chat Interno" ativo (mistura visual/funcional).
- * SEM forceMount, o Radix Tabs só monta o painel ativo — nunca os dois ao
- * mesmo tempo — preservando a experiência de abas que já existia.
+ * Root-cause fix of the original bug: the previous implementation used
+ * `<TabsContent forceMount>` on the support tab, which kept it
+ * rendering even with "Chat Interno" active (visual/functional mix).
+ * WITHOUT forceMount, Radix Tabs only mounts the active panel — never both at
+ * the same time — preserving the tab experience that already existed.
  */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -47,10 +47,10 @@ export default function MusicChat() {
           Configurações
         </Button>
       )}
-      {/* "Nova conversa" da Central de Atendimento fica no header (fluxo WhatsApp-only,
-          ver NewConversationDialog); Chat Interno tem seu próprio gatilho "Nova" dentro
-          do seu próprio Card — domínios diferentes, ações diferentes, sem estado
-          compartilhado entre eles. */}
+      {/* The Support Center "Nova conversa" lives in the header (WhatsApp-only flow,
+          see NewConversationDialog); Internal Chat has its own "Nova" trigger inside
+          its own Card — different domains, different actions, no state
+          shared between them. */}
       {activeArea === "support" && (
         <Button
           size="sm"
@@ -84,8 +84,8 @@ export default function MusicChat() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Sem forceMount: o Radix só monta o painel do tab ativo — o outro domínio
-              fica completamente desmontado, não apenas visualmente oculto. */}
+          {/* No forceMount: Radix only mounts the active tab's panel — the other domain
+              is fully unmounted, not just visually hidden. */}
           <TabsContent value="internal" className="mt-4">
             <ChatInternoView />
           </TabsContent>

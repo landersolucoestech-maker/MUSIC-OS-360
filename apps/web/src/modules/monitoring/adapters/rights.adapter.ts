@@ -1,29 +1,29 @@
 /**
  * modules/monitoring/adapters/rights.adapter.ts
  *
- * Adaptador de direitos para o módulo monitoring.
+ * Rights adapter for the monitoring module.
  *
- * RESPONSABILIDADE: converter dados de arrecadação/conciliação vindos
- * das APIs de direitos (ECAD, UBC, Abramus) para o formato das entidades
- * locais do módulo monitoring (Takedown, conciliação ECAD).
+ * RESPONSIBILITY: convert collection/reconciliation data coming
+ * from the rights APIs (ECAD, UBC, Abramus) into the shape of the monitoring
+ * module's local entities (Takedown, ECAD reconciliation).
  *
- * ESTADO ACTUAL: transformações de/para MOCK_DATA.
- * MIGRAÇÃO FUTURA:
+ * CURRENT STATE: transformations from/to MOCK_DATA.
+ * FUTURE MIGRATION:
  *   - ECAD → useEcadArrecadacao / useEcadConciliacao (hooks)
  *   - UBC  → useUbcDistribuicao (hook)
- *   - Abramus → useAbramus (hook funcional existente)
- *   Os shapes deste adaptador permanecem estáveis na migração.
+ *   - Abramus → useAbramus (existing working hook)
+ *   The shapes of this adapter stay stable during the migration.
  *
- * Fluxo esperado (futuro):
- *   API de direitos → fromRightsRecord() → entidade local → UI
- *   entidade local → toRightsQuery()     → API de direitos
+ * Expected flow (future):
+ *   rights API → fromRightsRecord() → local entity → UI
+ *   local entity → toRightsQuery()     → rights API
  */
 
 import type { Takedown } from "@/modules/monitoring/types/monitoring.types";
 
-// ─── Tipos de entrada do adaptador (formato APIs externas) ────────────────────
+// ─── Adapter input types (external API shape) ─────────────────────────────────
 
-/** Registro de arrecadação genérico vindo de ECAD, UBC ou Abramus */
+/** Generic collection record coming from ECAD, UBC or Abramus */
 export interface RightsRecord {
   source: "ecad" | "ubc" | "abramus";
   external_id: string;
@@ -40,7 +40,7 @@ export interface RightsRecord {
   observacoes?: string | null;
 }
 
-/** Consulta enviada para as APIs de direitos */
+/** Query sent to the rights APIs */
 export interface RightsQuery {
   isrc?: string;
   iswc?: string;
@@ -49,9 +49,9 @@ export interface RightsQuery {
   fontes?: Array<"ecad" | "ubc" | "abramus">;
 }
 
-// ─── Tipos de output do adaptador ────────────────────────────────────────────
+// ─── Adapter output types ────────────────────────────────────────────────────
 
-/** Registro de conciliação normalizado para exibição em monitoring */
+/** Reconciliation record normalized for display in monitoring */
 export interface MonitoringRightsEntry {
   id: string;
   source: "ecad" | "ubc" | "abramus";
@@ -68,7 +68,7 @@ export interface MonitoringRightsEntry {
   conciliado_em: string | null;
 }
 
-// ─── Mapeamentos estáticos ────────────────────────────────────────────────────
+// ─── Static mappings ──────────────────────────────────────────────────────────
 
 const SOURCE_LABELS: Record<RightsRecord["source"], string> = {
   ecad: "ECAD",
@@ -83,11 +83,11 @@ const STATUS_LABELS: Record<RightsRecord["status"], string> = {
   cancelado: "Cancelado",
 };
 
-// ─── Funções de adaptação ─────────────────────────────────────────────────────
+// ─── Adaptation functions ─────────────────────────────────────────────────────
 
 /**
- * Converte um RightsRecord (API externa) em MonitoringRightsEntry (UI).
- * MIGRAÇÃO FUTURA: receber dados reais de useEcadArrecadacao / useUbcDistribuicao.
+ * Converts a RightsRecord (external API) into a MonitoringRightsEntry (UI).
+ * FUTURE MIGRATION: receive real data from useEcadArrecadacao / useUbcDistribuicao.
  */
 export function fromRightsRecord(record: RightsRecord): MonitoringRightsEntry {
   const valorBrl = (record.valor_bruto_cents / 100).toLocaleString("pt-BR", {
@@ -115,11 +115,11 @@ export function fromRightsRecord(record: RightsRecord): MonitoringRightsEntry {
 }
 
 /**
- * Constrói uma consulta para as APIs de direitos a partir de um
- * Takedown local (faz match por ISRC quando disponível no campo `motivo`).
+ * Builds a query for the rights APIs from a
+ * local Takedown (matches by ISRC when available in the `motivo` field).
  *
- * MIGRAÇÃO FUTURA: o campo isrc virá diretamente de Takedown.isrc
- * após a adição desse campo na entidade.
+ * FUTURE MIGRATION: the isrc field will come directly from Takedown.isrc
+ * once that field is added to the entity.
  */
 export function toRightsQuery(
   takedown: Takedown,
@@ -133,7 +133,7 @@ export function toRightsQuery(
   };
 }
 
-// ─── Utilitários internos ─────────────────────────────────────────────────────
+// ─── Internal utilities ───────────────────────────────────────────────────────
 
 function formatPeriodo(iso: string): string {
   try {
@@ -147,8 +147,8 @@ function formatPeriodo(iso: string): string {
 }
 
 /**
- * Tenta extrair ISRC do campo `motivo` do Takedown.
- * MIGRAÇÃO FUTURA: remover esta heurística quando Takedown tiver campo isrc dedicado.
+ * Tries to extract the ISRC from the Takedown's `motivo` field.
+ * FUTURE MIGRATION: remove this heuristic once Takedown has a dedicated isrc field.
  */
 function extractIsrcFromTakedown(takedown: Takedown): string | undefined {
   const isrcPattern = /[A-Z]{2}[A-Z0-9]{3}\d{7}/;

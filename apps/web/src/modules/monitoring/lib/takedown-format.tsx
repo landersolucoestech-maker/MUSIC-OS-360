@@ -2,10 +2,10 @@ import { Badge, type BadgeVariant } from "@/shared/ui/badge";
 import type { Takedown } from "@/modules/monitoring/types/monitoring.types";
 
 /**
- * Shape canônico de um takedown para renderização. Centraliza a leitura dos dois
- * shapes que coexistem na base mock: snake_case (seeds/back-end) e camelCase legado
- * (persistido por versões antigas do FormModal). Não inventa dados — apenas resolve
- * o mesmo campo entre os aliases possíveis.
+ * Canonical takedown shape for rendering. Centralizes reading the two
+ * shapes that coexist in the mock base: snake_case (seeds/backend) and legacy camelCase
+ * (persisted by old FormModal versions). Invents no data — it only resolves
+ * the same field among the possible aliases.
  */
 export interface NormalizedTakedown {
   id: string;
@@ -27,7 +27,7 @@ export interface NormalizedTakedown {
 }
 
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
-/** Primeiro alias não-vazio entre os candidatos. */
+/** First non-empty alias among the candidates. */
 const pick = (...vals: unknown[]): string => {
   for (const v of vals) {
     const s = str(v);
@@ -75,7 +75,7 @@ export function normalizeTakedown(raw: Takedown & Record<string, unknown>): Norm
 }
 
 // ── Status ────────────────────────────────────────────────────────────────────
-/** Normaliza aliases legados para os estados canônicos de UI. */
+/** Normalizes legacy aliases to the canonical UI states. */
 function canonicalStatus(status?: string | null): string {
   switch (status) {
     case "resolvido": return "completed";
@@ -106,7 +106,7 @@ export function statusBadge(status?: string | null) {
   return <Badge variant={meta?.variant ?? "neutral"}>{statusLabel(status)}</Badge>;
 }
 
-// ── Tipo ──────────────────────────────────────────────────────────────────────
+// ── Type ──────────────────────────────────────────────────────────────────────
 export function typeBadge(type?: string | null) {
   if (type === "enviado") return <Badge variant="info">Enviado</Badge>;
   if (type === "recebido") return <Badge variant="warning">Recebido</Badge>;
@@ -116,6 +116,6 @@ export function typeBadge(type?: string | null) {
 export const typeLabel = (type?: string | null): string =>
   type === "enviado" ? "Enviado por nós" : type === "recebido" ? "Recebido (Claim)" : "—";
 
-// ── Prioridade ──────────────────────────────────────────────────────────────────
+// ── Priority ────────────────────────────────────────────────────────────────────
 const PRIORIDADE_LABEL: Record<string, string> = { alta: "Alta", media: "Média", baixa: "Baixa" };
 export const prioridadeLabel = (p?: string | null): string => (p ? PRIORIDADE_LABEL[p] ?? p : "—");

@@ -1,9 +1,9 @@
 /**
- * Tipos de domínio — Rights Monitoring.
- * Espelham os campos reais de content_detections e ecad_reports
- * (apps/api/src/database/entities.ts) — nenhum campo aqui existe apenas em
- * mock. Enriquecimento de catálogo (compositor/editora/iswc/cod_ecad) é
- * resolvido em runtime via work_id contra o catálogo real (useObras()).
+ * Domain types — Rights Monitoring.
+ * They mirror the real fields of content_detections and ecad_reports
+ * (apps/api/src/database/entities.ts) — no field here exists only in
+ * mock data. Catalog enrichment (composer/publisher/iswc/cod_ecad) is
+ * resolved at runtime via work_id against the real catalog (useObras()).
  */
 
 export type DetectionStatus = "pending" | "in_progress" | "completed" | "rejected" | "archived";

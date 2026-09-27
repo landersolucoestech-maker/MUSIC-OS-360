@@ -94,7 +94,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
     }
   }, [open, takedown, reset]);
 
-  /** Converte os campos do formulário no shape canônico snake_case persistido. */
+  /** Converts the form fields into the persisted canonical snake_case shape. */
   const buildPayload = (data: TakedownFormData) => ({
     title: data.title,
     type: data.type || null,
@@ -141,7 +141,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Informações Básicas */}
+          {/* Basic information */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <FileText className="h-4 w-4" /> Informações do Takedown
@@ -245,7 +245,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
             </div>
           </div>
 
-          {/* Plataforma e URL */}
+          {/* Platform and URL */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <Link2 className="h-4 w-4" /> Plataforma e Localização
@@ -284,7 +284,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
             </div>
           </div>
 
-          {/* Motivo e Descrição */}
+          {/* Reason and description */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" /> Motivo e Descrição

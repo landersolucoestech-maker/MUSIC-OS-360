@@ -1,11 +1,11 @@
 /**
  * components/NewConversationDialog.tsx
  *
- * Iniciar nova conversa (Decisão de produto PD-3, 2026-08-23): escopo WhatsApp-only.
- * Todo outro canal (facebook/instagram/tiktok/site/etc.) sempre resulta em
- * delivery_status='internal_only' no backend (dispatchOutbound nunca envia de verdade
- * para eles) — oferecer esses canais aqui criaria uma falsa impressão de escolha real.
- * WhatsApp é o único canal onde "iniciar conversa" de fato alcança alguém externamente.
+ * Start a new conversation (product decision PD-3, 2026-08-23): WhatsApp-only scope.
+ * Every other channel (facebook/instagram/tiktok/site/etc.) always results in
+ * delivery_status='internal_only' on the backend (dispatchOutbound never actually sends
+ * to them) — offering those channels here would create a false impression of a real choice.
+ * WhatsApp is the only channel where "start conversation" actually reaches someone externally.
  */
 import { useRef, useState } from "react";
 import {
@@ -36,10 +36,10 @@ export function NewConversationDialog({ open, onOpenChange, onCreated }: NewConv
   const [phone, setPhone] = useState("");
   const [initialMessage, setInitialMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // Uma chave de idempotência POR PAYLOAD, não por chamada. Retry do mesmo payload após um
-  // timeout reusa a chave e o backend devolve a conversa já criada em vez de criar uma segunda
-  // (IdempotencyInterceptor). Se o agente EDITAR os campos e reenviar, é outra tentativa
-  // lógica: chave nova, senão o backend replayaria a resposta antiga e a edição sumiria.
+  // One idempotency key PER PAYLOAD, not per call. A retry of the same payload after a
+  // timeout reuses the key and the backend returns the already-created conversation instead of creating a second one
+  // (IdempotencyInterceptor). If the agent EDITS the fields and resubmits, it is another logical
+  // attempt: new key, otherwise the backend would replay the old response and the edit would be lost.
   const attemptRef = useRef<{ key: string; signature: string } | null>(null);
 
   const canSubmit = phone.trim().length > 0 && !isSubmitting;
@@ -82,9 +82,9 @@ export function NewConversationDialog({ open, onOpenChange, onCreated }: NewConv
         try {
           await musicChatConversationsService.sendMessage(conversation.id, body);
         } catch {
-          // A conversa foi criada de verdade — só a primeira mensagem falhou ao enviar.
-          // Não fabricar sucesso silencioso: avisa o agente, mas mantém a conversa criada
-          // (ela já aparece na lista via o próprio evento conversation:created do realtime).
+          // The conversation was really created — only the first message failed to send.
+          // Do not fabricate silent success: warn the agent, but keep the created conversation
+          // (it already shows up in the list via the realtime conversation:created event itself).
           initialMessageFailed = true;
           toast.error("Conversa criada, mas a mensagem inicial falhou ao enviar. Tente reenviar pela conversa.");
         }
