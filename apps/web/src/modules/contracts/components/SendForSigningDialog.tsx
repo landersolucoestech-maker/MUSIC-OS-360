@@ -50,17 +50,17 @@ export function SendForSigningDialog({
   const [sending, setSending] = useState(false);
 
   const signers = Array.isArray(contract.signers) ? contract.signers : [];
-  const hasFile = Boolean(contract.arquivo_url);
+  const hasFile = Boolean(contract.file_url);
   const canSend = selected !== null && signers.length > 0 && hasFile && !sending;
 
   async function handleSend() {
-    if (!selected || signers.length === 0 || !contract.arquivo_url) return;
+    if (!selected || signers.length === 0 || !contract.file_url) return;
     setSending(true);
     try {
       const result = await signingService.sendForSigning({
         contratoId: contract.id,
         title:      contract.title,
-        fileUrl:    contract.arquivo_url,
+        fileUrl:    contract.file_url,
         signers:    signers.map((s) => ({ name: s.name, email: s.email })),
         provider:   selected,
       });

@@ -16,6 +16,7 @@ import { PlanLimitService } from '../../core/billing/plan-limit.service';
 import {
   resolveContractAliases,
   resolveContractQueryAliases,
+  canonicalContractVersions,
   type ResolvedContractWriteFields,
 } from './contract-legacy-alias.util';
 import { preserveServerOwnedMetadata, stripServerOwnedMetadata } from './contract-provider-signature';
@@ -139,7 +140,7 @@ export class ContractsService {
 
   /**
    * Builds the final payload for persistence from the already resolved canonical
-   * fields (title/type/artist_id/start_date/end_date/arquivo_url/fixed_value
+   * fields (title/type/artist_id/start_date/end_date/file_url/fixed_value
    * — see resolveContractAliases()) and the other fields unrelated to
    * aliases, which keep passing straight through to the entity.
    */
@@ -148,12 +149,13 @@ export class ContractsService {
 
     out.client_id    = dto['client_id']    ?? null;
     out.release_id = dto['release_id'] ?? null;
-    out.exclusivo     = dto['exclusivo']     ?? false;
+    // exclusivo / versoes: deprecated names a pre-canonical web build still sends (CZ-026).
+    out.exclusive     = dto['exclusive']     ?? dto['exclusivo'] ?? false;
     out.notes         = dto['notes']         ?? null;
     // autentique_doc_id / metadata provider* are server-owned (written only by
     // the signing integrations' sendForSignature) — never taken from a client.
     out.signing_platform  = dto['signing_platform']  ?? null;
-    out.versoes       = (dto['versoes'] as unknown[] | undefined) ?? [];
+    out.versions      = canonicalContractVersions((dto['versions'] ?? dto['versoes'] ?? []) as unknown[]);
     out.documents    = (dto['documents'] as unknown[] | undefined) ?? [];
     // Wizard fields (2026-07-12 rule: 1 column per field, exact name) — they are not aliases.
     out.template_id   = dto['template_id'] ?? null;

@@ -39,7 +39,7 @@ export const CONTRACTS_WORKFLOW: WorkflowDefinition<string> = {
       roles: ['super_admin','tenant_owner','owner','admin','manager'],
       guard: async (ctx) => {
         const entity = ctx.entity;
-        if (!entity['arquivo_url']) {
+        if (!entity['file_url']) {
           return { allowed: false, reason: 'Contrato precisa ter o documento anexado antes de ser assinado' };
         }
         return { allowed: true };

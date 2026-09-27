@@ -377,19 +377,19 @@ async function validateContractPdf(token: string, tenantId: string, contractId: 
     entity: 'contract',
     entityId: contractId,
   });
-  const patch = await http('PATCH', `/contracts/${contractId}`, { token, tenantId, body: { arquivo_url: upload.downloadUrl } });
+  const patch = await http('PATCH', `/contracts/${contractId}`, { token, tenantId, body: { file_url: upload.downloadUrl } });
   assert(patch.res.ok, 'Failed attaching PDF to contract', { status: patch.res.status, body: patch.json });
   const reloaded = await http('GET', `/contracts/${contractId}`, { token, tenantId });
   assert(reloaded.res.ok, 'Failed reloading contract', { status: reloaded.res.status, body: reloaded.json });
-  assert(reloaded.json?.arquivo_url === upload.downloadUrl, 'Contract did not persist arquivo_url', reloaded.json);
-  const downloaded = await downloadBytes(reloaded.json.arquivo_url);
+  assert(reloaded.json?.file_url === upload.downloadUrl, 'Contract did not persist file_url', reloaded.json);
+  const downloaded = await downloadBytes(reloaded.json.file_url);
   assert(downloaded.ok && downloaded.bytes.equals(PDF_MIN), 'Downloaded PDF failed or was corrupted', {
     status: downloaded.status,
     contentType: downloaded.contentType,
   });
   const newSession = await authA();
   const sessionReload = await http('GET', `/contracts/${contractId}`, { token: newSession.token, tenantId: newSession.tenantId });
-  assert(sessionReload.res.ok && sessionReload.json?.arquivo_url === upload.downloadUrl, 'New session did not reload the contract PDF', {
+  assert(sessionReload.res.ok && sessionReload.json?.file_url === upload.downloadUrl, 'New session did not reload the contract PDF', {
     status: sessionReload.res.status,
     body: sessionReload.json,
   });

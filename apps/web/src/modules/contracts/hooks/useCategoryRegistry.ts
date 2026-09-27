@@ -43,7 +43,7 @@ export const DEFAULT_CATEGORY_LABEL = "Padrão";
 export const UNKNOWN_CATEGORY_LABEL = "Categoria não cadastrada";
 
 /**
- * PT-BR label of a contract category slug (`tipo_servico`). The slug is a
+ * PT-BR label of a contract category slug (`service_type`). The slug is a
  * technical value and is never rendered: an unregistered slug gets a neutral label.
  */
 export function contractCategoryLabel(

@@ -22,7 +22,7 @@ describe('ExportFormatService — XLSX serialization', () => {
 
   it('text field exceeding the Excel cell limit is truncated (never breaks the export)', () => {
     const huge = 'A'.repeat(40000);
-    const buf = svc.toXlsx('contract_templates', 'Contratos', ['conteudo'], [{ conteudo: huge }]);
+    const buf = svc.toXlsx('contract_templates', 'Contratos', ['content'], [{ content: huge }]);
     const rows = readFirstSheetRows(buf);
     const cell = String(rows[1][0]);
     expect(cell.length).toBeLessThanOrEqual(32767);
@@ -53,8 +53,8 @@ describe('ExportFormatService — XLSX serialization', () => {
     it('logs entity, column and size when truncating (traceable in production)', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
       const huge = 'X'.repeat(50000);
-      sanitizeExcelCellValue(huge, { entity: 'contract_templates', column: 'conteudo' });
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('contract_templates.conteudo'));
+      sanitizeExcelCellValue(huge, { entity: 'contract_templates', column: 'content' });
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('contract_templates.content'));
       expect(warn).toHaveBeenCalledWith(expect.stringContaining('50000'));
       warn.mockRestore();
     });

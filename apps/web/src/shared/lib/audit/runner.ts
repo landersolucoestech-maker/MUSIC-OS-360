@@ -123,7 +123,7 @@ const CONFIGS: AuditConfig[] = [
       { key: "status", label: "Status", severity: "obrigatorio" },
       { key: "start_date", label: "Data de início", severity: "recomendado" },
       { key: "end_date", label: "Data de fim", severity: "recomendado" },
-      { key: "arquivo_url", label: "Arquivo do contrato", severity: "recomendado" },
+      { key: "file_url", label: "Arquivo do contrato", severity: "recomendado" },
     ],
   },
   {

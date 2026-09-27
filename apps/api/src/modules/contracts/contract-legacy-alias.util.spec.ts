@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { resolveContractAliases, resolveContractQueryAliases } from './contract-legacy-alias.util';
+import { canonicalContractVersions, resolveContractAliases, resolveContractQueryAliases } from './contract-legacy-alias.util';
 
 function getBody(fn: () => void): { code: string; message: string; fields?: unknown[] } {
   try {
@@ -219,41 +219,70 @@ describe('resolveContractAliases — start_date/data_inicio/startsAt and end_dat
   });
 });
 
-describe('resolveContractAliases — arquivo_url/fileUrl (strict, no normalization)', () => {
-  it('PT only', () => {
-    expect(resolveContractAliases({ title: 'X', arquivo_url: 'https://a.com/x.pdf' }).normalized.arquivo_url).toBe('https://a.com/x.pdf');
+describe('resolveContractAliases — file_url/arquivo_url/fileUrl (strict, no normalization)', () => {
+  it('canonical only', () => {
+    const { normalized, legacyAliasesUsed } = resolveContractAliases({ title: 'X', file_url: 'https://a.com/x.pdf' });
+    expect(normalized.file_url).toBe('https://a.com/x.pdf');
+    expect(legacyAliasesUsed).toEqual([]);
   });
 
-  it('EN only, records the alias', () => {
+  it('pre-rename PT name only, records the alias (CZ-026)', () => {
+    const { normalized, legacyAliasesUsed } = resolveContractAliases({ title: 'X', arquivo_url: 'https://a.com/x.pdf' });
+    expect(normalized.file_url).toBe('https://a.com/x.pdf');
+    expect(legacyAliasesUsed).toContain('arquivo_url');
+  });
+
+  it('EN camelCase alias only, records the alias', () => {
     const { normalized, legacyAliasesUsed } = resolveContractAliases({ title: 'X', fileUrl: 'https://a.com/x.pdf' });
-    expect(normalized.arquivo_url).toBe('https://a.com/x.pdf');
+    expect(normalized.file_url).toBe('https://a.com/x.pdf');
     expect(legacyAliasesUsed).toContain('fileUrl');
   });
 
-  it('both identical → equivalent', () => {
-    const { normalized } = resolveContractAliases({ title: 'X', arquivo_url: 'https://a.com/x.pdf', fileUrl: 'https://a.com/x.pdf' });
-    expect(normalized.arquivo_url).toBe('https://a.com/x.pdf');
+  it('all identical → equivalent', () => {
+    const { normalized } = resolveContractAliases({
+      title: 'X', file_url: 'https://a.com/x.pdf', arquivo_url: 'https://a.com/x.pdf', fileUrl: 'https://a.com/x.pdf',
+    });
+    expect(normalized.file_url).toBe('https://a.com/x.pdf');
   });
 
   it('a whitespace difference is a conflict (no trim/URL normalization)', () => {
     expect(getBody(() => resolveContractAliases({
-      title: 'X', arquivo_url: 'https://a.com/x.pdf', fileUrl: 'https://a.com/x.pdf ',
+      title: 'X', file_url: 'https://a.com/x.pdf', fileUrl: 'https://a.com/x.pdf ',
+    })).code).toBe('CONTRACT_ALIAS_CONFLICT');
+    expect(getBody(() => resolveContractAliases({
+      title: 'X', file_url: 'https://a.com/x.pdf', arquivo_url: 'https://a.com/y.pdf',
     })).code).toBe('CONTRACT_ALIAS_CONFLICT');
   });
 
   it('null/null → equivalent, returns null', () => {
-    const { normalized } = resolveContractAliases({ title: 'X', arquivo_url: null, fileUrl: null });
-    expect(normalized.arquivo_url).toBeNull();
+    const { normalized } = resolveContractAliases({ title: 'X', file_url: null, arquivo_url: null });
+    expect(normalized.file_url).toBeNull();
   });
 
   it('null/value → conflict', () => {
     expect(getBody(() => resolveContractAliases({
-      title: 'X', arquivo_url: null, fileUrl: 'https://a.com/x.pdf',
+      title: 'X', file_url: null, fileUrl: 'https://a.com/x.pdf',
     })).code).toBe('CONTRACT_ALIAS_CONFLICT');
   });
 
   it('fully absent → undefined', () => {
-    expect(resolveContractAliases({ title: 'X' }).normalized.arquivo_url).toBeUndefined();
+    expect(resolveContractAliases({ title: 'X' }).normalized.file_url).toBeUndefined();
+  });
+});
+
+describe('canonicalContractVersions (CZ-026)', () => {
+  it('maps the pre-rename element keys and preserves order and url', () => {
+    expect(canonicalContractVersions([
+      { versao: 'v1', url: 'u1', criado_em: '2026-01-01', notas: 'n', autor: 'a' },
+      { version: 'v2', url: 'u2', created_at: '2026-02-01' },
+    ])).toEqual([
+      { version: 'v1', url: 'u1', created_at: '2026-01-01', notes: 'n', author: 'a' },
+      { version: 'v2', url: 'u2', created_at: '2026-02-01' },
+    ]);
+  });
+
+  it('a canonical key already present wins and non-object entries are kept', () => {
+    expect(canonicalContractVersions([{ version: 'v9', versao: 'v1' }, 'x'])).toEqual([{ version: 'v9' }, 'x']);
   });
 });
 

@@ -66,8 +66,8 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
     ? releases.find((l) => l.id === contract.release_id)
     : undefined;
 
-  const versions: ContractVersion[] = Array.isArray(contract.versoes)
-    ? (contract.versoes as ContractVersion[])
+  const versions: ContractVersion[] = Array.isArray(contract.versions)
+    ? (contract.versions as ContractVersion[])
     : [];
   const documents = Array.isArray(contract.documents) ? contract.documents : [];
 
@@ -106,7 +106,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                       Expira em {remainingDays}d
                     </Badge>
                   )}
-                  {contract.exclusivo && (
+                  {contract.exclusive && (
                     <Badge variant="outline" className="text-[11px]">Exclusivo</Badge>
                   )}
                   {vinculadoDoc && (
@@ -133,7 +133,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                 { value: "informacoes", label: "Informações" },
                 { value: "assinatura",  label: `Assinatura${contractSigners.length > 0 ? ` (${contractSigners.length})` : ""}` },
                 { value: "arquivo",     label: "Arquivo" },
-                { value: "versoes",     label: `Versões${versions.length > 0 ? ` (${versions.length})` : ""}` },
+                { value: "versions",     label: `Versões${versions.length > 0 ? ` (${versions.length})` : ""}` },
                 { value: "documents",  label: `Documentos${documents.length > 0 ? ` (${documents.length})` : ""}` },
                 { value: "lancamento",  label: "Lançamento" },
               ].map((tab) => (
@@ -356,7 +356,7 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
 
               {/* ── File ── */}
               <TabsContent value="arquivo" className="p-6 mt-0" data-testid="tab-content-arquivo">
-                {contract.arquivo_url ? (
+                {contract.file_url ? (
                   <Card className="bg-muted/20">
                     <CardContent className="p-8 flex flex-col items-center gap-5 text-center">
                       <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -365,11 +365,11 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                       <div>
                         <p className="font-semibold text-sm mb-1">{contract.title}</p>
                         <p className="text-xs text-muted-foreground font-sans break-all max-w-sm mx-auto">
-                          {storedFileDisplayName(contract.arquivo_url)}
+                          {storedFileDisplayName(contract.file_url)}
                         </p>
                       </div>
                       <Button asChild className="gap-2" data-testid="button-open-arquivo">
-                        <StoredFileLink url={contract.arquivo_url}>
+                        <StoredFileLink url={contract.file_url}>
                           <ExternalLink className="h-4 w-4" />
                           Abrir PDF
                         </StoredFileLink>
@@ -386,21 +386,21 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
               </TabsContent>
 
               {/* ── Versions (document history) ── */}
-              <TabsContent value="versoes" className="p-6 mt-0" data-testid="tab-content-versoes">
+              <TabsContent value="versions" className="p-6 mt-0" data-testid="tab-content-versions">
                 {versions.length > 0 ? (
                   <div className="space-y-3">
                     {versions.map((v, index) => (
                       <div
                         key={index}
                         className="flex items-start gap-3 p-4 bg-muted/20 border border-border rounded-lg"
-                        data-testid={`versao-row-${index}`}
+                        data-testid={`version-row-${index}`}
                       >
                         <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
                           <History className="h-4 w-4 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-0.5">
-                            <span className="font-medium text-sm">{v.versao}</span>
+                            <span className="font-medium text-sm">{v.version}</span>
                             {index === versions.length - 1 && (
                               <Badge variant="success" className="text-[9px] h-4 px-1">
                                 Atual
@@ -409,16 +409,16 @@ export function ContractViewModal({ open, onOpenChange, contrato: contract, onEd
                           </div>
                           <p className="text-xs text-muted-foreground mb-0.5 flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            {formatDateDashes(v.criado_em)}
+                            {formatDateDashes(v.created_at)}
                           </p>
-                          {v.autor && (
+                          {v.author && (
                             <p className="text-xs text-muted-foreground mb-0.5 flex items-center gap-1">
                               <User className="h-3 w-3" />
-                              {v.autor}
+                              {v.author}
                             </p>
                           )}
-                          {v.notas && (
-                            <p className="text-xs text-muted-foreground">{v.notas}</p>
+                          {v.notes && (
+                            <p className="text-xs text-muted-foreground">{v.notes}</p>
                           )}
                         </div>
                         {v.url && (

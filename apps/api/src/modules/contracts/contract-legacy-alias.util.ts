@@ -37,7 +37,7 @@ export interface ResolvedContractWriteFields {
   artist_id?: string | null;
   start_date?: string | null;
   end_date?: string | null;
-  arquivo_url?: string | null;
+  file_url?: string | null;
   fixed_value?: string | null;
 }
 
@@ -199,8 +199,10 @@ const END_DATE_SPEC: PairSpec = {
 };
 
 const FILE_URL_SPEC: PairSpec = {
-  canonical: 'arquivo_url',
-  legacy: 'fileUrl',
+  canonical: 'file_url',
+  // 'arquivo_url' was this column's name until migration 20260928000004;
+  // 'fileUrl' the original English alias — both stay accepted.
+  legacy: ['arquivo_url', 'fileUrl'],
   isEquivalent: (a, b) => a === b,
   transform: (v) => v,
 };
@@ -285,7 +287,7 @@ export function resolveContractAliases(input: Record<string, unknown>): Contract
   if (endDate !== undefined) normalized.end_date = endDate as string | null;
 
   const fileUrl = resolvePair(input, FILE_URL_SPEC, legacyUsed);
-  if (fileUrl !== undefined) normalized.arquivo_url = fileUrl as string | null;
+  if (fileUrl !== undefined) normalized.file_url = fileUrl as string | null;
 
   const amount = resolvePair(input, FIXED_VALUE_SPEC, legacyUsed);
   if (amount !== undefined) normalized.fixed_value = amount as string | null;
@@ -308,4 +310,32 @@ export function resolveContractQueryAliases(input: Record<string, unknown>): Con
   if (artistId !== undefined) normalized.artist_id = artistId as string | null;
 
   return { normalized, legacyAliasesUsed: Array.from(legacyUsed) };
+}
+
+// ── Version history elements (contracts.versions) ─────────────────────────────
+
+/** Keys a web build released before migration 20260928000004 still writes in each version entry. */
+export const LEGACY_CONTRACT_VERSION_KEYS: Readonly<Record<string, string>> = {
+  versao: 'version',
+  criado_em: 'created_at',
+  notas: 'notes',
+  autor: 'author',
+};
+
+/**
+ * Normalizes a version-history array to the canonical element keys
+ * (version/url/created_at/notes/author); a canonical key already present wins.
+ * Non-object elements are kept as they are.
+ */
+export function canonicalContractVersions(versions: unknown[]): unknown[] {
+  return versions.map((entry) => {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return entry;
+    const out: Record<string, unknown> = { ...(entry as Record<string, unknown>) };
+    for (const [legacy, canonical] of Object.entries(LEGACY_CONTRACT_VERSION_KEYS)) {
+      if (!Object.prototype.hasOwnProperty.call(out, legacy)) continue;
+      if (out[canonical] === undefined) out[canonical] = out[legacy];
+      delete out[legacy];
+    }
+    return out;
+  });
 }

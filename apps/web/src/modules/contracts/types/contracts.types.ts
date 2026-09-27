@@ -6,11 +6,11 @@ import type { UploadedFile } from "@/shared/components/FileUpload";
 export type { ContractStatusValue, ContractType };
 
 export interface ContractVersion {
-  versao: string;
+  version: string;
   url: string;
-  criado_em: string;
-  notas?: string;
-  autor?: string;
+  created_at: string;
+  notes?: string;
+  author?: string;
 }
 
 export type SigningPlatform = "autentique" | "clicksign" | "docusign";
@@ -48,14 +48,14 @@ export interface Contract {
   start_date?: string | null;
   end_date?: string | null;
   fixed_value?: number | null;
-  exclusivo?: boolean | null;
+  exclusive?: boolean | null;
   notes?: string | null;
   template_id?: string | null;
   assinado_em?: string | null;
-  arquivo_url?: string | null;
+  file_url?: string | null;
   autentique_doc_id?: string | null;
   signing_platform?: SigningPlatform | null;
-  versoes?: ContractVersion[];
+  versions?: ContractVersion[];
   signers?: Array<ContractSigner | WizardSignerRecord>;
   documents?: UploadedFile[];
   created_at?: string;
@@ -75,8 +75,8 @@ export interface ContractTemplateRow {
   id: string;
   user_id?: string | null;
   name: string;
-  tipo_servico: string;
-  conteudo: string;
+  service_type: string;
+  content: string;
   description?: string | null;
   active: boolean;
   variables_manifest?: string | null;
@@ -247,7 +247,7 @@ export interface ContractTemplate {
   musicWork: MusicWork;
   signature: SignatureSettings;
   branding: BrandingSettings;
-  conteudo: string;
+  content: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -78,7 +78,7 @@ const ContractForm = ({
   const { templates } = useContractTemplates();
 
   // Normalizes CategoryRegistry (and legacy) slugs to the equivalent CST slugs.
-  // The workspace stores tipo_servico with CategoryRegistry slugs (e.g. "empresariamento_360").
+  // The workspace stores service_type with CategoryRegistry slugs (e.g. "empresariamento_360").
   // This function converts them to the matching CST slug so the filter works.
   const normalizeToCst = useCallback((slug: string | undefined | null): string | null => {
     if (!slug) return null;
@@ -109,7 +109,7 @@ const ContractForm = ({
       new Set(
         templates
           .map((t) => {
-            const raw = (t.tipo_servico || (t as Record<string, unknown>)["type"]) as string | undefined;
+            const raw = (t.service_type || (t as Record<string, unknown>)["type"]) as string | undefined;
             return normalizeToCst(raw);
           })
           .filter((s): s is string => Boolean(s)),
@@ -128,7 +128,7 @@ const ContractForm = ({
   const cstToLabel = useMemo(() => {
     const map = new Map<string, string>();
     for (const t of templates) {
-      const raw = (t.tipo_servico || (t as Record<string, unknown>)["type"]) as string | undefined;
+      const raw = (t.service_type || (t as Record<string, unknown>)["type"]) as string | undefined;
       if (!raw) continue;
       const cstSlug = normalizeToCst(raw);
       if (!cstSlug) continue;
@@ -381,22 +381,22 @@ const ContractForm = ({
         <CardHeader><CardTitle>Arquivo e Vínculos</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="arquivo_url">URL do Arquivo (PDF)</Label>
+            <Label htmlFor="file_url">URL do Arquivo (PDF)</Label>
             <Input
-              id="arquivo_url"
-              {...form.register("arquivo_url")}
+              id="file_url"
+              {...form.register("file_url")}
               placeholder="https://drive.google.com/file/d/... ou link do PDF"
               data-testid="input-arquivo-url"
             />
             <p className="text-xs text-muted-foreground">Cole o link público do PDF do contrato (Google Drive, Dropbox, etc.)</p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="notas_versao">Notas desta versão (opcional)</Label>
+            <Label htmlFor="version_notes">Notas desta versão (opcional)</Label>
             <Input
-              id="notas_versao"
-              {...form.register("notas_versao")}
+              id="version_notes"
+              {...form.register("version_notes")}
               placeholder="Ex: Alteração de cláusula de exclusividade, versão revisada pelo jurídico..."
-              data-testid="input-notas-versao"
+              data-testid="input-version-notes"
             />
             <p className="text-xs text-muted-foreground">Descreva o que mudou nesta versão do documento</p>
           </div>
@@ -571,7 +571,7 @@ function contractToFormData(c: ContractWithRelations): Partial<ContractFormSubmi
     title:        c.title ?? "",
     service_type: serviceType,
     status:       status ?? "draft",
-    arquivo_url:  c.arquivo_url ?? undefined,
+    file_url:     c.file_url ?? undefined,
     release_id: c.release_id ?? undefined,
     start_date:   c.start_date ? new Date(c.start_date) : undefined,
     end_date:     c.end_date    ? new Date(c.end_date)    : undefined,
@@ -605,20 +605,20 @@ export const ContractFormModal = ({
   const handleSubmit = async (data: ContractFormSubmitData) => {
     const {
       title, service_type, status,
-      arquivo_url: fileUrl, notas_versao: versionNotes, release_id,
+      file_url: fileUrl, version_notes: versionNotes, release_id,
       start_date, end_date, fixed_value,
       external_rights_percentage, advance_payment, financial_support, observations,
       signers, documents,
     } = data;
 
-    const resolvedFileUrl = fileUrl || (mode === "edit" && contract ? (contract.arquivo_url ?? null) : null);
+    const resolvedFileUrl = fileUrl || (mode === "edit" && contract ? (contract.file_url ?? null) : null);
     const resolvedReleaseId = release_id || (mode === "edit" && contract ? (contract.release_id ?? null) : null);
 
     const payload: Record<string, unknown> = {
       title,
       type: service_type,
       status: status || "draft",
-      arquivo_url: resolvedFileUrl,
+      file_url: resolvedFileUrl,
       release_id: resolvedReleaseId,
       start_date: start_date ? (start_date as Date).toISOString().split("T")[0] : null,
       end_date: end_date ? (end_date as Date).toISOString().split("T")[0] : null,
@@ -629,25 +629,25 @@ export const ContractFormModal = ({
     };
 
     if (mode === "edit" && contract) {
-      const prevUrl = contract.arquivo_url;
+      const prevUrl = contract.file_url;
       const newUrl = fileUrl || null;
       const urlChanged = newUrl && newUrl !== prevUrl;
-      const existingVersions: ContractVersion[] = Array.isArray(contract.versoes)
-        ? (contract.versoes as ContractVersion[])
+      const existingVersions: ContractVersion[] = Array.isArray(contract.versions)
+        ? (contract.versions as ContractVersion[])
         : [];
 
       if (urlChanged) {
         const nextVersionNum = existingVersions.length + 1;
         const newVersion: ContractVersion = {
-          versao: `v${nextVersionNum}`,
+          version: `v${nextVersionNum}`,
           url: newUrl as string,
-          criado_em: new Date().toISOString(),
-          notas: versionNotes || undefined,
-          autor: "Usuário atual",
+          created_at: new Date().toISOString(),
+          notes: versionNotes || undefined,
+          author: "Usuário atual",
         };
-        payload.versoes = [...existingVersions, newVersion];
+        payload.versions = [...existingVersions, newVersion];
       } else {
-        payload.versoes = existingVersions;
+        payload.versions = existingVersions;
       }
       try {
         await updateContract.mutateAsync({
@@ -662,15 +662,15 @@ export const ContractFormModal = ({
     } else {
       if (fileUrl) {
         const firstVersion: ContractVersion = {
-          versao: "v1",
+          version: "v1",
           url: fileUrl,
-          criado_em: new Date().toISOString(),
-          notas: versionNotes || undefined,
-          autor: "Usuário atual",
+          created_at: new Date().toISOString(),
+          notes: versionNotes || undefined,
+          author: "Usuário atual",
         };
-        payload.versoes = [firstVersion];
+        payload.versions = [firstVersion];
       } else {
-        payload.versoes = [];
+        payload.versions = [];
       }
       try {
         await addContract.mutateAsync(payload as Parameters<typeof addContract.mutateAsync>[0]);

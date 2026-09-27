@@ -4,6 +4,8 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { ContractTemplateEntity } from '../../database/entities';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import type { CreateContractTemplateDto } from './dto/create-contract-template.dto';
+import { CONTRACT_TEMPLATE_DEPRECATED_FIELDS } from './dto/create-contract-template.dto';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 import type { UpdateContractTemplateDto } from './dto/update-contract-template.dto';
 
 @Injectable()
@@ -20,7 +22,7 @@ export class ContractTemplatesService {
       .where('t.tenant_id = :tenantId', { tenantId })
       .andWhere('t.deleted_at IS NULL');
 
-    if (query.type)   qb.andWhere('t.tipo_servico = :type', { type:   query.type });
+    if (query.type)   qb.andWhere('t.service_type = :type', { type:   query.type });
     if (query.active !== undefined) qb.andWhere('t.active = :active', { active: query.active });
     if (query.search) qb.andWhere('t.name ILIKE :search',   { search: `%${query.search}%` });
 
@@ -42,13 +44,13 @@ export class ContractTemplatesService {
   }
 
   async create(tenantId: string, userId: string, dto: CreateContractTemplateDto): Promise<ContractTemplateEntity> {
-    const entity = this.repo!.create({ tenant_id: tenantId, ...(dto as any), created_by: userId });
+    const entity = this.repo!.create({ tenant_id: tenantId, ...applyDeprecatedFieldAliases(dto as any, CONTRACT_TEMPLATE_DEPRECATED_FIELDS), created_by: userId });
     return this.repo!.save(entity as any) as any;
   }
 
   async update(tenantId: string, id: string, dto: UpdateContractTemplateDto): Promise<ContractTemplateEntity> {
     await this.findById(tenantId, id);
-    const updates: Record<string, unknown> = { ...(dto as any), updated_at: new Date() };
+    const updates: Record<string, unknown> = { ...applyDeprecatedFieldAliases(dto as any, CONTRACT_TEMPLATE_DEPRECATED_FIELDS), updated_at: new Date() };
     const expectedUpdatedAt = updates['expectedUpdatedAt'] as string | undefined;
     delete updates['expectedUpdatedAt'];
     await casUpdate(

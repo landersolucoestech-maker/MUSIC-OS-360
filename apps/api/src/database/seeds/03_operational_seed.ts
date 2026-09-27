@@ -106,7 +106,7 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
 
   const contractId = '10000000-0000-0000-0000-000000000060';
   await ds.query(`
-    INSERT INTO contracts (id, tenant_id, title, type, status, artist_id, fixed_value, exclusivo, created_by)
+    INSERT INTO contracts (id, tenant_id, title, type, status, artist_id, fixed_value, exclusive, created_by)
     VALUES ($1, $2, 'Contrato de Gravacao Demo', 'gravacao', 'draft', $3, 50000, FALSE, $4)
     ON CONFLICT (id) DO NOTHING
   `, [contractId, tenantId, artistId, effectiveAdminSub]);

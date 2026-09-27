@@ -712,7 +712,7 @@ export function ArtistVision360Modal({
                         ]);
                         const isExclusive = actualContracts.some(
                           (c) =>
-                            c.exclusivo === true &&
+                            c.exclusive === true &&
                             ACTIVE_STATUS_VALUES.has((c.status || "").toLowerCase()),
                         );
                         return isExclusive ? (
@@ -2313,8 +2313,8 @@ export function ArtistVision360Modal({
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
                               <ContractStatusBadge contratos={[contract]} />
-                              {contract.arquivo_url && (
-                                <StoredFileLink url={contract.arquivo_url as string}
+                              {contract.file_url && (
+                                <StoredFileLink url={contract.file_url as string}
                                   data-testid={`link-contrato-pdf-${contract.id}`}>
                                   <Button
                                     variant="outline"

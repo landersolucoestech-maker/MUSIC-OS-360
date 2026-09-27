@@ -102,7 +102,7 @@ interface ManifestVar {
 interface WizardState {
   templateId: string;
   templateName: string;
-  /** Canonical category slug (tipo_servico), e.g. "gravacao" — used as contract type */
+  /** Canonical category slug (service_type), e.g. "gravacao" — used as contract type */
   templateTipoServico: string;
   templateContent: string;
   partyRoles: string[];
@@ -353,7 +353,7 @@ function StepTemplate({
         <div className="grid gap-3">
           {active.map((t) => {
             const selected = state.templateId === t.id;
-            const label = getCategoryLabel(t.tipo_servico);
+            const label = getCategoryLabel(t.service_type);
             return (
               <button
                 key={t.id}
@@ -982,9 +982,9 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
       };
 
       if (tmpl) {
-        const partyRoles   = extractPartyRoles(tmpl.conteudo);
-        const signatureRoles = extractSignatureRoles(tmpl.conteudo);
-        const manifestVars = parseManifest(tmpl.variables_manifest, tmpl.conteudo, partyRoles);
+        const partyRoles   = extractPartyRoles(tmpl.content);
+        const signatureRoles = extractSignatureRoles(tmpl.content);
+        const manifestVars = parseManifest(tmpl.variables_manifest, tmpl.content, partyRoles);
 
         // Seed party entries; prefer saved data over empty shells
         const initialParties: Record<string, PartyData> = {};
@@ -1018,8 +1018,8 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
         setState({
           templateId:          tmpl.id,
           templateName:        tmpl.name,
-          templateTipoServico: tmpl.tipo_servico || "",
-          templateContent:     tmpl.conteudo,
+          templateTipoServico: tmpl.service_type || "",
+          templateContent:     tmpl.content,
           partyRoles,
           signatureRoles,
           manifestVars,
@@ -1041,9 +1041,9 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
   // ── Template selection ───────────────────────────────────────────────────
 
   const handleSelectTemplate = useCallback((t: ContractTemplateRow) => {
-    const partyRoles     = extractPartyRoles(t.conteudo);
-    const signatureRoles = extractSignatureRoles(t.conteudo);
-    const manifestVars   = parseManifest(t.variables_manifest, t.conteudo, partyRoles);
+    const partyRoles     = extractPartyRoles(t.content);
+    const signatureRoles = extractSignatureRoles(t.content);
+    const manifestVars   = parseManifest(t.variables_manifest, t.content, partyRoles);
 
     const initialParties: Record<string, PartyData> = {};
     for (const role of partyRoles) {
@@ -1064,8 +1064,8 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
       ...prev,
       templateId:          t.id,
       templateName:        t.name,
-      templateTipoServico: t.tipo_servico || "",
-      templateContent:     t.conteudo,
+      templateTipoServico: t.service_type || "",
+      templateContent:     t.content,
       partyRoles,
       signatureRoles,
       manifestVars,

@@ -65,7 +65,7 @@ function formatDate(dateStr?: string): string {
 }
 
 function templateCategory(template: ContractTemplateRow, categories: ReadonlyArray<ContractCategory>): string {
-  return contractCategoryLabel(categories, template.tipo_servico);
+  return contractCategoryLabel(categories, template.service_type);
 }
 
 function templateStatus(template: ContractTemplateRow): string {
@@ -93,8 +93,8 @@ export default function ContractTemplates() {
     const q = search.trim().toLowerCase();
     return templates.filter((template) => {
       if (q && !template.name.toLowerCase().includes(q) && !(template.description ?? "").toLowerCase().includes(q)) return false;
-      if (filterType === "semantico" && template.tipo_servico !== "semantico") return false;
-      if (filterType === "padrao" && template.tipo_servico === "semantico") return false;
+      if (filterType === "semantico" && template.service_type !== "semantico") return false;
+      if (filterType === "padrao" && template.service_type === "semantico") return false;
       if (filterStatus === "ativo" && !template.active) return false;
       if (filterStatus === "inativo" && template.active) return false;
       return true;
@@ -175,7 +175,7 @@ export default function ContractTemplates() {
     setIsEditOpen(true);
   };
 
-  const semanticCount = templates.filter((template) => template.tipo_servico === "semantico").length;
+  const semanticCount = templates.filter((template) => template.service_type === "semantico").length;
   const activeCount = templates.filter((template) => template.active).length;
   const totalVars = templates.reduce((acc, template) => acc + countVariables(template), 0);
 
@@ -351,7 +351,7 @@ export default function ContractTemplates() {
                 <TableBody>
                   {pageItems.map((template) => {
                     const clauseTypes = getClauseTypes(template);
-                    const isSemantic = template.tipo_servico === "semantico";
+                    const isSemantic = template.service_type === "semantico";
                     return (
                       <TableRow key={template.id} className="cursor-pointer" onClick={() => handleViewClick(template)} data-testid={`row-template-${template.id}`}>
                         <TableCell onClick={(e) => e.stopPropagation()}>

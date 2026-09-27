@@ -2,6 +2,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray, IsBoolean, IsIn, IsInt, IsNumber, IsOptional, IsString, MaxLength, Min,
 } from 'class-validator';
+import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
+
+/** CZ-026 deploy-skew window: field names a pre-canonical web build still sends (see applyDeprecatedFieldAliases). */
+export const CONTRACT_SERVICE_TYPE_DEPRECATED_FIELDS: DeprecatedFieldAliases = { conteudo: 'content' };
 
 const CLIENT_TYPES = ['artista', 'pessoa_fisica', 'pessoa_juridica'] as const;
 const FINANCIAL_MODELS = ['valor_fixo', 'recebimentos externos de direitos', 'misto', 'recorrente'] as const;
@@ -60,6 +64,9 @@ export class CreateContractServiceTypeDto {
   footer_image_url?: string | null;
 
   @ApiPropertyOptional() @IsOptional() @IsString()
+  content?: string;
+
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "content".' }) @IsOptional() @IsString()
   conteudo?: string;
 
   // JSON blobs travel over the wire pre-serialized by the frontend

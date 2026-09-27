@@ -39,7 +39,7 @@ export function ContractTemplateViewModal({
         </head>
         <body>
           <h1>${template.name}</h1>
-          <pre>${template.conteudo ?? ""}</pre>
+          <pre>${template.content ?? ""}</pre>
         </body>
         </html>
       `);
@@ -49,12 +49,12 @@ export function ContractTemplateViewModal({
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(template.conteudo ?? "");
+    navigator.clipboard.writeText(template.content ?? "");
     toast.success("Conteúdo copiado para a área de transferência!");
   };
 
   const handleDownload = () => {
-    const blob = new Blob([template.conteudo ?? ""], { type: "text/plain" });
+    const blob = new Blob([template.content ?? ""], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -85,9 +85,9 @@ export function ContractTemplateViewModal({
                 >
                   {template.active ? "Ativo" : "Inativo"}
                 </Badge>
-                {template.tipo_servico && (
+                {template.service_type && (
                   <Badge variant="outline" className="no-underline">
-                    {contractCategoryLabel(categories, template.tipo_servico)}
+                    {contractCategoryLabel(categories, template.service_type)}
                   </Badge>
                 )}
               </div>
@@ -104,7 +104,7 @@ export function ContractTemplateViewModal({
         <div className="overflow-y-auto flex-1 min-h-0">
           <A4Preview
             headerImage={template.header_image ?? null}
-            content={template.conteudo ?? ""}
+            content={template.content ?? ""}
             footerImage={template.footer_image ?? null}
           />
         </div>

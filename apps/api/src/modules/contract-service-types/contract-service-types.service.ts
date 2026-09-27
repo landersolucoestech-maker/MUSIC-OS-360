@@ -3,11 +3,14 @@ import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { ContractServiceTypeEntity } from '../../database/entities';
 import type { CreateContractServiceTypeDto } from './dto/create-contract-service-type.dto';
+import { CONTRACT_SERVICE_TYPE_DEPRECATED_FIELDS } from './dto/create-contract-service-type.dto';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 import type { UpdateContractServiceTypeDto } from './dto/update-contract-service-type.dto';
 
 // created_at/updated_at never come from the client (@CreateDateColumn/@UpdateDateColumn
 // handle that); an explicit strip prevents an input value from leaking into the insert/update.
-function stripClientTimestamps(dto: Record<string, unknown>): Record<string, unknown> {
+function stripClientTimestamps(input: Record<string, unknown>): Record<string, unknown> {
+  const dto = applyDeprecatedFieldAliases(input, CONTRACT_SERVICE_TYPE_DEPRECATED_FIELDS);
   const { created_at: _createdAt, updated_at: _updatedAt, ...rest } = dto;
   return rest;
 }

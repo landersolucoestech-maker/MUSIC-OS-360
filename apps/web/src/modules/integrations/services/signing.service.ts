@@ -37,7 +37,7 @@ const PROVIDER_ENDPOINT: Record<SigningProviderId, string> = {
 export interface SendForSigningInput {
   contratoId: string;
   title: string;
-  /** Public URL of the file to sign (contrato.arquivo_url). */
+  /** Public URL of the file to sign (contracts.file_url). */
   fileUrl: string;
   signers: Array<{ name: string; email: string }>;
   provider?: SigningProviderId;
@@ -70,7 +70,7 @@ async function fetchFileAsBase64(url: string): Promise<string> {
 export const signingService = {
   /**
    * Orchestrates sending a contract for digital signature via Autentique:
-   * 1. Downloads the contract file (arquivo_url) and converts it to base64
+   * 1. Downloads the contract file (file_url) and converts it to base64
    * 2. Creates the document in Autentique (which already notifies the signers)
    */
   /**

@@ -122,7 +122,7 @@ const CANONICAL_ORDER: Record<string, string[]> = {
   contracts: [
     'id', 'tenant_id', 'template_id', 'title', 'type', 'status',
     'artist_id', 'client_id', 'release_id', 'start_date', 'end_date', 'fixed_value',
-    'exclusivo', 'notes', 'arquivo_url', 'autentique_doc_id', 'signing_platform', 'versoes',
+    'exclusive', 'notes', 'file_url', 'autentique_doc_id', 'signing_platform', 'versions',
     'signers', 'metadata', 'created_at', 'updated_at', 'created_by', 'updated_by',
     'deleted_at', 'documents',
   ],

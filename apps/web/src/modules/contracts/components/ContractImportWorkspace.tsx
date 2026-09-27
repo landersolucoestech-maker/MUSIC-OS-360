@@ -375,8 +375,8 @@ export function ContractImportWorkspace({
   useEffect(() => {
     if (!template) return;
     setName(template.name ?? "");
-    setCategory(template.tipo_servico || (template as Record<string, unknown>)["type"] as string || "");
-    setText(template.conteudo ?? "");
+    setCategory(template.service_type || (template as Record<string, unknown>)["type"] as string || "");
+    setText(template.content ?? "");
     setSearch("");
     setAiSuggestions([]);
     setAiSheetOpen(false);
@@ -503,8 +503,8 @@ export function ContractImportWorkspace({
         await Promise.resolve(
           onEdit(template.id, {
             name: name.trim(),
-            tipo_servico: category,
-            conteudo: text,
+            service_type: category,
+            content: text,
             active: template.active ?? true,
             description: template.description ?? `${placeholders.length} variáveis`,
             variables_manifest: JSON.stringify(manifest),
@@ -517,8 +517,8 @@ export function ContractImportWorkspace({
         await Promise.resolve(
           onSave({
             name: name.trim(),
-            tipo_servico: category,
-            conteudo: text,
+            service_type: category,
+            content: text,
             active: true,
             description: `${placeholders.length} variáveis`,
             variables_manifest: JSON.stringify(manifest),

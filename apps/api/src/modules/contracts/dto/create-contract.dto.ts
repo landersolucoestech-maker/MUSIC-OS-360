@@ -83,7 +83,7 @@ export class CreateContractDto {
   @IsDateString()
   signedAt?: string;
 
-  @ApiPropertyOptional({ deprecated: true, description: 'Use "arquivo_url".' })
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "file_url".' })
   @IsOptional()
   @IsString()
   fileUrl?: string;
@@ -137,6 +137,10 @@ export class CreateContractDto {
 
   @ApiPropertyOptional()
   @IsOptional() @IsBoolean()
+  exclusive?: boolean;
+
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "exclusive".' })
+  @IsOptional() @IsBoolean()
   exclusivo?: boolean;
 
   @ApiPropertyOptional()
@@ -145,13 +149,21 @@ export class CreateContractDto {
 
   @ApiPropertyOptional()
   @IsOptional() @IsString()
+  file_url?: string;
+
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "file_url".' })
+  @IsOptional() @IsString()
   arquivo_url?: string;
 
   @ApiPropertyOptional()
   @IsOptional() @IsString()
   signing_platform?: string;
 
-  @ApiPropertyOptional({ type: [Object] })
+  @ApiPropertyOptional({ type: [Object], description: 'File version history: {version, url, created_at, notes?, author?}.' })
+  @IsOptional() @IsArray()
+  versions?: unknown[];
+
+  @ApiPropertyOptional({ type: [Object], deprecated: true, description: 'Use "versions".' })
   @IsOptional() @IsArray()
   versoes?: unknown[];
 

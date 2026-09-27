@@ -128,7 +128,7 @@ export class ArtistsService {
     if (relationship === ArtistRelationshipType.EXCLUSIVE) {
       qb.andWhere(`EXISTS (
         SELECT 1 FROM contracts c WHERE c.artist_id = a.id AND c.tenant_id = a.tenant_id
-        AND c.deleted_at IS NULL AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL} AND c.exclusivo = true
+        AND c.deleted_at IS NULL AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL} AND c.exclusive = true
       )`);
     } else if (relationship === ArtistRelationshipType.PARTNER) {
       qb.andWhere(`EXISTS (
@@ -136,7 +136,7 @@ export class ArtistsService {
         AND c.deleted_at IS NULL AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL}
       )`).andWhere(`NOT EXISTS (
         SELECT 1 FROM contracts c WHERE c.artist_id = a.id AND c.tenant_id = a.tenant_id
-        AND c.deleted_at IS NULL AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL} AND c.exclusivo = true
+        AND c.deleted_at IS NULL AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL} AND c.exclusive = true
       )`);
     } else if (relationship === ArtistRelationshipType.INDEPENDENT) {
       qb.andWhere(`NOT EXISTS (
@@ -171,9 +171,9 @@ export class ArtistsService {
    * page — never the whole tenant) — same classification as relationshipStats(). */
   private async relationshipByArtistIds(tenantId: string, artistIds: string[]): Promise<Record<string, ArtistRelationshipType.EXCLUSIVE | ArtistRelationshipType.PARTNER>> {
     if (artistIds.length === 0) return {};
-    const rows = await this.ds!.query<Array<{ artist_id: string; exclusivo: boolean }>>(
+    const rows = await this.ds!.query<Array<{ artist_id: string; exclusive: boolean }>>(
       `
-      SELECT DISTINCT ON (c.artist_id) c.artist_id, bool_or(c.exclusivo) OVER (PARTITION BY c.artist_id) AS exclusivo
+      SELECT DISTINCT ON (c.artist_id) c.artist_id, bool_or(c.exclusive) OVER (PARTITION BY c.artist_id) AS exclusive
       FROM contracts c
       WHERE c.tenant_id = $1 AND c.deleted_at IS NULL AND c.artist_id = ANY($2::uuid[])
         AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL}
@@ -182,7 +182,7 @@ export class ArtistsService {
     );
     const result: Record<string, ArtistRelationshipType.EXCLUSIVE | ArtistRelationshipType.PARTNER> = {};
     for (const r of rows) {
-      result[r.artist_id] = r.exclusivo ? ArtistRelationshipType.EXCLUSIVE : ArtistRelationshipType.PARTNER;
+      result[r.artist_id] = r.exclusive ? ArtistRelationshipType.EXCLUSIVE : ArtistRelationshipType.PARTNER;
     }
     return result;
   }
@@ -192,7 +192,7 @@ export class ArtistsService {
    *
    * `relationship` reproduces exactly the classification the frontend used to do on
    * the client (Artistas.tsx `classifyVinculo`, since removed): an artist is "exclusive" if it
-   * has any active/signed/in-force/expiring contract with exclusivo=true;
+   * has any active/signed/in-force/expiring contract with exclusive=true;
    * "partner" if it has any such contract that is not exclusive; otherwise
    * "independent". Before: it downloaded whole artists AND contracts and
    * cross-referenced them on the client. Now: a single aggregate query.
@@ -206,7 +206,7 @@ export class ArtistsService {
             WHEN EXISTS (
               SELECT 1 FROM contracts c
               WHERE c.artist_id = a.id AND c.tenant_id = a.tenant_id AND c.deleted_at IS NULL
-                AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL} AND c.exclusivo = true
+                AND LOWER(c.status) IN ${ACTIVE_CONTRACT_STATUSES_SQL} AND c.exclusive = true
             ) THEN '${ArtistRelationshipType.EXCLUSIVE}'
             WHEN EXISTS (
               SELECT 1 FROM contracts c

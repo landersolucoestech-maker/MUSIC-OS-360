@@ -918,12 +918,12 @@ export class ContractEntity {
   @Column({ type: 'timestamp', nullable: true }) start_date: Date | null;
   @Column({ type: 'timestamp', nullable: true }) end_date: Date | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) fixed_value: string | null;
-  @Column({ type: 'boolean', default: false }) exclusivo: boolean;
+  @Column({ type: 'boolean', default: false }) exclusive: boolean;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  @Column({ type: 'text', nullable: true }) arquivo_url: string | null;
+  @Column({ type: 'text', nullable: true }) file_url: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) autentique_doc_id: string | null;
   @Column({ type: 'varchar', length: 100, nullable: true }) signing_platform: string | null;
-  @Column({ type: 'jsonb', default: [] }) versoes: unknown[];
+  @Column({ type: 'jsonb', default: [] }) versions: unknown[];
   // ── Form/wizard fields (1 column per field — exact name) ──────────────────────
   @Column({ type: 'uuid', nullable: true }) template_id: string | null;
   @Column({ type: 'jsonb', nullable: true }) signers: unknown[] | null;
@@ -948,9 +948,9 @@ export class ContractTemplateEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 500 }) name: string;
-  @Column({ type: 'varchar', length: 100 }) tipo_servico: string;
-  @Column({ type: 'text' }) conteudo: string;
-  @Column({ type: 'jsonb', default: [] }) variaveis: unknown[];
+  @Column({ type: 'varchar', length: 100 }) service_type: string;
+  @Column({ type: 'text' }) content: string;
+  @Column({ type: 'jsonb', default: [] }) variables: unknown[];
   @Column({ type: 'boolean', default: true }) active: boolean;
   @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'text', nullable: true }) variables_manifest: string | null;
@@ -985,7 +985,7 @@ export class ContractServiceTypeEntity {
   @Column({ type: 'int', default: 0 }) sort_order: number;
   @Column({ type: 'text', nullable: true }) header_image_url: string | null;
   @Column({ type: 'text', nullable: true }) footer_image_url: string | null;
-  @Column({ type: 'text', default: '' }) conteudo: string;
+  @Column({ type: 'text', default: '' }) content: string;
   @Column({ type: 'jsonb', default: [] }) participants: unknown;
   @Column({ type: 'jsonb', default: [] }) variables: unknown;
   @Column({ type: 'jsonb', nullable: true }) music_work: unknown;

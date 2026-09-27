@@ -32,7 +32,7 @@ export interface ContractServiceType {
   sort_order: number;
   header_image_url: string | null;
   footer_image_url: string | null;
-  conteudo: string;
+  content: string;
   created_at: string;
   updated_at: string;
   participants: Participant[];
@@ -90,7 +90,7 @@ function rowToType(row: StorageRow): ContractServiceType {
     sort_order: Number(row.sort_order ?? 0),
     header_image_url: row.header_image_url != null ? String(row.header_image_url) : null,
     footer_image_url: row.footer_image_url != null ? String(row.footer_image_url) : null,
-    conteudo: String(row.conteudo ?? ""),
+    content: String(row.content ?? ""),
     created_at: String(row.created_at ?? ""),
     updated_at: String(row.updated_at ?? ""),
     participants: parseJson<Participant[]>(row.participants, []),

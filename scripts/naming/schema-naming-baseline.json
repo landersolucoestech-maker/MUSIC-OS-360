@@ -1,5 +1,5 @@
 {
- "total": 268,
+ "total": 261,
  "debt": {
   "schema::column::artists.agencia": 1,
   "schema::column::artists.agencia_booking": 1,
@@ -69,13 +69,6 @@
   "schema::column::clients.status_contato": 1,
   "schema::column::clients.telefone_encrypted": 1,
   "schema::column::clients.tipo_pessoa": 1,
-  "schema::column::contract_service_types.conteudo": 1,
-  "schema::column::contract_templates.conteudo": 1,
-  "schema::column::contract_templates.tipo_servico": 1,
-  "schema::column::contract_templates.variaveis": 1,
-  "schema::column::contracts.arquivo_url": 1,
-  "schema::column::contracts.exclusivo": 1,
-  "schema::column::contracts.versoes": 1,
   "schema::column::ecad_reports.arquivo_url": 1,
   "schema::column::ecad_reports.periodo": 1,
   "schema::column::employees.cargo": 1,

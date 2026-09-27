@@ -1,8 +1,8 @@
 /**
  * contract-templates.service.spec.ts
  *
- * Task U — proves that the form's real contract (name/tipo_servico/
- * conteudo/active/description/variables_manifest/header_image/footer_image)
+ * Task U — proves that the form's real contract (name/service_type/
+ * content/active/description/variables_manifest/header_image/footer_image)
  * persists 1:1 into the physical columns. Before this fix, the DTO used English
  * keys (title/type/content/variables/metadata) that were never sent by the
  * only real form (ContractImportWorkspace.tsx) — every template create/edit
@@ -46,16 +46,16 @@ function updated(repo: ReturnType<typeof makeRepo>) {
 }
 
 describe("ContractTemplatesService — the form's real contract (Task U)", () => {
-  it('create: persists name/tipo_servico/conteudo/active exactly as sent', async () => {
+  it('create: persists name/service_type/content/active exactly as sent', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
-      name: 'Template Exclusividade', tipo_servico: 'semantico', conteudo: '{{NOME}}', active: true,
+      name: 'Template Exclusividade', service_type: 'semantico', content: '{{NOME}}', active: true,
     } as unknown as CreateContractTemplateDto);
 
     const row = created(repo);
     expect(row['name']).toBe('Template Exclusividade');
-    expect(row['tipo_servico']).toBe('semantico');
-    expect(row['conteudo']).toBe('{{NOME}}');
+    expect(row['service_type']).toBe('semantico');
+    expect(row['content']).toBe('{{NOME}}');
     expect(row['active']).toBe(true);
     expect(row['tenant_id']).toBe('tenant-1');
   });
@@ -63,7 +63,7 @@ describe("ContractTemplatesService — the form's real contract (Task U)", () =>
   it('create: persists description/variables_manifest/header_image/footer_image', async () => {
     const { svc, repo } = makeService();
     await svc.create('tenant-1', 'user-1', {
-      name: 'X', conteudo: 'Y',
+      name: 'X', content: 'Y',
       description: '3 variáveis',
       variables_manifest: '{"variables":["{{NOME}}"]}',
       header_image: 'data:image/png;base64,abc',

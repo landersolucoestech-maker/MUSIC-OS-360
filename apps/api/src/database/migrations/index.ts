@@ -282,6 +282,7 @@ import { RenameLegacyPortugueseIndexAndConstraintNames20260927000002 } from './2
 import { CanonicalizeArtistGoalsToEnglish20260928000001 } from './20260928000001_CanonicalizeArtistGoalsToEnglish';
 import { RenamePortugueseColumnsOnBriefingsCampaignsProjects20260928000002 } from './20260928000002_RenamePortugueseColumnsOnBriefingsCampaignsProjects';
 import { CanonicalizeContentDetectionsToEnglish20260928000003 } from './20260928000003_CanonicalizeContentDetectionsToEnglish';
+import { RenamePortugueseColumnsOnContracts20260928000004 } from './20260928000004_RenamePortugueseColumnsOnContracts';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -575,4 +576,5 @@ export const ALL_MIGRATIONS = [
   CanonicalizeArtistGoalsToEnglish20260928000001,
   RenamePortugueseColumnsOnBriefingsCampaignsProjects20260928000002,
   CanonicalizeContentDetectionsToEnglish20260928000003,
+  RenamePortugueseColumnsOnContracts20260928000004,
 ] as const;

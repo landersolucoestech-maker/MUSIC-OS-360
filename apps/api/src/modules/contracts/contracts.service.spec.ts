@@ -175,7 +175,7 @@ const baseContractRow = (overrides: Record<string, unknown> = {}) => ({
   fixed_value: null,
   start_date: null,
   end_date: null,
-  arquivo_url: null,
+  file_url: null,
   metadata: {},
   ...overrides,
 });
@@ -185,7 +185,7 @@ describe('ContractsService.create — alias consolidation (Phase 5 / C1)', () =>
     const { svc, repo } = makeServiceC1();
     await svc.create('tenant-1', 'user-1', {
       title: 'Contrato X', type: 'gravacao', artist_id: '11111111-1111-4111-8111-111111111111',
-      start_date: '2026-01-01T00:00:00.000Z', arquivo_url: 'https://a.com/x.pdf', valor: 10,
+      start_date: '2026-01-01T00:00:00.000Z', file_url: 'https://a.com/x.pdf', valor: 10,
     } as unknown as CreateContractDto);
 
     const row = createdC1(repo);
@@ -294,10 +294,10 @@ describe('ContractsService.update — alias consolidation (Phase 5 / C1)', () =>
 
   it('an isolated null on an optional field does not change the column (current behavior preserved)', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
-    await svc.update('tenant-1', 'user-1', 'contract-1', { arquivo_url: null } as unknown as UpdateContractDto);
+    await svc.update('tenant-1', 'user-1', 'contract-1', { file_url: null } as unknown as UpdateContractDto);
 
     const row = updatedC1(repo);
-    expect(row['arquivo_url']).toBeUndefined();
+    expect(row['file_url']).toBeUndefined();
   });
 
   it('an isolated legacy alias is translated', async () => {
@@ -305,8 +305,22 @@ describe('ContractsService.update — alias consolidation (Phase 5 / C1)', () =>
     await svc.update('tenant-1', 'user-1', 'contract-1', { fileUrl: 'https://a.com/x.pdf' } as unknown as UpdateContractDto);
 
     const row = updatedC1(repo);
-    expect(row['arquivo_url']).toBe('https://a.com/x.pdf');
+    expect(row['file_url']).toBe('https://a.com/x.pdf');
     expect(row['fileUrl']).toBeUndefined();
+  });
+
+  it('pre-canonical web payload (arquivo_url, exclusivo, versoes with PT keys) is persisted canonically (CZ-026)', async () => {
+    const { svc, repo } = makeServiceC1([baseContractRow()]);
+    await svc.update('tenant-1', 'user-1', 'contract-1', {
+      arquivo_url: 'https://a.com/x.pdf', exclusivo: true,
+      versoes: [{ versao: 'v1', url: 'https://a.com/x.pdf', criado_em: '2026-01-01', notas: 'n', autor: 'a' }],
+    } as unknown as UpdateContractDto);
+
+    const row = updatedC1(repo);
+    expect(row['file_url']).toBe('https://a.com/x.pdf');
+    expect(row['exclusive']).toBe(true);
+    expect(row['versions']).toEqual([{ version: 'v1', url: 'https://a.com/x.pdf', created_at: '2026-01-01', notes: 'n', author: 'a' }]);
+    for (const legacy of ['arquivo_url', 'exclusivo', 'versoes']) expect(row).not.toHaveProperty(legacy);
   });
 
   it('alias use on update emits a warning with operation=update and contractId', async () => {
@@ -322,7 +336,7 @@ describe('ContractsService.update — alias consolidation (Phase 5 / C1)', () =>
   it('a PT/EN conflict on update is rejected before calling the repository', async () => {
     const { svc, repo } = makeServiceC1([baseContractRow()]);
     await expect(svc.update('tenant-1', 'user-1', 'contract-1', {
-      arquivo_url: 'https://a.com/1.pdf', fileUrl: 'https://a.com/2.pdf',
+      file_url: 'https://a.com/1.pdf', fileUrl: 'https://a.com/2.pdf',
     } as unknown as UpdateContractDto)).rejects.toMatchObject({ response: { code: 'CONTRACT_ALIAS_CONFLICT' } });
     expect(repo.update).not.toHaveBeenCalled();
   });

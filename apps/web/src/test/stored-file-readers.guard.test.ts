@@ -15,7 +15,7 @@ const SRC_ROOT = path.resolve(__dirname, "..");
 
 // Persisted file-link fields produced by uploads of the documents/spreadsheets categories.
 const DOC_FIELDS = [
-  "arquivo_url", "url_arquivo", "documentos_pessoais_url", "presskit_url",
+  "file_url", "arquivo_url", "url_arquivo", "documentos_pessoais_url", "presskit_url",
   "url_pdf", "acordo_url", "attachmentsUrl", "comprovante_url",
 ];
 
