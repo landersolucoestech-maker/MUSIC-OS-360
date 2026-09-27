@@ -254,13 +254,13 @@ async function f54(): Promise<void> {
   expect('events dated today include the ones created in this run', ours.length === OPTS_A.eventsToday, `match=${ours.length} esperado=${OPTS_A.eventsToday}`);
 
   // Confirm that tomorrow's events do NOT enter today's slice
-  const amanha = list.filter((e) => (e.title ?? e.titulo ?? '').includes(`DASH_A_${TS}_EVENT_FUTURE`));
-  expect('eventos do dia seguinte criados', amanha.length === OPTS_A.eventsTomorrow);
-  const tomorrowSetAlsoHoje = amanha.filter((e) => {
+  const tomorrowEvents = list.filter((e) => (e.title ?? e.titulo ?? '').includes(`DASH_A_${TS}_EVENT_FUTURE`));
+  expect('next-day events created', tomorrowEvents.length === OPTS_A.eventsTomorrow);
+  const tomorrowEventsInToday = tomorrowEvents.filter((e) => {
     const raw = e.data_inicio ?? e.startsAt ?? e.data ?? e.start_date;
     return typeof raw === 'string' && raw.slice(0,10) === todayPrefix;
   });
-  expect('tomorrow events do NOT fall into "today"', tomorrowSetAlsoHoje.length === 0, `bleed=${tomorrowSetAlsoHoje.length}`);
+  expect('tomorrow events do NOT fall into "today"', tomorrowEventsInToday.length === 0, `bleed=${tomorrowEventsInToday.length}`);
 }
 
 // ============================================================================

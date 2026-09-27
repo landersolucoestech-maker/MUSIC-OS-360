@@ -169,7 +169,7 @@ async function main() {
     genero_musical: "MPB",
     email: `artist.${runId}@example.com`,
     cpf_cnpj: "12345678901",
-    observacoes: `Observacao inicial ${runId}`,
+    observacoes: `Observação inicial ${runId}`,
     metadata: { phase: "2.1", runId, source: "runtime-http" },
   };
   const artistCreate = await http("POST", "/artists", { token, tenantId, body: artistCreatePayload });
@@ -185,7 +185,7 @@ async function main() {
 
   const artistPatchPayload = {
     nome_artistico: base.artistNameEdited,
-    observacoes: `Observacao editada ${runId}`,
+    observacoes: `Observação editada ${runId}`,
     genero_musical: "Pop",
     metadata: { phase: "2.1", runId, edited: true },
   };
@@ -295,9 +295,9 @@ async function main() {
     startsAt: todayIsoAt(10),
     endsAt: todayIsoAt(11, 30),
     venue: `Casa Runtime ${runId}`,
-    city: "Sao Paulo",
+    city: "São Paulo",
     country: "BR",
-    metadata: { phase: "2.4", runId, description: `Descricao evento ${runId}` },
+    metadata: { phase: "2.4", runId, description: `Descrição do evento ${runId}` },
   };
   const eventCreate = await http("POST", "/events", { token, tenantId, body: eventPayload });
   const eventId = getId(eventCreate.json);

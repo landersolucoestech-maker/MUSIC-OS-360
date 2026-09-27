@@ -174,7 +174,7 @@ async function main(): Promise<void> {
       workbookBody([commitName]),
     );
     check(
-      'create-only rejeita duplicidade',
+      'create-only rejects duplicates',
       unwrap(duplicateCommit.data)?.importedRows === 0 &&
         (unwrap(duplicateCommit.data)?.errors ?? []).some((error: string) => /já existe/i.test(error)),
     );

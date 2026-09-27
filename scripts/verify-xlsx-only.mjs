@@ -66,7 +66,7 @@ const FORBIDDEN_PATTERNS = [
     regex: /(?:['"`])[^'"`\r\n]*\.exp\b[^'"`\r\n]*(?:['"`])/i,
   },
   {
-    label: 'biblioteca delimitada legada',
+    label: 'legacy delimited-format library',
     regex: /papaparse|fast-csv|json2csv|csv-parse|csv-stringify/i,
   },
 ];
