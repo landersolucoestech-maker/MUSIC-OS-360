@@ -185,7 +185,7 @@ export type ContactFiltersState = {
   tag: "all" | string;
 };
 
-export type Cliente = {
+export type Client = {
   id: string;
   nome: string;
   razao_social?: string | null;
@@ -208,7 +208,7 @@ export type Cliente = {
   segmento?: string | null;
 };
 
-export type ClienteInsert = Omit<Cliente, "id">;
-export type ClienteUpdate = Partial<ClienteInsert>;
+export type ClientInsert = Omit<Client, "id">;
+export type ClientUpdate = Partial<ClientInsert>;
 export type ClientSegment = string;
 

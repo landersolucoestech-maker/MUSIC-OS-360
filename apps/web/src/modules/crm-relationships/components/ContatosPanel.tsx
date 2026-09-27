@@ -3,17 +3,17 @@ import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
 import { getExpectedUpdatedAt } from "@/shared/hooks/useConcurrencyConflict";
 import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
-import { ContatosTable } from "./ContatosTable";
+import { ContactsTable } from "./ContatosTable";
 import { useContacts } from "../hooks/useContacts";
-import { contatoPayloadToContactData } from "../services/contacts.service";
-import { ContatoFormModal, type ContatoFormPayload } from "../modals/ContatoFormModal";
-import { ContatoViewModal } from "../modals/ContatoViewModal";
+import { contactPayloadToContactData } from "../services/contacts.service";
+import { ContactFormModal, type ContactFormPayload } from "../modals/ContatoFormModal";
+import { ContactViewModal } from "../modals/ContatoViewModal";
 import type { Contact, ContactType } from "../types";
 
 // ─────────────────────────────────────────────
 // Quick filters by category
 // ─────────────────────────────────────────────
-type FiltroTipo =
+type TypeFilter =
   | "todos"
   | "clientes"
   | "parceiros"
@@ -21,7 +21,7 @@ type FiltroTipo =
   | "contratantes"
   | "prestadores";
 
-const FILTROS: ReadonlyArray<{ value: FiltroTipo; label: string; types: ContactType[] }> = [
+const FILTERS: ReadonlyArray<{ value: TypeFilter; label: string; types: ContactType[] }> = [
   { value: "todos",        label: "Todos",        types: [] },
   { value: "clientes",     label: "Clientes",     types: ["CORPORATE_CLIENT"] },
   { value: "parceiros",    label: "Parceiros",    types: ["PARTNER"] },
@@ -35,25 +35,25 @@ const FILTROS: ReadonlyArray<{ value: FiltroTipo; label: string; types: ContactT
 // Converts Contact → the initial ContatoFormPayload
 // to fill the edit modal
 // ─────────────────────────────────────────────
-function contactToFormPayload(contact: Contact): Partial<ContatoFormPayload> {
+function contactToFormPayload(contact: Contact): Partial<ContactFormPayload> {
   const po = (contact.payloadOperacional ?? {}) as Record<string, unknown>;
   const str = (k: string) => (typeof po[k] === "string" ? (po[k] as string) : "");
 
   // Normalizes tipo_pessoa: accepts every legacy format and always returns
   // "pessoa_fisica" | "pessoa_juridica" — the only value ContatoFormModal understands.
-  const rawTipo = str("tipo_pessoa");
-  const tipoPessoa: "pessoa_fisica" | "pessoa_juridica" =
-    rawTipo === "pessoa_juridica" ||
-    rawTipo === "COMPANY" ||
+  const rawType = str("tipo_pessoa");
+  const personType: "pessoa_fisica" | "pessoa_juridica" =
+    rawType === "pessoa_juridica" ||
+    rawType === "COMPANY" ||
     (contact as Record<string, unknown>)["entityType"] === "COMPANY"
       ? "pessoa_juridica"
       : "pessoa_fisica";
 
-  const isIndividual = tipoPessoa === "pessoa_fisica";
+  const isIndividual = personType === "pessoa_fisica";
 
   return {
     // Entity
-    tipo_pessoa: tipoPessoa, // sempre "pessoa_fisica" | "pessoa_juridica"
+    tipo_pessoa: personType, // sempre "pessoa_fisica" | "pessoa_juridica"
 
     // Individual (natural person)
     nome_pf:           isIndividual ? contact.name : "",
@@ -111,15 +111,15 @@ function contactToFormPayload(contact: Contact): Partial<ContatoFormPayload> {
 // ─────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────
-export type ContatosPanelHandle = {
+export type ContactsPanelHandle = {
   openCreate: () => void;
 };
 
-export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, never>>(
+export const ContactsPanel = forwardRef<ContactsPanelHandle, Record<string, never>>(
   function ContatosPanel(_, ref) {
     const { contacts, isLoading, createContact, updateContact, deleteContact } = useContacts();
 
-    const [filtro, setFiltro]         = useState<FiltroTipo>("todos");
+    const [filter, setFilter]         = useState<TypeFilter>("todos");
     const [search, setSearch]         = useState("");
     const [viewContact, setViewContact] = useState<Contact | null>(null);
     const [editContact, setEditContact] = useState<Contact | null>(null);
@@ -127,7 +127,7 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
 
     // ── Filter ──────────────────────────────────
     const filtered = useMemo(() => {
-      const cfg  = FILTROS.find((f) => f.value === filtro)!;
+      const cfg  = FILTERS.find((f) => f.value === filter)!;
       const term = search.trim().toLowerCase();
       return contacts.filter((c) => {
         if (cfg.types.length > 0 && !cfg.types.includes(c.contactType)) return false;
@@ -138,7 +138,7 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
           .toLowerCase();
         return haystack.includes(term);
       });
-    }, [contacts, filtro, search]);
+    }, [contacts, filter, search]);
 
     // ── Handlers ────────────────────────────────
     function handleView(contact: Contact) {
@@ -154,8 +154,8 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
       await deleteContact(contact.id);
     }
 
-    async function handleFormSubmit(payload: ContatoFormPayload) {
-      const data = contatoPayloadToContactData(payload);
+    async function handleFormSubmit(payload: ContactFormPayload) {
+      const data = contactPayloadToContactData(payload);
 
       if (editContact) {
         await updateContact(editContact.id, data, getExpectedUpdatedAt(editContact));
@@ -182,12 +182,12 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
             className="h-8 flex-1 text-sm"
             data-testid="contatos-search"
           />
-          <Select value={filtro} onValueChange={(v) => setFiltro(v as FiltroTipo)}>
+          <Select value={filter} onValueChange={(v) => setFilter(v as TypeFilter)}>
             <SelectTrigger className="h-8 w-auto min-w-[140px] text-sm" data-testid="contatos-filtro-type">
               <SelectValue placeholder="Filtrar por tipo" />
             </SelectTrigger>
             <SelectContent>
-              {FILTROS.map((f) => (
+              {FILTERS.map((f) => (
                 <SelectItem key={f.value} value={f.value} data-testid={`filtro-${f.value}`}>
                   {f.label}
                 </SelectItem>
@@ -204,7 +204,7 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
             Nenhum contato encontrado.
           </p>
         ) : (
-          <ContatosTable
+          <ContactsTable
             contacts={filtered}
             onView={handleView}
             onEdit={handleEdit}
@@ -217,7 +217,7 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
         )}
 
         {/* View modal */}
-        <ContatoViewModal
+        <ContactViewModal
           open={viewContact !== null}
           onOpenChange={(next) => { if (!next) setViewContact(null); }}
           contact={viewContact}
@@ -228,7 +228,7 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
         />
 
         {/* Create / edit modal */}
-        <ContatoFormModal
+        <ContactFormModal
           open={formOpen}
           mode={editContact ? "edit" : "create"}
           initialValue={editContact ? contactToFormPayload(editContact) : null}

@@ -100,7 +100,7 @@ const matchCombo = (
 // ─────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────
-export type Interacao = {
+export type Interaction = {
   id: string;
   type: string;
   data: string;
@@ -174,7 +174,7 @@ export type LeadFormPayload = {
   campanha?: ConditionalCampaignPayload;
   influenciador?: CondicionalInfluenciadorPayload;
   empresario?: ConditionalManagerPayload;
-  interacoes: Interacao[];
+  interacoes: Interaction[];
   uploads: LeadUpload[];
 };
 
@@ -216,7 +216,7 @@ const MANAGER_DEFAULT: ConditionalManagerPayload = {
 
 const todayISO = () => new Date().toISOString().split("T")[0];
 
-const nowHorario = () => {
+const nowTime = () => {
   const d = new Date();
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 };
@@ -357,16 +357,16 @@ export function LeadFormModal({
   }));
 
   // ── Interactions ───────────────────────────────
-  const addInteracao = () => {
-    const newInteraction: Interacao = {
+  const addInteraction = () => {
+    const newInteraction: Interaction = {
       id: newId(), type: "whatsapp",
-      data: todayISO(), horario: nowHorario(), descricao: "",
+      data: todayISO(), horario: nowTime(), descricao: "",
     };
     setValues((prev) => ({ ...prev, interacoes: [...prev.interacoes, newInteraction] }));
   };
 
-  const updateInteracao = <K extends keyof Interacao>(
-    id: string, field: K, value: Interacao[K],
+  const updateInteracao = <K extends keyof Interaction>(
+    id: string, field: K, value: Interaction[K],
   ) => setValues((prev) => ({
     ...prev,
     interacoes: prev.interacoes.map((i) =>
@@ -1091,7 +1091,7 @@ export function LeadFormModal({
               type="button"
               variant="outline"
               size="sm"
-              onClick={addInteracao}
+              onClick={addInteraction}
               data-testid="button-add-interacao"
             >
               <Plus className="h-4 w-4 mr-1" />

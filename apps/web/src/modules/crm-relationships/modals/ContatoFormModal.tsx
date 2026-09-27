@@ -28,8 +28,8 @@ import {
   getPerfis,
   ensurePerfilOption,
 } from "../constants/contact-classification";
-import { ESTADOS_BR } from "../shared/estados";
-import { TIPO_INTERACAO_OPTIONS, type Interacao } from "../shared/interacoes";
+import { BR_STATES } from "../shared/estados";
+import { INTERACTION_TYPE_OPTIONS, type Interaction } from "../shared/interacoes";
 import type { ContactAttachment } from "../types";
 
 
@@ -37,10 +37,10 @@ import type { ContactAttachment } from "../types";
 // Types
 // ----------------------------------------------------------------------------
 
-export type TipoPessoa = "pessoa_fisica" | "pessoa_juridica";
+export type PersonType = "pessoa_fisica" | "pessoa_juridica";
 
-export type ContatoFormState = {
-  tipo_pessoa: TipoPessoa;
+export type ContactFormState = {
+  tipo_pessoa: PersonType;
 
   // Individual (natural person)
   nome_pf: string;
@@ -80,7 +80,7 @@ export type ContatoFormState = {
   responsavel_cargo: string;
 
   // History
-  interacoes: Interacao[];
+  interacoes: Interaction[];
   attachments: ContactAttachment[];
 
   // Notes
@@ -91,9 +91,9 @@ export type ContatoFormState = {
  * Final payload emitted by the modal.
  * Carries ALL form fields + legacy aliases (`nome`, `cpf_cnpj`,
  * `endereco`, `responsavel`, `status`) for compatibility with old
- * consumers (`addCliente.mutate`, etc.).
+ * consumers (`addClient.mutate`, etc.).
  */
-export type ContatoFormPayload = ContatoFormState & {
+export type ContactFormPayload = ContactFormState & {
   // Aliases legados
   nome: string;
   cpf_cnpj: string;
@@ -106,12 +106,12 @@ export type ContatoFormPayload = ContatoFormState & {
   cargo_responsavel?: string;
 };
 
-interface ContatoFormModalProps {
+interface ContactFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   mode: "create" | "edit";
-  initialValue?: Partial<ContatoFormPayload> | null;
-  onSubmit?: (payload: ContatoFormPayload) => void | Promise<void>;
+  initialValue?: Partial<ContactFormPayload> | null;
+  onSubmit?: (payload: ContactFormPayload) => void | Promise<void>;
 }
 
 // ----------------------------------------------------------------------------
@@ -119,13 +119,13 @@ interface ContatoFormModalProps {
 // ----------------------------------------------------------------------------
 
 const todayISO = () => new Date().toISOString().split("T")[0];
-const nowHorario = () => {
+const nowTime = () => {
   const d = new Date();
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 };
 const newId = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
 
-const DEFAULTS: ContatoFormState = {
+const DEFAULTS: ContactFormState = {
   tipo_pessoa: "pessoa_fisica",
   nome_pf: "",
   cpf: "",
@@ -157,41 +157,41 @@ const DEFAULTS: ContatoFormState = {
   observacoes: "",
 };
 
-const buildDefaults = (initial?: Partial<ContatoFormPayload> | null): ContatoFormState => {
+const buildDefaults = (initial?: Partial<ContactFormPayload> | null): ContactFormState => {
   if (!initial) return { ...DEFAULTS };
   return {
     ...DEFAULTS,
     ...Object.fromEntries(
       Object.entries(initial).filter(([key]) => key in DEFAULTS),
     ),
-  } as ContatoFormState;
+  } as ContactFormState;
 };
 
-const buildEndereco = (s: ContatoFormState) => {
+const buildAddress = (s: ContactFormState) => {
   const linha1 = [s.logradouro, s.numero].filter(Boolean).join(", ");
   const linha2 = [linha1, s.complemento].filter(Boolean).join(" - ");
   return [linha2, s.bairro].filter(Boolean).join(" / ");
 };
 
-const buildEnderecoCompleto = (s: ContatoFormState) => {
-  const base = buildEndereco(s);
-  const cidadeEstado = [s.cidade, s.estado].filter(Boolean).join(" - ");
+const buildFullAddress = (s: ContactFormState) => {
+  const base = buildAddress(s);
+  const cityState = [s.cidade, s.estado].filter(Boolean).join(" - ");
   const cep = s.cep ? `CEP ${s.cep}` : "";
-  return [base, cidadeEstado, cep].filter(Boolean).join(" · ");
+  return [base, cityState, cep].filter(Boolean).join(" · ");
 };
 
-const deriveNome = (s: ContatoFormState) =>
+const deriveName = (s: ContactFormState) =>
   s.tipo_pessoa === "pessoa_fisica" ? s.nome_pf : (s.nome_fantasia || s.razao_social);
 
-const deriveCpfCnpj = (s: ContatoFormState) =>
+const deriveCpfCnpj = (s: ContactFormState) =>
   s.tipo_pessoa === "pessoa_fisica" ? s.cpf : s.cnpj;
 
-const buildPayload = (s: ContatoFormState): ContatoFormPayload => ({
+const buildPayload = (s: ContactFormState): ContactFormPayload => ({
   ...s,
-  nome: deriveNome(s),
+  nome: deriveName(s),
   cpf_cnpj: deriveCpfCnpj(s),
-  endereco: buildEndereco(s),
-  endereco_completo: buildEnderecoCompleto(s),
+  endereco: buildAddress(s),
+  endereco_completo: buildFullAddress(s),
   responsavel: s.responsavel_nome,
   status: s.status_contato,
   prioridade: s.prioridade_contato,
@@ -222,8 +222,8 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 // Main component
 // ----------------------------------------------------------------------------
 
-export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSubmit }: ContatoFormModalProps) {
-  const [state, setState] = useState<ContatoFormState>(() => buildDefaults(initialValue));
+export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSubmit }: ContactFormModalProps) {
+  const [state, setState] = useState<ContactFormState>(() => buildDefaults(initialValue));
   const [submitting, setSubmitting] = useState(false);
   const [cepLoading, setCepLoading] = useState(false);
 
@@ -234,7 +234,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (open) setState(buildDefaults(initialValue)); }, [open, initialKey]);
 
-  const set = <K extends keyof ContatoFormState>(field: K, value: ContatoFormState[K]) =>
+  const set = <K extends keyof ContactFormState>(field: K, value: ContactFormState[K]) =>
     setState((prev) => ({ ...prev, [field]: value }));
 
   const isPF = state.tipo_pessoa === "pessoa_fisica";
@@ -243,9 +243,9 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
   // Hierarchical classification (config-driven, em cascata)
   const perfilOptions = ensurePerfilOption(getPerfis(state.tipo_pessoa, state.categoria), state.perfil);
 
-  const changeTipo = (value: ContatoFormState["tipo_pessoa"]) =>
+  const changeType = (value: ContactFormState["tipo_pessoa"]) =>
     setState((prev) => ({ ...prev, tipo_pessoa: value, categoria: "", perfil: "" }));
-  const changeCategoria = (value: string) =>
+  const changeCategory = (value: string) =>
     setState((prev) => ({ ...prev, categoria: value, perfil: "" }));
 
   // Automatic lookup by CEP (postal code)
@@ -281,11 +281,11 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
   };
 
   // Interactions
-  const addInteracao = () => {
-    const nova: Interacao = { id: newId(), type: "whatsapp", data: todayISO(), horario: nowHorario(), descricao: "" };
-    setState((prev) => ({ ...prev, interacoes: [...prev.interacoes, nova] }));
+  const addInteraction = () => {
+    const newInteraction: Interaction = { id: newId(), type: "whatsapp", data: todayISO(), horario: nowTime(), descricao: "" };
+    setState((prev) => ({ ...prev, interacoes: [...prev.interacoes, newInteraction] }));
   };
-  const updateInteracao = <K extends keyof Interacao>(id: string, field: K, value: Interacao[K]) => {
+  const updateInteracao = <K extends keyof Interaction>(id: string, field: K, value: Interaction[K]) => {
     setState((prev) => ({
       ...prev,
       interacoes: prev.interacoes.map((i) => (i.id === id ? { ...i, [field]: value } : i)),
@@ -318,7 +318,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
 
   // Validation — derived name + complete classification (category + profile)
   const isValid = useMemo(
-    () => Boolean(deriveNome(state).trim()) && Boolean(state.categoria) && Boolean(state.perfil),
+    () => Boolean(deriveName(state).trim()) && Boolean(state.categoria) && Boolean(state.perfil),
     [state],
   );
 
@@ -365,11 +365,11 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
     </>
   );
 
-  const renderHistorico = () => (
+  const renderHistory = () => (
     <>
       <div className="flex items-center justify-between border-b pb-1 pt-2">
         <p className="text-sm font-semibold tracking-wider text-muted-foreground">Histórico de Interações</p>
-        <Button type="button" variant="outline" size="sm" onClick={addInteracao} data-testid="button-add-interacao">
+        <Button type="button" variant="outline" size="sm" onClick={addInteraction} data-testid="button-add-interacao">
           <Plus className="h-4 w-4 mr-1" />
           Adicionar interação
         </Button>
@@ -393,7 +393,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
               <Select value={it.type} onValueChange={(v) => updateInteracao(it.id, "type", v)}>
                 <SelectTrigger data-testid={`select-interacao-type-${it.id}`}><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {TIPO_INTERACAO_OPTIONS.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                  {INTERACTION_TYPE_OPTIONS.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
                 </SelectContent>
               </Select>
             </Field>
@@ -412,7 +412,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
     </>
   );
 
-  const renderAnexos = () => (
+  const renderAttachments = () => (
     <>
       <SectionHeader title="Anexos" />
       <div className="space-y-3 rounded-md border border-dashed border-border bg-muted/20 p-4">
@@ -448,7 +448,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
     </>
   );
 
-  const renderObservacoes = () => (
+  const renderNotes = () => (
     <>
       <SectionHeader title="Observações" />
       <Field label="Notas">
@@ -475,7 +475,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Field label="Tipo de Contato *">
-              <Select value={state.tipo_pessoa} onValueChange={(v) => changeTipo(v as ContatoFormState["tipo_pessoa"])}>
+              <Select value={state.tipo_pessoa} onValueChange={(v) => changeType(v as ContactFormState["tipo_pessoa"])}>
                 <SelectTrigger data-testid="select-type-contato">
                   <SelectValue placeholder="Selecione o Tipo de Contato" />
                 </SelectTrigger>
@@ -487,7 +487,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
               </Select>
             </Field>
             <Field label="Categoria *">
-              <Select value={state.categoria} onValueChange={changeCategoria} disabled={!state.tipo_pessoa}>
+              <Select value={state.categoria} onValueChange={changeCategory} disabled={!state.tipo_pessoa}>
                 <SelectTrigger data-testid="select-categoria">
                   <SelectValue placeholder="Selecione a Categoria" />
                 </SelectTrigger>
@@ -694,7 +694,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
             <Field label="Estado">
               <Select value={state.estado} onValueChange={(v) => set("estado", v)}>
                 <SelectTrigger data-testid="select-estado"><SelectValue placeholder="UF" /></SelectTrigger>
-                <SelectContent>{ESTADOS_BR.map((uf) => <SelectItem key={uf} value={uf}>{uf}</SelectItem>)}</SelectContent>
+                <SelectContent>{BR_STATES.map((uf) => <SelectItem key={uf} value={uf}>{uf}</SelectItem>)}</SelectContent>
               </Select>
             </Field>
           </div>
@@ -754,9 +754,9 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
           )}
 
           {/* End (individual and legal entity): Attachments → Notes → History (last) */}
-          {renderAnexos()}
-          {renderObservacoes()}
-          {renderHistorico()}
+          {renderAttachments()}
+          {renderNotes()}
+          {renderHistory()}
         </div>
 
         <DialogFooter>

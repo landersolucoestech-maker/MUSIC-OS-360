@@ -28,7 +28,7 @@ import {
   EVENT_TYPE_OPTIONS,
   LEAD_TYPE_OPTIONS,
 } from "../constants/lead-form-options";
-import { INTERACTION_TYPE_OPTIONS, type Interacao } from "./LeadFormModal";
+import { INTERACTION_TYPE_OPTIONS, type Interaction } from "./LeadFormModal";
 import { useLeadInteractions } from "../hooks/useLeadInteractions";
 import { LEAD_INTERACTION_TYPE_LABELS } from "../services/lead-interactions.service";
 
@@ -167,7 +167,7 @@ export function LeadViewModal({
   const showArtistBandEvent = matchCombo(ARTIST_EVENT_COMBOS,  leadType, service);
 
   const interacoes = Array.isArray(ps.interacoes)
-    ? (ps.interacoes as Interacao[])
+    ? (ps.interacoes as Interaction[])
     : [];
   const uploads = lead.uploads ?? [];
 

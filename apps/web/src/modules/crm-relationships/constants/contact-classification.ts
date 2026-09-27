@@ -10,7 +10,7 @@
 // The whole relationship is centralized here — no scattered ifs/switches.
 // ============================================================================
 
-export type ContatoTipoPessoa = "pessoa_fisica" | "pessoa_juridica";
+export type ContactPersonType = "pessoa_fisica" | "pessoa_juridica";
 
 export interface ClassificationOption {
   value: string;
@@ -37,7 +37,7 @@ const OUTROS = opt("outros", "Outros");
 
 // Profiles per contact type + category.
 // Category keys = CONTACT_CATEGORY_OPTIONS slugs.
-export const CONTACT_PROFILES: Record<ContatoTipoPessoa, Record<string, ClassificationOption[]>> = {
+export const CONTACT_PROFILES: Record<ContactPersonType, Record<string, ClassificationOption[]>> = {
   pessoa_fisica: {
     CORPORATE_CLIENT: [
       opt("artista_banda", "Artista/Banda"),
@@ -139,8 +139,8 @@ export const CONTACT_PROFILES: Record<ContatoTipoPessoa, Record<string, Classifi
 };
 
 /** Valid profiles for a Type + Category combination. */
-export function getPerfis(type: ContatoTipoPessoa, categoriaSlug: string): ClassificationOption[] {
-  return CONTACT_PROFILES[type]?.[categoriaSlug] ?? [];
+export function getPerfis(type: ContactPersonType, categorySlug: string): ClassificationOption[] {
+  return CONTACT_PROFILES[type]?.[categorySlug] ?? [];
 }
 
 /**

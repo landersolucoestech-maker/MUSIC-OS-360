@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
-import { ContatosTable } from "@/modules/crm-relationships/components/ContatosTable";
+import { ContactsTable } from "@/modules/crm-relationships/components/ContatosTable";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
-import { ContatoFormModal, type ContatoFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
-import { ContatoViewModal } from "@/modules/crm-relationships/modals/ContatoViewModal";
+import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
+import { ContactViewModal } from "@/modules/crm-relationships/modals/ContatoViewModal";
 import type { Contact, ContactType } from "@/modules/crm-relationships/types";
 
 type TypeFilter =
@@ -24,7 +24,7 @@ const FILTERS: ReadonlyArray<{ value: TypeFilter; label: string; types: ContactT
   { value: "prestadores",  label: "Prestadores",  types: ["SERVICE_PROVIDER"] },
 ];
 
-function contactToFormPayload(contact: Contact): Partial<ContatoFormPayload> {
+function contactToFormPayload(contact: Contact): Partial<ContactFormPayload> {
   const po = (contact.payloadOperacional ?? {}) as Record<string, unknown>;
   const str = (k: string) => (typeof po[k] === "string" ? (po[k] as string) : "");
 
@@ -106,7 +106,7 @@ export function ContactsPanel() {
     await deleteContact(contact.id);
   }
 
-  async function handleFormSubmit(payload: ContatoFormPayload) {
+  async function handleFormSubmit(payload: ContactFormPayload) {
     const data = {
       name:           payload.nome,
       companyName:    payload.tipo_pessoa === "pessoa_juridica" ? payload.razao_social : undefined,
@@ -188,7 +188,7 @@ export function ContactsPanel() {
           Nenhum contato encontrado.
         </p>
       ) : (
-        <ContatosTable
+        <ContactsTable
           contacts={filtered}
           onView={handleView}
           onEdit={handleEdit}
@@ -196,7 +196,7 @@ export function ContactsPanel() {
         />
       )}
 
-      <ContatoViewModal
+      <ContactViewModal
         open={viewContact !== null}
         onOpenChange={(next) => { if (!next) setViewContact(null); }}
         contact={viewContact}
@@ -206,7 +206,7 @@ export function ContactsPanel() {
         }}
       />
 
-      <ContatoFormModal
+      <ContactFormModal
         open={formOpen}
         mode={editContact ? "edit" : "create"}
         initialValue={editContact ? contactToFormPayload(editContact) : null}

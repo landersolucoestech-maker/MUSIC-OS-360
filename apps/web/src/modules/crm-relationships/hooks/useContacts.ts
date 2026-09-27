@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { contactsService } from "../services";
 import { clientsService, type ApiClient, type CreateApiClientInput, type UpdateApiClientInput } from "../services/clients.service";
-import type { Cliente, ClienteInsert, ClientSegment, ClienteUpdate, Contact } from "../types";
+import type { Client, ClientInsert, ClientSegment, ClientUpdate, Contact } from "../types";
 
-export type { Cliente, ClienteInsert, ClienteUpdate, ClientSegment, Contact };
+export type { Client as Cliente, ClientInsert as ClienteInsert, ClientUpdate as ClienteUpdate, ClientSegment, Contact };
 
 export function useContacts(enabled = true) {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -67,9 +67,9 @@ export function useSimpleContacts() {
 /** Maps the real `/clients` response (ClientsService.mapClient) to the
  * `Cliente` view model consumed by the contracts/calendar/
  * finance/invoice/dashboard forms. */
-function apiClientToCliente(c: ApiClient): Cliente {
+function apiClientToClient(c: ApiClient): Client {
   const isPF = c.type === "pessoa_fisica";
-  const endereco = c.address ?? null;
+  const address = c.address ?? null;
   return {
     id: c.id,
     nome: c.name,
@@ -79,8 +79,8 @@ function apiClientToCliente(c: ApiClient): Cliente {
     empresa: c.razao_social ?? c.nome_fantasia ?? null,
     cidade: c.city ?? null,
     estado: c.state ?? null,
-    endereco,
-    endereco_completo: endereco,
+    endereco: address,
+    endereco_completo: address,
     cep: c.cep ?? null,
     status: c.status ?? null,
     cpf: isPF ? c.document ?? null : null,
@@ -94,7 +94,7 @@ function apiClientToCliente(c: ApiClient): Cliente {
   };
 }
 
-function clienteInsertToApiInput(data: ClienteInsert): CreateApiClientInput {
+function clientInsertToApiInput(data: ClientInsert): CreateApiClientInput {
   const cnpj = data.cnpj ?? (data.tipo_pessoa === "pessoa_juridica" || data.tipo_pessoa === "juridica" ? data.cpf_cnpj : undefined);
   const cpf = data.cpf ?? (data.tipo_pessoa === "pessoa_fisica" || data.tipo_pessoa === "fisica" ? data.cpf_cnpj : undefined);
   return {
@@ -108,7 +108,7 @@ function clienteInsertToApiInput(data: ClienteInsert): CreateApiClientInput {
   };
 }
 
-function clienteUpdateToApiInput(data: ClienteUpdate): UpdateApiClientInput {
+function clientUpdateToApiInput(data: ClientUpdate): UpdateApiClientInput {
   return {
     name: data.nome,
     category: data.segmento ?? undefined,
@@ -126,15 +126,15 @@ function clienteUpdateToApiInput(data: ClienteUpdate): UpdateApiClientInput {
  * (useContacts/useSimpleContacts above) — they are distinct physical
  * entities; see Part 79 for the full canonical model.
  */
-export function useClientes() {
-  const [apiClientes, setApiClientes] = useState<ApiClient[]>([]);
+export function useClients() {
+  const [apiClients, setApiClients] = useState<ApiClient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   async function refresh() {
     setIsLoading(true);
     try {
-      setApiClientes(await clientsService.list());
+      setApiClients(await clientsService.list());
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err : new Error(String(err)));
@@ -147,32 +147,32 @@ export function useClientes() {
     void refresh();
   }, []);
 
-  const clientes = useMemo(() => apiClientes.map(apiClientToCliente), [apiClientes]);
+  const clients = useMemo(() => apiClients.map(apiClientToClient), [apiClients]);
 
   return {
-    clientes,
+    clients,
     isLoading,
     error,
     refetch: refresh,
-    addCliente: {
-      mutate: (data: ClienteInsert, options?: { onSuccess?: () => void }) =>
-        void clientsService.create(clienteInsertToApiInput(data)).then(async (created) => { await refresh(); return created; }).then(options?.onSuccess),
-      mutateAsync: async (data: ClienteInsert) => {
-        const created = await clientsService.create(clienteInsertToApiInput(data));
+    addClient: {
+      mutate: (data: ClientInsert, options?: { onSuccess?: () => void }) =>
+        void clientsService.create(clientInsertToApiInput(data)).then(async (created) => { await refresh(); return created; }).then(options?.onSuccess),
+      mutateAsync: async (data: ClientInsert) => {
+        const created = await clientsService.create(clientInsertToApiInput(data));
         await refresh();
         return created;
       },
     },
-    updateCliente: {
-      mutate: (data: ClienteUpdate & { id: string }, options?: { onSuccess?: () => void }) =>
-        void clientsService.update(data.id, clienteUpdateToApiInput(data)).then(async () => { await refresh(); }).then(options?.onSuccess),
-      mutateAsync: async (data: ClienteUpdate & { id: string }) => {
-        const updated = await clientsService.update(data.id, clienteUpdateToApiInput(data));
+    updateClient: {
+      mutate: (data: ClientUpdate & { id: string }, options?: { onSuccess?: () => void }) =>
+        void clientsService.update(data.id, clientUpdateToApiInput(data)).then(async () => { await refresh(); }).then(options?.onSuccess),
+      mutateAsync: async (data: ClientUpdate & { id: string }) => {
+        const updated = await clientsService.update(data.id, clientUpdateToApiInput(data));
         await refresh();
         return updated;
       },
     },
-    deleteCliente: {
+    deleteClient: {
       mutate: (id: string, options?: { onSuccess?: () => void }) =>
         void clientsService.remove(id).then(async () => { await refresh(); }).then(options?.onSuccess),
       mutateAsync: async (id: string) => {

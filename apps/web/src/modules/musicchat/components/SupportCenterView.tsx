@@ -37,9 +37,9 @@ import { toast } from "sonner";
 import { LeadFormModal, type LeadFormPayload } from "@/modules/leads/modals/LeadFormModal";
 import { useLeads } from "@/modules/leads/hooks";
 import type { Lead, LeadClientType, LeadServiceType } from "@/modules/leads/types";
-import { ContatoFormModal, type ContatoFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
+import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
-import { contatoPayloadToContactData } from "@/modules/crm-relationships/services/contacts.service";
+import { contactPayloadToContactData } from "@/modules/crm-relationships/services/contacts.service";
 import { SchedulerFormModal } from "@/modules/events/components/SchedulerFormModal";
 import { useMusicChatAutomationSettings } from "@/modules/musicchat/hooks/useMusicChatAutomationSettings";
 import { useMusicChatTriageRules } from "@/modules/musicchat/hooks/useMusicChatTriageRules";
@@ -311,7 +311,7 @@ function buildLeadInitialValue(conversation: SupportConversation): Partial<LeadF
   };
 }
 
-function buildContactInitialValue(conversation: SupportConversation): Partial<ContatoFormPayload> {
+function buildContactInitialValue(conversation: SupportConversation): Partial<ContactFormPayload> {
   const priority = conversation.deadlineState === "overdue" ? "high" : "medium";
   const responsible = conversation.assignee === "Sem responsável" ? "" : conversation.assignee;
   return {
@@ -795,9 +795,9 @@ export function SupportCenterView({
     toast.success("Lead criado a partir da conversa.");
   };
 
-  const handleContactSubmit = async (payload: ContatoFormPayload) => {
+  const handleContactSubmit = async (payload: ContactFormPayload) => {
     if (!selectedConversation) return;
-    await createContact(contatoPayloadToContactData(payload));
+    await createContact(contactPayloadToContactData(payload));
     updateConversation(
       selectedConversation.id,
       (conversation) => ({
@@ -1673,7 +1673,7 @@ export function SupportCenterView({
           initialValue={buildLeadInitialValue(selectedConversation)}
           onSubmit={handleLeadSubmit}
         />
-        <ContatoFormModal
+        <ContactFormModal
           open={contactModalOpen}
           onOpenChange={setContactModalOpen}
           mode="create"

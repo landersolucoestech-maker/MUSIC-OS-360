@@ -16,9 +16,9 @@ import {
   MessageSquare, Pencil, Phone, Star, Tag, User,
 } from "lucide-react";
 import { contactPriorityOptions, contactStatusOptions, contactTypeOptions, labelFor } from "../constants";
-import { getPerfis, type ContatoTipoPessoa } from "../constants/contact-classification";
+import { getPerfis, type ContactPersonType } from "../constants/contact-classification";
 import { useClientTimeline } from "../hooks/useClientTimeline";
-import { TIPO_INTERACAO_OPTIONS } from "../shared/interacoes";
+import { INTERACTION_TYPE_OPTIONS } from "../shared/interacoes";
 import type { Contact } from "../types";
 import { useSkillRun } from "@/shared/hooks/useSkillRun";
 import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
@@ -27,7 +27,7 @@ import { StoredFileLink } from "@/shared/components/StoredFileLink";
 // ─────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────
-interface ContatoViewModalProps {
+interface ContactViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   contact: Contact | null;
@@ -82,7 +82,7 @@ function Row({
 // ─────────────────────────────────────────────
 // Main component
 // ─────────────────────────────────────────────
-export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: ContatoViewModalProps) {
+export function ContactViewModal({ open, onOpenChange, contact, onEdit }: ContactViewModalProps) {
   const timeline = useClientTimeline(open && contact ? contact.id : null);
   const [newNote, setNewNote] = useState("");
   const [isSavingNote, setIsSavingNote] = useState(false);
@@ -108,28 +108,28 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
   const interacoes: Array<{ id: string; type: string; data: string; horario: string; descricao: string }> =
     Array.isArray(po.interacoes) ? (po.interacoes as never) : [];
 
-  const tipoPessoa  = str("tipo_pessoa") || "pessoa_fisica";
-  const isPF        = tipoPessoa === "pessoa_fisica";
-  const tipoPessoaLabel = isPF ? "Pessoa Física" : "Pessoa Jurídica";
-  const categoriaLabel  = labelFor(contactTypeOptions, contact.contactType);
+  const personType  = str("tipo_pessoa") || "pessoa_fisica";
+  const isPF        = personType === "pessoa_fisica";
+  const personTypeLabel = isPF ? "Pessoa Física" : "Pessoa Jurídica";
+  const categoryLabel  = labelFor(contactTypeOptions, contact.contactType);
   const perfilSlug      = str("perfil");
   const perfilLabel     = perfilSlug
-    ? (getPerfis(tipoPessoa as ContatoTipoPessoa, contact.contactType).find((o) => o.value === perfilSlug)?.label ?? perfilSlug)
+    ? (getPerfis(personType as ContactPersonType, contact.contactType).find((o) => o.value === perfilSlug)?.label ?? perfilSlug)
     : "";
   const razaoSocial = str("razao_social");
-  const nomeFantasia = str("nome_fantasia");
+  const tradeName = str("nome_fantasia");
   const funcao       = str("funcao");
   const foto         = str("foto");
 
-  const respNome     = str("responsavel_nome")     || contact.responsible;
+  const ownerName     = str("responsavel_nome")     || contact.responsible;
   const respEmail    = str("responsavel_email");
-  const respTelefone = str("responsavel_telefone");
-  const respCargo    = str("responsavel_cargo");
+  const ownerPhone = str("responsavel_telefone");
+  const ownerPosition    = str("responsavel_cargo");
 
   const logradouro   = str("logradouro");
-  const numero       = str("numero");
-  const complemento  = str("complemento");
-  const bairro       = str("bairro");
+  const number       = str("numero");
+  const complement  = str("complemento");
+  const neighborhood       = str("bairro");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -163,8 +163,8 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
 
           {/* ══ CONTACT CLASSIFICATION ══ */}
           <Section title="Classificação do Contato">
-            <Row icon={User} label="Tipo de Contato" value={tipoPessoaLabel} />
-            <Row icon={Tag}  label="Categoria"        value={categoriaLabel} />
+            <Row icon={User} label="Tipo de Contato" value={personTypeLabel} />
+            <Row icon={Tag}  label="Categoria"        value={categoryLabel} />
             <Row icon={Tag}  label="Perfil"           value={perfilLabel} />
           </Section>
 
@@ -182,7 +182,7 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
             ) : (
               <>
                 <Row icon={Building2} label="Razão Social"  value={razaoSocial} />
-                <Row icon={Building2} label="Nome Fantasia" value={nomeFantasia} />
+                <Row icon={Building2} label="Nome Fantasia" value={tradeName} />
                 <Row icon={Hash}      label="CNPJ"          value={str("cnpj")} />
                 <Row icon={Mail}      label="E-mail"         value={contact.email} />
                 <Row icon={Instagram} label="Instagram"     value={contact.instagram} />
@@ -194,9 +194,9 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
           {/* ══ ADDRESS ══ */}
           <Section title="Endereço">
             <Row icon={MapPin} label="Logradouro"  value={logradouro} />
-            <Row icon={Hash}   label="Número"       value={numero} />
-            <Row icon={MapPin} label="Complemento"  value={complemento} />
-            <Row icon={MapPin} label="Bairro"       value={bairro} />
+            <Row icon={Hash}   label="Número"       value={number} />
+            <Row icon={MapPin} label="Complemento"  value={complement} />
+            <Row icon={MapPin} label="Bairro"       value={neighborhood} />
             <Row icon={MapPin} label="Cidade"       value={contact.city} />
             <Row icon={Hash}   label="Estado"       value={contact.state} />
             <Row icon={Hash}   label="CEP"          value={str("cep") || contact.zipCode} />
@@ -211,10 +211,10 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
           {/* ══ RESPONSIBLE PERSON (legal entities only) ══ */}
           {!isPF && (
             <Section title="Responsável">
-              <Row icon={User}      label="Nome do Responsável"     value={respNome} />
-              <Row icon={Briefcase} label="Cargo do Responsável"    value={respCargo} />
+              <Row icon={User}      label="Nome do Responsável"     value={ownerName} />
+              <Row icon={Briefcase} label="Cargo do Responsável"    value={ownerPosition} />
               <Row icon={Mail}      label="E-mail do responsável"    value={respEmail} />
-              <Row icon={Phone}     label="Telefone do Responsável" value={respTelefone} />
+              <Row icon={Phone}     label="Telefone do Responsável" value={ownerPhone} />
             </Section>
           )}
 
@@ -270,7 +270,7 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
                   >
                     <p className="flex items-center gap-2 text-xs font-medium tracking-wider text-muted-foreground">
                       <MessageSquare className="h-3.5 w-3.5" />
-                      Interação {idx + 1} · {labelFor([...TIPO_INTERACAO_OPTIONS], it.type)} · {fmtDate(it.data)}{it.horario ? ` ${it.horario}` : ""}
+                      Interação {idx + 1} · {labelFor([...INTERACTION_TYPE_OPTIONS], it.type)} · {fmtDate(it.data)}{it.horario ? ` ${it.horario}` : ""}
                     </p>
                     <p className="whitespace-pre-wrap text-sm text-foreground">
                       {it.descricao || "—"}

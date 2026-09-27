@@ -31,7 +31,7 @@ type Props = {
   onBulkDelete?: (contacts: Contact[]) => void;
 };
 
-export function ContatosTable({ contacts, onView, onEdit, onDelete, onBulkDelete }: Props) {
+export function ContactsTable({ contacts, onView, onEdit, onDelete, onBulkDelete }: Props) {
   const { page, pageSize, total, pageItems, setPage, setPageSize } = usePagination(contacts, 10);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -86,8 +86,8 @@ export function ContatosTable({ contacts, onView, onEdit, onDelete, onBulkDelete
         </TableHeader>
         <TableBody>
           {pageItems.map((contact) => {
-            const telefone = contact.whatsapp ?? contact.phone ?? "";
-            const cidade = [contact.city, contact.state].filter(Boolean).join(" / ");
+            const phone = contact.whatsapp ?? contact.phone ?? "";
+            const city = [contact.city, contact.state].filter(Boolean).join(" / ");
             return (
               <TableRow key={contact.id} className={selectedIds.includes(contact.id) ? "bg-primary/5" : ""} data-testid={`contato-row-${contact.id}`}>
                 <TableCell>
@@ -101,7 +101,7 @@ export function ContatosTable({ contacts, onView, onEdit, onDelete, onBulkDelete
                 <TableCell>
                   <p className="flex items-center gap-2 text-sm text-foreground">
                     <Phone className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                    {telefone || "-"}
+                    {phone || "-"}
                   </p>
                   <p className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Mail className="h-3.5 w-3.5 shrink-0" />
@@ -111,7 +111,7 @@ export function ContatosTable({ contacts, onView, onEdit, onDelete, onBulkDelete
                 <TableCell className="text-muted-foreground">
                   <span className="flex items-center gap-2">
                     <MapPin className="h-3.5 w-3.5 shrink-0" />
-                    {cidade || "-"}
+                    {city || "-"}
                   </span>
                 </TableCell>
                 <TableCell className="text-muted-foreground">{contact.responsible ?? "-"}</TableCell>

@@ -19,8 +19,8 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
-import { contatoPayloadToContactData } from "@/modules/crm-relationships/services/contacts.service";
-import { ContatoFormModal, type ContatoFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
+import { contactPayloadToContactData } from "@/modules/crm-relationships/services/contacts.service";
+import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
 import { contactTypeOptions, labelFor } from "@/modules/crm-relationships/constants";
 import type { Contact } from "@/modules/crm-relationships/types";
 import type { DistributorEntry } from "@/modules/artist/types/artist.types";
@@ -129,8 +129,8 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
   }
 
   // ── New contact (creates it in the CRM and links it automatically) ──
-  async function handleNewContact(payload: ContatoFormPayload) {
-    const created = await createContact(contatoPayloadToContactData(payload));
+  async function handleNewContact(payload: ContactFormPayload) {
+    const created = await createContact(contactPayloadToContactData(payload));
     if (created?.id) addLink(created.id);
   }
 
@@ -338,7 +338,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
       )}
 
       {/* CRM contact creation modal */}
-      <ContatoFormModal
+      <ContactFormModal
         open={newContactOpen}
         mode="create"
         onOpenChange={setNewContactOpen}

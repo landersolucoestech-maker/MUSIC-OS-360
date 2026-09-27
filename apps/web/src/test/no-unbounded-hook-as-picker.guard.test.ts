@@ -31,7 +31,7 @@ const UNBOUNDED_HOOKS = [
   "useWorks",
   "useProjects",
   "useContracts",
-  "useClientes",
+  "useClients",
   "usePhonograms",
   "useLicencas",
   "useEmployees",
@@ -70,7 +70,7 @@ const ALLOWED_CALL_SITES: Record<string, string> = {
   "modules/catalog/pages/RegistroMusicas.tsx":
     "useWorks/usePhonograms só para mutations. useProjects() alimenta só o dropdown de projetos/gêneros (valores distintos) — risco documentado no próprio arquivo por falta de endpoint dedicado (equivalente a /works/stats/generos); busca, paginação e deep-links não dependem disso.",
   "modules/artist/components/ArtistFormModal.tsx":
-    "useArtistas()/useClientes() só para mutations (addArtista/updateArtista/addCliente) — não há mais picker de contrato neste formulário (Task AA removeu a seção Classificação e Vínculos).",
+    "useArtistas()/useClients() só para mutations (addArtista/updateArtista/addClient) — não há mais picker de contrato neste formulário (Task AA removeu a seção Classificação e Vínculos).",
   "modules/hr/pages/HR.tsx":
     "useEmployees() só para mutations + isLoading; nomes resolvidos via FuncionarioNomeCell (useEntityById) e o picker de documentos usa AsyncEntityCombobox.",
   "modules/hr/components/EmployeeFormModal.tsx":

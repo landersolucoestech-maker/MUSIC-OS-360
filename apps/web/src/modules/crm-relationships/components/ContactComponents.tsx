@@ -154,7 +154,7 @@ export function ContactNotes({ register }: Pick<ContactFormController, "register
   return <Field label="Observações"><Textarea {...register("notes")} /></Field>;
 }
 
-export function ContactAgenda() {
+export function ContactSchedule() {
   return <div className="text-sm text-muted-foreground">Agenda operacional vinculada.</div>;
 }
 

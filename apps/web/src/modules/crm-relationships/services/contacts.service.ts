@@ -25,7 +25,7 @@
  * real column (`prioridade_contato`) — read/written normally below.
  */
 import type { Contact } from "../types";
-import type { ContatoFormPayload } from "../modals/ContatoFormModal";
+import type { ContactFormPayload } from "../modals/ContatoFormModal";
 import { clientsService, type ApiClient, type CreateApiClientInput } from "./clients.service";
 
 function fromApi(c: ApiClient): Contact {
@@ -86,8 +86,8 @@ function toApiInput(data: Partial<Omit<Contact, "id" | "createdAt" | "updatedAt"
  * by the CRM > Contacts panel and by the contact link in the artist
  * registration (EquipeContatosCRM), avoiding duplicated logic.
  */
-export function contatoPayloadToContactData(
-  payload: ContatoFormPayload,
+export function contactPayloadToContactData(
+  payload: ContactFormPayload,
 ): Omit<Contact, "id" | "createdAt" | "updatedAt"> {
   const isIndividual = payload.tipo_pessoa === "pessoa_fisica";
   return {

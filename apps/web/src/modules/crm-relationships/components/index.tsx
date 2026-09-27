@@ -8,7 +8,7 @@ export {
   ContactAttachments,
   ContactContracts,
   ContactNotes,
-  ContactAgenda,
+  ContactSchedule as ContactAgenda,
   CompanyRelations,
   SocialMediaSection,
   OperationalInfoSection,
@@ -16,5 +16,5 @@ export {
   type ContactFormValues,
 } from "./ContactComponents";
 
-export { ContatosPanel }            from "./ContatosPanel";
-export { ContatosTable }            from "./ContatosTable";
+export { ContactsPanel as ContatosPanel }            from "./ContatosPanel";
+export { ContactsTable as ContatosTable }            from "./ContatosTable";

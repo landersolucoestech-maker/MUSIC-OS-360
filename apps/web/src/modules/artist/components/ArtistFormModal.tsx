@@ -41,7 +41,7 @@ import { Loader2, Save, CheckCircle2, XCircle } from "lucide-react";
 import { FileUpload, type UploadedFile } from "@/shared/components/FileUpload";
 import { useArtists, type Artist } from "@/modules/artist/hooks/useArtists";
 import { api } from "@/shared/lib/api-client";
-import { useClientes } from "@/modules/crm-relationships/hooks/useContacts";
+import { useClients } from "@/modules/crm-relationships/hooks/useContacts";
 import { TeamContactsCRM } from "@/modules/artist/components/TeamContactsCRM";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { toast } from "sonner";
@@ -355,7 +355,7 @@ interface ArtistFormModalProps {
 export function ArtistFormModal({ open, onOpenChange, onSuccess, artist }: ArtistFormModalProps) {
   const isEditing = !!artist;
   const { addArtist, updateArtist } = useArtists();
-  const { addCliente } = useClientes();
+  const { addClient: addCliente } = useClients();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Task: spurious CAS 409 — the modal received `artist` as a frozen snapshot of

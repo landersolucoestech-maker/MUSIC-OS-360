@@ -10,13 +10,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { LeadFilters } from "../components";
 import { useLeads } from "../hooks";
 import { useLeadFiltersStore } from "../store";
-import { LeadFormModal, type Interacao, type LeadFormPayload } from "../modals/LeadFormModal";
+import { LeadFormModal, type Interaction, type LeadFormPayload } from "../modals/LeadFormModal";
 import { LeadViewModal } from "../modals/LeadViewModal";
 import { LeadsTable } from "../tables/LeadsTable";
 import type { Lead, LeadClientType, LeadServiceType } from "../types";
-import { ContatosPanel } from "@/modules/crm-relationships/components/ContatosPanel";
+import { ContactsPanel } from "@/modules/crm-relationships/components/ContatosPanel";
 import { useContacts } from "@/modules/crm-relationships/hooks/useContacts";
-import { ContatoFormModal, type ContatoFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
+import { ContactFormModal, type ContactFormPayload } from "@/modules/crm-relationships/modals/ContatoFormModal";
 
 // ─────────────────────────────────────────────
 // Conditional combos
@@ -194,7 +194,7 @@ function leadToFormInitial(lead: Lead): Partial<LeadFormPayload> {
     valor_estimado:       crm.valorEstimado != null ? String(crm.valorEstimado) : "",
     temperatura:          (crm.temperatura        as string) ?? "",
     interacoes: Array.isArray(ps.interacoes)
-      ? (ps.interacoes as Interacao[])
+      ? (ps.interacoes as Interaction[])
       : [],
     uploads: lead.uploads ?? [],
     evento: isEvent ? {
@@ -389,7 +389,7 @@ export default function LeadsPage() {
         </TabsList>
 
         <TabsContent value="contatos" data-testid="tab-content-contatos">
-          <ContatosPanel />
+          <ContactsPanel />
         </TabsContent>
 
         <TabsContent value="leads" data-testid="tab-content-leads">
@@ -439,11 +439,11 @@ export default function LeadsPage() {
         }}
       />
 
-      <ContatoFormModal
+      <ContactFormModal
         open={contactModalOpen}
         mode="create"
         onOpenChange={setContactModalOpen}
-        onSubmit={async (payload: ContatoFormPayload) => {
+        onSubmit={async (payload: ContactFormPayload) => {
           await createContact({
             name:           payload.nome,
             companyName:    payload.tipo_pessoa === "pessoa_juridica" ? payload.razao_social : undefined,

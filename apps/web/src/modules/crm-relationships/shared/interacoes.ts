@@ -1,7 +1,7 @@
 // Interaction types and constants shared within the crm-relationships module.
 // Previously imported from @/modules/leads/modals/LeadFormModal (an incorrect cross dependency).
 
-export const TIPO_INTERACAO_OPTIONS = [
+export const INTERACTION_TYPE_OPTIONS = [
   { value: "ligacao",    label: "Ligação"    },
   { value: "whatsapp",   label: "WhatsApp"   },
   { value: "email",      label: "E-mail"      },
@@ -11,9 +11,9 @@ export const TIPO_INTERACAO_OPTIONS = [
   { value: "observacao", label: "Observação" },
 ] as const;
 
-export type TipoInteracao = (typeof TIPO_INTERACAO_OPTIONS)[number]["value"];
+export type InteractionType = (typeof INTERACTION_TYPE_OPTIONS)[number]["value"];
 
-export type Interacao = {
+export type Interaction = {
   id: string;
   type: string;
   data: string;
