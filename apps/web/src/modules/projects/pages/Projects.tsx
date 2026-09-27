@@ -51,7 +51,7 @@ export default function Projects() {
   // Task J: full list (rawProjetos/useProjects() without a filter) used
   // ONLY to populate the genre dropdown — a "distinct values
   // for a filter" case still pending a dedicated endpoint
-  // (equivalent to /works/stats/generos), so it is still subject to the
+  // (equivalent to /works/stats/genres), so it is still subject to the
   // tenant cap of 50 in this specific options list; it does not affect the table (Task
   // H, paginated) nor the search/filter itself (server-side). The deep link and the
   // per-row artist name, which WERE the real risks of wrong/

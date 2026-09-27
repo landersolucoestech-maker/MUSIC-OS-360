@@ -71,11 +71,11 @@ export function useArtistsVinculoStats() {
   return { stats: query.data ?? EMPTY_VINCULO, isLoading: query.isLoading, error: query.error };
 }
 
-/** GET /artists/stats/generos — the tenant's distinct genres, for the filter. */
+/** GET /artists/stats/genres — the tenant's distinct genres, for the filter. */
 export function useMusicGenres() {
   const query = useQuery<string[]>({
-    queryKey: [...QUERY_KEYS.ARTISTS, "stats", "generos"],
-    queryFn: ({ signal }) => api.get<string[]>("/artists/stats/generos", { signal }),
+    queryKey: [...QUERY_KEYS.ARTISTS, "stats", "genres"],
+    queryFn: ({ signal }) => api.get<string[]>("/artists/stats/genres", { signal }),
     staleTime: 60_000,
   });
   return { genres: query.data ?? EMPTY_GENRES, isLoading: query.isLoading };

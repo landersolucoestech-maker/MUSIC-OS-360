@@ -77,8 +77,8 @@ export function useWorksStats(query: { status?: string; tipoObra?: string; gener
 
 export function useWorksGenres() {
   const q = useQuery<string[]>({
-    queryKey: [...QUERY_KEYS.WORKS, "stats", "generos"],
-    queryFn: ({ signal }) => api.get<string[]>("/works/stats/generos", { signal }),
+    queryKey: [...QUERY_KEYS.WORKS, "stats", "genres"],
+    queryFn: ({ signal }) => api.get<string[]>("/works/stats/genres", { signal }),
     staleTime: 60_000,
   });
   return { generos: q.data ?? EMPTY_GENRES, isLoading: q.isLoading };
@@ -144,8 +144,8 @@ export function usePhonogramsStats(query: { status?: string; genero?: string; ob
 
 export function usePhonogramsGenres() {
   const q = useQuery<string[]>({
-    queryKey: [...QUERY_KEYS.PHONOGRAMS, "stats", "generos"],
-    queryFn: ({ signal }) => api.get<string[]>("/phonograms/stats/generos", { signal }),
+    queryKey: [...QUERY_KEYS.PHONOGRAMS, "stats", "genres"],
+    queryFn: ({ signal }) => api.get<string[]>("/phonograms/stats/genres", { signal }),
     staleTime: 60_000,
   });
   return { generos: q.data ?? EMPTY_GENRES, isLoading: q.isLoading };

@@ -72,7 +72,7 @@ const ALLOWED_CALL_SITES: Record<string, string> = {
   "modules/contracts/components/ContractFormModal.tsx":
     "useContracts() for mutations only (addContract/updateContract); the client picker uses AsyncEntityCombobox.",
   "modules/catalog/pages/MusicRegistration.tsx":
-    "useWorks/usePhonograms for mutations only. useProjects() only feeds the project/genre dropdown (distinct values) — risk documented in the file itself for lack of a dedicated endpoint (equivalent to /works/stats/generos); search, pagination and deep links do not depend on it.",
+    "useWorks/usePhonograms for mutations only. useProjects() only feeds the project/genre dropdown (distinct values) — risk documented in the file itself for lack of a dedicated endpoint (equivalent to /works/stats/genres); search, pagination and deep links do not depend on it.",
   "modules/artist/components/ArtistFormModal.tsx":
     "useArtists()/useClients() for mutations only (addArtist/updateArtist/addClient) — this form no longer has a contract picker (Task AA removed the Classification and Links section).",
   "modules/hr/pages/HR.tsx":
