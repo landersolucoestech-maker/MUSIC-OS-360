@@ -32,65 +32,65 @@ import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/
 interface PayrollFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  registro?: PayrollEntry | null;
+  record?: PayrollEntry | null;
   mode: "create" | "edit" | "view";
 }
 
 export function PayrollFormModal({
   open,
   onOpenChange,
-  registro,
+  record,
   mode,
 }: PayrollFormModalProps) {
   const { addPayrollEntry, updatePayrollEntry } = usePayroll();
 
-  const [funcionarioId, setFuncionarioId] = useState("");
-  const [mesReferencia, setMesReferencia] = useState("");
-  const [salarioBruto, setSalarioBruto] = useState<number | "">("");
-  const [descontos, setDescontos] = useState<number | "">(0);
+  const [employeeId, setEmployeeId] = useState("");
+  const [referenceMonth, setReferenceMonth] = useState("");
+  const [grossSalary, setGrossSalary] = useState<number | "">("");
+  const [discounts, setDiscounts] = useState<number | "">(0);
   const [bonus, setBonus] = useState<number | "">(0);
-  const [dataPagamento, setDataPagamento] = useState("");
+  const [paymentDate, setPaymentDate] = useState("");
   const [status, setStatus] = useState("pending");
-  const [observacoes, setObservacoes] = useState("");
+  const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isViewMode = mode === "view";
 
   const netSalary =
-    (typeof salarioBruto === "number" ? salarioBruto : 0) -
-    (typeof descontos === "number" ? descontos : 0) +
+    (typeof grossSalary === "number" ? grossSalary : 0) -
+    (typeof discounts === "number" ? discounts : 0) +
     (typeof bonus === "number" ? bonus : 0);
 
   useEffect(() => {
     if (open && mode === "create") {
-      setFuncionarioId("");
-      setMesReferencia("");
-      setSalarioBruto("");
-      setDescontos(0);
+      setEmployeeId("");
+      setReferenceMonth("");
+      setGrossSalary("");
+      setDiscounts(0);
       setBonus(0);
-      setDataPagamento("");
+      setPaymentDate("");
       setStatus("pending");
-      setObservacoes("");
-    } else if (open && registro) {
-      setFuncionarioId((registro.funcionario_id as string) || "");
-      setMesReferencia((registro.mes_referencia as string) || "");
-      setSalarioBruto((registro.salario_bruto as number) ?? "");
-      setDescontos((registro.descontos as number) ?? 0);
-      setBonus((registro.bonus as number) ?? 0);
-      setDataPagamento((registro.data_pagamento as string) || "");
-      setStatus((registro.status as string) || "pending");
-      setObservacoes((registro.observacoes as string) || "");
+      setNotes("");
+    } else if (open && record) {
+      setEmployeeId((record.funcionario_id as string) || "");
+      setReferenceMonth((record.mes_referencia as string) || "");
+      setGrossSalary((record.salario_bruto as number) ?? "");
+      setDiscounts((record.descontos as number) ?? 0);
+      setBonus((record.bonus as number) ?? 0);
+      setPaymentDate((record.data_pagamento as string) || "");
+      setStatus((record.status as string) || "pending");
+      setNotes((record.observacoes as string) || "");
     }
-  }, [open, mode, registro]);
+  }, [open, mode, record]);
 
   const handleGrossSalaryChange = (value: string) => {
     const num = value === "" ? "" : parseFloat(value);
-    setSalarioBruto(num === "" || isNaN(num as number) ? "" : num);
+    setGrossSalary(num === "" || isNaN(num as number) ? "" : num);
   };
 
-  const handleDescontosChange = (value: string) => {
+  const handleDiscountsChange = (value: string) => {
     const num = value === "" ? 0 : parseFloat(value);
-    setDescontos(isNaN(num) ? 0 : num);
+    setDiscounts(isNaN(num) ? 0 : num);
   };
 
   const handleBonusChange = (value: string) => {
@@ -100,14 +100,14 @@ export function PayrollFormModal({
 
   const handleSubmit = async () => {
     const validation = payrollEntrySchema.safeParse({
-      employeeId: funcionarioId,
-      referenceMonth: mesReferencia,
-      grossSalary: salarioBruto !== "" ? Number(salarioBruto) : null,
-      descontos: descontos !== "" ? Number(descontos) : null,
+      employeeId,
+      referenceMonth,
+      grossSalary: grossSalary !== "" ? Number(grossSalary) : null,
+      descontos: discounts !== "" ? Number(discounts) : null,
       bonus: bonus !== "" ? Number(bonus) : null,
-      paymentDate: dataPagamento || "",
+      paymentDate: paymentDate || "",
       status: status as "pending" | "processed" | "paid" | "cancelled",
-      observacoes: observacoes || "",
+      observacoes: notes || "",
     });
 
     if (!validation.success) {
@@ -116,15 +116,15 @@ export function PayrollFormModal({
       return;
     }
 
-    if (!funcionarioId) {
+    if (!employeeId) {
       toast.error("Selecione um funcionário");
       return;
     }
-    if (!mesReferencia) {
+    if (!referenceMonth) {
       toast.error("Informe o mês de referência");
       return;
     }
-    if (salarioBruto === "" || salarioBruto <= 0) {
+    if (grossSalary === "" || grossSalary <= 0) {
       toast.error("Informe o salário bruto");
       return;
     }
@@ -132,25 +132,25 @@ export function PayrollFormModal({
     setIsSubmitting(true);
 
     const data = {
-      funcionario_id: funcionarioId,
-      mes_referencia: mesReferencia,
-      salario_bruto: typeof salarioBruto === "number" ? salarioBruto : 0,
-      descontos: typeof descontos === "number" ? descontos : 0,
+      funcionario_id: employeeId,
+      mes_referencia: referenceMonth,
+      salario_bruto: typeof grossSalary === "number" ? grossSalary : 0,
+      descontos: typeof discounts === "number" ? discounts : 0,
       bonus: typeof bonus === "number" ? bonus : 0,
       salario_liquido: netSalary,
-      data_pagamento: dataPagamento || null,
+      data_pagamento: paymentDate || null,
       status,
-      observacoes: observacoes.trim() || null,
+      observacoes: notes.trim() || null,
     };
 
     try {
       if (mode === "create") {
         await addPayrollEntry.mutateAsync(data);
-      } else if (registro) {
+      } else if (record) {
         await updatePayrollEntry.mutateAsync({
-          id: registro.id,
+          id: record.id,
           ...data,
-          expectedUpdatedAt: getExpectedUpdatedAt(registro),
+          expectedUpdatedAt: getExpectedUpdatedAt(record),
         });
       }
       onOpenChange(false);
@@ -171,7 +171,7 @@ export function PayrollFormModal({
 
   // Task I: resolves by direct ID (does not depend on the employee being among
   // the first ones loaded by useFuncionarios() without a filter).
-  const { entity: funcionarioSelecionado } = useEntityById<Employee>("funcionarios", funcionarioId || undefined);
+  const { entity: selectedEmployee } = useEntityById<Employee>("funcionarios", employeeId || undefined);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -190,20 +190,20 @@ export function PayrollFormModal({
             <Label>Funcionário *</Label>
             <AsyncEntityCombobox<Employee>
               table="funcionarios"
-              value={funcionarioId || null}
+              value={employeeId || null}
               getLabel={(f) => `${f.name ?? ""} - ${f.cargo || "Sem cargo"}`}
-              onChange={setFuncionarioId}
+              onChange={setEmployeeId}
               placeholder="Selecione o funcionário"
               searchPlaceholder="Buscar por nome…"
               emptyText="Nenhum funcionário encontrado"
               disabled={isViewMode}
               data-testid="select-funcionario-id"
             />
-            {funcionarioSelecionado && (
+            {selectedEmployee && (
               <p className="text-xs text-muted-foreground">
                 Salário base: R${" "}
-                {funcionarioSelecionado.salario
-                  ? Number(funcionarioSelecionado.salario).toLocaleString(
+                {selectedEmployee.salario
+                  ? Number(selectedEmployee.salario).toLocaleString(
                       "pt-BR",
                       { minimumFractionDigits: 2 }
                     )
@@ -215,8 +215,8 @@ export function PayrollFormModal({
           <div className="space-y-2">
             <Label>Mês de Referência *</Label>
             <MonthPickerField
-              value={mesReferencia}
-              onChange={setMesReferencia}
+              value={referenceMonth}
+              onChange={setReferenceMonth}
               disabled={isViewMode}
               placeholder="Selecione o mês"
               data-testid="monthpicker-mes-referencia"
@@ -231,7 +231,7 @@ export function PayrollFormModal({
                 step="0.01"
                 min="0"
                 placeholder="0,00"
-                value={salarioBruto}
+                value={grossSalary}
                 onChange={(e) => handleGrossSalaryChange(e.target.value)}
                 disabled={isViewMode}
                 data-testid="input-salario-bruto"
@@ -244,8 +244,8 @@ export function PayrollFormModal({
                 step="0.01"
                 min="0"
                 placeholder="0,00"
-                value={descontos}
-                onChange={(e) => handleDescontosChange(e.target.value)}
+                value={discounts}
+                onChange={(e) => handleDiscountsChange(e.target.value)}
                 disabled={isViewMode}
                 data-testid="input-descontos"
               />
@@ -285,8 +285,8 @@ export function PayrollFormModal({
             <div className="space-y-2">
               <Label>Data de Pagamento</Label>
               <DatePickerField
-                value={dataPagamento}
-                onChange={setDataPagamento}
+                value={paymentDate}
+                onChange={setPaymentDate}
                 disabled={isViewMode}
                 placeholder="Selecione a data"
                 data-testid="datepicker-data-pagamento"
@@ -317,8 +317,8 @@ export function PayrollFormModal({
             <Label>Observações</Label>
             <Textarea
               placeholder="Observações sobre este pagamento..."
-              value={observacoes}
-              onChange={(e) => setObservacoes(e.target.value)}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
               disabled={isViewMode}
               rows={3}
               data-testid="input-observacoes-pagamento"

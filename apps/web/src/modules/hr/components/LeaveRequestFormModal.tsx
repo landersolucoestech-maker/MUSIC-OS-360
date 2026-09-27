@@ -55,15 +55,15 @@ export function LeaveRequestFormModal({
   mode,
 }: LeaveRequestFormModalProps) {
   const { addLeaveRequest, updateLeaveRequest } = useLeaveRequests();
-  const { isLoading: loadingFuncionarios } = useEmployees();
+  const { isLoading: loadingEmployees } = useEmployees();
 
-  const [funcionarioId, setFuncionarioId] = useState("");
-  const [type, setTipo] = useState("");
-  const [startDate, setDataInicio] = useState("");
-  const [endDate, setDataFim] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
+  const [type, setType] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [status, setStatus] = useState("pending");
-  const [aprovadoPor, setAprovadoPor] = useState("");
-  const [observacoes, setObservacoes] = useState("");
+  const [approvedBy, setApprovedBy] = useState("");
+  const [notes, setNotes] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const isViewMode = mode === "view";
@@ -72,31 +72,31 @@ export function LeaveRequestFormModal({
 
   useEffect(() => {
     if (open && mode === "edit" && ausencia) {
-      setFuncionarioId((ausencia.funcionario_id as string) || "");
-      setTipo((ausencia.type as string) || "");
-      setDataInicio((ausencia.start_date as string) || "");
-      setDataFim((ausencia.end_date as string) || "");
+      setEmployeeId((ausencia.funcionario_id as string) || "");
+      setType((ausencia.type as string) || "");
+      setStartDate((ausencia.start_date as string) || "");
+      setEndDate((ausencia.end_date as string) || "");
       setStatus((ausencia.status as string) || "pending");
-      setAprovadoPor((ausencia.aprovado_por as string) || "");
-      setObservacoes((ausencia.observacoes as string) || "");
+      setApprovedBy((ausencia.aprovado_por as string) || "");
+      setNotes((ausencia.observacoes as string) || "");
       setErrors({});
     } else if (open && mode === "view" && ausencia) {
-      setFuncionarioId((ausencia.funcionario_id as string) || "");
-      setTipo((ausencia.type as string) || "");
-      setDataInicio((ausencia.start_date as string) || "");
-      setDataFim((ausencia.end_date as string) || "");
+      setEmployeeId((ausencia.funcionario_id as string) || "");
+      setType((ausencia.type as string) || "");
+      setStartDate((ausencia.start_date as string) || "");
+      setEndDate((ausencia.end_date as string) || "");
       setStatus((ausencia.status as string) || "pending");
-      setAprovadoPor((ausencia.aprovado_por as string) || "");
-      setObservacoes((ausencia.observacoes as string) || "");
+      setApprovedBy((ausencia.aprovado_por as string) || "");
+      setNotes((ausencia.observacoes as string) || "");
       setErrors({});
     } else if (open && mode === "create") {
-      setFuncionarioId("");
-      setTipo("");
-      setDataInicio("");
-      setDataFim("");
+      setEmployeeId("");
+      setType("");
+      setStartDate("");
+      setEndDate("");
       setStatus("pending");
-      setAprovadoPor("");
-      setObservacoes("");
+      setApprovedBy("");
+      setNotes("");
       setErrors({});
     }
   }, [open, mode, ausencia]);
@@ -113,13 +113,13 @@ export function LeaveRequestFormModal({
 
   const validate = (): boolean => {
     const result = leaveRequestSchema.safeParse({
-      employeeId: funcionarioId,
+      employeeId,
       type,
       startDate,
       endDate,
       status: status as "pending" | "approved" | "rejected" | "in_progress" | "completed",
-      approvedBy: aprovadoPor || "",
-      observacoes: observacoes || "",
+      approvedBy: approvedBy || "",
+      observacoes: notes || "",
     });
 
     if (!result.success) {
@@ -155,14 +155,14 @@ export function LeaveRequestFormModal({
     }
 
     const data: LeaveRequestInsert = {
-      funcionario_id: funcionarioId,
+      funcionario_id: employeeId,
       type: type || null,
       start_date: startDate,
       end_date: endDate,
       dias_totais: totalDays,
       status,
-      aprovado_por: aprovadoPor.trim() || null,
-      observacoes: observacoes.trim() || null,
+      aprovado_por: approvedBy.trim() || null,
+      observacoes: notes.trim() || null,
     };
 
     if (mode === "create") {
@@ -211,13 +211,13 @@ export function LeaveRequestFormModal({
             <Label>Funcionário *</Label>
             <AsyncEntityCombobox<Employee>
               table="funcionarios"
-              value={funcionarioId || null}
+              value={employeeId || null}
               getLabel={(f) => f.name ?? ""}
               onChange={(id) => {
-                setFuncionarioId(id);
+                setEmployeeId(id);
                 clearError("funcionario_id");
               }}
-              placeholder={loadingFuncionarios ? "Carregando…" : "Selecione o funcionário"}
+              placeholder={loadingEmployees ? "Carregando…" : "Selecione o funcionário"}
               searchPlaceholder="Buscar por nome…"
               emptyText="Nenhum funcionário encontrado"
               disabled={isViewMode}
@@ -234,7 +234,7 @@ export function LeaveRequestFormModal({
             <Select
               value={type}
               onValueChange={(v) => {
-                setTipo(v);
+                setType(v);
                 clearError("type");
               }}
               disabled={isViewMode}
@@ -263,7 +263,7 @@ export function LeaveRequestFormModal({
               <Label>Data Início *</Label>
               <DatePickerField
                 value={startDate}
-                onChange={(iso) => { setDataInicio(iso); clearError("start_date"); }}
+                onChange={(iso) => { setStartDate(iso); clearError("start_date"); }}
                 disabled={isViewMode}
                 placeholder="Selecione a data"
                 className={errors.start_date ? "border-destructive" : ""}
@@ -277,7 +277,7 @@ export function LeaveRequestFormModal({
               <Label>Data Fim *</Label>
               <DatePickerField
                 value={endDate}
-                onChange={(iso) => { setDataFim(iso); clearError("end_date"); }}
+                onChange={(iso) => { setEndDate(iso); clearError("end_date"); }}
                 disabled={isViewMode}
                 placeholder="Selecione a data"
                 className={errors.end_date ? "border-destructive" : ""}
@@ -324,8 +324,8 @@ export function LeaveRequestFormModal({
             <Label>Aprovado por</Label>
             <Input
               placeholder="Nome de quem aprovou"
-              value={aprovadoPor}
-              onChange={(e) => setAprovadoPor(e.target.value)}
+              value={approvedBy}
+              onChange={(e) => setApprovedBy(e.target.value)}
               disabled={isViewMode}
               data-testid="input-aprovado-por"
             />
@@ -335,8 +335,8 @@ export function LeaveRequestFormModal({
             <Label>Observações</Label>
             <Textarea
               placeholder="Observações adicionais..."
-              value={observacoes}
-              onChange={(e) => setObservacoes(e.target.value)}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
               disabled={isViewMode}
               data-testid="input-observacoes-ausencia"
             />

@@ -37,97 +37,97 @@ import { employeeSchema } from "@/modules/hr/schemas/employee-schema";
 interface EmployeeFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  funcionario?: Employee | null;
+  employee?: Employee | null;
   mode: "create" | "edit" | "view";
 }
 
 export function EmployeeFormModal({
   open,
   onOpenChange,
-  funcionario,
+  employee,
   mode,
 }: EmployeeFormModalProps) {
   const { addEmployee, updateEmployee } = useEmployees();
-  const { usuarios, isLoading: loadingUsuarios } = useUsuarios();
+  const { usuarios: users, isLoading: loadingUsers } = useUsuarios();
   const isViewMode = mode === "view";
 
   const [activeTab, setActiveTab] = useState("pessoal");
-  const [nomeCompleto, setNomeCompleto] = useState("");
+  const [fullName, setFullName] = useState("");
   const [cpf, setCpf] = useState("");
   const [rg, setRg] = useState("");
-  const [dataNascimento, setDataNascimento] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [email, setEmail] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [endereco, setEndereco] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
 
-  const [cargo, setCargo] = useState("");
-  const [setor, setSetor] = useState("");
-  const [tipoContrato, setTipoContrato] = useState("");
-  const [dataAdmissao, setDataAdmissao] = useState("");
-  const [salarioBase, setSalarioBase] = useState<number | "">("");
+  const [position, setPosition] = useState("");
+  const [department, setDepartment] = useState("");
+  const [contractType, setContractType] = useState("");
+  const [hireDate, setHireDate] = useState("");
+  const [baseSalary, setBaseSalary] = useState<number | "">("");
   const [status, setStatus] = useState("active");
-  const [observacoes, setObservacoes] = useState("");
-  const [vinculoUsuarioId, setVinculoUsuarioId] = useState("");
+  const [notes, setNotes] = useState("");
+  const [linkUserId, setLinkUserId] = useState("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open) {
-      if ((mode === "edit" || mode === "view") && funcionario) {
-        setNomeCompleto((funcionario.name as string) || "");
-        setCpf((funcionario.cpf as string) || "");
-        setRg((funcionario.rg as string) || "");
-        setDataNascimento((funcionario.data_nascimento as string) || "");
-        setEmail((funcionario.email as string) || "");
-        setTelefone((funcionario.telefone as string) || "");
-        setEndereco((funcionario.endereco as string) || "");
-        setCargo((funcionario.cargo as string) || "");
-        setSetor((funcionario.departamento as string) || "");
-        setTipoContrato((funcionario.tipo_contrato as string) || "");
-        setDataAdmissao((funcionario.data_admissao as string) || "");
-        setSalarioBase(funcionario.salario != null ? Number(funcionario.salario) : "");
-        setStatus((funcionario.status as string) || "active");
-        setObservacoes((funcionario.observacoes as string) || "");
-        setVinculoUsuarioId((funcionario.vinculo_usuario_id as string) || "");
+      if ((mode === "edit" || mode === "view") && employee) {
+        setFullName((employee.name as string) || "");
+        setCpf((employee.cpf as string) || "");
+        setRg((employee.rg as string) || "");
+        setBirthDate((employee.data_nascimento as string) || "");
+        setEmail((employee.email as string) || "");
+        setPhone((employee.telefone as string) || "");
+        setAddress((employee.endereco as string) || "");
+        setPosition((employee.cargo as string) || "");
+        setDepartment((employee.departamento as string) || "");
+        setContractType((employee.tipo_contrato as string) || "");
+        setHireDate((employee.data_admissao as string) || "");
+        setBaseSalary(employee.salario != null ? Number(employee.salario) : "");
+        setStatus((employee.status as string) || "active");
+        setNotes((employee.observacoes as string) || "");
+        setLinkUserId((employee.vinculo_usuario_id as string) || "");
       } else {
-        setNomeCompleto("");
+        setFullName("");
         setCpf("");
         setRg("");
-        setDataNascimento("");
+        setBirthDate("");
         setEmail("");
-        setTelefone("");
-        setEndereco("");
-        setCargo("");
-        setSetor("");
-        setTipoContrato("");
-        setDataAdmissao("");
-        setSalarioBase("");
+        setPhone("");
+        setAddress("");
+        setPosition("");
+        setDepartment("");
+        setContractType("");
+        setHireDate("");
+        setBaseSalary("");
         setStatus("active");
-        setObservacoes("");
-        setVinculoUsuarioId("");
+        setNotes("");
+        setLinkUserId("");
       }
       setErrors({});
       setActiveTab("pessoal");
     }
-  }, [open, mode, funcionario]);
+  }, [open, mode, employee]);
 
   const validate = (): boolean => {
     const result = employeeSchema.safeParse({
-      fullName: nomeCompleto,
+      fullName,
       email: email || "",
       cpf: cpf || "",
       rg: rg || "",
-      birthDate: dataNascimento || "",
-      telefone: telefone || "",
-      endereco: endereco || "",
-      cargo: cargo || "",
-      setor: setor || "",
-      contractType: tipoContrato || "",
-      hireDate: dataAdmissao || "",
-      baseSalary: salarioBase !== "" ? Number(salarioBase) : null,
+      birthDate: birthDate || "",
+      phone: phone || "",
+      address: address || "",
+      position: position || "",
+      department: department || "",
+      contractType: contractType || "",
+      hireDate: hireDate || "",
+      baseSalary: baseSalary !== "" ? Number(baseSalary) : null,
       status: status as "active" | "inactive" | "on_vacation" | "on_leave",
-      observacoes: observacoes || "",
+      notes: notes || "",
     });
 
     if (!result.success) {
@@ -139,7 +139,7 @@ export function EmployeeFormModal({
         }
       });
       setErrors(newErrors);
-      if (newErrors.fullName || newErrors.email || newErrors.cpf || newErrors.rg || newErrors.birthDate || newErrors.telefone || newErrors.endereco) {
+      if (newErrors.fullName || newErrors.email || newErrors.cpf || newErrors.rg || newErrors.birthDate || newErrors.phone || newErrors.address) {
         setActiveTab("pessoal");
       }
       return false;
@@ -159,26 +159,26 @@ export function EmployeeFormModal({
     setSaving(true);
 
     const data: Record<string, unknown> = {
-      name: nomeCompleto.trim(),
+      name: fullName.trim(),
       cpf: cpf.trim() || null,
       email: email.trim() || null,
-      telefone: telefone.trim() || null,
-      cargo: cargo.trim() || null,
-      departamento: setor || null,
-      tipo_contrato: tipoContrato || null,
-      data_admissao: dataAdmissao || null,
-      salario: salarioBase !== "" ? String(salarioBase) : null,
+      telefone: phone.trim() || null,
+      cargo: position.trim() || null,
+      departamento: department || null,
+      tipo_contrato: contractType || null,
+      data_admissao: hireDate || null,
+      salario: baseSalary !== "" ? String(baseSalary) : null,
       status,
     };
 
     try {
       if (mode === "create") {
         await addEmployee.mutateAsync(data as any);
-      } else if (mode === "edit" && funcionario) {
+      } else if (mode === "edit" && employee) {
         await updateEmployee.mutateAsync({
-          id: funcionario.id,
+          id: employee.id,
           ...data,
-          expectedUpdatedAt: getExpectedUpdatedAt(funcionario),
+          expectedUpdatedAt: getExpectedUpdatedAt(employee),
         } as any);
       }
       onOpenChange(false);
@@ -246,23 +246,23 @@ export function EmployeeFormModal({
               <Input
                 id="nome_completo"
                 placeholder="Nome completo do funcionário"
-                value={nomeCompleto}
+                value={fullName}
                 onChange={(e) => {
-                  setNomeCompleto(e.target.value);
-                  if (errors.nome_completo) {
+                  setFullName(e.target.value);
+                  if (errors.fullName) {
                     setErrors((prev) => {
                       const n = { ...prev };
-                      delete n.nome_completo;
+                      delete n.fullName;
                       return n;
                     });
                   }
                 }}
                 disabled={isViewMode}
-                className={errors.nome_completo ? "border-destructive" : ""}
+                className={errors.fullName ? "border-destructive" : ""}
                 data-testid="input-nome-completo"
               />
-              {errors.nome_completo && (
-                <p className="text-xs text-destructive">{errors.nome_completo}</p>
+              {errors.fullName && (
+                <p className="text-xs text-destructive">{errors.fullName}</p>
               )}
             </div>
 
@@ -295,8 +295,8 @@ export function EmployeeFormModal({
               <div className="space-y-1.5">
                 <Label htmlFor="data_nascimento">Data de Nascimento</Label>
                 <DatePickerField
-                  value={dataNascimento}
-                  onChange={setDataNascimento}
+                  value={birthDate}
+                  onChange={setBirthDate}
                   disabled={isViewMode}
                   placeholder="Selecione a data"
                   data-testid="datepicker-data-nascimento"
@@ -335,8 +335,8 @@ export function EmployeeFormModal({
                 <Input
                   id="telefone"
                   placeholder="(00) 00000-0000"
-                  value={telefone}
-                  onChange={(e) => setTelefone(maskPhone(e.target.value))}
+                  value={phone}
+                  onChange={(e) => setPhone(maskPhone(e.target.value))}
                   disabled={isViewMode}
                   data-testid="input-telefone"
                 />
@@ -346,8 +346,8 @@ export function EmployeeFormModal({
                 <Input
                   id="endereco"
                   placeholder="Endereço completo"
-                  value={endereco}
-                  onChange={(e) => setEndereco(e.target.value)}
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
                   disabled={isViewMode}
                   data-testid="input-endereco"
                 />
@@ -362,8 +362,8 @@ export function EmployeeFormModal({
                 <Input
                   id="cargo"
                   placeholder="Ex: Analista, Coordenador"
-                  value={cargo}
-                  onChange={(e) => setCargo(e.target.value)}
+                  value={position}
+                  onChange={(e) => setPosition(e.target.value)}
                   disabled={isViewMode}
                   data-testid="input-cargo"
                 />
@@ -371,8 +371,8 @@ export function EmployeeFormModal({
               <div className="space-y-1.5">
                 <Label htmlFor="setor">Setor</Label>
                 <Select
-                  value={setor}
-                  onValueChange={setSetor}
+                  value={department}
+                  onValueChange={setDepartment}
                   disabled={isViewMode}
                 >
                   <SelectTrigger data-testid="select-setor">
@@ -393,8 +393,8 @@ export function EmployeeFormModal({
               <div className="space-y-1.5">
                 <Label htmlFor="tipo_contrato">Tipo de Contrato</Label>
                 <Select
-                  value={tipoContrato}
-                  onValueChange={setTipoContrato}
+                  value={contractType}
+                  onValueChange={setContractType}
                   disabled={isViewMode}
                 >
                   <SelectTrigger data-testid="select-type-contrato">
@@ -412,8 +412,8 @@ export function EmployeeFormModal({
               <div className="space-y-1.5">
                 <Label htmlFor="data_admissao">Data de Admissão</Label>
                 <DatePickerField
-                  value={dataAdmissao}
-                  onChange={setDataAdmissao}
+                  value={hireDate}
+                  onChange={setHireDate}
                   disabled={isViewMode}
                   placeholder="Selecione a data"
                   data-testid="datepicker-data-admissao"
@@ -430,9 +430,9 @@ export function EmployeeFormModal({
                   min="0"
                   step="0.01"
                   placeholder="0,00"
-                  value={salarioBase}
+                  value={baseSalary}
                   onChange={(e) =>
-                    setSalarioBase(e.target.value ? Number(e.target.value) : "")
+                    setBaseSalary(e.target.value ? Number(e.target.value) : "")
                   }
                   disabled={isViewMode}
                   data-testid="input-salario-base"
@@ -464,8 +464,8 @@ export function EmployeeFormModal({
               <Textarea
                 id="observacoes"
                 placeholder="Observações sobre o funcionário"
-                value={observacoes}
-                onChange={(e) => setObservacoes(e.target.value)}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
                 disabled={isViewMode}
                 rows={3}
                 data-testid="input-observacoes"
@@ -479,16 +479,16 @@ export function EmployeeFormModal({
                   Vincular a Usuário do Sistema
                 </Label>
                 <Select
-                  value={vinculoUsuarioId || "none"}
-                  onValueChange={(v) => setVinculoUsuarioId(v === "none" ? "" : v)}
+                  value={linkUserId || "none"}
+                  onValueChange={(v) => setLinkUserId(v === "none" ? "" : v)}
                   disabled={isViewMode}
                 >
                   <SelectTrigger data-testid="select-vinculo-usuario">
-                    <SelectValue placeholder={loadingUsuarios ? "Carregando..." : "Nenhum (sem vínculo)"} />
+                    <SelectValue placeholder={loadingUsers ? "Carregando..." : "Nenhum (sem vínculo)"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Nenhum (sem vínculo)</SelectItem>
-                    {usuarios.map((u) => (
+                    {users.map((u) => (
                       <SelectItem key={u.id} value={u.id}>
                         {u.full_name || u.email || u.id}
                       </SelectItem>

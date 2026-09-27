@@ -11,14 +11,14 @@ export interface UseEmployeesPaginatedParams {
   pageSize: number;
   search?: string;
   status?: string;
-  setor?: string;
+  department?: string;
   enabled?: boolean;
 }
 
-export function useEmployeesPaginated({ page, pageSize, search, status, setor, enabled = true }: UseEmployeesPaginatedParams) {
+export function useEmployeesPaginated({ page, pageSize, search, status, department: department, enabled = true }: UseEmployeesPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
-  if (setor) filters.setor = setor;
+  if (department) filters.setor = department;
 
   const result = usePaginatedDataQuery<Employee>({
     queryKey: [...QUERY_KEYS.EMPLOYEES],
@@ -31,7 +31,7 @@ export function useEmployeesPaginated({ page, pageSize, search, status, setor, e
   });
 
   return {
-    funcionarios: result.items,
+    employees: result.items,
     total: result.total,
     totalPages: result.totalPages,
     isLoading: result.isLoading,
@@ -83,7 +83,7 @@ export function usePayrollPaginated({ page, pageSize, search, competencia, statu
   });
 
   return {
-    folhaPagamento: result.items,
+    payrollEntries: result.items,
     total: result.total,
     totalPages: result.totalPages,
     isLoading: result.isLoading,
@@ -116,7 +116,7 @@ export function useLeaveRequestsPaginated({ page, pageSize, search, status, enab
   });
 
   return {
-    feriasAusencias: result.items,
+    leaveRequests: result.items,
     total: result.total,
     totalPages: result.totalPages,
     isLoading: result.isLoading,

@@ -13,15 +13,15 @@ export const employeeSchema = z.object({
   cpf: z.string().max(20, "CPF inválido").optional().or(z.literal("")),
   rg: z.string().max(20, "RG inválido").optional().or(z.literal("")),
   birthDate: z.string().optional().or(z.literal("")),
-  telefone: z.string().max(20, "Telefone inválido").optional().or(z.literal("")),
-  endereco: z.string().max(300, "Endereço deve ter no máximo 300 caracteres").optional().or(z.literal("")),
-  cargo: z.string().max(100, "Cargo deve ter no máximo 100 caracteres").optional().or(z.literal("")),
-  setor: z.string().optional().or(z.literal("")),
+  phone: z.string().max(20, "Telefone inválido").optional().or(z.literal("")),
+  address: z.string().max(300, "Endereço deve ter no máximo 300 caracteres").optional().or(z.literal("")),
+  position: z.string().max(100, "Cargo deve ter no máximo 100 caracteres").optional().or(z.literal("")),
+  department: z.string().optional().or(z.literal("")),
   contractType: z.string().optional().or(z.literal("")),
   hireDate: z.string().optional().or(z.literal("")),
   baseSalary: z.number().min(0, "Salário não pode ser negativo").optional().nullable(),
   status: z.enum(["active", "inactive", "on_vacation", "on_leave"]).default("active"),
-  observacoes: z.string().max(2000, "Observações deve ter no máximo 2000 caracteres").optional().or(z.literal("")),
+  notes: z.string().max(2000, "Observações deve ter no máximo 2000 caracteres").optional().or(z.literal("")),
 });
 
 export type EmployeeFormData = z.infer<typeof employeeSchema>;

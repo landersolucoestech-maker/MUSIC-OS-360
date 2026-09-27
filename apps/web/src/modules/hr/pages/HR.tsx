@@ -122,16 +122,16 @@ function EmployeeNameCell({ id }: { id: string | null }) {
 
 export default function HR() {
   const {
-    isLoading: loadingFuncionarios,
+    isLoading: loadingEmployees,
     deleteEmployee,
   } = useEmployees();
 
   const { deletePayrollEntry } = usePayroll();
 
-  const { usuarios = [] } = useUsuarios();
+  const { usuarios: users = [] } = useUsuarios();
   const getUserName = (userId: string | null) => {
     if (!userId) return null;
-    const u = usuarios.find((u) => u.id === userId);
+    const u = users.find((u) => u.id === userId);
     return u?.full_name || u?.email || null;
   };
 
@@ -142,194 +142,194 @@ export default function HR() {
 
   const [activeTab, setActiveTab] = useState("funcionarios");
 
-  const [funcSearch, setFuncSearch] = useState("");
-  const [funcStatusFilter, setFuncStatusFilter] = useState("all");
-  const [funcSetorFilter, setFuncSetorFilter] = useState("all");
-  const [funcFormModal, setFuncFormModal] = useState<{
+  const [employeeSearch, setEmployeeSearch] = useState("");
+  const [employeeStatusFilter, setEmployeeStatusFilter] = useState("all");
+  const [employeeDepartmentFilter, setEmployeeDepartmentFilter] = useState("all");
+  const [employeeFormModal, setEmployeeFormModal] = useState<{
     open: boolean;
     mode: "create" | "edit" | "view";
-    funcionario?: Employee;
+    employee?: Employee;
   }>({ open: false, mode: "create" });
-  const [funcDeleteModal, setFuncDeleteModal] = useState<{
+  const [employeeDeleteModal, setEmployeeDeleteModal] = useState<{
     open: boolean;
-    funcionario?: Employee;
+    employee?: Employee;
   }>({ open: false });
 
-  const [selectedFuncIds, setSelectedFuncIds] = useState<string[]>([]);
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
   const toggleSelectAllFuncs = () => {
-    if (selectedFuncIds.length === filteredEmployees.length && filteredEmployees.length > 0) {
-      setSelectedFuncIds([]);
+    if (selectedEmployeeIds.length === filteredEmployees.length && filteredEmployees.length > 0) {
+      setSelectedEmployeeIds([]);
     } else {
-      setSelectedFuncIds(filteredEmployees.map((f: any) => f.id));
+      setSelectedEmployeeIds(filteredEmployees.map((f: any) => f.id));
     }
   };
-  const toggleSelectFunc = (id: string) => setSelectedFuncIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  const toggleSelectFunc = (id: string) => setSelectedEmployeeIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   const handleBulkDeleteFuncs = async () => {
-    if (selectedFuncIds.length === 0) return;
-    const ids = selectedFuncIds;
-    setSelectedFuncIds([]);
+    if (selectedEmployeeIds.length === 0) return;
+    const ids = selectedEmployeeIds;
+    setSelectedEmployeeIds([]);
     const result = await runBulkAction(ids, (id) => deleteEmployee.mutateAsync(id));
     reportBulkResult(result, "excluído", "funcionário");
   };
 
-  const [folhaSearch, setFolhaSearch] = useState("");
-  const [folhaMesFilter, setFolhaMesFilter] = useState("");
-  const [folhaStatusFilter, setFolhaStatusFilter] = useState("all");
-  const [folhaFormModal, setFolhaFormModal] = useState<{
+  const [payrollSearch, setPayrollSearch] = useState("");
+  const [payrollMonthFilter, setPayrollMonthFilter] = useState("");
+  const [payrollStatusFilter, setPayrollStatusFilter] = useState("all");
+  const [payrollFormModal, setPayrollFormModal] = useState<{
     open: boolean;
     mode: "create" | "edit" | "view";
-    registro?: PayrollEntry;
+    record?: PayrollEntry;
   }>({ open: false, mode: "create" });
-  const [folhaDeleteModal, setFolhaDeleteModal] = useState<{
+  const [payrollDeleteModal, setPayrollDeleteModal] = useState<{
     open: boolean;
-    registro?: PayrollEntry;
+    record?: PayrollEntry;
   }>({ open: false });
-  const [selectedFolhaIds, setSelectedFolhaIds] = useState<string[]>([]);
-  const [folhaBulkDeleteModal, setFolhaBulkDeleteModal] = useState<{ open: boolean; ids: string[] }>({ open: false, ids: [] });
+  const [selectedPayrollIds, setSelectedPayrollIds] = useState<string[]>([]);
+  const [payrollBulkDeleteModal, setPayrollBulkDeleteModal] = useState<{ open: boolean; ids: string[] }>({ open: false, ids: [] });
 
-  const [feriasSearch, setFeriasSearch] = useState("");
-  const [feriasStatusFilter, setFeriasStatusFilter] = useState("all");
-  const [feriasFormModal, setFeriasFormModal] = useState<{
+  const [leaveSearch, setLeaveSearch] = useState("");
+  const [leaveStatusFilter, setLeaveStatusFilter] = useState("all");
+  const [leaveFormModal, setLeaveFormModal] = useState<{
     open: boolean;
     mode: "create" | "edit" | "view";
     ausencia?: LeaveRequest;
   }>({ open: false, mode: "create" });
-  const [feriasDeleteModal, setFeriasDeleteModal] = useState<{
+  const [leaveDeleteModal, setLeaveDeleteModal] = useState<{
     open: boolean;
     ausencia?: LeaveRequest;
   }>({ open: false });
-  const [selectedFeriasIds, setSelectedFeriasIds] = useState<string[]>([]);
-  const [feriasBulkDeleteModal, setFeriasBulkDeleteModal] = useState<{ open: boolean; ids: string[] }>({ open: false, ids: [] });
+  const [selectedLeaveIds, setSelectedLeaveIds] = useState<string[]>([]);
+  const [leaveBulkDeleteModal, setLeaveBulkDeleteModal] = useState<{ open: boolean; ids: string[] }>({ open: false, ids: [] });
 
-  const [docFuncionarioId, setDocFuncionarioId] = useState("");
-  const [docTipoDocumento, setDocTipoDocumento] = useState("");
-  const [docDescricao, setDocDescricao] = useState("");
+  const [docEmployeeId, setDocEmployeeId] = useState("");
+  const [docType, setDocType] = useState("");
+  const [docDescription, setDocDescription] = useState("");
   const [docDeleteModal, setDocDeleteModal] = useState<{
     open: boolean;
-    documento?: EmployeeDocument;
+    document?: EmployeeDocument;
   }>({ open: false });
 
   const {
     documents,
     isLoading: loadingDocs,
-    addDocumento,
-    deleteDocumento,
-  } = useEmployeeDocuments(docFuncionarioId || undefined);
+    addDocumento: addDocument,
+    deleteDocumento: deleteDocument,
+  } = useEmployeeDocuments(docEmployeeId || undefined);
 
   // KPIs — exact aggregation over the whole tenant (GET /hr/employees/stats),
   // never computed over the loaded page only (Task H).
-  const { stats: funcionariosStats } = useEmployeesStats();
+  const { stats: employeesStats } = useEmployeesStats();
   const kpiCounts = {
-    total: funcionariosStats.total,
-    ativos: funcionariosStats.byGroup["active"] ?? 0,
-    ferias: funcionariosStats.byGroup["on_vacation"] ?? 0,
-    afastados: funcionariosStats.byGroup["on_leave"] ?? 0,
+    total: employeesStats.total,
+    ativos: employeesStats.byGroup["active"] ?? 0,
+    onLeave: employeesStats.byGroup["on_vacation"] ?? 0,
+    afastados: employeesStats.byGroup["on_leave"] ?? 0,
   };
 
-  const debouncedFuncSearch = useDebounce(funcSearch, 300);
-  const debouncedPayrollSearch = useDebounce(folhaSearch, 300);
-  const debouncedLeaveSearch = useDebounce(feriasSearch, 300);
+  const debouncedEmployeeSearch = useDebounce(employeeSearch, 300);
+  const debouncedPayrollSearch = useDebounce(payrollSearch, 300);
+  const debouncedLeaveSearch = useDebounce(leaveSearch, 300);
 
-  const [funcPage, setFuncPage] = useState(0);
-  const [funcPageSize, setFuncPageSize] = useState(10);
-  const [folhaPage, setFolhaPage] = useState(0);
-  const [folhaPageSize, setFolhaPageSize] = useState(10);
-  const [feriasPage, setFeriasPage] = useState(0);
-  const [feriasPageSize, setFeriasPageSize] = useState(10);
+  const [employeePage, setEmployeePage] = useState(0);
+  const [employeePageSize, setEmployeePageSize] = useState(10);
+  const [payrollPage, setPayrollPage] = useState(0);
+  const [payrollPageSize, setPayrollPageSize] = useState(10);
+  const [leavePage, setLeavePage] = useState(0);
+  const [leavePageSize, setLeavePageSize] = useState(10);
 
-  useEffect(() => { setFuncPage(0); }, [debouncedFuncSearch, funcStatusFilter, funcSetorFilter]);
-  useEffect(() => { setFolhaPage(0); }, [debouncedPayrollSearch, folhaMesFilter, folhaStatusFilter]);
-  useEffect(() => { setFeriasPage(0); }, [debouncedLeaveSearch, feriasStatusFilter]);
+  useEffect(() => { setEmployeePage(0); }, [debouncedEmployeeSearch, employeeStatusFilter, employeeDepartmentFilter]);
+  useEffect(() => { setPayrollPage(0); }, [debouncedPayrollSearch, payrollMonthFilter, payrollStatusFilter]);
+  useEffect(() => { setLeavePage(0); }, [debouncedLeaveSearch, leaveStatusFilter]);
 
   const {
-    funcionarios: funcPageItems, total: funcTotal, isLoading: isLoadingFuncPage,
-    error: funcPageError, refetch: refetchFuncPage,
+    employees: employeePageItems, total: employeeTotal, isLoading: isLoadingEmployeePage,
+    error: employeePageError, refetch: refetchEmployeePage,
   } = useEmployeesPaginated({
-    page: funcPage, pageSize: funcPageSize, search: debouncedFuncSearch || undefined,
-    status: funcStatusFilter !== "all" ? funcStatusFilter : undefined,
-    setor: funcSetorFilter !== "all" ? funcSetorFilter : undefined,
+    page: employeePage, pageSize: employeePageSize, search: debouncedEmployeeSearch || undefined,
+    status: employeeStatusFilter !== "all" ? employeeStatusFilter : undefined,
+    department: employeeDepartmentFilter !== "all" ? employeeDepartmentFilter : undefined,
     enabled: activeTab === "funcionarios",
   });
-  const filteredEmployees = funcPageItems;
-  const employeesPg = { pageItems: funcPageItems, total: funcTotal, page: funcPage, pageSize: funcPageSize, setPage: setFuncPage, setPageSize: setFuncPageSize };
+  const filteredEmployees = employeePageItems;
+  const employeesPg = { pageItems: employeePageItems, total: employeeTotal, page: employeePage, pageSize: employeePageSize, setPage: setEmployeePage, setPageSize: setEmployeePageSize };
 
   const {
-    folhaPagamento: folhaPageItems, total: folhaTotal, isLoading: isLoadingFolhaPage,
-    error: folhaPageError, refetch: refetchFolhaPage,
+    payrollEntries: payrollPageItems, total: totalPayroll, isLoading: isLoadingPayrollPage,
+    error: payrollPageError, refetch: refetchPayrollPage,
   } = usePayrollPaginated({
-    page: folhaPage, pageSize: folhaPageSize, search: debouncedPayrollSearch || undefined,
-    competencia: folhaMesFilter || undefined,
-    status: folhaStatusFilter !== "all" ? folhaStatusFilter : undefined,
+    page: payrollPage, pageSize: payrollPageSize, search: debouncedPayrollSearch || undefined,
+    competencia: payrollMonthFilter || undefined,
+    status: payrollStatusFilter !== "all" ? payrollStatusFilter : undefined,
     enabled: activeTab === "folha",
   });
-  const filteredPayroll = folhaPageItems;
-  const payrollPg = { pageItems: folhaPageItems, total: folhaTotal, page: folhaPage, pageSize: folhaPageSize, setPage: setFolhaPage, setPageSize: setFolhaPageSize };
+  const filteredPayroll = payrollPageItems;
+  const payrollPg = { pageItems: payrollPageItems, total: totalPayroll, page: payrollPage, pageSize: payrollPageSize, setPage: setPayrollPage, setPageSize: setPayrollPageSize };
 
   const {
-    feriasAusencias: feriasPageItems, total: feriasTotal, isLoading: isLoadingFeriasPage,
-    error: feriasPageError, refetch: refetchFeriasPage,
+    leaveRequests: leavePageItems, total: totalLeave, isLoading: isLoadingLeavePage,
+    error: leavePageError, refetch: refetchLeavePage,
   } = useLeaveRequestsPaginated({
-    page: feriasPage, pageSize: feriasPageSize, search: debouncedLeaveSearch || undefined,
-    status: feriasStatusFilter !== "all" ? feriasStatusFilter : undefined,
+    page: leavePage, pageSize: leavePageSize, search: debouncedLeaveSearch || undefined,
+    status: leaveStatusFilter !== "all" ? leaveStatusFilter : undefined,
     enabled: activeTab === "ferias",
   });
-  const filteredLeave = feriasPageItems;
-  const leavePg = { pageItems: feriasPageItems, total: feriasTotal, page: feriasPage, pageSize: feriasPageSize, setPage: setFeriasPage, setPageSize: setFeriasPageSize };
+  const filteredLeave = leavePageItems;
+  const leavePg = { pageItems: leavePageItems, total: totalLeave, page: leavePage, pageSize: leavePageSize, setPage: setLeavePage, setPageSize: setLeavePageSize };
 
 
   const handleDeleteEmployee = () => {
-    if (funcDeleteModal.funcionario) {
-      deleteEmployee.mutate(funcDeleteModal.funcionario.id);
-      setFuncDeleteModal({ open: false });
+    if (employeeDeleteModal.employee) {
+      deleteEmployee.mutate(employeeDeleteModal.employee.id);
+      setEmployeeDeleteModal({ open: false });
     }
   };
 
   const handleDeletePayroll = () => {
-    if (folhaDeleteModal.registro) {
-      deletePayrollEntry.mutate(folhaDeleteModal.registro.id);
-      setFolhaDeleteModal({ open: false });
+    if (payrollDeleteModal.record) {
+      deletePayrollEntry.mutate(payrollDeleteModal.record.id);
+      setPayrollDeleteModal({ open: false });
     }
   };
 
   const toggleSelectPayroll = (id: string) => {
-    setSelectedFolhaIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
+    setSelectedPayrollIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   };
 
   const toggleSelectAllPayroll = () => {
     const ids = filteredPayroll.map((fp) => fp.id);
-    const allSelected = ids.length > 0 && ids.every((id) => selectedFolhaIds.includes(id));
-    setSelectedFolhaIds((current) => allSelected ? current.filter((id) => !ids.includes(id)) : Array.from(new Set([...current, ...ids])));
+    const allSelected = ids.length > 0 && ids.every((id) => selectedPayrollIds.includes(id));
+    setSelectedPayrollIds((current) => allSelected ? current.filter((id) => !ids.includes(id)) : Array.from(new Set([...current, ...ids])));
   };
 
   const handleBulkDeletePayroll = async () => {
-    const ids = folhaBulkDeleteModal.ids;
-    setSelectedFolhaIds((current) => current.filter((id) => !ids.includes(id)));
-    setFolhaBulkDeleteModal({ open: false, ids: [] });
+    const ids = payrollBulkDeleteModal.ids;
+    setSelectedPayrollIds((current) => current.filter((id) => !ids.includes(id)));
+    setPayrollBulkDeleteModal({ open: false, ids: [] });
     const result = await runBulkAction(ids, (id) => deletePayrollEntry.mutateAsync(id));
     reportBulkResult(result, "excluído", "registro de folha");
   };
 
   const handleDeleteLeave = () => {
-    if (feriasDeleteModal.ausencia) {
-      deleteLeaveRequest.mutate(feriasDeleteModal.ausencia.id);
-      setFeriasDeleteModal({ open: false });
+    if (leaveDeleteModal.ausencia) {
+      deleteLeaveRequest.mutate(leaveDeleteModal.ausencia.id);
+      setLeaveDeleteModal({ open: false });
     }
   };
 
   const toggleSelectLeave = (id: string) => {
-    setSelectedFeriasIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
+    setSelectedLeaveIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   };
 
   const toggleSelectAllLeave = () => {
     const ids = filteredLeave.map((fa) => fa.id);
-    const allSelected = ids.length > 0 && ids.every((id) => selectedFeriasIds.includes(id));
-    setSelectedFeriasIds((current) => allSelected ? current.filter((id) => !ids.includes(id)) : Array.from(new Set([...current, ...ids])));
+    const allSelected = ids.length > 0 && ids.every((id) => selectedLeaveIds.includes(id));
+    setSelectedLeaveIds((current) => allSelected ? current.filter((id) => !ids.includes(id)) : Array.from(new Set([...current, ...ids])));
   };
 
   const handleBulkDeleteLeave = async () => {
-    const ids = feriasBulkDeleteModal.ids;
-    setSelectedFeriasIds((current) => current.filter((id) => !ids.includes(id)));
-    setFeriasBulkDeleteModal({ open: false, ids: [] });
+    const ids = leaveBulkDeleteModal.ids;
+    setSelectedLeaveIds((current) => current.filter((id) => !ids.includes(id)));
+    setLeaveBulkDeleteModal({ open: false, ids: [] });
     const result = await runBulkAction(ids, (id) => deleteLeaveRequest.mutateAsync(id));
     reportBulkResult(result, "excluído", "registro de férias");
   };
@@ -342,38 +342,38 @@ export default function HR() {
   };
 
   const handleDeleteDocument = () => {
-    if (docDeleteModal.documento) {
-      deleteDocumento.mutate(docDeleteModal.documento.id);
+    if (docDeleteModal.document) {
+      deleteDocument.mutate(docDeleteModal.document.id);
       setDocDeleteModal({ open: false });
     }
   };
 
   const handleDocUploadComplete = async (files: UploadedFile[]) => {
-    if (!docFuncionarioId) {
+    if (!docEmployeeId) {
       toast.error("Selecione um funcionário primeiro");
       return;
     }
     for (const file of files) {
       try {
-        await addDocumento.mutateAsync({
-          funcionario_id: docFuncionarioId,
-          tipo_documento: docTipoDocumento || "Outro",
+        await addDocument.mutateAsync({
+          funcionario_id: docEmployeeId,
+          tipo_documento: docType || "Outro",
           nome_arquivo: file.name,
           url_arquivo: file.url || file.path,
-          descricao: docDescricao.trim() || null,
+          descricao: docDescription.trim() || null,
         });
       } catch {
         toast.error(`Erro ao registrar documento: ${file.name}`);
       }
     }
-    setDocDescricao("");
-    setDocTipoDocumento("");
+    setDocDescription("");
+    setDocType("");
   };
 
   return (
     <FeatureGate feature="moduleRh" featureName="Recursos Humanos">
     <>
-    {loadingFuncionarios || isLoadingFuncPage ? (
+    {loadingEmployees || isLoadingEmployeePage ? (
       <MainLayout>
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -392,10 +392,10 @@ export default function HR() {
                 className="gap-2"
                 onClick={
                   activeTab === "funcionarios"
-                    ? () => setFuncFormModal({ open: true, mode: "create" })
+                    ? () => setEmployeeFormModal({ open: true, mode: "create" })
                     : activeTab === "folha"
-                    ? () => setFolhaFormModal({ open: true, mode: "create" })
-                    : () => setFeriasFormModal({ open: true, mode: "create" })
+                    ? () => setPayrollFormModal({ open: true, mode: "create" })
+                    : () => setLeaveFormModal({ open: true, mode: "create" })
                 }
                 data-testid="button-new-header"
               >
@@ -410,7 +410,7 @@ export default function HR() {
       }
     >
       <div className="space-y-6">
-        {(funcPageError || folhaPageError || feriasPageError) && (
+        {(employeePageError || payrollPageError || leavePageError) && (
           <div
             className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-muted/40 px-4 py-3"
             data-testid="rh-load-warning"
@@ -421,7 +421,7 @@ export default function HR() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => { refetchFuncPage(); refetchFolhaPage(); refetchFeriasPage(); }}
+              onClick={() => { refetchEmployeePage(); refetchPayrollPage(); refetchLeavePage(); }}
               className="gap-2"
               data-testid="button-retry"
             >
@@ -459,7 +459,7 @@ export default function HR() {
                 <Palmtree className="h-5 w-5 text-info" />
               </div>
               <div>
-                <p className="text-2xl font-bold" data-testid="text-kpi-ferias">{kpiCounts.ferias}</p>
+                <p className="text-2xl font-bold" data-testid="text-kpi-ferias">{kpiCounts.onLeave}</p>
                 <p className="text-xs text-muted-foreground">Férias</p>
               </div>
             </CardContent>
@@ -501,14 +501,14 @@ export default function HR() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <Input
                   placeholder="Buscar por nome, e-mail, cargo, CPF..."
-                  value={funcSearch}
-                  onChange={(e) => setFuncSearch(e.target.value)}
+                  value={employeeSearch}
+                  onChange={(e) => setEmployeeSearch(e.target.value)}
                   className="h-8 pl-9 text-sm bg-card border-border"
                   data-testid="input-search-funcionarios"
                 />
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <Select value={funcStatusFilter} onValueChange={setFuncStatusFilter}>
+                <Select value={employeeStatusFilter} onValueChange={setEmployeeStatusFilter}>
                   <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-filter-status-func">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
@@ -521,7 +521,7 @@ export default function HR() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Select value={funcSetorFilter} onValueChange={setFuncSetorFilter}>
+                <Select value={employeeDepartmentFilter} onValueChange={setEmployeeDepartmentFilter}>
                   <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-filter-setor">
                     <SelectValue placeholder="Setor" />
                   </SelectTrigger>
@@ -539,8 +539,8 @@ export default function HR() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center mt-4">
               {/* Date picker — always immediately to the left of the search */}
               <MonthPickerField
-                value={folhaMesFilter}
-                onChange={setFolhaMesFilter}
+                value={payrollMonthFilter}
+                onChange={setPayrollMonthFilter}
                 placeholder="Filtrar por mês"
                 className="w-[160px] h-8 text-sm bg-card border-border shrink-0"
                 data-testid="monthpicker-filter-mes-folha"
@@ -549,13 +549,13 @@ export default function HR() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <Input
                   placeholder="Buscar por funcionário ou mês..."
-                  value={folhaSearch}
-                  onChange={(e) => setFolhaSearch(e.target.value)}
+                  value={payrollSearch}
+                  onChange={(e) => setPayrollSearch(e.target.value)}
                   className="h-8 pl-9 text-sm bg-card border-border"
                   data-testid="input-search-folha"
                 />
               </div>
-              <Select value={folhaStatusFilter} onValueChange={setFolhaStatusFilter}>
+              <Select value={payrollStatusFilter} onValueChange={setPayrollStatusFilter}>
                 <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border shrink-0" data-testid="select-filter-status-folha">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
@@ -576,14 +576,14 @@ export default function HR() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <Input
                   placeholder="Buscar por funcionário ou tipo..."
-                  value={feriasSearch}
-                  onChange={(e) => setFeriasSearch(e.target.value)}
+                  value={leaveSearch}
+                  onChange={(e) => setLeaveSearch(e.target.value)}
                   className="h-8 pl-9 text-sm bg-card border-border"
                   data-testid="input-search-ferias"
                 />
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <Select value={feriasStatusFilter} onValueChange={setFeriasStatusFilter}>
+                <Select value={leaveStatusFilter} onValueChange={setLeaveStatusFilter}>
                   <SelectTrigger className="w-auto min-w-[140px] h-8 text-sm bg-card border-border" data-testid="select-filter-status-ferias">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
@@ -602,8 +602,8 @@ export default function HR() {
 
           <TabsContent value="funcionarios" className="mt-6 space-y-6">
             {filteredEmployees.length === 0 ? (
-              funcPageError && funcTotal === 0 ? (
-                <UnavailableState onRetry={() => refetchFuncPage()} />
+              employeePageError && employeeTotal === 0 ? (
+                <UnavailableState onRetry={() => refetchEmployeePage()} />
               ) : (
                 <EmptyState
                   icon={Users}
@@ -611,7 +611,7 @@ export default function HR() {
                   description="Adicione seu primeiro funcionário para começar a gerenciar a equipe."
                   action={{
                     label: "Novo Funcionário",
-                    onClick: () => setFuncFormModal({ open: true, mode: "create" }),
+                    onClick: () => setEmployeeFormModal({ open: true, mode: "create" }),
                   }}
                 />
               )
@@ -621,23 +621,23 @@ export default function HR() {
               <CardContent className="pt-0">
               <ListSectionHeader
                 title="Lista de Funcionários"
-                count={funcTotal}
+                count={employeeTotal}
                 description="Acompanhe funcionários, cargos, setores, vínculo, salário, status e usuário associado."
                 action={
                   <div className="flex flex-wrap items-center justify-end gap-3">
                     <Checkbox
-                      checked={selectedFuncIds.length === filteredEmployees.length && filteredEmployees.length > 0}
+                      checked={selectedEmployeeIds.length === filteredEmployees.length && filteredEmployees.length > 0}
                       onCheckedChange={toggleSelectAllFuncs}
                       data-testid="checkbox-select-all-funcs"
                       aria-label="Selecionar todos"
                     />
                     <span className="text-xs text-muted-foreground">
-                      {selectedFuncIds.length > 0 ? `${selectedFuncIds.length} selecionado(s)` : "Selecionar todos"}
+                      {selectedEmployeeIds.length > 0 ? `${selectedEmployeeIds.length} selecionado(s)` : "Selecionar todos"}
                     </span>
-                    {selectedFuncIds.length > 0 && (
+                    {selectedEmployeeIds.length > 0 && (
                       <Button variant="destructive" size="sm" className="gap-1 h-7 text-xs" onClick={handleBulkDeleteFuncs} data-testid="button-bulk-delete-funcs">
                         <Trash2 className="h-3.5 w-3.5" />
-                        Excluir ({selectedFuncIds.length})
+                        Excluir ({selectedEmployeeIds.length})
                       </Button>
                     )}
                   </div>
@@ -659,10 +659,10 @@ export default function HR() {
                 </TableHeader>
                 <TableBody>
                   {employeesPg.pageItems.map((f) => (
-                    <TableRow key={f.id} data-testid={`row-funcionario-${f.id}`} className={selectedFuncIds.includes(f.id) ? "bg-muted/20" : ""}>
+                    <TableRow key={f.id} data-testid={`row-funcionario-${f.id}`} className={selectedEmployeeIds.includes(f.id) ? "bg-muted/20" : ""}>
                       <TableCell>
                         <Checkbox
-                          checked={selectedFuncIds.includes(f.id)}
+                          checked={selectedEmployeeIds.includes(f.id)}
                           onCheckedChange={() => toggleSelectFunc(f.id)}
                           data-testid={`checkbox-funcionario-${f.id}`}
                           aria-label={`Selecionar ${f.name}`}
@@ -694,13 +694,13 @@ export default function HR() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setFuncFormModal({ open: true, mode: "view", funcionario: f })} data-testid={`button-view-func-${f.id}`}>
+                            <DropdownMenuItem onClick={() => setEmployeeFormModal({ open: true, mode: "view", employee: f })} data-testid={`button-view-func-${f.id}`}>
                               <Eye className="mr-2 h-4 w-4" /> Visualizar
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setFuncFormModal({ open: true, mode: "edit", funcionario: f })} data-testid={`button-edit-func-${f.id}`}>
+                            <DropdownMenuItem onClick={() => setEmployeeFormModal({ open: true, mode: "edit", employee: f })} data-testid={`button-edit-func-${f.id}`}>
                               <Pencil className="mr-2 h-4 w-4" /> Editar
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive" onClick={() => setFuncDeleteModal({ open: true, funcionario: f })} data-testid={`button-delete-func-${f.id}`}>
+                            <DropdownMenuItem className="text-destructive" onClick={() => setEmployeeDeleteModal({ open: true, employee: f })} data-testid={`button-delete-func-${f.id}`}>
                               <Trash2 className="mr-2 h-4 w-4" /> Excluir
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -725,13 +725,13 @@ export default function HR() {
           </TabsContent>
 
           <TabsContent value="folha" className="mt-6 space-y-6">
-            {isLoadingFolhaPage ? (
+            {isLoadingPayrollPage ? (
               <div className="flex items-center justify-center h-32">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : filteredPayroll.length === 0 ? (
-              folhaPageError && folhaTotal === 0 ? (
-                <UnavailableState onRetry={() => refetchFolhaPage()} />
+              payrollPageError && totalPayroll === 0 ? (
+                <UnavailableState onRetry={() => refetchPayrollPage()} />
               ) : (
                 <EmptyState
                   icon={DollarSign}
@@ -739,7 +739,7 @@ export default function HR() {
                   description="Adicione registros de folha de pagamento para controlar os salários."
                   action={{
                     label: "Novo Registro",
-                    onClick: () => setFolhaFormModal({ open: true, mode: "create" }),
+                    onClick: () => setPayrollFormModal({ open: true, mode: "create" }),
                   }}
                 />
               )
@@ -749,16 +749,16 @@ export default function HR() {
               <CardContent className="pt-0">
               <ListSectionHeader
                 title="Folha de Pagamento"
-                count={folhaTotal}
+                count={totalPayroll}
                 action={
                   <div className="flex flex-wrap items-center justify-end gap-3">
-                    {selectedFolhaIds.length > 0 && (
+                    {selectedPayrollIds.length > 0 && (
                       <Button
                         type="button"
                         variant="destructive"
                         size="sm"
                         className="h-8 text-xs gap-1.5"
-                        onClick={() => setFolhaBulkDeleteModal({ open: true, ids: filteredPayroll.filter((fp) => selectedFolhaIds.includes(fp.id)).map((fp) => fp.id) })}
+                        onClick={() => setPayrollBulkDeleteModal({ open: true, ids: filteredPayroll.filter((fp) => selectedPayrollIds.includes(fp.id)).map((fp) => fp.id) })}
                         data-testid="button-delete-selected-folha"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -766,13 +766,13 @@ export default function HR() {
                       </Button>
                     )}
                     <Checkbox
-                      checked={filteredPayroll.length > 0 && filteredPayroll.every((fp) => selectedFolhaIds.includes(fp.id))}
+                      checked={filteredPayroll.length > 0 && filteredPayroll.every((fp) => selectedPayrollIds.includes(fp.id))}
                       onCheckedChange={toggleSelectAllPayroll}
                       aria-label="Selecionar todos os registros de pagamento"
                       data-testid="checkbox-select-all-folha"
                     />
                     <span className="text-xs text-muted-foreground">
-                      {selectedFolhaIds.length > 0 ? `${filteredPayroll.filter((fp) => selectedFolhaIds.includes(fp.id)).length} selecionado(s)` : "Selecionar todos"}
+                      {selectedPayrollIds.length > 0 ? `${filteredPayroll.filter((fp) => selectedPayrollIds.includes(fp.id)).length} selecionado(s)` : "Selecionar todos"}
                     </span>
                   </div>
                 }
@@ -798,7 +798,7 @@ export default function HR() {
                     <TableRow key={fp.id} data-testid={`row-folha-${fp.id}`}>
                       <TableCell>
                         <Checkbox
-                          checked={selectedFolhaIds.includes(fp.id)}
+                          checked={selectedPayrollIds.includes(fp.id)}
                           onCheckedChange={() => toggleSelectPayroll(fp.id)}
                           aria-label={`Selecionar registro de pagamento ${fp.id}`}
                           data-testid={`checkbox-folha-${fp.id}`}
@@ -830,13 +830,13 @@ export default function HR() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setFolhaFormModal({ open: true, mode: "view", registro: fp })} data-testid={`button-view-folha-${fp.id}`}>
+                            <DropdownMenuItem onClick={() => setPayrollFormModal({ open: true, mode: "view", record: fp })} data-testid={`button-view-folha-${fp.id}`}>
                               <Eye className="mr-2 h-4 w-4" /> Visualizar
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setFolhaFormModal({ open: true, mode: "edit", registro: fp })} data-testid={`button-edit-folha-${fp.id}`}>
+                            <DropdownMenuItem onClick={() => setPayrollFormModal({ open: true, mode: "edit", record: fp })} data-testid={`button-edit-folha-${fp.id}`}>
                               <Pencil className="mr-2 h-4 w-4" /> Editar
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive" onClick={() => setFolhaDeleteModal({ open: true, registro: fp })} data-testid={`button-delete-folha-${fp.id}`}>
+                            <DropdownMenuItem className="text-destructive" onClick={() => setPayrollDeleteModal({ open: true, record: fp })} data-testid={`button-delete-folha-${fp.id}`}>
                               <Trash2 className="mr-2 h-4 w-4" /> Excluir
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -861,13 +861,13 @@ export default function HR() {
           </TabsContent>
 
           <TabsContent value="ferias" className="mt-6 space-y-6">
-            {isLoadingFeriasPage ? (
+            {isLoadingLeavePage ? (
               <div className="flex items-center justify-center h-32">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : filteredLeave.length === 0 ? (
-              feriasPageError && feriasTotal === 0 ? (
-                <UnavailableState onRetry={() => refetchFeriasPage()} />
+              leavePageError && totalLeave === 0 ? (
+                <UnavailableState onRetry={() => refetchLeavePage()} />
               ) : (
                 <EmptyState
                   icon={CalendarDays}
@@ -875,7 +875,7 @@ export default function HR() {
                   description="Registre férias e ausências dos funcionários aqui."
                   action={{
                     label: "Nova Ausência",
-                    onClick: () => setFeriasFormModal({ open: true, mode: "create" }),
+                    onClick: () => setLeaveFormModal({ open: true, mode: "create" }),
                   }}
                 />
               )
@@ -885,16 +885,16 @@ export default function HR() {
               <CardContent className="pt-0">
               <ListSectionHeader
                 title="Férias e Ausências"
-                count={feriasTotal}
+                count={totalLeave}
                 action={
                   <div className="flex flex-wrap items-center justify-end gap-3">
-                    {selectedFeriasIds.length > 0 && (
+                    {selectedLeaveIds.length > 0 && (
                       <Button
                         type="button"
                         variant="destructive"
                         size="sm"
                         className="h-8 text-xs gap-1.5"
-                        onClick={() => setFeriasBulkDeleteModal({ open: true, ids: filteredLeave.filter((fa) => selectedFeriasIds.includes(fa.id)).map((fa) => fa.id) })}
+                        onClick={() => setLeaveBulkDeleteModal({ open: true, ids: filteredLeave.filter((fa) => selectedLeaveIds.includes(fa.id)).map((fa) => fa.id) })}
                         data-testid="button-delete-selected-ferias"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -902,13 +902,13 @@ export default function HR() {
                       </Button>
                     )}
                     <Checkbox
-                      checked={filteredLeave.length > 0 && filteredLeave.every((fa) => selectedFeriasIds.includes(fa.id))}
+                      checked={filteredLeave.length > 0 && filteredLeave.every((fa) => selectedLeaveIds.includes(fa.id))}
                       onCheckedChange={toggleSelectAllLeave}
                       aria-label="Selecionar todos os registros de férias"
                       data-testid="checkbox-select-all-ferias"
                     />
                     <span className="text-xs text-muted-foreground">
-                      {selectedFeriasIds.length > 0 ? `${filteredLeave.filter((fa) => selectedFeriasIds.includes(fa.id)).length} selecionado(s)` : "Selecionar todos"}
+                      {selectedLeaveIds.length > 0 ? `${filteredLeave.filter((fa) => selectedLeaveIds.includes(fa.id)).length} selecionado(s)` : "Selecionar todos"}
                     </span>
                   </div>
                 }
@@ -932,7 +932,7 @@ export default function HR() {
                     <TableRow key={fa.id} data-testid={`row-ferias-${fa.id}`}>
                       <TableCell>
                         <Checkbox
-                          checked={selectedFeriasIds.includes(fa.id)}
+                          checked={selectedLeaveIds.includes(fa.id)}
                           onCheckedChange={() => toggleSelectLeave(fa.id)}
                           aria-label={`Selecionar registro de férias ${fa.id}`}
                           data-testid={`checkbox-ferias-${fa.id}`}
@@ -969,13 +969,13 @@ export default function HR() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => setFeriasFormModal({ open: true, mode: "view", ausencia: fa })} data-testid={`button-view-ferias-${fa.id}`}>
+                              <DropdownMenuItem onClick={() => setLeaveFormModal({ open: true, mode: "view", ausencia: fa })} data-testid={`button-view-ferias-${fa.id}`}>
                                 <Eye className="mr-2 h-4 w-4" /> Visualizar
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => setFeriasFormModal({ open: true, mode: "edit", ausencia: fa })} data-testid={`button-edit-ferias-${fa.id}`}>
+                              <DropdownMenuItem onClick={() => setLeaveFormModal({ open: true, mode: "edit", ausencia: fa })} data-testid={`button-edit-ferias-${fa.id}`}>
                                 <Pencil className="mr-2 h-4 w-4" /> Editar
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="text-destructive" onClick={() => setFeriasDeleteModal({ open: true, ausencia: fa })} data-testid={`button-delete-ferias-${fa.id}`}>
+                              <DropdownMenuItem className="text-destructive" onClick={() => setLeaveDeleteModal({ open: true, ausencia: fa })} data-testid={`button-delete-ferias-${fa.id}`}>
                                 <Trash2 className="mr-2 h-4 w-4" /> Excluir
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -1006,8 +1006,8 @@ export default function HR() {
                 <div className="w-[250px]">
                   <AsyncEntityCombobox<Employee>
                     table="funcionarios"
-                    value={docFuncionarioId || null}
-                    onChange={(id) => setDocFuncionarioId(id || "")}
+                    value={docEmployeeId || null}
+                    onChange={(id) => setDocEmployeeId(id || "")}
                     getLabel={(f) => f.name ?? ""}
                     placeholder="Selecione um funcionário"
                     searchPlaceholder="Buscar por nome…"
@@ -1018,7 +1018,7 @@ export default function HR() {
               </div>
             </div>
 
-            {!docFuncionarioId ? (
+            {!docEmployeeId ? (
               <EmptyState
                 icon={FileText}
                 title="Selecione um funcionário"
@@ -1032,7 +1032,7 @@ export default function HR() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Tipo de Documento</Label>
-                        <Select value={docTipoDocumento} onValueChange={setDocTipoDocumento}>
+                        <Select value={docType} onValueChange={setDocType}>
                           <SelectTrigger data-testid="select-type-documento">
                             <SelectValue placeholder="Selecione o tipo" />
                           </SelectTrigger>
@@ -1047,8 +1047,8 @@ export default function HR() {
                         <Label>Descrição</Label>
                         <Input
                           placeholder="Descrição opcional do documento"
-                          value={docDescricao}
-                          onChange={(e) => setDocDescricao(e.target.value)}
+                          value={docDescription}
+                          onChange={(e) => setDocDescription(e.target.value)}
                           data-testid="input-doc-descricao"
                         />
                       </div>
@@ -1112,7 +1112,7 @@ export default function HR() {
                                 variant="ghost"
                                 size="icon"
                                 className="text-destructive"
-                                onClick={() => setDocDeleteModal({ open: true, documento: doc })}
+                                onClick={() => setDocDeleteModal({ open: true, document: doc })}
                                 data-testid={`button-delete-doc-${doc.id}`}
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -1137,79 +1137,79 @@ export default function HR() {
           (Task C): EmployeeFormModal calls useEmployees() again only
           for the mutations, the same query as loadingFuncionarios above. */}
       <EmployeeFormModal
-        open={funcFormModal.open && funcFormModal.mode !== "view"}
-        onOpenChange={(open) => setFuncFormModal({ ...funcFormModal, open })}
-        funcionario={funcFormModal.funcionario}
-        mode={funcFormModal.mode}
+        open={employeeFormModal.open && employeeFormModal.mode !== "view"}
+        onOpenChange={(open) => setEmployeeFormModal({ ...employeeFormModal, open })}
+        employee={employeeFormModal.employee}
+        mode={employeeFormModal.mode}
       />
       <EmployeeViewModal
-        open={funcFormModal.open && funcFormModal.mode === "view"}
-        onOpenChange={(open) => setFuncFormModal({ ...funcFormModal, open })}
-        funcionario={funcFormModal.funcionario}
+        open={employeeFormModal.open && employeeFormModal.mode === "view"}
+        onOpenChange={(open) => setEmployeeFormModal({ ...employeeFormModal, open })}
+        employee={employeeFormModal.employee}
       />
 
       <PayrollFormModal
-        open={folhaFormModal.open && folhaFormModal.mode !== "view"}
-        onOpenChange={(open) => setFolhaFormModal({ ...folhaFormModal, open })}
-        registro={folhaFormModal.registro}
-        mode={folhaFormModal.mode}
+        open={payrollFormModal.open && payrollFormModal.mode !== "view"}
+        onOpenChange={(open) => setPayrollFormModal({ ...payrollFormModal, open })}
+        record={payrollFormModal.record}
+        mode={payrollFormModal.mode}
       />
       <PayrollViewModal
-        open={folhaFormModal.open && folhaFormModal.mode === "view"}
-        onOpenChange={(open) => setFolhaFormModal({ ...folhaFormModal, open })}
-        registro={folhaFormModal.registro}
+        open={payrollFormModal.open && payrollFormModal.mode === "view"}
+        onOpenChange={(open) => setPayrollFormModal({ ...payrollFormModal, open })}
+        record={payrollFormModal.record}
       />
 
       <LeaveRequestFormModal
-        open={feriasFormModal.open && feriasFormModal.mode !== "view"}
-        onOpenChange={(open) => setFeriasFormModal({ ...feriasFormModal, open })}
-        ausencia={feriasFormModal.ausencia}
-        mode={feriasFormModal.mode}
+        open={leaveFormModal.open && leaveFormModal.mode !== "view"}
+        onOpenChange={(open) => setLeaveFormModal({ ...leaveFormModal, open })}
+        ausencia={leaveFormModal.ausencia}
+        mode={leaveFormModal.mode}
       />
       <LeaveRequestViewModal
-        open={feriasFormModal.open && feriasFormModal.mode === "view"}
-        onOpenChange={(open) => setFeriasFormModal({ ...feriasFormModal, open })}
-        ausencia={feriasFormModal.ausencia}
+        open={leaveFormModal.open && leaveFormModal.mode === "view"}
+        onOpenChange={(open) => setLeaveFormModal({ ...leaveFormModal, open })}
+        ausencia={leaveFormModal.ausencia}
       />
 
       <DeleteConfirmModal
-        open={funcDeleteModal.open}
-        onOpenChange={(open) => setFuncDeleteModal({ ...funcDeleteModal, open })}
+        open={employeeDeleteModal.open}
+        onOpenChange={(open) => setEmployeeDeleteModal({ ...employeeDeleteModal, open })}
         onConfirm={handleDeleteEmployee}
         title="Excluir Funcionário"
-        description={`Tem certeza que deseja excluir "${funcDeleteModal.funcionario?.name}"? Esta ação não pode ser desfeita.`}
+        description={`Tem certeza que deseja excluir "${employeeDeleteModal.employee?.name}"? Esta ação não pode ser desfeita.`}
       />
 
       <DeleteConfirmModal
-        open={folhaDeleteModal.open}
-        onOpenChange={(open) => setFolhaDeleteModal({ ...folhaDeleteModal, open })}
+        open={payrollDeleteModal.open}
+        onOpenChange={(open) => setPayrollDeleteModal({ ...payrollDeleteModal, open })}
         onConfirm={handleDeletePayroll}
         title="Excluir Registro de Pagamento"
         description="Tem certeza que deseja excluir este registro de pagamento? Esta ação não pode ser desfeita."
       />
 
       <DeleteConfirmModal
-        open={feriasDeleteModal.open}
-        onOpenChange={(open) => setFeriasDeleteModal({ ...feriasDeleteModal, open })}
+        open={leaveDeleteModal.open}
+        onOpenChange={(open) => setLeaveDeleteModal({ ...leaveDeleteModal, open })}
         onConfirm={handleDeleteLeave}
         title="Excluir Registro de Ausência"
         description="Tem certeza que deseja excluir este registro de férias/ausência? Esta ação não pode ser desfeita."
       />
 
       <DeleteConfirmModal
-        open={folhaBulkDeleteModal.open}
-        onOpenChange={(open) => setFolhaBulkDeleteModal({ ...folhaBulkDeleteModal, open })}
+        open={payrollBulkDeleteModal.open}
+        onOpenChange={(open) => setPayrollBulkDeleteModal({ ...payrollBulkDeleteModal, open })}
         onConfirm={handleBulkDeletePayroll}
         title="Excluir registros de pagamento"
-        description={`Tem certeza que deseja excluir ${folhaBulkDeleteModal.ids.length} registro(s) selecionado(s)? Esta ação não pode ser desfeita.`}
+        description={`Tem certeza que deseja excluir ${payrollBulkDeleteModal.ids.length} registro(s) selecionado(s)? Esta ação não pode ser desfeita.`}
       />
 
       <DeleteConfirmModal
-        open={feriasBulkDeleteModal.open}
-        onOpenChange={(open) => setFeriasBulkDeleteModal({ ...feriasBulkDeleteModal, open })}
+        open={leaveBulkDeleteModal.open}
+        onOpenChange={(open) => setLeaveBulkDeleteModal({ ...leaveBulkDeleteModal, open })}
         onConfirm={handleBulkDeleteLeave}
         title="Excluir registros de férias e ausências"
-        description={`Tem certeza que deseja excluir ${feriasBulkDeleteModal.ids.length} registro(s) selecionado(s)? Esta ação não pode ser desfeita.`}
+        description={`Tem certeza que deseja excluir ${leaveBulkDeleteModal.ids.length} registro(s) selecionado(s)? Esta ação não pode ser desfeita.`}
       />
 
       <DeleteConfirmModal
@@ -1217,7 +1217,7 @@ export default function HR() {
         onOpenChange={(open) => setDocDeleteModal({ ...docDeleteModal, open })}
         onConfirm={handleDeleteDocument}
         title="Excluir Documento"
-        description={`Tem certeza que deseja excluir o documento "${docDeleteModal.documento?.nome_arquivo}"? Esta ação não pode ser desfeita.`}
+        description={`Tem certeza que deseja excluir o documento "${docDeleteModal.document?.nome_arquivo}"? Esta ação não pode ser desfeita.`}
       />
     </>
     </FeatureGate>

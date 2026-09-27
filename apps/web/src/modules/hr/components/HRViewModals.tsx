@@ -88,38 +88,38 @@ function ViewShell({
 export function EmployeeViewModal({
   open,
   onOpenChange,
-  funcionario,
+  employee,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  funcionario?: Employee | null;
+  employee?: Employee | null;
 }) {
-  if (!funcionario) return null;
+  if (!employee) return null;
   return (
     <ViewShell
       open={open}
       onOpenChange={onOpenChange}
-      title={funcionario.name || "Funcionário"}
+      title={employee.name || "Funcionário"}
       description="Detalhes do funcionário"
     >
       <Section title="Dados Pessoais">
-        <Row label="Nome completo" value={funcionario.name} />
-        <Row label="CPF" value={funcionario.cpf} />
-        <Row label="E-mail" value={funcionario.email} />
-        <Row label="Telefone" value={funcionario.telefone} />
+        <Row label="Nome completo" value={employee.name} />
+        <Row label="CPF" value={employee.cpf} />
+        <Row label="E-mail" value={employee.email} />
+        <Row label="Telefone" value={employee.telefone} />
       </Section>
       <Section title="Dados Profissionais">
-        <Row label="Cargo" value={funcionario.cargo} />
-        <Row label="Setor" value={humanize(funcionario.departamento)} />
-        <Row label="Tipo de contrato" value={humanize(funcionario.tipo_contrato as string)} />
-        <Row label="Data de admissão" value={formatDateDashes(funcionario.data_admissao)} />
-        <Row label="Salário base" value={<span className={getMonetarySemanticClass("neutral")}>{formatCurrency(funcionario.salario != null ? Number(funcionario.salario) : null)}</span>} />
+        <Row label="Cargo" value={employee.cargo} />
+        <Row label="Setor" value={humanize(employee.departamento)} />
+        <Row label="Tipo de contrato" value={humanize(employee.tipo_contrato as string)} />
+        <Row label="Data de admissão" value={formatDateDashes(employee.data_admissao)} />
+        <Row label="Salário base" value={<span className={getMonetarySemanticClass("neutral")}>{formatCurrency(employee.salario != null ? Number(employee.salario) : null)}</span>} />
         <Row
           label="Status"
           value={
-            funcionario.status ? (
-              <Badge variant={funcionario.status === "active" ? "success" : "neutral"}>
-                {humanize(funcionario.status as string)}
+            employee.status ? (
+              <Badge variant={employee.status === "active" ? "success" : "neutral"}>
+                {humanize(employee.status as string)}
               </Badge>
             ) : (
               "—"
@@ -127,9 +127,9 @@ export function EmployeeViewModal({
           }
         />
       </Section>
-      {funcionario.observacoes ? (
+      {employee.observacoes ? (
         <Section title="Observações">
-          <Row label="Observações" value={funcionario.observacoes} full />
+          <Row label="Observações" value={employee.observacoes} full />
         </Section>
       ) : null}
     </ViewShell>
@@ -141,39 +141,39 @@ export function EmployeeViewModal({
 export function PayrollViewModal({
   open,
   onOpenChange,
-  registro,
+  record,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  registro?: PayrollEntry | null;
+  record?: PayrollEntry | null;
 }) {
-  const { entity: funcionario } = useEntityById<Employee>("funcionarios", registro?.funcionario_id);
-  if (!registro) return null;
+  const { entity: employee } = useEntityById<Employee>("funcionarios", record?.funcionario_id);
+  if (!record) return null;
   return (
     <ViewShell
       open={open}
       onOpenChange={onOpenChange}
       title="Registro de Folha de Pagamento"
-      description={registro.periodo || registro.mes_referencia || "Detalhes do pagamento"}
+      description={record.periodo || record.mes_referencia || "Detalhes do pagamento"}
     >
       <Section title="Identificação">
-        <Row label="Funcionário" value={funcionario?.name} />
-        <Row label="Período" value={registro.periodo || registro.mes_referencia} />
+        <Row label="Funcionário" value={employee?.name} />
+        <Row label="Período" value={record.periodo || record.mes_referencia} />
       </Section>
       <Section title="Valores">
-        <Row label="Salário bruto" value={<span className={getMonetarySemanticClass("neutral")}>{formatCurrency(registro.salario_bruto)}</span>} />
-        <Row label="Descontos" value={<span className={getMonetarySemanticClass("negative")}>{formatCurrency(-Number(registro.descontos || 0))}</span>} />
-        <Row label="Bônus" value={<span className={getMonetarySemanticClass("neutral")}>{formatCurrency(registro.bonus)}</span>} />
-        <Row label="Salário líquido" value={<span className={getMonetarySemanticClass("neutral")}>{formatCurrency(registro.salario_liquido)}</span>} />
+        <Row label="Salário bruto" value={<span className={getMonetarySemanticClass("neutral")}>{formatCurrency(record.salario_bruto)}</span>} />
+        <Row label="Descontos" value={<span className={getMonetarySemanticClass("negative")}>{formatCurrency(-Number(record.descontos || 0))}</span>} />
+        <Row label="Bônus" value={<span className={getMonetarySemanticClass("neutral")}>{formatCurrency(record.bonus)}</span>} />
+        <Row label="Salário líquido" value={<span className={getMonetarySemanticClass("neutral")}>{formatCurrency(record.salario_liquido)}</span>} />
       </Section>
       <Section title="Pagamento">
-        <Row label="Data de pagamento" value={formatDateDashes(registro.data_pagamento)} />
+        <Row label="Data de pagamento" value={formatDateDashes(record.data_pagamento)} />
         <Row
           label="Status"
           value={
-            registro.status ? (
-              <Badge variant={registro.status === "paid" ? "success" : registro.status === "cancelled" ? "danger" : "warning"}>
-                {humanize(registro.status)}
+            record.status ? (
+              <Badge variant={record.status === "paid" ? "success" : record.status === "cancelled" ? "danger" : "warning"}>
+                {humanize(record.status)}
               </Badge>
             ) : (
               "—"
@@ -181,9 +181,9 @@ export function PayrollViewModal({
           }
         />
       </Section>
-      {registro.observacoes ? (
+      {record.observacoes ? (
         <Section title="Observações">
-          <Row label="Observações" value={registro.observacoes} full />
+          <Row label="Observações" value={record.observacoes} full />
         </Section>
       ) : null}
     </ViewShell>
@@ -201,7 +201,7 @@ export function LeaveRequestViewModal({
   onOpenChange: (open: boolean) => void;
   ausencia?: LeaveRequest | null;
 }) {
-  const { entity: funcionario } = useEntityById<Employee>("funcionarios", ausencia?.funcionario_id);
+  const { entity: employee } = useEntityById<Employee>("funcionarios", ausencia?.funcionario_id);
   if (!ausencia) return null;
   return (
     <ViewShell
@@ -211,7 +211,7 @@ export function LeaveRequestViewModal({
       description={humanize(ausencia.type as string)}
     >
       <Section title="Identificação">
-        <Row label="Funcionário" value={funcionario?.name} />
+        <Row label="Funcionário" value={employee?.name} />
         <Row label="Tipo" value={humanize(ausencia.type as string)} />
       </Section>
       <Section title="Período">
