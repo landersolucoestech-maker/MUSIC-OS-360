@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 /**
- * Parte 77 — em módulo próprio (sem depender de Auth.tsx, que puxa toda a
- * árvore de UI/env) para ser testável isoladamente. A senha NUNCA recebe
- * trim/lowercase/normalização — só o e-mail é normalizado (trim aqui;
- * lowercase acontece depois, em AuthContext.signIn via normalizeEmail()).
+ * Part 77 — in its own module (without depending on Auth.tsx, which pulls the whole
+ * UI/env tree) so it can be tested in isolation. The password NEVER gets
+ * trim/lowercase/normalization — only the e-mail is normalized (trim here;
+ * lowercase happens later, in AuthContext.signIn via normalizeEmail()).
  */
 export const loginSchema = z.object({
   email: z.string().trim().email("E-mail inválido"),

@@ -34,9 +34,9 @@ export interface MusicaInfo {
 }
 
 /**
- * musicas[] normalizada em project_tracks (migration 20260718000013) — a API
- * já retorna o array hidratado em `projeto.musicas`. `descricao` voltou a ser
- * texto livre puro e não é mais usada como origem das músicas.
+ * musicas[] normalized into project_tracks (migration 20260718000013) — the API
+ * already returns the hydrated array in `projeto.musicas`. `descricao` is again
+ * pure free text and is no longer used as the source of the songs.
  */
 export function parseMusicasFromProjeto(projeto: { musicas?: MusicaData[] } | null | undefined): MusicaData[] {
   return Array.isArray(projeto?.musicas) ? projeto!.musicas! : [];

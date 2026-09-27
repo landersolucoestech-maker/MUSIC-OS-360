@@ -1,12 +1,12 @@
 /**
  * ProjectFormModal.audio-upload.guard.test.ts
  *
- * Guarda permanente (Task T — continuidade): `uploadFile` era um stub que
- * sempre retornava `null` — o upload de áudio por música nunca enviava nada
- * a lugar nenhum, mas exibia "Arquivo de áudio carregado localmente." como
- * se tivesse funcionado (falso-sucesso). `musica.audioUrl` nunca era
- * preenchido, então mesmo salvando o projeto o áudio se perdia. Este teste
- * falha se o stub voltar (ou se o real upload via R2 for removido).
+ * Permanent guard (Task T — continuity): `uploadFile` was a stub that
+ * always returned `null` — the per-song audio upload never sent anything
+ * anywhere, but showed "Arquivo de áudio carregado localmente." as
+ * if it had worked (false success). `musica.audioUrl` was never
+ * filled, so even after saving the project the audio was lost. This test
+ * fails if the stub comes back (or if the real R2 upload is removed).
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

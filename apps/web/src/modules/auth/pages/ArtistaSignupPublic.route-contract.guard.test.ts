@@ -1,15 +1,15 @@
 /**
  * ArtistaSignupPublic.route-contract.guard.test.ts
  *
- * Guarda permanente: o formulário público de cadastro de artista (Artist
- * Public Form — canal oficial de captação, decisão de produto 2026-08-22)
- * chamava POST /public/artists, uma rota que nunca existiu no backend (o
- * real é /public/artist-registration, LeadsController/
- * public-registration.controller.ts) — todo envio real retornava 404. Além
- * disso o payload usava nomes de campo pt-BR (nome_artistico, nome_civil...)
- * incompatíveis com PublicArtistRegistrationDto (artistName/artisticName/
- * fullName/email — camelCase). Este teste falha se qualquer uma das duas
- * regressões voltar.
+ * Permanent guard: the public artist registration form (Artist
+ * Public Form — official intake channel, product decision 2026-08-22)
+ * called POST /public/artists, a route that never existed on the backend (the
+ * real one is /public/artist-registration, LeadsController/
+ * public-registration.controller.ts) — every real submission returned 404. Also,
+ * the payload used pt-BR field names (nome_artistico, nome_civil...)
+ * incompatible with PublicArtistRegistrationDto (artistName/artisticName/
+ * fullName/email — camelCase). This test fails if either of the two
+ * regressions comes back.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

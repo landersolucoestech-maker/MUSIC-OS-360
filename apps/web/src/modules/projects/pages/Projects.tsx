@@ -32,10 +32,10 @@ import { storage } from "@/shared/lib/storage";
 import type { ProjectWithRelationsExtended } from "@/modules/projects/types/projects-extensions";
 import { getFirstMusicaInfo, parseMusicasFromProjeto } from "@/modules/projects/lib/musica-helpers";
 
-// In mock mode (and over HTTP — /projects não faz join de artista) o
-// backend não devolve a relação `artistas` embutida. Injeta manualmente a
-// partir do id→artista map — usado tanto na lista completa (deep-link,
-// dropdown de gêneros) quanto na página atual vinda do backend.
+// In mock mode (and over HTTP — /projects does not join the artist) the
+// backend does not return the embedded `artistas` relation. Inject it manually
+// from the id→artist map — used both in the full list (deep link,
+// genre dropdown) and in the current page coming from the backend.
 function withArtista<T extends { artist_id?: string | null; artistas?: unknown }>(
   list: T[],
   artistasById: Record<string, any>,
@@ -48,14 +48,14 @@ function withArtista<T extends { artist_id?: string | null; artistas?: unknown }
 
 export default function Projects() {
   const navigate = useNavigate();
-  // Task J: lista completa (rawProjetos/useProjects() sem filtro) usada
-  // APENAS para popular o dropdown de gêneros — um caso de "valores
-  // distintos para filtro" ainda pendente de um endpoint dedicado
-  // (equivalente a /works/stats/generos), então continua sujeito ao cap de
-  // 50 do tenant nessa lista específica de opções; não afeta a tabela (Task
-  // H, paginada) nem a busca/filtro em si (server-side). Deep-link e o nome
-  // do artista por linha, que ERAM os riscos reais de dado incorreto/
-  // ausente, foram migrados abaixo para busca direta por ID.
+  // Task J: full list (rawProjetos/useProjects() without a filter) used
+  // ONLY to populate the genre dropdown — a "distinct values
+  // for a filter" case still pending a dedicated endpoint
+  // (equivalent to /works/stats/generos), so it is still subject to the
+  // tenant cap of 50 in this specific options list; it does not affect the table (Task
+  // H, paginated) nor the search/filter itself (server-side). The deep link and the
+  // per-row artist name, which WERE the real risks of wrong/
+  // missing data, were migrated below to a direct lookup by ID.
   const { projects: rawProjetos, isLoading, deleteProject: deleteProjeto } = useProjects();
 
   const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; projeto?: any }>({ open: false, mode: "create" });
@@ -73,8 +73,8 @@ export default function Projects() {
   const projectIdParam = searchParams.get("projeto");
 
   // Auto-open the view modal when arriving with ?projeto=:id (e.g. from an
-  // Obra link) — busca DIRETO por ID (GET /projects/:id), não depende do
-  // projeto estar entre os primeiros 50 carregados por useProjects() sem
+  // Work link) — fetches DIRECTLY by ID (GET /projects/:id), it does not depend on the
+  // project being among the first 50 loaded by useProjects() without
   // filtro (Task J).
   const { entity: deepLinkProjeto } = useEntityById<ProjectWithRelationsExtended>("projects", projectIdParam ?? undefined);
   useEffect(() => {
@@ -86,9 +86,9 @@ export default function Projects() {
   }, [searchParams, projectIdParam, deepLinkProjeto, setSearchParams]);
 
   // Canonical genre resolver: direct field wins; fallback to first track only.
-  // Usado só para popular o dropdown de gêneros (lista completa) — a
-  // filtragem em si agora acontece no backend, sobre a coluna `music_genre`
-  // direta (que já é o mesmo valor persistido como atalho na criação/edição,
+  // Used only to populate the genre dropdown (full list) — the
+  // filtering itself now happens on the backend, over the `music_genre`
+  // column directly (which is already the same value persisted as a shortcut on create/edit,
   // ver migration 20260719000005).
   const getProjetoGenero = (p: ProjectWithRelationsExtended): string => {
     if (p.music_genre) return (p.music_genre as string).trim().toLowerCase();
@@ -107,9 +107,9 @@ export default function Projects() {
 
   const debouncedSearch = useDebounce(searchTerm, 300);
 
-  // Task H: paginação real server-side — a página muda de request (nunca
-  // recorta uma lista já baixada), e volta pra página 0 quando um filtro
-  // muda (senão a página 5 de um filtro que só tem 2 páginas fica presa).
+  // Task H: real server-side pagination — the page changes the request (it never
+  // slices an already-downloaded list), and goes back to page 0 when a filter
+  // changes (otherwise page 5 of a filter that has only 2 pages gets stuck).
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   useEffect(() => { setPage(0); }, [debouncedSearch, statusFilter, artistaFilter, tipoFilter, generoFilter]);
@@ -130,10 +130,10 @@ export default function Projects() {
     genero: generoFilter !== "all" ? generoFilter : undefined,
   });
 
-  // Task J: nome do artista por linha, resolvido por ID direto (GET
-  // /artists/:id) só para os projetos da página atual — antes injetava a
-  // partir de useArtistas() sem filtro, truncado nos primeiros 50 artistas
-  // do tenant (silenciosamente ocultava o nome de qualquer artista além
+  // Task J: per-row artist name, resolved by direct ID (GET
+  // /artists/:id) only for the projects of the current page — previously it injected
+  // from useArtistas() without a filter, truncated to the first 50 artists
+  // of the tenant (silently hiding the name of any artist beyond
   // desse cap).
   const [resolvedArtistasMap, setResolvedArtistasMap] = useState<Record<string, Artist>>({});
   const pageArtistaIds = useMemo(
@@ -159,7 +159,7 @@ export default function Projects() {
     [pageItems, resolvedArtistasMap],
   );
 
-  // KPIs: contagem por status SOBRE O TENANT INTEIRO (não a página atual)
+  // KPIs: count per status OVER THE WHOLE TENANT (not the current page)
   // — GET /projects/stats, agregado no banco.
   const { stats: projetosStats } = useProjectsStats();
 
@@ -209,8 +209,8 @@ export default function Projects() {
     </RequirePermission>
   );
 
-  // Partição por status (bucket = status bruto, sem agrupamento) — cada
-  // projeto cai em exatamente um bucket vindo de GET /projects/stats.
+  // Partition by status (bucket = raw status, no grouping) — each
+  // project falls into exactly one bucket coming from GET /projects/stats.
   const tally = { in_progress: 0, completed: 0, planning: 0 };
   for (const [status, count] of Object.entries(projetosStats.byGroup)) {
     if (status in tally) tally[status as keyof typeof tally] += count;
@@ -262,9 +262,9 @@ export default function Projects() {
               <SelectItem value="planning">Planejamento</SelectItem>
             </SelectContent>
           </Select>
-          {/* Task J: busca server-side (AsyncEntityCombobox) — antes populava
-              o Select com useArtistas() sem filtro, truncado nos primeiros
-              50 artistas do tenant. */}
+          {/* Task J: server-side search (AsyncEntityCombobox) — previously it populated
+              the Select with useArtistas() without a filter, truncated to the first
+              50 artists of the tenant. */}
           <div className="flex items-center gap-1 shrink-0">
             <div className="h-8 w-[160px]">
               <AsyncEntityCombobox<Artist>
@@ -449,9 +449,9 @@ export default function Projects() {
     </MainLayout>
     )}
 
-      {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): ProjectFormModal chama useProjects() de novo só para
-          as mutations, a mesma query do isLoading acima. */}
+      {/* Outside the isLoading gate on purpose — same bug as /artistas
+          (Task C): ProjectFormModal calls useProjects() again only for
+          the mutations, the same query as the isLoading above. */}
       <ProjectFormModal key={formModal.mode === "create" ? "create" : (formModal.projeto?.id ?? "edit")} open={formModal.open} onOpenChange={(open) => setFormModal(prev => ({ ...prev, open }))} projeto={formModal.projeto} mode={formModal.mode} onConcluido={(id) => navigate(`/registro-musicas?newObra=${id}`)} />
       <ProjectViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} projeto={viewModal.projeto} />
       <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Projeto" description={`Tem certeza que deseja excluir o projeto "${deleteModal.projeto?.title}"?`} onConfirm={handleDelete} />

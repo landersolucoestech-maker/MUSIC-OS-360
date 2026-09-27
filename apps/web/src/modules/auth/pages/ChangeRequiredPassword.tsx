@@ -1,17 +1,17 @@
 /**
- * modules/auth/pages/ChangeRequiredPassword.tsx  (Parte 74)
+ * modules/auth/pages/ChangeRequiredPassword.tsx  (Part 74)
  *
- * Tela de troca OBRIGATÓRIA de senha do primeiro login (must_change_password
- * no app_metadata — ver MustChangePasswordGuard no backend). Diferente de
- * ResetPassword.tsx (fluxo de "esqueci minha senha" via magic link): aqui o
- * usuário já está autenticado (entrou com a senha provisória), mas o
- * backend bloqueia qualquer outra rota até a troca ser concluída.
+ * MANDATORY first-login password change screen (must_change_password
+ * in app_metadata — see MustChangePasswordGuard on the backend). Unlike
+ * ResetPassword.tsx ("forgot my password" flow via magic link): here the
+ * user is already authenticated (signed in with the temporary password), but the
+ * backend blocks every other route until the change is completed.
  *
- * Chama AuthContext.changeRequiredPassword(), que por sua vez chama
- * POST /auth/change-required-password — uma operação atômica no backend
- * (troca a senha de verdade no Supabase Auth E limpa a flag na mesma
- * chamada) — e depois renova a sessão para que o novo JWT (sem a flag)
- * chegue ao app.
+ * Calls AuthContext.changeRequiredPassword(), which in turn calls
+ * POST /auth/change-required-password — an atomic backend operation
+ * (really changes the password in Supabase Auth AND clears the flag in the same
+ * call) — and then refreshes the session so the new JWT (without the flag)
+ * reaches the app.
  */
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -49,7 +49,7 @@ export default function ChangeRequiredPassword() {
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (saving) return; // evita envio duplicado
+    if (saving) return; // prevents duplicate submission
     setErrorMessage(null);
 
     if (newPassword !== confirmPassword) {
@@ -66,7 +66,7 @@ export default function ChangeRequiredPassword() {
     try {
       const { error } = await changeRequiredPassword(newPassword, confirmPassword);
       if (error) {
-        // Mensagem já sanitizada pelo backend (nunca expõe detalhe interno) —
+        // Message already sanitized by the backend (never exposes internal detail) —
         // ver auth-password.service.ts / mapError() em api-client.ts.
         setErrorMessage(describeAuthError(error, "Não foi possível trocar a senha."));
         return;

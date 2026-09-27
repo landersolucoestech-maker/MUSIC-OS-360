@@ -16,9 +16,9 @@ export function useProjects(enabled = true, artistId?: string) {
     queryKey: artistId ? [...QUERY_KEYS.PROJECTS, "by-artist", artistId] : [...QUERY_KEYS.PROJECTS],
     table: "projects",
     enabled,
-    // QueryProjectDto só aceita "artistId" (Task H alinhou DTO/service nesse nome) —
-    // "artist_id" era rejeitado pelo whitelist do ValidationPipe (400), quebrando
-    // a aba Projetos do modal Visão 360° do artista.
+    // QueryProjectDto only accepts "artistId" (Task H aligned DTO/service on that name) —
+    // "artist_id" was rejected by the ValidationPipe whitelist (400), breaking
+    // the Projects tab of the artist 360° view modal.
     filters: artistId ? { artistId: artistId } : undefined,
   }, {
     create: { success: "Projeto criado com sucesso!", error: "Erro ao criar projeto" },

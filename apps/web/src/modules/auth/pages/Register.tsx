@@ -162,7 +162,7 @@ export default function Register() {
   const form3 = useForm<Step3>({ resolver: zodResolver(step3Schema) });
   const form4 = useForm<Step4>({ resolver: zodResolver(step4Schema), defaultValues: { activationPlanId: "" } });
 
-  /* Planos de ativação — fonte dinâmica (admin é a origem da verdade). */
+  /* Activation plans — dynamic source (admin is the source of truth). */
   const plansQuery = useQuery({
     queryKey: ["public-activation-plans"],
     queryFn: () => activationPlansService.listPublicPlans(),
@@ -189,7 +189,7 @@ export default function Register() {
   const onStep2 = (d: Step2) => { setData((p) => ({ ...p, ...d })); setStep(3); };
   const onStep3 = (d: Step3) => { setData((p) => ({ ...p, ...d })); setStep(4); };
 
-  /* ── Monta objeto tenant sem persistir ainda ── */
+  /* ── Builds the tenant object without persisting it yet ── */
   /* ── Persiste tenant no localStorage ── */
   /* ── Handler step 4 ── */
   const onStep4 = async (d: Step4) => {
@@ -313,7 +313,7 @@ export default function Register() {
             </div>
           </div>
 
-          {/* ── STEP 1 — EMPRESA ── */}
+          {/* ── STEP 1 — COMPANY ── */}
           {step === 1 && (
             <form onSubmit={form1.handleSubmit(onStep1)} className="space-y-4 flex-1">
               <div className="flex items-center gap-2 mb-2">
@@ -401,7 +401,7 @@ export default function Register() {
             </form>
           )}
 
-          {/* ── STEP 2 — ADMINISTRADOR ── */}
+          {/* ── STEP 2 — ADMINISTRATOR ── */}
           {step === 2 && (
             <form onSubmit={form2.handleSubmit(onStep2)} className="space-y-4 flex-1">
               <div className="flex items-center gap-2 mb-2">
@@ -517,7 +517,7 @@ export default function Register() {
             </form>
           )}
 
-          {/* ── STEP 4 — ATIVAÇÃO ── */}
+          {/* ── STEP 4 — ACTIVATION ── */}
           {step === 4 && (
             <form onSubmit={form4.handleSubmit(onStep4)} className="space-y-5 flex-1">
               <div className="flex items-center gap-2 mb-2">
@@ -525,7 +525,7 @@ export default function Register() {
                 <h2 className="text-base font-semibold text-foreground">Plano & Ativação</h2>
               </div>
 
-              {/* Plan selector — fonte dinâmica (planos definidos pelo admin) */}
+              {/* Plan selector — dynamic source (plans defined by the admin) */}
               <div>
                 {plansQuery.isLoading ? (
                   <div className="flex items-center justify-center gap-2 rounded-lg border border-border bg-muted py-8 text-sm text-muted-foreground">

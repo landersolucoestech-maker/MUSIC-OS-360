@@ -19,10 +19,10 @@ function createWrapper() {
   );
 }
 
-// Regressão: QueryProjectDto (apps/api) só aceita a query param "artistId"
-// (Task H alinhou DTO/service nesse nome). Enviar "artist_id" — como o hook
-// fazia antes — é rejeitado com 400 pelo whitelist do ValidationPipe, o que
-// quebrava silenciosamente a aba Projetos do modal Visão 360° do artista.
+// Regression: QueryProjectDto (apps/api) only accepts the "artistId" query param
+// (Task H aligned DTO/service on that name). Sending "artist_id" — as the hook
+// used to — is rejected with 400 by the ValidationPipe whitelist, which
+// silently broke the Projects tab of the artist 360° view modal.
 describe("useProjects", () => {
   beforeEach(() => {
     mockedList.mockReset();

@@ -28,9 +28,9 @@ import { Button } from "@/shared/ui/button";
 import { loginSchema, forgotSchema, type LoginData, type ForgotData } from "./login-schema";
 
 /**
- * Parte 75 — identificador seguro de ambiente na própria tela de login.
- * Elimina ambiguidade sobre qual Supabase/build este frontend está usando
- * sem nunca expor a URL completa ou a anon key.
+ * Part 75 — safe environment identifier on the login screen itself.
+ * Removes ambiguity about which Supabase/build this frontend is using
+ * without ever exposing the full URL or the anon key.
  */
 function AuthEnvironmentBadge() {
   return (
@@ -92,7 +92,7 @@ function AuthPage() {
 
   return (
     <main className="auth-layout grid min-h-screen overflow-x-hidden bg-background text-foreground lg:grid-cols-[44%_56%]">
-      {/* Painel esquerdo — login (identidade visual do sistema) */}
+      {/* Left panel — login (system visual identity) */}
       <section className="auth-login-left relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-8 sm:px-8">
         <div className="relative z-10 flex w-full max-w-[420px] flex-col">
           <div className="mb-6 flex justify-center">
@@ -134,13 +134,13 @@ function AuthPage() {
         </div>
       </section>
 
-      {/* Painel direito — foto do card 3D + conteudo institucional (HTML responsivo) */}
+      {/* Right panel — 3D card photo + institutional content (responsive HTML) */}
       <section
         className="auth-hero-right relative hidden min-h-screen flex-col justify-end overflow-hidden bg-[#0b0a09] bg-[length:100%_auto] bg-top bg-no-repeat lg:flex"
         style={{ backgroundImage: "url('/auth-card.png')" }}
         aria-label="MUSIC OS 360"
       >
-        {/* gradiente: funde a base da foto na cor do painel */}
+        {/* gradient: blends the bottom of the photo into the panel color */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0b0a09] via-[#0b0a09]/85 via-30% to-transparent to-55%" />
 
         <div className="relative z-10 px-8 pb-12 xl:px-14 xl:pb-16">
@@ -246,8 +246,8 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
     try {
       const { error } = await signIn(data.email, data.password);
       if (error) {
-        // Parte 77 — só uma credencial genuinamente errada consome uma
-        // tentativa; rede/servidor indisponível nunca bloqueia o usuário.
+        // Part 77 — only a genuinely wrong credential consumes an
+        // attempt; network/server unavailability never locks the user out.
         if (isCredentialsError(error)) {
           authRateLimiter.recordFailure(data.email);
           toast.error(

@@ -27,8 +27,8 @@ describe("loginSchema (Part 77) — the password is never transformed", () => {
     const result = loginSchema.safeParse({ email: "  User@Example.com  ", password: "  senha  " });
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.email).toBe("User@Example.com"); // trim, mas sem lowercase no schema (normalização real acontece no AuthContext)
-      expect(result.data.password).toBe("  senha  "); // intocada
+      expect(result.data.email).toBe("User@Example.com"); // trim, but no lowercase in the schema (the real normalization happens in AuthContext)
+      expect(result.data.password).toBe("  senha  "); // untouched
     }
   });
 

@@ -102,7 +102,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
 
               <Separator />
 
-              {/* Músicas */}
+              {/* Songs */}
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <Music2 className="h-4 w-4 text-muted-foreground" />
@@ -136,7 +136,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                               </div>
                             </div>
 
-                            {/* Duração, Gênero, Idioma */}
+                            {/* Duration, genre, language */}
                             <div className="grid grid-cols-3 gap-3 text-sm">
                               <div className="flex items-center gap-2">
                                 <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -161,7 +161,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                               </div>
                             </div>
 
-                            {/* Compositores, Intérpretes, Produtores */}
+                            {/* Composers, performers, producers */}
                             <div className="grid grid-cols-3 gap-3" data-testid="grid-credits">
                               <Card className="bg-background/50">
                                 <CardContent className="p-3">
@@ -198,7 +198,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                               </Card>
                             </div>
 
-                            {/* Letra — exibida apenas quando preenchida */}
+                            {/* Lyrics — shown only when filled in */}
                             {info.letra && (
                               <div>
                                 <span className="text-xs font-medium text-muted-foreground block mb-1">Letra</span>
@@ -208,7 +208,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                               </div>
                             )}
 
-                            {/* Áudio — exibido apenas quando há link cadastrado */}
+                            {/* Audio — shown only when a link is registered */}
                             {info.audioUrl && (
                               <div>
                                 <span className="text-xs font-medium text-muted-foreground block mb-1">Áudio</span>
@@ -231,7 +231,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                 ) : (
                   <Card className="bg-muted/30">
                     <CardContent className="p-4 space-y-4">
-                      {/* Fallback para projetos sem descricao JSON */}
+                      {/* Fallback for projects without a JSON descricao */}
                       <div className="flex items-start justify-between gap-2">
                         <h4 className="font-medium">{projeto.title}</h4>
                         <div className="flex items-center gap-1">
@@ -245,7 +245,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                 )}
               </div>
 
-              {/* Observações — exibidas apenas quando preenchidas */}
+              {/* Notes — shown only when filled in */}
               {projeto.notes && (
                 <>
                   <Separator />
@@ -267,7 +267,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
 
               <Separator />
 
-              {/* Obras Vinculadas */}
+              {/* Linked works */}
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">

@@ -497,7 +497,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         </div>
       </div>
 
-      {/* Compositores */}
+      {/* Composers */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Compositores *</Label>
@@ -555,7 +555,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         </div>
       </div>
 
-      {/* Produtores */}
+      {/* Producers */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Produtores *</Label>
@@ -584,7 +584,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         </div>
       </div>
 
-      {/* Letra */}
+      {/* Lyrics */}
       <div className="space-y-2">
         <Label>Letra</Label>
         <Textarea 

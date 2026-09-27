@@ -5,7 +5,7 @@ import { api } from "@/shared/lib/api-client";
 import type { ProjectWithRelations } from "./useProjects";
 
 export interface UseProjectsPaginatedParams {
-  /** 0-indexado, mesma convenção de usePagination()/TablePagination. */
+  /** 0-indexed, same convention as usePagination()/TablePagination. */
   page: number;
   pageSize: number;
   search?: string;
@@ -50,10 +50,10 @@ export interface ProjectStats {
 const EMPTY_STATS: ProjectStats = { total: 0, byGroup: {} };
 
 /**
- * Contagem por status, sobre o TENANT INTEIRO — GET /projects/stats
- * (agregado no banco). Task H: os KPIs de Projects.tsx não podem mais ser
- * calculados só sobre a página atual (nem sobre a lista inteira baixada
- * no cliente).
+ * Count per status, over the WHOLE TENANT — GET /projects/stats
+ * (aggregated in the database). Task H: the Projects.tsx KPIs can no longer be
+ * computed over the current page only (nor over the whole list downloaded
+ * on the client).
  */
 export function useProjectsStats() {
   const query = useQuery<ProjectStats>({

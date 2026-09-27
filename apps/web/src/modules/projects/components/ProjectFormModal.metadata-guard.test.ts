@@ -1,11 +1,11 @@
 /**
  * ProjectFormModal.metadata-guard.test.ts
  *
- * Guarda permanente (auditoria 2026-07-18 — projects CRÍTICO confirmado):
- * ProjectFormModal.tsx serializava musicas[] com JSON.stringify() dentro de
- * `descricao` (texto livre) — proibido pela regra de produto. Normalizado em
- * project_tracks (migration 20260718000013). Este teste falha se o arquivo
- * voltar a serializar musicas em descricao.
+ * Permanent guard (audit 2026-07-18 — projects CRITICAL confirmed):
+ * ProjectFormModal.tsx serialized musicas[] with JSON.stringify() inside
+ * `descricao` (free text) — forbidden by the product rule. Normalized into
+ * project_tracks (migration 20260718000013). This test fails if the file
+ * serializes musicas into descricao again.
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

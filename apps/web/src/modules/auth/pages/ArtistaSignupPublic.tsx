@@ -141,7 +141,7 @@ export default function ArtistaSignupPublic() {
   const [companyWebsite, setCompanyWebsite] = useState("");
 
   // ── Form state — mirrors ArtistaFormModal fields ───────────────────────────
-  // Step 1: Informações Básicas
+  // Step 1: Basic information
   const [nomeArtistico, setNomeArtistico]   = useState("");
   const [generoMusical, setGeneroMusical]   = useState("");
   const [especialidades, setEspecialidades] = useState<string[]>([]);
@@ -150,7 +150,7 @@ export default function ArtistaSignupPublic() {
   const [documentosPessoaisUrl, setDocumentosPessoaisUrl] = useState("");
   const [presskitUrl, setPresskitUrl]       = useState("");
 
-  // Step 2: Dados Pessoais
+  // Step 2: Personal data
   const [nome, setNome]               = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
   const [cpfCnpj, setCpfCnpj]         = useState("");
@@ -160,14 +160,14 @@ export default function ArtistaSignupPublic() {
   const [telefone, setTelefone]       = useState("");
   const [email, setEmail]             = useState("");
 
-  // Step 3: Dados Bancários
+  // Step 3: Bank details
   const [banco, setBanco]             = useState("");
   const [agencia, setAgencia]         = useState("");
   const [conta, setConta]             = useState("");
   const [chavePix, setChavePix]       = useState("");
   const [titularConta, setTitularConta] = useState("");
 
-  // Step 4: Redes Sociais
+  // Step 4: Social networks
   const [spotify, setSpotify]         = useState("");
   const [instagram, setInstagram]     = useState("");
   const [youtube, setYoutube]         = useState("");
@@ -176,14 +176,14 @@ export default function ArtistaSignupPublic() {
   const [deezer, setDeezer]           = useState("");
   const [appleMusic, setAppleMusic]   = useState("");
 
-  // Step 5: Distribuidoras / Agregadoras
+  // Step 5: Distributors / aggregators
   const [distribuidorasGerais, setDistribuidorasGerais] = useState<DistribuidoraEntry[]>([]);
 
-  // Step 6: Tipo de Perfil + Equipe
+  // Step 6: Profile type + team
   const [tipoPerfil, setTipoPerfil]       = useState("independente");
   const [contatosEquipe, setContatosEquipe] = useState<ContatoEquipe[]>([{ ...EMPTY_CONTATO }]);
 
-  // Step 7: Observações
+  // Step 7: Notes
   const [notasInternas, setNotasInternas] = useState("");
 
   // ── Slug validation ────────────────────────────────────────────────────────
@@ -229,7 +229,7 @@ export default function ArtistaSignupPublic() {
     );
   };
 
-  // ── Distribuidoras gerais helpers (same as ArtistaFormModal) ──────────────
+  // ── General distributor helpers (same as ArtistaFormModal) ──────────────
   const toggleDistGeral = (distId: string, checked: boolean) => {
     if (checked) {
       setDistribuidorasGerais((prev) => [
@@ -360,13 +360,13 @@ export default function ArtistaSignupPublic() {
 
     setIsSubmitting(true);
     try {
-      // Cadastro público cria um Lead (fonte=public_artist_application) via
-      // LeadsService.submitPublicArtistRegistration — não um artista direto.
-      // O contrato real do DTO (PublicArtistRegistrationDto/
-      // PublicArtistApplicationDto) só tem colunas próprias para um subset
-      // dos campos deste formulário; o restante (bancários, documentos,
-      // distribuição, contatos da equipe, endereço completo) vai em
-      // additionalData — nada é descartado silenciosamente.
+      // Public registration creates a Lead (source=public_artist_application) via
+      // LeadsService.submitPublicArtistRegistration — not an artist directly.
+      // The real DTO contract (PublicArtistRegistrationDto/
+      // PublicArtistApplicationDto) only has dedicated columns for a subset
+      // of this form's fields; the rest (bank details, documents,
+      // distribution, team contacts, full address) goes into
+      // additionalData — nothing is silently discarded.
       const socialLinks: Record<string, string> = {};
       if (spotify)    socialLinks.spotify    = spotify;
       if (youtube)    socialLinks.youtube    = youtube;
@@ -565,7 +565,7 @@ export default function ArtistaSignupPublic() {
         </div>
 
         {/* ══════════════════════════════════════════════════════════════════════
-            STEP 1 — Informações Básicas
+            STEP 1 — Basic information
             Mirrors ArtistaFormModal section 1
         ═══════════════════════════════════════════════════════════════════════ */}
         {step === 1 && (
@@ -724,7 +724,7 @@ export default function ArtistaSignupPublic() {
         )}
 
         {/* ══════════════════════════════════════════════════════════════════════
-            STEP 2 — Dados Pessoais
+            STEP 2 — Personal data
             Mirrors ArtistaFormModal section 2
         ═══════════════════════════════════════════════════════════════════════ */}
         {step === 2 && (
@@ -829,7 +829,7 @@ export default function ArtistaSignupPublic() {
         )}
 
         {/* ══════════════════════════════════════════════════════════════════════
-            STEP 3 — Dados Bancários
+            STEP 3 — Bank details
             Mirrors ArtistaFormModal section 3
         ═══════════════════════════════════════════════════════════════════════ */}
         {step === 3 && (
@@ -898,7 +898,7 @@ export default function ArtistaSignupPublic() {
         )}
 
         {/* ══════════════════════════════════════════════════════════════════════
-            STEP 4 — Perfis e Redes Sociais
+            STEP 4 — Profiles and social networks
             Mirrors ArtistaFormModal section 4
         ═══════════════════════════════════════════════════════════════════════ */}
         {step === 4 && (
@@ -1037,7 +1037,7 @@ export default function ArtistaSignupPublic() {
         )}
 
         {/* ══════════════════════════════════════════════════════════════════════
-            STEP 5 — Distribuidoras / Agregadoras
+            STEP 5 — Distributors / aggregators
             Mirrors ArtistaFormModal section 5
         ═══════════════════════════════════════════════════════════════════════ */}
         {step === 5 && (
@@ -1115,7 +1115,7 @@ export default function ArtistaSignupPublic() {
         )}
 
         {/* ══════════════════════════════════════════════════════════════════════
-            STEP 6 — Tipo de Perfil + Equipe
+            STEP 6 — Profile type + team
             Mirrors ArtistaFormModal section 6
         ═══════════════════════════════════════════════════════════════════════ */}
         {step === 6 && (
@@ -1141,7 +1141,7 @@ export default function ArtistaSignupPublic() {
 
             <Separator />
 
-            {/* Equipe dinâmica — mesma lógica do ArtistaFormModal */}
+            {/* Dynamic team — same logic as ArtistaFormModal */}
             {["independente", "com_empresario"].includes(tipoPerfil) && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -1196,7 +1196,7 @@ export default function ArtistaSignupPublic() {
                         </Button>
                       </div>
 
-                      {/* Nome + Categoria */}
+                      {/* Name + category */}
                       <div className={tipoPerfil === "com_empresario" ? "space-y-1.5" : "grid grid-cols-2 gap-3"}>
                         <div className="space-y-1.5">
                           <Label className="text-xs">Nome</Label>
@@ -1253,7 +1253,7 @@ export default function ArtistaSignupPublic() {
                         </div>
                       </div>
 
-                      {/* Distribuidoras — só quando Editora Musical (mesma lógica do modal) */}
+                      {/* Distributors — only when Editora Musical (same logic as the modal) */}
                       {isEditora && (
                         <div className="space-y-3 pt-2 border-t border-border/40">
                           <Label className="text-xs text-muted-foreground">Distribuidoras</Label>
@@ -1339,7 +1339,7 @@ export default function ArtistaSignupPublic() {
               <p className="text-sm text-muted-foreground">Notas para a equipe e revisão final</p>
             </div>
 
-            {/* Resumo do cadastro */}
+            {/* Registration summary */}
             <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-3">
               <p className="text-xs font-semibold  tracking-widest text-primary">Resumo do Cadastro</p>
               <div className="text-sm space-y-1.5">

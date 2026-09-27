@@ -1,46 +1,45 @@
 /**
- * activation-plans.service.ts — fonte ÚNICA dos planos de ativação do cadastro.
+ * activation-plans.service.ts — SINGLE source of the registration activation plans.
  *
- * REGRA DE NEGÓCIO:
- *   Os planos NÃO são fixos no código do formulário de cadastro.
- *   Eles são definidos pelos administradores no painel admin (origem da verdade)
- *   e expostos publicamente apenas os que estão ATIVOS e VISÍVEIS no cadastro.
+ * BUSINESS RULE:
+ *   Plans are NOT hardcoded in the registration form code.
+ *   They are defined by administrators in the admin panel (source of truth)
+ *   and only the plans that are ACTIVE and VISIBLE in registration are exposed publicly.
  *
- *     o admin publicaria. Isto NÃO é uma lista hardcoded dentro do componente —
- *     vive na camada de serviço/dados, exatamente como o restante do MOCK_DATA.
- *   - Produção: busca o catálogo público no backend (a ser implementado depois,
- *     ver contrato abaixo). O backend deve devolver SOMENTE planos ativos +
- *     visíveis + disponíveis para novas empresas, já ordenados.
+ *   The form reads them through this service layer, never from a list inside the
+ *   component. The public catalog is fetched from the backend (see the contract
+ *   below). The backend must return ONLY plans that are active +
+ *   visible + available to new companies, already ordered.
  *
- * CONTRATO BACKEND (futuro):
+ * BACKEND CONTRACT (not implemented in apps/api yet; Register.tsx already calls it):
  *   GET /api/v1/public/activation-plans  ->  ApiResponse<ActivationPlan[]>
  */
 import { publicApi } from "@/shared/lib/api-client";
 
-/** Modelo público de um plano de ativação (subconjunto exposto ao cadastro). */
+/** Public model of an activation plan (subset exposed to registration). */
 export interface ActivationPlan {
-  /** Identificador estável do plano (uuid em produção). Enviado como activationPlanId. */
+  /** Stable plan identifier (uuid in production). Sent as activationPlanId. */
   id: string;
-  /** Nome exibido (ex.: "Trial 14 dias"). */
+  /** Display name (e.g. "Trial 14 dias"). */
   name: string;
-  /** Descrição curta exibida no card. */
+  /** Short description shown on the card. */
   description: string;
-  /** Preço periódico, quando aplicável. null/undefined = sem preço (trial / sob consulta). */
+  /** Periodic price, when applicable. null/undefined = no price (trial / on request). */
   price?: number | null;
-  /** Moeda ISO do preço (ex.: "BRL"). */
+  /** ISO currency of the price (e.g. "BRL"). */
   currency?: string | null;
-  /** Período de cobrança/uso. */
+  /** Billing/usage period. */
   period?: "mensal" | "anual" | "trial" | null;
-  /** Dias de trial, quando aplicável. */
+  /** Trial days, when applicable. */
   trialDays?: number | null;
-  /** Ordem de exibição definida pelo admin (asc). */
+  /** Display order defined by the admin (asc). */
   order: number;
 }
 
 /**
- * Semente MOCK — simula os planos que o admin teria publicado.
- * Apenas planos ativos + visíveis no cadastro entram aqui.
- * (Em produção esta lista vem do backend; aqui é só a fonte do modo standalone.)
+ * Orders plans by the admin-defined `order` (ascending), without mutating
+ * the input array. The backend is expected to return them ordered already;
+ * this keeps the display order deterministic regardless.
  */
 function sortByOrder(plans: ActivationPlan[]): ActivationPlan[] {
   return [...plans].sort((a, b) => a.order - b.order);
@@ -48,8 +47,8 @@ function sortByOrder(plans: ActivationPlan[]): ActivationPlan[] {
 
 export const activationPlansService = {
   /**
-   * Lista os planos de ativação disponíveis publicamente para o cadastro.
-   * Retorna apenas planos ativos/visíveis, ordenados por `order`.
+   * Lists the activation plans publicly available for registration.
+   * Returns only active/visible plans, ordered by `order`.
    */
   async listPublicPlans(): Promise<ActivationPlan[]> {
     const plans = await publicApi.get<ActivationPlan[]>("/public/activation-plans");
