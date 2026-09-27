@@ -1321,17 +1321,18 @@ export class BriefingEntity {
 // ─── Events (Agenda) ──────────────────────────────────────────────────────────
 @Entity('events')
 @Index(['tenant_id'])
-@Index(['tenant_id', 'data'])
+@Index(['tenant_id', 'starts_at'])
 export class EventEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255 }) title: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 50, default: EventStatus.SCHEDULED }) status: EventStatus;
+  // C3: legacy start column, kept equal to starts_at (service dual-write + trigger
+  // trg_events_sync_start_columns, migration 20260928000007) until its removal (E6).
   @Column({ type: 'timestamp' }) data: Date;
-  // C3/E1 (migration 20260716000001): future canonical event start column.
-  // Nullable until phase E5; dual-written with `data` from phase E2 onwards.
-  @Column({ type: 'timestamp', nullable: true }) starts_at: Date | null;
+  // Canonical event start (C3/E4: every read uses it; NOT NULL since E5).
+  @Column({ type: 'timestamp' }) starts_at: Date;
   @Column({ type: 'varchar', length: 255, nullable: true }) venue: string | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;

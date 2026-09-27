@@ -33,9 +33,10 @@ describe("Agenda — the calendar calculation uses the real date fields", () => 
     expect(body).not.toMatch(/event\.tipo_evento/);
   });
 
-  it("reads event.data/event.end_date (real columns, full timestamp)", () => {
+  it("reads event.starts_at/event.end_date (canonical columns, full timestamp)", () => {
     const body = schedulerEventsBody();
-    expect(body).toMatch(/event\.data\s*\?/);
+    expect(body).toMatch(/event\.starts_at\s*\?/);
+    expect(body).not.toMatch(/event\.data\b/);
     expect(body).toMatch(/event\.end_date/);
   });
 });

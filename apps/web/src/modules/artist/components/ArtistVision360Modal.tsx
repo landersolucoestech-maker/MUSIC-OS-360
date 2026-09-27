@@ -403,8 +403,8 @@ export function ArtistVision360Modal({
     if (d) activityTimelineItems.push({ id: `mv-txn-${t.id}`, type: "Financeiro", descricao: t.descricao ?? (t.type === "receita" ? "Pagamento recebido" : "Despesa registrada"), data: d, responsavel: "Financeiro" });
   });
   actualEvents.forEach((e) => {
-    const ev = e as { data?: string; type?: string; created_at?: string };
-    const d = ev.data ?? ev.created_at;
+    const ev = e as { starts_at?: string; type?: string; created_at?: string };
+    const d = ev.starts_at ?? ev.created_at;
     if (d) activityTimelineItems.push({ id: `mv-evt-${e.id}`, type: "Agenda", descricao: `${getBackendEventTypeLabel(ev.type)}: ${e.title}`, data: d, responsavel: "—" });
   });
   actualReleases.forEach((l: any) => {
@@ -439,10 +439,10 @@ export function ArtistVision360Modal({
     .filter(
       (e) =>
         ["show", "festival"].includes(String(e.type ?? "").toLowerCase()) &&
-        e.data &&
-        new Date(e.data).getTime() >= nowTs,
+        e.starts_at &&
+        new Date(e.starts_at).getTime() >= nowTs,
     )
-    .sort((a, b) => new Date(a.data!).getTime() - new Date(b.data!).getTime())[0];
+    .sort((a, b) => new Date(a.starts_at!).getTime() - new Date(b.starts_at!).getTime())[0];
   const nextRelease = (actualReleases as any[])
     .filter((l) => l.data_lancamento && new Date(l.data_lancamento).getTime() >= nowTs)
     .sort((a, b) => new Date(a.data_lancamento).getTime() - new Date(b.data_lancamento).getTime())[0];
@@ -455,9 +455,9 @@ export function ArtistVision360Modal({
     .sort((a, b) => new Date(a.created_at ?? a.data_lancamento).getTime() - new Date(b.created_at ?? b.data_lancamento).getTime())[0];
   if (firstRelease) evolutionMilestones.push({ id: "m-lan", label: "Primeiro Lançamento", descricao: firstRelease.title ?? "Lançamento", data: firstRelease.created_at ?? firstRelease.data_lancamento });
   const firstShow = (actualEvents as any[])
-    .filter((e) => ["show", "festival"].includes(String(e.type ?? "").toLowerCase()) && e.data)
-    .sort((a, b) => new Date(a.data!).getTime() - new Date(b.data!).getTime())[0];
-  if (firstShow) evolutionMilestones.push({ id: "m-show", label: "Primeira Turnê/Show", descricao: firstShow.title, data: firstShow.data! });
+    .filter((e) => ["show", "festival"].includes(String(e.type ?? "").toLowerCase()) && e.starts_at)
+    .sort((a, b) => new Date(a.starts_at!).getTime() - new Date(b.starts_at!).getTime())[0];
+  if (firstShow) evolutionMilestones.push({ id: "m-show", label: "Primeira Turnê/Show", descricao: firstShow.title, data: firstShow.starts_at! });
   const firstContract = (actualContracts as any[])
     .filter((c) => c.created_at)
     .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())[0];
@@ -864,7 +864,7 @@ export function ArtistVision360Modal({
                     {nextShow ? (
                       <>
                         <p className="text-sm font-semibold truncate">{nextShow.title}</p>
-                        <p className="text-xs text-muted-foreground">{formatDateDMY(nextShow.data)}</p>
+                        <p className="text-xs text-muted-foreground">{formatDateDMY(nextShow.starts_at)}</p>
                       </>
                     ) : (
                       <p className="text-sm text-muted-foreground">Nenhum agendado</p>
@@ -2682,9 +2682,9 @@ export function ArtistVision360Modal({
                             key={e.id}
                             className="grid grid-cols-[88px_60px_110px_minmax(0,1fr)_minmax(0,1fr)_110px] gap-3 px-1 py-2 items-center text-sm"
                           >
-                            <span className="text-muted-foreground">{formatDateDMY(e.data)}</span>
+                            <span className="text-muted-foreground">{formatDateDMY(e.starts_at)}</span>
                             <span className="text-muted-foreground">
-                              {e.data ? new Date(e.data).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "—"}
+                              {e.starts_at ? new Date(e.starts_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "—"}
                             </span>
                             <span className="truncate">{getBackendEventTypeLabel(e.type)}</span>
                             <span className="truncate font-medium">{e.title}</span>

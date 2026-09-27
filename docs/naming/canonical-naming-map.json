@@ -1681,6 +1681,23 @@
       "definition": "RENAME COLUMN only. The API accepts the old DTO names as deprecated aliases (applyDeprecatedFieldAliases) and responds canonically. The web Event type now mirrors the real API response (phantom tipo_evento/horario_inicio/cidade/capacidade/contato_telefone fields removed); edit mode derives times from starts_at/end_date (the phantom time fields always came back empty). The agenda XLSX uses PT-BR headers and still imports older snake_case exports. The form-contracts guard now skips Swagger-deprecated DTO aliases, so report contracts no longer need PT alias entries. events.data (start) is the legacy half of the C3 data->starts_at plan and is retired by that plan, not renamed here.",
       "producers": "apps/web SchedulerFormModal, agenda XLSX import, reports import",
       "consumers": "EventsService, reports export/import (repeating group participants), apps/web Schedule / SchedulerViewModal / Artist 360, completeness audit"
+    },
+    {
+      "id": "CZ-029",
+      "status": "migrating",
+      "disposition": "MIGRATION_REQUIRED",
+      "layer": "database, api, web",
+      "language": "Portuguese",
+      "renameRequired": "yes",
+      "migrationRequired": "yes",
+      "evidence": "migration 20260928000007 verified on disposable PostgreSQL 16: divergence aborts (transactional), NULL starts_at backfilled, trigger syncs data<->starts_at on INSERT/UPDATE from either side, starts_at NOT NULL, down/up clean; events.service.spec (orderBy/filters/KPI read starts_at); schedule-calendar guard; API e2e 230/230",
+      "concept": "Event start (events.data -> events.starts_at, plan C3)",
+      "businessConcept": "When an event starts.",
+      "currentTechnicalName": "events.data (legacy, Portuguese 'date'), still written",
+      "canonicalEnglishName": "events.starts_at",
+      "definition": "C3 expand-and-contract. E1 (20260716000001) added starts_at; E2 dual-write in EventsService; this change adds E3 (aborting backfill), a sync trigger (trg_events_sync_start_columns) so writers bypassing the service keep both columns equal, E4 (API filters/order/KPIs and every web read use starts_at) and E5 (starts_at NOT NULL). Only E6 remains: drop events.data. The reports export/import contract still addresses the column as `data` (header 'Data') so existing spreadsheets keep round-tripping; the trigger keeps it equal to starts_at.",
+      "producers": "EventsService (dual-write), reports importer (writes data; trigger fills starts_at)",
+      "consumers": "EventsService list/stats, apps/web Schedule / SchedulerForm/ViewModal / Artist 360, reports export (via data)"
     }
   ],
   "renames": [],
@@ -3040,5 +3057,13 @@
       "status": "ACTIVE"
     }
   ],
-  "blockers": []
+  "blockers": [
+    {
+      "id": "BLK-C3-E6",
+      "item": "Drop events.data (C3/E6)",
+      "blocker": "Destructive schema change: needs explicit owner authorization and a release that only reads starts_at deployed to every environment; the reports events contract must move from col('data') to starts_at with a header-compatible label in the same change.",
+      "evidence": "migration 20260928000007 (E3/E5 + sync trigger); CZ-029",
+      "requiredAction": "After the E4 web/api release is live everywhere: switch the reports contract to starts_at keeping the 'Data' header accepted on import, stop the service dual-write, drop trg_events_sync_start_columns and events.data in one authorized migration."
+    }
+  ]
 }

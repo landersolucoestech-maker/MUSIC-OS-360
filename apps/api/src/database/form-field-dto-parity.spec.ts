@@ -33,8 +33,8 @@ describe('Dedicated form columns are always exposed in the matching DTO', () => 
     const block = entityBlock('EventEntity');
     const dto = source('../modules/events/dto/events.dto.ts');
     const fields = [
-      'endereco', 'contato_local', 'fee_amount', 'publico_esperado',
-      'description', 'notes', 'participantes',
+      'address', 'venue_contact', 'fee_amount', 'expected_attendance',
+      'description', 'notes', 'participants',
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);
     expectFields(dto, fields);

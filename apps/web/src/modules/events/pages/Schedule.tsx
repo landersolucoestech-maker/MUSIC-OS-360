@@ -211,7 +211,7 @@ export default function Schedule() {
     }
 
     const exportData = allEvents.map(e => {
-      const startParts = splitDateTime(e.data);
+      const startParts = splitDateTime(e.starts_at);
       const endParts = splitDateTime(e.end_date);
       return toAgendaRow({
         title: e.title,
@@ -316,11 +316,11 @@ export default function Schedule() {
   }, [scopedEvents, searchTerm, getEventParticipants]);
 
   const schedulerEvents = useMemo(() => filteredEvents.map((event) => {
-    // events.data/end_date are the only real date+time fields (column
+    // events.starts_at/end_date are the real date+time fields (starts_at is
     // NOT NULL, always present) — start_date/horario_inicio/horario_fim
     // never existed in the backend, so that read always fell into the fallback
     // "now" and every event showed on the wrong date in the calendar.
-    const start = event.data ? new Date(event.data) : new Date();
+    const start = event.starts_at ? new Date(event.starts_at) : new Date();
     const end = event.end_date ? new Date(event.end_date) : undefined;
     const isMidnight = start.getHours() === 0 && start.getMinutes() === 0;
 

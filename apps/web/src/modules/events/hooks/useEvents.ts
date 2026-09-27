@@ -8,7 +8,7 @@ export function useEvents(enabled = true, artistId?: string) {
   const result = useDataQuery<EventWithRelations>({
     queryKey: artistId ? [...QUERY_KEYS.EVENTS, "by-artist", artistId] : [...QUERY_KEYS.EVENTS],
     table: "events",
-    orderBy: { column: "data", ascending: true },
+    orderBy: { column: "starts_at", ascending: true },
     enabled,
     // EventsService.list() only reads "artist_id" (snake_case); "artistId" (camelCase)
     // exists in the DTO only for compatibility and is never read — see events.dto.ts.

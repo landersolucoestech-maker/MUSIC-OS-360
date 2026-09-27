@@ -253,10 +253,18 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
       }
     });
 
-    it('list() still orders by e.data — canonical read only in phase E4', async () => {
+    it('list() orders by e.starts_at — canonical read since phase E4', async () => {
       await service.list(TENANT, {} as never);
-      expect(mockDs._repo._qb.orderBy).toHaveBeenCalledWith('e.data', 'DESC');
-      expect(mockDs._repo._qb.orderBy).not.toHaveBeenCalledWith('e.starts_at', expect.anything());
+      expect(mockDs._repo._qb.orderBy).toHaveBeenCalledWith('e.starts_at', 'DESC');
+      expect(mockDs._repo._qb.orderBy).not.toHaveBeenCalledWith('e.data', expect.anything());
+    });
+
+    it('date-range filters and the 7-day KPI read e.starts_at (C3/E4)', async () => {
+      await service.list(TENANT, { dateFrom: '2026-01-01T00:00:00Z', dateTo: '2026-12-31T00:00:00Z' } as never);
+      const calls = mockDs._repo._qb.andWhere.mock.calls.map((c: unknown[]) => c[0]);
+      expect(calls).toContain('e.starts_at >= :dateFrom');
+      expect(calls).toContain('e.starts_at <= :dateTo');
+      expect(calls.join(' ')).not.toMatch(/e\.data\b/);
     });
   });
 
@@ -299,11 +307,7 @@ describe('EventsService — State P (pre-C3, current documented behavior)', () =
     });
   });
 
-  describe('list() — current documented behavior (pre-C3, no fix)', () => {
-    it('orders by e.data (legacy column)', async () => {
-      await service.list(TENANT, {} as never);
-      expect(mockDs._repo._qb.orderBy).toHaveBeenCalledWith('e.data', 'DESC');
-    });
+  describe('list() — current documented behavior', () => {
 
     // Documentation of the pre-existing bug (C3.5 debt): the DTO declared type/artistId
     // (EN) while the service read tipo/artist_id/dateFrom/dateTo — the type filter

@@ -102,8 +102,8 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
           {/* DATE AND TIME */}
           <Section title="Quando" icon={Calendar}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Field label="Data Início" value={formatDate(event.data)} />
-              <Field label="Horário Início" value={event.data ? new Date(event.data).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : null} />
+              <Field label="Data Início" value={formatDate(event.starts_at)} />
+              <Field label="Horário Início" value={event.starts_at ? new Date(event.starts_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : null} />
               <Field label="Data Fim" value={event.end_date ? formatDate(event.end_date) : null} />
               <Field label="Horário Fim" value={event.end_date ? new Date(event.end_date).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : null} />
             </div>

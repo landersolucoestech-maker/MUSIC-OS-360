@@ -33,8 +33,8 @@ export class EventsService {
     if (q['status'])     qb.andWhere('e.status = :status',       { status:     q['status'] });
     if (q['type'])       qb.andWhere('e.type = :type',           { type:       q['type'] });
     if (q['artist_id']) qb.andWhere('e.artist_id = :artistId', { artistId: q['artist_id'] });
-    if (q['dateFrom'])   qb.andWhere('e.data >= :dateFrom',      { dateFrom:   q['dateFrom'] });
-    if (q['dateTo'])     qb.andWhere('e.data <= :dateTo',        { dateTo:     q['dateTo'] });
+    if (q['dateFrom'])   qb.andWhere('e.starts_at >= :dateFrom', { dateFrom:   q['dateFrom'] });
+    if (q['dateTo'])     qb.andWhere('e.starts_at <= :dateTo',   { dateTo:     q['dateTo'] });
     if (q['search'])     qb.andWhere('e.title ILIKE :search',   { search: `%${q['search']}%` });
 
     return qb;
@@ -44,7 +44,7 @@ export class EventsService {
     const q = query as Record<string, unknown>;
     const qb = this.baseQb(tenantId, query);
 
-    qb.orderBy('e.data', q['ascending'] ? 'ASC' : 'DESC')
+    qb.orderBy('e.starts_at', q['ascending'] ? 'ASC' : 'DESC')
       .skip(typeof q['offset'] === 'number' ? q['offset'] : 0)
       .take(typeof q['limit']  === 'number' ? q['limit']  : 50);
 
@@ -76,7 +76,7 @@ export class EventsService {
       .createQueryBuilder('e')
       .where('e.tenant_id = :tenantId', { tenantId })
       .andWhere('e.deleted_at IS NULL')
-      .andWhere('e.data >= :now AND e.data <= :em7Dias', { now, em7Dias: inSevenDays })
+      .andWhere('e.starts_at >= :now AND e.starts_at <= :inSevenDays', { now, inSevenDays })
       .getCount();
     return { ...byStatus, upcoming7Days };
   }
@@ -102,9 +102,8 @@ export class EventsService {
     if (d['artistId']  != null) out['artist_id'] = d['artistId'];
     if (d['venue']     != null) out['venue']      = d['venue'];
     if (d['startsAt']  != null) {
-      // C3/E2 — dual-write: the SAME Date object feeds the legacy `data` column
-      // and the future canonical `starts_at` (zero divergence window; canonical
-      // reads only in phase E4, removal of `data` only in E6).
+      // C3 — dual-write: the SAME Date object feeds the canonical `starts_at`
+      // (read everywhere since E4) and the legacy `data` column (removed in E6).
       const startValue = new Date(d['startsAt'] as string | Date);
       out['data']      = startValue;
       out['starts_at'] = startValue;
@@ -147,7 +146,7 @@ export class EventsService {
       title: saved.title,
       type: saved.type,
       artistId: saved.artist_id,
-      data: saved.data,
+      startsAt: saved.starts_at,
     });
     return saved;
   }
