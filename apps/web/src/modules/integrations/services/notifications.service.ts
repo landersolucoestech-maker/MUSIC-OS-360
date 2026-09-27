@@ -76,13 +76,13 @@ export const notificationsService = {
 
     await emailAdapter.send({
       to,
-      subject:      `Contrato a expirar em ${daysRemaining} dias: ${contratoTitle}`,
+      subject:      `Contrato vence em ${daysRemaining} dias: ${contratoTitle}`,
       template_id:  "contract-expiry-alert",
       template_vars: { contrato_title: contratoTitle, days_remaining: daysRemaining },
     });
 
-    analyticsAdapter.track("contrato.expiry_alert_sent", {
-      contrato_id:    contratoId,
+    analyticsAdapter.track("contract.expiry_alert_sent", {
+      contract_id:    contratoId,
       days_remaining: daysRemaining,
     });
   },

@@ -33,8 +33,8 @@ export const DomainEvents = {
   CONTRACT_UPDATED:          "CONTRACT_UPDATED",
   CONTRACT_DELETED:          "CONTRACT_DELETED",
   CONTRACT_SIGNED:           "CONTRACT_SIGNED",
-  CONTRACT_SENT_FOR_SIGNING:  "contrato.sent_for_signing",
-  CONTRACT_SIGNING_CANCELLED: "contrato.signing_cancelled",
+  CONTRACT_SENT_FOR_SIGNING:  "CONTRACT_SENT_FOR_SIGNING",
+  CONTRACT_SIGNING_CANCELLED: "CONTRACT_SIGNING_CANCELLED",
   CONTRACT_TEMPLATE_CREATED: "CONTRACT_TEMPLATE_CREATED",
   CONTRACT_TEMPLATE_UPDATED: "CONTRACT_TEMPLATE_UPDATED",
   CONTRACT_TEMPLATE_DELETED: "CONTRACT_TEMPLATE_DELETED",
@@ -161,8 +161,8 @@ export type DomainEventPayloads = {
   INVOICE_DELETED:       { id: string; org_id: string };
   AUDIT_ENTRY_CREATED:   AuditEntryCreatedPayload;
   "user.invited":               { tenantId: string; email: string; role: string };
-  "contrato.sent_for_signing":  { contratoId: string; signers: unknown[]; org_id?: string };
-  "contrato.signing_cancelled": { contratoId: string; reason?: string; org_id?: string };
+  CONTRACT_SENT_FOR_SIGNING:    { contractId: string; signers: unknown[]; org_id?: string };
+  CONTRACT_SIGNING_CANCELLED:   { contractId: string; reason?: string; org_id?: string };
   "release.approved":           { releaseId: string; reason?: string };
   "release.rejected":           { releaseId: string; reason?: string };
 };

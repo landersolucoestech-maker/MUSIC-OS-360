@@ -11,7 +11,7 @@
  *
  * Usage:
  *   import { analyticsAdapter } from "@/modules/integrations/adapters/analytics.adapter";
- *   analyticsAdapter.track("contrato.created", { tenant_id, user_id });
+ *   analyticsAdapter.track("contract.created", { tenant_id, user_id });
  */
 
 import posthog from "posthog-js";
