@@ -68,14 +68,14 @@ export class UsersService {
     actorRole = 'viewer',
   ): Promise<OrgMemberEntity> {
     const existing = await this.findByUserId(tenantId, dto.userId);
-    if (existing) throw new ConflictException('Utilizador já existe neste tenant');
+    if (existing) throw new ConflictException('Este usuário já faz parte deste workspace.');
 
     const anyMember = await this.repo!
       .createQueryBuilder('m')
       .select('m.org_id')
       .where('m.tenant_id = :tenantId', { tenantId })
       .getOne();
-    if (!anyMember) throw new NotFoundException('Tenant sem organização associada');
+    if (!anyMember) throw new NotFoundException('Workspace sem organização associada.');
 
     // find-f7bfdd94: create() wrote dto.role straight into org_members.role without
     // going through assertCanAssignRole — same bypass class as find-5cc269d3,
@@ -168,7 +168,7 @@ export class UsersService {
           AND "is_active" = true AND "deleted_at" IS NULL LIMIT 1`,
       [tenantId, email],
     ) as unknown[];
-    if (existing.length > 0) throw new ConflictException('Email já pertence a este tenant');
+    if (existing.length > 0) throw new ConflictException('Este e-mail já pertence a um membro deste workspace.');
     const pending = await this.repo!.manager.query(
       `SELECT 1 FROM "tenant_invitations"
         WHERE "tenant_id" = $1 AND lower("email") = lower($2)
@@ -176,7 +176,7 @@ export class UsersService {
       [tenantId, email],
     ) as unknown[];
     if (pending.length > 0) throw new ConflictException('Já existe um convite pendente para este email');
-    if (!tenant) throw new NotFoundException('Tenant não encontrado ou inativo');
+    if (!tenant) throw new NotFoundException('Workspace não encontrado ou inativo.');
     await this.planLimit.enforce(tenantId, tenant.org_id, 'users');
 
     const supabase = this.supabaseAdmin();
@@ -390,7 +390,7 @@ export class UsersService {
       .andWhere('m.role IN (:...roles)', { roles: ['owner', 'tenant_owner'] })
       .getCount();
     if (owners === 0) {
-      throw new BadRequestException('O último owner ativo do tenant não pode ser removido ou rebaixado');
+      throw new BadRequestException('O último proprietário ativo do workspace não pode ser removido nem rebaixado.');
     }
   }
 

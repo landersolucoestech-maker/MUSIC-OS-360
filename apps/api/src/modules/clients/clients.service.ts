@@ -250,7 +250,7 @@ export class ClientsService {
   ) {
     await this.findById(tenantId, id);
     if (!input.storageKey.startsWith(`tenants/${tenantId}/`)) {
-      throw new BadRequestException('storageKey não pertence a este tenant');
+      throw new BadRequestException('O arquivo informado não pertence a este workspace.');
     }
     const entity = this.attachmentsRepo!.create({
       id: randomUUID(),

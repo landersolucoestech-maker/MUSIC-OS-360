@@ -36,7 +36,7 @@ export class OnboardingService {
         [orgId, tenantId, dto.companyName.trim(), dto.segment, dto.logoUrl ?? null, userId],
       ) as Array<Record<string, unknown>>;
       if (!organizationRows[0]) {
-        throw new NotFoundException('Organização ou tenant não encontrado');
+        throw new NotFoundException('Organização ou workspace não encontrado.');
       }
 
       const tenantRows = await manager.query(
@@ -68,7 +68,7 @@ export class OnboardingService {
           orgId,
         ],
       ) as Array<Record<string, unknown>>;
-      if (!tenantRows[0]) throw new NotFoundException('Tenant não encontrado');
+      if (!tenantRows[0]) throw new NotFoundException('Workspace não encontrado.');
 
       return {
         organization: organizationRows[0],

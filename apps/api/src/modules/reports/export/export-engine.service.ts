@@ -42,6 +42,7 @@ import {
   type ExportQueryParams,
   type ExportResult,
 } from './export.types';
+import { entityCopyPtBr } from '../i18n/report-copy.pt-br';
 
 const REPORT_MULTI_VALUE_SEPARATOR = ' | ';
 
@@ -50,7 +51,7 @@ function assertExportSize(entity: string, rows: number): void {
   throw new PayloadTooLargeException({
     error: 'REPORT_EXPORT_TOO_LARGE',
     message:
-      `A exportação de ${entity} possui mais de ${EXPORT_MAX_ROWS} linhas. ` +
+      `A exportação de ${entityCopyPtBr(entity)} possui mais de ${EXPORT_MAX_ROWS} linhas. ` +
       'Nenhum arquivo parcial foi gerado. Reduza o conjunto com filtros ou use o fluxo assíncrono quando disponível.',
     limit: EXPORT_MAX_ROWS,
   });
@@ -75,7 +76,7 @@ export class ExportEngineService {
     tenantId: string | undefined,
     userId: string,
   ): Promise<ExportResult> {
-    if (!tenantId) throw new ForbiddenException('Tenant nao identificado');
+    if (!tenantId) throw new ForbiddenException('Workspace não identificado.');
     if (!EXPORT_FORMATS.includes(params.format)) {
       throw new BadRequestException({
         error: 'UNSUPPORTED_EXPORT_FORMAT',
@@ -87,7 +88,7 @@ export class ExportEngineService {
     if (!report || !report.reportable) {
       throw new UnprocessableEntityException({
         error: 'REPORT_ENTITY_NOT_AVAILABLE',
-        message: `Entidade não disponível na Central de Relatórios: ${entity}`,
+        message: `A entidade ${entityCopyPtBr(entity)} não está disponível na Central de Relatórios.`,
       });
     }
 
@@ -96,11 +97,11 @@ export class ExportEngineService {
     if (!definition) {
       throw new UnprocessableEntityException({
         error: 'REPORT_CONTRACT_REQUIRED',
-        message: `Entidade sem contrato de relatório explícito: ${entity}`,
+        message: `A entidade ${entityCopyPtBr(entity)} ainda não está disponível para relatórios.`,
       });
     }
     if (!definition.supportsExport) {
-      throw new BadRequestException(`Entidade nao suporta exportacao: ${entity}`);
+      throw new BadRequestException(`A entidade ${entityCopyPtBr(entity)} não permite exportação.`);
     }
 
     const sheetName = report.label ?? entity;

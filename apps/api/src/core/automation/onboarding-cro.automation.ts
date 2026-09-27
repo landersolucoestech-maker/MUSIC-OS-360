@@ -51,7 +51,7 @@ export class OnboardingCroAutomation {
     userId: string,
   ): Promise<OnDemandSkillResult<OnboardingCroOutput>> {
     const tenant = await this.loadTenant(tenantId);
-    if (!tenant) throw new NotFoundException('Tenant não encontrado');
+    if (!tenant) throw new NotFoundException('Workspace não encontrado.');
 
     const [artists, catalogWorks, catalogRecordings, contracts, members, oauthConnections] = await Promise.all([
       this.count('artists', tenantId),

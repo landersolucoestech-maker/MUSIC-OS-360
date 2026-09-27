@@ -29,6 +29,6 @@ export async function assertSameTenantFk(
     [id, tenantId],
   ) as unknown[];
   if (!Array.isArray(rows) || rows.length === 0) {
-    throw new BadRequestException(`${label} não encontrado(a) neste tenant.`);
+    throw new BadRequestException(`${label} não encontrado(a) neste workspace.`);
   }
 }

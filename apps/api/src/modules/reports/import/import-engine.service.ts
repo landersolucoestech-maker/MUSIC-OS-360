@@ -25,6 +25,7 @@ import {
 import type { EntityReport } from '../entity-metadata.types';
 import type { ReportEntityDefinition } from '../definitions/report-entity-definition.types';
 import type { FieldTypeMeta, ImportValidationResult } from './import.types';
+import { entityCopyPtBr } from '../i18n/report-copy.pt-br';
 
 export interface ImportTemplateResult {
   filename: string;
@@ -118,13 +119,13 @@ export class ImportEngineService {
     file: { filename: string; content: Buffer },
     tenantId: string | undefined,
   ): Promise<ImportValidationResult> {
-    if (!tenantId) throw new ForbiddenException('Tenant não identificado');
+    if (!tenantId) throw new ForbiddenException('Workspace não identificado.');
 
     const report = this.metadata.scan().entities.find((item) => item.tableName === entity);
     if (!report || !report.reportable) {
       throw new NotFoundException({
         error: 'REPORT_ENTITY_NOT_AVAILABLE',
-        message: `Entidade não disponível na Central de Relatórios: ${entity}`,
+        message: `A entidade ${entityCopyPtBr(entity)} não está disponível na Central de Relatórios.`,
       });
     }
 
@@ -133,11 +134,11 @@ export class ImportEngineService {
     if (!def) {
       throw new NotFoundException({
         error: 'REPORT_CONTRACT_REQUIRED',
-        message: `Entidade sem contrato de relatório explícito: ${entity}`,
+        message: `A entidade ${entityCopyPtBr(entity)} ainda não está disponível para relatórios.`,
       });
     }
     if (!def.supportsImport) {
-      throw new BadRequestException(`Entidade não suporta importação: ${entity}`);
+      throw new BadRequestException(`A entidade ${entityCopyPtBr(entity)} não permite importação.`);
     }
 
     const contract = getReportFormContract(entity);
@@ -152,13 +153,13 @@ export class ImportEngineService {
   }
 
   async buildTemplate(entity: string, tenantId: string | undefined): Promise<ImportTemplateResult> {
-    if (!tenantId) throw new ForbiddenException('Tenant não identificado');
+    if (!tenantId) throw new ForbiddenException('Workspace não identificado.');
 
     const report = this.metadata.scan().entities.find((item) => item.tableName === entity);
     if (!report || !report.reportable) {
       throw new NotFoundException({
         error: 'REPORT_ENTITY_NOT_AVAILABLE',
-        message: `Entidade não disponível na Central de Relatórios: ${entity}`,
+        message: `A entidade ${entityCopyPtBr(entity)} não está disponível na Central de Relatórios.`,
       });
     }
 
@@ -167,11 +168,11 @@ export class ImportEngineService {
     if (!def) {
       throw new NotFoundException({
         error: 'REPORT_CONTRACT_REQUIRED',
-        message: `Entidade sem contrato de relatório explícito: ${entity}`,
+        message: `A entidade ${entityCopyPtBr(entity)} ainda não está disponível para relatórios.`,
       });
     }
     if (!def.supportsImport) {
-      throw new BadRequestException(`Entidade não suporta importação: ${entity}`);
+      throw new BadRequestException(`A entidade ${entityCopyPtBr(entity)} não permite importação.`);
     }
 
     const contract = getReportFormContract(entity);

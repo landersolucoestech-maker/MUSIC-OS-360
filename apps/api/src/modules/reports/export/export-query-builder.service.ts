@@ -10,11 +10,12 @@ import {
   contractMetadataFields,
   getReportFormContract,
 } from '../form-contracts/report-form-contracts';
+import { fieldCopyPtBr } from '../i18n/report-copy.pt-br';
 
 const IDENT = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
 function assertIdent(name: string): void {
-  if (!IDENT.test(name)) throw new BadRequestException(`Identificador inválido: ${name}`);
+  if (!IDENT.test(name)) throw new BadRequestException('Parâmetro de exportação inválido.');
 }
 
 function quote(name: string): string {
@@ -35,7 +36,7 @@ export class ExportQueryBuilderService {
     tenantId: string,
     opts: { softDeleteColumn?: string; includeInternalId?: boolean } = {},
   ): BuiltExportQuery {
-    if (!tenantId) throw new ForbiddenException('Tenant não identificado para exportação');
+    if (!tenantId) throw new ForbiddenException('Workspace não identificado.');
 
     // Selection = WHICH columns; canonical order (def.exportableColumns) = IN WHICH order.
     // Never use the order in which the caller sent `columns` — always filter the
@@ -43,10 +44,10 @@ export class ExportQueryBuilderService {
     if (params.columns?.length) {
       for (const column of params.columns) {
         if (def.sensitiveColumns.includes(column)) {
-          throw new BadRequestException(`Coluna sensível não pode ser exportada: ${column}`);
+          throw new BadRequestException(`O campo ${fieldCopyPtBr(column)} contém dados sensíveis e não pode ser exportado.`);
         }
         if (!def.exportableColumns.includes(column)) {
-          throw new BadRequestException(`Coluna não exportável: ${column}`);
+          throw new BadRequestException(`O campo ${fieldCopyPtBr(column)} não pode ser exportado.`);
         }
       }
     }
@@ -82,7 +83,7 @@ export class ExportQueryBuilderService {
 
     if (params.filters) {
       for (const [key, value] of Object.entries(params.filters)) {
-        if (!def.filterableColumns.includes(key)) throw new BadRequestException(`Filtro não permitido: ${key}`);
+        if (!def.filterableColumns.includes(key)) throw new BadRequestException(`O filtro por ${fieldCopyPtBr(key)} não é permitido nesta exportação.`);
         parameters.push(value);
         where.push(`${quote(physical(key))} = $${parameters.length}`);
       }
@@ -90,7 +91,7 @@ export class ExportQueryBuilderService {
 
     let orderBy = '';
     if (params.sort) {
-      if (!def.sortableColumns.includes(params.sort)) throw new BadRequestException(`Ordenação não permitida: ${params.sort}`);
+      if (!def.sortableColumns.includes(params.sort)) throw new BadRequestException(`A ordenação por ${fieldCopyPtBr(params.sort)} não é permitida nesta exportação.`);
       orderBy = ` ORDER BY ${quote(physical(params.sort))} ${params.order === 'DESC' ? 'DESC' : 'ASC'}`;
     }
 

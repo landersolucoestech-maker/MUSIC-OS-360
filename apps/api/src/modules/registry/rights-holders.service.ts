@@ -123,6 +123,6 @@ export class RightsHoldersService {
       });
     if (ignoreId) qb.andWhere('h.id != :id', { id: ignoreId });
     const existing = await qb.getOne();
-    if (existing) throw new ConflictException('Já existe um titular com este documento neste tenant.');
+    if (existing) throw new ConflictException('Já existe um titular com este documento neste workspace.');
   }
 }

@@ -52,7 +52,7 @@ export class CompanySettingsService {
       `SELECT id, settings FROM tenants WHERE id = $1`,
       [tenantId],
     ) as TenantRow[];
-    if (!tenant) throw new NotFoundException('Tenant não encontrado');
+    if (!tenant) throw new NotFoundException('Workspace não encontrado.');
 
     const config = org.config ?? {};
     const settings = tenant.settings ?? {};

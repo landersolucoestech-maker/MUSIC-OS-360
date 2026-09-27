@@ -392,7 +392,7 @@ export class BillingService {
     const ds = this.assertDataSource();
     await ds.transaction(async (manager) => {
       const tenant = await manager.getRepository(TenantEntity).findOne({ where: { id: tenantId } });
-      if (!tenant || tenant.deleted_at) throw new BadRequestException('Tenant nao encontrado');
+      if (!tenant || tenant.deleted_at) throw new BadRequestException('Workspace não encontrado.');
 
       if (body.name !== undefined) tenant.name = body.name;
       if (body.slug !== undefined) tenant.slug = body.slug;

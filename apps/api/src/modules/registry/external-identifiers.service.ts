@@ -143,7 +143,7 @@ export class ExternalIdentifierService {
       return await this.repository.save(entity);
     } catch (err) {
       if (err instanceof QueryFailedError && (err.driverError as { code?: string })?.code === '23505') {
-        throw new ConflictException('Identificador duplicado para esta entidade/tenant.');
+        throw new ConflictException('Identificador duplicado para esta entidade neste workspace.');
       }
       throw err;
     }
@@ -166,7 +166,7 @@ export class ExternalIdentifierService {
       );
     } catch (err) {
       if (err instanceof QueryFailedError && (err.driverError as { code?: string })?.code === '23505') {
-        throw new ConflictException('Identificador duplicado para esta entidade/tenant.');
+        throw new ConflictException('Identificador duplicado para esta entidade neste workspace.');
       }
       throw err;
     }

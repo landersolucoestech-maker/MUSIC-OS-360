@@ -82,7 +82,7 @@ export class IntegrationUsageGuard implements CanActivate {
 
     if (!tenantId) {
       this.logger.warn(`[integration-usage] ${providerKey}: no tenant context — denied (fail-closed)`);
-      throw new ForbiddenException('Contexto de tenant ausente para autorizar a integração.');
+      throw new ForbiddenException('Workspace não identificado para autorizar a integração.');
     }
 
     const resolved = await this.policy.resolveOne(providerKey, {

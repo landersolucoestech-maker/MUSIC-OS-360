@@ -52,7 +52,7 @@ const RELATION_TARGETS: Record<string, string> = {
 const IDENT = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
 function quote(name: string): string {
-  if (!IDENT.test(name)) throw new BadRequestException(`Identificador inválido: ${name}`);
+  if (!IDENT.test(name)) throw new BadRequestException('Parâmetro de importação inválido.');
   return `"${name}"`;
 }
 
@@ -128,7 +128,7 @@ export class ImportCommitService {
     tenantId: string | undefined,
     userId: string,
   ): Promise<ImportCommitResult> {
-    if (!tenantId) throw new ForbiddenException('Tenant não identificado');
+    if (!tenantId) throw new ForbiddenException('Workspace não identificado.');
 
     const validation = await this.engine.validateFile(entity, file, tenantId);
     const def = this.definitions.getDefinition(entity)!;

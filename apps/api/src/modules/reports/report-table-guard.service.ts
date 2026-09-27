@@ -16,6 +16,7 @@ import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import type { EntityReport } from './entity-metadata.types';
 import { REPORT_MODULE_REGISTRY_BY_TABLE } from './report-module-registry';
+import { entityCopyPtBr } from './i18n/report-copy.pt-br';
 
 @Injectable()
 export class ReportTableGuardService {
@@ -58,8 +59,9 @@ export class ReportTableGuardService {
    */
   async assertTableUsable(tableName: string, report: EntityReport | undefined): Promise<void> {
     if (!report) {
+      this.logger.error(`Entity "${tableName}" has no registered metadata; refusing to export/import it`);
       throw new UnprocessableEntityException(
-        `Entidade "${tableName}" não possui metadados registrados e não pode ser processada.`,
+        `A entidade ${entityCopyPtBr(tableName)} não pode ser processada no momento.`,
       );
     }
     // Computed report (e.g. Contabilidade/accounting_summary): has no
@@ -70,9 +72,9 @@ export class ReportTableGuardService {
     if (!tables) return; // could not be verified — does not block (the engine handles a missing DB)
 
     if (!tables.has(tableName)) {
+      this.logger.error(`Entity "${tableName}" is registered but its physical table does not exist (missing migration)`);
       throw new UnprocessableEntityException(
-        `A entidade "${tableName}" está registrada mas não possui tabela física no banco. ` +
-          `Exportação/importação indisponível até a tabela ser criada por migration.`,
+        `A exportação e a importação de ${entityCopyPtBr(tableName)} estão indisponíveis no momento.`,
       );
     }
 
