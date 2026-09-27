@@ -23,25 +23,25 @@ export function validateMarketingCalendarBuilderInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.artistName?.trim())   errors.push("artistName é obrigatório");
-  if (!input.campaignGoal?.trim()) errors.push("campaignGoal é obrigatório");
-  if (!input.startDate?.trim())    errors.push("startDate é obrigatório");
-  if (!input.endDate?.trim())      errors.push("endDate é obrigatório");
+  if (!input.artistName?.trim())   errors.push("artistName is required");
+  if (!input.campaignGoal?.trim()) errors.push("campaignGoal is required");
+  if (!input.startDate?.trim())    errors.push("startDate is required");
+  if (!input.endDate?.trim())      errors.push("endDate is required");
 
   if (input.startDate?.trim() && input.endDate?.trim()) {
     const start = parseDate(input.startDate);
     const end = parseDate(input.endDate);
     if (start !== null && end !== null && start > end) {
-      errors.push("startDate deve ser anterior ou igual a endDate");
+      errors.push("startDate must be on or before endDate");
     }
   }
 
   if (!Array.isArray(input.platforms) || input.platforms.length === 0) {
-    errors.push("platforms deve ter pelo menos 1 item");
+    errors.push("platforms must have at least 1 item");
   }
 
   if (!input.frequency || !(FREQUENCIES as string[]).includes(input.frequency)) {
-    errors.push("frequency é obrigatório e deve ser um dos valores definidos");
+    errors.push("frequency is required and must be one of the defined values");
   }
 
   return { valid: errors.length === 0, errors };
@@ -52,8 +52,8 @@ export function validateMarketingCalendarBuilderOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!Array.isArray(output.calendar))       errors.push("calendar deve ser uma lista");
-  if (!Array.isArray(output.campaignPhases)) errors.push("campaignPhases deve ser uma lista");
+  if (!Array.isArray(output.calendar))       errors.push("calendar must be a list");
+  if (!Array.isArray(output.campaignPhases)) errors.push("campaignPhases must be a list");
 
   return { valid: errors.length === 0, errors };
 }

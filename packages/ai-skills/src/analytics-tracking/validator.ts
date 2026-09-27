@@ -12,12 +12,12 @@ export function validateAnalyticsTrackingInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.providerName?.trim()) errors.push("providerName é obrigatório");
+  if (!input.providerName?.trim()) errors.push("providerName is required");
   if (input.providerState !== "configured" && input.providerState !== "configuration_required") {
-    errors.push("providerState deve ser 'configured' ou 'configuration_required'");
+    errors.push("providerState must be 'configured' or 'configuration_required'");
   }
-  if (typeof input.totalCanonicalEvents !== "number") errors.push("totalCanonicalEvents é obrigatório");
-  if (!Array.isArray(input.coverage)) errors.push("coverage deve ser uma lista");
+  if (typeof input.totalCanonicalEvents !== "number") errors.push("totalCanonicalEvents is required");
+  if (!Array.isArray(input.coverage)) errors.push("coverage must be a list");
 
   return { valid: errors.length === 0, errors };
 }
@@ -27,10 +27,10 @@ export function validateAnalyticsTrackingOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.coverageSummary?.trim()) errors.push("coverageSummary não pode estar vazio");
-  if (typeof output.coveragePercentage !== "number") errors.push("coveragePercentage é obrigatório");
-  if (!Array.isArray(output.gaps)) errors.push("gaps deve ser uma lista");
-  if (!Array.isArray(output.recommendations)) errors.push("recommendations deve ser uma lista");
+  if (!output.coverageSummary?.trim()) errors.push("coverageSummary must not be empty");
+  if (typeof output.coveragePercentage !== "number") errors.push("coveragePercentage is required");
+  if (!Array.isArray(output.gaps)) errors.push("gaps must be a list");
+  if (!Array.isArray(output.recommendations)) errors.push("recommendations must be a list");
 
   return { valid: errors.length === 0, errors };
 }

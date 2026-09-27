@@ -12,12 +12,12 @@ export function validateAdCreativeInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.campaignName?.trim()) errors.push("campaignName é obrigatório");
-  if (!input.objective?.trim()) errors.push("objective é obrigatório");
-  if (!input.promotedEntityType?.trim()) errors.push("promotedEntityType é obrigatório");
-  if (!input.promotedEntityName?.trim()) errors.push("promotedEntityName é obrigatório");
-  if (!input.platform?.trim()) errors.push("platform é obrigatório");
-  if (!input.placement?.trim()) errors.push("placement é obrigatório");
+  if (!input.campaignName?.trim()) errors.push("campaignName is required");
+  if (!input.objective?.trim()) errors.push("objective is required");
+  if (!input.promotedEntityType?.trim()) errors.push("promotedEntityType is required");
+  if (!input.promotedEntityName?.trim()) errors.push("promotedEntityName is required");
+  if (!input.platform?.trim()) errors.push("platform is required");
+  if (!input.placement?.trim()) errors.push("placement is required");
 
   return { valid: errors.length === 0, errors };
 }
@@ -27,12 +27,12 @@ export function validateAdCreativeOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.creativeSummary?.trim()) errors.push("creativeSummary não pode estar vazio");
+  if (!output.creativeSummary?.trim()) errors.push("creativeSummary must not be empty");
   if (!Array.isArray(output.variants) || output.variants.length === 0) {
-    errors.push("variants deve conter ao menos 1 item");
+    errors.push("variants must contain at least 1 item");
   }
-  if (!output.platformNotes?.trim()) errors.push("platformNotes não pode estar vazio");
-  if (!Array.isArray(output.risks)) errors.push("risks deve ser uma lista");
+  if (!output.platformNotes?.trim()) errors.push("platformNotes must not be empty");
+  if (!Array.isArray(output.risks)) errors.push("risks must be a list");
 
   return { valid: errors.length === 0, errors };
 }

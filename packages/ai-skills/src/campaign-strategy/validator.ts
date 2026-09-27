@@ -12,8 +12,8 @@ export function validateCampaignStrategyInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.campaignName?.trim()) errors.push("campaignName é obrigatório");
-  if (!input.campaignType?.trim()) errors.push("campaignType é obrigatório");
+  if (!input.campaignName?.trim()) errors.push("campaignName is required");
+  if (!input.campaignType?.trim()) errors.push("campaignType is required");
 
   return { valid: errors.length === 0, errors };
 }
@@ -23,9 +23,9 @@ export function validateCampaignStrategyOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.strategicDirection?.trim()) errors.push("strategicDirection não pode estar vazio");
-  if (!output.targetAudience?.trim())     errors.push("targetAudience não pode estar vazio");
-  if (!Array.isArray(output.keyMessages)) errors.push("keyMessages deve ser uma lista");
+  if (!output.strategicDirection?.trim()) errors.push("strategicDirection must not be empty");
+  if (!output.targetAudience?.trim())     errors.push("targetAudience must not be empty");
+  if (!Array.isArray(output.keyMessages)) errors.push("keyMessages must be a list");
 
   return { valid: errors.length === 0, errors };
 }

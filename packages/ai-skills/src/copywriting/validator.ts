@@ -16,8 +16,8 @@ export function validateCopywritingInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.taskTitle?.trim()) errors.push("taskTitle é obrigatório");
-  if (!INTENTS.includes(input.intent)) errors.push("intent inválido");
+  if (!input.taskTitle?.trim()) errors.push("taskTitle is required");
+  if (!INTENTS.includes(input.intent)) errors.push("intent is invalid");
 
   return { valid: errors.length === 0, errors };
 }
@@ -28,16 +28,16 @@ export function validateCopywritingOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.draftTitle?.trim()) errors.push("draftTitle não pode estar vazio");
-  if (!output.draftBody?.trim()) errors.push("draftBody não pode estar vazio");
-  if (!Array.isArray(output.usedFacts)) errors.push("usedFacts deve ser uma lista");
-  if (output.isDraft !== true) errors.push("isDraft deve ser sempre true — anti-fabricação (nunca um texto final)");
+  if (!output.draftTitle?.trim()) errors.push("draftTitle must not be empty");
+  if (!output.draftBody?.trim()) errors.push("draftBody must not be empty");
+  if (!Array.isArray(output.usedFacts)) errors.push("usedFacts must be a list");
+  if (output.isDraft !== true) errors.push("isDraft must always be true — anti-fabrication (never a final text)");
 
   if (input) {
     const allowed = new Set(input.sourceFacts ?? []);
     const invented = output.usedFacts.filter((f) => !allowed.has(f));
     if (invented.length > 0) {
-      errors.push(`usedFacts contém fato(s) não presentes em sourceFacts — anti-fabricação: ${invented.join(", ")}`);
+      errors.push(`usedFacts contains fact(s) not present in sourceFacts — anti-fabrication: ${invented.join(", ")}`);
     }
   }
 

@@ -14,10 +14,10 @@ export function validateSeoAuditInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.campaignName?.trim()) errors.push("campaignName é obrigatório");
-  if (!input.promotedEntityType?.trim()) errors.push("promotedEntityType é obrigatório");
-  if (!input.promotedEntityName?.trim()) errors.push("promotedEntityName é obrigatório");
-  if (typeof input.hasUtm !== "boolean") errors.push("hasUtm é obrigatório");
+  if (!input.campaignName?.trim()) errors.push("campaignName is required");
+  if (!input.promotedEntityType?.trim()) errors.push("promotedEntityType is required");
+  if (!input.promotedEntityName?.trim()) errors.push("promotedEntityName is required");
+  if (typeof input.hasUtm !== "boolean") errors.push("hasUtm is required");
 
   return { valid: errors.length === 0, errors };
 }
@@ -27,12 +27,12 @@ export function validateSeoAuditOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.auditSummary?.trim()) errors.push("auditSummary não pode estar vazio");
-  if (!Array.isArray(output.checks)) errors.push("checks deve ser uma lista");
+  if (!output.auditSummary?.trim()) errors.push("auditSummary must not be empty");
+  if (!Array.isArray(output.checks)) errors.push("checks must be a list");
   else if (output.checks.some((c) => c.source === "external_measurement")) {
-    errors.push("nenhum check pode ter source=external_measurement — anti-fabricação (esta skill não mede nada externo)");
+    errors.push("no check may have source=external_measurement — anti-fabrication (this skill measures nothing external)");
   }
-  if (!Array.isArray(output.unavailableMetrics)) errors.push("unavailableMetrics deve ser uma lista");
+  if (!Array.isArray(output.unavailableMetrics)) errors.push("unavailableMetrics must be a list");
 
   return { valid: errors.length === 0, errors };
 }

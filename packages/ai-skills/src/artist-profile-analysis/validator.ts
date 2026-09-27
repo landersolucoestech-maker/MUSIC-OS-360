@@ -17,18 +17,18 @@ export function validateArtistProfileAnalysisInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.artistName?.trim()) errors.push("artistName é obrigatório");
+  if (!input.artistName?.trim()) errors.push("artistName is required");
 
   if (input.platforms !== undefined) {
     if (!Array.isArray(input.platforms)) {
-      errors.push("platforms deve ser um array");
+      errors.push("platforms must be an array");
     } else {
       const invalidFollowers = input.platforms.some(
         (p) =>
           p.followers !== undefined &&
           (typeof p.followers !== "number" || Number.isNaN(p.followers) || !Number.isFinite(p.followers) || p.followers < 0),
       );
-      if (invalidFollowers) errors.push("followers, se informado, deve ser um número válido >= 0");
+      if (invalidFollowers) errors.push("followers, if provided, must be a valid number >= 0");
     }
   }
 
@@ -40,9 +40,9 @@ export function validateArtistProfileAnalysisOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.positioning?.trim())    errors.push("positioning não pode estar vazio");
-  if (!output.brandNarrative?.trim()) errors.push("brandNarrative não pode estar vazio");
-  if (!Array.isArray(output.opportunities)) errors.push("opportunities deve ser uma lista");
+  if (!output.positioning?.trim())    errors.push("positioning must not be empty");
+  if (!output.brandNarrative?.trim()) errors.push("brandNarrative must not be empty");
+  if (!Array.isArray(output.opportunities)) errors.push("opportunities must be a list");
 
   return { valid: errors.length === 0, errors };
 }

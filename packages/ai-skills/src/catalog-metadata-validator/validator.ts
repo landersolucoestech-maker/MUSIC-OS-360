@@ -19,30 +19,30 @@ export function validateCatalogMetadataValidatorInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.title?.trim()) errors.push("title é obrigatório");
+  if (!input.title?.trim()) errors.push("title is required");
 
   if (input.type !== "work" && input.type !== "recording") {
-    errors.push('type é obrigatório e deve ser "work" ou "recording"');
+    errors.push('type is required and must be "work" or "recording"');
   }
 
   if (input.type === "work") {
     if (!Array.isArray(input.composers) || input.composers.length === 0) {
-      errors.push("composers deve ter pelo menos 1 item para type=work");
+      errors.push("composers must have at least 1 item for type=work");
     }
   }
 
   if (input.type === "recording") {
     if (!Array.isArray(input.performers) || input.performers.length === 0) {
-      errors.push("performers deve ter pelo menos 1 item para type=recording");
+      errors.push("performers must have at least 1 item for type=recording");
     }
   }
 
   if (input.shares !== undefined) {
     if (!Array.isArray(input.shares)) {
-      errors.push("shares deve ser uma lista");
+      errors.push("shares must be a list");
     } else {
       const invalid = input.shares.some((s) => typeof s.percentage !== "number" || Number.isNaN(s.percentage));
-      if (invalid) errors.push("cada share.percentage deve ser um número");
+      if (invalid) errors.push("each share.percentage must be a number");
     }
   }
 
@@ -54,16 +54,16 @@ export function validateCatalogMetadataValidatorOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (typeof output.isValid !== "boolean") errors.push("isValid deve ser booleano");
+  if (typeof output.isValid !== "boolean") errors.push("isValid must be a boolean");
 
   if (typeof output.score !== "number") {
-    errors.push("score deve ser numérico");
+    errors.push("score must be numeric");
   } else if (output.score < 0 || output.score > 100) {
-    errors.push("score deve estar entre 0 e 100");
+    errors.push("score must be between 0 and 100");
   }
 
-  if (!Array.isArray(output.errors))   errors.push("errors deve ser uma lista");
-  if (!Array.isArray(output.warnings)) errors.push("warnings deve ser uma lista");
+  if (!Array.isArray(output.errors))   errors.push("errors must be a list");
+  if (!Array.isArray(output.warnings)) errors.push("warnings must be a list");
 
   return { valid: errors.length === 0, errors };
 }

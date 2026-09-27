@@ -24,17 +24,17 @@ export function validateAudiovisualBriefingInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.projectTitle?.trim()) errors.push("projectTitle é obrigatório");
-  if (!input.artistName?.trim())   errors.push("artistName é obrigatório");
+  if (!input.projectTitle?.trim()) errors.push("projectTitle is required");
+  if (!input.artistName?.trim())   errors.push("artistName is required");
 
   if (!input.contentType || !(CONTENT_TYPES as string[]).includes(input.contentType)) {
-    errors.push("contentType é obrigatório e deve ser um dos valores definidos");
+    errors.push("contentType is required and must be one of the defined values");
   }
 
-  if (!input.objective?.trim()) errors.push("objective é obrigatório");
+  if (!input.objective?.trim()) errors.push("objective is required");
 
   if (!input.budgetLevel || !(BUDGET_LEVELS as string[]).includes(input.budgetLevel)) {
-    errors.push("budgetLevel é obrigatório e deve ser um dos valores definidos");
+    errors.push("budgetLevel is required and must be one of the defined values");
   }
 
   return { valid: errors.length === 0, errors };
@@ -45,9 +45,9 @@ export function validateAudiovisualBriefingOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.creativeConcept?.trim())     errors.push("creativeConcept não pode estar vazio");
-  if (!Array.isArray(output.script))       errors.push("script deve ser uma lista");
-  if (!Array.isArray(output.deliverables)) errors.push("deliverables deve ser uma lista");
+  if (!output.creativeConcept?.trim())     errors.push("creativeConcept must not be empty");
+  if (!Array.isArray(output.script))       errors.push("script must be a list");
+  if (!Array.isArray(output.deliverables)) errors.push("deliverables must be a list");
 
   return { valid: errors.length === 0, errors };
 }

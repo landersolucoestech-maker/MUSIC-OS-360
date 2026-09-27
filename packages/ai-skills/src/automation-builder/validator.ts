@@ -12,9 +12,9 @@ export function validateAutomationBuilderInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!Array.isArray(input.currentMenuOptionLabels)) errors.push("currentMenuOptionLabels deve ser uma lista");
-  if (!Array.isArray(input.currentEscalationLevels)) errors.push("currentEscalationLevels deve ser uma lista");
-  if (typeof input.invalidOptionCount !== "number") errors.push("invalidOptionCount é obrigatório");
+  if (!Array.isArray(input.currentMenuOptionLabels)) errors.push("currentMenuOptionLabels must be a list");
+  if (!Array.isArray(input.currentEscalationLevels)) errors.push("currentEscalationLevels must be a list");
+  if (typeof input.invalidOptionCount !== "number") errors.push("invalidOptionCount is required");
 
   return { valid: errors.length === 0, errors };
 }
@@ -24,10 +24,10 @@ export function validateAutomationBuilderOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.suggestionsSummary?.trim()) errors.push("suggestionsSummary não pode estar vazio");
-  if (!Array.isArray(output.suggestedMenuChanges)) errors.push("suggestedMenuChanges deve ser uma lista");
-  if (!Array.isArray(output.suggestedEscalationChanges)) errors.push("suggestedEscalationChanges deve ser uma lista");
-  if (!Array.isArray(output.risks)) errors.push("risks deve ser uma lista");
+  if (!output.suggestionsSummary?.trim()) errors.push("suggestionsSummary must not be empty");
+  if (!Array.isArray(output.suggestedMenuChanges)) errors.push("suggestedMenuChanges must be a list");
+  if (!Array.isArray(output.suggestedEscalationChanges)) errors.push("suggestedEscalationChanges must be a list");
+  if (!Array.isArray(output.risks)) errors.push("risks must be a list");
 
   return { valid: errors.length === 0, errors };
 }

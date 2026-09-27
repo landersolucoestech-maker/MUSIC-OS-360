@@ -14,9 +14,9 @@ export function validateAutomationAuditInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (typeof input.automationEnabled !== "boolean") errors.push("automationEnabled é obrigatório");
-  if (typeof input.totalEventsAnalyzed !== "number") errors.push("totalEventsAnalyzed é obrigatório");
-  if (!Array.isArray(input.eventCounts)) errors.push("eventCounts deve ser uma lista");
+  if (typeof input.automationEnabled !== "boolean") errors.push("automationEnabled is required");
+  if (typeof input.totalEventsAnalyzed !== "number") errors.push("totalEventsAnalyzed is required");
+  if (!Array.isArray(input.eventCounts)) errors.push("eventCounts must be a list");
 
   return { valid: errors.length === 0, errors };
 }
@@ -26,10 +26,10 @@ export function validateAutomationAuditOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.auditSummary?.trim()) errors.push("auditSummary não pode estar vazio");
-  if (!HEALTH_STATUSES.includes(output.healthStatus)) errors.push("healthStatus inválido");
-  if (!Array.isArray(output.findings)) errors.push("findings deve ser uma lista");
-  if (!Array.isArray(output.recommendedActions)) errors.push("recommendedActions deve ser uma lista");
+  if (!output.auditSummary?.trim()) errors.push("auditSummary must not be empty");
+  if (!HEALTH_STATUSES.includes(output.healthStatus)) errors.push("healthStatus is invalid");
+  if (!Array.isArray(output.findings)) errors.push("findings must be a list");
+  if (!Array.isArray(output.recommendedActions)) errors.push("recommendedActions must be a list");
 
   return { valid: errors.length === 0, errors };
 }

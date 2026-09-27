@@ -26,10 +26,10 @@ export function validatePostizInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.postTitle?.trim()) errors.push("postTitle é obrigatório");
-  if (!input.channel?.trim()) errors.push("channel é obrigatório");
-  if (!READINESS_VALUES.includes(input.channelReadiness)) errors.push("channelReadiness inválido");
-  if (typeof input.hasCopy !== "boolean") errors.push("hasCopy é obrigatório");
+  if (!input.postTitle?.trim()) errors.push("postTitle is required");
+  if (!input.channel?.trim()) errors.push("channel is required");
+  if (!READINESS_VALUES.includes(input.channelReadiness)) errors.push("channelReadiness is invalid");
+  if (typeof input.hasCopy !== "boolean") errors.push("hasCopy is required");
 
   return { valid: errors.length === 0, errors };
 }
@@ -40,14 +40,14 @@ export function validatePostizOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.readinessSummary?.trim()) errors.push("readinessSummary não pode estar vazio");
-  if (typeof output.readyToRequestPublish !== "boolean") errors.push("readyToRequestPublish é obrigatório");
-  if (!Array.isArray(output.blockers)) errors.push("blockers deve ser uma lista");
-  if (!Array.isArray(output.recommendedActions)) errors.push("recommendedActions deve ser uma lista");
+  if (!output.readinessSummary?.trim()) errors.push("readinessSummary must not be empty");
+  if (typeof output.readyToRequestPublish !== "boolean") errors.push("readyToRequestPublish is required");
+  if (!Array.isArray(output.blockers)) errors.push("blockers must be a list");
+  if (!Array.isArray(output.recommendedActions)) errors.push("recommendedActions must be a list");
 
   if (input && output.readyToRequestPublish) {
     if (input.channelReadiness !== "connected" || !input.hasCopy) {
-      errors.push("readyToRequestPublish não pode ser true sem channel conectado e copy presente — anti-fabricação");
+      errors.push("readyToRequestPublish cannot be true without a connected channel and existing copy — anti-fabrication");
     }
   }
 

@@ -17,8 +17,8 @@ export function validatePerformanceReportInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (typeof input.months !== "number" || input.months <= 0) errors.push("months deve ser um número positivo");
-  if (!Array.isArray(input.series)) errors.push("series deve ser uma lista");
+  if (typeof input.months !== "number" || input.months <= 0) errors.push("months must be a positive number");
+  if (!Array.isArray(input.series)) errors.push("series must be a list");
 
   return { valid: errors.length === 0, errors };
 }
@@ -29,20 +29,20 @@ export function validatePerformanceReportOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.periodSummary?.trim()) errors.push("periodSummary não pode estar vazio");
-  if (!TRENDS.includes(output.trend)) errors.push("trend inválido");
-  if (!Array.isArray(output.monthlyBreakdown)) errors.push("monthlyBreakdown deve ser uma lista");
-  if (!Array.isArray(output.keyObservations)) errors.push("keyObservations deve ser uma lista");
-  if (!Array.isArray(output.recommendedActions)) errors.push("recommendedActions deve ser uma lista");
+  if (!output.periodSummary?.trim()) errors.push("periodSummary must not be empty");
+  if (!TRENDS.includes(output.trend)) errors.push("trend is invalid");
+  if (!Array.isArray(output.monthlyBreakdown)) errors.push("monthlyBreakdown must be a list");
+  if (!Array.isArray(output.keyObservations)) errors.push("keyObservations must be a list");
+  if (!Array.isArray(output.recommendedActions)) errors.push("recommendedActions must be a list");
 
   if (input && output.monthlyBreakdown) {
     if (output.monthlyBreakdown.length !== input.series.length) {
-      errors.push("monthlyBreakdown deve ter o mesmo número de meses da série real do input — anti-fabricação");
+      errors.push("monthlyBreakdown must have the same number of months as the real input series — anti-fabrication");
     } else {
       input.series.forEach((real, i) => {
         const reported = output.monthlyBreakdown[i];
         if (!reported || reported.month !== real.month || reported.revenue !== real.revenue || reported.expenses !== real.expenses) {
-          errors.push(`monthlyBreakdown[${i}] diverge da série real do input — anti-fabricação`);
+          errors.push(`monthlyBreakdown[${i}] diverges from the real input series — anti-fabrication`);
         }
       });
     }

@@ -12,8 +12,8 @@ export function validateLaunchStrategyInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.releaseTitle?.trim()) errors.push("releaseTitle é obrigatório");
-  if (!input.releaseType?.trim()) errors.push("releaseType é obrigatório");
+  if (!input.releaseTitle?.trim()) errors.push("releaseTitle is required");
+  if (!input.releaseType?.trim()) errors.push("releaseType is required");
 
   return { valid: errors.length === 0, errors };
 }
@@ -23,12 +23,12 @@ export function validateLaunchStrategyOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.strategicNarrative?.trim()) errors.push("strategicNarrative não pode estar vazio");
-  if (!output.targetAudience?.trim()) errors.push("targetAudience não pode estar vazio");
-  if (!output.competitivePositioning?.trim()) errors.push("competitivePositioning não pode estar vazio");
-  if (!Array.isArray(output.keyMessages)) errors.push("keyMessages deve ser uma lista");
-  if (!Array.isArray(output.successSignals)) errors.push("successSignals deve ser uma lista");
-  if (!Array.isArray(output.riskFactors)) errors.push("riskFactors deve ser uma lista");
+  if (!output.strategicNarrative?.trim()) errors.push("strategicNarrative must not be empty");
+  if (!output.targetAudience?.trim()) errors.push("targetAudience must not be empty");
+  if (!output.competitivePositioning?.trim()) errors.push("competitivePositioning must not be empty");
+  if (!Array.isArray(output.keyMessages)) errors.push("keyMessages must be a list");
+  if (!Array.isArray(output.successSignals)) errors.push("successSignals must be a list");
+  if (!Array.isArray(output.riskFactors)) errors.push("riskFactors must be a list");
 
   return { valid: errors.length === 0, errors };
 }

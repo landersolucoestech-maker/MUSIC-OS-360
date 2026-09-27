@@ -23,17 +23,17 @@ const STAGES: CrmStage[] = [
 export function validateCrmFollowupInput(input: CrmFollowupInput): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.leadName?.trim()) errors.push("leadName é obrigatório");
+  if (!input.leadName?.trim()) errors.push("leadName is required");
 
   if (!input.leadType || !(LEAD_TYPES as string[]).includes(input.leadType)) {
-    errors.push("leadType é obrigatório e deve ser um dos valores definidos");
+    errors.push("leadType is required and must be one of the defined values");
   }
 
   if (!input.currentStage || !(STAGES as string[]).includes(input.currentStage)) {
-    errors.push("currentStage é obrigatório e deve ser um dos valores definidos");
+    errors.push("currentStage is required and must be one of the defined values");
   }
 
-  if (!input.objective?.trim()) errors.push("objective é obrigatório");
+  if (!input.objective?.trim()) errors.push("objective is required");
 
   return { valid: errors.length === 0, errors };
 }
@@ -41,13 +41,13 @@ export function validateCrmFollowupInput(input: CrmFollowupInput): SkillValidati
 export function validateCrmFollowupOutput(output: CrmFollowupOutput): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.nextAction?.trim())      errors.push("nextAction não pode estar vazio");
-  if (!output.followUpMessage?.trim()) errors.push("followUpMessage não pode estar vazio");
+  if (!output.nextAction?.trim())      errors.push("nextAction must not be empty");
+  if (!output.followUpMessage?.trim()) errors.push("followUpMessage must not be empty");
 
   if (typeof output.conversionProbability !== "number") {
-    errors.push("conversionProbability deve ser numérico");
+    errors.push("conversionProbability must be numeric");
   } else if (output.conversionProbability < 0 || output.conversionProbability > 1) {
-    errors.push("conversionProbability deve estar entre 0 e 1");
+    errors.push("conversionProbability must be between 0 and 1");
   }
 
   return { valid: errors.length === 0, errors };

@@ -1,7 +1,7 @@
 {
   "name": "@music-os-360/ai-skills",
   "version": "0.0.1",
-  "description": "MUSIC OS 360 — Lógica pura das AI Skills (prompts, parsers, validators) compartilhada entre web e api",
+  "description": "MUSIC OS 360 — pure AI Skills logic (prompts, parsers, validators) shared by web and api",
   "private": true,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

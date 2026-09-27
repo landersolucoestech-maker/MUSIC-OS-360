@@ -14,13 +14,13 @@ export function validateAudienceHealthInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.artistName?.trim()) errors.push("artistName é obrigatório");
+  if (!input.artistName?.trim()) errors.push("artistName is required");
   if (input.careerStageStatus !== "OK" && input.careerStageStatus !== "INSUFFICIENT_DATA") {
-    errors.push("careerStageStatus deve ser 'OK' ou 'INSUFFICIENT_DATA'");
+    errors.push("careerStageStatus must be 'OK' or 'INSUFFICIENT_DATA'");
   }
-  if (typeof input.careerStageConfidence !== "number") errors.push("careerStageConfidence é obrigatório");
+  if (typeof input.careerStageConfidence !== "number") errors.push("careerStageConfidence is required");
   if (!["READY", "STALE", "REFRESHING", "INTEGRATION_UNAVAILABLE", "ERROR"].includes(input.marketBenchmarkReadStatus)) {
-    errors.push("marketBenchmarkReadStatus inválido");
+    errors.push("marketBenchmarkReadStatus is invalid");
   }
 
   return { valid: errors.length === 0, errors };
@@ -31,12 +31,12 @@ export function validateAudienceHealthOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.healthSummary?.trim()) errors.push("healthSummary não pode estar vazio");
-  if (!HEALTH_STATUSES.includes(output.healthStatus)) errors.push("healthStatus inválido");
-  if (!Array.isArray(output.strengths)) errors.push("strengths deve ser uma lista");
-  if (!Array.isArray(output.concerns)) errors.push("concerns deve ser uma lista");
-  if (!Array.isArray(output.recommendedActions)) errors.push("recommendedActions deve ser uma lista");
-  if (!Array.isArray(output.dataGaps)) errors.push("dataGaps deve ser uma lista");
+  if (!output.healthSummary?.trim()) errors.push("healthSummary must not be empty");
+  if (!HEALTH_STATUSES.includes(output.healthStatus)) errors.push("healthStatus is invalid");
+  if (!Array.isArray(output.strengths)) errors.push("strengths must be a list");
+  if (!Array.isArray(output.concerns)) errors.push("concerns must be a list");
+  if (!Array.isArray(output.recommendedActions)) errors.push("recommendedActions must be a list");
+  if (!Array.isArray(output.dataGaps)) errors.push("dataGaps must be a list");
 
   return { valid: errors.length === 0, errors };
 }

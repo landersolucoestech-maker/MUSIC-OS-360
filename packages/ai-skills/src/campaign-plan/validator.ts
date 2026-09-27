@@ -12,17 +12,17 @@ export function validateCampaignPlanInput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!input.campaignName?.trim()) errors.push("campaignName é obrigatório");
-  if (!input.campaignType?.trim()) errors.push("campaignType é obrigatório");
+  if (!input.campaignName?.trim()) errors.push("campaignName is required");
+  if (!input.campaignType?.trim()) errors.push("campaignType is required");
 
   if (input.budget !== undefined) {
     if (typeof input.budget !== "number" || Number.isNaN(input.budget) || !Number.isFinite(input.budget) || input.budget < 0) {
-      errors.push("budget, se informado, deve ser um número válido >= 0");
+      errors.push("budget, if provided, must be a valid number >= 0");
     }
   }
 
   if (input.platforms !== undefined && !Array.isArray(input.platforms)) {
-    errors.push("platforms deve ser um array");
+    errors.push("platforms must be an array");
   }
 
   return { valid: errors.length === 0, errors };
@@ -33,9 +33,9 @@ export function validateCampaignPlanOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.planSummary?.trim()) errors.push("planSummary não pode estar vazio");
-  if (!Array.isArray(output.channels)) errors.push("channels deve ser uma lista");
-  if (!Array.isArray(output.suggestedTasks)) errors.push("suggestedTasks deve ser uma lista");
+  if (!output.planSummary?.trim()) errors.push("planSummary must not be empty");
+  if (!Array.isArray(output.channels)) errors.push("channels must be a list");
+  if (!Array.isArray(output.suggestedTasks)) errors.push("suggestedTasks must be a list");
 
   return { valid: errors.length === 0, errors };
 }

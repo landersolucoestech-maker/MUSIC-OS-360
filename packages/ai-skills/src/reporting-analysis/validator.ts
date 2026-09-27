@@ -24,7 +24,7 @@ export function validateReportingAnalysisInput(
     ["netResultCurrentMonth", input.netResultCurrentMonth],
   ];
   for (const [name, value] of requiredNumbers) {
-    if (typeof value !== "number" || Number.isNaN(value)) errors.push(`${name} é obrigatório e deve ser numérico`);
+    if (typeof value !== "number" || Number.isNaN(value)) errors.push(`${name} is required and must be numeric`);
   }
 
   return { valid: errors.length === 0, errors };
@@ -35,11 +35,11 @@ export function validateReportingAnalysisOutput(
 ): SkillValidationResult {
   const errors: string[] = [];
 
-  if (!output.analysisSummary?.trim()) errors.push("analysisSummary não pode estar vazio");
-  if (!HEALTH_STATUSES.includes(output.healthStatus)) errors.push("healthStatus inválido");
-  if (!Array.isArray(output.highlights)) errors.push("highlights deve ser uma lista");
-  if (!Array.isArray(output.concerns)) errors.push("concerns deve ser uma lista");
-  if (!Array.isArray(output.recommendedActions)) errors.push("recommendedActions deve ser uma lista");
+  if (!output.analysisSummary?.trim()) errors.push("analysisSummary must not be empty");
+  if (!HEALTH_STATUSES.includes(output.healthStatus)) errors.push("healthStatus is invalid");
+  if (!Array.isArray(output.highlights)) errors.push("highlights must be a list");
+  if (!Array.isArray(output.concerns)) errors.push("concerns must be a list");
+  if (!Array.isArray(output.recommendedActions)) errors.push("recommendedActions must be a list");
 
   return { valid: errors.length === 0, errors };
 }
