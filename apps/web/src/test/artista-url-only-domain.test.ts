@@ -46,7 +46,7 @@ describe("Artist domain — URL-only (foto_url/spotify_url/youtube_url)", () => 
   });
 
   it("export (form columns) never includes a legacy field header", () => {
-    const artista = {
+    const artist = {
       id: "a1",
       stageName: "Artista Teste",
       photoUrl: "https://cdn.example.com/foto.png",
@@ -54,7 +54,7 @@ describe("Artist domain — URL-only (foto_url/spotify_url/youtube_url)", () => 
       youtube_url: "https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw",
     } as Artist;
 
-    const row = artistToExportRowFromForm(artista);
+    const row = artistToExportRowFromForm(artist);
     const headers = Object.keys(row);
 
     // No export header may be (or contain) a legacy field.

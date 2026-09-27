@@ -68,7 +68,7 @@ vi.mock("@/shared/lib/api-client", () => ({
 import { ArtistVision360Modal } from "@/modules/artist/components/ArtistVision360Modal";
 import { api } from "@/shared/lib/api-client";
 
-async function renderModal(artista: any) {
+async function renderModal(artist: any) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
@@ -77,7 +77,7 @@ async function renderModal(artista: any) {
       <ArtistVision360Modal
         open
         onOpenChange={() => {}}
-        artista={artista}
+        artista={artist}
       />
     </QueryClientProvider>,
   );

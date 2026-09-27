@@ -79,7 +79,7 @@ function dataQuery(points: MetricEvolutionPoint[]) {
   return { data: points, isLoading: false, error: null };
 }
 
-const fullArtista = {
+const fullArtist = {
   id: "art-1",
   spotify_url: "https://open.spotify.com/artist/spot-1",
   youtube_url: "https://www.youtube.com/channel/UC1",
@@ -107,7 +107,7 @@ describe("<ArtistEvolutionSection />", () => {
     spotifyMock.mockReturnValue(emptyQuery());
     youtubeMock.mockReturnValue(emptyQuery());
     deezerMock.mockReturnValue(emptyQuery());
-    renderWithProviders(<ArtistEvolutionSection artist={fullArtista} />);
+    renderWithProviders(<ArtistEvolutionSection artist={fullArtist} />);
 
     expect(screen.getByTestId("section-evolucao")).toBeInTheDocument();
     expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
@@ -135,7 +135,7 @@ describe("<ArtistEvolutionSection />", () => {
       dataQuery([point("2026-04-30T06:20:00Z", 300)]),
     );
 
-    renderWithProviders(<ArtistEvolutionSection artist={fullArtista} />);
+    renderWithProviders(<ArtistEvolutionSection artist={fullArtist} />);
 
     expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
       /sem histórico/i,
@@ -179,7 +179,7 @@ describe("<ArtistEvolutionSection />", () => {
       ]),
     );
 
-    renderWithProviders(<ArtistEvolutionSection artist={fullArtista} />);
+    renderWithProviders(<ArtistEvolutionSection artist={fullArtist} />);
 
     expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
       /estável/i,
@@ -220,7 +220,7 @@ describe("<ArtistEvolutionSection />", () => {
     );
     deezerMock.mockReturnValue(emptyQuery());
 
-    renderWithProviders(<ArtistEvolutionSection artist={fullArtista} />);
+    renderWithProviders(<ArtistEvolutionSection artist={fullArtist} />);
 
     expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
       /em crescimento/i,
@@ -261,7 +261,7 @@ describe("<ArtistEvolutionSection />", () => {
       ]),
     );
 
-    renderWithProviders(<ArtistEvolutionSection artist={fullArtista} />);
+    renderWithProviders(<ArtistEvolutionSection artist={fullArtist} />);
 
     expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
       /em queda/i,
@@ -307,7 +307,7 @@ describe("<ArtistEvolutionSection />", () => {
     youtubeMock.mockReturnValue(loadingQuery());
     deezerMock.mockReturnValue(loadingQuery());
 
-    renderWithProviders(<ArtistEvolutionSection artist={fullArtista} />);
+    renderWithProviders(<ArtistEvolutionSection artist={fullArtist} />);
 
     expect(screen.getByTestId("text-evolucao-status")).toHaveTextContent(
       /em crescimento/i,

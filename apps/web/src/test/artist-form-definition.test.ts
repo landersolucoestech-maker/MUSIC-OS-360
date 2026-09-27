@@ -14,7 +14,7 @@ import {
 } from "@/modules/artist/forms/artist-form.definition";
 import type { Artist } from "@/modules/artist/types/artist.types";
 
-const ARTISTA: Artist & { genero?: string } = {
+const ARTIST: Artist & { genero?: string } = {
   id: "a1",
   stageName: "MC Teste",
   legalName: "Fulano de Tal",
@@ -51,9 +51,9 @@ const ARTISTA: Artist & { genero?: string } = {
 
 describe("single source of truth for the artist form definition", () => {
   it("exports exactly one column per form field, in visual order", () => {
-    const row = artistToExportRowFromForm(ARTISTA);
-    const labelsDoFormulario = allArtistFormFields().map((f) => f.label);
-    expect(Object.keys(row)).toEqual(labelsDoFormulario);
+    const row = artistToExportRowFromForm(ARTIST);
+    const formLabels = allArtistFormFields().map((f) => f.label);
+    expect(Object.keys(row)).toEqual(formLabels);
   });
 
   it("walks the sections in form order", () => {
@@ -69,7 +69,7 @@ describe("single source of truth for the artist form definition", () => {
   });
 
   it("round-trips export → import → payload without losing form data", () => {
-    const row = artistToExportRowFromForm(ARTISTA);
+    const row = artistToExportRowFromForm(ARTIST);
     const values = parseArtistImportRow(row);
     expect(values).not.toBeNull();
     const payload = formValuesToArtistPayload(values!);

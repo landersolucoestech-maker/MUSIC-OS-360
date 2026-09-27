@@ -108,7 +108,7 @@ describe("ObraFormModal edit mode", () => {
     toastErrorMock.mockClear();
   });
 
-  const baseObra = {
+  const baseWork = {
     id: "obra-1",
     title: "Canção Original",
     music_genre: "pop",
@@ -127,7 +127,7 @@ describe("ObraFormModal edit mode", () => {
         open={true}
         onOpenChange={() => {}}
         mode="edit"
-        obra={baseObra}
+        obra={baseWork}
       />
     );
 
@@ -143,10 +143,10 @@ describe("ObraFormModal edit mode", () => {
     expect(screen.getByTestId("input-duracao-segundos")).toHaveValue("45");
 
     // Participantes from compositores + letristas
-    const nomeInputs = screen
+    const nameInputs = screen
       .getAllByPlaceholderText("Nome do participante")
       .map((el) => (el as HTMLInputElement).value);
-    expect(nomeInputs).toEqual(expect.arrayContaining(["Alice", "Bob", "Carol"]));
+    expect(nameInputs).toEqual(expect.arrayContaining(["Alice", "Bob", "Carol"]));
   });
 
   it("saves edits via updateWork with normalized payload", async () => {
@@ -156,7 +156,7 @@ describe("ObraFormModal edit mode", () => {
         open={true}
         onOpenChange={onOpenChange}
         mode="edit"
-        obra={baseObra}
+        obra={baseWork}
       />
     );
 
@@ -221,10 +221,10 @@ describe("ObraFormModal edit mode", () => {
     fireEvent.click(option);
 
     await waitFor(() => {
-      const nomeInputs = screen
+      const nameInputs = screen
         .getAllByPlaceholderText("Nome do participante")
         .map((el) => (el as HTMLInputElement).value);
-      expect(nomeInputs).toContain("Artista Fora Do Cap");
+      expect(nameInputs).toContain("Artista Fora Do Cap");
     });
   });
 });

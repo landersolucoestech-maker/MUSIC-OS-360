@@ -2,7 +2,7 @@
  "totals": {
   "eventQueueJob": 7,
   "filename": 77,
-  "identifier": 1773
+  "identifier": 1758
  },
  "debt": {
   "eventQueueJob::apps/web/src/modules/events/components/SchedulerFormModal.tsx::name::reunioes": 3,
@@ -1574,20 +1574,7 @@
   "identifier::apps/web/src/shared/types/refs.ts::property::genero": 1,
   "identifier::apps/web/src/shared/types/refs.ts::property::nome": 2,
   "identifier::apps/web/src/shared/types/refs.ts::property::nome_artistico": 1,
-  "identifier::apps/web/src/test/ArtistEvolutionSection.test.tsx::variable::fullArtista": 1,
-  "identifier::apps/web/src/test/ArtistPlatformMetrics.platform-profiles.test.tsx::variable::atualizarButton": 1,
-  "identifier::apps/web/src/test/ArtistVision360Modal.test.tsx::parameter::artista": 1,
-  "identifier::apps/web/src/test/FonogramaFormModal.edit.test.tsx::variable::baseFonograma": 1,
-  "identifier::apps/web/src/test/FonogramaFormModal.edit.test.tsx::variable::nomeInputs": 2,
-  "identifier::apps/web/src/test/FonogramaFormModal.edit.test.tsx::variable::produtoresNames": 1,
-  "identifier::apps/web/src/test/ObraFormModal.edit.test.tsx::variable::baseObra": 1,
-  "identifier::apps/web/src/test/ObraFormModal.edit.test.tsx::variable::nomeInputs": 2,
-  "identifier::apps/web/src/test/RightsMonitoring.test.tsx::variable::DETECCOES": 1,
-  "identifier::apps/web/src/test/RightsMonitoring.test.tsx::variable::OBRAS": 1,
   "identifier::apps/web/src/test/artist-form-definition.test.ts::property::genero": 1,
-  "identifier::apps/web/src/test/artist-form-definition.test.ts::variable::ARTISTA": 1,
-  "identifier::apps/web/src/test/artist-form-definition.test.ts::variable::labelsDoFormulario": 1,
-  "identifier::apps/web/src/test/artista-url-only-domain.test.ts::variable::artista": 1,
   "identifier::packages/ai-skills/src/contact-operations/contracts.ts::property::clientTipoPessoa": 1,
   "identifier::packages/ai-skills/src/contact-operations/contracts.ts::property::responsavelNome": 1,
   "identifier::packages/types/src/enums.ts::enum-member::ARTISTA": 1,

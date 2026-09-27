@@ -135,7 +135,7 @@ describe("FonogramaFormModal edit mode", () => {
     addPhonogramMock.mockClear();
   });
 
-  const baseFonograma = {
+  const basePhonogram = {
     id: "fono-1",
     title: "Canção Vinculada",
     work_id: "obra-1",
@@ -153,7 +153,7 @@ describe("FonogramaFormModal edit mode", () => {
         open={true}
         onOpenChange={() => {}}
         mode="edit"
-        fonograma={baseFonograma}
+        fonograma={basePhonogram}
       />
     );
 
@@ -175,10 +175,10 @@ describe("FonogramaFormModal edit mode", () => {
     expect(screen.getByTestId("input-duracao-segundos")).toHaveValue("20");
 
     // Produtores carried over
-    const nomeInputs = screen
+    const nameInputs = screen
       .getAllByPlaceholderText("Nome do participante")
       .map((el) => (el as HTMLInputElement).value);
-    expect(nomeInputs).toEqual(expect.arrayContaining(["Pedro", "Marta"]));
+    expect(nameInputs).toEqual(expect.arrayContaining(["Pedro", "Marta"]));
   });
 
   it("saves edits via updatePhonogram with the right payload", async () => {
@@ -187,7 +187,7 @@ describe("FonogramaFormModal edit mode", () => {
         open={true}
         onOpenChange={vi.fn()}
         mode="edit"
-        fonograma={baseFonograma}
+        fonograma={basePhonogram}
       />
     );
 
@@ -217,10 +217,10 @@ describe("FonogramaFormModal edit mode", () => {
     // The merged form persists Gravadora X via the agregadora field (mapped from gravadora)
     expect(callArg.agregadora).toBe("Gravadora X");
     // Produtores from the legacy column survive the round-trip via the participacao JSON
-    const produtoresNames = (callArg.participacao?.produtorFonografico ?? []).map(
+    const producerNames = (callArg.participacao?.produtorFonografico ?? []).map(
       (p: { name: string }) => p.name,
     );
-    expect(produtoresNames).toEqual(expect.arrayContaining(["Pedro", "Marta"]));
+    expect(producerNames).toEqual(expect.arrayContaining(["Pedro", "Marta"]));
     expect(callArg.status).toBe("under_review");
     // Tenant isolation: org_id/orgId must NEVER be part of the payload the
     // frontend sends — the API derives the tenant from the authenticated
@@ -252,10 +252,10 @@ describe("FonogramaFormModal edit mode", () => {
     fireEvent.click(option);
 
     await waitFor(() => {
-      const nomeInputs = screen
+      const nameInputs = screen
         .getAllByPlaceholderText("Nome do participante")
         .map((el) => (el as HTMLInputElement).value);
-      expect(nomeInputs).toContain("Artista Fora Do Cap");
+      expect(nameInputs).toContain("Artista Fora Do Cap");
     });
   });
 });

@@ -469,9 +469,9 @@ describe("ArtistPlatformMetrics platform profiles", () => {
 
     renderMetrics();
 
-    const atualizarButton = await screen.findByTestId("button-atualizar-metricas-artist-1");
-    await waitFor(() => expect(atualizarButton).not.toBeDisabled());
-    fireEvent.click(atualizarButton);
+    const updateButton = await screen.findByTestId("button-atualizar-metricas-artist-1");
+    await waitFor(() => expect(updateButton).not.toBeDisabled());
+    fireEvent.click(updateButton);
 
     await waitFor(() => {
       expect(api.post).toHaveBeenCalledWith("/artists/artist-1/platform-profiles/spotify/sync", {

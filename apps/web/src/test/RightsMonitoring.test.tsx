@@ -20,7 +20,7 @@ vi.mock("@/shared/components/MainLayout", () => ({
   ),
 }));
 
-const DETECCOES = [
+const DETECTIONS = [
   {
     id: "det-001", work_id: "obra-001", artist_id: null,
     plataforma: "YouTube", titulo_detectado: "Noite de Luz", url: "https://youtube.com/x",
@@ -35,7 +35,7 @@ const DETECCOES = [
   },
 ];
 
-const OBRAS = [
+const WORKS = [
   {
     id: "obra-001", title: "Noite de Luz",
     compositor: "Vitória Carvalho", compositores: "Vitória Carvalho, Lucas Mendes",
@@ -50,7 +50,7 @@ const deleteMutateAsync = vi.fn();
 
 vi.mock("@/modules/monitoring/hooks/useDetections", () => ({
   useDetections: () => ({
-    detections: DETECCOES,
+    detections: DETECTIONS,
     isLoading: false,
     error: null,
     refetch: vi.fn(),
@@ -73,7 +73,7 @@ vi.mock("@/shared/lib/storage", () => ({
   storage: {
     findById: async (table: string, id: string) => {
       if (table !== "obras") return undefined;
-      return OBRAS.find((o) => o.id === id);
+      return WORKS.find((o) => o.id === id);
     },
   },
 }));
