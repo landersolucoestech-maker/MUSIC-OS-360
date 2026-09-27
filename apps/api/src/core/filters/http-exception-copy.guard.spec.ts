@@ -101,20 +101,30 @@ describe('HttpException end-user copy carries no technical identifiers', () => {
     expect(violations()).toEqual([]);
   });
 
-  it('detects a violation (self-test of the patterns)', () => {
-    for (const bad of [
-      'defina SOUNDCHARTS_CLIENT_ID',
-      'contrato_id obrigatório',
-      'assetType é obrigatório',
-      'neste tenant',
-      'title é obrigatório.',
-      'Artist not found',
-      'Payload is invalid',
-    ]) {
-      expect(PATTERNS.some((re) => re.test(bad))).toBe(true);
-    }
-    for (const good of ['Informe o tipo do material.', 'Título é obrigatório.', 'Registro inválido ou ausente.', 'Papéis globais do sistema são somente leitura']) {
-      expect(PATTERNS.some((re) => re.test(good))).toBe(false);
-    }
+  describe('self-test of the patterns', () => {
+    const flagged = (text: string): boolean => PATTERNS.some((re) => re.test(text));
+
+    it.each([
+      ['accented PT-BR', 'Papéis globais do sistema são somente leitura.'],
+      ['plural PT-BR', 'Somente o sistema pode criar ou alterar papéis no nível de proprietário.'],
+      ['PT-BR with "é"', 'Título é obrigatório.'],
+      ['PT-BR with "são"', 'As datas são inválidas.'],
+      ['PT-BR guidance', 'Informe o tipo do material.'],
+      ['PT-BR with "ausente"', 'Registro inválido ou ausente.'],
+    ])('accepts valid PT-BR copy (%s)', (_label, text) => {
+      expect(flagged(text)).toBe(false);
+    });
+
+    it.each([
+      ['English field key before a PT verb', 'title é obrigatório.', LEADING_FIELD_KEY],
+      ['English sentence (not found)', 'Artist not found', ENGLISH_WORDS],
+      ['English sentence (is invalid)', 'Payload is invalid', ENGLISH_WORDS],
+      ['snake_case key', 'contrato_id obrigatório', SNAKE_KEY],
+      ['camelCase key', 'assetType é obrigatório', CAMEL_KEY],
+      ['env var name', 'defina SOUNDCHARTS_CLIENT_ID', ENV_NAME],
+      ['technical "tenant"', 'neste tenant', TENANT_WORD],
+    ])('rejects %s', (_label, text, pattern) => {
+      expect(pattern.test(text)).toBe(true);
+    });
   });
 });
