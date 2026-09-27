@@ -148,6 +148,8 @@ export function scanSource(relPath, text) {
         add("objectKey", "object-key", n.name.text, lineOf(n)); // report-only: mostly wire/DB field names
       }
     } else if (ts.isParameter(n) && ts.isIdentifier(n.name)) ident("parameter", n.name, n);
+    // destructured bindings: const [nomeCompleto, setNomeCompleto] = useState(); const { valor } = row
+    else if (ts.isBindingElement(n) && ts.isIdentifier(n.name)) ident("variable", n.name, n);
     else if (ts.isPropertyAccessExpression(n) && isEnvAccess(n.expression)) env(n.name.text, n);
     else if (ts.isElementAccessExpression(n) && isEnvAccess(n.expression) && ts.isStringLiteral(n.argumentExpression)) env(n.argumentExpression.text, n);
     else if (ts.isDecorator(n) && ts.isCallExpression(n.expression)) {

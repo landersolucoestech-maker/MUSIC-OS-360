@@ -77,6 +77,14 @@ test("prose detector: short Portuguese test titles without function words are fl
   }
 });
 
+test("identifiers: destructured bindings are scanned like variables", () => {
+  const src = `const [nomeCompleto, setNomeCompleto] = useState("");
+const { valor, dataNascimento: birth } = row;
+const [fullName, setFullName] = useState("");`;
+  const vars = names(scanSource("apps/web/src/b.tsx", src), "identifier").sort();
+  assert.deepEqual(vars, ["nomeCompleto", "setNomeCompleto", "valor"].sort());
+});
+
 test("comments are read from the AST: real comments flagged, strings/URLs/MIME globs are not", () => {
   const real = `/* calcula o repasse do artista quando não há contrato */
 const a = 1; // valida o valor antes de salvar no banco

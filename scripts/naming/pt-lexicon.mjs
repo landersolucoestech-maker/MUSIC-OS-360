@@ -38,6 +38,12 @@ patrimonio equipamento equipamentos
 aprovacao solicitacao solicitacoes
 mensagem mensagens conversa conversas atendimento atendimentos
 fila envio aviso agendamento resposta pedido
+nascimento completo bruto liquido artistico artistica desconto descontos imposto impostos taxa taxas capa cena cenas
+roteiro ensaio reuniao contratante ingresso ingressos publico capacidade entregavel entregaveis sociedade sociedades
+empresario segmento prioridade probabilidade fechamento estimado territorio territorios midia destino origem previsto
+realizado fornecedor fornecedores preco devolucao manutencao emprestado unidade unidades condicao dias meses anos
+todos todas geral resumo exportar importar baixar subir somente apenas pagar vencido vencida mensal anual semanal
+entrada saida inicial previsao contratado contratados ouvinte seguidor faturamento receber pagos pendentes
 `.split(/\s+/).map((t) => t.replace(/\?$/, "")).filter(Boolean)
   // ambiguous with English: drop
   .filter((t) => !["status","marketing","briefing","takedown","royalty","lead","cep","data","nota","ano","dia","modelo","ponto","banco","agencia","ordem","campo","idioma"].includes(t)));

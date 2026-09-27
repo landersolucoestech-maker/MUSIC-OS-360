@@ -181,7 +181,7 @@ export async function createApp(): Promise<INestApplication> {
     new TransformInterceptor(),
   );
 
-  // ── Swagger (dev/test apenas) ────────────────────────────────────────────────
+  // ── Swagger (dev/test only) ──────────────────────────────────────────────────
   if (!isProdLike(process.env['NODE_ENV'])) {
     try {
       const config = new DocumentBuilder()
