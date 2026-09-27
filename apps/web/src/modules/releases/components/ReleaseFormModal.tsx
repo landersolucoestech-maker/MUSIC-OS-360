@@ -2334,7 +2334,7 @@ export function ReleaseFormModal({
                   onCheckedChange={(checked) => setExtra("preOrder", checked === true)}
                   disabled={isViewMode}
                 />
-                <span className="text-sm font-medium">Pre-order</span>
+                <span className="text-sm font-medium">Pré-venda</span>
               </label>
               {extraFields.preOrder && (
                 <label className="flex items-center gap-2 cursor-pointer pl-6">

@@ -682,7 +682,7 @@ function CampaignViewModal({
             <h3 className="mb-1 text-sm font-semibold text-foreground">Otimização (IA)</h3>
 
             <div className="space-y-2">
-              <p className="text-xs font-medium tracking-wider text-muted-foreground">Higiene de link (seo-audit)</p>
+              <p className="text-xs font-medium tracking-wider text-muted-foreground">Higiene de link</p>
               <SkillRunPanel
                 label="Auditar link/UTM da campanha"
                 result={seoAudit.result}

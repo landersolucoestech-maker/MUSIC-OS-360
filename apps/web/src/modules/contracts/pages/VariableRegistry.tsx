@@ -682,7 +682,7 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
                     <TableHead>Alias</TableHead>
                     <TableHead>Nomenclatura Interna</TableHead>
                     <TableHead>Campo</TableHead>
-                    <TableHead>Placeholder</TableHead>
+                    <TableHead>Marcador</TableHead>
                     <TableHead className="w-28 text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>

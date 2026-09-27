@@ -288,7 +288,7 @@ export default function CategoryRegistry({
             </div>
             <div className="space-y-1">
               <Label className="text-xs flex items-center gap-1">
-                Slug
+                Identificador (URL)
                 <span className="text-muted-foreground font-normal">
                   (gerado auto)
                 </span>
@@ -387,7 +387,7 @@ export default function CategoryRegistry({
                   </div>
                   <div className="space-y-1">
                     <Label className="text-[10px]  tracking-wide text-muted-foreground">
-                      Slug
+                      Identificador (URL)
                     </Label>
                     <Input
                       className="h-7 text-xs font-sans"

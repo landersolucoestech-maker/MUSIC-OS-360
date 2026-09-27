@@ -17,7 +17,7 @@ PT-BR and are violations too.
 | Category | Terms | Rationale |
 |---|---|---|
 | Brands, products, platform features | Instagram, YouTube, Facebook, TikTok, Spotify, Apple Music, Deezer, SoundCloud, Stripe, Stripe Connect, PIX, Google Ads, Search Console, Content ID, Marquee, Graph API, Reels, Stories, Threads, WhatsApp, Symphonic, ECAD, ABRAMUS, UBC, ISRC, ISWC, UPC | Proper names / external product vocabulary (`EXTERNAL_CONTRACT`) |
-| Music-industry jargon established in Brazil | release, teaser, press kit, press release, lyric video, visualizer, stream(s), streaming, booker, booking, publisher, pitching, briefing, lead(s), share(s), split(s), master, rider, promoter, playlist, beat(s), sample(s), pack, making of, casting, pocket show, stems, sync, claim(s), feat, single, EP, remix, show | Standard vocabulary of the Brazilian music business |
+| Music-industry jargon established in Brazil | release, teaser, press kit, press release, lyric video, visualizer, stream(s), streaming, booker, booking, publisher, pitching, briefing, lead(s), share(s), split(s), master, rider, promoter, playlist, beat(s), sample(s), pack, making of, casting, pocket show, stems, sync, claim(s), feat, single, EP, remix, show, pré-save, motion cover | Standard vocabulary of the Brazilian music business |
 | Marketing / SaaS loanwords | dashboard, template, tag(s), hashtag(s), post, feed, banner, folder, thumbnail, copy, headline, backlog, networking, upload, download, login, link, app, site, e-mail, chat, workspace, ticket(s), prompt, pop-up, checklist, insights, engagement, performance, ranking, marketing, design, influencer, creator | Current PT-BR usage |
 | Admin / security technical terms (admin screens only) | API, token, webhook, MFA, SMTP, REST, CRM, KPI, ROI, CTR, MRR, churn, FAQ, SIEM | Audience is platform staff; no established PT-BR replacement |
 | Plan names | Starter, Growth, Professional, Enterprise | Product names |
@@ -51,6 +51,8 @@ PT-BR and are violations too.
 | build (app version) | versão |
 | owner (workspace) | proprietário |
 | type (field) | tipo |
+| pre-order (distribution) | pré-venda |
+| status value (any enum) | label from `packages/types/src/status-labels.pt-br.ts` — never the raw value |
 
 ## 3. Error copy
 
