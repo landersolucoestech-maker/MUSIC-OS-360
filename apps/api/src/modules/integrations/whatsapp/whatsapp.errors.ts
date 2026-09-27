@@ -15,3 +15,27 @@ export class WhatsAppError extends Error {
     this.code = code;
   }
 }
+
+/**
+ * Machine code of an outbound WhatsApp delivery failure, persisted on the
+ * conversation message as `metadata.delivery_error_code`. The web maps it to
+ * PT-BR end-user copy; `metadata.delivery_error` keeps the English technical
+ * detail for diagnostics and is never rendered.
+ */
+export type WhatsAppDeliveryErrorCode = WhatsAppErrorCode | 'WHATSAPP_RECIPIENT_PHONE_MISSING';
+
+export interface WhatsAppDeliveryFailure {
+  readonly code: WhatsAppDeliveryErrorCode;
+  readonly technicalMessage: string;
+}
+
+export const RECIPIENT_PHONE_MISSING: WhatsAppDeliveryFailure = {
+  code: 'WHATSAPP_RECIPIENT_PHONE_MISSING',
+  technicalMessage: 'Conversation metadata has no recipient phone (phone/external_contact_id)',
+};
+
+/** Classifies a send failure; unknown errors are upstream failures. */
+export function toWhatsAppDeliveryFailure(err: unknown): WhatsAppDeliveryFailure {
+  if (err instanceof WhatsAppError) return { code: err.code, technicalMessage: err.message };
+  return { code: 'WHATSAPP_UPSTREAM_ERROR', technicalMessage: err instanceof Error ? err.message : String(err) };
+}

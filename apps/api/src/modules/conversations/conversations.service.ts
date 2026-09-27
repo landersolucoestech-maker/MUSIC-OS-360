@@ -19,6 +19,11 @@ import {
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { RealtimeService }              from '../../core/realtime/realtime.service';
 import { WhatsAppCloudProvider }        from '../integrations/whatsapp/whatsapp-cloud.provider';
+import {
+  RECIPIENT_PHONE_MISSING,
+  toWhatsAppDeliveryFailure,
+  type WhatsAppDeliveryFailure,
+} from '../integrations/whatsapp/whatsapp.errors';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import type {
   CreateConversationDto,
@@ -291,29 +296,29 @@ export class ConversationsService {
       ?? (conv.metadata?.['external_contact_id'] as string | undefined);
     if (!to) {
       this.logger.warn(`dispatchOutbound: conversation ${conv.id} is whatsapp but has no phone in metadata — delivery skipped`);
-      return this.setDeliveryStatus(message, 'failed', 'Telefone do contact não encontrado na conversa');
+      return this.setDeliveryStatus(message, 'failed', RECIPIENT_PHONE_MISSING);
     }
 
     try {
       const result = await this.whatsapp.sendTextMessage(tenantId, to, message.body);
       return this.setDeliveryStatus(message, 'sent', undefined, result.externalMessageId);
     } catch (err) {
-      const reason = err instanceof Error ? err.message : String(err);
-      this.logger.warn(`dispatchOutbound: failed to send via WhatsApp (conversation ${conv.id}) — ${reason}`);
-      return this.setDeliveryStatus(message, 'failed', reason);
+      const failure = toWhatsAppDeliveryFailure(err);
+      this.logger.warn(`dispatchOutbound: failed to send via WhatsApp (conversation ${conv.id}) — ${failure.code}: ${failure.technicalMessage}`);
+      return this.setDeliveryStatus(message, 'failed', failure);
     }
   }
 
   private async setDeliveryStatus(
     message: ConversationMessageEntity,
     status: 'sent' | 'failed' | 'internal_only',
-    error?: string,
+    failure?: WhatsAppDeliveryFailure,
     externalMessageId?: string,
   ): Promise<ConversationMessageEntity> {
     const metadata = {
       ...(message.metadata ?? {}),
       delivery_status: status,
-      ...(error ? { delivery_error: error } : {}),
+      ...(failure ? { delivery_error_code: failure.code, delivery_error: failure.technicalMessage } : {}),
       ...(externalMessageId ? { external_message_id: externalMessageId } : {}),
     };
     await this.msgRepo!.update({ id: message.id } as any, { metadata } as any);

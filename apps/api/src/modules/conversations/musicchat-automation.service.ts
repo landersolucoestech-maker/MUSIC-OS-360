@@ -12,7 +12,7 @@ import {
 import { NotificationsService } from '../notifications/notifications.service';
 import { RealtimeService } from '../../core/realtime/realtime.service';
 import { WhatsAppCloudProvider } from '../integrations/whatsapp/whatsapp-cloud.provider';
-import { WhatsAppError } from '../integrations/whatsapp/whatsapp.errors';
+import { RECIPIENT_PHONE_MISSING, toWhatsAppDeliveryFailure } from '../integrations/whatsapp/whatsapp.errors';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import type {
   MusicChatEscalationRuleDto,
@@ -314,11 +314,11 @@ export class MusicChatAutomationService {
     const settings = await this.getSettings(tenantId);
     const channels = (settings.notification_channels ?? {}) as Record<string, unknown>;
     if (channels['whatsapp'] !== true) {
-      return fail('Canal WhatsApp não habilitado nas configurações de automação do tenant.', 'CHANNEL_DISABLED');
+      return fail('WhatsApp channel not enabled in the tenant automation settings.', 'CHANNEL_DISABLED');
     }
 
     if (!(await this.whatsapp.isConfigured(tenantId))) {
-      return fail('WhatsApp Cloud API não configurado para este tenant.', 'PROVIDER_NOT_CONFIGURED');
+      return fail('WhatsApp Cloud API not configured for this tenant.', 'PROVIDER_NOT_CONFIGURED');
     }
 
     const member = await this.orgMemberRepo!
@@ -328,7 +328,7 @@ export class MusicChatAutomationService {
       })
       .getOne();
     if (!member?.phone) {
-      return fail('Destinatário não possui telefone cadastrado.', 'INVALID_RECIPIENT');
+      return fail('Recipient has no registered phone.', 'INVALID_RECIPIENT');
     }
 
     const oneMinuteAgo = new Date(Date.now() - 60_000);
@@ -339,7 +339,7 @@ export class MusicChatAutomationService {
       })
       .getCount();
     if (recentSends >= MusicChatAutomationService.WHATSAPP_RATE_LIMIT_PER_MINUTE) {
-      return fail('Limite de envios WhatsApp por minuto atingido para este tenant.', 'RATE_LIMITED');
+      return fail('Per-minute WhatsApp send limit reached for this tenant.', 'RATE_LIMITED');
     }
 
     try {
@@ -355,9 +355,8 @@ export class MusicChatAutomationService {
         } as any,
       );
     } catch (err) {
-      const code = err instanceof WhatsAppError ? err.code : 'WHATSAPP_UPSTREAM_ERROR';
-      const reason = err instanceof Error ? err.message : 'Falha desconhecida ao enviar WhatsApp';
-      await fail(reason, code);
+      const failure = toWhatsAppDeliveryFailure(err);
+      await fail(failure.technicalMessage, failure.code);
     }
   }
 
@@ -491,16 +490,19 @@ export class MusicChatAutomationService {
     const metadataPatch: Record<string, unknown> = { ...(message.metadata ?? {}) };
     if (!to) {
       metadataPatch['delivery_status'] = 'failed';
-      metadataPatch['delivery_error'] = 'Telefone do contact não encontrado na conversa';
+      metadataPatch['delivery_error_code'] = RECIPIENT_PHONE_MISSING.code;
+      metadataPatch['delivery_error'] = RECIPIENT_PHONE_MISSING.technicalMessage;
     } else {
       try {
         const result = await this.whatsapp.sendTextMessage(tenantId, to, message.body);
         metadataPatch['delivery_status'] = 'sent';
         metadataPatch['external_message_id'] = result.externalMessageId;
       } catch (err) {
+        const failure = toWhatsAppDeliveryFailure(err);
         metadataPatch['delivery_status'] = 'failed';
-        metadataPatch['delivery_error'] = err instanceof Error ? err.message : String(err);
-        this.logger.warn(`dispatchOutboundIfExternal: failed to send automation via WhatsApp (conversation ${conversationId}) — ${metadataPatch['delivery_error']}`);
+        metadataPatch['delivery_error_code'] = failure.code;
+        metadataPatch['delivery_error'] = failure.technicalMessage;
+        this.logger.warn(`dispatchOutboundIfExternal: failed to send automation via WhatsApp (conversation ${conversationId}) — ${failure.code}: ${failure.technicalMessage}`);
       }
     }
     await this.msgRepo!.update({ id: message.id } as any, { metadata: metadataPatch } as any);

@@ -42,7 +42,13 @@ interface RawMessage {
   sender_id: string;
   sender_type: BackendSenderType;
   attachments: unknown[];
-  metadata: Record<string, unknown> & { delivery_status?: "sent" | "failed" | "internal_only"; delivery_error?: string };
+  metadata: Record<string, unknown> & {
+    delivery_status?: "sent" | "failed" | "internal_only";
+    /** Machine code of the delivery failure (see whatsapp.errors.ts on the API). */
+    delivery_error_code?: string;
+    /** English technical detail for diagnostics — never rendered. */
+    delivery_error?: string;
+  };
   created_at: string;
 }
 
@@ -91,7 +97,26 @@ export interface SupportMessage {
   /** Real delivery state computed by the backend (dispatchOutbound) — never fabricated on the
    *  frontend. Absent for messages that do not go through external dispatch (e.g. from the customer). */
   deliveryStatus?: "sent" | "failed" | "internal_only";
-  deliveryError?: string;
+  /** PT-BR end-user copy for a failed delivery, derived from the failure code. */
+  deliveryFailureCopy?: string;
+}
+
+/**
+ * Delivery failure code → PT-BR end-user copy. The technical `delivery_error`
+ * stays out of the UI model; unknown or missing codes (including messages
+ * persisted before the code existed) get the generic copy.
+ */
+const DELIVERY_FAILURE_COPY: Readonly<Record<string, string>> = {
+  WHATSAPP_RECIPIENT_PHONE_MISSING: "o contato não tem telefone cadastrado.",
+  WHATSAPP_INVALID_RECIPIENT: "o WhatsApp recusou o número do destinatário.",
+  WHATSAPP_RATE_LIMITED: "limite de envios do WhatsApp atingido. Tente novamente em instantes.",
+  WHATSAPP_NOT_CONFIGURED: "o WhatsApp não está configurado neste workspace.",
+  WHATSAPP_AUTH_ERROR: "a conexão com o WhatsApp expirou. Reconecte a integração.",
+};
+const GENERIC_DELIVERY_FAILURE_COPY = "não foi possível entregar a mensagem pelo WhatsApp.";
+
+export function deliveryFailureCopy(code: string | undefined): string {
+  return (code && DELIVERY_FAILURE_COPY[code]) || GENERIC_DELIVERY_FAILURE_COPY;
 }
 
 const CHANNEL_TO_SUPPORT: Record<BackendConversationChannel, SupportChannel> = {
@@ -210,7 +235,8 @@ function mapMessage(raw: RawMessage): SupportMessage {
     time: formatTime(raw.created_at),
     attachments,
     deliveryStatus: raw.metadata?.delivery_status,
-    deliveryError: raw.metadata?.delivery_error,
+    deliveryFailureCopy:
+      raw.metadata?.delivery_status === "failed" ? deliveryFailureCopy(raw.metadata.delivery_error_code) : undefined,
   };
 }
 

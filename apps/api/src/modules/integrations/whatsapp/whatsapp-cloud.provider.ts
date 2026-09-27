@@ -115,7 +115,7 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
     const bindings = await this.listPhoneNumberBindings();
     const other = bindings.find((b) => b.phoneNumberId === pid && b.tenantId !== tenantId);
     if (other) {
-      this.identityLogger.warn(`configure recusado: phone_number_id já vinculado a outro tenant (tenant solicitante=${tenantId})`);
+      this.identityLogger.warn(`configure refused: phone_number_id already bound to another tenant (requesting tenant=${tenantId})`);
       throw new ConflictException('Este número do WhatsApp já está vinculado a outra conta');
     }
 
@@ -166,7 +166,7 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
   async sendTextMessage(tenantId: string, to: string, body: string): Promise<WhatsAppSendResult> {
     const creds = await this.loadCredentials<WhatsAppCredentials>(tenantId, PROVIDER);
     if (!creds?.phoneNumberId || !creds?.accessToken) {
-      throw new WhatsAppError('WHATSAPP_NOT_CONFIGURED', 'WhatsApp Cloud API não configurado para este tenant');
+      throw new WhatsAppError('WHATSAPP_NOT_CONFIGURED', 'WhatsApp Cloud API not configured for this tenant');
     }
 
     const res = await this.fetch(`${GRAPH_API}/${encodeURIComponent(creds.phoneNumberId)}/messages`, {
@@ -180,7 +180,7 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
 
     const externalMessageId = (data as any)?.messages?.[0]?.id;
     if (!externalMessageId) {
-      throw new WhatsAppError('WHATSAPP_UPSTREAM_ERROR', 'WhatsApp Cloud API não retornou o id da mensagem enviada');
+      throw new WhatsAppError('WHATSAPP_UPSTREAM_ERROR', 'WhatsApp Cloud API did not return the id of the sent message');
     }
     return { externalMessageId };
   }
@@ -188,19 +188,19 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
   private mapUpstreamError(status: number, data: unknown): WhatsAppError {
     const metaError = (data as any)?.error ?? {};
     const metaCode = metaError.code;
-    const metaMessage = metaError.message ?? 'erro desconhecido';
+    const metaMessage = metaError.message ?? 'unknown error';
 
     if (status === 401 || metaCode === 190) {
-      return new WhatsAppError('WHATSAPP_AUTH_ERROR', `WhatsApp Cloud API respondeu 401: ${metaMessage}`);
+      return new WhatsAppError('WHATSAPP_AUTH_ERROR', `WhatsApp Cloud API responded 401: ${metaMessage}`);
     }
     if (status === 429 || metaCode === 4 || metaCode === 80007) {
-      return new WhatsAppError('WHATSAPP_RATE_LIMITED', `WhatsApp Cloud API respondeu 429: ${metaMessage}`);
+      return new WhatsAppError('WHATSAPP_RATE_LIMITED', `WhatsApp Cloud API responded 429: ${metaMessage}`);
     }
     // 131030 (recipient outside the test-mode allowlist), 131026 (not a valid WhatsApp user)
     if (metaCode === 131030 || metaCode === 131026 || metaCode === 100) {
-      return new WhatsAppError('WHATSAPP_INVALID_RECIPIENT', `WhatsApp Cloud API rejeitou o destinatário: ${metaMessage}`);
+      return new WhatsAppError('WHATSAPP_INVALID_RECIPIENT', `WhatsApp Cloud API rejected the recipient: ${metaMessage}`);
     }
-    return new WhatsAppError('WHATSAPP_UPSTREAM_ERROR', `WhatsApp Cloud API respondeu ${status}: ${metaMessage}`);
+    return new WhatsAppError('WHATSAPP_UPSTREAM_ERROR', `WhatsApp Cloud API responded ${status}: ${metaMessage}`);
   }
 
   /**
@@ -211,16 +211,16 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
   verifyWebhookChallenge(mode: string | undefined, token: string | undefined, challenge: string | undefined): string {
     const expected = this.config.get<string>('WHATSAPP_WEBHOOK_VERIFY_TOKEN') ?? '';
     if (!expected) {
-      throw new WhatsAppError('WHATSAPP_NOT_CONFIGURED', 'WHATSAPP_WEBHOOK_VERIFY_TOKEN não definido no ambiente da API');
+      throw new WhatsAppError('WHATSAPP_NOT_CONFIGURED', 'WHATSAPP_WEBHOOK_VERIFY_TOKEN not set in the API environment');
     }
     if (mode !== 'subscribe' || !token || !challenge) {
-      throw new WhatsAppError('WHATSAPP_WEBHOOK_INVALID', 'Parâmetros de verificação do webhook ausentes ou incorretos');
+      throw new WhatsAppError('WHATSAPP_WEBHOOK_INVALID', 'Webhook verification parameters missing or incorrect');
     }
 
     const tokenBuf = Buffer.from(token);
     const expectedBuf = Buffer.from(expected);
     if (tokenBuf.length !== expectedBuf.length || !timingSafeEqual(tokenBuf, expectedBuf)) {
-      throw new WhatsAppError('WHATSAPP_WEBHOOK_INVALID', 'Verify token inválido');
+      throw new WhatsAppError('WHATSAPP_WEBHOOK_INVALID', 'Invalid verify token');
     }
     return challenge;
   }

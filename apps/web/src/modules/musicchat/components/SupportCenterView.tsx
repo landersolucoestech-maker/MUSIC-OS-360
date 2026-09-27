@@ -125,7 +125,7 @@ interface SupportMessage {
   time: string;
   attachments?: ChatAttachmentData[];
   deliveryStatus?: "sent" | "failed" | "internal_only";
-  deliveryError?: string;
+  deliveryFailureCopy?: string;
 }
 
 const statusLabels: Record<SupportStatus, string> = {
@@ -1220,7 +1220,7 @@ export function SupportCenterView({
                       {message.body && <p className="text-sm leading-relaxed">{message.body}</p>}
                       {message.sender === "agent" && message.deliveryStatus === "failed" && (
                         <p className="mt-1 text-[10px] font-medium text-destructive">
-                          Falha no envio{message.deliveryError ? `: ${message.deliveryError}` : ""}
+                          Falha no envio{message.deliveryFailureCopy ? `: ${message.deliveryFailureCopy}` : ""}
                         </p>
                       )}
                       {message.sender === "agent" && message.deliveryStatus === "internal_only" && (

@@ -186,7 +186,7 @@ describe('ConversationsService.addMessage() — real delivery on the external ch
   });
 
   it('provider failure: never throws — persists the message and marks delivery_status=failed', async () => {
-    const sendTextMessage = jest.fn().mockRejectedValue(new Error('WhatsApp Cloud API respondeu 401'));
+    const sendTextMessage = jest.fn().mockRejectedValue(new Error('WhatsApp Cloud API responded 401'));
     const { service, mockDs } = buildService({ affected: 1 }, { sendTextMessage });
     mockDs._convRepo.createQueryBuilder = jest.fn(() => ({
       where: jest.fn(() => ({
@@ -198,6 +198,10 @@ describe('ConversationsService.addMessage() — real delivery on the external ch
     const updateCalls = mockDs._convRepo.update.mock.calls;
     const metadataUpdate = updateCalls.find(([, payload]) => (payload as any)?.metadata?.delivery_status === 'failed');
     expect(metadataUpdate).toBeDefined();
+    // Machine code for the web copy mapping; the provider text stays as technical detail only.
+    expect(metadataUpdate?.[1]).toMatchObject({
+      metadata: { delivery_error_code: 'WHATSAPP_UPSTREAM_ERROR', delivery_error: 'WhatsApp Cloud API responded 401' },
+    });
   });
 
   it("internal channel: never dispatches externally, marks delivery_status='internal_only'", async () => {

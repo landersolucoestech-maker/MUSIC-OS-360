@@ -79,14 +79,31 @@ describe("musicChatConversationsService HTTP envelope contract", () => {
 
   it("mapMessage surfaces failed/internal_only delivery status honestly, never silently as sent", async () => {
     apiMock.get.mockResolvedValue([
-      { ...rawMessage, id: "msg-failed", metadata: { delivery_status: "failed", delivery_error: "boom" } },
+      {
+        ...rawMessage,
+        id: "msg-failed",
+        metadata: {
+          delivery_status: "failed",
+          delivery_error_code: "WHATSAPP_INVALID_RECIPIENT",
+          delivery_error: "WhatsApp Cloud API rejected the recipient: (#131026) Message undeliverable",
+        },
+      },
+      { ...rawMessage, id: "msg-legacy", metadata: { delivery_status: "failed", delivery_error: "boom" } },
       { ...rawMessage, id: "msg-internal", metadata: { delivery_status: "internal_only" } },
     ]);
 
     const result = await musicChatConversationsService.messages("conv-1");
 
-    expect(result.find((m) => m.id === "msg-failed")).toEqual(
-      expect.objectContaining({ deliveryStatus: "failed", deliveryError: "boom" }),
+    const failed = result.find((m) => m.id === "msg-failed");
+    expect(failed).toEqual(
+      expect.objectContaining({ deliveryStatus: "failed", deliveryFailureCopy: "o WhatsApp recusou o número do destinatário." }),
+    );
+    // The technical provider detail never reaches the UI model.
+    expect(JSON.stringify(failed)).not.toContain("131026");
+    expect(failed).not.toHaveProperty("deliveryError");
+    // Messages persisted before the failure code existed get the generic copy, never the raw text.
+    expect(result.find((m) => m.id === "msg-legacy")).toEqual(
+      expect.objectContaining({ deliveryFailureCopy: "não foi possível entregar a mensagem pelo WhatsApp." }),
     );
     expect(result.find((m) => m.id === "msg-internal")).toEqual(
       expect.objectContaining({ deliveryStatus: "internal_only" }),
