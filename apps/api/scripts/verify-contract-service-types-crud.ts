@@ -76,7 +76,7 @@ async function main(): Promise<void> {
     ssl: dbSslDisabled ? false : { rejectUnauthorized: false },
   });
   await client.connect();
-  ok('Conectado ao PostgreSQL');
+  ok('Connected to PostgreSQL');
 
   const tenantA = randomUUID();
   const tenantB = randomUUID();
@@ -144,7 +144,7 @@ async function main(): Promise<void> {
       dupRejected = true;
     }
     await client.query('ROLLBACK');
-    if (dupRejected) { ok('TEST 3: slug duplicado no mesmo tenant rejeitado (uq_contract_service_types_tenant_slug)'); passed++; }
+    if (dupRejected) { ok('TEST 3: duplicate slug in the same tenant rejected (uq_contract_service_types_tenant_slug)'); passed++; }
     else { fail('TEST 3: FAIL — duplicate slug was accepted, tenant-scoped uniqueness is not working'); failed++; }
 
     // TEST 4: INSERT as Tenant B (same slug, different tenant — must work)
@@ -208,9 +208,9 @@ async function main(): Promise<void> {
     await client.end();
   }
 
-  console.log('\n── Resultado ───────────────────────────────────────────────\n');
-  console.log(`  Testes passados : ${passed}`);
-  console.log(`  Testes falhados : ${failed}`);
+  console.log('\n── Result ──────────────────────────────────────────────────\n');
+  console.log(`  Tests passed : ${passed}`);
+  console.log(`  Tests failed : ${failed}`);
 
   if (failed === 0) {
     console.log('\n  ✓ contract_service_types CRUD + tenant isolation VALIDADOS na DEV real.\n');

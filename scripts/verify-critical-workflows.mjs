@@ -38,7 +38,7 @@ for (const name of REQUIRED) {
   }
   const content = fs.readFileSync(file, "utf8");
   if (content.trim().length < MIN_BYTES) {
-    errors.push(`${name}: presente mas vazio/truncado (${content.trim().length} bytes)`);
+    errors.push(`${name}: present but empty/truncated (${content.trim().length} bytes)`);
     continue;
   }
   if (yaml) {
@@ -59,7 +59,7 @@ if (errors.length > 0) {
   for (const e of errors) console.error(`  • ${e}`);
   console.error(
     "\nThese 4 workflows are required by the release gate (release-check.mjs) and by the " +
-      "runbook docs/runbooks/staging-to-production.md. Lembrete: isto valida o WORKING " +
+      "runbook docs/runbooks/staging-to-production.md. Reminder: this validates the WORKING " +
       "current TREE — confirm separately that they are merged into `main` " +
       "(git ls-tree origin/main -- .github/workflows).\n",
   );

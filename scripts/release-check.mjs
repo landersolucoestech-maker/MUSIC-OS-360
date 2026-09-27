@@ -25,7 +25,7 @@ const steps = [
   // Cheap, build-free checks first (RELEASE-01, RBAC-SHADOW-01, DBCTX-01).
   { name: "Critical workflows present",   cmd: "node scripts/verify-critical-workflows.mjs" },
   { name: "Production flags (RBAC/DBCTX)", cmd: "corepack pnpm --filter @music-os-360/api verify:production-flags" },
-  { name: "Web typecheck (0 erros)",        cmd: "corepack pnpm --filter @music-os-360/web typecheck" },
+  { name: "Web typecheck (0 errors)",        cmd: "corepack pnpm --filter @music-os-360/web typecheck" },
   { name: "API build (tsc)",                cmd: "corepack pnpm --filter @music-os-360/api build" },
   { name: "Web build (vite, MOCK off)",     cmd: "corepack pnpm --filter @music-os-360/web build" },
   { name: "Production source/mock audit",   cmd: "node scripts/check-production-source.mjs" },
@@ -34,14 +34,14 @@ const steps = [
     ? [{ name: "DB: aplicar migrations", cmd: "corepack pnpm --filter @music-os-360/api db:migrate", writes: true }]
     : []),
   { name: "RLS fail-closed",                cmd: "corepack pnpm --filter @music-os-360/api verify:rls" },
-  { name: "Isolamento por tenant",          cmd: "corepack pnpm --filter @music-os-360/api verify:tenant-isolation" },
+  { name: "Tenant isolation",          cmd: "corepack pnpm --filter @music-os-360/api verify:tenant-isolation" },
 ];
 
 const results = [];
 let failed = false;
 
 console.log(`\n=== MUSIC OS 360 — release ${MIGRATE ? "MIGRATE" : "CHECK"} ===`);
-console.log(`Etapas: ${steps.length}. Modo: ${MIGRATE ? "aplica schema" : "read-only"}.\n`);
+console.log(`Steps: ${steps.length}. Mode: ${MIGRATE ? "applies schema" : "read-only"}.\n`);
 
 for (const step of steps) {
   if (failed) { results.push({ name: step.name, status: "SKIP" }); continue; }
@@ -68,7 +68,7 @@ for (const r of results) {
 }
 
 if (failed) {
-  console.log("\n❌ Release gate REPROVADO. Corrija a etapa acima e rode novamente.\n");
+  console.log("\n❌ Release gate REJECTED. Fix the step above and run again.\n");
   process.exit(1);
 }
-console.log(`\n✅ Release gate APROVADO${MIGRATE ? " (migrations aplicadas)" : ""}. Apto a prosseguir o cutover.\n`);
+console.log(`\n✅ Release gate APPROVED${MIGRATE ? " (migrations applied)" : ""}. Cleared to proceed with the cutover.\n`);

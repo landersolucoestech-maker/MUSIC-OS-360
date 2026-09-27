@@ -15,7 +15,7 @@ const PASSWORD = process.env['PROVISION_PASSWORD']
 
 function reqEnv(name: string): string {
   const value = process.env[name];
-  if (!value) throw new Error(`Variavel obrigatoria ausente: ${name}`);
+  if (!value) throw new Error(`Missing required variable: ${name}`);
   return value;
 }
 
@@ -68,12 +68,12 @@ async function main(): Promise<void> {
       [tenantIds],
     )) as Array<{ id: string; org_id: string }>;
     if (tenantRows.length !== tenantIds.length) {
-      throw new Error('Todos os STAGING_TENANT_IDS devem existir e estar ativos.');
+      throw new Error('Every STAGING_TENANT_IDS entry must exist and be active.');
     }
 
     const orgIds = [...new Set(tenantRows.map((tenant) => tenant.org_id))];
     if (orgIds.length !== 1) {
-      throw new Error('Os tenants do harness devem pertencer a mesma organizacao.');
+      throw new Error('The harness tenants must belong to the same organization.');
     }
     const orgId = orgIds[0];
     const credentials: string[] = [];
@@ -134,7 +134,7 @@ async function main(): Promise<void> {
     console.log('\n# Credentials for the harness:');
     // Never print the password (CWE-312/532). Set PROVISION_PASSWORD explicitly
     // so you control/know the value; it is not echoed to logs.
-    console.log('# RBAC_HARNESS_*_PASSWORD = (defina/leia via env PROVISION_PASSWORD)');
+    console.log('# RBAC_HARNESS_*_PASSWORD = (set/read via env PROVISION_PASSWORD)');
     console.log(credentials.join('\n'));
     console.log(`# RBAC_HARNESS_TENANT_A/B/C=${tenantIds.slice(0, 3).join(' / ')}`);
   } finally {

@@ -41,7 +41,7 @@ const TENANT_B = {
   tenantId: '20000000-0000-0000-0000-000000000002',
   orgId:    '20000000-0000-0000-0000-000000000001',
   userId:   '025d7498-52a9-4a9c-938d-99519c96b053', // same user (member of both)
-  name:     'FASE 3 Tenant B',
+  name:     'PHASE 3 Tenant B',
 };
 
 const TS = Date.now();
@@ -141,12 +141,12 @@ async function fase31(): Promise<void> {
   const ctxA = await call('GET', '/auth/context', { token: TOKEN_A, tenantId: TENANT_A.tenantId });
   expect('GET /auth/context Tenant A → 200', ctxA.status === 200, `status=${ctxA.status}`);
   const tenantIdA = ctxA.body?.data?.workspace?.id ?? ctxA.body?.data?.tenant?.id ?? ctxA.body?.workspace?.id;
-  expect('Tenant A retorna workspace.id correto', tenantIdA === TENANT_A.tenantId, `got=${tenantIdA}`);
+  expect('Tenant A returns the correct workspace.id', tenantIdA === TENANT_A.tenantId, `got=${tenantIdA}`);
 
   const ctxB = await call('GET', '/auth/context', { token: TOKEN_B, tenantId: TENANT_B.tenantId });
   expect('GET /auth/context Tenant B → 200', ctxB.status === 200, `status=${ctxB.status}`);
   const tenantIdB = ctxB.body?.data?.workspace?.id ?? ctxB.body?.data?.tenant?.id ?? ctxB.body?.workspace?.id;
-  expect('Tenant B retorna workspace.id correto', tenantIdB === TENANT_B.tenantId, `got=${tenantIdB}`);
+  expect('Tenant B returns the correct workspace.id', tenantIdB === TENANT_B.tenantId, `got=${tenantIdB}`);
 
   // Wrong X-Tenant-ID must fail (token A + header B)
   const wrong = await call('GET', '/auth/context', { token: TOKEN_A, tenantId: TENANT_B.tenantId });
@@ -181,7 +181,7 @@ async function createSetFor(
   });
   if (cli.status === 201 || cli.status === 200) {
     set.clientId = pickId(cli.body) ?? undefined;
-    ok(`[${tag}] Cliente criado id=${set.clientId?.slice(0, 8)}…`);
+    ok(`[${tag}] Client created id=${set.clientId?.slice(0, 8)}…`);
     passed++;
   } else {
     fail(`[${tag}] POST /clients → ${cli.status} ${JSON.stringify(cli.body).slice(0, 200)}`);
@@ -195,7 +195,7 @@ async function createSetFor(
   });
   if (art.status === 201 || art.status === 200) {
     set.artistId = pickId(art.body) ?? undefined;
-    ok(`[${tag}] Artista criado id=${set.artistId?.slice(0, 8)}…`);
+    ok(`[${tag}] Artist created id=${set.artistId?.slice(0, 8)}…`);
     passed++;
   } else {
     fail(`[${tag}] POST /artists → ${art.status} ${JSON.stringify(art.body).slice(0, 200)}`);
@@ -231,7 +231,7 @@ async function createSetFor(
   });
   if (ctr.status === 201 || ctr.status === 200) {
     set.contractId = pickId(ctr.body) ?? undefined;
-    ok(`[${tag}] Contrato criado id=${set.contractId?.slice(0, 8)}…`);
+    ok(`[${tag}] Contract created id=${set.contractId?.slice(0, 8)}…`);
     passed++;
   } else {
     fail(`[${tag}] POST /contracts → ${ctr.status} ${JSON.stringify(ctr.body).slice(0, 200)}`);
@@ -251,7 +251,7 @@ async function createSetFor(
   });
   if (ev.status === 201 || ev.status === 200) {
     set.eventId = pickId(ev.body) ?? undefined;
-    ok(`[${tag}] Evento criado id=${set.eventId?.slice(0, 8)}…`);
+    ok(`[${tag}] Event created id=${set.eventId?.slice(0, 8)}…`);
     passed++;
   } else {
     fail(`[${tag}] POST /events → ${ev.status} ${JSON.stringify(ev.body).slice(0, 200)}`);
@@ -323,7 +323,7 @@ const ENDPOINTS = [
 ];
 
 async function fase33(): Promise<void> {
-  section('FASE 3.3 — LISTAGEM ISOLADA');
+  section('PHASE 3.3 — ISOLATED LISTING');
 
   for (const ep of ENDPOINTS) {
     const respA = await call('GET', `${ep.path}?limit=200`, { token: TOKEN_A, tenantId: TENANT_A.tenantId });
@@ -379,7 +379,7 @@ const DETAIL_TARGETS = [
 ] as const;
 
 async function fase34(): Promise<void> {
-  section('FASE 3.4 — DETAIL CROSS-TENANT');
+  section('PHASE 3.4 — DETAIL CROSS-TENANT');
   for (const t of DETAIL_TARGETS) {
     const idA = (DATA_A as any)[t.keyA];
     const idB = (DATA_B as any)[t.keyB];
@@ -405,7 +405,7 @@ async function fase34(): Promise<void> {
 // ============================================================================
 
 async function fase35(): Promise<void> {
-  section('FASE 3.5 — UPDATE CROSS-TENANT');
+  section('PHASE 3.5 — UPDATE CROSS-TENANT');
   const updates = [
     { path: '/artists',      keyA: 'artistId',      keyB: 'artistId',      body: { nome_artistico: `HACKED_${TS}` } },
     { path: '/releases',     keyA: 'releaseId',     keyB: 'releaseId',     body: { title: `HACKED_${TS}` } },
@@ -433,7 +433,7 @@ async function fase35(): Promise<void> {
 // ============================================================================
 
 async function fase36(): Promise<void> {
-  section('FASE 3.6 — DELETE CROSS-TENANT');
+  section('PHASE 3.6 — DELETE CROSS-TENANT');
   const dels = [
     { path: '/artists',      keyA: 'artistId',      keyB: 'artistId' },
     { path: '/releases',     keyA: 'releaseId',     keyB: 'releaseId' },
@@ -461,7 +461,7 @@ async function fase36(): Promise<void> {
 // ============================================================================
 
 async function fase37(): Promise<void> {
-  section('FASE 3.7 — JOIN TENANT-SAFE');
+  section('PHASE 3.7 — JOIN TENANT-SAFE');
 
   function checkArtistRef(label: string, artistRef: any, expectedArtistId: string | undefined, tag: string): void {
     if (artistRef === undefined || artistRef === null) {
@@ -505,8 +505,8 @@ async function fase37(): Promise<void> {
     const contractA = r.body?.data ?? r.body;
     const aid = contractA?.artista_id ?? contractA?.artistId ?? contractA?.artista?.id;
     const cid = contractA?.cliente_id ?? contractA?.clientId ?? contractA?.cliente?.id;
-    expect('Contract A referencia Artist A (mesmo tenant)', !aid || aid === DATA_A.artistId, `aid=${aid}`);
-    expect('Contract A referencia Cliente A (mesmo tenant)', !cid || cid === DATA_A.clientId, `cid=${cid}`);
+    expect('Contract A references Artist A (same tenant)', !aid || aid === DATA_A.artistId, `aid=${aid}`);
+    expect('Contract A references Client A (same tenant)', !cid || cid === DATA_A.clientId, `cid=${cid}`);
   }
   if (DATA_B.contractId) {
     const r = await call('GET', `/contracts/${DATA_B.contractId}`, { token: TOKEN_B, tenantId: TENANT_B.tenantId });
@@ -514,8 +514,8 @@ async function fase37(): Promise<void> {
     const contractB = r.body?.data ?? r.body;
     const aid = contractB?.artista_id ?? contractB?.artistId ?? contractB?.artista?.id;
     const cid = contractB?.cliente_id ?? contractB?.clientId ?? contractB?.cliente?.id;
-    expect('Contract B referencia Artist B (mesmo tenant)', !aid || aid === DATA_B.artistId, `aid=${aid}`);
-    expect('Contract B referencia Cliente B (mesmo tenant)', !cid || cid === DATA_B.clientId, `cid=${cid}`);
+    expect('Contract B references Artist B (same tenant)', !aid || aid === DATA_B.artistId, `aid=${aid}`);
+    expect('Contract B references Client B (same tenant)', !cid || cid === DATA_B.clientId, `cid=${cid}`);
   }
 }
 
@@ -524,7 +524,7 @@ async function fase37(): Promise<void> {
 // ============================================================================
 
 async function fase38(): Promise<void> {
-  section('FASE 3.8 — ANALYTICS TENANT-SAFE');
+  section('PHASE 3.8 — ANALYTICS TENANT-SAFE');
   const dashA = await call('GET', '/analytics/dashboard', { token: TOKEN_A, tenantId: TENANT_A.tenantId });
   const dashB = await call('GET', '/analytics/dashboard', { token: TOKEN_B, tenantId: TENANT_B.tenantId });
   expect('/analytics/dashboard A → 200', dashA.status === 200, `got=${dashA.status}`);
@@ -549,7 +549,7 @@ async function fase38(): Promise<void> {
   // Direct comparison of the JSONs — if they are exactly equal with different data in the tenants, there is a global leak.
   const aStr = JSON.stringify(a);
   const bStr = JSON.stringify(b);
-  expect('Analytics A e B retornam corpos distintos', aStr !== bStr, 'identical bodies → suspected global leak');
+  expect('Analytics A and B return distinct bodies', aStr !== bStr, 'identical bodies → suspected global leak');
 
   // revenue endpoint
   const revA = await call('GET', '/analytics/revenue?months=3', { token: TOKEN_A, tenantId: TENANT_A.tenantId });
@@ -563,7 +563,7 @@ async function fase38(): Promise<void> {
 // ============================================================================
 
 async function fase39(): Promise<void> {
-  section('FASE 3.9 — AUDIT / ACTIVITY TENANT-SAFE');
+  section('PHASE 3.9 — AUDIT / ACTIVITY TENANT-SAFE');
 
   const auditA = await call('GET', '/audit-logs?limit=200', { token: TOKEN_A, tenantId: TENANT_A.tenantId });
   const auditB = await call('GET', '/audit-logs?limit=200', { token: TOKEN_B, tenantId: TENANT_B.tenantId });
@@ -628,11 +628,11 @@ async function main(): Promise<void> {
     errors.push({ where: 'main', detail: (err as Error).message });
   }
 
-  console.log('\n── RESULTADO ──');
-  console.log(`  Passados : ${passed}`);
-  console.log(`  Falhados : ${failed}`);
+  console.log('\n── RESULT ──');
+  console.log(`  Passed : ${passed}`);
+  console.log(`  Failed : ${failed}`);
   if (errors.length > 0) {
-    console.log('\n── ERROS ──');
+    console.log('\n── ERRORS ──');
     for (const e of errors) console.log(`  - ${e.where} :: ${e.detail}`);
   }
 
@@ -641,7 +641,7 @@ async function main(): Promise<void> {
   console.log('  B:', JSON.stringify(DATA_B));
 
   if (failed === 0) {
-    console.log('\n  ✓ FASE 3 PASSOU — multi-tenant isolado ponta-a-ponta.\n');
+    console.log('\n  ✓ PHASE 3 PASSED — multi-tenant isolated end to end.\n');
     process.exit(0);
   } else {
     console.log('\n  ✗ PHASE 3 FAILED — leaks or errors detected.\n');

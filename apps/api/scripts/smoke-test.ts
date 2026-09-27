@@ -141,7 +141,7 @@ async function main(): Promise<void> {
   const hasAuth = !!SMOKE_TOKEN;
   const hasTenant = !!SMOKE_TENANT && !!SMOKE_TOKEN;
 
-  await test('Health liveness publico responde 200', healthCheck);
+  await test('Public liveness health responds 200', healthCheck);
 
   await test('Protected endpoint without token -> 401/403', async () => {
     const r = await request('GET', '/artists', undefined, false);
@@ -219,7 +219,7 @@ async function main(): Promise<void> {
     expect(res.status, 'status').toBe(400);
   });
 
-  await test('X-Tenant-ID invalido -> 401/403/404', async () => {
+  await test('Invalid X-Tenant-ID -> 401/403/404', async () => {
     const res = await safeFetch(apiPath('/artists'), {
       headers: {
         Authorization: `Bearer ${SMOKE_TOKEN}`,
@@ -248,8 +248,8 @@ async function main(): Promise<void> {
   }
 
   console.log('\nResultado\n');
-  console.log(`  Passados  : ${passed}`);
-  console.log(`  Falhados  : ${failed}`);
+  console.log(`  Passed    : ${passed}`);
+  console.log(`  Failed    : ${failed}`);
   console.log(`  Skipped   : ${skipped} (no credentials)`);
 
   if (skipped > 0) {
@@ -258,9 +258,9 @@ async function main(): Promise<void> {
   }
 
   if (failed === 0 && skipped === 0) {
-    console.log('\n  SMOKE TEST PASSOU - plataforma operacional.\n');
+    console.log('\n  SMOKE TEST PASSED - platform operational.\n');
   } else if (failed === 0) {
-    console.log('\n  SMOKE TEST INCOMPLETO - credenciais obrigatorias ausentes.\n');
+    console.log('\n  SMOKE TEST INCOMPLETE - required credentials missing.\n');
     process.exit(2);
   } else {
     console.log('\n  SMOKE TEST FAILED - check the failures above.\n');

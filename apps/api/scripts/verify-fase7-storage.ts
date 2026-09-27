@@ -78,10 +78,10 @@ async function f71(): Promise<void> {
   // (already read in the source apps/api/src/storage/storage.{service,module}.ts)
   info('R2 is active in this environment — scenario A proven via static inspection.');
   info('Code path: getClient() → ServiceUnavailableException({ code: R2_NOT_CONFIGURED, statusCode:503 })');
-  info('Module factory: retorna null quando R2_ACCOUNT_ID || R2_ACCESS_KEY || R2_SECRET_KEY ausentes');
+  info('Module factory: returns null when R2_ACCOUNT_ID || R2_ACCESS_KEY || R2_SECRET_KEY are missing');
   ok('storage.service.ts implementa 503 R2_NOT_CONFIGURED', true);
   ok('storage.module.ts returns r2Client=null without credentials', true);
-  ok('useUploadToR2 (frontend) trata R2NotConfiguredError 503', true);
+  ok('useUploadToR2 (frontend) handles R2NotConfiguredError 503', true);
 }
 
 // ============================================================================
@@ -109,7 +109,7 @@ async function uploadCycle(token: string, tenant: string, dto: {
   if (!put.ok) {
     const errText = await put.text();
     const isAccessDenied = errText.includes('AccessDenied');
-    return { ok: false, status: put.status, detail: `PUT R2 ${put.status}: ${isAccessDenied ? 'AccessDenied (credencial R2 sem permissão WRITE — code path correto, ambiente precisa upgrade)' : put.statusText}`, fileId, key, publicUrl, phase: 'put' };
+    return { ok: false, status: put.status, detail: `PUT R2 ${put.status}: ${isAccessDenied ? 'AccessDenied (R2 credential without WRITE permission — correct code path, the environment needs an upgrade)' : put.statusText}`, fileId, key, publicUrl, phase: 'put' };
   }
 
   // 3) Confirm
@@ -156,7 +156,7 @@ async function f72(): Promise<void> {
     const d = await call('GET', `/uploads/${UPLOAD_FILE_ID_A}/download`, { token: TOKEN_A, tenant: TA });
     ok('GET /uploads/:id/download → 200', d.status === 200, `status=${d.status}`);
     const url = d.body?.data?.url ?? d.body?.url;
-    ok('Download URL retornada (assinada R2)', typeof url === 'string' && /\.r2\.cloudflarestorage\.com|amazonaws\.com|signature/.test(url), `url=${String(url).slice(0,80)}…`);
+    ok('Download URL returned (R2 signed)', typeof url === 'string' && /\.r2\.cloudflarestorage\.com|amazonaws\.com|signature/.test(url), `url=${String(url).slice(0,80)}…`);
     const fr = await fetch(url);
     ok('Fetch download URL retorna 200 e bytes', fr.status === 200 && (parseInt(fr.headers.get('content-length') ?? '0') > 0), `status=${fr.status} length=${fr.headers.get('content-length')}`);
   } else if (UPLOAD_FILE_ID_A) {
@@ -182,7 +182,7 @@ async function f73(): Promise<void> {
     ok('uploads row existe', !!row, `rows=${r.rowCount}`);
     if (row) {
       ok('uploads.tenant_id = Tenant A', row.tenant_id === TA, `db=${row.tenant_id}`);
-      ok('uploads.status registado (pending ou confirmed)', ['pending','confirmed'].includes(row.status), `status=${row.status}`);
+      ok('uploads.status recorded (pending or confirmed)', ['pending','confirmed'].includes(row.status), `status=${row.status}`);
       ok('uploads.r2_key has the tenants/{TA}/images/ prefix', row.r2_key.startsWith(`tenants/${TA}/images/`), `key=${row.r2_key}`);
       ok('uploads.mime_type correto', row.mime_type === 'image/png');
       ok('uploads.size_bytes > 0', row.size_bytes > 0);
@@ -197,7 +197,7 @@ async function f73(): Promise<void> {
     ok('reload: 2 GET downloads → 200', d1.status === 200 && d2.status === 200, `s1=${d1.status} s2=${d2.status}`);
     const u1 = d1.body?.data?.url ?? d1.body?.url;
     const u2 = d2.body?.data?.url ?? d2.body?.url;
-    ok('reload: 2 URLs assinadas diferentes (X-Amz-Date rotativo)', u1 !== u2 && typeof u1 === 'string' && typeof u2 === 'string');
+    ok('reload: 2 different signed URLs (rotating X-Amz-Date)', u1 !== u2 && typeof u1 === 'string' && typeof u2 === 'string');
   }
 }
 
@@ -309,7 +309,7 @@ async function f78(): Promise<void> {
 // ============================================================================
 async function main(): Promise<void> {
   console.log('\n╔══════════════════════════════════════════════════════════╗');
-  console.log('║  MUSIC OS 360 — FASE 7: Storage e Upload (R2)            ║');
+  console.log('║  MUSIC OS 360 — PHASE 7: Storage and upload (R2)         ║');
   console.log('╚══════════════════════════════════════════════════════════╝');
   console.log(`  API_URL  : ${API_URL}`);
 
@@ -328,11 +328,11 @@ async function main(): Promise<void> {
     try { if (DB) await DB.end(); } catch {}
   }
 
-  console.log('\n── RESULTADO ──');
-  console.log(`  Passados : ${passed}`);
-  console.log(`  Falhados : ${failed}`);
+  console.log('\n── RESULT ──');
+  console.log(`  Passed : ${passed}`);
+  console.log(`  Failed : ${failed}`);
   if (fails.length) {
-    console.log('\n── FALHAS ──');
+    console.log('\n── FAILURES ──');
     for (const f of fails) console.log(`  - ${f.label} :: ${f.detail}`);
   }
   process.exit(failed === 0 ? 0 : 1);

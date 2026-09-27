@@ -78,7 +78,7 @@ async function call(
 function check(label: string, status: number, wantSet: number[]): boolean {
   const okk = wantSet.includes(status);
   if (okk) { console.log(`  ✓  ${label} → ${status}`); passed++; }
-  else      { console.log(`  ✗  ${label} → ${status} (esperado ${wantSet.join('/')})`); failed++; fails.push({ where: label, got: status, want: wantSet.join('/') }); }
+  else      { console.log(`  ✗  ${label} → ${status} (expected ${wantSet.join('/')})`); failed++; fails.push({ where: label, got: status, want: wantSet.join('/') }); }
   return okk;
 }
 
@@ -312,10 +312,10 @@ async function f47(): Promise<void> {
   // Create an action as editor (allowed) and as viewer (forbidden); then confirm only the allowed one appears in audit.
   const tag = `F47_${Date.now()}`;
   const allowed = await call('POST', '/artists', { auth: tokens.editor, tenant: TENANT_A, body: { nome_artistico: `${tag}_OK` } });
-  check('editor cria artista (permitido)', allowed.status, [200, 201]);
+  check('editor creates artist (allowed)', allowed.status, [200, 201]);
 
   const denied = await call('POST', '/artists', { auth: tokens.viewer, tenant: TENANT_A, body: { nome_artistico: `${tag}_FAIL` } });
-  check('viewer cria artista (proibido)', denied.status, [403]);
+  check('viewer creates artist (forbidden)', denied.status, [403]);
 
   // Wait for the audit queue (interceptor)
   await new Promise((r) => setTimeout(r, 1500));
@@ -365,15 +365,15 @@ async function main(): Promise<void> {
     failed++;
   }
 
-  console.log('\n── RESULTADO ──');
-  console.log(`  Passados : ${passed}`);
-  console.log(`  Falhados : ${failed}`);
+  console.log('\n── RESULT ──');
+  console.log(`  Passed : ${passed}`);
+  console.log(`  Failed : ${failed}`);
   if (fails.length > 0) {
-    console.log('\n── FALHAS ──');
+    console.log('\n── FAILURES ──');
     for (const f of fails) console.log(`  - ${f.where}  got=${f.got}  want=${f.want}`);
   }
   if (failed === 0) {
-    console.log('\n  ✓ FASE 4 PASSOU — Auth/RBAC validado.\n');
+    console.log('\n  ✓ PHASE 4 PASSED — Auth/RBAC validated.\n');
     process.exit(0);
   } else {
     console.log('\n  ✗ PHASE 4 FAILED.\n');

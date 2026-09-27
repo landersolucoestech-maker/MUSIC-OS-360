@@ -51,7 +51,7 @@ async function main() {
   const workerConnection = connection(url);
   const eventsConnection = connection(url);
 
-  console.log(JSON.stringify({ phase: 'FASE 1B', provider: url.includes('127.0.0.1') || url.includes('localhost') ? 'local' : 'remote', url: url.replace(/\/\/.*@/, '//***@') }));
+  console.log(JSON.stringify({ phase: 'PHASE 1B', provider: url.includes('127.0.0.1') || url.includes('localhost') ? 'local' : 'remote', url: url.replace(/\/\/.*@/, '//***@') }));
 
   try {
     await queueConnection.connect();
@@ -129,7 +129,7 @@ async function main() {
   }
 
   const failedChecks = checks.filter((check) => !check.ok);
-  console.log(JSON.stringify({ result: failedChecks.length ? 'FAILED' : 'PASSOU', checks }, null, 2));
+  console.log(JSON.stringify({ result: failedChecks.length ? 'FAILED' : 'PASSED', checks }, null, 2));
   process.exit(failedChecks.length ? 1 : 0);
 }
 

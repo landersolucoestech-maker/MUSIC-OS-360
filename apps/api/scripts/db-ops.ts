@@ -120,14 +120,14 @@ async function rollback(): Promise<void> {
 }
 
 async function check(): Promise<void> {
-  console.log('\n[db:check] Verificando estado das migrations…\n');
+  console.log('\n[db:check] Checking migration state…\n');
   await AppDataSource.initialize();
 
   const hasPending = await AppDataSource.showMigrations();
   if (!hasPending) {
     console.log('✓ No pending migrations — schema in sync.\n');
   } else {
-    console.log('⚠ Existem migrations pendentes — execute: npm run db:migrate\n');
+    console.log('⚠ There are pending migrations — run: npm run db:migrate\n');
     process.exit(1);
   }
 }
@@ -141,7 +141,7 @@ async function reset(): Promise<void> {
   console.log('\n[db:reset] Inicializando DataSource…');
   await AppDataSource.initialize();
 
-  console.log('[db:reset] Dropando todas as tabelas (CASCADE)…');
+  console.log('[db:reset] Dropping every table (CASCADE)…');
   await AppDataSource.dropDatabase();
 
   console.log('[db:reset] Criando schema do zero…');
@@ -166,7 +166,7 @@ async function seedOperational(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`\n[seed:operational] Iniciando seed operacional (env=${env})…`);
+  console.log(`\n[seed:operational] Starting operational seed (env=${env})…`);
 
   if (!AppDataSource.isInitialized) await AppDataSource.initialize();
 
@@ -186,7 +186,7 @@ async function generate(): Promise<void> {
   console.log(
     `\n[db:generate] To generate migration '${name}', run manually:\n` +
     `  npx typeorm migration:generate -d src/database/datasource.ts src/database/migrations/${Date.now()}_${name}\n` +
-    '\nNota: ts-node deve estar instalado globalmente ou use npx ts-node.\n',
+    '\nNote: ts-node must be installed globally, or use npx ts-node.\n',
   );
   process.exit(0);
 }

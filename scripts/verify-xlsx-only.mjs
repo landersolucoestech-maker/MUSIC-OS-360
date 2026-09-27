@@ -51,7 +51,7 @@ const FORBIDDEN_PATTERNS = [
     regex: new RegExp(`\\.${LEGACY_TOKEN}\\b`, 'i'),
   },
   {
-    label: 'MIME delimitado legado',
+    label: 'legacy delimited MIME',
     regex: new RegExp(`text/${LEGACY_TOKEN}`, 'i'),
   },
   {

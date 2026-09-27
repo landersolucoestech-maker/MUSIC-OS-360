@@ -103,7 +103,7 @@ for (const file of trackedFiles) {
   const base = normalized.split("/").pop();
   const isCanonical = base === ".env.development" || base === ".env.staging" || base === ".env.production";
   if (!isCanonical) {
-    errors.push(`nome de env alternativo rastreado (proibido): ${file}`);
+    errors.push(`alternative env name tracked (forbidden): ${file}`);
   }
 }
 

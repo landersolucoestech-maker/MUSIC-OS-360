@@ -95,7 +95,7 @@ async function main() {
         }
       }
       await qr.commitTransaction();
-      console.log(`\n[APPLY] backfill commit OK — linhas atualizadas: ${updated} (idempotente: role_id IS NULL).`);
+      console.log(`\n[APPLY] backfill commit OK — rows updated: ${updated} (idempotent: role_id IS NULL).`);
     } catch (e) {
       await qr.rollbackTransaction();
       console.error('[APPLY] rollback due to error:', (e as Error).message); process.exitCode = 1;

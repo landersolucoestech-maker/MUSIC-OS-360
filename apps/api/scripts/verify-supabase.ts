@@ -145,7 +145,7 @@ async function main(): Promise<void> {
   for (const v of REQUIRED_VARS) {
     const val = process.env[v.key];
     if (!val) {
-      fail(`${v.key} — AUSENTE — ${v.description}`);
+      fail(`${v.key} — MISSING — ${v.description}`);
       missingRequired++;
       totalFails++;
     } else {
@@ -173,7 +173,7 @@ async function main(): Promise<void> {
   // Extra validation: ENCRYPTION_KEY must have 64 hex chars
   const encKey = process.env['ENCRYPTION_KEY'] ?? '';
   if (!/^[0-9a-fA-F]{64}$/.test(encKey)) {
-    fail('ENCRYPTION_KEY deve ter 64 caracteres hexadecimais (AES-256)');
+    fail('ENCRYPTION_KEY must have 64 hexadecimal characters (AES-256)');
     totalFails++;
   } else {
     ok('ENCRYPTION_KEY valid format (64 hex chars)');
@@ -211,7 +211,7 @@ async function main(): Promise<void> {
   }
 
   // ── 3. Migrations ─────────────────────────────────────────────────────────
-  console.log('\n── 3. Estado das Migrations ─────────────────────────────────\n');
+  console.log('\n── 3. Migration state ───────────────────────────────────────\n');
 
   try {
     const { AppDataSource } = await import('../src/database/datasource');
@@ -221,9 +221,9 @@ async function main(): Promise<void> {
     if (!hasPending) {
       ok('No pending migrations — schema in sync');
     } else {
-      warn('Existem migrations pendentes');
+      warn('There are pending migrations');
       if (FIX_MODE) {
-        info('--fix: Aplicando migrations pendentes…');
+        info('--fix: Applying pending migrations…');
         await AppDataSource.runMigrations({ transaction: 'each' });
         ok('Migrations aplicadas');
       } else {
@@ -258,14 +258,14 @@ async function main(): Promise<void> {
     if (existingTables.has(table)) {
       ok(table);
     } else {
-      fail(`${table} — AUSENTE`);
+      fail(`${table} — MISSING`);
       missingTables++;
       totalFails++;
     }
   }
 
   if (missingTables > 0) {
-    warn(`${missingTables} tabela(s) ausente(s) — execute: npm run db:migrate`);
+    warn(`${missingTables} table(s) missing — run: npm run db:migrate`);
   }
 
   // ── 5. RLS ────────────────────────────────────────────────────────────────
@@ -281,9 +281,9 @@ async function main(): Promise<void> {
     if (!existingTables.has(table)) continue; // already reported above
     const hasRls = rlsMap.get(table);
     if (hasRls) {
-      ok(`RLS habilitado: ${table}`);
+      ok(`RLS enabled: ${table}`);
     } else {
-      fail(`RLS DESABILITADO: ${table}`);
+      fail(`RLS DISABLED: ${table}`);
       rlsFails++;
       totalFails++;
     }
@@ -349,7 +349,7 @@ async function main(): Promise<void> {
   console.log('╚══════════════════════════════════════════════════════════╝\n');
 
   if (totalFails === 0 && totalWarns === 0) {
-    console.log('  ✓ PLATAFORMA TOTALMENTE PROVISIONADA E OPERACIONAL\n');
+    console.log('  ✓ PLATFORM FULLY PROVISIONED AND OPERATIONAL\n');
   } else if (totalFails === 0) {
     console.log(`  ✓ Verification completed with ${totalWarns} warning(s) — non-blocking\n`);
   } else {

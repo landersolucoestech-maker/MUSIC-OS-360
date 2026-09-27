@@ -4,7 +4,7 @@
   "directory": 23,
   "eventQueueJob": 18,
   "filename": 83,
-  "identifier": 2520
+  "identifier": 2519
  },
  "debt": {
   "comment::apps/web/src/modules/crm-relationships/forms/ContactModal.tsx": 1,
@@ -114,7 +114,6 @@
   "filename::apps/web/src/test/artista-url-only-domain.test.ts::filename::artista-url-only-domain.test.ts": 1,
   "filename::apps/web/src/test/artista-url-validators.test.ts::filename::artista-url-validators.test.ts": 1,
   "filename::apps/web/src/test/registroMusicasMappers.test.ts::filename::registroMusicasMappers.test.ts": 1,
-  "identifier::apps/api/scripts/rbac-shadow-go-no-go.ts::variable::aprovado": 1,
   "identifier::apps/api/scripts/verify-fase3-multitenant.ts::variable::nome": 1,
   "identifier::apps/api/scripts/verify-fase5-dashboard.ts::property::despesas": 2,
   "identifier::apps/api/scripts/verify-fase5-dashboard.ts::property::receitas": 2,

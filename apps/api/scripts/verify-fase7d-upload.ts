@@ -83,12 +83,12 @@ function assert(condition: unknown, message: string, detail?: unknown): asserts 
 }
 
 function createS3Client() {
-  assert(process.env.R2_ACCOUNT_ID, 'R2_ACCOUNT_ID ausente');
-  assert(process.env.R2_BUCKET_NAME, 'R2_BUCKET_NAME ausente');
+  assert(process.env.R2_ACCOUNT_ID, 'R2_ACCOUNT_ID missing');
+  assert(process.env.R2_BUCKET_NAME, 'R2_BUCKET_NAME missing');
   const accessKeyId = process.env.R2_ACCESS_KEY_ID ?? process.env.R2_ACCESS_KEY;
   const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY ?? process.env.R2_SECRET_KEY;
-  assert(accessKeyId, 'R2_ACCESS_KEY_ID/R2_ACCESS_KEY ausente');
-  assert(secretAccessKey, 'R2_SECRET_ACCESS_KEY/R2_SECRET_KEY ausente');
+  assert(accessKeyId, 'R2_ACCESS_KEY_ID/R2_ACCESS_KEY missing');
+  assert(secretAccessKey, 'R2_SECRET_ACCESS_KEY/R2_SECRET_KEY missing');
   return new S3Client({
     region: process.env.R2_REGION || 'auto',
     endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
@@ -204,7 +204,7 @@ async function sdkCycle(s3: S3Client, bucket: string) {
   const head = await s3.send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
   const got = await s3.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
   const gotBytes = await bodyToBuffer(got.Body);
-  assert(gotBytes.equals(body), 'SDK GET retornou bytes diferentes', { expected: body.toString(), actual: gotBytes.toString() });
+  assert(gotBytes.equals(body), 'SDK GET returned different bytes', { expected: body.toString(), actual: gotBytes.toString() });
   const del = await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
   try {
     await s3.send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
@@ -480,7 +480,7 @@ async function main() {
   checks.db = uploadRows.rows;
   await pg.end();
 
-  console.log(JSON.stringify(redactSensitiveObject({ runId, result: 'PASSOU', checks, requests }), null, 2));
+  console.log(JSON.stringify(redactSensitiveObject({ runId, result: 'PASSED', checks, requests }), null, 2));
 }
 
 main().catch((err) => {

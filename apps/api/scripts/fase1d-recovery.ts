@@ -120,7 +120,7 @@ async function tick(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  console.log(`FASE 1D probe → API=${API_URL}  REDIS=${REDIS_URL.replace(/:[^@]*@/, ':***@')}`);
+  console.log(`PHASE 1D probe → API=${API_URL}  REDIS=${REDIS_URL.replace(/:[^@]*@/, ':***@')}`);
   console.log('Press Ctrl+C to stop and write the report.\n');
 
   const interval = setInterval(() => {

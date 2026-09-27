@@ -70,7 +70,7 @@ async function main(): Promise<void> {
   const targetRef = extractSupabaseRef(databaseUrl);
   if (targetRef === SUPABASE_PROD_REF) {
     console.error('\n  ✗ ABORTED: DATABASE_URL points to the Supabase PRODUCTION ref.');
-    console.error('    Este script escreve/apaga linhas reais em organizations/tenants/artists.');
+    console.error('    This script writes/deletes real rows in organizations/tenants/artists.');
     console.error('    Point DATABASE_URL to a non-production branch/staging before running.\n');
     process.exit(1);
   }
@@ -89,7 +89,7 @@ async function main(): Promise<void> {
   });
 
   await client.connect();
-  ok('Conectado ao PostgreSQL');
+  ok('Connected to PostgreSQL');
 
   const tenantA = randomUUID();
   const tenantB = randomUUID();
@@ -207,7 +207,7 @@ async function main(): Promise<void> {
     await client.query('ROLLBACK');
 
     if ((crossDelete.rowCount ?? 0) === 0) {
-      ok('TEST 6: DELETE cross-tenant bloqueado por RLS — afetou 0 linhas');
+      ok('TEST 6: cross-tenant DELETE blocked by RLS — affected 0 rows');
       passed++;
     } else {
       fail(`TEST 6: CRITICAL FAILURE — RLS allowed cross-tenant DELETE (${crossDelete.rowCount} row(s))`);
@@ -255,12 +255,12 @@ async function main(): Promise<void> {
   }
 
   // ── Result ────────────────────────────────────────────────────────────────
-  console.log('\n── Resultado ───────────────────────────────────────────────\n');
-  console.log(`  Testes passados : ${passed}`);
-  console.log(`  Testes falhados : ${failed}`);
+  console.log('\n── Result ──────────────────────────────────────────────────\n');
+  console.log(`  Tests passed : ${passed}`);
+  console.log(`  Tests failed : ${failed}`);
 
   if (failed === 0) {
-    console.log('\n  ✓ TENANT ISOLATION VALIDADO — RLS funciona corretamente.\n');
+    console.log('\n  ✓ TENANT ISOLATION VALIDATED — RLS works correctly.\n');
   } else {
     console.log('\n  ✗ TENANT ISOLATION COMPROMISED — critical failures detected.\n');
     console.log('  Check the RLS policies and the tenant hook in the backend.\n');

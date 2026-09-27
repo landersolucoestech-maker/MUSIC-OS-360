@@ -472,7 +472,7 @@ async function main(): Promise<void> {
     assert(evidenceA.tenantJwt === orgA, 'Tenant A JWT mismatch');
     assert(evidenceA.tenantRequest === TENANT_A, 'Tenant A request mismatch');
     assert(evidenceA.private_tenant_id === TENANT_A, 'private_get_tenant_id() did not return A');
-    assert(evidenceA.connection_role === 'musicos_app', `Role inesperada: ${evidenceA.connection_role}`);
+    assert(evidenceA.connection_role === 'musicos_app', `Unexpected role: ${evidenceA.connection_role}`);
     assert(evidenceA.request_role === 'owner', `Request role inesperada: ${evidenceA.request_role}`);
     assert(
       JSON.stringify(evidenceA.rows.map((row: { subject: string }) => row.subject))
@@ -483,7 +483,7 @@ async function main(): Promise<void> {
     assert(evidenceB.tenantJwt === orgB, 'Tenant B JWT mismatch');
     assert(evidenceB.tenantRequest === TENANT_B, 'Tenant B request mismatch');
     assert(evidenceB.private_tenant_id === TENANT_B, 'private_get_tenant_id() did not return B');
-    assert(evidenceB.connection_role === 'musicos_app', `Role inesperada: ${evidenceB.connection_role}`);
+    assert(evidenceB.connection_role === 'musicos_app', `Unexpected role: ${evidenceB.connection_role}`);
     assert(evidenceB.request_role === 'owner', `Request role inesperada: ${evidenceB.request_role}`);
     assert(
       JSON.stringify(evidenceB.rows.map((row: { subject: string }) => row.subject))
@@ -602,7 +602,7 @@ async function main(): Promise<void> {
         id: settings.id,
       }));
       assert(settingsResponse.status === 200, `MusicChat ${label} status=${settingsResponse.status}`);
-      assert(settings.tenant_id === tenantId, `MusicChat ${label} retornou tenant incorreto`);
+      assert(settings.tenant_id === tenantId, `MusicChat ${label} returned the wrong tenant`);
       if (typeof settings.id === 'string' && !existingSettings.has(settings.id)) {
         createdSettingsIds.push(settings.id);
       }
@@ -621,7 +621,7 @@ async function main(): Promise<void> {
         enabled: patched.enabled,
       }));
       assert(patchResponse.status === 200, `PATCH settings ${label} status=${patchResponse.status}`);
-      assert(patched.tenant_id === tenantId, `PATCH settings ${label} retornou tenant incorreto`);
+      assert(patched.tenant_id === tenantId, `PATCH settings ${label} returned the wrong tenant`);
     }
 
     const inbound = async (
@@ -715,7 +715,7 @@ async function main(): Promise<void> {
       );
       assert(
         evidence.events.every((row: Record<string, any>) => row.conversation_id !== otherConversationId),
-        `MusicChat probe ${label} enxergou evento cross-tenant`,
+        `MusicChat probe ${label} saw a cross-tenant event`,
       );
       assert(
         evidence.notifications.some(

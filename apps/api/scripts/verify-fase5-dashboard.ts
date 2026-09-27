@@ -31,8 +31,8 @@ const OA = '10000000-0000-0000-0000-000000000001';
 const TB = '20000000-0000-0000-0000-000000000002';
 const OB = '20000000-0000-0000-0000-000000000001';
 
-const UID_A = '40000000-0000-0000-0000-000000000001'; // owner A (FASE 4)
-const UID_B = '40000000-0000-0000-0000-000000000008'; // owner B (FASE 4)
+const UID_A = '40000000-0000-0000-0000-000000000001'; // owner A (PHASE 4)
+const UID_B = '40000000-0000-0000-0000-000000000008'; // owner B (PHASE 4)
 
 const TS = Date.now();
 
@@ -181,11 +181,11 @@ async function f51(): Promise<void> {
   console.log('  Tenant A:', { artists: SEED_A.artists.length, releases: SEED_A.releases.length, contracts: SEED_A.contracts.length, events: SEED_A.events.length, tx: SEED_A.tx.length, leads: SEED_A.leads.length });
   console.log('  Tenant B:', { artists: SEED_B.artists.length, releases: SEED_B.releases.length, contracts: SEED_B.contracts.length, events: SEED_B.events.length, tx: SEED_B.tx.length, leads: SEED_B.leads.length });
 
-  expect('Tenant A seed criou todos os artistas', SEED_A.artists.length === OPTS_A.artists, `got=${SEED_A.artists.length}`);
-  expect('Tenant A seed criou todos os contratos', SEED_A.contracts.length === OPTS_A.contracts, `got=${SEED_A.contracts.length}`);
+  expect('Tenant A seed created every artist', SEED_A.artists.length === OPTS_A.artists, `got=${SEED_A.artists.length}`);
+  expect('Tenant A seed created every contract', SEED_A.contracts.length === OPTS_A.contracts, `got=${SEED_A.contracts.length}`);
   expect('Tenant A seed created events (today+tomorrow)', SEED_A.events.length === OPTS_A.eventsToday + OPTS_A.eventsTomorrow, `got=${SEED_A.events.length}`);
   expect('Tenant A seed created transactions (month + older)', SEED_A.tx.length === OPTS_A.txRevenueThisMonth + OPTS_A.txExpenseThisMonth + OPTS_A.txRevenueOtherMonth, `got=${SEED_A.tx.length}`);
-  expect('Tenant B seed criou todos os artistas', SEED_B.artists.length === OPTS_B.artists, `got=${SEED_B.artists.length}`);
+  expect('Tenant B seed created every artist', SEED_B.artists.length === OPTS_B.artists, `got=${SEED_B.artists.length}`);
 }
 
 // ============================================================================
@@ -240,7 +240,7 @@ async function f52(): Promise<void> {
 // ============================================================================
 
 async function f54(): Promise<void> {
-  section('5.4 — AGENDA DE HOJE');
+  section('5.4 — TODAY\'S SCHEDULE');
   // Lists all of Tenant A's events, filters by date
   const r = await call('GET', '/events?limit=200', { auth: TOKEN_A, tenant: TA });
   expect('GET /events A → 200', r.status === 200);
@@ -288,7 +288,7 @@ async function f55(): Promise<void> {
   // Reload simulado
   const r2 = await call('GET', '/audit-logs?limit=200', { auth: TOKEN_A, tenant: TA });
   const list2 = extractList(r2.body);
-  expect('audit-logs persistente (2ª chamada igual/maior)', list2.length >= list.length, `1st=${list.length} 2nd=${list2.length}`);
+  expect('persistent audit-logs (2nd call equal/greater)', list2.length >= list.length, `1st=${list.length} 2nd=${list2.length}`);
 
   // activity-logs too
   const ra = await call('GET', '/activity-logs?limit=100', { auth: TOKEN_A, tenant: TA });
@@ -300,7 +300,7 @@ async function f55(): Promise<void> {
 // ============================================================================
 
 async function f56(): Promise<void> {
-  section('5.6 — ARTISTAS DESTAQUE');
+  section('5.6 — FEATURED ARTISTS');
   // Creates a project linked to the first artist of A
   const artistA0 = SEED_A.artists[0];
   if (!artistA0) {
@@ -316,11 +316,11 @@ async function f56(): Promise<void> {
   const r = await call('GET', '/artists?limit=200', { auth: TOKEN_A, tenant: TA });
   const list = Array.isArray(r.body?.data) ? r.body.data : (r.body?.data?.data ?? r.body?.items ?? []);
   const myArtists = list.filter((a: any) => (a.nome_artistico ?? '').includes(`DASH_A_${TS}_ARTIST`));
-  expect('artistas DASH_A_* listados', myArtists.length === OPTS_A.artists, `got=${myArtists.length}`);
+  expect('DASH_A_* artists listed', myArtists.length === OPTS_A.artists, `got=${myArtists.length}`);
 
   // The artist with spotify_ouvintes=12345 (index 0) must keep it; others may have null or undefined
   const a0 = myArtists.find((a: any) => (a.nome_artistico ?? '').endsWith(`_0_${TS}`));
-  expect('artistA0 retorna spotify_ouvintes=12345 (streams reais)', a0?.spotify_ouvintes === 12345, `got=${a0?.spotify_ouvintes}`);
+  expect('artistA0 returns spotify_ouvintes=12345 (real streams)', a0?.spotify_ouvintes === 12345, `got=${a0?.spotify_ouvintes}`);
   const a1 = myArtists.find((a: any) => (a.nome_artistico ?? '').endsWith(`_1_${TS}`));
   // Hooks frontend tratam undefined/null como "–"
   expect('artistA1 does not fabricate streams (null/undefined)', a1?.spotify_ouvintes == null, `got=${a1?.spotify_ouvintes}`);
@@ -344,7 +344,7 @@ async function f57(): Promise<void> {
   const expectedExpA = parseFloat(dbA.rows[0]?.despesas ?? '0');
   expect('revenue_current_month A matches the database', Math.abs(DASH_A.revenue_current_month - expectedRevA) < 0.01, `dashboard=${DASH_A.revenue_current_month} db=${expectedRevA}`);
   expect('expenses_current_month A matches the database', Math.abs(DASH_A.expenses_current_month - expectedExpA) < 0.01, `dashboard=${DASH_A.expenses_current_month} db=${expectedExpA}`);
-  expect('net_result_current_month A correto', Math.abs(DASH_A.net_result_current_month - (expectedRevA - expectedExpA)) < 0.01);
+  expect('net_result_current_month A correct', Math.abs(DASH_A.net_result_current_month - (expectedRevA - expectedExpA)) < 0.01);
 
   // Same check for B
   const dbB = await DB.query<{ receitas: string; despesas: string }>(`
@@ -395,14 +395,14 @@ async function f58(): Promise<void> {
 
 async function main(): Promise<void> {
   console.log('\n╔══════════════════════════════════════════════════════════╗');
-  console.log('║  MUSIC OS 360 — FASE 5: Dashboard Real (HTTP+DB)          ║');
+  console.log('║  MUSIC OS 360 — PHASE 5: Real dashboard (HTTP+DB)        ║');
   console.log('╚══════════════════════════════════════════════════════════╝');
   console.log(`  API_URL  : ${API_URL}`);
   console.log(`  Tenant A : ${TA}`);
   console.log(`  Tenant B : ${TB}`);
   console.log(`  TS       : ${TS}`);
 
-  if (!KEY || !DB_URL) { console.error('ENCRYPTION_KEY ou DATABASE_URL ausente — abortando'); process.exit(2); }
+  if (!KEY || !DB_URL) { console.error('ENCRYPTION_KEY or DATABASE_URL missing — aborting'); process.exit(2); }
 
   try {
     await f51();
@@ -419,11 +419,11 @@ async function main(): Promise<void> {
     try { if (DB) await DB.end(); } catch {}
   }
 
-  console.log('\n── RESULTADO ──');
-  console.log(`  Passados : ${passed}`);
-  console.log(`  Falhados : ${failed}`);
+  console.log('\n── RESULT ──');
+  console.log(`  Passed : ${passed}`);
+  console.log(`  Failed : ${failed}`);
   if (fails.length > 0) {
-    console.log('\n── FALHAS ──');
+    console.log('\n── FAILURES ──');
     for (const f of fails) console.log(`  - ${f.where}  ${f.got}`);
   }
   if (failed === 0) {

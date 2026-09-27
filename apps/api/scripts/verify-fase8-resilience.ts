@@ -113,7 +113,7 @@ async function http(
   };
   requests.push(row);
   if (res.status >= 500 && !(options.expected ?? []).includes(res.status)) {
-    fail('network', `500 inesperado em ${method} ${path}`, row);
+    fail('network', `unexpected 500 on ${method} ${path}`, row);
   }
   return { res, json: unwrap(json), text };
 }
@@ -131,7 +131,7 @@ async function putPresigned(url: string, body: Buffer, mimeType: string) {
 
 function signTenantB() {
   const key = process.env.ENCRYPTION_KEY;
-  if (!key) throw new Error('ENCRYPTION_KEY ausente');
+  if (!key) throw new Error('ENCRYPTION_KEY missing');
   return jwt.sign(
     {
       sub: USER_B,
@@ -146,7 +146,7 @@ function signTenantB() {
 
 function signExpired(orgId: string, userId: string) {
   const key = process.env.ENCRYPTION_KEY;
-  if (!key) throw new Error('ENCRYPTION_KEY ausente');
+  if (!key) throw new Error('ENCRYPTION_KEY missing');
   return jwt.sign(
     { sub: userId, session_id: `expired-${runId}`, app_metadata: { org_id: orgId, role: 'owner' } },
     key,
@@ -332,7 +332,7 @@ async function validateR2FailurePath(pg: PgClient, token: string, tenantId: stri
     confirmedAt: row.rows[0]?.confirmed_at ?? null,
   };
   expect('r2', confirm.res.status === 400, 'confirm without an R2 object should return 400', evidence.r2);
-  expect('r2', row.rows[0]?.status === 'pending' && !row.rows[0]?.confirmed_at, 'upload fantasma ficou confirmado no DB', evidence.r2);
+  expect('r2', row.rows[0]?.status === 'pending' && !row.rows[0]?.confirmed_at, 'phantom upload stayed confirmed in the DB', evidence.r2);
 }
 
 async function validateRace(pg: PgClient, token: string, tenantId: string, core: Awaited<ReturnType<typeof createCoreData>>) {
@@ -382,9 +382,9 @@ async function validateRace(pg: PgClient, token: string, tenantId: string, core:
   };
   expect('race', badPatch.length === 0 && artistReload.res.ok, 'concurrent artist PATCH had a failure', evidence.race);
   expect('race', ![del.res.status, patchAfter.res.status].some((s) => s >= 500), 'DELETE+PATCH simultaneo gerou 5xx', evidence.race);
-  expect('race', up1.key !== up2.key, 'uploads simultaneos geraram r2_key duplicado', evidence.race);
+  expect('race', up1.key !== up2.key, 'simultaneous uploads generated a duplicate r2_key', evidence.race);
   expect('race', c1.res.ok && c2.res.ok, 'double confirm was not idempotent', evidence.race);
-  expect('race', uploadRows.rows[0]?.count === 3 && uploadRows.rows[0]?.unique_keys === 3, 'uploads concorrentes corromperam rows/keys', evidence.race);
+  expect('race', uploadRows.rows[0]?.count === 3 && uploadRows.rows[0]?.unique_keys === 3, 'concurrent uploads corrupted rows/keys', evidence.race);
 }
 
 async function validateTenantStress(pg: PgClient, authA: { token: string; tenantId: string }) {
@@ -531,7 +531,7 @@ async function main() {
 
   const summary = {
     runId,
-    result: failures.length ? 'FAILED' : 'PASSOU',
+    result: failures.length ? 'FAILED' : 'PASSED',
     failures,
     evidence,
     httpStatusCounts: requests.reduce<Record<string, number>>((acc, r) => {

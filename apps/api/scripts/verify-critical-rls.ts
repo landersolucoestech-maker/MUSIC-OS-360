@@ -261,11 +261,11 @@ async function main() {
     );
     assert(schemaRows.length === TABLES.length, 'critical tables were found');
     for (const row of schemaRows) {
-      assert(row.relrowsecurity === true, `${row.relname}: RLS habilitado`);
-      assert(row.relforcerowsecurity === true, `${row.relname}: FORCE RLS habilitado`);
+      assert(row.relrowsecurity === true, `${row.relname}: RLS enabled`);
+      assert(row.relforcerowsecurity === true, `${row.relname}: FORCE RLS enabled`);
       assert(
         row.policies === EXPECTED_POLICIES[row.relname as TableName],
-        `${row.relname}: ${EXPECTED_POLICIES[row.relname as TableName]} policies esperadas`,
+        `${row.relname}: ${EXPECTED_POLICIES[row.relname as TableName]} policies expected`,
       );
     }
 
@@ -286,7 +286,7 @@ async function main() {
       assert(fn.prosecdef === true, `${fn.proname}: SECURITY DEFINER preservado`);
       assert(
         fn.proconfig?.includes('search_path=pg_catalog'),
-        `${fn.proname}: search_path seguro`,
+        `${fn.proname}: safe search_path`,
       );
       assert(fn.public_execute === false, `${fn.proname}: PUBLIC without EXECUTE`);
     }

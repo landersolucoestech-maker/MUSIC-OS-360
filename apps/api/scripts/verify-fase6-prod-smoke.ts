@@ -39,7 +39,7 @@ function ok(label: string, cond: boolean, det?: string) {
 
 async function main() {
   console.log('\n╔══════════════════════════════════════════════════════════╗');
-  console.log('║  MUSIC OS 360 — FASE 6: Prod Smoke (build + CRUD)        ║');
+  console.log('║  MUSIC OS 360 — PHASE 6: Prod Smoke (build + CRUD)       ║');
   console.log('╚══════════════════════════════════════════════════════════╝');
 
   console.log('\n── 6.2 — Health/Web Boot ──');
@@ -90,7 +90,7 @@ async function main() {
     const r = await call('GET', '/audit-logs?limit=10');
     ok('/audit-logs → 200', r.status === 200);
     const arr = Array.isArray(r.body?.data) ? r.body.data : [];
-    ok('/audit-logs retorna entradas reais', arr.length >= 0); // 0 or more
+    ok('/audit-logs returns real entries', arr.length >= 0); // 0 or more
   }
 
   console.log('\n── 6.6 — Marketing metrics (no real integrations → empty) ──');
@@ -153,15 +153,15 @@ async function main() {
   // Persistence: read the artist back
   if (artistId) {
     const reread = await call('GET', `/artists/${artistId}`);
-    ok('Artista persistido (GET by id) → 200', reread.status === 200);
+    ok('Artist persisted (GET by id) → 200', reread.status === 200);
     ok('Artist keeps its name', reread.body?.data?.nome_artistico === `${tag}_ARTIST`);
   }
 
-  console.log('\n── RESULTADO ──');
-  console.log(`  Passados : ${passed}`);
-  console.log(`  Falhados : ${failed}`);
+  console.log('\n── RESULT ──');
+  console.log(`  Passed : ${passed}`);
+  console.log(`  Failed : ${failed}`);
   if (fails.length) {
-    console.log('\n── FALHAS ──');
+    console.log('\n── FAILURES ──');
     for (const f of fails) console.log(`  - ${f}`);
   }
   process.exit(failed === 0 ? 0 : 1);

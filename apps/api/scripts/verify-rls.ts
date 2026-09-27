@@ -144,7 +144,7 @@ async function main(): Promise<void> {
     } else {
       console.log(`  ✗  ${table}`);
       if (!rlsOn) {
-        console.log('       RLS DESABILITADO');
+        console.log('       RLS DISABLED');
         fails++;
         if (FIX_MODE) {
           await client.query(`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY`);
@@ -250,8 +250,8 @@ async function main(): Promise<void> {
         console.log(`  ✓  ${relation.tablename} — FORCE RLS + policies + least privilege`);
       } else {
         console.log(`  ✗  ${relation.tablename}`);
-        if (!relation.rowsecurity) { console.log('       RLS DESABILITADO'); fails++; }
-        if (!relation.force_rowsecurity) { console.log('       FORCE RLS DESABILITADO'); fails++; }
+        if (!relation.rowsecurity) { console.log('       RLS DISABLED'); fails++; }
+        if (!relation.force_rowsecurity) { console.log('       FORCE RLS DISABLED'); fails++; }
         if (!policies.has('tenant_isolation')) { console.log('       MISSING tenant_isolation policy'); fails++; }
         if (!policies.has('super_admin_full_access')) { console.log('       MISSING super_admin_full_access policy'); fails++; }
         if (anonGrants.size > 0) { console.log(`       anon grants: ${Array.from(anonGrants).join(', ')}`); fails++; }
@@ -261,7 +261,7 @@ async function main(): Promise<void> {
     }
   }
 
-  console.log('\n── Resumo ──────────────────────────────────────────────────\n');
+  console.log('\n── Summary ─────────────────────────────────────────────────\n');
   if (fails === 0) {
     console.log('  ✓ All multi-tenant tables have RLS and complete policies.\n');
   } else {

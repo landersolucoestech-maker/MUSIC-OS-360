@@ -34,9 +34,9 @@ SELECT s.*, xt.cross_tenant,
   CASE
     WHEN s.requests>=1000 AND s.endpoints>=10 AND s.roles>=5 AND s.tenants>=3
      AND s.would_allow=0 AND s.would_deny=0 AND xt.cross_tenant=0 AND s.resolver_divergence=0
-    THEN 'APROVADO'
-    ELSE 'REPROVADO'
-  END AS veredito
+    THEN 'APPROVED'
+    ELSE 'REJECTED'
+  END AS verdict
 FROM s, xt;
 `;
 
@@ -47,13 +47,13 @@ async function main() {
   if (!reg) { console.error('rbac_decision_logs DOES NOT EXIST — instrumentation missing.'); await ds.destroy(); process.exit(3); }
   const row = (await ds.query(SQL))[0];
   console.table([row]);
-  const aprovado = row.veredito === 'APROVADO';
-  console.log(`\nGO/NO-GO: ${row.veredito}  →  ${aprovado ? 'APTO PARA ON' : 'MANTER SHADOW'}`);
-  if (!aprovado) {
+  const approved = row.verdict === 'APPROVED';
+  console.log(`\nGO/NO-GO: ${row.verdict}  →  ${approved ? 'READY FOR ON' : 'KEEP SHADOW'}`);
+  if (!approved) {
     console.log('Criteria not met (expected: requests≥1000, endpoints≥10, roles≥5, tenants≥3, would_allow=0, would_deny=0, cross_tenant=0, resolver_divergence=0).');
   }
   await ds.destroy();
-  process.exit(aprovado ? 0 : 3);
+  process.exit(approved ? 0 : 3);
 }
 
 main().catch((e) => { console.error('ERROR:', e?.message ?? e); process.exit(1); });

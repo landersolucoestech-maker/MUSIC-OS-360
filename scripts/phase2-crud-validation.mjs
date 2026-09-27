@@ -196,7 +196,7 @@ async function main() {
   checks.artists = { id: artistId, created: artistCreate.res.status, patched: artistPatch.res.status, reloadedName: artistReload.json?.nome_artistico };
 
   const dbArtist = await dbOne(pg, "select id, tenant_id, nome_artistico, genero_musical, metadata from artists where id = $1", [artistId]);
-  expect(dbArtist?.tenant_id === tenantId, "DB artista tenant_id incorreto", { dbArtist });
+  expect(dbArtist?.tenant_id === tenantId, "DB artist tenant_id incorrect", { dbArtist });
   expect(dbArtist?.nome_artistico === base.artistNameEdited, "DB artist did not persist the edit", { dbArtist });
 
   const releasePayload = {
@@ -286,7 +286,7 @@ async function main() {
   checks.contracts = { id: contractId, clientId, created: contractCreate.res.status, patched: contractPatch.res.status, artist: contractReload.json?.artistas?.nome_artistico, client: contractReload.json?.clientes?.nome, status: contractReload.json?.status };
 
   const dbContract = await dbOne(pg, "select id, tenant_id, artista_id, cliente_id, valor from contracts where id = $1", [contractId]);
-  expect(dbContract?.tenant_id === tenantId && dbContract?.artista_id === artistId && dbContract?.cliente_id === clientId, "DB contrato relacoes/tenant incorretas", { dbContract });
+  expect(dbContract?.tenant_id === tenantId && dbContract?.artista_id === artistId && dbContract?.cliente_id === clientId, "DB contract relations/tenant incorrect", { dbContract });
 
   const eventPayload = {
     title: base.eventTitle,
@@ -322,7 +322,7 @@ async function main() {
   checks.events = { id: eventId, created: eventCreate.res.status, patched: eventPatch.res.status, agendaListed: Boolean(listedEvent), dashboardToday: dashboardHasTodayEvent };
 
   const dbEvent = await dbOne(pg, "select id, tenant_id, artista_id, titulo, data, local from events where id = $1", [eventId]);
-  expect(dbEvent?.tenant_id === tenantId && dbEvent?.artista_id === artistId, "DB evento relacao/tenant incorreta", { dbEvent });
+  expect(dbEvent?.tenant_id === tenantId && dbEvent?.artista_id === artistId, "DB event relation/tenant incorrect", { dbEvent });
 
   const dashboardBeforeTx = await http("GET", "/analytics/dashboard", { token, tenantId });
   const txPayload = {
@@ -459,7 +459,7 @@ async function main() {
   const criticalNetwork = requests.filter((r) => [400, 401, 403, 404, 409, 422, 500].includes(r.status));
   console.log(JSON.stringify({
     runId,
-    result: failures.length ? "FAILED" : "PASSOU",
+    result: failures.length ? "FAILED" : "PASSED",
     checks,
     network: {
       total: requests.length,
