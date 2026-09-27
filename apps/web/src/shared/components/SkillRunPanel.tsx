@@ -5,6 +5,7 @@ import { Alert, AlertDescription } from "@/shared/ui/alert";
 import type { SkillRunEnvelope } from "@/shared/hooks/useSkillRun";
 
 import { toUserMessage } from "@/shared/lib/errors";
+import { skillFieldLabel, skillValueLabel } from "@/shared/lib/skill-output-labels.pt-br";
 /**
  * SkillRunPanel — trigger button + generic rendering of the real result
  * of an ON_DEMAND AI Skill. No value is invented here: everything comes from
@@ -23,14 +24,19 @@ export interface SkillRunPanelProps<T extends Record<string, unknown>> {
   onRun: () => void;
 }
 
-function formatFieldLabel(key: string): string {
-  return key
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/^./, (c) => c.toUpperCase());
+/** AI provider ids returned by the backend gateway → product names. */
+const AI_PROVIDER_NAMES: Readonly<Record<string, string>> = {
+  openai: "OpenAI",
+  anthropic: "Anthropic Claude",
+  google: "Google Gemini",
+};
+
+function providerName(provider: string): string {
+  return AI_PROVIDER_NAMES[provider] ?? "provedor de IA";
 }
 
-function ListItem({ item }: { item: unknown }) {
-  if (typeof item === "string") return <li className="text-sm text-foreground">{item}</li>;
+function ListItem({ field, item }: { field: string; item: unknown }) {
+  if (typeof item === "string") return <li className="text-sm text-foreground">{skillValueLabel(field, item)}</li>;
   if (item && typeof item === "object") {
     const entries = Object.entries(item as Record<string, unknown>).filter(
       ([, v]) => typeof v === "string" || typeof v === "number" || typeof v === "boolean",
@@ -40,13 +46,13 @@ function ListItem({ item }: { item: unknown }) {
         {entries.map(([k, v], idx) => (
           <span key={k}>
             {idx > 0 && " · "}
-            <span className="text-muted-foreground">{formatFieldLabel(k)}:</span> {String(v)}
+            <span className="text-muted-foreground">{skillFieldLabel(k)}:</span> {skillValueLabel(k, v)}
           </span>
         ))}
       </li>
     );
   }
-  return <li className="text-sm text-foreground">{String(item)}</li>;
+  return <li className="text-sm text-foreground">{skillValueLabel(field, item)}</li>;
 }
 
 export function SkillRunResultView<T extends Record<string, unknown>>({ parsed }: { parsed: T }) {
@@ -69,7 +75,7 @@ export function SkillRunResultView<T extends Record<string, unknown>>({ parsed }
         <div className="flex flex-wrap gap-2">
           {scalarEntries.map(([k, v]) => (
             <Badge key={k} variant="info">
-              {formatFieldLabel(k)}: {String(v)}
+              {skillFieldLabel(k)}: {skillValueLabel(k, v)}
             </Badge>
           ))}
         </div>
@@ -79,10 +85,10 @@ export function SkillRunResultView<T extends Record<string, unknown>>({ parsed }
         if (arr.length === 0) return null;
         return (
           <div key={key} className="space-y-1">
-            <p className="text-xs font-medium tracking-wider text-muted-foreground">{formatFieldLabel(key)}</p>
+            <p className="text-xs font-medium tracking-wider text-muted-foreground">{skillFieldLabel(key)}</p>
             <ul className="list-disc space-y-1 pl-4">
               {arr.map((item, idx) => (
-                <ListItem key={idx} item={item} />
+                <ListItem key={idx} field={key} item={item} />
               ))}
             </ul>
           </div>
@@ -125,7 +131,7 @@ export function SkillRunPanel<T extends Record<string, unknown>>({
         <>
           <SkillRunResultView parsed={result.parsed} />
           <p className="text-xs text-muted-foreground">
-            {result.fromCache ? "Resultado reaproveitado (cache)" : "Gerado agora"} · {result.provider}/{result.model}
+            {result.fromCache ? "Resultado reaproveitado de uma execução anterior" : "Gerado agora"} · {providerName(result.provider)}
           </p>
         </>
       )}
