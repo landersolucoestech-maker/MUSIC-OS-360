@@ -1,10 +1,10 @@
 /**
  * modules/dashboard/hooks/useActivityHistory.ts
  *
- * Carrega o histórico de atividades persistido (audit-logs) para popular
- * a Activity Feed do Dashboard antes/depois de eventos em tempo real.
+ * Loads the persisted activity history (audit-logs) to populate
+ * the Dashboard Activity Feed before/after real-time events.
  *
- * Em HTTP mode chama GET /api/v1/audit-logs?limit=N.
+ * In HTTP mode it calls GET /api/v1/audit-logs?limit=N.
  */
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/shared/lib/api-client";

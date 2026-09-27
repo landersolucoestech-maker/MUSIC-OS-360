@@ -1,17 +1,17 @@
 /**
  * modules/dashboard/hooks/useMetrics.ts
  *
- * Hook agregador de métricas cross-módulo para o Dashboard.
- * Pertence ao módulo dashboard — NÃO é shared, pois importa directamente
- * de módulos de domínio. Shared nunca importa de módulos.
+ * Cross-module metrics aggregator hook for the Dashboard.
+ * It belongs to the dashboard module — it is NOT shared, because it imports directly
+ * from domain modules. Shared never imports from modules.
  *
- * Task G: contagens/somas (totalArtistas, contratosAtivos, contratosVencendo,
- * receitaMensal) agora vêm de useOperationalDashboard() — GET /analytics/dashboard,
- * que já calcula tudo via COUNT/SUM no banco (ver AnalyticsService.getDashboard) —
- * em vez de baixar as tabelas inteiras de contratos/transações/clientes só para
- * somar no cliente. Só continuam sendo buscadas as listas cujos REGISTROS (não
- * agregados) são exibidos: artistas e eventos (para "destaques" e "próximos
- * compromissos"), lançamentos/projetos (para contar por artista nos destaques).
+ * Task G: counts/sums (totalArtistas, contratosAtivos, contratosVencendo,
+ * receitaMensal) now come from useOperationalDashboard() — GET /analytics/dashboard,
+ * which already computes everything via COUNT/SUM in the database (see AnalyticsService.getDashboard) —
+ * instead of downloading the whole contracts/transactions/clients tables just to
+ * sum them on the client. Only the lists whose RECORDS (not
+ * aggregates) are displayed are still fetched: artists and events (for "highlights" and "upcoming
+ * appointments"), releases/projects (to count per artist in the highlights).
  */
 import { useMemo } from "react";
 import { useArtists } from "@/modules/artist/hooks/useArtists";
@@ -26,7 +26,7 @@ interface ArtistaDestaque {
   stageName: string;
   musicGenre: string | null;
   lancamentos: number;
-  /** null = dado de streams ainda não integrado (não exibir como 0). */
+  /** null = streams data not integrated yet (do not display as 0). */
   streams: number | null;
   projetos: number;
   photoUrl: string | null;
@@ -73,9 +73,9 @@ export function useMetrics(): UseMetricsReturn {
     refetchArtistas(); refetchEventos(); refetchLancamentos(); refetchProjetos(); refetchAgg();
   };
 
-  // Nenhuma das 5 fontes carregou com sucesso: KPIs zerados nesse caso são
-  // indisponibilidade, não dado real — Dashboard.tsx usa isto para decidir
-  // entre mostrar os KPIs ou um banner de "não foi possível carregar".
+  // None of the 5 sources loaded successfully: zeroed KPIs in this case mean
+  // unavailability, not real data — Dashboard.tsx uses this to decide
+  // between showing the KPIs or a "could not load" banner.
   const error = (errArtistas || errEventos || errLancamentos || errProjetos || errAgg) &&
     artistas.length === 0 && eventos.length === 0 && lancamentosData.length === 0 &&
     projetos.length === 0 && !dashboard
@@ -84,13 +84,13 @@ export function useMetrics(): UseMetricsReturn {
   const isLoading = loadingArtistas || loadingEventos || loadingLancamentos || loadingProjetos || loadingAgg;
 
   const artistasMetrics = useMemo<ArtistasMetrics>(() => {
-    // Task J: contrato_id/status são regra de negócio 1:1 no backend (artist
-    // só entra em status "signed" com contrato_id preenchido — ver
-    // ArtistsService.changeStatus) — por isso `artists_by_status.signed`
-    // do agregado GET /analytics/dashboard (COUNT real no banco, nunca
-    // capado) cobre exatamente "artistas com contrato ativo", sem precisar
-    // de endpoint novo. Cai para o array capado (artistas.length) só se o
-    // agregado ainda não carregou — mesmo padrão de fallback do totalArtistas.
+    // Task J: contrato_id/status are a 1:1 business rule on the backend (an artist
+    // only enters status "signed" with contrato_id filled in — see
+    // ArtistsService.changeStatus) — that is why `artists_by_status.signed`
+    // from the GET /analytics/dashboard aggregate (real COUNT in the database, never
+    // capped) covers exactly "artists with an active contract", without needing
+    // a new endpoint. It falls back to the capped array (artistas.length) only if the
+    // aggregate has not loaded yet — same fallback pattern as totalArtistas.
     const statusCounts = dashboard?.artists_by_status;
     const artistasComContrato = statusCounts
       ? (statusCounts["signed"] ?? 0)
@@ -129,8 +129,8 @@ export function useMetrics(): UseMetricsReturn {
     const inicioMes = startOfMonth(hoje);
     const fimMes = endOfMonth(hoje);
 
-    // Backend retorna timestamp na coluna `data`; mock usa `start_date`.
-    // Aceita os dois para evitar contagem zerada em HTTP mode.
+    // The backend returns the timestamp in the `data` column; the mock uses `start_date`.
+    // Accept both to avoid a zeroed count in HTTP mode.
     const readEventoData = (e: Record<string, unknown>): string | null => {
       const v =
         (e["start_date"] as string | null | undefined) ??
@@ -158,8 +158,8 @@ export function useMetrics(): UseMetricsReturn {
       const lancamentos = lancamentosData.filter(l => l.artist_id === artista.id).length;
       const projetosCount = projetos.filter(p => p.artist_id === artista.id).length;
 
-      // Streams: tenta múltiplas fontes; se nenhuma disponível, retorna null
-      // para a UI poder exibir "–" em vez de "0" falso.
+      // Streams: tries multiple sources; if none is available, returns null
+      // so the UI can show "–" instead of a false "0".
       const a = artista as unknown as Record<string, unknown>;
       const integrationsData = a["integrations_data"] as Record<string, unknown> | undefined;
       const spotifyData = integrationsData?.["spotify"] as Record<string, unknown> | undefined;
@@ -203,9 +203,9 @@ export function useMetrics(): UseMetricsReturn {
   return {
     artistasMetrics,
     dashboardMetrics,
-    // Exposto para quem precisa da lista bruta (ex.: Dashboard.tsx monta os
-    // "próximos compromissos") sem precisar de um segundo observer de
-    // useEventos() só para isso — mesma query, mesmo cache, um único fetch.
+    // Exposed for whoever needs the raw list (e.g. Dashboard.tsx builds the
+    // "upcoming appointments") without needing a second observer of
+    // useEventos() just for that — same query, same cache, a single fetch.
     eventos,
     isLoading,
     error,

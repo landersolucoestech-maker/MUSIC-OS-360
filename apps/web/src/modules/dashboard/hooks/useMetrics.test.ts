@@ -3,17 +3,17 @@ import { renderHook } from "@testing-library/react";
 import { useMetrics } from "@/modules/dashboard/hooks/useMetrics";
 
 /**
- * Task J — `artistasMetrics.comContrato`/`.ativos` eram calculados via
- * `artistas.filter(...).length` sobre useArtistas() (capada a 50/tenant).
- * Este teste prova que, com o agregado do dashboard disponível, o KPI usa
- * `artists_by_status` (COUNT real no banco) — não `artistas.length` — e por
- * isso reflete o total verdadeiro mesmo quando `artistas` só carregou os
- * primeiros 50 de um tenant com muito mais registros.
+ * Task J — `artistasMetrics.comContrato`/`.ativos` were computed via
+ * `artistas.filter(...).length` over useArtistas() (capped at 50/tenant).
+ * This test proves that, with the dashboard aggregate available, the KPI uses
+ * `artists_by_status` (real COUNT in the database) — not `artistas.length` — and therefore
+ * reflects the true total even when `artistas` only loaded the
+ * first 50 of a tenant with many more records.
  */
 
-// 50 artistas carregados (o "cap" antigo) — nenhum tem status "contratado" ou
-// "ativo" nessa amostra, simulando o cenário onde os artistas com contrato
-// estão fora da primeira página.
+// 50 artists loaded (the old "cap") — none has status "contratado" or
+// "ativo" in this sample, simulating the scenario where the artists under contract
+// are outside the first page.
 const CAPPED_ARTISTAS = Array.from({ length: 50 }, (_, i) => ({
   id: `artist-${i + 1}`,
   stageName: `Artista ${i + 1}`,
@@ -43,9 +43,9 @@ vi.mock("@/modules/projects/hooks/useProjects", () => ({
   useProjects: () => ({ projects: [], isLoading: false, error: null, refetch: vi.fn() }),
 }));
 
-// Tenant tem, de verdade, 137 artistas — 12 "contratado" e 30 "ativo" — número
-// que só o agregado (COUNT real) consegue refletir; a lista capada acima não
-// tem nenhum.
+// The tenant really has 137 artists — 12 "contratado" and 30 "ativo" — a number
+// only the aggregate (real COUNT) can reflect; the capped list above has
+// none.
 vi.mock("@/modules/dashboard/hooks/useOperationalDashboard", () => ({
   useOperationalDashboard: () => ({
     dashboard: {
@@ -65,9 +65,9 @@ describe("useMetrics — artistasMetrics.comContrato/.ativos beyond the cap of 5
   it("uses the dashboard aggregate (real COUNT), not artistas.length (capped at 50)", () => {
     const { result } = renderHook(() => useMetrics());
 
-    // A lista capada tem 0 artistas com status contratado/ativo (todos
-    // "prospecto") — se o hook ainda somasse via .filter().length sobre
-    // `artistas`, o KPI mostraria 0. O agregado diz 12 e 30.
+    // The capped list has 0 artists with status contratado/ativo (all
+    // "prospecto") — if the hook still summed via .filter().length over
+    // `artistas`, the KPI would show 0. The aggregate says 12 and 30.
     expect(result.current.artistasMetrics.comContrato).toBe(12);
     expect(result.current.artistasMetrics.ativos).toBe(12 + 30);
     expect(result.current.dashboardMetrics.totalArtistas).toBe(137);
@@ -81,7 +81,7 @@ describe("useMetrics — artistasMetrics.comContrato/.ativos beyond the cap of 5
     const { useMetrics: useMetricsNoAgg } = await import("@/modules/dashboard/hooks/useMetrics");
     const { result } = renderHook(() => useMetricsNoAgg());
 
-    // Sem agregado, cai para o filter sobre a lista capada — 0 (todos prospecto).
+    // Without the aggregate, it falls back to the filter over the capped list — 0 (all prospecto).
     expect(result.current.artistasMetrics.comContrato).toBe(0);
   });
 });

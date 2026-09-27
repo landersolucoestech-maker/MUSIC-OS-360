@@ -1,15 +1,15 @@
 /**
- * Tipos base de banco de dados — modo standalone.
+ * Base database types.
  *
- * Tipos base para o modo standalone. O app opera 100% com
- * MOCK_DATA (localStorage). Cada hook de domínio declara os campos
- * concretos em sua própria interface usando interseção com esses aliases
- * (ex: `Tables<"artistas"> & { nome_artistico?: string }`).
+ * Base types introduced for the standalone mode (MOCK_DATA in
+ * localStorage). Each domain hook declares the concrete fields
+ * in its own interface by intersecting with these aliases
+ * (e.g. `Tables<"artistas"> & { nome_artistico?: string }`).
  *
- * `Tables<T>` é um type base vazio (`object`) que, ao ser intersectado
- * com os campos específicos do hook, resulta exatamente nesses campos
- * sem vazar `unknown` para os acessos. Isso elimina a necessidade de
- * `any` e mantém segurança de tipos nos componentes consumidores.
+ * `Tables<T>` is an empty base type (`object`) that, when intersected
+ * with the hook-specific fields, results in exactly those fields
+ * without leaking `unknown` into property access. This removes the need for
+ * `any` and keeps type safety in the consuming components.
  */
 
 export type Json =
@@ -25,8 +25,8 @@ export type TablesInsert<_T extends string = string> = object;
 export type TablesUpdate<_T extends string = string> = object;
 
 /**
- * Tipo base para linhas do MOCK_DATA — usado em generics do hook CRUD.
- * Provê a assinatura de índice necessária internamente sem vazá-la para
- * os tipos de domínio.
+ * Base type for MOCK_DATA rows — used in the CRUD hook generics.
+ * Provides the index signature needed internally without leaking it into
+ * the domain types.
  */
 export type MockRow = { [key: string]: unknown };

@@ -38,12 +38,12 @@ interface ActivityItem {
 
 const MAX_ITEMS = 30;
 
-// ─── Próximos Compromissos (Agenda) ─────────────────────────────────────────
-// Categorias oficiais do módulo Agenda (SchedulerFormModal). Normaliza tanto os
-// events.type só guarda o enum coarse do backend — ver
+// ─── Upcoming appointments (Schedule) ─────────────────────────────────────────
+// Official categories of the Schedule module (SchedulerFormModal). Normalizes both the
+// events.type only stores the backend's coarse enum — see
 // modules/events/lib/event-type.ts para os rótulos pt-BR reais.
 
-// Status que removem o evento da lista de próximos compromissos (passado/encerrado).
+// Statuses that remove the event from the upcoming appointments list (past/closed).
 const COMPROMISSO_STATUS_OCULTOS = new Set([
   "cancelado", "concluido", "realizado", "arquivado",
 ]);
@@ -57,14 +57,14 @@ function categoriaCompromissoLabel(type: unknown): string {
   return getBackendEventTypeLabel(typeof type === "string" ? type : undefined);
 }
 
-// Combina data (date-only ou ISO) + horário "HH:mm" num Date comparável.
-// Sem horário, assume fim do dia para manter o compromisso visível o dia todo.
+// Combines date (date-only or ISO) + "HH:mm" time into a comparable Date.
+// Without a time, assumes end of day to keep the appointment visible all day.
 function compromissoDataHora(raw: unknown, horario: unknown): Date | null {
   if (typeof raw !== "string" || !raw) return null;
-  // `raw` já é o timestamp real do evento (coluna `data`, com hora inclusa) —
-  // um `horario` explícito (override) tem prioridade; sem ele, usa a hora que
-  // já vem no próprio timestamp em vez de inventar 23:59 (evento.horario_inicio
-  // nunca existiu no backend, então esse fallback sempre disparava antes).
+  // `raw` is already the real event timestamp (`data` column, time included) —
+  // an explicit `horario` (override) takes priority; without it, uses the time that
+  // already comes in the timestamp itself instead of inventing 23:59 (evento.horario_inicio
+  // never existed on the backend, so that fallback always fired before).
   if (typeof horario === "string" && /^\d{1,2}:\d{2}/.test(horario)) {
     const datePart = raw.includes("T") ? raw.slice(0, 10) : raw;
     const dt = new Date(`${datePart}T${horario.slice(0, 5)}:00`);
@@ -160,7 +160,7 @@ interface StatCardProps {
   accent?: "primary" | "success" | "warning" | "destructive";
 }
 
-// Mesma identidade visual dos KPI Cards da página Artistas (MetricCard).
+// Same visual identity as the KPI cards of the Artists page (MetricCard).
 const accentIcon: Record<NonNullable<StatCardProps["accent"]>, string> = {
   primary:     "bg-primary/8 text-primary border-primary/15",
   success:     "bg-success/8 text-success border-success/15",
@@ -345,7 +345,7 @@ function OperationalAlerts() {
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
-/** Iniciais para o placeholder padrão do avatar do artista. */
+/** Initials for the artist avatar's default placeholder. */
 function getInitials(nome: string): string {
   return nome
     .trim()
@@ -510,14 +510,14 @@ export default function Dashboard() {
   const { totalArtistas, contratosAtivos, contratosVencendo, receitaMensal, eventosMes, artistasDestaque } =
     dashboardMetrics;
 
-  // Próximos compromissos: somente eventos futuros (data/hora >= agora), sem os
-  // encerrados/cancelados/arquivados, em ordem cronológica e limitado a 5.
-  // O escopo por tenant já é garantido pela camada de dados (useEventos → tenant).
+  // Upcoming appointments: only future events (date/time >= now), without the
+  // closed/canceled/archived ones, in chronological order and limited to 5.
+  // Tenant scoping is already guaranteed by the data layer (useEventos → tenant).
   const proximosCompromissos = useMemo(() => {
     const agora = Date.now();
     return eventos
       .map((evento) => {
-        // Frontend usa `start_date`; backend retorna `data` na coluna timestamp.
+        // The frontend uses `start_date`; the backend returns `data` in the timestamp column.
         const raw =
           (evento.start_date as string | null | undefined) ??
           ((evento as { data?: string | null }).data ?? null);
@@ -609,7 +609,7 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* ── Main Grid: Atividades Recentes + Agenda (larguras iguais) ── */}
+        {/* ── Main grid: recent activity + schedule (equal widths) ── */}
         <div className="grid gap-6 lg:grid-cols-2">
 
           {/* Atividades Recentes — all system events */}
@@ -682,7 +682,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Próximos Compromissos */}
+          {/* Upcoming appointments */}
           <Card className="flex flex-col">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
@@ -756,7 +756,7 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* ── Artistas em Destaque ── */}
+        {/* ── Featured artists ── */}
         <div>
           <SectionHeader
             title="Artistas em Destaque"
@@ -771,7 +771,7 @@ export default function Dashboard() {
                   className="group relative overflow-hidden duration-200"
                   data-testid={`card-artista-destaque-${artista.id}`}
                 >
-                  {/* Imagem do artista cobre o card inteiro; placeholder padrão quando sem foto */}
+                  {/* The artist image covers the whole card; default placeholder when there is no photo */}
                   {artista.foto_url ? (
                     <>
                       <img
@@ -886,14 +886,14 @@ export default function Dashboard() {
     </MainLayout>
     )}
 
-      {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (ver Task C): ArtistaVisao360Modal chama useContratos/useTransacoes/
-          useEventos/useLancamentos/useProjetos incondicionalmente, todas
-          usadas no isLoading composto do Dashboard (useMetrics). Montá-lo só
-          depois do isLoading virar false cria observers novos nessas mesmas
-          queries; com elas em erro (backend fora do ar), refetchOnMount
-          reabre isLoading, o gate desmonta o modal de novo — loop infinito.
-          Mantê-lo sempre montado quebra o ciclo. */}
+      {/* Outside the isLoading gate on purpose — same bug as /artistas
+          (see Task C): ArtistaVisao360Modal calls useContratos/useTransacoes/
+          useEventos/useLancamentos/useProjetos unconditionally, all of them
+          used in the Dashboard's composite isLoading (useMetrics). Mounting it only
+          after isLoading turns false creates new observers on those same
+          queries; with them in error (backend down), refetchOnMount
+          reopens isLoading, the gate unmounts the modal again — infinite loop.
+          Keeping it always mounted breaks the cycle. */}
       <ArtistVision360Modal
         open={visao360Modal.open}
         onOpenChange={(open) => setVisao360Modal({ ...visao360Modal, open })}

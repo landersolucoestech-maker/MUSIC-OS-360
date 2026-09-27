@@ -1,15 +1,15 @@
 /**
  * shared/types/refs.ts
  * ─────────────────────────────────────────────────────────────────────────────
- * EntityRef — tipos de referência leve para relações cross-domain.
- * Usados nos campos *WithRelations de todos os módulos em vez de
+ * EntityRef — lightweight reference types for cross-domain relations.
+ * Used in the *WithRelations fields of every module instead of
  * `{ id: string; campo?: string; [key: string]: unknown }`.
  *
- * Regra: EntityRef nunca tem index signature — só campos explícitos.
+ * Rule: EntityRef never has an index signature — only explicit fields.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-/** Referência leve a um Artista (usada em relações de outros módulos). */
+/** Lightweight reference to an Artist (used in relations of other modules). */
 export interface ArtistaRef {
   id: string;
   nome_artistico?: string | null;
@@ -18,7 +18,7 @@ export interface ArtistaRef {
   status?: string | null;
 }
 
-/** Referência leve a um Cliente / Contact. */
+/** Lightweight reference to a Client / Contact. */
 export interface ClienteRef {
   id: string;
   nome?: string | null;
@@ -26,7 +26,7 @@ export interface ClienteRef {
   empresa?: string | null;
 }
 
-/** Referência leve a uma Obra musical. */
+/** Lightweight reference to a musical Work. */
 export interface ObraRef {
   id: string;
   title: string;
@@ -35,7 +35,7 @@ export interface ObraRef {
   isrc?: string | null;
 }
 
-/** Referência leve a um Fonograma. */
+/** Lightweight reference to a sound recording. */
 export interface FonogramaRef {
   id: string;
   title?: string | null;
@@ -43,7 +43,7 @@ export interface FonogramaRef {
   status?: string | null;
 }
 
-/** Referência leve a um Lançamento. */
+/** Lightweight reference to a Release. */
 export interface ReleaseRef {
   id: string;
   title: string;
@@ -51,7 +51,7 @@ export interface ReleaseRef {
   status?: string | null;
 }
 
-/** Referência leve a um Projeto. */
+/** Lightweight reference to a Project. */
 export interface ProjetoRef {
   id: string;
   title: string;
@@ -59,7 +59,7 @@ export interface ProjetoRef {
   type?: string | null;
 }
 
-/** Referência leve a um Contrato. */
+/** Lightweight reference to a Contract. */
 export interface ContratoRef {
   id: string;
   title?: string | null;
@@ -67,7 +67,7 @@ export interface ContratoRef {
   status?: string | null;
 }
 
-/** Referência leve a um Funcionário. */
+/** Lightweight reference to an Employee. */
 export interface FuncionarioRef {
   id: string;
   nome: string;

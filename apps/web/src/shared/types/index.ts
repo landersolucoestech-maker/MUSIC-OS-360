@@ -1,8 +1,8 @@
 /**
  * shared/types/index.ts
  * ─────────────────────────────────────────────────────────────────────────────
- * Barrel de re-exportação de todos os tipos partilhados cross-domain.
- * Importar de "@/shared/types" em vez de paths individuais.
+ * Re-export barrel of every cross-domain shared type.
+ * Import from "@/shared/types" instead of individual paths.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 

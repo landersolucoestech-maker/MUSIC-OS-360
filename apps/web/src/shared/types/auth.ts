@@ -1,20 +1,20 @@
 /**
- * Tipos mínimos de autenticação usados pelo app.
+ * Minimal authentication types used by the app.
  *
- * Mantemos apenas o contrato esperado pelo código existente:
- * id/email no usuário, access_token na sessão e `message` no erro.
- * A autenticação é gerida exclusivamente pelo backend NestJS via JWT.
+ * We keep only the contract expected by the existing code:
+ * id/email on the user, access_token on the session and `message` on the error.
+ * Authentication is managed exclusively by the NestJS backend via JWT.
  *
- * ARQUITECTURA: AppRole é derivado de AnyRole (SystemRole | FunctionalRole)
- * de @music-os-360/types — fonte única de verdade para todos os roles.
+ * ARCHITECTURE: AppRole is derived from AnyRole (SystemRole | FunctionalRole)
+ * from @music-os-360/types — single source of truth for every role.
  */
 
 import type { SystemRole, FunctionalRole } from '@music-os-360/types';
 
 /**
- * AppRole — union de todos os roles reconhecidos pelo sistema MUSIC OS 360.
- * Derivado de SystemRole | FunctionalRole via template literal types.
- * Retrocompatível: os valores string são idênticos aos anteriores.
+ * AppRole — union of every role recognized by the MUSIC OS 360 system.
+ * Derived from SystemRole | FunctionalRole via template literal types.
+ * Backward compatible: the string values are identical to the previous ones.
  */
 export type AppRole = `${SystemRole}` | `${FunctionalRole}`;
 
@@ -23,7 +23,7 @@ export interface User {
   email?: string;
   role?: AppRole | string;
   org_id?: string;
-  /** app_metadata.must_change_password do JWT — troca de senha obrigatória pendente (Parte 74). */
+  /** app_metadata.must_change_password from the JWT — pending mandatory password change (Part 74). */
   mustChangePassword?: boolean;
   user_metadata?: Record<string, unknown>;
   [key: string]: unknown;
