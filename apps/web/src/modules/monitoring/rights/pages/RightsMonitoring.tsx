@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import { detectionTypeLabel } from "@/modules/monitoring/rights/utils/detection-labels";
+import { ecadReportStatusLabel, ecadReportStatusVariant } from "@/modules/monitoring/rights/utils/ecad-labels";
+import { EcadReportStatus } from "@music-os-360/types";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
 import { MainLayout } from "@/shared/components/MainLayout";
 import { ListSectionHeader } from "@/shared/components/ListSectionHeader";
@@ -41,12 +43,6 @@ type Tab = "detections" | "ecad" | "divergencias";
 const fmtBRL = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
 
-const STATUS_VARIANT: Record<string, BadgeVariant> = {
-  concluido: "success", importado: "info", pendente: "warning", erro: "danger",
-};
-const STATUS_ECAD_LABEL: Record<string, string> = {
-  pendente: "Pendente", importado: "Importado", concluido: "Concluído", erro: "Erro",
-};
 
 export default function RightsMonitoring() {
   const [activeTab, setActiveTab] = useState<Tab>("detections");
@@ -181,7 +177,7 @@ export default function RightsMonitoring() {
   const matched    = filtered.filter((d) => d.obra?.cod_ecad).length;
   const matchRate  = filtered.length > 0 ? Math.round((matched / filtered.length) * 100) : 0;
   const receivedEcadAmount = enrichedReports
-    .filter((r) => r.status === "concluido")
+    .filter((r) => r.status === EcadReportStatus.COMPLETED)
     .reduce((s, r) => s + Number(r.net_amount ?? r.gross_amount ?? 0), 0);
 
   // Dynamic discrepancies: detections with no linked work, or linked to a
@@ -401,11 +397,11 @@ export default function RightsMonitoring() {
                       {enrichedReports.map((r) => (
                         <FeatureGate key={r.id} feature="moduleMonitoring" featureName="Monitoramento">
                           <TableRow>
-                            <TableCell className="font-semibold">{r.periodo}</TableCell>
+                            <TableCell className="font-semibold">{r.period}</TableCell>
                             <TableCell className="text-sm text-muted-foreground hidden md:table-cell">{r.obra?.title ?? r.work_id ?? "—"}</TableCell>
                             <TableCell className="text-sm text-muted-foreground hidden lg:table-cell">{formatRightsDate(r.created_at)}</TableCell>
                             <TableCell className="text-right">{fmtBRL(Number(r.net_amount ?? r.gross_amount ?? 0))}</TableCell>
-                            <TableCell><Badge variant={STATUS_VARIANT[r.status] ?? "neutral"}>{STATUS_ECAD_LABEL[r.status] ?? r.status}</Badge></TableCell>
+                            <TableCell><Badge variant={ecadReportStatusVariant(r.status)}>{ecadReportStatusLabel(r.status)}</Badge></TableCell>
                             <TableCell className="text-right">
                               <Button variant="outline" size="sm" onClick={() => { setSelectedEcad(r); setEcadDetailOpen(true); }}>
                                 Ver Detalhes

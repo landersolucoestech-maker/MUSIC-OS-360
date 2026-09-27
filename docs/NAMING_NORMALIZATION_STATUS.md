@@ -80,6 +80,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-024 | Artist relationship classification (exclusive/partner/independent) on the wire | done | DONE | no |
 | CZ-025 | Content detection (content_detections): platform, detected title, detection time, detection type | done | DONE | no |
 | CZ-026 | Contract file, exclusivity, version history, template and service-type content | done | DONE | no |
+| CZ-027 | ECAD report (ecad_reports): period, file, status vocabulary | done | DONE | no |
 
-Concepts: 74. Renames: 0. Exceptions: 83. Blockers: 0.
-By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 59, done/RESOLVED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 75. Renames: 0. Exceptions: 83. Blockers: 0.
+By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 60, done/RESOLVED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.

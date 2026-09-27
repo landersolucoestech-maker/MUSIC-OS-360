@@ -1,5 +1,5 @@
 {
- "total": 261,
+ "total": 257,
  "debt": {
   "schema::column::artists.agencia": 1,
   "schema::column::artists.agencia_booking": 1,
@@ -69,8 +69,6 @@
   "schema::column::clients.status_contato": 1,
   "schema::column::clients.telefone_encrypted": 1,
   "schema::column::clients.tipo_pessoa": 1,
-  "schema::column::ecad_reports.arquivo_url": 1,
-  "schema::column::ecad_reports.periodo": 1,
   "schema::column::employees.cargo": 1,
   "schema::column::employees.data_admissao": 1,
   "schema::column::employees.data_demissao": 1,
@@ -250,7 +248,6 @@
   "schema::default-value::clients.tipo_pessoa::pessoa_juridica": 1,
   "schema::default-value::contract_service_types.financial_model::valor_fixo": 1,
   "schema::default-value::contract_service_types.financial_payment_frequency::unico": 1,
-  "schema::default-value::ecad_reports.status::pendente": 1,
   "schema::default-value::employees.tipo_contrato::clt": 1,
   "schema::default-value::inventory_items.status::disponivel": 1,
   "schema::default-value::licenses.status::pendente": 1,
@@ -259,7 +256,6 @@
   "schema::default-value::releases.status::planejamento": 1,
   "schema::default-value::shares.party_role::autor": 1,
   "schema::index::contracts.idx_contracts_data_fim": 1,
-  "schema::index::ecad_reports.idx_ecad_reports_periodo": 1,
   "schema::index::leads.idx_leads_payload_servico": 1,
   "schema::index::payroll_entries.payroll_entries_employee_id_competencia_key": 1
  }

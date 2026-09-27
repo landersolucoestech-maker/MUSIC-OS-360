@@ -1647,6 +1647,23 @@
       "definition": "Reversible migration renames the columns and the version-entry keys (order preserved). The API accepts the old names during the deploy-skew window: arquivo_url through the existing contract alias resolver (next to fileUrl), exclusivo/versoes and PT version-entry keys in ContractsService, template/service-type content via applyDeprecatedFieldAliases. Responses are canonical. The signing workflow guard (AWAITING_SIGNATURE -> SIGNED) reads file_url; with the old name every signature would have been blocked, now covered by a test. contract_templates.variables now matches contract_service_types.variables.",
       "producers": "apps/web ContractFormModal / ContractImportWorkspace / contract service-type editor, operational seed",
       "consumers": "ContractsService, contracts workflow guard, ArtistsService relationship SQL (exclusive), reports export, apps/web contract views, Artist 360, signing dialog"
+    },
+    {
+      "id": "CZ-027",
+      "status": "done",
+      "disposition": "DONE",
+      "layer": "database, api, packages/types, web",
+      "language": "Portuguese",
+      "renameRequired": "yes",
+      "migrationRequired": "yes",
+      "evidence": "migration 20260928000005 verified on disposable PostgreSQL 16 (legacy rows up/down/up, index renamed, db:check clean, schema census shrink only); ecad-reports + reports suites; ecad-labels.test.ts; StatusBadge label domain test",
+      "concept": "ECAD report (ecad_reports): period, file, status vocabulary",
+      "businessConcept": "A royalty-collection report imported from ECAD for a period.",
+      "currentTechnicalName": "ecad_reports.periodo / arquivo_url, index idx_ecad_reports_periodo, status pendente/importado/concluido/erro (EcadReportStatus PENDENTE...; web union duplicated the values), list query param periodo",
+      "canonicalEnglishName": "ecad_reports.period / file_url, idx_ecad_reports_period, EcadReportStatus PENDING/IMPORTED/COMPLETED/ERROR = pending/imported/completed/error, query param period",
+      "definition": "Reversible migration renames the columns and index and remaps persisted status values and the default. No compatibility alias: nothing in the repository writes ECAD reports (the web only lists them). PT-BR status labels now live once in packages/types (ECAD_REPORT_STATUS_LABELS_PT_BR, domain ecad_report); the web imports the enum instead of duplicating it and no longer renders raw status/type values.",
+      "producers": "none in the repository",
+      "consumers": "EcadReportsService, apps/web RightsMonitoring / ECADViewModal / RightsKPICards"
     }
   ],
   "renames": [],

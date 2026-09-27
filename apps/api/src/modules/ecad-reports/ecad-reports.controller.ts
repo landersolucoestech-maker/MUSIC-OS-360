@@ -21,7 +21,7 @@ export class EcadReportsController {
   @ApiOperation({ summary: 'List ECAD reports (manager+)' })
   list(
     @CurrentTenant() tenant: { id: string },
-    @Query('periodo') periodo?: string,
+    @Query('period') period?: string,
     @Query('status') status?: string,
     @Query('work_id') work_id?: string,
     @Query('ascending') ascending?: string,
@@ -29,7 +29,7 @@ export class EcadReportsController {
     @Query('limit') limit?: string,
   ) {
     return this.svc.list(tenant.id, {
-      periodo,
+      period,
       status,
       work_id,
       ascending: ascending === 'true',

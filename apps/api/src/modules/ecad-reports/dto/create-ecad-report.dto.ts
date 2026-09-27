@@ -2,7 +2,7 @@ import { IsString, IsOptional, IsUrl } from 'class-validator';
 
 export class CreateEcadReportDto {
   @IsString()
-  periodo: string;
+  period: string;
 
   @IsString()
   type: string;
@@ -25,7 +25,7 @@ export class CreateEcadReportDto {
 
   @IsOptional()
   @IsUrl()
-  arquivo_url?: string;
+  file_url?: string;
 
   @IsOptional()
   metadata?: Record<string, unknown>;

@@ -1947,17 +1947,17 @@ export class ContentDetectionEntity {
 // ─── ECAD Reports ─────────────────────────────────────────────────────────────
 @Entity('ecad_reports')
 @Index(['tenant_id'])
-@Index(['periodo'])
+@Index(['period'])
 export class EcadReportEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'uuid', nullable: true }) work_id: string | null;
-  @Column({ type: 'varchar', length: 20 }) periodo: string;
+  @Column({ type: 'varchar', length: 20 }) period: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) gross_amount: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) net_amount: string | null;
-  @Column({ type: 'varchar', length: 50, default: EcadReportStatus.PENDENTE }) status: EcadReportStatus;
-  @Column({ type: 'text', nullable: true }) arquivo_url: string | null;
+  @Column({ type: 'varchar', length: 50, default: EcadReportStatus.PENDING }) status: EcadReportStatus;
+  @Column({ type: 'text', nullable: true }) file_url: string | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamptz' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updated_at: Date;

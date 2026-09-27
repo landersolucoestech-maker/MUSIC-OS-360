@@ -17,6 +17,7 @@ import {
   ClientStatus,
   ContentDetectionStatus,
   ContractStatus,
+  EcadReportStatus,
   EmployeeStatus,
   EventStatus,
   InvoiceStatus,
@@ -243,6 +244,13 @@ export const AI_JOB_STATUS_LABELS_PT_BR: Readonly<Record<AIJobStatus, string>> =
   [AIJobStatus.CANCELLED]: "Cancelado",
 };
 
+export const ECAD_REPORT_STATUS_LABELS_PT_BR: Readonly<Record<EcadReportStatus, string>> = {
+  [EcadReportStatus.PENDING]: "Pendente",
+  [EcadReportStatus.IMPORTED]: "Importado",
+  [EcadReportStatus.COMPLETED]: "Concluído",
+  [EcadReportStatus.ERROR]: "Erro",
+};
+
 export const ARTIST_GOAL_STATUS_LABELS_PT_BR: Readonly<Record<ArtistGoalStatus, string>> = {
   [ArtistGoalStatus.IN_PROGRESS]: "Em andamento",
   [ArtistGoalStatus.COMPLETED]: "Concluída",
@@ -294,6 +302,7 @@ export const STATUS_LABELS_PT_BR_BY_DOMAIN = {
   support_ticket: SUPPORT_TICKET_STATUS_LABELS_PT_BR,
   ai_job: AI_JOB_STATUS_LABELS_PT_BR,
   artist_goal: ARTIST_GOAL_STATUS_LABELS_PT_BR,
+  ecad_report: ECAD_REPORT_STATUS_LABELS_PT_BR,
   quote: QUOTE_STATUS_LABELS_PT_BR,
   billing: BILLING_STATUS_LABELS_PT_BR,
 } as const;

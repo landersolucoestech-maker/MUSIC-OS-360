@@ -23,7 +23,7 @@ export class EcadReportsService {
       .andWhere('r.deleted_at IS NULL');
 
     if (query.work_id) qb.andWhere('r.work_id = :workId',    { workId:  query.work_id });
-    if (query.periodo) qb.andWhere('r.periodo = :periodo',   { periodo: query.periodo });
+    if (query.period)  qb.andWhere('r.period = :period',     { period:  query.period });
     if (query.status)  qb.andWhere('r.status = :status',     { status:  query.status });
 
     qb.orderBy('r.created_at', query.ascending ? 'ASC' : 'DESC')

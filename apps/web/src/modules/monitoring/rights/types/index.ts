@@ -7,7 +7,8 @@
  */
 
 export type DetectionStatus = "pending" | "in_progress" | "completed" | "rejected" | "archived";
-export type EcadReportStatus = "pendente" | "importado" | "concluido" | "erro";
+export type { EcadReportStatus } from "@music-os-360/types";
+import type { EcadReportStatus } from "@music-os-360/types";
 
 export interface CatalogWorkRef {
   id: string;
@@ -44,12 +45,12 @@ export interface ContentDetection {
 export interface EcadReport {
   id: string;
   work_id: string | null;
-  periodo: string;
+  period: string;
   type: string;
   gross_amount: string | null;
   net_amount: string | null;
   status: EcadReportStatus;
-  arquivo_url: string | null;
+  file_url: string | null;
   metadata: Record<string, unknown>;
   created_at: string;
   updated_at: string;

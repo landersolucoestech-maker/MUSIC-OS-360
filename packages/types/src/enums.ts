@@ -523,10 +523,10 @@ export enum AIJobStatus {
 // ─── ECAD / Reports ──────────────────────────────────────────────────────────
 
 export enum EcadReportStatus {
-  PENDENTE  = "pendente",
-  IMPORTADO = "importado",
-  CONCLUIDO = "concluido",
-  ERRO      = "erro",
+  PENDING   = "pending",
+  IMPORTED  = "imported",
+  COMPLETED = "completed",
+  ERROR     = "error",
 }
 
 // ─── Artist Goals ─────────────────────────────────────────────────────────────

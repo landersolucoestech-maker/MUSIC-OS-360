@@ -13,7 +13,7 @@ describe('EcadReportsController.list — forwards work_id/ascending (find-36852d
     controller.list({ id: 'tenant-a' }, '2026-Q1', 'submitted', 'work-1', 'true', '0', '20');
 
     expect(svc.list).toHaveBeenCalledWith('tenant-a', {
-      periodo: '2026-Q1',
+      period: '2026-Q1',
       status: 'submitted',
       work_id: 'work-1',
       ascending: true,
