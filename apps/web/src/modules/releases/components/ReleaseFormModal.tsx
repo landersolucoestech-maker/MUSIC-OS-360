@@ -470,7 +470,7 @@ export function ReleaseFormModal({
   mode,
   onCreated,
 }: ReleaseFormModalProps) {
-  const { addLancamento: addRelease, updateLancamento: updateRelease } = useReleases();
+  const { addRelease, updateRelease } = useReleases();
   const { upload: uploadToR2, isUploading: isUploadingCoverR2 } = useUploadToR2();
 
   // ── Core state ────────────────────────────────────────────────────────────

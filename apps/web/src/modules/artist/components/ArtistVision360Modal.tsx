@@ -316,7 +316,7 @@ export function ArtistVision360Modal({
   const audienceHealth = useSkillRun<Record<string, unknown>>(`/artists/${artistId}/audience-health`);
   const { works: actualWorks } = useWorks(open, artistId);
   const { phonograms: actualPhonograms } = usePhonograms(open, artistId);
-  const { lancamentos: actualReleases } = useReleases(open, artistId);
+  const { releases: actualReleases } = useReleases(open, artistId);
   const { projects: actualProjects } = useProjects(open, artistId);
   const {
     metas: actualMetas,

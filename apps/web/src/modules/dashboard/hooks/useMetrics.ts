@@ -65,7 +65,7 @@ export interface UseMetricsReturn {
 export function useMetrics(): UseMetricsReturn {
   const { artists, isLoading: loadingArtists, error: errArtists, refetch: refetchArtists } = useArtists();
   const { events, isLoading: loadingEvents, error: errEvents, refetch: refetchEvents } = useEvents();
-  const { lancamentos: releasesData, isLoading: loadingReleases, error: errReleases, refetch: refetchReleases } = useReleases();
+  const { releases: releasesData, isLoading: loadingReleases, error: errReleases, refetch: refetchReleases } = useReleases();
   const { projects, isLoading: loadingProjects, error: errProjects, refetch: refetchProjects } = useProjects();
   const { dashboard, isLoading: loadingAgg, error: errAgg, refetch: refetchAgg } = useOperationalDashboard();
 

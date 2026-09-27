@@ -27,10 +27,10 @@ describe("ContractWizard — the contract amount persists in the canonical colum
   });
 
   it("includes fixed_value (parsed number, not the raw string) in the payload sent to the backend", () => {
-    expect(SOURCE).toMatch(/fixed_value:\s*parsedValor,/);
+    expect(SOURCE).toMatch(/fixed_value:\s*parsedAmount,/);
   });
 
   it("populates meta.value from the contract when editing (does not always reset to empty)", () => {
-    expect(SOURCE).toMatch(/value:\s*contrato\.fixed_value\s*!=\s*null\s*\?\s*String\(contrato\.fixed_value\)\s*:\s*""/);
+    expect(SOURCE).toMatch(/value:\s*contract\.fixed_value\s*!=\s*null\s*\?\s*String\(contract\.fixed_value\)\s*:\s*""/);
   });
 });

@@ -32,7 +32,7 @@ vi.mock("@/modules/catalog/hooks/useFonogramas", () => ({
   usePhonograms: () => ({ phonograms: [], isLoading: false }),
 }));
 vi.mock("@/modules/releases/hooks/useReleases", () => ({
-  useReleases: () => ({ lancamentos: [], isLoading: false }),
+  useReleases: () => ({ releases: [], isLoading: false }),
 }));
 vi.mock("@/modules/projects/hooks/useProjects", () => ({
   useProjects: () => ({ projects: [], isLoading: false }),

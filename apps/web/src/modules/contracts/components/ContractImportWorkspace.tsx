@@ -354,7 +354,7 @@ export function ContractImportWorkspace({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [name, setName] = useState("");
-  const [categoria, setCategoria] = useState("");
+  const [category, setCategory] = useState("");
   const [text, setText] = useState("");
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("template");
@@ -375,7 +375,7 @@ export function ContractImportWorkspace({
   useEffect(() => {
     if (!template) return;
     setName(template.name ?? "");
-    setCategoria(template.tipo_servico || (template as Record<string, unknown>)["type"] as string || "");
+    setCategory(template.tipo_servico || (template as Record<string, unknown>)["type"] as string || "");
     setText(template.conteudo ?? "");
     setSearch("");
     setAiSuggestions([]);
@@ -503,7 +503,7 @@ export function ContractImportWorkspace({
         await Promise.resolve(
           onEdit(template.id, {
             name: name.trim(),
-            tipo_servico: categoria,
+            tipo_servico: category,
             conteudo: text,
             active: template.active ?? true,
             description: template.description ?? `${placeholders.length} variáveis`,
@@ -517,7 +517,7 @@ export function ContractImportWorkspace({
         await Promise.resolve(
           onSave({
             name: name.trim(),
-            tipo_servico: categoria,
+            tipo_servico: category,
             conteudo: text,
             active: true,
             description: `${placeholders.length} variáveis`,
@@ -537,7 +537,7 @@ export function ContractImportWorkspace({
 
   function handleClose() {
     setName("");
-    setCategoria("semantico");
+    setCategory("semantico");
     setText("");
     setSearch("");
     setAiSuggestions([]);
@@ -649,7 +649,7 @@ export function ContractImportWorkspace({
                         <Label htmlFor="ws-categoria" className="text-xs">
                           Categoria do Template
                         </Label>
-                        <Select value={categoria} onValueChange={setCategoria}>
+                        <Select value={category} onValueChange={setCategory}>
                           <SelectTrigger
                             id="ws-categoria"
                             className="h-9"

@@ -4,23 +4,23 @@ import type { MockRow } from "@/shared/types/database";
 
 export type ContractLifecycleState = "ativo" | "vencendo" | "sem_contrato" | "em_negociacao";
 
-type ContratoLike = MockRow & {
+type ContractLike = MockRow & {
   status?: string | null;
   end_date?: string | null;
 };
 
-const ATIVO_STATUSES = new Set(["active", "signed", "in_force"]);
+const ACTIVE_STATUSES = new Set(["active", "signed", "in_force"]);
 const NEGOCIACAO_STATUSES = new Set(["em_negociacao", "negociacao", "draft", "under_review"]);
 
-export function getContractLifecycleState(contratos: ContratoLike[] | undefined | null): ContractLifecycleState {
-  if (!contratos || contratos.length === 0) return "sem_contrato";
+export function getContractLifecycleState(contracts: ContractLike[] | undefined | null): ContractLifecycleState {
+  if (!contracts || contracts.length === 0) return "sem_contrato";
 
   const hoje = new Date();
-  let temAtivo = false;
+  let hasActive = false;
   let temVencendo = false;
   let temNegociacao = false;
 
-  for (const c of contratos) {
+  for (const c of contracts) {
     const status = (c.status || "").toLowerCase();
 
     if (NEGOCIACAO_STATUSES.has(status)) {
@@ -30,18 +30,18 @@ export function getContractLifecycleState(contratos: ContratoLike[] | undefined 
 
     if (status === "expiring") {
       temVencendo = true;
-      temAtivo = true;
+      hasActive = true;
       continue;
     }
 
-    if (!ATIVO_STATUSES.has(status)) continue;
+    if (!ACTIVE_STATUSES.has(status)) continue;
 
-    temAtivo = true;
+    hasActive = true;
 
     if (c.end_date) {
       try {
-        const dias = differenceInDays(parseISO(c.end_date), hoje);
-        if (dias >= 0 && dias <= 30) temVencendo = true;
+        const days = differenceInDays(parseISO(c.end_date), hoje);
+        if (days >= 0 && days <= 30) temVencendo = true;
       } catch {
         /* ignore parse errors */
       }
@@ -49,23 +49,23 @@ export function getContractLifecycleState(contratos: ContratoLike[] | undefined 
   }
 
   if (temVencendo) return "vencendo";
-  if (temAtivo) return "ativo";
+  if (hasActive) return "ativo";
   if (temNegociacao) return "em_negociacao";
   return "sem_contrato";
 }
 
-function getDiasVencendo(contratos: ContratoLike[] | undefined | null): number | null {
-  if (!contratos) return null;
+function getDaysUntilExpiry(contracts: ContractLike[] | undefined | null): number | null {
+  if (!contracts) return null;
   const hoje = new Date();
   let menor: number | null = null;
-  for (const c of contratos) {
+  for (const c of contracts) {
     const status = (c.status || "").toLowerCase();
-    if (!ATIVO_STATUSES.has(status) && status !== "expiring") continue;
+    if (!ACTIVE_STATUSES.has(status) && status !== "expiring") continue;
     if (!c.end_date) continue;
     try {
-      const dias = differenceInDays(parseISO(c.end_date), hoje);
-      if (dias >= 0 && dias <= 30) {
-        if (menor === null || dias < menor) menor = dias;
+      const days = differenceInDays(parseISO(c.end_date), hoje);
+      if (days >= 0 && days <= 30) {
+        if (menor === null || days < menor) menor = days;
       }
     } catch { /* ignore */ }
   }
@@ -73,19 +73,19 @@ function getDiasVencendo(contratos: ContratoLike[] | undefined | null): number |
 }
 
 interface ContractStatusBadgeProps {
-  contratos?: ContratoLike[] | null;
+  contratos?: ContractLike[] | null;
   situacao?: ContractLifecycleState;
   className?: string;
   "data-testid"?: string;
 }
 
 export function ContractStatusBadge({
-  contratos,
+  contratos: contracts,
   situacao,
   className,
   ...rest
 }: ContractStatusBadgeProps) {
-  const resolved = situacao ?? getContractLifecycleState(contratos);
+  const resolved = situacao ?? getContractLifecycleState(contracts);
 
   let label: string;
   let variant: BadgeVariant;
@@ -96,8 +96,8 @@ export function ContractStatusBadge({
       variant = "success";
       break;
     case "vencendo": {
-      const dias = contratos ? getDiasVencendo(contratos) : null;
-      label = dias !== null ? `Contrato vencendo em ${dias} dia${dias === 1 ? "" : "s"}` : "Contrato vencendo";
+      const days = contracts ? getDaysUntilExpiry(contracts) : null;
+      label = days !== null ? `Contrato vencendo em ${days} dia${days === 1 ? "" : "s"}` : "Contrato vencendo";
       variant = "warning";
       break;
     }

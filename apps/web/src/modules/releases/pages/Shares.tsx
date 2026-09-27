@@ -45,7 +45,7 @@ const TYPE_LABELS: Record<string, string> = {
 
 export default function Shares() {
   const { deleteShare, updateShare } = useShares();
-  const { lancamentos: releases, isLoading: loadingReleases } = useReleases();
+  const { releases, isLoading: loadingReleases } = useReleases();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [direcaoFilter, setDirecaoFilter] = useState("todos");

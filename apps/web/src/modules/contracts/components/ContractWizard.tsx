@@ -29,11 +29,11 @@ import { UserFacingError } from "@/shared/lib/errors";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
-type PartyTipo = "pf" | "pj" | "artista";
+type PartyType = "pf" | "pj" | "artista";
 type PartyOrigin = "manual" | "crm" | "artistas";
 
 interface PartyData {
-  type: PartyTipo;
+  type: PartyType;
   origin: PartyOrigin;
   sourceId?: string;
   nome?: string;
@@ -334,8 +334,8 @@ function StepTemplate({
   const active = templates.filter((t) => t.active !== false);
 
   const getCategoryLabel = useCallback(
-    (tipoServico: string) => {
-      return contractCategoryLabel(categories, tipoServico);
+    (serviceType: string) => {
+      return contractCategoryLabel(categories, serviceType);
     },
     [categories],
   );
@@ -400,7 +400,7 @@ function PartyCard({
     [party, onChange],
   );
 
-  const icons: Record<PartyTipo, typeof User> = { pf: User, pj: Building2, artista: Music };
+  const icons: Record<PartyType, typeof User> = { pf: User, pj: Building2, artista: Music };
   const Icon = icons[party.type];
 
   return (
@@ -415,7 +415,7 @@ function PartyCard({
           <Label className="text-xs">Tipo</Label>
           <Select
             value={party.type}
-            onValueChange={(v) => set({ type: v as PartyTipo, nome: "", cpf: "", cnpj: "", email: "", sourceId: undefined })}
+            onValueChange={(v) => set({ type: v as PartyType, nome: "", cpf: "", cnpj: "", email: "", sourceId: undefined })}
           >
             <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -945,7 +945,7 @@ interface ContractWizardProps {
   contrato?: ContractWithRelations | null;
 }
 
-export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardProps) {
+export function ContractWizard({ open, onOpenChange, contrato: contract }: ContractWizardProps) {
   const [step, setStep] = useState(1);
   const [state, setState] = useState<WizardState>(EMPTY_WIZARD);
   const [isSaving, setIsSaving] = useState(false);
@@ -954,31 +954,31 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
   const { categories } = useCategoryRegistry();
   const { templates } = useContractTemplates();
 
-  const isEdit = !!contrato;
+  const isEdit = !!contract;
 
   // ── Initialise state on open ─────────────────────────────────────────────
 
   useEffect(() => {
     if (!open) return;
 
-    if (contrato) {
-      const tmpl = templates.find((t) => t.id === contrato.template_id);
+    if (contract) {
+      const tmpl = templates.find((t) => t.id === contract.template_id);
 
       // FIX: parse saved wizard blob from notes to hydrate parties/variables
       let savedBlob: { parties?: Record<string, PartyData>; variables?: Record<string, string> } = {};
       try {
-        if (contrato.notes && contrato.notes.startsWith("{")) {
-          savedBlob = JSON.parse(contrato.notes);
+        if (contract.notes && contract.notes.startsWith("{")) {
+          savedBlob = JSON.parse(contract.notes);
         }
       } catch { /* ignore parse errors */ }
 
       const baseMeta: WizardMeta = {
-        title:       contrato.title || "",
-        status:       String(contrato.status || "draft"),
-        start_date:  contrato.start_date || "",
-        end_date:     contrato.end_date || "",
+        title:       contract.title || "",
+        status:       String(contract.status || "draft"),
+        start_date:  contract.start_date || "",
+        end_date:     contract.end_date || "",
         observations: "",
-        value:        contrato.fixed_value != null ? String(contrato.fixed_value) : "",
+        value:        contract.fixed_value != null ? String(contract.fixed_value) : "",
       };
 
       if (tmpl) {
@@ -992,8 +992,8 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
           initialParties[role] = (savedBlob.parties?.[role] as PartyData | undefined) ?? { type: "pf", origin: "manual" };
         }
 
-        const savedSigners: WizardSigner[] = Array.isArray(contrato.signers)
-          ? (contrato.signers as unknown[]).map((s, i) => {
+        const savedSigners: WizardSigner[] = Array.isArray(contract.signers)
+          ? (contract.signers as unknown[]).map((s, i) => {
               const r = s as Record<string, unknown>;
               return {
                 id:          String(i),
@@ -1036,7 +1036,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
     }
 
     setStep(1);
-  }, [open, contrato, templates]);
+  }, [open, contract, templates]);
 
   // ── Template selection ───────────────────────────────────────────────────
 
@@ -1134,9 +1134,9 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
       const provider = (state.signers.find((s) => s.provider)?.provider || null) as SigningPlatform | null;
 
       // FIX: build typed payload — no `as any`
-      const trimmedValor = state.meta.value.trim();
-      const parsedValor = trimmedValor ? Number(trimmedValor) : null;
-      if (trimmedValor && (parsedValor === null || Number.isNaN(parsedValor))) {
+      const trimmedAmount = state.meta.value.trim();
+      const parsedAmount = trimmedAmount ? Number(trimmedAmount) : null;
+      if (trimmedAmount && (parsedAmount === null || Number.isNaN(parsedAmount))) {
         toast.error("Valor do contrato inválido");
         setIsSaving(false);
         return;
@@ -1149,7 +1149,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
         status:           resolvedStatus,
         start_date:      state.meta.start_date || null,
         end_date:         state.meta.end_date    || null,
-        fixed_value:      parsedValor,
+        fixed_value:      parsedAmount,
         notes:            wizardBlob,
         signing_platform: provider,
         // Deliberately map WizardSigner to the persisted WizardSignerRecord shape
@@ -1158,12 +1158,12 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
         })),
       };
 
-      if (isEdit && contrato) {
+      if (isEdit && contract) {
         try {
           await updateContract.mutateAsync({
-            id: contrato.id,
+            id: contract.id,
             ...payload,
-            expectedUpdatedAt: getExpectedUpdatedAt(contrato),
+            expectedUpdatedAt: getExpectedUpdatedAt(contract),
           });
         } catch (err) {
           if (handleConcurrencyConflict(err, "contrato")) return;

@@ -175,8 +175,8 @@ export function useContractServiceTypes(filterByClientType?: ClientType | null) 
     mutationFn: async (id: string) => {
       const typeToArchive = allTypes.find((t) => t.id === id);
       if (typeToArchive) {
-        const contratos = await contractsService.list();
-        const inUse = contratos.some(
+        const contracts = await contractsService.list();
+        const inUse = contracts.some(
           (c: StorageRow) =>
             c["service_type"] === typeToArchive.slug ||
             c["type"] === typeToArchive.slug,
@@ -200,8 +200,8 @@ export function useContractServiceTypes(filterByClientType?: ClientType | null) 
     return allTypes.find((t) => t.slug === slug);
   }
 
-  function isSlugInUse(slug: string, contratos: Array<Record<string, unknown>>): boolean {
-    return contratos.some((c) => c.service_type === slug || c.type === slug);
+  function isSlugInUse(slug: string, contracts: Array<Record<string, unknown>>): boolean {
+    return contracts.some((c) => c.service_type === slug || c.type === slug);
   }
 
   return {

@@ -57,7 +57,7 @@ function Field({
 }
 
 export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProps) {
-  const { lancamentos: releases } = useReleases();
+  const { releases } = useReleases();
 
   const s = (share ?? {}) as Share & Record<string, unknown>;
   const str = (k: string): string => (typeof s[k] === "string" ? (s[k] as string) : "");

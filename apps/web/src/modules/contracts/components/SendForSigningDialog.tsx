@@ -42,25 +42,25 @@ const PROVIDER_SELECTED: Record<SigningProviderId, string> = {
 export function SendForSigningDialog({
   open,
   onOpenChange,
-  contrato,
+  contrato: contract,
   onSuccess,
 }: SendForSigningDialogProps) {
   const { data: providers = [], isLoading: loadingProviders } = useSigningProviders();
   const [selected, setSelected] = useState<SigningProviderId | null>(null);
   const [sending, setSending] = useState(false);
 
-  const signers = Array.isArray(contrato.signers) ? contrato.signers : [];
-  const hasFile = Boolean(contrato.arquivo_url);
+  const signers = Array.isArray(contract.signers) ? contract.signers : [];
+  const hasFile = Boolean(contract.arquivo_url);
   const canSend = selected !== null && signers.length > 0 && hasFile && !sending;
 
   async function handleSend() {
-    if (!selected || signers.length === 0 || !contrato.arquivo_url) return;
+    if (!selected || signers.length === 0 || !contract.arquivo_url) return;
     setSending(true);
     try {
       const result = await signingService.sendForSigning({
-        contratoId: contrato.id,
-        title:      contrato.title,
-        fileUrl:    contrato.arquivo_url,
+        contratoId: contract.id,
+        title:      contract.title,
+        fileUrl:    contract.arquivo_url,
         signers:    signers.map((s) => ({ name: s.name, email: s.email })),
         provider:   selected,
       });
@@ -98,7 +98,7 @@ export function SendForSigningDialog({
           </DialogTitle>
           <DialogDescription className="text-xs">
             Escolha o provedor de assinatura digital para enviar o contrato{" "}
-            <span className="font-medium text-foreground">&ldquo;{contrato.title}&rdquo;</span>.
+            <span className="font-medium text-foreground">&ldquo;{contract.title}&rdquo;</span>.
           </DialogDescription>
         </DialogHeader>
 

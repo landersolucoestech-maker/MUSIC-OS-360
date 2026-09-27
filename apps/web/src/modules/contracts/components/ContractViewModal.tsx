@@ -39,45 +39,45 @@ interface ContractViewModalProps {
   onEdit?: () => void;
 }
 
-export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: ContractViewModalProps) {
-  const { lancamentos } = useReleases();
+export function ContractViewModal({ open, onOpenChange, contrato: contract, onEdit }: ContractViewModalProps) {
+  const { releases } = useReleases();
   const navigate = useNavigate();
   const { data: allDocuments = [] } = useDocuments();
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
   const { transition: workflowTransition, isPending: isTransitionPending } = useWorkflowTransition({
     table:    'contracts',
-    id:       contrato?.id ?? '',
+    id:       contract?.id ?? '',
     queryKey: ['contracts'],
   });
 
-  const { data: detail } = useEntityDetail<ContractWithWorkflow>('contracts', contrato?.id, open);
+  const { data: detail } = useEntityDetail<ContractWithWorkflow>('contracts', contract?.id, open);
 
-  if (!contrato) return null;
+  if (!contract) return null;
 
   const allowedTransitions = resolveAllowedTransitions(
     'contract',
-    detail?.status ?? contrato.status,
+    detail?.status ?? contract.status,
     detail?.allowed_transitions,
   );
-  const vinculadoDoc = allDocuments.find((d) => d.contract_id === contrato.id);
-  const contratoSigners = Array.isArray(contrato.signers) ? contrato.signers : [];
+  const vinculadoDoc = allDocuments.find((d) => d.contract_id === contract.id);
+  const contractSigners = Array.isArray(contract.signers) ? contract.signers : [];
 
-  const lancamentoVinculado: ReleaseWithRelations | undefined = contrato.release_id
-    ? lancamentos.find((l) => l.id === contrato.release_id)
+  const linkedRelease: ReleaseWithRelations | undefined = contract.release_id
+    ? releases.find((l) => l.id === contract.release_id)
     : undefined;
 
-  const versoes: ContractVersion[] = Array.isArray(contrato.versoes)
-    ? (contrato.versoes as ContractVersion[])
+  const versoes: ContractVersion[] = Array.isArray(contract.versoes)
+    ? (contract.versoes as ContractVersion[])
     : [];
-  const documents = Array.isArray(contrato.documents) ? contrato.documents : [];
+  const documents = Array.isArray(contract.documents) ? contract.documents : [];
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const in30Days = new Date(today);
   in30Days.setDate(in30Days.getDate() + 30);
-  const endDate = contrato.end_date ? new Date(contrato.end_date) : null;
+  const endDate = contract.end_date ? new Date(contract.end_date) : null;
   const expirando = endDate && endDate >= today && endDate <= in30Days;
-  const diasRestantes = endDate
+  const remainingDays = endDate
     ? Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
@@ -95,18 +95,18 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
               </div>
               <div className="flex-1 min-w-0">
                 <DialogTitle className="text-base font-semibold leading-tight truncate">
-                  {contrato.title}
+                  {contract.title}
                 </DialogTitle>
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  <StatusBadge status={contrato.status ?? ""} />
-                  <SigningPlatformBadge platform={contrato.signing_platform} />
+                  <StatusBadge status={contract.status ?? ""} />
+                  <SigningPlatformBadge platform={contract.signing_platform} />
                   {expirando && (
                     <Badge variant="warning" className="gap-1">
                       <AlertCircle className="h-3 w-3" />
-                      Expira em {diasRestantes}d
+                      Expira em {remainingDays}d
                     </Badge>
                   )}
-                  {contrato.exclusivo && (
+                  {contract.exclusivo && (
                     <Badge variant="outline" className="text-[11px]">Exclusivo</Badge>
                   )}
                   {vinculadoDoc && (
@@ -115,7 +115,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                 </div>
                 {allowedTransitions.length > 0 && (
                   <WorkflowTransitionPanel
-                    currentStatus={contrato.status ?? ""}
+                    currentStatus={contract.status ?? ""}
                     allowedTransitions={allowedTransitions}
                     onTransition={workflowTransition}
                     isLoading={isTransitionPending}
@@ -131,7 +131,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
             <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent h-auto p-0 shrink-0">
               {[
                 { value: "informacoes", label: "Informações" },
-                { value: "assinatura",  label: `Assinatura${contratoSigners.length > 0 ? ` (${contratoSigners.length})` : ""}` },
+                { value: "assinatura",  label: `Assinatura${contractSigners.length > 0 ? ` (${contractSigners.length})` : ""}` },
                 { value: "arquivo",     label: "Arquivo" },
                 { value: "versoes",     label: `Versões${versoes.length > 0 ? ` (${versoes.length})` : ""}` },
                 { value: "documents",  label: `Documentos${documents.length > 0 ? ` (${documents.length})` : ""}` },
@@ -153,12 +153,12 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
               <TabsContent value="informacoes" className="p-6 space-y-5 mt-0">
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                   {[
-                    { label: "Artista / Cliente", value: contrato.artistas?.nome_artistico || contrato.clientes?.nome || "—" },
-                    { label: "Tipo", value: contrato.type ? formatCategoryLabel(contrato.type) : "—" },
-                    { label: "Início", value: formatDateDashes(contrato.start_date) },
-                    { label: "Término", value: contrato.end_date ? formatDateDashes(contrato.end_date) : "Indeterminado" },
-                    { label: "Valor", value: contrato.fixed_value != null ? <span className={getMonetarySemanticClass("neutral")}>{formatCurrency(contrato.fixed_value)}</span> : "—" },
-                    { label: "Assinado em", value: formatDateDashes(contrato.assinado_em) },
+                    { label: "Artista / Cliente", value: contract.artistas?.nome_artistico || contract.clientes?.nome || "—" },
+                    { label: "Tipo", value: contract.type ? formatCategoryLabel(contract.type) : "—" },
+                    { label: "Início", value: formatDateDashes(contract.start_date) },
+                    { label: "Término", value: contract.end_date ? formatDateDashes(contract.end_date) : "Indeterminado" },
+                    { label: "Valor", value: contract.fixed_value != null ? <span className={getMonetarySemanticClass("neutral")}>{formatCurrency(contract.fixed_value)}</span> : "—" },
+                    { label: "Assinado em", value: formatDateDashes(contract.assinado_em) },
                   ].map(({ label, value }) => (
                     <div key={label}>
                       <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
@@ -167,21 +167,21 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                   ))}
                 </div>
 
-                {contrato.notes && (
+                {contract.notes && (
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Observações</p>
-                    <p className="text-sm bg-muted/30 rounded-lg p-3">{contrato.notes}</p>
+                    <p className="text-sm bg-muted/30 rounded-lg p-3">{contract.notes}</p>
                   </div>
                 )}
 
-                {contrato.signing_platform && (
+                {contract.signing_platform && (
                   <div className="flex items-center gap-2 p-3 bg-success/5 border border-success/20 rounded-lg">
                     <Info className="h-4 w-4 text-success shrink-0" />
                     <div className="flex-1 text-xs text-success">
                       <span>Assinado digitalmente via </span>
-                      <SigningPlatformBadge platform={contrato.signing_platform} className="inline-flex align-middle" />
-                      {contrato.autentique_doc_id && (
-                        <span className="ml-1">— ID: <span className="font-sans">{contrato.autentique_doc_id}</span></span>
+                      <SigningPlatformBadge platform={contract.signing_platform} className="inline-flex align-middle" />
+                      {contract.autentique_doc_id && (
+                        <span className="ml-1">— ID: <span className="font-sans">{contract.autentique_doc_id}</span></span>
                       )}
                     </div>
                   </div>
@@ -191,13 +191,13 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
               {/* ── Digital signature ── */}
               <TabsContent value="assinatura" className="p-6 mt-0 space-y-5" data-testid="tab-content-assinatura">
                 {/* Contract signatories (inline, from the form) */}
-                {contratoSigners.length > 0 ? (
+                {contractSigners.length > 0 ? (
                   <div>
                     <p className="text-xs font-medium text-muted-foreground  tracking-wide mb-3">
-                      Signatários ({contratoSigners.length})
+                      Signatários ({contractSigners.length})
                     </p>
                     <div className="space-y-2">
-                      {contratoSigners.map((signer, idx) => (
+                      {contractSigners.map((signer, idx) => (
                         <div
                           key={idx}
                           className="flex items-center gap-3 p-3 bg-card border border-border rounded-lg"
@@ -226,7 +226,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                         <div>
                           <p className="text-sm font-medium">Pronto para assinar?</p>
                           <p className="text-xs text-muted-foreground mt-0.5">
-                            Envie o contrato para os {contratoSigners.length} signatário(s) via plataforma de assinatura digital.
+                            Envie o contrato para os {contractSigners.length} signatário(s) via plataforma de assinatura digital.
                           </p>
                         </div>
                         <Button
@@ -290,7 +290,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                             )}
                           </div>
                         </div>
-                        {alreadySent && contratoSigners.length > 0 && vinculadoDoc.status !== "signed" && (
+                        {alreadySent && contractSigners.length > 0 && vinculadoDoc.status !== "signed" && (
                           <Button
                             size="sm"
                             variant="outline"
@@ -356,20 +356,20 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
 
               {/* ── File ── */}
               <TabsContent value="arquivo" className="p-6 mt-0" data-testid="tab-content-arquivo">
-                {contrato.arquivo_url ? (
+                {contract.arquivo_url ? (
                   <Card className="bg-muted/20">
                     <CardContent className="p-8 flex flex-col items-center gap-5 text-center">
                       <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
                         <FileText className="h-8 w-8 text-primary" />
                       </div>
                       <div>
-                        <p className="font-semibold text-sm mb-1">{contrato.title}</p>
+                        <p className="font-semibold text-sm mb-1">{contract.title}</p>
                         <p className="text-xs text-muted-foreground font-sans break-all max-w-sm mx-auto">
-                          {storedFileDisplayName(contrato.arquivo_url)}
+                          {storedFileDisplayName(contract.arquivo_url)}
                         </p>
                       </div>
                       <Button asChild className="gap-2" data-testid="button-open-arquivo">
-                        <StoredFileLink url={contrato.arquivo_url}>
+                        <StoredFileLink url={contract.arquivo_url}>
                           <ExternalLink className="h-4 w-4" />
                           Abrir PDF
                         </StoredFileLink>
@@ -482,30 +482,30 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
 
               {/* ── Release ── */}
               <TabsContent value="lancamento" className="p-6 mt-0" data-testid="tab-content-lancamento">
-                {lancamentoVinculado ? (
+                {linkedRelease ? (
                   <Card className="bg-muted/20">
                     <CardContent className="p-5 flex items-start gap-4">
                       <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                         <Music className="h-6 w-6 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm truncate">{lancamentoVinculado.title}</p>
+                        <p className="font-semibold text-sm truncate">{linkedRelease.title}</p>
                         <div className="flex items-center gap-2 mt-1 flex-wrap">
                           <Badge variant="outline" className="text-[10px] capitalize">
-                            {lancamentoVinculado.type || "—"}
+                            {linkedRelease.type || "—"}
                           </Badge>
-                          <StatusBadge status={lancamentoVinculado.status ?? ""} />
+                          <StatusBadge status={linkedRelease.status ?? ""} />
                         </div>
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-3">
                           <div>
                             <p className="text-[10px] text-muted-foreground">Distribuidora</p>
-                            <p className="text-xs font-medium">{lancamentoVinculado.distribuidora || "—"}</p>
+                            <p className="text-xs font-medium">{linkedRelease.distribuidora || "—"}</p>
                           </div>
                           <div>
                             <p className="text-[10px] text-muted-foreground">Data de lançamento</p>
                             <p className="text-xs font-medium">
-                              {lancamentoVinculado.data_lancamento
-                                ? formatDateDashes(lancamentoVinculado.data_lancamento)
+                              {linkedRelease.data_lancamento
+                                ? formatDateDashes(linkedRelease.data_lancamento)
                                 : "—"}
                             </p>
                           </div>
@@ -516,7 +516,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
                           className="mt-4 gap-1.5 text-xs"
                           onClick={() => {
                             onOpenChange(false);
-                            navigate(`/lancamentos?view=${lancamentoVinculado.id}`);
+                            navigate(`/lancamentos?view=${linkedRelease.id}`);
                           }}
                           data-testid="button-ver-lancamento"
                         >
@@ -539,7 +539,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
 
           {/* ── Footer ── */}
           <DialogFooter className="px-6 py-3 border-t border-border gap-2 flex-wrap shrink-0">
-            {contratoSigners.length > 0 && !alreadySent && (
+            {contractSigners.length > 0 && !alreadySent && (
               <Button
                 size="sm"
                 variant="outline"
@@ -561,7 +561,7 @@ export function ContractViewModal({ open, onOpenChange, contrato, onEdit }: Cont
       <SendForSigningDialog
         open={sendDialogOpen}
         onOpenChange={setSendDialogOpen}
-        contrato={contrato}
+        contrato={contract}
       />
     </>
   );

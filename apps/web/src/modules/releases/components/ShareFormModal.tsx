@@ -127,7 +127,7 @@ function shareToForm(share: Share & Record<string, unknown>): ShareFormState {
 
 export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, onSuccess }: ShareFormModalProps) {
   const { addShare, updateShare, shares } = useShares();
-  const { lancamentos: releases } = useReleases();
+  const { releases } = useReleases();
   const [formData, setFormData] = useState<ShareFormState>(EMPTY);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

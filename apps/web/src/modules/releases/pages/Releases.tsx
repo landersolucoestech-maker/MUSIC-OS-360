@@ -199,7 +199,7 @@ function ReleaseCard({ release, artista: artist, now, selected, onToggleSelect, 
 }
 
 export default function Releases() {
-  const { lancamentos: releases, isLoading, deleteLancamento: deleteRelease, addLancamento: addRelease } = useReleases();
+  const { releases, isLoading, deleteRelease, addRelease } = useReleases();
   const navigate = useNavigate();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 

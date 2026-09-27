@@ -242,7 +242,7 @@ export default function Metricas() {
   const ctrl = useCentralAnaliticaMarketing();
   const [searchParams] = useSearchParams();
   const releaseId = searchParams.get("releaseId");
-  const { lancamentos } = useReleases();
+  const { releases: lancamentos } = useReleases();
   const selectedRelease = useMemo(
     () => (releaseId ? lancamentos.find((release) => release.id === releaseId) ?? null : null),
     [lancamentos, releaseId],

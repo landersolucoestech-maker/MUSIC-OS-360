@@ -22,7 +22,7 @@ export function useReleases(enabled = true, artistId?: string) {
     orderBy: { column: "data_lancamento", ascending: false },
     enabled,
     // The releases backend uses "artistId" (camelCase), not "artist_id" — see releases.dto.ts/releases.service.ts.
-    filters: artistId ? { artistId: artistId } : undefined,
+    filters: artistId ? { artistId } : undefined,
     onMutationSuccess: {
       onCreate: (l) =>
         emit(DomainEvents.RELEASE_CREATED, {
@@ -48,12 +48,12 @@ export function useReleases(enabled = true, artistId?: string) {
   });
 
   return {
-    lancamentos: result.data,
+    releases: result.data,
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,
-    addLancamento: result.create,
-    updateLancamento: result.update,
-    deleteLancamento: result.delete,
+    addRelease: result.create,
+    updateRelease: result.update,
+    deleteRelease: result.delete,
   };
 }

@@ -45,12 +45,12 @@ const STATUS_LABELS: Record<string, string> = {
 /** REM-02: attached documents are not part of the zod schema (they need no
  * validation — they were already validated by the real R2 upload) — they travel alongside
  * the form fields up to the final payload. */
-type ContratoFormSubmitData = ContractFormData & { documents: UploadedFile[] };
+type ContractFormSubmitData = ContractFormData & { documents: UploadedFile[] };
 
 interface ContractFormProps {
-  onSubmit: (data: ContratoFormSubmitData) => void;
+  onSubmit: (data: ContractFormSubmitData) => void;
   onCancel?: () => void;
-  initialData?: Partial<ContratoFormSubmitData>;
+  initialData?: Partial<ContractFormSubmitData>;
   isLoading?: boolean;
   artists?: Array<{ id: string; name: string }>;
   /** id of the contract being edited — organizes the attachment folder in R2 (undefined on create). */
@@ -63,10 +63,10 @@ const ContractForm = ({
   initialData,
   isLoading = false,
   artists = [],
-  contratoId,
+  contratoId: contractId,
 }: ContractFormProps) => {
   const [documents, setDocuments] = useState<UploadedFile[]>(initialData?.documents ?? []);
-  const { lancamentos } = useReleases();
+  const { releases } = useReleases();
 
   const form = useForm<ContractFormData>({
     resolver: zodResolver(contractSchema),
@@ -411,7 +411,7 @@ const ContractForm = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">Nenhum</SelectItem>
-                {lancamentos.map((l) => (
+                {releases.map((l) => (
                   <SelectItem key={l.id} value={l.id}>{l.title}</SelectItem>
                 ))}
               </SelectContent>
@@ -430,7 +430,7 @@ const ContractForm = ({
             maxSize={20}
             multiple
             entity="contract"
-            entityId={contratoId}
+            entityId={contractId}
             value={documents}
             onChange={setDocuments}
           />
@@ -564,7 +564,7 @@ const ContractForm = ({
 };
 
 // ── Mapper: ContractWithRelations → ContractFormData ─────────────────────────
-function contratoToFormData(c: ContractWithRelations): Partial<ContratoFormSubmitData> {
+function contractToFormData(c: ContractWithRelations): Partial<ContractFormSubmitData> {
   const status = c.status as ContractFormData["status"] | undefined;
   const serviceType = c.type as ContractFormData["service_type"] | undefined;
   return {
@@ -596,29 +596,29 @@ interface ContractFormModalProps {
 export const ContractFormModal = ({
   open,
   onOpenChange,
-  contrato,
+  contrato: contract,
   mode = "create",
   prefill,
 }: ContractFormModalProps) => {
   const { addContract, updateContract } = useContracts();
 
-  const handleSubmit = async (data: ContratoFormSubmitData) => {
+  const handleSubmit = async (data: ContractFormSubmitData) => {
     const {
       title, service_type, status,
-      arquivo_url, notas_versao, release_id,
+      arquivo_url: fileUrl, notas_versao: versionNotes, release_id,
       start_date, end_date, fixed_value,
       external_rights_percentage, advance_payment, financial_support, observations,
       signers, documents,
     } = data;
 
-    const resolvedArquivoUrl = arquivo_url || (mode === "edit" && contrato ? (contrato.arquivo_url ?? null) : null);
-    const resolvedReleaseId = release_id || (mode === "edit" && contrato ? (contrato.release_id ?? null) : null);
+    const resolvedFileUrl = fileUrl || (mode === "edit" && contract ? (contract.arquivo_url ?? null) : null);
+    const resolvedReleaseId = release_id || (mode === "edit" && contract ? (contract.release_id ?? null) : null);
 
     const payload: Record<string, unknown> = {
-      title: title,
+      title,
       type: service_type,
       status: status || "draft",
-      arquivo_url: resolvedArquivoUrl,
+      arquivo_url: resolvedFileUrl,
       release_id: resolvedReleaseId,
       start_date: start_date ? (start_date as Date).toISOString().split("T")[0] : null,
       end_date: end_date ? (end_date as Date).toISOString().split("T")[0] : null,
@@ -628,12 +628,12 @@ export const ContractFormModal = ({
       documents: documents ?? [],
     };
 
-    if (mode === "edit" && contrato) {
-      const prevUrl = contrato.arquivo_url;
-      const newUrl = arquivo_url || null;
+    if (mode === "edit" && contract) {
+      const prevUrl = contract.arquivo_url;
+      const newUrl = fileUrl || null;
       const urlChanged = newUrl && newUrl !== prevUrl;
-      const existingVersions: ContractVersion[] = Array.isArray(contrato.versoes)
-        ? (contrato.versoes as ContractVersion[])
+      const existingVersions: ContractVersion[] = Array.isArray(contract.versoes)
+        ? (contract.versoes as ContractVersion[])
         : [];
 
       if (urlChanged) {
@@ -642,7 +642,7 @@ export const ContractFormModal = ({
           versao: `v${nextVersionNum}`,
           url: newUrl as string,
           criado_em: new Date().toISOString(),
-          notas: notas_versao || undefined,
+          notas: versionNotes || undefined,
           autor: "Usuário atual",
         };
         payload.versoes = [...existingVersions, newVersion];
@@ -651,21 +651,21 @@ export const ContractFormModal = ({
       }
       try {
         await updateContract.mutateAsync({
-          id: contrato.id,
+          id: contract.id,
           ...payload,
-          expectedUpdatedAt: getExpectedUpdatedAt(contrato),
+          expectedUpdatedAt: getExpectedUpdatedAt(contract),
         });
       } catch (err) {
         if (handleConcurrencyConflict(err, "contrato")) return;
         return;
       }
     } else {
-      if (arquivo_url) {
+      if (fileUrl) {
         const firstVersion: ContractVersion = {
           versao: "v1",
-          url: arquivo_url,
+          url: fileUrl,
           criado_em: new Date().toISOString(),
-          notas: notas_versao || undefined,
+          notas: versionNotes || undefined,
           autor: "Usuário atual",
         };
         payload.versoes = [firstVersion];
@@ -693,10 +693,10 @@ export const ContractFormModal = ({
             onSubmit={handleSubmit}
             onCancel={() => onOpenChange(false)}
             isLoading={addContract.isPending || updateContract.isPending}
-            contratoId={contrato?.id}
+            contratoId={contract?.id}
             initialData={
-              contrato
-                ? contratoToFormData(contrato)
+              contract
+                ? contractToFormData(contract)
                 : prefill
                   ? { title: prefill.title, observations: prefill.notes }
                   : undefined

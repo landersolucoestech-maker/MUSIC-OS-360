@@ -48,7 +48,7 @@ export default function Contracts() {
   useEditQueryParam(
     "edit",
     contracts,
-    useCallback((contrato) => setFormModal({ open: true, mode: "edit", contrato }), []),
+    useCallback((contract) => setFormModal({ open: true, mode: "edit", contrato: contract }), []),
     "contracts",
   );
 
@@ -81,20 +81,20 @@ export default function Contracts() {
     type: typeFilter !== "all-type" ? typeFilter : undefined,
     signingPlatform: platformFilter !== "all-platform" ? platformFilter : undefined,
   });
-  const filteredContratos = pageItems;
+  const filteredContracts = pageItems;
 
   // KPIs: count + value sum per status OVER THE WHOLE TENANT (not the
   // current page) — GET /contracts/stats, aggregated in the database. The bucket mapping
   // (active/signed/pending/under review/closed) is the same as always, except
   // that it now iterates over {status: count} (5-10 entries) instead of the full
   // contract list.
-  const { stats: contratosStats } = useContractsStats();
+  const { stats: contractsStats } = useContractsStats();
 
   const toggleSelectAll = () => {
-    if (selectedIds.length === filteredContratos.length && filteredContratos.length > 0) {
+    if (selectedIds.length === filteredContracts.length && filteredContracts.length > 0) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(filteredContratos.map((c: any) => c.id));
+      setSelectedIds(filteredContracts.map((c: any) => c.id));
     }
   };
   const toggleSelect = (id: string) =>
@@ -126,26 +126,26 @@ export default function Contracts() {
   // guaranteeing Total = active + signed + pending + under review + closed.
   const norm = (s?: string | null) => (s ?? "").toLowerCase();
   const EM_VIGOR_STATUSES = new Set(["in_force", "active"]);
-  const ASSINADO_STATUSES = new Set(["signed"]);
+  const SIGNED_STATUSES = new Set(["signed"]);
   const AGUARDANDO_STATUSES = new Set(["awaiting_signature", "pendente"]);
   const ENCERRADO_STATUSES = new Set(["expirado", "rescindido", "cancelled", "terminated"]);
   const bucketOf = (status?: string | null): "vigente" | "assinado" | "aguardando" | "encerrado" | "analise" => {
     const s = norm(status);
     if (EM_VIGOR_STATUSES.has(s)) return "vigente";
-    if (ASSINADO_STATUSES.has(s)) return "assinado";
+    if (SIGNED_STATUSES.has(s)) return "assinado";
     if (AGUARDANDO_STATUSES.has(s)) return "aguardando";
     if (ENCERRADO_STATUSES.has(s)) return "encerrado";
     return "analise"; // draft / under_review / negotiation / any unknown status
   };
 
   const tally = { vigente: 0, assinado: 0, aguardando: 0, analise: 0, encerrado: 0 };
-  let valorEfetivo = 0;
-  for (const [status, count] of Object.entries(contratosStats.byGroup)) {
+  let effectiveAmount = 0;
+  for (const [status, count] of Object.entries(contractsStats.byGroup)) {
     const b = bucketOf(status);
     tally[b] += count;
-    if (b === "vigente" || b === "assinado") valorEfetivo += contratosStats.sumByGroup?.[status] ?? 0;
+    if (b === "vigente" || b === "assinado") effectiveAmount += contractsStats.sumByGroup?.[status] ?? 0;
   }
-  const totalContratos = contratosStats.total;
+  const totalContracts = contractsStats.total;
   const today = new Date();
 
   return (
@@ -180,7 +180,7 @@ export default function Contracts() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard
             title="Total de Contratos"
-            value={totalContratos}
+            value={totalContracts}
             description="na base"
             icon={FileStack}
             accent="primary"
@@ -222,7 +222,7 @@ export default function Contracts() {
           />
           <MetricCard
             title="Valor Total"
-            value={formatCurrency(valorEfetivo)}
+            value={formatCurrency(effectiveAmount)}
             description="vigentes + assinados"
             icon={DollarSign}
             accent="primary"
@@ -289,7 +289,7 @@ export default function Contracts() {
           )}
           {hasActiveFilters && (
             <span className="text-xs text-muted-foreground ml-auto">
-              {total} de {contratosStats.total} contratos
+              {total} de {contractsStats.total} contratos
             </span>
           )}
         </div>
@@ -304,7 +304,7 @@ export default function Contracts() {
               action={
                 <div className="flex flex-wrap items-center justify-end gap-3">
                   <Checkbox
-                    checked={selectedIds.length === filteredContratos.length && filteredContratos.length > 0}
+                    checked={selectedIds.length === filteredContracts.length && filteredContracts.length > 0}
                     onCheckedChange={toggleSelectAll}
                     aria-label="Selecionar todos"
                   />
@@ -320,7 +320,7 @@ export default function Contracts() {
               }
             />
 
-            {filteredContratos.length > 0 ? (
+            {filteredContracts.length > 0 ? (
               <>
               <Table>
                 <TableHeader>
@@ -337,27 +337,27 @@ export default function Contracts() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pageItems.map((contrato) => {
-                    const end = contrato.end_date ? new Date(contrato.end_date) : null;
+                  {pageItems.map((contract) => {
+                    const end = contract.end_date ? new Date(contract.end_date) : null;
                     const diff = end ? Math.ceil((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)) : null;
                     const nearExpiry = diff !== null && diff >= 0 && diff <= 30;
                     return (
-                      <TableRow key={contrato.id} data-testid={`row-contrato-${contrato.id}`}>
+                      <TableRow key={contract.id} data-testid={`row-contrato-${contract.id}`}>
                         <TableCell>
                           <Checkbox
-                            checked={selectedIds.includes(contrato.id)}
-                            onCheckedChange={() => toggleSelect(contrato.id)}
+                            checked={selectedIds.includes(contract.id)}
+                            onCheckedChange={() => toggleSelect(contract.id)}
                           />
                         </TableCell>
-                        <TableCell className="font-medium">{contrato.title}</TableCell>
+                        <TableCell className="font-medium">{contract.title}</TableCell>
                         <TableCell className="text-muted-foreground text-sm">
-                          {contrato.artistas?.nome_artistico || contrato.clientes?.nome || "—"}
+                          {contract.artistas?.nome_artistico || contract.clientes?.nome || "—"}
                         </TableCell>
-                        <TableCell className="text-sm">{contrato.type ? formatCategoryLabel(contrato.type) : "—"}</TableCell>
-                        <TableCell><SigningPlatformBadge platform={contrato.signing_platform} /></TableCell>
+                        <TableCell className="text-sm">{contract.type ? formatCategoryLabel(contract.type) : "—"}</TableCell>
+                        <TableCell><SigningPlatformBadge platform={contract.signing_platform} /></TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1.5">
-                            <StatusBadge status={contrato.status ?? ""} />
+                            <StatusBadge status={contract.status ?? ""} />
                             {nearExpiry && (
                               <span className="inline-flex items-center gap-1 text-[10px] text-warning border border-warning/20 bg-warning/10 rounded-sm px-1.5 py-0.5 font-medium">
                                 <AlertCircle className="h-3 w-3" />{diff}d
@@ -366,30 +366,30 @@ export default function Contracts() {
                           </div>
                         </TableCell>
                         <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                          {formatDateDashes(contrato.start_date)} – {formatDateDashes(contrato.end_date)}
+                          {formatDateDashes(contract.start_date)} – {formatDateDashes(contract.end_date)}
                         </TableCell>
                         <TableCell className={`text-sm ${getMonetarySemanticClass("neutral")}`}>
-                          {contrato.fixed_value ? formatCurrency(contrato.fixed_value) : "—"}
+                          {contract.fixed_value ? formatCurrency(contract.fixed_value) : "—"}
                         </TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0" data-testid={`button-acoes-contrato-${contrato.id}`}>
+                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0" data-testid={`button-acoes-contrato-${contract.id}`}>
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => setViewModal({ open: true, contrato })}>
+                              <DropdownMenuItem onClick={() => setViewModal({ open: true, contrato: contract })}>
                                 <Eye className="h-3.5 w-3.5 mr-2" /> Ver
                               </DropdownMenuItem>
                               <RequirePermission module="contracts" action="write">
-                                <DropdownMenuItem onClick={() => setFormModal({ open: true, mode: "edit", contrato })}>
+                                <DropdownMenuItem onClick={() => setFormModal({ open: true, mode: "edit", contrato: contract })}>
                                   <Pencil className="h-3.5 w-3.5 mr-2" /> Editar
                                 </DropdownMenuItem>
                               </RequirePermission>
                               <RequirePermission module="contracts" action="delete">
                                 <DropdownMenuItem
-                                  onClick={() => setDeleteModal({ open: true, contrato })}
+                                  onClick={() => setDeleteModal({ open: true, contrato: contract })}
                                   className="text-destructive focus:text-destructive"
                                 >
                                   <Trash2 className="h-3.5 w-3.5 mr-2" /> Excluir

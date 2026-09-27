@@ -36,7 +36,7 @@ function isAiTab(value: string): value is AiTab {
 export function AiCreativeWorkspace() {
   const { tenant } = useTenant();
   const { data: suggestions = [] } = useAiSuggestions();
-  const { lancamentos = [] } = useReleases();
+  const { releases: lancamentos = [] } = useReleases();
   const { data: marketingProjects = [] } = useMarketingProjects();
   const { data: campaigns = [] } = useMarketingCampaigns();
   const { data: contents = [] } = useMarketingContents();
