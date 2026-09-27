@@ -19,7 +19,7 @@ export class InvoicesController {
   @Get()
   @RequireRole('viewer')
   @RequirePermission('invoice:read')
-  @ApiOperation({ summary: 'Listar notas fiscais' })
+  @ApiOperation({ summary: 'List invoices' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryInvoiceDto) {
     return this.svc.list(t.id, q);
   }
@@ -27,7 +27,7 @@ export class InvoicesController {
   @Get(':id')
   @RequireRole('viewer')
   @RequirePermission('invoice:read')
-  @ApiOperation({ summary: 'Obter nota fiscal' })
+  @ApiOperation({ summary: 'Get an invoice' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(t.id, id);
   }
@@ -37,8 +37,8 @@ export class InvoicesController {
   @RequirePermission('invoice:create')
   @Audit('invoice.created')
   @UseInterceptors(IdempotencyInterceptor)
-  @ApiOperation({ summary: 'Criar nota fiscal (financial+)' })
-  @ApiHeader({ name: 'X-Idempotency-Key', description: 'UUID único por operação — previne duplicação de nota fiscal em duplo-clique/retry', required: false })
+  @ApiOperation({ summary: 'Create an invoice (financial+)' })
+  @ApiHeader({ name: 'X-Idempotency-Key', description: 'Unique UUID per operation — prevents duplicate invoices on double click/retry', required: false })
   create(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,
@@ -51,7 +51,7 @@ export class InvoicesController {
   @RequireRole('financial')
   @RequirePermission('invoice:update')
   @Audit('invoice.updated')
-  @ApiOperation({ summary: 'Atualizar nota fiscal (financial+)' })
+  @ApiOperation({ summary: 'Update an invoice (financial+)' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,
@@ -65,7 +65,7 @@ export class InvoicesController {
   @RequireRole('manager')
   @RequirePermission('invoice:cancel')
   @Audit('invoice.deleted')
-  @ApiOperation({ summary: 'Cancelar nota fiscal (manager+)' })
+  @ApiOperation({ summary: 'Cancel an invoice (manager+)' })
   remove(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,

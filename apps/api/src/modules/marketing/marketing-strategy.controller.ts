@@ -21,7 +21,7 @@ export class MarketingStrategyController {
 
   @Get('project/:marketingProjectId')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Obter planejamento operacional do Marketing Project' })
+  @ApiOperation({ summary: 'Get the Marketing Project\'s operational plan' })
   getPlan(
     @CurrentTenant() tenant: { id: string },
     @Param('marketingProjectId', ParseUUIDPipe) marketingProjectId: string,
@@ -32,7 +32,7 @@ export class MarketingStrategyController {
   @Post('project/:marketingProjectId/complete')
   @RequireRole('editor')
   @Audit('marketing_plan.completed')
-  @ApiOperation({ summary: 'Concluir planejamento e gerar tarefas operacionais' })
+  @ApiOperation({ summary: 'Complete planning and generate operational tasks' })
   completePlan(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -44,7 +44,7 @@ export class MarketingStrategyController {
   @Post('strategies')
   @RequireRole('editor')
   @Audit('marketing_strategy.created')
-  @ApiOperation({ summary: 'Criar estrategia de marketing' })
+  @ApiOperation({ summary: 'Create a marketing strategy' })
   createStrategy(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -56,7 +56,7 @@ export class MarketingStrategyController {
   @Post('objectives')
   @RequireRole('editor')
   @Audit('marketing_strategy_objective.created')
-  @ApiOperation({ summary: 'Criar objetivo de estrategia' })
+  @ApiOperation({ summary: 'Create a strategy objective' })
   createObjective(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -68,7 +68,7 @@ export class MarketingStrategyController {
   @Post('initiatives')
   @RequireRole('editor')
   @Audit('marketing_strategy_initiative.created')
-  @ApiOperation({ summary: 'Criar iniciativa de objetivo' })
+  @ApiOperation({ summary: 'Create an objective initiative' })
   createInitiative(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -80,7 +80,7 @@ export class MarketingStrategyController {
   @Post('actions')
   @RequireRole('editor')
   @Audit('marketing_strategy_action.created')
-  @ApiOperation({ summary: 'Criar acao de iniciativa' })
+  @ApiOperation({ summary: 'Create an initiative action' })
   createAction(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,

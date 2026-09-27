@@ -33,7 +33,7 @@ export class CompanyBankingDto {
 }
 
 export class UpdateCompanySettingsDto {
-  @ApiPropertyOptional({ description: 'Razão social' })
+  @ApiPropertyOptional({ description: 'Legal company name' })
   @IsOptional() @IsString() @MaxLength(255)
   legalName?: string;
 
@@ -41,15 +41,15 @@ export class UpdateCompanySettingsDto {
   @IsOptional() @IsString() @MaxLength(255)
   tradeName?: string;
 
-  @ApiPropertyOptional({ description: 'CNPJ (será criptografado em repouso)' })
+  @ApiPropertyOptional({ description: 'CNPJ (encrypted at rest)' })
   @IsOptional() @IsString() @MaxLength(18)
   cnpj?: string;
 
-  @ApiPropertyOptional({ description: 'Inscrição Estadual' })
+  @ApiPropertyOptional({ description: 'State registration number' })
   @IsOptional() @IsString() @MaxLength(20)
   stateRegistration?: string;
 
-  @ApiPropertyOptional({ description: 'Nome do responsável pela empresa' })
+  @ApiPropertyOptional({ description: 'Name of the person responsible for the company' })
   @IsOptional() @IsString() @MaxLength(255)
   contactName?: string;
 
@@ -69,7 +69,7 @@ export class UpdateCompanySettingsDto {
   @ApiPropertyOptional() @IsOptional() @IsUrl({ require_protocol: true }) @MaxLength(2048)
   website?: string;
 
-  @ApiPropertyOptional({ description: 'Domínio customizado (sem protocolo, ex.: app.minhaempresa.com)' })
+  @ApiPropertyOptional({ description: 'Custom domain (without protocol, e.g. app.minhaempresa.com)' })
   @IsOptional() @IsString() @MaxLength(255)
   domain?: string;
 
@@ -93,11 +93,11 @@ export class UpdateCompanySettingsDto {
   @IsOptional() @IsString() @MaxLength(64)
   timezone?: string;
 
-  @ApiPropertyOptional({ description: 'Código ISO 4217, ex.: BRL' })
+  @ApiPropertyOptional({ description: 'ISO 4217 code, e.g. BRL' })
   @IsOptional() @IsString() @MaxLength(3)
   currency?: string;
 
-  @ApiPropertyOptional({ description: 'Código IETF, ex.: pt-BR' })
+  @ApiPropertyOptional({ description: 'IETF code, e.g. pt-BR' })
   @IsOptional() @IsString() @MaxLength(10)
   language?: string;
 }

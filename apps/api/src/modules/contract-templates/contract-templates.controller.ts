@@ -20,7 +20,7 @@ export class ContractTemplatesController {
   @Get()
   @RequireRole('viewer')
   @RequirePermission('contract_template:read')
-  @ApiOperation({ summary: 'Listar templates de contrato' })
+  @ApiOperation({ summary: 'List contract templates' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryContractTemplateDto) {
     return this.svc.list(t.id, q);
   }
@@ -28,7 +28,7 @@ export class ContractTemplatesController {
   @Get(':id')
   @RequireRole('viewer')
   @RequirePermission('contract_template:read')
-  @ApiOperation({ summary: 'Obter template por ID' })
+  @ApiOperation({ summary: 'Get a template by ID' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(t.id, id);
   }
@@ -37,7 +37,7 @@ export class ContractTemplatesController {
   @RequireRole('editor')
   @RequirePermission('contract_template:create')
   @Audit('contract_template.created')
-  @ApiOperation({ summary: 'Criar template' })
+  @ApiOperation({ summary: 'Create a template' })
   create(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Body() dto: CreateContractTemplateDto) {
     return this.svc.create(t.id, u?.userId ?? '', dto);
   }
@@ -46,7 +46,7 @@ export class ContractTemplatesController {
   @RequireRole('editor')
   @RequirePermission('contract_template:update')
   @Audit('contract_template.updated')
-  @ApiOperation({ summary: 'Atualizar template' })
+  @ApiOperation({ summary: 'Update a template' })
   update(@CurrentTenant() t: { id: string }, @CurrentUser() u: any, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateContractTemplateDto) {
     return this.svc.update(t.id, id, dto);
   }
@@ -55,7 +55,7 @@ export class ContractTemplatesController {
   @RequireRole('manager')
   @RequirePermission('contract_template:archive')
   @Audit('contract_template.deleted')
-  @ApiOperation({ summary: 'Arquivar template' })
+  @ApiOperation({ summary: 'Archive a template' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.remove(t.id, id);
   }

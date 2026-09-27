@@ -14,7 +14,7 @@ export class AudiovisualAssetsController {
   constructor(private readonly svc: AudiovisualAssetsService) {}
 
   @Get('projects/:projectId/assets') @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar arquivos do projeto (filtro opcional por kind)' })
+  @ApiOperation({ summary: 'List project files (optional filter by kind)' })
   list(
     @CurrentTenant() t: { id: string }, @Param('projectId', ParseUUIDPipe) projectId: string,
     @Query('kind') kind?: string,
@@ -23,7 +23,7 @@ export class AudiovisualAssetsController {
   }
 
   @Post('projects/:projectId/assets') @RequireRole('editor') @Audit('audiovisual.asset.created')
-  @ApiOperation({ summary: 'Registrar arquivo (URL já uploaded externamente)' })
+  @ApiOperation({ summary: 'Register a file (URL already uploaded externally)' })
   create(
     @CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth,
     @Param('projectId', ParseUUIDPipe) projectId: string, @Body() dto: CreateAssetInput,
@@ -32,13 +32,13 @@ export class AudiovisualAssetsController {
   }
 
   @Patch('assets/:id') @RequireRole('editor') @Audit('audiovisual.asset.updated')
-  @ApiOperation({ summary: 'Atualizar metadata do arquivo' })
+  @ApiOperation({ summary: 'Update file metadata' })
   update(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string, @Body() dto: Partial<CreateAssetInput>) {
     return this.svc.update(t.id, id, dto);
   }
 
   @Delete('assets/:id') @RequireRole('editor') @Audit('audiovisual.asset.deleted')
-  @ApiOperation({ summary: 'Remover arquivo (soft delete; storage externo permanece)' })
+  @ApiOperation({ summary: 'Remove a file (soft delete; external storage is kept)' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.remove(t.id, id);
   }

@@ -54,18 +54,18 @@ export class CreatePhonogramDto {
   @MaxLength(500)
   title?: string;
 
-  @ApiPropertyOptional({ example: 'Noite Estrelada (Ao Vivo)', deprecated: true, description: 'Alias legado. Use "title".' })
+  @ApiPropertyOptional({ example: 'Noite Estrelada (Ao Vivo)', deprecated: true, description: 'Legacy alias. Use "title".' })
   @IsOptional()
   @IsString()
   @MaxLength(500)
   titulo?: string;
 
-  @ApiPropertyOptional({ example: 'uuid-da-obra', deprecated: true, description: 'Alias legado. Use "work_id".' })
+  @ApiPropertyOptional({ example: 'uuid-da-obra', deprecated: true, description: 'Legacy alias. Use "work_id".' })
   @IsOptional()
   @IsUUID()
   workId?: string;
 
-  @ApiPropertyOptional({ example: 'uuid-do-artista', deprecated: true, description: 'Alias legado. Use "artist_id".' })
+  @ApiPropertyOptional({ example: 'uuid-do-artista', deprecated: true, description: 'Legacy alias. Use "artist_id".' })
   @IsOptional()
   @IsUUID()
   artistId?: string;
@@ -82,7 +82,7 @@ export class CreatePhonogramDto {
   @MaxLength(100)
   music_genre?: string | null;
 
-  @ApiPropertyOptional({ example: 312, description: 'Duração em segundos' })
+  @ApiPropertyOptional({ example: 312, description: 'Duration in seconds' })
   @IsOptional()
   @Type(() => Number)
   @IsInt()

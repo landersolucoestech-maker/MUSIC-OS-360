@@ -16,18 +16,18 @@ import {
 export class AudiovisualDeliverablesController {
   constructor(private readonly svc: AudiovisualDeliverablesService) {}
 
-  @Get('deliverables') @RequireRole('viewer') @ApiOperation({ summary: 'Listar entregáveis' })
+  @Get('deliverables') @RequireRole('viewer') @ApiOperation({ summary: 'List deliverables' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryDeliverableDto) {
     return this.svc.list(t.id, q);
   }
 
-  @Get('deliverables/:id') @RequireRole('viewer') @ApiOperation({ summary: 'Obter entregável' })
+  @Get('deliverables/:id') @RequireRole('viewer') @ApiOperation({ summary: 'Get a deliverable' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(t.id, id);
   }
 
   @Post('projects/:projectId/deliverables') @RequireRole('editor') @Audit('audiovisual.deliverable.created')
-  @ApiOperation({ summary: 'Criar entregável dentro do projeto' })
+  @ApiOperation({ summary: 'Create a deliverable inside the project' })
   create(
     @CurrentTenant() t: { id: string }, @CurrentUser() _u: JwtAuth,
     @Param('projectId', ParseUUIDPipe) projectId: string, @Body() dto: CreateDeliverableDto,
@@ -37,7 +37,7 @@ export class AudiovisualDeliverablesController {
 
   @Post('projects/:projectId/deliverables/seed-defaults') @RequireRole('editor')
   @Audit('audiovisual.deliverable.seeded_defaults')
-  @ApiOperation({ summary: 'Criar entregáveis padrão para o tipo de projeto' })
+  @ApiOperation({ summary: 'Create the default deliverables for the project type' })
   seed(
     @CurrentTenant() t: { id: string },
     @Param('projectId', ParseUUIDPipe) projectId: string,
@@ -47,7 +47,7 @@ export class AudiovisualDeliverablesController {
   }
 
   @Patch('deliverables/:id') @RequireRole('editor') @Audit('audiovisual.deliverable.updated')
-  @ApiOperation({ summary: 'Atualizar entregável' })
+  @ApiOperation({ summary: 'Update a deliverable' })
   update(
     @CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateDeliverableDto,

@@ -13,17 +13,17 @@ import { CreateReleaseDto, UpdateReleaseDto, QueryReleaseDto } from './dto/relea
 export class ReleasesController {
   constructor(private readonly svc: ReleasesService) {}
 
-  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'Listar lançamentos' })
+  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'List releases' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryReleaseDto) {
     return this.svc.list(t.id, q);
   }
 
-  @Get('stats') @RequireRole('viewer') @ApiOperation({ summary: 'Distribuição exata por status (tenant inteiro)' })
+  @Get('stats') @RequireRole('viewer') @ApiOperation({ summary: 'Exact distribution per status (whole tenant)' })
   stats(@CurrentTenant() t: { id: string }, @Query() q: QueryReleaseDto) {
     return this.svc.stats(t.id, q);
   }
 
-  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Obter lançamento' })
+  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Get a release' })
   findById(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,
@@ -34,8 +34,8 @@ export class ReleasesController {
 
   @Post() @RequireRole('editor') @Audit('release.created')
   @UseInterceptors(IdempotencyInterceptor)
-  @ApiOperation({ summary: 'Criar lançamento' })
-  @ApiHeader({ name: 'X-Idempotency-Key', description: 'UUID único por operação — previne duplicação de lançamento em duplo-clique/retry', required: false })
+  @ApiOperation({ summary: 'Create a release' })
+  @ApiHeader({ name: 'X-Idempotency-Key', description: 'Unique UUID per operation — prevents duplicate releases on double click/retry', required: false })
   create(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,
@@ -44,7 +44,7 @@ export class ReleasesController {
     return this.svc.create(t.id, u?.userId ?? '', dto);
   }
 
-  @Patch(':id') @RequireRole('editor') @Audit('release.updated') @ApiOperation({ summary: 'Atualizar lançamento' })
+  @Patch(':id') @RequireRole('editor') @Audit('release.updated') @ApiOperation({ summary: 'Update a release' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,
@@ -54,7 +54,7 @@ export class ReleasesController {
     return this.svc.update(t.id, u?.userId ?? '', id, dto, u?.orgRole ?? undefined);
   }
 
-  @Delete(':id') @RequireRole('manager') @Audit('release.deleted') @ApiOperation({ summary: 'Arquivar lançamento' })
+  @Delete(':id') @RequireRole('manager') @Audit('release.deleted') @ApiOperation({ summary: 'Archive a release' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.remove(t.id, id);
   }

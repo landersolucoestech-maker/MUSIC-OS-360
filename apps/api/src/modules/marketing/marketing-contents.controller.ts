@@ -20,14 +20,14 @@ export class MarketingContentsController {
 
   @Get()
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar conteudos agendados/publicados' })
+  @ApiOperation({ summary: 'List scheduled/published contents' })
   list(@CurrentTenant() tenant: { id: string }, @Query() query: QueryMarketingContentDto) {
     return this.svc.list(tenant.id, query);
   }
 
   @Get(':id')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Obter conteudo agendado/publicado' })
+  @ApiOperation({ summary: 'Get a scheduled/published content' })
   findById(@CurrentTenant() tenant: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(tenant.id, id);
   }
@@ -35,7 +35,7 @@ export class MarketingContentsController {
   @Post()
   @RequireRole('editor')
   @Audit('marketing.content.created')
-  @ApiOperation({ summary: 'Criar conteudo e agendar publicacao automatica' })
+  @ApiOperation({ summary: 'Create content and schedule automatic publishing' })
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -47,7 +47,7 @@ export class MarketingContentsController {
   @Patch(':id')
   @RequireRole('editor')
   @Audit('marketing.content.updated')
-  @ApiOperation({ summary: 'Atualizar conteudo e reagendar publicacao quando necessario' })
+  @ApiOperation({ summary: 'Update content and reschedule publishing when needed' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -60,7 +60,7 @@ export class MarketingContentsController {
   @Delete(':id')
   @RequireRole('editor')
   @Audit('marketing.content.cancelled')
-  @ApiOperation({ summary: 'Cancelar conteudo agendado' })
+  @ApiOperation({ summary: 'Cancel scheduled content' })
   archive(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -71,7 +71,7 @@ export class MarketingContentsController {
 
   @Post(':id/ai/postiz')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'AI Skill postiz — avalia prontidão de publicação (nunca publica)' })
+  @ApiOperation({ summary: 'AI Skill postiz — evaluates publishing readiness (never publishes)' })
   runPostizReadiness(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,

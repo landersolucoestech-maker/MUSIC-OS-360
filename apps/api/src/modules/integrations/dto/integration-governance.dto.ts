@@ -9,11 +9,11 @@ export class IntegrationAudienceDto {
   @IsIn(['none', 'all', 'plans', 'tenants'])
   mode!: 'none' | 'all' | 'plans' | 'tenants';
 
-  @ApiPropertyOptional({ type: [String], description: 'Slugs de plano — usado quando mode=plans' })
+  @ApiPropertyOptional({ type: [String], description: 'Plan slugs — used when mode=plans' })
   @IsOptional() @IsArray() @IsString({ each: true })
   plans?: string[];
 
-  @ApiPropertyOptional({ type: [String], description: 'IDs de tenant — usado quando mode=tenants' })
+  @ApiPropertyOptional({ type: [String], description: 'Tenant IDs — used when mode=tenants' })
   @IsOptional() @IsArray() @IsUUID('4', { each: true })
   tenantIds?: string[];
 }
@@ -23,7 +23,7 @@ export class IntegrationAudienceDto {
  * deliberately left out — see integration-admin.service.ts.
  */
 export class UpdatePlatformIntegrationDto {
-  @ApiPropertyOptional({ description: 'Categoria (uuid) ou null para remover' })
+  @ApiPropertyOptional({ description: 'Category (uuid), or null to remove' })
   @IsOptional() @IsUUID()
   categoryId?: string | null;
 
@@ -54,7 +54,7 @@ export class UpdatePlatformIntegrationDto {
  * no per-provider key, no plan name in code.
  */
 export class SetPlanIntegrationsDto {
-  @ApiPropertyOptional({ type: [String], description: 'Slugs comerciais incluídos no plano' })
+  @ApiPropertyOptional({ type: [String], description: 'Commercial slugs included in the plan' })
   @IsOptional() @IsArray() @IsString({ each: true })
   integrations?: string[];
 }

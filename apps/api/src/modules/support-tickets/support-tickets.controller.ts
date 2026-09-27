@@ -23,19 +23,19 @@ function senderRole(u: JwtAuth): 'support' | 'admin' {
 export class SupportTicketsController {
   constructor(private readonly svc: SupportTicketsService) {}
 
-  @Get() @RequireRole('manager') @ApiOperation({ summary: 'Listar tickets de suporte' })
+  @Get() @RequireRole('manager') @ApiOperation({ summary: 'List support tickets' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QuerySupportTicketDto) {
     return this.svc.list(t.id, q);
   }
 
   // Public admin route BEFORE ':id' — otherwise ':id' would capture 'admin'.
   @Get('admin') @RequireRole('super_admin')
-  @ApiOperation({ summary: 'Listar tickets de todos os tenants (painel Admin SaaS, super_admin)' })
+  @ApiOperation({ summary: 'List tickets of all tenants (SaaS Admin panel, super_admin)' })
   listAdmin(@Query() q: AdminListSupportTicketsDto) {
     return this.svc.listAdmin(q);
   }
 
-  @Get(':id') @RequireRole('manager') @ApiOperation({ summary: 'Obter ticket de suporte' })
+  @Get(':id') @RequireRole('manager') @ApiOperation({ summary: 'Get a support ticket' })
   findById(
     @CurrentTenant() t: { id: string },
     @CurrentUser()   u: JwtAuth,
@@ -44,7 +44,7 @@ export class SupportTicketsController {
     return this.svc.findById(t.id, id, u?.orgRole ?? undefined);
   }
 
-  @Post() @RequireRole('viewer') @Audit('support-ticket.created') @ApiOperation({ summary: 'Criar ticket de suporte' })
+  @Post() @RequireRole('viewer') @Audit('support-ticket.created') @ApiOperation({ summary: 'Create a support ticket' })
   create(
     @CurrentTenant() t: { id: string },
     @CurrentUser()   u: JwtAuth,
@@ -53,7 +53,7 @@ export class SupportTicketsController {
     return this.svc.create(t.id, u?.userId ?? 'unknown', dto);
   }
 
-  @Patch(':id') @RequireRole('manager') @Audit('support-ticket.updated') @ApiOperation({ summary: 'Atualizar ticket de suporte' })
+  @Patch(':id') @RequireRole('manager') @Audit('support-ticket.updated') @ApiOperation({ summary: 'Update a support ticket' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser()   u: JwtAuth,
@@ -63,17 +63,17 @@ export class SupportTicketsController {
     return this.svc.update(t.id, u?.userId ?? 'unknown', id, dto, u?.orgRole ?? undefined);
   }
 
-  @Delete(':id') @RequireRole('manager') @Audit('support-ticket.deleted') @ApiOperation({ summary: 'Fechar ticket de suporte' })
+  @Delete(':id') @RequireRole('manager') @Audit('support-ticket.deleted') @ApiOperation({ summary: 'Close a support ticket' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.remove(t.id, id);
   }
 
-  @Get(':id/messages') @RequireRole('manager') @ApiOperation({ summary: 'Listar mensagens do ticket' })
+  @Get(':id/messages') @RequireRole('manager') @ApiOperation({ summary: 'List ticket messages' })
   listMessages(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.listMessages(t.id, id);
   }
 
-  @Post(':id/messages') @RequireRole('manager') @Audit('support-ticket.message_sent') @ApiOperation({ summary: 'Responder ticket de suporte' })
+  @Post(':id/messages') @RequireRole('manager') @Audit('support-ticket.message_sent') @ApiOperation({ summary: 'Reply to a support ticket' })
   addMessage(
     @CurrentTenant() t: { id: string },
     @CurrentUser()   u: JwtAuth,

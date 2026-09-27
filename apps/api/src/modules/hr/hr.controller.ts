@@ -24,7 +24,7 @@ export class HrController {
 
   @Get('employees')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar funcionários do tenant' })
+  @ApiOperation({ summary: 'List the tenant\'s employees' })
   listEmployees(
     @CurrentTenant() tenant: { id: string },
     @Query('status') status?: string,
@@ -44,14 +44,14 @@ export class HrController {
 
   @Get('employees/stats')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Contagem exata de funcionários por status (tenant inteiro)' })
+  @ApiOperation({ summary: 'Exact employee count per status (whole tenant)' })
   employeeStats(@CurrentTenant() tenant: { id: string }) {
     return this.svc.employeeStats(tenant.id);
   }
 
   @Get('employees/:id')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Obter funcionário por ID' })
+  @ApiOperation({ summary: 'Get an employee by ID' })
   findEmployee(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -62,7 +62,7 @@ export class HrController {
   @Post('employees')
   @RequireRole('manager')
   @Audit('employee.created')
-  @ApiOperation({ summary: 'Criar funcionário' })
+  @ApiOperation({ summary: 'Create an employee' })
   createEmployee(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
@@ -74,7 +74,7 @@ export class HrController {
   @Patch('employees/:id')
   @RequireRole('manager')
   @Audit('employee.updated')
-  @ApiOperation({ summary: 'Atualizar funcionário' })
+  @ApiOperation({ summary: 'Update an employee' })
   updateEmployee(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
@@ -87,7 +87,7 @@ export class HrController {
   @Delete('employees/:id')
   @RequireRole('admin')
   @Audit('employee.deleted')
-  @ApiOperation({ summary: 'Desactivar funcionário (soft delete)' })
+  @ApiOperation({ summary: 'Deactivate an employee (soft delete)' })
   removeEmployee(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -99,7 +99,7 @@ export class HrController {
 
   @Get('payroll')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Listar folha de pagamento (restrito a manager+)' })
+  @ApiOperation({ summary: 'List payroll entries (restricted to manager+)' })
   listPayroll(
     @CurrentTenant() tenant: { id: string },
     @Query('employee_id') employee_id?: string,
@@ -121,8 +121,8 @@ export class HrController {
   @RequireRole('manager')
   @UseInterceptors(IdempotencyInterceptor)
   @Audit('payroll.created')
-  @ApiOperation({ summary: 'Lançar entrada na folha de pagamento' })
-  @ApiHeader({ name: 'X-Idempotency-Key', description: 'UUID único por operação — previne lançamento duplicado (pagamento em dobro) em duplo-clique/retry', required: false })
+  @ApiOperation({ summary: 'Post a payroll entry' })
+  @ApiHeader({ name: 'X-Idempotency-Key', description: 'Unique UUID per operation — prevents duplicate posting (double payment) on double click/retry', required: false })
   createPayroll(
     @CurrentTenant() tenant: { id: string },
     @Body() dto: CreatePayrollEntryDto,
@@ -134,7 +134,7 @@ export class HrController {
 
   @Get('leave-requests')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar pedidos de ausência' })
+  @ApiOperation({ summary: 'List leave requests' })
   listLeaveRequests(
     @CurrentTenant() tenant: { id: string },
     @Query('employee_id') employee_id?: string,
@@ -155,7 +155,7 @@ export class HrController {
   @Post('leave-requests')
   @RequireRole('editor')
   @Audit('leave_request.created')
-  @ApiOperation({ summary: 'Criar pedido de ausência' })
+  @ApiOperation({ summary: 'Create a leave request' })
   createLeaveRequest(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
@@ -167,7 +167,7 @@ export class HrController {
   @Patch('leave-requests/:id/approve')
   @RequireRole('manager')
   @Audit('leave_request.approved')
-  @ApiOperation({ summary: 'Aprovar pedido de ausência (manager+)' })
+  @ApiOperation({ summary: 'Approve a leave request (manager+)' })
   approveLeaveRequest(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },

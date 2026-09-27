@@ -13,7 +13,7 @@ export class ExternalIdentifiersController {
   constructor(private readonly svc: ExternalIdentifierService) {}
 
   @Get('entities/:entityType/:entityId/identifiers')
-  @RequireRole('viewer') @ApiOperation({ summary: 'Listar identificadores da entidade' })
+  @RequireRole('viewer') @ApiOperation({ summary: 'List the entity\'s identifiers' })
   list(
     @CurrentTenant() t: { id: string },
     @Param('entityType') entityType: string,
@@ -23,7 +23,7 @@ export class ExternalIdentifiersController {
   }
 
   @Post('entities/:entityType/:entityId/identifiers')
-  @RequireRole('editor') @Audit('registry.identifier.created') @ApiOperation({ summary: 'Adicionar identificador' })
+  @RequireRole('editor') @Audit('registry.identifier.created') @ApiOperation({ summary: 'Add an identifier' })
   create(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,
@@ -35,7 +35,7 @@ export class ExternalIdentifiersController {
   }
 
   @Patch('identifiers/:id')
-  @RequireRole('editor') @Audit('registry.identifier.updated') @ApiOperation({ summary: 'Atualizar identificador' })
+  @RequireRole('editor') @Audit('registry.identifier.updated') @ApiOperation({ summary: 'Update an identifier' })
   update(
     @CurrentTenant() t: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -45,7 +45,7 @@ export class ExternalIdentifiersController {
   }
 
   @Delete('identifiers/:id')
-  @RequireRole('manager') @Audit('registry.identifier.deleted') @ApiOperation({ summary: 'Remover identificador' })
+  @RequireRole('manager') @Audit('registry.identifier.deleted') @ApiOperation({ summary: 'Remove an identifier' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.remove(t.id, id);
   }

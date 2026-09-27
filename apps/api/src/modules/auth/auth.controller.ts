@@ -35,7 +35,7 @@ export class AuthController {
   ) {}
 
   @Get('context')
-  @ApiOperation({ summary: 'Obter contexto SaaS do utilizador autenticado' })
+  @ApiOperation({ summary: 'Get the authenticated user\'s SaaS context' })
   getContext(
     @CurrentUser() user: JwtAuth,
     @CurrentTenant() tenant: Record<string, unknown>,
@@ -46,7 +46,7 @@ export class AuthController {
 
   @Patch('provision-workspace')
   @AuthBootstrap()
-  @ApiOperation({ summary: 'Provisionar o primeiro workspace do usuário autenticado' })
+  @ApiOperation({ summary: 'Provision the authenticated user\'s first workspace' })
   provisionWorkspace(
     @CurrentUser() user: JwtAuth,
     @Body() dto: ProvisionWorkspaceDto,
@@ -56,7 +56,7 @@ export class AuthController {
 
   @Post('change-required-password')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Troca atômica da senha obrigatória do primeiro login: valida, troca fisicamente no Supabase Auth e limpa must_change_password na mesma operação' })
+  @ApiOperation({ summary: 'Atomic mandatory first-login password change: validates, physically changes it in Supabase Auth and clears must_change_password in the same operation' })
   changeRequiredPassword(
     @CurrentUser() user: JwtAuth,
     @CurrentTenant() tenant: Record<string, unknown>,
@@ -70,7 +70,7 @@ export class AuthController {
   @Patch('onboarding')
   @RequireRole('owner')
   @Audit('setting.onboarding_completed')
-  @ApiOperation({ summary: 'Concluir onboarding inicial do workspace' })
+  @ApiOperation({ summary: 'Complete the workspace\'s initial onboarding' })
   completeOnboarding(
     @CurrentUser() user: JwtAuth,
     @CurrentTenant() tenant: Record<string, unknown>,
@@ -86,7 +86,7 @@ export class AuthController {
 
   @Post('onboarding/ai/progress-analysis')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'AI Skill onboarding-cro — análise do progresso real de onboarding deste tenant' })
+  @ApiOperation({ summary: 'AI Skill onboarding-cro — analysis of this tenant\'s real onboarding progress' })
   runOnboardingProgressAnalysis(
     @CurrentUser() user: JwtAuth,
     @CurrentTenant() tenant: Record<string, unknown>,

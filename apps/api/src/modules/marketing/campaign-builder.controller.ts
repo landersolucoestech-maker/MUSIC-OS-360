@@ -9,7 +9,7 @@ import { campaignBuilderConfig } from './campaign-builder.config';
 export class CampaignBuilderController {
   @Get('config')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Obter configuração oficial do Campaign Builder' })
+  @ApiOperation({ summary: 'Get the official Campaign Builder configuration' })
   getConfig() {
     return campaignBuilderConfig;
   }

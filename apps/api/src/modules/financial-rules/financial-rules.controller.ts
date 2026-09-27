@@ -13,27 +13,27 @@ import { CreateFinancialRuleDto, UpdateFinancialRuleDto, QueryFinancialRuleDto }
 export class FinancialRulesController {
   constructor(private readonly svc: FinancialRulesService) {}
 
-  @Get() @RequireRole('viewer') @RequirePermission('financial_rule:read') @ApiOperation({ summary: 'Listar regras financeiras' })
+  @Get() @RequireRole('viewer') @RequirePermission('financial_rule:read') @ApiOperation({ summary: 'List financial rules' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryFinancialRuleDto) {
     return this.svc.list(t.id, q);
   }
 
-  @Get(':id') @RequireRole('viewer') @RequirePermission('financial_rule:read') @ApiOperation({ summary: 'Obter regra financeira' })
+  @Get(':id') @RequireRole('viewer') @RequirePermission('financial_rule:read') @ApiOperation({ summary: 'Get a financial rule' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(t.id, id);
   }
 
-  @Post() @RequireRole('manager') @RequirePermission('financial_rule:create') @Audit('financial_rule.created') @ApiOperation({ summary: 'Criar regra financeira' })
+  @Post() @RequireRole('manager') @RequirePermission('financial_rule:create') @Audit('financial_rule.created') @ApiOperation({ summary: 'Create a financial rule' })
   create(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Body() dto: CreateFinancialRuleDto) {
     return this.svc.create(t.id, u?.userId ?? '', dto);
   }
 
-  @Patch(':id') @RequireRole('manager') @RequirePermission('financial_rule:update') @Audit('financial_rule.updated') @ApiOperation({ summary: 'Atualizar regra financeira' })
+  @Patch(':id') @RequireRole('manager') @RequirePermission('financial_rule:update') @Audit('financial_rule.updated') @ApiOperation({ summary: 'Update a financial rule' })
   update(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateFinancialRuleDto) {
     return this.svc.update(t.id, u?.userId ?? '', id, dto);
   }
 
-  @Delete(':id') @RequireRole('admin') @RequirePermission('financial_rule:delete') @Audit('financial_rule.deleted') @ApiOperation({ summary: 'Remover regra financeira' })
+  @Delete(':id') @RequireRole('admin') @RequirePermission('financial_rule:delete') @Audit('financial_rule.deleted') @ApiOperation({ summary: 'Remove a financial rule' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.softDelete(t.id, id);
   }

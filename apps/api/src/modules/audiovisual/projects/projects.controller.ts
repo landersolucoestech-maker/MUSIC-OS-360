@@ -17,7 +17,7 @@ import {
 export class AudiovisualProjectsController {
   constructor(private readonly svc: AudiovisualProjectsService) {}
 
-  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'Listar projetos audiovisuais' })
+  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'List audiovisual projects' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryAudiovisualProjectDto) {
     return this.svc.list(t.id, q);
   }
@@ -27,19 +27,19 @@ export class AudiovisualProjectsController {
     return this.svc.dashboard(t.id, q);
   }
 
-  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Obter projeto' })
+  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Get a project' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(t.id, id);
   }
 
   @Post() @RequireRole('editor') @Audit('audiovisual.project.created')
-  @ApiOperation({ summary: 'Criar projeto audiovisual' })
+  @ApiOperation({ summary: 'Create an audiovisual project' })
   create(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Body() dto: CreateAudiovisualProjectDto) {
     return this.svc.create(t.id, u?.userId ?? '', dto);
   }
 
   @Patch(':id') @RequireRole('editor') @Audit('audiovisual.project.updated')
-  @ApiOperation({ summary: 'Atualizar projeto' })
+  @ApiOperation({ summary: 'Update a project' })
   update(
     @CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth,
     @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateAudiovisualProjectDto,
@@ -48,7 +48,7 @@ export class AudiovisualProjectsController {
   }
 
   @Post(':id/transition') @RequireRole('editor') @Audit('audiovisual.project.transitioned')
-  @ApiOperation({ summary: 'Avançar/retroceder status do pipeline' })
+  @ApiOperation({ summary: 'Move the pipeline status forward/backward' })
   transition(
     @CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth,
     @Param('id', ParseUUIDPipe) id: string, @Body() dto: TransitionProjectStatusDto,
@@ -57,7 +57,7 @@ export class AudiovisualProjectsController {
   }
 
   @Delete(':id') @RequireRole('manager') @Audit('audiovisual.project.deleted')
-  @ApiOperation({ summary: 'Remover projeto (soft delete)' })
+  @ApiOperation({ summary: 'Remove a project (soft delete)' })
   remove(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.softDelete(t.id, u?.userId ?? '', id);
   }

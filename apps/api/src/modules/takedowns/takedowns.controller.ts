@@ -16,21 +16,21 @@ export class TakedownsController {
 
   @Get()
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar takedowns' })
+  @ApiOperation({ summary: 'List takedowns' })
   list(@CurrentTenant() tenant: { id: string }, @Query() query: QueryTakedownDto) {
     return this.svc.list(tenant.id, query);
   }
 
   @Get('stats')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Contagem por status, sobre o tenant inteiro' })
+  @ApiOperation({ summary: 'Count per status, over the whole tenant' })
   stats(@CurrentTenant() tenant: { id: string }) {
     return this.svc.stats(tenant.id);
   }
 
   @Get(':id')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Obter takedown' })
+  @ApiOperation({ summary: 'Get a takedown' })
   findById(@CurrentTenant() tenant: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(tenant.id, id);
   }
@@ -38,7 +38,7 @@ export class TakedownsController {
   @Post()
   @RequireRole('editor')
   @Audit('takedown.created')
-  @ApiOperation({ summary: 'Criar takedown' })
+  @ApiOperation({ summary: 'Create a takedown' })
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -50,7 +50,7 @@ export class TakedownsController {
   @Patch(':id')
   @RequireRole('editor')
   @Audit('takedown.updated')
-  @ApiOperation({ summary: 'Atualizar takedown' })
+  @ApiOperation({ summary: 'Update a takedown' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -63,7 +63,7 @@ export class TakedownsController {
   @Delete(':id')
   @RequireRole('manager')
   @Audit('takedown.deleted')
-  @ApiOperation({ summary: 'Excluir takedown' })
+  @ApiOperation({ summary: 'Delete a takedown' })
   remove(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,

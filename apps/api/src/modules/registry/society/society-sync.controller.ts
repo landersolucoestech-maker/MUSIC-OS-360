@@ -12,17 +12,17 @@ import { RunSyncDto } from '../dto/operations.dto';
 export class SocietySyncController {
   constructor(private readonly svc: SocietySyncService) {}
 
-  @Post('sync/abramus') @RequireRole('manager') @Audit('registry.sync.run') @ApiOperation({ summary: 'Disparar sincronização de status' })
+  @Post('sync/abramus') @RequireRole('manager') @Audit('registry.sync.run') @ApiOperation({ summary: 'Trigger a status sync' })
   run(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Body() dto: RunSyncDto) {
     return this.svc.runSync(t.id, u?.userId ?? '', dto);
   }
 
-  @Get('sync-jobs') @RequireRole('viewer') @ApiOperation({ summary: 'Listar jobs de sincronização' })
+  @Get('sync-jobs') @RequireRole('viewer') @ApiOperation({ summary: 'List sync jobs' })
   list(@CurrentTenant() t: { id: string }) {
     return this.svc.list(t.id);
   }
 
-  @Get('sync-jobs/:id') @RequireRole('viewer') @ApiOperation({ summary: 'Obter job de sincronização' })
+  @Get('sync-jobs/:id') @RequireRole('viewer') @ApiOperation({ summary: 'Get a sync job' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(t.id, id);
   }

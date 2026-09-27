@@ -27,14 +27,14 @@ export class InternalChatController {
 
   @Get('conversations')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar minhas conversas internas' })
+  @ApiOperation({ summary: 'List my internal conversations' })
   listConversations(@CurrentTenant() tenant: { id: string }, @CurrentUser() user: JwtAuth) {
     return this.service.listMyConversations(tenant.id, user.userId);
   }
 
   @Get('conversations/:id')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Obter conversa interna por ID' })
+  @ApiOperation({ summary: 'Get an internal conversation by ID' })
   findConversation(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -50,8 +50,8 @@ export class InternalChatController {
   @Post('conversations')
   @RequireRole('viewer')
   @UseInterceptors(IdempotencyInterceptor)
-  @ApiOperation({ summary: 'Criar conversa interna (direta ou grupo)' })
-  @ApiHeader({ name: 'X-Idempotency-Key', description: 'UUID único por operação — previne criação duplicada', required: false })
+  @ApiOperation({ summary: 'Create an internal conversation (direct or group)' })
+  @ApiHeader({ name: 'X-Idempotency-Key', description: 'Unique UUID per operation — prevents duplicate creation', required: false })
   createConversation(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -62,7 +62,7 @@ export class InternalChatController {
 
   @Get('conversations/:id/messages')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar mensagens da conversa interna' })
+  @ApiOperation({ summary: 'List internal conversation messages' })
   listMessages(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -76,8 +76,8 @@ export class InternalChatController {
   @Post('conversations/:id/messages')
   @RequireRole('viewer')
   @UseInterceptors(IdempotencyInterceptor)
-  @ApiOperation({ summary: 'Enviar mensagem na conversa interna' })
-  @ApiHeader({ name: 'X-Idempotency-Key', description: 'UUID único por operação — previne mensagem duplicada', required: false })
+  @ApiOperation({ summary: 'Send a message in the internal conversation' })
+  @ApiHeader({ name: 'X-Idempotency-Key', description: 'Unique UUID per operation — prevents duplicate messages', required: false })
   sendMessage(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -89,7 +89,7 @@ export class InternalChatController {
 
   @Post('conversations/:id/read')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Marcar conversa interna como lida' })
+  @ApiOperation({ summary: 'Mark an internal conversation as read' })
   markRead(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -100,7 +100,7 @@ export class InternalChatController {
 
   @Get('members')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Buscar colegas da organização para iniciar uma conversa interna' })
+  @ApiOperation({ summary: 'Search organization colleagues to start an internal conversation' })
   searchMembers(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,

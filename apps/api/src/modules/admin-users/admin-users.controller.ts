@@ -9,7 +9,7 @@ export class AdminUsersController {
   constructor(private readonly svc: AdminUsersService) {}
 
   @Get() @RequireRole('super_admin')
-  @ApiOperation({ summary: 'Listar usuários reais cross-tenant, com papel/MFA/último login (super_admin)' })
+  @ApiOperation({ summary: 'List real cross-tenant users with role/MFA/last login (super_admin)' })
   list(@Query() query: AdminUsersQueryDto) {
     return this.svc.list(query);
   }

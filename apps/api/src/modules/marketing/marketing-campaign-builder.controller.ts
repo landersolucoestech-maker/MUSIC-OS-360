@@ -267,7 +267,7 @@ export class MarketingCampaignBuilderController {
 
   @Post(':id/ai/ad-creative')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'AI Skill ad-creative — sugestões de headline/copy/CTA para uma plataforma+posicionamento da campanha' })
+  @ApiOperation({ summary: 'AI Skill ad-creative — headline/copy/CTA suggestions for one campaign platform+placement' })
   runAdCreative(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -280,7 +280,7 @@ export class MarketingCampaignBuilderController {
 
   @Post(':id/ai/paid-ads-strategy')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'AI Skill paid-ads — sugestão de alocação de orçamento e posicionamento entre as plataformas já selecionadas' })
+  @ApiOperation({ summary: 'AI Skill paid-ads — budget allocation and placement suggestion across the already-selected platforms' })
   runPaidAdsStrategy(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -291,7 +291,7 @@ export class MarketingCampaignBuilderController {
 
   @Post(':id/ai/seo-audit')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'AI Skill seo-audit — auditoria de higiene de link (análise estática, sem medição externa)' })
+  @ApiOperation({ summary: 'AI Skill seo-audit — link hygiene audit (static analysis, no external measurement)' })
   runSeoAudit(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,

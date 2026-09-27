@@ -23,7 +23,7 @@ export class IntegrationAdminController {
 
   @Get('categories')
   @RequireRole('super_admin')
-  @ApiOperation({ summary: 'Categorias de integração (governança)' })
+  @ApiOperation({ summary: 'Integration categories (governance)' })
   listCategories() {
     return this.admin.listCategories();
   }
@@ -31,7 +31,7 @@ export class IntegrationAdminController {
   @Get()
   @RequireRole('super_admin')
   @ApiOperation({
-    summary: 'Integrações governadas, com estado técnico derivado do código',
+    summary: 'Governed integrations, with technical state derived from the code',
   })
   list() {
     return this.admin.list();
@@ -44,7 +44,7 @@ export class IntegrationAdminController {
    */
   @Get('plans/:planSlug')
   @RequireRole('super_admin')
-  @ApiOperation({ summary: 'Integrações comerciais incluídas no plano' })
+  @ApiOperation({ summary: 'Commercial integrations included in the plan' })
   getPlanIntegrations(@Param('planSlug') planSlug: string) {
     return this.admin.getPlanIntegrations(planSlug);
   }
@@ -53,7 +53,7 @@ export class IntegrationAdminController {
   @RequireRole('super_admin')
   @Audit('admin.plan_integrations_updated')
   @ApiOperation({
-    summary: 'Define as integrações comerciais incluídas no plano',
+    summary: 'Defines the commercial integrations included in the plan',
     description:
       'Slugs internos/billing/inexistentes são rejeitados — entitlement comercial ' +
       'não pode ser concedido a infraestrutura interna.',
@@ -69,9 +69,9 @@ export class IntegrationAdminController {
   @RequireRole('super_admin')
   @Audit('admin.integration_governance_updated')
   @ApiOperation({
-    summary: 'Atualiza governança (categoria, publicação, audiência VIEW/USE)',
+    summary: 'Updates governance (category, publication, VIEW/USE audience)',
     description:
-      'Não altera capacidade técnica (é código) nem conexão do tenant (é credencial do cliente).',
+      'Does not change the technical capability (it is code) nor the tenant connection (it is the client\'s credential).',
   })
   update(@Param('id') id: string, @Body() dto: UpdatePlatformIntegrationDto) {
     return this.admin.update(id, {

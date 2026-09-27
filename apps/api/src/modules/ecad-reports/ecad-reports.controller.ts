@@ -18,7 +18,7 @@ export class EcadReportsController {
 
   @Get()
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Listar relatórios ECAD (manager+)' })
+  @ApiOperation({ summary: 'List ECAD reports (manager+)' })
   list(
     @CurrentTenant() tenant: { id: string },
     @Query('periodo') periodo?: string,
@@ -40,7 +40,7 @@ export class EcadReportsController {
 
   @Get(':id')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Obter relatório ECAD por ID' })
+  @ApiOperation({ summary: 'Get an ECAD report by ID' })
   findOne(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -50,7 +50,7 @@ export class EcadReportsController {
 
   @Post()
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Criar relatório ECAD' })
+  @ApiOperation({ summary: 'Create an ECAD report' })
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
@@ -61,7 +61,7 @@ export class EcadReportsController {
 
   @Patch(':id')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Atualizar relatório ECAD' })
+  @ApiOperation({ summary: 'Update an ECAD report' })
   update(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -72,7 +72,7 @@ export class EcadReportsController {
 
   @Delete(':id')
   @RequireRole('admin')
-  @ApiOperation({ summary: 'Remover relatório ECAD (admin+)' })
+  @ApiOperation({ summary: 'Remove an ECAD report (admin+)' })
   remove(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,

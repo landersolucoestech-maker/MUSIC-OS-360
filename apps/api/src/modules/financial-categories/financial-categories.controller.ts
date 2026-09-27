@@ -34,7 +34,7 @@ export class FinancialCategoriesController {
   @Get()
   @RequireRole('viewer')
   @RequirePermission('financial_category:read')
-  @ApiOperation({ summary: 'Listar categorias financeiras' })
+  @ApiOperation({ summary: 'List financial categories' })
   list(
     @CurrentTenant() tenant: { id: string },
     @Query() query: QueryFinancialCategoryDto,
@@ -45,7 +45,7 @@ export class FinancialCategoriesController {
   @Get('tree')
   @RequireRole('viewer')
   @RequirePermission('financial_category:read')
-  @ApiOperation({ summary: 'Obter árvore financeira com lazy loading' })
+  @ApiOperation({ summary: 'Get the financial category tree with lazy loading' })
   tree(
     @CurrentTenant() tenant: { id: string },
     @Query() query: QueryFinancialCategoryDto,
@@ -56,7 +56,7 @@ export class FinancialCategoriesController {
   @Get('search')
   @RequireRole('viewer')
   @RequirePermission('financial_category:read')
-  @ApiOperation({ summary: 'Pesquisar categorias financeiras' })
+  @ApiOperation({ summary: 'Search financial categories' })
   search(
     @CurrentTenant() tenant: { id: string },
     @Query() query: QueryFinancialCategoryDto,
@@ -67,7 +67,7 @@ export class FinancialCategoriesController {
   @Get(':id')
   @RequireRole('viewer')
   @RequirePermission('financial_category:read')
-  @ApiOperation({ summary: 'Detalhar categoria financeira' })
+  @ApiOperation({ summary: 'Financial category detail' })
   findById(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,

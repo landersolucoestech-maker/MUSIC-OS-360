@@ -12,22 +12,22 @@ import { CreateRightsHolderDto, UpdateRightsHolderDto, QueryRightsHolderDto } fr
 export class RightsHoldersController {
   constructor(private readonly svc: RightsHoldersService) {}
 
-  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'Listar titulares' })
+  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'List rights holders' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryRightsHolderDto) {
     return this.svc.list(t.id, q);
   }
 
-  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Obter titular' })
+  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Get a rights holder' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(t.id, id);
   }
 
-  @Post() @RequireRole('editor') @Audit('registry.rights_holder.created') @ApiOperation({ summary: 'Criar titular' })
+  @Post() @RequireRole('editor') @Audit('registry.rights_holder.created') @ApiOperation({ summary: 'Create a rights holder' })
   create(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Body() dto: CreateRightsHolderDto) {
     return this.svc.create(t.id, u?.userId ?? '', dto);
   }
 
-  @Patch(':id') @RequireRole('editor') @Audit('registry.rights_holder.updated') @ApiOperation({ summary: 'Atualizar titular' })
+  @Patch(':id') @RequireRole('editor') @Audit('registry.rights_holder.updated') @ApiOperation({ summary: 'Update a rights holder' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,
@@ -37,7 +37,7 @@ export class RightsHoldersController {
     return this.svc.update(t.id, u?.userId ?? '', id, dto);
   }
 
-  @Delete(':id') @RequireRole('manager') @Audit('registry.rights_holder.deleted') @ApiOperation({ summary: 'Arquivar titular' })
+  @Delete(':id') @RequireRole('manager') @Audit('registry.rights_holder.deleted') @ApiOperation({ summary: 'Archive a rights holder' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.remove(t.id, id);
   }

@@ -16,17 +16,17 @@ import type { JwtAuth } from '../../core/guards/auth.guard';
 export class OperationalListsController {
   constructor(private readonly svc: OperationalListsService) {}
 
-  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'Listar itens de taxonomia operacional' })
+  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'List operational taxonomy items' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryOperationalListItemDto) {
     return this.svc.list(t.id, q);
   }
 
-  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Obter item de taxonomia operacional' })
+  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Get an operational taxonomy item' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(t.id, id);
   }
 
-  @Post() @RequireRole('editor') @Audit('operational_list_item.created') @ApiOperation({ summary: 'Criar item de taxonomia' })
+  @Post() @RequireRole('editor') @Audit('operational_list_item.created') @ApiOperation({ summary: 'Create a taxonomy item' })
   create(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,
@@ -35,7 +35,7 @@ export class OperationalListsController {
     return this.svc.create(t.id, u?.userId ?? '', dto);
   }
 
-  @Patch(':id') @RequireRole('editor') @Audit('operational_list_item.updated') @ApiOperation({ summary: 'Atualizar item de taxonomia' })
+  @Patch(':id') @RequireRole('editor') @Audit('operational_list_item.updated') @ApiOperation({ summary: 'Update a taxonomy item' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,
@@ -45,7 +45,7 @@ export class OperationalListsController {
     return this.svc.update(t.id, u?.userId ?? '', id, dto);
   }
 
-  @Delete(':id') @RequireRole('manager') @Audit('operational_list_item.deleted') @ApiOperation({ summary: 'Remover item de taxonomia' })
+  @Delete(':id') @RequireRole('manager') @Audit('operational_list_item.deleted') @ApiOperation({ summary: 'Remove a taxonomy item' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.remove(t.id, id);
   }

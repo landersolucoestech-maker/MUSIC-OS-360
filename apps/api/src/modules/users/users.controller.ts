@@ -12,10 +12,10 @@ import { CreateUserDto, UpdateUserDto, AssignRoleDto, SetStatusDto, QueryUserDto
 export class UsersController {
   constructor(private readonly svc: UsersService) {}
 
-  @Get()    @RequireRole('manager') @ApiOperation({ summary: 'Listar utilizadores' })
+  @Get()    @RequireRole('manager') @ApiOperation({ summary: 'List users' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryUserDto) { return this.svc.list(t.id, q); }
 
-  @Post() @RequireRole('owner') @Audit('user.created') @ApiOperation({ summary: 'Criar utilizador' })
+  @Post() @RequireRole('owner') @Audit('user.created') @ApiOperation({ summary: 'Create a user' })
   create(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: { userId: string },
@@ -23,7 +23,7 @@ export class UsersController {
     @Body() dto: CreateUserDto,
   ) { return this.svc.create(t.id, dto, u.userId, member?.role); }
 
-  @Post('invitations') @RequireRole('admin') @Audit('user.invited') @ApiOperation({ summary: 'Convidar utilizador por email' })
+  @Post('invitations') @RequireRole('admin') @Audit('user.invited') @ApiOperation({ summary: 'Invite a user by e-mail' })
   invite(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: { userId: string },
@@ -33,7 +33,7 @@ export class UsersController {
     return this.svc.invite(t.id, dto.email, dto.roleId, u.userId, member?.role);
   }
 
-  @Get('invitations') @RequireRole('admin') @ApiOperation({ summary: 'Listar convites do tenant' })
+  @Get('invitations') @RequireRole('admin') @ApiOperation({ summary: 'List the tenant\'s invitations' })
   invitations(@CurrentTenant() t: { id: string }) {
     return this.svc.listInvitations(t.id);
   }
@@ -57,15 +57,15 @@ export class UsersController {
     return this.svc.cancelInvitation(t.id, id, member?.role);
   }
 
-  @Get(':id') @RequireRole('manager') @ApiOperation({ summary: 'Obter utilizador' })
+  @Get(':id') @RequireRole('manager') @ApiOperation({ summary: 'Get a user' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(t.id, id);
   }
 
-  @Patch(':id') @RequireRole('manager') @Audit('user.updated') @ApiOperation({ summary: 'Atualizar utilizador' })
+  @Patch(':id') @RequireRole('manager') @Audit('user.updated') @ApiOperation({ summary: 'Update a user' })
   update(@CurrentTenant() t: { id: string }, @CurrentUser() _u: any, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUserDto) { return this.svc.update(t.id, id, dto); }
 
-  @Patch(':id/role') @RequireRole('admin') @Audit('user.role_changed') @ApiOperation({ summary: 'Alterar role do utilizador respeitando hierarquia' })
+  @Patch(':id/role') @RequireRole('admin') @Audit('user.role_changed') @ApiOperation({ summary: 'Change the user\'s role respecting the hierarchy' })
   assignRole(
     @CurrentTenant() t: { id: string },
     @CurrentMember() member: { role?: string } | undefined,
@@ -73,13 +73,13 @@ export class UsersController {
     @Body() dto: AssignRoleDto,
   ) { return this.svc.assignRole(t.id, id, dto.role, member?.role, dto.expectedUpdatedAt); }
 
-  @Patch(':id/status') @RequireRole('owner') @Audit('user.status_changed') @ApiOperation({ summary: 'Activar/desactivar/suspender utilizador (protege o último owner)' })
+  @Patch(':id/status') @RequireRole('owner') @Audit('user.status_changed') @ApiOperation({ summary: 'Activate/deactivate/suspend a user (protects the last owner)' })
   setStatus(
     @CurrentTenant() t: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: SetStatusDto,
   ) { return this.svc.setStatus(t.id, id, dto.status, dto.expectedUpdatedAt); }
 
-  @Delete(':id') @RequireRole('owner') @Audit('user.deleted') @ApiOperation({ summary: 'Desactivar utilizador' })
+  @Delete(':id') @RequireRole('owner') @Audit('user.deleted') @ApiOperation({ summary: 'Deactivate a user' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) { return this.svc.remove(t.id, id); }
 }

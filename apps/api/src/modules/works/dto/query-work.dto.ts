@@ -8,7 +8,7 @@ export class QueryWorkDto extends PaginationDto {
   @IsString()
   status?: string;
 
-  @ApiPropertyOptional({ example: 'MPB', description: 'Filtro server-side pelo gênero (coluna music_genre).' })
+  @ApiPropertyOptional({ example: 'MPB', description: 'Server-side filter by genre (music_genre column).' })
   @IsOptional()
   @IsString()
   music_genre?: string;
@@ -18,7 +18,7 @@ export class QueryWorkDto extends PaginationDto {
   @IsString()
   tipo_obra?: string;
 
-  @ApiPropertyOptional({ description: 'ID do projeto, ou "sem-projeto" para obras sem projeto vinculado.' })
+  @ApiPropertyOptional({ description: 'Project ID, or "sem-projeto" for works without a linked project.' })
   @IsOptional()
   @IsString()
   project_id?: string;
@@ -33,7 +33,7 @@ export class QueryWorkDto extends PaginationDto {
   @IsUUID()
   artist_id?: string;
 
-  @ApiPropertyOptional({ deprecated: true, description: 'Alias legado. Use "artist_id".' })
+  @ApiPropertyOptional({ deprecated: true, description: 'Legacy alias. Use "artist_id".' })
   @IsOptional()
   @IsUUID()
   artistId?: string;

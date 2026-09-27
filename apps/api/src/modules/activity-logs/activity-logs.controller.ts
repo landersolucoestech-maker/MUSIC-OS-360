@@ -16,7 +16,7 @@ export class ActivityLogsController {
 
   @Get()
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar activity logs' })
+  @ApiOperation({ summary: 'List activity logs' })
   list(@CurrentTenant() t: { id: string }, @Query() query: QueryActivityLogDto) {
     return this.svc.list(t.id, query);
   }
@@ -24,7 +24,7 @@ export class ActivityLogsController {
   @Post()
   @RequireRole('editor')
   @Audit('activity-log.created')
-  @ApiOperation({ summary: 'Criar activity log' })
+  @ApiOperation({ summary: 'Create an activity log' })
   create(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,

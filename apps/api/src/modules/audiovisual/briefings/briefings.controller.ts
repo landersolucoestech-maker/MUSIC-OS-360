@@ -14,13 +14,13 @@ import { UpsertBriefingDto } from '../dto/audiovisual.dto';
 export class AudiovisualBriefingsController {
   constructor(private readonly svc: AudiovisualBriefingsService) {}
 
-  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'Obter briefing do projeto' })
+  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'Get the project briefing' })
   get(@CurrentTenant() t: { id: string }, @Param('projectId', ParseUUIDPipe) projectId: string) {
     return this.svc.getByProject(t.id, projectId);
   }
 
   @Put() @RequireRole('editor') @Audit('audiovisual.briefing.upserted')
-  @ApiOperation({ summary: 'Criar ou atualizar briefing' })
+  @ApiOperation({ summary: 'Create or update a briefing' })
   upsert(
     @CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth,
     @Param('projectId', ParseUUIDPipe) projectId: string, @Body() dto: UpsertBriefingDto,

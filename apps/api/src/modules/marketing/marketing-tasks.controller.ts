@@ -79,7 +79,7 @@ export class MarketingTasksController {
   @Post(':id/ai/copywriting')
   @RequireRole('editor')
   @RequirePermission('marketing:update')
-  @ApiOperation({ summary: 'AI Skill copywriting — rascunho de texto (e-mail/release/landing) para a tarefa' })
+  @ApiOperation({ summary: 'AI Skill copywriting — text draft (e-mail/release/landing) for the task' })
   runCopywriting(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,

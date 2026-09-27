@@ -45,8 +45,8 @@ export class ArtistsController {
   @Get()
   @RequireRole('viewer')
   @RequirePermission('artist:read')
-  @ApiOperation({ summary: 'Listar artistas do tenant' })
-  @ApiResponse({ status: 200, description: 'Lista paginada de artistas' })
+  @ApiOperation({ summary: 'List the tenant\'s artists' })
+  @ApiResponse({ status: 200, description: 'Paginated artist list' })
   list(
     @CurrentTenant() tenant: { id: string },
     @Query() query: QueryArtistDto,
@@ -57,7 +57,7 @@ export class ArtistsController {
   @Get('stats/vinculo')
   @RequireRole('viewer')
   @RequirePermission('artist:read')
-  @ApiOperation({ summary: 'Contagem de artistas por vínculo (exclusivo/parceiro/independente), tenant inteiro' })
+  @ApiOperation({ summary: 'Artist count by relationship (exclusive/partner/independent), whole tenant' })
   vinculoStats(@CurrentTenant() tenant: { id: string }) {
     return this.service.vinculoStats(tenant.id);
   }
@@ -68,7 +68,7 @@ export class ArtistsController {
   @Get(['stats/genres', 'stats/generos'])
   @RequireRole('viewer')
   @RequirePermission('artist:read')
-  @ApiOperation({ summary: 'Gêneros musicais distintos do tenant' })
+  @ApiOperation({ summary: 'Distinct music genres of the tenant' })
   distinctMusicGenres(@CurrentTenant() tenant: { id: string }) {
     return this.service.distinctMusicGenres(tenant.id);
   }
@@ -76,7 +76,7 @@ export class ArtistsController {
   @Get(':id/platform-profiles')
   @RequireRole('viewer')
   @RequirePermission('artist:read')
-  @ApiOperation({ summary: 'Listar snapshots de perfis externos do artista' })
+  @ApiOperation({ summary: 'List the artist\'s external profile snapshots' })
   async listPlatformProfiles(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -88,7 +88,7 @@ export class ArtistsController {
   @Get(':id/platform-profiles/:platform')
   @RequireRole('viewer')
   @RequirePermission('artist:read')
-  @ApiOperation({ summary: 'Obter snapshot de perfil externo do artista por plataforma' })
+  @ApiOperation({ summary: 'Get the artist\'s external profile snapshot by platform' })
   async getPlatformProfile(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -102,7 +102,7 @@ export class ArtistsController {
   @Get(':id/platform-profiles/:platform/history')
   @RequireRole('viewer')
   @RequirePermission('artist:read')
-  @ApiOperation({ summary: 'Histórico real de uma métrica de plataforma (Fase 2 — Time-Series Foundation)' })
+  @ApiOperation({ summary: 'Real history of a platform metric (Phase 2 — Time-Series Foundation)' })
   async getPlatformMetricHistory(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -148,7 +148,7 @@ export class ArtistsController {
   @Get(':id/career-stage')
   @RequireRole('viewer')
   @RequirePermission('artist:read')
-  @ApiOperation({ summary: 'Estágio da Carreira (Fase 3) — calculado sobre métricas Soundcharts já ingeridas, nunca ao vivo' })
+  @ApiOperation({ summary: 'Career Stage (Phase 3) — computed from already-ingested Soundcharts metrics, never live' })
   async getCareerStage(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -160,7 +160,7 @@ export class ArtistsController {
   @Get(':id/market-benchmark')
   @RequireRole('viewer')
   @RequirePermission('artist:read')
-  @ApiOperation({ summary: 'Benchmark de Mercado (Fase 3.2) — leitura rápida; refresh de coorte externa roda em background, nunca no request' })
+  @ApiOperation({ summary: 'Market Benchmark (Phase 3.2) — fast read; external cohort refresh runs in the background, never in the request' })
   async getMarketBenchmark(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -173,7 +173,7 @@ export class ArtistsController {
   @RequireRole('viewer')
   @RequirePermission('artist:read')
   @ApiOperation({
-    summary: 'AI Skill audience-health — síntese narrativa sobre Career Stage + Market Benchmark já calculados',
+    summary: 'AI Skill audience-health — narrative synthesis over the already-computed Career Stage + Market Benchmark',
   })
   async getAudienceHealth(
     @CurrentTenant() tenant: { id: string },
@@ -189,7 +189,7 @@ export class ArtistsController {
   @RequireRole('editor')
   @RequirePermission('artist:update')
   @Audit('artist.platform_profile_sync_requested')
-  @ApiOperation({ summary: 'Enfileirar sincronização manual de perfil externo do artista' })
+  @ApiOperation({ summary: 'Enqueue a manual sync of the artist\'s external profile' })
   syncPlatformProfile(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
@@ -209,7 +209,7 @@ export class ArtistsController {
   @Get(':id')
   @RequireRole('viewer')
   @RequirePermission('artist:read')
-  @ApiOperation({ summary: 'Obter artista por ID' })
+  @ApiOperation({ summary: 'Get an artist by ID' })
   findById(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -221,8 +221,8 @@ export class ArtistsController {
   @RequireRole('editor')
   @RequirePermission('artist:create')
   @Audit('artist.created')
-  @ApiOperation({ summary: 'Criar artista' })
-  @ApiResponse({ status: 201, description: 'Artista criado com sucesso' })
+  @ApiOperation({ summary: 'Create an artist' })
+  @ApiResponse({ status: 201, description: 'Artist created successfully' })
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   JwtAuth,
@@ -235,7 +235,7 @@ export class ArtistsController {
   @RequireRole('editor')
   @RequirePermission('artist:update')
   @Audit('artist.updated')
-  @ApiOperation({ summary: 'Atualizar artista' })
+  @ApiOperation({ summary: 'Update an artist' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string },
@@ -249,7 +249,7 @@ export class ArtistsController {
   @RequireRole('manager')
   @RequirePermission('artist:delete')
   @Audit('artist.deleted')
-  @ApiOperation({ summary: 'Remover artista (soft delete auditável)' })
+  @ApiOperation({ summary: 'Remove an artist (auditable soft delete)' })
   remove(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string },

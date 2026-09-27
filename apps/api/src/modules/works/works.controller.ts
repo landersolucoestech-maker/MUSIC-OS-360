@@ -23,7 +23,7 @@ export class WorksController {
   @Get()
   @RequireRole('viewer')
   @RequirePermission('work:read')
-  @ApiOperation({ summary: 'Listar obras do tenant' })
+  @ApiOperation({ summary: 'List the tenant\'s works' })
   list(@CurrentTenant() tenant: { id: string }, @Query() query: QueryWorkDto) {
     return this.service.list(tenant.id, query);
   }
@@ -31,7 +31,7 @@ export class WorksController {
   @Get('stats')
   @RequireRole('viewer')
   @RequirePermission('work:read')
-  @ApiOperation({ summary: 'Contagem exata de obras por status (tenant inteiro)' })
+  @ApiOperation({ summary: 'Exact work count per status (whole tenant)' })
   stats(@CurrentTenant() tenant: { id: string }, @Query() query: QueryWorkDto) {
     return this.service.stats(tenant.id, query);
   }
@@ -42,7 +42,7 @@ export class WorksController {
   @Get(['stats/genres', 'stats/generos'])
   @RequireRole('viewer')
   @RequirePermission('work:read')
-  @ApiOperation({ summary: 'Gêneros distintos das obras do tenant' })
+  @ApiOperation({ summary: 'Distinct genres of the tenant\'s works' })
   distinctMusicGenres(@CurrentTenant() tenant: { id: string }) {
     return this.service.distinctMusicGenres(tenant.id);
   }
@@ -50,7 +50,7 @@ export class WorksController {
   @Get(':id')
   @RequireRole('viewer')
   @RequirePermission('work:read')
-  @ApiOperation({ summary: 'Obter obra por ID' })
+  @ApiOperation({ summary: 'Get a work by ID' })
   findById(@CurrentTenant() tenant: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.service.findById(tenant.id, id);
   }
@@ -59,7 +59,7 @@ export class WorksController {
   @RequireRole('editor')
   @RequirePermission('work:create')
   @Audit('work.created')
-  @ApiOperation({ summary: 'Criar obra musical' })
+  @ApiOperation({ summary: 'Create a musical work' })
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string },
@@ -72,7 +72,7 @@ export class WorksController {
   @RequireRole('editor')
   @RequirePermission('work:update')
   @Audit('work.updated')
-  @ApiOperation({ summary: 'Atualizar obra' })
+  @ApiOperation({ summary: 'Update a work' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string },
@@ -86,7 +86,7 @@ export class WorksController {
   @RequireRole('manager')
   @RequirePermission('work:delete')
   @Audit('work.deleted')
-  @ApiOperation({ summary: 'Remover obra (soft delete)' })
+  @ApiOperation({ summary: 'Remove a work (soft delete)' })
   remove(@CurrentTenant() tenant: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.service.softDelete(tenant.id, id);
   }

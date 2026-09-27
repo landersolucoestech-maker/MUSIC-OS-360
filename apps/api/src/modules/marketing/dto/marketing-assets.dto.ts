@@ -71,17 +71,17 @@ export class CreateMarketingAssetDto {
   @IsUUID()
   marketingProjectId?: string | null;
 
-  @ApiPropertyOptional({ description: 'Projeto musical de origem do ativo produzido.' })
+  @ApiPropertyOptional({ description: 'Music project the produced asset originates from.' })
   @IsOptional()
   @IsUUID()
   projectId?: string | null;
 
-  @ApiPropertyOptional({ description: 'Tarefa operacional que gerou o ativo.' })
+  @ApiPropertyOptional({ description: 'Operational task that generated the asset.' })
   @IsOptional()
   @IsUUID()
   taskId?: string | null;
 
-  @ApiPropertyOptional({ description: 'Setor que produziu o ativo: design, audiovisual, marketing, conteudo, etc.' })
+  @ApiPropertyOptional({ description: 'Department that produced the asset: design, audiovisual, marketing, content, etc.' })
   @IsOptional()
   @IsString()
   @MaxLength(80)
@@ -167,17 +167,17 @@ export class QueryMarketingAssetDto extends PaginationDto {
   @IsUUID()
   companyId?: string;
 
-  @ApiPropertyOptional({ description: 'Projeto musical de origem do ativo produzido.' })
+  @ApiPropertyOptional({ description: 'Music project the produced asset originates from.' })
   @IsOptional()
   @IsUUID()
   projectId?: string;
 
-  @ApiPropertyOptional({ description: 'Tarefa operacional que gerou o ativo.' })
+  @ApiPropertyOptional({ description: 'Operational task that generated the asset.' })
   @IsOptional()
   @IsUUID()
   taskId?: string;
 
-  @ApiPropertyOptional({ description: 'Setor que produziu o ativo.' })
+  @ApiPropertyOptional({ description: 'Department that produced the asset.' })
   @IsOptional()
   @IsString()
   sourceDepartment?: string;

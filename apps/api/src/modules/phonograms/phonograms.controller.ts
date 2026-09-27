@@ -23,7 +23,7 @@ export class PhonogramsController {
   @Get()
   @RequireRole('viewer')
   @RequirePermission('phonogram:read')
-  @ApiOperation({ summary: 'Listar fonogramas do tenant' })
+  @ApiOperation({ summary: 'List the tenant\'s phonograms' })
   list(@CurrentTenant() tenant: { id: string }, @Query() query: QueryPhonogramDto) {
     return this.service.list(tenant.id, query);
   }
@@ -31,7 +31,7 @@ export class PhonogramsController {
   @Get('stats')
   @RequireRole('viewer')
   @RequirePermission('phonogram:read')
-  @ApiOperation({ summary: 'Contagem exata de fonogramas por status (tenant inteiro)' })
+  @ApiOperation({ summary: 'Exact phonogram count per status (whole tenant)' })
   stats(@CurrentTenant() tenant: { id: string }, @Query() query: QueryPhonogramDto) {
     return this.service.stats(tenant.id, query);
   }
@@ -42,7 +42,7 @@ export class PhonogramsController {
   @Get(['stats/genres', 'stats/generos'])
   @RequireRole('viewer')
   @RequirePermission('phonogram:read')
-  @ApiOperation({ summary: 'Gêneros distintos dos fonogramas do tenant' })
+  @ApiOperation({ summary: 'Distinct genres of the tenant\'s phonograms' })
   distinctMusicGenres(@CurrentTenant() tenant: { id: string }) {
     return this.service.distinctMusicGenres(tenant.id);
   }
@@ -50,7 +50,7 @@ export class PhonogramsController {
   @Get(':id')
   @RequireRole('viewer')
   @RequirePermission('phonogram:read')
-  @ApiOperation({ summary: 'Obter fonograma por ID' })
+  @ApiOperation({ summary: 'Get a phonogram by ID' })
   findById(@CurrentTenant() tenant: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.service.findById(tenant.id, id);
   }
@@ -59,7 +59,7 @@ export class PhonogramsController {
   @RequireRole('editor')
   @RequirePermission('phonogram:create')
   @Audit('phonogram.created')
-  @ApiOperation({ summary: 'Criar fonograma' })
+  @ApiOperation({ summary: 'Create a phonogram' })
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string },
@@ -72,7 +72,7 @@ export class PhonogramsController {
   @RequireRole('editor')
   @RequirePermission('phonogram:update')
   @Audit('phonogram.updated')
-  @ApiOperation({ summary: 'Atualizar fonograma' })
+  @ApiOperation({ summary: 'Update a phonogram' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string },
@@ -86,7 +86,7 @@ export class PhonogramsController {
   @RequireRole('manager')
   @RequirePermission('phonogram:delete')
   @Audit('phonogram.deleted')
-  @ApiOperation({ summary: 'Remover fonograma (soft delete)' })
+  @ApiOperation({ summary: 'Remove a phonogram (soft delete)' })
   remove(@CurrentTenant() tenant: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.service.softDelete(tenant.id, id);
   }

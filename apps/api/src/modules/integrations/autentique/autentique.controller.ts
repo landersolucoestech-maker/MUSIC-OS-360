@@ -20,7 +20,7 @@ export class AutentiqueController {
   @RequiresIntegration('autentique')
   @UseInterceptors(IdempotencyInterceptor)
   @Audit('integration.autentique_document_created')
-  @ApiOperation({ summary: 'Criar documento Autentique para assinatura' })
+  @ApiOperation({ summary: 'Create an Autentique document for signing' })
   @HttpCode(HttpStatus.CREATED)
   createDocument(@Request() req: any, @Body() dto: CreateAutentiqueDocumentDto) {
     return this.autentique.sendForSignature({
@@ -39,7 +39,7 @@ export class AutentiqueController {
   @RequiresIntegration('autentique')
   @UseInterceptors(IdempotencyInterceptor)
   @Audit('integration.autentique_signature_requested')
-  @ApiOperation({ summary: 'Enviar contrato/documento para assinatura Autentique' })
+  @ApiOperation({ summary: 'Send a contract/document for Autentique signing' })
   @HttpCode(HttpStatus.OK)
   requestSignature(@Request() req: any, @Body() dto: SendForSignatureDto) {
     return this.autentique.sendForSignature({
@@ -53,7 +53,7 @@ export class AutentiqueController {
 
   @Post('webhook')
   @Public()
-  @ApiOperation({ summary: 'Webhook Autentique protegido por x-autentique-secret' })
+  @ApiOperation({ summary: 'Autentique webhook protected by x-autentique-secret' })
   @HttpCode(HttpStatus.OK)
   webhook(
     @Body() payload: any,

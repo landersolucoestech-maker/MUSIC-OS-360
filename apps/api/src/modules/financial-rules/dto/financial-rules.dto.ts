@@ -18,7 +18,7 @@ export class CreateFinancialRuleDto {
 }
 
 export class UpdateFinancialRuleDto extends PartialType(CreateFinancialRuleDto) {
-  @ApiPropertyOptional({ description: 'updated_at lido pelo cliente antes de editar — detecta edição concorrente (409 se divergir)' })
+  @ApiPropertyOptional({ description: 'updated_at read by the client before editing — detects concurrent edits (409 on mismatch)' })
   @IsOptional() @IsString() expectedUpdatedAt?: string;
 }
 

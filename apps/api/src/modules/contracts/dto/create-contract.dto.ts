@@ -159,7 +159,7 @@ export class CreateContractDto {
   @IsOptional() @IsArray()
   signers?: unknown[];
 
-  @ApiPropertyOptional({ type: [Object], description: 'Documentos anexos (metadata real de upload R2 — name/size/type/path/url).' })
+  @ApiPropertyOptional({ type: [Object], description: 'Attached documents (real R2 upload metadata — name/size/type/path/url).' })
   @IsOptional() @IsArray()
   documents?: unknown[];
 

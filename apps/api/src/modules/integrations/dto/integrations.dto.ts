@@ -15,7 +15,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 // tolerating unmodeled provider fields -- see IntegrationsController.
 
 export class OAuthInitDto {
-  @ApiProperty({ description: 'Plataforma que iniciará o fluxo OAuth' })
+  @ApiProperty({ description: 'Platform that will start the OAuth flow' })
   @IsString() @IsNotEmpty()
   @IsIn([
     'corp_instagram', 'meta_business', 'meta_ads',
@@ -28,11 +28,11 @@ export class OAuthInitDto {
 }
 
 export class OAuthExchangeDto {
-  @ApiProperty({ description: 'Código de autorização retornado pela plataforma' })
+  @ApiProperty({ description: 'Authorization code returned by the platform' })
   @IsString() @IsNotEmpty()
   code!: string;
 
-  @ApiProperty({ description: 'Identificador da plataforma (ex: corp_instagram, corp_tiktok, corp_youtube)' })
+  @ApiProperty({ description: 'Platform identifier (e.g. corp_instagram, corp_tiktok, corp_youtube)' })
   @IsString() @IsNotEmpty()
   @IsIn([
     'corp_instagram', 'meta_business', 'meta_ads',
@@ -42,81 +42,81 @@ export class OAuthExchangeDto {
   ])
   platform!: string;
 
-  @ApiProperty({ description: 'Token de troca de uso único emitido por POST /oauth/init (substitui redirect_uri)' })
+  @ApiProperty({ description: 'Single-use exchange token issued by POST /oauth/init (replaces redirect_uri)' })
   @IsString() @IsNotEmpty()
   exchange_token!: string;
 }
 
 export class ConfigureAutentiqueDto {
-  @ApiProperty({ description: 'Token de API da Autentique' })
+  @ApiProperty({ description: 'Autentique API token' })
   @IsString() @IsNotEmpty()
   apiToken!: string;
 }
 
 export class AutentiqueSignerDto {
-  @ApiProperty({ description: 'Nome do signatário' })
+  @ApiProperty({ description: 'Signer name' })
   @IsString() @IsNotEmpty()
   name!: string;
 
-  @ApiProperty({ description: 'E-mail do signatário' })
+  @ApiProperty({ description: 'Signer e-mail' })
   @IsEmail()
   email!: string;
 }
 
 export class CreateAutentiqueDocumentDto {
-  @ApiProperty({ description: 'Nome do documento' })
+  @ApiProperty({ description: 'Document name' })
   @IsString() @IsNotEmpty()
   name!: string;
 
-  @ApiProperty({ description: 'Conteúdo do arquivo em base64' })
+  @ApiProperty({ description: 'File content in base64' })
   @IsString() @IsBase64()
   fileBase64!: string;
 
-  @ApiProperty({ description: 'Lista de signatários', type: 'array' })
+  @ApiProperty({ description: 'Signers list', type: 'array' })
   @IsArray()
   signers!: AutentiqueSignerDto[];
 
-  @ApiPropertyOptional({ description: 'ID do contrato interno vinculado ao documento' })
+  @ApiPropertyOptional({ description: 'ID of the internal contract linked to the document' })
   @IsOptional() @IsString()
   contractId?: string;
 }
 
 export class SendForSignatureDto {
-  @ApiProperty({ description: 'ID do contrato na plataforma' })
+  @ApiProperty({ description: 'Contract ID on the platform' })
   @IsString() @IsNotEmpty()
   contractId!: string;
 
-  @ApiProperty({ description: 'Nome do documento' })
+  @ApiProperty({ description: 'Document name' })
   @IsString() @IsNotEmpty()
   name!: string;
 
-  @ApiProperty({ description: 'Conteúdo do ficheiro em base64' })
+  @ApiProperty({ description: 'File content in base64' })
   @IsString() @IsBase64()
   fileBase64!: string;
 
-  @ApiProperty({ description: 'Lista de signatários', type: 'array' })
+  @ApiProperty({ description: 'Signers list', type: 'array' })
   @IsArray()
   signers!: AutentiqueSignerDto[];
 }
 
 export class RecognizeAudioDto {
-  @ApiProperty({ description: 'Áudio em base64 (mp3, wav)' })
+  @ApiProperty({ description: 'Audio in base64 (mp3, wav)' })
   @IsString() @IsBase64()
   audioBase64!: string;
 }
 
 export class SpotifyConnectDto {
-  @ApiProperty({ description: 'Código OAuth devolvido pelo Spotify' })
+  @ApiProperty({ description: 'OAuth code returned by Spotify' })
   @IsString() @IsNotEmpty()
   code!: string;
 
-  @ApiProperty({ description: 'State passado no fluxo OAuth' })
+  @ApiProperty({ description: 'State passed in the OAuth flow' })
   @IsString() @IsNotEmpty()
   state!: string;
 }
 
 export class SyncSpotifyArtistDto {
-  @ApiProperty({ description: 'URL do perfil do artista no Spotify' })
+  @ApiProperty({ description: 'Artist profile URL on Spotify' })
   @IsString() @IsNotEmpty() @Matches(/^https:\/\/open\.spotify\.com\/(?:intl-[a-z]{2}\/)?artist\/[A-Za-z0-9]{22}(?:[/?#].*)?$/i, { message: 'Informe uma URL válida do Spotify' })
   spotifyUrl!: string;
 }
@@ -133,7 +133,7 @@ export class RequestExternalDataSyncDto {
 }
 
 export class DistributorSubmitDto {
-  @ApiProperty({ description: 'ID do provider distribuidor registrado (não há default — nenhum provider real está registrado em produção)' })
+  @ApiProperty({ description: 'Registered distributor provider ID (no default — no real provider is registered in production)' })
   @IsString() @IsNotEmpty()
   providerId!: string;
 
@@ -154,7 +154,7 @@ export class DistributorSubmitDto {
 }
 
 export class SocietySubmitDto {
-  @ApiProperty({ description: 'ID do provider de sociedade/PRO registrado (não há default — nenhum provider real está registrado em produção)' })
+  @ApiProperty({ description: 'Registered society/PRO provider ID (no default — no real provider is registered in production)' })
   @IsString() @IsNotEmpty()
   providerId!: string;
 
@@ -175,7 +175,7 @@ export class SocietySubmitDto {
 }
 
 export class ExternalDataStatusCheckDto {
-  @ApiProperty({ description: 'ID do provider registrado (não há default — nenhum provider real está registrado em produção)' })
+  @ApiProperty({ description: 'Registered provider ID (no default — no real provider is registered in production)' })
   @IsString() @IsNotEmpty()
   providerId!: string;
 
@@ -225,17 +225,17 @@ export class ConfigureSoundCloudDto {
 }
 
 export class OAuthCodeStateDto {
-  @ApiProperty({ description: 'Código de autorização retornado pela plataforma (Instagram/TikTok/Google Ads)' })
+  @ApiProperty({ description: 'Authorization code returned by the platform (Instagram/TikTok/Google Ads)' })
   @IsString() @IsNotEmpty()
   code!: string;
 
-  @ApiProperty({ description: 'State opaco emitido em /oauth/init, usado para correlacionar o callback' })
+  @ApiProperty({ description: 'Opaque state issued by /oauth/init, used to correlate the callback' })
   @IsString() @IsNotEmpty()
   state!: string;
 }
 
 export class AutentiqueWebhookDto {
-  @ApiProperty({ description: 'Tipo de evento enviado pela Autentique (ex: document.signed)' })
+  @ApiProperty({ description: 'Event type sent by Autentique (e.g. document.signed)' })
   @IsString() @IsNotEmpty()
   event!: string;
 

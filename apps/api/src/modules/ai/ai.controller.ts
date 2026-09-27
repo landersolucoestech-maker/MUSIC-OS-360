@@ -33,7 +33,7 @@ export class AIController {
   constructor(private readonly ai: AIService) {}
 
   @Post('complete')
-  @ApiOperation({ summary: 'Completion genérica com fallback multi-provider' })
+  @ApiOperation({ summary: 'Generic completion with multi-provider fallback' })
   @HttpCode(HttpStatus.OK)
   complete(@Request() req: any, @Body() dto: AICompletionDto) {
     assertSystemPromptAllowed(req, dto.systemPrompt);
@@ -70,7 +70,7 @@ export class AIController {
   }
 
   @Post('biography')
-  @ApiOperation({ summary: 'Gerar biografia de artista' })
+  @ApiOperation({ summary: 'Generate an artist biography' })
   @HttpCode(HttpStatus.OK)
   async biography(@Request() req: any, @Body() dto: GenerateBiographyDto) {
     const content = await this.ai.generateBiography(
@@ -83,7 +83,7 @@ export class AIController {
   }
 
   @Post('campaign-copy')
-  @ApiOperation({ summary: 'Gerar copy para campanha de marketing' })
+  @ApiOperation({ summary: 'Generate copy for a marketing campaign' })
   @HttpCode(HttpStatus.OK)
   async campaignCopy(@Request() req: any, @Body() dto: GenerateCampaignCopyDto) {
     const content = await this.ai.generateCampaignCopy(
@@ -95,7 +95,7 @@ export class AIController {
   }
 
   @Post('marketing-suggestion')
-  @ApiOperation({ summary: 'Gerar sugestão de conteúdo de marketing (JSON estruturado, systemPrompt fixo no servidor)' })
+  @ApiOperation({ summary: 'Generate a marketing content suggestion (structured JSON, server-fixed systemPrompt)' })
   @HttpCode(HttpStatus.OK)
   async marketingSuggestion(@Request() req: any, @Body() dto: GenerateMarketingSuggestionDto) {
     const content = await this.ai.generateMarketingSuggestion(
@@ -108,7 +108,7 @@ export class AIController {
 
   @Post('analyze-contract')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Analisar contrato e identificar cláusulas problemáticas (manager+)' })
+  @ApiOperation({ summary: 'Analyze a contract and flag problematic clauses (manager+)' })
   @HttpCode(HttpStatus.OK)
   async analyzeContract(@Request() req: any, @Body() dto: AnalyzeContractDto) {
     const content = await this.ai.analyzeContract(
@@ -121,7 +121,7 @@ export class AIController {
 
   @Get('cost-summary')
   @RequireRole('admin')
-  @ApiOperation({ summary: 'Resumo de custos de AI do tenant (admin+)' })
+  @ApiOperation({ summary: 'Tenant AI cost summary (admin+)' })
   getCostSummary(@Request() req: any) {
     return this.ai.getCostSummary(req.tenant?.id ?? req.tenantId);
   }

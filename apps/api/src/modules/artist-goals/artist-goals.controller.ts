@@ -20,7 +20,7 @@ export class ArtistGoalsController {
   @Get()
   @RequireRole('viewer')
   @RequirePermission('artist_goal:read')
-  @ApiOperation({ summary: 'Listar metas de artistas do tenant' })
+  @ApiOperation({ summary: 'List the tenant\'s artist goals' })
   list(
     @CurrentTenant() tenant: { id: string },
     @Query('artist_id') artist_id?: string,
@@ -43,7 +43,7 @@ export class ArtistGoalsController {
   @Get(':id')
   @RequireRole('viewer')
   @RequirePermission('artist_goal:read')
-  @ApiOperation({ summary: 'Obter meta de artista por ID' })
+  @ApiOperation({ summary: 'Get an artist goal by ID' })
   findOne(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -54,7 +54,7 @@ export class ArtistGoalsController {
   @Post()
   @RequireRole('editor')
   @RequirePermission('artist_goal:create')
-  @ApiOperation({ summary: 'Criar meta de artista' })
+  @ApiOperation({ summary: 'Create an artist goal' })
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
@@ -66,7 +66,7 @@ export class ArtistGoalsController {
   @Patch(':id')
   @RequireRole('editor')
   @RequirePermission('artist_goal:update')
-  @ApiOperation({ summary: 'Atualizar meta de artista' })
+  @ApiOperation({ summary: 'Update an artist goal' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
@@ -79,7 +79,7 @@ export class ArtistGoalsController {
   @Delete(':id')
   @RequireRole('manager')
   @RequirePermission('artist_goal:delete')
-  @ApiOperation({ summary: 'Remover meta de artista (soft delete)' })
+  @ApiOperation({ summary: 'Remove an artist goal (soft delete)' })
   remove(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,

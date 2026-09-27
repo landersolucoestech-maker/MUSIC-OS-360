@@ -26,7 +26,7 @@ export class ContractsController {
   @Get()
   @RequireRole('viewer')
   @RequirePermission('contract:read')
-  @ApiOperation({ summary: 'Listar contratos do tenant' })
+  @ApiOperation({ summary: 'List the tenant\'s contracts' })
   list(@CurrentTenant() tenant: { id: string }, @Query() query: QueryContractDto) {
     return this.service.list(tenant.id, query);
   }
@@ -34,7 +34,7 @@ export class ContractsController {
   @Get('stats')
   @RequireRole('viewer')
   @RequirePermission('contract:read')
-  @ApiOperation({ summary: 'Contagem + soma de valor por status, sobre o tenant inteiro' })
+  @ApiOperation({ summary: 'Count + sum of value per status, over the whole tenant' })
   stats(@CurrentTenant() tenant: { id: string }) {
     return this.service.stats(tenant.id);
   }
@@ -42,7 +42,7 @@ export class ContractsController {
   @Get(':id')
   @RequireRole('viewer')
   @RequirePermission('contract:read')
-  @ApiOperation({ summary: 'Obter contrato por ID' })
+  @ApiOperation({ summary: 'Get a contract by ID' })
   findById(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   JwtAuth,
@@ -56,8 +56,8 @@ export class ContractsController {
   @RequirePermission('contract:create')
   @Audit('contract.created')
   @UseInterceptors(IdempotencyInterceptor)
-  @ApiOperation({ summary: 'Criar contrato' })
-  @ApiHeader({ name: 'X-Idempotency-Key', description: 'UUID único por operação — previne criação de contratos duplicados', required: false })
+  @ApiOperation({ summary: 'Create a contract' })
+  @ApiHeader({ name: 'X-Idempotency-Key', description: 'Unique UUID per operation — prevents duplicate contract creation', required: false })
   create(
     @CurrentTenant() tenant: { id: string; org_id?: string },
     @CurrentUser()   user:   JwtAuth,
@@ -70,7 +70,7 @@ export class ContractsController {
   @RequireRole('editor')
   @RequirePermission('contract:update')
   @Audit('contract.updated')
-  @ApiOperation({ summary: 'Atualizar contrato' })
+  @ApiOperation({ summary: 'Update a contract' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   JwtAuth,
@@ -84,7 +84,7 @@ export class ContractsController {
   @RequireRole('manager')
   @RequirePermission('contract:cancel')
   @Audit('contract.cancelled')
-  @ApiOperation({ summary: 'Cancelar contrato (soft delete auditável)' })
+  @ApiOperation({ summary: 'Cancel a contract (auditable soft delete)' })
   remove(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   JwtAuth,

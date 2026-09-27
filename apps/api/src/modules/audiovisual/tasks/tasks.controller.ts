@@ -14,13 +14,13 @@ export class AudiovisualTasksController {
   constructor(private readonly svc: AudiovisualTasksService) {}
 
   @Get('projects/:projectId/tasks') @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar tarefas do projeto' })
+  @ApiOperation({ summary: 'List project tasks' })
   list(@CurrentTenant() t: { id: string }, @Param('projectId', ParseUUIDPipe) projectId: string) {
     return this.svc.listByProject(t.id, projectId);
   }
 
   @Post('projects/:projectId/tasks') @RequireRole('editor') @Audit('audiovisual.task.created')
-  @ApiOperation({ summary: 'Criar tarefa manual' })
+  @ApiOperation({ summary: 'Create a manual task' })
   create(
     @CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth,
     @Param('projectId', ParseUUIDPipe) projectId: string, @Body() dto: CreateTaskInput,
@@ -29,7 +29,7 @@ export class AudiovisualTasksController {
   }
 
   @Patch('tasks/:id') @RequireRole('editor') @Audit('audiovisual.task.updated')
-  @ApiOperation({ summary: 'Atualizar tarefa' })
+  @ApiOperation({ summary: 'Update a task' })
   update(
     @CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth,
     @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateTaskInput,
@@ -38,7 +38,7 @@ export class AudiovisualTasksController {
   }
 
   @Delete('tasks/:id') @RequireRole('editor') @Audit('audiovisual.task.deleted')
-  @ApiOperation({ summary: 'Remover tarefa (soft delete)' })
+  @ApiOperation({ summary: 'Remove a task (soft delete)' })
   remove(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.remove(t.id, u?.userId ?? '', id);
   }

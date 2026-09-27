@@ -17,7 +17,7 @@ export class ContractServiceTypesController {
   @Get()
   @RequireRole('viewer')
   @RequirePermission('contract_service_type:read')
-  @ApiOperation({ summary: 'Listar tipos de serviço de contrato' })
+  @ApiOperation({ summary: 'List contract service types' })
   list(@CurrentTenant() t: { id: string }) {
     return this.svc.list(t.id);
   }
@@ -25,7 +25,7 @@ export class ContractServiceTypesController {
   @Get(':id')
   @RequireRole('viewer')
   @RequirePermission('contract_service_type:read')
-  @ApiOperation({ summary: 'Obter tipo de serviço por ID' })
+  @ApiOperation({ summary: 'Get a service type by ID' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(t.id, id);
   }
@@ -34,7 +34,7 @@ export class ContractServiceTypesController {
   @RequireRole('editor')
   @RequirePermission('contract_service_type:create')
   @Audit('contract_service_type.created')
-  @ApiOperation({ summary: 'Criar tipo de serviço de contrato' })
+  @ApiOperation({ summary: 'Create a contract service type' })
   create(@CurrentTenant() t: { id: string }, @Body() dto: CreateContractServiceTypeDto) {
     return this.svc.create(t.id, dto);
   }
@@ -43,7 +43,7 @@ export class ContractServiceTypesController {
   @RequireRole('editor')
   @RequirePermission('contract_service_type:update')
   @Audit('contract_service_type.updated')
-  @ApiOperation({ summary: 'Atualizar tipo de serviço de contrato' })
+  @ApiOperation({ summary: 'Update a contract service type' })
   update(
     @CurrentTenant() t: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -56,7 +56,7 @@ export class ContractServiceTypesController {
   @RequireRole('manager')
   @RequirePermission('contract_service_type:archive')
   @Audit('contract_service_type.deleted')
-  @ApiOperation({ summary: 'Arquivar (soft-delete) tipo de serviço de contrato' })
+  @ApiOperation({ summary: 'Archive (soft delete) a contract service type' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.remove(t.id, id);
   }

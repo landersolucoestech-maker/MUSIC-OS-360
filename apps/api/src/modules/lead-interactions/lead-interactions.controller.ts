@@ -12,10 +12,10 @@ import { CreateLeadInteractionDto, QueryLeadInteractionDto } from './dto/lead-in
 export class LeadInteractionsController {
   constructor(private readonly svc: LeadInteractionsService) {}
 
-  @Get()  @RequireRole('viewer') @RequirePermission('lead_interaction:read') @ApiOperation({ summary: 'Listar interacções de leads' })
+  @Get()  @RequireRole('viewer') @RequirePermission('lead_interaction:read') @ApiOperation({ summary: 'List lead interactions' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryLeadInteractionDto) { return this.svc.list(t.id, q); }
 
-  @Post() @RequireRole('editor') @RequirePermission('lead_interaction:create') @Audit('lead_interaction.created') @ApiOperation({ summary: 'Registar interacção' })
+  @Post() @RequireRole('editor') @RequirePermission('lead_interaction:create') @Audit('lead_interaction.created') @ApiOperation({ summary: 'Register an interaction' })
   create(@CurrentTenant() t: { id: string }, @CurrentUser() u: { userId: string }, @Body() dto: CreateLeadInteractionDto) { return this.svc.create(t.id, u.userId, dto); }
 
   @Delete(':id') @RequireRole('manager') @RequirePermission('lead_interaction:delete') @Audit('lead_interaction.deleted') @ApiOperation({ summary: 'Remover interacção' })

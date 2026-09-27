@@ -30,7 +30,7 @@ export class RbacAdminController {
    * already see this UI at all (route-level @RequireRole above).
    */
   @Get('authority-mode')
-  @ApiOperation({ summary: 'Modo de autoridade RBAC persistido em vigor (OFF/SHADOW/ON) e se está de fato aplicado' })
+  @ApiOperation({ summary: 'Persisted RBAC authority mode in force (OFF/SHADOW/ON) and whether it is actually applied' })
   authorityMode() {
     return {
       mode: getPersistedAuthorityMode(),
@@ -39,7 +39,7 @@ export class RbacAdminController {
   }
 
   @Get('roles')
-  @ApiOperation({ summary: 'Listar papéis globais e do tenant' })
+  @ApiOperation({ summary: 'List global and tenant roles' })
   roles(
     @CurrentTenant() tenant: { id: string },
     @Query('includeArchived') includeArchived?: string,
@@ -48,7 +48,7 @@ export class RbacAdminController {
   }
 
   @Get('roles/:roleId')
-  @ApiOperation({ summary: 'Detalhar papel, herança, permissões efetivas e usuários impactados' })
+  @ApiOperation({ summary: 'Role detail: inheritance, effective permissions and impacted users' })
   roleDetail(
     @CurrentTenant() tenant: { id: string },
     @Param('roleId', ParseUUIDPipe) roleId: string,
@@ -57,13 +57,13 @@ export class RbacAdminController {
   }
 
   @Get('permissions')
-  @ApiOperation({ summary: 'Listar catálogo de permissões atribuíveis' })
+  @ApiOperation({ summary: 'List the catalog of assignable permissions' })
   permissions() {
     return this.service.listPermissions();
   }
 
   @Get('grants')
-  @ApiOperation({ summary: 'Listar grants dos papéis disponíveis no tenant' })
+  @ApiOperation({ summary: 'List the grants of the roles available in the tenant' })
   grants(@CurrentTenant() tenant: { id: string }) {
     return this.service.listGrants(tenant.id);
   }

@@ -12,12 +12,12 @@ import { CreateSupportRequestDto } from './dto/support-requests.dto';
 export class SupportRequestsController {
   constructor(private readonly svc: SupportRequestsService) {}
 
-  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'Listar solicitações (ordenadas por votos)' })
+  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'List requests (ordered by votes)' })
   list(@CurrentTenant() t: { id: string }) {
     return this.svc.list(t.id);
   }
 
-  @Post() @RequireRole('viewer') @Audit('support-request.created') @ApiOperation({ summary: 'Criar solicitação' })
+  @Post() @RequireRole('viewer') @Audit('support-request.created') @ApiOperation({ summary: 'Create a request' })
   create(
     @CurrentTenant() t: { id: string },
     @CurrentUser()   u: JwtAuth,
@@ -26,7 +26,7 @@ export class SupportRequestsController {
     return this.svc.create(t.id, u?.userId ?? 'unknown', dto);
   }
 
-  @Post(':id/upvote') @RequireRole('viewer') @HttpCode(HttpStatus.OK) @ApiOperation({ summary: 'Votar em uma solicitação' })
+  @Post(':id/upvote') @RequireRole('viewer') @HttpCode(HttpStatus.OK) @ApiOperation({ summary: 'Vote on a request' })
   upvote(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.upvote(t.id, id);
   }

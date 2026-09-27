@@ -110,7 +110,7 @@ export class IntegrationsController {
   @Post('oauth/init')
   @RequireRole('editor')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Emite exchange_token de uso único para iniciar fluxo OAuth de marketing' })
+  @ApiOperation({ summary: 'Issues a single-use exchange_token to start the marketing OAuth flow' })
   oauthInit(@Body() dto: OAuthInitDto, @Request() req: any): { exchange_token: string } {
     const token = randomUUID();
     // The authenticated caller's tenantId/userId travel with the exchange_token so
@@ -142,7 +142,7 @@ export class IntegrationsController {
   @Post('oauth/exchange')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Troca código OAuth e persiste credenciais criptografadas no servidor' })
+  @ApiOperation({ summary: 'Exchanges the OAuth code and persists encrypted credentials on the server' })
   async oauthExchange(@Body() dto: OAuthExchangeDto): Promise<{ connected: true; platform: string }> {
     const { code, platform, exchange_token } = dto;
 
@@ -382,7 +382,7 @@ export class IntegrationsController {
 
   @Get('oauth/status')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Consulta conexão OAuth persistida sem expor credenciais' })
+  @ApiOperation({ summary: 'Reads the persisted OAuth connection without exposing credentials' })
   oauthStatus(@Query('platform') platform: string, @Request() req: any) {
     const provider = this.resolveOAuthProvider(platform);
     return this.integrationBase.getOAuthStatus(
@@ -395,7 +395,7 @@ export class IntegrationsController {
   @Delete('oauth/disconnect')
   @RequireRole('admin')
   @Audit('integration.disconnected')
-  @ApiOperation({ summary: 'Remove conexão OAuth persistida (admin+)' })
+  @ApiOperation({ summary: 'Removes the persisted OAuth connection (admin+)' })
   @HttpCode(HttpStatus.NO_CONTENT)
   oauthDisconnect(@Query('platform') platform: string, @Request() req: any) {
     const provider = this.resolveOAuthProvider(platform);
@@ -420,7 +420,7 @@ export class IntegrationsController {
   @Get('providers')
   @RequireRole('viewer')
   @ApiOperation({
-    summary: 'Integrações resolvidas para este cliente (governança + capacidade + audiência + conexão)',
+    summary: 'Integrations resolved for this client (governance + capability + audience + connection)',
     description:
       'Resolvido pelo backend a partir da governança persistida (platform_integrations), da ' +
       'capacidade técnica derivada do código e da conexão do tenant. Só retorna o que o ' +
@@ -466,7 +466,7 @@ export class IntegrationsController {
 
   @Get('status')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Status de todas as integrações' })
+  @ApiOperation({ summary: 'Status of every integration' })
   getStatus() {
     return {
       acrcloud:    { configured: this.acrCloud.isConfigured() },
@@ -488,7 +488,7 @@ export class IntegrationsController {
   @Post('acrcloud/recognize')
   @RequireRole('editor')
   @Audit('integration.acr_recognized')
-  @ApiOperation({ summary: 'Identificar música por áudio (ACRCloud)' })
+  @ApiOperation({ summary: 'Identify a song by audio (ACRCloud)' })
   @HttpCode(HttpStatus.OK)
   recognizeAudio(@Body() dto: RecognizeAudioDto) {
     return this.acrCloud.recognize(dto.audioBase64);
@@ -499,7 +499,7 @@ export class IntegrationsController {
   @Post('autentique/configure')
   @RequireRole('admin')
   @Audit('integration.connected')
-  @ApiOperation({ summary: 'Configurar token de API Autentique (admin+)' })
+  @ApiOperation({ summary: 'Configure the Autentique API token (admin+)' })
   @HttpCode(HttpStatus.OK)
   configureAutentique(@Request() req: any, @Body() dto: ConfigureAutentiqueDto) {
     return this.autentique.configure(req.tenant?.id ?? req.tenantId, dto.apiToken);
@@ -509,7 +509,7 @@ export class IntegrationsController {
   @RequireRole('editor')
   @UseInterceptors(IdempotencyInterceptor)
   @Audit('integration.document_sent')
-  @ApiOperation({ summary: 'Enviar contrato para assinatura via Autentique' })
+  @ApiOperation({ summary: 'Send a contract for signing via Autentique' })
   sendForSignature(@Request() req: any, @Body() dto: SendForSignatureDto) {
     return this.autentique.sendForSignature({
       tenantId:   req.tenant?.id ?? req.tenantId,
@@ -522,7 +522,7 @@ export class IntegrationsController {
 
   @Post('autentique/webhook')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Webhook Autentique (assinatura concluída)' })
+  @ApiOperation({ summary: 'Autentique webhook (signature completed)' })
   @HttpCode(HttpStatus.OK)
   async autentiqueWebhook(@Body() payload: any) {
     // `payload: any` is deliberate: the global ValidationPipe (whitelist:true,
@@ -547,7 +547,7 @@ export class IntegrationsController {
 
   @Get('spotify/auth')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Iniciar fluxo OAuth Spotify' })
+  @ApiOperation({ summary: 'Start the Spotify OAuth flow' })
   spotifyAuthUrl(@Request() req: any) {
     return { url: this.spotify.getAuthUrl(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId) };
   }
@@ -578,7 +578,7 @@ export class IntegrationsController {
   @Post('spotify/sync-artist')
   @RequireRole('editor')
   @Audit('integration.spotify_synced')
-  @ApiOperation({ summary: 'Sincronizar métricas de artista no Spotify' })
+  @ApiOperation({ summary: 'Sync artist metrics on Spotify' })
   @HttpCode(HttpStatus.OK)
   syncSpotifyArtist(@Request() req: any, @Body() dto: SyncSpotifyArtistDto) {
     return this.spotify.syncArtistMetrics(req.tenant?.id ?? req.tenantId, dto.spotifyUrl);
@@ -587,7 +587,7 @@ export class IntegrationsController {
   @Delete('spotify/disconnect')
   @RequireRole('admin')
   @Audit('integration.disconnected')
-  @ApiOperation({ summary: 'Desconectar conta Spotify (admin+)' })
+  @ApiOperation({ summary: 'Disconnect the Spotify account (admin+)' })
   @HttpCode(HttpStatus.NO_CONTENT)
   spotifyDisconnect(@Request() req: any) {
     return this.spotify.disconnect(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId);
@@ -597,28 +597,28 @@ export class IntegrationsController {
 
   @Get('youtube/status')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Status integração YouTube' })
+  @ApiOperation({ summary: 'YouTube integration status' })
   youtubeStatus() {
     return { configured: this.youtube.isConfigured() };
   }
 
   @Get('youtube/channel/:id')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Estatísticas de canal YouTube' })
+  @ApiOperation({ summary: 'YouTube channel statistics' })
   getYouTubeChannel(@Param('id') id: string) {
     return this.youtube.getChannelStats(id);
   }
 
   @Get('youtube/video/:id')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Estatísticas de vídeo YouTube' })
+  @ApiOperation({ summary: 'YouTube video statistics' })
   getYouTubeVideo(@Param('id') id: string) {
     return this.youtube.getVideoStats(id);
   }
 
   @Get('youtube/search')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Buscar vídeos no YouTube' })
+  @ApiOperation({ summary: 'Search YouTube videos' })
   searchYouTube(@Query('q') q: string, @Query('limit') limit?: string) {
     return this.youtube.searchVideos(q, limit ? +limit : 10);
   }
@@ -627,28 +627,28 @@ export class IntegrationsController {
 
   @Get('deezer/artist/:id')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Estatísticas de artista no Deezer' })
+  @ApiOperation({ summary: 'Artist statistics on Deezer' })
   getDeezerArtist(@Param('id') id: string) {
     return this.deezer.getArtistStats(id);
   }
 
   @Get('deezer/artist/:id/top')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Top tracks do artista no Deezer' })
+  @ApiOperation({ summary: 'Artist top tracks on Deezer' })
   getDeezerTopTracks(@Param('id') id: string, @Query('limit') limit?: string) {
     return this.deezer.getTopTracks(id, limit ? +limit : 10);
   }
 
   @Get('deezer/album/:id')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Dados de álbum no Deezer' })
+  @ApiOperation({ summary: 'Album data on Deezer' })
   getDeezerAlbum(@Param('id') id: string) {
     return this.deezer.getAlbum(id);
   }
 
   @Get('deezer/search')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Buscar artistas no Deezer' })
+  @ApiOperation({ summary: 'Search artists on Deezer' })
   searchDeezer(@Query('q') q: string, @Query('limit') limit?: string) {
     return this.deezer.searchArtist(q, limit ? +limit : 5);
   }
@@ -658,7 +658,7 @@ export class IntegrationsController {
   @Post('soundcloud/configure')
   @RequireRole('admin')
   @Audit('integration.connected')
-  @ApiOperation({ summary: 'Configurar credenciais SoundCloud (admin+)' })
+  @ApiOperation({ summary: 'Configure SoundCloud credentials (admin+)' })
   @HttpCode(HttpStatus.OK)
   configureSoundCloud(
     @Request() req: any,
@@ -669,7 +669,7 @@ export class IntegrationsController {
 
   @Get('soundcloud/status')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Status integração SoundCloud' })
+  @ApiOperation({ summary: 'SoundCloud integration status' })
   soundCloudStatus(@Request() req: any) {
     return this.soundcloud.getProviderStatus(req.tenant?.id ?? req.tenantId);
   }
@@ -677,7 +677,7 @@ export class IntegrationsController {
   @Delete('soundcloud/disconnect')
   @RequireRole('admin')
   @Audit('integration.disconnected')
-  @ApiOperation({ summary: 'Desconectar SoundCloud (admin+)' })
+  @ApiOperation({ summary: 'Disconnect SoundCloud (admin+)' })
   @HttpCode(HttpStatus.NO_CONTENT)
   soundCloudDisconnect(@Request() req: any) {
     return this.soundcloud.disconnectProvider(req.tenant?.id ?? req.tenantId);
@@ -685,21 +685,21 @@ export class IntegrationsController {
 
   @Get('soundcloud/user')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Resolver perfil de usuário SoundCloud por URL' })
+  @ApiOperation({ summary: 'Resolve a SoundCloud user profile by URL' })
   resolveSoundCloudUser(@Query('url') url: string) {
     return this.soundcloud.resolveUser(url);
   }
 
   @Get('soundcloud/track/:id')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Estatísticas de track SoundCloud' })
+  @ApiOperation({ summary: 'SoundCloud track statistics' })
   getSoundCloudTrack(@Param('id') id: string) {
     return this.soundcloud.getTrackStats(id);
   }
 
   @Get('soundcloud/search')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Buscar tracks no SoundCloud' })
+  @ApiOperation({ summary: 'Search SoundCloud tracks' })
   searchSoundCloud(@Query('q') q: string, @Query('limit') limit?: string) {
     return this.soundcloud.searchTracks(q, limit ? +limit : 10);
   }
@@ -709,7 +709,7 @@ export class IntegrationsController {
   @Post('apple-music/configure')
   @RequireRole('admin')
   @Audit('integration.connected')
-  @ApiOperation({ summary: 'Configurar Apple Music Developer Token (admin+)' })
+  @ApiOperation({ summary: 'Configure the Apple Music Developer Token (admin+)' })
   @HttpCode(HttpStatus.OK)
   configureAppleMusic(
     @Request() req: any,
@@ -720,7 +720,7 @@ export class IntegrationsController {
 
   @Get('apple-music/status')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Status integração Apple Music' })
+  @ApiOperation({ summary: 'Apple Music integration status' })
   appleMusicStatus(@Request() req: any) {
     return this.appleMusic.getProviderStatus(req.tenant?.id ?? req.tenantId);
   }
@@ -728,7 +728,7 @@ export class IntegrationsController {
   @Delete('apple-music/disconnect')
   @RequireRole('admin')
   @Audit('integration.disconnected')
-  @ApiOperation({ summary: 'Desconectar Apple Music (admin+)' })
+  @ApiOperation({ summary: 'Disconnect Apple Music (admin+)' })
   @HttpCode(HttpStatus.NO_CONTENT)
   appleMusicDisconnect(@Request() req: any) {
     return this.appleMusic.disconnectProvider(req.tenant?.id ?? req.tenantId);
@@ -736,7 +736,7 @@ export class IntegrationsController {
 
   @Get('apple-music/artist/:id')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Buscar artista no catálogo Apple Music' })
+  @ApiOperation({ summary: 'Look up an artist in the Apple Music catalog' })
   getAppleMusicArtist(
     @Request() req: any,
     @Param('id') id: string,
@@ -747,7 +747,7 @@ export class IntegrationsController {
 
   @Get('apple-music/search')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Pesquisar no catálogo Apple Music' })
+  @ApiOperation({ summary: 'Search the Apple Music catalog' })
   searchAppleMusic(
     @Request() req: any,
     @Query('q') q: string,
@@ -765,7 +765,7 @@ export class IntegrationsController {
   @Post('whatsapp/configure')
   @RequireRole('admin')
   @Audit('integration.connected')
-  @ApiOperation({ summary: 'Configurar WhatsApp Cloud API (admin+)' })
+  @ApiOperation({ summary: 'Configure the WhatsApp Cloud API (admin+)' })
   @HttpCode(HttpStatus.OK)
   configureWhatsApp(
     @Request() req: any,
@@ -776,7 +776,7 @@ export class IntegrationsController {
 
   @Get('whatsapp/status')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Status integração WhatsApp' })
+  @ApiOperation({ summary: 'WhatsApp integration status' })
   whatsappStatus(@Request() req: any) {
     return this.whatsapp.getProviderStatus(req.tenant?.id ?? req.tenantId);
   }
@@ -784,7 +784,7 @@ export class IntegrationsController {
   @Delete('whatsapp/disconnect')
   @RequireRole('admin')
   @Audit('integration.disconnected')
-  @ApiOperation({ summary: 'Desconectar WhatsApp (admin+)' })
+  @ApiOperation({ summary: 'Disconnect WhatsApp (admin+)' })
   @HttpCode(HttpStatus.NO_CONTENT)
   whatsappDisconnect(@Request() req: any) {
     return this.whatsapp.disconnectProvider(req.tenant?.id ?? req.tenantId);
@@ -793,7 +793,7 @@ export class IntegrationsController {
   @Post('whatsapp/send')
   @RequireRole('editor')
   @Audit('integration.whatsapp_message_sent')
-  @ApiOperation({ summary: 'Enviar mensagem de texto via WhatsApp Cloud API' })
+  @ApiOperation({ summary: 'Send a text message via the WhatsApp Cloud API' })
   sendWhatsAppMessage(
     @Request() req: any,
     @Body() body: { to: string; body: string },
@@ -805,7 +805,7 @@ export class IntegrationsController {
 
   @Get('instagram/auth')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Iniciar fluxo OAuth Instagram (Meta)' })
+  @ApiOperation({ summary: 'Start the Instagram (Meta) OAuth flow' })
   instagramAuthUrl(@Request() req: any) {
     return { url: this.instagram.getAuthUrl(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId) };
   }
@@ -821,14 +821,14 @@ export class IntegrationsController {
 
   @Get('instagram/status')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Status integração Instagram' })
+  @ApiOperation({ summary: 'Instagram integration status' })
   instagramStatus(@Request() req: any) {
     return this.instagram.getProviderStatus(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId);
   }
 
   @Get('instagram/metrics')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Métricas da conta Instagram Business' })
+  @ApiOperation({ summary: 'Instagram Business account metrics' })
   instagramMetrics(@Request() req: any) {
     return this.instagram.getAccountMetrics(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId);
   }
@@ -836,7 +836,7 @@ export class IntegrationsController {
   @Delete('instagram/disconnect')
   @RequireRole('admin')
   @Audit('integration.disconnected')
-  @ApiOperation({ summary: 'Desconectar Instagram (admin+)' })
+  @ApiOperation({ summary: 'Disconnect Instagram (admin+)' })
   @HttpCode(HttpStatus.NO_CONTENT)
   instagramDisconnect(@Request() req: any) {
     return this.instagram.disconnectProvider(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId);
@@ -848,7 +848,7 @@ export class IntegrationsController {
 
   @Get('meta-corporate/status')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Status da conexão Meta corporativa (Business/Ads/Instagram)' })
+  @ApiOperation({ summary: 'Corporate Meta connection status (Business/Ads/Instagram)' })
   metaCorporateStatus(@Query('platform') platform: string, @Request() req: any) {
     if (!IntegrationsController.META_CORP_PLATFORMS.includes(platform)) {
       throw new BadRequestException(`Plataforma Meta corporativa inválida: ${platform}`);
@@ -859,7 +859,7 @@ export class IntegrationsController {
   @Delete('meta-corporate/disconnect')
   @RequireRole('admin')
   @Audit('integration.disconnected')
-  @ApiOperation({ summary: 'Desconectar conta Meta corporativa (admin+) — tenta revogar no Meta' })
+  @ApiOperation({ summary: 'Disconnect the corporate Meta account (admin+) — tries to revoke it at Meta' })
   @HttpCode(HttpStatus.NO_CONTENT)
   metaCorporateDisconnect(@Query('platform') platform: string, @Request() req: any) {
     if (!IntegrationsController.META_CORP_PLATFORMS.includes(platform)) {
@@ -873,7 +873,7 @@ export class IntegrationsController {
   @Post('tiktok/ads/configure')
   @RequireRole('admin')
   @Audit('integration.connected')
-  @ApiOperation({ summary: 'Configurar TikTok Ads (admin+)' })
+  @ApiOperation({ summary: 'Configure TikTok Ads (admin+)' })
   @HttpCode(HttpStatus.OK)
   configureTikTokAds(
     @Request() req: any,
@@ -886,7 +886,7 @@ export class IntegrationsController {
 
   @Get('tiktok/ads/status')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Status integração TikTok Ads' })
+  @ApiOperation({ summary: 'TikTok Ads integration status' })
   tiktokAdsStatus(@Request() req: any) {
     return this.tiktok.getAdsStatus(req.tenant?.id ?? req.tenantId);
   }
@@ -894,7 +894,7 @@ export class IntegrationsController {
   @Delete('tiktok/ads/disconnect')
   @RequireRole('admin')
   @Audit('integration.disconnected')
-  @ApiOperation({ summary: 'Desconectar TikTok Ads (admin+)' })
+  @ApiOperation({ summary: 'Disconnect TikTok Ads (admin+)' })
   @HttpCode(HttpStatus.NO_CONTENT)
   tiktokAdsDisconnect(@Request() req: any) {
     return this.tiktok.disconnectAds(req.tenant?.id ?? req.tenantId);
@@ -902,14 +902,14 @@ export class IntegrationsController {
 
   @Get('tiktok/ads/campaigns')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Listar campanhas TikTok Ads' })
+  @ApiOperation({ summary: 'List TikTok Ads campaigns' })
   tiktokAdsCampaigns(@Request() req: any) {
     return this.tiktok.getAdsCampaigns(req.tenant?.id ?? req.tenantId);
   }
 
   @Get('tiktok/ads/insights')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Insights de campanhas TikTok Ads' })
+  @ApiOperation({ summary: 'TikTok Ads campaign insights' })
   tiktokAdsInsights(
     @Request() req: any,
     @Query('start_date') startDate: string,
@@ -922,7 +922,7 @@ export class IntegrationsController {
 
   @Get('tiktok/auth')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Iniciar fluxo OAuth TikTok orgânico' })
+  @ApiOperation({ summary: 'Start the organic TikTok OAuth flow' })
   tiktokAuthUrl(@Request() req: any) {
     return { url: this.tiktok.getOAuthUrl(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId) };
   }
@@ -930,7 +930,7 @@ export class IntegrationsController {
   @Post('tiktok/callback')
   @RequireRole('editor')
   @Audit('integration.connected')
-  @ApiOperation({ summary: 'Callback OAuth TikTok orgânico' })
+  @ApiOperation({ summary: 'Organic TikTok OAuth callback' })
   @HttpCode(HttpStatus.OK)
   tiktokCallback(@Body() body: OAuthCodeStateDto) {
     return this.tiktok.handleOAuthCallback(body.code, body.state);
@@ -938,7 +938,7 @@ export class IntegrationsController {
 
   @Get('tiktok/status')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Status integração TikTok orgânico' })
+  @ApiOperation({ summary: 'Organic TikTok integration status' })
   tiktokStatus(@Request() req: any) {
     return this.tiktok.getOrganicStatus(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId);
   }
@@ -946,7 +946,7 @@ export class IntegrationsController {
   @Delete('tiktok/disconnect')
   @RequireRole('admin')
   @Audit('integration.disconnected')
-  @ApiOperation({ summary: 'Desconectar TikTok orgânico (admin+)' })
+  @ApiOperation({ summary: 'Disconnect organic TikTok (admin+)' })
   @HttpCode(HttpStatus.NO_CONTENT)
   tiktokDisconnect(@Request() req: any) {
     return this.tiktok.disconnectOrganic(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId);
@@ -957,7 +957,7 @@ export class IntegrationsController {
   @Post('google-ads/configure')
   @RequireRole('admin')
   @Audit('integration.connected')
-  @ApiOperation({ summary: 'Configurar Google Ads (admin+)' })
+  @ApiOperation({ summary: 'Configure Google Ads (admin+)' })
   @HttpCode(HttpStatus.OK)
   configureGoogleAds(
     @Request() req: any,
@@ -968,7 +968,7 @@ export class IntegrationsController {
 
   @Get('google-ads/auth')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Iniciar fluxo OAuth Google Ads' })
+  @ApiOperation({ summary: 'Start the Google Ads OAuth flow' })
   googleAdsAuthUrl(@Request() req: any) {
     return { url: this.googleAds.getOAuthUrl(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId) };
   }
@@ -984,7 +984,7 @@ export class IntegrationsController {
 
   @Get('google-ads/status')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Status integração Google Ads' })
+  @ApiOperation({ summary: 'Google Ads integration status' })
   googleAdsStatus(@Request() req: any) {
     return this.googleAds.getProviderStatus(req.tenant?.id ?? req.tenantId);
   }
@@ -992,7 +992,7 @@ export class IntegrationsController {
   @Delete('google-ads/disconnect')
   @RequireRole('admin')
   @Audit('integration.disconnected')
-  @ApiOperation({ summary: 'Desconectar Google Ads (admin+)' })
+  @ApiOperation({ summary: 'Disconnect Google Ads (admin+)' })
   @HttpCode(HttpStatus.NO_CONTENT)
   googleAdsDisconnect(@Request() req: any) {
     return this.googleAds.disconnectProvider(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId);
@@ -1000,7 +1000,7 @@ export class IntegrationsController {
 
   @Get('google-ads/campaigns')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Listar campanhas Google Ads' })
+  @ApiOperation({ summary: 'List Google Ads campaigns' })
   googleAdsCampaigns(@Request() req: any) {
     return this.googleAds.getCampaigns(req.tenant?.id ?? req.tenantId, req.auth?.userId ?? req.userId);
   }
@@ -1010,7 +1010,7 @@ export class IntegrationsController {
   @Post('abramus/configure')
   @RequireRole('admin')
   @Audit('integration.connected')
-  @ApiOperation({ summary: 'Configurar credenciais Abramus (admin+)' })
+  @ApiOperation({ summary: 'Configure Abramus credentials (admin+)' })
   @HttpCode(HttpStatus.OK)
   configureAbramus(
     @Request() req: any,
@@ -1021,7 +1021,7 @@ export class IntegrationsController {
 
   @Get('abramus/status')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Status integração Abramus' })
+  @ApiOperation({ summary: 'Abramus integration status' })
   abramusStatus(@Request() req: any) {
     return this.abramus.getProviderStatus(req.tenant?.id ?? req.tenantId);
   }
@@ -1029,7 +1029,7 @@ export class IntegrationsController {
   @Delete('abramus/disconnect')
   @RequireRole('admin')
   @Audit('integration.disconnected')
-  @ApiOperation({ summary: 'Desconectar Abramus (admin+)' })
+  @ApiOperation({ summary: 'Disconnect Abramus (admin+)' })
   @HttpCode(HttpStatus.NO_CONTENT)
   abramusDisconnect(@Request() req: any) {
     return this.abramus.disconnectProvider(req.tenant?.id ?? req.tenantId);
@@ -1037,7 +1037,7 @@ export class IntegrationsController {
 
   @Get('abramus/search-artist')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Buscar artista no Abramus' })
+  @ApiOperation({ summary: 'Look up an artist in Abramus' })
   abramusSearchArtist(
     @Request() req: any,
     @Query('q') q: string,
@@ -1048,7 +1048,7 @@ export class IntegrationsController {
 
   @Get('abramus/search-work')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Buscar obra no Abramus' })
+  @ApiOperation({ summary: 'Look up a work in Abramus' })
   abramusSearchWork(
     @Request() req: any,
     @Query('q') q: string,
@@ -1061,7 +1061,7 @@ export class IntegrationsController {
   @RequireRole('manager')
   @UseInterceptors(IdempotencyInterceptor)
   @Audit('integration.abramus_work_registered')
-  @ApiOperation({ summary: 'Registrar obra no Abramus (manager+)' })
+  @ApiOperation({ summary: 'Register a work in Abramus (manager+)' })
   abramusRegisterWork(@Request() req: any, @Body() body: RegisterAbramusWorkDto) {
     // AbramusService.registerWork uses `title` (not `titulo`) in the real Abramus
     // API call — mapped explicitly here to keep that existing wire contract while
@@ -1079,7 +1079,7 @@ export class IntegrationsController {
 
   @Get('abramus/statements')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Extratos de direitos autorais no Abramus (manager+)' })
+  @ApiOperation({ summary: 'Copyright statements in Abramus (manager+)' })
   abramusStatements(
     @Request() req: any,
     @Query('periodo') periodo?: string,

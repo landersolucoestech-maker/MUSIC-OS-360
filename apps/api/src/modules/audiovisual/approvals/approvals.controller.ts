@@ -16,18 +16,18 @@ import {
 export class AudiovisualApprovalsController {
   constructor(private readonly svc: AudiovisualApprovalsService) {}
 
-  @Get('approvals') @RequireRole('viewer') @ApiOperation({ summary: 'Listar aprovações' })
+  @Get('approvals') @RequireRole('viewer') @ApiOperation({ summary: 'List approvals' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryApprovalDto) {
     return this.svc.list(t.id, q);
   }
 
-  @Get('approvals/:id') @RequireRole('viewer') @ApiOperation({ summary: 'Obter aprovação' })
+  @Get('approvals/:id') @RequireRole('viewer') @ApiOperation({ summary: 'Get an approval' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(t.id, id);
   }
 
   @Post('projects/:projectId/approvals') @RequireRole('editor') @Audit('audiovisual.approval.requested')
-  @ApiOperation({ summary: 'Solicitar aprovação (projeto ou entregável específico)' })
+  @ApiOperation({ summary: 'Request an approval (project or specific deliverable)' })
   request(
     @CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth,
     @Param('projectId', ParseUUIDPipe) projectId: string, @Body() dto: RequestApprovalDto,
@@ -36,7 +36,7 @@ export class AudiovisualApprovalsController {
   }
 
   @Post('approvals/:id/decision') @RequireRole('manager') @Audit('audiovisual.approval.decided')
-  @ApiOperation({ summary: 'Decidir aprovação (approve / reject / revision_requested)' })
+  @ApiOperation({ summary: 'Decide an approval (approve / reject / revision_requested)' })
   decide(
     @CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth,
     @Param('id', ParseUUIDPipe) id: string, @Body() dto: ApprovalDecisionDto,

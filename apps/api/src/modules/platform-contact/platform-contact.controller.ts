@@ -16,7 +16,7 @@ export class PlatformContactController {
 
   @Public()
   @Post('platform-contact')
-  @ApiOperation({ summary: 'Contato comercial/institucional sobre o Music OS 360 (não pertence a nenhum tenant)' })
+  @ApiOperation({ summary: 'Commercial/institutional contact about Music OS 360 (belongs to no tenant)' })
   submit(@Body() dto: PlatformContactDto) {
     return this.svc.submit(dto);
   }

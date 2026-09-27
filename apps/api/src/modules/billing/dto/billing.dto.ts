@@ -2,11 +2,11 @@ import { IsString, IsOptional } from 'class-validator';
 import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
 
 export class CreateCheckoutDto {
-  @ApiPropertyOptional({ description: 'ID (uuid) do plano no banco' })
+  @ApiPropertyOptional({ description: 'Plan ID (uuid) in the database' })
   @IsOptional() @IsString()
   planId?: string;
 
-  @ApiPropertyOptional({ description: 'Slug do plano no banco (ex: professional)' })
+  @ApiPropertyOptional({ description: 'Plan slug in the database (e.g. professional)' })
   @IsOptional() @IsString()
   planSlug?: string;
 

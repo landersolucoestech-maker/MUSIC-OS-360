@@ -21,14 +21,14 @@ export class MarketingAssetsController {
 
   @Get()
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar ativos produzidos e reutilizáveis' })
+  @ApiOperation({ summary: 'List produced, reusable assets' })
   list(@CurrentTenant() tenant: { id: string }, @Query() query: QueryMarketingAssetDto) {
     return this.svc.list(tenant.id, query);
   }
 
   @Get('project/:projectId/library')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar biblioteca de ativos aprovados do projeto musical' })
+  @ApiOperation({ summary: 'List the music project\'s approved asset library' })
   listProjectLibrary(
     @CurrentTenant() tenant: { id: string },
     @Param('projectId', ParseUUIDPipe) projectId: string,
@@ -39,21 +39,21 @@ export class MarketingAssetsController {
 
   @Get(':id')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Obter ativo produzido' })
+  @ApiOperation({ summary: 'Get a produced asset' })
   findById(@CurrentTenant() tenant: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.findById(tenant.id, id);
   }
 
   @Get(':id/versions')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar versões do asset' })
+  @ApiOperation({ summary: 'List asset versions' })
   versions(@CurrentTenant() tenant: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.versions(tenant.id, id);
   }
 
   @Get(':id/approvals')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar aprovações do asset' })
+  @ApiOperation({ summary: 'List asset approvals' })
   approvals(@CurrentTenant() tenant: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.approvals(tenant.id, id);
   }
@@ -61,7 +61,7 @@ export class MarketingAssetsController {
   @Post()
   @RequireRole('editor')
   @Audit('marketing.asset.created')
-  @ApiOperation({ summary: 'Criar asset de Marketing' })
+  @ApiOperation({ summary: 'Create a marketing asset' })
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -73,7 +73,7 @@ export class MarketingAssetsController {
   @Patch(':id')
   @RequireRole('editor')
   @Audit('marketing.asset.updated')
-  @ApiOperation({ summary: 'Atualizar asset de Marketing' })
+  @ApiOperation({ summary: 'Update a marketing asset' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -86,7 +86,7 @@ export class MarketingAssetsController {
   @Post(':id/request-approval')
   @RequireRole('editor')
   @Audit('marketing.asset.approval_requested')
-  @ApiOperation({ summary: 'Enviar asset para aprovação' })
+  @ApiOperation({ summary: 'Submit an asset for approval' })
   requestApproval(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -98,7 +98,7 @@ export class MarketingAssetsController {
   @Post('approvals/:approvalId/decision')
   @RequireRole('manager')
   @Audit('marketing.asset.approval_decided')
-  @ApiOperation({ summary: 'Aprovar, rejeitar ou solicitar revisão de asset' })
+  @ApiOperation({ summary: 'Approve, reject or request revision of an asset' })
   decideApproval(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -111,7 +111,7 @@ export class MarketingAssetsController {
   @Delete(':id')
   @RequireRole('manager')
   @Audit('marketing.asset.archived')
-  @ApiOperation({ summary: 'Arquivar asset de Marketing' })
+  @ApiOperation({ summary: 'Archive a marketing asset' })
   archive(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,

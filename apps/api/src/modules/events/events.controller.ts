@@ -13,21 +13,21 @@ import { CreateEventDto, UpdateEventDto, QueryEventDto } from './dto/events.dto'
 export class EventsController {
   constructor(private readonly svc: EventsService) {}
 
-  @Get()    @RequireRole('viewer') @RequirePermission('event:read') @ApiOperation({ summary: 'Listar eventos' })
+  @Get()    @RequireRole('viewer') @RequirePermission('event:read') @ApiOperation({ summary: 'List events' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryEventDto) { return this.svc.list(t.id, q); }
 
-  @Get('stats') @RequireRole('viewer') @RequirePermission('event:read') @ApiOperation({ summary: 'KPIs exatos do tenant inteiro (status + próximos 7 dias)' })
+  @Get('stats') @RequireRole('viewer') @RequirePermission('event:read') @ApiOperation({ summary: 'Exact tenant-wide KPIs (status + next 7 days)' })
   stats(@CurrentTenant() t: { id: string }) { return this.svc.stats(t.id); }
 
-  @Get(':id') @RequireRole('viewer') @RequirePermission('event:read') @ApiOperation({ summary: 'Obter evento' })
+  @Get(':id') @RequireRole('viewer') @RequirePermission('event:read') @ApiOperation({ summary: 'Get an event' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) { return this.svc.findById(t.id, id); }
 
-  @Post() @RequireRole('editor') @RequirePermission('event:create') @Audit('event.created') @ApiOperation({ summary: 'Criar evento' })
+  @Post() @RequireRole('editor') @RequirePermission('event:create') @Audit('event.created') @ApiOperation({ summary: 'Create an event' })
   create(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Body() dto: CreateEventDto) { return this.svc.create(t.id, u?.userId ?? '', dto); }
 
-  @Patch(':id') @RequireRole('editor') @RequirePermission('event:update') @Audit('event.updated') @ApiOperation({ summary: 'Atualizar evento' })
+  @Patch(':id') @RequireRole('editor') @RequirePermission('event:update') @Audit('event.updated') @ApiOperation({ summary: 'Update an event' })
   update(@CurrentTenant() t: { id: string }, @CurrentUser() u: JwtAuth, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateEventDto) { return this.svc.update(t.id, u?.userId ?? '', id, dto); }
 
-  @Delete(':id') @RequireRole('manager') @RequirePermission('event:delete') @Audit('event.deleted') @ApiOperation({ summary: 'Cancelar evento' })
+  @Delete(':id') @RequireRole('manager') @RequirePermission('event:delete') @Audit('event.deleted') @ApiOperation({ summary: 'Cancel an event' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) { return this.svc.softDelete(t.id, id); }
 }

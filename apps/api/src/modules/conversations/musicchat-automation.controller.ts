@@ -25,7 +25,7 @@ export class MusicChatAutomationController {
 
   @Get('settings')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Obter configurações de automação do MusicChat' })
+  @ApiOperation({ summary: 'Get MusicChat automation settings' })
   getSettings(@CurrentTenant() tenant: { id: string }) {
     return this.service.getSettings(tenant.id);
   }
@@ -33,7 +33,7 @@ export class MusicChatAutomationController {
   @Patch('settings')
   @RequireRole('manager')
   @Audit('musicchat.automation.settings_updated')
-  @ApiOperation({ summary: 'Atualizar configurações de automação do MusicChat' })
+  @ApiOperation({ summary: 'Update MusicChat automation settings' })
   updateSettings(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -45,7 +45,7 @@ export class MusicChatAutomationController {
   @Post('inbound')
   @RequireRole('editor')
   @Audit('musicchat.automation.inbound')
-  @ApiOperation({ summary: 'Processar mensagem recebida e executar triagem automática' })
+  @ApiOperation({ summary: 'Process an inbound message and run automatic triage' })
   inbound(
     @CurrentTenant() tenant: { id: string },
     @Body() dto: MusicChatInboundMessageDto,
@@ -56,7 +56,7 @@ export class MusicChatAutomationController {
   @Post('escalations/run')
   @RequireRole('manager')
   @Audit('musicchat.automation.escalation_run')
-  @ApiOperation({ summary: 'Executar verificação de escalonamento de conversas sem resposta' })
+  @ApiOperation({ summary: 'Run the escalation check for unanswered conversations' })
   runEscalations(
     @CurrentTenant() tenant: { id: string },
     @Body() dto: RunMusicChatEscalationDto,
@@ -67,7 +67,7 @@ export class MusicChatAutomationController {
   @Post('notifications')
   @RequireRole('manager')
   @Audit('musicchat.automation.notification_created')
-  @ApiOperation({ summary: 'Criar notificação da automação MusicChat' })
+  @ApiOperation({ summary: 'Create a MusicChat automation notification' })
   sendNotification(
     @CurrentTenant() tenant: { id: string },
     @Body() dto: SendMusicChatNotificationDto,
@@ -78,7 +78,7 @@ export class MusicChatAutomationController {
   @Post('notifications/:id/retry')
   @RequireRole('manager')
   @Audit('musicchat.automation.notification_retried')
-  @ApiOperation({ summary: 'Reenviar notificação WhatsApp que falhou (reenvio controlado, máx. 3 tentativas)' })
+  @ApiOperation({ summary: 'Resend a failed WhatsApp notification (controlled resend, max. 3 attempts)' })
   retryNotification(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -88,7 +88,7 @@ export class MusicChatAutomationController {
 
   @Get('events')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar eventos de automação do MusicChat' })
+  @ApiOperation({ summary: 'List MusicChat automation events' })
   listEvents(
     @CurrentTenant() tenant: { id: string },
     @Query('conversationId') conversationId?: string,
@@ -98,7 +98,7 @@ export class MusicChatAutomationController {
 
   @Post('audit')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'AI Skill automation-audit — auditoria narrativa sobre contadores reais de eventos da automação' })
+  @ApiOperation({ summary: 'AI Skill automation-audit — narrative audit over real automation event counters' })
   runAudit(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -109,7 +109,7 @@ export class MusicChatAutomationController {
 
   @Post('builder-suggestions')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'AI Skill automation-builder — SUGESTÕES de menu/escalonamento (nunca aplicadas automaticamente)' })
+  @ApiOperation({ summary: 'AI Skill automation-builder — menu/escalation SUGGESTIONS (never applied automatically)' })
   runBuilderSuggestions(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,

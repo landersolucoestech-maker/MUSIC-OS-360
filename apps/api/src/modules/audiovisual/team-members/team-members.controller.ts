@@ -12,13 +12,13 @@ export class AudiovisualTeamMembersController {
   constructor(private readonly svc: AudiovisualTeamMembersService) {}
 
   @Get('projects/:projectId/team') @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar membros da equipe do projeto' })
+  @ApiOperation({ summary: 'List project team members' })
   list(@CurrentTenant() t: { id: string }, @Param('projectId', ParseUUIDPipe) projectId: string) {
     return this.svc.listByProject(t.id, projectId);
   }
 
   @Post('projects/:projectId/team') @RequireRole('editor') @Audit('audiovisual.team_member.created')
-  @ApiOperation({ summary: 'Adicionar membro à equipe' })
+  @ApiOperation({ summary: 'Add a team member' })
   create(
     @CurrentTenant() t: { id: string }, @Param('projectId', ParseUUIDPipe) projectId: string,
     @Body() dto: CreateTeamMemberInput,
@@ -27,13 +27,13 @@ export class AudiovisualTeamMembersController {
   }
 
   @Patch('team/:id') @RequireRole('editor') @Audit('audiovisual.team_member.updated')
-  @ApiOperation({ summary: 'Atualizar membro da equipe' })
+  @ApiOperation({ summary: 'Update a team member' })
   update(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string, @Body() dto: Partial<CreateTeamMemberInput>) {
     return this.svc.update(t.id, id, dto);
   }
 
   @Delete('team/:id') @RequireRole('editor') @Audit('audiovisual.team_member.deleted')
-  @ApiOperation({ summary: 'Remover membro da equipe' })
+  @ApiOperation({ summary: 'Remove a team member' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.remove(t.id, id);
   }

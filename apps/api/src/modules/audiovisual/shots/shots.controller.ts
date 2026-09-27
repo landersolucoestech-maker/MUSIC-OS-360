@@ -12,13 +12,13 @@ export class AudiovisualShotsController {
   constructor(private readonly svc: AudiovisualShotsService) {}
 
   @Get('projects/:projectId/shots') @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar shots do projeto (ordenados)' })
+  @ApiOperation({ summary: 'List the project\'s shots (ordered)' })
   list(@CurrentTenant() t: { id: string }, @Param('projectId', ParseUUIDPipe) projectId: string) {
     return this.svc.listByProject(t.id, projectId);
   }
 
   @Post('projects/:projectId/shots') @RequireRole('editor') @Audit('audiovisual.shot.created')
-  @ApiOperation({ summary: 'Criar shot (ordering auto se não passado)' })
+  @ApiOperation({ summary: 'Create a shot (ordering is automatic when omitted)' })
   create(
     @CurrentTenant() t: { id: string }, @Param('projectId', ParseUUIDPipe) projectId: string,
     @Body() dto: CreateShotInput,
@@ -27,7 +27,7 @@ export class AudiovisualShotsController {
   }
 
   @Post('projects/:projectId/shots/reorder') @RequireRole('editor') @Audit('audiovisual.shot.reordered')
-  @ApiOperation({ summary: 'Reordenar shots (lista de IDs na ordem desejada)' })
+  @ApiOperation({ summary: 'Reorder shots (list of IDs in the desired order)' })
   reorder(
     @CurrentTenant() t: { id: string }, @Param('projectId', ParseUUIDPipe) projectId: string,
     @Body() body: { ids: string[] },
@@ -36,7 +36,7 @@ export class AudiovisualShotsController {
   }
 
   @Patch('shots/:id') @RequireRole('editor') @Audit('audiovisual.shot.updated')
-  @ApiOperation({ summary: 'Atualizar shot' })
+  @ApiOperation({ summary: 'Update a shot' })
   update(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateShotInput) {
     return this.svc.update(t.id, id, dto);
   }

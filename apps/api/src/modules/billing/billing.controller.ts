@@ -45,21 +45,21 @@ export class BillingController {
   // Public route BEFORE plans/:id — otherwise ':id' would capture 'public'.
   @Get('plans/public')
   @Public()
-  @ApiOperation({ summary: 'Listar planos ativos publicamente (Landing) — sem autenticação' })
+  @ApiOperation({ summary: 'List active plans publicly (landing page) — no authentication' })
   listPublicPlans() {
     return this.plans.listPublic();
   }
 
   @Get('plans')
   @RequireRole('admin')
-  @ApiOperation({ summary: 'Listar planos (admin+)' })
+  @ApiOperation({ summary: 'List plans (admin+)' })
   listPlans(@Query('includeInactive') includeInactive?: string) {
     return this.plans.list({ includeInactive: includeInactive === 'true' });
   }
 
   @Get('plans/:id')
   @RequireRole('admin')
-  @ApiOperation({ summary: 'Obter plano por id (admin+)' })
+  @ApiOperation({ summary: 'Get a plan by id (admin+)' })
   getPlan(@Param('id') id: string) {
     return this.plans.get(id);
   }
@@ -67,7 +67,7 @@ export class BillingController {
   @Post('plans')
   @RequireRole('super_admin')
   @Audit('billing.plan_created')
-  @ApiOperation({ summary: 'Criar plano + sincronizar com Stripe (super_admin)' })
+  @ApiOperation({ summary: 'Create a plan + sync with Stripe (super_admin)' })
   createPlan(@Body() body: CreatePlanDto) {
     return this.plans.create(body);
   }
@@ -75,7 +75,7 @@ export class BillingController {
   @Patch('plans/:id')
   @RequireRole('super_admin')
   @Audit('billing.plan_updated')
-  @ApiOperation({ summary: 'Editar plano + re-sincronizar Stripe (super_admin)' })
+  @ApiOperation({ summary: 'Edit a plan + re-sync with Stripe (super_admin)' })
   updatePlan(@Param('id') id: string, @Body() body: UpdatePlanDto) {
     return this.plans.update(id, body);
   }
@@ -91,7 +91,7 @@ export class BillingController {
   @Post('checkout')
   @RequireRole('owner')
   @Audit('billing.checkout_started')
-  @ApiOperation({ summary: 'Criar sessão de checkout Stripe (owner+)' })
+  @ApiOperation({ summary: 'Create a Stripe checkout session (owner+)' })
   checkout(
     @CurrentTenant() tenant: any,
     @Body() body: CreateCheckoutDto,
@@ -108,7 +108,7 @@ export class BillingController {
   @Post('portal')
   @RequireRole('owner')
   @Audit('billing.portal_opened')
-  @ApiOperation({ summary: 'Criar sessão do portal de gestão Stripe (owner+)' })
+  @ApiOperation({ summary: 'Create a Stripe billing portal session (owner+)' })
   portal(
     @CurrentTenant() tenant: any,
     @Body() body: CreatePortalDto,
@@ -118,14 +118,14 @@ export class BillingController {
 
   @Get('subscription')
   @RequireRole('admin')
-  @ApiOperation({ summary: 'Obter assinatura actual (admin+)' })
+  @ApiOperation({ summary: 'Get the current subscription (admin+)' })
   getSubscription(@CurrentTenant() tenant: any) {
     return this.billing.getSubscription(tenant.org_id);
   }
 
   @Get('usage')
   @RequireRole('admin')
-  @ApiOperation({ summary: 'Uso actual vs limites do plano (admin+)' })
+  @ApiOperation({ summary: 'Current usage vs plan limits (admin+)' })
   getUsage(@CurrentTenant() tenant: any) {
     return this.billing.getUsage(tenant.id, tenant.org_id);
   }
@@ -139,7 +139,7 @@ export class BillingController {
 
   @Get('admin/tenants')
   @RequireRole('super_admin')
-  @ApiOperation({ summary: 'Listar tenants reais para o painel Admin SaaS' })
+  @ApiOperation({ summary: 'List real tenants for the SaaS Admin panel' })
   listAdminTenants(@Query() query: AdminListQueryDto) {
     return this.billing.listAdminTenants(query);
   }
@@ -147,7 +147,7 @@ export class BillingController {
   @Patch('admin/tenants/:tenantId')
   @RequireRole('super_admin')
   @Audit('tenant.admin_updated')
-  @ApiOperation({ summary: 'Editar tenant pelo painel Admin SaaS' })
+  @ApiOperation({ summary: 'Edit a tenant from the SaaS Admin panel' })
   updateAdminTenant(
     @Param('tenantId') tenantId: string,
     @Body() body: UpdateAdminTenantDto,
@@ -157,28 +157,28 @@ export class BillingController {
 
   @Get('admin/stripe-mode')
   @RequireRole('super_admin')
-  @ApiOperation({ summary: 'Modo do Stripe neste ambiente (sandbox = TEST MODE, disabled) — nunca expõe a chave' })
+  @ApiOperation({ summary: 'Stripe mode in this environment (sandbox = TEST MODE, disabled) — never exposes the key' })
   getAdminStripeMode() {
     return this.billing.getStripeMode();
   }
 
   @Get('admin/subscriptions')
   @RequireRole('super_admin')
-  @ApiOperation({ summary: 'Listar assinaturas reais para o painel Admin SaaS' })
+  @ApiOperation({ summary: 'List real subscriptions for the SaaS Admin panel' })
   listAdminSubscriptions(@Query() query: AdminListQueryDto) {
     return this.billing.listAdminSubscriptions(query);
   }
 
   @Get('admin/tenants/:tenantId/billing-state')
   @RequireRole('super_admin')
-  @ApiOperation({ summary: 'Obter estado financeiro persistido de um tenant' })
+  @ApiOperation({ summary: 'Get a tenant\'s persisted financial state' })
   getAdminTenantBillingState(@Param('tenantId') tenantId: string) {
     return this.enforcement.getState(tenantId);
   }
 
   @Get('admin/invoices')
   @RequireRole('super_admin')
-  @ApiOperation({ summary: 'Listar invoices reais do billing/admin' })
+  @ApiOperation({ summary: 'List real billing/admin invoices' })
   listAdminInvoices(@Query() query: AdminListQueryDto & { tenantId?: string }) {
     return this.billing.listAdminInvoices(query);
   }
@@ -246,7 +246,7 @@ export class BillingController {
   // and bringing the whole webhook down with a 500 even with a valid signature.
   @Post('webhooks/stripe')
   @Public()
-  @ApiOperation({ summary: 'Webhook Stripe (HMAC validado, sem autenticação)' })
+  @ApiOperation({ summary: 'Stripe webhook (HMAC validated, unauthenticated)' })
   webhook(
     @Headers('stripe-signature') signature: string,
     @Req() req: RawBodyRequest<Request>,

@@ -20,14 +20,14 @@ export class MarketingProjectsController {
 
   @Get()
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar Marketing Projects' })
+  @ApiOperation({ summary: 'List Marketing Projects' })
   list(@CurrentTenant() tenant: { id: string }, @Query() query: QueryMarketingProjectDto) {
     return this.svc.list(tenant.id, query);
   }
 
   @Get(':id')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Obter Marketing Project' })
+  @ApiOperation({ summary: 'Get a Marketing Project' })
   findById(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -38,7 +38,7 @@ export class MarketingProjectsController {
   @Post()
   @RequireRole('editor')
   @Audit('marketing_project.created')
-  @ApiOperation({ summary: 'Criar Marketing Project' })
+  @ApiOperation({ summary: 'Create a Marketing Project' })
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -50,7 +50,7 @@ export class MarketingProjectsController {
   @Patch(':id')
   @RequireRole('editor')
   @Audit('marketing_project.updated')
-  @ApiOperation({ summary: 'Atualizar Marketing Project' })
+  @ApiOperation({ summary: 'Update a Marketing Project' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -63,7 +63,7 @@ export class MarketingProjectsController {
   @Delete(':id')
   @RequireRole('manager')
   @Audit('marketing_project.deleted')
-  @ApiOperation({ summary: 'Arquivar Marketing Project' })
+  @ApiOperation({ summary: 'Archive a Marketing Project' })
   remove(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,

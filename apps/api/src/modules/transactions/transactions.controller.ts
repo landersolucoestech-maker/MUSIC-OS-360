@@ -30,7 +30,7 @@ export class TransactionsController {
   @Get()
   @RequireRole('viewer')
   @RequirePermission('transaction:read')
-  @ApiOperation({ summary: 'Listar transações do tenant' })
+  @ApiOperation({ summary: 'List the tenant\'s transactions' })
   list(@CurrentTenant() tenant: { id: string }, @Query() query: QueryTransactionDto) {
     return this.service.list(tenant.id, query);
   }
@@ -38,7 +38,7 @@ export class TransactionsController {
   @Get('stats')
   @RequireRole('viewer')
   @RequirePermission('transaction:read')
-  @ApiOperation({ summary: 'Distribuição exata type×status + soma de valor (tenant inteiro)' })
+  @ApiOperation({ summary: 'Exact type×status distribution + sum of value (whole tenant)' })
   stats(@CurrentTenant() tenant: { id: string }) {
     return this.service.stats(tenant.id);
   }
@@ -46,7 +46,7 @@ export class TransactionsController {
   @Get(':id')
   @RequireRole('viewer')
   @RequirePermission('transaction:read')
-  @ApiOperation({ summary: 'Obter transação por ID' })
+  @ApiOperation({ summary: 'Get a transaction by ID' })
   findById(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -59,8 +59,8 @@ export class TransactionsController {
   @RequirePermission('transaction:create')
   @Audit('transaction.created')
   @UseInterceptors(IdempotencyInterceptor)
-  @ApiOperation({ summary: 'Criar transação (financial+)' })
-  @ApiHeader({ name: 'X-Idempotency-Key', description: 'UUID único por operação — previne duplicação de transações', required: false })
+  @ApiOperation({ summary: 'Create a transaction (financial+)' })
+  @ApiHeader({ name: 'X-Idempotency-Key', description: 'Unique UUID per operation — prevents duplicate transactions', required: false })
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
@@ -73,7 +73,7 @@ export class TransactionsController {
   @RequireRole('financial')
   @RequirePermission('transaction:update')
   @Audit('transaction.updated')
-  @ApiOperation({ summary: 'Atualizar transação (financial+)' })
+  @ApiOperation({ summary: 'Update a transaction (financial+)' })
   replace(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
@@ -87,7 +87,7 @@ export class TransactionsController {
   @RequireRole('financial')
   @RequirePermission('transaction:update')
   @Audit('transaction.updated')
-  @ApiOperation({ summary: 'Atualizar transação parcial (financial+)' })
+  @ApiOperation({ summary: 'Partially update a transaction (financial+)' })
   update(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
@@ -101,7 +101,7 @@ export class TransactionsController {
   @RequireRole('manager')
   @RequirePermission('transaction:cancel')
   @Audit('transaction.cancelled')
-  @ApiOperation({ summary: 'Cancelar transação (manager+)' })
+  @ApiOperation({ summary: 'Cancel a transaction (manager+)' })
   remove(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },

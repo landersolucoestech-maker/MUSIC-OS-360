@@ -32,7 +32,7 @@ export class AssetsController {
 
   @Get('release-readiness')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Avaliar requisitos obrigatórios para distribuição' })
+  @ApiOperation({ summary: 'Evaluate the mandatory requirements for distribution' })
   readiness(
     @CurrentTenant() t: { id: string },
     @CurrentUser() user: { userId: string },
@@ -47,7 +47,7 @@ export class AssetsController {
 
   @Get('projects/:projectId/assets')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar assets vinculados a um projeto' })
+  @ApiOperation({ summary: 'List assets linked to a project' })
   projectAssets(
     @CurrentTenant() t: { id: string },
     @Param('projectId', ParseUUIDPipe) projectId: string,
@@ -57,7 +57,7 @@ export class AssetsController {
 
   @Get('tasks/:taskId/assets')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar assets vinculados a uma tarefa' })
+  @ApiOperation({ summary: 'List assets linked to a task' })
   taskAssets(
     @CurrentTenant() t: { id: string },
     @Param('taskId', ParseUUIDPipe) taskId: string,
@@ -67,7 +67,7 @@ export class AssetsController {
 
   @Get('assets/:id')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Detalhe de um asset central + versões' })
+  @ApiOperation({ summary: 'Central asset detail + versions' })
   async asset(
     @CurrentTenant() t: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -80,7 +80,7 @@ export class AssetsController {
   @Post('assets/:id/classify')
   @RequireRole('editor')
   @Audit('asset.classified')
-  @ApiOperation({ summary: 'Revisão manual da classificação de um asset' })
+  @ApiOperation({ summary: 'Manual review of an asset classification' })
   async classify(
     @CurrentTenant() t: { id: string },
     @CurrentUser() user: { userId: string },
@@ -94,7 +94,7 @@ export class AssetsController {
 
   @Get('skill-runs')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Histórico de execuções de skills (read-only)' })
+  @ApiOperation({ summary: 'Skill run history (read-only)' })
   skillRunsList(
     @CurrentTenant() t: { id: string },
     @Query() q: { skillName?: string; status?: string; limit?: string; offset?: string },
@@ -109,7 +109,7 @@ export class AssetsController {
 
   @Get('skill-runs/:id')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Detalhe de uma execução de skill + logs' })
+  @ApiOperation({ summary: 'Skill run detail + logs' })
   async skillRun(
     @CurrentTenant() t: { id: string },
     @Param('id', ParseUUIDPipe) id: string,

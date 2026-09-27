@@ -29,7 +29,7 @@ export class DocuSignController {
   @RequiresIntegration('docusign')
   @UseInterceptors(IdempotencyInterceptor)
   @Audit('integration.docusign_document_created')
-  @ApiOperation({ summary: 'Criar envelope DocuSign para assinatura' })
+  @ApiOperation({ summary: 'Create a DocuSign envelope for signing' })
   @HttpCode(HttpStatus.CREATED)
   createDocument(@Request() req: any, @Body() dto: SendForSignatureDto) {
     return this.docusign.sendForSignature({

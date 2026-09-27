@@ -24,15 +24,15 @@ export class CreateContractTemplateDto {
   @IsOptional() @IsString()
   description?: string;
 
-  @ApiPropertyOptional({ description: 'Manifesto de variáveis detectadas (JSON serializado)' })
+  @ApiPropertyOptional({ description: 'Manifest of detected variables (serialized JSON)' })
   @IsOptional() @IsString()
   variables_manifest?: string;
 
-  @ApiPropertyOptional({ description: 'Imagem de cabeçalho (data URL base64)' })
+  @ApiPropertyOptional({ description: 'Header image (base64 data URL)' })
   @IsOptional() @IsString()
   header_image?: string | null;
 
-  @ApiPropertyOptional({ description: 'Imagem de rodapé (data URL base64)' })
+  @ApiPropertyOptional({ description: 'Footer image (base64 data URL)' })
   @IsOptional() @IsString()
   footer_image?: string | null;
 }

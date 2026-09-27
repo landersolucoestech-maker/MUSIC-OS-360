@@ -12,28 +12,28 @@ import { QuerySubmissionDto, UpdateSubmissionStatusDto } from '../dto/society.dt
 export class SocietySubmissionsController {
   constructor(private readonly svc: SocietySubmissionService) {}
 
-  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'Listar submissões' })
+  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'List submissions' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QuerySubmissionDto) {
     return this.svc.list(t.id, q);
   }
 
-  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Obter submissão + transições permitidas' })
+  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Get a submission + allowed transitions' })
   findById(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.getWithAllowed(t.id, id);
   }
 
-  @Get(':id/events') @RequireRole('viewer') @ApiOperation({ summary: 'Histórico de eventos da submissão' })
+  @Get(':id/events') @RequireRole('viewer') @ApiOperation({ summary: 'Submission event history' })
   events(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.getEvents(t.id, id);
   }
 
-  @Get(':id/payload') @RequireRole('viewer') @ApiOperation({ summary: 'Snapshot de payload atual' })
+  @Get(':id/payload') @RequireRole('viewer') @ApiOperation({ summary: 'Current payload snapshot' })
   payload(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.getCurrentPayload(t.id, id);
   }
 
   @Patch(':id/status') @RequireRole('manager') @Audit('registry.submission.status_changed')
-  @ApiOperation({ summary: 'Mudar status (state machine)' })
+  @ApiOperation({ summary: 'Change status (state machine)' })
   changeStatus(
     @CurrentTenant() t: { id: string },
     @CurrentUser() u: JwtAuth,

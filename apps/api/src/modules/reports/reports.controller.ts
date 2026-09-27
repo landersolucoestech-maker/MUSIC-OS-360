@@ -119,7 +119,7 @@ export class ReportsController {
 
   @Get('entities')
   @RequireRole('admin')
-  @ApiOperation({ summary: 'Inventário classificado das entidades persistidas' })
+  @ApiOperation({ summary: 'Classified inventory of the persisted entities' })
   async entities(): Promise<EntitiesInventory> {
     const inventory = this.entityMetadata.scan();
     const tables = await this.tableGuard.existingTables();
@@ -146,7 +146,7 @@ export class ReportsController {
 
   @Get('definitions')
   @RequireRole('admin')
-  @ApiOperation({ summary: 'Contratos das entidades reportáveis' })
+  @ApiOperation({ summary: 'Contracts of the reportable entities' })
   async reportDefinitions(): Promise<ReportEntityDefinition[]> {
     const definitions = this.definitions.getDefinitions();
     const tables = await this.tableGuard.existingTables();
@@ -161,7 +161,7 @@ export class ReportsController {
   @Get('entities/:entity/export')
   @RequireRole('manager')
   @Audit('report.exported')
-  @ApiOperation({ summary: 'Exporta o conjunto integral de uma entidade reportável em XLSX' })
+  @ApiOperation({ summary: 'Export the full set of a reportable entity as XLSX' })
   async export(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },
@@ -185,7 +185,7 @@ export class ReportsController {
 
   @Get('entities/:entity/import/template')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Baixa o template XLSX de importação' })
+  @ApiOperation({ summary: 'Download the XLSX import template' })
   async importTemplate(
     @CurrentTenant() tenant: { id: string },
     @Param('entity') entity: string,
@@ -200,7 +200,7 @@ export class ReportsController {
 
   @Post('entities/:entity/import/validate')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Valida arquivo XLSX sem persistir' })
+  @ApiOperation({ summary: 'Validate an XLSX file without persisting' })
   importValidate(
     @CurrentTenant() tenant: { id: string },
     @Param('entity') entity: string,
@@ -216,7 +216,7 @@ export class ReportsController {
   @Post('entities/:entity/import/commit')
   @RequireRole('manager')
   @Audit('report.import.committed')
-  @ApiOperation({ summary: 'Commit transacional e create-only da importação XLSX' })
+  @ApiOperation({ summary: 'Transactional, create-only commit of the XLSX import' })
   importCommitEndpoint(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: { userId: string },

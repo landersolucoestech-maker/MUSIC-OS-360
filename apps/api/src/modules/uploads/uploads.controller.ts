@@ -60,7 +60,7 @@ export class UploadsController {
   @Post('presign')
   @RequireRole('editor')
   @Audit('upload.presigned')
-  @ApiOperation({ summary: 'Obter URL pré-assinada para upload directo ao R2' })
+  @ApiOperation({ summary: 'Get a presigned URL for direct upload to R2' })
   async presign(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string; orgId?: string | null },
@@ -103,7 +103,7 @@ export class UploadsController {
   @Post(':fileId/confirm')
   @RequireRole('editor')
   @Audit('upload.confirmed')
-  @ApiOperation({ summary: 'Confirmar que upload foi concluído' })
+  @ApiOperation({ summary: 'Confirm the upload completed' })
   async confirm(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string },
@@ -155,7 +155,7 @@ export class UploadsController {
 
   @Get(':fileId/download')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Obter URL temporária de download (expira em 1h)' })
+  @ApiOperation({ summary: 'Get a temporary download URL (expires in 1h)' })
   async download(
     @CurrentTenant() tenant: { id: string },
     @Param('fileId') fileId:  string,
@@ -182,7 +182,7 @@ export class UploadsController {
 
   @Get(':fileId/raw')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Stream do ficheiro através do backend (necessário para composição em canvas sem CORS tainting)' })
+  @ApiOperation({ summary: 'Stream the file through the backend (required for canvas composition without CORS tainting)' })
   async raw(
     @CurrentTenant() tenant: { id: string },
     @Param('fileId') fileId: string,

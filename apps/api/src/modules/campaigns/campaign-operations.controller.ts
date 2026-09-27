@@ -20,7 +20,7 @@ export class CampaignOperationsController {
 
   // ── Tasks ──────────────────────────────────────────────────────────────────
 
-  @Get('tasks') @RequireRole('viewer') @ApiOperation({ summary: 'Listar tarefas da campanha' })
+  @Get('tasks') @RequireRole('viewer') @ApiOperation({ summary: 'List campaign tasks' })
   listTasks(
     @CurrentTenant() t: { id: string },
     @Param('campaignId', ParseUUIDPipe) campaignId: string,
@@ -29,7 +29,7 @@ export class CampaignOperationsController {
     return this.svc.listTasks(t.id, campaignId, q);
   }
 
-  @Get('calendar') @RequireRole('viewer') @ApiOperation({ summary: 'Calendário de tarefas da campanha' })
+  @Get('calendar') @RequireRole('viewer') @ApiOperation({ summary: 'Campaign task calendar' })
   getCalendar(
     @CurrentTenant() t: { id: string },
     @Param('campaignId', ParseUUIDPipe) campaignId: string,
@@ -68,7 +68,7 @@ export class CampaignOperationsController {
 
   // ── Assets ─────────────────────────────────────────────────────────────────
 
-  @Get('assets') @RequireRole('viewer') @ApiOperation({ summary: 'Listar assets da campanha' })
+  @Get('assets') @RequireRole('viewer') @ApiOperation({ summary: 'List campaign assets' })
   listAssets(
     @CurrentTenant() t: { id: string },
     @Param('campaignId', ParseUUIDPipe) campaignId: string,

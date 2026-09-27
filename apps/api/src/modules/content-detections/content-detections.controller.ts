@@ -17,7 +17,7 @@ export class ContentDetectionsController {
 
   @Get()
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar detecções de conteúdo do tenant' })
+  @ApiOperation({ summary: 'List the tenant\'s content detections' })
   list(
     @CurrentTenant() tenant: { id: string },
     @Query('status') status?: string,
@@ -41,7 +41,7 @@ export class ContentDetectionsController {
 
   @Get(':id')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Obter detecção por ID' })
+  @ApiOperation({ summary: 'Get a detection by ID' })
   findOne(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -51,7 +51,7 @@ export class ContentDetectionsController {
 
   @Post()
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Registar detecção de conteúdo' })
+  @ApiOperation({ summary: 'Register a content detection' })
   create(
     @CurrentTenant() tenant: { id: string },
     @Body() dto: CreateContentDetectionDto,
@@ -61,7 +61,7 @@ export class ContentDetectionsController {
 
   @Patch(':id')
   @RequireRole('editor')
-  @ApiOperation({ summary: 'Atualizar detecção' })
+  @ApiOperation({ summary: 'Update a detection' })
   update(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -72,7 +72,7 @@ export class ContentDetectionsController {
 
   @Delete(':id')
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Remover detecção (soft delete)' })
+  @ApiOperation({ summary: 'Remove a detection (soft delete)' })
   remove(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,

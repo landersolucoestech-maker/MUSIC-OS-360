@@ -6,7 +6,7 @@ const STATUSES = ['active', 'inactive', 'suspended', 'invited'] as const;
 
 export class CreateUserDto {
   /** User identifier stored in auth_user_id column. */
-  @ApiProperty({ description: 'Identificador único do utilizador (JWT sub)' })
+  @ApiProperty({ description: 'Unique user identifier (JWT sub)' })
   @IsString()
   userId!: string;
 
@@ -16,7 +16,7 @@ export class CreateUserDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(30) phone?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() avatarUrl?: string;
 
-  @ApiProperty({ description: 'Slug de papel global ou customizado do tenant' })
+  @ApiProperty({ description: 'Global or tenant-custom role slug' })
   @IsString()
   @Matches(/^[a-z0-9_-]+$/)
   role!: string;
@@ -49,7 +49,7 @@ export class UpdateUserDto {
 }
 
 export class AssignRoleDto {
-  @ApiProperty({ description: 'Slug do novo papel a atribuir ao utilizador' })
+  @ApiProperty({ description: 'Slug of the new role to assign to the user' })
   @IsString()
   @Matches(/^[a-z0-9_-]+$/)
   role!: string;

@@ -26,7 +26,7 @@ export class PresignUploadDto {
   @MaxLength(255)
   mimeType!: string;
 
-  @ApiProperty({ example: 2048000, description: 'Tamanho do arquivo em bytes' })
+  @ApiProperty({ example: 2048000, description: 'File size in bytes' })
   @IsNumber()
   @IsPositive()
   @Type(() => Number)
@@ -35,12 +35,12 @@ export class PresignUploadDto {
   @ApiProperty({
     enum: UPLOAD_CATEGORIES,
     example: 'documents',
-    description: 'Categoria do upload — determina regras de MIME e tamanho',
+    description: 'Upload category — determines MIME and size rules',
   })
   @IsIn(UPLOAD_CATEGORIES)
   category!: UploadCategory;
 
-  @ApiPropertyOptional({ example: 'contract', description: 'Entidade relacionada ao arquivo' })
+  @ApiPropertyOptional({ example: 'contract', description: 'Entity related to the file' })
   @IsOptional()
   @IsString()
   @MaxLength(100)

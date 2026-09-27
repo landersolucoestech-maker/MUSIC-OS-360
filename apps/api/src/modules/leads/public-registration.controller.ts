@@ -10,14 +10,14 @@ export class PublicRegistrationController {
 
   @Public()
   @Get('workspaces/:slug')
-  @ApiOperation({ summary: 'Resolver workspace ativo para cadastro publico' })
+  @ApiOperation({ summary: 'Resolve the active workspace for public signup' })
   resolveWorkspace(@Param('slug') slug: string) {
     return this.svc.resolvePublicWorkspace(slug);
   }
 
   @Public()
   @Post('artist-registration')
-  @ApiOperation({ summary: 'Registrar cadastro publico de artista como lead' })
+  @ApiOperation({ summary: 'Register a public artist signup as a lead' })
   submitArtistRegistration(@Body() dto: PublicArtistRegistrationDto) {
     return this.svc.submitPublicArtistRegistration(dto);
   }

@@ -12,12 +12,12 @@ import { CreateCampaignDto, UpdateCampaignDto, QueryCampaignDto } from './dto/ca
 export class CampaignsController {
   constructor(private readonly svc: CampaignsService) {}
 
-  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'Listar campanhas' })
+  @Get() @RequireRole('viewer') @ApiOperation({ summary: 'List campaigns' })
   list(@CurrentTenant() t: { id: string }, @Query() q: QueryCampaignDto) {
     return this.svc.list(t.id, q);
   }
 
-  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Obter campanha' })
+  @Get(':id') @RequireRole('viewer') @ApiOperation({ summary: 'Get a campaign' })
   findById(
     @CurrentTenant() t: { id: string },
     @CurrentUser()   u: JwtAuth,
@@ -26,7 +26,7 @@ export class CampaignsController {
     return this.svc.findById(t.id, id, u?.orgRole ?? undefined);
   }
 
-  @Post() @RequireRole('editor') @Audit('campaign.created') @ApiOperation({ summary: 'Criar campanha' })
+  @Post() @RequireRole('editor') @Audit('campaign.created') @ApiOperation({ summary: 'Create a campaign' })
   create(
     @CurrentTenant() t: { id: string },
     @CurrentUser()   u: JwtAuth,
@@ -35,7 +35,7 @@ export class CampaignsController {
     return this.svc.create(t.id, u?.userId ?? '', dto);
   }
 
-  @Patch(':id') @RequireRole('editor') @Audit('campaign.updated') @ApiOperation({ summary: 'Atualizar campanha' })
+  @Patch(':id') @RequireRole('editor') @Audit('campaign.updated') @ApiOperation({ summary: 'Update a campaign' })
   update(
     @CurrentTenant() t: { id: string },
     @CurrentUser()   u: JwtAuth,
@@ -45,7 +45,7 @@ export class CampaignsController {
     return this.svc.update(t.id, u?.userId ?? '', id, dto, u?.orgRole ?? undefined);
   }
 
-  @Delete(':id') @RequireRole('manager') @Audit('campaign.deleted') @ApiOperation({ summary: 'Cancelar campanha' })
+  @Delete(':id') @RequireRole('manager') @Audit('campaign.deleted') @ApiOperation({ summary: 'Cancel a campaign' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) {
     return this.svc.remove(t.id, id);
   }

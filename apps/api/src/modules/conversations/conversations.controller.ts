@@ -35,7 +35,7 @@ export class ConversationsController {
 
   @Get()
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar conversas do tenant' })
+  @ApiOperation({ summary: 'List the tenant\'s conversations' })
   list(
     @CurrentTenant() tenant: { id: string },
     @Query() query: QueryConversationDto,
@@ -45,7 +45,7 @@ export class ConversationsController {
 
   @Get(':id')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Obter conversa por ID' })
+  @ApiOperation({ summary: 'Get a conversation by ID' })
   findById(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -57,8 +57,8 @@ export class ConversationsController {
   @RequireRole('editor')
   @Audit('conversation.created')
   @UseInterceptors(IdempotencyInterceptor)
-  @ApiOperation({ summary: 'Criar conversa' })
-  @ApiHeader({ name: 'X-Idempotency-Key', description: 'UUID único por operação — previne criação duplicada', required: false })
+  @ApiOperation({ summary: 'Create a conversation' })
+  @ApiHeader({ name: 'X-Idempotency-Key', description: 'Unique UUID per operation — prevents duplicate creation', required: false })
   create(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   JwtAuth,
@@ -70,7 +70,7 @@ export class ConversationsController {
   @Patch(':id')
   @RequireRole('editor')
   @Audit('conversation.updated')
-  @ApiOperation({ summary: 'Atualizar conversa (status, canal, assignee)' })
+  @ApiOperation({ summary: 'Update a conversation (status, channel, assignee)' })
   update(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -82,7 +82,7 @@ export class ConversationsController {
   @Delete(':id')
   @RequireRole('manager')
   @Audit('conversation.deleted')
-  @ApiOperation({ summary: 'Arquivar conversa (soft delete)' })
+  @ApiOperation({ summary: 'Archive a conversation (soft delete)' })
   remove(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -95,7 +95,7 @@ export class ConversationsController {
   @Patch(':id/assign')
   @RequireRole('editor')
   @Audit('conversation.assigned')
-  @ApiOperation({ summary: 'Atribuir conversa a um membro da equipe' })
+  @ApiOperation({ summary: 'Assign a conversation to a team member' })
   assign(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -107,7 +107,7 @@ export class ConversationsController {
   @Patch(':id/transfer')
   @RequireRole('editor')
   @Audit('conversation.transferred')
-  @ApiOperation({ summary: 'Transferir conversa entre filas, setores ou responsaveis' })
+  @ApiOperation({ summary: 'Transfer a conversation between queues, departments or assignees' })
   transfer(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -120,7 +120,7 @@ export class ConversationsController {
   @Patch(':id/close')
   @RequireRole('editor')
   @Audit('conversation.closed')
-  @ApiOperation({ summary: 'Finalizar atendimento com motivo e acoes de CRM' })
+  @ApiOperation({ summary: 'Close a conversation with a reason and CRM actions' })
   close(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -133,7 +133,7 @@ export class ConversationsController {
   @Patch(':id/reopen')
   @RequireRole('editor')
   @Audit('conversation.reopened')
-  @ApiOperation({ summary: 'Reabrir atendimento finalizado' })
+  @ApiOperation({ summary: 'Reopen a closed conversation' })
   reopen(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser() user: JwtAuth,
@@ -147,8 +147,8 @@ export class ConversationsController {
 
   @Get(':id/messages')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar mensagens da conversa' })
-  @ApiParam({ name: 'id', description: 'ID da conversa' })
+  @ApiOperation({ summary: 'List conversation messages' })
+  @ApiParam({ name: 'id', description: 'Conversation ID' })
   listMessages(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -162,8 +162,8 @@ export class ConversationsController {
   @RequireRole('editor')
   @Audit('conversation.message_sent')
   @UseInterceptors(IdempotencyInterceptor)
-  @ApiOperation({ summary: 'Enviar mensagem na conversa' })
-  @ApiHeader({ name: 'X-Idempotency-Key', description: 'UUID único por operação — previne envio duplicado (ex.: duplo clique/retry de rede)', required: false })
+  @ApiOperation({ summary: 'Send a message in the conversation' })
+  @ApiHeader({ name: 'X-Idempotency-Key', description: 'Unique UUID per operation — prevents duplicate sends (e.g. double click / network retry)', required: false })
   addMessage(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   JwtAuth,
@@ -177,7 +177,7 @@ export class ConversationsController {
 
   @Get(':id/notes')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar notas internas da conversa' })
+  @ApiOperation({ summary: 'List the conversation\'s internal notes' })
   listNotes(
     @CurrentTenant() tenant: { id: string },
     @Param('id', ParseUUIDPipe) id: string,
@@ -188,7 +188,7 @@ export class ConversationsController {
   @Post(':id/notes')
   @RequireRole('editor')
   @Audit('conversation.note_added')
-  @ApiOperation({ summary: 'Adicionar nota interna' })
+  @ApiOperation({ summary: 'Add an internal note' })
   addNote(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   JwtAuth,

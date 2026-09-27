@@ -24,7 +24,7 @@ export class NotificationsController {
 
   @Get()
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar notificações do utilizador autenticado' })
+  @ApiOperation({ summary: 'List the authenticated user\'s notifications' })
   list(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string; orgId?: string | null; orgRole?: string | null },
@@ -35,7 +35,7 @@ export class NotificationsController {
 
   @Get('unread-count')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Contar notificações não lidas' })
+  @ApiOperation({ summary: 'Count unread notifications' })
   async countUnread(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string; orgId?: string | null; orgRole?: string | null },
@@ -46,7 +46,7 @@ export class NotificationsController {
 
   @Post()
   @RequireRole('manager')
-  @ApiOperation({ summary: 'Criar e enfileirar notificação' })
+  @ApiOperation({ summary: 'Create and enqueue a notification' })
   enqueue(
     @CurrentTenant() tenant: { id: string },
     @Body()          dto:    CreateNotificationDto,
@@ -56,7 +56,7 @@ export class NotificationsController {
 
   @Patch(':id/read')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Marcar notificação como lida' })
+  @ApiOperation({ summary: 'Mark a notification as read' })
   markRead(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string; orgId?: string | null; orgRole?: string | null },
@@ -67,7 +67,7 @@ export class NotificationsController {
 
   @Patch('read-all')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Marcar todas as notificações como lidas' })
+  @ApiOperation({ summary: 'Mark all notifications as read' })
   markAllRead(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string; orgId?: string | null; orgRole?: string | null },
@@ -79,7 +79,7 @@ export class NotificationsController {
 
   @Get('settings')
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar configurações de notificação do tenant (com defaults)' })
+  @ApiOperation({ summary: 'List the tenant\'s notification settings (with defaults)' })
   listSettings(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { orgId?: string | null; orgRole?: string | null },
@@ -89,7 +89,7 @@ export class NotificationsController {
 
   @Patch('settings')
   @RequireRole('admin')
-  @ApiOperation({ summary: 'Atualizar configurações de notificação do tenant (admin+)' })
+  @ApiOperation({ summary: 'Update the tenant\'s notification settings (admin+)' })
   updateSettings(
     @CurrentTenant() tenant: { id: string },
     @CurrentUser()   user:   { userId: string; orgId?: string | null; orgRole?: string | null },

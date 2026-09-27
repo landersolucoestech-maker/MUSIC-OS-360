@@ -23,7 +23,7 @@ export class AuditLogController {
 
   @Get()
   @RequireRole('viewer')
-  @ApiOperation({ summary: 'Listar audit trail paginado (todos os roles dentro do tenant)' })
+  @ApiOperation({ summary: 'List the paginated audit trail (all roles within the tenant)' })
   list(
     @CurrentTenant() t: { id: string },
     @Query() q: QueryAuditLogDto,
@@ -34,14 +34,14 @@ export class AuditLogController {
   // Admin route BEFORE ':id' — otherwise ':id' would capture 'admin'.
   @Get('admin')
   @RequireRole('super_admin')
-  @ApiOperation({ summary: 'Listar audit trail de todos os tenants (painel Admin SaaS, super_admin)' })
+  @ApiOperation({ summary: 'List the audit trail of all tenants (SaaS Admin panel, super_admin)' })
   listAdmin(@Query() q: AdminListAuditLogsDto) {
     return this.svc.listAdmin(q);
   }
 
   @Get(':id')
   @RequireRole('admin')
-  @ApiOperation({ summary: 'Detalhe de um audit log com before/after (OWNER/ADMIN only)' })
+  @ApiOperation({ summary: 'Audit log detail with before/after (OWNER/ADMIN only)' })
   findById(
     @CurrentTenant() t: { id: string },
     @Param('id', ParseUUIDPipe) id: string,

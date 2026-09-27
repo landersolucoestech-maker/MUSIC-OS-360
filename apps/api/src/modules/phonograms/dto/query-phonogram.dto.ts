@@ -13,7 +13,7 @@ export class QueryPhonogramDto extends PaginationDto {
   @IsUUID()
   artist_id?: string;
 
-  @ApiPropertyOptional({ deprecated: true, description: 'Alias legado. Use "artist_id".' })
+  @ApiPropertyOptional({ deprecated: true, description: 'Legacy alias. Use "artist_id".' })
   @IsOptional()
   @IsUUID()
   artistId?: string;
@@ -23,7 +23,7 @@ export class QueryPhonogramDto extends PaginationDto {
   @IsUUID()
   work_id?: string;
 
-  @ApiPropertyOptional({ deprecated: true, description: 'Alias legado. Use "work_id".' })
+  @ApiPropertyOptional({ deprecated: true, description: 'Legacy alias. Use "work_id".' })
   @IsOptional()
   @IsUUID()
   workId?: string;

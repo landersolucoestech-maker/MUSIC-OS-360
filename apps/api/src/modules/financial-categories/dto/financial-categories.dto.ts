@@ -68,7 +68,7 @@ export class CreateFinancialCategoryDto {
 }
 
 export class UpdateFinancialCategoryDto extends PartialType(CreateFinancialCategoryDto) {
-  @ApiPropertyOptional({ description: 'updated_at lido pelo cliente antes de editar — detecta edição concorrente (409 se divergir)' })
+  @ApiPropertyOptional({ description: 'updated_at read by the client before editing — detects concurrent edits (409 on mismatch)' })
   @IsOptional()
   @IsString()
   expectedUpdatedAt?: string;
@@ -91,7 +91,7 @@ export class QueryFinancialCategoryDto extends PaginationDto {
   @IsUUID()
   parent_id?: string;
 
-  @ApiPropertyOptional({ description: 'Filtra somente categorias raiz.' })
+  @ApiPropertyOptional({ description: 'Filters root categories only.' })
   @IsOptional()
   @Transform(({ value }) => optionalBoolean(value))
   @IsBoolean()

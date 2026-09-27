@@ -17,7 +17,7 @@ export class RunCopywritingDto {
   @MaxLength(120)
   tone?: string;
 
-  @ApiPropertyOptional({ type: [String], description: 'Fatos reais para usar no texto — a skill nunca inventa fatos fora desta lista' })
+  @ApiPropertyOptional({ type: [String], description: 'Real facts to use in the text — the skill never invents facts outside this list' })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })

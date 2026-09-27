@@ -12,11 +12,11 @@ export class CreateInternalConversationDto {
   @IsEnum(InternalConversationType)
   type: InternalConversationType;
 
-  @ApiPropertyOptional({ description: 'Nome do grupo (apenas type=group)' })
+  @ApiPropertyOptional({ description: 'Group name (type=group only)' })
   @IsOptional() @IsString() @MaxLength(255)
   name?: string;
 
-  @ApiProperty({ type: [String], description: 'auth_user_id dos demais participantes (sem o criador, adicionado automaticamente)' })
+  @ApiProperty({ type: [String], description: 'auth_user_id of the other participants (without the creator, who is added automatically)' })
   @IsArray() @ArrayMinSize(1) @ArrayMaxSize(200) @IsString({ each: true })
   participantAuthUserIds: string[];
 }
