@@ -5,9 +5,12 @@
  * Covers artistic, corporate, commercial, product/service/SaaS, events,
  * behind-the-scenes (bastidores), meetings and institutional communication.
  *
- * Pure type declarations only — no runtime values, no imports. Runtime
- * vocabulary (labels, colors, option lists) lives in ../constants.
+ * Pure type declarations only — no runtime values and only type imports from
+ * the shared contract package. Runtime vocabulary (labels, colors, option
+ * lists) lives in ../constants.
  */
+
+import type { ArtistGoalStatus } from "@music-os-360/types";
 
 // ---------------------------------------------------------------------------
 // Primitives
@@ -815,84 +818,63 @@ export interface AiSuggestion {
 export type CreateInput<T> = Omit<T, "id" | "createdAt" | "updatedAt">;
 
 // ---------------------------------------------------------------------------
-// Metas (marketing goals / targets)
+// Artist goals (artist_goals)
 //
-// Restored to its original shape because it is consumed outside the module
-// (artist module's 360 view). Backed by hooks/useGoals.
+// Consumed outside the module (artist module's 360 view). Backed by
+// hooks/useGoals. Values are the canonical technical contract; PT-BR labels
+// live in the components that render them.
 // ---------------------------------------------------------------------------
 
 export type GoalType =
-  | "seguidores"
   | "streams"
+  | "followers"
   | "shows"
-  | "receita"
-  | "engajamento"
-  | "lancamentos"
-  | "personalizada";
+  | "revenue"
+  | "engagement"
+  | "releases"
+  | "other";
 
-export type MetaStatus =
-  | "em_progresso"
-  | "em_andamento"
-  | "ativa"
-  | "concluida"
-  | "concluido"
-  | "pausada"
-  | "cancelada";
+export type GoalCategory = "growth" | "financial" | "production" | "marketing" | "career";
 
-export interface Meta {
+export interface Goal {
   id: string;
-  nome: string;
-  /** Legacy artist-360 label. Prefer nome in new marketing code. */
-  title?: string;
-  descricao: string;
+  title: string;
+  description: string;
   type: GoalType;
-  /** Legacy artist-360 type. Prefer type in new marketing code. */
-  tipo_meta?: string;
-  categoria: string;
-  valorAlvo: number;
-  /** Legacy artist-360 target value. Prefer valorAlvo in new marketing code. */
-  valor_meta?: number;
-  valorAtual: number;
-  /** Legacy artist-360 current value. Prefer valorAtual in new marketing code. */
-  valor_atual?: number;
-  unidade: string;
-  prazo: string;
-  start_date?: string | null;
-  end_date?: string | null;
-  artist_id?: string | number | null;
-  status: MetaStatus;
-  progresso: number;
-  responsavel: string;
+  category: string;
+  targetValue: number;
+  currentValue: number;
+  unit: string;
+  startDate: string | null;
+  endDate: string | null;
+  artistId: string | null;
+  status: ArtistGoalStatus;
+  progress: number;
+  owner: string;
+  color: string;
+  icon: string;
   createdAt: string;
   updatedAt: string;
-  cor: string;
-  icone: string;
 }
 
-export interface CreateMetaInput {
-  nome?: string;
-  title?: string;
-  descricao: string;
-  type?: GoalType | string;
-  tipo_meta?: string;
-  categoria: string;
-  valorAlvo?: number;
-  valor_meta?: number;
-  valorAtual?: number;
-  valor_atual?: number;
-  unidade: string;
-  prazo?: string;
-  start_date?: string | null;
-  end_date?: string | null;
-  artist_id?: string | number | null;
-  status?: MetaStatus;
-  responsavel?: string;
-  cor?: string;
-  icone?: string;
-  progresso?: number;
+export interface CreateGoalInput {
+  artistId: string;
+  title: string;
+  description?: string;
+  type: GoalType;
+  category?: string;
+  targetValue: number;
+  currentValue?: number;
+  unit?: string;
+  startDate?: string | null;
+  endDate?: string | null;
+  status?: ArtistGoalStatus;
+  owner?: string;
+  color?: string;
+  icon?: string;
 }
 
-export interface UpdateMetaInput extends Partial<CreateMetaInput> {
+export interface UpdateGoalInput extends Partial<CreateGoalInput> {
   id: string;
 }
 

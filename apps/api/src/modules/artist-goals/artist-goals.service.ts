@@ -4,6 +4,7 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { ArtistGoalEntity } from '../../database/entities';
 import type { CreateArtistGoalDto } from './dto/create-artist-goal.dto';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
+import { normalizeArtistGoalInput } from './artist-goal-legacy.mapper';
 
 @Injectable()
 export class ArtistGoalsService {
@@ -44,7 +45,7 @@ export class ArtistGoalsService {
 
   async create(tenantId: string, userId: string, dto: CreateArtistGoalDto): Promise<ArtistGoalEntity> {
     await assertSameTenantFk(this.ds!, 'artists', (dto as { artist_id?: string }).artist_id, tenantId, 'Artista');
-    const entity = this.repo!.create({ tenant_id: tenantId, ...(dto as any), created_by: userId });
+    const entity = this.repo!.create({ tenant_id: tenantId, ...normalizeArtistGoalInput({ ...dto }), created_by: userId } as any);
     return this.repo!.save(entity as any) as any;
   }
 
@@ -54,7 +55,7 @@ export class ArtistGoalsService {
       await assertSameTenantFk(this.ds!, 'artists', dto.artist_id, tenantId, 'Artista');
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await this.repo!.update({ id, tenant_id: tenantId } as any, { ...dto, updated_at: new Date() } as any);
+    await this.repo!.update({ id, tenant_id: tenantId } as any, { ...normalizeArtistGoalInput({ ...dto }), updated_at: new Date() } as any);
     return this.findById(tenantId, id);
   }
 

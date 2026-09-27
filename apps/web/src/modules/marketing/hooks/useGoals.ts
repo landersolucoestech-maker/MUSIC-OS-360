@@ -1,17 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { ArtistGoalStatus } from "@music-os-360/types";
 import { api } from "@/shared/lib/api-client";
 import { MARKETING_QUERY_ROOT } from "./useMarketingResource";
 import type {
-  CreateMetaInput,
-  Meta,
+  CreateGoalInput,
+  Goal,
   GoalType,
-  UpdateMetaInput,
+  UpdateGoalInput,
 } from "../types/marketing.types";
 
-const QUERY_KEY = [MARKETING_QUERY_ROOT, "metas"] as const;
+const QUERY_KEY = [MARKETING_QUERY_ROOT, "goals"] as const;
 type ApiList<T> = T[] | { data: T[] };
 type GoalRow = Record<string, any>;
+
+const GOAL_TYPES: readonly GoalType[] = ["streams", "followers", "shows", "revenue", "engagement", "releases", "other"];
+const GOAL_STATUSES = Object.values(ArtistGoalStatus) as string[];
 
 function listRows<T>(value: ApiList<T>): T[] {
   if (Array.isArray(value)) return value;
@@ -24,86 +28,73 @@ function progress(current: number, target: number): number {
 }
 
 function normalizeType(value?: string): GoalType {
-  const allowed: GoalType[] = [
-    "seguidores", "streams", "shows", "receita",
-    "engajamento", "lancamentos", "personalizada",
-  ];
-  return allowed.includes(value as GoalType) ? value as GoalType : "personalizada";
+  return GOAL_TYPES.includes(value as GoalType) ? value as GoalType : "other";
 }
 
-function fromApi(row: GoalRow): Meta {
+function normalizeStatus(value?: string): ArtistGoalStatus {
+  return GOAL_STATUSES.includes(value ?? "") ? value as ArtistGoalStatus : ArtistGoalStatus.IN_PROGRESS;
+}
+
+function fromApi(row: GoalRow): Goal {
   const meta = row.metadata ?? {};
   const target = Number(row.target_value ?? 0);
   const current = Number(row.current_value ?? 0);
   return {
     id: row.id,
-    nome: row.title,
     title: row.title,
-    descricao: meta.descricao ?? "",
+    description: meta.description ?? "",
     type: normalizeType(row.type),
-    tipo_meta: row.type,
-    categoria: meta.categoria ?? "",
-    valorAlvo: target,
-    valor_meta: target,
-    valorAtual: current,
-    valor_atual: current,
-    unidade: meta.unidade ?? "",
-    prazo: row.end_date ? String(row.end_date).slice(0, 10) : "",
-    start_date: row.start_date,
-    end_date: row.end_date,
-    artist_id: row.artist_id,
-    status: row.status,
-    progresso: progress(current, target),
-    responsavel: meta.responsavel ?? "",
-    cor: meta.cor ?? "#6366f1",
-    icone: meta.icone ?? "target",
+    category: meta.category ?? "",
+    targetValue: target,
+    currentValue: current,
+    unit: meta.unit ?? "",
+    startDate: row.start_date ?? null,
+    endDate: row.end_date ?? null,
+    artistId: row.artist_id ?? null,
+    status: normalizeStatus(row.status),
+    progress: progress(current, target),
+    owner: meta.owner ?? "",
+    color: meta.color ?? "#6366f1",
+    icon: meta.icon ?? "target",
     createdAt: new Date(row.created_at).toISOString(),
     updatedAt: new Date(row.updated_at).toISOString(),
   };
 }
 
-function toApi(input: CreateMetaInput) {
-  if (!input.artist_id) {
-    throw new Error("[marketing] artist_id is required to persist a goal");
+function toApi(input: CreateGoalInput) {
+  if (!input.artistId) {
+    throw new Error("[marketing] artistId is required to persist a goal");
   }
-  const target = Number(input.valorAlvo ?? input.valor_meta ?? 0);
-  const current = Number(input.valorAtual ?? input.valor_atual ?? 0);
   return {
-    artist_id: String(input.artist_id),
-    title: input.title ?? input.nome ?? "Meta",
-    type: input.tipo_meta ?? input.type ?? "personalizada",
-    target_value: String(target),
-    current_value: String(current),
-    status: input.status ?? "em_andamento",
-    start_date: input.start_date ?? undefined,
-    end_date: input.end_date ?? input.prazo ?? undefined,
+    artist_id: String(input.artistId),
+    title: input.title,
+    type: input.type,
+    target_value: String(Number(input.targetValue ?? 0)),
+    current_value: String(Number(input.currentValue ?? 0)),
+    status: input.status ?? ArtistGoalStatus.IN_PROGRESS,
+    start_date: input.startDate ?? undefined,
+    end_date: input.endDate ?? undefined,
     metadata: {
-      descricao: input.descricao,
-      categoria: input.categoria,
-      unidade: input.unidade,
-      responsavel: input.responsavel,
-      cor: input.cor,
-      icone: input.icone,
+      description: input.description,
+      category: input.category,
+      unit: input.unit,
+      owner: input.owner,
+      color: input.color,
+      icon: input.icon,
     },
   };
 }
 
-export function getProgressPercent(meta: Pick<Meta, "valorAtual" | "valorAlvo"> & {
-  valor_atual?: number;
-  valor_meta?: number;
-}): number {
-  return progress(
-    Number(meta.valorAtual ?? meta.valor_atual ?? 0),
-    Number(meta.valorAlvo ?? meta.valor_meta ?? 0),
-  );
+export function getProgressPercent(goal: Pick<Goal, "currentValue" | "targetValue">): number {
+  return progress(Number(goal.currentValue ?? 0), Number(goal.targetValue ?? 0));
 }
 
-const EMPTY_GOALS: Meta[] = [];
+const EMPTY_GOALS: Goal[] = [];
 
 export function useGoals(enabled = true, artistId?: string) {
-  const createMeta = useCreateGoal();
-  const updateMetaMutation = useUpdateGoal();
-  const deleteMetaMutation = useDeleteGoal();
+  const createGoal = useCreateGoal();
+  const updateGoalMutation = useUpdateGoal();
+  const deleteGoalMutation = useDeleteGoal();
   const query = useQuery({
     queryKey: artistId ? [...QUERY_KEY, "by-artist", artistId] : QUERY_KEY,
     queryFn: async ({ signal }) => listRows(await api.get<ApiList<GoalRow>>(
@@ -113,13 +104,13 @@ export function useGoals(enabled = true, artistId?: string) {
     enabled,
   });
   return {
-    metas: query.data ?? EMPTY_GOALS,
+    goals: query.data ?? EMPTY_GOALS,
     isLoading: query.isLoading,
     isError: query.isError,
     refetch: query.refetch,
-    addMeta: createMeta.mutateAsync,
-    updateMeta: updateMetaMutation.mutateAsync,
-    deleteMeta: deleteMetaMutation.mutateAsync,
+    addGoal: createGoal.mutateAsync,
+    updateGoal: updateGoalMutation.mutateAsync,
+    deleteGoal: deleteGoalMutation.mutateAsync,
     getProgressPercent,
   };
 }
@@ -127,7 +118,7 @@ export function useGoals(enabled = true, artistId?: string) {
 export function useCreateGoal() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: async (input: CreateMetaInput) => fromApi(await api.post<GoalRow>("/artist-goals", toApi(input))),
+    mutationFn: async (input: CreateGoalInput) => fromApi(await api.post<GoalRow>("/artist-goals", toApi(input))),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: QUERY_KEY });
       toast.success("Meta criada com sucesso");
@@ -139,21 +130,23 @@ export function useCreateGoal() {
 export function useUpdateGoal() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...input }: UpdateMetaInput) => {
-      const current = await api.get<GoalRow>(`/artist-goals/${id}`);
-      const merged: CreateMetaInput = {
-        nome: current.title,
+    mutationFn: async ({ id, ...input }: UpdateGoalInput) => {
+      const current = fromApi(await api.get<GoalRow>(`/artist-goals/${id}`));
+      const merged: CreateGoalInput = {
+        artistId: String(current.artistId ?? ""),
         title: current.title,
-        descricao: current.metadata?.descricao ?? "",
+        description: current.description,
         type: current.type,
-        categoria: current.metadata?.categoria ?? "",
-        valorAlvo: Number(current.target_value ?? 0),
-        valorAtual: Number(current.current_value ?? 0),
-        unidade: current.metadata?.unidade ?? "",
-        artist_id: current.artist_id,
+        category: current.category,
+        targetValue: current.targetValue,
+        currentValue: current.currentValue,
+        unit: current.unit,
+        startDate: current.startDate,
+        endDate: current.endDate,
         status: current.status,
-        start_date: current.start_date,
-        end_date: current.end_date,
+        owner: current.owner,
+        color: current.color,
+        icon: current.icon,
         ...input,
       };
       return fromApi(await api.patch<GoalRow>(`/artist-goals/${id}`, toApi(merged)));

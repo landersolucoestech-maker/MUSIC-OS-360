@@ -84,6 +84,8 @@ import { usePhonograms } from "@/modules/catalog/hooks/usePhonograms";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useGoals } from "@/modules/marketing/hooks/useGoals";
+import type { Goal, GoalType } from "@/modules/marketing/types/marketing.types";
+import { ArtistGoalStatus, ARTIST_GOAL_STATUS_LABELS_PT_BR } from "@music-os-360/types";
 import {
   useContracts,
   type ContractWithRelations,
@@ -173,19 +175,31 @@ const CONTENT_FILTERS: Array<{ key: string; label: string; status?: string[] }> 
   { key: "publicado", label: "Publicado", status: ["publicado"] },
 ];
 
-interface MarketingMeta {
-  id: number;
+interface GoalFormState {
   title: string;
-  descricao: string;
-  type: string;
-  categoria: string;
-  valorMeta: number;
-  valorAtual: number;
-  unidade: string;
+  description: string;
+  type: GoalType | "";
+  category: string;
+  targetValue: string;
+  currentValue: string;
+  unit: string;
   startDate: string;
   endDate: string;
-  status: "em_progresso" | "concluida" | "pausada" | "cancelada";
+  status: ArtistGoalStatus;
 }
+
+const EMPTY_GOAL_FORM: GoalFormState = {
+  title: "",
+  description: "",
+  type: "",
+  category: "",
+  targetValue: "",
+  currentValue: "",
+  unit: "",
+  startDate: "",
+  endDate: "",
+  status: ArtistGoalStatus.IN_PROGRESS,
+};
 
 interface ArtistVision360ModalProps {
   open: boolean;
@@ -237,31 +251,32 @@ const getHistoryBadge = (type: string) => {
   }
 };
 
-const goalTypes = [
+const goalTypes: Array<{ value: GoalType; label: string }> = [
   { value: "streams", label: "Streams" },
-  { value: "seguidores", label: "Seguidores" },
-  { value: "lancamentos", label: "Lançamentos" },
-  { value: "receita", label: "Receita" },
-  { value: "eventos", label: "Shows/Eventos" },
-  { value: "outros", label: "Outros" },
+  { value: "followers", label: "Seguidores" },
+  { value: "releases", label: "Lançamentos" },
+  { value: "revenue", label: "Receita" },
+  { value: "shows", label: "Shows/Eventos" },
+  { value: "engagement", label: "Engajamento" },
+  { value: "other", label: "Outros" },
 ];
 
 const goalCategories = [
-  { value: "crescimento", label: "Crescimento" },
-  { value: "financeiro", label: "Financeiro" },
-  { value: "producao", label: "Produção" },
+  { value: "growth", label: "Crescimento" },
+  { value: "financial", label: "Financeiro" },
+  { value: "production", label: "Produção" },
   { value: "marketing", label: "Marketing" },
-  { value: "carreira", label: "Carreira" },
+  { value: "career", label: "Carreira" },
 ];
 
 const primaryCompactButtonClass = "h-8 text-xs gap-1.5";
 const activeBlueBadgeClass = "bg-primary text-primary-foreground border-primary";
 
-const metaStatusOptions = [
-  { value: "em_progresso", label: "Em Progresso", color: activeBlueBadgeClass },
-  { value: "concluida", label: "Concluída", color: "bg-success" },
-  { value: "pausada", label: "Pausada", color: "bg-gray-500" },
-  { value: "cancelada", label: "Cancelada", color: "bg-destructive" },
+const goalStatusOptions: Array<{ value: ArtistGoalStatus; label: string; color: string }> = [
+  { value: ArtistGoalStatus.IN_PROGRESS, label: ARTIST_GOAL_STATUS_LABELS_PT_BR[ArtistGoalStatus.IN_PROGRESS], color: activeBlueBadgeClass },
+  { value: ArtistGoalStatus.COMPLETED, label: ARTIST_GOAL_STATUS_LABELS_PT_BR[ArtistGoalStatus.COMPLETED], color: "bg-success" },
+  { value: ArtistGoalStatus.CANCELLED, label: ARTIST_GOAL_STATUS_LABELS_PT_BR[ArtistGoalStatus.CANCELLED], color: "bg-destructive" },
+  { value: ArtistGoalStatus.EXPIRED, label: ARTIST_GOAL_STATUS_LABELS_PT_BR[ArtistGoalStatus.EXPIRED], color: "bg-gray-500" },
 ];
 
 const getProjectStatusBadgeClass = (status?: string | null) => {
@@ -319,10 +334,10 @@ export function ArtistVision360Modal({
   const { releases: actualReleases } = useReleases(open, artistId);
   const { projects: actualProjects } = useProjects(open, artistId);
   const {
-    metas: actualGoals,
-    addMeta,
-    updateMeta,
-    deleteMeta,
+    goals: actualGoals,
+    addGoal,
+    updateGoal,
+    deleteGoal,
     getProgressPercent: calcProgress,
   } = useGoals(open, artistId);
   const { contracts: actualContracts } = useContracts(open, artistId);
@@ -343,8 +358,8 @@ export function ArtistVision360Modal({
   }, [artist, contacts]);
 
   const [activeTab, setActiveTab] = useState("visao-geral");
-  const [showMetaForm, setShowMetaForm] = useState(false);
-  const [editingMeta, setEditingMeta] = useState<MarketingMeta | null>(null);
+  const [showGoalForm, setShowGoalForm] = useState(false);
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const [scheduleFilter, setScheduleFilter] = useState("todos");
   const [contentFilter, setContentFilter] = useState("todos");
   const [contractFilter, setContractFilter] = useState("todos");
@@ -584,87 +599,65 @@ export function ArtistVision360Modal({
   // the artist has an ID configured for the platform — avoiding useless calls
   // for unlinked profiles.
 
-  const [metaForm, setMetaForm] = useState({
-    title: "",
-    descricao: "",
-    type: "",
-    categoria: "",
-    valorMeta: "",
-    valorAtual: "",
-    unidade: "",
-    startDate: "",
-    endDate: "",
-    status: "em_progresso" as MarketingMeta["status"],
-  });
+  const [goalForm, setGoalForm] = useState<GoalFormState>(EMPTY_GOAL_FORM);
 
   if (!artist) return null;
 
   const resetForm = () => {
-    setMetaForm({
-      title: "",
-      descricao: "",
-      type: "",
-      categoria: "",
-      valorMeta: "",
-      valorAtual: "",
-      unidade: "",
-      startDate: "",
-      endDate: "",
-      status: "em_progresso",
-    });
-    setEditingMeta(null);
-    setShowMetaForm(false);
+    setGoalForm(EMPTY_GOAL_FORM);
+    setEditingGoal(null);
+    setShowGoalForm(false);
   };
 
-  const handleSaveMeta = async () => {
-    if (!metaForm.title || !metaForm.type || !metaForm.valorMeta) return;
+  const handleSaveGoal = async () => {
+    if (!goalForm.title || !goalForm.type || !goalForm.targetValue) return;
     const payload = {
-      artist_id: artistId,
-      title: metaForm.title,
-      descricao: metaForm.descricao,
-      tipo_meta: metaForm.type,
-      categoria: metaForm.categoria,
-      valor_meta: Number(metaForm.valorMeta),
-      valor_atual: Number(metaForm.valorAtual) || 0,
-      unidade: metaForm.unidade,
-      start_date: metaForm.startDate || null,
-      end_date: metaForm.endDate || null,
-      status: metaForm.status,
+      artistId: String(artistId),
+      title: goalForm.title,
+      description: goalForm.description,
+      type: goalForm.type,
+      category: goalForm.category,
+      targetValue: Number(goalForm.targetValue),
+      currentValue: Number(goalForm.currentValue) || 0,
+      unit: goalForm.unit,
+      startDate: goalForm.startDate || null,
+      endDate: goalForm.endDate || null,
+      status: goalForm.status,
     };
-    if (editingMeta) {
-      await updateMeta({ id: String(editingMeta.id), ...payload });
+    if (editingGoal) {
+      await updateGoal({ id: editingGoal.id, ...payload });
     } else {
-      await addMeta(payload);
+      await addGoal(payload);
     }
     resetForm();
   };
 
-  const handleEditMeta = (meta: any) => {
-    setMetaForm({
-      title: meta.title || meta.tipo_meta || "",
-      descricao: meta.descricao || "",
-      type: meta.tipo_meta || meta.type || "",
-      categoria: meta.categoria || "",
-      valorMeta: String(meta.valor_meta ?? meta.valorMeta ?? ""),
-      valorAtual: String(meta.valor_atual ?? meta.valorAtual ?? ""),
-      unidade: meta.unidade || "",
-      startDate: meta.start_date || meta.startDate || "",
-      endDate: meta.end_date || meta.endDate || "",
-      status: (meta.status as MarketingMeta["status"]) || "em_progresso",
+  const handleEditGoal = (goal: Goal) => {
+    setGoalForm({
+      title: goal.title,
+      description: goal.description,
+      type: goal.type,
+      category: goal.category,
+      targetValue: String(goal.targetValue),
+      currentValue: String(goal.currentValue),
+      unit: goal.unit,
+      startDate: goal.startDate ?? "",
+      endDate: goal.endDate ?? "",
+      status: goal.status,
     });
-    setEditingMeta(meta);
-    setShowMetaForm(true);
+    setEditingGoal(goal);
+    setShowGoalForm(true);
   };
 
-  const handleDeleteMeta = async (id: string | number) => {
-    await deleteMeta(String(id));
+  const handleDeleteGoal = async (id: string) => {
+    await deleteGoal(id);
   };
 
   const goalsInProgress = actualGoals.filter(
-    (m) => m.status === "em_progresso",
+    (goal) => goal.status === ArtistGoalStatus.IN_PROGRESS,
   ).length;
   const completedGoals = actualGoals.filter(
-    (m) => m.status === "concluida",
+    (goal) => goal.status === ArtistGoalStatus.COMPLETED,
   ).length;
   const averageProgress =
     actualGoals.length > 0
@@ -2433,7 +2426,7 @@ export function ArtistVision360Modal({
                     <Button
                       size="sm"
                       className={primaryCompactButtonClass}
-                      onClick={() => setShowMetaForm(true)}
+                      onClick={() => setShowGoalForm(true)}
                     >
                       <Plus className="h-3.5 w-3.5" />
                       Nova Meta
@@ -2484,7 +2477,7 @@ export function ArtistVision360Modal({
                       <Button
                         size="sm"
                         className={primaryCompactButtonClass}
-                        onClick={() => setShowMetaForm(true)}
+                        onClick={() => setShowGoalForm(true)}
                       >
                         <Plus className="h-3.5 w-3.5" />
                         Criar Primeira Meta
@@ -2492,24 +2485,15 @@ export function ArtistVision360Modal({
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {actualGoals.map((meta) => {
-                        const progress = calcProgress(meta);
-                        const statusInfo = metaStatusOptions.find(
-                          (s) => s.value === meta.status,
+                      {actualGoals.map((goal) => {
+                        const progress = calcProgress(goal);
+                        const statusInfo = goalStatusOptions.find(
+                          (s) => s.value === goal.status,
                         );
-                        const title =
-                          (meta as any).title ||
-                          meta.tipo_meta ||
-                          meta.descricao ||
-                          "Meta";
-                        const goalType =
-                          (meta as any).tipo_meta || (meta as any).type;
-                        const category = (meta as any).categoria;
-                        const startDate =
-                          meta.start_date || (meta as any).startDate;
-                        const endDate = meta.end_date || (meta as any).endDate;
+                        const title = goal.title || goal.description || "Meta";
+                        const { type: goalType, category, startDate, endDate } = goal;
                         return (
-                          <Card key={meta.id} className="bg-background/50">
+                          <Card key={goal.id} className="bg-background/50">
                             <CardContent className="p-4">
                               <div className="flex items-start justify-between mb-3">
                                 <div className="flex-1">
@@ -2520,13 +2504,13 @@ export function ArtistVision360Modal({
                                         statusInfo?.color ?? "bg-gray-500"
                                       }
                                     >
-                                      {statusInfo?.label ?? meta.status}
+                                      {statusInfo?.label ?? "Status desconhecido"}
                                     </Badge>
                                   </div>
-                                  {meta.descricao &&
-                                    title !== meta.descricao && (
+                                  {goal.description &&
+                                    title !== goal.description && (
                                       <p className="text-sm text-muted-foreground">
-                                        {meta.descricao}
+                                        {goal.description}
                                       </p>
                                     )}
                                 </div>
@@ -2534,14 +2518,14 @@ export function ArtistVision360Modal({
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() => handleEditMeta(meta)}
+                                    onClick={() => handleEditGoal(goal)}
                                   >
                                     <Edit className="h-4 w-4" />
                                   </Button>
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() => handleDeleteMeta(meta.id)}
+                                    onClick={() => handleDeleteGoal(goal.id)}
                                   >
                                     <Trash2 className="h-4 w-4 text-destructive" />
                                   </Button>
@@ -2552,10 +2536,10 @@ export function ArtistVision360Modal({
                                 <div className="flex-1">
                                   <div className="flex items-center justify-between mb-1">
                                     <span className="text-sm text-muted-foreground">
-                                      {(meta.valor_atual ?? 0).toLocaleString()}{" "}
+                                      {goal.currentValue.toLocaleString()}{" "}
                                       /{" "}
-                                      {(meta.valor_meta ?? 0).toLocaleString()}{" "}
-                                      {meta.unidade}
+                                      {goal.targetValue.toLocaleString()}{" "}
+                                      {goal.unit}
                                     </span>
                                     <span className="text-sm font-medium">
                                       {progress}%
@@ -2584,13 +2568,13 @@ export function ArtistVision360Modal({
                                   <Badge variant="outline" className="text-xs">
                                     {goalCategories.find(
                                       (c) => c.value === category,
-                                    )?.label ?? category}
+                                    )?.label ?? "Outra categoria"}
                                   </Badge>
                                 )}
                                 {goalType && (
                                   <Badge variant="outline" className="text-xs">
                                     {goalTypes.find((t) => t.value === goalType)
-                                      ?.label ?? goalType}
+                                      ?.label ?? "Outros"}
                                   </Badge>
                                 )}
                               </div>
@@ -2890,13 +2874,13 @@ export function ArtistVision360Modal({
 
         {/* New/Edit goal modal */}
         <Dialog
-          open={showMetaForm}
+          open={showGoalForm}
           onOpenChange={(open) => !open && resetForm()}
         >
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>
-                {editingMeta ? "Editar Meta" : "Nova Meta"}
+                {editingGoal ? "Editar Meta" : "Nova Meta"}
               </DialogTitle>
             </DialogHeader>
 
@@ -2904,9 +2888,9 @@ export function ArtistVision360Modal({
               <div className="col-span-2">
                 <Label>Título da Meta *</Label>
                 <Input
-                  value={metaForm.title}
+                  value={goalForm.title}
                   onChange={(e) =>
-                    setMetaForm({ ...metaForm, title: e.target.value })
+                    setGoalForm({ ...goalForm, title: e.target.value })
                   }
                   placeholder="Ex: Alcançar 1M de streams"
                 />
@@ -2915,9 +2899,9 @@ export function ArtistVision360Modal({
               <div className="col-span-2">
                 <Label>Descrição</Label>
                 <Textarea
-                  value={metaForm.descricao}
+                  value={goalForm.description}
                   onChange={(e) =>
-                    setMetaForm({ ...metaForm, descricao: e.target.value })
+                    setGoalForm({ ...goalForm, description: e.target.value })
                   }
                   placeholder="Descreva a meta em detalhes..."
                   rows={2}
@@ -2927,8 +2911,8 @@ export function ArtistVision360Modal({
               <div>
                 <Label>Tipo de Meta *</Label>
                 <Select
-                  value={metaForm.type}
-                  onValueChange={(v) => setMetaForm({ ...metaForm, type: v })}
+                  value={goalForm.type}
+                  onValueChange={(v) => setGoalForm({ ...goalForm, type: v as GoalType })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione" />
@@ -2946,9 +2930,9 @@ export function ArtistVision360Modal({
               <div>
                 <Label>Categoria</Label>
                 <Select
-                  value={metaForm.categoria}
+                  value={goalForm.category}
                   onValueChange={(v) =>
-                    setMetaForm({ ...metaForm, categoria: v })
+                    setGoalForm({ ...goalForm, category: v })
                   }
                 >
                   <SelectTrigger>
@@ -2968,9 +2952,9 @@ export function ArtistVision360Modal({
                 <Label>Valor da Meta *</Label>
                 <Input
                   type="number"
-                  value={metaForm.valorMeta}
+                  value={goalForm.targetValue}
                   onChange={(e) =>
-                    setMetaForm({ ...metaForm, valorMeta: e.target.value })
+                    setGoalForm({ ...goalForm, targetValue: e.target.value })
                   }
                   placeholder="1000000"
                 />
@@ -2980,9 +2964,9 @@ export function ArtistVision360Modal({
                 <Label>Valor Atual</Label>
                 <Input
                   type="number"
-                  value={metaForm.valorAtual}
+                  value={goalForm.currentValue}
                   onChange={(e) =>
-                    setMetaForm({ ...metaForm, valorAtual: e.target.value })
+                    setGoalForm({ ...goalForm, currentValue: e.target.value })
                   }
                   placeholder="0"
                 />
@@ -2991,9 +2975,9 @@ export function ArtistVision360Modal({
               <div>
                 <Label>Unidade de Medida</Label>
                 <Input
-                  value={metaForm.unidade}
+                  value={goalForm.unit}
                   onChange={(e) =>
-                    setMetaForm({ ...metaForm, unidade: e.target.value })
+                    setGoalForm({ ...goalForm, unit: e.target.value })
                   }
                   placeholder="Ex: streams, seguidores, R$"
                 />
@@ -3002,16 +2986,16 @@ export function ArtistVision360Modal({
               <div>
                 <Label>Status</Label>
                 <Select
-                  value={metaForm.status}
+                  value={goalForm.status}
                   onValueChange={(v) =>
-                    setMetaForm({ ...metaForm, status: v as MarketingMeta["status"] })
+                    setGoalForm({ ...goalForm, status: v as ArtistGoalStatus })
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {metaStatusOptions.map((s) => (
+                    {goalStatusOptions.map((s) => (
                       <SelectItem key={s.value} value={s.value}>
                         {s.label}
                       </SelectItem>
@@ -3023,20 +3007,20 @@ export function ArtistVision360Modal({
               <div>
                 <Label>Data de Início</Label>
                 <DatePickerField
-                  value={metaForm.startDate}
-                  onChange={(iso) => setMetaForm({ ...metaForm, startDate: iso })}
+                  value={goalForm.startDate}
+                  onChange={(iso) => setGoalForm({ ...goalForm, startDate: iso })}
                   placeholder="Selecione a data"
-                  data-testid="datepicker-meta-data-inicio"
+                  data-testid="datepicker-goal-start-date"
                 />
               </div>
 
               <div>
                 <Label>Data de Fim</Label>
                 <DatePickerField
-                  value={metaForm.endDate}
-                  onChange={(iso) => setMetaForm({ ...metaForm, endDate: iso })}
+                  value={goalForm.endDate}
+                  onChange={(iso) => setGoalForm({ ...goalForm, endDate: iso })}
                   placeholder="Selecione a data"
-                  data-testid="datepicker-meta-data-fim"
+                  data-testid="datepicker-goal-end-date"
                 />
               </div>
             </div>
@@ -3046,10 +3030,10 @@ export function ArtistVision360Modal({
                 Cancelar
               </Button>
               <Button
-                onClick={handleSaveMeta}
+                onClick={handleSaveGoal}
                 className="bg-primary hover:bg-primary/90"
               >
-                {editingMeta ? "Salvar Alterações" : "Criar Meta"}
+                {editingGoal ? "Salvar Alterações" : "Criar Meta"}
               </Button>
             </div>
           </DialogContent>

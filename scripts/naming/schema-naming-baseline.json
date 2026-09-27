@@ -1,7 +1,6 @@
 {
- "total": 279,
+ "total": 277,
  "debt": {
-  "schema::column::artist_goals.periodo": 1,
   "schema::column::artists.agencia": 1,
   "schema::column::artists.agencia_booking": 1,
   "schema::column::artists.banco": 1,
@@ -263,7 +262,6 @@
   "schema::constraint::artists.chk_artists_status_cadastro": 1,
   "schema::constraint::shares.chk_shares_percentual_range": 1,
   "schema::constraint::work_participants.chk_work_participants_percentual": 1,
-  "schema::default-value::artist_goals.periodo::mensal": 1,
   "schema::default-value::clients.tipo_pessoa::pessoa_juridica": 1,
   "schema::default-value::content_detections.type::uso_nao_autorizado": 1,
   "schema::default-value::contract_service_types.financial_model::valor_fixo": 1,

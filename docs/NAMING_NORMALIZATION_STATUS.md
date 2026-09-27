@@ -75,6 +75,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-019 | Shared entity references (web) | done | DONE | no |
 | CZ-020 | API genre stats routes | done | DONE | no |
 | CZ-021 | Frontend domain events and analytics event names (web) | done | DONE | no |
+| CZ-022 | Artist goal (artist_goals): period, type, status and metadata vocabulary | done | DONE | no |
 
-Concepts: 69. Renames: 0. Exceptions: 45. Blockers: 0.
-By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 54, done/RESOLVED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 70. Renames: 0. Exceptions: 50. Blockers: 0.
+By status/disposition: approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/BUG 1, done/DONE 55, done/RESOLVED 1, proposed/BLOCKED_PRODUCT_DECISION 6, proposed/NEEDS_PRODUCT_DECISION 3.

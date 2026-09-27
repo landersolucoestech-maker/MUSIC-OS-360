@@ -1912,7 +1912,7 @@ export class ArtistGoalEntity {
   @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) target_value: string | null;
   @Column({ type: 'decimal', precision: 15, scale: 2, default: '0' }) current_value: string;
   @Column({ type: 'varchar', length: 50, default: ArtistGoalStatus.IN_PROGRESS }) status: ArtistGoalStatus;
-  @Column({ type: 'varchar', length: 50, default: 'mensal' }) periodo: string;
+  @Column({ type: 'varchar', length: 50, default: 'monthly' }) period: string;
   @Column({ type: 'timestamp', nullable: true }) start_date: Date | null;
   @Column({ type: 'timestamp', nullable: true }) end_date: Date | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
