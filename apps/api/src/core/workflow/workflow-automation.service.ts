@@ -126,7 +126,7 @@ export class WorkflowAutomationService implements OnModuleInit {
     }
 
     this.logger.log(
-      `WorkflowAutomationService inicializado — ${BUILTIN_TRIGGERS.length} triggers registados`,
+      `WorkflowAutomationService initialized — ${BUILTIN_TRIGGERS.length} triggers registered`,
     );
   }
 

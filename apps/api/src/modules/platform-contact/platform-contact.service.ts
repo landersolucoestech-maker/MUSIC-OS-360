@@ -63,7 +63,7 @@ export class PlatformContactService {
       tags: [{ name: 'type', value: 'platform_commercial_contact' }],
     });
 
-    this.logger.log('PlatformContactService: contato institucional encaminhado');
+    this.logger.log('PlatformContactService: institutional contact forwarded');
     return { accepted: true };
   }
 }

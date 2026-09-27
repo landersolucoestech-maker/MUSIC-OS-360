@@ -74,10 +74,10 @@ export class GoogleAdsService extends IntegrationBaseService {
 
   async getCampaigns(tenantId: string, userId: string) {
     const creds = await this.loadCredentials<GAdsCreds>(tenantId, PROVIDER);
-    if (!creds) return { error: 'Google Ads não configurado (developer_token)' };
+    if (!creds) return { error: 'Google Ads not configured (developer_token)' };
 
     const conn = await this.getOAuthConnection(tenantId, userId, PROVIDER);
-    if (!conn) return { error: 'Google Ads OAuth não conectado' };
+    if (!conn) return { error: 'Google Ads OAuth not connected' };
 
     const query = `
       SELECT campaign.id, campaign.name, campaign.status,

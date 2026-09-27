@@ -54,7 +54,7 @@ export class ArtistExternalProfileSyncService {
     const logCtx =
       `tenant=${input.tenantId} artist=${input.artistId} platform=${platform} ` +
       `requestedBy=${input.requestedBy} externalId=${externalId ?? '-'} externalUrl=${externalUrl ?? '-'}`;
-    this.logger.log(`[platform-sync/enqueue] solicitado ${logCtx}`);
+    this.logger.log(`[platform-sync/enqueue] requested ${logCtx}`);
 
     if (!externalId && !externalUrl) {
       this.logger.warn(`[platform-sync/enqueue] pulado reason=missing_external_profile ${logCtx}`);

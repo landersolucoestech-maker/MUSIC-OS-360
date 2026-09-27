@@ -195,7 +195,7 @@ export class DunningService implements OnApplicationBootstrap {
 
       if (tenantIds.length > 0) {
         this.logger.log(
-          `Dunning cycle[${runId}]: processados ${succeeded}/${tenantIds.length} tenants (falhas=${failed}, pulados=${skipped})`,
+          `Dunning cycle[${runId}]: processed ${succeeded}/${tenantIds.length} tenants (failures=${failed}, skipped=${skipped})`,
         );
       }
     } catch (err) {
@@ -262,7 +262,7 @@ export class DunningService implements OnApplicationBootstrap {
 
       // find-817acade: operators previously only saw failures for this cycle.
       this.logger.log(
-        `Dunning[${runId}]: tenant ${tenantId} processado — status=${state.status} notificado=${!!notification}`,
+        `Dunning[${runId}]: tenant ${tenantId} processed — status=${state.status} notified=${!!notification}`,
       );
       return 'processed';
     });

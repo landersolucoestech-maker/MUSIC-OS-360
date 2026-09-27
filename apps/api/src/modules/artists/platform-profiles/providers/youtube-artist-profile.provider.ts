@@ -173,7 +173,7 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
           ? `forHandle=@${encodeURIComponent(ref.value)}`
           : `forUsername=${encodeURIComponent(ref.value)}`;
       const res = await this.fetch(`${YOUTUBE_API}/channels?part=id&${param}&key=${apiKey}`);
-      if (!res.ok) throw new Error(await this.describeYouTubeError(res, `resolver o canal por ${ref.kind}`));
+      if (!res.ok) throw new Error(await this.describeYouTubeError(res, `resolving the channel by ${ref.kind}`));
       const data = (await res.json()) as { items?: Array<{ id?: string }> };
       const id = data.items?.[0]?.id;
       if (id) return id;
@@ -185,7 +185,7 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
     const res = await this.fetch(
       `${YOUTUBE_API}/search?part=id&type=channel&maxResults=1&q=${encodeURIComponent(ref.value)}&key=${apiKey}`,
     );
-    if (!res.ok) throw new Error(await this.describeYouTubeError(res, `pesquisar o canal "${ref.value}"`));
+    if (!res.ok) throw new Error(await this.describeYouTubeError(res, `searching the channel "${ref.value}"`));
     const data = (await res.json()) as { items?: Array<{ id?: { channelId?: string } }> };
     return data.items?.[0]?.id?.channelId ?? null;
   }
@@ -204,6 +204,6 @@ export class YouTubeArtistProfileProvider implements ArtistPlatformProvider {
       const apiMessage = body.error?.message;
       reason = [apiReason, apiMessage].filter(Boolean).join(' — ');
     } catch { /* non-JSON body: keep only the status */ }
-    return `YouTube API respondeu ${res.status} ao ${action}${reason ? `: ${reason}` : ''}`;
+    return `YouTube API responded ${res.status} while ${action}${reason ? `: ${reason}` : ''}`;
   }
 }

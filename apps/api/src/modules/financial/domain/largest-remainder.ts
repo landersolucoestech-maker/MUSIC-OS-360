@@ -39,7 +39,7 @@ export class LargestRemainderError extends Error {
 function toCents(value: string | number): bigint {
   const s = typeof value === 'number' ? value.toFixed(2) : String(value).trim();
   const m = /^(\d+)(?:\.(\d{1,2}))?$/.exec(s);
-  if (!m) throw new LargestRemainderError('INVALID_AMOUNT', `valor monetário inválido: "${s}"`);
+  if (!m) throw new LargestRemainderError('INVALID_AMOUNT', `invalid monetary amount: "${s}"`);
   const frac = (m[2] ?? '').padEnd(2, '0');
   return BigInt(m[1]) * 100n + BigInt(frac);
 }
@@ -49,7 +49,7 @@ function toPctScaled(value: string | number, index: number): bigint {
   const s = typeof value === 'number' ? value.toFixed(4) : String(value).trim();
   const m = /^(\d+)(?:\.(\d{1,4}))?$/.exec(s);
   if (!m) {
-    throw new LargestRemainderError('INVALID_PERCENTAGE', `percentual inválido na posição ${index}: "${s}"`);
+    throw new LargestRemainderError('INVALID_PERCENTAGE', `invalid percentage at position ${index}: "${s}"`);
   }
   const frac = (m[2] ?? '').padEnd(4, '0');
   return BigInt(m[1]) * PCT_SCALE + BigInt(frac);
@@ -70,10 +70,10 @@ export function largestRemainder(
 ): string[] {
   const amountCents = toCents(amount);
   if (amountCents <= 0n) {
-    throw new LargestRemainderError('INVALID_AMOUNT', 'amount deve ser > 0');
+    throw new LargestRemainderError('INVALID_AMOUNT', 'amount must be > 0');
   }
   if (percentages.length === 0) {
-    throw new LargestRemainderError('EMPTY_PERCENTAGES', 'lista de percentuais vazia');
+    throw new LargestRemainderError('EMPTY_PERCENTAGES', 'empty percentage list');
   }
 
   const pcts = percentages.map((p, i) => {
@@ -81,7 +81,7 @@ export function largestRemainder(
     if (scaled <= 0n || scaled > HUNDRED) {
       throw new LargestRemainderError(
         'INVALID_PERCENTAGE',
-        `percentual fora do intervalo (0,100] na posição ${i}`,
+        `percentage out of range (0,100] at position ${i}`,
       );
     }
     return scaled;
@@ -89,7 +89,7 @@ export function largestRemainder(
 
   const sumPct = pcts.reduce((a, b) => a + b, 0n);
   if (sumPct > HUNDRED) {
-    throw new LargestRemainderError('SUM_EXCEEDS_100', 'soma de percentuais excede 100 (I5)');
+    throw new LargestRemainderError('SUM_EXCEEDS_100', 'sum of percentages exceeds 100 (I5)');
   }
 
   // Unit of work: amountCents × pctScaled  (cents × 10^6).
@@ -127,7 +127,7 @@ export function largestRemainder(
     if (cents === 0n) {
       throw new LargestRemainderError(
         'SHARE_ROUNDS_TO_ZERO',
-        `rateio inviável: parcela da posição ${i} resulta em R$ 0,00 (allocated_amount > 0)`,
+        `infeasible split: share at position ${i} results in R$ 0,00 (allocated_amount > 0)`,
       );
     }
     return centsToString(cents);

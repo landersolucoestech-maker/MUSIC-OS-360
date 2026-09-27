@@ -422,10 +422,10 @@ export class IntegrationsController {
   @ApiOperation({
     summary: 'Integrations resolved for this client (governance + capability + audience + connection)',
     description:
-      'Resolvido pelo backend a partir da governança persistida (platform_integrations), da ' +
-      'capacidade técnica derivada do código e da conexão do tenant. Só retorna o que o ' +
-      'cliente pode ENXERGAR (canView) — o que ele pode USAR vem em canUse e é enforced no ' +
-      'backend pelo IntegrationUsageGuard, não apenas escondido na UI.',
+      'Resolved by the backend from the persisted governance (platform_integrations), the ' +
+      'technical capability derived from the code and the tenant connection. Returns only what the ' +
+      'client can SEE (canView) — what it can USE comes in canUse and is enforced on the ' +
+      'backend by the IntegrationUsageGuard, not just hidden in the UI.',
   })
   async listExternalProviders(@Request() req: any) {
     const resolved = await this.integrationPolicy.resolveAll({

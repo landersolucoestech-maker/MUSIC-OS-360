@@ -313,9 +313,9 @@ describe('DunningService — single billing authority (P0-A)', () => {
 
     await service.runDunningCycle();
 
-    const summary = logSpy.mock.calls.map((call) => String(call[0])).find((line) => line.includes('processados'));
-    expect(summary).toContain('processados 1/2');
-    expect(summary).toContain('falhas=1');
+    const summary = logSpy.mock.calls.map((call) => String(call[0])).find((line) => line.startsWith('Dunning cycle['));
+    expect(summary).toContain('processed 1/2');
+    expect(summary).toContain('failures=1');
   });
 
   it('find-27fef1de: a permanently-failed notification job for the same transition is retried, not silently dropped forever', async () => {
@@ -342,7 +342,7 @@ describe('DunningService — single billing authority (P0-A)', () => {
 
     await service.runDunningCycle();
 
-    const successLine = logSpy.mock.calls.map((call) => String(call[0])).find((line) => line.includes('tenant-1 processado'));
+    const successLine = logSpy.mock.calls.map((call) => String(call[0])).find((line) => line.includes('tenant-1 processed'));
     expect(successLine).toBeDefined();
     expect(successLine).toMatch(/Dunning\[[0-9a-f-]{36}\]/);
   });

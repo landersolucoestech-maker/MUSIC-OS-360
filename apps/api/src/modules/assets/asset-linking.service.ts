@@ -107,7 +107,7 @@ export class AssetLinkingService {
         }
 
         const assetType = AssetLinkingService.classify(upload.mime_type, upload.original_name);
-        await ctx.log('info', `Classificado como "${assetType}"`, { assetType });
+        await ctx.log('info', `Classified as "${assetType}"`, { assetType });
 
         // 1. Idempotent central asset (by upload origin/source_id).
         let asset = await this.assets!.findOne({
@@ -139,14 +139,14 @@ export class AssetLinkingService {
             }),
           );
           await this.assets!.update({ id: asset.id }, { current_version_id: version.id });
-          await ctx.log('info', 'Asset central criado', { assetId: asset.id, versionId: version.id });
+          await ctx.log('info', 'Central asset created', { assetId: asset.id, versionId: version.id });
 
           // Automatic classification (dedicated skill) refines asset_type + auditing.
           const classified = await this.classification.classifyAndApply(
             payload.tenantId, asset.id, upload.mime_type, upload.original_name, upload.category, payload.uploadedBy,
           );
           asset.asset_type = classified.assetType;
-          await ctx.log('info', `Classificado como "${classified.assetType}"`, classified as unknown as Record<string, unknown>);
+          await ctx.log('info', `Classified as "${classified.assetType}"`, classified as unknown as Record<string, unknown>);
         }
 
         // 2. Link to project/task according to the upload's polymorphic origin.
@@ -162,7 +162,7 @@ export class AssetLinkingService {
             actorId: payload.uploadedBy,
           });
           linkedProjectId = entityId;
-          await ctx.log('info', 'Vinculado ao projeto', { projectId: entityId });
+          await ctx.log('info', 'Linked to the project', { projectId: entityId });
         } else if (entityId && TASK_ENTITY_ALIASES.has(entity)) {
           await this.linkAssetToTask(payload.tenantId, asset.id, entityId, {
             role: 'reference',
@@ -170,14 +170,14 @@ export class AssetLinkingService {
             actorId: payload.uploadedBy,
           });
           linkedTaskId = entityId;
-          await ctx.log('info', 'Vinculado à tarefa', { taskId: entityId });
+          await ctx.log('info', 'Linked to the task', { taskId: entityId });
         } else {
           await this.recordUsage(payload.tenantId, asset.id, 'registered', {
             targetType: entity || null,
             targetId: entityId,
             actorId: payload.uploadedBy,
           });
-          await ctx.log('info', 'Asset registrado sem vínculo direto a projeto/tarefa');
+          await ctx.log('info', 'Asset registered without a direct project/task link');
         }
 
         const result: AssetLinkResult = { assetId: asset.id, linkedProjectId, linkedTaskId };

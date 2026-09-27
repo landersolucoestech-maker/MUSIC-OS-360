@@ -121,7 +121,7 @@ export class DevAuthController implements OnModuleInit {
           joined_at:     new Date(),
         } as any);
         await this.memberRepo.save(member as any);
-        this.logger.log(`Membro dev registado no tenant ${tenant.slug} (role_id=${ownerRoleId ?? 'NULL'})`);
+        this.logger.log(`Dev member registered in tenant ${tenant.slug} (role_id=${ownerRoleId ?? 'NULL'})`);
       }
     }
 

@@ -34,7 +34,7 @@ const STOREFRONT_RE = /^[a-z]{2}$/;
  */
 export function assertSafePathSegment(value: unknown, fieldName: string): string {
   if (typeof value !== 'string' || !PATH_SEGMENT_RE.test(value)) {
-    throw new UnsafeInputError(`Parâmetro inválido: ${fieldName}`);
+    throw new UnsafeInputError(`Invalid parameter: ${fieldName}`);
   }
   return value;
 }
@@ -42,7 +42,7 @@ export function assertSafePathSegment(value: unknown, fieldName: string): string
 /** Apple Music storefront — exactly two lowercase letters (e.g. "br", "us"). */
 export function assertSafeStorefront(value: unknown): string {
   if (typeof value !== 'string' || !STOREFRONT_RE.test(value)) {
-    throw new UnsafeInputError('storefront inválido');
+    throw new UnsafeInputError('invalid storefront');
   }
   return value;
 }
@@ -51,18 +51,18 @@ export function assertSafeStorefront(value: unknown): string {
 export function assertSafeLimit(value: unknown, min = 1, max = 50): number {
   const n = typeof value === 'number' ? value : Number(value);
   if (!Number.isInteger(n) || n < min || n > max) {
-    throw new UnsafeInputError('limit inválido');
+    throw new UnsafeInputError('invalid limit');
   }
   return n;
 }
 
 /** Comma-separated resource types validated against an explicit allowlist. */
 export function assertSafeTypes(value: unknown, allowed: readonly string[]): string {
-  if (typeof value !== 'string') throw new UnsafeInputError('types inválido');
+  if (typeof value !== 'string') throw new UnsafeInputError('invalid types');
   const parts = value.split(',').map((s) => s.trim()).filter(Boolean);
-  if (parts.length === 0) throw new UnsafeInputError('types inválido');
+  if (parts.length === 0) throw new UnsafeInputError('invalid types');
   for (const part of parts) {
-    if (!allowed.includes(part)) throw new UnsafeInputError(`types inválido: ${part}`);
+    if (!allowed.includes(part)) throw new UnsafeInputError(`invalid types: ${part}`);
   }
   return parts.join(',');
 }
@@ -70,11 +70,11 @@ export function assertSafeTypes(value: unknown, allowed: readonly string[]): str
 /** Free-text query value (search term) — bounded length, no control chars. */
 export function assertSafeQueryValue(value: unknown, fieldName: string, maxLen = 256): string {
   if (typeof value !== 'string' || value.length === 0 || value.length > maxLen) {
-    throw new UnsafeInputError(`Parâmetro inválido: ${fieldName}`);
+    throw new UnsafeInputError(`Invalid parameter: ${fieldName}`);
   }
   for (let i = 0; i < value.length; i += 1) {
     if (value.charCodeAt(i) < 0x20) {
-      throw new UnsafeInputError(`Parâmetro inválido: ${fieldName}`);
+      throw new UnsafeInputError(`Invalid parameter: ${fieldName}`);
     }
   }
   return value;
@@ -89,13 +89,13 @@ export function assertAllowedHost(rawUrl: string, allowedHosts: readonly string[
   try {
     parsed = new URL(rawUrl);
   } catch {
-    throw new DisallowedHostError('URL de integração inválida');
+    throw new DisallowedHostError('Invalid integration URL');
   }
   if (parsed.protocol !== 'https:') {
-    throw new DisallowedHostError(`Esquema não permitido: ${parsed.protocol}`);
+    throw new DisallowedHostError(`Scheme not allowed: ${parsed.protocol}`);
   }
   if (!allowedHosts.includes(parsed.hostname)) {
-    throw new DisallowedHostError(`Host não permitido para integração: ${parsed.hostname}`);
+    throw new DisallowedHostError(`Host not allowed for integration: ${parsed.hostname}`);
   }
   return parsed.toString();
 }

@@ -120,7 +120,7 @@ export class MailService {
     }
 
     const data = await res.json() as { id: string };
-    this.logger.log(`Email enviado: ${data.id} → ${recipients.join(', ')}`);
+    this.logger.log(`E-mail sent: ${data.id} → ${recipients.join(', ')}`);
     return { id: data.id };
   }
 

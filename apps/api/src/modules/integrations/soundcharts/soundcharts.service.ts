@@ -108,7 +108,7 @@ export class SoundchartsService {
     try { body = await res.json(); } catch { /* response without a JSON body */ }
 
     if (!body?.access_token) {
-      throw new SoundchartsApiError('Soundcharts token response sem access_token', res.status);
+      throw new SoundchartsApiError('Soundcharts token response without access_token', res.status);
     }
 
     const ttlS = typeof body.expires_in === 'number' ? body.expires_in : DEFAULT_TOKEN_TTL_S;
@@ -133,9 +133,9 @@ export class SoundchartsService {
   }
 
   private throwForStatus(status: number, context: string): never {
-    if (status === 404) throw new SoundchartsNotFoundError(`Soundcharts: não encontrado em ${context}`, status);
+    if (status === 404) throw new SoundchartsNotFoundError(`Soundcharts: not found in ${context}`, status);
     if (status === 429) throw new SoundchartsRateLimitError(`Soundcharts: rate limit em ${context}`, status);
-    throw new SoundchartsApiError(`Soundcharts respondeu HTTP ${status} em ${context}`, status);
+    throw new SoundchartsApiError(`Soundcharts responded HTTP ${status} in ${context}`, status);
   }
 
   /**
@@ -268,7 +268,7 @@ export class SoundchartsService {
       ?.object?.uuid
       ?? (body as { uuid?: string } | null)?.uuid
       ?? (body as { data?: { uuid?: string } } | null)?.data?.uuid;
-    if (!uuid) throw new SoundchartsApiError('Soundcharts: resposta sem uuid de artista', status);
+    if (!uuid) throw new SoundchartsApiError('Soundcharts: response without artist uuid', status);
 
     this.uuidCache.set(cacheKey, { uuid, expiresAt: Date.now() + UUID_CACHE_TTL_MS });
     return uuid;
@@ -298,8 +298,8 @@ export class SoundchartsService {
     }
     throw new SoundchartsApiError(
       attempted.length > 0
-        ? `Soundcharts: não foi possível resolver o artista por nenhum identificador disponível (${attempted.join('; ')})`
-        : 'Soundcharts: nenhum identificador de artista disponível para resolução',
+        ? `Soundcharts: could not resolve the artist by any available identifier (${attempted.join('; ')})`
+        : 'Soundcharts: no artist identifier available for resolution',
       404,
     );
   }
@@ -321,7 +321,7 @@ export class SoundchartsService {
     const items = (body as { items?: unknown } | null)?.items;
     const latest = this.pickLatest(items);
     if (!latest || typeof latest.value !== 'number') {
-      throw new SoundchartsApiError('Soundcharts: série de monthly listeners vazia/sem value', status);
+      throw new SoundchartsApiError('Soundcharts: monthly listeners series empty/without value', status);
     }
     return {
       value: latest.value,
@@ -342,7 +342,7 @@ export class SoundchartsService {
     const items = (body as { items?: unknown } | null)?.items;
     const latest = this.pickLatest(items);
     if (!latest || typeof latest.followerCount !== 'number') {
-      throw new SoundchartsApiError(`Soundcharts: followerCount ausente em ${methodName}`, status);
+      throw new SoundchartsApiError(`Soundcharts: followerCount missing in ${methodName}`, status);
     }
     return {
       value: latest.followerCount,
@@ -388,7 +388,7 @@ export class SoundchartsService {
     const items = (body as { items?: unknown } | null)?.items;
     const latest = this.pickLatest(items);
     if (!latest || typeof latest.followerCount !== 'number') {
-      throw new SoundchartsApiError('Soundcharts: followerCount ausente em getYouTubeAudience', status);
+      throw new SoundchartsApiError('Soundcharts: followerCount missing in getYouTubeAudience', status);
     }
     const observedAt = latest.date ? new Date(latest.date) : new Date();
 
@@ -461,7 +461,7 @@ export class SoundchartsService {
     const items = (body as { items?: unknown } | null)?.items;
     const latest = this.pickLatest(items);
     if (!latest || typeof latest.playlistCount !== 'number') {
-      throw new SoundchartsNotFoundError(`Soundcharts: nenhum playlist reach registrado em getAppleMusicPlaylistCount`, status);
+      throw new SoundchartsNotFoundError(`Soundcharts: no playlist reach recorded in getAppleMusicPlaylistCount`, status);
     }
     return {
       value: latest.playlistCount,

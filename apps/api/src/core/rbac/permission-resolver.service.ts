@@ -532,12 +532,12 @@ export class PermissionResolverService implements OnModuleInit {
 
       if (rows.length === 0) {
         throw new PermissionResolutionError(
-          'role canonica ativa nao encontrada',
+          'active canonical role not found',
         );
       }
       if (rows.some((row) => Number(row.depth) > 32)) {
         throw new PermissionResolutionError(
-          'profundidade maxima de heranca de roles excedida',
+          'maximum role inheritance depth exceeded',
         );
       }
       return rows.map((row) => ({
@@ -599,17 +599,17 @@ export class PermissionResolverService implements OnModuleInit {
 
       if (rows.some((row) => Boolean(row.invalid))) {
         throw new PermissionResolutionError(
-          'dependencia aponta para permissao inexistente ou descontinuada',
+          'dependency points to a nonexistent or discontinued permission',
         );
       }
       if (rows.some((row) => Boolean(row.cycle))) {
         throw new PermissionResolutionError(
-          'ciclo detectado no catalogo de dependencias',
+          'cycle detected in the dependency catalog',
         );
       }
       if (rows.some((row) => Number(row.depth) > 32)) {
         throw new PermissionResolutionError(
-          'profundidade maxima de dependencias excedida',
+          'maximum dependency depth exceeded',
         );
       }
       return rows.map((row) => ({

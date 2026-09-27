@@ -41,7 +41,7 @@ export class TikTokService extends IntegrationBaseService {
 
   async getAdsCampaigns(tenantId: string) {
     const creds = await this.loadCredentials<AdsCreds>(tenantId, PROVIDER_ADS);
-    if (!creds) return { error: 'TikTok Ads não configurado' };
+    if (!creds) return { error: 'TikTok Ads not configured' };
 
     const res = await this.fetch(
       `${TT_ADS_API}/campaign/get/?advertiser_id=${creds.advertiser_id}&fields=["campaign_id","campaign_name","status","budget","objective_type"]`,
@@ -55,7 +55,7 @@ export class TikTokService extends IntegrationBaseService {
 
   async getAdsInsights(tenantId: string, startDate: string, endDate: string) {
     const creds = await this.loadCredentials<AdsCreds>(tenantId, PROVIDER_ADS);
-    if (!creds) return { error: 'TikTok Ads não configurado' };
+    if (!creds) return { error: 'TikTok Ads not configured' };
 
     const body = {
       advertiser_id: creds.advertiser_id,
@@ -101,7 +101,7 @@ export class TikTokService extends IntegrationBaseService {
     if (data.error) throw new Error(data.error_description ?? data.error);
 
     await this.saveOAuthTokens({ tenantId, userId, provider: PROVIDER_ORG, accessToken: data.access_token, refreshToken: data.refresh_token, expiresIn: data.expires_in, scopes: data.scope });
-    this.logger.log(`TikTok OAuth: ${userId}@${tenantId} conectado`);
+    this.logger.log(`TikTok OAuth: ${userId}@${tenantId} connected`);
   }
 
   /** Status of the organic connection (same pattern as InstagramService.getProviderStatus) —

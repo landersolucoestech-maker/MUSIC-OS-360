@@ -146,7 +146,7 @@ export class AssetClassificationService {
       async (ctx) => {
         const result: ClassificationResult = { assetType, confidence: 1, method: 'manual' };
         await this.applyClassification(tenantId, assetId, result, actorId);
-        await ctx.log('info', `Classificação manual aplicada: "${assetType}"`, { assetId });
+        await ctx.log('info', `Manual classification applied: "${assetType}"`, { assetId });
         return { result, output: result as unknown as Record<string, unknown> };
       },
     );

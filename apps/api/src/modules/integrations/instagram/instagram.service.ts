@@ -47,7 +47,7 @@ export class InstagramService extends IntegrationBaseService {
     if (longToken.error) throw new Error(longToken.error.message);
 
     await this.saveOAuthTokens({ tenantId, userId, provider: PROVIDER, accessToken: longToken.access_token, expiresIn: longToken.expires_in ?? 5_184_000, scopes: SCOPES });
-    this.logger.log(`Instagram OAuth: ${userId}@${tenantId} conectado`);
+    this.logger.log(`Instagram OAuth: ${userId}@${tenantId} connected`);
   }
 
   async getProviderStatus(tenantId: string, userId: string, provider: string = PROVIDER) {
@@ -109,7 +109,7 @@ export class InstagramService extends IntegrationBaseService {
 
   async getAccountMetrics(tenantId: string, userId: string) {
     let conn = await this.getOAuthConnection(tenantId, userId, PROVIDER);
-    if (!conn) return { error: 'Instagram não conectado' };
+    if (!conn) return { error: 'Instagram not connected' };
 
     const REFRESH_WINDOW_MS = 7 * 24 * 60 * 60 * 1000; // renews starting 7 days before expiry
     const expiringSoon = !!conn.expires_at && conn.expires_at.getTime() - Date.now() < REFRESH_WINDOW_MS;
@@ -117,7 +117,7 @@ export class InstagramService extends IntegrationBaseService {
       const refreshed = await this.refreshLongLivedToken(tenantId, userId, PROVIDER);
       conn = refreshed ? await this.getOAuthConnection(tenantId, userId, PROVIDER) : conn;
     }
-    if (!conn) return { error: 'Instagram não conectado' };
+    if (!conn) return { error: 'Instagram not connected' };
     const token = conn.accessToken;
 
     const pagesRes = await this.fetch(`${META_API}/me/accounts?access_token=${token}`);
@@ -128,12 +128,12 @@ export class InstagramService extends IntegrationBaseService {
     }
 
     const pageData = pages.data?.[0];
-    if (!pageData) return { error: 'Nenhuma página Facebook encontrada' };
+    if (!pageData) return { error: 'No Facebook page found' };
 
     const igRes  = await this.fetch(`${META_API}/${pageData.id}?fields=instagram_business_account&access_token=${pageData.access_token}`);
     const igData = await igRes.json() as any;
     const igId   = igData.instagram_business_account?.id;
-    if (!igId) return { error: 'Conta Instagram Business não encontrada' };
+    if (!igId) return { error: 'Instagram Business account not found' };
 
     const metricsRes = await this.fetch(`${META_API}/${igId}?fields=username,name,biography,followers_count,follows_count,media_count,profile_picture_url&access_token=${pageData.access_token}`);
     const metrics    = await metricsRes.json() as any;

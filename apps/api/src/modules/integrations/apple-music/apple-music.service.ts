@@ -61,7 +61,7 @@ export class AppleMusicService extends IntegrationBaseService {
 
   async getArtistFromCatalog(tenantId: string, artistId: string, storefront = 'br') {
     const token = await this.getToken(tenantId);
-    if (!token) return { error: 'Apple Music não configurado' };
+    if (!token) return { error: 'Apple Music not configured' };
     const sf = assertSafeStorefront(storefront);
     const id = assertSafePathSegment(artistId, 'artistId');
     const url = assertAllowedHost(`${APPLE_API}/catalog/${encodeURIComponent(sf)}/artists/${encodeURIComponent(id)}`, APPLE_HOSTS);
@@ -79,7 +79,7 @@ export class AppleMusicService extends IntegrationBaseService {
 
   async searchCatalog(tenantId: string, term: string, types = 'artists,albums', storefront = 'br', limit = 10) {
     const token = await this.getToken(tenantId);
-    if (!token) return { error: 'Apple Music não configurado' };
+    if (!token) return { error: 'Apple Music not configured' };
     const sf = assertSafeStorefront(storefront);
     const safeTerm = assertSafeQueryValue(term, 'term');
     const safeTypes = assertSafeTypes(types, APPLE_SEARCH_TYPES);

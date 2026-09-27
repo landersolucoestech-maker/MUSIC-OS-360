@@ -55,8 +55,8 @@ export class IntegrationAdminController {
   @ApiOperation({
     summary: 'Defines the commercial integrations included in the plan',
     description:
-      'Slugs internos/billing/inexistentes são rejeitados — entitlement comercial ' +
-      'não pode ser concedido a infraestrutura interna.',
+      'Internal/billing/nonexistent slugs are rejected — a commercial entitlement ' +
+      'cannot be granted to internal infrastructure.',
   })
   setPlanIntegrations(
     @Param('planSlug') planSlug: string,

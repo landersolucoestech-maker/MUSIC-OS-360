@@ -27,14 +27,14 @@ export class YouTubeService {
   }
 
   async getChannelStats(channelId: string) {
-    if (!this.apiKey) return { error: 'YOUTUBE_API_KEY não configurado' };
+    if (!this.apiKey) return { error: 'YouTube API not configured' };
     const res = await this.fetch(
       `${YT_API}/channels?part=statistics,snippet&id=${channelId}&key=${this.apiKey}`,
     );
     if (!res.ok) return { error: `YouTube API error: ${res.status}` };
     const data = await res.json() as any;
     const item = data.items?.[0];
-    if (!item) return { error: 'Canal não encontrado' };
+    if (!item) return { error: 'Channel not found' };
     return {
       channelId,
       title:        item.snippet?.title ?? '',
@@ -48,14 +48,14 @@ export class YouTubeService {
   }
 
   async getVideoStats(videoId: string) {
-    if (!this.apiKey) return { error: 'YOUTUBE_API_KEY não configurado' };
+    if (!this.apiKey) return { error: 'YouTube API not configured' };
     const res = await this.fetch(
       `${YT_API}/videos?part=statistics,snippet&id=${videoId}&key=${this.apiKey}`,
     );
     if (!res.ok) return { error: `YouTube API error: ${res.status}` };
     const data = await res.json() as any;
     const item = data.items?.[0];
-    if (!item) return { error: 'Vídeo não encontrado' };
+    if (!item) return { error: 'Video not found' };
     return {
       videoId,
       title:        item.snippet?.title ?? '',

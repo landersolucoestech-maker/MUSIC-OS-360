@@ -86,7 +86,7 @@ export class ArtistPlatformSyncProcessor extends WorkerHost {
       `job=${job.id} tenant=${payload.tenant_id} artist=${payload.artist_id} ` +
       `platform=${payload.platform} externalId=${payload.external_id ?? '-'} ` +
       `externalUrl=${payload.external_url ?? '-'} requestedBy=${payload.requested_by ?? '-'}`;
-    this.logger.log(`[artist-platform-sync] iniciado ${logCtx}`);
+    this.logger.log(`[artist-platform-sync] started ${logCtx}`);
 
     await this.profiles.upsertPending({
       tenantId: payload.tenant_id,
@@ -107,7 +107,7 @@ export class ArtistPlatformSyncProcessor extends WorkerHost {
           platform: payload.platform,
           externalId: payload.external_id ?? null,
           externalUrl: payload.external_url ?? null,
-          error: 'Artista não encontrado',
+          error: 'Artist not found',
         });
         this.logger.warn(`[artist-platform-sync] artist not found ${logCtx}`);
         return;
@@ -119,9 +119,9 @@ export class ArtistPlatformSyncProcessor extends WorkerHost {
           platform: payload.platform,
           externalId: payload.external_id ?? null,
           externalUrl: payload.external_url ?? null,
-          error: 'Perfil externo ausente no artista',
+          error: 'External profile missing on the artist',
         });
-        this.logger.warn(`[artist-platform-sync] perfil externo ausente ${logCtx}`);
+        this.logger.warn(`[artist-platform-sync] external profile missing ${logCtx}`);
         return;
       }
 

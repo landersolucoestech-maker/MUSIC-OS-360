@@ -48,7 +48,7 @@ describe('largestRemainder — algoritmo normativo (Fases 11/12)', () => {
     expect(() => largestRemainder('1000.00', ['60', '50']))
       .toThrow(LargestRemainderError);
     expect(() => largestRemainder('1000.00', ['60', '50']))
-      .toThrow(/excede 100/);
+      .toThrow(/exceeds 100/);
   });
 
   it('R$ 0.01 → 60/40: a R$ 0.00 share is REJECTED (allocated_amount > 0)', () => {
@@ -70,7 +70,7 @@ describe('largestRemainder — algoritmo normativo (Fases 11/12)', () => {
   });
 
   it('lista vazia → rejeita', () => {
-    expect(() => largestRemainder('100.00', [])).toThrow(/vazia/);
+    expect(() => largestRemainder('100.00', [])).toThrow(/empty percentage list/);
   });
 
   it('duplicate percentages are accepted by the algorithm (target UNIQUE is the database\'s responsibility)', () => {

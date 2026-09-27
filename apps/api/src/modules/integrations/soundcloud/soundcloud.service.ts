@@ -33,7 +33,7 @@ export class SoundCloudService extends IntegrationBaseService {
 
   async resolveUser(url: string) {
     const cid = this.clientId;
-    if (!cid) return { error: 'SOUNDCLOUD_CLIENT_ID não configurado' };
+    if (!cid) return { error: 'SoundCloud not configured' };
     const safeResolveUrl = assertSafeQueryValue(url, 'url', 512);
     const qs = new URLSearchParams({ url: safeResolveUrl, client_id: cid }).toString();
     const safeUrl = assertAllowedHost(`${SC_API}/resolve?${qs}`, SC_HOSTS);
@@ -49,7 +49,7 @@ export class SoundCloudService extends IntegrationBaseService {
 
   async getTrackStats(trackId: string) {
     const cid = this.clientId;
-    if (!cid) return { error: 'SOUNDCLOUD_CLIENT_ID não configurado' };
+    if (!cid) return { error: 'SoundCloud not configured' };
     const id = assertSafePathSegment(trackId, 'trackId');
     const qs = new URLSearchParams({ client_id: cid }).toString();
     const safeUrl = assertAllowedHost(`${SC_API}/tracks/${encodeURIComponent(id)}?${qs}`, SC_HOSTS);

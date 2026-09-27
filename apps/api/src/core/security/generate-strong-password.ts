@@ -43,7 +43,7 @@ function shuffle(chars: string[]): string[] {
 
 export function generateStrongPassword(length = MIN_LENGTH): string {
   if (length < MIN_LENGTH) {
-    throw new Error(`generateStrongPassword: length deve ser >= ${MIN_LENGTH}`);
+    throw new Error(`generateStrongPassword: length must be >= ${MIN_LENGTH}`);
   }
 
   const required = [pick(LOWER), pick(UPPER), pick(DIGITS), pick(SYMBOLS)];

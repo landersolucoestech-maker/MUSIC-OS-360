@@ -104,7 +104,7 @@ export async function runOnDemandSkill<TInput, TOutput>(
   try {
     const validation = params.validateInput?.(params.input);
     if (validation && !validation.valid) {
-      throw new OnDemandSkillInputError(`input inválido: ${validation.errors.join('; ')}`);
+      throw new OnDemandSkillInputError(`invalid input: ${validation.errors.join('; ')}`);
     }
 
     const completion = await ai.complete({

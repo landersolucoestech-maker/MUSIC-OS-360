@@ -266,6 +266,6 @@ describe('resolveCanonicalUuidForProvider — cross-platform UUID reuse (Soundch
 
     await expect(
       resolveCanonicalUuidForProvider(soundcharts, URLS, 'instagram', 'billieeilish'),
-    ).rejects.toThrow(/não foi possível resolver o artista/);
+    ).rejects.toThrow(/could not resolve the artist/);
   });
 });

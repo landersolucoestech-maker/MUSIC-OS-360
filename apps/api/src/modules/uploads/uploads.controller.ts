@@ -94,7 +94,7 @@ export class UploadsController {
     });
     await repo.save(entity);
 
-    this.logger.log(`Presign registado: ${fileId} / tenant ${tenant.id}`);
+    this.logger.log(`Presign registered: ${fileId} / tenant ${tenant.id}`);
     return { presignedUrl, key, fileId, publicUrl };
   }
 
@@ -125,7 +125,7 @@ export class UploadsController {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await repo.update({ id: row.id, tenant_id: tenant.id } as any, { status: 'confirmed', confirmed_at: new Date() } as any);
-    this.logger.log(`Upload confirmado: ${fileId}`);
+    this.logger.log(`Upload confirmed: ${fileId}`);
 
     // Emit ASSET_UPLOADED domain event — triggers media processing via UploadEventsHandler
     this.events.emitTyped(DOMAIN_EVENTS.ASSET_UPLOADED, {

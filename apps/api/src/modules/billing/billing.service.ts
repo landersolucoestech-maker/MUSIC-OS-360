@@ -698,7 +698,7 @@ export class BillingService {
       payload: event as unknown as Record<string, unknown>,
     });
     if (insertStatus === 'duplicate') {
-      this.logger.log(`Webhook Stripe ja processado: ${event.id}`);
+      this.logger.log(`Stripe webhook already processed: ${event.id}`);
       return { received: true };
     }
 

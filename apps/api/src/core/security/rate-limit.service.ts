@@ -40,7 +40,7 @@ export class RateLimitService {
     if (hits.length >= config.maxRequests) {
       const oldest     = hits[0]!;
       const retryAfter = Math.ceil((oldest + config.windowMs - now) / 1000);
-      this.logger.warn(`Rate limit atingido: ${key} (${hits.length}/${config.maxRequests})`);
+      this.logger.warn(`Rate limit reached: ${key} (${hits.length}/${config.maxRequests})`);
       throw new HttpException(
         {
           message:    'Muitas requisições. Tente novamente em breve.',
