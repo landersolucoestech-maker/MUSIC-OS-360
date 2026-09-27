@@ -18,9 +18,9 @@ const SIGNED_TASKS: ReadonlyArray<{
   priority: string;
   daysFromNow: number;
 }> = [
-  { title: 'Arquivamento juridico', description: 'Enviar contrato assinado ao departamento juridico', priority: 'high', daysFromNow: 2 },
+  { title: 'Arquivamento jurídico', description: 'Enviar o contrato assinado ao departamento jurídico', priority: 'high', daysFromNow: 2 },
   { title: 'Lançamento financeiro', description: 'Registrar contrato no sistema financeiro e emitir NF', priority: 'high', daysFromNow: 3 },
-  { title: 'Briefing operacional', description: 'Reuniao com equipe para alinhar entregas do contrato', priority: 'medium', daysFromNow: 5 },
+  { title: 'Briefing operacional', description: 'Reunião com a equipe para alinhar as entregas do contrato', priority: 'medium', daysFromNow: 5 },
   { title: 'Setup de lançamento / metadata', description: 'Configurar releases e metadados do artista na plataforma', priority: 'medium', daysFromNow: 7 },
   { title: 'Configuração de integração futura', description: 'Preparar credenciais e mapeamentos para distribuidoras', priority: 'low', daysFromNow: 14 },
 ];

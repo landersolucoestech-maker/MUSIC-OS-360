@@ -16,7 +16,7 @@ import { assertDatabaseCommandEnv } from './src/core/config/env.schema';
 const url = process.env.DATABASE_URL;
 
 if (!url) {
-  console.error('❌  Defina DATABASE_URL no ficheiro apps/api/.env.development');
+  console.error('❌  Set DATABASE_URL in apps/api/.env.development');
   process.exit(1);
 }
 
@@ -32,7 +32,7 @@ const ds = new DataSource({
 });
 
 async function seed() {
-  console.log('🌱  A iniciar seed...');
+  console.log('🌱  Starting seed...');
   await ds.initialize();
   const qr = ds.createQueryRunner();
 
@@ -46,7 +46,7 @@ async function seed() {
     let orgId: string;
     if (existingOrg.length > 0) {
       orgId = existingOrg[0].id;
-      console.log('⏭️   Organização já existe:', orgId);
+      console.log('⏭️   Organization already exists:', orgId);
     } else {
       const [org] = await qr.query(
         `INSERT INTO organizations (name, slug, plan, billing_status, industry)
@@ -55,7 +55,7 @@ async function seed() {
         ['Music OS 360 Demo', 'music-os-360-demo', 'professional', 'trial', 'gravadora'],
       );
       orgId = org.id;
-      console.log('✅  Organização criada:', orgId);
+      console.log('✅  Organization created:', orgId);
     }
 
     // ── 2. Tenant ────────────────────────────────────────────────────────────
@@ -67,7 +67,7 @@ async function seed() {
     let tenantId: string;
     if (existingTenant.length > 0) {
       tenantId = existingTenant[0].id;
-      console.log('⏭️   Tenant já existe:', tenantId);
+      console.log('⏭️   Tenant already exists:', tenantId);
     } else {
       const features = JSON.stringify({
         artists: true, catalog: true, contracts: true, accounting: true,
@@ -84,7 +84,7 @@ async function seed() {
         [orgId, 'Demo Label', 'demo-label', 'professional', features, settings, true],
       );
       tenantId = tenant.id;
-      console.log('✅  Tenant criado:', tenantId);
+      console.log('✅  Tenant created:', tenantId);
     }
 
     // ── 3. Billing Subscription ───────────────────────────────────────────────
@@ -94,7 +94,7 @@ async function seed() {
     );
 
     if (existingBilling.length > 0) {
-      console.log('⏭️   Billing subscription já existe:', existingBilling[0].id);
+      console.log('⏭️   Billing subscription already exists:', existingBilling[0].id);
     } else {
       const trialEnd = new Date();
       trialEnd.setDate(trialEnd.getDate() + 14);
@@ -104,10 +104,10 @@ async function seed() {
          RETURNING id`,
         [orgId, 'professional', 'trial', trialEnd, 10, 1],
       );
-      console.log('✅  Billing subscription criada:', billing.id);
+      console.log('✅  Billing subscription created:', billing.id);
     }
 
-    console.log('\n🎉  Seed concluído!');
+    console.log('\n🎉  Seed finished!');
     console.log('    org_id:    ', orgId);
     console.log('    tenant_id: ', tenantId);
 
@@ -118,6 +118,6 @@ async function seed() {
 }
 
 seed().catch((err) => {
-  console.error('❌  Seed falhou:', err instanceof Error ? err.message : err);
+  console.error('❌  Seed failed:', err instanceof Error ? err.message : err);
   process.exit(1);
 });

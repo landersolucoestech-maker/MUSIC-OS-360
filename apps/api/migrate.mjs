@@ -16,7 +16,7 @@ const url =
   process.env.DATABASE_URL;
 
 if (!url) {
-  console.error('❌  Defina DIRECT_DATABASE_URL ou DATABASE_URL');
+  console.error('❌  Set DIRECT_DATABASE_URL or DATABASE_URL');
   process.exit(1);
 }
 
@@ -25,7 +25,7 @@ let rawSql;
 try {
   rawSql = readFileSync(sqlPath, 'utf-8');
 } catch {
-  console.error('❌  Ficheiro SQL não encontrado:', sqlPath);
+  console.error('❌  SQL file not found:', sqlPath);
   process.exit(1);
 }
 
@@ -37,7 +37,7 @@ const statements = rawSql
   .map((s) => s.trim())
   .filter(Boolean);
 
-console.log(`📋  ${statements.length} statements para aplicar...`);
+console.log(`📋  ${statements.length} statements to apply...`);
 
 let ok = 0;
 let skipped = 0;
@@ -60,11 +60,11 @@ for (let i = 0; i < statements.length; i++) {
       process.stdout.write('s');
     } else {
       failed++;
-      console.error(`\n⚠️   Statement ${i + 1} falhou: ${msg}`);
+      console.error(`\n⚠️   Statement ${i + 1} failed: ${msg}`);
       console.error('    SQL:', stmt.slice(0, 200));
     }
   }
 }
 
-console.log(`\n\n✅  Migration concluída — ${ok} ok, ${skipped} skipped, ${failed} falhou`);
+console.log(`\n\n✅  Migration finished — ${ok} ok, ${skipped} skipped, ${failed} failed`);
 if (failed > 0) process.exit(1);

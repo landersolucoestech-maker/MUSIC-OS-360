@@ -41,15 +41,15 @@ export class AIJobsQueueService {
   }
 
   async enqueueBiography(opts: { tenantId: string; userId: string; artistName: string; context: string; jobRef?: string }): Promise<string | undefined> {
-    return this.enqueue({ tenantId: opts.tenantId, userId: opts.userId, skill: 'biography', prompt: `Escreve uma biografia profissional para o artista: ${opts.artistName}.\nContexto: ${opts.context}`, jobRef: opts.jobRef });
+    return this.enqueue({ tenantId: opts.tenantId, userId: opts.userId, skill: 'biography', prompt: `Escreva uma biografia profissional para o artista: ${opts.artistName}.\nContexto: ${opts.context}`, jobRef: opts.jobRef });
   }
 
   async enqueueCampaignCopy(opts: { tenantId: string; userId: string; campaign: string; platform: string; goal: string; jobRef?: string }): Promise<string | undefined> {
-    return this.enqueue({ tenantId: opts.tenantId, userId: opts.userId, skill: 'campaign_copy', prompt: `Cria copy para campanha "${opts.campaign}" na plataforma ${opts.platform}. Objectivo: ${opts.goal}.`, jobRef: opts.jobRef }, LOW_PRIORITY);
+    return this.enqueue({ tenantId: opts.tenantId, userId: opts.userId, skill: 'campaign_copy', prompt: `Crie a copy da campanha "${opts.campaign}" para a plataforma ${opts.platform}. Objetivo: ${opts.goal}.`, jobRef: opts.jobRef }, LOW_PRIORITY);
   }
 
   async enqueueContractAnalysis(opts: { tenantId: string; userId: string; contractText: string; jobRef?: string }): Promise<string | undefined> {
-    return this.enqueue({ tenantId: opts.tenantId, userId: opts.userId, skill: 'contract_analysis', prompt: `Analisa o seguinte contrato e identifica cláusulas problemáticas:\n\n${opts.contractText}`, jobRef: opts.jobRef });
+    return this.enqueue({ tenantId: opts.tenantId, userId: opts.userId, skill: 'contract_analysis', prompt: `Analise o contrato a seguir e identifique as cláusulas problemáticas:\n\n${opts.contractText}`, jobRef: opts.jobRef });
   }
 
   async getQueueStats(): Promise<{ waiting: number; active: number; completed: number; failed: number; delayed: number }> {

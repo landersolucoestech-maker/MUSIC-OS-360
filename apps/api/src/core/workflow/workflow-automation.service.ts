@@ -35,6 +35,7 @@ export type TriggerAction =
 
 export interface TriggerRule {
   id:          string;
+  /** Operator-facing label persisted in workflow_executions.rule_name (technical, English). */
   name:        string;
   event:       string;
   conditions?: Array<{ field: string; operator: '==' | '!=' | 'in'; value: unknown }>;
@@ -46,7 +47,7 @@ export interface TriggerRule {
 const BUILTIN_TRIGGERS: TriggerRule[] = [
   {
     id:   'contract.signed → active',
-    name: 'Contrato assinado → atualizar release para pendente',
+    name: 'Contract signed → set release to pending',
     event: DOMAIN_EVENTS.CONTRACT_SIGNED,
     actions: [
       { type: 'notify', template: 'contract.signed.team' },
@@ -54,7 +55,7 @@ const BUILTIN_TRIGGERS: TriggerRule[] = [
   },
   {
     id:   'release.published → notify',
-    name: 'Release publicado → notificar equipe',
+    name: 'Release published → notify team',
     event: DOMAIN_EVENTS.RELEASE_PUBLISHED,
     actions: [
       { type: 'notify', template: 'release.published.team' },
@@ -62,7 +63,7 @@ const BUILTIN_TRIGGERS: TriggerRule[] = [
   },
   {
     id:   'lead.created → notify',
-    name: 'Lead criado → notificar equipe comercial',
+    name: 'Lead created → notify sales team',
     event: DOMAIN_EVENTS.LEAD_CREATED,
     actions: [
       { type: 'notify', template: 'lead.created.sales_team' },
@@ -70,7 +71,7 @@ const BUILTIN_TRIGGERS: TriggerRule[] = [
   },
   {
     id:   'campaign.started → notify',
-    name: 'Campanha iniciada → notificar responsáveis',
+    name: 'Campaign started → notify owners',
     event: DOMAIN_EVENTS.CAMPAIGN_STARTED,
     actions: [
       { type: 'notify', template: 'campaign.started.team' },
@@ -78,7 +79,7 @@ const BUILTIN_TRIGGERS: TriggerRule[] = [
   },
   {
     id:   'ticket.resolved → notify-contact',
-    name: 'Ticket resolvido → notificar contacto',
+    name: 'Ticket resolved → notify contact',
     event: DOMAIN_EVENTS.TICKET_RESOLVED,
     actions: [
       { type: 'notify', template: 'support.ticket.resolved.contact' },

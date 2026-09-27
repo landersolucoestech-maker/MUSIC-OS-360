@@ -18,6 +18,6 @@ export class LeadInteractionsController {
   @Post() @RequireRole('editor') @RequirePermission('lead_interaction:create') @Audit('lead_interaction.created') @ApiOperation({ summary: 'Register an interaction' })
   create(@CurrentTenant() t: { id: string }, @CurrentUser() u: { userId: string }, @Body() dto: CreateLeadInteractionDto) { return this.svc.create(t.id, u.userId, dto); }
 
-  @Delete(':id') @RequireRole('manager') @RequirePermission('lead_interaction:delete') @Audit('lead_interaction.deleted') @ApiOperation({ summary: 'Remover interacção' })
+  @Delete(':id') @RequireRole('manager') @RequirePermission('lead_interaction:delete') @Audit('lead_interaction.deleted') @ApiOperation({ summary: 'Remove an interaction' })
   remove(@CurrentTenant() t: { id: string }, @Param('id', ParseUUIDPipe) id: string) { return this.svc.remove(t.id, id); }
 }

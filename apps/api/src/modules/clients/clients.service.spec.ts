@@ -289,7 +289,7 @@ describe('ClientsService — encryption', () => {
         instagram: '@auroralive',
         zipCode: '01000-000',
         responsible: 'Operacoes',
-        notes: 'Venue estrategico',
+        notes: 'Venue estratégico',
       } as any);
 
       const saved = (repo.save as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
@@ -298,7 +298,7 @@ describe('ClientsService — encryption', () => {
       expect(saved['instagram']).toBe('@auroralive');
       expect(saved['cep']).toBe('01000-000');
       expect(saved['responsavel_nome']).toBe('Operacoes');
-      expect(saved['notes']).toBe('Venue estrategico');
+      expect(saved['notes']).toBe('Venue estratégico');
       // Never reintroduces the columns removed by the canonical migration.
       expect(saved['segmento']).toBeUndefined();
       expect(saved['endereco']).toBeUndefined();

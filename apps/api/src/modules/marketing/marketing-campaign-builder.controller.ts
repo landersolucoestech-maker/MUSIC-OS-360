@@ -107,14 +107,15 @@ function buildBlueprint(payload: CampaignBuilderPayload): CampaignBlueprint {
   const defaultRecommendations = campaignBuilderConfig.defaultRecommendations as Record<string, string[]>;
   const requiredActions = [
     ...(payload.objective ? defaultRecommendations[payload.objective] ?? [] : []),
-    ...(payload.expectedOutcome === 'PRE_SAVE' ? ['Smart link required', 'Pre-save event required'] : []),
-    ...(payload.expectedOutcome === 'VIDEO_VIEWS' ? ['Video creative required'] : []),
+    ...(payload.expectedOutcome === 'PRE_SAVE' ? ['Smart link obrigatório', 'Evento de pré-save obrigatório'] : []),
+    ...(payload.expectedOutcome === 'VIDEO_VIEWS' ? ['Criativo em vídeo obrigatório'] : []),
   ];
 
   return {
     recommendedPlatforms,
     requiredActions,
-    suggestedCtas: payload.objective === 'CONVERSIONS' ? ['Comprar agora', 'Fazer pre-save', 'Inscrever-se'] : ['Saiba mais', 'Ouvir agora', 'Acessar link'],
+    suggestedCtas: payload.objective === 'CONVERSIONS' ? ['Comprar agora', 'Fazer pré-save', 'Inscrever-se'] : ['Saiba mais', 'Ouvir agora', 'Acessar link'],
+    // Technical notes for API clients about this stub endpoint (not end-user copy).
     notes: [
       'Blueprint generated from Campaign Builder rules.',
       'Provider-side publishing is not executed by this stub endpoint.',

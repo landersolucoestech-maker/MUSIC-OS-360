@@ -53,7 +53,7 @@ const DEFAULT_TEMPLATES: MusicChatTemplateDto[] = [
 
 const DEFAULT_REQUIRED_FIELDS = [
   'Nome do contratante ou empresa',
-  'Nome do responsavel',
+  'Nome do responsável',
   'Cidade e Estado',
   'Data do evento',
   'Local do evento',
