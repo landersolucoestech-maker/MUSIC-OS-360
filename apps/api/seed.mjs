@@ -15,14 +15,14 @@ const url =
   process.env.DATABASE_URL;
 
 if (!url) {
-  console.error('❌  Defina DIRECT_DATABASE_URL ou DATABASE_URL');
+  console.error('❌  Set DIRECT_DATABASE_URL or DATABASE_URL');
   process.exit(1);
 }
 
 const sql = neon(url);
 
 async function seed() {
-  console.log('🌱  A iniciar seed...');
+  console.log('🌱  Starting seed...');
 
   // ── 1. Organization ────────────────────────────────────────────────────────
   const existingOrgs = await sql`
@@ -32,7 +32,7 @@ async function seed() {
   let orgId;
   if (existingOrgs.length > 0) {
     orgId = existingOrgs[0].id;
-    console.log('⏭️   Organização já existe:', orgId);
+    console.log('⏭️   Organization already exists:', orgId);
   } else {
     const inserted = await sql`
       INSERT INTO organizations (name, slug, plan, billing_status, industry)
@@ -40,7 +40,7 @@ async function seed() {
       RETURNING id
     `;
     orgId = inserted[0].id;
-    console.log('✅  Organização criada:', orgId);
+    console.log('✅  Organization created:', orgId);
   }
 
   // ── 2. Tenant ──────────────────────────────────────────────────────────────
@@ -51,7 +51,7 @@ async function seed() {
   let tenantId;
   if (existingTenants.length > 0) {
     tenantId = existingTenants[0].id;
-    console.log('⏭️   Tenant já existe:', tenantId);
+    console.log('⏭️   Tenant already exists:', tenantId);
   } else {
     const features = {
       artists: true, catalog: true, contracts: true, accounting: true,
@@ -75,7 +75,7 @@ async function seed() {
       RETURNING id
     `;
     tenantId = inserted[0].id;
-    console.log('✅  Tenant criado:', tenantId);
+    console.log('✅  Tenant created:', tenantId);
   }
 
   // ── 3. Billing Subscription ────────────────────────────────────────────────
@@ -84,7 +84,7 @@ async function seed() {
   `;
 
   if (existingBilling.length > 0) {
-    console.log('⏭️   Billing subscription já existe:', existingBilling[0].id);
+    console.log('⏭️   Billing subscription already exists:', existingBilling[0].id);
   } else {
     const trialEnd = new Date();
     trialEnd.setDate(trialEnd.getDate() + 14);
@@ -94,15 +94,15 @@ async function seed() {
       VALUES (${orgId}, 'professional', 'trial', ${trialEnd.toISOString()}, 10, 1)
       RETURNING id
     `;
-    console.log('✅  Billing subscription criada:', inserted[0].id);
+    console.log('✅  Billing subscription created:', inserted[0].id);
   }
 
-  console.log('\n🎉  Seed concluído!');
+  console.log('\n🎉  Seed finished!');
   console.log('    org_id:    ', orgId);
   console.log('    tenant_id: ', tenantId);
 }
 
 seed().catch((err) => {
-  console.error('❌  Seed falhou:', err instanceof Error ? err.message : err);
+  console.error('❌  Seed failed:', err instanceof Error ? err.message : err);
   process.exit(1);
 });

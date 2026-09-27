@@ -65,12 +65,12 @@ export async function reportHarness(input: HarnessReportInput): Promise<void> {
   const out = path.join(outDir, `harness-run-${input.runId}.json`);
   fs.writeFileSync(out, JSON.stringify({ summary, records }, null, 2));
 
-  console.log('\n=== HARNESS RESULTADO ===');
+  console.log('\n=== HARNESS RESULT ===');
   console.log(`requests=${total} endpoints=${endpoints} resources=${resources} roles=${roles} tenants=${tenants}`);
   console.log(`status: ${JSON.stringify(byStatus)}`);
-  console.log(`rbac mismatch (status observado ≠ esperado): ${rbacMismatch.length}`);
-  console.log(`criados=${input.createdCount} limpos=${input.cleaned} bloqueados_no_cleanup=${input.cleanupBlocked}`);
-  console.log(`alvos atingidos: ${JSON.stringify(summary.targetsMet)}`);
+  console.log(`rbac mismatch (observed status ≠ expected): ${rbacMismatch.length}`);
+  console.log(`created=${input.createdCount} cleaned=${input.cleaned} cleanup_blocked=${input.cleanupBlocked}`);
+  console.log(`targets met: ${JSON.stringify(summary.targetsMet)}`);
   console.log(`report saved: ${out}`);
   console.log('\n>> Next step: run `npm run rbac:shadow:go-no-go` (reads rbac_decision_logs populated by the API).');
 }
