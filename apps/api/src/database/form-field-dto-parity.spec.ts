@@ -96,8 +96,8 @@ describe('Dedicated form columns are always exposed in the matching DTO', () => 
     const service = source('../modules/licensing/licensing.service.ts');
     expectFields(dto, ['remuneration_type', 'currency', 'amount', 'percentage']);
     expectFields(entity, ['percentage'], (field) => `\\b${field}\\b`);
-    expect(service).toContain('{ valor: amount ?? valor ?? null }');
-    expect(service).toContain('{ moeda: currency ?? moeda ?? null }');
+    expect(service).toContain('{ valor: amount ?? legacyAmount ?? null }');
+    expect(service).toContain('{ moeda: currency ?? legacyCurrency ?? null }');
     expect(service).toContain('...(percentage !== undefined ? { percentage } : {})');
     expect(service).toContain("percentage: raw['percentage'] == null ? null : Number(raw['percentage'])");
   });
