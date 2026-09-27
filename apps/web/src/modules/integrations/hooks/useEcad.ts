@@ -26,7 +26,7 @@ export interface EcadStatus extends IntegrationRuntimeStatus {
   ultimo_relatorio_em?: string | null;
 }
 
-export interface EcadArrecadacaoEntry {
+export interface EcadCollectionEntry {
   isrc:                 string;
   title:               string;
   artista:              string;
@@ -43,7 +43,7 @@ export interface EcadArrecadacaoSummary {
   valor_bruto_cents:      number;
   valor_liquido_cents:    number;
   obras:                  number;
-  entries:                EcadArrecadacaoEntry[];
+  entries:                EcadCollectionEntry[];
 }
 
 export interface EcadConciliacaoResult {
@@ -113,7 +113,7 @@ export function useEcadConciliacao() {
   });
 }
 
-export function useEcadImportRelatorio() {
+export function useEcadImportReport() {
   return useMutation<{ linhas: number; importadas: number }, Error, File>({
     mutationFn: async (_file: File) => ecadUnavailable(),
     onError: (err) => toast.error(`Erro ao importar relatório: ${toUserMessage(err)}`),

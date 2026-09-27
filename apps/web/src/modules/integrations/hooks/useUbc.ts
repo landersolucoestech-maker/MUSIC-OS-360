@@ -199,7 +199,7 @@ export function useUbcRegistrationHistory(localId: string) {
   });
 }
 
-export function useUbcRegisterObra() {
+export function useUbcRegisterWork() {
   return useMutation<RegistrationResult, Error, RegisterWorkInput>({
     mutationFn: async (_input) => ubcUnavailable(),
     onError: (err) => toast.error(`Erro ao registrar obra: ${toUserMessage(err)}`),

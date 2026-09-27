@@ -14,6 +14,6 @@ export type { SendForSigningInput, SendForSigningResult } from "./signing.servic
 export { notificationsService } from "./notifications.service";
 export type {
   SendUserInviteInput,
-  SendContratoExpiryAlertInput,
+  SendContractExpiryAlertInput,
   SendReleaseStatusInput,
 } from "./notifications.service";

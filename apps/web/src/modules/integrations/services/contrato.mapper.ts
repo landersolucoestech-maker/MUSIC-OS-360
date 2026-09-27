@@ -16,7 +16,7 @@
 import type { CreateSigningDocumentParams as CreateDocumentInput, SigningDocument } from "@/modules/integrations/dto";
 
 /** Contract domain entity (source: mockData). */
-export interface ContratoEntity {
+export interface ContractEntity {
   id:            string;
   title:        string;
   type:          string;
@@ -30,22 +30,22 @@ export interface ContratoEntity {
   updatedAt:     string;
 }
 
-export const contratoMapper = {
+export const contractMapper = {
   /**
    * Converts a Contract into the input for creating a signature document.
    */
-  toSigningInput(contrato: ContratoEntity, _deadline_days = 7): CreateDocumentInput {
+  toSigningInput(contract: ContractEntity, _deadline_days = 7): CreateDocumentInput {
     return {
-      title:    contrato.title,
-      document: contrato.fileKey
-        ? `/storage/${contrato.bucket ?? "documents"}/${contrato.fileKey}`
+      title:    contract.title,
+      document: contract.fileKey
+        ? `/storage/${contract.bucket ?? "documents"}/${contract.fileKey}`
         : "",
-      signers: contrato.partes.map(p => ({
+      signers: contract.partes.map(p => ({
         name:  p.nome,
         email: p.email,
         role:  p.papel as import("@/shared/integrations/contracts/signing.contract").SignerRole,
       })),
-      expires_at: contrato.expiresAt,
+      expires_at: contract.expiresAt,
     };
   },
 
@@ -54,10 +54,10 @@ export const contratoMapper = {
    * Returns a (partial) patch to update the mockData.
    */
   applySigningStatus(
-    contrato: ContratoEntity,
+    contract: ContractEntity,
     signingDoc: SigningDocument,
-  ): Partial<ContratoEntity> {
-    const statusMap: Record<SigningDocument["status"], ContratoEntity["status"]> = {
+  ): Partial<ContractEntity> {
+    const statusMap: Record<SigningDocument["status"], ContractEntity["status"]> = {
       draft:            "rascunho",
       pending:          "aguardando_assinatura",
       partially_signed: "parcialmente_assinado",
@@ -68,9 +68,9 @@ export const contratoMapper = {
     };
 
     return {
-      id:            contrato.id,
+      id:            contract.id,
       signingDocId:  signingDoc.id,
-      status:        statusMap[signingDoc.status] ?? contrato.status,
+      status:        statusMap[signingDoc.status] ?? contract.status,
       updatedAt:     new Date().toISOString(),
     };
   },
@@ -78,17 +78,17 @@ export const contratoMapper = {
   /**
    * Checks whether a contract is in an active signature state.
    */
-  isInSigning(contrato: ContratoEntity): boolean {
-    return contrato.status === "aguardando_assinatura" && !!contrato.signingDocId;
+  isInSigning(contract: ContractEntity): boolean {
+    return contract.status === "aguardando_assinatura" && !!contract.signingDocId;
   },
 
   /**
    * Checks whether a contract is close to expiring (< 30 days).
    */
-  isDueToExpire(contrato: ContratoEntity, thresholdDays = 30): boolean {
-    if (!contrato.expiresAt) return false;
+  isDueToExpire(contract: ContractEntity, thresholdDays = 30): boolean {
+    if (!contract.expiresAt) return false;
     const daysLeft =
-      (new Date(contrato.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+      (new Date(contract.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
     return daysLeft > 0 && daysLeft < thresholdDays;
   },
 };

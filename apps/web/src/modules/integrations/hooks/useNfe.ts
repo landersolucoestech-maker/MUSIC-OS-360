@@ -17,14 +17,14 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 const STORAGE_KEY = "musicos360_nfe_credentials";
 
 export type NfeAmbiente = "producao" | "homologacao";
-export type NfeCertificadoTipo = "A1" | "A3";
+export type NfeCertificateType = "A1" | "A3";
 
 interface NfeCredentials {
   cnpj: string;
   ie?: string;
   regime_tributario: "simples_nacional" | "lucro_presumido" | "lucro_real";
   ambiente: NfeAmbiente;
-  certificado_tipo: NfeCertificadoTipo;
+  certificado_tipo: NfeCertificateType;
   certificado_serial?: string;
   token_provedor?: string;
   provedor: "focusnfe" | "nfeio" | "emites" | "plugnotas" | "proprio";
@@ -37,7 +37,7 @@ export interface NfeStatus {
   cnpj?: string;
   ambiente?: NfeAmbiente;
   provedor?: string;
-  certificado_tipo?: NfeCertificadoTipo;
+  certificado_tipo?: NfeCertificateType;
   regime_tributario?: string;
   saved_at?: string;
 }

@@ -215,7 +215,7 @@ export function useAbramusRegistrationHistory(kind: AbramusKind, localId: string
   });
 }
 
-export function useAbramusRegisterObra() {
+export function useAbramusRegisterWork() {
   const queryClient = useQueryClient();
   return useMutation<RegistrationResult, Error, RegisterWorkInput>({
     mutationFn: async (input) => {
@@ -257,7 +257,7 @@ export function useAbramusRegisterObra() {
   });
 }
 
-export function useAbramusRegisterFonograma() {
+export function useAbramusRegisterPhonogram() {
   return useMutation<RegistrationResult, Error, RegisterPhonogramInput>({
     mutationFn: async (_input) =>
       backendUnavailable("Registro de fonograma na ABRAMUS"),

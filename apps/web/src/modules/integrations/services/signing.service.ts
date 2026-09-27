@@ -83,7 +83,7 @@ export const signingService = {
    * for an intentional user-initiated retry of the same attempt.
    */
   async sendForSigning(input: SendForSigningInput, idempotencyKey: string = crypto.randomUUID()): Promise<SendForSigningResult> {
-    const { contratoId, title, fileUrl, signers } = input;
+    const { contratoId: contractId, title, fileUrl, signers } = input;
 
     if (!fileUrl) {
       throw new UserFacingError("Contract has no file URL", "Este contrato não possui um arquivo (URL) cadastrado. Adicione a URL do PDF antes de enviar para assinatura.");
@@ -101,7 +101,7 @@ export const signingService = {
         name: title,
         fileBase64,
         signers: signers.map((s) => ({ name: s.name, email: s.email })),
-        contractId: contratoId,
+        contractId,
       },
       { headers: { "X-Idempotency-Key": idempotencyKey } },
     );

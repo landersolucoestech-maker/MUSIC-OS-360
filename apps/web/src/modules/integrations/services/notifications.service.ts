@@ -32,7 +32,7 @@ export interface SendUserInviteInput {
   inviteUrl:   string;
 }
 
-export interface SendContratoExpiryAlertInput {
+export interface SendContractExpiryAlertInput {
   contratoId:    string;
   contratoTitle: string;
   daysRemaining: number;
@@ -71,18 +71,18 @@ export const notificationsService = {
     emit("user.invited", { tenantId, email: to.email, role });
   },
 
-  async sendContratoExpiryAlert(input: SendContratoExpiryAlertInput): Promise<void> {
-    const { contratoId, contratoTitle, daysRemaining, to } = input;
+  async sendContractExpiryAlert(input: SendContractExpiryAlertInput): Promise<void> {
+    const { contratoId: contractId, contratoTitle: contractTitle, daysRemaining, to } = input;
 
     await emailAdapter.send({
       to,
-      subject:      `Contrato vence em ${daysRemaining} dias: ${contratoTitle}`,
+      subject:      `Contrato vence em ${daysRemaining} dias: ${contractTitle}`,
       template_id:  "contract-expiry-alert",
-      template_vars: { contrato_title: contratoTitle, days_remaining: daysRemaining },
+      template_vars: { contrato_title: contractTitle, days_remaining: daysRemaining },
     });
 
     analyticsAdapter.track("contract.expiry_alert_sent", {
-      contract_id:    contratoId,
+      contract_id:    contractId,
       days_remaining: daysRemaining,
     });
   },

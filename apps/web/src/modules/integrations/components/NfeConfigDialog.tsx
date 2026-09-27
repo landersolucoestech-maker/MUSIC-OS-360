@@ -24,7 +24,7 @@ import {
   useNfeSaveCredentials,
   useNfeDeleteCredentials,
   type NfeAmbiente,
-  type NfeCertificadoTipo,
+  type NfeCertificateType,
 } from "@/modules/integrations/hooks/useNfe";
 
 interface NfeConfigDialogProps {
@@ -55,7 +55,7 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
   const [ie, setIe] = useState("");
   const [regime, setRegime] = useState<string>("simples_nacional");
   const [ambiente, setAmbiente] = useState<NfeAmbiente>("homologacao");
-  const [certificadoTipo, setCertificadoTipo] = useState<NfeCertificadoTipo>("A1");
+  const [certificateType, setCertificateType] = useState<NfeCertificateType>("A1");
   const [certificadoSerial, setCertificadoSerial] = useState("");
   const [tokenProvedor, setTokenProvedor] = useState("");
   const [provedor, setProvedor] = useState<string>("focusnfe");
@@ -67,14 +67,14 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
       setCnpj(s.cnpj ?? "");
       setRegime(s.regime_tributario ?? "simples_nacional");
       setAmbiente(s.ambiente ?? "homologacao");
-      setCertificadoTipo(s.certificado_tipo ?? "A1");
+      setCertificateType(s.certificado_tipo ?? "A1");
       setProvedor(s.provedor ?? "focusnfe");
     } else {
       setCnpj("");
       setIe("");
       setRegime("simples_nacional");
       setAmbiente("homologacao");
-      setCertificadoTipo("A1");
+      setCertificateType("A1");
       setCertificadoSerial("");
       setTokenProvedor("");
       setProvedor("focusnfe");
@@ -95,7 +95,7 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
       ie: ie.trim() || undefined,
       regime_tributario: regime as "simples_nacional" | "lucro_presumido" | "lucro_real",
       ambiente,
-      certificado_tipo: certificadoTipo,
+      certificado_tipo: certificateType,
       certificado_serial: certificadoSerial.trim() || undefined,
       token_provedor: tokenProvedor.trim() || undefined,
       provedor: provedor as "focusnfe" | "nfeio" | "emites" | "plugnotas" | "proprio",
@@ -208,8 +208,8 @@ export function NfeConfigDialog({ open, onOpenChange }: NfeConfigDialogProps) {
               <div className="space-y-1.5">
                 <Label>Tipo de Certificado</Label>
                 <Select
-                  value={certificadoTipo}
-                  onValueChange={(v) => setCertificadoTipo(v as NfeCertificadoTipo)}
+                  value={certificateType}
+                  onValueChange={(v) => setCertificateType(v as NfeCertificateType)}
                 >
                   <SelectTrigger data-testid="select-nfe-cert-type">
                     <SelectValue />

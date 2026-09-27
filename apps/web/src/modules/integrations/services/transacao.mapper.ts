@@ -75,7 +75,7 @@ export const transacaoMapper = {
   /**
    * Groups transactions by category for P&L.
    */
-  groupByCategoria(transacoes: TransacaoEntity[]): Record<string, TransacaoEntity[]> {
+  groupByCategory(transacoes: TransacaoEntity[]): Record<string, TransacaoEntity[]> {
     return transacoes.reduce<Record<string, TransacaoEntity[]>>((acc, t) => {
       if (!acc[t.categoria]) acc[t.categoria] = [];
       acc[t.categoria].push(t);
