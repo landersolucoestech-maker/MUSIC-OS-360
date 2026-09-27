@@ -154,7 +154,7 @@ function SaveBar() {
 }
 
 /* ── panels ── */
-function TabGeral() {
+function TabGeneral() {
   return (
     <div className="space-y-4">
       <Section title="Informações da Plataforma">
@@ -446,7 +446,7 @@ const PROVIDER_LOGO: Partial<Record<string, IntegrationLogoId>> = {
   soundon: "soundon", somvibe: "somvibe", musicpro: "musicpro",
 };
 
-function TabIntegracoes() {
+function TabIntegrations() {
   const { data: integrations, isLoading, isError, error, refetch } = useAdminIntegrations();
   const { data: categories } = useIntegrationCategories();
   const updateGovernance = useUpdateIntegrationGovernance();
@@ -671,7 +671,7 @@ const ROLE_STYLE: Record<string, string> = {
 };
 const DEFAULT_ROLE_STYLE = "text-muted-foreground bg-muted border-border";
 
-function TabUsuarios() {
+function TabUsers() {
   const [search, setSearch] = useState("");
   const usersQuery = useQuery({
     queryKey: ["admin", "users"],
@@ -786,14 +786,14 @@ function TabUsuarios() {
 }
 
 const TAB_PANELS: Record<TabKey, React.ComponentType> = {
-  usuarios:     TabUsuarios,
-  geral:        TabGeral,
+  usuarios:     TabUsers,
+  geral:        TabGeneral,
   email:        TabEmail,
   seguranca:    TabSeguranca,
   notificacoes: TabNotificacoes,
   webhooks:     TabWebhooks,
   "chaves-api": TabApiKeys,
-  integracoes:  TabIntegracoes,
+  integracoes:  TabIntegrations,
 };
 
 export default function AdminSettings() {

@@ -94,7 +94,7 @@ function KpiCards({ rows }: { rows: AudiovisualProject[] }) {
       String(row(p).final_status ?? row(p).status ?? row(p).approval_status),
     ),
   ).length;
-  const orcamento = rows.reduce((sum, p) => sum + (Number(row(p).budget_estimated ?? row(p).budget) || 0), 0);
+  const budget = rows.reduce((sum, p) => sum + (Number(row(p).budget_estimated ?? row(p).budget) || 0), 0);
   const cards = [
     { label: "Total de produções", value: String(total), icon: Film },
     { label: "Em produção", value: String(emProducao), icon: ClipboardList },
@@ -102,7 +102,7 @@ function KpiCards({ rows }: { rows: AudiovisualProject[] }) {
     { label: "Concluídas", value: String(concluidas), icon: PackageCheck },
     {
       label: "Orçamento total",
-      value: orcamento.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
+      value: budget.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
       icon: DollarSign,
     },
   ];

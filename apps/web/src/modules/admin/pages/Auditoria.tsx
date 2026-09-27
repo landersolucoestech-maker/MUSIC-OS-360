@@ -62,7 +62,7 @@ const AUDIT_PANEL_TABS: {
   { id: "servicos", label: "Serviços", title: "Auditoria de Serviços", module: null, icon: Settings },
 ];
 
-function DadosTab() {
+function DataTab() {
   const navigate = useNavigate();
   const { data, isLoading, error, refetch } = useAudit();
 
@@ -313,7 +313,7 @@ export default function Auditoria() {
       actions={headerActions}
     >
       <div className="space-y-4 pt-[10px] pb-[10px]">
-        <DadosTab />
+        <DataTab />
       </div>
     </MainLayout>
   );

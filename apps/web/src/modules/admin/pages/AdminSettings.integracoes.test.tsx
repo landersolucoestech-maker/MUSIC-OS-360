@@ -46,7 +46,7 @@ function renderAdminSettings() {
   );
 }
 
-async function openIntegracoesTab() {
+async function openIntegrationsTab() {
   const tab = await screen.findByText("Integrações");
   fireEvent.click(tab);
 }
@@ -63,13 +63,13 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
 
   it("dispara a query administrativa ao montar a aba", async () => {
     renderAdminSettings();
-    await openIntegracoesTab();
+    await openIntegrationsTab();
     await waitFor(() => expect(apiMock.get).toHaveBeenCalledWith("/admin/integrations"));
   });
 
   it("renders the admin providers in the DOM (including those hidden from the customer)", async () => {
     renderAdminSettings();
-    await openIntegracoesTab();
+    await openIntegrationsTab();
 
     // COMMERCIAL providers required by the gate.
     for (const name of ["Autentique", "DocuSign", "Clicksign", "UBC"]) {
@@ -83,7 +83,7 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
 
   it("shows ALL commercial admin records, not only the available ones", async () => {
     renderAdminSettings();
-    await openIntegracoesTab();
+    await openIntegrationsTab();
 
     await waitFor(() => expect(screen.getByTestId("admin-integration-autentique")).toBeInTheDocument());
     const rendered = document.querySelectorAll('[data-testid^="admin-integration-"]');
@@ -93,7 +93,7 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
 
   it("coming_soon and not_implemented stay visible and governable for the SYSTEM ADMIN", async () => {
     renderAdminSettings();
-    await openIntegracoesTab();
+    await openIntegrationsTab();
 
     // clicksign: draft + no adapter — invisible to the tenant, visible here.
     const row = await screen.findByTestId("admin-integration-clicksign");
@@ -107,7 +107,7 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
 
   it("uses human-readable names, never the raw slug", async () => {
     renderAdminSettings();
-    await openIntegracoesTab();
+    await openIntegrationsTab();
 
     expect(await screen.findByText("Google Ads")).toBeInTheDocument();
     // The slug appears only as a secondary technical identifier, not as the title.
@@ -125,7 +125,7 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
     });
 
     renderAdminSettings();
-    await openIntegracoesTab();
+    await openIntegrationsTab();
 
     // useAdminIntegrations uses retry: 1, so the error state only settles after
     // the second attempt — hence the larger timeout (it is not component slowness).
@@ -142,7 +142,7 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
     });
 
     renderAdminSettings();
-    await openIntegracoesTab();
+    await openIntegrationsTab();
 
     expect(await screen.findByTestId("admin-integrations-empty")).toBeInTheDocument();
     expect(screen.queryByTestId("admin-integrations-error")).not.toBeInTheDocument();
