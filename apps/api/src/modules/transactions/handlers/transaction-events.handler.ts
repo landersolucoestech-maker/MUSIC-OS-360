@@ -42,7 +42,7 @@ export class TransactionEventsHandler {
     }
     if (!this.financialRules) return;
 
-    const { transactionId, type, category, valor, source } = event.payload;
+    const { transactionId, type, category, valor: amountText, source } = event.payload;
     // The provisional transaction created by contract.signed already evaluates rules under
     // that trigger — avoids a duplicate trigger for the same business action.
     if (source === 'contract.signed') return;
@@ -51,7 +51,7 @@ export class TransactionEventsHandler {
       await this.financialRules.evaluateRules(tenantId, 'transaction.created', {
         entityId: transactionId,
         entityType: 'transaction',
-        valor: parseFloat(valor),
+        valor: parseFloat(amountText),
         category,
         type,
       });
@@ -77,14 +77,14 @@ export class TransactionEventsHandler {
     await runInContext(async (manager) => {
       const contractRepo = manager ? manager.getRepository(ContractEntity) : this.contractRepo;
       const taskRepo     = manager ? manager.getRepository(CrmTaskEntity)  : this.taskRepo;
-      const { transactionId, type, contratoId, valor, paidBy, paidAt } = event.payload;
+      const { transactionId, type, contratoId: contractId, valor: amountText, paidBy, paidAt } = event.payload;
 
       if (this.financialRules) {
         try {
           await this.financialRules.evaluateRules(tenantId, 'transaction.paid', {
             entityId: transactionId,
             entityType: 'transaction',
-            valor: parseFloat(valor),
+            valor: parseFloat(amountText),
             type,
           });
         } catch (err) {
@@ -93,12 +93,12 @@ export class TransactionEventsHandler {
       }
 
       // Update linked contract metadata with last payment info
-      if (contractRepo && contratoId) {
+      if (contractRepo && contractId) {
         try {
           const contract = await contractRepo
             .createQueryBuilder('c')
             .where('c.id = :id AND c.tenant_id = :tenantId AND c.deleted_at IS NULL', {
-              id: contratoId, tenantId,
+              id: contractId, tenantId,
             })
             .getOne();
 
@@ -106,16 +106,16 @@ export class TransactionEventsHandler {
             const updatedMetadata = {
               ...contract.metadata,
               ultimo_pagamento_em:    paidAt,
-              ultimo_pagamento_valor: valor,
+              ultimo_pagamento_valor: amountText,
               ultimo_pagamento_por:   paidBy,
             };
             await contractRepo
               .createQueryBuilder()
               .update(ContractEntity)
               .set({ metadata: updatedMetadata, updated_at: new Date() } as any)
-              .where('id = :id AND tenant_id = :tenantId', { id: contratoId, tenantId })
+              .where('id = :id AND tenant_id = :tenantId', { id: contractId, tenantId })
               .execute();
-            this.logger.log(`Contract "${contratoId}" metadata updated after transaction "${transactionId}" paid`);
+            this.logger.log(`Contract "${contractId}" metadata updated after transaction "${transactionId}" paid`);
           }
         } catch (err) {
           this.logger.warn(`Failed to update contract metadata for paid transaction "${transactionId}" — ${String(err)}`);
@@ -129,8 +129,8 @@ export class TransactionEventsHandler {
             entity_type:  'transaction',
             entity_id:    transactionId,
             action:       'paid',
-            description:  transactionPaidCopy(valor),
-            metadata:     { valor, contratoId, paidAt, correlationId: event.correlationId ?? null },
+            description:  transactionPaidCopy(amountText),
+            metadata:     { valor: amountText, contratoId: contractId, paidAt, correlationId: event.correlationId ?? null },
           });
         } catch { /* non-critical */ }
       }
@@ -146,8 +146,8 @@ export class TransactionEventsHandler {
             due.setDate(due.getDate() + 5);
             const task = taskRepo.create({
               tenant_id:   tenantId,
-              title:       reconciliationTaskTitle(valor),
-              description: reconciliationTaskDescription(valor, paidAt),
+              title:       reconciliationTaskTitle(amountText),
+              description: reconciliationTaskDescription(amountText, paidAt),
               status:      'pending',
               priority:    'medium',
               type:        `transaction.reconciliation:${transactionId}`,

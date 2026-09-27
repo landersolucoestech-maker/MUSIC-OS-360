@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // ── Enum values matching the frontend constants in transacao-constants.ts ─────
 
-const TIPOS_TRANSACAO = ['receita', 'despesa', 'investimento', 'imposto', 'transferencia'] as const;
+const TRANSACTION_TYPES = ['receita', 'despesa', 'investimento', 'imposto', 'transferencia'] as const;
 // 'aprovado'/'atrasado' were UI-only decorative labels with zero backend
 // consumer (no service/query ever branched on them) — dead options, removed.
 // 'pago' DOES have real consumers (transactions.service.ts PAID_STATUSES,
@@ -10,33 +10,33 @@ const TIPOS_TRANSACAO = ['receita', 'despesa', 'investimento', 'imposto', 'trans
 // to confirmado/concluido) so it is translated, not dropped: 'pago' ->
 // 'paid' (see TransactionStatus in packages/types/src/enums.ts).
 const STATUS          = ['pending', 'paid', 'confirmed', 'completed', 'scheduled', 'cancelled'] as const;
-const FORMAS_PAGAMENTO = [
+const PAYMENT_METHODS = [
   'pix', 'ted', 'boleto', 'cartao-credito', 'cartao-debito', 'dinheiro', 'cheque',
 ] as const;
-const TIPOS_PAGAMENTO     = ['avista', 'parcelado'] as const;
-const INTERVALOS_PARCELAS = ['mensal', 'quinzenal', 'semanal'] as const;
+const PAYMENT_PLANS     = ['avista', 'parcelado'] as const;
+const INSTALLMENT_INTERVALS = ['mensal', 'quinzenal', 'semanal'] as const;
 
 // ── Subcategory sets used in conditional validation ────────────────────────────
 
-const servicosDespesaComArtistaEProjeto = new Set([
+const expenseServicesWithArtistAndProject = new Set([
   'design-grafico', 'producao-audiovisual', 'licenciamento-obras',
   'direitos-autorais', 'fotografia-audiovisual', 'sampling-clearance',
 ]);
 
-const produtosDespesaComEvento = new Set(['cenografia-pirotecnia']);
+const expenseProductsWithEvent = new Set(['cenografia-pirotecnia']);
 
-const receitasMusicaisComArtistaEProjeto = new Set([
+const musicIncomeWithArtistAndProject = new Set([
   'direitos-autorais', 'direitos-conexos', 'recebimentos-externos-streaming',
   'licenciamento-obra', 'licenciamento-fonograma', 'sincronizacao', 'venda-beats',
 ]);
 
-const servicosReceitaComArtistaEProjeto = new Set([
+const incomeServicesWithArtistAndProject = new Set([
   'producao-musical', 'producao-audiovisual', 'marketing-divulgacao',
   'design-grafico', 'trafego-pago', 'gravacao-estudio',
   'mixagem', 'masterizacao', 'sessao-producao',
 ]);
 
-const servicosReceitaComArtista = new Set([
+const incomeServicesWithArtist = new Set([
   'criacao-site', 'gestao-redes-sociais', 'ensaio',
 ]);
 
@@ -51,10 +51,10 @@ const commonFields = {
   category:            z.string().optional(),
   subcategoria:        z.string().optional(),
   status:              z.enum(STATUS).optional(),
-  formaPagamento:      z.enum(FORMAS_PAGAMENTO).optional(),
-  tipoPagamento:       z.enum(TIPOS_PAGAMENTO).optional(),
+  formaPagamento:      z.enum(PAYMENT_METHODS).optional(),
+  tipoPagamento:       z.enum(PAYMENT_PLANS).optional(),
   quantidadeParcelas:  z.string().optional(),
-  intervaloParcelas:   z.enum(INTERVALOS_PARCELAS).optional(),
+  intervaloParcelas:   z.enum(INSTALLMENT_INTERVALS).optional(),
   dataPrimeiraParcela: z.string().optional(),
   artistaVinculado:    z.string().optional(),
   projetoVinculado:    z.string().optional(),
@@ -82,7 +82,7 @@ const amountField = z
   .optional();
 
 interface PayloadForValidation {
-  tipoTransacao: (typeof TIPOS_TRANSACAO)[number];
+  tipoTransacao: (typeof TRANSACTION_TYPES)[number];
   tipoCliente?: string;
   category?: string;
   subcategoria?: string;
@@ -103,7 +103,7 @@ interface PayloadForValidation {
 
 // Partial variant used by patchTransactionSchema where tipoTransacao may be absent
 interface PartialPayloadForValidation extends Omit<PayloadForValidation, 'tipoTransacao'> {
-  tipoTransacao?: (typeof TIPOS_TRANSACAO)[number];
+  tipoTransacao?: (typeof TRANSACTION_TYPES)[number];
 }
 
 /**
@@ -137,23 +137,23 @@ function validateParcelamento(data: PartialPayloadForValidation, ctx: z.Refineme
  */
 function validateConditionalByType(data: PayloadForValidation, ctx: z.RefinementCtx): void {
   const type             = data.tipoTransacao;
-  const tipoCliente      = data.tipoCliente;
+  const clientType      = data.tipoCliente;
   const category        = data.category;
   const subcategoria     = data.subcategoria ?? '';
-  const artistaVinculado = data.artistaVinculado;
+  const linkedArtist = data.artistaVinculado;
 
-  const isImposto        = type === 'imposto';
+  const isTax        = type === 'imposto';
   const isTransferencia  = type === 'transferencia';
-  const isInvestimento   = type === 'investimento';
-  const isDespesa        = type === 'despesa';
-  const isReceita        = type === 'receita';
-  const isEmpresa        = tipoCliente === 'empresa';
-  const isArtista        = tipoCliente === 'artista';
-  const isPessoa         = tipoCliente === 'pessoa';
-  const isEmpresaOuPessoa = isEmpresa || isPessoa;
+  const isInvestment   = type === 'investimento';
+  const isExpense        = type === 'despesa';
+  const isIncome        = type === 'receita';
+  const isCompany        = clientType === 'empresa';
+  const isArtist        = clientType === 'artista';
+  const isPerson         = clientType === 'pessoa';
+  const isCompanyOrPerson = isCompany || isPerson;
 
-  const needsClientType = !isImposto && !isTransferencia && !isInvestimento;
-  if (needsClientType && !tipoCliente) {
+  const needsClientType = !isTax && !isTransferencia && !isInvestment;
+  if (needsClientType && !clientType) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o tipo de cliente', path: ['tipoCliente'] });
   }
 
@@ -161,76 +161,76 @@ function validateConditionalByType(data: PayloadForValidation, ctx: z.Refinement
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione a categoria', path: ['category'] });
   }
 
-  const isDespesaServico                  = isDespesa && isEmpresaOuPessoa && category === 'servicos';
-  const isDespesaMarketing                = isDespesa && isEmpresaOuPessoa && category === 'marketing';
-  const isDespesaViagem                   = isDespesa && isEmpresaOuPessoa && category === 'viagens';
-  const isDespesaProduto                  = isDespesa && isEmpresaOuPessoa && category === 'produtos';
-  const isDespesaSuporteFinanceiro        = isDespesa && isEmpresaOuPessoa && category === 'suporte-financeiro';
-  const isDespesaArtistaCaches            = isDespesa && isArtista && category === 'caches';
-  const isDespesaArtistaSuporteFinanceiro = isDespesa && isArtista && category === 'suporte-financeiro';
-  const isReceitaMusical                  = isReceita && isEmpresaOuPessoa && category === 'receitas-musicais';
-  const isReceitaServico                  = isReceita && isEmpresaOuPessoa && category === 'servicos';
-  const isReceitaProduto                  = isReceita && isEmpresaOuPessoa && category === 'produtos';
+  const isServiceExpense                  = isExpense && isCompanyOrPerson && category === 'servicos';
+  const isMarketingExpense                = isExpense && isCompanyOrPerson && category === 'marketing';
+  const isTravelExpense                   = isExpense && isCompanyOrPerson && category === 'viagens';
+  const isProductExpense                  = isExpense && isCompanyOrPerson && category === 'produtos';
+  const isFinancialSupportExpense        = isExpense && isCompanyOrPerson && category === 'suporte-financeiro';
+  const isArtistFeeExpense            = isExpense && isArtist && category === 'caches';
+  const isArtistFinancialSupportExpense = isExpense && isArtist && category === 'suporte-financeiro';
+  const isMusicIncome                  = isIncome && isCompanyOrPerson && category === 'receitas-musicais';
+  const isServiceIncome                  = isIncome && isCompanyOrPerson && category === 'servicos';
+  const isProductIncome                  = isIncome && isCompanyOrPerson && category === 'produtos';
 
   const needsSubcategoria =
-    isDespesaServico || isDespesaMarketing || isDespesaViagem ||
-    isDespesaProduto || isDespesaArtistaCaches ||
-    isReceitaMusical || isReceitaServico || isReceitaProduto;
+    isServiceExpense || isMarketingExpense || isTravelExpense ||
+    isProductExpense || isArtistFeeExpense ||
+    isMusicIncome || isServiceIncome || isProductIncome;
 
   if (needsSubcategoria && !subcategoria) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione a subcategoria', path: ['subcategoria'] });
   }
 
-  const needsArtista =
-    (isDespesaServico  && servicosDespesaComArtistaEProjeto.has(subcategoria)) ||
-    (isDespesaMarketing && Boolean(subcategoria)) ||
-    (isDespesaViagem   && Boolean(subcategoria)) ||
-    (isDespesaProduto  && Boolean(subcategoria)) ||
-    isDespesaSuporteFinanceiro ||
-    (isDespesaArtistaCaches && Boolean(subcategoria)) ||
-    isDespesaArtistaSuporteFinanceiro ||
-    (isReceitaMusical && Boolean(subcategoria)) ||
-    (isReceitaServico && (
-      servicosReceitaComArtistaEProjeto.has(subcategoria) ||
-      servicosReceitaComArtista.has(subcategoria)
+  const needsArtist =
+    (isServiceExpense  && expenseServicesWithArtistAndProject.has(subcategoria)) ||
+    (isMarketingExpense && Boolean(subcategoria)) ||
+    (isTravelExpense   && Boolean(subcategoria)) ||
+    (isProductExpense  && Boolean(subcategoria)) ||
+    isFinancialSupportExpense ||
+    (isArtistFeeExpense && Boolean(subcategoria)) ||
+    isArtistFinancialSupportExpense ||
+    (isMusicIncome && Boolean(subcategoria)) ||
+    (isServiceIncome && (
+      incomeServicesWithArtistAndProject.has(subcategoria) ||
+      incomeServicesWithArtist.has(subcategoria)
     )) ||
-    (isReceitaProduto && Boolean(subcategoria));
+    (isProductIncome && Boolean(subcategoria));
 
-  if (needsArtista && !artistaVinculado) {
+  if (needsArtist && !linkedArtist) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o artista', path: ['artistaVinculado'] });
   }
 
-  const projetoObrigatorio =
-    (isDespesaServico  && servicosDespesaComArtistaEProjeto.has(subcategoria)) ||
-    (isReceitaMusical  && receitasMusicaisComArtistaEProjeto.has(subcategoria)) ||
-    (isReceitaServico  && servicosReceitaComArtistaEProjeto.has(subcategoria));
+  const projectRequired =
+    (isServiceExpense  && expenseServicesWithArtistAndProject.has(subcategoria)) ||
+    (isMusicIncome  && musicIncomeWithArtistAndProject.has(subcategoria)) ||
+    (isServiceIncome  && incomeServicesWithArtistAndProject.has(subcategoria));
 
-  const exibirProjeto =
-    projetoObrigatorio ||
-    (isDespesaMarketing && Boolean(subcategoria) && Boolean(artistaVinculado));
+  const showProject =
+    projectRequired ||
+    (isMarketingExpense && Boolean(subcategoria) && Boolean(linkedArtist));
 
-  if (exibirProjeto && projetoObrigatorio && artistaVinculado && !data.projetoVinculado) {
+  if (showProject && projectRequired && linkedArtist && !data.projetoVinculado) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o projeto', path: ['projetoVinculado'] });
   }
 
-  const needsEvento =
-    (isDespesaProduto     && produtosDespesaComEvento.has(subcategoria)) ||
-    (isDespesaArtistaCaches && subcategoria === 'show-evento') ||
-    (isReceitaMusical     && ['participacao-show-evento', 'venda-show-fechado'].includes(subcategoria));
+  const needsEvent =
+    (isProductExpense     && expenseProductsWithEvent.has(subcategoria)) ||
+    (isArtistFeeExpense && subcategoria === 'show-evento') ||
+    (isMusicIncome     && ['participacao-show-evento', 'venda-show-fechado'].includes(subcategoria));
 
-  if (needsEvento && artistaVinculado && !data.eventoVinculado) {
+  if (needsEvent && linkedArtist && !data.eventoVinculado) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o show/evento', path: ['eventoVinculado'] });
   }
 
-  if (isDespesaViagem && Boolean(subcategoria) && !data.motivoViagem?.trim()) {
+  if (isTravelExpense && Boolean(subcategoria) && !data.motivoViagem?.trim()) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe o motivo da viagem', path: ['motivoViagem'] });
   }
 
-  if (isDespesaArtistaCaches && subcategoria === 'publicidade' && !data.advertisingName?.trim()) {
+  if (isArtistFeeExpense && subcategoria === 'publicidade' && !data.advertisingName?.trim()) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe o nome da publicidade', path: ['advertisingName'] });
   }
 
-  if (isImposto && !data.orgaoArrecadador) {
+  if (isTax && !data.orgaoArrecadador) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione o órgão arrecadador', path: ['orgaoArrecadador'] });
   }
 }
@@ -240,7 +240,7 @@ function validateConditionalByType(data: PayloadForValidation, ctx: z.Refinement
 // is always present.
 
 export const createTransactionSchema = z.object({
-  tipoTransacao: z.enum(TIPOS_TRANSACAO),
+  tipoTransacao: z.enum(TRANSACTION_TYPES),
   description:     z.string().trim().min(1),
   amount:        amountField,
   dataTransacao: z.string().min(1),
@@ -248,7 +248,7 @@ export const createTransactionSchema = z.object({
   // Defaults applied only on create — absent fields on PATCH/PUT must stay absent
   // so the update path does not reset existing values.
   status:        z.enum(STATUS).optional().default('pending'),
-  tipoPagamento: z.enum(TIPOS_PAGAMENTO).optional().default('avista'),
+  tipoPagamento: z.enum(PAYMENT_PLANS).optional().default('avista'),
 }).superRefine((data, ctx) => {
   if (!data.description?.trim()) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe a descrição', path: ['description'] });
@@ -279,7 +279,7 @@ export const createTransactionSchema = z.object({
 // needed.
 
 export const updateTransactionSchema = z.object({
-  tipoTransacao: z.enum(TIPOS_TRANSACAO),
+  tipoTransacao: z.enum(TRANSACTION_TYPES),
   description:     z.string().trim().optional(),
   amount:        amountField,
   dataTransacao: z.string().optional(),
@@ -310,7 +310,7 @@ export const updateTransactionSchema = z.object({
 //     on the fields provided.
 
 export const patchTransactionSchema = z.object({
-  tipoTransacao: z.enum(TIPOS_TRANSACAO).optional(),
+  tipoTransacao: z.enum(TRANSACTION_TYPES).optional(),
   description:     z.string().trim().optional(),
   amount:        amountField,
   dataTransacao: z.string().optional(),

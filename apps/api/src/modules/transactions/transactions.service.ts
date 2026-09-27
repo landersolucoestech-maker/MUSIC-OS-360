@@ -37,9 +37,9 @@ const CANCELLED_STATUSES = new Set(['cancelled']);
 export const UNCATEGORIZED_PLACEHOLDER = 'outros';
 
 /** finance_category_keyword_rules only covers RECEITA/DESPESA — other types (investimento, imposto, transferencia) are never eligible. */
-export function toRuleTransactionType(tipoTransacao: unknown): 'RECEITA' | 'DESPESA' | null {
-  if (tipoTransacao === 'receita') return 'RECEITA';
-  if (tipoTransacao === 'despesa') return 'DESPESA';
+export function toRuleTransactionType(transactionType: unknown): 'RECEITA' | 'DESPESA' | null {
+  if (transactionType === 'receita') return 'RECEITA';
+  if (transactionType === 'despesa') return 'DESPESA';
   return null;
 }
 
@@ -263,7 +263,7 @@ export class TransactionsService {
     const entity = this.repo!.create(payload as Parameters<Repository<TransactionEntity>['create']>[0]);
     const saved = await this.repo!.save(entity as TransactionEntity);
 
-    const valor = String((dto as AnyRecord).amount ?? '0');
+    const amountText = String((dto as AnyRecord).amount ?? '0');
 
     if (this.events) {
       this.events.emitTyped(DOMAIN_EVENTS.TRANSACTION_CREATED, {
@@ -276,7 +276,7 @@ export class TransactionsService {
           tenantId,
           type:          saved.type ?? (dto as AnyRecord).tipoTransacao as string ?? '',
           category:      saved.categoria ?? (dto as AnyRecord).category as string ?? '',
-          valor,
+          valor: amountText,
           contratoId:    saved.contrato_id ?? null,
           artistId:     saved.artist_id ?? null,
           createdBy:     userId,
@@ -290,8 +290,8 @@ export class TransactionsService {
           entity_type:  'transaction',
           entity_id:    saved.id,
           action:       'created',
-          description:  transactionCreatedCopy(saved.type, valor),
-          metadata:     { type: saved.type, category: saved.categoria, valor },
+          description:  transactionCreatedCopy(saved.type, amountText),
+          metadata:     { type: saved.type, category: saved.categoria, valor: amountText },
         });
       } catch { /* non-critical */ }
     }
@@ -396,23 +396,23 @@ export class TransactionsService {
   private async resolveCategory(
     tenantId: string,
     dto: CreateTransactionDto,
-    currentCategoria: string,
+    currentCategory: string,
   ): Promise<string> {
-    if (currentCategoria.trim().toLowerCase() !== UNCATEGORIZED_PLACEHOLDER) {
-      return currentCategoria;
+    if (currentCategory.trim().toLowerCase() !== UNCATEGORIZED_PLACEHOLDER) {
+      return currentCategory;
     }
 
     const ruleType = toRuleTransactionType((dto as AnyRecord).tipoTransacao);
     const description = (dto as AnyRecord).description as string | undefined;
     if (!ruleType || !description || !this.financeCategoryRules) {
-      return currentCategoria;
+      return currentCategory;
     }
 
     try {
       const suggestion = await this.financeCategoryRules.suggestCategoryForTransaction(tenantId, ruleType, description);
-      return suggestion?.categoryName ?? currentCategoria;
+      return suggestion?.categoryName ?? currentCategory;
     } catch {
-      return currentCategoria;
+      return currentCategory;
     }
   }
 
@@ -432,7 +432,7 @@ export class TransactionsService {
     if (!requestedStatus || requestedStatus === before.status) return;
 
     const nowIso = new Date().toISOString();
-    const valor  = String(after.valor);
+    const amountText  = String(after.valor);
 
     if (this.events) {
       this.events.emitTyped(DOMAIN_EVENTS.TRANSACTION_STATUS_CHANGED, {
@@ -444,7 +444,7 @@ export class TransactionsService {
           transactionId:  after.id,
           tenantId,
           type:           after.type as string,
-          valor,
+          valor: amountText,
           previousStatus: before.status as string,
           newStatus:      requestedStatus,
           changedBy:      userId,
@@ -461,7 +461,7 @@ export class TransactionsService {
             transactionId: after.id,
             tenantId,
             type:          after.type as string,
-            valor,
+            valor: amountText,
             contratoId:    after.contrato_id ?? null,
             artistId:     after.artist_id  ?? null,
             paidBy:        userId,
@@ -480,7 +480,7 @@ export class TransactionsService {
             transactionId: after.id,
             tenantId,
             type:          after.type as string,
-            valor,
+            valor: amountText,
             cancelledBy:   userId,
             cancelledAt:   nowIso,
           },
@@ -495,7 +495,7 @@ export class TransactionsService {
           entity_id:    after.id,
           action:       'status_changed',
           description:  transactionStatusChangedCopy(before.status, requestedStatus),
-          metadata:     { previousStatus: before.status, newStatus: requestedStatus, valor },
+          metadata:     { previousStatus: before.status, newStatus: requestedStatus, valor: amountText },
         });
       } catch { /* non-critical */ }
     }
