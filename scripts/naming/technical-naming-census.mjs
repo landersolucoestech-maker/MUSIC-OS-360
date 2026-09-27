@@ -138,7 +138,7 @@ export function scanPath(relPath) {
   const segs = relPath.split("/");
   for (let i = 0; i < segs.length - 1; i++) if (ptWords(segs[i]).length) hits.push({ surface: "directory", kind: "directory", name: segs.slice(0, i + 1).join("/"), line: 0 });
   const base = segs[segs.length - 1];
-  const stem = base.replace(/\.(test|spec|e2e-spec|guard|stories)?\.?(tsx?|mts|cts|mjs|cjs|js|json|md|mdx|sql|ya?ml|png|jpe?g|svg|webp|gif|txt|csv|xlsx|pdf|sh|toml|html|css)$/i, "");
+  const stem = base.replace(/\.(test|spec|e2e-spec|guard|stories)?\.?(tsx?|mts|cts|mjs|cjs|js|json|md|mdx|sql|ya?ml|png|jpe?g|svg|webp|gif|txt|xlsx|pdf|sh|toml|html|css)$/i, "");
   if (ptWords(stem).length) hits.push({ surface: "filename", kind: "filename", name: base, line: 0 });
   return hits;
 }
