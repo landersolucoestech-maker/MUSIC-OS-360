@@ -20,10 +20,32 @@ const ZIP_CENTRAL_DIRECTORY_HEADER = 0x02014b50;
 const ZIP_END_OF_CENTRAL_DIRECTORY = 0x06054b50;
 const MAX_END_RECORD_SEARCH = 65_557;
 
+/**
+ * Rejection the user can act on: `detail` is PT-BR end-user copy describing
+ * what to change in the spreadsheet.
+ */
 function invalidWorkbook(detail: string): BadRequestException {
   return new BadRequestException({
     error: 'INVALID_XLSX_WORKBOOK',
-    message: `Workbook XLSX rejeitado. ${detail}`,
+    message: `Planilha XLSX rejeitada. ${detail}`,
+  });
+}
+
+const CORRUPT_WORKBOOK_MESSAGE =
+  'Planilha XLSX rejeitada. O arquivo não é uma planilha XLSX válida ou está corrompido.';
+const OVERSIZED_CONTENT_MESSAGE =
+  'Planilha XLSX rejeitada. O conteúdo da planilha excede o limite permitido.';
+
+/**
+ * Structural (ZIP/OpenXML container) rejection. The user only gets `message`
+ * (PT-BR copy); `reason` is the English technical diagnosis for operators and
+ * API clients and is never meant to be rendered.
+ */
+function rejectedContainer(reason: string, message = CORRUPT_WORKBOOK_MESSAGE): BadRequestException {
+  return new BadRequestException({
+    error: 'INVALID_XLSX_WORKBOOK',
+    message,
+    reason,
   });
 }
 
@@ -40,12 +62,12 @@ function findEndOfCentralDirectory(content: Buffer): number {
   for (let offset = content.length - 22; offset >= minimum; offset -= 1) {
     if (content.readUInt32LE(offset) === ZIP_END_OF_CENTRAL_DIRECTORY) return offset;
   }
-  throw invalidWorkbook('Diretório central ZIP ausente ou truncado.');
+  throw rejectedContainer('ZIP end of central directory record missing or truncated.');
 }
 
 function assertSafeZipContainer(content: Buffer): void {
   if (content.length < 4 || content.readUInt32LE(0) !== ZIP_LOCAL_FILE_HEADER) {
-    throw invalidWorkbook('Assinatura OpenXML ZIP inválida.');
+    throw rejectedContainer('Invalid OpenXML ZIP signature.');
   }
 
   const endOffset = findEndOfCentralDirectory(content);
@@ -54,10 +76,10 @@ function assertSafeZipContainer(content: Buffer): void {
   const centralDirectoryOffset = content.readUInt32LE(endOffset + 16);
 
   if (entryCount === 0 || entryCount > IMPORT_MAX_ZIP_ENTRIES) {
-    throw invalidWorkbook(`Quantidade de entradas ZIP fora do limite: ${entryCount}.`);
+    throw rejectedContainer(`ZIP entry count out of bounds: ${entryCount}.`);
   }
   if (centralDirectoryOffset + centralDirectorySize > content.length) {
-    throw invalidWorkbook('Diretório central ZIP aponta para dados fora do arquivo.');
+    throw rejectedContainer('ZIP central directory points outside the file.');
   }
 
   let cursor = centralDirectoryOffset;
@@ -68,7 +90,7 @@ function assertSafeZipContainer(content: Buffer): void {
 
   for (let index = 0; index < entryCount; index += 1) {
     if (cursor + 46 > content.length || content.readUInt32LE(cursor) !== ZIP_CENTRAL_DIRECTORY_HEADER) {
-      throw invalidWorkbook(`Entrada ZIP ${index + 1} inválida.`);
+      throw rejectedContainer(`Invalid ZIP central directory entry ${index + 1}.`);
     }
 
     const flags = content.readUInt16LE(cursor + 8);
@@ -80,18 +102,24 @@ function assertSafeZipContainer(content: Buffer): void {
     const nameStart = cursor + 46;
     const nameEnd = nameStart + fileNameLength;
 
-    if (nameEnd > content.length) throw invalidWorkbook('Nome de entrada ZIP truncado.');
-    if ((flags & 0x1) !== 0) throw invalidWorkbook('Entradas ZIP criptografadas não são permitidas.');
+    if (nameEnd > content.length) throw rejectedContainer('Truncated ZIP entry name.');
+    if ((flags & 0x1) !== 0) throw rejectedContainer(
+        'Encrypted ZIP entry.',
+        'Planilha XLSX rejeitada. Planilhas protegidas por senha não são permitidas.',
+      );
     if (compressedSize === 0xffffffff || uncompressedSize === 0xffffffff) {
-      throw invalidWorkbook('ZIP64 não é permitido em importações.');
+      throw rejectedContainer('ZIP64 archives are not accepted for imports.');
     }
 
     const entryName = content.subarray(nameStart, nameEnd).toString('utf8').replace(/\\/g, '/');
     if (!entryName || entryName.startsWith('/') || entryName.split('/').includes('..')) {
-      throw invalidWorkbook(`Caminho ZIP inseguro: "${entryName}".`);
+      throw rejectedContainer(`Unsafe ZIP entry path: "${entryName}".`);
     }
     if (/vbaProject\.bin|(^|\/)macrosheets\/|(^|\/)externalLinks\//i.test(entryName)) {
-      throw invalidWorkbook(`Conteúdo ativo ou referência externa não permitido: "${entryName}".`);
+      throw rejectedContainer(
+        `Active content or external link entry: "${entryName}".`,
+        'Planilha XLSX rejeitada. Macros e vínculos externos não são permitidos.',
+      );
     }
 
     hasContentTypes ||= entryName === '[Content_Types].xml';
@@ -100,29 +128,29 @@ function assertSafeZipContainer(content: Buffer): void {
     totalUncompressed += uncompressedSize;
 
     if (uncompressedSize > IMPORT_MAX_UNCOMPRESSED_BYTES) {
-      throw invalidWorkbook(`Entrada ZIP descompactada excede o limite: "${entryName}".`);
+      throw rejectedContainer(`Uncompressed ZIP entry exceeds the limit: "${entryName}".`, OVERSIZED_CONTENT_MESSAGE);
     }
     if (
       compressedSize > 0 &&
       uncompressedSize / compressedSize > IMPORT_MAX_COMPRESSION_RATIO
     ) {
-      throw invalidWorkbook(`Taxa de compressão suspeita na entrada "${entryName}".`);
+      throw rejectedContainer(`Suspicious compression ratio in entry "${entryName}".`, OVERSIZED_CONTENT_MESSAGE);
     }
 
     cursor = nameEnd + extraLength + commentLength;
   }
 
   if (!hasContentTypes || !hasWorkbook) {
-    throw invalidWorkbook('Estrutura mínima OpenXML ausente.');
+    throw rejectedContainer('Minimum OpenXML structure missing ([Content_Types].xml / xl/workbook.xml).');
   }
   if (totalUncompressed > IMPORT_MAX_UNCOMPRESSED_BYTES) {
-    throw invalidWorkbook('Conteúdo total descompactado excede o limite permitido.');
+    throw rejectedContainer('Total uncompressed content exceeds the limit.', OVERSIZED_CONTENT_MESSAGE);
   }
   if (
     totalCompressed > 0 &&
     totalUncompressed / totalCompressed > IMPORT_MAX_COMPRESSION_RATIO
   ) {
-    throw invalidWorkbook('Taxa de compressão total suspeita.');
+    throw rejectedContainer('Suspicious total compression ratio.', OVERSIZED_CONTENT_MESSAGE);
   }
 }
 
@@ -176,8 +204,8 @@ export class ImportParserService {
         bookVBA: true,
       });
     } catch (error) {
-      throw invalidWorkbook(
-        `Falha ao interpretar o OpenXML: ${error instanceof Error ? error.message : String(error)}.`,
+      throw rejectedContainer(
+        `OpenXML parse failure: ${error instanceof Error ? error.message : String(error)}.`,
       );
     }
 
@@ -198,10 +226,10 @@ export class ImportParserService {
       );
     }
     const sheetVisibility = workbook.Workbook?.Sheets?.[0]?.Hidden ?? 0;
-    if (sheetVisibility !== 0) throw invalidWorkbook('A única aba do workbook deve estar visível.');
+    if (sheetVisibility !== 0) throw invalidWorkbook('A única aba da planilha deve estar visível.');
 
     const sheet = workbook.Sheets[sheetName];
-    if (!sheet) throw invalidWorkbook('Aba declarada não foi encontrada no workbook.');
+    if (!sheet) throw rejectedContainer('Declared sheet not found in the workbook.');
     assertNoFormulasOrMerges(sheet);
 
     const reference = sheet['!ref'];

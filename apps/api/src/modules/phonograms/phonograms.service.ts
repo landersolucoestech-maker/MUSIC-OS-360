@@ -208,7 +208,7 @@ export class PhonogramsService {
     if (resolved.title === undefined) {
       throw new BadRequestException({
         code: 'PHONOGRAM_TITLE_REQUIRED',
-        message: 'title é obrigatório.',
+        message: 'Título é obrigatório.',
         fields: [{ canonical: 'title', legacy: 'titulo' }],
       });
     }

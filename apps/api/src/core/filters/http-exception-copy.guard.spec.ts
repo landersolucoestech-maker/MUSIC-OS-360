@@ -25,12 +25,23 @@ const MACHINE_CONSUMER_FILES = new Set([
 ]);
 
 /** English machine responses allowed in otherwise user-facing files. */
-const MACHINE_MESSAGES = new Set(['Stripe webhook secret unavailable']);
+const MACHINE_MESSAGES = new Set([
+  // Stripe webhook endpoint: answered to Stripe, never rendered.
+  'Stripe webhook secret unavailable',
+  'Stripe signature missing',
+  'Stripe raw body missing',
+]);
 
 const ENV_NAME = /\b[A-Z][A-Z0-9]*_[A-Z0-9_]+\b/;
 const SNAKE_KEY = /\b[a-z]+_[a-z0-9_]+\b/;
 const CAMEL_KEY = /\b[a-z]+[A-Z][A-Za-z0-9]*\b/;
 const TENANT_WORD = /\btenant\b/i;
+/** PT-BR copy starts with a capital letter; a bare lowercase key before a verb is a field name. */
+const LEADING_FIELD_KEY = /^[a-z][a-z0-9]*\s+(é|são|deve|devem|precisa|não)(?!\p{L})/u;
+/** English sentence vocabulary never appears in PT-BR copy. */
+const ENGLISH_WORDS =
+  /(?<!\p{L})(is|are|must|required|invalid|not found|missing|failed|unavailable|cannot|already exists|not allowed)(?!\p{L})/iu;
+const PATTERNS = [ENV_NAME, SNAKE_KEY, CAMEL_KEY, TENANT_WORD, LEADING_FIELD_KEY, ENGLISH_WORDS];
 
 function sourceFiles(dir: string): string[] {
   const out: string[] = [];
@@ -71,7 +82,7 @@ function violations(): string[] {
       if (ts.isNewExpression(node) && /Exception$/.test(node.expression.getText(sf))) {
         const text = messageTexts(node.arguments?.[0]).join(' ').trim();
         if (text && !MACHINE_MESSAGES.has(text)) {
-          const hit = [ENV_NAME, SNAKE_KEY, CAMEL_KEY, TENANT_WORD].find((re) => re.test(text));
+          const hit = PATTERNS.find((re) => re.test(text));
           if (hit) {
             const line = sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1;
             found.push(`${rel}:${line} ${hit} → ${text}`);
@@ -91,9 +102,19 @@ describe('HttpException end-user copy carries no technical identifiers', () => {
   });
 
   it('detects a violation (self-test of the patterns)', () => {
-    for (const bad of ['defina SOUNDCHARTS_CLIENT_ID', 'contrato_id obrigatório', 'assetType é obrigatório', 'neste tenant']) {
-      expect([ENV_NAME, SNAKE_KEY, CAMEL_KEY, TENANT_WORD].some((re) => re.test(bad))).toBe(true);
+    for (const bad of [
+      'defina SOUNDCHARTS_CLIENT_ID',
+      'contrato_id obrigatório',
+      'assetType é obrigatório',
+      'neste tenant',
+      'title é obrigatório.',
+      'Artist not found',
+      'Payload is invalid',
+    ]) {
+      expect(PATTERNS.some((re) => re.test(bad))).toBe(true);
     }
-    expect([ENV_NAME, SNAKE_KEY, CAMEL_KEY, TENANT_WORD].some((re) => re.test('Informe o tipo do material.'))).toBe(false);
+    for (const good of ['Informe o tipo do material.', 'Título é obrigatório.', 'Registro inválido ou ausente.', 'Papéis globais do sistema são somente leitura']) {
+      expect(PATTERNS.some((re) => re.test(good))).toBe(false);
+    }
   });
 });

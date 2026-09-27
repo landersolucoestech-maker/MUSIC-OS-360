@@ -157,7 +157,7 @@ export class ClientsService {
     input: { type: string; description: string },
   ) {
     await this.findById(tenantId, id);
-    if (!this.activityLogs) throw new ServiceUnavailableException('Timeline indisponível');
+    if (!this.activityLogs) throw new ServiceUnavailableException('O histórico do cliente está indisponível no momento. Tente novamente mais tarde.');
     return this.activityLogs.create(tenantId, userId, {
       entity_type: TIMELINE_ENTITY_TYPE,
       entity_id: id,
@@ -227,7 +227,7 @@ export class ClientsService {
     input: { fileName: string; mimeType: string; sizeBytes: number },
   ) {
     await this.findById(tenantId, id);
-    if (!this.storage) throw new ServiceUnavailableException('Storage indisponível');
+    if (!this.storage) throw new ServiceUnavailableException('O armazenamento de arquivos está indisponível no momento. Tente novamente mais tarde.');
     return this.storage.createPresignedUpload({
       tenantId,
       userId,

@@ -196,7 +196,7 @@ export class IntegrationBaseService {
   }
 
   verifySignedState(state: string): Record<string, string> {
-    if (typeof state !== 'string' || state.length > 2048) throw new UnauthorizedException('OAuth state inválido');
+    if (typeof state !== 'string' || state.length > 2048) throw new UnauthorizedException('Autorização da integração inválida. Tente conectar novamente.');
     const dot = state.lastIndexOf('.');
     if (dot === -1 || dot === 0 || dot === state.length - 1) throw new UnauthorizedException('Autorização da integração inválida. Tente conectar novamente.');
     const b64 = state.slice(0, dot);

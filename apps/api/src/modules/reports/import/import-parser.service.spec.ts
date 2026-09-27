@@ -22,6 +22,16 @@ function workbookBuffer(
   return XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' }) as Buffer;
 }
 
+function rejectionBody(run: () => unknown): { error?: string; message?: string; reason?: string } {
+  try {
+    run();
+  } catch (error) {
+    expect(error).toBeInstanceOf(BadRequestException);
+    return (error as BadRequestException).getResponse() as { error?: string; message?: string; reason?: string };
+  }
+  throw new Error('expected the parser to reject the input');
+}
+
 function mutateFirstCentralDirectoryEntry(
   input: Buffer,
   mutate: (copy: Buffer, offset: number) => void,
@@ -152,7 +162,10 @@ describe('ImportParserService — hardening XLSX', () => {
       workbookBuffer([['a'], ['1']]),
       (copy, offset) => copy.writeUInt16LE(copy.readUInt16LE(offset + 8) | 0x1, offset + 8),
     );
-    expect(() => service.parse('artists.xlsx', content)).toThrow(/criptografadas/);
+    const body = rejectionBody(() => service.parse('artists.xlsx', content));
+    expect(body.error).toBe('INVALID_XLSX_WORKBOOK');
+    expect(body.message).toBe('Planilha XLSX rejeitada. Planilhas protegidas por senha não são permitidas.');
+    expect(body.reason).toBe('Encrypted ZIP entry.');
   });
 
   it('rejects decompressed expansion incompatible with the limit', () => {
@@ -160,13 +173,33 @@ describe('ImportParserService — hardening XLSX', () => {
       workbookBuffer([['a'], ['1']]),
       (copy, offset) => copy.writeUInt32LE(IMPORT_MAX_UNCOMPRESSED_BYTES + 1, offset + 24),
     );
-    expect(() => service.parse('artists.xlsx', content)).toThrow(/descompactada excede/);
+    const body = rejectionBody(() => service.parse('artists.xlsx', content));
+    expect(body.message).toBe('Planilha XLSX rejeitada. O conteúdo da planilha excede o limite permitido.');
+    expect(body.reason).toMatch(/^Uncompressed ZIP entry exceeds the limit: /);
   });
 
   it('rejects truncated workbook', () => {
     const valid = workbookBuffer([['a'], ['1']]);
-    expect(() => service.parse('artists.xlsx', valid.subarray(0, valid.length - 32))).toThrow(
-      /Diretório central ZIP ausente|truncado/,
+    const body = rejectionBody(() => service.parse('artists.xlsx', valid.subarray(0, valid.length - 32)));
+    expect(body.message).toBe(
+      'Planilha XLSX rejeitada. O arquivo não é uma planilha XLSX válida ou está corrompido.',
     );
+    expect(body.reason).toMatch(/central directory|Invalid ZIP central directory entry|OpenXML parse failure/);
+  });
+
+  it('never forwards the raw OpenXML parser error to the user copy', () => {
+    const readSpy = jest.spyOn(XLSX, 'read').mockImplementation(() => {
+      throw new Error('Unsupported ZIP Compression method NaN');
+    });
+    try {
+      const body = rejectionBody(() => service.parse('artists.xlsx', workbookBuffer([['a'], ['1']])));
+      expect(body.message).toBe(
+        'Planilha XLSX rejeitada. O arquivo não é uma planilha XLSX válida ou está corrompido.',
+      );
+      expect(body.message).not.toContain('Unsupported ZIP');
+      expect(body.reason).toBe('OpenXML parse failure: Unsupported ZIP Compression method NaN.');
+    } finally {
+      readSpy.mockRestore();
+    }
   });
 });
