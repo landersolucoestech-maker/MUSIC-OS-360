@@ -1,24 +1,24 @@
 -- =============================================================================
--- MUSIC OS 360 — Setup Completo Supabase
--- Cole TUDO isso no SQL Editor do Supabase e execute de uma vez.
+-- MUSIC OS 360 — Complete Supabase setup
+-- Paste ALL of this into the Supabase SQL Editor and run it in one go.
 --
--- PRÉ-REQUISITO: Crie o usuário admin antes de rodar:
+-- PREREQUISITE: create the admin user before running it:
 --   Dashboard → Authentication → Users → Add user
---   Email: admin@musicos360.dev  |  Senha: (qualquer)
+--   Email: admin@musicos360.dev  |  Password: (any)
 --
--- Este script faz automaticamente:
---   1. Cria a função JWT hook (enriquece tokens com org_id + role)
---   2. Configura permissões do hook
---   3. Seed: organização, tenant, billing, admin member, artista demo, transação demo
+-- This script automatically:
+--   1. Creates the JWT hook function (enriches tokens with org_id + role)
+--   2. Configures the hook permissions
+--   3. Seeds: organization, tenant, billing, admin member, demo artist, demo transaction
 --
--- Após rodar, ative o hook em:
+-- After running it, enable the hook in:
 --   Authentication → Hooks → Custom Access Token → Enable
 --   Schema: public  |  Function: custom_access_token_hook → Save
 -- =============================================================================
 
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- PARTE 1: JWT HOOK
+-- PART 1: JWT HOOK
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 CREATE OR REPLACE FUNCTION public.custom_access_token_hook(event jsonb)
@@ -69,12 +69,12 @@ GRANT EXECUTE ON FUNCTION public.custom_access_token_hook(jsonb) TO supabase_aut
 REVOKE EXECUTE ON FUNCTION public.custom_access_token_hook(jsonb) FROM authenticated, anon, public;
 
 DO $$ BEGIN
-  RAISE NOTICE '✓ PARTE 1: JWT hook criado e permissões configuradas.';
+  RAISE NOTICE '✓ PART 1: JWT hook created and permissions configured.';
 END $$;
 
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- PARTE 2: SEED OPERACIONAL
+-- PART 2: OPERATIONAL SEED
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 DO $$
@@ -109,7 +109,7 @@ BEGIN
   ON CONFLICT DO NOTHING;
   RAISE NOTICE '  ✓ Billing subscription: enterprise, 50 seats';
 
-  -- ── 4. Admin Member (auto-lookup do UUID via auth.users) ──────────────────────
+  -- ── 4. Admin Member (UUID auto-lookup via auth.users) ─────────────────────────
   SELECT id INTO v_admin_sub
     FROM auth.users
    WHERE email = v_admin_email
@@ -121,29 +121,29 @@ BEGIN
     ON CONFLICT (tenant_id, auth_user_id) DO UPDATE SET
       role      = 'owner',
       is_active = TRUE;
-    RAISE NOTICE '  ✓ org_members: % (UUID: %) criado como owner', v_admin_email, v_admin_sub;
+    RAISE NOTICE '  ✓ org_members: % (UUID: %) created as owner', v_admin_email, v_admin_sub;
   ELSE
-    RAISE WARNING '  ⚠ Usuário % não encontrado em auth.users. Crie em Authentication → Users e rode novamente.', v_admin_email;
+    RAISE WARNING '  ⚠ User % not found in auth.users. Create it in Authentication → Users and run again.', v_admin_email;
   END IF;
 
   -- ── 5. Demo Artist ────────────────────────────────────────────────────────────
-  INSERT INTO artists (id, tenant_id, nome_artistico, nome_civil, tipo, status, genero_musical)
-  VALUES (v_artist_id, v_tenant_id, 'Artista Demo', 'Nome Civil Demo', 'solo', 'ativo', 'MPB')
+  INSERT INTO artists (id, tenant_id, nome_artistico, nome_civil, status, music_genre)
+  VALUES (v_artist_id, v_tenant_id, 'Artista Demo', 'Nome Civil Demo', 'active', 'MPB')
   ON CONFLICT DO NOTHING;
-  RAISE NOTICE '  ✓ Artista demo criado';
+  RAISE NOTICE '  ✓ Demo artist created';
 
   -- ── 6. Demo Transaction ───────────────────────────────────────────────────────
-  INSERT INTO transactions (tenant_id, tipo, categoria, descricao, valor, data, status)
-  VALUES (v_tenant_id, 'receita', 'cachê', 'Show de demonstração', 5000.00, NOW(), 'confirmado')
+  INSERT INTO transactions (tenant_id, type, categoria, descricao, valor, data, status)
+  VALUES (v_tenant_id, 'receita', 'cachê', 'Show de demonstração', 5000.00, NOW(), 'confirmed')
   ON CONFLICT DO NOTHING;
-  RAISE NOTICE '  ✓ Transação demo criada';
+  RAISE NOTICE '  ✓ Demo transaction created';
 
-  RAISE NOTICE '✓ PARTE 2: Seed operacional concluído — org=%, tenant=%', v_org_id, v_tenant_id;
+  RAISE NOTICE '✓ PART 2: operational seed finished — org=%, tenant=%', v_org_id, v_tenant_id;
 END $$;
 
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- VERIFICAÇÃO FINAL
+-- FINAL CHECK
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 SELECT
@@ -153,5 +153,5 @@ SELECT
   (SELECT COUNT(*) FROM artists        WHERE tenant_id = '10000000-0000-0000-0000-000000000002') AS artist_ok,
   (SELECT COUNT(*) FROM transactions   WHERE tenant_id = '10000000-0000-0000-0000-000000000002') AS transaction_ok;
 
--- Todos os valores devem ser 1.
--- Se admin_ok = 0: crie o usuário em Authentication → Users e rode apenas o bloco DO $$ da Parte 2.
+-- Every value must be 1.
+-- If admin_ok = 0: create the user in Authentication → Users and run only the DO $$ block of Part 2.
