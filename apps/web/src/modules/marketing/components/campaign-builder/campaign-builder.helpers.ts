@@ -155,7 +155,7 @@ export function createDefaultCampaignState(campaign?: MarketingCampaign | null):
   return {
     objective,
     expectedOutcome: OUTCOMES_BY_OBJECTIVE[objective][0],
-    // Contexto restrito a Empresa/Artista (campanhas legadas de outro contexto viram "empresa").
+    // Context restricted to Empresa/Artista (legacy campaigns of another context become "empresa").
     context: campaign?.targetType === "artista" ? "artista" : "empresa",
     // Selected publishing platforms — preserves all of them when reopening/editing.
     publishChannels: campaign?.platforms ?? [],
@@ -206,7 +206,7 @@ export function getRequiredPlacements(platforms: CampaignPlatform[]): CampaignPl
   return Array.from(new Set(platforms.flatMap((platform) => PLACEMENTS_BY_PLATFORM[platform])));
 }
 
-/** Plataforma dona do posicionamento, derivada do prefixo do valor. */
+/** Platform that owns the placement, derived from the value prefix. */
 export function placementPlatform(placement: CampaignPlacement): CampaignPlatform {
   if (placement.startsWith("TIKTOK")) return "TIKTOK_ADS";
   if (placement.startsWith("YOUTUBE")) return "YOUTUBE_ADS";

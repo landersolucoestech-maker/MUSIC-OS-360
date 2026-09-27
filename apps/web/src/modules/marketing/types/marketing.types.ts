@@ -412,7 +412,7 @@ export interface MarketingContent {
   targetId?: ID;
   targetName?: string;
   type: ContentType;
-  /** Plataforma principal (dirige formato/preview). Mantida por compatibilidade. */
+  /** Main platform (drives format/preview). Kept for compatibility. */
   channel: ContentChannel;
   /** Every selected publishing platform (multi-platform). */
   channels?: ContentChannel[];

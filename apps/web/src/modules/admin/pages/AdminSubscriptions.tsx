@@ -316,7 +316,7 @@ export default function AdminSubscriptions() {
             <h1 className="text-xl font-bold text-foreground">Assinaturas</h1>
             <p className="text-[12px] text-muted-foreground mt-0.5">Gestão de assinaturas, cobranças, cancelamentos e renovações</p>
           </div>
-          {/* find-340abf0b / Gotcha #20: modo real do Stripe, vindo do backend. */}
+          {/* find-340abf0b / Gotcha #20: real Stripe mode, coming from the backend. */}
           {stripeModeQuery.isError ? (
             <span
               className="inline-flex items-center rounded-md border border-destructive/40 bg-destructive/10 px-2.5 py-1 text-[11px] font-medium text-destructive"
@@ -374,7 +374,7 @@ export default function AdminSubscriptions() {
           </div>
         </div>
 
-        {/* Filtros */}
+        {/* Filters */}
         <div className="flex gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -398,7 +398,7 @@ export default function AdminSubscriptions() {
           </Select>
         </div>
 
-        {/* Tabela */}
+        {/* Table */}
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <ListSectionHeader
             title="Lista de Assinaturas"

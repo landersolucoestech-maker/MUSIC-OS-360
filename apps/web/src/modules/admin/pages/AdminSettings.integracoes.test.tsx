@@ -71,7 +71,7 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
     renderAdminSettings();
     await openIntegracoesTab();
 
-    // Provedores COMERCIAIS exigidos no gate.
+    // COMMERCIAL providers required by the gate.
     for (const name of ["Autentique", "DocuSign", "Clicksign", "UBC"]) {
       expect(await screen.findByText(name), ).toBeInTheDocument();
     }

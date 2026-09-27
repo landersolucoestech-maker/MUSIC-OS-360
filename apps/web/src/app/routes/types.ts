@@ -3,5 +3,5 @@
  */
 import type { ReactNode } from "react";
 
-/** Componente wrapper de Suspense/ErrorBoundary usado nas route configs. */
+/** Suspense/ErrorBoundary wrapper component used in the route configs. */
 export type SuspenseRouteComponent = React.ComponentType<{ children: ReactNode }>;

@@ -1,15 +1,15 @@
 /**
  * AudiovisualProjectFormModal.payload.test.ts
  *
- * Guarda permanente (auditoria 2026-07-18 — audiovisual CRÍTICO confirmado):
- * o formulário real de produção audiovisual enviava, sem nenhum mapper
- * intermediário, campos que CreateAudiovisualProjectDto não declarava
+ * Permanent guard (audit 2026-07-18 — audiovisual CRITICAL confirmed):
+ * the real audiovisual production form sent, without any intermediate
+ * mapper, fields that CreateAudiovisualProjectDto did not declare
  * (format, videomaker, editor, location, capture_status, editing_status,
  * approval_status, pre_release_date, observations, concept, final_status,
- * music_title, artist_name) — com ValidationPipe (whitelist +
- * forbidNonWhitelisted), toda criação/edição de produção audiovisual
- * retornava 400. Este teste fixa o payload real e garante que os nomes
- * inventados (music_id, budget, real_cost, name) nunca voltem a ser enviados.
+ * music_title, artist_name) — with ValidationPipe (whitelist +
+ * forbidNonWhitelisted), every audiovisual production create/edit
+ * returned 400. This test pins the real payload and guarantees the invented
+ * names (music_id, budget, real_cost, name) are never sent again.
  */
 import { describe, it, expect } from "vitest";
 import { buildAudiovisualProjectPayload } from "./AudiovisualProjectFormModal";

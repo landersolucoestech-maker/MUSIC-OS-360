@@ -39,7 +39,7 @@ import {
 } from "@/shared/integrations";
 import { toUserMessage } from "@/shared/lib/errors";
 
-// ─── Metadados por plataforma ─────────────────────────────────────────────────
+// ─── Per-platform metadata ───────────────────────────────────────────────────
 
 interface PlatformMeta {
   name: string;
@@ -272,7 +272,7 @@ const PLATFORM_META: Record<MarketingPlatformId, PlatformMeta> = {
 // Platforms whose OAuth is started by the backend (they have their own endpoint)
 const BACKEND_OAUTH_PLATFORMS = new Set<MarketingPlatformId>(["spotify_ads", "corp_spotify"]);
 
-// ─── Tipos ────────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 type DialogStep = "permissions" | "waiting" | "success";
 
@@ -485,7 +485,7 @@ function AuthorizationActions({
   );
 }
 
-// ─── Componente ───────────────────────────────────────────────────────────────
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }: Props) {
   const [step, setStep] = useState<DialogStep>("permissions");
@@ -528,7 +528,7 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
     return () => window.removeEventListener("message", handler);
   }, [open, platform, handleSuccess]);
 
-  // Polling: detecta popup fechado ou redirect de sucesso (Spotify)
+  // Polling: detects a closed popup or the success redirect (Spotify)
   useEffect(() => {
     if (step !== "waiting") return;
     const interval = setInterval(() => {
@@ -736,7 +736,7 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
             </>
           )}
 
-          {/* PASSO 2: Aguardando popup */}
+          {/* STEP 2: waiting for the popup */}
           {step === "waiting" && (
             <div className="flex flex-col items-center justify-center py-8 gap-3">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -756,7 +756,7 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
             </div>
           )}
 
-          {/* PASSO 3: Sucesso */}
+          {/* STEP 3: success */}
           {step === "success" && (
             <div className="flex flex-col items-center justify-center py-8 gap-3">
               <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">

@@ -149,7 +149,7 @@ describe("reportsApi — reports center, real data only", () => {
       expect(clickSpy).toHaveBeenCalledTimes(1);
       expect(anchor.href).toBe("blob:fake-url");
       expect(anchor.download).toBe("arquivo.xlsx");
-      // A revogação NÃO pode ter acontecido ainda no mesmo tick do click().
+      // The revocation must NOT have happened yet in the same tick as click().
       expect(URL.revokeObjectURL).not.toHaveBeenCalled();
 
       vi.runAllTimers();

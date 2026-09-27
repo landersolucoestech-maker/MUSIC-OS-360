@@ -20,7 +20,7 @@ export type ContentFormValues = {
   title: string;
   targetType: MarketingTarget;
   targetName: string;
-  /** Plataforma principal — dirige formato/preview/type. */
+  /** Main platform — drives format/preview/type. */
   channel: SocialPlatform;
   /** Every selected platform (multi-platform publishing). */
   channels: SocialPlatform[];

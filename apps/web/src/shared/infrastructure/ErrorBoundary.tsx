@@ -25,7 +25,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log para serviço externo (Sentry, etc.)
+    // Log to an external service (Sentry, etc.)
     captureError(error, {
       componentStack: errorInfo.componentStack || undefined,
     });

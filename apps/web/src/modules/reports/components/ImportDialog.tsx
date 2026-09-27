@@ -1,7 +1,7 @@
 /**
- * modules/reports/components/ImportDialog.tsx  ·  FASE 2.5
- * Upload → validate (preview) → commit, consumindo a API real. Sem persistência
- * no validate; commit só liberado após validação aprovada.
+ * modules/reports/components/ImportDialog.tsx  ·  PHASE 2.5
+ * Upload → validate (preview) → commit, consuming the real API. No persistence
+ * on validate; commit is only enabled after an approved validation.
  */
 import { useRef, useState } from "react";
 import { toast } from "sonner";

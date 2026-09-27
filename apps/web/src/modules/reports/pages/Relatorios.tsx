@@ -1,9 +1,9 @@
 /**
- * modules/reports/pages/Relatorios.tsx  ·  FASE 2.5
+ * modules/reports/pages/Relatorios.tsx  ·  PHASE 2.5
  *
- * Central de Relatórios — consome EXCLUSIVAMENTE a API (GET /reports/entities,
- * GET /reports/definitions). Sem lista fixa, sem mock, sem registry/contrato/
- * label no frontend. O backend é a única fonte da verdade.
+ * Reports Center — consumes ONLY the API (GET /reports/entities,
+ * GET /reports/definitions). No fixed list, no mock, no registry/contract/
+ * label on the frontend. The backend is the only source of truth.
  */
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -24,8 +24,8 @@ export default function Relatorios() {
   const [importOpen, setImportOpen] = useState(false);
   const [exporting, setExporting] = useState<string | null>(null);
 
-  // Exportação direta: sem modal/tela intermediária. Omitir `columns` faz o
-  // backend exportar TODAS as colunas do contrato da entidade, na ordem oficial.
+  // Direct export: no intermediate modal/screen. Omitting `columns` makes the
+  // backend export ALL the columns of the entity contract, in the official order.
   function runExport(tableName: string) {
     setExporting(tableName);
     exportM.mutate(

@@ -40,7 +40,7 @@ export function adminRoutes(S: SuspenseRouteComponent, P: SuspenseRouteComponent
       <Route path="/admin/musicchat/automacoes" element={<P><MusicChatAutomationSettings /></P>} />
 
 
-      {/* Redirects — rotas isoladas consolidadas em /admin/configuracoes */}
+      {/* Redirects — standalone routes consolidated under /admin/configuracoes */}
       <Route path="/admin/settings"       element={<Navigate to="/admin/configuracoes" replace />} />
       <Route path="/admin/security"       element={<Navigate to="/admin/configuracoes" replace />} />
       <Route path="/admin/integrations"   element={<Navigate to="/admin/configuracoes" replace />} />

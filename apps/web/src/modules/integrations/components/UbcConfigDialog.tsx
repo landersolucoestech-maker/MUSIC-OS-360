@@ -262,7 +262,7 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
               </Button>
             </div>
 
-            {/* Agendamento */}
+            {/* Scheduling */}
             <div className="rounded-lg border bg-muted/20 p-4 space-y-3">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
@@ -289,7 +289,7 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
 
             <Separator />
 
-            {/* Zona de perigo */}
+            {/* Danger zone */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Shield className="h-3.5 w-3.5" />

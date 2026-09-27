@@ -1,19 +1,19 @@
 /**
  * shared/infrastructure/ProtectedRoute.tsx
  *
- * Guard de autenticação — redirige para /auth se o utilizador
- * não estiver autenticado ou se a sessão ainda estiver a carregar.
+ * Authentication guard — redirects to /auth if the user
+ * is not authenticated or if the session is still loading.
  *
- * REGRA: todas as rotas privadas DEVEM estar envolvidas por este componente.
- * Rotas públicas (login, register, landing) ficam fora.
+ * RULE: every private route MUST be wrapped by this component.
+ * Public routes (login, register, landing) stay outside.
  *
- * Uso em rotas:
+ * Usage in routes:
  *   <Route element={<ProtectedRoute />}>
  *     <Route path="/dashboard" element={<Dashboard />} />
  *     ...
  *   </Route>
  *
- * Ou como wrapper directo:
+ * Or as a direct wrapper:
  *   <ProtectedRoute>
  *     <Dashboard />
  *   </ProtectedRoute>
@@ -25,9 +25,9 @@ import { useAuth } from "@/app/providers/AuthContext";
 import { AUTH_DISABLED, DEV_AUTH_BYPASS } from "@/shared/lib/env";
 
 interface ProtectedRouteProps {
-  /** Se omitido, renderiza as rotas filho via <Outlet> (padrão React Router v6). */
+  /** If omitted, renders the child routes via <Outlet> (React Router v6 pattern). */
   children?: React.ReactNode;
-  /** Rota de redirect quando não autenticado. Por omissão: /auth */
+  /** Redirect route when not authenticated. Default: /auth */
   loginPath?: string;
 }
 
@@ -39,7 +39,7 @@ export function ProtectedRoute({
   const location = useLocation();
 
   /**
-   * O utilizador mock está sempre "autenticado" apenas em desenvolvimento.
+   * The mock user is always "authenticated" in development only.
    */
   const allowRouteBypass = AUTH_DISABLED || DEV_AUTH_BYPASS;
   if (allowRouteBypass) {
@@ -47,8 +47,8 @@ export function ProtectedRoute({
   }
 
   /**
-   * Enquanto o AuthContext ainda está a resolver a sessão (hidratação inicial),
-   * mostramos um spinner centralizado para evitar flashes de redirect.
+   * While AuthContext is still resolving the session (initial hydration),
+   * we show a centered spinner to avoid redirect flashes.
    */
   if (loading) {
     return (
@@ -63,9 +63,9 @@ export function ProtectedRoute({
   }
 
   /**
-   * Sem utilizador autenticado → redirect para a página de login.
-   * Guardamos a rota actual em `state.from` para poder redirigir
-   * de volta após login bem-sucedido.
+   * No authenticated user → redirect to the login page.
+   * We store the current route in `state.from` to be able to redirect
+   * back after a successful login.
    */
   if (!user) {
     return (

@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { afterEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
 
-// Polyfills usados por componentes Radix em ambiente jsdom
+// Polyfills used by Radix components in the jsdom environment
 class ResizeObserverPolyfill {
   observe() {}
   unobserve() {}

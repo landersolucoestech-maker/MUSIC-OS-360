@@ -1,12 +1,12 @@
 /**
  * services/public-plans.service.ts
  *
- * Decision Gate item 1 (product-completion audit): fonte ÚNICA de pricing
- * público da Landing — GET /billing/plans/public, sem autenticação, mesmo
- * catálogo real do painel Admin (AdminPlans → sincronizado com Stripe).
- * Nunca hardcodar preço aqui; nunca ler ADMIN_PLANS (mock, sempre vazio) —
- * ver apps/api/src/modules/billing/billing-plans.service.ts::listPublic()
- * para a allow-list de campos.
+ * Decision Gate item 1 (product-completion audit): SINGLE source of the Landing's
+ * public pricing — GET /billing/plans/public, unauthenticated, the same
+ * real catalog as the Admin panel (AdminPlans → synchronized with Stripe).
+ * Never hardcode a price here; never read ADMIN_PLANS (mock, always empty) —
+ * see apps/api/src/modules/billing/billing-plans.service.ts::listPublic()
+ * for the field allow-list.
  */
 import { api } from "@/shared/lib/api-client";
 

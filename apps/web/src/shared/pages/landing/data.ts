@@ -25,8 +25,8 @@ import {
   Briefcase,
 } from "lucide-react";
 
-// ─── Conteúdo estático (institucional) — não comercial/dinâmico ───────────────
-// Módulos reais do produto (alinhados ao painel). Sem métricas/valores falsos.
+// ─── Static (institutional) content — not commercial/dynamic ─────────────────
+// Real product modules (aligned with the panel). No fake metrics/values.
 
 export const MODULES = [
   { icon: Users, title: "Gestão de Artistas", desc: "Cadastre artistas, perfis, contatos, documents, responsáveis e informações operacionais." },
@@ -67,7 +67,7 @@ export const AUDIENCE = [
   { icon: Briefcase, title: "Agências de Marketing Musical", desc: "Gerencie campanhas, conteúdos e demandas com organização e visão estratégica." },
 ] as const;
 
-// Prévia neutra do produto (sem dados/métricas/gráficos falsos).
+// Neutral product preview (no fake data/metrics/charts).
 export const PREVIEW_NAV = [
   { icon: FolderKanban, label: "Artistas" },
   { icon: Library, label: "Catálogo" },

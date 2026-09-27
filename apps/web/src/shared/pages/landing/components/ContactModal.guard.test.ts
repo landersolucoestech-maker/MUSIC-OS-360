@@ -1,12 +1,12 @@
 /**
  * ContactModal.guard.test.ts
  *
- * Guarda permanente (decisão de produto 2026-08-22): o contato institucional
- * da landing (Platform Commercial Contact) é arquiteturalmente separado do
- * tenant operacional — nunca deve criar Support Ticket, conversation do
- * MusicChat, lead, ou usar CurrentTenant/tenant_id. Deve chamar
- * exclusivamente /public/platform-contact via publicApi (não api, que anexa
- * auth de tenant).
+ * Permanent guard (product decision 2026-08-22): the landing's institutional
+ * contact (Platform Commercial Contact) is architecturally separate from the
+ * operational tenant — it must never create a Support Ticket, a MusicChat
+ * conversation, a lead, or use CurrentTenant/tenant_id. It must call
+ * only /public/platform-contact via publicApi (not api, which attaches
+ * tenant auth).
  */
 import { describe, it, expect } from "vitest";
 import * as fs from "fs";

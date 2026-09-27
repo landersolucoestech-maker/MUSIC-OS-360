@@ -1,11 +1,11 @@
 /**
  * ContactModal.tsx
  *
- * Platform Commercial Contact (decisão de produto 2026-08-22): contato
- * institucional/comercial sobre o próprio Music OS 360 — empresas
- * interessadas em contratar a plataforma. Envia para
- * POST /public/platform-contact (encaminha por e-mail via MailService real,
- * nunca cria Support Ticket/MusicChat/lead/tenant record).
+ * Platform Commercial Contact (product decision 2026-08-22): institutional/commercial
+ * contact about Music OS 360 itself — companies
+ * interested in hiring the platform. Sends to
+ * POST /public/platform-contact (forwards by e-mail via the real MailService,
+ * never creates a Support Ticket/MusicChat/lead/tenant record).
  */
 import { useState } from "react";
 import { toast } from "sonner";
@@ -25,7 +25,7 @@ export function ContactModal() {
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
   const [message, setMessage] = useState("");
-  const [website, setWebsite] = useState(""); // honeypot — deve permanecer vazio
+  const [website, setWebsite] = useState(""); // honeypot — must stay empty
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetAndClose = () => {
@@ -64,7 +64,7 @@ export function ContactModal() {
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Honeypot — invisível para humanos, bots preenchem */}
+          {/* Honeypot — invisible to humans, bots fill it in */}
           <div className="hidden" aria-hidden="true">
             <Label htmlFor="contact-website">Site</Label>
             <Input id="contact-website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />

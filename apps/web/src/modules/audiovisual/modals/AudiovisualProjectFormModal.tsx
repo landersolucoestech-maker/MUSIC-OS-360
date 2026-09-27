@@ -92,13 +92,13 @@ function projectToForm(project?: AudiovisualProject | null): FormState {
 }
 
 /**
- * Form state → payload real do backend (CreateAudiovisualProjectDto /
- * UpdateAudiovisualProjectDto). Regra de produto: cada campo do form tem sua
- * coluna própria (migration 20260718000012). `music_id`/`budget`/`real_cost`
- * não são colunas reais: `music_id` é a mesma relação de `phonogram_id`, e
- * `budget`/`real_cost` duplicariam `budget_estimated`/`budget_actual` (já
- * somados pelo dashboard financeiro) — por isso mapeiam para os nomes reais
- * em vez de criar coluna nova. `name` nunca é enviado: é idêntico a `title`.
+ * Form state → real backend payload (CreateAudiovisualProjectDto /
+ * UpdateAudiovisualProjectDto). Product rule: each form field has its own
+ * column (migration 20260718000012). `music_id`/`budget`/`real_cost`
+ * are not real columns: `music_id` is the same relation as `phonogram_id`, and
+ * `budget`/`real_cost` would duplicate `budget_estimated`/`budget_actual` (already
+ * summed by the financial dashboard) — so they map to the real names
+ * instead of creating a new column. `name` is never sent: it is identical to `title`.
  */
 export function buildAudiovisualProjectPayload(
   form: FormState,
@@ -191,10 +191,10 @@ export function AudiovisualProjectFormModal({
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) => setForm((current) => ({ ...current, [key]: value }));
   const handleMusicSelect = (music: AudiovisualMusicCatalogOption) => setForm((current) => ({ ...current, music_id: music.id, music_title: music.title, artist_name: music.primaryArtist }));
   const handleSubmit = () => {
-    // Task L: não fecha o modal aqui — o fechamento é responsabilidade do
-    // chamador via callback onSuccess do mutate() (só some se a gravação
-    // realmente foi bem-sucedida; em caso de 409 de concorrência ou outro
-    // erro, o modal permanece aberto com os dados do usuário intactos).
+    // Task L: does not close the modal here — closing is the responsibility of the
+    // caller via the mutate() onSuccess callback (it only disappears if the save
+    // really succeeded; on a concurrency 409 or any other
+    // error, the modal stays open with the user's data intact).
     onSubmit?.(buildAudiovisualProjectPayload(form, mode, project));
   };
 

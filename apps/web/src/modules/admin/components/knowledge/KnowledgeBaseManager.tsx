@@ -259,7 +259,7 @@ export function KnowledgeBaseManager() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Filtros */}
+        {/* Filters */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -298,7 +298,7 @@ export function KnowledgeBaseManager() {
           </Select>
         </div>
 
-        {/* Categorias */}
+        {/* Categories */}
         <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-dashed border-border p-2.5">
           <span className="mr-1 text-[11px] font-medium text-muted-foreground">Categorias:</span>
           {SUPPORT_KNOWLEDGE_CATEGORIES.length === 0 && (
@@ -327,7 +327,7 @@ export function KnowledgeBaseManager() {
           </Button>
         </div>
 
-        {/* Lista */}
+        {/* List */}
         {isLoading ? (
           <div className="py-10 text-center text-sm text-muted-foreground">Carregando...</div>
         ) : filtered.length === 0 ? (
@@ -549,7 +549,7 @@ export function KnowledgeBaseManager() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Nova categoria */}
+      {/* New category */}
       <Dialog open={categoryFormOpen} onOpenChange={(open) => { setCategoryFormOpen(open); if (!open) setNewCategoryName(""); }}>
         <DialogContent className="max-w-sm">
           <DialogHeader>

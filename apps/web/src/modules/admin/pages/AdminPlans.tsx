@@ -57,8 +57,8 @@ function PlanFormDialog({ plan, onSave, onClose }: FormDialogProps) {
   );
   const [newFeature, setNewFeature] = useState("");
 
-  // Entitlements do plano — persistidos separadamente do plano em si
-  // (billing_plans.integrations), via o endpoint administrativo dedicado.
+  // Plan entitlements — persisted separately from the plan itself
+  // (billing_plans.integrations), via the dedicated administrative endpoint.
   const { data: commercialIntegrations, isLoading: loadingIntegrations } = useCommercialIntegrations();
   const { data: persistedIntegrations } = usePlanIntegrations(plan?.tier);
   const saveIntegrations = useSavePlanIntegrations();
@@ -152,7 +152,7 @@ function PlanFormDialog({ plan, onSave, onClose }: FormDialogProps) {
             </div>
           </div>
 
-          {/* Limites */}
+          {/* Limits */}
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-1.5">
               <Label className="text-[11px] text-muted-foreground  tracking-wider">Máx. Usuários</Label>
@@ -539,7 +539,7 @@ function PlanCard({ plan, onView, onEdit, onToggleActive, onSyncStripe, onDelete
         </Badge>
       </div>
 
-      {/* Assinantes */}
+      {/* Subscribers */}
       <p className="text-[11px] text-muted-foreground -mt-2">{plan.active_subscribers} clientes</p>
 
       {/* Price */}
@@ -553,7 +553,7 @@ function PlanCard({ plan, onView, onEdit, onToggleActive, onSyncStripe, onDelete
         </p>
       </div>
 
-      {/* Limites */}
+      {/* Limits */}
       <div className="space-y-2 border-t border-border pt-3">
         {[
           { icon: Users,      label: `${plan.max_users === 999 ? "Ilimitado" : plan.max_users} usuários` },

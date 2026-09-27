@@ -1,7 +1,7 @@
 /**
  * shared/constants/index.ts
  *
- * Constantes globais partilhadas.
+ * Shared global constants.
  * localStorage prefix: musicos360_
  * Auth cookie: musicos360_rt
  * CustomEvents prefix: musicos360:*

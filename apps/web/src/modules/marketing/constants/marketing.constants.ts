@@ -369,14 +369,14 @@ export const TASK_TYPE_OPTIONS: Option<TaskType>[] = [
   { value: "entrevista", label: "Entrevista" },
   { value: "podcast_video", label: "Podcast em Vídeo" },
   { value: "captacao_evento", label: "Captação de Evento" },
-  // Comercial / CRM
+  // Sales / CRM
   { value: "prospeccao", label: "Prospecção" },
   { value: "negociacao", label: "Negociação" },
   { value: "follow_up", label: "Follow-up" },
   { value: "relacionamento", label: "Relacionamento" },
   // Digital distribution
   { value: "planejamento_lancamento", label: "Planejamento de Lançamento" },
-  // Empresa (corporativo)
+  // Company (corporate)
   { value: "material_institucional", label: "Material Institucional" },
   { value: "apresentacao_comercial", label: "Apresentação Comercial" },
   { value: "folder", label: "Folder" },
@@ -463,7 +463,7 @@ export const CONTEXT_SECTOR_OPTIONS: Record<MarketingTarget, Option<string>[]> =
   projeto_musical: ["Design", "Audiovisual", "Distribuição Digital", "Marketing", "Comunicação"].map(sectorOpt),
 };
 
-/** Tipos permitidos por Contexto × Setor. */
+/** Types allowed per Context × Sector. */
 export const CONTEXT_SECTOR_TYPE_OPTIONS: Record<MarketingTarget, Record<string, Option<TaskType>[]>> = {
   empresa: {
     "Design": (["material_institucional", "apresentacao_comercial", "folder", "banner", "identidade_visual"] as TaskType[]).map(taskType),

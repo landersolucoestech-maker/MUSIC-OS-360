@@ -1,5 +1,5 @@
 /**
- * Cliente da Central de Relatórios. Consome exclusivamente os endpoints reais.
+ * Reports Center client. Consumes only the real endpoints.
  */
 import { api, getAccessToken, getTenantId } from "@/shared/lib/api-client";
 import { API_BASE_URL } from "@/shared/lib/env";

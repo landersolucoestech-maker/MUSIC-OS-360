@@ -27,9 +27,9 @@ function RealtimeSyncAndNotify() {
   // ── Cache invalidation (domain events) ───────────────────────────────────
   useRealtimeSync();
 
-  // ── Notificações persistidas (backend → fila NOTIFICATIONS → WS) ─────────
+  // ── Persisted notifications (backend → NOTIFICATIONS queue → WS) ─────────
   useWsEvent<WsNotificationPayload>('notification:new', (n) => {
-    // Toast baseado no type da notificação
+    // Toast based on the notification type
     const title       = n.title;
     const description = n.body ?? undefined;
 
@@ -47,17 +47,17 @@ function RealtimeSyncAndNotify() {
         toast.info(title, { description });
     }
 
-    // Invalida a lista de notificações (topbar badge + dropdown)
+    // Invalidates the notification list (topbar badge + dropdown)
     qc.invalidateQueries({ queryKey: [QUERY_KEYS.NOTIFICATIONS] });
   });
 
-  // ── Dados alterados por outro utilizador da mesma org ────────────────────
+  // ── Data changed by another user of the same org ────────────────────────
   useWsEvent<{ entity: string; id: string }>('data:changed', ({ entity, id }) => {
     qc.invalidateQueries({ queryKey: [entity, id] });
     qc.invalidateQueries({ queryKey: [entity] });
   });
 
-  // ── Toasts para eventos de domínio ────────────────────────────────────────
+  // ── Toasts for domain events ─────────────────────────────────────────────
   useWsEvent('artist.created', (d) => {
     const label = (d as { nome_artistico?: string }).nome_artistico;
     toast.success('Artista cadastrado', {

@@ -2,8 +2,8 @@ import { Music, TrendingUp } from "lucide-react";
 import { PREVIEW_NAV } from "../data";
 
 /**
- * Prévia neutra do produto — chrome de UI ilustrativo, sem dados, métricas
- * ou gráficos fabricados (barras/linhas decorativas no lugar de números).
+ * Neutral product preview — illustrative UI chrome, with no fabricated data, metrics
+ * or charts (decorative bars/lines instead of numbers).
  */
 export function DashboardMockup() {
   return (
@@ -45,7 +45,7 @@ export function DashboardMockup() {
               <div className="h-6 w-20 rounded-md border border-border" />
             </div>
 
-            {/* Stat cards — placeholders, sem números fabricados */}
+            {/* Stat cards — placeholders, no fabricated numbers */}
             <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
               {["Receita total", "Lançamentos", "Contratos ativos", "Colaboradores"].map((label) => (
                 <div key={label} className="rounded-lg border border-border p-2.5">
@@ -56,7 +56,7 @@ export function DashboardMockup() {
             </div>
 
             <div className="grid grid-cols-[1.4fr_1fr] gap-3">
-              {/* Chart card — curva decorativa, não representa dados reais */}
+              {/* Chart card — decorative curve, does not represent real data */}
               <div className="rounded-lg border border-border p-3">
                 <div className="mb-2 flex items-center justify-between">
                   <div className="h-2.5 w-14 rounded bg-muted-foreground/30" />
@@ -74,7 +74,7 @@ export function DashboardMockup() {
                 </svg>
               </div>
 
-              {/* Lista — linhas skeleton, sem dados reais */}
+              {/* List — skeleton rows, no real data */}
               <div className="overflow-hidden rounded-lg border border-border">
                 <div className="border-b border-border bg-muted/30 px-2.5 py-1.5">
                   <div className="h-2 w-20 rounded bg-muted-foreground/30" />

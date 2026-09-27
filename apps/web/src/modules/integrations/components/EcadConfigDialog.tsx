@@ -135,7 +135,7 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
           </p>
         </div>
 
-        {/* Form de credenciais (desconectado) */}
+        {/* Credentials form (disconnected) */}
         {!isConnected && (
           <form onSubmit={handleSave} className="space-y-4">
             <div className="grid gap-4">

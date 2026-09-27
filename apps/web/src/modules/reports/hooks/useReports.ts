@@ -1,6 +1,6 @@
 /**
  * modules/reports/hooks/useReports.ts
- * FASE 2.5 — hooks que consomem EXCLUSIVAMENTE a API de relatórios.
+ * PHASE 2.5 — hooks that consume ONLY the reports API.
  */
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -26,7 +26,7 @@ export function useReportDefinitions() {
   });
 }
 
-/** Exportação: sempre XLSX, baixado como arquivo. */
+/** Export: always XLSX, downloaded as a file. */
 export function useReportExport() {
   return useMutation({
     mutationFn: async (vars: { entity: string; params: ExportParams }) => {
