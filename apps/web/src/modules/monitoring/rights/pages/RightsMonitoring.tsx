@@ -21,9 +21,9 @@ import {
 } from "lucide-react";
 import { RightsKPICards } from "../components/RightsKPICards";
 import { DetectionsTable, type DetectionRow } from "../components/DetectionsTable";
-import { DivergenciasPanel } from "../components/DivergenciasPanel";
-import { ResolverDivergenciaModal } from "../components/ResolverDivergenciaModal";
-import type { Divergencia } from "../components/DivergenciasPanel";
+import { DivergencesPanel } from "../components/DivergencesPanel";
+import { ResolveDivergenceModal } from "../components/ResolveDivergenceModal";
+import type { Divergencia } from "../components/DivergencesPanel";
 import { EcadImportModal } from "../components/EcadImportModal";
 import { DetectionDetailModal } from "../components/DetectionDetailModal";
 import { ECADViewModal, type EcadReportRow } from "@/modules/monitoring/components/ECADViewModal";
@@ -424,7 +424,7 @@ export default function RightsMonitoring() {
           <TabsContent value="divergencias" className="mt-0">
             <Card className="border-border/60">
               <CardContent className="p-0">
-                <DivergenciasPanel
+                <DivergencesPanel
                   divergencias={allDivergencias}
                   onResolve={(d) => { setSelectedDivergencia(d); setResolverOpen(true); }}
                 />
@@ -437,7 +437,7 @@ export default function RightsMonitoring() {
         <EcadImportModal open={importModalOpen} onOpenChange={setImportModalOpen} />
         <DetectionDetailModal detection={selectedExec} open={detailOpen} onOpenChange={setDetailOpen} />
         <ECADViewModal report={selectedEcad} open={ecadDetailOpen} onOpenChange={setEcadDetailOpen} />
-        <ResolverDivergenciaModal
+        <ResolveDivergenceModal
           divergencia={selectedDivergencia}
           open={resolverOpen}
           onOpenChange={setResolverOpen}

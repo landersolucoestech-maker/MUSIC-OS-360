@@ -3,7 +3,7 @@
  *
  * Support Center (team <-> external public) — its own
  * component/state/service tree, isolated from Internal Chat
- * (modules/musicchat-interno). Rendered by the "Central de Atendimento" tab
+ * (modules/musicchat-internal). Rendered by the "Central de Atendimento" tab
  * in modules/musicchat/pages/MusicChat.tsx — never together with the "Chat
  * Interno" tab (the parent does not use `forceMount`, so only the active tab is mounted).
  */
@@ -207,7 +207,7 @@ const teamMembers = ["Ana Mendes", "Lucas Araujo", "Bianca Rocha", "Sem respons�
 // the user switches to the Chat Interno tab and back (no forceMount, by design — see
 // MusicChat.tsx). Without this, an in-progress reply draft or pending (already-uploaded, awaiting
 // send) attachments are silently lost on every tab switch — same pattern already used by
-// ChatInternoView for its own draft state. An in-progress audio recording is intentionally NOT
+// InternalChatView for its own draft state. An in-progress audio recording is intentionally NOT
 // persisted here: the underlying MediaStream/MediaRecorder cannot survive an unmount, and the
 // existing unmount cleanup already stops the mic tracks cleanly (correct behavior, not a bug).
 const draftKey = (conversationId: string) => `musicchat-support:draft:${conversationId}`;
@@ -625,7 +625,7 @@ export function SupportCenterView({
   // Restore only — writes happen directly in the draft/attachment handlers below, not via a
   // second effect keyed on `draft`/`pendingAttachments` (that would race this restore: it would
   // see the pre-restore value on the same render pass and immediately overwrite what was just
-  // read — same reasoning as ChatInternoView's draft restore).
+  // read — same reasoning as InternalChatView's draft restore).
   useEffect(() => {
     if (selectedConversation) {
       setDraft(sessionStorage.getItem(draftKey(selectedConversation.id)) ?? "");

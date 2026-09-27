@@ -83,7 +83,7 @@ import { useWorks } from "@/modules/catalog/hooks/useWorks";
 import { usePhonograms } from "@/modules/catalog/hooks/usePhonograms";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { useProjects } from "@/modules/projects/hooks/useProjects";
-import { useMetas } from "@/modules/marketing/hooks/useMetas";
+import { useGoals } from "@/modules/marketing/hooks/useGoals";
 import {
   useContracts,
   type ContractWithRelations,
@@ -324,7 +324,7 @@ export function ArtistVision360Modal({
     updateMeta,
     deleteMeta,
     getProgressPercent: calcProgress,
-  } = useMetas(open, artistId);
+  } = useGoals(open, artistId);
   const { contracts: actualContracts } = useContracts(open, artistId);
   const { transactions: artistTransactions } = useTransactions(open, artistId);
   const { contacts } = useContacts(open);

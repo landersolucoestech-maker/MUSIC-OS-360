@@ -23,7 +23,7 @@ const read = (rel: string) => fs.readFileSync(path.resolve(SRC_ROOT, rel), "utf8
  *  false-positive against a check for actual forceMount usage. */
 const readCode = (rel: string) => read(rel).replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
 
-const CHAT_INTERNO_VIEW = "modules/musicchat-interno/components/ChatInternoView.tsx";
+const CHAT_INTERNO_VIEW = "modules/musicchat-internal/components/InternalChatView.tsx";
 const SUPPORT_CENTER_VIEW = "modules/musicchat/components/SupportCenterView.tsx";
 const MUSICCHAT_PAGE = "modules/musicchat/pages/MusicChat.tsx";
 const CHAT_ROUTES = "app/routes/chat.routes.tsx";
@@ -39,25 +39,25 @@ const INTERNAL_TEAM_TERMS = [
 ];
 
 describe("Permanent guard: internal chat and the support center never mix", () => {
-  it("ChatInternoView.tsx and SupportCenterView.tsx exist as isolated components", () => {
+  it("InternalChatView.tsx and SupportCenterView.tsx exist as isolated components", () => {
     expect(fs.existsSync(path.resolve(SRC_ROOT, CHAT_INTERNO_VIEW))).toBe(true);
     expect(fs.existsSync(path.resolve(SRC_ROOT, SUPPORT_CENTER_VIEW))).toBe(true);
   });
 
-  it("ChatInternoView.tsx imports nothing from modules/musicchat/ (support center)", () => {
+  it("InternalChatView.tsx imports nothing from modules/musicchat/ (support center)", () => {
     const content = read(CHAT_INTERNO_VIEW);
     expect(content).not.toMatch(/from ["']@\/modules\/musicchat\//);
   });
 
-  it("ChatInternoView.tsx references no external-channel/support term", () => {
+  it("InternalChatView.tsx references no external-channel/support term", () => {
     const content = read(CHAT_INTERNO_VIEW);
     const hits = EXTERNAL_CHANNEL_TERMS.filter((pattern) => pattern.test(content)).map(String);
     expect(hits).toEqual([]);
   });
 
-  it("SupportCenterView.tsx imports nothing from modules/musicchat-interno/ (internal chat)", () => {
+  it("SupportCenterView.tsx imports nothing from modules/musicchat-internal/ (internal chat)", () => {
     const content = read(SUPPORT_CENTER_VIEW);
-    expect(content).not.toMatch(/from ["']@\/modules\/musicchat-interno\//);
+    expect(content).not.toMatch(/from ["']@\/modules\/musicchat-internal\//);
   });
 
   it("SupportCenterView.tsx references none of the internal chat hooks/service", () => {
@@ -77,7 +77,7 @@ describe("Permanent guard: internal chat and the support center never mix", () =
 
   it("MusicChat.tsx mounts both tabs from the correct isolated components", () => {
     const content = read(MUSICCHAT_PAGE);
-    expect(content).toMatch(/<ChatInternoView\s*\/>/);
+    expect(content).toMatch(/<InternalChatView\s*\/>/);
     expect(content).toMatch(/<SupportCenterView/);
   });
 

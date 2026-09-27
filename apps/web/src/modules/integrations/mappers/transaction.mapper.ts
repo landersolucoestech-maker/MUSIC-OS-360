@@ -1,3 +1,1 @@
-
-export * from '../services/contract.mapper';
 export * from '../services/transaction.mapper';

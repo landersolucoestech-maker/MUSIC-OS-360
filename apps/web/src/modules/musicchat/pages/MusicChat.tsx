@@ -3,7 +3,7 @@
  *
  * MusicChat — single navigation point (/chat) between two architecturally
  * independent domains: Internal Chat (team <-> team,
- * modules/musicchat-interno) and Support Center (team <-> external
+ * modules/musicchat-internal) and Support Center (team <-> external
  * public, modules/musicchat). Each has its own component tree, state,
  * hooks and service — this file only decides WHICH one to mount.
  *
@@ -20,7 +20,7 @@ import { Button } from "@/shared/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { Headphones, Plus, Settings, Users } from "lucide-react";
 import { useTenant } from "@/app/providers/TenantContext";
-import { ChatInternoView } from "@/modules/musicchat-interno/components/ChatInternoView";
+import { InternalChatView } from "@/modules/musicchat-internal/components/InternalChatView";
 import { SupportCenterView, type SupportConversation } from "../components/SupportCenterView";
 import { NewConversationDialog } from "../components/NewConversationDialog";
 
@@ -87,7 +87,7 @@ export default function MusicChat() {
           {/* No forceMount: Radix only mounts the active tab's panel — the other domain
               is fully unmounted, not just visually hidden. */}
           <TabsContent value="internal" className="mt-4">
-            <ChatInternoView />
+            <InternalChatView />
           </TabsContent>
 
           <TabsContent value="support" className="mt-4">

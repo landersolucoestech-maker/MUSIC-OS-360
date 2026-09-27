@@ -36,7 +36,7 @@ describe('PHASE 3N - runtime tenant context (real PostgreSQL)', () => {
   let skillRuns: SkillRunService;
   let workflowExecutions: WorkflowExecutionService;
 
-  const tag = `fase3n_${Date.now()}`;
+  const tag = `phase3n_${Date.now()}`;
   const events = { emitTyped: jest.fn(), on: jest.fn() };
 
   beforeAll(async () => {

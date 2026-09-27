@@ -21,7 +21,7 @@ export * from "./hooks/useMarketingDashboard";
 export * from "./hooks/useMarketingAnalytics";
 export * from "./hooks/useMarketingAutomations";
 export * from "./hooks/useMarketingAI";
-export * from "./hooks/useMetas";
+export * from "./hooks/useGoals";
 
 // Services & contracts
 export { marketingService } from "./services/marketing.service";

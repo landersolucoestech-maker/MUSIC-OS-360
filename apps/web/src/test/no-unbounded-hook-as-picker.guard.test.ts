@@ -89,7 +89,7 @@ const ALLOWED_CALL_SITES: Record<string, string> = {
     "useProjects() for mutations only (addProject/updateProject).",
   "modules/projects/pages/Projects.tsx":
     "useProjects() for mutations + the genre dropdown (distinct values) — risk documented in the file itself; the deep link (?projeto=) and the per-row artist name use direct lookup by ID.",
-  "modules/marketing/components/ia-criativa/ProfileTab.tsx":
+  "modules/marketing/components/ai-creative/ProfileTab.tsx":
     "useWorks/usePhonograms(!!artist, artist?.id) — scoped server-side by the artist selected in the form itself.",
   "modules/licensing/pages/Licensing.tsx":
     "useLicenses() for mutations only (delete); the paginated list uses a separate hook (Task H).",

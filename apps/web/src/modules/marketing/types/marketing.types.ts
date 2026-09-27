@@ -818,7 +818,7 @@ export type CreateInput<T> = Omit<T, "id" | "createdAt" | "updatedAt">;
 // Metas (marketing goals / targets)
 //
 // Restored to its original shape because it is consumed outside the module
-// (artist module's 360 view). Backed by hooks/useMetas.
+// (artist module's 360 view). Backed by hooks/useGoals.
 // ---------------------------------------------------------------------------
 
 export type GoalType =

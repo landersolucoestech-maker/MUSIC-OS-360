@@ -37,8 +37,8 @@ vi.mock("@/modules/releases/hooks/useReleases", () => ({
 vi.mock("@/modules/projects/hooks/useProjects", () => ({
   useProjects: () => ({ projects: [], isLoading: false }),
 }));
-vi.mock("@/modules/marketing/hooks/useMetas", () => ({
-  useMetas: () => ({ metas: [], isLoading: false }),
+vi.mock("@/modules/marketing/hooks/useGoals", () => ({
+  useGoals: () => ({ metas: [], isLoading: false }),
 }));
 vi.mock("@/modules/contracts/hooks/useContracts", () => ({
   useContracts: () => ({ contracts: [], isLoading: false }),
