@@ -34,9 +34,9 @@ function Field({ label, value, icon, valueClassName }: { label: React.ReactNode;
 }
 
 export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewModalProps) {
-  // Busca DIRETO por ID (GET /works/:id, GET /clients/:id) — não depende de
-  // obra/cliente estarem entre os primeiros 50 carregados por useObras() /
-  // uma listagem de clientes sem filtro (Task J).
+  // Fetches DIRECTLY by ID (GET /works/:id, GET /clients/:id) — does not depend on the
+  // work/client being among the first 50 loaded by useObras() /
+  // an unfiltered client listing (Task J).
   const { entity: obra } = useEntityById<Obra>("obras", open ? licenca?.work_id ?? undefined : undefined);
   const { entity: cliente } = useEntityById<ClienteOption>("clientes", open ? licenca?.client_id ?? undefined : undefined);
 
@@ -61,7 +61,7 @@ export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewMod
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Informações da Licença */}
+          {/* License information */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <Music className="h-4 w-4" /> Informações da Licença
@@ -78,7 +78,7 @@ export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewMod
             </div>
           </div>
 
-          {/* Cliente e Projeto */}
+          {/* Client and project */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <Building className="h-4 w-4" /> Cliente e Projeto
@@ -91,7 +91,7 @@ export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewMod
             </div>
           </div>
 
-          {/* Período e Remuneração */}
+          {/* Period and compensation */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <DollarSign className="h-4 w-4" /> Período e Remuneração
@@ -102,7 +102,7 @@ export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewMod
             </div>
           </div>
 
-          {/* Observações */}
+          {/* Notes */}
           {licenca.notes && (
             <div className="space-y-2">
               <span className="text-sm text-muted-foreground">Observações</span>
@@ -110,7 +110,7 @@ export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewMod
             </div>
           )}
 
-          {/* Metadados */}
+          {/* Metadata */}
           {(licenca.created_at || licenca.updated_at) && (
             <div className="grid grid-cols-2 gap-4 border-t border-border/40 pt-3 text-xs text-muted-foreground">
               {licenca.created_at && <div>Criada em: {formatLicensingDate(licenca.created_at)}</div>}

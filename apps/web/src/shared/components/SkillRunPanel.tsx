@@ -6,13 +6,13 @@ import type { SkillRunEnvelope } from "@/shared/hooks/useSkillRun";
 
 import { toUserMessage } from "@/shared/lib/errors";
 /**
- * SkillRunPanel — botão de disparo + renderização genérica do resultado real
- * de um AI Skill ON_DEMAND. Nenhum valor é inventado aqui: tudo vem de
- * `result.parsed`, o output já validado/parseado pelo backend
- * (packages/ai-skills/*). Os campos de saída de todas as skills ON_DEMAND
- * seguem o padrão `<algo>Summary: string` + N campos de lista estruturada —
- * este painel renderiza esse padrão de forma genérica em vez de duplicar um
- * componente por skill.
+ * SkillRunPanel — trigger button + generic rendering of the real result
+ * of an ON_DEMAND AI Skill. No value is invented here: everything comes from
+ * `result.parsed`, the output already validated/parsed by the backend
+ * (packages/ai-skills/*). The output fields of every ON_DEMAND skill
+ * follow the pattern `<something>Summary: string` + N structured list fields —
+ * this panel renders that pattern generically instead of duplicating a
+ * component per skill.
  */
 export interface SkillRunPanelProps<T extends Record<string, unknown>> {
   label: string;

@@ -5,11 +5,11 @@ import { api } from "@/shared/lib/api-client";
 import type { LicencaWithRelations } from "../types/licensing.types";
 
 export interface UseLicencasPaginatedParams {
-  /** 0-indexado, mesma convenção de usePagination()/TablePagination. */
+  /** 0-indexed, same convention as usePagination()/TablePagination. */
   page: number;
   pageSize: number;
   search?: string;
-  /** Um status ("ativa") ou vários separados por vírgula ("negociacao,proposta") — a aba "Propostas" abrange dois status. */
+  /** One status ("ativa") or several separated by commas ("negociacao,proposta") — the "Propostas" tab spans two statuses. */
   status?: string;
   midia?: string;
 }
@@ -49,9 +49,9 @@ export interface LicencaStats {
 const EMPTY_STATS: LicencaStats = { total: 0, byGroup: {} };
 
 /**
- * Contagem + soma de valor por status, sobre o TENANT INTEIRO — GET
- * /licenses/stats (agregado no banco). Task H: os KPIs e as 3 abas de
- * Licenciamento.tsx não podem mais ser calculados só sobre a página atual.
+ * Count + value sum per status, over the WHOLE TENANT — GET
+ * /licenses/stats (aggregated in the database). Task H: the KPIs and the 3 tabs of
+ * Licenciamento.tsx can no longer be computed over the current page only.
  */
 export function useLicencasStats() {
   const query = useQuery<LicencaStats>({

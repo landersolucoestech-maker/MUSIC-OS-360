@@ -10,7 +10,7 @@ export interface Licenca {
   id: string;
   user_id?: string;
   title: string;
-  // Relações (fonte da verdade)
+  // Relations (source of truth)
   work_id?: string | null;
   client_id?: string | null;
   projeto?: string | null;
@@ -21,12 +21,12 @@ export interface Licenca {
   status?: LicenseStatus | string | null;
   start_date?: string | null;
   end_date?: string | null;
-  // Remuneração estruturada
+  // Structured compensation
   remuneration_type?: RemunerationType | null;
   currency?: Currency | null;
   amount?: number | null;
   percentage?: number | null;
-  /** @deprecated valor monetário legado — leitura/back-compat; novo modelo usa `amount`. */
+  /** @deprecated legacy monetary amount — read/back-compat; the new model uses `amount`. */
   valor?: number | null;
   notes?: string | null;
   created_at?: string;

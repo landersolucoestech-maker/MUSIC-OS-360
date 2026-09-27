@@ -7,9 +7,9 @@ import { cn } from "@/shared/lib/utils";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 
 export interface AsyncEntityComboboxProps<T extends { id: string }> {
-  /** Nome da tabela/recurso — mesma chave usada em TABLE_ENDPOINT (api-client.ts). */
+  /** Table/resource name — same key used in TABLE_ENDPOINT (api-client.ts). */
   table: string;
-  /** Extrai o texto exibido de um registro (ex.: (a) => a.nome_artistico). */
+  /** Extracts the display text from a record (e.g. (a) => a.nome_artistico). */
   getLabel: (item: T) => string;
   value?: string | null;
   onChange: (id: string, item: T | undefined) => void;
@@ -25,14 +25,14 @@ export interface AsyncEntityComboboxProps<T extends { id: string }> {
 }
 
 /**
- * Task I — combobox com busca server-side, substituto do padrão "carregar a
- * tabela inteira num Select" (useArtistas()/useObras()/etc. sem filtro, que
- * silenciosamente cortava em 50 registros por tenant). Cada tecla digitada
- * (debounced) refaz a query só com o termo atual — nunca a lista inteira.
+ * Task I — combobox with server-side search, replacing the "load the
+ * whole table into a Select" pattern (useArtistas()/useObras()/etc. without a filter, which
+ * silently cut off at 50 records per tenant). Each typed key
+ * (debounced) reruns the query with the current term only — never the whole list.
  *
- * O valor já selecionado é resolvido via GET /:resource/:id (useEntityById),
- * não por busca na lista — assim o label aparece correto mesmo que o
- * registro esteja fora dos primeiros resultados (ex.: editar um item #75).
+ * The already-selected value is resolved via GET /:resource/:id (useEntityById),
+ * not by searching the list — so the label shows correctly even if the
+ * record is outside the first results (e.g. editing item #75).
  */
 export function AsyncEntityCombobox<T extends { id: string }>({
   table, getLabel, value, onChange, filters, pageSize = 20,
@@ -46,8 +46,8 @@ export function AsyncEntityCombobox<T extends { id: string }>({
   const { items, isLoading, isFetching, error } = useEntityLookup<T>({
     table, search, filters, pageSize, enabled: open,
   });
-  // Resolve o item selecionado por ID — funciona mesmo se ele não estiver
-  // entre os resultados da busca atual (ou antes de qualquer busca).
+  // Resolves the selected item by ID — works even if it is not
+  // among the current search results (or before any search).
   const { entity: selectedEntity } = useEntityById<T>(table, value);
 
   const selectedLabel = selectedEntity ? getLabel(selectedEntity) : undefined;

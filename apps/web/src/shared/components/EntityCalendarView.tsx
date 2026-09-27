@@ -1,8 +1,8 @@
 /**
- * EntityCalendarView — calendário genérico Dia/Semana/Mês/Ano que plota eventos
- * pela data/hora. Mesma identidade visual do calendário de conteúdo de Marketing
- * (MarketingCalendarView), porém desacoplado de qualquer type específico: recebe
- * uma lista genérica de `CalendarEvent`.
+ * EntityCalendarView — generic Day/Week/Month/Year calendar that plots events
+ * by date/time. Same visual identity as the Marketing content calendar
+ * (MarketingCalendarView), but decoupled from any specific type: it receives
+ * a generic list of `CalendarEvent`.
  */
 
 import { cn } from "@/shared/lib/utils";
@@ -12,12 +12,12 @@ export type EntityCalendarViewMode = "dia" | "semana" | "mes" | "ano";
 export interface CalendarEvent {
   id: string;
   title: string;
-  /** Data ISO (YYYY-MM-DD ou com hora). */
+  /** ISO date (YYYY-MM-DD or with time). */
   dateISO: string;
   time?: string | null;
-  /** Classe de cor do chip (status). */
+  /** Chip color class (status). */
   toneClass?: string;
-  /** Texto auxiliar (tooltip). */
+  /** Helper text (tooltip). */
   hint?: string;
 }
 

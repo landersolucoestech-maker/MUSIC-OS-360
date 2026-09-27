@@ -72,9 +72,9 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
     defaultValues: DEFAULT_VALUES,
   });
 
-  // Artista é derivado da obra selecionada (read-only, não persistido) —
-  // busca DIRETA por ID (GET /works/:id), não depende da obra estar entre
-  // os primeiros 50 carregados por useObras() sem filtro (Task J).
+  // The artist is derived from the selected work (read-only, not persisted) —
+  // fetched DIRECTLY by ID (GET /works/:id), it does not depend on the work being among
+  // the first 50 loaded by useObras() without a filter (Task J).
   const workId = useWatch({ control, name: "workId" });
   const remunerationType = useWatch({ control, name: "remunerationType" });
   const { entity: obraSelecionada } = useEntityById<Obra>("obras", workId || undefined);
@@ -166,7 +166,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Informações da Licença */}
+          {/* License information */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <Music className="h-4 w-4" /> Informações da Licença
@@ -240,7 +240,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
             </div>
           </div>
 
-          {/* Cliente e Projeto */}
+          {/* Client and project */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <Building className="h-4 w-4" /> Cliente e Projeto
@@ -341,7 +341,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
             </div>
           </div>
 
-          {/* Período e Remuneração */}
+          {/* Period and compensation */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
               <DollarSign className="h-4 w-4" /> Período e Remuneração
@@ -439,7 +439,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
             </div>
           </div>
 
-          {/* Observações */}
+          {/* Notes */}
           <div className="space-y-2">
             <Label>Observações</Label>
             <Textarea

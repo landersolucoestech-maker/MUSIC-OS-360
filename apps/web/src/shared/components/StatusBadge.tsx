@@ -2,17 +2,17 @@ import { Badge, type BadgeVariant } from "@/shared/ui/badge";
 import { cn } from "@/shared/lib/utils";
 
 /**
- * StatusBadge — resolver semântico sobre o componente único `Badge`.
+ * StatusBadge — semantic resolver over the single `Badge` component.
  *
- * Converte um status (string de qualquer módulo) em um dos 5 variants canônicos
- * (success | info | warning | danger | neutral). Nenhuma cor é definida aqui —
- * toda a estilização vive no cva de `Badge`. Telas devem usar este componente
- * (ou `<Badge variant=...>`) em vez de classes de cor manuais.
+ * Converts a status (a string from any module) into one of the 5 canonical variants
+ * (success | info | warning | danger | neutral). No color is defined here —
+ * all styling lives in the `Badge` cva. Screens must use this component
+ * (or `<Badge variant=...>`) instead of manual color classes.
  */
 
-// ── Mapa semântico status → variant ─────────────────────────────────────────
-// Quando o mesmo termo aparece em domínios diferentes, usamos o sentido mais
-// comum; telas que precisem de outro variant passam `variant` explicitamente.
+// ── Semantic map status → variant ───────────────────────────────────────────
+// When the same term appears in different domains, we use the most
+// common meaning; screens that need another variant pass `variant` explicitly.
 const SUCCESS = [
   "active", "ativo", "ativa", "executed", "executado", "executada",
   "registered", "registrado", "registrada", "concluido", "concluida",
@@ -96,12 +96,12 @@ function normalizeKey(status: string | null | undefined): string {
   return status?.toLowerCase().replace(/ /g, "_") || "";
 }
 
-/** Resolve um status (qualquer módulo) para um dos 5 variants canônicos. */
+/** Resolves a status (any module) to one of the 5 canonical variants. */
 export function statusToVariant(status: string | null | undefined): BadgeVariant {
   return statusVariants[normalizeKey(status)] ?? "neutral";
 }
 
-/** Rótulo legível para um status conhecido (fallback: prettify do próprio valor). */
+/** Readable label for a known status (fallback: prettify the value itself). */
 export function statusLabel(status: string | null | undefined): string {
   const key = normalizeKey(status);
   return (
@@ -113,7 +113,7 @@ export function statusLabel(status: string | null | undefined): string {
 interface StatusBadgeProps {
   status: string;
   label?: string;
-  /** Sobrescreve o variant resolvido (use quando o contexto exigir). */
+  /** Overrides the resolved variant (use when the context requires it). */
   variant?: BadgeVariant;
   className?: string;
 }

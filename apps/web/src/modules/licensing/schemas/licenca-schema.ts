@@ -12,7 +12,7 @@ export const licencaSchema = z
     status: z.string().optional().or(z.literal("")),
     startDate: z.string().optional().or(z.literal("")),
     endDate: z.string().optional().or(z.literal("")),
-    // Remuneração
+    // Compensation
     remunerationType: z.enum(["FIXED", "PERCENTAGE", "FIXED_PLUS_PERCENTAGE"]).default("FIXED"),
     currency: z.enum(["BRL", "USD", "EUR"]).default("BRL"),
     amount: z.string().optional().or(z.literal("")),

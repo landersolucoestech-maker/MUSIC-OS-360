@@ -3,11 +3,11 @@ import * as fs from "fs";
 import * as path from "path";
 
 /**
- * Guarda permanente (auditoria 2026-07-19 — reconstrução de artists):
- * `FileUpload` (usado por artists/accounting/contracts/rh) tinha um stub fake
- * de upload (`setTimeout` + path fictício) e, para imagens, persistia um data
- * URL base64 na própria coluna de texto — nenhuma das duas é uma referência
- * real de storage. Agora usa `useUploadToR2` (presigned URL real).
+ * Permanent guard (audit 2026-07-19 — artists rebuild):
+ * `FileUpload` (used by artists/accounting/contracts/rh) had a fake upload
+ * stub (`setTimeout` + fictitious path) and, for images, persisted a base64 data
+ * URL in the text column itself — neither is a real storage
+ * reference. It now uses `useUploadToR2` (real presigned URL).
  */
 const src = fs.readFileSync(path.resolve(__dirname, "FileUpload.tsx"), "utf8");
 

@@ -3,7 +3,7 @@ import type { Obra } from "@/modules/catalog/types/catalog.types";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = { BRL: "R$", USD: "US$", EUR: "€" };
 
-/** Formata um valor monetário com o símbolo da moeda (R$/US$/€) e separadores pt-BR. */
+/** Formats a monetary amount with the currency symbol (R$/US$/€) and pt-BR separators. */
 export function formatMoney(amount: number, currency: Currency = "BRL"): string {
   const n = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
   return `${CURRENCY_SYMBOL[currency]} ${n}`;
@@ -27,9 +27,9 @@ export function formatLicensingDate(value?: string | Date | null): string | null
 }
 
 /**
- * Formata a remuneração da licença conforme o type:
+ * Formats the license compensation according to its type:
  * FIXED → "R$ 5.000,00" · PERCENTAGE → "15%" · FIXED_PLUS_PERCENTAGE → "US$ 1.000,00 + 10%".
- * Fallback para o campo legado `valor` quando não há remuneração estruturada.
+ * Falls back to the legacy `valor` field when there is no structured compensation.
  */
 export function formatRemuneration(l: Pick<Licenca, "remuneration_type" | "currency" | "amount" | "percentage" | "valor">): string {
   const type = l.remuneration_type;
@@ -40,7 +40,7 @@ export function formatRemuneration(l: Pick<Licenca, "remuneration_type" | "curre
   if (type === "PERCENTAGE") return `${pct}%`;
   if (type === "FIXED_PLUS_PERCENTAGE") return `${formatMoney(amount, currency)} + ${pct}%`;
   if (type === "FIXED") return formatMoney(amount, currency);
-  // Linhas antigas sem remuneration_type
+  // Old rows without remuneration_type
   return formatMoney(l.valor ?? 0, currency);
 }
 
@@ -52,7 +52,7 @@ function joinNames(v: string | string[] | null | undefined): string {
   return v;
 }
 
-/** Deriva o(s) artista(s) de uma obra: artista vinculado → intérpretes → compositores. */
+/** Derives the artist(s) of a work: linked artist → performers → composers. */
 export function obraArtistaLabel(obra: Obra | undefined | null): string {
   if (!obra) return "";
   const linked = (obra as { artistas?: { nome_artistico?: string | null } | null }).artistas?.nome_artistico;
@@ -62,7 +62,7 @@ export function obraArtistaLabel(obra: Obra | undefined | null): string {
   return joinNames(obra.compositores ?? obra.compositor);
 }
 
-/** Rótulos legíveis de mídia de destino (valores snake_case do form). */
+/** Readable labels for the target media (snake_case values from the form). */
 export const MIDIA_LABEL: Record<string, string> = {
   tv_aberta: "TV Aberta",
   tv_fechada: "TV Fechada",
@@ -77,7 +77,7 @@ export const MIDIA_LABEL: Record<string, string> = {
 export const midiaLabel = (v: string | null | undefined): string =>
   v ? (MIDIA_LABEL[v] ?? v.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())) : "—";
 
-/** Rótulos legíveis de tipo de licença. */
+/** Readable labels for the license type. */
 export const TIPO_LABEL: Record<string, string> = {
   sync_tv: "Sync TV",
   sync_cinema: "Sync Cinema",

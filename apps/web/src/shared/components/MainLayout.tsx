@@ -40,7 +40,7 @@ interface MainLayoutProps {
   noPadding?: boolean;
 }
 
-// Referência estável — ver shared/hooks/useDataQuery.ts para o motivo.
+// Stable reference — see shared/hooks/useDataQuery.ts for the reason.
 const EMPTY_NOTIFICATIONS: Array<{ id: string; title: string; body: string | null; read_at: string | null; created_at: string }> = [];
 
 const ROLE_LABEL: Record<string, string> = {
@@ -178,8 +178,8 @@ function TopbarUserMenu() {
 }
 
 function NotificationsPopover() {
-  // Notificações reais do backend (/notifications). Sem dados fictícios:
-  // erro ou backend indisponível ⇒ lista vazia (estado verdadeiro).
+  // Real backend notifications (/notifications). No fictitious data:
+  // error or unavailable backend ⇒ empty list (true state).
   const queryClient = useQueryClient();
   const { data: rawNotifications = EMPTY_NOTIFICATIONS } = useQuery({
     queryKey: ["notifications", "topbar"],

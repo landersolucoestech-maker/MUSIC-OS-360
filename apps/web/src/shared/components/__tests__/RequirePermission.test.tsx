@@ -44,7 +44,7 @@ describe("RequirePermission / PermissionGate", () => {
 
   it("while loading renders loadingFallback and NEVER opens children", () => {
     state.loading = true;
-    state.allow = true; // mesmo com allow, loading tem precedência (fail-closed)
+    state.allow = true; // even with allow, loading takes precedence (fail-closed)
     render(
       <RequirePermission module="accounting" action="export" loadingFallback={<span>carregando</span>}>
         <button>Exportar</button>

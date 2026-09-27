@@ -73,7 +73,7 @@ interface NavItem {
   title: string;
   href?: string;
   icon: React.ComponentType<{ className?: string }>;
-  /** Se definido, o item só aparece quando esta feature flag estiver activa. */
+  /** If set, the item only shows when this feature flag is active. */
   featureFlag?: keyof FeatureFlags;
   children?: {
     title: string;

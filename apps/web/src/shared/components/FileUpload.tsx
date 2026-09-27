@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useUploadToR2, type UploadCategory } from "@/shared/hooks/useUploadToR2";
 import { toUserMessage } from "@/shared/lib/errors";
 
-/** Deriva a categoria de upload (contrato real do backend) a partir do `accept` do campo. */
+/** Derives the upload category (real backend contract) from the field's `accept`. */
 function inferCategory(accept?: string): UploadCategory {
   if (!accept) return "documents";
   if (accept.includes("image/")) return "images";
@@ -31,12 +31,12 @@ interface FileUploadProps {
   maxSize?: number; // in MB
   multiple?: boolean;
   disabled?: boolean;
-  circular?: boolean; // Para avatar/foto circular
-  /** Categoria de upload real (R2) — se omitida, é inferida do `accept`. */
+  circular?: boolean; // For avatar/circular photo
+  /** Real upload category (R2) — if omitted, it is inferred from `accept`. */
   category?: UploadCategory;
-  /** Nome da entidade dona do arquivo (ex.: "artist", "release") — organiza a pasta no R2. */
+  /** Name of the entity that owns the file (e.g. "artist", "release") — organizes the folder in R2. */
   entity?: string;
-  /** id da entidade, se já existir (edição) — undefined em criação. */
+  /** entity id, if it already exists (edit) — undefined on create. */
   entityId?: string;
   onUploadComplete?: (files: UploadedFile[]) => void;
   onUploadError?: (error: string) => void;
@@ -61,7 +61,7 @@ const getFileIcon = (type: string, fileName?: string): LucideIcon => {
   return File;
 };
 
-// Verifica se o arquivo é válido baseado em type MIME ou extensão
+// Checks whether the file is valid based on MIME type or extension
 const isFileTypeValid = (file: File, accept: string): boolean => {
   const acceptedTypes = accept.split(",").map((t) => t.trim().toLowerCase());
   const fileExt = `.${file.name.split(".").pop()?.toLowerCase() || ""}`;
@@ -72,7 +72,7 @@ const isFileTypeValid = (file: File, accept: string): boolean => {
     if (type.endsWith("/*")) {
       const prefix = type.replace("/*", "/");
       if (mimeType && mimeType.startsWith(prefix)) return true;
-      // Fallback por extensão se MIME estiver vazio
+      // Fallback by extension if the MIME type is empty
       if (!mimeType || mimeType === "application/octet-stream") {
         if (type === "image/*") {
           return [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp"].includes(fileExt);
@@ -84,10 +84,10 @@ const isFileTypeValid = (file: File, accept: string): boolean => {
       return false;
     }
     
-    // Tipo MIME específico
+    // Specific MIME type
     if (type.includes("/")) {
       if (mimeType === type) return true;
-      // Fallback por extensão para tipos comuns
+      // Fallback by extension for common types
       if (!mimeType || mimeType === "application/octet-stream") {
         if (type === "application/pdf") return fileExt === ".pdf";
         if (type.includes("word") || type.includes("document")) {
@@ -97,12 +97,12 @@ const isFileTypeValid = (file: File, accept: string): boolean => {
       return false;
     }
     
-    // Extensão direta (ex: .pdf, .jpg)
+    // Direct extension (e.g. .pdf, .jpg)
     if (type.startsWith(".")) {
       return fileExt === type;
     }
     
-    // Fallback: verificar se extensão corresponde ao type
+    // Fallback: check whether the extension matches the type
     return fileExt === `.${type}`;
   });
 };
@@ -198,7 +198,7 @@ export function FileUpload({
             url: publicUrl,
           };
 
-          // Preview local instantâneo (blob URL) — não é o que é persistido.
+          // Instant local preview (blob URL) — this is not what gets persisted.
           if (file.type.startsWith("image/")) {
             uploadedFile.preview = URL.createObjectURL(file);
           }
@@ -282,11 +282,11 @@ export function FileUpload({
 
   const isUploading = uploadingFiles.size > 0;
 
-  // Modo circular com layout horizontal
+  // Circular mode with horizontal layout
   if (circular) {
     return (
       <div className={cn("flex items-center gap-4", className)}>
-        {/* Círculo do upload ou preview */}
+        {/* Upload circle or preview */}
         <div
           onClick={handleClick}
           onDragOver={handleDragOver}
@@ -337,7 +337,7 @@ export function FileUpload({
           )}
         </div>
 
-        {/* Texto e botão ao lado */}
+        {/* Text and button alongside */}
         <div className="flex flex-col gap-2">
           <div>
             <p className="text-sm font-medium text-foreground">

@@ -14,14 +14,14 @@ interface AiSkillRunPanelProps<TOutput> {
   runLabel?: string;
   mutation: UseMutationResult<OnDemandSkillResult<TOutput>, unknown, void, unknown>;
   renderResult: (parsed: TOutput) => ReactNode;
-  /** Desabilita a execução (ex.: contexto obrigatório ausente) com um motivo visível. */
+  /** Disables execution (e.g. required context missing) with a visible reason. */
   disabledReason?: string;
 }
 
 /**
- * Painel real de execução de uma AI Skill ON_DEMAND: botão de ação, e os
- * estados de loading/erro/sucesso/vazio vêm sempre da chamada real ao
- * backend — nunca um card decorativo com valores de amostra.
+ * Real execution panel of an ON_DEMAND AI Skill: action button, and the
+ * loading/error/success/empty states always come from the real backend
+ * call — never a decorative card with sample values.
  */
 export function AiSkillRunPanel<TOutput>({
   title,

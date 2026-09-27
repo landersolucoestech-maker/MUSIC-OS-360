@@ -10,12 +10,12 @@ interface UnavailableStateProps {
 }
 
 /**
- * Estado explícito de indisponibilidade — usar quando uma query falhou e
- * não há dados válidos em cache (`error && data.length === 0`).
+ * Explicit unavailability state — use when a query failed and
+ * there is no valid cached data (`error && data.length === 0`).
  *
- * Distinto de <EmptyState/> de propósito: uma tabela realmente vazia e um
- * backend fora do ar não podem parecer a mesma coisa para o usuário (ver
- * Task F — "Nenhum registro"/"R$ 0,00" mascarando indisponibilidade real).
+ * Distinct from <EmptyState/> on purpose: a genuinely empty table and a
+ * backend that is down must not look the same to the user (see
+ * Task F — "Nenhum registro"/"R$ 0,00" masking real unavailability).
  */
 export function UnavailableState({
   title = "Não foi possível carregar os dados",
@@ -48,8 +48,8 @@ export function UnavailableState({
   );
 }
 
-/** Banner discreto para quando há dados em cache válidos mas o refresh mais
- * recente falhou — preserva os dados exibidos, só sinaliza o problema. */
+/** Discreet banner for when there is valid cached data but the most
+ * recent refresh failed — keeps the displayed data, only flags the problem. */
 export function StaleDataNotice({ onRetry }: { onRetry?: () => void }) {
   return (
     <div

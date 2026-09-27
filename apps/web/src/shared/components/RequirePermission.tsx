@@ -1,13 +1,13 @@
 /**
  * shared/components/RequirePermission.tsx
  *
- * Gate de RBAC sobre a FONTE ÚNICA de permissões (membership.permissions, via usePermissions).
- * Renderiza `children` apenas se o utilizador tiver a permissão; caso contrário `fallback`.
+ * RBAC gate over the SINGLE SOURCE of permissions (membership.permissions, via usePermissions).
+ * Renders `children` only if the user has the permission; otherwise `fallback`.
  *
- * Durante o carregamento das permissões em produção (permissionKeys ainda null), renderiza
- * `loadingFallback` (por omissão null = nada visível e não-interactivo) — NUNCA abre por ausência.
+ * While permissions are loading in production (permissionKeys still null), renders
+ * `loadingFallback` (null by default = nothing visible and non-interactive) — NEVER fails open.
  *
- * Uso:
+ * Usage:
  *   <RequirePermission module="accounting" action="write">
  *     <Button>Nova Transação</Button>
  *   </RequirePermission>
@@ -35,7 +35,7 @@ export function RequirePermission({
   return canModule(module, action) ? <>{children}</> : <>{fallback}</>;
 }
 
-/** Alias semântico — gate por permissão. */
+/** Semantic alias — permission gate. */
 export const PermissionGate = RequirePermission;
 
 /**

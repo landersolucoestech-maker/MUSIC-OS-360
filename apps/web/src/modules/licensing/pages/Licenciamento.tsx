@@ -40,8 +40,8 @@ const getStatusBadge = (status: string) => {
 
 export default function Licenciamento() {
   // Task H: useLicencas() (fetch-all) fica só para mutations (delete) e o
-  // gate de isLoading inicial — as tabelas abaixo agora leem de
-  // useLicencasPaginated() (server-side, uma página por vez).
+  // initial isLoading gate — the tables below now read from
+  // useLicencasPaginated() (server-side, one page at a time).
   const { licencas, isLoading, deleteLicenca } = useLicencas();
 
   const [activeTab, setActiveTab] = useState("catalogo");
@@ -58,11 +58,11 @@ export default function Licenciamento() {
   const hasActiveFilters = searchTerm !== "" || statusFilter !== "all" || midiaFilter !== "all";
   const debouncedSearch = useDebounce(searchTerm, 300);
 
-  // Task H: paginação real server-side — a página muda de request (nunca
-  // recorta uma lista já baixada). Só a aba "catalogo" tem busca/filtro de
-  // mídia; "propostas"/"ativas" são um status fixo aplicado no backend.
-  // Como só a aba ativa é renderizada por vez, uma única chamada paginada
-  // basta — o filtro `status` é que muda com `activeTab`.
+  // Task H: real server-side pagination — the page changes the request (it never
+  // slices an already-downloaded list). Only the "catalogo" tab has media search/filter;
+  // "propostas"/"ativas" are a fixed status applied on the backend.
+  // Since only the active tab is rendered at a time, a single paginated call
+  // is enough — it is the `status` filter that changes with `activeTab`.
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   useEffect(() => { setPage(0); }, [debouncedSearch, statusFilter, midiaFilter, activeTab]);
@@ -86,10 +86,10 @@ export default function Licenciamento() {
     midia: activeTab === "catalogo" && midiaFilter !== "all" ? midiaFilter : undefined,
   });
 
-  // Task J: título de obra/nome de cliente por linha, resolvidos por ID
-  // direto (GET /works/:id, GET /clients/:id) só para os registros da
-  // página atual — antes escaneava useObras()/uma listagem de clientes sem
-  // filtro, truncados nos primeiros 50 do tenant.
+  // Task J: per-row work title/client name, resolved by direct ID
+  // (GET /works/:id, GET /clients/:id) only for the records of the
+  // current page — previously it scanned useObras()/an unfiltered client
+  // listing, truncated to the first 50 of the tenant.
   const [resolvedObras, setResolvedObras] = useState<Record<string, Obra>>({});
   const [resolvedClientes, setResolvedClientes] = useState<Record<string, { id: string; name: string }>>({});
   const licencaObraIds = useMemo(
@@ -131,8 +131,8 @@ export default function Licenciamento() {
   const artistaDe = (l: any) => (l.work_id ? obraArtistaLabel(resolvedObras[l.work_id]) : "");
   const clienteNomeDe = (l: any) => (l.client_id ? resolvedClientes[l.client_id]?.name ?? null : null);
 
-  // KPIs: contagem + soma de valor por status SOBRE O TENANT INTEIRO (não a
-  // página atual) — GET /licenses/stats, agregado no banco.
+  // KPIs: count + value sum per status OVER THE WHOLE TENANT (not the
+  // current page) — GET /licenses/stats, aggregated in the database.
   const { stats } = useLicencasStats();
 
   const toggleSelectLicenca = (id: string) => {
@@ -572,13 +572,13 @@ export default function Licenciamento() {
     </MainLayout>
     )}
 
-      {/* Fora do gate de isLoading de propósito — mesmo bug de /artistas
-          (Task C): LicencaFormModal chama useLicencas() de novo só para as
-          mutations de create/update, a mesma query do isLoading acima.
-          Montá-lo só depois do isLoading virar false criava um observer
-          novo nessa query; em erro (backend fora do ar), refetchOnMount
-          reabria isLoading, o gate desmontava o modal de novo — loop
-          infinito de loading. Mantê-los sempre montados quebra o ciclo. */}
+      {/* Outside the isLoading gate on purpose — same bug as /artistas
+          (Task C): LicencaFormModal calls useLicencas() again only for the
+          create/update mutations, the same query as the isLoading above.
+          Mounting it only after isLoading turned false created a new observer
+          on that query; on error (backend down), refetchOnMount
+          reopened isLoading, the gate unmounted the modal again — an infinite
+          loading loop. Keeping them always mounted breaks the cycle. */}
       <LicencaFormModal open={licencaModal.open} onOpenChange={(open) => setLicencaModal({ ...licencaModal, open })} licenca={licencaModal.licenca} mode={licencaModal.mode} />
       <LicencaViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} licenca={viewModal.licenca} />
       <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Licença" description={`Tem certeza que deseja excluir "${deleteModal.licenca?.title}"?`} onConfirm={handleDelete} />
