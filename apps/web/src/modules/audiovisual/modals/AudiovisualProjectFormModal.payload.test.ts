@@ -4,7 +4,7 @@
  * Permanent guard (audit 2026-07-18 — audiovisual CRITICAL confirmed):
  * the real audiovisual production form sent, without any intermediate
  * mapper, fields that CreateAudiovisualProjectDto did not declare
- * (format, videomaker, editor, location, capture_status, editing_status,
+ * (format, videographer, editor, location, capture_status, editing_status,
  * approval_status, pre_release_date, observations, concept, final_status,
  * music_title, artist_name) — with ValidationPipe (whitelist +
  * forbidNonWhitelisted), every audiovisual production create/edit
@@ -21,7 +21,7 @@ const BASE_FORM = {
   type: "music_video" as const,
   format: "16:9",
   director: "Fulano",
-  videomaker: "Beltrano",
+  videographer: "Beltrano",
   editor: "Ciclano",
   shooting_date: "2026-08-01",
   location: "Estúdio A",
@@ -69,7 +69,7 @@ describe("buildAudiovisualProjectPayload — canonical audiovisual_projects cont
       title: "Minha Música",
       format: "16:9",
       director: "Fulano",
-      videomaker: "Beltrano",
+      videographer: "Beltrano",
       editor: "Ciclano",
       shooting_date: "2026-08-01",
       location: "Estúdio A",

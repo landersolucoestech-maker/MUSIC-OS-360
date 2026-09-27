@@ -5,6 +5,10 @@ import {
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
+
+/** Deploy-skew window: field names a pre-canonical web build still sends (see applyDeprecatedFieldAliases). */
+export const AUDIOVISUAL_PROJECT_DEPRECATED_FIELDS: DeprecatedFieldAliases = { videomaker: 'videographer' };
 
 export const PROJECT_TYPES = [
   'music_video', 'visualizer', 'lyric_video', 'teaser', 'reels', 'backstage',
@@ -72,7 +76,9 @@ export class CreateAudiovisualProjectDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(500) music_title?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) artist_name?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) format?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) videomaker?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) videographer?: string;
+  @ApiPropertyOptional({ deprecated: true, description: 'Deprecated alias of videographer.' })
+  @IsOptional() @IsString() @MaxLength(255) videomaker?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) editor?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() shooting_date?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255) location?: string;

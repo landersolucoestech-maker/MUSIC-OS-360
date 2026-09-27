@@ -6,6 +6,8 @@ import { DATA_SOURCE } from '../../database/database.module';
 import { ProjectEntity, ProjectTrackEntity, ProjectTrackParticipantEntity } from '../../database/entities';
 import { groupCount, type GroupStatsResult } from '../../common/stats/group-count.util';
 import type { CreateProjectDto, UpdateProjectDto, QueryProjectDto } from './dto/projects.dto';
+import { PROJECT_DEPRECATED_FIELDS } from './dto/projects.dto';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 import { ProjectStatus } from '@music-os-360/types';
 import { WorkflowService } from '../../core/workflow/workflow.service';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
@@ -219,7 +221,8 @@ export class ProjectsService {
     return { ...hydrated, allowed_transitions };
   }
 
-  async create(tenantId: string, userId: string, dto: CreateProjectDto): Promise<ProjectWithTracks> {
+  async create(tenantId: string, userId: string, input: CreateProjectDto): Promise<ProjectWithTracks> {
+    const dto = applyDeprecatedFieldAliases(input, PROJECT_DEPRECATED_FIELDS);
     const { musicas: trackRows, ...rest } = dto as CreateProjectDto & { musicas?: Record<string, unknown>[] };
     // find-50dd3726: artist_id had no cross-tenant ownership check — a
     // project could silently reference another tenant's artist.
@@ -245,7 +248,7 @@ export class ProjectsService {
     actorRole?: string,
   ): Promise<ProjectWithTracks & { allowed_transitions: { to: string; label?: string }[] }> {
     const current = await this.findById(tenantId, id, actorRole);
-    const dtoMap  = dto as Record<string, unknown>;
+    const dtoMap  = applyDeprecatedFieldAliases(dto as Record<string, unknown>, PROJECT_DEPRECATED_FIELDS);
     const statusChanging = dtoMap['status'] != null && dtoMap['status'] !== current.status;
 
     const { status: _s, musicas: trackRows, expectedUpdatedAt, ...restFields } = dtoMap as Record<string, unknown> & { musicas?: Record<string, unknown>[]; expectedUpdatedAt?: string };

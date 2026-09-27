@@ -42,15 +42,14 @@ export class BriefingsService {
     return result;
   }
 
-  // The DTO uses English names (title/content/campaignId/dueAt) — since the
-  // naming normalization (Cluster E), the entity's physical columns
-  // also use these names (title/content/campaign_id/prazo).
+  // The DTO uses camelCase (title/content/campaignId/dueAt); the physical
+  // columns are their snake_case forms (title/content/campaign_id/due_at).
   private toEntityFields(dto: CreateBriefingDto | UpdateBriefingDto): Record<string, unknown> {
     const out: Record<string, unknown> = {};
     if (dto.title !== undefined) out.title = dto.title;
     if (dto.content !== undefined) out.content = dto.content;
     if (dto.campaignId !== undefined) out.campaign_id = dto.campaignId;
-    if (dto.dueAt !== undefined) out.prazo = dto.dueAt;
+    if (dto.dueAt !== undefined) out.due_at = dto.dueAt;
     if (dto.metadata !== undefined) out.metadata = dto.metadata;
     if ('status' in dto && dto.status !== undefined) out.status = dto.status;
     return out;

@@ -14,6 +14,8 @@ import type {
   QueryAudiovisualProjectDto, TransitionProjectStatusDto, QueryDashboardDto,
 } from '../dto/audiovisual.dto';
 import { casUpdate } from '../../../common/persistence/optimistic-update.util';
+import { applyDeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
+import { AUDIOVISUAL_PROJECT_DEPRECATED_FIELDS } from '../dto/audiovisual.dto';
 
 /**
  * AudiovisualProjectsService — CRUD + status lifecycle + dashboard.
@@ -67,7 +69,8 @@ export class AudiovisualProjectsService {
     return p;
   }
 
-  async create(tenantId: string, userId: string, dto: CreateAudiovisualProjectDto): Promise<AudiovisualProjectEntity> {
+  async create(tenantId: string, userId: string, input: CreateAudiovisualProjectDto): Promise<AudiovisualProjectEntity> {
+    const dto = applyDeprecatedFieldAliases(input, AUDIOVISUAL_PROJECT_DEPRECATED_FIELDS);
     const entity = this.r.create({
       tenant_id: tenantId,
       ...dto,
@@ -82,7 +85,8 @@ export class AudiovisualProjectsService {
     return this.r.save(entity as AudiovisualProjectEntity);
   }
 
-  async update(tenantId: string, userId: string, id: string, dto: UpdateAudiovisualProjectDto): Promise<AudiovisualProjectEntity> {
+  async update(tenantId: string, userId: string, id: string, input: UpdateAudiovisualProjectDto): Promise<AudiovisualProjectEntity> {
+    const dto = applyDeprecatedFieldAliases(input, AUDIOVISUAL_PROJECT_DEPRECATED_FIELDS);
     await this.findById(tenantId, id);
     const { expectedUpdatedAt, ...rest } = dto as UpdateAudiovisualProjectDto & { expectedUpdatedAt?: string };
     const patch: Record<string, unknown> = { ...rest, updated_by: userId, updated_at: new Date() };

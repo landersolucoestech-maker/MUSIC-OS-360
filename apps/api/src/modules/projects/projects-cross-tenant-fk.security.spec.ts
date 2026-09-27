@@ -85,35 +85,44 @@ describe('ProjectsService — cross-tenant FK ownership (find-50dd3726)', () => 
     expect(repo.update).not.toHaveBeenCalled();
   });
 
-  it('update: persists same-tenant artist_id and orcamento scoped by tenant_id', async () => {
+  it('update: persists same-tenant artist_id and budget scoped by tenant_id', async () => {
     const { service, repo } = makeService(jest.fn(async () => [{ exists: 1 }]));
     await service.update('tenant-1', 'user-1', 'project-1', {
-      artist_id: '223e4567-e89b-12d3-a456-426614174000', orcamento: 2500,
+      artist_id: '223e4567-e89b-12d3-a456-426614174000', budget: 2500,
     } as never);
     expect(repo.update).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'project-1', tenant_id: 'tenant-1' }),
-      expect.objectContaining({ artist_id: '223e4567-e89b-12d3-a456-426614174000', orcamento: 2500 }),
+      expect.objectContaining({ artist_id: '223e4567-e89b-12d3-a456-426614174000', budget: 2500 }),
     );
   });
 
-  it('create: persists orcamento and artist_id with the caller tenant', async () => {
+  it('create: persists budget and artist_id with the caller tenant', async () => {
     const { service, repo } = makeService(jest.fn(async () => [{ exists: 1 }]));
     await service.create('tenant-1', 'user-1', {
-      title: 'T', type: 'single', artist_id: '223e4567-e89b-12d3-a456-426614174000', orcamento: 15000.5,
+      title: 'T', type: 'single', artist_id: '223e4567-e89b-12d3-a456-426614174000', budget: 15000.5,
     } as never);
     expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({
-      tenant_id: 'tenant-1', artist_id: '223e4567-e89b-12d3-a456-426614174000', orcamento: 15000.5,
+      tenant_id: 'tenant-1', artist_id: '223e4567-e89b-12d3-a456-426614174000', budget: 15000.5,
     }));
   });
 
-  it('findById: readback returns artist_id/orcamento as persisted', async () => {
+  it('create/update: a deprecated orcamento from a pre-canonical web build is persisted as budget', async () => {
+    const { service, repo } = makeService(jest.fn(async () => [{ exists: 1 }]));
+    await service.create('tenant-1', 'user-1', { title: 'T', type: 'single', orcamento: 99 } as never);
+    expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({ budget: 99 }));
+    expect(repo.create).not.toHaveBeenCalledWith(expect.objectContaining({ orcamento: expect.anything() }));
+    await service.update('tenant-1', 'user-1', 'project-1', { orcamento: 7 } as never);
+    expect(repo.update).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ budget: 7 }));
+  });
+
+  it('findById: readback returns artist_id/budget as persisted', async () => {
     const { service, repo } = makeService(jest.fn());
     const qb = repo.createQueryBuilder() as unknown as { getOne: jest.Mock };
     qb.getOne.mockResolvedValue({
       id: 'project-1', tenant_id: 'tenant-1', status: 'planning',
-      artist_id: '223e4567-e89b-12d3-a456-426614174000', orcamento: '2500.00',
+      artist_id: '223e4567-e89b-12d3-a456-426614174000', budget: '2500.00',
     });
     const row = await service.findById('tenant-1', 'project-1');
-    expect(row).toMatchObject({ artist_id: '223e4567-e89b-12d3-a456-426614174000', orcamento: '2500.00' });
+    expect(row).toMatchObject({ artist_id: '223e4567-e89b-12d3-a456-426614174000', budget: '2500.00' });
   });
 });

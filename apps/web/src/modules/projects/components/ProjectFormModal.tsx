@@ -211,10 +211,10 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
   const [notes, setNotes] = useState(() => project?.notes || "");
   // GAP-0001 / DEC-001 (MUSICAL_PROJECT_CANONICAL_HUB): the main artist and the
   // production budget are legitimate attributes of the music project —
-  // columns projects.artist_id / projects.orcamento, accepted by the real DTO.
+  // columns projects.artist_id / projects.budget, accepted by the real DTO.
   const [artistId, setArtistId] = useState<string | null>(() => (project?.artist_id as string | null | undefined) ?? null);
   const [budget, setBudget] = useState<string>(() =>
-    project?.orcamento != null && project?.orcamento !== "" ? String(project.orcamento) : "");
+    project?.budget != null && project?.budget !== "" ? String(project.budget) : "");
   const [status, setStatus] = useState(() => normStatus(project?.status));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -278,7 +278,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
       music_genre: genre,
       musicas: tracksToSave,
       artist_id: artistId,
-      orcamento: budgetNum,
+      budget: budgetNum,
     };
 
     try {
@@ -293,7 +293,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
           music_genre: genre,
           musicas: tracksToSave,
           artist_id: artistId,
-          orcamento: budgetNum,
+          budget: budgetNum,
         };
         const created = await addProject.mutateAsync(insertPayload) as { id: string };
         savedId = created?.id;
@@ -758,9 +758,9 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="projeto-orcamento">Orçamento de produção (R$)</Label>
+              <Label htmlFor="project-budget">Orçamento de produção (R$)</Label>
               <Input
-                id="projeto-orcamento"
+                id="project-budget"
                 type="number"
                 inputMode="decimal"
                 min="0"
@@ -769,7 +769,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, o
                 onChange={(e) => setBudget(e.target.value)}
                 disabled={isViewMode}
                 placeholder="0,00"
-                data-testid="input-projeto-orcamento"
+                data-testid="input-project-budget"
               />
             </div>
           </div>

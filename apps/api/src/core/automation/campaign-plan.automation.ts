@@ -38,8 +38,8 @@ const SKILL_NAME = 'campaign-plan';
 interface CampaignRow {
   name: string | null;
   type: string | null;
-  objetivo: string | null;
-  orcamento: string | null;
+  objective: string | null;
+  budget: string | null;
   start_date: string | Date | null;
   end_date: string | Date | null;
   metadata: Record<string, unknown> | null;
@@ -96,7 +96,7 @@ export class CampaignPlanAutomation {
   ): Promise<CampaignRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT c.name, c.type, c.objetivo, c.orcamento, c.start_date, c.end_date, c.metadata,
+      `SELECT c.name, c.type, c.objective, c.budget, c.start_date, c.end_date, c.metadata,
               a.nome_artistico AS artist_name
          FROM campaigns c
          LEFT JOIN artists a
@@ -133,8 +133,8 @@ export class CampaignPlanAutomation {
       language: 'pt-BR',
     };
 
-    if (c.objetivo?.trim()) input.objective = c.objetivo.trim();
-    if (c.orcamento != null) input.budget = Number(c.orcamento);
+    if (c.objective?.trim()) input.objective = c.objective.trim();
+    if (c.budget != null) input.budget = Number(c.budget);
     if (typeof md.currency === 'string') input.currency = md.currency;
     if (c.start_date) input.startDate = new Date(c.start_date).toISOString();
     if (c.end_date) input.endDate = new Date(c.end_date).toISOString();

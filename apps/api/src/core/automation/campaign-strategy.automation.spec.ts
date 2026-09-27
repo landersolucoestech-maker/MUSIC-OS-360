@@ -63,7 +63,7 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
 const CAMPAIGN_ROW = {
   name: 'Lançamento Single Verão',
   type: 'lançamento',
-  objetivo: 'Maximizar streams na primeira semana',
+  objective: 'Maximizar streams na primeira semana',
   start_date: '2026-07-01T00:00:00.000Z',
   end_date: '2026-07-31T00:00:00.000Z',
   metadata: {

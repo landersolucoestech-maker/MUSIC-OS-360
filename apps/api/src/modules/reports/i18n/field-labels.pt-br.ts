@@ -327,6 +327,7 @@ export const FIELD_LABELS_PT_BR = {
   objetivo: 'Objetivo',
   obraMusical: 'Obra musical',
   orcamento: 'Orçamento',
+  budget: 'Orçamento',
   orgSlug: 'Identificador da organização',
   origemExterna: 'Origem externa',
   origemExternaSincronizadoEm: 'Sincronizado em (origem externa)',
@@ -340,6 +341,7 @@ export const FIELD_LABELS_PT_BR = {
   plataformas: 'Plataformas',
   platform: 'Plataforma',
   prazo: 'Prazo',
+  dueAt: 'Prazo',
   probabilidadeFechamento: 'Probabilidade de fechamento',
   probability: 'Probabilidade',
   producer: 'Produtor',
@@ -525,6 +527,7 @@ export const FIELD_LABELS_PT_BR = {
   musicTitle: 'Título da música',
   artistName: 'Nome do artista',
   videomaker: 'Videomaker',
+  videographer: 'Videomaker',
   editor: 'Editor',
   shootingDate: 'Data da gravação',
   // Same concept as `local` (line above) — this table's technical key is

@@ -61,16 +61,22 @@ describe('CreateProjectDto — real canonical contract (audit 2026-07-18)', () =
   });
 });
 
-describe('CreateProjectDto — artist_id/orcamento (GAP-0001 / DEC-001)', () => {
-  it('accepts artist_id and orcamento sent by ProjectFormModal', async () => {
-    expect(await validatePayload({ ...REAL_FORM_PAYLOAD, orcamento: 15000.5 })).toEqual([]);
+describe('CreateProjectDto — artist_id/budget (GAP-0001 / DEC-001)', () => {
+  it('accepts artist_id and budget sent by ProjectFormModal', async () => {
+    expect(await validatePayload({ ...REAL_FORM_PAYLOAD, budget: 15000.5 })).toEqual([]);
   });
 
-  it('accepts null artist_id/orcamento (cleared optional fields)', async () => {
-    expect(await validatePayload({ ...REAL_FORM_PAYLOAD, artist_id: null, orcamento: null })).toEqual([]);
+  it('accepts null artist_id/budget (cleared optional fields)', async () => {
+    expect(await validatePayload({ ...REAL_FORM_PAYLOAD, artist_id: null, budget: null })).toEqual([]);
   });
 
-  it('rejects a negative orcamento on the server (does not rely on the frontend)', async () => {
+  it('rejects a negative budget on the server (does not rely on the frontend)', async () => {
+    const errors = await validatePayload({ ...REAL_FORM_PAYLOAD, budget: -1 });
+    expect(errors.map((e) => e.property)).toContain('budget');
+  });
+
+  it('still accepts the deprecated orcamento name during the deploy-skew window, with the same validation', async () => {
+    expect(await validatePayload({ ...REAL_FORM_PAYLOAD, orcamento: 2500 })).toEqual([]);
     const errors = await validatePayload({ ...REAL_FORM_PAYLOAD, orcamento: -1 });
     expect(errors.map((e) => e.property)).toContain('orcamento');
   });

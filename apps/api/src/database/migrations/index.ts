@@ -280,6 +280,7 @@ import { DropDeadPhonogramsLegacyParticipantColumns20260923000002 } from './2026
 import { CanonicalizeFinancialRulesToEnglish20260927000001 } from './20260927000001_CanonicalizeFinancialRulesToEnglish';
 import { RenameLegacyPortugueseIndexAndConstraintNames20260927000002 } from './20260927000002_RenameLegacyPortugueseIndexAndConstraintNames';
 import { CanonicalizeArtistGoalsToEnglish20260928000001 } from './20260928000001_CanonicalizeArtistGoalsToEnglish';
+import { RenamePortugueseColumnsOnBriefingsCampaignsProjects20260928000002 } from './20260928000002_RenamePortugueseColumnsOnBriefingsCampaignsProjects';
 import { FixDefaultPrivilegesCreatorRole20260803000002 } from './20260803000002_FixDefaultPrivilegesCreatorRole';
 import { CreateContractServiceTypes20260803000003 } from './20260803000003_CreateContractServiceTypes';
 import { AddLicensePercentage20260804000001 } from './20260804000001_AddLicensePercentage';
@@ -571,4 +572,5 @@ export const ALL_MIGRATIONS = [
   CanonicalizeFinancialRulesToEnglish20260927000001,
   RenameLegacyPortugueseIndexAndConstraintNames20260927000002,
   CanonicalizeArtistGoalsToEnglish20260928000001,
+  RenamePortugueseColumnsOnBriefingsCampaignsProjects20260928000002,
 ] as const;

@@ -215,7 +215,7 @@ export function AudiovisualProjectDetailsModal({
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <DetailItem label="Diretor">{value(project.director)}</DetailItem>
 
-                <DetailItem label="Videomaker">{value(project.videomaker)}</DetailItem>
+                <DetailItem label="Videomaker">{value(project.videographer)}</DetailItem>
 
                 <DetailItem label="Editor">{value(project.editor)}</DetailItem>
 

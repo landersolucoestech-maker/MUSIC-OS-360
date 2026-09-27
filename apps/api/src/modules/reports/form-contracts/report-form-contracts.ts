@@ -314,7 +314,8 @@ const PROJECTS_CONTRACT: ReportFormContract = {
   excludedFormFields: {
     metadata: 'raw internal jsonb object',
     artist_id: 'no matching field in the Create/Edit modal',
-    orcamento: 'no matching field in the Create/Edit modal',
+    budget: 'no matching field in the Create/Edit modal',
+    orcamento: 'deprecated alias of budget (deploy-skew window), moved to budget before persistence',
     description: 'no matching field in the Create/Edit modal',
     music_genre: 'derived from the tracks, not a general form field',
     musicas: 'represented by the individual columns of the repeating group on the same sheet',
@@ -477,7 +478,7 @@ const AUDIOVISUAL_PROJECTS_CONTRACT: ReportFormContract = {
   identityColumn: 'music_title',
   fields: [
     col('music_title'), ro('artist_name'), col('type'), col('format'),
-    col('director'), col('videomaker'), col('editor'),
+    col('director'), col('videographer'), col('editor'),
     col('shooting_date'), col('location'),
     col('capture_status'), col('editing_status'), col('approval_status'),
     col('pre_release_date'), col('release_date'),
@@ -487,6 +488,7 @@ const AUDIOVISUAL_PROJECTS_CONTRACT: ReportFormContract = {
   ],
   excludedFormFields: {
     title: 'automatic duplicate of music_title — same form column, no input of its own',
+    videomaker: 'deprecated alias of videographer (deploy-skew window), moved to videographer before persistence',
     slug: 'accepted by the DTO but has no input in the Create/Edit modal',
     description: 'accepted by the DTO but has no input in the Create/Edit modal',
     objective: 'accepted by the DTO but has no input in the Create/Edit modal',
@@ -733,7 +735,7 @@ const MARKETING_CONTENT_POSTS_CONTRACT: ReportFormContract = {
 // ─── Briefing (generic, marketing) ───────────────────────────────────────────
 // Part 89 fix (briefings.service.ts): the DTO used English names
 // (title/content/campaignId/dueAt) that never reached the real physical columns
-// (title/descricao/campaign_id/prazo) — a mapping bug fixed so that
+// (title/descricao/campaign_id/due_at, then named prazo) — a mapping bug fixed so that
 // this contract is usable. Cluster E (naming-normalization): the physical
 // column descricao was renamed to content, eliminating the alias. The
 // "advanced" fields (objective, context, target audience etc., present only in
@@ -742,7 +744,7 @@ const BRIEFINGS_CONTRACT: ReportFormContract = {
   tableName: 'briefings',
   identityColumn: 'title',
   fields: [
-    col('title'), col('content'), col('campaign_id'), col('prazo'), col('status'),
+    col('title'), col('content'), col('campaign_id'), col('due_at'), col('status'),
     meta('type'), meta('owners'), meta('objective'), meta('context'), meta('audience'),
     meta('positioning'), meta('tone'), meta('requirements'), meta('creativeDirection'),
     meta('references'), meta('visualGuidelines'), meta('textGuidelines'), meta('market'),
@@ -758,7 +760,7 @@ const BRIEFINGS_CONTRACT: ReportFormContract = {
     title: 'title',
     content: 'content',
     campaignId: 'campaign_id',
-    dueAt: 'prazo',
+    dueAt: 'due_at',
   },
 };
 

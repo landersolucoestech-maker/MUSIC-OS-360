@@ -1277,8 +1277,8 @@ export class CampaignEntity {
   @Column({ type: 'varchar', length: 255 }) name: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 50, default: CampaignStatus.DRAFT }) status: CampaignStatus;
-  @Column({ type: 'text', nullable: true }) objetivo: string | null;
-  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) orcamento: string | null;
+  @Column({ type: 'text', nullable: true }) objective: string | null;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) budget: string | null;
   @Column({ type: 'timestamp', nullable: true }) start_date: Date | null;
   @Column({ type: 'timestamp', nullable: true }) end_date: Date | null;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
@@ -1305,7 +1305,7 @@ export class BriefingEntity {
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
   @Column({ type: 'uuid', nullable: true }) campaign_id: string | null;
   @Column({ type: 'varchar', length: 50, default: BriefingStatus.DRAFT }) status: BriefingStatus;
-  @Column({ type: 'timestamp', nullable: true }) prazo: Date | null;
+  @Column({ type: 'timestamp', nullable: true }) due_at: Date | null;
   @Column({ type: 'jsonb', default: {} }) metadata: Record<string, unknown>;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
   @UpdateDateColumn({ type: 'timestamp' }) updated_at: Date;
@@ -1363,7 +1363,7 @@ export class ProjectEntity {
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'varchar', length: 50, default: ProjectStatus.PLANNING }) status: ProjectStatus;
   @Column({ type: 'uuid', nullable: true }) artist_id: string | null;
-  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) orcamento: string | null;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true }) budget: string | null;
   // `description` is pure free text again — musicas[] normalized into project_tracks.
   @Column({ type: 'text', nullable: true }) description: string | null;
   @Column({ type: 'text', nullable: true }) notes: string | null;
@@ -3170,7 +3170,7 @@ export class AudiovisualProjectEntity {
   @Column({ type: 'varchar', length: 500, nullable: true }) music_title: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) artist_name: string | null;
   @Column({ type: 'varchar', length: 20, nullable: true }) format: string | null;
-  @Column({ type: 'varchar', length: 255, nullable: true }) videomaker: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true }) videographer: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) editor: string | null;
   @Column({ type: 'date', nullable: true }) shooting_date: string | null;
   @Column({ type: 'varchar', length: 255, nullable: true }) location: string | null;

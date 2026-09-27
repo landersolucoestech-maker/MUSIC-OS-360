@@ -10,7 +10,7 @@ export interface Project {
   type?: ProjectType | string | null;
   status?: ProjectStatusValue | string | null;
   artist_id?: string | null;
-  orcamento?: number | null;
+  budget?: number | null;
   description?: string | null;
   music_genre?: string | null;
   notes?: string | null;

@@ -46,7 +46,7 @@ const SKILL_NAME = 'campaign-report';
 interface CampaignRow {
   name: string | null;
   type: string | null;
-  objetivo: string | null;
+  objective: string | null;
   status: string | null;
   start_date: string | Date | null;
   end_date: string | Date | null;
@@ -107,7 +107,7 @@ export class CampaignReportAutomation {
   ): Promise<CampaignRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT c.name, c.type, c.objetivo, c.status, c.start_date, c.end_date, c.metadata,
+      `SELECT c.name, c.type, c.objective, c.status, c.start_date, c.end_date, c.metadata,
               a.nome_artistico AS artist_name,
               (SELECT COUNT(*) FROM campaign_tasks t WHERE t.campaign_id = c.id AND t.tenant_id = c.tenant_id) AS tasks_total,
               (SELECT COUNT(*) FROM campaign_tasks t WHERE t.campaign_id = c.id AND t.tenant_id = c.tenant_id AND t.status = 'done') AS tasks_completed,
@@ -148,7 +148,7 @@ export class CampaignReportAutomation {
       language: 'pt-BR',
     };
 
-    if (c.objetivo?.trim()) input.objective = c.objetivo.trim();
+    if (c.objective?.trim()) input.objective = c.objective.trim();
     if (c.artist_name?.trim()) input.relatedArtist = c.artist_name.trim();
     if (c.start_date) input.startDate = new Date(c.start_date).toISOString();
     if (c.end_date) input.endDate = new Date(c.end_date).toISOString();

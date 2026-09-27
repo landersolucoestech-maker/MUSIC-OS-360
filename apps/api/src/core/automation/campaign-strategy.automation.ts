@@ -39,7 +39,7 @@ const SKILL_NAME = 'campaign-strategy';
 interface CampaignRow {
   name: string | null;
   type: string | null;
-  objetivo: string | null;
+  objective: string | null;
   start_date: string | Date | null;
   end_date: string | Date | null;
   metadata: Record<string, unknown> | null;
@@ -96,7 +96,7 @@ export class CampaignStrategyAutomation {
   ): Promise<CampaignRow | null> {
     if (!this.ds) return null;
     const rows = (await manager.query(
-      `SELECT c.name, c.type, c.objetivo, c.start_date, c.end_date, c.metadata,
+      `SELECT c.name, c.type, c.objective, c.start_date, c.end_date, c.metadata,
               a.nome_artistico AS artist_name
          FROM campaigns c
          LEFT JOIN artists a
@@ -133,7 +133,7 @@ export class CampaignStrategyAutomation {
       language: 'pt-BR',
     };
 
-    if (c.objetivo?.trim()) input.objective = c.objetivo.trim();
+    if (c.objective?.trim()) input.objective = c.objective.trim();
     if (c.artist_name?.trim()) input.relatedArtist = c.artist_name.trim();
     if (c.start_date) input.startDate = new Date(c.start_date).toISOString();
     if (c.end_date) input.endDate = new Date(c.end_date).toISOString();

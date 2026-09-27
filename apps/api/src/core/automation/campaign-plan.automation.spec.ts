@@ -62,8 +62,8 @@ function makeEvent(overrides: Record<string, unknown> = {}) {
 const CAMPAIGN_ROW = {
   name: 'Lançamento Single Verão',
   type: 'lançamento',
-  objetivo: 'Maximizar streams na primeira semana',
-  orcamento: '5000.00',
+  objective: 'Maximizar streams na primeira semana',
+  budget: '5000.00',
   start_date: '2026-07-01T00:00:00.000Z',
   end_date: '2026-07-31T00:00:00.000Z',
   metadata: {},
@@ -127,7 +127,7 @@ describe('CampaignPlanAutomation (campaign.created → campaign-plan)', () => {
   });
 
   it('without a linked artist/budget, builds the input without those optional fields', async () => {
-    const row = { ...CAMPAIGN_ROW, artist_name: null, orcamento: null };
+    const row = { ...CAMPAIGN_ROW, artist_name: null, budget: null };
     const { ds } = makeDs([row]);
     const skillRun = makeSkillRun();
     const ai = makeAi(VALID_JSON);

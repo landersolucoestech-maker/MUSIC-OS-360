@@ -66,7 +66,7 @@ export interface AudiovisualProject {
   pre_release_date?: string | null;
   location?: string | null;
   director?: string | null;
-  videomaker?: string | null;
+  videographer?: string | null;
   editor?: string | null;
   budget?: string | number | null;
   real_cost?: string | number | null;

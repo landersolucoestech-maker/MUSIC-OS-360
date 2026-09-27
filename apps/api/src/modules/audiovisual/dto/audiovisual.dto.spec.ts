@@ -187,7 +187,7 @@ describe('CreateAudiovisualProjectDto — regression of the real bug (audit 2026
     type: 'music_video',
     format: '16:9',
     director: 'Fulano',
-    videomaker: 'Beltrano',
+    videographer: 'Beltrano',
     editor: 'Ciclano',
     shooting_date: '2026-08-01',
     location: 'Estúdio A',

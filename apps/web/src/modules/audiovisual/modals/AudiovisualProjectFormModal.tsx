@@ -23,7 +23,7 @@ type FormState = {
   type: NonNullable<AudiovisualProject["type"]>;
   format: string;
   director: string;
-  videomaker: string;
+  videographer: string;
   editor: string;
   shooting_date: string;
   location: string;
@@ -45,7 +45,7 @@ const initialForm: FormState = {
   type: "music_video",
   format: "16:9",
   director: "",
-  videomaker: "",
+  videographer: "",
   editor: "",
   shooting_date: "",
   location: "",
@@ -75,7 +75,7 @@ function projectToForm(project?: AudiovisualProject | null): FormState {
     type: project.type ?? "music_video",
     format: toText(project.format ?? "16:9"),
     director: toText(project.director),
-    videomaker: toText(project.videomaker),
+    videographer: toText(project.videographer),
     editor: toText(project.editor),
     shooting_date: toDateInput(project.shooting_date ?? project.recording_date),
     location: toText(project.location),
@@ -113,7 +113,7 @@ export function buildAudiovisualProjectPayload(
     type: form.type,
     format: form.format,
     director: form.director,
-    videomaker: form.videomaker,
+    videographer: form.videographer,
     editor: form.editor,
     shooting_date: form.shooting_date,
     location: form.location,
@@ -216,7 +216,7 @@ export function AudiovisualProjectFormModal({
           <Field label="Tipo de Produção"><Select value={form.type} onValueChange={(value) => update("type", value as FormState["type"])}><SelectTrigger className={inputClass}><SelectValue /></SelectTrigger><SelectContent><SelectItem value="music_video">Clipe Oficial</SelectItem><SelectItem value="reels">Reels Gravado</SelectItem><SelectItem value="visualizer">Visualizer</SelectItem><SelectItem value="teaser">Teaser</SelectItem><SelectItem value="backstage">Bastidores</SelectItem><SelectItem value="lyric_video">Lyric Video</SelectItem></SelectContent></Select></Field>
           <Field label="Formato"><Select value={form.format} onValueChange={(value) => update("format", value)}><SelectTrigger className={inputClass}><SelectValue /></SelectTrigger><SelectContent><SelectItem value="16:9">16:9</SelectItem><SelectItem value="9:16">9:16</SelectItem><SelectItem value="1:1">1:1</SelectItem><SelectItem value="4:5">4:5</SelectItem></SelectContent></Select></Field>
           <Field label="Diretor"><Input value={form.director} onChange={(event) => update("director", event.target.value)} className={inputClass} placeholder="Diretor" /></Field>
-          <Field label="Videomaker"><Input value={form.videomaker} onChange={(event) => update("videomaker", event.target.value)} className={inputClass} placeholder="Videomaker" /></Field>
+          <Field label="Videomaker"><Input value={form.videographer} onChange={(event) => update("videographer", event.target.value)} className={inputClass} placeholder="Videomaker" /></Field>
           <Field label="Editor"><Input value={form.editor} onChange={(event) => update("editor", event.target.value)} className={inputClass} placeholder="Editor" /></Field>
           <Field label="Data da Gravação"><DatePickerField value={form.shooting_date} onChange={(iso) => update("shooting_date", iso)} className={inputClass} /></Field>
           <Field label="Local da Gravação"><Input value={form.location} onChange={(event) => update("location", event.target.value)} className={inputClass} placeholder="Cidade / Local" /></Field>

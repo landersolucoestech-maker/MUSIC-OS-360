@@ -3,6 +3,10 @@ import { IsString, IsOptional, IsIn, IsNumber, IsUUID, IsArray, MaxLength, Min }
 import { Type } from 'class-transformer';
 import { ProjectStatus } from '@music-os-360/types';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
+import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
+
+/** Deploy-skew window: field names a pre-canonical web build still sends (see applyDeprecatedFieldAliases). */
+export const PROJECT_DEPRECATED_FIELDS: DeprecatedFieldAliases = { orcamento: 'budget' };
 
 const TYPES = ['album', 'ep', 'single', 'video', 'tour', 'podcast', 'other'] as const;
 const STATUSES = Object.values(ProjectStatus) as string[];
@@ -19,7 +23,9 @@ export class CreateProjectDto {
   @ApiProperty({ enum: TYPES }) @IsIn(TYPES) type!: typeof TYPES[number];
   @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
   // GAP-0001: the production budget is never negative — authoritative server-side validation.
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) orcamento?: number;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) budget?: number;
+  @ApiPropertyOptional({ deprecated: true, description: 'Deprecated alias of budget.' })
+  @IsOptional() @IsNumber() @Min(0) @Type(() => Number) orcamento?: number;
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) music_genre?: string;

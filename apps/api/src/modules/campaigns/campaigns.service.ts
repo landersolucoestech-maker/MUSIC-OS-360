@@ -69,7 +69,7 @@ export class CampaignsService {
   /**
    * find-c06511bf: CreateCampaignDto/UpdateCampaignDto use EN camelCase
    * field names (title/artistId/budget/currency/startsAt/endsAt) that never
-   * matched CampaignEntity's real columns (name/artist_id/orcamento/
+   * matched CampaignEntity's real columns (name/artist_id/budget/
    * start_date/end_date — `name` was `nome` at the time of this bug,
    * since renamed; the DTO's own field stays `title`, mapped onto the
    * `name` column in dtoToEntity()) — TypeORM silently drops unrecognized
@@ -93,7 +93,7 @@ export class CampaignsService {
     if (dto['title']    !== undefined) out['name']       = dto['title'];
     if (dto['type']     !== undefined) out['type']       = dto['type'];
     if (dto['artistId'] !== undefined) out['artist_id']  = dto['artistId'];
-    if (dto['budget']   !== undefined) out['orcamento']  = dto['budget'];
+    if (dto['budget']   !== undefined) out['budget']     = dto['budget'];
     if (dto['startsAt'] !== undefined) out['start_date'] = dto['startsAt'];
     if (dto['endsAt']   !== undefined) out['end_date']   = dto['endsAt'];
     if (dto['currency'] !== undefined || dto['platforms'] !== undefined || dto['metadata'] !== undefined) {

@@ -61,7 +61,7 @@ const CANONICAL_ORDER: Record<string, string[]> = {
   ],
   projects: [
     'id', 'tenant_id', 'type', 'title', 'music_genre', 'notes',
-    'status', 'artist_id', 'orcamento', 'description', 'metadata', 'created_at',
+    'status', 'artist_id', 'budget', 'description', 'metadata', 'created_at',
     'updated_at', 'created_by', 'updated_by', 'deleted_at',
   ],
   project_tracks: [
@@ -75,7 +75,7 @@ const CANONICAL_ORDER: Record<string, string[]> = {
   ],
   audiovisual_projects: [
     'id', 'tenant_id', 'phonogram_id', 'music_title', 'title', 'artist_name',
-    'type', 'format', 'director', 'videomaker', 'editor', 'shooting_date',
+    'type', 'format', 'director', 'videographer', 'editor', 'shooting_date',
     'location', 'capture_status', 'editing_status', 'approval_status', 'pre_release_date', 'release_date',
     'budget_estimated', 'budget_actual', 'concept', 'observations', 'status', 'final_status',
     'completed_at', 'publish_date', 'artist_id', 'release_id', 'campaign_id', 'event_id',
@@ -185,8 +185,8 @@ const CANONICAL_ORDER: Record<string, string[]> = {
     'created_at', 'updated_at', 'updated_by',
   ],
   campaigns: [
-    'id', 'tenant_id', 'name', 'type', 'status', 'objetivo',
-    'orcamento', 'start_date', 'end_date', 'artist_id', 'metadata', 'created_at',
+    'id', 'tenant_id', 'name', 'type', 'status', 'objective',
+    'budget', 'start_date', 'end_date', 'artist_id', 'metadata', 'created_at',
     'updated_at', 'created_by', 'updated_by', 'deleted_at',
   ],
   campaign_tasks: [
