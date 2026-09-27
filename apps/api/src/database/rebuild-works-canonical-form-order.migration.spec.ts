@@ -19,11 +19,11 @@ describe('RebuildWorksInCanonicalFormOrder20260719000002', () => {
     const tenantIdx = block.indexOf('tenant_id ');
     const projectIdx = block.indexOf('projeto_id ');
     const codEntidadeIdx = block.indexOf('cod_entidade ');
-    const tituloIdx = block.indexOf('titulo ');
+    const titleIdx = block.indexOf('titulo ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
     expect(projectIdx).toBeGreaterThan(tenantIdx);
     expect(codEntidadeIdx).toBeGreaterThan(projectIdx);
-    expect(tituloIdx).toBeGreaterThan(codEntidadeIdx);
+    expect(titleIdx).toBeGreaterThan(codEntidadeIdx);
   });
 
   it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {

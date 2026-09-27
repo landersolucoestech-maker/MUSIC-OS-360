@@ -1153,8 +1153,8 @@ export function ContractWizard({ open, onOpenChange, contrato: contract }: Contr
         notes:            wizardBlob,
         signing_platform: provider,
         // Deliberately map WizardSigner to the persisted WizardSignerRecord shape
-        signers: state.signers.map(({ name, email, role, obrigatorio, ordem, provider }): WizardSignerRecord => ({
-          name, email, role, obrigatorio, ordem, provider,
+        signers: state.signers.map(({ name, email, role, obrigatorio: required, ordem, provider }): WizardSignerRecord => ({
+          name, email, role, obrigatorio: required, ordem, provider,
         })),
       };
 

@@ -44,7 +44,7 @@ function catLabel(cat: string) {
 // ── KPI cards ─────────────────────────────────────────────────────────────────
 
 function KpiCards({
-  totalReceitas: incomeTotal, totalDespesas: expensesTotal, lucroLiquido: netProfit, margemLiquida,
+  totalReceitas: incomeTotal, totalDespesas: expensesTotal, lucroLiquido: netProfit, margemLiquida: netMargin,
 }: {
   totalReceitas: number; totalDespesas: number; lucroLiquido: number; margemLiquida: number;
 }) {
@@ -93,8 +93,8 @@ function KpiCards({
             <div className="p-2 bg-primary/10 rounded-lg"><RotateCcw className="h-5 w-5 text-primary" /></div>
             <div>
               <p className="text-sm text-muted-foreground">Margem Líquida</p>
-              <p className={`text-lg font-bold ${margemLiquida >= 0 ? "text-primary" : "text-destructive"}`} data-testid="metric-margem">
-                {margemLiquida.toFixed(1)}%
+              <p className={`text-lg font-bold ${netMargin >= 0 ? "text-primary" : "text-destructive"}`} data-testid="metric-margem">
+                {netMargin.toFixed(1)}%
               </p>
             </div>
           </div>
@@ -108,7 +108,7 @@ function KpiCards({
 
 function PlCompanyTable({
   receitasPorCategoria: incomeByCategory, despesasPorCategoria: expensesByCategory,
-  totalReceitas: incomeTotal, totalDespesas: expensesTotal, lucroLiquido: netProfit, margemLiquida,
+  totalReceitas: incomeTotal, totalDespesas: expensesTotal, lucroLiquido: netProfit, margemLiquida: netMargin,
 }: {
   receitasPorCategoria: { categoria: string; valor: number }[];
   despesasPorCategoria: { categoria: string; valor: number }[];
@@ -176,7 +176,7 @@ function PlCompanyTable({
                 {formatCurrency(netProfit)}
               </TableCell>
               <TableCell className={`text-right font-bold ${netProfit >= 0 ? "text-primary" : "text-destructive"}`}>
-                {margemLiquida.toFixed(1)}%
+                {netMargin.toFixed(1)}%
               </TableCell>
             </TableRow>
           </TableBody>
@@ -220,7 +220,7 @@ export default function ProfitAndLoss() {
   const incomeTotal = sum(income, "valor");
   const expensesTotal = sum(expenses, "valor");
   const netProfit = incomeTotal - expensesTotal;
-  const margemLiquida = incomeTotal > 0 ? (netProfit / incomeTotal) * 100 : 0;
+  const netMargin = incomeTotal > 0 ? (netProfit / incomeTotal) * 100 : 0;
 
   const incomeByCategory = useMemo(() => {
     const map: Record<string, number> = {};
@@ -286,7 +286,7 @@ export default function ProfitAndLoss() {
     );
   }
 
-  const plCompanyProps = { receitasPorCategoria: incomeByCategory, despesasPorCategoria: expensesByCategory, totalReceitas: incomeTotal, totalDespesas: expensesTotal, lucroLiquido: netProfit, margemLiquida };
+  const plCompanyProps = { receitasPorCategoria: incomeByCategory, despesasPorCategoria: expensesByCategory, totalReceitas: incomeTotal, totalDespesas: expensesTotal, lucroLiquido: netProfit, margemLiquida: netMargin };
 
   return (
     <FeatureGate feature="moduleAccounting" featureName="Contabilidade">
@@ -338,7 +338,7 @@ export default function ProfitAndLoss() {
         </div>
 
         {/* KPIs — always visible above the tabs */}
-        <KpiCards totalReceitas={incomeTotal} totalDespesas={expensesTotal} lucroLiquido={netProfit} margemLiquida={margemLiquida} />
+        <KpiCards totalReceitas={incomeTotal} totalDespesas={expensesTotal} lucroLiquido={netProfit} margemLiquida={netMargin} />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} data-testid="tabs-contabilidade">
           <TabsList className="grid w-full grid-cols-4">

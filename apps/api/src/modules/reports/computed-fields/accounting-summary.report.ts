@@ -36,8 +36,8 @@ export async function fetchAccountingSummaryRows(
   return rows.map((r) => {
     const income = Number(r.receitas);
     const expenses = Number(r.despesas);
-    const resultado = income - expenses;
-    const margem = income > 0 ? Number(((resultado / income) * 100).toFixed(2)) : 0;
-    return { artista: r.artista, receitas: income, despesas: expenses, resultado, margem };
+    const result = income - expenses;
+    const marginPct = income > 0 ? Number(((result / income) * 100).toFixed(2)) : 0;
+    return { artista: r.artista, receitas: income, despesas: expenses, resultado: result, margem: marginPct };
   });
 }

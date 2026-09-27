@@ -8,7 +8,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
  * FonogramaFormModal.tsx (`Participante` interface) -- confirmed by
  * direct inspection of the component, not assumed.
  */
-export class ParticipanteDto {
+export class ParticipantDto {
   @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() name?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() percentual?: string;
@@ -29,18 +29,18 @@ export class ParticipanteDto {
  * writer -- this is the root reason: the live field that should have
  * replaced it never accepted real data).
  */
-export class ParticipacaoDto {
-  @ApiPropertyOptional({ type: [ParticipanteDto] })
-  @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => ParticipanteDto)
-  produtorFonografico?: ParticipanteDto[];
+export class ParticipationDto {
+  @ApiPropertyOptional({ type: [ParticipantDto] })
+  @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => ParticipantDto)
+  produtorFonografico?: ParticipantDto[];
 
-  @ApiPropertyOptional({ type: [ParticipanteDto] })
-  @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => ParticipanteDto)
-  interprete?: ParticipanteDto[];
+  @ApiPropertyOptional({ type: [ParticipantDto] })
+  @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => ParticipantDto)
+  interprete?: ParticipantDto[];
 
-  @ApiPropertyOptional({ type: [ParticipanteDto] })
-  @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => ParticipanteDto)
-  musicoAcompanhante?: ParticipanteDto[];
+  @ApiPropertyOptional({ type: [ParticipantDto] })
+  @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => ParticipantDto)
+  musicoAcompanhante?: ParticipantDto[];
 }
 
 export class CreatePhonogramDto {
@@ -133,9 +133,9 @@ export class CreatePhonogramDto {
   @ApiPropertyOptional() @IsOptional() @IsString() notes?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() work_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() artist_id?: string;
-  @ApiPropertyOptional({ type: ParticipacaoDto })
-  @IsOptional() @IsObject() @ValidateNested() @Type(() => ParticipacaoDto)
-  participacao?: ParticipacaoDto;
+  @ApiPropertyOptional({ type: ParticipationDto })
+  @IsOptional() @IsObject() @ValidateNested() @Type(() => ParticipationDto)
+  participacao?: ParticipationDto;
   @ApiPropertyOptional() @IsOptional() @IsObject() arquivo_audio?: Record<string, unknown>;
   @ApiPropertyOptional() @IsOptional() @IsUUID() audio_file_id?: string;
 }

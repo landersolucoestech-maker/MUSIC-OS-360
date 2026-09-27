@@ -58,17 +58,17 @@ function splitFreeTextNames(text: string | null | undefined): string[] {
   return text.split(/[;,/\n]+/).map((s) => s.trim()).filter((s) => s.length > 0);
 }
 
-interface ParticipacaoParticipante {
+interface ParticipationEntry {
   name?: string;
 }
-interface ParticipacaoRow {
-  produtorFonografico?: ParticipacaoParticipante[];
-  interprete?: ParticipacaoParticipante[];
+interface ParticipationRow {
+  produtorFonografico?: ParticipationEntry[];
+  interprete?: ParticipationEntry[];
 }
 
 interface RecordingRow {
   title: string;
-  participacao: ParticipacaoRow | null;
+  participacao: ParticipationRow | null;
   isrc: string | null;
   gravadora: string | null;
   metadata: Record<string, unknown> | null;
@@ -76,7 +76,7 @@ interface RecordingRow {
 
 /** Non-empty names of a `participacao` category (structured jsonb --
  * see ParticipacaoDto in modules/phonograms/dto/create-phonogram.dto.ts). */
-function participantNames(list: ParticipacaoParticipante[] | undefined): string[] {
+function participantNames(list: ParticipationEntry[] | undefined): string[] {
   if (!Array.isArray(list)) return [];
   return list.map((p) => p?.name?.trim()).filter((n): n is string => !!n);
 }

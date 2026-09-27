@@ -15,11 +15,11 @@ describe('RebuildLicensesInCanonicalFormOrder20260719000015', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
-    const tituloIdx = block.indexOf('titulo ');
+    const titleIdx = block.indexOf('titulo ');
     const workIdx = block.indexOf('obra_id ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
-    expect(tituloIdx).toBeGreaterThan(tenantIdx);
-    expect(workIdx).toBeGreaterThan(tituloIdx);
+    expect(titleIdx).toBeGreaterThan(tenantIdx);
+    expect(workIdx).toBeGreaterThan(titleIdx);
   });
 
   it('remuneration_type/artista_id (the migration\'s historical name) sit before the audit block (no longer after deleted_at)', () => {

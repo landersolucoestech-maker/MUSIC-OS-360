@@ -33,7 +33,7 @@ interface ParticipantView {
   percentual?: string;
 }
 
-interface ParticipacaoView {
+interface ParticipationView {
   produtorFonografico?: ParticipantView[];
   interprete?: ParticipantView[];
   musicoAcompanhante?: ParticipantView[];
@@ -107,7 +107,7 @@ export interface PhonogramViewData {
   obra?: LinkedWorkView | null;
   work_id?: string | null;
   workId?: string | null;
-  participacao?: ParticipacaoView | null;
+  participacao?: ParticipationView | null;
   arquivoAudio?: AudioFileView | null;
   arquivo_audio?: AudioFileView | null;
 }
@@ -320,7 +320,7 @@ export function PhonogramViewModal({
   const status = pickStr(phonogram.status);
   const createdAt = (phonogram as { created_at?: string }).created_at;
 
-  const participacao: Required<ParticipacaoView> = {
+  const participation: Required<ParticipationView> = {
     produtorFonografico: phonogram.participacao?.produtorFonografico ?? [],
     interprete: phonogram.participacao?.interprete ?? [],
     musicoAcompanhante: phonogram.participacao?.musicoAcompanhante ?? [],
@@ -330,20 +330,20 @@ export function PhonogramViewModal({
     cat.reduce((t, p) => t + (parseFloat(p.percentual ?? "") || 0), 0);
 
   const percentageTotal =
-    calcCategory(participacao.produtorFonografico) +
-    calcCategory(participacao.interprete) +
-    calcCategory(participacao.musicoAcompanhante);
+    calcCategory(participation.produtorFonografico) +
+    calcCategory(participation.interprete) +
+    calcCategory(participation.musicoAcompanhante);
 
   const audioFile = phonogram.arquivoAudio ?? phonogram.arquivo_audio ?? null;
 
-  const renderParticipacaoSection = (
+  const renderParticipationSection = (
     title: string,
-    category: keyof Required<ParticipacaoView>,
+    category: keyof Required<ParticipationView>,
     percentageMax: number,
     isOpen: boolean,
     setIsOpen: (v: boolean) => void,
   ) => {
-    const list: ParticipantView[] = participacao[category] ?? [];
+    const list: ParticipantView[] = participation[category] ?? [];
     const currentPercentage = calcCategory(list);
 
     return (
@@ -530,21 +530,21 @@ export function PhonogramViewModal({
               </div>
 
               <div className="space-y-2">
-                {renderParticipacaoSection(
+                {renderParticipationSection(
                   "Produtor Fonográfico",
                   "produtorFonografico",
                   41.7,
                   producerOpen,
                   setProducerOpen,
                 )}
-                {renderParticipacaoSection(
+                {renderParticipationSection(
                   "Intérprete",
                   "interprete",
                   41.7,
                   performerOpen,
                   setPerformerOpen,
                 )}
-                {renderParticipacaoSection(
+                {renderParticipationSection(
                   "Músico Acompanhante",
                   "musicoAcompanhante",
                   16.6,

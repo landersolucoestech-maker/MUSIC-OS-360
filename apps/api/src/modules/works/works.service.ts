@@ -13,7 +13,7 @@ import type { CreateWorkDto }  from './dto/create-work.dto';
 import type { UpdateWorkDto }  from './dto/update-work.dto';
 import type { QueryWorkDto }   from './dto/query-work.dto';
 
-export interface ParticipanteResponse {
+export interface ParticipantResponse {
   id: string;
   name: string;
   classeFuncao: string;
@@ -21,7 +21,7 @@ export interface ParticipanteResponse {
   percentual: string | null;
 }
 
-type WorkWithParticipantes = WorkEntity & { participantes: ParticipanteResponse[] };
+type WorkWithParticipants = WorkEntity & { participantes: ParticipantResponse[] };
 
 @Injectable()
 export class WorksService {
@@ -46,7 +46,7 @@ export class WorksService {
    * array into the SAME format the frontend always consumed, so the
    * API contract does not change.
    */
-  private async hydrateParticipantes(works: WorkEntity[]): Promise<WorkWithParticipantes[]> {
+  private async hydrateParticipants(works: WorkEntity[]): Promise<WorkWithParticipants[]> {
     if (works.length === 0) return [];
     const ids = works.map((w) => w.id);
     const rows = await this.participantsRepo!
@@ -55,7 +55,7 @@ export class WorksService {
       .orderBy('p.sort_order', 'ASC')
       .getMany();
 
-    const byWork = new Map<string, ParticipanteResponse[]>();
+    const byWork = new Map<string, ParticipantResponse[]>();
     for (const row of rows) {
       const list = byWork.get(row.work_id) ?? [];
       list.push({
@@ -74,15 +74,15 @@ export class WorksService {
   /** Receives the repo explicitly (instead of always using this.participantsRepo)
    * so it can run inside the SAME transaction as the work's update/create —
    * see the comment in update(). */
-  private async replaceParticipantes(
+  private async replaceParticipants(
     repo: Repository<WorkParticipantEntity>,
     tenantId: string,
     workId: string,
-    participantes: unknown[] | undefined,
+    participants: unknown[] | undefined,
   ): Promise<void> {
-    if (participantes === undefined) return;
+    if (participants === undefined) return;
     await repo.delete({ work_id: workId, tenant_id: tenantId });
-    const rows = (participantes as Array<Record<string, unknown>>).map((p, index) =>
+    const rows = (participants as Array<Record<string, unknown>>).map((p, index) =>
       repo.create({
         id: (typeof p.id === 'string' && p.id) || randomUUID(),
         tenant_id: tenantId,
@@ -129,7 +129,7 @@ export class WorksService {
       .take((query as any).limit ?? 50);
 
     const [data, total] = await qb.getManyAndCount();
-    const hydrated = await this.hydrateParticipantes(data);
+    const hydrated = await this.hydrateParticipants(data);
     return { data: hydrated, meta: { total, offset: (query as any).offset ?? 0, limit: (query as any).limit ?? 50 } };
   }
 
@@ -151,13 +151,13 @@ export class WorksService {
     return rows.map((r) => r.musicGenre);
   }
 
-  async findById(tenantId: string, id: string): Promise<WorkWithParticipantes> {
+  async findById(tenantId: string, id: string): Promise<WorkWithParticipants> {
     const result = await this.repo!
       .createQueryBuilder('w')
       .where('w.id = :id AND w.tenant_id = :tenantId AND w.deleted_at IS NULL', { id, tenantId })
       .getOne();
     if (!result) throw new NotFoundException('Obra não encontrada');
-    const [hydrated] = await this.hydrateParticipantes([result]);
+    const [hydrated] = await this.hydrateParticipants([result]);
     return hydrated;
   }
 
@@ -180,7 +180,7 @@ export class WorksService {
     rest.isrc = canonicalIsrc;
   }
 
-  async create(tenantId: string, userId: string, dto: CreateWorkDto): Promise<WorkWithParticipantes> {
+  async create(tenantId: string, userId: string, dto: CreateWorkDto): Promise<WorkWithParticipants> {
     // works.type is NOT NULL. find-tipo-obra-type-collision: the real form
     // (formToObraPayload) NEVER sends `type` -- only `tipo_obra` ('autoral'|
     // 'referencia', the record's origin in the catalog, see
@@ -192,7 +192,7 @@ export class WorksService {
     // through the real UI. `tipo_obra` remains its own column, untouched;
     // `type` now only uses the real default when the caller does not send it.
     const type = dto.type ?? 'composicao';
-    const { participantes, ...rest } = dto as CreateWorkDto & { participantes?: unknown[] };
+    const { participantes: participants, ...rest } = dto as CreateWorkDto & { participantes?: unknown[] };
     // find-f81eebf2: artist_id had no FK (DB or app-layer) — a work could
     // silently reference another tenant's artist.
     await assertSameTenantFk(this.ds!, 'artists', rest.artist_id, tenantId, 'Artista');
@@ -222,7 +222,7 @@ export class WorksService {
         updated_by: userId,
       });
       const savedWork = (await workRepo.save(entity as any)) as WorkEntity;
-      await this.replaceParticipantes(participantsRepo, tenantId, savedWork.id, participantes);
+      await this.replaceParticipants(participantsRepo, tenantId, savedWork.id, participants);
       return savedWork;
     });
 
@@ -239,9 +239,9 @@ export class WorksService {
     return this.findById(tenantId, saved.id);
   }
 
-  async update(tenantId: string, userId: string, id: string, dto: UpdateWorkDto): Promise<WorkWithParticipantes> {
+  async update(tenantId: string, userId: string, id: string, dto: UpdateWorkDto): Promise<WorkWithParticipants> {
     const current = await this.findById(tenantId, id);
-    const { participantes, expectedUpdatedAt, ...rest } = dto as UpdateWorkDto & { participantes?: unknown[] };
+    const { participantes: participants, expectedUpdatedAt, ...rest } = dto as UpdateWorkDto & { participantes?: unknown[] };
     // find-f81eebf2: only validate when the patch actually sets artist_id —
     // omitted means "unchanged", already validated at its own create time.
     if (rest.artist_id !== undefined) await assertSameTenantFk(this.ds!, 'artists', rest.artist_id, tenantId, 'Artista');
@@ -281,7 +281,7 @@ export class WorksService {
         expectedUpdatedAt,
         'Esta obra foi alterada por outro usuário desde que você a carregou. Recarregue e tente novamente.',
       );
-      await this.replaceParticipantes(participantsRepo, tenantId, id, participantes);
+      await this.replaceParticipants(participantsRepo, tenantId, id, participants);
     });
     return this.findById(tenantId, id);
   }

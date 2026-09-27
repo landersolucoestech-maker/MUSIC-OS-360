@@ -337,7 +337,7 @@ export function WorkFormModal({
     enabled: searchProjectOpen,
   });
 
-  const [participacaoOpen, setParticipacaoOpen] = useState(true);
+  const [participationOpen, setParticipationOpen] = useState(true);
   const [otherTitlesOpen, setOtherTitlesOpen] = useState(false);
   const [referenciasOpen, setReferenciasOpen] = useState(false);
   const [lyricsOpen, setLyricsOpen] = useState(true);
@@ -1130,8 +1130,8 @@ export function WorkFormModal({
 
           {/* Participation */}
           <Collapsible
-            open={participacaoOpen}
-            onOpenChange={setParticipacaoOpen}
+            open={participationOpen}
+            onOpenChange={setParticipationOpen}
           >
             <div className="border border-border rounded-lg bg-muted/10">
               <CollapsibleTrigger className="flex items-center justify-between w-full p-5">
@@ -1143,7 +1143,7 @@ export function WorkFormModal({
                   </span>
                 </div>
                 <ChevronDown
-                  className={`w-4 h-4 transition-transform ${participacaoOpen ? "rotate-180" : ""}`}
+                  className={`w-4 h-4 transition-transform ${participationOpen ? "rotate-180" : ""}`}
                 />
               </CollapsibleTrigger>
               <CollapsibleContent className="px-5 pb-5 space-y-4">

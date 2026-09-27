@@ -17,19 +17,19 @@ describe('RebuildPhonogramsInCanonicalFormOrder20260719000003', () => {
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
     const workIdx = block.indexOf('obra_id ');
-    const tituloIdx = block.indexOf('titulo ');
+    const titleIdx = block.indexOf('titulo ');
     const codEntidadeIdx = block.indexOf('cod_entidade ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
     expect(workIdx).toBeGreaterThan(tenantIdx);
-    expect(tituloIdx).toBeGreaterThan(workIdx);
-    expect(codEntidadeIdx).toBeGreaterThan(tituloIdx);
+    expect(titleIdx).toBeGreaterThan(workIdx);
+    expect(codEntidadeIdx).toBeGreaterThan(titleIdx);
   });
 
   it('participacao and arquivo_audio (real, visible sections) come before the legacy fields', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
-    const participacaoIdx = block.indexOf('participacao ');
+    const participationIdx = block.indexOf('participacao ');
     const composersIdx = block.indexOf('compositores ');
-    expect(composersIdx).toBeGreaterThan(participacaoIdx);
+    expect(composersIdx).toBeGreaterThan(participationIdx);
   });
 
   it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {

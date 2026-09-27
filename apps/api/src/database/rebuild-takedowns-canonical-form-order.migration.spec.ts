@@ -17,11 +17,11 @@ describe('RebuildTakedownsInCanonicalFormOrder20260719000016', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
-    const tituloIdx = block.indexOf('titulo ');
+    const titleIdx = block.indexOf('titulo ');
     const platformIdx = block.indexOf('plataforma ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
-    expect(tituloIdx).toBeGreaterThan(tenantIdx);
-    expect(platformIdx).toBeGreaterThan(tituloIdx);
+    expect(titleIdx).toBeGreaterThan(tenantIdx);
+    expect(platformIdx).toBeGreaterThan(titleIdx);
   });
 
   it('drops url/resposta/obra_id/artista_id (proven orphans, the migration\'s historical names) with fail-fast validation', () => {

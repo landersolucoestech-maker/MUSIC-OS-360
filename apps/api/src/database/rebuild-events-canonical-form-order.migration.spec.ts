@@ -17,11 +17,11 @@ describe('RebuildEventsInCanonicalFormOrder20260719000007', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
-    const tituloIdx = block.indexOf('titulo ');
+    const titleIdx = block.indexOf('titulo ');
     const dataIdx = block.search(/\bdata\s+timestamp/);
     const startsAtIdx = block.indexOf('starts_at');
     expect(tenantIdx).toBeGreaterThan(idIdx);
-    expect(tituloIdx).toBeGreaterThan(tenantIdx);
+    expect(titleIdx).toBeGreaterThan(tenantIdx);
     expect(startsAtIdx).toBeGreaterThan(dataIdx);
     expect(startsAtIdx - dataIdx).toBeLessThan(120);
   });

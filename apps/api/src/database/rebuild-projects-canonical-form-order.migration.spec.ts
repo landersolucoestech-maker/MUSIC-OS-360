@@ -18,12 +18,12 @@ describe('RebuildProjectsInCanonicalFormOrder20260719000005', () => {
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
     const typeIdx = block.indexOf('tipo ');
-    const tituloIdx = block.indexOf('titulo ');
+    const titleIdx = block.indexOf('titulo ');
     const statusIdx = block.indexOf('status ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
     expect(typeIdx).toBeGreaterThan(tenantIdx);
-    expect(tituloIdx).toBeGreaterThan(typeIdx);
-    expect(statusIdx).toBeGreaterThan(tituloIdx);
+    expect(titleIdx).toBeGreaterThan(typeIdx);
+    expect(statusIdx).toBeGreaterThan(titleIdx);
   });
 
   it('artista_id (technical relation, written only by bulk import) comes after status', () => {

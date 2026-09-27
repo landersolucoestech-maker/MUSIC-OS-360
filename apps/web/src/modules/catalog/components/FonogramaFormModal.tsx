@@ -60,7 +60,7 @@ interface LinkedWorkInput {
   status?: string | null;
 }
 
-interface ParticipacaoInput {
+interface ParticipationInput {
   produtorFonografico?: Participant[];
   interprete?: Participant[];
   musicoAcompanhante?: Participant[];
@@ -92,7 +92,7 @@ export type PhonogramFormInput = Partial<PhonogramRow> & {
   paisPublicacao?: string | null;
   obraVinculada?: LinkedWorkInput | null;
   obra?: LinkedWorkInput | null;
-  participacao?: ParticipacaoInput | null;
+  participacao?: ParticipationInput | null;
   arquivoAudio?: AudioFileInput | null;
 };
 
@@ -120,11 +120,11 @@ const pickBool = (...values: Array<unknown>): boolean | undefined => {
 };
 
 const toParticipationCategory = (
-  raw: ParticipacaoInput | Json | null | undefined
+  raw: ParticipationInput | Json | null | undefined
 ): ParticipationCategory => {
   const empty: ParticipationCategory = { produtorFonografico: [], interprete: [], musicoAcompanhante: [] };
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return empty;
-  const r = raw as ParticipacaoInput;
+  const r = raw as ParticipationInput;
   return {
     produtorFonografico: Array.isArray(r.produtorFonografico) ? r.produtorFonografico : [],
     interprete: Array.isArray(r.interprete) ? r.interprete : [],
@@ -324,7 +324,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
   const [notes, setNotes] = useState(pickStr(phonogram?.notes));
 
   // Participation
-  const [participacao, setParticipacao] = useState<ParticipationCategory>(() => {
+  const [participation, setParticipation] = useState<ParticipationCategory>(() => {
     const fromCat = toParticipationCategory(phonogram?.participacao);
     if (fromCat.produtorFonografico.length === 0 && (phonogram as any)?.produtores) {
       return phonogramToParticipation(phonogram);
@@ -384,7 +384,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
     setTitle(f.title);
     setRecordLabel(f.gravadora);
     setNotes(f.notes);
-    setParticipacao(() => {
+    setParticipation(() => {
       const fromCat = toParticipationCategory(phonogram?.participacao);
       if (fromCat.produtorFonografico.length === 0 && (phonogram as any)?.produtores) {
         return phonogramToParticipation(phonogram);
@@ -475,29 +475,29 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
   };
 
   const calculateTotalPercentage = () => {
-    return calculateCategoryPercentage(participacao.produtorFonografico) +
-           calculateCategoryPercentage(participacao.interprete) +
-           calculateCategoryPercentage(participacao.musicoAcompanhante);
+    return calculateCategoryPercentage(participation.produtorFonografico) +
+           calculateCategoryPercentage(participation.interprete) +
+           calculateCategoryPercentage(participation.musicoAcompanhante);
   };
 
   const addParticipant = (category: keyof ParticipationCategory) => {
-    setParticipacao({
-      ...participacao,
-      [category]: [...participacao[category], { id: crypto.randomUUID(), name: "", percentual: "" }]
+    setParticipation({
+      ...participation,
+      [category]: [...participation[category], { id: crypto.randomUUID(), name: "", percentual: "" }]
     });
   };
 
   const updateParticipant = (category: keyof ParticipationCategory, id: string, field: keyof Participant, value: string) => {
-    setParticipacao({
-      ...participacao,
-      [category]: participacao[category].map(p => p.id === id ? { ...p, [field]: value } : p)
+    setParticipation({
+      ...participation,
+      [category]: participation[category].map(p => p.id === id ? { ...p, [field]: value } : p)
     });
   };
 
   const removeParticipant = (category: keyof ParticipationCategory, id: string) => {
-    setParticipacao({
-      ...participacao,
-      [category]: participacao[category].filter(p => p.id !== id)
+    setParticipation({
+      ...participation,
+      [category]: participation[category].filter(p => p.id !== id)
     });
   };
 
@@ -590,7 +590,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
       gravadora: recordLabel || null,
       notes: notes || null,
       work_id: linkedWork && typeof linkedWork.id === "string" ? linkedWork.id : null,
-      participacao: participacao as unknown as Json,
+      participacao: participation as unknown as Json,
       arquivo_audio: audioFile as unknown as Json,
       audio_file_id: audioFile?.fileId ?? null,
     };
@@ -674,14 +674,14 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
     }
   };
 
-  const renderParticipacaoSection = (
+  const renderParticipationSection = (
     title: string,
     category: keyof ParticipationCategory,
     percentageMax: number,
     isOpen: boolean,
     setIsOpen: (v: boolean) => void
   ) => {
-    const currentPercentage = calculateCategoryPercentage(participacao[category]);
+    const currentPercentage = calculateCategoryPercentage(participation[category]);
     
     return (
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -696,9 +696,9 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
             <Plus className="w-4 h-4 mr-1" /> Adicionar
           </Button>
           
-          {participacao[category].length > 0 ? (
+          {participation[category].length > 0 ? (
             <div className="space-y-2">
-              {participacao[category].map((p) => (
+              {participation[category].map((p) => (
                 <div key={p.id} className="flex gap-3 items-center">
                   <ArtistNameInput
                     value={p.name}
@@ -903,7 +903,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
                                 const performers: Participant[] = artistName
                                   ? [{ id: crypto.randomUUID(), name: artistName, percentual: "", artist_id: artistId }]
                                   : [];
-                                setParticipacao(prev => ({
+                                setParticipation(prev => ({
                                   ...prev,
                                   // produtorFonografico: leave blank for manual fill
                                   interprete: prev.interprete.length === 0 ? performers : prev.interprete,
@@ -1186,9 +1186,9 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
             </div>
             
             <div className="space-y-3">
-              {renderParticipacaoSection("Produtor Fonográfico", "produtorFonografico", 41.70, producerOpen, setProducerOpen)}
-              {renderParticipacaoSection("Intérprete", "interprete", 41.70, performerOpen, setPerformerOpen)}
-              {renderParticipacaoSection("Músico Acompanhante", "musicoAcompanhante", 16.60, musicoOpen, setMusicoOpen)}
+              {renderParticipationSection("Produtor Fonográfico", "produtorFonografico", 41.70, producerOpen, setProducerOpen)}
+              {renderParticipationSection("Intérprete", "interprete", 41.70, performerOpen, setPerformerOpen)}
+              {renderParticipationSection("Músico Acompanhante", "musicoAcompanhante", 16.60, musicoOpen, setMusicoOpen)}
             </div>
           </div>
 

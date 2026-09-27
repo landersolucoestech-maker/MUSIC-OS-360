@@ -796,17 +796,17 @@ export class WorkParticipantEntity {
 }
 
 // ─── Phonograms (legacy PT: fonogramas) ─────────────────────────────────────────
-export interface PhonogramParticipante {
+export interface PhonogramParticipant {
   id?: string;
   name?: string;
   percentual?: string;
   artist_id?: string;
 }
 
-export interface PhonogramParticipacao {
-  produtorFonografico?: PhonogramParticipante[];
-  interprete?: PhonogramParticipante[];
-  musicoAcompanhante?: PhonogramParticipante[];
+export interface PhonogramParticipation {
+  produtorFonografico?: PhonogramParticipant[];
+  interprete?: PhonogramParticipant[];
+  musicoAcompanhante?: PhonogramParticipant[];
 }
 
 @Entity('phonograms')
@@ -886,7 +886,7 @@ export class PhonogramEntity {
   // (produtorFonografico/interprete/musicoAcompanhante), not an array --
   // see ParticipacaoDto in modules/phonograms/dto/create-phonogram.dto.ts
   // (source of truth for the shape, confirmed against FonogramaFormModal.tsx).
-  @Column({ type: 'jsonb', nullable: true }) participacao: PhonogramParticipacao | null;
+  @Column({ type: 'jsonb', nullable: true }) participacao: PhonogramParticipation | null;
   @Column({ type: 'jsonb', nullable: true }) arquivo_audio: Record<string, unknown> | null;
 
   // ── Relations ───────────────────────────────────────────────────────────────

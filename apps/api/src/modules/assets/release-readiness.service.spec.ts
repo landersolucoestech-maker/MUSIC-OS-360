@@ -142,8 +142,8 @@ describe('ReleaseReadinessService.evaluate', () => {
     });
 
     it('other mandatory fields missing individually still block even with a performer present', async () => {
-      const semTitulo = { ...fullPhonogram, title: null };
-      const out1 = await new ReleaseReadinessService(makeDs(semTitulo) as never, skillRuns() as never, assetLinking(goodAssets) as never)
+      const withoutTitle = { ...fullPhonogram, title: null };
+      const out1 = await new ReleaseReadinessService(makeDs(withoutTitle) as never, skillRuns() as never, assetLinking(goodAssets) as never)
         .evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
       expect(out1.requirements.find((r) => r.id === 'metadata')?.status).toBe('missing');
 

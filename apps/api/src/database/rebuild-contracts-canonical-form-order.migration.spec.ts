@@ -19,12 +19,12 @@ describe('RebuildContractsInCanonicalFormOrder20260719000012', () => {
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
     const templateIdx = block.indexOf('template_id ');
-    const tituloIdx = block.indexOf('titulo ');
+    const titleIdx = block.indexOf('titulo ');
     const statusIdx = block.search(/\bstatus\s+varchar/);
     expect(tenantIdx).toBeGreaterThan(idIdx);
     expect(templateIdx).toBeGreaterThan(tenantIdx);
-    expect(tituloIdx).toBeGreaterThan(templateIdx);
-    expect(statusIdx).toBeGreaterThan(tituloIdx);
+    expect(titleIdx).toBeGreaterThan(templateIdx);
+    expect(statusIdx).toBeGreaterThan(titleIdx);
   });
 
   it('signers/template_id no longer sit after created_by/updated_by', () => {
