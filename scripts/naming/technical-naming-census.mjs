@@ -4,20 +4,28 @@
  *
  * Rule: engineering names are English; Portuguese only in end-user visible
  * frontend content (and in the exception classes of the canonical naming map).
- * The Portuguese lexicon (pt-lexicon.mjs) is a SIGNAL: a hit is a candidate for
+ * The Portuguese vocabulary (pt-lexicon.mjs) is a SIGNAL: a hit is a candidate for
  * semantic review, never an automatic rename.
  *
- * Surfaces and enforcement (see docs/NAMING_NORMALIZATION_CANONICAL_MAP.md):
- *   enforced          identifiers (functions, classes, interfaces, types, enums
- *                     and members, methods, properties, variables, parameters),
- *                     file names, directory names, env var names, event / queue /
- *                     job names, API route paths, test titles, technical comments
- *   report-only       frontend route paths, object-literal keys (mostly wire/DB
- *                     field names), migration file names (historical),
- *                     DB columns (enforced separately by
- *                     apps/api/src/database/pt-column-naming-baseline.guard.spec.ts)
- *   not scanned       user-facing strings (JSX text, string values, labels),
- *                     localization values, fixtures, user documentation
+ * Enforced surfaces (every one ratchets against the baseline; see
+ * docs/NAMING_NORMALIZATION_CANONICAL_MAP.md):
+ *   identifier     functions, classes, interfaces, types, enums and members, methods,
+ *                  properties, variables, parameters, destructured bindings
+ *   objectKey      object-literal keys and destructured property names (wire/DB field names)
+ *   value          technical string values: enum initializers, string-literal types, and any
+ *                  lowercase/camelCase token literal (status values, option values, form field
+ *                  names, test ids, query params); UX text is never token-shaped
+ *   dbColumn       physical columns declared in apps/api/src/database/entities.ts
+ *   filename / directory   every tracked path in the repository
+ *   envVar, eventQueueJob, apiRoute, frontendRoute
+ *   testTitle, comment     Portuguese prose in test titles and code comments
+ *   doc            Portuguese prose lines in tracked Markdown documentation
+ * The migrated database schema (indexes, constraints, functions, policies, defaults,
+ * CHECK values, unmapped columns) is enforced by schema-naming-census.mjs against a live DB.
+ *
+ * Not scanned: user-facing strings (JSX text, labels, messages — never token-shaped),
+ * vendored third-party bundles, published migrations (immutable history: their class
+ * names are recorded in the migrations table) and mission bookkeeping (.claude/ops).
  *
  * Baseline = known, classified debt (technical-naming-baseline.json), keyed by
  * path + kind + name so each entry is traceable. Names registered in the
@@ -26,6 +34,7 @@
  *   node scripts/naming/technical-naming-census.mjs --check   # CI guard
  *   node scripts/naming/technical-naming-census.mjs --write   # regenerate baseline
  *   node scripts/naming/technical-naming-census.mjs --report  # coverage summary (JSON)
+ *   node scripts/naming/technical-naming-census.mjs --list [surface]  # every debt entry
  *
  * --check fails when the current census differs from the baseline in EITHER
  * direction: growth is a new Portuguese technical name; shrinkage means a fixed
@@ -40,19 +49,42 @@ import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { ptWords, isPtProse } from "./pt-lexicon.mjs";
 import { ROOT, loadAuthority, exceptionIndex } from "./canonical-map.mjs";
+import { physicalColumns } from "./validate-canonical-map.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const BASELINE = process.env.NAMING_BASELINE_PATH ? path.resolve(process.env.NAMING_BASELINE_PATH) : path.join(here, "technical-naming-baseline.json");
 const require = createRequire(path.join(ROOT, "package.json"));
 const ts = require("typescript");
 
+export const SURFACES = ["apiRoute", "comment", "dbColumn", "directory", "doc", "envVar", "eventQueueJob", "filename", "frontendRoute", "identifier", "objectKey", "testTitle", "value"];
+const ENTITIES = "apps/api/src/database/entities.ts";
+
+/** Third-party bundles committed as static assets: not our names. */
+export const VENDORED = new Set(["apps/web/public/pdf.mjs", "apps/web/public/pdf.worker.min.mjs"]);
+/**
+ * The naming detectors' own vocabulary and test fixtures necessarily contain Portuguese
+ * words as data. Their identifiers are still checked; their string values, keys, test
+ * titles and comments are not.
+ */
+export const DETECTOR_FIXTURES = new Set([
+  "scripts/naming/pt-lexicon.mjs",
+  "scripts/naming/technical-naming-census.test.mjs",
+  "scripts/naming/schema-naming-census.test.mjs",
+  "apps/api/src/database/pt-column-naming-baseline.guard.spec.ts",
+]);
+/** Published migrations are immutable history (class names are tracked in musicos360_migrations). */
+export const isMigration = (f) => /(^|\/)migrations\//.test(f);
+const isBookkeeping = (f) => f.startsWith(".claude/ops/");
+
 export const layerOf = (f) => (f.startsWith("apps/web") ? "web" : f.startsWith("apps/api") ? "api" : f.startsWith("packages") ? "packages" : "scripts");
 const TECHNICAL_NAME = /^[a-z0-9][a-z0-9_.:-]*$/; // event/queue/job/i18n-key shaped (never a UX label)
+/** Token-shaped string values: snake_case, kebab-case or camelCase, starting lowercase, no spaces. */
+export const VALUE_SHAPE = /^[a-z][a-zA-Z0-9]*(?:[_-][a-zA-Z0-9]+)*$/;
+/** JSX attributes and object properties whose string value is user-visible text. */
+const UX_KEYS = new Set(["aria-label", "aria-description", "aria-placeholder", "aria-roledescription", "aria-valuetext", "title", "placeholder",
+  "alt", "label", "description", "helperText", "tooltip", "emptyMessage", "emptyText", "subtitle", "hint", "message", "text", "confirmText",
+  "cancelText", "successMessage", "errorMessage", "heading", "caption", "labelPt", "labelPtBr", "displayPtBr"]);
 
-/**
- * Scans one source file. Returns technical-name hits:
- * { surface, kind, name, line }. Pure: no filesystem access.
- */
 /**
  * Real comments of a source file: the leading trivia of every token in the AST.
  * A regex over the raw text also matched `//` inside URLs and `/*` inside strings such
@@ -89,22 +121,36 @@ export function sourceComments(sf, text) {
   return out.sort((a, b) => a.pos - b.pos);
 }
 
-export function scanSource(relPath, text) {
+/** Path surfaces of one tracked file: each Portuguese directory segment and the file name. */
+export function scanPath(relPath) {
   const hits = [];
-  const add = (surface, kind, name, line) => hits.push({ surface, kind, name, line });
   const segs = relPath.split("/");
-  for (const d of segs.slice(0, -1)) if (ptWords(d).length) add("directory", "directory", d, 0);
+  for (let i = 0; i < segs.length - 1; i++) if (ptWords(segs[i]).length) hits.push({ surface: "directory", kind: "directory", name: segs.slice(0, i + 1).join("/"), line: 0 });
   const base = segs[segs.length - 1];
-  if (ptWords(base.replace(/\.(test|spec|e2e-spec)?\.?(tsx?|mts|cts|mjs|js)$/, "")).length) add("filename", "filename", base, 0);
-  if (!/\.(ts|tsx|mts|cts|mjs|js)$/.test(relPath)) return hits;
+  const stem = base.replace(/\.(test|spec|e2e-spec|guard|stories)?\.?(tsx?|mts|cts|mjs|cjs|js|json|md|mdx|sql|ya?ml|png|jpe?g|svg|webp|gif|txt|csv|xlsx|pdf|sh|toml|html|css)$/i, "");
+  if (ptWords(stem).length) hits.push({ surface: "filename", kind: "filename", name: base, line: 0 });
+  return hits;
+}
 
-  const kind = relPath.endsWith("x") ? ts.ScriptKind.TSX : /\.(mjs|js)$/.test(relPath) ? ts.ScriptKind.JS : ts.ScriptKind.TS;
+/**
+ * Scans one source file. Returns technical-name hits:
+ * { surface, kind, name, line }. Pure: no filesystem access.
+ */
+export function scanSource(relPath, text) {
+  const hits = scanPath(relPath).map((h) => ({ ...h, name: h.surface === "filename" ? h.name : h.name.split("/").pop() }));
+  const add = (surface, kind, name, line) => hits.push({ surface, kind, name, line });
+  if (!/\.(ts|tsx|mts|cts|mjs|cjs|js)$/.test(relPath)) return hits;
+  const fixture = DETECTOR_FIXTURES.has(relPath);
+
+  const kind = relPath.endsWith("x") ? ts.ScriptKind.TSX : /\.(mjs|cjs|js)$/.test(relPath) ? ts.ScriptKind.JS : ts.ScriptKind.TS;
   const sf = ts.createSourceFile(relPath, text, ts.ScriptTarget.Latest, true, kind);
   const lineOf = (n) => sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1;
+  const claimed = new Set(); // string-literal nodes already reported by a more specific surface
   const ident = (kind, nameNode, at) => {
     if (!nameNode) return;
     const name = ts.isIdentifier(nameNode) || ts.isStringLiteral(nameNode) || ts.isPrivateIdentifier(nameNode) ? nameNode.text : null;
     if (!name) return;
+    if (ts.isStringLiteral(nameNode)) claimed.add(nameNode);
     // i18n/label maps: string-literal keys are technical keys; values are UX and never scanned
     if (ts.isStringLiteral(nameNode) && !TECHNICAL_NAME.test(name)) return;
     if (ptWords(name).length) add("identifier", kind, name, lineOf(at));
@@ -112,8 +158,36 @@ export function scanSource(relPath, text) {
   const isEnvAccess = (e) => ts.isPropertyAccessExpression(e) && e.name.text === "env"
     && ((ts.isIdentifier(e.expression) && e.expression.text === "process") || ts.isMetaProperty(e.expression));
   const env = (name, at) => { if (/^[A-Z][A-Z0-9_]+$/.test(name) && ptWords(name).length) add("envVar", "env", name, lineOf(at)); };
-  const evt = (name, at) => { if (TECHNICAL_NAME.test(name) && ptWords(name).length) add("eventQueueJob", "name", name, lineOf(at)); };
+  const evt = (lit, at) => {
+    if (ts.isStringLiteral(lit)) claimed.add(lit);
+    const name = lit.text;
+    if (TECHNICAL_NAME.test(name) && ptWords(name).length) add("eventQueueJob", "name", name, lineOf(at));
+  };
+  const objectKey = (nameNode, at) => {
+    if (fixture || !nameNode || !(ts.isIdentifier(nameNode) || ts.isStringLiteral(nameNode))) return;
+    if (ts.isStringLiteral(nameNode)) claimed.add(nameNode);
+    const name = nameNode.text;
+    if (TECHNICAL_NAME.test(name.replace(/[A-Z]/g, (c) => c.toLowerCase())) && ptWords(name).length) add("objectKey", "object-key", name, lineOf(at));
+  };
   const isEnvSchema = relPath.endsWith("env.schema.ts");
+  const isTestCall = (n) => ts.isCallExpression(n) && (ts.isIdentifier(n.expression) ? ["describe", "it", "test"].includes(n.expression.text)
+    : ts.isPropertyAccessExpression(n.expression) && ts.isIdentifier(n.expression.expression) && ["describe", "it", "test"].includes(n.expression.expression.text));
+  const isModuleSpecifier = (n) => {
+    const p = n.parent;
+    return ts.isImportDeclaration(p) || ts.isExportDeclaration(p) || ts.isExternalModuleReference(p) || ts.isImportTypeNode(p?.parent ?? p)
+      || (ts.isCallExpression(p) && (p.expression.kind === ts.SyntaxKind.ImportKeyword
+        || (ts.isIdentifier(p.expression) && p.expression.text === "require")
+        || (ts.isPropertyAccessExpression(p.expression) && ["mock", "doMock", "unmock", "requireActual", "importActual"].includes(p.expression.name.text))));
+  };
+  const isUxValue = (n) => {
+    const p = n.parent;
+    if (ts.isJsxAttribute(p) || (ts.isJsxExpression(p) && ts.isJsxAttribute(p.parent))) {
+      const attr = ts.isJsxAttribute(p) ? p : p.parent;
+      return UX_KEYS.has(attr.name.getText(sf));
+    }
+    if (ts.isPropertyAssignment(p) && p.initializer === n) return UX_KEYS.has(p.name.getText(sf).replace(/^["']|["']$/g, ""));
+    return false;
+  };
   let controllerBase = null;
 
   const visit = (n) => {
@@ -127,7 +201,7 @@ export function scanSource(relPath, text) {
         const lits = [];
         const collect = (t) => { if (ts.isUnionTypeNode(t)) t.types.forEach(collect); else if (ts.isLiteralTypeNode(t) && ts.isStringLiteral(t.literal)) lits.push(t.literal); };
         collect(n.type);
-        for (const l of lits) evt(l.text, l);
+        for (const l of lits) evt(l, l);
       }
     }
     else if (ts.isEnumDeclaration(n)) ident("enum", n.name, n);
@@ -137,94 +211,133 @@ export function scanSource(relPath, text) {
       let init = n.initializer;
       while (init && (ts.isAsExpression(init) || ts.isParenthesizedExpression(init) || (ts.isSatisfiesExpression && ts.isSatisfiesExpression(init)))) init = init.expression;
       if (init && ts.isObjectLiteralExpression(init) && /event|queue|job/i.test(n.name.text)) {
-        for (const p of init.properties) if (ts.isPropertyAssignment(p) && ts.isStringLiteral(p.initializer)) evt(p.initializer.text, p);
+        for (const p of init.properties) if (ts.isPropertyAssignment(p) && ts.isStringLiteral(p.initializer)) evt(p.initializer, p);
       }
     } else if (ts.isMethodDeclaration(n) || ts.isMethodSignature(n)) ident("method", n.name, n);
     else if (ts.isPropertyDeclaration(n) || ts.isPropertySignature(n)) ident("property", n.name, n);
     else if (ts.isPropertyAssignment(n) || ts.isShorthandPropertyAssignment(n)) {
       if (isEnvSchema && ts.isIdentifier(n.name)) env(n.name.text, n);
       else if (ts.isStringLiteral(n.name) && TECHNICAL_NAME.test(n.name.text) && n.name.text.includes(".")) ident("i18n-key", n.name, n);
-      else if ((ts.isIdentifier(n.name) || ts.isStringLiteral(n.name)) && TECHNICAL_NAME.test(n.name.text.replace(/[A-Z]/g, (c) => c.toLowerCase())) && ptWords(n.name.text).length) {
-        add("objectKey", "object-key", n.name.text, lineOf(n)); // report-only: mostly wire/DB field names
-      }
+      else objectKey(n.name, n);
     } else if (ts.isParameter(n) && ts.isIdentifier(n.name)) ident("parameter", n.name, n);
     // destructured bindings: const [nomeCompleto, setNomeCompleto] = useState(); const { valor } = row
-    else if (ts.isBindingElement(n) && ts.isIdentifier(n.name)) ident("variable", n.name, n);
+    else if (ts.isBindingElement(n)) {
+      if (ts.isIdentifier(n.name)) ident("variable", n.name, n);
+      if (n.propertyName) objectKey(n.propertyName, n); // const { valor: amount } = row
+    }
     else if (ts.isPropertyAccessExpression(n) && isEnvAccess(n.expression)) env(n.name.text, n);
-    else if (ts.isElementAccessExpression(n) && isEnvAccess(n.expression) && ts.isStringLiteral(n.argumentExpression)) env(n.argumentExpression.text, n);
+    else if (ts.isElementAccessExpression(n) && isEnvAccess(n.expression) && ts.isStringLiteral(n.argumentExpression)) { claimed.add(n.argumentExpression); env(n.argumentExpression.text, n); }
     else if (ts.isDecorator(n) && ts.isCallExpression(n.expression)) {
       const callee = n.expression.expression.getText(sf);
       const arg = n.expression.arguments[0];
-      const lits = !arg ? [] : ts.isStringLiteral(arg) ? [arg.text]
-        : ts.isArrayLiteralExpression(arg) ? arg.elements.filter(ts.isStringLiteral).map((e) => e.text) : [];
+      const litNodes = !arg ? [] : ts.isStringLiteral(arg) ? [arg]
+        : ts.isArrayLiteralExpression(arg) ? arg.elements.filter(ts.isStringLiteral) : [];
+      const lits = litNodes.map((l) => l.text);
       const lit = lits[0] ?? null;
       if (callee === "Controller" && lit != null) {
+        litNodes.forEach((l) => claimed.add(l));
         controllerBase = lit;
         if (ptWords(lit).length) add("apiRoute", "route", `/${lit}`, lineOf(n));
       } else if (["Get", "Post", "Put", "Patch", "Delete"].includes(callee)) {
+        litNodes.forEach((l) => claimed.add(l));
         for (const l of lits) if (ptWords(l).length) add("apiRoute", "route", `/${controllerBase ?? ""}/${l}`, lineOf(n));
-      } else if (["OnEvent", "Processor", "InjectQueue"].includes(callee) && lit) evt(lit, n);
+      } else if (["OnEvent", "Processor", "InjectQueue"].includes(callee) && litNodes[0]) evt(litNodes[0], n);
     } else if (ts.isCallExpression(n)) {
       const target = n.expression;
       const callee = ts.isIdentifier(target) ? target.text
         : ts.isPropertyAccessExpression(target) && ts.isIdentifier(target.expression) ? target.expression.text : null;
       const method = ts.isPropertyAccessExpression(target) ? target.name.text : callee;
       const a = n.arguments[0];
-      if (a && ts.isStringLiteral(a) && ["emit", "emitAsync", "registerQueue"].includes(method ?? "")) evt(a.text, n);
-      if (callee && ["describe", "it", "test"].includes(callee) && a && (ts.isStringLiteral(a) || ts.isNoSubstitutionTemplateLiteral(a)) && isPtProse(a.text)) {
-        add("testTitle", "test-title", a.text, lineOf(n));
+      if (a && ts.isStringLiteral(a) && ["emit", "emitAsync", "registerQueue"].includes(method ?? "")) evt(a, n);
+      if (isTestCall(n) && a && (ts.isStringLiteral(a) || ts.isNoSubstitutionTemplateLiteral(a))) {
+        claimed.add(a);
+        if (!fixture && isPtProse(a.text)) add("testTitle", "test-title", a.text, lineOf(n));
       }
+    } else if (ts.isJsxAttribute(n) && n.name.getText(sf) === "path" && n.initializer && ts.isStringLiteral(n.initializer)) {
+      claimed.add(n.initializer);
+      if (relPath.startsWith("apps/web/") && ptWords(n.initializer.text).length) add("frontendRoute", "route", n.initializer.text, lineOf(n));
+    }
+    if (!fixture && (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n)) && !claimed.has(n) && VALUE_SHAPE.test(n.text)
+      && !isModuleSpecifier(n) && !isUxValue(n) && ptWords(n.text).length) {
+      const p = n.parent;
+      const isKey = (ts.isPropertyAssignment(p) || ts.isPropertySignature(p) || ts.isPropertyDeclaration(p) || ts.isMethodDeclaration(p) || ts.isEnumMember(p)) && p.name === n;
+      if (!isKey) add("value", ts.isLiteralTypeNode(p) ? "literal-type" : ts.isEnumMember(p) ? "enum-value" : "string", n.text, lineOf(n));
     }
     ts.forEachChild(n, visit);
   };
   visit(sf);
-  for (const c of sourceComments(sf, text)) {
-    if (isPtProse(c.text)) add("comment", "comment", "", sf.getLineAndCharacterOfPosition(c.pos).line + 1);
+  if (!fixture) {
+    for (const c of sourceComments(sf, text)) {
+      if (isPtProse(c.text)) add("comment", "comment", "", sf.getLineAndCharacterOfPosition(c.pos).line + 1);
+    }
   }
   return hits;
 }
 
-function trackedSources() {
-  const files = execFileSync("git", ["ls-files", "apps", "packages", "scripts"], { cwd: ROOT, encoding: "utf8" })
-    .split("\n").filter(Boolean).sort();
-  const code = files.filter((f) => /\.(ts|tsx|mts|cts|mjs|js)$/.test(f) && !f.includes("/dist/") && !f.endsWith(".d.ts") && fs.existsSync(path.join(ROOT, f)));
-  if (code.length === 0) throw new Error("technical-naming census: no source files found (git ls-files returned nothing) — refusing to report success");
-  return code;
+/** Portuguese prose lines of a Markdown document (fenced code blocks are skipped). */
+export function scanMarkdown(text) {
+  let inFence = false;
+  let lines = 0;
+  for (const line of text.split("\n")) {
+    if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; continue; }
+    if (inFence || !line.trim()) continue;
+    if (isPtProse(line.replace(/`[^`]*`/g, " "))) lines++;
+  }
+  return lines;
 }
 
-const isMigration = (f) => f.includes("/migrations/");
+export function trackedFiles() {
+  const files = execFileSync("git", ["ls-files"], { cwd: ROOT, encoding: "utf8" })
+    .split("\n").filter(Boolean).sort()
+    .filter((f) => fs.existsSync(path.join(ROOT, f)) && !VENDORED.has(f) && !isBookkeeping(f));
+  if (files.length === 0) throw new Error("technical-naming census: no source files found (git ls-files returned nothing) — refusing to report success");
+  return files;
+}
+const isCode = (f) => /\.(ts|tsx|mts|cts|mjs|cjs|js)$/.test(f) && !f.includes("/dist/") && !f.endsWith(".d.ts");
+const isDoc = (f) => /\.mdx?$/.test(f);
 
-/** Full census: debt (baseline-comparable), exceptions and report-only surfaces. */
+/** Full census: debt (baseline-comparable), exceptions and report-only counters. */
 export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
   const debt = {};
   const excepted = {};
-  const reportOnly = { migrationFiles: 0, frontendRoutes: {}, objectKeys: {} };
-  const surfaces = Object.fromEntries(["apiRoute", "comment", "directory", "envVar", "eventQueueJob", "filename", "identifier", "testTitle"].map((k) => [k, { candidates: 0, exceptions: 0 }]));
+  const reportOnly = { migrationFiles: 0 };
+  const surfaces = Object.fromEntries(SURFACES.map((k) => [k, { candidates: 0, exceptions: 0 }]));
   let filesScanned = 0;
   const dirs = new Set();
-  for (const f of trackedSources()) {
+  const seenDirs = new Set();
+  const record = (surface, key, file, name, count = 1) => {
+    const exc = name != null && exceptions.get(file, name, surface);
+    const bucket = exc ? excepted : debt;
+    bucket[key] = (bucket[key] ?? 0) + count;
+    surfaces[surface].candidates += count;
+    if (exc) surfaces[surface].exceptions += count;
+  };
+  const files = trackedFiles();
+  if (!files.some(isCode)) throw new Error("technical-naming census: no code files found — refusing to report success");
+  for (const f of files) {
     filesScanned++;
     for (const d of path.dirname(f).split("/")) dirs.add(d);
-    const text = fs.readFileSync(path.join(ROOT, f), "utf8");
     if (isMigration(f)) {
       if (ptWords(path.basename(f)).length) reportOnly.migrationFiles++;
       continue; // historical: published migration names and SQL are immutable history
     }
-    for (const h of scanSource(f, text)) {
-      if (h.surface === "objectKey") { reportOnly.objectKeys[h.name] = (reportOnly.objectKeys[h.name] ?? 0) + 1; continue; }
-      {
-        const key = h.surface === "comment" ? `comment::${f}` : h.surface === "directory" ? `directory::${h.name}` : `${h.surface}::${f}::${h.kind}::${h.name}`;
-        const exc = h.name && exceptions.get(f, h.name);
-        const bucket = exc ? excepted : debt;
-        bucket[key] = (bucket[key] ?? 0) + 1;
-        surfaces[h.surface] = surfaces[h.surface] ?? { candidates: 0, exceptions: 0 };
-        surfaces[h.surface].candidates++;
-        if (exc) surfaces[h.surface].exceptions++;
-      }
+    for (const h of scanPath(f)) {
+      if (h.surface === "filename") { record("filename", `filename::${f}::filename::${h.name}`, f, h.name); continue; }
+      const key = `directory::${h.name}`; // one entry per Portuguese directory, however many files it holds
+      if (!seenDirs.has(key)) { seenDirs.add(key); record("directory", key, h.name, h.name.split("/").pop()); }
     }
-    if (f.startsWith("apps/web/src/") && /\.tsx?$/.test(f)) {
-      for (const m of text.matchAll(/\bpath(?:=|:\s*)["'](\/[^"']*)["']/g)) if (ptWords(m[1]).length) reportOnly.frontendRoutes[m[1]] = true;
+    const hits = isCode(f) ? scanSource(f, fs.readFileSync(path.join(ROOT, f), "utf8")).filter((h) => h.surface !== "directory" && h.surface !== "filename") : [];
+    for (const h of hits) {
+      const key = h.surface === "comment" ? `comment::${f}` : `${h.surface}::${f}::${h.kind}::${h.name}`;
+      record(h.surface, key, f, h.surface === "comment" ? null : h.name);
     }
+    if (isDoc(f)) {
+      const n = scanMarkdown(fs.readFileSync(path.join(ROOT, f), "utf8"));
+      if (n) record("doc", `doc::${f}`, f, "*", n);
+    }
+  }
+  for (const [table, cols] of physicalColumns()) {
+    for (const col of cols) if (ptWords(col).length) record("dbColumn", `dbColumn::${table}.${col}`, ENTITIES, col);
   }
   const sorted = (o) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
   return {
@@ -232,11 +345,7 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
     surfaces: sorted(surfaces),
     debt: sorted(debt),
     excepted: sorted(excepted),
-    reportOnly: {
-      migrationFiles: reportOnly.migrationFiles,
-      frontendRoutes: Object.keys(reportOnly.frontendRoutes).sort(),
-      objectKeys: sorted(reportOnly.objectKeys),
-    },
+    reportOnly,
   };
 }
 
@@ -268,6 +377,11 @@ function main() {
     console.log(JSON.stringify({ filesScanned: c.filesScanned, directoriesScanned: c.directoriesScanned, surfaces: c.surfaces, debtTotals: totalsBySurface(c.debt), exceptionHits: Object.values(c.excepted).reduce((a, b) => a + b, 0), reportOnly: c.reportOnly }, null, 1));
     return;
   }
+  if (mode === "--list") {
+    const only = process.argv[3];
+    for (const [k, v] of Object.entries(c.debt)) if (!only || k.startsWith(`${only}::`)) console.log(`${v}\t${k}`);
+    return;
+  }
   if (mode !== "--check") throw new Error(`unknown mode ${mode}`);
   if (!fs.existsSync(BASELINE)) throw new Error(`baseline not found: ${path.relative(ROOT, BASELINE)}`);
   const base = JSON.parse(fs.readFileSync(BASELINE, "utf8"));
@@ -275,11 +389,11 @@ function main() {
   const { grown, shrunk } = compare(c.debt, base.debt);
   console.log(`technical-naming census: ${c.filesScanned} files, debt ${JSON.stringify(totalsBySurface(c.debt))}`);
   if (grown.length) {
-    console.error(`\nNEW Portuguese technical names (engineering = English; Portuguese only in user-visible UX text):\n  ${grown.slice(0, 200).join("\n  ")}`);
+    console.error(`\nNEW Portuguese technical names (engineering = English; Portuguese only in user-visible UX text):\n  ${grown.slice(0, 200).join("\n  ")}${grown.length > 200 ? `\n  … ${grown.length - 200} more (--list)` : ""}`);
     console.error("\nRename to English. Only a documented exception (canonical-naming-map.json exceptions[]) may keep a Portuguese technical name.");
   }
   if (shrunk.length) {
-    console.error(`\nBaseline is stale — these debts were removed and must be dropped from the baseline in the same commit (run --write):\n  ${shrunk.slice(0, 200).join("\n  ")}`);
+    console.error(`\nBaseline is stale — these debts were removed and must be dropped from the baseline in the same commit (run --write):\n  ${shrunk.slice(0, 200).join("\n  ")}${shrunk.length > 200 ? `\n  … ${shrunk.length - 200} more` : ""}`);
   }
   if (grown.length || shrunk.length) process.exit(1);
 }

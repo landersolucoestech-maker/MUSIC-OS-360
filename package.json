@@ -32,8 +32,9 @@
     "naming:census": "node scripts/naming/technical-naming-census.mjs --report",
     "naming:baseline": "node scripts/naming/technical-naming-census.mjs --write",
     "naming:generate": "node scripts/naming/render-naming-docs.mjs",
+    "naming:schema": "node scripts/naming/schema-naming-census.mjs --check",
     "naming:validate": "node scripts/naming/validate-canonical-map.mjs",
-    "naming:check": "node scripts/naming/technical-naming-census.mjs --check && node scripts/naming/validate-canonical-map.mjs && node scripts/naming/render-naming-docs.mjs --check && node --test scripts/naming/technical-naming-census.test.mjs",
+    "naming:check": "node scripts/naming/technical-naming-census.mjs --check && node scripts/naming/validate-canonical-map.mjs && node scripts/naming/render-naming-docs.mjs --check && node --test scripts/naming/technical-naming-census.test.mjs scripts/naming/schema-naming-census.test.mjs",
     "release:check": "node scripts/release-check.mjs",
     "release:migrate": "node scripts/release-check.mjs --migrate"
   },

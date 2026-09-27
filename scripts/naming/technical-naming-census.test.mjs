@@ -190,10 +190,12 @@ test("UX test expectations (expect(...).toBe(...) / getByText(...)) are never fl
   assert.deepEqual(scanSource("apps/web/src/x.test.tsx", src), []);
 });
 
-test("user docs and non-code files are excluded from the census by construction (only tracked code extensions are scanned)", () => {
+test("docs and non-code files are in the census: Markdown prose and every tracked path name", () => {
   const c = census();
-  const keys = [...Object.keys(c.debt), ...Object.keys(c.excepted)];
-  assert.equal(keys.some((k) => /\.(md|mdx|txt|json|ya?ml)(::|$)/.test(k)), false);
+  const keys = Object.keys({ ...c.debt, ...c.excepted });
+  assert.ok(keys.some((k) => k.startsWith("doc::") && k.endsWith(".md")), "Markdown documents are scanned");
+  assert.ok(c.filesScanned > 3000, `every tracked file is scanned (got ${c.filesScanned})`);
+  assert.ok(keys.some((k) => k.startsWith("dbColumn::")), "physical columns are scanned");
 });
 
 test("tooling error: a malformed baseline JSON fails explicitly (never false success)", () => {
@@ -226,9 +228,10 @@ test("events: string-literal unions of *Event* types and camelCase/PascalCase ev
   assert.deepEqual(names(scanSource("apps/web/src/e.ts", good), "eventQueueJob"), []);
 });
 
-test("object-literal keys are a report-only surface (wire/DB field names), never debt", () => {
-  const hits = scanSource("apps/web/src/m.ts", `export const payload = { data_lancamento: x, nome: y };`);
-  assert.deepEqual(names(hits, "objectKey"), ["data_lancamento", "nome"]);
+test("object-literal keys and destructured property names are enforced (wire/DB field names)", () => {
+  const hits = scanSource("apps/web/src/m.ts", `export const payload = { data_lancamento: x, nome: y, releaseDate: z };
+const { valor: amount, title } = row;`);
+  assert.deepEqual(names(hits, "objectKey"), ["data_lancamento", "nome", "valor"]);
   assert.deepEqual(names(hits, "identifier"), []);
 });
 
@@ -247,4 +250,96 @@ test("exceptions are exact: one name in one file (or '*' only for legal-domain t
   assert.equal(idx.get("apps/api/src/modules/other.controller.ts", "/works/stats/generos"), undefined);
   assert.equal(idx.get("apps/api/src/modules/works/works.controller.ts", "/works/stats/generosX"), undefined);
   assert.ok(idx.get("apps/web/src/any.ts", "cnpj"));
+});
+
+test("values: Portuguese status/option values are flagged wherever they appear as tokens", () => {
+  const src = `export enum ReleaseStatus { PLANNING = 'planejamento', DONE = 'done' }
+type TxType = 'receita' | 'expense';
+if (row.status === 'pendente') {}
+switch (kind) { case 'pessoa_fisica': break; }
+const OPTIONS = ['com_empresario', 'independent'] as const;
+export const field = register('nomeArtistico');
+<Button data-testid="button-salvar-obra" />;`;
+  assert.deepEqual(names(scanSource("apps/web/src/v.tsx", src), "value").sort(),
+    ["button-salvar-obra", "com_empresario", "nomeArtistico", "pendente", "pessoa_fisica", "planejamento", "receita"]);
+});
+
+test("values: UX text, UX attributes, PascalCase labels, module paths and test titles are not values", () => {
+  const src = `import x from 'lancamento-utils';
+const m = await import('./obra');
+jest.mock('./artista');
+export function F() {
+  return <Input placeholder="nome" aria-label="fechar" title="Artista" label="valor">Salvar projeto</Input>;
+}
+const LABELS = { label: 'nome', title: 'Obra', message: 'pendente' };
+toast.success('Obra salva com sucesso');
+const name = 'Artista';
+describe('rejeita senha vazia', () => {});`;
+  assert.deepEqual(names(scanSource("apps/web/src/u.test.tsx", src), "value"), []);
+});
+
+test("frontend routes are enforced; English routes pass", () => {
+  const src = `<Route path="/lancamentos" element={<A />} /><Route path="/releases" element={<B />} />`;
+  assert.deepEqual(names(scanSource("apps/web/src/App.tsx", src), "frontendRoute"), ["/lancamentos"]);
+});
+
+test("paths: every Portuguese directory is reported with its full path, and non-code file names are checked", async () => {
+  const { scanPath } = await import("./technical-naming-census.mjs");
+  assert.deepEqual(scanPath("apps/web/src/modules/financeiro/regras/index.ts").map((h) => h.name),
+    ["apps/web/src/modules/financeiro", "apps/web/src/modules/financeiro/regras"]);
+  assert.deepEqual(scanPath("apps/web/scripts/tmp-chat-interno.png").map((h) => h.name), ["tmp-chat-interno.png"]);
+  assert.deepEqual(scanPath("docs/runbooks/continuous-improvement.md"), []);
+  assert.deepEqual(scanPath("docs/product-tasks/v5-backend-fixes.md"), []);
+});
+
+test("docs: Portuguese prose lines are counted, fenced code and English prose are not", async () => {
+  const { scanMarkdown } = await import("./technical-naming-census.mjs");
+  const md = ["# Guia de deploy", "Este documento descreve como fazer o deploy da API.", "", "```sql", "SELECT nome FROM clientes; -- não é prosa", "```",
+    "This section explains the rollback path.", "Use `nome_artistico` only for the legacy import."].join("\n");
+  assert.equal(scanMarkdown(md), 2);
+});
+
+test("vocabulary: missed Portuguese words are now detected; English technical vocabulary never is", () => {
+  for (const pt of ["agencia", "galeria", "foto", "especialidades", "parceira", "idioma", "banda", "cargo", "pago_em", "criada_por_ia", "duracao_seg", "com-obra"]) {
+    assert.ok(ptWords(pt).length > 0, `expected Portuguese: ${pt}`);
+  }
+  for (const en of ["continuous", "fixes", "classes", "series", "tempo", "meta", "param", "resolver", "logo", "alias", "util", "dao", "modulo", "todo",
+    "em", "qual", "com", "cores", "audiovisual", "whatsapp", "ecad", "musicos_app", "ipi_cae", "useIbgeLocations", "status", "data", "label", "total"]) {
+    assert.deepEqual(ptWords(en), [], `expected English/technical: ${en}`);
+  }
+});
+
+test("prose: single weak-signal Portuguese titles are caught; English titles naming legacy columns are not", () => {
+  for (const pt of ["AdminDashboard — falha de query nunca vira KPI zerado fabricado", "concede SELECT/INSERT/UPDATE/DELETE às tabelas de leitura-escrita normal",
+    "sem expectedUpdatedAt: aplica update incondicional", "respeita offset/limit passados", "calcula repasse artista"]) {
+    assert.equal(isPtProse(pt), true, pt);
+  }
+  for (const en of ["maps nome -> name and tipo -> type", "renames data_inicio to start_date on contracts", "TipoTransacao is the legacy enum",
+    "rejects unknown fields (nomeArtistico is legacy)"]) {
+    assert.equal(isPtProse(en), false, en);
+  }
+});
+
+test("legal-domain exceptions apply to their words: names built only from them are covered, others are not", async () => {
+  const { exceptionIndex } = await import("./canonical-map.mjs");
+  const idx = exceptionIndex({ exceptions: ["tomador", "nfe", "cpf", "cnpj"].map((n) => ({ currentName: n, path: "*", status: "ACTIVE" })) });
+  for (const covered of ["tomador_email", "NfeConfigDialog.tsx", "cpfCnpj"]) assert.ok(idx.get("apps/web/src/a.ts", covered), covered);
+  for (const notCovered of ["tomador_razao_social", "nomeCnpj"]) assert.equal(idx.get("apps/web/src/a.ts", notCovered), undefined, notCovered);
+});
+
+test("exceptions: a whole-file wildcard needs one exact path and a surface", async () => {
+  const { validateStructure, exceptionIndex } = await import("./canonical-map.mjs");
+  const base = { exceptionClass: "UX_TEXT", layer: "web", reason: "r", removalCondition: "c", status: "ACTIVE" };
+  const bad = validateStructure({ statusVocabulary: { exceptionClass: ["UX_TEXT"] }, glossary: [], exceptions: [{ ...base, currentName: "*", path: "*" }] });
+  assert.ok(bad.some((p) => /whole-file exception/.test(p)));
+  const idx = exceptionIndex({ exceptions: [{ ...base, currentName: "*", path: "apps/web/src/i18n/pt-br.ts", surface: "value" }] });
+  assert.ok(idx.get("apps/web/src/i18n/pt-br.ts", "pendente", "value"));
+  assert.equal(idx.get("apps/web/src/i18n/pt-br.ts", "pendente", "objectKey"), undefined);
+  assert.equal(idx.get("apps/web/src/other.ts", "pendente", "value"), undefined);
+});
+
+test("vocabulary integrity: the committed vocabulary loads fully and never contains an English override", async () => {
+  const { PT_TOKENS, EN_OVERRIDES } = await import("./pt-lexicon.mjs");
+  assert.ok(PT_TOKENS.size > 20000, `vocabulary size ${PT_TOKENS.size}`);
+  for (const w of EN_OVERRIDES) assert.equal(PT_TOKENS.has(w), false, w);
 });
