@@ -3,12 +3,12 @@ import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import { FileText, Music, Building, DollarSign, Calendar, MapPin, Tv } from "lucide-react";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
-import { formatLicensingDate, formatRemuneration, obraArtistaLabel, midiaLabel, tipoLabel } from "@/modules/licensing/lib/licenca-format";
+import { formatLicensingDate, formatRemuneration, workArtistLabel, mediaLabel, typeLabel } from "@/modules/licensing/lib/licenca-format";
 import type { Work } from "@/modules/catalog/types/catalog.types";
 
-interface ClienteOption { id: string; name: string }
+interface ClientOption { id: string; name: string }
 
-interface LicencaViewModalProps {
+interface LicenseViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   licenca?: any;
@@ -33,22 +33,22 @@ function Field({ label, value, icon, valueClassName }: { label: React.ReactNode;
   );
 }
 
-export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewModalProps) {
+export function LicenseViewModal({ open, onOpenChange, licenca: license }: LicenseViewModalProps) {
   // Fetches DIRECTLY by ID (GET /works/:id, GET /clients/:id) — does not depend on the
   // work/client being among the first 50 loaded by useObras() /
   // an unfiltered client listing (Task J).
-  const { entity: obra } = useEntityById<Work>("obras", open ? licenca?.work_id ?? undefined : undefined);
-  const { entity: cliente } = useEntityById<ClienteOption>("clientes", open ? licenca?.client_id ?? undefined : undefined);
+  const { entity: work } = useEntityById<Work>("obras", open ? license?.work_id ?? undefined : undefined);
+  const { entity: client } = useEntityById<ClientOption>("clientes", open ? license?.client_id ?? undefined : undefined);
 
-  if (!licenca) return null;
+  if (!license) return null;
 
-  const obraTitle = obra?.title ?? null;
-  const artista = obraArtistaLabel(obra) || null;
-  const clienteNome = cliente?.name ?? null;
+  const workTitle = work?.title ?? null;
+  const artist = workArtistLabel(work) || null;
+  const clientName = client?.name ?? null;
 
-  const inicio = formatLicensingDate(licenca.start_date);
-  const fim = formatLicensingDate(licenca.end_date);
-  const vigencia = inicio || fim ? `${inicio ?? "—"} até ${fim ?? "—"}` : null;
+  const start = formatLicensingDate(license.start_date);
+  const end = formatLicensingDate(license.end_date);
+  const term = start || end ? `${start ?? "—"} até ${end ?? "—"}` : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -67,14 +67,14 @@ export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewMod
               <Music className="h-4 w-4" /> Informações da Licença
             </h3>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Título" value={licenca.title} />
+              <Field label="Título" value={license.title} />
               <div>
                 <span className="text-sm text-muted-foreground">Status</span>
-                <div className="mt-1">{getStatusBadge(licenca.status)}</div>
+                <div className="mt-1">{getStatusBadge(license.status)}</div>
               </div>
-              <Field label="Tipo de Licença" value={tipoLabel(licenca.type)} />
-              <Field label="Obra Musical" value={obraTitle} />
-              <Field label="Artista" value={artista} />
+              <Field label="Tipo de Licença" value={typeLabel(license.type)} />
+              <Field label="Obra Musical" value={workTitle} />
+              <Field label="Artista" value={artist} />
             </div>
           </div>
 
@@ -84,10 +84,10 @@ export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewMod
               <Building className="h-4 w-4" /> Cliente e Projeto
             </h3>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Cliente" value={clienteNome} />
-              <Field label="Projeto" value={licenca.projeto} />
-              <Field label="Mídia de Destino" icon={<Tv className="h-3 w-3" />} value={midiaLabel(licenca.midia_destino)} />
-              <Field label="Território" icon={<MapPin className="h-3 w-3" />} value={tipoLabel(licenca.territorio)} />
+              <Field label="Cliente" value={clientName} />
+              <Field label="Projeto" value={license.projeto} />
+              <Field label="Mídia de Destino" icon={<Tv className="h-3 w-3" />} value={mediaLabel(license.midia_destino)} />
+              <Field label="Território" icon={<MapPin className="h-3 w-3" />} value={typeLabel(license.territorio)} />
             </div>
           </div>
 
@@ -97,24 +97,24 @@ export function LicencaViewModal({ open, onOpenChange, licenca }: LicencaViewMod
               <DollarSign className="h-4 w-4" /> Período e Remuneração
             </h3>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Vigência" icon={<Calendar className="h-3 w-3" />} value={vigencia} />
-              <Field label="Remuneração" value={formatRemuneration(licenca)} valueClassName="text-success" />
+              <Field label="Vigência" icon={<Calendar className="h-3 w-3" />} value={term} />
+              <Field label="Remuneração" value={formatRemuneration(license)} valueClassName="text-success" />
             </div>
           </div>
 
           {/* Notes */}
-          {licenca.notes && (
+          {license.notes && (
             <div className="space-y-2">
               <span className="text-sm text-muted-foreground">Observações</span>
-              <p className="text-sm bg-muted/30 p-3 rounded-lg">{licenca.notes}</p>
+              <p className="text-sm bg-muted/30 p-3 rounded-lg">{license.notes}</p>
             </div>
           )}
 
           {/* Metadata */}
-          {(licenca.created_at || licenca.updated_at) && (
+          {(license.created_at || license.updated_at) && (
             <div className="grid grid-cols-2 gap-4 border-t border-border/40 pt-3 text-xs text-muted-foreground">
-              {licenca.created_at && <div>Criada em: {formatLicensingDate(licenca.created_at)}</div>}
-              {licenca.updated_at && <div>Atualizada em: {formatLicensingDate(licenca.updated_at)}</div>}
+              {license.created_at && <div>Criada em: {formatLicensingDate(license.created_at)}</div>}
+              {license.updated_at && <div>Atualizada em: {formatLicensingDate(license.updated_at)}</div>}
             </div>
           )}
         </div>

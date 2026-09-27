@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const licencaSchema = z
+export const licenseSchema = z
   .object({
     title: z.string().min(1, "Título é obrigatório").max(200, "Título deve ter no máximo 200 caracteres").trim(),
     tipoLicenca: z.string().optional().or(z.literal("")),
@@ -32,4 +32,4 @@ export const licencaSchema = z
     }
   });
 
-export type LicencaFormData = z.infer<typeof licencaSchema>;
+export type LicenseFormData = z.infer<typeof licenseSchema>;

@@ -6,7 +6,7 @@ export type { LicenseType, LicenseStatus };
 export type RemunerationType = "FIXED" | "PERCENTAGE" | "FIXED_PLUS_PERCENTAGE";
 export type Currency = "BRL" | "USD" | "EUR";
 
-export interface Licenca {
+export interface License {
   id: string;
   user_id?: string;
   title: string;
@@ -34,9 +34,9 @@ export interface Licenca {
   [key: string]: unknown;
 }
 
-export type LicencaInsert = Omit<Licenca, "id" | "user_id" | "created_at" | "updated_at">;
-export type LicencaUpdate = Partial<LicencaInsert>;
+export type LicenseInsert = Omit<License, "id" | "user_id" | "created_at" | "updated_at">;
+export type LicenseUpdate = Partial<LicenseInsert>;
 
-export interface LicencaWithRelations extends Licenca {
+export interface LicenseWithRelations extends License {
   clientes?: ClienteRef | null;
 }

@@ -1,4 +1,4 @@
-import type { Currency, Licenca } from "@/modules/licensing/types/licensing.types";
+import type { Currency, License } from "@/modules/licensing/types/licensing.types";
 import type { Work } from "@/modules/catalog/types/catalog.types";
 
 const CURRENCY_SYMBOL: Record<Currency, string> = { BRL: "R$", USD: "US$", EUR: "€" };
@@ -31,7 +31,7 @@ export function formatLicensingDate(value?: string | Date | null): string | null
  * FIXED → "R$ 5.000,00" · PERCENTAGE → "15%" · FIXED_PLUS_PERCENTAGE → "US$ 1.000,00 + 10%".
  * Falls back to the legacy `valor` field when there is no structured compensation.
  */
-export function formatRemuneration(l: Pick<Licenca, "remuneration_type" | "currency" | "amount" | "percentage" | "valor">): string {
+export function formatRemuneration(l: Pick<License, "remuneration_type" | "currency" | "amount" | "percentage" | "valor">): string {
   const type = l.remuneration_type;
   const currency = (l.currency ?? "BRL") as Currency;
   const amount = l.amount ?? l.valor ?? 0;
@@ -53,17 +53,17 @@ function joinNames(v: string | string[] | null | undefined): string {
 }
 
 /** Derives the artist(s) of a work: linked artist → performers → composers. */
-export function obraArtistaLabel(obra: Work | undefined | null): string {
-  if (!obra) return "";
-  const linked = (obra as { artistas?: { nome_artistico?: string | null } | null }).artistas?.nome_artistico;
+export function workArtistLabel(work: Work | undefined | null): string {
+  if (!work) return "";
+  const linked = (work as { artistas?: { nome_artistico?: string | null } | null }).artistas?.nome_artistico;
   if (linked) return linked;
-  const interpretes = joinNames((obra as { interpretes?: string | string[] | null }).interpretes);
-  if (interpretes) return interpretes;
-  return joinNames(obra.compositores ?? obra.compositor);
+  const performers = joinNames((work as { interpretes?: string | string[] | null }).interpretes);
+  if (performers) return performers;
+  return joinNames(work.compositores ?? work.compositor);
 }
 
 /** Readable labels for the target media (snake_case values from the form). */
-export const MIDIA_LABEL: Record<string, string> = {
+export const MEDIA_LABEL: Record<string, string> = {
   tv_aberta: "TV Aberta",
   tv_fechada: "TV Fechada",
   cinema: "Cinema",
@@ -74,11 +74,11 @@ export const MIDIA_LABEL: Record<string, string> = {
   outro: "Outro",
 };
 
-export const midiaLabel = (v: string | null | undefined): string =>
-  v ? (MIDIA_LABEL[v] ?? v.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())) : "—";
+export const mediaLabel = (v: string | null | undefined): string =>
+  v ? (MEDIA_LABEL[v] ?? v.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())) : "—";
 
 /** Readable labels for the license type. */
-export const TIPO_LABEL: Record<string, string> = {
+export const TYPE_LABEL: Record<string, string> = {
   sync_tv: "Sync TV",
   sync_cinema: "Sync Cinema",
   sync_publicidade: "Sync Publicidade",
@@ -88,5 +88,5 @@ export const TIPO_LABEL: Record<string, string> = {
   mecanica: "Mecânica",
 };
 
-export const tipoLabel = (v: string | null | undefined): string =>
-  v ? (TIPO_LABEL[v] ?? v.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())) : "—";
+export const typeLabel = (v: string | null | undefined): string =>
+  v ? (TYPE_LABEL[v] ?? v.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())) : "—";

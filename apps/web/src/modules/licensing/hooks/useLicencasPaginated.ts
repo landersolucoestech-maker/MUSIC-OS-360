@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { api } from "@/shared/lib/api-client";
-import type { LicencaWithRelations } from "../types/licensing.types";
+import type { LicenseWithRelations } from "../types/licensing.types";
 
-export interface UseLicencasPaginatedParams {
+export interface UseLicensesPaginatedParams {
   /** 0-indexed, same convention as usePagination()/TablePagination. */
   page: number;
   pageSize: number;
@@ -14,12 +14,12 @@ export interface UseLicencasPaginatedParams {
   midia?: string;
 }
 
-export function useLicencasPaginated({ page, pageSize, search, status, midia }: UseLicencasPaginatedParams) {
+export function useLicensesPaginated({ page, pageSize, search, status, midia: media }: UseLicensesPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
-  if (midia) filters.midia_destino = midia;
+  if (media) filters.midia_destino = media;
 
-  const result = usePaginatedDataQuery<LicencaWithRelations>({
+  const result = usePaginatedDataQuery<LicenseWithRelations>({
     queryKey: [...QUERY_KEYS.LICENSES],
     table: "licencas",
     page: page + 1,
@@ -29,7 +29,7 @@ export function useLicencasPaginated({ page, pageSize, search, status, midia }: 
   });
 
   return {
-    licencas: result.items,
+    licenses: result.items,
     total: result.total,
     totalPages: result.totalPages,
     isLoading: result.isLoading,
@@ -39,24 +39,24 @@ export function useLicencasPaginated({ page, pageSize, search, status, midia }: 
   };
 }
 
-export interface LicencaStats {
+export interface LicenseStats {
   total: number;
   byGroup: Record<string, number>;
   sumByGroup?: Record<string, number>;
   totalSum?: number;
 }
 
-const EMPTY_STATS: LicencaStats = { total: 0, byGroup: {} };
+const EMPTY_STATS: LicenseStats = { total: 0, byGroup: {} };
 
 /**
  * Count + value sum per status, over the WHOLE TENANT — GET
  * /licenses/stats (aggregated in the database). Task H: the KPIs and the 3 tabs of
  * Licenciamento.tsx can no longer be computed over the current page only.
  */
-export function useLicencasStats() {
-  const query = useQuery<LicencaStats>({
+export function useLicensesStats() {
+  const query = useQuery<LicenseStats>({
     queryKey: [...QUERY_KEYS.LICENSES, "stats"],
-    queryFn: ({ signal }) => api.get<LicencaStats>("/licenses/stats", { signal }),
+    queryFn: ({ signal }) => api.get<LicenseStats>("/licenses/stats", { signal }),
     staleTime: 30_000,
   });
   return {

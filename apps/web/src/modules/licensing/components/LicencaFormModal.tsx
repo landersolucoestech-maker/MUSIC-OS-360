@@ -11,26 +11,26 @@ import { Textarea } from "@/shared/ui/textarea";
 import { FieldError } from "@/shared/components/FormField";
 import { toast } from "sonner";
 import { FileText, Music, DollarSign, Building } from "lucide-react";
-import { licencaSchema, type LicencaFormData } from "@/modules/licensing/lib/licenca-schema";
-import { useLicencas } from "@/modules/licensing/hooks/useLicencas";
+import { licenseSchema, type LicenseFormData } from "@/modules/licensing/lib/licenca-schema";
+import { useLicenses } from "@/modules/licensing/hooks/useLicencas";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
-import { obraArtistaLabel } from "@/modules/licensing/lib/licenca-format";
+import { workArtistLabel } from "@/modules/licensing/lib/licenca-format";
 import type { Work } from "@/modules/catalog/types/catalog.types";
 
-interface ClienteOption { id: string; name: string }
+interface ClientOption { id: string; name: string }
 
-interface LicencaFormModalProps {
+interface LicenseFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   licenca?: any;
   mode: "create" | "edit" | "view";
 }
 
-const tiposLicenca = ["Sync TV", "Sync Cinema", "Sync Publicidade", "Sync Games", "Sync Digital", "Master Use", "Mecânica"];
-const midiasDestino = ["TV Aberta", "TV Fechada", "Cinema", "Streaming", "Redes Sociais", "Publicidade Digital", "Games", "Outro"];
-const territorios = ["Brasil", "América Latina", "Mundial", "Estados Unidos", "Europa", "Ásia"];
+const licenseTypes = ["Sync TV", "Sync Cinema", "Sync Publicidade", "Sync Games", "Sync Digital", "Master Use", "Mecânica"];
+const destinationMedia = ["TV Aberta", "TV Fechada", "Cinema", "Streaming", "Redes Sociais", "Publicidade Digital", "Games", "Outro"];
+const territories = ["Brasil", "América Latina", "Mundial", "Estados Unidos", "Europa", "Ásia"];
 const statusOptions = [
   { value: "ativa", label: "Ativa" },
   { value: "negociacao", label: "Em Negociação" },
@@ -38,7 +38,7 @@ const statusOptions = [
   { value: "expirada", label: "Expirada" },
 ];
 
-const DEFAULT_VALUES: LicencaFormData = {
+const DEFAULT_VALUES: LicenseFormData = {
   title: "",
   tipoLicenca: "",
   workId: "",
@@ -56,10 +56,10 @@ const DEFAULT_VALUES: LicencaFormData = {
   observacoes: "",
 };
 
-export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaFormModalProps) {
+export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }: LicenseFormModalProps) {
   const isViewMode = mode === "view";
   const title = mode === "create" ? "Nova Licença de Sync" : mode === "edit" ? "Editar Licença" : "Detalhes da Licença";
-  const { addLicenca, updateLicenca } = useLicencas();
+  const { addLicense, updateLicense } = useLicenses();
 
   const {
     register,
@@ -67,8 +67,8 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<LicencaFormData>({
-    resolver: zodResolver(licencaSchema),
+  } = useForm<LicenseFormData>({
+    resolver: zodResolver(licenseSchema),
     defaultValues: DEFAULT_VALUES,
   });
 
@@ -77,37 +77,37 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
   // the first 50 loaded by useObras() without a filter (Task J).
   const workId = useWatch({ control, name: "workId" });
   const remunerationType = useWatch({ control, name: "remunerationType" });
-  const { entity: obraSelecionada } = useEntityById<Work>("obras", workId || undefined);
-  const artistaDerivado = useMemo(() => obraArtistaLabel(obraSelecionada), [obraSelecionada]);
+  const { entity: selectedWork } = useEntityById<Work>("obras", workId || undefined);
+  const derivedArtist = useMemo(() => workArtistLabel(selectedWork), [selectedWork]);
   const showMonetary = remunerationType === "FIXED" || remunerationType === "FIXED_PLUS_PERCENTAGE";
   const showPercentage = remunerationType === "PERCENTAGE" || remunerationType === "FIXED_PLUS_PERCENTAGE";
 
   useEffect(() => {
     if (!open) return;
-    if (licenca) {
+    if (license) {
       reset({
-        title: licenca.title || "",
-        tipoLicenca: licenca.type || "",
-        workId: licenca.work_id || "",
-        clientId: licenca.client_id || "",
-        projeto: licenca.projeto || "",
-        midiaDestino: licenca.midia_destino || "",
-        territorio: licenca.territorio || "",
-        status: licenca.status || "negociacao",
-        startDate: licenca.start_date || "",
-        endDate: licenca.end_date || "",
-        remunerationType: licenca.remuneration_type || "FIXED",
-        currency: licenca.currency || "BRL",
-        amount: (licenca.amount ?? licenca.valor) != null ? String(licenca.amount ?? licenca.valor) : "",
-        percentage: licenca.percentage != null ? String(licenca.percentage) : "",
-        observacoes: licenca.notes || "",
+        title: license.title || "",
+        tipoLicenca: license.type || "",
+        workId: license.work_id || "",
+        clientId: license.client_id || "",
+        projeto: license.projeto || "",
+        midiaDestino: license.midia_destino || "",
+        territorio: license.territorio || "",
+        status: license.status || "negociacao",
+        startDate: license.start_date || "",
+        endDate: license.end_date || "",
+        remunerationType: license.remuneration_type || "FIXED",
+        currency: license.currency || "BRL",
+        amount: (license.amount ?? license.valor) != null ? String(license.amount ?? license.valor) : "",
+        percentage: license.percentage != null ? String(license.percentage) : "",
+        observacoes: license.notes || "",
       });
     } else {
       reset(DEFAULT_VALUES);
     }
-  }, [open, licenca, reset]);
+  }, [open, license, reset]);
 
-  const buildPayload = (data: LicencaFormData) => {
+  const buildPayload = (data: LicenseFormData) => {
     const isFixed = data.remunerationType === "FIXED";
     const isPct = data.remunerationType === "PERCENTAGE";
     const isBoth = data.remunerationType === "FIXED_PLUS_PERCENTAGE";
@@ -133,19 +133,19 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
     };
   };
 
-  const onSubmit = async (data: LicencaFormData) => {
+  const onSubmit = async (data: LicenseFormData) => {
     if (isViewMode) return;
     try {
       const payload = buildPayload(data);
-      if (mode === "edit" && licenca?.id) {
-        await updateLicenca.mutateAsync({
-          id: licenca.id as string,
+      if (mode === "edit" && license?.id) {
+        await updateLicense.mutateAsync({
+          id: license.id as string,
           data: payload as never,
-          expectedUpdatedAt: getExpectedUpdatedAt(licenca),
+          expectedUpdatedAt: getExpectedUpdatedAt(license),
         });
         toast.success("Licença atualizada com sucesso.");
       } else {
-        await addLicenca.mutateAsync(payload as never);
+        await addLicense.mutateAsync(payload as never);
         toast.success("Licença criada com sucesso.");
       }
       onOpenChange(false);
@@ -195,7 +195,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
                         <SelectValue placeholder="Selecione o tipo" />
                       </SelectTrigger>
                       <SelectContent>
-                        {tiposLicenca.map(type => (
+                        {licenseTypes.map(type => (
                           <SelectItem key={type} value={type.toLowerCase().replace(/ /g, "_")}>{type}</SelectItem>
                         ))}
                       </SelectContent>
@@ -230,7 +230,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
               <div className="space-y-2">
                 <Label>Artista <span className="text-muted-foreground font-normal">(da obra)</span></Label>
                 <Input
-                  value={artistaDerivado}
+                  value={derivedArtist}
                   readOnly
                   disabled
                   placeholder="Definido pela obra selecionada"
@@ -253,7 +253,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
                   name="clientId"
                   control={control}
                   render={({ field }) => (
-                    <AsyncEntityCombobox<ClienteOption>
+                    <AsyncEntityCombobox<ClientOption>
                       table="clientes"
                       getLabel={(c) => c.name ?? ""}
                       value={field.value}
@@ -292,8 +292,8 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
                         <SelectValue placeholder="Selecione a mídia" />
                       </SelectTrigger>
                       <SelectContent>
-                        {midiasDestino.map(midia => (
-                          <SelectItem key={midia} value={midia.toLowerCase().replace(/ /g, "_")}>{midia}</SelectItem>
+                        {destinationMedia.map(media => (
+                          <SelectItem key={media} value={media.toLowerCase().replace(/ /g, "_")}>{media}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -311,7 +311,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
                         <SelectValue placeholder="Selecione o território" />
                       </SelectTrigger>
                       <SelectContent>
-                        {territorios.map(t => (
+                        {territories.map(t => (
                           <SelectItem key={t} value={t.toLowerCase().replace(/ /g, "_")}>{t}</SelectItem>
                         ))}
                       </SelectContent>

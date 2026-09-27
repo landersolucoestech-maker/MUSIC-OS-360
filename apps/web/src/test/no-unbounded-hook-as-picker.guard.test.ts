@@ -33,7 +33,7 @@ const UNBOUNDED_HOOKS = [
   "useContracts",
   "useClients",
   "usePhonograms",
-  "useLicencas",
+  "useLicenses",
   "useEmployees",
 ];
 
@@ -88,9 +88,9 @@ const ALLOWED_CALL_SITES: Record<string, string> = {
   "modules/marketing/components/ia-criativa/PerfilTab.tsx":
     "useObras/useFonogramas(!!artist, artist?.id) — escopados server-side pelo artista selecionado no próprio formulário.",
   "modules/licensing/pages/Licenciamento.tsx":
-    "useLicencas() só para mutations (delete); a lista paginada usa hook separado (Task H).",
+    "useLicenses() só para mutations (delete); a lista paginada usa hook separado (Task H).",
   "modules/licensing/components/LicencaFormModal.tsx":
-    "useLicencas() só para mutations (addLicenca/updateLicenca); o picker de obra usa AsyncEntityCombobox.",
+    "useLicenses() só para mutations (addLicense/updateLicense); o picker de obra usa AsyncEntityCombobox.",
 };
 
 function walk(dir: string, out: string[] = []): string[] {

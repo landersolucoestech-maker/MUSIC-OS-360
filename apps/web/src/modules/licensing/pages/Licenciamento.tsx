@@ -15,15 +15,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { FileText, Music, Clock, DollarSign, PlusCircle, Search, Loader2, MoreHorizontal, Eye, Pencil, Trash2, Shield } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/ui/dropdown-menu";
-import { LicencaFormModal } from "@/modules/licensing/components/LicencaFormModal";
-import { LicencaViewModal } from "@/modules/licensing/components/LicencaViewModal";
+import { LicenseFormModal } from "@/modules/licensing/components/LicencaFormModal";
+import { LicenseViewModal } from "@/modules/licensing/components/LicencaViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { RequirePermission } from "@/shared/components/RequirePermission";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
-import { useLicencas } from "@/modules/licensing/hooks/useLicencas";
-import { useLicencasPaginated, useLicencasStats } from "@/modules/licensing/hooks/useLicencasPaginated";
-import { formatRemuneration, obraArtistaLabel, midiaLabel } from "@/modules/licensing/lib/licenca-format";
+import { useLicenses } from "@/modules/licensing/hooks/useLicencas";
+import { useLicensesPaginated, useLicensesStats } from "@/modules/licensing/hooks/useLicencasPaginated";
+import { formatRemuneration, workArtistLabel, mediaLabel } from "@/modules/licensing/lib/licenca-format";
 import type { Work } from "@/modules/catalog/types/catalog.types";
 import { formatCurrency } from "@/shared/lib/format-utils";
 import { FeatureGate } from '@/shared/components/FeatureGate';
@@ -42,20 +42,20 @@ export default function Licenciamento() {
   // Task H: useLicencas() (fetch-all) remains only for mutations (delete) and the
   // initial isLoading gate — the tables below now read from
   // useLicencasPaginated() (server-side, one page at a time).
-  const { licencas, isLoading, deleteLicenca } = useLicencas();
+  const { licenses, isLoading, deleteLicense } = useLicenses();
 
   const [activeTab, setActiveTab] = useState("catalogo");
-  const [licencaModal, setLicencaModal] = useState<{ open: boolean; mode: "create" | "edit"; licenca?: any }>({ open: false, mode: "create" });
+  const [licenseModal, setLicenseModal] = useState<{ open: boolean; mode: "create" | "edit"; licenca?: any }>({ open: false, mode: "create" });
   const [viewModal, setViewModal] = useState<{ open: boolean; licenca?: any }>({ open: false });
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; licenca?: any }>({ open: false });
   const [bulkDeleteModal, setBulkDeleteModal] = useState<{ open: boolean; ids: string[] }>({ open: false, ids: [] });
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [midiaFilter, setMidiaFilter] = useState("all");
-  const [selectedLicencaIds, setSelectedLicencaIds] = useState<string[]>([]);
+  const [mediaFilter, setMediaFilter] = useState("all");
+  const [selectedLicenseIds, setSelectedLicenseIds] = useState<string[]>([]);
 
-  const hasActiveFilters = searchTerm !== "" || statusFilter !== "all" || midiaFilter !== "all";
+  const hasActiveFilters = searchTerm !== "" || statusFilter !== "all" || mediaFilter !== "all";
   const debouncedSearch = useDebounce(searchTerm, 300);
 
   // Task H: real server-side pagination — the page changes the request (it never
@@ -65,7 +65,7 @@ export default function Licenciamento() {
   // is enough — it is the `status` filter that changes with `activeTab`.
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  useEffect(() => { setPage(0); }, [debouncedSearch, statusFilter, midiaFilter, activeTab]);
+  useEffect(() => { setPage(0); }, [debouncedSearch, statusFilter, mediaFilter, activeTab]);
 
   const tabStatus =
     activeTab === "propostas" ? "negociacao,proposta" :
@@ -73,76 +73,76 @@ export default function Licenciamento() {
     (statusFilter !== "all" ? statusFilter : undefined);
 
   const {
-    licencas: pageItems,
+    licenses: pageItems,
     total,
     isLoading: isLoadingPage,
     error: pageError,
     refetch: refetchPage,
-  } = useLicencasPaginated({
+  } = useLicensesPaginated({
     page,
     pageSize,
     search: activeTab === "catalogo" ? (debouncedSearch || undefined) : undefined,
     status: tabStatus,
-    midia: activeTab === "catalogo" && midiaFilter !== "all" ? midiaFilter : undefined,
+    midia: activeTab === "catalogo" && mediaFilter !== "all" ? mediaFilter : undefined,
   });
 
   // Task J: per-row work title/client name, resolved by direct ID
   // (GET /works/:id, GET /clients/:id) only for the records of the
   // current page — previously it scanned useObras()/an unfiltered client
   // listing, truncated to the first 50 of the tenant.
-  const [resolvedObras, setResolvedObras] = useState<Record<string, Work>>({});
-  const [resolvedClientes, setResolvedClientes] = useState<Record<string, { id: string; name: string }>>({});
-  const licencaObraIds = useMemo(
+  const [resolvedWorks, setResolvedWorks] = useState<Record<string, Work>>({});
+  const [resolvedClients, setResolvedClients] = useState<Record<string, { id: string; name: string }>>({});
+  const licenseWorkIds = useMemo(
     () => Array.from(new Set(pageItems.map((l: any) => l.work_id).filter(Boolean))) as string[],
     [pageItems],
   );
-  const licencaClientIds = useMemo(
+  const licenseClientIds = useMemo(
     () => Array.from(new Set(pageItems.map((l: any) => l.client_id).filter(Boolean))) as string[],
     [pageItems],
   );
   useEffect(() => {
-    if (licencaObraIds.length === 0) return;
+    if (licenseWorkIds.length === 0) return;
     let cancelled = false;
-    Promise.all(licencaObraIds.map((id) => storage.findById<Work & { id: string }>("obras", id)))
+    Promise.all(licenseWorkIds.map((id) => storage.findById<Work & { id: string }>("obras", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, Work> = {};
-        results.forEach((o, i) => { if (o) map[licencaObraIds[i]] = o; });
-        setResolvedObras((prev) => ({ ...prev, ...map }));
+        results.forEach((o, i) => { if (o) map[licenseWorkIds[i]] = o; });
+        setResolvedWorks((prev) => ({ ...prev, ...map }));
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [licencaObraIds]);
+  }, [licenseWorkIds]);
   useEffect(() => {
-    if (licencaClientIds.length === 0) return;
+    if (licenseClientIds.length === 0) return;
     let cancelled = false;
-    Promise.all(licencaClientIds.map((id) => storage.findById<{ id: string; name: string }>("clientes", id)))
+    Promise.all(licenseClientIds.map((id) => storage.findById<{ id: string; name: string }>("clientes", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, { id: string; name: string }> = {};
-        results.forEach((c, i) => { if (c) map[licencaClientIds[i]] = c; });
-        setResolvedClientes((prev) => ({ ...prev, ...map }));
+        results.forEach((c, i) => { if (c) map[licenseClientIds[i]] = c; });
+        setResolvedClients((prev) => ({ ...prev, ...map }));
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [licencaClientIds]);
+  }, [licenseClientIds]);
 
-  const obraTitleDe = (l: any) => (l.work_id ? resolvedObras[l.work_id]?.title ?? null : null);
-  const artistaDe = (l: any) => (l.work_id ? obraArtistaLabel(resolvedObras[l.work_id]) : "");
-  const clienteNomeDe = (l: any) => (l.client_id ? resolvedClientes[l.client_id]?.name ?? null : null);
+  const workTitleOf = (l: any) => (l.work_id ? resolvedWorks[l.work_id]?.title ?? null : null);
+  const artistOf = (l: any) => (l.work_id ? workArtistLabel(resolvedWorks[l.work_id]) : "");
+  const clientNameOf = (l: any) => (l.client_id ? resolvedClients[l.client_id]?.name ?? null : null);
 
   // KPIs: count + value sum per status OVER THE WHOLE TENANT (not the
   // current page) — GET /licenses/stats, aggregated in the database.
-  const { stats } = useLicencasStats();
+  const { stats } = useLicensesStats();
 
-  const toggleSelectLicenca = (id: string) => {
-    setSelectedLicencaIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
+  const toggleSelectLicense = (id: string) => {
+    setSelectedLicenseIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   };
 
-  const toggleSelectLicencas = (rows: any[]) => {
+  const toggleSelectLicenses = (rows: any[]) => {
     const ids = rows.map((row) => row.id);
-    const allSelected = ids.length > 0 && ids.every((id) => selectedLicencaIds.includes(id));
-    setSelectedLicencaIds((current) => {
+    const allSelected = ids.length > 0 && ids.every((id) => selectedLicenseIds.includes(id));
+    setSelectedLicenseIds((current) => {
       if (allSelected) return current.filter((id) => !ids.includes(id));
       return Array.from(new Set([...current, ...ids]));
     });
@@ -150,8 +150,8 @@ export default function Licenciamento() {
 
   const renderSelectAction = (rows: any[], testId: string) => {
     if (rows.length === 0) return undefined;
-    const allSelected = rows.every((row) => selectedLicencaIds.includes(row.id));
-    const selectedCount = rows.filter((row) => selectedLicencaIds.includes(row.id)).length;
+    const allSelected = rows.every((row) => selectedLicenseIds.includes(row.id));
+    const selectedCount = rows.filter((row) => selectedLicenseIds.includes(row.id)).length;
     return (
       <div className="flex flex-wrap items-center justify-end gap-3">
         {selectedCount > 0 && (
@@ -160,7 +160,7 @@ export default function Licenciamento() {
             variant="destructive"
             size="sm"
             className="h-8 text-xs gap-1.5"
-            onClick={() => setBulkDeleteModal({ open: true, ids: rows.filter((row) => selectedLicencaIds.includes(row.id)).map((row) => row.id) })}
+            onClick={() => setBulkDeleteModal({ open: true, ids: rows.filter((row) => selectedLicenseIds.includes(row.id)).map((row) => row.id) })}
             data-testid={`${testId}-delete-selected`}
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -169,7 +169,7 @@ export default function Licenciamento() {
         )}
         <Checkbox
           checked={allSelected}
-          onCheckedChange={() => toggleSelectLicencas(rows)}
+          onCheckedChange={() => toggleSelectLicenses(rows)}
           aria-label="Selecionar todas as licenças"
           data-testid={testId}
         />
@@ -183,25 +183,25 @@ export default function Licenciamento() {
   const clearFilters = () => {
     setSearchTerm("");
     setStatusFilter("all");
-    setMidiaFilter("all");
+    setMediaFilter("all");
   };
 
   const handleDelete = () => {
     if (deleteModal.licenca) {
-      deleteLicenca.mutate(deleteModal.licenca.id);
+      deleteLicense.mutate(deleteModal.licenca.id);
       setDeleteModal({ open: false });
     }
   };
 
   const handleBulkDelete = async () => {
     const ids = bulkDeleteModal.ids;
-    setSelectedLicencaIds((current) => current.filter((id) => !ids.includes(id)));
+    setSelectedLicenseIds((current) => current.filter((id) => !ids.includes(id)));
     setBulkDeleteModal({ open: false, ids: [] });
-    const result = await runBulkAction(ids, (id) => deleteLicenca.mutateAsync(id));
+    const result = await runBulkAction(ids, (id) => deleteLicense.mutateAsync(id));
     reportBulkResult(result, "excluída", "licença");
   };
 
-  const metricas = useMemo(() => ({
+  const metrics = useMemo(() => ({
     total: stats.total,
     ativas: stats.byGroup["ativa"] ?? 0,
     propostas: (stats.byGroup["negociacao"] ?? 0) + (stats.byGroup["proposta"] ?? 0),
@@ -211,7 +211,7 @@ export default function Licenciamento() {
 
   const headerActions = (
     <RequirePermission module="licensing" action="write">
-      <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setLicencaModal({ open: true, mode: "create" })} data-testid="button-nova-licenca">
+      <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setLicenseModal({ open: true, mode: "create" })} data-testid="button-nova-licenca">
         <PlusCircle className="h-3.5 w-3.5" />Nova Licença
       </Button>
     </RequirePermission>
@@ -231,11 +231,11 @@ export default function Licenciamento() {
       <div className="space-y-6">
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          <MetricCard title="Total Licenças" value={metricas.total} icon={FileText} accent="primary" />
-          <MetricCard title="Licenças Ativas" value={metricas.ativas} icon={Music} accent="success" />
-          <MetricCard title="Em Negociação" value={metricas.propostas} icon={Clock} accent="warning" />
-          <MetricCard title="Expirado" value={metricas.expiradas} icon={Shield} accent="destructive" />
-          <MetricCard title="Valor Total" value={formatCurrency(metricas.valorTotal)} icon={DollarSign} accent="primary" />
+          <MetricCard title="Total Licenças" value={metrics.total} icon={FileText} accent="primary" />
+          <MetricCard title="Licenças Ativas" value={metrics.ativas} icon={Music} accent="success" />
+          <MetricCard title="Em Negociação" value={metrics.propostas} icon={Clock} accent="warning" />
+          <MetricCard title="Expirado" value={metrics.expiradas} icon={Shield} accent="destructive" />
+          <MetricCard title="Valor Total" value={formatCurrency(metrics.valorTotal)} icon={DollarSign} accent="primary" />
         </div>
 
         <div className="flex items-center gap-2">
@@ -266,7 +266,7 @@ export default function Licenciamento() {
                   <SelectItem value="expirada">Expirada</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={midiaFilter} onValueChange={setMidiaFilter}>
+              <Select value={mediaFilter} onValueChange={setMediaFilter}>
                 <SelectTrigger className="h-8 w-auto min-w-[132px] shrink-0 bg-card border-border text-sm"><SelectValue placeholder="Todas Mídias" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas Mídias</SelectItem>
@@ -306,27 +306,27 @@ export default function Licenciamento() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {pageItems.map((licenca) => (
-                      <TableRow key={licenca.id}>
+                    {pageItems.map((license) => (
+                      <TableRow key={license.id}>
                         <TableCell>
                           <Checkbox
-                            checked={selectedLicencaIds.includes(licenca.id)}
-                            onCheckedChange={() => toggleSelectLicenca(licenca.id)}
-                            aria-label={`Selecionar licença ${licenca.title || licenca.id}`}
-                            data-testid={`checkbox-licenca-${licenca.id}`}
+                            checked={selectedLicenseIds.includes(license.id)}
+                            onCheckedChange={() => toggleSelectLicense(license.id)}
+                            aria-label={`Selecionar licença ${license.title || license.id}`}
+                            data-testid={`checkbox-licenca-${license.id}`}
                           />
                         </TableCell>
-                        <TableCell className="font-medium">{licenca.title || "—"}</TableCell>
+                        <TableCell className="font-medium">{license.title || "—"}</TableCell>
                         <TableCell>
                           <div className="min-w-0">
-                            <p className="font-medium truncate">{obraTitleDe(licenca) ?? "—"}</p>
-                            {artistaDe(licenca) && <p className="text-xs text-muted-foreground truncate">{artistaDe(licenca)}</p>}
+                            <p className="font-medium truncate">{workTitleOf(license) ?? "—"}</p>
+                            {artistOf(license) && <p className="text-xs text-muted-foreground truncate">{artistOf(license)}</p>}
                           </div>
                         </TableCell>
-                        <TableCell>{clienteNomeDe(licenca) ?? "—"}</TableCell>
-                        <TableCell>{licenca.midia_destino ? <Badge variant="neutral">{midiaLabel(licenca.midia_destino)}</Badge> : "—"}</TableCell>
-                        <TableCell className="font-semibold text-success">{formatRemuneration(licenca)}</TableCell>
-                        <TableCell>{getStatusBadge(licenca.status ?? "")}</TableCell>
+                        <TableCell>{clientNameOf(license) ?? "—"}</TableCell>
+                        <TableCell>{license.midia_destino ? <Badge variant="neutral">{mediaLabel(license.midia_destino)}</Badge> : "—"}</TableCell>
+                        <TableCell className="font-semibold text-success">{formatRemuneration(license)}</TableCell>
+                        <TableCell>{getStatusBadge(license.status ?? "")}</TableCell>
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -335,15 +335,15 @@ export default function Licenciamento() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => setViewModal({ open: true, licenca })}>
+                              <DropdownMenuItem onClick={() => setViewModal({ open: true, licenca: license })}>
                                 <Eye className="h-4 w-4 mr-2" />
                                 Ver
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => setLicencaModal({ open: true, mode: "edit", licenca })}>
+                              <DropdownMenuItem onClick={() => setLicenseModal({ open: true, mode: "edit", licenca: license })}>
                                 <Pencil className="h-4 w-4 mr-2" />
                                 Editar
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => setDeleteModal({ open: true, licenca })} className="text-destructive">
+                              <DropdownMenuItem onClick={() => setDeleteModal({ open: true, licenca: license })} className="text-destructive">
                                 <Trash2 className="h-4 w-4 mr-2" />
                                 Excluir
                               </DropdownMenuItem>
@@ -371,7 +371,7 @@ export default function Licenciamento() {
                   title="Nenhuma licença cadastrada"
                   description="Comece criando sua primeira licença de sync"
                   actionLabel="Nova Licença"
-                  onAction={() => setLicencaModal({ open: true, mode: "create" })}
+                  onAction={() => setLicenseModal({ open: true, mode: "create" })}
                 />
               )}
               </CardContent>
@@ -404,27 +404,27 @@ export default function Licenciamento() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {pageItems.map((licenca) => (
-                        <TableRow key={licenca.id}>
+                      {pageItems.map((license) => (
+                        <TableRow key={license.id}>
                           <TableCell>
                             <Checkbox
-                              checked={selectedLicencaIds.includes(licenca.id)}
-                              onCheckedChange={() => toggleSelectLicenca(licenca.id)}
-                              aria-label={`Selecionar licença ${licenca.title || licenca.id}`}
-                              data-testid={`checkbox-proposta-${licenca.id}`}
+                              checked={selectedLicenseIds.includes(license.id)}
+                              onCheckedChange={() => toggleSelectLicense(license.id)}
+                              aria-label={`Selecionar licença ${license.title || license.id}`}
+                              data-testid={`checkbox-proposta-${license.id}`}
                             />
                           </TableCell>
-                          <TableCell className="font-medium">{licenca.title || "—"}</TableCell>
+                          <TableCell className="font-medium">{license.title || "—"}</TableCell>
                           <TableCell>
                             <div className="min-w-0">
-                              <p className="font-medium truncate">{obraTitleDe(licenca) ?? "—"}</p>
-                              {artistaDe(licenca) && <p className="text-xs text-muted-foreground truncate">{artistaDe(licenca)}</p>}
+                              <p className="font-medium truncate">{workTitleOf(license) ?? "—"}</p>
+                              {artistOf(license) && <p className="text-xs text-muted-foreground truncate">{artistOf(license)}</p>}
                             </div>
                           </TableCell>
-                          <TableCell>{clienteNomeDe(licenca) ?? "—"}</TableCell>
-                          <TableCell>{licenca.midia_destino ? <Badge variant="neutral">{midiaLabel(licenca.midia_destino)}</Badge> : "—"}</TableCell>
-                          <TableCell className="font-semibold text-success">{formatRemuneration(licenca)}</TableCell>
-                          <TableCell>{getStatusBadge(licenca.status ?? "")}</TableCell>
+                          <TableCell>{clientNameOf(license) ?? "—"}</TableCell>
+                          <TableCell>{license.midia_destino ? <Badge variant="neutral">{mediaLabel(license.midia_destino)}</Badge> : "—"}</TableCell>
+                          <TableCell className="font-semibold text-success">{formatRemuneration(license)}</TableCell>
+                          <TableCell>{getStatusBadge(license.status ?? "")}</TableCell>
                           <TableCell>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -433,15 +433,15 @@ export default function Licenciamento() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setViewModal({ open: true, licenca })}>
+                                <DropdownMenuItem onClick={() => setViewModal({ open: true, licenca: license })}>
                                   <Eye className="h-4 w-4 mr-2" />
                                   Ver
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setLicencaModal({ open: true, mode: "edit", licenca })}>
+                                <DropdownMenuItem onClick={() => setLicenseModal({ open: true, mode: "edit", licenca: license })}>
                                   <Pencil className="h-4 w-4 mr-2" />
                                   Editar
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setDeleteModal({ open: true, licenca })} className="text-destructive">
+                                <DropdownMenuItem onClick={() => setDeleteModal({ open: true, licenca: license })} className="text-destructive">
                                   <Trash2 className="h-4 w-4 mr-2" />
                                   Excluir
                                 </DropdownMenuItem>
@@ -499,27 +499,27 @@ export default function Licenciamento() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {pageItems.map((licenca) => (
-                        <TableRow key={licenca.id}>
+                      {pageItems.map((license) => (
+                        <TableRow key={license.id}>
                           <TableCell>
                             <Checkbox
-                              checked={selectedLicencaIds.includes(licenca.id)}
-                              onCheckedChange={() => toggleSelectLicenca(licenca.id)}
-                              aria-label={`Selecionar licença ${licenca.title || licenca.id}`}
-                              data-testid={`checkbox-ativa-${licenca.id}`}
+                              checked={selectedLicenseIds.includes(license.id)}
+                              onCheckedChange={() => toggleSelectLicense(license.id)}
+                              aria-label={`Selecionar licença ${license.title || license.id}`}
+                              data-testid={`checkbox-ativa-${license.id}`}
                             />
                           </TableCell>
-                          <TableCell className="font-medium">{licenca.title || "—"}</TableCell>
+                          <TableCell className="font-medium">{license.title || "—"}</TableCell>
                           <TableCell>
                             <div className="min-w-0">
-                              <p className="font-medium truncate">{obraTitleDe(licenca) ?? "—"}</p>
-                              {artistaDe(licenca) && <p className="text-xs text-muted-foreground truncate">{artistaDe(licenca)}</p>}
+                              <p className="font-medium truncate">{workTitleOf(license) ?? "—"}</p>
+                              {artistOf(license) && <p className="text-xs text-muted-foreground truncate">{artistOf(license)}</p>}
                             </div>
                           </TableCell>
-                          <TableCell>{clienteNomeDe(licenca) ?? "—"}</TableCell>
-                          <TableCell>{licenca.midia_destino ? <Badge variant="neutral">{midiaLabel(licenca.midia_destino)}</Badge> : "—"}</TableCell>
-                          <TableCell className="font-semibold text-success">{formatRemuneration(licenca)}</TableCell>
-                          <TableCell>{getStatusBadge(licenca.status ?? "")}</TableCell>
+                          <TableCell>{clientNameOf(license) ?? "—"}</TableCell>
+                          <TableCell>{license.midia_destino ? <Badge variant="neutral">{mediaLabel(license.midia_destino)}</Badge> : "—"}</TableCell>
+                          <TableCell className="font-semibold text-success">{formatRemuneration(license)}</TableCell>
+                          <TableCell>{getStatusBadge(license.status ?? "")}</TableCell>
                           <TableCell>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -528,15 +528,15 @@ export default function Licenciamento() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setViewModal({ open: true, licenca })}>
+                                <DropdownMenuItem onClick={() => setViewModal({ open: true, licenca: license })}>
                                   <Eye className="h-4 w-4 mr-2" />
                                   Ver
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setLicencaModal({ open: true, mode: "edit", licenca })}>
+                                <DropdownMenuItem onClick={() => setLicenseModal({ open: true, mode: "edit", licenca: license })}>
                                   <Pencil className="h-4 w-4 mr-2" />
                                   Editar
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setDeleteModal({ open: true, licenca })} className="text-destructive">
+                                <DropdownMenuItem onClick={() => setDeleteModal({ open: true, licenca: license })} className="text-destructive">
                                   <Trash2 className="h-4 w-4 mr-2" />
                                   Excluir
                                 </DropdownMenuItem>
@@ -579,8 +579,8 @@ export default function Licenciamento() {
           on that query; on error (backend down), refetchOnMount
           reopened isLoading, the gate unmounted the modal again — an infinite
           loading loop. Keeping them always mounted breaks the cycle. */}
-      <LicencaFormModal open={licencaModal.open} onOpenChange={(open) => setLicencaModal({ ...licencaModal, open })} licenca={licencaModal.licenca} mode={licencaModal.mode} />
-      <LicencaViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} licenca={viewModal.licenca} />
+      <LicenseFormModal open={licenseModal.open} onOpenChange={(open) => setLicenseModal({ ...licenseModal, open })} licenca={licenseModal.licenca} mode={licenseModal.mode} />
+      <LicenseViewModal open={viewModal.open} onOpenChange={(open) => setViewModal({ ...viewModal, open })} licenca={viewModal.licenca} />
       <DeleteConfirmModal open={deleteModal.open} onOpenChange={(open) => setDeleteModal({ ...deleteModal, open })} title="Excluir Licença" description={`Tem certeza que deseja excluir "${deleteModal.licenca?.title}"?`} onConfirm={handleDelete} />
       <DeleteConfirmModal open={bulkDeleteModal.open} onOpenChange={(open) => setBulkDeleteModal({ ...bulkDeleteModal, open })} title="Excluir licenças selecionadas" description={`Tem certeza que deseja excluir ${bulkDeleteModal.ids.length} licenca(s) selecionada(s)?`} onConfirm={handleBulkDelete} />
     </>
