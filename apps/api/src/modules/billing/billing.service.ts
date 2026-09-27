@@ -386,9 +386,7 @@ export class BillingService {
     // entire method, including the enforcement dispatch, now shares the one
     // transaction opened below, so any failure rolls back everything.
     if (body.status !== undefined && !BillingService.ADMIN_SETTABLE_BILLING_STATUSES.has(body.status)) {
-      throw new BadRequestException(
-        `Status "${body.status}" nao pode ser definido manualmente via este endpoint`,
-      );
+      throw new BadRequestException('Este status de assinatura não pode ser definido manualmente.');
     }
 
     const ds = this.assertDataSource();

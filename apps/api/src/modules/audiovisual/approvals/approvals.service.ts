@@ -80,7 +80,7 @@ export class AudiovisualApprovalsService {
   async decide(tenantId: string, userId: string, id: string, dto: ApprovalDecisionDto) {
     const current = await this.findById(tenantId, id);
     if (current.status !== 'pending') {
-      throw new BadRequestException(`Aprovação já em status "${current.status}" — não pode ser redecidida.`);
+      throw new BadRequestException('Esta aprovação já foi decidida e não pode ser alterada.');
     }
     const now = new Date();
     const patch: Record<string, unknown> = {

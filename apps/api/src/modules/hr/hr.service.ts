@@ -241,7 +241,7 @@ export class HrService {
         .where('l.id = :id AND l.tenant_id = :tenantId AND l.deleted_at IS NULL', { id, tenantId })
         .getOne();
       if (!current) throw new NotFoundException('Afastamento não encontrado');
-      throw new BadRequestException(`Afastamento não está pendente (status atual: ${current.status})`);
+      throw new BadRequestException('Este afastamento não está mais pendente.');
     }
     const updated = await this.leaveRepo!
       .createQueryBuilder('l')

@@ -123,9 +123,11 @@ export class ArtistExternalProfileSyncService {
       // failed/success on its own. There is nothing to persist: the
       // operation failed outright, so it throws with no DB write at all.
       this.logger.error(`[platform-sync/enqueue] BullMQ queue unavailable (Redis off/no-op) ${logCtx}`);
-      throw new ServiceUnavailableException(
-        `Fila de sincronização indisponível: BullMQ está em modo no-op (Redis inacessível ou REDIS_QUEUE_URL ausente) — sync de ${platform} não pôde ser enfileirado`,
-      );
+      throw new ServiceUnavailableException({
+        statusCode: 503,
+        error: 'SYNC_QUEUE_UNAVAILABLE',
+        message: 'A sincronização está indisponível no momento. Tente novamente mais tarde.',
+      });
     }
 
     const payload: ArtistPlatformSyncJobPayload = {

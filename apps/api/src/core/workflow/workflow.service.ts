@@ -116,9 +116,9 @@ export class WorkflowService {
   private async runValidation(req: TransitionRequest): Promise<void> {
     const engine = this.engines.get(req.entityType);
     if (!engine) {
-      throw new BadRequestException(
-        `Workflow não encontrado para entity type '${req.entityType}'`,
-      );
+      // Server misconfiguration (no workflow registered for this entity type):
+      // a plain Error → logged and answered with the generic 500 copy.
+      throw new Error(`No workflow registered for entity type '${req.entityType}'`);
     }
 
     const context: WorkflowContext<string> = {

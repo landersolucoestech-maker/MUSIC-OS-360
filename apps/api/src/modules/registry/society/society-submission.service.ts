@@ -149,10 +149,10 @@ export class SocietySubmissionService {
     const to = dto.status;
 
     if (!canTransition(from, to)) {
-      throw new BadRequestException(`Transição inválida: ${from} → ${to}. Permitidas: ${allowedNext(from).join(', ') || 'nenhuma'}.`);
+      throw new BadRequestException('Mudança de status inválida para esta submissão.');
     }
     if (REQUIRES_SNAPSHOT.includes(to) && !sub.current_payload_snapshot_id) {
-      throw new BadRequestException(`Status ${to} exige um snapshot de payload. Gere o payload antes.`);
+      throw new BadRequestException('Gere o payload da submissão antes de avançar para este status.');
     }
     // A protocol, once set, cannot be silently overwritten.
     if (dto.protocol && sub.protocol && dto.protocol !== sub.protocol) {

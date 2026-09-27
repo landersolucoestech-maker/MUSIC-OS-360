@@ -202,14 +202,14 @@ export class AudiovisualProjectsService {
     const fromIdx = order.indexOf(from);
     const toIdx   = order.indexOf(to);
     if (fromIdx === -1 || toIdx === -1) {
-      throw new BadRequestException(`Transição inválida: ${from} → ${to}`);
+      throw new BadRequestException('Mudança de status inválida para este projeto.');
     }
     // allows moving forward 1+, or back 1 (revision), but not jumping forward > 2 nor back > 1
     if (toIdx < fromIdx - 1) {
-      throw new BadRequestException(`Regressão de status não permitida: ${from} → ${to}. Use cancelled se for o caso.`);
+      throw new BadRequestException('Não é possível voltar mais de uma etapa. Para interromper o projeto, cancele-o.');
     }
     if (toIdx > fromIdx + 2) {
-      throw new BadRequestException(`Salto de status muito grande: ${from} → ${to}. Avance gradualmente.`);
+      throw new BadRequestException('Não é possível avançar mais de duas etapas de uma vez. Avance gradualmente.');
     }
   }
 }
