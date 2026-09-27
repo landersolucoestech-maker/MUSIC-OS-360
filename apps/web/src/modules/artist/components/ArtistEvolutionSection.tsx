@@ -255,7 +255,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
 
   return (
     <div className="space-y-6" data-testid="section-evolucao">
-      {/* Veredito agregado */}
+      {/* Aggregated verdict */}
       <Card
         className={cn(
           "ring-1 ring-offset-0 transition-colors",
@@ -349,7 +349,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
         </CardContent>
       </Card>
 
-      {/* Cards por plataforma */}
+      {/* Per-platform cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <ArtistEvolutionCard
           title="Spotify"

@@ -19,8 +19,8 @@
 /** Bucket categories that organize the files */
 export type StorageBucket =
   | "audio"       // audio files (phonograms, tracks)
-  | "images"      // capas, fotos de artistas, marketing
-  | "documents"   // contratos PDF, documents legais
+  | "images"      // covers, artist photos, marketing
+  | "documents"   // PDF contracts, legal documents
   | "exports"     // generated reports, XLSX/PDF exports
   | "temp";       // temporary uploads before processing
 
@@ -36,7 +36,7 @@ export interface StorageObject {
 
 export interface StorageUploadParams {
   bucket: StorageBucket;
-  /** Caminho dentro do bucket: `tenant-id/artista-id/audio/faixa.mp3` */
+  /** Path inside the bucket: `tenant-id/artist-id/audio/track.mp3` */
   key: string;
   file: File | Blob | ArrayBuffer;
   content_type: string;
@@ -56,7 +56,7 @@ export interface StoragePresignedUrlParams {
   expires_in?: number;
 }
 
-// ─── Contrato ─────────────────────────────────────────────────────────────────
+// ─── Contract ─────────────────────────────────────────────────────────────────
 
 /**
  * IStorageProvider — object storage contract.
@@ -75,7 +75,7 @@ export interface IStorageProvider {
   /** Remove um objecto do storage */
   delete(bucket: StorageBucket, key: string): Promise<void>;
 
-  /** Lista objectos num prefixo */
+  /** Lists objects under a prefix */
   list(bucket: StorageBucket, prefix: string): Promise<StorageObject[]>;
 
   /** Checks whether an object exists */

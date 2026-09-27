@@ -103,7 +103,7 @@ export type ArtistFieldType =
   | "distribuidoras";
 
 export interface ArtistFormField {
-  /** id do campo — chave em ArtistFormAllValues. */
+  /** field id — key in ArtistFormAllValues. */
   id: keyof ArtistFormAllValues;
   /** Label shown in the form = header of the exported column. */
   label: string;
@@ -112,7 +112,7 @@ export interface ArtistFormField {
   required?: boolean;
   placeholder?: string;
   testId?: string;
-  /** Ocupa a linha inteira do grid (default: meia largura). */
+  /** Spans the full grid row (default: half width). */
   fullWidth?: boolean;
   /** Options for type="select". */
   options?: ReadonlyArray<{ value: string; label: string }>;

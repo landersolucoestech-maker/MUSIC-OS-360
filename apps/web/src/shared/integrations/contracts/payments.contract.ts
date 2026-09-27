@@ -94,7 +94,7 @@ export interface CreatePortalParams {
   return_url: string;
 }
 
-// ─── Contrato ─────────────────────────────────────────────────────────────────
+// ─── Contract ─────────────────────────────────────────────────────────────────
 
 /**
  * IPaymentsProvider — SaaS billing and subscriptions contract.
@@ -116,7 +116,7 @@ export interface IPaymentsProvider {
   /** Lists the tenant's payment methods */
   listPaymentMethods(tenantId: string): Promise<PaymentMethod[]>;
 
-  /** Lista facturas emitidas */
+  /** Lists issued invoices */
   listInvoices(tenantId: string, limit?: number): Promise<Invoice[]>;
 
   /** Cancels the subscription at the end of the period */
@@ -126,7 +126,7 @@ export interface IPaymentsProvider {
   hasFeature(tenantId: string, feature: keyof SubscriptionFeatures): Promise<boolean>;
 }
 
-// ─── Limites por plano ────────────────────────────────────────────────────────
+// ─── Limits per plan ──────────────────────────────────────────────────────────
 
 export const PLAN_FEATURES: Record<SubscriptionPlan, SubscriptionFeatures> = {
   starter: {

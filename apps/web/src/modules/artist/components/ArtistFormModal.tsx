@@ -57,7 +57,7 @@ function UrlIcon({ state }: { state: UrlValidationState }) {
   return null;
 }
 
-// ─── Composite: Distribuidoras / Agregadoras ─────────────────────
+// ─── Composite: distributors / aggregators ─────────────────────
 
 function DistributorsField({
   value,

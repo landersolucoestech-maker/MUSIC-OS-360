@@ -16,11 +16,11 @@
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
 
 export type ChannelType =
-  | "direct"        // DM entre dois utilizadores
-  | "group"         // grupo ad-hoc
-  | "project"       // canal associado a um Projecto
+  | "direct"        // DM between two users
+  | "group"         // ad-hoc group
+  | "project"       // channel associated with a Project
   | "artist"        // channel associated with an artist
-  | "department"    // canal de departamento (Marketing, RH, etc.)
+  | "department"    // department channel (Marketing, HR, etc.)
   | "general";      // canal geral do tenant
 
 export type MessageType =
@@ -30,7 +30,7 @@ export type MessageType =
   | "audio"
   | "entity_ref"    // reference to a system entity
   | "notification"  // system-generated notification
-  | "event";        // evento de canal (membro adicionado, etc.)
+  | "event";        // channel event (member added, etc.)
 
 /**
  * Reference to a MUSIC OS 360 domain entity.
@@ -94,7 +94,7 @@ export interface ChatMessage {
   text?: string | null;
   attachments?: ChatAttachment[];
   entity_ref?: EntityReference | null;
-  /** IDs de utilizadores mencionados com @ */
+  /** IDs of users mentioned with @ */
   mentions?: string[];
   /** Message this one replies to (thread) */
   reply_to?: string | null;
@@ -135,7 +135,7 @@ export interface ChatNotification {
   created_at: string;
 }
 
-// ─── Contrato ─────────────────────────────────────────────────────────────────
+// ─── Contract ─────────────────────────────────────────────────────────────────
 
 /**
  * IChatProvider — internal communication contract.
@@ -145,7 +145,7 @@ export interface ChatNotification {
  *   - RealtimeChatProvider    (production — WebSocket or SSE)
  */
 export interface IChatProvider {
-  // ── Canais ────────────────────────────────────────────────────────────────
+  // ── Channels ────────────────────────────────────────────────────────────────
   listChannels(): Promise<ChatChannel[]>;
   getChannel(channelId: string): Promise<ChatChannel>;
   createChannel(params: CreateChannelParams): Promise<ChatChannel>;
@@ -153,7 +153,7 @@ export interface IChatProvider {
   addMember(channelId: string, userId: string): Promise<void>;
   removeMember(channelId: string, userId: string): Promise<void>;
 
-  // ── Mensagens ─────────────────────────────────────────────────────────────
+  // ── Messages ─────────────────────────────────────────────────────────────
   listMessages(channelId: string, params?: { before?: string; limit?: number }): Promise<ChatMessage[]>;
   sendMessage(params: SendMessageParams): Promise<ChatMessage>;
   editMessage(messageId: string, text: string): Promise<ChatMessage>;

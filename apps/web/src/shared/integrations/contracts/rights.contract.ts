@@ -16,13 +16,13 @@
  * FUTURE MIGRATION: each entity implements IRightsProvider with its own API.
  */
 
-// ─── Identificadores ──────────────────────────────────────────────────────────
+// ─── Identifiers ──────────────────────────────────────────────────────────────
 
 export type RightsEntityId = "ecad" | "ubc" | "abramus";
 
 export type RightsKind = "obra" | "fonograma";
 
-// ─── DTOs de pesquisa ─────────────────────────────────────────────────────────
+// ─── Search DTOs ──────────────────────────────────────────────────────────────
 
 export interface RightsSearchQuery {
   query: string;
@@ -47,7 +47,7 @@ export interface RightsSearchResult {
   data_registro?: string | null;
 }
 
-// ─── DTOs de busca de artistas ────────────────────────────────────────────────
+// ─── Artist search DTOs ───────────────────────────────────────────────────────
 
 export interface ArtistSearchQuery {
   query: string;
@@ -65,7 +65,7 @@ export interface ArtistSearchResult {
   data_filiacao?: string | null;
 }
 
-// ─── DTOs de registro ─────────────────────────────────────────────────────────
+// ─── Registration DTOs ────────────────────────────────────────────────────────
 
 export interface RightsRegistrationStatus {
   entity: RightsEntityId;
@@ -183,10 +183,10 @@ export interface GenerateISRCResult {
 
 export type ArrecadacaoTipo =
   | "execucao_publica"   // radio, TV, live concerts
-  | "streaming"          // plataformas digitais
+  | "streaming"          // digital platforms
   | "sincronizacao"      // films, series, advertising
   | "mecanica"           // mechanical reproduction, CDs
-  | "sonorizacao";       // estabelecimentos comerciais
+  | "sonorizacao";       // commercial establishments
 
 export interface ArrecadacaoEntry {
   id: string;
@@ -228,7 +228,7 @@ export interface ConciliacaoResult {
   total_unmatched_external: number;
 }
 
-// ─── Contrato ─────────────────────────────────────────────────────────────────
+// ─── Contract ─────────────────────────────────────────────────────────────────
 
 /**
  * IRightsProvider — complete copyright management contract.
@@ -242,7 +242,7 @@ export interface ConciliacaoResult {
 export interface IRightsProvider {
   readonly entity: RightsEntityId;
 
-  // ── Pesquisa ────────────────────────────────────────────────────────────────
+  // ── Search ────────────────────────────────────────────────────────────────
 
   /** Searches works or phonograms in the entity's database */
   search(query: RightsSearchQuery): Promise<RightsSearchResult[]>;
@@ -261,7 +261,7 @@ export interface IRightsProvider {
   /** History of registration operations */
   getRegistrationHistory(kind: RightsKind, localId: string): Promise<RegistrationHistoryEntry[]>;
 
-  // ── Registro de novas obras/fonogramas ──────────────────────────────────────
+  // ── Registration of new works/sound recordings ──────────────────────────────────────
 
   /** Registers a new work (composition) at the entity */
   registerObra(input: RegisterObraInput): Promise<RegistrationResult>;

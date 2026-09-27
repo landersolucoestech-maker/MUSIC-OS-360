@@ -114,7 +114,7 @@ const CAMPAIGN_SECTIONS: Array<{ key: string; label: string; status: string[] }>
   { key: "planejadas", label: "Campanhas Planejadas", status: ["draft", "agendada"] },
 ];
 
-// ── Financeiro: receitas por natureza ──────────────────────────────────────
+// ── Finance: revenue by nature ──────────────────────────────────────
 const NATURE_BUCKETS: Array<{ label: string; keywords: string[] }> = [
   { label: "Royalties", keywords: ["royalt"] },
   { label: "Shows", keywords: ["show", "cache", "cachê"] },
@@ -123,7 +123,7 @@ const NATURE_BUCKETS: Array<{ label: string; keywords: string[] }> = [
   { label: "Distribuição", keywords: ["distrib", "streaming"] },
 ];
 
-// ── Contratos: filtros por type ────────────────────────────────────────────
+// ── Contracts: filters by type ────────────────────────────────────────────
 const CONTRACT_FILTERS: Array<{ key: string; label: string; tipos?: string[] }> = [
   { key: "todos", label: "Todos" },
   { key: "empresarial", label: "Empresarial", tipos: ["exclusivo", "nao_exclusivo", "gestao", "representacao"] },
@@ -349,7 +349,7 @@ export function ArtistVision360Modal({
   const [contentFilter, setContentFilter] = useState("todos");
   const [contractFilter, setContractFilter] = useState("todos");
 
-  // ── Agenda (eventos do artista) ────────────────────────────────────────
+  // ── Schedule (artist events) ────────────────────────────────────────
   const filteredSchedule = (actualEvents as any[]).filter((e) => {
     const cfg = SCHEDULE_FILTERS.find((f) => f.key === scheduleFilter);
     if (!cfg || !cfg.tipos) return true;
@@ -366,7 +366,7 @@ export function ArtistVision360Modal({
     return cfg.status.includes(String(c.status ?? "").toLowerCase());
   });
 
-  // ── Marketing (campanhas do artista) ───────────────────────────────────
+  // ── Marketing (artist campaigns) ───────────────────────────────────
   const actualCampaigns = marketingCampaigns.filter(
     (c) => c.targetType === "artista" && c.targetId === artistId,
   );
@@ -449,7 +449,7 @@ export function ArtistVision360Modal({
   if (firstContract) evolutionMilestones.push({ id: "m-ctr", label: "Contrato Assinado", descricao: firstContract.title, data: firstContract.created_at });
   evolutionMilestones.sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
 
-  // ── Financeiro real ──────────────────────────────────────────────────
+  // ── Real finance ──────────────────────────────────────────────────
   const totalRevenue = artistTransactions
     .filter((t) => t.type === "receita" && t.status === "paid")
     .reduce((sum, t) => sum + (t.valor ?? 0), 0);
@@ -550,7 +550,7 @@ export function ArtistVision360Modal({
         usuario: "Financeiro",
       });
   });
-  // Status-change events derivados do status atual do artista
+  // Status-change events derived from the artist's current status
   const ARTIST_STATUS_HISTORY_LABELS: Record<string, string> = {
     signed: "Artista contratado",
     in_negotiation: "Negociação iniciada",
@@ -822,7 +822,7 @@ export function ArtistVision360Modal({
           >
             {/* Overview */}
             <TabsContent value="visao-geral" className="p-6 space-y-6 mt-0">
-              {/* KPIs executivos */}
+              {/* Executive KPIs */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <h3 className="font-semibold mb-4">Resumo Executivo</h3>
@@ -1043,7 +1043,7 @@ export function ArtistVision360Modal({
                 </Card>
               </div>
 
-              {/* Resumo Financeiro */}
+              {/* Financial summary */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
@@ -1081,7 +1081,7 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
-              {/* Progresso das Metas */}
+              {/* Goal progress */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
@@ -1143,7 +1143,7 @@ export function ArtistVision360Modal({
               </Card>
             </TabsContent>
 
-            {/* Perfil */}
+            {/* Profile */}
             <TabsContent value="perfil" className="p-6 space-y-6 mt-0">
               {/* Basic information */}
               <Card className="bg-muted/30">
@@ -1195,7 +1195,7 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
-              {/* Dados Pessoais */}
+              {/* Personal data */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
@@ -1317,7 +1317,7 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
-              {/* Perfis e Redes Sociais */}
+              {/* Profiles and social networks */}
               <ArtistPlatformMetrics
                 artistId={artista.id}
                 spotifyUrl={artista.spotify_url ?? null}
@@ -1329,7 +1329,7 @@ export function ArtistVision360Modal({
                 soundcloudUrl={artista.soundcloud_url ?? null}
               />
 
-              {/* Tipo de Perfil */}
+              {/* Profile type */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
@@ -1451,7 +1451,7 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
-              {/* Distribuidoras */}
+              {/* Distributors */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
@@ -1577,7 +1577,7 @@ export function ArtistVision360Modal({
                 );
               })()}
 
-              {/* Equipe Vinculada (CRM) — dados resolvidos dinamicamente do CRM */}
+              {/* Linked team (CRM) — data resolved dynamically from the CRM */}
               {linkedContactsResolved.length > 0 && (
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
@@ -1708,7 +1708,7 @@ export function ArtistVision360Modal({
                 </Card>
               )}
 
-              {/* Data de Cadastro */}
+              {/* Registration date */}
               <div className="text-sm text-muted-foreground">
                 <span>Data do Cadastro: </span>
                 <span>
@@ -1721,7 +1721,7 @@ export function ArtistVision360Modal({
 
             {/* Media */}
             <TabsContent value="midia" className="p-6 space-y-6 mt-0">
-              {/* Galeria de Fotos */}
+              {/* Photo gallery */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
@@ -1779,7 +1779,7 @@ export function ArtistVision360Modal({
 
             </TabsContent>
 
-            {/* Documentos */}
+            {/* Documents */}
             <TabsContent value="documents" className="p-6 space-y-6 mt-0">
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
@@ -1839,7 +1839,7 @@ export function ArtistVision360Modal({
                 </CardContent>
               </Card>
 
-              {/* Links de documentos legados */}
+              {/* Legacy document links */}
               {(artista.documentos_pessoais_url || artista.presskit_url) && (
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
@@ -2089,7 +2089,7 @@ export function ArtistVision360Modal({
               )}
             </TabsContent>
 
-            {/* Financeiro */}
+            {/* Finance */}
             <TabsContent value="financeiro" className="p-6 space-y-6 mt-0">
               {/* Cards de Valores */}
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -2149,7 +2149,7 @@ export function ArtistVision360Modal({
                 </Card>
               </div>
 
-              {/* Receitas por natureza */}
+              {/* Revenue by nature */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <h3 className="font-semibold mb-4">Receitas por Natureza</h3>
@@ -2212,7 +2212,7 @@ export function ArtistVision360Modal({
               </Card>
             </TabsContent>
 
-            {/* Contratos */}
+            {/* Contracts */}
             <TabsContent value="contratos" className="p-6 space-y-6 mt-0">
               {/* Contract metrics */}
               <div className="grid grid-cols-3 gap-4">
@@ -2243,7 +2243,7 @@ export function ArtistVision360Modal({
                 </Card>
               </div>
 
-              {/* Filtros por type */}
+              {/* Filters by type */}
               <div className="flex flex-wrap gap-2">
                 {CONTRACT_FILTERS.map((f) => (
                   <Button
@@ -2257,7 +2257,7 @@ export function ArtistVision360Modal({
                 ))}
               </div>
 
-              {/* Lista de Contratos */}
+              {/* Contract list */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <h3 className="font-semibold mb-4">
@@ -2349,7 +2349,7 @@ export function ArtistVision360Modal({
 
             {/* Marketing */}
             <TabsContent value="marketing" className="p-6 space-y-6 mt-0">
-              {/* Campanhas */}
+              {/* Campaigns */}
               {actualCampaigns.length === 0 ? (
                 <Card className="bg-muted/30">
                   <CardContent className="p-8 flex flex-col items-center justify-center text-center gap-2">
@@ -2417,7 +2417,7 @@ export function ArtistVision360Modal({
                 })
               )}
 
-              {/* Metas */}
+              {/* Goals */}
               <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-4">
@@ -2440,7 +2440,7 @@ export function ArtistVision360Modal({
                     </Button>
                   </div>
 
-                  {/* Resumo */}
+                  {/* Summary */}
                   <div className="grid grid-cols-4 gap-4 mb-6">
                     <div className="text-center p-3 bg-muted/50 rounded-lg">
                       <p className="text-2xl font-bold">{actualMetas.length}</p>
@@ -2622,7 +2622,7 @@ export function ArtistVision360Modal({
                 />
               </section>
 
-              {/* Marcos / Linha do tempo */}
+              {/* Milestones / timeline */}
               {evolutionMilestones.length > 0 && (
                 <Card className="bg-muted/30">
                   <CardContent className="p-4">
@@ -2888,7 +2888,7 @@ export function ArtistVision360Modal({
           </div>
         </Tabs>
 
-        {/* Modal de Nova/Editar Meta */}
+        {/* New/Edit goal modal */}
         <Dialog
           open={showMetaForm}
           onOpenChange={(open) => !open && resetForm()}

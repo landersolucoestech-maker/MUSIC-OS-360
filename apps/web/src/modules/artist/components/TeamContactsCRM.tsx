@@ -25,7 +25,7 @@ import { contactTypeOptions, labelFor } from "@/modules/crm-relationships/consta
 import type { Contact } from "@/modules/crm-relationships/types";
 import type { DistributorEntry } from "@/modules/artist/types/artist.types";
 
-// ─── Tipos ────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────
 
 export type { DistributorEntry };
 
@@ -39,7 +39,7 @@ interface TeamContactsCRMProps {
   onChange: (next: LinkedContactForm[]) => void;
 }
 
-// ─── Constantes ───────────────────────────────────────────────────
+// ─── Constants ───────────────────────────────────────────────────
 
 const DISTRIBUTORS_OPTIONS = [
   { id: "onerpm", label: "ONErpm" },
@@ -59,7 +59,7 @@ const DISTRIBUTOR_CONTACT_TYPES = new Set<Contact["contactType"]>([
   "MUSIC_PUBLISHER",
 ]);
 
-// ─── Componente ───────────────────────────────────────────────────
+// ─── Component ───────────────────────────────────────────────────
 
 export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
   const { contacts, createContact } = useContacts();
@@ -164,7 +164,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
         </div>
       </div>
 
-      {/* Busca de contatos do CRM */}
+      {/* CRM contact search */}
       {searchOpen && (
         <div className="space-y-2 rounded-lg border bg-muted/10 p-3" data-testid="crm-contato-search">
           <div className="relative">
@@ -208,7 +208,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
         </div>
       )}
 
-      {/* Equipe Vinculada */}
+      {/* Linked team */}
       {value.length === 0 ? (
         <p className="rounded-lg border border-dashed py-4 text-center text-xs text-muted-foreground">
           Nenhum contato vinculado. Use "Vincular Contato do CRM" ou "Novo Contato".

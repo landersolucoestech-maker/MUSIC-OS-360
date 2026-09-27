@@ -94,7 +94,7 @@ export interface Artist {
   website?: string | null;
   personType?: string | null;
   birthDate?: string | null;
-  /** Documento de identidade (RG). */
+  /** Identity document (RG). */
   idDocument?: string | null;
   address?: string | null;
   bank?: string | null;

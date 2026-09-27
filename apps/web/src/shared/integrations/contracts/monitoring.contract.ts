@@ -72,7 +72,7 @@ export interface FeatureFlagContext {
  *   - PostHogAnalyticsProvider (production — PostHog SDK)
  */
 export interface IAnalyticsProvider {
-  /** Identifica o utilizador no sistema de analytics */
+  /** Identifies the user in the analytics system */
   identify(userId: string, properties?: AnalyticsEventProperties): void;
 
   /** Records a product event */

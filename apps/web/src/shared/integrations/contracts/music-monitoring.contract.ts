@@ -26,7 +26,7 @@ export type MonitoringSourceType =
   | "video"        // YouTube, TikTok, Instagram Reels
   | "podcast"      // Podcasts and audio shows
   | "venue"        // Concerts, live events
-  | "public"       // Ambientes comerciais (loja, restaurante)
+  | "public"       // Commercial venues (store, restaurant)
   | "unknown";
 
 // ─── DTOs de fingerprint ───────────────────────────────────────────────────────
@@ -36,7 +36,7 @@ export interface FingerprintInput {
   audio_data: string;
   /** Clip duration in seconds (default: 10s) */
   duration_seconds?: number;
-  /** Fonte do trecho para contexto */
+  /** Source of the snippet, for context */
   source_type?: MonitoringSourceType;
   /** Station/platform name (e.g. "Rádio CBN", "Spotify") */
   source_name?: string;
@@ -54,7 +54,7 @@ export interface FingerprintMatch {
   duracao_segundos?: number | null;
   data_lancamento?: string | null;
   genero?: string | null;
-  /** Identificador interno do ACRCloud */
+  /** ACRCloud internal identifier */
   external_id: string;
   /** Position in the clip where the track was detected (seconds) */
   offset_segundos?: number | null;
@@ -90,7 +90,7 @@ export interface PlayReport {
   estimated_audience?: number | null;
   /** Amount reported by an external platform in cents (BRL); no internal calculation */
   external_reported_amount_cents?: number | null;
-  /** ID local do fonograma se cruzamento for bem-sucedido */
+  /** Local sound recording ID if the cross-match succeeds */
   local_fonograma_id?: string | null;
   local_work_id?: string | null;
   status: "pending" | "confirmed" | "disputed" | "paid";
@@ -120,7 +120,7 @@ export interface PlayReportSummary {
   period_to: string;
 }
 
-// ─── DTOs de alertas ──────────────────────────────────────────────────────────
+// ─── Alert DTOs ───────────────────────────────────────────────────────────────
 
 export type AlertSeverity = "critical" | "warning" | "info";
 
@@ -150,17 +150,17 @@ export interface MonitoringAlert {
   local_fonograma_id?: string | null;
 }
 
-// ─── DTOs de projetos de monitoramento ───────────────────────────────────────
+// ─── Monitoring project DTOs ──────────────────────────────────────────────────
 
 export interface MonitoringProject {
   id: string;
   name: string;
   artista_nome?: string | null;
-  /** ISRCs a monitorar */
+  /** ISRCs to monitor */
   isrcs: string[];
-  /** ISWCs a monitorar */
+  /** ISWCs to monitor */
   iswcs: string[];
-  /** Fontes a monitorar */
+  /** Sources to monitor */
   sources: MonitoringSourceType[];
   /** Countries to monitor (ISO 3166-1 alpha-2, empty = all) */
   countries: string[];
@@ -201,7 +201,7 @@ export interface MusicSearchResult {
   total_plays_30d?: number | null;
 }
 
-// ─── Contrato ─────────────────────────────────────────────────────────────────
+// ─── Contract ─────────────────────────────────────────────────────────────────
 
 /**
  * IMusicMonitoringProvider — music monitoring contract by fingerprint.
@@ -234,7 +234,7 @@ export interface IMusicMonitoringProvider {
   /** Creates a monitoring project */
   createProject(input: CreateMonitoringProjectInput): Promise<MonitoringProject>;
 
-  /** Lista projectos de monitoramento */
+  /** Lists monitoring projects */
   listProjects(): Promise<MonitoringProject[]>;
 
   /** Enables/disables a monitoring project */
@@ -275,5 +275,5 @@ export function playReportsStorageKey(isrc: string): string {
 /** localStorage key for monitoring projects */
 export const MONITORING_PROJECTS_KEY = "musicos360_acrcloud_projects";
 
-/** Chave de localStorage para alertas */
+/** localStorage key for alerts */
 export const MONITORING_ALERTS_KEY = "musicos360_acrcloud_alerts";

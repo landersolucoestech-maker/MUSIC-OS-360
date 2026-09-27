@@ -48,7 +48,7 @@ export interface SendEmailParams {
   template_vars?: Record<string, string | number | boolean>;
   attachments?: EmailAttachment[];
   reply_to?: EmailRecipient;
-  /** Tenant de origem — usado para from address personalizado */
+  /** Origin tenant — used for a custom from address */
   tenant_id?: string;
 }
 
@@ -64,7 +64,7 @@ export interface EmailDeliveryStatus {
   events: Array<{ type: string; timestamp: string }>;
 }
 
-// ─── Contrato ─────────────────────────────────────────────────────────────────
+// ─── Contract ─────────────────────────────────────────────────────────────────
 
 /**
  * IEmailProvider — transactional email sending contract.

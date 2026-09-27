@@ -15,7 +15,7 @@
  *       No component calls streaming APIs directly.
  */
 
-// ─── Identificadores de plataforma ────────────────────────────────────────────
+// ─── Platform identifiers ─────────────────────────────────────────────────────
 
 export type StreamingPlatformId =
   | "spotify"
@@ -192,7 +192,7 @@ export interface IAdsProvider {
   verifyConnection(): Promise<boolean>;
 }
 
-// ─── Metadados de plataformas ─────────────────────────────────────────────────
+// ─── Platform metadata ────────────────────────────────────────────────────────
 
 export interface StreamingPlatformMeta {
   id: StreamingPlatformId;

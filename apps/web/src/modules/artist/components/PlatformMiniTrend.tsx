@@ -12,7 +12,7 @@ interface PlatformMiniTrendProps {
   metric?: "followers" | "views" | "popularity";
   /** Sparkline stroke color (CSS). Default: translucent white. */
   strokeColor?: string;
-  /** Contraste do texto: tiles coloridos usam "white", neutros podem usar "muted". */
+  /** Text contrast: colored tiles use "white", neutral ones may use "muted". */
   variant?: "white" | "muted";
   /** data-testid prefix for the badge/sparkline. */
   testIdPrefix: string;

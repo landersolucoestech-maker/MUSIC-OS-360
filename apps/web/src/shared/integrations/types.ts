@@ -9,7 +9,7 @@
  * it uses its own module's adapter.
  */
 
-// ─── Identificadores ──────────────────────────────────────────────────────────
+// ─── Identifiers ──────────────────────────────────────────────────────────────
 
 /**
  * Canonical identifier of each integration.
@@ -61,7 +61,7 @@ export type IntegrationId =
   | "chat"
   | "musicroomchat";
 
-// ─── Categorias ───────────────────────────────────────────────────────────────
+// ─── Categories ───────────────────────────────────────────────────────────────
 
 export type IntegrationCategory =
   | "storage"
@@ -86,7 +86,7 @@ export type IntegrationStatus =
   | "pending"
   | "disabled";
 
-// ─── Metadados ───────────────────────────────────────────────────────────────
+// ─── Metadata ─────────────────────────────────────────────────────────────────
 
 /**
  * Descriptive metadata of an integration.
@@ -97,7 +97,7 @@ export interface IntegrationMeta {
   id: IntegrationId;
   /** Display name */
   name: string;
-  /** Categoria funcional */
+  /** Functional category */
   category: IntegrationCategory;
   /** Short UI description */
   description: string;

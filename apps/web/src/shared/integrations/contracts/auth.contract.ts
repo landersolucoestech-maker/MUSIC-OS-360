@@ -44,7 +44,7 @@ export interface AuthInviteParams {
   tenantId: string;
 }
 
-// ─── Contrato ─────────────────────────────────────────────────────────────────
+// ─── Contract ─────────────────────────────────────────────────────────────────
 
 /**
  * IAuthProvider — contract every authentication provider must implement.
@@ -72,7 +72,7 @@ export interface IAuthProvider {
 
   /** Checks whether the active token is still valid */
   verifySession(): Promise<boolean>;
-  /** Renova o token de acesso */
+  /** Refreshes the access token */
   refreshSession(): Promise<AuthSession>;
 }
 

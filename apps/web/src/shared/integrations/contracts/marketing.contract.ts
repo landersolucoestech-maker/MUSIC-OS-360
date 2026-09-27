@@ -26,12 +26,12 @@ export type MarketingPlatformId =
   | "google_business"     // Google Business — Analytics 4 + Search Console + Google Ads (unificado)
   | "corp_spotify"        // Spotify for Artists — the company's official profile
   | "corp_deezer"         // Deezer for Artists — the label's presence on Deezer
-  | "corp_soundcloud"     // SoundCloud Pro — perfil oficial da label
+  | "corp_soundcloud"     // SoundCloud Pro — official label profile
   | "corp_apple_music"    // Apple Music for Artists — the label's presence on Apple Music
   // ── Corporate metrics — short aliases ─────────────────────────────────────
-  | "corp_instagram"       // Instagram corporativo (parte de meta_business)
-  | "corp_tiktok"          // TikTok corporativo (parte de tiktok_business)
-  | "corp_youtube"         // YouTube corporativo (parte de youtube_business)
+  | "corp_instagram"       // Corporate Instagram (part of meta_business)
+  | "corp_tiktok"          // Corporate TikTok (part of tiktok_business)
+  | "corp_youtube"         // Corporate YouTube (part of youtube_business)
   // ── Paid traffic ─────────────────────────────────────────────────────────
   // The company's paid ad accounts. Login required.
   | "meta_ads"

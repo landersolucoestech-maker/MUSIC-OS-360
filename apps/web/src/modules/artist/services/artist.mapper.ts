@@ -24,7 +24,7 @@ import type {
   DistributorEntry,
 } from "@/modules/artist/types/artist.types";
 
-// ─── Utilidades internas ──────────────────────────────────────────
+// ─── Internal utilities ──────────────────────────────────────────
 
 function str(v: unknown): string {
   if (v == null) return "";
@@ -109,7 +109,7 @@ export const SPECIALTY_LABELS: Record<string, string> = {
   produtor:         "Produtor",
 };
 
-/** Mapeamento inverso: label normalizado → enum interno. */
+/** Reverse mapping: normalized label → internal enum. */
 const SPECIALTY_ENUM: Record<string, string> = Object.fromEntries(
   Object.entries(SPECIALTY_LABELS).map(([k, v]) => [normalizeKey(v), k]),
 );
@@ -295,7 +295,7 @@ type WireContatoEquipe = {
   distribuidoras: WireDistributorEntry[];
 };
 
-/** Shape do JSON realmente trafegado pela API (contrato do backend — inalterado). */
+/** Shape of the JSON actually sent over the API (backend contract — unchanged). */
 export type ArtistWireRecord = Record<string, unknown> & {
   id: string;
   user_id?: string;
@@ -675,7 +675,7 @@ export interface ArtistFormFieldValues {
   deezerFas: string;
   appleMusic: string;
   appleMusicAlbuns: string;
-  // relacionamentos comerciais (novo modelo relacional)
+  // commercial relationships (new relational model)
   relacionamentos: ArtistFormRelationship[];
   // legacy — kept for backward compat with the CRM select
   tipoPerfil: "independente" | "com_empresario" | "gravadora" | "editora";
@@ -875,7 +875,7 @@ export function artistToFormFields(artist: Artist | null | undefined): ArtistFor
     especialidades: Array.isArray(artist.specialties) ? artist.specialties : [],
     biografia: str(artist.notes),
     notasInternas: str(artist.internalNotes),
-    // Pessoal
+    // Personal
     nome: str(artist.legalName),
     dataNascimento: str(artist.birthDate),
     cpfCnpj: str(artist.taxId),
@@ -904,9 +904,9 @@ export function artistToFormFields(artist: Artist | null | undefined): ArtistFor
     deezerFas: artist.deezerFans != null ? String(artist.deezerFans) : "",
     appleMusic: str(artist.appleMusicUrl),
     appleMusicAlbuns: artist.appleMusicAlbumsUrl != null ? String(artist.appleMusicAlbumsUrl) : "",
-    // Relacionamentos
+    // Relationships
     relacionamentos,
-    // Legado
+    // Legacy
     tipoPerfil: (str(artist.profileType) || "independente") as ArtistFormFieldValues["tipoPerfil"],
     empresarioId: str(artist.managerId),
     empresarioNome: str(artist.managerName),
@@ -924,7 +924,7 @@ export function artistToFormFields(artist: Artist | null | undefined): ArtistFor
     distribuidorasEmails: (artist.distributorEmails as Record<string, string> | null) ?? {},
     distribuidorasEmpresaSelecionadas: (artist.selectedCompanyDistributors as Record<string, boolean> | null) ?? {},
     distribuidorasEmpresaEmails: (artist.companyDistributorEmails as Record<string, string> | null) ?? {},
-    // Arquivos
+    // Files
     fotoUrl: str(artist.photoUrl),
     documentosPessoaisUrl: str(artist.personalDocumentsUrl),
     presskitUrl: str(artist.pressKitUrl),
@@ -942,7 +942,7 @@ export interface FormToArtistInput extends ArtistFormFieldValues {
  * re-import lose no data.
  */
 export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "user_id" | "created_at" | "updated_at"> {
-  // Converte ArtistFormRelationship[] → ArtistRelationship[]
+  // Converts ArtistFormRelationship[] → ArtistRelationship[]
   const relationships: ArtistRelationship[] = f.relacionamentos
     .filter((r) => r.nome.trim() !== "")
     .map((r) => {
@@ -1010,7 +1010,7 @@ export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "
     specialties: f.especialidades.length > 0 ? f.especialidades : null,
     notes: strOrNull(f.biografia),
     photoUrl: strOrNull(f.fotoUrl),
-    // Pessoal
+    // Personal
     birthDate: strOrNull(f.dataNascimento),
     idDocument: strOrNull(f.rg),
     address: strOrNull(f.endereco),
@@ -1023,7 +1023,7 @@ export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "
     bankAccount: strOrNull(f.conta),
     pixKey: strOrNull(f.chavePix),
     accountHolder: strOrNull(f.titularConta),
-    // Plataformas — persiste a URL diretamente (contrato do backend: spotify_url/youtube_url)
+    // Platforms — persists the URL directly (backend contract: spotify_url/youtube_url)
     spotifyUrl: strOrNull(f.spotify),
     spotifyListeners: numOrNull(f.spotifyOuvintes),
     youtubeUrl: strOrNull(f.youtube),
@@ -1038,7 +1038,7 @@ export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "
     instagramFollowers: numOrNull(f.instagramSeguidores),
     tiktokUrl: strOrNull(f.tiktok),
     tiktokFollowers: numOrNull(f.tiktokSeguidores),
-    // Relacionamentos (novo)
+    // Relationships (new)
     relationships: relationships.length > 0 ? relationships : null,
     // Legacy (kept for backward compat — derived from the new relational model)
     profileType: f.tipoPerfil,
@@ -1061,7 +1061,7 @@ export function formToArtistPayload(f: FormToArtistInput): Omit<Artist, "id" | "
     selectedCompanyDistributors: Object.keys(selectedCompanyDistributors).length > 0 ? selectedCompanyDistributors : null,
     companyDistributorEmails: Object.keys(companyDistributorEmails).length > 0 ? companyDistributorEmails : null,
     internalNotes: strOrNull(f.notasInternas),
-    // Documentos / presskit
+    // Documents / press kit
     personalDocumentsUrl: strOrNull(f.documentosPessoaisUrl),
     pressKitUrl: strOrNull(f.presskitUrl),
   } as Omit<Artist, "id" | "user_id" | "created_at" | "updated_at">;

@@ -158,7 +158,7 @@ export function ArtistEvolutionCard({
         typeof p[metric] === "number" && Number.isFinite(p[metric] as number),
       )
       .map((p) => {
-        // O snapshot real do backend traz `captured_at`; aceitamos `date` por retrocompat.
+        // The real backend snapshot carries `captured_at`; we accept `date` for backward compatibility.
         const rawDate = typeof p.captured_at === "string" ? p.captured_at : p.date;
         const dt = typeof rawDate === "string" ? parseISO(rawDate) : new Date(NaN);
         const hasValidDate = !Number.isNaN(dt.getTime());
@@ -193,7 +193,7 @@ export function ArtistEvolutionCard({
           </div>
         </div>
 
-        {/* Corpo */}
+        {/* Body */}
         <div className="px-4 py-4 space-y-3">
           {isMissingConfig ? (
             <div className="text-center py-6 text-muted-foreground text-sm">

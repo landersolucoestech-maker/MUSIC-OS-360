@@ -58,7 +58,7 @@ export interface SigningDocument {
    * Available right after createDocument.
    */
   signing_url?: string | null;
-  /** ID do contrato local associado */
+  /** Associated local contract ID */
   contrato_id?: string;
 }
 
@@ -82,7 +82,7 @@ export interface SigningWebhookEvent {
   timestamp: string;
 }
 
-// ─── Contrato ─────────────────────────────────────────────────────────────────
+// ─── Contract ─────────────────────────────────────────────────────────────────
 
 /**
  * ISigningProvider — digital signature contract.
@@ -98,7 +98,7 @@ export interface ISigningProvider {
   /** Looks up the current state of a document */
   getDocument(documentId: string): Promise<SigningDocument>;
 
-  /** Lista documents (opcionalmente filtrados por contrato local) */
+  /** Lists documents (optionally filtered by local contract) */
   listDocuments(params?: { contrato_id?: string; status?: SigningStatus }): Promise<SigningDocument[]>;
 
   /** Cancels an open document */
@@ -110,6 +110,6 @@ export interface ISigningProvider {
   /** Processes a received webhook event */
   handleWebhook(event: SigningWebhookEvent): Promise<void>;
 
-  /** Verifica as credenciais configuradas */
+  /** Checks the configured credentials */
   verifyConnection(): Promise<boolean>;
 }
