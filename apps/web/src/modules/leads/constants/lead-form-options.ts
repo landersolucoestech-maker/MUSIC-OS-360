@@ -1,6 +1,6 @@
 export type Option<T extends string = string> = { value: T; label: string };
 
-export const TIPO_LEAD_OPTIONS = [
+export const LEAD_TYPE_OPTIONS = [
   { value: "artista_banda",         label: "Artista/Banda"          },
   { value: "contratante_show",      label: "Contratante de Show"    },
   { value: "empresario_artistico",  label: "Empresário Artístico"   },
@@ -12,9 +12,9 @@ export const TIPO_LEAD_OPTIONS = [
   { value: "outros",                label: "Outros"                 },
 ] as const satisfies ReadonlyArray<Option>;
 
-export type TipoLead = (typeof TIPO_LEAD_OPTIONS)[number]["value"];
+export type LeadType = (typeof LEAD_TYPE_OPTIONS)[number]["value"];
 
-export const SERVICOS_OPTIONS = [
+export const SERVICES_OPTIONS = [
   { value: "agenciamento_gestao",   label: "Agenciamento e Gestão"    },
   { value: "contratacao_artistas",  label: "Contratação de Artistas"  },
   { value: "distribuicao_digital",  label: "Distribuição Digital"     },
@@ -36,12 +36,12 @@ export const SERVICOS_OPTIONS = [
   { value: "consultoria",           label: "Consultoria"              },
 ] as const satisfies ReadonlyArray<Option>;
 
-export type ServicoLead = (typeof SERVICOS_OPTIONS)[number]["value"];
+export type ServiceLead = (typeof SERVICES_OPTIONS)[number]["value"];
 
 // Lead type value with special handling (free-text services).
-export const TIPO_LEAD_OUTROS: TipoLead = "outros";
+export const LEAD_TYPE_OTHER: LeadType = "outros";
 
-export const SERVICOS_POR_TIPO_LEAD: Record<TipoLead, ReadonlyArray<ServicoLead>> = {
+export const SERVICES_BY_LEAD_TYPE: Record<LeadType, ReadonlyArray<ServiceLead>> = {
   artista_banda: [
     "agenciamento_gestao",
     "producao_musical",
@@ -120,17 +120,17 @@ export const SERVICOS_POR_TIPO_LEAD: Record<TipoLead, ReadonlyArray<ServicoLead>
   outros: [],
 };
 
-export function getServicosForTipoLead(
-  type: TipoLead | "" | undefined,
+export function getServicesForLeadType(
+  type: LeadType | "" | undefined,
 ): ReadonlyArray<Option> {
   if (!type) return [];
-  const slugs = SERVICOS_POR_TIPO_LEAD[type as TipoLead] ?? [];
+  const slugs = SERVICES_BY_LEAD_TYPE[type as LeadType] ?? [];
   return slugs
-    .map((slug) => SERVICOS_OPTIONS.find((o) => o.value === slug))
-    .filter((o): o is (typeof SERVICOS_OPTIONS)[number] => Boolean(o));
+    .map((slug) => SERVICES_OPTIONS.find((o) => o.value === slug))
+    .filter((o): o is (typeof SERVICES_OPTIONS)[number] => Boolean(o));
 }
 
-export const ORIGEM_LEAD_OPTIONS = [
+export const LEAD_SOURCE_OPTIONS = [
   { value: "website",          label: "Site"           },
   { value: "instagram",        label: "Instagram"         },
   { value: "facebook",         label: "Facebook"          },
@@ -148,7 +148,7 @@ export const ORIGEM_LEAD_OPTIONS = [
   { value: "outro",            label: "Outro"             },
 ] as const satisfies ReadonlyArray<Option>;
 
-export type OrigemLead = (typeof ORIGEM_LEAD_OPTIONS)[number]["value"];
+export type LeadSource = (typeof LEAD_SOURCE_OPTIONS)[number]["value"];
 
 // Aligned 1:1 with the real LeadStatus enum (@music-os-360/types) and the workflow
 // apps/api/src/core/workflow/definitions/leads.workflow.ts — a lista anterior
@@ -168,15 +168,15 @@ export const STATUS_LEAD_OPTIONS = [
 
 export type StatusLead = (typeof STATUS_LEAD_OPTIONS)[number]["value"];
 
-export const PRIORIDADE_OPTIONS = [
+export const PRIORITY_OPTIONS = [
   { value: "alta",  label: "Alta"  },
   { value: "media", label: "Média" },
   { value: "baixa", label: "Baixa" },
 ] as const satisfies ReadonlyArray<Option>;
 
-export type Prioridade = (typeof PRIORIDADE_OPTIONS)[number]["value"];
+export type Priority = (typeof PRIORITY_OPTIONS)[number]["value"];
 
-export const TIPO_EVENTO_OPTIONS = [
+export const EVENT_TYPE_OPTIONS = [
   { value: "aniversario",   label: "Aniversário"   },
   { value: "casamento",     label: "Casamento"     },
   { value: "casa_noturna",  label: "Casa noturna"  },
@@ -184,15 +184,15 @@ export const TIPO_EVENTO_OPTIONS = [
   { value: "corporativo",   label: "Corporativo"   },
 ] as const satisfies ReadonlyArray<Option>;
 
-export type TipoEvento = (typeof TIPO_EVENTO_OPTIONS)[number]["value"];
+export type EventType = (typeof EVENT_TYPE_OPTIONS)[number]["value"];
 
-export const ESTADOS_BR = [
+export const BR_STATES = [
   "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA",
   "MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN",
   "RS","RO","RR","SC","SP","SE","TO",
 ] as const;
 
-export type EstadoBR = (typeof ESTADOS_BR)[number];
+export type BrState = (typeof BR_STATES)[number];
 
-export const TIPO_LEAD_INFLUENCIADOR: TipoLead = "influenciador";
-export const TIPO_LEAD_EMPRESARIO:    TipoLead = "empresario_artistico";
+export const LEAD_TYPE_INFLUENCER: LeadType = "influenciador";
+export const LEAD_TYPE_MANAGER:    LeadType = "empresario_artistico";

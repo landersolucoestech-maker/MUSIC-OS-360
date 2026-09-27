@@ -7,7 +7,7 @@ import { ContatoFormModal, type ContatoFormPayload } from "@/modules/crm-relatio
 import { ContatoViewModal } from "@/modules/crm-relationships/modals/ContatoViewModal";
 import type { Contact, ContactType } from "@/modules/crm-relationships/types";
 
-type FiltroTipo =
+type TypeFilter =
   | "todos"
   | "clientes"
   | "parceiros"
@@ -15,7 +15,7 @@ type FiltroTipo =
   | "contratantes"
   | "prestadores";
 
-const FILTROS: ReadonlyArray<{ value: FiltroTipo; label: string; types: ContactType[] }> = [
+const FILTERS: ReadonlyArray<{ value: TypeFilter; label: string; types: ContactType[] }> = [
   { value: "todos",        label: "Todos",        types: [] },
   { value: "clientes",     label: "Clientes",     types: ["CORPORATE_CLIENT"] },
   { value: "parceiros",    label: "Parceiros",    types: ["PARTNER"] },
@@ -28,11 +28,11 @@ function contactToFormPayload(contact: Contact): Partial<ContatoFormPayload> {
   const po = (contact.payloadOperacional ?? {}) as Record<string, unknown>;
   const str = (k: string) => (typeof po[k] === "string" ? (po[k] as string) : "");
 
-  const tipoPessoa = (str("tipo_pessoa") || "pessoa_fisica") as "pessoa_fisica" | "pessoa_juridica";
-  const isPF = tipoPessoa === "pessoa_fisica";
+  const personType = (str("tipo_pessoa") || "pessoa_fisica") as "pessoa_fisica" | "pessoa_juridica";
+  const isPF = personType === "pessoa_fisica";
 
   return {
-    tipo_pessoa:          tipoPessoa,
+    tipo_pessoa:          personType,
     nome_pf:              isPF ? contact.name : "",
     cpf:                  str("cpf"),
     funcao:               str("funcao"),
@@ -70,17 +70,17 @@ function contactToFormPayload(contact: Contact): Partial<ContatoFormPayload> {
   };
 }
 
-export function ContatosPanel() {
+export function ContactsPanel() {
   const { contacts, isLoading, createContact, updateContact, deleteContact } = useContacts();
 
-  const [filtro, setFiltro] = useState<FiltroTipo>("todos");
+  const [filter, setFilter] = useState<TypeFilter>("todos");
   const [search, setSearch] = useState("");
   const [viewContact, setViewContact] = useState<Contact | null>(null);
   const [editContact, setEditContact] = useState<Contact | null>(null);
   const [formOpen, setFormOpen] = useState(false);
 
   const filtered = useMemo(() => {
-    const cfg  = FILTROS.find((f) => f.value === filtro)!;
+    const cfg  = FILTERS.find((f) => f.value === filter)!;
     const term = search.trim().toLowerCase();
     return contacts.filter((c) => {
       if (cfg.types.length > 0 && !cfg.types.includes(c.contactType)) return false;
@@ -91,7 +91,7 @@ export function ContatosPanel() {
         .toLowerCase();
       return haystack.includes(term);
     });
-  }, [contacts, filtro, search]);
+  }, [contacts, filter, search]);
 
   function handleView(contact: Contact) {
     setViewContact(contact);
@@ -167,12 +167,12 @@ export function ContatosPanel() {
           className="h-8 flex-1"
           data-testid="contatos-search"
         />
-        <Select value={filtro} onValueChange={(v) => setFiltro(v as FiltroTipo)}>
+        <Select value={filter} onValueChange={(v) => setFilter(v as TypeFilter)}>
           <SelectTrigger className="h-8 sm:w-56" data-testid="contatos-filtro-type">
             <SelectValue placeholder="Filtrar por tipo" />
           </SelectTrigger>
           <SelectContent>
-            {FILTROS.map((f) => (
+            {FILTERS.map((f) => (
               <SelectItem key={f.value} value={f.value} data-testid={`filtro-${f.value}`}>
                 {f.label}
               </SelectItem>

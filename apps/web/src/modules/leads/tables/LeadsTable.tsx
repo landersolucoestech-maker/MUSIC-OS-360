@@ -24,9 +24,9 @@ import { usePagination } from "@/shared/hooks/usePagination";
 import { LeadRowSummary } from "../components";
 import { optionLabel, leadServiceTypeOptions } from "../constants";
 import {
-  ORIGEM_LEAD_OPTIONS,
-  PRIORIDADE_OPTIONS,
-  SERVICOS_OPTIONS,
+  LEAD_SOURCE_OPTIONS,
+  PRIORITY_OPTIONS,
+  SERVICES_OPTIONS,
   STATUS_LEAD_OPTIONS,
 } from "../constants/lead-form-options";
 import type { Lead } from "../types";
@@ -101,12 +101,12 @@ export function LeadsTable({
         <TableBody>
           {pageItems.map((lead) => {
             const ps = (lead.payloadServico ?? {}) as Record<string, unknown>;
-            const servico = typeof ps.servico === "string" ? ps.servico : "";
+            const service = typeof ps.servico === "string" ? ps.servico : "";
 
             // CORRIGIDO: fallback usa leadServiceTypeOptions (enum LeadServiceType),
             // not leadStatusOptions, which is a status list unrelated to serviceType.
-            const servicoLabel = servico
-              ? optionLabel(SERVICOS_OPTIONS, servico)
+            const serviceLabel = service
+              ? optionLabel(SERVICES_OPTIONS, service)
               : optionLabel(leadServiceTypeOptions, lead.serviceType);
 
             return (
@@ -121,14 +121,14 @@ export function LeadsTable({
                   {[lead.city, lead.state].filter(Boolean).join(" / ") || "-"}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {servicoLabel}
+                  {serviceLabel}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
                   {/* FIXED: uses STATUS_LEAD_OPTIONS aligned with the values saved by the new system */}
                   {optionLabel(STATUS_LEAD_OPTIONS, lead.dadosInternosCRM.statusLead)}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {optionLabel(ORIGEM_LEAD_OPTIONS, lead.dadosInternosCRM.origemLead) ?? "-"}
+                  {optionLabel(LEAD_SOURCE_OPTIONS, lead.dadosInternosCRM.origemLead) ?? "-"}
                 </TableCell>
                 <TableCell className="text-right font-medium text-foreground">
                   {Number(lead.dadosInternosCRM.valorEstimado ?? 0).toLocaleString("pt-BR", {
@@ -140,7 +140,7 @@ export function LeadsTable({
                   {formatDate(lead.dadosInternosCRM.proximoFollowUp)}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {optionLabel(PRIORIDADE_OPTIONS, lead.dadosInternosCRM.prioridade) ?? "-"}
+                  {optionLabel(PRIORITY_OPTIONS, lead.dadosInternosCRM.prioridade) ?? "-"}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>

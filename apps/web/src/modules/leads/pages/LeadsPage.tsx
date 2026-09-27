@@ -21,7 +21,7 @@ import { ContatoFormModal, type ContatoFormPayload } from "@/modules/crm-relatio
 // ─────────────────────────────────────────────
 // Conditional combos
 // ─────────────────────────────────────────────
-const EVENTO_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
+const EVENT_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
   { type: "marca_empresa",        servico: "eventos_corporativos" },
   { type: "agencia",              servico: "producao_eventos"     },
   { type: "agencia",              servico: "contratacao_artistas" },
@@ -33,7 +33,7 @@ const EVENTO_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
   { type: "influenciador",        servico: "producao_eventos"     },
 ];
 
-const CAMPANHA_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
+const CAMPAIGN_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
   { type: "marca_empresa", servico: "campanhas_artistas" },
   { type: "agencia",       servico: "campanhas_artistas" },
 ];
@@ -41,13 +41,13 @@ const CAMPANHA_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
 const matchCombo = (
   list: ReadonlyArray<{ type: string; servico: string }>,
   type: string,
-  servico: string,
-) => list.some((c) => c.type === type && c.servico === servico);
+  service: string,
+) => list.some((c) => c.type === type && c.servico === service);
 
 // ─────────────────────────────────────────────
 // Mappings
 // ─────────────────────────────────────────────
-const TIPO_LEAD_TO_CLIENT: Record<string, LeadClientType> = {
+const LEAD_TYPE_TO_CLIENT: Record<string, LeadClientType> = {
   artista_banda:        "artist",
   contratante_show:     "eventProducer",
   marca_empresa:        "brand",
@@ -60,7 +60,7 @@ const TIPO_LEAD_TO_CLIENT: Record<string, LeadClientType> = {
   outros:               "other",
 };
 
-const SERVICO_TO_TIPO_SERVICO: Record<string, LeadServiceType> = {
+const SERVICE_TO_SERVICE_TYPE: Record<string, LeadServiceType> = {
   agenciamento_gestao:       "gestaoArtistica",
   producao_musical:          "producaoMusical",
   edicao_musical:            "mixagem",
@@ -96,8 +96,8 @@ const SERVICO_TO_TIPO_SERVICO: Record<string, LeadServiceType> = {
 function payloadToLead(
   payload: LeadFormPayload,
 ): Omit<Lead, "id" | "createdAt" | "updatedAt" | "historicoInteracoes"> {
-  const clientType = TIPO_LEAD_TO_CLIENT[payload.tipo_lead]   ?? "other";
-  const serviceType = SERVICO_TO_TIPO_SERVICO[payload.servico] ?? "consultoria";
+  const clientType = LEAD_TYPE_TO_CLIENT[payload.tipo_lead]   ?? "other";
+  const serviceType = SERVICE_TO_SERVICE_TYPE[payload.servico] ?? "consultoria";
 
   // FIXED: each conditional block is spread individually so no data is lost.
   // The previous chained ?? operator discarded every block except the first non-undefined one.
@@ -161,13 +161,13 @@ function leadToFormInitial(lead: Lead): Partial<LeadFormPayload> {
   const str = (k: string): string =>
     typeof ps[k] === "string" ? (ps[k] as string) : "";
 
-  const tipoLead = str("tipo_lead");
-  const servico  = str("servico");
+  const leadType = str("tipo_lead");
+  const service  = str("servico");
 
-  const isEvento        = matchCombo(EVENTO_COMBOS,   tipoLead, servico);
-  const isCampanha      = matchCombo(CAMPANHA_COMBOS, tipoLead, servico);
-  const isInfluenciador = tipoLead === "influenciador"        && !isEvento;
-  const isEmpresario    = tipoLead === "empresario_artistico" && !isEvento;
+  const isEvent        = matchCombo(EVENT_COMBOS,   leadType, service);
+  const isCampaign      = matchCombo(CAMPAIGN_COMBOS, leadType, service);
+  const isInfluenciador = leadType === "influenciador"        && !isEvent;
+  const isManager    = leadType === "empresario_artistico" && !isEvent;
 
   return {
     nome:                 lead.nomeCompleto,
@@ -182,8 +182,8 @@ function leadToFormInitial(lead: Lead): Partial<LeadFormPayload> {
     endereco:             str("endereco"),
     data_entrada:         str("data_entrada"),
     responsavel:          str("responsavel"),
-    tipo_lead:            tipoLead as LeadFormPayload["tipo_lead"],
-    servico,
+    tipo_lead:            leadType as LeadFormPayload["tipo_lead"],
+    servico: service,
     nome_artista_servico: str("nome_artista_servico"),
     descricao:            str("descricao"),
     origem_lead:          (crm.origemLead         as string) ?? "",
@@ -197,7 +197,7 @@ function leadToFormInitial(lead: Lead): Partial<LeadFormPayload> {
       ? (ps.interacoes as Interacao[])
       : [],
     uploads: lead.uploads ?? [],
-    evento: isEvento ? {
+    evento: isEvent ? {
       nome_evento:             str("nome_evento"),
       tipo_evento:             str("tipo_evento"),
       data_evento:             str("data_evento"),
@@ -208,7 +208,7 @@ function leadToFormInitial(lead: Lead): Partial<LeadFormPayload> {
       nome_artista_banda:      str("nome_artista_banda"),
       necessidades_adicionais: str("necessidades_adicionais"),
     } : undefined,
-    campanha: isCampanha ? {
+    campanha: isCampaign ? {
       nome_campanha:           str("nome_campanha"),
       tipo_campanha:           str("tipo_campanha"),
       start_date:             str("start_date"),
@@ -227,7 +227,7 @@ function leadToFormInitial(lead: Lead): Partial<LeadFormPayload> {
       estado:                  str("estado"),
       necessidades_adicionais: str("necessidades_adicionais"),
     } : undefined,
-    empresario: isEmpresario ? {
+    empresario: isManager ? {
       nome_artista_banda:      str("nome_artista_banda"),
       necessidades_adicionais: str("necessidades_adicionais"),
     } : undefined,
@@ -246,10 +246,10 @@ export default function LeadsPage() {
   const [modalOpen,        setModalOpen]        = useState(false);
   const [editingLead,      setEditingLead]      = useState<Lead | null>(null);
   const [viewLead,         setViewLead]         = useState<Lead | null>(null);
-  const [contatoModalOpen, setContatoModalOpen] = useState(false);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
   const [activeTab,        setActiveTab]        = useState<"contatos" | "leads">("contatos");
 
-  const responsaveis = useMemo(
+  const owners = useMemo(
     () => Array.from(
       new Set(leads.map((l) => l.dadosInternosCRM.responsavel).filter(Boolean)),
     ) as string[],
@@ -281,7 +281,7 @@ export default function LeadsPage() {
     });
   }, [filters, leads]);
 
-  const contatosKpis = useMemo(() => {
+  const contactsKpis = useMemo(() => {
     const countBy = (types: string[]) =>
       contacts.filter((c) => types.includes(c.contactType)).length;
     return {
@@ -323,7 +323,7 @@ export default function LeadsPage() {
           Novo Lead
         </Button>
       ) : (
-        <Button size="sm" onClick={() => setContatoModalOpen(true)} data-testid="button-novo-contato">
+        <Button size="sm" onClick={() => setContactModalOpen(true)} data-testid="button-novo-contato">
           <Plus className="mr-1 h-4 w-4" />
           Novo Contato
         </Button>
@@ -339,11 +339,11 @@ export default function LeadsPage() {
     >
       {activeTab === "contatos" ? (
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5" data-testid="contatos-kpis">
-          <Kpi label="Total de contatos" value={contatosKpis.total}        />
-          <Kpi label="Clientes"          value={contatosKpis.clientes}     />
-          <Kpi label="Parceiros"         value={contatosKpis.parceiros}    />
-          <Kpi label="Fornecedores"      value={contatosKpis.fornecedores} />
-          <Kpi label="Prestadores"       value={contatosKpis.prestadores}  />
+          <Kpi label="Total de contatos" value={contactsKpis.total}        />
+          <Kpi label="Clientes"          value={contactsKpis.clientes}     />
+          <Kpi label="Parceiros"         value={contactsKpis.parceiros}    />
+          <Kpi label="Fornecedores"      value={contactsKpis.fornecedores} />
+          <Kpi label="Prestadores"       value={contactsKpis.prestadores}  />
         </section>
       ) : (
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5" data-testid="leads-kpis">
@@ -397,7 +397,7 @@ export default function LeadsPage() {
             <LeadFilters
               filters={filters}
               onChange={(field, value) => setFilters({ [field]: value })}
-              responsaveis={responsaveis}
+              responsaveis={owners}
               origens={origens}
             />
             <LeadsTable
@@ -440,9 +440,9 @@ export default function LeadsPage() {
       />
 
       <ContatoFormModal
-        open={contatoModalOpen}
+        open={contactModalOpen}
         mode="create"
-        onOpenChange={setContatoModalOpen}
+        onOpenChange={setContactModalOpen}
         onSubmit={async (payload: ContatoFormPayload) => {
           await createContact({
             name:           payload.nome,

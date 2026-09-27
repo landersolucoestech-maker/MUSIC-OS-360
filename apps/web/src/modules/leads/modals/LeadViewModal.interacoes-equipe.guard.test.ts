@@ -17,6 +17,6 @@ describe("LeadViewModal — real record of team interactions (REM-04)", () => {
   });
 
   it("renders the real list, not a static placeholder", () => {
-    expect(SOURCE).toMatch(/interacoesEquipe\.map/);
+    expect(SOURCE).toMatch(/teamInteractions\.map/);
   });
 });

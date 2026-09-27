@@ -27,15 +27,15 @@ import { useOperationalSettings } from "@/modules/settings/hooks/useOperationalS
 import { useUploadToR2, R2NotConfiguredError } from "@/shared/hooks/useUploadToR2";
 
 import {
-  ESTADOS_BR,
-  ORIGEM_LEAD_OPTIONS,
-  PRIORIDADE_OPTIONS,
-  TIPO_EVENTO_OPTIONS,
-  TIPO_LEAD_EMPRESARIO,
-  TIPO_LEAD_INFLUENCIADOR,
-  TIPO_LEAD_OPTIONS,
-  getServicosForTipoLead,
-  type TipoLead,
+  BR_STATES,
+  LEAD_SOURCE_OPTIONS,
+  PRIORITY_OPTIONS,
+  EVENT_TYPE_OPTIONS,
+  LEAD_TYPE_MANAGER,
+  LEAD_TYPE_INFLUENCER,
+  LEAD_TYPE_OPTIONS,
+  getServicesForLeadType,
+  type LeadType,
 } from "../constants/lead-form-options";
 import type { LeadUpload } from "../types";
 import { toUserMessage } from "@/shared/lib/errors";
@@ -43,7 +43,7 @@ import { toUserMessage } from "@/shared/lib/errors";
 // ─────────────────────────────────────────────
 // Interactions
 // ─────────────────────────────────────────────
-export const TIPO_INTERACAO_OPTIONS = [
+export const INTERACTION_TYPE_OPTIONS = [
   { value: "ligacao",    label: "Ligação"    },
   { value: "whatsapp",   label: "WhatsApp"   },
   { value: "email",      label: "E-mail"      },
@@ -63,7 +63,7 @@ export const TEMPERATURA_OPTIONS = [
 // Conditional rules per type + service combo
 // ─────────────────────────────────────────────
 
-const EVENTO_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
+const EVENT_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
   { type: "marca_empresa",        servico: "eventos_corporativos" },
   { type: "agencia",              servico: "producao_eventos"     },
   { type: "agencia",              servico: "contratacao_artistas" },
@@ -75,12 +75,12 @@ const EVENTO_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
   { type: "influenciador",        servico: "producao_eventos"     },
 ];
 
-const CAMPANHA_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
+const CAMPAIGN_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
   { type: "marca_empresa", servico: "campanhas_artistas" },
   { type: "agencia",       servico: "campanhas_artistas" },
 ];
 
-const ARTISTA_EVENTO_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
+const ARTIST_EVENT_COMBOS: ReadonlyArray<{ type: string; servico: string }> = [
   { type: "marca_empresa",        servico: "eventos_corporativos" },
   { type: "agencia",              servico: "producao_eventos"     },
   { type: "agencia",              servico: "contratacao_artistas" },
@@ -94,8 +94,8 @@ const ARTISTA_EVENTO_COMBOS: ReadonlyArray<{ type: string; servico: string }> = 
 const matchCombo = (
   list: ReadonlyArray<{ type: string; servico: string }>,
   type: string,
-  servico: string,
-) => list.some((c) => c.type === type && c.servico === servico);
+  service: string,
+) => list.some((c) => c.type === type && c.servico === service);
 
 // ─────────────────────────────────────────────
 // Types
@@ -108,7 +108,7 @@ export type Interacao = {
   descricao: string;
 };
 
-type CondicionalEventoPayload = {
+type ConditionalEventPayload = {
   nome_evento: string;
   tipo_evento: string;
   data_evento: string;
@@ -120,7 +120,7 @@ type CondicionalEventoPayload = {
   necessidades_adicionais: string;
 };
 
-type CondicionalCampanhaPayload = {
+type ConditionalCampaignPayload = {
   nome_campanha: string;
   tipo_campanha: string;
   start_date: string;
@@ -141,7 +141,7 @@ type CondicionalInfluenciadorPayload = {
   necessidades_adicionais: string;
 };
 
-type CondicionalEmpresarioPayload = {
+type ConditionalManagerPayload = {
   nome_artista_banda: string;
   necessidades_adicionais: string;
 };
@@ -157,7 +157,7 @@ export type LeadFormPayload = {
   endereco: string;
   cidade: string;
   estado: string;
-  tipo_lead: TipoLead | "";
+  tipo_lead: LeadType | "";
   servico: string;
   nome_artista_servico: string;
   descricao: string;
@@ -170,10 +170,10 @@ export type LeadFormPayload = {
   proximo_follow_up: string;
   valor_estimado: string;
   temperatura: string;
-  evento?: CondicionalEventoPayload;
-  campanha?: CondicionalCampanhaPayload;
+  evento?: ConditionalEventPayload;
+  campanha?: ConditionalCampaignPayload;
   influenciador?: CondicionalInfluenciadorPayload;
-  empresario?: CondicionalEmpresarioPayload;
+  empresario?: ConditionalManagerPayload;
   interacoes: Interacao[];
   uploads: LeadUpload[];
 };
@@ -191,14 +191,14 @@ interface LeadFormModalProps {
 // ─────────────────────────────────────────────
 // Defaults
 // ─────────────────────────────────────────────
-const EVENTO_DEFAULT: CondicionalEventoPayload = {
+const EVENT_DEFAULT: ConditionalEventPayload = {
   nome_evento: "", tipo_evento: "", data_evento: "",
   local_evento: "", cidade: "", estado: "",
   capacidade_publico: "", nome_artista_banda: "",
   necessidades_adicionais: "",
 };
 
-const CAMPANHA_DEFAULT: CondicionalCampanhaPayload = {
+const CAMPAIGN_DEFAULT: ConditionalCampaignPayload = {
   nome_campanha: "", tipo_campanha: "",
   start_date: "", end_date: "",
   cidade: "", estado: "",
@@ -210,7 +210,7 @@ const INFLUENCIADOR_DEFAULT: CondicionalInfluenciadorPayload = {
   data: "", cidade: "", estado: "", necessidades_adicionais: "",
 };
 
-const EMPRESARIO_DEFAULT: CondicionalEmpresarioPayload = {
+const MANAGER_DEFAULT: ConditionalManagerPayload = {
   nome_artista_banda: "", necessidades_adicionais: "",
 };
 
@@ -239,7 +239,7 @@ const buildDefaults = (
   endereco:             initial?.endereco             ?? "",
   cidade:               initial?.cidade               ?? "",
   estado:               initial?.estado               ?? "",
-  tipo_lead:            (initial?.tipo_lead as TipoLead) ?? "",
+  tipo_lead:            (initial?.tipo_lead as LeadType) ?? "",
   servico:              initial?.servico              ?? "",
   nome_artista_servico: initial?.nome_artista_servico ?? "",
   descricao:            initial?.descricao            ?? "",
@@ -252,10 +252,10 @@ const buildDefaults = (
   proximo_follow_up:    initial?.proximo_follow_up    ?? "",
   valor_estimado:       initial?.valor_estimado       ?? "",
   temperatura:          initial?.temperatura          ?? "",
-  evento:               initial?.evento               ?? { ...EVENTO_DEFAULT },
-  campanha:             initial?.campanha             ?? { ...CAMPANHA_DEFAULT },
+  evento:               initial?.evento               ?? { ...EVENT_DEFAULT },
+  campanha:             initial?.campanha             ?? { ...CAMPAIGN_DEFAULT },
   influenciador:        initial?.influenciador        ?? { ...INFLUENCIADOR_DEFAULT },
-  empresario:           initial?.empresario           ?? { ...EMPRESARIO_DEFAULT },
+  empresario:           initial?.empresario           ?? { ...MANAGER_DEFAULT },
   interacoes:           initial?.interacoes           ?? [],
   uploads:              initial?.uploads              ?? [],
 });
@@ -328,18 +328,18 @@ export function LeadFormModal({
     field: K, value: LeadFormPayload[K],
   ) => setValues((prev) => ({ ...prev, [field]: value }));
 
-  const setEvento = <K extends keyof CondicionalEventoPayload>(
-    field: K, value: CondicionalEventoPayload[K],
+  const setEvent = <K extends keyof ConditionalEventPayload>(
+    field: K, value: ConditionalEventPayload[K],
   ) => setValues((prev) => ({
     ...prev,
-    evento: { ...(prev.evento ?? EVENTO_DEFAULT), [field]: value },
+    evento: { ...(prev.evento ?? EVENT_DEFAULT), [field]: value },
   }));
 
-  const setCampanha = <K extends keyof CondicionalCampanhaPayload>(
-    field: K, value: CondicionalCampanhaPayload[K],
+  const setCampaign = <K extends keyof ConditionalCampaignPayload>(
+    field: K, value: ConditionalCampaignPayload[K],
   ) => setValues((prev) => ({
     ...prev,
-    campanha: { ...(prev.campanha ?? CAMPANHA_DEFAULT), [field]: value },
+    campanha: { ...(prev.campanha ?? CAMPAIGN_DEFAULT), [field]: value },
   }));
 
   const setInfluenciador = <K extends keyof CondicionalInfluenciadorPayload>(
@@ -349,20 +349,20 @@ export function LeadFormModal({
     influenciador: { ...(prev.influenciador ?? INFLUENCIADOR_DEFAULT), [field]: value },
   }));
 
-  const setEmpresario = <K extends keyof CondicionalEmpresarioPayload>(
-    field: K, value: CondicionalEmpresarioPayload[K],
+  const setManager = <K extends keyof ConditionalManagerPayload>(
+    field: K, value: ConditionalManagerPayload[K],
   ) => setValues((prev) => ({
     ...prev,
-    empresario: { ...(prev.empresario ?? EMPRESARIO_DEFAULT), [field]: value },
+    empresario: { ...(prev.empresario ?? MANAGER_DEFAULT), [field]: value },
   }));
 
   // ── Interactions ───────────────────────────────
   const addInteracao = () => {
-    const nova: Interacao = {
+    const newInteraction: Interacao = {
       id: newId(), type: "whatsapp",
       data: todayISO(), horario: nowHorario(), descricao: "",
     };
-    setValues((prev) => ({ ...prev, interacoes: [...prev.interacoes, nova] }));
+    setValues((prev) => ({ ...prev, interacoes: [...prev.interacoes, newInteraction] }));
   };
 
   const updateInteracao = <K extends keyof Interacao>(
@@ -409,42 +409,42 @@ export function LeadFormModal({
   const removeUpload = (id: string) =>
     setValues((prev) => ({ ...prev, uploads: prev.uploads.filter((upload) => upload.id !== id) }));
 
-  const type    = values.tipo_lead as TipoLead | "";
-  const servico = values.servico;
+  const type    = values.tipo_lead as LeadType | "";
+  const service = values.servico;
 
-  const showEvento   = matchCombo(EVENTO_COMBOS,   type, servico);
-  const showCampanha = matchCombo(CAMPANHA_COMBOS, type, servico);
+  const showEvent   = matchCombo(EVENT_COMBOS,   type, service);
+  const showCampaign = matchCombo(CAMPAIGN_COMBOS, type, service);
 
   // FIXED: showInfluenciador and showEmpresario are mutually exclusive with showEvento
-  const showInfluenciador = type === TIPO_LEAD_INFLUENCIADOR && !showEvento;
-  const showEmpresario    = type === TIPO_LEAD_EMPRESARIO    && !showEvento;
+  const showInfluenciador = type === LEAD_TYPE_INFLUENCER && !showEvent;
+  const showManager    = type === LEAD_TYPE_MANAGER    && !showEvent;
 
-  const showArtistaBandaEvento = matchCombo(ARTISTA_EVENTO_COMBOS, type, servico);
+  const showArtistBandEvent = matchCombo(ARTIST_EVENT_COMBOS, type, service);
 
   // Artist/influencer field in the Classification section
-  const showArtistaMarcaEmpresa    = type === "marca_empresa"    && servico === "campanhas_artistas";
-  const showArtistaBandaEmpresario = type === TIPO_LEAD_EMPRESARIO;
-  const showInfluenciadorTipoLead  = type === TIPO_LEAD_INFLUENCIADOR;
+  const showArtistBrandCompany    = type === "marca_empresa"    && service === "campanhas_artistas";
+  const showArtistBandManager = type === LEAD_TYPE_MANAGER;
+  const showInfluencerLeadType  = type === LEAD_TYPE_INFLUENCER;
 
-  const showCampoArtista =
-    showArtistaMarcaEmpresa    ||
-    showArtistaBandaEmpresario ||
-    showInfluenciadorTipoLead;
+  const showArtistField =
+    showArtistBrandCompany    ||
+    showArtistBandManager ||
+    showInfluencerLeadType;
 
-  const labelArtista =
-    showInfluenciadorTipoLead
+  const labelArtist =
+    showInfluencerLeadType
       ? "Nome do Influenciador"
-      : showArtistaBandaEmpresario
+      : showArtistBandManager
       ? "Nome do Artista / Banda"
       : "Nome do Artista";
 
-  const placeholderArtista =
-    showInfluenciadorTipoLead
+  const placeholderArtist =
+    showInfluencerLeadType
       ? "Ex: @influenciador"
       : "Ex: João da Silva";
 
-  const servicosDisponiveis = useMemo(
-    () => getServicosForTipoLead(type),
+  const availableServices = useMemo(
+    () => getServicesForLeadType(type),
     [type],
   );
 
@@ -455,10 +455,10 @@ export function LeadFormModal({
       setSubmitting(true);
       await onSubmit({
         ...values,
-        evento:        showEvento        ? values.evento        : undefined,
-        campanha:      showCampanha      ? values.campanha      : undefined,
+        evento:        showEvent        ? values.evento        : undefined,
+        campanha:      showCampaign      ? values.campanha      : undefined,
         influenciador: showInfluenciador ? values.influenciador : undefined,
-        empresario:    showEmpresario    ? values.empresario    : undefined,
+        empresario:    showManager    ? values.empresario    : undefined,
       });
       onOpenChange(false);
     } catch (err) {
@@ -583,7 +583,7 @@ export function LeadFormModal({
               <SelectField
                 value={values.estado}
                 onChange={(v) => set("estado", v)}
-                options={ESTADOS_BR.map((uf) => ({ value: uf, label: uf }))}
+                options={BR_STATES.map((uf) => ({ value: uf, label: uf }))}
                 placeholder="UF"
                 testId="select-estado"
               />
@@ -600,16 +600,16 @@ export function LeadFormModal({
               <SelectField
                 value={values.tipo_lead}
                 onChange={(v) => {
-                  const novoTipo = v as TipoLead;
-                  const servicosValidos = getServicosForTipoLead(novoTipo).map((o) => o.value);
+                  const newType = v as LeadType;
+                  const validServices = getServicesForLeadType(newType).map((o) => o.value);
                   setValues((prev) => ({
                     ...prev,
-                    tipo_lead:            novoTipo,
-                    servico:              servicosValidos.includes(prev.servico) ? prev.servico : "",
+                    tipo_lead:            newType,
+                    servico:              validServices.includes(prev.servico) ? prev.servico : "",
                     nome_artista_servico: "",
                   }));
                 }}
-                options={TIPO_LEAD_OPTIONS}
+                options={LEAD_TYPE_OPTIONS}
                 testId="select-type-lead"
               />
             </Field>
@@ -626,7 +626,7 @@ export function LeadFormModal({
                 <SelectField
                   value={values.servico}
                   onChange={(v) => set("servico", v)}
-                  options={servicosDisponiveis}
+                  options={availableServices}
                   placeholder={
                     values.tipo_lead
                       ? "Selecione o serviço"
@@ -638,12 +638,12 @@ export function LeadFormModal({
             </Field>
           </div>
 
-          {showCampoArtista && (
-            <Field label={labelArtista}>
+          {showArtistField && (
+            <Field label={labelArtist}>
               <Input
                 value={values.nome_artista_servico}
                 onChange={(e) => set("nome_artista_servico", e.target.value)}
-                placeholder={placeholderArtista}
+                placeholder={placeholderArtist}
                 data-testid="input-nome-artista-servico"
               />
             </Field>
@@ -668,7 +668,7 @@ export function LeadFormModal({
               <SelectField
                 value={values.origem_lead}
                 onChange={(v) => set("origem_lead", v)}
-                options={ORIGEM_LEAD_OPTIONS}
+                options={LEAD_SOURCE_OPTIONS}
                 testId="select-origem-lead"
               />
             </Field>
@@ -714,7 +714,7 @@ export function LeadFormModal({
               <SelectField
                 value={values.prioridade}
                 onChange={(v) => set("prioridade", v)}
-                options={PRIORIDADE_OPTIONS}
+                options={PRIORITY_OPTIONS}
                 testId="select-prioridade"
               />
             </Field>
@@ -753,7 +753,7 @@ export function LeadFormModal({
           {/* ══════════════════════════════════════
               EVENT DETAILS
           ══════════════════════════════════════ */}
-          {showEvento && (
+          {showEvent && (
             <>
               <SectionHeader title="Detalhes do Evento" />
 
@@ -761,15 +761,15 @@ export function LeadFormModal({
                 <Field label="Nome do Evento">
                   <Input
                     value={values.evento!.nome_evento}
-                    onChange={(e) => setEvento("nome_evento", e.target.value)}
+                    onChange={(e) => setEvent("nome_evento", e.target.value)}
                     data-testid="input-evento-nome"
                   />
                 </Field>
                 <Field label="Tipo de Evento">
                   <SelectField
                     value={values.evento!.tipo_evento}
-                    onChange={(v) => setEvento("tipo_evento", v)}
-                    options={TIPO_EVENTO_OPTIONS}
+                    onChange={(v) => setEvent("tipo_evento", v)}
+                    options={EVENT_TYPE_OPTIONS}
                     testId="select-evento-type"
                   />
                 </Field>
@@ -779,7 +779,7 @@ export function LeadFormModal({
                 <Field label="Data do Evento">
                   <DatePickerField
                     value={values.evento!.data_evento}
-                    onChange={(v) => setEvento("data_evento", v)}
+                    onChange={(v) => setEvent("data_evento", v)}
                     placeholder="Selecione a data"
                     data-testid="datepicker-evento-data"
                   />
@@ -787,7 +787,7 @@ export function LeadFormModal({
                 <Field label="Local do Evento">
                   <Input
                     value={values.evento!.local_evento}
-                    onChange={(e) => setEvento("local_evento", e.target.value)}
+                    onChange={(e) => setEvent("local_evento", e.target.value)}
                     data-testid="input-evento-local"
                   />
                 </Field>
@@ -797,15 +797,15 @@ export function LeadFormModal({
                 <Field label="Cidade">
                   <Input
                     value={values.evento!.cidade}
-                    onChange={(e) => setEvento("cidade", e.target.value)}
+                    onChange={(e) => setEvent("cidade", e.target.value)}
                     data-testid="input-evento-cidade"
                   />
                 </Field>
                 <Field label="Estado (UF)">
                   <SelectField
                     value={values.evento!.estado}
-                    onChange={(v) => setEvento("estado", v)}
-                    options={ESTADOS_BR.map((uf) => ({ value: uf, label: uf }))}
+                    onChange={(v) => setEvent("estado", v)}
+                    options={BR_STATES.map((uf) => ({ value: uf, label: uf }))}
                     placeholder="UF"
                     testId="select-evento-estado"
                   />
@@ -816,16 +816,16 @@ export function LeadFormModal({
                 <Field label="Capacidade de Público">
                   <Input
                     value={values.evento!.capacidade_publico}
-                    onChange={(e) => setEvento("capacidade_publico", e.target.value)}
+                    onChange={(e) => setEvent("capacidade_publico", e.target.value)}
                     placeholder="Ex: 5000"
                     data-testid="input-evento-capacidade"
                   />
                 </Field>
-                {showArtistaBandaEvento && (
+                {showArtistBandEvent && (
                   <Field label="Nome do Artista / Banda">
                     <Input
                       value={values.evento!.nome_artista_banda}
-                      onChange={(e) => setEvento("nome_artista_banda", e.target.value)}
+                      onChange={(e) => setEvent("nome_artista_banda", e.target.value)}
                       data-testid="input-evento-artista"
                     />
                   </Field>
@@ -835,7 +835,7 @@ export function LeadFormModal({
               <Field label="Necessidades Adicionais">
                 <Textarea
                   value={values.evento!.necessidades_adicionais}
-                  onChange={(e) => setEvento("necessidades_adicionais", e.target.value)}
+                  onChange={(e) => setEvent("necessidades_adicionais", e.target.value)}
                   placeholder="Descreva as necessidades adicionais do evento..."
                   data-testid="textarea-evento-necessidades"
                 />
@@ -846,7 +846,7 @@ export function LeadFormModal({
           {/* ══════════════════════════════════════
               CAMPAIGN DETAILS
           ══════════════════════════════════════ */}
-          {showCampanha && (
+          {showCampaign && (
             <>
               <SectionHeader title="Detalhes da Campanha" />
 
@@ -854,14 +854,14 @@ export function LeadFormModal({
                 <Field label="Nome da Campanha">
                   <Input
                     value={values.campanha!.nome_campanha}
-                    onChange={(e) => setCampanha("nome_campanha", e.target.value)}
+                    onChange={(e) => setCampaign("nome_campanha", e.target.value)}
                     data-testid="input-campanha-nome"
                   />
                 </Field>
                 <Field label="Tipo da Campanha">
                   <Input
                     value={values.campanha!.tipo_campanha}
-                    onChange={(e) => setCampanha("tipo_campanha", e.target.value)}
+                    onChange={(e) => setCampaign("tipo_campanha", e.target.value)}
                     data-testid="input-campanha-type"
                   />
                 </Field>
@@ -871,7 +871,7 @@ export function LeadFormModal({
                 <Field label="Data de Início">
                   <DatePickerField
                     value={values.campanha!.start_date}
-                    onChange={(v) => setCampanha("start_date", v)}
+                    onChange={(v) => setCampaign("start_date", v)}
                     placeholder="Selecione a data"
                     data-testid="datepicker-campanha-inicio"
                   />
@@ -879,7 +879,7 @@ export function LeadFormModal({
                 <Field label="Data de Fim">
                   <DatePickerField
                     value={values.campanha!.end_date}
-                    onChange={(v) => setCampanha("end_date", v)}
+                    onChange={(v) => setCampaign("end_date", v)}
                     placeholder="Selecione a data"
                     data-testid="datepicker-campanha-fim"
                   />
@@ -890,15 +890,15 @@ export function LeadFormModal({
                 <Field label="Cidade">
                   <Input
                     value={values.campanha!.cidade}
-                    onChange={(e) => setCampanha("cidade", e.target.value)}
+                    onChange={(e) => setCampaign("cidade", e.target.value)}
                     data-testid="input-campanha-cidade"
                   />
                 </Field>
                 <Field label="Estado (UF)">
                   <SelectField
                     value={values.campanha!.estado}
-                    onChange={(v) => setCampanha("estado", v)}
-                    options={ESTADOS_BR.map((uf) => ({ value: uf, label: uf }))}
+                    onChange={(v) => setCampaign("estado", v)}
+                    options={BR_STATES.map((uf) => ({ value: uf, label: uf }))}
                     placeholder="UF"
                     testId="select-campanha-estado"
                   />
@@ -908,7 +908,7 @@ export function LeadFormModal({
               <Field label="Nome do Artista / Banda">
                 <Input
                   value={values.campanha!.nome_artista_banda}
-                  onChange={(e) => setCampanha("nome_artista_banda", e.target.value)}
+                  onChange={(e) => setCampaign("nome_artista_banda", e.target.value)}
                   data-testid="input-campanha-artista"
                 />
               </Field>
@@ -916,7 +916,7 @@ export function LeadFormModal({
               <Field label="Necessidades Adicionais">
                 <Textarea
                   value={values.campanha!.necessidades_adicionais}
-                  onChange={(e) => setCampanha("necessidades_adicionais", e.target.value)}
+                  onChange={(e) => setCampaign("necessidades_adicionais", e.target.value)}
                   placeholder="Descreva as necessidades adicionais da campanha..."
                   data-testid="textarea-campanha-necessidades"
                 />
@@ -978,7 +978,7 @@ export function LeadFormModal({
                   <SelectField
                     value={values.influenciador!.estado}
                     onChange={(v) => setInfluenciador("estado", v)}
-                    options={ESTADOS_BR.map((uf) => ({ value: uf, label: uf }))}
+                    options={BR_STATES.map((uf) => ({ value: uf, label: uf }))}
                     placeholder="UF"
                     testId="select-influ-estado"
                   />
@@ -1001,14 +1001,14 @@ export function LeadFormModal({
           {/* ══════════════════════════════════════
               ARTIST MANAGER DETAILS
           ══════════════════════════════════════ */}
-          {showEmpresario && (
+          {showManager && (
             <>
               <SectionHeader title="Detalhes do Empresário Artístico" />
 
               <Field label="Nome do Artista / Banda">
                 <Input
                   value={values.empresario!.nome_artista_banda}
-                  onChange={(e) => setEmpresario("nome_artista_banda", e.target.value)}
+                  onChange={(e) => setManager("nome_artista_banda", e.target.value)}
                   data-testid="input-empresario-artista"
                 />
               </Field>
@@ -1016,7 +1016,7 @@ export function LeadFormModal({
               <Field label="Necessidades Adicionais">
                 <Textarea
                   value={values.empresario!.necessidades_adicionais}
-                  onChange={(e) => setEmpresario("necessidades_adicionais", e.target.value)}
+                  onChange={(e) => setManager("necessidades_adicionais", e.target.value)}
                   placeholder="Descreva as necessidades adicionais..."
                   data-testid="textarea-empresario-necessidades"
                 />
@@ -1135,7 +1135,7 @@ export function LeadFormModal({
                   <SelectField
                     value={it.type}
                     onChange={(v) => updateInteracao(it.id, "type", v)}
-                    options={TIPO_INTERACAO_OPTIONS}
+                    options={INTERACTION_TYPE_OPTIONS}
                     testId={`select-interacao-type-${it.id}`}
                   />
                 </Field>

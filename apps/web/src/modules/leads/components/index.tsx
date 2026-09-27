@@ -11,7 +11,7 @@ import { cn } from "@/shared/lib/utils";
 import { useOperationalSettings } from "@/modules/settings/hooks/useOperationalSettings";
 import { leadClientTypeOptions, leadServiceTypeOptions, optionLabel, uploadRules } from "../constants";
 import {
-  ORIGEM_LEAD_OPTIONS,
+  LEAD_SOURCE_OPTIONS,
 } from "../constants/lead-form-options";
 import { sectionLabel, serviceLeadSchemas, type DynamicFieldSchema, type LeadBaseFieldName, type ServiceLeadSchema } from "../schemas";
 import type { Lead, LeadServiceType, LeadUpload } from "../types";
@@ -62,7 +62,7 @@ export function LeadHeader({ onCreate }: { onCreate: () => void }) {
 export function LeadFilters({
   filters,
   onChange,
-  responsaveis,
+  responsaveis: owners,
   origens,
 }: {
   filters: Record<string, string>;
@@ -96,13 +96,13 @@ export function LeadFilters({
       <FilterSelect
         value={filters.responsavel}
         onValueChange={(value) => onChange("responsavel", value)}
-        options={[{ value: "all", label: "Responsáveis" }, ...responsaveis.map((value) => ({ value, label: value }))]}
+        options={[{ value: "all", label: "Responsáveis" }, ...owners.map((value) => ({ value, label: value }))]}
       />
-      {/* FIXED: uses ORIGEM_LEAD_OPTIONS from the new system */}
+      {/* FIXED: uses LEAD_SOURCE_OPTIONS from the new system */}
       <FilterSelect
         value={filters.origemLead}
         onValueChange={(value) => onChange("origemLead", value)}
-        options={[{ value: "all", label: "Origens" }, ...ORIGEM_LEAD_OPTIONS]}
+        options={[{ value: "all", label: "Origens" }, ...LEAD_SOURCE_OPTIONS]}
       />
       <FilterSelect
         value={filters.temperatura}
@@ -353,7 +353,7 @@ export function InternalCRMFields({ register, setValue, watch }: LeadFormControl
         <Select value={watch("dadosInternosCRM.origemLead")} onValueChange={(value) => setValue("dadosInternosCRM.origemLead", value, { shouldDirty: true })}>
           <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
           <SelectContent>
-            {ORIGEM_LEAD_OPTIONS.map((option) => (
+            {LEAD_SOURCE_OPTIONS.map((option) => (
               <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
             ))}
           </SelectContent>
