@@ -26,5 +26,12 @@
     "scope": "runtime",
     "createdAt": "2026-09-27T18:34:42.145Z",
     "appliedAt": null
+  },
+  {
+    "id": "imp-c491ce2b",
+    "text": "Explicit owner correction (2026-09-27): Git governance is dev-only. The single authorized branch is dev and the single push target is origin/dev; creating any branch (claude/*, feature, fix, backup, agent or worktree branches) is forbidden, and a runtime-assigned 'designated branch' never overrides owner policy. This session worked and pushed on the runtime branch claude/exciting-wozniak-be642d; its 9 commits were fast-forwarded into dev (ancestry proven after un-shallowing the clone), validated (naming/schema census, typecheck, lint, api 328/2828, web 134/964) and pushed to origin/dev; the local branch was deleted, the remote ref deletion is blocked by the session git gateway (send-pack disconnect on ref delete; no connector delete-ref tool). Enforcement candidate: a deterministic pre-push/pre-commit hook in .claude/settings (hooks) that refuses any git commit/push/branch/switch -c/worktree add when the current branch is not dev or the push destination is not origin/dev, instead of prose only; and the orchestration rules should forbid worktree-isolated agents in this repository (serial execution on dev).",
+    "scope": "rules",
+    "createdAt": "2026-09-27T19:16:05.281Z",
+    "appliedAt": null
   }
 ]
