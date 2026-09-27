@@ -18,10 +18,10 @@ describe('RebuildTakedownsInCanonicalFormOrder20260719000016', () => {
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
     const tituloIdx = block.indexOf('titulo ');
-    const plataformaIdx = block.indexOf('plataforma ');
+    const platformIdx = block.indexOf('plataforma ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
     expect(tituloIdx).toBeGreaterThan(tenantIdx);
-    expect(plataformaIdx).toBeGreaterThan(tituloIdx);
+    expect(platformIdx).toBeGreaterThan(tituloIdx);
   });
 
   it('drops url/resposta/obra_id/artista_id (proven orphans, the migration\'s historical names) with fail-fast validation', () => {

@@ -17,20 +17,20 @@ describe('RebuildProjectsInCanonicalFormOrder20260719000005', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
-    const tipoIdx = block.indexOf('tipo ');
+    const typeIdx = block.indexOf('tipo ');
     const tituloIdx = block.indexOf('titulo ');
     const statusIdx = block.indexOf('status ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
-    expect(tipoIdx).toBeGreaterThan(tenantIdx);
-    expect(tituloIdx).toBeGreaterThan(tipoIdx);
+    expect(typeIdx).toBeGreaterThan(tenantIdx);
+    expect(tituloIdx).toBeGreaterThan(typeIdx);
     expect(statusIdx).toBeGreaterThan(tituloIdx);
   });
 
   it('artista_id (technical relation, written only by bulk import) comes after status', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const statusIdx = block.indexOf('status ');
-    const artistaIdx = block.indexOf('artista_id ');
-    expect(artistaIdx).toBeGreaterThan(statusIdx);
+    const artistIdx = block.indexOf('artista_id ');
+    expect(artistIdx).toBeGreaterThan(statusIdx);
   });
 
   it('drops data_inicio/data_fim (proven orphans) with fail-fast validation', () => {

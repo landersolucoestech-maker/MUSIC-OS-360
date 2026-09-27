@@ -18,37 +18,37 @@ describe('RebuildLeaveRequestsInCanonicalFormOrder20260719000025', () => {
   it('funcionario_id/employee_id sit next to each other (real field first) right after tenant_id', () => {
     const b = block();
     const tenantIdx = b.indexOf('tenant_id');
-    const funcionarioIdx = b.indexOf('funcionario_id');
+    const legacyEmployeeIdx = b.indexOf('funcionario_id');
     const employeeIdx = b.indexOf('employee_id');
-    expect(funcionarioIdx).toBeGreaterThan(tenantIdx);
-    expect(employeeIdx).toBeGreaterThan(funcionarioIdx);
+    expect(legacyEmployeeIdx).toBeGreaterThan(tenantIdx);
+    expect(employeeIdx).toBeGreaterThan(legacyEmployeeIdx);
   });
 
   it('segue a ordem visual do form: tipo -> data_inicio -> data_fim -> dias_totais -> status -> aprovado_por -> observacoes', () => {
     const b = block();
-    const tipoIdx = b.search(/\btipo\s+varchar/);
-    const inicioIdx = b.indexOf('data_inicio');
-    const fimIdx = b.indexOf('data_fim');
-    const diasIdx = b.indexOf('dias_totais');
+    const typeIdx = b.search(/\btipo\s+varchar/);
+    const startIdx = b.indexOf('data_inicio');
+    const endIdx = b.indexOf('data_fim');
+    const daysIdx = b.indexOf('dias_totais');
     const statusIdx = b.search(/\bstatus\s+varchar/);
-    const aprovadoIdx = b.indexOf('aprovado_por');
+    const approvedIdx = b.indexOf('aprovado_por');
     const obsIdx = b.indexOf('observacoes');
-    expect(inicioIdx).toBeGreaterThan(tipoIdx);
-    expect(fimIdx).toBeGreaterThan(inicioIdx);
-    expect(diasIdx).toBeGreaterThan(fimIdx);
-    expect(statusIdx).toBeGreaterThan(diasIdx);
-    expect(aprovadoIdx).toBeGreaterThan(statusIdx);
-    expect(obsIdx).toBeGreaterThan(aprovadoIdx);
+    expect(startIdx).toBeGreaterThan(typeIdx);
+    expect(endIdx).toBeGreaterThan(startIdx);
+    expect(daysIdx).toBeGreaterThan(endIdx);
+    expect(statusIdx).toBeGreaterThan(daysIdx);
+    expect(approvedIdx).toBeGreaterThan(statusIdx);
+    expect(obsIdx).toBeGreaterThan(approvedIdx);
   });
 
   it('motivo/documento_url (legacy zone, no visual field) come after observacoes and before metadata', () => {
     const b = block();
     const obsIdx = b.indexOf('observacoes');
-    const motivoIdx = b.indexOf('motivo');
+    const reasonIdx = b.indexOf('motivo');
     const docIdx = b.indexOf('documento_url');
     const metadataIdx = b.indexOf('metadata');
-    expect(motivoIdx).toBeGreaterThan(obsIdx);
-    expect(docIdx).toBeGreaterThan(motivoIdx);
+    expect(reasonIdx).toBeGreaterThan(obsIdx);
+    expect(docIdx).toBeGreaterThan(reasonIdx);
     expect(metadataIdx).toBeGreaterThan(docIdx);
   });
 

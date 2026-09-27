@@ -17,26 +17,26 @@ describe('RebuildPayrollEntriesInCanonicalFormOrder20260719000019', () => {
 
   it('funcionario_id/employee_id and mes_referencia/competencia sit in adjacent pairs (real field first)', () => {
     const b = block();
-    const funcionarioIdx = b.indexOf('funcionario_id');
+    const legacyEmployeeIdx = b.indexOf('funcionario_id');
     const employeeIdx = b.indexOf('employee_id');
-    const mesRefIdx = b.indexOf('mes_referencia');
+    const referenceMonthIdx = b.indexOf('mes_referencia');
     const competenciaIdx = b.indexOf('competencia');
-    expect(employeeIdx).toBeGreaterThan(funcionarioIdx);
-    expect(competenciaIdx).toBeGreaterThan(mesRefIdx);
-    expect(mesRefIdx).toBeGreaterThan(employeeIdx);
+    expect(employeeIdx).toBeGreaterThan(legacyEmployeeIdx);
+    expect(competenciaIdx).toBeGreaterThan(referenceMonthIdx);
+    expect(referenceMonthIdx).toBeGreaterThan(employeeIdx);
   });
 
   it('bonus/data_pagamento/observacoes follow the form\'s visual order, before arquivo_url/pago_em (legacy)', () => {
     const b = block();
     const bonusIdx = b.indexOf('bonus');
-    const salarioLiquidoIdx = b.indexOf('salario_liquido');
-    const dataPagamentoIdx = b.indexOf('data_pagamento');
-    const arquivoUrlIdx = b.indexOf('arquivo_url');
-    const pagoEmIdx = b.indexOf('pago_em');
-    expect(salarioLiquidoIdx).toBeGreaterThan(bonusIdx);
-    expect(dataPagamentoIdx).toBeGreaterThan(salarioLiquidoIdx);
-    expect(arquivoUrlIdx).toBeGreaterThan(dataPagamentoIdx);
-    expect(pagoEmIdx).toBeGreaterThan(arquivoUrlIdx);
+    const netSalaryIdx = b.indexOf('salario_liquido');
+    const paymentDateIdx = b.indexOf('data_pagamento');
+    const fileUrlIdx = b.indexOf('arquivo_url');
+    const paidAtIdx = b.indexOf('pago_em');
+    expect(netSalaryIdx).toBeGreaterThan(bonusIdx);
+    expect(paymentDateIdx).toBeGreaterThan(netSalaryIdx);
+    expect(fileUrlIdx).toBeGreaterThan(paymentDateIdx);
+    expect(paidAtIdx).toBeGreaterThan(fileUrlIdx);
   });
 
   it('the audit block is created_at -> updated_at -> deleted_at (no created_by/updated_by, pre-existing gap)', () => {

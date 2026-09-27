@@ -16,11 +16,11 @@ describe('RebuildInventoryItemsInCanonicalFormOrder20260719000017', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
-    const nomeIdx = block.search(/\bnome\s+varchar/);
-    const categoriaIdx = block.indexOf('categoria ');
+    const nameIdx = block.search(/\bnome\s+varchar/);
+    const categoryIdx = block.indexOf('categoria ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
-    expect(nomeIdx).toBeGreaterThan(tenantIdx);
-    expect(categoriaIdx).toBeGreaterThan(nomeIdx);
+    expect(nameIdx).toBeGreaterThan(tenantIdx);
+    expect(categoryIdx).toBeGreaterThan(nameIdx);
   });
 
   it('the audit block is created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {

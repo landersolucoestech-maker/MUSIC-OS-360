@@ -17,15 +17,15 @@ describe('RebuildClientsInCanonicalFormOrder20260719000010', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
-    const tipoIdx = block.indexOf('tipo_pessoa ');
-    const categoriaIdx = block.indexOf('categoria ');
+    const typeIdx = block.indexOf('tipo_pessoa ');
+    const categoryIdx = block.indexOf('categoria ');
     const perfilIdx = block.indexOf('perfil ');
-    const nomeIdx = block.search(/\bnome\s+varchar/);
+    const nameIdx = block.search(/\bnome\s+varchar/);
     expect(tenantIdx).toBeGreaterThan(idIdx);
-    expect(tipoIdx).toBeGreaterThan(tenantIdx);
-    expect(categoriaIdx).toBeGreaterThan(tipoIdx);
-    expect(perfilIdx).toBeGreaterThan(categoriaIdx);
-    expect(nomeIdx).toBeGreaterThan(perfilIdx);
+    expect(typeIdx).toBeGreaterThan(tenantIdx);
+    expect(categoryIdx).toBeGreaterThan(typeIdx);
+    expect(perfilIdx).toBeGreaterThan(categoryIdx);
+    expect(nameIdx).toBeGreaterThan(perfilIdx);
   });
 
   it('drops segmento/endereco/responsavel/prioridade/cpf/cnpj (proven orphans) with fail-fast validation', () => {

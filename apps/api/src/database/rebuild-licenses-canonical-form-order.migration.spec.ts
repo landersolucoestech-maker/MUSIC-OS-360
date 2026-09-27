@@ -16,18 +16,18 @@ describe('RebuildLicensesInCanonicalFormOrder20260719000015', () => {
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
     const tituloIdx = block.indexOf('titulo ');
-    const obraIdx = block.indexOf('obra_id ');
+    const workIdx = block.indexOf('obra_id ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
     expect(tituloIdx).toBeGreaterThan(tenantIdx);
-    expect(obraIdx).toBeGreaterThan(tituloIdx);
+    expect(workIdx).toBeGreaterThan(tituloIdx);
   });
 
   it('remuneration_type/artista_id (the migration\'s historical name) sit before the audit block (no longer after deleted_at)', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
-    const observacoesIdx = block.indexOf('observacoes ');
+    const notesIdx = block.indexOf('observacoes ');
     const remunerationIdx = block.indexOf('remuneration_type');
     const createdAtIdx = block.indexOf('created_at');
-    expect(remunerationIdx).toBeGreaterThan(observacoesIdx);
+    expect(remunerationIdx).toBeGreaterThan(notesIdx);
     expect(createdAtIdx).toBeGreaterThan(remunerationIdx);
   });
 

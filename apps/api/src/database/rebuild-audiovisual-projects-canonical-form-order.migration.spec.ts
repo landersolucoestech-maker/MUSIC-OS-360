@@ -28,10 +28,10 @@ describe('RebuildAudiovisualProjectsInCanonicalFormOrder20260719000006', () => {
 
   it('status/final_status come after the form fields, and completed_at/publish_date (service-derived) after them', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
-    const observacoesIdx = block.indexOf('observations ');
+    const notesIdx = block.indexOf('observations ');
     const statusIdx = block.search(/\bstatus\s+varchar/);
     const completedIdx = block.indexOf('completed_at ');
-    expect(statusIdx).toBeGreaterThan(observacoesIdx);
+    expect(statusIdx).toBeGreaterThan(notesIdx);
     expect(completedIdx).toBeGreaterThan(statusIdx);
   });
 

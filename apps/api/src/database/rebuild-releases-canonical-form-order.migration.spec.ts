@@ -17,12 +17,12 @@ describe('RebuildReleasesInCanonicalFormOrder20260719000004', () => {
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
     const tituloIdx = block.indexOf('titulo ');
-    const gravadoraIdx = block.indexOf('gravadora ');
+    const labelIdx = block.indexOf('gravadora ');
     const statusIdx = block.indexOf('status ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
     expect(tituloIdx).toBeGreaterThan(tenantIdx);
-    expect(gravadoraIdx).toBeGreaterThan(tituloIdx);
-    expect(statusIdx).toBeGreaterThan(gravadoraIdx);
+    expect(labelIdx).toBeGreaterThan(tituloIdx);
+    expect(statusIdx).toBeGreaterThan(labelIdx);
   });
 
   it('no functional field appears after metadata/created_at/updated_at/deleted_at', () => {

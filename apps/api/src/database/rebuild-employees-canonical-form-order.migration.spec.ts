@@ -20,33 +20,33 @@ describe('RebuildEmployeesInCanonicalFormOrder20260719000018', () => {
     const b = block();
     const idIdx = b.indexOf('id ');
     const tenantIdx = b.indexOf('tenant_id ');
-    const nomeCompletoIdx = b.indexOf('nome_completo');
-    const nomeIdx = b.search(/\bnome\s+varchar/);
+    const fullNameIdx = b.indexOf('nome_completo');
+    const nameIdx = b.search(/\bnome\s+varchar/);
     expect(tenantIdx).toBeGreaterThan(idIdx);
-    expect(nomeCompletoIdx).toBeGreaterThan(tenantIdx);
-    expect(nomeIdx).toBeGreaterThan(nomeCompletoIdx);
+    expect(fullNameIdx).toBeGreaterThan(tenantIdx);
+    expect(nameIdx).toBeGreaterThan(fullNameIdx);
   });
 
   it('legacy fields (departamento/salario/data_demissao) sit next to their matching real field', () => {
     const b = block();
-    const setorIdx = b.indexOf('setor ');
-    const departamentoIdx = b.indexOf('departamento');
-    const admissaoIdx = b.indexOf('data_admissao');
-    const demissaoIdx = b.indexOf('data_demissao');
-    const salarioBaseIdx = b.indexOf('salario_base');
-    const salarioIdx = b.search(/\bsalario\s+numeric/);
-    expect(departamentoIdx).toBeGreaterThan(setorIdx);
-    expect(demissaoIdx).toBeGreaterThan(admissaoIdx);
-    expect(salarioIdx).toBeGreaterThan(salarioBaseIdx);
+    const sectorIdx = b.indexOf('setor ');
+    const departmentIdx = b.indexOf('departamento');
+    const hireDateIdx = b.indexOf('data_admissao');
+    const terminationDateIdx = b.indexOf('data_demissao');
+    const baseSalaryIdx = b.indexOf('salario_base');
+    const salaryIdx = b.search(/\bsalario\s+numeric/);
+    expect(departmentIdx).toBeGreaterThan(sectorIdx);
+    expect(terminationDateIdx).toBeGreaterThan(hireDateIdx);
+    expect(salaryIdx).toBeGreaterThan(baseSalaryIdx);
   });
 
   it('documentos (no visual field) comes before metadata and after the functional fields', () => {
     const b = block();
     const vinculoIdx = b.indexOf('vinculo_usuario_id');
-    const documentosIdx = b.indexOf('documentos');
+    const documentsIdx = b.indexOf('documentos');
     const metadataIdx = b.indexOf('metadata');
-    expect(documentosIdx).toBeGreaterThan(vinculoIdx);
-    expect(metadataIdx).toBeGreaterThan(documentosIdx);
+    expect(documentsIdx).toBeGreaterThan(vinculoIdx);
+    expect(metadataIdx).toBeGreaterThan(documentsIdx);
   });
 
   it('the audit block is created_at -> updated_at -> created_by -> deleted_at (no updated_by, pre-existing gap)', () => {

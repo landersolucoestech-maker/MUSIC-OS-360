@@ -18,11 +18,11 @@ describe('RebuildSharesInCanonicalFormOrder20260719000014', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
-    const obraIdx = block.indexOf('obra_id ');
+    const workIdx = block.indexOf('obra_id ');
     const papelIdx = block.search(/\bpapel\s+varchar/);
     expect(tenantIdx).toBeGreaterThan(idIdx);
-    expect(obraIdx).toBeGreaterThan(tenantIdx);
-    expect(papelIdx).toBeGreaterThan(obraIdx);
+    expect(workIdx).toBeGreaterThan(tenantIdx);
+    expect(papelIdx).toBeGreaterThan(workIdx);
   });
 
   it('the Registry Fields Phase 1 block (rights_holder_id..end_date) comes before the financial form (share_type onward)', () => {

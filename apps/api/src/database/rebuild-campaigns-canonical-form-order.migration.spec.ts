@@ -18,21 +18,21 @@ describe('RebuildCampaignsInCanonicalFormOrder20260719000024', () => {
 
   it('keeps the existing functional order: nome -> tipo -> status -> objetivo -> orcamento -> data_inicio -> data_fim -> artista_id', () => {
     const b = block();
-    const nomeIdx = b.search(/\bnome\s+varchar/);
-    const tipoIdx = b.indexOf('tipo');
+    const nameIdx = b.search(/\bnome\s+varchar/);
+    const typeIdx = b.indexOf('tipo');
     const statusIdx = b.search(/\bstatus\s+varchar/);
     const objetivoIdx = b.indexOf('objetivo');
-    const orcamentoIdx = b.indexOf('orcamento');
-    const inicioIdx = b.indexOf('data_inicio');
-    const fimIdx = b.indexOf('data_fim');
-    const artistaIdx = b.indexOf('artista_id');
-    expect(tipoIdx).toBeGreaterThan(nomeIdx);
-    expect(statusIdx).toBeGreaterThan(tipoIdx);
+    const budgetIdx = b.indexOf('orcamento');
+    const startIdx = b.indexOf('data_inicio');
+    const endIdx = b.indexOf('data_fim');
+    const artistIdx = b.indexOf('artista_id');
+    expect(typeIdx).toBeGreaterThan(nameIdx);
+    expect(statusIdx).toBeGreaterThan(typeIdx);
     expect(objetivoIdx).toBeGreaterThan(statusIdx);
-    expect(orcamentoIdx).toBeGreaterThan(objetivoIdx);
-    expect(inicioIdx).toBeGreaterThan(orcamentoIdx);
-    expect(fimIdx).toBeGreaterThan(inicioIdx);
-    expect(artistaIdx).toBeGreaterThan(fimIdx);
+    expect(budgetIdx).toBeGreaterThan(objetivoIdx);
+    expect(startIdx).toBeGreaterThan(budgetIdx);
+    expect(endIdx).toBeGreaterThan(startIdx);
+    expect(artistIdx).toBeGreaterThan(endIdx);
   });
 
   it('the audit block is created_at -> updated_at -> created_by -> updated_by -> deleted_at', () => {

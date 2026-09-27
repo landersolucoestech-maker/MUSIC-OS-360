@@ -17,12 +17,12 @@ describe('RebuildWorksInCanonicalFormOrder20260719000002', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
-    const projetoIdx = block.indexOf('projeto_id ');
+    const projectIdx = block.indexOf('projeto_id ');
     const codEntidadeIdx = block.indexOf('cod_entidade ');
     const tituloIdx = block.indexOf('titulo ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
-    expect(projetoIdx).toBeGreaterThan(tenantIdx);
-    expect(codEntidadeIdx).toBeGreaterThan(projetoIdx);
+    expect(projectIdx).toBeGreaterThan(tenantIdx);
+    expect(codEntidadeIdx).toBeGreaterThan(projectIdx);
     expect(tituloIdx).toBeGreaterThan(codEntidadeIdx);
   });
 

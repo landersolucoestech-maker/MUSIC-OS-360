@@ -17,11 +17,11 @@ describe('RebuildLeadsInCanonicalFormOrder20260719000011', () => {
     const block = migrationSrc.split('newColumns = `')[1].split('`;')[0];
     const idIdx = block.indexOf('id ');
     const tenantIdx = block.indexOf('tenant_id ');
-    const nomeIdx = block.search(/\bnome\s+varchar/);
-    const empresaIdx = block.indexOf('empresa ');
+    const nameIdx = block.search(/\bnome\s+varchar/);
+    const companyIdx = block.indexOf('empresa ');
     expect(tenantIdx).toBeGreaterThan(idIdx);
-    expect(nomeIdx).toBeGreaterThan(tenantIdx);
-    expect(empresaIdx).toBeGreaterThan(nomeIdx);
+    expect(nameIdx).toBeGreaterThan(tenantIdx);
+    expect(companyIdx).toBeGreaterThan(nameIdx);
   });
 
   it('renames tipoServico/origemLead/probabilidadeFechamento to snake_case (new physical columns)', () => {
