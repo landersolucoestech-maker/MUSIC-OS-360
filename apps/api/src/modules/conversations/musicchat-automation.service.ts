@@ -59,7 +59,7 @@ const DEFAULT_REQUIRED_FIELDS = [
   'Local do evento',
   'Tipo de evento',
   'Artista desejado',
-  'Publico estimado',
+  'Público estimado',
   'Telefone para contato',
   'E-mail',
 ];

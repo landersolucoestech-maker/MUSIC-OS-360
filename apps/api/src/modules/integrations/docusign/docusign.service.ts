@@ -244,7 +244,7 @@ export class DocuSignService {
 
     const conn = await this.integrationBase.getOAuthConnection(params.tenantId, params.userId, PROVIDER);
     if (!conn?.accessToken) {
-      throw new ServiceUnavailableException('DocuSign não conectado para este utilizador — autorize a integração primeiro');
+      throw new ServiceUnavailableException('DocuSign não conectado para este usuário — autorize a integração primeiro');
     }
 
     const { accountId, baseUri } = await this.resolveAccount(params.tenantId, params.userId, conn.accessToken);

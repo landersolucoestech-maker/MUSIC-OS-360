@@ -73,7 +73,7 @@ export class CampaignEventsHandler {
             tenant_id: tenantId,
             user_id: event.userId,
             title: `Campanha encerrada: "${title}"`,
-            body: `Campanha encerrada em ${endedAt}. Relatorio de performance em processamento.`,
+            body: `Campanha encerrada em ${endedAt}. Relatório de performance em processamento.`,
             type: DOMAIN_EVENTS.CAMPAIGN_ENDED,
             entity: 'campaign',
             entity_id: campaignId,

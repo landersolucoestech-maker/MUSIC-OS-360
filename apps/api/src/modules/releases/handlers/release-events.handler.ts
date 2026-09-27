@@ -15,10 +15,10 @@ import type {
 
 const APPROVAL_CHECKLIST = [
   'Verificar arte de capa (3000x3000px, RGB, JPG/PNG)',
-  'Confirmar ISRC atribuido a todos os fonogramas',
+  'Confirmar ISRC atribuído a todos os fonogramas',
   'Confirmar UPC / EAN do album',
   'Selecionar distribuidora e plataformas de destino',
-  'Validar metadados (title, artistas, creditos, ISWC)',
+  'Validar metadados (title, artistas, créditos, ISWC)',
 ] as const;
 
 @Injectable()
@@ -50,7 +50,7 @@ export class ReleaseEventsHandler {
               id: randomUUID(),
               tenant_id: tenantId,
               user_id: event.userId,
-              title: `Checklist de lancamento aprovado: "${title}"`,
+              title: `Checklist de lançamento aprovado: "${title}"`,
               body: APPROVAL_CHECKLIST.map((item, i) => `${i + 1}. ${item}`).join('\n'),
               type: 'release.approved.checklist',
               entity: 'release',
@@ -78,8 +78,8 @@ export class ReleaseEventsHandler {
               id: randomUUID(),
               tenant_id: tenantId,
               user_id: artistId,
-              title: `Seu lancamento foi aprovado: "${title}"`,
-              body: `O lancamento "${title}" foi aprovado por ${approvedBy} e segue para distribuicao. Aguarde o checklist de validacao.`,
+              title: `Seu lançamento foi aprovado: "${title}"`,
+              body: `O lançamento "${title}" foi aprovado por ${approvedBy} e segue para distribuição. Aguarde o checklist de validação.`,
               type: 'release.approved.artist',
               entity: 'release',
               entity_id: releaseId,

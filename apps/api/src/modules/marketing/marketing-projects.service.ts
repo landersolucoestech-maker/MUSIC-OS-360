@@ -251,7 +251,7 @@ export class MarketingProjectsService {
       marketing_project_id: marketingProject.id,
       task_key: taskKey,
       title: `Criar arte de capa - ${payload.title}`,
-      description: 'Tarefa automatica gerada quando o projeto musical foi concluido. Preparar briefing, referencias, metadados e links internos para arte de capa.',
+      description: 'Tarefa automática gerada quando o projeto musical foi concluído. Preparar briefing, referências, metadados e links internos para arte de capa.',
       status: 'pending',
       priority: 'high',
       kind: 'cover_art',
@@ -271,7 +271,7 @@ export class MarketingProjectsService {
             completedAt: payload.completedAt,
           },
           references: [],
-          observations: 'Gerado automaticamente pelo modulo Marketing. Nao cria Release.',
+          observations: 'Gerado automaticamente pelo módulo Marketing. Não cria Release.',
           internalLinks: {
             projectId: payload.projectId,
             marketingProjectId: marketingProject.id,

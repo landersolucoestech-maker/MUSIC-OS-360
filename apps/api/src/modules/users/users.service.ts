@@ -50,7 +50,7 @@ export class UsersService {
       .createQueryBuilder('m')
       .where('m.id = :id AND m.tenant_id = :tenantId', { id, tenantId })
       .getOne();
-    if (!result) throw new NotFoundException('Utilizador não encontrado');
+    if (!result) throw new NotFoundException('Usuário não encontrado');
     return result;
   }
 
@@ -134,7 +134,7 @@ export class UsersService {
       { id, tenant_id: tenantId } as any,
       updates as any,
       dto.expectedUpdatedAt,
-      'Este utilizador foi alterado por outra pessoa desde que você o carregou. Recarregue e tente novamente.',
+      'Este usuário foi alterado por outra pessoa desde que você o carregou. Recarregue e tente novamente.',
     );
     await this.invalidateMembershipCache(tenantId, current.auth_user_id);
     return this.findById(tenantId, id);
@@ -330,7 +330,7 @@ export class UsersService {
       { id, tenant_id: tenantId } as any,
       { role, role_id: roleId, updated_at: new Date() } as any,
       expectedUpdatedAt,
-      'Este utilizador foi alterado por outra pessoa desde que você o carregou. Recarregue e tente novamente.',
+      'Este usuário foi alterado por outra pessoa desde que você o carregou. Recarregue e tente novamente.',
     );
     await this.invalidateMembershipCache(tenantId, current.auth_user_id);
     return this.findById(tenantId, id);
@@ -367,7 +367,7 @@ export class UsersService {
       { id, tenant_id: tenantId } as any,
       { is_active: status === 'active', updated_at: new Date() } as any,
       expectedUpdatedAt,
-      'Este utilizador foi alterado por outra pessoa desde que você o carregou. Recarregue e tente novamente.',
+      'Este usuário foi alterado por outra pessoa desde que você o carregou. Recarregue e tente novamente.',
     );
     await this.invalidateMembershipCache(tenantId, current.auth_user_id);
     return this.findById(tenantId, id);

@@ -239,7 +239,7 @@ export class BillingService {
   }
 
   private get stripeRequired(): StripeClient {
-    if (!this.stripe) throw new BadRequestException('Stripe nao configurado neste ambiente');
+    if (!this.stripe) throw new BadRequestException('A integração com o Stripe não está configurada neste ambiente.');
     return this.stripe;
   }
 
@@ -940,7 +940,7 @@ export class BillingService {
     this.ws.sendToTenant(tenantId, 'billing:payment_failed', {
       invoice_id: invoice.id,
       hosted_invoice_url: invoice.hosted_invoice_url ?? null,
-      message: 'Pagamento recusado - atualize o metodo de pagamento para manter o acesso',
+      message: 'Pagamento recusado - atualize o método de pagamento para manter o acesso',
     });
   }
 

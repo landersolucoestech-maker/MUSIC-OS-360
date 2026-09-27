@@ -171,7 +171,7 @@ export class LeadsService {
     return this.submitPublicArtistApplication(dto.workspaceSlug, {
       ...dto,
       artisticName: dto.artistName,
-      musicalGenre: dto.musicalGenre ?? 'Nao informado',
+      musicalGenre: dto.musicalGenre ?? 'Não informado',
     });
   }
 
@@ -290,7 +290,7 @@ export class LeadsService {
   private normalizePublicWorkspaceSlug(slug: string): string {
     const normalized = slug.trim().toLowerCase();
     if (!/^[a-z0-9][a-z0-9_-]{0,98}[a-z0-9]$/.test(normalized)) {
-      throw new NotFoundException('Link de cadastro invalido');
+      throw new NotFoundException('Link de cadastro inválido');
     }
     return normalized;
   }
@@ -343,7 +343,7 @@ export class LeadsService {
       settings: Record<string, unknown>;
     }>;
     const tenant = rows[0];
-    if (!tenant) throw new NotFoundException('Workspace nao encontrado');
+    if (!tenant) throw new NotFoundException('Workspace não encontrado');
     if (!tenant.active || tenant.deleted_at) throw new NotFoundException('Cadastro indisponível.');
     // find-a22e0dad / req-ea44db5a: unlike the Type-B external-reconciliation webhooks
     // (Autentique/DocuSign/external-data), public lead-capture is a repeatable, unauthenticated,
@@ -355,7 +355,7 @@ export class LeadsService {
       throw new NotFoundException('Cadastro indisponível.');
     }
     if (!tenant.allow_public_registration || tenant.public_registration_blocked || tenant.public_registration_revoked_at) {
-      throw new NotFoundException('Cadastro indisponivel para este workspace');
+      throw new NotFoundException('Cadastro indisponível para este workspace');
     }
     if (trackAccess) {
       await this.incrementPublicRegistrationMetric(tenant.id, 'public_registration_access_count');

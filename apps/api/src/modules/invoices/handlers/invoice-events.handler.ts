@@ -152,7 +152,7 @@ export class InvoiceEventsHandler {
         due.setDate(due.getDate() + 3);
         const task = taskRepo.create({
           tenant_id: tenantId,
-          title: `Follow-up cobranca: nota fiscal${numero ? ` n. ${numero}` : ''} vencida`,
+          title: `Follow-up cobrança: nota fiscal${numero ? ` n. ${numero}` : ''} vencida`,
           description: `Nota fiscal vencida em ${dataVencimento} - R$${valor}. Contatar cliente e regularizar.`,
           status: 'pending',
           priority: 'high',

@@ -106,7 +106,7 @@ export class ExportEngineService {
 
     const sheetName = report.label ?? entity;
     if (REPORT_MODULE_REGISTRY_BY_TABLE.get(entity)?.computed) {
-      if (!this.ds) throw new ServiceUnavailableException('Banco de dados indisponivel');
+      if (!this.ds) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente.');
       try {
         const rows = await this.resolveComputedReport(entity, tenantId);
         assertExportSize(entity, rows.length);
@@ -129,7 +129,7 @@ export class ExportEngineService {
     const softDeleteColumn = report.hasSoftDelete
       ? report.columns.find((column) => column.isDeletedAt)?.name
       : undefined;
-    if (!this.ds) throw new ServiceUnavailableException('Banco de dados indisponivel');
+    if (!this.ds) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente.');
 
     if (contract?.repeatingGroup) {
       try {
@@ -202,7 +202,7 @@ export class ExportEngineService {
     group: ReportRepeatingGroupSpec,
     softDeleteColumn: string | undefined,
   ): Promise<ExportResult> {
-    if (!this.ds) throw new ServiceUnavailableException('Banco de dados indisponivel');
+    if (!this.ds) throw new ServiceUnavailableException('Serviço temporariamente indisponível. Tente novamente.');
 
     const generalColumns = contract.fields.map((field) => field.key);
     const query = this.queryBuilder.build(

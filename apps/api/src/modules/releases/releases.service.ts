@@ -127,7 +127,7 @@ export class ReleasesService {
       updated_by:      userId,
     });
     const saved = await this.repo!.save(entity);
-    await this.recordActivity(tenantId, userId, saved.id, 'created', `Lancamento "${saved.title}" criado`, {
+    await this.recordActivity(tenantId, userId, saved.id, 'created', `Lançamento "${saved.title}" criado`, {
       title: saved.title,
       type: saved.type,
       artistId: saved.artist_id,

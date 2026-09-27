@@ -19,8 +19,8 @@ const ONBOARDING_TASKS: ReadonlyArray<{
 }> = [
   { title: 'Onboarding artistico', description: 'Apresentar plataforma e fluxos ao artista', priority: 'high', daysFromNow: 3 },
   { title: 'Coleta documental', description: 'Solicitar e validar documentos', priority: 'high', daysFromNow: 5 },
-  { title: 'Setup de distribuicao digital', description: 'Configurar perfil nas distribuidoras e DSPs', priority: 'medium', daysFromNow: 10 },
-  { title: 'Setup de marketing', description: 'Criar perfis e plano de conteudo inicial', priority: 'medium', daysFromNow: 10 },
+  { title: 'Setup de distribuição digital', description: 'Configurar perfil nas distribuidoras e DSPs', priority: 'medium', daysFromNow: 10 },
+  { title: 'Setup de marketing', description: 'Criar perfis e plano de conteúdo inicial', priority: 'medium', daysFromNow: 10 },
   { title: 'Revisao de identidade visual', description: 'Alinhar brand guidelines e assets visuais', priority: 'low', daysFromNow: 15 },
   { title: 'Kickoff operacional', description: 'Reuniao de alinhamento com equipe interna', priority: 'high', daysFromNow: 7 },
 ];
