@@ -1,86 +1,86 @@
-# Módulo `inventory` — Auditoria Zero-Gap (Fase 2, Prompt 107)
+# Module `inventory` — Zero-Gap Audit (Phase 2, Prompt 107)
 
 STATUS: **COMPLETE** — UNMAPPED_*: 0, UNKNOWN_FIELD_CLASSIFICATIONS: 0.
 
-Escopo real (menor que os módulos anteriores — confirmado por rastreamento completo, não por
-suposição): 1 tabela física (`inventory_items`, 19 colunas), 1 controller/service/DTO no backend, 1
-página + 2 modais + 1 hook real no frontend. Nenhuma tabela de `stock_movements`, `warehouses`,
-`locations`, `reservations`, `loans`, `maintenance_records`, `suppliers` ou `barcodes` existe no
-banco (confirmado via `database-backend-column-mapping.json` — busca por `inventor|equipment|
-asset|stock|warehouse|movement|loan|maintenance|reservation|supplier|barcode` só retornou
-`inventory_items` como tabela do domínio deste módulo; as demais tabelas `*_assets` pertencentes a
-`audiovisual`/`marketing`/`projects`/`tasks` já são de outros domínios, não reauditados aqui).
+Real scope (smaller than the previous modules — confirmed by complete tracing, not by
+assumption): 1 physical table (`inventory_items`, 19 columns), 1 controller/service/DTO in the backend, 1
+page + 2 modals + 1 real hook in the frontend. No `stock_movements`, `warehouses`,
+`locations`, `reservations`, `loans`, `maintenance_records`, `suppliers` or `barcodes` table exists in the
+database (confirmed via `database-backend-column-mapping.json` — a search for `inventor|equipment|
+asset|stock|warehouse|movement|loan|maintenance|reservation|supplier|barcode` only returned
+`inventory_items` as a table of this module's domain; the other `*_assets` tables belonging to
+`audiovisual`/`marketing`/`projects`/`tasks` already belong to other domains, not re-audited here).
 
 ---
 
-## 1. Subdomínios reais identificados
+## 1. Real subdomains identified
 
-| Subdomínio | FRONTEND_ENTRYPOINT | ENDPOINTS | BACKEND_CONTROLLER | SERVICE | DATABASE_TABLES |
+| Subdomain | FRONTEND_ENTRYPOINT | ENDPOINTS | BACKEND_CONTROLLER | SERVICE | DATABASE_TABLES |
 |---|---|---|---|---|---|
 | ITEM | `Inventario.tsx`, `InventarioFormModal.tsx`, `InventarioViewModal.tsx` | `GET/POST/PATCH/DELETE /inventory` | `inventory.controller.ts` | `inventory.service.ts` | `inventory_items` |
 
-**Apenas 1 subdomínio real.** `CATEGORY` (não é uma entidade — é uma string livre validada apenas
-por um `<Select>` de opções hardcoded no formulário, sem tabela própria), `STOCK`/`MOVEMENT`/
-`LOCATION`/`WAREHOUSE`/`RESERVATION`/`LOAN`/`MAINTENANCE`/`SUPPLIER`/`PURCHASE`/`ATTACHMENT` — todos
-**NOT_IMPLEMENTED** como entidades/subdomínios próprios (ver seções 12-26 para o detalhamento de
-cada um, com evidência específica de ausência).
+**Only 1 real subdomain.** `CATEGORY` (it is not an entity — it is a free string validated only
+by a `<Select>` of hardcoded options in the form, with no table of its own), `STOCK`/`MOVEMENT`/
+`LOCATION`/`WAREHOUSE`/`RESERVATION`/`LOAN`/`MAINTENANCE`/`SUPPLIER`/`PURCHASE`/`ATTACHMENT` — all
+**NOT_IMPLEMENTED** as entities/subdomains of their own (see sections 12-26 for the details of
+each one, with specific evidence of absence).
 
 ---
 
 ## 2. `Auditoria.tsx` — CROSS_MODULE_AUDITORIA_TSX
 
-Ferramenta real (mesma já auditada em todos os módulos anteriores): entrada `module: "inventory"`,
-`table: "inventario"` em `apps/web/src/shared/lib/audit/runner.ts:157-170`.
+Real tool (the same one already audited in all the previous modules): entry `module: "inventory"`,
+`table: "inventario"` in `apps/web/src/shared/lib/audit/runner.ts:157-170`.
 
 `AUDITORIA_INVENTORY_FIELDS`:
 
-| Campo | Severidade |
+| Field | Severity |
 |---|---|
-| `nome` | obrigatorio |
-| `categoria` | obrigatorio |
-| `status` | obrigatorio |
-| `valor` | recomendado |
-| `localizacao` | recomendado |
+| `nome` | `obrigatorio` |
+| `categoria` | `obrigatorio` |
+| `status` | `obrigatorio` |
+| `valor` | `recomendado` |
+| `localizacao` | `recomendado` |
 
-`AUDITORIA_INVENTORY_RULES`: mesmo motor genérico (`hasValue()`) usado em todos os módulos já
-auditados — sem regra específica adicional para `inventory`. `fixPath`: `editPath("/inventario",
+`AUDITORIA_INVENTORY_RULES`: the same generic engine (`hasValue()`) used in all modules already
+audited — no additional rule specific to `inventory`. `fixPath`: `editPath("/inventario",
 row)` → `/inventario?edit=<id>`.
 
 `AUDITORIA_INVENTORY_DATABASE_SOURCES`: `storage.list("inventario")` → `GET /inventory` (via
-`api-client.ts:85`, `inventario: "/inventory"`) — mesmo endpoint real usado pelo resto do módulo.
+`api-client.ts:85`, `inventario: "/inventory"`) — the same real endpoint used by the rest of the module.
 
-`AUDITORIA_INVENTORY_GAPS` (2, confirmados por leitura de código):
+`AUDITORIA_INVENTORY_GAPS` (2, confirmed by reading the code):
 
-1. **Campo recomendado sempre "faltante"**: a Auditoria verifica `row.valor`, mas a coluna real e o
-   campo real do DTO/resposta é `valor_unitario` (confirmado em `database-backend-column-mapping.
-   json` e em `inventory.dto.ts`) — `row.valor` é sempre `undefined`, então todo item com um valor
-   unitário genuinamente preenchido ainda aparece como "Valor" recomendado-faltante na Auditoria.
-2. **Deep-link sem handler**: `fixPath` aponta para `/inventario?edit=<id>`, mas `Inventario.tsx`
-   não implementa nenhum `useSearchParams`/tratamento de query string (confirmado por leitura
-   completa do arquivo, 256 linhas) — mesmo padrão de deep-link quebrado já confirmado em
-   `events.md`/`crm-relationships.md` para outros módulos.
+1. **Recommended field always "missing"**: the Audit checks `row.valor`, but the real column and
+   the real DTO/response field is `valor_unitario` (confirmed in `database-backend-column-mapping.
+   json` and in `inventory.dto.ts`) — `row.valor` is always `undefined`, so every item with a genuinely
+   filled-in unit value still appears with "Valor" (Value) as recommended-missing in the Audit.
+2. **Deep link with no handler**: `fixPath` points to `/inventario?edit=<id>`, but `Inventario.tsx`
+   does not implement any `useSearchParams`/query-string handling (confirmed by a full reading
+   of the file, 256 lines) — the same broken deep-link pattern already confirmed in
+   `events.md`/`crm-relationships.md` for other modules.
 
-`AUDITORIA_TSX_INVENTORY_SECTION_COMPLETE: SIM`.
+`AUDITORIA_TSX_INVENTORY_SECTION_COMPLETE: SIM` (yes).
 
 ---
 
-## 3. Componentes (classificação completa)
+## 3. Components (complete classification)
 
-| Componente | Classificação | Observação |
+| Component | Classification | Note |
 |---|---|---|
-| `InventarioFormModal.tsx` | CREATE_MODAL + EDIT_MODAL | 427 linhas, único formulário; mapeamento de **criação** correto e completo; mapeamento de **edição** (pré-preenchimento) com bug real — ver §8 |
-| `InventarioViewModal.tsx` | DETAIL_MODAL | 123 linhas, leitura defensiva (`item.local ?? item.localizacao`, `item.valorUnitario ?? item.valor_unitario ?? item.valorUnit`) — mais robusta que a tabela principal |
-| `Inventario.tsx` | TABLE + FILTER + SEARCH + SORT(client, ver §31) + STATIC(métricas) | página única, 256 linhas |
-| `hooks/inventory.store.ts` | DEAD | Zustand store, zero consumidores fora do próprio arquivo (mesmo padrão já visto em `events.md`/`catalog.md`) |
-| `services/inventory.service.ts` | DEAD | zero consumidores — a página real usa `useInventario()` diretamente |
-| `constants/index.ts`, `forms/index.ts`, `schemas/index.ts`(barrel), `utils/index.ts` | STATIC (stub) | pastas vazias, mesmo padrão de scaffold já visto em todos os módulos anteriores |
-| `store/index.ts`, `store/inventory.store.ts` | DEAD | re-export/duplicata do `hooks/inventory.store.ts`, mesmo zero consumidores |
+| `InventarioFormModal.tsx` | CREATE_MODAL + EDIT_MODAL | 427 lines, the only form; **create** mapping correct and complete; **edit** mapping (prefill) with a real bug — see §8 |
+| `InventarioViewModal.tsx` | DETAIL_MODAL | 123 lines, defensive reading (`item.local ?? item.localizacao`, `item.valorUnitario ?? item.valor_unitario ?? item.valorUnit`) — more robust than the main table |
+| `Inventario.tsx` | TABLE + FILTER + SEARCH + SORT(client, see §31) + STATIC(metrics) | the only page, 256 lines |
+| `hooks/inventory.store.ts` | DEAD | Zustand store, zero consumers outside its own file (the same pattern already seen in `events.md`/`catalog.md`) |
+| `services/inventory.service.ts` | DEAD | zero consumers — the real page uses `useInventario()` directly |
+| `constants/index.ts`, `forms/index.ts`, `schemas/index.ts`(barrel), `utils/index.ts` | STATIC (stub) | empty folders, the same scaffold pattern already seen in all the previous modules |
+| `store/index.ts`, `store/inventory.store.ts` | DEAD | a re-export/duplicate of `hooks/inventory.store.ts`, also zero consumers |
 
-Não há `RELATION_SELECTOR`/`CATEGORY_SELECTOR`(estruturado)/`LOCATION_SELECTOR`(estruturado)/
-`SUPPLIER_SELECTOR`/`QUANTITY_CONTROL`(dedicado, além do `<Input type="number">`)/`STOCK_BADGE`/
-`MOVEMENT_UI`/`RESERVATION_UI`/`LOAN_UI`/`MAINTENANCE_UI`/`UPLOAD`/`IMPORT`/`EXPORT`(nível de
-página)/`BARCODE_UI`/`QR_UI`/`REALTIME_CONSUMER` — nenhum desses componentes existe neste módulo
-(confirmado por leitura completa de todos os arquivos do diretório).
+There is no `RELATION_SELECTOR`/`CATEGORY_SELECTOR`(structured)/`LOCATION_SELECTOR`(structured)/
+`SUPPLIER_SELECTOR`/`QUANTITY_CONTROL`(dedicated, beyond the `<Input type="number">`)/`STOCK_BADGE`/
+`MOVEMENT_UI`/`RESERVATION_UI`/`LOAN_UI`/`MAINTENANCE_UI`/`UPLOAD`/`IMPORT`/`EXPORT`(page
+level)/`BARCODE_UI`/`QR_UI`/`REALTIME_CONSUMER` — none of these components exists in this module
+(confirmed by a full reading of all the files in the directory).
 
 ---
 
@@ -88,538 +88,539 @@ página)/`BARCODE_UI`/`QR_UI`/`REALTIME_CONSUMER` — nenhum desses componentes 
 
 | HOOK | FILE | SUBDOMAIN | ENDPOINTS | READ/WRITE | REALTIME | TENANT_DEP |
 |---|---|---|---|---|---|---|
-| `useInventario` | `hooks/useInventario.ts` | ITEM | `GET/POST/PATCH/DELETE /inventory` (via `useDataQuery`/`storage`, `table: "inventario"`) | leitura completa da lista + create/update/delete | não | implícito (`CurrentTenant()` no backend) |
+| `useInventario` | `hooks/useInventario.ts` | ITEM | `GET/POST/PATCH/DELETE /inventory` (via `useDataQuery`/`storage`, `table: "inventario"`) | full list read + create/update/delete | no | implicit (`CurrentTenant()` in the backend) |
 
-**1 hook ativo, totalmente classificado.** Sem `QUANTITY_FIELDS` dedicados (quantidade é só mais um
-campo do objeto, não um sub-hook próprio), sem `MOVEMENT_USAGE` (não existe conceito de
-movimentação), sem `STORAGE_USAGE`.
+**1 active hook, fully classified.** No dedicated `QUANTITY_FIELDS` (quantity is just another
+field of the object, not a sub-hook of its own), no `MOVEMENT_USAGE` (there is no concept of a
+movement), no `STORAGE_USAGE`.
 
 ---
 
-## 5. CREATE ITEM — mapeamento campo a campo
+## 5. CREATE ITEM — field-by-field mapping
 
-`InventarioFormModal.tsx::onSubmit` constrói o payload explicitamente (linhas 146-159) mapeando
-CORRETAMENTE os nomes internos do formulário (camelCase, usados só dentro do `react-hook-form`) para
-os nomes reais de API/DB (snake_case):
+`InventarioFormModal.tsx::onSubmit` builds the payload explicitly (lines 146-159), CORRECTLY mapping
+the form's internal names (camelCase, used only inside `react-hook-form`) to
+the real API/DB names (snake_case):
 
-| FORM_FIELD (interno) | LABEL | TYPE | REQUIRED | API_REQUEST_FIELD | DATABASE_COLUMN | PERSISTED |
+| FORM_FIELD (internal) | LABEL | TYPE | REQUIRED | API_REQUEST_FIELD | DATABASE_COLUMN | PERSISTED |
 |---|---|---|---|---|---|---|
-| `nome` | Nome do Item | string | sim (zod `.min(1)`) | `nome` | `inventory_items.nome` | sim |
-| `categoria` | Categoria | select (9 opções fixas) | não | `categoria` | `.categoria` | sim |
-| `quantidade` | Quantidade | number | sim na UI (zod `.min(1)`; backend aceita `.min(0)` — ver Gap #6) | `quantidade` | `.quantidade` | sim |
-| `localizacao` | Localização | string livre | não | `localizacao` | `.localizacao` | sim |
-| `responsavel` | Responsável | string livre | não | `responsavel` | `.responsavel` | sim |
-| `status` | Status | select (6 opções no form — ver Gap #5, ENUM_MISMATCH) | sim (zod enum) | `status` | `.status` | sim |
-| `setor` | Setor | select (16 opções fixas) | não | `setor` | `.setor` | sim |
-| `localCompra` | Local de Compra | string livre | não | `local_compra` | `.local_compra` | sim |
-| `numeroNotaFiscal` | Número da Nota Fiscal | string livre | não | `numero_nota_fiscal` | `.numero_nota_fiscal` | sim |
-| `dataEntrada` | Data de Entrada | date picker | não (default: hoje) | `data_entrada` | `.data_entrada` | sim |
-| `valor_unitario` | Valor Unitário (R$) | number | não | `valor_unitario` | `.valor_unitario` | sim |
-| `observacoes` | Observações | textarea | não | `observacoes` | `.observacoes` | sim |
-| "Valor Total" | Valor Total (Calculado) | derivado (`quantidade × valor_unitario`, `useMemo`) | — | **nunca enviado** | nenhuma coluna própria | **UI_ONLY/DERIVED** — calculado só para exibição, não persistido (não há coluna `valor_total`/`current_value` no banco) |
+| `nome` | "Nome do Item" (Item name) | string | yes (zod `.min(1)`) | `nome` | `inventory_items.nome` | yes |
+| `categoria` | "Categoria" (Category) | select (9 fixed options) | no | `categoria` | `.categoria` | yes |
+| `quantidade` | "Quantidade" (Quantity) | number | yes in the UI (zod `.min(1)`; the backend accepts `.min(0)` — see Gap #6) | `quantidade` | `.quantidade` | yes |
+| `localizacao` | "Localização" (Location) | free string | no | `localizacao` | `.localizacao` | yes |
+| `responsavel` | "Responsável" (Responsible person) | free string | no | `responsavel` | `.responsavel` | yes |
+| `status` | "Status" | select (6 options in the form — see Gap #5, ENUM_MISMATCH) | yes (zod enum) | `status` | `.status` | yes |
+| `setor` | "Setor" (Sector) | select (16 fixed options) | no | `setor` | `.setor` | yes |
+| `localCompra` | "Local de Compra" (Place of purchase) | free string | no | `local_compra` | `.local_compra` | yes |
+| `numeroNotaFiscal` | "Número da Nota Fiscal" (Invoice number) | free string | no | `numero_nota_fiscal` | `.numero_nota_fiscal` | yes |
+| `dataEntrada` | "Data de Entrada" (Entry date) | date picker | no (default: today) | `data_entrada` | `.data_entrada` | yes |
+| `valor_unitario` | "Valor Unitário (R$)" (Unit value) | number | no | `valor_unitario` | `.valor_unitario` | yes |
+| `observacoes` | "Observações" (Notes) | textarea | no | `observacoes` | `.observacoes` | yes |
+| "Valor Total" (Total value) | "Valor Total (Calculado)" (Total value, calculated) | derived (`quantidade × valor_unitario`, `useMemo`) | — | **never sent** | no column of its own | **UI_ONLY/DERIVED** — computed only for display, not persisted (there is no `valor_total`/`current_value` column in the database) |
 
-**Todos os 12 campos reais do formulário de criação são corretamente mapeados e persistidos** — o
-`onSubmit` já converte para os nomes snake_case corretos. `CREATE_FIELDS: 12` (11 campos de
-domínio + status).
+**All 12 real fields of the create form are correctly mapped and persisted** — the
+`onSubmit` already converts to the correct snake_case names. `CREATE_FIELDS: 12` (11 domain
+fields + status).
 
 ---
 
-## 6. EDIT ITEM — Create ≠ Edit (bug real confirmado)
+## 6. EDIT ITEM — Create ≠ Edit (real bug confirmed)
 
-Mesmo componente (`mode: "create"|"edit"|"view"`), mas o **pré-preenchimento** do formulário em modo
-edição (`useEffect` que chama `reset({...})` quando `item` é passado, linhas 108-121) lê os campos
-do objeto `item` (a resposta real da API) usando os MESMOS NOMES INTERNOS camelCase que o formulário
-usa para si mesmo, em vez dos nomes reais retornados pela API:
+The same component (`mode: "create"|"edit"|"view"`), but the form's **prefill** in edit
+mode (the `useEffect` that calls `reset({...})` when `item` is passed, lines 108-121) reads the fields
+of the `item` object (the real API response) using the SAME internal camelCase NAMES that the form
+uses for itself, instead of the real names returned by the API:
 
 ```js
 reset({
   ...,
-  localCompra:       item.localCompra || "",        // API real retorna item.local_compra
-  numeroNotaFiscal:  item.numeroNotaFiscal || "",    // API real retorna item.numero_nota_fiscal
-  dataEntrada:       item.dataEntrada || <hoje>,     // API real retorna item.data_entrada
+  localCompra:       item.localCompra || "",        // real API returns item.local_compra
+  numeroNotaFiscal:  item.numeroNotaFiscal || "",    // real API returns item.numero_nota_fiscal
+  dataEntrada:       item.dataEntrada || <today>,    // real API returns item.data_entrada
 });
 ```
 
-**EDIT_MAPPING_MISMATCH confirmado**: `item.localCompra`, `item.numeroNotaFiscal` e `item.dataEntrada`
-são sempre `undefined` na resposta real de `GET /inventory/:id` (que retorna `local_compra`/
-`numero_nota_fiscal`/`data_entrada`) — ao abrir um item existente para edição, esses 3 campos
-**sempre aparecem vazios/com o valor padrão**, mesmo que o item tenha esses dados genuinamente
-persistidos no banco. Se o usuário salvar a edição sem notar e sem preencher novamente, o
-`onSubmit` envia `undefined` para esses 3 campos (que o `PATCH` trataria como "não alterar", já que
-`UpdateInventoryItemDto extends PartialType(...)` e o backend só atualiza o que vier no DTO) — na
-prática o dado NÃO é apagado no banco (PATCH parcial preserva o valor antigo), mas a UI mostra ao
-usuário um formulário de edição incorreto/incompleto, podendo levá-lo a re-digitar um valor
-diferente do original sem perceber que já existia um.
+**EDIT_MAPPING_MISMATCH confirmed**: `item.localCompra`, `item.numeroNotaFiscal` and `item.dataEntrada`
+are always `undefined` in the real response of `GET /inventory/:id` (which returns `local_compra`/
+`numero_nota_fiscal`/`data_entrada`) — when an existing item is opened for editing, these 3 fields
+**always appear empty/with the default value**, even if the item has this data genuinely
+persisted in the database. If the user saves the edit without noticing and without filling them in again, the
+`onSubmit` sends `undefined` for these 3 fields (which the `PATCH` would treat as "do not change", since
+`UpdateInventoryItemDto extends PartialType(...)` and the backend only updates what comes in the DTO) — in
+practice the data is NOT erased in the database (a partial PATCH preserves the old value), but the UI shows the
+user an incorrect/incomplete edit form, which may lead them to retype a value
+different from the original without realizing one already existed.
 
-Os demais 9 campos (`nome`, `categoria`, `quantidade`, `localizacao`, `status`, `responsavel`,
-`setor`, `valor_unitario`, `observacoes`) usam o MESMO nome no formulário e na API — pré-preenchimento
-correto para esses.
+The other 9 fields (`nome`, `categoria`, `quantidade`, `localizacao`, `status`, `responsavel`,
+`setor`, `valor_unitario`, `observacoes`) use the SAME name in the form and in the API — correct prefill
+for those.
 
-`EDIT_FIELDS: 12` (mesmos 12 do create). `IMMUTABLE_AFTER_CREATE: nenhum campo` (todos editáveis).
-`DATABASE_MAPPING`: idêntico ao create para os 12 campos (a divergência é só na LEITURA para
-popular o formulário, não na escrita).
+`EDIT_FIELDS: 12` (the same 12 as create). `IMMUTABLE_AFTER_CREATE: no field` (all editable).
+`DATABASE_MAPPING`: identical to create for the 12 fields (the divergence is only in the READ used to
+populate the form, not in the write).
 
 ---
 
-## 7. Identificação do item
+## 7. Item identification
 
 | FIELD | DATABASE_COLUMN | UNIQUE | GENERATED_OR_MANUAL | VALIDATION | NORMALIZATION | SEARCH_USAGE |
 |---|---|---|---|---|---|---|
-| `id` | `id` (uuid) | sim (PK) | GENERATED (`gen_random_uuid()`) | — | — | não (não é buscável pelo usuário) |
-| `nome` | `nome` | **NÃO** (sem constraint UNIQUE no banco, confirmado na Fase 1) | MANUAL | `@IsString @MaxLength(255)` (backend), `.min(1).max(150)` (frontend — **DEFAULT_MISMATCH**: limite de 150 no frontend vs. 255 no backend, o frontend é mais restritivo, não é um bug funcional mas é uma divergência real de regra) | `.trim()` só no frontend (zod) | sim — busca por nome (`ILIKE`, backend; `.includes()`, frontend) |
+| `id` | `id` (uuid) | yes (PK) | GENERATED (`gen_random_uuid()`) | — | — | no (not searchable by the user) |
+| `nome` | `nome` | **NO** (no UNIQUE constraint in the database, confirmed in Phase 1) | MANUAL | `@IsString @MaxLength(255)` (backend), `.min(1).max(150)` (frontend — **DEFAULT_MISMATCH**: a limit of 150 in the frontend vs. 255 in the backend; the frontend is more restrictive, it is not a functional bug but it is a real rule divergence) | `.trim()` only in the frontend (zod) | yes — search by name (`ILIKE`, backend; `.includes()`, frontend) |
 
-**Nenhum SKU, código interno, barcode, QR code, número de série, modelo ou marca existe** em
-nenhuma camada (schema, DTO, formulário) — `nome` é o único identificador humano do item, sem
-nenhuma normalização/geração automática, sem unicidade garantida (dois itens podem ter exatamente o
-mesmo `nome`, sem aviso).
+**No SKU, internal code, barcode, QR code, serial number, model or brand exists** in
+any layer (schema, DTO, form) — `nome` is the item's only human identifier, with no
+normalization/automatic generation, with no guaranteed uniqueness (two items can have exactly the
+same `nome`, without warning).
 
 ---
 
-## 8. Categorias
+## 8. Categories
 
-Não existe uma entidade/tabela de categorias — `categoria` é uma coluna `character varying` livre em
-`inventory_items`, validada no formulário apenas por um `<Select>` com 9 opções hardcoded no
-componente (`categoriasOptions`, linhas 43-53 de `InventarioFormModal.tsx`): Áudio, Computador,
-Escritório, Estrutura, Iluminação, Mobília, Software, Vídeo, Outros. Sem hierarquia (sem
-`parent_id`), sem `CATEGORY_ID` próprio, sem descrição, sem status.
+There is no categories entity/table — `categoria` is a free `character varying` column in
+`inventory_items`, validated in the form only by a `<Select>` with 9 options hardcoded in the
+component (`categoriasOptions`, lines 43-53 of `InventarioFormModal.tsx`): "Áudio", "Computador",
+"Escritório", "Estrutura", "Iluminação", "Mobília", "Software", "Vídeo", "Outros" (Audio, Computer,
+Office, Structure, Lighting, Furniture, Software, Video, Other). No hierarchy (no
+`parent_id`), no `CATEGORY_ID` of its own, no description, no status.
 
 ```text
-CREATE:   via <Select> das 9 opções fixas (não permite digitar categoria livre — o backend aceitaria
-          qualquer string, mas a única UI real restringe às 9)
-EDIT:     mesmo <Select>
-DISPLAY:  Badge simples (`item.categoria`)
-FILTER:   dropdown na página principal com 5 opções (áudio/vídeo/computador/iluminação/estrutura —
-          SUBCONJUNTO das 9 do formulário; "Escritório"/"Mobília"/"Software"/"Outros" nunca
-          aparecem como opção de filtro, apesar de serem selecionáveis na criação — REAL_MAPPING_GAP
-          menor, um item criado com essas 4 categorias nunca pode ser isolado via filtro de
-          categoria, só via busca textual)
-RELATION: nenhuma (string livre, sem FK)
+CREATE:   via a <Select> of the 9 fixed options (does not allow typing a free category — the backend would accept
+          any string, but the only real UI restricts it to the 9)
+EDIT:     the same <Select>
+DISPLAY:  simple Badge (`item.categoria`)
+FILTER:   dropdown on the main page with 5 options (áudio/vídeo/computador/iluminação/estrutura —
+          a SUBSET of the form's 9; "Escritório"/"Mobília"/"Software"/"Outros" never
+          appear as a filter option, even though they are selectable at creation — a minor
+          REAL_MAPPING_GAP, an item created with these 4 categories can never be isolated via the
+          category filter, only via text search)
+RELATION: none (free string, no FK)
 DATABASE_MAPPING: `inventory_items.categoria` (DIRECT)
 ```
 
-`CATEGORY_FIELDS: 1` (a própria coluna `categoria`).
+`CATEGORY_FIELDS: 1` (the `categoria` column itself).
 
 ---
 
-## 9. Quantidade / Estoque
+## 9. Quantity / Stock
 
 | FIELD | DATABASE_COLUMN | TYPE | DEFAULT | DERIVED_OR_PERSISTED | UPDATE_SOURCE |
 |---|---|---|---|---|---|
-| `quantidade` | `quantidade` (integer) | integer | `0` (banco) / `1` (frontend, no formulário) | PERSISTED | sobrescrita direta pelo valor absoluto digitado no formulário a cada create/update |
+| `quantidade` | `quantidade` (integer) | integer | `0` (database) / `1` (frontend, in the form) | PERSISTED | directly overwritten by the absolute value typed in the form on every create/update |
 
-**Não existem** `available_quantity`, `reserved_quantity`, `minimum_quantity`, `maximum_quantity`,
-`damaged_quantity`, `in_use_quantity` — apenas a única coluna `quantidade`, um contador simples,
-sem nenhuma subdivisão. `QUANTITY_FIELDS: 1`.
+`available_quantity`, `reserved_quantity`, `minimum_quantity`, `maximum_quantity`,
+`damaged_quantity`, `in_use_quantity` **do not exist** — only the single `quantidade` column, a simple counter,
+with no subdivision at all. `QUANTITY_FIELDS: 1`.
 
 ---
 
-## 10. Regra de estoque
+## 10. Stock rule
 
 ```text
 STOCK_MODEL: QUANTITY_SNAPSHOT
 
-O saldo (`quantidade`) é um valor absoluto armazenado diretamente na linha do item, sobrescrito a
-cada PATCH com o valor que o usuário digitar no formulário — NÃO existe um ledger de movimentações
-(entradas/saídas) do qual o saldo seria derivado por soma. Não há fórmula de cálculo
-(INITIAL + ENTRIES - EXITS ...) porque não há histórico de transações de estoque — apenas o estado
-atual, decidido a cada edição pelo usuário.
+The balance (`quantidade`) is an absolute value stored directly on the item's row, overwritten on
+every PATCH with the value the user types in the form — there is NO ledger of movements
+(entries/exits) from which the balance would be derived by summation. There is no calculation formula
+(INITIAL + ENTRIES - EXITS ...) because there is no history of stock transactions — only the current
+state, decided by the user on each edit.
 ```
 
 ---
 
-## 11. Movimentações
+## 11. Movements
 
-**Não implementado.** Nenhuma tabela `inventory_movements`/`stock_movements` existe no banco
-(confirmado na Fase 1), nenhum endpoint de movimentação existe no `InventoryController`
-(`GET/POST/PATCH/DELETE /inventory` são as únicas 4 rotas), nenhum componente de UI de
-entrada/saída/transferência/ajuste foi encontrado. `status: "em_uso"`/`"manutencao"`/etc. é apenas
-um campo de rótulo na própria linha do item — não gera nenhum registro de movimentação associado.
+**Not implemented.** No `inventory_movements`/`stock_movements` table exists in the database
+(confirmed in Phase 1), no movement endpoint exists in `InventoryController`
+(`GET/POST/PATCH/DELETE /inventory` are the only 4 routes), no UI component for
+entry/exit/transfer/adjustment was found. `status: "em_uso"`/`"manutencao"`/etc. is merely
+a label field on the item's own row — it does not generate any associated movement record.
 `MOVEMENT_FIELDS: 0`. `MOVEMENT_TYPES: 0`.
 
 ---
 
-## 12. Transação de estoque / Concorrência
+## 12. Stock transaction / Concurrency
 
 ```text
-MOVEMENT_CREATED: NOT_APPLICABLE (não existem movimentações)
-QUANTITY_UPDATED: SIM — via UPDATE de linha única (`inventory.service.ts::update()`,
+MOVEMENT_CREATED: NOT_APPLICABLE (movements do not exist)
+QUANTITY_UPDATED: YES — via a single-row UPDATE (`inventory.service.ts::update()`,
        `this.repository.update({id, tenant_id}, {...dto, updated_at, updated_by})`)
-SAME_TRANSACTION: NOT_APPLICABLE (não há uma segunda escrita — "movimento" e "novo saldo" são o
-       mesmo único UPDATE)
-STOCK_CONSISTENCY_GAP: não aplicável no sentido de "saldo divergente do histórico" (não há
-       histórico para divergir) — mas ver INVENTORY_HISTORY_GAP abaixo (§18) para o achado
-       correspondente de auditabilidade.
+SAME_TRANSACTION: NOT_APPLICABLE (there is no second write — "movement" and "new balance" are the
+       same single UPDATE)
+STOCK_CONSISTENCY_GAP: not applicable in the sense of "balance diverging from history" (there is no
+       history to diverge from) — but see INVENTORY_HISTORY_GAP below (§18) for the
+       corresponding auditability finding.
 
-CONCURRENCY_CONTROL: NONE — o `update()` grava o valor de `quantidade` (e demais campos) tal como
-       veio no `dto`, sem verificação de versão (sem `updated_at`/`version` otimista) e sem lock
-       de linha explícito. Se dois usuários abrirem o mesmo item simultaneamente com valores de
-       `quantidade` diferentes em mente e ambos salvarem, o último `PATCH` a chegar vence
-       silenciosamente (last-write-wins) — um STOCK_CONCURRENCY_GAP real, mas da mesma classe de
-       risco genérica de qualquer formulário CRUD simples sem lock otimista (não é uma falha
-       específica de um "saldo mutável de alta frequência" como em um sistema de estoque real de
-       movimentação contínua, dado que aqui a alteração é sempre manual, via formulário).
+CONCURRENCY_CONTROL: NONE — `update()` writes the value of `quantidade` (and the other fields) as
+       it came in the `dto`, with no version check (no optimistic `updated_at`/`version`) and no explicit
+       row lock. If two users open the same item simultaneously with different
+       `quantidade` values in mind and both save, the last `PATCH` to arrive silently
+       wins (last-write-wins) — a real STOCK_CONCURRENCY_GAP, but of the same generic risk class
+       as any simple CRUD form without optimistic locking (it is not a failure
+       specific to a "high-frequency mutable balance" as in a real stock system with
+       continuous movement, given that here the change is always manual, via a form).
 ```
 
 ---
 
-## 13. Saldo negativo
+## 13. Negative balance
 
 ```text
-NEGATIVE_STOCK_ALLOWED: NÃO
-BACKEND_ENFORCEMENT: SIM — `@Min(0)` em `CreateInventoryItemDto.quantidade` (class-validator)
-DATABASE_ENFORCEMENT: NÃO — a coluna `quantidade` (integer) não tem CHECK constraint (confirmado na
-       Fase 1, `check_constraint: []`) — a proteção existe só na camada de validação HTTP, não no
+NEGATIVE_STOCK_ALLOWED: NO
+BACKEND_ENFORCEMENT: YES — `@Min(0)` on `CreateInventoryItemDto.quantidade` (class-validator)
+DATABASE_ENFORCEMENT: NO — the `quantidade` (integer) column has no CHECK constraint (confirmed in
+       Phase 1, `check_constraint: []`) — the protection exists only in the HTTP validation layer, not in the
        schema
-FRONTEND_ENFORCEMENT: SIM, mas mais restritivo — zod exige `.min(1)` (não permite nem 0), enquanto o
-       backend permite 0 — DEFAULT_MISMATCH real (não impede o usuário de operar, apenas o
-       frontend é mais rígido que o back nesse ponto específico; não classificado como bug
-       funcional, pois nenhum caminho real tenta enviar 0 hoje)
+FRONTEND_ENFORCEMENT: YES, but more restrictive — zod requires `.min(1)` (does not even allow 0), while the
+       backend allows 0 — a real DEFAULT_MISMATCH (it does not prevent the user from operating, only the
+       frontend is stricter than the back end on this specific point; not classified as a functional
+       bug, since no real path tries to send 0 today)
 ```
 
 ---
 
-## 14. Reservas, Empréstimos, Manutenção
+## 14. Reservations, Loans, Maintenance
 
-**Todos NOT_IMPLEMENTED como entidade/fluxo próprio** — confirmado pela ausência de qualquer tabela
-(`reservations`/`loans`/`maintenance_records`) e de qualquer endpoint/componente dedicado.
+**All NOT_IMPLEMENTED as an entity/flow of their own** — confirmed by the absence of any table
+(`reservations`/`loans`/`maintenance_records`) and of any dedicated endpoint/component.
 
 ```text
-RESERVATION_FIELDS: 0 (o valor "reservado" existe no enum de status do BACKEND — ver §16 — mas não
-       há CAMPOS de reserva (quem reservou, quantidade reservada, período) além do rótulo de status
-       em si; e esse valor "reservado" nem sequer é oferecido pela UI real, ver Gap de enum abaixo)
-LOAN_FIELDS: 0 (o valor "emprestado" existe apenas no FRONTEND — zod schema e shared type — mas,
-       pela mesma razão, não há campos de empréstimo (borrower, checkout_at, expected_return_at,
-       returned_at) — é só um rótulo de status, e o backend sequer aceita esse valor, ver Gap #5)
-MAINTENANCE_FIELDS: 0 (mesmo raciocínio para "manutencao" — presente nas 3 camadas de enum, mas sem
-       nenhum campo de manutenção (tipo, descrição, data agendada, custo, fornecedor) além do
-       rótulo de status)
+RESERVATION_FIELDS: 0 (the value "reservado" exists in the BACKEND status enum — see §16 — but there
+       are no reservation FIELDS (who reserved, quantity reserved, period) beyond the status label
+       itself; and that "reservado" value is not even offered by the real UI, see the enum Gap below)
+LOAN_FIELDS: 0 (the value "emprestado" exists only in the FRONTEND — zod schema and shared type — but,
+       for the same reason, there are no loan fields (borrower, checkout_at, expected_return_at,
+       returned_at) — it is only a status label, and the backend does not even accept that value, see Gap #5)
+MAINTENANCE_FIELDS: 0 (the same reasoning for "manutencao" — present in all 3 enum layers, but with
+       no maintenance field (type, description, scheduled date, cost, supplier) beyond the
+       status label)
 ```
 
-`STATUS` funciona, na prática, como um rótulo livre de "situação atual do item" sem nenhum dos
-fluxos de negócio (criar reserva, criar empréstimo, agendar manutenção) que os nomes dos valores
-sugerem — mudar o status de um item para "manutencao" não dispara nenhum efeito colateral, não cria
-nenhum registro, não bloqueia nenhuma ação.
+`STATUS` works, in practice, as a free "current item situation" label without any of the
+business flows (create reservation, create loan, schedule maintenance) that the value names
+suggest — changing an item's status to "manutencao" triggers no side effect, creates
+no record, blocks no action.
 
 ---
 
-## 15. Status / Condition — ENUM_MISMATCH confirmado (3 vocabulários divergentes)
+## 15. Status / Condition — ENUM_MISMATCH confirmed (3 divergent vocabularies)
 
-| Camada | Fonte | Valores |
+| Layer | Source | Values |
 |---|---|---|
-| Backend DTO (`@IsIn`, valida a escrita real) | `apps/api/src/modules/inventory/dto/inventory.dto.ts:6` | `disponivel`, `em_uso`, `manutencao`, `descartado`, **`reservado`** |
-| Frontend Zod (`inventarioSchema`, valida o formulário) | `apps/web/src/modules/inventory/schemas/inventario-schema.ts:21` | `disponivel`, `em_uso`, **`emprestado`**, `manutencao`, **`danificado`**, `descartado` |
+| Backend DTO (`@IsIn`, validates the real write) | `apps/api/src/modules/inventory/dto/inventory.dto.ts:6` | `disponivel`, `em_uso`, `manutencao`, `descartado`, **`reservado`** |
+| Frontend Zod (`inventarioSchema`, validates the form) | `apps/web/src/modules/inventory/schemas/inventario-schema.ts:21` | `disponivel`, `em_uso`, **`emprestado`**, `manutencao`, **`danificado`**, `descartado` |
 | Shared type (`InventarioStatus`) | `apps/web/src/shared/types/enums.ts:281` | `disponivel`, `em_uso`, `manutencao`, `descartado`, **`emprestado`** |
 
-Nenhuma das 3 listas é idêntica às outras duas. Efeito prático confirmado: `InventarioFormModal.tsx`
-oferece 6 opções na UI (`statusOptions`, linhas 55-62) — as mesmas 6 do schema Zod — incluindo
-**`emprestado`** e **`danificado`**, nenhuma das quais o `@IsIn(STATUSES)` do backend aceita.
-**Selecionar "Emprestado" ou "Danificado" no formulário e salvar resulta em HTTP 400** (rejeição de
-validação do NestJS `ValidationPipe`) — um bug real e acionável pelo usuário através do fluxo normal
-da UI. Inversamente, `reservado` (aceito pelo backend) nunca é oferecido em nenhuma tela — um item
-não pode ser colocado nesse status através da UI real.
+None of the 3 lists is identical to the other two. Confirmed practical effect: `InventarioFormModal.tsx`
+offers 6 options in the UI (`statusOptions`, lines 55-62) — the same 6 as the Zod schema — including
+**`emprestado`** and **`danificado`**, neither of which the backend's `@IsIn(STATUSES)` accepts.
+**Selecting "Emprestado" (On loan) or "Danificado" (Damaged) in the form and saving results in HTTP 400** (a
+NestJS `ValidationPipe` validation rejection) — a real bug that the user can trigger through the normal UI
+flow. Conversely, `reservado` (accepted by the backend) is never offered on any screen — an item
+cannot be put into that status through the real UI.
 
 ```text
-FRONTEND_LABEL → FRONTEND_VALUE → BACKEND_ACEITA?
-Disponível      → disponivel      → SIM
-Em Uso          → em_uso          → SIM
-Emprestado      → emprestado      → NÃO (400)
-Em Manutenção   → manutencao      → SIM
-Danificado      → danificado      → NÃO (400)
-Descartado      → descartado      → SIM
-(nenhum label)  → reservado       → N/A (nunca ofertado pela UI)
+FRONTEND_LABEL → FRONTEND_VALUE → BACKEND_ACCEPTS?
+Disponível      → disponivel      → YES
+Em Uso          → em_uso          → YES
+Emprestado      → emprestado      → NO (400)
+Em Manutenção   → manutencao      → YES
+Danificado      → danificado      → NO (400)
+Descartado      → descartado      → YES
+(no label)      → reservado       → N/A (never offered by the UI)
 ```
 
-`FILTER_USAGE`: o filtro de status na página principal (`statusFilter`) só oferece 3 das 6 opções
-do form (`em-uso`/`disponivel`/`manutencao` — nem "emprestado"/"danificado"/"descartado" são
-filtráveis via dropdown, só via busca textual indireta, que também não cobre status).
+`FILTER_USAGE`: the status filter on the main page (`statusFilter`) only offers 3 of the form's 6 options
+(`em-uso`/`disponivel`/`manutencao` — neither "emprestado"/"danificado"/"descartado" are
+filterable via the dropdown, only via indirect text search, which does not cover status either).
 
-`TRANSITIONS`: nenhuma regra de transição de estado — qualquer status pode ser escolhido a qualquer
-momento (mesma ausência de workflow já confirmada em outros módulos simples desta série).
+`TRANSITIONS`: no state transition rule — any status can be chosen at any
+time (the same absence of a workflow already confirmed in other simple modules of this series).
 
 ---
 
 ## 16. Location / Warehouse
 
-`localizacao` é uma única coluna `character varying` de texto livre — **não é uma entidade
-estruturada**. Não existem `warehouse`/`room`/`shelf`/`bin`/`address` como campos ou tabelas
-próprias. O único artefato de "localização estruturada" é ilusório: o filtro `localFilter` na
-página principal (`Inventario.tsx:61-65`) compara `item.localizacao` contra 4 strings EXATAS
-hardcoded ("Estúdio 1", "Estúdio 2", "Escritório", "Estoque"), enquanto o campo de formulário é um
-`<Input>` de texto livre com placeholder de exemplo ("Ex: Estúdio A, Sala 201, Depósito") — ou seja,
-o filtro assume uma taxonomia fixa que a UI de criação não impõe. Um item cadastrado com
-`localizacao: "Estúdio A"` (exatamente o exemplo do próprio placeholder) **nunca aparece** ao
-filtrar por "Estúdio 1" nem por nenhuma das 4 opções — REAL_MAPPING_GAP confirmado, o filtro de
-local é estruturalmente quase-morto para dados reais digitados livremente.
+`localizacao` is a single free-text `character varying` column — **it is not a structured
+entity**. `warehouse`/`room`/`shelf`/`bin`/`address` do not exist as fields or tables
+of their own. The only "structured location" artifact is illusory: the `localFilter` filter on the
+main page (`Inventario.tsx:61-65`) compares `item.localizacao` against 4 hardcoded EXACT
+strings ("Estúdio 1", "Estúdio 2", "Escritório", "Estoque"), while the form field is a
+free-text `<Input>` with an example placeholder ("Ex: Estúdio A, Sala 201, Depósito") — that is,
+the filter assumes a fixed taxonomy that the creation UI does not impose. An item registered with
+`localizacao: "Estúdio A"` (exactly the placeholder's own example) **never appears** when
+filtering by "Estúdio 1" or by any of the 4 options — REAL_MAPPING_GAP confirmed; the location
+filter is structurally almost dead for real, freely typed data.
 
 ```text
-FRONTEND_FIELD: localizacao (texto livre)
+FRONTEND_FIELD: localizacao (free text)
 API_FIELD: localizacao
-DATABASE_RELATION: nenhuma (coluna simples, sem FK)
+DATABASE_RELATION: none (a simple column, no FK)
 CARDINALITY: N/A
-TENANT_SCOPE: herdado da linha do item (tenant_id da tabela inventory_items)
+TENANT_SCOPE: inherited from the item's row (tenant_id of the inventory_items table)
 ```
 
 `LOCATION_FIELDS: 1`.
 
 ---
 
-## 17. Transferências
+## 17. Transfers
 
-**NOT_IMPLEMENTED.** Nenhum campo, endpoint ou componente de transferência de item entre locais foi
-encontrado — mudar a "localização" de um item é apenas editar o campo de texto livre via o mesmo
-formulário de edição genérico, sem nenhum conceito de "transferência" (origem/destino/aprovação)
-distinto de uma edição comum.
+**NOT_IMPLEMENTED.** No field, endpoint or component for transferring an item between locations was
+found — changing an item's "location" is just editing the free-text field via the same
+generic edit form, with no concept of a "transfer" (origin/destination/approval)
+distinct from an ordinary edit.
 
 ---
 
-## 18. Custos
+## 18. Costs
 
 | FIELD | DATABASE_TYPE | PRECISION/SCALE | CURRENCY | SOURCE | ACCOUNTING_RELATION |
 |---|---|---|---|---|---|
-| `valor_unitario` | `numeric` (sem precisão/escala fixada no schema, confirmado na Fase 1) | genérico (Postgres `numeric` sem restrição) | implícita — BRL (formatação `pt-BR`/`formatCurrency`), sem coluna de moeda | manual, digitado no formulário | nenhuma (ver §19) |
+| `valor_unitario` | `numeric` (no precision/scale fixed in the schema, confirmed in Phase 1) | generic (unrestricted Postgres `numeric`) | implicit — BRL (`pt-BR` formatting/`formatCurrency`), no currency column | manual, typed in the form | none (see §19) |
 
-`current_value`/`replacement_value`/`maintenance_cost`/`purchase_cost` (como campos distintos de
-`valor_unitario`) **não existem** — "Valor Total" exibido na UI (form e página) é sempre um cálculo
-client-side (`quantidade × valor_unitario`), nunca uma coluna persistida. `FINANCIAL_FIELDS: 1`
+`current_value`/`replacement_value`/`maintenance_cost`/`purchase_cost` (as fields distinct from
+`valor_unitario`) **do not exist** — the "Valor Total" (Total value) displayed in the UI (form and page) is always a
+client-side calculation (`quantidade × valor_unitario`), never a persisted column. `FINANCIAL_FIELDS: 1`
 (`valor_unitario`).
 
 ---
 
 ## 19. Inventory ↔ Accounting
 
-**NOT_IMPLEMENTED.** Nenhuma propagação automática ou manual foi encontrada entre `inventory_items`
-e `transactions`/`invoices` (módulo `accounting`, já auditado, não reaberto aqui) — apesar dos
-campos `valor_unitario`, `local_compra` e `numero_nota_fiscal` sugerirem fortemente um registro de
-compra, não existe nenhum botão "Lançar como despesa"/nenhum `@OnEvent`/nenhuma chamada de serviço
-cruzando os dois módulos (confirmado por leitura completa de `inventory.service.ts`, que não emite
-nenhum evento de domínio, e por busca de consumidores de `InventoryItemEntity`/`inventory_items`
-fora do próprio módulo — nenhum resultado em `apps/api/src` além dos já esperados: entities.ts,
-migrations, e os módulos genéricos de relatórios/RLS).
+**NOT_IMPLEMENTED.** No automatic or manual propagation was found between `inventory_items`
+and `transactions`/`invoices` (the `accounting` module, already audited, not reopened here) — even though the
+fields `valor_unitario`, `local_compra` and `numero_nota_fiscal` strongly suggest a purchase
+record, there is no "Lançar como despesa" (Record as expense) button/no `@OnEvent`/no service call
+crossing the two modules (confirmed by a full reading of `inventory.service.ts`, which emits
+no domain event, and by a search for consumers of `InventoryItemEntity`/`inventory_items`
+outside the module itself — no result in `apps/api/src` beyond the expected ones: entities.ts,
+migrations, and the generic reports/RLS modules).
 
 ```text
-INVENTORY_ACTION: criar/editar item com valor_unitario preenchido
-FINANCIAL_RESOURCE: nenhum
-DATABASE_RELATION: nenhuma
-CLASSIFICAÇÃO: NOT_IMPLEMENTED (nem MANUAL_ONLY nem UI_ONLY — não há sequer um caminho manual de
-       registrar a compra como transação a partir do item de inventário; o usuário precisaria
-       criar a transação de forma totalmente independente no módulo `accounting`)
+INVENTORY_ACTION: create/edit an item with valor_unitario filled in
+FINANCIAL_RESOURCE: none
+DATABASE_RELATION: none
+CLASSIFICATION: NOT_IMPLEMENTED (neither MANUAL_ONLY nor UI_ONLY — there is not even a manual path to
+       record the purchase as a transaction from the inventory item; the user would need to
+       create the transaction completely independently in the `accounting` module)
 ```
 
 ---
 
-## 20. Fornecedores
+## 20. Suppliers
 
-**Não existe relação real com CRM/fornecedores.** `local_compra` é uma coluna `character varying`
-de texto livre (ex.: "Loja de Música ABC", conforme o próprio placeholder do formulário) — não há
-`supplier_id`, não há `<Select>` de fornecedor, não há vínculo com a tabela `clients` (já auditada
-em `crm-relationships.md`, não reaberta aqui). Consistente com a instrução do prompt de não inventar
-uma relação inexistente — confirmado que ela genuinamente não existe.
+**There is no real relation with the CRM/suppliers.** `local_compra` is a free-text `character varying`
+column (e.g. "Loja de Música ABC", per the form's own placeholder) — there is no
+`supplier_id`, there is no supplier `<Select>`, there is no link to the `clients` table (already audited
+in `crm-relationships.md`, not reopened here). Consistent with the prompt's instruction not to invent
+a nonexistent relation — confirmed that it genuinely does not exist.
 
 ---
 
-## 21. Projetos / Audiovisual / Events
+## 21. Projects / Audiovisual / Events
 
-**Nenhuma relação encontrada.** Busca exaustiva por `InventoryItemEntity`/`inventory_items` fora do
-próprio módulo `inventory` (backend) e por `useInventario`/`modules/inventory` fora do próprio
-módulo (frontend) não encontrou nenhum consumidor em `projects`, `audiovisual` ou `events` — itens
-de inventário não podem ser alocados/reservados para um projeto, produção audiovisual ou evento em
-nenhuma camada do sistema hoje.
+**No relation found.** An exhaustive search for `InventoryItemEntity`/`inventory_items` outside the
+`inventory` module itself (backend) and for `useInventario`/`modules/inventory` outside the
+module itself (frontend) found no consumer in `projects`, `audiovisual` or `events` — inventory
+items cannot be allocated/reserved for a project, audiovisual production or event in
+any layer of the system today.
 
 ---
 
 ## 22. Ownership / Assignment
 
-`responsavel` é uma coluna `character varying` de texto livre (nome digitado, não uma FK para
-`users`/`employees`) — não é uma atribuição estruturada com cardinalidade/início/fim, é apenas um
-rótulo textual. Nenhum outro campo de atribuição (a artista, equipe, projeto, evento, local
-estruturado) existe.
+`responsavel` is a free-text `character varying` column (a typed name, not an FK to
+`users`/`employees`) — it is not a structured assignment with cardinality/start/end, it is just a
+text label. No other assignment field (to an artist, team, project, event, structured
+location) exists.
 
 ---
 
-## 23. Tables/Grids — rastreabilidade de colunas
+## 23. Tables/Grids — column traceability
 
 | SCREEN | COLUMN_LABEL | COLUMN_KEY | API_FIELD | DATABASE_COLUMN | DERIVED | SORTABLE | FILTERABLE | SEARCHABLE |
 |---|---|---|---|---|---|---|---|---|
-| Inventario.tsx | (checkbox) | — | — | — | UI_ONLY | não | não | não |
-| Inventario.tsx | Nome | `nome` | `nome` | `inventory_items.nome` | não | não (ver §31) | não | sim |
-| Inventario.tsx | Categoria | `categoria` | `categoria` | `.categoria` | não | não | sim | sim |
-| Inventario.tsx | Setor | `setor` | `setor` | `.setor` | não | não | não | não |
-| Inventario.tsx | Localização | `localizacao` | `localizacao` | `.localizacao` | não | não | sim (ver Gap §16) | sim |
-| Inventario.tsx | Responsável | `responsavel` | `responsavel` | `.responsavel` | não | não | não | não |
-| Inventario.tsx | Status | `status` | `status` | `.status` | não | não | sim | não |
-| Inventario.tsx | Qtd. | `quantidade` | `quantidade` | `.quantidade` | não | não | não | não |
-| Inventario.tsx | Valor Unit. | `valor_unitario` | `valor_unitario` | `.valor_unitario` | não | não | não | não |
-| Inventario.tsx | Valor Total | (derivado) | — | — | **DERIVED** (`valor_unitario × quantidade`, client-side) | não | não | não |
-| Inventario.tsx | Entrada | `dataEntrada` | **`data_entrada`** (real) | `.data_entrada` | não | não | não | não | **DISPLAY_MAPPING_MISMATCH confirmado**: a coluna lê `item.dataEntrada` (camelCase), que é sempre `undefined` na resposta real da API — a coluna "Entrada" **sempre exibe "—"**, mesmo para itens com `data_entrada` genuinamente preenchida |
+| Inventario.tsx | (checkbox) | — | — | — | UI_ONLY | no | no | no |
+| Inventario.tsx | "Nome" (Name) | `nome` | `nome` | `inventory_items.nome` | no | no (see §31) | no | yes |
+| Inventario.tsx | "Categoria" (Category) | `categoria` | `categoria` | `.categoria` | no | no | yes | yes |
+| Inventario.tsx | "Setor" (Sector) | `setor` | `setor` | `.setor` | no | no | no | no |
+| Inventario.tsx | "Localização" (Location) | `localizacao` | `localizacao` | `.localizacao` | no | no | yes (see Gap §16) | yes |
+| Inventario.tsx | "Responsável" (Responsible person) | `responsavel` | `responsavel` | `.responsavel` | no | no | no | no |
+| Inventario.tsx | "Status" | `status` | `status` | `.status` | no | no | yes | no |
+| Inventario.tsx | "Qtd." (Qty.) | `quantidade` | `quantidade` | `.quantidade` | no | no | no | no |
+| Inventario.tsx | "Valor Unit." (Unit value) | `valor_unitario` | `valor_unitario` | `.valor_unitario` | no | no | no | no |
+| Inventario.tsx | "Valor Total" (Total value) | (derived) | — | — | **DERIVED** (`valor_unitario × quantidade`, client-side) | no | no | no |
+| Inventario.tsx | "Entrada" (Entry) | `dataEntrada` | **`data_entrada`** (real) | `.data_entrada` | no | no | no | no | **DISPLAY_MAPPING_MISMATCH confirmed**: the column reads `item.dataEntrada` (camelCase), which is always `undefined` in the real API response — the "Entrada" column **always displays "—"**, even for items with a genuinely filled-in `data_entrada` |
 
-Nenhuma coluna visível ficou sem origem — 10 de 11 colunas de dados mapeiam corretamente; 1
-(`Entrada`) tem uma origem real (`data_entrada`) mas o código lê o nome errado.
+No visible column was left without a source — 10 of 11 data columns map correctly; 1
+("Entrada") has a real source (`data_entrada`) but the code reads the wrong name.
 
 ---
 
 ## 24. Details (InventarioViewModal.tsx)
 
-| DISPLAY_LABEL | DISPLAY_FIELD (lido) | API_FIELD real | Situação |
+| DISPLAY_LABEL | DISPLAY_FIELD (read) | Real API_FIELD | Status |
 |---|---|---|---|
-| Nome/Categoria (header) | `item.nome`/`item.categoria` | `nome`/`categoria` | correto |
-| Status | `item.status` | `status` | correto |
-| Quantidade | `item.quantidade ?? item.qtd` | `quantidade` | correto (fallback `qtd` nunca usado, mas inofensivo) |
-| Localização | `item.local ?? item.localizacao` | `localizacao` | correto (cai no segundo fallback) |
-| Valor Unitário | `item.valor_unitario ?? item.valorUnitario ?? item.valorUnit` | `valor_unitario` | correto (primeiro fallback já bate) |
-| Valor Total | derivado (`valorUnitario × quantidade`) | — | DERIVED, client-side |
-| Setor | `item.setor` | `setor` | correto |
-| Responsável | `item.responsavel` | `responsavel` | correto |
+| "Nome"/"Categoria" (Name/Category) (header) | `item.nome`/`item.categoria` | `nome`/`categoria` | correct |
+| "Status" | `item.status` | `status` | correct |
+| "Quantidade" (Quantity) | `item.quantidade ?? item.qtd` | `quantidade` | correct (the `qtd` fallback is never used, but harmless) |
+| "Localização" (Location) | `item.local ?? item.localizacao` | `localizacao` | correct (falls through to the second fallback) |
+| "Valor Unitário" (Unit value) | `item.valor_unitario ?? item.valorUnitario ?? item.valorUnit` | `valor_unitario` | correct (the first fallback already matches) |
+| "Valor Total" (Total value) | derived (`valorUnitario × quantidade`) | — | DERIVED, client-side |
+| "Setor" (Sector) | `item.setor` | `setor` | correct |
+| "Responsável" (Responsible person) | `item.responsavel` | `responsavel` | correct |
 
-**Diferente da tabela principal e do formulário de edição**, o `InventarioViewModal` usa cadeias de
-fallback defensivas em quase todo campo — por isso não sofre do bug de `dataEntrada`/`localCompra`/
-`numeroNotaFiscal` (esses 3 campos, aliás, **nem são exibidos** neste modal — `local_compra`,
-`numero_nota_fiscal` e `data_entrada` não aparecem em lugar nenhum do detalhe, apesar de existirem
-no banco e serem coletados no formulário — um DISPLAY_MAPPING_GAP por omissão, não por nome errado:
-o usuário não consegue ver esses 3 campos em nenhuma tela de leitura, só no formulário de edição
-recém-aberto, e mesmo ali, incorretamente vazios, ver §6).
+**Unlike the main table and the edit form**, `InventarioViewModal` uses defensive fallback
+chains in almost every field — which is why it does not suffer from the `dataEntrada`/`localCompra`/
+`numeroNotaFiscal` bug (these 3 fields, incidentally, **are not even displayed** in this modal — `local_compra`,
+`numero_nota_fiscal` and `data_entrada` do not appear anywhere in the detail view, even though they exist
+in the database and are collected in the form — a DISPLAY_MAPPING_GAP by omission, not by a wrong name:
+the user cannot see these 3 fields on any read screen, only in the freshly opened edit
+form, and even there, incorrectly empty, see §6).
 
-`EMPTY_STATE`: "—" para campos ausentes/nulos, consistente com o padrão dos demais módulos.
+`EMPTY_STATE`: "—" for absent/null fields, consistent with the pattern of the other modules.
 
 ---
 
-## 25. Filters, Search, Sort, Paginação, Limites
+## 25. Filters, Search, Sort, Pagination, Limits
 
-**FILTERS** (`Inventario.tsx`): 3 — `categoryFilter` (5 de 9 opções reais, ver §8), `statusFilter`
-(3 de 6 opções reais, ver §15), `localFilter` (4 strings fixas contra um campo de texto livre, ver
-§16). Todos 100% client-side, sobre o array já carregado — nenhum vira query-param HTTP real,
-apesar de `QueryInventoryDto` aceitar `status`/`categoria`/`search` no backend (o mesmo padrão de
-"filtro backend pronto, nunca chamado pelo frontend" já confirmado em módulos anteriores desta
-série).
+**FILTERS** (`Inventario.tsx`): 3 — `categoryFilter` (5 of 9 real options, see §8), `statusFilter`
+(3 of 6 real options, see §15), `localFilter` (4 fixed strings against a free-text field, see
+§16). All 100% client-side, over the already-loaded array — none becomes a real HTTP query param,
+even though `QueryInventoryDto` accepts `status`/`categoria`/`search` in the backend (the same pattern of
+"backend filter ready, never called by the frontend" already confirmed in previous modules of this
+series).
 
-**SEARCH**: `searchTerm` compara `item.nome`/`item.categoria`/`item.localizacao` via
-`.toLowerCase().includes()` — 100% client-side, os 3 campos comparados são nomeados corretamente.
+**SEARCH**: `searchTerm` compares `item.nome`/`item.categoria`/`item.localizacao` via
+`.toLowerCase().includes()` — 100% client-side, the 3 compared fields are named correctly.
 
-**SORT**: nenhum controle de ordenação interativo na tabela (sem `SortableTableHead` nem
-equivalente) — a ordem é a de chegada da API (`ORDER BY i.created_at DESC`, hardcoded no backend,
-`inventory.service.ts:31`), sem nenhuma forma de o usuário reordenar por nome/quantidade/valor.
-`SORT_FIELDS: 0` (interativos).
+**SORT**: no interactive sorting control in the table (no `SortableTableHead` or
+equivalent) — the order is the API's arrival order (`ORDER BY i.created_at DESC`, hardcoded in the backend,
+`inventory.service.ts:31`), with no way for the user to reorder by name/quantity/value.
+`SORT_FIELDS: 0` (interactive).
 
-**PAGINAÇÃO**: `usePagination(filteredEquipamentos, 10)` — paginação 100% client-side sobre o array
-já filtrado, que por sua vez já veio truncado do backend (ver Limites abaixo). `TOTAL_COUNT_SOURCE`:
-`filteredEquipamentos.length` (contagem do array já truncado, não do total real do tenant).
+**PAGINATION**: `usePagination(filteredEquipamentos, 10)` — 100% client-side pagination over the
+already-filtered array, which in turn already arrived truncated from the backend (see Limits below). `TOTAL_COUNT_SOURCE`:
+`filteredEquipamentos.length` (the count of the already-truncated array, not of the tenant's real total).
 
-**LIMITES**:
+**LIMITS**:
 
 | ENDPOINT_OR_COMPONENT | LIMIT | SERVER_OR_CLIENT | INTENTIONAL | AFFECTS_TOTAL |
 |---|---|---|---|---|
-| `GET /inventory` (via `useInventario()`, sem override) | 50 (`PaginationDto.limit` default, `inventory.service.ts:33` `query.limit ?? 50`) | SERVER (silencioso) | NÃO | **SIM** — mesmo padrão de truncamento silencioso já confirmado em praticamente todos os módulos anteriores desta série (`works`, `phonograms`, `contracts`, `clients`, `events`, os hooks do `dashboard`) — aqui afeta a lista principal, as métricas do topo da página (`metricas.total`/`.emUso`/`.disponiveis`/`.emManutencao`/`.valorTotal`, todas computadas sobre o mesmo array truncado) e a paginação client-side (que pagina um subconjunto, não o total real) |
+| `GET /inventory` (via `useInventario()`, no override) | 50 (`PaginationDto.limit` default, `inventory.service.ts:33` `query.limit ?? 50`) | SERVER (silent) | NO | **YES** — the same silent truncation pattern already confirmed in practically all the previous modules of this series (`works`, `phonograms`, `contracts`, `clients`, `events`, the `dashboard` hooks) — here it affects the main list, the metrics at the top of the page (`metricas.total`/`.emUso`/`.disponiveis`/`.emManutencao`/`.valorTotal`, all computed over the same truncated array) and the client-side pagination (which paginates a subset, not the real total) |
 
-`TRUNCATION_GAP` confirmado — mesma causa raiz estrutural já documentada em todos os módulos
-anteriores.
+`TRUNCATION_GAP` confirmed — the same structural root cause already documented in all the previous
+modules.
 
 ---
 
 ## 26. Import / Export / XLSX
 
-**Import (nível de página): NOT_IMPLEMENTED.** Nenhum botão/fluxo de importação foi encontrado em
-`Inventario.tsx` nem em nenhum outro arquivo do módulo (diferente de `events`/`catalog`, que têm
-import XLSX client-side próprio, ainda que quebrado) — o módulo `inventory` simplesmente não
-oferece essa funcionalidade em nenhuma forma, nem funcional nem quebrada.
+**Import (page level): NOT_IMPLEMENTED.** No import button/flow was found in
+`Inventario.tsx` or in any other file of the module (unlike `events`/`catalog`, which have their own
+client-side XLSX import, even if broken) — the `inventory` module simply does not
+offer this functionality in any form, neither functional nor broken.
 
-**Export (nível de página): NOT_IMPLEMENTED** pela mesma ausência — nenhum botão de exportação na
-página do módulo.
+**Export (page level): NOT_IMPLEMENTED** by the same absence — no export button on the
+module's page.
 
-**Export via Central de Relatórios (mecanismo genérico, já auditado estruturalmente em módulos
-anteriores)**: `inventory_items` **está registrado e corretamente mapeado**
-(`report-form-contracts.ts:586-595`, `INVENTORY_ITEMS_CONTRACT`) — os 12 campos reais
+**Export via the Reports Center (a generic mechanism, already structurally audited in previous
+modules)**: `inventory_items` **is registered and correctly mapped**
+(`report-form-contracts.ts:586-595`, `INVENTORY_ITEMS_CONTRACT`) — the 12 real fields
 (`nome`, `categoria`, `quantidade`, `valor_unitario`, `localizacao`, `status`, `responsavel`,
-`setor`, `data_entrada`, `local_compra`, `numero_nota_fiscal`, `observacoes`) usam os NOMES REAIS
-snake_case corretos — **este caminho de export não sofre do bug de `dataEntrada`/`localCompra`/
-`numeroNotaFiscal` da UI própria do módulo**, porque o motor genérico de relatórios lê diretamente
-do schema real, não do código de `Inventario.tsx`. `WORKSHEET_COUNT`: herdado do motor genérico
-(já confirmado em módulos anteriores como respeitando `XLSX_MAX_SHEETS: 2`, não reauditado
-individualmente aqui por não ser um mecanismo específico deste módulo). `XLSX_RULE_VIOLATION: NÃO`.
+`setor`, `data_entrada`, `local_compra`, `numero_nota_fiscal`, `observacoes`) use the correct REAL
+snake_case NAMES — **this export path does not suffer from the `dataEntrada`/`localCompra`/
+`numeroNotaFiscal` bug of the module's own UI**, because the generic reports engine reads directly
+from the real schema, not from the code of `Inventario.tsx`. `WORKSHEET_COUNT`: inherited from the generic engine
+(already confirmed in previous modules as respecting `XLSX_MAX_SHEETS: 2`, not re-audited
+individually here since it is not a mechanism specific to this module). `XLSX_RULE_VIOLATION: NÃO` (no).
 
-`IMPORT_FIELDS: 0`. `EXPORT_FIELDS: 12` (via Central de Relatórios). `XLSX_EXPORTS: 0` (nenhum
-export XLSX específico do módulo `inventory` — só o compartilhado).
+`IMPORT_FIELDS: 0`. `EXPORT_FIELDS: 12` (via the Reports Center). `XLSX_EXPORTS: 0` (no
+XLSX export specific to the `inventory` module — only the shared one).
 
 ---
 
-## 27. Duplicidade
+## 27. Duplicates
 
-Nenhuma regra de deduplicação existe para `nome` (nem `DATABASE_UNIQUE`, nem `BACKEND_CHECK`, nem
-`FRONTEND_CHECK`) — como não há SKU/barcode/serial, não há campo algum candidato a chave de
-duplicidade além do próprio `nome`, e mesmo esse não é verificado. `DUPLICATE_HANDLING_GAP`
-confirmado: dois cliques rápidos no botão "Cadastrar Item" (sem debounce/disable visível além do
-`disabled={isSubmitting}` do próprio botão, que cobre o caso mais óbvio de duplo-clique mas não uma
-segunda tentativa deliberada) podem gerar 2 itens idênticos sem nenhum aviso.
+No deduplication rule exists for `nome` (neither `DATABASE_UNIQUE`, nor `BACKEND_CHECK`, nor
+`FRONTEND_CHECK`) — since there is no SKU/barcode/serial, there is no candidate field for a
+duplicate key besides `nome` itself, and even that one is not checked. `DUPLICATE_HANDLING_GAP`
+confirmed: two quick clicks on the "Cadastrar Item" (Register Item) button (with no visible debounce/disable beyond the
+button's own `disabled={isSubmitting}`, which covers the most obvious double-click case but not a
+deliberate second attempt) can create 2 identical items without any warning.
 
 ---
 
 ## 28. Barcode / QR Code
 
-**NOT_IMPLEMENTED.** Nenhum campo, biblioteca, componente de geração ou leitura de código de barras
-ou QR code foi encontrado em nenhuma camada. `BARCODE_QR_FIELDS: 0`.
+**NOT_IMPLEMENTED.** No field, library, or component for generating or reading barcodes
+or QR codes was found in any layer. `BARCODE_QR_FIELDS: 0`.
 
 ---
 
-## 29. Storage (fotos, notas fiscais, manuais, garantias)
+## 29. Storage (photos, invoices, manuals, warranties)
 
-**NOT_IMPLEMENTED.** Apesar do formulário coletar `numero_nota_fiscal` (um número de referência em
-texto), não existe nenhum campo de upload de arquivo (foto do item, PDF da nota fiscal, manual,
-termo de garantia) em nenhuma camada — sem coluna de referência de storage em `inventory_items`
-(confirmado na Fase 1: nenhuma coluna `*_url`/`*_key`/`attachment*`), sem endpoint de
-presign/upload dedicado, sem componente de upload no formulário. `STORAGE_FIELDS: 0`.
+**NOT_IMPLEMENTED.** Even though the form collects `numero_nota_fiscal` (a reference number in
+text), there is no file upload field (item photo, invoice PDF, manual,
+warranty document) in any layer — no storage reference column in `inventory_items`
+(confirmed in Phase 1: no `*_url`/`*_key`/`attachment*` column), no dedicated
+presign/upload endpoint, no upload component in the form. `STORAGE_FIELDS: 0`.
 
 ---
 
 ## 30. Audit / History
 
-Não existe um ledger de movimentações nem uma tabela de auditoria dedicada ao módulo — a única
-trilha de mudança é a genérica: `@Audit('inventory.created'|'inventory.updated'|'inventory.deleted')`
-no controller, que grava em `activity_logs` (mesmo `AuditInterceptor` já confirmado em todos os
-módulos anteriores — registra a AÇÃO e o ator, não necessariamente um diff old_value/new_value
-campo a campo). Não há UI que exiba esse histórico dentro do módulo `inventory` (a Activity Feed do
-Dashboard, já auditada em `dashboard.md`, é o único consumidor cross-domain desse log, sujeito ao
-mesmo gap de realtime já documentado lá).
+There is neither a movement ledger nor a dedicated audit table for the module — the only
+change trail is the generic one: `@Audit('inventory.created'|'inventory.updated'|'inventory.deleted')`
+in the controller, which writes to `activity_logs` (the same `AuditInterceptor` already confirmed in all the
+previous modules — it records the ACTION and the actor, not necessarily a field-by-field old_value/new_value
+diff). There is no UI that displays this history inside the `inventory` module (the
+Dashboard's Activity Feed, already audited in `dashboard.md`, is the only cross-domain consumer of this log, subject to the
+same realtime gap already documented there).
 
 ```text
-INVENTORY_HISTORY_GAP confirmado: alterar `quantidade` de um item (a operação mais sensível deste
-módulo) não deixa nenhum registro específico do valor antigo vs. novo além do log de atividade
-genérico (ação "inventory.updated", sem payload de diff estruturado garantido) — não há como, a
-partir da UI ou de uma consulta simples ao banco, reconstruir "quanto tinha em estoque em uma data
-passada" — o histórico de quantidade, se existir no JSON do activity log, não é exposto em nenhuma
-tela.
+INVENTORY_HISTORY_GAP confirmed: changing an item's `quantidade` (the most sensitive operation in this
+module) leaves no specific record of the old vs. new value beyond the generic activity
+log (action "inventory.updated", with no guaranteed structured diff payload) — there is no way,
+from the UI or from a simple database query, to reconstruct "how much was in stock on a past
+date" — the quantity history, if it exists in the activity log's JSON, is not exposed on any
+screen.
 ```
 
 ---
 
 ## 31. Realtime
 
-**NOT_IMPLEMENTED.** Nenhum `useWsEvent()` foi encontrado em nenhum arquivo do módulo `inventory`
-(confirmado por leitura completa de `Inventario.tsx`/`InventarioFormModal.tsx`/
-`InventarioViewModal.tsx`/`useInventario.ts`) — consistente com o contrato canônico de realtime já
-fechado (doc37, 22 eventos catalogados), que não inclui nenhum evento relacionado a inventário.
+**NOT_IMPLEMENTED.** No `useWsEvent()` was found in any file of the `inventory` module
+(confirmed by a full reading of `Inventario.tsx`/`InventarioFormModal.tsx`/
+`InventarioViewModal.tsx`/`useInventario.ts`) — consistent with the already closed canonical realtime
+contract (doc37, 22 cataloged events), which does not include any inventory-related event.
 `REALTIME_EVENTS: 0`.
 
 ---
 
-## 32. Permissões e Tenant Isolation
+## 32. Permissions and Tenant Isolation
 
 | PERMISSION | FRONTEND_ENFORCEMENT | BACKEND_ENFORCEMENT |
 |---|---|---|
-| `inventory:read` | leitura não gateada explicitamente (assume-se acesso à página já gateado por rota) | `@RequireRole('viewer') @RequirePermission('inventory:read')` |
-| `inventory:create` | botão "Novo Item" via `<RequirePermission module="inventory" action="write">` | `@RequireRole('editor') @RequirePermission('inventory:create')` |
-| `inventory:update` | nenhum gate visível no item de menu "Editar" | `@RequireRole('editor') @RequirePermission('inventory:update')` |
-| `inventory:delete` | nenhum gate visível no item de menu "Excluir" nem no botão de exclusão em massa | `@RequireRole('manager') @RequirePermission('inventory:delete')` |
+| `inventory:read` | reading not explicitly gated (access to the page is assumed to be already gated by the route) | `@RequireRole('viewer') @RequirePermission('inventory:read')` |
+| `inventory:create` | "Novo Item" (New Item) button via `<RequirePermission module="inventory" action="write">` | `@RequireRole('editor') @RequirePermission('inventory:create')` |
+| `inventory:update` | no visible gate on the "Editar" (Edit) menu item | `@RequireRole('editor') @RequirePermission('inventory:update')` |
+| `inventory:delete` | no visible gate on the "Excluir" (Delete) menu item or on the bulk delete button | `@RequireRole('manager') @RequirePermission('inventory:delete')` |
 
-`AUTHORIZATION_GAPS: 0` — todas as rotas reais estão protegidas no backend; ausência de gate visual
-antecipado em editar/excluir é a mesma observação não-bloqueante já registrada em módulos
-anteriores (o backend recusaria a operação de qualquer forma). Note-se que o botão "Excluir em
-massa" (`handleBulkDelete`) dispara múltiplas chamadas `deleteInventario.mutate(id)` em loop — cada
-uma passa pelo mesmo endpoint protegido, sem um endpoint de "delete em lote" dedicado (funcional,
-apenas N requisições em vez de 1, não classificado como gap).
+`AUTHORIZATION_GAPS: 0` — all real routes are protected in the backend; the absence of an early
+visual gate on edit/delete is the same non-blocking observation already recorded in previous
+modules (the backend would refuse the operation anyway). Note that the "Excluir em
+massa" (Bulk delete) button (`handleBulkDelete`) fires multiple `deleteInventario.mutate(id)` calls in a loop — each
+one goes through the same protected endpoint, with no dedicated "batch delete" endpoint (functional,
+just N requests instead of 1, not classified as a gap).
 
-`TENANT_ISOLATION_GAPS: 0`. `InventoryService` filtra `tenant_id = :tenantId` em
-`list`/`findById`/`update`/`softDelete`, e `create` grava `tenant_id: tenantId` explicitamente a
-partir de `@CurrentTenant()` — consistente com o padrão já auditado em `auth.md`. Não há
-`movements`/`locations`/`reservations`/`loans`/`maintenance`/`attachments` para os quais avaliar
-isolamento adicional, pois nenhuma dessas entidades existe (§11-14, §29).
+`TENANT_ISOLATION_GAPS: 0`. `InventoryService` filters `tenant_id = :tenantId` in
+`list`/`findById`/`update`/`softDelete`, and `create` writes `tenant_id: tenantId` explicitly
+from `@CurrentTenant()` — consistent with the pattern already audited in `auth.md`. There are no
+`movements`/`locations`/`reservations`/`loans`/`maintenance`/`attachments` for which to assess
+additional isolation, since none of these entities exists (§11-14, §29).
 
 ---
 
@@ -627,77 +628,77 @@ isolamento adicional, pois nenhuma dessas entidades existe (§11-14, §29).
 
 | UI_ACTION | ENDPOINT | DATABASE_BEHAVIOR | RELATION_IMPACT | SOFT_OR_HARD |
 |---|---|---|---|---|
-| Excluir item (`DeleteConfirmModal`, individual ou via seleção em massa) | `DELETE /inventory/:id` | `UPDATE inventory_items SET deleted_at = now()` | nenhum (sem tabelas filhas, §11-14) | SOFT |
+| Delete item (`DeleteConfirmModal`, individually or via bulk selection) | `DELETE /inventory/:id` | `UPDATE inventory_items SET deleted_at = now()` | none (no child tables, §11-14) | SOFT |
 
-Não há `ARCHIVE`/`RESTORE`/`DEACTIVATE` distintos do soft-delete padrão. `HAS_MOVEMENTS`: sempre
-`false` (não existe o conceito) — `DELETE_ALLOWED`: sempre sim, sem nenhuma restrição de FK
-(`foreign_key: false` em todas as colunas de `inventory_items`, confirmado na Fase 1) —
-`HISTORY_PRESERVED`: N/A (não há histórico de movimentação para preservar/perder; o próprio item
-soft-deletado preserva seus dados na linha, apenas oculto de `list`/`findById`).
-
----
-
-## 34. Idempotência
-
-Nenhum `idempotencyKey` em nenhum endpoint de `inventory` — `create` não tem proteção contra
-double-submit no nível de servidor (só o `disabled={isSubmitting}` do botão no frontend). Como não
-há import/sync/transfer neste módulo (§26, §17), o único caso relevante é `create` — registrado
-como `IDEMPOTENCY_GAP` de baixa severidade (mesma classe de qualquer formulário CRUD simples sem
-proteção server-side contra reenvio).
+There is no `ARCHIVE`/`RESTORE`/`DEACTIVATE` distinct from the standard soft delete. `HAS_MOVEMENTS`: always
+`false` (the concept does not exist) — `DELETE_ALLOWED`: always yes, with no FK restriction
+(`foreign_key: false` on all `inventory_items` columns, confirmed in Phase 1) —
+`HISTORY_PRESERVED`: N/A (there is no movement history to preserve/lose; the soft-deleted item itself
+preserves its data on the row, only hidden from `list`/`findById`).
 
 ---
 
-## Gaps consolidados (evidenciados, não corrigidos)
+## 34. Idempotency
 
-1. **EDIT_MAPPING_MISMATCH** — `InventarioFormModal.tsx` pré-preenche `localCompra`/
-   `numeroNotaFiscal`/`dataEntrada` a partir de campos camelCase inexistentes na resposta real da
-   API (que usa `local_compra`/`numero_nota_fiscal`/`data_entrada`) — esses 3 campos sempre
-   aparecem vazios ao editar um item existente, mesmo com dado real persistido.
-2. **DISPLAY_MAPPING_MISMATCH** — a coluna "Entrada" da tabela principal lê `item.dataEntrada`
-   (sempre `undefined`), sempre exibindo "—" mesmo quando `data_entrada` está preenchida.
-3. **DISPLAY_MAPPING_GAP** (omissão) — `local_compra`/`numero_nota_fiscal`/`data_entrada` nunca são
-   exibidos no modal de detalhes (`InventarioViewModal.tsx`), apesar de existirem e serem
-   coletados no formulário.
-4. **ENUM_MISMATCH** (crítico) — 3 vocabulários de status divergentes entre backend DTO, Zod
-   schema do frontend e shared type; a UI real oferece "Emprestado"/"Danificado", que o backend
-   rejeita com HTTP 400; "Reservado" (aceito pelo backend) nunca é oferecido pela UI.
-5. **REAL_MAPPING_GAP** — filtro de localização (`localFilter`) compara contra 4 strings exatas
-   fixas, incompatível com o campo de texto livre real (`localizacao`) que o próprio placeholder do
-   formulário incentiva a preencher de forma diferente.
-6. **REAL_MAPPING_GAP** — filtro de categoria oferece só 5 das 9 categorias reais selecionáveis na
-   criação.
-7. **DEFAULT_MISMATCH** — quantidade mínima: frontend exige `≥1` (zod), backend aceita `≥0`
-   (class-validator); limite de tamanho de `nome`: frontend `≤150`, backend `≤255`.
-8. **TRUNCATION_GAP** — `GET /inventory` usa `PaginationDto.limit=50` e `useInventario()` nunca
-   sobrescreve — lista, métricas e paginação client-side operam sobre um subconjunto truncado para
-   tenants com mais de 50 itens.
-9. **DUPLICATE_HANDLING_GAP** — nenhuma verificação de duplicidade de `nome` (ou qualquer outro
-   campo) em nenhuma camada.
-10. **STOCK_CONCURRENCY_GAP** — atualização de `quantidade` (e demais campos) é last-write-wins,
-    sem lock otimista nem verificação de versão.
-11. **INVENTORY_HISTORY_GAP** — sem ledger de movimentações; mudanças de `quantidade` não deixam
-    trilha estruturada além do log de atividade genérico.
-12. **IDEMPOTENCY_GAP** — `create` sem proteção server-side contra reenvio duplicado.
-13. **FINANCIAL_INTEGRATION_GAP** — nenhuma propagação (automática ou manual) entre item de
-    inventário e o módulo `accounting`, apesar dos campos de compra sugerirem essa necessidade.
-14. **MOVEMENT_GAP / RESERVATION_GAP / LOAN_GAP / MAINTENANCE_GAP** — os 4 conceitos existem apenas
-    como rótulos de `status` (parcialmente, dado o Gap #4), sem nenhum campo, tabela ou fluxo de
-    negócio próprio por trás.
-15. **STORAGE_GAP** — nenhum anexo (foto/nota fiscal/manual/garantia) implementado, nem mesmo de
-    forma parcial/fake.
-16. **AUDITORIA_TSX gap** — campo `valor` verificado pela Auditoria não corresponde ao campo real
-    `valor_unitario`; deep-link `/inventario?edit=` sem handler na página (§2).
-17. **DEAD CODE** (não contado como gap formal) — `hooks/inventory.store.ts`/`store/*`
-    (Zustand, zero consumidores), `services/inventory.service.ts` (zero consumidores).
+No `idempotencyKey` on any `inventory` endpoint — `create` has no protection against
+double-submit at the server level (only the button's `disabled={isSubmitting}` in the frontend). Since there is
+no import/sync/transfer in this module (§26, §17), the only relevant case is `create` — recorded
+as a low-severity `IDEMPOTENCY_GAP` (the same class as any simple CRUD form without
+server-side protection against resubmission).
 
-Total: 17 achados (3 DISPLAY/EDIT-mapping-família, 1 ENUM_MISMATCH, 2 REAL_MAPPING_GAP de filtro, 1
+---
+
+## Consolidated gaps (evidenced, not fixed)
+
+1. **EDIT_MAPPING_MISMATCH** — `InventarioFormModal.tsx` prefills `localCompra`/
+   `numeroNotaFiscal`/`dataEntrada` from camelCase fields that do not exist in the real API response
+   (which uses `local_compra`/`numero_nota_fiscal`/`data_entrada`) — these 3 fields always
+   appear empty when editing an existing item, even with real persisted data.
+2. **DISPLAY_MAPPING_MISMATCH** — the main table's "Entrada" (Entry) column reads `item.dataEntrada`
+   (always `undefined`), always displaying "—" even when `data_entrada` is filled in.
+3. **DISPLAY_MAPPING_GAP** (omission) — `local_compra`/`numero_nota_fiscal`/`data_entrada` are never
+   displayed in the details modal (`InventarioViewModal.tsx`), even though they exist and are
+   collected in the form.
+4. **ENUM_MISMATCH** (critical) — 3 divergent status vocabularies between the backend DTO, the frontend's Zod
+   schema and the shared type; the real UI offers "Emprestado"/"Danificado" (On loan/Damaged), which the backend
+   rejects with HTTP 400; "Reservado" (Reserved) (accepted by the backend) is never offered by the UI.
+5. **REAL_MAPPING_GAP** — the location filter (`localFilter`) compares against 4 fixed exact strings,
+   incompatible with the real free-text field (`localizacao`) that the form's own placeholder
+   encourages filling in differently.
+6. **REAL_MAPPING_GAP** — the category filter offers only 5 of the 9 real categories selectable at
+   creation.
+7. **DEFAULT_MISMATCH** — minimum quantity: the frontend requires `≥1` (zod), the backend accepts `≥0`
+   (class-validator); `nome` length limit: frontend `≤150`, backend `≤255`.
+8. **TRUNCATION_GAP** — `GET /inventory` uses `PaginationDto.limit=50` and `useInventario()` never
+   overrides it — the list, metrics and client-side pagination operate on a truncated subset for
+   tenants with more than 50 items.
+9. **DUPLICATE_HANDLING_GAP** — no duplicate check of `nome` (or any other
+   field) in any layer.
+10. **STOCK_CONCURRENCY_GAP** — updating `quantidade` (and the other fields) is last-write-wins,
+    with no optimistic lock or version check.
+11. **INVENTORY_HISTORY_GAP** — no movement ledger; changes to `quantidade` leave no
+    structured trail beyond the generic activity log.
+12. **IDEMPOTENCY_GAP** — `create` has no server-side protection against duplicate resubmission.
+13. **FINANCIAL_INTEGRATION_GAP** — no propagation (automatic or manual) between an inventory
+    item and the `accounting` module, even though the purchase fields suggest that need.
+14. **MOVEMENT_GAP / RESERVATION_GAP / LOAN_GAP / MAINTENANCE_GAP** — the 4 concepts exist only
+    as `status` labels (partially, given Gap #4), with no field, table or business flow
+    of their own behind them.
+15. **STORAGE_GAP** — no attachment (photo/invoice/manual/warranty) implemented, not even in
+    a partial/fake form.
+16. **AUDITORIA_TSX gap** — the `valor` field checked by the Audit does not correspond to the real field
+    `valor_unitario`; the `/inventario?edit=` deep link has no handler in the page (§2).
+17. **DEAD CODE** (not counted as a formal gap) — `hooks/inventory.store.ts`/`store/*`
+    (Zustand, zero consumers), `services/inventory.service.ts` (zero consumers).
+
+Total: 17 findings (3 DISPLAY/EDIT-mapping family, 1 ENUM_MISMATCH, 2 filter REAL_MAPPING_GAP, 1
 DEFAULT_MISMATCH, 1 TRUNCATION_GAP, 1 DUPLICATE_HANDLING_GAP, 1 STOCK_CONCURRENCY_GAP, 1
-INVENTORY_HISTORY_GAP, 1 IDEMPOTENCY_GAP, 1 FINANCIAL_INTEGRATION_GAP, 1 achado agregando
-MOVEMENT/RESERVATION/LOAN/MAINTENANCE_GAP, 1 STORAGE_GAP, 1 achado de Auditoria.tsx).
+INVENTORY_HISTORY_GAP, 1 IDEMPOTENCY_GAP, 1 FINANCIAL_INTEGRATION_GAP, 1 finding aggregating
+MOVEMENT/RESERVATION/LOAN/MAINTENANCE_GAP, 1 STORAGE_GAP, 1 Auditoria.tsx finding).
 
 ---
 
-## Contadores finais (Zero-Gap)
+## Final counters (Zero-Gap)
 
 ```text
 SUBDOMAINS_AUDITED: 1
@@ -710,7 +711,7 @@ EDIT_FIELDS: 12
 MODALS_DRAWERS_WIZARDS: 2 (InventarioFormModal, InventarioViewModal)
 TABLE_GRID_FIELDS: 11
 DETAIL_DISPLAY_FIELDS: 8
-IDENTIFIER_FIELDS: 1 (nome — único identificador real, sem SKU/barcode/serial)
+IDENTIFIER_FIELDS: 1 (nome — the only real identifier, no SKU/barcode/serial)
 CATEGORY_FIELDS: 1
 QUANTITY_FIELDS: 1
 MOVEMENT_FIELDS: 0
@@ -725,9 +726,9 @@ FILTERS: 3
 SEARCH_FIELDS: 3
 SORT_FIELDS: 0
 IMPORT_FIELDS: 0
-EXPORT_FIELDS: 12 (via Central de Relatórios genérica)
-XLSX_EXPORTS: 0 (específico do módulo — o export real é o mecanismo compartilhado, não reauditado
-    em detalhe de worksheet aqui)
+EXPORT_FIELDS: 12 (via the generic Reports Center)
+XLSX_EXPORTS: 0 (module-specific — the real export is the shared mechanism, not re-audited
+    at worksheet level here)
 XLSX_RULE_VIOLATIONS: 0
 BARCODE_QR_FIELDS: 0
 STORAGE_FIELDS: 0
@@ -740,38 +741,38 @@ CODE_FIELD_ONLY: 0
 DATABASE_COLUMN_ONLY: 0
 TYPE_MISMATCH: 0
 NULLABILITY_MISMATCH: 0
-DEFAULT_MISMATCH: 1 (quantidade mínima + limite de nome — contado como 1 achado categorizado,
-    afetando 2 campos)
-ENUM_MISMATCH: 1 (3 vocabulários de status divergentes)
+DEFAULT_MISMATCH: 1 (minimum quantity + name limit — counted as 1 categorized finding,
+    affecting 2 fields)
+ENUM_MISMATCH: 1 (3 divergent status vocabularies)
 RELATION_MISMATCH: 0
-CREATE_MAPPING_MISMATCH: 0 (create é correto)
-EDIT_MAPPING_MISMATCH: 1 (localCompra/numeroNotaFiscal/dataEntrada no pré-preenchimento)
-DISPLAY_MAPPING_MISMATCH: 2 (coluna "Entrada" da tabela + omissão de 3 campos no view modal —
-    contados como 2 achados distintos: 1 de nome errado, 1 de omissão)
-STOCK_CONSISTENCY_GAPS: 0 (não aplicável — modelo snapshot, sem ledger a divergir)
+CREATE_MAPPING_MISMATCH: 0 (create is correct)
+EDIT_MAPPING_MISMATCH: 1 (localCompra/numeroNotaFiscal/dataEntrada in the prefill)
+DISPLAY_MAPPING_MISMATCH: 2 (the table's "Entrada" column + omission of 3 fields in the view modal —
+    counted as 2 distinct findings: 1 wrong name, 1 omission)
+STOCK_CONSISTENCY_GAPS: 0 (not applicable — snapshot model, no ledger to diverge from)
 STOCK_CONCURRENCY_GAPS: 1
-NEGATIVE_STOCK_GAPS: 0 (negativo corretamente impedido nas camadas que existem)
+NEGATIVE_STOCK_GAPS: 0 (negative values correctly prevented in the layers that exist)
 MOVEMENT_GAPS: 1
 RESERVATION_GAPS: 1
 LOAN_GAPS: 1
 MAINTENANCE_GAPS: 1
 FINANCIAL_INTEGRATION_GAPS: 1
 DUPLICATE_HANDLING_GAPS: 1
-IMPORT_MAPPING_GAPS: 0 (não há import para ter mapeamento — NOT_IMPLEMENTED, não um gap de
-    mapeamento)
+IMPORT_MAPPING_GAPS: 0 (there is no import to have a mapping — NOT_IMPLEMENTED, not a
+    mapping gap)
 STORAGE_GAPS: 1
-PAGINATION_GAPS: 0 (paginação client-side funciona corretamente sobre o array recebido — o
-    problema é o array já vir truncado, contado em TRUNCATION_GAPS)
+PAGINATION_GAPS: 0 (client-side pagination works correctly over the received array — the
+    problem is that the array already arrives truncated, counted in TRUNCATION_GAPS)
 TRUNCATION_GAPS: 1
 INVENTORY_HISTORY_GAPS: 1
 IDEMPOTENCY_GAPS: 1
-REAL_MAPPING_GAPS: 2 (filtro de localização + filtro de categoria)
+REAL_MAPPING_GAPS: 2 (location filter + category filter)
 
-ACCOUNTING_INVENTORY_TRACEABILITY_COMPLETE: SIM
-CRM_INVENTORY_TRACEABILITY_COMPLETE: SIM
-EVENTS_INVENTORY_TRACEABILITY_COMPLETE: SIM
-AUDIOVISUAL_INVENTORY_TRACEABILITY_COMPLETE: SIM
-AUDITORIA_TSX_INVENTORY_SECTION_COMPLETE: SIM
+ACCOUNTING_INVENTORY_TRACEABILITY_COMPLETE: YES
+CRM_INVENTORY_TRACEABILITY_COMPLETE: YES
+EVENTS_INVENTORY_TRACEABILITY_COMPLETE: YES
+AUDIOVISUAL_INVENTORY_TRACEABILITY_COMPLETE: YES
+AUDITORIA_TSX_INVENTORY_SECTION_COMPLETE: YES
 
 UNMAPPED_CREATE_FIELDS: 0
 UNMAPPED_EDIT_FIELDS: 0

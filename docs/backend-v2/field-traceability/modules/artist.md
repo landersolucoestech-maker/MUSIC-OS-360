@@ -1,63 +1,63 @@
-# Módulo: artist (Artistas)
+# Module: artist (Artists)
 
-Fase 2 do Prompt 98. Escopo: `apps/web/src/modules/artist/**` completo + dependências reais
-seguidas fora da pasta: `apps/web/src/modules/auth/pages/ArtistaSignupPublic.tsx` (cadastro público),
+Phase 2 of Prompt 98. Scope: all of `apps/web/src/modules/artist/**` + real dependencies
+followed outside the folder: `apps/web/src/modules/auth/pages/ArtistaSignupPublic.tsx` (public sign-up),
 `apps/web/src/shared/components/FileUpload.tsx`+`useUploadToR2` (upload), `apps/web/src/shared/lib/audit/runner.ts`
-(seção `Auditoria.tsx`), `apps/api/src/modules/artists/**` completo (controller, service, DTOs,
+(the `Auditoria.tsx` section), all of `apps/api/src/modules/artists/**` (controller, service, DTOs,
 platform-profiles/providers), `apps/api/src/modules/reports/form-contracts/report-form-contracts.ts`
-(ARTISTS_CONTRACT — achado central, ver §2). Lado banco↔backend reaproveitado da Fase 1
-(78 colunas reais de `artists`, já extraídas) — não refeito aqui.
+(ARTISTS_CONTRACT — central finding, see §2). The database↔backend side is reused from Phase 1
+(78 real columns of `artists`, already extracted) — not redone here.
 
-Read-only. `DATABASE_WRITES: 0`. Nenhum `.ts`/`.tsx` alterado.
+Read-only. `DATABASE_WRITES: 0`. No `.ts`/`.tsx` changed.
 
-## 1. Achado estrutural central: DOIS fluxos paralelos de criação/edição
+## 1. Central structural finding: TWO parallel create/edit flows
 
-Existem **duas implementações independentes**, cada uma com seu próprio sistema de definição de
-campos, para criar/editar um artista:
+There are **two independent implementations**, each with its own field-definition
+system, for creating/editing an artist:
 
-1. **`ArtistaFormModal.tsx`** (modal) — aberto a partir de `Artistas.tsx` (`setCreateModal(true)` /
-   ações de linha) e via `?edit=<id>` na URL. Usa `ArtistaFormFields`
-   (`services/artista.mapper.ts`, 658 linhas, "ÚNICA FONTE DE VERDADE" segundo o próprio comentário
-   do arquivo). **Este é o fluxo realmente usado pela UI.**
-2. **`ArtistaCadastro.tsx`** (página dedicada) — roteada em `/artistas/novo` e
-   `/artistas/:id/editar` (`app/routes/artist.routes.tsx`), usa `ARTIST_FORM_SECTIONS`
-   (`forms/artist-form.definition.ts`, 702 linhas, sistema de definição por seções mais granular,
-   inclui campos que o modal não tem — ex.: `genero` [gênero da pessoa, distinto de
-   `generoMusical`]). **Confirmado órfã**: grep repo-wide por `/artistas/novo` e `/editar\`` fora do
-   próprio arquivo de rotas retorna **zero resultados** — nenhum botão/link do app aponta para essas
-   rotas. Código real, rota real, funcional se acessada por URL direta, mas inalcançável pela
-   navegação normal.
+1. **`ArtistaFormModal.tsx`** (modal) — opened from `Artistas.tsx` (`setCreateModal(true)` /
+   row actions) and via `?edit=<id>` in the URL. Uses `ArtistaFormFields`
+   (`services/artista.mapper.ts`, 658 lines, "ÚNICA FONTE DE VERDADE" (single source of truth) according to the file's own
+   comment). **This is the flow the UI actually uses.**
+2. **`ArtistaCadastro.tsx`** (dedicated page) — routed at `/artistas/novo` and
+   `/artistas/:id/editar` (`app/routes/artist.routes.tsx`), uses `ARTIST_FORM_SECTIONS`
+   (`forms/artist-form.definition.ts`, 702 lines, a more granular section-based definition system,
+   includes fields the modal does not have — e.g. `genero` [the person's gender, distinct from
+   `generoMusical`]). **Confirmed orphaned**: a repo-wide grep for `/artistas/novo` and `/editar\`` outside
+   the routes file itself returns **zero results** — no button/link in the app points to these
+   routes. Real code, real route, functional if accessed via direct URL, but unreachable through
+   normal navigation.
 
-Classificação: `REAL_MAPPING_GAP` (duplicação arquitetural) + `DEAD` (para `ArtistaCadastro.tsx`
-especificamente, do ponto de vista de alcançabilidade via UI — não do ponto de vista de código,
-que é válido e funcional).
+Classification: `REAL_MAPPING_GAP` (architectural duplication) + `DEAD` (for `ArtistaCadastro.tsx`
+specifically, from the standpoint of reachability via the UI — not from the standpoint of the code,
+which is valid and functional).
 
-Um **terceiro** fluxo de criação existe fora do módulo: `apps/web/src/modules/auth/pages/
-ArtistaSignupPublic.tsx` — autocadastro público, `POST /public/artists` (endpoint distinto de
+A **third** creation flow exists outside the module: `apps/web/src/modules/auth/pages/
+ArtistaSignupPublic.tsx` — public self-sign-up, `POST /public/artists` (an endpoint distinct from
 `POST /artists`).
 
-`ArtistaSignupPublic: AUDITED_IN_AUTH` — fechado na auditoria do módulo `auth`
-(`docs/backend-v2/field-traceability/modules/auth.md` §1). Achado crítico confirmado lá: o
-endpoint `POST /public/artists` **não existe em nenhum lugar do backend** — todo o fluxo de
-autocadastro público de artista está 100% quebrado (toda submissão retorna erro). Registrado como
-`REAL_MAPPING_GAP`/`PUBLIC_SIGNUP_GAP` no doc do módulo `auth`, não neste documento.
+`ArtistaSignupPublic: AUDITED_IN_AUTH` — closed in the `auth` module audit
+(`docs/backend-v2/field-traceability/modules/auth.md` §1). Critical finding confirmed there: the
+`POST /public/artists` endpoint **does not exist anywhere in the backend** — the entire public artist
+self-sign-up flow is 100% broken (every submission returns an error). Recorded as
+`REAL_MAPPING_GAP`/`PUBLIC_SIGNUP_GAP` in the `auth` module doc, not in this document.
 
-## 2. Achado estrutural central #2: a maioria dos campos "estendidos" vive em `metadata` JSONB, não nas 78 colunas físicas
+## 2. Central structural finding #2: most "extended" fields live in `metadata` JSONB, not in the 78 physical columns
 
-`ARTISTS_CONTRACT` (`report-form-contracts.ts`, fonte única também usada por `ArtistsService.create/
-update`) revela que das 78 colunas reais de `artists` (Fase 1), a persistência real segue esta
-divisão, **por decisão arquitetural documentada, não por bug**:
+`ARTISTS_CONTRACT` (`report-form-contracts.ts`, a single source also used by `ArtistsService.create/
+update`) reveals that of the 78 real columns of `artists` (Phase 1), the real persistence follows this
+split, **by documented architectural decision, not by bug**:
 
-- **~23 colunas físicas diretas** (`storage: 'column'`): `nome_artistico`, `nome_civil`, `tipo`,
+- **~23 direct physical columns** (`storage: 'column'`): `nome_artistico`, `nome_civil`, `tipo`,
   `status`, `genero_musical`, `observacoes`, `especialidades`, `foto_url`, `spotify_url`,
   `youtube_url`, `deezer_url`, `apple_music_url`, `soundcloud_url`, `galeria_urls`, `documentos`,
   `manager_nome`, `produtor_executivo`, `agencia_booking`, `label_parceira`, `contrato_id`.
-- **4 colunas cifradas** (`storage: 'encrypted'`): `email`→`email_encrypted`,
+- **4 encrypted columns** (`storage: 'encrypted'`): `email`→`email_encrypted`,
   `telefone`→`telefone_encrypted`, `cpf_cnpj`→`cpf_cnpj_encrypted`,
-  `manager_contato`→`manager_contato_encrypted` — cifra/decifra confirmada em
-  `artists.service.ts` via `EncryptionService.encryptNullable()`/`safeDecrypt()` (ver §3).
-- **~41 campos armazenados dentro da coluna `metadata` (jsonb)**, não em coluna própria, apesar de
-  colunas físicas com esses EXATOS nomes existirem na tabela (confirmado Fase 1):
+  `manager_contato`→`manager_contato_encrypted` — encryption/decryption confirmed in
+  `artists.service.ts` via `EncryptionService.encryptNullable()`/`safeDecrypt()` (see §3).
+- **~41 fields stored inside the `metadata` (jsonb) column**, not in their own column, even though
+  physical columns with these EXACT names exist in the table (confirmed in Phase 1):
   `slug_artistico`, `tipo_perfil`, `fase_carreira`, `genero`, `data_nascimento`, `rg`, `endereco`,
   `tags_musicais`, `presskit_url`, `documentos_pessoais_url`, `apple_music_albuns_url`,
   `soundcloud_seguidores_url`, `instagram_url`, `tiktok_url`, `instagram_seguidores`,
@@ -67,209 +67,209 @@ divisão, **por decisão arquitetural documentada, não por bug**:
   `distribuidoras_selecionadas/gerais/emails/empresa_selecionadas/empresa_emails`,
   `contatos_equipe`, `contatos_vinculados`, `relacionamentos`.
 
-**Correção à Fase 1**: essas ~41 colunas foram classificadas `DIRECT_VIA_DTO_OR_RAW_QUERY` (achado
-mecânico: "referenciadas em código real"). Essa classificação estava **parcialmente imprecisa** —
-as colunas físicas existem e o nome aparece no DTO/migrations, mas o *caminho de persistência real*
-(confirmado lendo `artists.service.ts::create()`/`update()`) grava o valor dentro de `metadata`
-(`METADATA_FIELDS` coletados do contrato), nunca na coluna física homônima. As colunas físicas ficam
-efetivamente **não utilizadas** por este caminho de código — reservadas/preparadas (schema já
-existe, possivelmente de uma migration antecipando uma normalização futura), mas não é para lá que
-o dado vai. Reclassificação correta:
-`SCHEMA_COLUMN_PRESENT_BUT_APPLICATION_WRITES_TO_METADATA_JSONB_INSTEAD` (não é gap funcional — o
-dado é persistido e recuperado corretamente via `metadata`, com round-trip confirmado em
-`toResponse()`, que "achata" `metadata.<campo>` de volta para o nome plano na resposta da API — só
-não é onde a introspecção do banco sugeria).
+**Correction to Phase 1**: these ~41 columns were classified `DIRECT_VIA_DTO_OR_RAW_QUERY` (a
+mechanical finding: "referenced in real code"). That classification was **partially inaccurate** —
+the physical columns exist and the name appears in the DTO/migrations, but the *real persistence path*
+(confirmed by reading `artists.service.ts::create()`/`update()`) writes the value inside `metadata`
+(`METADATA_FIELDS` collected from the contract), never into the physical column of the same name. The physical columns are
+effectively **unused** by this code path — reserved/prepared (the schema already
+exists, possibly from a migration anticipating a future normalization), but that is not where
+the data goes. Correct reclassification:
+`SCHEMA_COLUMN_PRESENT_BUT_APPLICATION_WRITES_TO_METADATA_JSONB_INSTEAD` (not a functional gap — the
+data is persisted and retrieved correctly via `metadata`, with a round-trip confirmed in
+`toResponse()`, which "flattens" `metadata.<campo>` back to the flat name in the API response — it just
+is not where the database introspection suggested).
 
-## 3. Dados sensíveis / criptografados
+## 3. Sensitive / encrypted data
 
-| Campo | Coluna DB | Criptografado | Camada | Leitura | Busca |
+| Field | DB column | Encrypted | Layer | Read | Search |
 |---|---|---|---|---|---|
-| Email | `email_encrypted` | SIM (AES-256-GCM, `EncryptionService`) | `artists.service.ts` `encryptNullable`/`safeDecrypt` | API decifra em `toResponse()`, expõe `email` plano | Não pesquisável por email (ciphertext não permite `ILIKE`) |
-| Telefone | `telefone_encrypted` | SIM | idem | idem | idem |
-| CPF/CNPJ | `cpf_cnpj_encrypted` | SIM | idem | idem | idem |
-| Contato do manager | `manager_contato_encrypted` | SIM | idem | idem | idem |
-| RG, endereço, dados bancários (banco/agência/conta/chave PIX/titular) | dentro de `metadata` jsonb | NÃO (metadata não é cifrada) | — | plano, dentro do JSON | não pesquisável (jsonb sem index de busca dedicado encontrado) |
+| Email | `email_encrypted` | YES (AES-256-GCM, `EncryptionService`) | `artists.service.ts` `encryptNullable`/`safeDecrypt` | API decrypts in `toResponse()`, exposes plain `email` | Not searchable by email (ciphertext does not allow `ILIKE`) |
+| Phone | `telefone_encrypted` | YES | same | same | same |
+| CPF/CNPJ (Brazilian individual/company tax IDs) | `cpf_cnpj_encrypted` | YES | same | same | same |
+| Manager contact | `manager_contato_encrypted` | YES | same | same | same |
+| RG (ID card), address, bank details (bank/branch/account/PIX key/account holder) | inside `metadata` jsonb | NO (metadata is not encrypted) | — | plain, inside the JSON | not searchable (no dedicated search index on the jsonb found) |
 
-`SEARCH_LIMITATION` confirmado: `searchableColumns: ['nome_artistico', 'nome_civil',
-'genero_musical', 'observacoes']` no `ARTISTS_CONTRACT` — nenhum campo cifrado ou de `metadata` é
-pesquisável pela Central de Relatórios; a busca da listagem (`Artistas.tsx`) é 100% client-side sobre
-os dados já carregados (ver §6), então tecnicamente pesquisa até email/telefone decifrados que já
-chegaram ao browser — mas não há busca server-side sobre PII cifrada (esperado/correto: ciphertext
-não é pesquisável por natureza).
+`SEARCH_LIMITATION` confirmed: `searchableColumns: ['nome_artistico', 'nome_civil',
+'genero_musical', 'observacoes']` in `ARTISTS_CONTRACT` — no encrypted or `metadata` field is
+searchable through the Reports Center; the list search (`Artistas.tsx`) is 100% client-side over
+the data already loaded (see §6), so technically it even searches decrypted email/phone that have already
+reached the browser — but there is no server-side search over encrypted PII (expected/correct: ciphertext
+is not searchable by nature).
 
-## 4. Create/Edit — mapeamento de campos
+## 4. Create/Edit — field mapping
 
-`services/artista.mapper.ts::formToArtistaPayload()`/`artistaToFormFields()` (o par usado pelo fluxo
-real, `ArtistaFormModal.tsx`) foi lido por completo e mapeia corretamente ~45 campos de formulário
-para os nomes de campo que `CreateArtistDto`/`UpdateArtistDto` esperam — incluindo o rename correto
-`instagram`(form)→`instagram_url`(DTO/metadata) e `tiktok`(form)→`tiktok_url`(DTO/metadata),
-resolvendo explicitamente (comentário no código, `artists.service.ts` linhas 36-37) um bug histórico
-já corrigido onde esses dois campos eram descartados silenciosamente. Sem gaps de mapeamento
-encontrados no par form↔DTO para os ~45 campos cobertos pelo modal.
+`services/artista.mapper.ts::formToArtistaPayload()`/`artistaToFormFields()` (the pair used by the
+real flow, `ArtistaFormModal.tsx`) was read in full and correctly maps ~45 form fields
+to the field names that `CreateArtistDto`/`UpdateArtistDto` expect — including the correct rename
+`instagram`(form)→`instagram_url`(DTO/metadata) and `tiktok`(form)→`tiktok_url`(DTO/metadata),
+explicitly resolving (code comment, `artists.service.ts` lines 36-37) a historical bug,
+already fixed, where these two fields were silently discarded. No mapping gaps
+found in the form↔DTO pair for the ~45 fields covered by the modal.
 
-`forms/artist-form.definition.ts` (fluxo órfão, `ArtistaCadastro.tsx`, §1) define ~71 campos
-(granularidade maior, separa `genero` pessoa de `generoMusical`, tem seções de relacionamento mais
-explícitas) — cobre uma superfície maior dos 78 campos reais que o modal, mas não é alcançável pela
+`forms/artist-form.definition.ts` (orphaned flow, `ArtistaCadastro.tsx`, §1) defines ~71 fields
+(finer granularity, separates the person's `genero` from `generoMusical`, has more explicit relationship
+sections) — it covers a larger surface of the 78 real fields than the modal does, but is not reachable through the
 UI.
 
-`CREATE_SUPPORTED = EDIT_SUPPORTED` para praticamente todos os campos em ambos os fluxos — não foi
-encontrado nenhum campo `IMMUTABLE_AFTER_CREATE` explícito (nem no schema, nem em validação).
+`CREATE_SUPPORTED = EDIT_SUPPORTED` for practically all fields in both flows — no explicit
+`IMMUTABLE_AFTER_CREATE` field was found (neither in the schema nor in validation).
 
-## 5. Table/Grid (lista) e Detail/Profile
+## 5. Table/Grid (list) and Detail/Profile
 
-`Artistas.tsx` é um **grid de cards**, não uma `<Table>` — `data-testid="card-artista-*"`. Campos
-exibidos por card: nome artístico, gênero musical, status, tipo, foto (avatar), especialidades,
-contrato vinculado (via `artistasComContrato`, relação com `contracts`). `KPI` cards no topo:
-total, exclusivos, (mais 2 não lidos em detalhe — baixo risco, são contagens derivadas do mesmo
-array já carregado).
+`Artistas.tsx` is a **card grid**, not a `<Table>` — `data-testid="card-artista-*"`. Fields
+displayed per card: stage name, music genre, status, type, photo (avatar), specialties,
+linked contract (via `artistasComContrato`, a relation with `contracts`). `KPI` cards at the top:
+total, exclusive, (plus 2 not read in detail — low risk, they are counts derived from the same
+already-loaded array).
 
-`ArtistaVisao360Modal.tsx` (3170 linhas — o maior componente já encontrado nesta auditoria) é o
-"hub" central de detalhe: abas para dados pessoais/perfil, evolução/métricas de plataforma
-(`ArtistaEvolucaoSection`+`ArtistaPlatformMetrics`+`PlatformMiniTrend`), equipe/contatos CRM
-(`EquipeContatosCRM`), e listas relacionadas de obras/fonogramas/lançamentos/projetos/metas/
-contratos/transações/eventos/conteúdos e campanhas de marketing (ver §6). Todos os campos exibidos
-nessas abas rastreiam para colunas já confirmadas na Fase 1 ou nas relações do §6 — nenhum campo
-sem origem conhecida encontrado na amostragem estrutural (grep de imports + padrão de filtro
-consistente, não lido linha a linha nas 3170 linhas por volume).
+`ArtistaVisao360Modal.tsx` (3170 lines — the largest component found so far in this audit) is the
+central detail "hub": tabs for personal data/profile, platform evolution/metrics
+(`ArtistaEvolucaoSection`+`ArtistaPlatformMetrics`+`PlatformMiniTrend`), team/CRM contacts
+(`EquipeContatosCRM`), and related lists of works/phonograms/releases/projects/goals/
+contracts/transactions/events/content and marketing campaigns (see §6). All fields displayed
+in these tabs trace to columns already confirmed in Phase 1 or to the relations in §6 — no field
+of unknown origin was found in the structural sampling (grep of imports + consistent filter
+pattern, not read line by line across the 3170 lines due to volume).
 
-## 6. Relações
+## 6. Relations
 
-Todas as relações a seguir seguem o MESMO padrão arquitetural já visto em `accounting`: o hook do
-módulo relacionado busca **todos** os registros do tenant, e `ArtistaVisao360Modal.tsx` filtra
-client-side por `artista_id === artistaId` (confirmado via grep direto no componente).
+All the relations below follow the SAME architectural pattern already seen in `accounting`: the
+related module's hook fetches **all** of the tenant's records, and `ArtistaVisao360Modal.tsx` filters
+client-side by `artista_id === artistaId` (confirmed via a direct grep in the component).
 
-| Relação | Hook | Coluna FK | Enforcement no banco |
+| Relation | Hook | FK column | Database enforcement |
 |---|---|---|---|
-| Obras (works) | `useObras` (catalog) | `works.artista_id` | FK real → `artists.id` |
-| Fonogramas (phonograms) | `useFonogramas` (catalog) | `phonograms.artista_id` | FK real → `artists.id` |
-| Lançamentos (releases) | `useLancamentos` (releases) | `releases.artista_id` | FK real → `artists.id` |
-| Contratos | `useContratos` (contracts) | `contracts.artista_id` | FK real → `artists.id` |
-| Projetos | `useProjetos` (projects) | `projects.artista_id` | coluna existe, **sem FK declarada** — `LOGICAL_RELATION_WITHOUT_FK` |
-| Transações (financeiro) | `useTransacoes` (accounting) | `transactions.artista_id` | coluna existe, **sem FK declarada** — `LOGICAL_RELATION_WITHOUT_FK` |
-| Eventos | `useEventos` (events) | `events.artista_id` | coluna existe, **sem FK declarada** — `LOGICAL_RELATION_WITHOUT_FK` |
-| Metas (goals) | `useMetas` (marketing) | `artist_goals.artista_id` | coluna existe, **sem FK declarada** — `LOGICAL_RELATION_WITHOUT_FK` |
-| Contatos (CRM) | `useContacts` (crm-relationships) | via `EquipeContatosCRM`, vínculo por `contatos_vinculados` (metadata jsonb, §2) | relação lógica, não FK relacional |
-| Conteúdos/Campanhas de marketing | `useMarketingContents`/`useMarketingCampaigns` | não verificado em detalhe (fora do escopo profundo desta passada — mapeamento superficial conforme §13 do prompt) | — |
+| Works | `useObras` (catalog) | `works.artista_id` | real FK → `artists.id` |
+| Phonograms | `useFonogramas` (catalog) | `phonograms.artista_id` | real FK → `artists.id` |
+| Releases | `useLancamentos` (releases) | `releases.artista_id` | real FK → `artists.id` |
+| Contracts | `useContratos` (contracts) | `contracts.artista_id` | real FK → `artists.id` |
+| Projects | `useProjetos` (projects) | `projects.artista_id` | column exists, **no FK declared** — `LOGICAL_RELATION_WITHOUT_FK` |
+| Transactions (financial) | `useTransacoes` (accounting) | `transactions.artista_id` | column exists, **no FK declared** — `LOGICAL_RELATION_WITHOUT_FK` |
+| Events | `useEventos` (events) | `events.artista_id` | column exists, **no FK declared** — `LOGICAL_RELATION_WITHOUT_FK` |
+| Goals | `useMetas` (marketing) | `artist_goals.artista_id` | column exists, **no FK declared** — `LOGICAL_RELATION_WITHOUT_FK` |
+| Contacts (CRM) | `useContacts` (crm-relationships) | via `EquipeContatosCRM`, linked through `contatos_vinculados` (metadata jsonb, §2) | logical relation, not a relational FK |
+| Marketing content/campaigns | `useMarketingContents`/`useMarketingCampaigns` | not verified in detail (outside the deep scope of this pass — surface mapping per §13 of the prompt) | — |
 
-Nenhuma relação ficou sem identificação de tabela/coluna de origem.
+No relation was left without its source table/column identified.
 
-## 7. Financeiro do artista
+## 7. Artist financials
 
-`transactions.artista_id` é uma coluna real (Fase 1: `DIRECT`), sem FK declarada
-(`LOGICAL_RELATION_WITHOUT_FK`, mesma tabela já auditada em `accounting`). `ArtistaVisao360Modal.tsx`
-usa `useTransacoes()` (o MESMO hook do módulo accounting, sem endpoint próprio de artista) e filtra
-client-side. **Confirmado**: é uma relação real e persistida (não apenas vínculo de UI) — o
-`artista_id` é gravado de verdade na tabela `transactions` no momento da criação da transação
-(campo `artistaVinculado` do formulário de Transação, já confirmado em `accounting.md`). Não é
-afetado pelo gap do `entityLinks`/P&L (`accounting.md` §2.1) — esse gap é sobre o array de rateio
-multi-entidade, não sobre o vínculo simples `artista_id`, que funciona corretamente.
+`transactions.artista_id` is a real column (Phase 1: `DIRECT`), with no FK declared
+(`LOGICAL_RELATION_WITHOUT_FK`, same table already audited in `accounting`). `ArtistaVisao360Modal.tsx`
+uses `useTransacoes()` (the SAME hook as the accounting module, with no artist-specific endpoint) and filters
+client-side. **Confirmed**: it is a real, persisted relation (not just a UI link) — the
+`artista_id` is actually written to the `transactions` table when the transaction is created
+(the `artistaVinculado` field of the Transaction form, already confirmed in `accounting.md`). It is not
+affected by the `entityLinks`/P&L gap (`accounting.md` §2.1) — that gap concerns the
+multi-entity allocation array, not the simple `artista_id` link, which works correctly.
 
-## 8. Plataformas externas / métricas
+## 8. External platforms / metrics
 
-Dois sistemas distintos e não confundíveis:
+Two distinct systems that must not be confused:
 
-1. **Contadores estáticos manuais** (`spotify_ouvintes`, `youtube_inscritos`, `deezer_fas`,
+1. **Manual static counters** (`spotify_ouvintes`, `youtube_inscritos`, `deezer_fas`,
    `apple_music_albuns_url`, `soundcloud_seguidores_url`, `instagram_seguidores`,
-   `tiktok_seguidores`) — campos de formulário, digitados manualmente pelo usuário, armazenados em
-   `metadata` (§2). `SOURCE_OF_TRUTH: manual do usuário`, sem sincronização automática.
-2. **Sincronização real com API externa** (`useArtistPlatformProfiles`/
-   `useSyncArtistPlatformProfile`, tabela `artist_platform_profiles` — 24 colunas, 100% `DIRECT`,
-   confirmada na Fase 1): `GET/POST /artists/:id/platform-profiles[/:platform/sync]`. Providers
-   reais e funcionais lidos por completo:
-   - **Spotify** (`spotify-artist-profile.provider.ts`): OAuth client-credentials real contra
-     `accounts.spotify.com`/`api.spotify.com`. `CREDENTIAL_REQUIRED_LATER: SIM` —
-     `SPOTIFY_CLIENT_ID`/`SPOTIFY_CLIENT_SECRET`, `OWNERSHIP: PLATFORM` (não por tenant). Se
-     ausente, `isConfigured()` retorna falso e a sincronização falha com erro claro
-     (`ServiceUnavailableException`), não silenciosamente.
-   - **YouTube** (`youtube-artist-profile.provider.ts`): YouTube Data API v3 real.
-     `CREDENTIAL_REQUIRED_LATER: SIM` — `YOUTUBE_API_KEY`, `OWNERSHIP: PLATFORM`. Mesmo
-     comportamento de falha explícita quando não configurado.
-   `SOURCE_OF_TRUTH: API externa`, via job assíncrono (`enqueued`/`job_id` na resposta de sync).
+   `tiktok_seguidores`) — form fields, typed in manually by the user, stored in
+   `metadata` (§2). `SOURCE_OF_TRUTH: manual do usuário` (manual user input), with no automatic synchronization.
+2. **Real synchronization with an external API** (`useArtistPlatformProfiles`/
+   `useSyncArtistPlatformProfile`, table `artist_platform_profiles` — 24 columns, 100% `DIRECT`,
+   confirmed in Phase 1): `GET/POST /artists/:id/platform-profiles[/:platform/sync]`. Real, functional
+   providers read in full:
+   - **Spotify** (`spotify-artist-profile.provider.ts`): real OAuth client-credentials against
+     `accounts.spotify.com`/`api.spotify.com`. `CREDENTIAL_REQUIRED_LATER: SIM` (yes) —
+     `SPOTIFY_CLIENT_ID`/`SPOTIFY_CLIENT_SECRET`, `OWNERSHIP: PLATFORM` (not per tenant). If
+     missing, `isConfigured()` returns false and synchronization fails with a clear error
+     (`ServiceUnavailableException`), not silently.
+   - **YouTube** (`youtube-artist-profile.provider.ts`): real YouTube Data API v3.
+     `CREDENTIAL_REQUIRED_LATER: SIM` (yes) — `YOUTUBE_API_KEY`, `OWNERSHIP: PLATFORM`. Same
+     explicit-failure behavior when not configured.
+   `SOURCE_OF_TRUTH: API externa` (external API), via an asynchronous job (`enqueued`/`job_id` in the sync response).
 
-Os dois sistemas não se sobrepõem tecnicamente (colunas/tabelas diferentes), mas representam
-conceitualmente a MESMA informação (seguidores/ouvintes por plataforma) capturada de duas formas
-diferentes sem nenhuma reconciliação visível entre elas — registrado como observação, não como
-gap técnico (nenhum dos dois está quebrado).
+The two systems do not overlap technically (different columns/tables), but they conceptually represent
+the SAME information (followers/listeners per platform) captured in two different
+ways with no visible reconciliation between them — recorded as an observation, not as a
+technical gap (neither of the two is broken).
 
-## 9. Storage (avatar/documentos)
+## 9. Storage (avatar/documents)
 
-`ARTIST_FORM_SECTIONS` declara 3 campos `type: "file"`: `fotoUrl` (`folder: "artistas/fotos"`,
+`ARTIST_FORM_SECTIONS` declares 3 `type: "file"` fields: `fotoUrl` (`folder: "artistas/fotos"`,
 `accept: "image/*"`, `maxSize: 5MB`, `circular: true`), `documentosPessoaisUrl`
-(`folder: "artistas/documentos"`, `accept: "application/pdf"`), `presskitUrl` (idem, PDF).
-`ArtistaFormModal.tsx` importa e usa `@/shared/components/FileUpload` (que usa `useUploadToR2`,
-confirmado real — não é um campo de texto disfarçado). Fluxo end-to-end real, não quebrado.
+(`folder: "artistas/documentos"`, `accept: "application/pdf"`), `presskitUrl` (same, PDF).
+`ArtistaFormModal.tsx` imports and uses `@/shared/components/FileUpload` (which uses `useUploadToR2`,
+confirmed real — not a disguised text field). Real end-to-end flow, not broken.
 
 ## 10. Import / Export / XLSX
 
-**Import**: `Artistas.tsx::handleExcelImport` — lê **apenas a primeira aba** (`workbook.
-SheetNames[0]`) via `XLSX.utils.sheet_to_json`, processa linha a linha via `parseArtistaImportRow`
-(services/artista.mapper.ts, mesma fonte única do form). `WORKSHEET_COUNT` consumido: 1 — dentro da
-regra. Sem `XLSX_RULE_VIOLATION` neste módulo.
+**Import**: `Artistas.tsx::handleExcelImport` — reads **only the first sheet** (`workbook.
+SheetNames[0]`) via `XLSX.utils.sheet_to_json`, processes row by row via `parseArtistaImportRow`
+(services/artista.mapper.ts, the same single source as the form). `WORKSHEET_COUNT` consumed: 1 — within the
+rule. No `XLSX_RULE_VIOLATION` in this module.
 
-**Export**: nenhum botão de exportação dedicado em `Artistas.tsx` (grep confirmado). A exportação
-real acontece pela Central de Relatórios centralizada (`report-module-registry.ts`, `{ tableName:
-'artists', label: 'Artistas' }`, já documentado no doc80), consumindo o mesmo `ARTISTS_CONTRACT`
-(68 campos, coluna/metadata/cifrado corretamente resolvidos e descriptografados na exportação por
-`ExportEngineService`). Não recontado aqui — pertence à infraestrutura central de relatórios, não ao
-módulo `artist` isoladamente.
+**Export**: no dedicated export button in `Artistas.tsx` (grep confirmed). The real
+export happens through the centralized Reports Center (`report-module-registry.ts`, `{ tableName:
+'artists', label: 'Artistas' }`, already documented in doc80), consuming the same `ARTISTS_CONTRACT`
+(68 fields, column/metadata/encrypted correctly resolved and decrypted on export by
+`ExportEngineService`). Not recounted here — it belongs to the central reporting infrastructure, not to the
+`artist` module in isolation.
 
-## 11. Filtros / Busca / Ordenação / Paginação
+## 11. Filters / Search / Sorting / Pagination
 
-Tudo client-side (mesmo padrão de `accounting`/`admin`): busca (nome/email/gênero — 1 campo de
-busca cobrindo múltiplas colunas), 3 selects de filtro (gênero, status, tipo — a julgar pelos
-`SelectTrigger` encontrados), paginação via `usePagination` (10/página). Sem ordenação explícita por
-coluna encontrada (sem `SortableTableHead` no grid de cards). `BACKEND_FILTER: NENHUM` —
-`artistaService.list()` não aceita parâmetros.
+All client-side (same pattern as `accounting`/`admin`): search (name/email/genre — 1 search field
+covering multiple columns), 3 filter selects (genre, status, type — judging by the
+`SelectTrigger`s found), pagination via `usePagination` (10/page). No explicit per-column sorting
+found (no `SortableTableHead` in the card grid). `BACKEND_FILTER: NENHUM` (none) —
+`artistaService.list()` accepts no parameters.
 
-## 12. Permissões / Tenant isolation / Delete
+## 12. Permissions / Tenant isolation / Delete
 
-Backend (`artists.controller.ts`, lido por completo): todas as rotas com `@RequireRole`+
-`@RequirePermission`+`@CurrentTenant` — leitura=`viewer`/`artist:read`, criar=`editor`/
-`artist:create`, editar=`editor`/`artist:update`, sync de plataforma=`editor`/`artist:update`,
-excluir=`manager`/`artist:delete`. `DELETE` chama `softDelete()` (usa `deleted_at`, confirmado
-`DIRECT` na Fase 1) — **soft delete confirmado**, não hard delete. Frontend usa
-`RequirePermission module="artists" action="write"` no botão "Novo Artista" — consistente com o
-enforcement do backend. `AUTHORIZATION_GAP: 0`. `TENANT_ISOLATION_GAP: 0` (todas as rotas exigem
-`@CurrentTenant`, sem exceção encontrada).
+Backend (`artists.controller.ts`, read in full): every route with `@RequireRole`+
+`@RequirePermission`+`@CurrentTenant` — read=`viewer`/`artist:read`, create=`editor`/
+`artist:create`, edit=`editor`/`artist:update`, platform sync=`editor`/`artist:update`,
+delete=`manager`/`artist:delete`. `DELETE` calls `softDelete()` (uses `deleted_at`, confirmed
+`DIRECT` in Phase 1) — **soft delete confirmed**, not hard delete. The frontend uses
+`RequirePermission module="artists" action="write"` on the "Novo Artista" (New Artist) button — consistent with the
+backend enforcement. `AUTHORIZATION_GAP: 0`. `TENANT_ISOLATION_GAP: 0` (every route requires
+`@CurrentTenant`, no exception found).
 
-## 13. `CROSS_MODULE_AUDITORIA_TSX` — seção específica de artistas
+## 13. `CROSS_MODULE_AUDITORIA_TSX` — artist-specific section
 
-Fecha a lacuna deixada pelo módulo `admin` (`admin.md` §7). Config real em `shared/lib/audit/
-runner.ts`, objeto `{ module: "artistas", table: "artistas", ... }`:
+Closes the gap left by the `admin` module (`admin.md` §7). Real config in `shared/lib/audit/
+runner.ts`, object `{ module: "artistas", table: "artistas", ... }`:
 
 ```text
 AUDITORIA_ARTIST_FIELDS:
-  nome_artistico   (severidade: obrigatorio)
-  genero_musical   (severidade: obrigatorio)
-  email            (severidade: obrigatorio)
-  telefone         (severidade: recomendado)
-  cpf_cnpj         (severidade: recomendado)
-  status           (severidade: recomendado)
+  nome_artistico   (severity: obrigatorio)
+  genero_musical   (severity: obrigatorio)
+  email            (severity: obrigatorio)
+  telefone         (severity: recomendado)
+  cpf_cnpj         (severity: recomendado)
+  status           (severity: recomendado)
 
 AUDITORIA_ARTIST_RULES:
   entityType: "Artista"
   label: entityLabel(row, ["nome_artistico","nome_civil","email"], "Artista sem nome")
-  fixPath: "/artistas?edit=<id>" (abre ArtistaFormModal — o fluxo real, não o órfão)
+  fixPath: "/artistas?edit=<id>" (opens ArtistaFormModal — the real flow, not the orphaned one)
 
 AUDITORIA_ARTIST_DATABASE_SOURCES:
-  table: "artistas" → endpoint /artists (mesmo hook useDataQuery/storage já usado em toda a app)
-  Os campos email/telefone/cpf_cnpj checados aqui batem exatamente com os nomes PLANOS que a API
-  retorna já descriptografados (toResponse() em artists.service.ts) — a checagem de completude
-  funciona corretamente mesmo sendo campos cifrados no banco, porque opera sobre a resposta da API,
-  não sobre as colunas *_encrypted diretamente. Confirmado, sem gap.
+  table: "artistas" → endpoint /artists (same useDataQuery/storage hook already used across the app)
+  The email/telefone/cpf_cnpj fields checked here match exactly the FLAT names that the API
+  returns already decrypted (toResponse() in artists.service.ts) — the completeness check
+  works correctly even though these fields are encrypted in the database, because it operates on the API response,
+  not on the *_encrypted columns directly. Confirmed, no gap.
 
 AUDITORIA_ARTIST_GAPS:
-  Nenhum gap próprio encontrado nesta seção — as 6 regras batem 1:1 com campos reais e alcançáveis
-  via o fluxo de edição real (ArtistaFormModal). Único ponto de atenção: a regra não verifica
-  nenhum dos ~41 campos armazenados em `metadata` (§2) nem os campos do fluxo órfão
-  ArtistaCadastro.tsx — mas isso é esperado/correto, pois a auditoria de completude é sobre o dado
-  persistido real (via API), não sobre a superfície completa de todos os formulários possíveis.
+  No gap of its own found in this section — the 6 rules match 1:1 real fields that are reachable
+  via the real edit flow (ArtistaFormModal). Only point of attention: the rule does not check
+  any of the ~41 fields stored in `metadata` (§2) nor the fields of the orphaned flow
+  ArtistaCadastro.tsx — but this is expected/correct, since the completeness audit is about the real
+  persisted data (via the API), not about the full surface of every possible form.
 ```
 
-## Resumo
+## Summary
 
 ```text
-STATUS: CONCLUÍDO (módulo artist)
+STATUS: COMPLETED (artist module)
 MODULE_STATUS: COMPLETE
 UNMAPPED_CREATE_FIELDS: 0
 UNMAPPED_EDIT_FIELDS: 0
@@ -281,14 +281,14 @@ UNMAPPED_METRIC_FIELDS: 0
 UNMAPPED_PLATFORM_FIELDS: 0
 UNMAPPED_STORAGE_FIELDS: 0
 UNKNOWN_FIELD_CLASSIFICATIONS: 0
-REAL_MAPPING_GAPS: 3 (dois fluxos paralelos de create/edit com cobertura de campo divergente,
-  ArtistaCadastro.tsx órfão/inalcançável pela UI; ~41 colunas físicas da tabela artists reservadas
-  mas não usadas — dado real vive em metadata jsonb, correção de classificação da Fase 1;
-  contadores estáticos manuais de seguidores/ouvintes coexistem sem reconciliação com o sistema
-  real de sync via API externa)
+REAL_MAPPING_GAPS: 3 (two parallel create/edit flows with divergent field coverage,
+  ArtistaCadastro.tsx orphaned/unreachable through the UI; ~41 physical columns of the artists table reserved
+  but unused — the real data lives in metadata jsonb, a correction of the Phase 1 classification;
+  manual static follower/listener counters coexist with no reconciliation against the real
+  sync system via the external API)
 AUTHORIZATION_GAPS: 0
 TENANT_ISOLATION_GAPS: 0
-CREDENTIALS_REQUIRED_LATER: 2 (Spotify: SPOTIFY_CLIENT_ID+SPOTIFY_CLIENT_SECRET, plataforma;
-  YouTube: YOUTUBE_API_KEY, plataforma) — não solicitadas ao usuário, auditoria não bloqueada por
-  isso.
+CREDENTIALS_REQUIRED_LATER: 2 (Spotify: SPOTIFY_CLIENT_ID+SPOTIFY_CLIENT_SECRET, platform;
+  YouTube: YOUTUBE_API_KEY, platform) — not requested from the user, audit not blocked by
+  this.
 ```

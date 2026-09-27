@@ -4,8 +4,8 @@ STATUS: COMPLETE
 
 ## 0. Central objective — critical findings up front
 
-**RH_DOMAIN_MEANING**: `rh` is an internal **HR/employee records management system** (funcionários,
-folha de pagamento, férias/ausências, documentos) — confirmed by evidence to be a record-keeping tool
+**RH_DOMAIN_MEANING**: `rh` is an internal **HR/employee records management system** (employees,
+payroll, vacations/absences, documents) — confirmed by evidence to be a record-keeping tool
 entirely separate from platform authentication/authorization. An `Employee` (`funcionário`) is **not**
 the same entity as a platform `User`/`OrgMember` (§8) — there is no FK between them, only an optional,
 non-persisted display-only linkage attempt.
@@ -18,8 +18,9 @@ request outright.** This module has the highest concentration of such breaks fou
 series:
 
 1. **Employee create/update — 100% broken.** `CreateEmployeeDto` requires `nome` and accepts only
-   13 fields (`nome, cargo, departamento, tipo_contrato, status, email, telefone, cpf, salario,
-   data_admissao, data_demissao, documentos, metadata`). `FuncionarioFormModal.tsx` (lines 160-176)
+   13 fields
+   (`nome, cargo, departamento, tipo_contrato, status, email, telefone, cpf, salario, data_admissao, data_demissao, documentos, metadata`).
+   `FuncionarioFormModal.tsx` (lines 160-176)
    builds and sends `{nome_completo, cpf, rg, data_nascimento, email, telefone, endereco, cargo, setor,
    tipo_contrato, data_admissao, salario_base, status, observacoes, vinculo_usuario_id}` — it **never
    sends `nome`** (the one required field) and sends 8 fields the DTO doesn't whitelist (`nome_completo,
@@ -52,8 +53,8 @@ not inferred.
 
 Beyond create/edit, **the employee list/table is non-functional even for reading**. Migration
 `20260712000003_HrFormFieldColumns.ts` added 8 real physical columns to `employees`
-(`nome_completo, rg, data_nascimento, endereco, setor, salario_base, observacoes,
-vinculo_usuario_id`) — but `EmployeeEntity` (`entities.ts:1692-1722`) **never declares any of them**.
+(`nome_completo, rg, data_nascimento, endereco, setor, salario_base, observacoes, vinculo_usuario_id`)
+— but `EmployeeEntity` (`entities.ts:1692-1722`) **never declares any of them**.
 TypeORM therefore never selects or returns them via `GET /hr/employees`. `RH.tsx`'s table (confirmed
 directly, lines 656-676, 993) reads `f.nome_completo`, `f.setor`, `f.salario_base`,
 `f.vinculo_usuario_id` for every row — **all four render blank/"—"/N/A for every employee that
@@ -67,9 +68,10 @@ cannot see it at all, on either the read or write side).
 The same drift pattern recurs on `payroll_entries` (orphaned physical `funcionario_id`, `mes_referencia`,
 `bonus`, `data_pagamento`, `observacoes`, never mapped in `PayrollEntryEntity`) and `leave_requests`
 (orphaned physical `funcionario_id`, `dias_totais`, `observacoes`). The migration's own docstring
-(`20260712000003_HrFormFieldColumns.ts:4-12`) documents the *intended* design — *"cada campo do
-formulário tem a SUA coluna física... colunas legadas são espelhadas pelo service a partir dos campos
-do formulário"* — i.e. `HrService` was supposed to mirror form field names into these legacy columns.
+(`20260712000003_HrFormFieldColumns.ts:4-12`) documents the *intended* design —
+*"cada campo do formulário tem a SUA coluna física... colunas legadas são espelhadas pelo service a partir dos campos do formulário"*
+(every form field has ITS OWN physical column... legacy columns are mirrored by the service from the
+form fields) — i.e. `HrService` was supposed to mirror form field names into these legacy columns.
 **This mirroring was never implemented** — confirmed directly: `hr.service.ts`'s `createEmployee`/
 `updateEmployee`/`createPayroll`/`createLeaveRequest` never reference any of the 16 orphaned columns
 across all three tables.
@@ -111,20 +113,20 @@ severity of the confirmed CRUD breaks already found, but consistent with the sys
 
 | UI Label | Form field | API field sent | DTO accepts it? | Persisted |
 |---|---|---|---|---|
-| Nome completo | `nome_completo` | `nome_completo` | **NO** (DTO wants `nome`) | **NO — request rejected (§0.1)** |
-| Cargo | `cargo` | `cargo` | yes | NO (blocked by the same rejected request) |
-| Setor | `setor` | `setor` | **NO** (DTO/entity have no `setor`) | NO |
-| Tipo de contrato | `tipo_contrato` | `tipo_contrato` | yes | NO |
-| Data de admissão | `data_admissao` | `data_admissao` | yes | NO |
-| Salário base | `salario_base` | `salario_base` | **NO** (DTO/entity want `salario`) | NO |
-| Status | `status` | `status` | yes, but enum values differ (§9) | NO |
-| CPF / RG / Data de nascimento / Endereço | respective fields | `cpf`/`rg`/`data_nascimento`/`endereco` | `cpf` yes; `rg`/`data_nascimento`/`endereco` **NO** | NO |
-| Observações | `observacoes` | `observacoes` | **NO** | NO |
-| Vincular a Usuário do Sistema | `vinculo_usuario_id` | `vinculo_usuario_id` | **NO** | NO (and even if it were, entity doesn't declare the column — §8) |
+| "Nome completo" (Full name) | `nome_completo` | `nome_completo` | **NO** (DTO wants `nome`) | **NO — request rejected (§0.1)** |
+| "Cargo" (Position) | `cargo` | `cargo` | yes | NO (blocked by the same rejected request) |
+| "Setor" (Sector) | `setor` | `setor` | **NO** (DTO/entity have no `setor`) | NO |
+| "Tipo de contrato" (Contract type) | `tipo_contrato` | `tipo_contrato` | yes | NO |
+| "Data de admissão" (Hire date) | `data_admissao` | `data_admissao` | yes | NO |
+| "Salário base" (Base salary) | `salario_base` | `salario_base` | **NO** (DTO/entity want `salario`) | NO |
+| "Status" | `status` | `status` | yes, but enum values differ (§9) | NO |
+| "CPF" / "RG" / "Data de nascimento" / "Endereço" (tax ID / ID card / birth date / address) | respective fields | `cpf`/`rg`/`data_nascimento`/`endereco` | `cpf` yes; `rg`/`data_nascimento`/`endereco` **NO** | NO |
+| "Observações" (Notes) | `observacoes` | `observacoes` | **NO** | NO |
+| "Vincular a Usuário do Sistema" (Link to system user) | `vinculo_usuario_id` | `vinculo_usuario_id` | **NO** | NO (and even if it were, entity doesn't declare the column — §8) |
 
 `nome` (the DTO's one required field) is **never sent by the form at all** — even setting aside every
 other mismatch, this alone guarantees rejection. Every field in the table above is therefore
-`PERSISTED: NÃO` today, not because each field individually fails, but because the entire request never
+`PERSISTED: NÃO` (no) today, not because each field individually fails, but because the entire request never
 reaches persistence.
 
 ## 5. Edit vs Create
@@ -185,9 +187,9 @@ backend resource `rh`) — appropriately separate from user/auth permissions.
 
 ## 9. Status — `EmployeeStatus` enum mismatch
 
-Backend `EmployeeStatus` (`packages/types/src/enums.ts`): `ativo | inativo | ferias | licenca |
-demitido`. Frontend `STATUS_FUNCIONARIO` (`useFuncionarios.ts:28-34`, confirmed directly): `ativo |
-inativo | férias | afastado | desligado` — a **different value set**: accented `"férias"` (backend has
+Backend `EmployeeStatus` (`packages/types/src/enums.ts`): `ativo | inativo | ferias | licenca | demitido`.
+Frontend `STATUS_FUNCIONARIO` (`useFuncionarios.ts:28-34`, confirmed directly):
+`ativo | inativo | férias | afastado | desligado` — a **different value set**: accented `"férias"` (backend has
 unaccented `"ferias"`), and `"afastado"`/`"desligado"` where the backend has `"licenca"`/`"demitido"`.
 `CreateEmployeeDto.status` is `@IsEnum(EmployeeStatus)`-validated — any of the three divergent frontend
 values, if ever sent, would be rejected on enum grounds **independently of and in addition to** the
@@ -195,13 +197,13 @@ values, if ever sent, would be rejected on enum grounds **independently of and i
 engine governs these transitions (§7's `NOT_PRESENT` finding extends to employees too) —
 `STATUS_WORKFLOW: FIELD_ONLY`, not `REAL_WORKFLOW`.
 
-`PayrollStatus` (`pendente|processado|pago|cancelado`) and `LeaveRequestStatus` (`pendente|aprovado|
-rejeitado|concluido`) were not found to have an equivalent frontend/backend value-set mismatch (the
+`PayrollStatus` (`pendente|processado|pago|cancelado`) and `LeaveRequestStatus`
+(`pendente|aprovado|rejeitado|concluido`) were not found to have an equivalent frontend/backend value-set mismatch (the
 leave-request gap is a *route*-availability problem, §7, not a value-naming one).
 
 ## 10. `Auditoria.tsx` — RH section
 
-`AUDITORIA_TSX_RH_SECTION_COMPLETE: SIM` — section confirmed present (`runner.ts`, module `"rh"`, table
+`AUDITORIA_TSX_RH_SECTION_COMPLETE: SIM` (yes) — section confirmed present (`runner.ts`, module `"rh"`, table
 `"funcionarios"`):
 
 ```
@@ -215,8 +217,8 @@ fields:
 
 **Direct, doubly-confirmed consequence of §1**: since `GET /hr/employees` never returns `nome_completo`
 (the entity doesn't declare the column) regardless of whether any data exists for it in the physical
-table, this completeness rule will flag **every employee in the system, unconditionally, as "Funcionário
-sem nome"** — not a data-quality signal, a structural blind spot in the auditor itself, inherited
+table, this completeness rule will flag **every employee in the system, unconditionally, as
+"Funcionário sem nome"** (employee without a name) — not a data-quality signal, a structural blind spot in the auditor itself, inherited
 directly from the same entity/column gap that already breaks the main list view.
 
 ## 11. Tenant Isolation & Permissions
@@ -288,17 +290,17 @@ This module ties with (and arguably exceeds) `releases.md` for the most severely
 found this session — but where `releases` had one precise, single-field root cause blocking create/edit,
 `rh` has **four independent field-mapping breaks** (one per sub-resource) **plus** a structurally
 separate entity/physical-table drift that independently breaks the read/list/search/filter path even
-before considering writes. Every one of its four tabs (Funcionários, Folha de Pagamento, Férias e
-Ausências, Documentos) is confirmed non-functional for its primary create action through the real UI
+before considering writes. Every one of its four tabs ("Funcionários", "Folha de Pagamento",
+"Férias e Ausências", "Documentos" — Employees, Payroll, Vacations and Absences, Documents) is confirmed non-functional for its primary create action through the real UI
 today. Tenant isolation, authorization, and the PII-encryption layer are, independently, all sound —
 this is a pure field-contract/entity-declaration problem, not a security problem.
 
-## Contadores finais (Zero-Gap)
+## Final counters (Zero-Gap)
 
 ```
 MODULE_STATUS: COMPLETE
-RH_DOMAIN_MEANING: internal HR/employee records management (funcionários, folha de pagamento, férias/
-  ausências, documentos) — Employee is structurally distinct from platform User/OrgMember, no FK exists
+RH_DOMAIN_MEANING: internal HR/employee records management (employees, payroll, vacations/
+  absences, documents) — Employee is structurally distinct from platform User/OrgMember, no FK exists
 SUBDOMAINS_AUDITED: 4
 COMPONENTS_AUDITED: 5
 HOOKS_AUDITED: 4
@@ -315,7 +317,7 @@ TRUNCATION_GAPS: 1 (systemic limit=50 across all 3 list endpoints)
 AUTHORIZATION_GAPS: 0
 TENANT_ISOLATION_GAPS: 0
 PERMISSIONS_AUDITED: 10 endpoint-role pairs
-AUDITORIA_TSX_RH_SECTION_COMPLETE: SIM
+AUDITORIA_TSX_RH_SECTION_COMPLETE: YES
 EMPLOYEE_USER_IDENTITY_LINK: NOT_IMPLEMENTED (display-only string, no FK, unreadable via API regardless)
 UNMAPPED_FIELDS: 0
 UNKNOWN_FIELD_CLASSIFICATIONS: 0

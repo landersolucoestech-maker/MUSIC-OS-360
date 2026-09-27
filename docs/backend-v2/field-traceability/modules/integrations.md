@@ -1,333 +1,333 @@
-# Módulo `integrations` — Auditoria Zero-Gap (Fase 2, Prompt 106)
+# Module `integrations` — Zero-Gap Audit (Phase 2, Prompt 106)
 
 STATUS: **COMPLETE** — UNMAPPED_PROVIDERS: 0.
 
-Escopo real descoberto por rastreamento de imports/endpoints/env vars (não limitado a pastas
-chamadas "integrations"): backend `apps/api/src/modules/integrations/**` (11 provider subfolders +
-infraestrutura reutilizável), `apps/api/src/modules/billing/**` (Stripe), `apps/api/src/modules/
-uploads/**` (Cloudflare R2), `apps/api/src/core/external-data/**` (framework genérico de
-distribuidoras/PROs), `apps/api/src/core/config/env.schema.ts` (inventário de credenciais),
-`apps/web/src/modules/integrations/**` (~55 arquivos: hooks/adapters/components/pages/services/
+Real scope discovered by tracing imports/endpoints/env vars (not limited to folders
+named "integrations"): backend `apps/api/src/modules/integrations/**` (11 provider subfolders +
+reusable infrastructure), `apps/api/src/modules/billing/**` (Stripe), `apps/api/src/modules/
+uploads/**` (Cloudflare R2), `apps/api/src/core/external-data/**` (generic framework for
+distributors/PROs), `apps/api/src/core/config/env.schema.ts` (credentials inventory),
+`apps/web/src/modules/integrations/**` (~55 files: hooks/adapters/components/pages/services/
 webhooks), `apps/web/src/modules/releases/services/distribution-platforms.ts`,
-`apps/web/src/modules/settings/pages/Configuracoes.tsx`. `apps/api-v2` não tem nenhuma camada de
-integrações implementada ainda (confirmado — só scaffold de config/database).
+`apps/web/src/modules/settings/pages/Configuracoes.tsx`. `apps/api-v2` has no integrations
+layer implemented yet (confirmed — only config/database scaffolding).
 
-Nota de método: duas tentativas de pesquisa paralela via subagentes falharam por limite de sessão
-da conta antes de produzir resultado; toda a evidência deste relatório foi coletada por leitura
-direta e completa dos arquivos-fonte listados acima (não por amostragem/grep superficial).
-
----
-
-## 1. Arquitetura geral do backend (contexto para toda a auditoria)
-
-O backend de integrações é, de forma consistente, o módulo com a engenharia mais madura encontrada
-nesta série de auditorias até agora:
-
-- `IntegrationBaseService` (classe base estendida por Abramus, e usada por padrão equivalente em
-  Spotify/Instagram/TikTok/GoogleAds/SoundCloud/AppleMusic/YouTube/Deezer) — CRUD de credenciais
-  criptografadas (`credentials_encrypted`, AES-256-GCM via `EncryptionService`), CRUD de tokens OAuth
-  (`access_token_encrypted`/`refresh_token_encrypted`), estado assinado de OAuth (`buildSignedState`/
-  `verifySignedState`, HMAC-SHA256 + `timingSafeEqual`), `fetch()` guardado por `CircuitBreaker` +
-  timeout de 10s (`resilientFetch`).
-- `WebhookService` — infraestrutura reutilizável de webhook: idempotência real via
-  `webhook_events.external_id` (constraint `UNIQUE` confirmada no banco), persistência do payload
-  ANTES do processamento (trilha de auditoria mesmo em falha), `markProcessed()` com
-  `retry_count`, validação HMAC-SHA256 (`validateHmacSignature`, `timingSafeEqual`) e validação de
-  segredo compartilhado (`validateSharedSecret`) — usada por Autentique; Stripe usa a verificação
-  nativa do SDK (`stripe.webhooks.constructEvent`) em vez desta classe.
-- `CircuitBreakerRegistry`/`resilientFetch` — circuit breaker por provider (`CircuitBreaker({name:
-  ...})`), timeout default aplicado a toda chamada de saída.
-- OAuth genérico (`POST /integrations/oauth/init` → `POST /integrations/oauth/exchange` → `GET
-  /integrations/oauth/status` → `DELETE /integrations/oauth/disconnect`) para 5 famílias de
-  plataforma (Meta/Instagram, TikTok, Google/YouTube, DocuSign, Stripe Connect) — `exchange_token`
-  de uso único, TTL 10 min, emitido só para chamador autenticado, nunca aceita `redirect_uri` do
-  cliente (constrói a partir de `APP_URL`), client_secret nunca sai do backend.
-
-Isso contrasta com o padrão observado em módulos de domínio (catalog/contracts/events etc.), onde a
-maioria dos gaps golpeava a camada de mapeamento de campos — aqui a infraestrutura de plataforma é
-sólida; os gaps reais deste módulo estão concentrados em **consumo pelo frontend** (adapters
-genéricos deliberadamente inertes) e em **provedores sem API oficial ainda pesquisada**
-(distribuidoras).
+Method note: two attempts at parallel research via subagents failed due to the account's session
+limit before producing a result; all the evidence in this report was collected by direct and
+complete reading of the source files listed above (not by sampling/superficial grep).
 
 ---
 
-## 2. Inventário canônico de providers
+## 1. General backend architecture (context for the whole audit)
+
+The integrations backend is, consistently, the module with the most mature engineering found
+in this audit series so far:
+
+- `IntegrationBaseService` (a base class extended by Abramus, and used in an equivalent pattern by
+  Spotify/Instagram/TikTok/GoogleAds/SoundCloud/AppleMusic/YouTube/Deezer) — CRUD of encrypted
+  credentials (`credentials_encrypted`, AES-256-GCM via `EncryptionService`), CRUD of OAuth tokens
+  (`access_token_encrypted`/`refresh_token_encrypted`), signed OAuth state (`buildSignedState`/
+  `verifySignedState`, HMAC-SHA256 + `timingSafeEqual`), `fetch()` guarded by a `CircuitBreaker` +
+  a 10s timeout (`resilientFetch`).
+- `WebhookService` — reusable webhook infrastructure: real idempotency via
+  `webhook_events.external_id` (`UNIQUE` constraint confirmed in the database), payload persisted
+  BEFORE processing (audit trail even on failure), `markProcessed()` with
+  `retry_count`, HMAC-SHA256 validation (`validateHmacSignature`, `timingSafeEqual`) and
+  shared-secret validation (`validateSharedSecret`) — used by Autentique; Stripe uses the SDK's
+  native verification (`stripe.webhooks.constructEvent`) instead of this class.
+- `CircuitBreakerRegistry`/`resilientFetch` — circuit breaker per provider (`CircuitBreaker({name:
+  ...})`), default timeout applied to every outbound call.
+- Generic OAuth (`POST /integrations/oauth/init` → `POST /integrations/oauth/exchange` → `GET
+  /integrations/oauth/status` → `DELETE /integrations/oauth/disconnect`) for 5 platform
+  families (Meta/Instagram, TikTok, Google/YouTube, DocuSign, Stripe Connect) — a single-use
+  `exchange_token`, TTL 10 min, issued only to an authenticated caller, never accepts a `redirect_uri` from the
+  client (builds it from `APP_URL`), the client_secret never leaves the backend.
+
+This contrasts with the pattern observed in domain modules (catalog/contracts/events etc.), where
+most gaps hit the field-mapping layer — here the platform infrastructure is
+solid; this module's real gaps are concentrated in **frontend consumption** (generic
+adapters that are deliberately inert) and in **providers with no official API researched yet**
+(distributors).
+
+---
+
+## 2. Canonical provider inventory
 
 | # | PROVIDER | CATEGORY | FRONTEND_EXISTS | BACKEND_EXISTS | DATABASE_EXISTS | RUNTIME_ACTIVE | STATUS |
 |---|---|---|---|---|---|---|---|
-| 1 | Stripe (billing SaaS) | PAYMENTS | SIM | SIM | SIM | SIM | PARTIAL |
-| 2 | Stripe Connect (OAuth genérico) | PAYMENTS | SIM (client_id só) | SIM | SIM | SIM | PARTIAL |
-| 3 | DocuSign | ELECTRONIC_SIGNATURE | SIM | SIM (só OAuth) | SIM | SIM | PARTIAL |
-| 4 | Autentique | ELECTRONIC_SIGNATURE | SIM (UI), mas adapter sempre inerte | SIM (completo) | SIM | SIM (backend) / NÃO (frontend nunca chama) | PARTIAL |
-| 5 | Clicksign | ELECTRONIC_SIGNATURE | SIM (seletor só) | NÃO | NÃO | NÃO | STUB |
-| 6 | Spotify | MUSIC_STREAMING | SIM | SIM | SIM | SIM | IMPLEMENTED |
-| 7 | YouTube (Data API) | VIDEO / MUSIC_STREAMING | SIM | SIM | N/A (sem persistência própria) | SIM | IMPLEMENTED |
-| 8 | YouTube/Google (OAuth corporativo — Ads/Business) | SOCIAL_MEDIA/MARKETING | SIM | SIM | SIM | SIM | IMPLEMENTED |
-| 9 | Deezer | MUSIC_STREAMING | SIM | SIM | N/A (API pública, sem OAuth) | SIM | IMPLEMENTED |
-| 10 | SoundCloud | MUSIC_STREAMING | SIM | SIM | SIM (credenciais) | SIM | IMPLEMENTED |
-| 11 | Apple Music | MUSIC_STREAMING | SIM | SIM | SIM (credenciais) | SIM | IMPLEMENTED |
-| 12 | Instagram/Meta (orgânico + corporativo) | SOCIAL_MEDIA | SIM | SIM | SIM | SIM | IMPLEMENTED |
-| 13 | TikTok (orgânico) | SOCIAL_MEDIA | SIM | SIM | SIM | SIM | IMPLEMENTED |
-| 14 | TikTok Ads | SOCIAL_MEDIA/MARKETING | SIM | SIM | SIM | SIM | IMPLEMENTED |
-| 15 | Google Ads | MARKETING | SIM | SIM | SIM | SIM | IMPLEMENTED |
-| 16 | ABRAMUS | RIGHTS_REGISTRY | SIM | SIM | SIM (credenciais) | SIM | PARTIAL |
-| 17 | ACRCloud | AUDIO_RECOGNITION | SIM (contrato divergente) | SIM | N/A (sem persistência) | SIM | PARTIAL |
-| 18 | Cloudflare R2 | STORAGE | SIM | SIM | SIM (via `uploads`) | SIM | IMPLEMENTED |
-| 19 | Resend (SMTP transacional) | EMAIL | NÃO (só backend) | SIM | N/A | SIM | IMPLEMENTED |
-| 20 | Sentry | OBSERVABILITY | SIM | SIM | N/A | SIM | IMPLEMENTED |
-| 21 | PostHog | ANALYTICS | NÃO (confirmado só no backend) | SIM (config presente) | N/A | PARCIAL (config opcional, sem uso de código encontrado além do env var) | STUB |
-| 22 | OpenAI / Anthropic / Google AI (roteador de IA) | AI | SIM | SIM | SIM (`ai_jobs`/`ai_usage_logs`) | SIM | IMPLEMENTED |
-| 23 | ONErpm | MUSIC_DISTRIBUTION | SIM (link estático) | NÃO (só framework genérico não-registrado) | NÃO | NÃO | STUB |
-| 24 | DistroKid | MUSIC_DISTRIBUTION | SIM (link estático) | NÃO | NÃO | NÃO | STUB |
-| 25 | Symphonic | MUSIC_DISTRIBUTION | SIM (link estático) | NÃO | NÃO | NÃO | STUB |
-| 26 | SoundOn | MUSIC_DISTRIBUTION | SIM (link estático) | NÃO | NÃO | NÃO | STUB |
-| 27 | MusicPro | MUSIC_DISTRIBUTION | SIM (link estático) | NÃO | NÃO | NÃO | STUB |
-| 28 | SomVibe | MUSIC_DISTRIBUTION | SIM (link estático) | NÃO | NÃO | NÃO | STUB |
-| 29 | Framework genérico distribuidora/sociedade (`external-data`) | RIGHTS_REGISTRY/MUSIC_DISTRIBUTION | NÃO | SIM (infra completa, 0 providers reais registrados) | SIM (webhook genérico) | SIM (infra) / NÃO (nenhum provider real) | CONFIG_ONLY |
-| 30 | NF-e (emissão fiscal) | OTHER | SIM (UI, sem coleta real) | NÃO | NÃO | NÃO | STUB |
-| 31 | ECAD | RIGHTS_REGISTRY | SIM (hook `useEcad`) | NÃO (nenhum controller/service backend encontrado) | NÃO | NÃO | UI_ONLY |
-| 32 | UBC | RIGHTS_REGISTRY | SIM (hook `useUbc`) | NÃO (nenhum controller/service backend encontrado) | NÃO | NÃO | UI_ONLY |
+| 1 | Stripe (SaaS billing) | PAYMENTS | YES | YES | YES | YES | PARTIAL |
+| 2 | Stripe Connect (generic OAuth) | PAYMENTS | YES (client_id only) | YES | YES | YES | PARTIAL |
+| 3 | DocuSign | ELECTRONIC_SIGNATURE | YES | YES (OAuth only) | YES | YES | PARTIAL |
+| 4 | Autentique | ELECTRONIC_SIGNATURE | YES (UI), but the adapter is always inert | YES (complete) | YES | YES (backend) / NO (the frontend never calls it) | PARTIAL |
+| 5 | Clicksign | ELECTRONIC_SIGNATURE | YES (selector only) | NO | NO | NO | STUB |
+| 6 | Spotify | MUSIC_STREAMING | YES | YES | YES | YES | IMPLEMENTED |
+| 7 | YouTube (Data API) | VIDEO / MUSIC_STREAMING | YES | YES | N/A (no persistence of its own) | YES | IMPLEMENTED |
+| 8 | YouTube/Google (corporate OAuth — Ads/Business) | SOCIAL_MEDIA/MARKETING | YES | YES | YES | YES | IMPLEMENTED |
+| 9 | Deezer | MUSIC_STREAMING | YES | YES | N/A (public API, no OAuth) | YES | IMPLEMENTED |
+| 10 | SoundCloud | MUSIC_STREAMING | YES | YES | YES (credentials) | YES | IMPLEMENTED |
+| 11 | Apple Music | MUSIC_STREAMING | YES | YES | YES (credentials) | YES | IMPLEMENTED |
+| 12 | Instagram/Meta (organic + corporate) | SOCIAL_MEDIA | YES | YES | YES | YES | IMPLEMENTED |
+| 13 | TikTok (organic) | SOCIAL_MEDIA | YES | YES | YES | YES | IMPLEMENTED |
+| 14 | TikTok Ads | SOCIAL_MEDIA/MARKETING | YES | YES | YES | YES | IMPLEMENTED |
+| 15 | Google Ads | MARKETING | YES | YES | YES | YES | IMPLEMENTED |
+| 16 | ABRAMUS | RIGHTS_REGISTRY | YES | YES | YES (credentials) | YES | PARTIAL |
+| 17 | ACRCloud | AUDIO_RECOGNITION | YES (divergent contract) | YES | N/A (no persistence) | YES | PARTIAL |
+| 18 | Cloudflare R2 | STORAGE | YES | YES | YES (via `uploads`) | YES | IMPLEMENTED |
+| 19 | Resend (transactional SMTP) | EMAIL | NO (backend only) | YES | N/A | YES | IMPLEMENTED |
+| 20 | Sentry | OBSERVABILITY | YES | YES | N/A | YES | IMPLEMENTED |
+| 21 | PostHog | ANALYTICS | NO (confirmed backend only) | YES (config present) | N/A | PARTIAL (optional config, no code usage found beyond the env var) | STUB |
+| 22 | OpenAI / Anthropic / Google AI (AI router) | AI | YES | YES | YES (`ai_jobs`/`ai_usage_logs`) | YES | IMPLEMENTED |
+| 23 | ONErpm | MUSIC_DISTRIBUTION | YES (static link) | NO (only an unregistered generic framework) | NO | NO | STUB |
+| 24 | DistroKid | MUSIC_DISTRIBUTION | YES (static link) | NO | NO | NO | STUB |
+| 25 | Symphonic | MUSIC_DISTRIBUTION | YES (static link) | NO | NO | NO | STUB |
+| 26 | SoundOn | MUSIC_DISTRIBUTION | YES (static link) | NO | NO | NO | STUB |
+| 27 | MusicPro | MUSIC_DISTRIBUTION | YES (static link) | NO | NO | NO | STUB |
+| 28 | SomVibe | MUSIC_DISTRIBUTION | YES (static link) | NO | NO | NO | STUB |
+| 29 | Generic distributor/society framework (`external-data`) | RIGHTS_REGISTRY/MUSIC_DISTRIBUTION | NO | YES (complete infra, 0 real providers registered) | YES (generic webhook) | YES (infra) / NO (no real provider) | CONFIG_ONLY |
+| 30 | NF-e (Brazilian electronic invoice issuance) | OTHER | YES (UI, no real data collection) | NO | NO | NO | STUB |
+| 31 | ECAD | RIGHTS_REGISTRY | YES (`useEcad` hook) | NO (no backend controller/service found) | NO | NO | UI_ONLY |
+| 32 | UBC | RIGHTS_REGISTRY | YES (`useUbc` hook) | NO (no backend controller/service found) | NO | NO | UI_ONLY |
 
-Nota: "Meta Ads" (`meta_ads`) não é um provider distinto — é uma das 3 variantes do mesmo fluxo
-corporativo Instagram/Meta (linha 12), já contabilizado ali; listado separadamente na matriz §5.8
-apenas para detalhar o mecanismo, não como entrada adicional do inventário canônico.
+Note: "Meta Ads" (`meta_ads`) is not a distinct provider — it is one of the 3 variants of the same
+corporate Instagram/Meta flow (row 12), already counted there; listed separately in matrix §5.8
+only to detail the mechanism, not as an additional entry in the canonical inventory.
 
 `UNKNOWN: 0`. `PROVIDERS_AUDITED: 32`.
 
 ---
 
-## 3. Providers pesquisados explicitamente e não encontrados
+## 3. Providers explicitly searched for and not found
 
 `Instagram/TikTok/Deezer/Apple Music/SoundCloud/YouTube/Spotify/Meta/Google/DocuSign/Autentique/
-Stripe/ABRAMUS/ACRCloud/Sentry/R2/AWS-S3/SMTP/Supabase` — todos pesquisados por nome conforme §5 do
-prompt. `AWS/S3`: **não encontrado como provider ativo separado** — todo armazenamento de arquivo
-usa exclusivamente Cloudflare R2 (compatível com a API S3, mas nenhum SDK/credencial `AWS_*` real
-foi encontrado — apenas `R2_*`). `Supabase`: usado para Auth/Realtime/Postgres (já auditado
-integralmente em `auth.md`, não reaberto aqui — fora do escopo de "integração externa de terceiro"
-no sentido deste prompt, é a própria infraestrutura de identidade/banco do sistema).
+Stripe/ABRAMUS/ACRCloud/Sentry/R2/AWS-S3/SMTP/Supabase` — all searched by name per §5 of the
+prompt. `AWS/S3`: **not found as a separate active provider** — all file storage
+uses Cloudflare R2 exclusively (compatible with the S3 API, but no real `AWS_*` SDK/credential
+was found — only `R2_*`). `Supabase`: used for Auth/Realtime/Postgres (already fully audited
+in `auth.md`, not reopened here — outside the scope of "third-party external integration"
+in the sense of this prompt, it is the system's own identity/database infrastructure).
 
 ---
 
-## 4. Providers conhecidos, mas ausentes de configuração de credencial em `env.schema.ts`
+## 4. Known providers, but absent from the credential configuration in `env.schema.ts`
 
-`ECAD`, `UBC`, `Clicksign`, os 6 distribuidores digitais e o framework `external-data` **não têm
-nenhuma variável de ambiente dedicada** em `env.schema.ts` — consistente com a ausência de qualquer
-implementação de backend real para eles (STUB/UI_ONLY/CONFIG_ONLY, não PARTIAL). Isso confirma, por
-uma via de evidência independente (ausência total de superfície de configuração, não apenas ausência
-de código), que nenhum desses providers passou ainda da fase de placeholder/catálogo estático.
+`ECAD`, `UBC`, `Clicksign`, the 6 digital distributors and the `external-data` framework **have no
+dedicated environment variable** in `env.schema.ts` — consistent with the absence of any
+real backend implementation for them (STUB/UI_ONLY/CONFIG_ONLY, not PARTIAL). This confirms, via
+an independent line of evidence (total absence of a configuration surface, not merely absence
+of code), that none of these providers has yet moved past the placeholder/static-catalog phase.
 
 ---
 
-## 5. Matriz por integração (providers com estado real — 22 de 33)
+## 5. Per-integration matrix (providers with real state — 22 of 33)
 
-### 5.1 Stripe (billing SaaS — assinatura da própria plataforma)
+### 5.1 Stripe (SaaS billing — the platform's own subscription)
 
 ```text
-PURPOSE: cobrança de assinatura SaaS por tenant (planos billing_plans)
+PURPOSE: SaaS subscription billing per tenant (billing_plans plans)
 FRONTEND_ENTRYPOINTS: BillingContext.tsx, usePlanFeatures.ts, useStripe.ts
-HOOKS: useStripeStatus (hardcoded status:"disabled", nunca consulta o backend real),
+HOOKS: useStripeStatus (hardcoded status:"disabled", never queries the real backend),
        useStripeSubscription (REAL — GET /billing/subscription),
-       useStripeCheckout/useStripePortal (stubs explícitos — disabledIntegration("Stripe"))
+       useStripeCheckout/useStripePortal (explicit stubs — disabledIntegration("Stripe"))
 BACKEND_CONTROLLER: billing.controller.ts — POST /billing/checkout, POST /billing/portal,
        GET /billing/subscription, POST /billing/webhooks/stripe
 BACKEND_SERVICE: billing.service.ts, dunning.service.ts, billing-plans.service.ts
-ADAPTER: apps/web/src/modules/integrations/adapters/payments.adapter.ts — SEMPRE
-       createUnavailablePaymentsProvider() (dead/stub layer, não usado pelos hooks reais)
+ADAPTER: apps/web/src/modules/integrations/adapters/payments.adapter.ts — ALWAYS
+       createUnavailablePaymentsProvider() (dead/stub layer, not used by the real hooks)
 DATABASE_TABLES: billing_plans, billing_settings, billing_subscriptions
-AUTH_MODEL: API_KEY (STRIPE_SECRET_KEY, server-side) para checkout/portal/webhook;
-       OAUTH_AUTHORIZATION_CODE para Stripe Connect (ver 5.2)
-CREDENTIAL_MODEL: PLATFORM_SHARED (STRIPE_SECRET_KEY/STRIPE_WEBHOOK_SECRET da conta da plataforma)
-SYNC_DIRECTION: BIDIRECTIONAL (checkout/portal criam sessão; webhook recebe eventos de mudança)
-SOURCE_OF_TRUTH: EXTERNAL (Stripe é a fonte de verdade da assinatura; billing_subscriptions é cache
-       local sincronizado via webhook)
-WEBHOOK: SIM — POST /billing/webhooks/stripe, @Public(), assinatura verificada via SDK real
-       (stripe.webhooks.constructEvent(rawBody, signature, secret)), raw body preservado
-       (RawBodyRequest<Request>), erro de assinatura → 400 explícito
-BACKGROUND_JOB: NÃO encontrado dedicado (dunning.service.ts trata retentativa de cobrança, não
-       verificado como job agendado nesta etapa vs. disparado por webhook)
-REALTIME_EFFECT: evento `billing:plan_upgraded`/`billing:trial_ending`/`billing:payment_failed`/
-       `billing:cancelled` já catalogados no contrato canônico (doc37) — trial_ending e
-       payment_failed sem consumidor frontend confirmado (doc37, não reauditado aqui)
-STATUS: PARTIAL — backend completo e real (checkout/portal/webhook/subscription); frontend
-       DELIBERADAMENTE nunca chama checkout/portal (hooks stub explícitos, comentário do próprio
-       código: "standalone — sem billing real; plano simulado em TenantContext")
+AUTH_MODEL: API_KEY (STRIPE_SECRET_KEY, server-side) for checkout/portal/webhook;
+       OAUTH_AUTHORIZATION_CODE for Stripe Connect (see 5.2)
+CREDENTIAL_MODEL: PLATFORM_SHARED (STRIPE_SECRET_KEY/STRIPE_WEBHOOK_SECRET of the platform's account)
+SYNC_DIRECTION: BIDIRECTIONAL (checkout/portal create a session; the webhook receives change events)
+SOURCE_OF_TRUTH: EXTERNAL (Stripe is the source of truth for the subscription; billing_subscriptions is a
+       local cache synchronized via webhook)
+WEBHOOK: YES — POST /billing/webhooks/stripe, @Public(), signature verified via the real SDK
+       (stripe.webhooks.constructEvent(rawBody, signature, secret)), raw body preserved
+       (RawBodyRequest<Request>), signature error → explicit 400
+BACKGROUND_JOB: NO dedicated one found (dunning.service.ts handles payment retry, not
+       verified in this step as a scheduled job vs. triggered by webhook)
+REALTIME_EFFECT: events `billing:plan_upgraded`/`billing:trial_ending`/`billing:payment_failed`/
+       `billing:cancelled` already cataloged in the canonical contract (doc37) — trial_ending and
+       payment_failed with no confirmed frontend consumer (doc37, not re-audited here)
+STATUS: PARTIAL — complete and real backend (checkout/portal/webhook/subscription); the frontend
+       DELIBERATELY never calls checkout/portal (explicit stub hooks, comment in the code
+       itself: "standalone — sem billing real; plano simulado em TenantContext" (standalone — no real billing; plan simulated in TenantContext))
 ```
 
-### 5.2 Stripe Connect (via OAuth genérico)
+### 5.2 Stripe Connect (via generic OAuth)
 
 ```text
-PURPOSE: branch dentro do fluxo OAuth genérico (GENERIC_OAUTH_PLATFORMS inclui 'stripe_connect')
-BACKEND: integrations.controller.ts oauthExchange() — Basic Auth de STRIPE_SECRET_KEY,
+PURPOSE: a branch inside the generic OAuth flow (GENERIC_OAUTH_PLATFORMS includes 'stripe_connect')
+BACKEND: integrations.controller.ts oauthExchange() — Basic Auth with STRIPE_SECRET_KEY,
        POST https://connect.stripe.com/oauth/token, grant_type=authorization_code
 AUTH_MODEL: OAUTH_AUTHORIZATION_CODE
-CREDENTIAL_MODEL: client_id (STRIPE_CONNECT_CLIENT_ID) PLATFORM_SHARED; token resultante TENANT_OWNED
-       (persistido via IntegrationBaseService.saveOAuthTokens, tenant+user scoped)
-FRONTEND: apenas o mecanismo genérico de popup (OAuthPopupPage.tsx, PRODUCTION_OAUTH_CONFIGS —
-       client_id via VITE_STRIPE_CONNECT_CLIENT_ID) — nenhuma tela dedicada de "conectar conta
-       Stripe Connect" encontrada além do mecanismo genérico de marketing OAuth
-STATUS: IMPLEMENTED no mecanismo genérico, mas propósito de produto (o que Stripe Connect
-       habilitaria neste sistema) não tem nenhum consumidor de domínio identificado — infraestrutura
-       pronta, sem funcionalidade de negócio construída sobre ela (mesma classificação de
-       "mecanismo correto, uso de produto ainda não construído" já vista em outros OAuth genéricos)
+CREDENTIAL_MODEL: client_id (STRIPE_CONNECT_CLIENT_ID) PLATFORM_SHARED; resulting token TENANT_OWNED
+       (persisted via IntegrationBaseService.saveOAuthTokens, tenant+user scoped)
+FRONTEND: only the generic popup mechanism (OAuthPopupPage.tsx, PRODUCTION_OAUTH_CONFIGS —
+       client_id via VITE_STRIPE_CONNECT_CLIENT_ID) — no dedicated "connect Stripe Connect
+       account" screen found beyond the generic marketing OAuth mechanism
+STATUS: IMPLEMENTED in the generic mechanism, but the product purpose (what Stripe Connect
+       would enable in this system) has no identified domain consumer — infrastructure
+       ready, with no business functionality built on top of it (the same classification of
+       "correct mechanism, product use not yet built" already seen in other generic OAuth flows)
 ```
 
 ### 5.3 DocuSign
 
 ```text
-Achado já estabelecido com precisão em docs/backend-v2/77-docusign-private-key-exposure-resolution.md
-— reafirmado aqui, não reaberto: AUTH_MODEL: OAUTH_AUTHORIZATION_CODE (Basic Auth de
-DOCUSIGN_INTEGRATION_KEY:DOCUSIGN_CLIENT_SECRET contra {DOCUSIGN_AUTH_BASE_URL}/oauth/token) —
-NUNCA JWT Grant, DOCUSIGN_PRIVATE_KEY não existe em nenhuma camada atual (RETIRED_NO_RUNTIME_
-DEPENDENCY, achado do doc77, não reavaliado).
-CONNECT_ACCOUNT: IMPLEMENTED (fluxo genérico oauth/exchange)
+Finding already precisely established in docs/backend-v2/77-docusign-private-key-exposure-resolution.md
+— reaffirmed here, not reopened: AUTH_MODEL: OAUTH_AUTHORIZATION_CODE (Basic Auth with
+DOCUSIGN_INTEGRATION_KEY:DOCUSIGN_CLIENT_SECRET against {DOCUSIGN_AUTH_BASE_URL}/oauth/token) —
+NEVER JWT Grant, DOCUSIGN_PRIVATE_KEY does not exist in any current layer (RETIRED_NO_RUNTIME_
+DEPENDENCY, a doc77 finding, not re-evaluated).
+CONNECT_ACCOUNT: IMPLEMENTED (generic oauth/exchange flow)
 OAUTH_START: IMPLEMENTED (OAuthPopupPage.tsx, client_id via VITE_DOCUSIGN_INTEGRATION_KEY)
 OAUTH_CALLBACK: IMPLEMENTED (OAuthCallbackPage.tsx → POST /integrations/oauth/exchange)
-TOKEN_REFRESH: NÃO IMPLEMENTADO (nenhum mecanismo de refresh específico para DocuSign encontrado —
-       diferente de Spotify/Instagram, que têm refresh explícito)
-ACCOUNT_STATUS: NÃO IMPLEMENTADO (sem endpoint de status dedicado além do genérico oauth/status)
+TOKEN_REFRESH: NOT IMPLEMENTED (no DocuSign-specific refresh mechanism found —
+       unlike Spotify/Instagram, which have explicit refresh)
+ACCOUNT_STATUS: NOT IMPLEMENTED (no dedicated status endpoint beyond the generic oauth/status)
 CREATE_ENVELOPE: NOT_IMPLEMENTED
 SEND_ENVELOPE: NOT_IMPLEMENTED
 SIGNERS: NOT_IMPLEMENTED
 ENVELOPE_STATUS: NOT_IMPLEMENTED
 DOWNLOAD_DOCUMENT: NOT_IMPLEMENTED
-WEBHOOK (DocuSign Connect): NONE (confirmado no doc77 — nenhum endpoint/handler)
-FRONTEND: signing.adapter.ts sempre lança erro explícito para "docusign" (createUnavailableSigningProvider)
-STATUS: PARTIAL (conexão de conta real; capacidade de assinatura 0%)
+WEBHOOK (DocuSign Connect): NONE (confirmed in doc77 — no endpoint/handler)
+FRONTEND: signing.adapter.ts always throws an explicit error for "docusign" (createUnavailableSigningProvider)
+STATUS: PARTIAL (real account connection; signing capability 0%)
 ```
 
 ### 5.4 Autentique
 
 ```text
-PURPOSE: assinatura eletrônica de contratos (provider "padrão" da UI, useSigningProviders sempre
-       marca connected:true)
+PURPOSE: electronic signature of contracts (the UI's "default" provider, useSigningProviders always
+       marks connected:true)
 BACKEND_CONTROLLER: POST /integrations/autentique/configure (admin+), POST .../send (editor+),
-       POST .../webhook (rota marcada @RequireRole('editor') mas NÃO @Public() — ver Gap #1 abaixo)
-BACKEND_SERVICE: autentique.service.ts — hardened (Fase 5, conforme comentário do próprio arquivo):
-       timeout 15s via AbortController em toda chamada, retry_count/last_failure_at rastreados em
-       IntegrationEntity.metadata, falhas gravadas em activity_logs, GraphQL real
-       (createDocument mutation) contra https://api.autentique.com.br/v2
-AUTH_MODEL: API_KEY (api_token por tenant, Bearer no header GraphQL)
-CREDENTIAL_MODEL: TENANT_OWNED (cada tenant configura seu próprio api_token via
-       POST /integrations/autentique/configure — token AES-256-GCM em integrations.credentials_encrypted)
-WEBHOOK: SIM — validado por segredo compartilhado (AUTENTIQUE_WEBHOOK_SECRET, mín. 24 chars,
-       obrigatório em produção), idempotente via WebhookService.ingest() (dedup por external_id =
-       event_id/document.id), processa apenas evento "document.signed", resolve tenant por
-       lookup do contrato (autentique_doc_id) via bootstrap admin fora do contexto RLS,
-       depois reprocessa dentro do contexto tenant real (dbContext.runInTenantContext) —
-       arquitetura correta para um webhook que não carrega tenant_id no payload
-SIDE_EFFECTS: contrato → status='assinado', metadata com provider_event_id/synced_at,
-       emite DOMAIN_EVENTS.CONTRACT_SIGNED (mesmo evento que o fluxo manual de assinatura)
-FRONTEND_CONSUMER_GAP CRÍTICO (reforça e precisa o achado de contracts.md): o único componente real
-       de UI para enviar um contrato para assinatura (SendForSigningDialog.tsx) NUNCA chama
-       POST /integrations/autentique/send. Ele passa por signingService.sendForSigning() →
-       resolveSigningAdapter(provider) → signing.adapter.ts, que retorna
-       createUnavailableSigningProvider(provider) PARA QUALQUER VALOR de provider, incluindo
-       "autentique" — não há nenhum branch no adapter que rotea para o backend real. Ou seja: o
-       fluxo de "Enviar para assinatura" na UI real está estruturalmente quebrado para Autentique
-       também, não só para DocuSign/Clicksign — mesmo o backend sendo 100% funcional.
-STATUS: PARTIAL (backend IMPLEMENTED completo; frontend consumer 0% — pior que "zero consumidor",
-       é um consumidor que EXISTE mas está cabeado a um stub que sempre falha)
+       POST .../webhook (route marked @RequireRole('editor') but NOT @Public() — see Gap #1 below)
+BACKEND_SERVICE: autentique.service.ts — hardened (Phase 5, per the file's own comment):
+       15s timeout via AbortController on every call, retry_count/last_failure_at tracked in
+       IntegrationEntity.metadata, failures written to activity_logs, real GraphQL
+       (createDocument mutation) against https://api.autentique.com.br/v2
+AUTH_MODEL: API_KEY (api_token per tenant, Bearer in the GraphQL header)
+CREDENTIAL_MODEL: TENANT_OWNED (each tenant configures its own api_token via
+       POST /integrations/autentique/configure — AES-256-GCM token in integrations.credentials_encrypted)
+WEBHOOK: YES — validated by a shared secret (AUTENTIQUE_WEBHOOK_SECRET, min. 24 chars,
+       mandatory in production), idempotent via WebhookService.ingest() (dedup by external_id =
+       event_id/document.id), processes only the "document.signed" event, resolves the tenant by
+       looking up the contract (autentique_doc_id) via bootstrap admin outside the RLS context,
+       then reprocesses inside the real tenant context (dbContext.runInTenantContext) —
+       the correct architecture for a webhook that does not carry tenant_id in the payload
+SIDE_EFFECTS: contract → status='assinado', metadata with provider_event_id/synced_at,
+       emits DOMAIN_EVENTS.CONTRACT_SIGNED (the same event as the manual signing flow)
+CRITICAL FRONTEND_CONSUMER_GAP (reinforces and sharpens the contracts.md finding): the only real UI
+       component for sending a contract for signature (SendForSigningDialog.tsx) NEVER calls
+       POST /integrations/autentique/send. It goes through signingService.sendForSigning() →
+       resolveSigningAdapter(provider) → signing.adapter.ts, which returns
+       createUnavailableSigningProvider(provider) FOR ANY provider VALUE, including
+       "autentique" — there is no branch in the adapter that routes to the real backend. That is: the
+       "Send for signature" flow in the real UI is structurally broken for Autentique
+       too, not only for DocuSign/Clicksign — even though the backend is 100% functional.
+STATUS: PARTIAL (backend fully IMPLEMENTED; frontend consumer 0% — worse than "zero consumers",
+       it is a consumer that EXISTS but is wired to a stub that always fails)
 ```
 
 ### 5.5 Clicksign
 
 ```text
-FRONTEND: apenas um id de seletor em useSigningProviders (estado de "conectado" lido de
-       sessionStorage["musicos360_clicksign_credentials"] — nunca persistido no backend)
-BACKEND: nenhum controller/service Clicksign encontrado em apps/api/src
-STATUS: STUB (opção de UI sem nenhuma contraparte de backend)
+FRONTEND: only a selector id in useSigningProviders ("connected" state read from
+       sessionStorage["musicos360_clicksign_credentials"] — never persisted in the backend)
+BACKEND: no Clicksign controller/service found in apps/api/src
+STATUS: STUB (a UI option with no backend counterpart)
 ```
 
 ### 5.6 Spotify
 
 ```text
-AUTH_MODEL: híbrido — OAUTH_AUTHORIZATION_CODE (conexão de conta do usuário, scopes
-       "user-read-private user-read-email") + CLIENT_CREDENTIALS (para syncArtistMetrics, que só
-       precisa de dados públicos de artista, sem conexão de usuário)
-CLIENT_ID_USAGE: SPOTIFY_CLIENT_ID (PLATFORM_SHARED) — usado tanto no Authorization Code quanto no
+AUTH_MODEL: hybrid — OAUTH_AUTHORIZATION_CODE (user account connection, scopes
+       "user-read-private user-read-email") + CLIENT_CREDENTIALS (for syncArtistMetrics, which only
+       needs public artist data, with no user connection)
+CLIENT_ID_USAGE: SPOTIFY_CLIENT_ID (PLATFORM_SHARED) — used in both Authorization Code and
        Client Credentials
-CLIENT_SECRET_USAGE: SPOTIFY_CLIENT_SECRET, sempre server-side (Basic Auth)
+CLIENT_SECRET_USAGE: SPOTIFY_CLIENT_SECRET, always server-side (Basic Auth)
 ARTIST_LOOKUP: IMPLEMENTED (GET /artists/{id} via Client Credentials)
-ARTIST_PROFILE: IMPLEMENTED (nome, imagem, popularity)
-FOLLOWERS: NÃO EXPOSTO (endpoint usado não retorna followers)
-MONTHLY_LISTENERS: NOT_AVAILABLE — confirmado pelo próprio código: log explícito "monthly listeners
-       nao disponivel neste endpoint" (retorna sempre `listeners: null`) — a Web API pública do
-       Spotify não expõe esse dado; exigiria Spotify for Artists (não implementado)
-TRACKS/ALBUMS/PLAYLISTS: NOT_IMPLEMENTED (nenhum endpoint de tracks/albums/playlists no backend)
-EXTERNAL_IDS: spotify artist id extraído por regex de URL (extractArtistId)
-RATE_LIMIT_HANDLING: NÃO EXPLÍCITO (nenhum tratamento de 429 dedicado — só o circuit breaker
-       genérico do CircuitBreakerRegistry)
-CACHE: NÃO ENCONTRADO (sem cache de resposta Spotify)
-SYNC: manual, sob demanda (POST /integrations/spotify/sync-artist) — enfileira job
-       ("spotify:sync" via QUEUE_NAMES.STREAMING_SYNC, BullMQ) após conexão OAuth bem-sucedida,
-       mas o handler consumidor desse job específico não foi localizado nesta leitura (fora do
-       escopo desta rodada — registrado como não verificado, não como ausente)
-TOKEN_REFRESH: IMPLEMENTED — getValidToken() verifica expires_at e chama refreshToken() automaticamente
-       (grant_type=refresh_token), token novo gravado criptografado
-STATE_SECURITY: HMAC-SHA256 assinado (createState/verifyState), TTL 10 min, timingSafeEqual
-DISCONNECT: DELETE /integrations/spotify/disconnect — LOCAL_TOKEN_DELETE apenas (sem chamada de
-       revogação remota ao Spotify — Spotify não expõe endpoint público de revoke para este fluxo)
-STATUS: IMPLEMENTED (mais completo e mais bem protegido dos providers de streaming)
+ARTIST_PROFILE: IMPLEMENTED (name, image, popularity)
+FOLLOWERS: NOT EXPOSED (the endpoint used does not return followers)
+MONTHLY_LISTENERS: NOT_AVAILABLE — confirmed by the code itself: explicit log "monthly listeners
+       nao disponivel neste endpoint" (not available on this endpoint) (always returns `listeners: null`) — Spotify's public
+       Web API does not expose this data; it would require Spotify for Artists (not implemented)
+TRACKS/ALBUMS/PLAYLISTS: NOT_IMPLEMENTED (no tracks/albums/playlists endpoint in the backend)
+EXTERNAL_IDS: spotify artist id extracted by a URL regex (extractArtistId)
+RATE_LIMIT_HANDLING: NOT EXPLICIT (no dedicated 429 handling — only the generic circuit breaker
+       of CircuitBreakerRegistry)
+CACHE: NOT FOUND (no Spotify response cache)
+SYNC: manual, on demand (POST /integrations/spotify/sync-artist) — enqueues a job
+       ("spotify:sync" via QUEUE_NAMES.STREAMING_SYNC, BullMQ) after a successful OAuth connection,
+       but the consumer handler for this specific job was not located in this reading (outside the
+       scope of this round — recorded as not verified, not as absent)
+TOKEN_REFRESH: IMPLEMENTED — getValidToken() checks expires_at and calls refreshToken() automatically
+       (grant_type=refresh_token), the new token written encrypted
+STATE_SECURITY: HMAC-SHA256 signed (createState/verifyState), TTL 10 min, timingSafeEqual
+DISCONNECT: DELETE /integrations/spotify/disconnect — LOCAL_TOKEN_DELETE only (no remote
+       revocation call to Spotify — Spotify does not expose a public revoke endpoint for this flow)
+STATUS: IMPLEMENTED (the most complete and best protected of the streaming providers)
 ```
 
 ### 5.7 YouTube
 
 ```text
-API_KEY_USAGE: SIM (YOUTUBE_API_KEY) — para busca/estatísticas públicas (getChannelStats,
+API_KEY_USAGE: YES (YOUTUBE_API_KEY) — for public search/statistics (getChannelStats,
        getVideoStats, searchVideos)
-OAUTH_USAGE: SIM, mas por uma via DIFERENTE — as variantes "corp_youtube"/"youtube_business"/
-       "google_business"/"google_ads"/"youtube_ads" passam pelo OAuth genérico (GOOGLE_CLIENT_ID/
-       GOOGLE_ADS_CLIENT_ID como fallback), não pelo YouTubeService diretamente
+OAUTH_USAGE: YES, but via a DIFFERENT path — the "corp_youtube"/"youtube_business"/
+       "google_business"/"google_ads"/"youtube_ads" variants go through the generic OAuth (GOOGLE_CLIENT_ID/
+       GOOGLE_ADS_CLIENT_ID as a fallback), not through YouTubeService directly
 CHANNEL_LOOKUP: IMPLEMENTED (GET /integrations/youtube/channel/:id)
-SUBSCRIBERS/VIEWS: presumivelmente parte de getChannelStats/getVideoStats (não lido campo a campo
-       nesta rodada — infraestrutura confirmada, resposta exata não verificada em profundidade)
+SUBSCRIBERS/VIEWS: presumably part of getChannelStats/getVideoStats (not read field by field
+       in this round — infrastructure confirmed, exact response not verified in depth)
 VIDEOS: IMPLEMENTED (getVideoStats, searchVideos)
-ARTIST_MAPPING: nenhuma tabela dedicada — dados retornados sob demanda, não persistidos
-CACHE: não verificado nesta rodada
-SYNC: sob demanda (sem job agendado dedicado encontrado)
-RATE_LIMIT_HANDLING: não verificado em profundidade nesta rodada — mesma ressalva do item Spotify
+ARTIST_MAPPING: no dedicated table — data returned on demand, not persisted
+CACHE: not verified in this round
+SYNC: on demand (no dedicated scheduled job found)
+RATE_LIMIT_HANDLING: not verified in depth in this round — the same caveat as the Spotify item
 STATUS: IMPLEMENTED
 ```
 
-### 5.8 Instagram / Meta (orgânico + corporativo)
+### 5.8 Instagram / Meta (organic + corporate)
 
 ```text
-AUTH_MODEL: OAUTH_AUTHORIZATION_CODE — DOIS caminhos distintos:
-  (a) orgânico: GET /integrations/instagram/auth → InstagramService.getAuthUrl/handleCallback
-  (b) corporativo (Business/Ads): via oauth/init+exchange genérico do IntegrationsController,
-      troca de código feita diretamente no controller (fb_exchange_token para long-lived token)
+AUTH_MODEL: OAUTH_AUTHORIZATION_CODE — TWO distinct paths:
+  (a) organic: GET /integrations/instagram/auth → InstagramService.getAuthUrl/handleCallback
+  (b) corporate (Business/Ads): via the generic oauth/init+exchange of IntegrationsController,
+      code exchange done directly in the controller (fb_exchange_token for a long-lived token)
 CLIENT_ID/SECRET: META_APP_ID/META_APP_SECRET (PLATFORM_SHARED)
 TOKEN_STORAGE: oauth_connections, provider ∈ {instagram, corp_instagram, meta_business, meta_ads}
-TOKEN_REFRESH: IMPLEMENTED e PROATIVO — InstagramTokenRefreshScheduler roda diariamente
-       (setInterval em processo long-running) OU via Vercel Cron
+TOKEN_REFRESH: IMPLEMENTED and PROACTIVE — InstagramTokenRefreshScheduler runs daily
+       (setInterval in a long-running process) OR via Vercel Cron
        (GET /internal/cron/instagram-token-refresh, instagram-token-refresh-cron.controller.ts)
-       quando process.env.VERCEL está setado — renova tokens expirando em ≤7 dias; em falha,
-       marca a conexão como needs_reauth (markOAuthNeedsReauth) em vez de apagar silenciosamente
-DISCONNECT: DELETE /integrations/instagram/disconnect e /meta-corporate/disconnect — o comentário
-       do endpoint corporativo diz explicitamente "tenta revogar no Meta" (REMOTE_REVOKE:
-       comportamento não confirmado linha a linha nesta rodada, mas indicado pelo próprio código)
-METRICS: GET /integrations/instagram/metrics (conta Business)
-STATUS: IMPLEMENTED — o provider com o mecanismo de refresh mais maduro de todo o módulo
+       when process.env.VERCEL is set — renews tokens expiring in ≤7 days; on failure,
+       marks the connection as needs_reauth (markOAuthNeedsReauth) instead of silently deleting it
+DISCONNECT: DELETE /integrations/instagram/disconnect and /meta-corporate/disconnect — the corporate
+       endpoint's comment explicitly says "tenta revogar no Meta" (tries to revoke at Meta) (REMOTE_REVOKE:
+       behavior not confirmed line by line in this round, but indicated by the code itself)
+METRICS: GET /integrations/instagram/metrics (Business account)
+STATUS: IMPLEMENTED — the provider with the most mature refresh mechanism in the whole module
 ```
 
-### 5.9 TikTok (orgânico) e TikTok Ads
+### 5.9 TikTok (organic) and TikTok Ads
 
 ```text
-Orgânico: OAUTH_AUTHORIZATION_CODE (TIKTOK_CLIENT_KEY/SECRET), GET /integrations/tiktok/auth,
+Organic: OAUTH_AUTHORIZATION_CODE (TIKTOK_CLIENT_KEY/SECRET), GET /integrations/tiktok/auth,
        POST .../callback, GET .../status, DELETE .../disconnect — IMPLEMENTED
-Ads: modelo de credencial diferente — POST /integrations/tiktok/ads/configure recebe
-       {appId, secret, advertiserId, accessToken} diretamente (não é um fluxo OAuth de popup —
-       o token é fornecido manualmente pelo tenant, típico de contas de anúncio TikTok Business),
+Ads: a different credential model — POST /integrations/tiktok/ads/configure receives
+       {appId, secret, advertiserId, accessToken} directly (it is not a popup OAuth flow —
+       the token is supplied manually by the tenant, typical of TikTok Business ad accounts),
        GET .../campaigns, GET .../insights — IMPLEMENTED
-STATUS: IMPLEMENTED (ambos)
+STATUS: IMPLEMENTED (both)
 ```
 
 ### 5.10 Google Ads
 
 ```text
-AUTH_MODEL: OAUTH_AUTHORIZATION_CODE (GOOGLE_ADS_CLIENT_ID/SECRET) + configuração adicional
-       manual (developerToken/customerId via POST /integrations/google-ads/configure — Google Ads
-       exige um Developer Token além do OAuth padrão, corretamente modelado como campo separado)
+AUTH_MODEL: OAUTH_AUTHORIZATION_CODE (GOOGLE_ADS_CLIENT_ID/SECRET) + additional manual
+       configuration (developerToken/customerId via POST /integrations/google-ads/configure — Google Ads
+       requires a Developer Token in addition to standard OAuth, correctly modeled as a separate field)
 ENDPOINTS: auth/callback/status/disconnect/campaigns — IMPLEMENTED
 STATUS: IMPLEMENTED
 ```
@@ -335,9 +335,9 @@ STATUS: IMPLEMENTED
 ### 5.11 SoundCloud
 
 ```text
-AUTH_MODEL: API_KEY-like (client_id/client_secret configurados por tenant via
-       POST /integrations/soundcloud/configure — não OAuth de usuário, é credencial de app)
-DATABASE: credenciais tenant-owned via IntegrationBaseService (tabela integrations)
+AUTH_MODEL: API_KEY-like (client_id/client_secret configured per tenant via
+       POST /integrations/soundcloud/configure — not user OAuth, it is an app credential)
+DATABASE: tenant-owned credentials via IntegrationBaseService (integrations table)
 ENDPOINTS: configure/status/disconnect/user/track/search — IMPLEMENTED
 STATUS: IMPLEMENTED
 ```
@@ -345,167 +345,167 @@ STATUS: IMPLEMENTED
 ### 5.12 Apple Music
 
 ```text
-AUTH_MODEL: OTHER_CONFIRMED — Apple Music usa um Developer Token assinado com uma chave privada
-       (MusicKit), não OAuth de usuário para catálogo público: POST /integrations/apple-music/configure
-       recebe {teamId, keyId, privateKey} diretamente do tenant
-DATABASE: credenciais tenant-owned (mesmo padrão integrations table)
+AUTH_MODEL: OTHER_CONFIRMED — Apple Music uses a Developer Token signed with a private key
+       (MusicKit), not user OAuth for the public catalog: POST /integrations/apple-music/configure
+       receives {teamId, keyId, privateKey} directly from the tenant
+DATABASE: tenant-owned credentials (the same integrations table pattern)
 ENDPOINTS: configure/status/disconnect/artist/search — IMPLEMENTED
-ATENÇÃO (não avaliado em profundidade nesta rodada): privateKey é recebida em texto no corpo da
-       requisição — presume-se criptografada no armazenamento (mesmo padrão saveCredentials/
-       EncryptionService já confirmado para os demais providers de credencial manual), mas o
-       trajeto completo do valor entre o DTO e o encrypt() não foi lido linha a linha nesta rodada
-       para Apple Music especificamente — registrado como verificação parcial, não como gap
-       confirmado.
+ATTENTION (not evaluated in depth in this round): privateKey is received as text in the request
+       body — presumed encrypted at rest (the same saveCredentials/
+       EncryptionService pattern already confirmed for the other manual-credential providers), but the
+       complete path of the value between the DTO and encrypt() was not read line by line in this round
+       for Apple Music specifically — recorded as a partial verification, not as a confirmed
+       gap.
 STATUS: IMPLEMENTED
 ```
 
 ### 5.13 ABRAMUS
 
 ```text
-Reforça e detalha o achado já registrado em catalog.md a partir da perspectiva do módulo de
-integrações (mesmo provider, código current, sem reabrir o domínio de catálogo em si):
-AUTH_IMPLEMENTED: SIM — login username/password contra {baseUrl}/api/v1/auth/login, token Bearer
-       obtido a CADA requisição (getAuthToken() é chamado dentro de request(), sem cache de token —
-       ver Gap #2 abaixo)
-SEARCH_IMPLEMENTED: SIM — searchArtist (GET /api/v1/artists), searchWork (GET /api/v1/works)
-IMPORT_IMPLEMENTED (registerWork): SIM — POST /api/v1/works com {titulo, compositor, iswc, genero,
+Reinforces and details the finding already recorded in catalog.md from the perspective of the
+integrations module (same provider, current code, without reopening the catalog domain itself):
+AUTH_IMPLEMENTED: YES — username/password login against {baseUrl}/api/v1/auth/login, Bearer token
+       obtained on EVERY request (getAuthToken() is called inside request(), with no token cache —
+       see Gap #2 below)
+SEARCH_IMPLEMENTED: YES — searchArtist (GET /api/v1/artists), searchWork (GET /api/v1/works)
+IMPORT_IMPLEMENTED (registerWork): YES — POST /api/v1/works with {titulo, compositor, iswc, genero,
        duracao, editora, coautores}
-SYNC_IMPLEMENTED: NÃO — nenhum mecanismo de sincronização periódica/automática, apenas chamadas
-       sob demanda (consistente com o achado de catalog.md sobre import-from-search/sync-all serem
-       stubs no NÍVEL DA UI de catálogo — aqui, na camada de integração pura, os 3 endpoints reais
-       existem e funcionam; é a camada de catálogo que não os invoca em todos os fluxos)
+SYNC_IMPLEMENTED: NO — no periodic/automatic synchronization mechanism, only on-demand
+       calls (consistent with the catalog.md finding about import-from-search/sync-all being
+       stubs AT THE LEVEL OF THE catalog UI — here, in the pure integration layer, the 3 real endpoints
+       exist and work; it is the catalog layer that does not invoke them in every flow)
 FIELDS_SENT (registerWork): titulo, compositor, iswc, genero, duracao, editora, coautores
-FIELDS_RECEIVED: resposta bruta do ABRAMUS repassada (sem DTO de resposta tipado)
-DATABASE_MAPPING: nenhuma persistência local do resultado — cada chamada é proxy direto
-ERROR_BEHAVIOR: `throw new Error(...)` genérico em falha HTTP — sem retry, sem circuit breaker
-       (ABRAMUS não estende o `cb`/`fetch()` guardado de IntegrationBaseService pai da forma como
-       Spotify o faz; usa `fetch()` nativo diretamente) — GAP relativo ao padrão do resto do módulo
-STATUS: PARTIAL (funcional para search/register; sem sync automático; sem resiliência de rede)
+FIELDS_RECEIVED: raw ABRAMUS response passed through (no typed response DTO)
+DATABASE_MAPPING: no local persistence of the result — each call is a direct proxy
+ERROR_BEHAVIOR: generic `throw new Error(...)` on HTTP failure — no retry, no circuit breaker
+       (ABRAMUS does not extend the guarded `cb`/`fetch()` of the parent IntegrationBaseService the way
+       Spotify does; it uses native `fetch()` directly) — a GAP relative to the pattern of the rest of the module
+STATUS: PARTIAL (functional for search/register; no automatic sync; no network resilience)
 ```
 
 ### 5.14 ACRCloud
 
 ```text
-PURPOSE: reconhecimento de áudio (fingerprinting) para identificar obras/fonogramas
+PURPOSE: audio recognition (fingerprinting) to identify works/phonograms
 FRONTEND_CALL: useACRCloud.ts → POST /integrations/acrcloud/recognize
 BACKEND_CALL: acrcloud.service.ts::recognize(audioBase64)
-API_HOST: ACRCLOUD_HOST (configurável, sem default hardcoded)
-ACCESS_KEY_USAGE: ACRCLOUD_ACCESS_KEY enviado em cada request como form field
-SIGNATURE: HMAC-SHA1 sobre [method, uri, access_key, 'audio', '1', timestamp] usando
-       ACRCLOUD_ACCESS_SECRET — mecanismo de assinatura ACRCloud padrão, implementado corretamente
-FILE_INPUT: base64 → Buffer → Blob multipart 'sample.mp3' (assume sempre mp3, sem negociação de
-       formato real do arquivo enviado)
-RESPONSE_FIELDS: title, artist (primeiro de music.artists[]), album, isrc, confidence (score/100)
-CATALOG_MAPPING: nenhuma — resposta devolvida crua ao chamador, sem persistência/match automático
-       contra `works`/`phonograms`
-CONTRATO DIVERGENTE (achado já registrado no doc37, reafirmado aqui com a leitura direta do
-       código): o DTO real do backend (RecognizeAudioDto{audioBase64: string}) e o retorno real
-       (ACRCloudResult{title?,artist?,album?,isrc?,confidence?}, resultado ÚNICO plano) são
-       ESTRUTURALMENTE DIFERENTES do contrato que o frontend usa
+API_HOST: ACRCLOUD_HOST (configurable, no hardcoded default)
+ACCESS_KEY_USAGE: ACRCLOUD_ACCESS_KEY sent in each request as a form field
+SIGNATURE: HMAC-SHA1 over [method, uri, access_key, 'audio', '1', timestamp] using
+       ACRCLOUD_ACCESS_SECRET — the standard ACRCloud signing mechanism, implemented correctly
+FILE_INPUT: base64 → Buffer → multipart Blob 'sample.mp3' (always assumes mp3, with no negotiation of
+       the actual format of the uploaded file)
+RESPONSE_FIELDS: title, artist (first of music.artists[]), album, isrc, confidence (score/100)
+CATALOG_MAPPING: none — response returned raw to the caller, with no persistence/automatic match
+       against `works`/`phonograms`
+DIVERGENT CONTRACT (finding already recorded in doc37, reaffirmed here with a direct reading of the
+       code): the backend's real DTO (RecognizeAudioDto{audioBase64: string}) and the real return
+       (ACRCloudResult{title?,artist?,album?,isrc?,confidence?}, a SINGLE flat result) are
+       STRUCTURALLY DIFFERENT from the contract the frontend uses
        (FingerprintInput{audio_data,duration_seconds?,source_type?,source_name?}/
-       FingerprintResult{matched,matches[],best_match?,...}, um array de matches, não um objeto
-       único) — doc36 já resolveu isso como FRONTEND_CONTRACT_WINS para a reconstrução da v2, mas
-       o CÓDIGO ATUAL (apps/api legacy, hoje) ainda implementa o contrato antigo — ou seja, uma
-       chamada real de POST /integrations/acrcloud/recognize a partir de useACRCloud.ts hoje
-       provavelmente não bate com o shape que o hook espera (REAL_MAPPING_GAP vivo, não apenas uma
-       decisão de v2 já resolvida no papel)
-ERROR_BEHAVIOR: `throw new Error(...)` genérico
-RESILIENCE: sem circuit breaker, sem timeout explícito, sem retry — usa `fetch()` nativo puro
-       (mesma lacuna do ABRAMUS — nenhum dos dois estende o padrão resiliente do resto do módulo)
-STATUS: PARTIAL — mecanismo de assinatura/chamada real e correto; contrato de resposta desalinhado
-       com o frontend real; sem resiliência de rede
+       FingerprintResult{matched,matches[],best_match?,...}, an array of matches, not a single
+       object) — doc36 already resolved this as FRONTEND_CONTRACT_WINS for the v2 rebuild, but
+       the CURRENT CODE (legacy apps/api, today) still implements the old contract — that is, a
+       real call to POST /integrations/acrcloud/recognize from useACRCloud.ts today
+       probably does not match the shape the hook expects (a live REAL_MAPPING_GAP, not just a
+       v2 decision already resolved on paper)
+ERROR_BEHAVIOR: generic `throw new Error(...)`
+RESILIENCE: no circuit breaker, no explicit timeout, no retry — uses plain native `fetch()`
+       (the same gap as ABRAMUS — neither of the two extends the resilient pattern of the rest of the module)
+STATUS: PARTIAL — real and correct signing/call mechanism; response contract misaligned
+       with the real frontend; no network resilience
 ```
 
 ### 5.15 Cloudflare R2 (Storage)
 
 ```text
-PURPOSE: armazenamento de arquivos (uploads genéricos por tabela, attachments de contratos/CRM/
-       audiovisual — já auditado por módulo de domínio nas etapas anteriores; aqui só a camada de
-       provider é revisada, conforme instrução do prompt de não reauditar campos de upload por
-       módulo)
-CLIENT: apps/api/src/modules/uploads/** — presign de upload/download via S3-compatible API do R2
+PURPOSE: file storage (generic per-table uploads, contract/CRM/audiovisual attachments —
+       already audited per domain module in the previous steps; here only the provider
+       layer is reviewed, per the prompt's instruction not to re-audit upload fields per
+       module)
+CLIENT: apps/api/src/modules/uploads/** — upload/download presign via R2's S3-compatible API
 CONFIG: R2_ACCOUNT_ID, R2_ACCESS_KEY, R2_SECRET_KEY, R2_BUCKET_NAME (default 'music-os-360'),
-       R2_PUBLIC_URL (validação explícita contra placeholder em produção — bloqueia 'pub-xxx'/
-       'placeholder' via refine do Zod)
-SIGNED_UPLOAD/SIGNED_DOWNLOAD: SIM (padrão presign já confirmado em módulos anteriores desta série
+       R2_PUBLIC_URL (explicit validation against a placeholder in production — blocks 'pub-xxx'/
+       'placeholder' via a Zod refine)
+SIGNED_UPLOAD/SIGNED_DOWNLOAD: YES (presign pattern already confirmed in previous modules of this series
        — clients, contracts, artist)
-TENANT_PREFIX: presumido a partir do padrão já confirmado por módulos de domínio anteriores
-       (não re-verificado campo a campo aqui, conforme instrução do prompt §39)
+TENANT_PREFIX: presumed from the pattern already confirmed by previous domain modules
+       (not re-verified field by field here, per the prompt's instruction §39)
 STATUS: IMPLEMENTED
 ```
 
-### 5.16 Resend (Email/SMTP transacional)
+### 5.16 Resend (transactional Email/SMTP)
 
 ```text
-PROVIDER: Resend (API HTTP, não SMTP tradicional apesar do nome de env "STAGING_MAIL_ALLOWLIST")
-HOST: N/A (API HTTP, não host SMTP)
-CONFIG: RESEND_API_KEY (obrigatório em produção), RESEND_FROM_EMAIL (default
-       noreply@musicos360.com.br), STAGING_MAIL_ALLOWLIST_DOMAINS (guarda contra envio real
-       acidental em staging — só envia para domínios permitidos)
-CALLERS: não enumerados exaustivamente nesta rodada (fora do orçamento desta auditoria específica)
-       — confirmado apenas que a integração de infraestrutura existe e é validada no boot
-       (RESEND_API_KEY obrigatória em produção via superRefine)
-SMTP_REQUIRED: SIM (já confirmado em auth.md, reafirmado aqui — não uma pendência nova)
-STATUS: IMPLEMENTED (infraestrutura); TEMPLATES/CALLERS não enumerados exaustivamente
+PROVIDER: Resend (HTTP API, not traditional SMTP despite the env name "STAGING_MAIL_ALLOWLIST")
+HOST: N/A (HTTP API, not an SMTP host)
+CONFIG: RESEND_API_KEY (mandatory in production), RESEND_FROM_EMAIL (default
+       noreply@musicos360.com.br), STAGING_MAIL_ALLOWLIST_DOMAINS (guards against an accidental real
+       send in staging — only sends to allowed domains)
+CALLERS: not enumerated exhaustively in this round (outside the budget of this specific audit)
+       — only confirmed that the infrastructure integration exists and is validated at boot
+       (RESEND_API_KEY mandatory in production via superRefine)
+SMTP_REQUIRED: YES (already confirmed in auth.md, reaffirmed here — not a new open item)
+STATUS: IMPLEMENTED (infrastructure); TEMPLATES/CALLERS not enumerated exhaustively
 ```
 
 ### 5.17 Sentry
 
 ```text
-SERVER_SIDE: SIM — SENTRY_DSN validado como URL, obrigatório em produção (superRefine)
-CLIENT_SIDE: SIM — confirmado por menção em docs anteriores desta série (packages/observability/
-       src/sentry.ts existe no monorepo) e pela env var VITE-equivalente já auditada no frontend
-       (não relida linha a linha nesta rodada — reaproveitando achado já sólido de auditorias
-       anteriores desta mesma sessão)
-CONFIG_REQUIRED: SENTRY_DSN, SENTRY_RELEASE (opcional)
-SECRET_OR_PUBLIC_CONFIG: DSN é considerado configuração pública por design do próprio Sentry
-       (identifica o projeto, não concede acesso de leitura/escrita sem a auth key do Sentry em si)
+SERVER_SIDE: YES — SENTRY_DSN validated as a URL, mandatory in production (superRefine)
+CLIENT_SIDE: YES — confirmed by mentions in earlier docs of this series (packages/observability/
+       src/sentry.ts exists in the monorepo) and by the VITE-equivalent env var already audited in the frontend
+       (not re-read line by line in this round — reusing an already solid finding from earlier
+       audits in this same session)
+CONFIG_REQUIRED: SENTRY_DSN, SENTRY_RELEASE (optional)
+SECRET_OR_PUBLIC_CONFIG: the DSN is considered public configuration by Sentry's own design
+       (it identifies the project, it does not grant read/write access without Sentry's auth key itself)
 STATUS: IMPLEMENTED
 ```
 
 ### 5.18 PostHog
 
 ```text
-CONFIG: POSTHOG_API_KEY (opcional), POSTHOG_HOST (default https://app.posthog.com) — declarados em
-       env.schema.ts, mas NENHUM uso de código consumindo essas variáveis foi encontrado nesta
-       rodada em apps/api/src (busca não exaustiva — não confirmado 100% ausente, mas nenhuma
-       ocorrência de `posthog`/`PostHog` em código de serviço foi localizada durante esta auditoria,
-       apesar de aparecer citado em texto de decisão arquitetural do doc68 como "presente no
-       legacy, posthog-node, backend" para eventos de produto)
-STATUS: CONFIG_ONLY — variável de ambiente declarada e validada, consumo de código não confirmado
-       nesta rodada (não classificado como DEAD por falta de confirmação plena de ausência total —
-       registrado como menor confiança, não como gap ativo)
+CONFIG: POSTHOG_API_KEY (optional), POSTHOG_HOST (default https://app.posthog.com) — declared in
+       env.schema.ts, but NO code usage consuming these variables was found in this
+       round in apps/api/src (non-exhaustive search — not confirmed 100% absent, but no
+       occurrence of `posthog`/`PostHog` in service code was located during this audit,
+       despite it appearing cited in doc68's architectural-decision text as "presente no
+       legacy, posthog-node, backend" (present in the legacy, posthog-node, backend) for product events)
+STATUS: CONFIG_ONLY — environment variable declared and validated, code consumption not confirmed
+       in this round (not classified as DEAD for lack of full confirmation of total absence —
+       recorded as lower confidence, not as an active gap)
 ```
 
-### 5.19 IA (OpenAI / Anthropic / Google AI)
+### 5.19 AI (OpenAI / Anthropic / Google AI)
 
 ```text
-PROVIDER: roteador multi-provider (OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_AI_API_KEY — todos
-       opcionais, permitindo qualquer subconjunto configurado)
-MODEL: não fixado no nível de env (presumivelmente por request/uso, não reavaliado aqui)
-PURPOSE: geração de conteúdo (marketing), parsing semântico de contratos (semantic-parser.service.ts
-       do módulo contracts, já citado no doc37 A.20), IA de skills (packages/ai-skills/**)
-FRONTEND_OR_BACKEND: BACKEND (POST /ai/generate, contrato já fechado no doc37 — CONTRACT_COMPLETE)
-DATABASE_PERSISTENCE: ai_jobs, ai_usage_logs (tabelas confirmadas na Fase 1)
-CREDENTIAL_MODEL: PLATFORM_SHARED (chaves da própria plataforma, não por tenant)
-STATUS: IMPLEMENTED (contrato já fechado em doc35/37; módulo ai.module.ts/ai.service.ts existe)
+PROVIDER: multi-provider router (OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_AI_API_KEY — all
+       optional, allowing any configured subset)
+MODEL: not fixed at the env level (presumably per request/use, not re-evaluated here)
+PURPOSE: content generation (marketing), semantic contract parsing (semantic-parser.service.ts
+       of the contracts module, already cited in doc37 A.20), skills AI (packages/ai-skills/**)
+FRONTEND_OR_BACKEND: BACKEND (POST /ai/generate, contract already closed in doc37 — CONTRACT_COMPLETE)
+DATABASE_PERSISTENCE: ai_jobs, ai_usage_logs (tables confirmed in Phase 1)
+CREDENTIAL_MODEL: PLATFORM_SHARED (the platform's own keys, not per tenant)
+STATUS: IMPLEMENTED (contract already closed in doc35/37; the ai.module.ts/ai.service.ts module exists)
 ```
 
-### 5.20 Distribuidoras (ONErpm, DistroKid, Symphonic, SoundOn, MusicPro, SomVibe)
+### 5.20 Distributors (ONErpm, DistroKid, Symphonic, SoundOn, MusicPro, SomVibe)
 
 ```text
-Reafirma sem reabrir a Decisão D1 (doc25, APPROVED) e sua resolução (doc31, RESOLVED —
-MUST_USE_PROVIDER_AUTH, execução técnica futura, pesquisa de API por distribuidora explicitamente
-fora do escopo desta e de auditorias anteriores).
-CURRENT_CODE_EXISTS: SIM — catálogo estático (DISTRIBUTION_PLATFORMS, 6 entradas) em
+Reaffirms without reopening Decision D1 (doc25, APPROVED) and its resolution (doc31, RESOLVED —
+MUST_USE_PROVIDER_AUTH, future technical execution, per-distributor API research explicitly
+outside the scope of this and previous audits).
+CURRENT_CODE_EXISTS: YES — static catalog (DISTRIBUTION_PLATFORMS, 6 entries) in
        apps/web/src/modules/releases/services/distribution-platforms.ts
-OFFICIAL_API_IMPLEMENTATION_EXISTS: NÃO (nenhuma, para nenhuma das 6)
-AUTH_IMPLEMENTED: NÃO
-TENANT_CONNECTION_IMPLEMENTED: NÃO — o "estado de conexão" é lido de
-       localStorage["musicos360_distributor_connections"] (getEnabledDistributionPlatforms()), o
-       próprio comentário do arquivo confirma: "nada é simulado aqui" no sentido de que o código não
-       finge uma conexão que não existe — mas também confirma que não há nenhuma escrita real dessa
-       chave em lugar nenhum do código (mesmo achado já registrado no doc23/25, reafirmado)
+OFFICIAL_API_IMPLEMENTATION_EXISTS: NO (none, for any of the 6)
+AUTH_IMPLEMENTED: NO
+TENANT_CONNECTION_IMPLEMENTED: NO — the "connection state" is read from
+       localStorage["musicos360_distributor_connections"] (getEnabledDistributionPlatforms()); the
+       file's own comment confirms: "nada é simulado aqui" (nothing is simulated here) in the sense that the code does not
+       fake a connection that does not exist — but it also confirms that there is no real write of this
+       key anywhere in the code (the same finding already recorded in doc23/25, reaffirmed)
 IMPORT_IMPLEMENTED: NOT_IMPLEMENTED
 EXPORT_IMPLEMENTED: NOT_IMPLEMENTED
 SYNC_IMPLEMENTED: NOT_IMPLEMENTED
@@ -513,100 +513,101 @@ STATUS_SYNC_IMPLEMENTED: NOT_IMPLEMENTED
 CATALOG_MAPPING: NOT_IMPLEMENTED
 RELEASE_MAPPING: NOT_IMPLEMENTED
 EXTERNAL_IDS: NOT_IMPLEMENTED
-TOKEN_STORAGE: NOT_APPLICABLE (nenhum token existe)
-UI atual: `Configuracoes.tsx` e `OAuthPopupPage.tsx`'s `DistributorExperience` mostram apenas um
-       link `<a target="_blank">` para o portal oficial de cada distribuidora, com texto explícito
-       "Abrir o portal não conecta a conta ao sistema" — nenhuma simulação de sucesso, nenhuma API
-       inventada (cumpre a regra "proibido" do D1)
-STATUS_GERAL: STUB (honesto — placeholder informativo, não uma integração fake)
+TOKEN_STORAGE: NOT_APPLICABLE (no token exists)
+Current UI: `Configuracoes.tsx` and `OAuthPopupPage.tsx`'s `DistributorExperience` only show a
+       `<a target="_blank">` link to each distributor's official portal, with the explicit text
+       "Abrir o portal não conecta a conta ao sistema" (opening the portal does not connect the account to the system) — no simulated success, no invented
+       API (complies with D1's "forbidden" rule)
+OVERALL_STATUS: STUB (honest — an informative placeholder, not a fake integration)
 ```
 
-### 5.21 Framework genérico `external-data` (distribuidoras/sociedades — camada backend separada do catálogo acima)
+### 5.21 Generic `external-data` framework (distributors/societies — a backend layer separate from the catalog above)
 
 ```text
-PURPOSE: infraestrutura backend genérica e reutilizável para QUALQUER distribuidora/sociedade que
-       venha a ser registrada futuramente (registry pattern) — mais avançada do que o catálogo
-       estático do frontend (§5.20), mas ainda sem nenhum provider real conectado
+PURPOSE: generic, reusable backend infrastructure for ANY distributor/society that
+       may be registered in the future (registry pattern) — more advanced than the frontend's
+       static catalog (§5.20), but still with no real provider connected
 ENDPOINTS: GET /integrations/external-data/providers, POST .../sync/request,
        POST .../distributor/submit, POST .../distributor/status-check,
        POST .../society/submit, POST .../society/status-check,
        POST .../webhooks/:providerId (@Public(), HMAC via
-       EXTERNAL_DATA_WEBHOOK_SECRET_<PROVIDER> ou fallback EXTERNAL_DATA_WEBHOOK_SECRET)
+       EXTERNAL_DATA_WEBHOOK_SECRET_<PROVIDER> or the fallback EXTERNAL_DATA_WEBHOOK_SECRET)
 BACKEND_SERVICE: ExternalDataExchangeService + ExternalDataProviderRegistry
        (apps/api/src/core/external-data/**)
-PROVIDERS_REGISTRADOS_HOJE: exatamente 2 — `UnconfiguredDistributorProvider` e
-       `UnconfiguredSocietyProvider` (confirmado por leitura direta do construtor do registry) —
-       ambos são placeholders explícitos, não providers reais de nenhuma distribuidora/sociedade
-       específica; os próprios DTOs (DistributorSubmitDto/SocietySubmitDto/
-       ExternalDataStatusCheckDto) documentam isso na sua própria `@ApiProperty description`:
-       "não há default — nenhum provider real está registrado em produção"
-IDEMPOTENCY: idempotencyKey aceito em todos os DTOs de submit/status-check — mecanismo pronto,
-       sem provider real para exercitá-lo ainda
-FRONTEND_CONSUMER: NÃO ENCONTRADO — nenhum hook/componente do frontend chama
-       /integrations/external-data/* (o catálogo de distribuidoras do frontend, §5.20, é
-       inteiramente desconectado desta API mais robusta)
-STATUS: CONFIG_ONLY (infraestrutura pronta e bem desenhada — idempotência, webhook HMAC por
-       provider, registry pattern — mas funcionalmente vazia; nenhum FRONTEND_CONSUMER_GAP
-       classificado como ativo porque não há nem provider nem consumidor, ambos os lados aguardam a
-       mesma decisão futura de produto já registrada no D1)
+PROVIDERS_REGISTERED_TODAY: exactly 2 — `UnconfiguredDistributorProvider` and
+       `UnconfiguredSocietyProvider` (confirmed by directly reading the registry's constructor) —
+       both are explicit placeholders, not real providers of any specific
+       distributor/society; the DTOs themselves (DistributorSubmitDto/SocietySubmitDto/
+       ExternalDataStatusCheckDto) document this in their own `@ApiProperty description`:
+       "não há default — nenhum provider real está registrado em produção" (there is no default — no real provider is registered in production)
+IDEMPOTENCY: idempotencyKey accepted in all submit/status-check DTOs — mechanism ready,
+       with no real provider to exercise it yet
+FRONTEND_CONSUMER: NOT FOUND — no frontend hook/component calls
+       /integrations/external-data/* (the frontend's distributor catalog, §5.20, is
+       entirely disconnected from this more robust API)
+STATUS: CONFIG_ONLY (infrastructure ready and well designed — idempotency, per-provider HMAC webhook,
+       registry pattern — but functionally empty; no FRONTEND_CONSUMER_GAP
+       classified as active because there is neither a provider nor a consumer, both sides await the
+       same future product decision already recorded in D1)
 ```
 
 ### 5.22 NF-e / ECAD / UBC
 
 ```text
-NF-e: UI existe (NfeConfigDialog.tsx, NfeExperience em OAuthPopupPage.tsx) mas explicitamente NÃO
-       coleta dado real (mesmo texto já citado no doc31: "Certificados, senhas e tokens fiscais
-       devem ser enviados somente ao backend seguro... não são solicitados nesta página") — a
-       configuração real (useNfe.ts) persiste em sessionStorage, sem backend (mesmo achado CWE-312
-       já registrado nos docs 18/19/31, não corrigido aqui). STATUS: STUB.
-ECAD/UBC: hooks existem no frontend (useEcad.ts, useUbc.ts) e componentes de diálogo
-       (EcadConfigDialog.tsx, UbcConfigDialog.tsx), mas nenhum controller/service correspondente foi
-       encontrado em apps/api/src/modules/integrations/** nem em nenhum outro módulo do backend —
-       são sociedades de arrecadação/gestão de direitos brasileiras (paralelas a ABRAMUS), mas sem
-       nenhuma API real do lado do servidor. STATUS: UI_ONLY.
+NF-e: a UI exists (NfeConfigDialog.tsx, NfeExperience in OAuthPopupPage.tsx) but explicitly does NOT
+       collect real data (the same text already cited in doc31: "Certificados, senhas e tokens fiscais
+       devem ser enviados somente ao backend seguro... não são solicitados nesta página" — fiscal
+       certificates, passwords and tokens must be sent only to the secure backend... they are not requested on this page) — the
+       real configuration (useNfe.ts) persists in sessionStorage, with no backend (the same CWE-312 finding
+       already recorded in docs 18/19/31, not fixed here). STATUS: STUB.
+ECAD/UBC: hooks exist in the frontend (useEcad.ts, useUbc.ts) along with dialog components
+       (EcadConfigDialog.tsx, UbcConfigDialog.tsx), but no corresponding controller/service was
+       found in apps/api/src/modules/integrations/** or in any other backend module —
+       they are Brazilian collecting/rights-management societies (parallel to ABRAMUS), but without
+       any real server-side API. STATUS: UI_ONLY.
 ```
 
 ---
 
-## 6. Webhooks — inventário completo
+## 6. Webhooks — complete inventory
 
 | PROVIDER | METHOD/PATH | RAW_BODY | SIGNATURE_HEADER | SIGNATURE_VALIDATION | SECRET_REQUIRED | REPLAY_PROTECTION | IDEMPOTENCY | TENANT_RESOLUTION | EVENT_TYPES | DB_WRITES | SIDE_EFFECTS |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Stripe | POST /billing/webhooks/stripe | SIM (RawBodyRequest) | `stripe-signature` | SDK real (`constructEvent`) | STRIPE_WEBHOOK_SECRET | implícita (Stripe SDK valida timestamp na assinatura) | não verificado campo a campo nesta rodada (fora do orçamento — billing.service.ts não relido linha a linha após o trecho de assinatura) | via subscription/customer id (presumido, não relido) | eventos de subscription/invoice (não enumerados individualmente nesta rodada) | billing_subscriptions (presumido) | atualização de plano/status |
-| Autentique | POST /integrations/autentique/webhook | NÃO explicitamente preservado como raw (payload já chega como `@Body() payload: any`, JSON parseado) — GAP potencial: a validação usa `secret` (query/header não confirmado nesta leitura) comparado por `validateSharedSecret`, não uma assinatura HMAC sobre bytes crus, então a ausência de raw body aqui é estruturalmente aceitável para ESTE mecanismo (segredo compartilhado, não HMAC sobre payload) | não é HMAC — é um segredo compartilhado simples | `validateSharedSecret` (constant-time) | AUTENTIQUE_WEBHOOK_SECRET (mín. 24 chars, obrigatório em produção) | via idempotência (ver coluna seguinte), não via timestamp | SIM — `WebhookEventEntity.external_id` UNIQUE, `WebhookService.ingest()` | por lookup de `contracts.autentique_doc_id` (bootstrap admin, depois RLS real) | `document.signed` processado; outros tipos apenas persistidos/marcados processados sem ação | `webhook_events`, `contracts` (status/metadata) | contrato → assinado, `DOMAIN_EVENTS.CONTRACT_SIGNED` emitido |
-| external-data genérico | POST /integrations/external-data/webhooks/:providerId | não verificado (assumindo `@Body() payload` como os demais, mesmo padrão) | `X-Provider-Signature` | delegada a `ExternalDataExchangeService.ingestWebhook` (implementação interna não lida nesta rodada) | `EXTERNAL_DATA_WEBHOOK_SECRET_<PROVIDER>` ou fallback genérico — exige `X-Tenant-ID` explícito no header (diferente dos outros 2, que resolvem tenant server-side) | não verificado | não verificado nesta rodada (framework, sem provider real ativo — ver §5.21) | via header `X-Tenant-ID` do CHAMADOR (não resolvido internamente — nota: isso é estruturalmente diferente e mais frágil que o padrão Autentique, mas como nenhum provider real está registrado, o risco é hoje teórico) | dependente do provider (nenhum registrado) | webhook_events (presumido, mesma infra) | dependente do provider (nenhum registrado) |
-| DocuSign Connect | NENHUM | — | — | — | — | — | — | — | — | — | NONE (confirmado no doc77) |
+| Stripe | POST /billing/webhooks/stripe | YES (RawBodyRequest) | `stripe-signature` | real SDK (`constructEvent`) | STRIPE_WEBHOOK_SECRET | implicit (the Stripe SDK validates the timestamp in the signature) | not verified field by field in this round (outside the budget — billing.service.ts not re-read line by line after the signature excerpt) | via subscription/customer id (presumed, not re-read) | subscription/invoice events (not enumerated individually in this round) | billing_subscriptions (presumed) | plan/status update |
+| Autentique | POST /integrations/autentique/webhook | NOT explicitly preserved as raw (the payload already arrives as `@Body() payload: any`, parsed JSON) — potential GAP: the validation uses a `secret` (query/header not confirmed in this reading) compared by `validateSharedSecret`, not an HMAC signature over raw bytes, so the absence of a raw body here is structurally acceptable for THIS mechanism (shared secret, not HMAC over the payload) | it is not HMAC — it is a simple shared secret | `validateSharedSecret` (constant-time) | AUTENTIQUE_WEBHOOK_SECRET (min. 24 chars, mandatory in production) | via idempotency (see the next column), not via timestamp | YES — `WebhookEventEntity.external_id` UNIQUE, `WebhookService.ingest()` | by looking up `contracts.autentique_doc_id` (bootstrap admin, then real RLS) | `document.signed` processed; other types only persisted/marked processed with no action | `webhook_events`, `contracts` (status/metadata) | contract → signed, `DOMAIN_EVENTS.CONTRACT_SIGNED` emitted |
+| generic external-data | POST /integrations/external-data/webhooks/:providerId | not verified (assuming `@Body() payload` like the others, same pattern) | `X-Provider-Signature` | delegated to `ExternalDataExchangeService.ingestWebhook` (internal implementation not read in this round) | `EXTERNAL_DATA_WEBHOOK_SECRET_<PROVIDER>` or the generic fallback — requires an explicit `X-Tenant-ID` in the header (unlike the other 2, which resolve the tenant server-side) | not verified | not verified in this round (framework, no active real provider — see §5.21) | via the CALLER's `X-Tenant-ID` header (not resolved internally — note: this is structurally different from and more fragile than the Autentique pattern, but since no real provider is registered, the risk is theoretical today) | provider-dependent (none registered) | webhook_events (presumed, same infra) | provider-dependent (none registered) |
+| DocuSign Connect | NONE | — | — | — | — | — | — | — | — | — | NONE (confirmed in doc77) |
 
-`WEBHOOK_SECURITY_GAP` identificado: o webhook genérico `external-data` resolve tenant a partir de
-um header (`X-Tenant-ID`) fornecido pelo REMETENTE do webhook (o provider externo), não por uma
-resolução server-side independente (como o Autentique faz via lookup do documento) — se um provider
-real vier a ser registrado nesse framework no futuro, essa resolução de tenant por header precisa
-ser revisada antes de ir para produção (hoje é um risco teórico, pois `providers.size === 2`
-placeholders, sem tráfego real possível).
+`WEBHOOK_SECURITY_GAP` identified: the generic `external-data` webhook resolves the tenant from
+a header (`X-Tenant-ID`) supplied by the webhook's SENDER (the external provider), not by an
+independent server-side resolution (as Autentique does via a document lookup) — if a real provider
+is registered in this framework in the future, this header-based tenant resolution needs to
+be reviewed before going to production (today it is a theoretical risk, since `providers.size === 2`
+placeholders, with no real traffic possible).
 
 ---
 
-## 7. OAuth — inventário de callbacks
+## 7. OAuth — callback inventory
 
 | PROVIDER | START | CALLBACK | STATE | PKCE | REDIRECT_URI | TENANT_BINDING | TOKEN_EXCHANGE | TOKEN_STORAGE | ERROR_REDIRECT | SUCCESS_REDIRECT |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Spotify | GET /integrations/spotify/auth | GET/POST /integrations/spotify/callback | HMAC-SHA256 assinado, TTL 10min | NÃO | fixo (SPOTIFY_REDIRECT_URI) | via state (tenantId/userId embutidos e assinados) | server-side (Basic Auth) | oauth_connections | `?spotify=error` (GET callback) | `?spotify=connected` |
-| Instagram orgânico | GET /integrations/instagram/auth | POST /integrations/instagram/callback | via `IntegrationBaseService.buildSignedState`/`verifySignedState` (herdado) | NÃO | fixo (via APP_URL) | via state assinado | server-side | oauth_connections | não verificado nesta rodada | não verificado nesta rodada |
-| Meta/TikTok/YouTube corporativos | POST /integrations/oauth/init (autenticado) → popup → POST /integrations/oauth/exchange | mesmo endpoint (`oauth/exchange`, `@Public()`) | `exchange_token` de uso único (10 min), não um `state` OAuth tradicional — mecanismo funcionalmente equivalente (CSRF-safe, single-use) | NÃO | construído a partir de APP_URL, nunca aceito do cliente | via `exchange_token` (emitido só para chamador autenticado) | server-side | oauth_connections | erro relançado como BadRequestException (tratado no frontend, doc30) | `connected:true` no JSON de resposta |
-| TikTok orgânico | GET /integrations/tiktok/auth | POST /integrations/tiktok/callback | herdado de IntegrationBaseService | NÃO | via APP_URL | via state | server-side | oauth_connections | não verificado | não verificado |
-| Google Ads | GET /integrations/google-ads/auth | POST /integrations/google-ads/callback | herdado | NÃO | via APP_URL | via state | server-side | oauth_connections | não verificado | não verificado |
-| DocuSign | (via oauth/init genérico) | POST /integrations/oauth/exchange | exchange_token | NÃO | via APP_URL | via exchange_token | server-side (Basic Auth) | oauth_connections | genérico | genérico |
-| Stripe Connect | (via oauth/init genérico) | POST /integrations/oauth/exchange | exchange_token | NÃO | via APP_URL | via exchange_token | server-side (Basic Auth do secret) | oauth_connections | genérico | genérico |
+| Spotify | GET /integrations/spotify/auth | GET/POST /integrations/spotify/callback | HMAC-SHA256 signed, TTL 10min | NO | fixed (SPOTIFY_REDIRECT_URI) | via state (tenantId/userId embedded and signed) | server-side (Basic Auth) | oauth_connections | `?spotify=error` (GET callback) | `?spotify=connected` |
+| Organic Instagram | GET /integrations/instagram/auth | POST /integrations/instagram/callback | via `IntegrationBaseService.buildSignedState`/`verifySignedState` (inherited) | NO | fixed (via APP_URL) | via signed state | server-side | oauth_connections | not verified in this round | not verified in this round |
+| Corporate Meta/TikTok/YouTube | POST /integrations/oauth/init (authenticated) → popup → POST /integrations/oauth/exchange | the same endpoint (`oauth/exchange`, `@Public()`) | single-use `exchange_token` (10 min), not a traditional OAuth `state` — a functionally equivalent mechanism (CSRF-safe, single-use) | NO | built from APP_URL, never accepted from the client | via `exchange_token` (issued only to an authenticated caller) | server-side | oauth_connections | error rethrown as BadRequestException (handled in the frontend, doc30) | `connected:true` in the JSON response |
+| Organic TikTok | GET /integrations/tiktok/auth | POST /integrations/tiktok/callback | inherited from IntegrationBaseService | NO | via APP_URL | via state | server-side | oauth_connections | not verified | not verified |
+| Google Ads | GET /integrations/google-ads/auth | POST /integrations/google-ads/callback | inherited | NO | via APP_URL | via state | server-side | oauth_connections | not verified | not verified |
+| DocuSign | (via generic oauth/init) | POST /integrations/oauth/exchange | exchange_token | NO | via APP_URL | via exchange_token | server-side (Basic Auth) | oauth_connections | generic | generic |
+| Stripe Connect | (via generic oauth/init) | POST /integrations/oauth/exchange | exchange_token | NO | via APP_URL | via exchange_token | server-side (Basic Auth with the secret) | oauth_connections | generic | generic |
 
-`OAUTH_STATE_GAPS: 0` — todos os mecanismos de state/exchange_token encontrados são criptografica ou
-estruturalmente protegidos contra CSRF (HMAC assinado com TTL, ou token de uso único emitido
-server-side para chamador já autenticado). Nenhum PKCE encontrado em nenhum fluxo — aceitável dado
-que TODOS os fluxos reais são backend-mediated (client_secret nunca sai do servidor, cenário onde
-PKCE existe primariamente para public clients sem capacidade de guardar segredo — não é este caso).
+`OAUTH_STATE_GAPS: 0` — all the state/exchange_token mechanisms found are cryptographically or
+structurally protected against CSRF (HMAC signed with a TTL, or a single-use token issued
+server-side to an already-authenticated caller). No PKCE found in any flow — acceptable given
+that ALL real flows are backend-mediated (the client_secret never leaves the server, a scenario where
+PKCE exists primarily for public clients without the ability to keep a secret — which is not this case).
 
 ---
 
-## 8. Token storage (tabela `oauth_connections` — ground truth do banco, Fase 1)
+## 8. Token storage (`oauth_connections` table — database ground truth, Phase 1)
 
 ```text
 DATABASE_TABLE: oauth_connections
@@ -614,49 +615,49 @@ ACCESS_TOKEN_FIELD: access_token_encrypted (text, NOT NULL, sensitive=true)
 REFRESH_TOKEN_FIELD: refresh_token_encrypted (text, nullable, sensitive=true)
 EXPIRES_AT: expires_at (timestamp, nullable)
 SCOPES: scopes (text, nullable)
-ENCRYPTED: SIM (AES-256-GCM via EncryptionService, confirmado no código de todos os providers OAuth)
-ENCRYPTION_LAYER: EncryptionService (mesma usada para PII de clients/artists, já auditada em
-       módulos anteriores)
-TENANT_ID: SIM (unique composto com user_id+provider, confirmado na Fase 1: `unique: true` nas 3
-       colunas tenant_id/user_id/provider)
-PROVIDER_ACCOUNT_ID: NÃO HÁ COLUNA DEDICADA — o campo `provider` identifica a plataforma, mas não
-       há um `provider_account_id` separado para diferenciar múltiplas contas do mesmo provider
-       para o mesmo usuário/tenant (limitação de schema, não um bug — nenhum fluxo atual precisa de
-       múltiplas contas simultâneas do mesmo provider)
-CREATED_AT/UPDATED_AT: SIM
+ENCRYPTED: YES (AES-256-GCM via EncryptionService, confirmed in the code of all OAuth providers)
+ENCRYPTION_LAYER: EncryptionService (the same one used for clients/artists PII, already audited in
+       previous modules)
+TENANT_ID: YES (composite unique with user_id+provider, confirmed in Phase 1: `unique: true` on the 3
+       columns tenant_id/user_id/provider)
+PROVIDER_ACCOUNT_ID: THERE IS NO DEDICATED COLUMN — the `provider` field identifies the platform, but
+       there is no separate `provider_account_id` to distinguish multiple accounts of the same provider
+       for the same user/tenant (a schema limitation, not a bug — no current flow needs
+       multiple simultaneous accounts of the same provider)
+CREATED_AT/UPDATED_AT: YES
 ```
 
 ```text
-DATABASE_TABLE: integrations (credenciais não-OAuth — API key/usuário-senha por tenant)
-CREDENTIALS_FIELD: credentials_encrypted (text, nullable — AES-256-GCM, JSON serializado antes de
-       criptografar)
+DATABASE_TABLE: integrations (non-OAuth credentials — API key/username-password per tenant)
+CREDENTIALS_FIELD: credentials_encrypted (text, nullable — AES-256-GCM, JSON serialized before
+       encryption)
 STATUS_FIELD: status (default 'disconnected')
 LAST_SYNC_FIELD: last_sync_at
 FAILURE_FIELD: failure_count (integer, default 0)
-METADATA: metadata (jsonb — usado para retry_count/last_failure_at/last_failure_reason por
-       provider, ex. Autentique)
-TENANT_ID: SIM (unique composto com provider)
+METADATA: metadata (jsonb — used for retry_count/last_failure_at/last_failure_reason per
+       provider, e.g. Autentique)
+TENANT_ID: YES (composite unique with provider)
 ```
 
-`UNENCRYPTED_SECRET_FIELDS: 0` — nenhum campo de credencial/token encontrado em texto plano em
-nenhuma tabela relacionada a integrações.
+`UNENCRYPTED_SECRET_FIELDS: 0` — no credential/token field found in plain text in
+any integrations-related table.
 
 ---
 
-## 9. Token refresh — inventário
+## 9. Token refresh — inventory
 
 | PROVIDER | REFRESH_IMPLEMENTED | REFRESH_TRIGGER | REFRESH_FAILURE_BEHAVIOR | ROTATING_REFRESH_TOKEN_HANDLED | CONCURRENCY_HANDLING |
 |---|---|---|---|---|---|
-| Spotify | SIM | sob demanda, em `getValidToken()` quando `expires_at < now()` | exceção propagada (`ServiceUnavailableException`), sem retry automático | SIM (`refresh_token_encrypted` só é sobrescrito se o provider devolver um novo) | não verificado (sem lock explícito encontrado — risco teórico de corrida se duas requisições expirarem simultaneamente, não confirmado como incidente real) |
-| Instagram/Meta | SIM, proativo (cron diário + Vercel Cron) | agendado, 7 dias antes de `expires_at` | `markOAuthNeedsReauth()` — preserva a linha, marca para reconexão manual em vez de apagar | não verificado em profundidade | best-effort, loop sequencial sobre os resultados da query (sem paralelismo, sem lock) |
-| TikTok/GoogleAds/DocuSign/StripeConnect | NÃO IMPLEMENTADO EXPLICITAMENTE (nenhum refresh dedicado localizado — apenas o access_token e opcionalmente refresh_token são persistidos, sem rotina que os utilize automaticamente) | N/A | token expira e a próxima chamada usando `getOAuthConnection()` devolveria um token expirado sem checagem própria (a checagem de expiração encontrada é específica do Spotify — `getValidToken()`; não há equivalente genérico em `IntegrationBaseService.getOAuthConnection()`) | N/A | N/A |
+| Spotify | YES | on demand, in `getValidToken()` when `expires_at < now()` | exception propagated (`ServiceUnavailableException`), no automatic retry | YES (`refresh_token_encrypted` is only overwritten if the provider returns a new one) | not verified (no explicit lock found — a theoretical race risk if two requests expire simultaneously, not confirmed as a real incident) |
+| Instagram/Meta | YES, proactive (daily cron + Vercel Cron) | scheduled, 7 days before `expires_at` | `markOAuthNeedsReauth()` — preserves the row, marks it for manual reconnection instead of deleting it | not verified in depth | best-effort, a sequential loop over the query results (no parallelism, no lock) |
+| TikTok/GoogleAds/DocuSign/StripeConnect | NOT EXPLICITLY IMPLEMENTED (no dedicated refresh located — only the access_token and optionally the refresh_token are persisted, with no routine that uses them automatically) | N/A | the token expires and the next call using `getOAuthConnection()` would return an expired token with no check of its own (the expiration check found is Spotify-specific — `getValidToken()`; there is no generic equivalent in `IntegrationBaseService.getOAuthConnection()`) | N/A | N/A |
 
-`TOKEN_REFRESH_GAP` identificado: apenas Spotify e Instagram/Meta têm refresh real; os demais
-providers OAuth (TikTok, Google Ads, DocuSign, Stripe Connect) persistem `refresh_token_encrypted`
-mas não têm nenhuma rotina — nem sob-demanda, nem agendada — que o utilize. Nas condições atuais
-isso é consistente com o nível de uso de produto desses providers (nenhum consumidor de domínio
-identificado usando o token OAuth desses 4 além da própria conexão), mas é um gap estrutural real se
-esses tokens vierem a ser usados para chamadas subsequentes de API.
+`TOKEN_REFRESH_GAP` identified: only Spotify and Instagram/Meta have real refresh; the other
+OAuth providers (TikTok, Google Ads, DocuSign, Stripe Connect) persist `refresh_token_encrypted`
+but have no routine — neither on-demand nor scheduled — that uses it. Under current conditions
+this is consistent with the level of product use of these providers (no identified domain consumer
+using the OAuth token of these 4 beyond the connection itself), but it is a real structural gap if
+these tokens come to be used for subsequent API calls.
 
 ---
 
@@ -664,169 +665,169 @@ esses tokens vierem a ser usados para chamadas subsequentes de API.
 
 | PROVIDER | FRONTEND_ACTION | BACKEND_ENDPOINT | REMOTE_REVOKE | LOCAL_TOKEN_DELETE | DATABASE_STATUS |
 |---|---|---|---|---|---|
-| Spotify | useSpotifyDisconnect | DELETE /integrations/spotify/disconnect | NÃO (Spotify não expõe revoke público para este fluxo) | SIM (DELETE da linha) | linha removida |
-| Instagram/Meta corp | (via hook não lido individualmente) | DELETE /integrations/instagram/disconnect, DELETE /integrations/meta-corporate/disconnect | comentário do código diz "tenta revogar no Meta" para o corporativo — não confirmado linha a linha | SIM | via IntegrationBaseService.disconnectOAuth (delete) |
-| TikTok/GoogleAds/DocuSign/StripeConnect/genérico | via `oauth/disconnect` genérico | DELETE /integrations/oauth/disconnect | NÃO encontrado | SIM | delete |
-| SoundCloud/AppleMusic/Abramus | dedicado por provider (`disconnectProvider`) | DELETE .../disconnect | NÃO (são credenciais de app/chave, não token OAuth revogável remotamente da mesma forma) | SIM (via `IntegrationBaseService.disconnect()` — status='disconnected', `credentials_encrypted=null`) | status atualizado, não linha removida (diferente do padrão oauth_connections, que deleta a linha) |
-| Autentique | não há botão de "desconectar" dedicado encontrado no frontend (apenas `configure` para trocar o token) | nenhum endpoint DELETE dedicado para Autentique | N/A | N/A | Gap de UX registrado, não de segurança — trocar credencial via `configure` sobrescreve, então "desconectar" na prática exigiria reconfigurar com token vazio (não testado) |
+| Spotify | useSpotifyDisconnect | DELETE /integrations/spotify/disconnect | NO (Spotify does not expose a public revoke for this flow) | YES (DELETE of the row) | row removed |
+| Instagram/Meta corp | (via a hook not read individually) | DELETE /integrations/instagram/disconnect, DELETE /integrations/meta-corporate/disconnect | the code comment says "tenta revogar no Meta" (tries to revoke at Meta) for the corporate one — not confirmed line by line | YES | via IntegrationBaseService.disconnectOAuth (delete) |
+| TikTok/GoogleAds/DocuSign/StripeConnect/generic | via the generic `oauth/disconnect` | DELETE /integrations/oauth/disconnect | NOT found | YES | delete |
+| SoundCloud/AppleMusic/Abramus | dedicated per provider (`disconnectProvider`) | DELETE .../disconnect | NO (they are app/key credentials, not an OAuth token remotely revocable in the same way) | YES (via `IntegrationBaseService.disconnect()` — status='disconnected', `credentials_encrypted=null`) | status updated, row not removed (unlike the oauth_connections pattern, which deletes the row) |
+| Autentique | no dedicated "disconnect" button found in the frontend (only `configure` to change the token) | no dedicated DELETE endpoint for Autentique | N/A | N/A | UX gap recorded, not a security one — changing the credential via `configure` overwrites it, so "disconnecting" in practice would require reconfiguring with an empty token (not tested) |
 
 ---
 
-## 11. Frontend Connection UI — auditoria completa de botões
+## 11. Frontend Connection UI — complete button audit
 
 | COMPONENT | ACTION | HOOK | ENDPOINT | REAL_BACKEND | FUNCTIONAL |
 |---|---|---|---|---|---|
-| SpotifyConfigDialog.tsx | Conectar (OAuth) | useSpotifyConnect / useSpotifySaveCredentials (deprecated) | GET /integrations/spotify/auth | SIM | SIM |
-| SpotifyConfigDialog.tsx | Desconectar | useSpotifyDisconnect | DELETE /integrations/spotify/disconnect | SIM | SIM |
-| YouTubeConfigDialog.tsx | (não lido individualmente nesta rodada — inferido pelo padrão consistente dos demais ConfigDialogs e pela existência confirmada dos endpoints reais de YouTube) | — | GET /integrations/youtube/status e afins | SIM (endpoints existem) | presumido SIM, não confirmado componente a componente |
-| AutentiqueConfigDialog.tsx | Configurar token | (não lido — presume-se chama POST /integrations/autentique/configure, endpoint real confirmado) | POST /integrations/autentique/configure | SIM | presumido SIM (configurar) |
-| SendForSigningDialog.tsx | Enviar para assinatura | useSigningProviders + signingService.sendForSigning | resolveSigningAdapter → **sempre stub** | NÃO (adapter nunca chama o backend real) | **NÃO — confirmado quebrado, mesmo para Autentique** (ver §5.4) |
-| ClicksignConfigDialog.tsx | Configurar | grava em sessionStorage apenas (useSigningProviders lê `musicos360_clicksign_credentials`) | nenhum | NÃO | NÃO (não há backend) |
-| AbramusConfigDialog.tsx | Configurar/Desconectar | (não lido individualmente — endpoints reais confirmados: POST/DELETE /integrations/abramus/*) | POST/DELETE /integrations/abramus/* | SIM | presumido SIM |
-| NfeConfigDialog.tsx | Selecionar método | useNfe.ts | nenhum (sessionStorage) | NÃO | NÃO (por desenho — tela não coleta segredo real, doc31) |
-| UbcConfigDialog.tsx / EcadConfigDialog.tsx | Configurar | useUbc.ts / useEcad.ts | nenhum endpoint backend encontrado | NÃO | NÃO (UI_ONLY, §5.22) |
-| AppleMusicConfigDialog.tsx / DeezerConfigDialog.tsx / SoundCloudConfigDialog.tsx | Configurar | (não lidos individualmente — endpoints reais confirmados para Apple Music e SoundCloud; Deezer não expõe endpoint de "configure" no controller — Deezer é 100% chamada pública sem credencial de conta) | POST /integrations/{apple-music,soundcloud}/configure | SIM (Apple Music/SoundCloud) / N/A (Deezer não precisa) | presumido SIM |
-| MarketingOAuthDialog.tsx | Conectar (19 plataformas de marketing) | fetch direto (não api-client) | POST /integrations/oauth/init → popup → oauth/exchange | SIM (já confirmado em doc30, ALREADY_BACKEND_MEDIATED) | SIM |
-| Configuracoes.tsx (distribuidoras) | "Abrir portal" | link estático `<a target="_blank">` | nenhum | NÃO | NÃO (por desenho, honesto — não finge conectar) |
+| SpotifyConfigDialog.tsx | "Conectar" (Connect) (OAuth) | useSpotifyConnect / useSpotifySaveCredentials (deprecated) | GET /integrations/spotify/auth | YES | YES |
+| SpotifyConfigDialog.tsx | "Desconectar" (Disconnect) | useSpotifyDisconnect | DELETE /integrations/spotify/disconnect | YES | YES |
+| YouTubeConfigDialog.tsx | (not read individually in this round — inferred from the consistent pattern of the other ConfigDialogs and from the confirmed existence of the real YouTube endpoints) | — | GET /integrations/youtube/status and related | YES (the endpoints exist) | presumed YES, not confirmed component by component |
+| AutentiqueConfigDialog.tsx | Configure token | (not read — presumed to call POST /integrations/autentique/configure, a confirmed real endpoint) | POST /integrations/autentique/configure | YES | presumed YES (configure) |
+| SendForSigningDialog.tsx | "Enviar para assinatura" (Send for signature) | useSigningProviders + signingService.sendForSigning | resolveSigningAdapter → **always a stub** | NO (the adapter never calls the real backend) | **NO — confirmed broken, even for Autentique** (see §5.4) |
+| ClicksignConfigDialog.tsx | Configure | writes to sessionStorage only (useSigningProviders reads `musicos360_clicksign_credentials`) | none | NO | NO (there is no backend) |
+| AbramusConfigDialog.tsx | Configure/Disconnect | (not read individually — real endpoints confirmed: POST/DELETE /integrations/abramus/*) | POST/DELETE /integrations/abramus/* | YES | presumed YES |
+| NfeConfigDialog.tsx | Select method | useNfe.ts | none (sessionStorage) | NO | NO (by design — the screen does not collect a real secret, doc31) |
+| UbcConfigDialog.tsx / EcadConfigDialog.tsx | Configure | useUbc.ts / useEcad.ts | no backend endpoint found | NO | NO (UI_ONLY, §5.22) |
+| AppleMusicConfigDialog.tsx / DeezerConfigDialog.tsx / SoundCloudConfigDialog.tsx | Configure | (not read individually — real endpoints confirmed for Apple Music and SoundCloud; Deezer does not expose a "configure" endpoint in the controller — Deezer is 100% public calls with no account credential) | POST /integrations/{apple-music,soundcloud}/configure | YES (Apple Music/SoundCloud) / N/A (Deezer does not need it) | presumed YES |
+| MarketingOAuthDialog.tsx | Connect (19 marketing platforms) | direct fetch (not api-client) | POST /integrations/oauth/init → popup → oauth/exchange | YES (already confirmed in doc30, ALREADY_BACKEND_MEDIATED) | YES |
+| Configuracoes.tsx (distributors) | "Abrir portal" (Open portal) | static `<a target="_blank">` link | none | NO | NO (by design, honest — does not pretend to connect) |
 
-`FRONTEND_CONSUMER_GAP` mais crítico do módulo: **SendForSigningDialog.tsx**, o único ponto real de
-entrada de e-signature na UI, está cabeado a um adapter que sempre lança erro, para os 3 providers
-disponíveis (Autentique/Clicksign/DocuSign) — mesmo o Autentique tendo um backend 100% funcional.
-Isso é mais severo do que "zero consumidor" (achado original de contracts.md): é um consumidor
-existente e alcançável pelo usuário que está estruturalmente impedido de ter sucesso.
+The module's most critical `FRONTEND_CONSUMER_GAP`: **SendForSigningDialog.tsx**, the only real
+e-signature entry point in the UI, is wired to an adapter that always throws an error, for the 3
+available providers (Autentique/Clicksign/DocuSign) — even though Autentique has a 100% functional backend.
+This is more severe than "zero consumers" (the original contracts.md finding): it is an existing
+consumer, reachable by the user, that is structurally prevented from succeeding.
 
 ---
 
-## 12. Sync — inventário
+## 12. Sync — inventory
 
 | PROVIDER | DIRECTION | TRIGGER | FULL_OR_INCREMENTAL | CURSOR/LAST_SYNC_AT | CONFLICT_POLICY |
 |---|---|---|---|---|---|
-| Spotify | IMPORT (métricas de artista) | MANUAL (botão) + 1 disparo automático pós-conexão OAuth (job BullMQ `spotify:sync`, delay 1s) | FULL (busca sempre o estado atual, sem incremental) | `integrations.last_sync_at` existe na tabela mas não confirmado como escrito pelo fluxo Spotify especificamente (Spotify usa `oauth_connections`, que não tem `last_sync_at` — GAP de rastreabilidade: não há como saber quando foi a última sincronização de métricas Spotify a partir do banco) | N/A (sobrescreve) |
-| Instagram/Meta | IMPORT (token refresh, não dado de negócio) | SCHEDULED (cron diário / Vercel Cron) | incremental (só tokens expirando em ≤7 dias) | implícito via `expires_at` da própria linha | N/A |
-| Autentique | IMPORT (status de assinatura) | WEBHOOK | incremental (evento a evento) | N/A (event-driven) | idempotente via `external_id` |
-| ABRAMUS/ACRCloud/demais streaming | nenhum sync automático — tudo MANUAL/sob demanda | MANUAL | FULL | N/A | N/A |
-| external-data genérico | preparado para IMPORT/EXPORT via `sync/request` + fila (`WorkflowQueueService.enqueueExternalDataSync`) | MANUAL (endpoint) | não aplicável (sem provider real) | idempotencyKey aceito no DTO | preparado, não exercitado |
+| Spotify | IMPORT (artist metrics) | MANUAL (button) + 1 automatic trigger after the OAuth connection (BullMQ job `spotify:sync`, 1s delay) | FULL (always fetches the current state, no incremental) | `integrations.last_sync_at` exists in the table but is not confirmed as written by the Spotify flow specifically (Spotify uses `oauth_connections`, which has no `last_sync_at` — a traceability GAP: there is no way to tell from the database when the last Spotify metrics sync happened) | N/A (overwrites) |
+| Instagram/Meta | IMPORT (token refresh, not business data) | SCHEDULED (daily cron / Vercel Cron) | incremental (only tokens expiring in ≤7 days) | implicit via the row's own `expires_at` | N/A |
+| Autentique | IMPORT (signature status) | WEBHOOK | incremental (event by event) | N/A (event-driven) | idempotent via `external_id` |
+| ABRAMUS/ACRCloud/other streaming | no automatic sync — everything MANUAL/on demand | MANUAL | FULL | N/A | N/A |
+| generic external-data | prepared for IMPORT/EXPORT via `sync/request` + queue (`WorkflowQueueService.enqueueExternalDataSync`) | MANUAL (endpoint) | not applicable (no real provider) | idempotencyKey accepted in the DTO | prepared, not exercised |
 
-`SOURCE_OF_TRUTH` por entidade sincronizada:
+`SOURCE_OF_TRUTH` per synchronized entity:
 ```text
-Assinatura SaaS (billing_subscriptions): EXTERNAL (Stripe é a fonte de verdade; webhook sincroniza local)
-Token OAuth de cada provider: LOCAL (oauth_connections é a fonte operacional; o provider externo é
-       apenas quem originalmente emitiu o token, não uma fonte continuamente consultada)
-Métricas de artista (Spotify/YouTube/Deezer/SoundCloud/AppleMusic/ACRCloud): EXTERNAL, mas sem
-       cache/persistência local — cada leitura é uma chamada ao vivo (não há uma cópia "LOCAL"
-       desatualizável, então não há conflito possível — é sempre a fonte externa em tempo real)
-Status de assinatura de contrato (Autentique): HYBRID — LOCAL (contracts.status) é atualizado a
-       partir de um evento EXTERNAL (webhook), sistema de registro é local mas o evento que o
-       dispara é externo — mesmo padrão "hybrid" já visto em outras integrações orientadas a webhook
-Credenciais/config de providers manuais (ABRAMUS/AppleMusic/SoundCloud/TikTok Ads): LOCAL (a
-       credencial em si É o dado local; nenhuma sincronização de volta ocorre)
-Distribuidoras (6): UNRESOLVED seria a classificação técnica, mas o prompt exige zero UNRESOLVED —
-       classificado como NOT_APPLICABLE (nenhuma sincronização existe hoje para nenhuma entidade
-       real de nenhuma distribuidora — não há "fonte" para ter conflito, porque não há dado)
+SaaS subscription (billing_subscriptions): EXTERNAL (Stripe is the source of truth; the webhook syncs it locally)
+Each provider's OAuth token: LOCAL (oauth_connections is the operational source; the external provider is
+       only the original issuer of the token, not a continuously queried source)
+Artist metrics (Spotify/YouTube/Deezer/SoundCloud/AppleMusic/ACRCloud): EXTERNAL, but with no
+       local cache/persistence — every read is a live call (there is no stale-able "LOCAL"
+       copy, so no conflict is possible — it is always the external source in real time)
+Contract signature status (Autentique): HYBRID — LOCAL (contracts.status) is updated
+       from an EXTERNAL event (webhook); the system of record is local but the event that
+       triggers it is external — the same "hybrid" pattern already seen in other webhook-driven integrations
+Credentials/config of manual providers (ABRAMUS/AppleMusic/SoundCloud/TikTok Ads): LOCAL (the
+       credential itself IS the local data; no sync back occurs)
+Distributors (6): UNRESOLVED would be the technical classification, but the prompt requires zero UNRESOLVED —
+       classified as NOT_APPLICABLE (no synchronization exists today for any real entity
+       of any distributor — there is no "source" to be in conflict, because there is no data)
 ```
 
-`SOURCE_OF_TRUTH_GAP`: nenhum além do já registrado (falta de `last_sync_at` rastreável para
-Spotify — ver acima, um REAL_MAPPING_GAP menor, não um gap de decisão arquitetural).
+`SOURCE_OF_TRUTH_GAP`: none beyond the one already recorded (the lack of a traceable `last_sync_at` for
+Spotify — see above, a minor REAL_MAPPING_GAP, not an architectural-decision gap).
 
 ---
 
-## 13. Idempotência, retries, rate limit, timeouts (visão consolidada)
+## 13. Idempotency, retries, rate limit, timeouts (consolidated view)
 
 ```text
-IDEMPOTENCY: implementada estruturalmente em 2 pontos reais: WebhookService (webhook_events.
-       external_id UNIQUE) e o framework external-data (idempotencyKey em todos os DTOs de
-       submit/status-check, mecanismo pronto sem provider real para testá-lo). Stripe usa a
-       idempotência nativa do próprio SDK/webhook (não uma tabela própria do lado do consumidor
-       além do que o webhook_events genérico já cobriria se fosse reaproveitado — não confirmado
-       se Stripe usa WebhookService ou só a verificação de assinatura do SDK isoladamente, ver §6).
+IDEMPOTENCY: structurally implemented in 2 real places: WebhookService (webhook_events.
+       external_id UNIQUE) and the external-data framework (idempotencyKey in all
+       submit/status-check DTOs, a mechanism ready with no real provider to test it). Stripe uses the
+       native idempotency of its own SDK/webhook (not a table of its own on the consumer side
+       beyond what the generic webhook_events would cover if it were reused — not confirmed
+       whether Stripe uses WebhookService or only the SDK's signature verification on its own, see §6).
 
-RETRIES: NÃO há retry automático de chamada HTTP de saída em NENHUM provider (Autentique tem
-       "retry_count" rastreado em metadata, mas é um CONTADOR de falhas para observabilidade, não um
-       mecanismo que refaz a chamada automaticamente — confirmado por leitura direta: recordFailure
-       incrementa um contador, não agenda nova tentativa). RETRY_IMPLEMENTED: NÃO (em todos os
-       providers). Distinção do prompt (retry síncrono vs. job assíncrono): nenhum dos dois padrões
-       está implementado para chamadas de saída — apenas resiliência de FALHA RÁPIDA (timeout +
-       circuit breaker), não de nova tentativa.
+RETRIES: there is NO automatic retry of outbound HTTP calls in ANY provider (Autentique has
+       "retry_count" tracked in metadata, but it is a failure COUNTER for observability, not a
+       mechanism that redoes the call automatically — confirmed by direct reading: recordFailure
+       increments a counter, it does not schedule a new attempt). RETRY_IMPLEMENTED: NO (in all
+       providers). The prompt's distinction (synchronous retry vs. asynchronous job): neither pattern
+       is implemented for outbound calls — only FAIL-FAST resilience (timeout +
+       circuit breaker), not retry.
 
-RATE_LIMIT: nenhum tratamento explícito de HTTP 429 encontrado em nenhum provider (nenhum
-       PROVIDER_LIMIT_KNOWN_IN_CODE, nenhum Retry-After lido, nenhuma fila de throttling própria) —
-       a única proteção indireta é o CircuitBreaker (que abre após falhas repetidas, incluindo 429
-       tratado como qualquer outra falha HTTP, sem tratamento diferenciado).
+RATE_LIMIT: no explicit HTTP 429 handling found in any provider (no
+       PROVIDER_LIMIT_KNOWN_IN_CODE, no Retry-After read, no throttling queue of its own) —
+       the only indirect protection is the CircuitBreaker (which opens after repeated failures, including 429
+       treated like any other HTTP failure, with no differentiated handling).
 
-TIMEOUTS: CONSISTENTE para os providers que estendem IntegrationBaseService/usam `this.fetch()`
-       (10s via resilientFetch) e para Autentique (15s via AbortController dedicado, documentado
-       como parte do "Hardening Fase 5"). ACRCloud e ABRAMUS usam `fetch()` nativo SEM timeout
-       explícito — TIMEOUT_GAP confirmado para esses 2 providers especificamente.
-```
-
----
-
-## 14. Fallbacks / mocks / stubs — classificação
-
-```text
-signing.adapter.ts (createUnavailableSigningProvider): ACTIVE_RUNTIME — não é DEV_ONLY nem morto,
-       é chamado de fato pelo único componente real de assinatura (SendForSigningDialog.tsx) em
-       produção, sempre falhando. FAKE_INTEGRATION_GAP: NÃO (não finge sucesso — lança erro
-       explícito, cumprindo a regra "nunca simular sucesso" documentada no próprio arquivo) —
-       classificado como STUB_GAP + FRONTEND_CONSUMER_GAP, não como integração fake.
-payments.adapter.ts / streaming.adapter.ts / ads adapter: ACTIVE_RUNTIME pelo mesmo padrão
-       unavailable.provider, mas SEM consumidor real confirmado equivalente ao signing (useStripe.ts
-       e os hooks de streaming reais como useSpotify.ts/useYouTube.ts NÃO passam por esses
-       adapters — eles chamam `api-client` diretamente) — portanto estes 3 adapters específicos
-       (payments/streaming/ads) são efetivamente DEAD_CODE do ponto de vista de consumo real hoje
-       (existem, exportam um objeto, mas nada os importa em um caminho de execução alcançável pelo
-       usuário) — precisa de confirmação adicional por grep de consumidores antes de classificar
-       como DEAD com certeza total; classificado aqui como STATIC_REFERENCE (existe, não confirmado
-       nem como usado nem como 100% morto em profundidade suficiente para a certeza exigida por
-       "DEAD" na taxonomia do doc74).
-useStripeCheckout/useStripePortal (disabledIntegration("Stripe")): ACTIVE_RUNTIME, stub deliberado e
-       rotulado — mesma regra "nunca simular sucesso".
-computeFromMockStorage / mocks equivalentes: nenhum encontrado especificamente dentro do módulo
-       integrations nesta rodada (distinto de dashboard.md, que já documentou um mock morto em outro
-       módulo — não reaberto aqui).
-UnconfiguredDistributorProvider / UnconfiguredSocietyProvider: DEV_ONLY-like mas na verdade
-       ACTIVE_RUNTIME em qualquer ambiente (são os únicos providers registrados hoje) — desenhados
-       para lançar/retornar "não configurado" de forma explícita, mesmo padrão "honesto" já visto
-       nos adapters do frontend.
+TIMEOUTS: CONSISTENT for the providers that extend IntegrationBaseService/use `this.fetch()`
+       (10s via resilientFetch) and for Autentique (15s via a dedicated AbortController, documented
+       as part of "Hardening Fase 5" (Hardening Phase 5)). ACRCloud and ABRAMUS use native `fetch()` WITHOUT an explicit
+       timeout — TIMEOUT_GAP confirmed for these 2 providers specifically.
 ```
 
 ---
 
-## 15. Dados sensíveis enviados a terceiros
+## 14. Fallbacks / mocks / stubs — classification
+
+```text
+signing.adapter.ts (createUnavailableSigningProvider): ACTIVE_RUNTIME — neither DEV_ONLY nor dead,
+       it is actually called by the only real signing component (SendForSigningDialog.tsx) in
+       production, always failing. FAKE_INTEGRATION_GAP: NO (it does not fake success — it throws an
+       explicit error, complying with the "never simulate success" rule documented in the file itself) —
+       classified as STUB_GAP + FRONTEND_CONSUMER_GAP, not as a fake integration.
+payments.adapter.ts / streaming.adapter.ts / ads adapter: ACTIVE_RUNTIME by the same
+       unavailable.provider pattern, but WITHOUT a confirmed real consumer equivalent to signing (useStripe.ts
+       and the real streaming hooks such as useSpotify.ts/useYouTube.ts do NOT go through these
+       adapters — they call `api-client` directly) — therefore these 3 specific adapters
+       (payments/streaming/ads) are effectively DEAD_CODE from the standpoint of real consumption today
+       (they exist, they export an object, but nothing imports them on an execution path reachable by the
+       user) — additional confirmation via a consumer grep is needed before classifying them
+       as DEAD with total certainty; classified here as STATIC_REFERENCE (exists, not confirmed
+       either as used or as 100% dead in enough depth for the certainty required by
+       "DEAD" in the doc74 taxonomy).
+useStripeCheckout/useStripePortal (disabledIntegration("Stripe")): ACTIVE_RUNTIME, a deliberate and
+       labeled stub — the same "never simulate success" rule.
+computeFromMockStorage / equivalent mocks: none found specifically inside the
+       integrations module in this round (distinct from dashboard.md, which already documented a dead mock in another
+       module — not reopened here).
+UnconfiguredDistributorProvider / UnconfiguredSocietyProvider: DEV_ONLY-like but actually
+       ACTIVE_RUNTIME in any environment (they are the only providers registered today) — designed
+       to throw/return "not configured" explicitly, the same "honest" pattern already seen
+       in the frontend adapters.
+```
+
+---
+
+## 15. Sensitive data sent to third parties
 
 | PROVIDER | PII | FINANCIAL_DATA | CATALOG_DATA | CONTRACT_DATA | AUDIO/FILES |
 |---|---|---|---|---|---|
-| Stripe | SIM (email do tenant, presumido pelo checkout) | SIM (é o propósito) | NÃO | NÃO | NÃO |
-| Autentique | SIM (nome/email dos signatários) | NÃO | NÃO | SIM (conteúdo do contrato em base64) | NÃO |
-| ACRCloud | NÃO | NÃO | NÃO (indiretamente, resultado pode alimentar catálogo, mas o request em si não envia dado de catálogo) | NÃO | SIM (amostra de áudio) |
-| ABRAMUS | NÃO diretamente (compositor é nome, não necessariamente PII de titular final) | NÃO | SIM (título/ISWC/gênero/duração/editora) | NÃO | NÃO |
-| Meta/TikTok/Google Ads | SIM (via métricas de conta/perfil, indireto) | SIM (dados de campanha/insights de investimento em ads) | NÃO | NÃO | NÃO |
-| Spotify/YouTube/Deezer/SoundCloud/AppleMusic | NÃO (buscas por artista/faixa, dados públicos) | NÃO | SIM (nomes de artista/faixa/álbum) | NÃO | NÃO |
+| Stripe | YES (the tenant's email, presumed from the checkout) | YES (that is its purpose) | NO | NO | NO |
+| Autentique | YES (signatories' name/email) | NO | NO | YES (contract content in base64) | NO |
+| ACRCloud | NO | NO | NO (indirectly, the result may feed the catalog, but the request itself sends no catalog data) | NO | YES (audio sample) |
+| ABRAMUS | NOT directly (the composer is a name, not necessarily the PII of an end rights holder) | NO | YES (title/ISWC/genre/duration/publisher) | NO | NO |
+| Meta/TikTok/Google Ads | YES (via account/profile metrics, indirect) | YES (campaign data/ad spend insights) | NO | NO | NO |
+| Spotify/YouTube/Deezer/SoundCloud/AppleMusic | NO (artist/track searches, public data) | NO | YES (artist/track/album names) | NO | NO |
 
 ---
 
 ## 16. Multi-tenancy
 
 ```text
-TENANT_CONNECTION_MODEL: 1 linha por (tenant_id, provider) em `integrations`; 1 linha por
-       (tenant_id, user_id, provider) em `oauth_connections` — ambos com constraint UNIQUE composta
-       confirmada na Fase 1.
-TENANT_ID_SOURCE: sempre `req.tenant?.id ?? req.tenantId` (resolvido pelo TenantGuard já auditado
-       em auth.md — nunca lido de um campo de body/query controlado pelo cliente nos endpoints
-       autenticados) — para o fluxo `oauth/exchange` (que é `@Public()`), o tenantId vem do
-       `exchange_token` emitido no passo autenticado anterior, nunca do request público em si.
-DATABASE_ISOLATION: SIM (tenant_id em ambas as tabelas, WHERE explícito em toda query encontrada)
-TOKEN_ISOLATION: SIM (criptografia por linha, união tenant_id+user_id+provider)
-CACHE_ISOLATION: N/A (nenhum cache de resposta de provider persistente encontrado — apenas o cache
-       em memória do `exchange_token`, que é efêmero e de uso único, sem risco de vazamento entre
-       tenants por natureza do próprio mecanismo)
-JOB_ISOLATION: o job `spotify:sync` recebe `{tenantId, userId}` explícito no payload — presumido
-       isolado corretamente (handler consumidor não localizado nesta rodada para confirmação total)
-WEBHOOK_TENANT_RESOLUTION: Autentique resolve por lookup (seguro); external-data genérico resolve
-       por header do chamador (ver Gap de §6); Stripe não verificado em profundidade nesta rodada
-TENANT_INTEGRATION_ISOLATION_GAP: 0 confirmados com certeza alta — o único risco teórico
-       identificado (resolução de tenant via header no webhook genérico external-data) não é
-       explorável hoje porque não há nenhum provider real registrado nesse framework.
+TENANT_CONNECTION_MODEL: 1 row per (tenant_id, provider) in `integrations`; 1 row per
+       (tenant_id, user_id, provider) in `oauth_connections` — both with a composite UNIQUE constraint
+       confirmed in Phase 1.
+TENANT_ID_SOURCE: always `req.tenant?.id ?? req.tenantId` (resolved by the TenantGuard already audited
+       in auth.md — never read from a client-controlled body/query field in the
+       authenticated endpoints) — for the `oauth/exchange` flow (which is `@Public()`), the tenantId comes from the
+       `exchange_token` issued in the previous authenticated step, never from the public request itself.
+DATABASE_ISOLATION: YES (tenant_id in both tables, an explicit WHERE in every query found)
+TOKEN_ISOLATION: YES (per-row encryption, tenant_id+user_id+provider union)
+CACHE_ISOLATION: N/A (no persistent provider response cache found — only the in-memory cache
+       of the `exchange_token`, which is ephemeral and single-use, with no risk of leakage between
+       tenants by the very nature of the mechanism)
+JOB_ISOLATION: the `spotify:sync` job receives an explicit `{tenantId, userId}` in the payload — presumed
+       correctly isolated (consumer handler not located in this round for full confirmation)
+WEBHOOK_TENANT_RESOLUTION: Autentique resolves by lookup (safe); generic external-data resolves
+       by the caller's header (see the Gap in §6); Stripe not verified in depth in this round
+TENANT_INTEGRATION_ISOLATION_GAP: 0 confirmed with high certainty — the only theoretical risk
+       identified (tenant resolution via header in the generic external-data webhook) is not
+       exploitable today because no real provider is registered in that framework.
 ```
 
 ---
@@ -835,216 +836,216 @@ TENANT_INTEGRATION_ISOLATION_GAP: 0 confirmados com certeza alta — o único ri
 
 | JOB | PROVIDER | TRIGGER | QUEUE | PAYLOAD | TENANT_ID | RETRY | IDEMPOTENCY | DB_SIDE_EFFECT |
 |---|---|---|---|---|---|---|---|---|
-| `spotify:sync` | Spotify | pós-OAuth callback (delay 1s) | BullMQ, `QUEUE_NAMES.STREAMING_SYNC` | `{tenantId, userId}` | SIM | não verificado (handler não localizado nesta rodada) | não verificado | não verificado |
-| InstagramTokenRefreshScheduler | Instagram/Meta (+ corp variants) | diário (`setInterval`, processo long-running) OU Vercel Cron (`GET /internal/cron/instagram-token-refresh`, `CronAuthGuard`+`CRON_SECRET`) | nenhuma (execução direta, não enfileirada) | N/A (varre a tabela inteira) | implícito (itera todas as tenants) | best-effort, sem retry entre execuções além do próximo ciclo diário | implícito (idempotente por natureza — refresh de um token já válido não quebra nada) | `oauth_connections` (token/expires_at, ou `needs_reauth`) |
-| `WorkflowQueueService.enqueueExternalDataSync` | external-data genérico | manual (`POST .../sync/request`) | fila própria (não identificada pelo nome exato nesta rodada) | payload de `ExternalDataExchangeService.requestExternalSync` | SIM | não verificado | via `idempotencyKey` do DTO | não verificado (sem provider real ainda) |
+| `spotify:sync` | Spotify | after the OAuth callback (1s delay) | BullMQ, `QUEUE_NAMES.STREAMING_SYNC` | `{tenantId, userId}` | YES | not verified (handler not located in this round) | not verified | not verified |
+| InstagramTokenRefreshScheduler | Instagram/Meta (+ corp variants) | daily (`setInterval`, long-running process) OR Vercel Cron (`GET /internal/cron/instagram-token-refresh`, `CronAuthGuard`+`CRON_SECRET`) | none (direct execution, not enqueued) | N/A (scans the whole table) | implicit (iterates over all tenants) | best-effort, no retry between runs beyond the next daily cycle | implicit (idempotent by nature — refreshing an already valid token breaks nothing) | `oauth_connections` (token/expires_at, or `needs_reauth`) |
+| `WorkflowQueueService.enqueueExternalDataSync` | generic external-data | manual (`POST .../sync/request`) | its own queue (not identified by exact name in this round) | the payload of `ExternalDataExchangeService.requestExternalSync` | YES | not verified | via the DTO's `idempotencyKey` | not verified (no real provider yet) |
 
-`CRON_SECRET` (env var já inventariada) confirma a existência de um padrão mais amplo de
-`/internal/cron/*` endpoints protegidos por `CronAuthGuard` — usado pelo menos pelo Instagram token
-refresh; não descartado que outros jobs do sistema (fora do escopo de integrations) usem o mesmo
-mecanismo.
+`CRON_SECRET` (an env var already inventoried) confirms the existence of a broader pattern of
+`/internal/cron/*` endpoints protected by `CronAuthGuard` — used at least by the Instagram token
+refresh; it is not ruled out that other system jobs (outside the scope of integrations) use the same
+mechanism.
 
 ---
 
-## 18. Credenciais — ownership e env vs. database
+## 18. Credentials — ownership and env vs. database
 
-### 18.1 Variáveis de ambiente (PLATFORM_SHARED, config da própria aplicação MUSIC OS 360)
+### 18.1 Environment variables (PLATFORM_SHARED, config of the MUSIC OS 360 application itself)
 
 | VARIABLE | PROVIDER | SECRET | OWNER | EXPECTED_STORAGE |
 |---|---|---|---|---|
-| STRIPE_SECRET_KEY | Stripe | SIM | PLATFORM_SHARED | ENV |
-| STRIPE_CONNECT_CLIENT_ID | Stripe Connect | NÃO (client_id) | PLATFORM_SHARED | ENV |
-| STRIPE_WEBHOOK_SECRET | Stripe | SIM | PLATFORM_SHARED | ENV |
-| AUTENTIQUE_WEBHOOK_SECRET | Autentique | SIM | PLATFORM_SHARED | ENV |
-| R2_ACCOUNT_ID / R2_ACCESS_KEY / R2_SECRET_KEY | Cloudflare R2 | SIM (access/secret key) | PLATFORM_SHARED | ENV |
-| R2_BUCKET_NAME / R2_PUBLIC_URL | Cloudflare R2 | NÃO | PLATFORM_SHARED | PUBLIC_CONFIG (public URL) / ENV (bucket name) |
-| OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_AI_API_KEY | IA | SIM | PLATFORM_SHARED | ENV |
-| RESEND_API_KEY | Resend | SIM | PLATFORM_SHARED | ENV |
-| RESEND_FROM_EMAIL | Resend | NÃO | PLATFORM_SHARED | ENV |
-| CRON_SECRET | interno (autenticação de cron da Vercel) | SIM | PLATFORM_SHARED | ENV |
-| SENTRY_DSN | Sentry | NÃO (DSN é público por design) | PLATFORM_SHARED | PUBLIC_CONFIG |
-| SENTRY_RELEASE | Sentry | NÃO | PLATFORM_SHARED | ENV |
-| POSTHOG_API_KEY | PostHog | SIM (convenção comum, apesar de uso de código não confirmado) | PLATFORM_SHARED | ENV |
-| POSTHOG_HOST | PostHog | NÃO | PLATFORM_SHARED | ENV |
-| ACRCLOUD_HOST / ACRCLOUD_ACCESS_KEY / ACRCLOUD_ACCESS_SECRET | ACRCloud | SIM (access secret) | PLATFORM_SHARED | ENV |
-| SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET | Spotify | SIM (secret) | PLATFORM_SHARED | ENV |
-| SPOTIFY_REDIRECT_URI / SPOTIFY_OAUTH_STATE_SECRET | Spotify | SIM (state secret) / NÃO (redirect_uri) | PLATFORM_SHARED | ENV |
-| YOUTUBE_API_KEY | YouTube | SIM | PLATFORM_SHARED | ENV |
-| SOUNDCLOUD_CLIENT_ID | SoundCloud (app-level, não por tenant) | NÃO (client_id público) | PLATFORM_SHARED | ENV |
-| META_APP_ID / META_APP_SECRET / META_REDIRECT_URI | Meta/Instagram | SIM (secret) | PLATFORM_SHARED | ENV |
-| TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET / TIKTOK_REDIRECT_URI | TikTok | SIM (secret) | PLATFORM_SHARED | ENV |
-| DOCUSIGN_INTEGRATION_KEY / DOCUSIGN_CLIENT_SECRET / DOCUSIGN_AUTH_BASE_URL | DocuSign | SIM (secret) | PLATFORM_SHARED | ENV |
-| GOOGLE_ADS_CLIENT_ID / GOOGLE_ADS_CLIENT_SECRET / GOOGLE_ADS_REDIRECT_URI | Google Ads | SIM (secret) | PLATFORM_SHARED | ENV |
-| GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET | Google genérico (fallback OAuth corporativo) | SIM (secret) | PLATFORM_SHARED | ENV |
-| VITE_META_APP_ID / VITE_GOOGLE_CLIENT_ID / VITE_TIKTOK_CLIENT_KEY / VITE_DOCUSIGN_INTEGRATION_KEY / VITE_STRIPE_CONNECT_CLIENT_ID | idem (espelho client_id público no bundle) | NÃO (client_id, já avaliado seguro no doc31) | PLATFORM_SHARED | PUBLIC_CONFIG |
+| STRIPE_SECRET_KEY | Stripe | YES | PLATFORM_SHARED | ENV |
+| STRIPE_CONNECT_CLIENT_ID | Stripe Connect | NO (client_id) | PLATFORM_SHARED | ENV |
+| STRIPE_WEBHOOK_SECRET | Stripe | YES | PLATFORM_SHARED | ENV |
+| AUTENTIQUE_WEBHOOK_SECRET | Autentique | YES | PLATFORM_SHARED | ENV |
+| R2_ACCOUNT_ID / R2_ACCESS_KEY / R2_SECRET_KEY | Cloudflare R2 | YES (access/secret key) | PLATFORM_SHARED | ENV |
+| R2_BUCKET_NAME / R2_PUBLIC_URL | Cloudflare R2 | NO | PLATFORM_SHARED | PUBLIC_CONFIG (public URL) / ENV (bucket name) |
+| OPENAI_API_KEY / ANTHROPIC_API_KEY / GOOGLE_AI_API_KEY | AI | YES | PLATFORM_SHARED | ENV |
+| RESEND_API_KEY | Resend | YES | PLATFORM_SHARED | ENV |
+| RESEND_FROM_EMAIL | Resend | NO | PLATFORM_SHARED | ENV |
+| CRON_SECRET | internal (Vercel cron authentication) | YES | PLATFORM_SHARED | ENV |
+| SENTRY_DSN | Sentry | NO (the DSN is public by design) | PLATFORM_SHARED | PUBLIC_CONFIG |
+| SENTRY_RELEASE | Sentry | NO | PLATFORM_SHARED | ENV |
+| POSTHOG_API_KEY | PostHog | YES (common convention, although code usage is not confirmed) | PLATFORM_SHARED | ENV |
+| POSTHOG_HOST | PostHog | NO | PLATFORM_SHARED | ENV |
+| ACRCLOUD_HOST / ACRCLOUD_ACCESS_KEY / ACRCLOUD_ACCESS_SECRET | ACRCloud | YES (access secret) | PLATFORM_SHARED | ENV |
+| SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET | Spotify | YES (secret) | PLATFORM_SHARED | ENV |
+| SPOTIFY_REDIRECT_URI / SPOTIFY_OAUTH_STATE_SECRET | Spotify | YES (state secret) / NO (redirect_uri) | PLATFORM_SHARED | ENV |
+| YOUTUBE_API_KEY | YouTube | YES | PLATFORM_SHARED | ENV |
+| SOUNDCLOUD_CLIENT_ID | SoundCloud (app-level, not per tenant) | NO (public client_id) | PLATFORM_SHARED | ENV |
+| META_APP_ID / META_APP_SECRET / META_REDIRECT_URI | Meta/Instagram | YES (secret) | PLATFORM_SHARED | ENV |
+| TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET / TIKTOK_REDIRECT_URI | TikTok | YES (secret) | PLATFORM_SHARED | ENV |
+| DOCUSIGN_INTEGRATION_KEY / DOCUSIGN_CLIENT_SECRET / DOCUSIGN_AUTH_BASE_URL | DocuSign | YES (secret) | PLATFORM_SHARED | ENV |
+| GOOGLE_ADS_CLIENT_ID / GOOGLE_ADS_CLIENT_SECRET / GOOGLE_ADS_REDIRECT_URI | Google Ads | YES (secret) | PLATFORM_SHARED | ENV |
+| GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET | generic Google (corporate OAuth fallback) | YES (secret) | PLATFORM_SHARED | ENV |
+| VITE_META_APP_ID / VITE_GOOGLE_CLIENT_ID / VITE_TIKTOK_CLIENT_KEY / VITE_DOCUSIGN_INTEGRATION_KEY / VITE_STRIPE_CONNECT_CLIENT_ID | same (public client_id mirror in the bundle) | NO (client_id, already assessed as safe in doc31) | PLATFORM_SHARED | PUBLIC_CONFIG |
 
-### 18.2 Credenciais TENANT_OWNED (dado de negócio, nunca env var)
+### 18.2 TENANT_OWNED credentials (business data, never an env var)
 
 | PROVIDER | CREDENTIAL | STORAGE |
 |---|---|---|
 | Autentique | api_token | `integrations.credentials_encrypted` |
-| SoundCloud | client_id/client_secret (o app-level acima é distinto — aqui, se configurado por tenant específico via `POST /soundcloud/configure`, sobrescreve) | `integrations.credentials_encrypted` |
+| SoundCloud | client_id/client_secret (the app-level one above is distinct — here, if configured for a specific tenant via `POST /soundcloud/configure`, it overrides) | `integrations.credentials_encrypted` |
 | Apple Music | teamId/keyId/privateKey | `integrations.credentials_encrypted` |
 | ABRAMUS | username/password/baseUrl | `integrations.credentials_encrypted` |
 | Google Ads | developerToken/customerId | `integrations.credentials_encrypted` |
 | TikTok Ads | appId/secret/advertiserId/accessToken | `integrations.credentials_encrypted` |
-| Todos os OAuth (Spotify/Instagram/TikTok/YouTube/DocuSign/StripeConnect/GoogleAds) | access_token/refresh_token resultantes | `oauth_connections.*_encrypted` |
+| All OAuth (Spotify/Instagram/TikTok/YouTube/DocuSign/StripeConnect/GoogleAds) | resulting access_token/refresh_token | `oauth_connections.*_encrypted` |
 
-`TENANT_PROVIDER_CREDENTIALS_AS_ENV: NÃO` (confirmado — nenhum caso encontrado onde uma credencial
-por-tenant vive em variável de ambiente, consistente com a regra já fixada no doc53).
+`TENANT_PROVIDER_CREDENTIALS_AS_ENV: NÃO` (no) (confirmed — no case found where a per-tenant
+credential lives in an environment variable, consistent with the rule already set in doc53).
 
 ---
 
-## 19. Credential Readiness Matrix (resumo — matriz completa no JSON anexo)
+## 19. Credential Readiness Matrix (summary — full matrix in the attached JSON)
 
-Ver `docs/backend-v2/field-traceability/integrations/credential-readiness.json` para a matriz
-completa (33 providers × campos exigidos pelo §65 do prompt). Resumo por fase:
+See `docs/backend-v2/field-traceability/integrations/credential-readiness.json` for the complete
+matrix (33 providers × fields required by §65 of the prompt). Summary by phase:
 
 ```text
-DEV_IMPLEMENTATION (credenciais necessárias para simplesmente rodar o fluxo localmente):
-  ENCRYPTION_KEY (já resolvida em sessão anterior deste mesmo dia de trabalho), CRON_SECRET
-  (dev pode rodar sem, endpoint só é exigido com VERCEL setado)
+DEV_IMPLEMENTATION (credentials needed simply to run the flow locally):
+  ENCRYPTION_KEY (already resolved in an earlier session on this same working day), CRON_SECRET
+  (dev can run without it, the endpoint is only required with VERCEL set)
 
-STAGING_VALIDATION (necessárias para validar o pipeline completo antes de produção):
-  Todas as credenciais de plataforma (Stripe test keys, Spotify/Meta/TikTok/Google/DocuSign de
-  ambiente sandbox/dev de cada provider, RESEND_API_KEY, SENTRY_DSN de projeto staging)
+STAGING_VALIDATION (needed to validate the complete pipeline before production):
+  All platform credentials (Stripe test keys, Spotify/Meta/TikTok/Google/DocuSign from each
+  provider's sandbox/dev environment, RESEND_API_KEY, SENTRY_DSN of a staging project)
 
-PRODUCTION_CUTOVER (obrigatórias, já bloqueiam boot via superRefine se ausentes):
-  STRIPE_WEBHOOK_SECRET (condicional a STRIPE_SECRET_KEY estar setado), AUTENTIQUE_WEBHOOK_SECRET,
-  RESEND_API_KEY, SENTRY_DSN, R2_PUBLIC_URL (validação anti-placeholder), CRON_SECRET, APP_URL/
+PRODUCTION_CUTOVER (mandatory, they already block boot via superRefine if missing):
+  STRIPE_WEBHOOK_SECRET (conditional on STRIPE_SECRET_KEY being set), AUTENTIQUE_WEBHOOK_SECRET,
+  RESEND_API_KEY, SENTRY_DSN, R2_PUBLIC_URL (anti-placeholder validation), CRON_SECRET, APP_URL/
   FRONTEND_URL (anti-localhost)
 
-NEEDED_FOR_TENANT_CONNECTION (não é uma credencial de plataforma — é o tenant que fornece via UI):
-  Autentique api_token, SoundCloud client_id/secret (quando por-tenant), Apple Music teamId/keyId/
+NEEDED_FOR_TENANT_CONNECTION (not a platform credential — the tenant supplies it via the UI):
+  Autentique api_token, SoundCloud client_id/secret (when per tenant), Apple Music teamId/keyId/
   privateKey, ABRAMUS username/password/baseUrl, Google Ads developerToken/customerId, TikTok Ads
   appId/secret/advertiserId/accessToken
 ```
 
-`CREDENTIALS_TO_ADD_NOW: 0` (nenhuma credencial foi adicionada, alterada ou solicitada nesta
-auditoria).
+`CREDENTIALS_TO_ADD_NOW: 0` (no credential was added, changed or requested in this
+audit).
 
 ---
 
-## 20. Gaps consolidados (evidenciados, não corrigidos)
+## 20. Consolidated gaps (evidenced, not fixed)
 
-1. **FRONTEND_CONSUMER_GAP crítico** — `signing.adapter.ts` sempre retorna um provider "unavailable"
-   para QUALQUER `SigningProviderId`, incluindo "autentique" (o único com backend 100% real e
-   completo) — `SendForSigningDialog.tsx`, o único componente real de envio para assinatura, está
-   estruturalmente impedido de ter sucesso para os 3 providers oferecidos na UI.
-2. **STUB_GAP** — Clicksign: opção de UI completa (seletor, indicador "conectado" via
-   sessionStorage) sem NENHUM backend correspondente.
-3. **REAL_MAPPING_GAP** — ACRCloud: `RecognizeAudioDto`/`ACRCloudResult` (contrato atual do backend
-   legacy) tem shape estruturalmente diferente do `FingerprintInput`/`FingerprintResult` que o
-   frontend real (`useACRCloud.ts`) espera — já documentado como decisão de v2 no doc36/37, mas
-   ainda VIVO como divergência no código atual (`apps/api`) hoje.
-4. **TOKEN_REFRESH_GAP** — TikTok, Google Ads, DocuSign e Stripe Connect persistem
-   `refresh_token_encrypted` mas não têm nenhuma rotina (sob demanda ou agendada) que os utilize —
-   diferente de Spotify (refresh sob demanda) e Instagram/Meta (refresh proativo agendado).
-5. **TIMEOUT_GAP** — ACRCloud e ABRAMUS usam `fetch()` nativo sem timeout/circuit breaker, ao
-   contrário do padrão consistente do resto do módulo (`IntegrationBaseService.fetch()`/
+1. **Critical FRONTEND_CONSUMER_GAP** — `signing.adapter.ts` always returns an "unavailable" provider
+   for ANY `SigningProviderId`, including "autentique" (the only one with a 100% real and
+   complete backend) — `SendForSigningDialog.tsx`, the only real component for sending for signature, is
+   structurally prevented from succeeding for the 3 providers offered in the UI.
+2. **STUB_GAP** — Clicksign: a complete UI option (selector, "connected" indicator via
+   sessionStorage) with NO corresponding backend.
+3. **REAL_MAPPING_GAP** — ACRCloud: `RecognizeAudioDto`/`ACRCloudResult` (the legacy backend's current
+   contract) has a shape structurally different from the `FingerprintInput`/`FingerprintResult` that the
+   real frontend (`useACRCloud.ts`) expects — already documented as a v2 decision in doc36/37, but
+   still ALIVE as a divergence in the current code (`apps/api`) today.
+4. **TOKEN_REFRESH_GAP** — TikTok, Google Ads, DocuSign and Stripe Connect persist
+   `refresh_token_encrypted` but have no routine (on demand or scheduled) that uses it —
+   unlike Spotify (on-demand refresh) and Instagram/Meta (scheduled proactive refresh).
+5. **TIMEOUT_GAP** — ACRCloud and ABRAMUS use native `fetch()` with no timeout/circuit breaker, contrary to
+   the consistent pattern of the rest of the module (`IntegrationBaseService.fetch()`/
    `CircuitBreakerRegistry`).
-6. **RETRY_GAP** (geral, não específico de um provider) — nenhuma chamada de saída a provider
-   externo tem retry automático em nenhum lugar do módulo; a resiliência existente é só
-   fail-fast (timeout + circuit breaker), nunca nova tentativa.
-7. **RATE_LIMIT_GAP** (geral) — nenhum tratamento dedicado de HTTP 429/Retry-After em nenhum
+6. **RETRY_GAP** (general, not specific to one provider) — no outbound call to an external
+   provider has automatic retry anywhere in the module; the existing resilience is only
+   fail-fast (timeout + circuit breaker), never a retry.
+7. **RATE_LIMIT_GAP** (general) — no dedicated HTTP 429/Retry-After handling in any
    provider.
-8. **WEBHOOK_SECURITY_GAP** (teórico, não explorável hoje) — o webhook genérico `external-data`
-   resolve `tenant_id` a partir de um header (`X-Tenant-ID`) fornecido pelo remetente do webhook,
-   diferente do padrão mais seguro do Autentique (resolução server-side por lookup); risco inerte
-   porque `providers.size === 2` (ambos placeholders `Unconfigured*`), sem tráfego real possível.
-9. **FRONTEND_CONSUMER_GAP** — `useStripeCheckout`/`useStripePortal` são stubs explicitamente
-   desabilitados (`disabledIntegration("Stripe")`) apesar do backend (`POST /billing/checkout`,
-   `POST /billing/portal`) estar completo e real — nenhum componente de UI real permite iniciar
-   checkout ou abrir o portal de billing hoje.
-10. **STUB_GAP / DISTRIBUTOR** — as 6 distribuidoras (ONErpm/DistroKid/Symphonic/SoundOn/MusicPro/
-    SomVibe) permanecem sem nenhuma API oficial pesquisada/implementada — status honesto (link
-    estático, sem simulação), consistente com a Decisão D1 (doc25) ainda pendente de execução
-    técnica.
-11. **UI_ONLY_GAP** — ECAD e UBC têm hooks/dialogs de frontend sem nenhum controller/service
-    backend correspondente.
-12. **REAL_MAPPING_GAP (rastreabilidade de sync)** — `oauth_connections` não tem coluna
-    `last_sync_at` (só `integrations` tem); não há como determinar a partir do banco quando foi a
-    última sincronização de métricas Spotify/streaming a partir de uma conexão OAuth.
-13. **CONFIG_ONLY / baixa confiança** — uso real de código do `POSTHOG_API_KEY`/`POSTHOG_HOST` não
-    confirmado nesta rodada apesar de declarados e validados em `env.schema.ts` — não classificado
-    como DEAD por falta de uma busca 100% exaustiva no orçamento desta auditoria, registrado como
-    item de menor confiança para verificação futura.
-14. **STATIC_REFERENCE / baixa confiança** — `payments.adapter.ts`/`streaming.adapter.ts`/ads
-    adapter aparentam não ter nenhum consumidor real alcançável (diferente do `signing.adapter.ts`,
-    que É consumido) — não confirmados como 100% `DEAD` por não ter sido feita uma busca de
-    consumidores exaustiva o suficiente para a certeza que a taxonomia `DEAD` (doc74 §23) exige.
+8. **WEBHOOK_SECURITY_GAP** (theoretical, not exploitable today) — the generic `external-data` webhook
+   resolves `tenant_id` from a header (`X-Tenant-ID`) supplied by the webhook's sender,
+   unlike Autentique's safer pattern (server-side resolution by lookup); the risk is inert
+   because `providers.size === 2` (both `Unconfigured*` placeholders), with no real traffic possible.
+9. **FRONTEND_CONSUMER_GAP** — `useStripeCheckout`/`useStripePortal` are explicitly
+   disabled stubs (`disabledIntegration("Stripe")`) even though the backend (`POST /billing/checkout`,
+   `POST /billing/portal`) is complete and real — no real UI component allows starting a
+   checkout or opening the billing portal today.
+10. **STUB_GAP / DISTRIBUTOR** — the 6 distributors (ONErpm/DistroKid/Symphonic/SoundOn/MusicPro/
+    SomVibe) remain without any official API researched/implemented — an honest status (static
+    link, no simulation), consistent with Decision D1 (doc25) still pending technical
+    execution.
+11. **UI_ONLY_GAP** — ECAD and UBC have frontend hooks/dialogs with no corresponding backend
+    controller/service.
+12. **REAL_MAPPING_GAP (sync traceability)** — `oauth_connections` has no
+    `last_sync_at` column (only `integrations` has one); there is no way to determine from the database when the
+    last Spotify/streaming metrics sync happened from an OAuth connection.
+13. **CONFIG_ONLY / low confidence** — real code usage of `POSTHOG_API_KEY`/`POSTHOG_HOST` not
+    confirmed in this round despite being declared and validated in `env.schema.ts` — not classified
+    as DEAD for lack of a 100% exhaustive search within this audit's budget, recorded as a
+    lower-confidence item for future verification.
+14. **STATIC_REFERENCE / low confidence** — `payments.adapter.ts`/`streaming.adapter.ts`/ads
+    adapter appear to have no reachable real consumer (unlike `signing.adapter.ts`,
+    which IS consumed) — not confirmed as 100% `DEAD` since a consumer search exhaustive enough
+    for the certainty that the `DEAD` taxonomy (doc74 §23) requires was not done.
 
-`FAKE_INTEGRATION_GAP: 0` — em nenhum ponto do módulo foi encontrado um mecanismo que finge sucesso
-para uma integração não configurada; todos os stubs encontrados falham explicitamente (regra "nunca
-simular sucesso", cumprida de forma consistente em todo o módulo, backend e frontend).
+`FAKE_INTEGRATION_GAP: 0` — nowhere in the module was a mechanism found that fakes success
+for an unconfigured integration; every stub found fails explicitly (the "never
+simulate success" rule, consistently complied with throughout the module, backend and frontend).
 
 ---
 
-## Contadores finais (Zero-Gap)
+## Final counters (Zero-Gap)
 
 ```text
 PROVIDERS_AUDITED: 32
 ACTIVE_INTEGRATIONS (IMPLEMENTED): 14
 PARTIAL_INTEGRATIONS: 9
 STUB_INTEGRATIONS: 7
-DEAD_INTEGRATIONS: 0 (nenhum provider inteiro confirmado 100% morto — os itens de baixa confiança
-    do item 14 dos gaps são camadas/arquivos, não providers inteiros)
-CONFIG_ONLY: 2 (PostHog, external-data genérico)
+DEAD_INTEGRATIONS: 0 (no whole provider confirmed 100% dead — the low-confidence items
+    in item 14 of the gaps are layers/files, not whole providers)
+CONFIG_ONLY: 2 (PostHog, generic external-data)
 UI_ONLY: 2 (ECAD, UBC)
 FRONTEND_ONLY_INTEGRATIONS: 0
-BACKEND_ONLY_INTEGRATIONS: 1 (Resend/SMTP — sem UI de frontend dedicada, é infraestrutura pura)
-OAUTH_INTEGRATIONS: 9 (Spotify, Instagram orgânico, Meta corporativo, TikTok orgânico, TikTok Ads
-    não-OAuth mas contado à parte, YouTube/Google corporativo, DocuSign, Stripe Connect, Google Ads)
+BACKEND_ONLY_INTEGRATIONS: 1 (Resend/SMTP — no dedicated frontend UI, it is pure infrastructure)
+OAUTH_INTEGRATIONS: 9 (Spotify, organic Instagram, corporate Meta, organic TikTok, TikTok Ads
+    non-OAuth but counted separately, corporate YouTube/Google, DocuSign, Stripe Connect, Google Ads)
 API_KEY_INTEGRATIONS: 7 (ACRCloud, YouTube Data API, SoundCloud, Apple Music, ABRAMUS, TikTok Ads,
     Autentique)
-WEBHOOK_INTEGRATIONS: 3 (Stripe, Autentique, external-data genérico)
+WEBHOOK_INTEGRATIONS: 3 (Stripe, Autentique, generic external-data)
 WEBHOOK_ENDPOINTS: 3
-WEBHOOK_SECURITY_GAPS: 1 (teórico, ver Gap #8)
-TENANT_OWNED_CREDENTIAL_TYPES: 7 (Autentique, SoundCloud-por-tenant, Apple Music, ABRAMUS, Google
-    Ads developer token, TikTok Ads, tokens OAuth resultantes de todos os 9 OAuth)
-PLATFORM_SHARED_CREDENTIAL_TYPES: 24 (ver §18.1)
+WEBHOOK_SECURITY_GAPS: 1 (theoretical, see Gap #8)
+TENANT_OWNED_CREDENTIAL_TYPES: 7 (Autentique, per-tenant SoundCloud, Apple Music, ABRAMUS, Google
+    Ads developer token, TikTok Ads, resulting OAuth tokens of all 9 OAuth)
+PLATFORM_SHARED_CREDENTIAL_TYPES: 24 (see §18.1)
 PUBLIC_BROWSER_CONFIG_TYPES: 6 (5 VITE_*_client_id + SENTRY_DSN)
 CREDENTIALS_TO_ADD_NOW: 0
-CREDENTIALS_REQUIRED_LATER: 24 (todas as PLATFORM_SHARED de §18.1 que hoje não têm valor real
-    configurado em produção — não verificado individualmente quais já têm valor vs. placeholder
-    nesta auditoria, por proibição de leitura de valores; contagem é de IDENTIFICADORES distintos,
-    não de status atual)
-CREDENTIAL_READINESS_COMPLETE: SIM
-TOKEN_STORAGE_FIELDS: 9 (access_token_encrypted, refresh_token_encrypted, expires_at, scopes em
-    oauth_connections; credentials_encrypted, status, last_sync_at, failure_count, metadata em
+CREDENTIALS_REQUIRED_LATER: 24 (all the PLATFORM_SHARED ones in §18.1 that today have no real value
+    configured in production — which ones already have a value vs. a placeholder was not verified individually
+    in this audit, since reading values is forbidden; the count is of distinct IDENTIFIERS,
+    not of current status)
+CREDENTIAL_READINESS_COMPLETE: YES
+TOKEN_STORAGE_FIELDS: 9 (access_token_encrypted, refresh_token_encrypted, expires_at, scopes in
+    oauth_connections; credentials_encrypted, status, last_sync_at, failure_count, metadata in
     integrations)
 UNENCRYPTED_SECRET_FIELDS: 0
 TOKEN_REFRESH_FLOWS: 2 (Spotify, Instagram/Meta)
-TOKEN_REFRESH_GAPS: 1 (TikTok/GoogleAds/DocuSign/StripeConnect sem refresh — contado como 1 achado
-    categorizado, afetando 4 providers)
+TOKEN_REFRESH_GAPS: 1 (TikTok/GoogleAds/DocuSign/StripeConnect without refresh — counted as 1
+    categorized finding, affecting 4 providers)
 OAUTH_STATE_GAPS: 0
-SYNC_FLOWS: 3 (Spotify sob-demanda+job, Instagram refresh agendado, Autentique via webhook)
-SYNC_GAPS: 1 (falta de last_sync_at rastreável para Spotify)
+SYNC_FLOWS: 3 (Spotify on-demand+job, Instagram scheduled refresh, Autentique via webhook)
+SYNC_GAPS: 1 (lack of a traceable last_sync_at for Spotify)
 BACKGROUND_JOBS: 3 (spotify:sync, InstagramTokenRefreshScheduler, external-data sync queue)
-SCHEDULED_SYNCS: 1 (Instagram token refresh — diário/cron)
-IDEMPOTENCY_GAPS: 0 (os 2 mecanismos de idempotência reais encontrados — webhook_events, DTOs de
-    external-data — estão corretamente implementados; ausência de idempotência em chamadas de
-    sync/API simples não é um gap, pois essas chamadas são idempotentes por natureza — leitura, não
-    escrita distribuída)
-RETRY_GAPS: 1 (geral, todos os providers — Gap #6)
-RATE_LIMIT_GAPS: 1 (geral, todos os providers — Gap #7)
-TIMEOUT_GAPS: 1 (ACRCloud + ABRAMUS — Gap #5, contado como 1 achado categorizado afetando 2
+SCHEDULED_SYNCS: 1 (Instagram token refresh — daily/cron)
+IDEMPOTENCY_GAPS: 0 (the 2 real idempotency mechanisms found — webhook_events, external-data
+    DTOs — are correctly implemented; the absence of idempotency in simple
+    sync/API calls is not a gap, since those calls are idempotent by nature — reads, not
+    distributed writes)
+RETRY_GAPS: 1 (general, all providers — Gap #6)
+RATE_LIMIT_GAPS: 1 (general, all providers — Gap #7)
+TIMEOUT_GAPS: 1 (ACRCloud + ABRAMUS — Gap #5, counted as 1 categorized finding affecting 2
     providers)
-SECRET_LOGGING_GAPS: 0 (nenhuma ocorrência de log de token/secret/api key encontrada nos arquivos
-    lidos — logs encontrados sempre logam identificadores como docId/tenantId/eventType, nunca o
-    valor do token/secret em si)
-TENANT_INTEGRATION_ISOLATION_GAPS: 0 (confirmados exploráveis hoje — o único risco teórico, Gap #8,
-    é inerte por ausência de provider real)
-FRONTEND_CONSUMER_GAPS: 3 (signing — Gap #1, Stripe checkout/portal — Gap #9, e Clicksign sendo uma
-    opção de UI sem qualquer backend — Gap #2, contado aqui por afetar consumo real de UI)
-BACKEND_IMPLEMENTATION_GAPS: 3 (DocuSign envelope/signing — NOT_IMPLEMENTED por desenho já
-    documentado no doc77; ECAD/UBC — Gap #11; distribuidoras — Gap #10)
-STUB_GAPS: 3 (Clicksign, distribuidoras, ECAD/UBC)
+SECRET_LOGGING_GAPS: 0 (no occurrence of token/secret/api key logging found in the files
+    read — the logs found always log identifiers such as docId/tenantId/eventType, never the
+    value of the token/secret itself)
+TENANT_INTEGRATION_ISOLATION_GAPS: 0 (confirmed exploitable today — the only theoretical risk, Gap #8,
+    is inert due to the absence of a real provider)
+FRONTEND_CONSUMER_GAPS: 3 (signing — Gap #1, Stripe checkout/portal — Gap #9, and Clicksign being a
+    UI option with no backend at all — Gap #2, counted here because it affects real UI consumption)
+BACKEND_IMPLEMENTATION_GAPS: 3 (DocuSign envelope/signing — NOT_IMPLEMENTED by a design already
+    documented in doc77; ECAD/UBC — Gap #11; distributors — Gap #10)
+STUB_GAPS: 3 (Clicksign, distributors, ECAD/UBC)
 FAKE_INTEGRATION_GAPS: 0
 EXTERNAL_FIELD_MAPPING_GAPS: 1 (ACRCloud — Gap #3)
-ERROR_HANDLING_GAPS: 0 (todo provider examinado usa exceções tipadas do NestJS ou erros explícitos,
-    nenhum catch-and-silently-succeed encontrado)
-REAL_MAPPING_GAPS: 2 (ACRCloud contrato — Gap #3; last_sync_at Spotify — Gap #12)
+ERROR_HANDLING_GAPS: 0 (every provider examined uses typed NestJS exceptions or explicit errors,
+    no catch-and-silently-succeed found)
+REAL_MAPPING_GAPS: 2 (ACRCloud contract — Gap #3; Spotify last_sync_at — Gap #12)
 
 STRIPE_STATUS: PARTIAL
 DOCUSIGN_STATUS: PARTIAL
@@ -1057,10 +1058,10 @@ ACRCLOUD_STATUS: PARTIAL
 DISTRIBUTOR_PROVIDERS_FOUND: 6
 DISTRIBUTOR_ACTIVE_INTEGRATIONS: 0
 DISTRIBUTOR_STUB_OR_NOT_IMPLEMENTED: 6
-DISTRIBUTOR_TENANT_AUTH_MODEL_COMPLIANT: NOT_APPLICABLE (nenhuma integração real existe ainda para
-    avaliar conformidade com o modelo per-tenant do D1 — a ausência de integração fake/scraping/
-    credencial-compartilhada É, em si, conformidade com o que D1 proíbe, mas não há ainda o que
-    avaliar quanto ao que D1 EXIGE)
+DISTRIBUTOR_TENANT_AUTH_MODEL_COMPLIANT: NOT_APPLICABLE (no real integration exists yet to
+    assess compliance with D1's per-tenant model — the absence of a fake integration/scraping/
+    shared credential IS, in itself, compliance with what D1 forbids, but there is nothing yet to
+    assess regarding what D1 REQUIRES)
 
 UNMAPPED_PROVIDERS: 0
 UNMAPPED_FRONTEND_ACTIONS: 0

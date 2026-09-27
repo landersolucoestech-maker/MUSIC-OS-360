@@ -1,232 +1,232 @@
-# Módulo: auth (Autenticação / Sessão / Tenant / RBAC)
+# Module: auth (Authentication / Session / Tenant / RBAC)
 
-Fase 2 do Prompt 100. Escopo: `apps/web/src/app/providers/AuthContext.tsx` (hub central),
-`apps/web/src/modules/auth/**` (6 páginas), `apps/web/src/lib/supabase.ts`,
+Phase 2 of Prompt 100. Scope: `apps/web/src/app/providers/AuthContext.tsx` (central hub),
+`apps/web/src/modules/auth/**` (6 pages), `apps/web/src/lib/supabase.ts`,
 `apps/web/src/shared/lib/api-client.ts`, `apps/web/src/shared/lib/ws-client.ts`+`useWebSocket.ts`,
-`apps/api/src/modules/auth/**` completo, `apps/api/src/core/guards/{auth,tenant}.guard.ts`,
+all of `apps/api/src/modules/auth/**`, `apps/api/src/core/guards/{auth,tenant}.guard.ts`,
 `apps/api/src/core/interceptors/request-tenant-context.interceptor.ts`,
-`apps/api/src/core/rbac/**` (enumeração, não reauditoria completa do RBAC como sistema — fora de
-escopo, mas suas fronteiras com auth foram verificadas). Fecha a pendência registrada em
+`apps/api/src/core/rbac/**` (enumeration, not a complete re-audit of RBAC as a system — out of
+scope, but its boundaries with auth were verified). Closes the open item recorded in
 `artist.md` (`ArtistaSignupPublic.tsx`).
 
-Read-only. `DATABASE_WRITES: 0`. Nenhum `.ts`/`.tsx` alterado. `SUPABASE_CHANGED: NÃO`.
+Read-only. `DATABASE_WRITES: 0`. No `.ts`/`.tsx` changed. `SUPABASE_CHANGED: NÃO` (no).
 
-## 1. Achado crítico: `ArtistaSignupPublic.tsx` chama um endpoint que não existe
+## 1. Critical finding: `ArtistaSignupPublic.tsx` calls an endpoint that does not exist
 
-Fecha a pendência do `artist.md`. `ArtistaSignupPublic.tsx` (rota pública `/cadastro/:orgSlug`,
-sem autenticação) — fluxo de 393 linhas, wizard multi-etapa, comentário explícito no código:
-*"Cadastro público cria DIRETAMENTE um artista (sem Lead/CRM/status intermediário)"* — envia, ao
-final:
+Closes the open item from `artist.md`. `ArtistaSignupPublic.tsx` (public route `/cadastro/:orgSlug`,
+no authentication) — a 393-line flow, multi-step wizard, explicit comment in the code:
+*"Cadastro público cria DIRETAMENTE um artista (sem Lead/CRM/status intermediário)"* (public sign-up creates an artist DIRECTLY — no Lead/CRM/intermediate status) — at the
+end it sends:
 
 ```ts
 publicApi.post("/public/artists", { workspaceSlug: orgSlug, ...artistaPayload, acceptedTerms, companyWebsite })
 ```
 
-**Confirmado por busca exaustiva em todo `apps/api/src`** (grep por `Controller('public`,
-`Post('artists'`, `'public/artists'`): **não existe nenhuma rota `POST /public/artists` em lugar
-nenhum do backend.** O único endpoint público relacionado a artistas é
+**Confirmed by an exhaustive search across all of `apps/api/src`** (grep for `Controller('public`,
+`Post('artists'`, `'public/artists'`): **there is no `POST /public/artists` route anywhere
+in the backend.** The only public artist-related endpoint is
 `POST /public/artist-registration` (`PublicRegistrationController`,
-`modules/leads/public-registration.controller.ts`), que cria um **Lead** (via `LeadsService`), não
-um artista — um modelo de dados e um controller inteiramente diferentes. `GET /public/workspaces/
-:slug` (usado no mesmo componente para resolver o workspace pelo slug, linha 194) **existe e
-funciona** — confirmado no mesmo controller.
+`modules/leads/public-registration.controller.ts`), which creates a **Lead** (via `LeadsService`), not
+an artist — an entirely different data model and controller. `GET /public/workspaces/
+:slug` (used in the same component to resolve the workspace by slug, line 194) **exists and
+works** — confirmed in the same controller.
 
-Resultado real: **todo envio deste formulário retorna erro** (rota inexistente → 404), capturado
-pelo `catch` genérico do componente, que mostra apenas "Erro ao enviar cadastro. Tente novamente."
-— nenhum artista é criado, nenhum dado é persistido, em nenhuma circunstância. Confirmado por
-leitura direta do código-fonte de ambos os lados, não inferência.
+Actual result: **every submission of this form returns an error** (nonexistent route → 404), caught
+by the component's generic `catch`, which only shows "Erro ao enviar cadastro. Tente novamente." (error submitting sign-up, please try again)
+— no artist is created, no data is persisted, under any circumstance. Confirmed by
+reading the source code on both sides directly, not by inference.
 
-Achado adicional (mesmo que o endpoint existisse): os nomes de campo enviados no payload
-divergem tanto do `CreateArtistDto` (auditado em `artist.md`) quanto das colunas reais de
-`artists` — `spotify_artist_url`/`youtube_channel_url` (vs. `spotify_url`/`youtube_url` reais) e
-`instagram`/`tiktok` (vs. `instagram_url`/`tiktok_url` reais, o mesmo par que
-`artists.service.ts` já precisou corrigir uma vez no fluxo autenticado — ver `artist.md` §4). Isso
-sugere que este componente foi escrito contra um contrato de API planejado e nunca sincronizado
-com a implementação real, não apenas "esquecido de implementar".
+Additional finding (even if the endpoint existed): the field names sent in the payload
+diverge both from `CreateArtistDto` (audited in `artist.md`) and from the real columns of
+`artists` — `spotify_artist_url`/`youtube_channel_url` (vs. the real `spotify_url`/`youtube_url`) and
+`instagram`/`tiktok` (vs. the real `instagram_url`/`tiktok_url`, the same pair that
+`artists.service.ts` already had to fix once in the authenticated flow — see `artist.md` §4). This
+suggests that this component was written against a planned API contract that was never synchronized
+with the real implementation, not merely "forgotten to implement".
 
-**Classificação: `PUBLIC_SIGNUP_GAP` — severidade máxima, confirmado, não corrigido nesta etapa.**
+**Classification: `PUBLIC_SIGNUP_GAP` — maximum severity, confirmed, not fixed in this step.**
 
-## 2. `AuthContext.tsx` — hub real, bem implementado
+## 2. `AuthContext.tsx` — real hub, well implemented
 
-Lido por completo (370 linhas). Autenticação 100% via Supabase Auth (SDK gerencia tokens/refresh/
-persistência) — sem "modo mock" (comentário do próprio arquivo confirma). Achados:
+Read in full (370 lines). Authentication 100% via Supabase Auth (the SDK manages tokens/refresh/
+persistence) — no "mock mode" (the file's own comment confirms). Findings:
 
-- **Resolução de sessão**: `sb.auth.getSession()` no boot + `onAuthStateChange` como fonte única de
-  verdade para mudanças de sessão (login, logout, refresh, recovery).
-- **Claims JWT decodificados apenas para log de DEV** (`decodeJwtClaims`/`logJwtClaims`, gated por
-  `IS_DEV`) — nunca usados para autorização real no frontend (correto).
-- **`org_id`/`role`**: extraídos de `app_metadata` do JWT (claims confiáveis, assinados pelo
-  Supabase — presumivelmente injetados por um Auth Hook customizado), com fallback para
-  `user_metadata`. Nunca vêm de um campo editável pelo usuário.
-- **Auto-provisionamento de workspace**: `needsWorkspaceProvisioning()` detecta sessão sem
-  `org_id` mas com `user_metadata.workspace_slug` (= acabou de se cadastrar) → chama
-  `PATCH /auth/provision-workspace` automaticamente → `refreshSession()` para obter JWT com o
-  `org_id` recém-criado. Mecanismo real, testado via `activeProvisioning` (deduplica chamadas
-  concorrentes). **Sem gap.**
-- **`AUTH_DISABLED`**: usuário sintético fixo (`AUTH_DISABLED_USER`, UUID fixo, role `owner`) —
-  gate por `import.meta.env.VITE_AUTH_DISABLED === "true"` (frontend); nunca chama Supabase Auth
-  quando ativo (comentário explícito no código). Espelha `DEV_TENANT`/`DEV_MEMBER` do backend
-  (`core/auth-disabled.ts`) — mesmo UUID, confirmado consistente nos dois lados.
-- **`changeRequiredPassword`**: chama `POST /auth/change-required-password` (troca atômica +
-  limpeza de `must_change_password` no mesmo request no backend), depois `refreshSession()` para
-  que o novo JWT (sem a flag) chegue ao app. Bem documentado, sem gap.
+- **Session resolution**: `sb.auth.getSession()` at boot + `onAuthStateChange` as the single source of
+  truth for session changes (login, logout, refresh, recovery).
+- **JWT claims decoded only for DEV logging** (`decodeJwtClaims`/`logJwtClaims`, gated by
+  `IS_DEV`) — never used for real authorization in the frontend (correct).
+- **`org_id`/`role`**: extracted from the JWT's `app_metadata` (trusted claims, signed by
+  Supabase — presumably injected by a custom Auth Hook), falling back to
+  `user_metadata`. They never come from a user-editable field.
+- **Workspace auto-provisioning**: `needsWorkspaceProvisioning()` detects a session without
+  `org_id` but with `user_metadata.workspace_slug` (= just signed up) → calls
+  `PATCH /auth/provision-workspace` automatically → `refreshSession()` to obtain a JWT with the
+  newly created `org_id`. Real mechanism, tested via `activeProvisioning` (deduplicates concurrent
+  calls). **No gap.**
+- **`AUTH_DISABLED`**: fixed synthetic user (`AUTH_DISABLED_USER`, fixed UUID, role `owner`) —
+  gated by `import.meta.env.VITE_AUTH_DISABLED === "true"` (frontend); never calls Supabase Auth
+  when active (explicit comment in the code). Mirrors the backend's `DEV_TENANT`/`DEV_MEMBER`
+  (`core/auth-disabled.ts`) — same UUID, confirmed consistent on both sides.
+- **`changeRequiredPassword`**: calls `POST /auth/change-required-password` (atomic change +
+  clearing of `must_change_password` in the same request on the backend), then `refreshSession()` so
+  that the new JWT (without the flag) reaches the app. Well documented, no gap.
 
-## 3. Backend — JWT / Guards / Tenant isolation (achado positivo: bem protegido)
+## 3. Backend — JWT / Guards / Tenant isolation (positive finding: well protected)
 
-`JwtAuthGuard` (`core/guards/auth.guard.ts`, lido em detalhe): verificação real via **JWKS**
-(`${SUPABASE_URL}/auth/v1/.well-known/jwks.json`, algoritmo `ES256`, `issuer`=URL do projeto
-Supabase, `audience`='authenticated') em produção; fallback **HS256** com segredo de dev e
-`issuer: 'music-os-360-dev'` apenas em ambiente de desenvolvimento — caminhos claramente
-separados.
+`JwtAuthGuard` (`core/guards/auth.guard.ts`, read in detail): real verification via **JWKS**
+(`${SUPABASE_URL}/auth/v1/.well-known/jwks.json`, algorithm `ES256`, `issuer`=Supabase project
+URL, `audience`='authenticated') in production; an **HS256** fallback with a dev secret and
+`issuer: 'music-os-360-dev'` only in the development environment — clearly
+separated paths.
 
-`TenantGuard` (`core/guards/tenant.guard.ts`, lido por completo) — **achado de segurança
-positivo, confirmado**: o header `X-Tenant-ID` (enviado pelo `api-client.ts` do frontend) **nunca
-é usado como autoridade**. O tenant real é resolvido a partir de `auth.orgId` (claim do JWT,
-verificado), e o header é usado **apenas como checagem de consistência** — se
-`X-Tenant-ID` não bater com o `id`/`org_id`/`external_auth_org_id` do tenant já resolvido pelo
-JWT, a requisição é rejeitada (`ForbiddenException`). Também resolve e valida a
-**membership real** (`resolveMembership(tenant.id, auth.userId)`) — rejeita se o usuário não for
-membro ativo. `TENANT_ISOLATION_GAP: 0`.
+`TenantGuard` (`core/guards/tenant.guard.ts`, read in full) — **positive security finding,
+confirmed**: the `X-Tenant-ID` header (sent by the frontend's `api-client.ts`) **is never
+used as authority**. The real tenant is resolved from `auth.orgId` (a verified JWT
+claim), and the header is used **only as a consistency check** — if
+`X-Tenant-ID` does not match the `id`/`org_id`/`external_auth_org_id` of the tenant already resolved from the
+JWT, the request is rejected (`ForbiddenException`). It also resolves and validates the
+**real membership** (`resolveMembership(tenant.id, auth.userId)`) — rejects if the user is not an
+active member. `TENANT_ISOLATION_GAP: 0`.
 
-`DevAuthController` — duplamente protegido: (a) só é **registrado como rota** quando
-`!isProdLike(NODE_ENV)` (a rota não existe fisicamente em produção, não é só um 403), e (b) checa
-`isProdLike` de novo no próprio `OnModuleInit`. `AUTHORIZATION_GAP: 0` para este ponto.
+`DevAuthController` — doubly protected: (a) it is only **registered as a route** when
+`!isProdLike(NODE_ENV)` (the route physically does not exist in production, it is not just a 403), and (b) it checks
+`isProdLike` again in its own `OnModuleInit`. `AUTHORIZATION_GAP: 0` for this point.
 
-`@Public()` e `@AuthBootstrap()` (decorators) — usados corretamente: `@Public()` em rotas
-verdadeiramente sem sessão (`/public/*`, health, alguns webhooks); `@AuthBootstrap()` só em
-`PATCH /auth/provision-workspace` (usuário autenticado mas ainda sem tenant) — escopo mínimo e
-correto, não usado indevidamente em nenhuma outra rota do módulo.
+`@Public()` and `@AuthBootstrap()` (decorators) — used correctly: `@Public()` on routes
+that are truly session-less (`/public/*`, health, some webhooks); `@AuthBootstrap()` only on
+`PATCH /auth/provision-workspace` (user authenticated but still without a tenant) — minimal and
+correct scope, not misused on any other route in the module.
 
-## 4. `AuthContextService.build()` — `GET /auth/context`, resolução completa
+## 4. `AuthContextService.build()` — `GET /auth/context`, complete resolution
 
-Lido por completo. Constrói `{ user, workspace, membership, claims }` a partir de
-`(auth, tenant, member)` já resolvidos pelo `TenantGuard`/interceptor — nunca confia em dado vindo
-do cliente para os campos de segurança. **Efeito colateral real encontrado**: a cada chamada,
-executa um `UPDATE tenant_invitations SET status='accepted' WHERE tenant_id=$1 AND
-auth_user_id=$2 AND status='pending'` — auto-aceite de convite pendente na primeira vez que o
-usuário convidado carrega o contexto autenticado. Mecanismo real e funcional, não documentado
-antes nesta série de auditorias — acrescenta um consumidor real a mais para `tenant_invitations`
-(já confirmada `MATCH`/`DIRECT_RAW_SQL` na Fase 1).
+Read in full. Builds `{ user, workspace, membership, claims }` from
+`(auth, tenant, member)` already resolved by the `TenantGuard`/interceptor — never trusts data coming
+from the client for the security fields. **Real side effect found**: on every call, it
+executes an `UPDATE tenant_invitations SET status='accepted' WHERE tenant_id=$1 AND
+auth_user_id=$2 AND status='pending'` — auto-acceptance of a pending invitation the first time the
+invited user loads the authenticated context. A real, functional mechanism, not documented
+before in this audit series — it adds one more real consumer for `tenant_invitations`
+(already confirmed `MATCH`/`DIRECT_RAW_SQL` in Phase 1).
 
-Permissões: `RbacService.getEffectivePermissions({role, role_id, tenant_id})` — "DUAL-SOURCE
-(FASE 5)": usa permissões do banco quando `role_id` existe (RBAC dinâmico), cai para matriz de
-roles legada (`role-hierarchy.ts`, 14 identificadores: `super_admin`(100), `tenant_owner`/
+Permissions: `RbacService.getEffectivePermissions({role, role_id, tenant_id})` — "DUAL-SOURCE
+(FASE 5)" (phase 5): uses database permissions when `role_id` exists (dynamic RBAC), and falls back to the legacy role
+matrix (`role-hierarchy.ts`, 14 identifiers: `super_admin`(100), `tenant_owner`/
 `owner`(90), `admin`(80), `manager`(70), `editor`/`financial`/`accounting`(60), `juridico`(55),
 `marketing_manager`/`rh_manager`(55), `marketing`(50), `comercial`(45), `produtor`/`radio`/`tv`(40),
-`artist`/`artista`(30), `colaborador`(20), `viewer`(10)) quando não. Sistema RBAC completo em si
-não foi reauditado (fora de escopo desta passada — pertence à sua própria fronteira, mas a
-integração com `auth` foi verificada e é coerente).
+`artist`/`artista`(30), `colaborador`(20), `viewer`(10)) when it does not. The complete RBAC system itself
+was not re-audited (out of scope for this pass — it belongs to its own boundary, but the
+integration with `auth` was verified and is coherent).
 
-## 5. Internal user — distinção `auth.users` / `public.users` / `app.users`
+## 5. Internal user — the `auth.users` / `public.users` / `app.users` distinction
 
-Confirmado, sem mistura: `auth.users` (Supabase-managed, nunca tocado diretamente por código de
-aplicação além do SDK) é a fonte de identidade/credenciais. `org_members` (não `public.users`) é
-a tabela real de **membership** consultada por `TenantGuard`/`AuthContextService` (`member.id`,
+Confirmed, no mixing: `auth.users` (Supabase-managed, never touched directly by application
+code beyond the SDK) is the identity/credentials source. `org_members` (not `public.users`) is
+the real **membership** table queried by `TenantGuard`/`AuthContextService` (`member.id`,
 `member.role`, `member.role_id`, `member.email`, `member.full_name`, `member.is_active`) —
-mesma tabela já identificada no doc80 (`ENTITY_TABLE_MAP`'s `user: 'org_members'`). `public.users`
-(perfil de aplicação, `UserEntity`, já confirmado `MATCH` na Fase 1) não aparece em nenhum ponto do
-fluxo de auth/tenant-context lido nesta auditoria — seu uso real fica para a auditoria do módulo
-`settings`/perfil de usuário (fora de escopo aqui). `app.users` (futuro namespace v2) não existe e
-não é referenciado — consistente com doc73/doc84.
+the same table already identified in doc80 (`ENTITY_TABLE_MAP`'s `user: 'org_members'`). `public.users`
+(application profile, `UserEntity`, already confirmed `MATCH` in Phase 1) does not appear anywhere in the
+auth/tenant-context flow read in this audit — its real use is left to the audit of the
+`settings`/user profile module (out of scope here). `app.users` (future v2 namespace) does not exist and
+is not referenced — consistent with doc73/doc84.
 
-## 6. Login / Logout / Signup / Reset — campo a campo
+## 6. Login / Logout / Signup / Reset — field by field
 
-| Fluxo | Componente | Rota | Campos | Backend/Supabase |
+| Flow | Component | Route | Fields | Backend/Supabase |
 |---|---|---|---|---|
 | Login | `Auth.tsx` | `/auth`, `/login` | email, password | `supabase.auth.signInWithPassword` |
-| Esqueci a senha (solicitar) | `Auth.tsx` (mesma página, outro modo) | `/forgot-password` | email | `supabase.auth.resetPasswordForEmail(email, {redirectTo: origin+"/reset-password"})` |
-| Atualizar senha (pós-link) | `ResetPassword.tsx` | `/reset-password` | password, confirmPassword | `supabase.auth.updateUser({password})`, depende da sessão de recovery já ativa via `onAuthStateChange` |
-| Troca de senha obrigatória (1º login) | `ChangeRequiredPassword.tsx` | `/change-required-password` | newPassword, confirmPassword | `POST /auth/change-required-password` (real, atômico) |
-| Signup completo (empresa) | `Register.tsx` (wizard 3 passos) | `/register`, `/signup` | email, password, fullName, tradeName, segment (enum: gravadora/editora/produtora/escritorio), corporateEmail, workspaceName, slug (derivado), phone, address, city, state, requestedPlan, acceptedTerms, acceptedLgpd | `supabase.auth.signUp()` com `options.data` = todos os campos acima como `user_metadata`, seguido do auto-provisionamento (§2) |
-| Onboarding pós-signup | `Onboarding.tsx` | `/onboarding` (protegida) | via `CompleteOnboardingDto` (não expandido campo-a-campo — formulário de finalização, papel secundário face ao Register) | `PATCH /auth/onboarding`, `RequireRole('owner')` |
-| Cadastro público de artista | `ArtistaSignupPublic.tsx` | `/cadastro/:orgSlug` | ~30 campos (mesmo shape de `ArtistaFormModal`, ver `artist.md`) | **`POST /public/artists` — INEXISTENTE (§1)** |
-| Logout | botão em `AdminLayout`/menu de usuário (não um componente próprio) | — | — | `supabase.auth.signOut()` + `clearApiSessionState()` + `queryClient.clear()` — **não chama `disconnectRealtimeChannels()`** (ver §8) |
+| Forgot password (request) | `Auth.tsx` (same page, another mode) | `/forgot-password` | email | `supabase.auth.resetPasswordForEmail(email, {redirectTo: origin+"/reset-password"})` |
+| Update password (after link) | `ResetPassword.tsx` | `/reset-password` | password, confirmPassword | `supabase.auth.updateUser({password})`, depends on the recovery session already active via `onAuthStateChange` |
+| Mandatory password change (1st login) | `ChangeRequiredPassword.tsx` | `/change-required-password` | newPassword, confirmPassword | `POST /auth/change-required-password` (real, atomic) |
+| Full signup (company) | `Register.tsx` (3-step wizard) | `/register`, `/signup` | email, password, fullName, tradeName, segment (enum: gravadora/editora/produtora/escritorio), corporateEmail, workspaceName, slug (derived), phone, address, city, state, requestedPlan, acceptedTerms, acceptedLgpd | `supabase.auth.signUp()` with `options.data` = all the fields above as `user_metadata`, followed by auto-provisioning (§2) |
+| Post-signup onboarding | `Onboarding.tsx` | `/onboarding` (protected) | via `CompleteOnboardingDto` (not expanded field by field — a finalization form, secondary role relative to Register) | `PATCH /auth/onboarding`, `RequireRole('owner')` |
+| Public artist sign-up | `ArtistaSignupPublic.tsx` | `/cadastro/:orgSlug` | ~30 fields (same shape as `ArtistaFormModal`, see `artist.md`) | **`POST /public/artists` — NONEXISTENT (§1)** |
+| Logout | button in `AdminLayout`/user menu (not a component of its own) | — | — | `supabase.auth.signOut()` + `clearApiSessionState()` + `queryClient.clear()` — **does not call `disconnectRealtimeChannels()`** (see §8) |
 
-Todos os campos de `Register.tsx` batem exatamente com os parâmetros que
-`provisionWorkspaceForSession()` envia para `PATCH /auth/provision-workspace` — mapeamento
-verificado, sem gap.
+All the fields of `Register.tsx` match exactly the parameters that
+`provisionWorkspaceForSession()` sends to `PATCH /auth/provision-workspace` — mapping
+verified, no gap.
 
 ## 7. API client — Authorization / X-Tenant-ID / 401
 
-`api-client.ts`: injeta `Authorization: Bearer <token>` e `X-Tenant-ID` a partir de variáveis em
-memória (`_accessToken`/`_tenantId`, setadas exclusivamente por `AuthContext` via
-`setAccessToken`/`setTenantId` — nunca lidas diretamente de `localStorage` pelo client HTTP; a
-persistência de sessão em si é gerida pelo SDK do Supabase, não pelo `api-client`). Em `401`:
-`setAccessToken(null)` + circuit-breaker de backoff (evita tempestade de requisições após sessão
-inválida). Evento customizado `musicos360:auth:tokenRefreshed` disparado em `TOKEN_REFRESHED` —
-consumido por quem precisar reagir a um novo token (não mapeado em detalhe — nenhum consumidor
-crítico de segurança depende dele além do próprio fluxo de refresh do SDK).
+`api-client.ts`: injects `Authorization: Bearer <token>` and `X-Tenant-ID` from in-memory
+variables (`_accessToken`/`_tenantId`, set exclusively by `AuthContext` via
+`setAccessToken`/`setTenantId` — never read directly from `localStorage` by the HTTP client; the
+session persistence itself is managed by the Supabase SDK, not by the `api-client`). On `401`:
+`setAccessToken(null)` + a backoff circuit-breaker (avoids a request storm after an invalid
+session). Custom event `musicos360:auth:tokenRefreshed` fired on `TOKEN_REFRESHED` —
+consumed by whoever needs to react to a new token (not mapped in detail — no security-critical
+consumer depends on it beyond the SDK's own refresh flow).
 
-## 8. Realtime — integração com Auth
+## 8. Realtime — integration with Auth
 
-`ws-client.ts`: 2 canais privados por sessão (`tenant:${orgId}`, `user:${userId}`), Supabase
-Realtime nativo — autorização via **RLS** (migration `20260801000001_RealtimeBroadcastAuthorization`,
-citada no comentário do arquivo), não por lógica própria — o client Supabase já encaminha o JWT da
-sessão atual automaticamente. `ensureRealtimeChannels()` (chamado por `useWebSocket()`, único
-consumidor confirmado via grep) re-vincula os canais quando `orgId`/`userId` mudam (ex.: troca de
-usuário sem reload de página).
+`ws-client.ts`: 2 private channels per session (`tenant:${orgId}`, `user:${userId}`), native Supabase
+Realtime — authorization via **RLS** (migration `20260801000001_RealtimeBroadcastAuthorization`,
+cited in the file's comment), not via its own logic — the Supabase client already forwards the current
+session's JWT automatically. `ensureRealtimeChannels()` (called by `useWebSocket()`, the only
+consumer confirmed via grep) re-binds the channels when `orgId`/`userId` change (e.g. switching
+users without a page reload).
 
-**Gap confirmado**: `AuthContext.signOut()` **não chama `disconnectRealtimeChannels()`**
-(verificado lendo o corpo completo de `signOut()`) — os canais realtime da sessão anterior não são
-explicitamente fechados no logout. Como `ensureRealtimeChannels()` retorna cedo quando
-`orgId`/`userId` são `null` (linha `if (!orgId || !userId) return;`, antes de chegar à lógica que
-reconectaria/desconectaria), um canal já aberto pode permanecer inscrito após o logout até um
-reload completo de página. `REALTIME_AUTH_GAP` — moderado (não é vazamento de dados entre tenants,
-já que RLS continua aplicando; é um canal potencialmente obsoleto sem limpeza explícita).
+**Confirmed gap**: `AuthContext.signOut()` **does not call `disconnectRealtimeChannels()`**
+(verified by reading the full body of `signOut()`) — the previous session's realtime channels are not
+explicitly closed on logout. Since `ensureRealtimeChannels()` returns early when
+`orgId`/`userId` are `null` (line `if (!orgId || !userId) return;`, before reaching the logic that
+would reconnect/disconnect), an already-open channel may remain subscribed after logout until a
+full page reload. `REALTIME_AUTH_GAP` — moderate (not a cross-tenant data leak,
+since RLS still applies; it is a potentially stale channel without explicit cleanup).
 
-## 9. Site URL / Redirect paths (inventário, sem configurar)
+## 9. Site URL / Redirect paths (inventory, not configured)
 
 ```text
 FLOW: password reset request → REDIRECT_PATH: {window.location.origin}/reset-password
-  (calculado dinamicamente — funciona em qualquer ambiente sem configuração adicional do lado
-  frontend; a allowlist de Redirect URLs no painel do Supabase ainda precisa conter cada origem
-  real, ponto já registrado como pendente/não resolvido no doc75 desta série — não reinvestigado
-  aqui, apenas referenciado).
-FLOW: signup / email confirmation → nenhum emailRedirectTo explícito encontrado em signUp() —
-  usa o comportamento padrão do Supabase (Site URL do projeto). Requer confirmação futura de qual
-  é o Site URL configurado — mesma pendência do doc75.
+  (computed dynamically — works in any environment with no additional configuration on the
+  frontend side; the Redirect URLs allowlist in the Supabase dashboard still needs to contain each
+  real origin, a point already recorded as open/unresolved in doc75 of this series — not re-investigated
+  here, only referenced).
+FLOW: signup / email confirmation → no explicit emailRedirectTo found in signUp() —
+  uses Supabase's default behavior (the project's Site URL). Requires future confirmation of which
+  Site URL is configured — same open item as doc75.
 ```
 
-`DEVELOPMENT_REDIRECTS_REQUIRED`: 1 (`/reset-password`, resolvido dinamicamente, funciona já).
-`STAGING_REDIRECTS_REQUIRED`/`PRODUCTION_REDIRECTS_REQUIRED`: `UNRESOLVED` — depende da allowlist
-real do Supabase Dashboard, fora do alcance de leitura de código (mesma conclusão do doc75, não
-reaberta aqui).
+`DEVELOPMENT_REDIRECTS_REQUIRED`: 1 (`/reset-password`, resolved dynamically, already works).
+`STAGING_REDIRECTS_REQUIRED`/`PRODUCTION_REDIRECTS_REQUIRED`: `UNRESOLVED` — depends on the real
+allowlist in the Supabase Dashboard, beyond the reach of code reading (same conclusion as doc75, not
+reopened here).
 
 ## 10. SMTP
 
-Fluxos que dependem de email transacional, confirmados pelo código: **password reset**
-(`resetPasswordForEmail`) e, condicionalmente, **confirmação de signup** (depende do toggle
-"Confirm email" do projeto Supabase, não inspecionável via código — mesma pendência do doc75).
-Nenhum fluxo de "convite por email" explícito foi encontrado neste módulo (o auto-aceite de
-`tenant_invitations`, §4, pressupõe que o convite já foi criado/enviado por outro fluxo — não
-mapeado aqui, pertence a `settings`/gestão de usuários do tenant). `SMTP_REQUIRED: SIM` (para os 2
-fluxos listados). **Não solicitado nem configurado nesta etapa**, conforme instrução.
+Flows that depend on transactional email, confirmed from the code: **password reset**
+(`resetPasswordForEmail`) and, conditionally, **signup confirmation** (depends on the Supabase project's
+"Confirm email" toggle, not inspectable via code — same open item as doc75).
+No explicit "email invitation" flow was found in this module (the auto-acceptance of
+`tenant_invitations`, §4, presupposes that the invitation was already created/sent by another flow — not
+mapped here, it belongs to `settings`/tenant user management). `SMTP_REQUIRED: SIM` (yes) (for the 2
+flows listed). **Neither requested nor configured in this step**, per instruction.
 
-## 11. Erros / Status de usuário
+## 11. Errors / User status
 
-Estados de erro tratados de forma real, confirmados no código: credenciais inválidas (mensagem do
-Supabase repassada), sessão ausente (`Navigate to /auth`), tenant não encontrado/inativo
-(`UnauthorizedException` no `TenantGuard`), usuário sem membership ativa
-(`ForbiddenException`), token/tenant divergente (`ForbiddenException`), `must_change_password`
-(redireciona para `/change-required-password` — verificado no `Home()` de `App.tsx`, já
-referenciado em prompts anteriores desta série). Não foi encontrado nenhum estado explícito de
-usuário "suspended"/"deleted" tratado neste módulo especificamente — apenas `is_active` da
-membership (booleano simples).
+Error states handled for real, confirmed in the code: invalid credentials (Supabase message
+passed through), missing session (`Navigate to /auth`), tenant not found/inactive
+(`UnauthorizedException` in `TenantGuard`), user without an active membership
+(`ForbiddenException`), mismatched token/tenant (`ForbiddenException`), `must_change_password`
+(redirects to `/change-required-password` — verified in `Home()` of `App.tsx`, already
+referenced in earlier prompts of this series). No explicit "suspended"/"deleted"
+user state handled in this module specifically was found — only the membership's `is_active`
+(a simple boolean).
 
-## 12. Auth storage local
+## 12. Local auth storage
 
-`api-client.ts` não persiste token em `localStorage` diretamente (mantém em memória, repassado
-pelo AuthContext a cada mudança de sessão). A persistência real de sessão (refresh token, etc.) é
-inteiramente delegada ao SDK do Supabase (`@supabase/supabase-js`), que gerencia sua própria chave
-em `localStorage` internamente — não lida/escrita diretamente por código da aplicação, portanto
-não haveria valor a reportar mesmo que fosse necessário (e não é, por instrução explícita de nunca
-imprimir valores). `CONTENT_TYPE`: token de sessão (sensível); `OWNER`: SDK Supabase;
-`CLEAR_BEHAVIOR`: `supabase.auth.signOut()` limpa a própria persistência do SDK.
+`api-client.ts` does not persist the token in `localStorage` directly (it keeps it in memory, passed in
+by AuthContext on every session change). The real session persistence (refresh token, etc.) is
+entirely delegated to the Supabase SDK (`@supabase/supabase-js`), which manages its own key
+in `localStorage` internally — not read/written directly by application code, so
+there would be no value to report even if it were needed (and it is not, per the explicit instruction to never
+print values). `CONTENT_TYPE`: session token (sensitive); `OWNER`: Supabase SDK;
+`CLEAR_BEHAVIOR`: `supabase.auth.signOut()` clears the SDK's own persistence.
 
-## Resumo
+## Summary
 
 ```text
-STATUS: CONCLUÍDO (módulo auth)
+STATUS: COMPLETED (auth module)
 MODULE_STATUS: COMPLETE
 UNMAPPED_AUTH_FIELDS: 0
 UNMAPPED_SIGNUP_FIELDS: 0
@@ -236,16 +236,16 @@ UNMAPPED_SESSION_FIELDS: 0
 UNMAPPED_ROLE_PERMISSION_REFERENCES: 0
 UNMAPPED_TENANT_REFERENCES: 0
 UNKNOWN_AUTH_CLASSIFICATIONS: 0
-REAL_MAPPING_GAPS: 2 (ArtistaSignupPublic->POST /public/artists inexistente, severidade máxima;
-  nomes de campo de plataforma divergentes no mesmo payload, mesmo se o endpoint existisse)
-PUBLIC_SIGNUP_GAPS: 1 (o mesmo achado do §1 — fluxo público de cadastro de artista 100% quebrado)
-REALTIME_AUTH_GAPS: 1 (signOut() não chama disconnectRealtimeChannels() — canais podem persistir
-  além do logout até reload completo; não é vazamento entre tenants, RLS continua aplicando)
+REAL_MAPPING_GAPS: 2 (ArtistaSignupPublic->POST /public/artists nonexistent, maximum severity;
+  divergent platform field names in the same payload, even if the endpoint existed)
+PUBLIC_SIGNUP_GAPS: 1 (the same finding as §1 — public artist sign-up flow 100% broken)
+REALTIME_AUTH_GAPS: 1 (signOut() does not call disconnectRealtimeChannels() — channels may persist
+  beyond logout until a full reload; not a cross-tenant leak, RLS still applies)
 AUTHORIZATION_GAPS: 0
 AUTHENTICATION_GAPS: 0
 TENANT_ISOLATION_GAPS: 0
 SESSION_GAPS: 0
-REDIRECT_GAPS: 0 (dentro do que o código controla; Site URL/allowlist real do Supabase permanece
-  UNRESOLVED, mesma pendência do doc75, não reaberta aqui)
+REDIRECT_GAPS: 0 (within what the code controls; the real Supabase Site URL/allowlist remains
+  UNRESOLVED, same open item as doc75, not reopened here)
 EMAIL_FLOW_GAPS: 0
 ```
