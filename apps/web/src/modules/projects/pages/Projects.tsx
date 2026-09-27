@@ -30,19 +30,19 @@ import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { storage } from "@/shared/lib/storage";
 import type { ProjectWithRelationsExtended } from "@/modules/projects/types/projects-extensions";
-import { getFirstMusicaInfo, parseMusicasFromProjeto } from "@/modules/projects/lib/musica-helpers";
+import { getFirstTrackInfo, parseTracksFromProject } from "@/modules/projects/lib/musica-helpers";
 
 // In mock mode (and over HTTP — /projects does not join the artist) the
 // backend does not return the embedded `artistas` relation. Inject it manually
 // from the id→artist map — used both in the full list (deep link,
 // genre dropdown) and in the current page coming from the backend.
-function withArtista<T extends { artist_id?: string | null; artistas?: unknown }>(
+function withArtist<T extends { artist_id?: string | null; artistas?: unknown }>(
   list: T[],
-  artistasById: Record<string, any>,
+  artistsById: Record<string, any>,
 ): T[] {
   return list.map(p => ({
     ...p,
-    artistas: p.artistas ?? (p.artist_id ? artistasById[p.artist_id] : undefined),
+    artistas: p.artistas ?? (p.artist_id ? artistsById[p.artist_id] : undefined),
   }));
 }
 
@@ -56,7 +56,7 @@ export default function Projects() {
   // H, paginated) nor the search/filter itself (server-side). The deep link and the
   // per-row artist name, which WERE the real risks of wrong/
   // missing data, were migrated below to a direct lookup by ID.
-  const { projects: rawProjetos, isLoading, deleteProject: deleteProjeto } = useProjects();
+  const { projects: rawProjects, isLoading, deleteProject } = useProjects();
 
   const [formModal, setFormModal] = useState<{ open: boolean; mode: "create" | "edit"; projeto?: any }>({ open: false, mode: "create" });
   const [viewModal, setViewModal] = useState<{ open: boolean; projeto?: any }>({ open: false });
@@ -65,9 +65,9 @@ export default function Projects() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [artistaFilter, setArtistaFilter] = useState("all");
-  const [tipoFilter, setTipoFilter] = useState("all");
-  const [generoFilter, setGeneroFilter] = useState("all");
+  const [artistFilter, setArtistFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [genreFilter, setGenreFilter] = useState("all");
 
   const [searchParams, setSearchParams] = useSearchParams();
   const projectIdParam = searchParams.get("projeto");
@@ -76,34 +76,34 @@ export default function Projects() {
   // Work link) — fetches DIRECTLY by ID (GET /projects/:id), it does not depend on the
   // project being among the first 50 loaded by useProjects() without
   // filtro (Task J).
-  const { entity: deepLinkProjeto } = useEntityById<ProjectWithRelationsExtended>("projects", projectIdParam ?? undefined);
+  const { entity: deepLinkProject } = useEntityById<ProjectWithRelationsExtended>("projects", projectIdParam ?? undefined);
   useEffect(() => {
-    if (!projectIdParam || !deepLinkProjeto) return;
-    setViewModal({ open: true, projeto: deepLinkProjeto });
+    if (!projectIdParam || !deepLinkProject) return;
+    setViewModal({ open: true, projeto: deepLinkProject });
     const next = new URLSearchParams(searchParams);
     next.delete("projeto");
     setSearchParams(next, { replace: true });
-  }, [searchParams, projectIdParam, deepLinkProjeto, setSearchParams]);
+  }, [searchParams, projectIdParam, deepLinkProject, setSearchParams]);
 
   // Canonical genre resolver: direct field wins; fallback to first track only.
   // Used only to populate the genre dropdown (full list) — the
   // filtering itself now happens on the backend, over the `music_genre`
   // column directly (which is already the same value persisted as a shortcut on create/edit,
   // ver migration 20260719000005).
-  const getProjetoGenero = (p: ProjectWithRelationsExtended): string => {
+  const getProjectGenre = (p: ProjectWithRelationsExtended): string => {
     if (p.music_genre) return (p.music_genre as string).trim().toLowerCase();
-    const musicas = parseMusicasFromProjeto(p);
-    return (musicas[0]?.genero || "").trim().toLowerCase();
+    const tracks = parseTracksFromProject(p);
+    return (tracks[0]?.genero || "").trim().toLowerCase();
   };
 
-  const generos = useMemo(() => {
+  const genres = useMemo(() => {
     const set = new Set<string>();
-    (rawProjetos as ProjectWithRelationsExtended[]).forEach(p => {
-      const g = getProjetoGenero(p);
+    (rawProjects as ProjectWithRelationsExtended[]).forEach(p => {
+      const g = getProjectGenre(p);
       if (g) set.add(g);
     });
     return Array.from(set).sort();
-  }, [rawProjetos]);
+  }, [rawProjects]);
 
   const debouncedSearch = useDebounce(searchTerm, 300);
 
@@ -112,7 +112,7 @@ export default function Projects() {
   // changes (otherwise page 5 of a filter that has only 2 pages gets stuck).
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  useEffect(() => { setPage(0); }, [debouncedSearch, statusFilter, artistaFilter, tipoFilter, generoFilter]);
+  useEffect(() => { setPage(0); }, [debouncedSearch, statusFilter, artistFilter, typeFilter, genreFilter]);
 
   const {
     projects: pageItems,
@@ -125,9 +125,9 @@ export default function Projects() {
     pageSize,
     search: debouncedSearch || undefined,
     status: statusFilter !== "all" ? statusFilter : undefined,
-    type: tipoFilter !== "all" ? tipoFilter : undefined,
-    artistId: artistaFilter !== "all" ? artistaFilter : undefined,
-    genero: generoFilter !== "all" ? generoFilter : undefined,
+    type: typeFilter !== "all" ? typeFilter : undefined,
+    artistId: artistFilter !== "all" ? artistFilter : undefined,
+    genero: genreFilter !== "all" ? genreFilter : undefined,
   });
 
   // Task J: per-row artist name, resolved by direct ID (GET
@@ -135,37 +135,37 @@ export default function Projects() {
   // from useArtistas() without a filter, truncated to the first 50 artists
   // of the tenant (silently hiding the name of any artist beyond
   // desse cap).
-  const [resolvedArtistasMap, setResolvedArtistasMap] = useState<Record<string, Artist>>({});
-  const pageArtistaIds = useMemo(
+  const [resolvedArtistsMap, setResolvedArtistsMap] = useState<Record<string, Artist>>({});
+  const pageArtistIds = useMemo(
     () => Array.from(new Set((pageItems as ProjectWithRelationsExtended[]).map(p => p.artist_id).filter((id): id is string => !!id))),
     [pageItems],
   );
   useEffect(() => {
-    if (pageArtistaIds.length === 0) return;
+    if (pageArtistIds.length === 0) return;
     let cancelled = false;
-    Promise.all(pageArtistaIds.map((id) => storage.findById<ArtistWireRecord>("artistas", id)))
+    Promise.all(pageArtistIds.map((id) => storage.findById<ArtistWireRecord>("artistas", id)))
       .then((results) => {
         if (cancelled) return;
         const map: Record<string, Artist> = {};
-        results.forEach((a, i) => { if (a) map[pageArtistaIds[i]] = wireToArtist(a); });
-        setResolvedArtistasMap((prev) => ({ ...prev, ...map }));
+        results.forEach((a, i) => { if (a) map[pageArtistIds[i]] = wireToArtist(a); });
+        setResolvedArtistsMap((prev) => ({ ...prev, ...map }));
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [pageArtistaIds]);
+  }, [pageArtistIds]);
 
-  const pageProjetos = useMemo<ProjectWithRelationsExtended[]>(
-    () => withArtista(pageItems as ProjectWithRelationsExtended[], resolvedArtistasMap),
-    [pageItems, resolvedArtistasMap],
+  const pageProjects = useMemo<ProjectWithRelationsExtended[]>(
+    () => withArtist(pageItems as ProjectWithRelationsExtended[], resolvedArtistsMap),
+    [pageItems, resolvedArtistsMap],
   );
 
   // KPIs: count per status OVER THE WHOLE TENANT (not the current page)
   // — GET /projects/stats, agregado no banco.
-  const { stats: projetosStats } = useProjectsStats();
+  const { stats: projectsStats } = useProjectsStats();
 
   const handleDelete = () => {
     if (deleteModal.projeto) {
-      deleteProjeto.mutate(deleteModal.projeto.id);
+      deleteProject.mutate(deleteModal.projeto.id);
       setDeleteModal({ open: false });
     }
   };
@@ -174,7 +174,7 @@ export default function Projects() {
     if (selectedIds.length === 0) return;
     const ids = selectedIds;
     setSelectedIds([]);
-    const result = await runBulkAction(ids, (id) => deleteProjeto.mutateAsync(id));
+    const result = await runBulkAction(ids, (id) => deleteProject.mutateAsync(id));
     reportBulkResult(result, "excluído", "projeto");
   };
 
@@ -183,10 +183,10 @@ export default function Projects() {
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.length === pageProjetos.length) {
+    if (selectedIds.length === pageProjects.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(pageProjetos.map(p => p.id));
+      setSelectedIds(pageProjects.map(p => p.id));
     }
   };
 
@@ -212,14 +212,14 @@ export default function Projects() {
   // Partition by status (bucket = raw status, no grouping) — each
   // project falls into exactly one bucket coming from GET /projects/stats.
   const tally = { in_progress: 0, completed: 0, planning: 0 };
-  for (const [status, count] of Object.entries(projetosStats.byGroup)) {
+  for (const [status, count] of Object.entries(projectsStats.byGroup)) {
     if (status in tally) tally[status as keyof typeof tally] += count;
   }
-  const metricas = {
+  const metrics = {
     ativos: tally.in_progress,
     concluidos: tally.completed,
     rascunhos: tally.planning,
-    total: projetosStats.total,
+    total: projectsStats.total,
   };
 
   return (
@@ -234,10 +234,10 @@ export default function Projects() {
     <MainLayout title="Projetos" description="Gestão completa de projetos musicais" actions={headerActions}>
       <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <MetricCard title="Projetos Ativos" value={metricas.ativos} description="em desenvolvimento" icon={Clock} accent="primary" />
-          <MetricCard title="Concluídos" value={metricas.concluidos} description="projetos finalizados" icon={TrendingUp} accent="success" />
-          <MetricCard title="Rascunhos" value={metricas.rascunhos} description="em planejamento" icon={FileText} accent="warning" />
-          <MetricCard title="Total de Projetos" value={metricas.total} description="cadastrados no sistema" icon={LayoutGrid} accent="primary" />
+          <MetricCard title="Projetos Ativos" value={metrics.ativos} description="em desenvolvimento" icon={Clock} accent="primary" />
+          <MetricCard title="Concluídos" value={metrics.concluidos} description="projetos finalizados" icon={TrendingUp} accent="success" />
+          <MetricCard title="Rascunhos" value={metrics.rascunhos} description="em planejamento" icon={FileText} accent="warning" />
+          <MetricCard title="Total de Projetos" value={metrics.total} description="cadastrados no sistema" icon={LayoutGrid} accent="primary" />
         </div>
 
         <div className="flex items-center gap-2 flex-wrap rounded-lg bg-muted/30 p-3">
@@ -270,20 +270,20 @@ export default function Projects() {
               <AsyncEntityCombobox<Artist>
                 table="artistas"
                 getLabel={(a) => a.stageName ?? ""}
-                value={artistaFilter !== "all" ? artistaFilter : null}
-                onChange={(id) => setArtistaFilter(id)}
+                value={artistFilter !== "all" ? artistFilter : null}
+                onChange={(id) => setArtistFilter(id)}
                 placeholder="Todos Artista"
                 searchPlaceholder="Buscar artista..."
                 data-testid="select-filter-artista"
               />
             </div>
-            {artistaFilter !== "all" && (
-              <Button variant="ghost" size="sm" onClick={() => setArtistaFilter("all")} data-testid="button-limpar-filtro-artista">
+            {artistFilter !== "all" && (
+              <Button variant="ghost" size="sm" onClick={() => setArtistFilter("all")} data-testid="button-limpar-filtro-artista">
                 ×
               </Button>
             )}
           </div>
-          <Select value={tipoFilter} onValueChange={setTipoFilter}>
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger className="w-auto min-w-[126px] shrink-0 h-8 text-sm bg-card border-border">
               <SelectValue placeholder="Todos Tipo de..." />
             </SelectTrigger>
@@ -295,13 +295,13 @@ export default function Projects() {
               <SelectItem value="turne">Turnê</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={generoFilter} onValueChange={setGeneroFilter}>
+          <Select value={genreFilter} onValueChange={setGenreFilter}>
             <SelectTrigger className="w-auto min-w-[126px] shrink-0 h-8 text-sm bg-card border-border">
               <SelectValue placeholder="Todos Gênero" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos Gênero</SelectItem>
-              {generos.map(g => (
+              {genres.map(g => (
                 <SelectItem key={g} value={g.toLowerCase()}>{g.charAt(0).toUpperCase() + g.slice(1)}</SelectItem>
               ))}
             </SelectContent>
@@ -317,7 +317,7 @@ export default function Projects() {
               action={
                 <div className="flex flex-wrap items-center justify-end gap-3">
                   <Checkbox
-                    checked={selectedIds.length === pageProjetos.length && pageProjetos.length > 0}
+                    checked={selectedIds.length === pageProjects.length && pageProjects.length > 0}
                     onCheckedChange={toggleSelectAll}
                     data-testid="checkbox-select-all"
                     aria-label="Selecionar todos"
@@ -341,7 +341,7 @@ export default function Projects() {
               }
             />
 
-            {pageProjetos.length > 0 ? (
+            {pageProjects.length > 0 ? (
               <>
               <Table>
                 <TableHeader>
@@ -358,8 +358,8 @@ export default function Projects() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pageProjetos.map((project) => {
-                    const info = getFirstMusicaInfo(project);
+                  {pageProjects.map((project) => {
+                    const info = getFirstTrackInfo(project);
                     return (
                       <TableRow key={project.id} data-testid={`row-projeto-${project.id}`} className={selectedIds.includes(project.id) ? "bg-muted/20" : ""}>
                         <TableCell>
@@ -373,11 +373,11 @@ export default function Projects() {
                         <TableCell>
                           <div className="flex items-center gap-3">
                             {(() => {
-                              const capa = (project.capa_url ?? project.photoUrl ?? project.cover_url) as string | undefined;
+                              const cover = (project.capa_url ?? project.photoUrl ?? project.cover_url) as string | undefined;
                               return (
                                 <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted flex items-center justify-center">
-                                  {capa ? (
-                                    <img src={capa} alt={project.title} className="h-full w-full object-cover" />
+                                  {cover ? (
+                                    <img src={cover} alt={project.title} className="h-full w-full object-cover" />
                                   ) : (
                                     <Music className="h-4 w-4 text-muted-foreground" />
                                   )}

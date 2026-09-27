@@ -15,16 +15,16 @@ const FILE_PATH = path.resolve(__dirname, "ProjectFormModal.tsx");
 const SOURCE = fs.readFileSync(FILE_PATH, "utf8");
 
 describe("ProjectFormModal — does not serialize musicas into descricao", () => {
-  it("no longer uses JSON.stringify(musicasParaSalvar) or JSON.parse(projeto.descricao)", () => {
-    expect(SOURCE).not.toMatch(/JSON\.stringify\(musicasParaSalvar\)/);
-    expect(SOURCE).not.toMatch(/JSON\.parse\(projeto\.descricao/);
+  it("no longer uses JSON.stringify(tracksToSave) or JSON.parse(project.descricao)", () => {
+    expect(SOURCE).not.toMatch(/JSON\.stringify\(tracksToSave\)/);
+    expect(SOURCE).not.toMatch(/JSON\.parse\(project\.descricao/);
   });
 
   it("sends musicas as a structured payload field (own storage via project_tracks)", () => {
-    expect(SOURCE).toMatch(/musicas:\s*musicasParaSalvar/);
+    expect(SOURCE).toMatch(/musicas:\s*tracksToSave/);
   });
 
   it("reads musicas from `projeto.musicas` (hydrated by the API), not from descricao", () => {
-    expect(SOURCE).toMatch(/\(projeto as \{ musicas\?: MusicaData\[\] \}\)\.musicas/);
+    expect(SOURCE).toMatch(/\(project as \{ musicas\?: TrackData\[\] \}\)\.musicas/);
   });
 });

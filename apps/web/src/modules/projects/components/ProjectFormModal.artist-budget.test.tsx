@@ -81,11 +81,11 @@ describe("ProjectFormModal — main artist and budget (GAP-0001)", () => {
   });
 
   it("edit loads and resends the persisted values", async () => {
-    const projeto = {
+    const project = {
       id: "p1", title: "Faixa", type: "single", status: "planning", updated_at: "2026-09-01T00:00:00Z",
       artist_id: "22222222-2222-4222-8222-222222222222", orcamento: "2500.00",
     };
-    render(<ProjectFormModal open onOpenChange={() => {}} mode="edit" projeto={projeto} />);
+    render(<ProjectFormModal open onOpenChange={() => {}} mode="edit" projeto={project} />);
     expect((screen.getByTestId("input-projeto-orcamento") as HTMLInputElement).value).toBe("2500.00");
     fireEvent.click(screen.getByRole("button", { name: /^salvar$/i }));
     await waitFor(() => expect(updateMutate).toHaveBeenCalledTimes(1));

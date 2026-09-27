@@ -15,12 +15,12 @@ export interface UseProjectsPaginatedParams {
   genero?: string;
 }
 
-export function useProjectsPaginated({ page, pageSize, search, status, type, artistId, genero }: UseProjectsPaginatedParams) {
+export function useProjectsPaginated({ page, pageSize, search, status, type, artistId, genero: genre }: UseProjectsPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
   if (type) filters.type = type;
   if (artistId) filters.artistId = artistId;
-  if (genero) filters.music_genre = genero;
+  if (genre) filters.music_genre = genre;
 
   const result = usePaginatedDataQuery<ProjectWithRelations>({
     queryKey: [...QUERY_KEYS.PROJECTS],

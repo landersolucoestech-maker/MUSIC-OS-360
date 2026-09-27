@@ -6,7 +6,7 @@ import { Badge } from "@/shared/ui/badge";
 import { Separator } from "@/shared/ui/separator";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Play, User, Music2, Clock, Globe, Mic, ExternalLink, FileText } from "lucide-react";
-import { parseMusicasFromProjeto, getMusicaInfo } from "@/modules/projects/lib/musica-helpers";
+import { parseTracksFromProject, getTrackInfo } from "@/modules/projects/lib/musica-helpers";
 import { WorkflowTransitionPanel } from "@/shared/components/WorkflowTransitionPanel";
 import { useWorkflowTransition } from "@/shared/hooks/useWorkflowTransition";
 import { useEntityDetail } from "@/shared/hooks/useEntityDetail";
@@ -28,25 +28,25 @@ function capitalize(s: string) {
 }
 
 export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps>(
-  function ProjectViewModal({ open, onOpenChange, projeto }, ref) {
+  function ProjectViewModal({ open, onOpenChange, projeto: project }, ref) {
     const { transition: workflowTransition, isPending: isTransitionPending } = useWorkflowTransition({
       table:    'projects',
-      id:       projeto?.id ?? '',
+      id:       project?.id ?? '',
       queryKey: ['projects'],
     });
 
-    const { data: detail } = useEntityDetail<typeof projeto & { allowed_transitions?: WorkflowTransition[] }>(
-      'projects', projeto?.id, open,
+    const { data: detail } = useEntityDetail<typeof project & { allowed_transitions?: WorkflowTransition[] }>(
+      'projects', project?.id, open,
     );
 
-    if (!projeto) return null;
+    if (!project) return null;
 
     const allowedTransitions = resolveAllowedTransitions(
       'project',
-      detail?.status ?? projeto.status,
+      detail?.status ?? project.status,
       detail?.allowed_transitions,
     );
-    const musicas = parseMusicasFromProjeto(projeto);
+    const tracks = parseTracksFromProject(project);
 
     const getStatusBadge = (status: string) => {
       if (status?.toLowerCase().includes("pendente") || status === "planning") {
@@ -80,14 +80,14 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                   <Play className="h-5 w-5 text-foreground ml-0.5" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-lg font-bold">{projeto.title}</h2>
+                  <h2 className="text-lg font-bold">{project.title}</h2>
                   <div className="flex items-center gap-2 mt-1">
-                    {getStatusBadge(projeto.status)}
-                    <Badge variant="outline">{capitalize(projeto.type) || "Single"}</Badge>
+                    {getStatusBadge(project.status)}
+                    <Badge variant="outline">{capitalize(project.type) || "Single"}</Badge>
                   </div>
                   {allowedTransitions.length > 0 && (
                     <WorkflowTransitionPanel
-                      currentStatus={projeto.status ?? ""}
+                      currentStatus={project.status ?? ""}
                       allowedTransitions={allowedTransitions}
                       onTransition={workflowTransition}
                       isLoading={isTransitionPending}
@@ -95,7 +95,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                     />
                   )}
                   <p className="text-xs text-muted-foreground mt-1">
-                    📅 Cadastrado em: {projeto.created_at ? new Date(projeto.created_at).toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR')}
+                    📅 Cadastrado em: {project.created_at ? new Date(project.created_at).toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR')}
                   </p>
                 </div>
               </div>
@@ -107,21 +107,21 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                 <div className="flex items-center gap-2 mb-3">
                   <Music2 className="h-4 w-4 text-muted-foreground" />
                   <h3 className="font-semibold">
-                    {musicas.length > 1 ? `Músicas (${musicas.length})` : "Música"}
+                    {tracks.length > 1 ? `Músicas (${tracks.length})` : "Música"}
                   </h3>
                 </div>
 
-                {musicas.length > 0 ? (
+                {tracks.length > 0 ? (
                   <div className="space-y-4">
-                    {musicas.map((musica, idx) => {
-                      const info = getMusicaInfo(musica);
+                    {tracks.map((track, idx) => {
+                      const info = getTrackInfo(track);
                       return (
                         <Card key={idx} className="bg-muted/30">
                           <CardContent className="p-4 space-y-4">
                             {/* Title and badges */}
                             <div className="flex items-start justify-between gap-2">
                               <h4 className="font-medium" data-testid={`text-view-musica-nome-${idx}`}>
-                                {musicas.length > 1 ? `${idx + 1}. ` : ""}{info.name || projeto.title}
+                                {tracks.length > 1 ? `${idx + 1}. ` : ""}{info.name || project.title}
                               </h4>
                               <div className="flex items-center gap-1 flex-wrap justify-end">
                                 <Badge variant="outline" className="text-xs">
@@ -233,7 +233,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                     <CardContent className="p-4 space-y-4">
                       {/* Fallback for projects without a JSON descricao */}
                       <div className="flex items-start justify-between gap-2">
-                        <h4 className="font-medium">{projeto.title}</h4>
+                        <h4 className="font-medium">{project.title}</h4>
                         <div className="flex items-center gap-1">
                           <Badge variant="outline" className="text-xs">Solo</Badge>
                           <Badge variant="outline" className="text-xs">Original</Badge>
@@ -246,7 +246,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
               </div>
 
               {/* Notes — shown only when filled in */}
-              {projeto.notes && (
+              {project.notes && (
                 <>
                   <Separator />
                   <div>
@@ -257,7 +257,7 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                     <Card className="bg-muted/30">
                       <CardContent className="p-4">
                         <p className="text-sm whitespace-pre-wrap" data-testid="text-view-observacoes">
-                          {projeto.notes}
+                          {project.notes}
                         </p>
                       </CardContent>
                     </Card>
@@ -274,12 +274,12 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                     <FileText className="h-4 w-4 text-muted-foreground" />
                     <h3 className="font-semibold">Obras Vinculadas</h3>
                     <Badge variant="secondary" data-testid="badge-obras-total">
-                      {Array.isArray(projeto.obras) ? projeto.obras.length : 0}
+                      {Array.isArray(project.obras) ? project.obras.length : 0}
                     </Badge>
                   </div>
-                  {Array.isArray(projeto.obras) && projeto.obras.length > 0 && (
+                  {Array.isArray(project.obras) && project.obras.length > 0 && (
                     <Link
-                      to={`/registro-musicas?projeto=${projeto.id}`}
+                      to={`/registro-musicas?projeto=${project.id}`}
                       className="text-xs text-destructive hover:underline inline-flex items-center gap-1"
                       onClick={() => onOpenChange(false)}
                       data-testid="link-ver-todas-obras"
@@ -288,32 +288,32 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
                     </Link>
                   )}
                 </div>
-                {Array.isArray(projeto.obras) && projeto.obras.length > 0 ? (
+                {Array.isArray(project.obras) && project.obras.length > 0 ? (
                   <Card className="bg-muted/30">
                     <CardContent className="p-2">
                       <ul className="divide-y divide-border">
-                        {projeto.obras.map((obra: any) => (
+                        {project.obras.map((work: any) => (
                           <li
-                            key={obra.id}
+                            key={work.id}
                             className="flex items-center justify-between gap-2 px-2 py-2"
-                            data-testid={`row-obra-${obra.id}`}
+                            data-testid={`row-obra-${work.id}`}
                           >
                             <div className="flex items-center gap-2 min-w-0">
                               <Music2 className="h-4 w-4 text-warning shrink-0" />
-                              <span className="text-sm font-medium truncate" data-testid={`text-obra-title-${obra.id}`}>
-                                {obra.title}
+                              <span className="text-sm font-medium truncate" data-testid={`text-obra-title-${work.id}`}>
+                                {work.title}
                               </span>
-                              {obra.status && (
+                              {work.status && (
                                 <Badge variant="outline" className="text-[10px] ">
-                                  {obra.status}
+                                  {work.status}
                                 </Badge>
                               )}
                             </div>
                             <Link
-                              to={`/registro-musicas?projeto=${projeto.id}&obra=${obra.id}`}
+                              to={`/registro-musicas?projeto=${project.id}&obra=${work.id}`}
                               className="text-xs text-destructive hover:underline inline-flex items-center gap-1 shrink-0"
                               onClick={() => onOpenChange(false)}
-                              data-testid={`link-obra-${obra.id}`}
+                              data-testid={`link-obra-${work.id}`}
                             >
                               Abrir <ExternalLink className="h-3 w-3" />
                             </Link>

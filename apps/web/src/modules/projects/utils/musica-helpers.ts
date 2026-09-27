@@ -1,4 +1,4 @@
-export interface MusicaData {
+export interface TrackData {
   id?: string;
   name?: string;
   soloFeat?: string;
@@ -18,7 +18,7 @@ export interface MusicaData {
   arquivoAudio?: { name: string; size: number } | null;
 }
 
-export interface MusicaInfo {
+export interface TrackInfo {
   name: string;
   genero: string;
   idioma: string;
@@ -38,8 +38,8 @@ export interface MusicaInfo {
  * already returns the hydrated array in `projeto.musicas`. `descricao` is again
  * pure free text and is no longer used as the source of the songs.
  */
-export function parseMusicasFromProjeto(projeto: { musicas?: MusicaData[] } | null | undefined): MusicaData[] {
-  return Array.isArray(projeto?.musicas) ? projeto!.musicas! : [];
+export function parseTracksFromProject(project: { musicas?: TrackData[] } | null | undefined): TrackData[] {
+  return Array.isArray(project?.musicas) ? project!.musicas! : [];
 }
 
 function joinArray(arr: string[] | string | undefined | null): string {
@@ -48,10 +48,10 @@ function joinArray(arr: string[] | string | undefined | null): string {
   return arr;
 }
 
-export function getMusicaInfo(m: MusicaData): MusicaInfo {
+export function getTrackInfo(m: TrackData): TrackInfo {
   const min = m.duracaoMin || "";
   const seg = m.duracaoSeg || "";
-  const duracao = min && seg ? `${min}:${seg.padStart(2, "0")}` : min ? `${min}:00` : "";
+  const duration = min && seg ? `${min}:${seg.padStart(2, "0")}` : min ? `${min}:00` : "";
   return {
     name: m.name || "",
     genero: m.genero || "",
@@ -59,7 +59,7 @@ export function getMusicaInfo(m: MusicaData): MusicaInfo {
     compositores: joinArray(m.compositores),
     interpretes: joinArray(m.interpretes),
     produtores: joinArray(m.produtores),
-    duracao,
+    duracao: duration,
     soloFeat: m.soloFeat || "solo",
     originalRemix: m.originalRemix || "original",
     instrumental: m.instrumental || "nao",
@@ -68,14 +68,14 @@ export function getMusicaInfo(m: MusicaData): MusicaInfo {
   };
 }
 
-export function getFirstMusicaInfo(projeto: { musicas?: MusicaData[] } | null | undefined): MusicaInfo {
-  const musicas = parseMusicasFromProjeto(projeto);
-  if (musicas.length === 0) {
+export function getFirstTrackInfo(project: { musicas?: TrackData[] } | null | undefined): TrackInfo {
+  const tracks = parseTracksFromProject(project);
+  if (tracks.length === 0) {
     return {
       name: "", genero: "", idioma: "", compositores: "", interpretes: "",
       produtores: "", duracao: "", soloFeat: "solo", originalRemix: "original",
       instrumental: "nao", letra: "", audioUrl: "",
     };
   }
-  return getMusicaInfo(musicas[0]);
+  return getTrackInfo(tracks[0]);
 }

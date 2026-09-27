@@ -28,7 +28,7 @@ interface ProjectFormModalProps {
   onConcluido?: (projectId: string) => void;
 }
 
-interface MusicaData {
+interface TrackData {
   id: string;
   name: string;
   soloFeat: string;
@@ -52,7 +52,7 @@ interface UploadedAudio {
   size: number;
 }
 
-const generosMusicais = MUSICAL_GENRES;
+const musicGenres = MUSICAL_GENRES;
 
 const idiomas = LANGUAGES;
 
@@ -64,7 +64,7 @@ const formatFileSize = (bytes: number) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
-const createEmptyMusica = (): MusicaData => ({
+const createEmptyTrack = (): TrackData => ({
   id: crypto.randomUUID(),
   name: "",
   soloFeat: "solo",
@@ -83,7 +83,7 @@ const createEmptyMusica = (): MusicaData => ({
 
 // Normalize stored enum values to match Select option values exactly.
 // Handles capitalization differences, accent variants and legacy typos.
-function normTipo(v: string | null | undefined): string {
+function normType(v: string | null | undefined): string {
   const s = (v || "").toLowerCase().trim();
   if (s === "álbum" || s === "album") return "album";
   if (s === "ep") return "ep";
@@ -181,21 +181,21 @@ function ArtistNameInput({ value, onChange, placeholder, disabled }: ArtistNameI
   );
 }
 
-export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluido }: ProjectFormModalProps) {
+export function ProjectFormModal({ open, onOpenChange, projeto: project, mode, onConcluido: onCompleted }: ProjectFormModalProps) {
   const { addProject, updateProject } = useProjects();
   const { upload: uploadToR2 } = useUploadToR2();
 
   // Initialize state from projeto when the component mounts fresh (key-based remount ensures fresh mount per project).
-  const [tipoLancamento, setTipoLancamento] = useState(() => normTipo(projeto?.type));
-  const [nomeEP, setNomeEP] = useState(() => (mode !== "create" && projeto?.type !== "single") ? (projeto?.title || "") : "");
-  const [musicas, setMusicas] = useState<MusicaData[]>(() => {
-    if (mode === "create" || !projeto) return [createEmptyMusica()];
+  const [releaseType, setReleaseType] = useState(() => normType(project?.type));
+  const [epName, setEpName] = useState(() => (mode !== "create" && project?.type !== "single") ? (project?.title || "") : "");
+  const [tracks, setTracks] = useState<TrackData[]>(() => {
+    if (mode === "create" || !project) return [createEmptyTrack()];
     // musicas[] is normalized into project_tracks (migration 20260718000013) —
     // the API already returns the hydrated array in projeto.musicas.
-    const saved = (projeto as { musicas?: MusicaData[] }).musicas;
+    const saved = (project as { musicas?: TrackData[] }).musicas;
     if (Array.isArray(saved) && saved.length > 0) {
       return saved.map((m) => ({
-        ...createEmptyMusica(), ...m,
+        ...createEmptyTrack(), ...m,
         soloFeat: normEnum(m.soloFeat, "solo"),
         originalRemix: normEnum(m.originalRemix, "original"),
         instrumental: normEnum(m.instrumental, "nao"),
@@ -204,35 +204,35 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         id: m.id || crypto.randomUUID(),
       }));
     }
-    const type = normTipo(projeto?.type);
-    const generoHerdado = normEnum(projeto?.music_genre as string | undefined, "");
-    return [{ ...createEmptyMusica(), name: type === "single" ? (projeto?.title || "") : "", genero: generoHerdado }];
+    const type = normType(project?.type);
+    const inheritedGenre = normEnum(project?.music_genre as string | undefined, "");
+    return [{ ...createEmptyTrack(), name: type === "single" ? (project?.title || "") : "", genero: inheritedGenre }];
   });
-  const [observacoes, setObservacoes] = useState(() => projeto?.notes || "");
+  const [notes, setNotes] = useState(() => project?.notes || "");
   // GAP-0001 / DEC-001 (MUSICAL_PROJECT_CANONICAL_HUB): the main artist and the
   // production budget are legitimate attributes of the music project —
   // columns projects.artist_id / projects.orcamento, accepted by the real DTO.
-  const [artistId, setArtistId] = useState<string | null>(() => (projeto?.artist_id as string | null | undefined) ?? null);
-  const [orcamento, setOrcamento] = useState<string>(() =>
-    projeto?.orcamento != null && projeto?.orcamento !== "" ? String(projeto.orcamento) : "");
-  const [status, setStatus] = useState(() => normStatus(projeto?.status));
+  const [artistId, setArtistId] = useState<string | null>(() => (project?.artist_id as string | null | undefined) ?? null);
+  const [budget, setBudget] = useState<string>(() =>
+    project?.orcamento != null && project?.orcamento !== "" ? String(project.orcamento) : "");
+  const [status, setStatus] = useState(() => normStatus(project?.status));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const audioInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   const isViewMode = mode === "view";
   const title = mode === "create" ? "Novo Projeto" : mode === "edit" ? "Editar Projeto" : "Detalhes do Projeto";
-  const showAlbumEpName = tipoLancamento === "album" || tipoLancamento === "ep";
+  const showAlbumEpName = releaseType === "album" || releaseType === "ep";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (mode === "view") return;
 
     const validation = projectSchema.safeParse({
-      tipoLancamento,
-      nomeEP: nomeEP || "",
+      tipoLancamento: releaseType,
+      nomeEP: epName || "",
       status: status || "",
-      notes: observacoes || "",
+      notes: notes || "",
     });
 
     if (!validation.success) {
@@ -241,44 +241,44 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
       return;
     }
 
-    if (!tipoLancamento) {
+    if (!releaseType) {
       toast.error("Selecione o tipo de lançamento!");
       return;
     }
 
     const title = showAlbumEpName
-      ? nomeEP.trim()
-      : (musicas[0]?.name?.trim() || "");
+      ? epName.trim()
+      : (tracks[0]?.name?.trim() || "");
 
     if (!title) {
       toast.error(!showAlbumEpName
         ? "Digite o nome da música!"
-        : `Digite o nome do ${tipoLancamento === "ep" ? "EP" : "Álbum"}!`);
+        : `Digite o nome do ${releaseType === "ep" ? "EP" : "Álbum"}!`);
       return;
     }
-    const orcamentoTrim = orcamento.trim();
-    const orcamentoNum = orcamentoTrim === "" ? null : Number(orcamentoTrim);
-    if (orcamentoNum !== null && (!Number.isFinite(orcamentoNum) || orcamentoNum < 0)) {
+    const budgetTrim = budget.trim();
+    const budgetNum = budgetTrim === "" ? null : Number(budgetTrim);
+    if (budgetNum !== null && (!Number.isFinite(budgetNum) || budgetNum < 0)) {
       toast.error("Orçamento deve ser um valor numérico maior ou igual a zero.");
       return;
     }
 
     // Removes local-only fields (File metadata, upload flag) before sending —
     // musicas[] goes to its own storage (project_tracks), never again serialized into descricao.
-    const musicasParaSalvar = musicas.map(({ arquivoAudio: _a, _uploading: _u, ...m }) => m);
+    const tracksToSave = tracks.map(({ arquivoAudio: _a, _uploading: _u, ...m }) => m);
 
     // Persists the first track's genre as a direct field for efficient filtering
-    const genero = musicas[0]?.genero || null;
+    const genre = tracks[0]?.genero || null;
 
     const basePayload: ProjectUpdate = {
       title,
-      type: tipoLancamento,
+      type: releaseType,
       status,
-      notes: observacoes || null,
-      music_genre: genero,
-      musicas: musicasParaSalvar,
+      notes: notes || null,
+      music_genre: genre,
+      musicas: tracksToSave,
       artist_id: artistId,
-      orcamento: orcamentoNum,
+      orcamento: budgetNum,
     };
 
     try {
@@ -287,27 +287,27 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
       if (mode === "create") {
         const insertPayload: ProjectInsert = {
           title,
-          type: tipoLancamento,
+          type: releaseType,
           status,
-          notes: observacoes || null,
-          music_genre: genero,
-          musicas: musicasParaSalvar,
+          notes: notes || null,
+          music_genre: genre,
+          musicas: tracksToSave,
           artist_id: artistId,
-          orcamento: orcamentoNum,
+          orcamento: budgetNum,
         };
         const created = await addProject.mutateAsync(insertPayload) as { id: string };
         savedId = created?.id;
-      } else if (projeto?.id) {
+      } else if (project?.id) {
         await updateProject.mutateAsync({
-          id: projeto.id as string,
+          id: project.id as string,
           ...basePayload,
-          expectedUpdatedAt: getExpectedUpdatedAt(projeto),
+          expectedUpdatedAt: getExpectedUpdatedAt(project),
         });
-        savedId = projeto.id as string;
+        savedId = project.id as string;
       }
       onOpenChange(false);
       if (status === "completed" && savedId) {
-        onConcluido?.(savedId);
+        onCompleted?.(savedId);
       }
     } catch (err) {
       if (handleConcurrencyConflict(err, "projeto")) return;
@@ -317,32 +317,32 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
     }
   };
 
-  const addMusica = () => {
-    setMusicas([...musicas, createEmptyMusica()]);
+  const addTrack = () => {
+    setTracks([...tracks, createEmptyTrack()]);
   };
 
-  const removeMusica = (id: string) => {
-    if (musicas.length > 1) {
-      setMusicas(musicas.filter(m => m.id !== id));
+  const removeTrack = (id: string) => {
+    if (tracks.length > 1) {
+      setTracks(tracks.filter(m => m.id !== id));
     }
   };
 
-  const updateMusica = (id: string, field: keyof MusicaData, value: any) => {
-    setMusicas(musicas.map(m => m.id === id ? { ...m, [field]: value } : m));
+  const updateTrack = (id: string, field: keyof TrackData, value: any) => {
+    setTracks(tracks.map(m => m.id === id ? { ...m, [field]: value } : m));
   };
 
-  const addItemToMusica = (musicaId: string, field: 'compositores' | 'interpretes' | 'produtores') => {
-    setMusicas(musicas.map(m => {
-      if (m.id === musicaId) {
+  const addItemToTrack = (trackId: string, field: 'compositores' | 'interpretes' | 'produtores') => {
+    setTracks(tracks.map(m => {
+      if (m.id === trackId) {
         return { ...m, [field]: [...m[field], ""] };
       }
       return m;
     }));
   };
 
-  const updateItemInMusica = (musicaId: string, field: 'compositores' | 'interpretes' | 'produtores', index: number, value: string) => {
-    setMusicas(musicas.map(m => {
-      if (m.id === musicaId) {
+  const updateItemInTrack = (trackId: string, field: 'compositores' | 'interpretes' | 'produtores', index: number, value: string) => {
+    setTracks(tracks.map(m => {
+      if (m.id === trackId) {
         const newArray = [...m[field]];
         newArray[index] = value;
         return { ...m, [field]: newArray };
@@ -351,9 +351,9 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
     }));
   };
 
-  const removeItemFromMusica = (musicaId: string, field: 'compositores' | 'interpretes' | 'produtores', index: number) => {
-    setMusicas(musicas.map(m => {
-      if (m.id === musicaId && m[field].length > 1) {
+  const removeItemFromTrack = (trackId: string, field: 'compositores' | 'interpretes' | 'produtores', index: number) => {
+    setTracks(tracks.map(m => {
+      if (m.id === trackId && m[field].length > 1) {
         const newArray = m[field].filter((_, i) => i !== index);
         return { ...m, [field]: newArray };
       }
@@ -361,7 +361,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
     }));
   };
 
-  const handleAudioUpload = async (musicaId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAudioUpload = async (trackId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -376,17 +376,17 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
     }
 
     // Show local file immediately for UX feedback
-    updateMusica(musicaId, 'arquivoAudio', { name: file.name, size: file.size });
-    updateMusica(musicaId, '_uploading', true);
+    updateTrack(trackId, 'arquivoAudio', { name: file.name, size: file.size });
+    updateTrack(trackId, '_uploading', true);
 
     try {
       const { publicUrl } = await uploadToR2({
         file,
         category: "audio",
         entity:   "project",
-        entityId: projeto?.id as string | undefined,
+        entityId: project?.id as string | undefined,
       });
-      updateMusica(musicaId, 'audioUrl', publicUrl);
+      updateTrack(trackId, 'audioUrl', publicUrl);
       toast.success("Áudio enviado e link gerado com sucesso!");
     } catch (err) {
       const msg = err instanceof R2NotConfiguredError
@@ -394,21 +394,21 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         : toUserMessage(err, "Erro no upload do áudio");
       toast.error(`Upload falhou: ${msg}`);
       // Never fakes success: without a real URL, removes the displayed local file.
-      updateMusica(musicaId, 'arquivoAudio', null);
+      updateTrack(trackId, 'arquivoAudio', null);
     } finally {
-      updateMusica(musicaId, '_uploading', false);
+      updateTrack(trackId, '_uploading', false);
     }
   };
 
-  const renderMusicaForm = (musica: MusicaData, index: number) => (
-    <div key={musica.id} className="border border-border rounded-lg p-4 space-y-4 bg-muted/10">
+  const renderTrackForm = (track: TrackData, index: number) => (
+    <div key={track.id} className="border border-border rounded-lg p-4 space-y-4 bg-muted/10">
       <div className="flex items-center justify-between">
         <h4 className="font-medium flex items-center gap-2">
           <Music className="w-4 h-4 text-primary" />
-          Detalhes da Música {tipoLancamento !== "single" && `#${index + 1}`}
+          Detalhes da Música {releaseType !== "single" && `#${index + 1}`}
         </h4>
-        {tipoLancamento !== "single" && musicas.length > 1 && !isViewMode && (
-          <Button type="button" variant="ghost" size="sm" onClick={() => removeMusica(musica.id)}>
+        {releaseType !== "single" && tracks.length > 1 && !isViewMode && (
+          <Button type="button" variant="ghost" size="sm" onClick={() => removeTrack(track.id)}>
             <X className="w-4 h-4" />
           </Button>
         )}
@@ -418,15 +418,15 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         <div className="space-y-2">
           <Label>Nome da Música *</Label>
           <Input
-            value={musica.name}
-            onChange={(e) => updateMusica(musica.id, 'name', e.target.value)}
+            value={track.name}
+            onChange={(e) => updateTrack(track.id, 'name', e.target.value)}
             disabled={isViewMode} 
             placeholder="Digite o nome da música" 
           />
         </div>
         <div className="space-y-2">
           <Label>Solo/Feat *</Label>
-          <Select value={musica.soloFeat} onValueChange={(v) => updateMusica(musica.id, 'soloFeat', v)} disabled={isViewMode}>
+          <Select value={track.soloFeat} onValueChange={(v) => updateTrack(track.id, 'soloFeat', v)} disabled={isViewMode}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="solo">Solo</SelectItem>
@@ -436,7 +436,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         </div>
         <div className="space-y-2">
           <Label>Original/Remix *</Label>
-          <Select value={musica.originalRemix} onValueChange={(v) => updateMusica(musica.id, 'originalRemix', v)} disabled={isViewMode}>
+          <Select value={track.originalRemix} onValueChange={(v) => updateTrack(track.id, 'originalRemix', v)} disabled={isViewMode}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="original">Original</SelectItem>
@@ -449,7 +449,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
       <div className="grid grid-cols-4 gap-4">
         <div className="space-y-2">
           <Label>Instrumental *</Label>
-          <Select value={musica.instrumental || "nao"} onValueChange={(v) => updateMusica(musica.id, 'instrumental', v)} disabled={isViewMode}>
+          <Select value={track.instrumental || "nao"} onValueChange={(v) => updateTrack(track.id, 'instrumental', v)} disabled={isViewMode}>
             <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="nao">Não</SelectItem>
@@ -461,16 +461,16 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
           <Label>Duração</Label>
           <div className="flex items-center gap-1 min-w-0">
             <Input 
-              value={musica.duracaoMin} 
-              onChange={(e) => updateMusica(musica.id, 'duracaoMin', e.target.value)} 
+              value={track.duracaoMin}
+              onChange={(e) => updateTrack(track.id, 'duracaoMin', e.target.value)}
               disabled={isViewMode} 
               placeholder="Min" 
               className="min-w-0 flex-1 px-2"
             />
             <span className="text-muted-foreground shrink-0">:</span>
             <Input 
-              value={musica.duracaoSeg} 
-              onChange={(e) => updateMusica(musica.id, 'duracaoSeg', e.target.value)} 
+              value={track.duracaoSeg}
+              onChange={(e) => updateTrack(track.id, 'duracaoSeg', e.target.value)}
               disabled={isViewMode} 
               placeholder="Seg" 
               className="min-w-0 flex-1 px-2"
@@ -479,16 +479,16 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         </div>
         <div className="space-y-2">
           <Label>Gênero Musical *</Label>
-          <Select value={musica.genero} onValueChange={(v) => updateMusica(musica.id, 'genero', v)} disabled={isViewMode}>
+          <Select value={track.genero} onValueChange={(v) => updateTrack(track.id, 'genero', v)} disabled={isViewMode}>
             <SelectTrigger><SelectValue placeholder="Selecione o gênero" /></SelectTrigger>
             <SelectContent>
-              {generosMusicais.map(g => <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>)}
+              {musicGenres.map(g => <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-2">
           <Label>Idioma da Música *</Label>
-          <Select value={musica.idioma} onValueChange={(v) => updateMusica(musica.id, 'idioma', v)} disabled={isViewMode}>
+          <Select value={track.idioma} onValueChange={(v) => updateTrack(track.id, 'idioma', v)} disabled={isViewMode}>
             <SelectTrigger><SelectValue placeholder="Selecione o idioma" /></SelectTrigger>
             <SelectContent>
               {idiomas.map(i => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}
@@ -502,22 +502,22 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         <div className="flex items-center justify-between">
           <Label>Compositores *</Label>
           {!isViewMode && (
-            <Button type="button" variant="outline" size="sm" onClick={() => addItemToMusica(musica.id, 'compositores')}>
+            <Button type="button" variant="outline" size="sm" onClick={() => addItemToTrack(track.id, 'compositores')}>
               <Plus className="w-4 h-4 mr-1" /> Adicionar Compositor
             </Button>
           )}
         </div>
         <div className="space-y-2">
-          {musica.compositores.map((comp, idx) => (
+          {track.compositores.map((comp, idx) => (
             <div key={idx} className="flex gap-2">
               <ArtistNameInput
                 value={comp}
-                onChange={(v) => updateItemInMusica(musica.id, 'compositores', idx, v)}
+                onChange={(v) => updateItemInTrack(track.id, 'compositores', idx, v)}
                 placeholder="Nome do compositor"
                 disabled={isViewMode}
               />
-              {!isViewMode && musica.compositores.length > 1 && (
-                <Button type="button" variant="ghost" size="icon" onClick={() => removeItemFromMusica(musica.id, 'compositores', idx)}>
+              {!isViewMode && track.compositores.length > 1 && (
+                <Button type="button" variant="ghost" size="icon" onClick={() => removeItemFromTrack(track.id, 'compositores', idx)}>
                   <X className="w-4 h-4" />
                 </Button>
               )}
@@ -531,22 +531,22 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         <div className="flex items-center justify-between">
           <Label>Intérpretes *</Label>
           {!isViewMode && (
-            <Button type="button" variant="outline" size="sm" onClick={() => addItemToMusica(musica.id, 'interpretes')}>
+            <Button type="button" variant="outline" size="sm" onClick={() => addItemToTrack(track.id, 'interpretes')}>
               <Plus className="w-4 h-4 mr-1" /> Adicionar Intérprete
             </Button>
           )}
         </div>
         <div className="space-y-2">
-          {musica.interpretes.map((int, idx) => (
+          {track.interpretes.map((int, idx) => (
             <div key={idx} className="flex gap-2">
               <ArtistNameInput
                 value={int}
-                onChange={(v) => updateItemInMusica(musica.id, 'interpretes', idx, v)}
+                onChange={(v) => updateItemInTrack(track.id, 'interpretes', idx, v)}
                 placeholder="Nome do intérprete"
                 disabled={isViewMode}
               />
-              {!isViewMode && musica.interpretes.length > 1 && (
-                <Button type="button" variant="ghost" size="icon" onClick={() => removeItemFromMusica(musica.id, 'interpretes', idx)}>
+              {!isViewMode && track.interpretes.length > 1 && (
+                <Button type="button" variant="ghost" size="icon" onClick={() => removeItemFromTrack(track.id, 'interpretes', idx)}>
                   <X className="w-4 h-4" />
                 </Button>
               )}
@@ -560,22 +560,22 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         <div className="flex items-center justify-between">
           <Label>Produtores *</Label>
           {!isViewMode && (
-            <Button type="button" variant="outline" size="sm" onClick={() => addItemToMusica(musica.id, 'produtores')}>
+            <Button type="button" variant="outline" size="sm" onClick={() => addItemToTrack(track.id, 'produtores')}>
               <Plus className="w-4 h-4 mr-1" /> Adicionar Produtor
             </Button>
           )}
         </div>
         <div className="space-y-2">
-          {musica.produtores.map((prod, idx) => (
+          {track.produtores.map((prod, idx) => (
             <div key={idx} className="flex gap-2">
               <ArtistNameInput
                 value={prod}
-                onChange={(v) => updateItemInMusica(musica.id, 'produtores', idx, v)}
+                onChange={(v) => updateItemInTrack(track.id, 'produtores', idx, v)}
                 placeholder="Nome do produtor"
                 disabled={isViewMode}
               />
-              {!isViewMode && musica.produtores.length > 1 && (
-                <Button type="button" variant="ghost" size="icon" onClick={() => removeItemFromMusica(musica.id, 'produtores', idx)}>
+              {!isViewMode && track.produtores.length > 1 && (
+                <Button type="button" variant="ghost" size="icon" onClick={() => removeItemFromTrack(track.id, 'produtores', idx)}>
                   <X className="w-4 h-4" />
                 </Button>
               )}
@@ -588,8 +588,8 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
       <div className="space-y-2">
         <Label>Letra</Label>
         <Textarea 
-          value={musica.letra} 
-          onChange={(e) => updateMusica(musica.id, 'letra', e.target.value)} 
+          value={track.letra}
+          onChange={(e) => updateTrack(track.id, 'letra', e.target.value)}
           disabled={isViewMode} 
           rows={4} 
           placeholder="Digite a letra da música..." 
@@ -600,31 +600,31 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
       <div className="space-y-2">
         <Label>Arquivos de Áudio (MP3/WAV)</Label>
         <input
-          ref={(el) => { audioInputRefs.current[musica.id] = el; }}
+          ref={(el) => { audioInputRefs.current[track.id] = el; }}
           type="file"
           accept="audio/mpeg,audio/wav,audio/x-wav"
-          onChange={(e) => handleAudioUpload(musica.id, e)}
+          onChange={(e) => handleAudioUpload(track.id, e)}
           className="hidden"
           disabled={isViewMode}
         />
-        {musica.arquivoAudio ? (
+        {track.arquivoAudio ? (
           <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border">
             <div className="flex items-center gap-3">
-              {musica._uploading ? (
+              {track._uploading ? (
                 <Loader2 className="w-8 h-8 text-primary animate-spin" />
               ) : (
                 <FileAudio className="w-8 h-8 text-primary" />
               )}
               <div>
-                <p className="text-sm font-medium">{musica.arquivoAudio.name}</p>
+                <p className="text-sm font-medium">{track.arquivoAudio.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {formatFileSize(musica.arquivoAudio.size)}
-                  {musica._uploading && " — enviando..."}
-                  {!musica._uploading && musica.audioUrl && " — link gerado ✓"}
+                  {formatFileSize(track.arquivoAudio.size)}
+                  {track._uploading && " — enviando..."}
+                  {!track._uploading && track.audioUrl && " — link gerado ✓"}
                 </p>
-                {!musica._uploading && musica.audioUrl && (
+                {!track._uploading && track.audioUrl && (
                   <a
-                    href={musica.audioUrl}
+                    href={track.audioUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs text-primary hover:underline flex items-center gap-1 mt-0.5"
@@ -639,33 +639,33 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
               <div className="flex gap-2">
                 <Button
                   type="button" variant="outline" size="sm"
-                  onClick={() => audioInputRefs.current[musica.id]?.click()}
-                  disabled={!!musica._uploading}
+                  onClick={() => audioInputRefs.current[track.id]?.click()}
+                  disabled={!!track._uploading}
                 >
                   Trocar
                 </Button>
                 <Button
                   type="button" variant="ghost" size="sm"
                   onClick={() => {
-                    updateMusica(musica.id, 'arquivoAudio', null);
-                    updateMusica(musica.id, 'audioUrl', undefined);
+                    updateTrack(track.id, 'arquivoAudio', null);
+                    updateTrack(track.id, 'audioUrl', undefined);
                   }}
-                  disabled={!!musica._uploading}
+                  disabled={!!track._uploading}
                 >
                   <X className="w-4 h-4" />
                 </Button>
               </div>
             )}
           </div>
-        ) : musica.audioUrl ? (
+        ) : track.audioUrl ? (
           /* Remote audio from import/previous save — no local file */
           <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border">
             <div className="flex items-center gap-3">
               <FileAudio className="w-8 h-8 text-primary" />
               <div>
-                <p className="text-sm font-medium">{musica.audioUrl.split("/").pop() || "Áudio remoto"}</p>
+                <p className="text-sm font-medium">{track.audioUrl.split("/").pop() || "Áudio remoto"}</p>
                 <a
-                  href={musica.audioUrl}
+                  href={track.audioUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs text-primary hover:underline flex items-center gap-1"
@@ -679,13 +679,13 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
               <div className="flex gap-2">
                 <Button
                   type="button" variant="outline" size="sm"
-                  onClick={() => audioInputRefs.current[musica.id]?.click()}
+                  onClick={() => audioInputRefs.current[track.id]?.click()}
                 >
                   Trocar
                 </Button>
                 <Button
                   type="button" variant="ghost" size="sm"
-                  onClick={() => updateMusica(musica.id, 'audioUrl', undefined)}
+                  onClick={() => updateTrack(track.id, 'audioUrl', undefined)}
                 >
                   <X className="w-4 h-4" />
                 </Button>
@@ -695,7 +695,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
         ) : (
           <div
             className="border-2 border-dashed border-warning/50 rounded-lg p-8 text-center bg-muted/20 cursor-pointer hover:border-warning hover:bg-muted/30 transition-colors"
-            onClick={() => !isViewMode && audioInputRefs.current[musica.id]?.click()}
+            onClick={() => !isViewMode && audioInputRefs.current[track.id]?.click()}
           >
             <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
             <p className="text-sm text-muted-foreground">Clique para selecionar arquivos ou arraste e solte aqui</p>
@@ -718,7 +718,7 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
             {/* Release type */}
             <div className={showAlbumEpName ? "space-y-2" : "space-y-2 md:col-span-2"}>
               <Label>Tipo de Lançamento *</Label>
-              <Select value={tipoLancamento} onValueChange={setTipoLancamento} disabled={isViewMode}>
+              <Select value={releaseType} onValueChange={setReleaseType} disabled={isViewMode}>
                 <SelectTrigger className="border-primary"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="single">Single</SelectItem>
@@ -731,12 +731,12 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
             {/* EP/album name (conditional) */}
             {showAlbumEpName && (
               <div className="space-y-2">
-                <Label>Nome do {tipoLancamento === "ep" ? "EP" : "Álbum"} *</Label>
+                <Label>Nome do {releaseType === "ep" ? "EP" : "Álbum"} *</Label>
                 <Input
-                  value={nomeEP}
-                  onChange={(e) => setNomeEP(e.target.value)}
+                  value={epName}
+                  onChange={(e) => setEpName(e.target.value)}
                   disabled={isViewMode}
-                  placeholder={`Digite o nome do ${tipoLancamento === "ep" ? "EP" : "Álbum"}`}
+                  placeholder={`Digite o nome do ${releaseType === "ep" ? "EP" : "Álbum"}`}
                 />
               </div>
             )}
@@ -765,8 +765,8 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
                 inputMode="decimal"
                 min="0"
                 step="0.01"
-                value={orcamento}
-                onChange={(e) => setOrcamento(e.target.value)}
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
                 disabled={isViewMode}
                 placeholder="0,00"
                 data-testid="input-projeto-orcamento"
@@ -777,16 +777,16 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
           {/* Tracks section */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">{tipoLancamento === "single" ? "Música" : "Músicas"}</h3>
-              {tipoLancamento !== "single" && !isViewMode && (
-                <Button type="button" variant="outline" onClick={addMusica}>
+              <h3 className="text-lg font-semibold">{releaseType === "single" ? "Música" : "Músicas"}</h3>
+              {releaseType !== "single" && !isViewMode && (
+                <Button type="button" variant="outline" onClick={addTrack}>
                   <Plus className="w-4 h-4 mr-2" /> Adicionar Música
                 </Button>
               )}
             </div>
             
             <div className="space-y-4">
-              {musicas.map((musica, index) => renderMusicaForm(musica, index))}
+              {tracks.map((track, index) => renderTrackForm(track, index))}
             </div>
           </div>
 
@@ -794,8 +794,8 @@ export function ProjectFormModal({ open, onOpenChange, projeto, mode, onConcluid
           <div className="space-y-2">
             <Label>Observações</Label>
             <Textarea 
-              value={observacoes} 
-              onChange={(e) => setObservacoes(e.target.value)} 
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
               disabled={isViewMode} 
               rows={3} 
               placeholder="Observações adicionais sobre o projeto..." 

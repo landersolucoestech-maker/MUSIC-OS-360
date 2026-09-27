@@ -39,7 +39,7 @@ import {
 } from "@/modules/catalog/hooks/useCatalogPaginated";
 import type { Work, Phonogram } from "@/modules/catalog/types/catalog.types";
 import { projectToWorkSeed } from "@/modules/catalog/mappers";
-import { parseMusicasFromProjeto } from "@/modules/projects/lib/musica-helpers";
+import { parseTracksFromProject } from "@/modules/projects/lib/musica-helpers";
 import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useSignedArtists } from "@/modules/artist/hooks/useSignedArtists";
 
@@ -814,7 +814,7 @@ export default function MusicRegistry() {
             // (Task J).
             const project = await storage.findById<ProjectWithRelations>("projects", pendingProjectId);
             if (project) {
-              const tracks = parseMusicasFromProjeto(project);
+              const tracks = parseTracksFromProject(project);
               workSeed = projectToWorkSeed(project, tracks[0] ?? null);
             } else {
               workSeed = { project_id: pendingProjectId };
