@@ -475,9 +475,9 @@ async function fase37(): Promise<void> {
       detail = `artistId=${artistRef}`;
     } else if (typeof artistRef === 'object') {
       const id = (artistRef as any).id;
-      const nome = (artistRef as any).nome_artistico ?? (artistRef as any).name;
-      isSame = (expectedArtistId && id === expectedArtistId) || (typeof nome === 'string' && nome.includes(tag));
-      detail = `id=${id} nome=${nome}`;
+      const name = (artistRef as any).nome_artistico ?? (artistRef as any).name;
+      isSame = (expectedArtistId && id === expectedArtistId) || (typeof name === 'string' && name.includes(tag));
+      detail = `id=${id} name=${name}`;
     }
     expect(label, isSame, detail);
   }

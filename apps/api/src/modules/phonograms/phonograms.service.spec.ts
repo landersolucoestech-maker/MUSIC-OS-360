@@ -414,10 +414,10 @@ describe('PhonogramsService — State B (pre-C2, current behavior documented)', 
 
     it('absence of work_id/artist_id: does not add a filter for those fields', async () => {
       await service.list(TENANT, { status: 'active' } as any);
-      const calledWithObraId = mockDs._repo._qb.andWhere.mock.calls.some((c: unknown[]) => c[0] === 'p.work_id = :workId');
-      const calledWithArtistaId = mockDs._repo._qb.andWhere.mock.calls.some((c: unknown[]) => c[0] === 'p.artist_id = :artistId');
-      expect(calledWithObraId).toBe(false);
-      expect(calledWithArtistaId).toBe(false);
+      const calledWithWorkId = mockDs._repo._qb.andWhere.mock.calls.some((c: unknown[]) => c[0] === 'p.work_id = :workId');
+      const calledWithArtistId = mockDs._repo._qb.andWhere.mock.calls.some((c: unknown[]) => c[0] === 'p.artist_id = :artistId');
+      expect(calledWithWorkId).toBe(false);
+      expect(calledWithArtistId).toBe(false);
     });
 
     it('other filters (status, search) keep working', async () => {

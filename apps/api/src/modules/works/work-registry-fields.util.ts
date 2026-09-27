@@ -107,9 +107,9 @@ type IaElement = { ferramenta?: string; prompt?: string } | null | undefined;
 export function deriveAiToolsAndPrompts(
   iaHarmonia: IaElement,
   iaMelodia: IaElement,
-  iaLetra: IaElement,
+  aiLyrics: IaElement,
 ): { ai_tools: string[]; ai_prompts: string[] } {
-  const elements = [iaHarmonia, iaMelodia, iaLetra];
+  const elements = [iaHarmonia, iaMelodia, aiLyrics];
   const ai_tools = elements
     .map((e) => e?.ferramenta)
     .filter((v): v is string => typeof v === 'string' && v.trim().length > 0);

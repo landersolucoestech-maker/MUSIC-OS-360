@@ -246,11 +246,11 @@ async function f54(): Promise<void> {
   expect('GET /events A → 200', r.status === 200);
   const list: any[] = Array.isArray(r.body?.data) ? r.body.data : (r.body?.data?.data ?? r.body?.items ?? []);
   const todayPrefix = new Date().toISOString().slice(0,10);
-  const eventosHojeTotal = list.filter((e) => {
+  const todayEventsTotal = list.filter((e) => {
     const raw = e.data_inicio ?? e.startsAt ?? e.data ?? e.start_date;
     return typeof raw === 'string' && raw.slice(0,10) === todayPrefix;
   });
-  const ours = eventosHojeTotal.filter((e) => (e.title ?? e.titulo ?? '').includes(`DASH_A_${TS}_EVENT_TODAY`));
+  const ours = todayEventsTotal.filter((e) => (e.title ?? e.titulo ?? '').includes(`DASH_A_${TS}_EVENT_TODAY`));
   expect('events dated today include the ones created in this run', ours.length === OPTS_A.eventsToday, `match=${ours.length} esperado=${OPTS_A.eventsToday}`);
 
   // Confirm that tomorrow's events do NOT enter today's slice

@@ -124,10 +124,10 @@ export class FinancialRulesService {
       if (conds['type'] && context.type && conds['type'] !== context.type) continue;
 
       // Compute result
-      const valor  = context.valor ?? 0;
+      const amount  = context.valor ?? 0;
       const ruleVal = parseFloat(String(rule.value));
       let computed: number;
-      if (rule.calculo === 'percentual') computed = (valor * ruleVal) / 100;
+      if (rule.calculo === 'percentual') computed = (amount * ruleVal) / 100;
       else if (rule.calculo === 'fixo')  computed = ruleVal;
       else {
         // REM-03: 'faixa' (tiered/bracket) still has no persisted bracket
@@ -140,7 +140,7 @@ export class FinancialRulesService {
         continue;
       }
 
-      const result = { trigger, computed, ruleCalculo: rule.calculo, ruleValor: ruleVal, contextValor: valor };
+      const result = { trigger, computed, ruleCalculo: rule.calculo, ruleValor: ruleVal, contextValor: amount };
 
       try {
         this.events.emitTyped(DOMAIN_EVENTS.FINANCIAL_RULE_TRIGGERED, {

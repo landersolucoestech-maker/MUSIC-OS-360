@@ -21,7 +21,7 @@ export class ContentDetectionsController {
   list(
     @CurrentTenant() tenant: { id: string },
     @Query('status') status?: string,
-    @Query('plataforma') plataforma?: string,
+    @Query('plataforma') platform?: string,
     @Query('artist_id') artist_id?: string,
     @Query('work_id') work_id?: string,
     @Query('ascending') ascending?: string,
@@ -30,7 +30,7 @@ export class ContentDetectionsController {
   ) {
     return this.svc.list(tenant.id, {
       status,
-      plataforma,
+      plataforma: platform,
       artist_id,
       work_id,
       ascending: ascending === 'true',

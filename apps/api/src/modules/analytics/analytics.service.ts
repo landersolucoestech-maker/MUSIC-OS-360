@@ -112,7 +112,7 @@ export class AnalyticsService {
       cancelledTxCount,
       invoicesByStatus,
       txByStatus,
-      txByTipo,
+      txByType,
       // Operational
       pendingTasksCount,
       overdueTasksCount,
@@ -217,10 +217,10 @@ export class AnalyticsService {
     const contractStatusMap = Object.fromEntries(contractsByStatus.map((r) => [r.status, parseInt(r.cnt)]));
     const invoiceStatusMap  = Object.fromEntries(invoicesByStatus.map((r)  => [r.status, parseInt(r.cnt)]));
     const txStatusMap       = Object.fromEntries(txByStatus.map((r)        => [r.status, parseInt(r.cnt)]));
-    const txTipoMap         = Object.fromEntries(txByTipo.map((r)          => [r.type,   parseInt(r.cnt)]));
+    const txTypeMap         = Object.fromEntries(txByType.map((r)          => [r.type,   parseInt(r.cnt)]));
 
-    const receitas = parseFloat(financialCurrentMonth[0]?.receitas ?? '0');
-    const despesas = parseFloat(financialCurrentMonth[0]?.despesas ?? '0');
+    const income = parseFloat(financialCurrentMonth[0]?.receitas ?? '0');
+    const expenses = parseFloat(financialCurrentMonth[0]?.despesas ?? '0');
 
     return {
       artists:                       artistCount,
@@ -233,16 +233,16 @@ export class AnalyticsService {
       open_tickets:                  parseInt(openTickets[0]?.cnt ?? '0'),
       campaigns:                     campaignCount,
       // Financial
-      revenue_current_month:         receitas,
-      expenses_current_month:        despesas,
-      net_result_current_month:      receitas - despesas,
+      revenue_current_month:         income,
+      expenses_current_month:        expenses,
+      net_result_current_month:      income - expenses,
       pending_receivables:           parseFloat(pendingReceivables[0]?.total ?? '0'),
       overdue_invoices_count:        parseInt(overdueInvoicesCount[0]?.cnt ?? '0'),
       paid_transactions_count:       parseInt(paidTxCount[0]?.cnt ?? '0'),
       cancelled_transactions_count:  parseInt(cancelledTxCount[0]?.cnt ?? '0'),
       invoices_by_status:            invoiceStatusMap,
       transactions_by_status:        txStatusMap,
-      transactions_by_tipo:          txTipoMap,
+      transactions_by_tipo:          txTypeMap,
       // Operational
       pending_tasks_count:           parseInt(pendingTasksCount[0]?.cnt ?? '0'),
       overdue_tasks_count:           parseInt(overdueTasksCount[0]?.cnt ?? '0'),

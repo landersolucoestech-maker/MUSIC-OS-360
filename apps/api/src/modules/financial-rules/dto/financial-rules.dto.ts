@@ -3,14 +3,14 @@ import { IsString, IsOptional, IsNumber, IsIn, IsBoolean, MaxLength } from 'clas
 import { Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
-const TIPOS    = ['imposto', 'comissao', 'external_rights_fee', 'desconto', 'taxa', 'outros'] as const;
-const CALCULOS = ['percentual', 'fixo', 'faixa'] as const;
+const RULE_TYPES    = ['imposto', 'comissao', 'external_rights_fee', 'desconto', 'taxa', 'outros'] as const;
+const CALCULATION_METHODS = ['percentual', 'fixo', 'faixa'] as const;
 
 export class CreateFinancialRuleDto {
   @ApiProperty() @IsString() @MaxLength(255) name!: string;
-  @ApiProperty({ enum: TIPOS }) @IsIn(TIPOS) type!: string;
+  @ApiProperty({ enum: RULE_TYPES }) @IsIn(RULE_TYPES) type!: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) category?: string;
-  @ApiProperty({ enum: CALCULOS }) @IsIn(CALCULOS) calculo!: string;
+  @ApiProperty({ enum: CALCULATION_METHODS }) @IsIn(CALCULATION_METHODS) calculo!: string;
   @ApiProperty() @IsNumber() @Type(() => Number) value!: number;
   @ApiPropertyOptional() @IsOptional() @IsString() description?: string;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() active?: boolean;

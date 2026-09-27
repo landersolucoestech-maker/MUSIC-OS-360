@@ -69,12 +69,12 @@ export class EventsService {
       'status',
     );
     const now = new Date();
-    const em7Dias = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const inSevenDays = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
     const upcoming7Days = await this.repo!
       .createQueryBuilder('e')
       .where('e.tenant_id = :tenantId', { tenantId })
       .andWhere('e.deleted_at IS NULL')
-      .andWhere('e.data >= :now AND e.data <= :em7Dias', { now, em7Dias })
+      .andWhere('e.data >= :now AND e.data <= :em7Dias', { now, em7Dias: inSevenDays })
       .getCount();
     return { ...byStatus, upcoming7Days };
   }

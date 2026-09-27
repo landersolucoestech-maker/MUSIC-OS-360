@@ -22,14 +22,14 @@ export const SPLIT_TOLERANCE = 0.01;
 
 export function assertSplitBudgetNotExceeded(
   existingEligibleSum: number,
-  incomingPercentual: number,
+  incomingPercentage: number,
   context: string,
 ): void {
-  const total = existingEligibleSum + incomingPercentual;
+  const total = existingEligibleSum + incomingPercentage;
   if (total - 100 > SPLIT_TOLERANCE) {
     throw new BadRequestException(
       `Soma dos splits elegíveis para registro em ${context} excederia 100% ` +
-      `(existente: ${existingEligibleSum.toFixed(2)}% + este: ${incomingPercentual.toFixed(2)}% = ${total.toFixed(2)}%).`,
+      `(existente: ${existingEligibleSum.toFixed(2)}% + este: ${incomingPercentage.toFixed(2)}% = ${total.toFixed(2)}%).`,
     );
   }
 }

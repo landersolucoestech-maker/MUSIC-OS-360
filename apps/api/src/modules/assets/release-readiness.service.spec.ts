@@ -147,13 +147,13 @@ describe('ReleaseReadinessService.evaluate', () => {
         .evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
       expect(out1.requirements.find((r) => r.id === 'metadata')?.status).toBe('missing');
 
-      const semGenero = { ...fullPhonogram, music_genre: null };
-      const out2 = await new ReleaseReadinessService(makeDs(semGenero) as never, skillRuns() as never, assetLinking(goodAssets) as never)
+      const withoutGenre = { ...fullPhonogram, music_genre: null };
+      const out2 = await new ReleaseReadinessService(makeDs(withoutGenre) as never, skillRuns() as never, assetLinking(goodAssets) as never)
         .evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
       expect(out2.requirements.find((r) => r.id === 'metadata')?.status).toBe('missing');
 
-      const semArtista = { ...fullPhonogram, artist_id: null };
-      const out3 = await new ReleaseReadinessService(makeDs(semArtista) as never, skillRuns() as never, assetLinking(goodAssets) as never)
+      const withoutArtist = { ...fullPhonogram, artist_id: null };
+      const out3 = await new ReleaseReadinessService(makeDs(withoutArtist) as never, skillRuns() as never, assetLinking(goodAssets) as never)
         .evaluate('t1', { projectId: 'proj-1', phonogramId: 'ph-1' });
       expect(out3.requirements.find((r) => r.id === 'metadata')?.status).toBe('missing');
     });

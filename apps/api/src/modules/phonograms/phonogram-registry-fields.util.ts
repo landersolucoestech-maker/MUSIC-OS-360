@@ -19,7 +19,7 @@
 // official standard, not a heuristic guess). "UK" itself is not the ISO
 // code for the United Kingdom -- that's "GB" -- so this is a real
 // correction, not just a case change.
-const PAIS_ORIGEM_TO_ISO: Record<string, string> = {
+const SOURCE_COUNTRY_TO_ISO: Record<string, string> = {
   brazil: 'BR',
   usa: 'US',
   uk: 'GB',
@@ -29,9 +29,9 @@ const PAIS_ORIGEM_TO_ISO: Record<string, string> = {
   // rather than invented.
 };
 
-export function mapOriginCountryToCountryCode(paisOrigem: string | null | undefined): string | null {
-  if (!paisOrigem) return null;
-  const code = PAIS_ORIGEM_TO_ISO[paisOrigem.toLowerCase()];
+export function mapOriginCountryToCountryCode(sourceCountry: string | null | undefined): string | null {
+  if (!sourceCountry) return null;
+  const code = SOURCE_COUNTRY_TO_ISO[sourceCountry.toLowerCase()];
   return code ?? null;
 }
 

@@ -28,14 +28,14 @@ export class HrController {
   listEmployees(
     @CurrentTenant() tenant: { id: string },
     @Query('status') status?: string,
-    @Query('setor') setor?: string,
+    @Query('setor') sector?: string,
     @Query('search') search?: string,
     @Query('offset') offset?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.listEmployees(tenant.id, {
       status,
-      setor,
+      setor: sector,
       search,
       offset: offset ? +offset : undefined,
       limit:  limit  ? +limit  : undefined,

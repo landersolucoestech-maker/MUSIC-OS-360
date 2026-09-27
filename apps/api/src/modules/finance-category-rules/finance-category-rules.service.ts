@@ -108,9 +108,9 @@ export class FinanceCategoryRulesService {
   async suggestCategoryForTransaction(
     tenantId: string,
     transactionType: 'RECEITA' | 'DESPESA',
-    descricao: string,
+    description: string,
   ): Promise<FinanceCategorySuggestion | null> {
-    if (!this.repo || !descricao?.trim()) return null;
+    if (!this.repo || !description?.trim()) return null;
 
     const { entities, raw } = await this.repo
       .createQueryBuilder('r')
@@ -125,7 +125,7 @@ export class FinanceCategoryRulesService {
       .limit(500)
       .getRawAndEntities();
 
-    const matched = matchCategoryRule(entities, { descricao, transactionType });
+    const matched = matchCategoryRule(entities, { descricao: description, transactionType });
     if (!matched) return null;
 
     const index = entities.indexOf(matched);
