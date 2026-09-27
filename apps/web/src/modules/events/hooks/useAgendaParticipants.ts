@@ -14,7 +14,7 @@ export type AgendaParticipant = {
   category?: string;
 };
 
-interface ArtistaLookup {
+interface ArtistLookup {
   id: string;
   nome_artistico?: string | null;
   nome?: string | null;
@@ -22,7 +22,7 @@ interface ArtistaLookup {
   telefone?: string | null;
 }
 
-interface FuncionarioLookup {
+interface EmployeeLookup {
   id: string;
   name?: string | null;
   full_name?: string | null;
@@ -72,14 +72,14 @@ export function summarizeAgendaParticipants(participants: AgendaParticipant[]) {
  * list of 8 flagged in Task J) — kept as they were.
  */
 export function useAgendaParticipants(search: string = "", pendingArtistId?: string | null) {
-  const { items: artistItems } = useEntityLookup<ArtistaLookup>({ table: "artistas", search, pageSize: 20 });
-  const { items: employeeItems } = useEntityLookup<FuncionarioLookup>({ table: "funcionarios", search, pageSize: 20 });
-  const { entity: pendingArtist } = useEntityById<ArtistaLookup>("artistas", pendingArtistId);
-  const { users: usuarios = [] } = useUsers();
+  const { items: artistItems } = useEntityLookup<ArtistLookup>({ table: "artistas", search, pageSize: 20 });
+  const { items: employeeItems } = useEntityLookup<EmployeeLookup>({ table: "funcionarios", search, pageSize: 20 });
+  const { entity: pendingArtist } = useEntityById<ArtistLookup>("artistas", pendingArtistId);
+  const { users: users = [] } = useUsers();
   const { contacts = [] } = useContacts();
 
   const participants = useMemo<AgendaParticipant[]>(() => {
-    const artistSource: ArtistaLookup[] =
+    const artistSource: ArtistLookup[] =
       pendingArtist && !artistItems.some((a) => a.id === pendingArtist.id)
         ? [...artistItems, pendingArtist]
         : artistItems;
@@ -102,7 +102,7 @@ export function useAgendaParticipants(search: string = "", pendingArtistId?: str
       category: employee.departamento ? String(employee.departamento) : "Funcionario",
     }));
 
-    const userOptions = (usuarios as any[]).map((user) => ({
+    const userOptions = (users as any[]).map((user) => ({
       source: "user" as const,
       id: String(user.id),
       label: String(user.full_name || user.nome || user.email || user.id),
@@ -126,7 +126,7 @@ export function useAgendaParticipants(search: string = "", pendingArtistId?: str
       byKey.set(agendaParticipantKey(participant), participant);
     });
     return [...byKey.values()].sort((a, b) => a.label.localeCompare(b.label));
-  }, [artistItems, employeeItems, pendingArtist, usuarios, contacts]);
+  }, [artistItems, employeeItems, pendingArtist, users, contacts]);
 
   const getParticipantByKey = (key: string) =>
     participants.find((participant) => agendaParticipantKey(participant) === key);

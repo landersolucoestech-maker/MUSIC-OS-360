@@ -75,7 +75,7 @@ const STATUS_TONE: Record<string, string> = {
   postponed: "border-slate-300/40 bg-slate-400/15 text-slate-700",
 };
 
-const TIPO_OPTIONS = [
+const TYPE_OPTIONS = [
   { value: "all-type", label: "Todos Tipos" },
   { value: "shows", label: "Shows" },
   { value: "sessoes_estudio", label: "Sessões de Estúdio" },
@@ -134,7 +134,7 @@ export default function Agenda() {
   const { getOptionsByKind, getItemsByKind } = useOperationalSettings();
   const eventTypeOptions = getOptionsByKind("event_type");
   const typeOptions = useMemo(
-    () => [{ value: "all-type", label: "Todos Tipos" }, ...(eventTypeOptions.length > 0 ? eventTypeOptions : TIPO_OPTIONS.slice(1))],
+    () => [{ value: "all-type", label: "Todos Tipos" }, ...(eventTypeOptions.length > 0 ? eventTypeOptions : TYPE_OPTIONS.slice(1))],
     [eventTypeOptions],
   );
   // events.type only stores the backend's coarse enum (show/festival/recording/
@@ -209,17 +209,17 @@ export default function Agenda() {
     }
 
     const exportData = allEvents.map(e => {
-      const inicio = splitDateTime(e.data);
-      const fim = splitDateTime(e.end_date);
+      const startParts = splitDateTime(e.data);
+      const endParts = splitDateTime(e.end_date);
       return {
         title: e.title,
         type: getBackendEventTypeLabel(e.type),
         status: e.status,
         participantes: summarizeAgendaParticipants(getEventParticipants(e)),
-        start_date: inicio.date,
-        horario_inicio: inicio.time,
-        end_date: fim.date,
-        horario_fim: fim.time,
+        start_date: startParts.date,
+        horario_inicio: startParts.time,
+        end_date: endParts.date,
+        horario_fim: endParts.time,
         local: e.local || "",
         publico_esperado: e.publico_esperado ?? "",
         valor_cache: e.fee_amount || "",
@@ -263,27 +263,27 @@ export default function Agenda() {
         if (!title) continue;
 
         const startDate = row.start_date || row.data || row.Data || new Date().toISOString().split("T")[0];
-        const horarioInicio = row.horario_inicio || row.horario || row.Horario || null;
+        const startTime = row.horario_inicio || row.horario || row.Horario || null;
         const endDate = row.end_date || row["Data Fim"] || null;
-        const horarioFim = row.horario_fim || row["Horário Fim"] || null;
-        const tipoRaw = String(row.tipo_evento || row.type || row.Tipo || "").toLowerCase();
-        const valorCache = row.valor_cache || row["Valor Cachê"];
-        const publicoEsperado = row.publico_esperado || row["Público Esperado"] || row.capacidade || row["Capacidade"];
+        const endTime = row.horario_fim || row["Horário Fim"] || null;
+        const rawType = String(row.tipo_evento || row.type || row.Tipo || "").toLowerCase();
+        const feeValue = row.valor_cache || row["Valor Cachê"];
+        const expectedAudience = row.publico_esperado || row["Público Esperado"] || row.capacidade || row["Capacidade"];
 
         // Payload in the real CreateEventDto shape (title/type/startsAt/
         // endsAt/venue — not title/type/start_date, which do not exist in the DTO;
         // status is omitted because CreateEventDto does not accept it, only UpdateEventDto).
         const payload: Record<string, unknown> = {
-          title: title,
-          type: normalizeToBackendType(tipoRaw, granularToBackendType),
+          title,
+          type: normalizeToBackendType(rawType, granularToBackendType),
         };
-        const startsAt = combineDateTime(startDate, horarioInicio);
+        const startsAt = combineDateTime(startDate, startTime);
         if (startsAt) payload.startsAt = startsAt;
-        const endsAt = combineDateTime(endDate, horarioFim);
+        const endsAt = combineDateTime(endDate, endTime);
         if (endsAt) payload.endsAt = endsAt;
         if (row.local || row.Local) payload.venue = row.local || row.Local;
-        if (valorCache) payload.fee_amount = Number(valorCache);
-        if (publicoEsperado) payload.publico_esperado = Number(publicoEsperado);
+        if (feeValue) payload.fee_amount = Number(feeValue);
+        if (expectedAudience) payload.publico_esperado = Number(expectedAudience);
         if (row.descricao || row.Descrição) payload.description = row.descricao || row.Descrição;
         if (row.observacoes || row.Observações) payload.notes = row.observacoes || row.Observações;
 

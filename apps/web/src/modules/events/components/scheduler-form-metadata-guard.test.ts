@@ -34,8 +34,8 @@ describe("SchedulerFormModal — does not write formal fields into metadata", ()
   it("sends the formal fields as top-level payload keys (own column via the DTO)", () => {
     expect(SOURCE).toMatch(/payload\["endereco"\]\s*=\s*data\.endereco/);
     expect(SOURCE).toMatch(/payload\["contato_local"\]\s*=\s*data\.contatoLocal/);
-    expect(SOURCE).toMatch(/payload\["fee_amount"\]\s*=\s*valorCache/);
-    expect(SOURCE).toMatch(/payload\["publico_esperado"\]\s*=\s*publicoEsperado/);
+    expect(SOURCE).toMatch(/payload\["fee_amount"\]\s*=\s*feeAmount/);
+    expect(SOURCE).toMatch(/payload\["publico_esperado"\]\s*=\s*expectedAudience/);
     expect(SOURCE).toMatch(/payload\["description"\]\s*=\s*data\.descricao/);
     expect(SOURCE).toMatch(/payload\["notes"\]\s*=\s*data\.observacoes/);
     expect(SOURCE).toMatch(/payload\["participantes"\]\s*=\s*data\.participantes/);

@@ -56,7 +56,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
 
   if (!event) return null;
 
-  const artista = event.artistas;
+  const artist = event.artistas;
   const meta = (event.metadata as Record<string, unknown> | undefined) ?? {};
   const storedParticipants = normalizeAgendaParticipants(meta["participants"]);
   const legacyArtistParticipant = getArtistParticipantById(event.artist_id);
@@ -64,13 +64,13 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
     ? storedParticipants
     : legacyArtistParticipant
       ? [legacyArtistParticipant]
-      : artista
+      : artist
         ? [{
             source: "artist" as const,
-            id: String(artista.id ?? event.artist_id ?? "legacy-artist"),
-            label: String(artista.nome_artistico || artista.nome || "Artista"),
-            email: artista.email ? String(artista.email) : undefined,
-            phone: artista.telefone ? String(artista.telefone) : undefined,
+            id: String(artist.id ?? event.artist_id ?? "legacy-artist"),
+            label: String(artist.nome_artistico || artist.nome || "Artista"),
+            email: artist.email ? String(artist.email) : undefined,
+            phone: artist.telefone ? String(artist.telefone) : undefined,
             category: "Artista",
           }]
         : [];
@@ -148,7 +148,7 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
           )}
 
           {/* ARTIST */}
-          {artista && participants.length === 0 && (
+          {artist && participants.length === 0 && (
             <Section title="Artista" icon={User}>
               <Card>
                 <CardContent className="p-4 flex items-center gap-3">
@@ -157,16 +157,16 @@ export function SchedulerViewModal({ open, onOpenChange, event, onEdit }: Schedu
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold truncate" data-testid="text-evento-artista">
-                      {artista.nome_artistico || artista.nome || "—"}
+                      {artist.nome_artistico || artist.nome || "—"}
                     </p>
-                    {artista.music_genre && (
-                      <p className="text-xs text-muted-foreground">{artista.music_genre}</p>
+                    {artist.music_genre && (
+                      <p className="text-xs text-muted-foreground">{artist.music_genre}</p>
                     )}
                   </div>
-                  {artista.email && (
+                  {artist.email && (
                     <div className="hidden sm:flex flex-col text-right text-xs text-muted-foreground">
-                      <span>{artista.email}</span>
-                      {artista.telefone && <span>{artista.telefone}</span>}
+                      <span>{artist.email}</span>
+                      {artist.telefone && <span>{artist.telefone}</span>}
                     </div>
                   )}
                 </CardContent>

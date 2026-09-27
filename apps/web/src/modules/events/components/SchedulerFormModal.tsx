@@ -51,7 +51,7 @@ interface LocalCRMLookup {
   state?: string | null;
 }
 
-const tiposEvento = [
+const eventTypes = [
   { value: "sessoes_estudio", label: "Sessões de estúdio" },
   { value: "ensaios", label: "Ensaios" },
   { value: "sessoes_fotos", label: "Sessões de fotos" },
@@ -73,7 +73,7 @@ const statusOptions = [
 ];
 
 
-const tiposRelacionadosArtista = [
+const artistRelatedTypes = [
   "sessoes_estudio",
   "ensaios",
   "sessoes_fotos",
@@ -86,9 +86,9 @@ const tiposRelacionadosArtista = [
 ];
 
 // Event types that should pull the venue from the CRM
-const tiposLocalCRM = ["shows", "programas_tv", "radio", "podcasts"];
+const venueTypesCrm = ["shows", "programas_tv", "radio", "podcasts"];
 
-const tipoEventoAliases: Record<string, string> = {
+const eventTypeAliases: Record<string, string> = {
   show: "shows",
   show_teatro: "shows",
   festival: "shows",
@@ -186,7 +186,7 @@ const getInitialFormData = (event?: any) => {
     title: (legacyTitle(event) as string | undefined) || "",
     tipoEvento: normalizeSelectValue(
       event?.tipoEvento || event?.tipo_evento || event?.tipo || event?.type,
-      tipoEventoAliases,
+      eventTypeAliases,
     ),
     artista: event?.artista || event?.artist_id || event?.artistId || "",
     participantes: normalizeAgendaParticipants(event?.participantes ?? meta["participants"]),
@@ -236,17 +236,17 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   const queryClient = useQueryClient();
   const { getOptionsByKind, getItemsByKind } = useOperationalSettings();
   const operationalEventTypeOptions = getOptionsByKind("event_type");
-  const eventTypeOptions = operationalEventTypeOptions.length > 0 ? operationalEventTypeOptions : tiposEvento;
+  const eventTypeOptions = operationalEventTypeOptions.length > 0 ? operationalEventTypeOptions : eventTypes;
   // events.type only keeps the backend's coarse enum — each granular category
   // configured in Settings → Operational carries the mapping in
   // metadata.backend_type (ver lib/event-type.ts).
   const granularToBackendType = buildGranularToBackendTypeMap(getItemsByKind("event_type"));
   const [participantSearch, setParticipantSearch] = useState("");
-  const legacyArtistaId = event?.artista || event?.artist_id || event?.artistId || null;
-  const { participants, getParticipantByKey, getArtistParticipantById, pendingArtist } = useAgendaParticipants(participantSearch, legacyArtistaId);
+  const legacyArtistId = event?.artista || event?.artist_id || event?.artistId || null;
+  const { participants, getParticipantByKey, getArtistParticipantById, pendingArtist } = useAgendaParticipants(participantSearch, legacyArtistId);
 
-  const hydrateFormData = (currentEvento?: any) => {
-    const initial = getInitialFormData(currentEvento);
+  const hydrateFormData = (currentEvent?: any) => {
+    const initial = getInitialFormData(currentEvent);
     if (initial.participantes.length === 0 && initial.artista) {
       const artistParticipant = getArtistParticipantById(initial.artista);
       if (artistParticipant) {
@@ -258,7 +258,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
 
   const [formData, setFormData] = useState(hydrateFormData(event));
 
-  const { addEvent: addEvento, updateEvent: updateEvento } = useEvents();
+  const { addEvent, updateEvent } = useEvents();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -276,16 +276,16 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   const title = mode === "create" ? "Novo Evento na Agenda" : mode === "edit" ? "Editar Evento" : "Visualizar Evento";
 
   // Check whether the event type is artist-related
-  const isArtistaRelated = tiposRelacionadosArtista.includes(formData.tipoEvento);
+  const isArtistRelated = artistRelatedTypes.includes(formData.tipoEvento);
   
   // Show the venue fields when artist-related OR a meeting
-  const showLocalFields = isArtistaRelated || formData.tipoEvento === "reunioes";
+  const showLocalFields = isArtistRelated || formData.tipoEvento === "reunioes";
   
   // Show the show-only fields
   const isShow = formData.tipoEvento === "shows";
   
   // Check whether the event type should pull the venue from the CRM
-  const shouldUseCRMLocal = tiposLocalCRM.includes(formData.tipoEvento);
+  const shouldUseCRMLocal = venueTypesCrm.includes(formData.tipoEvento);
   const selectedParticipantKeys = formData.participantes.map(agendaParticipantKey);
   const selectedParticipantsSummary = summarizeAgendaParticipants(formData.participantes);
 
@@ -329,7 +329,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   const getNormalizedFormData = (): SchedulerFormData => ({
     ...formData,
     title: String(formData.title || event?.title || event?.titulo || "").trim(),
-    tipoEvento: normalizeSelectValue(formData.tipoEvento || event?.tipoEvento || event?.tipo_evento || event?.tipo, tipoEventoAliases),
+    tipoEvento: normalizeSelectValue(formData.tipoEvento || event?.tipoEvento || event?.tipo_evento || event?.tipo, eventTypeAliases),
     status: normalizeSelectValue(formData.status || event?.status, statusAliases) || "agendado",
     startDate: normalizeDate(formData.startDate) ?? normalizeEventDate(event?.startDate || event?.start_date || event?.data),
     endDate: normalizeDate(formData.endDate) ?? normalizeEventDate(event?.endDate || event?.end_date),
@@ -393,7 +393,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   // Settings → Operational (granularToBackendType, lib/event-type.ts).
   // The table below is only the fallback for legacy/hand-typed slugs that
   // match no configured category.
-  const legacyTipoToBackendType: Record<string, string> = {
+  const legacyTypeToBackendType: Record<string, string> = {
     shows:           "show",
     show:            "show",
     show_teatro:     "show",
@@ -416,10 +416,10 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
     tour:            "tour",
     turne:           "tour",
   };
-  const mapTipoToBackendType = (type: string): string => {
+  const mapTypeToBackendType = (type: string): string => {
     const t = (type || "").toLowerCase();
     if (granularToBackendType[t]) return granularToBackendType[t];
-    return legacyTipoToBackendType[t] ?? "other";
+    return legacyTypeToBackendType[t] ?? "other";
   };
 
   // Combine `YYYY-MM-DD` + `HH:mm` → ISO datetime string for backend.
@@ -485,7 +485,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
 
     const payload: Record<string, unknown> = {
       title: String(data.title || "").trim(),
-      type:  mapTipoToBackendType(data.tipoEvento),
+      type:  mapTypeToBackendType(data.tipoEvento),
     };
 
     const firstArtistParticipant = data.participantes.find((participant) => participant.source === "artist");
@@ -500,10 +500,10 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
 
     if (data.endereco)      payload["endereco"]      = data.endereco;
     if (data.contatoLocal)  payload["contato_local"]  = data.contatoLocal;
-    const valorCache = toNumberOrUndefined(data.valorCache);
-    if (valorCache !== undefined) payload["fee_amount"] = valorCache;
-    const publicoEsperado = toNumberOrUndefined(data.publicoEsperado);
-    if (publicoEsperado !== undefined) payload["publico_esperado"] = publicoEsperado;
+    const feeAmount = toNumberOrUndefined(data.valorCache);
+    if (feeAmount !== undefined) payload["fee_amount"] = feeAmount;
+    const expectedAudience = toNumberOrUndefined(data.publicoEsperado);
+    if (expectedAudience !== undefined) payload["publico_esperado"] = expectedAudience;
     if (data.descricao)   payload["description"] = data.descricao;
     if (data.observacoes) payload["notes"]       = data.observacoes;
     if (data.participantes.length > 0) payload["participantes"] = data.participantes;
@@ -534,13 +534,13 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
           toast.error("Não foi possível atualizar: evento sem identificador.");
           return;
         }
-        await updateEvento.mutateAsync({
+        await updateEvent.mutateAsync({
           id: event.id,
           ...buildPayload(validatedFormData, true),
           expectedUpdatedAt: getExpectedUpdatedAt(event),
         });
       } else {
-        await addEvento.mutateAsync(buildPayload(validatedFormData, false));
+        await addEvent.mutateAsync(buildPayload(validatedFormData, false));
       }
       await queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.EVENTS] });
       onOpenChange(false);
