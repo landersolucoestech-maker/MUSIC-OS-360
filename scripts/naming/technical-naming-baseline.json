@@ -2,7 +2,7 @@
  "totals": {
   "eventQueueJob": 7,
   "filename": 77,
-  "identifier": 2139
+  "identifier": 2138
  },
  "debt": {
   "eventQueueJob::apps/web/src/modules/events/components/SchedulerFormModal.tsx::name::reunioes": 3,
@@ -931,7 +931,6 @@
   "identifier::apps/web/src/modules/artist/services/artist.mapper.ts::type::WireResponsavel": 1,
   "identifier::apps/web/src/modules/artist/services/artist.service.ts::variable::artistaService": 1,
   "identifier::apps/web/src/modules/artist/types/artist.types.ts::property::nome": 1,
-  "identifier::apps/web/src/modules/artist/types/artist.types.ts::property::pixKey": 1,
   "identifier::apps/web/src/modules/audiovisual/pages/AudiovisualProjectsList.tsx::variable::orcamento": 1,
   "identifier::apps/web/src/modules/auth/pages/ArtistaSignupPublic.tsx::function::ArtistaSignupPublic": 1,
   "identifier::apps/web/src/modules/auth/pages/ArtistaSignupPublic.tsx::interface::ContatoEquipe": 1,

@@ -28,7 +28,7 @@ visualizar criar atualizar remover deletar carregar enviar receber gerar calcula
 selecionar abrir fechar mostrar exibir ocultar adicionar
 evolucao metrica metricas plataforma plataformas seguidores ouvintes
 marketing? conteudo conteudos tarefa briefing? calendario postagem postagens
-banco agencia conta pix boleto cartao
+banco agencia conta pix boleto cartao chave chaves
 rh folha ponto beneficio beneficios salario salarios admissao demissao cargo cargos departamento
 treinamento avaliacao desempenho
 monitoramento deteccao deteccoes direitos direito licenca licencas takedown?
@@ -46,7 +46,9 @@ todos todas geral resumo exportar importar baixar subir somente apenas pagar ven
 entrada saida inicial previsao contratado contratados ouvinte seguidor faturamento receber pagos pendentes
 `.split(/\s+/).map((t) => t.replace(/\?$/, "")).filter(Boolean)
   // ambiguous with English: drop
-  .filter((t) => !["status","marketing","briefing","takedown","royalty","lead","cep","data","nota","ano","dia","modelo","ponto","banco","agencia","ordem","campo","idioma"].includes(t)));
+  .filter((t) => !["status","marketing","briefing","takedown","royalty","lead","cep","data","nota","ano","dia","modelo","ponto","banco","agencia","ordem","campo","idioma",
+    // proper names with no English translation (Brazilian payment system "Pix")
+    "pix"].includes(t)));
 
 export function splitWords(name) {
   return name

@@ -85,6 +85,10 @@ const [fullName, setFullName] = useState("");`;
   assert.deepEqual(vars, ["nomeCompleto", "setNomeCompleto", "valor"].sort());
 });
 
+test("identifiers: proper names without translation are not Portuguese technical names", () => {
+  assert.deepEqual(names(scanSource("apps/web/src/p.ts", "const pixKey = ''; const chavePix = '';"), "identifier"), ["chavePix"]);
+});
+
 test("comments are read from the AST: real comments flagged, strings/URLs/MIME globs are not", () => {
   const real = `/* calcula o repasse do artista quando não há contrato */
 const a = 1; // valida o valor antes de salvar no banco

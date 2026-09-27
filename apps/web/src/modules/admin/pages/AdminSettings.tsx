@@ -393,7 +393,7 @@ function TabWebhooks() {
 // API keys will come from the real API once the endpoint exists. Empty until then.
 const API_KEYS: Array<{ id: string; name: string; key: string; created: string; last_used: string; scopes: string[] }> = [];
 
-function TabChavesApi() {
+function TabApiKeys() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -792,7 +792,7 @@ const TAB_PANELS: Record<TabKey, React.ComponentType> = {
   seguranca:    TabSeguranca,
   notificacoes: TabNotificacoes,
   webhooks:     TabWebhooks,
-  "chaves-api": TabChavesApi,
+  "chaves-api": TabApiKeys,
   integracoes:  TabIntegracoes,
 };
 

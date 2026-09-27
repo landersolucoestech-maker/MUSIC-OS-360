@@ -883,12 +883,12 @@ describe('BillingService.getStripeMode', () => {
     expect(svc.getStripeMode()).toEqual({ environment: 'sandbox', keyState: 'VALID_TEST_KEY' });
   });
 
-  it('chave sk_live_ => disabled (recusada), nunca production', async () => {
+  it('sk_live_ key => disabled (refused), never production', async () => {
     const svc = await build('sk_live_abc');
     expect(svc.getStripeMode()).toEqual({ environment: 'disabled', keyState: 'LIVE_KEY_REJECTED' });
   });
 
-  it('sem chave => disabled/MISSING', async () => {
+  it('no key => disabled/MISSING', async () => {
     const svc = await build(undefined);
     expect(svc.getStripeMode()).toEqual({ environment: 'disabled', keyState: 'MISSING' });
   });
