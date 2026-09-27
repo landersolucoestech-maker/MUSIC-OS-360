@@ -14,7 +14,7 @@ import { useMetrics } from "@/modules/dashboard/hooks/useMetrics";
 // 50 artists loaded (the old "cap") — none has status "contratado" or
 // "ativo" in this sample, simulating the scenario where the artists under contract
 // are outside the first page.
-const CAPPED_ARTISTAS = Array.from({ length: 50 }, (_, i) => ({
+const CAPPED_ARTISTS = Array.from({ length: 50 }, (_, i) => ({
   id: `artist-${i + 1}`,
   stageName: `Artista ${i + 1}`,
   musicGenre: null,
@@ -24,7 +24,7 @@ const CAPPED_ARTISTAS = Array.from({ length: 50 }, (_, i) => ({
 
 vi.mock("@/modules/artist/hooks/useArtists", () => ({
   useArtists: () => ({
-    artists: CAPPED_ARTISTAS,
+    artists: CAPPED_ARTISTS,
     isLoading: false,
     error: null,
     refetch: vi.fn(),

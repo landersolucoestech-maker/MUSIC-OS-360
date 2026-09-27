@@ -44,26 +44,26 @@ const MAX_ITEMS = 30;
 // modules/events/lib/event-type.ts for the real pt-BR labels.
 
 // Statuses that remove the event from the upcoming appointments list (past/closed).
-const COMPROMISSO_STATUS_OCULTOS = new Set([
+const HIDDEN_APPOINTMENT_STATUSES = new Set([
   "cancelado", "concluido", "realizado", "arquivado",
 ]);
 
-function normalizarSlug(value: unknown): string {
+function normalizeSlug(value: unknown): string {
   if (typeof value !== "string") return "";
   return value.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
 
-function categoriaCompromissoLabel(type: unknown): string {
+function appointmentCategoryLabel(type: unknown): string {
   return getBackendEventTypeLabel(typeof type === "string" ? type : undefined);
 }
 
 // Combines date (date-only or ISO) + "HH:mm" time into a comparable Date.
 // Without a time, assumes end of day to keep the appointment visible all day.
-function compromissoDataHora(raw: unknown, horario: unknown): Date | null {
+function appointmentDateTime(raw: unknown, horario: unknown): Date | null {
   if (typeof raw !== "string" || !raw) return null;
   // `raw` is already the real event timestamp (`data` column, time included) —
   // an explicit `horario` (override) takes priority; without it, uses the time that
-  // already comes in the timestamp itself instead of inventing 23:59 (evento.horario_inicio
+  // already comes in the timestamp itself instead of inventing 23:59 (event.horario_inicio
   // never existed on the backend, so that fallback always fired before).
   if (typeof horario === "string" && /^\d{1,2}:\d{2}/.test(horario)) {
     const datePart = raw.includes("T") ? raw.slice(0, 10) : raw;
@@ -346,8 +346,8 @@ function OperationalAlerts() {
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
 /** Initials for the artist avatar's default placeholder. */
-function getInitials(nome: string): string {
-  return nome
+function getInitials(name: string): string {
+  return name
     .trim()
     .split(/\s+/)
     .slice(0, 2)
@@ -357,7 +357,7 @@ function getInitials(nome: string): string {
 
 export default function Dashboard() {
   const [visao360Modal, setVisao360Modal] = useState<{ open: boolean; artista?: any }>({ open: false });
-  const { dashboardMetrics, artistasMetrics, isLoading, eventos, error: metricsError, refetch: refetchMetrics } = useMetrics();
+  const { dashboardMetrics, artistasMetrics: artistsMetrics, isLoading, eventos: events, error: metricsError, refetch: refetchMetrics } = useMetrics();
 
   // ── Activity state ──────────────────────────────────────────────────────────
   const [activities, setActivities] = useState<ActivityItem[]>([]);
@@ -507,35 +507,35 @@ export default function Dashboard() {
 
   // ── Derived data ────────────────────────────────────────────────────────────
 
-  const { totalArtistas, contratosAtivos, contratosVencendo, receitaMensal, eventosMes, artistasDestaque } =
+  const { totalArtistas: totalArtists, contratosAtivos: activeContracts, contratosVencendo: expiringContracts, receitaMensal: monthlyIncome, eventosMes: eventsMonth, artistasDestaque: featuredArtists } =
     dashboardMetrics;
 
   // Upcoming appointments: only future events (date/time >= now), without the
   // closed/canceled/archived ones, in chronological order and limited to 5.
   // Tenant scoping is already guaranteed by the data layer (useEventos → tenant).
-  const proximosCompromissos = useMemo(() => {
-    const agora = Date.now();
-    return eventos
-      .map((evento) => {
+  const upcomingAppointments = useMemo(() => {
+    const nowMs = Date.now();
+    return events
+      .map((calendarEvent) => {
         // The frontend uses `start_date`; the backend returns `data` in the timestamp column.
         const raw =
-          (evento.start_date as string | null | undefined) ??
-          ((evento as { data?: string | null }).data ?? null);
-        return { evento, quando: compromissoDataHora(raw, evento.horario_inicio) };
+          (calendarEvent.start_date as string | null | undefined) ??
+          ((calendarEvent as { data?: string | null }).data ?? null);
+        return { event: calendarEvent, when: appointmentDateTime(raw, calendarEvent.horario_inicio) };
       })
       .filter(
-        (item): item is { evento: EventWithRelations; quando: Date } => {
-          if (!item.quando) return false;
-          if (item.quando.getTime() < agora) return false;
-          return !COMPROMISSO_STATUS_OCULTOS.has(normalizarSlug(item.evento.status));
+        (item): item is { event: EventWithRelations; when: Date } => {
+          if (!item.when) return false;
+          if (item.when.getTime() < nowMs) return false;
+          return !HIDDEN_APPOINTMENT_STATUSES.has(normalizeSlug(item.event.status));
         },
       )
-      .sort((a, b) => a.quando.getTime() - b.quando.getTime())
+      .sort((a, b) => a.when.getTime() - b.when.getTime())
       .slice(0, 5);
-  }, [eventos]);
+  }, [events]);
 
-  const artistasComEventos = useMemo(
-    () => artistasDestaque.map((a) => ({
+  const artistsWithEvents = useMemo(
+    () => featuredArtists.map((a) => ({
       id: a.id,
       nome: a.stageName,
       genero: a.musicGenre || "Outro",
@@ -544,7 +544,7 @@ export default function Dashboard() {
       projetos: a.projetos,
       foto_url: a.photoUrl,
     })),
-    [artistasDestaque],
+    [featuredArtists],
   );
 
   return (
@@ -566,26 +566,26 @@ export default function Dashboard() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             label="Artistas Cadastrados"
-            value={totalArtistas}
+            value={totalArtists}
             icon={Users}
             accent="primary"
             sub={
               <span>
-                <span className="font-sans font-semibold text-success">{artistasMetrics.comContrato}</span>
+                <span className="font-sans font-semibold text-success">{artistsMetrics.comContrato}</span>
                 {" "}com contrato ativo
               </span>
             }
           />
           <StatCard
             label="Contratos Vigentes"
-            value={contratosAtivos}
+            value={activeContracts}
             icon={FileText}
-            accent={contratosVencendo > 0 ? "warning" : "success"}
+            accent={expiringContracts > 0 ? "warning" : "success"}
             sub={
-              contratosVencendo > 0 ? (
+              expiringContracts > 0 ? (
                 <span className="flex items-center gap-1">
                   <AlertTriangle className="h-3 w-3 text-warning" />
-                  <span className="font-sans font-semibold text-warning">{contratosVencendo}</span>
+                  <span className="font-sans font-semibold text-warning">{expiringContracts}</span>
                   {" "}vencendo em breve
                 </span>
               ) : (
@@ -595,17 +595,17 @@ export default function Dashboard() {
           />
           <StatCard
             label="Receita Total"
-            value={formatCurrency(receitaMensal)}
+            value={formatCurrency(monthlyIncome)}
             icon={DollarSign}
             accent="success"
             sub={<span>receita atual consolidada</span>}
           />
           <StatCard
             label="Eventos do Mês"
-            value={eventosMes}
+            value={eventsMonth}
             icon={Calendar}
             accent="primary"
-            sub={<span>{eventosMes === 1 ? "evento" : "eventos"} no mês atual</span>}
+            sub={<span>{eventsMonth === 1 ? "evento" : "eventos"} no mês atual</span>}
           />
         </div>
 
@@ -698,32 +698,32 @@ export default function Dashboard() {
               </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col pt-0">
-              {proximosCompromissos.length > 0 ? (
+              {upcomingAppointments.length > 0 ? (
                 <ul className="flex-1 divide-y divide-border/60">
-                  {proximosCompromissos.map(({ evento, quando }) => (
+                  {upcomingAppointments.map(({ event: calendarEvent, when }) => (
                     <li
-                      key={evento.id}
+                      key={calendarEvent.id}
                       className="flex flex-col gap-1 py-3 first:pt-0 sm:flex-row sm:items-start sm:gap-3"
-                      data-testid={`compromisso-${evento.id}`}
+                      data-testid={`compromisso-${calendarEvent.id}`}
                     >
                       <div className="flex shrink-0 items-center gap-2 sm:w-16 sm:flex-col sm:items-center sm:gap-0 sm:text-center">
                         <span className="text-xs font-sans font-semibold text-foreground">
-                          {quando.toLocaleDateString("pt-BR")}
+                          {when.toLocaleDateString("pt-BR")}
                         </span>
                         <span className="text-xs font-sans text-primary sm:mt-0.5">
-                          {quando.getHours() === 0 && quando.getMinutes() === 0
+                          {when.getHours() === 0 && when.getMinutes() === 0
                             ? "Dia inteiro"
-                            : quando.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                            : when.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
                         </span>
                       </div>
                       <div className="hidden w-px self-stretch bg-primary/20 sm:block" />
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium leading-tight">{evento.title}</p>
+                        <p className="text-sm font-medium leading-tight">{calendarEvent.title}</p>
                         <Badge
                           variant="outline"
                           className="mt-1.5 px-1.5 py-0 text-[10px] border-border text-muted-foreground"
                         >
-                          {categoriaCompromissoLabel(evento.type)}
+                          {appointmentCategoryLabel(calendarEvent.type)}
                         </Badge>
                       </div>
                     </li>
@@ -763,20 +763,20 @@ export default function Dashboard() {
             description="Artistas com maior relevância no período"
             action={{ label: "Ver todos", href: "/artistas" }}
           />
-          {artistasComEventos.length > 0 ? (
+          {artistsWithEvents.length > 0 ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {artistasComEventos.map((artista, index) => (
+              {artistsWithEvents.map((artist, index) => (
                 <Card
-                  key={artista.id}
+                  key={artist.id}
                   className="group relative overflow-hidden duration-200"
-                  data-testid={`card-artista-destaque-${artista.id}`}
+                  data-testid={`card-artista-destaque-${artist.id}`}
                 >
                   {/* The artist image covers the whole card; default placeholder when there is no photo */}
-                  {artista.foto_url ? (
+                  {artist.foto_url ? (
                     <>
                       <img
-                        src={artista.foto_url}
-                        alt={artista.nome}
+                        src={artist.foto_url}
+                        alt={artist.nome}
                         className="absolute inset-0 h-full w-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/10" />
@@ -784,21 +784,21 @@ export default function Dashboard() {
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center bg-muted">
                       <span className="text-3xl font-semibold text-muted-foreground/70">
-                        {getInitials(artista.nome)}
+                        {getInitials(artist.nome)}
                       </span>
                     </div>
                   )}
 
                   <div className={cn(
                     "relative z-10 flex min-h-[300px] flex-col p-4",
-                    artista.foto_url && "text-white",
+                    artist.foto_url && "text-white",
                   )}>
                     <div className="flex justify-end">
                       <span className={cn(
                         "text-[11px] font-bold tabular-nums tracking-tight px-1.5 py-0.5 rounded-sm border",
                         index === 0
                           ? "bg-warning/10 text-warning border-warning/20"
-                          : artista.foto_url
+                          : artist.foto_url
                             ? "bg-white/15 text-white border-white/30"
                             : "bg-muted text-muted-foreground border-border"
                       )}>
@@ -808,35 +808,35 @@ export default function Dashboard() {
 
                     <div className="mt-auto space-y-3">
                       <div>
-                        <h3 className="font-semibold text-sm leading-tight truncate">{artista.nome}</h3>
-                        <p className={cn("text-xs mt-0.5", artista.foto_url ? "text-white/80" : "text-muted-foreground")}>{artista.genero}</p>
+                        <h3 className="font-semibold text-sm leading-tight truncate">{artist.nome}</h3>
+                        <p className={cn("text-xs mt-0.5", artist.foto_url ? "text-white/80" : "text-muted-foreground")}>{artist.genero}</p>
                       </div>
 
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between">
-                          <span className={cn("flex items-center gap-1.5 text-xs", artista.foto_url ? "text-white/80" : "text-muted-foreground")}>
+                          <span className={cn("flex items-center gap-1.5 text-xs", artist.foto_url ? "text-white/80" : "text-muted-foreground")}>
                             <Layers className="h-3 w-3" />
                             Projetos
                           </span>
-                          <span className="text-xs font-sans font-semibold">{artista.projetos}</span>
+                          <span className="text-xs font-sans font-semibold">{artist.projetos}</span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className={cn("flex items-center gap-1.5 text-xs", artista.foto_url ? "text-white/80" : "text-muted-foreground")}>
+                          <span className={cn("flex items-center gap-1.5 text-xs", artist.foto_url ? "text-white/80" : "text-muted-foreground")}>
                             <Radio className="h-3 w-3" />
                             Streams
                           </span>
                           <span className="text-xs font-sans font-semibold">
-                            {artista.streams == null
+                            {artist.streams == null
                               ? "–"
-                              : artista.streams.toLocaleString("pt-BR")}
+                              : artist.streams.toLocaleString("pt-BR")}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className={cn("flex items-center gap-1.5 text-xs", artista.foto_url ? "text-white/80" : "text-muted-foreground")}>
+                          <span className={cn("flex items-center gap-1.5 text-xs", artist.foto_url ? "text-white/80" : "text-muted-foreground")}>
                             <Disc className="h-3 w-3" />
                             Lançamentos
                           </span>
-                          <span className="text-xs font-sans font-semibold">{artista.lancamentos}</span>
+                          <span className="text-xs font-sans font-semibold">{artist.lancamentos}</span>
                         </div>
                       </div>
 
@@ -845,17 +845,17 @@ export default function Dashboard() {
                         size="sm"
                         className={cn(
                           "w-full mt-1 h-7 text-xs border",
-                          artista.foto_url
+                          artist.foto_url
                             ? "text-white border-white/40 hover:bg-white/10 hover:text-white"
                             : "text-muted-foreground hover:text-foreground border-border/60 hover:border-border"
                         )}
                         onClick={() =>
                           setVisao360Modal({
                             open: true,
-                            artista: artistasDestaque.find((a) => a.id === artista.id),
+                            artista: featuredArtists.find((a) => a.id === artist.id),
                           })
                         }
-                        data-testid={`button-ver-perfil-${artista.id}`}
+                        data-testid={`button-ver-perfil-${artist.id}`}
                       >
                         Ver perfil 360°
                       </Button>

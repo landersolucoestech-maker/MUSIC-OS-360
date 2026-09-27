@@ -21,7 +21,7 @@ import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useOperationalDashboard } from "./useOperationalDashboard";
 import { isToday, startOfMonth, endOfMonth, parseISO } from "date-fns";
 
-interface ArtistaDestaque {
+interface FeaturedArtist {
   id: string;
   stageName: string;
   musicGenre: string | null;
@@ -32,7 +32,7 @@ interface ArtistaDestaque {
   photoUrl: string | null;
 }
 
-interface ArtistasMetrics {
+interface ArtistsMetrics {
   total: number;
   totalArtistas: number;
   comContrato: number;
@@ -50,11 +50,11 @@ interface DashboardMetrics {
   receitaMensal: number;
   eventosHoje: number;
   eventosMes: number;
-  artistasDestaque: ArtistaDestaque[];
+  artistasDestaque: FeaturedArtist[];
 }
 
 export interface UseMetricsReturn {
-  artistasMetrics: ArtistasMetrics;
+  artistasMetrics: ArtistsMetrics;
   dashboardMetrics: DashboardMetrics;
   eventos: EventWithRelations[];
   isLoading: boolean;
@@ -63,27 +63,27 @@ export interface UseMetricsReturn {
 }
 
 export function useMetrics(): UseMetricsReturn {
-  const { artists: artistas, isLoading: loadingArtistas, error: errArtistas, refetch: refetchArtistas } = useArtists();
-  const { events: eventos, isLoading: loadingEventos, error: errEventos, refetch: refetchEventos } = useEvents();
-  const { lancamentos: lancamentosData, isLoading: loadingLancamentos, error: errLancamentos, refetch: refetchLancamentos } = useReleases();
-  const { projects: projetos, isLoading: loadingProjetos, error: errProjetos, refetch: refetchProjetos } = useProjects();
+  const { artists, isLoading: loadingArtists, error: errArtists, refetch: refetchArtists } = useArtists();
+  const { events, isLoading: loadingEvents, error: errEvents, refetch: refetchEvents } = useEvents();
+  const { lancamentos: releasesData, isLoading: loadingReleases, error: errReleases, refetch: refetchReleases } = useReleases();
+  const { projects, isLoading: loadingProjects, error: errProjects, refetch: refetchProjects } = useProjects();
   const { dashboard, isLoading: loadingAgg, error: errAgg, refetch: refetchAgg } = useOperationalDashboard();
 
   const refetch = () => {
-    refetchArtistas(); refetchEventos(); refetchLancamentos(); refetchProjetos(); refetchAgg();
+    refetchArtists(); refetchEvents(); refetchReleases(); refetchProjects(); refetchAgg();
   };
 
   // None of the 5 sources loaded successfully: zeroed KPIs in this case mean
   // unavailability, not real data — Dashboard.tsx uses this to decide
   // between showing the KPIs or a "could not load" banner.
-  const error = (errArtistas || errEventos || errLancamentos || errProjetos || errAgg) &&
-    artistas.length === 0 && eventos.length === 0 && lancamentosData.length === 0 &&
-    projetos.length === 0 && !dashboard
-    ? (errArtistas || errEventos || errLancamentos || errProjetos || errAgg)
+  const error = (errArtists || errEvents || errReleases || errProjects || errAgg) &&
+    artists.length === 0 && events.length === 0 && releasesData.length === 0 &&
+    projects.length === 0 && !dashboard
+    ? (errArtists || errEvents || errReleases || errProjects || errAgg)
     : null;
-  const isLoading = loadingArtistas || loadingEventos || loadingLancamentos || loadingProjetos || loadingAgg;
+  const isLoading = loadingArtists || loadingEvents || loadingReleases || loadingProjects || loadingAgg;
 
-  const artistasMetrics = useMemo<ArtistasMetrics>(() => {
+  const artistsMetrics = useMemo<ArtistsMetrics>(() => {
     // Task J: contrato_id/status are a 1:1 business rule on the backend (an artist
     // only enters status "signed" with contrato_id filled in — see
     // ArtistsService.changeStatus) — that is why `artists_by_status.signed`
@@ -92,20 +92,20 @@ export function useMetrics(): UseMetricsReturn {
     // a new endpoint. It falls back to the capped array (artistas.length) only if the
     // aggregate has not loaded yet — same fallback pattern as totalArtistas.
     const statusCounts = dashboard?.artists_by_status;
-    const artistasComContrato = statusCounts
+    const artistsWithContract = statusCounts
       ? (statusCounts["signed"] ?? 0)
-      : artistas.filter(a => a.contractId).length;
-    const artistasAtivos = statusCounts
+      : artists.filter(a => a.contractId).length;
+    const activeArtists = statusCounts
       ? (statusCounts["active"] ?? 0) + (statusCounts["signed"] ?? 0)
-      : artistas.filter(a => a.status === "active" || a.status === "signed").length;
-    const shows = eventos;
+      : artists.filter(a => a.status === "active" || a.status === "signed").length;
+    const shows = events;
     const totalShows = shows.length;
-    const showsAgendados = shows.filter(e => {
+    const scheduledShows = shows.filter(e => {
       const s = (e.status ?? "").toLowerCase();
       return s === "confirmado" || s === "pendente" || s === "negociacao";
     }).length;
-    const showsRealizados = shows.filter(e => (e.status ?? "").toLowerCase() === "realizado").length;
-    const receitaTotal = shows
+    const completedShows = shows.filter(e => (e.status ?? "").toLowerCase() === "realizado").length;
+    const totalIncome = shows
       .filter(e => {
         const s = (e.status ?? "").toLowerCase();
         return s === "confirmado" || s === "realizado";
@@ -113,25 +113,25 @@ export function useMetrics(): UseMetricsReturn {
       .reduce((acc, e) => acc + ((e as Record<string, unknown>)["fee_amount"] as number || 0), 0);
 
     return {
-      total: artistas.length,
-      totalArtistas: dashboard?.artists ?? artistas.length,
-      comContrato: artistasComContrato,
-      ativos: artistasAtivos,
+      total: artists.length,
+      totalArtistas: dashboard?.artists ?? artists.length,
+      comContrato: artistsWithContract,
+      ativos: activeArtists,
       totalShows,
-      showsAgendados,
-      showsRealizados,
-      receitaTotal,
+      showsAgendados: scheduledShows,
+      showsRealizados: completedShows,
+      receitaTotal: totalIncome,
     };
-  }, [artistas, eventos, dashboard]);
+  }, [artists, events, dashboard]);
 
   const dashboardMetrics = useMemo<DashboardMetrics>(() => {
     const hoje = new Date();
-    const inicioMes = startOfMonth(hoje);
-    const fimMes = endOfMonth(hoje);
+    const monthStart = startOfMonth(hoje);
+    const monthEnd = endOfMonth(hoje);
 
     // The backend returns the timestamp in the `data` column; the mock uses `start_date`.
     // Accept both to avoid a zeroed count in HTTP mode.
-    const readEventoData = (e: Record<string, unknown>): string | null => {
+    const readEventData = (e: Record<string, unknown>): string | null => {
       const v =
         (e["start_date"] as string | null | undefined) ??
         (e["data"]        as string | null | undefined) ??
@@ -139,32 +139,32 @@ export function useMetrics(): UseMetricsReturn {
       return v ?? null;
     };
 
-    const eventosHoje = eventos.filter(e => {
-      const raw = readEventoData(e as Record<string, unknown>);
+    const todayEvents = events.filter(e => {
+      const raw = readEventData(e as Record<string, unknown>);
       if (!raw) return false;
       try { return isToday(parseISO(raw)); } catch { return false; }
     }).length;
 
-    const eventosMes = eventos.filter(e => {
-      const raw = readEventoData(e as Record<string, unknown>);
+    const eventsMonth = events.filter(e => {
+      const raw = readEventData(e as Record<string, unknown>);
       if (!raw) return false;
       try {
         const d = parseISO(raw);
-        return d >= inicioMes && d <= fimMes;
+        return d >= monthStart && d <= monthEnd;
       } catch { return false; }
     }).length;
 
-    const artistasComMetricas: ArtistaDestaque[] = artistas.map(artista => {
-      const lancamentos = lancamentosData.filter(l => l.artist_id === artista.id).length;
-      const projetosCount = projetos.filter(p => p.artist_id === artista.id).length;
+    const artistsWithMetrics: FeaturedArtist[] = artists.map(artist => {
+      const releases = releasesData.filter(l => l.artist_id === artist.id).length;
+      const projectsCount = projects.filter(p => p.artist_id === artist.id).length;
 
       // Streams: tries multiple sources; if none is available, returns null
       // so the UI can show "–" instead of a false "0".
-      const a = artista as unknown as Record<string, unknown>;
+      const a = artist as unknown as Record<string, unknown>;
       const integrationsData = a["integrations_data"] as Record<string, unknown> | undefined;
       const spotifyData = integrationsData?.["spotify"] as Record<string, unknown> | undefined;
       const streamsRaw =
-        artista.spotifyListeners ??
+        artist.spotifyListeners ??
         (spotifyData?.["monthly_listeners"] as number | undefined) ??
         (spotifyData?.["listeners"] as number | undefined);
       const streams = typeof streamsRaw === "number" && Number.isFinite(streamsRaw)
@@ -172,17 +172,17 @@ export function useMetrics(): UseMetricsReturn {
         : null;
 
       return {
-        id: artista.id,
-        stageName: artista.stageName,
-        musicGenre: artista.musicGenre ?? null,
-        lancamentos,
+        id: artist.id,
+        stageName: artist.stageName,
+        musicGenre: artist.musicGenre ?? null,
+        lancamentos: releases,
         streams,
-        projetos: projetosCount,
+        projetos: projectsCount,
         photoUrl: (a["foto_url"] as string | null) ?? null,
       };
     });
 
-    const artistasDestaque = artistasComMetricas
+    const featuredArtists = artistsWithMetrics
       .sort((a, b) => {
         if (b.lancamentos !== a.lancamentos) return b.lancamentos - a.lancamentos;
         return b.projetos - a.projetos;
@@ -190,23 +190,23 @@ export function useMetrics(): UseMetricsReturn {
       .slice(0, 4);
 
     return {
-      totalArtistas: dashboard?.artists ?? artistas.length,
+      totalArtistas: dashboard?.artists ?? artists.length,
       contratosAtivos: dashboard?.active_contracts_count ?? 0,
       contratosVencendo: dashboard?.contracts_expiring_soon_count ?? 0,
       receitaMensal: dashboard?.revenue_current_month ?? 0,
-      eventosHoje,
-      eventosMes,
-      artistasDestaque,
+      eventosHoje: todayEvents,
+      eventosMes: eventsMonth,
+      artistasDestaque: featuredArtists,
     };
-  }, [artistas, eventos, lancamentosData, projetos, dashboard]);
+  }, [artists, events, releasesData, projects, dashboard]);
 
   return {
-    artistasMetrics,
+    artistasMetrics: artistsMetrics,
     dashboardMetrics,
     // Exposed for whoever needs the raw list (e.g. Dashboard.tsx builds the
     // "upcoming appointments") without needing a second observer of
     // useEventos() just for that — same query, same cache, a single fetch.
-    eventos,
+    eventos: events,
     isLoading,
     error,
     refetch,
