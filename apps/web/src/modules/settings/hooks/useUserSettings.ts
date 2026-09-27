@@ -86,7 +86,7 @@ function writeJSON<T>(key: string, value: T) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    // ignora falha de quota
+    // ignore quota failure
   }
 }
 
@@ -153,7 +153,7 @@ export function useUserSettings() {
     try {
       localStorage.setItem(orgSlugKey(user.id), slug);
     } catch {
-      // ignora falha de quota
+      // ignore quota failure
     }
     setOrgSlug(slug);
     return true;

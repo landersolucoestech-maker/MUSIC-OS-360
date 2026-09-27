@@ -1,11 +1,9 @@
 {
  "totals": {
-  "comment": 1,
   "eventQueueJob": 8,
   "identifier": 1618
  },
  "debt": {
-  "comment::apps/web/src/modules/integrations/components/MarketingOAuthDialog.tsx": 1,
   "eventQueueJob::apps/api/src/modules/reports/computed-fields/registry.ts::name::participantes": 1,
   "eventQueueJob::apps/web/src/modules/events/components/SchedulerFormModal.tsx::name::reunioes": 3,
   "eventQueueJob::apps/web/src/shared/types/enums.ts::name::ensaio": 1,

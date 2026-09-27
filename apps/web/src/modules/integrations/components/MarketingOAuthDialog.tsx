@@ -544,7 +544,7 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
             void handleSuccess();
             return;
           }
-        } catch { /* cross-origin durante o fluxo OAuth — ignorar */ }
+        } catch { /* cross-origin during the OAuth flow — ignore */ }
       }
 
       if (popupRef.current?.closed) {

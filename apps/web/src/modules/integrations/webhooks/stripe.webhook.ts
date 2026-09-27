@@ -16,11 +16,11 @@
  */
 
 export const STRIPE_WEBHOOK_EVENTS = [
-  "checkout.session.completed",      // tenant completou upgrade de plano
+  "checkout.session.completed",      // tenant completed a plan upgrade
   "customer.subscription.updated",   // plan change (upgrade/downgrade)
-  "customer.subscription.deleted",   // cancelamento de subscription
-  "invoice.paid",                    // pagamento de fatura confirmado
-  "invoice.payment_failed",          // falha de pagamento → notificar admin
+  "customer.subscription.deleted",   // subscription cancellation
+  "invoice.paid",                    // invoice payment confirmed
+  "invoice.payment_failed",          // payment failure → notify admin
 ] as const;
 
 export type StripeWebhookEvent = typeof STRIPE_WEBHOOK_EVENTS[number];
