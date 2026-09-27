@@ -26,13 +26,13 @@ import {
   DEPARTMENTS,
   CONTRACT_TYPES,
   EMPLOYEE_STATUS,
-} from "@/modules/rh/hooks/useEmployees";
-import type { Employee } from "@/modules/rh/hooks/useEmployees";
+} from "@/modules/hr/hooks/useEmployees";
+import type { Employee } from "@/modules/hr/hooks/useEmployees";
 import { useUsuarios } from "@/modules/settings/hooks/useUsuarios";
 import { maskCPF, maskPhone } from "@/shared/lib/masks";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { toast } from "sonner";
-import { employeeSchema } from "@/modules/rh/lib/funcionario-schema";
+import { employeeSchema } from "@/modules/hr/schemas/employee-schema";
 
 interface EmployeeFormModalProps {
   open: boolean;

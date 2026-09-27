@@ -21,10 +21,10 @@ import {
 import { Textarea } from "@/shared/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { payrollEntrySchema } from "@/modules/rh/lib/folha-pagamento-schema";
-import { usePayroll, PAYMENT_STATUS } from "@/modules/rh/hooks/usePayroll";
-import type { PayrollEntry } from "@/modules/rh/hooks/usePayroll";
-import type { Employee } from "@/modules/rh/hooks/useEmployees";
+import { payrollEntrySchema } from "@/modules/hr/schemas/payroll-entry-schema";
+import { usePayroll, PAYMENT_STATUS } from "@/modules/hr/hooks/usePayroll";
+import type { PayrollEntry } from "@/modules/hr/hooks/usePayroll";
+import type { Employee } from "@/modules/hr/hooks/useEmployees";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";

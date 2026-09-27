@@ -48,7 +48,7 @@ const HOOK_DEFINITION_FILES = new Set([
   "modules/crm-relationships/hooks/useContacts.ts",
   "modules/crm-relationships/services/clients.service.ts",
   "modules/licensing/hooks/useLicencas.ts",
-  "modules/rh/hooks/useEmployees.ts",
+  "modules/hr/hooks/useEmployees.ts",
   "modules/artist/hooks/useArtistasPaginated.ts",
   "shared/hooks/useEntityLookup.ts",
   "shared/hooks/useEditQueryParam.ts",
@@ -71,11 +71,11 @@ const ALLOWED_CALL_SITES: Record<string, string> = {
     "useObras/useFonogramas só para mutations. useProjects() alimenta só o dropdown de projetos/gêneros (valores distintos) — risco documentado no próprio arquivo por falta de endpoint dedicado (equivalente a /works/stats/generos); busca, paginação e deep-links não dependem disso.",
   "modules/artist/components/ArtistFormModal.tsx":
     "useArtistas()/useClientes() só para mutations (addArtista/updateArtista/addCliente) — não há mais picker de contrato neste formulário (Task AA removeu a seção Classificação e Vínculos).",
-  "modules/rh/pages/RH.tsx":
+  "modules/hr/pages/HR.tsx":
     "useEmployees() só para mutations + isLoading; nomes resolvidos via FuncionarioNomeCell (useEntityById) e o picker de documentos usa AsyncEntityCombobox.",
-  "modules/rh/components/EmployeeFormModal.tsx":
+  "modules/hr/components/EmployeeFormModal.tsx":
     "useEmployees() só para mutations (addEmployee/updateEmployee).",
-  "modules/rh/components/LeaveRequestFormModal.tsx":
+  "modules/hr/components/LeaveRequestFormModal.tsx":
     "useEmployees() só para isLoading; o picker de funcionário usa AsyncEntityCombobox.",
   "modules/catalog/components/ObraFormModal.tsx":
     "useObras() só para mutations (addObra/updateObra); pickers de artista/projeto usam useEntityLookup/useEntityById.",

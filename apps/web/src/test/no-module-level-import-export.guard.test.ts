@@ -31,7 +31,7 @@ const SRC_ROOT = path.resolve(__dirname, "..");
 const FIXED_MODULE_FILES = [
   "modules/projects/pages/Projects.tsx",
   "modules/catalog/pages/RegistroMusicas.tsx",
-  "modules/rh/pages/RH.tsx",
+  "modules/hr/pages/HR.tsx",
   "modules/releases/pages/Releases.tsx",
   "modules/inventory/pages/Inventario.tsx",
   "modules/contracts/pages/Contracts.tsx",

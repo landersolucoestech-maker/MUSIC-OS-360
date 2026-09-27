@@ -49,14 +49,14 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
-import { EmployeeFormModal } from "@/modules/rh/components/EmployeeFormModal";
-import { PayrollFormModal } from "@/modules/rh/components/PayrollFormModal";
-import { LeaveRequestFormModal } from "@/modules/rh/components/LeaveRequestFormModal";
+import { EmployeeFormModal } from "@/modules/hr/components/EmployeeFormModal";
+import { PayrollFormModal } from "@/modules/hr/components/PayrollFormModal";
+import { LeaveRequestFormModal } from "@/modules/hr/components/LeaveRequestFormModal";
 import {
   EmployeeViewModal,
   PayrollViewModal,
   LeaveRequestViewModal,
-} from "@/modules/rh/components/RHViewModals";
+} from "@/modules/hr/components/HRViewModals";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { RequirePermission } from "@/shared/components/RequirePermission";
 import { FileUpload, UploadedFile } from "@/shared/components/FileUpload";
@@ -67,25 +67,25 @@ import {
   useEmployees,
   DEPARTMENTS,
   EMPLOYEE_STATUS,
-} from "@/modules/rh/hooks/useEmployees";
-import type { Employee } from "@/modules/rh/hooks/useEmployees";
-import { usePayroll, PAYMENT_STATUS } from "@/modules/rh/hooks/usePayroll";
-import type { PayrollEntry } from "@/modules/rh/hooks/usePayroll";
+} from "@/modules/hr/hooks/useEmployees";
+import type { Employee } from "@/modules/hr/hooks/useEmployees";
+import { usePayroll, PAYMENT_STATUS } from "@/modules/hr/hooks/usePayroll";
+import type { PayrollEntry } from "@/modules/hr/hooks/usePayroll";
 import {
   useLeaveRequests,
   LEAVE_STATUS,
-} from "@/modules/rh/hooks/useLeaveRequests";
-import type { LeaveRequest } from "@/modules/rh/hooks/useLeaveRequests";
+} from "@/modules/hr/hooks/useLeaveRequests";
+import type { LeaveRequest } from "@/modules/hr/hooks/useLeaveRequests";
 import {
   useEmployeesPaginated, useEmployeesStats,
   usePayrollPaginated, useLeaveRequestsPaginated,
-} from "@/modules/rh/hooks/useHRPaginated";
+} from "@/modules/hr/hooks/useHRPaginated";
 import { useUsuarios } from "@/modules/settings/hooks/useUsuarios";
 import {
   useEmployeeDocuments,
   DOCUMENT_TYPES,
-} from "@/modules/rh/hooks/useEmployeeDocuments";
-import type { EmployeeDocument } from "@/modules/rh/hooks/useEmployeeDocuments";
+} from "@/modules/hr/hooks/useEmployeeDocuments";
+import type { EmployeeDocument } from "@/modules/hr/hooks/useEmployeeDocuments";
 import { Label } from "@/shared/ui/label";
 import { FeatureGate } from '@/shared/components/FeatureGate';
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
@@ -120,7 +120,7 @@ function FuncionarioNomeCell({ id }: { id: string | null }) {
   return <>{entity?.name || "N/A"}</>;
 }
 
-export default function RH() {
+export default function HR() {
   const {
     isLoading: loadingFuncionarios,
     deleteEmployee,

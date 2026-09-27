@@ -21,15 +21,15 @@ import {
 } from "@/shared/ui/select";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { leaveRequestSchema } from "@/modules/rh/lib/ferias-ausencias-schema";
+import { leaveRequestSchema } from "@/modules/hr/schemas/leave-request-schema";
 import {
   useLeaveRequests,
   LEAVE_TYPES,
   LEAVE_STATUS,
-} from "@/modules/rh/hooks/useLeaveRequests";
-import type { LeaveRequest, LeaveRequestInsert } from "@/modules/rh/hooks/useLeaveRequests";
+} from "@/modules/hr/hooks/useLeaveRequests";
+import type { LeaveRequest, LeaveRequestInsert } from "@/modules/hr/hooks/useLeaveRequests";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
-import { useEmployees, type Employee } from "@/modules/rh/hooks/useEmployees";
+import { useEmployees, type Employee } from "@/modules/hr/hooks/useEmployees";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
 
 interface LeaveRequestFormModalProps {

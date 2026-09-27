@@ -1,6 +1,6 @@
 /**
  * Operations Routes
- * Covers: Projects, Events, Inventory, RH
+ * Covers: Projects, Events, Inventory, HR
  * MusicChat (Chat Interno / Central de Atendimento) lives in chat.routes.tsx.
  */
 import { lazy } from "react";
@@ -10,7 +10,7 @@ import type { SuspenseRouteComponent } from "./types";
 const Projects  = lazy(() => import("@/modules/projects/pages/Projects"));
 const Agenda    = lazy(() => import("@/modules/events/pages/Agenda"));
 const Inventario = lazy(() => import("@/modules/inventory/pages/Inventario"));
-const RH        = lazy(() => import("@/modules/rh/pages/RH"));
+const HR        = lazy(() => import("@/modules/hr/pages/HR"));
 
 export function operationsRoutes(P: SuspenseRouteComponent) {
   return (
@@ -20,7 +20,7 @@ export function operationsRoutes(P: SuspenseRouteComponent) {
       <Route path="/agenda"     element={<P><Agenda /></P>} />
       <Route path="/agenda/configuracoes" element={<Navigate to="/configuracoes?aba=operacional&modulo=agenda" replace />} />
       <Route path="/inventario" element={<P><Inventario /></P>} />
-      <Route path="/rh"         element={<P><RH /></P>} />
+      <Route path="/rh"         element={<P><HR /></P>} />
     </>
   );
 }

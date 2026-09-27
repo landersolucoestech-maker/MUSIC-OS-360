@@ -1,5 +1,5 @@
 // ============================================================================
-// RHViewModals — VIEW (read-only) modals of the HR module:
+// HRViewModals — VIEW (read-only) modals of the HR module:
 // Employees, Payroll and Vacations/Absences. They follow the
 // informational pattern (label + value, no inputs) of the other ViewModals of the system,
 // so they do not look like edit forms.
@@ -16,7 +16,7 @@ import {
 import { Badge } from "@/shared/ui/badge";
 import { formatCurrency, formatDateDashes, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
-import type { Employee, PayrollEntry, LeaveRequest } from "@/modules/rh/types/hr.types";
+import type { Employee, PayrollEntry, LeaveRequest } from "@/modules/hr/types/hr.types";
 
 function humanize(value?: string | null): string {
   if (!value) return "—";

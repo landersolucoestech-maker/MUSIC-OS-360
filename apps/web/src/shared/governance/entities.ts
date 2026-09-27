@@ -537,7 +537,7 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
   Funcionario: {
     name:         "Funcionario",
     ownerModule:  "rh",
-    typesFile:    "modules/rh/types/funcionario.types.ts",
+    typesFile:    "modules/hr/types/hr.types.ts",
     primaryKey:   "id",
     externalIds:  ["cpf", "pis", "ctps"],
     requiredFields: ["id", "nome", "cargo", "tipo_contrato"],

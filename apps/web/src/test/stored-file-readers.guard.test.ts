@@ -48,7 +48,7 @@ describe("stored document readers go through the tenant-checked download", () =>
     const readers = [
       "modules/contracts/components/ContractViewModal.tsx",
       "modules/artist/components/ArtistVision360Modal.tsx",
-      "modules/rh/pages/RH.tsx",
+      "modules/hr/pages/HR.tsx",
       "modules/accounting/components/TransactionViewModal.tsx",
       "modules/accounting/components/InvoiceViewModal.tsx",
       "modules/accounting/pages/Invoices.tsx",
