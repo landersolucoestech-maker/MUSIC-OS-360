@@ -16,7 +16,7 @@ import {
   MessageSquare, Pencil, Phone, Star, Tag, User,
 } from "lucide-react";
 import { contactPriorityOptions, contactStatusOptions, contactTypeOptions, labelFor } from "../constants";
-import { getPerfis, type ContactPersonType } from "../constants/contact-classification";
+import { profileLabel, type ContactPersonType } from "../constants/contact-classification";
 import { useClientTimeline } from "../hooks/useClientTimeline";
 import { INTERACTION_TYPE_OPTIONS } from "../shared/interacoes";
 import type { Contact } from "../types";
@@ -105,17 +105,15 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
   const po = (contact.payloadOperacional ?? {}) as Record<string, unknown>;
   const str = (k: string): string => (typeof po[k] === "string" ? (po[k] as string) : "");
 
-  const interacoes: Array<{ id: string; type: string; data: string; horario: string; descricao: string }> =
+  const interactions: Array<{ id: string; type: string; data: string; horario: string; descricao: string }> =
     Array.isArray(po.interacoes) ? (po.interacoes as never) : [];
 
   const personType  = str("tipo_pessoa") || "pessoa_fisica";
   const isPF        = personType === "pessoa_fisica";
   const personTypeLabel = isPF ? "Pessoa Física" : "Pessoa Jurídica";
   const categoryLabel  = labelFor(contactTypeOptions, contact.contactType);
-  const perfilSlug      = str("perfil");
-  const perfilLabel     = perfilSlug
-    ? (getPerfis(personType as ContactPersonType, contact.contactType).find((o) => o.value === perfilSlug)?.label ?? perfilSlug)
-    : "";
+  const profileSlug      = str("perfil");
+  const profileText      = profileLabel(profileSlug, personType as ContactPersonType, contact.contactType);
   const razaoSocial = str("razao_social");
   const tradeName = str("nome_fantasia");
   const funcao       = str("funcao");
@@ -165,7 +163,7 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
           <Section title="Classificação do Contato">
             <Row icon={User} label="Tipo de Contato" value={personTypeLabel} />
             <Row icon={Tag}  label="Categoria"        value={categoryLabel} />
-            <Row icon={Tag}  label="Perfil"           value={perfilLabel} />
+            <Row icon={Tag}  label="Perfil"           value={profileText} />
           </Section>
 
           {/* ══ DATA ══ */}
@@ -256,13 +254,13 @@ export function ContactViewModal({ open, onOpenChange, contact, onEdit }: Contac
             <h3 className="border-b pb-1 text-sm font-semibold tracking-wider text-muted-foreground">
               Histórico de Interações
             </h3>
-            {interacoes.length === 0 ? (
+            {interactions.length === 0 ? (
               <p className="text-sm italic text-muted-foreground">
                 Nenhuma interação registrada.
               </p>
             ) : (
               <div className="space-y-3">
-                {interacoes.map((it, idx) => (
+                {interactions.map((it, idx) => (
                   <div
                     key={it.id}
                     className="space-y-1 rounded-md border bg-muted/20 p-3"

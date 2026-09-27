@@ -139,18 +139,41 @@ export const CONTACT_PROFILES: Record<ContactPersonType, Record<string, Classifi
 };
 
 /** Valid profiles for a Type + Category combination. */
-export function getPerfis(type: ContactPersonType, categorySlug: string): ClassificationOption[] {
+export function getProfiles(type: ContactPersonType, categorySlug: string): ClassificationOption[] {
   return CONTACT_PROFILES[type]?.[categorySlug] ?? [];
+}
+
+/** PT-BR label shown for a saved profile slug that no longer exists in the catalog. */
+export const UNKNOWN_PROFILE_LABEL = "Perfil não cadastrado";
+
+/**
+ * PT-BR label for a profile slug. Looks in the current Type + Category list
+ * first, then in the whole catalog (a legacy profile saved under another
+ * category keeps its real label); never returns the raw slug.
+ */
+export function profileLabel(slug: string, type?: ContactPersonType, categorySlug?: string): string {
+  if (!slug) return "";
+  if (type && categorySlug) {
+    const scoped = getProfiles(type, categorySlug).find((o) => o.value === slug);
+    if (scoped) return scoped.label;
+  }
+  for (const byCategory of Object.values(CONTACT_PROFILES)) {
+    for (const options of Object.values(byCategory)) {
+      const found = options.find((o) => o.value === slug);
+      if (found) return found.label;
+    }
+  }
+  return UNKNOWN_PROFILE_LABEL;
 }
 
 /**
  * Ensures a saved (possibly legacy) profile appears in the options list
- * so the data is not lost on edit.
+ * so the data is not lost on edit. Its label comes from profileLabel().
  */
-export function ensurePerfilOption(
+export function ensureProfileOption(
   list: ClassificationOption[],
   value: string,
 ): ClassificationOption[] {
   if (!value || list.some((o) => o.value === value)) return list;
-  return [...list, opt(value, value)];
+  return [...list, opt(value, profileLabel(value))];
 }
