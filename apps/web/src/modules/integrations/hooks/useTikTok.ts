@@ -62,7 +62,7 @@ export function useTikTokVideoMetrics() {
   return {
     data: null,
     isLoading: false,
-    fetch: () => disabledIntegration("TikTok video metrics (TikTok Display API não expõe este endpoint)"),
+    fetch: () => disabledIntegration("TikTok", "the TikTok Display API does not expose video metrics"),
   };
 }
 
@@ -71,6 +71,6 @@ export function useTikTokSoundMetrics() {
     data: null,
     isLoading: false,
     fetch: (_isrc: string) =>
-      disabledIntegration("TikTok sound metrics (TikTok Display API não expõe este endpoint)"),
+      disabledIntegration("TikTok", "the TikTok Display API does not expose sound metrics"),
   };
 }

@@ -97,8 +97,8 @@ function resolveTable(table: string): { ep: string } | { pending: true; reason: 
 function unavailableTable(table: string, reason: string): never {
   throw new IntegrationError(
     "module-unavailable",
-    `Modulo "${table}" indisponivel nesta versao: ${reason}`,
-    { retryable: false, statusCode: 503 },
+    `Module "${table}" unavailable in this version: ${reason}`,
+    { retryable: false, statusCode: 503, userMessage: "Este módulo ainda não está disponível nesta versão." },
   );
 }
 

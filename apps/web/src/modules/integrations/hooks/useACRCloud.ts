@@ -14,6 +14,8 @@ import type {
 import type { IntegrationRuntimeStatus } from "@/shared/integrations/types";
 
 import { UserFacingError, toUserMessage } from "@/shared/lib/errors";
+import { DisabledIntegrationError } from "@/shared/lib/disabled-integration";
+
 export interface ACRCloudStatus extends IntegrationRuntimeStatus {
   integration_id: "acrcloud";
   plan?: string | null;
@@ -60,8 +62,8 @@ async function callAcrcloudApi<T>(
   return unwrapApiResponse<T>(await res.json());
 }
 
-function notImplemented<T>(message: string): Promise<T> {
-  return Promise.reject(new Error(message));
+function notImplemented<T>(capability: string): Promise<T> {
+  return Promise.reject(new DisabledIntegrationError("ACRCloud", `${capability} is not implemented by the API`));
 }
 
 export function useACRCloudStatus() {
@@ -73,7 +75,7 @@ export function useACRCloudStatus() {
       connected: false,
       plan: null,
       quota_remaining: null,
-      last_error: "Status ACRCloud real nao implementado na API",
+      last_error: "ACRCloud status is not implemented by the API",
       last_checked_at: new Date().toISOString(),
     }),
     staleTime: 60_000,
@@ -93,7 +95,7 @@ export function useACRCloudIdentify() {
       }
     },
     onError: (err) => {
-      toast.error(`Erro na identificacao: ${toUserMessage(err)}`);
+      toast.error(`Erro na identificação: ${toUserMessage(err)}`);
     },
   });
 }
@@ -101,7 +103,7 @@ export function useACRCloudIdentify() {
 export function useACRCloudPlayReports(query: PlayReportQuery, enabled = true) {
   return useQuery<PlayReport[]>({
     queryKey: ["acrcloud", "play-reports", query],
-    queryFn: () => notImplemented("Relatorios ACRCloud reais nao implementados na API"),
+    queryFn: () => notImplemented("play reports"),
     enabled,
     staleTime: 60_000,
   });
@@ -110,7 +112,7 @@ export function useACRCloudPlayReports(query: PlayReportQuery, enabled = true) {
 export function useACRCloudPlaySummary(query: PlayReportQuery, enabled = true) {
   return useQuery<PlayReportSummary>({
     queryKey: ["acrcloud", "play-summary", query],
-    queryFn: () => notImplemented("Resumo ACRCloud real nao implementado na API"),
+    queryFn: () => notImplemented("play summary"),
     enabled,
     staleTime: 60_000,
   });
@@ -119,7 +121,7 @@ export function useACRCloudPlaySummary(query: PlayReportQuery, enabled = true) {
 export function useACRCloudAlerts(options?: { unacknowledged_only?: boolean; limit?: number }) {
   return useQuery<MonitoringAlert[]>({
     queryKey: ["acrcloud", "alerts", options],
-    queryFn: () => notImplemented("Alertas ACRCloud reais nao implementados na API"),
+    queryFn: () => notImplemented("alerts"),
     staleTime: 30_000,
     refetchInterval: 120_000,
   });
@@ -128,7 +130,7 @@ export function useACRCloudAlerts(options?: { unacknowledged_only?: boolean; lim
 export function useACRCloudAcknowledgeAlert() {
   const queryClient = useQueryClient();
   return useMutation<void, Error, string>({
-    mutationFn: (_alertId) => notImplemented("Confirmacao de alerta ACRCloud real nao implementada na API"),
+    mutationFn: (_alertId) => notImplemented("alert acknowledgement"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["acrcloud", "alerts"] });
       toast.success("Alerta marcado como lido.");
@@ -143,7 +145,7 @@ export function useACRCloudSearch(query: string, enabled = true) {
   const trimmed = query.trim();
   return useQuery<MusicSearchResult[]>({
     queryKey: ["acrcloud", "search", trimmed],
-    queryFn: () => notImplemented("Pesquisa ACRCloud real nao implementada na API"),
+    queryFn: () => notImplemented("search"),
     enabled: enabled && trimmed.length >= 2,
     staleTime: 30_000,
   });
@@ -152,7 +154,7 @@ export function useACRCloudSearch(query: string, enabled = true) {
 export function useACRCloudProjects() {
   return useQuery<MonitoringProject[]>({
     queryKey: ["acrcloud", "projects"],
-    queryFn: () => notImplemented("Projetos ACRCloud reais nao implementados na API"),
+    queryFn: () => notImplemented("projects"),
     staleTime: 60_000,
   });
 }
@@ -160,7 +162,7 @@ export function useACRCloudProjects() {
 export function useACRCloudCreateProject() {
   const queryClient = useQueryClient();
   return useMutation<MonitoringProject, Error, CreateMonitoringProjectInput>({
-    mutationFn: (_input) => notImplemented("Criacao de projeto ACRCloud real nao implementada na API"),
+    mutationFn: (_input) => notImplemented("project creation"),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["acrcloud", "projects"] });
       toast.success(`Projeto "${data.name}" criado com sucesso.`);
@@ -174,7 +176,7 @@ export function useACRCloudCreateProject() {
 export function useACRCloudToggleProject() {
   const queryClient = useQueryClient();
   return useMutation<MonitoringProject, Error, { projectId: string; active: boolean }>({
-    mutationFn: (_input) => notImplemented("Toggle de projeto ACRCloud real nao implementado na API"),
+    mutationFn: (_input) => notImplemented("project toggle"),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["acrcloud", "projects"] });
       toast.success(`Projeto "${data.name}" ${data.active ? "ativado" : "pausado"}.`);
@@ -196,7 +198,7 @@ export function useACRCloudCheckCopyright() {
       }
     },
     onError: (err) => {
-      toast.error(`Erro na verificacao: ${toUserMessage(err)}`);
+      toast.error(`Erro na verificação: ${toUserMessage(err)}`);
     },
   });
 }

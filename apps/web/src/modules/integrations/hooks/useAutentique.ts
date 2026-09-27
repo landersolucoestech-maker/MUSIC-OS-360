@@ -52,7 +52,7 @@ export function useAutentiqueSaveCredentials() {
 /** No real disconnect endpoint — never fabricate success. */
 export function useAutentiqueDeleteCredentials() {
   return useMutation({
-    mutationFn: async () => Promise.reject(new DisabledIntegrationError("Autentique (desconectar)")),
+    mutationFn: async () => Promise.reject(new DisabledIntegrationError("Autentique", "disconnect is not implemented by the API")),
     onError: (err: Error) => toast.error(toUserMessage(err)),
   });
 }
