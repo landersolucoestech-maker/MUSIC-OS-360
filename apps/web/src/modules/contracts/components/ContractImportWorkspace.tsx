@@ -265,7 +265,7 @@ function AiSuggestionsSheet({
         <ScrollArea className="flex-1 mt-4">
           {suggestions.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">
-              Nenhuma sugestão encontrada para o texto actual.
+              Nenhuma sugestão encontrada para o texto atual.
             </p>
           ) : (
             <div className="space-y-3 pr-2">
@@ -479,7 +479,7 @@ export function ContractImportWorkspace({
 
   async function handleSave() {
     if (!name.trim()) {
-      toast.error("Dê um nome ao template antes de guardar");
+      toast.error("Dê um nome ao template antes de salvar");
       return;
     }
     if (!text.trim()) {
@@ -601,7 +601,7 @@ export function ContractImportWorkspace({
                       { value: "template", label: "Template" },
                       { value: "variaveis", label: "Variáveis" },
                       { value: "categorias", label: "Categorias" },
-                      { value: "preview", label: "Preview" },
+                      { value: "preview", label: "Pré-visualização" },
                     ] as const
                   ).map((tab) => (
                     <TabsTrigger
@@ -736,7 +736,7 @@ export function ContractImportWorkspace({
                 <div className="px-3 pt-3 pb-2 shrink-0 border-b">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-[11px] font-semibold text-muted-foreground  tracking-wider">
-                      Variáveis do Registo
+                      Variáveis do Registro
                     </p>
                     <button
                       type="button"

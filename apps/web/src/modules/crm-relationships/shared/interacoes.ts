@@ -4,7 +4,7 @@
 export const TIPO_INTERACAO_OPTIONS = [
   { value: "ligacao",    label: "Ligação"    },
   { value: "whatsapp",   label: "WhatsApp"   },
-  { value: "email",      label: "Email"      },
+  { value: "email",      label: "E-mail"      },
   { value: "reuniao",    label: "Reunião"    },
   { value: "proposta",   label: "Proposta"   },
   { value: "follow_up",  label: "Follow-up"  },

@@ -127,8 +127,8 @@ export default function AdminClients() {
       setEditing(null);
     },
     onError: (error) => {
-      toast.error("Nao foi possivel atualizar o cliente", {
-        description: toUserMessage(error, "Verifique permissao e API."),
+      toast.error("Não foi possível atualizar o cliente", {
+        description: toUserMessage(error, "Verifique as permissões e tente novamente."),
       });
     },
   });
@@ -155,13 +155,13 @@ export default function AdminClients() {
         {/* Header */}
         <div>
           <h1 className="text-xl font-bold text-foreground">Clientes</h1>
-          <p className="text-[12px] text-muted-foreground mt-0.5">Gestão global de tenants</p>
+          <p className="text-[12px] text-muted-foreground mt-0.5">Gestão global de workspaces</p>
         </div>
 
         {/* KPI Strip */}
         <div className="grid grid-cols-4 gap-4">
           {[
-            { label: "Tenants Ativos",  value: fmt(stats.active), icon: Building2, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+            { label: "Workspaces ativos",  value: fmt(stats.active), icon: Building2, color: "text-emerald-400", bg: "bg-emerald-500/10" },
             { label: "Em Trial",        value: fmt(stats.trial),  icon: RefreshCw,  color: "text-primary",    bg: "bg-primary/10" },
             { label: "Suspensos",       value: fmt(stats.susp),   icon: PowerOff,   color: "text-red-400",     bg: "bg-red-500/10" },
             { label: "MRR Total",       value: fmtBRL(stats.mrr), icon: DollarSign, color: "text-muted-foreground",    bg: "bg-muted" },
@@ -181,7 +181,7 @@ export default function AdminClients() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              placeholder="Buscar por nome, email ou slug..."
+              placeholder="Buscar por nome, e-mail ou endereço..."
               className="pl-9 h-8 text-xs bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-ring"
               value={search}
               onChange={e => setSearch(e.target.value)}
@@ -219,13 +219,13 @@ export default function AdminClients() {
           <ListSectionHeader
             title="Lista de Clientes"
             count={filtered.length}
-            description="Acompanhe tenants, planos, status, cobrança e uso da plataforma"
+            description="Acompanhe workspaces, planos, status, cobrança e uso da plataforma"
             className="p-4"
           />
           <Table>
             <TableHeader>
               <TableRow className="border-border hover:bg-transparent">
-                {["Tenant", "Plano", "Status", "Usuários", "Storage", "MRR", "Ciclo", "Próxima Cobrança", "Método", "Desde", ""].map((h, i) => (
+                {["Workspace", "Plano", "Status", "Usuários", "Armazenamento", "MRR", "Ciclo", "Próxima Cobrança", "Método", "Desde", ""].map((h, i) => (
                   <TableHead key={i} className="text-[11px] font-semibold text-muted-foreground  tracking-wider whitespace-nowrap">
                     {h}
                   </TableHead>
@@ -243,7 +243,7 @@ export default function AdminClients() {
               {!isLoading && error && (
                 <TableRow>
                   <TableCell colSpan={11} className="py-10 text-center text-sm text-red-300">
-                    Nao foi possivel carregar clientes: {toUserMessage(error, "erro desconhecido")}
+                    Não foi possível carregar os clientes: {toUserMessage(error, "erro desconhecido")}
                   </TableCell>
                 </TableRow>
               )}
@@ -356,7 +356,7 @@ export default function AdminClients() {
                             data-testid={`delete-${t.id}`}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
-                            {t.status === "suspended" ? "Preparar reativacao" : "Preparar suspensao"}
+                            {t.status === "suspended" ? "Preparar reativação" : "Preparar suspensão"}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -372,7 +372,7 @@ export default function AdminClients() {
             pageSize={pageSize}
             onPageChange={setPage}
             onPageSizeChange={setPageSize}
-            itemLabel="tenants"
+            itemLabel="workspaces"
           />
         </div>
       </div>
@@ -432,7 +432,7 @@ export default function AdminClients() {
             <div className="space-y-4 pt-2">
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5 sm:col-span-2">
-                  <p className="text-[11px] font-medium text-muted-foreground">Nome do tenant</p>
+                  <p className="text-[11px] font-medium text-muted-foreground">Nome do workspace</p>
                   <Input
                     value={editing.name}
                     onChange={(e) => setEditing({ ...editing, name: e.target.value })}
@@ -441,7 +441,7 @@ export default function AdminClients() {
                   />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2">
-                  <p className="text-[11px] font-medium text-muted-foreground">Email do responsável</p>
+                  <p className="text-[11px] font-medium text-muted-foreground">E-mail do responsável</p>
                   <Input
                     value={editing.owner_email}
                     onChange={(e) => setEditing({ ...editing, owner_email: e.target.value })}
@@ -450,7 +450,7 @@ export default function AdminClients() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <p className="text-[11px] font-medium text-muted-foreground">Slug</p>
+                  <p className="text-[11px] font-medium text-muted-foreground">Endereço (URL)</p>
                   <Input
                     value={editing.slug}
                     onChange={(e) => setEditing({ ...editing, slug: e.target.value })}

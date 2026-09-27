@@ -215,7 +215,7 @@ export function AudioUpload({
     <Field label={`Audio WAV${required ? " *" : ""}`}>
       <div className="rounded-lg border border-dashed border-border p-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-muted-foreground">.wav ate {formatBytes(MAX_WAV_SIZE_BYTES)}. Preview local, envio preparado para backend/storage.</p>
+          <p className="text-xs text-muted-foreground">.wav ate {formatBytes(MAX_WAV_SIZE_BYTES)}. Pré-visualização local; o envio usa o armazenamento do servidor.</p>
           <div className="flex items-center gap-2">
             <Input ref={fileInputRef} type="file" accept=".wav,audio/wav,audio/x-wav" onChange={handleChange} className="max-w-[250px]" />
             {metadata && (
@@ -263,7 +263,7 @@ export function StructuredResult({ result, compact = false }: { result: AiGenera
     return (
       <div className="rounded-lg border border-dashed border-border p-8 text-center">
         <p className="text-sm font-medium">Nenhum resultado gerado ainda.</p>
-        <p className="mt-1 text-xs text-muted-foreground">Configure o fluxo e execute a acao principal para ver a resposta aqui.</p>
+        <p className="mt-1 text-xs text-muted-foreground">Configure o fluxo e execute a ação principal para ver a resposta aqui.</p>
       </div>
     );
   }
@@ -307,7 +307,7 @@ export function ResultList({ title, items }: { title: string; items: string[] })
           ))}
         </ul>
       ) : (
-        <p className="mt-2 text-sm text-muted-foreground">Aguardando processamento desta secao.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Aguardando processamento desta seção.</p>
       )}
     </section>
   );

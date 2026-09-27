@@ -453,7 +453,7 @@ export function ArtistEvolutionSection({ artist }: ArtistEvolutionSectionProps) 
 
       <p className="text-xs text-muted-foreground">
         Cada plataforma reflete o histórico real das sincronizações — a sincronização
-        é manual, feita pelo botão "Sincronizar agora" em cada card, e cada uma
+        é manual, feita pelo botão "Sincronizar agora" em cada cartão, e cada uma
         soma um novo ponto ao histórico. A tendência só aparece a partir de 2
         sincronizações com dado real em datas diferentes. Plataformas sem
         perfil vinculado ou sem métrica de audiência na fonte atual (Apple

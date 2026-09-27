@@ -118,16 +118,16 @@ function ProfileWaitingState({ bundle }: { bundle: ArtistProfileBundle | null })
     return (
       <div className="rounded-lg border border-dashed border-border p-8 text-center">
         <UserRound className="mx-auto h-8 w-8 text-muted-foreground/60" />
-        <p className="mt-3 text-sm font-medium">Selecione um artista para carregar o dossie automaticamente.</p>
-        <p className="mt-1 text-xs text-muted-foreground">A analise usa os dados ja cadastrados no sistema, nao um formulario manual.</p>
+        <p className="mt-3 text-sm font-medium">Selecione um artista para carregar o dossiê automaticamente.</p>
+        <p className="mt-1 text-xs text-muted-foreground">A analise usa os dados já cadastrados no sistema, não um formulário manual.</p>
       </div>
     );
   }
   return (
     <div className="rounded-lg border border-dashed border-border p-8 text-center">
       <Search className="mx-auto h-8 w-8 text-muted-foreground/60" />
-      <p className="mt-3 text-sm font-medium">Dossie carregado para {bundle.artist.label}.</p>
-      <p className="mt-1 text-xs text-muted-foreground">Execute a analise para preencher o dashboard executivo com diagnostico estrategico.</p>
+      <p className="mt-3 text-sm font-medium">Dossiê carregado para {bundle.artist.label}.</p>
+      <p className="mt-1 text-xs text-muted-foreground">Execute a analise para preencher o dashboard executivo com diagnostico estratégico.</p>
     </div>
   );
 }
@@ -137,7 +137,7 @@ function ExecutiveProfileResult({ result, bundle }: { result: AiGeneratedResult;
     <div className="space-y-4">
       <StructuredResult result={result} compact />
       <div className="grid gap-3 md:grid-cols-2">
-        <ResultText title="Perfil Artistico" text={[
+        <ResultText title="Perfil Artístico" text={[
           bundle?.predominantGenre ? `Gênero predominante: ${bundle.predominantGenre}.` : "Gênero predominante a inferir pela IA.",
           bundle?.subgenres.length ? `Subgêneros: ${bundle.subgenres.join(", ")}.` : "Subgêneros pendentes para inferência.",
           bundle?.moods.length ? `Mood: ${bundle.moods.join(", ")}.` : "Mood pendente para inferência por áudio/letra.",

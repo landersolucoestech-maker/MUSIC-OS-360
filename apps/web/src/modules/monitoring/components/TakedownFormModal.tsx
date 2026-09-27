@@ -347,7 +347,7 @@ export function TakedownFormModal({ open, onOpenChange, takedown, mode }: Takedo
               <Textarea
                 {...register("evidencias")}
                 disabled={isViewMode}
-                placeholder="Links para evidências, screenshots, etc..."
+                placeholder="Links para evidências, capturas de tela etc."
                 rows={2}
                 data-testid="textarea-evidencias"
               />

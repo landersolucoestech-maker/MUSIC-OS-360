@@ -163,13 +163,13 @@ export function ContatosPanel() {
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por nome, empresa, email, telefone ou cidade"
+          placeholder="Buscar por nome, empresa, e-mail, telefone ou cidade"
           className="h-8 flex-1"
           data-testid="contatos-search"
         />
         <Select value={filtro} onValueChange={(v) => setFiltro(v as FiltroTipo)}>
           <SelectTrigger className="h-8 sm:w-56" data-testid="contatos-filtro-type">
-            <SelectValue placeholder="Filtrar por type" />
+            <SelectValue placeholder="Filtrar por tipo" />
           </SelectTrigger>
           <SelectContent>
             {FILTROS.map((f) => (

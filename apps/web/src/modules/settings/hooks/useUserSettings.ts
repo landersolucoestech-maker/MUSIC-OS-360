@@ -147,7 +147,7 @@ export function useUserSettings() {
   const saveOrgSlug = (slug: string): boolean => {
     if (!user) return false;
     if (!/^[a-z0-9-]+$/.test(slug)) {
-      toast.error("O slug deve conter apenas letras minúsculas, números e hífens.");
+      toast.error("O identificador deve conter apenas letras minúsculas, números e hífens.");
       return false;
     }
     try {

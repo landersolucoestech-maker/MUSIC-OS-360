@@ -73,7 +73,7 @@ function DiffViewer({ diff, before, after }: {
   after:  AuditLogEntry["after"];
 }) {
   if (!diff && !before && !after) {
-    return <p className="text-xs text-muted-foreground italic">Sem dados de snapshot disponíveis.</p>;
+    return <p className="text-xs text-muted-foreground italic">Sem dados do registro disponíveis.</p>;
   }
 
   if (diff && Object.keys(diff).length > 0) {
@@ -89,12 +89,12 @@ function DiffViewer({ diff, before, after }: {
             <span className="font-sans text-muted-foreground truncate">{field}</span>
             <span className="font-sans bg-destructive/10 text-destructive px-1 rounded truncate">
               {change.from === null || change.from === undefined
-                ? <em>null</em>
+                ? <em>vazio</em>
                 : String(change.from)}
             </span>
             <span className="font-sans bg-success/10 text-success px-1 rounded truncate">
               {change.to === null || change.to === undefined
-                ? <em>null</em>
+                ? <em>vazio</em>
                 : String(change.to)}
             </span>
           </div>
@@ -200,7 +200,7 @@ export default function AuditTrail() {
               <ShieldCheck className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-foreground">Audit Trail</h1>
+              <h1 className="text-xl font-semibold text-foreground">Trilha de auditoria</h1>
               <p className="text-sm text-muted-foreground">
                 Histórico imutável de todas as operações críticas — restrito a Proprietário/Admin
               </p>
@@ -225,11 +225,11 @@ export default function AuditTrail() {
         {/* Stats */}
         <div className="grid grid-cols-4 gap-4">
           {[
-            { label: "Total de eventos",    value: entries.length, sub: "audit logs" },
+            { label: "Total de eventos",    value: entries.length, sub: "registros de auditoria" },
             { label: "Criações",            value: entries.filter(e => e.action.endsWith(".created")).length,   sub: "endpoints" },
             { label: "Atualizações",       value: entries.filter(e => e.action.endsWith(".updated")).length,   sub: "modificações" },
             {
-              label: "Eliminações/Cancel.",
+              label: "Exclusões/cancelamentos",
               value: entries.filter(e =>
                 e.action.endsWith(".deleted") || e.action.endsWith(".cancelled")
               ).length,
@@ -289,7 +289,7 @@ export default function AuditTrail() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   data-testid="input-audit-search"
-                  placeholder="Pesquisar por acção, actor, ID, correlation…"
+                  placeholder="Pesquisar por ação, autor, ID, correlação…"
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   className="pl-9 h-8 text-sm"
@@ -313,12 +313,12 @@ export default function AuditTrail() {
               {/* Action */}
               <Select value={actionFilter} onValueChange={setActionFilter}>
                 <SelectTrigger data-testid="select-audit-action" className="h-8 text-sm w-[160px]">
-                  <SelectValue placeholder="Tipo de acção" />
+                  <SelectValue placeholder="Tipo de ação" />
                 </SelectTrigger>
                 <SelectContent>
                   {actionGroups.map(a => (
                     <SelectItem key={a} value={a}>
-                      {a === "all" ? "Todas as acções" : a}
+                      {a === "all" ? "Todas as ações" : a}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -333,24 +333,24 @@ export default function AuditTrail() {
             <ListSectionHeader
               title="Eventos"
               count={filtered.length}
-              description="Clique numa linha para expandir o diff before/after"
+              description="Clique em uma linha para ver as alterações (antes/depois)"
               className="px-6 pt-6"
             />
             <div className="rounded-b-lg overflow-hidden">
               {isLoading ? (
                 <div className="flex items-center justify-center py-16 gap-3 text-muted-foreground">
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  <span className="text-sm">A carregar audit trail…</span>
+                  <span className="text-sm">Carregando a trilha de auditoria…</span>
                 </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-muted/20 hover:bg-muted/20">
                       <TableHead className="w-[20px]" />
-                      <TableHead className="text-xs w-[160px]">Timestamp</TableHead>
-                      <TableHead className="text-xs w-[140px]">Actor</TableHead>
+                      <TableHead className="text-xs w-[160px]">Data e hora</TableHead>
+                      <TableHead className="text-xs w-[140px]">Autor</TableHead>
                       <TableHead className="text-xs w-[80px]">Role</TableHead>
-                      <TableHead className="text-xs">Acção</TableHead>
+                      <TableHead className="text-xs">Ação</TableHead>
                       <TableHead className="text-xs w-[100px]">Entidade</TableHead>
                       <TableHead className="text-xs w-[120px]">ID</TableHead>
                       <TableHead className="text-xs w-[70px]">Método</TableHead>
@@ -360,7 +360,7 @@ export default function AuditTrail() {
                     {filtered.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={8} className="text-center py-12 text-muted-foreground text-sm">
-                          Nenhum evento encontrado com os filtros actuais.
+                          Nenhum evento encontrado com os filtros atuais.
                         </TableCell>
                       </TableRow>
                     ) : (
@@ -387,7 +387,7 @@ export default function AuditTrail() {
                               <div className="flex items-center gap-1.5">
                                 <User className="w-3 h-3 text-muted-foreground shrink-0" />
                                 <span className="font-sans truncate max-w-[110px]" title={entry.user_id ?? undefined}>
-                                  {entry.user_id ?? <em className="text-muted-foreground">system</em>}
+                                  {entry.user_id ?? <em className="text-muted-foreground">sistema</em>}
                                 </span>
                               </div>
                             </TableCell>
@@ -429,10 +429,10 @@ export default function AuditTrail() {
                                       <span>IP: <code className="font-sans">{entry.ip_address}</code></span>
                                     )}
                                     {entry.http_path && (
-                                      <span>Path: <code className="font-sans">{entry.http_path}</code></span>
+                                      <span>Caminho: <code className="font-sans">{entry.http_path}</code></span>
                                     )}
                                     {entry.correlation_id && (
-                                      <span>Correlation: <code className="font-sans">{entry.correlation_id}</code></span>
+                                      <span>Correlação: <code className="font-sans">{entry.correlation_id}</code></span>
                                     )}
                                   </div>
                                   <DiffViewer
@@ -465,7 +465,7 @@ export default function AuditTrail() {
         </Card>
 
         <p className="text-center text-xs text-muted-foreground">
-          Audit trail append-only — nenhum registo pode ser modificado ou eliminado após criação.
+          Trilha de auditoria somente de inclusão — nenhum registro pode ser modificado ou excluído após a criação.
         </p>
       </div>
     </MainLayout>

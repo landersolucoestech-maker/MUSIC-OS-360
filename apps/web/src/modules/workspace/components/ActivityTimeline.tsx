@@ -68,8 +68,8 @@ export function ActivityTimeline({ activities, isLoading }: ActivityTimelineProp
                   </p>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                  <span>by {item.user_name ?? item.user_id}</span>
-                  <span>entity: {item.entity_type}</span>
+                  <span>por {item.user_name ?? item.user_id}</span>
+                  <span>entidade: {item.entity_type}</span>
                 </div>
               </div>
             </div>

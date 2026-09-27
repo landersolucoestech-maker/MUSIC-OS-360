@@ -121,7 +121,7 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
           </div>
           {isConnected && (
             <Badge variant="info">
-              Activo
+              Ativo
             </Badge>
           )}
         </div>
@@ -155,11 +155,11 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
 
               <div className="grid gap-1.5">
                 <Label htmlFor="ecad-username" className="text-xs font-medium">
-                  Utilizador <span className="text-destructive">*</span>
+                  Usuário <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="ecad-username"
-                  placeholder="Utilizador de acesso fornecido pelo ECAD"
+                  placeholder="Usuário de acesso fornecido pelo ECAD"
                   value={form.username}
                   onChange={(e) => setForm((p) => ({ ...p, username: e.target.value }))}
                   data-testid="input-ecad-username"
@@ -222,7 +222,7 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
                 <span className="text-sm font-medium">Conciliação com catálogo</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Compara os fonogramas com código ECAD registado no catálogo com os dados de arrecadação do período actual.
+                Compara os fonogramas com código ECAD registrado no catálogo com os dados de arrecadação do período atual.
               </p>
               {conciliacao.data && (
                 <div className="grid grid-cols-3 gap-2 text-center">
@@ -263,10 +263,10 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
                 <span className="text-sm font-medium">Importar relatório ECAD</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Importe o ficheiro de arrecadação ECAD (.txt / .xml) recebido por e-mail da sua associação.
+                Importe o arquivo de arrecadação ECAD (.txt / .xml) recebido por e-mail da sua associação.
               </p>
               <p className="text-xs text-muted-foreground/60 italic">
-                Disponível após vincular relatório ao módulo Accounting.
+                Disponível após vincular o relatório ao módulo de Contabilidade.
               </p>
             </div>
 
@@ -277,7 +277,7 @@ export function EcadConfigDialog({ open, onOpenChange }: EcadConfigDialogProps) 
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Shield className="h-3.5 w-3.5" />
                 <span>
-                  {status?.associacao_filiada} · Utilizador: <strong>{status?.username}</strong>
+                  {status?.associacao_filiada} · Usuário: <strong>{status?.username}</strong>
                 </span>
               </div>
               <AlertDialog>

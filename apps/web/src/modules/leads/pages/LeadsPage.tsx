@@ -306,7 +306,7 @@ export default function LeadsPage() {
       size="sm"
       variant="outline"
       onClick={() => navigate("/relatorios")}
-      title="Exporta pela Central de Relatórios (dados completos do tenant)"
+      title="Exporta pela Central de Relatórios (dados completos do workspace)"
       data-testid="button-exportar-crm"
     >
       <Download className="mr-1 h-4 w-4" />

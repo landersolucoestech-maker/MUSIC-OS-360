@@ -84,7 +84,7 @@ export const INTEGRATION_CATALOGUE: IntegrationDescriptor[] = [
   { key: "tiktok_ads", label: "TikTok Ads", category: "ads", available: false },
   { key: "crm", label: "CRM", category: "crm", available: false },
   { key: "portal_noticias", label: "Portal de Notícias", category: "content", available: false },
-  { key: "storage", label: "Storage", category: "storage", available: false },
+  { key: "storage", label: "Armazenamento", category: "storage", available: false },
   { key: "ai", label: "IA", category: "ai", available: false },
   { key: "distribuicao_digital", label: "Distribuição Digital", category: "internal", available: false },
   { key: "producao_musical", label: "Produção Musical", category: "internal", available: false },

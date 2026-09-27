@@ -132,7 +132,7 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
           </div>
           {isConnected && (
             <Badge variant="success">
-              Activo
+              Ativo
             </Badge>
           )}
         </div>
@@ -242,7 +242,7 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
               </p>
               {syncAll.data && (
                 <div className="rounded bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 text-xs text-emerald-700">
-                  Última sync: {syncAll.data.total_inserted} novas obras importadas, {syncAll.data.total_updated} já existentes
+                  Última sincronização: {syncAll.data.total_inserted} novas obras importadas, {syncAll.data.total_updated} já existentes
                   {syncAll.data.total_errors > 0 && ` · ${syncAll.data.total_errors} erros`}
                 </div>
               )}
@@ -293,7 +293,7 @@ export function UbcConfigDialog({ open, onOpenChange }: UbcConfigDialogProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Shield className="h-3.5 w-3.5" />
-                <span>Filiado: <strong>{status?.numero_filiado}</strong> · Utilizador: <strong>{status?.username}</strong></span>
+                <span>Filiado: <strong>{status?.numero_filiado}</strong> · Usuário: <strong>{status?.username}</strong></span>
               </div>
               <AlertDialog>
                 <AlertDialogTrigger asChild>

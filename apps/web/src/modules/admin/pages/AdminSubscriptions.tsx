@@ -60,11 +60,11 @@ const STATUS_META: Record<SubscriptionStatus, { label: string; variant: BadgeVar
   active: { label: "Ativa", variant: "success" },
   trial: { label: "Trial", variant: "info" },
   past_due: { label: "Inadimplente", variant: "warning" },
-  payment_grace: { label: "Grace period", variant: "warning" },
+  payment_grace: { label: "Período de carência", variant: "warning" },
   read_only: { label: "Somente leitura", variant: "warning" },
   suspended: { label: "Suspensa", variant: "danger" },
   cancelled: { label: "Cancelada", variant: "danger" },
-  unpaid: { label: "Unpaid", variant: "danger" },
+  unpaid: { label: "Não pago", variant: "danger" },
 };
 
 const STATUS_FILTERS: { value: string; label: string }[] = [
@@ -72,7 +72,7 @@ const STATUS_FILTERS: { value: string; label: string }[] = [
   { value: "active", label: "Ativas" },
   { value: "trial", label: "Trial" },
   { value: "past_due", label: "Inadimplentes" },
-  { value: "payment_grace", label: "Grace period" },
+  { value: "payment_grace", label: "Período de carência" },
   { value: "read_only", label: "Somente leitura" },
   { value: "suspended", label: "Suspensas" },
   { value: "cancelled", label: "Canceladas" },
@@ -203,19 +203,19 @@ function CancelDialog({ sub, onConfirm, onClose }: { sub: AdminSubscription; onC
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-foreground text-[15px]">
             <AlertTriangle className="h-4 w-4 text-red-400" />
-            Suspender tenant
+            Suspender workspace
           </DialogTitle>
         </DialogHeader>
         <p className="py-2 text-[13px] text-muted-foreground">
-          Tem certeza que deseja suspender o tenant{" "}
+          Tem certeza que deseja suspender o workspace{" "}
           <span className="font-semibold text-foreground">{sub.tenant_name}</span>?
-          O backend bloqueara rotas tenant-scoped ate a reativacao.
+          O acesso ao workspace ficará bloqueado até a reativação.
         </p>
         <DialogFooter className="gap-2">
           <Button variant="outline" size="sm" className="text-xs" onClick={onClose}>Voltar</Button>
           <Button size="sm" className="gap-1.5 bg-red-600 text-xs text-white hover:bg-red-500 hover:text-white focus-visible:text-white" onClick={onConfirm} data-testid="btn-confirm-cancel-sub">
             <XCircle className="h-3.5 w-3.5" />
-            Suspender tenant
+            Suspender workspace
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -290,14 +290,14 @@ export default function AdminSubscriptions() {
       const nextStatus = subscriptionStatusFromBilling(result.status);
       queryClient.invalidateQueries({ queryKey: ["admin", "subscriptions"] });
       queryClient.invalidateQueries({ queryKey: ["admin", "tenants"] });
-      toast.success("Billing atualizado", {
+      toast.success("Cobrança atualizada", {
         description: `${action.sub.tenant_name}: ${STATUS_META[nextStatus].label}`,
       });
       setCancelSub(null);
     },
     onError: (error) => {
-      toast.error("Nao foi possivel atualizar o billing", {
-        description: toUserMessage(error, "Verifique permissao, API e tenant."),
+      toast.error("Não foi possível atualizar a cobrança", {
+        description: toUserMessage(error, "Verifique as permissões e o workspace e tente novamente."),
       });
     },
   });
@@ -360,14 +360,14 @@ export default function AdminSubscriptions() {
                 <Lock className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <h2 className="text-sm font-semibold text-foreground">Enforcement financeiro</h2>
+                <h2 className="text-sm font-semibold text-foreground">Controle de inadimplência</h2>
                 <p className="mt-0.5 text-[12px] text-muted-foreground">
-                  Acoes administrativas conectadas ao backend para suspensao, reativacao, modo somente leitura e override por tenant.
+                  Ações administrativas de suspensão, reativação, modo somente leitura e liberação manual por workspace.
                 </p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Badge variant="warning" className="text-[10px]">Grace period</Badge>
+              <Badge variant="warning" className="text-[10px]">Período de carência</Badge>
               <Badge variant="warning" className="text-[10px]">Somente leitura</Badge>
               <Badge variant="danger" className="text-[10px]">Suspenso</Badge>
             </div>
@@ -425,7 +425,7 @@ export default function AdminSubscriptions() {
               {!subscriptionsQuery.isLoading && subscriptionsQuery.error && (
                 <TableRow>
                   <TableCell colSpan={9} className="py-10 text-center text-sm text-red-300">
-                    Nao foi possivel carregar assinaturas: {toUserMessage(subscriptionsQuery.error, "erro desconhecido")}
+                    Não foi possível carregar as assinaturas: {toUserMessage(subscriptionsQuery.error, "erro desconhecido")}
                   </TableCell>
                 </TableRow>
               )}
@@ -461,11 +461,11 @@ export default function AdminSubscriptions() {
                         <DropdownMenuSeparator className="bg-muted" />
                         <DropdownMenuItem className="gap-2 text-xs cursor-pointer hover:bg-muted focus:bg-muted" onClick={() => !billingAction.isPending && billingAction.mutate({ kind: "reactivate", sub: s })} data-testid={`reactivate-tenant-${s.id}`}>
                           <Unlock className="h-3.5 w-3.5 text-emerald-400" />
-                          Reativar tenant
+                          Reativar workspace
                         </DropdownMenuItem>
                         <DropdownMenuItem className="gap-2 text-xs cursor-pointer hover:bg-muted focus:bg-muted" onClick={() => !billingAction.isPending && billingAction.mutate({ kind: "override_active", sub: s })} data-testid={`override-active-${s.id}`}>
                           <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-                          Override ativo por 7 dias
+                          Liberação manual ativa por 7 dias
                         </DropdownMenuItem>
                         <DropdownMenuItem className="gap-2 text-xs cursor-pointer hover:bg-muted focus:bg-muted" onClick={() => !billingAction.isPending && billingAction.mutate({ kind: "override_read_only", sub: s })} data-testid={`override-read-only-${s.id}`}>
                           <Lock className="h-3.5 w-3.5 text-yellow-400" />
@@ -473,12 +473,12 @@ export default function AdminSubscriptions() {
                         </DropdownMenuItem>
                         <DropdownMenuItem className="gap-2 text-xs cursor-pointer hover:bg-muted focus:bg-muted" onClick={() => !billingAction.isPending && billingAction.mutate({ kind: "remove_override", sub: s })} data-testid={`remove-override-${s.id}`}>
                           <ShieldOff className="h-3.5 w-3.5 text-muted-foreground" />
-                          Remover override
+                          Remover liberação manual
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-muted" />
                         <DropdownMenuItem className="gap-2 text-xs cursor-pointer text-red-400 hover:bg-red-500/10 focus:bg-red-500/10 focus:text-red-400" onClick={() => !billingAction.isPending && setCancelSub(s)} data-testid={`suspend-tenant-${s.id}`}>
                           <XCircle className="h-3.5 w-3.5" />
-                          Suspender tenant
+                          Suspender workspace
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

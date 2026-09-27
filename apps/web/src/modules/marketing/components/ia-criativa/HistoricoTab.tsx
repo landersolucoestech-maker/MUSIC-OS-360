@@ -27,7 +27,7 @@ export function HistoricoTab({
         result={
           <div className="rounded-lg border border-dashed border-border p-8 text-center">
             <p className="text-sm font-medium">Selecione uma execução para consultar os detalhes.</p>
-            <p className="mt-1 text-xs text-muted-foreground">O historico guarda resultado, contexto, audio vinculado e payload operacional.</p>
+            <p className="mt-1 text-xs text-muted-foreground">O histórico guarda resultado, contexto, áudio vinculado e dados operacionais.</p>
           </div>
         }
       >
@@ -41,7 +41,7 @@ export function HistoricoTab({
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <MarketingBadge tone="neutral">{AI_KIND_LABEL[item.kind]}</MarketingBadge>
-                        <MarketingBadge tone="info">Concluido</MarketingBadge>
+                        <MarketingBadge tone="info">Concluído</MarketingBadge>
                         {item.audioMetadata && <MarketingBadge tone="pending">com WAV</MarketingBadge>}
                       </div>
                       <p className="mt-2 text-sm font-medium">{item.targetName || "Empresa"}</p>

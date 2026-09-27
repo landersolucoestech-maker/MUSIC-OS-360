@@ -7,7 +7,7 @@ export const leadClientTypeOptions: Array<{ value: LeadClientType; label: string
   { value: "company",       label: "Empresa"                    },
   { value: "agency",        label: "Agência"                    },
   { value: "eventProducer", label: "Produtora de eventos"       },
-  { value: "venue",         label: "Venue ou casa de show"      },
+  { value: "venue",         label: "Casa de show ou espaço de eventos"      },
   { value: "brand",         label: "Marca"                      },
   { value: "creator",       label: "Creator ou influenciador"   },
   { value: "other",         label: "Outro"                      },

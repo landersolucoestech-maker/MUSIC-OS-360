@@ -200,7 +200,7 @@ export default function Configuracoes() {
 
   const copyPublicRegistrationLink = async () => {
     if (!publicRegistrationLink) {
-      toast.error("Defina um slug da organização antes de copiar o link.");
+      toast.error("Defina o identificador da organização antes de copiar o link.");
       return;
     }
     await navigator.clipboard.writeText(publicRegistrationLink);
@@ -316,7 +316,7 @@ export default function Configuracoes() {
 
   const handleInviteUser = async () => {
     if (!inviteEmail.trim()) {
-      toast.error("Digite um email válido");
+      toast.error("Digite um e-mail válido");
       return;
     }
     try {
@@ -588,7 +588,7 @@ export default function Configuracoes() {
     // Integration via a code snippet (JS pixel + webhook + iframe) — no OAuth.
     {
       id: "website_leads",
-      name: "Website / Captação de Leads",
+      name: "Site / Captação de leads",
       icon: Globe2,
       iconClassName: "text-cyan-600",
       iconBackgroundClassName: "bg-cyan-500/10",
@@ -770,7 +770,7 @@ export default function Configuracoes() {
             </TabsTrigger>
             <TabsTrigger value="billing" className="flex items-center gap-2">
               <CreditCard className="h-4 w-4" />
-              Billing
+              Cobrança
             </TabsTrigger>
             <TabsTrigger value="usuarios" className="flex items-center gap-2">
               <UserCog className="h-4 w-4" />
@@ -940,7 +940,7 @@ export default function Configuracoes() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="org-slug">Slug da organização</Label>
+                  <Label htmlFor="org-slug">Identificador da organização (URL)</Label>
                   <Input
                     id="org-slug"
                     data-testid="input-org-slug"
@@ -1588,15 +1588,15 @@ export default function Configuracoes() {
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2">
-                    🌐 Website / Captação de Leads
+                    🌐 Site / Captação de leads
                   </DialogTitle>
                   <DialogDescription>
-                    Cole os snippets abaixo no seu site para captar leads directamente no CRM. Não é necessário login — a integração funciona via código.
+                    Cole os trechos de código abaixo no seu site para captar leads diretamente no CRM. Não é necessário login — a integração funciona via código.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-5 pt-2">
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Pixel JavaScript (head do site)</Label>
+                    <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Pixel JavaScript (cabeçalho do site)</Label>
                     <div className="relative">
                       <Textarea
                         readOnly
@@ -1610,7 +1610,7 @@ export default function Configuracoes() {
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Embed iFrame (formulário de captação)</Label>
+                    <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Incorporação via iFrame (formulário de captação)</Label>
                     <div className="relative">
                       <Textarea
                         readOnly
@@ -1712,7 +1712,7 @@ export default function Configuracoes() {
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <Input
                       value={publicRegistrationLink}
-                      placeholder="Defina um slug da organização na aba Empresa"
+                      placeholder="Defina o identificador da organização na aba Empresa"
                       readOnly
                       className="font-mono text-xs sm:text-sm"
                       data-testid="input-public-link"
@@ -1729,7 +1729,7 @@ export default function Configuracoes() {
                   </div>
                   {!publicRegistrationLink && (
                     <p className="text-xs text-muted-foreground">
-                      Configure o slug da organização na aba <strong>Empresa</strong> para gerar o link.
+                      Configure o identificador da organização na aba <strong>Empresa</strong> para gerar o link.
                     </p>
                   )}
                 </div>
@@ -1762,7 +1762,7 @@ export default function Configuracoes() {
                     </Button>
                     <Button variant="outline" disabled title="Disponível quando o backend de cadastro público estiver ativo">
                       <RotateCcw className="h-4 w-4 mr-2" />
-                      Regenerar slug
+                      Regenerar identificador
                     </Button>
                     {publicRegistrationEnabled && !!publicRegistrationLink && (
                       <Button variant="destructive" disabled title="Disponível quando o backend de cadastro público estiver ativo">
@@ -1900,7 +1900,7 @@ export default function Configuracoes() {
                         <CreditCard className="h-4 w-4 text-primary" />
                         Método de Pagamento
                       </CardTitle>
-                      <CardDescription>Cartão guardado para cobranças automáticas</CardDescription>
+                      <CardDescription>Cartão salvo para cobranças automáticas</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center justify-between p-4 rounded-lg border bg-muted/30">
@@ -2116,7 +2116,7 @@ export default function Configuracoes() {
                   <div className="relative flex-1">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input 
-                      placeholder="Digite o endereço de email" 
+                      placeholder="Digite o endereço de e-mail"
                       className="pl-10" 
                       value={inviteEmail} 
                       onChange={(e) => setInviteEmail(e.target.value)}
@@ -2466,7 +2466,7 @@ export default function Configuracoes() {
                               Adicionar
                             </Button>
                           </div>
-                          <p className="text-sm font-medium">Gerenciar grants diretos</p>
+                          <p className="text-sm font-medium">Gerenciar permissões diretas</p>
                           {Object.entries(getPermissionsByCategory()).map(([category, categoryPermissions]) => (
                             <div key={category}>
                               <p className="mb-2 text-xs font-medium text-muted-foreground">{category}</p>

@@ -61,7 +61,7 @@ export default function AdminAudit() {
     <AdminLayout>
       <div className="p-6 space-y-6 animate-fade-in">
         <div>
-          <h1 className="text-xl font-bold text-foreground">Logs & Auditoria</h1>
+          <h1 className="text-xl font-bold text-foreground">Registros e auditoria</h1>
           <p className="text-[12px] text-muted-foreground mt-0.5">Trilha de auditoria e ações administrativas</p>
         </div>
 
@@ -85,7 +85,7 @@ export default function AdminAudit() {
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
-            placeholder="Buscar por usuário, tenant, ação..."
+            placeholder="Buscar por usuário, workspace, ação..."
             className="pl-9 h-8 text-xs bg-muted border-border text-foreground placeholder:text-muted-foreground"
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -95,9 +95,9 @@ export default function AdminAudit() {
 
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <ListSectionHeader
-            title="Logs de Auditoria"
+            title="Registros de auditoria"
             count={filtered.length}
-            description="Acompanhe ações administrativas, usuários, tenants e detalhes de auditoria"
+            description="Acompanhe ações administrativas, usuários, workspaces e detalhes de auditoria"
             className="p-4"
           />
           <Table>
@@ -150,7 +150,7 @@ export default function AdminAudit() {
           ) : auditQuery.isError ? (
             <div className="py-16 flex flex-col items-center gap-3">
               <ScrollText className="h-8 w-8 text-red-400" />
-              <p className="text-[13px] text-muted-foreground">Falha ao carregar os logs de auditoria.</p>
+              <p className="text-[13px] text-muted-foreground">Falha ao carregar os registros de auditoria.</p>
               <button onClick={() => auditQuery.refetch()} className="text-[12px] text-primary hover:underline" data-testid="button-retry-audit">
                 Tentar novamente
               </button>

@@ -46,7 +46,7 @@ export function DetectionsTable({ detections, onViewDetail, selectedIds, onToggl
             <TableHead className="hidden lg:table-cell min-w-[140px] w-[16%]">Plataforma</TableHead>
             <TableHead className="hidden md:table-cell w-[96px]">Tipo</TableHead>
             <TableHead className="hidden xl:table-cell min-w-[128px] w-[128px]">Detectado em</TableHead>
-            <TableHead className="hidden lg:table-cell w-[90px]">Match</TableHead>
+            <TableHead className="hidden lg:table-cell w-[90px]">Correspondência</TableHead>
             <TableHead className="hidden md:table-cell w-[80px]">Score</TableHead>
             <TableHead className="min-w-[128px] w-[128px]">Status</TableHead>
             <TableHead className="w-10"></TableHead>
@@ -95,7 +95,7 @@ export function DetectionsTable({ detections, onViewDetail, selectedIds, onToggl
                 </TableCell>
                 <TableCell className="py-3 hidden lg:table-cell">
                   <span className={`text-xs font-semibold ${matched ? "text-success" : "text-destructive"}`}>
-                    {matched ? "✓ Match" : "✗ Sem match"}
+                    {matched ? "✓ Com correspondência" : "✗ Sem correspondência"}
                   </span>
                 </TableCell>
                 <TableCell className="py-3 hidden md:table-cell text-sm">

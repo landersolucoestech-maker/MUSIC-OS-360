@@ -448,7 +448,7 @@ export default function ArtistaSignupPublic() {
           <div>
             <h1 className="text-xl font-bold">{orgSlug ? "Cadastro indisponivel" : "Link invalido"}</h1>
             <p className="text-muted-foreground text-sm mt-2">
-              Use o link publico de cadastro fornecido pela empresa responsavel.
+              Use o link publico de cadastro fornecido pela empresa responsável.
             </p>
           </div>
           {orgSlug && (
@@ -731,7 +731,7 @@ export default function ArtistaSignupPublic() {
           <div className="space-y-5">
             <div>
               <h2 className="font-semibold text-base">Dados Pessoais</h2>
-              <p className="text-sm text-muted-foreground">Informações pessoais e de contacto</p>
+              <p className="text-sm text-muted-foreground">Informações pessoais e de contato</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -1081,7 +1081,7 @@ export default function ArtistaSignupPublic() {
                             value={entry?.email ?? ""}
                             onChange={(e) => updateDistEmailGeral(dist.id, e.target.value)}
                             type="email"
-                            placeholder="Email de share…"
+                            placeholder="E-mail de share…"
                             className="h-8 text-sm"
                             data-testid="input-geral-dist-email-outros"
                           />
@@ -1108,7 +1108,7 @@ export default function ArtistaSignupPublic() {
 
             {distribuidorasGerais.some((d) => d.id === "outros" && !(d.nomeCustom ?? "").trim()) && (
               <p className="text-xs text-muted-foreground ml-6">
-                Preencha o nome da distribuidora para activar o email de share.
+                Preencha o nome da distribuidora para ativar o e-mail de share.
               </p>
             )}
           </div>
@@ -1145,7 +1145,7 @@ export default function ArtistaSignupPublic() {
             {["independente", "com_empresario"].includes(tipoPerfil) && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <Label className="text-sm text-muted-foreground">Equipe / Contactos</Label>
+                  <Label className="text-sm text-muted-foreground">Equipe / Contatos</Label>
                   <Button
                     type="button"
                     variant="outline"
@@ -1161,7 +1161,7 @@ export default function ArtistaSignupPublic() {
 
                 {contatosEquipe.length === 0 && (
                   <p className="text-xs text-muted-foreground text-center py-4 border border-dashed rounded-lg">
-                    Nenhum contacto adicionado. Clique em "Adicionar" para incluir membros da equipe.
+                    Nenhum contato adicionado. Clique em "Adicionar" para incluir membros da equipe.
                   </p>
                 )}
 
@@ -1182,7 +1182,7 @@ export default function ArtistaSignupPublic() {
                       {/* Header */}
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground font-medium">
-                          Contacto {idx + 1}
+                          Contato {idx + 1}
                         </span>
                         <Button
                           type="button"
@@ -1241,7 +1241,7 @@ export default function ArtistaSignupPublic() {
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <Label className="text-xs">Email</Label>
+                          <Label className="text-xs">E-mail</Label>
                           <Input
                             value={contato.email}
                             onChange={(e) => updateContato(idx, "email", e.target.value)}
@@ -1289,7 +1289,7 @@ export default function ArtistaSignupPublic() {
                                           value={dEntry?.email ?? ""}
                                           onChange={(e) => updateDistEmailEquipe(idx, dist.id, e.target.value)}
                                           type="email"
-                                          placeholder="Email de share…"
+                                          placeholder="E-mail de share…"
                                           className="h-7 text-xs"
                                           data-testid={`input-dist-email-share-${idx}-${dist.id}`}
                                         />
@@ -1315,7 +1315,7 @@ export default function ArtistaSignupPublic() {
                           </div>
                           {outrosEntry && !outrosEntry.nomeCustom && (
                             <p className="text-xs text-muted-foreground ml-6">
-                              Preencha o nome da distribuidora para activar o email de share.
+                              Preencha o nome da distribuidora para ativar o e-mail de share.
                             </p>
                           )}
                         </div>

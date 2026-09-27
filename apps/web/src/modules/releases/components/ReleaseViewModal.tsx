@@ -41,7 +41,7 @@ interface ReleaseViewModalProps {
 const TIPO_MAP: Record<string, { label: string; color: string }> = {
   single: { label: "Single", color: "bg-primary text-foreground" },
   ep: { label: "EP", color: "bg-info text-info-foreground" },
-  album: { label: "Album", color: "bg-primary text-foreground" },
+  album: { label: "Álbum", color: "bg-primary text-foreground" },
 };
 
 const IDIOMAS: Record<string, string> = {
@@ -333,7 +333,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
             <Separator />
             <div className="space-y-3">
               <h3 className="text-[11px] font-semibold  tracking-wider text-muted-foreground">
-                Creditos
+                Créditos
               </h3>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                 <Field label="Compositores" value={compositores} />
@@ -352,7 +352,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
                 <div className="space-y-3">
                   <h3 className="flex items-center gap-2 text-[11px] font-semibold  tracking-wider text-muted-foreground">
                     <LinkIcon className="h-3.5 w-3.5" />
-                    Assets
+                    Arquivos
                   </h3>
                   <LinkField label="Capa" value={capaUrl} />
                   <LinkField label="Áudio master" value={textValue(assets["audio_master_url"])} />
@@ -385,7 +385,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
             <div className="space-y-3">
               <h3 className="flex items-center gap-2 text-[11px] font-semibold  tracking-wider text-muted-foreground">
                 <FileText className="h-3.5 w-3.5" />
-                Observacoes
+                Observações
               </h3>
               <Field label="Notas de distribuição" value={release.notes ?? textValue(metadata["observacoes"])} />
               <Field label="Notas internas" value={release.notas_internas ?? textValue(metadata["notas_internas"])} />

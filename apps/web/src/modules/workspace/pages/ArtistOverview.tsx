@@ -20,7 +20,7 @@ export default function ArtistOverview() {
               <p className="font-semibold">{entity?.name ?? 'Carregando...'}</p>
             </div>
             <div>
-              <p className="text-xs  text-muted-foreground">Entity ID</p>
+              <p className="text-xs  text-muted-foreground">ID da entidade</p>
               <p className="font-semibold break-all">{entity?.id ?? '...'}</p>
             </div>
             <div>

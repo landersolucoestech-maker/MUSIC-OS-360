@@ -303,7 +303,7 @@ export default function RightsMonitoring() {
               </div>
               <div className="relative min-w-[220px] flex-1">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                <Input placeholder="Buscar obra, plataforma, type..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-8 h-8 text-sm bg-card border-border" data-testid="input-search-execucoes" />
+                <Input placeholder="Buscar obra, plataforma, tipo..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-8 h-8 text-sm bg-card border-border" data-testid="input-search-execucoes" />
               </div>
               <Select value={artistaFilter} onValueChange={setArtistFilter}>
                 <SelectTrigger className="h-8 w-auto min-w-[142px] shrink-0 bg-card border-border text-sm" data-testid="select-artista-filter">

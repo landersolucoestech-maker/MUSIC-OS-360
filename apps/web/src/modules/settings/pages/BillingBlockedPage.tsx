@@ -18,12 +18,12 @@ export default function BillingBlockedPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Lock className="h-5 w-5 text-destructive" />
-              Subscription payment overdue
+              Pagamento da assinatura em atraso
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-5">
             <div className="rounded-md border border-destructive/30 bg-destructive/10 p-4 text-sm">
-              O workspace esta com pagamento em atraso. Enquanto a pendencia existir, o acesso aos modulos operacionais permanece bloqueado ou em modo somente leitura.
+              O workspace esta com pagamento em atraso. Enquanto a pendencia existir, o acesso aos módulos operacionais permanece bloqueado ou em modo somente leitura.
             </div>
             <div className="grid gap-3 text-sm sm:grid-cols-2">
               <div>
@@ -31,7 +31,7 @@ export default function BillingBlockedPage() {
                 <p className="font-semibold">{formatAmount(billing.amountDue)}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Prazo de regularizacao</p>
+                <p className="text-muted-foreground">Prazo de regularização</p>
                 <p className="font-semibold">{billing.graceUntil ? new Date(billing.graceUntil).toLocaleDateString("pt-BR") : "Indisponivel"}</p>
               </div>
             </div>

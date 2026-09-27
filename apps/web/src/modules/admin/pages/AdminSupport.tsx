@@ -53,7 +53,7 @@ export default function AdminSupport() {
     <AdminLayout>
       <div className="p-6 space-y-6 animate-fade-in">
         <div>
-          <h1 className="text-xl font-bold text-foreground">Support Hub</h1>
+          <h1 className="text-xl font-bold text-foreground">Central de suporte</h1>
           <p className="text-[12px] text-muted-foreground mt-0.5">Gestão global de tickets de suporte</p>
         </div>
 
@@ -107,7 +107,7 @@ export default function AdminSupport() {
           <ListSectionHeader
             title="Lista de Tickets"
             count={filtered.length}
-            description="Acompanhe tickets, tenants, prioridades e responsáveis"
+            description="Acompanhe tickets, workspaces, prioridades e responsáveis"
             className="p-4"
           />
           <Table>

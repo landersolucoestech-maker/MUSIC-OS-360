@@ -69,7 +69,7 @@ export const AUDIT_MODULES: { id: AuditModuleId; label: string }[] = [
   { id: "contracts", label: "Contratos" },
   { id: "crm", label: "CRM" },
   { id: "events", label: "Eventos" },
-  { id: "accounting", label: "Accounting" },
+  { id: "accounting", label: "Contabilidade" },
   { id: "inventory", label: "Inventário" },
   { id: "leads", label: "Leads" },
   { id: "licensing", label: "Licenciamento" },

@@ -313,7 +313,7 @@ function MetadataBlock({ metadata }: { metadata: unknown }) {
   if (!hasValue(metadata)) return null;
   return (
     <div className="mt-2 rounded-lg bg-muted/40 p-3">
-      <p className="mb-2 text-xs font-medium text-muted-foreground">Metadata</p>
+      <p className="mb-2 text-xs font-medium text-muted-foreground">Metadados</p>
       <pre className="max-h-48 overflow-auto whitespace-pre-wrap break-words text-xs leading-relaxed text-muted-foreground">
         {JSON.stringify(metadata, null, 2)}
       </pre>

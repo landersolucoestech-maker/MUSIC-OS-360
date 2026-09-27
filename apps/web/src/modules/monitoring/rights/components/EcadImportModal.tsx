@@ -24,7 +24,7 @@ const PIPELINE_STEPS = [
   { key: "uploading",   label: "Upload",         desc: "Enviando arquivo..." },
   { key: "parsing",     label: "Parser",          desc: "Lendo estrutura do arquivo..." },
   { key: "normalizing", label: "Normalização",    desc: "Padronizando ISRCs e metadados..." },
-  { key: "matching",    label: "Match ECAD",      desc: "Associando execuções ao catálogo..." },
+  { key: "matching",    label: "Correspondência ECAD",      desc: "Associando execuções ao catálogo..." },
   { key: "done",        label: "Conciliação",     desc: "Relatório conciliado com sucesso" },
 ];
 
@@ -67,7 +67,7 @@ export function EcadImportModal({ open, onOpenChange }: Props) {
     // Importação real de relatório ECAD requer endpoint no backend; nunca
     // simular progresso nem preview com dados fictícios.
     toast.error(
-      "Importação de relatório ECAD ainda não está disponível (requer endpoint real no backend).",
+      "A importação de relatório ECAD ainda não está disponível.",
     );
   };
 
@@ -216,7 +216,7 @@ export function EcadImportModal({ open, onOpenChange }: Props) {
 
               <div className="flex items-center gap-2 p-3 bg-success/10 rounded-lg border border-success/20">
                 <CheckCircle className="h-4 w-4 text-success flex-shrink-0" />
-                <p className="text-xs text-success font-medium">Relatório ECAD importado e conciliado com sucesso. Execuções adicionadas ao módulo Rights Monitoring.</p>
+                <p className="text-xs text-success font-medium">Relatório ECAD importado e conciliado com sucesso. Execuções adicionadas ao módulo de Monitoramento de direitos.</p>
               </div>
             </div>
           )}

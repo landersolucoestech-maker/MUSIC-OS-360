@@ -246,7 +246,7 @@ export function DetailsSection({
             getLabel={(c) => c.name}
             value={formData.client_id}
             onChange={handleClientChange}
-            placeholder="Selecione um client"
+            placeholder="Selecione um cliente"
             searchPlaceholder="Buscar client…"
             disabled={disabled}
             data-testid="combobox-client-nf"

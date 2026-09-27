@@ -431,7 +431,7 @@ export function KnowledgeBaseManager() {
           <DialogHeader>
             <DialogTitle>{editing ? "Editar conteúdo" : "Novo conteúdo"}</DialogTitle>
             <DialogDescription>
-              Defina título, categoria, type e conteúdo. Use markdown no corpo do texto.
+              Defina título, categoria, tipo e conteúdo. Use markdown no corpo do texto.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">

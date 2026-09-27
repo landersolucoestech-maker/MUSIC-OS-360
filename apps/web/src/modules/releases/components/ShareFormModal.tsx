@@ -376,7 +376,7 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="pagador_contato">Contato do pagador</Label>
-                  <Input id="pagador_contato" placeholder="Email / telefone" value={formData.pagador_contato}
+                  <Input id="pagador_contato" placeholder="E-mail / telefone" value={formData.pagador_contato}
                     onChange={(e) => handleChange("pagador_contato", e.target.value)} data-testid="input-pagador-contato" />
                 </div>
               </div>

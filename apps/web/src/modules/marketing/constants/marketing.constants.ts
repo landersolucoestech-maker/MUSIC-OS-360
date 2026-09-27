@@ -409,7 +409,7 @@ export const TASK_TYPE_OPTIONS: Option<TaskType>[] = [
   { value: "teaser", label: "Teaser" },
   { value: "conteudo_lancamento", label: "Conteúdo de Lançamento" },
   { value: "distribuicao", label: "Distribuição" },
-  { value: "metadata", label: "Metadata" },
+  { value: "metadata", label: "Metadados" },
   { value: "pitching", label: "Pitching" },
   { value: "pre_save", label: "Pré-save" },
   { value: "campanha_lancamento", label: "Campanha de Lançamento" },
@@ -540,7 +540,7 @@ export const ASSET_CATEGORY_OPTIONS: Option<AssetCategory>[] = [
   { value: "material_bastidores", label: "Material de Bastidores" },
   { value: "material_reuniao", label: "Material de Reunião" },
   { value: "arquivo_portal", label: "Arquivo para Portal" },
-  { value: "asset_campanha", label: "Asset de Campanha" },
+  { value: "asset_campanha", label: "Material de campanha" },
 ];
 
 export const ASSET_CATEGORY_LABEL = optionLabels(ASSET_CATEGORY_OPTIONS);
@@ -555,7 +555,7 @@ export const DELIVERABLE_TYPE_OPTIONS: Option<DeliverableType>[] = [
   { value: "thumbnail", label: "Thumbnail" },
   { value: "artwork", label: "Artwork" },
   { value: "logo", label: "Logo" },
-  { value: "brand_asset", label: "Asset de Marca" },
+  { value: "brand_asset", label: "Material de marca" },
   { value: "video_clip", label: "Videoclipe" },
   { value: "teaser", label: "Teaser" },
   { value: "visualizer", label: "Visualizer" },

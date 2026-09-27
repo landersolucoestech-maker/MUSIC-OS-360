@@ -151,7 +151,7 @@ export default function AdminDashboard() {
     };
     const counts = new Map<string, number>();
     tenants.forEach((tenant: AdminTenant) => {
-      const key = tenant.country || "Nao informado";
+      const key = tenant.country || "Não informado";
       counts.set(key, (counts.get(key) ?? 0) + 1);
     });
     return Array.from(counts.entries()).map(([country, count]) => ({
@@ -173,15 +173,15 @@ export default function AdminDashboard() {
     {
       label: "Clientes Ativos",
       value: "Indisponível",
-      description: "Falha ao carregar tenants — tente novamente",
+      description: "Falha ao carregar os workspaces — tente novamente",
       icon: Building2,
       accent: "destructive",
       href: "/admin/clients",
     },
     {
-      label: "Usuarios Cadastrados",
+      label: "Usuários Cadastrados",
       value: "Indisponível",
-      description: "Falha ao carregar tenants — tente novamente",
+      description: "Falha ao carregar os workspaces — tente novamente",
       icon: Users,
       accent: "destructive",
       href: "/admin/clients",
@@ -189,7 +189,7 @@ export default function AdminDashboard() {
     {
       label: "Churn Rate",
       value: "Indisponível",
-      description: "Falha ao carregar tenants — tente novamente",
+      description: "Falha ao carregar os workspaces — tente novamente",
       icon: TrendingDown,
       accent: "destructive",
       href: "/admin/clients",
@@ -203,9 +203,9 @@ export default function AdminDashboard() {
       href: "/admin/subscriptions",
     },
     {
-      label: "Tenants em Atencao",
+      label: "Workspaces em atenção",
       value: "Indisponível",
-      description: "Falha ao carregar tenants — tente novamente",
+      description: "Falha ao carregar os workspaces — tente novamente",
       icon: AlertCircle,
       accent: "destructive",
       href: "/admin/clients",
@@ -228,7 +228,7 @@ export default function AdminDashboard() {
       href: "/admin/clients",
     },
     {
-      label: "Usuarios Cadastrados",
+      label: "Usuários Cadastrados",
       value: fmt(kpis.total_users),
       description: `${fmt(tenants.length)} tenants no total`,
       icon: Users,
@@ -238,7 +238,7 @@ export default function AdminDashboard() {
     {
       label: "Churn Rate",
       value: `${kpis.churn_rate_pct}%`,
-      description: `${fmt(kpis.churned_tenants)} tenants suspensos/cancelados`,
+      description: `${fmt(kpis.churned_tenants)} workspaces suspensos/cancelados`,
       icon: TrendingDown,
       accent: kpis.churned_tenants > 0 ? "destructive" : "success",
       href: "/admin/clients",
@@ -252,7 +252,7 @@ export default function AdminDashboard() {
       href: "/admin/subscriptions",
     },
     {
-      label: "Tenants em Atencao",
+      label: "Workspaces em atenção",
       value: fmt(kpis.churned_tenants),
       description: "Suspensos ou cancelados",
       icon: AlertCircle,
@@ -330,7 +330,7 @@ export default function AdminDashboard() {
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-[12px] font-medium" style={{ color: p.color }}>{p.plan}</span>
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] text-muted-foreground">{p.count} tenants</span>
+                        <span className="text-[11px] text-muted-foreground">{p.count} workspaces</span>
                         <span className="text-[12px] font-semibold text-muted-foreground">{pct}%</span>
                       </div>
                     </div>
@@ -370,7 +370,7 @@ export default function AdminDashboard() {
           {/* Recent tenants */}
           <div className="rounded-2xl border border-border bg-card overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-              <h2 className="text-[13px] font-semibold text-foreground">Tenants Recentes</h2>
+              <h2 className="text-[13px] font-semibold text-foreground">Workspaces recentes</h2>
               <Link to="/admin/clients" className="text-[11px] text-primary hover:text-primary-hover flex items-center gap-1">
                 Ver todos <ChevronRight className="h-3.5 w-3.5" />
               </Link>

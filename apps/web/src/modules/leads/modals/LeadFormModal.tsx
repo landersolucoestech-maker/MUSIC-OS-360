@@ -46,7 +46,7 @@ import { toUserMessage } from "@/shared/lib/errors";
 export const TIPO_INTERACAO_OPTIONS = [
   { value: "ligacao",    label: "Ligação"    },
   { value: "whatsapp",   label: "WhatsApp"   },
-  { value: "email",      label: "Email"      },
+  { value: "email",      label: "E-mail"      },
   { value: "reuniao",    label: "Reunião"    },
   { value: "proposta",   label: "Proposta"   },
   { value: "follow_up",  label: "Follow-up"  },
@@ -521,7 +521,7 @@ export function LeadFormModal({
                 data-testid="input-cargo"
               />
             </Field>
-            <Field label="Email">
+            <Field label="E-mail">
               <Input
                 type="email"
                 value={values.email}
@@ -552,7 +552,7 @@ export function LeadFormModal({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Website">
+            <Field label="Site">
               <Input
                 value={values.website}
                 onChange={(e) => set("website", e.target.value)}

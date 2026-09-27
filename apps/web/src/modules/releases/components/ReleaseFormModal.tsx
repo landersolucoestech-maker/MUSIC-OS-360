@@ -73,11 +73,11 @@ import { toUserMessage } from "@/shared/lib/errors";
 // STEP LABELS
 // ─────────────────────────────────────────────────────────────────────────────
 const STEPS = [
-  "Album Info",
-  "Track Upload",
-  "Album Art",
-  "Distribution Preferences",
-  "Preview",
+  "Informações do álbum",
+  "Envio de faixas",
+  "Capa do álbum",
+  "Preferências de distribuição",
+  "Revisão",
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -223,26 +223,26 @@ const IDIOMA_OPTS = sortOptionsByLabel([
 const TIMEZONE_OPTS = [
   {
     value: "America/Sao_Paulo",
-    label: "(GMT -3:00) Brazil, Buenos Aires, Georgetown",
+    label: "(GMT -3:00) Brasília, Buenos Aires, Georgetown",
   },
   {
     value: "America/New_York",
-    label: "(GMT -5:00) Eastern Time (US & Canada)",
+    label: "(GMT -5:00) Horário do Leste (EUA e Canadá)",
   },
-  { value: "America/Chicago", label: "(GMT -6:00) Central Time (US & Canada)" },
+  { value: "America/Chicago", label: "(GMT -6:00) Horário Central (EUA e Canadá)" },
   {
     value: "America/Los_Angeles",
-    label: "(GMT -8:00) Pacific Time (US & Canada)",
+    label: "(GMT -8:00) Horário do Pacífico (EUA e Canadá)",
   },
-  { value: "Europe/London", label: "(GMT +0:00) London, Dublin, Lisbon" },
-  { value: "Europe/Paris", label: "(GMT +1:00) Paris, Madrid, Berlin" },
-  { value: "Asia/Tokyo", label: "(GMT +9:00) Tokyo, Seoul" },
+  { value: "Europe/London", label: "(GMT +0:00) Londres, Dublin, Lisboa" },
+  { value: "Europe/Paris", label: "(GMT +1:00) Paris, Madri, Berlim" },
+  { value: "Asia/Tokyo", label: "(GMT +9:00) Tóquio, Seul" },
 ];
 
 const PRICING_OPTS = [
-  { value: "custom", label: "Custom" },
-  { value: "standard", label: "Standard" },
-  { value: "free", label: "Free" },
+  { value: "custom", label: "Personalizado" },
+  { value: "standard", label: "Padrão" },
+  { value: "free", label: "Gratuito" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1130,9 +1130,9 @@ export function ReleaseFormModal({
       {/* Metadata */}
       <Card className="bg-muted/30 border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Metadata</CardTitle>
+          <CardTitle className="text-base">Metadados</CardTitle>
           <CardDescription>
-            Original Album Information — todos os campos são obrigatórios,
+            Informações do álbum original — todos os campos são obrigatórios,
             exceto onde indicado
           </CardDescription>
         </CardHeader>
@@ -1278,7 +1278,7 @@ export function ReleaseFormModal({
             <InfoBox>
               Adicione artistas no nível do álbum com o papel correspondente.
               Eles aparecerão em <strong>todas</strong> as faixas. Para artistas
-              de faixas específicas, adicione na etapa Track Upload. Apenas
+              de faixas específicas, adicione na etapa Envio de faixas. Apenas
               artistas devem ser listados — não inclua selos ou produtoras.
             </InfoBox>
             <ArtistRows
@@ -1384,7 +1384,7 @@ export function ReleaseFormModal({
       {/* Copyright Info */}
       <Card className="bg-muted/30 border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Copyright Info</CardTitle>
+          <CardTitle className="text-base">Direitos autorais</CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
           {/* Label */}
@@ -1583,7 +1583,7 @@ export function ReleaseFormModal({
                     <div className="flex-1 space-y-2">
                       <Label>Descrição da Versão Customizada</Label>
                       <Input
-                        placeholder="Ex: Versão extended, remix especial, etc."
+                        placeholder="Ex.: versão estendida, remix especial etc."
                         value={faixa.versionCustomName || ""}
                         onChange={(e) => updF(faixa.id, "versionCustomName", e.target.value)}
                         disabled={isViewMode}
@@ -1603,7 +1603,7 @@ export function ReleaseFormModal({
                 <Label>
                   Artistas do Álbum{" "}
                   <span className="text-xs text-muted-foreground font-normal">
-                    (aparecem em todas as faixas — altere na etapa Album Info)
+                    (aparecem em todas as faixas — altere na etapa Informações do álbum)
                   </span>
                 </Label>
                 <div className="bg-muted/50 border rounded-md p-3 space-y-1">
@@ -2053,7 +2053,7 @@ export function ReleaseFormModal({
                 </li>
                 <li>
                   A capa <strong>não pode conter</strong> logotipos, URLs, datas
-                  de lançamento ou anúncios de qualquer type.
+                  de lançamento ou anúncios de qualquer tipo.
                 </li>
               </ul>
             </div>
@@ -2242,7 +2242,7 @@ export function ReleaseFormModal({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="world">World (Global)</SelectItem>
+                  <SelectItem value="world">Mundo (global)</SelectItem>
                   <SelectItem value="br">Brasil</SelectItem>
                   <SelectItem value="us">Estados Unidos</SelectItem>
                   <SelectItem value="latam">América Latina</SelectItem>
@@ -2277,7 +2277,7 @@ export function ReleaseFormModal({
                     setFormData({ ...formData, dataLancamento: iso })
                   }
                   disabled={isViewMode}
-                  placeholder="DD/MM/YYYY"
+                  placeholder="DD/MM/AAAA"
                   displayFormat="dd/MM/yyyy"
                 />
               </div>

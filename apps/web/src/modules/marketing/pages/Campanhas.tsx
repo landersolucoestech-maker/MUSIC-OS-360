@@ -251,7 +251,7 @@ export default function Campanhas() {
         <div className="space-y-6 bg-background text-muted-foreground">
           <div className="grid gap-3 md:grid-cols-5">
             <CampaignKpi label="Campanhas Ativas" value={totals.active} caption="em execução" icon={Target} />
-            <CampaignKpi label="Budget Total" value={formatCurrency(totals.budget)} caption="investimento" icon={DollarSign} tone="success" />
+            <CampaignKpi label="Orçamento total" value={formatCurrency(totals.budget)} caption="investimento" icon={DollarSign} tone="success" />
             <CampaignKpi label="Gasto Total" value={formatCurrency(totals.spend)} caption="executado" icon={DollarSign} tone="danger" />
             <CampaignKpi
               label="Cliques"
@@ -458,7 +458,7 @@ function CampaignTable({
             <SortableTableHead sortKey="contexto" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Contexto</SortableTableHead>
             <SortableTableHead sortKey="plataforma" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Plataforma</SortableTableHead>
             <SortableTableHead sortKey="status" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Status</SortableTableHead>
-            <SortableTableHead sortKey="budget" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Budget</SortableTableHead>
+            <SortableTableHead sortKey="budget" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Orçamento</SortableTableHead>
             <SortableTableHead sortKey="gasto" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Gasto</SortableTableHead>
             <SortableTableHead sortKey="cliques" sortState={sortState} onSort={(key) => setSortState((current) => nextTableSortState(current, key))}>Cliques</SortableTableHead>
             <SortableTableHead sortKey="acoes" sortState={sortState} onSort={() => undefined} disabled className="text-right">Ações</SortableTableHead>

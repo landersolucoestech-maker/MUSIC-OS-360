@@ -502,7 +502,7 @@ export function SupportCenterView({
     { id: "facebook", label: "Facebook", connected: false, icon: SiFacebook },
     { id: "instagram", label: "Instagram", connected: false, icon: SiInstagram },
     { id: "tiktok", label: "TikTok", connected: false, icon: SiTiktok },
-    { id: "site", label: "Website", connected: false, icon: Globe },
+    { id: "site", label: "Site", connected: false, icon: Globe },
   ];
   const quickReplyOptions = useMemo(
     () => (automationSettings?.templates?.length ? automationSettings.templates.slice(0, 3).map((template) => template.body) : quickReplies),

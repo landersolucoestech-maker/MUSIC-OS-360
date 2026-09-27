@@ -361,7 +361,7 @@ function TikTokAuthorizationPresentation({
           <IntegrationLogo id="tiktok_business" className="h-12 w-12" imageClassName="h-9 w-9" />
           <div>
             <DialogTitle className="text-base text-[#161823]">TikTok for Business</DialogTitle>
-            <DialogDescription className="text-xs">Business Center authorization</DialogDescription>
+            <DialogDescription className="text-xs">Autorização do Business Center</DialogDescription>
           </div>
         </div>
         <span className="h-2.5 w-2.5 rounded-full bg-[#25f4ee] shadow-[5px_0_0_#fe2c55]" />
@@ -567,7 +567,7 @@ export function MarketingOAuthDialog({ open, onOpenChange, platform, onConnect }
     const popup = window.open("about:blank", `musicos360_oauth_${platform}`, popupFeatures);
     if (!popup) {
       toast.error(
-        "Popup bloqueado pelo browser. Clique no ícone 🚫 na barra de endereço e permita popups para este site.",
+        "Pop-up bloqueado pelo navegador. Clique no ícone 🚫 na barra de endereço e permita pop-ups para este site.",
       );
       return;
     }

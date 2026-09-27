@@ -78,7 +78,7 @@ export function LeadFilters({
       <Input
         value={filters.search}
         onChange={(event) => onChange("search", event.target.value)}
-        placeholder="Buscar por nome, email, WhatsApp, Instagram ou empresa"
+        placeholder="Buscar por nome, e-mail, WhatsApp, Instagram ou empresa"
         className="h-8 min-w-[240px] flex-1 bg-card border-border text-sm"
       />
       {/* serviceType: usa leadServiceTypeOptions (enum LeadServiceType — válido para filtrar lead.serviceType) */}
@@ -154,7 +154,7 @@ export function LeadBaseFields({ register, setValue, watch, schema }: LeadFormCo
         payload={payload}
         setValue={setValue}
       />
-      <Field label="Email">
+      <Field label="E-mail">
         <Input type="email" {...register("email")} placeholder="email@exemplo.com" />
       </Field>
       <Field label="Telefone / WhatsApp *">
@@ -164,7 +164,7 @@ export function LeadBaseFields({ register, setValue, watch, schema }: LeadFormCo
         <Input {...register("instagram")} placeholder="@usuario" />
       </Field>
       <PayloadInput
-        label="Website"
+        label="Site"
         name="websiteLead"
         placeholder="https://..."
         payload={payload}
@@ -406,7 +406,7 @@ export function UploadDropzone({ uploads, onChange }: { uploads: LeadUpload[]; o
     <FormSection title="4. ANEXOS">
       <label className="flex min-h-[120px] cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card px-4 py-6 text-center transition hover:bg-muted md:col-span-2">
         <Upload className="mb-2 h-5 w-5 text-muted-foreground" />
-        <span className="text-sm font-medium text-foreground">Adicionar PDF, imagem, video, contrato, rider, midia kit ou release</span>
+        <span className="text-sm font-medium text-foreground">Adicionar PDF, imagem, video, contrato, rider, mídia kit ou release</span>
         <span className="mt-1 text-xs text-muted-foreground">Máximo de 25MB por arquivo</span>
         <input type="file" multiple className="hidden" accept={uploadRules.extensions.join(",")} onChange={(event) => handleFiles(event.target.files)} />
       </label>

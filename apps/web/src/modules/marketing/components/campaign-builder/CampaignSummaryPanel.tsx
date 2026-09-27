@@ -18,7 +18,7 @@ export function CampaignSummaryPanel({ state, step, compact = false }: { state: 
         <Summary label="Plataformas" value={state.platforms.map((item) => PLATFORM_LABEL[item]).join(", ") || "Pendente"} />
         <Summary label="Posicionamentos" value={state.placements.map((item) => PLACEMENT_LABEL[item]).join(", ") || "Pendente"} />
         <Summary label="Criativos" value={`${state.creatives.length} cadastrados`} />
-        <Summary label="Budget" value={formatCurrency(state.budget.totalBudget)} />
+        <Summary label="Orçamento" value={formatCurrency(state.budget.totalBudget)} />
         <Summary label="Status" value="Rascunho" />
       </div>
       <div className="rounded-md border border-border bg-background p-3 text-xs">

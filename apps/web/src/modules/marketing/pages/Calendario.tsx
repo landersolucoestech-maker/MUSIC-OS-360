@@ -665,7 +665,7 @@ function ContentScheduleModal({
                 </p>
               </FieldBlock>
 
-              <FieldBlock label="Tipo de conteudo" required error={errors.type}>
+              <FieldBlock label="Tipo de conteúdo" required error={errors.type}>
                 <Select value={values.type} onValueChange={(value) => handleTypeChange(value as ContentType)}>
                   <SelectTrigger data-testid="select-type-conteudo">
                     <SelectValue />
@@ -1213,7 +1213,7 @@ function CreativeSection({
             </button>
             {exportError && <p className="text-[10px] text-destructive">{exportError}</p>}
             <p className="rounded-md border border-dashed border-border bg-background/50 p-2 text-[10px] leading-relaxed text-muted-foreground">
-              A exportação em imagem estática (PNG) compõe o template real com a mídia enviada. Vídeo não tem exportação de frame estático nesta versão, e agendar publicação via integração externa para conteúdo em modo Template ainda exige uma mídia final renderizada por um pipeline dedicado.
+              A exportação em imagem estática (PNG) compõe o template real com a mídia enviada. Vídeo não tem exportação de quadro estático nesta versão, e agendar publicação via integração externa para conteúdo em modo Template ainda exige uma mídia final renderizada por um pipeline dedicado.
             </p>
           </div>
         </div>

@@ -23,7 +23,7 @@ const PLANS = [
     name:        "Starter",
     price:       "R$ 299",
     period:      "/mês",
-    description: "Para labels e publishers independentes",
+    description: "Para gravadoras e editoras independentes",
     icon:        <Star className="h-5 w-5" />,
     features: [
       "Artistas ilimitados",
@@ -81,7 +81,7 @@ const STATUS_BADGE: Record<string, { label: string; variant: "default" | "second
   active:    { label: "Ativo",      variant: "default" },
   trial:     { label: "Trial",      variant: "secondary" },
   past_due:  { label: "Em atraso",  variant: "destructive" },
-  payment_grace: { label: "Prazo de regularizacao", variant: "destructive" },
+  payment_grace: { label: "Prazo de regularização", variant: "destructive" },
   read_only: { label: "Somente leitura", variant: "outline" },
   suspended: { label: "Suspenso", variant: "destructive" },
   unpaid:    { label: "Em atraso", variant: "destructive" },
@@ -102,7 +102,7 @@ export default function Billing() {
   // WebSocket: updates the plan in real time after an upgrade
   useWsEvent("billing:plan_upgraded", () => {
     queryClient.invalidateQueries({ queryKey: ["billing", "subscription"] });
-    toast.success("Plano atualizado!", { description: "O seu plano foi atualizado com sucesso." });
+    toast.success("Plano atualizado!", { description: "Seu plano foi atualizado com sucesso." });
   });
 
   useWsEvent("billing:cancelled", () => {
@@ -137,7 +137,7 @@ export default function Billing() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("success") === "1") {
-      toast.success("Pagamento realizado!", { description: "O seu plano será activado em instantes." });
+      toast.success("Pagamento realizado!", { description: "Seu plano será ativado em instantes." });
       queryClient.invalidateQueries({ queryKey: ["billing", "subscription"] });
       window.history.replaceState({}, "", window.location.pathname);
     }
@@ -154,16 +154,16 @@ export default function Billing() {
   return (
     <div className="space-y-8 pb-12">
       <PageHeader
-        title="Billing"
+        title="Cobrança"
         description="Gerencie o seu plano e assinatura"
       />
 
-      {/* Plano actual */}
+      {/* Plano atual */}
       <Card className="border-border/60">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base">Plano actual</CardTitle>
+              <CardTitle className="text-base">Plano atual</CardTitle>
               <CardDescription>Detalhes da sua assinatura</CardDescription>
             </div>
             <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
@@ -173,7 +173,7 @@ export default function Billing() {
           {isLoading ? (
             <div className="flex items-center gap-2 text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
-              <span className="text-sm">A carregar...</span>
+              <span className="text-sm">Carregando...</span>
             </div>
           ) : (
             <div className="flex items-center justify-between">
@@ -260,7 +260,7 @@ export default function Billing() {
                 <CardFooter>
                   {isCurrentPlan ? (
                     <Button variant="secondary" className="w-full" disabled>
-                      Plano actual
+                      Plano atual
                     </Button>
                   ) : plan.id === "enterprise" ? (
                     <Button

@@ -248,7 +248,7 @@ export default function FinanceCategoryRules() {
   return (
     <MainLayout
       title="Regras de Categorização Financeira"
-      description="Categorize receitas e despesas automaticamente por palavras-chave, type e prioridade."
+      description="Categorize receitas e despesas automaticamente por palavras-chave, tipo e prioridade."
       actions={
         <Button size="sm" className="h-8 text-xs gap-1.5" onClick={openCreate}>
           <Plus className="h-3.5 w-3.5" /> Nova Regra

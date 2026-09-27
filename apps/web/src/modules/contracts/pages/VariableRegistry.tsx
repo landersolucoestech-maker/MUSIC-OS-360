@@ -85,7 +85,7 @@ function EmptyState({ onNew }: { onNew: () => void }) {
       <div>
         <p className="text-lg font-semibold">Nenhuma variável criada</p>
         <p className="text-sm text-muted-foreground mt-1">
-          Clique em "Nova Variável" para começar a criar placeholders reutilizáveis.
+          Clique em "Nova Variável" para começar a criar marcadores reutilizáveis.
         </p>
       </div>
       <Button onClick={onNew} data-testid="button-new-variable-empty">
@@ -199,7 +199,7 @@ function VariableFormModal({
             <div className="space-y-1.5">
               <Label htmlFor="vr-group">
                 Alias Visual / Jurídico
-                <span className="ml-1 text-[10px] font-normal text-muted-foreground">(aparece no placeholder)</span>
+                <span className="ml-1 text-[10px] font-normal text-muted-foreground">(aparece no marcador)</span>
               </Label>
               <Input
                 id="vr-group"
@@ -226,7 +226,7 @@ function VariableFormModal({
                 data-testid="input-variable-internal"
               />
               <p className="text-[10px] text-muted-foreground leading-tight">
-                Organização interna — não aparece no placeholder
+                Organização interna — não aparece no marcador
               </p>
             </div>
           </div>
@@ -306,7 +306,7 @@ function ImportConfirmDialog({
         <DialogHeader>
           <DialogTitle>Confirmar Importação</DialogTitle>
           <DialogDescription>
-            O ficheiro contém <strong>{preview?.incoming.length ?? 0}</strong> variável(eis).
+            O arquivo contém <strong>{preview?.incoming.length ?? 0}</strong> variável(eis).
           </DialogDescription>
         </DialogHeader>
 
@@ -322,7 +322,7 @@ function ImportConfirmDialog({
             </div>
             {preview.willAdd === 0 && (
               <p className="text-xs text-muted-foreground pt-1">
-                Todas as variáveis do ficheiro já existem no registo.
+                Todas as variáveis do arquivo já existem no registro.
               </p>
             )}
           </div>
@@ -458,10 +458,10 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
         }
         setImportPreview({ incoming: valid, willAdd, willSkip });
       } catch {
-        toast.error("Ficheiro inválido — verifique o formato");
+        toast.error("Arquivo inválido — verifique o formato");
       }
     };
-    reader.onerror = () => toast.error("Ficheiro inválido — verifique o formato");
+    reader.onerror = () => toast.error("Arquivo inválido — verifique o formato");
     reader.readAsArrayBuffer(file);
   }
 
@@ -572,7 +572,7 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
         <div className="flex items-center justify-between px-6 py-4 border-b shrink-0">
           <div>
             <p className="text-base font-semibold">Variáveis de Template</p>
-            <p className="text-xs text-muted-foreground">Crie, organize e reutilize placeholders em qualquer contrato</p>
+            <p className="text-xs text-muted-foreground">Crie, organize e reutilize marcadores em qualquer contrato</p>
           </div>
           <div className="flex items-center gap-2">
             <Button size="sm" variant="outline" onClick={handleImportClick} data-testid="button-modal-import">
@@ -595,7 +595,7 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
       ) : (
         <PageHeader
           title="Variáveis de Template"
-          description="Crie, organize e reutilize placeholders em qualquer contrato"
+          description="Crie, organize e reutilize marcadores em qualquer contrato"
           actions={{
             import: true,
             export: true,
@@ -657,7 +657,7 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
               <ListSectionHeader
                 title="Lista de Variáveis"
                 count={filtered.length}
-                description="Acompanhe placeholders, aliases, nomenclatura interna e campos reutilizáveis"
+                description="Acompanhe marcadores, apelidos, nomenclatura interna e campos reutilizáveis"
                 className="px-4 pt-4"
                 action={
                   <div className="flex flex-wrap items-center justify-end gap-3">
@@ -665,7 +665,7 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
                       checked={allSelected}
                       data-state={someSelected && !allSelected ? "indeterminate" : undefined}
                       onCheckedChange={toggleSelectAll}
-                      aria-label="Seleccionar todas"
+                      aria-label="Selecionar todas"
                       data-testid="checkbox-select-all"
                     />
                     <span className="text-xs text-muted-foreground">
@@ -683,7 +683,7 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
                     <TableHead>Nomenclatura Interna</TableHead>
                     <TableHead>Campo</TableHead>
                     <TableHead>Placeholder</TableHead>
-                    <TableHead className="w-28 text-right">Acções</TableHead>
+                    <TableHead className="w-28 text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -708,7 +708,7 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
                           <Checkbox
                             checked={selected.has(v.id)}
                             onCheckedChange={() => toggleSelect(v.id)}
-                            aria-label={`Seleccionar ${v.name}`}
+                            aria-label={`Selecionar ${v.name}`}
                             data-testid={`checkbox-variable-${v.id}`}
                           />
                         </TableCell>
@@ -734,7 +734,7 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
                               size="icon"
                               className="h-8 w-8"
                               onClick={() => handleCopy(v.placeholder)}
-                              title="Copiar placeholder"
+                              title="Copiar marcador"
                               data-testid={`button-copy-variable-${v.id}`}
                             >
                               <Copy className="h-3.5 w-3.5" />
@@ -815,8 +815,8 @@ export default function VariableRegistry({ asModal = false, onClose }: VariableR
           <DialogHeader>
             <DialogTitle>Eliminar variáveis</DialogTitle>
             <DialogDescription>
-              Esta acção é irreversível. Serão eliminadas{" "}
-              <strong>{selectedCount}</strong> variável(eis) seleccionada(s).
+              Esta ação é irreversível. Serão eliminadas{" "}
+              <strong>{selectedCount}</strong> variável(eis) selecionada(s).
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

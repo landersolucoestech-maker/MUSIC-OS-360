@@ -151,7 +151,7 @@ export const serviceLeadSchemas: Record<LeadServiceType, ServiceLeadSchema> = {
     fields: [
       ...musicProjectFields,
       field("formatoLancamento", "select", "Formato", "escopo", {
-        options: [{ value: "single", label: "Single" }, { value: "ep", label: "EP" }, { value: "album", label: "Album" }],
+        options: [{ value: "single", label: "Single" }, { value: "ep", label: "EP" }, { value: "album", label: "Álbum" }],
       }),
       field("quantidadeFaixas", "number", "Quantidade de faixas", "escopo"),
     ],

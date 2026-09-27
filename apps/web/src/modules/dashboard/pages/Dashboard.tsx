@@ -272,7 +272,7 @@ function OperationalAlerts() {
       variant: "destructive" as const,
     },
     dashboard.overdue_invoices_count > 0 && {
-      label: "Invoices vencidas",
+      label: "Notas fiscais vencidas",
       value: dashboard.overdue_invoices_count,
       href: "/accounting/nota-fiscal",
       icon: AlertTriangle,
@@ -307,7 +307,7 @@ function OperationalAlerts() {
       variant: "info" as const,
     },
     dashboard.pending_distribution_setups > 0 && {
-      label: "Setups de distribuição pendentes",
+      label: "Configurações de distribuição pendentes",
       value: dashboard.pending_distribution_setups,
       href: "/lancamentos",
       icon: Upload,
@@ -426,7 +426,7 @@ export default function Dashboard() {
     push({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Transação atualizada", description: "Alterações salvas", badge: "Accounting", badgeVariant: "secondary" }),
   );
   useWsEvent("finance.calculated", () =>
-    push({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Apuração concluída", description: "Accounting recalculado", badge: "Accounting", badgeVariant: "default" }),
+    push({ icon: <DollarSign className="h-3.5 w-3.5" />, label: "Apuração concluída", description: "Contabilidade recalculada", badge: "Accounting", badgeVariant: "default" }),
   );
   useWsEvent("audit.entry.created", (d) => {
     const ev = d as { action?: string; entity?: string };
@@ -497,7 +497,7 @@ export default function Dashboard() {
       },
       {
         event: "musicos360:FINANCE_CALCULATED",
-        fn: () => pushRef.current({ icon: <Radio className="h-3.5 w-3.5" />, label: "Apuração concluída", description: "Accounting recalculado", badge: "Accounting", badgeVariant: "default" }),
+        fn: () => pushRef.current({ icon: <Radio className="h-3.5 w-3.5" />, label: "Apuração concluída", description: "Contabilidade recalculada", badge: "Accounting", badgeVariant: "default" }),
       },
     ];
 

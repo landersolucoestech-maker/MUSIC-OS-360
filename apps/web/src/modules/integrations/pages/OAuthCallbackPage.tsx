@@ -205,7 +205,7 @@ export default function OAuthCallbackPage() {
         {state.status === "no_code" && (
           <>
             <h2 style={{ margin: "0 0 8px", fontSize: 18, fontWeight: 700, color: "#374151" }}>
-              Página de Callback OAuth
+              Retorno da autorização
             </h2>
             <p style={{ color: "#6b7280", fontSize: 14, margin: 0 }}>
               Esta página recebe o retorno das plataformas após autorização OAuth.

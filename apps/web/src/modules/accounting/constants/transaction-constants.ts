@@ -451,7 +451,7 @@ export const investmentTechnologyItems = [
 
 export const investmentMarketingItems = [
   { value: "branding", label: "Branding" },
-  { value: "website", label: "Website" },
+  { value: "website", label: "Site" },
   { value: "redes-sociais", label: "Redes sociais" },
   { value: "assessoria-imprensa", label: "Assessoria de imprensa" },
   { value: "material-promocional", label: "Material promocional" },

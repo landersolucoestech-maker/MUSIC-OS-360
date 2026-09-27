@@ -66,7 +66,7 @@ export function ContactModal() {
         <div className="space-y-4">
           {/* Honeypot — invisível para humanos, bots preenchem */}
           <div className="hidden" aria-hidden="true">
-            <Label htmlFor="contact-website">Website</Label>
+            <Label htmlFor="contact-website">Site</Label>
             <Input id="contact-website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
           </div>
 

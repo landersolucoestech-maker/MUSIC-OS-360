@@ -112,7 +112,7 @@ function DistributorsField({
                       value={entry?.email ?? ""}
                       onChange={(e) => updateEmail(dist.id, e.target.value)}
                       type="email"
-                      placeholder="Email de share…"
+                      placeholder="E-mail de share…"
                       className="h-8 text-sm"
                       data-testid="input-geral-dist-email-outros"
                     />
@@ -139,7 +139,7 @@ function DistributorsField({
 
       {value.some((d) => d.id === "outros" && !(d.customName ?? "").trim()) && (
         <p className="text-xs text-muted-foreground ml-6">
-          Preencha o nome da distribuidora para activar o email de share.
+          Preencha o nome da distribuidora para ativar o e-mail de share.
         </p>
       )}
     </>

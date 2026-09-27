@@ -196,7 +196,7 @@ const ContractForm = ({
                 <SelectContent>
                   {legacyServiceTypeLabel && (
                     <SelectItem value={serviceTypeValue!} disabled className="text-muted-foreground">
-                      {legacyServiceTypeLabel} (type anterior)
+                      {legacyServiceTypeLabel} (tipo anterior)
                     </SelectItem>
                   )}
                   {typesWithTemplates.length === 0 ? (
@@ -485,7 +485,7 @@ const ContractForm = ({
                     )}
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs text-muted-foreground">Email *</Label>
+                    <Label className="text-xs text-muted-foreground">E-mail *</Label>
                     <Input
                       {...form.register(`signers.${index}.email`)}
                       placeholder="email@exemplo.com"

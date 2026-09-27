@@ -180,7 +180,7 @@ export default function ContractTemplates() {
 
   if (isLoading) {
     return (
-      <MainLayout title="Templates de Contrato" description="Motor semantico de templates contratuais">
+      <MainLayout title="Templates de Contrato" description="Motor semântico de templates contratuais">
         <div className="flex items-center justify-center h-40">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
@@ -208,7 +208,7 @@ export default function ContractTemplates() {
         <div className="grid gap-4 md:grid-cols-4">
           {[
             { title: "Total de Templates", value: templates.length, sub: "todos os tipos", icon: FileText },
-            { title: "Semanticos (IA)", value: semanticCount, sub: "gerados por IA", icon: Sparkles },
+            { title: "Semânticos (IA)", value: semanticCount, sub: "gerados por IA", icon: Sparkles },
             { title: "Ativos", value: activeCount, sub: "disponiveis", icon: FileText },
             { title: "Variáveis Mapeadas", value: totalVars, sub: "em todos os templates", icon: Sparkles },
           ].map(({ title, value, sub, icon: Icon }) => (
@@ -253,8 +253,8 @@ export default function ContractTemplates() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os tipos</SelectItem>
-              <SelectItem value="semantico">Semantico (IA)</SelectItem>
-              <SelectItem value="padrao">Padrao</SelectItem>
+              <SelectItem value="semantico">Semântico (IA)</SelectItem>
+              <SelectItem value="padrao">Padrão</SelectItem>
             </SelectContent>
           </Select>
 

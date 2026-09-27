@@ -204,10 +204,10 @@ export function LeadViewModal({
             <Row icon={User}      label="Nome"                  value={lead.nomeCompleto}                        />
             <Row icon={Building2} label="Empresa / Contratante" value={lead.empresa}                             />
             <Row icon={Briefcase} label="Cargo / Função"        value={str("cargo")}                             />
-            <Row icon={Mail}      label="Email"                  value={lead.email}                               />
+            <Row icon={Mail}      label="E-mail"                  value={lead.email}                               />
             <Row icon={Phone}     label="Telefone / WhatsApp"   value={lead.whatsapp}                            />
             <Row icon={Instagram} label="Instagram"             value={lead.instagram}                           />
-            <Row icon={Globe}     label="Website"               value={str("website")}                           />
+            <Row icon={Globe}     label="Site"               value={str("website")}                           />
             <Row icon={MapPin}    label="Endereço"              value={str("endereco")}                          />
             <Row icon={MapPin}    label="Cidade"                value={lead.city}                                />
             <Row icon={Hash}      label="Estado"                value={lead.state}                               />

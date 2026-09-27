@@ -175,7 +175,7 @@ function PlanFormDialog({ plan, onSave, onClose }: FormDialogProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[11px] text-muted-foreground  tracking-wider">Storage (GB)</Label>
+              <Label className="text-[11px] text-muted-foreground  tracking-wider">Armazenamento (GB)</Label>
               <Input
                 type="number"
                 value={form.max_storage_gb}
@@ -193,16 +193,16 @@ function PlanFormDialog({ plan, onSave, onClose }: FormDialogProps) {
             </Label>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg bg-muted border border-border px-2.5 py-1.5" data-testid="display-plan-stripe-product">
-                <p className="text-[9px] text-muted-foreground/70 tracking-wider">PRODUCT ID</p>
+                <p className="text-[9px] text-muted-foreground/70 tracking-wider">ID DO PRODUTO (STRIPE)</p>
                 <p className="text-[12px] text-foreground font-mono truncate">{form.stripe_product_id || "—"}</p>
               </div>
               <div className="rounded-lg bg-muted border border-border px-2.5 py-1.5" data-testid="display-plan-stripe-price">
-                <p className="text-[9px] text-muted-foreground/70 tracking-wider">PRICE ID</p>
+                <p className="text-[9px] text-muted-foreground/70 tracking-wider">ID DO PREÇO (STRIPE)</p>
                 <p className="text-[12px] text-foreground font-mono truncate">{form.stripe_price_id || "—"}</p>
               </div>
             </div>
             <p className="text-[10px] text-muted-foreground/70">
-              Criados/atualizados no Stripe ao salvar. Preço alterado → novo Price (o antigo é desativado).
+              Criados/atualizados no Stripe ao salvar. Preço alterado → novo preço no Stripe (o anterior é desativado).
             </p>
           </div>
 
@@ -246,7 +246,7 @@ function PlanFormDialog({ plan, onSave, onClose }: FormDialogProps) {
                       />
                       <span className="flex-1">{it.name}</span>
                       {it.technicalCapability !== "implemented" && (
-                        <span className="text-[10px] text-yellow-500">sem adapter</span>
+                        <span className="text-[10px] text-yellow-500">sem conector</span>
                       )}
                     </label>
                   );
@@ -359,7 +359,7 @@ function ViewPlanDialog({ plan, onClose }: { plan: AdminPlan; onClose: () => voi
               { label: "MRR", value: fmtBRL(plan.mrr) },
               { label: "Máx. Usuários", value: plan.max_users === 999 ? "Ilimitado" : plan.max_users },
               { label: "Máx. Artistas", value: plan.max_artists === 999 ? "Ilimitados" : plan.max_artists },
-              { label: "Storage", value: plan.max_storage_gb === 1000 ? "1 TB" : `${plan.max_storage_gb} GB` },
+              { label: "Armazenamento", value: plan.max_storage_gb === 1000 ? "1 TB" : `${plan.max_storage_gb} GB` },
             ].map(({ label, value }) => (
               <div key={label} className="rounded-xl bg-muted border border-border p-3">
                 <p className="text-[10px] text-muted-foreground mb-1">{label}</p>

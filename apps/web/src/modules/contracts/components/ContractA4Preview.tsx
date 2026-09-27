@@ -6,7 +6,7 @@ export function HighlightedPreview({ text }: { text: string }) {
   if (!text.trim()) {
     return (
       <p className="text-muted-foreground/50 text-xs italic select-none">
-        O preview aparece aqui enquanto escreve…
+        A pré-visualização aparece aqui enquanto você escreve…
       </p>
     );
   }
@@ -76,7 +76,7 @@ export function A4Preview({ headerImage, content, footerImage }: A4PreviewProps)
       <div className="h-full flex flex-col items-center justify-center gap-3 text-center text-muted-foreground">
         <FileText className="h-12 w-12 opacity-20" />
         <div>
-          <p className="text-sm font-medium">Preview do documento</p>
+          <p className="text-sm font-medium">Pré-visualização do documento</p>
           <p className="text-xs mt-1 text-muted-foreground/70">
             Preencha o conteúdo na aba Template para visualizar aqui.
           </p>

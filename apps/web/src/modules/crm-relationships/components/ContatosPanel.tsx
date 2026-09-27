@@ -178,13 +178,13 @@ export const ContatosPanel = forwardRef<ContatosPanelHandle, Record<string, neve
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por nome, empresa, email, telefone ou cidade"
+            placeholder="Buscar por nome, empresa, e-mail, telefone ou cidade"
             className="h-8 flex-1 text-sm"
             data-testid="contatos-search"
           />
           <Select value={filtro} onValueChange={(v) => setFiltro(v as FiltroTipo)}>
             <SelectTrigger className="h-8 w-auto min-w-[140px] text-sm" data-testid="contatos-filtro-type">
-              <SelectValue placeholder="Filtrar por type" />
+              <SelectValue placeholder="Filtrar por tipo" />
             </SelectTrigger>
             <SelectContent>
               {FILTROS.map((f) => (

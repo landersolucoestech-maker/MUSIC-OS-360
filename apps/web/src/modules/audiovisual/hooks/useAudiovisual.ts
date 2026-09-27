@@ -160,13 +160,13 @@ export function useShotMutations(projectId: string) {
     create: useMutation({
       mutationFn: (data: Parameters<typeof audiovisualService.shots.create>[1]) =>
         audiovisualService.shots.create(projectId, data),
-      onSuccess: () => { invalidate(); toast.success("Shot adicionado"); },
+      onSuccess: () => { invalidate(); toast.success("Plano adicionado"); },
       onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     update: useMutation({
       mutationFn: ({ id, data }: { id: string; data: Parameters<typeof audiovisualService.shots.update>[1] }) =>
         audiovisualService.shots.update(id, data),
-      onSuccess: () => { invalidate(); toast.success("Shot atualizado"); },
+      onSuccess: () => { invalidate(); toast.success("Plano atualizado"); },
       onError:   (e: Error) => {
         if (handleConcurrencyConflict(e, "shot")) return;
         toast.error(toUserMessage(e));
@@ -179,7 +179,7 @@ export function useShotMutations(projectId: string) {
     }),
     remove: useMutation({
       mutationFn: (id: string) => audiovisualService.shots.delete(id),
-      onSuccess: () => { invalidate(); toast.success("Shot removido"); },
+      onSuccess: () => { invalidate(); toast.success("Plano removido"); },
       onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
   };

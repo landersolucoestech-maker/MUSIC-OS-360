@@ -97,7 +97,7 @@ describe("Admin portal → Settings → Integrations (real component)", () => {
 
     // clicksign: draft + no adapter — invisible to the tenant, visible here.
     const row = await screen.findByTestId("admin-integration-clicksign");
-    expect(within(row).getByText("Sem adapter")).toBeInTheDocument();
+    expect(within(row).getByText("Sem conector")).toBeInTheDocument();
     // And it stays editable: the publication select reflects the real state.
     expect((screen.getByTestId("publication-clicksign") as HTMLSelectElement).value).toBe("coming_soon");
     // Governable audiences present.

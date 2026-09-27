@@ -69,7 +69,7 @@ export function DetectionDetailModal({ detection, open, onOpenChange }: Props) {
               )}
               <Row
                 icon={<Link2 className="h-3.5 w-3.5" />}
-                label="Match ECAD"
+                label="Correspondência ECAD"
                 value={
                   catalog?.cod_ecad
                     ? <span className="text-success font-semibold text-xs">✓ Obra vinculada com cód. ECAD</span>

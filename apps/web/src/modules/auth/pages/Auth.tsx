@@ -35,7 +35,7 @@ import { loginSchema, forgotSchema, type LoginData, type ForgotData } from "./lo
 function AuthEnvironmentBadge() {
   return (
     <p className="mt-4 text-center text-[10px] uppercase tracking-wider text-muted-foreground/60">
-      Ambiente: {authEnvironmentLabel()} · Projeto: {maskedSupabaseRef()} · Build: {BUILD_COMMIT_SHA}
+      Ambiente: {authEnvironmentLabel()} · Projeto: {maskedSupabaseRef()} · Versão: {BUILD_COMMIT_SHA}
     </p>
   );
 }
@@ -343,7 +343,7 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
       const { error } = await resetPassword(data.email);
       if (error) toast.error(describeAuthError(error, "Não foi possível enviar o e-mail de recuperação. Tente novamente."));
       else {
-        toast.success("Email enviado! Verifique sua caixa de entrada.");
+        toast.success("E-mail enviado! Verifique sua caixa de entrada.");
         onBack();
       }
     } finally {

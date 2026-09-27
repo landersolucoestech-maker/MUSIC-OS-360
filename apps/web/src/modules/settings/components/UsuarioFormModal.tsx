@@ -22,7 +22,7 @@ interface UsuarioFormModalProps {
 const NIVEIS_ACESSO = [
   { value: "admin_master", label: "Administrador Master", description: "Acesso total a todos os módulos e configurações do sistema." },
   { value: "ar_gestao", label: "A&R / Gestão Artística", description: "Gestão de artistas, projetos, lançamentos e repertório." },
-  { value: "financeiro_contabil", label: "Accounting / Contábil", description: "Acesso ao módulo Accounting: transações e notas fiscais." },
+  { value: "financeiro_contabil", label: "Contabilidade", description: "Acesso ao módulo de Contabilidade: transações e notas fiscais." },
   { value: "juridico", label: "Jurídico", description: "Gestão de contratos, licenciamentos e questões legais." },
   { value: "marketing", label: "Marketing", description: "Campanhas, métricas e gestão de conteúdo promocional." },
   { value: "artista", label: "Artista", description: "Acesso restrito aos próprios dados e projetos vinculados." },
@@ -134,7 +134,7 @@ export function UsuarioFormModal({ open, onOpenChange, usuario, mode }: UsuarioF
                 />
 
                 <FormField
-                  label="Email"
+                  label="E-mail"
                   required
                   type="email"
                   {...register("email")}

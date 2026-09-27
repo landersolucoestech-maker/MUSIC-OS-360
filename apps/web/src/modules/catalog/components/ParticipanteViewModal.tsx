@@ -124,7 +124,7 @@ export function ParticipanteViewModal({
               <Input
                 value={dataNascimento}
                 disabled
-                placeholder="DD/MM/YYYY"
+                placeholder="DD/MM/AAAA"
                 className="bg-muted/30 text-sm opacity-100 cursor-not-allowed"
                 data-testid="input-participante-data-nascimento"
               />

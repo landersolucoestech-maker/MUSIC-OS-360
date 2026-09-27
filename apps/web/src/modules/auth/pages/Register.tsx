@@ -216,7 +216,7 @@ export default function Register() {
         toast.error(describeAuthError(error, "Erro ao criar conta. Tente novamente."));
         return;
       }
-      toast.success("Cadastro enviado. Confirme seu email para ativar a conta.");
+      toast.success("Cadastro enviado. Confirme seu e-mail para ativar a conta.");
       navigate("/login", { replace: true });
     } catch (err: unknown) {
       toast.error(toUserMessage(err, "Erro ao criar conta. Tente novamente."));
@@ -392,7 +392,7 @@ export default function Register() {
                     onChange={(e) => form1.setValue("phone", phoneMask(e.target.value))}
                   />
                 </Field>
-                <Field label="Email Corporativo" error={form1.formState.errors.corporateEmail?.message}>
+                <Field label="E-mail corporativo" error={form1.formState.errors.corporateEmail?.message}>
                   <input className={inputCls} type="email" placeholder="contato@empresa.com" {...form1.register("corporateEmail")} data-testid="input-corporate-email" />
                 </Field>
               </div>
@@ -408,7 +408,7 @@ export default function Register() {
                 <User className="h-5 w-5 text-primary" />
                 <h2 className="text-base font-semibold text-foreground">Dados do Administrador</h2>
               </div>
-              <p className="text-[12px] text-muted-foreground -mt-2">Este usuário será o owner e admin master da organização.</p>
+              <p className="text-[12px] text-muted-foreground -mt-2">Este usuário será o proprietário e administrador principal da organização.</p>
 
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Nome Completo" error={form2.formState.errors.fullName?.message}>
@@ -419,7 +419,7 @@ export default function Register() {
                 </Field>
               </div>
 
-              <Field label="Email de Acesso" error={form2.formState.errors.email?.message}>
+              <Field label="E-mail de acesso" error={form2.formState.errors.email?.message}>
                 <input className={inputCls} type="email" placeholder="admin@empresa.com" {...form2.register("email")} data-testid="input-admin-email" />
               </Field>
 
@@ -501,7 +501,7 @@ export default function Register() {
                 />
               </Field>
 
-              <Field label="Slug (URL)" error={form3.formState.errors.slug?.message}>
+              <Field label="Endereço do workspace (URL)" error={form3.formState.errors.slug?.message}>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">musicos360.com/</span>
                   <input

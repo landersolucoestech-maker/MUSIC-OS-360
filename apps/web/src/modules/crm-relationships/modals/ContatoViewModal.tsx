@@ -174,7 +174,7 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
               <>
                 <Row icon={User}      label="Nome Completo" value={contact.name} />
                 <Row icon={Hash}      label="CPF"           value={str("cpf")} />
-                <Row icon={Mail}      label="Email"         value={contact.email} />
+                <Row icon={Mail}      label="E-mail"         value={contact.email} />
                 <Row icon={Phone}     label="Telefone"      value={contact.phone || contact.whatsapp} />
                 <Row icon={Instagram} label="Instagram"     value={contact.instagram} />
                 <Row icon={Briefcase} label="Função"        value={funcao} />
@@ -184,7 +184,7 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
                 <Row icon={Building2} label="Razão Social"  value={razaoSocial} />
                 <Row icon={Building2} label="Nome Fantasia" value={nomeFantasia} />
                 <Row icon={Hash}      label="CNPJ"          value={str("cnpj")} />
-                <Row icon={Mail}      label="Email"         value={contact.email} />
+                <Row icon={Mail}      label="E-mail"         value={contact.email} />
                 <Row icon={Instagram} label="Instagram"     value={contact.instagram} />
                 <Row icon={Phone}     label="Telefone"      value={contact.phone || contact.whatsapp} />
               </>
@@ -213,7 +213,7 @@ export function ContatoViewModal({ open, onOpenChange, contact, onEdit }: Contat
             <Section title="Responsável">
               <Row icon={User}      label="Nome do Responsável"     value={respNome} />
               <Row icon={Briefcase} label="Cargo do Responsável"    value={respCargo} />
-              <Row icon={Mail}      label="Email do Responsável"    value={respEmail} />
+              <Row icon={Mail}      label="E-mail do responsável"    value={respEmail} />
               <Row icon={Phone}     label="Telefone do Responsável" value={respTelefone} />
             </Section>
           )}

@@ -33,7 +33,7 @@ export function RightsKPICards({ total, completed, pending, divergences, matchRa
     { label: "Concluídas",    value: fmtNum(completed),    subvalue: `${total > 0 ? Math.round((completed / total) * 100) : 0}% do total`, icon: CheckCircle, accent: "success" },
     { label: "Pendentes",     value: fmtNum(pending),     subvalue: "aguardam análise",            icon: Clock,         accent: "warning" },
     { label: "Divergências",  value: fmtNum(divergences),  subvalue: "sem vínculo/cód. ECAD",       icon: AlertTriangle, accent: "destructive" },
-    { label: "Match Rate",    value: `${matchRate}%`,       subvalue: "vinculadas ao catálogo",      icon: TrendingUp,    accent: matchRate >= 80 ? "success" : matchRate >= 60 ? "warning" : "destructive" },
+    { label: "Taxa de correspondência",    value: `${matchRate}%`,       subvalue: "vinculadas ao catálogo",      icon: TrendingUp,    accent: matchRate >= 80 ? "success" : matchRate >= 60 ? "warning" : "destructive" },
     { label: "Relatórios ECAD", value: fmtNum(totalEcadReports), subvalue: "importados",           icon: DollarSign,    accent: "primary" },
     { label: "Valor Recebido", value: fmtBRL(receivedEcadAmount), subvalue: "ECAD concluído",          icon: DollarSign,    accent: "success" },
   ];

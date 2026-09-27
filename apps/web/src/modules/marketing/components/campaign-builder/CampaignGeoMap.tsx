@@ -100,7 +100,7 @@ export function CampaignGeoMap({
           value={radius}
           onChange={(event) => setRadius(Number(event.target.value))}
           className="h-1 min-w-[120px] flex-1 accent-primary"
-          aria-label="Raio em quilometros"
+          aria-label="Raio em quilômetros"
         />
         <span className="w-14 text-right text-xs font-medium tabular-nums">{radius} km</span>
       </div>

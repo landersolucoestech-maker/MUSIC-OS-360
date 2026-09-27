@@ -131,7 +131,7 @@ export function getServicosForTipoLead(
 }
 
 export const ORIGEM_LEAD_OPTIONS = [
-  { value: "website",          label: "Website"           },
+  { value: "website",          label: "Site"           },
   { value: "instagram",        label: "Instagram"         },
   { value: "facebook",         label: "Facebook"          },
   { value: "google_ads",       label: "Google Ads"        },
@@ -144,7 +144,7 @@ export const ORIGEM_LEAD_OPTIONS = [
   { value: "parceria",         label: "Parceria"          },
   { value: "prospeccao_ativa", label: "Prospecção ativa"  },
   { value: "telefone",         label: "Telefone"          },
-  { value: "email",            label: "Email"             },
+  { value: "email",            label: "E-mail"             },
   { value: "outro",            label: "Outro"             },
 ] as const satisfies ReadonlyArray<Option>;
 

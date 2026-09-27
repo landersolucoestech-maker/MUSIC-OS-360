@@ -22,7 +22,7 @@ const NAV_ITEMS = [
   { label: "Clientes",        href: "/admin/clients",   icon: Building2 },
   { label: "Planos",          href: "/admin/plans",     icon: Tag },
   { label: "Assinaturas",     href: "/admin/subscriptions", icon: Receipt },
-  { label: "Logs & Auditoria",href: "/admin/audit",     icon: ScrollText },
+  { label: "Registros e auditoria",href: "/admin/audit",     icon: ScrollText },
   { label: "Suporte",         href: "/admin/support",   icon: HeadphonesIcon },
   { label: "Base de Conhecimento", href: "/admin/knowledge", icon: BookOpen },
   { label: "Configurações",   href: "/admin/configuracoes", icon: Settings },

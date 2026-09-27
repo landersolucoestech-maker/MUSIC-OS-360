@@ -68,7 +68,7 @@ export function DocumentTimeline({ logs, className = "" }: DocumentTimelineProps
         className={`flex flex-col items-center justify-center py-8 text-muted-foreground text-sm gap-2 ${className}`}
       >
         <Clock className="h-8 w-8 opacity-30" />
-        <p>Nenhum evento registado ainda.</p>
+        <p>Nenhum evento registrado ainda.</p>
       </div>
     );
   }

@@ -172,14 +172,14 @@ function DiagnosisReview({ diagnosis }: { diagnosis: TrackDiagnosis }) {
         <DiagnosisValue label="Subgênero detectado" value={diagnosis.subgenre} />
         <DiagnosisValue label="BPM detectado" value={diagnosis.bpm} />
         <DiagnosisValue label="Tonalidade detectada" value={diagnosis.key} />
-        <DiagnosisValue label="Mood detectado" value={diagnosis.mood} />
+        <DiagnosisValue label="Clima detectado" value={diagnosis.mood} />
         <DiagnosisValue label="Energia" value={diagnosis.energy} />
         <DiagnosisValue label="Tema da letra" value={diagnosis.theme} />
         <DiagnosisValue label="Sentimento" value={diagnosis.sentiment} />
         <DiagnosisValue label="Público-alvo" value={diagnosis.targetAudience} />
         <ReadOnlyList label="Tags editoriais" items={diagnosis.editorialTags} />
         <ReadOnlyList label="Playlists sugeridas" items={diagnosis.playlistFit} />
-        <ReadOnlyList label="Plataformas prioritarias" items={diagnosis.platformPriority} />
+        <ReadOnlyList label="Plataformas prioritárias" items={diagnosis.platformPriority} />
         <DiagnosisValue label="Potencial comercial" value={diagnosis.commercialPotential} />
         <DiagnosisValue label="Potencial viral" value={diagnosis.viralPotential} />
         <DiagnosisValue label="Potencial de sincronização" value={diagnosis.syncPotential} />

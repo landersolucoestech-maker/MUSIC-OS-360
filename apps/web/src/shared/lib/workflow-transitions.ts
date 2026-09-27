@@ -34,10 +34,10 @@ function buildAllowed(defs: RawDef[], currentStatus: string): WorkflowTransition
 
 const RELEASES_DEFS: RawDef[] = [
   { from: 'draft',             to: 'metadata_pending', label: 'Preencher Metadados' },
-  { from: 'metadata_pending',  to: 'assets_pending',   label: 'Enviar Assets' },
+  { from: 'metadata_pending',  to: 'assets_pending',   label: 'Enviar arquivos' },
   { from: 'assets_pending',    to: 'review',           label: 'Enviar para Revisão' },
   { from: 'review',            to: 'approved',         label: 'Aprovar' },
-  { from: 'review',            to: 'assets_pending',   label: 'Solicitar Revisão de Assets' },
+  { from: 'review',            to: 'assets_pending',   label: 'Solicitar revisão de arquivos' },
   { from: 'approved',          to: 'scheduled',        label: 'Agendar Distribuição' },
   { from: 'scheduled',         to: 'distributed',      label: 'Confirmar Distribuição' },
   { from: 'distributed',       to: 'released',         label: 'Publicado nas Plataformas' },

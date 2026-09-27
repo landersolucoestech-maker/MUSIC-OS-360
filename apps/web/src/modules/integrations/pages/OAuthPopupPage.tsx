@@ -478,7 +478,7 @@ function OAuthExperience({
               <IntegrationLogo id={definition.logoId} className="h-12 w-12" imageClassName="h-9 w-9" />
               <div>
                 <strong style={{ display: "block", fontSize: 17 }}>TikTok for Business</strong>
-                <span style={{ color: "#8a8b91", fontSize: 12 }}>Business Center authorization</span>
+                <span style={{ color: "#8a8b91", fontSize: 12 }}>Autorização do Business Center</span>
               </div>
             </div>
             <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#25f4ee", boxShadow: "5px 0 0 #fe2c55" }} />

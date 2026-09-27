@@ -160,7 +160,7 @@ export function CampaignBuilderModal({
                   </div>
                 </div>
                 <p className="mt-3 text-xs text-muted-foreground">
-                  Diario estimado: {state.budget.currency} {state.budget.dailyBudget.toLocaleString("pt-BR")}
+                  Diário estimado: {state.budget.currency} {state.budget.dailyBudget.toLocaleString("pt-BR")}
                 </p>
               </section>
 
@@ -212,13 +212,13 @@ function getDurationDays(startDate: string, endDate: string) {
 
 function CampaignSidePreview({ state }: { state: CampaignBuilderState }) {
   const creative = state.creatives[0] ?? null;
-  const placementLabel = creative ? PLACEMENT_LABEL[creative.placement] : "Preview criativo";
+  const placementLabel = creative ? PLACEMENT_LABEL[creative.placement] : "Pré-visualização do criativo";
   const ratio = creative ? expectedRatio(creative.placement) : "9:16";
 
   return (
     <section className="rounded-lg border border-border bg-card p-4">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-sm font-semibold">Preview</h3>
+        <h3 className="text-sm font-semibold">Pré-visualização</h3>
         <span className="rounded border border-border px-2 py-0.5 text-[11px] text-muted-foreground">{ratio}</span>
       </div>
 
@@ -242,7 +242,7 @@ function CampaignSidePreview({ state }: { state: CampaignBuilderState }) {
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground">
-        O preview usa o primeiro criativo cadastrado. A etapa Preview continua com a lista completa.
+        A pré-visualização usa o primeiro criativo cadastrado. A etapa de pré-visualização continua com a lista completa.
       </p>
     </section>
   );

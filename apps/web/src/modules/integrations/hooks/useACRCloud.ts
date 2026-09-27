@@ -86,10 +86,10 @@ export function useACRCloudIdentify() {
     onSuccess: (data) => {
       if (data.matched && data.best_match) {
         toast.success(
-          `Musica identificada: "${data.best_match.title}" - ${data.best_match.artista} (${data.best_match.score}% confianca)`,
+          `Musica identificada: "${data.best_match.title}" - ${data.best_match.artista} (${data.best_match.score}% confiança)`,
         );
       } else {
-        toast.info("Nenhuma correspondencia encontrada para o trecho de audio.");
+        toast.info("Nenhuma correspondência encontrada para o trecho de áudio.");
       }
     },
     onError: (err) => {
@@ -192,7 +192,7 @@ export function useACRCloudCheckCopyright() {
       if (data.protected) {
         toast.info(`Obra protegida. Detentores: ${data.rights_holders.map((r) => r.name).join(", ")}.`);
       } else {
-        toast.success("Obra sem restricoes de copyright identificadas.");
+        toast.success("Obra sem restrições de copyright identificadas.");
       }
     },
     onError: (err) => {
@@ -205,7 +205,7 @@ export function useACRCloudMonitorTrack() {
   return useMutation<{ job_id: string; status: string }, Error, { isrc?: string; title: string; artist: string }>({
     mutationFn: (input) => callAcrcloudApi("monitor", input),
     onSuccess: (data) => {
-      toast.success(`Monitoramento ativo (job: ${data.job_id}).`);
+      toast.success("Monitoramento ativo.");
     },
     onError: (err) => {
       toast.error(`Erro ao iniciar monitoramento: ${toUserMessage(err)}`);

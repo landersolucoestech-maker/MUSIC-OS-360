@@ -104,7 +104,7 @@ export const contactTypeSchemas: Record<ContactSchemaKey, ContactTypeSchema> = {
   ]),
   agency: createContactTypeSchema([
     { name: "specialty", type: "text", label: "Especialidade" },
-    { name: "portfolioUrl", type: "url", label: "Portfolio", masks: "url" },
+    { name: "portfolioUrl", type: "url", label: "Portfólio", masks: "url" },
   ]),
   media: createContactTypeSchema([
     { name: "mediaChannel", type: "text", label: "Canal" },
@@ -143,16 +143,16 @@ export const contactTypeSchemas: Record<ContactSchemaKey, ContactTypeSchema> = {
     { name: "certifications", type: "textarea", label: "Certificações" },
   ], ["technicalRole"]),
   videomaker: createContactTypeSchema([
-    { name: "portfolio", type: "url", label: "Portfolio", masks: "url" },
+    { name: "portfolio", type: "url", label: "Portfólio", masks: "url" },
     { name: "equipment", type: "textarea", label: "Equipamentos" },
   ]),
   photographer: createContactTypeSchema([
-    { name: "portfolio", type: "url", label: "Portfolio", masks: "url" },
+    { name: "portfolio", type: "url", label: "Portfólio", masks: "url" },
     { name: "coverageStyle", type: "text", label: "Estilo de cobertura" },
   ]),
   designer: createContactTypeSchema([
     { name: "designFocus", type: "text", label: "Foco de design" },
-    { name: "portfolio", type: "url", label: "Portfolio", masks: "url" },
+    { name: "portfolio", type: "url", label: "Portfólio", masks: "url" },
   ]),
   corporateClient: createContactTypeSchema([
     { name: "decisionMaker", type: "text", label: "Decisor" },

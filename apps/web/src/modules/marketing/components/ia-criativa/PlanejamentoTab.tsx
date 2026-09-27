@@ -44,7 +44,7 @@ export function PlanejamentoTab({
       result={
         <div className="space-y-4">
           <ResultList title={`Plano de ${period} dias`} items={plan.items.map((item) => `${item.title} · D+${item.dueInDays} · ${item.channel} · ${item.priority}`)} />
-          <p className="text-xs text-muted-foreground">Cada item planejado esta pronto para virar tarefa no modulo Tarefas quando a integracao de criacao operacional estiver conectada.</p>
+          <p className="text-xs text-muted-foreground">Cada item planejado esta pronto para virar tarefa no modulo Tarefas quando a integração de criação operacional estiver conectada.</p>
         </div>
       }
     >

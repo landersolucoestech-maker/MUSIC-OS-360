@@ -84,7 +84,7 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "1:N",
         via:         "contrato_id",
         required:    false,
-        description: "Contrato activo vinculado ao artista",
+        description: "Contrato ativo vinculado ao artista",
       },
       {
         target:      "Obra",
@@ -98,7 +98,7 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:N",
         via:         "Lancamento.artista_ids[]",
         required:    false,
-        description: "Artistas participantes num lançamento",
+        description: "Artistas participantes em um lançamento",
       },
       {
         target:      "ArtistaRelacionamento",
@@ -415,7 +415,7 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "1:N",
         via:         "Contato.cliente_id",
         required:    false,
-        description: "Contactos associados a este cliente",
+        description: "Contatos associados a este cliente",
       },
     ],
     description:
@@ -572,14 +572,14 @@ export const ENTITY_CATALOG: Record<string, EntityDefinition> = {
         cardinality: "N:1",
         via:         "obra_id",
         required:    false,
-        description: "Obra cujo uso está a ser contestado",
+        description: "Obra cujo uso está sendo contestado",
       },
       {
         target:      "Fonograma",
         cardinality: "N:1",
         via:         "fonograma_id",
         required:    false,
-        description: "Fonograma cujo uso está a ser contestado",
+        description: "Fonograma cujo uso está sendo contestado",
       },
     ],
     description:

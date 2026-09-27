@@ -82,7 +82,7 @@ export default function CategoryRegistry({
     const slug = autoSlug ? toSlug(label) : newValue.trim() || toSlug(label);
     const dupe = categories.find((c) => c.value === slug);
     if (dupe) {
-      toast.error(`Já existe uma categoria com o slug "${slug}"`);
+      toast.error(`Já existe uma categoria com o identificador "${slug}"`);
       return;
     }
     addCategory(label, slug, newDesc.trim() || undefined);
@@ -116,7 +116,7 @@ export default function CategoryRegistry({
       (c) => c.value === slug && c.id !== editing.id,
     );
     if (dupe) {
-      toast.error(`Slug "${slug}" já está a ser usado por outra categoria`);
+      toast.error(`O identificador "${slug}" já está em uso por outra categoria`);
       return;
     }
     updateCategory(editing.id, {
@@ -192,10 +192,10 @@ export default function CategoryRegistry({
         if (added > 0) {
           toast.success(`${added} categoria(s) importada(s)${skipped > 0 ? ` · ${skipped} ignorada(s)` : ""}`);
         } else {
-          toast.warning(skipped > 0 ? `${skipped} linha(s) ignorada(s) (slugs duplicados ou Nome vazio)` : "Ficheiro sem linhas válidas");
+          toast.warning(skipped > 0 ? `${skipped} linha(s) ignorada(s) (slugs duplicados ou Nome vazio)` : "Arquivo sem linhas válidas");
         }
       } catch {
-        toast.error("Erro ao ler o ficheiro XLSX");
+        toast.error("Erro ao ler o arquivo XLSX");
       }
     };
     reader.readAsArrayBuffer(file);
@@ -342,7 +342,7 @@ export default function CategoryRegistry({
       {/* Counter */}
       <p className="text-xs text-muted-foreground">
         {filtered.length} categoria{filtered.length !== 1 ? "s" : ""}
-        {search ? ` para "${search}"` : " no registo"}
+        {search ? ` para "${search}"` : " no registro"}
       </p>
 
       {/* List */}
@@ -438,7 +438,7 @@ export default function CategoryRegistry({
                     data-testid="button-confirm-edit-category"
                   >
                     <Check className="h-3 w-3 mr-1" />
-                    Guardar
+                    Salvar
                   </Button>
                 </div>
               </div>

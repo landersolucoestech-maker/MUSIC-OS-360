@@ -148,7 +148,7 @@ function buildOverviewSummary(ctrl: ReturnType<typeof useCentralAnaliticaMarketi
 
   return [
     { id: "audience", label: "Audiência total", value: formatMetric(kpis.get("audience")?.value, "compact") },
-    { id: "views", label: "Views totais/mês", value: formatMetric(kpis.get("views")?.value, "compact") },
+    { id: "views", label: "Visualizações totais/mês", value: formatMetric(kpis.get("views")?.value, "compact") },
     { id: "engagement", label: "Engajamento médio", value: formatMetric(kpis.get("engagement")?.value, "compact") },
     { id: "reach", label: "Alcance total", value: formatCompact(reach) },
     { id: "ads-impressions", label: "Impressões Ads", value: formatCompact(adsImpressions) },

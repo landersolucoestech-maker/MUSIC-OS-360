@@ -42,7 +42,7 @@ type TabKey = "usuarios" | "geral" | "email" | "seguranca" | "notificacoes" | "w
 
 const TABS: { key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { key: "geral",        label: "Geral",       icon: Settings  },
-  { key: "email",        label: "Email",        icon: Mail      },
+  { key: "email",        label: "E-mail",       icon: Mail      },
   { key: "seguranca",    label: "Segurança",    icon: Shield    },
   { key: "notificacoes", label: "Notificações", icon: Bell      },
   { key: "webhooks",     label: "Webhooks",     icon: Webhook   },
@@ -61,7 +61,7 @@ const STATUS_CFG: Record<IntegrationStatus, { label: string; color: string; bg: 
 };
 const CAT_LABEL: Record<string, string> = {
   core: "Core da Plataforma", billing: "Billing", email: "E-mail",
-  observability: "Observabilidade", storage: "Storage", api: "API", webhook: "Webhooks",
+  observability: "Observabilidade", storage: "Armazenamento", api: "API", webhook: "Webhooks",
   contracts: "Contratos", rights: "Direitos & Associações", fiscal: "Fiscal",
   social: "Redes Sociais", music_platform: "Plataformas de Música",
   launch_connector: "Conectores de Lançamento", marketing: "Marketing",
@@ -145,7 +145,7 @@ function SaveBar() {
         className="rounded-xl bg-primary/40 px-5 py-2 text-[13px] font-semibold text-primary-foreground/70 cursor-not-allowed"
         data-testid="button-save-settings"
         disabled
-        title="Ainda não implementado -- não há endpoint de configurações da plataforma"
+        title="Ainda não implementado — o servidor não oferece esta configuração"
       >
         Salvar Alterações
       </button>
@@ -177,7 +177,7 @@ function TabGeral() {
       </Section>
       <Section title="Suporte & Contato">
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Email de Suporte"><Inp defaultValue="suporte@musicos360.com" type="email" /></Field>
+          <Field label="E-mail de suporte"><Inp defaultValue="suporte@musicos360.com" type="email" /></Field>
           <Field label="Telefone de Suporte"><Inp defaultValue="+55 11 99999-0000" /></Field>
           <Field label="Endereço" hint="Usado em documentos fiscais e contratos">
             <Inp defaultValue="Rua das Artes, 123 — Sala 45, São Paulo, SP" />
@@ -205,7 +205,7 @@ function TabEmail() {
     <div className="space-y-4">
       <Section title="Configuração SMTP">
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Host SMTP"><Inp placeholder="smtp.exemplo.com" /></Field>
+          <Field label="Servidor SMTP"><Inp placeholder="smtp.exemplo.com" /></Field>
           <Field label="Porta">
             <Sel options={["465 (SSL)", "587 (TLS)", "25 (padrão)"]} defaultValue="587 (TLS)" />
           </Field>
@@ -223,12 +223,12 @@ function TabEmail() {
             </div>
           </Field>
           <Field label="Nome do Remetente"><Inp defaultValue="MUSIC OS 360" /></Field>
-          <Field label="Email do Remetente"><Inp defaultValue="noreply@musicos360.com" type="email" /></Field>
+          <Field label="E-mail do remetente"><Inp defaultValue="noreply@musicos360.com" type="email" /></Field>
         </div>
       </Section>
-      <Section title="Templates de Email">
+      <Section title="Templates de e-mail">
         <div className="space-y-0">
-          <Toggle label="Email de Boas-vindas" desc="Enviado ao criar novo tenant" defaultOn />
+          <Toggle label="E-mail de boas-vindas" desc="Enviado ao criar um novo workspace" defaultOn />
           <Toggle label="Redefinição de Senha" desc="Link seguro com expiração de 1h" defaultOn />
           <Toggle label="Convite de Usuário" desc="Enviado ao convidar membros" defaultOn />
           <Toggle label="Alertas de Contrato" desc="Vencimentos próximos e assinaturas" defaultOn />
@@ -269,7 +269,7 @@ function TabSeguranca() {
       </Section>
       <Section title="Sessão">
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Timeout de Sessão" hint="Usuário é desconectado após inatividade">
+          <Field label="Tempo limite da sessão" hint="Usuário é desconectado após inatividade">
             <Sel options={["30 minutos", "1 hora", "4 horas", "8 horas", "24 horas"]} defaultValue="4 horas" />
           </Field>
           <Field label="Máximo de Sessões Simultâneas">
@@ -277,12 +277,12 @@ function TabSeguranca() {
           </Field>
         </div>
       </Section>
-      <Section title="Auditoria & Logs">
+      <Section title="Auditoria e registros">
         <div className="space-y-0">
           <Toggle label="Registrar todos os logins" defaultOn />
           <Toggle label="Registrar alterações de dados sensíveis" defaultOn />
           <Toggle label="Alertar logins de IPs desconhecidos" defaultOn />
-          <Toggle label="Exportar logs para SIEM externo" />
+          <Toggle label="Exportar registros para SIEM externo" />
         </div>
       </Section>
       <SaveBar />
@@ -295,8 +295,8 @@ function TabNotificacoes() {
     <div className="space-y-4">
       <Section title="Canais de Notificação">
         <div className="space-y-0">
-          <Toggle label="Notificações por Email" defaultOn />
-          <Toggle label="Notificações Push (browser)" defaultOn />
+          <Toggle label="Notificações por e-mail" defaultOn />
+          <Toggle label="Notificações push (navegador)" defaultOn />
           <Toggle label="Notificações In-App" defaultOn />
           <Toggle label="Notificações via Webhook" />
           <Toggle label="Notificações via Slack" />
@@ -305,7 +305,7 @@ function TabNotificacoes() {
       <Section title="Eventos do Sistema">
         <div className="space-y-0">
           <Toggle label="Novo usuário criado" defaultOn />
-          <Toggle label="Novo tenant cadastrado" defaultOn />
+          <Toggle label="Novo workspace cadastrado" defaultOn />
           <Toggle label="Falha de integração" defaultOn />
           <Toggle label="Limite de plano atingido" defaultOn />
           <Toggle label="Contrato próximo do vencimento" defaultOn />
@@ -347,7 +347,7 @@ function TabWebhooks() {
           <Plus className="h-3.5 w-3.5" /> Novo Webhook
         </button>
       </div>
-      <Section title="Endpoints Configurados">
+      <Section title="Webhooks configurados">
         <div className="space-y-3">
           {WEBHOOKS.map(wh => (
             <div key={wh.id} className="rounded-xl border border-border bg-muted p-4 space-y-2" data-testid={`webhook-${wh.id}`}>
@@ -372,7 +372,7 @@ function TabWebhooks() {
         </div>
       </Section>
       <Section title="Segredo de Assinatura">
-        <Field label="Webhook Secret" hint="Usado para validar a autenticidade dos eventos recebidos">
+        <Field label="Segredo do webhook" hint="Usado para validar a autenticidade dos eventos recebidos">
           <div className="flex items-center gap-2">
             <input
               type="password"
@@ -430,7 +430,7 @@ function TabChavesApi() {
       </Section>
       <Section title="Documentação">
         <p className="text-[12px] text-muted-foreground leading-relaxed">
-          Inclua o header <span className="font-sans text-primary/70">Authorization: Bearer sk_live_...</span> em todas as requisições REST.
+          Inclua o cabeçalho <span className="font-sans text-primary/70">Authorization: Bearer sk_live_...</span> em todas as requisições à API REST.
         </p>
         <button className="mt-1 text-[12px] text-primary hover:underline">Ver documentação completa →</button>
       </Section>
@@ -473,7 +473,7 @@ function TabIntegracoes() {
     { label: "Integrações governadas", value: integrations.length, icon: Zap,          color: "text-muted-foreground", bg: "bg-muted" },
     { label: "Publicadas",             value: published,           icon: CheckCircle2, color: "text-emerald-400",      bg: "bg-emerald-500/10" },
     { label: "Em rascunho",            value: draft,               icon: ShieldOff,    color: "text-muted-foreground", bg: "bg-muted" },
-    { label: "Sem adapter",            value: notImplemented,      icon: AlertCircle,  color: "text-yellow-400",       bg: "bg-yellow-500/10" },
+    { label: "Sem conector",           value: notImplemented,      icon: AlertCircle,  color: "text-yellow-400",       bg: "bg-yellow-500/10" },
   ];
 
   const byCategory = integrations.reduce<Record<string, AdminIntegration[]>>((acc, i) => {
@@ -500,7 +500,7 @@ function TabIntegracoes() {
         <p className="text-xs text-muted-foreground">
           {toUserMessage(error, "Erro desconhecido.")} Isto NÃO significa que o
           catálogo está vazio — verifique se a API está no ar e se a rota
-          <code className="mx-1">GET /admin/integrations</code> existe nesta build.
+          <code className="mx-1">GET /admin/integrations</code> existe nesta versão.
         </p>
         <Button variant="outline" size="sm" onClick={() => void refetch()}>Tentar novamente</Button>
       </div>
@@ -511,7 +511,7 @@ function TabIntegracoes() {
     return (
       <p className="text-sm text-muted-foreground" data-testid="admin-integrations-empty">
         A API respondeu com sucesso, mas o catálogo administrativo está vazio.
-        Rode a migration de governança para popular <code>platform_integrations</code>.
+        Execute a migração de governança para popular <code>platform_integrations</code>.
       </p>
     );
   }
@@ -522,7 +522,7 @@ function TabIntegracoes() {
         <h3 className="text-base font-semibold">Governança de integrações</h3>
         <p className="text-sm text-muted-foreground mt-1 max-w-3xl">
           Define o que cada cliente enxerga e pode usar. A capacidade técnica é somente leitura —
-          vem do código, não deste painel: publicar uma integração sem adapter não a faz funcionar,
+          vem do código, não deste painel: publicar uma integração sem conector não a faz funcionar,
           e o backend continua bloqueando o uso.
         </p>
       </div>
@@ -546,10 +546,10 @@ function TabIntegracoes() {
       {contradictions > 0 && (
         <div className="rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-4">
           <p className="text-sm font-medium text-yellow-500">
-            {contradictions} integração(ões) publicada(s) sem adapter implementado
+            {contradictions} integração(ões) publicada(s) sem conector implementado
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            Clientes na audiência enxergam, mas o uso é negado pelo backend. Implemente o adapter
+            Clientes na audiência enxergam, mas o uso é negado pelo backend. Implemente o conector
             ou volte para rascunho.
           </p>
         </div>
@@ -568,9 +568,9 @@ function TabIntegracoes() {
                       <code className="text-xs text-muted-foreground">{row.providerKey}</code>
                       {row.isCore && <Badge variant="info">Core</Badge>}
                       {row.technicalCapability === "implemented"
-                        ? <Badge variant="success">Adapter implementado</Badge>
-                        : <Badge variant="warning">Sem adapter</Badge>}
-                      {row.publishedWithoutCapability && <Badge variant="danger">Publicado sem adapter</Badge>}
+                        ? <Badge variant="success">Conector implementado</Badge>
+                        : <Badge variant="warning">Sem conector</Badge>}
+                      {row.publishedWithoutCapability && <Badge variant="danger">Publicado sem conector</Badge>}
                     </div>
                     {row.capabilityEvidence && (
                       <p className="text-xs text-muted-foreground mt-1 font-mono">{row.capabilityEvidence}</p>
@@ -602,7 +602,7 @@ function TabIntegracoes() {
                   </label>
 
                   <label className="space-y-1.5 block">
-                    <span className="text-xs text-muted-foreground">Quem enxerga (VIEW)</span>
+                    <span className="text-xs text-muted-foreground">Quem enxerga (visualização)</span>
                     <select
                       className="w-full h-9 rounded-md border border-border bg-background px-2 text-sm"
                       value={row.viewAudience.mode}
@@ -722,7 +722,7 @@ function TabUsuarios() {
         <ListSectionHeader
           title="Usuários Administrativos"
           count={filtered.length}
-          description="Acompanhe usuários, tenants, papéis, MFA e sessões ativas"
+          description="Acompanhe usuários, workspaces, papéis, MFA e sessões ativas"
           className="p-4"
         />
         {usersQuery.isLoading ? (
@@ -733,7 +733,7 @@ function TabUsuarios() {
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">
-              {["Usuário", "Tenant", "Role", "MFA", "Status", "Sessões", "Último Login"].map(h => (
+              {["Usuário", "Workspace", "Papel", "MFA", "Status", "Sessões", "Último login"].map(h => (
                 <TableHead key={h} className="text-[11px] font-semibold text-muted-foreground  tracking-wider">{h}</TableHead>
               ))}
             </TableRow>

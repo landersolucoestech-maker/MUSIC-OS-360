@@ -480,7 +480,7 @@ export function ArtistPlatformMetrics({
                 {formatCount(youtubeMetric?.value)}
               </p>
               <p className="text-[10px] text-muted-foreground">
-                Inscritos · {formatCount(youtubeSnapshot?.total_views)} views
+                Inscritos · {formatCount(youtubeSnapshot?.total_views)} visualizações
               </p>
             </>,
           )}

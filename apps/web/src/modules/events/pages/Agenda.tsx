@@ -234,7 +234,7 @@ export default function Agenda() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Agenda");
     XLSX.writeFile(workbook, `agenda_${new Date().toISOString().split('T')[0]}.xlsx`);
     if (truncated) {
-      toast.warning(`Exportação limitada a ${allEvents.length} evento(s) (tenant muito grande) — refine os filtros para exportar o restante.`);
+      toast.warning(`Exportação limitada a ${allEvents.length} evento(s) (volume muito grande) — refine os filtros para exportar o restante.`);
     } else {
       toast.success(`${allEvents.length} evento(s) exportado(s) com sucesso!`);
     }

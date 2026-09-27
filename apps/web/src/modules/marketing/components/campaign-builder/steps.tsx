@@ -55,30 +55,30 @@ const COUNTRY_OPTIONS = [
   "Vietna", "Zambia", "Zimbabue",
 ] as const;
 const LANGUAGE_OPTIONS = [
-  { value: "af", label: "Africans" }, { value: "sq", label: "Albanes" }, { value: "de", label: "Alemao" },
-  { value: "am", label: "Amarico" }, { value: "ar", label: "Arabe" }, { value: "hy", label: "Armenio" },
+  { value: "af", label: "Africâner" }, { value: "sq", label: "Albanês" }, { value: "de", label: "Alemão" },
+  { value: "am", label: "Amarico" }, { value: "ar", label: "Árabe" }, { value: "hy", label: "Armênio" },
   { value: "az", label: "Azerbaijano" }, { value: "bn", label: "Bengali" }, { value: "be", label: "Bielorrusso" },
-  { value: "bg", label: "Bulgaro" }, { value: "km", label: "Cambojano" }, { value: "ca", label: "Catalao" },
+  { value: "bg", label: "Búlgaro" }, { value: "km", label: "Cambojano" }, { value: "ca", label: "Catalão" },
   { value: "kk", label: "Cazaque" }, { value: "zh-CN", label: "Chines simplificado" },
   { value: "zh-TW", label: "Chines tradicional" }, { value: "ko", label: "Coreano" }, { value: "hr", label: "Croata" },
-  { value: "da", label: "Dinamarques" }, { value: "sk", label: "Eslovaco" }, { value: "sl", label: "Esloveno" },
-  { value: "es", label: "Espanhol" }, { value: "et", label: "Estoniano" }, { value: "fi", label: "Finlandes" },
+  { value: "da", label: "Dinamarquês" }, { value: "sk", label: "Eslovaco" }, { value: "sl", label: "Esloveno" },
+  { value: "es", label: "Espanhol" }, { value: "et", label: "Estoniano" }, { value: "fi", label: "Finlandês" },
   { value: "fr", label: "Frances" }, { value: "ka", label: "Georgiano" }, { value: "el", label: "Grego" },
-  { value: "gu", label: "Gujarati" }, { value: "ht", label: "Haitiano crioulo" }, { value: "ha", label: "Hausa" },
-  { value: "he", label: "Hebraico" }, { value: "hi", label: "Hindi" }, { value: "nl", label: "Holandes" },
-  { value: "hu", label: "Hungaro" }, { value: "id", label: "Indonesio" }, { value: "en", label: "Ingles" },
-  { value: "ga", label: "Irlandes" }, { value: "is", label: "Islandes" }, { value: "it", label: "Italiano" },
-  { value: "ja", label: "Japones" }, { value: "jv", label: "Javanes" }, { value: "lo", label: "Laosiano" },
-  { value: "lv", label: "Letao" }, { value: "lt", label: "Lituano" }, { value: "ms", label: "Malaio" },
-  { value: "mt", label: "Maltes" }, { value: "mn", label: "Mongol" }, { value: "ne", label: "Nepales" },
-  { value: "no", label: "Noruegues" }, { value: "fa", label: "Persa" }, { value: "pl", label: "Polones" },
+  { value: "gu", label: "Guzerate" }, { value: "ht", label: "Haitiano crioulo" }, { value: "ha", label: "Hauçá" },
+  { value: "he", label: "Hebraico" }, { value: "hi", label: "Hindi" }, { value: "nl", label: "Holandês" },
+  { value: "hu", label: "Húngaro" }, { value: "id", label: "Indonésio" }, { value: "en", label: "Inglês" },
+  { value: "ga", label: "Irlandês" }, { value: "is", label: "Islandês" }, { value: "it", label: "Italiano" },
+  { value: "ja", label: "Japonês" }, { value: "jv", label: "Javanês" }, { value: "lo", label: "Laosiano" },
+  { value: "lv", label: "Letão" }, { value: "lt", label: "Lituano" }, { value: "ms", label: "Malaio" },
+  { value: "mt", label: "Maltes" }, { value: "mn", label: "Mongol" }, { value: "ne", label: "Nepalês" },
+  { value: "no", label: "Norueguês" }, { value: "fa", label: "Persa" }, { value: "pl", label: "Polonês" },
   { value: "pt-BR", label: "Português (Brasil)" }, { value: "pt-PT", label: "Português (Portugal)" },
-  { value: "ro", label: "Romeno" }, { value: "ru", label: "Russo" }, { value: "sr", label: "Servio" },
-  { value: "so", label: "Somali" }, { value: "sw", label: "Suaile" }, { value: "sv", label: "Sueco" },
-  { value: "tl", label: "Tagalo" }, { value: "th", label: "Tailandes" }, { value: "ta", label: "Tamil" },
+  { value: "ro", label: "Romeno" }, { value: "ru", label: "Russo" }, { value: "sr", label: "Sérvio" },
+  { value: "so", label: "Somali" }, { value: "sw", label: "Suaíle" }, { value: "sv", label: "Sueco" },
+  { value: "tl", label: "Tagalo" }, { value: "th", label: "Tailandês" }, { value: "ta", label: "Tâmil" },
   { value: "cs", label: "Tcheco" }, { value: "te", label: "Telugo" }, { value: "tr", label: "Turco" },
   { value: "uk", label: "Ucraniano" }, { value: "ur", label: "Urdu" }, { value: "vi", label: "Vietnamita" },
-  { value: "yo", label: "Yoruba" }, { value: "zu", label: "Zulu" },
+  { value: "yo", label: "Iorubá" }, { value: "zu", label: "Zulu" },
 ] as const;
 const GENDER_OPTIONS = [
   { value: "todos", label: "Todos" },
@@ -347,7 +347,7 @@ export function CampaignAudienceStep({ state, setState }: BuilderStepProps) {
   const update = (patch: Partial<typeof state.audience>) => setState((c) => ({ ...c, audience: { ...c.audience, ...patch } }));
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <Field label="Paises">
+      <Field label="Países">
         <Select value={state.audience.countries} onValueChange={(countries) => update({ countries })}>
           <SelectTrigger><SelectValue placeholder="Selecione um pais" /></SelectTrigger>
           <SelectContent className="max-h-72">
@@ -369,8 +369,8 @@ export function CampaignAudienceStep({ state, setState }: BuilderStepProps) {
           }}
         />
       </Field>
-      <Field label="Idade minima"><Input type="number" value={state.audience.ageMin} onChange={(e) => update({ ageMin: Number(e.target.value) })} /></Field>
-      <Field label="Idade maxima"><Input type="number" value={state.audience.ageMax} onChange={(e) => update({ ageMax: Number(e.target.value) })} /></Field>
+      <Field label="Idade mínima"><Input type="number" value={state.audience.ageMin} onChange={(e) => update({ ageMin: Number(e.target.value) })} /></Field>
+      <Field label="Idade máxima"><Input type="number" value={state.audience.ageMax} onChange={(e) => update({ ageMax: Number(e.target.value) })} /></Field>
       <Field label="Gênero">
         <Select value={state.audience.gender} onValueChange={(gender) => update({ gender })}>
           <SelectTrigger><SelectValue placeholder="Selecione o gênero" /></SelectTrigger>
@@ -400,7 +400,7 @@ export function CampaignAudienceStep({ state, setState }: BuilderStepProps) {
         />
       </Field>
       <Field label="Interesses" className="md:col-span-2"><Textarea value={state.audience.interests} onChange={(e) => update({ interests: e.target.value })} rows={3} /></Field>
-      <Field label="Exclusoes / remarketing" className="md:col-span-2"><Textarea value={state.audience.exclusions} onChange={(e) => update({ exclusions: e.target.value })} rows={3} /></Field>
+      <Field label="Exclusões / remarketing" className="md:col-span-2"><Textarea value={state.audience.exclusions} onChange={(e) => update({ exclusions: e.target.value })} rows={3} /></Field>
     </div>
   );
 }

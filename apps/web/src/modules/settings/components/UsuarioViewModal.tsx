@@ -81,7 +81,7 @@ export function UsuarioViewModal({ open, onOpenChange, usuario }: UsuarioViewMod
               </div>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Email</p>
+              <p className="text-sm text-muted-foreground">E-mail</p>
               <div className="flex items-center gap-1.5">
                 <Mail className="h-4 w-4 text-muted-foreground" />
                 <span className="font-medium text-foreground">{usuario.email || "-"}</span>

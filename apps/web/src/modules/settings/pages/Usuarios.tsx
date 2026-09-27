@@ -134,7 +134,7 @@ export default function Usuarios() {
         ) : (
           <Card className="bg-card border-border">
             <CardContent className="pt-0">
-              <ListSectionHeader title="Usuários" count={filteredUsuarios.length} description="Usuários cadastrados no tenant atual" />
+              <ListSectionHeader title="Usuários" count={filteredUsuarios.length} description="Usuários cadastrados no workspace atual" />
               <Table>
                 <TableHeader>
                   <TableRow>

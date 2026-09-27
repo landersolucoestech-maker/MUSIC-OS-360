@@ -20,9 +20,9 @@ export function ContactHeader({ onCreate }: { onCreate: () => void }) {
     <header className="flex flex-col gap-4 border-b border-border pb-5 lg:flex-row lg:items-end lg:justify-between">
       <div>
         <p className="text-xs font-semibold tracking-[0.18em] text-primary">CRM relacionamentos</p>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">Contatos estrategicos</h1>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">Contatos estratégicos</h1>
         <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-          Fornecedores, parceiros, mídia, venues, patrocinadores e contatos operacionais em uma lista central.
+          Fornecedores, parceiros, mídia, casas de show, patrocinadores e contatos operacionais em uma lista central.
         </p>
       </div>
       <Button onClick={onCreate}>
@@ -51,7 +51,7 @@ export function ContactFilters({
       <Input
         value={filters.search}
         onChange={(event) => onChange("search", event.target.value)}
-        placeholder="Buscar por nome, empresa, email, telefone, tag ou cidade"
+        placeholder="Buscar por nome, empresa, e-mail, telefone, tag ou cidade"
         className="h-8"
       />
       <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
@@ -159,13 +159,13 @@ export function ContactAgenda() {
 }
 
 export function CompanyRelations() {
-  return <div className="text-sm text-muted-foreground">Relacoes empresariais e vinculos operacionais.</div>;
+  return <div className="text-sm text-muted-foreground">Relações empresariais e vínculos operacionais.</div>;
 }
 
 export function SocialMediaSection({ contact }: { contact: Contact }) {
   return (
     <section className="space-y-2">
-      <h3 className="text-xs font-semibold tracking-[0.14em] text-muted-foreground">Contato e localizacao</h3>
+      <h3 className="text-xs font-semibold tracking-[0.14em] text-muted-foreground">Contato e localização</h3>
       <Info icon={Phone} value={contact.whatsapp ?? contact.phone} />
       <Info icon={Mail} value={contact.email} />
       <Info icon={MapPin} value={[contact.city, contact.state, contact.country].filter(Boolean).join(", ")} />
@@ -199,7 +199,7 @@ export function ContactForm({ register, setValue, watch }: ContactFormController
 
   return (
     <div className="space-y-4">
-      <FormSection title="Dados Basicos">
+      <FormSection title="Dados Básicos">
         <Field label="Nome"><Input {...register("name")} /></Field>
         <Field label="Empresa"><Input {...register("companyName")} /></Field>
         <Field label="Tipo">
@@ -215,7 +215,7 @@ export function ContactForm({ register, setValue, watch }: ContactFormController
         <Field label="WhatsApp"><Input {...register("whatsapp")} /></Field>
         <Field label="E-mail"><Input type="email" {...register("email")} /></Field>
         <Field label="Instagram"><Input {...register("instagram")} /></Field>
-        <Field label="Website"><Input {...register("website")} /></Field>
+        <Field label="Site"><Input {...register("website")} /></Field>
       </FormSection>
       <FormSection title="Localização">
         <Field label="Endereço"><Input {...register("address")} /></Field>
@@ -283,8 +283,8 @@ function ContactAttachmentDropzone({
     <FormSection title="Anexos">
       <label className="flex min-h-[120px] cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 px-4 py-6 text-center transition hover:bg-muted/50">
         <Upload className="mb-2 h-5 w-5 text-muted-foreground" />
-        <span className="text-sm font-medium text-foreground">Adicionar PDF, imagem, video, contrato, rider, midia kit ou release</span>
-        <span className="mt-1 text-xs text-muted-foreground">Arquivos invalidos sao bloqueados antes de salvar.</span>
+        <span className="text-sm font-medium text-foreground">Adicionar PDF, imagem, video, contrato, rider, mídia kit ou release</span>
+        <span className="mt-1 text-xs text-muted-foreground">Arquivos inválidos são bloqueados antes de salvar.</span>
         <input type="file" multiple className="hidden" accept={relationshipUploadRules.extensions.join(",")} onChange={(event) => handleFiles(event.target.files)} />
       </label>
       <div className="space-y-2">

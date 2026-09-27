@@ -172,7 +172,7 @@ export function PositioningCard({ artistId }: { artistId: string }) {
 
             {/* Level 6 — source, coverage, freshness */}
             <p className="text-[10px] text-muted-foreground/60 mt-3">
-              Fonte: Soundcharts · Career Stage {cs.engineVersion} · atualizado em {new Date(cs.calculatedAt).toLocaleString("pt-BR")}
+              Fonte: Soundcharts · Estágio de carreira {cs.engineVersion} · atualizado em {new Date(cs.calculatedAt).toLocaleString("pt-BR")}
             </p>
 
             <Sheet>
@@ -186,12 +186,12 @@ export function PositioningCard({ artistId }: { artistId: string }) {
                 <SheetHeader>
                   <SheetTitle>Como este posicionamento é calculado?</SheetTitle>
                   <SheetDescription>
-                    Career Stage {cs.engineVersion} · calculado em {new Date(cs.calculatedAt).toLocaleString("pt-BR")}
+                    Estágio de carreira {cs.engineVersion} · calculado em {new Date(cs.calculatedAt).toLocaleString("pt-BR")}
                   </SheetDescription>
                 </SheetHeader>
                 <div className="mt-4 space-y-4">
                   <div>
-                    <p className="text-sm font-medium mb-2">Dimensões do Career Stage</p>
+                    <p className="text-sm font-medium mb-2">Dimensões do estágio de carreira</p>
                     {cs.dimensions.map((dim) => (
                       <div key={dim.key} className="border-b border-border pb-3 mb-3">
                         <div className="flex items-center justify-between mb-1">
@@ -220,7 +220,7 @@ export function PositioningCard({ artistId }: { artistId: string }) {
                     <div>
                       <p className="text-sm font-medium mb-2">Comparação de mercado</p>
                       <p className="text-xs text-muted-foreground mb-2">
-                        Engine {mb.result.engineVersion} · coorte nível {mb.result.fallbackLevel} · {mb.result.sampleSize} artista(s) comparável(is) via Soundcharts · calculado em{" "}
+                        Motor {mb.result.engineVersion} · coorte nível {mb.result.fallbackLevel} · {mb.result.sampleSize} artista(s) comparável(is) via Soundcharts · calculado em{" "}
                         {new Date(mb.result.calculatedAt).toLocaleString("pt-BR")}
                         {mb.readStatus === "STALE" ? " · atualizando em segundo plano" : ""}
                       </p>

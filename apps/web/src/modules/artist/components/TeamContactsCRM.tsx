@@ -303,7 +303,7 @@ export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
                                       updateDistributorField(link.contactId, dist.id, { email: e.target.value })
                                     }
                                     type="email"
-                                    placeholder="Email de share…"
+                                    placeholder="E-mail de share…"
                                     className="h-7 text-xs"
                                     data-testid={`input-dist-email-share-${link.contactId}-${dist.id}`}
                                   />

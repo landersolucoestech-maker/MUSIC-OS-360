@@ -271,7 +271,7 @@ export default function Briefing() {
       <div className="space-y-6">
         <section className="grid gap-3 md:grid-cols-4">
           <BriefingMetric title="Briefings abertos" value={stats.open} icon={ClipboardList} />
-          <BriefingMetric title="Em revisao" value={stats.inReview} icon={Eye} />
+          <BriefingMetric title="Em revisão" value={stats.inReview} icon={Eye} />
           <BriefingMetric title="Aprovados" value={stats.approved} icon={Target} />
           <BriefingMetric title="Entregáveis planejados" value={stats.deliverables} icon={Rocket} />
         </section>
@@ -483,7 +483,7 @@ function BriefingViewModal({
                 Apoio da IA Criativa
               </div>
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                Leve este briefing para a IA gerar ideias, campanhas, conteudos, personas, tom de voz,
+                Leve este briefing para a IA gerar ideias, campanhas, conteúdos, personas, tom de voz,
                 cronograma, oportunidades e recomendações estratégicas.
               </p>
             </div>

@@ -234,7 +234,7 @@ export default function Contracts() {
           <div className="relative flex-1 min-w-[220px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              placeholder="Buscar por artista, type ou título…"
+              placeholder="Buscar por artista, tipo ou título…"
               className="pl-9 h-8 text-sm bg-card border-border"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

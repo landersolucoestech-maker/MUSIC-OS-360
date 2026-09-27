@@ -28,7 +28,7 @@ export const eventSchema = z.object({
   horarioFim: z.string().optional().or(z.literal("")),
   nomeLocal: z.string().max(200, "Nome do local deve ter no máximo 200 caracteres").optional().or(z.literal("")),
   endereco: z.string().max(300, "Endereço deve ter no máximo 300 caracteres").optional().or(z.literal("")),
-  contatoLocal: z.string().max(150, "Contacto deve ter no máximo 150 caracteres").optional().or(z.literal("")),
+  contatoLocal: z.string().max(150, "Contato deve ter no máximo 150 caracteres").optional().or(z.literal("")),
   capacidadePublico: z.string().optional().or(z.literal("")),
   valorCache: z.string().optional().or(z.literal("")),
   publicoEsperado: z.string().optional().or(z.literal("")),

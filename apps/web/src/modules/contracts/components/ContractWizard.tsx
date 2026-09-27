@@ -344,11 +344,11 @@ function StepTemplate({
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Selecione o template. O formulário será gerado automaticamente a partir dos placeholders.
+        Selecione o template. O formulário será gerado automaticamente a partir dos marcadores.
       </p>
       {active.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          Nenhum template activo. Crie um template em <strong>Contratos → Templates</strong>.
+          Nenhum template ativo. Crie um template em <strong>Contratos → Templates</strong>.
         </div>
       ) : (
         <div className="grid gap-3">
@@ -1204,11 +1204,11 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
         return (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Preencha os dados de cada parte. Detectadas automaticamente dos placeholders do template.
+              Preencha os dados de cada parte. Detectadas automaticamente dos marcadores do template.
             </p>
             {state.partyRoles.length === 0 ? (
               <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-                Nenhuma parte detectada. Verifique se o template contém placeholders como{" "}
+                Nenhuma parte detectada. Verifique se o template contém marcadores como{" "}
                 <code className="text-xs bg-muted px-1 rounded">{`{{REPRESENTANTE.NAME}}`}</code>.
               </div>
             ) : (
@@ -1266,7 +1266,7 @@ export function ContractWizard({ open, onOpenChange, contrato }: ContractWizardP
         return (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Configure os signatários. Roles detectados automaticamente dos placeholders{" "}
+              Configure os signatários. Papéis detectados automaticamente dos marcadores{" "}
               <code className="text-[10px] bg-muted px-1 rounded">SIGNATURE.*</code>,{" "}
               <code className="text-[10px] bg-muted px-1 rounded">INITIALS.*</code>,{" "}
               <code className="text-[10px] bg-muted px-1 rounded">SIGN_DATE.*</code>.

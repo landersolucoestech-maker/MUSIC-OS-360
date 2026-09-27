@@ -447,7 +447,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
                 </SelectContent>
               </Select>
             </Field>
-            <Field label="Email">
+            <Field label="E-mail">
               <Input
                 type="email"
                 value={state.email}
@@ -593,7 +593,7 @@ export function ContatoFormModal({ open, onOpenChange, mode, initialValue, onSub
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Email do Responsável">
+            <Field label="E-mail do responsável">
               <Input
                 type="email"
                 value={state.responsavel_email}

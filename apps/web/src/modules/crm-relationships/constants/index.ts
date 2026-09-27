@@ -40,7 +40,7 @@ export const individualContactTypeOptions: ContactOption[] = [
   { value: "ARTIST_MANAGER", label: "Empresário Artístico" },
   { value: "AUDIO_ENGINEER", label: "Engenheiro de Áudio" },
   { value: "MIX_MASTER_ENGINEER", label: "Engenheiro de Mixagem/Masterização" },
-  { value: "GROWTH_SPECIALIST", label: "Especialista em Crescimento/Growth" },
+  { value: "GROWTH_SPECIALIST", label: "Especialista em crescimento (growth)" },
   { value: "COPYRIGHT_SPECIALIST", label: "Especialista em Direitos Autorais" },
   { value: "DISTRIBUTION_SPECIALIST", label: "Especialista em Distribuição" },
   { value: "LICENSING_SYNC_SPECIALIST", label: "Especialista em Licenciamento/Sincronização" },
@@ -134,7 +134,7 @@ export const contactStatusOptions: Array<{ value: ContactStatus; label: string }
   { value: "negotiating", label: "Negociando" },
   { value: "blocked", label: "Bloqueado" },
   { value: "favorite", label: "Favorito" },
-  { value: "blacklisted", label: "Blacklist" },
+  { value: "blacklisted", label: "Lista de bloqueio" },
 ];
 
 export const contactPriorityOptions: Array<{ value: ContactPriority; label: string }> = [

@@ -44,7 +44,7 @@ export default function VisaoGeral() {
     <FeatureGate feature="moduleMarketing" featureName="Marketing">
       <MainLayout
         title="Visão Geral"
-        description="Cockpit operacional do setor de marketing"
+        description="Painel operacional do setor de marketing"
       >
         <div className="space-y-6">
           {/* KPIs */}

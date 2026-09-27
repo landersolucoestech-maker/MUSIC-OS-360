@@ -186,7 +186,7 @@ export function MarketingDataTable<T>({
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir selecionados?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acao remove {bulkDeleteIds.length} registro(s) selecionado(s). Deseja continuar?
+              Esta ação remove {bulkDeleteIds.length} registro(s) selecionado(s). Deseja continuar?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

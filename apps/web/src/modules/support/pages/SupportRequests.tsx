@@ -113,7 +113,7 @@ export default function SupportRequests() {
   return (
     <MainLayout
       title="Solicitações"
-      description="Features e melhorias solicitadas pela comunidade"
+      description="Funcionalidades e melhorias solicitadas pela comunidade"
       actions={
         <Button size="sm" className="h-8 text-xs gap-1.5" onClick={() => setShowModal(true)} data-testid="button-nova-solicitacao">
           <Plus className="h-3.5 w-3.5" /> Nova Solicitação
