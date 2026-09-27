@@ -184,7 +184,7 @@ export class WorksService {
     // works.type is NOT NULL. find-tipo-obra-type-collision: the real form
     // (formToObraPayload) NEVER sends `type` -- only `tipo_obra` ('autoral'|
     // 'referencia', the record's origin in the catalog, see
-    // ObraTipoSelectorModal.tsx). The `?? dto.tipo_obra` fallback that existed
+    // WorkTypeSelectorModal.tsx). The `?? dto.tipo_obra` fallback that existed
     // here therefore ALWAYS fired in real use, writing 'autoral'/
     // 'referencia' into the column that ABRAMUS/ECAD registration reads as the
     // work's musical classification (e.g. 'composicao') -- two distinct

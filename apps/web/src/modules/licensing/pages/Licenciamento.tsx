@@ -88,7 +88,7 @@ export default function Licensing() {
 
   // Task J: per-row work title/client name, resolved by direct ID
   // (GET /works/:id, GET /clients/:id) only for the records of the
-  // current page — previously it scanned useObras()/an unfiltered client
+  // current page — previously it scanned useWorks()/an unfiltered client
   // listing, truncated to the first 50 of the tenant.
   const [resolvedWorks, setResolvedWorks] = useState<Record<string, Work>>({});
   const [resolvedClients, setResolvedClients] = useState<Record<string, { id: string; name: string }>>({});

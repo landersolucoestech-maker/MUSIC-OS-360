@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 import { ChevronDown, FileAudio, Music } from "lucide-react";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
-import type { ObraWithRelations } from "@/modules/catalog/hooks/useObras";
+import type { ObraWithRelations } from "@/modules/catalog/hooks/useWorks";
 
 // `compositores` is typed as string[] in the schema, but in some legacy
 // records it may arrive as a string or null. Normalizes safely.
@@ -211,7 +211,7 @@ export function PhonogramViewModal({
 
   // Resolves the linked work DIRECTLY by ID (GET /works/:id) when no inline
   // object came — does not depend on the work being among the first records
-  // loaded (Task J: it used to use an unfiltered useObras(), truncated at 50).
+  // loaded (Task J: it used to use an unfiltered useWorks(), truncated at 50).
   const inlineWork = phonogram?.obraVinculada ?? phonogram?.obra ?? null;
   const lookupWorkId = !inlineWork ? (phonogram?.work_id ?? phonogram?.workId) : undefined;
   const { entity: foundWork } = useEntityById<ObraWithRelations>("obras", open ? lookupWorkId : undefined);

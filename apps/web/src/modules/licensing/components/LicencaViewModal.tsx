@@ -35,7 +35,7 @@ function Field({ label, value, icon, valueClassName }: { label: React.ReactNode;
 
 export function LicenseViewModal({ open, onOpenChange, licenca: license }: LicenseViewModalProps) {
   // Fetches DIRECTLY by ID (GET /works/:id, GET /clients/:id) — does not depend on the
-  // work/client being among the first 50 loaded by useObras() /
+  // work/client being among the first 50 loaded by useWorks() /
   // an unfiltered client listing (Task J).
   const { entity: work } = useEntityById<Work>("obras", open ? license?.work_id ?? undefined : undefined);
   const { entity: client } = useEntityById<ClientOption>("clientes", open ? license?.client_id ?? undefined : undefined);

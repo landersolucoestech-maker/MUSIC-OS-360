@@ -45,13 +45,13 @@ import {
 import type { ProjectWithRelations as ProjetoWithRelations } from "@/modules/projects/hooks/useProjects";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
-import { ParticipantViewModal } from "@/modules/catalog/components/ParticipanteViewModal";
-import { useWorks } from "@/modules/catalog/hooks/useObras";
+import { ParticipantViewModal } from "@/modules/catalog/components/ParticipantViewModal";
+import { useWorks } from "@/modules/catalog/hooks/useWorks";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { useCurrentOrgId } from "@/shared/hooks/useCurrentOrgId";
 import { AbramusSearchRow } from "@/modules/catalog/components/AbramusSearchRow";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import type { WorkType } from "@/modules/catalog/components/ObraTipoSelectorModal";
+import type { WorkType } from "@/modules/catalog/components/WorkTypeSelectorModal";
 import {
   dbStatusToSelect,
   parseDurationText,
@@ -68,7 +68,7 @@ import {
   workToFormFields,
   formToWorkPayload,
 } from "@/modules/catalog/mappers";
-import { workSchema } from "@/modules/catalog/lib/obra-schema";
+import { workSchema } from "@/modules/catalog/lib/work-schema";
 
 // ── Autocomplete: server-side search by nome_artistico/nome_civil (Task I —
 // it used to filter only the tenant's first 50 artists, loaded via

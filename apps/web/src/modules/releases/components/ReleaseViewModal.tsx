@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
-import type { FonogramaWithRelations } from "@/modules/catalog/hooks/useFonogramas";
+import type { FonogramaWithRelations } from "@/modules/catalog/hooks/usePhonograms";
 import { useShares } from "@/modules/releases/hooks/useShares";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { StatusBadge } from "@/shared/components/StatusBadge";
@@ -126,7 +126,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
 
   // Track fallback (only used when metadata.faixas is empty — old
   // releases) and artist names per linked share — resolved directly by ID
-  // via storage.findById, never scanning useFonogramas()/
+  // via storage.findById, never scanning usePhonograms()/
   // useArtistas() without a filter (Task J).
   const phonogramIds = useMemo(
     () => (Array.isArray(release?.fonograma_ids) ? (release!.fonograma_ids as string[]) : []),

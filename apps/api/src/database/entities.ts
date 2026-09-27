@@ -885,7 +885,7 @@ export class PhonogramEntity {
   // Real shape: an object with 3 participant array categories
   // (produtorFonografico/interprete/musicoAcompanhante), not an array --
   // see ParticipacaoDto in modules/phonograms/dto/create-phonogram.dto.ts
-  // (source of truth for the shape, confirmed against FonogramaFormModal.tsx).
+  // (source of truth for the shape, confirmed against PhonogramFormModal.tsx).
   @Column({ type: 'jsonb', nullable: true }) participacao: PhonogramParticipation | null;
   @Column({ type: 'jsonb', nullable: true }) arquivo_audio: Record<string, unknown> | null;
 

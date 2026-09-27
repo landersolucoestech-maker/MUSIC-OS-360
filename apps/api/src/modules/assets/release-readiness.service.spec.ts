@@ -76,7 +76,7 @@ describe('ReleaseReadinessService.evaluate', () => {
   });
 
   // ── Performer requirement (participacao.interprete[]) ─────────────────────
-  // Real shape confirmed against FonogramaFormModal.tsx (ParticipacaoCategoria)
+  // Real shape confirmed against PhonogramFormModal.tsx (ParticipacaoCategoria)
   // and against the DTO fix in create-phonogram.dto.ts (ParticipacaoDto) --
   // an object with array categories, not an array like the old
   // `@IsArray() participacao?: unknown[]` expected.

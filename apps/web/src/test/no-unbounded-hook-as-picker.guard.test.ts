@@ -27,7 +27,7 @@ import * as path from "path";
 const SRC_ROOT = path.resolve(__dirname, "..");
 
 const UNBOUNDED_HOOKS = [
-  "useArtistas",
+  "useArtists",
   "useWorks",
   "useProjects",
   "useContracts",
@@ -40,16 +40,16 @@ const UNBOUNDED_HOOKS = [
 // Definitions of the hooks themselves (and of the lookup infrastructure,
 // which mentions them in JSDoc) — not real call sites.
 const HOOK_DEFINITION_FILES = new Set([
-  "modules/artist/hooks/useArtistas.ts",
-  "modules/catalog/hooks/useObras.ts",
-  "modules/catalog/hooks/useFonogramas.ts",
+  "modules/artist/hooks/useArtists.ts",
+  "modules/catalog/hooks/useWorks.ts",
+  "modules/catalog/hooks/usePhonograms.ts",
   "modules/projects/hooks/useProjects.ts",
   "modules/contracts/hooks/useContracts.ts",
   "modules/crm-relationships/hooks/useContacts.ts",
   "modules/crm-relationships/services/clients.service.ts",
   "modules/licensing/hooks/useLicencas.ts",
   "modules/hr/hooks/useEmployees.ts",
-  "modules/artist/hooks/useArtistasPaginated.ts",
+  "modules/artist/hooks/useArtistsPaginated.ts",
   "shared/hooks/useEntityLookup.ts",
   "shared/hooks/useEditQueryParam.ts",
   "shared/components/AsyncEntityCombobox.tsx",
@@ -58,39 +58,43 @@ const HOOK_DEFINITION_FILES = new Set([
 // Call sites confirmed LEGITIMATE in the Task J audit.
 const ALLOWED_CALL_SITES: Record<string, string> = {
   "modules/dashboard/hooks/useMetrics.ts":
-    "useArtistas()/useProjects() alimentam contagens com o agregado do backend (dashboard.artists_by_status/.artists) como fonte primária; o array capado só é usado como fallback quando o agregado ainda não carregou (mesmo padrão do HR stats).",
+    "useArtists()/useProjects() feed counts from the backend aggregate (dashboard.artists_by_status/.artists) as the primary source; the capped array is only a fallback while the aggregate has not loaded yet (same pattern as the HR stats).",
   "modules/artist/components/ArtistVision360Modal.tsx":
-    "useWorks/usePhonograms/useProjects/useContracts(open, artistId) recebem artistId explícito e filtram server-side — não é 'me dê tudo'.",
+    "useWorks/usePhonograms/useProjects/useContracts(open, artistId) receive an explicit artistId and filter server-side — not 'give me everything'.",
+  "modules/artist/pages/Artists.tsx":
+    "useArtists() for mutations + isLoading; the list only resolves the ?edit= deep link, with a storage.findById fallback for IDs outside the loaded batch (same pattern as Contracts.tsx).",
+  "modules/auth/pages/ArtistaSignupPublic.tsx":
+    "useArtists() for mutations only (addArtist).",
   "modules/contracts/pages/Contracts.tsx":
-    "useContracts() só para mutations; a lista é passada a useEditQueryParam, que tem fallback findById para IDs fora da página carregada.",
+    "useContracts() for mutations only; the list is passed to useEditQueryParam, which falls back to findById for IDs outside the loaded page.",
   "modules/contracts/components/ContractWizard.tsx":
-    "useContracts() só para mutations (addContract/updateContract).",
+    "useContracts() for mutations only (addContract/updateContract).",
   "modules/contracts/components/ContractFormModal.tsx":
-    "useContracts() só para mutations (addContract/updateContract); o picker de clientes usa AsyncEntityCombobox.",
-  "modules/catalog/pages/RegistroMusicas.tsx":
-    "useWorks/usePhonograms só para mutations. useProjects() alimenta só o dropdown de projetos/gêneros (valores distintos) — risco documentado no próprio arquivo por falta de endpoint dedicado (equivalente a /works/stats/generos); busca, paginação e deep-links não dependem disso.",
+    "useContracts() for mutations only (addContract/updateContract); the client picker uses AsyncEntityCombobox.",
+  "modules/catalog/pages/MusicRegistration.tsx":
+    "useWorks/usePhonograms for mutations only. useProjects() only feeds the project/genre dropdown (distinct values) — risk documented in the file itself for lack of a dedicated endpoint (equivalent to /works/stats/generos); search, pagination and deep links do not depend on it.",
   "modules/artist/components/ArtistFormModal.tsx":
-    "useArtistas()/useClients() só para mutations (addArtista/updateArtista/addClient) — não há mais picker de contrato neste formulário (Task AA removeu a seção Classificação e Vínculos).",
+    "useArtists()/useClients() for mutations only (addArtist/updateArtist/addClient) — this form no longer has a contract picker (Task AA removed the Classification and Links section).",
   "modules/hr/pages/HR.tsx":
-    "useEmployees() só para mutations + isLoading; nomes resolvidos via FuncionarioNomeCell (useEntityById) e o picker de documentos usa AsyncEntityCombobox.",
+    "useEmployees() for mutations + isLoading; names are resolved via EmployeeNameCell (useEntityById) and the documents picker uses AsyncEntityCombobox.",
   "modules/hr/components/EmployeeFormModal.tsx":
-    "useEmployees() só para mutations (addEmployee/updateEmployee).",
+    "useEmployees() for mutations only (addEmployee/updateEmployee).",
   "modules/hr/components/LeaveRequestFormModal.tsx":
-    "useEmployees() só para isLoading; o picker de funcionário usa AsyncEntityCombobox.",
-  "modules/catalog/components/ObraFormModal.tsx":
-    "useWorks() só para mutations (addWork/updateWork); pickers de artista/projeto usam useEntityLookup/useEntityById.",
-  "modules/catalog/components/FonogramaFormModal.tsx":
-    "usePhonograms() só para mutations (addPhonogram/updatePhonogram); resolução de artista/obra usa storage.findById/listPaged direto.",
+    "useEmployees() for isLoading only; the employee picker uses AsyncEntityCombobox.",
+  "modules/catalog/components/WorkFormModal.tsx":
+    "useWorks() for mutations only (addWork/updateWork); artist/project pickers use useEntityLookup/useEntityById.",
+  "modules/catalog/components/PhonogramFormModal.tsx":
+    "usePhonograms() for mutations only (addPhonogram/updatePhonogram); artist/work resolution uses storage.findById/listPaged directly.",
   "modules/projects/components/ProjectFormModal.tsx":
-    "useProjects() só para mutations (addProject/updateProject).",
+    "useProjects() for mutations only (addProject/updateProject).",
   "modules/projects/pages/Projects.tsx":
-    "useProjects() só para mutations + dropdown de gêneros (valores distintos) — risco documentado no próprio arquivo; deep-link (?projeto=) e nome do artista por linha usam busca direta por ID.",
+    "useProjects() for mutations + the genre dropdown (distinct values) — risk documented in the file itself; the deep link (?projeto=) and the per-row artist name use direct lookup by ID.",
   "modules/marketing/components/ia-criativa/PerfilTab.tsx":
-    "useObras/useFonogramas(!!artist, artist?.id) — escopados server-side pelo artista selecionado no próprio formulário.",
+    "useWorks/usePhonograms(!!artist, artist?.id) — scoped server-side by the artist selected in the form itself.",
   "modules/licensing/pages/Licenciamento.tsx":
-    "useLicenses() só para mutations (delete); a lista paginada usa hook separado (Task H).",
+    "useLicenses() for mutations only (delete); the paginated list uses a separate hook (Task H).",
   "modules/licensing/components/LicencaFormModal.tsx":
-    "useLicenses() só para mutations (addLicense/updateLicense); o picker de obra usa AsyncEntityCombobox.",
+    "useLicenses() for mutations only (addLicense/updateLicense); the work picker uses AsyncEntityCombobox.",
 };
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -160,6 +164,21 @@ describe("Permanent guard (Task J): 'give me everything' hooks only where review
   it("every file calling a 'give me everything' hook is in the reviewed allowlist", () => {
     const unlisted = flagged.filter((rel) => !(rel in ALLOWED_CALL_SITES));
     expect(unlisted).toEqual([]);
+  });
+
+  it("every hook definition file exists (a renamed/moved file would silently disable the exemption)", () => {
+    const missing = [...HOOK_DEFINITION_FILES].filter((rel) => !fs.existsSync(path.join(SRC_ROOT, rel)));
+    expect(missing).toEqual([]);
+  });
+
+  it("every guarded hook is still exported under that name (a renamed hook would silently escape the guard)", () => {
+    const exported = UNBOUNDED_HOOKS.filter((hook) =>
+      [...HOOK_DEFINITION_FILES].some((rel) => {
+        const full = path.join(SRC_ROOT, rel);
+        return fs.existsSync(full) && new RegExp(`export (function|const) ${hook}\\b`).test(fs.readFileSync(full, "utf8"));
+      }),
+    );
+    expect(exported).toEqual(UNBOUNDED_HOOKS);
   });
 
   it("the allowlist does not accumulate stale entries (file removed/renamed or hook removed from the file)", () => {

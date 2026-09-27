@@ -10,9 +10,9 @@ import { Separator } from "@/shared/ui/separator";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Switch } from "@/shared/ui/switch";
 import { Music } from "lucide-react";
-import { WorkTypeBadge } from "@/modules/catalog/components/ObraFormModal";
+import { WorkTypeBadge } from "@/modules/catalog/components/WorkFormModal";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
-import type { ObraWithRelations } from "@/modules/catalog/hooks/useObras";
+import type { ObraWithRelations } from "@/modules/catalog/hooks/useWorks";
 import {
   workOtherTitles,
   workRelatedReferences,
@@ -103,7 +103,7 @@ export function WorkViewModal({
   obra: workProp,
 }: WorkViewModalProps) {
   // Fetches DIRECTLY by ID (GET /works/:id) — does not depend on the work being among
-  // the first loaded records (Task J: it used to use an unfiltered useObras(),
+  // the first loaded records (Task J: it used to use an unfiltered useWorks(),
   // which truncated at 50 works per tenant).
   const { entity: fresh } = useEntityById<ObraWithRelations>("obras", open ? workProp?.id : undefined);
   if (!workProp) return null;

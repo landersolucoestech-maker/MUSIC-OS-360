@@ -3,7 +3,7 @@ import * as path from 'path';
 
 /**
  * Permanent guard (2026-07-19 audit): physical rebuild of `works`
- * in the real form's order (ObraFormModal) — projeto_id is the first
+ * in the real form's order (WorkFormModal) — projeto_id is the first
  * functional field (the project link appears before
  * "Dados Principais da Obra" in the real render tree).
  */

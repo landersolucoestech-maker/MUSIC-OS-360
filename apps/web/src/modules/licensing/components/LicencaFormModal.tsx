@@ -74,7 +74,7 @@ export function LicenseFormModal({ open, onOpenChange, licenca: license, mode }:
 
   // The artist is derived from the selected work (read-only, not persisted) —
   // fetched DIRECTLY by ID (GET /works/:id), it does not depend on the work being among
-  // the first 50 loaded by useObras() without a filter (Task J).
+  // the first 50 loaded by useWorks() without a filter (Task J).
   const workId = useWatch({ control, name: "workId" });
   const remunerationType = useWatch({ control, name: "remunerationType" });
   const { entity: selectedWork } = useEntityById<Work>("obras", workId || undefined);

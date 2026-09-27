@@ -475,7 +475,7 @@ export function phonogramToFormFields(f: any): PhonogramFormFields {
 
 /**
  * Converts a Project + its first MusicaData into a seed object that can be
- * passed directly to ObraFormModal as the `obra` prop.
+ * passed directly to WorkFormModal as the `obra` prop.
  *
  * Guarantees contextual inheritance: when registering a Work from a Project
  * the form is born prefilled with all the project's musical data

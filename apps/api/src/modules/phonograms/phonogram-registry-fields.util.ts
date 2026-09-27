@@ -4,7 +4,7 @@
  * Naming-mission audit (2026-09-20/21) proved PhonogramEntity's Registry
  * Fields (recording_date/release_date/duration_seconds/country_of_recording,
  * migration 20260601000001_RegistryFieldsPhase1) are never populated by the
- * real write path — FonogramaFormModal writes only the Portuguese "one
+ * real write path — PhonogramFormModal writes only the Portuguese "one
  * column per form field" set (gravacao_original/data_lancamento/
  * duracao_min+duracao_seg/pais_origem), and society-payload-builder.
  * service.ts's buildRecordingPayload() reads only the Registry Fields —
@@ -14,7 +14,7 @@
  */
 
 // The form's country <Select> is a small, fixed, lowercased list
-// (FonogramaFormModal.tsx: paises = ["BRAZIL","USA","UK","PORTUGAL",
+// (PhonogramFormModal.tsx: paises = ["BRAZIL","USA","UK","PORTUGAL",
 // "ARGENTINA","OUTRO"]) -- not free text. ISO 3166-1 alpha-2 codes (an
 // official standard, not a heuristic guess). "UK" itself is not the ISO
 // code for the United Kingdom -- that's "GB" -- so this is a real

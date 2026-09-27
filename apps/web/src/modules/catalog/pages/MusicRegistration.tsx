@@ -16,11 +16,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { SortableTableHead } from "@/shared/components/SortableTableHead";
 import { nextTableSortState, sortTableRows, type TableSortState } from "@/shared/lib/table-sort";
-import { WorkFormModal, WorkTypeBadge } from "@/modules/catalog/components/ObraFormModal";
-import { WorkViewModal } from "@/modules/catalog/components/ObraViewModal";
-import { WorkTypeSelectorModal, type WorkType } from "@/modules/catalog/components/ObraTipoSelectorModal";
-import { PhonogramFormModal } from "@/modules/catalog/components/FonogramaFormModal";
-import { PhonogramViewModal } from "@/modules/catalog/components/FonogramaViewModal";
+import { WorkFormModal, WorkTypeBadge } from "@/modules/catalog/components/WorkFormModal";
+import { WorkViewModal } from "@/modules/catalog/components/WorkViewModal";
+import { WorkTypeSelectorModal, type WorkType } from "@/modules/catalog/components/WorkTypeSelectorModal";
+import { PhonogramFormModal } from "@/modules/catalog/components/PhonogramFormModal";
+import { PhonogramViewModal } from "@/modules/catalog/components/PhonogramViewModal";
 import { DeleteConfirmModal } from "@/shared/components/DeleteConfirmModal";
 import { RequirePermission } from "@/shared/components/RequirePermission";
 import { ContractFormModal } from "@/modules/contracts/components/ContractFormModal";
@@ -28,8 +28,8 @@ import { toast } from "sonner";
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { UnavailableState } from "@/shared/components/UnavailableState";
-import { useWorks } from "@/modules/catalog/hooks/useObras";
-import { usePhonograms } from "@/modules/catalog/hooks/useFonogramas";
+import { useWorks } from "@/modules/catalog/hooks/useWorks";
+import { usePhonograms } from "@/modules/catalog/hooks/usePhonograms";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
 import type { ProjectWithRelations } from "@/modules/projects/hooks/useProjects";
@@ -153,7 +153,7 @@ export default function MusicRegistry() {
   const editWorkParam = searchParams.get("editObra");
   const phonogramParam = searchParams.get("fonograma");
   // Deep-link resolution DIRECTLY by ID (Task J) — it used to scan the works/
-  // phonograms of an unfiltered useObras()/useFonogramas(), truncated at the tenant's
+  // phonograms of an unfiltered useWorks()/usePhonograms(), truncated at the tenant's
   // first 50; GET /works/:id and /phonograms/:id reach
   // any record of the tenant.
   const { entity: deepLinkWork, isLoading: loadingDeepLinkWork } = useEntityById<Work>("obras", workParam ?? undefined);
@@ -828,8 +828,8 @@ export default function MusicRegistry() {
     )}
 
       {/* Outside the isLoading gate on purpose — the same bug as /artistas
-          (Task C): ObraFormModal/FonogramaFormModal call useObras()/
-          useFonogramas() again only for the mutations, the same queries as the
+          (Task C): WorkFormModal/PhonogramFormModal call useWorks()/
+          usePhonograms() again only for the mutations, the same queries as the
           isLoading above. Mounting them only after isLoading turned false created
           new observers on those queries; on error (backend down),
           refetchOnMount reopened isLoading, the gate unmounted the modals
@@ -852,13 +852,13 @@ export default function MusicRegistry() {
         open={phonogramModal.open}
         onOpenChange={(open) => setPhonogramModal({ ...phonogramModal, open })}
         mode={phonogramModal.mode}
-        fonograma={phonogramModal.fonograma as import("@/modules/catalog/components/FonogramaFormModal").PhonogramFormInput | null | undefined}
+        fonograma={phonogramModal.fonograma as import("@/modules/catalog/components/PhonogramFormModal").PhonogramFormInput | null | undefined}
         onSaved={(info) => setContractModal({ open: true, prefill: info })}
       />
       <PhonogramViewModal
         open={phonogramViewModal.open}
         onOpenChange={(open) => setPhonogramViewModal({ ...phonogramViewModal, open })}
-        fonograma={phonogramViewModal.fonograma as unknown as import("@/modules/catalog/components/FonogramaViewModal").PhonogramViewData | null | undefined}
+        fonograma={phonogramViewModal.fonograma as unknown as import("@/modules/catalog/components/PhonogramViewModal").PhonogramViewData | null | undefined}
       />
       <DeleteConfirmModal
         open={deleteModal.open}

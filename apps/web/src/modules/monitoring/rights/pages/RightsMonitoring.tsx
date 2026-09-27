@@ -71,7 +71,7 @@ export default function RightsMonitoring() {
   const queryClient = useQueryClient();
 
   // Catalog resolution by work_id — ALWAYS by ID (GET /works/:id), never
-  // scanning the truncated useObras() list (no-unbounded-hook-as-picker guard:
+  // scanning the truncated useWorks() list (no-unbounded-hook-as-picker guard:
   // detections/reports may reference more works than the first ~50
   // of the tenant). The id set is the real link present in the data, not an
   // arbitrary list.

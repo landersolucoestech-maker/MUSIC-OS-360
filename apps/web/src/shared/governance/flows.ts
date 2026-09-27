@@ -137,7 +137,7 @@ export const FLOW_ARTIST_ONBOARDING: OperationalFlow = {
       module:           "catalog",
       entitiesAffected: ["Obra", "Fonograma", "Share"],
       integrations:     [],
-      uiElement:        "RegistroMusicas / ObraFormModal",
+      uiElement:        "MusicRegistration / WorkFormModal",
     },
   ],
   successCriteria: [

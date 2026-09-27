@@ -4,7 +4,7 @@
  * Naming-mission audit (2026-09-20/21) proved WorkEntity's Registry Fields
  * (language/is_instrumental/duration_seconds/ai_used/ai_tools/ai_prompts/
  * alternative_titles, migration 20260601000001_RegistryFieldsPhase1) are
- * NEVER populated by the real write path — ObraFormModal writes only the
+ * NEVER populated by the real write path — WorkFormModal writes only the
  * Portuguese "one column per form field" set (idioma/instrumental/
  * criada_por_ia/duration_text/outros_titulos/ia_harmonia/ia_melodia/
  * ia_letra), and society-payload-builder.service.ts's buildWorkPayload()
@@ -82,7 +82,7 @@ export function mapInstrumentalToBoolean(instrumental: string | null | undefined
 
 /**
  * `duration_text` ("MM:SS", the only format the write path ever produces --
- * see apps/web/.../registro-musicas.mapper.ts's formatDurationText; parsing
+ * see apps/web/.../music-registration.mapper.ts's formatDurationText; parsing
  * also accepts "HH:MM:SS" for defensiveness, matching that same file's
  * parseDurationText read side) -> `duration_seconds` (integer).
  */
@@ -142,7 +142,7 @@ export interface WorkRegistryDerivedFields {
   // `lyrics` (Registry Fields Phase 1) had zero writers/readers of its own --
   // society-payload-builder.service.ts's buildWorkPayload() doesn't include
   // it either. `letra_completa` is the live, actually-used field (form +
-  // ObraViewModal). Mirrored here rather than dropped so the Registry
+  // WorkViewModal). Mirrored here rather than dropped so the Registry
   // Fields report section (report-form-contracts.ts's ro('lyrics')) shows
   // real data instead of a permanently-null column.
   lyrics: string | null;

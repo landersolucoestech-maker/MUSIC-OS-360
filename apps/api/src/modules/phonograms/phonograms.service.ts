@@ -141,7 +141,7 @@ export class PhonogramsService {
     // ['duration'] still wins when a caller actually sends it (e.g. a
     // future registry-aware form or API client); otherwise it's derived
     // below from duracao_min/duracao_seg, the PT fields the real
-    // FonogramaFormModal actually writes.
+    // PhonogramFormModal actually writes.
     out['duration_seconds'] = input['duration_seconds'] ?? input['duration'];
     // type: default only when explicitly absent on CREATE (see create());
     // in a PATCH without type, do not overwrite the persisted value.

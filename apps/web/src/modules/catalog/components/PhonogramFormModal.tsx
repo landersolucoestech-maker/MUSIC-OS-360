@@ -15,18 +15,18 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { toast } from "sonner";
 import { Plus, Search, ChevronDown, Trash2, Upload, FileAudio, Music, X, Eye, Link, Loader2 } from "lucide-react";
-import type { ObraWithRelations } from "@/modules/catalog/hooks/useObras";
-import { usePhonograms, type FonogramaInsert, type FonogramaUpdate } from "@/modules/catalog/hooks/useFonogramas";
+import type { ObraWithRelations } from "@/modules/catalog/hooks/useWorks";
+import { usePhonograms, type FonogramaInsert, type FonogramaUpdate } from "@/modules/catalog/hooks/usePhonograms";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import type { ProjectWithRelations as ProjetoWithRelations } from "@/modules/projects/hooks/useProjects";
-import { ParticipantViewModal } from "@/modules/catalog/components/ParticipanteViewModal";
+import { ParticipantViewModal } from "@/modules/catalog/components/ParticipantViewModal";
 import { useCurrentOrgId } from "@/shared/hooks/useCurrentOrgId";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { AbramusSearchRow } from "@/modules/catalog/components/AbramusSearchRow";
 import type { Json } from "@/shared/types/database";
-import type { Fonograma } from "@/modules/catalog/hooks/useFonogramas";
+import type { Fonograma } from "@/modules/catalog/hooks/usePhonograms";
 import {
   dbStatusToSelect,
   normalizeStatusForDb,
@@ -37,7 +37,7 @@ import {
   phonogramToParticipation,
   phonogramToFormFields,
 } from "@/modules/catalog/mappers";
-import { phonogramSchema } from "@/modules/catalog/lib/fonograma-schema";
+import { phonogramSchema } from "@/modules/catalog/lib/phonogram-schema";
 import { useUploadToR2, R2NotConfiguredError } from "@/shared/hooks/useUploadToR2";
 import { toUserMessage } from "@/shared/lib/errors";
 
@@ -398,7 +398,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
 
   // Hydrates the linked work from fonograma.work_id — fetches DIRECTLY by
   // ID (GET /works/:id via useEntityById), it does not depend on the work being among
-  // the first records loaded by useObras() (Task I: the work used to
+  // the first records loaded by useWorks() (Task I: the work used to
   // stay stuck on the "Obra vinculada" placeholder forever if it was
   // outside the tenant's first 50).
   const hydratedWorkId: string | undefined =
@@ -444,7 +444,7 @@ export function PhonogramFormModal({ open, onOpenChange, fonograma: phonogram, m
   const searchWorkDebounced = useDebounce(searchWork, 300);
 
   // Server-side search (Task I) — it used to filter only the tenant's first 50 works
-  // loaded via an unfiltered useObras(); now each typed (debounced) key
+  // loaded via an unfiltered useWorks(); now each typed (debounced) key
   // re-runs the search in the backend (titles), reaching any
   // work of the tenant. Note: the server-side search matches titles only (the backend
   // does not index composers/genre) — a slight narrowing compared to the previous local

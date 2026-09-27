@@ -5,8 +5,8 @@ import { estimateReleaseFrequency, inferCareerStage, mostCommon, score, stringif
 
 /**
  * Task J — works/phonograms/artistRecord arrive already resolved by the caller
- * (a server-side search scoped to the artist, via useObras(true, artistId)/
- * useFonogramas(true, artistId)/useEntityById), no longer filtered from an unfiltered
+ * (a server-side search scoped to the artist, via useWorks(true, artistId)/
+ * usePhonograms(true, artistId)/useEntityById), no longer filtered from an unfiltered
  * sources.obras/sources.fonogramas/sources.artists (capped at the tenant's
  * first 50).
  */

@@ -25,10 +25,10 @@ vi.mock("recharts", async () => {
 
 // Mocks of the modal's data hooks (irrelevant here — we only want to
 // render the "Perfil" tab). They return empty arrays.
-vi.mock("@/modules/catalog/hooks/useObras", () => ({
+vi.mock("@/modules/catalog/hooks/useWorks", () => ({
   useWorks: () => ({ works: [], isLoading: false }),
 }));
-vi.mock("@/modules/catalog/hooks/useFonogramas", () => ({
+vi.mock("@/modules/catalog/hooks/usePhonograms", () => ({
   usePhonograms: () => ({ phonograms: [], isLoading: false }),
 }));
 vi.mock("@/modules/releases/hooks/useReleases", () => ({

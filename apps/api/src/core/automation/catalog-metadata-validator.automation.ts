@@ -247,7 +247,7 @@ export class CatalogMetadataValidatorAutomation {
     // writers ever, so this input was already always empty in production).
     // Real participant data lives in phonograms.participacao (jsonb object
     // with produtorFonografico/interprete/musicoAcompanhante array
-    // categories -- shape confirmed against FonogramaFormModal.tsx and
+    // categories -- shape confirmed against PhonogramFormModal.tsx and
     // fixed at the DTO, create-phonogram.dto.ts's ParticipacaoDto).
     // validateCatalogMetadataValidatorInput() requires a non-empty
     // `performers` for type=recording -- this is not optional enrichment.

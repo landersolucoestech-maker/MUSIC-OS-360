@@ -3,7 +3,7 @@ import * as path from 'path';
 
 /**
  * Permanent guard (2026-07-19 audit): physical rebuild of
- * `phonograms` in the real form's order (FonogramaFormModal) — obra_id is
+ * `phonograms` in the real form's order (PhonogramFormModal) — obra_id is
  * the first functional field ("Título da Obra Vinculada" is the 1st section).
  */
 const migrationSrc = fs.readFileSync(

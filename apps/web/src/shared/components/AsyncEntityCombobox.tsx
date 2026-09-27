@@ -26,7 +26,7 @@ export interface AsyncEntityComboboxProps<T extends { id: string }> {
 
 /**
  * Task I — combobox with server-side search, replacing the "load the
- * whole table into a Select" pattern (useArtistas()/useObras()/etc. without a filter, which
+ * whole table into a Select" pattern (useArtistas()/useWorks()/etc. without a filter, which
  * silently cut off at 50 records per tenant). Each typed key
  * (debounced) reruns the query with the current term only — never the whole list.
  *

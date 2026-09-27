@@ -4,7 +4,7 @@ import * as path from 'path';
 /**
  * Permanent guard (2026-07-19 audit): physical rebuild of
  * `contracts` combining the two real forms (ContratoWizard.tsx —
- * main flow; ContratoFormModal.tsx — flow in RegistroMusicas.tsx).
+ * main flow; ContratoFormModal.tsx — flow in MusicRegistration.tsx).
  * A pure order rebuild — no column removed (all have a proven real
  * writer, directly or via DTO/automation).
  */

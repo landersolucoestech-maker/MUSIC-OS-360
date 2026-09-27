@@ -1,5 +1,5 @@
 /**
- * registro-musicas.mapper.test.ts
+ * music-registration.mapper.test.ts
  *
  * Permanent guard (2026-07-18 audit — works contract): behaviorally pins
  * the canonical contract of the works form, so that
@@ -20,7 +20,7 @@ import {
   formToWorkPayload,
   participantsToComposersLyricists,
   type ParticipantForm,
-} from "./registro-musicas.mapper";
+} from "./music-registration.mapper";
 
 function baseInput(participants: ParticipantForm[] = []) {
   return {

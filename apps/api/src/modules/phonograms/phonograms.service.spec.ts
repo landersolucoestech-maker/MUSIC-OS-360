@@ -124,7 +124,7 @@ describe('PhonogramsService — State B (pre-C2, current behavior documented)', 
 
     // participacao: real bug found during naming-closure Phase 2 --
     // the previous shape (`@IsArray() participacao?: unknown[]`) rejected the
-    // real object that FonogramaFormModal.tsx always sent
+    // real object that PhonogramFormModal.tsx always sent
     // (ParticipacaoCategoria: { produtorFonografico, interprete,
     // musicoAcompanhante }), with "participacao must be an array" on EVERY
     // real submit with participants filled in -- verified

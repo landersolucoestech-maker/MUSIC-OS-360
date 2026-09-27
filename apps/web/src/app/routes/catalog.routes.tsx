@@ -5,7 +5,7 @@ import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
 import type { SuspenseRouteComponent } from "./types";
 
-const MusicRegistration  = lazy(() => import("@/modules/catalog/pages/RegistroMusicas"));
+const MusicRegistration  = lazy(() => import("@/modules/catalog/pages/MusicRegistration"));
 const Takedowns        = lazy(() => import("@/modules/monitoring/pages/Takedowns"));
 const Licensing    = lazy(() => import("@/modules/licensing/pages/Licenciamento"));
 const RightsMonitoring = lazy(() => import("@/modules/monitoring/rights/pages/RightsMonitoring"));

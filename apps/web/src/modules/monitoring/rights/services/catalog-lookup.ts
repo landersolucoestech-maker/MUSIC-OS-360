@@ -1,6 +1,6 @@
 /**
  * Catalog lookup helpers for Rights Monitoring.
- * Pure functions used to index the real catalog (obtained via useObras())
+ * Pure functions used to index the real catalog (obtained via useWorks())
  * by ISRC/id and compute the ECAD match rate / orphan ISRCs. The catalog
  * fetch itself happens in the component, via a real hook — this module does not
  * fetch data on its own (avoids a second source of truth).

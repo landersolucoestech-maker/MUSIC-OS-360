@@ -58,7 +58,7 @@ import { formatReleaseDate } from "@/modules/releases/lib/release-format";
 import type { ProjectWithRelations } from "@/modules/projects/hooks/useProjects";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
-import type { FonogramaWithRelations } from "@/modules/catalog/hooks/useFonogramas";
+import type { FonogramaWithRelations } from "@/modules/catalog/hooks/usePhonograms";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
 import {
@@ -129,7 +129,7 @@ const splitNames = (s: string | null | undefined): string[] => {
 
 /**
  * Resolves a phonogram by exact title (after normalization) — server-side
- * search (ILIKE) instead of scanning the capped, unfiltered useFonogramas()
+ * search (ILIKE) instead of scanning the capped, unfiltered usePhonograms()
  * list (Task J). Used only for best-effort autofill (ISRC of a project track);
  * a few results are enough, so the small `pageSize` is intentional.
  */
@@ -583,7 +583,7 @@ export function ReleaseFormModal({
   // for projects beyond the tenant's first 50. The linked artist's name/genre
   // and the phonogram whose title matches the project/track are also resolved
   // by direct lookup (storage.findById / title search), never by scanning
-  // unfiltered useArtistas()/useFonogramas().
+  // unfiltered useArtistas()/usePhonograms().
   const handleSelectProject = async (project: ProjectWithRelations) => {
     const projectId = project.id;
     const seed = projectToReleaseSeed(project);

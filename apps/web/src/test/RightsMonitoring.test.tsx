@@ -4,7 +4,7 @@
 //
 // Covers:
 //  1. Clicking a row detail button opens DetectionDetailModal with compositor + cod_ecad
-//     from the catalog (enriched via work_id lookup against useObras())
+//     from the catalog (enriched via work_id lookup against useWorks())
 //  2. Clicking a detection with no matching/linked work shows the orphan warning
 //  3. The "Divergências" tab badge count reflects detections without a reconciled work
 

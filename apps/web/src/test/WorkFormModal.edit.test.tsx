@@ -11,7 +11,7 @@ const { updateWorkMock, addWorkMock, toastErrorMock } = vi.hoisted(() => ({
   toastErrorMock: vi.fn(),
 }));
 
-vi.mock("@/modules/catalog/hooks/useObras", () => {
+vi.mock("@/modules/catalog/hooks/useWorks", () => {
   const stableReturn = {
     works: [] as any[],
     isLoading: false,
@@ -30,7 +30,7 @@ vi.mock("@/modules/artist/hooks/useSignedArtists", () => {
 
 // Task J: the useArtistas() hook (capped at the tenant's first 50) is
 // deliberately EMPTY — if the artist resolution inside selectProjeto
-// (ObraFormModal.tsx) still depended on scanning that array, the test
+// (WorkFormModal.tsx) still depended on scanning that array, the test
 // "resolves the linked project's artist..." below would fail.
 vi.mock("@/modules/artist/hooks/useArtists", async () => {
   const actual = await vi.importActual<typeof import("@/modules/artist/hooks/useArtists")>(
@@ -49,7 +49,7 @@ vi.mock("@/modules/artist/hooks/useArtists", async () => {
   };
 });
 
-// ObraFormModal.tsx no longer uses useProjetos() (Task J) — the
+// WorkFormModal.tsx no longer uses useProjetos() (Task J) — the
 // "Vincular a Projeto Concluído" picker and the resolution of the project's linked artist now
 // go through storage.listPaged/findById directly.
 vi.mock("@/shared/lib/storage", async () => {
@@ -99,9 +99,9 @@ vi.mock("sonner", () => ({
   },
 }));
 
-import { WorkFormModal } from "@/modules/catalog/components/ObraFormModal";
+import { WorkFormModal } from "@/modules/catalog/components/WorkFormModal";
 
-describe("ObraFormModal edit mode", () => {
+describe("WorkFormModal edit mode", () => {
   beforeEach(() => {
     updateWorkMock.mockClear();
     addWorkMock.mockClear();
@@ -194,7 +194,7 @@ describe("ObraFormModal edit mode", () => {
     expect(callArg.iswc).toBe("T-123.456.789-0");
     // Tenant isolation: org_id/orgId must NEVER be part of the payload the
     // frontend sends — the API derives the tenant from the authenticated
-    // request context (see registro-musicas.mapper.ts::formToObraPayload).
+    // request context (see music-registration.mapper.ts::formToObraPayload).
     // A client-supplied org_id would be a tenant-spoofing vector; this
     // assertion is a regression guard against that ever being reintroduced.
     expect(callArg.org_id).toBeUndefined();

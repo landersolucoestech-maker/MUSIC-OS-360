@@ -3,7 +3,7 @@
  * They mirror the real fields of content_detections and ecad_reports
  * (apps/api/src/database/entities.ts) — no field here exists only in
  * mock data. Catalog enrichment (composer/publisher/iswc/cod_ecad) is
- * resolved at runtime via work_id against the real catalog (useObras()).
+ * resolved at runtime via work_id against the real catalog (useWorks()).
  */
 
 export type DetectionStatus = "pending" | "in_progress" | "completed" | "rejected" | "archived";

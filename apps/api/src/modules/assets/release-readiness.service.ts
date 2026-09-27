@@ -107,7 +107,7 @@ export class ReleaseReadinessService {
         // ever, naming-closure Phase 2,
         // 20260921000005.../20260923000002_DropDeadWorksPhonogramsLegacyParticipantColumns)
         // was superseded by phonograms.participacao.interprete[]. Real shape
-        // confirmed against FonogramaFormModal.tsx and fixed at the DTO
+        // confirmed against PhonogramFormModal.tsx and fixed at the DTO
         // (create-phonogram.dto.ts's ParticipacaoDto -- the previous
         // `@IsArray() participacao?: unknown[]` rejected the real object
         // shape the form sends with "participacao must be an array" on every

@@ -9,7 +9,7 @@ const { updatePhonogramMock, addPhonogramMock } = vi.hoisted(() => ({
   addPhonogramMock: vi.fn().mockResolvedValue({}),
 }));
 
-vi.mock("@/modules/catalog/hooks/useFonogramas", () => {
+vi.mock("@/modules/catalog/hooks/usePhonograms", () => {
   const stableReturn = {
     phonograms: [] as any[],
     isLoading: false,
@@ -21,7 +21,7 @@ vi.mock("@/modules/catalog/hooks/useFonogramas", () => {
   return { usePhonograms: () => stableReturn };
 });
 
-vi.mock("@/modules/catalog/hooks/useObras", () => {
+vi.mock("@/modules/catalog/hooks/useWorks", () => {
   const stableWorks = [
     {
       id: "obra-1",
@@ -44,7 +44,7 @@ vi.mock("@/modules/catalog/hooks/useObras", () => {
 
 // Task J: the useArtistas() hook (capped at the tenant's first 50) is
 // deliberately EMPTY here — if the performer resolution in selectObra
-// (FonogramaFormModal.tsx) still depended on scanning that array, the test
+// (PhonogramFormModal.tsx) still depended on scanning that array, the test
 // below would fail. The real resolution must come from storage.findById (GET
 // /artists/:id), which works for any artist of the tenant.
 vi.mock("@/modules/artist/hooks/useArtists", async () => {
@@ -68,7 +68,7 @@ vi.mock("@/shared/hooks/useCurrentOrgId", () => ({
   useCurrentOrgId: () => ({ orgId: "org-1", isLoading: false }),
 }));
 
-// Task I: FonogramaFormModal hydrates the linked work via useEntityById
+// Task I: PhonogramFormModal hydrates the linked work via useEntityById
 // (a direct GET /works/:id), no longer scanning the useWorks() list — the
 // fixture must come from storage.findById, not from the useWorks() mock above.
 vi.mock("@/shared/lib/storage", async () => {
@@ -83,14 +83,14 @@ vi.mock("@/shared/lib/storage", async () => {
         }
         // Task J: an artist "outside the cap" — it would never be among the first 50
         // returned by an unfiltered useArtistas(); it is only reachable by a direct GET
-        // /artists/:id (see selectObra in FonogramaFormModal.tsx).
+        // /artists/:id (see selectObra in PhonogramFormModal.tsx).
         if (table === "artistas" && id === "art-99") {
           return { id: "art-99", nome_artistico: "Artista Fora Do Cap" };
         }
         return undefined;
       }),
       // Search result of the linkable work — used by the "Buscar
-      // obra" popover (useEntityLookup inside FonogramaFormModal). A single
+      // obra" popover (useEntityLookup inside PhonogramFormModal). A single
       // record whose artist is only resolvable via storage.findById above.
       listPaged: vi.fn(async (table: string) => {
         if (table === "obras") {
@@ -127,9 +127,9 @@ vi.mock("sonner", () => ({
   },
 }));
 
-import { PhonogramFormModal } from "@/modules/catalog/components/FonogramaFormModal";
+import { PhonogramFormModal } from "@/modules/catalog/components/PhonogramFormModal";
 
-describe("FonogramaFormModal edit mode", () => {
+describe("PhonogramFormModal edit mode", () => {
   beforeEach(() => {
     updatePhonogramMock.mockClear();
     addPhonogramMock.mockClear();
@@ -224,7 +224,7 @@ describe("FonogramaFormModal edit mode", () => {
     expect(callArg.status).toBe("under_review");
     // Tenant isolation: org_id/orgId must NEVER be part of the payload the
     // frontend sends — the API derives the tenant from the authenticated
-    // request context (see registro-musicas.mapper.ts). A client-supplied
+    // request context (see music-registration.mapper.ts). A client-supplied
     // org_id would be a tenant-spoofing vector; this assertion is a
     // regression guard against that ever being reintroduced.
     expect(callArg.org_id).toBeUndefined();

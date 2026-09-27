@@ -5,7 +5,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 /**
  * A participant within a `participacao` category (phonographic
  * producer / performer / accompanying musician). Real shape produced by
- * FonogramaFormModal.tsx (`Participante` interface) -- confirmed by
+ * PhonogramFormModal.tsx (`Participante` interface) -- confirmed by
  * direct inspection of the component, not assumed.
  */
 export class ParticipantDto {
@@ -18,7 +18,7 @@ export class ParticipantDto {
 /**
  * Real shape of `participacao`: an OBJECT with three array categories
  * (produtorFonografico/interprete/musicoAcompanhante) -- confirmed by
- * direct inspection of FonogramaFormModal.tsx (`ParticipacaoCategoria`
+ * direct inspection of PhonogramFormModal.tsx (`ParticipacaoCategoria`
  * interface, `participacao: participacao as unknown as Json` on submit).
  * The PREVIOUS physical field was `@IsArray() participacao?: unknown[]` --
  * `@IsArray()` rejects this real object with "participacao must be an

@@ -79,8 +79,8 @@ const formatDateDMY = (d?: string | null): string => {
 
 // imports moved here after CircularProgress was removed
 import { formatCurrency, getCurrencyToneClass, getMonetarySemanticClass } from "@/shared/lib/format-utils";
-import { useWorks } from "@/modules/catalog/hooks/useObras";
-import { usePhonograms } from "@/modules/catalog/hooks/useFonogramas";
+import { useWorks } from "@/modules/catalog/hooks/useWorks";
+import { usePhonograms } from "@/modules/catalog/hooks/usePhonograms";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
 import { useProjects } from "@/modules/projects/hooks/useProjects";
 import { useMetas } from "@/modules/marketing/hooks/useMetas";
