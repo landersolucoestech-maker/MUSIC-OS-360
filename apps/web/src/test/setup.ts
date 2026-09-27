@@ -1,6 +1,10 @@
 import '@testing-library/jest-dom';
 import { afterEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
+import { installZodErrorMapPtBr } from '@/shared/lib/zod-pt-br';
+
+// Same global zod error map as the app bootstrap (main.tsx).
+installZodErrorMapPtBr();
 
 // Polyfills used by Radix components in the jsdom environment
 class ResizeObserverPolyfill {

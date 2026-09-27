@@ -1,6 +1,9 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { validateFrontendEnv } from "@/shared/lib/env";
+import { installZodErrorMapPtBr } from "@/shared/lib/zod-pt-br";
+
+installZodErrorMapPtBr();
 
 function renderStartupError(error: unknown): void {
   const root = document.getElementById("root");
