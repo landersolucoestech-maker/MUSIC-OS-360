@@ -179,7 +179,7 @@ const normalizeTimeValue = (value: unknown): string => {
 };
 
 const getInitialFormData = (event?: any) => {
-  // Backend HTTP retorna entity columns: type, data, local. Metadata armazena
+  // The HTTP backend returns entity columns: type, data, local. Metadata stores
   // descricao, observacoes, valor_cache, etc. Accepts every format.
   const meta = (event?.metadata as Record<string, unknown> | undefined) ?? {};
   return {

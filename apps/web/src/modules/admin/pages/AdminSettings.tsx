@@ -65,8 +65,8 @@ const CAT_LABEL: Record<string, string> = {
   contracts: "Contratos", rights: "Direitos & Associações", fiscal: "Fiscal",
   social: "Redes Sociais", music_platform: "Plataformas de Música",
   launch_connector: "Conectores de Lançamento", marketing: "Marketing",
-  // legado (App/tenant)
-  payment: "Pagamento", communication: "Comunicação", analytics: "Métricas", music: "Música", accounting: "Accounting", distribution: "Distribuição",
+  // legacy (App/tenant)
+  payment: "Pagamento", communication: "Comunicação", analytics: "Métricas", music: "Música", accounting: "Contabilidade", distribution: "Distribuição",
 };
 const ENV_LABEL: Record<string, string> = { production: "Produção", sandbox: "Sandbox", disabled: "Desabilitado" };
 function fmtDate(iso?: string) {

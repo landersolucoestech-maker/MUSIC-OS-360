@@ -190,7 +190,7 @@ export default function Register() {
   const onStep3 = (d: Step3) => { setData((p) => ({ ...p, ...d })); setStep(4); };
 
   /* ── Builds the tenant object without persisting it yet ── */
-  /* ── Persiste tenant no localStorage ── */
+  /* ── Persists the tenant in localStorage ── */
   /* ── Handler step 4 ── */
   const onStep4 = async (d: Step4) => {
     setIsLoading(true);

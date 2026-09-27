@@ -128,7 +128,7 @@ export function LicencaFormModal({ open, onOpenChange, licenca, mode }: LicencaF
       currency:          isFixed || isBoth ? data.currency : null,
       amount:            isFixed || isBoth ? amountNum : null,
       percentage:        isPct || isBoth ? pctNum : null,
-      valor:             isFixed || isBoth ? amountNum : null, // back-compat (campo legado)
+      valor:             isFixed || isBoth ? amountNum : null, // back-compat (legacy field)
       notes:             data.observacoes || undefined,
     };
   };

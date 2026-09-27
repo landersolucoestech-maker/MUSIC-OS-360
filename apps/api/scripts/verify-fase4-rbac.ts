@@ -236,7 +236,7 @@ async function f44(): Promise<void> {
     { method: 'POST', path: () => `/transactions`, body: () => ({ tipoTransacao: 'transferencia', descricao: `RB_TX_${Math.random().toString(36).slice(2,6)}`, valor: '50', dataTransacao: '2026-05-23', formaPagamento: 'pix' }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, financial: ALLOW, viewer: DENY, super: ALLOW } as any },
 
-    // PATCH — editor+ (transactions = financial+; ambos nivel 60)
+    // PATCH — editor+ (transactions = financial+; both at level 60)
     { method: 'PATCH', path: () => `/artists/${SEED_IDS['artist']}`, body: () => ({ nome_artistico: `RB_PATCH_${Math.random().toString(36).slice(2,6)}` }),
       perRole: { owner: ALLOW, admin: ALLOW, manager: ALLOW, editor: ALLOW, viewer: DENY } as any },
     { method: 'PATCH', path: () => `/releases/${SEED_IDS['release']}`, body: () => ({ title: `RB_PATCH_${Math.random().toString(36).slice(2,6)}` }),

@@ -26,7 +26,7 @@ export type IntegrationId =
   | "autentique"
   | "clicksign"
   | "docusign"
-  // Monitoramento de produto / erros
+  // Product monitoring / errors
   | "posthog"
   | "sentry"
   // Streaming / metrics

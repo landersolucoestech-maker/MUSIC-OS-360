@@ -84,7 +84,7 @@ export class ContactsService {
     };
   }
 
-  /** Payload "Contact" legado → CreateClientDto/UpdateClientDto. */
+  /** Legacy "Contact" payload → CreateClientDto/UpdateClientDto. */
   private toClientDto(payload: Record<string, unknown>): Record<string, unknown> {
     const dto: Record<string, unknown> = {};
     const pick = (target: string, ...keys: string[]) => {
